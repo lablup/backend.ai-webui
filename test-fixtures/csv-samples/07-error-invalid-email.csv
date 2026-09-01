@@ -1,0 +1,6 @@
+email,username,password
+not-an-email,bad-email-1,Password!23
+@missinglocal.com,bad-email-2,Password!23
+nodomain@,bad-email-3,Password!23
+spaces in@email.com,bad-email-4,Password!23
+valid@example.com,good-email,Password!23

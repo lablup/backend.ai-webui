@@ -1,15 +1,21 @@
-import BAIConfirmModalWithInput from '../../BAIConfirmModalWithInput';
-import BAIFlex from '../../BAIFlex';
+/*
+ to-astryx W2-D: `ModalProps` -> `BAIModalProps`. The component renders
+ `BAIDeleteConfirmModal` (already Astryx-backed, ticket p3-b) and only used the
+ antd type to forward modal props, so this is a pure type re-point (P15) — the
+ prop surface is identical.
+*/
+import { App } from '../../../app-shim';
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
+import BAIDeleteConfirmModal from '../../BAIDeleteConfirmModal';
+import { type BAIModalProps } from '../../BAIModal';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { Alert, App, theme, Typography, type ModalProps } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { use } from 'react';
-import { useTranslation } from 'react-i18next';
 
-export interface DeleteSelectedItemsModalProps extends ModalProps {
+export interface DeleteSelectedItemsModalProps extends BAIModalProps {
   onRequestClose: (success: boolean, deletingFilePaths?: Array<string>) => void;
   onDeleteFilesInBackground?: (
     bgTaskId: string,
@@ -25,8 +31,7 @@ const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
   selectedFiles,
   ...modalProps
 }) => {
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { t } = useBAIi18n();
   const { message } = App.useApp();
   const { currentPath, targetVFolderId } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
@@ -79,59 +84,18 @@ const DeleteSelectedItemsModal: React.FC<DeleteSelectedItemsModalProps> = ({
   };
 
   return (
-    <BAIConfirmModalWithInput
+    <BAIDeleteConfirmModal
       title={t('comp:FileExplorer.DeleteSelectedItemsDialog')}
-      okText={t('general.button.Delete')}
-      okButtonProps={{ danger: true, loading: deleteFilesMutation.isPending }}
+      target={t('general.File')}
+      items={_.map(selectedFiles, (item) => ({
+        key: item.name + item.created,
+        label: item.name,
+      }))}
+      requireConfirmInput
+      okButtonProps={{ loading: deleteFilesMutation.isPending }}
       inputProps={{ disabled: deleteFilesMutation.isPending }}
       onOk={handleDelete}
       onCancel={() => onRequestClose(false)}
-      confirmText={
-        selectedFiles.length > 1
-          ? t('general.button.Delete')
-          : selectedFiles[0]?.name
-      }
-      content={
-        <BAIFlex align="stretch" direction="column" gap="md">
-          <Alert type="warning" title={t('general.modal.DeleteForeverDesc')} />
-          {selectedFiles.length > 1 ? (
-            <BAIFlex gap="sm" direction="column" align="stretch">
-              <Typography.Text strong>
-                {t('general.modal.ItemSelectedWithCount', {
-                  count: selectedFiles.length,
-                })}
-              </Typography.Text>
-              <BAIFlex
-                direction="column"
-                align="stretch"
-                style={{ maxHeight: 200, overflowY: 'auto' }}
-              >
-                {_.map(selectedFiles, (item) => (
-                  <Typography.Text
-                    code
-                    key={item.name + item.created}
-                    style={{ width: '100%', wordBreak: 'keep-all' }}
-                  >
-                    {item.name}
-                  </Typography.Text>
-                ))}
-              </BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('comp:FileExplorer.TypeDeleteToConfirm')}
-              </Typography.Text>
-            </BAIFlex>
-          ) : (
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('comp:FileExplorer.TypeFolderNameToDelete')}
-                <Typography.Text code style={{ wordBreak: 'keep-all' }}>
-                  {selectedFiles[0]?.name}
-                </Typography.Text>
-              </Typography.Text>
-            </BAIFlex>
-          )}
-        </BAIFlex>
-      }
       {...modalProps}
     />
   );

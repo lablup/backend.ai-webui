@@ -2,30 +2,30 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
-import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
 import {
-  BAIButton,
+  ProjectFairShareTableFragment$data,
+  ProjectFairShareTableFragment$key,
+} from '../../__generated__/ProjectFairShareTableFragment.graphql';
+import { theme } from '../../theme-shim';
+import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
-  BAILink,
+  BAINameActionCell,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import { ChevronRight } from 'lucide-react';
+import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  ProjectFairShareTableFragment$data,
-  ProjectFairShareTableFragment$key,
-} from 'src/__generated__/ProjectFairShareTableFragment.graphql';
 
 export type ProjectFairShare = NonNullable<
   ProjectFairShareTableFragment$data[number]
@@ -121,53 +121,47 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       dataIndex: 'projectName',
       sorter: isEnableSorter('projectName'),
       render: (_name, record) => (
-        <BAIFlex gap="xxs" align="center">
-          <ProjectResourceGroupWarningIcon projectFairShareFrgmt={record} />
-          <BAILink
-            icon={<ChevronRight />}
-            onClick={() => onClickProjectName?.(record?.projectId)}
-          >
-            {record?.project?.basicInfo?.name}
-          </BAILink>
-        </BAIFlex>
-      ),
-    },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      fixed: 'left',
-      render: (_text, record) => (
-        <BAIFlex direction="row" gap="xxs">
-          <BAIButton
-            type="text"
-            icon={<SettingOutlined style={{ color: token.colorInfo }} />}
-            onClick={() => {
-              onOpenWeightSetting?.(record);
-            }}
-          />
-        </BAIFlex>
+        <BAINameActionCell
+          icon={
+            <ProjectResourceGroupWarningIcon projectFairShareFrgmt={record} />
+          }
+          title={record?.project?.basicInfo?.name}
+          onTitleClick={() => onClickProjectName?.(record?.projectId)}
+          showActions="always"
+          actions={[
+            {
+              key: 'settings',
+              title: t('button.Settings'),
+              icon: <Settings size="1em" />,
+              onClick: () => {
+                onOpenWeightSetting?.(record);
+              },
+            },
+          ]}
+        />
       ),
     },
     {
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.Weight')}
-          <QuestionIconWithTooltip title={t('fairShare.WeightDescription')} />
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.WeightDescription')}
+          />
         </BAIFlex>
       ),
       key: 'weight',
       dataIndex: ['spec', 'weight'],
       render: (weight, record) => (
         <BAIFlex gap="xxs">
-          <Typography.Text>
-            {weight ? toFixedFloorWithoutTrailingZeros(weight, 1) : '-'}
-          </Typography.Text>
-          <Typography.Text
-            type="secondary"
-            style={{ fontSize: token.fontSizeSM }}
-          >
+          <Text>
+            {_.isNil(weight)
+              ? '-'
+              : toFixedFloorWithoutTrailingZeros(weight, 1)}
+          </Text>
+          <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
             {record.spec.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
-          </Typography.Text>
+          </Text>
         </BAIFlex>
       ),
     },
@@ -175,7 +169,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.FairShareFactor')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.FairShareFactorDescription')}
           />
         </BAIFlex>
@@ -192,7 +186,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.AllocationAverage')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.AllocationAverageDescription')}
           />
         </BAIFlex>
@@ -210,16 +204,12 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
               entries,
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
-                  {index > 0 && (
-                    <Divider type="vertical" style={{ margin: 0 }} />
-                  )}
+                  {index > 0 && <Divider orientation="vertical" />}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Typography.Text type="secondary">
-                        / {t('fairShare.DayUnit')}
-                      </Typography.Text>
+                      <Text color="secondary">/ {t('fairShare.DayUnit')}</Text>
                     }
                   />
                 </BAIFlex>
@@ -247,8 +237,8 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   return (
     <>
       <BAITable
-        rowKey={'id'}
         scroll={{ x: 'max-content' }}
+        rowKey={'id'}
         {...tableProps}
         dataSource={projectFairShares || []}
         columns={columns}

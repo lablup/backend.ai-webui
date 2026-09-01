@@ -6,34 +6,41 @@ import { ResourceGroupSettingModalAssociateDomainMutation } from '../__generated
 import { ResourceGroupSettingModalCreateMutation } from '../__generated__/ResourceGroupSettingModalCreateMutation.graphql';
 import { ResourceGroupSettingModalFragment$key } from '../__generated__/ResourceGroupSettingModalFragment.graphql';
 import { ResourceGroupSettingModalUpdateMutation } from '../__generated__/ResourceGroupSettingModalUpdateMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { newLineToBrElement } from '../helper';
-import { useCurrentDomainValue } from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import {
+  computeProxyDelta,
+  proxiesServingGroups,
+  useSFTPProxyResourceGroupsQuery,
+  useSFTPResourceGroups,
+} from '../hooks/useSFTPResourceGroups';
+import BAIFormItem from './BAIFormItem';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
-  App,
-  Col,
-  Form,
-  FormInstance,
-  Input,
-  InputNumber,
-  ModalProps,
-  Row,
-  Select,
-  Skeleton,
-  Switch,
-  Tooltip,
-  theme,
-} from 'antd';
+  AstryxFormMultiSelector,
+  AstryxFormNumberInput,
+  AstryxFormSelector,
+  AstryxFormSwitch,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { Grid } from '@astryxdesign/core/Grid';
 import {
-  BAIModal,
-  omitNullAndUndefinedFields,
   BAICard,
-  BAIFlex,
   BAIDomainSelect,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAIQuestionIconWithTooltip,
+  BAISkeleton,
+  BAIStorageProxySelect,
+  omitNullAndUndefinedFields,
+  useBAILogger,
 } from 'backend.ai-ui';
-import _ from 'lodash';
-import { Suspense, useMemo, useRef } from 'react';
+import * as _ from 'lodash-es';
+import React, { Suspense, useDeferredValue, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -49,9 +56,10 @@ type FormInputType = {
   scheduler: string;
   pendingTimeout: number;
   retriesToSkip: number;
+  sftpProxies: string[];
 };
 
-interface ResourceGroupCreateModalProps extends ModalProps {
+interface ResourceGroupCreateModalProps extends BAIModalProps {
   resourceGroupFrgmt?: ResourceGroupSettingModalFragment$key | null | undefined;
   onRequestClose?: (success: boolean) => void;
 }
@@ -61,10 +69,13 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
+  const { applyGroupProxyDelta } = useSFTPResourceGroups();
   const formRef = useRef<FormInstance>(null);
 
   const resourceGroup = useFragment(
@@ -82,6 +93,23 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
     `,
     resourceGroupFrgmt,
   );
+
+  // Superadmin-only SFTP proxy membership for this group, read from etcd without
+  // suspending: gate on a deferred `open` so enabling runs in a transition. The
+  // field below skeletons until the map resolves, then mounts with its prefill
+  // as the Form.Item `initialValue` — the rest of the form renders immediately.
+  const deferredOpen = useDeferredValue(modalProps.open);
+  const { data: proxyResourceGroups, isFetching: isSftpMapFetching } =
+    useSFTPProxyResourceGroupsQuery({
+      enabled: baiClient.is_superadmin && !!deferredOpen,
+    });
+  const currentSftpProxies = proxiesServingGroups(
+    proxyResourceGroups,
+    resourceGroup?.name ? [resourceGroup.name] : [],
+  );
+  const isSftpMapLoading =
+    proxyResourceGroups === undefined || isSftpMapFetching;
+
   const [commitUpdateResourceGroup, isInFlightCommitUpdateResourceGroup] =
     useMutation<ResourceGroupSettingModalUpdateMutation>(graphql`
       mutation ResourceGroupSettingModalUpdateMutation(
@@ -159,7 +187,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       onCancel={() => {
         onRequestClose?.(false);
       }}
-      okText={resourceGroup ? t('button.Update') : t('button.Create')}
+      okText={resourceGroup ? t('button.Save') : t('button.Create')}
       okButtonProps={{
         loading:
           isInFlightCommitCreateResourceGroup ||
@@ -192,6 +220,40 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               wsproxy_api_token: values.wsProxyAPIToken,
             };
 
+            // After the group is saved, sync its SFTP proxy membership to the
+            // selected proxies (add to newly-selected proxies, remove from
+            // deselected ones, preserving other groups on each proxy).
+            // Deselection here removes without a separate confirm — unlike the
+            // bulk modal — because Update is an explicit, per-group edit.
+            // Superadmin-only.
+            const applySftpProxies = (groupName: string): Promise<void> => {
+              if (!baiClient.is_superadmin) {
+                return Promise.resolve();
+              }
+              const { added, removed } = computeProxyDelta(
+                currentSftpProxies,
+                values.sftpProxies ?? [],
+              );
+              return applyGroupProxyDelta([groupName], added, removed).then(
+                (results) => {
+                  const failed = results.filter((r) => r.status === 'rejected');
+                  if (failed.length > 0) {
+                    failed.forEach((r) => {
+                      if (r.status === 'rejected') {
+                        logger.error(
+                          'Failed to update SFTP storage proxies:',
+                          r.reason,
+                        );
+                      }
+                    });
+                    message.error(
+                      t('storageProxy.FailedToUpdateSFTPResourceGroups'),
+                    );
+                  }
+                },
+              );
+            };
+
             if (resourceGroup) {
               commitUpdateResourceGroup({
                 variables: {
@@ -214,7 +276,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                     return;
                   }
                   message.success(t('resourceGroup.ResourceGroupModified'));
-                  onRequestClose?.(true);
+                  applySftpProxies(resourceGroup.name).finally(() =>
+                    onRequestClose?.(true),
+                  );
                 },
                 onError: (err) => {
                   message.error(err.message);
@@ -267,7 +331,9 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                     }
 
                     message.success(t('resourceGroup.ResourceGroupCreated'));
-                    onRequestClose?.(true);
+                    applySftpProxies(values.name).finally(() =>
+                      onRequestClose?.(true),
+                    );
                   },
                   onError: (err) => {
                     message.error(err.message);
@@ -283,13 +349,13 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
       }}
       {...modalProps}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeleton rows={6} />}>
         <Form
           ref={formRef}
           initialValues={INITIAL_FORM_VALUES}
           layout="vertical"
         >
-          <Form.Item
+          <BAIFormItem
             label={t('resourceGroup.Name')}
             name="name"
             rules={[
@@ -301,10 +367,13 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <Input disabled={!!resourceGroup} />
-          </Form.Item>
+            <AstryxFormTextInput
+              label={t('resourceGroup.Name')}
+              disabled={!!resourceGroup}
+            />
+          </BAIFormItem>
           {!resourceGroup ? (
-            <Form.Item
+            <BAIFormItem
               label={t('resourceGroup.Domain')}
               name="domain"
               rules={[
@@ -317,12 +386,15 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               ]}
             >
               <BAIDomainSelect />
-            </Form.Item>
+            </BAIFormItem>
           ) : null}
-          <Form.Item label={t('resourceGroup.Description')} name="description">
-            <Input.TextArea />
-          </Form.Item>
-          <Form.Item
+          <BAIFormItem
+            label={t('resourceGroup.Description')}
+            name="description"
+          >
+            <AstryxFormTextArea label={t('resourceGroup.Description')} />
+          </BAIFormItem>
+          <BAIFormItem
             label={t('resourceGroup.AllowedSessionTypes')}
             name="allowedSessionTypes"
             rules={[
@@ -334,8 +406,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <Select
-              mode="multiple"
+            <AstryxFormMultiSelector
+              label={t('resourceGroup.AllowedSessionTypes')}
               options={[
                 { label: 'Batch', value: 'batch' },
                 { label: 'Interactive', value: 'interactive' },
@@ -343,41 +415,68 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 { label: 'System', value: 'system' },
               ]}
             />
-          </Form.Item>
-          <Form.Item
-            label={t('resourceGroup.WsproxyAddress')}
+          </BAIFormItem>
+          <BAIFormItem
+            label={t('resourceGroup.AppProxyAddress')}
             name="wsProxyAddress"
             rules={[{ type: 'url', message: t('error.InvalidUrl') }]}
           >
-            <Input placeholder="http://localhost:10200" />
-          </Form.Item>
-          <Form.Item
-            label={t('resourceGroup.WsproxyAPIToken')}
+            <AstryxFormTextInput
+              label={t('resourceGroup.AppProxyAddress')}
+              placeholder="http://localhost:10200"
+            />
+          </BAIFormItem>
+          <BAIFormItem
+            label={t('resourceGroup.AppProxyAPIToken')}
             name="wsProxyAPIToken"
           >
-            <Input.Password placeholder={t('resourceGroup.EnterAPIToken')} />
-          </Form.Item>
-          <Row>
-            <Col span={12}>
-              <Form.Item
-                layout="horizontal"
-                label={t('resourceGroup.Active')}
-                name="active"
-              >
-                <Switch />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                layout="horizontal"
-                label={t('resourceGroup.Public')}
-                name="public"
-              >
-                <Switch />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item
+            <AstryxFormTextInput
+              label={t('resourceGroup.AppProxyAPIToken')}
+              type="password"
+              placeholder={t('resourceGroup.EnterAPIToken')}
+            />
+          </BAIFormItem>
+          {baiClient.is_superadmin ? (
+            isSftpMapLoading ? (
+              <BAIFormItem label={t('storageProxy.SFTPStorageProxies')}>
+                <BAISkeleton variant="input" />
+              </BAIFormItem>
+            ) : (
+              // Wrap the Form.Item (not the select — that would break Form's
+              // value/onChange binding) in Suspense: BAIStorageProxySelect's
+              // proxy-options query suspends. The prefill is registered as the
+              // Form.Item `initialValue`, computed from the now-resolved map.
+              <Suspense fallback={<BAISkeleton variant="input" />}>
+                <BAIFormItem
+                  label={t('storageProxy.SFTPStorageProxies')}
+                  name="sftpProxies"
+                  initialValue={currentSftpProxies}
+                  tooltip={t('storageProxy.SFTPStorageProxiesDescription')}
+                >
+                  <BAIStorageProxySelect mode="multiple" allowClear />
+                </BAIFormItem>
+              </Suspense>
+            )
+          ) : null}
+          {/* antd Row + Col span={12}×2 → Grid columns={2} (MAPPING §3.9 R2:
+              fixed equal-width columns, no breakpoint props involved). */}
+          <Grid columns={2}>
+            <BAIFormItem
+              layout="horizontal"
+              label={t('resourceGroup.Active')}
+              name="active"
+            >
+              <AstryxFormSwitch label={t('resourceGroup.Active')} />
+            </BAIFormItem>
+            <BAIFormItem
+              layout="horizontal"
+              label={t('resourceGroup.Public')}
+              name="public"
+            >
+              <AstryxFormSwitch label={t('resourceGroup.Public')} />
+            </BAIFormItem>
+          </Grid>
+          <BAIFormItem
             label={t('resourceGroup.Scheduler')}
             name="scheduler"
             rules={[
@@ -389,7 +488,8 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               },
             ]}
           >
-            <Select
+            <AstryxFormSelector
+              label={t('resourceGroup.Scheduler')}
               options={[
                 {
                   label: 'FIFO',
@@ -409,33 +509,29 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 },
               ]}
             />
-          </Form.Item>
-          <Form.Item label={t('resourceGroup.SchedulerOptions')}>
+          </BAIFormItem>
+          <BAIFormItem label={t('resourceGroup.SchedulerOptions')}>
             <BAICard styles={{ body: { paddingBottom: 0 } }}>
-              <Form.Item
+              <BAIFormItem
                 label={
                   <BAIFlex gap="xxs">
                     {t('resourceGroup.PendingTimeout')}
-                    <Tooltip
+                    <BAIQuestionIconWithTooltip
                       title={newLineToBrElement(
                         t('resourceGroup.PendingTimeoutDesc'),
                       )}
-                    >
-                      <QuestionCircleOutlined
-                        style={{ color: token.colorTextSecondary }}
-                      />
-                    </Tooltip>
+                    />
                   </BAIFlex>
                 }
                 name="pendingTimeout"
               >
-                <InputNumber
-                  style={{ width: '100%' }}
-                  suffix={t('resourceGroup.TimeoutSeconds')}
+                <AstryxFormNumberInput
+                  label={t('resourceGroup.PendingTimeout')}
+                  units={t('resourceGroup.TimeoutSeconds')}
                   min={0}
                 />
-              </Form.Item>
-              <Form.Item
+              </BAIFormItem>
+              <BAIFormItem
                 label={
                   <BAIFlex style={{ whiteSpace: 'pre' }}>
                     {t('resourceGroup.RetriesToSkipDesc')}
@@ -443,14 +539,14 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
                 }
                 name="retriesToSkip"
               >
-                <InputNumber
-                  style={{ width: '100%' }}
-                  suffix={t('resourceGroup.RetriesToSkip')}
+                <AstryxFormNumberInput
+                  label={t('resourceGroup.RetriesToSkipDesc')}
+                  units={t('resourceGroup.RetriesToSkip')}
                   min={0}
                 />
-              </Form.Item>
+              </BAIFormItem>
             </BAICard>
-          </Form.Item>
+          </BAIFormItem>
         </Form>
       </Suspense>
     </BAIModal>

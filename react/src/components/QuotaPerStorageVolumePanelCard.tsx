@@ -7,14 +7,15 @@ import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaP
 import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import BAIProgress from './BAIProgress';
-import FlexActivityIndicator from './FlexActivityIndicator';
 import StorageSelect from './StorageSelect';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Col, Empty, Row, theme, Tooltip, Typography } from 'antd';
-import { BAICard, BAICardProps, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
-import React, { useDeferredValue, useState } from 'react';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Grid, GridSpan } from '@astryxdesign/core/Grid';
+import { Text } from '@astryxdesign/core/Text';
+import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -22,21 +23,39 @@ export type VolumeInfo = {
   id: string;
   backend: string;
   capabilities: string[];
-  usage: {
-    percentage: number;
+  // `usage` is optional because `vfolder.list_hosts()` only attaches it for
+  // hosts that can report capacity; `usage.percentage` is optional because
+  // even a reporting host may omit the percentage (rendered as "Unknown").
+  usage?: {
+    percentage?: number;
   };
   sftp_scaling_groups: string[];
 };
 
-interface QuotaPerStorageVolumePanelCardProps extends BAICardProps {}
+interface QuotaPerStorageVolumePanelCardProps {
+  /**
+   * Pre-selects a volume so the content renders that host's quota immediately
+   * (e.g. when opened from a specific folder row). When provided, the built-in
+   * usage-based auto-select is disabled; users can still switch volumes via
+   * the inline `StorageSelect`.
+   */
+  defaultVolumeInfo?: VolumeInfo;
+}
 
-const QuotaPerStorageVolumePanelCard: React.FC<
-  QuotaPerStorageVolumePanelCardProps
-> = ({ ...baiCardProps }) => {
+interface QuotaScopeContentProps {
+  selectedVolumeInfo: VolumeInfo | undefined;
+}
+
+// Body of the panel: fetches and renders project / user quota scope for the
+// selected volume. Wrapped in a Suspense boundary by the parent so switching
+// to an uncached host shows a loading indicator while in flight, while cache
+// hits commit synchronously without any spinner flash.
+const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
+  selectedVolumeInfo,
+}) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [selectedVolumeInfo, setSelectedVolumeInfo] = useState<VolumeInfo>();
-  const deferredSelectedVolumeInfo = useDeferredValue(selectedVolumeInfo);
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
 
@@ -92,13 +111,24 @@ const QuotaPerStorageVolumePanelCard: React.FC<
           currentProject?.id || '',
         ),
         user_quota_scope_id: addQuotaScopeTypePrefix('user', user?.id || ''),
-        storage_host_name: deferredSelectedVolumeInfo?.id || '',
+        storage_host_name: selectedVolumeInfo?.id || '',
         skipQuotaScope:
           currentProject?.id === undefined ||
           user?.id === undefined ||
-          !deferredSelectedVolumeInfo?.id,
+          !selectedVolumeInfo?.id,
       },
     );
+
+  if (!selectedVolumeInfo?.capabilities?.includes('quota')) {
+    return (
+      // antd `Empty` → `EmptyState` (MAPPING §4); the simple placeholder
+      // illustration is dropped and `description` becomes the required title.
+      <EmptyState
+        title={t('storageHost.QuotaDoesNotSupported')}
+        style={{ margin: 'auto 25px' }}
+      />
+    );
+  }
 
   const projectUsageBytes = _.toFinite(
     project_quota_scope?.details?.usage_bytes,
@@ -121,118 +151,114 @@ const QuotaPerStorageVolumePanelCard: React.FC<
     : 0;
 
   return (
-    <BAICard
-      {...baiCardProps}
-      title={
-        <BAIFlex gap={'xs'} align="center">
-          {t('data.QuotaPerStorageVolume')}
-          <Tooltip title={t('data.HostDetails')}>
-            <QuestionCircleOutlined
-              style={{ color: token.colorTextDescription }}
-            />
-          </Tooltip>
-        </BAIFlex>
-      }
-      extra={
-        <BAIFlex
-          style={{
-            marginRight: -8,
-          }}
-        >
-          <StorageSelect
-            value={selectedVolumeInfo?.id}
-            onChange={(__, vInfo) => {
-              setSelectedVolumeInfo(vInfo);
-            }}
-            autoSelectType="usage"
-            showUsageStatus
-            showSearch
-            variant="borderless"
-          />
-        </BAIFlex>
-      }
-      styles={{
-        body: {
-          paddingTop: token.paddingLG,
-        },
-      }}
-    >
-      {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (
-        <FlexActivityIndicator style={{ minHeight: 120 }} />
-      ) : selectedVolumeInfo?.capabilities?.includes('quota') ? (
-        <Row gutter={[24, 16]}>
-          <Col
-            span={12}
-            style={{
-              borderRight: `1px solid ${token.colorBorderSecondary}`,
-            }}
-          >
-            <BAIProgress
-              title={
-                <BAIFlex direction="column" align="start">
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
-                  >
-                    {t('data.Project')}
-                  </Typography.Text>
-                  <Typography.Text style={{ fontSize: token.fontSize }}>
-                    {currentProject?.name}
-                  </Typography.Text>
-                </BAIFlex>
-              }
-              percent={projectPercent}
-              used={
-                projectUsageBytes === 0
-                  ? ''
-                  : `${convertToDecimalUnit(_.toString(projectUsageBytes), 'g')?.displayValue}`
-              }
-              total={
-                projectHardLimitBytes === 0
-                  ? ''
-                  : `${convertToDecimalUnit(_.toString(projectHardLimitBytes), 'g')?.displayValue}`
-              }
-            />
-          </Col>
-          <Col span={12}>
-            <BAIProgress
-              percent={userPercent}
-              title={
-                <BAIFlex direction="column" align="start">
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
-                  >
-                    {t('data.User')}
-                  </Typography.Text>
-                  <Typography.Text style={{ fontSize: token.fontSize }}>
-                    {baiClient?.full_name}
-                  </Typography.Text>
-                </BAIFlex>
-              }
-              used={
-                userUsageBytes === 0
-                  ? ''
-                  : convertToDecimalUnit(_.toString(userUsageBytes), 'auto')
-                      ?.displayValue
-              }
-              total={
-                userHardLimitBytes === 0
-                  ? ''
-                  : convertToDecimalUnit(_.toString(userHardLimitBytes), 'auto')
-                      ?.displayValue
-              }
-            />
-          </Col>
-        </Row>
-      ) : (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('storageHost.QuotaDoesNotSupported')}
-          style={{ margin: 'auto 25px' }}
+    // antd `Row gutter={[24,16]}` + two `Col span={12}` → Astryx `Grid` with a
+    // 24-track budget and `GridSpan span={12}` (MAPPING §3.9). No breakpoint
+    // props were in play, so this is a straight translation; gutter 24/16px
+    // becomes columnGap step 6 / rowGap step 4 (step n = 4n px).
+    <Grid columns={24} columnGap={6} rowGap={4}>
+      <GridSpan
+        columns={12}
+        style={{
+          borderRight: `1px solid ${token.colorBorderSecondary}`,
+        }}
+      >
+        <BAIProgress
+          title={
+            <BAIFlex direction="column" align="start">
+              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+                {t('data.Project')}
+              </Text>
+              <Text style={{ fontSize: token.fontSize }}>
+                {currentProject?.name}
+              </Text>
+            </BAIFlex>
+          }
+          percent={projectPercent}
+          used={
+            projectUsageBytes === 0
+              ? ''
+              : `${convertToDecimalUnit(_.toString(projectUsageBytes), 'g')?.displayValue}`
+          }
+          total={
+            projectHardLimitBytes === 0
+              ? ''
+              : `${convertToDecimalUnit(_.toString(projectHardLimitBytes), 'g')?.displayValue}`
+          }
         />
-      )}
-    </BAICard>
+      </GridSpan>
+      <GridSpan columns={12}>
+        <BAIProgress
+          percent={userPercent}
+          title={
+            <BAIFlex direction="column" align="start">
+              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+                {t('data.User')}
+              </Text>
+              <Text style={{ fontSize: token.fontSize }}>
+                {baiClient?.full_name}
+              </Text>
+            </BAIFlex>
+          }
+          used={
+            userUsageBytes === 0
+              ? ''
+              : convertToDecimalUnit(_.toString(userUsageBytes), 'auto')
+                  ?.displayValue
+          }
+          total={
+            userHardLimitBytes === 0
+              ? ''
+              : convertToDecimalUnit(_.toString(userHardLimitBytes), 'auto')
+                  ?.displayValue
+          }
+        />
+      </GridSpan>
+    </Grid>
+  );
+};
+
+// Modal-body view for per-volume quota. Intentionally not wrapped in a BAICard
+// — the consuming Modal provides its own title and chrome, so a nested card
+// would duplicate the header and inflate the modal visually.
+const QuotaPerStorageVolumePanelCard: React.FC<
+  QuotaPerStorageVolumePanelCardProps
+> = ({ defaultVolumeInfo }) => {
+  'use memo';
+  const [selectedVolumeInfo, setSelectedVolumeInfo] = useState<
+    VolumeInfo | undefined
+  >(defaultVolumeInfo);
+  // Reset the inline selection when the consumer passes a different
+  // `defaultVolumeInfo` while the panel stays mounted (e.g., reopened for a
+  // different host). Compare ids only — following the
+  // "storing info from previous renders" pattern
+  // (https://react.dev/reference/react/useState#storing-information-from-previous-renders),
+  // so the badge reflects the latest prop without an effect.
+  const [prevDefaultVolumeId, setPrevDefaultVolumeId] = useState(
+    defaultVolumeInfo?.id,
+  );
+  if (prevDefaultVolumeId !== defaultVolumeInfo?.id) {
+    setPrevDefaultVolumeId(defaultVolumeInfo?.id);
+    setSelectedVolumeInfo(defaultVolumeInfo);
+  }
+
+  return (
+    <BAIFlex direction="column" align="stretch" gap={'md'}>
+      <StorageSelect
+        value={selectedVolumeInfo?.id}
+        onChange={(__, vInfo) => {
+          setSelectedVolumeInfo(vInfo);
+        }}
+        autoSelectType={defaultVolumeInfo ? undefined : 'usage'}
+        showUsageStatus
+        showSearch
+        style={{ alignSelf: 'flex-start', minWidth: 240 }}
+      />
+      {/* antd `Skeleton paragraph={{rows: 0}}` (title bar only) →
+          `BAISkeleton rows={0}`; `active` is always-on behaviour. */}
+      <Suspense fallback={<BAISkeleton rows={0} />}>
+        <QuotaScopeContent selectedVolumeInfo={selectedVolumeInfo} />
+      </Suspense>
+    </BAIFlex>
   );
 };
 

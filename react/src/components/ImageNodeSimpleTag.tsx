@@ -4,15 +4,18 @@
  */
 import { ImageNodeSimpleTagFragment$key } from '../__generated__/ImageNodeSimpleTagFragment.graphql';
 import { preserveDotStartCase } from '../helper';
-import {
-  useBackendAIImageMetaData,
-  useSuspendedBackendaiClient,
-} from '../hooks';
-import CopyableCodeText from './CopyableCodeText';
+import { useBackendAIImageMetaData } from '../hooks';
+import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
-import { Divider, Tag, Typography, theme } from 'antd';
-import { BAIDoubleTag, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Divider } from '@astryxdesign/core/Divider';
+import {
+  badgeVariantForTagColor,
+  BAIDoubleTag,
+  BAIFlex,
+  BAIText,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -29,15 +32,14 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
 }) => {
   const [, { tagAlias }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
   const image = useFragment(
     graphql`
       fragment ImageNodeSimpleTagFragment on ImageNode {
-        base_image_name @since(version: "24.12.0")
-        version @since(version: "24.12.0")
+        base_image_name
+        version
         architecture
         name
-        tags @since(version: "24.12.0") {
+        tags {
           key
           value
         }
@@ -46,7 +48,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
           value
         }
         registry
-        namespace @since(version: "24.12.0")
+        namespace
         tag
       }
     `,
@@ -56,31 +58,29 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
   if (!image) return null;
 
   const fullName = `${image.registry}/${image.namespace}:${image.tag}@${image.architecture}`;
-  const legacyFullImageString = `${image.registry}/${image.name}:${image.tag}@${image.architecture}`;
-  const isSupportBaseImageName = baiClient.supports('base-image-name');
 
-  return isSupportBaseImageName ? (
+  return (
     <BAIFlex direction="row" gap={'xs'} wrap="wrap">
       <ImageMetaIcon image={fullName} />
-      <Typography.Text>{tagAlias(image.base_image_name || '')}</Typography.Text>
+      <BAIText>{tagAlias(image.base_image_name || '')}</BAIText>
       <Divider
-        type="vertical"
+        orientation="vertical"
         style={{
           marginInline: 0,
         }}
       />
-      <Typography.Text>{image.version}</Typography.Text>
+      <BAIText>{image.version}</BAIText>
       <Divider
-        type="vertical"
+        orientation="vertical"
         style={{
           marginInline: 0,
         }}
       />
-      <Typography.Text>{image.architecture}</Typography.Text>
+      <BAIText>{image.architecture}</BAIText>
       {withoutTag ? null : (
         <>
           <Divider
-            type="vertical"
+            orientation="vertical"
             style={{
               marginInline: 0,
             }}
@@ -116,29 +116,25 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
                 ]}
               />
             ) : (
-              <Tag
+              <Badge
                 key={`${tag.key}-${index}`}
-                color={isCustomized ? 'cyan' : undefined}
-              >
-                {aliasedTag}
-              </Tag>
+                variant={badgeVariantForTagColor(
+                  isCustomized ? 'cyan' : undefined,
+                )}
+                label={aliasedTag}
+              />
             );
           })}
         </>
       )}
       {copyable && (
-        <Typography.Text
+        <BAIText
           style={{ color: token.colorLink }}
           copyable={{
             text: fullName,
           }}
         />
       )}
-    </BAIFlex>
-  ) : (
-    <BAIFlex direction="row" gap={'xs'}>
-      <ImageMetaIcon image={legacyFullImageString || null} />
-      <CopyableCodeText>{legacyFullImageString}</CopyableCodeText>
     </BAIFlex>
   );
 };

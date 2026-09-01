@@ -90,8 +90,6 @@ config.ini
 config.toml
 configs/*.toml
 
-# model card metadata
-resources/model_card_metadata.json
 
 # webpack
 dist
@@ -111,9 +109,6 @@ src/lib/webcomponents-loader.js
 **/*.js-E
 **/*.ts-E
 **/*.json-E
-# Documentation
-
-docs/
 # backend.ai app directory
 backend.ai-app/
 
@@ -172,6 +167,11 @@ data/merged_schema.graphql
 # webui release download temp directories (safe to delete)
 scripts/temp-releases/
 
+# derived type-check tsconfig generated at dev startup (FR-3214): excludes the
+# machine-specific pnpm store path from vite-plugin-checker's TS watch program
+react/tsconfig.checker.json
+react/tsconfig.checker.json.*.tmp
+
 # ignore playwright mcp test files
 .playwright-mcp/
 
@@ -181,3 +181,8 @@ e2e/.agent-output/
 
 
 e2e/recordings/
+
+# Local scratch space — never committed (the FR-3482 migration's working
+# directory briefly lived here; its durable records moved to
+# .specs/FR-3482-astryx-migration/ in FR-3488).
+.scratch/

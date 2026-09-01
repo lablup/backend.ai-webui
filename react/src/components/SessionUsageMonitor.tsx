@@ -4,20 +4,20 @@
  */
 import { SessionUsageMonitorFragment$key } from '../__generated__/SessionUsageMonitorFragment.graphql';
 import { convertToBinaryUnit, convertToDecimalUnit } from '../helper';
-import { ResourceSlotName } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useSessionLiveStat } from '../hooks/useSessionNodeLiveStat';
 import SimpleProgressWithLabel from './SimpleProgressWithLabel';
-import { type ProgressProps, Typography, Row, Col } from 'antd';
-import {
-  filterOutEmpty,
-  BAIFlex,
-  useResourceSlotsDetails,
-} from 'backend.ai-ui';
-import _ from 'lodash';
+import { Grid, GridSpan } from '@astryxdesign/core/Grid';
+import { Text } from '@astryxdesign/core/Text';
+import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
-interface SessionUsageMonitorProps extends ProgressProps {
+// PILOT-DECISION (ticket 17): the interface no longer extends antd
+// `ProgressProps` — no consumer passed any Progress prop through (grepped:
+// SessionDetailContent only passes sessionFrgmt/displayTarget).
+interface SessionUsageMonitorProps {
   sessionFrgmt: SessionUsageMonitorFragment$key;
   size?: 'small' | 'default';
   displayTarget?: 'max' | 'avg' | 'current';
@@ -141,9 +141,10 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     ..._.map(
       _.omit(sortedLiveStat, 'cpu_util', 'cpu_used', 'mem'),
       (value, key) => {
-        const deviceName = _.split(key, '_')[0];
-        let deviceKey = _.find(resourceSlotNames, (name) =>
-          _.includes(name, deviceName),
+        const deviceName = _.split(key, '_').slice(0, -1).join('-');
+        let deviceKey = _.find(
+          resourceSlotNames,
+          (name) => _.startsWith(name, deviceName + '.') || name === deviceName,
         );
 
         if (size === 'small' && !key?.endsWith('mem')) {
@@ -156,10 +157,10 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
             title={
               <>
                 {mergedResourceSlots?.[deviceKey]?.human_readable_name}
-                <Typography.Text type="secondary">
+                <Text color="secondary">
                   {_.includes(key, 'util') && ' (util)'}
                   {_.includes(key, 'mem') && ' (mem)'}
-                </Typography.Text>
+                </Text>
               </>
             }
             percent={
@@ -204,31 +205,25 @@ const SessionUsageMonitor: React.FC<SessionUsageMonitorProps> = ({
     ),
   ]);
 
-  return (
-    <Row gutter={[16, 16]}>
-      {size === 'default' ? (
-        _.map(utilItems, (item, index) => (
-          <Col xs={24} sm={12} key={index}>
-            <BAIFlex direction="column" align="stretch">
-              {item}
-            </BAIFlex>
-          </Col>
-        ))
-      ) : (
-        <BAIFlex direction="column" align="stretch" gap={3}>
-          {utilItems}
+  // Responsive policy R1 (ticket 14): antd `Row gutter={[16,16]}` +
+  // `Col xs={24} sm={12}` (2-up from 576px) -> container-driven Astryx Grid
+  // (minWidth 576/2 ~= 280, max 2 tracks). The full-width I/O line keeps its
+  // span via GridSpan 'full'.
+  return size === 'default' ? (
+    <Grid columns={{ minWidth: 280, max: 2 }} gap={4}>
+      {utilItems}
+      <GridSpan columns="full">
+        <BAIFlex justify="end">
+          <Text>
+            {`I/O Read: ${convertToDecimalUnit(sortedLiveStat?.io_read?.current, 'm')?.displayValue ?? '-'} / Write: ${convertToDecimalUnit(sortedLiveStat?.io_write?.current, 'm')?.displayValue ?? '-'}`}
+          </Text>
         </BAIFlex>
-      )}
-      {size === 'default' && (
-        <Col span={24}>
-          <BAIFlex justify="end">
-            <Typography.Text>
-              {`I/O Read: ${convertToDecimalUnit(sortedLiveStat?.io_read?.current, 'm')?.displayValue ?? '-'} / Write: ${convertToDecimalUnit(sortedLiveStat?.io_write?.current, 'm')?.displayValue ?? '-'}`}
-            </Typography.Text>
-          </BAIFlex>
-        </Col>
-      )}
-    </Row>
+      </GridSpan>
+    </Grid>
+  ) : (
+    <BAIFlex direction="column" align="stretch" gap={3}>
+      {utilItems}
+    </BAIFlex>
   );
 };
 

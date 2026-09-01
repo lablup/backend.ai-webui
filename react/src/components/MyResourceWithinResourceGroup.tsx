@@ -2,27 +2,32 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ResourceSlotName } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
+import { theme } from '../theme-shim';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
-import { useControllableValue } from 'ahooks';
-import { Segmented, Skeleton, theme, Typography } from 'antd';
 import {
-  BAIFlex,
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Heading } from '@astryxdesign/core/Text';
+import {
+  BAISkeleton,
   BAIBoardItemTitle,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAIFlexProps,
   ResourceStatistics,
   convertToNumber,
   processMemoryValue,
-  BAIFetchKeyButton,
-  BAIFlexProps,
-  useResourceSlotsDetails,
+  useControllableValue,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ReactNode, useDeferredValue, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -131,49 +136,51 @@ const MyResourceWithinResourceGroup: React.FC<
           }
         : null;
 
-    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
-      .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => {
-        if (
-          !resourceSlot ||
-          _.isUndefined(
+    const accelerators = _.compact(
+      _.map(
+        _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
+        (resourceSlot, key) => {
+          if (
+            !resourceSlot ||
+            _.isUndefined(
+              checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+                ?.using?.[key as ResourceSlotName],
+            )
+          )
+            return null;
+
+          // TODO: convertToNumber should not handle `undefined` as Infinity.
+          const usingCurrent = convertToNumber(
             checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
               ?.using?.[key as ResourceSlotName],
-          )
-        )
-          return null;
+          );
+          const remainingCurrent = convertToNumber(
+            checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
+              ?.remaining?.[key as ResourceSlotName],
+          );
 
-        // TODO: convertToNumber should not handle `undefined` as Infinity.
-        const usingCurrent = convertToNumber(
-          checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-            ?.using?.[key as ResourceSlotName],
-        );
-        const remainingCurrent = convertToNumber(
-          checkPresetInfo?.scaling_groups?.[deferredCurrentResourceGroup]
-            ?.remaining?.[key as ResourceSlotName],
-        );
+          // Skip displaying if both used and free are not finite numbers
+          if (!isFinite(usingCurrent) && !isFinite(remainingCurrent))
+            return null;
 
-        // Skip displaying if both used and free are not finite numbers
-        if (!isFinite(usingCurrent) && !isFinite(remainingCurrent)) return null;
-
-        return {
-          key,
-          used: {
-            current: usingCurrent,
-            total: undefined,
-          },
-          free: {
-            current: remainingCurrent,
-            total: undefined,
-          },
-          metadata: {
-            title: resourceSlot.human_readable_name,
-            displayUnit: resourceSlot.display_unit,
-          },
-        };
-      })
-      .compact()
-      .value();
+          return {
+            key,
+            used: {
+              current: usingCurrent,
+              total: undefined,
+            },
+            free: {
+              current: remainingCurrent,
+              total: undefined,
+            },
+            metadata: {
+              title: resourceSlot.human_readable_name,
+              displayUnit: resourceSlot.display_unit,
+            },
+          };
+        },
+      ),
+    );
 
     return { cpu: cpuData, memory: memoryData, accelerators };
   }, [checkPresetInfo, resourceSlotsDetails, deferredCurrentResourceGroup]);
@@ -192,14 +199,10 @@ const MyResourceWithinResourceGroup: React.FC<
       <BAIBoardItemTitle
         title={
           <>
-            <Typography.Text
-              style={{
-                fontSize: token.fontSizeHeading5,
-                fontWeight: token.fontWeightStrong,
-              }}
-            >
-              {t('webui.menu.MyResourcesIn')}
-            </Typography.Text>
+            {/* antd Typography.Text (fontSizeHeading5 = 16px +
+                fontWeightStrong). 16px is heading-5 on the restored antd type
+                ramp; `level={3}` tracked the same 16px under Astryx's own. */}
+            <Heading level={5}>{t('webui.menu.MyResourcesIn')}</Heading>
             <SharedResourceGroupSelectForCurrentProject
               size="small"
               showSearch
@@ -212,26 +215,25 @@ const MyResourceWithinResourceGroup: React.FC<
         tooltip={t('webui.menu.MyResourcesInResourceGroupDescription')}
         extra={
           <BAIFlex gap={'xs'}>
-            <Segmented<
-              Exclude<
-                MyResourceWithinResourceGroupProps['displayType'],
-                undefined
-              >
-            >
-              size="small"
-              options={[
-                {
-                  label: t('dashboard.Used'),
-                  value: 'used',
-                },
-                {
-                  label: t('dashboard.Free'),
-                  value: 'free',
-                },
-              ]}
+            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+                composed from the two option labels to avoid new i18n keys. */}
+            <SegmentedControl
+              size="sm"
+              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
-              onChange={(v) => v && setDisplayType(v)}
-            />
+              onChange={(v) =>
+                v &&
+                setDisplayType(
+                  v as Exclude<
+                    MyResourceWithinResourceGroupProps['displayType'],
+                    undefined
+                  >,
+                )
+              }
+            >
+              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
+              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
+            </SegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPending || refetching}
@@ -249,7 +251,10 @@ const MyResourceWithinResourceGroup: React.FC<
         }
       />
       {resourceSlotsDetails.isLoading ? (
-        <Skeleton active />
+        // `data-testid` anchor for e2e (`dashboard.spec.ts`): Astryx
+        // `Skeleton` renders `aria-hidden="true"` with no default class, so
+        // there is no other stable "still loading" selector.
+        <BAISkeleton data-testid="my-resource-skeleton" />
       ) : (
         <ResourceStatistics
           resourceData={resourceData}

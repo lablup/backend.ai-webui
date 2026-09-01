@@ -1,27 +1,54 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ BAIProjectSelect — ticket-27 Astryx sibling of `BAIProjectSelect`,
+ built on `BAIComplexSelect` (ticket 26), following pattern B of the
+ recipe used across the Astryx migration (copy of `BAIUserSelect.tsx`,
+ the worked example).
+
+ FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
+ `BAIProjectSelect` is NOT touched by this change. It keeps serving every
+ unmigrated call site until ticket 27 moves them. This file is the
+ Astryx-native sibling, and its OUTER value contract is deliberately the same
+ plain key (`string` / `string[]`) the antd wrapper exposes — labelInValue
+ lives strictly between this wrapper and `BAIComplexSelect`.
+
+ CLASS B (id-valued): the key is the project's raw GraphQL `id` (matching the
+ antd original — `toLocalId` is used ONLY when building the `id == "..."`
+ filter clause for the value-resolution query, never as the stored key
+ itself; this file preserves that exact split).
+
+ PILOT-DECISIONs:
+  - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
+    is dropped (see `BAIComplexSelect` header, general policy).
+  - None of this wrapper's other antd affordances (`optionRender`,
+    `labelRender`, `tagRender`) were used by the original, so there is
+    nothing else to record.
+*/
 import { BAIProjectSelectPaginatedQuery } from '../../__generated__/BAIProjectSelectPaginatedQuery.graphql';
 import { BAIProjectSelectValueQuery } from '../../__generated__/BAIProjectSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import BAIComplexSelect, {
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
+} from '../BAIComplexSelect';
 import { mergeFilterValues } from '../BAIPropertyFilter';
-import BAISelect, { BAISelectProps } from '../BAISelect';
-import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
-import { GetRef, Skeleton } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   useDeferredValue,
   useImperativeHandle,
-  useOptimistic,
-  useRef,
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type ProjectNode = NonNullable<
+export type AstryxProjectNode = NonNullable<
   NonNullable<
     BAIProjectSelectPaginatedQuery['response']['group_nodes']
   >['edges'][number]
@@ -32,44 +59,50 @@ export interface BAIProjectSelectRef {
 }
 
 export interface BAIProjectSelectProps extends Omit<
-  BAISelectProps,
-  'options' | 'labelInValue' | 'ref'
+  BAIComplexSelectProps,
+  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
+  /** Plain key(s), as the antd `BAIProjectSelect` exposes. */
+  value?: string | Array<string> | null;
+  onChange?: (value: string | Array<string> | undefined) => void;
   filter?: string;
   ref?: React.Ref<BAIProjectSelectRef>;
 }
 
 const BAIProjectSelect: React.FC<BAIProjectSelectProps> = ({
-  loading,
   filter,
+  multiple = false,
+  isLoading,
   ref,
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
-  const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+  const { t } = useBAIi18n();
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | string[] | undefined
-  >(selectProps);
+    string | Array<string> | null | undefined
+  >(selectProps as Record<string, unknown>, {
+    valuePropName: 'value',
+    trigger: 'onChange',
+  });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
-    selectProps,
+    selectProps as Record<string, unknown>,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
       defaultValuePropName: 'defaultOpen',
     },
   );
+
   const deferredOpen = useDeferredValue(controllableOpen);
-  const [searchStr, setSearchStr] = useState<string>();
-  const deferredSearchStr = useDebouncedDeferredValue(searchStr);
-  const [optimisticSearchStr, setOptimisticSearchStr] =
-    useOptimistic(searchStr);
+  const [searchStr, setSearchStr] = useState<string>('');
+  const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // Defer query refetch to prevent flickering during user selection
+  // Deferred so a fresh selection does not immediately re-run the value query.
   const deferredControllableValue = useDeferredValue(controllableValue);
+  const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
   const { group_nodes: selectedGroupNodes } =
     useLazyLoadQuery<BAIProjectSelectValueQuery>(
@@ -96,13 +129,9 @@ const BAIProjectSelect: React.FC<BAIProjectSelectProps> = ({
       {
         selectedFilter: mergeFilterValues(
           [
-            !_.isEmpty(deferredControllableValue)
+            selectedKeys.length
               ? mergeFilterValues(
-                  _.castArray(deferredControllableValue).map((value) => {
-                    // Convert Global ID to local UUID for filtering
-                    const filterValue = toLocalId(value);
-                    return `id == "${filterValue}"`;
-                  }),
+                  _.map(selectedKeys, (value) => `id == "${toLocalId(value)}"`),
                   '|',
                 )
               : null,
@@ -110,19 +139,17 @@ const BAIProjectSelect: React.FC<BAIProjectSelectProps> = ({
           ],
           '&',
         ),
-        first: _.castArray(deferredControllableValue).length,
-        skipSelected: _.isEmpty(deferredControllableValue),
+        first: Math.max(selectedKeys.length, 1),
+        skipSelected: selectedKeys.length === 0,
       },
       {
-        fetchPolicy: !_.isEmpty(deferredControllableValue)
-          ? 'store-or-network'
-          : 'store-only',
+        fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIProjectSelectPaginatedQuery, ProjectNode>(
+    useLazyPaginatedQuery<BAIProjectSelectPaginatedQuery, AstryxProjectNode>(
       graphql`
         query BAIProjectSelectPaginatedQuery(
           $offset: Int!
@@ -150,7 +177,9 @@ const BAIProjectSelect: React.FC<BAIProjectSelectProps> = ({
       {
         filter: mergeFilterValues([
           filter,
-          deferredSearchStr ? `name ilike "%${deferredSearchStr}%"` : null,
+          debouncedDeferredValue
+            ? `name ilike "%${debouncedDeferredValue}%"`
+            : null,
         ]),
       },
       {
@@ -158,14 +187,12 @@ const BAIProjectSelect: React.FC<BAIProjectSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.group_nodes?.count ?? undefined,
-        getItem: (result) =>
-          result.group_nodes?.edges?.map((edge) => edge?.node),
+        getTotal: (r) => r.group_nodes?.count ?? undefined,
+        getItem: (r) => r.group_nodes?.edges?.map((edge) => edge?.node),
         getId: (item) => item?.id,
       },
     );
 
-  // Expose refetch function through ref
   useImperativeHandle(
     ref,
     () => ({
@@ -178,117 +205,53 @@ const BAIProjectSelect: React.FC<BAIProjectSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.name,
-    value: item?.id,
-  }));
-
-  const controllableValueWithLabel = selectedGroupNodes?.edges
-    ? // Sort by deferredControllableValue order to maintain selection order
-      _.castArray(deferredControllableValue)
-        .map((value) => {
-          const edge = selectedGroupNodes.edges.find(
-            (edge) => edge?.node?.id === value,
-          );
-          return edge
-            ? {
-                label: edge.node?.name,
-                value: edge.node?.id,
-              }
-            : null;
-        })
-        .filter(
-          (item): item is { label: string; value: string } => item !== null,
-        )
-    : !_.isEmpty(deferredControllableValue)
-      ? _.castArray(deferredControllableValue).map((value) => ({
-          label: value,
-          value: value,
-        }))
-      : undefined;
-
-  const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
-    controllableValueWithLabel,
+  const options = _.compact(
+    _.map(paginationData, (item) => {
+      const key = item?.id;
+      return key
+        ? {
+            value: key,
+            label: item?.name ?? key,
+          }
+        : null;
+    }),
   );
 
+  const labeledValue: BAIComplexSelectValue = (() => {
+    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
+      const edge = _.find(
+        selectedGroupNodes?.edges,
+        (e) => e?.node?.id === key,
+      );
+      return { label: edge?.node?.name ?? key, value: key };
+    });
+    if (multiple) return labeled;
+    return labeled[0] ?? null;
+  })();
+
   return (
-    <BAISelect
-      ref={selectRef}
+    <BAIComplexSelect
       placeholder={t('comp:BAIProjectSelect.SelectProject')}
-      loading={
-        loading ||
+      {...selectProps}
+      multiple={multiple}
+      isLoading={
+        isLoading ||
         controllableValue !== deferredControllableValue ||
-        searchStr !== deferredSearchStr ||
+        searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
-      {...selectProps}
-      searchAction={async (value) => {
-        setOptimisticSearchStr(value);
-        setSearchStr(value);
-        await selectProps.searchAction?.(value);
+      isLoadingNext={isLoadingNext}
+      total={result.group_nodes?.count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
+        setControllableValue(multiple ? keys : keys[0], undefined);
       }}
-      showSearch={
-        selectProps.showSearch === false
-          ? false
-          : {
-              searchValue: optimisticSearchStr,
-              autoClearSearchValue: true,
-              ...(_.isObject(selectProps.showSearch)
-                ? _.omit(selectProps.showSearch, ['searchValue'])
-                : {}),
-              filterOption: false,
-            }
-      }
-      value={
-        controllableValue !== deferredControllableValue
-          ? optimisticValueWithLabel
-          : controllableValueWithLabel
-      }
-      labelInValue
-      onChange={(value, option) => {
-        // In multiple mode, when removing tags, value.label is a React element
-        // So we need to find the original label from availableOptions
-        const castedValue = _.isEmpty(value) ? [] : _.castArray(value);
-        const valueWithOriginalLabel = castedValue.map((v) => {
-          // If label is string, use it directly; if React element, find from options
-          const label = _.isString(v.label)
-            ? v.label
-            : (availableOptions.find((opt) => opt.value === v.value)?.label ??
-              v.value);
-          return {
-            label,
-            value: v.value,
-          };
-        });
-        setOptimisticValueWithLabel(valueWithOriginalLabel);
-        const isMultiple =
-          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
-        const idArray = castedValue.map((v) => _.toString(v.value));
-        setControllableValue(
-          isMultiple ? idArray : (idArray[0] ?? undefined),
-          option,
-        );
-      }}
-      options={availableOptions}
-      endReached={() => {
-        loadNext();
-      }}
-      open={controllableOpen}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
       onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(result.group_nodes?.count) &&
-        result.group_nodes.count > 0 ? (
-          <TotalFooter
-            loading={isLoadingNext}
-            total={result.group_nodes.count}
-          />
-        ) : undefined
-      }
+      endReached={loadNext}
     />
   );
 };

@@ -2,55 +2,109 @@
 
 Standardized terminology for the Backend.AI WebUI user manual. Use these terms consistently across all documentation and all languages.
 
-## Core Concepts
+> **This file is partially generated.** The term tables in the **Standardized Terms** section below and the **Terms to Avoid** table are generated from `terminology.json` (the single source of truth) by `scripts/generate-terminology.mjs`. Do **not** hand-edit anything between the `<!-- terminology:auto:... -->` markers — edit `terminology.json` and run `pnpm run build:terminology`. All prose outside the markers is human-curated and safe to edit directly.
+
+## Precedence
+
+When sources disagree on a term, precedence is: (1) the live UI i18n label in `resources/i18n/{lang}.json`, (2) `terminology.json`, (3) `DOCUMENTATION-STYLE-GUIDE.md`.
+
+The higher-precedence source wins because the i18n label is what users actually see (ground truth); `terminology.json` is the curated decision; the style guide is the fallback for what neither covers. When they disagree, fix the lower-precedence source to match — or, if the *label itself* is wrong, open an FR to change it. A half-applied rename (label changed but termbase not, or vice versa) silently reverts intent under this rule, so always complete a rename atomically (see [Rename / Deprecation Checklist](#rename--deprecation-checklist)).
+
+## Standardized Terms
+
+The tables below list the approved term for each concept, per language, grouped by category. `EN`/`KO`/`JA`/`TH` are the preferred terms; `—` means the source does not define that language explicitly (fall back to the English term or the contextual prose under the matching section heading). The prose sections that follow each category (usage notes, "Do NOT use" callouts, spelling rules) provide the human guidance that the table cannot capture.
+
+<!-- terminology:auto:concepts START -->
+
+### Core Concepts
+
+| Concept | EN | KO | JA | TH | Context | Deciding FR | Description |
+|---|---|---|---|---|---|---|---|
+| agent | agent, agent node | 에이전트, 에이전트 노드 | エージェント, エージェントノード | เอเจนต์, โหนดเอเจนต์ | — | — | The compute node that runs containers (sessions). "Agent" for general reference, "agent node" when emphasizing the hardware aspect. Use "worker node" only in model serving context. |
+| compute-session | compute session | 연산 세션 | コンピュートセッション | เซสชันการคำนวณ | — | — | The isolated compute environment where users run code, notebooks, or applications. Use "session" as shorthand after first full mention. |
+| domain | domain | 도메인 | ドメイン | โดเมน | — | — | The top-level organizational unit for authority and resource control. Do NOT use "organization" or "affiliate" as substitutes. |
+| folder-type-project | Project folder | — | — | — | Storage folder type | — | Created by administrators, shared across project members. |
+| folder-type-user | User folder | — | — | — | Storage folder type | — | Created by individual users for personal use. |
+| fractional-gpu | fGPU | fGPU | fGPU | fGPU | Numeric form | — | Backend.AI's GPU virtualization technology that allows sharing a single physical GPU across multiple sessions. Numeric (abbreviated) form. Write "fractional GPU (fGPU)" on first mention, then "fGPU" thereafter. |
+| fractional-gpu-descriptive | fractional GPU | 분할 GPU | フラクショナルGPU | GPU แบบเศษส่วน | Descriptive form | — | Descriptive form of fGPU (Backend.AI's GPU virtualization technology). |
+| keypair | keypair | 키페어 | キーペア | คีย์แพร์ | — | — | Authentication credentials for API access. Always "keypair" (one word, no hyphen). Never "key pair" or "key-pair". |
+| physical-node | physical node | 물리 노드 | 物理ノード | โหนดกายภาพ | Cluster mode | FR-3207 | The physical machine (or virtual machine) hosting session nodes. Used in the cluster-mode setup description to explain how a managed node and worker nodes are distributed across machines. The cluster-mode UI tooltips (DescSingleNode / DescMultiNode) use this term. Do NOT confuse with "agent node" — in the cluster-mode node-distribution context, use "physical node" to match the UI. |
+| project | project | 프로젝트 | プロジェクト | โปรเจกต์ | — | — | The work unit within a domain. Users can belong to multiple projects. Do NOT use "group" as a substitute for project. |
+| resource-group | resource group | 자원 그룹 | リソースグループ | กลุ่มทรัพยากร | — | — | A grouping of agents (compute nodes) with similar hardware specifications. Do NOT use "scaling group" (deprecated internal term). |
+| session-type-batch | batch session | 배치 세션 | バッチセッション | — | — | — | Compute session type: Pre-defined script execution. |
+| session-type-inference | inference session | 추론 세션 | 推論セッション | — | — | — | Compute session type: Model serving sessions. |
+| session-type-interactive | interactive session | 대화형 세션 | インタラクティブセッション | — | — | — | Compute session type: User interacts after creation. |
+| storage-folder | storage folder | 스토리지 폴더 | ストレージフォルダ | โฟลเดอร์จัดเก็บ | — | — | Persistent storage that survives session termination. Use "storage folder" in procedural text, "virtual folder" or "vfolder" in introductions. |
+| storage-folder-technical | vfolder | 가상 폴더 | バーチャルフォルダ | โฟลเดอร์เสมือน | Technical term for storage folder | — | Technical-context term for the storage folder (virtual folder). Referred to as "vfolder" in technical contexts. |
+
+### Feature-Specific Terms
+
+| Concept | EN | KO | JA | TH | Context | Deciding FR | Description |
+|---|---|---|---|---|---|---|---|
+| active-pool | Active Pool | 활성 풀 | アクティブプール | แอ็กทีฟพูล | — | FR-3302 | The set of model-service replicas currently receiving traffic through App Proxy. Membership tracks traffic and is independent of a replica's health status. See app-proxy. |
+| app-proxy | App Proxy | App Proxy | App Proxy | App Proxy | — | FR-2841 | The standalone, per-resource-group proxy service that relays in-container application traffic directly between the user's browser and the compute session's Agent. Renamed from WSProxy to App Proxy in the UI in FR-2841. Use "App Proxy" only; do not reference the old "WSProxy" name in user-facing documentation. UI label stays in English across all locales. |
+| app-proxy-api-token | App Proxy API Token | App Proxy API 토큰 | App Proxy APIトークン | โทเค็น API ของ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy API token. |
+| app-proxy-server-address | App Proxy Server Address | App Proxy 서버 주소 | App Proxy サーバアドレス | ที่อยู่เซิร์ฟเวอร์ App Proxy | Field label (Resource Group settings) | FR-2841 | Resource Group settings field label for the App Proxy server address. |
+| autoscaling-rule | Auto Scaling Rule | 오토스케일링 규칙 | 自動スケーリングルール | กฎการปรับขนาดอัตโนมัติ | — | FR-3207 | The rule that automatically adjusts a deployment's replica count based on live metrics. Match the UI label exactly: KO uses "오토스케일링" (the autoScalingRule i18n keys), NOT "자동 스케일링". Documentation section: deployment/deployment.md |
+| container | Container | — | — | — | — | — | The runtime environment of a compute session. Do NOT use "container" and "kernel" interchangeably. |
+| endpoint | Endpoint | — | — | — | — | — | The access point created for a served model. |
+| fair-share | Fair Share | Fair Share | 公平配分 | การจัดสรรแบบเป็นธรรม | — | FR-3302 | The scheduling policy that balances resource-allocation fairness across users within a resource group. The KO UI keeps the English label "Fair Share" (webui.menu.FairShare). |
+| fair-share-scheduler | Fair Share Scheduler | — | — | — | — | FR-3302 | The scheduler component that computes Fair Share priorities. Appears in Fair Share setting descriptions; no dedicated per-language UI label (documentation term). |
+| inference | Inference | — | — | — | — | — | The operation of running predictions through a served model. |
+| kernel-image | Kernel image / Container image | — | — | — | — | — | The base image (snapshot) from which containers are created. Do NOT use "container" and "kernel" interchangeably. |
+| model-serving | Model Service / Model Serving | — | — | — | — | — | The feature name (page title, menu item). |
+| model-store | Model Store | 모델 스토어 | モデルストア | คลังโมเดล | — | FR-3302 | The Model Store feature/page for browsing and importing published models into a project. |
+| rate-limit | Rate Limit | 최대 요청수 | レート制限 | ขีดจำกัดอัตรา | — | FR-3302 | The keypair/credential setting capping API request frequency. The KO UI label is "최대 요청수" (credential.RateLimit). |
+| rbac | RBAC | RBAC | RBAC | RBAC | — | — | Role-Based Access Control. Keep as abbreviation across all languages. |
+| rbac-permission | permission | 세부 권한 | 権限 | สิทธิ์ | — | — | A fine-grained access rule within a role. "세부 권한" is used specifically for fine-grained permissions within a role. |
+| rbac-permission-type | permission type | 권한 타입 | 権限タイプ | ประเภทสิทธิ์ | — | — | The category of resource a permission controls. |
+| rbac-role | role | 권한 | ロール | บทบาท | — | — | A named set of permissions assignable to users. The Korean i18n uses "권한" for both "Role" and "Permission" in different contexts. |
+| rbac-role-assignment | role assignment | 권한 할당 | ロール割り当て | การมอบหมายบทบาท | — | — | The association of a user to a role. |
+| rbac-scope-type | scope type | 적용 범위 타입 | スコープタイプ | ประเภทขอบเขต | — | — | The level at which a permission applies. |
+| replica | replica | 복제본 | レプリカ | เรพลิกา | — | — | An individual running instance of a deployed model service. The desired/active count of these is managed by the deployment and auto-scaling rules. Documentation section: deployment/deployment.md |
+| resource-policy | Resource Policy | 자원 정책 | リソースポリシー | นโยบายทรัพยากร | — | FR-3302 | A named policy defining resource limits (CPU, memory, GPU, session count). WebUI has distinct keypair, user, and project resource policies. KO uses "자원 정책" (consistent with 자원 그룹). |
+
+### User Roles
+
+| Concept | EN | KO | JA | TH | Description |
+|---|---|---|---|---|---|
+| role-domain-admin | domain admin | 도메인 관리자 | ドメイン管理者 | — | Manages users and resources within a domain. |
+| role-superadmin | superadmin | 슈퍼 관리자 | スーパー管理者 | — | Full system access across all domains. |
+| role-user | user | 사용자 | ユーザー | — | Standard access. |
+
+### UI Navigation Terms
+
+| Concept | EN | KO | JA | TH | Description |
+|---|---|---|---|---|---|
+| nav-data | Data | 데이터 | データ | — | Sidebar menu item. Documentation section: vfolder/vfolder.md |
+| nav-deployment | Deployment | 배포 | モデルサービス | — | Sidebar menu item. Documentation section: deployment/deployment.md |
+| nav-rbac-management | RBAC Management | RBAC 관리 | RBAC管理 | — | Sidebar menu item. Documentation section: rbac_management/rbac_management.md |
+| nav-sessions | Sessions | 세션 | セッション | — | Sidebar menu item. Documentation section: session_page/session_page.md |
+| nav-statistics | Statistics | 통계 | 統計 | — | Sidebar menu item. Documentation section: statistics/statistics.md |
+| nav-summary | Summary | 요약 | サマリー | — | Sidebar menu item. Documentation section: summary/summary.md |
+| nav-user-settings | User Settings | 사용자 설정 | ユーザー設定 | — | Sidebar menu item. Documentation section: user_settings/user_settings.md |
+
+<!-- terminology:auto:concepts END -->
+
+## Concept Notes
+
+The following prose expands on the generated tables above. It is human-curated guidance — usage rules, "Do NOT use" callouts, and contextual explanations that the tables cannot fully express. When the prose and the tables disagree on a *term*, the tables (generated from `terminology.json`) win; the prose exists to explain *how* and *when* to use those terms.
 
 ### Compute Session
 
-The isolated compute environment where users run code, notebooks, or applications.
+The isolated compute environment where users run code, notebooks, or applications. Use "session" as shorthand after first full mention.
 
-| Language | Term | Notes |
-|----------|------|-------|
-| English | compute session | Use "session" as shorthand after first full mention |
-| Korean | 연산 세션 | |
-| Japanese | コンピュートセッション | |
-| Thai | เซสชันการคำนวณ | |
-
-**Session Types:**
-
-| Type | EN | KO | JA | Description |
-|------|----|----|----|----|
-| Interactive | interactive session | 대화형 세션 | インタラクティブセッション | User interacts after creation |
-| Batch | batch session | 배치 세션 | バッチセッション | Pre-defined script execution |
-| Inference | inference session | 추론 세션 | 推論セッション | Model serving sessions |
+**Session Types:** Sessions come in three types — interactive (the user interacts after creation), batch (pre-defined script execution), and inference (model serving sessions). See the `session-type-*` rows in the table above for per-language terms.
 
 ### Storage Folder (Virtual Folder)
 
-Persistent storage that survives session termination. Referred to as "vfolder" in technical contexts.
+Persistent storage that survives session termination. Referred to as "vfolder" in technical contexts. Use "storage folder" in procedural text, "virtual folder" or "vfolder" in introductions.
 
-| Language | Primary Term | Technical Term | Notes |
-|----------|-------------|----------------|-------|
-| English | storage folder | vfolder | Use "storage folder" in procedural text, "virtual folder" or "vfolder" in introductions |
-| Korean | 스토리지 폴더 | 가상 폴더 | |
-| Japanese | ストレージフォルダ | バーチャルフォルダ | |
-| Thai | โฟลเดอร์จัดเก็บ | โฟลเดอร์เสมือน | |
-
-**Folder Types:**
-
-| Type | Description |
-|------|-------------|
-| User folder | Created by individual users for personal use |
-| Project folder | Created by administrators, shared across project members |
+**Folder Types:** A **User folder** is created by individual users for personal use; a **Project folder** is created by administrators and shared across project members.
 
 ### Domain
 
 The top-level organizational unit for authority and resource control.
-
-| Language | Term |
-|----------|------|
-| English | domain |
-| Korean | 도메인 |
-| Japanese | ドメイン |
-| Thai | โดเมน |
 
 **Do NOT use**: "organization" or "affiliate" as substitutes. "Affiliate" appears only as an analogy in the overview section.
 
@@ -58,25 +112,11 @@ The top-level organizational unit for authority and resource control.
 
 The work unit within a domain. Users can belong to multiple projects.
 
-| Language | Term |
-|----------|------|
-| English | project |
-| Korean | 프로젝트 |
-| Japanese | プロジェクト |
-| Thai | โปรเจกต์ |
-
 **Do NOT use**: "group" as a substitute for project.
 
 ### Resource Group
 
 A grouping of agents (compute nodes) with similar hardware specifications.
-
-| Language | Term |
-|----------|------|
-| English | resource group |
-| Korean | 자원 그룹 |
-| Japanese | リソースグループ |
-| Thai | กลุ่มทรัพยากร |
 
 **Do NOT use**: "scaling group" (deprecated internal term).
 
@@ -84,25 +124,11 @@ A grouping of agents (compute nodes) with similar hardware specifications.
 
 Authentication credentials for API access.
 
-| Language | Term |
-|----------|------|
-| English | keypair |
-| Korean | 키페어 |
-| Japanese | キーペア |
-| Thai | คีย์แพร์ |
-
 **Spelling**: Always "keypair" (one word, no hyphen). Never "key pair" or "key-pair".
 
 ### Agent / Agent Node
 
 The compute node that runs containers (sessions).
-
-| Language | Term |
-|----------|------|
-| English | agent, agent node |
-| Korean | 에이전트, 에이전트 노드 |
-| Japanese | エージェント, エージェントノード |
-| Thai | เอเจนต์, โหนดเอเจนต์ |
 
 **Usage**: "Agent" for general reference, "agent node" when emphasizing the hardware aspect. Use "worker node" only in model serving context.
 
@@ -110,65 +136,140 @@ The compute node that runs containers (sessions).
 
 Backend.AI's GPU virtualization technology that allows sharing a single physical GPU across multiple sessions.
 
-| Language | Numeric Form | Descriptive Form |
-|----------|-------------|------------------|
-| English | fGPU | fractional GPU |
-| Korean | fGPU | 분할 GPU |
-| Japanese | fGPU | フラクショナルGPU |
-| Thai | fGPU | GPU แบบเศษส่วน |
-
 **Usage**: Write "fractional GPU (fGPU)" on first mention, then "fGPU" thereafter.
 
-## Feature-Specific Terms
+### App Proxy
 
-### Model Serving / Endpoint
+The standalone, per-resource-group proxy service that relays in-container application traffic (Jupyter, Terminal, TensorBoard, etc.) directly between the user's browser and the compute session's Agent (the **v2** path, bypassing the Manager). Renamed from **WSProxy** to **App Proxy** in the UI in FR-2841.
 
-| Term | Usage |
-|------|-------|
-| Model Service / Model Serving | The feature name (page title, menu item) |
-| Endpoint | The access point created for a served model |
-| Inference | The operation of running predictions through a served model |
+There is **no** standalone `wsproxy` daemon. In Backend.AI core, App Proxy is a separate service family (App Proxy **Coordinator** + **Worker**); the legacy **v1** path is not a daemon at all but a stream proxy embedded in the Manager process. The lowercase `wsproxy` token survives only as **internal identifiers** — never a user-facing component name:
+
+- DB columns: `scaling_groups.wsproxy_addr`, `wsproxy_api_token`
+- API route: `/scaling-groups/{sg}/wsproxy-version`
+- Constant: `WSPROXY_V1_VERSION = "v1"`
+- The WebUI's own client-side embedded proxy (`src/wsproxy/`) and its `config.toml` key `wsproxy.proxyURL`
+
+The KO/JA/TH UI label stays in English as "App Proxy"; do not append the old "WSProxy" name in any locale's user-facing documentation. The App Proxy field labels (App Proxy Server Address, App Proxy API Token) appear in the Resource Group settings — see the `app-proxy-*` rows in the table above for per-language values.
+
+**Do NOT use** "WSProxy" as the user-facing label in new documentation, and do **not** describe `wsproxy` as a server-side binary or daemon (it isn't one). Keep `wsproxy` (lowercase, `code` style) only for the internal identifiers listed above — DB columns, the API route, the `WSPROXY_V1_VERSION` constant, the WebUI's own client-side proxy (`src/wsproxy/`), and the `config.toml` key `wsproxy.proxyURL`.
 
 ### Container vs Kernel / Image
 
-| Term | Meaning |
-|------|---------|
-| Container | The runtime environment of a compute session |
-| Kernel image / Container image | The base image (snapshot) from which containers are created |
+A **Container** is the runtime environment of a compute session; a **Kernel image / Container image** is the base image (snapshot) from which containers are created.
 
 **Do NOT use** "container" and "kernel" interchangeably. They refer to different concepts.
 
-## User Roles
+### RBAC (Role-Based Access Control)
 
-| Role | EN | KO | JA | Scope |
-|------|----|----|----|----|
-| User | user | 사용자 | ユーザー | Standard access |
-| Domain Admin | domain admin | 도메인 관리자 | ドメイン管理者 | Manages users and resources within a domain |
-| Superadmin | superadmin | 슈퍼관리자 | スーパー管理者 | Full system access across all domains |
+The RBAC vocabulary (RBAC, role, permission, role assignment, scope type, permission type) is listed in the Feature-Specific Terms table above with per-language terms.
 
-## UI Navigation Terms
+**Note**: The Korean i18n uses "권한" for both "Role" and "Permission" in different contexts. "세부 권한" is used specifically for fine-grained permissions within a role. Always check `resources/i18n/ko.json` for the exact UI labels.
 
-These terms match sidebar menu items. Keep documentation references consistent with actual UI labels.
+### UI Navigation Terms
 
-| EN Menu Label | KO | JA | Documentation Section |
-|---------------|----|----|----------------------|
-| Summary | 요약 | サマリー | summary/summary.md |
-| Sessions | 세션 | セッション | session_page/session_page.md |
-| Data | 데이터 | データ | vfolder/vfolder.md |
-| Model Serving | 모델 서빙 | モデルサービス | model_serving/model_serving.md |
-| Statistics | 통계 | 統計 | statistics/statistics.md |
-| User Settings | 사용자 설정 | ユーザー設定 | user_settings/user_settings.md |
+These terms match sidebar menu items. Keep documentation references consistent with actual UI labels. The per-language menu labels and their documentation sections are in the UI Navigation Terms table above.
 
 **Important**: Always check `resources/i18n/{lang}.json` in the main project for current UI label translations. The i18n files are the source of truth for UI labels.
 
 ## Terms to Avoid
 
-| Avoid | Use Instead | Reason |
-|-------|-------------|--------|
-| scaling group | resource group | Deprecated term |
-| key pair, key-pair | keypair | Incorrect spelling |
-| group (for project) | project | Ambiguous |
-| organization | domain | Not used in Backend.AI |
-| data folder | storage folder / vfolder | Non-standard |
-| worker node | agent node | Reserve "worker node" for model serving context only |
-| compute node | agent node | Non-standard in docs |
+Each row lists one forbidden term, the language it applies to, its canonical replacement, and the reason. Parenthetical qualifiers in the **Avoid** column (e.g. "group (for project)") indicate the context in which the term is disallowed. A row applies **only to its `Lang`** — the checker scans each language's stores (and doc pages) against that language's rows. What a match does depends on the **context qualifier, not the language** (FR-3374), and on which surface it was found:
+
+| Row | In an i18n value | In manual prose |
+|---|---|---|
+| context-free | **blocks** (error) | **blocks** (error) |
+| context-qualified | warns | **not checked at all** |
+
+Context-qualified rows are skipped outright on prose because long-form text is full of the word's legitimate sense ("group three GPUs"), which would make the report useless. Those calls stay with docs-lead review.
+
+**Non-English curation rule (FR-3051).** ko/ja/th have no reliable word boundaries, so the checker matches non-Latin avoid terms by plain **substring**. A non-English `avoid` term must therefore be a **precise multi-token compound** (e.g. `스케일링 그룹`, `スケーリンググループ`) or an **unambiguous deprecated spelling** (e.g. `레플리카`, `슈퍼어드민`) — **never a bare concept noun** (ko `세션` appears in ~200 legitimate values; every one would fire), and never a substring of any `concepts[].preferred[lang]` value. Every non-English row must ship with positive/negative fixtures and a live false-positive budget (default 0) in `terminology.selftest.json`; `pnpm run lint:terminology:selftest` (`scripts/check-terminology-i18n.selftest.mjs`, run as a hard CI gate by `terminology-selftest.yml` on termbase/fixtures/checker changes only) enforces the rule and rejects noisy rows. Since FR-3374 the budget is measured over the **manual as well as** the i18n stores, and a context-free non-English row that clears it is **blocking** — so this harness is what earns a ko/ja/th row its teeth. Adding a row without fixtures, or widening one until the budget breaks, is what the gate exists to stop.
+
+<!-- terminology:auto:avoid START -->
+
+| Avoid | Lang | Use Instead | Reason |
+|---|---|---|---|
+| WSProxy (as a UI label) | en | App Proxy | Renamed in FR-2841; `wsproxy` (code style) survives only as internal identifiers (DB columns, API route, constants), not a daemon |
+| compute node | en | agent node | Non-standard in docs |
+| data folder | en | storage folder / vfolder | Non-standard |
+| group (for project) | en | project | Ambiguous |
+| key pair | en | keypair | Incorrect spelling |
+| key-pair | en | keypair | Incorrect spelling |
+| organization (as a Backend.AI scope) | en | domain | Not a Backend.AI scope name; "organization" as an ordinary English noun (your organization's SSO, your organization's hardware, the license text) is fine |
+| scaling group | en | resource group | Deprecated term |
+| worker node | en | agent node | Reserve "worker node" for model serving context only |
+| スケーリンググループ | ja | リソースグループ | Deprecated term ("scaling group"); the UI and docs use "リソースグループ" |
+| 레플리카 | ko | 복제본 | Use the Korean translation, not the transliteration, for consistency |
+| 리소스 그룹 | ko | 자원 그룹 | Use the Korean translation, not the transliteration, for consistency with "자원 정책" |
+| 슈퍼관리자 | ko | 슈퍼 관리자 | Use the spaced form for consistency |
+| 슈퍼어드민 | ko | 슈퍼 관리자 | Use the Korean translation, not the transliteration |
+| 스케일링 그룹 | ko | 자원 그룹 | Deprecated term ("scaling group"); the UI and docs use "자원 그룹" |
+| 자동 스케일링 (auto scaling rule) | ko | 오토스케일링 | Match the UI label; the autoScalingRule i18n keys use "오토스케일링" |
+
+<!-- terminology:auto:avoid END -->
+
+## Approved Verbs
+
+This table pins **one approved action verb per intent** so docs and UI use the same word for the same operation. Verb choice is **context-dependent**: "remove from a list" is not "delete permanently", and "deactivate an account" is not "purge it". Each row therefore states the **context** in which its approved verb is canonical, plus the near-synonyms to avoid in that context.
+
+The table below is generated from the `verbs` array in `terminology.json`. Edit `terminology.json` and run `pnpm run build:terminology`; do not hand-edit between the markers.
+
+:::warning[Lexical, not behavioral — keep the two axes orthogonal]
+This list governs only **which word** labels an action. It does **not** decide the confirmation UX. Whether an action needs a typed-confirmation modal (`BAIDeleteConfirmModal` with `requireConfirmInput`) or a one-click anchored confirm (`BAIPopconfirmAstryx`) is decided **per call site** by [`.claude/rules/destructive-confirmation.md`](../../.claude/rules/destructive-confirmation.md), keyed off the action's **reversibility** — never derived from the verb. "Delete" can be reversible (soft-delete with a reachable restore path) or irreversible; the same word can map to either confirmation pattern. The optional **Reversible** column below is documentation only — read the rule, not this column, when choosing the confirmation component.
+:::
+
+<!-- terminology:auto:verbs START -->
+
+| Intent | Approved Verb (EN) | Avoid | Context | Reversible | Deciding FR | Description |
+|---|---|---|---|---|---|---|
+| cancel | Cancel | Abort, Discard | Stop an in-flight or not-yet-committed operation (request, draft, running deployment rollout). | reversible | FR-3052 | Use "Cancel" for stopping an action that has not yet had a permanent effect (a pending request, a model-service request, an unsaved form). Does not destroy persisted data. Maps to i18n `button.Cancel` / `modelService.Cancel`. |
+| delete | Delete | Destroy, Erase, Wipe | Permanently remove a standalone resource the user owns (storage folder, image, token, resource preset). | irreversible | FR-3052 | Use "Delete" for permanent removal of a resource that exists on its own. Maps to i18n `button.Delete`, `data.folders.Delete`, `environment.Delete`. NOTE: lexical only — whether a given Delete needs a typed-confirm modal is decided by destructive-confirmation.md from the action's reversibility, NOT from this word. |
+| edit | Edit | Modify, Update | Modify values of an existing entity that was created with initial values (resource group, user, role, preset, deployment, registry, resource policy). | reversible | FR-3331 | Use "Edit" (KO: 수정) for actions that open or title a form modifying a previously created entity's values — modal titles, row actions, icon tooltips. Maps to i18n `button.Edit`, `credential.ModifyUserDetail` ("Edit User Detail"), `resourceGroup.ModifyResourceGroup` ("Edit Resource Group"). Do NOT use "Edit" for feature configuration — that stays "Settings" (KO: 설정, e.g., fair share settings) — nor for text/content editing where KO keeps 편집 (e.g., the vfolder file editor). The submit button of an edit form is "Save" (KO: 저장, i18n `button.Save`), not "Edit" or "Update". |
+| hide | Hide | Remove, Delete, Dismiss | Make an item invisible in the UI without deleting it (hide a column, hide a notice, hide a list entry). | reversible | FR-3052 | Use "Hide" for purely cosmetic visibility changes that keep the underlying data intact and can be reversed by un-hiding. Never use "Hide" when data is actually removed. |
+| inactivate | Deactivate | Inactivate, Disable, Suspend | Disable an account/credential/project/role so it can no longer be used, while keeping its data for later reactivation. | reversible | FR-3052 | Approved verb is "Deactivate" (not "Inactivate"): the UI uses "Deactivate" 13x vs "Inactivate" 1x. Maps to i18n `credential.Deactivate`, `project.Deactivate`, `rbac.Deactivate`, `resourceGroup.Deactivate`. The single `usersettings.InactivateTheFollowingUsers` value is the drift this entry pins. Reversible: pair with Activate. |
+| purge | Purge | Delete, Wipe, Destroy | Permanently and irrecoverably erase an already-deactivated account/project/role and all its records. | irreversible | FR-3052 | Use "Purge" for the final, irreversible erase that follows "Deactivate". Distinct from "Delete": Purge implies the entity was first deactivated and now has its records expunged. Maps to i18n `project.Purge`, `project.PurgeProject`, `rbac.PurgeRole`. |
+| remove | Remove | Delete, Unlink | Detach an item from a collection / relationship without destroying the item itself (permission from a role, version from a list, member from a project). | reversible | FR-3052 | Use "Remove" for taking an item out of a list or breaking an association — the underlying entity survives elsewhere. "Remove from list" is NOT "Delete permanently". Maps to i18n `rbac.RemovePermission`, `model.RemoveSelectedVersions`. Reserve "Delete" for destroying the standalone resource. |
+| stop | Stop | Pause, Halt, Terminate | Halt a process that can later be resumed or restarted (a service replica, a pausable job). | reversible | FR-3052 | Use "Stop" only when the workload can be started again afterward. If the resources are released and the session ends, use "Terminate" instead. |
+| terminate | Terminate | Kill, Destroy, End | End a running compute session (interactive / batch / inference) or model-service endpoint. | irreversible | FR-3052 | Use "Terminate" for ending a running session/endpoint and releasing its resources. Maps to i18n `session.Terminate`, `session.TerminateSession`, `session.ForceTerminate`. Do not use "Stop" for this; "Stop" is reserved for pausable workloads. |
+
+<!-- terminology:auto:verbs END -->
+
+### Verb usage notes
+
+- **delete vs remove** — Use **Delete** to destroy a standalone resource the user owns (a storage folder, an image, a token). Use **Remove** to take an item out of a collection or break an association (a permission from a role, a version from a list, a member from a project) where the underlying entity survives elsewhere. When in doubt, ask: *does the entity still exist after the action?* If yes → Remove; if no → Delete.
+- **terminate vs stop** — Use **Terminate** to end a running compute session/endpoint and release its resources (irreversible). Use **Stop** only for a workload that can be started again afterward. Backend.AI sessions are terminated, not stopped.
+- **inactivate → Deactivate** — The approved English verb for the *inactivate* intent is **Deactivate** (the UI uses "Deactivate" overwhelmingly; "Inactivate" appears once and is treated as drift to be fixed). Deactivation is reversible (pair with Activate); the irreversible follow-up is **Purge**.
+- **purge vs delete** — Use **Purge** for the final, irreversible erase of an already-**deactivated** account/project/role and all its records. It is distinct from **Delete** (which targets standalone resources without a prior deactivate step).
+- **cancel** — Use **Cancel** to stop an in-flight or not-yet-committed operation (a pending request, an unsaved form, a running rollout) that has not yet had a permanent effect.
+- **hide** — Use **Hide** only for cosmetic visibility changes (hide a column, a notice, a list entry) that keep the underlying data intact and can be reversed by un-hiding. Never use "Hide" when data is actually removed.
+
+Per-locale approved verb forms are **out of scope for v1**: the destructive-confirmation UX is language-agnostic, so one approved English verb plus normal translation is sufficient. Add other-language `preferred` keys to a `verbs[]` entry only if a specific locale needs a pinned form.
+
+## Governance
+
+### Term Owner of Record
+
+The **docs-lead** flow (`.claude/skills/docs-lead/SKILL.md`) is the term owner of record. Every `terminology.json` mutation — adding a concept, repointing a `preferred` term, adding an `avoid[]` row, deprecating a concept — flows through docs-lead, which assigns the `decidingFR` and runs the rename checklist below. "Owner" here means *editorial accountability*, not a merge gate: a human reviewer still has to approve the change.
+
+### New-Term Gate
+
+A new user-facing noun or verb requires a `terminology.json` entry — carrying a non-null `decidingFR` — **before it ships**. A label cannot appear in `resources/i18n/{lang}.json` as a user-facing term without a corresponding curated decision in the termbase.
+
+Enforcement is **partial, and never a substitute for review.** `scripts/check-terminology-i18n.mjs` scans both the i18n values and the manual's prose. It is wired into `scripts/verify.sh` and `pnpm run lint:terminology` locally, and into two CI workflows that gate merges on a path filter: `docs-checks.yml` for the manual (FR-3373) and `terminology-content.yml` for the i18n stores and the termbase (FR-3375). What it does with a finding depends on the row:
+
+- A **context-free `avoid[]` row** (no `context` qualifier) is **blocking, in every language**: since FR-3049 the checker runs `--strict` in `verify.sh`, and since FR-3373 it also runs on any PR touching the manual. A forbidden term such as "scaling group" — or `슈퍼관리자`, or `スケーリンググループ` — cannot land. Non-English rows were warn-only until FR-3374; they now block on the strength of the FR-3051 self-test, which proves each one clears a zero false-positive budget over the live i18n stores **and** the manual.
+- A **context-qualified** row ("group (for project)") is **warn-only** in every language — the qualifier means the term is wrong in one sense and fine in another, which no matcher can settle. Context-qualified rows are skipped entirely on manual prose, where the ordinary sense of the word ("group three GPUs", "your organization's SSO") is legitimate and would otherwise be a permanent false-positive stream.
+- An **unknown** term (CHECK 3 — no matching `concepts[].preferred`) is always report-only.
+
+So a green checker means "no forbidden term slipped in", not "this is the right term". The gate itself is satisfied by the docs-lead review that lands the `terminology.json` entry. Treat a checker warning as a prompt to add (or allowlist) the entry, never as the approval itself.
+
+## Rename / Deprecation Checklist
+
+Renaming or deprecating an established term is **atomic**: the termbase, all UI locales, and all doc languages change together, in one PR stack. A partial rename leaves the live label and the termbase disagreeing — and because [Precedence](#precedence) says the label wins, a half-done rename silently reverts the decision. Run every step below before submitting.
+
+1. **Deprecate in `terminology.json`.** Set the old concept's `status` to `deprecated`, point `preferred` at the new term (or add the new concept), and add an `avoid[]` row (`avoid` = old term, `useInstead` = new term, plus `reason`, `lang`, and `conceptId`). Set `decidingFR` on the changed concept(s) — the new-term gate requires it. For a **non-English** avoid row, also add its fixtures entry to `terminology.selftest.json` and confirm `pnpm run lint:terminology:selftest` passes (see the non-English curation rule above).
+2. **Retranslate the UI locales.** Update all 21 files in `resources/i18n/*.json` **and** all 21 in `packages/backend.ai-ui/src/locale/*.json`. Edit `en.json` by hand, then propagate the other 20 with the `fw` i18n-translator (`/fw:i18n`).
+3. **Update the 4 doc languages.** Replace prose occurrences of the old term under `src/{en,ko,ja,th}/`.
+4. **Regenerate the term tables.** Run `pnpm run build:terminology` to refresh the `<!-- terminology:auto:* -->` regions of this file, then `pnpm run check:terminology-md` (confirms the tables match `terminology.json`) and `pnpm run lint:terminology` (confirms no live label **and no manual page** still uses the deprecated term — since FR-3373 the checker reads both, so it verifies steps 2 and 3 together). A non-English or context-qualified row only WARNs, so read the report; do not rely on the exit code alone.
+5. **Ship as one stack.** With `scripts/verify.sh` clean, submit the whole change as a single PR stack (`gh stack submit --auto`). Do not let any step land in a separate PR ahead of the others — the atomicity is the point.
+
+The App Proxy rename (FR-2841) is the cautionary precedent for skipping this: it landed partly in prose and partly in `avoid[]`, which is exactly the split-state this checklist exists to prevent.

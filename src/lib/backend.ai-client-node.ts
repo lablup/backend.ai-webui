@@ -259,9 +259,6 @@ class Client {
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
     this.requestTimeout = 15000;
-    //if (this._config.connectionMode === 'API') {
-    //this.getManagerVersion();
-    //}
   }
 
   /**
@@ -622,6 +619,22 @@ class Client {
       this._features['scheduler-opts'] = true;
       this._features['session-lifetime'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.8.0')) {
+      // Single-string `command` + nullable `shell` on the model-service config
+      // (FR-3205 / BA-6551). The field pair actually landed in 26.7.0, but the
+      // GraphQL input default `shell: String = "/bin/bash"` (BA-6742,
+      // lablup/backend.ai#12622) did not: it merged after the 26.7.0 tag, so on
+      // a 26.7.0 manager an omitted `shell` is null, which silently disables
+      // shell wrapping (the preset form still omits it when no command is
+      // typed). Worse, a manager built from `main` after BA-6742 still reports
+      // `26.7.0`, so the two cannot be told apart by version. BA-6742 ships
+      // together with the 26.8.0 fields (both are in `main`), so gating the
+      // whole command/shell path at 26.8.0 removes the ambiguity — 26.7.0
+      // managers keep using the deprecated `startCommand` token list and never
+      // receive `shell`. Kept in sync with the browser client
+      // (`packages/backend.ai-client/src/client.ts`).
+      this._features['model-service-command-string'] = true;
+    }
   }
 
   /**
@@ -670,12 +683,8 @@ class Client {
       if (result.authenticated === true) {
         this._config._accessKey = result.data.access_key;
         this._config._session_id = result.session_id;
-        //console.log("login succeed");
-      } else {
-        //console.log("login failed");
       }
     } catch (err) {
-      // console.log(err);
       return Promise.resolve(false);
     }
     return result.authenticated;
@@ -731,8 +740,6 @@ class Client {
             'Authentication failed. Check information and manager status.',
         };
       }
-      //console.log(err);
-      //return false;
     }
   }
 
@@ -785,8 +792,6 @@ class Client {
             'Authentication failed. Check information and manager status.',
         };
       }
-      //console.log(err);
-      //return false;
     }
   }
 
@@ -981,7 +986,6 @@ class Client {
     } else {
       rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
     }
-    //return this._wrapWithPromise(rqst);
     return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
@@ -1242,7 +1246,6 @@ class Client {
 
   async upload(sessionId, path, fs) {
     const formData = new FormData();
-    //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
     let rqst = this.newSignedRequest(
       'POST',
@@ -1330,7 +1333,6 @@ class Client {
       requestBody = JSON.stringify(body);
       authBody = requestBody;
     }
-    //queryString = '/' + this._config.apiVersionMajor + queryString;
     let aStr;
     let hdrs;
     let uri = '';
@@ -1443,7 +1445,6 @@ class Client {
       credentials: 'include',
       mode: 'cors',
     });
-    //queryString = '/' + urlPrefix + queryString;
     let requestInfo = {
       method: method,
       headers: hdrs,
@@ -1900,15 +1901,18 @@ class VFolder {
    * Leave an invited Virtual folder.
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
+   * @param {string} sharedUserUuid - Optional shared user UUID (admin leaving on behalf of another user).
    */
-  async leave_invited(name = null) {
+  async leave_invited(name = null, sharedUserUuid: string | null = null) {
     if (name == null) {
       name = this.name;
     }
+    const body =
+      sharedUserUuid != null ? { shared_user_uuid: sharedUserUuid } : {};
     let rqst = this.client.newSignedRequest(
       'POST',
       `${this.urlPrefix}/${name}/leave`,
-      null,
+      body,
     );
     return this.client._wrapWithPromise(rqst);
   }
@@ -2670,32 +2674,6 @@ class Keypair {
       },
     };
     return this.client.query(q, v);
-    /** accessKey is no longer used */
-    /*
-    if (accessKey !== null && accessKey !== '') {
-      fields = fields.concat(['access_key', 'secret_key']);
-    } */
-    /* if (accessKey !== null && accessKey !== '') {
-      v = {
-        'user_id': userId,
-        'input': {
-          'is_active': isActive,
-          'is_admin': isAdmin,
-          'resource_policy': resourcePolicy,
-          'rate_limit': rateLimit,
-        },
-      };
-    } else {
-      v = {
-        'user_id': userId,
-        'input': {
-          'is_active': isActive,
-          'is_admin': isAdmin,
-          'resource_policy': resourcePolicy,
-          'rate_limit': rateLimit
-        },
-      };
-    } */
   }
 
   /**
@@ -3682,8 +3660,6 @@ class Domain {
    * };
    */
   async update(domain_name = false, input) {
-    //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-    //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
     if (this.client.is_superadmin === true) {
       let q =
         `mutation($name: String!, $input: ModifyDomainInput!) {` +
@@ -4426,13 +4402,11 @@ class UserConfig {
    * @param {string} path - path of script dotfile.
    */
   async delete(path: string) {
-    let params = {
-      path: path,
-    };
+    const queryParams = new URLSearchParams({ path });
     const rqst = this.client.newSignedRequest(
       'DELETE',
-      '/user-config/dotfiles',
-      params,
+      `/user-config/dotfiles?${queryParams.toString()}`,
+      null,
     );
     return this.client._wrapWithPromise(rqst);
   }

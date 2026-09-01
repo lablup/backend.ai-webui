@@ -1,0 +1,89 @@
+# CI merge-gate for terminology drift in i18n CONTENT (FR-3375).
+#
+# `scripts/verify.sh` has run the checker in --strict since FR-3049, but
+# verify.sh is the LOCAL / AGENT harness — no workflow invokes it. So a PR that
+# put a forbidden term into resources/i18n/en.json and did not touch the manual
+# had no CI gate at all: it merged if the author skipped verify.sh. This
+# workflow closes that hole.
+#
+# WHY THIS GATE IS ABSOLUTE, NOT DIFF-AWARE
+#
+# FR-3049 deferred a CI gate on the grounds that it "must be diff-aware (fail
+# only on findings a PR introduces), so a pre-existing drift elsewhere cannot
+# block an unrelated PR". That reasoning assumed a dirty baseline. The baseline
+# is clean — 0 blocking, 0 warn across both i18n stores and (since FR-3373) the
+# manual — which makes an absolute gate SELF-MAINTAINING.
+#
+# CHECK 1 has four finding sources, and TWO workflows cover them between them:
+#
+#   packages/backend.ai-webui-docs/src/**   -> docs-checks.yml   (FR-3373)
+#   resources/i18n/**                       -> this workflow
+#   packages/backend.ai-ui/src/locale/**    -> this workflow
+#   packages/backend.ai-webui-docs/terminology.json
+#                                           -> this workflow (a new avoid[] row
+#                                              can turn existing content into
+#                                              drift, so the termbase counts as
+#                                              a source, not just a config)
+#
+# The manual is deliberately NOT in this filter: docs-checks.yml already runs
+# this exact command on docs PRs, so listing it here would double-run the job.
+# Both workflows invoke the checker over the WHOLE repo, so whichever one fires
+# sees every source — the split is about which PRs trigger a run, not about
+# which files get scanned.
+#
+# Together the two filters cover every path that can introduce a finding. So a
+# PR that introduces drift is caught by one of these gates, the drift never
+# reaches main, and it is never there to block anyone else. The "innocent PR
+# blocked by someone else's drift" scenario requires drift to already be on
+# main — which is precisely what this prevents. If a future change adds a fifth
+# CHECK 1 source, it must join one of the two filters or the argument breaks.
+#
+# The one genuinely retroactive case is the termbase row above: the PR adding
+# it trips this gate first, and the curator fixes (or allowlists) the affected
+# content in the same change. terminology-selftest.yml's header already calls
+# that the intended curation-time behavior.
+#
+# Revisit diff-awareness only if the baseline goes dirty AND has to stay dirty.
+# Until then it would buy nothing for the cost of a merge-base checkout, finding
+# fingerprinting, and a renamed-key rule.
+name: terminology-content
+
+on:
+  pull_request:
+    paths:
+      - "resources/i18n/**"
+      - "packages/backend.ai-ui/src/locale/**"
+      - "packages/backend.ai-webui-docs/terminology.json"
+      - "scripts/check-terminology-i18n.mjs"
+      - "scripts/terminology-i18n.allowlist.json"
+      - ".github/workflows/terminology-content.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Read-only whole-repo scan — cancelling a superseded run loses nothing.
+  group: terminology-content-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  terminology-content:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The checker is dependency-free (native Node only) — no pnpm install.
+      # package-manager-cache must be off: with pnpm absent from the job, the
+      # default cache resolution (`pnpm store path`) would fail setup-node.
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version-file: ".nvmrc"
+          package-manager-cache: false
+
+      # Same command, termbase and severity model as scripts/verify.sh: a
+      # context-free avoid[] row blocks in any language, a context-qualified one
+      # warns. To unblock a legitimate false positive without reverting, add the
+      # value/key to scripts/terminology-i18n.allowlist.json or append
+      # `[[i18n-term-ok]]` to the value.
+      - name: Terminology drift (i18n content + manual)
+        run: node scripts/check-terminology-i18n.mjs --strict

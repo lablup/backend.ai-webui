@@ -4,7 +4,7 @@
  */
 import { VFolderPermissionTag_VFolder$key } from '../__generated__/VFolderPermissionTag_VFolder.graphql';
 import { BAIDoubleTag, DoubleTagObjectValue } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -40,22 +40,24 @@ const VFolderPermissionTag: React.FC<VFolderPermissionTagProps> = ({
     `,
     vFolderFrgmt,
   );
-  const tagValues: DoubleTagObjectValue[] = _.chain({
-    r: 'green',
-    w: 'blue',
-    d: 'red',
-  })
-    .map((color, perm) => {
-      if (hasPermission(vFolder?.permission || permission, perm)) {
-        return {
-          label: perm.toUpperCase(),
-          color,
-        };
-      }
-      return undefined;
-    })
-    .compact()
-    .value();
+  const tagValues: DoubleTagObjectValue[] = _.compact(
+    _.map(
+      {
+        r: 'green',
+        w: 'blue',
+        d: 'red',
+      },
+      (color, perm) => {
+        if (hasPermission(vFolder?.permission || permission, perm)) {
+          return {
+            label: perm.toUpperCase(),
+            color,
+          };
+        }
+        return undefined;
+      },
+    ),
+  );
 
   return <BAIDoubleTag values={tagValues} />;
 };

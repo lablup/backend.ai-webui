@@ -2,33 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import CopyButton from './Chat/CopyButton';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
-import { theme } from 'antd';
-import { createStyles } from 'antd-style';
+import './SourceCodeView.css';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 
 interface SourceCodeViewProps {
   children: string;
   language: string;
+  style?: React.CSSProperties;
 }
-
-const useStyles = createStyles(({ token }) => ({
-  codeBlock: {
-    '& .shiki.github-light': {
-      margin: '0 !important',
-      padding: `${token.paddingSM}px !important`,
-    },
-    '& .shiki.github-dark': {
-      margin: '0 !important',
-      padding: `${token.paddingSM}px !important`,
-    },
-    '& div[dir="ltr"]': {
-      display: 'table',
-      minWidth: '100%',
-    },
-  },
-}));
 
 const CodeHead = ({
   lang,
@@ -71,28 +55,28 @@ const CodeHead = ({
 const SourceCodeView: React.FC<SourceCodeViewProps> = ({
   children,
   language,
+  style,
 }) => {
   'use memo';
-  const { styles } = useStyles();
   const { token } = theme.useToken();
 
   return (
-    <BAIFlex
-      direction="column"
+    <div
       style={{
         border: `1px solid ${token.colorBorderSecondary}`,
         margin: 0,
         padding: 0,
         borderRadius: token.borderRadiusLG,
         overflow: 'hidden',
-        width: '100%',
+        flex: 1,
+        minWidth: 0,
+        ...style,
       }}
     >
       <CodeHead
         lang={language}
         extra={
           <CopyButton
-            type="text"
             copyable={{ text: children ?? '' }}
             style={{
               display: 'block',
@@ -100,18 +84,17 @@ const SourceCodeView: React.FC<SourceCodeViewProps> = ({
           />
         }
       />
-      <BAIFlex
-        className={styles.codeBlock}
+      <div
+        className="source-code-view-block"
         style={{
-          width: '100%',
           paddingTop: 0,
           borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
           overflow: 'auto',
         }}
       >
         <SyntaxHighlighter language={language}>{children}</SyntaxHighlighter>
-      </BAIFlex>
-    </BAIFlex>
+      </div>
+    </div>
   );
 };
 

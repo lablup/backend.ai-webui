@@ -2,24 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  CSSTokenVariables,
-  NotificationForAnonymous,
-} from '../components/MainLayout/MainLayout';
+import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { Button, Card, Descriptions } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
-import { Suspense } from 'react';
+import { Button } from '@astryxdesign/core/Button';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { BAI_Z_INDEX, BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
+import { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { StringParam, useQueryParam } from 'use-query-params';
 
 const InteractiveLoginPage = () => {
   return (
     <>
       <CSSTokenVariables />
-      <NotificationForAnonymous />
       <Suspense>
         <Children />
       </Suspense>
@@ -28,49 +25,50 @@ const InteractiveLoginPage = () => {
 };
 
 const Children = () => {
+  'use memo';
   useSuspendedBackendaiClient();
   const [userInfo] = useCurrentUserInfo();
   const { pathname, search } = useLocation();
-  const [callback] = useQueryParam('callback', StringParam);
-  const [name] = useQueryParam('name', StringParam);
+  const [callback] = useQueryState('callback', parseAsString);
+  const [name] = useQueryState('name', parseAsString);
   const { t } = useTranslation();
+
+  // This route has no MainLayout, so the interactive-login card is its "main
+  // UI". Put the splash into login-backdrop mode (keeps the Diagonal Weave +
+  // version/copyright as the background, hides the loader) — the same backdrop
+  // the login screen uses — and render the card above it. Without this the
+  // splash is never dismissed and covers the card, leaving the screen stuck on
+  // the loading curtain.
+  useEffect(() => {
+    (
+      globalThis as typeof globalThis & { __enterLoginBackdrop?: () => void }
+    ).__enterLoginBackdrop?.();
+  }, []);
 
   return (
     <BAIFlex
       direction="column"
       align="center"
       justify="center"
-      style={{ height: '100vh' }}
+      style={{ position: 'fixed', inset: 0, zIndex: BAI_Z_INDEX.loginHost }}
     >
-      <Card title={t('interactiveLogin.InteractiveLoginWithBackendAI')}>
+      <BAICard title={t('interactiveLogin.InteractiveLoginWithBackendAI')}>
         <BAIFlex direction="column" gap={'sm'} align="stretch">
           {t('interactiveLogin.ConfirmLoginMessage', {
             username: userInfo.username,
             email: userInfo.email,
           })}
-          <Descriptions
-            column={1}
-            bordered
-            items={[
-              {
-                label: t('interactiveLogin.ServiceName'),
-                children: name,
-              },
-              // {
-              //   label: '서비스 설명',
-              //   children: (
-              //     <BAIFlex style={{ maxWidth: 400 }}>
-              //       Backend.AI FastTrack는 Backend.AI를 이용한 MLOps 서비스
-              //       입니다.
-              //     </BAIFlex>
-              //   ),
-              // },
-              {
-                label: 'URL',
-                children: callback ? new URL(callback).origin : '-',
-              },
-            ]}
-          />
+          {/* antd `Descriptions` -> `MetadataList` (MAPPING §4).
+              `bordered` has no destination (project-wide PILOT-DECISION since
+              ticket 20); `column={1}` becomes `columns="single"`. */}
+          <BAIMetadataList columns="single">
+            <MetadataListItem label={t('interactiveLogin.ServiceName')}>
+              {name}
+            </MetadataListItem>
+            <MetadataListItem label="URL">
+              {callback ? new URL(callback).origin : '-'}
+            </MetadataListItem>
+          </BAIMetadataList>
           <BAIFlex
             direction="row"
             justify="between"
@@ -81,7 +79,8 @@ const Children = () => {
               globalThis?.backendaiclient?._config
                 ?.enableInteractiveLoginAccountSwitch ? (
                 <Button
-                  size="large"
+                  size="lg"
+                  label={t('interactiveLogin.UseAnotherAccount')}
                   onClick={() => {
                     const event: CustomEvent = new CustomEvent(
                       'backend-ai-logout',
@@ -93,26 +92,23 @@ const Children = () => {
                     );
                     document.dispatchEvent(event);
                   }}
-                >
-                  {t('interactiveLogin.UseAnotherAccount')}
-                </Button>
+                />
               ) : (
                 <div></div>
               )
             }
             <Button
-              size="large"
-              type="primary"
+              size="lg"
+              variant="primary"
+              label={t('login.Login')}
               onClick={() => {
                 //redirect to callback
                 window.location.href = callback || '';
               }}
-            >
-              {t('login.Login')}
-            </Button>
+            />
           </BAIFlex>
         </BAIFlex>
-      </Card>
+      </BAICard>
     </BAIFlex>
   );
 };

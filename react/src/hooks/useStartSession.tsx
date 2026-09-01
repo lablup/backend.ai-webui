@@ -3,22 +3,27 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import { useStartSessionCreationQuery } from '../__generated__/useStartSessionCreationQuery.graphql';
+import { transformPortValuesToNumbers } from '../components/PortSelectFormItem';
+import {
+  RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
+  UNIFIED_SLOT_TAG_PREFIX,
+  isUnifiedAcceleratorSlot,
+} from '../components/SessionFormItems/ResourceAllocationFormItems';
+import {
+  SessionLauncherFormValue,
+  SessionResources,
+} from '../pages/SessionLauncherPage';
 import { useSetBAINotification } from './useBAINotification';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupState,
 } from './useCurrentProject';
+import { useResolveImageReference } from './useDefaultImagesWithFallback';
 import { generateRandomString, toGlobalId } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
-import { useStartSessionCreationQuery } from 'src/__generated__/useStartSessionCreationQuery.graphql';
-import { transformPortValuesToNumbers } from 'src/components/PortSelectFormItem';
-import { RESOURCE_ALLOCATION_INITIAL_FORM_VALUES } from 'src/components/SessionFormItems/ResourceAllocationFormItems';
-import {
-  SessionLauncherFormValue,
-  SessionResources,
-} from 'src/pages/SessionLauncherPage';
 
 // Type for successful session creation result
 type SessionCreationSuccess = {
@@ -30,7 +35,11 @@ type SessionCreationSuccess = {
 interface CreateSessionInfo {
   kernelName: string;
   sessionName: string;
-  architecture: string;
+  // Left `undefined` when the image reference carries no `@arch` suffix, so
+  // that `createIfNotExists()` applies its own `x86_64` default. Passing an
+  // empty string instead would suppress that default and send a blank
+  // architecture to the manager.
+  architecture: string | undefined;
   batchTimeout?: string;
   resources: SessionResources;
 }
@@ -77,7 +86,17 @@ export type StartSessionValue =
   // Required fields (environments with only version required)
   StartSessionEnvironments &
     // Optional fields from SessionLauncherFormValue
-    Partial<Omit<SessionLauncherFormValue, 'environments'>>;
+    Partial<Omit<SessionLauncherFormValue, 'environments'>> & {
+      /**
+       * Explicit target project (group) name for the created session
+       * (ADR-0001, FR-3412). When set, `group_name` is pinned to exactly
+       * this project instead of the ambient current project. Distinct from
+       * the `owner` branch, which is coupled to `owner_access_key`.
+       * Callers that omit it keep the ambient-project fallback — a
+       * sanctioned interim state until they are converted.
+       */
+      projectName?: string;
+    };
 
 // Type for minimum required values (all fields except those with defaults are required)
 export type StartSessionWithDefaultValue = Omit<
@@ -91,7 +110,9 @@ export type StartSessionWithDefaultValue = Omit<
       | SessionLauncherDefaultFields
       | keyof typeof RESOURCE_ALLOCATION_INITIAL_FORM_VALUES
     >
-  >;
+  > & {
+    dependencies?: string[];
+  };
 
 export type StartSessionResults = {
   fulfilled?: PromiseFulfilledResult<SessionCreationSuccess>[];
@@ -106,6 +127,7 @@ export const useStartSession = () => {
   const { upsertNotification } = useSetBAINotification();
 
   const relayEnv = useRelayEnvironment();
+  const resolveImageReference = useResolveImageReference();
   const baiClient = useSuspendedBackendaiClient();
   const supportsMountById = baiClient.supports('mount-by-id');
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
@@ -144,15 +166,34 @@ export const useStartSession = () => {
     minimumValues: StartSessionWithDefaultValue,
   ) => {
     const mergedValue = _.merge({}, defaultFormValues, minimumValues);
-    return startSession(mergedValue as SessionLauncherFormValue);
+    return startSession(
+      mergedValue as SessionLauncherFormValue & {
+        dependencies?: string[];
+        projectName?: string;
+      },
+    );
   };
-  const startSession = async (values: SessionLauncherFormValue) => {
-    // If manual image is selected, use it as kernelName
+  const startSession = async (
+    values: SessionLauncherFormValue & {
+      dependencies?: string[];
+      projectName?: string;
+    },
+  ) => {
+    // A manual image (the `allowManualImageNameForSession` escape hatch) is
+    // used verbatim — the user explicitly typed it, so it must not be
+    // rewritten by resolution. `environment` holds a name-only reference (see
+    // `normalizeEnvironmentFormat`); config values such as
+    // `defaultImportEnvironment` may omit the tag and/or the architecture, so
+    // resolve them against the registered image list here to make every
+    // caller of `startSession` behave like the launcher form (FR-3462).
     const imageFullName =
-      values.environments.manual || values.environments.version;
-    const [kernelName, architecture] = imageFullName
-      ? imageFullName.split('@')
-      : ['', ''];
+      values.environments.manual ||
+      (await resolveImageReference(
+        values.environments.version || values.environments.environment,
+      ));
+    // `architecture` stays `undefined` for a reference without `@arch` on
+    // purpose — see the note on `CreateSessionInfo.architecture`.
+    const [kernelName = '', architecture] = imageFullName?.split('@') ?? [];
 
     const sessionName = _.isEmpty(values.sessionName)
       ? generateSessionId()
@@ -165,17 +206,26 @@ export const useStartSession = () => {
       architecture,
       resources: {
         enqueueOnly: true,
-        // Project and domain settings
+        // Project and domain settings. `projectName` (explicit project
+        // contract, FR-3412) wins over the ambient current project; the
+        // `owner` branch stays independent because it is coupled to
+        // `owner_access_key`.
         group_name: values.owner?.enabled
           ? values.owner.project
-          : currentProject.name || undefined,
+          : values.projectName || currentProject.name || undefined,
         domain: values.owner?.enabled
           ? values.owner.domainName
           : baiClient._config.domainName,
 
         // Session configuration
         type: values.sessionType,
-        cluster_mode: values.cluster_mode,
+        // Convert multi-node x1 to single-node x1 since they are functionally
+        // equivalent but multi-node requires overlay network which may not be
+        // configured in all-in-one environments (FR-2381)
+        cluster_mode:
+          values.cluster_mode === 'multi-node' && values.cluster_size === 1
+            ? 'single-node'
+            : values.cluster_mode,
         cluster_size: values.cluster_size,
         maxWaitSeconds: 15,
         reuseIfExists: values.reuseIfExists ?? false,
@@ -213,16 +263,34 @@ export const useStartSession = () => {
             }
           : undefined),
 
+        // Session dependencies
+        ...(values.dependencies && values.dependencies.length > 0
+          ? { dependencies: values.dependencies }
+          : {}),
+
+        // Temporary marker for unified-memory sessions. There is currently no
+        // dedicated field to tell from session info alone whether a session
+        // uses a unified-memory accelerator, so tag it as
+        // `unified-slot:<accelerator slot name>` (e.g. `unified-slot:cuda.unified`).
+        ...(isUnifiedAcceleratorSlot(values.resource?.acceleratorType)
+          ? {
+              tag: `${UNIFIED_SLOT_TAG_PREFIX}${values.resource?.acceleratorType}`,
+            }
+          : {}),
+
         config: {
           // Resource allocation
           ...(values?.resource && {
             resources: {
               cpu: values?.resource?.cpu,
               mem: values?.resource?.mem,
-              // Add accelerator only if specified
+              // Add accelerator only if specified. Unified-memory slots
+              // auto-allocate from the shared host pool, so never send an
+              // accelerator quantity for them.
               ...(values.resource?.acceleratorType &&
               values.resource?.accelerator &&
-              values.resource?.accelerator > 0
+              values.resource?.accelerator > 0 &&
+              !isUnifiedAcceleratorSlot(values.resource.acceleratorType)
                 ? {
                     [values.resource.acceleratorType]:
                       values.resource.accelerator,
@@ -231,7 +299,7 @@ export const useStartSession = () => {
             },
           }),
           scaling_group: values.owner?.enabled
-            ? values.owner.project
+            ? values.owner.resourceGroup
             : values.resourceGroup,
           ...(values?.resource && {
             resource_opts: {
@@ -264,10 +332,10 @@ export const useStartSession = () => {
           !_.isEqual(_.castArray(values.agent), ['auto'])
             ? {
                 // Filter out undefined values
-                agent_list: _.chain(values.agent)
-                  .castArray()
-                  .filter((agent): agent is string => !!agent)
-                  .value(),
+                agent_list: _.filter(
+                  _.castArray(values.agent),
+                  (agent): agent is string => !!agent,
+                ),
               }
             : undefined),
         },

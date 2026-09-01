@@ -2,12 +2,28 @@
 // scenarios: 6 (Widget Rendering), 7 (Session Count Widget), 8 (My Resources Widget),
 //            9 (My Resources in Resource Group Widget), 10 (Agent Stats Widget),
 //            11 (Recently Created Sessions Widget), 12 (Board Layout)
+// plus: custom panel add flow (edit sider -> panel modal), added after the plan
+import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 // Timeout for widget visibility checks - widgets load after GraphQL data fetches,
 // which may be slow when multiple workers run in parallel.
 const WIDGET_TIMEOUT = 30_000;
+
+// Custom dashboard panels are an experimental opt-in. The user-settings atom
+// reads localStorage at app boot, so write the flag and reload rather than
+// toggling it through the settings UI.
+const enableCustomDashboardPanels = async (page: Page) => {
+  await page.evaluate(() => {
+    localStorage.setItem(
+      'backendaiwebui.settings.user.experimental_custom_dashboard_panels',
+      'true',
+    );
+  });
+  await page.reload();
+  await page.waitForSelector('[data-testid="user-dropdown-button"]');
+};
 
 test.describe(
   'Dashboard Page',
@@ -37,7 +53,7 @@ test.describe(
         await expect(
           page
             .locator('.bai_grid_item')
-            .filter({ hasText: 'My Total Resources Limit' })
+            .filter({ hasText: 'My Total Resource Usage' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -102,7 +118,7 @@ test.describe(
         await expect(
           page
             .locator('.bai_grid_item')
-            .filter({ hasText: 'My Total Resources Limit' })
+            .filter({ hasText: 'My Total Resource Usage' })
             .first(),
         ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -171,7 +187,7 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Click the refresh (BAIFetchKeyButton) in the widget's header area
-        const refreshButton = widget.getByRole('button', { name: 'reload' });
+        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
         await refreshButton.click();
 
         // 3. Verify the widget data remains visible after refresh
@@ -195,7 +211,7 @@ test.describe(
         // 1. Locate the "My Resources" widget
         const widget = page
           .locator('.bai_grid_item')
-          .filter({ hasText: 'My Total Resources Limit' })
+          .filter({ hasText: 'My Total Resource Usage' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
@@ -212,12 +228,12 @@ test.describe(
         // 1. Locate the "My Resources" widget
         const widget = page
           .locator('.bai_grid_item')
-          .filter({ hasText: 'My Total Resources Limit' })
+          .filter({ hasText: 'My Total Resource Usage' })
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'reload' });
+        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
         await refreshButton.click();
 
         // 3. Verify the widget still renders CPU/Memory after refresh
@@ -245,19 +261,39 @@ test.describe(
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Verify a resource group selector (dropdown or select) is visible within the widget
-        await expect(widget.locator('.ant-select').first()).toBeVisible();
+        // 2. Verify a resource group selector is visible within the widget.
+        // `SharedResourceGroupSelectForCurrentProject` renders `BAISelect` with
+        // `showSearch`, so Astryx `Selector` renders the trigger as a plain
+        // `<button>` (`role: hasSearch ? undefined : 'combobox'`) whose
+        // accessible name falls back to `t('general.Select')` — the call site
+        // passes no `label`/`placeholder` (`BAISelect.tsx`:
+        // `label: accessibleLabel || t('general.Select')`). `exact` is required:
+        // the widget's info-tooltip button's aria-label contains "selected".
+        await expect(
+          widget.getByRole('button', { name: 'Select', exact: true }),
+        ).toBeVisible();
 
         // 3. Verify the resource content area has finished loading for the current resource group.
         // The widget may show CPU/RAM statistics when the admin user has resource quota allocated
         // in the resource group, or show an empty state ("No resource data available") when no
         // quota is assigned. The skeleton loader disappears once data has been fetched either way.
-        await expect(widget.locator('.ant-skeleton')).not.toBeVisible({
+        // `MyResourceWithinResourceGroup.tsx` renders `BAISkeleton` while
+        // loading, tagged `data-testid="my-resource-skeleton"` (Astryx
+        // `Skeleton` has no default class to anchor on); the "paragraph"
+        // variant renders several boxes sharing that testid, hence `.first()`.
+        await expect(
+          widget.getByTestId('my-resource-skeleton').first(),
+        ).not.toBeVisible({
           timeout: WIDGET_TIMEOUT,
         });
 
-        // 4. Verify a "Used" / "Free" segmented control is present
-        const segmentedControl = widget.locator('.ant-segmented');
+        // 4. Verify a "Used" / "Free" segmented control is present.
+        // `SegmentedControl` (`@astryxdesign/core/SegmentedControl`) is a
+        // `role="radiogroup"` with `label="Used/Free"` (composed from the two
+        // option labels — `MyResourceWithinResourceGroup.tsx`).
+        const segmentedControl = widget.getByRole('radiogroup', {
+          name: 'Used/Free',
+        });
         await expect(segmentedControl).toBeVisible();
         await expect(segmentedControl.getByText('Used')).toBeVisible();
         await expect(segmentedControl.getByText('Free')).toBeVisible();
@@ -274,90 +310,101 @@ test.describe(
           .first();
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Locate the segmented control
-        const segmentedControl = widget.locator('.ant-segmented');
+        // 2. Locate the segmented control (Astryx `SegmentedControl`,
+        // `role="radiogroup"`, `label="Used/Free"` — see the previous test).
+        const segmentedControl = widget.getByRole('radiogroup', {
+          name: 'Used/Free',
+        });
         await expect(segmentedControl).toBeVisible();
 
         // 3. Click the "Used" segment
-        await segmentedControl.getByText('Used').click();
+        await segmentedControl.getByRole('radio', { name: 'Used' }).click();
 
         // 4. Verify the "Used" segment is now selected
         await expect(
-          segmentedControl.locator('.ant-segmented-item-selected'),
-        ).toContainText('Used');
+          segmentedControl.getByRole('radio', { name: 'Used' }),
+        ).toBeChecked();
 
         // 5. Click the "Free" segment
-        await segmentedControl.getByText('Free').click();
+        await segmentedControl.getByRole('radio', { name: 'Free' }).click();
 
         // 6. Verify the "Free" segment is now selected
         await expect(
-          segmentedControl.locator('.ant-segmented-item-selected'),
-        ).toContainText('Free');
+          segmentedControl.getByRole('radio', { name: 'Free' }),
+        ).toBeChecked();
       });
     });
 
     // -----------------------------------------------------------------------
     // 10. Agent Stats Widget (Admin Only)
     // -----------------------------------------------------------------------
-    test.describe('Agent Stats Widget', () => {
-      test.beforeEach(async ({ page, request }) => {
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'summary');
-      });
+    test.describe(
+      'Agent Stats Widget',
+      { tag: ['@requires-manager-v25.15'] },
+      () => {
+        test.beforeEach(async ({ page, request }) => {
+          await loginAsAdmin(page, request);
+          await navigateTo(page, 'summary');
 
-      test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
-        page,
-      }) => {
-        // Agent Stats widget requires server >= 25.15.0
-        const widget = page
-          .locator('.bai_grid_item')
-          .filter({ hasText: 'Agent Statistics' });
+          // Declarative feature gate (FR-3112): the Agent Statistics widget is
+          // rendered only when the manager supports 'agent-stats'
+          // (manager >= 25.15.0; widget introduced by FR-1575).
+          await skipUnlessClientFeature(
+            page,
+            'agent-stats',
+            "Agent Statistics widget requires the 'agent-stats' capability (Backend.AI manager >= 25.15.0, FR-1575)",
+          );
+        });
 
-        // Skip test explicitly if widget is not available on this server version
-        test.skip(
-          !(await widget.isVisible({ timeout: WIDGET_TIMEOUT })),
-          'Agent Statistics widget not available (requires server >= 25.15.0)',
-        );
+        test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
+          page,
+        }) => {
+          // 1. The backend is capable — the widget MUST be present; absence is a failure.
+          const widget = page
+            .locator('.bai_grid_item')
+            .filter({ hasText: 'Agent Statistics' });
+          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 2. Verify a "Used" / "Free" segmented toggle is present
-        const segmentedControl = widget.locator('.ant-segmented');
-        await expect(segmentedControl).toBeVisible();
+          // 2. Verify a "Used" / "Free" segmented toggle is present.
+          // `AgentStats.tsx` renders Astryx `SegmentedControl`
+          // (`role="radiogroup"`, `label="Used/Free"`, composed from the two
+          // option labels).
+          const segmentedControl = widget.getByRole('radiogroup', {
+            name: 'Used/Free',
+          });
+          await expect(segmentedControl).toBeVisible();
 
-        // 3. Click the "Free" segment and verify it becomes selected
-        await segmentedControl.getByText('Free').click();
-        await expect(
-          segmentedControl.locator('.ant-segmented-item-selected'),
-        ).toContainText('Free');
+          // 3. Click the "Free" segment and verify it becomes selected
+          await segmentedControl.getByRole('radio', { name: 'Free' }).click();
+          await expect(
+            segmentedControl.getByRole('radio', { name: 'Free' }),
+          ).toBeChecked();
 
-        // 4. Click the "Used" segment and verify it becomes selected
-        await segmentedControl.getByText('Used').click();
-        await expect(
-          segmentedControl.locator('.ant-segmented-item-selected'),
-        ).toContainText('Used');
-      });
+          // 4. Click the "Used" segment and verify it becomes selected
+          await segmentedControl.getByRole('radio', { name: 'Used' }).click();
+          await expect(
+            segmentedControl.getByRole('radio', { name: 'Used' }),
+          ).toBeChecked();
+        });
 
-      test('Admin can manually refresh the Agent Stats widget', async ({
-        page,
-      }) => {
-        // Agent Stats widget requires server >= 25.15.0
-        const widget = page
-          .locator('.bai_grid_item')
-          .filter({ hasText: 'Agent Statistics' });
+        test('Admin can manually refresh the Agent Stats widget', async ({
+          page,
+        }) => {
+          // 1. The backend is capable — the widget MUST be present; absence is a failure.
+          const widget = page
+            .locator('.bai_grid_item')
+            .filter({ hasText: 'Agent Statistics' });
+          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // Skip test explicitly if widget is not available on this server version
-        test.skip(
-          !(await widget.isVisible({ timeout: WIDGET_TIMEOUT })),
-          'Agent Statistics widget not available (requires server >= 25.15.0)',
-        );
+          // 2. Click the refresh button in the widget header
+          const refreshButton = widget.getByRole('button', { name: 'Refresh' });
+          await refreshButton.click();
 
-        // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'reload' });
-        await refreshButton.click();
-
-        // 3. Verify the widget still renders after refresh (no error state)
-        await expect(widget).toBeVisible();
-      });
-    });
+          // 3. Verify the widget still renders after refresh (no error state)
+          await expect(widget).toBeVisible();
+        });
+      },
+    );
 
     // -----------------------------------------------------------------------
     // 11. Recently Created Sessions Widget
@@ -378,7 +425,7 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Verify the sessions table container is displayed
-        await expect(widget.locator('.ant-table')).toBeVisible();
+        await expect(widget.getByRole('table')).toBeVisible();
       });
 
       test('Admin can manually refresh the Recently Created Sessions widget', async ({
@@ -391,19 +438,19 @@ test.describe(
         await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
         // 2. Click the refresh button in the widget header
-        const refreshButton = widget.getByRole('button', { name: 'reload' });
+        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
         await refreshButton.click();
 
         // 3. Verify the widget still renders after refresh
-        await expect(widget.locator('.ant-table')).toBeVisible();
+        await expect(widget.getByRole('table')).toBeVisible();
       });
     });
 
     // -----------------------------------------------------------------------
-    // 12. Board Layout (Resize and Move - smoke tests)
+    // 12. Board Layout (always rearrangeable; the edit sider manages panels)
     // -----------------------------------------------------------------------
     test.describe('Board Layout', () => {
-      test('Admin can see resizable and movable widgets on the Dashboard', async ({
+      test('Admin sees drag and resize handles on the dashboard board', async ({
         page,
         request,
       }) => {
@@ -422,13 +469,87 @@ test.describe(
         const count = await boardItems.count();
         expect(count).toBeGreaterThanOrEqual(3);
 
-        // 4. Verify drag handles exist on board widgets
-        const dragHandles = page.locator('.bai_board_handle');
-        await expect(dragHandles.first()).toBeVisible();
+        // 4. Panels are rearrangeable at all times — no mode to enter first
+        await expect(page.locator('.bai_board_handle').first()).toBeVisible();
+        await expect(page.locator('.bai_board_resizer').first()).toBeVisible();
+      });
 
-        // 5. Verify resize handles exist on board widgets
-        const resizeHandles = page.locator('.bai_board_resizer');
-        await expect(resizeHandles.first()).toBeVisible();
+      test('Admin can open and close the dashboard edit sider', async ({
+        page,
+        request,
+      }) => {
+        // 1. Login as admin and navigate to /summary
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'summary');
+        await enableCustomDashboardPanels(page);
+        await expect(
+          page.getByRole('heading', { name: 'Active Sessions' }),
+        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+        // 2. The edit toggle lives in the breadcrumb bar and opens the sider that
+        //    manages custom panels (it does NOT gate dragging).
+        const breadcrumb = page.getByTestId('webui-breadcrumb');
+        await breadcrumb.getByRole('button', { name: 'Edit' }).click();
+        await expect(
+          page.getByRole('button', { name: 'Add', exact: true }),
+        ).toBeVisible();
+
+        // 3. Closing it hides the sider again
+        await breadcrumb.getByRole('button', { name: 'Close' }).click();
+        await expect(
+          page.getByRole('button', { name: 'Add', exact: true }),
+        ).not.toBeVisible();
+      });
+
+      test('Admin can add a custom table panel from the dashboard edit sider', async ({
+        page,
+        request,
+      }) => {
+        // 1. Login as admin, open the dashboard, opt in, and enter edit mode
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'summary');
+        await enableCustomDashboardPanels(page);
+        await expect(
+          page.getByRole('heading', { name: 'Active Sessions' }),
+        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        await page
+          .getByTestId('webui-breadcrumb')
+          .getByRole('button', { name: 'Edit' })
+          .click();
+
+        // 2. The edit sider opens beside the board; its "Add" button opens the
+        //    panel modal (a native <dialog> via BAIModal)
+        await page.getByRole('button', { name: 'Add', exact: true }).click();
+        const modal = page.getByRole('dialog').filter({ hasText: 'Add panel' });
+        await expect(modal).toBeVisible();
+
+        // 3. Pick the "Sessions" data source (project-scoped, available to every
+        //    role). The AstryxFormSelector for the `resourceType` field is
+        //    labelled `t('dashboard.panelModal.DataSource')` = "Data source"
+        //    (`DashboardPanelModal.tsx`); the other combobox in the dialog is
+        //    the condition property filter ("Search filters").
+        await modal.getByRole('combobox', { name: 'Data source' }).click();
+        await page
+          .getByRole('option', { name: 'Sessions', exact: true })
+          .click();
+
+        // 4. Title the panel with a unique name — the title is how the panel's
+        //    condition is expressed on the board.
+        const panelTitle = `e2e-panel-${Date.now()}`;
+        await modal
+          .getByRole('textbox', { name: 'Title (optional)' })
+          .fill(panelTitle);
+
+        // 5. Confirm — the modal's OK button is labelled "Add" in create mode
+        await modal.getByRole('button', { name: 'Add', exact: true }).click();
+        await expect(modal).toBeHidden();
+
+        // 6. The new panel appears as a board item titled with the panel title.
+        //    (The panel is persisted in localStorage only, and each test runs in
+        //    a fresh browser context, so no cleanup is needed.)
+        await expect(
+          page.locator('.bai_grid_item').filter({ hasText: panelTitle }),
+        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
       });
     });
   },

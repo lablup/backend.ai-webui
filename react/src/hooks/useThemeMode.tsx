@@ -6,7 +6,7 @@ import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
 import {
   PropsWithChildren,
   createContext,
-  useContext,
+  use,
   useEffect,
   useState,
 } from 'react';
@@ -91,7 +91,7 @@ export const ThemeModeProvider: React.FC<PropsWithChildren> = ({
 };
 
 export const useThemeMode = () => {
-  const context = useContext(ThemeModeContext);
+  const context = use(ThemeModeContext);
   if (context === undefined) {
     throw new Error(
       'useThemeModeContext must be used within a ThemeModeProvider',

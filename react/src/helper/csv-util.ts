@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 /**
  * Escapes a value for CSV formatting.
@@ -64,6 +64,12 @@ export const JSONToCSVBody = <T>(
 
 /**
  * Download a file from the given blob.
+ *
+ * The anchor is appended to the document before clicking and the object URL
+ * revocation is delayed, so the download also works on Safari and older
+ * engines that ignore clicks on detached anchors or cancel downloads whose
+ * URL is revoked synchronously.
+ *
  * @param {Blob} blob - The file content.
  * @param {string} filename - The name of the file.
  */
@@ -73,8 +79,39 @@ export const downloadBlob = (blob: Blob, filename: string) => {
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+};
+
+export const UTF8_BOM = '\uFEFF';
+
+/**
+ * Download a CSV string as a file with a UTF-8 BOM prepended.
+ *
+ * The BOM makes Excel decode the file as UTF-8 instead of the system ANSI
+ * codepage (e.g. CP949 on Korean Windows), which would otherwise garble
+ * multibyte characters in localized content.
+ *
+ * This helper is for CSV content that must be assembled client-side because
+ * the backend's server-side CSV export (`POST /export/{nodeKey}/csv`) does not
+ * cover the data yet. Once server-side export supports the data you are
+ * exporting, use the `useCSVExport` hook instead of building CSV in the
+ * client.
+ *
+ * @param csvContent - The CSV content. A pre-existing BOM is not duplicated.
+ * @param filename - The download filename. `.csv` is appended if missing.
+ */
+export const downloadCSV = (csvContent: string, filename: string) => {
+  const content = csvContent.startsWith(UTF8_BOM)
+    ? csvContent
+    : UTF8_BOM + csvContent;
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  downloadBlob(
+    blob,
+    filename.toLowerCase().endsWith('.csv') ? filename : `${filename}.csv`,
+  );
 };
 
 export const exportCSVWithFormattingRules = <T>(
@@ -85,6 +122,87 @@ export const exportCSVWithFormattingRules = <T>(
   },
 ) => {
   const bodyStr = JSONToCSVBody(data, format_rules);
-  const blob = new Blob([bodyStr], { type: 'text/csv' });
-  downloadBlob(blob, `${filename}.csv`);
+  downloadCSV(bodyStr, filename);
+};
+
+/**
+ * Parses a CSV string into an array of row objects keyed by the header row.
+ *
+ * Handles RFC 4180 style quoting: double-quoted fields, escaped double quotes
+ * (`""`), and commas / line breaks inside quoted fields. Leading/trailing
+ * whitespace around unquoted values and header names is trimmed, and fully
+ * empty lines are skipped. Header names are preserved as-is (after trimming);
+ * callers that need case-insensitive matching should normalize the keys.
+ *
+ * @param text - The raw CSV file content.
+ * @returns An array of objects, one per data row, keyed by header name.
+ */
+export const parseCSV = (text: string): Record<string, string>[] => {
+  // Strip a leading UTF-8 BOM so the first header cell does not become
+  // a BOM-prefixed "email", which would silently fail header matching.
+  if (text.charCodeAt(0) === 0xfeff) {
+    text = text.slice(1);
+  }
+
+  const rows: string[][] = [];
+  let cell = '';
+  let row: string[] = [];
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (inQuotes) {
+      if (char === '"') {
+        if (text[i + 1] === '"') {
+          // Escaped double quote inside a quoted field.
+          cell += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        cell += char;
+      }
+    } else if (char === '"') {
+      inQuotes = true;
+    } else if (char === ',') {
+      row.push(cell);
+      cell = '';
+    } else if (char === '\n' || char === '\r') {
+      if (char === '\r' && text[i + 1] === '\n') {
+        i++;
+      }
+      row.push(cell);
+      cell = '';
+      rows.push(row);
+      row = [];
+    } else {
+      cell += char;
+    }
+  }
+  // A quote that never closes means the file is malformed; fail loudly so
+  // callers can surface a parse error instead of silently importing garbage.
+  if (inQuotes) {
+    throw new Error('Unterminated quoted field in CSV');
+  }
+
+  // Flush the final cell/row when the file does not end with a line break.
+  if (cell.length > 0 || row.length > 0) {
+    row.push(cell);
+    rows.push(row);
+  }
+
+  const nonEmptyRows = rows.filter((r) => r.some((c) => c.trim() !== ''));
+  if (nonEmptyRows.length === 0) {
+    return [];
+  }
+
+  const header = nonEmptyRows[0].map((h) => h.trim());
+  return nonEmptyRows.slice(1).map((dataRow) => {
+    const record: Record<string, string> = {};
+    header.forEach((key, index) => {
+      record[key] = (dataRow[index] ?? '').trim();
+    });
+    return record;
+  });
 };

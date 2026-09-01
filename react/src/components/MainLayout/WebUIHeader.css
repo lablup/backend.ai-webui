@@ -1,0 +1,16 @@
+/*
+ * Static styles for <WebUIHeader> (to-astryx ticket 24).
+ *
+ * These were an `antd-style` `createStyles` block whose only content was the
+ * Electron title-bar drag regions. They carry no theme token, so they move to
+ * a plain, component-imported stylesheet — P17: replacement CSS belongs in a
+ * file the component itself imports, not the app stylesheet.
+ */
+.bai-webui-header,
+.bai-webui-header .draggable {
+  -webkit-app-region: drag;
+}
+
+.bai-webui-header .non-draggable {
+  -webkit-app-region: no-drag;
+}

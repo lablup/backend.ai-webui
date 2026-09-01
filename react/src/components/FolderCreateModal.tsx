@@ -2,37 +2,36 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
+import { theme } from '../theme-shim';
+import './FolderCreateModal.css';
 import StorageSelect from './StorageSelect';
 import {
-  App,
-  Divider,
-  Form,
-  Input,
-  Radio,
-  Skeleton,
-  Switch,
-  theme,
-  Tooltip,
-} from 'antd';
-import { createStyles } from 'antd-style';
-import { FormInstance } from 'antd/lib';
+  AstryxFormRadioList,
+  AstryxFormSwitch,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
 import {
   BAIButton,
   BAIFlex,
+  BAIIconWithTooltip,
   BAIModal,
   BAIModalProps,
+  BAIQuestionIconWithTooltip,
   ESMClientErrorResponse,
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { TriangleAlertIcon } from 'lucide-react';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,27 +41,6 @@ const MODEL_STORE_PROJECT_NAME = 'model-store';
 const FOLDER_NAME_MAX_LENGTH = 64;
 const MODAL_WIDTH = 650;
 
-const useStyles = createStyles(({ css }) => ({
-  modal: css`
-    .ant-modal-body {
-      padding-top: 24px !important;
-      padding-bottom: 0 !important;
-    }
-  `,
-  form: css`
-    .ant-form-item-label {
-      display: flex;
-      align-items: start;
-      padding-left: var(--token-paddingSM);
-    }
-    .ant-form-item-control {
-      padding-right: var(--token-paddingSM);
-    }
-    .ant-form-item-label > label::after {
-      display: none !important;
-    }
-  `,
-}));
 interface FolderCreateFormItemsType {
   name: string;
   host: string | undefined;
@@ -114,7 +92,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -218,7 +195,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
   return (
     <BAIModal
       loading={isFetchingAllowedTypes}
-      className={styles.modal}
+      className="folder-create-modal"
       title={t('data.CreateANewStorageFolder')}
       footer={
         <BAIFlex justify="between">
@@ -257,13 +234,20 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
       destroyOnHidden
       {...modalProps}
       afterOpenChange={(open) => {
-        if (open && initialValidate) {
-          formRef.current?.validateFields();
+        if (open) {
+          if (initialValidate) {
+            formRef.current?.validateFields();
+          } else if (mergedInitialValues.type === 'project') {
+            // The project-folder notice is a warningOnly validator on `type`;
+            // antd runs validators only on interaction, so trigger it here or
+            // the notice stays hidden until the user touches the form.
+            formRef.current?.validateFields(['type']);
+          }
         }
       }}
     >
       <Form
-        className={styles.form}
+        className="folder-create-modal-form"
         ref={formRef}
         initialValues={mergedInitialValues}
         labelCol={{ span: 8 }}
@@ -274,9 +258,17 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           required
           hidden={_.includes(hiddenFormItems, 'usage_mode')}
         >
-          <Radio.Group
-            onChange={() => {
-              // Only validate name field if it has a value to prevent excessive validation
+          {/* antd `Radio.Group` + `<Radio>` children → `AstryxFormRadioList`
+              (MAPPING §3.10). PILOT-DECISION: `<Radio>` accepted arbitrary JSX
+              children; `RadioListItem.label` is a plain string with the
+              trailing slot exposed separately, so the composite AutoMount label
+              splits into `label` + `endContent`. The cross-field revalidation
+              antd hung on the group's `onChange` moves to `onValueChange`,
+              because Astryx passes the value, not the event. */}
+          <AstryxFormRadioList
+            label={t('data.UsageMode')}
+            onValueChange={() => {
+              // Only validate name/type fields if they have a value, to prevent excessive validation
               if (formRef.current?.getFieldValue('name')) {
                 formRef.current.validateFields(['name']);
               }
@@ -284,29 +276,42 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                 formRef.current.validateFields(['type']);
               }
             }}
-          >
-            {!_.includes(hiddenFormItems, 'usage_mode_general') && (
-              <Radio value={'general'} data-testid="general-usage-mode">
-                {t('data.General')}
-              </Radio>
-            )}
-            {baiClient._config.enableModelFolders &&
-              !_.includes(hiddenFormItems, 'usage_mode_model') && (
-                <Radio value={'model'} data-testid="model-usage-mode">
-                  {t('data.Models')}
-                </Radio>
-              )}
-            {!_.includes(hiddenFormItems, 'usage_mode_automount') && (
-              <Radio value={'automount'} data-testid="automount-usage-mode">
-                <BAIFlex gap="xxs">
-                  {t('data.AutoMount')}
-                  <QuestionIconWithTooltip
-                    title={t('data.AutomountFolderCreationDesc')}
-                  />
-                </BAIFlex>
-              </Radio>
-            )}
-          </Radio.Group>
+            options={[
+              ...(!_.includes(hiddenFormItems, 'usage_mode_general')
+                ? [
+                    {
+                      value: 'general',
+                      label: t('data.General'),
+                      'data-testid': 'general-usage-mode',
+                    },
+                  ]
+                : []),
+              ...(baiClient._config.enableModelFolders &&
+              !_.includes(hiddenFormItems, 'usage_mode_model')
+                ? [
+                    {
+                      value: 'model',
+                      label: t('data.Models'),
+                      'data-testid': 'model-usage-mode',
+                    },
+                  ]
+                : []),
+              ...(!_.includes(hiddenFormItems, 'usage_mode_automount')
+                ? [
+                    {
+                      value: 'automount',
+                      label: t('data.AutoMount'),
+                      'data-testid': 'automount-usage-mode',
+                      endContent: (
+                        <BAIQuestionIconWithTooltip
+                          title={t('data.AutomountFolderCreationDesc')}
+                        />
+                      ),
+                    },
+                  ]
+                : []),
+            ]}
+          />
         </Form.Item>
         <Divider />
 
@@ -353,7 +358,13 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
             }),
           ]}
         >
-          <Input placeholder={t('maxLength.64chars')} />
+          {/* antd `Input` → `AstryxFormTextInput` (MAPPING §3.6): the adapter
+              coalesces the nullable Form-injected value, hides the duplicate
+              label, and normalises `onChange` to the value. */}
+          <AstryxFormTextInput
+            label={t('data.Foldername')}
+            placeholder={t('maxLength.64chars')}
+          />
         </Form.Item>
         <Divider />
 
@@ -363,7 +374,10 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           required
           hidden={_.includes(hiddenFormItems, 'host')}
         >
-          <Suspense fallback={<Skeleton.Input active />}>
+          {/* antd `Skeleton.Input active` → a single Astryx `Skeleton` box
+              sized to the control height (MAPPING "Also COMPOSITION"); the
+              shimmer is always on, so `active` carries no information. */}
+          <Suspense fallback={<Skeleton height={32} />}>
             <StorageSelect
               onChange={(value) => {
                 formRef.current?.setFieldValue('host', value);
@@ -439,48 +453,58 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                   },
                 ]}
               >
-                <Radio.Group>
-                  {/* Both checks are required:
-                   * - role check (admin/superadmin): Controls permission to create project folders
-                   * - allowedTypes check: Ensures the 'group' type is registered in ETCD
-                   * allowedTypes comes from ETCD and contains all registered types regardless of permissions,
-                   * so we need both checks for proper access control
-                   */}
-                  {_.includes(allowedTypes, 'user') &&
-                    !_.includes(hiddenFormItems, 'type_user') && (
-                      <Radio value={'user'} data-testid="user-type">
-                        {t('data.User')}
-                      </Radio>
-                    )}
-                  {(userRole === 'admin' || userRole === 'superadmin') &&
+                {/* Both checks are required:
+                 * - role check (admin/superadmin): Controls permission to create project folders
+                 * - allowedTypes check: Ensures the 'group' type is registered in ETCD
+                 * allowedTypes comes from ETCD and contains all registered types regardless of permissions,
+                 * so we need both checks for proper access control
+                 */}
+                {/* PILOT-DECISION: antd wrapped the whole (disabled) Project
+                    radio in a Tooltip. Astryx forbids wrapping a disabled
+                    control — the trigger swallows the hover the wrapper needs —
+                    so the warning icon in `endContent` carries the tooltip. */}
+                <AstryxFormRadioList
+                  label={t('data.Type')}
+                  options={[
+                    ...(_.includes(allowedTypes, 'user') &&
+                    !_.includes(hiddenFormItems, 'type_user')
+                      ? [
+                          {
+                            value: 'user',
+                            label: t('data.User'),
+                            'data-testid': 'user-type',
+                          },
+                        ]
+                      : []),
+                    ...((userRole === 'admin' || userRole === 'superadmin') &&
                     _.includes(allowedTypes, 'group') &&
-                    !_.includes(hiddenFormItems, 'type_project') && (
-                      <Radio
-                        value={'project'}
-                        data-testid="project-type"
-                        disabled={shouldDisableProject}
-                      >
-                        <Tooltip
-                          title={
-                            shouldDisableProject
-                              ? usageMode === 'model'
-                                ? t(
-                                    'data.folders.CreateModelFolderOnlyInExclusiveProject',
-                                  )
-                                : t(
-                                    'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
-                                  )
-                              : undefined
-                          }
-                        >
-                          <BAIFlex gap="xxs">
-                            {t('data.Project')}
-                            {shouldDisableProject && <TriangleAlertIcon />}
-                          </BAIFlex>
-                        </Tooltip>
-                      </Radio>
-                    )}
-                </Radio.Group>
+                    !_.includes(hiddenFormItems, 'type_project')
+                      ? [
+                          {
+                            value: 'project',
+                            label: t('data.Project'),
+                            'data-testid': 'project-type',
+                            disabled: shouldDisableProject,
+                            endContent: shouldDisableProject ? (
+                              <BAIIconWithTooltip
+                                content={
+                                  usageMode === 'model'
+                                    ? t(
+                                        'data.folders.CreateModelFolderOnlyInExclusiveProject',
+                                      )
+                                    : t(
+                                        'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
+                                      )
+                                }
+                                focusable={false}
+                                icon={<TriangleAlertIcon />}
+                              />
+                            ) : undefined,
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
               </Form.Item>
             );
           }}
@@ -525,35 +549,39 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                   }),
                 ]}
               >
-                <Radio.Group>
-                  {!_.includes(hiddenFormItems, 'permission_rw') && (
-                    <Radio
-                      value={'rw'}
-                      data-testid="rw-permission"
-                      disabled={shouldDisableRWPermission}
-                    >
-                      <Tooltip
-                        title={
-                          shouldDisableRWPermission
-                            ? t(
-                                'data.folders.ModelProjectFolderRestrictedToReadOnly',
-                              )
-                            : undefined
-                        }
-                      >
-                        <BAIFlex gap="xxs">
-                          {t('data.ReadWrite')}
-                          {shouldDisableRWPermission && <TriangleAlertIcon />}
-                        </BAIFlex>
-                      </Tooltip>
-                    </Radio>
-                  )}
-                  {!_.includes(hiddenFormItems, 'permission_ro') && (
-                    <Radio value={'ro'} data-testid="ro-permission">
-                      {t('data.ReadOnly')}
-                    </Radio>
-                  )}
-                </Radio.Group>
+                <AstryxFormRadioList
+                  label={t('data.Permission')}
+                  options={[
+                    ...(!_.includes(hiddenFormItems, 'permission_rw')
+                      ? [
+                          {
+                            value: 'rw',
+                            label: t('data.ReadWrite'),
+                            'data-testid': 'rw-permission',
+                            disabled: shouldDisableRWPermission,
+                            endContent: shouldDisableRWPermission ? (
+                              <BAIIconWithTooltip
+                                content={t(
+                                  'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                                )}
+                                focusable={false}
+                                icon={<TriangleAlertIcon />}
+                              />
+                            ) : undefined,
+                          },
+                        ]
+                      : []),
+                    ...(!_.includes(hiddenFormItems, 'permission_ro')
+                      ? [
+                          {
+                            value: 'ro',
+                            label: t('data.ReadOnly'),
+                            'data-testid': 'ro-permission',
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
               </Form.Item>
             );
           }}
@@ -570,7 +598,10 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
                     name={'cloneable'}
                     hidden={_.includes(hiddenFormItems, 'cloneable')}
                   >
-                    <Switch defaultChecked={false} />
+                    {/* antd `Switch defaultChecked={false}` → `AstryxFormSwitch`
+                        (MAPPING §4): the Form supplies the value, so the
+                        uncontrolled default is redundant. */}
+                    <AstryxFormSwitch label={t('data.folders.Cloneable')} />
                   </Form.Item>
                 </>
               )

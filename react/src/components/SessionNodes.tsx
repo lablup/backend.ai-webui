@@ -7,25 +7,37 @@ import {
   SessionNodesFragment$key,
 } from '../__generated__/SessionNodesFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useSuspendedAppTemplateConfig } from '../hooks/useAppTemplate';
+import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
+import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
+import SessionAccessKey from './ComputeSessionNodeItems/SessionAccessKey';
+import SessionReclamationStatusCell from './ComputeSessionNodeItems/SessionReclamationStatusCell';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
+import TerminateSessionModal from './ComputeSessionNodeItems/TerminateSessionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIColumnType,
+  BAIFlex,
   BAITable,
   BAITableProps,
   BAISessionAgentIds,
-  BAILink,
+  BAIAppIcon,
+  BAINameActionCell,
   BAISessionTypeTag,
   BAISessionClusterMode,
+  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import React from 'react';
+import * as _ from 'lodash-es';
+import { PowerOffIcon, SettingsIcon } from 'lucide-react';
+import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -56,6 +68,7 @@ interface SessionNodesProps extends Omit<
   sessionsFrgmt: SessionNodesFragment$key;
   onClickSessionName?: (session: SessionNodeInList) => void;
   disableSorter?: boolean;
+  enablePriorityColumn?: boolean;
   onChangeOrder?: (
     order: (typeof availableSessionSorterValues)[number] | null,
   ) => void;
@@ -65,6 +78,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   sessionsFrgmt,
   onClickSessionName,
   disableSorter,
+  enablePriorityColumn,
   onChangeOrder,
   ...tableProps
 }) => {
@@ -72,6 +86,14 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
+  const { hideAppsOnBatchSession } = useSuspendedAppTemplateConfig();
+  const [userInfo] = useCurrentUserInfo();
+  const [terminateTarget, setTerminateTarget] =
+    useState<SessionNodeInList | null>(null);
+  const [appLauncherTarget, setAppLauncherTarget] =
+    useState<SessionNodeInList | null>(null);
+  const [editPriorityTarget, setEditPriorityTarget] =
+    useState<SessionNodeInList | null>(null);
 
   const sessions = useFragment(
     graphql`
@@ -81,15 +103,23 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         name
         status
         type
+        service_ports
+        user_id
         agent_ids
+        priority @since(version: "24.09.0")
         ...SessionStatusTagFragment
         ...SessionReservationFragment
         ...SessionSlotCellFragment
+        ...SessionReclamationStatusCellFragment
         ...SessionUsageMonitorFragment
         ...SessionDetailDrawerFragment
         ...BAISessionAgentIdsFragment
         ...BAISessionTypeTagFragment
         ...BAISessionClusterModeFragment
+        ...AppLauncherModalFragment
+        ...TerminateSessionModalFragment
+        ...EditSessionPriorityModalFragment
+        ...SessionAccessKeyFragment
         kernel_nodes {
           edges {
             node {
@@ -105,6 +135,24 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         owner @since(version: "25.13.0") {
           email
         }
+        dependees {
+          edges {
+            node {
+              row_id
+              name
+            }
+          }
+          count
+        }
+        dependents {
+          edges {
+            node {
+              row_id
+              name
+            }
+          }
+          count
+        }
       }
     `,
     sessionsFrgmt,
@@ -119,17 +167,54 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         title: t('session.SessionName'),
         dataIndex: 'name',
         render: (name: string, session) => {
-          return onClickSessionName ? (
-            <BAILink
-              type="hover"
-              onClick={() => {
-                onClickSessionName(session);
-              }}
-            >
-              {name}
-            </BAILink>
-          ) : (
-            name
+          const isActive =
+            session.type === 'system'
+              ? session.status === 'RUNNING'
+              : !['TERMINATED', 'CANCELLED', 'TERMINATING'].includes(
+                  session.status || '',
+                );
+          const isAppSupported =
+            ['batch', 'interactive', 'inference', 'system', 'running'].includes(
+              session.type || '',
+            ) && !_.isEmpty(JSON.parse(session.service_ports ?? '{}'));
+          const isOwner = userInfo?.uuid === session.user_id;
+          return (
+            <BAINameActionCell
+              title={name}
+              showActions="always"
+              onTitleClick={
+                onClickSessionName
+                  ? () => onClickSessionName(session)
+                  : undefined
+              }
+              actions={filterOutEmpty([
+                session.type !== 'system' &&
+                  !(hideAppsOnBatchSession && session.type === 'batch') && {
+                    key: 'appLauncher',
+                    title: t('session.SeeAppDialog'),
+                    icon: <BAIAppIcon />,
+                    disabled: !isAppSupported || !isActive || !isOwner,
+                    onClick: () => setAppLauncherTarget(session),
+                  },
+                enablePriorityColumn && {
+                  key: 'editPriority',
+                  title: t('button.Settings'),
+                  icon: <SettingsIcon />,
+                  // Priority only orders the pending queue, so it is only
+                  // editable while the session is PENDING.
+                  disabled: session.status !== 'PENDING',
+                  onClick: () => setEditPriorityTarget(session),
+                },
+                {
+                  key: 'terminate',
+                  title: t('session.TerminateSession'),
+                  icon: <PowerOffIcon />,
+                  type: 'danger' as const,
+                  disabled: !isActive,
+                  onClick: () => setTerminateTarget(session),
+                },
+              ])}
+            />
           );
         },
         sorter: isEnableSorter('name'),
@@ -145,23 +230,25 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           return <SessionStatusTag sessionFrgmt={session} />;
         },
       },
-      // This column will be added back when the session list column setting ui is ready
-      // {
-      //   key: 'utils',
-      //   title: t('session.Utilization'),
-      //   render: (__, session) => {
-      //     return (
-      //       <BAIFlex
-      //         style={{
-      //           paddingLeft: token.paddingXS,
-      //         }}
-      //       >
-      //         <SessionUsageMonitor size="small" sessionFrgmt={session} />
-      //       </BAIFlex>
-      //     );
-      //   },
-      //   defaultHidden: true,
-      // },
+      enablePriorityColumn && {
+        key: 'priority',
+        title: t('session.Priority'),
+        dataIndex: 'priority',
+        // Priority only orders the pending queue, so it is only meaningful
+        // while the session is PENDING. Editing goes through the name cell's
+        // action (Settings icon), not this column.
+        render: (priority: number | null, session) =>
+          session.status === 'PENDING' && !_.isNil(priority)
+            ? String(priority)
+            : '-',
+      },
+      {
+        key: 'reclamationStatus',
+        title: t('session.ReclamationStatus'),
+        render: (__, session) => (
+          <SessionReclamationStatusCell sessionFrgmt={session} />
+        ),
+      },
       {
         key: 'accelerator',
         title: t('session.launcher.AIAccelerator'),
@@ -242,12 +329,55 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ),
       },
       {
+        key: 'dependencies',
+        title: t('session.launcher.Dependencies'),
+        defaultHidden: true,
+        render: (__, session) => {
+          const dependeeNodes = session.dependees?.edges
+            ?.map((edge) => edge?.node)
+            .filter(Boolean);
+          const dependentNodes = session.dependents?.edges
+            ?.map((edge) => edge?.node)
+            .filter(Boolean);
+          if (
+            (!dependeeNodes || dependeeNodes.length === 0) &&
+            (!dependentNodes || dependentNodes.length === 0)
+          ) {
+            return '-';
+          }
+          return (
+            <BAIFlex gap="xs" wrap="wrap">
+              {dependeeNodes?.map((node) => (
+                <Tooltip key={node?.row_id} content={t('session.DependsOn')}>
+                  <Badge label={`→ ${node?.name}`} />
+                </Tooltip>
+              ))}
+              {dependentNodes?.map((node) => (
+                <Tooltip
+                  key={node?.row_id}
+                  content={t('session.DependedByOthers')}
+                >
+                  <Badge label={`← ${node?.name}`} />
+                </Tooltip>
+              ))}
+            </BAIFlex>
+          );
+        },
+      },
+      {
         key: 'created_at',
         dataIndex: 'created_at',
         title: t('session.CreatedAt'),
         defaultHidden: true,
         sorter: isEnableSorter('created_at'),
         render: (created_at: string) => dayjs(created_at).format('LLL') || '-',
+      },
+      {
+        key: 'access_key',
+        title: t('general.AccessKey'),
+        defaultHidden: true,
+        exportKey: 'access_key',
+        render: (__, session) => <SessionAccessKey sessionFrgmt={session} />,
       },
       // The method of directly fetching project name is currently not possible through GraphQL's query. Until backend work is completed, id will be displayed.
       {
@@ -283,12 +413,12 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
   return (
     <>
       <BAITable
+        scroll={{ x: 'max-content' }}
         resizable
         rowKey={'id'}
         size="small"
         dataSource={filteredSessions}
         columns={columns}
-        scroll={{ x: 'max-content' }}
         onChangeOrder={(order) => {
           onChangeOrder?.(
             (order as (typeof availableSessionSorterValues)[number]) || null,
@@ -296,6 +426,27 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         }}
         {...tableProps}
       />
+      <Suspense fallback={null}>
+        <BAIUnmountAfterClose>
+          <AppLauncherModal
+            sessionFrgmt={appLauncherTarget}
+            open={!!appLauncherTarget}
+            onRequestClose={() => setAppLauncherTarget(null)}
+          />
+        </BAIUnmountAfterClose>
+      </Suspense>
+      <TerminateSessionModal
+        sessionFrgmts={terminateTarget ? [terminateTarget] : []}
+        open={!!terminateTarget}
+        onRequestClose={() => setTerminateTarget(null)}
+      />
+      <BAIUnmountAfterClose>
+        <EditSessionPriorityModal
+          sessionFrgmts={editPriorityTarget ? [editPriorityTarget] : null}
+          open={!!editPriorityTarget}
+          onRequestClose={() => setEditPriorityTarget(null)}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

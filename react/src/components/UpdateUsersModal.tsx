@@ -2,32 +2,36 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  UpdateUsersModalBulkUpdateMutation,
+  UserStatusV2,
+} from '../__generated__/UpdateUsersModalBulkUpdateMutation.graphql';
+import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalFragment.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import { App, Form, InputNumber, theme } from 'antd';
-import { FormInstance } from 'antd/lib';
 import {
-  BAIAlert,
+  AstryxFormNumberInput,
+  AstryxFormTagsInput,
+} from './astryxFormControls';
+import {
   BAIDomainSelect,
   BAIFlex,
+  BAIListAlert,
   BAIModal,
   BAIModalProps,
   BAISelect,
+  toLocalId,
   useBAILogger,
-  useErrorMessageResolver,
-  useMutationWithPromise,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
-import { PayloadError } from 'relay-runtime';
-import { UpdateUsersModalFragment$key } from 'src/__generated__/UpdateUsersModalFragment.graphql';
-import {
-  ModifyUserInput,
-  UpdateUsersModalMutation,
-} from 'src/__generated__/UpdateUsersModalMutation.graphql';
-import { SIGNED_32BIT_MAX_INT } from 'src/helper/const-vars';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface UpdateUsersFormValues {
   domain_name?: string;
@@ -39,45 +43,57 @@ interface UpdateUsersFormValues {
   container_gids?: string[];
 }
 
+// Maps the form's v1 status strings to the v2 UserStatusV2 enum.
+const statusToV2: Record<
+  NonNullable<UpdateUsersFormValues['status']>,
+  UserStatusV2
+> = {
+  active: 'ACTIVE',
+  inactive: 'INACTIVE',
+  'before-verification': 'BEFORE_VERIFICATION',
+  deleted: 'DELETED',
+};
+
 export interface UpdateUsersModalProps extends Omit<BAIModalProps, 'title'> {
-  userFrgmt: UpdateUsersModalFragment$key;
+  usersFrgmt: UpdateUsersModalFragment$key;
 }
 
 const UpdateUsersModal = ({
-  userFrgmt,
+  usersFrgmt,
   ...modalProps
 }: UpdateUsersModalProps) => {
   'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<UpdateUsersFormValues>>(null);
   const [isPending, setIsPending] = useState(false);
-  const { token } = theme.useToken();
-  const { t } = useTranslation();
-  const { message } = App.useApp();
-  const { getErrorMessage } = useErrorMessageResolver();
-  const { logger } = useBAILogger();
-
-  const users = useFragment<UpdateUsersModalFragment$key>(
+  const users = useFragment(
     graphql`
-      fragment UpdateUsersModalFragment on UserNode @relay(plural: true) {
+      fragment UpdateUsersModalFragment on UserV2 @relay(plural: true) {
         id
-        email
-        username
-        full_name
+        basicInfo {
+          email
+        }
       }
     `,
-    userFrgmt,
+    usersFrgmt,
   );
-
-  // TODO: when backend supports batch update, change to batch mutation
-  const mutateUpdateUsersWithPromise =
-    useMutationWithPromise<UpdateUsersModalMutation>(graphql`
-      mutation UpdateUsersModalMutation(
-        $email: String!
-        $props: ModifyUserInput!
+  // >= 26.4.0: adminBulkUpdateUsersV2 — single round-trip, keyed by userId.
+  const [commitBulkUpdate, isInFlightBulkUpdate] =
+    useMutation<UpdateUsersModalBulkUpdateMutation>(graphql`
+      mutation UpdateUsersModalBulkUpdateMutation(
+        $input: BulkUpdateUserV2Input!
       ) {
-        modify_user(email: $email, props: $props) {
-          ok
-          msg
+        adminBulkUpdateUsersV2(input: $input) {
+          updatedUsers {
+            id
+          }
+          failed {
+            userId
+            message
+          }
         }
       }
     `);
@@ -85,79 +101,82 @@ const UpdateUsersModal = ({
   return (
     <BAIModal
       title={t('credential.UpdateUsers')}
-      okText={t('button.Update')}
-      confirmLoading={isPending}
+      okText={t('button.Save')}
+      confirmLoading={isPending || isInFlightBulkUpdate}
       {...modalProps}
+      okButtonProps={{
+        ...modalProps.okButtonProps,
+        disabled: users.length === 0,
+      }}
       onOk={(e) => {
         formRef.current
           ?.validateFields()
           .then((values) => {
             setIsPending(true);
-            const userList = _.compact(users);
 
-            // Build props with type safety and remove empty values
-            const props = _.omitBy(
+            // v2: same field-inclusion rules as the legacy path, but with
+            // camelCase keys and the UserStatusV2 enum.
+            const input = _.omitBy(
               {
-                domain_name: values.domain_name,
-                group_ids: values.group_ids,
-                status: values.status,
-                resource_policy: values.resource_policy,
-                container_uid: values.container_uid,
-                container_main_gid: values.container_main_gid,
-                container_gids: !_.isEmpty(values.container_gids)
+                domainName: values.domain_name,
+                groupIds: values.group_ids,
+                status: values.status ? statusToV2[values.status] : undefined,
+                resourcePolicy: values.resource_policy,
+                containerUid: values.container_uid,
+                containerMainGid: values.container_main_gid,
+                containerGids: !_.isEmpty(values.container_gids)
                   ? _.map(values.container_gids, (gid) => _.toNumber(gid))
                   : undefined,
-              } satisfies ModifyUserInput,
-              (value) => _.isNil(value) || value === '' || _.isEmpty(value),
+              },
+              (value) =>
+                _.isNil(value) ||
+                value === '' ||
+                (!_.isNumber(value) && _.isEmpty(value)),
             );
 
-            const promises = userList.map((user) =>
-              mutateUpdateUsersWithPromise({
-                email: user.email || '',
-                props,
-              }).catch((error) => Promise.reject({ user, error })),
-            );
-            Promise.allSettled(promises)
-              .then((results) => {
-                const fulfilled = results.filter(
-                  (r) => r.status === 'fulfilled',
-                );
-                const rejected = results.filter((r) => r.status === 'rejected');
+            commitBulkUpdate({
+              variables: {
+                input: {
+                  users: users.map((user) => ({
+                    userId: toLocalId(user.id),
+                    input,
+                  })),
+                },
+              },
+              onCompleted: (res, errors) => {
+                if (errors && errors.length > 0) {
+                  message.error(errors.map((err) => err.message).join(', '));
+                  setIsPending(false);
+                  return;
+                }
+                const adminBulkUpdateUsersV2 = res.adminBulkUpdateUsersV2;
+                if (!adminBulkUpdateUsersV2) {
+                  message.error(t('error.UnknownError'));
+                  setIsPending(false);
+                  return;
+                }
+                const { updatedUsers, failed } = adminBulkUpdateUsersV2;
 
-                if (rejected.length > 0) {
-                  const failedUserNames = rejected
-                    .map((r) => {
-                      const reason = r.reason;
-                      return reason.user.email || t('credential.WrongEmail');
-                    })
-                    .join(', ');
-
-                  failedUserNames &&
-                    message.error(
-                      t('credential.FailedToUpdateUsers', {
-                        users: failedUserNames,
-                      }),
-                    );
-                  const error =
-                    rejected[0]?.reason?.error?.length > 0 &&
-                    rejected[0].reason.error[0];
-                  error &&
-                    message.error(getErrorMessage(error as PayloadError));
+                if (failed.length > 0) {
+                  message.error(failed.map((f) => f.message).join(', '));
                 }
 
-                if (fulfilled.length > 0) {
+                if (updatedUsers.length > 0) {
                   message.success(
                     t('credential.UpdatedUsers', {
-                      count: fulfilled.length,
-                      total: userList.length,
+                      count: updatedUsers.length,
+                      total: users.length,
                     }),
                   );
                   modalProps.onOk?.(e);
                 }
-              })
-              .finally(() => {
                 setIsPending(false);
-              });
+              },
+              onError: (error) => {
+                message.error(error.message);
+                setIsPending(false);
+              },
+            });
           })
           .catch((error) => {
             logger.error('Validation failed:', error);
@@ -165,79 +184,72 @@ const UpdateUsersModal = ({
       }}
     >
       <BAIFlex direction="column" align="stretch">
-        <BAIAlert
+        <BAIListAlert
           type="warning"
           showIcon
           title={t('credential.UpdateUsersWarningAlertTitle')}
-          description={
-            <ul
-              style={{
-                margin: 0,
-                padding: 0,
-                paddingTop: token.paddingXXS,
-                listStyle: 'circle',
-                listStylePosition: 'inside',
-                maxHeight: 165,
-                overflowY: 'auto',
-              }}
-            >
-              {_.map(users, (user) => (
-                <li key={user.id}>{user.email}</li>
-              ))}
-            </ul>
-          }
+          items={_.map(users, (user) => ({
+            key: user.id,
+            content: user.basicInfo.email,
+          }))}
           style={{ marginBottom: token.marginSM }}
         />
         {/* TODO: We need to create a Form.Item component that can distinguish between keeping the default value and clearing the value. */}
         <Form ref={formRef} layout="vertical" preserve={false}>
           <Suspense
             fallback={
-              <Form.Item label={t('credential.Domain')}>
+              <BAIFormItem label={t('credential.Domain')}>
                 <BAISelect loading />
-              </Form.Item>
+              </BAIFormItem>
             }
           >
-            <Form.Item name="domain_name" label={t('credential.Domain')}>
+            <BAIFormItem name="domain_name" label={t('credential.Domain')}>
               <BAIDomainSelect
                 onChange={() => {
                   formRef.current?.setFieldValue('group_ids', []);
                 }}
                 allowClear
               />
-            </Form.Item>
+            </BAIFormItem>
           </Suspense>
           <Suspense
             fallback={
-              <Form.Item label={t('credential.Projects')}>
+              <BAIFormItem label={t('credential.Projects')}>
                 <BAISelect loading />
-              </Form.Item>
+              </BAIFormItem>
             }
           >
-            <Form.Item noStyle dependencies={['domain_name']}>
-              {({ getFieldValue }) => (
-                <Form.Item
-                  name="group_ids"
-                  label={t('credential.Projects')}
-                  validateStatus={
-                    !getFieldValue('domain_name') ? 'warning' : undefined
-                  }
-                  help={
-                    !getFieldValue('domain_name')
-                      ? t('credential.validation.PleaseSelectDomain')
-                      : undefined
-                  }
-                >
-                  <ProjectSelect
-                    mode="multiple"
-                    domain={getFieldValue('domain_name')}
-                    disableDefaultFilter
-                    disabled={!getFieldValue('domain_name')}
-                  />
-                </Form.Item>
-              )}
-            </Form.Item>
+            <BAIFormItem noStyle dependencies={['domain_name']}>
+              {(form) => {
+                // BAIFormItem render-prop children receive `unknown` (antd
+                // typed this as FormInstance); narrow it back.
+                const { getFieldValue } =
+                  form as FormInstance<UpdateUsersFormValues>;
+                return (
+                  <BAIFormItem
+                    name="group_ids"
+                    label={t('credential.Projects')}
+                    validateStatus={
+                      !getFieldValue('domain_name') ? 'warning' : undefined
+                    }
+                    help={
+                      !getFieldValue('domain_name')
+                        ? t('credential.validation.PleaseSelectDomain')
+                        : undefined
+                    }
+                  >
+                    <ProjectSelect
+                      mode="multiple"
+                      domain={getFieldValue('domain_name')}
+                      disableDefaultFilter
+                      disabled={!getFieldValue('domain_name')}
+                    />
+                  </BAIFormItem>
+                );
+              }}
+            </BAIFormItem>
           </Suspense>
-          <Form.Item name="status" label={t('credential.UserStatus')}>
+          <BAIFormItem name="status" label={t('credential.UserStatus')}>
             <BAISelect
               options={[
                 {
@@ -249,31 +261,31 @@ const UpdateUsersModal = ({
                   label: t('general.Inactive'),
                 },
                 {
+                  value: 'deleted',
+                  label: t('credential.InactiveIncludeKeypair'),
+                },
+                {
                   value: 'before-verification',
                   label: t('credential.BeforeVerification'),
                 },
-                {
-                  value: 'deleted',
-                  label: t('credential.Deleted'),
-                },
               ]}
             />
-          </Form.Item>
+          </BAIFormItem>
           <Suspense
             fallback={
-              <Form.Item label={t('resourcePolicy.ResourcePolicy')}>
+              <BAIFormItem label={t('resourcePolicy.ResourcePolicy')}>
                 <BAISelect loading />
-              </Form.Item>
+              </BAIFormItem>
             }
           >
-            <Form.Item
+            <BAIFormItem
               name="resource_policy"
               label={t('resourcePolicy.ResourcePolicy')}
             >
               <UserResourcePolicySelect allowClear />
-            </Form.Item>
+            </BAIFormItem>
           </Suspense>
-          <Form.Item
+          <BAIFormItem
             name="container_uid"
             label={t('credential.ContainerUID')}
             tooltip={t('credential.ContainerUIDTooltip')}
@@ -285,13 +297,13 @@ const UpdateUsersModal = ({
               },
             ]}
           >
-            <InputNumber
-              style={{ width: '100%' }}
+            <AstryxFormNumberInput
+              label={t('credential.ContainerUID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </Form.Item>
-          <Form.Item
+          </BAIFormItem>
+          <BAIFormItem
             name="container_main_gid"
             label={t('credential.ContainerGID')}
             tooltip={t('credential.ContainerGIDTooltip')}
@@ -303,13 +315,13 @@ const UpdateUsersModal = ({
               },
             ]}
           >
-            <InputNumber
-              style={{ width: '100%' }}
+            <AstryxFormNumberInput
+              label={t('credential.ContainerGID')}
               max={SIGNED_32BIT_MAX_INT}
               min={1}
             />
-          </Form.Item>
-          <Form.Item
+          </BAIFormItem>
+          <BAIFormItem
             name="container_gids"
             label={t('credential.ContainerSupplementaryGIDs')}
             tooltip={t('credential.ContainerSupplementaryGIDsTooltip')}
@@ -370,16 +382,14 @@ const UpdateUsersModal = ({
               }),
             ]}
           >
-            <BAISelect
-              mode="tags"
+            <AstryxFormTagsInput
               tokenSeparators={[',', ' ']}
-              open={false}
-              suffixIcon={null}
+              label={t('credential.ContainerSupplementaryGIDs')}
               placeholder={t(
                 'credential.ContainerSupplementaryGIDsPlaceholder',
               )}
             />
-          </Form.Item>
+          </BAIFormItem>
         </Form>
       </BAIFlex>
     </BAIModal>

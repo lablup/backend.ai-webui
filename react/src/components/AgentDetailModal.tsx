@@ -7,16 +7,19 @@ import {
   convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { Col, Row, theme, Typography } from 'antd';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import { theme } from '../theme-shim';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Heading } from '@astryxdesign/core/Heading';
+import { Text } from '@astryxdesign/core/Text';
 import {
-  useResourceSlotsDetails,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAIProgressWithLabel,
   convertToBinaryUnit,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -40,6 +43,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -67,40 +71,41 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
       footer={null}
     >
       <BAIFlex direction="column" align="stretch" gap={'md'}>
-        <Row gutter={[24, 24]}>
+        {/* antd Row gutter={[24,24]} + Col xs={24} sm={12} (uniform 2-up from
+            576px) → Grid columns={{minWidth:280, max:2}} gap={6}
+            (RESPONSIVE-POLICY R1; 24px gutter = step 6). */}
+        <Grid columns={{ minWidth: 280, max: 2 }} gap={6}>
           {parsedLiveStat?.devices?.cpu_util ? (
-            <Col xs={24} sm={12}>
-              <BAIFlex direction="column" gap="xxs" align="stretch">
-                <Typography.Title level={5} style={{ marginTop: 0 }}>
-                  {mergedResourceSlots?.cpu?.human_readable_name}
-                </Typography.Title>
-                {_.map(parsedLiveStat?.devices?.cpu_util, (value, key) => (
-                  <BAIFlex justify="between">
-                    <Typography.Text
-                      key={key}
-                      type="secondary"
-                      style={{ flex: 0.5 }}
-                    >
-                      {mergedResourceSlots?.cpu?.human_readable_name}
-                      {key}
-                    </Typography.Text>
-                    <BAIProgressWithLabel
-                      percent={value?.pct}
-                      valueLabel={
-                        toFixedFloorWithoutTrailingZeros(value?.pct, 1) + '%'
-                      }
-                    />
-                  </BAIFlex>
-                ))}
-              </BAIFlex>
-            </Col>
+            <BAIFlex direction="column" gap="xxs" align="stretch">
+              {/* antd Title level={5} = 16px → `Heading level={5}` (every
+                  level here is a visual decision, not a rename — MAPPING §4;
+                  the restored antd type ramp puts 16px on heading-5, where
+                  Astryx's own ramp had put 17px on heading-3). */}
+              <Heading level={5}>
+                {mergedResourceSlots?.cpu?.human_readable_name}
+              </Heading>
+              {_.map(parsedLiveStat?.devices?.cpu_util, (value, key) => (
+                <BAIFlex key={key} justify="between">
+                  <Text color="secondary" style={{ flex: 0.5 }}>
+                    {mergedResourceSlots?.cpu?.human_readable_name}
+                    {key}
+                  </Text>
+                  <BAIProgressWithLabel
+                    percent={value?.pct}
+                    valueLabel={
+                      toFixedFloorWithoutTrailingZeros(value?.pct, 1) + '%'
+                    }
+                  />
+                </BAIFlex>
+              ))}
+            </BAIFlex>
           ) : null}
-          <Col xs={24} sm={12}>
+          <BAIFlex direction="column" gap="sm" align="stretch">
             {parsedAvailableSlots?.mem ? (
               <BAIFlex direction="column" gap="xxs" align="stretch">
-                <Typography.Title level={5} style={{ marginTop: 0 }}>
+                <Heading level={5}>
                   {mergedResourceSlots?.mem?.human_readable_name}
-                </Typography.Title>
+                </Heading>
                 <BAIProgressWithLabel
                   percent={parsedLiveStat?.node?.mem?.pct || 0}
                   valueLabel={`${
@@ -114,12 +119,10 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
             ) : null}
             {parsedLiveStat?.node ? (
               <BAIFlex direction="column" gap="xxs" align="start">
-                <Typography.Title level={5} style={{ marginTop: 0 }}>
-                  {t('session.launcher.Network')}
-                </Typography.Title>
+                <Heading level={5}>{t('session.launcher.Network')}</Heading>
                 <BAIFlex gap="xl">
-                  <Typography.Text>TX:</Typography.Text>
-                  <Typography.Text>
+                  <Text>TX:</Text>
+                  <Text>
                     {
                       convertToDecimalUnit(
                         parsedLiveStat?.node?.net_tx?.current,
@@ -128,11 +131,11 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                       )?.displayValue
                     }
                     B
-                  </Typography.Text>
+                  </Text>
                 </BAIFlex>
                 <BAIFlex gap="xl">
-                  <Typography.Text>RX:</Typography.Text>
-                  <Typography.Text>
+                  <Text>RX:</Text>
+                  <Text>
                     {
                       convertToDecimalUnit(
                         parsedLiveStat?.node?.net_rx?.current,
@@ -141,97 +144,91 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
                       )?.displayValue
                     }
                     B
-                  </Typography.Text>
+                  </Text>
                 </BAIFlex>
               </BAIFlex>
             ) : null}
-          </Col>
-        </Row>
-        <Row gutter={[24, 24]} style={{ marginBottom: token.marginSM }}>
+          </BAIFlex>
+        </Grid>
+        <Grid
+          columns={{ minWidth: 280, max: 2 }}
+          gap={6}
+          style={{ marginBottom: token.marginSM }}
+        >
           {_.map(_.keys(parsedLiveStat?.devices), (key) => {
             if (['cpu_util', 'mem', 'disk', 'net_rx', 'net_tx'].includes(key)) {
               return null;
             } else if (_.includes(key, '_util')) {
-              const deviceName = _.split(key, '_')[0] + '.device';
+              const deviceName =
+                _.split(key, '_').slice(0, -1).join('-') + '.device';
               return (
-                <Col xs={24} sm={12}>
-                  <BAIFlex direction="column" gap="xxs" align="stretch">
-                    <Typography.Title level={5} style={{ marginTop: 0 }}>
-                      {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
-                      {t('session.Utilization')}
-                    </Typography.Title>
-                    {_.map(
-                      _.toPairs(parsedLiveStat?.devices[key]),
-                      (value, index) => (
-                        <BAIFlex justify="between">
-                          <Typography.Text
-                            key={index}
-                            type="secondary"
-                            style={{ flex: 0.5 }}
-                          >
-                            {
-                              mergedResourceSlots?.[deviceName]
-                                ?.human_readable_name
-                            }
-                            {index}
-                          </Typography.Text>
-                          <BAIProgressWithLabel
-                            percent={_.toFinite((value?.[1] as LiveStat)?.pct)}
-                            valueLabel={
-                              toFixedFloorWithoutTrailingZeros(
-                                (value?.[1] as LiveStat)?.pct,
-                                1,
-                              ) + '%'
-                            }
-                          />
-                        </BAIFlex>
-                      ),
-                    )}
-                  </BAIFlex>
-                </Col>
+                <BAIFlex key={key} direction="column" gap="xxs" align="stretch">
+                  <Heading level={5}>
+                    {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
+                    {t('session.Utilization')}
+                  </Heading>
+                  {_.map(
+                    _.toPairs(parsedLiveStat?.devices[key]),
+                    (value, index) => (
+                      <BAIFlex key={index} justify="between">
+                        <Text color="secondary" style={{ flex: 0.5 }}>
+                          {
+                            mergedResourceSlots?.[deviceName]
+                              ?.human_readable_name
+                          }
+                          {index}
+                        </Text>
+                        <BAIProgressWithLabel
+                          percent={_.toFinite((value?.[1] as LiveStat)?.pct)}
+                          valueLabel={
+                            toFixedFloorWithoutTrailingZeros(
+                              (value?.[1] as LiveStat)?.pct,
+                              1,
+                            ) + '%'
+                          }
+                        />
+                      </BAIFlex>
+                    ),
+                  )}
+                </BAIFlex>
               );
             } else if (_.includes(key, '_mem')) {
-              const deviceName = _.split(key, '_')[0] + '.device';
+              const deviceName =
+                _.split(key, '_').slice(0, -1).join('-') + '.device';
               return (
-                <Col xs={24} sm={12}>
-                  <BAIFlex direction="column" gap="xxs" align="stretch">
-                    <Typography.Title level={5} style={{ marginTop: 0 }}>
-                      {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
-                      {t('session.launcher.Memory')}
-                    </Typography.Title>
-                    {_.map(
-                      _.toPairs(parsedLiveStat?.devices[key]),
-                      (value, index) => (
-                        <BAIFlex justify="between">
-                          <Typography.Text
-                            key={index}
-                            type="secondary"
-                            style={{ flex: 0.5 }}
-                          >
-                            {
-                              mergedResourceSlots?.[deviceName]
-                                ?.human_readable_name
-                            }
-                            {index}
-                          </Typography.Text>
-                          <BAIProgressWithLabel
-                            percent={_.toFinite((value?.[1] as LiveStat)?.pct)}
-                            valueLabel={
-                              toFixedFloorWithoutTrailingZeros(
-                                (value?.[1] as LiveStat)?.pct,
-                                1,
-                              ) + '%'
-                            }
-                          />
-                        </BAIFlex>
-                      ),
-                    )}
-                  </BAIFlex>
-                </Col>
+                <BAIFlex key={key} direction="column" gap="xxs" align="stretch">
+                  <Heading level={5}>
+                    {mergedResourceSlots?.[deviceName]?.human_readable_name}{' '}
+                    {t('session.launcher.Memory')}
+                  </Heading>
+                  {_.map(
+                    _.toPairs(parsedLiveStat?.devices[key]),
+                    (value, index) => (
+                      <BAIFlex key={index} justify="between">
+                        <Text color="secondary" style={{ flex: 0.5 }}>
+                          {
+                            mergedResourceSlots?.[deviceName]
+                              ?.human_readable_name
+                          }
+                          {index}
+                        </Text>
+                        <BAIProgressWithLabel
+                          percent={_.toFinite((value?.[1] as LiveStat)?.pct)}
+                          valueLabel={
+                            toFixedFloorWithoutTrailingZeros(
+                              (value?.[1] as LiveStat)?.pct,
+                              1,
+                            ) + '%'
+                          }
+                        />
+                      </BAIFlex>
+                    ),
+                  )}
+                </BAIFlex>
               );
             }
           })}
-        </Row>
+        </Grid>
       </BAIFlex>
     </BAIModal>
   );

@@ -3,6 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AdminDashboardPageQuery } from '../__generated__/AdminDashboardPageQuery.graphql';
+import ActiveAgents from '../components/ActiveAgents';
+import AgentStats from '../components/AgentStats';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
 import RecentlyCreatedSession from '../components/RecentlyCreatedSession';
 import SessionCountDashboardItem from '../components/SessionCountDashboardItem';
@@ -10,25 +12,25 @@ import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from '../components/TotalResourceWithinResourceGroup';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { Skeleton, theme } from 'antd';
+import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import {
+  BAISkeleton,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   useFetchKey,
   useInterval,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import ActiveAgents from 'src/components/ActiveAgents';
-import AgentStats from 'src/components/AgentStats';
-import { useCurrentUserRole } from 'src/hooks/backendai';
 
 const AdminDashboardPage: React.FC = () => {
   const { token } = theme.useToken();
@@ -108,7 +110,7 @@ const AdminDashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
             }
           >
             <SessionCountDashboardItem
@@ -150,10 +152,7 @@ const AdminDashboardPage: React.FC = () => {
           content: (
             <Suspense
               fallback={
-                <Skeleton
-                  active
-                  style={{ padding: `0px ${token.marginMD}px` }}
-                />
+                <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
               }
             >
               <AgentStats
@@ -176,7 +175,7 @@ const AdminDashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
             }
           >
             <ActiveAgents
@@ -200,6 +199,11 @@ const AdminDashboardPage: React.FC = () => {
           <RecentlyCreatedSession
             queryRef={queryRef}
             isRefetching={isPendingIntervalRefetch}
+            // /admin-dashboard is out of FR-3407 scope (page is unused) and
+            // its session list is still ambient-project-scoped (`scopeId`
+            // above) — keep the exact current behavior by passing the
+            // narrowed ambient project (ADR-0001 page-level narrowing).
+            project={toProjectContext(currentProject)}
           />
         ),
       },

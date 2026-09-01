@@ -1,28 +1,13 @@
-import { useSuspenseTanQuery } from '../helper/reactQueryAlias';
-import { useBAISignedRequestWithPromise, useUpdatableState } from '../hooks';
+import { useControllableValue, useProjectResourceGroups } from '../hooks';
 import BAISelect, { BAISelectProps } from './BAISelect';
 import BAITextHighlighter from './BAITextHighlighter';
-import { useControllableValue } from 'ahooks';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useEffect, useState, useTransition } from 'react';
-
-interface ScalingGroupItem {
-  name: string;
-}
-
-interface VolumeInfo {
-  backend: string;
-  capabilities: string[];
-  usage: {
-    percentage: number;
-  };
-  sftp_scaling_groups?: string[];
-}
 
 interface BAIProjectResourceGroupSelectProps extends BAISelectProps {
   projectName: string;
   autoSelectDefault?: boolean;
-  filter?: (projectName: string) => boolean;
+  filter?: (resourceGroupName: string) => boolean;
 }
 
 const BAIProjectResourceGroupSelect: React.FC<
@@ -35,8 +20,6 @@ const BAIProjectResourceGroupSelect: React.FC<
   loading,
   ...selectProps
 }) => {
-  const baiRequestWithPromise = useBAISignedRequestWithPromise();
-  const [fetchKey] = useUpdatableState('first');
   const [controllableSearchValue, setControllableSearchValue] =
     useControllableValue<string>({
       value:
@@ -60,64 +43,18 @@ const BAIProjectResourceGroupSelect: React.FC<
     [startChangeTransition, setControllableValueDoNotUseWithoutTransition],
   );
 
-  const { data: resourceGroupSelectQueryResult } = useSuspenseTanQuery<
-    | [
-        {
-          scaling_groups: ScalingGroupItem[];
-        },
-        {
-          allowed: string[];
-          default: string;
-          volume_info: {
-            [key: string]: VolumeInfo;
-          };
-        },
-      ]
-    | null
-  >({
-    queryKey: ['ResourceGroupSelectQuery', projectName],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      search.set('group', projectName);
-      return Promise.all([
-        baiRequestWithPromise({
-          method: 'GET',
-          url: `/scaling-groups?${search.toString()}`,
-        }),
-        baiRequestWithPromise({
-          method: 'GET',
-          url: `/folders/_/hosts`,
-        }),
-      ]);
-    },
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    fetchKey: fetchKey,
-  });
+  const { resourceGroups } = useProjectResourceGroups(projectName, { filter });
 
-  const sftpResourceGroups = _.flatMap(
-    resourceGroupSelectQueryResult?.[1]?.volume_info,
-    (item) => item?.sftp_scaling_groups ?? [],
-  );
-
-  const resourceGroups = _.filter(
-    resourceGroupSelectQueryResult?.[0]?.scaling_groups,
-    (item: ScalingGroupItem) => {
-      if (_.includes(sftpResourceGroups, item.name)) {
-        return false;
-      }
-      if (filter) {
-        return filter(item.name);
-      }
-      return true;
-    },
-  );
-
-  // If the current selected value is not in the resourceGroups, reset the value to undefined
+  // If the loaded resource group list does not contain the current value, reset to undefined.
+  // Guard on resourceGroups.length > 0 so we don't wipe a pre-filled value while the list
+  // is still loading — an empty list means "not yet fetched", not "no valid groups".
   useEffect(() => {
     if (
       controllableValue &&
+      resourceGroups.length > 0 &&
       !_.some(resourceGroups, (item) => item.name === controllableValue)
     ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- transition-wrapped parent sync; can't run during render, no user event to move into
       setControllableValueWithTransition(undefined);
     }
   }, [resourceGroups, controllableValue, setControllableValueWithTransition]);
@@ -134,18 +71,18 @@ const BAIProjectResourceGroupSelect: React.FC<
     : undefined;
 
   useEffect(() => {
-    if (
-      autoSelectDefault &&
-      autoSelectedOption &&
-      autoSelectedOption.value !== selectProps.value
-    ) {
+    if (autoSelectDefault && autoSelectedOption && !controllableValue) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- transition-wrapped auto-select; can't run during render, no user event to move into
       setControllableValueWithTransition(
         autoSelectedOption.value,
         autoSelectedOption,
       );
     }
+    // controllableValue is intentionally excluded from deps — we only want
+    // to fire when the available options first appear (autoSelectedOption?.value
+    // transitions from undefined→name), not on every selection change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoSelectDefault]);
+  }, [autoSelectDefault, autoSelectedOption?.value]);
 
   return (
     <BAISelect

@@ -1,5 +1,6 @@
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIFlex from './BAIFlex';
+import { Switch } from '@astryxdesign/core/Switch';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -23,10 +24,13 @@ A refresh button that manages fetch keys for data refetching with auto-update ca
 | \`loading\` | \`boolean\` | \`false\` | Loading state of the data fetch |
 | \`lastLoadTime\` | \`Date\` | \`undefined\` | Timestamp of the last successful load |
 | \`showLastLoadTime\` | \`boolean\` | \`false\` | Shows "Last updated: X ago" in tooltip |
-| \`autoUpdateDelay\` | \`number \\| null\` | \`null\` | Auto-refresh interval in milliseconds |
+| \`autoUpdateDelay\` | \`number \\| null\` | \`null\` | Auto-refresh interval in ms (controllable); \`null\` = Off |
 | \`onChange\` | \`(fetchKey: string) => void\` | - | Callback fired when fetch key updates |
 | \`hidden\` | \`boolean\` | \`false\` | Hides the button completely |
 | \`pauseWhenHidden\` | \`boolean\` | \`true\` | Pauses auto-update when button is hidden |
+| \`onChangeAutoUpdateDelay\` | \`(delayMs: number \\| null) => void\` | - | Fired when the user picks an interval; **providing it shows the dropdown** |
+| \`autoUpdateDelayOptions\` | \`number[]\` | \`[5000, 10000, 15000, 30000, 60000]\` | Interval presets (ms); "Off" is auto-prepended |
+| \`showCountdownBorder\` | \`boolean\` | \`true\` | Show the animated countdown border while auto-refresh is on |
 
 For all other props, refer to [Ant Design Button](https://ant.design/components/button).
         `,
@@ -67,7 +71,8 @@ For all other props, refer to [Ant Design Button](https://ant.design/components/
     },
     autoUpdateDelay: {
       control: { type: 'number' },
-      description: 'Auto-refresh interval in milliseconds, null to disable',
+      description:
+        'Auto-refresh interval in ms (controllable); null disables (Off)',
       table: {
         type: { summary: 'number | null' },
         defaultValue: { summary: 'null' },
@@ -91,6 +96,32 @@ For all other props, refer to [Ant Design Button](https://ant.design/components/
     pauseWhenHidden: {
       control: { type: 'boolean' },
       description: 'When true, pauses auto-update when button is hidden',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'true' },
+      },
+    },
+    onChangeAutoUpdateDelay: {
+      action: 'onChangeAutoUpdateDelay',
+      description:
+        'Fired when the user selects an interval or "Off"; providing it shows the dropdown',
+      table: {
+        type: { summary: '(delayMs: number | null) => void' },
+      },
+    },
+    autoUpdateDelayOptions: {
+      control: { type: 'object' },
+      description:
+        'Interval presets in ms; "Off" is auto-prepended by the component',
+      table: {
+        type: { summary: 'number[]' },
+        defaultValue: { summary: '[5000, 10000, 15000, 30000, 60000]' },
+      },
+    },
+    showCountdownBorder: {
+      control: { type: 'boolean' },
+      description:
+        'Show the animated countdown border that fills the control while auto-refresh is on',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'true' },
@@ -204,6 +235,251 @@ export const AutoUpdate: Story = {
             showLastLoadTime={true}
           />
         </BAIFlex>
+      </BAIFlex>
+    );
+  },
+};
+
+export const IntervalDropdown: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Providing `onChangeAutoUpdateDelay` opts the button into the interval dropdown: a chevron trigger next to the refresh button lets the user pick an auto-refresh interval or turn it off. Auto-refresh is off by default; once an interval is selected it shows as a label (e.g. "15s") on the dropdown trigger button.',
+      },
+    },
+  },
+  render: () => {
+    const [fetchKey, setFetchKey] = useState(new Date().toISOString());
+    const [loading, setLoading] = useState(false);
+    const [delay, setDelay] = useState<number | null>(null);
+    const [counter, setCounter] = useState(0);
+
+    const handleChange = (newKey: string) => {
+      setLoading(true);
+      setFetchKey(newKey);
+      setCounter((prev) => prev + 1);
+      // Simulate API call
+      setTimeout(() => {
+        setLoading(false);
+      }, 800);
+    };
+
+    return (
+      <BAIFlex direction="column" gap="md" align="start">
+        <BAIFlex gap="sm" align="center">
+          <span style={{ width: 200 }}>Configurable interval:</span>
+          <BAIFetchKeyButton
+            value={fetchKey}
+            loading={loading}
+            onChange={handleChange}
+            autoUpdateDelay={delay}
+            onChangeAutoUpdateDelay={setDelay}
+            showLastLoadTime={true}
+          />
+          <span>Refresh count: {counter}</span>
+        </BAIFlex>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          Selected interval: {delay === null ? 'Off' : `${delay / 1000}s`}
+        </div>
+      </BAIFlex>
+    );
+  },
+};
+
+export const CountdownBorder: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'While auto-refresh is on, an animated border fills the control clockwise once per interval (top-left → top-right → bottom-right → bottom-left → back), resetting each cycle. Toggle `showCountdownBorder` to turn the animation on/off — auto-refresh keeps working either way.',
+      },
+    },
+  },
+  render: () => {
+    const [fetchKey, setFetchKey] = useState(new Date().toISOString());
+    const [loading, setLoading] = useState(false);
+    const [delay, setDelay] = useState<number | null>(5000);
+    const [showBorder, setShowBorder] = useState(true);
+
+    const handleChange = (newKey: string) => {
+      setLoading(true);
+      setFetchKey(newKey);
+      setTimeout(() => {
+        setLoading(false);
+      }, 800);
+    };
+
+    return (
+      <BAIFlex direction="column" gap="md" align="start">
+        <BAIFlex gap="sm" align="center">
+          {/* Astryx Switch requires a `label`; the adjacent <span> already
+              carries the visible description, so the label is kept but
+              visually hidden rather than duplicated. */}
+          <Switch
+            label="Show countdown border"
+            isLabelHidden
+            value={showBorder}
+            onChange={setShowBorder}
+          />
+          <span>
+            <code>showCountdownBorder</code>: {String(showBorder)}
+          </span>
+        </BAIFlex>
+        <BAIFetchKeyButton
+          value={fetchKey}
+          loading={loading}
+          onChange={handleChange}
+          autoUpdateDelay={delay}
+          onChangeAutoUpdateDelay={setDelay}
+          showCountdownBorder={showBorder}
+        />
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          Selected interval: {delay === null ? 'Off' : `${delay / 1000}s`}
+        </div>
+      </BAIFlex>
+    );
+  },
+};
+
+export const CountdownBorderPausesWhileLoading: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Reproduces FR-3354: with a short auto-refresh interval (3s) but a `loading` refresh that stays in flight LONGER than the interval (~6s), the countdown border does not complete or loop while loading. Instead it freezes (`animation-play-state: paused`) at its current position for the whole request, then re-anchors and restarts from empty the instant `loading` returns to false — so the exposed countdown stays in sync with the real (end-anchored) refresh. Click the button (or wait for an auto-refresh) to trigger the long load and watch the border pause.',
+      },
+    },
+  },
+  render: () => {
+    const [fetchKey, setFetchKey] = useState(new Date().toISOString());
+    const [loading, setLoading] = useState(false);
+    // Short interval (3s) but a long in-flight load (6s) — the load outlasts a
+    // full countdown cycle, so without the fix the border would complete/loop
+    // while the real refresh is still pending.
+    const [delay] = useState<number | null>(3000);
+    const [counter, setCounter] = useState(0);
+
+    const handleChange = (newKey: string) => {
+      setLoading(true);
+      setFetchKey(newKey);
+      setCounter((prev) => prev + 1);
+      // Simulate a slow API call that outlasts the 3s interval.
+      setTimeout(() => {
+        setLoading(false);
+      }, 6000);
+    };
+
+    return (
+      <BAIFlex direction="column" gap="md" align="start">
+        <BAIFlex gap="sm" align="center">
+          <span style={{ width: 220 }}>3s interval, 6s load:</span>
+          <BAIFetchKeyButton
+            value={fetchKey}
+            loading={loading}
+            onChange={handleChange}
+            autoUpdateDelay={delay}
+            showLastLoadTime={true}
+          />
+          <span>Refresh count: {counter}</span>
+        </BAIFlex>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          {loading
+            ? 'Loading… border is HIDDEN until the load finishes.'
+            : 'Idle — border fills over 3s, then restarts fresh after each load.'}
+        </div>
+      </BAIFlex>
+    );
+  },
+};
+
+export const CustomOptions: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Consumers own the option list via `autoUpdateDelayOptions`. Here a longer-period set is passed (`[30s, 1m, 5m, 10m, 30m]`); the dropdown shows exactly those presets and the labels are formatted with the largest whole unit ("30s", "1m", "5m", "1h") via `dayjs.duration`, localized through the existing i18n keys.',
+      },
+    },
+  },
+  render: () => {
+    const [fetchKey, setFetchKey] = useState(new Date().toISOString());
+    const [loading, setLoading] = useState(false);
+    const [delay, setDelay] = useState<number | null>(null);
+
+    const handleChange = (newKey: string) => {
+      setLoading(true);
+      setFetchKey(newKey);
+      setTimeout(() => {
+        setLoading(false);
+      }, 800);
+    };
+
+    return (
+      <BAIFlex direction="column" gap="md" align="start">
+        <BAIFlex gap="sm" align="center">
+          <span style={{ width: 200 }}>Long-period options:</span>
+          <BAIFetchKeyButton
+            value={fetchKey}
+            loading={loading}
+            onChange={handleChange}
+            autoUpdateDelay={delay}
+            onChangeAutoUpdateDelay={setDelay}
+            autoUpdateDelayOptions={[
+              30_000, 60_000, 300_000, 600_000, 1_800_000,
+            ]}
+            showLastLoadTime={true}
+          />
+        </BAIFlex>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          Selected interval (ms): {delay === null ? 'Off' : delay}
+        </div>
+      </BAIFlex>
+    );
+  },
+};
+
+export const CustomInterval: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "When the active `autoUpdateDelay` is not one of `autoUpdateDelayOptions` (e.g. a legacy 7s poller against the default `[5, 10, 15, 30, 60]s` presets), the component merges that value into the menu — sorted, deduped, and checked — so exactly one item is always selected and the running interval is never hidden. The merged value is sticky: once seen it stays in the list for the session, so after switching to another interval you can still pick 7s again. The consumer's option list is not mutated.",
+      },
+    },
+  },
+  render: () => {
+    const [fetchKey, setFetchKey] = useState(new Date().toISOString());
+    const [loading, setLoading] = useState(false);
+    // Off-list starting value: 7s is not one of the default presets.
+    const [delay, setDelay] = useState<number | null>(7_000);
+
+    const handleChange = (newKey: string) => {
+      setLoading(true);
+      setFetchKey(newKey);
+      setTimeout(() => {
+        setLoading(false);
+      }, 800);
+    };
+
+    return (
+      <BAIFlex direction="column" gap="md" align="start">
+        <BAIFlex gap="sm" align="center">
+          <span style={{ width: 200 }}>Off-list active value (7s):</span>
+          <BAIFetchKeyButton
+            value={fetchKey}
+            loading={loading}
+            onChange={handleChange}
+            autoUpdateDelay={delay}
+            onChangeAutoUpdateDelay={setDelay}
+            showLastLoadTime={true}
+          />
+        </BAIFlex>
+        <div style={{ fontSize: '12px', color: '#666' }}>
+          Selected interval (ms): {delay === null ? 'Off' : delay} — open the
+          menu: 7s appears merged between 5s and 10s, checked. Pick another
+          interval, reopen — 7s stays in the list (sticky).
+        </div>
       </BAIFlex>
     );
   },

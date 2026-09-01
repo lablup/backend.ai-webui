@@ -3,28 +3,24 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
 import TextHighlighter from './TextHighlighter';
-import {
-  DeleteOutlined,
-  SearchOutlined,
-  SettingOutlined,
-  LoadingOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { Button, Typography, Alert, Checkbox, Input, theme } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIFlex,
   BAIModal,
   BAITable,
+  type BAIColumnsType,
   useUpdatableState,
-  BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Trash2, Search, RotateCw } from 'lucide-react';
 import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -47,8 +43,6 @@ const ErrorLogList: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
-  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
-    useToggle();
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
   const [logSearch, setLogSearch] = useState('');
   const [updateKey, checkUpdateKey] = useUpdatableState('first');
@@ -57,7 +51,7 @@ const ErrorLogList: React.FC<{
   const [isPendingReset, startResetTransition] = useTransition();
 
   useSuspendedBackendaiClient(); // TODO: remove this after react routing is stable. This is for remove flickering when browser reload
-  const columns: ColumnsType<LogType> = [
+  const columns: BAIColumnsType<LogType> = [
     {
       title: t('logs.TimeStamp'),
       dataIndex: 'formattedTimeStamp',
@@ -177,8 +171,9 @@ const ErrorLogList: React.FC<{
     },
   ];
 
-  const [hiddenColumnKeys, setHiddenColumnKeys] =
-    useHiddenColumnKeysSetting('ErrorLogList');
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ErrorLogList',
+  );
 
   const storageLogData = useMemo(() => {
     const raw: LogType[] = JSON.parse(
@@ -212,7 +207,7 @@ const ErrorLogList: React.FC<{
   return (
     <BAIFlex direction="column" align="stretch" gap={'xs'}>
       <BAIFlex direction="row" justify="between" wrap="wrap" gap={'xs'}>
-        <Typography.Text>{t('logs.UpTo3000Logs')}</Typography.Text>
+        <Text>{t('logs.UpTo3000Logs')}</Text>
         <BAIFlex
           direction="row"
           gap={'xs'}
@@ -220,59 +215,45 @@ const ErrorLogList: React.FC<{
           style={{ flexShrink: 1 }}
         >
           <BAIFlex gap={'xs'}>
-            <Input
-              allowClear
-              prefix={<SearchOutlined />}
+            <TextInput
+              label={t('logs.SearchLogs')}
+              isLabelHidden
+              hasClear
+              startIcon={Search}
               placeholder={t('logs.SearchLogs')}
-              onChange={(e) => {
-                startSearchTransition(() => setLogSearch(e.target.value));
+              value={logSearch}
+              onChange={(value) => {
+                startSearchTransition(() => setLogSearch(value));
               }}
-              style={{
-                width: 200,
-              }}
+              width={200}
             />
-            <Checkbox
-              onChange={(e) => setCheckedShowOnlyError(e.target.checked)}
-            >
-              {t('logs.ShowOnlyError')}
-            </Checkbox>
+            <CheckboxInput
+              label={t('logs.ShowOnlyError')}
+              value={checkedShowOnlyError}
+              onChange={(checked) => setCheckedShowOnlyError(checked)}
+            />
           </BAIFlex>
           <BAIFlex gap={'xs'}>
             <Button
-              icon={<ReloadOutlined />}
-              loading={isPendingRefreshTransition}
+              icon={<RotateCw size="1em" />}
+              isLoading={isPendingRefreshTransition}
+              label={t('button.Refresh')}
               onClick={() => {
                 startRefreshTransition(() => checkUpdateKey());
               }}
-            >
-              {t('button.Refresh')}
-            </Button>
+            />
             <Button
-              danger
-              icon={<DeleteOutlined />}
+              variant="destructive"
+              icon={<Trash2 size="1em" />}
+              label={t('button.ClearLogs')}
               onClick={() => {
                 setIsOpenClearLogsModal(true);
               }}
-            >
-              {t('button.ClearLogs')}
-            </Button>
+            />
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>
       <BAITable
-        pagination={{
-          showSizeChanger: false,
-          style: {
-            marginBottom: 0,
-          },
-        }}
-        loading={
-          isPendingSearchTransition
-            ? {
-                indicator: <LoadingOutlined />,
-              }
-            : false
-        }
         scroll={{
           x: 'max-content',
           y:
@@ -280,6 +261,13 @@ const ErrorLogList: React.FC<{
               ? undefined
               : 'calc(100vh - 400px)',
         }}
+        pagination={{
+          showSizeChanger: false,
+        }}
+        // PILOT-DECISION (ticket 25 §4): the Astryx engine dims the rows while
+        // a refetch is in flight but has no spinner slot, so the antd
+        // `{ indicator }` object collapses to a boolean.
+        loading={isPendingSearchTransition}
         dataSource={
           checkedShowOnlyError
             ? _.filter(filteredLogData, (log) => {
@@ -287,31 +275,17 @@ const ErrorLogList: React.FC<{
               })
             : (filteredLogData as LogType[])
         }
-        columns={_.filter(
-          columns,
-          (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-        )}
+        columns={columns}
+        tableSettings={{
+          columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
         onRow={(record) => {
           return {
             style: { color: record.isError ? token.colorError : '' },
           };
         }}
       />
-      <BAIFlex
-        justify="end"
-        style={{
-          paddingRight: token.paddingXS,
-          paddingBottom: token.paddingXS,
-        }}
-      >
-        <Button
-          type="text"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            toggleColumnSettingModal();
-          }}
-        />
-      </BAIFlex>
       <BAIModal
         open={isOpenClearLogsModal}
         title={t('dialog.warning.LogDeletion')}
@@ -328,25 +302,8 @@ const ErrorLogList: React.FC<{
         cancelText={t('button.Cancel')}
         onCancel={() => setIsOpenClearLogsModal(false)}
       >
-        <Alert title={t('dialog.warning.CannotBeUndone')} type="warning" />
+        <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
       </BAIModal>
-      <BAIUnmountAfterClose>
-        <TableColumnsSettingModal
-          open={visibleColumnSettingModal}
-          onRequestClose={(values) => {
-            values?.selectedColumnKeys &&
-              setHiddenColumnKeys(
-                _.difference(
-                  columns.map((column) => _.toString(column.key)),
-                  values?.selectedColumnKeys,
-                ),
-              );
-            toggleColumnSettingModal();
-          }}
-          columns={columns}
-          hiddenColumnKeys={hiddenColumnKeys}
-        />
-      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

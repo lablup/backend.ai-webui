@@ -18,7 +18,7 @@ describe('useScrollBreakPoint', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Basic Functionality', () => {
@@ -487,7 +487,7 @@ describe('useScrollBreakPoint', () => {
 
   describe('Cleanup', () => {
     it('should cleanup event listeners on unmount', () => {
-      const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
+      const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
 
       const { unmount } = renderHook(() =>
         useScrollBreakPoint({ x: 100, y: 200 }),
@@ -505,7 +505,7 @@ describe('useScrollBreakPoint', () => {
 
     it('should cleanup element event listeners on unmount', () => {
       const element = document.createElement('div');
-      const removeEventListenerSpy = jest.spyOn(element, 'removeEventListener');
+      const removeEventListenerSpy = vi.spyOn(element, 'removeEventListener');
 
       const { unmount } = renderHook(() =>
         useScrollBreakPoint({ x: 100, y: 200 }, element),
@@ -525,11 +525,8 @@ describe('useScrollBreakPoint', () => {
       const element1 = document.createElement('div');
       const element2 = document.createElement('div');
 
-      const removeEventListenerSpy1 = jest.spyOn(
-        element1,
-        'removeEventListener',
-      );
-      const addEventListenerSpy2 = jest.spyOn(element2, 'addEventListener');
+      const removeEventListenerSpy1 = vi.spyOn(element1, 'removeEventListener');
+      const addEventListenerSpy2 = vi.spyOn(element2, 'addEventListener');
 
       const { rerender } = renderHook(
         ({ element }) => useScrollBreakPoint({ x: 100, y: 200 }, element),

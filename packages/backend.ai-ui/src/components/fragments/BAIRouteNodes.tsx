@@ -6,10 +6,14 @@ import {
   SemanticColor,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  safeDecodeUuid,
   toLocalId,
   useSemanticColorMap,
 } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
+import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAITag from '../BAITag';
 import BAIText from '../BAIText';
@@ -19,11 +23,11 @@ import {
   BAITable,
   BAITableProps,
 } from '../Table';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { theme } from 'antd';
+import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash-es';
+import { CircleAlert, History } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
 export type RouteNodeInList = NonNullable<BAIRouteNodesFragment$data[number]>;
@@ -44,15 +48,22 @@ const isEnableSorter = (key: string) => {
 };
 
 const routeStatusSemanticMap: Record<string, SemanticColor> = {
-  HEALTHY: 'success',
   PROVISIONING: 'info',
+  RUNNING: 'success',
+  TERMINATING: 'warning',
+  TERMINATED: 'default',
+  FAILED_TO_START: 'error',
+  // Pre-26.4.0: health states were part of RouteStatus
+  HEALTHY: 'success',
   UNHEALTHY: 'warning',
   DEGRADED: 'warning',
-  FAILED_TO_START: 'error',
 };
 
-const trafficStatusSemanticMap: Record<string, SemanticColor> = {
-  ACTIVE: 'success',
+const routeHealthStatusSemanticMap: Record<string, SemanticColor> = {
+  HEALTHY: 'success',
+  UNHEALTHY: 'warning',
+  DEGRADED: 'warning',
+  NOT_CHECKED: 'default',
 };
 
 export interface BAIRouteNodesProps extends Omit<
@@ -69,6 +80,7 @@ export interface BAIRouteNodesProps extends Omit<
   ) => void;
   onClickSessionId?: (sessionId: string) => void;
   onClickErrorData?: (errorData: unknown) => void;
+  onClickSchedulingHistory?: (routeId: string) => void;
 }
 
 const BAIRouteNodes = ({
@@ -78,18 +90,22 @@ const BAIRouteNodes = ({
   onChangeOrder,
   onClickSessionId,
   onClickErrorData,
+  onClickSchedulingHistory,
   ...tableProps
 }: BAIRouteNodesProps) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const semanticColorMap = useSemanticColorMap();
+  const baiClient = useConnectedBAIClient();
+  const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
 
   const routes = useFragment<BAIRouteNodesFragment$key>(
     graphql`
       fragment BAIRouteNodesFragment on Route @relay(plural: true) {
         id
         status
+        healthStatus @since(version: "26.4.0")
         trafficRatio
         createdAt
         errorData
@@ -114,7 +130,7 @@ const BAIRouteNodes = ({
               <BAIButton
                 size="small"
                 type="text"
-                icon={<ExclamationCircleOutlined />}
+                icon={<CircleAlert size="1em" />}
                 style={{ color: token.colorError }}
                 onClick={() => {
                   onClickErrorData?.(record.errorData);
@@ -151,36 +167,74 @@ const BAIRouteNodes = ({
         dataIndex: 'status',
         key: 'status',
         sorter: isEnableSorter('status'),
-        render: (status) =>
-          status && status !== '%future added value' ? (
-            <BAITag
-              color={
-                semanticColorMap[routeStatusSemanticMap[status] ?? 'default']
-              }
-              style={{ marginRight: 0 }}
-            >
-              {status}
-            </BAITag>
-          ) : null,
+        render: (status, record) => (
+          <BAIFlex align="center" gap="xs">
+            {status && status !== '%future added value' ? (
+              <BAITag
+                color={
+                  semanticColorMap[routeStatusSemanticMap[status] ?? 'default']
+                }
+                style={{ marginRight: 0 }}
+              >
+                {status}
+              </BAITag>
+            ) : null}
+            {onClickSchedulingHistory && (
+              <Tooltip content={t('comp:BAIRouteNodes.SchedulingHistory')}>
+                <BAIButton
+                  type="text"
+                  icon={<History size="1em" />}
+                  size="small"
+                  onClick={() =>
+                    onClickSchedulingHistory(
+                      safeDecodeUuid(record.id) ?? record.id,
+                    )
+                  }
+                />
+              </Tooltip>
+            )}
+          </BAIFlex>
+        ),
       },
-      {
-        title: t('comp:BAIRouteNodes.TrafficStatus'),
-        dataIndex: 'trafficStatus',
-        key: 'trafficStatus',
-        render: (trafficStatus) =>
-          trafficStatus && trafficStatus !== '%future added value' ? (
-            <BAITag
-              color={
-                semanticColorMap[
-                  trafficStatusSemanticMap[trafficStatus] ?? 'default'
-                ]
-              }
-              style={{ marginRight: 0 }}
-            >
-              {trafficStatus}
-            </BAITag>
-          ) : null,
-      },
+      isSupportRouteHealthStatus
+        ? {
+            title: t('comp:BAIRouteNodes.HealthStatus'),
+            dataIndex: 'healthStatus',
+            key: 'healthStatus',
+            render: (healthStatus) =>
+              healthStatus && healthStatus !== '%future added value' ? (
+                <BAITag
+                  color={
+                    semanticColorMap[
+                      routeHealthStatusSemanticMap[healthStatus] ?? 'default'
+                    ]
+                  }
+                  style={{ marginRight: 0 }}
+                >
+                  {healthStatus}
+                </BAITag>
+              ) : null,
+          }
+        : undefined,
+      // TODO(needs-backend): Unhide when backend interaction for traffic status is supported (FR-2591)
+      // {
+      //   title: t('comp:BAIRouteNodes.TrafficStatus'),
+      //   dataIndex: 'trafficStatus',
+      //   key: 'trafficStatus',
+      //   render: (trafficStatus) =>
+      //     trafficStatus && trafficStatus !== '%future added value' ? (
+      //       <BAITag
+      //         color={
+      //           semanticColorMap[
+      //             trafficStatusSemanticMap[trafficStatus] ?? 'default'
+      //           ]
+      //         }
+      //         style={{ marginRight: 0 }}
+      //       >
+      //         {trafficStatus}
+      //       </BAITag>
+      //     ) : null,
+      // },
       // TODO(needs-backend): Uncomment when the backend supports traffic ratio for routes
       // {
       //   title: t('comp:BAIRouteNodes.TrafficRatio'),
@@ -208,10 +262,10 @@ const BAIRouteNodes = ({
 
   return (
     <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(routes)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableRouteSorterValues)[number]) || null,

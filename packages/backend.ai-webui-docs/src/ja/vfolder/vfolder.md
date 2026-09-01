@@ -1,44 +1,31 @@
+---
+navTitle: ストレージフォルダ
+---
+
+<a id="vfolders"></a>
+
 # データとストレージフォルダの取り扱い
 
 
-Backend.AI supports dedicated storage to preserve ユーザー's files. Since the files
-and directories of a compute session are deleted upon session termination, it is
-recommended to save them in a storage folder. List of storage folders can be
-found by selecting the Data page on the sidebar. You can see the information
-such as the folder name and ID, the NFS host name where the folder is located
-(Location), and folder access rights (Permission).
+Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。フォルダ名やID、フォルダが配置されているストレージホスト名（ロケーション）、フォルダのアクセス権限（許可）などの情報を確認できます。
 
 
 ![](../images/data_page.png)
 
 ストレージフォルダには、`ユーザー`と`プロジェクト`の2つのタイプがあります。「種類」列で区別できます。
 
-ユーザーフォルダは、個々のユーザーが個人的に使用するために直接作成したフォルダです。
-プロジェクトフォルダは、ドメイン管理者が各プロジェクトに対して作成したフォルダです。
-一般ユーザーは自分でプロジェクトフォルダを作成できません。管理者が作成したプロジェクトフォルダのみ使用できます。
+## 招待バッジとエントリーポイント
 
-![](../images/vfolder_status.png)
+他のユーザーが自分のストレージフォルダを共有するために招待を送ると、サイドバーのデータ
+ページ項目とフォルダステータスの概要の横に小さな招待バッジが表示されます。バッジには、
+まだ応答していない保留中の招待の件数が表示されます。
 
-The Storage Status and ストレージボリュームごとのクォータ show the following information:
+![](../images/vfolder_invitation_badge.png)
 
-- Storage Status
-    - Created フォルダー: The number of folders that the ユーザー created.
-
-         - 制限: ユーザーがその後作成できるフォルダーの最大数。この値はユーザーに適用されるリソースポリシーに依存しており、リソースポリシーを変更しない限り変更できません。ユーザーによって作成されていないフォルダー（例: 共有に招待されたフォルダーやプロジェクトフォルダー）はカウントされません。
-
-    * Project フォルダー: The number of project folders that the ユーザー created.
-    * Invited フォルダー: The number of folders that the ユーザー was invited to share.
-- ストレージボリュームごとのクォータ
-    * ホスト: ストレージホストの名前。
-    * プロジェクト: 現在のプロジェクトフォルダ使用量 / 現在のプロジェクトフォルダクオータ範囲。
-    * ユーザー: 現在のユーザーフォルダー使用量 / 現在のユーザーフォルダーのクオータースコープ。
-
-
-:::note
-Please remind that quota is only available in storage that provides quota setting
-(e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
-to the [Quota Setting Panel](#quota-setting-panel) section.
-:::
+バッジをクリックすると招待リストが開き、保留中の各招待を受諾または辞退できます。
+受諾したフォルダは即座にフォルダ一覧に `招待` タイプとして表示されます。`/data`
+ページ自体も招待を確認するための有効なエントリーポイントです。データページを開けば、
+フォルダステータスの概要から同じ招待リストにアクセスできます。
 
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
@@ -46,59 +33,81 @@ to the [Quota Setting Panel](#quota-setting-panel) section.
 ## ストレージフォルダを作成
 
 
-To create a new folder, click 'Create Folder' on the Data page. Fill in the fields in
-the creation dialog as follows:
+新しいフォルダを作成するには、データページで「フォルダ作成」をクリックします。作成ダイアログのフィールドは以下のように入力します。
 
 ![](../images/vfolder_create_modal.png)
 
-The meaning of each field in the creation dialog is as follows.
+作成ダイアログの各フィールドの意味は以下のとおりです。
 
-- Usage Mode: Set the purpose of the folder.
+- **使用モード**: フォルダの用途を設定します。
 
-   * General: Defines a folder for storing various data in a general-purpose manner.
-   * モデル一覧: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder's copy availability.
-   * Auto Mount: フォルダー automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
+   * 一般: 多目的にさまざまなデータを保存するためのフォルダを定義します。
+   * モデル: モデルサービングおよび管理に特化したフォルダを定義します。このモードを選択すると、フォルダのコピー可否を切り替えることもできます。
+   * オートマウント: セッション作成時に自動的にマウントされるフォルダです。選択した場合、フォルダ名はドット（'.'）で始まる必要があります。
 
-- Folder name: The name of the folder (up to 64 characters).
-- Location: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
-- 種類: 作成するフォルダーの種類を決定します。ユーザーまたはプロジェクトとして設定できます。ユーザーフォルダーは、ユーザーが自身で作成して使用できるフォルダーであり、プロジェクトフォルダーは管理者によって作成され、プロジェクト内のユーザーと共有されるフォルダーです。
-- プロジェクト：プロジェクトタイプを選択したときにのみ表示されます。新しいプロジェクトフォルダを作成するときに、フォルダが属するプロジェクトを指定します。プロジェクトフォルダは、プロジェクトに属する必要があります。ただし、ユーザーフォルダを作成する際には、役割を果たしません。
-- パーミッション: プロジェクトフォルダのプロジェクトメンバーに対するパーミッションを設定します。これが「読み取り専用」に設定されている場合、プロジェクトメンバーは計算セッション内でこのフォルダに書き込みを行うことができません。
-- Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
+- **フォルダ名**: フォルダの名前（最大64文字）。
+- **ロケーション**: フォルダを作成するストレージホストを選択します。複数のホストがある場合は、いずれか1つを選択してください。利用可能な容量が十分かどうかをインジケータで確認できます。
+- **種類**: 作成するフォルダーの種類を決定します。ユーザーまたはプロジェクトとして設定できます。ユーザーフォルダーは、ユーザーが自身で作成して使用できるフォルダーであり、プロジェクトフォルダーは管理者によって作成され、プロジェクト内のユーザーと共有されるフォルダーです。
+- **プロジェクト**：プロジェクトタイプを選択したときにのみ表示されます。フォルダが現在トップバーで選択されているプロジェクトに属します。別のプロジェクトセレクターはなく、確認メッセージでどのプロジェクトがフォルダを所有するかが示されます。このフィールドはユーザーフォルダの作成時には効果がありません。
+- **権限**: フォルダがコンピュートセッションにマウントされるときに適用されるマウント権限。**読み取り・書き込み**はセッション内のフォルダへの書き込みを許可し、**読み取り専用**はそれを防止します。これはユーザーフォルダとプロジェクトフォルダの両方に適用されます。プロジェクトフォルダの場合、すべてのプロジェクトメンバーのアクセスを管理します。
+- **コピー可能**: 使用モードで「モデル」を選択した場合のみ表示されます。作成するバーチャルフォルダ（vfolder）をコピー可能にするかどうかを選択します。
 
-The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. フォルダー are mounted
-under the ユーザー's default working directory, `/home/work/`, and the file stored in the mounted
-directory will not be deleted when the compute session is terminated.
-(If you delete the folder, the file will also be deleted.)
+ここで作成したフォルダは、コンピュートセッション作成時に[マウント](#session-mounts)できます。フォルダはユーザーのデフォルト作業ディレクトリ `/home/work/` にマウントされ、マウントされたディレクトリに保存されたファイルはコンピュートセッションが終了しても削除されません。
+（フォルダを削除した場合は、ファイルも削除されます。）
 
 <a id="explore-folder"></a>
 
 ## フォルダーを探索
 
 
-Click the folder name to open a file explorer and view the contents of the folder.
+フォルダ名をクリックすると、ファイルエクスプローラーが開き、フォルダの内容を確認できます。
 
 ![](../images/click_folder_name.png)
 
-フォルダ内にディレクトリやファイルが存在する場合、それらが一覧表示されます。Name列でディレクトリ名をクリックすると、そのディレクトリに移動します。Actions列のダウンロードボタンまたは削除ボタンをクリックして、ダウンロードしたり、ディレクトリから完全に削除したりすることができます。また、ファイル/ディレクトリの名前を変更することも可能です。より詳細なファイル操作については、コンピュートセッションを作成する際にこのフォルダをマウントし、TerminalやJupyter Notebookなどのサービスを使用して行うことができます。
+フォルダエクスプローラーは2パネルレイアウトを採用しています。
+
+- **左パネル**: ストレージフォルダのディレクトリツリーとファイル一覧を表示するファイルブラウザ。
+- **右パネル**: 2つのタブに整理された追加情報とログ。
+  * **メタデータ**: フォルダの説明とプロパティ（以前はサイドパネルに表示されていました）。
+  * **監査ログ**: このフォルダで実行された操作の時系列記録。
+
+幅の広い（xl）画面では、2つのパネルの間にドラッグ可能な区切り線が表示され、ワークフローに合わせてサイズを調整できます。幅の狭い画面では、パネルが縦に積み重なって表示されます。
 
 ![](../images/folder_explorer.png)
 
-現在のパスに新しいディレクトリを作成するには、「作成」ボタン（フォルダーエクスプローラー内）を使用するか、ローカルファイルやフォルダーをアップロードするには「アップロード」ボタンを使用します。これらのファイル操作は、上記のフォルダーをコンピューターセッションにマウントする方法を使用して実行することもできます。
+![](../images/split_panel_folder_explorer.png)
+
+### ファイル操作
+
+左パネル内ではフォルダ内のすべてのディレクトリとファイルを確認できます。**名前**列でディレクトリ名をクリックすると、そのディレクトリに移動します。各行の操作ボタンは、**名前**列の項目名の隣にあります。**ダウンロード**をクリックするとファイルやディレクトリをダウンロードし、**消去**をクリックすると削除し、名前の隣にある鉛筆（**Rename**）ボタンをクリックするとその場で名前を変更できます。列の幅が狭くすべてのボタンを表示できない場合、残りの操作は同じ行の**その他の操作**（⋮）メニューに移動します。より詳細なファイル操作については、コンピュートセッションを作成する際にこのフォルダをマウントし、TerminalやJupyter Notebookなどのサービスを使用して行うことができます。
+
+**フォルダ作成**ボタンで現在のパスに新しいフォルダを作成でき、**アップロード**ボタンでローカルファイルやフォルダーを現在のパスにアップロードすることもできます。これらのファイル操作は、上記のフォルダーをコンピュートセッションにマウントする方法を使用して実行することもできます。
+
+:::warning
+お使いのアカウントに、このフォルダがホストされているストレージホストに対する
+`upload-file` 権限がない場合、「アップロード」ボタン（およびドラッグアンドドロップでの
+アップロード）は **無効化** されます。ボタン自体は表示されますがグレーアウトされ、
+ツールチップでアップロードが許可されていないことが案内されます。
+
+`upload-file` はホストレベルの権限であり、ドメインレベルの権限、プロジェクトレベルの権限、
+またはキーペアリソースポリシーの **いずれか一つ** が対象のストレージホストにこの権限を
+付与していれば、アップロードが許可されます。ボタンが無効になっている場合は、管理者に
+依頼して、該当ホストへの `upload-file` 権限を付与してもらってください。フォルダがどのホスト上に
+あるかは、フォルダ一覧の **ロケーション** 列、またはフォルダ詳細ドロワーで確認できます。
+:::
+
+![](../images/vfolder_upload_disabled.png)
 
 フォルダ内のファイルまたはディレクトリの最大長は、ホストファイルシステムに依存することがあります。しかし、通常は255文字を超えることはできません。
 
 
 :::note
-To ensure smooth performance, the screen limits the maximum number of files that can be displayed when a
-directory contains an excessive number of files. If a folder contains a large number of files, some may
-not be shown on the screen. In such cases, please use the terminal or other applications to view all files
-in the directory.
+スムーズなパフォーマンスを確保するため、ディレクトリに非常に多くのファイルが含まれている場合、画面に表示できるファイルの最大数に制限があります。フォルダに多数のファイルがある場合、一部のファイルが画面に表示されないことがあります。その場合は、ターミナルや他のアプリケーションを使用してディレクトリ内のすべてのファイルを確認してください。
 :::
 
 ### テキストファイルを編集
 
-フォルダーエクスプローラーでテキストファイルを直接編集できます。フォルダー名をクリックしてファイルエクスプローラーを開き、テキストファイルのコントロール列にある「ファイルを編集」ボタンをクリックします。
+フォルダーエクスプローラーでテキストファイルを直接編集できます。フォルダー名をクリックしてファイルエクスプローラーを開き、**名前**列にあるテキストファイルの行で**その他の操作**（⋮）メニューを開き、**ファイルを編集**を選択します。
 
 ![](../images/folder_explorer_edit_button.png)
 
@@ -109,13 +118,30 @@ in the directory.
 エディタはUIの設定に合わせてライトテーマとダークテーマの両方をサポートしています。ファイルの内容を編集した後、「保存」をクリックして変更されたファイルをアップロードするか、「キャンセル」をクリックして変更を破棄できます。
 
 :::note
-ファイルを編集ボタンは、ストレージフォルダに対するwrite_contentパーミッションがある場合にのみ使用できます。ファイルの読み込みに失敗した場合、エラーメッセージが表示されます。
+**ファイルを編集**の操作は、対象のストレージフォルダに対するユーザーのアクセス権限に `write_content` 権限が含まれている場合にのみ使用できます（フォルダの共有権限、またはフォルダに付与されたロールを通じて付与されます）。コントロールパネルのストレージホストレベルの設定は、この動作には影響しません。ファイルの読み込みに失敗した場合、エラーメッセージが表示されます。
 :::
+
+### 監査ログタブ
+
+右パネルの **監査ログ** タブには、このストレージフォルダで実行されたすべての操作（作成、更新、削除イベントなど）が時系列で一覧表示されます。
+
+![](../images/vfolder_audit_log_tab.png)
+
+監査ログには、以下の列が表示されます。
+
+- **時刻**: 操作が発生した時刻。
+- **操作**: アクションの種類（例：作成、更新、削除）。
+- **ステータス**: 操作の結果（例えば SUCCESS または ERROR）。
+- **説明**: 操作についての追加詳細。
+- **所要時間**: 操作にかかった時間。
+- **起動者**: 操作を実行したユーザーで、「メールアドレス (ID)」の形式で表示されます。
+
+時刻、操作、ステータス、起動者でログをフィルタリングできます。
 
 ## フォルダー名を変更
 
 
-ストレージフォルダの名前を変更する権限がある場合、編集ボタンをクリックして名前を変更できます。
+ストレージフォルダの名前を変更する権限がある場合、フォルダの詳細ドロワーを開き、フォルダ名の横にある編集ボタンをクリックして名前を変更します。名前変更は詳細ドロワー内でのみ行います。
 
 ![](../images/rename_vfolder.png)
 
@@ -127,21 +153,46 @@ in the directory.
 
 ![](../images/move_to_trash.png)
 
-この状態では、コントロール列の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ列の「ゴミ箱」ボタンをクリックしてください。
+### 複数のフォルダをまとめて削除
+
+削除したいフォルダのチェックボックスを選択すると、フォルダ一覧の上に選択件数の表示
+（`{件数}選択`）とゴミ箱ボタンが現れます。ゴミ箱ボタンをクリックすると、選択した
+フォルダ全体に対する **ゴミ箱に移動します** の確認モーダルが開きます。
+
+![](../images/vfolder_bulk_move_to_trash.png)
+
+選択したフォルダの中に削除権限のないものが含まれている場合、モーダルには
+*「以下の削除権限のないフォルダーは除外されます。」* というタイトルのアラートが表示され、
+該当するフォルダ名が一覧されます。削除を進める前にこの一覧を確認してください。権限の
+ないフォルダを除いた残りのフォルダだけがゴミ箱タブに移動し、アラートの下の確認
+メッセージにも実際に移動するフォルダの数のみが表示されます。
+
+### フォルダの復元と完全削除
+
+この状態では、**名前**列にある該当フォルダの行の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ行の「ゴミ箱」ボタンをクリックしてください。
 
 ![](../images/vfolder_trash_list.png)
 
-確認モーダルが表示され、`削除するフォルダ名を入力してください`という入力フィールドが表示されます。削除するフォルダ名を正確に入力し、赤い「完全に削除」ボタンをクリックしてフォルダを完全に削除します。
+フォルダ名の入力を求める確認モーダルが表示されます。フォルダ名を正確に入力すると **永久に削除** ボタンが有効になり、クリックしてフォルダを完全に削除できます。
 
 ![](../images/vfolder_delete_dialog.png)
+
+:::warning[モデルカードの連鎖削除]
+削除対象のフォルダが **モデルカード** に関連付けられている場合、確認モーダルには
+*「関連するモデルフォルダも削除する」* オプションと *「関連するモデルフォルダを削除すると、
+そのフォルダを使用しているすべてのモデルカードも削除されます。」* という警告メッセージが
+追加で表示されます。このまま削除を実行すると、このストレージフォルダを基盤とする
+すべてのモデルカードが永久に削除されます。フォルダのファイルだけが削除されるわけでは
+ありません。削除を確定する前に、一覧に表示されるモデルカードを必ず確認してください。
+この操作は元に戻せません。
+:::
+
+![](../images/vfolder_cascading_delete_warning.png)
 
 ## ファイルブラウザの使用
 
 
-Backend.AI supports [FileBrowser](https://filebrowser.org) from version
-20.09. FileBrowser is a program that helps you manage files on a remote server
-through a web browser. This is especially useful when uploading a directory from
-the ユーザー's local machine.
+Backend.AIは[FileBrowser](https://filebrowser.org)をサポートしています。FileBrowserは、Webブラウザを通じてリモートサーバー上のファイルを管理できるプログラムです。ユーザーのローカルマシンからディレクトリをアップロードする際に特に便利です。
 
 現在、Backend.AIは計算セッションのアプリケーションとしてFileBrowserを提供しています。したがって、それを起動するためには以下の条件が必要です。
 
@@ -151,26 +202,25 @@ the ユーザー's local machine.
 
 ファイルブラウザには2つの方法でアクセスできます。
 
-- Execute FileBrowser from file explorer dialog of a data folder.
+- ストレージフォルダのファイルエクスプローラダイアログからFileBrowserを実行します。
 - セッションページのFileBrowserイメージから直接コンピュートセッションを起動します。
 
 
-### Execute FileBrowser from folder explorer dialog
+### フォルダエクスプローラダイアログからFileBrowserを実行する
 
-Go to the Data page and open the file explorer dialog of target
-data folder. Click the folder name to open the file explorer.
+データページに移動し、対象のストレージフォルダのファイルエクスプローラダイアログを開きます。フォルダ名をクリックしてファイルエクスプローラを開きます。
 
 ![](../images/click_folder_name.png)
 
-Click 'Execute filebrowser' button in the upper-right corner of the explorer.
+エクスプローラー右上の「ファイルブラウザーを実行」ボタンをクリックします。
 
 ![](../images/folder_explorer.png)
 
-FileBrowserが新しいウィンドウで開かれているのがわかります。また、エクスプローラーダイアログで開いたデータフォルダがルートディレクトリになっているのがわかります。FileBrowserウィンドウから、ディレクトリやファイルを自由にアップロード、変更、削除することができます。
+FileBrowserが新しいウィンドウで開かれているのがわかります。また、エクスプローラーダイアログで開いたストレージフォルダがルートディレクトリになっているのがわかります。FileBrowserウィンドウから、ディレクトリやファイルを自由にアップロード、変更、削除することができます。
 
 ![](../images/filebrowser_with_new_window.png)
 
-ユーザーが 'EXECUTE FILEBROWSER' ボタンをクリックすると、Backend.AI はそのアプリ専用のコンピュートセッションを自動で作成します。したがって、セッションページで FileBrowser のコンピュートセッションが表示されるはずです。このコンピュートセッションを削除するかどうかはユーザーの責任です。
+ユーザーが `ファイルブラウザを実行する` ボタンをクリックすると、Backend.AI はそのアプリ専用のコンピュートセッションを自動で作成します。したがって、セッションページで FileBrowser のコンピュートセッションが表示されるはずです。このコンピュートセッションを削除するかどうかはユーザーの責任です。
 
 ![](../images/filebrowser_in_session_page.png)
 
@@ -180,25 +230,21 @@ FileBrowserが新しいウィンドウで開かれているのがわかります
 
 ![](../images/app_dialog_with_filebrowser.png)
 
-データフォルダーエクスプローラーで 'EXECUTE FILEBROWSER' ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。
+ストレージフォルダーエクスプローラーで `ファイルブラウザを実行する` ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。
 :::
 
 ### FileBrowserイメージでコンピュートセッションを作成する
 
-FileBrowser対応のイメージを使用して直接コンピュートセッションを作成できます。アクセスするには、1つ以上のデータフォルダをマウントする必要があります。どのデータフォルダもマウントしなくても問題なくFileBrowserを使用できますが、セッション終了後にアップロード/更新されたファイルはすべて失われます。
+FileBrowser対応のイメージを使用して直接コンピュートセッションを作成できます。アクセスするには、1つ以上のストレージフォルダをマウントする必要があります。どのストレージフォルダもマウントしなくても問題なくFileBrowserを使用できますが、セッション終了後にアップロード/更新されたファイルはすべて失われます。
 
 
 :::note
-The root directory of FileBrowser will be `/home/work`. Therefore, you
-can access any mounted data folders for the compute session.
+FileBrowserのルートディレクトリは `/home/work` になります。したがって、コンピュートセッションにマウントされたあらゆるストレージフォルダにアクセスできます。
 :::
 
 ### FileBrowserの基本的な使用例
 
-Here, we present some basic usage examples of FileBrowser in Backend.AI. Most
-of the FileBrowser operations are intuitive, but if you need more detailed
-guide, please refer to the
-[FileBrowser documentation](https://filebrowser.org).
+ここでは、Backend.AIにおけるFileBrowserの基本的な使用例をいくつか紹介します。FileBrowserの操作のほとんどは直感的ですが、より詳細なガイドが必要な場合は、[FileBrowserのドキュメント](https://filebrowser.org)を参照してください。
 
 **FileBrowserを使用してローカルディレクトリをアップロード**
 
@@ -220,120 +266,88 @@ foo
 +-- test.txt
 ```
 
-After selecting `foo` directory, you can see the directory just uploaded
-successfully.
+`foo` ディレクトリを選択すると、ディレクトリが正常にアップロードされたことを確認できます。
 
 ![](../images/filebrowser_upload_finished.png)
 
-You can also upload local files and directories by drag and drop.
+ドラッグ＆ドロップでローカルファイルやディレクトリをアップロードすることもできます。
 
-**Move files or directories to another directory**
+**ファイルやディレクトリを別のディレクトリに移動する**
 
-Moving files or directories in data folder is also possible from FileBrowser.
-You can move files or directories by following steps below.
+FileBrowserからストレージフォルダ内のファイルやディレクトリを移動することもできます。以下の手順でファイルやディレクトリを移動できます。
 
-1. Select directories or files from FileBrowser.
+1. FileBrowserからディレクトリまたはファイルを選択します。
 
 ![](../images/select_folders.png)
 
-2. Click the 'arrow' button in the upper right corner of FileBrowser
+2. FileBrowser右上の「矢印」ボタンをクリックします。
 
 ![](../images/click_arrow_icon.png)
 
-3. Select the destination
+3. 移動先を選択します。
 
 ![](../images/select_the_destination.png)
 
-4. Click 'MOVE' button
+4. 「MOVE」ボタンをクリックします。
 
-You will see that moving operation is successfully finished.
+移動操作が正常に完了したことを確認できます。
 
 ![](../images/moving_operation_in_filebrowser_finished.png)
 
 
 :::note
-FileBrowser is provided via application inside a compute session currently.
-We are planning to update FileBrowser so that it can run independently
-without creating a session.
+現在、FileBrowserはコンピュートセッション内のアプリケーションとして提供されています。セッションを作成せずに独立して実行できるように、FileBrowserを更新する予定です。
 :::
 
-## Using SFTP Server
+## SFTPサーバーの使用
 
 
-From 22.09, Backend.AI supports SSH / SFTP file upload from both desktop app and
-web-based WebUI. The SFTP server allows you to upload files quickly through reliable
-data streams.
+Backend.AIはデスクトップアプリとWebベースのWebUIの両方からSSH / SFTPファイルアップロードをサポートしています。SFTPサーバーを使用すると、信頼性の高いデータストリームを通じてファイルをすばやくアップロードできます。
 
 
 :::note
-Depending on the system settings, running SFTP server from the file dialog may not
-be allowed.
+システム設定によっては、ファイルダイアログからSFTPサーバーを実行できない場合があります。
 :::
 
-### Execute SFTP server from folder explorer dialog in Data page
+### データページのフォルダエクスプローラダイアログからSFTPサーバーを実行する
 
-Go to the Data page and open the file explorer dialog of target data folder.
-Click the folder button or the folder name to open the file explorer.
+データページに移動し、対象のストレージフォルダのファイルエクスプローラーダイアログを開きます。フォルダボタンまたはフォルダ名をクリックしてファイルエクスプローラーを開きます。
 
-Click 'Run SFTP server' button in the upper-right corner of the explorer.
+エクスプローラー右上の「SFTPサーバーを実行」ボタンをクリックします。
 
 ![](../images/folder_explorer.png)
 
-You can see the SSH / SFTP connection dialog. And a new SFTP session will be created
-automatically. (This session will not affect resource occupancy.)
+SSH / SFTP接続ダイアログが表示されます。新しいSFTPセッションが自動的に作成されます。（このセッションはリソース占有には影響しません。）
 
 ![](../images/SSH_SFTP_connection.png)
 
-For the connection, click 'Download SSH Key' button to download the SSH private key
-(`id_container`). Also, remember the host and port number. Then, you can copy your
-files to the session using the Connection Example code written in the dialog, or
-referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#for-linux-mac).
-To preserve the files, you need to transfer the files to the data folder. Also,
-the session will be terminated when there is no transfer for some time.
+接続のために、「SSHキーをダウンロード」ボタンをクリックしてSSH秘密鍵（`id_container`）をダウンロードします。また、ホスト名とポート番号を控えておいてください。その後、ダイアログに記載された接続例のコードを使用して、または以下のガイドを参照してファイルをセッションにコピーできます: [SFTP接続ガイド](#ssh-sftp-container)。ファイルを保持するには、ストレージフォルダにファイルを転送する必要があります。また、一定時間転送がない場合、セッションは終了します。
 
 
 :::note
-If you upload your SSH keypair, the `id_container` will be set with your
-own SSH private key. So, you don't need to download it every time you
-want to connect via SSH to your container. Please refer to
-[managing user's SSH keypair](#user-ssh-keypair-management).
+SSHキーペアをアップロードすると、`id_container` はユーザー自身のSSH秘密鍵に設定されます。そのため、SSHでコンテナに接続するたびにダウンロードする必要はありません。詳細は[ユーザーのSSHキーペア管理](#user-ssh-keypair-management)を参照してください。
 :::
 
-## Folder Categories
+## パイプラインフォルダ
 
-
-## Pipeline folders
-
-This tab shows the list of folders that are automatically created when executing a
-pipeline in FastTrack. When a pipeline is created, a new folder is created and mounted
-under `/pipeline` for each instance of work (computing session).
+このタブには、FastTrackでパイプラインを実行する際に自動的に作成されるフォルダの一覧が表示されます。パイプラインが作成されると、作業の各インスタンス（コンピュートセッション）ごとに新しいフォルダが作成され、`/pipeline` 配下にマウントされます。
 
 <a id="automount-folder"></a>
 
-## Automount folders
+## 自動マウントフォルダ
 
 
-Data page has an Automount Folders tab. Click this tab to see a
-list of folders whose names prefixed with a dot (`.`). When you create a folder,
-if you specify a name that starts with a dot (`.`), it is added to the Automount
-Folders tab, not the Folders tab. Automount Folders are special folders that are
-automatically mounted in your home directory even if you do not mount them
-manually when creating a compute session. By using this feature, creating and
-using Storage folders such as `.local`, `.linuxbrew`, `.pyenv`, etc.,
-you can configure a certain ユーザー packages or environments that do not change
-with different kinds of compute session.
+データページには自動マウントフォルダタブがあります。このタブをクリックすると、名前がドット（`.`）で始まるフォルダの一覧が表示されます。フォルダを作成する際にドット（`.`）で始まる名前を指定すると、フォルダタブではなく自動マウントフォルダタブに追加されます。自動マウントフォルダは、コンピュートセッション作成時に手動でマウントしなくても、自動的にホームディレクトリにマウントされる特別なフォルダです。この機能を利用して、`.local`、`.linuxbrew`、`.pyenv` などのストレージフォルダを作成・使用することで、異なる種類のコンピュートセッションでも変わらないユーザーパッケージや環境を構成できます。
 
-For more detailed information on the usage of 自動マウントフォルダー, refer to
-[examples of using automount folders](#using-automount-folder).
+自動マウントフォルダの使用方法の詳細については、[自動マウントフォルダの使用例](#using-automount-folder)を参照してください。
 
 ![](../images/vfolder_automount_folders.png)
 
 <a id="models"></a>
 
-## モデル一覧
+## モデル
 
 
-The モデル一覧 tab facilitates straightforward model serving.
-You can store the necessary data, including input data for [model serving](#model-serving) and training data, in the model folder.
+モデルタブは、シンプルなモデルサービングを実現します。[モデルサービング](#model-serving)用の入力データやトレーニングデータなど、必要なデータをモデルフォルダに保存できます。
 
 ![](../images/models.png)

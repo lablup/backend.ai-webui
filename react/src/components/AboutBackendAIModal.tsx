@@ -5,7 +5,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import { BAILink, BAIModal, BAIModalProps } from 'backend.ai-ui';
 
 interface AboutBackendAIModalProps extends BAIModalProps {
@@ -15,7 +15,7 @@ const AboutBackendAIModal = ({
   onRequestClose,
   ...props
 }: AboutBackendAIModalProps) => {
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
   const baiClient = useSuspendedBackendaiClient();
   // @ts-ignore
@@ -25,7 +25,7 @@ const AboutBackendAIModal = ({
   // @ts-ignore
   const packageEdition = globalThis.packageEdition;
   // @ts-ignore
-  const buildVersion = globalThis.buildVersion;
+  const buildNumber = globalThis.buildNumber;
   // @ts-ignore
   const isElectron = globalThis.isElectron;
 
@@ -37,14 +37,23 @@ const AboutBackendAIModal = ({
           className="about-logo-img"
           alt={themeConfig?.logo?.alt || 'Backend.AI Logo'}
           src={
-            isDarkMode && themeConfig?.logo?.srcDark
-              ? themeConfig?.logo?.src || '/manifest/backend.ai-white-text.svg'
-              : themeConfig?.logo?.srcDark ||
+            isDarkMode
+              ? themeConfig?.logo?.aboutLogoSrcDark ||
+                themeConfig?.logo?.src ||
+                '/manifest/backend.ai-white-text.svg'
+              : themeConfig?.logo?.aboutLogoSrc ||
+                themeConfig?.logo?.srcDark ||
                 '/manifest/backend.ai-white-text.svg'
           }
           style={{
-            width: themeConfig?.logo?.aboutModalSize?.width || 159,
-            height: themeConfig?.logo?.aboutModalSize?.height || 24,
+            width:
+              themeConfig?.logo?.aboutLogoSize?.width ??
+              themeConfig?.logo?.aboutModalSize?.width ??
+              159,
+            height:
+              themeConfig?.logo?.aboutLogoSize?.height ??
+              themeConfig?.logo?.aboutModalSize?.height ??
+              24,
             cursor: 'pointer',
           }}
         />
@@ -55,7 +64,7 @@ const AboutBackendAIModal = ({
       width={350}
       {...props}
     >
-      <Typography.Paragraph>
+      <Text as="p" display="block">
         Backend.AI Web UI {packageVersion}
         <br />
         {packageEdition} Edition
@@ -75,13 +84,13 @@ const AboutBackendAIModal = ({
             return '';
           }
         })()}
-      </Typography.Paragraph>
-      <Typography.Paragraph>
+      </Text>
+      <Text as="p" display="block">
         Backend.AI Cluster {baiClient.managerVersion}
         <br />
-        {isElectron ? 'App' : 'WebServer'} Build {buildVersion}
-      </Typography.Paragraph>
-      <Typography.Paragraph>
+        {isElectron ? 'App' : 'WebServer'} Build {buildNumber}
+      </Text>
+      <Text as="p" display="block">
         Powered by{' '}
         <BAILink
           target="_blank"
@@ -107,7 +116,7 @@ const AboutBackendAIModal = ({
         >
           License
         </BAILink>
-      </Typography.Paragraph>
+      </Text>
     </BAIModal>
   );
 };

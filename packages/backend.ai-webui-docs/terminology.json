@@ -1,0 +1,839 @@
+{
+  "version": 1,
+  "languages": ["en", "ko", "ja", "th"],
+  "concepts": [
+    {
+      "id": "compute-session",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "compute session",
+        "ko": "연산 세션",
+        "ja": "コンピュートセッション",
+        "th": "เซสชันการคำนวณ"
+      },
+      "description": "The isolated compute environment where users run code, notebooks, or applications. Use \"session\" as shorthand after first full mention."
+    },
+    {
+      "id": "session-type-interactive",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "interactive session",
+        "ko": "대화형 세션",
+        "ja": "インタラクティブセッション"
+      },
+      "description": "Compute session type: User interacts after creation."
+    },
+    {
+      "id": "session-type-batch",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "batch session",
+        "ko": "배치 세션",
+        "ja": "バッチセッション"
+      },
+      "description": "Compute session type: Pre-defined script execution."
+    },
+    {
+      "id": "session-type-inference",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "inference session",
+        "ko": "추론 세션",
+        "ja": "推論セッション"
+      },
+      "description": "Compute session type: Model serving sessions."
+    },
+    {
+      "id": "storage-folder",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "storage folder",
+        "ko": "스토리지 폴더",
+        "ja": "ストレージフォルダ",
+        "th": "โฟลเดอร์จัดเก็บ"
+      },
+      "description": "Persistent storage that survives session termination. Use \"storage folder\" in procedural text, \"virtual folder\" or \"vfolder\" in introductions."
+    },
+    {
+      "id": "storage-folder-technical",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "vfolder",
+        "ko": "가상 폴더",
+        "ja": "バーチャルフォルダ",
+        "th": "โฟลเดอร์เสมือน"
+      },
+      "context": "Technical term for storage folder",
+      "description": "Technical-context term for the storage folder (virtual folder). Referred to as \"vfolder\" in technical contexts."
+    },
+    {
+      "id": "folder-type-user",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "User folder"
+      },
+      "context": "Storage folder type",
+      "description": "Created by individual users for personal use."
+    },
+    {
+      "id": "folder-type-project",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Project folder"
+      },
+      "context": "Storage folder type",
+      "description": "Created by administrators, shared across project members."
+    },
+    {
+      "id": "domain",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "domain",
+        "ko": "도메인",
+        "ja": "ドメイン",
+        "th": "โดเมน"
+      },
+      "description": "The top-level organizational unit for authority and resource control. Do NOT use \"organization\" or \"affiliate\" as substitutes."
+    },
+    {
+      "id": "project",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "project",
+        "ko": "프로젝트",
+        "ja": "プロジェクト",
+        "th": "โปรเจกต์"
+      },
+      "description": "The work unit within a domain. Users can belong to multiple projects. Do NOT use \"group\" as a substitute for project."
+    },
+    {
+      "id": "resource-group",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "resource group",
+        "ko": "자원 그룹",
+        "ja": "リソースグループ",
+        "th": "กลุ่มทรัพยากร"
+      },
+      "description": "A grouping of agents (compute nodes) with similar hardware specifications. Do NOT use \"scaling group\" (deprecated internal term)."
+    },
+    {
+      "id": "keypair",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "keypair",
+        "ko": "키페어",
+        "ja": "キーペア",
+        "th": "คีย์แพร์"
+      },
+      "description": "Authentication credentials for API access. Always \"keypair\" (one word, no hyphen). Never \"key pair\" or \"key-pair\"."
+    },
+    {
+      "id": "agent",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "agent, agent node",
+        "ko": "에이전트, 에이전트 노드",
+        "ja": "エージェント, エージェントノード",
+        "th": "เอเจนต์, โหนดเอเจนต์"
+      },
+      "description": "The compute node that runs containers (sessions). \"Agent\" for general reference, \"agent node\" when emphasizing the hardware aspect. Use \"worker node\" only in model serving context."
+    },
+    {
+      "id": "fractional-gpu",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "fGPU",
+        "ko": "fGPU",
+        "ja": "fGPU",
+        "th": "fGPU"
+      },
+      "context": "Numeric form",
+      "description": "Backend.AI's GPU virtualization technology that allows sharing a single physical GPU across multiple sessions. Numeric (abbreviated) form. Write \"fractional GPU (fGPU)\" on first mention, then \"fGPU\" thereafter."
+    },
+    {
+      "id": "fractional-gpu-descriptive",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "fractional GPU",
+        "ko": "분할 GPU",
+        "ja": "フラクショナルGPU",
+        "th": "GPU แบบเศษส่วน"
+      },
+      "context": "Descriptive form",
+      "description": "Descriptive form of fGPU (Backend.AI's GPU virtualization technology)."
+    },
+    {
+      "id": "model-serving",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Model Service / Model Serving"
+      },
+      "description": "The feature name (page title, menu item)."
+    },
+    {
+      "id": "replica",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "replica",
+        "ko": "복제본",
+        "ja": "レプリカ",
+        "th": "เรพลิกา"
+      },
+      "description": "An individual running instance of a deployed model service. The desired/active count of these is managed by the deployment and auto-scaling rules. Documentation section: deployment/deployment.md"
+    },
+    {
+      "id": "autoscaling-rule",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3207",
+      "preferred": {
+        "en": "Auto Scaling Rule",
+        "ko": "오토스케일링 규칙",
+        "ja": "自動スケーリングルール",
+        "th": "กฎการปรับขนาดอัตโนมัติ"
+      },
+      "description": "The rule that automatically adjusts a deployment's replica count based on live metrics. Match the UI label exactly: KO uses \"오토스케일링\" (the autoScalingRule i18n keys), NOT \"자동 스케일링\". Documentation section: deployment/deployment.md"
+    },
+    {
+      "id": "physical-node",
+      "category": "Core Concepts",
+      "status": "approved",
+      "decidingFR": "FR-3207",
+      "preferred": {
+        "en": "physical node",
+        "ko": "물리 노드",
+        "ja": "物理ノード",
+        "th": "โหนดกายภาพ"
+      },
+      "context": "Cluster mode",
+      "description": "The physical machine (or virtual machine) hosting session nodes. Used in the cluster-mode setup description to explain how a managed node and worker nodes are distributed across machines. The cluster-mode UI tooltips (DescSingleNode / DescMultiNode) use this term. Do NOT confuse with \"agent node\" — in the cluster-mode node-distribution context, use \"physical node\" to match the UI."
+    },
+    {
+      "id": "endpoint",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Endpoint"
+      },
+      "description": "The access point created for a served model."
+    },
+    {
+      "id": "inference",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Inference"
+      },
+      "description": "The operation of running predictions through a served model."
+    },
+    {
+      "id": "app-proxy",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-2841",
+      "preferred": {
+        "en": "App Proxy",
+        "ko": "App Proxy",
+        "ja": "App Proxy",
+        "th": "App Proxy"
+      },
+      "description": "The standalone, per-resource-group proxy service that relays in-container application traffic directly between the user's browser and the compute session's Agent. Renamed from WSProxy to App Proxy in the UI in FR-2841. Use \"App Proxy\" only; do not reference the old \"WSProxy\" name in user-facing documentation. UI label stays in English across all locales."
+    },
+    {
+      "id": "app-proxy-server-address",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-2841",
+      "preferred": {
+        "en": "App Proxy Server Address",
+        "ko": "App Proxy 서버 주소",
+        "ja": "App Proxy サーバアドレス",
+        "th": "ที่อยู่เซิร์ฟเวอร์ App Proxy"
+      },
+      "context": "Field label (Resource Group settings)",
+      "description": "Resource Group settings field label for the App Proxy server address."
+    },
+    {
+      "id": "app-proxy-api-token",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-2841",
+      "preferred": {
+        "en": "App Proxy API Token",
+        "ko": "App Proxy API 토큰",
+        "ja": "App Proxy APIトークン",
+        "th": "โทเค็น API ของ App Proxy"
+      },
+      "context": "Field label (Resource Group settings)",
+      "description": "Resource Group settings field label for the App Proxy API token."
+    },
+    {
+      "id": "container",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Container"
+      },
+      "description": "The runtime environment of a compute session. Do NOT use \"container\" and \"kernel\" interchangeably."
+    },
+    {
+      "id": "kernel-image",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Kernel image / Container image"
+      },
+      "description": "The base image (snapshot) from which containers are created. Do NOT use \"container\" and \"kernel\" interchangeably."
+    },
+    {
+      "id": "rbac",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "RBAC",
+        "ko": "RBAC",
+        "ja": "RBAC",
+        "th": "RBAC"
+      },
+      "description": "Role-Based Access Control. Keep as abbreviation across all languages."
+    },
+    {
+      "id": "rbac-role",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "role",
+        "ko": "권한",
+        "ja": "ロール",
+        "th": "บทบาท"
+      },
+      "description": "A named set of permissions assignable to users. The Korean i18n uses \"권한\" for both \"Role\" and \"Permission\" in different contexts."
+    },
+    {
+      "id": "rbac-permission",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "permission",
+        "ko": "세부 권한",
+        "ja": "権限",
+        "th": "สิทธิ์"
+      },
+      "description": "A fine-grained access rule within a role. \"세부 권한\" is used specifically for fine-grained permissions within a role."
+    },
+    {
+      "id": "rbac-role-assignment",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "role assignment",
+        "ko": "권한 할당",
+        "ja": "ロール割り当て",
+        "th": "การมอบหมายบทบาท"
+      },
+      "description": "The association of a user to a role."
+    },
+    {
+      "id": "rbac-scope-type",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "scope type",
+        "ko": "적용 범위 타입",
+        "ja": "スコープタイプ",
+        "th": "ประเภทขอบเขต"
+      },
+      "description": "The level at which a permission applies."
+    },
+    {
+      "id": "rbac-permission-type",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "permission type",
+        "ko": "권한 타입",
+        "ja": "権限タイプ",
+        "th": "ประเภทสิทธิ์"
+      },
+      "description": "The category of resource a permission controls."
+    },
+    {
+      "id": "role-user",
+      "category": "User Roles",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "user",
+        "ko": "사용자",
+        "ja": "ユーザー"
+      },
+      "description": "Standard access."
+    },
+    {
+      "id": "role-domain-admin",
+      "category": "User Roles",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "domain admin",
+        "ko": "도메인 관리자",
+        "ja": "ドメイン管理者"
+      },
+      "description": "Manages users and resources within a domain."
+    },
+    {
+      "id": "role-superadmin",
+      "category": "User Roles",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "superadmin",
+        "ko": "슈퍼 관리자",
+        "ja": "スーパー管理者"
+      },
+      "description": "Full system access across all domains."
+    },
+    {
+      "id": "nav-summary",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Summary",
+        "ko": "요약",
+        "ja": "サマリー"
+      },
+      "description": "Sidebar menu item. Documentation section: summary/summary.md"
+    },
+    {
+      "id": "nav-sessions",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Sessions",
+        "ko": "세션",
+        "ja": "セッション"
+      },
+      "description": "Sidebar menu item. Documentation section: session_page/session_page.md"
+    },
+    {
+      "id": "nav-data",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Data",
+        "ko": "데이터",
+        "ja": "データ"
+      },
+      "description": "Sidebar menu item. Documentation section: vfolder/vfolder.md"
+    },
+    {
+      "id": "nav-deployment",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Deployment",
+        "ko": "배포",
+        "ja": "モデルサービス"
+      },
+      "description": "Sidebar menu item. Documentation section: deployment/deployment.md"
+    },
+    {
+      "id": "nav-statistics",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "Statistics",
+        "ko": "통계",
+        "ja": "統計"
+      },
+      "description": "Sidebar menu item. Documentation section: statistics/statistics.md"
+    },
+    {
+      "id": "nav-user-settings",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "User Settings",
+        "ko": "사용자 설정",
+        "ja": "ユーザー設定"
+      },
+      "description": "Sidebar menu item. Documentation section: user_settings/user_settings.md"
+    },
+    {
+      "id": "nav-rbac-management",
+      "category": "UI Navigation Terms",
+      "status": "approved",
+      "decidingFR": null,
+      "preferred": {
+        "en": "RBAC Management",
+        "ko": "RBAC 관리",
+        "ja": "RBAC管理"
+      },
+      "description": "Sidebar menu item. Documentation section: rbac_management/rbac_management.md"
+    },
+    {
+      "id": "fair-share",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Fair Share",
+        "ko": "Fair Share",
+        "ja": "公平配分",
+        "th": "การจัดสรรแบบเป็นธรรม"
+      },
+      "description": "The scheduling policy that balances resource-allocation fairness across users within a resource group. The KO UI keeps the English label \"Fair Share\" (webui.menu.FairShare)."
+    },
+    {
+      "id": "fair-share-scheduler",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Fair Share Scheduler"
+      },
+      "description": "The scheduler component that computes Fair Share priorities. Appears in Fair Share setting descriptions; no dedicated per-language UI label (documentation term)."
+    },
+    {
+      "id": "rate-limit",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Rate Limit",
+        "ko": "최대 요청수",
+        "ja": "レート制限",
+        "th": "ขีดจำกัดอัตรา"
+      },
+      "description": "The keypair/credential setting capping API request frequency. The KO UI label is \"최대 요청수\" (credential.RateLimit)."
+    },
+    {
+      "id": "active-pool",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Active Pool",
+        "ko": "활성 풀",
+        "ja": "アクティブプール",
+        "th": "แอ็กทีฟพูล"
+      },
+      "description": "The set of model-service replicas currently receiving traffic through App Proxy. Membership tracks traffic and is independent of a replica's health status. See app-proxy."
+    },
+    {
+      "id": "model-store",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Model Store",
+        "ko": "모델 스토어",
+        "ja": "モデルストア",
+        "th": "คลังโมเดล"
+      },
+      "description": "The Model Store feature/page for browsing and importing published models into a project."
+    },
+    {
+      "id": "resource-policy",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3302",
+      "preferred": {
+        "en": "Resource Policy",
+        "ko": "자원 정책",
+        "ja": "リソースポリシー",
+        "th": "นโยบายทรัพยากร"
+      },
+      "description": "A named policy defining resource limits (CPU, memory, GPU, session count). WebUI has distinct keypair, user, and project resource policies. KO uses \"자원 정책\" (consistent with 자원 그룹)."
+    }
+  ],
+  "avoid": [
+    {
+      "avoid": "scaling group",
+      "useInstead": "resource group",
+      "reason": "Deprecated term",
+      "lang": "en",
+      "context": null,
+      "conceptId": "resource-group"
+    },
+    {
+      "avoid": "key pair",
+      "useInstead": "keypair",
+      "reason": "Incorrect spelling",
+      "lang": "en",
+      "context": null,
+      "conceptId": "keypair"
+    },
+    {
+      "avoid": "key-pair",
+      "useInstead": "keypair",
+      "reason": "Incorrect spelling",
+      "lang": "en",
+      "context": null,
+      "conceptId": "keypair"
+    },
+    {
+      "avoid": "group",
+      "useInstead": "project",
+      "reason": "Ambiguous",
+      "lang": "en",
+      "context": "for project",
+      "conceptId": "project"
+    },
+    {
+      "avoid": "organization",
+      "useInstead": "domain",
+      "reason": "Not a Backend.AI scope name; \"organization\" as an ordinary English noun (your organization's SSO, your organization's hardware, the license text) is fine",
+      "lang": "en",
+      "context": "as a Backend.AI scope",
+      "conceptId": "domain"
+    },
+    {
+      "avoid": "data folder",
+      "useInstead": "storage folder / vfolder",
+      "reason": "Non-standard",
+      "lang": "en",
+      "context": null,
+      "conceptId": "storage-folder"
+    },
+    {
+      "avoid": "worker node",
+      "useInstead": "agent node",
+      "reason": "Reserve \"worker node\" for model serving context only",
+      "lang": "en",
+      "context": null,
+      "conceptId": "agent"
+    },
+    {
+      "avoid": "compute node",
+      "useInstead": "agent node",
+      "reason": "Non-standard in docs",
+      "lang": "en",
+      "context": null,
+      "conceptId": "agent"
+    },
+    {
+      "avoid": "WSProxy",
+      "useInstead": "App Proxy",
+      "reason": "Renamed in FR-2841; `wsproxy` (code style) survives only as internal identifiers (DB columns, API route, constants), not a daemon",
+      "lang": "en",
+      "context": "as a UI label",
+      "conceptId": "app-proxy"
+    },
+    {
+      "avoid": "레플리카",
+      "useInstead": "복제본",
+      "reason": "Use the Korean translation, not the transliteration, for consistency",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "replica"
+    },
+    {
+      "avoid": "자동 스케일링",
+      "useInstead": "오토스케일링",
+      "reason": "Match the UI label; the autoScalingRule i18n keys use \"오토스케일링\"",
+      "lang": "ko",
+      "context": "auto scaling rule",
+      "conceptId": "autoscaling-rule"
+    },
+    {
+      "avoid": "슈퍼관리자",
+      "useInstead": "슈퍼 관리자",
+      "reason": "Use the spaced form for consistency",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "role-superadmin"
+    },
+    {
+      "avoid": "슈퍼어드민",
+      "useInstead": "슈퍼 관리자",
+      "reason": "Use the Korean translation, not the transliteration",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "role-superadmin"
+    },
+    {
+      "avoid": "스케일링 그룹",
+      "useInstead": "자원 그룹",
+      "reason": "Deprecated term (\"scaling group\"); the UI and docs use \"자원 그룹\"",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "resource-group"
+    },
+    {
+      "avoid": "리소스 그룹",
+      "useInstead": "자원 그룹",
+      "reason": "Use the Korean translation, not the transliteration, for consistency with \"자원 정책\"",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "resource-group"
+    },
+    {
+      "avoid": "スケーリンググループ",
+      "useInstead": "リソースグループ",
+      "reason": "Deprecated term (\"scaling group\"); the UI and docs use \"リソースグループ\"",
+      "lang": "ja",
+      "context": null,
+      "conceptId": "resource-group"
+    }
+  ],
+  "verbs": [
+    {
+      "id": "verb-cancel",
+      "intent": "cancel",
+      "context": "Stop an in-flight or not-yet-committed operation (request, draft, running deployment rollout).",
+      "preferred": {
+        "en": "Cancel"
+      },
+      "avoid": ["Abort", "Discard"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Cancel\" for stopping an action that has not yet had a permanent effect (a pending request, a model-service request, an unsaved form). Does not destroy persisted data. Maps to i18n `button.Cancel` / `modelService.Cancel`."
+    },
+    {
+      "id": "verb-delete",
+      "intent": "delete",
+      "context": "Permanently remove a standalone resource the user owns (storage folder, image, token, resource preset).",
+      "preferred": {
+        "en": "Delete"
+      },
+      "avoid": ["Destroy", "Erase", "Wipe"],
+      "reversible": "irreversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Delete\" for permanent removal of a resource that exists on its own. Maps to i18n `button.Delete`, `data.folders.Delete`, `environment.Delete`. NOTE: lexical only — whether a given Delete needs a typed-confirm modal is decided by destructive-confirmation.md from the action's reversibility, NOT from this word."
+    },
+    {
+      "id": "verb-remove",
+      "intent": "remove",
+      "context": "Detach an item from a collection / relationship without destroying the item itself (permission from a role, version from a list, member from a project).",
+      "preferred": {
+        "en": "Remove"
+      },
+      "avoid": ["Delete", "Unlink"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Remove\" for taking an item out of a list or breaking an association — the underlying entity survives elsewhere. \"Remove from list\" is NOT \"Delete permanently\". Maps to i18n `rbac.RemovePermission`, `model.RemoveSelectedVersions`. Reserve \"Delete\" for destroying the standalone resource."
+    },
+    {
+      "id": "verb-terminate",
+      "intent": "terminate",
+      "context": "End a running compute session (interactive / batch / inference) or model-service endpoint.",
+      "preferred": {
+        "en": "Terminate"
+      },
+      "avoid": ["Kill", "Destroy", "End"],
+      "reversible": "irreversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Terminate\" for ending a running session/endpoint and releasing its resources. Maps to i18n `session.Terminate`, `session.TerminateSession`, `session.ForceTerminate`. Do not use \"Stop\" for this; \"Stop\" is reserved for pausable workloads."
+    },
+    {
+      "id": "verb-stop",
+      "intent": "stop",
+      "context": "Halt a process that can later be resumed or restarted (a service replica, a pausable job).",
+      "preferred": {
+        "en": "Stop"
+      },
+      "avoid": ["Pause", "Halt", "Terminate"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Stop\" only when the workload can be started again afterward. If the resources are released and the session ends, use \"Terminate\" instead."
+    },
+    {
+      "id": "verb-inactivate",
+      "intent": "inactivate",
+      "context": "Disable an account/credential/project/role so it can no longer be used, while keeping its data for later reactivation.",
+      "preferred": {
+        "en": "Deactivate"
+      },
+      "avoid": ["Inactivate", "Disable", "Suspend"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Approved verb is \"Deactivate\" (not \"Inactivate\"): the UI uses \"Deactivate\" 13x vs \"Inactivate\" 1x. Maps to i18n `credential.Deactivate`, `project.Deactivate`, `rbac.Deactivate`, `resourceGroup.Deactivate`. The single `usersettings.InactivateTheFollowingUsers` value is the drift this entry pins. Reversible: pair with Activate."
+    },
+    {
+      "id": "verb-purge",
+      "intent": "purge",
+      "context": "Permanently and irrecoverably erase an already-deactivated account/project/role and all its records.",
+      "preferred": {
+        "en": "Purge"
+      },
+      "avoid": ["Delete", "Wipe", "Destroy"],
+      "reversible": "irreversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Purge\" for the final, irreversible erase that follows \"Deactivate\". Distinct from \"Delete\": Purge implies the entity was first deactivated and now has its records expunged. Maps to i18n `project.Purge`, `project.PurgeProject`, `rbac.PurgeRole`."
+    },
+    {
+      "id": "verb-hide",
+      "intent": "hide",
+      "context": "Make an item invisible in the UI without deleting it (hide a column, hide a notice, hide a list entry).",
+      "preferred": {
+        "en": "Hide"
+      },
+      "avoid": ["Remove", "Delete", "Dismiss"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3052",
+      "description": "Use \"Hide\" for purely cosmetic visibility changes that keep the underlying data intact and can be reversed by un-hiding. Never use \"Hide\" when data is actually removed."
+    },
+    {
+      "id": "verb-edit",
+      "intent": "edit",
+      "context": "Modify values of an existing entity that was created with initial values (resource group, user, role, preset, deployment, registry, resource policy).",
+      "preferred": { "en": "Edit" },
+      "avoid": ["Modify", "Update"],
+      "reversible": "reversible",
+      "decidingFR": "FR-3331",
+      "description": "Use \"Edit\" (KO: 수정) for actions that open or title a form modifying a previously created entity's values — modal titles, row actions, icon tooltips. Maps to i18n `button.Edit`, `credential.ModifyUserDetail` (\"Edit User Detail\"), `resourceGroup.ModifyResourceGroup` (\"Edit Resource Group\"). Do NOT use \"Edit\" for feature configuration — that stays \"Settings\" (KO: 설정, e.g., fair share settings) — nor for text/content editing where KO keeps 편집 (e.g., the vfolder file editor). The submit button of an edit form is \"Save\" (KO: 저장, i18n `button.Save`), not \"Edit\" or \"Update\"."
+    }
+  ]
+}

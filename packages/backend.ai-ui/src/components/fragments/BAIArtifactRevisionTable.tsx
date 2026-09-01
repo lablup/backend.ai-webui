@@ -3,17 +3,21 @@ import {
   BAIArtifactRevisionTableArtifactRevisionFragment$key,
 } from '../../__generated__/BAIArtifactRevisionTableArtifactRevisionFragment.graphql';
 import { BAIArtifactRevisionTableLatestRevisionFragment$key } from '../../__generated__/BAIArtifactRevisionTableLatestRevisionFragment.graphql';
-import { convertToDecimalUnit, filterOutEmpty } from '../../helper';
+import {
+  badgeVariantForTagColor,
+  convertToDecimalUnit,
+  filterOutEmpty,
+} from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
-import { Tag } from 'antd';
+import { Badge } from '@astryxdesign/core/Badge';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
 dayjs.extend(relativeTime);
@@ -22,16 +26,13 @@ export type ArtifactRevision = NonNullable<
   NonNullable<BAIArtifactRevisionTableArtifactRevisionFragment$data>[number]
 >;
 
-export interface BAIArtifactRevisionTableProps
-  extends Omit<
-    BAITableProps<ArtifactRevision>,
-    'dataSource' | 'columns' | 'rowKey'
-  > {
+export interface BAIArtifactRevisionTableProps extends Omit<
+  BAITableProps<ArtifactRevision>,
+  'dataSource' | 'columns' | 'rowKey'
+> {
   artifactRevisionFrgmt: BAIArtifactRevisionTableArtifactRevisionFragment$key;
   latestRevisionFrgmt:
-    | BAIArtifactRevisionTableLatestRevisionFragment$key
-    | null
-    | undefined;
+    BAIArtifactRevisionTableLatestRevisionFragment$key | null | undefined;
   customizeColumns?: (
     baseColumns: BAIColumnType<ArtifactRevision>[],
   ) => BAIColumnType<ArtifactRevision>[];
@@ -43,7 +44,7 @@ const BAIArtifactRevisionTable = ({
   customizeColumns,
   ...tableProps
 }: BAIArtifactRevisionTableProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const artifactRevision =
     useFragment<BAIArtifactRevisionTableArtifactRevisionFragment$key>(
@@ -78,7 +79,6 @@ const BAIArtifactRevisionTable = ({
         title: t('comp:BAIArtifactRevisionTable.Version'),
         dataIndex: 'version',
         key: 'version',
-        width: '30%',
         render: (version: string, record: ArtifactRevision) => (
           <div>
             <BAIFlex align="center" gap={'xs'}>
@@ -86,7 +86,12 @@ const BAIArtifactRevisionTable = ({
                 {version}
               </BAIText>
               {latestRevision && latestRevision.id === record.id && (
-                <Tag color="blue">Latest</Tag>
+                // to-astryx W2-D: antd `Tag` -> Astryx `Badge`, hue via the
+                // repo-global lookup (MAPPING §3.5).
+                <Badge
+                  variant={badgeVariantForTagColor('blue')}
+                  label="Latest"
+                />
               )}
               {record.status === 'PULLED' && <BAITag>{record.status}</BAITag>}
             </BAIFlex>
@@ -97,7 +102,6 @@ const BAIArtifactRevisionTable = ({
         title: t('comp:BAIArtifactRevisionTable.Status'),
         dataIndex: 'status',
         key: 'status',
-        width: '15%',
         render: (_value: string, record: ArtifactRevision) => {
           return <BAIArtifactStatusTag artifactRevisionFrgmt={record} />;
         },
@@ -106,7 +110,6 @@ const BAIArtifactRevisionTable = ({
         title: t('comp:BAIArtifactRevisionTable.Size'),
         dataIndex: 'size',
         key: 'size',
-        width: '15%',
         render: (size: number) => {
           if (!size) return <BAIText monospace>N/A</BAIText>;
           return (
@@ -120,7 +123,6 @@ const BAIArtifactRevisionTable = ({
         title: t('comp:BAIArtifactTable.Updated'),
         dataIndex: 'updatedAt',
         key: 'updatedAt',
-        width: '15%',
         render: (updated_at: string) =>
           updated_at ? (
             <BAIText type="secondary" title={dayjs(updated_at).toString()}>
@@ -139,11 +141,14 @@ const BAIArtifactRevisionTable = ({
 
   return (
     <BAITable<ArtifactRevision>
+      // Restores the pre-migration pairing. The percentage column widths that
+      // used to sit alongside it are gone: BAITable keeps only NUMERIC widths
+      // in x mode, so they were inert. Use numbers if proportions are wanted.
+      scroll={{ x: 'max-content' }}
       rowKey={(record) => record.id}
       resizable
       columns={allColumns}
       dataSource={artifactRevision}
-      scroll={{ x: 'max-content' }}
       {...tableProps}
     ></BAITable>
   );

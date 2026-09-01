@@ -2,23 +2,23 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from 'antd';
+import { getDefaultDesignToken } from '../../helper/defaultDesignTokens';
+import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { BAIUncontrolledInput } from 'backend.ai-ui';
-import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 const FontFamilySettingItem: React.FC = () => {
   'use memo';
 
-  const { getThemeValue, updateUserCustomThemeConfig } =
-    useUserCustomThemeConfig();
+  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
 
-  const defaultTokens = theme.getDesignToken({
-    algorithm: theme.defaultAlgorithm,
-  });
+  // Was `theme.getDesignToken({ algorithm: theme.defaultAlgorithm })` — the
+  // last antd import in this file. `fontFamily` is a seed, so the shim-backed
+  // helper returns antd's stock stack verbatim.
+  const defaultTokens = getDefaultDesignToken('light');
 
   const fontFamily =
-    getThemeValue<string>('fontFamily') ??
-    getThemeValue<string>('light.token.fontFamily') ??
+    getDefaultThemeValue<string>('fontFamily') ??
+    getDefaultThemeValue<string>('light.token.fontFamily') ??
     defaultTokens.fontFamily;
 
   return (
@@ -26,9 +26,9 @@ const FontFamilySettingItem: React.FC = () => {
       defaultValue={fontFamily}
       onCommit={(v) => {
         const value = v || undefined;
-        updateUserCustomThemeConfig('fontFamily', value);
-        updateUserCustomThemeConfig('light.token.fontFamily', value);
-        updateUserCustomThemeConfig('dark.token.fontFamily', value);
+        updateDefaultTheme('fontFamily', value);
+        updateDefaultTheme('light.token.fontFamily', value);
+        updateDefaultTheme('dark.token.fontFamily', value);
       }}
       style={{ alignSelf: 'stretch' }}
     />

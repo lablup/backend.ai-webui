@@ -11,9 +11,11 @@ test.beforeEach(async ({ page, request }) => {
   });
   await loginAsVisualRegressionAdmin(page, request);
   await navigateTo(page, 'environment');
-  // Wait for the BAIPropertyFilter via its accessible combobox
+  // Wait for the BAIPropertyFilter via its accessible combobox. Since
+  // to-astryx ticket 28 the filter is an Astryx `PowerSearch`: one typeahead
+  // combobox labelled by the control, not the antd property selector.
   await page
-    .getByRole('combobox', { name: 'Filter property selector' })
+    .getByRole('combobox', { name: 'Search filters' })
     .waitFor({ state: 'visible' });
 });
 
@@ -21,8 +23,10 @@ test.describe(
   'Environments page Visual Regression Test',
   { tag: ['@regression', '@environment', '@visual'] },
   () => {
-    // FIXME: Modal locator times out - 'div.ant-modal.css-dev-only-do-not-override-1wkvdan.bai-modal' cannot find the modal
-    // May need to update modal locator to use getByRole('dialog') instead
+    // FIXME(FR-3111/brittle-locator): Modal locator hard-codes the antd version-specific
+    // hash class 'css-dev-only-do-not-override-1wkvdan' and times out. Replace with
+    // getByRole('dialog'). Not a stale baseline; owned by the locator-quality triage
+    // category of FR-3109.
     test.fixme(`images table`, async ({ page }) => {
       // full page
       await expect(page).toHaveScreenshot('images_table.png', {
@@ -46,8 +50,10 @@ test.describe(
       await page.getByRole('button', { name: 'Close' }).click();
     });
 
-    // FIXME: Strict mode violation - getByText('Name', { exact: true }) resolves to 2 elements
-    // Need to use more specific locator, e.g., getByRole('columnheader', { name: 'Name' })
+    // FIXME(FR-3111/brittle-locator): Strict mode violation — getByText('Name',
+    // { exact: true }) resolves to 2 elements; use getByRole('columnheader', { name:
+    // 'Name' }). Not a stale baseline; owned by the locator-quality triage category of
+    // FR-3109.
     test.fixme(`resource presets table`, async ({ page }) => {
       await page.getByRole('tab', { name: 'Resource Presets' }).click();
       await page.getByText('Name', { exact: true }).waitFor();
@@ -72,8 +78,9 @@ test.describe(
       await page.getByRole('button', { name: 'Close' }).click();
     });
 
-    // FIXME: Modal locator times out - 'div.ant-modal-content' cannot find the add registry modal
-    // May need to wait longer or use getByRole('dialog') instead
+    // FIXME(FR-3111/brittle-locator): 'div.ant-modal-content' cannot find the add
+    // registry modal; use getByRole('dialog'). Not a stale baseline; owned by the
+    // locator-quality triage category of FR-3109.
     test.fixme('registries table', async ({ page }) => {
       await page.getByRole('tab', { name: 'Registries' }).click();
       await page.getByTitle('Registry Name').waitFor();

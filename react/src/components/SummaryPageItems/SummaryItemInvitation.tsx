@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../../app-shim';
 import {
   baiSignedRequestWithPromise,
   useBaiSignedRequestWithPromise,
@@ -11,13 +12,23 @@ import {
   useSuspenseTanQuery,
   useTanMutation,
 } from '../../hooks/reactQueryAlias';
-import { App, Button, Descriptions, Empty, Tag, Typography, theme } from 'antd';
-import { BAICard, BAIFlex, useErrorMessageResolver } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Heading } from '@astryxdesign/core/Heading';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import {
+  BAICard,
+  BAIFlex,
+  BAIMetadataList,
+  badgeVariantForStatus,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 const SummaryItemInvitation: React.FC = () => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -63,17 +74,18 @@ const SummaryItemInvitation: React.FC = () => {
 
   const permissionIndicator = (permission: any) => {
     const indicator = [...permission].map((p: any) => {
-      const color = ['green', 'blue', 'red', 'orange'][
-        ['r', 'w', 'd', 'o'].indexOf(p)
-      ];
       const text = ['read', 'write', 'delete', 'only'][
         ['r', 'w', 'd', 'o'].indexOf(p)
       ];
 
+      // The local r/w/d/o -> colour array is gone: ticket 13's global lookup
+      // already carries this exact map as the `vfolderPermission` domain.
       return (
-        <Tag color={color} key={p}>
-          {text}
-        </Tag>
+        <Badge
+          key={p}
+          variant={badgeVariantForStatus('vfolderPermission', p)}
+          label={text}
+        />
       );
     });
 
@@ -87,26 +99,36 @@ const SummaryItemInvitation: React.FC = () => {
       align="center"
       //FIXME: This can modify dynamically by the layout
       style={{ width: '100%' }}
-      gap={token.marginSM}
+      gap="sm"
     >
       {invitations.length > 0 ? (
         <>
           {invitations.map((invitation: any) => (
             <BAICard key={invitation.id} showDivider style={{ width: '100%' }}>
-              <Descriptions title={`From: ${invitation.inviter}`} column={1}>
-                <Descriptions.Item
-                  label={t('summary.FolderName')}
-                  style={{ padding: 0 }}
-                >
+              {/* antd `Descriptions` -> `MetadataList` (MAPPING §4). The
+                  per-item `padding: 0` override is dropped — MetadataList owns
+                  its row rhythm. `Descriptions.title` has no MetadataList
+                  counterpart in this layout, so the inviter line becomes an
+                  explicit Heading above the list. */}
+              <Heading level={6}>
+                {`From: ${invitation.inviter_user_email || invitation.inviter || '-'}`}
+              </Heading>
+              <BAIMetadataList columns="single">
+                <MetadataListItem label={t('summary.FolderName')}>
                   {invitation.vfolder_name}
-                </Descriptions.Item>
-                <Descriptions.Item label={t('summary.Permission')}>
+                </MetadataListItem>
+                <MetadataListItem label={t('summary.Permission')}>
                   {permissionIndicator(invitation.perm)}
-                </Descriptions.Item>
-              </Descriptions>
-              <BAIFlex gap={token.paddingXS} justify="end">
+                </MetadataListItem>
+              </BAIMetadataList>
+              <BAIFlex gap="xs" justify="end">
+                {/* MAPPING §3.3: a `default` button whose only child was a
+                    `type="danger"` Text is a `destructive` Button — the
+                    label/colour pair collapses into one variant instead of
+                    tinting text inside a neutral button. */}
                 <Button
-                  type="default"
+                  variant="destructive"
+                  label={t('summary.Decline')}
                   onClick={() =>
                     terminateInvitationsMutation.mutate(invitation.id, {
                       onSuccess() {
@@ -121,20 +143,14 @@ const SummaryItemInvitation: React.FC = () => {
                       },
                     })
                   }
-                >
-                  <Typography.Text
-                    type="danger"
-                    style={{ fontSize: token.fontSizeSM }}
-                  >
-                    {t('summary.Decline')}
-                  </Typography.Text>
-                </Button>
+                />
+                {/* The `colorPrimary` label tint was antd's way of marking
+                    this as the affirmative action; on Astryx that IS
+                    `variant="primary"` (P5 — no colour escape hatch, and none
+                    is needed). */}
                 <Button
-                  type="default"
-                  style={{
-                    fontSize: token.fontSizeSM,
-                    color: token.colorPrimary,
-                  }}
+                  variant="primary"
+                  label={t('summary.Accept')}
                   onClick={() =>
                     acceptInvitationsMutation.mutate(invitation.id, {
                       onSuccess() {
@@ -151,18 +167,15 @@ const SummaryItemInvitation: React.FC = () => {
                       },
                     })
                   }
-                >
-                  {t('summary.Accept')}
-                </Button>
+                />
               </BAIFlex>
             </BAICard>
           ))}
         </>
       ) : (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t('summary.NoInvitations')}
-        />
+        // antd `Empty` -> `EmptyState`: `description` becomes the required
+        // `title`; `PRESENTED_IMAGE_SIMPLE` has no counterpart and is dropped.
+        <EmptyState title={t('summary.NoInvitations')} />
       )}
     </BAIFlex>
   );

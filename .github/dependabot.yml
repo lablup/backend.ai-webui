@@ -1,9 +1,11 @@
-version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    allow:
-      - dependency-name: actions/*
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
+- allow:
+  - dependency-name: "actions/*"
+  directory: /
+  ignore:
+  - dependency-name: "github/gh-aw-actions/**" # Managed by gh aw compile. Version-locked to the gh-aw compiler; do not bump.
+  package-ecosystem: github-actions
+  schedule:
+    day: saturday
+    interval: weekly
+version: 2

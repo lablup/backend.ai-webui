@@ -5,6 +5,7 @@
     "Architecture": "Архитектур",
     "DiskPerc": "Диск %",
     "Endpoint": "Эцсийн цэг",
+    "FailedToLoadCellData": "Өгөгдөл ачааллахад алдаа гарлаа.",
     "NoAvailableLiveStat": "Амьд статистик байхгүй",
     "Region": "Бүс",
     "ResourceGroup": "Ресурсын бүлэг",
@@ -25,6 +26,9 @@
     "AreYouSureYouWantToActivateSome": "Та {{count}} олдворуудыг идэвхжүүлэхийг хүсч байна уу?",
     "FailedToActivateArtifacts": "Олдворуудыг идэвхжүүлж чадсангүй.",
     "SuccessfullyActivated": "Амжилттай идэвхжүүлсэн олдворууд."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Keypair нөөцийн бодлого сонгох"
   },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Моделийн үйлчилгээ сонгох"
@@ -63,6 +67,22 @@
     "Updated": "Шинэчилсэн цаг нь",
     "Version": "Таамаглал"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "Үйлийн ID",
+    "Actor": "Гүйцэтгэгч",
+    "Description": "Тайлбар",
+    "Duration": "Үргэлжлэх хугацаа",
+    "EntityId": "Объектын ID",
+    "EntityType": "Объектын төрөл",
+    "Operation": "Үйлдэл",
+    "RequestId": "Хүсэлтийн ID",
+    "Status": "Төлөв",
+    "Time": "Цаг",
+    "TriggeredBy": "Өдөөгч"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Урьдчилан тохиргоо сонгох"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Гэнэтийн алдаа гарлаа. Дахин оролдоно уу эсвэл асуудал үргэлжилбэл дэмжлэгт хандана уу."
   },
@@ -70,6 +90,18 @@
     "Clear": "Цэвэрлэх",
     "KeepAsIs": "Хэвээр үлдээх",
     "UndoChanges": "Өөрчлөлтийг буцаах"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Гүйцэтгэл амжилтгүй боллоо",
+    "ErrorOccurred": "Алдаа гарлаа"
+  },
+  "comp:BAIComplexSelect": {
+    "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
+    "NoResults": "Үр дүн олдсонгүй",
+    "SearchOptions": "Сонголтуудаас хайх"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
   },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Та {{name}} идэвхгүй болгохыг хүсч байна уу?}}?",
@@ -88,14 +120,58 @@
     "SuccessFullyRemoved": "Амжилттай хассан {{тоолох} хувилбарууд.",
     "Version": "Таамаглал"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Та устгахдаа итгэлтэй байна уу?",
+    "AreYouSureToPermanentlyDeleteTarget": "{{target}}-г бүрмөсөн устгахдаа итгэлтэй байна уу?",
+    "CannotBeUndone": "Энэ үйлдлийг буцаах боломжгүй.",
+    "DeleteItem": "Устгах",
+    "DeleteNItems": "{{count}} зүйл устгах",
+    "TypeToConfirm": "Баталгаажуулахын тулд <code>{{confirmText}}</code> гэж бичнэ үү."
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Үүсгэсэн"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Оролдлого",
+    "Category": "Ангилал",
+    "CreatedAt": "Үүссэн огноо",
+    "ErrorCode": "Алдааны код",
+    "From": "Эх төлөв",
+    "Message": "Зурвас",
+    "Phase": "Шат",
+    "Result": "Үр дүн",
+    "To": "Зорилтот төлөв",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Байршуулалт сонгох"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Муудсан",
+    "Deploying": "Байршуулж байна",
+    "Healthy": "Эрүүл",
+    "NotChecked": "Шалгаагүй",
+    "Pending": "Хүлээгдэж байна",
+    "Ready": "Бэлэн",
+    "Scaling": "Хэмжээ өөрчлөгдөж байна",
+    "Stopped": "Зогссон",
+    "Stopping": "Зогсож байна",
+    "Terminated": "Дуусгавар болсон",
+    "Unhealthy": "Эрүүл бус"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Домен сонгох"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Автоматаар сэргээх",
+    "EveryHours": "{{count}}h",
+    "EveryMinutes": "{{count}}m",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Сүүлд шинэчлэгдсэн",
+    "Off": "Унтраах",
     "Refresh": "Шинэчлэх"
   },
   "comp:BAIGraphQLPropertyFilter": {
@@ -103,6 +179,9 @@
     "operator": {
       "After": "дараа",
       "Before": "өмнө",
+      "Contains": "агуулсан",
+      "EndsWith": "төгсдөг",
+      "Equals": "тэнцүү",
       "GreaterThan": "их",
       "GreaterThanOrEqual": "их эсвэл тэнцүү",
       "IContains": "агуулсан",
@@ -116,7 +195,12 @@
       "In": "дотор",
       "LessThan": "бага",
       "LessThanOrEqual": "бага эсвэл тэнцүү",
-      "NotIn": "дотор биш"
+      "NotContains": "агуулаагүй",
+      "NotEndsWith": "төгсдөггүй",
+      "NotEquals": "тэнцүү биш",
+      "NotIn": "дотор биш",
+      "NotStartsWith": "эхэлдэггүй",
+      "StartsWith": "эхэлдэг"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -124,6 +208,9 @@
     "HuggingFaceSettings": "Hugging Face Settings",
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Зураг сонгох"
   },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} хувилбарыг хасч болно.",
@@ -135,8 +222,36 @@
     "SuccessFullyPulled": "{{count} хувилбарыг амжилттай хийхийг хүсч байна.",
     "Version": "Таамаглал"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Кластерийн хэмжээ",
+    "Concurrency": "Зэрэгцээ сессүүд",
+    "CreatedAt": "Үүсгэсэн",
+    "DefaultForUnspecified": "Тодорхойлогдоогүй тохиолдолд анхдагч",
+    "DefaultForUnspecifiedTooltipDesc1": "Тодорхой CPU эсвэл санах ой байхгүй үед үндсэн бодлогыг тохируулна.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Хязгааргүй' нь агент зангилааны хүчин чадлыг ашиглах боломжийг олгодог бөгөөд 'Хязгаарлагдмал' нөөцийг ашиглахгүй бол нөөцийг үгүйсгэхгүй. \nИхэнх тохиолдолд 'Хязгааргүй' зөвлөж байна.",
+    "IdleTimeout": "Сул зогсолтын хугацаа",
+    "MaxConcurrentSFTPSessions": "Макс тохиролцсон SFTP хуралдаанууд",
+    "MaxPendingSessionCount": "Макс хүлээгдэж буй хуралдааны тоо",
+    "MaxPendingSessionResourceSlots": "Макс хүлээгдэж буй сешний нөөцийн слотууд",
+    "MaxSessionLifetime": "Хамгийн их сессийн ашиглалтын хугацаа",
+    "Name": "Нэр",
+    "StorageNodes": "Хадгалах цэгүүд",
+    "TotalResourceSlots": "Нөөцийн бодлого"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Түлхүүрийн хос сонгох"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Домэйн",
+    "FailReason": "Амжилтгүй болсон шалтгаан",
+    "LoginTime": "Нэвтэрсэн цаг",
+    "Result": "Үр дүн"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Хандалтын түлхүүр",
+    "CreatedAt": "Үүсгэсэн",
+    "InvalidatedAt": "Хүчингүй болгосон",
+    "User": "Хэрэглэгч"
   },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
@@ -145,10 +260,51 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "\"{{deploymentName}}\" байршуулалтыг устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй.",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "CreatedUser": "Зохиогч",
+    "CurrentRevisionID": "Одоогийн засвариин ID",
+    "Delete": "Устгах",
+    "DeleteDeployment": "Байршуулалт устгах",
+    "DeploymentDeleted": "Байршуулалт устгагдлаа.",
+    "DeploymentID": "Байршуулалтын ID",
+    "DomainName": "Домайн",
+    "EndpointURL": "Төгсгөлийн цэгийн URL",
+    "FailedToDeleteDeployment": "Байршуулалт устгаж чадсангүй.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Амьдралын мөчлөг",
+    "Model": "Загвар",
+    "Name": "Нэр",
+    "OpenToPublic": "Нийтэд нээлттэй",
+    "Owner": "Эзэн",
+    "PreferredDomainName": "Давуу домайн",
+    "Project": "Төсөл",
+    "ProjectID": "Төслийн ID",
+    "ReplicaSummary": "Хуулбар",
+    "ReplicaSummaryTooltip": "Гүйцэтгэж байгаа хуулбарын тоо хүссэн хуулбарын тоотой харьцуулсан.",
+    "Replicas": "Хуулбар",
+    "ResourceGroup": "Нөөцийн бүлэг",
+    "RevisionNumber": "Засвар",
+    "RevisionNumberTooltip": "Байршуулалтын одоогийн засварын дугаар.",
+    "StrategyType": "Стратеги",
+    "Tags": "Шошго",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "Бусад үйлдэл"
+  },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Дараах хавтас(ууд) шинэчлэгдэх болно.",
+    "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
     "UpdateMultipleProjects": "Олон төслийг шинэчлэх"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Үүсгэсэн",
+    "MaxNetworkCount": "Хамгийн их сүлжээний тоо",
+    "MaxQuotaScopeSize": "Хавтасны хамгийн их хэмжээ",
+    "MaxVFolderCount": "Хамгийн их хавтасны тоо",
+    "Name": "Нэр"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Төсөл сонгох"
@@ -176,32 +332,24 @@
     "UpdateProject": "Төслийг шинэчлэх"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Та {{projectName}} төслийг идэвхгүй болгохыг баталж байна уу?",
-    "AreYouSureToPurgeProject": "Та {{projectName}} бүрмөсөн устгахдаа итгэлтэй байна уу? Энэ үйлдэл буцаашгүй.",
     "ContainerRegistry": "Контейнерийн бүртгэл",
-    "Controls": "Удирдлага",
+    "ContainerRegistryProject": "Контейнерийн бүртгэлийн төсөл",
     "CreatedAt": "Үүсгэсэн огноо",
-    "Deactivate": "Идэвхгүй болгох",
-    "DeactivateProject": "Төслийг идэвхгүй болгох",
     "Description": "Тайлбар",
     "Domain": "Домен",
-    "FailedToDeactivateProject": "Төслийг идэвхгүй болгоход амжилтгүй боллоо.",
-    "FailedToPurgeProject": "Төслийг бүрмөсөн устгахад амжилтгүй боллоо.",
     "IntegrationID": "Интеграцийн ID",
-    "IsActive": "Идэвхтэй",
     "Name": "Нэр",
     "Project": "Төсөл",
-    "ProjectDeactivated": "Төсөл идэвхгүй боллоо.",
     "ProjectID": "Төслийн ID",
-    "ProjectPurged": "Төсөл бүрмөсөн устгагдсан.",
-    "Purge": "Устгах",
-    "PurgeProject": "Төслийг бүрэн устгах",
     "Registry": "Регистри",
     "ResourcePolicy": "Ресурсын бодлого",
     "ScalingGroups": "Нөөцийн бүлгүүд",
     "StorageNodes": "Хадгалах зангилаанууд",
     "TotalResourceSlots": "Нийт нөөцийн слотууд",
     "Type": "Төрөл"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Хавтас сонгох"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Хайх",
@@ -219,22 +367,154 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Ресурсын бүлэг сонгох"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Хуваарилсан / Хүссэн"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Бүлгийн өнгийг өөрчлөх",
+    "ResourceGrid": "Нөөцийн тор",
+    "UseColorN": "Өнгө {{n}} ашиглах"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Хязгааргүй"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Үүсгэсэн огноо",
+    "HealthStatus": "Эрүүл мэндийн төлөв",
     "RouteId": "Маршрутын ID",
+    "SchedulingHistory": "Хуваарилалтын түүх",
     "SessionId": "Сессийн ID",
     "Status": "Төлөв",
     "TrafficRatio": "Трафикийн харьцаа",
     "TrafficStatus": "Трафикийн төлөв"
   },
-  "comp:BAISchedulingHistoryNodes": {
+  "comp:BAIRouteSchedulingHistoryNodes": {
     "Attempts": "Оролдлого",
+    "Category": "Ангилал",
     "CreatedAt": "Үүссэн огноо",
-    "From": "Эхлэх",
+    "ErrorCode": "Алдааны код",
+    "From": "Эх төлөв",
+    "Message": "Зурвас",
     "Phase": "Шат",
     "Result": "Үр дүн",
-    "StatusTransition": "Статусын шилжилт",
-    "To": "Хүртэл",
+    "To": "Зорилтот төлөв",
+    "UpdatedAt": "Шинэчлэгдсэн огноо"
+  },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Сонголт нэмэх",
+    "Category": "Ангилал",
+    "CategoryPlaceholder": "жн: model_loading",
+    "CategoryTooltip": "Холбоотой параметрүүдийг хамтад нь бүлэглэхэд ашиглагдах UI ангилал.",
+    "ChoiceLabel": "Шошго",
+    "ChoiceLabelPlaceholder": "жн: FP16",
+    "ChoiceLabelRequired": "Сонголтын шошго заавал шаардлагатай.",
+    "ChoiceValue": "Утга",
+    "ChoiceValuePlaceholder": "жн: fp16",
+    "ChoiceValueRequired": "Сонголтын утга заавал шаардлагатай.",
+    "Choices": "Сонголтууд",
+    "ChoicesRequired": "Дор хаяж нэг сонголт шаардлагатай.",
+    "CreatePreset": "Урьдчилсан тохиргоо үүсгэх",
+    "DefaultValue": "Өгөгдмөл утга",
+    "DefaultValuePlaceholder": "жн: 1",
+    "Description": "Тайлбар",
+    "DescriptionPlaceholder": "Энэ параметр юуг удирдаж, дүгнэлтийн ажиллагаанд хэрхэн нөлөөлдгийг тайлбарлана уу.",
+    "DisplayName": "Харагдах нэр",
+    "DisplayNamePlaceholder": "жн: Tensor Parallel Size",
+    "DisplayNameTooltip": "Байршуулалтын маягтад параметрийн нэрний оронд харагдах, амархан ойлгогдох шошго.",
+    "EditPreset": "Урьдчилсан тохиргоо засах",
+    "Key": "Түлхүүр",
+    "KeyPlaceholder": "жн: TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Түлхүүр заавал шаардлагатай.",
+    "Name": "Нэр",
+    "NamePlaceholder": "жн: Tensor Parallel Size",
+    "NameRequired": "Нэр заавал бөглөх ёстой.",
+    "NumberMax": "Дээд утга",
+    "NumberMaxMustExceedMin": "Дээд утга нь доод утгаас их байх ёстой.",
+    "NumberMin": "Доод утга",
+    "PresetCreated": "Ажиллах орчны урьдчилсан тохиргоо үүсгэгдлээ.",
+    "PresetTarget": "Урьдчилсан тохиргооны зорилт",
+    "PresetTargetArgs": "Тушаалын мөрийн аргумент",
+    "PresetTargetEnv": "Орчны хувьсагч",
+    "PresetTargetRequired": "Урьдчилсан тохиргооны зорилт заавал шаардлагатай.",
+    "PresetUpdated": "Ажиллах орчны урьдчилсан тохиргоо шинэчлэгдлээ.",
+    "Rank": "Зэрэглэл",
+    "RankTooltip": "Ижил ажиллах орчны урьдчилсан тохиргоонуудын дэлгэцийн дараалал. Бага утга эхэлж харагдана.",
+    "Required": "Шаардлагатай",
+    "RequiredTooltip": "Байршуулалтын шинэчлэл (revision) бүтээх үед энэ урьдчилсан тохиргооны параметрийг заавал өгөх ёстой эсэх.",
+    "Requirement": "Заавал эсэх",
+    "RuntimeVariant": "Ажиллах орчин",
+    "RuntimeVariantRequired": "Ажиллах орчин заавал шаардлагатай.",
+    "SliderMax": "Дээд утга",
+    "SliderMaxMustExceedMin": "Дээд утга нь доод утгаас их байх ёстой.",
+    "SliderMaxRequired": "Дээд утга заавал шаардлагатай.",
+    "SliderMin": "Доод утга",
+    "SliderMinRequired": "Доод утга заавал шаардлагатай.",
+    "SliderStep": "Алхам",
+    "SliderStepMustBePositive": "Алхам 0-ээс их байх ёстой.",
+    "SliderStepTooltip": "Гулсагчийн өсөх алхам. Анхны утга нь 1.",
+    "StoredValueTypeMismatch": "Энэ урьдчилсан тохиргоо нь {{valueType}} утгын төрлөөр хадгалагдсан бөгөөд {{uiType}} UI төрөл үүнийг харуулж чадахгүй. UI төрөл эсвэл утгын төрлийг өөрчилнө үү.",
+    "TextPlaceholderExample": "жн: Утга оруулна уу",
+    "TextPlaceholderLabel": "Оролтын түр бичвэр",
+    "UIType": "UI төрөл",
+    "UITypeCheckbox": "Чекбокс",
+    "UITypeIncompatibleWithValueType": "Сонгосон UI төрөл энэ утгын төрлийг харуулж чадахгүй.",
+    "UITypeNumberInput": "Тооны оролт",
+    "UITypeSelect": "Сонгох",
+    "UITypeSlider": "Гулсагч",
+    "UITypeTextInput": "Текст оролт",
+    "UITypeTooltip": "Энэ параметрийг байршуулалтын маягтад харуулахад ашиглагдах хяналт.",
+    "ValueType": "Утгын төрөл",
+    "ValueTypeBool": "Логик утга",
+    "ValueTypeFlag": "Флаг",
+    "ValueTypeFloat": "Бутархай тоо",
+    "ValueTypeInt": "Бүхэл тоо",
+    "ValueTypeRequired": "Утгын төрөл заавал шаардлагатай.",
+    "ValueTypeStr": "Тэмдэгт мөр"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Ангилал",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "DefaultValue": "Өгөгдмөл утга",
+    "Description": "Тайлбар",
+    "DisplayName": "Харагдах нэр",
+    "Key": "Түлхүүр",
+    "ModifiedAt": "Өөрчлөлтийн огноо",
+    "Name": "Нэр",
+    "Optional": "Заавал биш",
+    "PresetTarget": "Урьдчилсан тохиргооны зорилт",
+    "PresetTargetArgs": "Тушаалын мөрийн аргумент",
+    "PresetTargetEnv": "Орчны хувьсагч",
+    "Rank": "Зэрэглэл",
+    "RankTooltip": "Ижил ажиллах орчны урьдчилсан тохиргоонуудын дэлгэцийн дараалал. Бага утга эхэлж харагдана.",
+    "Required": "Шаардлагатай",
+    "RuntimeVariantId": "Ажиллах орчны ID",
+    "RuntimeVariantWithID": "Ажиллах орчин (ID)",
+    "UIType": "UI төрөл",
+    "UITypeCheckbox": "Чекбокс",
+    "UITypeNumberInput": "Тооны оролт",
+    "UITypeSelect": "Сонгох",
+    "UITypeSlider": "Гулсагч",
+    "UITypeTextInput": "Текст оролт",
+    "ValueType": "Утгын төрөл",
+    "ValueTypeBool": "Логик утга",
+    "ValueTypeFlag": "Флаг",
+    "ValueTypeFloat": "Бутархай тоо",
+    "ValueTypeInt": "Бүхэл тоо",
+    "ValueTypeStr": "Тэмдэгт мөр"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Ажиллах хувилбар сонгох"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Оролдлого",
+    "Category": "Ангилал",
+    "CreatedAt": "Үүссэн огноо",
+    "ErrorCode": "Алдааны код",
+    "From": "Эх төлөв",
+    "Message": "Зурвас",
+    "Phase": "Шат",
+    "Result": "Үр дүн",
+    "To": "Зорилтот төлөв",
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAISessionAgentIds": {
@@ -250,11 +530,32 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Хадгалах хост сонгох"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Хадгалалтын прокси сонгох"
+  },
+  "comp:BAISubStepNodes": {
+    "Duration": "Үргэлжлэх хугацаа",
+    "ErrorCode": "Алдааны код",
+    "Message": "Зурвас",
+    "Result": "Үр дүн",
+    "ResultMarker": "Энэ оролдлогын үр дүнгийн тэмдэглэгээ",
+    "Step": "Алхам",
+    "Time": "Цаг"
+  },
   "comp:BAITable": {
+    "Apply": "Хэрэглэх",
+    "Cancel": "Цуцлах",
+    "CollapseAll": "Бүгдийг хураах",
+    "ExpandAll": "Бүгдийг дэлгэх",
+    "ExpandErrorsOnly": "Зөвхөн алдааг дэлгэх",
+    "ExpandOptions": "Дэлгэх сонголтууд",
+    "ExpandRow": "Мөрийг дэлгэх",
     "Export": "Экспорт",
     "ExportCSV": "CSV экспортлах",
     "GoToFirstPage": "Эх хуудас руу шилжих",
     "InvalidPageNumber": "Хуудасны дугаар буруу байна",
+    "NoDataToDisplay": "Харуулах өгөгдөл алга",
+    "Pagination": "Хуудаслалт",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх",
     "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
     "SettingTable": "Хүснэгтийн тохиргоо"
@@ -262,16 +563,39 @@
   "comp:BAITestButton": {
     "Test": "турших"
   },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Үүсгэсэн",
+    "MaxConcurrentLogins": "Хамгийн их зэрэгцээ нэвтрэлт",
+    "MaxCustomizedImageCount": "Хамгийн их тохируулсан зургийн тоо",
+    "MaxQuotaScopeSize": "Хавтасны хамгийн их хэмжээ",
+    "MaxSessionCountPerModelSession": "Загвар бүрийн хамгийн их сеанс тоо",
+    "MaxVFolderCount": "Хамгийн их хавтасны тоо",
+    "Name": "Нэр"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "Хэрэглэгч сонгох"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Замын формат буруу байна.",
+    "AliasOverlapping": "Маунтын зам өөр хавтастай давхцаж байна.",
+    "AliasPlaceholder": "Маунтын зам",
+    "AutoMountedFolders": "Автоматаар маунт хийсэн хавтаснууд",
+    "Name": "Нэр",
+    "PathAndAlias": "Зам & Alias",
+    "PathAndAliasTooltip": "Хавтасыг контейнер дотор маунт хийх зам. Анхдагч замыг ашиглахын тулд хоосон үлдээнэ үү.",
+    "RemoveFolder": "Хасах",
+    "Subpath": "Дэд зам",
+    "SubpathInvalid": "Дэд зам нь харьцангуй зам байх ёстой бөгөөд '..' агуулж болохгүй.",
+    "SubpathPlaceholder": "жш нь dataset/train (заавал биш)",
+    "SubpathTooltip": "Хавтасны үндсийн оронд хавтас дотрах дэд хавтасыг эх сурвалж болгон маунт хийнэ. Үндсийг маунт хийхийн тулд хоосон үлдээнэ үү."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "{{count}} зүйлийн таталт эхэллээ.",
     "ChangeFileExtension": "Файлын өргөтгөлийг өөрчлөх",
     "ChangeFileExtensionDesc": "Файлын өргөтгөлийг өөрчлөх нь файлыг ашиглах боломжгүй эсвэл буруу нээхэд хүргэж болзошгүй юм. \nТа үргэлжлүүлэхийг хүсч байна уу?",
-    "Controls": "Удирдлага",
     "CreateANewFile": "Create a new file",
     "CreateANewFolder": "Шинэ хавтас үүсгэх",
     "CreateFile": "Create File",
@@ -279,6 +603,8 @@
     "CreatedAt": "Бүтэмж дээр бүтсэн",
     "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
     "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
+    "Download": "Татаж авах",
+    "DownloadSelected": "Татаж авах",
     "DownloadStarted": "Файл \"{{fileName}} нь\" Татаж авах ажил эхэллээ.",
     "DragAndDropDesc": "Байршуулахын тулд энэ газарт файлуудыг чирч, буулгана уу.",
     "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих",
@@ -294,10 +620,12 @@
     "MaxFileNameLength": "File name must be 255 characters or less.",
     "MaxFolderNameLength": "Фолдерын нэр 255 тэмдэгт буюу түүнээс бага тэмдэгт байх ёстой.",
     "ModifiedAt": "Өөрчлөгдсөн",
-    "MoreOptions": "Нэмэлт сонголтууд",
     "Name": "Нэр",
+    "NoUploadPermissionForHost": "Энэ хостод байршуулах эрх байхгүй байна.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",
     "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
     "Size": "Хэмжээ",
@@ -317,19 +645,31 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Дууссан цаг",
-    "ErrorCode": "Алдааны код",
-    "Message": "Зурвас",
-    "Result": "Үр дүн",
-    "StartedAt": "Эхэлсэн цаг",
-    "Step": "Алхам"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI хурдасгуур",
+    "CPU": "CPU",
+    "ClusterMode": "Кластерийн горим",
+    "CreatedAt": "Үүсгэсэн огноо",
+    "ElapsedTime": "Өнгөрсөн хугацаа",
+    "Environments": "Орчнууд",
+    "Memory": "Санах ой",
+    "OwnerEmail": "Эзний и-мэйл",
+    "Project": "Төсөл",
+    "ResourceGroup": "Нөөцийн бүлэг",
+    "SessionId": "Сессийн ID",
+    "SessionName": "Сессийн нэр",
+    "SessionType": "Сессийн төрөл",
+    "Status": "Статус",
+    "TerminateSession": "Сессийг дуусгах"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Зөвшөөрөгдсөн үйлчлүүлэгч IP",
-    "ContainerGIDs": "Контейнерийн GID",
-    "ContainerMainGID": "Контейнерийн үндсэн GID",
+    "ContainerGIDs": "Нэмэлт GID-үүд",
+    "ContainerGIDsTooltip": "Контейнерийн процессуудад хуваарилагдсан нэмэлт тоон группийн ID-үүд",
+    "ContainerMainGID": "Контейнерийн GID",
+    "ContainerMainGIDTooltip": "Контейнер доторх процессуудад оноогдох анхдагч тоон бүлгийн ID",
     "ContainerUID": "Контейнерийн UID",
+    "ContainerUIDTooltip": "Контейнер доторх процессуудад олгогдсон тоон хэрэглэгчийн ID",
     "CreatedAt": "Үүсгэсэн",
     "Description": "Тайлбар",
     "Disabled": "Идэвхгүй",
@@ -337,6 +677,8 @@
     "Email": "И-мэйл",
     "Enabled": "Идэвхтэй",
     "FullName": "Бүтэн нэр",
+    "IntegrationName": "Нэгтгэлийн нэр",
+    "MainAccessKey": "Үндсэн хандалтын түлхүүр",
     "ModifiedAt": "Өөрчилсөн",
     "NeedPasswordChange": "Нууц үг солих шаардлагатай",
     "Project": "Төсөл",
@@ -346,20 +688,79 @@
     "StatusInfo": "Төлөвийн мэдээлэл",
     "SudoSessionEnabled": "Sudo горим идэвхтэй",
     "TwoFA": "Хоёр үе шаттай баталгаажуулалт",
+    "TwoFAActivatedAt": "Хоёр үе шаттай баталгаажуулалт идэвхжсэн",
+    "UserID": "Хэрэглэгчийн ID",
     "Username": "Хэрэглэгчийн нэр"
+  },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Зам сонгохын тулд дарна уу",
+    "SelectAPath": "Зам сонгох",
+    "SelectAPathInFolder": "{{folderName}} хавтаснаас зам сонгох",
+    "SelectFolderFirst": "Эхлээд хавтас сонгоно уу",
+    "SelectThisLocation": "Энэ байршлыг сонгох",
+    "SelectedPath": "Сонгогдсон"
   },
   "error": {
     "UnknownError": "Үл мэдэгдэх алдаа гарлаа. \nДахин оролдоно уу."
   },
+  "form": {
+    "Optional": "(сонголттой)",
+    "validateMessages": {
+      "Default": "${label}-ийн талбарын баталгаажуулалтын алдаа",
+      "Required": "${label} оруулна уу",
+      "Whitespace": "${label} нь хоосон тэмдэгт байж болохгүй",
+      "array": {
+        "Len": "${len} ${label} байх ёстой",
+        "Max": "Хамгийн ихдээ ${max} ${label}",
+        "Min": "Дор хаяж ${мин} ${label}",
+        "Range": "${label}-н хэмжээ ${min}-${max} хооронд байх ёстой"
+      },
+      "number": {
+        "Len": "${label} нь ${len}-тэй тэнцүү байх ёстой",
+        "Max": "${label} дээд тал нь ${max} байх ёстой",
+        "Min": "${label} хамгийн багадаа ${min} байх ёстой",
+        "Range": "${label} ${min}-${max} хооронд байх ёстой"
+      },
+      "pattern": {
+        "Mismatch": "${label} нь ${pattern} загвартай тохирохгүй байна"
+      },
+      "string": {
+        "Len": "${label} ${len} тэмдэгттэй байх ёстой",
+        "Max": "${label} нь ${max} хүртэлх тэмдэгттэй байх ёстой",
+        "Min": "${label} хамгийн багадаа ${min} тэмдэгттэй байх ёстой",
+        "Range": "${label} ${min}-${max} тэмдэгтийн хооронд байх ёстой"
+      },
+      "types": {
+        "Email": "${label} нь хүчинтэй ${type} биш",
+        "Number": "${label} нь хүчинтэй ${type} биш",
+        "Object": "${label} нь хүчинтэй ${type} биш",
+        "String": "${label} нь хүчинтэй ${type} биш",
+        "Url": "${label} нь хүчинтэй ${type} биш"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
+    "DeselectAll": "Бүгдийг сонголтоос хасах",
+    "File": "Файл",
+    "Increase": "Increase",
     "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
+    "Project": "Төсөл",
+    "Search": "Хайх",
+    "Select": "Select",
+    "SelectPlaceholder": "{{label}} сонгоно уу",
     "TotalItems": "Нийт {{total}} зүйлүүд",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Цуаах",
       "Close": "Ойр дөхөм",
       "Collapse": "Сүйрэл",
+      "Confirm": "Confirm",
       "Copied": "Хуулсан",
+      "Copy": "Хуулах",
       "CopyAll": "Бүгдийг хуулбарлах",
       "Create": "Шуүгиан дэгдээх",
       "Delete": "Эдгээх",

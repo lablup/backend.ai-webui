@@ -1,8 +1,6 @@
 # Backend.AI WebUI User Guide
 
-Backend.AI Web-UI의 사용자 가이드입니다.
-
-Backend.AI Web-UI는 웹 또는 앱 형태의 GUI 클라이언트로, Backend.AI 서버에 접속하여 연산 자원을 활용하고 자신의 환경을 관리할 수 있는 편리한 그래픽 인터페이스를 제공합니다.
+Backend.AI WebUI는 웹 또는 앱 형태의 GUI 클라이언트로, Backend.AI 서버에 접속하여 연산 자원을 활용하고 자신의 환경을 관리할 수 있는 편리한 그래픽 인터페이스를 제공합니다.
 
 이 문서의 최신 버전은 아래 사이트에서 볼 수 있습니다:
 
@@ -17,18 +15,16 @@ Backend.AI Web-UI는 웹 또는 앱 형태의 GUI 클라이언트로, Backend.AI
 - [개요](overview/overview.md)
 - [설치](installation/installation.md)
 - [로그인](login/login.md)
-- [헤더](header/header.md)
+- [상단 바](header/header.md)
 - [시작 페이지](start/start.md)
 - [대시보드](dashboard/dashboard.md)
-- [요약](summary/summary.md)
 - [스토리지 폴더](vfolder/vfolder.md)
 - [세션 페이지](session_page/session_page.md)
-- [전체 세션](sessions_all/sessions_all.md)
+- [연산 세션](sessions_all/sessions_all.md)
 - [스토리지 폴더 마운트](mount_vfolder/mount_vfolder.md)
 - [스토리지 폴더 공유](share_vfolder/share_vfolder.md)
-- [모델 서빙](model_serving/model_serving.md)
+- [배포](deployment/deployment.md)
 - [채팅](chat/chat.md)
-- [가져오기 및 실행](import_run/import_run.md)
 - [내 환경](my_environments/my_environments.md)
 - [에이전트 요약](agent_summary/agent_summary.md)
 - [통계](statistics/statistics.md)

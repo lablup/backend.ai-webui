@@ -1,0 +1,43 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <EditableFileName>, imported by the component itself
+ (P17). No theme token is involved.
+
+ to-astryx W2-D: the hover-reveal rules were keyed on `ant-typography-edit`,
+ the anchor antd injected for `Typography.Text editable`. That element no
+ longer exists (the affordance is an Astryx `IconButton` now), so the selector
+ is re-pointed at the button's own class rather than left silently matching
+ nothing (P6).
+
+ Ticket 35 re-pointed the margin rule the same way. The rename field sits in
+ the self-hosted form engine now, so its item root is `[data-bai-form-item]`
+ and the old `ant-form-item*` selectors had stopped matching anything —
+ which would have left this field with the shell's default 24px bottom margin
+ inside a single-line inline editor. `!important` still wins over the shell's
+ inline `marginBottom` (author `!important` beats a non-important inline
+ style), so the collapse-to-zero behaviour is unchanged.
+*/
+.bai-editable-file-name-hover-edit .bai-editable-file-name-edit-button {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.bai-editable-file-name-hover-edit:hover .bai-editable-file-name-edit-button,
+.bai-editable-file-name-hover-edit:focus-within
+  .bai-editable-file-name-edit-button {
+  opacity: 1;
+}
+
+.bai-editable-file-name-form [data-bai-form-item] {
+  margin-bottom: 0px !important;
+}
+
+/* The rename field replaces the name INSIDE the shared name/action cell, so it
+   has to yield width the same way the name does — otherwise it sizes to the
+   input's intrinsic width and paints over the row actions. */
+.bai-editable-file-name-form {
+  flex: 1;
+  min-width: 0;
+}

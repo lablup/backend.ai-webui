@@ -2,47 +2,51 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import FolderCreateModal from './FolderCreateModal';
-import { useToggle } from 'ahooks';
+import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
+import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } from '../__generated__/ImportArtifactRevisionToFolderModalModelStoreProjectsFragment.graphql';
+import { ImportArtifactRevisionToFolderModalMutation } from '../__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
+import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
+import FolderCreateModalV2 from './FolderCreateModalV2';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  Alert,
-  App,
-  Button,
-  Form,
-  FormInstance,
-  Popconfirm,
-  theme,
-} from 'antd';
-import {
-  BAIModalProps,
-  BAIVFolderSelectRef,
-  BAIModal,
+  BAIButton,
   BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAISelect,
   BAIVFolderSelect,
-  toGlobalId,
+  BAIVFolderSelectRef,
   convertToUUID,
-  useBAILogger,
-  toLocalId,
   mergeFilterValues,
+  toGlobalId,
+  toLocalId,
+  useBAILogger,
+  useToggle,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
-import { startTransition, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useFragment } from 'react-relay';
-import { ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key } from 'src/__generated__/ImportArtifactRevisionToFolderModalArtifactRevisionFragment.graphql';
-import { ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key } from 'src/__generated__/ImportArtifactRevisionToFolderModalModelStoreProjectsFragment.graphql';
-import { ImportArtifactRevisionToFolderModalMutation } from 'src/__generated__/ImportArtifactRevisionToFolderModalMutation.graphql';
-import {
-  useCurrentProjectValue,
-  useSetCurrentProject,
-} from 'src/hooks/useCurrentProject';
 
 export interface ImportArtifactRevisionToFolderModalProps extends Omit<
   BAIModalProps,
   'onOk'
 > {
   selectedArtifactRevisionFrgmt: ImportArtifactRevisionToFolderModalArtifactRevisionFragment$key;
+  /**
+   * Every model-store project the page resolved (ADR-0001, FR-3415 —
+   * derive-from-resource tier). An artifact import always lands in the model
+   * store, never in the ambient current project, so the destination is picked
+   * from this list. Previously the modal read the ambient project and offered
+   * a "Change Project" confirmation that WROTE the global selection; both are
+   * gone. When several model-store projects exist the in-modal selector is
+   * how the user chooses between them.
+   */
   modelStoreProjectsFrgmt?: ImportArtifactRevisionToFolderModalModelStoreProjectsFragment$key;
   onOk?: (
     e: React.MouseEvent<HTMLElement>,
@@ -80,8 +84,6 @@ const ImportArtifactRevisionToFolderModal = ({
     useToggle(false);
 
   const { logger } = useBAILogger();
-  const currentProject = useCurrentProjectValue();
-  const setCurrentProject = useSetCurrentProject();
 
   const selectedArtifactRevisions = useFragment(
     graphql`
@@ -93,15 +95,33 @@ const ImportArtifactRevisionToFolderModal = ({
     selectedArtifactRevisionFrgmt,
   );
 
-  const modelStoreProject = useFragment(
+  const modelStoreProjects = useFragment(
     graphql`
-      fragment ImportArtifactRevisionToFolderModalModelStoreProjectsFragment on Group {
+      fragment ImportArtifactRevisionToFolderModalModelStoreProjectsFragment on Group
+      @relay(plural: true) {
         id
         name
       }
     `,
     modelStoreProjectsFrgmt,
   );
+
+  const modelStoreProjectOptions = _.map(
+    _.filter(modelStoreProjects, (project) => !!project?.id),
+    (project) => ({
+      label: project.name,
+      value: project.id as string,
+    }),
+  );
+
+  // ADR-0001: the destination project comes exclusively from the model-store
+  // projects the page passed in. `undefined` falls back to the first one, so a
+  // single-model-store deployment (the common case) needs no interaction while
+  // the choice stays visible on screen.
+  const [pickedProjectId, setPickedProjectId] = useState<string | undefined>();
+  const destinationProject =
+    _.find(modelStoreProjects, (project) => project?.id === pickedProjectId) ??
+    modelStoreProjects?.[0];
 
   const [importArtifacts, isInflightImportArtifacts] =
     useMutation<ImportArtifactRevisionToFolderModalMutation>(graphql`
@@ -183,24 +203,34 @@ const ImportArtifactRevisionToFolderModal = ({
                     );
                     return;
                   }
+                  const importArtifacts = res.importArtifacts;
+                  if (!importArtifacts) {
+                    message.error(
+                      t('importArtifactRevisionToFolderModal.FailedToImport'),
+                    );
+                    return;
+                  }
 
-                  if (res.importArtifacts.artifactRevisions?.count > 0) {
+                  if (importArtifacts.artifactRevisions?.count > 0) {
                     message.success(
                       t(
                         'importArtifactRevisionToFolderModal.SuccessfullyImported',
                       ),
                     );
 
-                    const tasks = res.importArtifacts.tasks
+                    const tasks = importArtifacts.tasks
                       .filter((task) => task.taskId != null)
-                      .map((task) => ({
-                        taskId: task.taskId!,
-                        version: task.artifactRevision.version,
-                        artifact: {
-                          id: toLocalId(task.artifactRevision.artifact.id),
-                          name: task.artifactRevision.artifact.name,
-                        },
-                      }));
+                      .map((task) => {
+                        const artifact = task.artifactRevision.artifact!;
+                        return {
+                          taskId: task.taskId!,
+                          version: task.artifactRevision.version,
+                          artifact: {
+                            id: toLocalId(artifact.id ?? ''),
+                            name: artifact.name ?? '',
+                          },
+                        };
+                      });
 
                     onOk?.(e, tasks, values.vfolderId);
                   } else {
@@ -234,12 +264,42 @@ const ImportArtifactRevisionToFolderModal = ({
           validateTrigger={['onChange', 'onBlur']}
         >
           <BAIFlex direction="column" align="stretch">
-            <Alert
-              type="warning"
+            {/* antd `Alert` → `Banner` (MAPPING §4): `type` → `status`,
+                `showIcon` dropped (Banner always renders its status icon). */}
+            <Banner
+              status="warning"
               title={t('importArtifactRevisionToFolderModal.OverwriteWarning')}
-              showIcon
               style={{ marginBottom: token.marginMD }}
             />
+            {/* The destination project is chosen here, in the modal — the
+                admin surface below must never mutate the global selection. */}
+            <Form.Item
+              label={t('importArtifactRevisionToFolderModal.ModelStoreProject')}
+            >
+              <BAISelect
+                data-testid="import-artifact-model-store-project-select"
+                value={destinationProject?.id ?? undefined}
+                options={modelStoreProjectOptions}
+                disabled={_.isEmpty(modelStoreProjectOptions)}
+                status={
+                  _.isEmpty(modelStoreProjectOptions) ? 'error' : undefined
+                }
+                tooltip={
+                  _.isEmpty(modelStoreProjectOptions)
+                    ? t(
+                        'importArtifactRevisionToFolderModal.FailedToRetrieveModelStoreProject',
+                      )
+                    : undefined
+                }
+                popupMatchSelectWidth={false}
+                onChange={(value) => {
+                  setPickedProjectId(value as string);
+                  // The folder list is scoped to the destination project;
+                  // clear a selection made under the previous one.
+                  formRef.current?.setFieldsValue({ vfolderId: undefined });
+                }}
+              />
+            </Form.Item>
             <Form.Item
               label={t(
                 'importArtifactRevisionToFolderModal.FolderMountForModelStore',
@@ -255,88 +315,55 @@ const ImportArtifactRevisionToFolderModal = ({
                 <Form.Item name="vfolderId" noStyle>
                   <BAIVFolderSelect
                     ref={vfolderSelectRef}
+                    label={t(
+                      'importArtifactRevisionToFolderModal.FolderMountForModelStore',
+                    )}
+                    isLabelHidden
                     excludeDeleted
+                    // Disabled rather than unfiltered without a destination:
+                    // dropping the `group` predicate would list every
+                    // group-owned folder and allow an import outside the
+                    // model store.
+                    isDisabled={!destinationProject?.id}
                     // model-store-exclusive project folders only
                     filter={mergeFilterValues([
                       'ownership_type == "group"',
-                      modelStoreProject?.id
-                        ? `group == "${modelStoreProject.id}"`
-                        : null,
+                      `group == "${destinationProject?.id ?? ''}"`,
                     ])}
                   />
                 </Form.Item>
-                {currentProject.id === modelStoreProject?.id ? (
-                  <Button
+                <Tooltip
+                  content={t(
+                    'importArtifactRevisionToFolderModal.FailedToRetrieveModelStoreProject',
+                  )}
+                  isEnabled={!destinationProject?.id}
+                >
+                  <BAIButton
                     icon={<PlusIcon />}
+                    data-testid="import-artifact-create-folder-button"
+                    disabled={!destinationProject?.id}
                     onClick={() => {
                       toggleIsOpenCreateModal();
                     }}
                   />
-                ) : (
-                  <Popconfirm
-                    title={t(
-                      'importArtifactRevisionToFolderModal.ModelStoreProjectRequired',
-                    )}
-                    description={t(
-                      'importArtifactRevisionToFolderModal.ModelStoreProjectRequiredDescription',
-                    )}
-                    okText={t('button.ChangeProject')}
-                    cancelText={t('button.Cancel')}
-                    onConfirm={() => {
-                      if (
-                        modelStoreProject &&
-                        modelStoreProject.id &&
-                        modelStoreProject.name
-                      ) {
-                        startTransition(() => {
-                          setCurrentProject({
-                            projectId: modelStoreProject.id!,
-                            projectName: modelStoreProject.name!,
-                          });
-                          message.success(
-                            t(
-                              'importArtifactRevisionToFolderModal.CurrentProjectChangedSuccessfully',
-                            ),
-                          );
-                          toggleIsOpenCreateModal();
-                        });
-                      } else {
-                        message.error(
-                          t(
-                            'importArtifactRevisionToFolderModal.FailedToRetrieveModelStoreProject',
-                          ),
-                        );
-                      }
-                    }}
-                  >
-                    <Button icon={<PlusIcon />} />
-                  </Popconfirm>
-                )}
+                </Tooltip>
               </BAIFlex>
             </Form.Item>
           </BAIFlex>
         </Form>
       </BAIModal>
-      <FolderCreateModal
+      <FolderCreateModalV2
         open={isOpenCreateModal}
+        // ADR-0001: the new folder lands in the model-store project the user
+        // picked above — the same project the folder list is filtered by.
+        project={toProjectContext(destinationProject ?? {})}
         initialValidate={true}
-        initialValues={{
-          usage_mode: 'model',
-          type: 'project',
-          permission: 'ro',
-          cloneable: true,
-        }}
-        hiddenFormItems={[
-          'usage_mode_general',
-          'usage_mode_automount',
-          'type_user',
-          'permission_rw',
-        ]}
+        folderType="model_project"
         onRequestClose={(result) => {
           toggleIsOpenCreateModal();
           if (result) {
             // Set the created folder as the selected value in the vfolderId
-            // TODO: FolderCreateModal returns id without '-'.
+            // TODO: FolderCreateModalV2 returns id without '-'.
             formRef.current?.setFieldsValue({
               vfolderId: toGlobalId(
                 'VirtualFolderNode',

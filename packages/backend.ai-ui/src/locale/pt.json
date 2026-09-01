@@ -5,6 +5,7 @@
     "Architecture": "Arquitetura",
     "DiskPerc": "Disco %",
     "Endpoint": "Endpoint",
+    "FailedToLoadCellData": "Falha ao carregar os dados.",
     "NoAvailableLiveStat": "Nenhuma estatística em tempo real disponível",
     "Region": "Região",
     "ResourceGroup": "Grupo de Recursos",
@@ -25,6 +26,9 @@
     "AreYouSureYouWantToActivateSome": "Tem certeza de que deseja ativar os artefatos {{count}}?",
     "FailedToActivateArtifacts": "Falhou em ativar artefatos.",
     "SuccessfullyActivated": "Artefatos ativados com sucesso."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Selecionar política de recursos keypair"
   },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Selecionar serviço de modelo"
@@ -63,6 +67,22 @@
     "Updated": "Atualizado",
     "Version": "Versão"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID de ação",
+    "Actor": "Ator",
+    "Description": "Descrição",
+    "Duration": "Duração",
+    "EntityId": "ID de entidade",
+    "EntityType": "Tipo de entidade",
+    "Operation": "Operação",
+    "RequestId": "ID de solicitação",
+    "Status": "Estado",
+    "Time": "Hora",
+    "TriggeredBy": "Acionado por"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Selecionar preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ocorreu um erro inesperado. Tente novamente mais tarde ou entre em contato com o suporte se o problema persistir."
   },
@@ -70,6 +90,18 @@
     "Clear": "Limpar",
     "KeepAsIs": "Manter como está",
     "UndoChanges": "Desfazer alterações"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Falha na execução",
+    "ErrorOccurred": "Ocorreu um erro"
+  },
+  "comp:BAIComplexSelect": {
+    "ClearSearch": "Limpar Pesquisar opções",
+    "NoResults": "Sem resultados",
+    "SearchOptions": "Pesquisar opções"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Selecionar registro de contêiner"
   },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Tem certeza de que deseja desativar {{name}}?",
@@ -88,14 +120,58 @@
     "SuccessFullyRemoved": "Removido com sucesso {{count}} versões.",
     "Version": "Versão"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Tem a certeza de que pretende eliminar?",
+    "AreYouSureToPermanentlyDeleteTarget": "Tem certeza de que deseja excluir permanentemente {{target}}?",
+    "CannotBeUndone": "Esta ação não pode ser anulada.",
+    "DeleteItem": "Eliminar",
+    "DeleteNItems": "Eliminar {{count}} itens",
+    "TypeToConfirm": "Escreva <code>{{confirmText}}</code> para confirmar."
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Criado por"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Tentativas",
+    "Category": "Categoria",
+    "CreatedAt": "Criado em",
+    "ErrorCode": "Código de erro",
+    "From": "Estado de origem",
+    "Message": "Mensagem",
+    "Phase": "Fase",
+    "Result": "Resultado",
+    "To": "Estado de destino",
+    "UpdatedAt": "Atualizado em"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Selecionar implantação"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Degradado",
+    "Deploying": "A implantar",
+    "Healthy": "Saudável",
+    "NotChecked": "Não verificado",
+    "Pending": "Pendente",
+    "Ready": "Pronto",
+    "Scaling": "A escalar",
+    "Stopped": "Parado",
+    "Stopping": "A parar",
+    "Terminated": "Terminado",
+    "Unhealthy": "Não saudável"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Selecionar domínio"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Atualização automática",
+    "EveryHours": "{{count}}h",
+    "EveryMinutes": "{{count}}m",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Última atualização",
+    "Off": "Desligado",
     "Refresh": "Atualizar"
   },
   "comp:BAIGraphQLPropertyFilter": {
@@ -103,6 +179,9 @@
     "operator": {
       "After": "depois",
       "Before": "antes",
+      "Contains": "contém",
+      "EndsWith": "termina com",
+      "Equals": "igual a",
       "GreaterThan": "maior que",
       "GreaterThanOrEqual": "maior ou igual",
       "IContains": "contém",
@@ -116,7 +195,12 @@
       "In": "em",
       "LessThan": "menor que",
       "LessThanOrEqual": "menor ou igual",
-      "NotIn": "não em"
+      "NotContains": "não contém",
+      "NotEndsWith": "não termina com",
+      "NotEquals": "diferente de",
+      "NotIn": "não em",
+      "NotStartsWith": "não começa com",
+      "StartsWith": "começa com"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -124,6 +208,9 @@
     "HuggingFaceSettings": "Hugging Face Settings",
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Selecionar Imagem"
   },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versões são excluídas.",
@@ -135,8 +222,36 @@
     "SuccessFullyPulled": "Pull solicitado com sucesso para {{count}} versões.",
     "Version": "Versão"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Tamanho do Cluster",
+    "Concurrency": "Sessões simultâneas",
+    "CreatedAt": "Criado em",
+    "DefaultForUnspecified": "Padrão para não especificado",
+    "DefaultForUnspecifiedTooltipDesc1": "Define a política padrão quando nenhuma CPU ou memória específica é solicitada.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' permite o uso até a capacidade do nó do agente, enquanto 'limitado' nega recursos, a menos que seja explicitamente definido. \nNa maioria dos casos, recomenda -se 'ilimitado'.",
+    "IdleTimeout": "Tempo limite ocioso",
+    "MaxConcurrentSFTPSessions": "Sessões SFTP simultâneas máximas",
+    "MaxPendingSessionCount": "Contagem máxima de sessão pendente",
+    "MaxPendingSessionResourceSlots": "Slots de recurso de sessão pendente máximo",
+    "MaxSessionLifetime": "Duração máxima da sessão",
+    "Name": "Nome",
+    "StorageNodes": "Nós de Armazenamento",
+    "TotalResourceSlots": "Política de Recursos"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Selecionar par de chaves"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Domínio",
+    "FailReason": "Motivo da falha",
+    "LoginTime": "Hora do login",
+    "Result": "Resultado"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Chave de acesso",
+    "CreatedAt": "Criado em",
+    "InvalidatedAt": "Invalidado em",
+    "User": "Usuário"
   },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
@@ -145,10 +260,51 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Tem certeza que deseja excluir o deployment \"{{deploymentName}}\"? Esta ação não pode ser desfeita.",
+    "CreatedAt": "Criado em",
+    "CreatedUser": "Autor",
+    "CurrentRevisionID": "ID de revisão atual",
+    "Delete": "Excluir",
+    "DeleteDeployment": "Excluir deployment",
+    "DeploymentDeleted": "Deployment excluído.",
+    "DeploymentID": "ID do deployment",
+    "DomainName": "Domínio",
+    "EndpointURL": "URL do ponto final",
+    "FailedToDeleteDeployment": "Falha ao excluir o deployment.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Ciclo de vida",
+    "Model": "Modelo",
+    "Name": "Nome",
+    "OpenToPublic": "Aberto ao público",
+    "Owner": "Proprietário",
+    "PreferredDomainName": "Domínio preferido",
+    "Project": "Projeto",
+    "ProjectID": "ID do projeto",
+    "ReplicaSummary": "Réplicas",
+    "ReplicaSummaryTooltip": "Réplicas em execução em relação ao número desejado de réplicas.",
+    "Replicas": "Réplicas",
+    "ResourceGroup": "Grupo de Recursos",
+    "RevisionNumber": "Revisão",
+    "RevisionNumberTooltip": "O número de revisão atual da implantação.",
+    "StrategyType": "Estratégia",
+    "Tags": "Tag",
+    "UpdatedAt": "Atualizado em"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "Mais ações"
+  },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "A(s) pasta(s) a seguir será(ão) atualizada(s).",
+    "FollowingProjectsWillBeUpdated": "O(s) projeto(s) a seguir será(ão) atualizado(s).",
     "ProjectResourcePolicy": "Política de Recursos do Projeto",
     "UpdateMultipleProjects": "Atualizar vários projetos"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Criado em",
+    "MaxNetworkCount": "Contagem máxima de rede",
+    "MaxQuotaScopeSize": "Tamanho máximo da pasta",
+    "MaxVFolderCount": "Contagem máxima de pastas",
+    "Name": "Nome"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Selecionar projeto"
@@ -176,32 +332,24 @@
     "UpdateProject": "Atualizar projeto"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Tem certeza de que deseja desativar o projeto {{projectName}}?",
-    "AreYouSureToPurgeProject": "Tem certeza de que deseja purgar {{projectName}}? Esta ação é irreversível.",
     "ContainerRegistry": "Registro de Contêineres",
-    "Controls": "Controles",
+    "ContainerRegistryProject": "Projeto do Registro de Contêineres",
     "CreatedAt": "Criado em",
-    "Deactivate": "Desativar",
-    "DeactivateProject": "Desativar projeto",
     "Description": "Descrição",
     "Domain": "Domínio",
-    "FailedToDeactivateProject": "Falha ao desativar o projeto.",
-    "FailedToPurgeProject": "Não foi possível purgar o projeto.",
     "IntegrationID": "ID da Integração",
-    "IsActive": "Ativo",
     "Name": "Nome",
     "Project": "Projeto",
-    "ProjectDeactivated": "O projeto foi desativado.",
-    "ProjectID": "ID do Projeto",
-    "ProjectPurged": "O projeto foi purgado",
-    "Purge": "Limpar",
-    "PurgeProject": "Purgar Projeto",
+    "ProjectID": "ID do projeto",
     "Registry": "Registo",
     "ResourcePolicy": "Política de Recursos",
     "ScalingGroups": "Grupos de Recursos",
     "StorageNodes": "Nós de Armazenamento",
     "TotalResourceSlots": "Total de slots de recursos",
     "Type": "Tipo"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Selecionar pasta"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pesquisar",
@@ -219,22 +367,154 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Selecionar grupo de recursos"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Alocado / Solicitado"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Alterar a cor do grupo",
+    "ResourceGrid": "Grelha de recursos",
+    "UseColorN": "Usar a cor {{n}}"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Ilimitado"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Criado em",
+    "HealthStatus": "Estado de Saúde",
     "RouteId": "ID da Rota",
+    "SchedulingHistory": "Histórico de Agendamento",
     "SessionId": "ID da sessão",
     "Status": "Estado",
     "TrafficRatio": "Proporção de tráfego",
     "TrafficStatus": "Status do tráfego"
   },
-  "comp:BAISchedulingHistoryNodes": {
+  "comp:BAIRouteSchedulingHistoryNodes": {
     "Attempts": "Tentativas",
+    "Category": "Categoria",
     "CreatedAt": "Criado em",
-    "From": "De",
+    "ErrorCode": "Código de erro",
+    "From": "Estado de origem",
+    "Message": "Mensagem",
     "Phase": "Fase",
     "Result": "Resultado",
-    "StatusTransition": "Transição de status",
-    "To": "Para",
+    "To": "Estado de destino",
+    "UpdatedAt": "Atualizado em"
+  },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Adicionar Opção",
+    "Category": "Categoria",
+    "CategoryPlaceholder": "ex., model_loading",
+    "CategoryTooltip": "Categoria de UI utilizada para agrupar parâmetros relacionados.",
+    "ChoiceLabel": "Rótulo",
+    "ChoiceLabelPlaceholder": "ex., FP16",
+    "ChoiceLabelRequired": "O rótulo da opção é obrigatório.",
+    "ChoiceValue": "Valor",
+    "ChoiceValuePlaceholder": "ex., fp16",
+    "ChoiceValueRequired": "O valor da opção é obrigatório.",
+    "Choices": "Opções",
+    "ChoicesRequired": "É necessária, pelo menos, uma opção.",
+    "CreatePreset": "Criar Predefinição",
+    "DefaultValue": "Valor Padrão",
+    "DefaultValuePlaceholder": "ex., 1",
+    "Description": "Descrição",
+    "DescriptionPlaceholder": "Descreva o que este parâmetro controla e como afeta o comportamento de inferência.",
+    "DisplayName": "Nome de Exibição",
+    "DisplayNamePlaceholder": "ex., Tensor Parallel Size",
+    "DisplayNameTooltip": "Rótulo legível apresentado em vez do nome do parâmetro no formulário de implementação.",
+    "EditPreset": "Editar Predefinição",
+    "Key": "Chave",
+    "KeyPlaceholder": "ex., TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "A chave é obrigatória.",
+    "Name": "Nome",
+    "NamePlaceholder": "ex., Tensor Parallel Size",
+    "NameRequired": "O nome é obrigatório.",
+    "NumberMax": "Máximo",
+    "NumberMaxMustExceedMin": "O valor máximo deve ser superior ao valor mínimo.",
+    "NumberMin": "Mínimo",
+    "PresetCreated": "A predefinição de variante de runtime foi criada.",
+    "PresetTarget": "Alvo da Predefinição",
+    "PresetTargetArgs": "Argumento de Linha de Comando",
+    "PresetTargetEnv": "Variável de Ambiente",
+    "PresetTargetRequired": "O alvo da predefinição é obrigatório.",
+    "PresetUpdated": "A predefinição de variante de runtime foi atualizada.",
+    "Rank": "Classificação",
+    "RankTooltip": "Ordem de apresentação entre predefinições da mesma variante de runtime. Valores menores aparecem primeiro.",
+    "Required": "Obrigatório",
+    "RequiredTooltip": "Se este parâmetro de predefinição deve ser obrigatoriamente fornecido ao criar uma revisão de implementação.",
+    "Requirement": "Obrigatoriedade",
+    "RuntimeVariant": "Variante de Runtime",
+    "RuntimeVariantRequired": "A variante de runtime é obrigatória.",
+    "SliderMax": "Máximo",
+    "SliderMaxMustExceedMin": "O valor máximo deve ser superior ao valor mínimo.",
+    "SliderMaxRequired": "O valor máximo é obrigatório.",
+    "SliderMin": "Mínimo",
+    "SliderMinRequired": "O valor mínimo é obrigatório.",
+    "SliderStep": "Incremento",
+    "SliderStepMustBePositive": "O incremento deve ser superior a 0.",
+    "SliderStepTooltip": "Incremento do cursor. O valor predefinido é 1.",
+    "StoredValueTypeMismatch": "Esta predefinição está guardada com o tipo de valor {{valueType}}, que o tipo de interface {{uiType}} não consegue apresentar. Altere o tipo de interface ou o tipo de valor.",
+    "TextPlaceholderExample": "ex., Introduza um valor",
+    "TextPlaceholderLabel": "Texto de Espaço Reservado",
+    "UIType": "Tipo de UI",
+    "UITypeCheckbox": "Caixa de Verificação",
+    "UITypeIncompatibleWithValueType": "O tipo de interface selecionado não consegue apresentar este tipo de valor.",
+    "UITypeNumberInput": "Entrada Numérica",
+    "UITypeSelect": "Seleção",
+    "UITypeSlider": "Cursor",
+    "UITypeTextInput": "Entrada de Texto",
+    "UITypeTooltip": "Controlo utilizado para apresentar este parâmetro no formulário de implementação.",
+    "ValueType": "Tipo de Valor",
+    "ValueTypeBool": "Booleano",
+    "ValueTypeFlag": "Flag",
+    "ValueTypeFloat": "Flutuante",
+    "ValueTypeInt": "Inteiro",
+    "ValueTypeRequired": "O tipo de valor é obrigatório.",
+    "ValueTypeStr": "Texto"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Categoria",
+    "CreatedAt": "Data de criação",
+    "DefaultValue": "Valor Padrão",
+    "Description": "Descrição",
+    "DisplayName": "Nome de Exibição",
+    "Key": "Chave",
+    "ModifiedAt": "Última modificação",
+    "Name": "Nome",
+    "Optional": "Opcional",
+    "PresetTarget": "Alvo da Predefinição",
+    "PresetTargetArgs": "Argumento de Linha de Comando",
+    "PresetTargetEnv": "Variável de Ambiente",
+    "Rank": "Classificação",
+    "RankTooltip": "Ordem de apresentação entre predefinições da mesma variante de runtime. Valores menores aparecem primeiro.",
+    "Required": "Obrigatório",
+    "RuntimeVariantId": "ID da Variante de Runtime",
+    "RuntimeVariantWithID": "Variante de Runtime (ID)",
+    "UIType": "Tipo de UI",
+    "UITypeCheckbox": "Caixa de Verificação",
+    "UITypeNumberInput": "Entrada Numérica",
+    "UITypeSelect": "Seleção",
+    "UITypeSlider": "Cursor",
+    "UITypeTextInput": "Entrada de Texto",
+    "ValueType": "Tipo de Valor",
+    "ValueTypeBool": "Booleano",
+    "ValueTypeFlag": "Flag",
+    "ValueTypeFloat": "Flutuante",
+    "ValueTypeInt": "Inteiro",
+    "ValueTypeStr": "Texto"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Selecionar variante de execução"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Tentativas",
+    "Category": "Categoria",
+    "CreatedAt": "Criado em",
+    "ErrorCode": "Código de erro",
+    "From": "Estado de origem",
+    "Message": "Mensagem",
+    "Phase": "Fase",
+    "Result": "Resultado",
+    "To": "Estado de destino",
     "UpdatedAt": "Atualizado em"
   },
   "comp:BAISessionAgentIds": {
@@ -250,11 +530,32 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Selecionar host de armazenamento"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Selecionar proxy de armazenamento"
+  },
+  "comp:BAISubStepNodes": {
+    "Duration": "Duração",
+    "ErrorCode": "Código de erro",
+    "Message": "Mensagem",
+    "Result": "Resultado",
+    "ResultMarker": "Marcador de resultado desta tentativa",
+    "Step": "Etapa",
+    "Time": "Hora"
+  },
   "comp:BAITable": {
+    "Apply": "Aplicar",
+    "Cancel": "Cancelar",
+    "CollapseAll": "Recolher tudo",
+    "ExpandAll": "Expandir tudo",
+    "ExpandErrorsOnly": "Expandir apenas erros",
+    "ExpandOptions": "Opções de expansão",
+    "ExpandRow": "Expandir linha",
     "Export": "Exportar",
     "ExportCSV": "Exportar CSV",
     "GoToFirstPage": "Ir para a primeira página",
     "InvalidPageNumber": "Número de página inválido",
+    "NoDataToDisplay": "Nenhum dado para apresentar",
+    "Pagination": "Paginação",
     "SearchTableColumn": "Pesquisar colunas da tabela",
     "SelectColumnToDisplay": "Selecione colunas para exibir",
     "SettingTable": "Configurações da tabela"
@@ -262,16 +563,39 @@
   "comp:BAITestButton": {
     "Test": "teste"
   },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Criado em",
+    "MaxConcurrentLogins": "Máx. de logins simultâneos",
+    "MaxCustomizedImageCount": "Contagem máxima de imagens personalizadas",
+    "MaxQuotaScopeSize": "Tamanho máximo da pasta",
+    "MaxSessionCountPerModelSession": "Contagem máxima de sessões por sessão de modelo",
+    "MaxVFolderCount": "Contagem máxima de pastas",
+    "Name": "Nome"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "Selecionar usuário"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Formato de caminho inválido.",
+    "AliasOverlapping": "O caminho de montagem sobrepõe-se a outra pasta.",
+    "AliasPlaceholder": "Caminho de montagem",
+    "AutoMountedFolders": "Pastas de montagem automática",
+    "Name": "Nome",
+    "PathAndAlias": "Caminho & Alias",
+    "PathAndAliasTooltip": "O caminho dentro do contentor onde a pasta será montada. Deixe em branco para usar o caminho predefinido.",
+    "RemoveFolder": "Remover",
+    "Subpath": "Subcaminho",
+    "SubpathInvalid": "O subcaminho deve ser um caminho relativo e não deve conter '..'.",
+    "SubpathPlaceholder": "ex. dataset/train (opcional)",
+    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da sua raiz. Deixe em branco para montar a raiz."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Selecionar pasta"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "O download de {{count}} item(s) foi iniciado.",
     "ChangeFileExtension": "Alterar a extensão do arquivo",
     "ChangeFileExtensionDesc": "Alterar a extensão do arquivo pode fazer com que o arquivo se torne inutilizável ou aberto incorretamente. \nVocê quer prosseguir?",
-    "Controls": "Controles",
     "CreateANewFile": "Create a new file",
     "CreateANewFolder": "Crie uma nova pasta",
     "CreateFile": "Create File",
@@ -279,6 +603,8 @@
     "CreatedAt": "Criado em",
     "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
     "DeleteSelectedItemsDialog": "Excluir confirmação",
+    "Download": "Baixar",
+    "DownloadSelected": "Baixar",
     "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
     "DragAndDropDesc": "Arraste e solte arquivos para esta área para fazer upload.",
     "DuplicatedFiles": "Substituição de substituição",
@@ -294,10 +620,12 @@
     "MaxFileNameLength": "File name must be 255 characters or less.",
     "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",
     "ModifiedAt": "Modificado em",
-    "MoreOptions": "Mais opções",
     "Name": "Nome",
+    "NoUploadPermissionForHost": "Não tem permissão de upload para este anfitrião.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
+    "RenameFile": "Rename",
     "RenameSuccess": "O nome foi alterado com sucesso.",
     "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
     "Size": "Tamanho",
@@ -317,19 +645,31 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Sem dados de recurso disponíveis"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Finalizado em",
-    "ErrorCode": "Código de erro",
-    "Message": "Mensagem",
-    "Result": "Resultado",
-    "StartedAt": "Iniciado em",
-    "Step": "Etapa"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Acelerador de IA",
+    "CPU": "CPU",
+    "ClusterMode": "Modo Cluster",
+    "CreatedAt": "Criado em",
+    "ElapsedTime": "Tempo decorrido",
+    "Environments": "Ambientes",
+    "Memory": "Memória",
+    "OwnerEmail": "E-mail do proprietário",
+    "Project": "Projeto",
+    "ResourceGroup": "Grupo de Recursos",
+    "SessionId": "ID da sessão",
+    "SessionName": "Nome da sessão",
+    "SessionType": "Tipo de sessão",
+    "Status": "Estado",
+    "TerminateSession": "Terminar sessão"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IPs de cliente permitidos",
-    "ContainerGIDs": "GIDs do contêiner",
-    "ContainerMainGID": "GID principal do contêiner",
-    "ContainerUID": "UID do contêiner",
+    "ContainerGIDs": "GIDs suplementares",
+    "ContainerGIDsTooltip": "IDs numéricos de grupo adicionais atribuídos aos processos do contêiner",
+    "ContainerMainGID": "GID do container",
+    "ContainerMainGIDTooltip": "ID numérico de grupo padrão atribuído aos processos dentro do contêiner",
+    "ContainerUID": "UID do container",
+    "ContainerUIDTooltip": "ID numérico do usuário atribuído aos processos dentro do contêiner",
     "CreatedAt": "Criado em",
     "Description": "Descrição",
     "Disabled": "Desativado",
@@ -337,29 +677,90 @@
     "Email": "E-mail",
     "Enabled": "Ativado",
     "FullName": "Nome completo",
+    "IntegrationName": "Nome da integração",
+    "MainAccessKey": "Chave de acesso principal",
     "ModifiedAt": "Modificado em",
     "NeedPasswordChange": "Requer alteração de senha",
     "Project": "Projeto",
-    "ResourcePolicy": "Política de recursos",
+    "ResourcePolicy": "Política de Recursos",
     "Role": "Função",
     "Status": "Status",
     "StatusInfo": "Informação de status",
     "SudoSessionEnabled": "Sessão Sudo ativada",
     "TwoFA": "Autenticação de dois fatores",
+    "TwoFAActivatedAt": "Autenticação de dois fatores ativada em",
+    "UserID": "ID do usuário",
     "Username": "Nome de usuário"
+  },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Clique para selecionar um caminho",
+    "SelectAPath": "Selecionar um caminho",
+    "SelectAPathInFolder": "Selecionar um caminho em {{folderName}}",
+    "SelectFolderFirst": "Selecione primeiro uma pasta",
+    "SelectThisLocation": "Selecionar esta localização",
+    "SelectedPath": "Selecionado"
   },
   "error": {
     "UnknownError": "Ocorreu um erro desconhecido. \nPor favor, tente novamente."
   },
+  "form": {
+    "Optional": "(opcional)",
+    "validateMessages": {
+      "Default": "Erro de validação no campo ${label}",
+      "Required": "Por favor, introduza ${label}",
+      "Whitespace": "${label} não pode ser um carácter em branco",
+      "array": {
+        "Len": "Deve ter ${len} ${label}",
+        "Max": "No máximo ${max} ${label}",
+        "Min": "Pelo menos ${min} ${label}",
+        "Range": "A quantidade de ${label} deve estar entre ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} deve ser igual a ${len}",
+        "Max": "${label} deve ser no máximo ${max}",
+        "Min": "${label} deve ser no mínimo ${min}",
+        "Range": "${label} deve estar entre ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} não corresponde ao padrão ${pattern}"
+      },
+      "string": {
+        "Len": "${label} deve ter ${len} caracteres",
+        "Max": "${label} deve ter até ${max} caracteres",
+        "Min": "${label} deve ter pelo menos ${min} caracteres",
+        "Range": "${label} deve ter entre ${min}-${max} caracteres"
+      },
+      "types": {
+        "Email": "${label} não é um(a) ${type} válido(a)",
+        "Number": "${label} não é um(a) ${type} válido(a)",
+        "Object": "${label} não é um(a) ${type} válido(a)",
+        "String": "${label} não é um(a) ${type} válido(a)",
+        "Url": "${label} não é um(a) ${type} válido(a)"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
+    "DeselectAll": "Desmarcar tudo",
+    "File": "Arquivo",
+    "Increase": "Increase",
     "NSelected": "{{count}} selecionado",
     "Optional": "Opcional",
+    "Project": "Projeto",
+    "Search": "Pesquisar",
+    "Select": "Select",
+    "SelectPlaceholder": "Selecione {{label}}",
     "TotalItems": "Total {{total}} itens",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Cancelar",
       "Close": "Fechar",
       "Collapse": "Colapso",
+      "Confirm": "Confirm",
       "Copied": "Copiado",
+      "Copy": "Copiar",
       "CopyAll": "Copie tudo",
       "Create": "Criar",
       "Delete": "Excluir",

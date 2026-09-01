@@ -1,3 +1,7 @@
+---
+navTitle: SFTP to Container
+---
+
 <a id="ssh-sftp-container"></a>
 
 # SSH/SFTP Connection to a Compute Session
@@ -5,59 +9,52 @@
 Backend.AI supports SSH/SFTP connection to the created compute sessions
 (containers). In this section, we will learn how to do it.
 
-:::note
-From 24.03 SSH/SFTP connection feature is available in both Web browser and WebUI Desktop application.
-When the version is 23.09 or lower version, you need to use WebUI Desktop app. Desktop app can be downloaded
-a panel from the Summary page. Using this panel, the compatible version will be downloaded automatically.
-
-![](../images/app_download_panel.png)
-
-You can also download the app from
-https://github.com/lablup/backend.ai-webui/releases. Make sure to download
-the compatible version of the Web-UI in this case. You can check the Web-UI
-version by clicking on the "About Backend.AI" sub-menu located in the
-preference menu on the upper-right side of the GUI.
-:::
-
-
 <a id="for-linux-mac"></a>
 
 ## For Linux / Mac
 
 First, create a compute session, then click the app icon (first button) in
 Control, followed by SSH / SFTP icon. Then, a daemon that allows SSH/SFTP access
-from inside the container will be initiated, and the Web-UI app interacts with
+from inside the container will be initiated, and the WebUI app interacts with
 the daemon through a local proxy service.
-
 
 :::note
 You cannot establish a SSH/SFTP connection to the session until you click
-the SSH/SFTP icon. When you close the Web-UI app and launch it again, the
-connection between the local proxy and the Web-UI app is initialized, so the
+the SSH/SFTP icon. When you close the WebUI app and launch it again, the
+connection between the local proxy and the WebUI app is initialized, so the
 SSH/SFTP icon must be clicked again.
 :::
 
-Next, a dialog containing SSH/SFTP connection information will be pop up.
-Remember the address (especially the assigned port) written in the SFTP URL and
-click the download link to save the `id_container` file on the local machine.
-This file is an automatically generated SSH private key. Instead of using the
-link, you can also download the `id_container` file located under
-`/home/work/` with your web terminal or Jupyter Notebook. The auto-generated
-SSH key may change when new session is created. In that case, it must be
-downloaded again.
+Next, a dialog containing SSH/SFTP connection information pops up. The
+dialog shows the **User**, **Host**, and **Port** to connect to, ready-made
+`sftp`, `scp`, and `rsync` example commands, and a **Download SSH Key** button
+that saves the `id_container` file on the local machine. This file is an
+automatically generated SSH private key. Instead of using the button, you can
+also download the `id_container` file located under `/home/work/` with your web
+terminal or Jupyter Notebook. The auto-generated SSH key may change when new
+session is created. In that case, it must be downloaded again.
+
+![](../images/SSH_SFTP_connection.png)
 
 ![](../images/sftp_app.png)
 
+Always take the connection address from the **Host** and **Port** fields of this
+dialog. The values depend on how you use Backend.AI. If the connection information cannot be
+resolved, the dialog does not open at all and an error notification explains the
+reason — see [Connection Errors](#connection-errors).
+
 To SSH connect to the compute session with the downloaded SSH private key, you
 run the following command in the shell environment. You should write the
-path to the downloaded `id_container` file after `-i` option and the
-assigned port number after `-p` option. The user inside the compute session is
+path to the downloaded `id_container` file after `-i` option, the port number
+from the dialog after `-p` option, and the host from the dialog as the
+connection address. The user inside the compute session is
 usually set to `work`, but if your session uses other account, the `work`
-part in `work@127.0.0.1` should be changed to the actual session account.  If
+part in `work@<host>` should be changed to the actual session account. If
 you run the command correctly, you can see that SSH connection is made to the
-compute session and you are welcomed by the container's shell environment.
+compute session and you are welcomed by the container's shell environment. Replace the
+host and port in the transcript below with the values shown in your own dialog.
 
-```shell
+```shellsession
 $ ssh \
     -i ~/.ssh/id_container -p 30722 \
     -o StrictHostKeyChecking=no \
@@ -71,7 +68,6 @@ Connecting by SFTP would almost be the same. After running the SFTP client and
 setting public key-based connection method, simply specify `id_container`
 as the SSH private key. Each FTP client may adopt different way, so refer to
 each FTP client manual for details.
-
 
 :::note
 The SSH/SFTP connection port number is randomly assigned each time when a session
@@ -100,12 +96,37 @@ permission of the `id_container` to 600. (`chmod 600 <id_container path>`)
 ![](../images/bad_permissions.png)
 :::
 
+<a id="connection-errors"></a>
+
+### Connection Errors
+
+The SSH/SFTP connection information is resolved through the App Proxy of the
+resource group that runs the session. When that step fails, no connection dialog
+opens and a notification reports the reason instead. The message tells you which
+part of the path failed:
+
+- **Proxy is not ready yet. Check proxy settings for detail.**: The WebUI could
+  not reach the App Proxy, or the proxy did not return any connection
+  information. The proxy may still be starting up, so wait a few seconds and
+  click the SSH/SFTP icon again. If the message keeps appearing, the App Proxy
+  is not reachable from your machine — for example it is blocked by a firewall,
+  or it is served over a different protocol than the WebUI itself. Ask your
+  administrator to check the **App Proxy Server Address** of the resource group.
+- **Proxy direct TCP connection is not supported yet**: The App Proxy answered,
+  but it does not offer the direct TCP connection that SSH/SFTP requires.
+  Web-based apps such as Jupyter Notebook and Terminal still work on the same
+  session. Ask your administrator to enable a TCP-capable App Proxy for the
+  resource group.
+- **The app cannot be launched due to an invalid URL.**: The App Proxy returned
+  an address that the WebUI cannot interpret. Click the SSH/SFTP icon again, and
+  if the message persists, report it to your administrator together with the
+  name of the session's resource group.
 
 <a id="for-windows-filezilla"></a>
 
 ## For Windows / FileZilla
 
-Backend.AI Web-UI app supports OpenSSH-based public key connection (RSA2048).
+Backend.AI WebUI app supports OpenSSH-based public key connection (RSA2048).
 To access with a client such as PuTTY on Windows, a private key must be
 converted into a `ppk` file through a program such as PuTTYgen. You can refer
 to the following link for the conversion method:
@@ -145,7 +166,6 @@ with this SFTP connection.
 
 ![](../images/filezilla_connection_established.png)
 
-
 <a id="for-visual-studio-code"></a>
 
 ## For Visual Studio Code
@@ -164,19 +184,22 @@ Link: https://aka.ms/vscode-remote/download/extension
 
 After installing the extension, you should configure the SSH connection for the
 compute session. In the VSCode Remote Connection dialog, click the copy icon button
-to copy the Visual Studio Code remote SSH password. Also, remember the port number.
+to copy the Visual Studio Code remote SSH password. Also, remember the host and
+the port number shown in the dialog.
 
 ![](../images/download_ssh_key.png)
 
 Then, set the SSH config file. Edit the `~/.ssh/config` file (for Linux/Mac)
 or `C:\Users\[user name]\.ssh\config` (for Windows) and add the following block.
+Enter the host and the port number from the dialog in the `Hostname` and `Port`
+lines.
 For convenience, we set the hostname to `bai-vscode`. It can be changed to any alias.
 
 ```
 Host bai-vscode
 User work
+# write down the host and the port number that you remembered
 Hostname 127.0.0.1
-# write down the port number that you remembered
 Port 49335
 StrictHostKeyChecking no
 UserKnownHostsFile /dev/null
@@ -207,7 +230,6 @@ Open...` or `File > Open Workspace...` menu just as you usually would do!
 
 ![](../images/vscode_connected_host_file_open.png)
 
-
 <a id="establish-ssh-connection-with-backendai-client-package"></a>
 
 ## Establish SSH connection with Backend.AI client package
@@ -223,7 +245,7 @@ Backend.AI Client package, this process is relatively simple to configure.
 
 <a id="prepare-backendai-client-package"></a>
 
-### Prepare Backend.AI Client package
+### Prepare Backend.AI client package
 
 <a id="prepare-with-docker-image"></a>
 
@@ -233,10 +255,10 @@ The Backend.AI Client package is available as a Docker image. You can pull the
 image from the Docker Hub with the following command:
 
 ```bash
-$ docker pull lablup/backend.ai-client
-$
-$ # If you want to use the specific version, you can pull the image with the following command:
-$ docker pull lablup/backend.ai-client:<version>
+docker pull lablup/backend.ai-client
+
+# If you want to use the specific version, you can pull the image with the following command:
+docker pull lablup/backend.ai-client:${VERSION}
 ```
 
 The version of Backend.AI server can be found in "About Backend.AI" menu that
@@ -247,14 +269,14 @@ appears when you click on the person icon on the top right corner of the Web UI.
 Run the Docker image with the following command:
 
 ```bash
-$ docker run --rm -it lablup/backend.ai-client bash
+docker run --rm -it lablup/backend.ai-client bash
 ```
 
 Check if `backend.ai` command is available in the container. If it is
 available, the help message will be displayed.
 
 ```bash
-$ backend.ai
+backend.ai
 ```
 
 <a id="prepare-directly-from-host-with-a-python-virtual-environment"></a>
@@ -288,7 +310,7 @@ After unarchiving the binary, `python` directory will be created under the
 current directory. You can check the version of the downloaded Python by running
 the following command.
 
-```bash
+```shellsession
 $ ./python/install/bin/python3 -V
 Python 3.11.8
 ```
@@ -299,14 +321,14 @@ command, a Python virtual environment will be created under the directory
 `.venv.`.
 
 ```bash
-$ ./python/install/bin/python3 -m venv .venv
+./python/install/bin/python3 -m venv .venv
 ```
 
 Activate the virtual environment. Since a new virtual environment has been
 activated, only the `pip` and `setuptools` packages will be installed when
 you run the `pip list` command.
 
-```bash
+```shellsession
 $ source .venv/bin/activate
 (.venv) $ pip list
 Package    Version
@@ -344,7 +366,7 @@ Run the following CLI command to connect to the server. Enter the email and
 password that you use to log in from your browser. If everything goes well, you
 will see the message `Login succeeded`.
 
-```bash
+```shellsession
 $ backend.ai login
 User ID: myuser@test.com
 Password:
@@ -353,7 +375,7 @@ Password:
 
 <a id="sshscp-connection-to-computation-session"></a>
 
-### SSH/SCP Connection to Computation Session
+### SSH/SCP connection to computation session
 
 Create a compute session from the browser by mounting the folder where you want
 to copy the data. You can create the session using CLI as well, but for
@@ -363,7 +385,7 @@ the name of the created compute session. Here, we assume it is
 
 If you simply want to SSH, execute the following command:
 
-```bash
+```shellsession
 $ backend.ai ssh ibnFmWim-session
 ∙ running a temporary sshd proxy at localhost:9922 ...
 work@main1[ibnFmWim-session]:~$
@@ -374,7 +396,7 @@ need to first run the following command to launch a local proxy service that
 relays connection from the local machine to the computation session. You can
 specify the port (9922) to use on the local machine with the b option.
 
-```bash
+```shellsession
 $ backend.ai app ibnFmWim-session sshd -b 9922
 ∙ A local proxy to the application "sshd" provided by the session "ibnFmWim-session" is available at:
 tcp://127.0.0.1:9922
@@ -384,7 +406,7 @@ Open another terminal window on your local machine. Move to the working
 directory where the `.env` file is located, and download the SSH key
 automatically generated in the compute session.
 
-```bash
+```shellsession
 $ source .venv/bin/activate  # Reactivate the Python virtual environment as this is a different terminal
 $ backend.ai session download ibnFmWim-session id_container
 Downloading files: 3.58kbytes [00:00, 352kbytes/s]
@@ -395,7 +417,7 @@ You can use the downloaded key to SSH as follows. Since you launched the local
 proxy on port 9922, the connection address should be 127.0.0.1 and the port
 should be 9922. Use the user account `work` for the connection.
 
-```bash
+```shellsession
 $ ssh \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \
@@ -410,7 +432,7 @@ Similarly, you can use the `scp` command to copy files. In this case, you
 should copy the files to the mounted folder within the compute session to
 preserve them even after the session has been terminated.
 
-```bash
+```shellsession
 $ scp \
 -o StrictHostKeyChecking=no \
 -o UserKnownHostsFile=/dev/null \

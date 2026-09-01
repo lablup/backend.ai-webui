@@ -11,11 +11,13 @@ import {
 } from './reactQueryAlias';
 import { useBAISettingUserState, UserSettings } from './useBAISetting';
 import {
+  ImageMetaData,
   ResourceSlotDetail,
+  useBAISignedRequestWithPromise,
   useUpdatableState,
   useViewer,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useEffect, useState } from 'react';
 
 export const baseResourceSlotNames = ['cpu', 'mem'] as const;
@@ -39,8 +41,7 @@ export type KnownAcceleratorResourceSlotName =
   (typeof knownAcceleratorResourceSlotNames)[number];
 
 export type ResourceSlotName =
-  | BaseResourceSlotName
-  | KnownAcceleratorResourceSlotName;
+  BaseResourceSlotName | KnownAcceleratorResourceSlotName;
 export interface QuotaScope {
   id: string;
   quota_scope_id: string;
@@ -82,6 +83,60 @@ export const useDeviceMetaData = (key = 'first') => {
     },
     staleTime: 1000 * 60 * 60 * 24,
   });
+};
+
+export const useImageMetaData = () => {
+  return useTanQuery<ImageMetaData>({
+    // Share the cache entry with the legacy `useBackendAIImageMetaData`
+    // (react/src/hooks/index.tsx) so `image_metadata.json` is fetched only
+    // once while both hooks coexist. Keep queryKey/retry in sync with it.
+    queryKey: ['backendai-metadata-for-suspense'],
+    queryFn: () => {
+      return fetch('resources/image_metadata.json').then((response) =>
+        response.json(),
+      );
+    },
+    retry: false,
+    staleTime: 1000 * 60 * 60 * 24,
+  });
+};
+
+/**
+ * Fetches resource slot details from the server API and merges them with
+ * static device metadata. When `resourceGroupName` is provided, the API
+ * call is scoped to that specific resource group (for per-group accelerator availability).
+ *
+ * This is the webui-side hook that performs actual API calls. BUI components
+ * read the merged results from context (populated by BAIResourceSlotsProvider).
+ */
+export const useResourceSlotsDetails = (resourceGroupName?: string) => {
+  'use memo';
+  const [key, checkUpdate] = useUpdatableState('first');
+  const baiRequestWithPromise = useBAISignedRequestWithPromise();
+  const { data: deviceMetaData } = useDeviceMetaData();
+  const { data: resourceSlotsInRG, isLoading } = useTanQuery<{
+    [key: string]: ResourceSlotDetail | undefined;
+  }>({
+    queryKey: ['useResourceSlots', resourceGroupName, key],
+    queryFn: () => {
+      const search = new URLSearchParams();
+      resourceGroupName && search.set('sgroup', resourceGroupName);
+      const searchParamString = search.toString();
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/config/resource-slots/details${searchParamString ? '?' + search.toString() : ''}`,
+      });
+    },
+    staleTime: 3000,
+  });
+
+  return {
+    resourceSlotsInRG,
+    deviceMetaData,
+    mergedResourceSlots: _.merge({}, deviceMetaData, resourceSlotsInRG),
+    refresh: checkUpdate,
+    isLoading,
+  };
 };
 
 interface UserInfo {
@@ -249,6 +304,27 @@ export const useTOTPSupported = () => {
   });
 
   return { isTOTPSupported: isManagerSupportingTOTP, isLoading };
+};
+
+/**
+ * Suspending counterpart of `useTOTPSupported`, for callers that must not
+ * render — or issue a query — while the capability is still `undefined`
+ * (e.g. a page that builds `isNotSupportTotp` into preloaded query variables
+ * once). Shares the same TanQuery key, so it resolves from the cache the app
+ * shell has usually already filled.
+ */
+export const useSuspendedTOTPSupported = () => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: isTOTPSupported } = useSuspenseTanQuery<boolean>({
+    queryKey: ['isManagerSupportingTOTP'],
+    queryFn: () => {
+      return baiClient.isManagerSupportingTOTP();
+    },
+    staleTime: 1000,
+  });
+
+  return isTOTPSupported;
 };
 
 export interface InvitationItem {

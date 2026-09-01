@@ -13,30 +13,24 @@ import {
   SessionLauncherFormValue,
 } from '../pages/SessionLauncherPage';
 import ImageMetaIcon from './ImageMetaIcon';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import { Button, theme, Tooltip, Typography } from 'antd';
-import { createStyles } from 'antd-style';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIQuestionIconWithTooltip,
   BAIModal,
   BAIModalProps,
   BAITable,
   BAIFlex,
   BAILink,
-  BAITag,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import { PinIcon } from 'lucide-react';
+import * as _ from 'lodash-es';
+import { PencilIcon, PinIcon } from 'lucide-react';
 import React, { Key, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const useStyle = createStyles(({ css }) => ({
-  fixEditableVerticalAlign: css`
-    & {
-      margin-top: 0px !important;
-    }
-  `,
-}));
 
 interface SessionTemplateModalProps extends Omit<
   BAIModalProps,
@@ -54,7 +48,6 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { styles } = useStyle();
   const [sessionHistory, { update: updateSessionHistory }] =
     useRecentSessionHistory();
   const [hoverRowKey, setHoverRowKey] = useState<Key | null>(null);
@@ -64,7 +57,11 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
     usePinnedSessionHistory();
 
   const [, setSelectedHistoryId] = useState<string>();
-  const { token } = theme.useToken();
+  // Inline rename editor state (replaces antd `Typography.Text editable`).
+  const [editingRow, setEditingRow] = useState<{
+    id: string;
+    value: string;
+  } | null>(null);
 
   const parsedSessionHistory: Array<ParsedSessionHistory> = useMemo(() => {
     const parseToFormValues = (history: SessionHistory, isPinned: boolean) => {
@@ -93,9 +90,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
       ...parseToFormValues(history, true),
     }));
 
-    return _.chain([...pinned, ...recent])
-      .unionBy('id')
-      .value();
+    return _.unionBy([...pinned, ...recent], 'id');
   }, [sessionHistory, pinnedSessionHistory]);
 
   return (
@@ -111,22 +106,24 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <Typography.Text>
-          {t('session.launcher.YouCanStartWithHistory')}
-        </Typography.Text>
+        <Text>{t('session.launcher.YouCanStartWithHistory')}</Text>
+        {/* PILOT-DECISION (ticket 30-D): this table used antd `rowSelection`
+            with `columnWidth: 0` + `hideSelectAll` + `renderCell: () => null`
+            purely to borrow antd's selected-row background for pinned rows —
+            an invisible checkbox column with no `onChange`.
+            Astryx owns its checkbox column and has no such hook, so the
+            highlight is applied directly through `onRow` instead, which is
+            what the hack was emulating. */}
         <BAITable<ParsedSessionHistory>
-          rowSelection={{
-            selectedRowKeys: pinnedSessionHistory?.map((item) => item.id),
-            columnWidth: 0,
-            hideSelectAll: true,
-            renderCell: () => null,
-          }}
           scroll={{ x: 'max-content' }}
           dataSource={parsedSessionHistory}
           pagination={false}
           onRow={(record) => ({
             onMouseEnter: () => setHoverRowKey(record.id),
             onMouseLeave: () => setHoverRowKey(null),
+            style: record.pinned
+              ? { backgroundColor: 'var(--color-background-blue)' }
+              : undefined,
           })}
           rowKey={(record) => record.id}
           columns={[
@@ -134,7 +131,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
               title: (
                 <BAIFlex gap={'xxs'}>
                   <PinIcon />
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('session.launcher.PinnedHistoryTooltip')}
                   />
                 </BAIFlex>
@@ -145,30 +142,32 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                 const isPinned = !!record.pinned;
                 const isHovered = hoverRowKey === record.id;
                 return isPinned ? (
-                  <Button
-                    size="small"
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    icon={<PinIcon />}
+                    label={t('session.launcher.PinnedHistoryTooltip')}
                     onClick={() => {
                       unpin(record.id);
                       // TODO: add it to recent session history
                     }}
-                    type="link"
-                  >
-                    <PinIcon />
-                  </Button>
+                  />
                 ) : (
-                  <Button
-                    size="small"
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    icon={
+                      <PinIcon
+                        style={{
+                          color: isHovered
+                            ? 'var(--color-text-disabled)'
+                            : 'transparent',
+                        }}
+                      />
+                    }
+                    label={t('session.launcher.PinnedHistoryTooltip')}
                     onClick={() => pin(record.id)}
-                    type="link"
-                  >
-                    <PinIcon
-                      style={{
-                        color: isHovered
-                          ? token.colorTextQuaternary
-                          : 'transparent',
-                      }}
-                    />
-                  </Button>
+                  />
                 );
               },
             },
@@ -181,40 +180,58 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                   record.cluster_mode === 'multi-node' &&
                   Number.isFinite(record.cluster_size) &&
                   record.cluster_size > 1;
-                return (
+                const commitRename = (value: string) => {
+                  if (!_.isEmpty(value)) {
+                    updateSessionHistory(record.id, value);
+                    record.pinned && updatePinnedHistory(record.id, value);
+                  }
+                  setEditingRow(null);
+                };
+                // PILOT-DECISION: antd `Typography.Text editable` (inline
+                // pencil rename) rebuilt with Astryx TextInput + ghost
+                // IconButton — antd Typography's editable behaviour has no
+                // Astryx destination (MAPPING.md §3.4).
+                return editingRow?.id === record.id ? (
+                  <TextInput
+                    label={t('data.folders.Rename')}
+                    isLabelHidden
+                    value={editingRow.value}
+                    onChange={(value) =>
+                      setEditingRow({ id: record.id, value })
+                    }
+                    onEnter={() => commitRename(editingRow.value)}
+                    onBlur={() => commitRename(editingRow.value)}
+                  />
+                ) : (
                   <BAIFlex align="center" gap="xs">
-                    <Typography.Text
-                      className={styles.fixEditableVerticalAlign}
-                      editable={{
-                        onChange(value) {
-                          if (!_.isEmpty(value)) {
-                            updateSessionHistory(record.id, value);
-                            record.pinned &&
-                              updatePinnedHistory(record.id, value);
-                          }
-                        },
-                        text: displayName,
+                    <BAILink
+                      type="hover"
+                      onClick={() => {
+                        modalProps.onRequestClose?.(
+                          JSON.parse(
+                            new URLSearchParams(record.params || '').get(
+                              'formValues',
+                            ) || '{}',
+                          ),
+                        );
                       }}
                     >
-                      <BAILink
-                        type="hover"
-                        onClick={() => {
-                          modalProps.onRequestClose?.(
-                            JSON.parse(
-                              new URLSearchParams(record.params || '').get(
-                                'formValues',
-                              ) || '{}',
-                            ),
-                          );
-                        }}
-                      >
-                        {displayName}
-                      </BAILink>
-                    </Typography.Text>
+                      {displayName}
+                    </BAILink>
+                    <IconButton
+                      variant="ghost"
+                      size="sm"
+                      icon={<PencilIcon />}
+                      label={t('data.folders.Rename')}
+                      tooltip={t('data.folders.Rename')}
+                      onClick={() =>
+                        setEditingRow({ id: record.id, value: displayName })
+                      }
+                    />
                     {isMultiNode && (
-                      <BAITag>
-                        {t('session.launcher.MultiNode')} ×{record.cluster_size}
-                      </BAITag>
+                      <Badge
+                        label={`${t('session.launcher.MultiNode')} ×${record.cluster_size}`}
+                      />
                     )}
                   </BAIFlex>
                 );
@@ -228,13 +245,13 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                   record.environments?.version || record.environments?.manual;
                 return (
                   imageStr && (
-                    <Tooltip title={imageStr} placement="right">
+                    <Tooltip content={imageStr} placement="end">
                       <BAIFlex gap={'xxs'}>
                         <ImageMetaIcon image={imageStr} />
-                        <Typography.Text>
+                        <Text>
                           {getImageAliasName(imageStr)}{' '}
                           {getBaseVersion(imageStr)}
-                        </Typography.Text>
+                        </Text>
                       </BAIFlex>
                     </Tooltip>
                   )

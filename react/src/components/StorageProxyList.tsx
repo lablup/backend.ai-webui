@@ -8,28 +8,38 @@ import {
   convertUnitValue,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
-import { InfoCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Button, type TableColumnsType, Tag, theme, Typography } from 'antd';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { theme } from '../theme-shim';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
+import StorageHostDetailDrawer from './StorageHostDetailDrawer';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Text } from '@astryxdesign/core/Text';
 import {
   filterOutNullAndUndefined,
   BAICephIcon,
+  BAIColumnsType,
   BAIFlex,
   BAILink,
   BAIPureStorageIcon,
   BAITable,
-  BAIFetchKeyButton,
   BAIProgressWithLabel,
   BAIDoubleTag,
+  BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Server } from 'lucide-react';
-import { useDeferredValue, useEffect, useMemo } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
+// Feeds BAIDoubleTag only, which still renders an antd `<Tag color>`
+// internally (frontier, unconverted — 16 consumers across the app). Legacy
+// antd color-preset strings are kept for that reason; the repo-global
+// `storageBackend` domain lookup (astryxTagVariant.ts, ticket 13) was
+// pre-built for this exact data and becomes the source of truth once
+// BAIDoubleTag itself is rebuilt on Astryx Badge.
 const backendType = {
   xfs: {
     color: 'blue',
@@ -76,13 +86,17 @@ type StorageVolume = NonNullable<
 >;
 
 const StorageProxyList = () => {
+  'use memo';
   const { token } = theme.useToken();
   const { t } = useTranslation();
+  const [drawerStorageHostId, setDrawerStorageHostId] = useState<string | null>(
+    null,
+  );
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
@@ -106,8 +120,8 @@ const StorageProxyList = () => {
             capabilities
             path
             fsprefix
-            performance_metric
             usage
+            ...StorageHostDetailDrawerFragment @alias(as: "storageVolumeFrgmt")
           }
           total_count
         }
@@ -123,16 +137,23 @@ const StorageProxyList = () => {
     },
   );
 
-  const columns: TableColumnsType<StorageVolume> = [
+  const columns: BAIColumnsType<StorageVolume> = [
     {
       title: <>ID / {t('agent.Endpoint')}</>,
       key: 'id',
       dataIndex: 'id',
+      fixed: 'left',
       render: (value, record) => {
         return (
           <BAIFlex direction="column" align="start">
-            <Typography.Text>{value}</Typography.Text>
-            <Typography.Text type="secondary">{record.path}</Typography.Text>
+            <BAILink
+              onClick={() => {
+                setDrawerStorageHostId(record.id ?? null);
+              }}
+            >
+              {value}
+            </BAILink>
+            <Text color="secondary">{record.path}</Text>
           </BAIFlex>
         );
       },
@@ -191,7 +212,7 @@ const StorageProxyList = () => {
               strokeColor={color}
               width={120}
             />
-            <Typography.Text style={{ fontSize: token.fontSizeSM }}>
+            <Text size="xsm">
               {usage.used_bytes
                 ? convertToDecimalUnit(usage.used_bytes, baseUnit)?.numberFixed
                 : '-'}
@@ -200,7 +221,7 @@ const StorageProxyList = () => {
                 ? convertToDecimalUnit(usage.capacity_bytes, baseUnit)
                     ?.displayValue
                 : '-'}
-            </Typography.Text>
+            </Text>
           </>
         );
       },
@@ -214,61 +235,9 @@ const StorageProxyList = () => {
         return (
           <BAIFlex gap="xxs" align="start" wrap="wrap">
             {_.map(value, (item) => (
-              <Tag key={item} color="blue">
-                {item}
-              </Tag>
+              <Badge key={item} variant="blue" label={item} />
             ))}
           </BAIFlex>
-        );
-      },
-    },
-    {
-      title: t('general.Control'),
-      key: 'control',
-      width: 100,
-      fixed: 'right',
-      render: (_value, record) => {
-        let perfMetricDisabled;
-        try {
-          const performanceMetric = JSON.parse(
-            record.performance_metric || '{}',
-          );
-          perfMetricDisabled = _.isEmpty(performanceMetric);
-        } catch {
-          perfMetricDisabled = true;
-        }
-        return (
-          <>
-            <Button
-              disabled={perfMetricDisabled}
-              style={{
-                color: perfMetricDisabled
-                  ? token.colorTextDisabled
-                  : token.colorSuccess,
-              }}
-              icon={<InfoCircleOutlined />}
-              onClick={() => {
-                // This event is being listened to by the plugin
-                const event = new CustomEvent(
-                  'backend-ai-selected-storage-proxy',
-                  {
-                    detail: record.id,
-                  },
-                );
-                document.dispatchEvent(event);
-              }}
-              type="text"
-            />
-            <BAILink to={`/storage-settings/${record.id}`}>
-              <Button
-                style={{
-                  color: token.colorInfo,
-                }}
-                icon={<SettingOutlined />}
-                type="text"
-              />
-            </BAILink>
-          </>
         );
       },
     },
@@ -295,12 +264,12 @@ const StorageProxyList = () => {
               },
             ]}
           /> */}
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="storage-proxy-list"
           loading={
             deferredFetchKey !== fetchKey ||
             deferredQueryVariables !== queryVariables
           }
-          autoUpdateDelay={15_000}
           value={fetchKey}
           onChange={() => {
             updateFetchKey();
@@ -308,9 +277,9 @@ const StorageProxyList = () => {
         />
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         resizable
         size="small"
-        scroll={{ x: 'max-content' }}
         rowKey={'id'}
         dataSource={filterOutNullAndUndefined(storage_volume_list?.items)}
         columns={columns}
@@ -332,6 +301,21 @@ const StorageProxyList = () => {
           },
         }}
       />
+      <BAIUnmountAfterClose>
+        <StorageHostDetailDrawer
+          open={!!drawerStorageHostId}
+          storageVolumeFrgmt={
+            _.find(
+              storage_volume_list?.items,
+              (v) => v?.id === drawerStorageHostId,
+            )?.storageVolumeFrgmt ?? null
+          }
+          onRefetchParentList={() => {
+            updateFetchKey();
+          }}
+          onRequestClose={() => setDrawerStorageHostId(null)}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

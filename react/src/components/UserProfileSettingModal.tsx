@@ -2,64 +2,132 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { UserProfileSettingModalQuery } from '../__generated__/UserProfileSettingModalQuery.graphql';
+import { UserProfileSettingModalFragment$key } from '../__generated__/UserProfileSettingModalFragment.graphql';
+import { UserProfileSettingModalUpdateUserMutation } from '../__generated__/UserProfileSettingModalUpdateUserMutation.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
+import { isIpIncludedInList, isValidIPOrCidr } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { passwordPattern } from './ResetPasswordRequired';
 import TOTPActivateModal from './TOTPActivateModal';
-import { UserProfileQuery } from './UserProfileSettingModalQuery';
-import { ExclamationCircleFilled, LoadingOutlined } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
 import {
-  type ModalProps,
-  Input,
-  Form,
-  Switch,
-  Spin,
-  type FormInstance,
-  App,
-} from 'antd';
-import { BAIModal, useErrorMessageResolver } from 'backend.ai-ui';
+  AstryxFormSwitch,
+  AstryxFormTagsInput,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAIModal,
+  BAIText,
+  type BAIModalProps,
+  useErrorMessageResolver,
+  useToggle,
+} from 'backend.ai-ui';
+import { CircleAlert } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PreloadedQuery, usePreloadedQuery } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
-interface Props extends ModalProps {
-  queryRef: PreloadedQuery<UserProfileSettingModalQuery>;
+// The antd `ModalProps` type import is replaced by BUI's own `BAIModalProps`
+// — the modal this component actually renders (P15: a type-only antd import
+// still keeps the module in the antd import graph).
+interface Props extends BAIModalProps {
+  userFrgmt: UserProfileSettingModalFragment$key | null | undefined;
+  currentClientIp?: string;
   onRequestClose: (success?: boolean) => void;
   onRequestRefresh: () => void;
   totpSupported?: boolean;
-  isRefreshModalPending?: boolean;
 }
 
 type UserProfileFormValues = {
   full_name: string;
-  originalPassword?: string;
-  newPasswordConfirm?: string;
-  newPassword?: string;
+  password?: string;
+  passwordConfirm?: string;
   totp_activated: boolean;
+  allowed_client_ip?: string[];
 };
 
 const UserProfileSettingModal: React.FC<Props> = ({
   onRequestClose,
   onRequestRefresh,
-  isRefreshModalPending,
   totpSupported,
-  queryRef,
+  userFrgmt,
+  currentClientIp,
   ...baiModalProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<UserProfileFormValues>>(null);
   const { message, modal } = App.useApp();
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
   const baiClient = useSuspendedBackendaiClient();
-  const userRole = useCurrentUserRole();
-  const [userInfo, userMutations] = useCurrentUserInfo();
   const { getErrorMessage } = useErrorMessageResolver();
 
-  const { user } = usePreloadedQuery(UserProfileQuery, queryRef);
+  const user = useFragment(
+    graphql`
+      fragment UserProfileSettingModalFragment on UserV2 {
+        id
+        basicInfo {
+          email
+          fullName
+        }
+        security {
+          totpActivated @skipOnClient(if: $isNotSupportTotp)
+          allowedClientIp
+        }
+        ...TOTPActivateModalFragment
+      }
+    `,
+    userFrgmt,
+  );
+
+  const [commitUpdateUser, isInFlightUpdateUser] =
+    useMutation<UserProfileSettingModalUpdateUserMutation>(graphql`
+      mutation UserProfileSettingModalUpdateUserMutation(
+        $input: UpdateUserV2Input!
+      ) {
+        updateUserV2(input: $input) {
+          user {
+            id
+            basicInfo {
+              email
+              fullName
+              username
+              description
+              integrationName
+            }
+            organization {
+              domainName
+              role
+              resourcePolicy
+              mainAccessKey
+            }
+            security {
+              totpActivated
+              totpActivatedAt
+              sudoSessionEnabled
+              allowedClientIp
+            }
+            status {
+              status
+              statusInfo
+              needPasswordChange
+            }
+            container {
+              containerUid
+              containerMainGid
+              containerGids
+            }
+            timestamps {
+              createdAt
+              modifiedAt
+            }
+          }
+        }
+      }
+    `);
 
   const mutationToRemoveTotp = useTanMutation({
     mutationFn: () => {
@@ -71,49 +139,31 @@ const UserProfileSettingModal: React.FC<Props> = ({
     formRef.current
       ?.validateFields()
       .then((values) => {
-        userMutations.updateFullName(values.full_name, {
-          onSuccess: () => {
-            message.open({
-              type: 'success',
-              content: t('webui.menu.FullNameUpdated'),
-            });
+        if (!formRef.current?.isFieldsTouched()) {
+          message.info(t('webui.menu.NoChangesToUpdate'));
+          return;
+        }
 
-            if (
-              values.newPassword &&
-              values.newPasswordConfirm &&
-              values.originalPassword
-            ) {
-              userMutations.updatePassword(
-                {
-                  new_password: values.newPassword,
-                  new_password2: values.newPasswordConfirm,
-                  old_password: values.originalPassword,
-                },
-                {
-                  onSuccess: () => {
-                    message.open({
-                      type: 'success',
-                      content: t('webui.menu.PasswordUpdated'),
-                    });
-                    onRequestClose(true);
-                  },
-                  onError: (e) => {
-                    message.open({
-                      type: 'error',
-                      content: e.message,
-                    });
-                  },
-                },
-              );
-            } else {
-              onRequestClose(true);
-            }
+        commitUpdateUser({
+          variables: {
+            input: {
+              fullName: values.full_name,
+              password: values.password || undefined,
+              allowedClientIp: values.allowed_client_ip?.length
+                ? values.allowed_client_ip
+                : null,
+            },
           },
-          onError: (e) => {
-            message.open({
-              type: 'error',
-              content: e.message,
-            });
+          onCompleted: (_res, errors) => {
+            if (errors?.[0]) {
+              message.error(errors[0].message || t('error.UnknownError'));
+              return;
+            }
+            message.success(t('webui.menu.ProfileUpdated'));
+            onRequestClose(true);
+          },
+          onError: (err) => {
+            message.error(getErrorMessage(err));
           },
         });
       })
@@ -129,157 +179,239 @@ const UserProfileSettingModal: React.FC<Props> = ({
         onCancel={() => {
           onRequestClose();
         }}
-        confirmLoading={userInfo.isPendingMutation}
+        confirmLoading={isInFlightUpdateUser}
         onOk={() => onSubmit()}
         centered
         destroyOnHidden
         title={t('webui.menu.MyAccountInformation')}
       >
-        <Spin spinning={isRefreshModalPending} indicator={<LoadingOutlined />}>
-          <Form
-            ref={formRef}
-            layout="vertical"
-            initialValues={{
-              full_name: user?.full_name ?? userInfo.full_name,
-              totp_activated: user?.totp_activated || false,
-            }}
-            preserve={false}
-          >
-            <Form.Item
-              name="full_name"
-              label={t('webui.menu.FullName')}
-              rules={[
-                () => ({
-                  validator(_, value) {
-                    if (value && value.length < 65) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error(t('webui.menu.FullNameInvalid')),
-                    );
-                  },
-                }),
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="originalPassword"
-              label={t('webui.menu.OriginalPassword')}
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (
-                      !value &&
-                      (getFieldValue('newPassword') ||
-                        getFieldValue('newPasswordConfirm'))
-                    ) {
-                      return Promise.reject(
-                        new Error(t('webui.menu.InputOriginalPassword')),
-                      );
-                    }
+        <Form
+          ref={formRef}
+          layout="vertical"
+          initialValues={{
+            full_name: user?.basicInfo?.fullName ?? '',
+            totp_activated: user?.security?.totpActivated || false,
+            allowed_client_ip: user?.security?.allowedClientIp
+              ? [...user.security.allowedClientIp].filter(
+                  (ip): ip is string => ip != null,
+                )
+              : [],
+          }}
+          preserve={false}
+        >
+          <Form.Item
+            name="full_name"
+            label={t('webui.menu.FullName')}
+            rules={[
+              () => ({
+                validator(_, value) {
+                  if (!value || value.length < 65) {
                     return Promise.resolve();
-                  },
-                }),
-              ]}
-              dependencies={['newPassword', 'newPasswordConfirm']}
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item
-              name="newPassword"
-              label={t('webui.menu.NewPassword')}
-              rules={[
-                {
-                  pattern:
-                    userRole === 'superadmin' ? undefined : passwordPattern,
-                  message: t('webui.menu.InvalidPasswordMessage'),
+                  }
+                  return Promise.reject(
+                    new Error(t('webui.menu.FullNameInvalid')),
+                  );
                 },
-              ]}
-            >
-              <Input.Password />
-            </Form.Item>
-            <Form.Item
-              name="newPasswordConfirm"
-              label={t('webui.menu.NewPasswordAgain')}
-              dependencies={['newPassword']}
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue('newPassword') === value) {
-                      return Promise.resolve();
-                    }
+              }),
+            ]}
+          >
+            {/* PILOT-DECISION 1: `autoComplete` is dropped on all three text
+                fields — `TextInputProps` is a closed surface with no
+                raw-attribute passthrough. The password fields lose only the
+                browser hint that this is a NEW password, not any validation
+                (the Form.Item rules are unchanged).
+
+                PILOT-DECISION 2: `Input.Password` -> `TextInput
+                type="password"` (MAPPING §3.6) drops antd's reveal-eye
+                toggle; Astryx's TextInput has no show/hide affordance and
+                rebuilding one is out of scope. Both password fields are
+                write-only here (they are never pre-filled), so nothing the
+                user cannot re-type is hidden from them.
+
+                HANDOFF (not ours to fix): the antd `Form.Item` LABELS in this
+                modal render at `rgb(20,20,20)` against the dialog's dark
+                surface, i.e. invisible — measured live during the FR-3482
+                Astryx migration. It is
+                PRE-EXISTING: the same probe against this file's
+                pre-conversion revision reproduces it exactly. The cause is
+                the header's reverse-theme region (this modal is opened from
+                the account menu) meeting the Astryx `Dialog` surface that
+                wave 1 introduced, while the antd Form layer still paints its
+                labels from the LIGHT antd theme — MAPPING §5's "a nested
+                <Theme> with no explicit `mode`" hazard. Fixing it belongs to
+                the modal/theme layer, not to this call site. */}
+            <AstryxFormTextInput label={t('webui.menu.FullName')} />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label={t('general.NewPassword')}
+            rules={[
+              {
+                pattern: /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/,
+                message: t('webui.menu.InvalidPasswordMessage'),
+              },
+            ]}
+          >
+            <AstryxFormTextInput
+              label={t('general.NewPassword')}
+              type="password"
+            />
+          </Form.Item>
+          <Form.Item
+            name="passwordConfirm"
+            label={t('webui.menu.NewPasswordAgain')}
+            dependencies={['password']}
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  const password = getFieldValue('password');
+                  if (!password && !value) {
+                    return Promise.resolve();
+                  }
+                  if (password && !value) {
                     return Promise.reject(
                       new Error(t('webui.menu.NewPasswordMismatch')),
                     );
-                  },
-                }),
-              ]}
+                  }
+                  if (password !== value) {
+                    return Promise.reject(
+                      new Error(t('webui.menu.NewPasswordMismatch')),
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
+          >
+            <AstryxFormTextInput
+              label={t('webui.menu.NewPasswordAgain')}
+              type="password"
+            />
+          </Form.Item>
+          <Form.Item
+            name="allowed_client_ip"
+            label={t('credential.AllowedClientIP')}
+            extra={
+              <>
+                <Text color="secondary">
+                  {t('credential.AllowedClientIPHint')}
+                </Text>
+                <br />
+                <BAIText
+                  type="secondary"
+                  copyable={currentClientIp ? { text: currentClientIp } : false}
+                >
+                  {t('credential.CurrentClientIp', {
+                    ip: currentClientIp,
+                  })}
+                </BAIText>
+              </>
+            }
+            rules={[
+              {
+                validator: async (_rule, value) => {
+                  if (!value || value.length === 0) return Promise.resolve();
+                  const invalidIPs = (value as string[]).filter(
+                    (ip: string) => !isValidIPOrCidr(ip),
+                  );
+                  if (invalidIPs.length > 0) {
+                    return Promise.reject(
+                      new Error(
+                        `${t('credential.InvalidIP')}: ${invalidIPs.join(', ')}`,
+                      ),
+                    );
+                  }
+                  if (
+                    currentClientIp &&
+                    !isIpIncludedInList(currentClientIp, value)
+                  ) {
+                    return Promise.reject(
+                      new Error(
+                        t('credential.AllowedClientIpNotIncluded', {
+                          ip: currentClientIp,
+                        }),
+                      ),
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+            style={{ marginBottom: 0 }}
+          >
+            <AstryxFormTagsInput
+              tokenSeparators={[',', ' ']}
+              label={t('credential.AllowedClientIP')}
+              placeholder={t('credential.AllowedClientIPPlaceholder')}
+            />
+          </Form.Item>
+          {!!totpSupported && (
+            <Form.Item
+              name="totp_activated"
+              label={t('webui.menu.TotpActivated')}
+              valuePropName="checked"
             >
-              <Input.Password />
-            </Form.Item>
-            {!!totpSupported && (
-              <Form.Item
-                name="totp_activated"
+              {/* MAPPING §4: `checked` -> `value` (coalesced by the local
+                  adapter below, since Form.Item injects `undefined` until the
+                  field is touched), `loading` -> `isLoading`. */}
+              {/* `isLoading` and the post-`onChange` side-effect slot
+                  (`onValueChange`) are on the SHARED adapter now — those two
+                  gaps were the whole reason for the local copy (D10
+                  fold-back). */}
+              <AstryxFormSwitch
                 label={t('webui.menu.TotpActivated')}
-                valuePropName="checked"
-              >
-                <Switch
-                  loading={mutationToRemoveTotp.isPending}
-                  onChange={(checked: boolean) => {
-                    if (checked) {
-                      toggleTOTPActivateModal();
-                    } else {
-                      if (user?.totp_activated) {
-                        formRef.current?.setFieldValue('totp_activated', true);
-                        modal.confirm({
-                          title: t('totp.TurnOffTotp'),
-                          icon: <ExclamationCircleFilled />,
-                          content: t('totp.ConfirmTotpRemovalBody'),
-                          okText: t('button.Yes'),
-                          okType: 'danger',
-                          cancelText: t('button.No'),
-                          onOk() {
-                            mutationToRemoveTotp.mutate(undefined, {
-                              onSuccess: () => {
-                                message.success(
-                                  t('totp.RemoveTotpSetupCompleted'),
-                                );
-                                // updateFetchKey();
-                                onRequestRefresh();
+                isLoading={mutationToRemoveTotp.isPending}
+                onValueChange={(checked: boolean) => {
+                  if (checked) {
+                    toggleTOTPActivateModal();
+                  } else {
+                    if (user?.security?.totpActivated) {
+                      formRef.current?.setFieldValue('totp_activated', true);
+                      modal.confirm({
+                        title: t('totp.TurnOffTotp'),
+                        icon: <CircleAlert size="1em" />,
+                        content: t('totp.ConfirmTotpRemovalBody'),
+                        okText: t('button.Yes'),
+                        okType: 'danger',
+                        cancelText: t('button.No'),
+                        onOk() {
+                          mutationToRemoveTotp.mutate(undefined, {
+                            onSuccess: () => {
+                              message.success(
+                                t('totp.RemoveTotpSetupCompleted'),
+                              );
+                              onRequestRefresh();
 
-                                formRef.current?.setFieldValue(
-                                  'totp_activated',
-                                  false,
-                                );
-                              },
-                              onError: (error) => {
-                                message.error(getErrorMessage(error));
-                              },
-                            });
-                          },
-                          onCancel() {
-                            formRef.current?.setFieldValue(
-                              'totp_activated',
-                              true,
-                            );
-                          },
-                        });
-                      }
+                              formRef.current?.setFieldValue(
+                                'totp_activated',
+                                false,
+                              );
+                            },
+                            onError: (error) => {
+                              message.error(getErrorMessage(error));
+                            },
+                          });
+                        },
+                        onCancel() {
+                          formRef.current?.setFieldValue(
+                            'totp_activated',
+                            true,
+                          );
+                        },
+                      });
                     }
-                  }}
-                />
-              </Form.Item>
-            )}
-          </Form>
-        </Spin>
+                  }
+                }}
+              />
+            </Form.Item>
+          )}
+        </Form>
         {!!totpSupported && (
           <TOTPActivateModal
             userFrgmt={user}
             open={isOpenTOTPActivateModal}
             onRequestClose={(success) => {
               if (success) {
-                // updateFetchKey();
                 onRequestRefresh();
               } else {
                 formRef.current?.setFieldValue('totp_activated', false);

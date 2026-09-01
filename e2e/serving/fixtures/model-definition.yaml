@@ -8,5 +8,4 @@ models:
       port: 8000
       health_check:
         path: /health
-        initial_delay: 5.0
         max_retries: 10

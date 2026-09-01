@@ -1,7 +1,6 @@
-import { SemanticColor, useSemanticColorMap } from '../helper';
-import BAIFlex from './BAIFlex';
-import { Badge, BadgeProps } from 'antd';
-import _ from 'lodash';
+import { SemanticColor } from '../helper';
+import BAIBadge, { BAIBadgeProps } from './BAIBadge';
+import * as _ from 'lodash-es';
 
 export type SchedulingResult =
   | 'SUCCESS'
@@ -13,13 +12,18 @@ export type SchedulingResult =
   | 'SKIPPED';
 
 export interface BAISchedulingResultBadgeProps extends Omit<
-  BadgeProps,
+  BAIBadgeProps,
   'text' | 'color'
 > {
   result: SchedulingResult | null;
 }
 
-const resultSemanticMap: Record<SchedulingResult, SemanticColor> = {
+/**
+ * The one semantic mapping for a scheduling result. Exported so anything that
+ * draws a result alongside the badge (the sub-step timeline's rail dots) picks
+ * the same colour instead of inventing a second language.
+ */
+export const resultSemanticColorMap: Record<SchedulingResult, SemanticColor> = {
   SUCCESS: 'success',
   FAILURE: 'error',
   STALE: 'default',
@@ -34,17 +38,17 @@ const BAISchedulingResultBadge = ({
   ...badgeProps
 }: BAISchedulingResultBadgeProps) => {
   'use memo';
-  const semanticColorMap = useSemanticColorMap();
-  const semanticColor = result ? _.get(resultSemanticMap, result) : undefined;
+  const semanticColor = result
+    ? _.get(resultSemanticColorMap, result)
+    : undefined;
 
   return (
-    <BAIFlex gap={'xs'} wrap="nowrap" align="center">
-      <Badge
-        {...badgeProps}
-        color={semanticColor ? semanticColorMap[semanticColor] : undefined}
-      />
-      &nbsp;{result}
-    </BAIFlex>
+    <BAIBadge
+      {...badgeProps}
+      color={semanticColor}
+      text={result}
+      style={{ whiteSpace: 'nowrap', ...badgeProps.style }}
+    />
   );
 };
 

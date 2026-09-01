@@ -3,12 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
+import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackendAIAppLauncherFragment.graphql';
+import { requestLocalProxyToken } from '../helper/localProxyToken';
 import { useSetBAINotification } from './useBAINotification';
+import { useProjectPath } from './useRouteScope';
 import { BAILink, useBAILogger, useErrorMessageResolver } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useBackendAIAppLauncherFragment$key } from 'src/__generated__/useBackendAIAppLauncherFragment.graphql';
 
 export const TCP_APPS = ['sshd', 'vscode-desktop', 'xrdp', 'vnc'];
 export const useBackendAIAppLauncher = (
@@ -25,6 +27,7 @@ export const useBackendAIAppLauncher = (
   const { upsertNotification } = useSetBAINotification();
   const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const baiClient = useSuspendedBackendaiClient();
   const { logger } = useBAILogger();
 
@@ -66,19 +69,44 @@ export const useBackendAIAppLauncher = (
   };
 
   const getWSProxyVersion = async (): Promise<'v1' | 'v2'> => {
+    logger.info('[wsproxy] getWSProxyVersion() called', {
+      scaling_group: session?.scaling_group,
+      project_id: session?.project_id,
+      isElectron: globalThis.isElectron,
+      // @ts-ignore
+      debug: globalThis?.backendaiwebui?.debug,
+      forceUseV1Proxy: debugOptions?.forceUseV1Proxy,
+      forceUseV2Proxy: debugOptions?.forceUseV2Proxy,
+    });
     // @ts-ignore
     if (globalThis?.backendaiwebui?.debug === true) {
-      if (debugOptions?.forceUseV1Proxy) return 'v1';
-      else if (debugOptions?.forceUseV2Proxy) return 'v2';
+      if (debugOptions?.forceUseV1Proxy) {
+        logger.info('[wsproxy] forced v1 via debugOptions');
+        return 'v1';
+      } else if (debugOptions?.forceUseV2Proxy) {
+        logger.info('[wsproxy] forced v2 via debugOptions');
+        return 'v2';
+      }
     }
     if (globalThis.isElectron) {
+      logger.info('[wsproxy] Electron environment → v1');
       return 'v1';
     }
-    return baiClient.scalingGroup
-      .getWsproxyVersion(session?.scaling_group, session?.project_id)
-      .then((result: { wsproxy_version: 'v1' | 'v2' }) => {
-        return result.wsproxy_version;
-      });
+    try {
+      const result: { wsproxy_version: 'v1' | 'v2' } =
+        await baiClient.scalingGroup.getWsproxyVersion(
+          session?.scaling_group,
+          session?.project_id,
+        );
+      logger.info('[wsproxy] backend reported version:', result);
+      return result.wsproxy_version;
+    } catch (err) {
+      logger.error(
+        '[wsproxy] getWsproxyVersion() failed; defaulting to v1',
+        err,
+      );
+      return 'v1';
+    }
   };
 
   /**
@@ -95,13 +123,19 @@ export const useBackendAIAppLauncher = (
    */
   const getProxyURL = async (wsproxyVersion: string) => {
     let url = 'http://127.0.0.1:5050/';
+    // Truthy check covers undefined, null, and empty string. The
+    // Backend.AI client initializes `_config._proxyURL = null` by default,
+    // and `config.toml` can ship `wsproxy.proxyURL = ""` for environments
+    // that rely on the local default. Both cases must fall through to the
+    // default URL above instead of overwriting it with a non-string value
+    // (which would later crash on `url.endsWith(...)`).
     if (
       // @ts-ignore
-      globalThis.__local_proxy?.url !== undefined
+      globalThis.__local_proxy?.url
     ) {
       // @ts-ignore
       url = globalThis.__local_proxy.url;
-    } else if (baiClient._config.proxyURL !== undefined) {
+    } else if (baiClient._config.proxyURL) {
       url = baiClient._config.proxyURL;
     }
     // Normalize base URL (remove trailing slash if exists)
@@ -166,7 +200,7 @@ export const useBackendAIAppLauncher = (
     const response = await sendRequest(rqst);
     if (response === undefined) {
       throw new AppLaunchError(
-        'Proxy configurator is not responding.',
+        t('session.launcher.ProxyConfiguratorNotResponding'),
         'configuring',
       );
     }
@@ -209,8 +243,11 @@ export const useBackendAIAppLauncher = (
       );
 
       if (tokenResponse === undefined) {
+        // The manager answered but without a token payload. This is NOT the
+        // proxy configurator (v1 `/conf`) case — the AppProxy coordinator has
+        // not been contacted at this point in the flow (FR-3478).
         throw new AppLaunchError(
-          'Proxy configurator is not responding.',
+          t('session.appLauncher.FailedToStartAppService'),
           'configuring',
         );
       }
@@ -224,12 +261,31 @@ export const useBackendAIAppLauncher = (
       if (err instanceof AppLaunchError) {
         throw err;
       }
+      // Detect "session not accessible" on session lookup. The manager
+      // scopes session lookups by the *current* access key; if the
+      // session was created under a different AK (or was terminated
+      // between page render and click), the lookup returns 404 /
+      // "session not found", which is misleading to end users (FR-2586).
+      if (isSessionNotFoundError(err)) {
+        throw new AppLaunchError(
+          t('session.appLauncher.SessionNotAccessible'),
+          'configuring',
+          err,
+        );
+      }
+      // The Backend.AI client rejects with a plain object
+      // (`{ statusCode, title, msg, error_code, ... }`), never an Error, so
+      // resolve the manager's own message instead of pattern-matching on
+      // `instanceof Error` — that check made every start-service failure
+      // surface as "Proxy configurator is not responding." (FR-3478).
       throw new AppLaunchError(
-        err instanceof Error
-          ? err.message
-          : 'Proxy configurator is not responding.',
+        resolveStartServiceErrorMessage(
+          err,
+          getErrorMessage,
+          t('session.appLauncher.FailedToStartAppService'),
+        ),
         'configuring',
-        err instanceof Error ? err : undefined,
+        err,
       );
     }
   };
@@ -239,8 +295,26 @@ export const useBackendAIAppLauncher = (
    * Used when re-launching apps like tensorboard that need to be restarted with different args.
    */
   const _close_wsproxy = async (app: string) => {
-    const token = baiClient._config.accessKey;
-    const proxyURL = await getProxyURL(await getWSProxyVersion());
+    const wsproxyVersion = await getWSProxyVersion();
+    const proxyURL = await getProxyURL(wsproxyVersion);
+    // The local v1 proxy now requires the per-instance secret token returned
+    // by /conf for the /delete route (FR-3227). The v2 remote App Proxy keeps
+    // using the access key. If the token cannot be obtained (e.g. /conf is
+    // rejected), fail the cleanup gracefully rather than hitting
+    // `/proxy/undefined/...`.
+    let token: string;
+    try {
+      token =
+        wsproxyVersion === 'v1'
+          ? await requestLocalProxyToken(baiClient, proxyURL)
+          : baiClient._config.accessKey;
+    } catch (err) {
+      logger.error(
+        '[wsproxy] failed to obtain local proxy token for cleanup',
+        err,
+      );
+      return false;
+    }
 
     const uri = new URL(
       `proxy/${token}/${session?.row_id}/delete?${new URLSearchParams({ app }).toString()}`,
@@ -358,13 +432,10 @@ export const useBackendAIAppLauncher = (
     try {
       return await sendRequest(rqst_proxy);
     } catch (err) {
-      // Wrap error in AppLaunchError with proper stage
       throw new AppLaunchError(
-        err instanceof Error && err.message
-          ? err.message
-          : 'Failed to connect to coordinator',
+        getErrorMessage(err, 'Failed to connect to coordinator'),
         'requesting',
-        err instanceof Error ? err : undefined,
+        err,
       );
     }
   };
@@ -390,19 +461,36 @@ export const useBackendAIAppLauncher = (
     allowedClientIps?: Array<string>;
     onProgress?: (progress: { percent: number; stage: string }) => void;
   }) => {
+    logger.info('[_launchApp] start', {
+      app,
+      port,
+      session_row_id: session?.row_id,
+      session_name: session?.name,
+      scaling_group: session?.scaling_group,
+      project_id: session?.project_id,
+      service_ports_raw: session?.service_ports,
+    });
+
     // vscode-desktop uses sshd service internally
     // Legacy implementation: sendAppName = 'sshd' when app === 'vscode-desktop'
     const serviceAppName = app === 'vscode-desktop' ? 'sshd' : app;
 
     // Stage 1: Detecting proxy version (0-20%)
     const proxyVersion = await getWSProxyVersion();
+    logger.info('[_launchApp] resolved proxyVersion:', proxyVersion);
 
     // Stage 2: Getting proxy URL (20-40%)
     onProgress?.({ percent: 20, stage: 'configuring' });
     const proxyURL = await getProxyURL(proxyVersion);
+    logger.info('[_launchApp] resolved proxyURL:', proxyURL);
 
     // Stage 3: Adding to socket queue (40-60%)
     onProgress?.({ percent: 40, stage: 'connecting' });
+    logger.info('[_launchApp] calling _open_wsproxy...', {
+      app: serviceAppName,
+      proxyVersion,
+      proxyURL,
+    });
     const response = await _open_wsproxy({
       app: serviceAppName, // Use actual service name for API call
       port, // Pass as-is (undefined becomes null in _open_wsproxy)
@@ -413,18 +501,42 @@ export const useBackendAIAppLauncher = (
       proxyVersion,
       proxyURL,
     });
+    // Log only a narrow summary of the proxy response. The full payload
+    // may contain sensitive fields (proxy tokens, permit keys, internal
+    // URLs) that should not land in browser logs.
+    logger.debug('[_launchApp] _open_wsproxy returned summary:', {
+      url: response && typeof response === 'object' ? response.url : undefined,
+      port:
+        response && typeof response === 'object' ? response.port : undefined,
+      reused:
+        response && typeof response === 'object' ? response.reused : undefined,
+      reuse:
+        response && typeof response === 'object' ? response.reuse : undefined,
+      status:
+        response && typeof response === 'object' ? response.status : undefined,
+    });
 
     if (!response || typeof response === 'boolean') {
+      logger.error(
+        '[_launchApp] _open_wsproxy returned falsy/boolean — throwing AppLaunchError',
+        response,
+      );
       throw new AppLaunchError('Failed to configure proxy', 'configuring');
     }
 
     // Stage 4: Connecting to proxy worker (60-100%)
     onProgress?.({ percent: 60, stage: 'connecting' });
+    logger.info('[_launchApp] calling _connectToProxyWorker...', response.url);
     const { appConnectUrl, reused, redirectUrl } = await _connectToProxyWorker(
       response.url,
       '',
       !TCP_APPS.includes(app) || globalThis.isElectron, // Enable direct TCP for non-TCP apps, or when running in Electron
     );
+    logger.info('[_launchApp] _connectToProxyWorker returned:', {
+      appConnectUrl: appConnectUrl?.href,
+      reused,
+      redirectUrl,
+    });
 
     // Initialize TCP connection info variables
     let tcpHost: string | null = null;
@@ -444,30 +556,73 @@ export const useBackendAIAppLauncher = (
           const redirectCheckUrl = new URL(appConnectUrl.href);
           redirectCheckUrl.searchParams.set('do-not-redirect', 'true');
 
+          // The worker's /setup endpoint answers TCP circuits with
+          // `{ redirectURI: '...?directTCP=true&gateway=tcp://host:port' }`.
+          // Any failure here used to be swallowed, letting the launcher render
+          // a bogus `127.0.0.1:undefined` connection dialog — surface each
+          // failure as a launch error instead, like the Lit-era launcher did.
+          // (FR-3359)
+          let redirectURI: string | undefined;
           try {
             const result = await fetch(redirectCheckUrl.href);
             const body = await result.json();
-            const { redirectURI } = body;
-
-            if (redirectURI) {
-              const redirectURL = new URL(redirectURI);
-
-              // Check if directTCP is supported
-              const directTCPParam = redirectURL.searchParams.get('directTCP');
-              directTCPSupported = directTCPParam === 'true';
-
-              // Extract gateway URI
-              const gatewayURI = redirectURL.searchParams.get('gateway');
-
-              if (directTCPSupported && gatewayURI) {
-                // Parse gateway URL (format: tcp://host:port)
-                const gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
-                tcpHost = gatewayURL.hostname;
-                tcpPort = gatewayURL.port;
-              }
-            }
+            redirectURI = body?.redirectURI;
           } catch (error) {
             logger.error('Failed to fetch TCP connection info:', error);
+            throw new AppLaunchError(
+              t('session.launcher.ProxyNotReady'),
+              'connecting',
+              error instanceof Error ? error : undefined,
+            );
+          }
+          if (!redirectURI) {
+            throw new AppLaunchError(
+              t('session.launcher.ProxyNotReady'),
+              'connecting',
+            );
+          }
+
+          let redirectURL: URL;
+          try {
+            redirectURL = new URL(redirectURI);
+          } catch (error) {
+            throw new AppLaunchError(
+              t('session.InvalidRedirectURL'),
+              'connecting',
+              error instanceof Error ? error : undefined,
+            );
+          }
+
+          // Check if directTCP is supported
+          directTCPSupported =
+            redirectURL.searchParams.get('directTCP') === 'true';
+          if (!directTCPSupported) {
+            throw new AppLaunchError(
+              t('session.launcher.ProxyDirectTCPNotSupported'),
+              'connecting',
+            );
+          }
+
+          // Extract gateway URI
+          const gatewayURI = redirectURL.searchParams.get('gateway');
+          if (!gatewayURI) {
+            throw new AppLaunchError(
+              t('session.launcher.ProxyNotReady'),
+              'connecting',
+            );
+          }
+
+          try {
+            // Parse gateway URL (format: tcp://host:port)
+            const gatewayURL = new URL(gatewayURI.replace('tcp', 'http'));
+            tcpHost = gatewayURL.hostname;
+            tcpPort = gatewayURL.port;
+          } catch (error) {
+            throw new AppLaunchError(
+              t('session.InvalidRedirectURL'),
+              'connecting',
+              error instanceof Error ? error : undefined,
+            );
           }
         } else {
           // Reused connection: Use appConnectUrl directly
@@ -478,8 +633,13 @@ export const useBackendAIAppLauncher = (
       }
     }
 
-    // Handle generic TCP apps (non-standard protocols)
-    if (response.url?.includes('protocol=tcp') && redirectUrl) {
+    // Handle generic TCP apps (non-standard protocols). TCP_APPS are already
+    // fully resolved above, so skip them here to avoid a redundant fetch.
+    if (
+      !TCP_APPS.includes(app) &&
+      response.url?.includes('protocol=tcp') &&
+      redirectUrl
+    ) {
       try {
         const redirectResponse = await fetch(redirectUrl);
         const redirectBody = await redirectResponse.json();
@@ -505,26 +665,42 @@ export const useBackendAIAppLauncher = (
         }
       } catch (error) {
         logger.error('Failed to parse generic TCP app URL:', error);
+        throw new AppLaunchError(
+          t('session.launcher.ProxyNotReady'),
+          'connecting',
+          error instanceof Error ? error : undefined,
+        );
+      }
+      // The TCP connection dialog is useless without a resolved gateway —
+      // fail the launch instead of showing `127.0.0.1:undefined`. (FR-3359)
+      if (!tcpHost || !tcpPort) {
+        throw new AppLaunchError(
+          t('session.launcher.ProxyNotReady'),
+          'connecting',
+        );
       }
     }
 
-    // Validate TCP connection info before returning
+    // Validate TCP connection info before returning. Reaching this point
+    // without a host/port means the connection dialog would render
+    // `127.0.0.1:undefined` — fail the launch visibly instead. (FR-3359)
     if (TCP_APPS.includes(app) && (!tcpHost || !tcpPort)) {
-      logger.warn(
-        `TCP connection info not available for ${app}. Using defaults.`,
-        {
-          tcpHost,
-          tcpPort,
-          directTCPSupported,
-          isElectron: globalThis.isElectron,
-          reused,
-        },
+      logger.error(`TCP connection info not available for ${app}.`, {
+        tcpHost,
+        tcpPort,
+        directTCPSupported,
+        isElectron: globalThis.isElectron,
+        reused,
+      });
+      throw new AppLaunchError(
+        t('session.launcher.ProxyNotReady'),
+        'connecting',
       );
     }
 
     onProgress?.({ percent: 100, stage: 'connected' });
 
-    return {
+    const result = {
       appConnectUrl,
       reused,
       redirectUrl,
@@ -532,6 +708,15 @@ export const useBackendAIAppLauncher = (
       tcpPort,
       directTCPSupported,
     };
+    logger.info('[_launchApp] resolved final workInfo:', {
+      appConnectUrl: appConnectUrl?.href,
+      reused,
+      redirectUrl,
+      tcpHost,
+      tcpPort,
+      directTCPSupported,
+    });
+    return result;
   };
 
   /**
@@ -592,7 +777,7 @@ export const useBackendAIAppLauncher = (
               const newSearchParams = new URLSearchParams(location.search);
               newSearchParams.set('sessionDetail', session?.row_id || '');
               webuiNavigate({
-                pathname: `/session`,
+                pathname: buildProjectPath('session'),
                 search: newSearchParams.toString(),
               });
             }}
@@ -624,7 +809,7 @@ export const useBackendAIAppLauncher = (
           rejected: (error: any) => {
             return {
               description: getErrorMessage(error),
-              extraDescription: error?.stack || JSON.stringify(error, null, 2),
+              extraDescription: buildAppLaunchFailureExtraDescription(error),
               duration: 0, // Persistent error notification
             };
           },
@@ -721,6 +906,26 @@ export const useBackendAIAppLauncher = (
 
     if (response.error_code) {
       throw response;
+    }
+
+    // The App Proxy Coordinator allocates a worker for the circuit at this
+    // `/v2/proxy/auth` (`proxy`) step (`add_circuit` → `pick_worker`). When no
+    // worker slot is free — e.g. the TCP worker's port pool is exhausted — it
+    // responds with HTTP 503 `WorkerNotAvailable` ("Worker not available.").
+    // `sendRequest` returns that as a `{ status, statusText, body }` object (it
+    // only throws on network errors), and the `error_code` check above only
+    // catches HTTP-200 logical errors, so without this guard the 503 falls
+    // through to the fallback request below and the launcher ends up rendering
+    // a bogus `127.0.0.1` connection dialog instead of the error. Surface the
+    // backend message instead. (FR-3027)
+    if (isSendRequestErrorResponse(response)) {
+      throw new AppLaunchError(
+        getAppProxyErrorMessage(
+          response,
+          'Failed to allocate an app proxy worker.',
+        ),
+        'connecting',
+      );
     }
 
     // Handle successful response with redirect_url
@@ -855,6 +1060,17 @@ export const useBackendAIAppLauncher = (
      */
     launchAppWithNotification,
     /**
+     * Lower-level launch API that returns the resolved work info via promise
+     * without going through the notification lifecycle. Use this where a
+     * progress toast would be redundant — e.g. the EduAppLauncher page, whose
+     * card UI already shows per-step progress, so driving a toast through the
+     * app-wide `NotificationHost` would only duplicate that display.
+     *
+     * Throws `AppLaunchError` for known failure stages (e.g. service port
+     * missing → stage `'configuring'`).
+     */
+    launchApp: _launchApp,
+    /**
      * Close wsproxy connection for a specific app.
      * Used when re-launching apps like tensorboard that need to be restarted with different args.
      */
@@ -862,15 +1078,62 @@ export const useBackendAIAppLauncher = (
   };
 };
 
+/**
+ * Detect a "session not found" response from the manager.
+ *
+ * The manager looks up sessions scoped by the *current* access key. The
+ * most common cause of a 404 from the `start-service` endpoint is an
+ * access-key mismatch — the session was created under a different keypair
+ * (e.g. the user switched access keys after creating it), so the lookup
+ * returns HTTP 404 even though the session still exists. The same 404
+ * also surfaces when the session was genuinely terminated between page
+ * render and the user's click; we cannot disambiguate the two cases from
+ * the response, so the user-facing copy covers both.
+ *
+ * Called exclusively from `_resolveV2ProxyUri`'s catch (the `startService`
+ * call site). The manager produces a `SessionNotFound` exception there with
+ * varying English titles (`"No such session."`, `"Session ... not found"`,
+ * etc.), so branching on title wording is fragile — it breaks on wording
+ * changes, locale-translated manager responses, and `_wrapWithPromise`
+ * reformatting (it concatenates `statusText` into `title`, which is empty
+ * on some manager versions).
+ *
+ * A bare `statusCode === 404` is not enough either: start-service also
+ * returns 404 for a missing *app* (`error_code: "backendai_read_not-found"`,
+ * e.g. the app name is not in the session's service_ports), which must NOT
+ * be presented as "session not accessible". Manager ≥24.09 sends a stable
+ * `error_code` ("{domain}_{operation}_{detail}"), so when one is present we
+ * exclude that one known app-not-found code; when absent (older managers)
+ * we keep the 404-only heuristic from FR-2586.
+ */
+export function isSessionNotFoundError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const e = err as { statusCode?: unknown; error_code?: unknown };
+  if (e.statusCode !== 404) return false;
+  if (typeof e.error_code === 'string') {
+    // `backendai_read_not-found` means the *app* is absent from service_ports,
+    // not the session. Deliberately a denylist rather than an allowlist on the
+    // `session_` domain: this backend contract cannot be verified from the
+    // frontend, so an unrecognized code must keep the FR-2586 behaviour instead
+    // of silently dropping the localized recovery guidance.
+    return e.error_code !== 'backendai_read_not-found';
+  }
+  return true;
+}
+
 // Custom error class for app launch errors
-class AppLaunchError extends Error {
+export class AppLaunchError extends Error {
   stage: 'detecting' | 'configuring' | 'requesting' | 'connecting';
-  originalError?: Error;
+  // The Backend.AI client rejects with a plain object, not an Error
+  // (see `_wrapWithPromise` in packages/backend.ai-client), so this must be
+  // `unknown` — typing it `Error` silently dropped the manager's payload
+  // (statusCode/error_code/traceback) at wrap time (FR-3478).
+  originalError?: unknown;
 
   constructor(
     message: string,
     stage: 'detecting' | 'configuring' | 'requesting' | 'connecting',
-    originalError?: Error,
+    originalError?: unknown,
   ) {
     super(message);
     this.name = 'AppLaunchError';
@@ -884,23 +1147,145 @@ class AppLaunchError extends Error {
 }
 
 /**
+ * Resolve the user-facing message for a start-service rejection.
+ *
+ * The client's `message` is a debug string ("server responded failure:
+ * 503 Service Unavailable - …") and its `msg` is always undefined —
+ * `_wrapWithPromise` copies it off the fetch `Response`, which never carries
+ * one. The clean manager text lives in `description` / `response.msg`, so
+ * slot it into the resolver's preferred field before delegating.
+ */
+export function resolveStartServiceErrorMessage(
+  err: unknown,
+  getErrorMessage: (error: unknown, defaultMessage?: string) => string,
+  fallback: string,
+): string {
+  if (err && typeof err === 'object' && !(err instanceof Error)) {
+    const e = err as {
+      msg?: unknown;
+      description?: unknown;
+      response?: { msg?: unknown; title?: unknown } | null;
+    };
+    const clean = [
+      e.msg,
+      e.description,
+      e.response?.msg,
+      e.response?.title,
+    ].find((v): v is string => typeof v === 'string' && v.length > 0);
+    if (clean) {
+      return getErrorMessage({ ...e, msg: clean }, fallback);
+    }
+  }
+  return getErrorMessage(err, fallback);
+}
+
+/**
+ * Diagnostic payload for the failure notification's copyable details.
+ * Prefers the original rejection (manager problem+json with
+ * statusCode/error_code/traceback) over the AppLaunchError wrapper stack.
+ * `requestParameters` is omitted: it echoes the raw start-service request
+ * body — login_session_token and possibly secret-bearing app envs/args.
+ */
+export function buildAppLaunchFailureExtraDescription(
+  error: unknown,
+): string | undefined {
+  const original =
+    error && typeof error === 'object' && 'originalError' in error
+      ? (error as { originalError?: unknown }).originalError
+      : undefined;
+  if (original instanceof Error) {
+    return original.stack;
+  }
+  if (original && typeof original === 'object') {
+    return JSON.stringify(_.omit(original, 'requestParameters'), null, 2);
+  }
+  if (original) {
+    return JSON.stringify(original, null, 2);
+  }
+  const e = error as { stack?: string } | null | undefined;
+  return e?.stack || JSON.stringify(error, null, 2);
+}
+
+/**
+ * Detect the error-object shape that {@link sendRequest} resolves to for non-OK
+ * HTTP responses (`{ status, statusText, body }`). It returns this object
+ * instead of throwing so retry logic can inspect the status code; call sites
+ * that are not retrying must check for it explicitly, otherwise an error
+ * response (which carries no success payload) flows downstream as a
+ * pseudo-success. (FR-3027)
+ */
+export function isSendRequestErrorResponse(
+  response: unknown,
+): response is { status: number; statusText?: string; body?: unknown } {
+  return (
+    typeof response === 'object' &&
+    response !== null &&
+    typeof (response as { status?: unknown }).status === 'number' &&
+    (response as { status: number }).status >= 400
+  );
+}
+
+/**
+ * Extract a human-readable message from a {@link sendRequest} error response.
+ *
+ * App Proxy errors are Backend.AI problem+json bodies
+ * (`{ type, title, error_code, msg? }`), e.g. HTTP 503 `WorkerNotAvailable`
+ * with `title: "Worker not available."`. Prefer `msg` / `title` / `message`
+ * from the parsed body, then fall back to `statusText`, then the default.
+ */
+export function getAppProxyErrorMessage(
+  response: { status: number; statusText?: string; body?: unknown },
+  fallback: string,
+): string {
+  const body = response.body;
+  if (body && typeof body === 'object') {
+    const { msg, title, message } = body as {
+      msg?: unknown;
+      title?: unknown;
+      message?: unknown;
+    };
+    const candidate = msg ?? title ?? message;
+    if (typeof candidate === 'string' && candidate.length > 0) {
+      return candidate;
+    }
+  }
+  if (typeof body === 'string' && body.length > 0) {
+    return body;
+  }
+  if (response.statusText && response.statusText.length > 0) {
+    return response.statusText;
+  }
+  return fallback;
+}
+
+// A stale or dead local wsproxy gateway (see `manager.js`'s `/add` route)
+// can hand back a port whose redirect target never responds — without a
+// timeout, `fetch()` hangs indefinitely and the launcher's progress UI is
+// stuck on "Adding kernel to socket queue..." forever. Bound every proxy
+// request so a dead target fails visibly instead.
+const PROXY_REQUEST_TIMEOUT_MS = 30000;
+
+/**
  * Send a request and return the response body.
  * For error status codes, returns an object with status information for retry logic.
  *
  * @param request - Request configuration object
  * @returns Parsed response body or error object with status
  */
-interface SendRequestConfig extends RequestInit {
+export interface SendRequestConfig extends RequestInit {
   uri: string;
   method?: string;
 }
-async function sendRequest(request: SendRequestConfig) {
+export async function sendRequest(request: SendRequestConfig) {
   try {
     if (request.method === 'GET') {
       request.body = undefined;
     }
 
-    const resp = await fetch(request.uri, request);
+    const resp = await fetch(request.uri, {
+      ...request,
+      signal: request.signal ?? AbortSignal.timeout(PROXY_REQUEST_TIMEOUT_MS),
+    });
     const contentType = resp.headers.get('Content-Type');
 
     let body;
@@ -928,6 +1313,11 @@ async function sendRequest(request: SendRequestConfig) {
 
     return body;
   } catch (e) {
+    if (e instanceof DOMException && e.name === 'TimeoutError') {
+      throw new Error(
+        `Request timed out after ${PROXY_REQUEST_TIMEOUT_MS}ms: ${request.uri}`,
+      );
+    }
     // Network errors or other exceptions
     throw new Error(
       `Request failed: ${e instanceof Error ? e.message : 'Unknown error'}`,

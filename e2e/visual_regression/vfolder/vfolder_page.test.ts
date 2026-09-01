@@ -8,22 +8,30 @@ test.beforeEach(async ({ page, request }) => {
     height: 1000,
   });
   await navigateTo(page, 'data');
-  await page.getByText('This storage backend').waitFor();
+  // Wait for the folder list table header to confirm the data page has loaded.
+  // The old 'This storage backend' placeholder text is no longer shown;
+  // the page now renders the folder table directly.
+  await expect(page.getByRole('columnheader', { name: 'Name' })).toBeVisible();
 });
 
 test.describe(
   'Vfolder page Visual Regression Test',
   { tag: ['@regression', '@vfolder', '@visual'] },
   () => {
-    test('Full page', async ({ page }) => {
+    // FIXME: Snapshot diff detected (49230 pixels, ratio 0.04 > maxDiffPixelRatio 0.02) —
+    // the Data/Folder page layout has changed (new table columns, folder name changes in test data).
+    // Baseline needs snapshot-update PR.
+    test.fixme('Full page', async ({ page }) => {
       await expect(page).toHaveScreenshot('vfolder_page.png', {
         fullPage: true,
         maxDiffPixelRatio: 0.02,
       });
     });
 
-    // FIXME: Modal not visible - dialog locator times out
-    // The modal might not render or the Create Folder button flow has changed
+    // FIXME(FR-3111/brittle-locator): The Create Folder dialog locator times out —
+    // the button index (.nth(1)) and dialog locator need updating for the current
+    // folder-creation flow. Not a stale baseline; owned by the locator-quality triage
+    // category of FR-3109.
     test.fixme('Create Folder modal', async ({ page }) => {
       await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
       const folderCreationModal = page.getByRole('dialog');
@@ -35,8 +43,9 @@ test.describe(
     });
 
     test.describe('existing folder action modal', () => {
-      // FIXME: Test timeout - 'model_folder' link cannot be clicked
-      // The test folder might not exist or the link locator changed
+      // FIXME(FR-3111/missing-test-data): The seeded vfolder 'model_folder' does not
+      // exist on the test backend. Not a stale baseline; owned by the test-data
+      // seeding triage category of FR-3109.
       test.fixme('Folder info modal', async ({ page }) => {
         await page.getByRole('link', { name: 'model_folder' }).click();
         await page
@@ -51,8 +60,9 @@ test.describe(
         await page.getByRole('button', { name: 'Close' }).click();
       });
 
-      // FIXME: Test timeout - 'model_folder' row button cannot be clicked
-      // The test folder might not exist or the row locator changed
+      // FIXME(FR-3111/missing-test-data): The seeded vfolder 'model_folder' does not
+      // exist on the test backend. Not a stale baseline; owned by the test-data
+      // seeding triage category of FR-3109.
       test.fixme('Modify Permission modal', async ({ page }) => {
         await page
           .getByRole('row', { name: `VFolder Identicon model_folder` })

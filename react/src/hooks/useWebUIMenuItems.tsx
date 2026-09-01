@@ -3,46 +3,50 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
+import { theme } from '../theme-shim';
 import { useCurrentUserRole } from './backendai';
+import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
+import { useEffectiveAdminRole } from './useCurrentUserProjectRoles';
 import { useCustomThemeConfig } from './useCustomThemeConfig';
+import {
+  getRouteScopeAndKey,
+  useActiveProjectName,
+  useCurrentMenuKey,
+} from './useRouteScope';
 import {
   PluginPage,
   useWebUIPluginLoadedValue,
   useWebUIPluginValue,
 } from './useWebUIPluginState';
 import {
-  PlayCircleOutlined,
-  DashboardOutlined,
-  MessageOutlined,
-  CloudUploadOutlined,
-  HddOutlined,
-  BarChartOutlined,
-  UserOutlined,
-  FileDoneOutlined,
-  SolutionOutlined,
-  ControlOutlined,
-  ToolOutlined,
-  InfoCircleOutlined,
-  ApiOutlined,
-  TeamOutlined,
-  SafetyCertificateOutlined,
-} from '@ant-design/icons';
-import { useSessionStorageState } from 'ahooks';
-import { theme, Typography } from 'antd';
-import { GetProp } from 'antd/lib';
-import { MenuItemType } from 'antd/lib/menu/interface';
-import {
+  BAIBadgeCount,
   BAIEndpointsIcon,
-  BAIFlex,
   BAIModelStoreIcon,
   BAIMyEnvironmentsIcon,
   BAIPipelinesIcon,
   BAISessionsIcon,
   filterOutEmpty,
+  useSessionStorageState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
+  CirclePlay,
+  Gauge,
+  MessageSquare,
+  CloudUpload,
+  HardDrive,
+  ChartColumn,
+  User,
+  FileCheck,
+  FileUser,
+  SlidersHorizontal,
+  Wrench,
+  Info,
+  Plug,
+  Users,
+  BadgeCheck,
   Activity,
   BotMessageSquare,
   ClipboardClock,
@@ -51,11 +55,8 @@ import {
   ExternalLinkIcon,
   Palette,
 } from 'lucide-react';
-import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import WebUILink from 'src/components/WebUILink';
-import { ROUTER_STATIC_PATHS, ROUTER_DYNAMIC_PATTERNS } from 'src/routes';
 
 export type MenuGroupName =
   | 'none'
@@ -67,10 +68,7 @@ export type MenuGroupName =
   | 'mlops';
 
 export type AdminMenuGroupName =
-  | 'none'
-  | 'superadmin-operations'
-  | 'superadmin-infrastructure'
-  | 'superadmin-system';
+  'none' | 'admin-operations' | 'admin-infrastructure' | 'admin-system';
 
 /**
  * Single source of truth for all valid menu keys.
@@ -83,7 +81,7 @@ export const VALID_MENU_KEYS = [
   'summary', // alias to dashboard for backward compatibility
   'session',
   'job', // alias to session for backward compatibility
-  'serving',
+  'deployments',
   'model-store',
   'ai-agent',
   'chat',
@@ -99,9 +97,13 @@ export const VALID_MENU_KEYS = [
   'scheduler',
   'resource-policy',
   'reservoir',
-  'admin-serving',
+  'admin-deployments',
   'admin-dashboard',
   'admin-data',
+  'project-admin-users',
+  'project-data',
+  'project-admin-deployments',
+  'project-admin-session',
   'agent',
   'project',
   'settings',
@@ -123,9 +125,14 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'scheduler',
   'resource-policy',
   'reservoir',
-  'admin-serving',
+  'admin-deployments',
+  'admin-serving', // legacy redirect path; treat as admin so goBackPath is not polluted
   'admin-dashboard',
   'admin-data',
+  'project-admin-users',
+  'project-data',
+  'project-admin-deployments',
+  'project-admin-session',
   'agent',
   'project',
   'settings',
@@ -136,46 +143,103 @@ const ALL_ADMIN_PAGE_KEYS: ReadonlySet<string> = new Set([
   'information',
 ]);
 
-// Page keys that additionally require superadmin role
-const SUPERADMIN_ONLY_PAGE_KEYS: ReadonlySet<string> = new Set([
-  'admin-serving',
-  'admin-dashboard',
-  'admin-data',
-  'agent',
-  'project',
-  'settings',
-  'maintenance',
-  'diagnostics',
-  'branding',
-  'rbac',
-  'information',
-]);
+// Admin-category page keys reachable by a project admin (3-tier admin gating).
+// Project admins see Sessions, Deployments, Data (vfolders) and Members within
+// the admin category. Other admin pages remain visible only to domain admins or
+// superadmins. Kept as a plain array so it can be exported and reused (e.g. for
+// per-page route gating in follow-up PRs).
+const PROJECT_ADMIN_PAGE_KEYS = [
+  // 'admin-session',
+  // 'admin-deployments',
+  // 'admin-data',
+  'project-admin-users',
+  'project-data',
+  'project-admin-deployments',
+  'project-admin-session',
+] as const;
 
-// Convert menu key to URL path
-// Most keys map directly to /${key}, with exceptions for backward compatibility
-export const getPathFromMenuKey = (key: MenuKeys): string => {
+export const PROJECT_ADMIN_PAGE_KEY_SET: ReadonlySet<string> = new Set(
+  PROJECT_ADMIN_PAGE_KEYS,
+);
+
+// Legacy flat path for a menu key (the pre-scope-aware URL, e.g. `/session`,
+// `/project-data`, `/admin-session`). These flat paths are still mounted as
+// backward-compat redirect shims (`legacyRedirects.tsx`), so emitting one is a
+// safe fallback: the shim resolves it to the canonical scope-aware URL at
+// runtime. Used when a project-scoped menu key has no resolvable project name
+// (avoids producing an invalid `/project//<feature>` path).
+const getLegacyFlatPath = (key: MenuKeys): string => {
   // 'job' is an alias for '/session' (backward compatibility)
   if (key === 'job') return '/session';
   if (key === 'summary') return '/dashboard';
   return `/${key}`;
 };
 
-type MenuItem = {
-  label: ReactNode;
-  icon: React.ReactNode;
-  group?: string;
-  key: string;
+// Convert a menu key to its scope-aware URL path.
+//
+// Delegates to `buildPath` via `MENU_KEY_TO_SCOPE_FEATURE` so a menu key like
+// `session` (project scope) becomes `/project/<projectName>/session`,
+// `project-data` (project-admin scope) becomes
+// `/project/<projectName>/admin/data`, and `admin-session` (global admin)
+// becomes `/admin/session`.
+//
+// `projectName` is required for project / projectAdmin scopes. When it is
+// missing (e.g. the rare "no current project" edge case), we fall back to the
+// legacy flat path which the redirect shims resolve, rather than building a
+// broken `/project//...` URL. Admin-scope keys never need a project name.
+export const getPathFromMenuKey = (
+  key: MenuKeys,
+  projectName?: string | null,
+): string => {
+  const scopeFeature = MENU_KEY_TO_SCOPE_FEATURE[key];
+  if (!scopeFeature) {
+    // Unknown key (e.g. a plugin url passed through): preserve legacy behavior.
+    return getLegacyFlatPath(key);
+  }
+  const { scope, featureKey } = scopeFeature;
+  if (scope !== 'admin' && !projectName) {
+    return getLegacyFlatPath(key);
+  }
+  return buildPath(scope, featureKey, projectName);
 };
 
-interface WebUIGeneralMenuItemType extends MenuItemType {
-  group: MenuGroupName;
+/**
+ * to-astryx ticket 24 — the menu model is now UI-library-neutral.
+ *
+ * It used to extend antd's `MenuItemType` and carry a `label` that was
+ * already a rendered `<WebUILink>` element. Astryx `SideNavItem` takes a
+ * **required `label: string`** plus `href` + `as` (the three universal
+ * contracts, §1), so the link is built by the renderer (`BAIMenu`) from
+ * `labelText` + `to` instead of being baked into the data.
+ */
+export interface WebUIMenuItemBase {
   key: MenuKeys;
+  /** Accessible/visible label — a plain string, never JSX (P2). */
   labelText: string;
+  icon: React.ReactNode;
+  /** Router destination; absent for action-only entries (e.g. FastTrack). */
+  to?: string;
+  disabled?: boolean;
+  onClick?: () => void;
 }
 
-interface WebUIAdminMenuItemType extends MenuItemType {
+type MenuItem = WebUIMenuItemBase & { group?: string };
+
+export interface WebUIGeneralMenuItemType extends WebUIMenuItemBase {
+  group: MenuGroupName;
+}
+
+export interface WebUIAdminMenuItemType extends WebUIMenuItemBase {
   group: AdminMenuGroupName;
-  key: MenuKeys;
+}
+
+/** A titled group of menu items (antd's `{type:'group'}` shape, de-antd'd). */
+export interface WebUIMenuGroupType<T> {
+  type: 'group';
+  name: string;
+  /** Plain string — `SideNavSection.title` is a required string. */
+  labelText: string;
+  children: Array<T>;
 }
 
 export interface UseWebUIMenuItemsProps {
@@ -185,12 +249,28 @@ export interface UseWebUIMenuItemsProps {
 export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   'use memo';
 
-  const { hideGroupName = false } = props || {};
+  // `hideGroupName` is now consumed by the RENDERER (`BAIMenu` passes it
+  // to `SideNavSection.isHeaderHidden`); the grouped data always carries
+  // its title string. Kept on the props type for call-site compatibility.
+  void props?.hideGroupName;
   const plugins = useWebUIPluginValue();
   const isPluginLoaded = useWebUIPluginLoadedValue();
   const currentUserRole = useCurrentUserRole();
+  const effectiveAdminRole = useEffectiveAdminRole();
 
-  const location = useLocation();
+  // Scope-aware current menu key (legacy hyphenated key, e.g. 'admin-session',
+  // 'project-data', 'session'). Derived from the matched route `handle.menuKey`
+  // (with a pathname-parse fallback) so it stays correct under the new
+  // `/project/:name/<feature>` and `/admin/<feature>` URL shapes, where
+  // `location.pathname.split('/')[1]` would return the scope prefix
+  // ('project'/'admin') instead of the feature key.
+  const currentMenuKeyFromRoute = useCurrentMenuKey();
+  const routerLocation = useLocation();
+  // Active project NAME (URL `:projectName` if present, else current project
+  // atom). Used to build scope-aware menu `to` paths via `getPathFromMenuKey` /
+  // `buildPath` so every menu link points at `/project/<name>/<feature>` (or
+  // `/admin/<feature>` for admin keys, where the name is ignored).
+  const activeProjectName = useActiveProjectName();
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const isHideAgents = baiClient?._config?.hideAgents ?? true;
@@ -207,15 +287,34 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     defaultValue: false,
   });
 
-  // Helper to create menu item with labelText reused in label
+  const diagnosticsBadgeSeverity = useDiagnosticsBadgeSeverity();
+
+  // Helper to create a menu item. The `to` path is derived from the menu `key`
+  // via `getPathFromMenuKey` (scope-aware: `/project/<name>/<feature>` for
+  // general keys), so call sites no longer hardcode the URL — a single source
+  // of truth that stays correct under the scope-prefixed routing scheme.
   const createMenuItem = (
-    to: GetProp<typeof WebUILink, 'to'>,
     labelText: string,
     icon: React.ReactNode,
     key: MenuKeys,
     group: MenuGroupName,
   ): WebUIGeneralMenuItemType => ({
-    label: <WebUILink to={to}>{labelText}</WebUILink>,
+    to: getPathFromMenuKey(key, activeProjectName),
+    icon,
+    key,
+    group,
+    labelText,
+  });
+
+  // Admin menu item builder — same scope-aware `to` derivation, with the admin
+  // menu's info-color icons and admin group typing.
+  const createAdminMenuItem = (
+    labelText: string,
+    icon: React.ReactNode,
+    key: MenuKeys,
+    group: AdminMenuGroupName,
+  ): WebUIAdminMenuItemType => ({
+    to: getPathFromMenuKey(key, activeProjectName),
     icon,
     key,
     group,
@@ -224,35 +323,30 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
     createMenuItem(
-      '/start',
       t('webui.menu.Start'),
-      <PlayCircleOutlined style={{ color: token.colorPrimary }} />,
+      <CirclePlay style={{ color: token.colorPrimary }} size="1em" />,
       'start',
       'none',
     ),
     createMenuItem(
-      '/dashboard',
       t('webui.menu.Dashboard'),
-      <DashboardOutlined style={{ color: token.colorPrimary }} />,
+      <Gauge style={{ color: token.colorPrimary }} size="1em" />,
       'dashboard',
       'none',
     ),
     createMenuItem(
-      '/session',
       t('webui.menu.Sessions'),
       <BAISessionsIcon style={{ color: token.colorPrimary }} />,
       'session',
       'workload',
     ),
     createMenuItem(
-      '/serving',
-      t('webui.menu.Serving'),
+      t('webui.menu.Deployments'),
       <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
-      'serving',
+      'deployments',
       'service',
     ),
     createMenuItem(
-      '/model-store',
       t('data.ModelStore'),
       <BAIModelStoreIcon style={{ color: token.colorPrimary }} />,
       'model-store',
@@ -260,28 +354,24 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     ),
     experimentalAIAgents &&
       createMenuItem(
-        '/ai-agent',
         t('webui.menu.AIAgents'),
         <BotMessageSquare style={{ color: token.colorPrimary }} />,
         'ai-agent',
         'playground',
       ),
     createMenuItem(
-      '/chat',
       t('webui.menu.Chat'),
-      <MessageOutlined style={{ color: token.colorPrimary }} />,
+      <MessageSquare style={{ color: token.colorPrimary }} size="1em" />,
       'chat',
       'playground',
     ),
     createMenuItem(
-      '/data',
       t('webui.menu.Data'),
-      <CloudUploadOutlined style={{ color: token.colorPrimary }} />,
+      <CloudUpload style={{ color: token.colorPrimary }} size="1em" />,
       'data',
       'storage',
     ),
     createMenuItem(
-      '/my-environment',
       t('webui.menu.MyEnvironments'),
       <BAIMyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
       'my-environment',
@@ -289,21 +379,18 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     ),
     !isHideAgents &&
       createMenuItem(
-        '/agent-summary',
         t('webui.menu.AgentSummary'),
-        <HddOutlined style={{ color: token.colorPrimary }} />,
+        <HardDrive style={{ color: token.colorPrimary }} size="1em" />,
         'agent-summary',
         'metrics',
       ),
     createMenuItem(
-      '/statistics',
       t('webui.menu.Statistics'),
-      <BarChartOutlined style={{ color: token.colorPrimary }} />,
+      <ChartColumn style={{ color: token.colorPrimary }} size="1em" />,
       'statistics',
       'metrics',
     ),
     !!fasttrackEndpoint && {
-      label: t('webui.menu.FastTrack'),
       icon: <BAIPipelinesIcon style={{ color: token.colorPrimary }} />,
       key: 'pipeline' as MenuKeys,
       onClick: () => {
@@ -316,132 +403,183 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
 
   const isSuperAdmin = currentUserRole === 'superadmin';
 
-  const adminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
+  // PILOT-DECISION: antd `Badge dot offset color` — a DOT OVERLAY on a child
+  // — is MAPPING §3.8's explicit NONE ("no count overlay, no Badge.Ribbon;
+  // self-build, build once"). The gap component built for exactly that in
+  // ticket 08 is `BAIBadgeCount`, used here in its `dot` form. The
+  // arbitrary `color={token.colorError|colorWarning}` becomes the component's
+  // closed `variant` enum.
+  const diagnosticsIcon = diagnosticsBadgeSeverity ? (
+    <BAIBadgeCount
+      hasDot
+      offset={[-2, 2]}
+      variant={diagnosticsBadgeSeverity === 'critical' ? 'error' : 'warning'}
+      title={t('webui.menu.Diagnostics')}
+    >
+      <Activity style={{ color: token.colorInfo }} />
+    </BAIBadgeCount>
+  ) : (
+    <Activity style={{ color: token.colorInfo }} />
+  );
+
+  const fullAdminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
     // --- Operations group ---
-    {
-      label: <WebUILink to="/credential">{t('webui.menu.Users')}</WebUILink>,
-      icon: <UserOutlined style={{ color: token.colorInfo }} />,
-      key: 'credential' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
-    },
-    isSuperAdmin && {
-      label: <WebUILink to="/project">{t('webui.menu.Projects')}</WebUILink>,
-      icon: <TeamOutlined style={{ color: token.colorInfo }} />,
-      key: 'project' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
-    },
-    isSuperAdmin && {
-      label: <WebUILink to="/admin-data">{t('webui.menu.Data')}</WebUILink>,
-      icon: <CloudUploadOutlined style={{ color: token.colorInfo }} />,
-      key: 'admin-data' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
-    },
-    {
-      label: (
-        <WebUILink to="/admin-session">{t('webui.menu.Sessions')}</WebUILink>
+    createAdminMenuItem(
+      t('webui.menu.Users'),
+      <User style={{ color: token.colorInfo }} size="1em" />,
+      'credential',
+      'admin-operations',
+    ),
+    createAdminMenuItem(
+      t('webui.menu.ProjectMembers'),
+      <Users style={{ color: token.colorInfo }} size="1em" />,
+      'project-admin-users',
+      'admin-operations',
+    ),
+    createAdminMenuItem(
+      t('webui.menu.Data'),
+      <CloudUpload style={{ color: token.colorInfo }} size="1em" />,
+      'project-data',
+      'admin-operations',
+    ),
+    createAdminMenuItem(
+      t('webui.menu.ProjectSessions'),
+      <BAISessionsIcon style={{ color: token.colorInfo }} />,
+      'project-admin-session',
+      'admin-operations',
+    ),
+    createAdminMenuItem(
+      t('webui.menu.ProjectDeployments'),
+      <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
+      'project-admin-deployments',
+      'admin-operations',
+    ),
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.Projects'),
+        <Users style={{ color: token.colorInfo }} size="1em" />,
+        'project',
+        'admin-operations',
       ),
-      icon: <BAISessionsIcon style={{ color: token.colorInfo }} />,
-      key: 'admin-session' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
-    },
-    isSuperAdmin && {
-      label: (
-        <WebUILink to="/admin-serving">{t('webui.menu.Serving')}</WebUILink>
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.Data'),
+        <CloudUpload style={{ color: token.colorInfo }} size="1em" />,
+        'admin-data',
+        'admin-operations',
       ),
-      icon: <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
-      key: 'admin-serving' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
-    },
-    {
-      label: (
-        <WebUILink to="/environment">{t('webui.menu.Environments')}</WebUILink>
+    createAdminMenuItem(
+      t('webui.menu.Sessions'),
+      <BAISessionsIcon style={{ color: token.colorInfo }} />,
+      'admin-session',
+      'admin-operations',
+    ),
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.Deployments'),
+        <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
+        'admin-deployments',
+        'admin-operations',
       ),
-      icon: <FileDoneOutlined style={{ color: token.colorInfo }} />,
-      key: 'environment' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
-    },
+    createAdminMenuItem(
+      t('webui.menu.Environments'),
+      <FileCheck style={{ color: token.colorInfo }} size="1em" />,
+      'environment',
+      'admin-operations',
+    ),
     baiClient?.supports('reservoir') &&
-      baiClient?._config.enableReservoir && {
-        label: (
-          <WebUILink to="/reservoir">{t('webui.menu.Reservoir')}</WebUILink>
-        ),
-        icon: <PackagePlus style={{ color: token.colorInfo }} />,
-        key: 'reservoir' as MenuKeys,
-        group: 'superadmin-operations' as AdminMenuGroupName,
-      },
-    baiClient?.supports('fair-share-scheduling') && {
-      label: <WebUILink to="/scheduler">{t('webui.menu.Scheduler')}</WebUILink>,
-      icon: <ClipboardClock style={{ color: token.colorInfo }} />,
-      key: 'scheduler' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
-    },
-    {
-      label: (
-        <WebUILink to="/resource-policy">
-          {t('webui.menu.ResourcePolicies')}
-        </WebUILink>
+      baiClient?._config.enableReservoir &&
+      createAdminMenuItem(
+        t('webui.menu.Reservoir'),
+        <PackagePlus style={{ color: token.colorInfo }} />,
+        'reservoir',
+        'admin-operations',
       ),
-      icon: <SolutionOutlined style={{ color: token.colorInfo }} />,
-      key: 'resource-policy' as MenuKeys,
-      group: 'superadmin-operations' as AdminMenuGroupName,
-    },
+    baiClient?.supports('fair-share-scheduling') &&
+      createAdminMenuItem(
+        t('webui.menu.Scheduler'),
+        <ClipboardClock style={{ color: token.colorInfo }} />,
+        'scheduler',
+        'admin-operations',
+      ),
+    createAdminMenuItem(
+      t('webui.menu.ResourcePolicies'),
+      <FileUser style={{ color: token.colorInfo }} size="1em" />,
+      'resource-policy',
+      'admin-operations',
+    ),
     // --- Infrastructure group (superadmin only) ---
-    isSuperAdmin && {
-      label: <WebUILink to="/agent">{t('webui.menu.Resources')}</WebUILink>,
-      icon: <HddOutlined style={{ color: token.colorInfo }} />,
-      key: 'agent' as MenuKeys,
-      group: 'superadmin-infrastructure' as AdminMenuGroupName,
-    },
-    isSuperAdmin && {
-      label: (
-        <WebUILink to="/settings">{t('webui.menu.Configurations')}</WebUILink>
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.Resources'),
+        <HardDrive style={{ color: token.colorInfo }} size="1em" />,
+        'agent',
+        'admin-infrastructure',
       ),
-      icon: <ControlOutlined style={{ color: token.colorInfo }} />,
-      key: 'settings' as MenuKeys,
-      group: 'superadmin-infrastructure' as AdminMenuGroupName,
-    },
-    isSuperAdmin && {
-      label: (
-        <WebUILink to="/maintenance">{t('webui.menu.Maintenance')}</WebUILink>
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.Configurations'),
+        <SlidersHorizontal style={{ color: token.colorInfo }} size="1em" />,
+        'settings',
+        'admin-infrastructure',
       ),
-      icon: <ToolOutlined style={{ color: token.colorInfo }} />,
-      key: 'maintenance' as MenuKeys,
-      group: 'superadmin-infrastructure' as AdminMenuGroupName,
-    },
-    isSuperAdmin && {
-      label: (
-        <WebUILink to="/diagnostics">{t('webui.menu.Diagnostics')}</WebUILink>
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.Maintenance'),
+        <Wrench style={{ color: token.colorInfo }} size="1em" />,
+        'maintenance',
+        'admin-infrastructure',
       ),
-      icon: <Activity style={{ color: token.colorInfo }} />,
-      key: 'diagnostics' as MenuKeys,
-      group: 'superadmin-infrastructure' as AdminMenuGroupName,
-    },
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.Diagnostics'),
+        diagnosticsIcon,
+        'diagnostics',
+        'admin-infrastructure',
+      ),
     // --- System group (superadmin only) ---
     isSuperAdmin &&
-      baiClient?.supports('rbac') && {
-        label: (
-          <WebUILink to="/rbac">{t('webui.menu.RBACManagement')}</WebUILink>
-        ),
-        icon: <SafetyCertificateOutlined style={{ color: token.colorInfo }} />,
-        key: 'rbac' as MenuKeys,
-        group: 'superadmin-system' as AdminMenuGroupName,
-      },
-    isSuperAdmin &&
-      !isThemePreviewMode && {
-        label: <WebUILink to="/branding">{t('webui.menu.Branding')}</WebUILink>,
-        icon: <Palette style={{ color: token.colorInfo }} />,
-        key: 'branding' as MenuKeys,
-        group: 'superadmin-system' as AdminMenuGroupName,
-      },
-    isSuperAdmin && {
-      label: (
-        <WebUILink to="/information">{t('webui.menu.Information')}</WebUILink>
+      baiClient?.supports('rbac') &&
+      createAdminMenuItem(
+        t('webui.menu.RBACManagement'),
+        <BadgeCheck style={{ color: token.colorInfo }} size="1em" />,
+        'rbac',
+        'admin-system',
       ),
-      icon: <InfoCircleOutlined style={{ color: token.colorInfo }} />,
-      key: 'information' as MenuKeys,
-      group: 'superadmin-system' as AdminMenuGroupName,
-    },
+    isSuperAdmin &&
+      !isThemePreviewMode &&
+      createAdminMenuItem(
+        t('webui.menu.Branding'),
+        <Palette style={{ color: token.colorInfo }} />,
+        'branding',
+        'admin-system',
+      ),
+    isSuperAdmin &&
+      createAdminMenuItem(
+        t('webui.menu.Information'),
+        <Info style={{ color: token.colorInfo }} size="1em" />,
+        'information',
+        'admin-system',
+      ),
   ]);
+
+  // 3-tier admin gating:
+  // - 'none': no admin items
+  // - 'currentProjectAdmin': only PROJECT_ADMIN_PAGE_KEYS
+  // - 'domainAdmin' / 'superadmin': full admin menu MINUS project-admin-only
+  //   pages. Higher-tier admins have broader equivalents (e.g. `credential`
+  //   covers users across the domain/system), so per-project admin pages would
+  //   be redundant and confusing to show.
+  const adminMenu: Array<WebUIAdminMenuItemType> =
+    effectiveAdminRole === 'none'
+      ? []
+      : effectiveAdminRole === 'currentProjectAdmin'
+        ? fullAdminMenu.filter((item) =>
+            PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
+          )
+        : fullAdminMenu.filter(
+            (item) => !PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string),
+          );
 
   const pluginMap: Record<string, MenuItem[]> = {
     'menuitem-user': generalMenu as unknown as MenuItem[],
@@ -472,9 +610,10 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
         // if menuitem is empty, skip adding menu item
         if (page && page.menuitem) {
           const menuItem: MenuItem = {
-            label: <WebUILink to={`/${page?.url}`}>{page?.menuitem}</WebUILink>,
-            icon: pluginIconMap[page.icon || ''] || <ApiOutlined />,
-            key: page?.url,
+            labelText: page?.menuitem,
+            to: `/${page?.url}`,
+            icon: pluginIconMap[page.icon || ''] || <Plug size="1em" />,
+            key: page?.url as MenuKeys,
             group: page.group || 'none',
           };
           menu?.push(menuItem);
@@ -513,38 +652,31 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     [key in AdminMenuGroupName]: string;
   } = {
     none: '',
-    'superadmin-operations': t('webui.menu.groupName.superadmin.Operations'),
-    'superadmin-infrastructure': t(
-      'webui.menu.groupName.superadmin.Infrastructure',
-    ),
-    'superadmin-system': t('webui.menu.groupName.superadmin.System'),
+    'admin-operations': t('webui.menu.groupName.superadmin.Operations'),
+    'admin-infrastructure': t('webui.menu.groupName.superadmin.Infrastructure'),
+    'admin-system': t('webui.menu.groupName.superadmin.System'),
   };
-  const groupedGeneralMenu = _.chain(generalMenu)
-    .groupBy('group')
-    .map((items, group) => {
+  const groupedGeneralMenu = _.map(
+    _.groupBy(generalMenu, 'group'),
+    (items, group) => {
       if (group === 'none') {
         return items;
       }
+      // The group header used to be a JSX node (a bordered flex with a
+      // secondary `Typography.Text`). `SideNavSection.title` is a required
+      // string and the section renders its own header, so the group carries
+      // only the STRING; `hideGroupName` (collapsed sider) is passed to
+      // `SideNavSection.isHeaderHidden` by the renderer instead of blanking
+      // the label here. The 1px bottom rule has no destination.
       return {
-        type: 'group',
+        type: 'group' as const,
         name: group,
-        label: (
-          <BAIFlex
-            style={{
-              borderBottom: `1px solid ${token.colorBorder}`,
-            }}
-          >
-            {!hideGroupName && (
-              <Typography.Text type="secondary" ellipsis>
-                {aliasGroupNameMap[group as MenuGroupName] ?? group}
-              </Typography.Text>
-            )}
-          </BAIFlex>
-        ),
+        labelText: aliasGroupNameMap[group as MenuGroupName] ?? group,
         children: items,
       };
-    })
-    .flatten()
+    },
+  )
+    .flat()
     .sort((a, b) => {
       const groupOrder: Array<MenuGroupName | undefined> = [
         undefined,
@@ -566,41 +698,28 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       };
 
       return getWeight(a) - getWeight(b);
-    })
-    .value();
+    });
 
   const buildGroupedMenu = <T extends AdminMenuGroupName>(
-    menu: Array<{ group?: T; key?: MenuKeys; [key: string]: any }>,
+    menu: Array<WebUIMenuItemBase & { group?: T }>,
     groupNameMap: Record<T, string>,
     groupOrder: Array<T | undefined>,
-  ) => {
-    return _.chain(menu)
-      .groupBy('group')
-      .map((items, group) => {
-        if (group === 'none' || !group) {
-          return items;
-        }
-        return {
-          type: 'group',
-          name: group,
-          label: (
-            <BAIFlex
-              style={{
-                borderBottom: `1px solid ${token.colorBorder}`,
-              }}
-            >
-              {!hideGroupName && (
-                <Typography.Text type="secondary" ellipsis>
-                  {groupNameMap[group as T] ?? group}
-                </Typography.Text>
-              )}
-            </BAIFlex>
-          ),
-          children: items,
-        };
-      })
-      .flatten()
-      .value()
+  ): Array<
+    | (WebUIMenuItemBase & { group?: T })
+    | WebUIMenuGroupType<WebUIMenuItemBase & { group?: T }>
+  > => {
+    return _.map(_.groupBy(menu, 'group'), (items, group) => {
+      if (group === 'none' || !group) {
+        return items;
+      }
+      return {
+        type: 'group' as const,
+        name: group,
+        labelText: groupNameMap[group as T] ?? group,
+        children: items,
+      };
+    })
+      .flat()
       .filter((item: any) => {
         // Filter out empty groups (e.g. when all children removed by blockList)
         if (item?.type === 'group' && 'children' in item) {
@@ -621,9 +740,9 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const adminGroupOrder: Array<AdminMenuGroupName | undefined> = [
     undefined,
     'none',
-    'superadmin-operations',
-    'superadmin-infrastructure',
-    'superadmin-system',
+    'admin-operations',
+    'admin-infrastructure',
+    'admin-system',
   ];
 
   const groupedAdminMenu = buildGroupedMenu(
@@ -632,7 +751,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     adminGroupOrder,
   );
 
-  // Get the first available admin menu item (after blocklist filtering)
+  // First admin menu item reachable by the current user, after role filtering
+  // (`adminMenu` is already narrowed by `effectiveAdminRole`) and blocklist /
+  // inactive-list filtering. Treat this as the single source of truth for
+  // "does the current user have any admin category page to enter?" — callers
+  // should NOT combine this with a separate role check; a `null` value already
+  // means the admin category is unreachable for this user.
   const firstAvailableAdminMenuItem = (() => {
     for (const item of groupedAdminMenu) {
       // Non-group item (direct menu item)
@@ -658,13 +782,46 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     return null;
   })();
 
-  const isSelectedAdminCategoryMenu =
-    _.some(adminMenu, (item) => {
-      if (item && 'key' in item) {
-        return item.key === location.pathname.split('/')[1];
-      }
-      return false;
-    }) || 'storage-settings' === location.pathname.split('/')[1];
+  // First project-admin page in sider order that survives blocklist /
+  // inactive-list filtering. Computed from the un-role-filtered fullAdminMenu
+  // (super/domain admins' `adminMenu` excludes project-admin items, but they
+  // can access all of them) — the redirect target for `/project/:name/admin`.
+  // `undefined` when the config hides every project-admin page.
+  const firstAvailableProjectAdminMenuKey = _.find(
+    fullAdminMenu,
+    (item) =>
+      PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string) &&
+      !_.includes(blockList, item.key) &&
+      !_.includes(inactiveList, item.key),
+  )?.key;
+
+  const isSelectedAdminCategoryMenu = _.some(adminMenu, (item) => {
+    if (item && 'key' in item) {
+      return item.key === currentMenuKeyFromRoute;
+    }
+    return false;
+  });
+
+  // Role-independent variant: true when the current path is *any* admin
+  // category page, regardless of whether the current user's effective role
+  // can reach it. Callers that track "last visited general (non-admin) page"
+  // must use this flag rather than `isSelectedAdminCategoryMenu`, which is
+  // role-filtered and would otherwise classify an admin page as "general"
+  // when the user's role excludes it from the admin menu (e.g. superadmin on
+  // `/project-admin-users`, or a user switched into a project where they
+  // lack admin rights).
+  const currentPageMenuKey = currentMenuKeyFromRoute ?? '';
+  // Also treat any admin-scoped URL as admin category, keyed on the URL scope
+  // itself. The menu-key sets alone miss the bare scope roots (`/admin`,
+  // `/project/:name/admin`): their feature key is empty during the index
+  // redirect, which used to classify them as "general" and pollute the
+  // sider's `goBackPath` with `/admin` — making "go back" a no-op loop
+  // (FR-3388, deep-link-then-login repro).
+  const currentUrlScope = getRouteScopeAndKey(routerLocation.pathname).scope;
+  const isCurrentPathAdminCategory =
+    ALL_ADMIN_PAGE_KEYS.has(currentPageMenuKey) ||
+    PROJECT_ADMIN_PAGE_KEY_SET.has(currentPageMenuKey) ||
+    currentUrlScope !== 'project';
 
   // Get the first available menu item from groupedGeneralMenu
   // (after blocklist filtering, excluding disabled/inactive items)
@@ -695,101 +852,31 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     return null;
   })();
 
-  // Check if current page is in blocklist
-  const currentPathKey = location.pathname.split('/')[1] || '';
+  // Check if current page is in blocklist.
+  // `currentMenuKeyFromRoute` is the scope-aware legacy menu key (from the
+  // matched route handle), so it equals the feature key for general pages and
+  // the hyphenated admin key for admin pages — exactly what
+  // `ALL_ADMIN_PAGE_KEYS` and `PROJECT_ADMIN_PAGE_KEY_SET` are keyed on. Empty
+  // (`''`) means "root / no feature matched" and is treated as always valid.
+  const currentPathKey = currentMenuKeyFromRoute ?? '';
   const currentMenuKey = currentPathKey;
   // Root path '/' should not be blocked (it redirects to first available menu)
   const isCurrentPageBlocked =
     currentPathKey !== '' && _.includes(blockList, currentMenuKey);
 
-  // Compute all valid paths from menu items + plugins + static routes
-  const allValidPaths = (() => {
-    const paths = new Set<string>();
-
-    // Add paths from all menus
-    [generalMenu, adminMenu].forEach((menu) => {
-      menu?.forEach((item) => {
-        if (item && 'key' in item && item.key) {
-          paths.add(item.key as string);
-        }
-      });
-    });
-
-    // Add all admin page keys regardless of role, so they are treated as
-    // 401 (unauthorized) rather than 404 (not found) for unprivileged users.
-    ALL_ADMIN_PAGE_KEYS.forEach((key) => paths.add(key));
-
-    // Add plugin pages
-    plugins?.page?.forEach((page) => {
-      if (page?.url) {
-        paths.add(page.url);
-      }
-    });
-
-    // Add static routes from router configuration
-    ROUTER_STATIC_PATHS.forEach((route) => paths.add(route));
-
-    return paths;
-  })();
-
-  // Check if current page matches dynamic route patterns from router configuration
-  const fullPath = location.pathname.slice(1); // Remove leading '/'
-  const matchesDynamicRoute = ROUTER_DYNAMIC_PATTERNS.some((pattern) =>
-    pattern.test(fullPath),
-  );
-
-  // Check if current page is not found
-  // Only check after plugins are loaded to avoid false positives
-  const isCurrentPageNotFound = (() => {
-    // Root path is always valid (redirects to first available menu)
-    if (currentPathKey === '') return false;
-
-    // If plugins haven't loaded yet, assume page is valid to prevent flickering
-    if (!isPluginLoaded) return false;
-
-    // Check if path is in valid paths set
-    if (allValidPaths.has(currentPathKey)) return false;
-
-    // Check if path matches a dynamic route pattern
-    if (matchesDynamicRoute) return false;
-
-    return true;
-  })();
-
-  // Check if current page requires higher permission than user has
-  // Uses static key sets (not role-filtered adminMenu) to ensure correct 401 responses.
-  const isCurrentPageUnauthorized = (() => {
-    if (currentPathKey === '') return false;
-
-    // Regular users (not admin, not superadmin) cannot access any admin page
-    if (
-      currentUserRole !== 'admin' &&
-      currentUserRole !== 'superadmin' &&
-      ALL_ADMIN_PAGE_KEYS.has(currentMenuKey)
-    ) {
-      return true;
-    }
-
-    // Admin users cannot access superadmin-only pages
-    if (
-      currentUserRole === 'admin' &&
-      SUPERADMIN_ONLY_PAGE_KEYS.has(currentMenuKey)
-    ) {
-      return true;
-    }
-
-    return false;
-  })();
-
   // Get theme config for custom logo href
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useCustomThemeConfig();
 
-  // Default menu path considering theme config's logo href
-  // Priority: themeConfig.logo.href > firstAvailableMenuItem path > '/start'
+  // Default menu path considering theme config's logo href.
+  // Priority: themeConfig.logo.href > firstAvailableMenuItem path > '/start'.
+  // Project-aware: `getPathFromMenuKey` builds `/project/<name>/<feature>` for
+  // the first general menu item using the active project name. When no project
+  // is resolvable it falls back to the legacy flat path (e.g. `/start`), which
+  // the redirect shims resolve to the canonical project URL at runtime.
   const defaultMenuPath =
     themeConfig?.logo?.href ||
     (firstAvailableMenuItem?.key
-      ? getPathFromMenuKey(firstAvailableMenuItem.key)
+      ? getPathFromMenuKey(firstAvailableMenuItem.key, activeProjectName)
       : '/start');
 
   return {
@@ -798,12 +885,12 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     groupedGeneralMenu,
     groupedAdminMenu,
     isSelectedAdminCategoryMenu,
+    isCurrentPathAdminCategory,
     firstAvailableMenuItem,
     firstAvailableAdminMenuItem,
+    firstAvailableProjectAdminMenuKey,
     defaultMenuPath,
     isCurrentPageBlocked,
-    isCurrentPageNotFound,
-    isCurrentPageUnauthorized,
     isPluginLoaded,
     blockList,
   };

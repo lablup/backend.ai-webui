@@ -1,8 +1,23 @@
-import type { DrawerProps, ModalProps } from 'antd';
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+
+/**
+ * The slice of the child's props this wrapper reads and writes. It used to be
+ * `ModalProps | DrawerProps` imported from antd; the wrapper never needed the
+ * other ~40 keys, and typing it structurally is what lets an Astryx-backed
+ * `BAIModal` and a still-antd `Drawer` both flow through unchanged
+ * (to-astryx phase 3 / ticket B).
+ */
+export interface BAIUnmountAfterCloseChildProps {
+  /** Visibility flag — both antd `Modal`/`Drawer` and `BAIModal` use `open`. */
+  open?: boolean;
+  /** Fired once the modal has finished closing. */
+  afterClose?: () => void;
+  /** Drawer's equivalent, fired with the new visibility. */
+  afterOpenChange?: (open: boolean) => void;
+}
 
 interface BAIUnmountModalAfterCloseProps {
-  children: React.ReactElement<ModalProps | DrawerProps>;
+  children: React.ReactElement<BAIUnmountAfterCloseChildProps>;
 }
 
 /**
@@ -21,7 +36,7 @@ interface BAIUnmountModalAfterCloseProps {
  *
  * @example
  * <UnmountAfterClose>
- *   <Modal open={isOpen} afterClose={handleAfterClose} />
+ *   <BAIModal open={isOpen} afterClose={handleAfterClose} />
  * </UnmountAfterClose>
  */
 const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
@@ -31,16 +46,24 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   const childElement = React.Children.only(children);
   const isOpen = childElement.props.open;
 
-  // Manage internal rendering state
-  const [isMount, setIsMount] = useState(isOpen);
+  // Track whether the exit animation has finished. While open, the child is
+  // always mounted; once closed, it stays mounted until the close animation
+  // completes (afterClose / afterOpenChange) so the exit transition is shown.
+  // Initialize from `isOpen` so a child that mounts already-open does not start
+  // in the "closed" state (which could unmount it before its effect runs).
+  const [afterClosed, setAfterClosed] = useState(() => !isOpen);
 
-  // Update internal state when the child's open prop becomes true
-  useLayoutEffect(() => {
+  // Reset the afterClosed state to false whenever the modal is opened, so it can be unmounted after the next close.
+  useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsMount(true);
+      setAfterClosed(false);
     }
   }, [isOpen]);
+
+  // Derive synchronously so the child mounts on the same render `open` flips to
+  // true (no one-render delay), while still surviving the close animation.
+  const isMount = isOpen || !afterClosed;
 
   // Return null if the modal should not be rendered
   if (!isMount) {
@@ -48,28 +71,28 @@ const BAIUnmountAfterClose: React.FC<BAIUnmountModalAfterCloseProps> = ({
   }
 
   // Preserve the original afterClose callback if it exists
-  const originalAfterClose = (childElement.props as ModalProps).afterClose;
+  const originalAfterClose = childElement.props.afterClose;
 
   // New handler to intercept afterClose
-  const handleModalAfterClose: ModalProps['afterClose'] = (...args) => {
+  const handleModalAfterClose = () => {
     if (originalAfterClose) {
-      originalAfterClose(...args);
+      originalAfterClose();
     }
-    // Set internal state to false after the exit animation completes
-    setIsMount(false);
+    // Mark as closed after the exit animation completes
+    setAfterClosed(true);
   };
 
   // Preserve the original afterOpenChange callback if it exists
   const originalAfterOpenChange = childElement.props.afterOpenChange;
 
   // New handler to intercept afterOpenChange
-  const handleModalAfterOpenChange: DrawerProps['afterOpenChange'] = (open) => {
+  const handleModalAfterOpenChange = (open: boolean) => {
     if (originalAfterOpenChange) {
       originalAfterOpenChange(open);
     }
-    // Set internal state to false after the exit animation completes
+    // Mark as closed after the exit animation completes
     if (!open) {
-      setIsMount(false);
+      setAfterClosed(true);
     }
   };
 

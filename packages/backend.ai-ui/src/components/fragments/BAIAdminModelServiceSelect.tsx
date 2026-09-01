@@ -1,28 +1,56 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ BAIAdminModelServiceSelect — ticket-27 Astryx sibling of
+ `BAIAdminModelServiceSelect`, built on `BAIComplexSelect` (ticket 26).
+
+ FRONTIER RULE: the antd `BAIAdminModelServiceSelect` is NOT touched by this
+ file and keeps serving every unmigrated call site until ticket 27 moves
+ them. The OUTER value contract stays the same plain key (`string` /
+ `string[]`, the deployment UUID) the antd wrapper exposes today —
+ `labelInValue` lives strictly between this wrapper and `BAIComplexSelect`.
+
+ CLASS: B (id-valued) — stored value is always `toLocalId(node.id)`, exactly
+ as the antd original.
+
+ PILOT-DECISIONs:
+  - The resolution query resolves only the FIRST selected key, carried over
+    unchanged from the antd original: `DeploymentFilter` has no id-based
+    filter, so the original falls back to the single-node `deployment(id:)`
+    query, which can only take one id. In `multiple` mode any selection
+    beyond the first therefore falls back to `label: key` (the raw UUID)
+    until it scrolls back into a loaded page — this is a pre-existing
+    limitation of the underlying schema/query, not something introduced by
+    this conversion.
+  - `notFoundContent={<Skeleton.Input/>}` first-load placeholder dropped
+    (P26-7).
+  - This wrapper never used `optionRender`/`labelRender`.
+*/
 import { BAIAdminModelServiceSelectPaginatedQuery } from '../../__generated__/BAIAdminModelServiceSelectPaginatedQuery.graphql';
 import { BAIAdminModelServiceSelectValueQuery } from '../../__generated__/BAIAdminModelServiceSelectValueQuery.graphql';
 import { toGlobalId, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
-import BAISelect, { BAISelectProps } from '../BAISelect';
-import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
-import { GetRef, Skeleton } from 'antd';
-import _ from 'lodash';
+import BAIComplexSelect, {
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
+} from '../BAIComplexSelect';
+import * as _ from 'lodash-es';
 import {
   useDeferredValue,
   useImperativeHandle,
-  useOptimistic,
-  useRef,
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type ModelServiceNode = NonNullable<
+export type AstryxModelServiceNode = NonNullable<
   NonNullable<
-    BAIAdminModelServiceSelectPaginatedQuery['response']['deployments']
+    BAIAdminModelServiceSelectPaginatedQuery['response']['adminDeployments']
   >['edges'][number]
 >['node'];
 
@@ -31,46 +59,54 @@ export interface BAIAdminModelServiceSelectRef {
 }
 
 export interface BAIAdminModelServiceSelectProps extends Omit<
-  BAISelectProps,
-  'options' | 'labelInValue' | 'ref'
+  BAIComplexSelectProps,
+  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
+  /** Plain key(s), as the antd `BAIAdminModelServiceSelect` exposes. */
+  value?: string | Array<string> | null;
+  onChange?: (value: string | Array<string> | undefined) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
   ref?: React.Ref<BAIAdminModelServiceSelectRef>;
 }
 
 const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
-  loading,
+  multiple = false,
+  isLoading,
   ref,
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
-  const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+  const { t } = useBAIi18n();
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | string[] | undefined
-  >(selectProps);
+    string | Array<string> | null | undefined
+  >(selectProps as Record<string, unknown>, {
+    valuePropName: 'value',
+    trigger: 'onChange',
+  });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
-    selectProps,
+    selectProps as Record<string, unknown>,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
       defaultValuePropName: 'defaultOpen',
     },
   );
+
   const deferredOpen = useDeferredValue(controllableOpen);
-  const [searchStr, setSearchStr] = useState<string>();
+  const [searchStr, setSearchStr] = useState<string>('');
   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
-  const [optimisticSearchStr, setOptimisticSearchStr] =
-    useOptimistic(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // Defer query refetch to prevent flickering during selection
   const deferredControllableValue = useDeferredValue(controllableValue);
+  const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
-  // Use single-node query to resolve selected value's label
-  // DeploymentFilter does not support id-based filtering,
-  // so we use the deployment(id:) query instead
+  // Use single-node query to resolve the selected value's label.
+  // DeploymentFilter does not support id-based filtering, so we use the
+  // deployment(id:) query instead — it can only resolve ONE id (see the
+  // PILOT-DECISION in the header comment).
   const { deployment: selectedDeployment } =
     useLazyLoadQuery<BAIAdminModelServiceSelectValueQuery>(
       graphql`
@@ -87,20 +123,13 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
         }
       `,
       {
-        id: !_.isEmpty(deferredControllableValue)
-          ? toGlobalId(
-              'ModelDeployment',
-              _.isArray(deferredControllableValue)
-                ? (deferredControllableValue[0] ?? '')
-                : (deferredControllableValue ?? ''),
-            )
+        id: selectedKeys.length
+          ? toGlobalId('ModelDeployment', selectedKeys[0])
           : '',
-        skipSelected: _.isEmpty(deferredControllableValue),
+        skipSelected: selectedKeys.length === 0,
       },
       {
-        fetchPolicy: !_.isEmpty(deferredControllableValue)
-          ? 'store-or-network'
-          : 'store-only',
+        fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
@@ -108,7 +137,7 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<
       BAIAdminModelServiceSelectPaginatedQuery,
-      ModelServiceNode
+      AstryxModelServiceNode
     >(
       graphql`
         query BAIAdminModelServiceSelectPaginatedQuery(
@@ -116,7 +145,7 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
           $limit: Int!
           $filter: DeploymentFilter
         ) {
-          deployments(offset: $offset, limit: $limit, filter: $filter) {
+          adminDeployments(offset: $offset, limit: $limit, filter: $filter) {
             count
             edges {
               node {
@@ -140,9 +169,9 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.deployments?.count ?? undefined,
+        getTotal: (result) => result.adminDeployments?.count ?? undefined,
         getItem: (result) =>
-          result.deployments?.edges?.map((edge) => edge?.node),
+          result.adminDeployments?.edges?.map((edge) => edge?.node),
         getId: (item) => (item?.id ? toLocalId(item.id) : item?.id),
       },
     );
@@ -161,105 +190,50 @@ const BAIAdminModelServiceSelect: React.FC<BAIAdminModelServiceSelectProps> = ({
   );
 
   // Use raw UUID (toLocalId) as value instead of Relay global ID
-  const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.metadata?.name,
-    value: item?.id ? toLocalId(item.id) : item?.id,
-  }));
-
-  const controllableValueWithLabel = selectedDeployment
-    ? [
-        {
-          label: selectedDeployment.metadata?.name,
-          value: toLocalId(selectedDeployment.id),
-        },
-      ]
-    : !_.isEmpty(deferredControllableValue)
-      ? _.castArray(deferredControllableValue).map((value) => ({
-          label: value,
-          value: value,
-        }))
-      : undefined;
-
-  const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
-    controllableValueWithLabel,
+  const options = _.compact(
+    _.map(paginationData, (item) => {
+      const key = item?.id ? toLocalId(item.id) : undefined;
+      return key ? { value: key, label: item?.metadata?.name ?? key } : null;
+    }),
   );
 
+  const labeledValue: BAIComplexSelectValue = (() => {
+    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
+      if (selectedDeployment && toLocalId(selectedDeployment.id) === key) {
+        return {
+          label: selectedDeployment.metadata?.name ?? key,
+          value: key,
+        };
+      }
+      return { label: key, value: key };
+    });
+    if (multiple) return labeled;
+    return labeled[0] ?? null;
+  })();
+
   return (
-    <BAISelect
-      ref={selectRef}
+    <BAIComplexSelect
       placeholder={t('comp:BAIAdminModelServiceSelect.SelectModelService')}
-      loading={
-        loading ||
+      {...selectProps}
+      multiple={multiple}
+      isLoading={
+        isLoading ||
         controllableValue !== deferredControllableValue ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
-      {...selectProps}
-      searchAction={async (value) => {
-        setOptimisticSearchStr(value);
-        setSearchStr(value);
-        await selectProps.searchAction?.(value);
+      isLoadingNext={isLoadingNext}
+      total={result.adminDeployments?.count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
+        setControllableValue(multiple ? keys : keys[0], undefined);
       }}
-      showSearch={
-        selectProps.showSearch === false
-          ? false
-          : {
-              searchValue: optimisticSearchStr,
-              autoClearSearchValue: true,
-              ...(_.isObject(selectProps.showSearch)
-                ? _.omit(selectProps.showSearch, ['searchValue'])
-                : {}),
-              filterOption: false,
-            }
-      }
-      value={
-        controllableValue !== deferredControllableValue
-          ? optimisticValueWithLabel
-          : controllableValueWithLabel
-      }
-      labelInValue
-      onChange={(value, option) => {
-        const castedValue = _.isEmpty(value) ? [] : _.castArray(value);
-        const valueWithOriginalLabel = castedValue.map((v) => {
-          // If label is string, use it directly; if React element, find from options
-          const label = _.isString(v.label)
-            ? v.label
-            : (availableOptions.find((opt) => opt.value === v.value)?.label ??
-              v.value);
-          return {
-            label,
-            value: v.value,
-          };
-        });
-        setOptimisticValueWithLabel(valueWithOriginalLabel);
-        const isMultiple =
-          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
-        const idArray = castedValue.map((v) => _.toString(v.value));
-        setControllableValue(
-          isMultiple ? idArray : (idArray[0] ?? undefined),
-          option,
-        );
-      }}
-      options={availableOptions}
-      endReached={() => {
-        loadNext();
-      }}
-      open={controllableOpen}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
       onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(result.deployments?.count) &&
-        result.deployments.count > 0 ? (
-          <TotalFooter
-            loading={isLoadingNext}
-            total={result.deployments.count}
-          />
-        ) : undefined
-      }
+      endReached={loadNext}
     />
   );
 };

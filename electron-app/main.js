@@ -27,7 +27,7 @@ if (isDev()) {
 }
 const url = require('url');
 const path = require('path');
-const toml = require('markty-toml');
+const { parse: toml } = require('smol-toml');
 const nfs = require('fs');
 const fs = require('fs').promises;
 const mime = require('mime-types');
@@ -63,6 +63,7 @@ protocol.registerSchemesAsPrivileged([
       secure: true,
       bypassCSP: true,
       supportFetchAPI: true,
+      corsEnabled: true,
     },
   },
 ]);
@@ -82,15 +83,6 @@ app.once('ready', function () {
       {
         label: 'Backend.AI',
         submenu: [
-          {
-            label: 'About Backend.AI Desktop',
-            click: function () {
-              mainContent.executeJavaScript(
-                'let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
-                  '    document.dispatchEvent(event);',
-              );
-            },
-          },
           {
             label:
               'App version ' +
@@ -391,10 +383,19 @@ function createWindow() {
     mainWindow.loadURL(endpoint);
   } else {
     // Load HTML into new Window (file-based serving)
+    const loadFallbackIndex = () => {
+      mainURL = url.format({
+        pathname: path.join(mainIndex),
+        protocol: 'file',
+        slashes: true,
+      });
+      mainWindow.loadURL(mainURL);
+    };
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
       console.log('Running on build-resource debug mode...');
       if (err) {
         console.log('No configuration file found.');
+        loadFallbackIndex();
         return;
       }
       try {
@@ -413,16 +414,13 @@ function createWindow() {
           config.server.webServerURL != '""'
         ) {
           mainURL = config.server.webServerURL;
+          mainWindow.loadURL(mainURL);
         } else {
-          mainURL = url.format({
-            pathname: path.join(mainIndex),
-            protocol: 'file',
-            slashes: true,
-          });
+          loadFallbackIndex();
         }
-        mainWindow.loadURL(mainURL);
       } catch (parseErr) {
         console.error('config.toml parse error:', parseErr);
+        loadFallbackIndex();
       }
     });
   }
@@ -520,12 +518,28 @@ function setSameSitePolicy() {
   session.defaultSession.webRequest.onHeadersReceived(
     filter,
     (details, callback) => {
-      const cookies = details.responseHeaders['Set-Cookie'] || [];
-      cookies.map((cookie) => cookie.replace('SameSite=Lax', 'SameSite=None')); // Override SameSite Lax option to None for App mode cookie.
-      if (cookies.length > 0 && !cookies.includes('SameSite')) {
-        // Add SameSite policy if not present.
-        details.responseHeaders['Set-Cookie'] =
-          cookies + '; SameSite=None; Secure';
+      // HTTP header names are case-insensitive and Electron may normalize the
+      // Set-Cookie key differently across platforms/versions, so find the
+      // actual key rather than assuming 'Set-Cookie'.
+      const cookieKey = Object.keys(details.responseHeaders).find(
+        (key) => key.toLowerCase() === 'set-cookie',
+      );
+      if (cookieKey) {
+        details.responseHeaders[cookieKey] = details.responseHeaders[
+          cookieKey
+        ].map((cookie) => {
+          // Normalize any SameSite value (Lax, Strict, or missing) to None so
+          // the cookie is sent on cross-site requests. Case-insensitive to
+          // match RFC 6265.
+          const withSameSite = /SameSite=/i.test(cookie)
+            ? cookie.replace(/SameSite=\w+/i, 'SameSite=None')
+            : cookie + '; SameSite=None';
+          // SameSite=None requires the Secure attribute, otherwise
+          // Chromium/Electron rejects the cookie.
+          return /;\s*Secure/i.test(withSameSite)
+            ? withSameSite
+            : withSameSite + '; Secure';
+        });
       }
       callback({ cancel: false, responseHeaders: details.responseHeaders });
     },
@@ -568,7 +582,10 @@ app.on('ready', () => {
       const mimeType = mime.lookup(filePath) || 'application/octet-stream';
 
       return new Response(data, {
-        headers: { 'content-type': mimeType },
+        headers: {
+          'content-type': mimeType,
+          'access-control-allow-origin': '*',
+        },
       });
     } catch (err) {
       console.error('Error reading file:', err);

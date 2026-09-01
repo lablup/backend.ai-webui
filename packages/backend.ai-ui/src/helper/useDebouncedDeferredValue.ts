@@ -1,8 +1,7 @@
-import { useDebounce } from 'ahooks';
-import type { DebounceOptions } from 'ahooks/lib/useDebounce/debounceOptions';
+import { useDebounce, type DebounceOptions } from '../hooks';
 import { useDeferredValue } from 'react';
 
-const useDebouncedDeferredValue = <T>(
+export const useDebouncedDeferredValue = <T>(
   value: T,
   options: DebounceOptions = {
     wait: 200,

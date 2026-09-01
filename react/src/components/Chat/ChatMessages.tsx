@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../../theme-shim';
 import PureChatTokenCounter from './ChatTokenCounter';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { UIMessage } from '@ai-sdk/react';
-import { theme } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { memo } from 'react';
 
@@ -18,6 +18,7 @@ interface ChatMessageProps {
   input: string;
   isStreaming: boolean;
   startTime: number | null;
+  endTime: number | null;
 }
 
 const ChatMessages: React.FC<ChatMessageProps> = ({
@@ -25,10 +26,18 @@ const ChatMessages: React.FC<ChatMessageProps> = ({
   input,
   isStreaming,
   startTime,
+  endTime,
 }) => {
   const { token } = theme.useToken();
   return (
-    <BAIFlex direction="column" align="stretch" style={{ flex: 1 }}>
+    // `minHeight: 0` lets this pane absorb the shrink when the composer grows
+    // (attachment drawer open, multi-line input) instead of the composer being
+    // clipped: the virtualized list already scrolls internally.
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      style={{ flex: 1, minHeight: 0 }}
+    >
       <ChatMessageList messages={messages} isStreaming={isStreaming} />
       <BAIFlex
         direction="column"
@@ -44,6 +53,7 @@ const ChatMessages: React.FC<ChatMessageProps> = ({
           messages={messages}
           input={input}
           startTime={startTime}
+          endTime={endTime}
         />
       </BAIFlex>
     </BAIFlex>

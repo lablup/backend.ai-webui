@@ -4,7 +4,7 @@
  */
 import { SessionHistory, useBAISettingUserState } from './useBAISetting';
 import { useEventNotStable, generateRandomString } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export const useRecentSessionHistory = () => {
   const [recentSessions, setRecentSessionHistory] = useBAISettingUserState(

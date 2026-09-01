@@ -2,41 +2,40 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { message } from '../app-shim';
 import CspDiagnosticsSection from '../components/CspDiagnosticsSection';
 import EndpointDiagnosticsSection from '../components/EndpointDiagnosticsSection';
+import ErrorBoundaryWithNullFallback from '../components/ErrorBoundaryWithNullFallback';
 import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnosticsSection';
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
-import { downloadBlob } from '../helper/csv-util';
+import { downloadCSV } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
+import { Collapsible, CollapsibleGroup } from '@astryxdesign/core/Collapsible';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Switch } from '@astryxdesign/core/Switch';
 import {
-  DownloadOutlined,
-  MoreOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import {
-  Collapse,
-  Dropdown,
-  Skeleton,
-  Switch,
-  Typography,
-  message,
-} from 'antd';
-import { BAIButton, BAICard, BAIFlex, useFetchKey } from 'backend.ai-ui';
+  BAISkeleton,
+  BAIButton,
+  BAICard,
+  BAIFlex,
+  useFetchKey,
+} from 'backend.ai-ui';
+import { Download, EllipsisVertical, RotateCw } from 'lucide-react';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense, useCallback, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import ErrorBoundaryWithNullFallback from 'src/components/ErrorBoundaryWithNullFallback';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
-type TabKey = 'diagnostics';
 type SectionKey = 'csp' | 'storage' | 'endpoint' | 'config';
-
-const tabParam = withDefault(StringParam, 'diagnostics');
 
 const DiagnosticsPage = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['diagnostics']).withDefault('diagnostics'),
+  );
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isPending, startTransition] = useTransition();
   const [showOnlyFailed, setShowOnlyFailed] = useState(false);
@@ -137,11 +136,10 @@ const DiagnosticsPage = () => {
       .map((row) => row.map(escCsv).join(','))
       .join('\n');
 
-    const blob = new Blob([csvContent], {
-      type: 'text/csv;charset=utf-8;',
-    });
     const today = new Date().toISOString().slice(0, 10);
-    downloadBlob(blob, `diagnostics-${today}.csv`);
+    // Diagnostics reports are assembled client-side; switch to the
+    // useCSVExport hook once server-side CSV export supports them.
+    downloadCSV(csvContent, `diagnostics-${today}.csv`);
   };
 
   const allItems = [
@@ -150,7 +148,7 @@ const DiagnosticsPage = () => {
       label: t('diagnostics.ContentSecurityPolicy'),
       children: (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeleton />}>
             <CspDiagnosticsSection
               hidePassed={showOnlyFailed}
               fetchKey={fetchKey}
@@ -166,7 +164,7 @@ const DiagnosticsPage = () => {
       label: t('diagnostics.StorageProxy'),
       children: (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeleton />}>
             <StorageProxyDiagnosticsSection
               hidePassed={showOnlyFailed}
               fetchKey={fetchKey}
@@ -182,7 +180,7 @@ const DiagnosticsPage = () => {
       label: t('diagnostics.EndpointConnectivity'),
       children: (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeleton />}>
             <EndpointDiagnosticsSection
               hidePassed={showOnlyFailed}
               fetchKey={fetchKey}
@@ -198,7 +196,7 @@ const DiagnosticsPage = () => {
       label: t('diagnostics.WebServerConfig'),
       children: (
         <ErrorBoundaryWithNullFallback>
-          <Suspense fallback={<Skeleton active />}>
+          <Suspense fallback={<BAISkeleton />}>
             <WebServerConfigDiagnosticsSection
               hidePassed={showOnlyFailed}
               fetchKey={fetchKey}
@@ -218,54 +216,99 @@ const DiagnosticsPage = () => {
   return (
     <BAICard
       activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={[
         {
           key: 'diagnostics',
-          tab: t('webui.menu.Diagnostics'),
+          label: t('webui.menu.Diagnostics'),
         },
       ]}
       tabBarExtraContent={
         <BAIFlex gap="sm" align="center">
+          {/* antd `Switch` + a sibling `Typography.Text` caption -> one Astryx
+              `Switch`. `label` is required and rendered by the control itself
+              (`labelPosition="end"` is the default), so the separate text node
+              is not just redundant, it was the only thing giving the toggle an
+              accessible name — and it never actually did, because antd's
+              Switch and that Text were unassociated siblings. */}
           <Switch
-            size="small"
-            checked={showOnlyFailed}
+            size="sm"
+            value={showOnlyFailed}
             onChange={setShowOnlyFailed}
+            label={t('diagnostics.ShowOnlyFailedItems')}
           />
-          <Typography.Text>
-            {t('diagnostics.ShowOnlyFailedItems')}
-          </Typography.Text>
           <BAIButton
-            icon={<ReloadOutlined spin={isPending} />}
+            icon={
+              <RotateCw
+                className={isPending ? 'bai-icon-spin' : undefined}
+                size="1em"
+              />
+            }
             onClick={handleRefresh}
             loading={isPending}
           >
             {t('diagnostics.Refresh')}
           </BAIButton>
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: 'export-csv',
-                  icon: <DownloadOutlined />,
-                  label: t('diagnostics.ExportCSV'),
-                  onClick: handleExport,
-                },
-              ],
+          {/* antd `Dropdown menu={{items}}` wrapping an icon-only child button
+              -> `DropdownMenu`, which owns its own trigger. `trigger={['click']}`
+              is the Astryx default and disappears; the per-item `key` goes with
+              antd's menu model (`onClick` already lives on the item). The
+              trigger gains a real accessible name, which the bare icon button
+              never had. */}
+          <DropdownMenu
+            hasChevron={false}
+            placement="below"
+            alignment="end"
+            button={{
+              label: t('button.More'),
+              isIconOnly: true,
+              icon: <EllipsisVertical size="1em" />,
             }}
-            trigger={['click']}
-          >
-            <BAIButton icon={<MoreOutlined />} />
-          </Dropdown>
+            items={[
+              {
+                icon: <Download size="1em" />,
+                label: t('diagnostics.ExportCSV'),
+                onClick: handleExport,
+              },
+            ]}
+          />
         </BAIFlex>
       }
     >
       {curTabKey === 'diagnostics' && (
         <BAIFlex direction="column" align="stretch" gap="md">
-          <Collapse
-            defaultActiveKey={['csp', 'storage', 'endpoint', 'config']}
-            items={visibleItems}
-          />
+          {visibleItems.length === 0 ? (
+            // antd `Empty` -> `EmptyState`: `description` becomes the required
+            // `title`; `PRESENTED_IMAGE_SIMPLE` has no counterpart and the
+            // section genuinely has nothing to illustrate, so no icon.
+            <EmptyState title={t('diagnostics.NoFailedItems')} />
+          ) : (
+            // antd `Collapse items=[...] defaultActiveKey={[all]}` (a bordered
+            // multi-panel accordion, every panel open) -> `CollapsibleGroup
+            // type="multiple" hasDividers` + one `Collapsible` per item.
+            // `hasDividers` supplies the row hairlines antd's panel chrome drew;
+            // the outer box border is DROPPED (Astryx collapsibles are flat, and
+            // this list already sits inside a `BAICard`).
+            <CollapsibleGroup
+              type="multiple"
+              hasDividers
+              // The GROUP owns open state once it coordinates its children —
+              // a child's own `defaultIsOpen` is ignored inside one (measured:
+              // every section rendered collapsed). antd's
+              // `defaultActiveKey={[all]}` therefore becomes the group's
+              // `defaultValue`.
+              defaultValue={allItems.map((item) => item.key)}
+            >
+              {visibleItems.map((item) => (
+                <Collapsible
+                  key={item.key}
+                  value={item.key}
+                  trigger={item.label}
+                >
+                  {item.children}
+                </Collapsible>
+              ))}
+            </CollapsibleGroup>
+          )}
         </BAIFlex>
       )}
     </BAICard>

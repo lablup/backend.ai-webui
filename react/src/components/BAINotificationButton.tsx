@@ -2,52 +2,43 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  useBAINotificationEffect,
-  useBAINotificationState,
-} from '../hooks/useBAINotification';
-import ReverseThemeProvider from './ReverseThemeProvider';
+import { useBAINotificationState } from '../hooks/useBAINotification';
+import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
+import { useThemeMode } from '../hooks/useThemeMode';
+import './BAINotificationButton.css';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
-import { BellOutlined } from '@ant-design/icons';
-import { Badge, Button, Tooltip, Typography, type ButtonProps } from 'antd';
-import { BAIText } from 'backend.ai-ui';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Kbd } from '@astryxdesign/core/Kbd';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { BAIBadgeCount } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
-import _ from 'lodash';
-import React, { useEffect } from 'react';
-import useKeyboardShortcut from 'src/hooks/useKeyboardShortcut';
+import * as _ from 'lodash-es';
+import { Bell } from 'lucide-react';
+import React from 'react';
 
 export const isOpenDrawerState = atom(false);
 
-const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
-  const [notifications, { upsertNotification, clearNotification }] =
-    useBAINotificationState();
-  useBAINotificationEffect();
+// Pure UI: badge + drawer toggle. Notification event handling and toast
+// rendering live in the app-wide <NotificationHost /> (DefaultProviders),
+// which stays mounted regardless of authentication state.
+/**
+ * PILOT-DECISION: the props no longer extend antd `ButtonProps` (P1 grep — the
+ * single consumer, `WebUIHeader`, passes only `data-testid`). Astryx's
+ * `IconButton` props are the natural base now that the render is one.
+ */
+type BAINotificationButtonProps = Pick<
+  React.ComponentProps<typeof IconButton>,
+  'style' | 'className' | 'isDisabled'
+> & { 'data-testid'?: string };
+
+const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
+  ...props
+}) => {
+  const [notifications] = useBAINotificationState();
+  const { isDarkMode } = useThemeMode();
 
   const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerState);
-  useEffect(() => {
-    const addNotificationHandler = (e: any) => {
-      upsertNotification(e.detail);
-    };
-    const clearNotificationHandler = (e: any) => {
-      clearNotification(e.detail.key);
-    };
-    document.addEventListener('add-bai-notification', addNotificationHandler);
-    document.addEventListener(
-      'clear-bai-notification',
-      clearNotificationHandler,
-    );
-    return () => {
-      document.removeEventListener(
-        'add-bai-notification',
-        addNotificationHandler,
-      );
-      document.removeEventListener(
-        'clear-bai-notification',
-        clearNotificationHandler,
-      );
-    };
-  }, [upsertNotification, clearNotification]);
 
   useKeyboardShortcut(
     (event) => {
@@ -65,37 +56,58 @@ const BAINotificationButton: React.FC<ButtonProps> = ({ ...props }) => {
     return n.backgroundTask?.status === 'pending';
   });
 
-  // To match complicated theme in WebUIHeader, we need to wrap the icon with nested `ReverseThemeProvider`.
+  // TRAP (measured, twice). `Tooltip` and the drawer render as inline SIBLINGS
+  // of the trigger, not through a portal, so a `MediaTheme` wrapper around the
+  // trigger reaches their panels too. The band context therefore sits on the
+  // trigger BUTTON only, via `data-astryx-media` (QA-FINDINGS Q-10). The
+  // tooltip's `Kbd` is coloured by the tooltip block of `ANTD_HOVER_PARITY`,
+  // not by a `MediaTheme` wrapper — the dark palette's `--color-neutral`
+  // equals the bubble (FR-3726).
+  const bandMediaMode = isDarkMode ? 'light' : 'dark';
+
   return (
     <>
-      <ReverseThemeProvider>
-        <Tooltip
-          title={
-            <>
-              {t('notification.Notifications')}{' '}
-              <BAIText keyboardWithLightBorder>{']'}</BAIText>
-            </>
+      {/* antd `Tooltip title` -> `content`; `placement="left"` -> `"start"`
+          (Astryx uses logical placements — MAPPING §4). */}
+      <Tooltip
+        content={
+          <>
+            {t('notification.Notifications')} <Kbd keys="]" />
+          </>
+        }
+        placement="start"
+      >
+        {/* antd icon-only `Button type="text"` -> `IconButton
+            variant="ghost"`, which requires the accessible name antd let
+            this button ship without (P8). The `Badge dot` overlay is
+            MAPPING §3.8's NONE branch, already self-built once as
+            `BAIBadgeCount`; antd `color="red"` becomes
+            `variant="error"` (the closed-enum equivalent). */}
+        <IconButton
+          // `data-astryx-media` IS `MediaTheme`'s whole mechanism, applied at
+          // element scope so the sibling tooltip panel cannot inherit it.
+          data-astryx-media={bandMediaMode}
+          variant="ghost"
+          label={t('notification.Notifications')}
+          icon={
+            <BAIBadgeCount
+              // The band's inversion stops at the overlay — see the .css.
+              className="bai-notification-badge"
+              hasDot={hasRunningBackgroundTask}
+              variant="error"
+              title={t('notification.Notifications')}
+            >
+              {/* On the glyph itself, not just the button: the badge wrapper
+                  declares its own `color`, so it intercepts inheritance before
+                  the icon sees it. `MediaTheme` remaps the token above. */}
+              <Bell size="1em" style={{ color: 'var(--color-icon-primary)' }} />
+            </BAIBadgeCount>
           }
-          placement="left"
-        >
-          <Button
-            icon={
-              <ReverseThemeProvider>
-                <Badge color="red" dot={hasRunningBackgroundTask}>
-                  <ReverseThemeProvider>
-                    <Typography.Text>
-                      <BellOutlined />
-                    </Typography.Text>
-                  </ReverseThemeProvider>
-                </Badge>
-              </ReverseThemeProvider>
-            }
-            type="text"
-            onClick={() => setIsOpenDrawer((v) => !v)}
-            {...props}
-          />
-        </Tooltip>
-      </ReverseThemeProvider>
+          onClick={() => setIsOpenDrawer((v) => !v)}
+          {...props}
+          style={{ color: 'var(--color-icon-primary)', ...props.style }}
+        />
+      </Tooltip>
       <WEBUINotificationDrawer
         open={isOpenDrawer}
         onClose={() => setIsOpenDrawer((v) => !v)}

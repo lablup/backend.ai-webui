@@ -5,6 +5,7 @@
     "Architecture": "สถาปัตยกรรม",
     "DiskPerc": "การใช้ดิสก์ %",
     "Endpoint": "เอ็นด์พอยต์",
+    "FailedToLoadCellData": "โหลดข้อมูลไม่สำเร็จ",
     "NoAvailableLiveStat": "ไม่มีสถิติเรียลไทม์ที่ใช้งานได้",
     "Region": "ภูมิภาค",
     "ResourceGroup": "กลุ่มทรัพยากร",
@@ -25,6 +26,9 @@
     "AreYouSureYouWantToActivateSome": "คุณแน่ใจหรือไม่ว่าต้องการเปิดใช้งาน {{count}} สิ่งประดิษฐ์?",
     "FailedToActivateArtifacts": "ไม่สามารถเปิดใช้งานสิ่งประดิษฐ์ได้",
     "SuccessfullyActivated": "สิ่งประดิษฐ์ที่เปิดใช้งานสำเร็จ"
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "เลือกนโยบายทรัพยากร Keypair"
   },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "เลือกบริการโมเดล"
@@ -63,6 +67,22 @@
     "Updated": "อัปเดต",
     "Version": "รุ่น"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "รหัสการดำเนินการ",
+    "Actor": "ผู้ดำเนินการ",
+    "Description": "คำอธิบาย",
+    "Duration": "ระยะเวลา",
+    "EntityId": "รหัสเอนทิตี",
+    "EntityType": "ประเภทเอนทิตี",
+    "Operation": "การดำเนินการ",
+    "RequestId": "รหัสคำขอ",
+    "Status": "สถานะ",
+    "Time": "เวลา",
+    "TriggeredBy": "ผู้กระตุ้น"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "เลือกการตั้งค่าล่วงหน้า"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
   },
@@ -70,6 +90,18 @@
     "Clear": "ล้าง",
     "KeepAsIs": "เก็บไว้ตามเดิม",
     "UndoChanges": "ยกเลิกการเปลี่ยนแปลง"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "การดำเนินการล้มเหลว",
+    "ErrorOccurred": "เกิดข้อผิดพลาด"
+  },
+  "comp:BAIComplexSelect": {
+    "ClearSearch": "ล้าง ค้นหาตัวเลือก",
+    "NoResults": "ไม่พบผลลัพธ์",
+    "SearchOptions": "ค้นหาตัวเลือก"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
   },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "แน่ใจหรือว่าคุณต้องการปิดการใช้งาน {{name}}?",
@@ -88,14 +120,58 @@
     "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
     "Version": "รุ่น"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "คุณแน่ใจหรือไม่ว่าต้องการลบ?",
+    "AreYouSureToPermanentlyDeleteTarget": "คุณแน่ใจหรือไม่ว่าต้องการลบ {{target}} อย่างถาวร?",
+    "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
+    "DeleteItem": "ลบ",
+    "DeleteNItems": "ลบ {{count}} รายการ",
+    "TypeToConfirm": "พิมพ์ <code>{{confirmText}}</code> เพื่อยืนยัน"
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "สร้างโดย"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "จำนวนครั้งที่ลอง",
+    "Category": "หมวดหมู่",
+    "CreatedAt": "สร้างเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "From": "สถานะต้นทาง",
+    "Message": "ข้อความ",
+    "Phase": "ระยะ",
+    "Result": "ผลลัพธ์",
+    "To": "สถานะปลายทาง",
+    "UpdatedAt": "อัปเดตเมื่อ"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "เลือกการปรับใช้"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "ลดลง",
+    "Deploying": "กำลังปรับใช้",
+    "Healthy": "ปกติ",
+    "NotChecked": "ยังไม่ตรวจสอบ",
+    "Pending": "รอดำเนินการ",
+    "Ready": "พร้อม",
+    "Scaling": "กำลังปรับขนาด",
+    "Stopped": "หยุดแล้ว",
+    "Stopping": "กำลังหยุด",
+    "Terminated": "สิ้นสุดแล้ว",
+    "Unhealthy": "ผิดปกติ"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "เลือกโดเมน"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "รีเฟรชอัตโนมัติ",
+    "EveryHours": "{{count}}ชม.",
+    "EveryMinutes": "{{count}}น.",
+    "EverySeconds": "{{count}}วิ",
     "LastUpdated": "อัปเดตล่าสุด",
+    "Off": "ปิด",
     "Refresh": "รีเฟรช"
   },
   "comp:BAIGraphQLPropertyFilter": {
@@ -103,6 +179,9 @@
     "operator": {
       "After": "หลัง",
       "Before": "ก่อน",
+      "Contains": "ประกอบด้วย",
+      "EndsWith": "ลงท้ายด้วย",
+      "Equals": "เท่ากับ",
       "GreaterThan": "มากกว่า",
       "GreaterThanOrEqual": "มากกว่าหรือเท่ากับ",
       "IContains": "ประกอบด้วย",
@@ -116,7 +195,12 @@
       "In": "ใน",
       "LessThan": "น้อยกว่า",
       "LessThanOrEqual": "น้อยกว่าหรือเท่ากับ",
-      "NotIn": "ไม่ใน"
+      "NotContains": "ไม่มี",
+      "NotEndsWith": "ไม่ลงท้ายด้วย",
+      "NotEquals": "ไม่เท่ากับ",
+      "NotIn": "ไม่ใน",
+      "NotStartsWith": "ไม่เริ่มต้นด้วย",
+      "StartsWith": "เริ่มต้นด้วย"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -124,6 +208,9 @@
     "HuggingFaceSettings": "Hugging Face Settings",
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "เลือกรูปภาพ"
   },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} ไม่รวมรุ่น",
@@ -135,8 +222,36 @@
     "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
     "Version": "รุ่น"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "ขนาดคลัสเตอร์",
+    "Concurrency": "เซสชันที่ทำงานพร้อมกัน",
+    "CreatedAt": "สร้างเมื่อ",
+    "DefaultForUnspecified": "ค่าเริ่มต้นสำหรับการไม่ระบุ",
+    "DefaultForUnspecifiedTooltipDesc1": "ตั้งค่านโยบายเริ่มต้นเมื่อไม่มีการร้องขอ CPU หรือหน่วยความจำเฉพาะ",
+    "DefaultForUnspecifiedTooltipDesc2": "'ไม่ จำกัด ' ช่วยให้การใช้งานตามความจุของเอเจนต์โหนดในขณะที่ 'จำกัด ' ปฏิเสธทรัพยากรเว้นแต่จะตั้งค่าไว้อย่างชัดเจน \nในกรณีส่วนใหญ่แนะนำให้ 'ไม่ จำกัด '",
+    "IdleTimeout": "หมดเวลาเมื่อไม่มีการใช้งาน",
+    "MaxConcurrentSFTPSessions": "เซสชัน SFTP ที่เกิดขึ้นพร้อมกันสูงสุด",
+    "MaxPendingSessionCount": "จำนวนเซสชันที่ค้างอยู่สูงสุด",
+    "MaxPendingSessionResourceSlots": "ช่องทรัพยากรเซสชันที่รออยู่สูงสุด",
+    "MaxSessionLifetime": "อายุการใช้งานสูงสุดของเซสชัน",
+    "Name": "ชื่อ",
+    "StorageNodes": "โหนดจัดเก็บ",
+    "TotalResourceSlots": "นโยบายทรัพยากร"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "เลือกคู่คีย์"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "โดเมน",
+    "FailReason": "สาเหตุที่ล้มเหลว",
+    "LoginTime": "เวลาเข้าสู่ระบบ",
+    "Result": "ผลลัพธ์"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "คีย์การเข้าถึง",
+    "CreatedAt": "สร้างเมื่อ",
+    "InvalidatedAt": "ถูกยกเลิกเมื่อ",
+    "User": "ผู้ใช้"
   },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
@@ -145,10 +260,51 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "คุณแน่ใจหรือไม่ว่าต้องการลบการปรับใช้ \"{{deploymentName}}\"? การดำเนินการนี้ไม่สามารถยกเลิกได้",
+    "CreatedAt": "วันที่สร้าง",
+    "CreatedUser": "ผู้เขียน",
+    "CurrentRevisionID": "รหัสการแก้ไขปัจจุบัน",
+    "Delete": "ลบ",
+    "DeleteDeployment": "ลบการปรับใช้",
+    "DeploymentDeleted": "ลบการปรับใช้แล้ว",
+    "DeploymentID": "รหัสการปรับใช้",
+    "DomainName": "โดเมน",
+    "EndpointURL": "URL ปลายทาง",
+    "FailedToDeleteDeployment": "ไม่สามารถลบการปรับใช้ได้",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "วงจรชีวิต",
+    "Model": "โมเดล",
+    "Name": "ชื่อ",
+    "OpenToPublic": "เปิดสาธารณะ",
+    "Owner": "เจ้าของ",
+    "PreferredDomainName": "โดเมนที่ต้องการ",
+    "Project": "โปรเจกต์",
+    "ProjectID": "รหัสโปรเจกต์",
+    "ReplicaSummary": "จำนวนสำเนา",
+    "ReplicaSummaryTooltip": "จำนวนสำเนาที่กำลังทำงานเทียบกับจำนวนสำเนาที่ต้องการ",
+    "Replicas": "จำนวนสำเนา",
+    "ResourceGroup": "กลุ่มทรัพยากร",
+    "RevisionNumber": "ฉบับแก้ไข",
+    "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",
+    "StrategyType": "กลยุทธ์",
+    "Tags": "แท็ก",
+    "UpdatedAt": "วันที่อัปเดต"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "การดำเนินการเพิ่มเติม"
+  },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "โฟลเดอร์ต่อไปนี้จะถูกอัปเดต.",
+    "FollowingProjectsWillBeUpdated": "โครงการต่อไปนี้จะถูกอัปเดต.",
     "ProjectResourcePolicy": "นโยบายทรัพยากรโครงการ",
     "UpdateMultipleProjects": "อัปเดตหลายโครงการ"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "สร้างเมื่อ",
+    "MaxNetworkCount": "จำนวนเครือข่ายสูงสุด",
+    "MaxQuotaScopeSize": "ขนาดโฟลเดอร์สูงสุด",
+    "MaxVFolderCount": "จำนวนโฟลเดอร์สูงสุด",
+    "Name": "ชื่อ"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "เลือกโปรเจกต์"
@@ -176,32 +332,24 @@
     "UpdateProject": "อัปเดตโปรเจกต์"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "คุณแน่ใจว่าต้องการปิดใช้งานโปรเจ็กต์ {{projectName}}?",
-    "AreYouSureToPurgeProject": "คุณแน่ใจหรือว่าต้องการลบออกอย่างถาวร {{projectName}}? การดำเนินการนี้ไม่สามารถย้อนกลับได้.",
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
-    "Controls": "การควบคุม",
+    "ContainerRegistryProject": "โปรเจ็กต์รีจิสทรีคอนเทนเนอร์",
     "CreatedAt": "สร้างเมื่อ",
-    "Deactivate": "ปิดใช้งาน",
-    "DeactivateProject": "ปิดการใช้งานโครงการ",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
-    "FailedToDeactivateProject": "ไม่สามารถปิดใช้งานโปรเจ็กต์ได้",
-    "FailedToPurgeProject": "ไม่สามารถล้างโปรเจกต์ได้",
     "IntegrationID": "รหัสการผสานระบบ",
-    "IsActive": "ใช้งาน",
     "Name": "ชื่อ",
     "Project": "โปรเจ็กต์",
-    "ProjectDeactivated": "โครงการถูกปิดการใช้งานแล้ว",
     "ProjectID": "รหัสโครงการ",
-    "ProjectPurged": "โครงการถูกลบอย่างถาวร",
-    "Purge": "ลบถาวร",
-    "PurgeProject": "ลบโปรเจกต์อย่างถาวร",
     "Registry": "รีจิสทรี",
     "ResourcePolicy": "นโยบายทรัพยากร",
     "ScalingGroups": "กลุ่มทรัพยากร",
     "StorageNodes": "โหนดจัดเก็บข้อมูล",
     "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
     "Type": "ประเภท"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "ค้นหา",
@@ -219,22 +367,154 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "เลือกกลุ่มทรัพยากร"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "ที่จัดสรร / ที่ร้องขอ"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "เปลี่ยนสีกลุ่ม",
+    "ResourceGrid": "ตารางทรัพยากร",
+    "UseColorN": "ใช้สี {{n}}"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "ไม่ จำกัด"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "สร้างเมื่อ",
+    "HealthStatus": "สถานะระบบ",
     "RouteId": "รหัสเส้นทาง",
+    "SchedulingHistory": "ประวัติการจัดตาราง",
     "SessionId": "รหัสเซสชัน",
     "Status": "สถานะ",
     "TrafficRatio": "สัดส่วนทราฟฟิก",
     "TrafficStatus": "สถานะการรับส่งข้อมูล"
   },
-  "comp:BAISchedulingHistoryNodes": {
+  "comp:BAIRouteSchedulingHistoryNodes": {
     "Attempts": "จำนวนครั้งที่ลอง",
+    "Category": "หมวดหมู่",
     "CreatedAt": "สร้างเมื่อ",
-    "From": "จาก",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "From": "สถานะต้นทาง",
+    "Message": "ข้อความ",
     "Phase": "ระยะ",
     "Result": "ผลลัพธ์",
-    "StatusTransition": "การเปลี่ยนสถานะ",
-    "To": "ถึง",
+    "To": "สถานะปลายทาง",
+    "UpdatedAt": "อัปเดตเมื่อ"
+  },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "เพิ่มตัวเลือก",
+    "Category": "หมวดหมู่",
+    "CategoryPlaceholder": "เช่น model_loading",
+    "CategoryTooltip": "หมวดหมู่ UI ที่ใช้จัดกลุ่มพารามิเตอร์ที่เกี่ยวข้องไว้ด้วยกัน",
+    "ChoiceLabel": "ป้ายกำกับ",
+    "ChoiceLabelPlaceholder": "เช่น FP16",
+    "ChoiceLabelRequired": "จำเป็นต้องระบุป้ายกำกับตัวเลือก",
+    "ChoiceValue": "ค่า",
+    "ChoiceValuePlaceholder": "เช่น fp16",
+    "ChoiceValueRequired": "จำเป็นต้องระบุค่าตัวเลือก",
+    "Choices": "ตัวเลือก",
+    "ChoicesRequired": "ต้องมีอย่างน้อยหนึ่งตัวเลือก",
+    "CreatePreset": "สร้างพรีเซต",
+    "DefaultValue": "ค่าเริ่มต้น",
+    "DefaultValuePlaceholder": "เช่น 1",
+    "Description": "คำอธิบาย",
+    "DescriptionPlaceholder": "อธิบายว่าพารามิเตอร์นี้ควบคุมอะไรและส่งผลต่อพฤติกรรมการอนุมานอย่างไร",
+    "DisplayName": "ชื่อที่แสดง",
+    "DisplayNamePlaceholder": "เช่น Tensor Parallel Size",
+    "DisplayNameTooltip": "ป้ายกำกับที่อ่านง่าย ซึ่งจะแสดงแทนชื่อพารามิเตอร์ในแบบฟอร์มการปรับใช้",
+    "EditPreset": "แก้ไขพรีเซต",
+    "Key": "คีย์",
+    "KeyPlaceholder": "เช่น TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "จำเป็นต้องระบุคีย์",
+    "Name": "ชื่อ",
+    "NamePlaceholder": "เช่น Tensor Parallel Size",
+    "NameRequired": "จำเป็นต้องระบุชื่อ",
+    "NumberMax": "ค่าสูงสุด",
+    "NumberMaxMustExceedMin": "ค่าสูงสุดต้องมากกว่าค่าต่ำสุด",
+    "NumberMin": "ค่าต่ำสุด",
+    "PresetCreated": "สร้างพรีเซตตัวแปรรันไทม์เรียบร้อยแล้ว",
+    "PresetTarget": "เป้าหมายพรีเซต",
+    "PresetTargetArgs": "อาร์กิวเมนต์บรรทัดคำสั่ง",
+    "PresetTargetEnv": "ตัวแปรสภาพแวดล้อม",
+    "PresetTargetRequired": "จำเป็นต้องระบุเป้าหมายพรีเซต",
+    "PresetUpdated": "อัปเดตพรีเซตตัวแปรรันไทม์เรียบร้อยแล้ว",
+    "Rank": "อันดับ",
+    "RankTooltip": "ลำดับการแสดงผลระหว่างพรีเซตของตัวแปรรันไทม์เดียวกัน ค่าที่น้อยกว่าจะแสดงก่อน",
+    "Required": "จำเป็น",
+    "RequiredTooltip": "พารามิเตอร์พรีเซตนี้ต้องระบุหรือไม่เมื่อสร้าง revision ของการปรับใช้",
+    "Requirement": "การบังคับกรอก",
+    "RuntimeVariant": "ตัวแปรรันไทม์",
+    "RuntimeVariantRequired": "จำเป็นต้องระบุตัวแปรรันไทม์",
+    "SliderMax": "ค่าสูงสุด",
+    "SliderMaxMustExceedMin": "ค่าสูงสุดต้องมากกว่าค่าต่ำสุด",
+    "SliderMaxRequired": "จำเป็นต้องระบุค่าสูงสุด",
+    "SliderMin": "ค่าต่ำสุด",
+    "SliderMinRequired": "จำเป็นต้องระบุค่าต่ำสุด",
+    "SliderStep": "ขั้น",
+    "SliderStepMustBePositive": "ขั้นต้องมากกว่า 0",
+    "SliderStepTooltip": "ค่าเพิ่มขั้นของแถบเลื่อน ค่าเริ่มต้นคือ 1",
+    "StoredValueTypeMismatch": "พรีเซ็ตนี้ถูกบันทึกด้วยประเภทค่า {{valueType}} ซึ่งประเภท UI {{uiType}} ไม่สามารถแสดงได้ กรุณาเปลี่ยนประเภท UI หรือประเภทค่า",
+    "TextPlaceholderExample": "เช่น กรอกค่า",
+    "TextPlaceholderLabel": "ข้อความตัวอย่างในช่องกรอก",
+    "UIType": "ประเภท UI",
+    "UITypeCheckbox": "ช่องทำเครื่องหมาย",
+    "UITypeIncompatibleWithValueType": "ประเภท UI ที่เลือกไม่สามารถแสดงประเภทค่านี้ได้",
+    "UITypeNumberInput": "ช่องกรอกตัวเลข",
+    "UITypeSelect": "ตัวเลือกแบบเลือก",
+    "UITypeSlider": "แถบเลื่อน",
+    "UITypeTextInput": "ช่องกรอกข้อความ",
+    "UITypeTooltip": "ตัวควบคุมที่ใช้แสดงพารามิเตอร์นี้ในแบบฟอร์มการปรับใช้",
+    "ValueType": "ประเภทค่า",
+    "ValueTypeBool": "บูลีน",
+    "ValueTypeFlag": "แฟล็ก",
+    "ValueTypeFloat": "จำนวนทศนิยม",
+    "ValueTypeInt": "จำนวนเต็ม",
+    "ValueTypeRequired": "จำเป็นต้องระบุประเภทค่า",
+    "ValueTypeStr": "สตริง"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "หมวดหมู่",
+    "CreatedAt": "วันที่สร้าง",
+    "DefaultValue": "ค่าเริ่มต้น",
+    "Description": "คำอธิบาย",
+    "DisplayName": "ชื่อที่แสดง",
+    "Key": "คีย์",
+    "ModifiedAt": "วันที่แก้ไข",
+    "Name": "ชื่อ",
+    "Optional": "ไม่บังคับ",
+    "PresetTarget": "เป้าหมายพรีเซต",
+    "PresetTargetArgs": "อาร์กิวเมนต์บรรทัดคำสั่ง",
+    "PresetTargetEnv": "ตัวแปรสภาพแวดล้อม",
+    "Rank": "อันดับ",
+    "RankTooltip": "ลำดับการแสดงผลระหว่างพรีเซตของตัวแปรรันไทม์เดียวกัน ค่าที่น้อยกว่าจะแสดงก่อน",
+    "Required": "จำเป็น",
+    "RuntimeVariantId": "รหัสตัวแปรรันไทม์",
+    "RuntimeVariantWithID": "ตัวแปรรันไทม์ (ID)",
+    "UIType": "ประเภท UI",
+    "UITypeCheckbox": "ช่องทำเครื่องหมาย",
+    "UITypeNumberInput": "ช่องกรอกตัวเลข",
+    "UITypeSelect": "ตัวเลือกแบบเลือก",
+    "UITypeSlider": "แถบเลื่อน",
+    "UITypeTextInput": "ช่องกรอกข้อความ",
+    "ValueType": "ประเภทค่า",
+    "ValueTypeBool": "บูลีน",
+    "ValueTypeFlag": "แฟล็ก",
+    "ValueTypeFloat": "จำนวนทศนิยม",
+    "ValueTypeInt": "จำนวนเต็ม",
+    "ValueTypeStr": "สตริง"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "เลือกตัวแปรรันไทม์"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "จำนวนครั้งที่ลอง",
+    "Category": "หมวดหมู่",
+    "CreatedAt": "สร้างเมื่อ",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "From": "สถานะต้นทาง",
+    "Message": "ข้อความ",
+    "Phase": "ระยะ",
+    "Result": "ผลลัพธ์",
+    "To": "สถานะปลายทาง",
     "UpdatedAt": "อัปเดตเมื่อ"
   },
   "comp:BAISessionAgentIds": {
@@ -250,11 +530,32 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "เลือกพร็อกซีที่เก็บข้อมูล"
+  },
+  "comp:BAISubStepNodes": {
+    "Duration": "ระยะเวลา",
+    "ErrorCode": "รหัสข้อผิดพลาด",
+    "Message": "ข้อความ",
+    "Result": "ผลลัพธ์",
+    "ResultMarker": "เครื่องหมายผลลัพธ์ของความพยายามนี้",
+    "Step": "ขั้นตอน",
+    "Time": "เวลา"
+  },
   "comp:BAITable": {
+    "Apply": "ใช้",
+    "Cancel": "ยกเลิก",
+    "CollapseAll": "ยุบทั้งหมด",
+    "ExpandAll": "ขยายทั้งหมด",
+    "ExpandErrorsOnly": "ขยายเฉพาะข้อผิดพลาด",
+    "ExpandOptions": "ตัวเลือกการขยาย",
+    "ExpandRow": "ขยายแถว",
     "Export": "ส่งออก",
     "ExportCSV": "ส่งออก CSV",
     "GoToFirstPage": "ไปยังหน้าแรก",
     "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
+    "NoDataToDisplay": "ไม่มีข้อมูลที่จะแสดง",
+    "Pagination": "การแบ่งหน้า",
     "SearchTableColumn": "คอลัมน์ตารางค้นหา",
     "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
     "SettingTable": "การตั้งค่าตาราง"
@@ -262,42 +563,69 @@
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
   },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "สร้างเมื่อ",
+    "MaxConcurrentLogins": "จำนวนการเข้าสู่ระบบพร้อมกันสูงสุด",
+    "MaxCustomizedImageCount": "จำนวนอิมเมจที่กำหนดเองสูงสุด",
+    "MaxQuotaScopeSize": "ขนาดโฟลเดอร์สูงสุด",
+    "MaxSessionCountPerModelSession": "จำนวนเซสชันสูงสุดต่อเซสชันโมเดล",
+    "MaxVFolderCount": "จำนวนโฟลเดอร์สูงสุด",
+    "Name": "ชื่อ"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "เลือกผู้ใช้"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "รูปแบบพาธไม่ถูกต้อง",
+    "AliasOverlapping": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์อื่น",
+    "AliasPlaceholder": "พาธ mount",
+    "AutoMountedFolders": "โฟลเดอร์ที่ mount อัตโนมัติ",
+    "Name": "ชื่อ",
+    "PathAndAlias": "พาธ & Alias",
+    "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
+    "RemoveFolder": "ลบ",
+    "Subpath": "Subpath",
+    "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
+    "SubpathPlaceholder": "เช่น dataset/train (ไม่บังคับ)",
+    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root ปล่อยว่างเพื่อ mount จาก root"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "การดาวน์โหลด {{count}} รายการเริ่มแล้ว",
     "ChangeFileExtension": "เปลี่ยนนามสกุลไฟล์",
     "ChangeFileExtensionDesc": "การเปลี่ยนนามสกุลไฟล์อาจทำให้ไฟล์ไม่สามารถใช้งานได้หรือเปิดไม่ถูกต้อง \nคุณต้องการดำเนินการต่อหรือไม่?",
-    "Controls": "การควบคุม",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "สร้างไฟล์ใหม่",
     "CreateANewFolder": "สร้างโฟลเดอร์ใหม่",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "สร้างไฟล์",
+    "CreateFolder": "สร้างโฟลเดอร์",
     "CreatedAt": "สร้างขึ้นที่",
     "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
     "DeleteSelectedItemsDialog": "ลบการยืนยัน",
+    "Download": "ดาวน์โหลด",
+    "DownloadSelected": "ดาวน์โหลด",
     "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
     "DragAndDropDesc": "ลากและวางไฟล์ไปยังพื้นที่นี้เพื่ออัปโหลด",
     "DuplicatedFiles": "การยืนยันการเขียนทับ",
     "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",
     "EditFile": "แก้ไขไฟล์",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "ไฟล์สร้างสำเร็จ",
+    "FileName": "ชื่อไฟล์",
+    "FileNamePlaceholder": "เช่น model-definition.yaml",
     "FileTooLargeToEdit": "การแก้ไขในเบราว์เซอร์ถูกจำกัดเนื่องจากขนาดไฟล์เกิน {{size}}MB",
     "FolderCreatedSuccessfully": "โฟลเดอร์สร้างสำเร็จ",
     "FolderName": "ชื่อโฟลเดอร์",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "ชื่อไฟล์ต้องเป็น 255 อักขระหรือน้อยกว่า",
     "MaxFolderNameLength": "ชื่อโฟลเดอร์ต้องเป็น 255 อักขระหรือน้อยกว่า",
     "ModifiedAt": "ดัดแปลงที่",
-    "MoreOptions": "ตัวเลือกเพิ่มเติม",
     "Name": "ชื่อ",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "NoUploadPermissionForHost": "คุณไม่มีสิทธิ์อัปโหลดสำหรับโฮสต์นี้",
+    "Path": "Path",
+    "PleaseEnterAFileName": "กรุณากรอกชื่อไฟล์",
     "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
+    "RenameFile": "Rename",
     "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",
     "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
     "Size": "ขนาด",
@@ -317,19 +645,31 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "สิ้นสุดเมื่อ",
-    "ErrorCode": "รหัสข้อผิดพลาด",
-    "Message": "ข้อความ",
-    "Result": "ผลลัพธ์",
-    "StartedAt": "เริ่มเมื่อ",
-    "Step": "ขั้นตอน"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "ตัวเร่ง AI",
+    "CPU": "CPU",
+    "ClusterMode": "โหมดคลัสเตอร์",
+    "CreatedAt": "สร้างเมื่อ",
+    "ElapsedTime": "เวลาที่ผ่านไป",
+    "Environments": "สภาพแวดล้อม",
+    "Memory": "หน่วยความจำ",
+    "OwnerEmail": "อีเมลเจ้าของ",
+    "Project": "โครงการ",
+    "ResourceGroup": "กลุ่มทรัพยากร",
+    "SessionId": "ID เซสชัน",
+    "SessionName": "ชื่อเซสชัน",
+    "SessionType": "ประเภทเซสชัน",
+    "Status": "สถานะ",
+    "TerminateSession": "ยุติเซสชัน"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP ไคลเอนต์ที่อนุญาต",
-    "ContainerGIDs": "GID ของคอนเทนเนอร์",
-    "ContainerMainGID": "GID หลักของคอนเทนเนอร์",
-    "ContainerUID": "UID ของคอนเทนเนอร์",
+    "ContainerGIDs": "GID เสริม",
+    "ContainerGIDsTooltip": "รหัสกลุ่มตัวเลขเพิ่มเติมที่กำหนดให้กับกระบวนการในคอนเทนเนอร์",
+    "ContainerMainGID": "GID คอนเทนเนอร์",
+    "ContainerMainGIDTooltip": "รหัสกลุ่มแบบตัวเลขเริ่มต้นที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์",
+    "ContainerUID": "UID คอนเทนเนอร์",
+    "ContainerUIDTooltip": "รหัสผู้ใช้แบบตัวเลขที่กำหนดให้กับกระบวนการภายในคอนเทนเนอร์",
     "CreatedAt": "สร้างเมื่อ",
     "Description": "คำอธิบาย",
     "Disabled": "ปิดใช้งาน",
@@ -337,6 +677,8 @@
     "Email": "อีเมล",
     "Enabled": "เปิดใช้งาน",
     "FullName": "ชื่อเต็ม",
+    "IntegrationName": "ชื่อการเชื่อมต่อ",
+    "MainAccessKey": "คีย์เข้าถึงหลัก",
     "ModifiedAt": "แก้ไขเมื่อ",
     "NeedPasswordChange": "ต้องเปลี่ยนรหัสผ่าน",
     "Project": "โครงการ",
@@ -346,20 +688,79 @@
     "StatusInfo": "ข้อมูลสถานะ",
     "SudoSessionEnabled": "เซสชัน Sudo เปิดใช้งาน",
     "TwoFA": "การยืนยันตัวตนสองขั้นตอน",
+    "TwoFAActivatedAt": "เปิดใช้งาน 2FA เมื่อ",
+    "UserID": "รหัสผู้ใช้",
     "Username": "ชื่อผู้ใช้"
+  },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "คลิกเพื่อเลือกพาธ",
+    "SelectAPath": "เลือกพาธ",
+    "SelectAPathInFolder": "เลือกพาธใน {{folderName}}",
+    "SelectFolderFirst": "กรุณาเลือกโฟลเดอร์ก่อน",
+    "SelectThisLocation": "เลือกตำแหน่งนี้",
+    "SelectedPath": "เลือกแล้ว"
   },
   "error": {
     "UnknownError": "เกิดข้อผิดพลาดที่ไม่รู้จัก \nโปรดลองอีกครั้ง"
   },
+  "form": {
+    "Optional": "(ไม่จำเป็น)",
+    "validateMessages": {
+      "Default": "ฟิลด์ ${label} ไม่ผ่านเงื่อนไขการตรวจสอบ",
+      "Required": "กรุณากรอก ${label}",
+      "Whitespace": "${label} ไม่สามารถเป็นช่องว่างได้",
+      "array": {
+        "Len": "ต้องมี ${len} ${label}",
+        "Max": "มีได้สูงสุด ${max} ${label}",
+        "Min": "ต้องมีอย่างน้อย ${min} ${label}",
+        "Range": "จำนวน ${label} ต้องอยู่ในช่วง ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} ต้องมี ${len} ตัว",
+        "Max": "ค่าสูงสุด ${label} คือ ${max}",
+        "Min": "ค่าต่ำสุด ${label} คือ ${min}",
+        "Range": "${label} ต้องมีค่า ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} ไม่ตรงกับรูปแบบ ${pattern}"
+      },
+      "string": {
+        "Len": "${label} ต้องมี ${len} ตัวอักษร",
+        "Max": "${label} มีได้สูงสุด ${max} ตัวอักษร",
+        "Min": "${label} ต้องมีอย่างน้อย ${min} ตัวอักษร",
+        "Range": "${label} ต้องมี ${min}-${max} ตัวอักษร"
+      },
+      "types": {
+        "Email": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "Number": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "Object": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "String": "${label} ไม่ใช่ ${type} ที่ถูกต้อง",
+        "Url": "${label} ไม่ใช่ ${type} ที่ถูกต้อง"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
+    "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
+    "File": "ไฟล์",
+    "Increase": "Increase",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
+    "Project": "โครงการ",
+    "Search": "ค้นหา",
+    "Select": "Select",
+    "SelectPlaceholder": "เลือก{{label}}",
     "TotalItems": "รวม {{total}} รายการ",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "ยกเลิก",
       "Close": "ปิด",
       "Collapse": "ทรุด",
+      "Confirm": "Confirm",
       "Copied": "คัดลอกแล้ว",
+      "Copy": "คัดลอก",
       "CopyAll": "คัดลอกทั้งหมด",
       "Create": "สร้าง",
       "Delete": "ลบ",

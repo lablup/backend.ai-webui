@@ -2,27 +2,22 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SFTPConnectionInfoModalFragment$key } from '../../__generated__/SFTPConnectionInfoModalFragment.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
+import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
-import { Alert, Descriptions } from 'antd';
-import { createStyles } from 'antd-style';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Heading } from '@astryxdesign/core/Heading';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import {
+  BAIFlex,
+  BAIMetadataList,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { useTranslation, Trans } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { SFTPConnectionInfoModalFragment$key } from 'src/__generated__/SFTPConnectionInfoModalFragment.graphql';
-import { useSuspendedBackendaiClient } from 'src/hooks';
-import { useTanQuery } from 'src/hooks/reactQueryAlias';
-
-const useStyles = createStyles(({ css, token }) => ({
-  description: css`
-    .ant-descriptions-header {
-      margin-bottom: ${token.marginSM}px !important;
-    }
-    .ant-descriptions-item {
-      padding-bottom: ${token.paddingXXS}px !important;
-    }
-  `,
-}));
 
 type DirectAccessInfo = {
   kernel_role: string;
@@ -44,14 +39,28 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { styles } = useStyles();
   const baiClient = useSuspendedBackendaiClient();
 
   const session = useFragment(
     graphql`
       fragment SFTPConnectionInfoModalFragment on ComputeSessionNode {
         row_id @required(action: NONE)
-        vfolder_mounts
+        # TODO(needs-backend): pagination args are not supported here. The
+        # backend resolve_vfolder_nodes resolver rejects first/last
+        # (unexpected keyword argument) even though the schema declares them,
+        # so we fetch all edges and take the first one in JS. Migrate to the
+        # V2 VFolder connection once ComputeSessionNode exposes it (see FR-2619).
+        #
+        # @since matches the other vfolder_nodes usages so it merges cleanly on
+        # the shared ComputeSessionNode selection (this project targets >= 26,
+        # so the field is always present and needs no vfolder_mounts fallback).
+        vfolder_nodes @since(version: "25.4.0") {
+          edges {
+            node {
+              name
+            }
+          }
+        }
       }
     `,
     sessionFrgmt,
@@ -91,6 +100,8 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
   const displayHost = host || directAccessInfo?.public_host;
   const displayPorts = port || directAccessInfo?.sshd_ports.join(', ');
   const firstSshdPort = port || directAccessInfo?.sshd_ports[0];
+  // `vfolder_mounts` returns the UUID, so use the resolved vfolder name instead.
+  const mountFolderName = session?.vfolder_nodes?.edges?.[0]?.node?.name ?? '';
 
   return (
     <BAIModal
@@ -100,15 +111,13 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
       okText={t('session.appLauncher.DownloadSSHKey')}
       onOk={readAndDownloadSSHKey}
     >
-      <BAIFlex className={styles.description} direction="column" gap="md">
-        <Alert
-          showIcon
-          type="info"
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Banner
+          status="info"
           title={<Trans i18nKey="session.SFTPDescription" />}
         />
-        <Alert
-          showIcon
-          type="warning"
+        <Banner
+          status="warning"
           title={
             <>
               <Trans i18nKey="session.SFTPExtraNotification" />
@@ -117,35 +126,43 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
           }
         />
 
-        <Descriptions
+        <BAIMetadataList
           title={t('session.ConnectionInformation')}
-          column={1}
-          labelStyle={{ minWidth: 60 }}
+          columns="single"
+          label={{ position: 'start', width: 60 }}
         >
-          <Descriptions.Item label={t('session.User')}>work</Descriptions.Item>
-          <Descriptions.Item label={t('session.Host')}>
+          <MetadataListItem label={t('session.User')}>work</MetadataListItem>
+          <MetadataListItem label={t('session.Host')}>
             {displayHost}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.Port')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.Port')}>
             {displayPorts}
-          </Descriptions.Item>
-        </Descriptions>
-
-        <Descriptions title={t('session.ConnectionExample')} column={1}>
-          <Descriptions.Item>
-            <BAIFlex direction="column" gap="xs" style={{ width: '100%' }}>
-              <SourceCodeView
-                language={'shell'}
-              >{`sftp -i ./id_container -P ${firstSshdPort} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${displayHost}`}</SourceCodeView>
-              <SourceCodeView
-                language={'shell'}
-              >{`scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${firstSshdPort} -rp /path/to/source work@${displayHost}:~/${session?.vfolder_mounts?.[0] ?? ''}`}</SourceCodeView>
-              <SourceCodeView
-                language={'shell'}
-              >{`rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${directAccessInfo?.sshd_ports[0]}" /path/to/source/ work@${directAccessInfo?.public_host}:~/${session?.vfolder_mounts?.[0] ? `${session?.vfolder_mounts?.[0]}/` : ''}`}</SourceCodeView>
-            </BAIFlex>
-          </Descriptions.Item>
-        </Descriptions>
+          </MetadataListItem>
+        </BAIMetadataList>
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          gap="sm"
+          style={{ width: '100%' }}
+        >
+          <Heading level={5}>{t('session.ConnectionExample')}</Heading>
+          <BAIFlex
+            direction="column"
+            align="stretch"
+            gap="xs"
+            style={{ width: '100%' }}
+          >
+            <SourceCodeView
+              language={'shell'}
+            >{`sftp -i ./id_container -P ${firstSshdPort} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null work@${displayHost}`}</SourceCodeView>
+            <SourceCodeView
+              language={'shell'}
+            >{`scp -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${firstSshdPort} -rp /path/to/source work@${displayHost}:~/${mountFolderName}`}</SourceCodeView>
+            <SourceCodeView
+              language={'shell'}
+            >{`rsync -av -e "ssh -i ./id_container -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${firstSshdPort}" /path/to/source/ work@${displayHost}:~/${mountFolderName ? `${mountFolderName}/` : ''}`}</SourceCodeView>
+          </BAIFlex>
+        </BAIFlex>
       </BAIFlex>
     </BAIModal>
   );

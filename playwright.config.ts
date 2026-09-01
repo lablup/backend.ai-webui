@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import * as dotenv from "dotenv";
-dotenv.config({ path: "./e2e/envs/.env.playwright" });
+dotenv.config({ path: "./e2e/envs/.env.playwright", override: true });
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -27,12 +27,27 @@ export default defineConfig({
     ? [["html", { open: "never" }], ["github"]]
     : [["html", { open: "never" }], ["list"]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  /* Default timeout for each test */
+  timeout: 180000,
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+    permissions: ["local-network-access"],
+    /*
+     * Bound every action (click/fill/check/hover/…) so a single stuck action
+     * cannot consume the whole 180s test budget. Without this, a transiently
+     * pointer-blocked click — e.g. an antd notification/tooltip portal briefly
+     * overlapping a tab or row button during the best-effort vfolder cleanup
+     * sweep — would retry until the test timeout, hanging the cleanup and
+     * leaving e2e-* orphans on the shared server (FR-3090). 30s is 3x the
+     * largest explicit per-action timeout in the suite (10s), so it never cuts
+     * a legitimately-slow action short; stuck actions now fail fast with a
+     * catchable error that the sweep's skip-and-continue handles.
+     */
+    actionTimeout: 30000,
   },
 
   snapshotPathTemplate: `e2e/{testFileDir}/snapshot/{arg}{ext}`,
@@ -40,6 +55,19 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
+      use: { ...devices["Desktop Chrome"], locale: "en-US" },
+      // The global cleanup runs as a dedicated teardown project, not as a
+      // regular test in the suite.
+      testIgnore: /global-cleanup\.teardown\.ts/,
+      teardown: "cleanup",
+    },
+
+    // Best-effort global cleanup (FR-3090): sweeps leftover e2e-* vfolders and
+    // services after the whole suite finishes, regardless of pass/fail, so the
+    // shared test server is always left clean. Runs only as chromium's teardown.
+    {
+      name: "cleanup",
+      testMatch: /global-cleanup\.teardown\.ts/,
       use: { ...devices["Desktop Chrome"], locale: "en-US" },
     },
 

@@ -3,20 +3,25 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceAllocationFormItemsQuery } from '../../__generated__/ResourceAllocationFormItemsQuery.graphql';
+import { Form } from '../../form-engine';
 import {
   addNumberWithUnits,
   compareNumberWithUnits,
   convertToBinaryUnit,
 } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { useResourceSlots } from '../../hooks/backendai';
+import {
+  useResourceSlots,
+  useResourceSlotsDetails,
+} from '../../hooks/backendai';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../../hooks/hooksUsingRelay';
-import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import {
   MergedResourceLimits,
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
+import { theme } from '../../theme-shim';
+import { ProjectContext } from '../../types/projectContext';
 import AgentSelect from '../AgentSelect';
 import {
   Image,
@@ -24,23 +29,29 @@ import {
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
+import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
+// FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
+// `Form.Item` are self-hosted since ticket 34 (live again since ticket 35),
+// and every control and every piece of chrome below is Astryx now.
+import { Card } from '@astryxdesign/core/Card';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
+import { VStack } from '@astryxdesign/core/Stack';
+import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import {
-  CaretDownOutlined,
-  InfoCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import { Button, Card, Col, Form, Radio, Row, Tooltip, theme } from 'antd';
-import {
-  useResourceSlotsDetails,
+  BAIDynamicUnitInputNumberWithSlider,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
+  BAIProjectResourceGroupSelect,
+  BAISegmentedControlItem,
+  BAISelect,
   useEventNotStable,
   useUpdatableState,
-  BAIDynamicUnitInputNumberWithSlider,
-  BAIProjectResourceGroupSelect,
-  BAISelect,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { RotateCw } from 'lucide-react';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -65,6 +76,43 @@ export const isMinOversMaxValue = (min: number, max: number) => {
   return min >= max;
 };
 
+/**
+ * Returns true when the given accelerator slot name represents a unified
+ * memory architecture, where the accelerator memory and the host memory
+ * share a single physical pool. Identified by a `.unified` suffix on the
+ * slot name (e.g. `cuda.unified`).
+ */
+export const isUnifiedAcceleratorSlot = (slotName?: string | null): boolean => {
+  return !!slotName && _.endsWith(slotName, '.unified');
+};
+
+/**
+ * Prefix of the session `tag` that marks a session as using a unified-memory
+ * accelerator slot (e.g. `unified-slot:cuda.unified`). This is a temporary
+ * marker until the session model exposes unified-memory usage directly.
+ */
+export const UNIFIED_SLOT_TAG_PREFIX = 'unified-slot:';
+
+/**
+ * Extracts the unified-memory accelerator slot name from a session `tag`
+ * (e.g. `unified-slot:cuda.unified` -> `cuda.unified`). Returns `undefined`
+ * when the tag carries no unified-slot marker, or when the marked slot is not
+ * actually a unified-memory slot (i.e. does not end with `.unified`) — this
+ * guards the downstream UI, which assumes a genuine unified slot. The tag is
+ * treated as a comma/whitespace-separated list so it stays correct even if
+ * other markers are appended later.
+ */
+export const getUnifiedSlotNameFromTag = (
+  tag?: string | null,
+): string | undefined => {
+  if (!tag) return undefined;
+  const token = tag
+    .split(/[,\s]+/)
+    .find((part) => part.startsWith(UNIFIED_SLOT_TAG_PREFIX));
+  const slotName = token?.slice(UNIFIED_SLOT_TAG_PREFIX.length);
+  return isUnifiedAcceleratorSlot(slotName) ? slotName : undefined;
+};
+
 export interface ResourceAllocationFormValue {
   resource: {
     cpu: number;
@@ -86,21 +134,115 @@ export type MergedResourceAllocationFormValue = ResourceAllocationFormValue &
   ImageEnvironmentFormInput;
 
 interface ResourceAllocationFormItemsProps {
+  /**
+   * The project that scopes every project-dependent piece of this form
+   * fragment: the `accessible_scaling_groups(project_id:)` query, the
+   * resource-group select, and the resource limit / remaining / preset
+   * lookups. Required and non-null per ADR-0001 (form-fragment tier,
+   * FR-3411): this fragment never reads the ambient current project and
+   * never embeds a project selector — the parent owns any selector and
+   * passes the chosen/derived project down.
+   */
+  project: ProjectContext;
   enableAgentSelect?: boolean;
-  enableNumOfSessions?: boolean;
   enableResourcePresets?: boolean;
   showRemainingWarning?: boolean;
   forceImageMinValues?: boolean;
+  hideClusterFormItems?: boolean;
+  /**
+   * Opt-in: when the form field has no value, auto-select the project's
+   * "default" resource group (or the first available one). Forwarded to
+   * `BAIProjectResourceGroupSelect`'s `autoSelectDefault` prop. Off by
+   * default to preserve existing behavior for shared callers like
+   * `SessionLauncherPage` / `ServiceLauncherPageContent` that pre-fill
+   * the form themselves.
+   */
+  autoSelectFirstResourceGroup?: boolean;
+  /**
+   * Hide the resource group selector while still mounting the underlying
+   * `BAIProjectResourceGroupSelect` (so `autoSelectFirstResourceGroup` and
+   * any external `form.setFieldValue('resourceGroup', ...)` still flow
+   * through). Used by the deployment-revision flow where the resource
+   * group is sourced from the parent deployment rather than chosen here.
+   */
+  hideResourceGroupFormItem?: boolean;
+  extraAcceleratorRules?: Array<{
+    warningOnly?: boolean;
+    validator: (rule: unknown, value: number) => Promise<void>;
+  }>;
 }
+
+// FR-3531: hug the content instead of stretching to the parent's width.
+const clusterModeSegmentedStyles = stylex.create({
+  control: { alignSelf: 'flex-start' },
+  label: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: spacingVars['--spacing-1'],
+  },
+});
+
+/**
+ * Cluster-mode segmented control — the twin of the one in
+ * `ClusterModeFormItems`, declared locally for the same reason: each option
+ * carries a help tooltip that the shared `AstryxFormSegmented` option shape
+ * does not model. The two `Form.Item` contracts are honoured inline.
+ */
+const ClusterModeSegmented: React.FC<{
+  label: string;
+  isDisabled?: boolean;
+  onValueChange: () => void;
+  items: Array<{ value: string; label: string; tooltip: React.ReactNode }>;
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+}> = ({ label, isDisabled, onValueChange, items, value, onChange }) => {
+  'use memo';
+  return (
+    <SegmentedControl
+      label={label}
+      isDisabled={isDisabled}
+      value={value ?? items[0]?.value ?? ''}
+      xstyle={clusterModeSegmentedStyles.control}
+      onChange={(next) => {
+        onChange?.(next);
+        onValueChange();
+      }}
+    >
+      {items.map((item) => (
+        // FR-3531: the help affordance is a small view that trails the label,
+        // not a leading `icon` — Astryx renders the `icon` slot first.
+        <BAISegmentedControlItem
+          key={item.value}
+          value={item.value}
+          label={
+            <span {...stylex.props(clusterModeSegmentedStyles.label)}>
+              {item.label}
+              <BAIQuestionIconWithTooltip
+                title={item.tooltip}
+                focusable={false}
+              />
+            </span>
+          }
+        />
+      ))}
+    </SegmentedControl>
+  );
+};
 
 const ResourceAllocationFormItems: React.FC<
   ResourceAllocationFormItemsProps
 > = ({
+  project,
   enableAgentSelect = false,
-  enableNumOfSessions,
   enableResourcePresets,
   forceImageMinValues = false,
   showRemainingWarning = false,
+  hideClusterFormItems = false,
+  autoSelectFirstResourceGroup = false,
+  hideResourceGroupFormItem = false,
+  extraAcceleratorRules,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
@@ -109,16 +251,12 @@ const ResourceAllocationFormItems: React.FC<
   const baiClient = useSuspendedBackendaiClient();
   const supportMultiAgents = baiClient.supports('multi-agents');
 
-  const [{ keypairResourcePolicy, sessionLimitAndRemaining }] =
+  const [{ keypairResourcePolicy }] =
     useCurrentKeyPairResourcePolicyLazyLoadQuery();
 
   const [agentFetchKey, updateAgentFetchKey] = useUpdatableState('first');
   const [isPendingAgentList, startAgentListTransition] = useTransition();
 
-  const currentProject = useCurrentProjectValue();
-  if (!currentProject.id || !currentProject.name) {
-    throw new Error('Project ID is required for ResourceAllocationFormItems');
-  }
   const currentResourceGroupInForm =
     Form.useWatch(['resourceGroup'], {
       form,
@@ -138,7 +276,7 @@ const ResourceAllocationFormItems: React.FC<
         }
       `,
       {
-        projectID: currentProject.id,
+        projectID: project.id,
       },
       {
         fetchPolicy: baiClient.supports('custom-accelerator-quantum-size')
@@ -150,6 +288,13 @@ const ResourceAllocationFormItems: React.FC<
   const currentResourceGroupInfo = _.find(
     accessible_scaling_groups,
     (group) => group?.name === currentResourceGroupInForm,
+  );
+  // Names of the resource groups accessible to the PASSED project. Handed to
+  // `useResourceLimitAndRemaining` so its "is this resource group valid?"
+  // guard is keyed off the `project` prop instead of the ambient current
+  // project's derived resource-group atom (ADR-0001).
+  const accessibleResourceGroupNames = _.compact(
+    _.map(accessible_scaling_groups, (group) => group?.name),
   );
   const currentResourceValue = Form.useWatch(['resource']);
   const currentImage = Form.useWatch(['environments', 'image'], {
@@ -167,10 +312,11 @@ const ResourceAllocationFormItems: React.FC<
 
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
-      currentProjectName: currentProject.name,
+      currentProjectName: project.name,
       currentResourceGroup: currentResourceGroupInForm || undefined, // global currentResourceGroup can be null
       currentResourceGroupFrgmtForLimit: currentResourceGroupInfo,
       currentImage: currentImage,
+      accessibleResourceGroupNames,
     });
 
   const [resourceSlots] = useResourceSlots();
@@ -200,7 +346,10 @@ const ResourceAllocationFormItems: React.FC<
 
   // Get supported accelerator types in resource group by image
   const supportedAcceleratorTypesInRGByImage = useMemo(() => {
-    if (_.isUndefined(acceleratorSlotsInRG) || _.isNil(currentImage)) {
+    if (
+      _.isUndefined(acceleratorSlotsInRG) ||
+      (_.isNil(currentImage) && _.isEmpty(currentEnvironmentManual))
+    ) {
       return undefined;
     }
     return _.keys(acceleratorSlotsInRG).filter((acceleratorTypeName) => {
@@ -221,12 +370,22 @@ const ResourceAllocationFormItems: React.FC<
   }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
 
   useEffect(() => {
-    if (!currentResourceValue) {
+    if (
+      !currentResourceValue &&
+      form.getFieldValue('allocationPreset') !== 'custom'
+    ) {
       form.setFieldsValue({
         allocationPreset: 'auto-select',
       });
     }
-    if (supportedAcceleratorTypesInRGByImage?.length === 0) {
+    // Write only on an actual change: `setFieldsValue` rebuilds `resource`,
+    // so `Form.useWatch(['resource'])` returns a new reference and re-triggers
+    // this effect. Unguarded, that self-feeding loop never settles and starves
+    // React's transition lanes, freezing every `useDeferredValue` on the page.
+    if (
+      supportedAcceleratorTypesInRGByImage?.length === 0 &&
+      currentResourceValue?.accelerator !== 0
+    ) {
       form.setFieldsValue({
         resource: {
           accelerator: 0,
@@ -234,12 +393,6 @@ const ResourceAllocationFormItems: React.FC<
       });
     }
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
-
-  const sessionSliderLimitAndRemaining = {
-    min: 1,
-    max: sessionLimitAndRemaining.max,
-    remaining: sessionLimitAndRemaining.remaining,
-  };
 
   const allocatablePresetNames = useMemo(() => {
     return getAllocatablePresetNames(
@@ -268,6 +421,23 @@ const ResourceAllocationFormItems: React.FC<
     }
   };
 
+  // Centralized helper that CLEARS the `resource.accelerator` field whenever
+  // the active accelerator slot is a unified one. Unified-memory slots
+  // auto-allocate accelerator memory from the shared host pool, so the
+  // launcher neither sends nor displays an accelerator quantity. Call this
+  // from every code path that mutates `resource.mem` or
+  // `resource.acceleratorType`.
+  const syncUnifiedAcceleratorIfNeeded = useEventNotStable(() => {
+    const activeAcceleratorType = form.getFieldValue([
+      'resource',
+      'acceleratorType',
+    ]);
+    if (!isUnifiedAcceleratorSlot(activeAcceleratorType)) {
+      return;
+    }
+    form.setFieldValue(['resource', 'accelerator'], undefined);
+  });
+
   const ensureValidAcceleratorType = useEventNotStable(() => {
     const currentAcceleratorType = form.getFieldValue([
       'resource',
@@ -279,11 +449,20 @@ const ResourceAllocationFormItems: React.FC<
       ? currentAcceleratorType
       : _.first(_.keys(acceleratorSlotsInRG));
 
-    form.setFieldsValue({
-      resource: {
-        acceleratorType: nextAcceleratorType || currentAcceleratorType,
-      },
-    });
+    const resolvedAcceleratorType =
+      nextAcceleratorType || currentAcceleratorType;
+    // Write only on an actual change — see the accelerator effect above for
+    // why an unconditional `setFieldsValue` here never settles.
+    if (resolvedAcceleratorType !== currentAcceleratorType) {
+      form.setFieldsValue({
+        resource: {
+          acceleratorType: resolvedAcceleratorType,
+        },
+      });
+    }
+    // The accelerator type may have changed; clear the accelerator field if
+    // the resolved type is a unified slot.
+    syncUnifiedAcceleratorIfNeeded();
   });
 
   const updateResourceFieldsBasedOnImage = useEventNotStable(
@@ -389,6 +568,9 @@ const ResourceAllocationFormItems: React.FC<
       if (form.getFieldValue('enabledAutomaticShmem')) {
         runShmemAutomationRule(form.getFieldValue(['resource', 'mem']) || '0g');
       }
+      // mem and/or acceleratorType may have changed above; keep the
+      // accelerator field consistent for unified slots.
+      syncUnifiedAcceleratorIfNeeded();
       form
         .validateFields(['resource'], {
           recursive: true,
@@ -446,6 +628,9 @@ const ResourceAllocationFormItems: React.FC<
       if (!hasPresetShmem) {
         runShmemAutomationRule(mem || '0g');
       }
+      // mem and/or acceleratorType may have changed above; keep the
+      // accelerator field consistent for unified slots.
+      syncUnifiedAcceleratorIfNeeded();
 
       form
         .validateFields(['resource'], {
@@ -527,6 +712,7 @@ const ResourceAllocationFormItems: React.FC<
       <Form.Item
         name="resourceGroup"
         label={t('session.ResourceGroup')}
+        hidden={hideResourceGroupFormItem}
         rules={[
           {
             required: true,
@@ -534,7 +720,8 @@ const ResourceAllocationFormItems: React.FC<
         ]}
       >
         <BAIProjectResourceGroupSelect
-          projectName={currentProject.name}
+          projectName={project.name}
+          autoSelectDefault={autoSelectFirstResourceGroup}
           showSearch
         />
       </Form.Item>
@@ -585,6 +772,9 @@ const ResourceAllocationFormItems: React.FC<
           />
         </Form.Item>
       ) : null}
+      {/* MAPPING §5.1: antd `Card` -> Astryx `Card`, a bare container. This
+          call site passes no `title`/`extra`/`tabList`, so nothing needs
+          composing around it — only the bottom margin, which stays. */}
       <Card style={{ marginBottom: token.margin }}>
         <Form.Item
           shouldUpdate={(prev, cur) =>
@@ -666,7 +856,7 @@ const ResourceAllocationFormItems: React.FC<
                       sliderProps={{
                         marks: {
                           // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                          ...(remaining.cpu
+                          ...(remaining.cpu && showRemainingWarning
                             ? {
                                 [remaining.cpu]: {
                                   label: <RemainingMark />,
@@ -722,7 +912,7 @@ const ResourceAllocationFormItems: React.FC<
                     <Form.Item
                       noStyle
                       shouldUpdate={(prev, next) =>
-                        prev.resource.shmem !== next.resource.shmem
+                        prev.resource?.shmem !== next.resource?.shmem
                       }
                       hidden={!baiClient._config.allowCustomResourceAllocation}
                     >
@@ -842,7 +1032,7 @@ const ResourceAllocationFormItems: React.FC<
                               max={resourceLimits.mem?.max}
                               min={resourceLimits.mem?.min}
                               extraMarks={{
-                                ...(remaining.mem
+                                ...(remaining.mem && showRemainingWarning
                                   ? {
                                       //@ts-ignore
                                       [convertToBinaryUnit(
@@ -865,6 +1055,13 @@ const ResourceAllocationFormItems: React.FC<
                                 ) {
                                   runShmemAutomationRule(M_plus_S || '0g');
                                 }
+                                // When the active accelerator slot is a
+                                // unified-memory slot, accelerator memory is
+                                // auto-allocated from the shared host pool, so
+                                // clear any accelerator value at the source of
+                                // change to keep submit-time form state
+                                // consistent.
+                                syncUnifiedAcceleratorIfNeeded();
                               }}
                             />
                           </Form.Item>
@@ -922,6 +1119,17 @@ const ResourceAllocationFormItems: React.FC<
                         currentAcceleratorType as keyof typeof resourceSlots
                       ] === 'unique';
 
+                    const isUnifiedType = isUnifiedAcceleratorSlot(
+                      currentAcceleratorType,
+                    );
+
+                    // For unified slots, surface the device's own description
+                    // (from resource-slot metadata) instead of a generic note.
+                    const unifiedAcceleratorDescription = isUnifiedType
+                      ? mergedResourceSlots?.[currentAcceleratorType]
+                          ?.description
+                      : undefined;
+
                     const isSingleCluster =
                       form.getFieldValue('cluster_size') < 2;
                     const hasQuantumSize = _.isNumber(
@@ -966,135 +1174,172 @@ const ResourceAllocationFormItems: React.FC<
                             />
                           ),
                         }}
+                        extra={
+                          unifiedAcceleratorDescription
+                            ? t(
+                                'session.launcher.UnifiedAcceleratorMemoryNote',
+                                {
+                                  description: unifiedAcceleratorDescription,
+                                },
+                              )
+                            : undefined
+                        }
                         dependencies={[
                           ['resource', 'acceleratorType'],
                           'cluster_size',
+                          ['resource', 'mem'],
                         ]}
-                        rules={[
-                          {
-                            required:
-                              currentImageAcceleratorLimits &&
-                              currentImageAcceleratorLimits.length > 0,
-                          },
-                          {
-                            type: 'number',
-                            min:
-                              resourceLimits.accelerators[
-                                currentAcceleratorType
-                              ]?.min || 0,
-                            // Unique type should only allow 0 or 1
-                            max: isUniqueType
-                              ? 1
-                              : resourceLimits.accelerators[
-                                  currentAcceleratorType
-                                ]?.max,
-                          },
-                          {
-                            validator: async (_rule: any, value: number) => {
-                              if (
-                                _.endsWith(currentAcceleratorType, 'shares') &&
-                                form.getFieldValue('cluster_size') >= 2 &&
-                                value % 1 !== 0
-                              ) {
-                                return Promise.reject(
-                                  t(
-                                    'session.launcher.OnlyAllowsDiscreteNumberByClusterSize',
-                                  ),
-                                );
-                              } else {
-                                return Promise.resolve();
-                              }
-                            },
-                          },
-                          {
-                            validator: async (_rule: any, value: number) => {
-                              if (
-                                _.isNumber(currentAcceleratorStep) &&
-                                ![0, currentAcceleratorStep].includes(
-                                  _.round(value % currentAcceleratorStep, 5),
-                                )
-                              ) {
-                                return Promise.reject(
-                                  t(
-                                    'session.launcher.OnlyAllowsDiscreteNumberByQuantumSize',
-                                    {
-                                      stepSize: currentAcceleratorStep,
-                                    },
-                                  ),
-                                );
-                              } else {
-                                return Promise.resolve();
-                              }
-                            },
-                          },
-                          {
-                            warningOnly: true,
-                            validator: async (_rule: any, value: number) => {
-                              if (
-                                _.isNumber(
-                                  resourceLimits.accelerators[
-                                    currentAcceleratorType
-                                  ]?.min,
-                                ) &&
-                                _.isNumber(
-                                  resourceLimits.accelerators[
-                                    currentAcceleratorType
-                                  ]?.max,
-                                ) &&
-                                isMinOversMaxValue(
-                                  resourceLimits.accelerators[
-                                    currentAcceleratorType
-                                  ]?.min,
-                                  resourceLimits.accelerators[
-                                    currentAcceleratorType
-                                  ]?.max,
-                                )
-                              ) {
-                                return Promise.reject(
-                                  t(
-                                    'session.launcher.InsufficientAllocationOfResourcesWarning',
-                                  ),
-                                );
-                              }
-                              if (showRemainingWarning) {
-                                if (
-                                  _.isNumber(
-                                    remaining.accelerators[
+                        // Unified-memory slots clear the accelerator field
+                        // (it stays empty, not mirrored) and disable direct
+                        // edits, so none of the discrete accelerator
+                        // constraints (required, min/max, step,
+                        // remaining/unique warnings, caller-provided rules)
+                        // apply. Skip all validation in that mode.
+                        rules={
+                          isUnifiedType
+                            ? []
+                            : [
+                                {
+                                  required:
+                                    currentImageAcceleratorLimits &&
+                                    currentImageAcceleratorLimits.length > 0,
+                                },
+                                {
+                                  type: 'number',
+                                  min:
+                                    resourceLimits.accelerators[
                                       currentAcceleratorType
-                                    ],
-                                  ) &&
-                                  value >
-                                    remaining.accelerators[
-                                      currentAcceleratorType
-                                    ]
-                                ) {
-                                  return Promise.reject(
-                                    t(
-                                      'session.launcher.EnqueueComputeSessionWarning',
-                                    ),
-                                  );
-                                }
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                          {
-                            warningOnly: true,
-                            validator: async (_rule, _value) => {
-                              if (isUniqueType) {
-                                return Promise.reject(
-                                  t(
-                                    'session.launcher.CurrentAcceleratorTypeAllowsMaxOne',
-                                    {
-                                      accelerator: currentAcceleratorType,
-                                    },
-                                  ),
-                                );
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
+                                    ]?.min || 0,
+                                  // Unique type should only allow 0 or 1
+                                  max: isUniqueType
+                                    ? 1
+                                    : resourceLimits.accelerators[
+                                        currentAcceleratorType
+                                      ]?.max,
+                                },
+                                {
+                                  validator: async (
+                                    _rule: any,
+                                    value: number,
+                                  ) => {
+                                    if (
+                                      _.endsWith(
+                                        currentAcceleratorType,
+                                        'shares',
+                                      ) &&
+                                      form.getFieldValue('cluster_size') >= 2 &&
+                                      value % 1 !== 0
+                                    ) {
+                                      return Promise.reject(
+                                        t(
+                                          'session.launcher.OnlyAllowsDiscreteNumberByClusterSize',
+                                        ),
+                                      );
+                                    } else {
+                                      return Promise.resolve();
+                                    }
+                                  },
+                                },
+                                {
+                                  validator: async (
+                                    _rule: any,
+                                    value: number,
+                                  ) => {
+                                    if (
+                                      _.isNumber(currentAcceleratorStep) &&
+                                      ![0, currentAcceleratorStep].includes(
+                                        _.round(
+                                          value % currentAcceleratorStep,
+                                          5,
+                                        ),
+                                      )
+                                    ) {
+                                      return Promise.reject(
+                                        t(
+                                          'session.launcher.OnlyAllowsDiscreteNumberByQuantumSize',
+                                          {
+                                            stepSize: currentAcceleratorStep,
+                                          },
+                                        ),
+                                      );
+                                    } else {
+                                      return Promise.resolve();
+                                    }
+                                  },
+                                },
+                                {
+                                  warningOnly: true,
+                                  validator: async (
+                                    _rule: any,
+                                    value: number,
+                                  ) => {
+                                    if (
+                                      _.isNumber(
+                                        resourceLimits.accelerators[
+                                          currentAcceleratorType
+                                        ]?.min,
+                                      ) &&
+                                      _.isNumber(
+                                        resourceLimits.accelerators[
+                                          currentAcceleratorType
+                                        ]?.max,
+                                      ) &&
+                                      isMinOversMaxValue(
+                                        resourceLimits.accelerators[
+                                          currentAcceleratorType
+                                        ]?.min,
+                                        resourceLimits.accelerators[
+                                          currentAcceleratorType
+                                        ]?.max,
+                                      )
+                                    ) {
+                                      return Promise.reject(
+                                        t(
+                                          'session.launcher.InsufficientAllocationOfResourcesWarning',
+                                        ),
+                                      );
+                                    }
+                                    if (showRemainingWarning) {
+                                      if (
+                                        _.isNumber(
+                                          remaining.accelerators[
+                                            currentAcceleratorType
+                                          ],
+                                        ) &&
+                                        value >
+                                          remaining.accelerators[
+                                            currentAcceleratorType
+                                          ]
+                                      ) {
+                                        return Promise.reject(
+                                          t(
+                                            'session.launcher.EnqueueComputeSessionWarning',
+                                          ),
+                                        );
+                                      }
+                                    }
+                                    return Promise.resolve();
+                                  },
+                                },
+                                {
+                                  warningOnly: true,
+                                  validator: async (_rule, _value) => {
+                                    if (isUniqueType) {
+                                      return Promise.reject(
+                                        t(
+                                          'session.launcher.CurrentAcceleratorTypeAllowsMaxOne',
+                                          {
+                                            accelerator: currentAcceleratorType,
+                                          },
+                                        ),
+                                      );
+                                    }
+                                    return Promise.resolve();
+                                  },
+                                },
+                                ...(extraAcceleratorRules ?? []),
+                              ]
+                        }
                       >
                         <InputNumberWithSlider
                           inputContainerMinWidth={190}
@@ -1102,7 +1347,8 @@ const ResourceAllocationFormItems: React.FC<
                             marks: {
                               0: 0,
                               // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                              ...(adjustedRemainingMarkValue
+                              ...(adjustedRemainingMarkValue &&
+                              showRemainingWarning
                                 ? {
                                     [adjustedRemainingMarkValue]: {
                                       label: <RemainingMark />,
@@ -1140,6 +1386,7 @@ const ResourceAllocationFormItems: React.FC<
                           disabled={
                             supportedAcceleratorTypesInRGByImage?.length === 0
                           }
+                          disableMode={isUnifiedType ? 'empty' : 'normal'}
                           min={0}
                           max={
                             // Unique type should only allow 0 or 1
@@ -1165,12 +1412,16 @@ const ResourceAllocationFormItems: React.FC<
                                   )}
                                 >
                                   <BAISelect
+                                    // In an InputGroup the trigger resolves to
+                                    // width:100%; size it to content, bounded,
+                                    // so the number field keeps the row.
                                     style={{
-                                      width: 75,
+                                      flex: '0 0 auto',
+                                      width: 'auto',
+                                      maxWidth: 100,
                                     }}
                                     autoSelectOption
                                     tabIndex={-1}
-                                    // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
                                     suffixIcon={
                                       _.size(acceleratorSlotsInRG) > 1
                                         ? undefined
@@ -1192,6 +1443,56 @@ const ResourceAllocationFormItems: React.FC<
                                         };
                                       },
                                     )}
+                                    onChange={(nextType: string) => {
+                                      // Changing the slot type mutates the
+                                      // active allocation; the previously
+                                      // selected preset no longer matches.
+                                      form.setFieldValue(
+                                        'allocationPreset',
+                                        'custom',
+                                      );
+                                      // Keep the accelerator field consistent
+                                      // at the moment the slot type changes,
+                                      // rather than relying on a watcher
+                                      // effect that runs after render.
+                                      if (isUnifiedAcceleratorSlot(nextType)) {
+                                        // Switching INTO a unified slot: clear
+                                        // the accelerator field since unified
+                                        // memory is auto-allocated. Write
+                                        // acceleratorType first so the shared
+                                        // helper sees the new active slot when
+                                        // it reads from the form.
+                                        form.setFieldValue(
+                                          ['resource', 'acceleratorType'],
+                                          nextType,
+                                        );
+                                        syncUnifiedAcceleratorIfNeeded();
+                                      } else if (
+                                        isUnifiedAcceleratorSlot(
+                                          currentAcceleratorType,
+                                        )
+                                      ) {
+                                        // Switching OUT of a unified slot
+                                        // into a discrete one: reset to the
+                                        // discrete slot's min so the empty
+                                        // unified-mode value does not bleed
+                                        // through as a device count.
+                                        //
+                                        // Discrete-to-discrete switches are
+                                        // intentionally NOT reset here:
+                                        // ensureValidAcceleratorType clamps
+                                        // the existing value if it falls
+                                        // outside the new slot's range, so
+                                        // the user's current allocation is
+                                        // preserved across discrete slot
+                                        // changes.
+                                        form.setFieldValue(
+                                          ['resource', 'accelerator'],
+                                          resourceLimits.accelerators[nextType]
+                                            ?.min ?? 0,
+                                        );
+                                      }
+                                    }}
                                   />
                                 </Form.Item>
                               ) : undefined,
@@ -1206,80 +1507,6 @@ const ResourceAllocationFormItems: React.FC<
           }}
         </Form.Item>
       </Card>
-      {enableNumOfSessions ? (
-        <Card
-          style={{
-            marginBottom: token.margin,
-          }}
-        >
-          <Form.Item
-            noStyle
-            shouldUpdate={(prev, next) =>
-              prev.cluster_size !== next.cluster_size
-            }
-          >
-            {() => {
-              return (
-                <Form.Item
-                  name={['num_of_sessions']}
-                  label={t('webui.menu.Sessions')}
-                  tooltip={<Trans i18nKey={'session.launcher.DescSession'} />}
-                  required
-                  rules={[
-                    {
-                      required: true,
-                    },
-                    {
-                      warningOnly: true,
-                      validator: async (_rule, value: number) => {
-                        if (showRemainingWarning) {
-                          if (
-                            sessionSliderLimitAndRemaining &&
-                            value > sessionSliderLimitAndRemaining.remaining
-                          ) {
-                            return Promise.reject(
-                              t(
-                                'session.launcher.EnqueueComputeSessionWarning',
-                              ),
-                            );
-                          }
-                        }
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
-                >
-                  <InputNumberWithSlider
-                    inputContainerMinWidth={190}
-                    inputNumberProps={{
-                      suffix: '#',
-                    }}
-                    disabled={form.getFieldValue('cluster_size') > 1}
-                    sliderProps={{
-                      marks: {
-                        [sessionSliderLimitAndRemaining?.min]:
-                          sessionSliderLimitAndRemaining?.min,
-                        // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                        ...(sessionSliderLimitAndRemaining?.remaining
-                          ? {
-                              [sessionSliderLimitAndRemaining?.remaining]: {
-                                label: <RemainingMark />,
-                              },
-                            }
-                          : {}),
-                        [sessionSliderLimitAndRemaining?.max]:
-                          sessionSliderLimitAndRemaining?.max,
-                      },
-                    }}
-                    min={sessionSliderLimitAndRemaining?.min}
-                    max={sessionSliderLimitAndRemaining?.max}
-                  />
-                </Form.Item>
-              );
-            }}
-          </Form.Item>
-        </Card>
-      ) : null}
       {/* TODO: Support cluster mode */}
       {enableAgentSelect && (
         <Form.Item
@@ -1325,271 +1552,262 @@ const ResourceAllocationFormItems: React.FC<
               </Form.Item>
             </Suspense>
             <Form.Item noStyle>
-              <Button
-                loading={isPendingAgentList}
+              {/* MAPPING §3.3: icon-only, no children -> `IconButton`, whose
+                  required `label` finally names this refresh control. */}
+              <IconButton
+                isLoading={isPendingAgentList}
                 onClick={() => {
                   startAgentListTransition(() => updateAgentFetchKey());
                 }}
-                icon={<ReloadOutlined />}
-              ></Button>
+                icon={<RotateCw size="1em" />}
+                label={t('button.Refresh')}
+                tooltip={t('button.Refresh')}
+              />
             </Form.Item>
           </BAIFlex>
         </Form.Item>
       )}
-      <Form.Item
-        label={t('session.launcher.ClusterMode')}
-        required
-        dependencies={['agent']}
-      >
-        {({ getFieldValue }) => {
-          return (
-            <Card
-              style={{
-                marginBottom: token.margin,
-              }}
-            >
-              <Row gutter={token.marginMD}>
-                <Col xs={24}>
-                  {/* <Col xs={24} lg={12}> */}
-                  <Form.Item name={'cluster_mode'} required>
-                    <Radio.Group
-                      onChange={() => {
-                        form.validateFields().catch(() => {});
-                      }}
-                      disabled={
+      {!hideClusterFormItems && (
+        <Form.Item
+          label={t('session.launcher.ClusterMode')}
+          required
+          dependencies={['agent']}
+        >
+          {({ getFieldValue }) => {
+            return (
+              <>
+                {/* RESPONSIVE-POLICY: `Row gutter` + two full-width
+                    `Col xs={24}` is a single column with a gap — not a grid.
+                    MAPPING §3.9 keeps only the breakpoint-free shapes, and
+                    this one is `VStack gap`. No `xs`-driven reflow is lost:
+                    both columns already spanned the full 24.
+                    The Radio.Group -> SegmentedControl move mirrors
+                    `ClusterModeFormItems` exactly. */}
+                <VStack gap={5} align="stretch">
+                  <Form.Item name={'cluster_mode'} required noStyle>
+                    <ClusterModeSegmented
+                      label={t('session.launcher.ClusterMode')}
+                      isDisabled={
                         !supportMultiAgents &&
                         !_.isEqual(_.castArray(getFieldValue('agent')), [
                           'auto',
                         ])
                       }
-                    >
-                      <Radio.Button value="multi-node">
-                        {t('session.launcher.MultiNode')}
-                        <Tooltip
-                          title={
+                      onValueChange={() => {
+                        form.validateFields().catch(() => {});
+                      }}
+                      items={[
+                        {
+                          value: 'multi-node',
+                          label: t('session.launcher.MultiNode'),
+                          tooltip: (
                             <Trans i18nKey={'session.launcher.DescMultiNode'} />
-                          }
-                        >
-                          <InfoCircleOutlined
-                            style={{ marginLeft: token.marginXXS }}
-                          />
-                        </Tooltip>
-                      </Radio.Button>
-                      <Radio.Button value="single-node">
-                        {t('session.launcher.SingleNode')}
-                        <Tooltip
-                          title={
+                          ),
+                        },
+                        {
+                          value: 'single-node',
+                          label: t('session.launcher.SingleNode'),
+                          tooltip: (
                             <Trans
                               i18nKey={'session.launcher.DescSingleNode'}
                             />
-                          }
-                        >
-                          <InfoCircleOutlined
-                            style={{ marginLeft: token.marginXXS }}
-                          />
-                        </Tooltip>
-                      </Radio.Button>
-                    </Radio.Group>
+                          ),
+                        },
+                      ]}
+                    />
                   </Form.Item>
-                </Col>
-                <Col xs={24}>
-                  <Form.Item
-                    noStyle
-                    shouldUpdate={(prev, next) =>
-                      prev.cluster_mode !== next.cluster_mode ||
-                      prev.resource?.cpu !== next.resource?.cpu ||
-                      prev.resource?.mem !== next.resource?.mem ||
-                      prev.resource?.accelerator !==
-                        next.resource?.accelerator ||
-                      prev.resource?.acceleratorType !==
-                        next.resource?.acceleratorType
-                    }
-                  >
-                    {() => {
-                      const derivedClusterSizeMaxLimit =
-                        keypairResourcePolicy.max_containers_per_session;
-
-                      const clusterUnit =
-                        form.getFieldValue('cluster_mode') === 'single-node'
-                          ? t('session.launcher.Container')
-                          : t('session.launcher.Node');
-
-                      // Calculate max cluster size that can start immediately
-                      // based on current resource allocation and remaining resources
-                      const currentResource = form.getFieldValue('resource');
-                      const maxClusterCandidates: number[] = [];
-                      if (
-                        Number.isFinite(remaining.cpu) &&
-                        currentResource?.cpu > 0
-                      ) {
-                        maxClusterCandidates.push(
-                          Math.floor(remaining.cpu! / currentResource.cpu),
-                        );
+                  <>
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(prev, next) =>
+                        prev.cluster_mode !== next.cluster_mode ||
+                        prev.cluster_size !== next.cluster_size ||
+                        prev.resource?.cpu !== next.resource?.cpu ||
+                        prev.resource?.mem !== next.resource?.mem ||
+                        prev.resource?.accelerator !==
+                          next.resource?.accelerator ||
+                        prev.resource?.acceleratorType !==
+                          next.resource?.acceleratorType
                       }
-                      if (
-                        Number.isFinite(remaining.mem) &&
-                        currentResource?.mem
-                      ) {
-                        const memBytes =
-                          convertToBinaryUnit(currentResource.mem, '')
-                            ?.number || 0;
-                        if (memBytes > 0) {
+                    >
+                      {() => {
+                        const derivedClusterSizeMaxLimit =
+                          keypairResourcePolicy.max_containers_per_session;
+
+                        const clusterUnit =
+                          form.getFieldValue('cluster_mode') === 'single-node'
+                            ? t('session.launcher.Container')
+                            : t('session.launcher.Node');
+
+                        // Calculate max cluster size that can start immediately
+                        // based on current resource allocation and remaining resources
+                        const currentResource = form.getFieldValue('resource');
+                        const maxClusterCandidates: number[] = [];
+                        if (
+                          Number.isFinite(remaining.cpu) &&
+                          currentResource?.cpu > 0
+                        ) {
                           maxClusterCandidates.push(
-                            Math.floor(remaining.mem! / memBytes),
+                            Math.floor(remaining.cpu! / currentResource.cpu),
                           );
                         }
-                      }
-                      const accelType = currentResource?.acceleratorType;
-                      const accelValue = currentResource?.accelerator || 0;
-                      if (
-                        accelType &&
-                        accelValue > 0 &&
-                        Number.isFinite(remaining.accelerators[accelType])
-                      ) {
-                        maxClusterCandidates.push(
-                          Math.floor(
-                            remaining.accelerators[accelType]! / accelValue,
-                          ),
-                        );
-                      }
-                      const maxImmediateClusterSize =
-                        maxClusterCandidates.length > 0
-                          ? _.min(maxClusterCandidates)
-                          : undefined;
+                        if (
+                          Number.isFinite(remaining.mem) &&
+                          currentResource?.mem
+                        ) {
+                          const memBytes =
+                            convertToBinaryUnit(currentResource.mem, '')
+                              ?.number || 0;
+                          if (memBytes > 0) {
+                            maxClusterCandidates.push(
+                              Math.floor(remaining.mem! / memBytes),
+                            );
+                          }
+                        }
+                        const accelType = currentResource?.acceleratorType;
+                        const accelValue = currentResource?.accelerator || 0;
+                        if (
+                          accelType &&
+                          accelValue > 0 &&
+                          Number.isFinite(remaining.accelerators[accelType])
+                        ) {
+                          maxClusterCandidates.push(
+                            Math.floor(
+                              remaining.accelerators[accelType]! / accelValue,
+                            ),
+                          );
+                        }
+                        const maxImmediateClusterSize =
+                          maxClusterCandidates.length > 0
+                            ? _.min(maxClusterCandidates)
+                            : undefined;
 
-                      // Use resource-aware remaining mark instead of raw remaining.cpu
-                      // Clamp to slider max so the mark doesn't render outside the range
-                      const remainingMarkValue =
-                        _.isNumber(maxImmediateClusterSize) &&
-                        maxImmediateClusterSize >= 1
-                          ? _.isNumber(derivedClusterSizeMaxLimit)
-                            ? Math.min(
-                                maxImmediateClusterSize,
-                                derivedClusterSizeMaxLimit,
-                              )
-                            : maxImmediateClusterSize
-                          : undefined;
+                        // Use resource-aware remaining mark instead of raw remaining.cpu
+                        // Clamp to slider max so the mark doesn't render outside the range
+                        const remainingMarkValue =
+                          _.isNumber(maxImmediateClusterSize) &&
+                          maxImmediateClusterSize >= 1
+                            ? _.isNumber(derivedClusterSizeMaxLimit)
+                              ? Math.min(
+                                  maxImmediateClusterSize,
+                                  derivedClusterSizeMaxLimit,
+                                )
+                              : maxImmediateClusterSize
+                            : undefined;
 
-                      return (
-                        <Form.Item
-                          name={'cluster_size'}
-                          label={t('session.launcher.ClusterSize')}
-                          required
-                          dependencies={[
-                            ['resource', 'cpu'],
-                            ['resource', 'mem'],
-                            ['resource', 'accelerator'],
-                            ['resource', 'acceleratorType'],
-                          ]}
-                          rules={[
-                            {
-                              warningOnly: true,
-                              validator: async (_rule, value: number) => {
-                                if (showRemainingWarning && value > 1) {
-                                  // Only show cluster-specific warning when at least 1 cluster
-                                  // can start immediately. When maxImmediateClusterSize is 0,
-                                  // per-resource warnings already cover the situation.
+                        return (
+                          <Form.Item
+                            name={'cluster_size'}
+                            noStyle
+                            required
+                            dependencies={[
+                              ['resource', 'cpu'],
+                              ['resource', 'mem'],
+                              ['resource', 'accelerator'],
+                              ['resource', 'acceleratorType'],
+                            ]}
+                            rules={[
+                              {
+                                warningOnly: true,
+                                validator: async (_rule, value: number) => {
                                   if (
-                                    _.isNumber(maxImmediateClusterSize) &&
-                                    maxImmediateClusterSize >= 1 &&
-                                    value > maxImmediateClusterSize
+                                    form.getFieldValue('cluster_mode') ===
+                                      'multi-node' &&
+                                    value === 1
                                   ) {
                                     return Promise.reject(
                                       t(
-                                        'session.launcher.ClusterSizeExceedsImmediateCapacity',
-                                        {
-                                          maxClusterSize:
-                                            maxImmediateClusterSize,
-                                          unit: clusterUnit,
-                                        },
+                                        'session.launcher.ClusterSizeOneMultiNodeConvertInfo',
                                       ),
                                     );
                                   }
-                                }
-                                return Promise.resolve();
-                              },
-                            },
-                          ]}
-                        >
-                          <InputNumberWithSlider
-                            inputContainerMinWidth={190}
-                            min={1}
-                            step={1}
-                            // TODO: max cluster size
-                            max={
-                              _.isNumber(derivedClusterSizeMaxLimit)
-                                ? derivedClusterSizeMaxLimit
-                                : undefined
-                            }
-                            disabled={
-                              derivedClusterSizeMaxLimit === 1 ||
-                              (!supportMultiAgents &&
-                                !_.isEqual(
-                                  _.castArray(getFieldValue('agent')),
-                                  ['auto'],
-                                ))
-                            }
-                            sliderProps={{
-                              marks: {
-                                1: '1',
-                                // remaining mark code should be located before max mark code to prevent overlapping when it is same value
-                                ...(remainingMarkValue
-                                  ? {
-                                      [remainingMarkValue]: {
-                                        label: <RemainingMark />,
-                                      },
-                                    }
-                                  : {}),
-                                ...(_.isNumber(derivedClusterSizeMaxLimit)
-                                  ? {
-                                      [derivedClusterSizeMaxLimit]:
-                                        derivedClusterSizeMaxLimit,
-                                    }
-                                  : {}),
-                              },
-                              tooltip: {
-                                formatter: (value = 0) => {
-                                  return `${value} ${clusterUnit}`;
+                                  return Promise.resolve();
                                 },
                               },
-                            }}
-                            inputNumberProps={{
-                              suffix: clusterUnit,
-                            }}
-                            onChange={(value) => {
-                              if (value > 1) {
-                                form.setFieldValue('num_of_sessions', 1);
+                              {
+                                warningOnly: true,
+                                validator: async (_rule, value: number) => {
+                                  if (showRemainingWarning && value > 1) {
+                                    if (
+                                      _.isNumber(maxImmediateClusterSize) &&
+                                      maxImmediateClusterSize >= 1 &&
+                                      value > maxImmediateClusterSize
+                                    ) {
+                                      return Promise.reject(
+                                        t(
+                                          'session.launcher.ClusterSizeExceedsImmediateCapacity',
+                                          {
+                                            maxClusterSize:
+                                              maxImmediateClusterSize,
+                                            unit: clusterUnit,
+                                          },
+                                        ),
+                                      );
+                                    }
+                                  }
+                                  return Promise.resolve();
+                                },
+                              },
+                            ]}
+                          >
+                            <InputNumberWithSlider
+                              inputContainerMinWidth={190}
+                              min={1}
+                              step={1}
+                              // TODO: max cluster size
+                              max={
+                                _.isNumber(derivedClusterSizeMaxLimit)
+                                  ? derivedClusterSizeMaxLimit
+                                  : undefined
                               }
-                            }}
-                          />
-                        </Form.Item>
-                      );
-                    }}
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Card>
-          );
-        }}
-      </Form.Item>
+                              disabled={
+                                derivedClusterSizeMaxLimit === 1 ||
+                                (!supportMultiAgents &&
+                                  !_.isEqual(
+                                    _.castArray(getFieldValue('agent')),
+                                    ['auto'],
+                                  ))
+                              }
+                              sliderProps={{
+                                marks: {
+                                  1: '1',
+                                  // remaining mark code should be located before max mark code to prevent overlapping when it is same value
+                                  ...(remainingMarkValue && showRemainingWarning
+                                    ? {
+                                        [remainingMarkValue]: {
+                                          label: <RemainingMark />,
+                                        },
+                                      }
+                                    : {}),
+                                  ...(_.isNumber(derivedClusterSizeMaxLimit)
+                                    ? {
+                                        [derivedClusterSizeMaxLimit]:
+                                          derivedClusterSizeMaxLimit,
+                                      }
+                                    : {}),
+                                },
+                                tooltip: {
+                                  formatter: (value = 0) => {
+                                    return `${value} ${clusterUnit}`;
+                                  },
+                                },
+                              }}
+                              inputNumberProps={{
+                                suffix: clusterUnit,
+                              }}
+                            />
+                          </Form.Item>
+                        );
+                      }}
+                    </Form.Item>
+                  </>
+                </VStack>
+              </>
+            );
+          }}
+        </Form.Item>
+      )}
     </>
-  );
-};
-
-const RemainingMark: React.FC<{ title?: string }> = () => {
-  const { token } = theme.useToken();
-  return (
-    <BAIFlex
-      style={{
-        position: 'absolute',
-        top: -24,
-        transform: 'translateX(-50%)',
-        color: token.colorSuccess,
-        opacity: 0.5,
-      }}
-    >
-      <CaretDownOutlined />
-    </BAIFlex>
   );
 };
 

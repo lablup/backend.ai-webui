@@ -1,0 +1,62 @@
+# Deterministic checks for the user-manual package (FR-3276).
+#
+# Runs the docs package's script-based lints on any PR that touches the
+# manual. These previously existed only as local npm scripts with no CI
+# teeth:
+#   - check:terminology-md — TERMINOLOGY.md is in sync with terminology.json
+#   - check:nav-titles     — sidebar nav labels relate to their page H1s
+#     (guards against "Sessions All"-style label/title drift; see
+#     packages/backend.ai-webui-docs/scripts/check-nav-titles.mjs)
+#
+# FR-3373 added a third: the manual's prose is scanned against the same
+# terminology.json `avoid[]` rows that already hard-gate the i18n stores. Until
+# then the termbase governed its consumers but not its own home — the ko manual
+# had drifted to `슈퍼관리자` while i18n stayed clean, because TERMINOLOGY.md's
+# rename checklist has a verification step for step 2 (UI locales) and had none
+# for step 3 (the 4 doc languages).
+name: docs-checks
+
+on:
+  pull_request:
+    paths:
+      # Image/PDF-only docs PRs (most of the trigger surface) carry nothing
+      # these text checks can read. Mixed md+png PRs still run — the
+      # include/exclude match is per-file. terminology.json stays in scope:
+      # this workflow is the only CI gate for the TERMINOLOGY.md sync check.
+      - "packages/backend.ai-webui-docs/**"
+      - "!packages/backend.ai-webui-docs/**/*.png"
+      - "!packages/backend.ai-webui-docs/**/*.svg"
+      - "!packages/backend.ai-webui-docs/**/*.pdf"
+      - ".github/workflows/docs-checks.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  docs-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The install is load-bearing: check-nav-titles.mjs imports `yaml`.
+      - uses: ./.github/actions/setup-node-pnpm
+        with:
+          install-args: "--filter backend.ai-webui-docs"
+
+      - name: Terminology table in sync
+        run: pnpm --filter backend.ai-webui-docs run check:terminology-md
+
+      - name: Nav labels relate to page H1s
+        run: pnpm --filter backend.ai-webui-docs run check:nav-titles
+
+      # Same checker, same termbase, same severity model as scripts/verify.sh:
+      # a bare-English `avoid[]` term blocks; non-English and context-qualified
+      # rows warn. Dependency-free (native Node), so it needs no extra install.
+      # It scans the i18n stores too — their baseline is clean, and a docs PR
+      # that somehow introduces UI-label drift should be caught here as well.
+      - name: Terminology drift (manual prose + i18n)
+        run: node scripts/check-terminology-i18n.mjs --strict

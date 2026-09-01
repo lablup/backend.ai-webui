@@ -1,25 +1,41 @@
 import { BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromGroupFragment.graphql';
 import { BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment.graphql';
 import { BAIAllowedVfolderHostsWithPermissionQuery } from '../../__generated__/BAIAllowedVfolderHostsWithPermissionQuery.graphql';
+import {
+  SemanticColor,
+  v2AllowedVfolderHostsToRecord,
+  type V2AllowedVfolderHostEntry,
+} from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIModal from '../BAIModal';
 import { BAITable } from '../Table';
-import { CheckCircleFilled, StopFilled } from '@ant-design/icons';
-import { Badge, theme } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { CircleCheck, Ban, LockIcon, LockOpenIcon } from 'lucide-react';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 export type BAIAllowedVfolderHostsWithPermissionProps =
   | {
       allowedHostPermissionFrgmtFromKeyPair: BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment$key;
       allowedHostPermissionFrgmtFromGroup?: never;
+      allowedVfolderHostEntries?: never;
     }
   | {
       allowedHostPermissionFrgmtFromKeyPair?: never;
       allowedHostPermissionFrgmtFromGroup: BAIAllowedVfolderHostsWithPermissionFromGroupFragment$key;
+      allowedVfolderHostEntries?: never;
+    }
+  | {
+      allowedHostPermissionFrgmtFromKeyPair?: never;
+      allowedHostPermissionFrgmtFromGroup?: never;
+      /**
+       * The Strawberry V2 `[VFolderHostPermissionEntry!]` shape, for callers
+       * on a V2 node that has no JSONString field to spread a fragment from.
+       */
+      allowedVfolderHostEntries: ReadonlyArray<V2AllowedVfolderHostEntry>;
     };
 
 const BAIAllowedVfolderHostsWithPermission: React.FC<
@@ -27,8 +43,9 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
 > = ({
   allowedHostPermissionFrgmtFromKeyPair,
   allowedHostPermissionFrgmtFromGroup,
+  allowedVfolderHostEntries,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const [storageHost, setStorageHost] = React.useState<string | null>();
 
@@ -52,11 +69,14 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
       allowedHostPermissionFrgmtFromGroup,
     );
 
-  const allowedVfolderHosts = JSON.parse(
-    keypairResourcePolicy?.allowed_vfolder_hosts ||
-      groupNode?.allowed_vfolder_hosts ||
-      '{}',
-  );
+  const allowedVfolderHosts: Record<string, string[]> =
+    allowedVfolderHostEntries
+      ? v2AllowedVfolderHostsToRecord(allowedVfolderHostEntries)
+      : JSON.parse(
+          keypairResourcePolicy?.allowed_vfolder_hosts ||
+            groupNode?.allowed_vfolder_hosts ||
+            '{}',
+        );
 
   const { vfolder_host_permissions } =
     useLazyLoadQuery<BAIAllowedVfolderHostsWithPermissionQuery>(
@@ -70,36 +90,60 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
       {},
     );
 
-  const getColor = (vfolderHost: string) => {
+  const getColor = (vfolderHost: string): SemanticColor => {
     if (
       _.isEqual(
         new Set(allowedVfolderHosts[vfolderHost]),
         new Set(vfolder_host_permissions?.vfolder_host_permission_list || null),
       )
     ) {
-      return 'green';
+      return 'success';
     } else if (allowedVfolderHosts[vfolderHost]?.length > 0) {
-      return 'gold';
+      return 'warning';
     } else {
-      return 'red';
+      return 'error';
     }
   };
 
   return (
     <>
       <BAIFlex gap="xs" wrap="wrap">
-        {_.map(_.keys(allowedVfolderHosts), (storageHost) => (
-          <BAILink
-            key={storageHost}
-            onClick={() => {
-              setStorageHost(storageHost);
-            }}
-            type="hover"
-          >
-            <Badge color={getColor(storageHost)} />
-            &nbsp;{storageHost}
-          </BAILink>
-        ))}
+        {_.map(_.keys(allowedVfolderHosts), (storageHost) => {
+          const color = getColor(storageHost);
+          return (
+            <BAILink
+              key={storageHost}
+              onClick={() => {
+                setStorageHost(storageHost);
+              }}
+              type="hover"
+            >
+              <BAIFlex gap="xxs" align="center">
+                {color === 'error' ? (
+                  <LockIcon
+                    size={14}
+                    aria-hidden="true"
+                    focusable={false}
+                    style={{ color: token.colorError }}
+                  />
+                ) : (
+                  <LockOpenIcon
+                    size={14}
+                    aria-hidden="true"
+                    focusable={false}
+                    style={{
+                      color:
+                        color === 'success'
+                          ? token.colorSuccess
+                          : token.colorWarning,
+                    }}
+                  />
+                )}
+                {storageHost}
+              </BAIFlex>
+            </BAILink>
+          );
+        })}
       </BAIFlex>
       <BAIModal
         centered
@@ -119,24 +163,6 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
               isAllowed: _.includes(
                 _.get(allowedVfolderHosts, storageHost || ''),
                 permission,
-              ) ? (
-                <BAIFlex justify="center">
-                  <CheckCircleFilled
-                    style={{
-                      color: token.green5,
-                      fontSize: token.fontSizeLG,
-                    }}
-                  />
-                </BAIFlex>
-              ) : (
-                <BAIFlex justify="center">
-                  <StopFilled
-                    style={{
-                      color: token.red5,
-                      fontSize: token.fontSizeLG,
-                    }}
-                  />
-                </BAIFlex>
               ),
             }),
           )}
@@ -150,6 +176,27 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
               title: t('comp:AllowedVfolderHostsWithPermission.Allowed'),
               dataIndex: 'isAllowed',
               key: 'isAllowed',
+              render: (isAllowed: boolean) => (
+                <BAIFlex justify="center">
+                  {isAllowed ? (
+                    <CircleCheck
+                      style={{
+                        color: token.green5,
+                        fontSize: token.fontSizeLG,
+                      }}
+                      size="1em"
+                    />
+                  ) : (
+                    <Ban
+                      style={{
+                        color: token.red5,
+                        fontSize: token.fontSizeLG,
+                      }}
+                      size="1em"
+                    />
+                  )}
+                </BAIFlex>
+              ),
             },
           ]}
         />

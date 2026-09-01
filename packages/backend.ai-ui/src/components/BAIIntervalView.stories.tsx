@@ -1,7 +1,7 @@
+import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
 import BAIIntervalView from './BAIIntervalView';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button } from 'antd';
 import { useRef, useState } from 'react';
 
 /**
@@ -176,9 +176,9 @@ export const ManualTrigger: Story = {
 
     return (
       <BAIFlex direction="column" gap="md">
-        <Button onClick={() => setTriggerKey(Date.now().toString())}>
+        <BAIButton onClick={() => setTriggerKey(Date.now().toString())}>
           Trigger Update
-        </Button>
+        </BAIButton>
 
         <div>
           <div style={{ marginBottom: 8, fontWeight: 500 }}>
@@ -225,18 +225,18 @@ export const PauseResume: Story = {
     return (
       <BAIFlex direction="column" gap="md">
         <BAIFlex gap="sm">
-          <Button
+          <BAIButton
             onClick={() => setDelay(1000)}
             type={delay === 1000 ? 'primary' : 'default'}
           >
             Start (1s)
-          </Button>
-          <Button
+          </BAIButton>
+          <BAIButton
             onClick={() => setDelay(null)}
             type={delay === null ? 'primary' : 'default'}
           >
             Pause
-          </Button>
+          </BAIButton>
         </BAIFlex>
 
         <div>
@@ -362,9 +362,13 @@ export const RealWorldExample: Story = {
           />
         </div>
 
-        <Button onClick={() => setIsRunning(!isRunning)} type="primary" block>
+        <BAIButton
+          onClick={() => setIsRunning(!isRunning)}
+          type="primary"
+          block
+        >
           {isRunning ? 'Pause Monitoring' : 'Resume Monitoring'}
-        </Button>
+        </BAIButton>
       </BAIFlex>
     );
   },

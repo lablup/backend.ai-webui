@@ -25,17 +25,35 @@
       "Bash(ls)",
       "mcp__playwright-test__test_run",
       "mcp__playwright-test__test_list"
+    ],
+    "deny": [
+      "Bash(gt)",
+      "Bash(gt:*)",
+      "mcp__graphite"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/scripts/block-gt.sh"
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
     "type": "command",
     "command": ".claude/scripts/statusline.sh",
-    "padding": 0
+    "padding": 0,
+    "refreshInterval": 10
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "Atlassian",
-    "playwright-test",
-    "graphite"
+    "playwright-test"
   ]
 }

@@ -1,3 +1,7 @@
+---
+navTitle: Installation
+---
+
 # Installation
 
 Backend.AI WebUI can be used in two different forms.

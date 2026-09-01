@@ -1,11 +1,12 @@
 // spec: Suite 5: Upload to Subdirectory
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   loginAsUser,
   navigateTo,
   createVFolderAndVerify,
-  moveToTrashAndVerify,
-  deleteForeverAndVerifyFromTrash,
+  selectPropertyFilter,
+  clearAllFilters,
 } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 import fs from 'fs';
@@ -17,7 +18,8 @@ const openFolderExplorer = async (
   folderName: string,
 ): Promise<FolderExplorerModal> => {
   await navigateTo(page, 'data');
-  await page.waitForLoadState('networkidle');
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
   const folderLink = page.getByRole('link', { name: folderName }).first();
   await expect(folderLink).toBeVisible({ timeout: 15000 });
   await folderLink.click();
@@ -27,10 +29,12 @@ const openFolderExplorer = async (
   return modal;
 };
 
-test.describe.serial(
+// Not serial: single test — no ordering dependency.
+test.describe(
   'Upload to Subdirectory',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
+    test.describe.configure({ timeout: 90_000 });
     const testFolderName = 'e2e-test-subdir-upload-' + Date.now();
     const subfolderName = 'test-subfolder';
     let tmpDir: string;
@@ -53,18 +57,14 @@ test.describe.serial(
     });
 
     test.afterAll(async ({ browser, request }) => {
+      test.setTimeout(180_000);
       // Cleanup: delete VFolder
       const context = await browser.newContext();
       const page = await context.newPage();
 
       await loginAsUser(page, request);
 
-      try {
-        await moveToTrashAndVerify(page, testFolderName);
-        await deleteForeverAndVerifyFromTrash(page, testFolderName);
-      } catch {
-        console.log(`Could not delete ${testFolderName}, it may not exist`);
-      }
+      await cleanupVFolderSafely(page, testFolderName);
 
       await context.close();
 
@@ -112,13 +112,27 @@ test.describe.serial(
       // Verify the subfolder appears in the file table (this implicitly waits for folder creation)
       await modal.verifyFileVisible(subfolderName);
 
-      // 5. Navigate into the newly created folder (click folder name)
-      await page.getByRole('cell', { name: subfolderName }).first().click();
+      // 5. Navigate into the newly created folder by clicking the folder name link
+      // inside the Name cell. Clicking the cell itself only triggers row selection
+      // (onRow handler); the actual navigation is on the Typography.Text element
+      // wrapping the folder icon + name (BAIFileExplorer's onClick handler).
+      const folderNameCell = page
+        .getByRole('dialog')
+        .first()
+        .getByRole('cell')
+        .filter({ hasText: subfolderName })
+        .first();
+      await expect(folderNameCell).toBeVisible({ timeout: 10000 });
+      await folderNameCell.getByText(subfolderName).click();
 
       // 6. Verify breadcrumb shows the subdirectory path (waits for navigation)
       await expect(
-        page.locator('.ant-breadcrumb').getByText(subfolderName),
-      ).toBeVisible();
+        page
+          .getByRole('dialog')
+          .first()
+          .locator('.ant-breadcrumb')
+          .getByText(subfolderName),
+      ).toBeVisible({ timeout: 10000 });
 
       // 7. Upload a file via Upload button
       const uploadButton = await modal.getUploadButton();
@@ -136,8 +150,12 @@ test.describe.serial(
       await modal.verifyFileVisible(fileName);
 
       // 9. Navigate back to root (click home in breadcrumb)
-      // The breadcrumb has a home icon at the beginning
-      const breadcrumb = page.locator('.ant-breadcrumb');
+      // The breadcrumb has a home icon at the beginning; scope to the dialog
+      // to avoid matching the page-level breadcrumb.
+      const breadcrumb = page
+        .getByRole('dialog')
+        .first()
+        .locator('.ant-breadcrumb');
       await breadcrumb.locator('a').first().click();
 
       // 10. Verify navigation back to root by checking subfolder is visible again

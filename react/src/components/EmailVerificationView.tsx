@@ -2,9 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+// Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
+import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
-import { App, Form, Input } from 'antd';
-import { BAIButton, BAIFlex, BAIModal } from 'backend.ai-ui';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { BAIFlex, BAIModal } from 'backend.ai-ui';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -56,6 +61,7 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
           setVerificationState('failed');
         });
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- missing-token failure state kept per review
       setVerificationState('failed');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,9 +93,12 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
         open={verificationState === 'success'}
         title={t('signUp.EmailVerified')}
         footer={
-          <BAIButton type="primary" block onClick={redirectToLoginPage}>
-            {t('login.Login')}
-          </BAIButton>
+          <Button
+            variant="primary"
+            width="100%"
+            onClick={redirectToLoginPage}
+            label={t('login.Login')}
+          />
         }
         closable={false}
         maskClosable={false}
@@ -104,15 +113,14 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
         open={verificationState === 'failed'}
         title={t('signUp.EmailVerificationFailed')}
         footer={
-          <BAIButton
-            type="primary"
-            block
-            action={async () => {
+          <Button
+            variant="primary"
+            width="100%"
+            clickAction={async () => {
               await handleResendVerification();
             }}
-          >
-            {t('signUp.SendEmail')}
-          </BAIButton>
+            label={t('signUp.SendEmail')}
+          />
         }
         closable={false}
         maskClosable={false}
@@ -123,7 +131,7 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
             {t('signUp.EmailVerificationFailedMessage')}
           </p>
           <Form form={form} style={{ marginTop: 20 }}>
-            <Form.Item
+            <BAIFormItem
               name="email"
               rules={[
                 {
@@ -141,12 +149,12 @@ const EmailVerificationView: React.FC<EmailVerificationViewProps> = ({
                 },
               ]}
             >
-              <Input
+              <AstryxFormTextInput
+                label={t('data.explorer.EnterEmailAddress')}
                 placeholder={t('data.explorer.EnterEmailAddress')}
-                autoFocus
-                maxLength={64}
+                hasAutoFocus
               />
-            </Form.Item>
+            </BAIFormItem>
           </Form>
         </BAIFlex>
       </BAIModal>

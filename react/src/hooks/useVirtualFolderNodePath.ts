@@ -4,7 +4,7 @@
  */
 import { useVirtualFolderNodePathFragment$key } from '../__generated__/useVirtualFolderNodePathFragment.graphql';
 import { toLocalId } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
 export const useVirtualFolderPath = (

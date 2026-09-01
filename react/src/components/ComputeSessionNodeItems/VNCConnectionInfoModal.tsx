@@ -2,8 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Alert, Descriptions, Typography } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Link } from '@astryxdesign/core/Link';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import {
+  BAIFlex,
+  BAIMetadataList,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 interface VNCConnectionInfoModalProps extends BAIModalProps {
@@ -19,29 +26,22 @@ const VNCConnectionInfoModal: React.FC<VNCConnectionInfoModalProps> = ({
   'use memo';
   const { t } = useTranslation();
   const vncDisplayUrl = `vnc://${host}:${port}`;
-  // Note: Original code uses ssh:// in href but displays vnc://
   const vncHref = `vnc://${host}:${port}`;
 
   return (
     <BAIModal title={t('session.VNCconnection')} footer={null} {...modalProps}>
       <BAIFlex direction="column" align="stretch" gap="md">
-        <Alert
-          title={t('session.UseYourFavoriteVNCApp')}
-          type="info"
-          showIcon
-        />
-        <Descriptions
-          column={1}
-          bordered
-          size="small"
+        <Banner status="info" title={t('session.UseYourFavoriteVNCApp')} />
+        <BAIMetadataList
+          columns="single"
           title={t('session.ConnectionInformation')}
         >
-          <Descriptions.Item label="VNC URL">
-            <Typography.Link href={vncHref} target="_blank">
+          <MetadataListItem label="VNC URL">
+            <Link href={vncHref} target="_blank">
               {vncDisplayUrl}
-            </Typography.Link>
-          </Descriptions.Item>
-        </Descriptions>
+            </Link>
+          </MetadataListItem>
+        </BAIMetadataList>
       </BAIFlex>
     </BAIModal>
   );

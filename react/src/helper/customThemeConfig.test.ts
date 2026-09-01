@@ -4,35 +4,48 @@ import {
   type CustomThemeConfig,
   type LogoConfig,
 } from './customThemeConfig';
+import type { Mock, MockInstance } from 'vitest';
 
 describe('customThemeConfig', () => {
-  let fetchMock: jest.Mock;
+  let fetchMock: Mock;
   let originalFetch: typeof global.fetch;
-  let dispatchEventSpy: jest.SpyInstance;
-  const originalNodeEnv: string | undefined = process.env.NODE_ENV;
+  let dispatchEventSpy: MockInstance;
 
   beforeEach(() => {
     // Save original values
     originalFetch = global.fetch;
 
     // Setup fetch mock
-    fetchMock = jest.fn();
+    fetchMock = vi.fn();
     global.fetch = fetchMock as unknown as typeof global.fetch;
 
     // Setup event dispatcher spy
-    dispatchEventSpy = jest.spyOn(document, 'dispatchEvent');
+    dispatchEventSpy = vi.spyOn(document, 'dispatchEvent');
   });
 
   afterEach(() => {
     // Restore original values
     global.fetch = originalFetch;
-    Object.defineProperty(process.env, 'NODE_ENV', {
-      value: originalNodeEnv,
-      writable: true,
-      configurable: true,
-    });
-    jest.clearAllMocks();
+    // Vitest 4 / Node 20+ make `process.env.NODE_ENV` non-configurable, so
+    // `Object.defineProperty` throws. `vi.stubEnv` is the supported way.
+    vi.unstubAllEnvs();
+    vi.clearAllMocks();
   });
+
+  // Route the fetch mock by URL; each entry in `themes` feeds one
+  // `loadCustomThemeConfig` call.
+  const mockThemeFetch = (...themes: unknown[]) => {
+    const themeQueue = [...themes];
+    fetchMock.mockImplementation((url: string) => {
+      if (url === 'resources/theme.json') {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(themeQueue.shift()),
+        } as unknown as Response);
+      }
+      return Promise.reject(new Error(`Unexpected fetch: ${url}`));
+    });
+  };
 
   describe('getCustomTheme', () => {
     it('should return undefined when no theme is loaded', () => {
@@ -52,10 +65,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -79,10 +89,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockLegacyTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockLegacyTheme);
 
       loadCustomThemeConfig();
 
@@ -101,13 +108,10 @@ describe('customThemeConfig', () => {
       expect(theme?.logo).toEqual(mockLegacyTheme.logo);
     });
 
-    it('should apply REACT_APP_THEME_COLOR in development environment', async () => {
-      Object.defineProperty(process.env, 'NODE_ENV', {
-        value: 'development',
-        writable: true,
-        configurable: true,
-      });
-      process.env.REACT_APP_THEME_COLOR = '#ff0000';
+    it('should apply VITE_THEME_HEADER_COLOR in development environment', async () => {
+      vi.stubEnv('MODE', 'development');
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
 
       const mockTheme: CustomThemeConfig = {
         light: {
@@ -124,10 +128,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -138,13 +139,10 @@ describe('customThemeConfig', () => {
       expect(theme?.dark.components?.Layout?.headerBg).toBe('#ff0000');
     });
 
-    it('should not apply REACT_APP_THEME_COLOR in production environment', async () => {
-      Object.defineProperty(process.env, 'NODE_ENV', {
-        value: 'production',
-        writable: true,
-        configurable: true,
-      });
-      process.env.REACT_APP_THEME_COLOR = '#ff0000';
+    it('should not apply VITE_THEME_HEADER_COLOR in production environment', async () => {
+      vi.stubEnv('MODE', 'production');
+      vi.stubEnv('DEV', false);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
 
       const mockTheme: CustomThemeConfig = {
         light: {
@@ -161,10 +159,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -185,10 +180,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -219,10 +211,7 @@ describe('customThemeConfig', () => {
         logo: logoConfig,
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -245,10 +234,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -272,10 +258,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -326,10 +309,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -361,15 +341,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock
-        .mockResolvedValueOnce({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce(mockTheme1),
-        } as unknown as Response)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: jest.fn().mockResolvedValueOnce(mockTheme2),
-        } as unknown as Response);
+      mockThemeFetch(mockTheme1, mockTheme2);
 
       loadCustomThemeConfig();
       await new Promise((resolve) => setTimeout(resolve, 100));
@@ -377,17 +349,16 @@ describe('customThemeConfig', () => {
       loadCustomThemeConfig();
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(
+        fetchMock.mock.calls.filter(([url]) => url === 'resources/theme.json'),
+      ).toHaveLength(2);
       expect(dispatchEventSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('should only apply REACT_APP_THEME_COLOR when both development mode and env var are set', async () => {
-      Object.defineProperty(process.env, 'NODE_ENV', {
-        value: 'development',
-        writable: true,
-        configurable: true,
-      });
-      delete process.env.REACT_APP_THEME_COLOR;
+    it('should only apply VITE_THEME_HEADER_COLOR when both development mode and env var are set', async () => {
+      vi.stubEnv('MODE', 'development');
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '');
 
       const mockTheme: CustomThemeConfig = {
         light: {
@@ -404,10 +375,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 
@@ -418,13 +386,10 @@ describe('customThemeConfig', () => {
       expect(theme?.dark.components?.Layout?.headerBg).toBeUndefined();
     });
 
-    it('should preserve existing Layout component settings when applying REACT_APP_THEME_COLOR', async () => {
-      Object.defineProperty(process.env, 'NODE_ENV', {
-        value: 'development',
-        writable: true,
-        configurable: true,
-      });
-      process.env.REACT_APP_THEME_COLOR = '#ff0000';
+    it('should preserve existing Layout component settings when applying VITE_THEME_HEADER_COLOR', async () => {
+      vi.stubEnv('MODE', 'development');
+      vi.stubEnv('DEV', true);
+      vi.stubEnv('VITE_THEME_HEADER_COLOR', '#ff0000');
 
       const mockTheme: CustomThemeConfig = {
         light: {
@@ -451,10 +416,7 @@ describe('customThemeConfig', () => {
         },
       };
 
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValueOnce(mockTheme),
-      } as unknown as Response);
+      mockThemeFetch(mockTheme);
 
       loadCustomThemeConfig();
 

@@ -1,6 +1,15 @@
 // spec: Statistics page tests
+import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
-import test, { expect } from '@playwright/test';
+import test, { expect, Page } from '@playwright/test';
+
+// `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+// which this app never does. The active tab carries `aria-current="true"`.
+function statisticsTab(page: Page, name: string) {
+  return page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name });
+}
 
 test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
   test('Admin can see Statistics page with Allocation History tab', async ({
@@ -11,12 +20,15 @@ test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
     await navigateTo(page, 'statistics');
 
     // Verify Allocation History tab is selected by default
-    await expect(
-      page.getByRole('tab', { name: 'Allocation History', selected: true }),
-    ).toBeVisible();
+    const allocationHistoryTab = statisticsTab(page, 'Allocation History');
+    await expect(allocationHistoryTab).toBeVisible();
+    await expect(allocationHistoryTab).toHaveAttribute('aria-current', 'true');
 
-    // Verify Period selector exists
-    await expect(page.getByText(/Period/)).toBeVisible();
+    // Verify the Period selector itself, not its label: the Astryx
+    // `Selector` carries the (hidden) accessible name "Period", while the
+    // enclosing `Form.Item` renders that same text as a visible label --
+    // asserting on the text would pass even if the control never rendered.
+    await expect(page.getByRole('combobox', { name: 'Period' })).toBeVisible();
 
     // Verify chart sections exist
     await expect(page.getByText('Sessions').first()).toBeVisible();
@@ -24,28 +36,28 @@ test.describe('Statistics', { tag: ['@functional', '@statistics'] }, () => {
     await expect(page.getByText('Memory').first()).toBeVisible();
   });
 
-  test('Admin can switch to User Session History tab', async ({
-    page,
-    request,
-  }) => {
-    await loginAsAdmin(page, request);
-    await navigateTo(page, 'statistics');
+  test(
+    'Admin can switch to User Session History tab',
+    { tag: ['@requires-manager-v25.6'] },
+    async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'statistics');
 
-    // User Session History tab is conditional (requires user-metrics support)
-    const userSessionTab = page.getByRole('tab', {
-      name: 'User Session History',
-    });
-    const isTabVisible = await userSessionTab
-      .isVisible({ timeout: 3000 })
-      .catch(() => false);
-    test.skip(!isTabVisible, 'User Session History tab not available');
+      // Declarative feature gate (FR-3112): the User Session History tab is
+      // rendered only when the manager supports 'user-metrics'
+      // (manager >= 25.6.0; tab introduced by FR-655).
+      await skipUnlessClientFeature(
+        page,
+        'user-metrics',
+        "User Session History tab requires the 'user-metrics' capability (Backend.AI manager >= 25.6.0, FR-655)",
+      );
 
-    await userSessionTab.click();
-    await expect(
-      page.getByRole('tab', {
-        name: 'User Session History',
-        selected: true,
-      }),
-    ).toBeVisible();
-  });
+      // The backend is capable — the tab MUST be present; absence is a failure.
+      const userSessionTab = statisticsTab(page, 'User Session History');
+      await expect(userSessionTab).toBeVisible();
+
+      await userSessionTab.click();
+      await expect(userSessionTab).toHaveAttribute('aria-current', 'true');
+    },
+  );
 });

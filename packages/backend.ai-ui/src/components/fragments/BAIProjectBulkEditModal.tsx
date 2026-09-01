@@ -1,15 +1,15 @@
 import { BAIProjectBulkEditModalFragment$key } from '../../__generated__/BAIProjectBulkEditModalFragment.graphql';
 import { BAIProjectBulkEditModalProjectMutation } from '../../__generated__/BAIProjectBulkEditModalProjectMutation.graphql';
+import { Form } from '../../form-engine';
 import { useMutationWithPromise } from '../../hooks';
-import BAIAlert from '../BAIAlert';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
+import BAIListAlert from '../BAIListAlert';
 import BAIModal, { BAIModalProps } from '../BAIModal';
 import BAISelect from '../BAISelect';
 import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
-import { Form, theme } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Suspense, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIProjectBulkEditModalProps extends BAIModalProps {
@@ -20,8 +20,7 @@ const BAIProjectBulkEditModal = ({
   selectedProjectFragments,
   ...tableProps
 }: BAIProjectBulkEditModalProps) => {
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { t } = useBAIi18n();
   const [form] = Form.useForm();
   const [isSaving, setIsSaving] = useState(false);
   const mutateProjectWithPromise =
@@ -58,18 +57,17 @@ const BAIProjectBulkEditModal = ({
         form
           .validateFields()
           .then((values) => {
-            const promises = _.chain(selectedProjects)
-              .map((project) => project.row_id)
-              .compact()
-              .map((id) => {
+            const promises = _.map(
+              _.compact(_.map(selectedProjects, (project) => project.row_id)),
+              (id) => {
                 return mutateProjectWithPromise({
                   gid: id,
                   props: {
                     resource_policy: values.resource_policy,
                   },
                 });
-              })
-              .value();
+              },
+            );
 
             return Promise.all(promises).then(() => tableProps.onOk?.(e));
           })
@@ -78,27 +76,17 @@ const BAIProjectBulkEditModal = ({
       destroyOnHidden
     >
       <BAIFlex direction="column" align="stretch" gap="md">
-        <BAIAlert
+        <BAIListAlert
           type="info"
           showIcon
           ghostInfoBg={false}
           title={t(
-            'comp:BAIProjectBulkEditModal.FollowingFoldersWillBeUpdated',
+            'comp:BAIProjectBulkEditModal.FollowingProjectsWillBeUpdated',
           )}
-          description={
-            <ul
-              style={{
-                margin: 0,
-                padding: 0,
-                paddingTop: token.paddingXXS,
-                listStyle: 'circle',
-              }}
-            >
-              {_.map(selectedProjects, (project) => (
-                <li key={project.row_id}>{project.name}</li>
-              ))}
-            </ul>
-          }
+          items={_.map(selectedProjects, (project) => ({
+            key: project.row_id,
+            content: project.name,
+          }))}
         />
         <Form form={form}>
           <Suspense

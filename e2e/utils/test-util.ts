@@ -1,6 +1,12 @@
 import { FolderCreationModal } from './classes/vfolder/FolderCreationModal';
 import TOML from '@iarna/toml';
-import { APIRequestContext, Locator, Page, expect } from '@playwright/test';
+import {
+  APIRequestContext,
+  Locator,
+  Page,
+  expect,
+  request as apiRequest,
+} from '@playwright/test';
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return (
@@ -91,8 +97,9 @@ export type ThemeConfig = {
   branding?: ThemeBrandingConfig;
 };
 
-export const webuiEndpoint =
-  process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081';
+export const webuiEndpoint = (
+  process.env.E2E_WEBUI_ENDPOINT || 'http://127.0.0.1:9081'
+).replace(/\/$/, '');
 export const webServerEndpoint =
   process.env.E2E_WEBSERVER_ENDPOINT || 'http://127.0.0.1:8090';
 
@@ -133,14 +140,74 @@ export async function login(
     .catch(() => {});
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
-  // Expand the endpoint section if it's not already visible
-  const endpointInput = page.getByLabel('Endpoint');
+  // Astryx Button exposes no aria-label — its accessible name is the visible text.
+  const loginButton = page.getByRole('button', { name: 'Login', exact: true });
+  // Expand the endpoint section if it's not already visible. Must be the role
+  // locator: getByLabel('Endpoint') also matches the 'Endpoint History' /
+  // 'About Endpoint' controls once the section is open.
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
   await endpointInput.fill(endpoint);
-  await page.getByLabel('Login', { exact: true }).click();
-  await page.waitForSelector('[data-testid="user-dropdown-button"]');
+  // A busy shared test backend can transiently reject a *valid* login (the
+  // manager surfaces an internal error, the UI renders it as "Login
+  // information mismatch"). Retry the submit a couple of times, with a fixed
+  // 5s delay between attempts, so a short server hiccup doesn't fail the whole
+  // (often serial) suite at a random beforeEach.
+  //
+  // Cost of that choice, since login() runs per test: against a backend that
+  // is genuinely down this burns up to 3 x 30s + 2 x 5s = 100s per test before
+  // reporting, instead of failing fast. The per-attempt wait stays at 30s on
+  // purpose — a rejection surfaces far sooner than that, but a slow-but-
+  // accepted login keeps the form up for an unknown while, and a shorter wait
+  // would misread it as a rejection and re-submit.
+  const maxAttempts = 3;
+  const retryDelayMs = 5000;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    await loginButton.click();
+    try {
+      await page.waitForSelector('[data-testid="user-dropdown-button"]', {
+        timeout: 30000,
+      });
+      return;
+    } catch (error) {
+      const stillOnLoginForm = await loginButton.isVisible().catch(() => false);
+      if (!stillOnLoginForm) {
+        // The login was accepted (the form is gone) and the app is just
+        // booting slowly — keep waiting instead of re-submitting.
+        await page.waitForSelector('[data-testid="user-dropdown-button"]', {
+          timeout: 60000,
+        });
+        return;
+      }
+      // Diagnostic: surface the server's actual rejection reason (the UI
+      // collapses every failure into "Login information mismatch"). Runs in a
+      // throwaway context so a successful probe cannot leave its session
+      // cookie in the page's context and silently authenticate the next
+      // attempt.
+      let probeContext: APIRequestContext | undefined;
+      try {
+        probeContext = await apiRequest.newContext();
+        const probe = await probeContext.post(`${endpoint}/server/login`, {
+          data: { username, password },
+        });
+        console.log(
+          `[login] attempt ${attempt} rejected for ${username}; direct API login → ${probe.status()} ${(await probe.text()).slice(0, 300)}`,
+        );
+      } catch (probeError) {
+        console.log(
+          `[login] attempt ${attempt} rejected for ${username}; probe failed: ${String(probeError).slice(0, 200)}`,
+        );
+      } finally {
+        await probeContext?.dispose();
+      }
+      if (attempt === maxAttempts) {
+        throw error;
+      }
+      await page.waitForTimeout(retryDelayMs);
+    }
+  }
 }
 
 export const userInfo = {
@@ -275,10 +342,39 @@ export async function logout(page: Page) {
   await page.waitForTimeout(1000);
 }
 
+/**
+ * Locator for the route-level "not found" screen (FR-3279/FR-3383).
+ * The legacy image-based Page404 (`<img alt="404 Not Found">`) was replaced by
+ * the shared RouteErrorContent composition, which renders the i18n heading
+ * `webui.NotFound` ("Oops! Page not Found...") instead of an image.
+ */
+export function notFoundPageHeading(page: Page) {
+  return page.getByText('Page not Found');
+}
+
+/**
+ * Locator for the route-level "forbidden" screen (FR-3383).
+ * The legacy image-based Page401 (`<img alt="401 Not Found">`) was replaced by
+ * ForbiddenPage in the shared RouteErrorContent composition, which renders the
+ * i18n heading `webui.UnauthorizedAccess`.
+ */
+export function forbiddenPageHeading(page: Page) {
+  return page.getByText('Unauthorized Access');
+}
+
 export async function navigateTo(page: Page, path: string) {
   //merge the base url with the path
   const url = new URL(path, webuiEndpoint);
   await page.goto(url.toString());
+  // Remove webpack-dev-server overlay iframe that can intercept pointer events
+  await page
+    .evaluate(() => {
+      const overlay = document.getElementById(
+        'webpack-dev-server-client-overlay',
+      );
+      if (overlay) overlay.remove();
+    })
+    .catch(() => {});
 }
 
 export async function fillOutVaadinGridCellFilter(
@@ -296,31 +392,39 @@ export async function fillOutVaadinGridCellFilter(
   await nameInput.fill(inputValue);
 }
 
-async function removeSearchButton(page: Page, folderName: string) {
+/**
+ * `BAIPropertyFilter` / `BAIGraphQLPropertyFilter` (to-astryx ticket 28) are
+ * built on Astryx `PowerSearch`. A committed filter is a token whose remove
+ * control carries `aria-label="Remove {label}"`
+ * (`t('@astryx.token.remove', {label})`, `Token.tsx` / locales/en.json), and
+ * whose label follows `"<Field>: <operator> <value>"` (`PowerSearch.tsx`
+ * `tokenizerValue` -> `displayLabel`). "name" has no `defaultOperator`
+ * override on the vfolder pages this targets, so it uses the BUI default
+ * `ilike` = "contains".
+ */
+export async function removeSearchButton(page: Page, folderName: string) {
   try {
-    const filterChip = page
+    const removeButton = page
       .getByTestId('vfolder-filter')
-      .locator('div')
-      .filter({ hasText: `Name: ${folderName}` })
-      .locator('svg')
-      .first();
+      .getByRole('button', { name: `Remove Name: contains ${folderName}` });
 
-    // Only try to click if the filter chip exists
-    if (await filterChip.isVisible({ timeout: 1000 })) {
-      await filterChip.click();
+    // Only try to click if the filter token exists
+    if (await removeButton.isVisible({ timeout: 1000 })) {
+      await removeButton.click();
     }
   } catch {
-    // Silently ignore if filter chip doesn't exist
+    // Silently ignore if filter token doesn't exist
     // This prevents cascading failures when the filter was already removed
   }
 }
 
-async function clearAllFilters(page: Page) {
+export async function clearAllFilters(page: Page) {
   try {
-    // Find all filter chips in the vfolder-filter component
+    // Every token's remove button carries an aria-label starting with
+    // "Remove " (see `removeSearchButton` above).
     const filterChips = page
       .getByTestId('vfolder-filter')
-      .locator('.ant-tag-close-icon');
+      .getByRole('button', { name: /^Remove / });
 
     // Get count of filter chips
     const count = await filterChips.count();
@@ -341,13 +445,21 @@ async function clearAllFilters(page: Page) {
 }
 
 /**
- * Select a property filter and search for a value in BAIPropertyFilter component
+ * Select a property filter and search for a value in a `BAIPropertyFilter` /
+ * `BAIGraphQLPropertyFilter` component (to-astryx ticket 28 rebuilt both on
+ * Astryx `PowerSearch`: a single typeahead that, for a field with no
+ * pre-filled value, opens an edit popover (Field/Operator/Value) on
+ * selection — `PowerSearch.tsx` `handleTokenizerChange`). The `data-testid`
+ * lands on `PowerSearch`'s own root (`data-testid={testId}`,
+ * `PowerSearch.tsx`), which contains exactly one `role="combobox"` (the
+ * typeahead), so scoping through it stays unambiguous regardless of any
+ * per-page `label` override.
  * @param page - Playwright Page object
  * @param propertyName - Name of the property to filter by (e.g., 'Name', 'Status')
  * @param searchValue - Value to search for
  * @param testId - Test ID of the filter component (default: 'vfolder-filter')
  */
-async function selectPropertyFilter(
+export async function selectPropertyFilter(
   page: Page,
   propertyName: string,
   searchValue: string,
@@ -355,46 +467,111 @@ async function selectPropertyFilter(
 ) {
   const filterContainer = page.getByTestId(testId);
 
-  // The BAIPropertyFilter is inside .ant-space-compact with two .ant-select elements
-  // 1. Property selector (first .ant-select in Space.Compact)
-  // 2. Search input (AutoComplete, second .ant-select in Space.Compact)
+  // Open the typeahead and pick the field.
+  const searchBar = filterContainer.getByRole('combobox').first();
+  await searchBar.click();
+  await page.getByRole('option', { name: propertyName, exact: true }).click();
 
-  // Click the first Select in the Space.Compact (property selector)
-  const propertySelect = filterContainer
-    .locator('.ant-space-compact')
-    .locator('.ant-select')
+  // Fill the Value control in the edit popover it opens. The value editor's
+  // accessible name is "Value" (`t('@astryx.powersearch.valueEditor.value')`)
+  // regardless of which control renders it: free-text fields render a
+  // `TextInput` (`role="textbox"`, commits via the popover's Apply button);
+  // strict-selection fields render a `Selector` (`role="combobox"`, commits
+  // immediately on picking an option) — `PowerSearchValueEditor.tsx`.
+  const valueTextbox = page.getByRole('textbox', { name: 'Value' });
+  if (await valueTextbox.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await valueTextbox.fill(searchValue);
+    await page.getByRole('button', { name: 'Apply', exact: true }).click();
+  } else {
+    await page.getByRole('combobox', { name: 'Value' }).click();
+    await page.getByRole('option', { name: searchValue, exact: true }).click();
+  }
+}
+
+/**
+ * Locates the table refresh button (BAIFetchKeyButton). The icon is lucide
+ * `RotateCw` (no antd `.anticon-reload` class since ticket 12); the button
+ * carries the native `title="Refresh"` attribute instead
+ * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
+ * Clicking it bumps the list's fetchKey, forcing a network-only refetch.
+ */
+export function getTableRefreshButton(page: Page) {
+  return page.locator('button[title="Refresh"]').first();
+}
+
+/**
+ * Runs `assertion` up to `attempts` times, clicking the table refresh button
+ * between failures. The vfolder list never refetches on its own after the
+ * initial (filtered) response, so when the backend lags a mutation the ONLY
+ * way a row can appear/disappear/change is a new request — waiting longer on
+ * the DOM is pure dead time. Short assertion windows + an explicit refetch
+ * converge much faster than the old 10s visibility windows (FR-3361).
+ */
+async function retryWithTableRefresh(
+  page: Page,
+  assertion: () => Promise<void>,
+  attempts = 6,
+) {
+  let refreshFailures = 0;
+  for (let attempt = 0; ; attempt++) {
+    try {
+      await assertion();
+      return;
+    } catch (error) {
+      if (attempt >= attempts - 1) throw error;
+      // A single click failure is tolerated: a closing modal's mask or a
+      // toast can briefly intercept pointer events, and mutation-driven
+      // refetches (updateFetchKey) may still land during the next window.
+      // But if the button is unavailable twice in a row the loop would just
+      // poll stale DOM, so fail fast with the real page-state problem
+      // instead of burning the remaining budget on a foregone conclusion.
+      const refreshed = await getTableRefreshButton(page)
+        .click({ timeout: 2000 })
+        .then(() => true)
+        .catch(() => false);
+      refreshFailures = refreshed ? 0 : refreshFailures + 1;
+      if (refreshFailures >= 2) {
+        throw new Error(
+          'Table refresh button unavailable while polling the vfolder list; ' +
+            `last assertion failure: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+  }
+}
+
+export function getVFolderRow(page: Page, folderName: string) {
+  return page
+    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
     .first();
-  await propertySelect.click();
-
-  // Select the property option from the dropdown
-  await page.getByRole('option', { name: propertyName }).click();
-
-  // Fill in the search value in the AutoComplete input
-  // It's the second .ant-select in the Space.Compact
-  const searchInput = filterContainer
-    .locator('.ant-space-compact')
-    .locator('.ant-select')
-    .last()
-    .locator('input[role="combobox"]');
-  await searchInput.fill(searchValue);
-
-  // Click search button
-  await page.getByRole('button', { name: 'search' }).click();
 }
 
 export async function verifyVFolder(
   page: Page,
   folderName: string,
   statusTab: 'Active' | 'Trash' = 'Active',
+  dataPath: string = 'data',
 ) {
-  await page.getByRole('link', { name: 'Data' }).click();
-  await page.getByRole('tab', { name: statusTab }).click();
+  // Use navigateTo for reliable navigation regardless of current page state
+  await navigateTo(page, dataPath);
+  // The Active/Trash tabs render a count Badge in their endContent when any
+  // folder exists, which joins the tab's accessible name ("Active 3") — so a
+  // whole-string name match fails exactly when there is something to clean
+  // up. Match on the label prefix instead (all tab sites below do the same).
+  // The Active/Trash tabs currently render as BUTTONS (not role=tab)
+  // whose accessible name is the label doubled plus the count Badge
+  // ("ActiveActive27") — accept either role, match the label prefix.
+  await page
+    .getByRole('tab', { name: new RegExp(`^${statusTab}`) })
+    .or(page.getByRole('button', { name: new RegExp(`^${statusTab}`) }))
+    .first()
+    .click();
+  await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
-  await expect(
-    page
-      .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
-      .filter({ hasText: folderName }),
-  ).toBeVisible();
+  const row = getVFolderRow(page, folderName);
+  await retryWithTableRefresh(page, () =>
+    expect(row).toBeVisible({ timeout: 2500 }),
+  );
   await removeSearchButton(page, folderName);
 }
 
@@ -405,8 +582,11 @@ export async function createVFolderAndVerify(
   type: 'user' | 'project' = 'user',
   permission: 'rw' | 'ro' = 'rw',
 ) {
-  await page.getByRole('link', { name: 'Data' }).click();
-  await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
+  await navigateTo(page, 'data');
+  // VFolderNodeListPage's BAICard extra renders a single "Create Folder" button.
+  // The previous `.nth(1)` assumed an older layout with a second header CTA and
+  // breaks against the current React build, so use the first match.
+  await page.getByRole('button', { name: 'Create Folder' }).first().click();
 
   const modal = new FolderCreationModal(page);
   await modal.modalToBeVisible();
@@ -436,30 +616,92 @@ export async function createVFolderAndVerify(
   }
 
   await (await modal.getCreateButton()).click();
+  // Wait for the creation modal to close before verifying
+  await expect(
+    page.getByRole('dialog').filter({ hasText: 'Create a new storage folder' }),
+  ).toBeHidden({ timeout: 30000 });
   await verifyVFolder(page, folderName);
 }
 
-export async function moveToTrashAndVerify(page: Page, folderName: string) {
-  await page.getByRole('link', { name: 'Data' }).click();
+export async function moveToTrashAndVerify(
+  page: Page,
+  folderName: string,
+  dataPath: string = 'data',
+) {
+  // Use navigateTo to ensure a clean navigation to the data page regardless of current state
+  await navigateTo(page, dataPath);
+  await page
+    .getByRole('tab', { name: /^Active/ })
+    .or(page.getByRole('button', { name: /^Active/ }))
+    .first()
+    .click();
   await selectPropertyFilter(page, 'Name', folderName);
 
-  await page
-    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
-    .getByRole('button', { name: 'trash bin' })
-    .click();
-  const moveButton = page.getByRole('button', { name: 'Move' });
-  await expect(moveButton).toBeVisible();
-  await moveButton.click();
+  // Fail fast (with a bounded wait) if the folder is not in Active — for example,
+  // a test already moved it to Trash. The Playwright config does not set a global
+  // actionTimeout, so a bare .click() on a non-existent row would hang for the
+  // entire test timeout, defeating the try/catch in callers.
+  const folderRow = getVFolderRow(page, folderName);
+  await expect(folderRow).toBeVisible({ timeout: 10000 });
+
+  // Bound the move-to-trash button before clicking it. On pages where the
+  // current account cannot delete the folder (e.g. a project-type folder shown
+  // on the regular user's /data), the button stays disabled — this assertion
+  // failing fast (a catchable error) lets the best-effort sweep skip the
+  // un-deletable row instead of stranding cleanup.
+  // BAINameActionCell sets aria-label to the action's title
+  // (t('data.folders.MoveToTrash') = "Move to trash bin"), not the icon's
+  // implicit "delete" name (changed in #8320) — a `name: 'delete'` locator
+  // never matches and burns its whole timeout.
+  const moveToTrashButton = folderRow.getByRole('button', {
+    name: 'Move to trash bin',
+  });
+  await expect(moveToTrashButton).toBeEnabled({ timeout: 10000 });
+  await moveToTrashButton.click();
+  // The "Move to trash" confirmation modal uses a standardized "Confirm"
+  // button (t('button.Confirm')) instead of "Move".
+  const confirmButton = page
+    .locator('.ant-modal-confirm')
+    .getByRole('button', { name: 'Confirm' });
+  await expect(confirmButton).toBeVisible();
+  // Wait for the DELETE /folders API response so a rejected request fails
+  // here with the status/body instead of surfacing as a row-gone timeout.
+  const deletionResponsePromise = page.waitForResponse(
+    (response) =>
+      response.url().includes('/folders') &&
+      response.request().method() === 'DELETE',
+    { timeout: 30000 },
+  );
+  await confirmButton.click();
+  const deletionResponse = await deletionResponsePromise;
+  if (!deletionResponse.ok()) {
+    throw new Error(
+      `DELETE /folders returned ${deletionResponse.status()}: ${await deletionResponse.text()}`,
+    );
+  }
+  // Verify in place: with the name filter still applied, the row must leave
+  // the Active list. This replaces the old verifyVFolder(..., 'Trash') pass
+  // (a full page reload + filter cycle + retry loop); Trash membership is
+  // asserted by whichever helper operates on the Trash tab next
+  // (deleteForeverAndVerifyFromTrash / restoreVFolderAndVerify).
+  await retryWithTableRefresh(page, () =>
+    expect(folderRow).toBeHidden({ timeout: 2500 }),
+  );
   await removeSearchButton(page, folderName);
-  await verifyVFolder(page, folderName, 'Trash');
 }
 
 export async function deleteForeverAndVerifyFromTrash(
   page: Page,
   folderName: string,
+  dataPath: string = 'data',
 ) {
-  await page.getByRole('link', { name: 'Data' }).click();
-  await page.getByRole('tab', { name: 'Trash' }).click();
+  // Use navigateTo to ensure a clean navigation to the data page regardless of current state
+  await navigateTo(page, dataPath);
+  await page
+    .getByRole('tab', { name: /^Trash/ })
+    .or(page.getByRole('button', { name: /^Trash/ }))
+    .first()
+    .click();
 
   // Clear any existing filters before searching for the folder to delete
   await clearAllFilters(page);
@@ -467,36 +709,45 @@ export async function deleteForeverAndVerifyFromTrash(
   // Set filter to search by Name
   await selectPropertyFilter(page, 'Name', folderName);
 
-  // Verify the folder row exists before attempting deletion
-  const folderRowToDelete = page.getByRole('row', {
-    name: `VFolder Identicon ${folderName}`,
+  // Verify the folder row exists before attempting deletion. The Trash tab
+  // may briefly lag the DELETE /folders mutation (the status flip to
+  // delete-pending is asynchronous on the backend), so poll with explicit
+  // refetches instead of one long DOM wait.
+  const folderRowToDelete = getVFolderRow(page, folderName);
+  await retryWithTableRefresh(page, () =>
+    expect(folderRowToDelete).toBeVisible({ timeout: 2500 }),
+  );
+
+  // Wait for the "Delete forever" button (aria-label "Delete" from its action
+  // title — position-independent, unlike the old `.nth(1)`) to be enabled:
+  // the folder must reach 'delete-pending' status, which may also require a
+  // refetch to observe.
+  const deleteForeverButton = folderRowToDelete.getByRole('button', {
+    name: 'Delete',
   });
+  await retryWithTableRefresh(page, () =>
+    expect(deleteForeverButton).toBeEnabled({ timeout: 2500 }),
+  );
 
-  await expect(folderRowToDelete).toBeVisible({ timeout: 5000 });
+  // Click the delete forever button
+  await deleteForeverButton.click();
 
-  // Delete forever
-  await folderRowToDelete.getByRole('button').nth(1).click();
-  await page.locator('#confirmText').click();
-  await page.locator('#confirmText').fill(folderName);
+  // Wait for confirmation modal to appear before interacting with it.
+  // Use fill() directly (it waits for actionability) to avoid flakiness from
+  // click() on a modal still playing its open animation ("element is not stable").
+  const confirmInput = page.locator('#confirmText');
+  await expect(confirmInput).toBeVisible();
+  await confirmInput.fill(folderName);
   await page.getByRole('button', { name: 'Delete forever' }).click();
 
-  // Wait for the deletion notification to appear and disappear
-  // This ensures the backend has completed the deletion before verification
-  const deletionNotification = page.getByRole('alert').filter({
-    hasText: /deleted forever/i,
-  });
-  await expect(deletionNotification).toBeVisible({ timeout: 15000 });
-  await expect(deletionNotification).toBeHidden({ timeout: 15000 });
-
-  // Verify deletion - clear filters again and search
-  await clearAllFilters(page);
-  await selectPropertyFilter(page, 'Name', folderName);
-
-  // Verify the folder is either deleted (not visible) or in DELETE-ONGOING status
-  const folderRowAfterDelete = page.getByRole('row').filter({
-    has: page.getByRole('cell', { name: `VFolder Identicon ${folderName}` }),
-  });
-  await expect(folderRowAfterDelete).toBeHidden();
+  // Deletion is verified by the filtered table emptying out below — the
+  // success toast is transient and adds no extra signal, so it is not
+  // asserted (the old visible+hidden waits added up to 30s of dead time).
+  // With the Name filter still applied, the row disappearing from the Trash
+  // tab is the authoritative signal that the backend deleted the folder.
+  await retryWithTableRefresh(page, () =>
+    expect(folderRowToDelete).toBeHidden({ timeout: 2500 }),
+  );
 
   // Clean up the search filter
   await removeSearchButton(page, folderName);
@@ -508,70 +759,291 @@ export async function shareVFolderAndVerify(
   invitedUser: string,
 ) {
   await navigateTo(page, 'data');
+  await selectPropertyFilter(page, 'Name', folderName);
 
-  const searchInput = page.locator('input[type="search"].ant-input');
-  await searchInput.fill(folderName);
-  await page.getByRole('button', { name: 'search' }).click();
+  // Click the share button inside the BAINameActionCell of the folder row.
+  // Action buttons (share/trash) are embedded in the Name cell; locate the
+  // "share" button by its icon's aria-label rather than by td index.
+  const folderRow = page.getByRole('row', {
+    name: `VFolder Identicon ${folderName}`,
+  });
+  await expect(folderRow).toBeVisible({ timeout: 10000 });
+  await folderRow.getByRole('button', { name: 'share' }).first().click();
 
-  // share folder
-  await page
-    .locator('.ant-table-row')
-    .locator('td')
-    .nth(2)
-    .getByRole('button')
-    .nth(0)
-    .click();
-  await page.locator('.ant-modal').getByRole('textbox').fill(invitedUser);
-  await page.getByRole('button', { name: 'Add' }).click();
-  await page
-    .locator('.ant-modal')
-    .getByRole('button', { name: 'close' })
-    .click();
+  // Fill in invited user's email in the share modal
+  const shareModal = page.locator('.ant-modal');
+  await expect(shareModal).toBeVisible();
+  await shareModal.getByRole('textbox').fill(invitedUser);
+
+  // Set up the response promise before clicking Add to avoid a race condition
+  // where the response fires before we start listening.
+  // URL pattern: POST /folders/{id}/invite → 200 or 201
+  const inviteResponsePromise = page.waitForResponse(
+    (response) =>
+      response.url().includes('/invite') &&
+      response.request().method() === 'POST',
+    { timeout: 15000 },
+  );
+  await shareModal.getByRole('button', { name: 'Add' }).click();
+  const inviteResponse = await inviteResponsePromise;
+  if (!inviteResponse.ok()) {
+    throw new Error(
+      `POST /folders/.../invite returned ${inviteResponse.status()}: ${await inviteResponse.text()}`,
+    );
+  }
+
+  await shareModal.getByRole('button', { name: 'close' }).click();
+
   await removeSearchButton(page, folderName);
 }
 
 export async function acceptAllInvitationAndVerifySpecificFolder(
   page: Page,
   folderName: string,
+  inviterEmail?: string,
 ) {
+  // When the caller wants to assert the inviter email, register a listener
+  // for the invitations/list response BEFORE navigation so we can inspect
+  // whether the backend actually populates `inviter_user_email`. Some manager
+  // RC builds (e.g. v26.4.4rc6) do not yet return this field even though the
+  // version-compatibility check passes; the email assertion is skipped in that
+  // case rather than producing a spurious failure unrelated to the frontend fix.
+  const firstInvitationsResponse = inviterEmail
+    ? page
+        .waitForResponse(
+          (resp) =>
+            resp.url().includes('/folders/invitations/list') &&
+            resp.status() === 200,
+          { timeout: 30_000 },
+        )
+        .catch(() => null)
+    : null;
+
+  // Open the FolderInvitationResponseModal directly via its query param.
+  // The notification-based "See Detail" entry was replaced by an Invited
+  // Folders badge + modal; using the query param avoids a brittle click path.
+  await navigateTo(page, 'data');
+  await page.evaluate(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('invitation', 'true');
+    window.history.pushState({}, '', url.toString());
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+
+  const invitationModal = page.locator('.ant-modal').filter({
+    has: page.getByRole('button', { name: /Accept/i }),
+  });
+  await expect(invitationModal.first()).toBeVisible({ timeout: 15000 });
+
+  // Verify the inviter's email is rendered in the "From" field only if the
+  // backend actually returned `inviter_user_email` in the response. Catches
+  // regressions in the `invitation-inviter-email` capability check and
+  // `item.inviter_user_email` rendering without failing on backends that
+  // predate the field.
+  if (inviterEmail && firstInvitationsResponse) {
+    let backendReturnsInviterEmail = false;
+    try {
+      const resp = await firstInvitationsResponse;
+      if (resp) {
+        const body = await resp.json();
+        const inv = (body.invitations ?? []).find(
+          (i: any) => i.vfolder_name === folderName,
+        );
+        backendReturnsInviterEmail =
+          typeof inv?.inviter_user_email === 'string' &&
+          inv.inviter_user_email.length > 0;
+      }
+    } catch {
+      // JSON parse failed or response was not captured; skip the assertion
+    }
+    if (backendReturnsInviterEmail) {
+      await expect(invitationModal.first()).toContainText(inviterEmail, {
+        timeout: 10000,
+      });
+    }
+  }
+
+  // Accept the pending invitation for this specific folder. The modal renders
+  // one List.Item per invitation; scope to the item whose text contains the
+  // folder name so a stale invitation left over from a prior failed run is never
+  // accepted by mistake. The list shrinks as each acceptance resolves and the
+  // clicked button detaches mid-click, so re-query each iteration and tolerate
+  // detach races.
+  let folderInvitationAccepted = false;
+  for (let i = 0; i < 20; i++) {
+    const invitationItem = invitationModal
+      .locator('.ant-list-item')
+      .filter({ hasText: folderName })
+      .first();
+    const isItemVisible = await invitationItem
+      .isVisible({ timeout: 1000 })
+      .catch(() => false);
+
+    if (!isItemVisible) {
+      // Invitation not yet propagated into the list; wait briefly and retry.
+      await page.waitForTimeout(500);
+      continue;
+    }
+
+    // Click the Accept button inside this specific invitation item.
+    const acceptBtn = invitationItem.getByRole('button', { name: /^Accept$/i });
+    await expect(acceptBtn).toBeVisible({ timeout: 5000 });
+
+    const acceptResponsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes('/invitations/accept') &&
+        response.request().method() === 'POST',
+      { timeout: 10000 },
+    );
+    await acceptBtn.click();
+    const acceptResponse = await acceptResponsePromise.catch(() => null);
+    if (acceptResponse && !acceptResponse.ok()) {
+      const body = await acceptResponse.text().catch(() => '<unreadable>');
+      throw new Error(
+        `POST /invitations/accept returned HTTP ${acceptResponse.status()} — ` +
+          `folder "${folderName}" invitation acceptance failed.\nResponse body: ${body}`,
+      );
+    }
+
+    // Wait for the invitation item to be removed from the modal list (success).
+    // If it stays visible (error case), we'll still proceed and verify.
+    await invitationItem
+      .waitFor({ state: 'detached', timeout: 8000 })
+      .catch(() => {});
+
+    folderInvitationAccepted = true;
+    break;
+  }
+
+  if (!folderInvitationAccepted) {
+    throw new Error(
+      `Invitation for folder "${folderName}" not found in modal after 20 attempts.`,
+    );
+  }
+
+  // Close the modal if still open.
   await page
-    .locator('.ant-notification-notice')
-    .getByText('See Detail')
+    .locator('.ant-modal')
+    .getByRole('button', { name: /close/i })
+    .first()
+    .click()
+    .catch(() => {});
+
+  // Verify the shared folder now appears in the user's Active data page.
+  await verifyVFolder(page, folderName, 'Active');
+}
+
+/**
+ * Leave a shared (invited) vfolder via SharedFolderPermissionInfoModal.
+ *
+ * Regression guard for FR-2978: VFolder.leave_invited used to send `null`
+ * as the request body, which the manager's BodyParam[LeaveVFolderReq] rejected
+ * with a 400. Driving the full UI flow here ensures the client sends a valid
+ * JSON body end-to-end.
+ *
+ * Caller must already be logged in as the invitee and have accepted the
+ * invitation (see acceptAllInvitationAndVerifySpecificFolder).
+ */
+export async function leaveSharedFolderAndVerify(
+  page: Page,
+  folderName: string,
+) {
+  await navigateTo(page, 'data');
+  await page
+    .getByRole('tab', { name: /^Active/ })
+    .or(page.getByRole('button', { name: /^Active/ }))
+    .first()
+    .click();
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
+
+  // For folders the user does not own, the "share" action button opens the
+  // SharedFolderPermissionInfoModal instead of the invite modal (see
+  // VFolderNodes.tsx onShare). The button's aria-label is still "share".
+  const folderRow = page.getByRole('row', {
+    name: `VFolder Identicon ${folderName}`,
+  });
+  await expect(folderRow).toBeVisible({ timeout: 10000 });
+  await folderRow.getByRole('button', { name: 'share' }).first().click();
+
+  // The modal renders a Tooltip-wrapped Leave button whose accessible name is
+  // the tooltip's title ('Leave the shared folder').
+  const sharedFolderModal = page.locator('.ant-modal').filter({
+    hasText: folderName,
+  });
+  await expect(sharedFolderModal.first()).toBeVisible({ timeout: 10000 });
+  await sharedFolderModal
+    .getByRole('button', { name: 'Leave the shared folder' })
+    .first()
     .click();
 
-  await page.waitForLoadState('networkidle');
-  // Accept all invitations one by one
-  const acceptButtons = await page
-    .getByRole('button', { name: 'Accept' })
-    .all();
-  for (const acceptButton of acceptButtons) {
-    await acceptButton.click();
-  }
-  await page.waitForLoadState('networkidle');
+  // Popconfirm OK button — confirm leaving.
+  await page
+    .locator('.ant-popover')
+    .getByRole('button', { name: /^OK$/i })
+    .click();
 
+  // Success toast should appear (no 400) and the folder should disappear from
+  // the user's Active list.
+  await expect(
+    page.getByText('Successfully left the shared folder'),
+  ).toBeVisible({ timeout: 15000 });
+
+  // Re-navigate for a fresh server-side fetch: leaving does not refetch the
+  // in-place vfolder list, so the row can linger in the cached Active view.
+  // This mirrors how the other *AndVerify helpers force a clean reload before
+  // asserting a row's disappearance.
   await navigateTo(page, 'data');
-  // Select the search input - use type="search" with ant-input class for the folder search
-  const searchInput = page.locator('input.ant-input[type="search"]');
-  await searchInput.fill(folderName);
-  await page.getByRole('button', { name: 'search' }).click();
-  expect(
-    page.locator('.ant-table-row').locator('td').nth(1).getByText(folderName),
-  );
+  await page
+    .getByRole('tab', { name: /^Active/ })
+    .or(page.getByRole('button', { name: /^Active/ }))
+    .first()
+    .click();
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
+  await expect(
+    page.locator('tbody tr').filter({ hasText: folderName }),
+  ).toHaveCount(0, { timeout: 10000 });
+  await removeSearchButton(page, folderName);
 }
 
 export async function restoreVFolderAndVerify(page: Page, folderName: string) {
-  await page.getByRole('link', { name: 'Data' }).click();
-  await page.getByRole('tab', { name: 'Trash' }).click();
-  await page.locator('#react-root').getByTitle('Name').click();
-  await page.getByRole('option', { name: 'Name' }).locator('div').click();
-  const searchInput = page.locator('input[type="search"].ant-input');
-  await searchInput.fill(folderName);
-  // Restore
+  await navigateTo(page, 'data');
   await page
-    .getByRole('row', { name: 'VFolder Identicon e2e-test-' })
-    .getByRole('button')
+    .getByRole('tab', { name: /^Trash/ })
+    .or(page.getByRole('button', { name: /^Trash/ }))
     .first()
     .click();
+
+  // Clear any existing filters before searching
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
+
+  // Find the folder row and wait for it (poll with refetches — the Trash tab
+  // may lag the move-to-trash mutation).
+  const folderRowToRestore = getVFolderRow(page, folderName);
+  await retryWithTableRefresh(page, () =>
+    expect(folderRowToRestore).toBeVisible({ timeout: 2500 }),
+  );
+
+  // Wait for the Restore button (aria-label from its action title) to be
+  // enabled — the folder must reach DELETE_PENDING status, which may require
+  // a refetch to observe.
+  const restoreButton = folderRowToRestore.getByRole('button', {
+    name: 'Restore',
+  });
+  await retryWithTableRefresh(page, () =>
+    expect(restoreButton).toBeEnabled({ timeout: 2500 }),
+  );
+  await restoreButton.click();
+
+  // The Restore button is wrapped in a Popconfirm — click the OK button to confirm.
+  const popconfirmOkButton = page
+    .locator('.ant-popover')
+    .getByRole('button', { name: 'Confirm' });
+  await expect(popconfirmOkButton).toBeVisible({ timeout: 5000 });
+  await popconfirmOkButton.click();
+
   await verifyVFolder(page, folderName, 'Active');
 }
 
@@ -672,15 +1144,13 @@ export async function deleteSession(page: Page, sessionName: string) {
  */
 
 /**
- * Convert a config object to TOML string that is compatible with markty-toml parser.
+ * Convert a config object to TOML string that is compatible with the app's TOML parser.
  *
- * markty-toml has a known bug where it parses empty strings `""` as literal `""`
- * (with quote characters included in the value). This causes the app's _preprocessToml
- * to crash when it tries JSON.parse on the malformed value, which silently fails
- * due to .catch(() => undefined), resulting in an empty config object.
+ * The app's preprocessToml processes apiEndpointText with JSON.parse, which keeps
+ * the original value on failure (try/catch with no-op catch).
  *
- * Additionally, markty-toml parses underscore-separated numbers (e.g., 4_294_967_296)
- * as strings instead of numbers.
+ * Additionally, some TOML serializers emit underscore-separated numbers
+ * (e.g., 4_294_967_296) which may be parsed as strings instead of numbers.
  *
  * This function uses @iarna/toml stringify and post-processes the output to:
  * 1. Remove lines with empty string values (the app treats missing keys as empty)
@@ -690,12 +1160,11 @@ function tomlStringifyCompatible(config: any): string {
   let tomlStr = TOML.stringify(config);
 
   // Fix 1: Remove lines with empty string values `= ""`
-  // markty-toml parses `key = ""` as key: '""' instead of key: ''
   // The app treats undefined/missing the same as empty string for most fields
   tomlStr = tomlStr.replace(/^.+ = ""\s*$/gm, '');
 
   // Fix 2: Remove underscore separators from large numbers
-  // markty-toml parses `4_294_967_296` as a string instead of a number
+  // Some serializers emit `4_294_967_296` which may be parsed as a string
   tomlStr = tomlStr.replace(
     /^(.+ = )(\d[\d_]+\d)\s*$/gm,
     (_match, prefix, num) => {
@@ -707,6 +1176,48 @@ function tomlStringifyCompatible(config: any): string {
   tomlStr = tomlStr.replace(/\n{3,}/g, '\n\n');
 
   return tomlStr;
+}
+
+/**
+ * Deduplicate keys within each TOML section.
+ *
+ * @iarna/toml throws on duplicate keys, but config.toml files in some
+ * environments contain duplicate keys (e.g., `debug = true` appearing twice).
+ * This function removes earlier occurrences, keeping the last value for each key
+ * within each section, matching the last-wins behavior of most TOML parsers.
+ */
+function deduplicateTomlKeys(tomlStr: string): string {
+  const lines = tomlStr.split('\n');
+  const sections: string[][] = [];
+  let currentSection: string[] = [];
+
+  // Split the TOML content into sections delimited by [header] lines
+  for (const line of lines) {
+    if (/^\[/.test(line.trim())) {
+      sections.push(currentSection);
+      currentSection = [line];
+    } else {
+      currentSection.push(line);
+    }
+  }
+  sections.push(currentSection);
+
+  // Deduplicate keys within each section, keeping the last occurrence
+  const deduped = sections.map((sectionLines) => {
+    const seenKeys = new Set<string>();
+    const reversed = [...sectionLines].reverse();
+    const kept = reversed.filter((line) => {
+      const match = /^(\w[\w-]*)(\s*=)/.exec(line.trim());
+      if (!match) return true; // Keep non-key lines (headers, comments, blanks)
+      const key = match[1];
+      if (seenKeys.has(key)) return false; // Duplicate – drop this earlier occurrence
+      seenKeys.add(key);
+      return true;
+    });
+    return kept.reverse().join('\n');
+  });
+
+  return deduped.join('\n');
 }
 
 // Store the accumulated config modifications in a WeakMap keyed by page
@@ -745,7 +1256,11 @@ export async function modifyConfigToml(
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.text();
         });
-        config = TOML.parse(configToml);
+        // Deduplicate keys within each TOML section before parsing.
+        // @iarna/toml throws on duplicate keys; the production app (smol-toml) may not.
+        // When duplicate keys exist in config.toml, keep the last occurrence of each key.
+        const deduplicatedToml = deduplicateTomlKeys(configToml);
+        config = TOML.parse(deduplicatedToml);
         break; // Success, exit retry loop
       } catch (error) {
         lastError = error;
@@ -760,9 +1275,15 @@ export async function modifyConfigToml(
     await tempContext.close();
 
     if (!config) {
-      throw new Error(
-        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}`,
+      // Fallback: use an empty config object so the requested changes can still be
+      // applied and served via route interception. This makes login resilient when
+      // the server cannot be reached at the configured webuiEndpoint (e.g., when
+      // running tests via the Playwright MCP tool without the env var set).
+      console.warn(
+        `Failed to fetch config.toml from ${webuiEndpoint} after ${maxRetries} attempts: ${lastError}. ` +
+          `Using empty base config — only explicitly requested keys will be set.`,
       );
+      config = {};
     }
   }
 

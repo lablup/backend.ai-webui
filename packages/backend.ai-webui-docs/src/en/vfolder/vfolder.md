@@ -1,3 +1,9 @@
+---
+navTitle: Storage Folders
+---
+
+<a id="vfolders"></a>
+
 # Handling Data & Storage Folders
 
 
@@ -5,7 +11,7 @@ Backend.AI supports dedicated storage to preserve user's files. Since the files
 and directories of a compute session are deleted upon session termination, it is
 recommended to save them in a storage folder. List of storage folders can be
 found by selecting the Data page on the sidebar. You can see the information
-such as the folder name and ID, the NFS host name where the folder is located
+such as the folder name and ID, the storage host name where the folder is located
 (Location), and folder access rights (Permission).
 
 
@@ -14,33 +20,20 @@ such as the folder name and ID, the NFS host name where the folder is located
 There are two types of storage folders: `User` and `Project`. You can
 distinguish between them in the 'Type' column.
 
-A User folder is created directly by an individual user for personal use.
-A Project folder is created by a domain administrator for each project.
-Regular users cannot create project folders themselves; they can only use
-project folders that have been created by an administrator.
+## Invitation badge and entry point
 
-![](../images/vfolder_status.png)
+When another user invites you to share one of their storage folders, a small
+invitation badge appears on the Data page entry in the sidebar and next to the
+folder status summary. The badge displays the number of pending invitations
+that still need a response.
 
-The Storage Status and Quota per storage volume show the following information:
+![](../images/vfolder_invitation_badge.png)
 
-- Storage Status
-    - Created Folders: The number of folders that the user created.
-
-         - Limit: The maximum number of folders that the user can create afterwards. This value depends on the resource policy applied to the user and cannot be changed without changing the resource policy. Folders that were not created by the user (eg. folders invited to share, or project folders) are not counted.
-
-    * Project Folders: The number of project folders that the user created.
-    * Invited Folders: The number of folders that the user was invited to share.
-- Quota per storage volume
-    * Host: The name of the storage host.
-    * Project: Current project folder usage / current project folder quota scope.
-    * User: Current user folder usage / current user folder quota scope.
-
-
-:::note
-Please remind that quota is only available in storage that provides quota setting
-(e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
-to the [Quota Setting Panel](#quota-setting-panel) section.
-:::
+Click the badge to open the invitation list, where you can accept or decline
+each pending invitation. Accepted folders immediately appear in your folder
+list with the `Invited` type. The `/data` page itself is also a valid entry
+point for reviewing invitations — open the Data page and the same invitation
+list is reachable from the folder status summary.
 
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
@@ -48,27 +41,27 @@ to the [Quota Setting Panel](#quota-setting-panel) section.
 ## Create storage folder
 
 
-To create a new folder, click 'Create Folder' on the Data page. Fill in the fields in
+To create a new folder, click `Create Folder` on the Data page. Fill in the fields in
 the creation dialog as follows:
 
 ![](../images/vfolder_create_modal.png)
 
 The meaning of each field in the creation dialog is as follows.
 
-- Usage Mode: Set the purpose of the folder.
+- **Usage Mode**: Set the purpose of the folder.
 
    * General: Defines a folder for storing various data in a general-purpose manner.
    * Models: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder's copy availability.
    * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
 
-- Folder name: The name of the folder (up to 64 characters).
-- Location: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
-- Type: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
-- Project: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a user folder.
-- Permission: Set permission of a project folder for project members. If this is set to "Read-Only", project members cannot write to this folder inside their compute session.
-- Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
+- **Folder name**: The name of the folder (up to 64 characters).
+- **Location**: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
+- **Type**: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
+- **Project**: Shown only when you select Project type. The folder belongs to the project currently selected in the top bar — there is no separate project selector, and a confirmation message indicates which project will own the folder. This field has no effect when creating a User folder.
+- **Permission**: The mount permission applied when the folder is mounted into a compute session. **Read & Write** allows writing to the folder inside sessions; **Read only** prevents it. This applies to both User and Project folders; for a Project folder it governs access for all project members.
+- **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
 
-The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. Folders are mounted
+The folders created here can be [mounted](#session-mounts) when creating a compute session. Folders are mounted
 under the user's default working directory, `/home/work/`, and the file stored in the mounted
 directory will not be deleted when the compute session is terminated.
 (If you delete the folder, the file will also be deleted.)
@@ -78,28 +71,47 @@ directory will not be deleted when the compute session is terminated.
 ## Explore folder
 
 
-Click the folder name to open a file explorer and view the contents of the folder.
+Click the folder name to open the folder explorer and view the contents of the folder.
 
 ![](../images/click_folder_name.png)
 
-You can see that directories and files inside the folder will be listed, if
-exists. Click a directory name in the Name column to move to the directory.  You
-can click the download button or delete button in the Actions column to download
-it or delete it entirely from the directory. You can rename a file/directory as
-well. For more detailed file operations, you can mount this folder when creating
-a compute session, and then use a service like Terminal or Jupyter Notebook to
-do it.
+The folder explorer uses a two-panel layout:
+
+- **Left panel**: File browser showing the directory tree and file list for the storage folder.
+- **Right panel**: Additional information and logs, organized into two tabs:
+  * **Metadata**: Folder description and properties (previously shown as a side panel).
+  * **Audit Log**: A chronological record of operations performed on this folder.
+
+On wide (xl) screens a draggable divider separates the two panels so you can resize them to suit your workflow. On narrow screens the panels stack vertically.
 
 ![](../images/folder_explorer.png)
 
-You can create a new directory on the current path with the 'Create' button
-(in the folder explorer), or upload a local file or folder with the 'Upload' button. All
-of these file operations can also be performed using the above-described method
-of mounting folders into a compute session.
+![](../images/split_panel_folder_explorer.png)
 
-The maximum length of file or directory inside a folder may depends on the host
-file system. But, it usually cannot exceed 255 characters.
+### File operations
 
+Inside the left panel you can see all directories and files in the folder. Click a directory name in the **Name** column to navigate into it. The actions for each row sit in the **Name** column, next to the item's name: click **Download** to download a file or directory, **Delete** to delete it, or the pencil (**Rename**) button beside the name to rename it in place. When the column is too narrow to show every button, the remaining actions move into the **More actions** (⋮) menu on the same row. For more detailed file operations, you can mount this folder when creating a compute session and then use a service like Terminal or Jupyter Notebook.
+
+You can create a new folder on the current path with the **Create Folder** button, or upload a local file or folder with the **Upload** button. All of these file operations can also be performed using the above-described method of mounting folders into a compute session.
+
+:::warning
+The **Upload** button (and drag-and-drop upload) is **disabled** when your account
+does not have the `upload-file` permission on the storage host that hosts this
+folder. The button itself remains visible but is greyed out, and tooltips
+explain that uploads are not permitted.
+
+`upload-file` is a host-level capability granted through domain-level
+permissions, project-level permissions, or your keypair resource policy — you
+receive it if **any one** of these grants it for the storage host. If the button
+is disabled, ask your administrator to grant you `upload-file` permission for
+the host that stores this folder. You can identify which host the folder lives
+on from the **Location** column in the folder list or from the folder detail
+drawer.
+:::
+
+![](../images/vfolder_upload_disabled.png)
+
+The maximum length of a file or directory name inside a folder depends on the host file system, but it usually cannot exceed 255 characters.
 
 :::note
 To ensure smooth performance, the screen limits the maximum number of files that can be displayed when a
@@ -108,9 +120,9 @@ not be shown on the screen. In such cases, please use the terminal or other appl
 in the directory.
 :::
 
-### Edit Text Files
+### Edit text files
 
-You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then click the 'Edit File' button in the Control column for any text file.
+You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then open the **More actions** (⋮) menu on the text file's row in the **Name** column and select **Edit File**.
 
 ![](../images/folder_explorer_edit_button.png)
 
@@ -118,17 +130,35 @@ The text file editor opens in a modal with a code editor interface. The editor a
 
 ![](../images/text_file_editor_modal.png)
 
-The editor supports both light and dark themes matching your UI preferences. You can edit the file content, then click 'Save' to upload the modified file, or 'Cancel' to discard changes.
+The editor supports both light and dark themes matching your UI preferences. You can edit the file content, then click **Save** to upload the modified file, or **Cancel** to discard changes.
 
 :::note
-The Edit File button is only available when you have write_content permission on the storage folder. If the file fails to load, an error message will be displayed.
+The **Edit File** action is only available when your access to this storage folder includes the `write_content` permission (granted via folder sharing permission or your role on the folder). Storage-host level settings in the control panel do not affect this. If the file fails to load, an error message will be displayed.
 :::
+
+### Audit log tab
+
+The **Audit Log** tab in the right panel shows a chronological list of all operations performed on this storage folder (create, update, delete events, and more).
+
+![](../images/vfolder_audit_log_tab.png)
+
+The audit log shows the following columns, in order:
+
+- **Time**: When the operation occurred.
+- **Operation**: The type of action (for example, create, update, or delete).
+- **Status**: The result of the operation (for example, SUCCESS or ERROR).
+- **Description**: Additional details about the operation.
+- **Duration**: How long the operation took.
+- **Triggered By**: The user who performed the operation, shown in "email (id)" format.
+
+You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
 
 ## Rename folder
 
 
-If you have permission to rename the storage folder, you can rename it by
-clicking the edit button.
+If you have permission to rename the storage folder, open the folder's detail
+drawer and click the edit button next to the folder name. Renaming is performed
+inside the detail drawer.
 
 ![](../images/rename_vfolder.png)
 
@@ -136,27 +166,53 @@ clicking the edit button.
 ## Delete folder
 
 
-If you have permission to delete the storage folder, you can send the folder to the 'Trash'
-tab by clicking the 'trash bin' button. When you move a folder to the Trash tab, it is marked as delete-pending.
+If you have permission to delete the storage folder, you can send the folder to the `Trash`
+tab by clicking the `trash bin` button. When you move a folder to the Trash tab, it is marked as delete-pending.
 
 ![](../images/move_to_trash.png)
 
-In this status, you can restore the folder by clicking restore button in Control column. If you want to permanently delete the folder,
-please click 'trash bin' button in the same column.
+### Delete several folders at once
+
+Select the checkboxes of the folders you want to remove. A selection summary
+(`{count} selected`) and a trash bin button appear above the folder list. Click
+the trash bin button to open the **Move to trash bin** confirmation for the
+whole selection.
+
+![](../images/vfolder_bulk_move_to_trash.png)
+
+If the selection contains folders you are not allowed to delete, the modal lists
+them in an alert titled *"The following folder(s) without delete permission will
+be excluded."* Check the list before proceeding with the deletion: only the
+remaining folders move to the Trash tab, and the confirmation message below the
+alert counts just the folders that are actually moved.
+
+### Restore or permanently delete
+
+In this status, you can restore the folder by clicking the restore button on the folder's row in the **Name** column. If you want to permanently delete the folder,
+please click the `trash bin` button on the same row.
 
 ![](../images/vfolder_trash_list.png)
 
-A confirmation modal will pop up with
-an input field saying `Type folder name to delete`. Make sure you type the exact folder name correctly
-into the field, and click the red 'DELETE FOREVER' button to permanently delete the folder.
+A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the **Delete forever** button becomes active. Click it to permanently delete the folder.
 
 ![](../images/vfolder_delete_dialog.png)
+
+:::warning[Cascading model card deletion]
+If the folder you are deleting is associated with a **model card**, the
+confirmation modal additionally surfaces the option *"Also delete the
+associated model folder"* with the warning *"Deleting the associated model
+folder will also delete every model card that uses it."* Proceeding with the
+deletion permanently removes every model card backed by this storage folder —
+not just the folder's files. Review the listed model cards before confirming;
+this action cannot be undone.
+:::
+
+![](../images/vfolder_cascading_delete_warning.png)
 
 ## Using FileBrowser
 
 
-Backend.AI supports [FileBrowser](https://filebrowser.org) from version
-20.09. FileBrowser is a program that helps you manage files on a remote server
+Backend.AI supports [FileBrowser](https://filebrowser.org). FileBrowser is a program that helps you manage files on a remote server
 through a web browser. This is especially useful when uploading a directory from
 the user's local machine.
 
@@ -169,29 +225,29 @@ session. Therefore, the following conditions are required to launch it.
 
 You can access FileBrowser in two ways.
 
-- Execute FileBrowser from file explorer dialog of a data folder.
+- Execute FileBrowser from file explorer dialog of a storage folder.
 - Launch a compute session directly from a FileBrowser image on Sessions page.
 
 
 ### Execute FileBrowser from folder explorer dialog
 
 Go to the Data page and open the file explorer dialog of target
-data folder. Click the folder name to open the file explorer.
+storage folder. Click the folder name to open the file explorer.
 
 ![](../images/click_folder_name.png)
 
-Click 'Execute filebrowser' button in the upper-right corner of the explorer.
+Click `Execute filebrowser` button in the upper-right corner of the explorer.
 
 ![](../images/folder_explorer.png)
 
 You can see the FileBrowser is opened in a new window. You can also see that the
-data folder you opened the explorer dialog becomes the root directory. From the
+storage folder you opened the explorer dialog becomes the root directory. From the
 FileBrowser window, you can freely upload, modify, and delete any directories
 and files.
 
 ![](../images/filebrowser_with_new_window.png)
 
-When user clicks 'EXECUTE FILEBROWSER' button, Backend.AI automatically creates a
+When user clicks `Execute filebrowser` button, Backend.AI automatically creates a
 dedicated compute session for the app. So, in the Sessions page, you should see
 FileBrowser compute session. It is user's responsibility to delete this compute
 session.
@@ -206,7 +262,7 @@ FileBrowser compute session.
 
 ![](../images/app_dialog_with_filebrowser.png)
 
-When you click 'EXECUTE FILEBROWSER' button again in the data folder
+When you click `Execute filebrowser` button again in the storage folder
 explorer, a new compute session will be created and a total of two
 FileBrowser sessions will appear.
 :::
@@ -214,14 +270,14 @@ FileBrowser sessions will appear.
 ### Create a compute session with FileBrowser image
 
 You can directly create a compute session with FileBrowser supported images.
-You need to mount at least one or more data folders to access them. You can use
-FileBrowser without a problem even if you do not mount any data folder, but
+You need to mount at least one or more storage folders to access them. You can use
+FileBrowser without a problem even if you do not mount any storage folder, but
 every uploaded/updated files will be lost after the session is terminated.
 
 
 :::note
 The root directory of FileBrowser will be `/home/work`. Therefore, you
-can access any mounted data folders for the compute session.
+can access any mounted storage folders for the compute session.
 :::
 
 ### Basic usage examples of FileBrowser
@@ -264,14 +320,14 @@ You can also upload local files and directories by drag and drop.
 
 **Move files or directories to another directory**
 
-Moving files or directories in data folder is also possible from FileBrowser.
+Moving files or directories in storage folder is also possible from FileBrowser.
 You can move files or directories by following steps below.
 
 1. Select directories or files from FileBrowser.
 
 ![](../images/select_folders.png)
 
-2. Click the 'arrow' button in the upper right corner of FileBrowser
+2. Click the `arrow` button in the upper right corner of FileBrowser
 
 ![](../images/click_arrow_icon.png)
 
@@ -279,7 +335,7 @@ You can move files or directories by following steps below.
 
 ![](../images/select_the_destination.png)
 
-4. Click 'MOVE' button
+4. Click `Move` button
 
 You will see that moving operation is successfully finished.
 
@@ -292,10 +348,10 @@ We are planning to update FileBrowser so that it can run independently
 without creating a session.
 :::
 
-## Using SFTP Server
+## Using SFTP server
 
 
-From 22.09, Backend.AI supports SSH / SFTP file upload from both desktop app and
+Backend.AI supports SSH / SFTP file upload from both desktop app and
 web-based WebUI. The SFTP server allows you to upload files quickly through reliable
 data streams.
 
@@ -307,10 +363,10 @@ be allowed.
 
 ### Execute SFTP server from folder explorer dialog in Data page
 
-Go to the Data page and open the file explorer dialog of target data folder.
+Go to the Data page and open the file explorer dialog of target storage folder.
 Click the folder button or the folder name to open the file explorer.
 
-Click 'Run SFTP server' button in the upper-right corner of the explorer.
+Click `Run SFTP server` button in the upper-right corner of the explorer.
 
 ![](../images/folder_explorer.png)
 
@@ -319,11 +375,11 @@ automatically. (This session will not affect resource occupancy.)
 
 ![](../images/SSH_SFTP_connection.png)
 
-For the connection, click 'Download SSH Key' button to download the SSH private key
+For the connection, click `Download SSH Key` button to download the SSH private key
 (`id_container`). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
-referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#for-linux-mac).
-To preserve the files, you need to transfer the files to the data folder. Also,
+referring to the following guide: [SFTP Connection Guide](#ssh-sftp-container).
+To preserve the files, you need to transfer the files to the storage folder. Also,
 the session will be terminated when there is no transfer for some time.
 
 
@@ -333,9 +389,6 @@ own SSH private key. So, you don't need to download it every time you
 want to connect via SSH to your container. Please refer to
 [managing user's SSH keypair](#user-ssh-keypair-management).
 :::
-
-## Folder Categories
-
 
 ## Pipeline folders
 

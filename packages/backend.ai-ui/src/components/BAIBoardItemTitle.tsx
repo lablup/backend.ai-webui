@@ -1,6 +1,7 @@
+import BAIQuestionIconWithTooltip from './BAIQuestionIconWithTooltip';
+import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Typography, Tooltip, theme } from 'antd';
+import { Heading } from '@astryxdesign/core/Text';
 import React from 'react';
 
 export interface BAIBoardItemTitleProps {
@@ -10,7 +11,9 @@ export interface BAIBoardItemTitleProps {
   style?: React.CSSProperties;
 }
 
-const Z_INDEX_IN_BAI_BOARD_ITEM_TITLE = 5;
+// Context-local: above the table's fixed columns (calculated per column count),
+// below `BAI_Z_INDEX.appHeader` (see `styles/zIndexLadder.ts`).
+const Z_INDEX_IN_BAI_BOARD_ITEM_TITLE = 50;
 
 const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
   title,
@@ -38,19 +41,16 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
     >
       <BAIFlex gap={'xs'} align="center" wrap="wrap">
         {typeof title === 'string' ? (
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            {title}
-          </Typography.Title>
+          // antd Typography.Title level={5} = 16px. `level={3}` was picked when
+          // Astryx's heading ramp still started three rungs lower (h3 = 17px);
+          // once `ANTD_ALIGN_TOKENS` restored the antd scale (38/30/24/20/16),
+          // 16px moved to `level={5}` and h3 became 24px. Re-levelled by
+          // RENDERED SIZE, which is what the original choice was tracking.
+          <Heading level={5}>{title}</Heading>
         ) : (
           title
         )}
-        {tooltip ? (
-          <Tooltip title={tooltip}>
-            <QuestionCircleOutlined
-              style={{ color: token.colorTextSecondary }}
-            />
-          </Tooltip>
-        ) : null}
+        {tooltip ? <BAIQuestionIconWithTooltip title={tooltip} /> : null}
       </BAIFlex>
 
       <BAIFlex

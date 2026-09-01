@@ -1,9 +1,9 @@
-import { BAILocale } from '.';
-import mn_MN from 'antd/es/locale/mn_MN';
+import type { BAILocale } from '.';
+import astryxLocale from './astryx/mn.json';
 
 const localeValue: BAILocale = {
   lang: 'mn',
-  antdLocale: mn_MN,
+  astryxLocale,
 };
 
 export default localeValue;

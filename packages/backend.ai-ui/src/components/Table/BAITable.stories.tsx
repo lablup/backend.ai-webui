@@ -1,54 +1,39 @@
-import { BAILocale } from '../../locale';
-import { BAIConfigProvider } from '../provider';
-import { BAIClient } from '../provider/BAIClientProvider';
-import BAITable, {
-  BAIColumnsType,
-  BAITableColumnOverrideItem,
-} from './BAITable';
+import BAITag from '../BAITag';
+import BAITable from './BAITable';
+import { BAITableColumnOverrideItem, BAIColumnsType } from './tableTypes';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Tag, Button, Space } from 'antd';
-import enUS from 'antd/locale/en_US';
-import koKR from 'antd/locale/ko_KR';
-import React, { useState } from 'react';
+import { useState, type Key } from 'react';
 
-// Mock BAIClient for Storybook
-const mockClient = {} as BAIClient;
-const mockClientPromise = Promise.resolve(mockClient);
-const mockAnonymousClientFactory = () => mockClient;
-
-// Simple locale setup for Storybook
-const locales = {
-  en: { lang: 'en', antdLocale: enUS },
-  ko: { lang: 'ko', antdLocale: koKR },
-} as const;
-
+/**
+ * `BAITable` renders through Astryx's `Table` primitive + plugin pipeline,
+ * behind the antd-shaped `columns` / `dataSource` contract the retired antd
+ * engine had. That engine and its stories were deleted in to-astryx ticket
+ * 30-D, so these are the table's only stories.
+ */
 const meta: Meta<typeof BAITable> = {
   title: 'Table/BAITable',
   component: BAITable,
-  tags: ['autodocs'], // Enable autodocs for this component
+  tags: ['autodocs'],
   parameters: {
     layout: 'padded',
     docs: {
       description: {
         component: `
-BAITable is an enhanced table component that extends Ant Design's Table with additional features:
+**BAITable** renders through Astryx instead of the retired antd engine, keeping the same public contract:
 
-- **Column Management**: Show/hide columns with persistent settings
-- **Resizable Columns**: Drag column borders to resize
-- **Enhanced Sorting**: String-based order support with callbacks
-- **Custom Pagination**: Integrated pagination with extra content support
-- **Settings Modal**: Built-in column visibility controls
+- **Column visibility** via \`tableSettings\` (Astryx \`Dialog\` settings modal, not the antd one)
+- **Resizable columns** — drag-to-resize, persisted into \`columnOverrides[key].width\`
+- **Sorting** via \`order\`/\`onChangeOrder\` order strings
+- **Pagination** — a custom bottom bar (not antd's pager). Client-side data is sliced here; a \`total\` larger than \`dataSource\` means the caller already sliced server-side (FR-3563)
 
-## Key Features
+- **Horizontal scroll** via antd-shaped \`scroll={{ x }}\` — width-less columns take their content's intrinsic width (FR-3500)
+- **Vertical scroll** via \`scroll={{ y }}\` — the body is capped at \`y\` and the header row sticks (FR-3500)
 
-### Column Visibility
-Columns can be marked as \`defaultHidden\` or \`required\`. Users can toggle visibility through the settings modal (gear icon).
-
-### Column Overrides
-The component supports controllable column overrides that can be persisted to localStorage or any storage solution.
-
-### Sorting
-Uses order strings like \`'name'\` (ascending) or \`'-name'\` (descending) instead of Ant Design's sorter object.
+## Dropped vs BAITable (see ticket 25 "Feature matrix" for the full list)
+- \`loading\` dims rows but shows no spinner
+- \`scroll.y\`'s sticky header loses its bottom rule while scrolled (a collapsed-border rule cannot travel with a sticky cell)
+- Column groups (\`columns[].children\`) are flattened, not spanned
+- Row virtualization (deferred, explicit product decision)
         `,
       },
     },
@@ -56,44 +41,32 @@ Uses order strings like \`'name'\` (ascending) or \`'-name'\` (descending) inste
   argTypes: {
     loading: {
       control: { type: 'boolean' },
-      description: 'Show loading state with reduced opacity',
+      description: 'Dims the rows while a refetch is in flight (no spinner)',
     },
     size: {
       control: { type: 'select' },
-      options: ['large', 'middle', 'small'],
-      description: 'Size of the table',
+      options: ['small', 'middle', 'large'],
+      description: 'Row density, mapped to Astryx `density`',
     },
     resizable: {
       control: { type: 'boolean' },
       description: 'Enable column resizing by dragging column borders',
     },
+    bordered: {
+      control: { type: 'boolean' },
+      description: 'Grid dividers between cells (-> Astryx `dividers="grid"`)',
+    },
     order: {
       control: { type: 'text' },
       description:
-        'Sort order string (e.g., "name" for ascending, "-name" for descending)',
+        'Sort order string (e.g. "name" ascending, "-name" descending)',
     },
-    tableSettings: {
+    scroll: {
       control: { type: 'object' },
-      description: 'Configuration for column visibility and settings modal',
+      description:
+        'antd-shaped `{ x?, y? }` — `x` sizes the table from its content, `y` caps the body height with a sticky header',
     },
   },
-  decorators: [
-    (Story, context) => {
-      const locale = context.globals.locale || 'en';
-      const baiLocale: BAILocale =
-        locales[locale as keyof typeof locales] || locales.en;
-
-      return (
-        <BAIConfigProvider
-          locale={baiLocale}
-          clientPromise={mockClientPromise}
-          anonymousClientFactory={mockAnonymousClientFactory}
-        >
-          <Story />
-        </BAIConfigProvider>
-      );
-    },
-  ],
 };
 
 export default meta;
@@ -107,7 +80,7 @@ const sampleColumns: BAIColumnsType<any> = [
     key: 'name',
     sorter: true,
     width: 150,
-    required: true, // This column cannot be hidden
+    required: true,
   },
   {
     title: 'Age',
@@ -126,7 +99,9 @@ const sampleColumns: BAIColumnsType<any> = [
         inactive: 'red',
         pending: 'orange',
       };
-      return <Tag color={colors[status as keyof typeof colors]}>{status}</Tag>;
+      return (
+        <BAITag color={colors[status as keyof typeof colors]}>{status}</BAITag>
+      );
     },
     width: 100,
   },
@@ -134,23 +109,15 @@ const sampleColumns: BAIColumnsType<any> = [
     title: 'Department',
     dataIndex: 'department',
     key: 'department',
-    defaultHidden: true, // Hidden by default
+    defaultHidden: true,
     width: 120,
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-    defaultHidden: true, // Hidden by default
-    ellipsis: true,
   },
   {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
-    defaultHidden: true, // Hidden by default
-    ellipsis: true,
-    width: 200,
+    defaultHidden: true,
+    width: 220,
   },
 ];
 
@@ -159,7 +126,6 @@ const sampleData = [
     key: '1',
     name: 'John Brown',
     age: 32,
-    address: 'New York No. 1 Lake Park',
     email: 'john.brown@example.com',
     status: 'active',
     department: 'Engineering',
@@ -168,7 +134,6 @@ const sampleData = [
     key: '2',
     name: 'Jim Green',
     age: 42,
-    address: 'London No. 1 Lake Park',
     email: 'jim.green@example.com',
     status: 'inactive',
     department: 'Marketing',
@@ -177,7 +142,6 @@ const sampleData = [
     key: '3',
     name: 'Joe Black',
     age: 28,
-    address: 'Sidney No. 1 Lake Park',
     email: 'joe.black@example.com',
     status: 'pending',
     department: 'Sales',
@@ -186,7 +150,6 @@ const sampleData = [
     key: '4',
     name: 'Alice Johnson',
     age: 35,
-    address: 'Toronto No. 2 Lake Park',
     email: 'alice.johnson@example.com',
     status: 'active',
     department: 'HR',
@@ -195,12 +158,49 @@ const sampleData = [
     key: '5',
     name: 'Bob Smith',
     age: 29,
-    address: 'Berlin No. 3 Lake Park',
     email: 'bob.smith@example.com',
     status: 'active',
     department: 'Engineering',
   },
 ];
+
+// The FR-3500 shape: long unwrapped resource labels in width-less columns,
+// inside a container far narrower than the content (the dashboard card).
+const scrollColumns: BAIColumnsType<any> = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    width: 120,
+    fixed: 'left',
+  },
+  { title: 'Allocation', dataIndex: 'allocation', key: 'allocation' },
+  { title: 'Usage', dataIndex: 'usage', key: 'usage' },
+  { title: 'Status', dataIndex: 'status', key: 'status' },
+];
+
+const scrollData = [
+  {
+    key: 'a1',
+    name: 'agent-node-with-a-deliberately-long-name-01',
+    allocation: 'CPU 126.9 / 128 cores · MEM 972.3 / 1024 GiB',
+    usage: 'CPU 87% (111.4 cores) · MEM 63% (645.1 GiB) · GPU 4/8 (fGPU 3.5)',
+    status: 'ALIVE (schedulable)',
+  },
+  {
+    key: 'a2',
+    name: 'agent-node-02',
+    allocation: 'CPU 12 / 64 cores · MEM 96 / 512 GiB',
+    usage: 'CPU 12% (7.7 cores) · MEM 18% (92.2 GiB) · GPU 0/4 (fGPU 0)',
+    status: 'ALIVE (schedulable)',
+  },
+];
+
+// Enough rows in the same shape to overflow a 240px body cap.
+const verticalScrollData = Array.from({ length: 15 }, (_unused, index) => ({
+  ...scrollData[index % scrollData.length],
+  key: `n${index + 1}`,
+}));
 
 export const Default: Story = {
   name: 'Basic Table',
@@ -208,7 +208,7 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'Basic table with sample data. Note that some columns are hidden by default (`defaultHidden: true`).',
+          'Basic table with sample data. `department` and `email` are hidden by default (`defaultHidden: true`) — open the settings gear to reveal them.',
       },
     },
   },
@@ -222,13 +222,118 @@ export const Default: Story = {
   },
 };
 
-export const WithColumnVisibilitySettings: Story = {
+const makePeople = (count: number, keyPrefix: string) =>
+  Array.from({ length: count }, (_unused, index) => ({
+    ...sampleData[index % sampleData.length],
+    key: `${keyPrefix}${index + 1}`,
+    name: `Person ${index + 1}`,
+  }));
+
+const clientPagedData = makePeople(42, 'p');
+
+export const ClientSidePagination: Story = {
+  name: 'Client-side Pagination',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A whole list handed over at once, with no `total`: the table slices it and the pager walks all 42 rows. Passing a `total` larger than `dataSource` instead declares the rows already server-sliced, and the table leaves them alone (FR-3563).',
+      },
+    },
+  },
+  args: {
+    columns: sampleColumns,
+    dataSource: clientPagedData,
+    pagination: {
+      pageSize: 10,
+    },
+  },
+};
+
+const serverPagedData = makePeople(177, 's');
+
+export const InvalidPage: Story = {
+  name: 'Invalid Page Number',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A server-sliced page past the last one: the caller holds page 20 of a 177-row result set and the server returned nothing. Instead of "No data to display", the body offers a way back; "Go to first page" resets the caller\'s page through `pagination.onChange`, which is what refetches (FR-3703).',
+      },
+    },
+  },
+  render: () => {
+    const [page, setPage] = useState(20);
+    const pageSize = 10;
+    return (
+      <BAITable
+        columns={sampleColumns}
+        dataSource={serverPagedData.slice(
+          (page - 1) * pageSize,
+          page * pageSize,
+        )}
+        pagination={{
+          current: page,
+          pageSize,
+          total: serverPagedData.length,
+          onChange: setPage,
+        }}
+      />
+    );
+  },
+};
+
+export const HorizontalScroll: Story = {
+  name: 'Horizontal Scroll (scroll.x)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "antd-shaped `scroll={{ x: 'max-content' }}` inside a 560px container: width-less columns (Allocation / Usage / Status) take their content's intrinsic width and the table scrolls horizontally; the pixel-width `Name` column stays 120px and still truncates. Without `scroll.x` the same table squeezes every column into the container and clips the labels (FR-3500).",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ width: 560 }}>
+      <BAITable
+        scroll={{ x: 'max-content' }}
+        columns={scrollColumns}
+        dataSource={scrollData}
+        pagination={{ total: scrollData.length, pageSize: 10 }}
+      />
+    </div>
+  ),
+};
+
+export const VerticalScroll: Story = {
+  name: 'Vertical Scroll (scroll.y)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`scroll={{ x: 'max-content', y: 240 }}` — the shape an `x`+`y` call site passes. `y` caps the scroll container at 240px and sticks the header row over an opaque base, so all 15 rows render inside a fixed-height body instead of growing the page. Both axes scroll in the same container: the `Name` column stays pinned while scrolling sideways, and its header stays put while scrolling down.",
+      },
+    },
+  },
+  render: () => (
+    <div style={{ width: 560 }}>
+      <BAITable
+        scroll={{ x: 'max-content', y: 240 }}
+        columns={scrollColumns}
+        dataSource={verticalScrollData}
+        pagination={{ total: verticalScrollData.length, pageSize: 20 }}
+      />
+    </div>
+  ),
+};
+
+export const WithColumnSettings: Story = {
   name: 'Column Visibility Settings',
   parameters: {
     docs: {
       description: {
         story:
-          'Table with column visibility settings enabled. Click the gear icon to open the settings modal where you can show/hide columns. Changes are tracked in the `columnOverrides` state.',
+          'Table with `tableSettings` wired to local state. Click the gear icon to open the Astryx settings dialog and toggle column visibility.',
       },
     },
   },
@@ -241,116 +346,9 @@ export const WithColumnVisibilitySettings: Story = {
       <BAITable
         columns={sampleColumns}
         dataSource={sampleData}
+        resizable
         tableSettings={{
-          columnOverrides: columnOverrides,
-          onColumnOverridesChange: (
-            newOverrides: Record<string, BAITableColumnOverrideItem>,
-          ) => {
-            setColumnOverrides(newOverrides);
-            console.log('Column overrides changed:', newOverrides);
-          },
-        }}
-        pagination={{
-          total: sampleData.length,
-          pageSize: 10,
-        }}
-      />
-    );
-  },
-};
-
-export const WithPersistentColumnSettings: Story = {
-  name: 'Persistent Column Settings',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Demonstrates persistent column settings using localStorage. Column visibility changes are automatically saved and restored. Use the "Reset" button to clear saved settings.',
-      },
-    },
-  },
-  render: () => {
-    const STORAGE_KEY = 'storybook-bai-table-columns';
-
-    const [columnOverrides, setColumnOverrides] = useState<
-      Record<string, BAITableColumnOverrideItem>
-    >(() => {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : {};
-      } catch {
-        return {};
-      }
-    });
-
-    return (
-      <div>
-        <Space style={{ marginBottom: 16 }}>
-          <Button
-            onClick={() => {
-              localStorage.removeItem(STORAGE_KEY);
-              setColumnOverrides({});
-            }}
-          >
-            Reset Column Settings
-          </Button>
-          <Button
-            onClick={() => {
-              const settings = localStorage.getItem(STORAGE_KEY);
-              alert(settings ? `Settings: ${settings}` : 'No settings saved');
-            }}
-          >
-            Show Saved Settings
-          </Button>
-        </Space>
-        <BAITable
-          columns={sampleColumns}
-          dataSource={sampleData}
-          tableSettings={{
-            columnOverrides: columnOverrides,
-            onColumnOverridesChange: (
-              newOverrides: Record<string, BAITableColumnOverrideItem>,
-            ) => {
-              setColumnOverrides(newOverrides);
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(newOverrides));
-              console.log('Column overrides saved:', newOverrides);
-            },
-          }}
-          pagination={{
-            total: sampleData.length,
-            pageSize: 5,
-          }}
-        />
-      </div>
-    );
-  },
-};
-
-export const WithPresetHiddenColumns: Story = {
-  name: 'Preset Hidden Columns',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Shows how to preset column visibility using `columnOverrides`. Some columns are hidden by default, while others override their `defaultHidden` setting.',
-      },
-    },
-  },
-  render: () => {
-    const [columnOverrides, setColumnOverrides] = useState<
-      Record<string, BAITableColumnOverrideItem>
-    >({
-      address: { hidden: true },
-      email: { hidden: true },
-      department: { hidden: false }, // Show department by default (overrides defaultHidden)
-    });
-
-    return (
-      <BAITable
-        columns={sampleColumns}
-        dataSource={sampleData}
-        tableSettings={{
-          columnOverrides: columnOverrides,
+          columnOverrides,
           onColumnOverridesChange: setColumnOverrides,
         }}
         pagination={{
@@ -362,126 +360,84 @@ export const WithPresetHiddenColumns: Story = {
   },
 };
 
+export const WithSorting: Story = {
+  name: 'Sortable Columns',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Uses `order`/`onChangeOrder` order strings (e.g. `"name"`, `"-age"`) instead of an antd sorter object.',
+      },
+    },
+  },
+  render: () => {
+    const [order, setOrder] = useState<string | null>('name');
+    return (
+      <BAITable
+        columns={sampleColumns}
+        dataSource={sampleData}
+        order={order}
+        onChangeOrder={(next) => setOrder(next ?? null)}
+        pagination={false}
+      />
+    );
+  },
+};
+
+export const RowSelection: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: 'Checkbox row selection, same `rowSelection` shape as antd.',
+      },
+    },
+  },
+  render: () => {
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Array<Key>>([]);
+    return (
+      <BAITable
+        columns={sampleColumns}
+        dataSource={sampleData}
+        rowKey="key"
+        rowSelection={{
+          selectedRowKeys,
+          onChange: (keys) => setSelectedRowKeys([...keys]),
+        }}
+        pagination={false}
+      />
+    );
+  },
+};
+
 export const Loading: Story = {
   name: 'Loading State',
   parameters: {
     docs: {
       description: {
-        story: 'Table in loading state with reduced opacity and no data.',
+        story:
+          'Rows dim while `loading` is true. Unlike antd there is no centred spinner (ticket 25 PILOT-DECISION 4).',
       },
     },
   },
   args: {
     columns: sampleColumns,
-    dataSource: [],
+    dataSource: sampleData,
     loading: true,
-    pagination: {
-      total: 0,
-      pageSize: 10,
-    },
+    pagination: false,
   },
 };
 
-export const SmallSize: Story = {
-  name: 'Small Size table',
+export const EmptyState: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Table with small size variant for compact displays.',
-      },
-    },
-  },
-  args: {
-    columns: sampleColumns,
-    dataSource: sampleData,
-    size: 'small',
-    pagination: {
-      total: sampleData.length,
-      pageSize: 10,
-    },
-  },
-};
-
-export const NoData: Story = {
-  name: 'Empty State',
-  parameters: {
-    docs: {
-      description: {
-        story: 'Table with no data showing empty state.',
+        story: 'No rows — renders the empty state in place of the body.',
       },
     },
   },
   args: {
     columns: sampleColumns,
     dataSource: [],
-    pagination: {
-      total: 0,
-      pageSize: 10,
-    },
-  },
-};
-
-export const ResizableColumns: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Table with resizable columns. Drag the column borders to resize them. Column widths are maintained in component state.',
-      },
-    },
-  },
-  args: {
-    columns: sampleColumns,
-    dataSource: sampleData,
-    resizable: true,
-    pagination: {
-      total: sampleData.length,
-      pageSize: 10,
-    },
-  },
-};
-
-export const WithSorting: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Table with sorting functionality. Uses order strings instead of Ant Design's default sorter format. Click column headers to sort.",
-      },
-    },
-  },
-  render: () => {
-    const [order, setOrder] = useState<string | undefined>('name');
-    const [sortedData, setSortedData] = useState(sampleData);
-
-    React.useEffect(() => {
-      if (order) {
-        const isDescending = order.startsWith('-');
-        const field = isDescending ? order.substring(1) : order;
-        const sorted = [...sampleData].sort((a, b) => {
-          const aVal = a[field as keyof typeof a];
-          const bVal = b[field as keyof typeof b];
-          if (aVal < bVal) return isDescending ? 1 : -1;
-          if (aVal > bVal) return isDescending ? -1 : 1;
-          return 0;
-        });
-        setSortedData(sorted);
-      } else {
-        setSortedData(sampleData);
-      }
-    }, [order]);
-
-    return (
-      <BAITable
-        columns={sampleColumns}
-        dataSource={sortedData}
-        order={order}
-        onChangeOrder={setOrder}
-        pagination={{
-          total: sortedData.length,
-          pageSize: 10,
-        }}
-      />
-    );
+    pagination: false,
   },
 };

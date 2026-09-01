@@ -6,15 +6,11 @@
 // This import has side effects: it instantiates the four singleton stores
 // and assigns them to globalThis for backward compatibility with Lit code.
 import App from './App';
-import { jotaiStore, useWebComponentInfo } from './components/DefaultProviders';
-import SourceCodeView from './components/SourceCodeView';
+import { jotaiStore } from './components/DefaultProviders';
 import './global-stores';
 import { loadCustomThemeConfig } from './helper/customThemeConfig';
-import reactToWebComponent, {
-  ReactWebComponentProps,
-} from './helper/react-to-webcomponent';
+import { applyDevServerTitle } from './helper/devServerTitle';
 import { ThemeModeProvider } from './hooks/useThemeMode';
-import { ConfigProvider } from 'antd';
 import { Provider as JotaiProvider } from 'jotai';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -24,13 +20,22 @@ import ReactDOM from 'react-dom/client';
 // It's advisable to ignore these frequent logs in development mode.
 if (process.env.NODE_ENV === 'development') {
   // Enable react-grab for AI agent element inspection during development
-  import('react-grab').catch((error) => {
-    // eslint-disable-next-line no-console
-    console.warn(
-      'Failed to load react-grab devtool. AI agent element inspection will be disabled.',
-      error,
-    );
-  });
+  import('react-grab')
+    .then(() => {
+      window.__REACT_GRAB__?.registerPlugin({
+        name: 'hide-toolbar',
+        theme: {
+          toolbar: { enabled: false },
+        },
+      });
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.warn(
+        'Failed to load react-grab devtool. AI agent element inspection will be disabled.',
+        error,
+      );
+    });
 
   // eslint-disable-next-line no-console
   const originalConsoleError = console.error;
@@ -51,120 +56,27 @@ if (process.env.NODE_ENV === 'development') {
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();
 
-const DefaultProviders = React.lazy(
-  () => import('./components/DefaultProviders'),
-);
-const ResetPasswordRequired = React.lazy(
-  () => import('./components/ResetPasswordRequired'),
-);
-const CopyableCodeText = React.lazy(
-  () => import('./components/CopyableCodeText'),
-);
+// to-astryx final switch — the `ConfigProvider.config({ holderRender })` block
+// that used to live here is gone.
+//
+// It existed for antd's STATIC methods (`message.*` / `notification.*` /
+// `Modal.*`), which render in a detached holder built from `globalConfig()` —
+// outside the app's ConfigProvider, and therefore outside both its CSP nonce
+// and its theme. The holder had to be re-wrapped in its own ConfigProvider
+// carrying the nonce (so cssinjs's injected <style> survived a strict
+// `style-src 'nonce-…'`) and the dark algorithm (so a statically-invoked toast
+// did not paint light on a dark page), subscribing to
+// `change:backendaiwebui.setting.isDarkMode` to follow a mid-session flip.
+//
+// None of that has a subject any more. The imperative API is `app-shim`
+// (ticket 04), whose host `<BAIAppProvider>` is mounted INSIDE the app's
+// `<AstryxBrandTheme>` in `DefaultProviders`, so it inherits theme and mode
+// like any other component — and Astryx injects no runtime <style>, so there
+// is no nonce to plumb.
 
-const TOTPActivateModalWithToken = React.lazy(
-  () => import('./components/TOTPActivateModalWithToken'),
-);
-
-const SignupModal = React.lazy(() => import('./components/SignupModal'));
-
-customElements.define(
-  'backend-ai-react-signup-modal',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <SignupModalInWebComponent {...props} />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-totp-registration-modal-before-login',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <TOTPActivateModalWithToken />
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-reset-password-required-modal',
-  reactToWebComponent((props) => (
-    <DefaultProviders {...props}>
-      <ResetPasswordRequired />
-    </DefaultProviders>
-  )),
-);
-
-customElements.define(
-  'backend-ai-react-copyable-code-text',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        {/* FIXME: When rendered inside a Shadow DOM, Tooltip may affect layout flow.
-                   Force portal to shadowRoot to prevent layout shift.*/}
-        {/* @ts-ignore */}
-        <ConfigProvider getPopupContainer={() => props.shadowRoot}>
-          <CopyableCodeText text={props.value || ''} />
-        </ConfigProvider>
-      </DefaultProviders>
-    );
-  }),
-);
-
-customElements.define(
-  'backend-ai-react-source-code-viewer',
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <SourceCodeViewerInWebComponent {...props} />
-      </DefaultProviders>
-    );
-  }),
-);
-
-const SignupModalInWebComponent: React.FC<ReactWebComponentProps> = (props) => {
-  const {
-    parsedValue: {
-      open = false,
-      endpoint = '',
-      allowSignupWithoutConfirmation = false,
-      preloadedToken,
-    } = {},
-  } = useWebComponentInfo<{
-    open: boolean;
-    endpoint: string;
-    allowSignupWithoutConfirmation: boolean;
-    preloadedToken?: string;
-  }>();
-
-  return (
-    <SignupModal
-      open={open}
-      endpoint={endpoint}
-      allowSignupWithoutConfirmation={allowSignupWithoutConfirmation}
-      preloadedToken={preloadedToken}
-      onRequestClose={() => {
-        props.dispatchEvent('close', null);
-      }}
-    />
-  );
-};
-
-const SourceCodeViewerInWebComponent: React.FC<ReactWebComponentProps> = () => {
-  const {
-    parsedValue: { children, language } = {
-      children: '',
-      language: '',
-    },
-  } = useWebComponentInfo<{
-    children: string;
-    language: string;
-  }>();
-  return <SourceCodeView language={language}>{children}</SourceCodeView>;
-};
+// In dev, distinguish multiple dev-server tabs by prefixing the tab title with
+// the Portless app name injected via VITE_DEV_SERVER_NAME (no-op in production).
+applyDevServerTitle();
 
 const root = ReactDOM.createRoot(
   document.getElementById('react-root') as HTMLElement,

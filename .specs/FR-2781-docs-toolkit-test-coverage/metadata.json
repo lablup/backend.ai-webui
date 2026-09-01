@@ -1,0 +1,40 @@
+{
+  "epicKey": "FR-2781",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2781",
+  "slug": "docs-toolkit-test-coverage",
+  "specTaskKey": "FR-2782",
+  "specTaskUrl": "https://lablup.atlassian.net/browse/FR-2782",
+  "specGithubIssue": 7176,
+  "stories": [],
+  "sourceIssues": [],
+  "predecessorEpics": ["FR-2710", "FR-2729"],
+  "createdAt": "2026-04-30T00:00:00Z",
+  "stackShape": "linear-single-branch",
+  "stackBase": "main",
+  "subtasks": [
+    {
+      "key": "FR-2783",
+      "label": "A",
+      "title": "feat(FR-2781 / A): docs-toolkit example boilerplate package",
+      "githubIssue": 7177,
+      "dependsOn": ["FR-2782"],
+      "stackParent": "spec"
+    },
+    {
+      "key": "FR-2784",
+      "label": "B",
+      "title": "test(FR-2781 / B): toolkit unit test coverage expansion",
+      "githubIssue": 7178,
+      "dependsOn": ["FR-2783"],
+      "stackParent": "FR-2783"
+    },
+    {
+      "key": "FR-2785",
+      "label": "C",
+      "title": "test(FR-2781 / C): example-driven E2E + PDF integration tests",
+      "githubIssue": 7179,
+      "dependsOn": ["FR-2784"],
+      "stackParent": "FR-2784"
+    }
+  ]
+}

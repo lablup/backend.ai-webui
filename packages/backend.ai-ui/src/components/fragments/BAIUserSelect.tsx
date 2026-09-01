@@ -1,28 +1,58 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ BAIUserSelect — the ticket-26 demonstration consumer of
+ `BAIComplexSelect`.
+
+ `BAIUserSelect` is the hardest select in this repo and the template the other
+ ~17 Relay-backed `*Select` wrappers follow: Relay OFFSET pagination with
+ scroll-driven `loadNext`, server-side search, `labelInValue`, and
+ single/multiple modes all at once (cn-oss-removal ticket 12 §"이식 대상 선정").
+ Porting it first is what proves the foundation; ticket 27 converts the rest.
+
+ FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
+ `BAIUserSelect` is NOT touched. It keeps serving every unmigrated call site
+ until ticket 27 moves them. This file is the Astryx-native sibling, and its
+ OUTER value contract is deliberately the same plain key (`string` /
+ `string[]`) the antd wrapper exposes — labelInValue lives strictly between
+ the wrapper and `BAIComplexSelect`, exactly as it does between
+ `BAIUserSelect` and `BAISelect` today.
+
+ PILOT-DECISIONs:
+  - P26-5 `useControllableValue` (BUI) is kept for the value/open pair, so
+    the wrapper stays drop-in for both controlled and uncontrolled callers.
+  - P26-6 The `open ? 'network-only' : 'store-only'` fetchPolicy switch
+    survives — `BAIComplexSelect.onOpenChange` re-exposes the open state that
+    `ComplexSelector` otherwise keeps private.
+  - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
+    is dropped: `emptyContent` takes a ReactNode but a skeleton row inside an
+    Astryx popup adds an antd dependency back into a migrated surface. The
+    empty state is the shared "No results" text (simplicity policy).
+*/
 import { BAIUserSelectPaginatedQuery } from '../../__generated__/BAIUserSelectPaginatedQuery.graphql';
 import { BAIUserSelectValueQuery } from '../../__generated__/BAIUserSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import BAIComplexSelect, {
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
+} from '../BAIComplexSelect';
 import { mergeFilterValues } from '../BAIPropertyFilter';
-import BAISelect, { BAISelectProps } from '../BAISelect';
-import BAIText from '../BAIText';
-import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
-import { GetRef, Skeleton } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   useDeferredValue,
   useImperativeHandle,
-  useOptimistic,
-  useRef,
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type UserNode = NonNullable<
+export type AstryxUserNode = NonNullable<
   NonNullable<
     BAIUserSelectPaginatedQuery['response']['user_nodes']
   >['edges'][number]
@@ -33,38 +63,53 @@ export interface BAIUserSelectRef {
 }
 
 export interface BAIUserSelectProps extends Omit<
-  BAISelectProps,
-  'options' | 'labelInValue' | 'ref'
+  BAIComplexSelectProps,
+  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
+  /** Plain key(s), as the antd `BAIUserSelect` exposes. */
+  value?: string | Array<string> | null;
+  /**
+   * P3C-1: the second `option` argument survives here (and only here). antd's
+   * `onChange(value, option)` was dropped wholesale by ticket 27, but
+   * `BAIGraphQLPropertyFilter.renderInput` needs the human-readable label to
+   * put on the filter chip while the raw UUID goes into the GraphQL filter —
+   * and the label is not derivable at the call site. Shape is the
+   * `labelInValue` pair the wrapper already holds, so nothing is rebuilt.
+   */
+  onChange?: (
+    value: string | Array<string> | undefined,
+    option?: BAILabeledValue | Array<BAILabeledValue>,
+  ) => void;
   filter?: string;
   excludeInactive?: boolean;
   valuePropName?: 'id' | 'email';
-  onChange?: (value: string | string[] | undefined, option: any) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
   ref?: React.Ref<BAIUserSelectRef>;
 }
 
-// Default filter for active users only
-const defaultActiveUserFilter = 'is_active == true';
+/** Same rationale as `BAIUserSelect`: `user_nodes` filters on the enum. */
+const defaultActiveUserFilter = 'status == "active"';
 
 const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
-  loading,
   filter,
   excludeInactive = false,
   valuePropName = 'email',
+  multiple = false,
+  isLoading,
   ref,
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
-  const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+  const { t } = useBAIi18n();
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | string[] | undefined
-  >(selectProps, {
+    string | Array<string> | null | undefined
+  >(selectProps as Record<string, unknown>, {
     valuePropName: 'value',
     trigger: 'onChange',
   });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
-    selectProps,
+    selectProps as Record<string, unknown>,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
@@ -73,21 +118,28 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   );
 
   const deferredOpen = useDeferredValue(controllableOpen);
-  const [searchStr, setSearchStr] = useState<string>();
+  const [searchStr, setSearchStr] = useState<string>('');
   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
-  const [optimisticSearchStr, setOptimisticSearchStr] =
-    useOptimistic(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [fetchKey, updateFetchKey] = useFetchKey();
+  const deferredFetchKey = useDeferredValue(fetchKey);
+
   const mergedFilter = mergeFilterValues([
     excludeInactive ? defaultActiveUserFilter : null,
     filter,
   ]);
-  const [fetchKey, updateFetchKey] = useFetchKey();
-  const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // Defer query refetch to prevent flickering during user selection
+  // Deferred so a fresh selection does not immediately re-run the value query.
   const deferredControllableValue = useDeferredValue(controllableValue);
+  const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
+  /**
+   * The selected-key -> label resolution query. In antd this was a NICETY
+   * (antd renders the raw value when no option matches); on Astryx it is
+   * MANDATORY infrastructure — the trigger reads its text from the VALUE, and
+   * a value chosen on page 1 is not in `options` after `loadNext` has paged
+   * past it (cn-oss-removal ticket 12 §2b).
+   */
   const { user_nodes: selectedUserNodes } =
     useLazyLoadQuery<BAIUserSelectValueQuery>(
       graphql`
@@ -102,8 +154,6 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
               node {
                 id
                 email
-                username
-                full_name
               }
             }
           }
@@ -112,11 +162,13 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
       {
         selectedFilter: mergeFilterValues(
           [
-            !_.isEmpty(deferredControllableValue)
+            selectedKeys.length
               ? mergeFilterValues(
-                  _.castArray(deferredControllableValue).map((value) => {
-                    return `email == "${value}"`;
-                  }),
+                  _.map(selectedKeys, (value) =>
+                    valuePropName === 'id'
+                      ? `uuid == "${value}"`
+                      : `email == "${value}"`,
+                  ),
                   '|',
                 )
               : null,
@@ -124,20 +176,17 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
           ],
           '&',
         ),
-        first: _.castArray(deferredControllableValue).length,
-        skipSelected:
-          _.isEmpty(deferredControllableValue) || valuePropName === 'id',
+        first: Math.max(selectedKeys.length, 1),
+        skipSelected: selectedKeys.length === 0,
       },
       {
-        fetchPolicy: !_.isEmpty(deferredControllableValue)
-          ? 'store-or-network'
-          : 'store-only',
+        fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIUserSelectPaginatedQuery, UserNode>(
+    useLazyPaginatedQuery<BAIUserSelectPaginatedQuery, AstryxUserNode>(
       graphql`
         query BAIUserSelectPaginatedQuery(
           $offset: Int!
@@ -176,18 +225,17 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
         order: 'email',
       },
       {
+        // P26-6: the open state comes back out of the Astryx popup.
         fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.user_nodes?.count ?? undefined,
-        getItem: (result) =>
-          result.user_nodes?.edges?.map((edge) => edge?.node),
+        getTotal: (r) => r.user_nodes?.count ?? undefined,
+        getItem: (r) => r.user_nodes?.edges?.map((edge) => edge?.node),
         getId: (item) => item?.id,
       },
     );
 
-  // Expose refetch function through ref
   useImperativeHandle(
     ref,
     () => ({
@@ -200,134 +248,70 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.[valuePropName],
-    value: item?.[valuePropName],
-  }));
+  const keyOfNode = (
+    node: { id: string; email?: string | null } | null | undefined,
+  ): string | undefined => {
+    if (!node) return undefined;
+    return valuePropName === 'id'
+      ? toLocalId(node.id)
+      : (node.email ?? undefined);
+  };
 
-  const controllableValueWithLabel = selectedUserNodes?.edges
-    ? // Sort by deferredControllableValue order to maintain selection order
-      _.castArray(deferredControllableValue)
-        .map((value) => {
-          const edge = selectedUserNodes.edges.find(
-            (edge) => edge?.node?.[valuePropName] === value,
-          );
-          return edge
-            ? {
-                label: edge.node?.[valuePropName],
-                value: edge.node?.[valuePropName],
-              }
-            : null;
-        })
-        .filter(
-          (item): item is { label: string; value: string } => item !== null,
-        )
-    : !_.isEmpty(deferredControllableValue)
-      ? _.castArray(deferredControllableValue).map((value) => ({
-          label: value,
-          value: value,
-        }))
-      : undefined;
-
-  const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
-    controllableValueWithLabel,
+  const options = _.compact(
+    _.map(paginationData, (item) => {
+      const key = keyOfNode(item);
+      return key
+        ? {
+            value: key,
+            label: item?.email ?? key,
+            description: item?.full_name ?? undefined,
+          }
+        : null;
+    }),
   );
 
+  /** Plain keys -> labelInValue, resolving each label where we can. */
+  const labeledValue: BAIComplexSelectValue = (() => {
+    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
+      const edge = _.find(
+        selectedUserNodes?.edges,
+        (e) => keyOfNode(e?.node) === key,
+      );
+      // Echoing the key as its own label is the antd fallback, made explicit.
+      return { label: edge?.node?.email ?? key, value: key };
+    });
+    if (multiple) return labeled;
+    return labeled[0] ?? null;
+  })();
+
   return (
-    <BAISelect
-      ref={selectRef}
+    <BAIComplexSelect
       placeholder={t('comp:BAIUserSelect.SelectUser')}
-      loading={
-        loading ||
+      {...selectProps}
+      multiple={multiple}
+      isLoading={
+        isLoading ||
         controllableValue !== deferredControllableValue ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
-      {...selectProps}
-      searchAction={async (value) => {
-        setOptimisticSearchStr(value);
-        setSearchStr(value);
-        await selectProps.searchAction?.(value);
-      }}
-      showSearch={
-        selectProps.showSearch === false
-          ? false
-          : {
-              searchValue: optimisticSearchStr,
-              autoClearSearchValue: true,
-              ...(_.isObject(selectProps.showSearch)
-                ? _.omit(selectProps.showSearch, ['searchValue'])
-                : {}),
-              filterOption: false,
-            }
-      }
-      value={
-        controllableValue !== deferredControllableValue
-          ? optimisticValueWithLabel
-          : controllableValueWithLabel
-      }
-      labelInValue
-      labelRender={({ label }) => {
-        return valuePropName === 'id' && _.isString(label) ? (
-          <BAIText monospace>{toLocalId(label)}</BAIText>
-        ) : (
-          label
-        );
-      }}
-      optionRender={({ label }) => {
-        return valuePropName === 'id' && _.isString(label) ? (
-          <BAIText monospace>{toLocalId(label)}</BAIText>
-        ) : (
-          label
-        );
-      }}
-      onChange={(value, option) => {
-        // _.castArray to handle both single and multiple mode uniformly
-        const valueArray = _.isEmpty(value) ? [] : _.castArray(value);
-
-        // In multiple mode, when removing tags, value.label is a React element
-        // So we need to find the original label from availableOptions
-        const valueWithOriginalLabel = valueArray.map((v) => {
-          // If label is string, use it directly; if React element, find from options
-          const label = _.isString(v.label)
-            ? v.label
-            : (availableOptions.find((opt) => opt.value === v.value)?.label ??
-              v.value);
-          return {
-            label,
-            value: v.value,
-          };
-        });
-
-        setOptimisticValueWithLabel(valueWithOriginalLabel);
-
-        const isMultiple =
-          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
-        const emailArray = valueArray.map((v) => _.toString(v.value));
+      isLoadingNext={isLoadingNext}
+      total={result.user_nodes?.count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const labeled = _.compact(_.castArray(next ?? []));
+        const keys = _.map(labeled, (v) => v.value);
+        // P3C-1: second argument carries the labelInValue pair(s).
         setControllableValue(
-          isMultiple ? emailArray : (emailArray[0] ?? undefined),
-          option,
+          multiple ? keys : keys[0],
+          multiple ? labeled : labeled[0],
         );
       }}
-      options={availableOptions}
-      endReached={() => {
-        loadNext();
-      }}
-      open={controllableOpen}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
       onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(result.user_nodes?.count) && result.user_nodes.count > 0 ? (
-          <TotalFooter
-            loading={isLoadingNext}
-            total={result.user_nodes.count}
-          />
-        ) : undefined
-      }
+      endReached={loadNext}
     />
   );
 };

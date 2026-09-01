@@ -1,0 +1,349 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+/**
+ * Tests for STokenLoginBoundary (Epic FR-2616).
+ *
+ * Focus areas mapped to spec acceptance criteria:
+ * - Children only render after the authentication sequence succeeds.
+ * - `backend-ai-connected` fires exactly once per successful login, even
+ *   across a retry-then-success sequence (invariant from spec Pitfall #6).
+ * - Error classification surfaced via `onError` for each branch the test
+ *   can provoke without network (missing-token, endpoint-unresolved,
+ *   server-unreachable, token-invalid).
+ * - `errorFallback` prop replaces the built-in card for every kind (Q4).
+ * - Source file does not reference forbidden URL APIs — this is the
+ *   CI-enforced gate for the spec FR-2616 "URL 파라미터 파싱 규약" rule.
+ *
+ * The helper module is mocked entirely because the real
+ * `createBackendAIClient` instantiates a global `BackendAIClient` that is
+ * only available at runtime in the browser bundle.
+ */
+import '../../__test__/matchMedia.mock.js';
+import {
+  connectViaGQL,
+  createBackendAIClient,
+  tokenLogin,
+} from '../helper/loginSessionAuth';
+import * as endpointModule from '../hooks/useResolvedApiEndpoint';
+import { initializeConfigOnce } from '../hooks/useWebUIConfig';
+import {
+  STokenLoginBoundary,
+  type STokenLoginError,
+} from './STokenLoginBoundary';
+import { render, screen, waitFor } from '@testing-library/react';
+import fs from 'fs';
+import { Provider as JotaiProvider, createStore } from 'jotai';
+import path from 'path';
+import React from 'react';
+import { vi, type Mock, type MockedFunction } from 'vitest';
+
+// ---------------------------------------------------------------------------
+// Module mocks
+// ---------------------------------------------------------------------------
+
+vi.mock('./DefaultProviders', () => ({
+  __esModule: true,
+  jotaiStore: { get: () => null, set: () => {} },
+}));
+
+vi.mock('../hooks/useWebUIConfig', async () => {
+  // A real (empty) atom: the component reads it through the provider store
+  // (`store.get(loginConfigState)`), so the mock must be a genuine Jotai atom.
+  const { atom } = await vi.importActual<typeof import('jotai')>('jotai');
+  return {
+    __esModule: true,
+    loginConfigState: atom(null),
+    initializeConfigOnce: vi.fn().mockResolvedValue(undefined),
+  };
+});
+
+vi.mock('../hooks/useResolvedApiEndpoint', () => {
+  const state: { endpoint: string } = { endpoint: 'https://api.example.com' };
+  return {
+    __esModule: true,
+    useResolvedApiEndpoint: vi.fn(() => state.endpoint),
+    __endpointState: state,
+  };
+});
+
+vi.mock('../helper/loginSessionAuth', () => ({
+  __esModule: true,
+  createBackendAIClient: vi.fn(),
+  tokenLogin: vi.fn(),
+  connectViaGQL: vi.fn(),
+}));
+
+vi.mock('backend.ai-ui', async () => {
+  const actual =
+    await vi.importActual<typeof import('backend.ai-ui')>('backend.ai-ui');
+  return {
+    ...actual,
+    useBAILogger: () => ({
+      logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
+    }),
+  };
+});
+
+// Mock Jotai's useAtomValue to return null (no config in test env).
+vi.mock('jotai', async () => {
+  const actual = await vi.importActual<typeof import('jotai')>('jotai');
+  return {
+    ...actual,
+    useAtomValue: () => null,
+  };
+});
+
+// ---------------------------------------------------------------------------
+// Test helpers
+// ---------------------------------------------------------------------------
+
+const mockedCreateBackendAIClient = createBackendAIClient as MockedFunction<
+  typeof createBackendAIClient
+>;
+const mockedTokenLogin = tokenLogin as MockedFunction<typeof tokenLogin>;
+const mockedConnectViaGQL = connectViaGQL as MockedFunction<
+  typeof connectViaGQL
+>;
+const endpointState = (
+  endpointModule as unknown as { __endpointState: { endpoint: string } }
+).__endpointState;
+const setEndpoint = (next: string) => {
+  endpointState.endpoint = next;
+};
+
+type FakeClient = {
+  get_manager_version: Mock;
+  check_login: Mock;
+  token_login: Mock;
+};
+
+const buildFakeClient = (overrides: Partial<FakeClient> = {}): FakeClient => ({
+  get_manager_version: vi.fn().mockResolvedValue('1.0'),
+  check_login: vi.fn().mockResolvedValue(false),
+  token_login: vi.fn().mockResolvedValue(true),
+  ...overrides,
+});
+
+const renderBoundary = (
+  overrides: Partial<{
+    sToken: string;
+    onSuccess: (client: unknown) => void;
+    onError: (error: STokenLoginError) => void;
+    errorFallback: (
+      error: STokenLoginError,
+      retry: () => void,
+    ) => React.ReactNode;
+  }>,
+  children: React.ReactNode = <div>children-rendered</div>,
+) => {
+  const store = createStore();
+  return render(
+    <JotaiProvider store={store}>
+      <STokenLoginBoundary
+        sToken={overrides.sToken ?? 'fake-token'}
+        onSuccess={overrides.onSuccess}
+        onError={overrides.onError}
+        errorFallback={overrides.errorFallback}
+      >
+        {children}
+      </STokenLoginBoundary>
+    </JotaiProvider>,
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Event spy
+// ---------------------------------------------------------------------------
+
+let connectedEventCount = 0;
+const connectedEventHandler = () => {
+  connectedEventCount += 1;
+};
+
+beforeEach(() => {
+  connectedEventCount = 0;
+  document.addEventListener('backend-ai-connected', connectedEventHandler);
+  setEndpoint('https://api.example.com');
+  mockedCreateBackendAIClient.mockImplementation(() => ({
+    client: buildFakeClient(),
+    clientConfig: {},
+  }));
+  mockedTokenLogin.mockResolvedValue([]);
+  mockedConnectViaGQL.mockResolvedValue([]);
+});
+
+afterEach(() => {
+  document.removeEventListener('backend-ai-connected', connectedEventHandler);
+  vi.clearAllMocks();
+});
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+describe('STokenLoginBoundary', () => {
+  test('renders children after the login sequence succeeds', async () => {
+    const onSuccess = vi.fn();
+    renderBoundary({ onSuccess });
+
+    await waitFor(() => {
+      expect(screen.getByText('children-rendered')).toBeInTheDocument();
+    });
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(tokenLogin).toHaveBeenCalledTimes(1);
+  });
+
+  test('dispatches backend-ai-connected exactly once on success', async () => {
+    renderBoundary({});
+
+    await waitFor(() => {
+      expect(screen.getByText('children-rendered')).toBeInTheDocument();
+    });
+    expect(connectedEventCount).toBe(1);
+  });
+
+  test('reports missing-token when sToken prop is empty', async () => {
+    const onError = vi.fn();
+    renderBoundary({ sToken: '', onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({ kind: 'missing-token' });
+    });
+    expect(tokenLogin).not.toHaveBeenCalled();
+    expect(connectedEventCount).toBe(0);
+  });
+
+  test('reports endpoint-unresolved when the resolver returns empty', async () => {
+    const onError = vi.fn();
+    setEndpoint('');
+    renderBoundary({ onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({ kind: 'endpoint-unresolved' });
+    });
+    expect(tokenLogin).not.toHaveBeenCalled();
+    expect(connectedEventCount).toBe(0);
+  });
+
+  test('reports server-unreachable when get_manager_version rejects', async () => {
+    const serverErr = new Error('network down');
+    mockedCreateBackendAIClient.mockImplementation(() => ({
+      client: {
+        get_manager_version: vi.fn().mockRejectedValue(serverErr),
+        token_login: vi.fn(),
+      },
+      clientConfig: {},
+    }));
+    const onError = vi.fn();
+    renderBoundary({ onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({
+        kind: 'server-unreachable',
+        cause: serverErr,
+      });
+    });
+    expect(tokenLogin).not.toHaveBeenCalled();
+    expect(connectedEventCount).toBe(0);
+  });
+
+  test('reports token-invalid when tokenLogin throws', async () => {
+    const tokenErr = new Error('bad token');
+    mockedTokenLogin.mockRejectedValue(tokenErr);
+    const onError = vi.fn();
+    renderBoundary({ onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({
+        kind: 'token-invalid',
+        cause: tokenErr,
+      });
+    });
+    expect(connectedEventCount).toBe(0);
+  });
+
+  test('skips token_login when the browser already holds a valid session', async () => {
+    // Reuse the existing session: check_login resolves truthy.
+    const client = buildFakeClient({
+      check_login: vi.fn().mockResolvedValue(true),
+    });
+    mockedCreateBackendAIClient.mockImplementation(() => ({
+      client,
+      clientConfig: {},
+    }));
+    const onSuccess = vi.fn();
+    renderBoundary({ onSuccess });
+
+    await waitFor(() => {
+      expect(screen.getByText('children-rendered')).toBeInTheDocument();
+    });
+    // Fast-path assertions: no re-authentication was attempted, but the
+    // GQL wiring still ran and the connected event fired exactly once so
+    // Relay and plugin subscribers unblock.
+    expect(mockedTokenLogin).not.toHaveBeenCalled();
+    expect(mockedConnectViaGQL).toHaveBeenCalledTimes(1);
+    expect(connectedEventCount).toBe(1);
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  test('awaits the config.toml bootstrap before authenticating (FR-3128)', async () => {
+    renderBoundary({});
+
+    await waitFor(() => {
+      expect(screen.getByText('children-rendered')).toBeInTheDocument();
+    });
+
+    const mockedInitializeConfigOnce = initializeConfigOnce as MockedFunction<
+      typeof initializeConfigOnce
+    >;
+    // The bootstrap config load must run, and must run BEFORE the token
+    // exchange — otherwise `applyConfigToClient` inside `tokenLogin` writes
+    // `getDefaultLoginConfig()` values (e.g. `allowNonAuthTCP: false`) into
+    // `backendaiclient._config`, hiding the SSH/SFTP app after SSO login.
+    expect(mockedInitializeConfigOnce).toHaveBeenCalledTimes(1);
+    expect(mockedInitializeConfigOnce.mock.invocationCallOrder[0]).toBeLessThan(
+      mockedTokenLogin.mock.invocationCallOrder[0],
+    );
+  });
+
+  test('errorFallback replaces the built-in card for every kind', async () => {
+    const tokenErr = new Error('bad token');
+    mockedTokenLogin.mockRejectedValue(tokenErr);
+    const errorFallback = vi.fn((error: STokenLoginError) => (
+      <div>custom-{error.kind}</div>
+    ));
+    renderBoundary({ errorFallback });
+
+    await waitFor(() => {
+      expect(screen.getByText('custom-token-invalid')).toBeInTheDocument();
+    });
+    expect(errorFallback).toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// URL-API prohibition invariant
+// ---------------------------------------------------------------------------
+
+describe('STokenLoginBoundary source', () => {
+  test('does not reference any URL-state APIs', () => {
+    const source = fs.readFileSync(
+      path.join(__dirname, 'STokenLoginBoundary.tsx'),
+      'utf8',
+    );
+    // Strip block comments and line comments so the rule documentation in
+    // the file header (which intentionally names the forbidden APIs) is
+    // not flagged.
+    const stripped = source
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .split('\n')
+      .map((line) => line.replace(/\/\/.*$/, ''))
+      .join('\n');
+    expect(stripped).not.toMatch(/window\.location/);
+    expect(stripped).not.toMatch(/window\.history/);
+    expect(stripped).not.toMatch(/document\.location/);
+    expect(stripped).not.toMatch(/\bURLSearchParams\b/);
+  });
+});

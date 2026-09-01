@@ -2,77 +2,87 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { UserInfoModalQuery } from '../__generated__/UserInfoModalQuery.graphql';
+import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
-import { Descriptions, type DescriptionsProps, Tag, Spin } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import { theme } from '../theme-shim';
+import { Badge } from '@astryxdesign/core/Badge';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Spinner } from '@astryxdesign/core/Spinner';
+import {
+  BAIFlex,
+  BAIIconWithTooltip,
+  BAIMetadataList,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { TriangleAlert } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface Props extends BAIModalProps {
-  userEmail: string;
+  userInfoFrgmt: UserInfoModalFragment$key | null | undefined;
   onRequestClose: () => void;
 }
 
 const UserInfoModal: React.FC<Props> = ({
-  userEmail,
+  userInfoFrgmt,
   onRequestClose,
   ...baiModalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
     useTOTPSupported();
 
-  const { user } = useLazyLoadQuery<UserInfoModalQuery>(
+  const user = useFragment(
     graphql`
-      query UserInfoModalQuery(
-        $email: String
-        $isNotSupportSudoSessionEnabled: Boolean!
-        $isTOTPSupported: Boolean!
-      ) {
-        user(email: $email) {
+      fragment UserInfoModalFragment on UserV2 {
+        basicInfo {
           email
           username
-          need_password_change
-          full_name
+          fullName
           description
+        }
+        status {
           status
-          domain_name
+          needPasswordChange
+        }
+        security {
+          totpActivated
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
+          sudoSessionEnabled
+        }
+        organization {
+          domainName
           role
-          groups {
-            id
-            name
+          resourcePolicy
+          mainAccessKey
+        }
+        projects {
+          edges {
+            node {
+              id
+              basicInfo {
+                name
+              }
+            }
           }
-          resource_policy
-          # TODO: reflect https://github.com/lablup/backend.ai-webui/pull/1999
-          # support from 23.09.0b1
-          # https://github.com/lablup/backend.ai/pull/1530
-          sudo_session_enabled
-            @skipOnClient(if: $isNotSupportSudoSessionEnabled)
-          totp_activated @include(if: $isTOTPSupported)
-          main_access_key @since(version: "23.09.7")
         }
       }
     `,
-    {
-      email: userEmail,
-      isNotSupportSudoSessionEnabled: false,
-      isTOTPSupported: isTOTPSupported ?? false,
-    },
+    userInfoFrgmt ?? null,
   );
 
-  const columnSetting: DescriptionsProps['column'] = {
-    xxl: 1,
-    xl: 1,
-    lg: 1,
-    md: 1,
-    sm: 1,
-    xs: 1,
-  };
-
+  // PILOT-DECISION: antd Descriptions `size="small"`, the responsive
+  // `column` breakpoint map (all forced to 1), and `labelStyle` have no
+  // MetadataList destination — MetadataList's single-column defaults already
+  // match (defaults-first / simplicity policy); `label={{ width: '50%' }}`
+  // reproduces the label column width.
   return (
     <BAIModal
       centered
@@ -81,74 +91,88 @@ const UserInfoModal: React.FC<Props> = ({
       onCancel={onRequestClose}
       {...baiModalProps}
     >
-      <Descriptions
-        size="small"
-        column={columnSetting}
+      <BAIMetadataList
         title={t('credential.Information')}
-        labelStyle={{ width: '50%' }}
+        label={{ position: 'start', width: '50%' }}
       >
-        <Descriptions.Item label={t('credential.UserID')}>
-          {user?.email}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.Description')}>
-          {user?.description}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.UserName')}>
-          {user?.username}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.FullName')}>
-          {user?.full_name}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.MainAccessKey')}>
-          {user?.main_access_key}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.DescActiveUser')}>
-          {user?.status === 'active' ? t('button.Yes') : t('button.No')}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.DescRequirePasswordChange')}>
-          {user?.need_password_change ? t('button.Yes') : t('button.No')}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.EnableSudoSession')}>
-          {user?.sudo_session_enabled ? t('button.Yes') : t('button.No')}
-        </Descriptions.Item>
+        <MetadataListItem label={t('credential.UserID')}>
+          {user?.basicInfo.email}
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.Description')}>
+          {user?.basicInfo.description}
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.UserName')}>
+          {user?.basicInfo.username}
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.FullName')}>
+          {user?.basicInfo.fullName}
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.MainAccessKey')}>
+          {user?.organization.mainAccessKey}
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.DescActiveUser')}>
+          {user?.status.status === 'ACTIVE' ? t('button.Yes') : t('button.No')}
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.DescRequirePasswordChange')}>
+          {user?.status.needPasswordChange ? t('button.Yes') : t('button.No')}
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.EnableSudoSession')}>
+          {user?.security.sudoSessionEnabled ? t('button.Yes') : t('button.No')}
+        </MetadataListItem>
         {isTOTPSupported && (
-          <Descriptions.Item label={t('webui.menu.TotpActivated')}>
-            <Spin spinning={isLoadingManagerSupportingTOTP}>
-              {user?.totp_activated ? t('button.Yes') : t('button.No')}
-            </Spin>
-          </Descriptions.Item>
+          <MetadataListItem label={t('webui.menu.TotpActivated')}>
+            {/* PILOT-DECISION: antd `Spin spinning` overlays a dimmed
+                spinner on top of existing content; Astryx `Spinner` has no
+                wrap/overlay mode, so the loading state replaces the value
+                outright instead of dimming it. */}
+            {isLoadingManagerSupportingTOTP ? (
+              <Spinner size="sm" />
+            ) : user?.security.totpActivated ? (
+              t('button.Yes')
+            ) : (
+              t('button.No')
+            )}
+          </MetadataListItem>
         )}
-      </Descriptions>
-      <br />
-      <Descriptions
-        size="small"
-        column={columnSetting}
+      </BAIMetadataList>
+      <BAIMetadataList
         title={t('credential.Association')}
-        labelStyle={{ width: '50%' }}
+        label={{ position: 'start', width: '50%' }}
       >
-        <Descriptions.Item label={t('credential.Role')}>
-          {user?.role}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.Domain')}>
-          {user?.domain_name}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('credential.ResourcePolicy')}>
-          {user?.resource_policy}
-        </Descriptions.Item>
-      </Descriptions>
-      <br />
-      <Descriptions
-        title={t('credential.ProjectAndGroup')}
-        labelStyle={{ width: '50%' }}
-      >
-        <Descriptions.Item>
-          <BAIFlex gap="xs" wrap="wrap">
-            {_.map(user?.groups, (group) => {
-              return <Tag key={group?.id}>{group?.name}</Tag>;
-            })}
-          </BAIFlex>
-        </Descriptions.Item>
-      </Descriptions>
+        <MetadataListItem label={t('credential.Role')}>
+          {user?.organization.role}
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.Domain')}>
+          {user?.organization.domainName}
+        </MetadataListItem>
+        <MetadataListItem label={t('credential.ResourcePolicy')}>
+          {user?.organization.resourcePolicy}
+        </MetadataListItem>
+      </BAIMetadataList>
+      <BAIMetadataList label={{ position: 'start', width: '50%' }}>
+        <MetadataListItem label={t('credential.ProjectAndGroup')}>
+          {user && !user.projects ? (
+            <BAIIconWithTooltip
+              content={t('credential.FailedToLoadProjects')}
+              icon={
+                <TriangleAlert style={{ color: token.colorError }} size="1em" />
+              }
+            />
+          ) : (
+            <BAIFlex gap="xs" wrap="wrap">
+              {_.map(user?.projects?.edges, (edge) => {
+                return (
+                  <Badge
+                    key={edge?.node?.id}
+                    variant="neutral"
+                    label={edge?.node?.basicInfo.name}
+                  />
+                );
+              })}
+            </BAIFlex>
+          )}
+        </MetadataListItem>
+      </BAIMetadataList>
     </BAIModal>
   );
 };

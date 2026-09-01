@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Form, type FormItemProps } from 'antd';
-import _ from 'lodash';
+import { Form, type FormItemProps } from '../form-engine';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 interface FormItemControlProps extends FormItemProps {

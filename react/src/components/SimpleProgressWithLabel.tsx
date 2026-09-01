@@ -2,13 +2,15 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme, Tooltip, Typography } from 'antd';
+import { theme } from '../theme-shim';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAIProgressWithLabel,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 interface SimpleProgressWithLabelProps {
   size: 'small' | 'default';
@@ -34,34 +36,40 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
 
   if (size === 'default') {
     return (
-      <>
+      // One box, not a fragment: as siblings the label row and the bar become
+      // two separate cells wherever this is dropped into a Grid.
+      <BAIFlex direction="column" align="stretch" gap={3}>
         <BAIFlex justify="between">
-          <Typography.Text>{title}</Typography.Text>
-          {description && (
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: token.fontSizeSM }}
-            >
-              {description}
-            </Typography.Text>
-          )}
+          <Text>{title}</Text>
+          {/* antd `type="secondary" fontSize={fontSizeSM}` is exactly Astryx's
+              `supporting` semantic type (smaller + secondary colour) — the
+              defaults-first mapping, no inline font size. */}
+          {description && <Text type="supporting">{description}</Text>}
         </BAIFlex>
         <BAIProgressWithLabel
           percent={_.toNumber(percent)}
           valueLabel={percentLabel}
-          strokeColor="#BFBFBF"
+          // Mode-blind hardcode fixed (sweep #3). `#BFBFBF` is exactly antd's
+          // `colorTextQuaternary` — rgba(0,0,0,0.25) composited on white —
+          // i.e. the neutral "bar" grey, never a brand value. Written as a
+          // literal it stayed #BFBFBF in dark mode too, where it all but
+          // vanished against the backdrop. The theme-shim carries that token
+          // verbatim (`selfTokens`, verdict 'self') as a light/dark pair, so
+          // routing through it restores the legacy light value EXACTLY and
+          // gets rgba(255,255,255,0.25) in dark for free.
+          strokeColor={token.colorTextQuaternary}
           progressStyle={{ border: 'none' }}
           showInfo={false}
           labelStyle={{
             height: token.sizeXS,
           }}
         />
-      </>
+      </BAIFlex>
     );
   }
 
   return (
-    <Tooltip title={tooltipTitle || title} placement="left">
+    <Tooltip content={tooltipTitle || title} placement="start">
       <BAIFlex direction="row" gap={'xxs'}>
         <BAIFlex
           style={{
@@ -71,17 +79,17 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
               140,
             ]),
             height: 12,
-            backgroundColor: '#BFBFBF',
+            // Same mode-blind hardcode as `strokeColor` above — this bare
+            // div IS the small-size variant's bar.
+            backgroundColor: token.colorTextQuaternary,
           }}
         ></BAIFlex>
-        <Typography.Text
-          style={{
-            fontSize: token.fontSizeSM,
-            lineHeight: `${token.fontSizeSM}px`,
-          }}
-        >
+        {/* PILOT-DECISION: the tight `lineHeight: fontSizeSM` is dropped —
+            Astryx's `supporting` type owns its line-height, and the row is
+            already vertically centred by BAIFlex. */}
+        <Text type="supporting" color="primary">
           {_.toNumber(percent).toFixed(0) + '%'}
-        </Typography.Text>
+        </Text>
       </BAIFlex>
     </Tooltip>
   );

@@ -1,9 +1,9 @@
-import { BAILocale } from '.';
-import ru_RU from 'antd/es/locale/ru_RU';
+import type { BAILocale } from '.';
+import astryxLocale from './astryx/ru.json';
 
 const localeValue: BAILocale = {
   lang: 'ru',
-  antdLocale: ru_RU,
+  astryxLocale,
 };
 
 export default localeValue;

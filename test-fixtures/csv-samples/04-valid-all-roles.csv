@@ -1,0 +1,5 @@
+email,username,password,role,status
+role-user@example.com,role-user,Password!23,user,active
+role-admin@example.com,role-admin,Password!23,admin,active
+role-superadmin@example.com,role-superadmin,Password!23,superadmin,active
+role-monitor@example.com,role-monitor,Password!23,monitor,active

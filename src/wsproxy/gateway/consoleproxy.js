@@ -17,4 +17,11 @@ module.exports = proxy = class Proxy {
   getPort() {
     return this.c.port;
   }
+  // Whether the underlying TCP listener is still bound. A gateway can outlive
+  // its usefulness (e.g. the user closed the app tab without the manager
+  // ever seeing a /delete call) while staying in `Manager.proxies` — reusing
+  // it then would hand back a port nothing is listening on.
+  isAlive() {
+    return !!this.c && !!this.c.tcpServer && this.c.tcpServer.listening;
+  }
 };

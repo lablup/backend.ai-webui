@@ -3,6 +3,7 @@
 //            4 (Start From URL Modal), 5 (Board Item Drag-and-Drop)
 import { StartPage } from '../utils/classes/common/StartPage';
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
+import { skipUnlessClientConfig } from '../utils/feature-gate-util';
 import {
   loginAsAdmin,
   loginAsUser,
@@ -146,7 +147,9 @@ test.describe(
         test.afterEach(async ({ page }) => {
           if (folderCreated) {
             try {
-              await moveToTrashAndVerify(page, folderName);
+              await moveToTrashAndVerify(page, folderName, 'data', {
+                skipTrashVerify: true,
+              });
               await deleteForeverAndVerifyFromTrash(page, folderName);
             } catch {
               /* ignore cleanup errors */
@@ -260,25 +263,32 @@ test.describe(
         await expect(page).toHaveURL(/sessionType.*batch|batch.*sessionType/);
       });
 
-      test('Admin can navigate to the Model Service creation page from the "Start Model Service" card', async ({
+      test('Admin can navigate to the Deployments page from the "Start Deployment" card', async ({
         page,
       }) => {
         const startPage = new StartPage(page);
 
-        // 1. Check if the "Start Model Service" card is visible (depends on enableModelFolders config)
-        const card = startPage.getModelServiceCard();
-
-        // Skip test explicitly if the card is not available in the current configuration
-        test.skip(
-          !(await card.isVisible()),
-          'Model service card not available in current configuration',
+        // Declarative config gate (FR-3112): the "Start Deployment" card
+        // (formerly titled "Start Model Service") is rendered only when
+        // `enableModelFolders = true` in config.toml (StartPage.tsx reads
+        // `baiClient._config.enableModelFolders`).
+        await skipUnlessClientConfig(
+          page,
+          'enableModelFolders',
+          'Start Deployment card requires `enableModelFolders = true` in config.toml',
         );
 
-        // 2. Click the "Start Service" button within the card
-        await startPage.getStartServiceButton(card).click();
+        // 1. The config enables the feature — the card MUST be present; absence is a failure.
+        const card = startPage.getDeploymentCard();
+        await expect(card).toBeVisible({ timeout: CARD_TIMEOUT });
 
-        // 3. Verify the URL changes to /service/start
-        await expect(page).toHaveURL(/\/service\/start/);
+        // 2. Click the "Create Deployment" button within the card (renamed
+        // from "Start Service").
+        await startPage.getCreateDeploymentButton(card).click();
+
+        // 3. Verify the URL changes to /deployments (this card no longer
+        // routes through /service/start).
+        await expect(page).toHaveURL(/\/deployments/);
       });
     });
 
@@ -301,36 +311,38 @@ test.describe(
         await card.getByRole('button', { name: 'Start Now' }).click();
 
         // 2. Verify the "Start From URL" modal opens
+        const modal = page
+          .getByRole('dialog')
+          .filter({ hasText: 'Start From URL' });
+        await expect(modal).toBeVisible();
+
+        // 3. Verify three tabs are visible. `BAITabs`/`BAITabList` renders
+        // Astryx `TabList` items as plain `<button>`s (class `astryx-tab`)
+        // inside a `navigation "Tabs"` landmark, not `role="tab"` — scope
+        // through that landmark to avoid matching the modal's other buttons.
+        const tabs = modal.getByRole('navigation', { name: 'Tabs' });
         await expect(
-          page.getByRole('dialog').filter({ hasText: 'Start From URL' }),
+          tabs.getByRole('button', { name: /Import Notebook/i }),
+        ).toBeVisible();
+        await expect(
+          tabs.getByRole('button', { name: /Import GitHub Repository/i }),
+        ).toBeVisible();
+        await expect(
+          tabs.getByRole('button', { name: /Import GitLab Repository/i }),
         ).toBeVisible();
 
-        // 3. Verify three tabs are visible
+        // 4. Verify the "Import Notebook" tab is active by default. The
+        // active tab carries `aria-current="true"` (no `aria-selected`).
         await expect(
-          page.getByRole('tab', { name: /Import Notebook/i }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('tab', { name: /Import GitHub Repository/i }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('tab', { name: /Import GitLab Repository/i }),
-        ).toBeVisible();
-
-        // 4. Verify the "Import Notebook" tab is active by default
-        await expect(
-          page
-            .locator('.ant-tabs-tab-active')
-            .filter({ hasText: /Import Notebook/i }),
-        ).toBeVisible();
+          tabs.getByRole('button', { name: /Import Notebook/i }),
+        ).toHaveAttribute('aria-current', 'true');
 
         // 5. Close the modal
         await page
           .getByRole('dialog')
           .getByRole('button', { name: 'close' })
           .click();
-        await expect(
-          page.getByRole('dialog').filter({ hasText: 'Start From URL' }),
-        ).not.toBeVisible();
+        await expect(modal).not.toBeVisible();
       });
 
       test('Admin can switch between tabs in the Start From URL modal', async ({
@@ -341,39 +353,39 @@ test.describe(
           .locator('.bai_grid_item')
           .filter({ hasText: 'Start From URL' });
         await card.getByRole('button', { name: 'Start Now' }).click();
-        await expect(
-          page.getByRole('dialog').filter({ hasText: 'Start From URL' }),
-        ).toBeVisible();
+        const modal = page
+          .getByRole('dialog')
+          .filter({ hasText: 'Start From URL' });
+        await expect(modal).toBeVisible();
+        const tabs = modal.getByRole('navigation', { name: 'Tabs' });
 
         // 2. Click the "Import GitHub Repository" tab
-        await page
-          .getByRole('tab', { name: /Import GitHub Repository/i })
+        await tabs
+          .getByRole('button', { name: /Import GitHub Repository/i })
           .click();
 
         // 3. Verify the GitHub tab is active
         await expect(
-          page.locator('.ant-tabs-tab-active').filter({ hasText: /GitHub/i }),
-        ).toBeVisible();
+          tabs.getByRole('button', { name: /GitHub/i }),
+        ).toHaveAttribute('aria-current', 'true');
 
         // 4. Click the "Import GitLab Repository" tab
-        await page
-          .getByRole('tab', { name: /Import GitLab Repository/i })
+        await tabs
+          .getByRole('button', { name: /Import GitLab Repository/i })
           .click();
 
         // 5. Verify the GitLab tab is active
         await expect(
-          page.locator('.ant-tabs-tab-active').filter({ hasText: /GitLab/i }),
-        ).toBeVisible();
+          tabs.getByRole('button', { name: /GitLab/i }),
+        ).toHaveAttribute('aria-current', 'true');
 
         // 6. Click the "Import Notebook" tab to return to default
-        await page.getByRole('tab', { name: /Import Notebook/i }).click();
+        await tabs.getByRole('button', { name: /Import Notebook/i }).click();
 
         // 7. Verify the notebook tab is active
         await expect(
-          page
-            .locator('.ant-tabs-tab-active')
-            .filter({ hasText: /Import Notebook/i }),
-        ).toBeVisible();
+          tabs.getByRole('button', { name: /Import Notebook/i }),
+        ).toHaveAttribute('aria-current', 'true');
 
         // 8. Close the modal
         await page
@@ -394,17 +406,19 @@ test.describe(
           `start?type=url&data=${encodeURIComponent(data)}`,
         );
 
-        // 2. Verify the "Start From URL" modal opens automatically
-        await expect(
-          page.getByRole('dialog').filter({ hasText: 'Start From URL' }),
-        ).toBeVisible();
+        // 2. Verify the "Start From URL" modal opens automatically. The modal
+        // is driven by the query params on first render, so it can lag a
+        // plain navigation by more than the default expect timeout — and the
+        // dialog carries "Start From URL" as its accessible name, so match on
+        // that rather than filtering the whole dialog by text.
+        const modal = page.getByRole('dialog', { name: 'Start From URL' });
+        await expect(modal).toBeVisible({ timeout: 20000 });
 
         // 3. Verify the "Import Notebook" tab is active
+        const tabs = modal.getByRole('navigation', { name: 'Tabs' });
         await expect(
-          page
-            .locator('.ant-tabs-tab-active')
-            .filter({ hasText: /Import Notebook/i }),
-        ).toBeVisible();
+          tabs.getByRole('button', { name: /Import Notebook/i }),
+        ).toHaveAttribute('aria-current', 'true');
 
         // 4. Verify the URL input field is pre-filled with the notebook URL
         const urlInput = page.getByRole('dialog').getByRole('textbox').first();

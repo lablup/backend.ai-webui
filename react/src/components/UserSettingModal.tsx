@@ -2,58 +2,69 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
   UserSettingModalBulkCreateMutation,
   UserRoleV2,
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
-import { UserSettingModalModifyMutation } from '../__generated__/UserSettingModalModifyMutation.graphql';
-import { UserSettingModalQuery } from '../__generated__/UserSettingModalQuery.graphql';
+import { UserSettingModalFragment$key } from '../__generated__/UserSettingModalFragment.graphql';
+import { UserSettingModalUpdateMutation } from '../__generated__/UserSettingModalUpdateMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
+import { theme } from '../theme-shim';
 import AccessKeySelect from './AccessKeySelect';
+import BAIFormItem from './BAIFormItem';
+import {
+  BulkCreateUserErrorModal,
+  type FailedUserCreation,
+  toFailedUserCreations,
+} from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
 import TOTPActivateModal from './TOTPActivateModal';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
 import {
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Switch,
-  message,
-  Typography,
-  FormInstance,
-  App,
-  theme,
-  Checkbox,
-  Skeleton,
-  Tag,
-  Space,
-} from 'antd';
+  AstryxFormCheckbox,
+  AstryxFormNumberInput,
+  AstryxFormSelector,
+  AstryxFormTagsInput,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { Switch } from '@astryxdesign/core/Switch';
+import { Text } from '@astryxdesign/core/Text';
+import { Tokenizer } from '@astryxdesign/core/Tokenizer';
+import type {
+  SearchableItem,
+  SearchSource,
+} from '@astryxdesign/core/Typeahead';
 import {
-  BAIDomainSelect,
+  BAISkeleton,
   BAIAlert,
+  BAICompactGroup,
+  BAIDomainSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  toLocalId,
   useBAILogger,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { CircleAlert } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useLazyLoadQuery } from 'react-relay';
-import { GeneratedKeypairListModalFragment$key } from 'src/__generated__/GeneratedKeypairListModalFragment.graphql';
+import { graphql, useMutation, useFragment } from 'react-relay';
 
 type UserRole = {
   [key: string]: string[];
@@ -83,6 +94,7 @@ type FormValues = {
   group_ids?: string[];
   status: string;
   allowed_client_ip?: string[];
+  main_access_key?: string;
   need_password_change: boolean;
   totp_activated?: boolean;
   sudo_session_enabled?: boolean;
@@ -112,6 +124,21 @@ const roleToV2: Record<string, UserRoleV2> = {
   monitor: 'MONITOR',
 };
 
+// Reverse maps: v2 enums → the form's v1 string values used by the Select inputs.
+const statusFromV2: Record<string, string> = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  BEFORE_VERIFICATION: 'before-verification',
+  DELETED: 'deleted',
+};
+
+const roleFromV2: Record<string, string> = {
+  USER: 'user',
+  ADMIN: 'admin',
+  SUPERADMIN: 'superadmin',
+  MONITOR: 'monitor',
+};
+
 const formatBulkEmail = (
   prefix: string,
   suffix: string,
@@ -131,22 +158,93 @@ const formatBulkUsername = (
   return `${prefix}${String(index).padStart(padLength, '0')}`;
 };
 
+// Free-tag entry has no options to search — the source is intentionally empty
+// and `hasCreate` commits typed text as new tokens. Module-level so the
+// Tokenizer never sees a fresh identity per render.
+const EMPTY_TAG_SEARCH_SOURCE: SearchSource<SearchableItem> = {
+  search: () => [],
+  bootstrap: () => [],
+};
+
+// antd `Select mode="tags"` → Astryx Tokenizer bridge for the antd form
+// engine: the form field holds `string[]`, the Tokenizer works on
+// `SearchableItem[]` ({id, label}), so the shapes are translated here.
+// PILOT-DECISION: antd's `tokenSeparators={[',', ' ']}` (splitting pasted
+// comma/space-separated text into multiple tags) has no Tokenizer
+// equivalent and is dropped — tags are committed one at a time with Enter
+// (`hasCreate`). The per-tag red highlight for invalid IPs (the antd
+// `tagRender`) is also dropped: `astryx component Tokenizer` best practices
+// explicitly discourage custom per-token colors, and the field's own
+// `rules` validator (kept unchanged below) already surfaces every invalid
+// IP in the BAIFormItem's error text under the control, so the same
+// information still reaches the user without per-chip coloring.
+const AllowedClientIpInput: React.FC<{
+  value?: string[];
+  onChange?: (next: string[]) => void;
+  label: string;
+  placeholder?: string;
+}> = ({ value, onChange, label, placeholder }) => {
+  'use memo';
+  return (
+    <Tokenizer
+      label={label}
+      isLabelHidden
+      value={(value ?? []).map((ip) => ({ id: ip, label: ip }))}
+      onChange={(items) =>
+        onChange?.(
+          Array.from(new Set(items.map((item) => item.label))).filter(Boolean),
+        )
+      }
+      searchSource={EMPTY_TAG_SEARCH_SOURCE}
+      hasCreate
+      placeholder={placeholder}
+      width="100%"
+    />
+  );
+};
+
+// Bridge for `BAIFormItem name="totp_activated" valuePropName="checked"`:
+// this field needs `isLoading` (while the TOTP-support check / removal
+// mutation is in flight), which `AstryxFormSwitch`'s adapter surface does
+// not expose, so the raw Astryx `Switch` is used directly here — coalescing
+// antd's injected `checked` the same way the adapter does elsewhere.
+const TotpSwitch: React.FC<{
+  checked?: boolean;
+  onChange?: (checked: boolean) => void;
+  label: string;
+  isLoading?: boolean;
+  disabled?: boolean;
+}> = ({ checked, onChange, label, isLoading, disabled }) => {
+  'use memo';
+  return (
+    <Switch
+      value={checked ?? false}
+      onChange={(next) => onChange?.(next)}
+      label={label}
+      isLabelHidden
+      isLoading={isLoading}
+      isDisabled={disabled}
+    />
+  );
+};
+
 interface UserSettingModalProps extends BAIModalProps {
-  userEmail?: string | null;
+  userSettingFrgmt?: UserSettingModalFragment$key | null;
   bulkCreate?: boolean;
   onRequestClose: (success: boolean) => void;
 }
 
 const UserSettingModal: React.FC<UserSettingModalProps> = ({
-  userEmail = null,
+  userSettingFrgmt = null,
   bulkCreate = false,
   onRequestClose,
   ...baiModalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal } = App.useApp();
-  const formRef = useRef<FormInstance<FormValues | BulkFormValues>>(null);
+  const { modal, message } = App.useApp();
+  const formRef = useRef<FormInstance<FormValues>>(null);
   const { logger } = useBAILogger();
 
   const currentUserRole = useCurrentUserRole();
@@ -162,116 +260,158 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const [createdKeypairs, setCreatedKeypairs] =
     useState<GeneratedKeypairListModalFragment$key | null>();
 
-  const { user } = useLazyLoadQuery<UserSettingModalQuery>(
+  // Users the server refused to create. Reported inside the generated-keypair
+  // result modal when some users were created, or in a standalone modal over
+  // this form when none were.
+  const [failedUsers, setFailedUsers] = useState<FailedUserCreation[]>([]);
+  // The server's own created count for the LAST submit — the mutation may
+  // reject users the form considered valid, so this is not derived from the
+  // requested count. Per-attempt on purpose: it labels that attempt's failure
+  // report ("Success: n, Failed: m"), so a retry must overwrite it.
+  const [createdCount, setCreatedCount] = useState(0);
+  // Whether any user reached the backend during this modal session. Separate
+  // from `createdCount` because that one is per-attempt: retrying a partially
+  // successful bulk create can succeed 0 times, which would otherwise reset
+  // the count to 0 and make the close below report "nothing created" even
+  // though the first attempt did create users. Monotonic, and never cleared —
+  // the modal is unmounted on close (BAIUnmountAfterClose), so the next
+  // session starts from false. Mirrors `AssignRoleModal`'s `hasAssignedAny`.
+  const [hasCreatedAny, setHasCreatedAny] = useState(false);
+
+  const user = useFragment(
     graphql`
-      query UserSettingModalQuery($email: String, $isNotSupportTotp: Boolean!) {
-        user(email: $email) {
+      fragment UserSettingModalFragment on UserV2 {
+        id
+        basicInfo {
           email
           username
-          need_password_change
-          full_name
+          fullName
           description
-          status
-          domain_name
-          role
-          groups {
-            id
-            name
-          }
-          resource_policy
-          sudo_session_enabled
-          totp_activated @skipOnClient(if: $isNotSupportTotp)
-          allowed_client_ip
-          main_access_key
-          container_uid
-          container_main_gid
-          container_gids
-          ...TOTPActivateModalFragment
         }
+        status {
+          status
+          needPasswordChange
+        }
+        organization {
+          domainName
+          role
+          resourcePolicy
+          mainAccessKey
+        }
+        security {
+          totpActivated
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
+          sudoSessionEnabled
+          allowedClientIp
+        }
+        container {
+          containerUid
+          containerMainGid
+          containerGids
+        }
+        projects {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+        ...TOTPActivateModalFragment
       }
     `,
-    {
-      email: userEmail ?? '',
-      isNotSupportTotp: !isTOTPSupported,
-    },
-    {
-      // Do not fetch user data if the modal is closed or the user email is not provided
-      fetchPolicy: deferredOpen && userEmail ? 'network-only' : 'store-only',
-      fetchKey: fetchKey,
-    },
+    userSettingFrgmt ?? null,
   );
 
-  const [commitModifyUserSetting, isInFlightCommitModifyUserSetting] =
-    useMutation<UserSettingModalModifyMutation>(graphql`
-      mutation UserSettingModalModifyMutation(
-        $email: String!
-        $props: ModifyUserInput!
-        $isNotSupportTotp: Boolean!
+  // >= 26.4.0: adminUpdateUserV2 — edit keyed by userId.
+  const [commitUpdateUserV2, isInFlightUpdateUserV2] =
+    useMutation<UserSettingModalUpdateMutation>(graphql`
+      mutation UserSettingModalUpdateMutation(
+        $userId: UUID!
+        $input: UpdateUserV2Input!
       ) {
-        modify_user(email: $email, props: $props) {
-          ok
-          msg
+        adminUpdateUserV2(userId: $userId, input: $input) {
           user {
             id
-            email
-            username
-            need_password_change
-            full_name
-            description
-            status
-            domain_name
-            role
-            groups {
-              id
-              name
+            basicInfo {
+              email
+              fullName
+              username
+              description
+              integrationName
             }
-            resource_policy
-            sudo_session_enabled
-            totp_activated @skipOnClient(if: $isNotSupportTotp)
-            allowed_client_ip
-            main_access_key
-            container_uid
-            container_main_gid
-            container_gids
-            ...TOTPActivateModalFragment
+            organization {
+              domainName
+              role
+              resourcePolicy
+              mainAccessKey
+            }
+            security {
+              totpActivated
+              totpActivatedAt
+              sudoSessionEnabled
+              allowedClientIp
+            }
+            status {
+              status
+              statusInfo
+              needPasswordChange
+            }
+            container {
+              containerUid
+              containerMainGid
+              containerGids
+            }
+            timestamps {
+              createdAt
+              modifiedAt
+            }
           }
         }
       }
     `);
 
+  // >= 26.4.3: adminCreateUserV2 returns the user together with its generated
+  // keypair (secret key shown once), so single create runs fully on v2.
   const [commitCreateUser, isInFlightCommitCreateUser] =
     useMutation<UserSettingModalCreateMutation>(graphql`
-      mutation UserSettingModalCreateMutation(
-        $email: String!
-        $props: UserInput!
-        $isNotSupportTotp: Boolean!
-      ) {
-        create_user(email: $email, props: $props) {
-          ok
-          msg
+      mutation UserSettingModalCreateMutation($input: CreateUserV2Input!) {
+        adminCreateUserV2(input: $input) {
           user {
             id
-            email
-            username
-            need_password_change
-            full_name
-            description
-            status
-            domain_name
-            role
-            groups {
-              id
-              name
+            basicInfo {
+              email
+              fullName
+              username
+              description
+              integrationName
             }
-            resource_policy
-            sudo_session_enabled
-            totp_activated @skipOnClient(if: $isNotSupportTotp)
-            allowed_client_ip
-            main_access_key
-            container_uid
-            container_main_gid
-            container_gids
-            ...TOTPActivateModalFragment
+            organization {
+              domainName
+              role
+              resourcePolicy
+              mainAccessKey
+            }
+            security {
+              totpActivated
+              totpActivatedAt
+              sudoSessionEnabled
+              allowedClientIp
+            }
+            status {
+              status
+              statusInfo
+              needPasswordChange
+            }
+            container {
+              containerUid
+              containerMainGid
+              containerGids
+            }
+            timestamps {
+              createdAt
+              modifiedAt
+            }
           }
           keypair {
             ...GeneratedKeypairListModalFragment
@@ -280,14 +420,19 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       }
     `);
 
+  // adminBulkCreateUsersWithKeypairV2 replaces the deprecated
+  // adminBulkCreateUsersV2, returning each created user's generated keypair
+  // and one-time secret key.
   const [commitBulkCreateUsers, isInFlightBulkCreateUsers] =
     useMutation<UserSettingModalBulkCreateMutation>(graphql`
       mutation UserSettingModalBulkCreateMutation(
         $input: BulkCreateUserV2Input!
       ) {
-        adminBulkCreateUsersV2(input: $input) {
-          createdUsers {
-            id
+        adminBulkCreateUsersWithKeypairV2(input: $input) {
+          created {
+            keypair {
+              ...GeneratedKeypairListModalFragment
+            }
           }
           failed {
             index
@@ -310,7 +455,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       ?.validateFields()
       .then(async (values) => {
         if (bulkCreate) {
-          const bulkValues = values as BulkFormValues;
+          const bulkValues = values as unknown as BulkFormValues;
           const users = _.range(1, bulkValues.user_count + 1).map((i) => ({
             email: formatBulkEmail(
               bulkValues.email_prefix,
@@ -346,26 +491,47 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 return;
               }
 
-              const createdCount =
-                res.adminBulkCreateUsersV2?.createdUsers?.length ?? 0;
-              const failedList = res.adminBulkCreateUsersV2?.failed ?? [];
+              const createdList =
+                res.adminBulkCreateUsersWithKeypairV2?.created ?? [];
+              const succeededCount = createdList.length;
+              const failedList =
+                res.adminBulkCreateUsersWithKeypairV2?.failed ?? [];
+              setCreatedCount(succeededCount);
+              if (succeededCount > 0) {
+                setHasCreatedAny(true);
+              }
+
+              // Reveal the generated keypairs (secret keys are returned once).
+              const keypairs = _.map(createdList, (created) => created.keypair);
+              if (keypairs.length > 0) {
+                setCreatedKeypairs(keypairs);
+              }
 
               if (failedList.length > 0) {
-                message.warning(
+                // Immediate failure notice as a toast on top of the detail
+                // modal (matches FR-3357's AssignRoleModal) — the modal
+                // carries the per-user table, the message the at-a-glance cue.
+                message.error(
                   t('credential.BulkCreateUserPartialFailure', {
-                    successCount: createdCount,
+                    successCount: succeededCount,
                     failCount: failedList.length,
                   }),
                 );
-                logger.error('Bulk create partial failures:', failedList);
-              } else {
-                message.success(
-                  t('credential.BulkCreateUserSuccess', {
-                    count: createdCount,
-                  }),
-                );
+                // The per-user reasons only reach the admin through the error
+                // modal — this form (or the keypair list of the users that were
+                // created) stays open behind it, so nothing closes here.
+                setFailedUsers(toFailedUserCreations(failedList));
+                return;
               }
-              onRequestClose(true);
+
+              message.success(
+                t('credential.BulkCreateUserSuccess', {
+                  count: succeededCount,
+                }),
+              );
+              if (keypairs.length === 0) {
+                onRequestClose(true);
+              }
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -376,39 +542,42 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         }
 
         const formValues = values as FormValues;
-        const mutationProps = {
-          ..._.omit(formValues, 'email', 'password_confirm'),
-          // Convert container_gids from string[] to number[]
-          container_gids: _.map(formValues.container_gids, (v) =>
-            _.toNumber(v),
-          ),
-          need_password_change: formValues.need_password_change || false,
-        };
 
         if (user) {
-          commitModifyUserSetting({
+          commitUpdateUserV2({
             variables: {
-              email: formValues?.email || '',
-              props: mutationProps,
-              isNotSupportTotp: !isTOTPSupported,
+              userId: toLocalId(user.id),
+              input: {
+                username: formValues.username,
+                password: formValues.password || undefined,
+                fullName: formValues.full_name,
+                description: formValues.description,
+                status: formValues.status
+                  ? statusToV2[formValues.status]
+                  : undefined,
+                role: formValues.role ? roleToV2[formValues.role] : undefined,
+                domainName: formValues.domain_name,
+                groupIds: formValues.group_ids,
+                allowedClientIp: formValues.allowed_client_ip,
+                needPasswordChange: formValues.need_password_change || false,
+                resourcePolicy: formValues.resource_policy,
+                sudoSessionEnabled: formValues.sudo_session_enabled,
+                mainAccessKey: formValues.main_access_key,
+                containerUid: formValues.container_uid,
+                containerMainGid: formValues.container_main_gid,
+                containerGids: _.map(formValues.container_gids, (v) =>
+                  _.toNumber(v),
+                ),
+              },
             },
-            onCompleted: (res, errors) => {
-              const errorMessage = errors?.[0]?.message; //user modify mutation can have only one error at most
-              const notOkMessage =
-                res?.modify_user?.ok === false
-                  ? res.modify_user.msg
-                  : undefined;
-
-              if (res.modify_user?.ok === false || errors?.[0]) {
-                message.error(
-                  notOkMessage || errorMessage || t('error.UnknownError'),
-                );
-                logger.error(res?.modify_user?.msg, errorMessage);
+            onCompleted: (_res, errors) => {
+              if (errors?.[0]) {
+                message.error(errors[0].message || t('error.UnknownError'));
+                logger.error(errors);
                 return;
               }
-
               message.success(t('environment.SuccessfullyModified'));
-              onRequestClose(true);
+              onRequestClose(false);
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -418,46 +587,52 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         } else {
           commitCreateUser({
             variables: {
-              email: formValues?.email || '',
-              props: {
-                ...mutationProps,
-                // In create user, password is required field
+              input: {
+                email: formValues.email,
+                username: formValues.username,
                 password: formValues.password as string,
+                domainName: formValues.domain_name,
+                needPasswordChange: formValues.need_password_change || false,
+                status: statusToV2[formValues.status] || 'ACTIVE',
+                role: roleToV2[formValues.role] || 'USER',
+                fullName: formValues.full_name || null,
+                description: formValues.description || null,
+                groupIds: formValues.group_ids || null,
+                allowedClientIp: formValues.allowed_client_ip || null,
+                totpActivated: formValues.totp_activated || false,
+                resourcePolicy: formValues.resource_policy || 'default',
+                sudoSessionEnabled: formValues.sudo_session_enabled || false,
+                containerUid: formValues.container_uid ?? null,
+                containerMainGid: formValues.container_main_gid ?? null,
+                containerGids: formValues.container_gids
+                  ? _.map(formValues.container_gids, (v) => _.toNumber(v))
+                  : null,
               },
-              isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (res, errors) => {
-              const errorMessage = errors?.[0]?.message; //user creation mutation can have only one error at most
-              const notOkMessage =
-                res?.create_user?.ok === false
-                  ? res.create_user.msg
-                  : undefined;
+              // adminCreateUserV2 reports failures via GraphQL errors
+              // (at most one).
+              const errorMessage = errors?.[0]?.message;
 
-              // Handle "user already exists" error separately to show a more user-friendly message
-              if (
-                (notOkMessage && notOkMessage.includes('already exists')) ||
-                (errorMessage &&
-                  errorMessage.includes('The user already exists'))
-              ) {
+              // Handle "user already exists" error separately to show a more
+              // user-friendly message.
+              if (errorMessage && errorMessage.includes('already exists')) {
                 message.error(t('credential.UserAccountCreatedError'));
-                logger.error(res?.create_user?.msg, errorMessage);
+                logger.error(errorMessage);
                 return;
               }
 
-              // Handle other errors messages
-              if (res.create_user?.ok === false || errors?.[0]) {
-                message.error(
-                  notOkMessage || errorMessage || t('error.UnknownError'),
-                );
-                logger.error(res, errors);
+              if (errors?.[0]) {
+                message.error(errorMessage || t('error.UnknownError'));
+                logger.error(errors);
                 return;
-              } else if (res.create_user?.keypair) {
-                // Show the created keypair modal if user creation is successful
-                setCreatedKeypairs([res.create_user.keypair]);
+              }
+
+              if (res.adminCreateUserV2?.keypair) {
+                // Show the created keypair modal (secret key returned once).
+                setCreatedKeypairs([res.adminCreateUserV2.keypair]);
               } else {
-                // User might have been created successfully but no keypair returned
-                // Just close the modal with success to refresh the user list
-                onRequestClose(true);
+                onRequestClose(false);
               }
             },
             onError: (err) => {
@@ -480,18 +655,26 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             ? t('credential.BulkCreateUser')
             : t('credential.CreateUser')
       }
+      okText={user ? t('button.Save') : t('button.Create')}
       destroyOnHidden
       onOk={handleOk}
       confirmLoading={
-        isInFlightCommitModifyUserSetting ||
+        isInFlightUpdateUserV2 ||
         isInFlightCommitCreateUser ||
         isInFlightBulkCreateUsers
       }
-      onCancel={() => onRequestClose(false)}
+      // A bulk create that partially failed leaves this form open, so its
+      // Cancel still has to report the users that *were* created — otherwise
+      // the list behind it never refetches. Uses the session-wide
+      // `hasCreatedAny` rather than the per-attempt `createdCount`, so a retry
+      // that creates nothing cannot erase an earlier attempt's success. Stays
+      // false on the single-create and edit paths, which keeps their behaviour
+      // unchanged.
+      onCancel={() => onRequestClose(hasCreatedAny)}
       loading={deferredOpen !== baiModalProps.open}
       {...baiModalProps}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeleton />}>
         <Form
           ref={formRef}
           preserve={false}
@@ -499,11 +682,37 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           initialValues={
             user
               ? {
-                  ...user,
-                  // Convert container_gids from number[] to string[] for Select mode="tags"
-                  container_gids: user.container_gids
-                    ? _.map(user.container_gids, (gid) => String(gid))
+                  email: user.basicInfo.email,
+                  username: user.basicInfo.username ?? undefined,
+                  full_name: user.basicInfo.fullName ?? undefined,
+                  description: user.basicInfo.description ?? undefined,
+                  need_password_change: user.status.needPasswordChange ?? false,
+                  status: statusFromV2[user.status.status],
+                  role: user.organization.role
+                    ? roleFromV2[user.organization.role]
                     : undefined,
+                  domain_name: user.organization.domainName ?? undefined,
+                  resource_policy: user.organization.resourcePolicy,
+                  main_access_key: user.organization.mainAccessKey ?? undefined,
+                  sudo_session_enabled: user.security.sudoSessionEnabled,
+                  totp_activated: user.security.totpActivated ?? undefined,
+                  allowed_client_ip: user.security.allowedClientIp
+                    ? [...user.security.allowedClientIp]
+                    : undefined,
+                  container_uid: user.container.containerUid ?? undefined,
+                  container_main_gid:
+                    user.container.containerMainGid ?? undefined,
+                  // Convert container_gids from number[] to string[]: the tags
+                  // input (AstryxFormTagsInput) works on strings; the submit
+                  // handler converts back with _.toNumber.
+                  container_gids: user.container.containerGids
+                    ? _.map(user.container.containerGids, (gid) => String(gid))
+                    : undefined,
+                  group_ids: _.compact(
+                    _.map(user.projects?.edges, (edge) =>
+                      edge?.node?.id ? toLocalId(edge.node.id) : null,
+                    ),
+                  ),
                 }
               : ({
                   need_password_change: bulkCreate ? true : false,
@@ -526,8 +735,19 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 description={t('credential.BulkCreateUserDescription')}
                 style={{ marginBottom: token.marginMD }}
               />
-              <Space.Compact style={{ width: '100%' }}>
-                <Form.Item
+              {/* QA-FINDINGS Q-32 — "email prefix 와 email suffix 사이의
+                  input margin 이 없음". The gapless `HStack` this replaces put
+                  the two BORDERED boxes edge to edge at x=800 with each still
+                  carrying `border-radius: 8px`, so they collided instead of
+                  reading as one control. antd welded them with
+                  `<Space.Compact>`; `BAICompactGroup` is that weld — the
+                  members overlap by one `var(--border-width)` so the doubled
+                  border collapses to a single stroke, the inner corners are
+                  squared, and the focused field's edge is raised above its
+                  neighbour's. The prefix and suffix are two halves of ONE
+                  address, so a gap would have been the wrong control. */}
+              <BAICompactGroup>
+                <BAIFormItem
                   name="email_prefix"
                   label={t('credential.EmailPrefix')}
                   style={{ flex: 1 }}
@@ -540,9 +760,12 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     { max: 30 },
                   ]}
                 >
-                  <Input placeholder={t('maxLength.30chars')} />
-                </Form.Item>
-                <Form.Item
+                  <AstryxFormTextInput
+                    label={t('credential.EmailPrefix')}
+                    placeholder={t('maxLength.30chars')}
+                  />
+                </BAIFormItem>
+                <BAIFormItem
                   name="email_suffix"
                   label={t('credential.EmailSuffix')}
                   style={{ flex: 1 }}
@@ -556,10 +779,17 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     { max: 30 },
                   ]}
                 >
-                  <Input prefix="@" placeholder={t('maxLength.30chars')} />
-                </Form.Item>
-              </Space.Compact>
-              <Form.Item
+                  {/* PILOT-DECISION: antd `Input prefix="@"` rendered a static
+                      "@" glyph inline before the text; Astryx TextInput only
+                      supports an icon `startIcon`, not arbitrary prefix text
+                      (no equivalent), so the "@" adornment is dropped. */}
+                  <AstryxFormTextInput
+                    label={t('credential.EmailSuffix')}
+                    placeholder={t('maxLength.30chars')}
+                  />
+                </BAIFormItem>
+              </BAICompactGroup>
+              <BAIFormItem
                 name="user_count"
                 label={t('credential.UserCount')}
                 rules={[
@@ -573,7 +803,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
                 extra={
-                  <Form.Item
+                  <BAIFormItem
                     noStyle
                     dependencies={[
                       'email_prefix',
@@ -581,7 +811,11 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                       'user_count',
                     ]}
                   >
-                    {({ getFieldValue }) => {
+                    {(form) => {
+                      // BAIFormItem render-prop children receive `unknown`
+                      // (antd typed this as FormInstance); narrow it back.
+                      const { getFieldValue } =
+                        form as FormInstance<BulkFormValues>;
                       const prefix = getFieldValue('email_prefix');
                       const suffix = getFieldValue('email_suffix');
                       const count = getFieldValue('user_count');
@@ -610,28 +844,35 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                             )
                           : undefined;
                       return (
-                        <Typography.Text type="secondary">
+                        <Text color="secondary">
                           {previewEmails.join(', ')}
                           {lastEmail && ` … ${lastEmail}`}
-                        </Typography.Text>
+                        </Text>
                       );
                     }}
-                  </Form.Item>
+                  </BAIFormItem>
                 }
               >
-                <InputNumber style={{ width: '100%' }} min={1} />
-              </Form.Item>
+                <AstryxFormNumberInput
+                  label={t('credential.UserCount')}
+                  min={1}
+                />
+              </BAIFormItem>
             </>
           ) : (
             <>
-              <Form.Item
+              <BAIFormItem
                 name="email"
                 label={t('general.E-Mail')}
                 rules={[{ required: !user }, { type: 'email' }]}
               >
-                <Input disabled={!!user} />
-              </Form.Item>
-              <Form.Item
+                <AstryxFormTextInput
+                  label={t('general.E-Mail')}
+                  type="email"
+                  disabled={!!user}
+                />
+              </BAIFormItem>
+              <BAIFormItem
                 name="username"
                 label={t('credential.UserName')}
                 rules={[
@@ -643,9 +884,12 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <Input placeholder={t('maxLength.64chars')} />
-              </Form.Item>
-              <Form.Item
+                <AstryxFormTextInput
+                  label={t('credential.UserName')}
+                  placeholder={t('maxLength.64chars')}
+                />
+              </BAIFormItem>
+              <BAIFormItem
                 name="full_name"
                 label={t('credential.FullName')}
                 rules={[
@@ -654,11 +898,14 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <Input placeholder={t('maxLength.64chars')} />
-              </Form.Item>
+                <AstryxFormTextInput
+                  label={t('credential.FullName')}
+                  placeholder={t('maxLength.64chars')}
+                />
+              </BAIFormItem>
             </>
           )}
-          <Form.Item
+          <BAIFormItem
             name="password"
             label={user ? t('general.NewPassword') : t('general.Password')}
             rules={[
@@ -671,9 +918,12 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               },
             ]}
           >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item
+            <AstryxFormTextInput
+              label={user ? t('general.NewPassword') : t('general.Password')}
+              type="password"
+            />
+          </BAIFormItem>
+          <BAIFormItem
             name="password_confirm"
             dependencies={['password']}
             label={
@@ -703,25 +953,36 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               }),
             ]}
           >
-            <Input.Password />
-          </Form.Item>
-          <Form.Item
+            <AstryxFormTextInput
+              label={
+                user
+                  ? t('webui.menu.NewPasswordAgain')
+                  : t('general.ConfirmPassword')
+              }
+              type="password"
+            />
+          </BAIFormItem>
+          <BAIFormItem
             name="need_password_change"
             label={t('credential.DescRequirePasswordChange')}
             valuePropName="checked"
             tooltip={t('credential.TooltipForRequirePasswordChange')}
           >
-            <Checkbox>{t('general.Enable')}</Checkbox>
-          </Form.Item>
-          <Form.Item
+            <AstryxFormCheckbox label={t('general.Enable')} />
+          </BAIFormItem>
+          <BAIFormItem
             name="description"
             label={t('credential.Description')}
             rules={[{ max: 500 }]}
           >
-            <Input.TextArea placeholder={t('maxLength.500chars')} />
-          </Form.Item>
-          <Form.Item name="status" label={t('credential.UserStatus')}>
-            <Select
+            <AstryxFormTextArea
+              label={t('credential.Description')}
+              placeholder={t('maxLength.500chars')}
+            />
+          </BAIFormItem>
+          <BAIFormItem name="status" label={t('credential.UserStatus')}>
+            <AstryxFormSelector
+              label={t('credential.UserStatus')}
               options={[
                 {
                   value: 'active',
@@ -732,20 +993,21 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   label: t('general.Inactive'),
                 },
                 {
+                  value: 'deleted',
+                  label: t('credential.InactiveIncludeKeypair'),
+                },
+                {
                   value: 'before-verification',
                   label: t('credential.BeforeVerification'),
                 },
-                {
-                  value: 'deleted',
-                  label: t('credential.Deleted'),
-                },
               ]}
             />
-          </Form.Item>
+          </BAIFormItem>
           {!!currentUserRole &&
             currentUserRole in permissionRangeOfRoleChanges && (
-              <Form.Item name="role" label={t('credential.Role')}>
-                <Select
+              <BAIFormItem name="role" label={t('credential.Role')}>
+                <AstryxFormSelector
+                  label={t('credential.Role')}
                   options={_.map(
                     permissionRangeOfRoleChanges[currentUserRole],
                     (item) => {
@@ -756,68 +1018,70 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     },
                   )}
                 />
-              </Form.Item>
+              </BAIFormItem>
             )}
-          <Form.Item
+          <BAIFormItem
             name="sudo_session_enabled"
             label={t('credential.EnableSudoSession')}
             valuePropName="checked"
           >
-            <Checkbox>{t('general.Allow')}</Checkbox>
-          </Form.Item>
+            <AstryxFormCheckbox label={t('general.Allow')} />
+          </BAIFormItem>
           {!!isTOTPSupported && !bulkCreate && (
-            <Form.Item
+            <BAIFormItem
               name="totp_activated"
               label={t('webui.menu.TotpActivated')}
               valuePropName="checked"
               extra={
-                user?.email !== baiClient?.email && (
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
-                  >
+                user?.basicInfo.email !== baiClient?.email && (
+                  <Text type="supporting">
                     {t('credential.AdminCanOnlyRemoveTotp')}
-                  </Typography.Text>
+                  </Text>
                 )
               }
             >
-              <Switch
-                loading={
+              <TotpSwitch
+                label={t('webui.menu.TotpActivated')}
+                isLoading={
                   isLoadingManagerSupportingTOTP ||
                   mutationToRemoveTotp.isPending
                 }
                 disabled={
-                  user?.email !== baiClient?.email && !user?.totp_activated
+                  user?.basicInfo.email !== baiClient?.email &&
+                  !user?.security.totpActivated
                 }
                 onChange={(checked: boolean) => {
                   if (checked) {
                     toggleTOTPActivateModal();
                   } else {
-                    if (user?.totp_activated) {
+                    if (user?.security.totpActivated) {
                       formRef.current?.setFieldValue('totp_activated', true);
                       modal.confirm({
                         title: t('totp.TurnOffTotp'),
-                        icon: <ExclamationCircleFilled />,
+                        icon: <CircleAlert size="1em" />,
                         content: t('totp.ConfirmTotpRemovalBody'),
                         okText: t('button.Yes'),
                         okType: 'danger',
                         cancelText: t('button.No'),
                         onOk() {
-                          mutationToRemoveTotp.mutate(user?.email || '', {
-                            onSuccess: () => {
-                              message.success(
-                                t('totp.RemoveTotpSetupCompleted'),
-                              );
-                              updateFetchKey();
-                              formRef.current?.setFieldValue(
-                                'totp_activated',
-                                false,
-                              );
+                          mutationToRemoveTotp.mutate(
+                            user?.basicInfo.email || '',
+                            {
+                              onSuccess: () => {
+                                message.success(
+                                  t('totp.RemoveTotpSetupCompleted'),
+                                );
+                                updateFetchKey();
+                                formRef.current?.setFieldValue(
+                                  'totp_activated',
+                                  false,
+                                );
+                              },
+                              onError: (err) => {
+                                logger.error(err);
+                              },
                             },
-                            onError: (err) => {
-                              logger.error(err);
-                            },
-                          });
+                          );
                         },
                         onCancel() {
                           formRef.current?.setFieldValue(
@@ -830,16 +1094,16 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   }
                 }}
               />
-            </Form.Item>
+            </BAIFormItem>
           )}
-          <Form.Item
+          <BAIFormItem
             name="resource_policy"
             label={t('resourcePolicy.ResourcePolicy')}
             rules={[{ required: !user }]}
           >
             <UserResourcePolicySelect />
-          </Form.Item>
-          <Form.Item
+          </BAIFormItem>
+          <BAIFormItem
             name="domain_name"
             label={t('credential.Domain')}
             rules={[{ required: true }]}
@@ -849,37 +1113,46 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 formRef.current?.setFieldValue('group_ids', []);
               }}
             />
-          </Form.Item>
+          </BAIFormItem>
           <Suspense
             fallback={
-              <Form.Item label={t('credential.Projects')}>
-                <Select loading />
-              </Form.Item>
+              <BAIFormItem label={t('credential.Projects')}>
+                <BAISelect loading style={{ width: '100%' }} />
+              </BAIFormItem>
             }
           >
-            <Form.Item noStyle dependencies={['domain_name']}>
-              {({ getFieldValue }) => (
-                <Form.Item
-                  name="group_ids"
-                  label={t('credential.Projects')}
-                  getValueFromEvent={(value) => value}
-                  getValueProps={(value) => ({
-                    value: _.isArray(value)
-                      ? value
-                      : _.map(user?.groups, (g) => g?.id),
-                  })}
-                >
-                  <ProjectSelect
-                    mode="multiple"
-                    domain={getFieldValue('domain_name')}
-                    disableDefaultFilter
-                    lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
-                  />
-                </Form.Item>
-              )}
-            </Form.Item>
+            <BAIFormItem noStyle dependencies={['domain_name']}>
+              {(form) => {
+                // BAIFormItem render-prop children receive `unknown` (antd
+                // typed this as FormInstance); narrow it back.
+                const { getFieldValue } = form as FormInstance<FormValues>;
+                return (
+                  <BAIFormItem
+                    name="group_ids"
+                    label={t('credential.Projects')}
+                    getValueFromEvent={(value) => value}
+                    getValueProps={(value) => ({
+                      value: _.isArray(value)
+                        ? value
+                        : _.compact(
+                            _.map(user?.projects?.edges, (edge) =>
+                              edge?.node?.id ? toLocalId(edge.node.id) : null,
+                            ),
+                          ),
+                    })}
+                  >
+                    <ProjectSelect
+                      mode="multiple"
+                      domain={getFieldValue('domain_name')}
+                      disableDefaultFilter
+                      lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
+                    />
+                  </BAIFormItem>
+                );
+              }}
+            </BAIFormItem>
           </Suspense>
-          <Form.Item
+          <BAIFormItem
             name="allowed_client_ip"
             label={t('credential.AllowedClientIP')}
             extra={t('credential.AllowedClientIPHint')}
@@ -902,27 +1175,15 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               },
             ]}
           >
-            <Select
-              mode="tags"
-              tokenSeparators={[',', ' ']}
-              tagRender={(props) => {
-                const isValid =
-                  _.isString(props.label) && isValidIPOrCidr(props.label);
-                return (
-                  <Tag color={!isValid ? 'red' : undefined} {...props}>
-                    {props.label}
-                  </Tag>
-                );
-              }}
-              open={false}
-              suffixIcon={null}
+            <AllowedClientIpInput
+              label={t('credential.AllowedClientIP')}
               placeholder={t('credential.AllowedClientIPPlaceholder')}
             />
-          </Form.Item>
+          </BAIFormItem>
 
           {!bulkCreate && (
             <>
-              <Form.Item
+              <BAIFormItem
                 name="container_uid"
                 label={t('credential.ContainerUID')}
                 tooltip={t('credential.ContainerUIDTooltip')}
@@ -936,13 +1197,13 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <InputNumber
-                  style={{ width: '100%' }}
+                <AstryxFormNumberInput
+                  label={t('credential.ContainerUID')}
                   max={SIGNED_32BIT_MAX_INT}
                   min={1}
                 />
-              </Form.Item>
-              <Form.Item
+              </BAIFormItem>
+              <BAIFormItem
                 name="container_main_gid"
                 label={t('credential.ContainerGID')}
                 tooltip={t('credential.ContainerGIDTooltip')}
@@ -956,13 +1217,13 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   },
                 ]}
               >
-                <InputNumber
-                  style={{ width: '100%' }}
+                <AstryxFormNumberInput
+                  label={t('credential.ContainerGID')}
                   max={SIGNED_32BIT_MAX_INT}
                   min={1}
                 />
-              </Form.Item>
-              <Form.Item
+              </BAIFormItem>
+              <BAIFormItem
                 name="container_gids"
                 label={t('credential.ContainerSupplementaryGIDs')}
                 tooltip={t('credential.ContainerSupplementaryGIDsTooltip')}
@@ -1023,32 +1284,33 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   }),
                 ]}
               >
-                <BAISelect
-                  mode="tags"
+                <AstryxFormTagsInput
                   tokenSeparators={[',', ' ']}
-                  open={false}
-                  suffixIcon={null}
+                  label={t('credential.ContainerSupplementaryGIDs')}
                   placeholder={t(
                     'credential.ContainerSupplementaryGIDsPlaceholder',
                   )}
                 />
-              </Form.Item>
+              </BAIFormItem>
             </>
           )}
-          {!!user && userEmail && (
+          {!!user && (
             <Suspense
               fallback={
-                <Form.Item label={t('credential.MainAccessKey')}>
-                  <Select loading />
-                </Form.Item>
+                <BAIFormItem label={t('credential.MainAccessKey')}>
+                  <BAISelect loading style={{ width: '100%' }} />
+                </BAIFormItem>
               }
             >
-              <Form.Item
+              <BAIFormItem
                 name="main_access_key"
                 label={t('credential.MainAccessKey')}
               >
-                <AccessKeySelect userEmail={userEmail} fetchKey={fetchKey} />
-              </Form.Item>
+                <AccessKeySelect
+                  userEmail={user.basicInfo.email}
+                  fetchKey={fetchKey}
+                />
+              </BAIFormItem>
             </Suspense>
           )}
         </Form>
@@ -1071,11 +1333,29 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             open={!!createdKeypairs}
             keypairFragment={filterOutNullAndUndefined(createdKeypairs)}
             onRequestClose={() => {
+              const hadFailures = !_.isEmpty(failedUsers);
               setCreatedKeypairs(null);
-              onRequestClose(true);
+              if (!hadFailures) {
+                // Full success — nothing left to review, finish the whole flow.
+                onRequestClose(true);
+              }
+              // Partial failure: leave failedUsers as-is. BulkCreateUserErrorModal
+              // below is the next step — its `open` gate flips true now that
+              // createdKeypairs is cleared, showing the failures over the
+              // still-open form (FR-3419).
             }}
           />
         </BAIUnmountAfterClose>
+        {/* The failure report — shown immediately when every user failed (no
+            keypairs to show first), or as the step after the admin dismisses
+            the keypair modal above when some users succeeded. Never shown
+            together with the keypair modal (FR-3419). */}
+        <BulkCreateUserErrorModal
+          open={!createdKeypairs && !_.isEmpty(failedUsers)}
+          failedUsers={failedUsers}
+          createdCount={createdCount}
+          onRequestClose={() => setFailedUsers([])}
+        />
       </Suspense>
     </BAIModal>
   );

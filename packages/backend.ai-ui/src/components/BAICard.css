@@ -1,0 +1,133 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `BAICard` co-located CSS (to-astryx phase 3, wave 2 / ticket W2-D).
+
+ Astryx `Card` exposes `variant`, `padding`, `elevation` and nothing else — no
+ border-colour knob and no hover treatment (P5). These three rules reproduce
+ the two antd behaviours the wrapper genuinely owned, in TOKENS ONLY.
+
+ P19: every custom property below is declared by the built brand theme
+ (`react/src/astryx-theme/built/backendai-default-built.css`) — verified by
+ grep, and deliberately written WITHOUT a literal fallback argument so a
+ renamed token fails loudly instead of silently pinning the literal forever.
+*/
+
+/*
+ `status` — the success/warning/error border tint. antd got it from
+ `style={{ borderColor: token.colorError }}`; the same three semantic colours
+ are Astryx theme variables, so the tint follows the theme (including dark
+ mode) instead of a resolved hex.
+*/
+.bai-card--success {
+  border-color: var(--color-success);
+}
+
+.bai-card--warning {
+  border-color: var(--color-warning);
+}
+
+.bai-card--error {
+  border-color: var(--color-error);
+}
+
+/*
+ `hoverable` — antd raised the card's shadow on hover. Astryx's `elevation` is
+ a RESTING depth with no hover state, so the transition is authored here off
+ the same shadow token scale `elevation` uses.
+*/
+.bai-card--hoverable {
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.bai-card--hoverable:hover {
+  box-shadow: var(--shadow-med);
+}
+
+/*
+ The status glyph on the header's `extraButtonTitle` action. Astryx `Button`
+ has no `color` escape hatch, so the icon inherits from a class instead of the
+ `style={{ color: token.colorError }}` antd used.
+*/
+.bai-card-extra--warning svg {
+  color: var(--color-warning);
+}
+
+.bai-card-extra--error svg {
+  color: var(--color-error);
+}
+
+/*
+ `tabList` — the card-top tab chrome (QA2-A / item 3).
+
+ antd's `Card` rendered `tabList` INSIDE `ant-card-head`, so the tab strip was
+ part of the card's chrome, not content: the head's `border-bottom` ran the FULL
+ width of the card (`ant-card-head { padding: 0 24px; border-bottom: 1px solid
+ colorBorderSecondary }`) while the first tab's LABEL started at the same 24px
+ inset as the body below it.  Astryx's `Card` is a single padded box, so
+ rebuilding that anatomy means full-bleeding the strip back out to the card's
+ edges and re-adding the inset as padding.
+
+ MEASURED against antd (`antd/es/card/style`, default tokens):
+   headerPadding = paddingLG = 24px          -> `--bai-card-inset`
+   headerHeight  = fontSizeLG * lineHeightLG + padding * 2 = 56px
+   lineWidth     = 1px                       -> `--border-width`
+   tabsMarginBottom = -padding - lineWidth = -17px  (welds the tabs' own rail
+                                              onto the head's bottom border)
+
+ Every value below is a token; the only arithmetic is the bleed/inset identity.
+ Astryx `Card` reflects whatever `padding` step it resolved (the `size`-derived
+ default or an explicit `padding` prop) as `--container-padding-inline-start`
+ on the same element, and its bordered variant subtracts the border width from
+ its padding so that border + padding == the padding token. The inset derives
+ from that reflected var and does the same subtraction, so the rail lands
+ exactly between the card's side borders — as antd's head border did — for
+ every padding step. `max()` keeps `padding={0}` from going negative.
+*/
+.bai-card {
+  --bai-card-inset: max(
+    0px,
+    calc(var(--container-padding-inline-start) - var(--border-width))
+  );
+}
+
+.bai-card__tabs {
+  /* Bleed out to the card's inner edges, then put the inset back as padding so
+     the first tab's LABEL still lines up with the body content. The tab's own
+     `padding-inline` (`--spacing-3`) is part of that inset, hence the subtract;
+     `max()` keeps it non-negative on `size="small"`, where the card's padding
+     and the tab's padding are the same step. */
+  margin-inline: calc(-1 * var(--bai-card-inset));
+  padding-inline: max(0px, calc(var(--bai-card-inset) - var(--spacing-3)));
+  /* Astryx's strip carries `max-width: 100%` so it can never overflow its
+     container. The bleed overflows on purpose, and the cap would otherwise
+     clamp the nav back to the card's CONTENT width while the negative margin
+     still shifted it left — leaving the rail short by one inset on the right. */
+  max-width: none;
+}
+
+/*
+ Title-less tabbed card: pull the strip up to the card's top edge and reserve
+ the header band above it, instead of floating a full card padding below the
+ top edge.
+
+ The band is `--spacing-3` + 32px tab + 4px rail gap + 1px = 49px. It was
+ `--spacing-5` (57px, antd's 56px `ant-card-head`) until the tab strip read as
+ sitting too far off the card's top border; the 8px is a deliberate departure
+ from antd parity, not drift.
+*/
+.bai-card__tabs--top {
+  margin-block-start: calc(-1 * var(--bai-card-inset));
+  padding-block-start: var(--spacing-3);
+}
+
+/*
+ NOT declared here on purpose: the gap BELOW the rail. antd's tabbed card set
+ `body.paddingTop = token.padding` (16px) — `use-bai-card.md` codifies it
+ ("Cards with `tabList` keep their default body paddingTop … a flush body would
+ put the first row of content immediately under the tab underline, which reads
+ as broken") — and `BAICard`'s `VStack gap={4}` already IS 16px. Measured
+ rail->content: 16px on every tabbed surface.
+*/

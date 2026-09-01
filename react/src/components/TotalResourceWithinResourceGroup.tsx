@@ -3,24 +3,33 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
-import { useCurrentUserRole } from '../hooks/backendai';
-import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
-import { useControllableValue } from 'ahooks';
-import { Segmented, theme, Typography } from 'antd';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
-  filterOutNullAndUndefined,
-  BAIFlex,
-  subNumberWithUnits,
-  addNumberWithUnits,
-  BAIBoardItemTitle,
-  ResourceStatistics,
-  convertToNumber,
-  processMemoryValue,
-  BAIFlexProps,
-  BAIFetchKeyButton,
+  useCurrentUserRole,
   useResourceSlotsDetails,
+} from '../hooks/backendai';
+import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
+import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Heading } from '@astryxdesign/core/Text';
+import {
+  BAIBoardItemTitle,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAIFlexProps,
+  ResourceStatistics,
+  addNumberWithUnits,
+  convertToNumber,
+  filterOutNullAndUndefined,
+  processMemoryValue,
+  subNumberWithUnits,
+  useControllableValue,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   useMemo,
   useTransition,
@@ -30,8 +39,6 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
-import { useSuspendedBackendaiClient } from 'src/hooks';
-import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 
 interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
@@ -228,42 +235,45 @@ const TotalResourceWithinResourceGroup: React.FC<
         }
       : null;
 
-    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
-      .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => {
-        if (!resourceSlot) return null;
+    const accelerators = _.filter(
+      _.compact(
+        _.map(
+          _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
+          (resourceSlot, key) => {
+            if (!resourceSlot) return null;
 
-        const processAcceleratorValue = (value: any): number => {
-          return convertToNumber(value);
-        };
+            const processAcceleratorValue = (value: any): number => {
+              return convertToNumber(value);
+            };
 
-        const occupied = totalOccupiedSlots[key] || 0;
-        const available = totalAvailableSlots[key] || 0;
-        const remaining = subNumberWithUnits(
-          _.toString(available),
-          _.toString(occupied),
-          '',
-        );
+            const occupied = totalOccupiedSlots[key] || 0;
+            const available = totalAvailableSlots[key] || 0;
+            const remaining = subNumberWithUnits(
+              _.toString(available),
+              _.toString(occupied),
+              '',
+            );
 
-        return {
-          key,
-          used: {
-            current: processAcceleratorValue(occupied),
-            total: processAcceleratorValue(available),
+            return {
+              key,
+              used: {
+                current: processAcceleratorValue(occupied),
+                total: processAcceleratorValue(available),
+              },
+              free: {
+                current: processAcceleratorValue(remaining),
+                total: processAcceleratorValue(available),
+              },
+              metadata: {
+                title: resourceSlot.human_readable_name,
+                displayUnit: resourceSlot.display_unit,
+              },
+            };
           },
-          free: {
-            current: processAcceleratorValue(remaining),
-            total: processAcceleratorValue(available),
-          },
-          metadata: {
-            title: resourceSlot.human_readable_name,
-            displayUnit: resourceSlot.display_unit,
-          },
-        };
-      })
-      .compact()
-      .filter((item) => !!(item.used.current || item.used.total))
-      .value();
+        ),
+      ),
+      (item) => !!(item.used.current || item.used.total),
+    );
 
     return { cpu: cpuData, memory: memoryData, accelerators };
   }, [agent_nodes, agent_summary_list, resourceSlotsDetails]);
@@ -282,14 +292,10 @@ const TotalResourceWithinResourceGroup: React.FC<
       <BAIBoardItemTitle
         title={
           <BAIFlex gap={'xs'} wrap="wrap">
-            <Typography.Text
-              style={{
-                fontSize: token.fontSizeHeading5,
-                fontWeight: token.fontWeightStrong,
-              }}
-            >
-              {t('webui.menu.TotalResourcesIn')}
-            </Typography.Text>
+            {/* antd Typography.Text (fontSizeHeading5 = 16px +
+                fontWeightStrong). 16px is heading-5 on the restored antd type
+                ramp; `level={3}` tracked the same 16px under Astryx's own. */}
+            <Heading level={5}>{t('webui.menu.TotalResourcesIn')}</Heading>
             <SharedResourceGroupSelectForCurrentProject
               size="small"
               showSearch
@@ -303,26 +309,24 @@ const TotalResourceWithinResourceGroup: React.FC<
         tooltip={t('webui.menu.TotalResourcesInResourceGroupDescription')}
         extra={
           <BAIFlex gap={'xs'} wrap="wrap">
-            <Segmented<
-              Exclude<
-                TotalResourceWithinResourceGroupProps['displayType'],
-                undefined
-              >
-            >
-              size="small"
-              options={[
-                {
-                  label: t('dashboard.Used'),
-                  value: 'used',
-                },
-                {
-                  label: t('dashboard.Free'),
-                  value: 'free',
-                },
-              ]}
+            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+                composed from the two option labels to avoid new i18n keys. */}
+            <SegmentedControl
+              size="sm"
+              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
-              onChange={(v) => setDisplayType(v)}
-            />
+              onChange={(v) =>
+                setDisplayType(
+                  v as Exclude<
+                    TotalResourceWithinResourceGroupProps['displayType'],
+                    undefined
+                  >,
+                )
+              }
+            >
+              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
+              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
+            </SegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPendingRefetch || refetching}

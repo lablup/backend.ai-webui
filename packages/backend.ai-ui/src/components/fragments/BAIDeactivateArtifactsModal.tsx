@@ -1,15 +1,17 @@
 import { BAIDeactivateArtifactsModalArtifactsFragment$key } from '../../__generated__/BAIDeactivateArtifactsModalArtifactsFragment.graphql';
 import { BAIDeactivateArtifactsModalDeleteArtifactsMutation } from '../../__generated__/BAIDeactivateArtifactsModalDeleteArtifactsMutation.graphql';
+import { App } from '../../app-shim';
 import { toLocalId } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { App, Modal, Typography, type ModalProps } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { Text } from '@astryxdesign/core/Text';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export type BAIDeactivateArtifactsModalArtifactsFragmentKey =
   BAIDeactivateArtifactsModalArtifactsFragment$key;
 
-export interface BAIDeactivateArtifactsModalProps extends ModalProps {
+export interface BAIDeactivateArtifactsModalProps extends BAIModalProps {
   selectedArtifactsFragment: BAIDeactivateArtifactsModalArtifactsFragmentKey;
 }
 
@@ -19,7 +21,7 @@ const BAIDeactivateArtifactsModal = ({
   onCancel,
   ...modalProps
 }: BAIDeactivateArtifactsModalProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { message } = App.useApp();
   const selectedArtifacts =
     useFragment<BAIDeactivateArtifactsModalArtifactsFragment$key>(
@@ -49,7 +51,7 @@ const BAIDeactivateArtifactsModal = ({
 
   return (
     <BAIUnmountAfterClose>
-      <Modal
+      <BAIModal
         title={t('comp:BAIDeactivateArtifactsModal.DeactivateArtifacts')}
         centered
         okText={t('comp:BAIDeactivateArtifactsModal.Deactivate')}
@@ -93,7 +95,7 @@ const BAIDeactivateArtifactsModal = ({
         okButtonProps={{ danger: true, loading: isInflightDeleteArtifacts }}
         {...modalProps}
       >
-        <Typography.Text>
+        <Text>
           {selectedArtifacts.length === 1
             ? t(
                 'comp:BAIDeactivateArtifactsModal.AreYouSureYouWantToDeactivateOne',
@@ -107,8 +109,8 @@ const BAIDeactivateArtifactsModal = ({
                   count: selectedArtifacts.length,
                 },
               )}
-        </Typography.Text>
-      </Modal>
+        </Text>
+      </BAIModal>
     </BAIUnmountAfterClose>
   );
 };

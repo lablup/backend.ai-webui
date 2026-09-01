@@ -27,7 +27,7 @@ The user manual is located at `packages/backend.ai-webui-docs/src/`. It is a mul
 
 The user may provide one or more of the following. Adapt your approach accordingly:
 
-#### Source A: PR or Graphite Stack (code-driven)
+#### Source A: PR or PR Stack (code-driven)
 When the user references a PR, branch, or stack:
 
 ```bash
@@ -35,8 +35,8 @@ When the user references a PR, branch, or stack:
 git diff main...HEAD --name-only
 git diff main...HEAD --stat
 
-# For Graphite stack
-gt state
+# For a PR stack (GitHub Stacked PRs)
+gh stack view --json
 ```
 
 Analyze the changed files to understand what user-facing changes were made.
@@ -207,6 +207,7 @@ Produce a structured plan saved as a Markdown file at `packages/backend.ai-webui
 5. **Screenshot Planning**: Identify where new screenshots are needed or existing ones need updating
 6. **Navigation Updates**: Flag when `book.config.yaml` needs updating for new sections
 7. **Code-Informed**: Even when working from a description, always verify details against the actual codebase to ensure accuracy
+8. **Content Exclusions (FR-3480, PR #8619)**: Never plan documentation for topics deliberately removed from the manual: auto-refresh controls / default refresh intervals on list pages (only genuinely feature-specific polling like the deployment revision apply's 5s polling is allowed), view-state persistence boilerplate (filters/sort/pagination in the URL, surviving reload, or per-tab state being restored when switching tabs and back), and self-evident table expand-mode / table-state enumerations (including the Expand options kebab menu and its per-user mode memory). These are discoverable from the UI and were judged not worth manual space — planning them forces the same removal work again. The docs-update-writer carries the matching skip rule.
 
 ## Documentation Style Reference
 

@@ -2,27 +2,346 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
-import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
-import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
-import { App, Form, Input } from 'antd';
 import {
+  RBACElementType,
+  RoleFormModalCreateMutation,
+} from '../__generated__/RoleFormModalCreateMutation.graphql';
+import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
+import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
+import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
+import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
+import { useSuspendedBackendaiClient } from '../hooks';
+import {
+  AstryxFormCheckbox,
+  AstryxFormSelector,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import {
+  BAIAdminContainerRegistrySelect,
+  BAIAdminModelServiceSelect,
+  BAIAdminProjectSelect,
+  BAIAdminResourceGroupSelect,
+  BAIAdminSessionSelect,
+  BAIButton,
+  BAIDomainSelect,
+  BAIDomainSelectV2,
+  BAIFlex,
+  BAIKeypairSelect,
   BAIModal,
   BAIModalProps,
+  BAISelect,
+  BAIStorageHostSelect,
+  BAIUserSelect,
+  BAIVFolderSelect,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
-import React from 'react';
+import { Trash, PlusIcon } from 'lucide-react';
+import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useMutation } from 'react-relay';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
+
+// Scope types that have a UI-side scopeId selector implemented.
+// Used as the whitelist for role scope selection, intersected with
+// rbacPermissionMatrix at usage time.
+export const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
+  // Scope ID select implemented
+  'DOMAIN',
+  'PROJECT',
+  'USER',
+  'VFOLDER',
+  'RESOURCE_GROUP',
+  'SESSION',
+  'MODEL_DEPLOYMENT',
+  'CONTAINER_REGISTRY',
+  'STORAGE_HOST',
+  'KEYPAIR',
+  // TODO: Scope ID select to be implemented in separate stacks
+  // 'IMAGE',
+  // 'ARTIFACT',
+  // 'ARTIFACT_REGISTRY',
+  // 'ARTIFACT_REVISION',
+  // 'RESOURCE_PRESET',
+  // 'USER_RESOURCE_POLICY',
+  // 'KEYPAIR_RESOURCE_POLICY',
+  // 'PROJECT_RESOURCE_POLICY',
+  // 'ROLE',
+  // TODO: No management UI in WebUI yet
+  // 'DEPLOYMENT',
+  // 'NOTIFICATION_CHANNEL',
+  // 'NETWORK',
+  // 'SESSION_TEMPLATE',
+  // 'APP_CONFIG',
+  // 'AUDIT_LOG',
+  // 'EVENT_LOG',
+  // 'NOTIFICATION_RULE',
+];
+
+/**
+ * PILOT-DECISION P3C-4: this used to `extend SelectProps` (antd) and spread the
+ * whole antd prop bag into ten different selects. The Astryx siblings do not
+ * take antd props, so the router now declares the narrow contract its two call
+ * sites actually use — the rest is what `Form.Item` injects.
+ */
+interface ScopeIdSelectProps {
+  scopeType?: string;
+  /** Injected by `Form.Item`. */
+  value?: string;
+  onChange?: (value: string | Array<string> | undefined) => void;
+  placeholder?: string;
+  isDisabled?: boolean;
+}
+
+/** Every branch renders inside a `Form.Item` that prints its own label. */
+type ScopeIdBranchProps = Omit<ScopeIdSelectProps, 'scopeType'> & {
+  label: string;
+  isLabelHidden?: boolean;
+};
+
+const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
+  'use memo';
+  const queryRef = useLazyLoadQuery<RoleFormModalResourceGroupQuery>(
+    graphql`
+      query RoleFormModalResourceGroupQuery {
+        ...BAIAdminResourceGroupSelect_resourceGroupsFragment
+      }
+    `,
+    {},
+    { fetchPolicy: 'store-and-network' },
+  );
+  return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
+};
+
+export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
+  scopeType,
+  ...selectProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
+  // field's own label is the accessible name only.
+  const branchProps: ScopeIdBranchProps = {
+    ...selectProps,
+    label: t('rbac.ScopeId'),
+    isLabelHidden: true,
+  };
+  const fallback = (
+    <AstryxFormSelector
+      label={t('rbac.ScopeId')}
+      placeholder={selectProps.placeholder}
+      isLoading
+      disabled
+      options={[]}
+    />
+  );
+  if (scopeType === 'DOMAIN') {
+    // Managers >= 26.9.0 (BA-7234) parse a DOMAIN scopeId as the domain uuid;
+    // older managers expect the domain name. FR-3618.
+    const domainSelectProps = {
+      showSearch: true,
+      placeholder: selectProps.placeholder,
+      disabled: selectProps.isDisabled,
+      value: selectProps.value,
+      onChange: selectProps.onChange,
+    };
+    return (
+      <Suspense fallback={fallback}>
+        {baiClient.supports('rbac-domain-scope-uuid') ? (
+          <BAIDomainSelectV2 {...domainSelectProps} />
+        ) : (
+          <BAIDomainSelect {...domainSelectProps} />
+        )}
+      </Suspense>
+    );
+  }
+  if (scopeType === 'PROJECT') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIAdminProjectSelect {...branchProps} />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'USER') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIUserSelect valuePropName="id" {...branchProps} />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'VFOLDER') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIVFolderSelect {...branchProps} />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'SESSION') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIAdminSessionSelect {...branchProps} />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'MODEL_DEPLOYMENT') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIAdminModelServiceSelect {...branchProps} />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'CONTAINER_REGISTRY') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIAdminContainerRegistrySelect
+          valuePropName="row_id"
+          {...branchProps}
+        />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'STORAGE_HOST') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIStorageHostSelect {...branchProps} />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'KEYPAIR') {
+    return (
+      <Suspense fallback={fallback}>
+        <BAIKeypairSelect {...branchProps} />
+      </Suspense>
+    );
+  }
+  if (scopeType === 'RESOURCE_GROUP') {
+    return (
+      <Suspense fallback={fallback}>
+        <ResourceGroupScopeIdSelect {...branchProps} />
+      </Suspense>
+    );
+  }
+  // No scope type picked yet: an inert, empty field.
+  return (
+    <AstryxFormSelector
+      label={t('rbac.ScopeId')}
+      placeholder={selectProps.placeholder}
+      value={selectProps.value}
+      disabled
+      options={[]}
+    />
+  );
+};
+
+interface ScopeRowProps {
+  name: number;
+  availableScopeTypes: ReadonlyArray<RBACElementType>;
+  canRemove: boolean;
+  onRemove: () => void;
+}
+
+const ScopeRow: React.FC<ScopeRowProps> = ({
+  name,
+  availableScopeTypes,
+  canRemove,
+  onRemove,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const form = Form.useFormInstance();
+  const scopeType = Form.useWatch(['scopes', name, 'scopeType'], form) as
+    RBACElementType | undefined;
+
+  return (
+    <BAIFlex direction="row" gap="xs" align="start" style={{ width: '100%' }}>
+      <Form.Item
+        name={[name, 'scopeType']}
+        style={{ flex: 1, marginBottom: 0 }}
+        rules={[
+          {
+            required: true,
+            message: t('general.ValueRequired', {
+              name: t('rbac.ScopeType'),
+            }),
+          },
+        ]}
+      >
+        <BAISelect
+          showSearch
+          placeholder={t('rbac.ScopeType')}
+          options={availableScopeTypes.map((type) => ({
+            value: type,
+            label: t(`rbac.types.${type}`, { defaultValue: type }),
+          }))}
+          onChange={() => {
+            const scopes = form.getFieldValue('scopes') ?? [];
+            const next = [...scopes];
+            next[name] = { ...next[name], scopeId: undefined };
+            form.setFieldsValue({ scopes: next });
+          }}
+        />
+      </Form.Item>
+      <Form.Item
+        name={[name, 'scopeId']}
+        style={{ flex: 1, marginBottom: 0 }}
+        rules={[
+          {
+            required: true,
+            message: t('general.ValueRequired', {
+              name: t('rbac.ScopeId'),
+            }),
+          },
+          ({ getFieldValue }) => ({
+            validator(_rule, value) {
+              if (!value) return Promise.resolve();
+              const scopes: Array<{ scopeType?: string; scopeId?: string }> =
+                getFieldValue('scopes') ?? [];
+              const hasDuplicate = scopes.some(
+                (s, idx) =>
+                  idx !== name &&
+                  s?.scopeType === scopeType &&
+                  s?.scopeId === value,
+              );
+              if (hasDuplicate) {
+                return Promise.reject(new Error(t('rbac.DuplicateScope')));
+              }
+              return Promise.resolve();
+            },
+          }),
+        ]}
+      >
+        <ScopeIdSelect scopeType={scopeType} placeholder={t('rbac.ScopeId')} />
+      </Form.Item>
+      {/* MAPPING §3.3: icon-only + `danger` -> `IconButton
+          variant="destructive"`; the ad-hoc `aria-label` becomes the
+          component's required `label`. */}
+      <IconButton
+        variant="destructive"
+        icon={<Trash size="1em" />}
+        isDisabled={!canRemove}
+        onClick={onRemove}
+        label={t('button.Delete')}
+      />
+    </BAIFlex>
+  );
+};
 
 interface RoleFormModalProps extends BAIModalProps {
-  editingRoleFrgmt?: RoleFormModalFragment$key | null;
+  roleNodeFrgmt?: RoleFormModalFragment$key | null;
   onRequestClose: (success: boolean) => void;
 }
 
 const RoleFormModal: React.FC<RoleFormModalProps> = ({
-  editingRoleFrgmt,
+  roleNodeFrgmt,
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -31,6 +350,37 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [form] = Form.useForm();
+  const baiClient = useSuspendedBackendaiClient();
+  // Auto-assign is only supported on managers >= 26.4.4. Gate the form field
+  // and the mutation input so older managers never receive the unknown field.
+  const supportsAutoAssign = baiClient.supports('role-auto-assign');
+
+  const { rbacPermissionMatrix } =
+    useLazyLoadQuery<RoleFormModalPermissionMatrixQuery>(
+      graphql`
+        query RoleFormModalPermissionMatrixQuery {
+          rbacPermissionMatrix {
+            scopeType
+            entities {
+              actions {
+                requiredPermission
+              }
+            }
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-and-network' },
+    );
+
+  // Scope types available for a new role: intersection of UI-supported types
+  // (RBAC_ELEMENT_TYPES) and backend-reported scope types that have at least
+  // one entity with at least one action.
+  const availableScopeTypes = RBAC_ELEMENT_TYPES.filter((type) => {
+    const entry = rbacPermissionMatrix?.find((c) => c.scopeType === type);
+    if (!entry) return false;
+    return entry.entities.some((e) => e.actions.length > 0);
+  });
 
   const editingRole = useFragment(
     graphql`
@@ -38,9 +388,10 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         id
         name
         description
+        autoAssign @since(version: "26.4.4")
       }
     `,
-    editingRoleFrgmt ?? null,
+    roleNodeFrgmt ?? null,
   );
 
   const isEditMode = !!editingRole;
@@ -54,6 +405,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           description
           source
           status
+          autoAssign @since(version: "26.4.4")
           createdAt
           updatedAt
         }
@@ -67,6 +419,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           id
           name
           description
+          autoAssign @since(version: "26.4.4")
           updatedAt
         }
       }
@@ -88,6 +441,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           const changedFields: {
             name?: string;
             description?: string | null;
+            autoAssign?: boolean;
           } = {};
           if (values.name !== editingRole.name) {
             changedFields.name = values.name;
@@ -96,6 +450,12 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             (values.description || null) !== (editingRole.description || null)
           ) {
             changedFields.description = values.description || null;
+          }
+          if (
+            supportsAutoAssign &&
+            values.autoAssign !== editingRole.autoAssign
+          ) {
+            changedFields.autoAssign = values.autoAssign;
           }
 
           if (Object.keys(changedFields).length === 0) {
@@ -147,6 +507,18 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
               input: {
                 name: values.name,
                 description: values.description || null,
+                ...(supportsAutoAssign
+                  ? { autoAssign: values.autoAssign }
+                  : {}),
+                scopes: (
+                  values.scopes as Array<{
+                    scopeType: RBACElementType;
+                    scopeId: string;
+                  }>
+                ).map((s) => ({
+                  scopeType: s.scopeType,
+                  scopeId: s.scopeId,
+                })),
               },
             },
             onCompleted: (_data, errors) => {
@@ -203,6 +575,8 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         initialValues={{
           name: editingRole?.name ?? '',
           description: editingRole?.description ?? '',
+          autoAssign: editingRole?.autoAssign ?? false,
+          scopes: [{}],
         }}
       >
         <Form.Item
@@ -217,11 +591,67 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             },
           ]}
         >
-          <Input autoFocus />
+          <AstryxFormTextInput label={t('rbac.RoleName')} hasAutoFocus />
         </Form.Item>
         <Form.Item name="description" label={t('rbac.RoleDescription')}>
-          <Input.TextArea rows={3} />
+          <AstryxFormTextArea label={t('rbac.RoleDescription')} rows={1} />
         </Form.Item>
+        {supportsAutoAssign && (
+          <Form.Item
+            name="autoAssign"
+            label={t('rbac.AutoAssign')}
+            valuePropName="checked"
+            tooltip={t('rbac.AutoAssignDescription')}
+          >
+            <AstryxFormCheckbox label={t('general.Enable')} />
+          </Form.Item>
+        )}
+        {!isEditMode && (
+          <Form.Item label={t('rbac.ScopeTypeAndId')} required>
+            <Form.List
+              name="scopes"
+              rules={[
+                {
+                  validator: async (_rule, scopes) => {
+                    if (!scopes || scopes.length === 0) {
+                      return Promise.reject(
+                        new Error(t('rbac.AtLeastOneScopeRequired')),
+                      );
+                    }
+                  },
+                },
+              ]}
+            >
+              {(fields, { add, remove }, { errors }) => (
+                <BAIFlex
+                  direction="column"
+                  gap="xs"
+                  align="stretch"
+                  style={{ width: '100%' }}
+                >
+                  {fields.map(({ key, name }) => (
+                    <ScopeRow
+                      key={key}
+                      name={name}
+                      availableScopeTypes={availableScopeTypes}
+                      canRemove={fields.length > 1}
+                      onRemove={() => remove(name)}
+                    />
+                  ))}
+                  <BAIButton
+                    type="dashed"
+                    block
+                    icon={<PlusIcon />}
+                    onClick={() => add({})}
+                  >
+                    {t('button.Add')}
+                  </BAIButton>
+                  <Form.ErrorList errors={errors} />
+                </BAIFlex>
+              )}
+            </Form.List>
+          </Form.Item>
+        )}
       </Form>
     </BAIModal>
   );

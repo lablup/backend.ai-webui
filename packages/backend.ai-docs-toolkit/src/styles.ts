@@ -1,11 +1,51 @@
+import { pathToFileURL } from 'url';
+import type { ResolvedPdfFontFace } from './config.js';
 import type { PdfTheme } from './theme.js';
 import { defaultTheme } from './theme.js';
 
 const CJK_LANGS = new Set(['ko', 'ja', 'zh', 'zh-CN', 'zh-TW']);
 
-export function generatePdfStyles(theme: PdfTheme, lang?: string): string {
+/**
+ * Built-in body font stack: Latin system fonts followed by the full Noto CJK
+ * + Thai families so every script has glyph coverage before the final
+ * Helvetica/Arial fallback. Shared by the `body` rule and the `.cover-title`
+ * fallback so a custom `coverTitleFontFamily` that lacks CJK coverage still
+ * falls back to a CJK face (not straight to Latin-only Helvetica, which would
+ * render Hangul/Kana/Han as tofu). The `:lang(ja)` / `:lang(th)` rules below
+ * re-order this stack per language and are intentionally kept inline.
+ */
+const BUILTIN_FONT_STACK =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", ' +
+  '"Noto Sans KR", "Noto Sans CJK KR", ' +
+  '"Noto Sans JP", "Noto Sans CJK JP", ' +
+  '"Noto Sans TC", "Noto Sans CJK TC", ' +
+  '"Noto Sans Thai", ' +
+  'Helvetica, Arial, sans-serif';
+
+/**
+ * `file://` font URLs work because the document itself loads from a
+ * `file://` temp file; family names, weights, and styles are validated at
+ * config-resolve time (see `validateFontFamily` / `validateFontWeight` /
+ * `validateFontStyle`).
+ */
+function buildFontFaceCss(fontFaces: ResolvedPdfFontFace[]): string {
+  return fontFaces
+    .map((face) => `@font-face {
+  font-family: "${face.family}";
+  src: url("${pathToFileURL(face.path).href}");${face.weight !== undefined ? `\n  font-weight: ${face.weight};` : ''}${face.style ? `\n  font-style: ${face.style};` : ''}
+}`)
+    .join('\n\n');
+}
+
+export function generatePdfStyles(
+  theme: PdfTheme,
+  lang?: string,
+  fontFaces: ResolvedPdfFontFace[] = [],
+): string {
   const isCjk = lang ? CJK_LANGS.has(lang) : false;
+  const custom = theme.fontFamily ? `"${theme.fontFamily}", ` : '';
   return `
+${buildFontFaceCss(fontFaces)}
 /* ==========================================================================
    Base
    ========================================================================== */
@@ -19,9 +59,7 @@ export function generatePdfStyles(theme: PdfTheme, lang?: string): string {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
-    "Noto Sans KR", "Noto Sans JP", "Noto Sans Thai",
-    Helvetica, Arial, sans-serif;
+  font-family: ${custom}${BUILTIN_FONT_STACK};
   font-size: ${theme.baseFontSize};
   line-height: 1.6;
   color: ${theme.textPrimary};
@@ -33,6 +71,22 @@ body {
   overflow-wrap: break-word;
 }
 
+/* Per-language font priorities so Chromium picks the language-appropriate
+ * Noto CJK face first (KR/JP/TC differ in kanji/hanja glyph style). The
+ * <html lang="..."> attribute is set by html-builder.ts. */
+:lang(ja) {
+  font-family: ${custom}-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    "Noto Sans JP", "Noto Sans CJK JP",
+    "Noto Sans KR", "Noto Sans CJK KR",
+    Helvetica, Arial, sans-serif;
+}
+
+:lang(th) {
+  font-family: ${custom}-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    "Noto Sans Thai", "Loma", "Garuda",
+    Helvetica, Arial, sans-serif;
+}
+
 /* ==========================================================================
    Cover Page
    ========================================================================== */
@@ -42,7 +96,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  /* A4 297mm − 25mm/20mm print margins (PDF_OPTIONS) − 2mm rounding slack.
+   * Not 100vh: print-viewport height tracks the paper size, not the content
+   * box, so a 100vh cover spills a blank page 2 before the TOC. */
+  height: 250mm;
+  overflow: hidden;
   text-align: center;
   padding: 60px 40px;
 }
@@ -57,6 +115,7 @@ body {
 }
 
 .cover-title {
+  ${theme.coverTitleFontFamily ? `font-family: "${theme.coverTitleFontFamily}", ${custom}${BUILTIN_FONT_STACK};` : ''}
   font-size: ${theme.coverTitleSize};
   font-weight: 700;
   color: ${theme.textPrimary};
@@ -103,6 +162,19 @@ body {
   background: ${theme.brandColor};
   margin: 40px auto;
   border: none;
+}
+
+.cover-note {
+  margin-top: 32px;
+  padding: 12px 20px;
+  border: 1.5px solid ${theme.brandColor};
+  border-radius: 6px;
+  background: #fafafa;
+  color: #444;
+  font-size: 11pt;
+  line-height: 1.5;
+  max-width: 420px;
+  text-align: center;
 }
 
 /* ==========================================================================
@@ -538,6 +610,24 @@ em {
   border-left: 3px solid #3578e5;
   margin-left: -12px;
   padding-left: 9px;
+}
+
+/* shellsession blocks (FR-2756). The PDF pipeline strips the literal
+   '$' / '#' from the source DOM and restores it via ::before so the
+   visible prompt prints in the PDF too. Output lines are slightly dimmed
+   so command vs response is visually distinct on paper. */
+.cmd-line {
+  display: block;
+}
+
+.cmd-line::before {
+  content: attr(data-prompt) " ";
+  color: #888;
+}
+
+.output-line {
+  display: block;
+  color: #666;
 }
 
 /* ==========================================================================

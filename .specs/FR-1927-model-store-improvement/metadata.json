@@ -1,0 +1,8 @@
+{
+  "epic": "FR-1927",
+  "specTask": "FR-2382",
+  "title": "Model Store Improvement",
+  "status": "draft",
+  "createdAt": "2026-03-26",
+  "relatedIssues": ["FR-2351", "FR-2338"]
+}

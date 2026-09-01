@@ -7,62 +7,64 @@ import {
   VFolderNodeListPageQuery$data,
   VFolderNodeListPageQuery$variables,
 } from '../__generated__/VFolderNodeListPageQuery.graphql';
-import ActionItemContent from '../components/ActionItemContent';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
-import FolderCreateModal from '../components/FolderCreateModal';
-import QuotaPerStorageVolumePanelCard from '../components/QuotaPerStorageVolumePanelCard';
+import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
-import StorageStatusPanelCard from '../components/StorageStatusPanelCard';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
 import { handleRowSelectionChange } from '../helper';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useToggle } from 'ahooks';
+import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
+import { toProjectContext } from '../types/projectContext';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Link } from '@astryxdesign/core/Link';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  Badge,
-  Button,
-  Col,
-  Grid,
-  Row,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
-import {
-  BAIAlertIconWithTooltip,
-  BAICard,
-  BAIFetchKeyButton,
-  BAIFlex,
-  BAINewFolderIcon,
-  BAIPropertyFilter,
-  BAIRestoreIcon,
   BAIVFolderDeleteButton,
+  BAICard,
+  BAIPropertyFilter,
+  BAISelectionLabel,
+  BAITabCountBadge,
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { RotateCcwIcon } from 'lucide-react';
+import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import React, {
-  Suspense,
   useDeferredValue,
   useEffect,
+  useEffectEvent,
   useRef,
   useState,
 } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from 'src/hooks/reactPaginationQueryOptions';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export const isDeletedCategory = (status?: string | null) => {
   return _.includes(
-    ['delete-pending', 'delete-ongoing', 'delete-complete', 'delete-error'],
+    [
+      // V1 `VirtualFolderNode.status` (kebab-case)
+      'delete-pending',
+      'delete-ongoing',
+      'delete-complete',
+      'delete-error',
+      // V2 `VFolder.status` (UPPERCASE enum, VFolderOperationStatus)
+      'DELETE_PENDING',
+      'DELETE_ONGOING',
+      'DELETE_COMPLETE',
+      'DELETE_ERROR',
+    ],
     status,
   );
 };
@@ -91,20 +93,19 @@ const FILTER_BY_STATUS_CATEGORY = {
   deleted: 'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR"]',
 };
 
-const CARD_MIN_HEIGHT = 200;
-
 const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   ...props
 }) => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { lg } = Grid.useBreakpoint();
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
-  const webuiNavigate = useWebUINavigate();
   const [invitations] = useVFolderInvitations();
+  const [, setInvitationOpen] = useQueryState(
+    'invitation',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.VFolderNodeListPage',
@@ -114,11 +115,12 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     Array<VFolderNodesType>
   >([]);
 
-  useEffect(() => {
+  // Reset selectedRowKeys when currentProject changes
+  const [prevProjectId, setPrevProjectId] = useState(currentProject.id);
+  if (prevProjectId !== currentProject.id) {
+    setPrevProjectId(currentProject.id);
     setSelectedFolderList([]);
-
-    // Reset selectedRowKeys when currentProject changes
-  }, [currentProject.id]);
+  }
 
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
@@ -128,25 +130,30 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, '-created_at'),
-    filter: withDefault(StringParam, undefined),
-    statusCategory: withDefault(StringParam, 'active'),
-    mode: withDefault(StringParam, 'all'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      order: parseAsString.withDefault('-created_at'),
+      filter: parseAsString,
+      statusCategory: parseAsString.withDefault('active'),
+      mode: parseAsString.withDefault('all'),
+    },
+    { history: 'replace' },
+  );
 
   const queryMapRef = useRef({
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
   });
-  queryMapRef.current[queryParams.statusCategory] = {
-    queryParams,
-    tablePaginationOption,
-  };
+  useEffect(() => {
+    queryMapRef.current[queryParams.statusCategory] = {
+      queryParams,
+      tablePaginationOption,
+    };
+  }, [queryParams, tablePaginationOption]);
 
   function getUsageModeFilter(mode: string) {
     switch (mode) {
@@ -187,10 +194,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  useEffect(() => {
+  // An eslint suppression here made the React Compiler skip this whole
+  // component, so `queryVariables` lost memoization and any re-render (e.g. row
+  // selection) flashed the deferred-comparison loading states (FR-3510).
+  const refetchOnInvitationChange = useEffectEvent(() => {
     updateFetchKey();
-    // Update fetchKey when invitation count changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+  useEffect(() => {
+    refetchOnInvitationChange();
   }, [invitations.length]);
 
   const { vfolder_nodes, ...folderCounts } =
@@ -262,187 +273,51 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     );
 
   return (
-    <BAIFlex direction="column" align="stretch" gap={'md'} {...props}>
-      <Row
-        gutter={[16, 16]}
-        align={'stretch'}
-        style={{ minHeight: lg ? CARD_MIN_HEIGHT : undefined }}
-      >
-        <Col xs={24} md={8} xl={4} style={{ display: 'flex' }}>
-          <BAICard
-            style={{
-              width: '100%',
-              minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-            }}
-          >
-            <ActionItemContent
-              title={
-                <Typography.Text
-                  style={{
-                    maxWidth: lg ? 120 : undefined,
-                    wordBreak: 'keep-all',
-                    overflowWrap: 'break-word',
-                  }}
-                >
-                  {t('data.CreateFolderAndUploadFiles')}
-                </Typography.Text>
-              }
-              buttonText={t('data.CreateFolder')}
-              icon={<BAINewFolderIcon />}
-              type="simple"
-              onClick={() => {
-                toggleCreateModal();
-              }}
-              style={{
-                height: '100%',
-              }}
-            />
-          </BAICard>
-        </Col>
-        <Col xs={24} md={16} xl={8} style={{ display: 'flex' }}>
-          <ErrorBoundary
-            fallbackRender={() => {
-              return (
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.FolderStatus')}
-                  status="error"
-                  extra={
-                    <BAIAlertIconWithTooltip
-                      title={t('error.UnexpectedError')}
-                    />
-                  }
-                />
-              );
-            }}
-          >
-            <Suspense
-              fallback={
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.FolderStatus')}
-                  loading
-                />
-              }
-            >
-              <StorageStatusPanelCard
-                style={{
-                  width: '100%',
-                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                }}
-                fetchKey={deferredFetchKey}
-                onRequestBadgeClick={() => {
-                  webuiNavigate({
-                    search: new URLSearchParams({
-                      invitation: 'true',
-                    }).toString(),
-                  });
-                }}
-              />
-            </Suspense>
-          </ErrorBoundary>
-        </Col>
-        <Col xs={24} md={24} xl={12} style={{ display: 'flex' }}>
-          <ErrorBoundary
-            fallbackRender={() => {
-              return (
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.QuotaPerStorageVolume')}
-                  status="error"
-                  extra={
-                    <BAIAlertIconWithTooltip
-                      title={t('error.UnexpectedError')}
-                    />
-                  }
-                />
-              );
-            }}
-          >
-            <Suspense
-              fallback={
-                <BAICard
-                  style={{
-                    width: '100%',
-                    minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                  }}
-                  title={t('data.QuotaPerStorageVolume')}
-                  loading
-                />
-              }
-            >
-              <QuotaPerStorageVolumePanelCard
-                style={{
-                  width: '100%',
-                  minHeight: lg ? CARD_MIN_HEIGHT : undefined,
-                }}
-              />
-            </Suspense>
-          </ErrorBoundary>
-        </Col>
-      </Row>
+    <VStack align="stretch" gap={5} {...props}>
       <BAICard
-        variant="borderless"
         title={t('data.Folders')}
         extra={
-          <BAIFlex gap={'xs'}>
-            <BAIFetchKeyButton
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
-              autoUpdateDelay={15_000}
-              value={fetchKey}
-              onChange={(newFetchKey) => {
-                updateFetchKey(newFetchKey);
-              }}
-            />
-            <Button
-              type="primary"
-              onClick={() => {
-                toggleCreateModal();
-              }}
-            >
-              {t('data.CreateFolder')}
-            </Button>
-          </BAIFlex>
+          <Button
+            variant="primary"
+            label={t('data.CreateFolder')}
+            onClick={() => {
+              toggleCreateModal();
+            }}
+          />
         }
-        styles={{
-          header: {
-            borderBottom: 'none',
-          },
-          body: {
-            paddingTop: 0,
-          },
-        }}
       >
         <BAITabs
           activeKey={queryParams.statusCategory}
-          onChange={(key) => {
+          onChange={(key: string) => {
             const storedQuery = queryMapRef.current[key] || {
               mode: 'all',
             };
-            setQuery(
-              {
-                ...storedQuery.queryParams,
-                statusCategory: key as 'active' | 'deleted',
-              },
-              'replace',
-            );
+            // Reset the whole group first: nuqs partial updates merge, so
+            // without this the previous tab's filter/order/mode leak into a
+            // tab that has no cached state (legacy 'replace' cleared them).
+            setQuery(null);
+            setQuery({
+              ...storedQuery.queryParams,
+              statusCategory: key as 'active' | 'deleted',
+            });
             setTablePaginationOption(
               storedQuery.tablePaginationOption || { current: 1 },
             );
             setSelectedFolderList([]);
           }}
+          tabBarExtraContent={
+            invitations.length > 0 ? (
+              <Link
+                href="#"
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  setInvitationOpen('true');
+                }}
+              >
+                {`${t('data.invitation.PendingInvitations')} (${invitations.length})`}
+              </Link>
+            ) : undefined
+          }
           items={_.map(
             {
               active: t('data.Active'),
@@ -450,51 +325,28 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             },
             (label, key) => ({
               key,
-              label: (
-                <BAIFlex justify="center" gap={10}>
-                  {label}
-                  {
-                    // display badge only if count is greater than 0
-                    // @ts-ignore
-                    (folderCounts[key]?.count || 0) > 0 && (
-                      <Badge
-                        // @ts-ignore
-                        count={folderCounts[key].count}
-                        color={
-                          queryParams.statusCategory === key
-                            ? token.colorPrimary
-                            : token.colorTextDisabled
-                        }
-                        size="small"
-                        showZero
-                        style={{
-                          paddingRight: token.paddingXS,
-                          paddingLeft: token.paddingXS,
-                          fontSize: 10,
-                        }}
-                      />
-                    )
-                  }
-                </BAIFlex>
+              // Astryx `Tab` takes a STRING label plus a native `endContent`
+              // slot, so the original's BAIFlex-wrapped JSX label is split in
+              // two. This also restores a correct `aria-label` on the tab.
+              label,
+              endContent: (
+                <BAITabCountBadge
+                  // @ts-ignore
+                  count={folderCounts[key]?.count}
+                  selected={queryParams.statusCategory === key}
+                />
               ),
             }),
           )}
         />
-        <BAIFlex direction="column" align="stretch" gap={'sm'}>
-          <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
-            <BAIFlex
-              gap={'sm'}
-              align="start"
-              style={{
-                flexShrink: 1,
-              }}
-              wrap="wrap"
-            >
+        <VStack align="stretch" gap={3}>
+          <HStack justify="between" wrap="wrap" gap={3}>
+            <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
               <BAIRadioGroup
                 optionType="button"
                 value={queryParams.mode}
                 onChange={(e) => {
-                  setQuery({ mode: e.target.value }, 'replaceIn');
+                  setQuery({ mode: e.target.value });
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
@@ -521,8 +373,17 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                   },
                 ])}
               />
+              {/* The BUI antd composite is replaced by Astryx `PowerSearch`.
+                  Same external contract (DSL string in, DSL string out) so
+                  the URL round-trip and the GraphQL variable are untouched. */}
               <BAIPropertyFilter
                 data-testid="vfolder-filter"
+                style={{ minWidth: 320, flex: 1 }}
+                label={t('settings.SearchPlaceholder')}
+                placeholder={t('data.SearchByName')}
+                applyLabel={t('button.Apply')}
+                // Free text with no field prefix becomes a `name ilike` token.
+                contentSearchFieldKey="name"
                 filterProperties={[
                   {
                     key: 'name',
@@ -579,52 +440,58 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                       },
                     ],
                   },
+                  {
+                    key: 'cloneable',
+                    propertyLabel: t('data.folders.Cloneable'),
+                    type: 'boolean',
+                  },
+                  {
+                    key: 'quota_scope_id',
+                    propertyLabel: t('data.QuotaScopeId'),
+                    type: 'string',
+                  },
                 ]}
-                value={queryParams.filter || undefined}
+                value={queryParams.filter ?? undefined}
                 onChange={(value) => {
-                  setQuery({ filter: value }, 'replaceIn');
+                  setQuery({ filter: value ?? null });
                   setTablePaginationOption({ current: 1 });
                   setSelectedFolderList([]);
                 }}
               />
-            </BAIFlex>
-            <BAIFlex gap={'sm'}>
+            </HStack>
+            <HStack gap={2}>
               {selectedFolderList.length > 0 &&
                 queryParams.statusCategory === 'active' && (
                   <>
-                    {t('general.NSelected', {
-                      count: selectedFolderList.length,
-                    })}
-                    <Tooltip title={t('data.folders.MoveToTrash')}>
-                      <BAIVFolderDeleteButton
-                        vfolderFrgmt={selectedFolderList}
-                        style={{
-                          borderColor: token.colorBorder,
-                        }}
-                        type="text"
-                        variant="outlined"
-                        onClick={() => {
-                          toggleDeleteModal();
-                        }}
-                      />
-                    </Tooltip>
+                    <BAISelectionLabel
+                      count={selectedFolderList.length}
+                      onClearSelection={() => setSelectedFolderList([])}
+                    />
+                    <BAIVFolderDeleteButton
+                      vfolderFrgmt={selectedFolderList}
+                      // P8: the accessible name is now on the control itself,
+                      // so the wrapping Tooltip that used to BE the name is
+                      // gone — the component owns both.
+                      label={t('data.folders.MoveToTrash')}
+                      onClick={() => {
+                        toggleDeleteModal();
+                      }}
+                    />
                   </>
                 )}
               {selectedFolderList.length > 0 &&
                 queryParams.statusCategory === 'deleted' && (
                   <>
-                    {t('general.NSelected', {
-                      count: selectedFolderList.length,
-                    })}
-                    <Tooltip title={t('data.folders.Restore')}>
-                      <Button
-                        style={{
-                          color: token.colorInfo,
-                          borderColor: token.colorBorder,
-                        }}
-                        type="text"
-                        variant="outlined"
-                        icon={<BAIRestoreIcon />}
+                    <BAISelectionLabel
+                      count={selectedFolderList.length}
+                      onClearSelection={() => setSelectedFolderList([])}
+                    />
+                    <Tooltip content={t('data.folders.Restore')}>
+                      <IconButton
+                        // Astryx requires a real accessible name; the antd
+                        // original had none (only the wrapping tooltip).
+                        label={t('data.folders.Restore')}
+                        icon={<RotateCcwIcon />}
                         onClick={() => {
                           toggleRestoreModal();
                         }}
@@ -632,17 +499,29 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                     </Tooltip>
                   </>
                 )}
-            </BAIFlex>
-          </BAIFlex>
+              <AutoUpdateFetchKeyButton
+                settingId="vfolder-list"
+                loading={
+                  deferredQueryVariables !== queryVariables ||
+                  deferredFetchKey !== fetchKey
+                }
+                value={fetchKey}
+                onChange={(newFetchKey) => {
+                  updateFetchKey(newFetchKey);
+                }}
+              />
+            </HStack>
+          </HStack>
           <VFolderNodes
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
+            disableProjectFolderActions
+            project={toProjectContext(currentProject)}
             vfoldersFrgmt={filterOutNullAndUndefined(
               _.map(vfolder_nodes?.edges, 'node'),
             )}
             rowSelection={{
               type: 'checkbox',
-              // Preserve selected rows between pages, but clear when filter changes
               preserveSelectedRowKeys: true,
               getCheckboxProps(record: VFolderNodeInList) {
                 return {
@@ -652,7 +531,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 };
               },
               onChange: (selectedRowKeys) => {
-                // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
                 handleRowSelectionChange(
                   selectedRowKeys,
                   filterOutNullAndUndefined(
@@ -674,7 +552,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               },
             }}
             onChangeOrder={(order) => {
-              setQuery({ order }, 'replaceIn');
+              setQuery({ order: order ?? null });
             }}
             onRemoveRow={(removedId) => {
               setSelectedFolderList((prevSelected) =>
@@ -687,10 +565,11 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               onColumnOverridesChange: setColumnOverrides,
             }}
           />
-        </BAIFlex>
+        </VStack>
       </BAICard>
-      <FolderCreateModal
+      <FolderCreateModalV2
         open={isOpenCreateModal}
+        project={toProjectContext(currentProject)}
         initialValues={{
           usage_mode:
             queryParams.mode === 'model'
@@ -728,7 +607,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           toggleRestoreModal();
         }}
       />
-    </BAIFlex>
+    </VStack>
   );
 };
 

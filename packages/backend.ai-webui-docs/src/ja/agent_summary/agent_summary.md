@@ -1,14 +1,29 @@
+---
+navTitle: エージェントサマリー
+---
+
 # エージェントサマリー
 
-For now, ユーザーs with 管理者 role only can see agent information via 管理者istration menu.
-From 22.09 Backend.AI WebUI supports showing partial information of agent node(s) when configuration is set.
-In Agent summary menu, you can see the list of agent information including endpoint address, CPU architecture, resource allocation,
-and whether the agent is schedulable or not. This menu is useful to check resource allocation on session creation.
+エージェントサマリーページでは、プロジェクトで利用できるコンピュート**エージェント**（エージェントノード）と、各エージェントのリソース割り当て状況を読み取り専用で確認できます。コンピュートセッションを作成する前に、CPU、メモリ、アクセラレータの残り容量を確認するために使用します。
 
 ![](../images/agent_summary.png)
 
+:::note
+サーバーの設定によっては、エージェントサマリー機能が利用できない場合があります。その場合は、システムの管理者にお問い合わせください。
+:::
+
+## 列
+
+エージェントリストには次の列が表示されます。
+
+- **ID**: エージェントの一意の識別子です。
+- **アーキテクチャ**: エージェントの CPU アーキテクチャです（例: `x86_64`）。
+- **割り当て情報**: エージェントの各リソーススロットの使用中の容量と利用可能な容量を、使用率のプログレスバーとともに表示します。
+   * CPU はコア数、メモリは GiB 単位で表示され、エージェントに搭載されているアクセラレータ（GPU や fGPU など）は追加のスロットとして表示されます。
+   * 使用率が 80% を超えると、プログレスバーが赤色で表示されます。
+- **リソースグループ**: エージェントが属するリソースグループです。
+- **スケジューリング可能かどうか**: エージェントが新しいセッションを受け入れられるかどうかです。チェックアイコンはスケジューリング可能であることを、淡色表示のマイナスアイコンは不可であることを示します。
 
 :::note
-Depending on the server configuration, the agent summary service feature may not be available.
-In that case, please contact 管理者istrator of your system.
+SFTP 専用のリソースグループに属するエージェントは、このリストから自動的に除外されるため、ストレージ専用のエージェントはここには表示されません。
 :::

@@ -1,24 +1,88 @@
 import { omitNullAndUndefinedFields } from '../helper';
+import { useControllableValue } from '../hooks';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
-import { ReloadOutlined } from '@ant-design/icons';
-import { useControllableValue } from 'ahooks';
-import { Button, Tooltip, type ButtonProps } from 'antd';
+import BAIButton, { type BAIButtonProps } from './BAIButton';
+import BAICountdownBorder from './BAICountdownBorder';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import {
+  DropdownMenu,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from '@astryxdesign/core/DropdownMenu';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import duration from 'dayjs/plugin/duration';
+import * as _ from 'lodash-es';
+import { RotateCw, ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-interface BAIFetchKeyButtonProps
-  extends Omit<ButtonProps, 'value' | 'onChange' | 'loading'> {
-  value: string;
+dayjs.extend(duration);
+
+/** antd `SizeType` -> Astryx's button size scale. */
+const ASTRYX_SIZE = {
+  small: 'sm',
+  middle: 'md',
+  large: 'lg',
+} as const;
+
+/**
+ * Default auto-refresh interval presets (in milliseconds) offered in the
+ * interval-selection dropdown. "Off" (`null`) is always prepended by the
+ * component and must NOT be included here. Consumers can override the list
+ * via the `autoUpdateDelayOptions` prop.
+ */
+export const AUTO_UPDATE_DELAY_OPTIONS = [
+  5_000, 10_000, 15_000, 30_000, 60_000,
+] as const;
+
+export interface BAIFetchKeyButtonProps extends Omit<
+  BAIButtonProps,
+  'value' | 'onChange' | 'loading'
+> {
+  /**
+   * Optional. The button self-generates its fetch key on each refresh
+   * (`onChange(new Date().toISOString())`) and re-anchors its countdown via an
+   * internal `cycleKey`, so it does not read this value. Consumers that drive
+   * refetching directly (e.g. a preloaded `loadQuery(..., 'network-only')` in
+   * `onChange`) can omit it entirely instead of threading a `useFetchKey`.
+   */
+  value?: string;
   loading?: boolean;
   lastLoadTime?: Date;
   showLastLoadTime?: boolean;
+  /**
+   * Auto-refresh interval in milliseconds; `null`/absent disables auto-refresh.
+   * Controllable — pair with `onChangeAutoUpdateDelay` to let the interval
+   * dropdown change it and let the host persist it (e.g. via `useBAISetting`).
+   * Without `onChangeAutoUpdateDelay` it is simply a fixed interval, exactly as
+   * existing consumers use it.
+   */
   autoUpdateDelay?: number | null;
-  size?: ButtonProps['size'];
+  size?: BAIButtonProps['size'];
   onChange: (fetchKey: string) => void;
   hidden?: boolean;
   pauseWhenHidden?: boolean;
+  /**
+   * Fired when the user picks an interval (or "Off") from the dropdown.
+   * **Providing this callback opts the button into the interval-selection
+   * dropdown** (and makes `autoUpdateDelay` a controllable value). Without it,
+   * the component renders exactly as before — a single refresh button. The
+   * parent decides whether to show the dropdown simply by wiring this handler
+   * (typically to a persisted setting).
+   */
+  onChangeAutoUpdateDelay?: (delayMs: number | null) => void;
+  /**
+   * Interval presets shown in the dropdown, in milliseconds. "Off" (`null`) is
+   * always prepended by the component and must NOT be included here.
+   * Defaults to {@link AUTO_UPDATE_DELAY_OPTIONS}.
+   */
+  autoUpdateDelayOptions?: readonly number[];
+  /**
+   * Whether to show the animated countdown border that fills the control while
+   * auto-refresh is on. Defaults to `true`.
+   */
+  showCountdownBorder?: boolean;
 }
 
 /**
@@ -29,25 +93,36 @@ interface BAIFetchKeyButtonProps
  * @param loading - Loading state of the data fetch
  * @param lastLoadTime - Timestamp of the last successful load
  * @param showLastLoadTime - When true, shows "Last updated: X ago" in tooltip
- * @param autoUpdateDelay - Auto-refresh interval in milliseconds, null to disable
+ * @param autoUpdateDelay - Auto-refresh interval in milliseconds (controllable), null to disable
  * @param onChange - Callback fired when fetch key should be updated
  * @param hidden - When true, hides the button completely
  * @param pauseWhenHidden - When true, pauses auto-update when button is hidden
+ * @param onChangeAutoUpdateDelay - Callback fired when the user picks an interval (or "Off"); providing it shows the interval-selection dropdown
+ * @param autoUpdateDelayOptions - Interval presets (ms) shown in the dropdown
+ * @param showCountdownBorder - When true (default), shows the animated countdown border while auto-refresh is on
  */
 const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
   loading,
   onChange,
   showLastLoadTime,
-  autoUpdateDelay = null,
+  autoUpdateDelay,
   size,
   hidden,
   lastLoadTime: lastLoadTimeProp,
   pauseWhenHidden = true,
+  onChangeAutoUpdateDelay,
+  autoUpdateDelayOptions = AUTO_UPDATE_DELAY_OPTIONS,
+  showCountdownBorder = true,
   ...buttonProps
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
+  // Providing `onChangeAutoUpdateDelay` opts the button into the
+  // interval-selection dropdown; without it the component renders exactly as
+  // before (a single refresh button), keeping all existing consumers unchanged.
+  const isAutoUpdateConfigurable = onChangeAutoUpdateDelay !== undefined;
+
+  const { t } = useBAIi18n();
   const [lastLoadTime, setLastLoadTime] = useControllableValue(
     // To use the default value when lastLoadTimeProp is undefined, we need to omit the value field
     omitNullAndUndefinedFields({
@@ -58,23 +133,55 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
     },
   );
 
+  // The auto-refresh interval is a controllable value built on `autoUpdateDelay`
+  // (`null` means "Off"): when the parent passes it the value is controlled and
+  // the dropdown reports changes via `onChangeAutoUpdateDelay`; otherwise the
+  // component keeps it internally. We assemble the props by hand — rather than
+  // `omitNullAndUndefinedFields` (as used for `lastLoadTime` above) — because
+  // that helper strips `null`, which would turn a controlled "Off" into an
+  // uncontrolled value. So include `value` only when `autoUpdateDelay` is
+  // defined, which preserves an explicit `null`.
+  const selectedDelayControllableProps =
+    autoUpdateDelay !== undefined
+      ? { value: autoUpdateDelay, onChange: onChangeAutoUpdateDelay }
+      : { onChange: onChangeAutoUpdateDelay };
+  const [selectedDelay, setSelectedDelay] = useControllableValue<number | null>(
+    selectedDelayControllableProps,
+    {
+      defaultValue: null,
+    },
+  );
+
   // display loading icon for at least "some ms" to avoid flickering
   const [displayLoading, setDisplayLoading] = useState(false);
+  const turnOffTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loadingStartTimeRef = useRef<number | null>(null);
   useEffect(() => {
     if (loading) {
-      const startTime = Date.now();
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      // a new load started: cancel any pending "turn-off" and show immediately
+      if (turnOffTimeoutRef.current !== null) {
+        clearTimeout(turnOffTimeoutRef.current);
+        turnOffTimeoutRef.current = null;
+      }
+      loadingStartTimeRef.current = Date.now();
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- immediate icon-on preserves the min-700ms anti-flicker timing
       setDisplayLoading(true);
-
-      return () => {
-        const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(700 - elapsedTime, 0);
-
-        setTimeout(() => {
-          setDisplayLoading(false);
-        }, remainingTime);
-      };
+    } else if (loadingStartTimeRef.current !== null) {
+      // loading finished: keep the icon visible for at least 700ms total
+      const elapsedTime = Date.now() - loadingStartTimeRef.current;
+      const remainingTime = Math.max(700 - elapsedTime, 0);
+      loadingStartTimeRef.current = null;
+      turnOffTimeoutRef.current = setTimeout(() => {
+        setDisplayLoading(false);
+        turnOffTimeoutRef.current = null;
+      }, remainingTime);
     }
+    return () => {
+      if (turnOffTimeoutRef.current !== null) {
+        clearTimeout(turnOffTimeoutRef.current);
+        turnOffTimeoutRef.current = null;
+      }
+    };
   }, [loading]);
 
   const loadTimeMessage = useIntervalValue(
@@ -96,29 +203,261 @@ const BAIFetchKeyButton: React.FC<BAIFetchKeyButtonProps> = ({
     }
   }, [loading, setLastLoadTime]);
 
+  // Single entry point for every refresh, manual or automatic. Bumping
+  // `cycleKey` re-anchors both the auto-refresh interval (via `useInterval`'s
+  // `resetKey`) and the countdown border animation (via `BAICountdownBorder`'s
+  // `resetKey`) to this exact moment, so a mid-cycle manual refresh restarts
+  // the countdown instead of leaving it to fire on its stale schedule, and the
+  // animation never drifts out of sync with the real reload — each refresh,
+  // whichever triggered it, resets both clocks together.
+  const [cycleKey, setCycleKey] = useState(0);
+  const triggerRefresh = () => {
+    onChange(new Date().toISOString());
+    setCycleKey((key) => key + 1);
+  };
+
   useInterval(
-    () => {
-      onChange(new Date().toISOString());
-    },
+    triggerRefresh,
     // only start auto-updating after the previous loading is false(done).
-    loading ? null : autoUpdateDelay,
+    loading ? null : selectedDelay,
     pauseWhenHidden,
+    cycleKey,
   );
 
+  // When a consumer-supplied `loading` refresh finishes, re-anchor the countdown
+  // to this moment. `useInterval` already restarts the paused interval on the
+  // same `loading` true->false transition (its delay flips from null back to
+  // `selectedDelay`); bumping `cycleKey` here restarts the border animation from
+  // empty at the same instant, so the newly exposed countdown stays accurate
+  // instead of finishing early on its request-start anchor.
+  const [prevLoading, setPrevLoading] = useState(loading);
+  if (loading !== prevLoading) {
+    setPrevLoading(loading);
+    if (!loading) {
+      setCycleKey((key) => key + 1);
+    }
+  }
+
   const tooltipTitle = showLastLoadTime ? loadTimeMessage : undefined;
-  return hidden ? null : (
-    <Tooltip title={tooltipTitle} placement="topLeft">
-      <Button
-        title={tooltipTitle ? undefined : t('comp:BAIFetchKeyButton.Refresh')}
-        loading={displayLoading}
-        size={size}
-        icon={<ReloadOutlined />}
-        onClick={() => {
-          onChange(new Date().toISOString());
-        }}
-        {...buttonProps}
-      />
-    </Tooltip>
+  const isAutoRefreshOn = selectedDelay !== null;
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // "Sticky" off-list intervals: when an active value outside the consumer's
+  // presets appears (e.g. a persisted legacy 7s), remember it for the lifetime
+  // of the component so it stays selectable in the menu even after the user
+  // switches to another interval — it must not vanish the way a transient
+  // injection would. The consumer's `autoUpdateDelayOptions` is never mutated.
+  const [seenOffListDelays, setSeenOffListDelays] = useState<number[]>([]);
+  // The `undefined` sentinel (which `selectedDelay: number | null` never
+  // equals) guarantees the first render is evaluated too.
+  const [trackedDelay, setTrackedDelay] = useState<number | null | undefined>(
+    undefined,
+  );
+  if (selectedDelay !== trackedDelay) {
+    // On a real interval change (not the initial render), re-anchor the
+    // countdown to this moment: `useInterval` already restarts its schedule on
+    // the new delay, so bump `cycleKey` to remount `BAICountdownBorder` and
+    // refill from empty over the new duration — instead of morphing the
+    // in-flight fill to the new speed mid-cycle. `undefined` (the initial
+    // `trackedDelay`) means "first render", where the border mounts fresh
+    // anyway, so skip the bump there.
+    if (trackedDelay !== undefined) {
+      setCycleKey((key) => key + 1);
+    }
+    setTrackedDelay(selectedDelay);
+    if (
+      selectedDelay !== null &&
+      !autoUpdateDelayOptions.includes(selectedDelay)
+    ) {
+      setSeenOffListDelays((prev) =>
+        prev.includes(selectedDelay) ? prev : [...prev, selectedDelay],
+      );
+    }
+  }
+
+  // Icon-only refresh button. When the interval dropdown is shown, the selected
+  // interval label ("Ns") lives on the dropdown trigger, not here.
+  //
+  // `ownTooltip` decides WHO renders the hover text. Astryx joins a
+  // `ButtonGroup`'s members through context + `:first-child` / `IS_LAST_ITEM`
+  // CSS on the button ELEMENT, so a member has to be a DIRECT child of the
+  // group. Astryx's `Tooltip` wraps its child in a `display: contents` div —
+  // invisible to layout, but a real element to the selector engine, which made
+  // the refresh button `:first-child` of the WRAPPER instead of the group and
+  // left it with a full `8px` pill against the dropdown's `0 8px 8px 0`: a
+  // visible notch, measured on /deployments and /data (QA2-B-2). Astryx
+  // `Button` renders its own `tooltip` as a `[popover]` SIBLING inside a
+  // fragment (which is exactly why `IS_LAST_ITEM` skips `[popover]`), so
+  // routing the same text through `title` keeps the button a direct child and
+  // the group welded.
+  const refreshButton = (ownTooltip: boolean) => (
+    <BAIButton
+      title={
+        ownTooltip
+          ? tooltipTitle || t('comp:BAIFetchKeyButton.Refresh')
+          : tooltipTitle
+            ? undefined
+            : t('comp:BAIFetchKeyButton.Refresh')
+      }
+      aria-label={t('comp:BAIFetchKeyButton.Refresh')}
+      loading={displayLoading}
+      size={size}
+      icon={<RotateCw size="1em" />}
+      onClick={triggerRefresh}
+      {...buttonProps}
+    />
+  );
+
+  // While auto-refresh is on (and `showCountdownBorder`), wrap the control in
+  // `BAICountdownBorder` so its border fills clockwise, once per selected
+  // interval, restarting exactly on `cycleKey` (see `triggerRefresh` above) so
+  // it never drifts out of sync with the real refresh — whether the cycle was
+  // completed automatically or cut short by a manual click. While a
+  // consumer-supplied `loading` refresh is in flight the border is frozen
+  // (`paused={loading}`) instead of advancing, and it is re-anchored (via the
+  // `cycleKey` bump on the `loading` true->false edge above) when the refresh
+  // completes, so it never finishes or loops ahead of the real reload.
+  const withCountdownBorder = (node: React.ReactNode) =>
+    isAutoRefreshOn && showCountdownBorder ? (
+      <BAICountdownBorder
+        durationMs={selectedDelay as number}
+        resetKey={cycleKey}
+        paused={loading}
+      >
+        {node}
+      </BAICountdownBorder>
+    ) : (
+      node
+    );
+
+  if (hidden) {
+    return null;
+  }
+
+  // No interval handler wired (default): render exactly as before — a single
+  // tooltip-wrapped refresh button. No layout or behavior change for the
+  // existing consumers.
+  if (!isAutoUpdateConfigurable) {
+    return withCountdownBorder(
+      <Tooltip
+        content={tooltipTitle}
+        placement="above"
+        alignment="start"
+        isEnabled={!!tooltipTitle}
+      >
+        {refreshButton(false)}
+      </Tooltip>,
+    );
+  }
+
+  // Feature enabled: a `ButtonGroup` welding the refresh button to a chevron
+  // dropdown trigger that picks the auto-refresh interval (or turns it off).
+  // The trigger shows the selected interval ("Ns") next to the chevron.
+  //
+  // PILOT-DECISION (to-astryx W2-D): the hand-rolled check mark is DELETED.
+  // antd's `Dropdown menu={{items}}` has no single-choice semantics, so the
+  // active interval was faked with a `<Check>` icon plus a
+  // `visibility: hidden` copy on every other row to keep them aligned.
+  // `DropdownMenuRadioGroup` + `DropdownMenuRadioItem` is native single-choice:
+  // it emits `role="menuitemradio"` with `aria-checked`, draws the selected
+  // state itself, and aligns the rows — strictly better than the original,
+  // which announced nothing (MAPPING §5.3 makes exactly this call).
+
+  // Render an interval (ms) as a compact label, using the largest whole unit:
+  // "30s" / "5m" / "1h". `dayjs.duration` only picks the unit; the unit text
+  // itself is localized via i18n (e.g. ko "5분", ja "5分"), consistent with the
+  // existing `time.*` translations.
+  const formatInterval = (ms: number) => {
+    const d = dayjs.duration(ms);
+    const hours = d.asHours();
+    const minutes = d.asMinutes();
+    if (Number.isInteger(hours) && hours >= 1) {
+      return t('comp:BAIFetchKeyButton.EveryHours', { count: hours });
+    }
+    if (Number.isInteger(minutes) && minutes >= 1) {
+      return t('comp:BAIFetchKeyButton.EveryMinutes', { count: minutes });
+    }
+    return t('comp:BAIFetchKeyButton.EverySeconds', { count: d.asSeconds() });
+  };
+  // Menu options = the consumer's presets, plus any off-list interval that has
+  // been active this session (sticky, so it stays selectable), plus the current
+  // value. Deduped and ascending. This guarantees exactly one item is always
+  // checked — the active value is always present — without ever mutating the
+  // consumer's option list.
+  const mergedOptions = [
+    ...new Set([
+      ...autoUpdateDelayOptions,
+      ...seenOffListDelays,
+      ...(selectedDelay !== null ? [selectedDelay] : []),
+    ]),
+  ].sort((a, b) => a - b);
+  return withCountdownBorder(
+    <ButtonGroup
+      label={t('comp:BAIFetchKeyButton.AutoRefresh')}
+      size={size ? ASTRYX_SIZE[size] : undefined}
+    >
+      {/* Direct child on purpose — see `refreshButton`'s note (QA2-B-2). */}
+      {refreshButton(true)}
+      <DropdownMenu
+        isMenuOpen={isDropdownOpen}
+        onOpenChange={setIsDropdownOpen}
+        placement="below"
+        alignment="end"
+        // ORIGINAL FIDELITY: antd showed the selected interval ("30s") next to
+        // the chevron only while auto-refresh was ON, and a bare chevron
+        // otherwise. Astryx `Button` renders `label` as visible text unless
+        // `children` overrides it or `isIconOnly` is set — so the OFF state
+        // has to be `isIconOnly`, or the accessible name would become a
+        // permanent visible "Auto Refresh" caption the antd control never had.
+        button={
+          isAutoRefreshOn
+            ? {
+                size: size ? ASTRYX_SIZE[size] : undefined,
+                variant: 'secondary' as const,
+                label: t('comp:BAIFetchKeyButton.AutoRefresh'),
+                tooltip: t('comp:BAIFetchKeyButton.AutoRefresh'),
+                endContent: isDropdownOpen ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                ),
+                children: formatInterval(selectedDelay as number),
+              }
+            : {
+                size: size ? ASTRYX_SIZE[size] : undefined,
+                variant: 'secondary' as const,
+                label: t('comp:BAIFetchKeyButton.AutoRefresh'),
+                tooltip: t('comp:BAIFetchKeyButton.AutoRefresh'),
+                isIconOnly: true,
+                icon: isDropdownOpen ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                ),
+              }
+        }
+      >
+        <DropdownMenuRadioGroup
+          label={t('comp:BAIFetchKeyButton.AutoRefresh')}
+          value={selectedDelay === null ? 'off' : String(selectedDelay)}
+          onChange={(next) =>
+            setSelectedDelay(next === 'off' ? null : Number(next))
+          }
+        >
+          <DropdownMenuRadioItem
+            value="off"
+            label={t('comp:BAIFetchKeyButton.Off')}
+          />
+          {mergedOptions.map((ms) => (
+            <DropdownMenuRadioItem
+              key={String(ms)}
+              value={String(ms)}
+              label={formatInterval(ms)}
+            />
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenu>
+    </ButtonGroup>,
   );
 };
 

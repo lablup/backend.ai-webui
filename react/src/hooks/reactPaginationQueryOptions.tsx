@@ -4,25 +4,35 @@
  */
 // import { offset_to_cursor } from "../helper";
 import { LazyLoadQueryOptions } from '../helper/types';
-import type { SorterResult } from 'antd/lib/table/interface';
-import _ from 'lodash';
-import { parseAsInteger, useQueryStates } from 'nuqs';
+import * as _ from 'lodash-es';
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsJson,
+  parseAsString,
+  useQueryStates,
+} from 'nuqs';
+import type React from 'react';
 import { useMemo, useState } from 'react';
 import {
   fetchQuery,
   GraphQLTaggedNode,
   useRelayEnvironment,
 } from 'react-relay';
-import {
-  ArrayParam,
-  NumberParam,
-  ObjectParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from 'use-query-params';
 
-export type SorterInterface = Pick<SorterResult<any>, 'field' | 'order'>;
+/**
+ * A table sort descriptor: which column, which direction.
+ *
+ * Was `Pick<SorterResult<any>, 'field' | 'order'>` from
+ * `antd/lib/table/interface` — a type-only import, so it shipped nothing, but
+ * it kept this module (a 388-file taint hub) inside the import-graph gate's
+ * antd-reachable set and kept antd required for `tsc`. The two picked members
+ * are restated here verbatim; `BAITable` is the only producer and consumer.
+ */
+export interface SorterInterface {
+  field?: React.Key | readonly React.Key[];
+  order?: 'ascend' | 'descend' | null;
+}
 
 export const antdSorterResultToOrder = (
   sorter: SorterInterface | SorterInterface[],
@@ -48,9 +58,7 @@ export const orderToAntdSorterResult = (order: string[]) => {
     return {
       field,
       order: (orderKey === 'ASC' ? 'ascend' : 'descend') as
-        | 'ascend'
-        | 'descend'
-        | null,
+        'ascend' | 'descend' | null,
     };
   });
 };
@@ -94,12 +102,17 @@ export const useRelayPaginationQueryOptions = <
 }) => {
   const [isPending, setIsPending] = useState(false);
 
-  const [params, setParams] = useQueryParams({
-    page: NumberParam,
-    pageSize: NumberParam,
-    order: ArrayParam,
-    filter: ObjectParam,
-  });
+  const [params, setParams] = useQueryStates(
+    {
+      page: parseAsInteger,
+      pageSize: parseAsInteger,
+      order: parseAsArrayOf(parseAsString),
+      filter: parseAsJson<F>((value) => value as F),
+    },
+    {
+      history: 'replace',
+    },
+  );
 
   const page = params.page || defaultVariables.page;
   const pageSize = params.pageSize || defaultVariables.pageSize;
@@ -145,8 +158,10 @@ export const useRelayPaginationQueryOptions = <
         setParams({
           page: newPage,
           pageSize: newPageSize,
-          order: newOrder as [], // TODO: not use as []
-          filter: newFilter as {}, // TODO: not use as {}
+          order: newOrder as string[], // TODO: not use as []
+          // nuqs skips `undefined` in partial updates; `null` removes the key,
+          // matching the legacy clearing behavior when refreshing to defaults.
+          filter: newFilter ?? null,
         });
         setRefreshedQueryOptions((prev) => ({
           ...prev,
@@ -207,12 +222,17 @@ export const useBAIPaginationQueryOptions = ({
     filter?: string;
   }) => any;
 }) => {
-  const [params, setParams] = useQueryParams({
-    page: NumberParam,
-    pageSize: NumberParam,
-    filter: StringParam,
-    order: StringParam,
-  });
+  const [params, setParams] = useQueryStates(
+    {
+      page: parseAsInteger,
+      pageSize: parseAsInteger,
+      filter: parseAsString,
+      order: parseAsString,
+    },
+    {
+      history: 'replace',
+    },
+  );
   const page = params.page || defaultVariables.page;
   const pageSize = params.pageSize || defaultVariables.pageSize;
   const order = params.order || defaultVariables.order;
@@ -248,8 +268,10 @@ export const useBAIPaginationQueryOptions = ({
         setParams({
           page: newPage,
           pageSize: newPageSize,
-          order: newOrder,
-          filter: newFilter,
+          // `null` removes the key (nuqs skips `undefined`), so refreshing
+          // back to defaults clears stale order/filter from the URL.
+          order: newOrder ?? null,
+          filter: newFilter ?? null,
         });
         setRefreshedQueryOptions((prev) => ({
           ...prev,
@@ -341,54 +363,6 @@ export const useBAIPaginationOptionState = (
       },
     };
   }, [pageSize, current]);
-};
-
-export const useBAIPaginationOptionStateOnSearchParamLegacy = (
-  initialOptions: InitialPaginationOption,
-): BAIPaginationOptionState => {
-  const [{ pageSize, current }, setOptions] = useQueryParams({
-    current: withDefault(NumberParam, initialOptions.current),
-    pageSize: withDefault(NumberParam, initialOptions.pageSize),
-  });
-
-  const memoizedOptions = useMemo<{
-    baiPaginationOption: BAIPaginationOption;
-    tablePaginationOption: AntdBasicPaginationOption;
-  }>(() => {
-    return {
-      baiPaginationOption: {
-        limit: pageSize,
-        first: pageSize,
-        offset: current > 1 ? (current - 1) * pageSize : 0,
-      },
-      tablePaginationOption: {
-        pageSize: pageSize,
-        current: current,
-      },
-    };
-  }, [pageSize, current]);
-
-  return {
-    ...memoizedOptions,
-    setTablePaginationOption: (
-      pagination: Partial<AntdBasicPaginationOption>,
-    ) => {
-      if (
-        !_.isEqual(pagination, {
-          pageSize,
-          current,
-        })
-      ) {
-        setOptions(
-          (current) => ({
-            ...current,
-            ...pagination,
-          }),
-          'replaceIn',
-        );
-      }
-    },
-  };
 };
 
 export const useBAIPaginationOptionStateOnSearchParam = (

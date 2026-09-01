@@ -2,6 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import { Form, type FormItemProps } from '../form-engine';
 import { VFolder } from './VFolderSelect';
 import VFolderTable, {
   AliasMap,
@@ -9,9 +11,8 @@ import VFolderTable, {
   VFolderTableProps,
   vFolderAliasNameRegExp,
 } from './VFolderTable';
-import { App, Form, type FormItemProps, Input } from 'antd';
 import { useEventNotStable } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -48,13 +49,16 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
         rules={[
           {
             validator(_rule, map) {
-              const arr = _.chain(form.getFieldValue('mount_ids'))
-                .reduce((result, name) => {
-                  result[name] = map[name] || '/home/work/' + name;
-                  return result;
-                }, {} as AliasMap)
-                .values()
-                .value();
+              const arr = _.values(
+                _.reduce(
+                  form.getFieldValue('mount_ids'),
+                  (result, name) => {
+                    result[name] = map[name] || '/home/work/' + name;
+                    return result;
+                  },
+                  {} as AliasMap,
+                ),
+              );
               if (_.uniq(arr).length !== arr.length) {
                 return Promise.reject(
                   t('session.launcher.FolderAliasOverlapping'),
@@ -80,7 +84,12 @@ const VFolderTableFormItem: React.FC<VFolderTableFormItemProps> = ({
           },
         ]}
       >
-        <Input />
+        {/* A HIDDEN Form.Item — this control is never rendered; it exists
+            only so `mount_id_map` has a registered field to validate. The
+            three hidden siblings below already use a bare `<div />` for the
+            same job, so the antd `Input` becomes one too rather than
+            importing a control nobody sees. */}
+        <div />
       </Form.Item>
       {/* The mounts field has been deprecated but is retained for backward compatibility */}
       <Form.Item hidden name="mounts">

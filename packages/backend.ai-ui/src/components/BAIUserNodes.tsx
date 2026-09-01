@@ -12,9 +12,9 @@ import {
   BAIUserNodesFragment$data,
   BAIUserNodesFragment$key,
 } from '../__generated__/BAIUserNodesFragment.graphql';
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash-es';
 import { useFragment } from 'react-relay';
 import { graphql } from 'relay-runtime';
 
@@ -66,7 +66,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
   ...tableProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const users = useFragment(
     graphql`
@@ -122,7 +122,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
         render: (__, record) => (
           <BAIText
             copyable
-            ellipsis
+            ellipsis={{ tooltip: true }}
             monospace
             style={{
               maxWidth: 100,
@@ -148,7 +148,6 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
         key: 'domain_name',
         title: t('comp:UserNodes.DomainName'),
         dataIndex: 'domain_name',
-        minWidth: 100,
         sorter: isEnableSorter('domain_name'),
       },
       {
@@ -296,12 +295,12 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
 
   return (
     <BAITable
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey={'id'}
       size="small"
       dataSource={filterOutNullAndUndefined(users)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableUserSorterValues)[number]) || null,

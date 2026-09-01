@@ -1,25 +1,22 @@
-import { theme } from 'antd';
-import { SorterResult } from 'antd/es/table/interface';
+import { theme } from '../theme-shim';
 import Big from 'big.js';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
-export function transformSorterToOrderString<T = any>(
-  sorter: SorterResult<T> | Array<SorterResult<T>>,
-) {
-  if (Array.isArray(sorter)) {
-    return _.chain(sorter)
-      .map((s) =>
-        s.order ? `${s.order === 'descend' ? '-' : ''}${s.field}` : undefined,
-      )
-      .compact()
-      .join(',')
-      .value();
-  } else {
-    return sorter.order
-      ? `${sorter.order === 'descend' ? '-' : ''}${sorter.field}`
-      : undefined;
-  }
-}
+export * from './astryxTagVariant';
+export * from './runtimeVariantPresetUI';
+export * from './vfolderHostPermission';
+
+/*
+ to-astryx TICKET 30-D — `transformSorterToOrderString` was removed here.
+
+ It adapted the `sorter` argument of antd `Table.onChange` into the Backend.AI
+ `-field` order string, and the antd `BAITable` was its only caller. With that
+ engine deleted the function had no consumer left (the Astryx engine builds
+ the order string directly from `TableSortState` in `BAITable`), and its
+ `SorterResult` parameter was the SOLE antd import in this module — which the
+ import-graph gate ranks as a 606-file taint hub. Dropping it makes
+ `helper/index.ts` antd-free.
+*/
 
 export function parseValueWithUnit(str: string): [number, string | undefined] {
   const match = str?.match(/^(\d+(?:\.\d+)?|\.\d+)\s*([a-zA-Z%]*)$/);
@@ -325,7 +322,8 @@ type KnownGlobalIdType =
   | 'GroupNode'
   | 'UserNode'
   | 'ProjectNode'
-  | 'ModelDeployment';
+  | 'ModelDeployment'
+  | 'ImageV2';
 
 export const toGlobalId = (type: KnownGlobalIdType, id: string): string => {
   return btoa(`${type}:${id}`);
@@ -356,6 +354,24 @@ export const toLocalId = (globalId: string): string => {
 export const filterOutEmpty = <T>(
   arr: Array<T | undefined | null | '' | false | any[] | object>,
 ): Array<T> => _.filter(arr, (item) => !_.isEmpty(item)) as Array<T>;
+
+/**
+ * Start-cases a string while preserving dot (`.`) separators, so version-like
+ * tokens (e.g. `py3.9`) keep their dots instead of being split into words.
+ *
+ * Mirrors the v1 `preserveDotStartCase` helper used by the image metadata
+ * tag aliasing logic.
+ */
+export function preserveDotStartCase(str: string = '') {
+  // Temporarily replace periods with a unique placeholder
+  const placeholder = '<<<DOT>>>';
+  const tempStr = str.replace(/\./g, placeholder);
+
+  const startCased = _.startCase(tempStr);
+
+  // Replace the placeholder back with periods
+  return startCased.replace(new RegExp(placeholder, 'g'), '.');
+}
 
 /**
  * Filters out `null` and `undefined` values from an array of objects.
@@ -431,6 +447,23 @@ export const isValidUUID = (uuid: string) => {
   return regex.test(uuid);
 };
 
+/**
+ * Resolve a UUID from either a raw UUID or a Strawberry global id like
+ * `ImageV2:<uuid>`. Useful for mutation inputs that are declared as `ID!`
+ * but parsed as `UUID!` server-side — callers can pass either form and get
+ * a clean UUID back. `toLocalId` calls `atob`, which throws on non-base64
+ * input, so we guard with try/catch and verify the decoded value is a UUID.
+ */
+export const safeDecodeUuid = (idOrGlobalId: string): string | undefined => {
+  if (isValidUUID(idOrGlobalId)) return idOrGlobalId;
+  try {
+    const decoded = toLocalId(idOrGlobalId);
+    return decoded && isValidUUID(decoded) ? decoded : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 export const convertToUUID = (id: string): string => {
   if (isValidUUID(id) && /^[0-9a-fA-F]{36}$/.test(id)) {
     return id;
@@ -441,14 +474,11 @@ export const convertToUUID = (id: string): string => {
   );
 };
 
+export * from './newLineToBrElement';
 export * from './useDebouncedDeferredValue';
 
 export type SemanticColor =
-  | 'success'
-  | 'info'
-  | 'warning'
-  | 'error'
-  | 'default';
+  'success' | 'info' | 'warning' | 'error' | 'default';
 
 export const useSemanticColorMap = (): Record<SemanticColor, string> => {
   const { token } = theme.useToken();
@@ -459,4 +489,38 @@ export const useSemanticColorMap = (): Record<SemanticColor, string> => {
     error: token.colorError,
     default: token.colorBorder,
   };
+};
+
+/**
+ * Initiate a file download from a URL with a custom filename.
+ * Handles iOS Safari separately by opening a new window.
+ */
+export const initiateDownload = async (
+  downloadURL: string,
+  fileName: string,
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    try {
+      // @ts-ignore - iOS Safari
+      if (globalThis.iOSSafari) {
+        const newWindow = window.open(downloadURL, '_blank');
+        newWindow && resolve();
+      } else {
+        const downloadLink = document.createElement('a');
+        downloadLink.style.display = 'none';
+        downloadLink.href = downloadURL;
+        downloadLink.download = fileName;
+        downloadLink.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        resolve();
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
 };

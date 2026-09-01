@@ -1,10 +1,19 @@
+/*
+ to-astryx W2-D: antd `Alert` -> `BAIAlert` and antd `Button` -> `BAIButton`.
+ Both BUI wrappers were rewritten onto Astryx `Banner` / `Button` in wave 1
+ while keeping their antd-shaped prop surfaces, so `type`, `showIcon`, `title`,
+ `action` and the button's `type="text"` all keep their meaning here.
+ `showIcon` is now a no-op — `Banner` always shows its status icon (p3-a).
+*/
 import { BAIPullingArtifactRevisionAlertCancelMutation } from '../../__generated__/BAIPullingArtifactRevisionAlertCancelMutation.graphql';
 import { BAIPullingArtifactRevisionAlertFragment$key } from '../../__generated__/BAIPullingArtifactRevisionAlertFragment.graphql';
+import { App } from '../../app-shim';
 import { toLocalId } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAIAlert from '../BAIAlert';
+import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
-import { Alert, App, Button } from 'antd';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export interface BAIPullingArtifactRevisionAlertProps {
@@ -16,7 +25,7 @@ const BAIPullingArtifactRevisionAlert = ({
   pullingArtifactRevisionFrgmt,
   onOk,
 }: BAIPullingArtifactRevisionAlertProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { modal, message } = App.useApp();
 
   const pullingArtifactRevision =
@@ -46,14 +55,14 @@ const BAIPullingArtifactRevisionAlert = ({
     `);
 
   return (
-    <Alert
+    <BAIAlert
       type="info"
       showIcon
       title={t('comp:BAIPullingArtifactRevisionAlert.VersionIsPullingNow', {
         version: pullingArtifactRevision.version,
       })}
       action={
-        <Button
+        <BAIButton
           type="text"
           onClick={() => {
             modal.confirm({
@@ -129,7 +138,7 @@ const BAIPullingArtifactRevisionAlert = ({
           }}
         >
           {t('general.button.Cancel')}
-        </Button>
+        </BAIButton>
       }
     />
   );

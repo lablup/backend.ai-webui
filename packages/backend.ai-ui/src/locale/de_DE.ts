@@ -1,9 +1,9 @@
-import { BAILocale } from '.';
-import de_DE from 'antd/es/locale/de_DE';
+import type { BAILocale } from '.';
+import astryxLocale from './astryx/de.json';
 
 const localeValue: BAILocale = {
   lang: 'de',
-  antdLocale: de_DE,
+  astryxLocale,
 };
 
 export default localeValue;

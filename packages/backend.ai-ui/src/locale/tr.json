@@ -5,6 +5,7 @@
     "Architecture": "Mimari",
     "DiskPerc": "Disk %",
     "Endpoint": "Uç Nokta",
+    "FailedToLoadCellData": "Veriler yüklenemedi.",
     "NoAvailableLiveStat": "Canlı istatistik yok",
     "Region": "Bölge",
     "ResourceGroup": "Kaynak Grubu",
@@ -25,6 +26,9 @@
     "AreYouSureYouWantToActivateSome": "{{count}} artefaktları etkinleştirmek istediğinizden emin misiniz?",
     "FailedToActivateArtifacts": "Eserleri etkinleştiremedi.",
     "SuccessfullyActivated": "Başarıyla etkinleştirilmiş eserler."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Keypair kaynak politikası seçin"
   },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Model hizmeti seçin"
@@ -63,6 +67,22 @@
     "Updated": "Güncellenmiş",
     "Version": "Versiyon"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "Eylem ID",
+    "Actor": "Aktör",
+    "Description": "Açıklama",
+    "Duration": "Süre",
+    "EntityId": "Varlık ID",
+    "EntityType": "Varlık Tipi",
+    "Operation": "İşlem",
+    "RequestId": "İstek ID",
+    "Status": "Durum",
+    "Time": "Zaman",
+    "TriggeredBy": "Tetikleyen"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Ön ayar seçin"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin veya sorun devam ederse destekle iletişime geçin."
   },
@@ -70,6 +90,18 @@
     "Clear": "Temizle",
     "KeepAsIs": "Olduğu gibi bırak",
     "UndoChanges": "Değişiklikleri geri al"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Yürütme başarısız oldu",
+    "ErrorOccurred": "Bir hata oluştu"
+  },
+  "comp:BAIComplexSelect": {
+    "ClearSearch": "Seçenekleri ara alanını temizle",
+    "NoResults": "Sonuç yok",
+    "SearchOptions": "Seçenekleri ara"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
   },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "{{name}} 'ı devre dışı bırakmak istediğinizden emin misiniz?",
@@ -88,14 +120,58 @@
     "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
     "Version": "Versiyon"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Silmek istediğinizden emin misiniz?",
+    "AreYouSureToPermanentlyDeleteTarget": "{{target}} kalıcı olarak silinsin mi?",
+    "CannotBeUndone": "Bu işlem geri alınamaz.",
+    "DeleteItem": "Sil",
+    "DeleteNItems": "{{count}} öğeyi sil",
+    "TypeToConfirm": "Onaylamak için <code>{{confirmText}}</code> yazın."
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Oluşturan"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Denemeler",
+    "Category": "Kategori",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "ErrorCode": "Hata Kodu",
+    "From": "Başlangıç durumu",
+    "Message": "Mesaj",
+    "Phase": "Aşama",
+    "Result": "Sonuç",
+    "To": "Hedef durum",
+    "UpdatedAt": "Güncelleme Tarihi"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Dağıtım seçin"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Bozulmuş",
+    "Deploying": "Dağıtılıyor",
+    "Healthy": "Sağlıklı",
+    "NotChecked": "Kontrol Edilmedi",
+    "Pending": "Bekliyor",
+    "Ready": "Hazır",
+    "Scaling": "Ölçekleniyor",
+    "Stopped": "Durduruldu",
+    "Stopping": "Durduruluyor",
+    "Terminated": "Sonlandırıldı",
+    "Unhealthy": "Sağlıksız"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Etki Alanı Seçin"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Otomatik yenileme",
+    "EveryHours": "{{count}}sa",
+    "EveryMinutes": "{{count}}dk",
+    "EverySeconds": "{{count}}sn",
     "LastUpdated": "Son güncelleme",
+    "Off": "Kapalı",
     "Refresh": "Yenile"
   },
   "comp:BAIGraphQLPropertyFilter": {
@@ -103,6 +179,9 @@
     "operator": {
       "After": "sonra",
       "Before": "önce",
+      "Contains": "içerir",
+      "EndsWith": "ile biter",
+      "Equals": "eşit",
       "GreaterThan": "daha büyük",
       "GreaterThanOrEqual": "büyük veya eşit",
       "IContains": "içerir",
@@ -116,7 +195,12 @@
       "In": "içinde",
       "LessThan": "daha küçük",
       "LessThanOrEqual": "küçük veya eşit",
-      "NotIn": "içinde değil"
+      "NotContains": "içermez",
+      "NotEndsWith": "ile bitmez",
+      "NotEquals": "eşit değil",
+      "NotIn": "içinde değil",
+      "NotStartsWith": "ile başlamaz",
+      "StartsWith": "ile başlar"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -124,6 +208,9 @@
     "HuggingFaceSettings": "Hugging Face Settings",
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Görüntü Seç"
   },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} sürümleri hariç tutulur.",
@@ -135,8 +222,36 @@
     "SuccessFullyPulled": "{{count}} sürümleri için başarıyla talep edildi.",
     "Version": "Versiyon"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Küme boyutu",
+    "Concurrency": "Eşzamanlı Oturumlar",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "DefaultForUnspecified": "Belirtilmemiş için varsayılan",
+    "DefaultForUnspecifiedTooltipDesc1": "Belirli bir CPU veya bellek istendiğinde varsayılan ilkeyi ayarlar.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Sınırsız', aracı düğümünün kapasitesine kadar kullanım sağlarken, 'Limited' açıkça ayarlanmadıkça kaynakları reddeder. \nÇoğu durumda, 'sınırsız' önerilir.",
+    "IdleTimeout": "Boşta Kalma Zaman Aşımı",
+    "MaxConcurrentSFTPSessions": "Maksimum eşzamanlı SFTP oturumları",
+    "MaxPendingSessionCount": "Max bekleyen oturum sayısı",
+    "MaxPendingSessionResourceSlots": "Max Bekleyen Oturum Kaynak Yuvaları",
+    "MaxSessionLifetime": "Maksimum Oturum Ömrü",
+    "Name": "isim",
+    "StorageNodes": "Depolama Düğümleri",
+    "TotalResourceSlots": "Kaynak Politikası"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Anahtar Çifti Seçin"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Alan Adı",
+    "FailReason": "Hata Nedeni",
+    "LoginTime": "Oturum Açma Zamanı",
+    "Result": "Sonuç"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Erişim Anahtarı",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "InvalidatedAt": "Geçersizleştirilme Tarihi",
+    "User": "Kullanıcı"
   },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
@@ -145,10 +260,51 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "\"{{deploymentName}}\" dağıtımını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "CreatedUser": "Yazar",
+    "CurrentRevisionID": "Mevcut Revizyon Kimliği",
+    "Delete": "Sil",
+    "DeleteDeployment": "Dağıtımı Sil",
+    "DeploymentDeleted": "Dağıtım silindi.",
+    "DeploymentID": "Dağıtım Kimliği",
+    "DomainName": "Alan Adı",
+    "EndpointURL": "Uç Nokta URL'si",
+    "FailedToDeleteDeployment": "Dağıtım silinemedi.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Yaşam Döngüsü",
+    "Model": "Model",
+    "Name": "Ad",
+    "OpenToPublic": "Herkese Açık",
+    "Owner": "Sahip",
+    "PreferredDomainName": "Tercih Edilen Alan Adı",
+    "Project": "Proje",
+    "ProjectID": "Proje Kimliği",
+    "ReplicaSummary": "Kopyalar",
+    "ReplicaSummaryTooltip": "İstenen kopya sayısına karşılık çalışan kopyalar.",
+    "Replicas": "Kopyalar",
+    "ResourceGroup": "Kaynak Grubu",
+    "RevisionNumber": "Revizyon",
+    "RevisionNumberTooltip": "Dağıtımın mevcut revizyon numarası.",
+    "StrategyType": "Strateji",
+    "Tags": "Etiketler",
+    "UpdatedAt": "Güncellenme Tarihi"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "Diğer işlemler"
+  },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Aşağıdaki klasör(ler) güncellenecek.",
+    "FollowingProjectsWillBeUpdated": "Aşağıdaki proje(ler) güncellenecek.",
     "ProjectResourcePolicy": "Proje Kaynak Politikası",
     "UpdateMultipleProjects": "Birden Çok Projeyi Güncelle"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Oluşturulma Tarihi",
+    "MaxNetworkCount": "Maksimum Ağ Sayısı",
+    "MaxQuotaScopeSize": "Maksimum Klasör Boyutu",
+    "MaxVFolderCount": "Maksimum Klasör Sayısı",
+    "Name": "isim"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Proje seç"
@@ -176,32 +332,24 @@
     "UpdateProject": "Projeyi Güncelle"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Proje {{projectName}}'i devre dışı bırakmak istediğinizden emin misiniz?",
-    "AreYouSureToPurgeProject": "{{projectName}} öğesini kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
     "ContainerRegistry": "Konteyner Kayıt Deposu",
-    "Controls": "Kontroller",
+    "ContainerRegistryProject": "Konteyner Kayıt Deposu Projesi",
     "CreatedAt": "Oluşturulma Tarihi",
-    "Deactivate": "Devre dışı bırak",
-    "DeactivateProject": "Projeyi devre dışı bırak",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
-    "FailedToDeactivateProject": "Proje devre dışı bırakılamadı.",
-    "FailedToPurgeProject": "Proje temizlenemedi.",
     "IntegrationID": "Entegrasyon Kimliği",
-    "IsActive": "Aktif",
     "Name": "Ad",
     "Project": "Proje",
-    "ProjectDeactivated": "Proje devre dışı bırakıldı.",
     "ProjectID": "Proje Kimliği",
-    "ProjectPurged": "Proje kalıcı olarak silindi.",
-    "Purge": "Temizle",
-    "PurgeProject": "Projeyi Temizle",
     "Registry": "Kayıt Deposu",
     "ResourcePolicy": "Kaynak Politikası",
     "ScalingGroups": "Kaynak Grupları",
     "StorageNodes": "Depolama Düğümleri",
     "TotalResourceSlots": "Toplam Kaynak Slotları",
     "Type": "Tür"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Klasör Seç"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Arama",
@@ -219,22 +367,154 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Kaynak Grubu Seç"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Ayrılan / İstenen"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Grup rengini değiştir",
+    "ResourceGrid": "Kaynak ızgarası",
+    "UseColorN": "Renk {{n}} kullan"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Sınırsız"
+  },
   "comp:BAIRouteNodes": {
-    "CreatedAt": "Oluşturulma tarihi",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "HealthStatus": "Sağlık Durumu",
     "RouteId": "Rota Kimliği",
+    "SchedulingHistory": "Zamanlama Geçmişi",
     "SessionId": "Oturum Kimliği",
     "Status": "Durum",
     "TrafficRatio": "Trafik Oranı",
     "TrafficStatus": "Trafik Durumu"
   },
-  "comp:BAISchedulingHistoryNodes": {
+  "comp:BAIRouteSchedulingHistoryNodes": {
     "Attempts": "Denemeler",
+    "Category": "Kategori",
     "CreatedAt": "Oluşturulma Tarihi",
-    "From": "Kaynak",
+    "ErrorCode": "Hata Kodu",
+    "From": "Başlangıç durumu",
+    "Message": "Mesaj",
     "Phase": "Aşama",
     "Result": "Sonuç",
-    "StatusTransition": "Durum Geçişi",
-    "To": "Bitiş",
+    "To": "Hedef durum",
+    "UpdatedAt": "Güncelleme Tarihi"
+  },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Seçenek Ekle",
+    "Category": "Kategori",
+    "CategoryPlaceholder": "örn. model_loading",
+    "CategoryTooltip": "İlgili parametreleri bir arada düzenlemek için kullanılan UI kategorisi.",
+    "ChoiceLabel": "Etiket",
+    "ChoiceLabelPlaceholder": "örn. FP16",
+    "ChoiceLabelRequired": "Seçenek etiketi zorunludur.",
+    "ChoiceValue": "Değer",
+    "ChoiceValuePlaceholder": "örn. fp16",
+    "ChoiceValueRequired": "Seçenek değeri zorunludur.",
+    "Choices": "Seçenekler",
+    "ChoicesRequired": "En az bir seçenek gereklidir.",
+    "CreatePreset": "Ön Ayar Oluştur",
+    "DefaultValue": "Varsayılan Değer",
+    "DefaultValuePlaceholder": "örn. 1",
+    "Description": "Açıklama",
+    "DescriptionPlaceholder": "Bu parametrenin neyi kontrol ettiğini ve çıkarım davranışını nasıl etkilediğini açıklayın.",
+    "DisplayName": "Görünen Ad",
+    "DisplayNamePlaceholder": "örn. Tensor Parallel Size",
+    "DisplayNameTooltip": "Dağıtım formunda parametre adı yerine gösterilen okunabilir etiket.",
+    "EditPreset": "Ön Ayarı Düzenle",
+    "Key": "Anahtar",
+    "KeyPlaceholder": "örn. TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Anahtar zorunludur.",
+    "Name": "Ad",
+    "NamePlaceholder": "örn. Tensor Parallel Size",
+    "NameRequired": "Ad zorunludur.",
+    "NumberMax": "Maksimum",
+    "NumberMaxMustExceedMin": "Maksimum değer, minimum değerden büyük olmalıdır.",
+    "NumberMin": "Minimum",
+    "PresetCreated": "Çalışma zamanı varyantı ön ayarı oluşturuldu.",
+    "PresetTarget": "Ön Ayar Hedefi",
+    "PresetTargetArgs": "Komut Satırı Argümanı",
+    "PresetTargetEnv": "Ortam Değişkeni",
+    "PresetTargetRequired": "Ön ayar hedefi zorunludur.",
+    "PresetUpdated": "Çalışma zamanı varyantı ön ayarı güncellendi.",
+    "Rank": "Sıra",
+    "RankTooltip": "Aynı çalışma zamanı varyantının ön ayarları arasında görüntüleme sırası. Düşük değerler önce görünür.",
+    "Required": "Zorunlu",
+    "RequiredTooltip": "Bu ön ayar parametresinin bir dağıtım revizyonu oluşturulurken sağlanması gerekip gerekmediği.",
+    "Requirement": "Zorunluluk",
+    "RuntimeVariant": "Çalışma Zamanı Varyantı",
+    "RuntimeVariantRequired": "Çalışma zamanı varyantı zorunludur.",
+    "SliderMax": "Maksimum",
+    "SliderMaxMustExceedMin": "Maksimum değer, minimum değerden büyük olmalıdır.",
+    "SliderMaxRequired": "Maksimum değer zorunludur.",
+    "SliderMin": "Minimum",
+    "SliderMinRequired": "Minimum değer zorunludur.",
+    "SliderStep": "Adım",
+    "SliderStepMustBePositive": "Adım 0'dan büyük olmalıdır.",
+    "SliderStepTooltip": "Kaydırıcı için artış adımı. Varsayılan değer 1'dir.",
+    "StoredValueTypeMismatch": "Bu ön ayar {{valueType}} değer türüyle kaydedilmiş ve {{uiType}} arayüz türü bunu gösteremez. Arayüz türünü veya değer türünü değiştirin.",
+    "TextPlaceholderExample": "örn. Bir değer girin",
+    "TextPlaceholderLabel": "Giriş Yer Tutucusu",
+    "UIType": "UI Türü",
+    "UITypeCheckbox": "Onay Kutusu",
+    "UITypeIncompatibleWithValueType": "Seçilen arayüz türü bu değer türünü gösteremez.",
+    "UITypeNumberInput": "Sayı Girişi",
+    "UITypeSelect": "Seçim",
+    "UITypeSlider": "Kaydırıcı",
+    "UITypeTextInput": "Metin Girişi",
+    "UITypeTooltip": "Bu parametrenin dağıtım formunda gösterilmesi için kullanılan kontrol.",
+    "ValueType": "Değer Türü",
+    "ValueTypeBool": "Boole",
+    "ValueTypeFlag": "Bayrak",
+    "ValueTypeFloat": "Ondalık Sayı",
+    "ValueTypeInt": "Tam Sayı",
+    "ValueTypeRequired": "Değer türü zorunludur.",
+    "ValueTypeStr": "Metin"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Kategori",
+    "CreatedAt": "Oluşturulma tarihi",
+    "DefaultValue": "Varsayılan Değer",
+    "Description": "Açıklama",
+    "DisplayName": "Görünen Ad",
+    "Key": "Anahtar",
+    "ModifiedAt": "Değiştirilme tarihi",
+    "Name": "Ad",
+    "Optional": "İsteğe Bağlı",
+    "PresetTarget": "Ön Ayar Hedefi",
+    "PresetTargetArgs": "Komut Satırı Argümanı",
+    "PresetTargetEnv": "Ortam Değişkeni",
+    "Rank": "Sıra",
+    "RankTooltip": "Aynı çalışma zamanı varyantının ön ayarları arasında görüntüleme sırası. Düşük değerler önce görünür.",
+    "Required": "Zorunlu",
+    "RuntimeVariantId": "Çalışma Zamanı Varyantı ID",
+    "RuntimeVariantWithID": "Çalışma Zamanı Varyantı (ID)",
+    "UIType": "UI Türü",
+    "UITypeCheckbox": "Onay Kutusu",
+    "UITypeNumberInput": "Sayı Girişi",
+    "UITypeSelect": "Seçim",
+    "UITypeSlider": "Kaydırıcı",
+    "UITypeTextInput": "Metin Girişi",
+    "ValueType": "Değer Türü",
+    "ValueTypeBool": "Boole",
+    "ValueTypeFlag": "Bayrak",
+    "ValueTypeFloat": "Ondalık Sayı",
+    "ValueTypeInt": "Tam Sayı",
+    "ValueTypeStr": "Metin"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Çalışma Zamanı Varyantını Seç"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Denemeler",
+    "Category": "Kategori",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "ErrorCode": "Hata Kodu",
+    "From": "Başlangıç durumu",
+    "Message": "Mesaj",
+    "Phase": "Aşama",
+    "Result": "Sonuç",
+    "To": "Hedef durum",
     "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAISessionAgentIds": {
@@ -250,11 +530,32 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Depolama Sunucusu Seç"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Depolama Proxy'si Seç"
+  },
+  "comp:BAISubStepNodes": {
+    "Duration": "Süre",
+    "ErrorCode": "Hata Kodu",
+    "Message": "Mesaj",
+    "Result": "Sonuç",
+    "ResultMarker": "Bu denemenin sonuç işareti",
+    "Step": "Adım",
+    "Time": "Zaman"
+  },
   "comp:BAITable": {
+    "Apply": "Uygula",
+    "Cancel": "İptal",
+    "CollapseAll": "Tümünü daralt",
+    "ExpandAll": "Tümünü genişlet",
+    "ExpandErrorsOnly": "Yalnızca hataları genişlet",
+    "ExpandOptions": "Genişletme seçenekleri",
+    "ExpandRow": "Satırı genişlet",
     "Export": "Dışa aktar",
     "ExportCSV": "CSV Dışa Aktar",
     "GoToFirstPage": "İlk sayfaya git",
     "InvalidPageNumber": "Geçersiz sayfa numarası",
+    "NoDataToDisplay": "Görüntülenecek veri yok",
+    "Pagination": "Sayfalama",
     "SearchTableColumn": "Arama Tablosu sütunları",
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
     "SettingTable": "Masa Ayarları"
@@ -262,14 +563,39 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Oluşturulma Tarihi",
+    "MaxConcurrentLogins": "Maksimum eşzamanlı oturum açma",
+    "MaxCustomizedImageCount": "Maksimum Özelleştirilmiş Görüntü Sayısı",
+    "MaxQuotaScopeSize": "Maksimum Klasör Boyutu",
+    "MaxSessionCountPerModelSession": "Model Oturumu Başına Maksimum Oturum Sayısı",
+    "MaxVFolderCount": "Maksimum Klasör Sayısı",
+    "Name": "isim"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "Kullanıcıyı Seç"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Geçersiz yol biçimi.",
+    "AliasOverlapping": "Bağlama yolu başka bir klasörle çakışıyor.",
+    "AliasPlaceholder": "Bağlama yolu",
+    "AutoMountedFolders": "Otomatik bağlanan klasörler",
+    "Name": "Ad",
+    "PathAndAlias": "Yol & Takma Ad",
+    "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
+    "RemoveFolder": "Kaldır",
+    "Subpath": "Alt yol",
+    "SubpathInvalid": "Alt yol göreli bir yol olmalı ve '..' içermemelidir.",
+    "SubpathPlaceholder": "örn. dataset/train (isteğe bağlı)",
+    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Kökü bağlamak için boş bırakın."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Klasör Seç"
   },
   "comp:FileExplorer": {
-    "Controls": "Kontroller",
+    "ArchiveDownloadStarted": "{{count}} öğe indirilmeye başlandı.",
+    "ChangeFileExtension": "Dosya Uzantısını Değiştir",
+    "ChangeFileExtensionDesc": "Dosya uzantısını değiştirmek dosyanın kullanılamaz hale gelmesine veya hatalı açılmasına neden olabilir. Devam etmek istiyor musunuz?",
     "CreateANewFile": "Create a new file",
     "CreateANewFolder": "Yeni bir klasör oluşturun",
     "CreateFile": "Create File",
@@ -277,6 +603,8 @@
     "CreatedAt": "Yaratılmış",
     "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
     "DeleteSelectedItemsDialog": "Onay Sil",
+    "Download": "İndir",
+    "DownloadSelected": "İndir",
     "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
     "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın.",
     "DuplicatedFiles": "Üzerine Yazın Onay",
@@ -292,10 +620,12 @@
     "MaxFileNameLength": "File name must be 255 characters or less.",
     "MaxFolderNameLength": "Klasör adı 255 karakter veya daha az olmalıdır.",
     "ModifiedAt": "Değiştirildi",
-    "MoreOptions": "Daha fazla seçenek",
     "Name": "İsim",
+    "NoUploadPermissionForHost": "Bu depolama sunucusuna yükleme izniniz yok.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
+    "RenameFile": "Rename",
     "RenameSuccess": "İsim başarıyla değiştirildi.",
     "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
     "Size": "Boyut",
@@ -304,7 +634,10 @@
     "UnsupportedFileFormat": "Bu dosya biçimi düzenlemeyi desteklemiyor.",
     "UploadFiles": "Dosyaları Yükle",
     "UploadFolder": "Klasörü Yükle",
-    "error": {}
+    "error": {
+      "DuplicatedName": "Bu isim zaten kullanılıyor. Lütfen farklı bir isim girin.",
+      "FileNameRequired": "Lütfen bir dosya veya klasör adı girin."
+    }
   },
   "comp:PaginationInfoText": {
     "Total": "{{start}} - {{end}} öğelerinin {{total}}"
@@ -312,19 +645,31 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Kaynak verisi yok"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Bitiş Zamanı",
-    "ErrorCode": "Hata Kodu",
-    "Message": "Mesaj",
-    "Result": "Sonuç",
-    "StartedAt": "Başlama zamanı",
-    "Step": "Adım"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI Hızlandırıcı",
+    "CPU": "CPU",
+    "ClusterMode": "Küme Modu",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "ElapsedTime": "Geçen Süre",
+    "Environments": "Ortamlar",
+    "Memory": "Bellek",
+    "OwnerEmail": "Sahip E-postası",
+    "Project": "Proje",
+    "ResourceGroup": "Kaynak Grubu",
+    "SessionId": "Oturum ID",
+    "SessionName": "Oturum Adı",
+    "SessionType": "Oturum Türü",
+    "Status": "Durum",
+    "TerminateSession": "Oturumu Sonlandır"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "İzin Verilen İstemci IP'leri",
-    "ContainerGIDs": "Konteyner GID'leri",
-    "ContainerMainGID": "Konteyner Ana GID",
+    "ContainerGIDs": "Ek GID'ler",
+    "ContainerGIDsTooltip": "Konteyner işlemlerine atanan ek sayısal grup kimlikleri",
+    "ContainerMainGID": "Konteyner GID",
+    "ContainerMainGIDTooltip": "Konteyner içindeki işlemlere atanan varsayılan sayısal grup kimliği",
     "ContainerUID": "Konteyner UID",
+    "ContainerUIDTooltip": "Konteyner içindeki işlemlere atanan sayısal kullanıcı kimliği",
     "CreatedAt": "Oluşturulma",
     "Description": "Açıklama",
     "Disabled": "Devre Dışı",
@@ -332,6 +677,8 @@
     "Email": "E-posta",
     "Enabled": "Etkin",
     "FullName": "Tam Ad",
+    "IntegrationName": "Entegrasyon adı",
+    "MainAccessKey": "Ana Erişim Anahtarı",
     "ModifiedAt": "Değiştirilme",
     "NeedPasswordChange": "Şifre Değişikliği Gerekli",
     "Project": "Proje",
@@ -341,20 +688,79 @@
     "StatusInfo": "Durum Bilgisi",
     "SudoSessionEnabled": "Sudo Oturumu Etkin",
     "TwoFA": "İki Faktörlü Kimlik Doğrulama",
+    "TwoFAActivatedAt": "2FA Etkinleştirme Tarihi",
+    "UserID": "Kullanıcı Kimliği",
     "Username": "Kullanıcı Adı"
+  },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Yol seçmek için tıklayın",
+    "SelectAPath": "Bir yol seçin",
+    "SelectAPathInFolder": "{{folderName}} içinde bir yol seçin",
+    "SelectFolderFirst": "Önce bir klasör seçin",
+    "SelectThisLocation": "Bu konumu seç",
+    "SelectedPath": "Seçildi"
   },
   "error": {
     "UnknownError": "Bilinmeyen bir hata oluştu. \nLütfen tekrar deneyin."
   },
+  "form": {
+    "Optional": "(opsiyonel)",
+    "validateMessages": {
+      "Default": "Alan doğrulama hatası ${label}",
+      "Required": "${label} gerekli bir alan",
+      "Whitespace": "${label} sadece boşluk olamaz",
+      "array": {
+        "Len": "${label} sayısı ${len} olmalı",
+        "Max": "${label} sayısı en çok ${max} olmalı",
+        "Min": "${label} sayısı en az ${min} olmalı",
+        "Range": "${label} sayısı ${min}-${max} arası olmalı"
+      },
+      "number": {
+        "Len": "${label} ${len} olmalı",
+        "Max": "${label} en çok ${max} olmalı",
+        "Min": "${label} en az ${min} olmalı",
+        "Range": "${label} ${min}-${max} arası olmalı"
+      },
+      "pattern": {
+        "Mismatch": "${label} şu kalıpla eşleşmeli: ${pattern}"
+      },
+      "string": {
+        "Len": "${label} ${len} karakter olmalı",
+        "Max": "${label} en çok ${max} karakter olmalı",
+        "Min": "${label} en az ${min} karakter olmalı",
+        "Range": "${label} ${min}-${max} karakter arası olmalı"
+      },
+      "types": {
+        "Email": "${label} geçerli bir ${type} değil",
+        "Number": "${label} geçerli bir ${type} değil",
+        "Object": "${label} geçerli bir ${type} değil",
+        "String": "${label} geçerli bir ${type} değil",
+        "Url": "${label} geçerli bir ${type} değil"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
+    "DeselectAll": "Tüm seçimi kaldır",
+    "File": "Dosya",
+    "Increase": "Increase",
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
+    "Project": "Proje",
+    "Search": "Ara",
+    "Select": "Select",
+    "SelectPlaceholder": "{{label}} seçin",
     "TotalItems": "Total {{total}} öğeleri",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "İptal etmek",
       "Close": "Kapalı",
       "Collapse": "Yıkılmak",
+      "Confirm": "Confirm",
       "Copied": "Kopyalandı",
+      "Copy": "Kopyala",
       "CopyAll": "Hepsini kopyala",
       "Create": "Yaratmak",
       "Delete": "Silmek",

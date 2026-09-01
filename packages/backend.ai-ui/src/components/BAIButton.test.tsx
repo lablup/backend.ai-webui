@@ -1,3 +1,11 @@
+/*
+ to-astryx W2-D: `BAIButton` renders Astryx `Button` / `IconButton`, so the
+ antd class assertions (`ant-btn-primary`, `ant-btn-dangerous`,
+ `.ant-btn-loading-icon`) no longer describe anything. Astryx styles through
+ StyleX and its generated class names are not a contract, so the loading
+ assertions move to `aria-busy` — which is what Astryx sets and announces, and
+ which antd never exposed at all.
+*/
 import BAIButton from './BAIButton';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,16 +19,15 @@ describe('BAIButton', () => {
       ).toBeInTheDocument();
     });
 
-    it('should pass through Ant Design Button props', () => {
+    it('should keep the antd-shaped prop surface', () => {
       render(
         <BAIButton type="primary" danger disabled>
           Danger Button
         </BAIButton>,
       );
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('ant-btn-primary');
-      expect(button).toHaveClass('ant-btn-dangerous');
       expect(button).toBeDisabled();
+      expect(button).toHaveAccessibleName('Danger Button');
     });
 
     it('should render with custom className', () => {
@@ -31,7 +38,7 @@ describe('BAIButton', () => {
 
   describe('onClick Handler', () => {
     it('should call onClick handler when clicked', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAIButton onClick={onClick}>Click</BAIButton>);
 
@@ -40,7 +47,7 @@ describe('BAIButton', () => {
     });
 
     it('should not call onClick if disabled', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(
         <BAIButton onClick={onClick} disabled>
@@ -55,7 +62,7 @@ describe('BAIButton', () => {
 
   describe('Async Action Handling', () => {
     it('should execute async action when provided', async () => {
-      const action = jest.fn().mockResolvedValue(undefined);
+      const action = vi.fn().mockResolvedValue(undefined);
       const user = userEvent.setup();
       render(<BAIButton action={action}>Execute Action</BAIButton>);
 
@@ -67,7 +74,7 @@ describe('BAIButton', () => {
     });
 
     it('should show loading state during async action', async () => {
-      const action = jest
+      const action = vi
         .fn()
         .mockImplementation(
           () => new Promise((resolve) => setTimeout(resolve, 100)),
@@ -80,14 +87,12 @@ describe('BAIButton', () => {
 
       // Button should show loading state immediately after click
       await waitFor(() => {
-        expect(
-          button.querySelector('.ant-btn-loading-icon'),
-        ).toBeInTheDocument();
+        expect(button).toHaveAttribute('aria-busy', 'true');
       });
     });
 
     it('should clear loading state after action completes', async () => {
-      const action = jest.fn().mockResolvedValue(undefined);
+      const action = vi.fn().mockResolvedValue(undefined);
       const user = userEvent.setup();
       render(<BAIButton action={action}>Complete Action</BAIButton>);
 
@@ -101,17 +106,15 @@ describe('BAIButton', () => {
       // Wait for transition to complete
       await waitFor(
         () => {
-          expect(
-            button.querySelector('.ant-btn-loading-icon'),
-          ).not.toBeInTheDocument();
+          expect(button).not.toHaveAttribute('aria-busy');
         },
         { timeout: 3000 },
       );
     });
 
     it('should call both action and onClick when both are provided', async () => {
-      const action = jest.fn().mockResolvedValue(undefined);
-      const onClick = jest.fn();
+      const action = vi.fn().mockResolvedValue(undefined);
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(
         <BAIButton action={action} onClick={onClick}>
@@ -128,7 +131,7 @@ describe('BAIButton', () => {
     });
 
     it('should handle async action with successful resolution', async () => {
-      const action = jest.fn().mockResolvedValue('success');
+      const action = vi.fn().mockResolvedValue('success');
       const user = userEvent.setup();
       render(<BAIButton action={action}>Async Success</BAIButton>);
 
@@ -142,9 +145,7 @@ describe('BAIButton', () => {
       // Loading state should clear after success
       await waitFor(
         () => {
-          expect(
-            button.querySelector('.ant-btn-loading-icon'),
-          ).not.toBeInTheDocument();
+          expect(button).not.toHaveAttribute('aria-busy');
         },
         { timeout: 3000 },
       );
@@ -154,13 +155,11 @@ describe('BAIButton', () => {
   describe('Loading Prop Override', () => {
     it('should show loading when loading prop is true', () => {
       render(<BAIButton loading>Loading Button</BAIButton>);
-      expect(
-        screen.getByRole('button').querySelector('.ant-btn-loading-icon'),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button')).toHaveAttribute('aria-busy', 'true');
     });
 
     it('should combine loading prop with action loading state', async () => {
-      const action = jest
+      const action = vi
         .fn()
         .mockImplementation(
           () => new Promise((resolve) => setTimeout(resolve, 50)),
@@ -175,18 +174,14 @@ describe('BAIButton', () => {
       const button = screen.getByRole('button');
 
       // Initially not loading
-      expect(
-        button.querySelector('.ant-btn-loading-icon'),
-      ).not.toBeInTheDocument();
+      expect(button).not.toHaveAttribute('aria-busy');
 
       // Click to start action
       await user.click(button);
 
       // Should show loading during action
       await waitFor(() => {
-        expect(
-          button.querySelector('.ant-btn-loading-icon'),
-        ).toBeInTheDocument();
+        expect(button).toHaveAttribute('aria-busy', 'true');
       });
 
       // Rerender with loading=true while action is still running
@@ -197,27 +192,23 @@ describe('BAIButton', () => {
       );
 
       // Should still be loading
-      expect(button.querySelector('.ant-btn-loading-icon')).toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-busy', 'true');
     });
 
     it('should respect loading prop even without action', () => {
       const { rerender } = render(
         <BAIButton loading={false}>Button</BAIButton>,
       );
-      expect(
-        screen.getByRole('button').querySelector('.ant-btn-loading-icon'),
-      ).not.toBeInTheDocument();
+      expect(screen.getByRole('button')).not.toHaveAttribute('aria-busy');
 
       rerender(<BAIButton loading={true}>Button</BAIButton>);
-      expect(
-        screen.getByRole('button').querySelector('.ant-btn-loading-icon'),
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button')).toHaveAttribute('aria-busy', 'true');
     });
   });
 
   describe('Event Object Handling', () => {
     it('should pass click event to onClick handler', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAIButton onClick={onClick}>Click</BAIButton>);
 
@@ -231,8 +222,8 @@ describe('BAIButton', () => {
     });
 
     it('should call onClick even when action is provided', async () => {
-      const action = jest.fn().mockResolvedValue(undefined);
-      const onClick = jest.fn();
+      const action = vi.fn().mockResolvedValue(undefined);
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(
         <BAIButton action={action} onClick={onClick}>
@@ -254,7 +245,7 @@ describe('BAIButton', () => {
 
   describe('Edge Cases', () => {
     it('should handle undefined action gracefully', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(
         <BAIButton action={undefined} onClick={onClick}>
@@ -277,7 +268,7 @@ describe('BAIButton', () => {
     });
 
     it('should handle rapid clicks during async action', async () => {
-      const action = jest
+      const action = vi
         .fn()
         .mockImplementation(
           () => new Promise((resolve) => setTimeout(resolve, 100)),
@@ -301,7 +292,7 @@ describe('BAIButton', () => {
 
   describe('Accessibility', () => {
     it('should be keyboard accessible', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAIButton onClick={onClick}>Accessible</BAIButton>);
 

@@ -5,6 +5,7 @@
     "Architecture": "Arsitektur",
     "DiskPerc": "Disk %",
     "Endpoint": "Endpoint",
+    "FailedToLoadCellData": "Gagal memuat data.",
     "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
     "Region": "Wilayah",
     "ResourceGroup": "Grup Sumber Daya",
@@ -25,6 +26,9 @@
     "AreYouSureYouWantToActivateSome": "Anda yakin ingin mengaktifkan {{count}} artefak?",
     "FailedToActivateArtifacts": "Gagal mengaktifkan artefak.",
     "SuccessfullyActivated": "Artefak yang berhasil diaktifkan."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Pilih Kebijakan Sumber Daya Keypair"
   },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Pilih Layanan Model"
@@ -63,6 +67,22 @@
     "Updated": "Diperbarui",
     "Version": "Versi"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID Tindakan",
+    "Actor": "Pelaku",
+    "Description": "Deskripsi",
+    "Duration": "Durasi",
+    "EntityId": "ID Entitas",
+    "EntityType": "Jenis Entitas",
+    "Operation": "Operasi",
+    "RequestId": "ID Permintaan",
+    "Status": "Status",
+    "Time": "Waktu",
+    "TriggeredBy": "Dipicu oleh"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Pilih Preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
   },
@@ -70,6 +90,18 @@
     "Clear": "Hapus",
     "KeepAsIs": "Pertahankan",
     "UndoChanges": "Batalkan perubahan"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Eksekusi gagal",
+    "ErrorOccurred": "Terjadi kesalahan"
+  },
+  "comp:BAIComplexSelect": {
+    "ClearSearch": "Hapus Cari opsi",
+    "NoResults": "Tidak ada hasil",
+    "SearchOptions": "Cari opsi"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Pilih Registri Container"
   },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Anda yakin ingin menonaktifkan {{name}}?",
@@ -88,14 +120,58 @@
     "SuccessFullyRemoved": "Berhasil menghapus {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Apakah Anda yakin ingin menghapus?",
+    "AreYouSureToPermanentlyDeleteTarget": "Apakah Anda yakin ingin menghapus {{target}} secara permanen?",
+    "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
+    "DeleteItem": "Hapus",
+    "DeleteNItems": "Hapus {{count}} item",
+    "TypeToConfirm": "Ketik <code>{{confirmText}}</code> untuk mengonfirmasi."
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Dibuat oleh"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Percobaan",
+    "Category": "Kategori",
+    "CreatedAt": "Dibuat pada",
+    "ErrorCode": "Kode Kesalahan",
+    "From": "Status asal",
+    "Message": "Pesan",
+    "Phase": "Tahap",
+    "Result": "Hasil",
+    "To": "Status tujuan",
+    "UpdatedAt": "Diperbarui pada"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Deployment"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Terdegradasi",
+    "Deploying": "Sedang Diterapkan",
+    "Healthy": "Sehat",
+    "NotChecked": "Belum Diperiksa",
+    "Pending": "Tertunda",
+    "Ready": "Siap",
+    "Scaling": "Sedang Diskalakan",
+    "Stopped": "Dihentikan",
+    "Stopping": "Sedang Dihentikan",
+    "Terminated": "Diakhiri",
+    "Unhealthy": "Tidak Sehat"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Pilih Domain"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Penyegaran otomatis",
+    "EveryHours": "{{count}}h",
+    "EveryMinutes": "{{count}}m",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Terakhir diperbarui",
+    "Off": "Mati",
     "Refresh": "Segarkan"
   },
   "comp:BAIGraphQLPropertyFilter": {
@@ -103,6 +179,9 @@
     "operator": {
       "After": "setelah",
       "Before": "sebelum",
+      "Contains": "mengandung",
+      "EndsWith": "diakhiri dengan",
+      "Equals": "sama dengan",
       "GreaterThan": "lebih besar dari",
       "GreaterThanOrEqual": "lebih besar atau sama",
       "IContains": "mengandung",
@@ -116,7 +195,12 @@
       "In": "dalam",
       "LessThan": "kurang dari",
       "LessThanOrEqual": "kurang dari atau sama",
-      "NotIn": "tidak dalam"
+      "NotContains": "tidak berisi",
+      "NotEndsWith": "tidak diakhiri dengan",
+      "NotEquals": "tidak sama dengan",
+      "NotIn": "tidak dalam",
+      "NotStartsWith": "tidak dimulai dengan",
+      "StartsWith": "dimulai dengan"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -124,6 +208,9 @@
     "HuggingFaceSettings": "Hugging Face Settings",
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Pilih Gambar"
   },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versi dikecualikan.",
@@ -135,8 +222,36 @@
     "SuccessFullyPulled": "Berhasil meminta tarik untuk versi {{count}}.",
     "Version": "Versi"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Ukuran Klaster",
+    "Concurrency": "Sesi Serentak",
+    "CreatedAt": "Dibuat di",
+    "DefaultForUnspecified": "Default untuk tidak ditentukan",
+    "DefaultForUnspecifiedTooltipDesc1": "Menetapkan kebijakan default ketika tidak ada CPU atau memori tertentu yang diminta.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' memungkinkan penggunaan hingga kapasitas agen node, sementara 'Limited' menolak sumber daya kecuali diatur secara eksplisit. \nDalam kebanyakan kasus, 'tidak terbatas' direkomendasikan.",
+    "IdleTimeout": "Batas Waktu Diam",
+    "MaxConcurrentSFTPSessions": "Sesi SFTP Max Concurrent",
+    "MaxPendingSessionCount": "Hitungan sesi Max Tertunda",
+    "MaxPendingSessionResourceSlots": "Slot sumber daya sesi maks yang tertunda",
+    "MaxSessionLifetime": "Sesi Maksimal Seumur Hidup",
+    "Name": "Nama",
+    "StorageNodes": "Node Penyimpanan",
+    "TotalResourceSlots": "Kebijakan Sumber Daya"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Pilih Keypair"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Domain",
+    "FailReason": "Alasan Kegagalan",
+    "LoginTime": "Waktu Login",
+    "Result": "Hasil"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Kunci Akses",
+    "CreatedAt": "Dibuat pada",
+    "InvalidatedAt": "Dibatalkan Pada",
+    "User": "Pengguna"
   },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
@@ -145,10 +260,51 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Apakah Anda yakin ingin menghapus penerapan \"{{deploymentName}}\"? Tindakan ini tidak dapat dibatalkan.",
+    "CreatedAt": "Dibuat pada",
+    "CreatedUser": "Penulis",
+    "CurrentRevisionID": "ID Revisi Saat Ini",
+    "Delete": "Menghapus",
+    "DeleteDeployment": "Hapus Penerapan",
+    "DeploymentDeleted": "Penerapan berhasil dihapus.",
+    "DeploymentID": "ID Penerapan",
+    "DomainName": "Domain",
+    "EndpointURL": "URL Titik Akhir",
+    "FailedToDeleteDeployment": "Gagal menghapus penerapan.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Siklus Hidup",
+    "Model": "Model",
+    "Name": "Nama",
+    "OpenToPublic": "Terbuka untuk Umum",
+    "Owner": "Pemilik",
+    "PreferredDomainName": "Domain Pilihan",
+    "Project": "Proyek",
+    "ProjectID": "ID Proyek",
+    "ReplicaSummary": "Replika",
+    "ReplicaSummaryTooltip": "Replika yang berjalan dari jumlah replika yang diinginkan.",
+    "Replicas": "Replika",
+    "ResourceGroup": "Grup Sumber Daya",
+    "RevisionNumber": "Revisi",
+    "RevisionNumberTooltip": "Nomor revisi saat ini dari penerapan.",
+    "StrategyType": "Strategi",
+    "Tags": "Tag",
+    "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "Tindakan lainnya"
+  },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Folder berikut akan diperbarui.",
+    "FollowingProjectsWillBeUpdated": "Proyek berikut akan diperbarui.",
     "ProjectResourcePolicy": "Kebijakan Sumber Daya Proyek",
     "UpdateMultipleProjects": "Perbarui Beberapa Proyek"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Dibuat di",
+    "MaxNetworkCount": "Jumlah Jaringan Maks",
+    "MaxQuotaScopeSize": "Ukuran Folder Maks",
+    "MaxVFolderCount": "Jumlah Folder Maks",
+    "Name": "Nama"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Pilih Proyek"
@@ -176,32 +332,24 @@
     "UpdateProject": "Perbarui Proyek"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Anda yakin ingin menonaktifkan proyek {{projectName}}?",
-    "AreYouSureToPurgeProject": "Apakah Anda yakin ingin menghapus {{projectName}}? Tindakan ini tidak dapat dibatalkan.",
     "ContainerRegistry": "Registri Kontainer",
-    "Controls": "Kontrol",
+    "ContainerRegistryProject": "Proyek Registri Kontainer",
     "CreatedAt": "Dibuat pada",
-    "Deactivate": "Nonaktifkan",
-    "DeactivateProject": "Nonaktifkan Proyek",
     "Description": "Deskripsi",
     "Domain": "Domain",
-    "FailedToDeactivateProject": "Gagal menonaktifkan proyek.",
-    "FailedToPurgeProject": "Gagal menghapus proyek secara permanen.",
     "IntegrationID": "ID Integrasi",
-    "IsActive": "Aktif",
     "Name": "Nama",
     "Project": "Proyek",
-    "ProjectDeactivated": "Proyek telah dinonaktifkan.",
     "ProjectID": "ID Proyek",
-    "ProjectPurged": "Proyek telah dihapus secara permanen.",
-    "Purge": "Bersihkan",
-    "PurgeProject": "Hapus Proyek Secara Permanen",
     "Registry": "Registri",
     "ResourcePolicy": "Kebijakan Sumber Daya",
     "ScalingGroups": "Grup Sumber Daya",
     "StorageNodes": "Node Penyimpanan",
     "TotalResourceSlots": "Jumlah Slot Sumber Daya",
     "Type": "Tipe"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Pilih Folder"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Pencarian",
@@ -219,22 +367,154 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Pilih Grup Sumber Daya"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Dialokasikan / Diminta"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Ubah warna grup",
+    "ResourceGrid": "Kisi sumber daya",
+    "UseColorN": "Gunakan warna {{n}}"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Tak terbatas"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Dibuat pada",
+    "HealthStatus": "Status Kesehatan",
     "RouteId": "ID Rute",
+    "SchedulingHistory": "Riwayat Penjadwalan",
     "SessionId": "ID Sesi",
     "Status": "Status",
     "TrafficRatio": "Rasio Lalu Lintas",
     "TrafficStatus": "Status Trafik"
   },
-  "comp:BAISchedulingHistoryNodes": {
+  "comp:BAIRouteSchedulingHistoryNodes": {
     "Attempts": "Percobaan",
+    "Category": "Kategori",
     "CreatedAt": "Dibuat pada",
-    "From": "Dari",
+    "ErrorCode": "Kode Kesalahan",
+    "From": "Status asal",
+    "Message": "Pesan",
     "Phase": "Tahap",
     "Result": "Hasil",
-    "StatusTransition": "Transisi Status",
-    "To": "sampai",
+    "To": "Status tujuan",
+    "UpdatedAt": "Diperbarui pada"
+  },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Tambah Pilihan",
+    "Category": "Kategori",
+    "CategoryPlaceholder": "mis. model_loading",
+    "CategoryTooltip": "Kategori UI yang digunakan untuk mengelompokkan parameter terkait.",
+    "ChoiceLabel": "Label",
+    "ChoiceLabelPlaceholder": "mis. FP16",
+    "ChoiceLabelRequired": "Label pilihan wajib diisi.",
+    "ChoiceValue": "Nilai",
+    "ChoiceValuePlaceholder": "mis. fp16",
+    "ChoiceValueRequired": "Nilai pilihan wajib diisi.",
+    "Choices": "Pilihan",
+    "ChoicesRequired": "Diperlukan minimal satu pilihan.",
+    "CreatePreset": "Buat Preset",
+    "DefaultValue": "Nilai Default",
+    "DefaultValuePlaceholder": "mis. 1",
+    "Description": "Deskripsi",
+    "DescriptionPlaceholder": "Jelaskan parameter apa yang dikontrol oleh nilai ini dan bagaimana pengaruhnya terhadap perilaku inferensi.",
+    "DisplayName": "Nama Tampilan",
+    "DisplayNamePlaceholder": "mis. Tensor Parallel Size",
+    "DisplayNameTooltip": "Label yang mudah dibaca dan ditampilkan menggantikan nama parameter pada formulir deployment.",
+    "EditPreset": "Edit Preset",
+    "Key": "Kunci",
+    "KeyPlaceholder": "mis. TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Kunci wajib diisi.",
+    "Name": "Nama",
+    "NamePlaceholder": "mis. Tensor Parallel Size",
+    "NameRequired": "Nama wajib diisi.",
+    "NumberMax": "Maksimum",
+    "NumberMaxMustExceedMin": "Nilai maksimum harus lebih besar dari nilai minimum.",
+    "NumberMin": "Minimum",
+    "PresetCreated": "Preset varian runtime telah dibuat.",
+    "PresetTarget": "Target Preset",
+    "PresetTargetArgs": "Argumen Baris Perintah",
+    "PresetTargetEnv": "Variabel Lingkungan",
+    "PresetTargetRequired": "Target preset wajib diisi.",
+    "PresetUpdated": "Preset varian runtime telah diperbarui.",
+    "Rank": "Peringkat",
+    "RankTooltip": "Urutan tampilan di antara preset dari varian runtime yang sama. Nilai yang lebih rendah ditampilkan terlebih dahulu.",
+    "Required": "Wajib",
+    "RequiredTooltip": "Menentukan apakah parameter preset ini harus disediakan saat membuat revisi deployment.",
+    "Requirement": "Kewajiban",
+    "RuntimeVariant": "Varian Runtime",
+    "RuntimeVariantRequired": "Varian runtime wajib diisi.",
+    "SliderMax": "Maksimum",
+    "SliderMaxMustExceedMin": "Nilai maksimum harus lebih besar dari nilai minimum.",
+    "SliderMaxRequired": "Nilai maksimum wajib diisi.",
+    "SliderMin": "Minimum",
+    "SliderMinRequired": "Nilai minimum wajib diisi.",
+    "SliderStep": "Langkah",
+    "SliderStepMustBePositive": "Langkah harus lebih besar dari 0.",
+    "SliderStepTooltip": "Langkah kenaikan untuk slider. Default-nya 1.",
+    "StoredValueTypeMismatch": "Preset ini disimpan dengan tipe nilai {{valueType}}, yang tidak dapat ditampilkan oleh tipe antarmuka {{uiType}}. Ubah tipe antarmuka atau tipe nilai.",
+    "TextPlaceholderExample": "mis. Masukkan nilai",
+    "TextPlaceholderLabel": "Placeholder Input",
+    "UIType": "Tipe UI",
+    "UITypeCheckbox": "Kotak Centang",
+    "UITypeIncompatibleWithValueType": "Tipe antarmuka yang dipilih tidak dapat menampilkan tipe nilai ini.",
+    "UITypeNumberInput": "Input Angka",
+    "UITypeSelect": "Pilih",
+    "UITypeSlider": "Slider",
+    "UITypeTextInput": "Input Teks",
+    "UITypeTooltip": "Kontrol yang digunakan untuk menampilkan parameter ini pada formulir deployment.",
+    "ValueType": "Tipe Nilai",
+    "ValueTypeBool": "Boolean",
+    "ValueTypeFlag": "Penanda",
+    "ValueTypeFloat": "Bilangan Desimal",
+    "ValueTypeInt": "Bilangan Bulat",
+    "ValueTypeRequired": "Tipe nilai wajib diisi.",
+    "ValueTypeStr": "String"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Kategori",
+    "CreatedAt": "Tanggal dibuat",
+    "DefaultValue": "Nilai Default",
+    "Description": "Deskripsi",
+    "DisplayName": "Nama Tampilan",
+    "Key": "Kunci",
+    "ModifiedAt": "Tanggal diubah",
+    "Name": "Nama",
+    "Optional": "Opsional",
+    "PresetTarget": "Target Preset",
+    "PresetTargetArgs": "Argumen Baris Perintah",
+    "PresetTargetEnv": "Variabel Lingkungan",
+    "Rank": "Peringkat",
+    "RankTooltip": "Urutan tampilan di antara preset dari varian runtime yang sama. Nilai yang lebih rendah ditampilkan terlebih dahulu.",
+    "Required": "Wajib",
+    "RuntimeVariantId": "ID Varian Runtime",
+    "RuntimeVariantWithID": "Varian Runtime (ID)",
+    "UIType": "Tipe UI",
+    "UITypeCheckbox": "Kotak Centang",
+    "UITypeNumberInput": "Input Angka",
+    "UITypeSelect": "Pilih",
+    "UITypeSlider": "Slider",
+    "UITypeTextInput": "Input Teks",
+    "ValueType": "Tipe Nilai",
+    "ValueTypeBool": "Boolean",
+    "ValueTypeFlag": "Penanda",
+    "ValueTypeFloat": "Bilangan Desimal",
+    "ValueTypeInt": "Bilangan Bulat",
+    "ValueTypeStr": "String"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Pilih Varian Runtime"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Percobaan",
+    "Category": "Kategori",
+    "CreatedAt": "Dibuat pada",
+    "ErrorCode": "Kode Kesalahan",
+    "From": "Status asal",
+    "Message": "Pesan",
+    "Phase": "Tahap",
+    "Result": "Hasil",
+    "To": "Status tujuan",
     "UpdatedAt": "Diperbarui pada"
   },
   "comp:BAISessionAgentIds": {
@@ -250,11 +530,32 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Pilih Host Penyimpanan"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Pilih Proksi Penyimpanan"
+  },
+  "comp:BAISubStepNodes": {
+    "Duration": "Durasi",
+    "ErrorCode": "Kode Kesalahan",
+    "Message": "Pesan",
+    "Result": "Hasil",
+    "ResultMarker": "Penanda hasil untuk percobaan ini",
+    "Step": "Langkah",
+    "Time": "Waktu"
+  },
   "comp:BAITable": {
+    "Apply": "Terapkan",
+    "Cancel": "Batal",
+    "CollapseAll": "Ciutkan semua",
+    "ExpandAll": "Perluas semua",
+    "ExpandErrorsOnly": "Perluas hanya kesalahan",
+    "ExpandOptions": "Opsi perluasan",
+    "ExpandRow": "Perluas baris",
     "Export": "Ekspor",
     "ExportCSV": "Ekspor CSV",
     "GoToFirstPage": "Ke halaman pertama",
     "InvalidPageNumber": "Nomor halaman tidak valid",
+    "NoDataToDisplay": "Tidak ada data untuk ditampilkan",
+    "Pagination": "Penomoran halaman",
     "SearchTableColumn": "Kolom Tabel Cari",
     "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
     "SettingTable": "Pengaturan Tabel"
@@ -262,16 +563,39 @@
   "comp:BAITestButton": {
     "Test": "tes"
   },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Dibuat di",
+    "MaxConcurrentLogins": "Login Bersamaan Maksimum",
+    "MaxCustomizedImageCount": "Jumlah Gambar Khusus Maksimum",
+    "MaxQuotaScopeSize": "Ukuran Folder Maks",
+    "MaxSessionCountPerModelSession": "Jumlah Sesi Maks Per Sesi Model",
+    "MaxVFolderCount": "Jumlah Folder Maks",
+    "Name": "Nama"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "Pilih Pengguna"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Format jalur tidak valid.",
+    "AliasOverlapping": "Jalur mount bertumpang tindih dengan folder lain.",
+    "AliasPlaceholder": "Jalur mount",
+    "AutoMountedFolders": "Folder mount otomatis",
+    "Name": "Nama",
+    "PathAndAlias": "Jalur & Alias",
+    "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
+    "RemoveFolder": "Hapus",
+    "Subpath": "Subjal",
+    "SubpathInvalid": "Subjalur harus berupa jalur relatif dan tidak boleh mengandung '..'.",
+    "SubpathPlaceholder": "mis. dataset/train (opsional)",
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Kosongkan untuk mount dari root."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Unduhan {{count}} item telah dimulai.",
     "ChangeFileExtension": "Ubah ekstensi file",
     "ChangeFileExtensionDesc": "Mengubah ekstensi file dapat menyebabkan file menjadi tidak dapat digunakan atau dibuka secara tidak benar. \nApakah Anda ingin melanjutkan?",
-    "Controls": "Kontrol",
     "CreateANewFile": "Create a new file",
     "CreateANewFolder": "Buat folder baru",
     "CreateFile": "Create File",
@@ -279,6 +603,8 @@
     "CreatedAt": "Dibuat di",
     "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
     "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
+    "Download": "Unduh",
+    "DownloadSelected": "Unduh",
     "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
     "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah.",
     "DuplicatedFiles": "Timpa konfirmasi",
@@ -294,10 +620,12 @@
     "MaxFileNameLength": "File name must be 255 characters or less.",
     "MaxFolderNameLength": "Nama folder harus 255 karakter atau kurang.",
     "ModifiedAt": "Dimodifikasi di",
-    "MoreOptions": "Opsi lainnya",
     "Name": "Nama",
+    "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Harap masukkan nama folder.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Namanya telah berhasil diubah.",
     "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
     "Size": "Ukuran",
@@ -317,19 +645,31 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tidak ada data sumber daya yang tersedia"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Berakhir pada",
-    "ErrorCode": "Kode Kesalahan",
-    "Message": "Pesan",
-    "Result": "Hasil",
-    "StartedAt": "Dimulai pada",
-    "Step": "Langkah"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Akselerator AI",
+    "CPU": "CPU",
+    "ClusterMode": "Mode Kluster",
+    "CreatedAt": "Dibuat pada",
+    "ElapsedTime": "Waktu Berlalu",
+    "Environments": "Lingkungan",
+    "Memory": "Memori",
+    "OwnerEmail": "Email Pemilik",
+    "Project": "Proyek",
+    "ResourceGroup": "Grup Sumber Daya",
+    "SessionId": "ID Sesi",
+    "SessionName": "Nama Sesi",
+    "SessionType": "Jenis Sesi",
+    "Status": "Status",
+    "TerminateSession": "Hentikan Sesi"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP Klien yang Diizinkan",
-    "ContainerGIDs": "GID Container",
-    "ContainerMainGID": "GID Utama Container",
-    "ContainerUID": "UID Container",
+    "ContainerGIDs": "GID tambahan",
+    "ContainerGIDsTooltip": "ID grup numerik tambahan yang ditetapkan pada proses kontainer",
+    "ContainerMainGID": "GID kontainer",
+    "ContainerMainGIDTooltip": "ID grup numerik default yang ditetapkan untuk proses di dalam kontainer",
+    "ContainerUID": "UID kontainer",
+    "ContainerUIDTooltip": "ID pengguna numerik yang ditetapkan untuk proses di dalam kontainer",
     "CreatedAt": "Dibuat pada",
     "Description": "Deskripsi",
     "Disabled": "Nonaktif",
@@ -337,6 +677,8 @@
     "Email": "Email",
     "Enabled": "Aktif",
     "FullName": "Nama Lengkap",
+    "IntegrationName": "Nama integrasi",
+    "MainAccessKey": "Kunci Akses Utama",
     "ModifiedAt": "Dimodifikasi pada",
     "NeedPasswordChange": "Perlu Ganti Kata Sandi",
     "Project": "Proyek",
@@ -346,20 +688,79 @@
     "StatusInfo": "Info Status",
     "SudoSessionEnabled": "Sesi Sudo Diaktifkan",
     "TwoFA": "Autentikasi Dua Faktor",
+    "TwoFAActivatedAt": "2FA Diaktifkan Pada",
+    "UserID": "ID Pengguna",
     "Username": "Nama Pengguna"
+  },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Klik untuk memilih jalur",
+    "SelectAPath": "Pilih jalur",
+    "SelectAPathInFolder": "Pilih jalur di {{folderName}}",
+    "SelectFolderFirst": "Pilih folder terlebih dahulu",
+    "SelectThisLocation": "Pilih lokasi ini",
+    "SelectedPath": "Terpilih"
   },
   "error": {
     "UnknownError": "Terjadi kesalahan yang tidak diketahui. \nTolong coba lagi."
   },
+  "form": {
+    "Optional": "(optional)",
+    "validateMessages": {
+      "Default": "Kesalahan validasi untuk ${label}",
+      "Required": "Tolong masukkan ${label}",
+      "Whitespace": "${label} tidak boleh berupa karakter kosong",
+      "array": {
+        "Len": "Harus ${len} ${label}",
+        "Max": "Maksimal ${max} ${label}",
+        "Min": "Minimal ${min} ${label}",
+        "Range": "Jumlah ${label} harus di antara ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} harus sama dengan ${len}",
+        "Max": "${label} harus maksimal ${max}",
+        "Min": "${label} harus minimal ${min}",
+        "Range": "${label} harus di antara ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} tidak sesuai dengan pola ${pattern}"
+      },
+      "string": {
+        "Len": "${label} harus berupa ${len} karakter",
+        "Max": "${label} harus maksimal ${max} karakter",
+        "Min": "${label} harus minimal ${min} karakter",
+        "Range": "${label} harus diantara ${min}-${max} karakter"
+      },
+      "types": {
+        "Email": "${label} tidak valid ${type}",
+        "Number": "${label} tidak valid ${type}",
+        "Object": "${label} tidak valid ${type}",
+        "String": "${label} tidak valid ${type}",
+        "Url": "${label} tidak valid ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
+    "DeselectAll": "Batalkan semua pilihan",
+    "File": "Berkas",
+    "Increase": "Increase",
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
+    "Project": "Proyek",
+    "Search": "Cari",
+    "Select": "Select",
+    "SelectPlaceholder": "Pilih {{label}}",
     "TotalItems": "Total {{total}} item",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Membatalkan",
       "Close": "Menutup",
       "Collapse": "Runtuh",
+      "Confirm": "Confirm",
       "Copied": "Disalin",
+      "Copy": "Salin",
       "CopyAll": "Salin semua",
       "Create": "Membuat",
       "Delete": "Menghapus",

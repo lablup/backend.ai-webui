@@ -5,6 +5,7 @@
     "Architecture": "Architecture",
     "DiskPerc": "Disk %",
     "Endpoint": "Endpoint",
+    "FailedToLoadCellData": "Failed to load data.",
     "NoAvailableLiveStat": "No available live stat",
     "Region": "Region",
     "ResourceGroup": "Resource Group",
@@ -25,6 +26,9 @@
     "AreYouSureYouWantToActivateSome": "Are you sure you want to activate {{count}} artifacts?",
     "FailedToActivateArtifacts": "Failed to activate artifacts.",
     "SuccessfullyActivated": "Successfully activated artifacts."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Select Keypair Resource Policy"
   },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Select Model Service"
@@ -63,6 +67,22 @@
     "Updated": "Updated",
     "Version": "Version"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "Action ID",
+    "Actor": "Actor",
+    "Description": "Description",
+    "Duration": "Duration",
+    "EntityId": "Entity ID",
+    "EntityType": "Entity Type",
+    "Operation": "Operation",
+    "RequestId": "Request ID",
+    "Status": "Status",
+    "Time": "Time",
+    "TriggeredBy": "Triggered By"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Select Preset"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
   },
@@ -70,6 +90,21 @@
     "Clear": "Clear",
     "KeepAsIs": "Keep as is",
     "UndoChanges": "Undo changes"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Action execution failed",
+    "ErrorOccurred": "Error Occurred"
+  },
+  "comp:BAIColorPicker": {
+    "Clear": "Clear",
+    "HexValue": "Hex value",
+    "NoColor": "No color",
+    "SelectColor": "Select color"
+  },
+  "comp:BAIComplexSelect": {
+    "ClearSearch": "Clear Search options",
+    "NoResults": "No results",
+    "SearchOptions": "Search options"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Select Container Registry"
@@ -91,14 +126,58 @@
     "SuccessFullyRemoved": "Successfully removed {{count}} versions.",
     "Version": "Version"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Are you sure you want to delete?",
+    "AreYouSureToPermanentlyDeleteTarget": "Are you sure you want to permanently delete {{target}}?",
+    "CannotBeUndone": "This action cannot be undone.",
+    "DeleteItem": "Delete",
+    "DeleteNItems": "Delete {{count}} items",
+    "TypeToConfirm": "Type <code>{{confirmText}}</code> to confirm."
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Created by"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Attempts",
+    "Category": "Category",
+    "CreatedAt": "Created At",
+    "ErrorCode": "Error Code",
+    "From": "From Status",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Result",
+    "To": "To Status",
+    "UpdatedAt": "Updated At"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Select Deployment"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Degraded",
+    "Deploying": "Deploying",
+    "Healthy": "Healthy",
+    "NotChecked": "Not Checked",
+    "Pending": "Pending",
+    "Ready": "Ready",
+    "Scaling": "Scaling",
+    "Stopped": "Stopped",
+    "Stopping": "Stopping",
+    "Terminated": "Terminated",
+    "Unhealthy": "Unhealthy"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Select Domain"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Auto Refresh",
+    "EveryHours": "{{count}}h",
+    "EveryMinutes": "{{count}}m",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Last Updated",
+    "Off": "Off",
     "Refresh": "Refresh"
   },
   "comp:BAIGraphQLPropertyFilter": {
@@ -106,6 +185,9 @@
     "operator": {
       "After": "after",
       "Before": "before",
+      "Contains": "contains",
+      "EndsWith": "ends with",
+      "Equals": "equals",
       "GreaterThan": "greater than",
       "GreaterThanOrEqual": "greater or equal",
       "IContains": "contains",
@@ -119,7 +201,12 @@
       "In": "in",
       "LessThan": "less than",
       "LessThanOrEqual": "less or equal",
-      "NotIn": "not in"
+      "NotContains": "not contains",
+      "NotEndsWith": "not ends with",
+      "NotEquals": "not equals",
+      "NotIn": "not in",
+      "NotStartsWith": "not starts with",
+      "StartsWith": "starts with"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -127,6 +214,9 @@
     "HuggingFaceSettings": "Hugging Face Settings",
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Select Image"
   },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} versions are excluded.",
@@ -138,8 +228,36 @@
     "SuccessFullyPulled": "Successfully requested pull for {{count}} versions.",
     "Version": "Version"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Cluster Size",
+    "Concurrency": "Concurrent Sessions",
+    "CreatedAt": "Created At",
+    "DefaultForUnspecified": "Default For Unspecified",
+    "DefaultForUnspecifiedTooltipDesc1": "Sets the default policy when no specific CPU or memory is requested.",
+    "DefaultForUnspecifiedTooltipDesc2": "'UNLIMITED' allows usage up to the agent node’s capacity, while 'LIMITED' denies resources unless explicitly set. In most cases, 'UNLIMITED' is recommended.",
+    "IdleTimeout": "Idle Timeout",
+    "MaxConcurrentSFTPSessions": "Max Concurrent SFTP Sessions",
+    "MaxPendingSessionCount": "Max Pending Session Count",
+    "MaxPendingSessionResourceSlots": "Max Pending Session Resource Slots",
+    "MaxSessionLifetime": "Max Session Lifetime",
+    "Name": "Name",
+    "StorageNodes": "Storage Nodes",
+    "TotalResourceSlots": "Resource Policy"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Select Keypair"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Domain",
+    "FailReason": "Failure Reason",
+    "LoginTime": "Login Time",
+    "Result": "Result"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Access Key",
+    "CreatedAt": "Created At",
+    "InvalidatedAt": "Invalidated At",
+    "User": "User"
   },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
@@ -148,10 +266,51 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Are you sure you want to delete deployment \"{{deploymentName}}\"? This action cannot be undone.",
+    "CreatedAt": "Created At",
+    "CreatedUser": "Author",
+    "CurrentRevisionID": "Current Revision ID",
+    "Delete": "Delete",
+    "DeleteDeployment": "Delete Deployment",
+    "DeploymentDeleted": "Deployment deleted.",
+    "DeploymentID": "Deployment ID",
+    "DomainName": "Domain",
+    "EndpointURL": "Endpoint URL",
+    "FailedToDeleteDeployment": "Failed to delete deployment.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Lifecycle",
+    "Model": "Model",
+    "Name": "Name",
+    "OpenToPublic": "Open to Public",
+    "Owner": "Owner",
+    "PreferredDomainName": "Preferred Domain",
+    "Project": "Project",
+    "ProjectID": "Project ID",
+    "ReplicaSummary": "Replicas",
+    "ReplicaSummaryTooltip": "Running replicas over the desired replica count.",
+    "Replicas": "Replicas",
+    "ResourceGroup": "Resource Group",
+    "RevisionNumber": "Revision",
+    "RevisionNumberTooltip": "The current revision number of the deployment.",
+    "StrategyType": "Strategy",
+    "Tags": "Tags",
+    "UpdatedAt": "Updated At"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "More actions"
+  },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "The following folder(s) will be updated.",
+    "FollowingProjectsWillBeUpdated": "The following project(s) will be updated.",
     "ProjectResourcePolicy": "Project Resource Policy",
     "UpdateMultipleProjects": "Update Multiple Projects"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Created At",
+    "MaxNetworkCount": "Max Network Count",
+    "MaxQuotaScopeSize": "Max Folder Size",
+    "MaxVFolderCount": "Max Folder Count",
+    "Name": "Name"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Select Project"
@@ -179,26 +338,15 @@
     "UpdateProject": "Update Project"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Are you sure to deactivate project {{projectName}}?",
-    "AreYouSureToPurgeProject": "Are you sure to purge {{projectName}}? This action is irreversible.",
     "ContainerRegistry": "Container Registry",
-    "Controls": "Controls",
+    "ContainerRegistryProject": "Container Registry Project",
     "CreatedAt": "Created At",
-    "Deactivate": "Deactivate",
-    "DeactivateProject": "Deactivate Project",
     "Description": "Description",
     "Domain": "Domain",
-    "FailedToDeactivateProject": "Failed to deactivate the project.",
-    "FailedToPurgeProject": "Failed to purge the project.",
     "IntegrationID": "Integration ID",
-    "IsActive": "Active",
     "Name": "Name",
     "Project": "Project",
-    "ProjectDeactivated": "The project has been deactivated.",
     "ProjectID": "Project ID",
-    "ProjectPurged": "The projecth has been purged",
-    "Purge": "Purge",
-    "PurgeProject": "Purge Project",
     "Registry": "Registry",
     "ResourcePolicy": "Resource Policy",
     "ScalingGroups": "Resource Groups",
@@ -206,9 +354,24 @@
     "TotalResourceSlots": "Total Resource Slots",
     "Type": "Type"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Select Folder"
+  },
   "comp:BAIPropertyFilter": {
+    "Apply": "Apply",
     "PlaceHolder": "Search",
-    "ResetFilter": "Reset filters"
+    "ResetFilter": "Reset filters",
+    "SearchLabel": "Search filters",
+    "operator": {
+      "Contains": "contains",
+      "Equals": "is",
+      "GreaterThan": "greater than",
+      "GreaterThanOrEqual": "greater or equal",
+      "In": "in",
+      "LessThan": "less than",
+      "LessThanOrEqual": "less or equal",
+      "NotEquals": "is not"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Cancel Pull",
@@ -222,25 +385,154 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Select Resource Group"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Allocated / Requested"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Change group color",
+    "ResourceGrid": "Resource grid",
+    "UseColorN": "Use color {{n}}"
+  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
   },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Created At",
+    "HealthStatus": "Health Status",
     "RouteId": "Route ID",
+    "SchedulingHistory": "Scheduling History",
     "SessionId": "Session ID",
     "Status": "Status",
     "TrafficRatio": "Traffic Ratio",
     "TrafficStatus": "Traffic Status"
   },
-  "comp:BAISchedulingHistoryNodes": {
+  "comp:BAIRouteSchedulingHistoryNodes": {
     "Attempts": "Attempts",
+    "Category": "Category",
     "CreatedAt": "Created At",
-    "From": "From",
+    "ErrorCode": "Error Code",
+    "From": "From Status",
+    "Message": "Message",
     "Phase": "Phase",
     "Result": "Result",
-    "StatusTransition": "Status Transition",
-    "To": "To",
+    "To": "To Status",
+    "UpdatedAt": "Updated At"
+  },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Add Choice",
+    "Category": "Category",
+    "CategoryPlaceholder": "e.g., model_loading",
+    "CategoryTooltip": "UI category used to organize related parameters together.",
+    "ChoiceLabel": "Label",
+    "ChoiceLabelPlaceholder": "e.g., FP16",
+    "ChoiceLabelRequired": "Choice label is required.",
+    "ChoiceValue": "Value",
+    "ChoiceValuePlaceholder": "e.g., fp16",
+    "ChoiceValueRequired": "Choice value is required.",
+    "Choices": "Choices",
+    "ChoicesRequired": "At least one choice is required.",
+    "CreatePreset": "Create Preset",
+    "DefaultValue": "Default Value",
+    "DefaultValuePlaceholder": "e.g., 1",
+    "Description": "Description",
+    "DescriptionPlaceholder": "Describe what this parameter controls and how it affects inference behavior.",
+    "DisplayName": "Display Name",
+    "DisplayNamePlaceholder": "e.g., Tensor Parallel Size",
+    "DisplayNameTooltip": "Human-readable label shown in place of the parameter name in the deployment form.",
+    "EditPreset": "Edit Preset",
+    "Key": "Key",
+    "KeyPlaceholder": "e.g., TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Key is required.",
+    "Name": "Name",
+    "NamePlaceholder": "e.g., Tensor Parallel Size",
+    "NameRequired": "Name is required.",
+    "NumberMax": "Maximum",
+    "NumberMaxMustExceedMin": "Maximum must be greater than minimum.",
+    "NumberMin": "Minimum",
+    "PresetCreated": "Runtime variant preset has been created.",
+    "PresetTarget": "Preset Target",
+    "PresetTargetArgs": "Command-line Argument",
+    "PresetTargetEnv": "Environment Variable",
+    "PresetTargetRequired": "Preset target is required.",
+    "PresetUpdated": "Runtime variant preset has been updated.",
+    "Rank": "Rank",
+    "RankTooltip": "Display ordering among presets of the same runtime variant. Lower values are shown first.",
+    "Required": "Required",
+    "RequiredTooltip": "Whether this preset parameter must be supplied when building a deployment revision.",
+    "Requirement": "Requirement",
+    "RuntimeVariant": "Runtime Variant",
+    "RuntimeVariantRequired": "Runtime variant is required.",
+    "SliderMax": "Maximum",
+    "SliderMaxMustExceedMin": "Maximum must be greater than minimum.",
+    "SliderMaxRequired": "Maximum value is required.",
+    "SliderMin": "Minimum",
+    "SliderMinRequired": "Minimum value is required.",
+    "SliderStep": "Step",
+    "SliderStepMustBePositive": "Step must be greater than 0.",
+    "SliderStepTooltip": "Increment step for the slider. Defaults to 1.",
+    "StoredValueTypeMismatch": "This preset is saved with the value type {{valueType}}, which the UI type {{uiType}} cannot render. Change either the UI type or the value type.",
+    "TextPlaceholderExample": "e.g., Enter a value",
+    "TextPlaceholderLabel": "Input Placeholder",
+    "UIType": "UI Type",
+    "UITypeCheckbox": "Checkbox",
+    "UITypeIncompatibleWithValueType": "The selected UI type cannot render this value type.",
+    "UITypeNumberInput": "Number Input",
+    "UITypeSelect": "Select",
+    "UITypeSlider": "Slider",
+    "UITypeTextInput": "Text Input",
+    "UITypeTooltip": "Control used to render this parameter in the deployment form.",
+    "ValueType": "Value Type",
+    "ValueTypeBool": "Boolean",
+    "ValueTypeFlag": "Flag",
+    "ValueTypeFloat": "Float",
+    "ValueTypeInt": "Integer",
+    "ValueTypeRequired": "Value type is required.",
+    "ValueTypeStr": "String"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Category",
+    "CreatedAt": "Created At",
+    "DefaultValue": "Default Value",
+    "Description": "Description",
+    "DisplayName": "Display Name",
+    "Key": "Key",
+    "ModifiedAt": "Modified At",
+    "Name": "Name",
+    "Optional": "Optional",
+    "PresetTarget": "Preset Target",
+    "PresetTargetArgs": "Command-line Argument",
+    "PresetTargetEnv": "Environment Variable",
+    "Rank": "Rank",
+    "RankTooltip": "Display ordering among presets of the same runtime variant. Lower values are shown first.",
+    "Required": "Required",
+    "RuntimeVariantId": "Runtime Variant ID",
+    "RuntimeVariantWithID": "Runtime Variant (ID)",
+    "UIType": "UI Type",
+    "UITypeCheckbox": "Checkbox",
+    "UITypeNumberInput": "Number Input",
+    "UITypeSelect": "Select",
+    "UITypeSlider": "Slider",
+    "UITypeTextInput": "Text Input",
+    "ValueType": "Value Type",
+    "ValueTypeBool": "Boolean",
+    "ValueTypeFlag": "Flag",
+    "ValueTypeFloat": "Float",
+    "ValueTypeInt": "Integer",
+    "ValueTypeStr": "String"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Select Runtime Variant"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Attempts",
+    "Category": "Category",
+    "CreatedAt": "Created At",
+    "ErrorCode": "Error Code",
+    "From": "From Status",
+    "Message": "Message",
+    "Phase": "Phase",
+    "Result": "Result",
+    "To": "To Status",
     "UpdatedAt": "Updated At"
   },
   "comp:BAISessionAgentIds": {
@@ -256,11 +548,32 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Select Storage Host"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Select Storage Proxy"
+  },
+  "comp:BAISubStepNodes": {
+    "Duration": "Duration",
+    "ErrorCode": "Error Code",
+    "Message": "Message",
+    "Result": "Result",
+    "ResultMarker": "Result marker for this attempt",
+    "Step": "Step",
+    "Time": "Time"
+  },
   "comp:BAITable": {
+    "Apply": "Apply",
+    "Cancel": "Cancel",
+    "CollapseAll": "Collapse all",
+    "ExpandAll": "Expand all",
+    "ExpandErrorsOnly": "Expand errors only",
+    "ExpandOptions": "Expand options",
+    "ExpandRow": "Expand row",
     "Export": "Export",
     "ExportCSV": "Export CSV",
     "GoToFirstPage": "Go to first page",
     "InvalidPageNumber": "Invalid page number",
+    "NoDataToDisplay": "No data to display",
+    "Pagination": "Pagination",
     "SearchTableColumn": "Search table columns",
     "SelectColumnToDisplay": "Select columns to display",
     "SettingTable": "Table Settings"
@@ -268,16 +581,39 @@
   "comp:BAITestButton": {
     "Test": "Test"
   },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Created At",
+    "MaxConcurrentLogins": "Max Concurrent Logins",
+    "MaxCustomizedImageCount": "Max Customized Image Count",
+    "MaxQuotaScopeSize": "Max Folder Size",
+    "MaxSessionCountPerModelSession": "Max Session Count Per Model Session",
+    "MaxVFolderCount": "Max Folder Count",
+    "Name": "Name"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "Select User"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Invalid path format.",
+    "AliasOverlapping": "Mount path overlaps with another folder.",
+    "AliasPlaceholder": "Mount path",
+    "AutoMountedFolders": "Automount Folders",
+    "Name": "Name",
+    "PathAndAlias": "Path & Alias",
+    "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
+    "RemoveFolder": "Remove",
+    "Subpath": "Subpath",
+    "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
+    "SubpathPlaceholder": "e.g. dataset/train (optional)",
+    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Select Folder"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Download of {{count}} item(s) has started.",
     "ChangeFileExtension": "Change File Extension",
     "ChangeFileExtensionDesc": "Changing the file extension may cause the file to become unusable or open incorrectly. Do you want to proceed?",
-    "Controls": "Controls",
     "CreateANewFile": "Create a new file",
     "CreateANewFolder": "Create a new folder",
     "CreateFile": "Create File",
@@ -285,6 +621,8 @@
     "CreatedAt": "Created At",
     "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
     "DeleteSelectedItemsDialog": "Delete Confirmation",
+    "Download": "Download",
+    "DownloadSelected": "Download",
     "DownloadStarted": "File \"{{fileName}}\" download has started.",
     "DragAndDropDesc": "Drag and drop files to this area to upload.",
     "DuplicatedFiles": "Overwrite Confirmation",
@@ -300,10 +638,12 @@
     "MaxFileNameLength": "File name must be 255 characters or less.",
     "MaxFolderNameLength": "Folder name must be 255 characters or less.",
     "ModifiedAt": "Modified At",
-    "MoreOptions": "More options",
     "Name": "Name",
+    "NoUploadPermissionForHost": "You don't have upload permission for this host.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Please enter the folder name.",
+    "RenameFile": "Rename",
     "RenameSuccess": "The name has been successfully changed.",
     "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
     "Size": "Size",
@@ -323,19 +663,31 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Ended At",
-    "ErrorCode": "Error Code",
-    "Message": "Message",
-    "Result": "Result",
-    "StartedAt": "Started At",
-    "Step": "Step"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "AI Accelerator",
+    "CPU": "CPU",
+    "ClusterMode": "Cluster Mode",
+    "CreatedAt": "Created At",
+    "ElapsedTime": "Elapsed Time",
+    "Environments": "Environments",
+    "Memory": "Memory",
+    "OwnerEmail": "Owner Email",
+    "Project": "Project",
+    "ResourceGroup": "Resource Group",
+    "SessionId": "Session ID",
+    "SessionName": "Session Name",
+    "SessionType": "Session Type",
+    "Status": "Status",
+    "TerminateSession": "Terminate Session"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Allowed Client IPs",
-    "ContainerGIDs": "Container GIDs",
-    "ContainerMainGID": "Container Main GID",
+    "ContainerGIDs": "Supplementary GID",
+    "ContainerGIDsTooltip": "Additional numeric group IDs assigned to container processes",
+    "ContainerMainGID": "Container GID",
+    "ContainerMainGIDTooltip": "Default numeric group ID assigned to processes inside the container",
     "ContainerUID": "Container UID",
+    "ContainerUIDTooltip": "Numeric User ID assigned to processes inside the container",
     "CreatedAt": "Created At",
     "Description": "Description",
     "Disabled": "Disabled",
@@ -343,6 +695,8 @@
     "Email": "E-Mail",
     "Enabled": "Enabled",
     "FullName": "Full Name",
+    "IntegrationName": "Integration Name",
+    "MainAccessKey": "Main Access Key",
     "ModifiedAt": "Modified At",
     "NeedPasswordChange": "Need Password Change",
     "Project": "Project",
@@ -352,20 +706,79 @@
     "StatusInfo": "Status Info",
     "SudoSessionEnabled": "Sudo Session Enabled",
     "TwoFA": "2FA",
+    "TwoFAActivatedAt": "2FA Activated At",
+    "UserID": "User ID",
     "Username": "Username"
+  },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Click to select a path",
+    "SelectAPath": "Select a path",
+    "SelectAPathInFolder": "Select a path in {{folderName}}",
+    "SelectFolderFirst": "Select a folder first",
+    "SelectThisLocation": "Select this location",
+    "SelectedPath": "Selected"
   },
   "error": {
     "UnknownError": "An unknown error occurred. Please try again."
   },
+  "form": {
+    "Optional": "(optional)",
+    "validateMessages": {
+      "Default": "Field validation error for ${label}",
+      "Required": "Please enter ${label}",
+      "Whitespace": "${label} cannot be a blank character",
+      "array": {
+        "Len": "Must be ${len} ${label}",
+        "Max": "At most ${max} ${label}",
+        "Min": "At least ${min} ${label}",
+        "Range": "The amount of ${label} must be between ${min}-${max}"
+      },
+      "number": {
+        "Len": "${label} must be equal to ${len}",
+        "Max": "${label} must be maximum ${max}",
+        "Min": "${label} must be minimum ${min}",
+        "Range": "${label} must be between ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} does not match the pattern ${pattern}"
+      },
+      "string": {
+        "Len": "${label} must be ${len} characters",
+        "Max": "${label} must be up to ${max} characters",
+        "Min": "${label} must be at least ${min} characters",
+        "Range": "${label} must be between ${min}-${max} characters"
+      },
+      "types": {
+        "Email": "${label} is not a valid ${type}",
+        "Number": "${label} is not a valid ${type}",
+        "Object": "${label} is not a valid ${type}",
+        "String": "${label} is not a valid ${type}",
+        "Url": "${label} is not a valid ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
+    "DeselectAll": "Deselect all",
+    "File": "File",
+    "Increase": "Increase",
     "NSelected": "{{count}} selected",
     "Optional": "Optional",
+    "Project": "Project",
+    "Search": "Search",
+    "Select": "Select",
+    "SelectPlaceholder": "Select {{label}}",
     "TotalItems": "Total {{total}} items",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Cancel",
       "Close": "Close",
       "Collapse": "Collapse",
+      "Confirm": "Confirm",
       "Copied": "Copied",
+      "Copy": "Copy",
       "CopyAll": "Copy All",
       "Create": "Create",
       "Delete": "Delete",

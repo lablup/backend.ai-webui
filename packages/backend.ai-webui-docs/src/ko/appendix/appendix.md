@@ -1,3 +1,7 @@
+---
+navTitle: 부록
+---
+
 # 부록
 
 <a id="gpu-virtualization-and-fractional-gpu-allocation"></a>
@@ -39,9 +43,9 @@ Backend.AI는 GPU 가상화 기술을 지원하여 하나의 물리 GPU를 여�
 
 ## 자동 작업 스케줄링
 
-Backend.AI 서버는 자체 개발한 작업 스케줄러를 내장하고 있습니다. 자동으로 모든 워커 노드의 가용 자원을 확인하여 사용자의 자원 요청에 맞는 워커로 연산 세션 생성 요청을 위임합니다. 또한, 자원이 부족한 경우에는 사용자의 연산 세션 생성 요청을 작업 큐에 PENDING 상태로 등록합니다. 이후 자원이 다시 가용 상태가 되면 대기 중인 요청을 재개하여 연산 세션을 생성합니다.
+Backend.AI 서버는 자체 개발한 작업 스케줄러를 내장하고 있습니다. 자동으로 모든 에이전트 노드의 가용 자원을 확인하여 사용자의 자원 요청에 맞는 에이전트로 연산 세션 생성 요청을 위임합니다. 또한, 자원이 부족한 경우에는 사용자의 연산 세션 생성 요청을 작업 큐에 PENDING 상태로 등록합니다. 이후 자원이 다시 가용 상태가 되면 대기 중인 요청을 재개하여 연산 세션을 생성합니다.
 
-사용자 Web-UI에서 간단한 방법으로 작업 스케줄러의 동작을 확인할 수 있습니다. GPU 호스트가 최대 2 fGPU를 할당할 수 있는 경우, 각각 1 fGPU 할당을 요청하는 3개의 연산 세션을 동시에 생성해 보겠습니다. 세션 시작 다이얼로그의 사용자 지정 할당 섹션에는 GPU와 세션 슬라이더가 있습니다. 세션에서 1보다 큰 값을 지정하고 LAUNCH 버튼을 클릭하면 해당 수만큼의 세션이 동시에 요청됩니다. GPU와 세션을 각각 1과 3으로 설정하겠습니다. 이는 fGPU가 2 단위밖에 없는 상황에서 총 3 fGPU를 요청하는 3개의 세션을 생성하는 상황입니다.
+사용자 WebUI에서 간단한 방법으로 작업 스케줄러의 동작을 확인할 수 있습니다. GPU 호스트가 최대 2 fGPU를 할당할 수 있는 경우, 각각 1 fGPU 할당을 요청하는 3개의 연산 세션을 동시에 생성해 보겠습니다. 세션 런처의 실행 환경 & 자원 할당 단계에서 AI 가속기를 1로 설정합니다. 이어서 검토 및 시작 단계에서 시작 버튼 옆의 메뉴를 열어 복수 세션 동시 시작을 선택합니다. 세션 개수를 3으로 지정하고 시작을 클릭하면 3개의 세션이 동시에 요청됩니다. 이는 fGPU가 2 단위밖에 없는 상황에서 총 3 fGPU를 요청하는 3개의 세션을 생성하는 상황입니다.
 
 ![](../images/session_launch_dialog_2_sessions.png)
 
@@ -80,11 +84,11 @@ Backend.AI는 다양한 사전 빌드된 ML 및 HPC 커널 이미지를 제공�
 
 ![](../images/tf115_version_print.png)
 
-마지막으로, PyTorch 1.7 버전을 사용하여 연산 세션을 생성합니다.
+마지막으로, PyTorch 1.9 버전을 사용하여 연산 세션을 생성합니다.
 
 ![](../images/session_launch_dialog_pytorch17.png)
 
-생성된 세션의 웹 터미널을 열고 다음 Python 명령을 실행합니다. PyTorch 1.8 버전이 설치되어 있는 것을 확인할 수 있습니다.
+생성된 세션의 웹 터미널을 열고 다음 Python 명령을 실행합니다. PyTorch 1.9 버전이 설치되어 있는 것을 확인할 수 있습니다.
 
 ![](../images/pytorch17_version_print.png)
 
@@ -123,18 +127,18 @@ Backend.AI 서버 데몬/서비스를 설치하려면 다음 하드웨어 사양
 - Manager: 2코어, 4 GiB 메모리
 - Agent: 4코어, 32 GiB 메모리, NVIDIA GPU (GPU 워크로드용), > 512 GiB SSD
 - Webserver: 2코어, 4 GiB 메모리
-- WSProxy: 2코어, 4 GiB 메모리
+- App Proxy: 2코어, 4 GiB 메모리
 - PostgreSQL DB: 2코어, 4 GiB 메모리
 - Redis: 1코어, 2 GiB 메모리
 - Etcd: 1코어, 2 GiB 메모리
 
 각 서비스를 설치하기 전에 사전 설치해야 하는 필수 호스트 의존 패키지는 다음과 같습니다.
 
-- Web-UI: 최신 브라우저를 실행할 수 있는 운영체제 (Windows, Mac OS, Ubuntu 등)
+- WebUI: 최신 브라우저를 실행할 수 있는 운영체제 (Windows, Mac OS, Ubuntu 등)
 - Manager: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Agent: docker (≥19.03), CUDA/CUDA Toolkit (≥8, 11 권장), nvidia-docker v2, Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Webserver: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
-- WSProxy: docker (≥19.03), docker-compose (≥1.24)
+- App Proxy: docker (≥19.03), docker-compose (≥1.24)
 - PostgreSQL DB: docker (≥19.03), docker-compose (≥1.24)
 - Redis: docker (≥19.03), docker-compose (≥1.24)
 - Etcd: docker (≥19.03), docker-compose (≥1.24)
@@ -168,8 +172,8 @@ Backend.AI에는 MLFlow와 MLFlow UI를 내장 앱으로 지원하는 다양한 
 
 먼저, 터미널 앱 "console"을 실행하고 아래 명령을 실행합니다. 이 명령은 MLFlow 추적 UI 서버를 시작합니다.
 
-```shell
-$ mlflow ui --host 0.0.0.0
+```bash
+mlflow ui --host 0.0.0.0
 ```
 
 그런 다음, 앱 런처 다이얼로그에서 "MLFlow UI" 앱을 클릭합니다.
@@ -182,9 +186,9 @@ $ mlflow ui --host 0.0.0.0
 
 MLFlow를 사용하면 실행할 때마다 메트릭, 파라미터 등의 실험을 추적할 수 있습니다. 간단한 예제부터 실험 추적을 시작해 보겠습니다.
 
-```shell
-$ wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
-$ python train_diabetes.py
+```bash
+wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
+python train_diabetes.py
 ```
 
 Python 코드를 실행한 후, MLFlow에서 실험 결과를 확인할 수 있습니다.
@@ -193,8 +197,8 @@ Python 코드를 실행한 후, MLFlow에서 실험 결과를 확인할 수 있�
 
 코드 실행 시 인자를 전달하여 하이퍼파라미터를 설정할 수도 있습니다.
 
-```shell
-$ python train_diabetes.py 0.2 0.05
+```bash
+python train_diabetes.py 0.2 0.05
 ```
 
 몇 번의 학습이 끝나면, 학습된 모델들의 결과를 서로 비교해 볼 수 있습니다.

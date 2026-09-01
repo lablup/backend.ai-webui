@@ -1,7 +1,7 @@
+import BAIComplexSelect, { BAILabeledValue } from './BAIComplexSelect';
 import BAIPropertyFilter from './BAIPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-
-// import { action } from '@storybook/addon-actions';
+import { useState } from 'react';
 
 const meta: Meta<typeof BAIPropertyFilter> = {
   title: 'Filter/BAIPropertyFilter',
@@ -16,9 +16,12 @@ const meta: Meta<typeof BAIPropertyFilter> = {
 
 - **Multiple property types**: String and boolean properties with type-specific operators
 - **Dynamic query building**: Visual interface for constructing filter expressions
-- **Autocomplete support**: Predefined options and suggestions for property values  
+- **Autocomplete support**: Predefined options and suggestions for property values
 - **Validation rules**: Custom validation for property values
 - **Query language**: Based on Backend.AI's query filter minilang specification
+- **Custom input via \`renderInput\`**: Replace the built-in value editor with any controlled control (e.g., a user or storage-host picker). The control stages a value via \`onAddCondition(value, label?)\` and the edit popover's Apply button commits it; pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the token shows the label instead. Same contract as \`BAIGraphQLPropertyFilter\`, so controls are interchangeable.
+
+> **to-astryx ticket 28** — the engine is now Astryx \`PowerSearch\`. The prop contract is unchanged, but the antd chrome it documented (property \`Select\` + \`AutoComplete\` + closable \`Tag\`s + the bespoke reset button) is replaced by PowerSearch's typeahead, tokens and built-in clear. \`rule.validate\` is advisory now: a violating token is reported through the control's error status instead of being refused. **to-astryx ticket 32** refreshed these stories: the \`renderInput\` demo below now uses \`BAIComplexSelect\` (Astryx-native) instead of antd \`Select\`, matching what a migrated call site actually renders.
 
 The component generates filter query strings that can be used with Backend.AI's query system, enabling powerful data filtering capabilities across the platform.
 
@@ -61,6 +64,28 @@ The component generates filter query strings that can be used with Backend.AI's 
       },
     },
   },
+  // BAIPropertyFilter is a controlled component: it renders exactly what
+  // `value` holds and reports changes through `onChange`. Storybook args are
+  // static, so unless each change is written back into `value` the filter
+  // looks frozen — searching can't add a tag and the close/reset buttons
+  // can't remove one. We hold the value in local state per story instance so
+  // every story is independently interactive. NOTE: do not use Storybook
+  // `useArgs` here — in the autodocs page only the Primary story's
+  // `updateArgs` is wired, so every other story would stay frozen. `useState`
+  // works for every instance in both the Canvas and Docs views.
+  render: (args) => {
+    const [value, setValue] = useState(args.value);
+    return (
+      <BAIPropertyFilter
+        {...args}
+        value={value}
+        onChange={(next) => {
+          args.onChange?.(next);
+          setValue(next);
+        }}
+      />
+    );
+  },
 };
 
 export default meta;
@@ -96,8 +121,39 @@ export const Default: Story = {
         type: 'boolean',
       },
     ],
-    onChange: () => console.log('Filter changed'),
-    value: 'name ilike %test% & active == true',
+    value: 'name ilike "%test%" & active == true',
+  },
+};
+
+export const NumberAndDatetime: Story = {
+  name: 'Number and Datetime Properties',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Numeric and time properties offer comparison operators. Numbers serialize bare (`priority >= 10`); datetimes stay quoted (`created_at >= "2026-08-01"`) because the backend parses the string into a date.',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+      },
+      {
+        key: 'priority',
+        propertyLabel: 'Priority',
+        type: 'number',
+      },
+      {
+        key: 'created_at',
+        propertyLabel: 'Created At',
+        type: 'datetime',
+      },
+    ],
+    value: 'priority >= 10 & created_at >= "2026-08-01"',
   },
 };
 
@@ -134,7 +190,6 @@ export const WithCustomValidation: Story = {
         strictSelection: true,
       },
     ],
-    onChange: () => console.log('Filter changed'),
   },
 };
 
@@ -173,8 +228,7 @@ export const WithAutocompleteOptions: Story = {
         strictSelection: true,
       },
     ],
-    onChange: () => console.log('Filter changed'),
-    value: 'department ilike %engineering%',
+    value: 'department ilike "%engineering%"',
   },
 };
 
@@ -199,7 +253,6 @@ export const EmptyState: Story = {
         type: 'boolean',
       },
     ],
-    onChange: () => console.log('Filter changed'),
   },
 };
 
@@ -221,6 +274,54 @@ export const LoadingState: Story = {
       },
     ],
     loading: true,
+  },
+};
+
+const sampleOwnerOptions = [
+  { label: 'alice@example.com', value: 'owner-uuid-0001' },
+  { label: 'bob@example.com', value: 'owner-uuid-0002' },
+  { label: 'carol@example.com', value: 'owner-uuid-0003' },
+];
+
+export const WithRenderInput: Story = {
+  name: 'Custom Input via renderInput',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When `renderInput` is provided, the default AutoComplete is replaced with a custom control. The control commits a condition via `onAddCondition(value, label?)` as soon as it emits a non-empty value; keep it controlled with `value={null}` so it clears after each commit. Pass the option label as the second argument so the condition tag shows a human-readable label (e.g. an email) instead of the opaque committed value (e.g. a UUID). Same contract as the one `BAIGraphQLPropertyFilter` adopts in FR-3011 (#8082), so controls become interchangeable once both land.',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+        defaultOperator: 'ilike',
+      },
+      {
+        key: 'owner',
+        propertyLabel: 'Owner',
+        type: 'string',
+        defaultOperator: '==',
+        renderInput: ({ onAddCondition }) => (
+          <BAIComplexSelect
+            label="Owner"
+            isLabelHidden
+            placeholder="Select owner"
+            width={220}
+            options={sampleOwnerOptions}
+            value={null}
+            onChange={(next) => {
+              const labeled = next as BAILabeledValue | null;
+              onAddCondition(labeled?.value, labeled?.label);
+            }}
+          />
+        ),
+      },
+    ],
     onChange: () => console.log('Filter changed'),
   },
 };

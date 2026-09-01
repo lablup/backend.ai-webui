@@ -1,0 +1,199 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://backend.ai/webui-docs/terminology.schema.json",
+  "title": "Backend.AI WebUI Docs Terminology",
+  "description": "Machine-readable source of truth for standardized Backend.AI WebUI user-manual terminology, mirroring TERMINOLOGY.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "languages", "concepts", "avoid"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "description": "Schema/content version of this file.",
+      "minimum": 1
+    },
+    "languages": {
+      "type": "array",
+      "description": "Languages covered by the manual, in canonical order.",
+      "items": {
+        "type": "string",
+        "enum": ["en", "ko", "ja", "th"]
+      },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "concepts": {
+      "type": "array",
+      "description": "Every concept group from TERMINOLOGY.md (Core Concepts, Feature-Specific Terms, User Roles, UI Navigation Terms).",
+      "items": { "$ref": "#/definitions/concept" }
+    },
+    "avoid": {
+      "type": "array",
+      "description": "Every row of the TERMINOLOGY.md \"Terms to Avoid\" table, one entry per forbidden NOUN/phrase. This is the ONLY list the i18n checker (scripts/check-terminology-i18n.mjs CHECK 1) scans against — verb lexicon avoidances live in verbs[].avoid and are intentionally NOT scanned here, to keep the verb axis orthogonal to the noun drift checker.",
+      "items": { "$ref": "#/definitions/avoidEntry" }
+    },
+    "verbs": {
+      "type": "array",
+      "description": "Approved ACTION VERBS, one entry per user-facing intent (cancel / delete / remove / terminate / stop / inactivate / purge / hide). A pure lexicon: each entry pins exactly one approved English verb for an intent, in a stated context, with the rejected near-synonyms. ORTHOGONALITY CONTRACT: this list governs only WHICH WORD labels an action; it does NOT encode confirmation-UX behavior. Whether an action needs a typed-confirm modal (BAIConfirmModalWithInput) vs a Popconfirm is decided by .claude/rules/destructive-confirmation.md from the action's REVERSIBILITY, never derived from the verb. The optional per-entry `reversible` field is documentation only and must not be read as the confirmation rule. The i18n noun-checker (CHECK 1) does NOT read this array.",
+      "items": { "$ref": "#/definitions/verbEntry" }
+    }
+  },
+  "definitions": {
+    "language": {
+      "type": "string",
+      "enum": ["en", "ko", "ja", "th"]
+    },
+    "preferred": {
+      "type": "object",
+      "description": "Preferred term per language. A language key is omitted when the source table has no cell for that language.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "en": { "type": "string", "minLength": 1 },
+        "ko": { "type": "string", "minLength": 1 },
+        "ja": { "type": "string", "minLength": 1 },
+        "th": { "type": "string", "minLength": 1 }
+      }
+    },
+    "concept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "status", "decidingFR", "preferred"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable kebab-case concept id.",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "Core Concepts",
+            "Feature-Specific Terms",
+            "User Roles",
+            "UI Navigation Terms"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["approved", "deprecated"]
+        },
+        "decidingFR": {
+          "description": "FR-XXXX issue that decided this term, or null when the source cites none.",
+          "type": ["string", "null"],
+          "pattern": "^FR-[0-9]+$"
+        },
+        "preferred": { "$ref": "#/definitions/preferred" },
+        "context": {
+          "type": "string",
+          "description": "Optional parenthetical qualifier (e.g. \"Technical term for storage folder\", \"Field label (Resource Group settings)\").",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional one-line gloss carried over from the source's explanatory prose.",
+          "minLength": 1
+        }
+      }
+    },
+    "avoidEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "avoid",
+        "useInstead",
+        "reason",
+        "lang",
+        "context",
+        "conceptId"
+      ],
+      "properties": {
+        "avoid": {
+          "type": "string",
+          "description": "The single forbidden term. For non-English (ko/ja/th) rows this MUST be a precise multi-token compound (e.g. \"스케일링 그룹\", \"スケーリンググループ\") or an unambiguous deprecated spelling (e.g. \"레플리카\") — never a bare concept noun, and never a substring of any concepts[].preferred[<lang>] value: non-Latin matching is substring-based (no word boundaries), so a bare noun would flag every legitimate use. Enforced by scripts/check-terminology-i18n.selftest.mjs against the fixtures + falsePositiveBudget in terminology.selftest.json (FR-3051).",
+          "minLength": 1
+        },
+        "useInstead": {
+          "type": "string",
+          "description": "The canonical replacement term.",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "description": "Why the term is forbidden.",
+          "minLength": 1
+        },
+        "lang": {
+          "allOf": [{ "$ref": "#/definitions/language" }],
+          "description": "Language the avoid rule applies to. The i18n checker applies the row only to that language's stores. Non-English rows are always WARN-severity (never hard-block) and require a fixtures entry in terminology.selftest.json (FR-3051). (allOf wrapper: draft-07 ignores sibling keywords next to $ref, so a bare $ref would drop this description.)"
+        },
+        "context": {
+          "description": "Optional parenthetical qualifier (e.g. \"for project\", \"as a UI label\"), or null.",
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "conceptId": {
+          "description": "Optional link to concepts[].id that the canonical replacement maps to, or null.",
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        }
+      }
+    },
+    "verbEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "intent", "context", "preferred", "decidingFR"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable kebab-case verb id (e.g. \"verb-delete\").",
+          "pattern": "^verb-[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "intent": {
+          "type": "string",
+          "description": "The user intent this verb labels: cancel / delete / remove / terminate / stop / inactivate / purge / hide.",
+          "enum": [
+            "cancel",
+            "delete",
+            "remove",
+            "terminate",
+            "stop",
+            "inactivate",
+            "purge",
+            "hide"
+          ]
+        },
+        "context": {
+          "type": "string",
+          "description": "The situation in which this intent applies. Verb choice is context-dependent (\"remove from list\" != \"delete permanently\"), so the approved verb is only canonical within this stated context.",
+          "minLength": 1
+        },
+        "preferred": {
+          "$ref": "#/definitions/preferred",
+          "description": "Approved verb per language. English-only is sufficient for v1 (the destructive-confirmation UX is language-agnostic); other locales translate normally."
+        },
+        "avoid": {
+          "type": "array",
+          "description": "Rejected near-synonyms for this intent. Documentation/review guidance ONLY — intentionally NOT consumed by the i18n CHECK 1 drift scanner (which reads only the top-level avoid[] noun list). Keeps the verb axis orthogonal to the noun checker.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "reversible": {
+          "type": "string",
+          "description": "Documentation-only hint about whether the action can typically be undone. MUST NOT be read as the confirmation-UX rule: the typed-confirm-vs-Popconfirm decision is owned by .claude/rules/destructive-confirmation.md, per-call-site, from the action's actual reversibility — not from this verb entry.",
+          "enum": ["reversible", "irreversible"]
+        },
+        "decidingFR": {
+          "description": "FR-XXXX issue that decided this verb, or null when the source cites none.",
+          "type": ["string", "null"],
+          "pattern": "^FR-[0-9]+$"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional one-line gloss: when to use the verb, which i18n keys it maps to, and how it differs from the rejected synonyms.",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

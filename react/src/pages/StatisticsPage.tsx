@@ -3,40 +3,42 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import AllocationHistory from '../components/AllocationHistory';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import UserSessionsMetrics from '../components/UserSessionsMetrics';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { Skeleton, theme } from 'antd';
-import { filterOutEmpty, BAICard } from 'backend.ai-ui';
+import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
+import { theme } from '../theme-shim';
+import { BAISkeleton, filterOutEmpty, BAICard } from 'backend.ai-ui';
+import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 
 interface ResourcesPageProps {}
 
-const tabParam = withDefault(StringParam, 'allocation-history');
+const tabParser = parseAsStringLiteral([
+  'allocation-history',
+  'user-session-history',
+]).withDefault('allocation-history');
 
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
+  'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
 
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
-    updateType: 'replace',
-  });
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   return (
     <BAICard
-      activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key)}
+      activeTabKey={currentTab}
+      onTabChange={onTabChange}
       tabList={filterOutEmpty([
         {
           key: 'allocation-history',
-          tab: t('webui.menu.UsageHistory'),
+          label: t('webui.menu.UsageHistory'),
         },
         baiClient?.supports('user-metrics') && {
           key: 'user-session-history',
-          tab: t('webui.menu.UserSessionHistory'),
+          label: t('webui.menu.UserSessionHistory'),
         },
       ])}
       styles={{
@@ -45,28 +47,34 @@ const ResourcesPage: React.FC<ResourcesPageProps> = () => {
         },
       }}
     >
-      {curTabKey === 'allocation-history' ? (
+      {currentTab === 'allocation-history' ? (
         <BAIErrorBoundary>
           <Suspense
             fallback={
-              <Skeleton
-                active
-                style={{ padding: token.paddingContentVerticalLG }}
-              />
+              // antd `Skeleton active style={{padding}}` -> `BAISkeleton`
+              // inside a padded box. The padding cannot ride on the component:
+              // in `paragraph` mode it forwards `style` to EVERY line box, so
+              // one shared style would repeat the inset per row.
+              <div style={{ padding: token.paddingContentVerticalLG }}>
+                <BAISkeleton />
+              </div>
             }
           >
             <AllocationHistory />
           </Suspense>
         </BAIErrorBoundary>
       ) : null}
-      {curTabKey === 'user-session-history' ? (
+      {currentTab === 'user-session-history' ? (
         <BAIErrorBoundary>
           <Suspense
             fallback={
-              <Skeleton
-                active
-                style={{ padding: token.paddingContentVerticalLG }}
-              />
+              // antd `Skeleton active style={{padding}}` -> `BAISkeleton`
+              // inside a padded box. The padding cannot ride on the component:
+              // in `paragraph` mode it forwards `style` to EVERY line box, so
+              // one shared style would repeat the inset per row.
+              <div style={{ padding: token.paddingContentVerticalLG }}>
+                <BAISkeleton />
+              </div>
             }
           >
             <UserSessionsMetrics />

@@ -29,8 +29,11 @@ export class StartPage {
   getBatchSessionCard() {
     return this.getCardByTitle('Start Batch Session');
   }
-  getModelServiceCard() {
-    return this.getCardByTitle('Start Model Service');
+  // Renamed from "Start Model Service" to "Start Deployment" (its button text
+  // changed from "Start Service" to "Create Deployment", and it now navigates
+  // straight to /deployments instead of /service/start).
+  getDeploymentCard() {
+    return this.getCardByTitle('Start Deployment');
   }
   getStartFromURLCard() {
     return this.getCardByTitle('Start From URL');
@@ -47,8 +50,8 @@ export class StartPage {
   getStartSessionButton(card: Locator) {
     return card.getByRole('button', { name: 'Start Session' });
   }
-  getStartServiceButton(card: Locator) {
-    return card.getByRole('button', { name: 'Start Service' });
+  getCreateDeploymentButton(card: Locator) {
+    return card.getByRole('button', { name: 'Create Deployment' });
   }
   getBoardItems() {
     return this.page.locator('.bai_grid_item');

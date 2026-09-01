@@ -4,12 +4,17 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
-// Mock the useNavigate hook from react-router-dom
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-}));
+// Mock the useNavigate hook from react-router-dom.
+// Vitest does not have a sync `jest.requireActual`; the async
+// `importOriginal` helper in the factory is the supported equivalent.
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe('BAIBackButton', () => {
   beforeEach(() => {
@@ -32,7 +37,12 @@ describe('BAIBackButton', () => {
       expect(svg).toBeInTheDocument();
     });
 
-    it('should render as text type button', () => {
+    // to-astryx W2-D: the button is an Astryx `IconButton variant="ghost"`, so
+    // the antd `ant-btn-text` class is gone (Astryx styles through StyleX, and
+    // its generated class names are not a contract). What IS newly guaranteed —
+    // and what the antd original never had — is an accessible name on an
+    // icon-only control (P8).
+    it('should render an icon-only button with an accessible name', () => {
       render(
         <MemoryRouter>
           <BAIBackButton to="/previous" />
@@ -40,7 +50,8 @@ describe('BAIBackButton', () => {
       );
 
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('ant-btn-text');
+      expect(button).toHaveAccessibleName();
+      expect(button.querySelector('svg')).toBeInTheDocument();
     });
   });
 

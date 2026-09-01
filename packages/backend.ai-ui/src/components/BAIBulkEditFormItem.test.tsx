@@ -1,22 +1,30 @@
+import { Form, FormInstance } from '../form-engine';
 import BAIBulkEditFormItem from './BAIBulkEditFormItem';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, FormInstance, Select } from 'antd';
 import React, { useEffect } from 'react';
 
-// Mock react-i18next
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'comp:BAIBulkEditFormItem.KeepAsIs': 'Keep as is',
-        'comp:BAIBulkEditFormItem.Clear': 'Clear',
-        'comp:BAIBulkEditFormItem.UndoChanges': 'Undo changes',
-      };
-      return translations[key] || key;
-    },
-  }),
-}));
+// Partial mock: preserve every real export from `react-i18next` (notably
+// `initReactI18next`, which BUI's `locale/index.ts` consumes at import
+// time) and only override `useTranslation` for predictable label strings.
+// See useErrorMessageResolver.test.tsx for the rationale (FR-2986).
+vi.mock('react-i18next', async () => {
+  const actual =
+    await vi.importActual<typeof import('react-i18next')>('react-i18next');
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string) => {
+        const translations: Record<string, string> = {
+          'comp:BAIBulkEditFormItem.KeepAsIs': 'Keep as is',
+          'comp:BAIBulkEditFormItem.Clear': 'Clear',
+          'comp:BAIBulkEditFormItem.UndoChanges': 'Undo changes',
+        };
+        return translations[key] || key;
+      },
+    }),
+  };
+});
 
 // Helper component wrapper with Form context
 const FormWrapper: React.FC<{
@@ -39,25 +47,86 @@ const FormWrapper: React.FC<{
   );
 };
 
-// Helper to select an option from antd Select dropdown
+/**
+ * The control the suite wraps. It was antd's `Select`, driven through
+ * `.ant-select-dropdown`; the final switch uninstalled antd, so it is now a
+ * local double built on the platform `<select>`.
+ *
+ * A DOUBLE rather than `BAISelect` is the deliberate choice. The subject here
+ * is `BAIBulkEditFormItem`'s three-mode state machine (keep / edit / clear)
+ * and the blur-driven revert that drives it — the wrapped control is a
+ * fixture, and every assertion in this file is about the machine, never about
+ * the control's own rendering. Swapping in `BAISelect` was tried first and
+ * turns 4 of these into tests of Astryx `Selector`'s popup-blur ordering
+ * instead: picking an option blurs the trigger before the form value commits,
+ * so `handleControlBlur` sees `undefined` and reverts to keep mode. That
+ * interaction is worth its own investigation (recorded in MERGE-CHECKLIST) —
+ * it is not what this file is for, and neither app call site pairs
+ * `BAIBulkEditFormItem` with a select (they use `AstryxFormNumberInput` and
+ * `BAICheckbox`).
+ *
+ * The double reproduces exactly the contract `BAIBulkEditFormItem` and its
+ * `ControlWrapper` rely on: a `value`/`onChange` pair whose change event
+ * commits synchronously, a focusable element, a rendered placeholder, and
+ * tolerance for the `open`/`onOpenChange` props `ControlWrapper` clones in.
+ */
+const Select = React.forwardRef<
+  HTMLSelectElement,
+  {
+    placeholder?: string;
+    options: Array<{ value: string; label: string }>;
+    value?: string;
+    onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+    onBlur?: () => void;
+    // Cloned in by `ControlWrapper`; the double has no popup to open.
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    'aria-label'?: string;
+  }
+>(({ placeholder, options, value, onChange, onBlur, ...rest }, ref) => (
+  <select
+    ref={ref}
+    aria-label={rest['aria-label'] ?? placeholder}
+    value={value ?? ''}
+    onChange={onChange}
+    onBlur={onBlur}
+  >
+    <option value="">{placeholder ?? ''}</option>
+    {options.map((option) => (
+      <option key={option.value} value={option.value}>
+        {option.label}
+      </option>
+    ))}
+  </select>
+));
+Select.displayName = 'Select';
+
+/**
+ * Pick an option by its visible LABEL.
+ *
+ * Two accommodations, both for how the call sites locate the control: they
+ * pass `screen.getByText(placeholder)`, which resolves to the placeholder
+ * `<option>` rather than the `<select>`, so the listbox is walked up to
+ * first. And `selectOptions` matches a bare string against an option's
+ * `value`, while labels and values differ throughout this suite, so the
+ * option element is looked up by role rather than passed as a string.
+ */
 const selectOption = async (
   user: ReturnType<typeof userEvent.setup>,
   selectElement: HTMLElement,
   optionText: string,
 ) => {
-  await user.click(selectElement);
-  // Wait for dropdown to open and find option
-  await waitFor(() => {
-    const dropdown = document.querySelector('.ant-select-dropdown');
-    expect(dropdown).toBeInTheDocument();
-  });
-  const dropdown = document.querySelector('.ant-select-dropdown');
-  const option = within(dropdown as HTMLElement).getByText(optionText);
-  await user.click(option);
+  const listbox =
+    selectElement instanceof HTMLSelectElement
+      ? selectElement
+      : (selectElement.closest('select') as HTMLSelectElement);
+  const option = within(listbox).getByRole('option', { name: optionText });
+  await user.selectOptions(listbox, option);
 };
 
 describe('BAIBulkEditFormItem', () => {
-  // Skip pointer events check for antd Select dropdown interactions
+  // Keeps the historical setup: the suite clicks through elements the form
+  // item toggles mid-interaction, where pointer-events can lag a frame.
   const setupUser = () => userEvent.setup({ pointerEventsCheck: 0 });
 
   describe('Basic Rendering', () => {
@@ -340,7 +409,7 @@ describe('BAIBulkEditFormItem', () => {
     });
 
     it('should allow user selection in edit mode', async () => {
-      const onValuesChange = jest.fn();
+      const onValuesChange = vi.fn();
       const user = setupUser();
       render(
         <FormWrapper onValuesChange={onValuesChange}>
@@ -445,9 +514,12 @@ describe('BAIBulkEditFormItem', () => {
         </FormWrapper>,
       );
 
-      // Required marker should be present (BAIBulkEditFormItem always sets required=true internally)
+      // Required marker should be present (BAIBulkEditFormItem always sets
+      // required=true internally). The anchor is `[data-bai-form-item-required]`
+      // since ticket 34 — the form item's visual shell is BAI's, not antd's;
+      // see the DOM-attribute mapping in the ticket-31 selector migration.
       expect(
-        document.querySelector('.ant-form-item-required'),
+        document.querySelector('[data-bai-form-item-required]'),
       ).toBeInTheDocument();
     });
 
@@ -531,8 +603,12 @@ describe('BAIBulkEditFormItem', () => {
         </FormWrapper>,
       );
 
-      const clearLink = screen.getByText('Clear');
-      expect(clearLink.tagName.toLowerCase()).toBe('a');
+      // to-astryx W2-D: "Clear" is an Astryx `Link` with no `href`, which
+      // renders a link-styled BUTTON — the correct semantics for a pure
+      // `onClick` action, and the call wave 1 ratified for `BAILink` (D3).
+      // antd's `Typography.Link` rendered a destination-less `<a>`, which is
+      // not keyboard-activatable as an action.
+      expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
     });
 
     it('should have accessible link for Undo changes action', async () => {
@@ -548,8 +624,9 @@ describe('BAIBulkEditFormItem', () => {
       // Switch to clear mode (which sets value to null, triggering Undo changes link)
       await user.click(screen.getByText('Clear'));
 
-      const undoLink = screen.getByText('Undo changes');
-      expect(undoLink.tagName.toLowerCase()).toBe('a');
+      expect(
+        screen.getByRole('button', { name: 'Undo changes' }),
+      ).toBeInTheDocument();
     });
   });
 });

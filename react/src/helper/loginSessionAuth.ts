@@ -170,19 +170,133 @@ export async function connectViaGQL(
 }
 
 /**
+ * Structured error thrown by `tokenLogin` when the webserver reports
+ * `authenticated === false`. Carries the raw `fail_reason` string and the
+ * authenticated-probe `type` when available so callers (the
+ * `STokenLoginBoundary` classifier) can discriminate `require-totp-*`,
+ * `active-login-session-exists`, and generic invalid-token cases without
+ * string-matching the user-visible message.
+ *
+ * The prior implementation collapsed every non-success result into a
+ * generic `Error('Cannot authorize session by token.')`, which silently
+ * broke for `{ fail_reason }` returns (`client.token_login` returns an
+ * object in that case — truthy, so the old `!loginSuccess` check passed
+ * through and `connectViaGQL` ran against an unauthenticated client).
+ */
+export class TokenLoginFailedError extends Error {
+  readonly failReason: string | null;
+  readonly failType: string | null;
+  readonly raw: unknown;
+  constructor(
+    failReason: string | null,
+    failType: string | null,
+    raw: unknown,
+  ) {
+    super(failReason ?? 'Cannot authorize session by token.');
+    this.name = 'TokenLoginFailedError';
+    this.failReason = failReason;
+    this.failType = failType;
+    this.raw = raw;
+  }
+}
+
+/**
  * Perform token-based login (SSO).
+ *
+ * `extraParams` are forwarded to `client.token_login` alongside the explicit
+ * `sToken` argument. Callers typically collect these from URL query parameters
+ * (for example, EduAppLauncher forwards `app`, `session_id`, resource hints)
+ * for the server-side token handler. The `STokenLoginBoundary` also folds
+ * interactive inputs (`otp`, `force`) into this object when retrying after a
+ * TOTP or concurrent-session challenge. LoginView callers that do not need
+ * to forward anything can omit the argument.
+ *
+ * Reserved keys (`sToken`, `stoken`) are stripped from `extraParams` before
+ * forwarding so that the explicit `sToken` argument always wins, regardless
+ * of whether a caller accidentally (or maliciously) included the token in
+ * the forwarded query parameters. `client.token_login` merges `extraParams`
+ * into the request body via `Object.assign`, so an unsanitized map would
+ * otherwise overwrite the authenticated token field.
  */
 export async function tokenLogin(
   client: any,
   sToken: string,
   cfg: LoginConfigState,
   endpoints: string[],
+  extraParams?: Record<string, string | boolean>,
 ): Promise<string[]> {
-  const loginSuccess = await client.token_login(sToken);
-  if (!loginSuccess) {
-    throw new Error('Cannot authorize session by token.');
+  const sanitizedExtraParams = extraParams
+    ? Object.fromEntries(
+        Object.entries(extraParams).filter(
+          ([key]) => key !== 'sToken' && key !== 'stoken',
+        ),
+      )
+    : {};
+  const result = await client.token_login(sToken, sanitizedExtraParams);
+  // `client.token_login` returns:
+  //   - truthy check_login result object                       → authenticated
+  //   - `{ fail_reason: string, fail_type: string }`           → authenticated: false
+  //   - `false`                                                → authenticated: false, no envelope
+  // Only the first is a successful login.
+  const failed =
+    result === false ||
+    result == null ||
+    (typeof result === 'object' &&
+      ('fail_reason' in result || 'fail_type' in result));
+  if (failed) {
+    const envelope =
+      typeof result === 'object' && result
+        ? (result as { fail_reason?: string; fail_type?: string })
+        : null;
+    throw new TokenLoginFailedError(
+      envelope?.fail_reason ?? null,
+      envelope?.fail_type ?? null,
+      result,
+    );
   }
   return connectViaGQL(client, cfg, endpoints);
+}
+
+/**
+ * Persist the state a successful login should leave behind, independent of
+ * which UI surface performed the login (LoginView panel, STokenLoginBoundary,
+ * etc.). Centralized here so every successful login path keeps the same
+ * side effects in lockstep:
+ *
+ *   - `last_login` timestamp + reset of `login_attempt` counter
+ *   - drop any saved username / password / keypair credentials from prior
+ *     signed-out sessions on this device
+ *   - persist the resolved API endpoint into `localStorage` so the next
+ *     cold start can re-use it
+ *   - mark the client `ready` so `useLoginOrchestration` short-circuits on
+ *     subsequent mounts within the same page load
+ *
+ * Callers: the `STokenLoginBoundary` `onSuccess` route handlers (route-level
+ * sToken flow for `/`, `/interactive-login`, `/edu-applauncher`, `/applauncher`).
+ * LoginView's panel-based login still runs its own `postConnectSetup` inline —
+ * unifying both paths through this helper is tracked as a follow-up refactor
+ * once the boundary migrations settle (see PR #6861 review discussion). Kept
+ * separate from `connectViaGQL` because the GQL step also runs for the
+ * non-authenticated paths (e.g. an already-logged-in session refresh) where
+ * the counter and credential-cleanup side effects would be incorrect.
+ */
+export function persistPostLoginState(client: any): void {
+  const options = (globalThis as any).backendaioptions;
+  if (options) {
+    options.set('last_login', Math.floor(Date.now() / 1000), 'general');
+    options.set('login_attempt', 0, 'general');
+  }
+  localStorage.removeItem('backendaiwebui.login.api_key');
+  localStorage.removeItem('backendaiwebui.login.secret_key');
+  localStorage.removeItem('backendaiwebui.login.user_id');
+  localStorage.removeItem('backendaiwebui.login.password');
+  const endpoint = client?._config?.endpoint;
+  if (typeof endpoint === 'string' && endpoint) {
+    localStorage.setItem('backendaiwebui.api_endpoint', endpoint);
+  }
+  if (client) {
+    client.ready = true;
+  }
 }
 
 /**
@@ -204,7 +318,7 @@ export async function loadConfigFromWebServer(
       return;
     }
     const webserverConfigURL = new URL('./config.toml', apiEndpoint).href;
-    const config = await fetchAndParseConfig(webserverConfigURL);
+    const { config } = await fetchAndParseConfig(webserverConfigURL);
     if (!config) return;
 
     const backendaiutils = (globalThis as Record<string, any>).backendaiutils;

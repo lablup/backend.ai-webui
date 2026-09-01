@@ -42,6 +42,38 @@ Detailed content...
 - Always leave a blank line before and after headings
 - Never skip heading levels (e.g., H1 directly to H3)
 
+### Sidebar Nav Label vs Page H1
+
+The sidebar label (the page's frontmatter `navTitle:`, FR-3277) and the
+page H1 serve different purposes and MAY differ **by design, never by
+accident**:
+
+- **Sidebar label** — a short navigation label: ≤ 3 words / ~24 chars for
+  English, ~12 chars for CJK. Example: `SFTP to Container`.
+- **H1** — the full descriptive title. Example:
+  `SSH/SFTP Connection to a Compute Session`.
+- The label lives at the top of the page file:
+
+  ```markdown
+  ---
+  navTitle: SFTP to Container
+  ---
+
+  # SSH/SFTP Connection to a Compute Session
+  ```
+
+  When `navTitle` is omitted, the H1 is used as-is. (A `title:` on the
+  `book.config.yaml` nav item is legacy fallback only — do not add new
+  ones; the config holds structure, not labels.)
+- The label must remain a recognizable shortening of the H1 (they share a
+  meaningful word/substring). Zero-relation pairs like the historical
+  `Sessions All` label on the `Compute Sessions` page are drift, not design.
+- Enforced by `pnpm run check:nav-titles`
+  (`scripts/check-nav-titles.mjs`, runs in CI via `docs-checks.yml`).
+  Intentional exceptions go in that script's `ALLOWLIST` with a comment.
+- When renaming a page H1, revisit the same file's `navTitle` (and the
+  language's `index.md` table of contents) in the same change.
+
 ## Formatting Elements
 
 ### Inline Formatting
@@ -304,10 +336,112 @@ Rules:
 Use fenced code blocks with a language identifier:
 
 ````markdown
-```shell
-$ pip install backend.ai-client
+```bash
+pip install backend.ai-client
 ```
 ````
+
+#### Choosing the right language identifier
+
+| Situation | Fence | Notes |
+|---|---|---|
+| Runnable command or shell script | ` ```bash ` | Default for most snippets. Don't include a `$ ` prompt — the snippet should be ready to copy-and-paste. |
+| Terminal session transcript (prompt + output) | ` ```shellsession ` | Use this when showing what the user types **and** what the program prints. Lines starting with `$ ` or `# ` are treated as commands; everything else is treated as program output. The `$` / `#` prompt is rendered visually but **excluded from the clipboard** — readers can copy the block and paste runnable commands without manual cleanup. |
+| POSIX-only script (no bashisms) | ` ```sh ` | Use when the snippet must run under any POSIX shell. |
+| zsh / fish-specific snippet | ` ```zsh ` / ` ```fish ` | Reserve for shell-specific syntax. |
+| Other languages | ` ```python `, ` ```toml `, ` ```javascript `, etc. | Use the language's canonical Shiki name. |
+
+##### shellsession example
+
+````markdown
+```shellsession
+$ docker pull lablup/backend.ai-client
+$ docker run --rm -it lablup/backend.ai-client bash
+Hello, world!
+$ exit
+```
+````
+
+In the rendered web page, the `$` prompts and the `Hello, world!` output line are visible, but **clicking the copy button (or drag-selecting and copying) yields only the runnable commands and output text — never the `$` prompts**:
+
+```
+docker pull lablup/backend.ai-client
+docker run --rm -it lablup/backend.ai-client bash
+Hello, world!
+exit
+```
+
+> **PDF note:** the printed PDF shows the `$` prompts visually too, but text-extraction behavior on PDF copy depends on the viewer. Most viewers include the prompt characters that the page renders, including content injected via CSS `::before`. The web copy button is the guaranteed path for prompt-free clipboard text.
+
+#### How to choose: bash or shellsession?
+
+Ask: **does the block include any program output, error messages, or a follow-up shell prompt?**
+
+- **No** → ` ```bash `. Strip any decorative `$ ` from each line. The reader's copy button gives them runnable commands directly.
+- **Yes** → ` ```shellsession `. Author the transcript as the user would actually see it (prompts, commands, output). The toolkit hides the `$` / `#` from the clipboard automatically.
+
+A multi-line command joined by `\` line continuations is still a single command — keep it in ` ```bash `:
+
+````markdown
+```bash
+curl -H "Content-Type: application/json" -X GET \
+  -H "Authorization: Bearer $TOKEN" \
+  https://api.example.com/v1/resource
+```
+````
+
+#### Placeholders in bash blocks
+
+In shells like `bash`, an unquoted `<word>` in a command can be parsed as **input redirection**, even when it appears mid-token. A naive copy-paste of `docker pull image:<version>` will fail because the shell tries to read from a file named `version`. Two safe patterns:
+
+| Pattern | Use when |
+|---|---|
+| `${VARIABLE}` (with an `export VAR="<placeholder>"` companion) | The placeholder appears multiple times, or the block is meant to be edited then run end-to-end. |
+| Quoted string `"<placeholder>"` | A single-occurrence placeholder where the reader will replace the whole quoted token. |
+
+````markdown
+```bash
+# ✅ safe — VERSION is a real shell variable
+export VERSION="<the version you want, e.g. 24.09>"
+docker pull lablup/backend.ai-client:${VERSION}
+```
+````
+
+````markdown
+```bash
+# ✅ safe — quoted; reader replaces the literal token
+docker pull "lablup/backend.ai-client:<version>"
+```
+````
+
+````markdown
+```bash
+# ❌ broken — bash parses <version> as input redirection
+docker pull lablup/backend.ai-client:<version>
+```
+````
+
+The same rule applies to `<token>`, `<endpoint>`, `<path>`, etc. — and not just inside ` ```bash ` blocks. ` ```shellsession ` blocks also have a copy button, and readers paste the resulting command text into a real shell; an unquoted `<placeholder>` in a shellsession command line will fail in their terminal too. Apply the placeholder-safety rule whenever you expect readers to copy and run the command, regardless of fence type.
+
+#### Code-block authoring checklist
+
+Before merging a doc page that contains code blocks, verify:
+
+1. The fence language matches the **content type** (single command vs transcript).
+2. There is no decorative `$ ` prefix in ` ```bash ` blocks. Use ` ```shellsession ` if you need to show the prompt.
+3. No unquoted `<placeholder>` at the start of a token in a bash block.
+4. **Inline comments inside the code block are localized**: if the source `.md` is in `ko/`, `ja/`, or `th/`, any `# comment` lines must be translated to that locale (the comment is part of the user-facing rendered code, not a build-time directive). See [TRANSLATION-GUIDE.md](TRANSLATION-GUIDE.md#inline-code-comments).
+5. Pasting the rendered (web copy-button) output into a real shell would actually run.
+
+#### Common mistakes
+
+| Mistake | Why it's wrong | Fix |
+|---|---|---|
+| Decorative `$ ` in ` ```bash ` | The reader's copy includes `$ ` which is not a command — paste fails. | Drop the `$ `, or move to ` ```shellsession ` if showing transcript intent. |
+| Unquoted `<placeholder>` | Bash parses `<…>` as redirection. | Use `${VARIABLE}` or quoted form (see above). |
+| English `# comment` in a translated locale | Reader sees an untranslated string in the middle of otherwise-localized prose. | Translate the comment to the locale's language. |
+| ` ```shellsession ` for a single command with no output | Adds prompt visual noise without transcript value. | Use ` ```bash ` without prompt. |
+| ` ```shell ` (legacy alias) | Deprecated in this manual; avoid using it in new or updated pages. | Use ` ```bash ` (or ` ```sh ` for explicit POSIX-only intent). |
 
 #### Code Block with Title
 
@@ -498,6 +632,92 @@ Rules:
 - Clearly mark admin-only features: "For superadmins..." or "Logging in with an admin account will reveal..."
 - Use separate screenshots for admin views when they differ significantly
 
+### What NOT to Document
+
+These exclusion rules are distilled from human review of the automated
+documentation PRs (2026-08, #8601–#9293) and the Teams docs-autoupdate
+thread. Several PRs were closed without merge (#8993, #9032) or had their
+prose changes fully reverted (#9117) because they only *narrated the UI*.
+The manual tells users **what they can do and how to do it** — it does not
+describe how the interface is rendered.
+
+Apply this litmus test to every sentence before adding it:
+
+> **If this sentence disappeared, would a user fail to accomplish a task?**
+> If not, leave it out.
+
+#### 1. No widget-rendering or layout details
+
+How a control is *drawn* — full-screen vs. inline modal, centered layout,
+dividers, whether a section "expands", where a button sits on the screen —
+is not documentation content. Name the control and say what it does.
+
+```markdown
+<!-- ❌ Removed in review (#9118) -->
+이 모달도 전체 화면으로 열리며, 세부단계는 [스케줄링 기록](#scheduling-history-substeps)에서
+설명한 것과 동일한 인라인 표로 확장됩니다.
+
+<!-- ❌ Positional detail removed in review (#9292) -->
+**배포** 카드 헤더 오른쪽 위의 **배포 생성** 버튼을 클릭합니다.
+
+<!-- ✅ The control's name is enough -->
+**배포 생성** 버튼을 클릭합니다.
+```
+
+#### 2. No micro-affordance notes
+
+Small interaction affordances — "(copyable)", hover tooltips, focus
+behavior, whether a value can be selected — do not need to be written down.
+
+```markdown
+<!-- ❌ "(복사 가능)" removed in review (#9118) -->
+- **키**: 값이 전달되는 환경 변수 이름 또는 커맨드라인 인자입니다(복사 가능).
+
+<!-- ✅ -->
+- **키**: 값이 전달되는 환경 변수 이름 또는 커맨드라인 인자입니다.
+```
+
+#### 3. No exhaustive column / filter enumerations, no implementation or performance claims
+
+Do not list every table column or every filterable field, and never
+describe implementation details ("sorting and paging are handled
+server-side") or performance ("the tab stays fast with many policies").
+Generic table mechanics — click a header to sort, use the pagination
+controls — need no explanation anywhere in the manual. (#9293, #9117)
+
+Mention a specific column or filter only when a task depends on it
+(e.g., a newly added column that changes what the user can do).
+
+#### 4. Self-evident controls get a name, not a paragraph
+
+A search box, an obvious filter, a standard list — naming them in passing
+is enough. If a change only adds self-evident UI, the right amount of new
+documentation is often **none** (#8993 and #9032 were closed for this).
+
+#### 5. No rare edge-case or fallback narration
+
+Uncommon fallback behaviors and one-off confirmation nuances add length
+without helping the typical reader (#8601). If an edge case genuinely
+matters (data loss, security), it belongs in a `:::warning` — otherwise
+omit it.
+
+#### 6. Localization follow-through
+
+- In translated pages, use the **translated** menu/page names from
+  `resources/i18n/{lang}.json`, not the English ones (#9118).
+- Avoid machine-translation tone; when a sentence is not strictly
+  necessary, deleting it reads better than polishing it (#8623).
+- Every addition, edit, or removal applies to **all four locales in the
+  same change** — a reviewer should never have to ask "apply this to the
+  other languages too" (#9118, #9120, #9158, #9292).
+
+#### 7. Screenshot content
+
+- Use realistic sample data — a deployment list showing a single `test`
+  entry was rejected in review (#9158).
+- Redact personal identity rows (name / email / role) in captures that
+  show real accounts (#9026), per `SCREENSHOT-GUIDELINES.md`.
+
 ### Completeness Checklist
 
 For each documented feature, ensure:
@@ -508,6 +728,10 @@ For each documented feature, ensure:
 - [ ] Notes for limitations, prerequisites, or special conditions
 - [ ] Cross-references to related sections
 - [ ] Admin-specific aspects documented separately
+
+Completeness means covering the **workflow**, not narrating every widget —
+"all form fields are described" means each field's purpose is stated, not
+its rendering or affordances. See [What NOT to Document](#what-not-to-document).
 
 ## File Organization
 
@@ -564,6 +788,9 @@ Quick reference of all supported syntax:
 | Hard-coded UI labels without checking i18n | Verify against `resources/i18n/{lang}.json` |
 | Using "Note:" or "Warning:" prefixes | Use admonitions or indented blocks |
 | Inconsistent terminology | Follow `TERMINOLOGY.md` |
+| Narrating widget rendering ("opens full-screen", "expands inline") | Name the control and its purpose — see [What NOT to Document](#what-not-to-document) |
+| Enumerating every table column / filter field | Mention only what a task depends on — see [What NOT to Document](#what-not-to-document) |
+| Editing one locale and leaving the other three behind | Apply every change to en/ko/ja/th in the same commit |
 | Using 3-space indented notes for new content | Prefer admonitions (`:::note`, `:::warning`, etc.) |
 | Using `<>` in cross-reference URLs `[Text <anchor>](#...)` | Use `[Text](#anchor-id)` — angle brackets break `marked` link parsing |
 | Missing blank line after `<summary>` | Always leave blank line for markdown processing |

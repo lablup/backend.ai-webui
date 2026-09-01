@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RightOutlined } from '@ant-design/icons';
-import { theme } from 'antd';
+import { theme } from '../theme-shim';
 import { BAIFlex } from 'backend.ai-ui';
+import { ChevronRight } from 'lucide-react';
 import React from 'react';
 
 interface SummaryItemProps {
@@ -44,10 +44,11 @@ export const SummaryItem: React.FC<SummaryItemProps> = ({
           <>
             {icon}
             {title}
-            <RightOutlined
+            <ChevronRight
               className="drag-cancel-component"
               style={{ cursor: 'pointer' }}
               onClick={onClick}
+              size="1em"
             />
           </>
         )}

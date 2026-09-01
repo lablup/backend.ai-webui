@@ -3,17 +3,20 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIBoardItem } from '../components/BAIBoard';
+import type { PersistedPanel } from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
 import { backendaiOptions } from '../global-stores';
-import type { AIAgent } from './useAIAgent';
+import { CustomThemeConfig } from '../helper/customThemeConfig';
+import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
 import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai-family';
 import { SetStateAction } from 'react';
-import { CustomThemeConfig } from 'src/helper/customThemeConfig';
 
 export interface UserSettings {
   has_opened_tour_neo_session_validation?: boolean;
+  has_opened_tour_neo_deployment_validation?: boolean;
+  has_opened_tour_deployment_preset_validation?: boolean;
   desktop_notification?: boolean;
   compact_sidebar?: boolean;
   preserve_login?: boolean;
@@ -29,10 +32,16 @@ export interface UserSettings {
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
-  extra_ai_agents?: Array<AIAgent>;
+  experimental_custom_dashboard_panels?: boolean;
+  experimental_import_from_huggingface?: boolean;
+  experimental_session_resource_grid?: boolean;
+  extra_ai_agents?: Array<AgentProfile>;
+  agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
+  /** Decoupled-dashboard custom panels (serialized descriptors + layout). */
+  custom_dashboard_panels?: Array<PersistedPanel>;
   resource_panel_type?:
     | 'MyResource'
     | 'MyResourceWithinResourceGroup'
@@ -40,11 +49,20 @@ export interface UserSettings {
   [key: `hiddenColumnKeys.${string}`]: Array<string>;
   [key: `table_column_overrides.${string}`]: BAITableColumnOverrideRecord;
   [key: `projectGroup.${string}`]: string;
+  // Per-consumer auto-refresh interval (ms) chosen via BAIFetchKeyButton's
+  // interval dropdown. `null` (or absent) means auto-refresh is off. Keyed by a
+  // stable consumer id (see AutoUpdateFetchKeyButton's `settingId`).
+  [key: `fetchKeyAutoUpdateDelay.${string}`]: number | null;
 
   max_concurrent_uploads?: number;
-  container_log_auto_refresh_enabled?: boolean;
-  container_log_auto_refresh_interval?: number;
   custom_theme_config?: CustomThemeConfig;
+  custom_primary_color?: { light?: string; dark?: string };
+  deploymentRevisionCreationMode?: 'preset' | 'custom';
+  // Session resource grid: per-session group-color overrides, keyed by
+  // session id, valued by palette index (FR-3570).
+  sessionResourceGridHueOverrides?: Record<string, number>;
+  schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
+  chat_intro_alert_dismissed?: boolean;
 }
 
 export type SessionHistory = {
@@ -64,6 +82,23 @@ export const useBAISettingUserState = <K extends keyof UserSettings>(
   name: K,
 ): [UserSettings[K], (newValue: SetStateAction<UserSettings[K]>) => void] => {
   return useAtom<UserSettings[K]>(SettingAtomFamily('user.' + name));
+};
+
+/**
+ * Whether a user setting has ever been explicitly written to `localStorage`.
+ * Needed because `useBAISettingUserState` collapses "never set" and
+ * "explicitly set to `null`" into the same `null` return value — callers that
+ * need a fallback-only-when-unset default (e.g. a per-consumer auto-refresh
+ * interval where the user can legitimately choose "off") can't tell the two
+ * apart from the hook's value alone.
+ */
+export const hasStoredUserSetting = <K extends keyof UserSettings>(
+  name: K,
+): boolean => {
+  if (typeof window === 'undefined') return false;
+  return (
+    window.localStorage.getItem('backendaiwebui.settings.user.' + name) !== null
+  );
 };
 
 export const useBAISettingGeneralState = <K extends keyof GeneralSettings>(

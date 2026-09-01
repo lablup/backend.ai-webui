@@ -8,50 +8,46 @@ import {
   ContainerRegistryListQuery,
   ContainerRegistryListQuery$data,
 } from '../__generated__/ContainerRegistryListQuery.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Switch } from '@astryxdesign/core/Switch';
 import {
-  DeleteOutlined,
-  ExclamationCircleOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import {
-  Button,
-  Form,
-  Input,
-  Switch,
-  Tag,
-  Tooltip,
-  Typography,
-  theme,
-  App,
-} from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
-import {
-  filterOutNullAndUndefined,
-  BAITable,
+  BAIDeleteConfirmModal,
   BAIFlex,
+  BAINameActionCell,
   BAIPropertyFilter,
-  BAIModal,
+  BAITable,
+  INITIAL_FETCH_KEY,
+  badgeVariantForTagColor,
+  filterOutNullAndUndefined,
+  type BAIColumnType,
+  type BAIColumnsType,
   useBAILogger,
   useFetchKey,
-  INITIAL_FETCH_KEY,
+  useToggle,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import {
+  Trash2,
+  RotateCw,
+  Settings,
+  RefreshCw,
+  PlusIcon,
+  SquarePenIcon,
+} from 'lucide-react';
+import { parseAsString, useQueryStates } from 'nuqs';
 import { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 export type ContainerRegistry = NonNullable<
   NonNullable<
@@ -64,6 +60,7 @@ export type ContainerRegistry = NonNullable<
 const ContainerRegistryList: React.FC<{
   style?: React.CSSProperties;
 }> = ({ style }) => {
+  'use memo';
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -73,16 +70,19 @@ const ContainerRegistryList: React.FC<{
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
 
-  const [queryParams, setQueryParams] = useQueryParams({
-    filter: withDefault(StringParam, undefined),
-    order: withDefault(StringParam, undefined),
-  });
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      filter: parseAsString,
+      order: parseAsString,
+    },
+    { history: 'replace' },
+  );
 
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 20,
   });
@@ -190,12 +190,10 @@ const ContainerRegistryList: React.FC<{
     `);
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [editingRegistry, setEditingRegistry] =
     useState<ContainerRegistry | null>();
   const [deletingRegistry, setDeletingRegistry] =
     useState<ContainerRegistry | null>();
-  const [deletingConfirmText, setDeletingConfirmText] = useState('');
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
   const [inFlightHostName, setInFlightHostName] = useState<string>();
@@ -271,12 +269,47 @@ const ContainerRegistryList: React.FC<{
       .catch(handleReScanError);
   };
 
-  const columns: ColumnsType<ContainerRegistry> = [
+  const columns: BAIColumnsType<ContainerRegistry> = [
     {
       key: 'registry_name',
       title: t('registry.RegistryName'),
       dataIndex: 'registry_name',
       sorter: true,
+      fixed: 'left',
+      render: (name: string, record) => (
+        <BAINameActionCell
+          title={name}
+          showActions="always"
+          actions={[
+            {
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <SquarePenIcon />,
+              onClick: () => {
+                setEditingRegistry(record);
+              },
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <Trash2 size="1em" />,
+              type: 'danger',
+              onClick: () => {
+                setDeletingRegistry(record);
+              },
+            },
+            {
+              key: 'rescan',
+              title: t('maintenance.RescanImages'),
+              icon: <RefreshCw size="1em" />,
+              onClick: () => {
+                record.registry_name &&
+                  rescanImage(record.registry_name, record.project);
+              },
+            },
+          ]}
+        />
+      ),
     },
     {
       key: 'url',
@@ -293,7 +326,14 @@ const ContainerRegistryList: React.FC<{
       title: t('registry.Project'),
       dataIndex: 'project',
       render: (value) => {
-        return <Tag key={value || ''}>{value || ''}</Tag>;
+        // Uncolored antd Tag -> neutral Astryx Badge (Tag lookup policy).
+        return value ? (
+          <Badge
+            key={value}
+            variant={badgeVariantForTagColor(undefined)}
+            label={value}
+          />
+        ) : null;
       },
     },
     {
@@ -315,14 +355,21 @@ const ContainerRegistryList: React.FC<{
           record.registry_name,
         );
         return (
+          // antd Switch checked/loading/disabled -> Astryx Switch
+          // value/isLoading/isDisabled; `label` is required, hidden here
+          // because the column header already names the control (P2).
           <Switch
-            checked={
+            label={t('general.Enabled')}
+            isLabelHidden
+            value={
               inFlightHostName === record.id + deferredFetchKey
                 ? !isEnabled
                 : isEnabled
             }
-            disabled={deferredFetchKey !== fetchKey || isInFlightDomainMutation}
-            loading={
+            isDisabled={
+              deferredFetchKey !== fetchKey || isInFlightDomainMutation
+            }
+            isLoading={
               (deferredFetchKey !== fetchKey || isInFlightDomainMutation) &&
               inFlightHostName === record.id + deferredFetchKey
             }
@@ -376,51 +423,6 @@ const ContainerRegistryList: React.FC<{
         );
       },
     },
-    {
-      title: t('general.Control'),
-      fixed: 'right',
-      render(_value, record) {
-        return (
-          <BAIFlex>
-            <Tooltip title={t('button.Edit')}>
-              <Button
-                style={{
-                  color: token.colorInfo,
-                }}
-                type="text"
-                icon={<SettingOutlined />}
-                onClick={() => {
-                  setEditingRegistry(record);
-                }}
-              />
-            </Tooltip>
-            <Tooltip title={t('button.Delete')}>
-              <Button
-                danger
-                type="text"
-                icon={<DeleteOutlined />}
-                onClick={() => {
-                  setDeletingRegistry(record);
-                }}
-              />
-            </Tooltip>
-            <Tooltip title={t('maintenance.RescanImages')}>
-              <Button
-                type="text"
-                icon={
-                  <SyncOutlined
-                    onClick={() => {
-                      record.registry_name &&
-                        rescanImage(record.registry_name, record.project);
-                    }}
-                  />
-                }
-              />
-            </Tooltip>
-          </BAIFlex>
-        );
-      },
-    },
   ];
 
   const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
@@ -453,36 +455,34 @@ const ContainerRegistryList: React.FC<{
               type: 'string',
             },
           ]}
-          value={queryParams.filter}
+          value={queryParams.filter ?? undefined}
           onChange={(value) => {
-            setQueryParams({ filter: value }, 'replaceIn');
+            setQueryParams({ filter: value ?? null });
           }}
         />
         <BAIFlex gap="xs">
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              loading={deferredFetchKey !== fetchKey}
-              icon={<ReloadOutlined />}
-              onClick={() => {
-                updateFetchKey();
-              }}
-            />
-          </Tooltip>
+          <IconButton
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
+            isLoading={deferredFetchKey !== fetchKey}
+            icon={<RotateCw size="1em" />}
+            onClick={() => {
+              updateFetchKey();
+            }}
+          />
           <Button
-            type="primary"
-            icon={<PlusOutlined />}
+            variant="primary"
+            icon={<PlusIcon />}
+            label={t('registry.AddRegistry')}
             onClick={() => {
               setIsNewModalOpen(true);
             }}
-          >
-            {t('registry.AddRegistry')}
-          </Button>
+          />
         </BAIFlex>
       </BAIFlex>
       <BAITable
-        rowKey={(record) => record.id}
         scroll={{ x: 'max-content' }}
-        showSorterTooltip={false}
+        rowKey={(record) => record.id}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: container_registry_nodes?.count ?? 0,
@@ -496,9 +496,10 @@ const ContainerRegistryList: React.FC<{
             }
           },
           extraContent: (
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
+            <IconButton
+              variant="ghost"
+              icon={<Settings size="1em" />}
+              label={t('table.SettingTable')}
               onClick={() => {
                 toggleColumnSettingModal();
               }}
@@ -506,7 +507,7 @@ const ContainerRegistryList: React.FC<{
           ),
         }}
         onChangeOrder={(order) => {
-          setQueryParams({ order }, 'replaceIn');
+          setQueryParams({ order: order ?? null });
         }}
         loading={
           deferredQueryVariables !== queryVariables ||
@@ -517,7 +518,7 @@ const ContainerRegistryList: React.FC<{
           _.filter(
             columns,
             (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-          ) as ColumnType<AnyObject>[]
+          ) as BAIColumnType<ContainerRegistry>[]
         }
       />
       <ContainerRegistryEditorModal
@@ -545,22 +546,25 @@ const ContainerRegistryList: React.FC<{
         }}
         centered={false}
       />
-      <BAIModal
-        title={
-          <>
-            <ExclamationCircleOutlined
-              style={{
-                color: token.colorWarning,
-              }}
-            />{' '}
-            {t('dialog.warning.CannotBeUndone')}
-          </>
+      <BAIDeleteConfirmModal
+        open={!!deletingRegistry}
+        title={t('dialog.title.DeleteSomething', {
+          name: deletingRegistry?.registry_name,
+        })}
+        target={t('general.ContainerRegistry')}
+        items={
+          deletingRegistry
+            ? [
+                {
+                  key: deletingRegistry.id,
+                  label: deletingRegistry.registry_name ?? '',
+                },
+              ]
+            : []
         }
-        okText={t('button.Delete')}
-        okButtonProps={{
-          danger: true,
-          disabled: deletingConfirmText !== deletingRegistry?.registry_name,
-        }}
+        confirmText={deletingRegistry?.registry_name ?? ''}
+        requireConfirmInput
+        confirmLoading={isInFlightDeleteMutation}
         onOk={() => {
           if (deletingRegistry) {
             commitDeleteMutation({
@@ -594,54 +598,10 @@ const ContainerRegistryList: React.FC<{
             setDeletingRegistry(null);
           }
         }}
-        confirmLoading={isInFlightDeleteMutation}
         onCancel={() => {
           setDeletingRegistry(null);
         }}
-        destroyOnHidden
-        open={!!deletingRegistry}
-      >
-        <BAIFlex
-          direction="column"
-          align="stretch"
-          gap="sm"
-          style={{
-            marginTop: token.marginMD,
-          }}
-        >
-          <Typography.Text>
-            <Typography.Text code>
-              {deletingRegistry?.registry_name}
-            </Typography.Text>{' '}
-            {t('registry.TypeRegistryNameToDelete')}
-          </Typography.Text>
-          <Form>
-            <Form.Item
-              name={'confirmText'}
-              rules={[
-                {
-                  required: true,
-                  message: t('registry.HostnameDoesNotMatch'),
-                  validator: () => {
-                    if (
-                      deletingConfirmText === deletingRegistry?.registry_name
-                    ) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject();
-                  },
-                },
-              ]}
-            >
-              <Input
-                autoComplete="off"
-                value={deletingConfirmText}
-                onChange={(e) => setDeletingConfirmText(e.target.value)}
-              />
-            </Form.Item>
-          </Form>
-        </BAIFlex>
-      </BAIModal>
+      />
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

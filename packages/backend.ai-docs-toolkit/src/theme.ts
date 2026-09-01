@@ -1,3 +1,5 @@
+import { validateFontFamily } from './config.js';
+
 export interface PdfTheme {
   name: string;
 
@@ -42,6 +44,12 @@ export interface PdfTheme {
   // Header / Footer (Playwright displayHeaderFooter templates)
   headerHtml: string;
   footerHtml: string;
+
+  /** Family leading the body font stacks; register it via `pdfFontFaces`. */
+  fontFamily?: string;
+
+  /** Family for the cover H1 only; falls back through `fontFamily`. */
+  coverTitleFontFamily?: string;
 }
 
 /**
@@ -150,4 +158,29 @@ export function loadTheme(themeName?: string): PdfTheme {
     return defaultTheme;
   }
   return theme;
+}
+
+/**
+ * Resolve the config file's `theme` value: a string selects a built-in
+ * theme; an object is a partial override merged over the default theme.
+ */
+export function resolveTheme(
+  option?: string | Partial<PdfTheme>,
+): PdfTheme {
+  if (!option || typeof option === 'string') {
+    return loadTheme(option);
+  }
+  const merged = { ...defaultTheme, ...option, name: option.name ?? 'custom' };
+  // Family names are interpolated into the stylesheet — validate against
+  // CSS injection.
+  if (merged.fontFamily) {
+    merged.fontFamily = validateFontFamily(merged.fontFamily, 'theme.fontFamily');
+  }
+  if (merged.coverTitleFontFamily) {
+    merged.coverTitleFontFamily = validateFontFamily(
+      merged.coverTitleFontFamily,
+      'theme.coverTitleFontFamily',
+    );
+  }
+  return merged;
 }

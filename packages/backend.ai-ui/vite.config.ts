@@ -1,21 +1,35 @@
 import react from '@vitejs/plugin-react';
 import glob from 'fast-glob';
-import { dirname, resolve, basename } from 'node:path';
+import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import relay from 'vite-plugin-relay-lite';
 import svgr from 'vite-plugin-svgr';
 
+import { peerDependencies } from './package.json';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Rollup matches `external` strings exactly, so bare names left subpaths like
+// `react-dom/client` bundled — a second renderer that blank-screens consumers
+// on any other React patch (#8595). i18next / react-i18next are dependencies
+// rather than peers, so they stay bundled and keep BUI's i18n isolated.
+const peerDependencyPatterns = Object.keys(peerDependencies).map(
+  // `.` is the only regex metacharacter an npm package name can hold.
+  (name) => new RegExp(`^${name.replaceAll('.', '\\.')}(/.*)?$`),
+);
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
+  // One entry per language module on top of the main entry: `ko_KR.ts` →
+  // `dist/locale/ko_KR.js`, published as the `./locale/*` package export
+  // the host's `bui-language.ts` imports (the antd-era `BAILocale` flow, now
+  // carrying `astryxLocale` instead of `antdLocale` — FR-3511).
   const localeFiles = glob.sync('src/locale/*.ts', { cwd: __dirname });
   const entries: Record<string, string> = {
     'backend.ai-ui': resolve(__dirname, 'src/index.ts'),
   };
-  // Add locale entries
   localeFiles.forEach((file) => {
     const name = basename(file, '.ts');
     if (name === 'index') return;
@@ -36,16 +50,7 @@ export default defineConfig(({ mode }) => {
         formats: ['es'],
       },
       rollupOptions: {
-        external: [
-          'react',
-          'react-dom',
-          'react-router-dom',
-          'relay-runtime',
-          'antd',
-          'antd-style',
-          'graphql',
-          // i18next and react-i18next are bundled to isolate BUI's i18n instance from the host app
-        ],
+        external: peerDependencyPatterns,
       },
       sourcemap: true,
       outDir: 'dist',
@@ -69,12 +74,22 @@ export default defineConfig(({ mode }) => {
         codegen: !isDevMode,
       }),
       dts({
-        include: ['src/**/*'],
-        exclude: ['**/*.{stories,test}.{ts,tsx}', 'src/locale/*.json'],
+        include: ['src/**/*', 'vite-env.d.ts'],
+        // `**/*.doc.ts` and `src/astryx-docs/**` are the Astryx CLI integration's
+        // contributions — read by the CLI from source, never imported by the
+        // library, so they have no business in the published types.
+        exclude: [
+          '**/*.{stories,test}.{ts,tsx}',
+          'src/locale/*.json',
+          '**/*.doc.ts',
+          'src/astryx-docs/**',
+        ],
         rollupTypes: false,
         insertTypesEntry: true,
         compilerOptions: {
           preserveSymlinks: false,
+          rootDir: 'src',
+          paths: {}
         },
       }),
       svgr(),

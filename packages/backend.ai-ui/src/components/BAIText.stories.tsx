@@ -1,11 +1,13 @@
+import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAIText from './BAIText';
+import { Kbd } from '@astryxdesign/core/Kbd';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Card } from 'antd';
 
 /**
- * BAIText extends Ant Design's Typography.Text with additional features
- * for better text handling and customization.
+ * BAIText keeps the Ant Design Typography.Text-shaped prop surface (`type`,
+ * `strong`, `ellipsis`, `copyable`, `code`, `keyboard`, `mark`, ...) and the
+ * antd-era DOM structure, rendered on Astryx tokens (FR-3726).
  *
  * Key features:
  * - Monospace font support via `monospace` prop
@@ -24,7 +26,7 @@ const meta: Meta<typeof BAIText> = {
     docs: {
       description: {
         component: `
-**BAIText** extends [Ant Design Typography.Text](https://ant.design/components/typography) with enhanced text handling features.
+**BAIText** keeps the [Ant Design Typography.Text](https://ant.design/components/typography)-shaped prop surface and the antd-era structure — one inline span, which becomes an inline-flex row holding the clamp box, the tooltip, the expand link and the copy control when \`ellipsis\` / \`copyable\` are set — rendered on Astryx tokens, with the tooltip on Astryx \`Tooltip\` and the copy control on Astryx \`IconButton\` + \`navigator.clipboard\`.
 
 ## BAI-Specific Props
 | Prop | Type | Default | Description |
@@ -52,7 +54,7 @@ interface EllipsisConfig {
 }
 \`\`\`
 
-For all other props, refer to [Ant Design Typography.Text](https://ant.design/components/typography).
+For all other props, see \`BAIText.tsx\` — the antd-shaped types (\`BAITextEllipsisConfig\`, \`BAITextCopyConfig\`) are declared locally. \`copyable\` takes antd's \`[resting, copied]\` tuples for \`icon\` and \`tooltips\`.
         `,
       },
     },
@@ -96,14 +98,6 @@ For all other props, refer to [Ant Design Typography.Text](https://ant.design/co
       description: 'Enable copy-to-clipboard functionality',
       table: {
         type: { summary: 'boolean | CopyConfig' },
-        defaultValue: { summary: 'false' },
-      },
-    },
-    editable: {
-      control: false,
-      description: 'Enable inline editing functionality',
-      table: {
-        type: { summary: 'boolean | EditConfig' },
         defaultValue: { summary: 'false' },
       },
     },
@@ -157,7 +151,8 @@ For all other props, refer to [Ant Design Typography.Text](https://ant.design/co
     },
     keyboard: {
       control: { type: 'boolean' },
-      description: 'Keyboard shortcut styling with shadow effect',
+      description:
+        'Render the children as an Astryx Kbd shortcut (`+`-separated keys)',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -293,22 +288,22 @@ export const SingleLineEllipsis: Story = {
   name: 'SingleLineEllipsis',
   render: () => (
     <BAIFlex direction="column" style={{ width: '100%' }}>
-      <Card size="small" style={{ width: 300 }}>
+      <BAICard size="small" style={{ width: 300 }}>
         <BAIText ellipsis={{ tooltip: true }}>
           This is a very long text that will be truncated with ellipsis when it
           exceeds the container width. Hover to see full content.
         </BAIText>
-      </Card>
-      <Card size="small" style={{ width: 200 }}>
+      </BAICard>
+      <BAICard size="small" style={{ width: 200 }}>
         <BAIText ellipsis={{ tooltip: true }} monospace>
           /very/long/path/to/some/file/in/system.txt
         </BAIText>
-      </Card>
-      <Card size="small" style={{ width: 250 }}>
+      </BAICard>
+      <BAICard size="small" style={{ width: 250 }}>
         <BAIText ellipsis={{ tooltip: true }} type="secondary">
           user@example.com with a very long email address that overflows
         </BAIText>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -325,22 +320,22 @@ export const MultiLineEllipsis: Story = {
   name: 'MultiLineEllipsis',
   render: () => (
     <BAIFlex direction="column" style={{ width: '100%' }}>
-      <Card size="small" style={{ width: 400 }}>
+      <BAICard size="small" style={{ width: 400 }}>
         <BAIText ellipsis={{ rows: 2, tooltip: true }}>
           This is a longer text that spans multiple lines. When it exceeds the
           specified number of rows, it will be truncated with ellipsis. The
           tooltip will show the full content when you hover over the truncated
           text. This demonstrates multi-line ellipsis functionality.
         </BAIText>
-      </Card>
-      <Card size="small" style={{ width: 300 }}>
+      </BAICard>
+      <BAICard size="small" style={{ width: 300 }}>
         <BAIText ellipsis={{ rows: 3, tooltip: true }} type="secondary">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
           aliquip ex ea commodo consequat.
         </BAIText>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -357,33 +352,29 @@ export const EllipsisWithCustomTooltip: Story = {
   name: 'CustomTooltip',
   render: () => (
     <BAIFlex direction="column" style={{ width: '100%' }}>
-      <Card size="small" style={{ width: 300 }}>
+      <BAICard size="small" style={{ width: 300 }}>
         <BAIText
           ellipsis={{
             rows: 1,
-            tooltip: {
-              title: 'Custom tooltip content',
-              placement: 'topLeft',
-            },
+            // Of antd's `TooltipProps` only `title` has a destination on the
+            // Astryx Tooltip.
+            tooltip: { title: 'Custom tooltip content' },
           }}
         >
           Text with custom tooltip configuration and placement
         </BAIText>
-      </Card>
-      <Card size="small" style={{ width: 250 }}>
+      </BAICard>
+      <BAICard size="small" style={{ width: 250 }}>
         <BAIText
           ellipsis={{
             rows: 2,
-            tooltip: {
-              title: 'This tooltip has custom styling',
-              color: 'blue',
-            },
+            tooltip: { title: 'This tooltip has custom styling' },
           }}
         >
           Multi-line text with custom colored tooltip when it overflows beyond
           two rows
         </BAIText>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -399,12 +390,12 @@ export const EllipsisWithCustomTooltip: Story = {
 export const EllipsisDisabledTooltip: Story = {
   name: 'NoTooltip (Default)',
   render: () => (
-    <Card size="small" style={{ width: 300 }}>
+    <BAICard size="small" style={{ width: 300 }}>
       <BAIText ellipsis={{ rows: 1 }}>
         This text will be truncated but no tooltip will appear on hover even
         when it overflows
       </BAIText>
-    </Card>
+    </BAICard>
   ),
   parameters: {
     docs: {
@@ -419,22 +410,22 @@ export const ExpandableEllipsis: Story = {
   name: 'ExpandableEllipsis',
   render: () => (
     <BAIFlex direction="column" style={{ width: '100%' }}>
-      <Card size="small" style={{ width: 300 }}>
+      <BAICard size="small" style={{ width: 300 }}>
         <BAIText ellipsis={{ rows: 1, expandable: true }}>
           This is a long text that will be truncated with ellipsis. Click
           &quot;Expand&quot; to see the full content and &quot;Collapse&quot; to
           hide it again.
         </BAIText>
-      </Card>
-      <Card size="small" style={{ width: 400 }}>
+      </BAICard>
+      <BAICard size="small" style={{ width: 400 }}>
         <BAIText ellipsis={{ rows: 2, expandable: true, tooltip: true }}>
           This is a longer text that spans multiple lines. When it exceeds the
           specified number of rows, it will be truncated with ellipsis. You can
           click &quot;Expand&quot; to see the full content. The tooltip will
           also show the full content when you hover over the truncated text.
         </BAIText>
-      </Card>
-      <Card size="small" style={{ width: 250 }}>
+      </BAICard>
+      <BAICard size="small" style={{ width: 250 }}>
         <BAIText
           ellipsis={{
             rows: 3,
@@ -448,7 +439,7 @@ export const ExpandableEllipsis: Story = {
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
           aliquip ex ea commodo consequat.
         </BAIText>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -465,15 +456,15 @@ export const ExpandableWithOtherFeatures: Story = {
   name: 'ExpandableWithCombinedFeatures',
   render: () => (
     <BAIFlex direction="column" style={{ width: '100%' }}>
-      <Card size="small" style={{ width: 350 }}>
+      <BAICard size="small" style={{ width: 350 }}>
         <BAIText
           ellipsis={{ rows: 1, expandable: true, tooltip: true }}
           copyable
         >
           /home/user/projects/backend.ai-webui/react/src/components/very/long/path/to/file.tsx
         </BAIText>
-      </Card>
-      <Card size="small" style={{ width: 300 }}>
+      </BAICard>
+      <BAICard size="small" style={{ width: 300 }}>
         <BAIText
           monospace
           ellipsis={{ rows: 2, expandable: true }}
@@ -482,8 +473,8 @@ export const ExpandableWithOtherFeatures: Story = {
         >
           1234567890abcdefghijklmnopqrstuvwxyz_very_long_api_key_string_that_needs_expansion
         </BAIText>
-      </Card>
-      <Card size="small" style={{ width: 400 }}>
+      </BAICard>
+      <BAICard size="small" style={{ width: 400 }}>
         <BAIText
           ellipsis={{ rows: 2, expandable: true, tooltip: true }}
           type="danger"
@@ -492,7 +483,7 @@ export const ExpandableWithOtherFeatures: Story = {
           with status 500. Please check your network connection and server
           configuration, then try again.
         </BAIText>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {
@@ -509,35 +500,17 @@ export const Interactive: Story = {
   name: 'InteractiveText',
   render: () => (
     <BAIFlex direction="column">
-      <BAIText
-        editable={{
-          onChange: (str) => console.log('Content changed:', str),
-        }}
-      >
-        This is an editable text (click to edit)
-      </BAIText>
-      <BAIText
-        editable={{
-          tooltip: 'Click to edit',
-          triggerType: ['icon', 'text'],
-        }}
-      >
-        Editable with custom tooltip
-      </BAIText>
-      <BAIText
-        copyable
-        editable={{
-          onChange: (str) => console.log('Content changed:', str),
-        }}
-      >
-        Both editable and copyable
+      <BAIText copyable>Click the glyph to copy this line</BAIText>
+      <BAIText copyable={{ text: 'the-full-untruncated-value' }} ellipsis>
+        A truncated value whose copy target is the full string
       </BAIText>
     </BAIFlex>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Interactive text with editable functionality.',
+        story:
+          "Interactive text. antd's `editable` inline-edit affordance is not part of the surface — no production call site used it. `copyable` is built on `IconButton` + `navigator.clipboard`; with `ellipsis`, `copyable.text` keeps the clipboard target at the full value.",
       },
     },
   },
@@ -546,23 +519,34 @@ export const Interactive: Story = {
 export const Keyboard: Story = {
   name: 'KeyboardShortcuts',
   render: () => (
-    <BAIFlex direction="column">
+    <BAIFlex direction="column" gap="md" align="start">
       <div>
-        <BAIText keyboard>Ctrl</BAIText> + <BAIText keyboard>C</BAIText>
+        <BAIText type="secondary">Copy: </BAIText> <Kbd keys="mod+c" />
       </div>
       <div>
-        <BAIText keyboard>Cmd</BAIText> + <BAIText keyboard>Shift</BAIText> +{' '}
-        <BAIText keyboard>P</BAIText>
+        <BAIText type="secondary">Quick open: </BAIText>{' '}
+        <Kbd keys="mod+shift+p" />
       </div>
       <div>
-        Press <BAIText keyboard>Enter</BAIText> to submit
+        <BAIText type="secondary">A single literal key: </BAIText>{' '}
+        <Kbd keys="]" />
+      </div>
+      <div>
+        <BAIText type="secondary">Through the prop: </BAIText>
+        <BAIText keyboard>mod+c</BAIText>
+      </div>
+      <div>
+        <BAIText keyboard copyable>
+          shift+enter
+        </BAIText>
       </div>
     </BAIFlex>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Display keyboard shortcuts with keyboard styling.',
+        story:
+          'Shortcut badges are Astryx `Kbd`; it takes a `keys` spec rather than children, and a key it does not know (`]`) is rendered verbatim. `BAIText keyboard` (the antd `Typography.Text keyboard` prop) hands its text to `Kbd` as that spec, so the two forms render the same badges. For `Kbd` on a DARK tooltip bubble wrap the content in `MediaTheme mode="dark"` (never the whole `Tooltip`): `useTooltip` hardcodes its bubble colours without flipping token context, and the host app pins its tooltip dark in BOTH modes via `ANTD_HOVER_PARITY`.',
       },
     },
   },
@@ -641,13 +625,13 @@ export const RealWorldExamples: Story = {
   name: 'RealWorldUsage',
   render: () => (
     <BAIFlex direction="column" style={{ width: '100%' }} gap="lg">
-      <Card title="File Path" size="small" style={{ width: 400 }}>
+      <BAICard title="File Path" size="small" style={{ width: 400 }}>
         <BAIText monospace ellipsis={{ tooltip: true }} copyable>
           /home/user/projects/backend.ai-webui/react/src/components/AgentStats.tsx
         </BAIText>
-      </Card>
+      </BAICard>
 
-      <Card title="API Key" size="small" style={{ width: 450 }}>
+      <BAICard title="API Key" size="small" style={{ width: 450 }}>
         <BAIText monospace type="secondary" copyable>
           1234567890abcdefghijklmnopqrstuvwxyz
         </BAIText>
@@ -656,56 +640,52 @@ export const RealWorldExamples: Story = {
         <BAIText code copyable ellipsis={{ tooltip: true }}>
           1234567890abcdefghijklmnopqrstuvwxyz_very_long_token_string
         </BAIText>
-      </Card>
+      </BAICard>
 
-      <Card title="Error Message" size="small" style={{ width: 450 }}>
+      <BAICard title="Error Message" size="small" style={{ width: 450 }}>
         <BAIText type="danger" ellipsis={{ rows: 2, tooltip: true }}>
           Failed to load resource: net::ERR_CONNECTION_REFUSED at
           https://example.com/api/v1/endpoint. Please check your network
           connection and try again.
         </BAIText>
-      </Card>
+      </BAICard>
 
-      <Card title="User Email" size="small" style={{ width: 300 }}>
+      <BAICard title="User Email" size="small" style={{ width: 300 }}>
         <BAIText ellipsis={{ tooltip: true }} copyable>
           user.with.very.long.name@company.example.com
         </BAIText>
-      </Card>
+      </BAICard>
 
-      <Card title="Description" size="small" style={{ width: 350 }}>
+      <BAICard title="Description" size="small" style={{ width: 350 }}>
         <BAIText type="secondary" ellipsis={{ rows: 3, tooltip: true }}>
           This is a sample description that might be quite long and needs to be
           truncated to maintain a clean UI. The full content will be available
           in a tooltip when users hover over the truncated text. This provides a
           good balance between information density and usability.
         </BAIText>
-      </Card>
+      </BAICard>
 
-      <Card title="Command & Keyboard" size="small" style={{ width: 200 }}>
+      <BAICard title="Command & Keyboard" size="small" style={{ width: 200 }}>
         <BAIText type="secondary">To copy the command: </BAIText>
-        <BAIText keyboard>Ctrl</BAIText>
-        <BAIText type="secondary"> + </BAIText>
-        <BAIText keyboard>C</BAIText>
+        <Kbd keys="mod+c" />
         <br />
         <BAIText code copyable>
           git clone repository.git
         </BAIText>
         <br />
         <BAIText type="secondary">Quick Open: </BAIText>
-        <BAIText keyboard copyable ellipsis>
-          Ctrl+Shift+P+Alt+Meta+Super
-        </BAIText>
-      </Card>
+        <Kbd keys="mod+shift+p" />
+      </BAICard>
 
-      <Card title="Status Update" size="small" style={{ width: 400 }}>
+      <BAICard title="Status Update" size="small" style={{ width: 400 }}>
         <BAIText strong mark type="warning">
           Action Required:
         </BAIText>
         <br />
         <BAIText>Your subscription expires in 3 days.</BAIText>
-      </Card>
+      </BAICard>
 
-      <Card title="Version Info" size="small" style={{ width: 400 }}>
+      <BAICard title="Version Info" size="small" style={{ width: 400 }}>
         <BAIText delete type="secondary">
           Old version: 1.0.0
         </BAIText>
@@ -713,9 +693,9 @@ export const RealWorldExamples: Story = {
         <BAIText strong type="success">
           Current version: 2.0.0
         </BAIText>
-      </Card>
+      </BAICard>
 
-      <Card title="Deprecation Notice" size="small" style={{ width: 450 }}>
+      <BAICard title="Deprecation Notice" size="small" style={{ width: 450 }}>
         <BAIText type="warning" strong>
           ⚠️ Deprecated:
         </BAIText>{' '}
@@ -727,9 +707,9 @@ export const RealWorldExamples: Story = {
           newFunction()
         </BAIText>
         <BAIText type="secondary"> instead</BAIText>
-      </Card>
+      </BAICard>
 
-      <Card title="Combined Styles" size="small" style={{ width: 400 }}>
+      <BAICard title="Combined Styles" size="small" style={{ width: 400 }}>
         <BAIText
           type="danger"
           monospace
@@ -743,7 +723,7 @@ export const RealWorldExamples: Story = {
           Monospace strong italic underlined text with ellipsis and copy for
           very long expandable content that is also marked as deleted
         </BAIText>
-      </Card>
+      </BAICard>
     </BAIFlex>
   ),
   parameters: {

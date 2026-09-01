@@ -1,27 +1,54 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ BAIKeypairSelect — ticket-27 Astryx sibling of `BAIKeypairSelect`,
+ built on `BAIComplexSelect` (ticket 26), following pattern A of the
+ recipe used across the Astryx migration (copy of `BAIUserSelect.tsx`,
+ the worked example).
+
+ FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
+ `BAIKeypairSelect` is NOT touched by this change. It keeps serving every
+ unmigrated call site until ticket 27 moves them. This file is the
+ Astryx-native sibling, and its OUTER value contract is deliberately the same
+ plain key (`string` / `string[]`) the antd wrapper exposes — labelInValue
+ lives strictly between this wrapper and `BAIComplexSelect`.
+
+ CLASS A (name-valued): the key is `access_key` (a display value in its own
+ right), matching the antd original.
+
+ PILOT-DECISIONs:
+  - P26-3 antd's `labelRender`/`optionRender` rendered the access key in
+    monospace (`<BAIText monospace>{label}</BAIText>`). `BAIComplexSelect`
+    requires `label` to be a plain string (it is the trigger text, the
+    accessible name and the live-region text), so the monospace styling is
+    dropped — the label prints as plain text. No information is lost, only
+    the font treatment.
+  - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
+    is dropped (see `BAIComplexSelect` header, general policy).
+*/
 import { BAIKeypairSelectPaginatedQuery } from '../../__generated__/BAIKeypairSelectPaginatedQuery.graphql';
 import { BAIKeypairSelectValueQuery } from '../../__generated__/BAIKeypairSelectValueQuery.graphql';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import BAIComplexSelect, {
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
+} from '../BAIComplexSelect';
 import { mergeFilterValues } from '../BAIPropertyFilter';
-import BAISelect, { BAISelectProps } from '../BAISelect';
-import BAIText from '../BAIText';
-import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
-import { GetRef, Skeleton } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   useDeferredValue,
   useImperativeHandle,
-  useOptimistic,
-  useRef,
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type KeypairNode = NonNullable<
+export type AstryxKeypairNode = NonNullable<
   NonNullable<
     BAIKeypairSelectPaginatedQuery['response']['keypair_list']
   >['items'][number]
@@ -32,31 +59,33 @@ export interface BAIKeypairSelectRef {
 }
 
 export interface BAIKeypairSelectProps extends Omit<
-  BAISelectProps,
-  'options' | 'labelInValue' | 'ref'
+  BAIComplexSelectProps,
+  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
+  /** Plain key(s), as the antd `BAIKeypairSelect` exposes. */
+  value?: string | Array<string> | null;
+  onChange?: (value: string | Array<string> | undefined) => void;
   filter?: string;
-  onChange?: (value: string | string[] | undefined, option: any) => void;
   ref?: React.Ref<BAIKeypairSelectRef>;
 }
 
 const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
-  loading,
   filter,
+  multiple = false,
+  isLoading,
   ref,
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
-  const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+  const { t } = useBAIi18n();
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | string[] | undefined
-  >(selectProps, {
+    string | Array<string> | null | undefined
+  >(selectProps as Record<string, unknown>, {
     valuePropName: 'value',
     trigger: 'onChange',
   });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
-    selectProps,
+    selectProps as Record<string, unknown>,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
@@ -65,18 +94,16 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
   );
 
   const deferredOpen = useDeferredValue(controllableOpen);
-  const [searchStr, setSearchStr] = useState<string>();
+  const [searchStr, setSearchStr] = useState<string>('');
   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
-  const [optimisticSearchStr, setOptimisticSearchStr] =
-    useOptimistic(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // Defer query refetch to prevent flickering during selection
+  // Deferred so a fresh selection does not immediately re-run the value query.
   const deferredControllableValue = useDeferredValue(controllableValue);
+  const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
-  // ValueQuery: fetch selected keypairs by access_key filter
   const { keypair_list: selectedKeypairList } =
     useLazyLoadQuery<BAIKeypairSelectValueQuery>(
       graphql`
@@ -98,29 +125,24 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
         }
       `,
       {
-        filter: !_.isEmpty(deferredControllableValue)
+        filter: selectedKeys.length
           ? mergeFilterValues(
-              _.castArray(deferredControllableValue).map(
-                (value) => `access_key == "${value}"`,
-              ),
+              _.map(selectedKeys, (value) => `access_key == "${value}"`),
               '|',
             )
           : undefined,
-        limit: _.castArray(deferredControllableValue).length || 1,
+        limit: Math.max(selectedKeys.length, 1),
         offset: 0,
-        skipSelected: _.isEmpty(deferredControllableValue),
+        skipSelected: selectedKeys.length === 0,
       },
       {
-        fetchPolicy: !_.isEmpty(deferredControllableValue)
-          ? 'store-or-network'
-          : 'store-only',
+        fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
 
-  // PaginatedQuery: fetch all keypairs with pagination and search
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIKeypairSelectPaginatedQuery, KeypairNode>(
+    useLazyPaginatedQuery<BAIKeypairSelectPaginatedQuery, AstryxKeypairNode>(
       graphql`
         query BAIKeypairSelectPaginatedQuery(
           $offset: Int!
@@ -156,13 +178,12 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.keypair_list?.total_count ?? undefined,
-        getItem: (result) => result.keypair_list?.items,
+        getTotal: (r) => r.keypair_list?.total_count ?? undefined,
+        getItem: (r) => r.keypair_list?.items,
         getId: (item) => item?.access_key,
       },
     );
 
-  // Expose refetch function through ref
   useImperativeHandle(
     ref,
     () => ({
@@ -175,123 +196,53 @@ const BAIKeypairSelect: React.FC<BAIKeypairSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.access_key,
-    value: item?.access_key,
-  }));
-
-  const controllableValueWithLabel = selectedKeypairList?.items
-    ? _.castArray(deferredControllableValue)
-        .map((value) => {
-          const item = selectedKeypairList.items.find(
-            (item) => item?.access_key === value,
-          );
-          return item
-            ? {
-                label: item.access_key,
-                value: item.access_key,
-              }
-            : null;
-        })
-        .filter(
-          (item): item is { label: string | null; value: string | null } =>
-            item !== null,
-        )
-    : !_.isEmpty(deferredControllableValue)
-      ? _.castArray(deferredControllableValue).map((value) => ({
-          label: value,
-          value: value,
-        }))
-      : undefined;
-
-  const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
-    controllableValueWithLabel,
+  const options = _.compact(
+    _.map(paginationData, (item) => {
+      const key = item?.access_key;
+      return key
+        ? {
+            value: key,
+            label: key,
+          }
+        : null;
+    }),
   );
 
+  const labeledValue: BAIComplexSelectValue = (() => {
+    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
+      const item = _.find(
+        selectedKeypairList?.items,
+        (i) => i?.access_key === key,
+      );
+      return { label: item?.access_key ?? key, value: key };
+    });
+    if (multiple) return labeled;
+    return labeled[0] ?? null;
+  })();
+
   return (
-    <BAISelect
-      ref={selectRef}
+    <BAIComplexSelect
       placeholder={t('comp:BAIKeypairSelect.SelectKeypair')}
-      loading={
-        loading ||
+      {...selectProps}
+      multiple={multiple}
+      isLoading={
+        isLoading ||
         controllableValue !== deferredControllableValue ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
-      {...selectProps}
-      searchAction={async (value) => {
-        setOptimisticSearchStr(value);
-        setSearchStr(value);
-        await selectProps.searchAction?.(value);
+      isLoadingNext={isLoadingNext}
+      total={result.keypair_list?.total_count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
+        setControllableValue(multiple ? keys : keys[0], undefined);
       }}
-      showSearch={
-        selectProps.showSearch === false
-          ? false
-          : {
-              searchValue: optimisticSearchStr,
-              autoClearSearchValue: true,
-              ...(_.isObject(selectProps.showSearch)
-                ? _.omit(selectProps.showSearch, ['searchValue'])
-                : {}),
-              filterOption: false,
-            }
-      }
-      value={
-        controllableValue !== deferredControllableValue
-          ? optimisticValueWithLabel
-          : controllableValueWithLabel
-      }
-      labelInValue
-      labelRender={({ label }) => {
-        return _.isString(label) ? <BAIText monospace>{label}</BAIText> : label;
-      }}
-      optionRender={({ label }) => {
-        return _.isString(label) ? <BAIText monospace>{label}</BAIText> : label;
-      }}
-      onChange={(value, option) => {
-        const valueArray = _.isEmpty(value) ? [] : _.castArray(value);
-
-        const valueWithOriginalLabel = valueArray.map((v) => {
-          const label = _.isString(v.label)
-            ? v.label
-            : (availableOptions.find((opt) => opt.value === v.value)?.label ??
-              v.value);
-          return {
-            label,
-            value: v.value,
-          };
-        });
-
-        setOptimisticValueWithLabel(valueWithOriginalLabel);
-
-        const isMultiple =
-          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
-        const accessKeyArray = valueArray.map((v) => _.toString(v.value));
-        setControllableValue(
-          isMultiple ? accessKeyArray : (accessKeyArray[0] ?? undefined),
-          option,
-        );
-      }}
-      options={availableOptions}
-      endReached={() => {
-        loadNext();
-      }}
-      open={controllableOpen}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
       onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(result.keypair_list?.total_count) &&
-        result.keypair_list.total_count > 0 ? (
-          <TotalFooter
-            loading={isLoadingNext}
-            total={result.keypair_list.total_count}
-          />
-        ) : undefined
-      }
+      endReached={loadNext}
     />
   );
 };

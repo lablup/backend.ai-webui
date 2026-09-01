@@ -11,13 +11,20 @@ import {
   convertToDecimalUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import { Empty, Typography, theme } from 'antd';
-import { createStyles } from 'antd-style';
-import { useResourceSlotsDetails, BAIFlex } from 'backend.ai-ui';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import { theme } from '../theme-shim';
+import './SessionMetricGraph.css';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Heading } from '@astryxdesign/core/Heading';
+import {
+  BAIQuestionIconWithTooltip,
+  BAIFlex,
+  BAISkeleton,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import { useMemo } from 'react';
+import * as _ from 'lodash-es';
+import { Suspense, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
   LineChart,
@@ -30,28 +37,6 @@ import {
   ReferenceLine,
   Tooltip as ChartTooltip,
 } from 'recharts';
-
-const useStyle = createStyles(({ css, token }) => ({
-  recharts: css`
-    .recharts-label {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-cartesian-axis-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-line {
-      stroke: ${token.colorBorder};
-    }
-    .recharts-cartesian-axis-tick-value {
-      fill: ${token.colorTextDescription};
-    }
-    .recharts-default-tooltip {
-      background-color: ${token.colorBgBase} !important;
-      border: 1px solid ${token.colorBorderSecondary} !important;
-      color: ${token.colorText} !important;
-    }
-  `,
-}));
 
 type MetricData = NonNullable<
   NonNullable<SessionMetricGraphQuery$data['current_metric']>['metrics']
@@ -69,14 +54,88 @@ interface PrometheusMetricGraphProps {
   tooltip?: string | React.ReactNode;
 }
 
-const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
+// Split in two (FR-3682): the board item has no card chrome of its own, so
+// the title lives inside this component — and this component is also the one
+// that suspends. A boundary above it therefore unmounts the header on every
+// fetch. The shell below never suspends; only the body does.
+const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = (props) => {
+  'use memo';
+  const {
+    queryProps: { metricName },
+    tooltip,
+  } = props;
+  const { token } = theme.useToken();
+  const { mergedResourceSlots } = useResourceSlotsDetails();
+
+  const resourceSlotKey = useMemo(() => {
+    const parts = _.split(metricName, '_');
+    const devicePrefix =
+      parts.length > 1 ? parts.slice(0, -1).join('-') : parts[0];
+    return (
+      _.find(
+        _.keys(mergedResourceSlots),
+        (slotKey) =>
+          _.startsWith(slotKey, devicePrefix + '.') || slotKey === devicePrefix,
+      ) ?? ''
+    );
+  }, [mergedResourceSlots, metricName]);
+  const deviceDescription = mergedResourceSlots[resourceSlotKey]?.description;
+
+  const getMetricTitle = () => {
+    const [, ...rest] = _.split(metricName, '_');
+    const restLabel = _.startCase(rest.join(' '));
+
+    // TODO: Modify to use display name when display name is added to device metadata.
+    // Currently, cuda and rocm have the same human_readable_name in device_metadata.
+    if (deviceDescription) {
+      return `${deviceDescription} ${restLabel}`;
+    } else if (_.includes(metricName.toLowerCase(), 'io')) {
+      return `${_.startCase(metricName.replaceAll('io', 'IO').replaceAll('_', ' '))}`;
+    } else {
+      return `${_.startCase(metricName.replaceAll('_', ' '))}`;
+    }
+  };
+
+  return (
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      gap="sm"
+      style={{
+        height: '100%',
+        overflow: 'hidden',
+      }}
+    >
+      <BAIFlex align="center" style={{ height: 56, marginLeft: 52 }} gap="xs">
+        <Heading level={5}>{getMetricTitle()}</Heading>
+        {tooltip ? <BAIQuestionIconWithTooltip title={tooltip} /> : null}
+      </BAIFlex>
+      <Suspense
+        fallback={
+          // BAISkeleton spreads `style` onto every line box in paragraph
+          // mode, so the inset has to ride on a wrapper.
+          <BAIFlex
+            direction="column"
+            align="stretch"
+            style={{ padding: token.marginMD }}
+          >
+            <BAISkeleton />
+          </BAIFlex>
+        }
+      >
+        <SessionMetricGraphBody {...props} />
+      </Suspense>
+    </BAIFlex>
+  );
+};
+
+const SessionMetricGraphBody: React.FC<PrometheusMetricGraphProps> = ({
   queryProps: { startDate, endDate, metricName, userId, dayDiff },
   fetchKey,
-  tooltip,
 }) => {
+  'use memo';
+  const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { styles } = useStyle();
-  const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const { capacity_metric, current_metric } =
     useLazyLoadQuery<SessionMetricGraphQuery>(
@@ -159,56 +218,17 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
     convertMetricFunction[metricName] ?? undefined,
   );
 
-  const resourceSlotKey = useMemo(() => {
-    const [key] = _.split(metricName, '_');
-    return (
-      _.find(_.keys(mergedResourceSlots), (slotKey) =>
-        _.startsWith(slotKey, key),
-      ) ?? ''
-    );
-  }, [mergedResourceSlots, metricName]);
-  const deviceDescription = mergedResourceSlots[resourceSlotKey]?.description;
-
-  const getMetricTitle = () => {
-    const [, ...rest] = _.split(metricName, '_');
-    const restLabel = _.startCase(rest.join(' '));
-
-    // TODO: Modify to use display name when display name is added to device metadata.
-    // Currently, cuda and rocm have the same human_readable_name in device_metadata.
-    if (deviceDescription) {
-      return `${deviceDescription} ${restLabel}`;
-    } else if (_.includes(metricName.toLowerCase(), 'io')) {
-      return `${_.startCase(metricName.replaceAll('io', 'IO').replaceAll('_', ' '))}`;
-    } else {
-      return `${_.startCase(metricName.replaceAll('_', ' '))}`;
-    }
-  };
-
   return (
-    <BAIFlex
-      direction="column"
-      align="stretch"
-      gap="sm"
-      style={{
-        height: '100%',
-        overflow: 'hidden',
-      }}
-    >
-      <BAIFlex align="center" style={{ height: 56, marginLeft: 52 }} gap="xs">
-        <Typography.Text style={{ fontSize: token.fontSizeHeading5 }} strong>
-          {getMetricTitle()}
-        </Typography.Text>
-        {tooltip ? <QuestionIconWithTooltip title={tooltip} /> : null}
-      </BAIFlex>
+    <>
       {_.isEmpty(capacity_metric?.metrics) &&
       _.isEmpty(current_metric?.metrics) ? (
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          style={{ height: '100%', alignContent: 'center' }}
-        />
+        <EmptyState isCompact title={t('autoScalingRule.NoDataAvailable')} />
       ) : (
         <ResponsiveContainer style={{ paddingRight: token.marginXL }}>
-          <LineChart data={metricData} className={styles.recharts}>
+          <LineChart
+            data={metricData}
+            className="session-metric-graph-recharts"
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="timestamp" minTickGap={token.marginMD} />
             <YAxis domain={[0, 'dataMax']} />
@@ -240,14 +260,14 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
             <Line
               type="monotone"
               dataKey="used"
-              stroke={token.colorPrimary}
+              stroke={token.colorError}
               strokeWidth={2}
               dot={{ r: 0 }}
             />
           </LineChart>
         </ResponsiveContainer>
       )}
-    </BAIFlex>
+    </>
   );
 };
 

@@ -1,7 +1,57 @@
-import BAIUnmountAfterClose from './BAIUnmountAfterClose';
+import BAIModal from './BAIModal';
+import BAIUnmountAfterClose, {
+  type BAIUnmountAfterCloseChildProps,
+} from './BAIUnmountAfterClose';
 import { render, screen, waitFor, act } from '@testing-library/react';
-import { Modal, Drawer } from 'antd';
 import React from 'react';
+
+/**
+ * The modal leg runs against the real `BAIModal` (Astryx `Dialog`
+ * underneath). It used to be antd's `Modal`; `BAIModal` keeps the same three
+ * props this wrapper contracts on — `open`, and `afterClose` firing once the
+ * close completes — and its own header documents that
+ * `BAIUnmountAfterClose` keeps working against it unchanged. Using the
+ * component we actually ship makes the suite an integration test rather than
+ * a test against a library that is no longer installed.
+ */
+const Modal = BAIModal;
+
+/**
+ * The drawer leg is a local double, because BUI ships no drawer component:
+ * the app's one drawer surface (`WEBUINotificationDrawer`) is app-side. What
+ * `BAIUnmountAfterClose` cares about is the OTHER lifecycle callback shape —
+ * `afterOpenChange(open)` instead of `afterClose()` — so the double
+ * reproduces exactly that contract and nothing else. It is deliberately NOT a
+ * visual component; asserting on a drawer's chrome here would be testing the
+ * drawer, not the wrapper.
+ *
+ * Semantics mirrored from antd's `Drawer` (the previous subject):
+ *   - renders nothing while closed;
+ *   - on the open -> closed transition, fires `afterOpenChange(false)`
+ *     asynchronously, standing in for the exit animation completing.
+ */
+const Drawer: React.FC<
+  BAIUnmountAfterCloseChildProps & {
+    title?: string;
+    children?: React.ReactNode;
+    // Accepted and ignored — call sites in this suite pass them to prove the
+    // wrapper forwards unknown props untouched.
+    onClose?: () => void;
+    placement?: string;
+    getContainer?: false;
+  }
+> = ({ open, afterOpenChange, children }) => {
+  const wasOpen = React.useRef(open);
+  React.useEffect(() => {
+    if (wasOpen.current && !open) {
+      const id = setTimeout(() => afterOpenChange?.(false), 0);
+      wasOpen.current = !!open;
+      return () => clearTimeout(id);
+    }
+    wasOpen.current = !!open;
+  }, [open, afterOpenChange]);
+  return open ? <div>{children}</div> : null;
+};
 
 describe('BAIUnmountAfterClose', () => {
   describe('Basic Rendering', () => {
@@ -102,7 +152,7 @@ describe('BAIUnmountAfterClose', () => {
 
   describe('afterClose Callback (Modal)', () => {
     it('should call original afterClose callback when provided', async () => {
-      const originalAfterClose = jest.fn();
+      const originalAfterClose = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -149,7 +199,7 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should handle modal with afterClose callback', () => {
-      const afterClose = jest.fn();
+      const afterClose = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -179,7 +229,7 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should preserve original afterOpenChange callback', () => {
-      const originalAfterOpenChange = jest.fn();
+      const originalAfterOpenChange = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -200,7 +250,7 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should handle drawer with custom props', () => {
-      const onClose = jest.fn();
+      const onClose = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -274,8 +324,8 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should preserve modal props other than afterClose', () => {
-      const onCancel = jest.fn();
-      const onOk = jest.fn();
+      const onCancel = vi.fn();
+      const onOk = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -296,7 +346,7 @@ describe('BAIUnmountAfterClose', () => {
     });
 
     it('should preserve drawer props other than afterOpenChange', () => {
-      const onClose = jest.fn();
+      const onClose = vi.fn();
 
       render(
         <BAIUnmountAfterClose>
@@ -317,7 +367,7 @@ describe('BAIUnmountAfterClose', () => {
 
   describe('Performance and Re-rendering', () => {
     it('should not cause unnecessary re-renders when open prop stays true', () => {
-      const renderCounter = jest.fn();
+      const renderCounter = vi.fn();
 
       const TestModal = ({ open }: { open: boolean }) => {
         renderCounter();

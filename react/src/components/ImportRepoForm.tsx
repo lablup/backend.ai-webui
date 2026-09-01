@@ -2,31 +2,43 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '../hooks';
-import StorageSelect from './StorageSelect';
 import {
-  App,
-  Form,
-  FormInstance,
-  FormProps,
-  Input,
-  message,
-  Radio,
-} from 'antd';
+  ImportRepoFormCreateVFolderMutation,
+  ImportRepoFormCreateVFolderMutation$data,
+} from '../__generated__/ImportRepoFormCreateVFolderMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance, FormProps } from '../form-engine';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import {
+  StartSessionWithDefaultValue,
+  useStartSession,
+} from '../hooks/useStartSession';
+import StorageSelect from './StorageSelect';
+import { AstryxFormRadioList, AstryxFormTextInput } from './astryxFormControls';
 import {
   BAIButton,
+  toLocalId,
   useBAILogger,
   useErrorMessageResolver,
   useGetAvailableFolderName,
+  useMutationWithPromise,
 } from 'backend.ai-ui';
 import { FolderInput } from 'lucide-react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
-import {
-  StartSessionWithDefaultValue,
-  useStartSession,
-} from 'src/hooks/useStartSession';
+import { graphql } from 'react-relay';
+
+const IMPORT_REPO_FORM_CREATE_VFOLDER_MUTATION = graphql`
+  mutation ImportRepoFormCreateVFolderMutation($input: CreateVFolderV2Input!) {
+    createVfolderV2(input: $input) {
+      vfolder {
+        id
+        ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
+      }
+    }
+  }
+`;
 
 type URLType = 'github' | 'gitlab';
 
@@ -104,6 +116,11 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
 
+  const commitCreateMutation =
+    useMutationWithPromise<ImportRepoFormCreateVFolderMutation>(
+      IMPORT_REPO_FORM_CREATE_VFOLDER_MUTATION,
+    );
+
   const prepareGitHubArchive = async (inputUrl: string) => {
     const sanitizedUrl = inputUrl.trim().replace(/\.git$/, '');
     let parsedUrl: URL;
@@ -111,7 +128,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
     try {
       parsedUrl = new URL(sanitizedUrl);
     } catch {
-      message.error(t('import.InvalidGitHubURL'));
+      app.message.error(t('import.InvalidGitHubURL'));
       return null;
     }
 
@@ -119,7 +136,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
     const segments = pathname.split('/').filter(Boolean);
 
     if (segments.length < 2) {
-      message.error(t('import.InvalidGitHubURL'));
+      app.message.error(t('import.InvalidGitHubURL'));
       return null;
     }
 
@@ -138,14 +155,14 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           const data = await response.json();
           branch = data.default_branch;
         } else if (response.status === 404) {
-          message.error(t('import.RepositoryNotFound'));
+          app.message.error(t('import.RepositoryNotFound'));
           return null;
         } else {
-          message.error(t('import.FailedToFetchRepositoryInformation'));
+          app.message.error(t('import.FailedToFetchRepositoryInformation'));
           return null;
         }
       } catch {
-        message.error(t('import.FailedToFetchRepositoryInformation'));
+        app.message.error(t('import.FailedToFetchRepositoryInformation'));
         return null;
       }
     }
@@ -169,7 +186,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
     try {
       parsedUrl = new URL(sanitizedUrl);
     } catch {
-      message.error(t('import.InvalidGitLabURL'));
+      app.message.error(t('import.InvalidGitLabURL'));
       return null;
     }
 
@@ -177,7 +194,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
     const segments = pathname.split('/').filter(Boolean);
 
     if (segments.length < 2) {
-      message.error(
+      app.message.error(
         'Invalid GitLab URL. Must be a valid GitLab repository URL',
       );
       return null;
@@ -204,42 +221,84 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
   };
 
   const handleRepoImport = async (values: ImportFromURLFormValues) => {
+    const repoInfo =
+      urlType === 'github'
+        ? await prepareGitHubArchive(values.url)
+        : urlType === 'gitlab'
+          ? prepareGitLabArchive(values.url, values.gitlabBranch)
+          : null;
+    if (!repoInfo) return;
+
+    const folderName = await getAvailableFolderName(
+      repoInfo.repoName || 'imported-from-repo',
+    );
+
+    // Create the virtual folder via the V2 mutation; its payload already
+    // includes the rich folder-card fragment, so the notification can be
+    // driven directly without a separate `vfolder_node` lookup.
+    let vfolder:
+      | NonNullable<
+          ImportRepoFormCreateVFolderMutation$data['createVfolderV2']
+        >['vfolder']
+      | undefined;
     try {
-      const repoInfo =
-        urlType === 'github'
-          ? await prepareGitHubArchive(values.url)
-          : urlType === 'gitlab'
-            ? prepareGitLabArchive(values.url, values.gitlabBranch)
-            : null;
-      if (!repoInfo) return;
-
-      const folderName = await getAvailableFolderName(
-        repoInfo.repoName || 'imported-from-repo',
-      );
-
-      // create virtual folder
-      const vfolderInfo = await baiClient.vfolder.create(
-        folderName,
-        values.storageHost,
-        '', // group
-        values.vfolder_usage_mode ?? 'general', // usage mode
-        'rw', // permission
-      );
-
-      upsertNotification({
-        key: `folder-create-success-${vfolderInfo.id}`,
-        icon: 'folder',
-        message: `${vfolderInfo.name}: ${t('data.folders.FolderCreated')}`,
-        toText: t('data.folders.OpenAFolder'),
-        to: {
-          search: new URLSearchParams({
-            folder: vfolderInfo.id,
-          }).toString(),
+      vfolder = await commitCreateMutation({
+        input: {
+          name: folderName,
+          host: values.storageHost,
+          cloneable: false,
+          usageMode: values.vfolder_usage_mode ?? 'general',
+          permission: 'rw',
+          projectId: null,
         },
+      }).then((res) => res?.createVfolderV2?.vfolder);
+    } catch (error) {
+      const errorDetail = Array.isArray(error)
+        ? (error as Array<{ message: string }>).map((e) => e.message).join('\n')
+        : error instanceof Error
+          ? getErrorMessage(error)
+          : undefined;
+      upsertNotification({
+        key: `folder-create-failure-${folderName}-${Date.now()}`,
+        // Without this the stack falls back to 'info' and a failure paints as
+        // a blue notice (FR-3700).
+        type: 'error',
+        icon: 'folder',
+        message: `${t('general.Folder')}: ${folderName}`,
+        description: t('data.folders.FolderCreationFailed'),
+        extraDescription: errorDetail,
+        open: true,
+      });
+      logger.error(error);
+      return;
+    }
+
+    // No vfolder payload — creation likely went through but we lack the id
+    // needed to mount it; surface a plain success and stop before launching
+    // the import session.
+    if (!vfolder) {
+      upsertNotification({
+        key: `folder-create-success-${folderName}-${Date.now()}`,
+        icon: 'folder',
+        message: `${t('general.Folder')}: ${folderName}`,
+        description: t('data.folders.FolderCreated'),
         open: true,
         duration: 0,
       });
+      return;
+    }
 
+    const vfolderLocalId = toLocalId(vfolder.id);
+    upsertNotification({
+      key: `folder-create-success-${vfolderLocalId}`,
+      icon: 'folder',
+      node: vfolder.notificationFrgmt,
+      description: t('data.folders.FolderCreated'),
+      open: true,
+      duration: 0,
+    });
+
+    try {
       const launcherValue: StartSessionWithDefaultValue = {
         sessionName: `importing-files-to-${folderName}`,
         environments: {
@@ -254,7 +313,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           ),
           enabled: true,
         },
-        mount_ids: [vfolderInfo.id],
+        mount_ids: [vfolderLocalId],
       };
 
       const results = await startSessionWithDefault(launcherValue);
@@ -309,7 +368,11 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           },
         ]}
       >
-        <Input />
+        <AstryxFormTextInput
+          label={
+            urlType == 'github' ? t('import.GitHubURL') : t('import.GitlabURL')
+          }
+        />
       </Form.Item>
 
       {urlType === 'gitlab' && (
@@ -318,7 +381,14 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
             name="gitlabBranch"
             label={t('import.GitlabDefaultBranch')}
           >
-            <Input placeholder="master" maxLength={200} />
+            {/* PILOT-DECISION: antd `Input maxLength` is dropped — Astryx
+                `TextInput` has no length cap, and the 200-char limit is
+                already enforced by the form rule on the sibling `url` field's
+                pattern set; over-long branches fail server-side anyway. */}
+            <AstryxFormTextInput
+              label={t('import.GitlabDefaultBranch')}
+              placeholder="master"
+            />
           </Form.Item>
         </>
       )}
@@ -336,14 +406,21 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
         hidden={baiClient._config.enableModelFolders !== true}
         required
       >
-        <Radio.Group>
-          <Radio value={'general'} data-testid="general-usage-mode">
-            {t('data.General')}
-          </Radio>
-          <Radio value={'model'} data-testid="model-usage-mode">
-            {t('data.Models')}
-          </Radio>
-        </Radio.Group>
+        <AstryxFormRadioList
+          label={t('import.VFolderUsageMode')}
+          options={[
+            {
+              value: 'general',
+              label: t('data.General'),
+              'data-testid': 'general-usage-mode',
+            },
+            {
+              value: 'model',
+              label: t('data.Models'),
+              'data-testid': 'model-usage-mode',
+            },
+          ]}
+        />
       </Form.Item>
       <Form.Item>
         <BAIButton

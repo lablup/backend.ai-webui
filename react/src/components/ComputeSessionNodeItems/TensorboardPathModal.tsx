@@ -2,9 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { App, Form, Input, Typography } from 'antd';
+import { TensorboardPathModalFragment$key } from '../../__generated__/TensorboardPathModalFragment.graphql';
+import { App } from '../../app-shim';
+import { Form } from '../../form-engine';
+import { useSuspendedBackendaiClient } from '../../hooks';
+import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
+import { AstryxFormTextInput } from '../astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { Text } from '@astryxdesign/core/Text';
+// FRONTIER (ticket 17 / ticket 34): Form + Form.Item stay on the antd
+// form engine (locked SHIM decision).
 import {
-  BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -13,18 +21,21 @@ import {
 } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { TensorboardPathModalFragment$key } from 'src/__generated__/TensorboardPathModalFragment.graphql';
-import { useSuspendedBackendaiClient } from 'src/hooks';
-import { useBackendAIAppLauncher } from 'src/hooks/useBackendAIAppLauncher';
 
 interface TensorboardPathModalProps extends BAIModalProps {
   sessionFrgmt: TensorboardPathModalFragment$key;
   onRequestClose: () => void;
+  port?: number;
+  openToPublic?: boolean;
+  allowedClientIps?: Array<string>;
 }
 
 const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
   sessionFrgmt,
   onRequestClose,
+  port,
+  openToPublic,
+  allowedClientIps,
   ...modalProps
 }) => {
   'use memo';
@@ -71,6 +82,9 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
       await launchAppWithNotification({
         app: 'tensorboard',
         args: { '--logdir': path },
+        port,
+        openToPublic,
+        allowedClientIps,
         onPrepared(workerInfo) {
           // Open tensorboard in new window
           if (workerInfo.appConnectUrl) {
@@ -94,9 +108,9 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" gap="md" align="stretch">
-        <Typography.Paragraph>
+        <Text as="p" display="block">
           {t('session.InputTensorboardPath')}
-        </Typography.Paragraph>
+        </Text>
 
         <Form
           form={form}
@@ -106,13 +120,19 @@ const TensorboardPathModal: React.FC<TensorboardPathModalProps> = ({
           }}
         >
           <Form.Item name="tensorboardPath">
-            <Input placeholder={t('session.DefaultTensorboardPath')} />
+            <AstryxFormTextInput
+              label={t('session.TensorboardPath')}
+              placeholder={t('session.DefaultTensorboardPath')}
+            />
           </Form.Item>
         </Form>
 
-        <BAIButton type="primary" size="large" action={handleSubmit}>
-          {t('session.UseThisPath')}
-        </BAIButton>
+        <Button
+          variant="primary"
+          size="lg"
+          label={t('session.UseThisPath')}
+          clickAction={handleSubmit}
+        />
       </BAIFlex>
     </BAIModal>
   );

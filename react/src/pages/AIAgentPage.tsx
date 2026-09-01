@@ -6,50 +6,43 @@ import AgentEditorModal from '../components/AgentEditorModal';
 import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
+import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
+import './AIAgentPage.css';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { Card } from '@astryxdesign/core/Card';
 import {
-  DeleteOutlined,
-  EditOutlined,
-  MoreOutlined,
-  PlusOutlined,
-  UndoOutlined,
-} from '@ant-design/icons';
-import { App, Button, Card, Dropdown, List, Skeleton, Tag, theme } from 'antd';
-import { createStyles } from 'antd-style';
-import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
-import _ from 'lodash';
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAISkeleton,
+  BAIFlex,
+  BAIUnmountAfterClose,
+  BAIDeleteConfirmModal,
+  badgeVariantForTagColor,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import {
+  Trash2,
+  EllipsisVertical,
+  Undo2,
+  PlusIcon,
+  SquarePenIcon,
+} from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const useStyles = createStyles(({ css, token }) => {
-  return {
-    cardList: css`
-      .and-col {
-        height: calc(100% - ${token.marginMD});
-      }
-      .ant-tag {
-        margin-inline-end: 0;
-      }
-      .ant-card:hover .agent-more-button {
-        opacity: 1 !important;
-      }
-    `,
-    meta: css`
-      .ant-card-meta-description {
-        max-height: 6.4em; // Adjusted for 4 lines
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .ant-card-meta-title {
-        white-space: normal;
-      }
-    `,
-  };
-});
-
-const { Meta } = Card;
+// `.ant-*` selectors dropped (P6) — the hover-reveal rule now targets the
+// converted card's own class (`.agent-card`, plain CSS file, P17: component-
+// imported, not the app stylesheet) instead of antd's `.ant-card`.
 
 interface AIAgentCardProps {
   agent: AIAgent;
+  endpointLabel?: string;
   isOverridden?: boolean;
   onEdit?: (agent: AIAgent) => void;
   onDelete?: (agent: AIAgent) => void;
@@ -58,93 +51,100 @@ interface AIAgentCardProps {
 
 const AIAgentCard: React.FC<AIAgentCardProps> = ({
   agent,
+  endpointLabel,
   isOverridden,
   onEdit,
   onDelete,
   onReset,
 }) => {
   const { t } = useTranslation();
-  const tags = agent.meta.tags || [];
-  const { styles } = useStyles();
+  const tags = agent.tags || [];
   const { token } = theme.useToken();
 
-  const menuItems = _.compact([
+  // PILOT-DECISION: antd `danger` (red text on "Delete Agent") has no
+  // destination on Astryx `DropdownMenuItemData` (P5, closed shape, no
+  // colour field) — dropped.
+  const menuItems: DropdownMenuOption[] = _.compact([
     onEdit && {
-      key: 'edit',
       label: t('button.Edit'),
-      icon: <EditOutlined />,
-      onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
-        e.domEvent.stopPropagation();
-        onEdit(agent);
-      },
+      icon: <SquarePenIcon />,
+      onClick: () => onEdit(agent),
     },
     isOverridden &&
       onReset && {
-        key: 'reset',
         label: t('aiAgent.ResetToDefault'),
-        icon: <UndoOutlined />,
-        onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
-          e.domEvent.stopPropagation();
-          onReset(agent);
-        },
+        icon: <Undo2 size="1em" />,
+        onClick: () => onReset(agent),
       },
+    agent.isCustom && onDelete && { type: 'divider' as const },
     agent.isCustom &&
       onDelete && {
-        type: 'divider' as const,
-      },
-    agent.isCustom &&
-      onDelete && {
-        key: 'delete',
-        danger: true,
         label: t('aiAgent.DeleteAgent'),
-        icon: <DeleteOutlined />,
-        onClick: (e: { domEvent: React.MouseEvent | React.KeyboardEvent }) => {
-          e.domEvent.stopPropagation();
-          onDelete(agent);
-        },
+        icon: <Trash2 size="1em" />,
+        onClick: () => onDelete(agent),
       },
   ]);
 
   return (
-    <Card hoverable style={{ position: 'relative' }}>
+    <Card
+      className="agent-card"
+      style={{ position: 'relative', width: '100%', cursor: 'pointer' }}
+    >
       {menuItems.length > 0 && (
-        <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-          <Button
-            type="text"
-            className="agent-more-button"
-            icon={<MoreOutlined />}
-            size="small"
-            style={{
-              position: 'absolute',
-              top: token.paddingXS,
-              right: token.paddingXS,
-              zIndex: 1,
-              color: token.colorTextSecondary,
-              opacity: 0,
+        // Stops the click from bubbling to the parent grid item's
+        // navigate-to-chat handler (antd's per-item `domEvent.stopPropagation()`
+        // has no equivalent on Astryx `DropdownMenuItemData.onClick`, which
+        // takes no event — caught one level up instead).
+        <div
+          style={{
+            position: 'absolute',
+            top: token.paddingXS,
+            right: token.paddingXS,
+            zIndex: 1,
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <DropdownMenu
+            items={menuItems}
+            button={{
+              variant: 'ghost',
+              className: 'agent-more-button',
+              icon: <EllipsisVertical size="1em" />,
+              label: t('button.MoreActions'),
+              isIconOnly: true,
+              style: { color: token.colorTextSecondary, opacity: 0 },
             }}
-            onClick={(e) => e.stopPropagation()}
           />
-        </Dropdown>
+        </div>
       )}
       <BAIFlex
         direction="column"
         align="stretch"
         gap="xs"
         justify="between"
-        style={{ minHeight: '200px' }}
+        style={{ minHeight: '160px' }}
       >
-        <Meta
-          title={agent.meta.title}
-          avatar={
-            <FluentEmojiIcon
-              emoji={agent.meta.avatar}
-              height={150}
-              width={150}
-            />
-          }
-          description={agent.meta.descriptions}
-          className={styles.meta}
-        />
+        <BAIFlex direction="row" gap="md" align="start">
+          <FluentEmojiIcon emoji={agent.icon} height={64} width={64} />
+          <BAIFlex
+            direction="column"
+            align="stretch"
+            gap="xxs"
+            style={{ flex: 1, minWidth: 0 }}
+          >
+            <Text weight="semibold" style={{ whiteSpace: 'normal' }}>
+              {agent.name}
+            </Text>
+            <Text
+              color="secondary"
+              maxLines={3}
+              as="p"
+              style={{ marginBottom: 0 }}
+            >
+              {agent.description}
+            </Text>
+          </BAIFlex>
+        </BAIFlex>
         <BAIFlex
           direction="row"
           justify="start"
@@ -152,17 +152,27 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
           gap={6}
           wrap="wrap"
         >
-          {agent.endpoint && (
-            <Tag key={agent.endpoint} color="orange-inverse">
-              {agent.endpoint}
-            </Tag>
+          {endpointLabel && (
+            <Badge
+              key={endpointLabel}
+              label={endpointLabel}
+              variant={badgeVariantForTagColor('orange-inverse')}
+            />
           )}
           {agent.isCustom && !isOverridden && (
-            <Tag color="blue-inverse">{t('aiAgent.Custom')}</Tag>
+            <Badge
+              label={t('aiAgent.Custom')}
+              variant={badgeVariantForTagColor('blue-inverse')}
+            />
           )}
-          {isOverridden && <Tag color="orange">{t('aiAgent.Edited')}</Tag>}
-          {tags.map((tag, index) => (
-            <Tag key={index}>{tag}</Tag>
+          {isOverridden && (
+            <Badge
+              label={t('aiAgent.Edited')}
+              variant={badgeVariantForTagColor('orange')}
+            />
+          )}
+          {tags.map((tag) => (
+            <Badge key={tag} label={tag} variant="neutral" />
           ))}
         </BAIFlex>
       </BAIFlex>
@@ -174,14 +184,15 @@ const AIAgentPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { agents, builtInAgents, deleteAgent } = useAIAgent();
+  const { agents, builtInAgents, deleteAgent, getEndpointBinding } =
+    useAIAgent();
   const webuiNavigate = useWebUINavigate();
-  const { modal } = App.useApp();
-  const { styles } = useStyles();
+  const buildProjectPath = useProjectPath();
 
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingAgent, setEditingAgent] = useState<AIAgent | undefined>();
+  const [deletingAgent, setDeletingAgent] = useState<AIAgent | null>(null);
+  const [resettingAgent, setResettingAgent] = useState<AIAgent | null>(null);
 
   const builtInIds = new Set(builtInAgents.map((a) => a.id));
 
@@ -191,65 +202,60 @@ const AIAgentPage: React.FC = () => {
   };
 
   const handleDelete = (agent: AIAgent) => {
-    modal.confirm({
-      title: t('aiAgent.DeleteConfirmTitle'),
-      content: t('aiAgent.DeleteConfirmDescription'),
-      okButtonProps: { danger: true },
-      okText: t('button.Delete'),
-      onOk: () => deleteAgent(agent.id),
-    });
+    setDeletingAgent(agent);
   };
 
   const handleReset = (agent: AIAgent) => {
-    modal.confirm({
-      title: t('aiAgent.ResetConfirmTitle'),
-      content: t('aiAgent.ResetConfirmDescription'),
-      onOk: () => deleteAgent(agent.id),
-    });
+    setResettingAgent(agent);
   };
 
   return (
-    <Suspense
-      fallback={<Skeleton active style={{ padding: token.paddingMD }} />}
-    >
+    <Suspense fallback={<BAISkeleton rows={4} />}>
       <BAIFlex direction="column" align="stretch" justify="center" gap="sm">
         <BAIFlex direction="row" justify="end" align="center">
           <Button
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
+            label={t('button.Add')}
             onClick={() => {
               setEditingAgent(undefined);
               setIsEditorOpen(true);
             }}
-          >
-            {t('button.Add')}
-          </Button>
+          />
         </BAIFlex>
-        <List
-          className={styles.cardList}
-          grid={{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 2, xl: 3, xxl: 4 }}
-          dataSource={agents}
-          renderItem={(agent) => {
+        {/* PILOT-DECISION (RESPONSIVE-POLICY.md R1): antd `Row/Col
+            xs={24} sm={24} md={24} lg={12} xl={12} xxl={8} xxxl={6}` — a
+            uniform card grid that first goes 2-up at `lg` (992px) — becomes
+            `Grid columns={{minWidth: 496, max: 4}}` (992/2 ≈ 496; max 4 from
+            `xxxl={6}` = 24/6). Same recipe as ModelStoreListPageV2 (both
+            flagged in the census as the repo's two `xxxl` sites). */}
+        <Grid columns={{ minWidth: 496, max: 4 }} gap={4}>
+          {agents.map((agent) => {
             const isOverridden = !agent.isCustom
               ? false
               : builtInIds.has(agent.id);
             return (
-              <List.Item
-                style={{ height: '100%' }}
+              <div
+                key={agent.id}
+                style={{ display: 'flex' }}
                 onClick={() => {
                   const searchParams: Record<string, string> = {
                     agentId: agent.id,
                   };
-                  if (agent.endpoint_id) {
-                    searchParams.endpointId = agent.endpoint_id;
+                  const binding = getEndpointBinding(agent.id);
+                  if (binding?.endpoint_id) {
+                    searchParams.endpointId = binding.endpoint_id;
                   }
                   webuiNavigate({
-                    pathname: '/chat',
+                    pathname: buildProjectPath('chat'),
                     search: new URLSearchParams(searchParams).toString(),
                   });
                 }}
               >
                 <AIAgentCard
                   agent={agent}
+                  endpointLabel={
+                    getEndpointBinding(agent.id)?.endpoint ?? undefined
+                  }
                   isOverridden={isOverridden}
                   onEdit={handleEdit}
                   onDelete={
@@ -257,10 +263,10 @@ const AIAgentPage: React.FC = () => {
                   }
                   onReset={isOverridden ? handleReset : undefined}
                 />
-              </List.Item>
+              </div>
             );
-          }}
-        />
+          })}
+        </Grid>
         <BAIUnmountAfterClose>
           <AgentEditorModal
             open={isEditorOpen}
@@ -271,6 +277,47 @@ const AIAgentPage: React.FC = () => {
             }}
           />
         </BAIUnmountAfterClose>
+        <BAIDeleteConfirmModal
+          open={!!deletingAgent}
+          title={t('aiAgent.DeleteConfirmTitle')}
+          target={t('general.AIAgent')}
+          items={
+            deletingAgent
+              ? [{ key: deletingAgent.id, label: deletingAgent.name }]
+              : []
+          }
+          confirmText={deletingAgent?.name ?? ''}
+          requireConfirmInput
+          inputProps={{ placeholder: deletingAgent?.name ?? '' }}
+          onOk={() => {
+            if (deletingAgent) {
+              deleteAgent(deletingAgent.id);
+            }
+            setDeletingAgent(null);
+          }}
+          onCancel={() => setDeletingAgent(null)}
+        />
+        <BAIDeleteConfirmModal
+          open={!!resettingAgent}
+          title={t('aiAgent.ResetConfirmTitle')}
+          target={t('general.AIAgent')}
+          items={
+            resettingAgent
+              ? [{ key: resettingAgent.id, label: resettingAgent.name }]
+              : []
+          }
+          confirmText={resettingAgent?.name ?? ''}
+          requireConfirmInput
+          inputProps={{ placeholder: resettingAgent?.name ?? '' }}
+          okText={t('button.Reset')}
+          onOk={() => {
+            if (resettingAgent) {
+              deleteAgent(resettingAgent.id);
+            }
+            setResettingAgent(null);
+          }}
+          onCancel={() => setResettingAgent(null)}
+        />
       </BAIFlex>
     </Suspense>
   );

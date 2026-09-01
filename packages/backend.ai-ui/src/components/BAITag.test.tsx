@@ -17,7 +17,9 @@ describe('BAITag', () => {
     it('should render tag with closable property', () => {
       render(<BAITag closable>Closable Tag</BAITag>);
       expect(screen.getByText('Closable Tag')).toBeInTheDocument();
-      expect(screen.getByRole('img', { name: /close/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /remove/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -59,13 +61,13 @@ describe('BAITag', () => {
 
   describe('Close Functionality', () => {
     it('should call onClose when close button is clicked', () => {
-      const handleClose = jest.fn();
+      const handleClose = vi.fn();
       render(
         <BAITag closable onClose={handleClose}>
           Closable
         </BAITag>,
       );
-      const closeButton = screen.getByRole('img', { name: /close/i });
+      const closeButton = screen.getByRole('button', { name: /remove/i });
       act(() => {
         closeButton.click();
       });
@@ -75,7 +77,7 @@ describe('BAITag', () => {
     it('should not show close button when closable is false', () => {
       render(<BAITag closable={false}>Not Closable</BAITag>);
       expect(
-        screen.queryByRole('img', { name: /close/i }),
+        screen.queryByRole('button', { name: /remove/i }),
       ).not.toBeInTheDocument();
     });
   });
@@ -105,7 +107,7 @@ describe('BAITag', () => {
   describe('Edge Cases', () => {
     it('should render empty tag', () => {
       const { container } = render(<BAITag />);
-      expect(container.querySelector('.ant-tag')).toBeInTheDocument();
+      expect(container.querySelector('.astryx-badge')).toBeInTheDocument();
     });
 
     it('should render tag with number as children', () => {
@@ -124,50 +126,63 @@ describe('BAITag', () => {
 
     it('should handle undefined children gracefully', () => {
       const { container } = render(<BAITag>{undefined}</BAITag>);
-      expect(container.querySelector('.ant-tag')).toBeInTheDocument();
+      expect(container.querySelector('.astryx-badge')).toBeInTheDocument();
     });
 
     it('should handle null children gracefully', () => {
       const { container } = render(<BAITag>{null}</BAITag>);
-      expect(container.querySelector('.ant-tag')).toBeInTheDocument();
+      expect(container.querySelector('.astryx-badge')).toBeInTheDocument();
     });
   });
 
-  describe('Theme Customization', () => {
-    it('should apply custom ConfigProvider theme with transparent background', () => {
-      const { container } = render(<BAITag>Themed Tag</BAITag>);
-      const tag = container.querySelector('.ant-tag');
-      expect(tag).toBeInTheDocument();
+  describe('Variant Mapping', () => {
+    // PILOT-DECISION (to-astryx phase 3, ticket A): antd's ConfigProvider
+    // re-theme (transparent background, #999999 text, borderRadiusSM 11,
+    // paddingSM inline) is DROPPED — Astryx `Badge`'s look is closed and
+    // theme-owned. What replaces it is the repo-global `color` -> `variant`
+    // lookup, which is what these assertions pin.
+    it('should map an antd status preset onto the matching Badge variant', () => {
+      const { container } = render(<BAITag color="success">Themed Tag</BAITag>);
+      expect(container.querySelector('.astryx-badge')).toHaveAttribute(
+        'data-variant',
+        'success',
+      );
     });
 
-    it('should apply theme with borderRadiusSM of 11', () => {
-      const { container } = render(<BAITag>Rounded Tag</BAITag>);
-      const tag = container.querySelector('.ant-tag');
-      expect(tag).toBeInTheDocument();
+    it('should map an antd palette preset onto the same-hue Badge variant', () => {
+      const { container } = render(
+        <BAITag color="geekblue">Rounded Tag</BAITag>,
+      );
+      expect(container.querySelector('.astryx-badge')).toHaveAttribute(
+        'data-variant',
+        'blue',
+      );
     });
 
-    it('should apply custom padding from token', () => {
-      const { container } = render(<BAITag>Padded Tag</BAITag>);
-      const tag = container.querySelector('.ant-tag');
-      expect(tag).toBeInTheDocument();
+    it('should drop an inexpressible colour to neutral', () => {
+      const { container } = render(<BAITag color="#ff0000">Padded Tag</BAITag>);
+      expect(container.querySelector('.astryx-badge')).toHaveAttribute(
+        'data-variant',
+        'neutral',
+      );
     });
   });
 
   describe('Accessibility', () => {
     it('should be keyboard accessible when closable', () => {
-      const handleClose = jest.fn();
+      const handleClose = vi.fn();
       render(
         <BAITag closable onClose={handleClose}>
           Accessible Tag
         </BAITag>,
       );
-      const closeButton = screen.getByRole('img', { name: /close/i });
+      const closeButton = screen.getByRole('button', { name: /remove/i });
       expect(closeButton).toBeInTheDocument();
     });
 
     it('should have proper aria attributes for close button', () => {
       render(<BAITag closable>Closable</BAITag>);
-      const closeButton = screen.getByRole('img', { name: /close/i });
+      const closeButton = screen.getByRole('button', { name: /remove/i });
       expect(closeButton).toBeInTheDocument();
     });
   });
@@ -187,8 +202,8 @@ describe('BAITag', () => {
     });
 
     it('should handle multiple closable tags independently', () => {
-      const handleClose1 = jest.fn();
-      const handleClose2 = jest.fn();
+      const handleClose1 = vi.fn();
+      const handleClose2 = vi.fn();
       render(
         <>
           <BAITag closable onClose={handleClose1}>
@@ -199,7 +214,7 @@ describe('BAITag', () => {
           </BAITag>
         </>,
       );
-      const closeButtons = screen.getAllByRole('img', { name: /close/i });
+      const closeButtons = screen.getAllByRole('button', { name: /remove/i });
       expect(closeButtons).toHaveLength(2);
       act(() => {
         closeButtons[0].click();
@@ -211,7 +226,7 @@ describe('BAITag', () => {
 
   describe('Event Handlers', () => {
     it('should call onClick when tag is clicked', () => {
-      const handleClick = jest.fn();
+      const handleClick = vi.fn();
       render(<BAITag onClick={handleClick}>Clickable Tag</BAITag>);
       const tag = screen.getByText('Clickable Tag');
       act(() => {
@@ -221,13 +236,13 @@ describe('BAITag', () => {
     });
 
     it('should call onClose with event parameter', () => {
-      const handleClose = jest.fn();
+      const handleClose = vi.fn();
       render(
         <BAITag closable onClose={handleClose}>
           Closable
         </BAITag>,
       );
-      const closeButton = screen.getByRole('img', { name: /close/i });
+      const closeButton = screen.getByRole('button', { name: /remove/i });
       act(() => {
         closeButton.click();
       });

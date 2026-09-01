@@ -1,46 +1,30 @@
+---
+navTitle: 付録
+---
+
 # 付録
 
 <a id="gpu-virtualization-and-fractional-gpu-allocation"></a>
 
-## GPU仮想化および分数GPU割り当て
+## GPU仮想化およびフラクショナルGPU割り当て
 
-Backend.AI supports GPU virtualization technology which allows single physical
-GPU can be divided and shared by multiple ユーザーs simultaneously. Therefore, if
-you want to execute a task that does not require much GPU computation
-capability, you can create a compute session by allocating a portion of the GPU.
-The amount of GPU resources that 1 fGPU actually allocates may vary from system
-to system depending on 管理者istrator settings. For example, if the 管理者istrator
-has set one physical GPU to be divided into five pieces, 5 fGPU means 1 physical
-GPU, or 1 fGPU means 0.2 physical GPU. If you set 1 fGPU when creating a compute
-session, the session can utilize the streaming multiprocessor (SM) and GPU
-memory equivalent to 0.2 physical GPU.
+Backend.AIは、1つの物理GPUを複数のユーザーで分割して同時に共有できるGPU仮想化技術をサポートしています。したがって、GPUの計算能力をあまり必要としないタスクを実行する場合、GPUの一部を割り当ててコンピュートセッションを作成できます。1フラクショナルGPU (fGPU) が実際に割り当てるGPUリソースの量は、管理者の設定によってシステムごとに異なる場合があります。例えば、管理者が1つの物理GPUを5つに分割するように設定した場合、5 fGPUは1物理GPU、または1 fGPUは0.2物理GPUを意味します。コンピュートセッション作成時に1 fGPUを設定すると、そのセッションは0.2物理GPUに相当するストリーミングマルチプロセッサ (SM) およびGPUメモリを利用できます。
 
 このセクションでは、GPUの一部を割り当てて計算セッションを作成し、その計算コンテナ内で認識されたGPUが本当に部分的な物理GPUに対応しているかどうかを確認します。
 
-First, let's check the type of physical GPU installed in the
-host node and the amount of memory. The GPU node used in this guide is equipped
-with a GPU with 8 GB of memory as in the following figure. And through the
-管理者istrator settings, 1 fGPU is set to an amount equivalent to 0.5 physical
-GPU (or 1 physical GPU is 2 fGPU).
+まず、ホストノードにインストールされている物理GPUの種類とメモリ容量を確認しましょう。本ガイドで使用するGPUノードは、以下の図のように8 GBのメモリを搭載したGPUを備えています。また、管理者の設定により、1 fGPUは0.5物理GPUに相当する量（または1物理GPUは2 fGPU）に設定されています。
 
 ![](../images/host_gpu.png)
 
-Now let's go to the セッション page and create a compute session by allocating 0.5
-fGPU as follows:
+それでは、セッションページに移動し、以下のように0.5 fGPUを割り当ててコンピュートセッションを作成してみましょう。
 
 ![](../images/session_launch_dialog_with_gpu.png)
 
-In the AI Accelerator panel of the session list, you can see that
-0.5 fGPU is allocated.
+セッション一覧のAIアクセラレータパネルで、0.5 fGPUが割り当てられていることを確認できます。
 
 ![](../images/session_list_with_gpu.png)
 
-Now, let's connect directly to the container and check if the allocated GPU
-memory is really equivalent to 0.5 units (~2 GB). Let's bring up a web
-terminal. When the terminal comes up, run the `nvidia-smi` command. As you can
-see in the following figure, you can see that about 2 GB of GPU memory is
-allocated. This shows that the physical GPU is actually divided into quarters and allocated inside the
-container for this compute session, which is not possible by a way like PCI passthrough.
+次に、コンテナに直接接続し、割り当てられたGPUメモリが本当に0.5ユニット（約2 GB）に相当するかを確認しましょう。Webターミナルを起動し、ターミナルが表示されたら `nvidia-smi` コマンドを実行します。以下の図のとおり、約2 GBのGPUメモリが割り当てられていることを確認できます。これは、このコンピュートセッションのコンテナ内で物理GPUが実際に4分の1に分割して割り当てられていることを示しており、PCIパススルーのような方法では実現できないものです。
 
 ![](../images/nvidia_smi_inside_container.png)
 
@@ -48,24 +32,20 @@ Jupyter Notebookを開いて、シンプルなMLトレーニングコードを�
 
 ![](../images/mnist_train.png)
 
-While training is in progress, connect to the shell of the GPU host node and
-execute the `nvidia-smi` command. You can see that there is one GPU attached
-to the process and this process is occupying about 25% of the resources of the
-physical GPU. (GPU occupancy can vary greatly depending on training code and GPU
-model.)
+トレーニング実行中に、GPUホストノードのシェルに接続し、`nvidia-smi` コマンドを実行します。プロセスに1つのGPUがアタッチされており、このプロセスが物理GPUのリソースの約25%を占有していることを確認できます。（GPU占有率はトレーニングコードやGPUモデルによって大きく異なる場合があります。）
 
 ![](../images/host_nvidia_smi.png)
 
-Alternatively, you can run the `nvidia-smi` command from the web terminal to query the GPU usage history inside the container.
+あるいは、Webターミナルから `nvidia-smi` コマンドを実行して、コンテナ内のGPU使用履歴を確認することもできます。
 
 
 <a id="automated-job-scheduling"></a>
 
 ## 自動ジョブスケジューリング
 
-Backend.AIサーバーには、独自開発されたタスクスケジューラーが組み込まれています。これにより、すべてのワーカーノードの利用可能なリソースを自動的にチェックし、ユーザーのリソース要求を満たすワーカーに対してコンピュートセッションの作成を委任します。さらに、リソースが不足している場合、ユーザーのコンピュートセッションの作成要求は、ジョブキューのPENDING状態として登録されます。その後、リソースが再び利用可能になると、保留された要求が再開されてコンピュートセッションの作成が行われます。
+Backend.AIサーバーには、独自開発されたタスクスケジューラーが組み込まれています。これにより、すべてのエージェントノードの利用可能なリソースを自動的にチェックし、ユーザーのリソース要求を満たすエージェントに対してコンピュートセッションの作成を委任します。さらに、リソースが不足している場合、ユーザーのコンピュートセッションの作成要求は、ジョブキューのPENDING状態として登録されます。その後、リソースが再び利用可能になると、保留された要求が再開されてコンピュートセッションの作成が行われます。
 
-ジョブスケジューラの動作は、ユーザーWeb-UIから簡単に確認することができます。GPUホストが最大2つのfGPUを割り当てることができる場合、それぞれ1つのfGPUの割り当てを要求する3つのコンピュートセッションを同時に作成してみましょう。セッション起動ダイアログのカスタム割り当てセクションには、GPUとセッションのスライダーがあります。セッションに1より大きい値を指定してLAUNCHボタンをクリックすると、セッションの数が同時に要求されます。GPUとセッションをそれぞれ1と3に設定してみましょう。これは、合計3つのfGPUを要求する3つのセッションが、2つのfGPUしか存在しないときに作成される状況です。
+ジョブスケジューラの動作は、ユーザーWebUIから簡単に確認することができます。GPUホストが最大2つのfGPUを割り当てることができる場合、それぞれ1つのfGPUの割り当てを要求する3つのコンピュートセッションを同時に作成してみましょう。セッションランチャーの環境 & リソース配分ステップで、AIアクセラレータを1に設定します。続いてレビューと開始ステップで、ローンチボタンの横にあるメニューを開いて複数セッションを起動を選択します。セッション数を3に指定して開始をクリックすると、3つのセッションが同時に要求されます。これは、合計3つのfGPUを要求する3つのセッションが、2つのfGPUしか存在しないときに作成される状況です。
 
 ![](../images/session_launch_dialog_2_sessions.png)
 
@@ -88,31 +68,27 @@ Backend.AIは、さまざまなプリビルドのMLおよびHPCカーネルイ�
 
 ![](../images/various_kernel_images.png)
 
-Here, let's select the TensorFlow 2.3 environment and created a session.
+ここでは、TensorFlow 2.3 環境を選択してセッションを作成してみましょう。
 
 ![](../images/session_launch_dialog_tf23.png)
 
-Open the web terminal of the created session and run the following Python
-command. You can see that TensorFlow 2.3 version is installed.
+作成したセッションのWebターミナルを開き、以下のPythonコマンドを実行します。TensorFlow 2.3 がインストールされていることを確認できます。
 
 ![](../images/tf23_version_print.png)
 
-This time, let's select the TensorFlow 1.15 environment to create a compute
-session. If resources are insufficient, delete the previous session.
+今度は、TensorFlow 1.15 環境を選択してコンピュートセッションを作成しましょう。リソースが不足している場合は、先に作成したセッションを削除してください。
 
 ![](../images/session_launch_dialog_tf115.png)
 
-Open the web terminal of the created session and run the same Python command as
-before. You can see that TensorFlow 1.15(.4) version is installed.
+作成したセッションのWebターミナルを開き、先ほどと同じPythonコマンドを実行します。TensorFlow 1.15(.4) がインストールされていることを確認できます。
 
 ![](../images/tf115_version_print.png)
 
-Finally, create a compute session using PyTorch version 1.7.
+最後に、PyTorch 1.9 を使用してコンピュートセッションを作成します。
 
 ![](../images/session_launch_dialog_pytorch17.png)
 
-Open the web terminal of the created session and run the following Python
-command. You can see that PyTorch 1.8 version is installed.
+作成したセッションのWebターミナルを開き、以下のPythonコマンドを実行します。PyTorch 1.9 がインストールされていることを確認できます。
 
 ![](../images/pytorch17_version_print.png)
 
@@ -151,18 +127,18 @@ Backend.AIサーバーデーモン/サービスには、以下のハードウェ
 - Manager: 2コア、4 GiBメモリ
 - Agent: 4コア、32 GiBメモリ、NVIDIA GPU（GPUワークロード用）、> 512 GiB SSD
 - Webserver: 2コア、4 GiBメモリ
-- WSProxy: 2コア、4 GiBメモリ
+- App Proxy: 2コア、4 GiBメモリ
 - PostgreSQL DB: 2コア、4 GiBメモリ
 - Redis: 1コア、2 GiBメモリ
 - Etcd: 1コア、2 GiBメモリ
 
 各サービスをインストールする前に事前にインストールする必要がある必須ホスト依存パッケージは以下の通りです：
 
-- Web-UI: 最新のブラウザを実行できるオペレーティングシステム（Windows、Mac OS、Ubuntuなど）
+- WebUI: 最新のブラウザを実行できるオペレーティングシステム（Windows、Mac OS、Ubuntuなど）
 - Manager: Python (≥3.8)、pyenv/pyenv-virtualenv (≥1.2)
 - Agent: docker (≥19.03)、CUDA/CUDA Toolkit (≥8、11推奨)、nvidia-docker v2、Python (≥3.8)、pyenv/pyenv-virtualenv (≥1.2)
 - Webserver: Python (≥3.8)、pyenv/pyenv-virtualenv (≥1.2)
-- WSProxy: docker (≥19.03)、docker-compose (≥1.24)
+- App Proxy: docker (≥19.03)、docker-compose (≥1.24)
 - PostgreSQL DB: docker (≥19.03)、docker-compose (≥1.24)
 - Redis: docker (≥19.03)、docker-compose (≥1.24)
 - Etcd: docker (≥19.03)、docker-compose (≥1.24)
@@ -196,8 +172,8 @@ Backend.AIにはMLFlowとMLFlow UIを内蔵アプリとしてサポートする�
 
 まず、ターミナルアプリ「console」を起動し、以下のコマンドを実行します。これによりMLFlowトラッキングUIサーバーが開始されます。
 
-```shell
-$ mlflow ui --host 0.0.0.0
+```bash
+mlflow ui --host 0.0.0.0
 ```
 
 次に、アプリランチャーダイアログで「MLFlow UI」アプリをクリックします。
@@ -210,9 +186,9 @@ $ mlflow ui --host 0.0.0.0
 
 MLFlowを使用すると、実行するたびにメトリクス、パラメータなどの実験を追跡できます。簡単な例から実験追跡を始めましょう。
 
-```shell
-$ wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
-$ python train_diabetes.py
+```bash
+wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
+python train_diabetes.py
 ```
 
 Pythonコードを実行した後、MLFlowで実験結果を確認できます。
@@ -221,8 +197,8 @@ Pythonコードを実行した後、MLFlowで実験結果を確認できます�
 
 コード実行時に引数を渡してハイパーパラメータを設定することもできます。
 
-```shell
-$ python train_diabetes.py 0.2 0.05
+```bash
+python train_diabetes.py 0.2 0.05
 ```
 
 いくつかのトレーニングを行った後で、結果とともに訓練されたモデルを比較することができます。

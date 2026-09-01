@@ -7,33 +7,37 @@ import { RBACManagementPageDeactivateRoleMutation } from '../__generated__/RBACM
 import { RBACManagementPagePurgeRoleMutation } from '../__generated__/RBACManagementPagePurgeRoleMutation.graphql';
 import {
   RBACManagementPageQuery,
+  RoleFilter,
   RoleOrderBy,
 } from '../__generated__/RBACManagementPageQuery.graphql';
+import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
-import RoleFormModal from '../components/RoleFormModal';
+import RoleFormModal, { RBAC_ELEMENT_TYPES } from '../components/RoleFormModal';
 import RoleNodes, {
   type RoleNodeInList,
   availableRoleSorterValues,
 } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { App, Popconfirm, theme } from 'antd';
 import {
   BAIButton,
   BAICard,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAILink,
-  BAITrashBinIcon,
-  type GraphQLFilter,
+  BAINameActionCell,
+  BAIUserSelect,
+  filterOutEmpty,
   INITIAL_FETCH_KEY,
   toLocalId,
   useBAILogger,
   useFetchKey,
+  useMutationWithPromise,
 } from 'backend.ai-ui';
-import { BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
+import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
   parseAsJson,
   parseAsString,
@@ -50,8 +54,7 @@ const RBACManagementPage: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-
+  const baiClient = useSuspendedBackendaiClient();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -65,7 +68,7 @@ const RBACManagementPage: React.FC = () => {
     {
       status: parseAsStringLiteral(statusFilterValues).withDefault('ACTIVE'),
       order: parseAsStringLiteral(availableRoleSorterValues),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
+      filter: parseAsJson<RoleFilter>((value) => value as RoleFilter),
     },
     {
       history: 'replace',
@@ -106,6 +109,7 @@ const RBACManagementPage: React.FC = () => {
             node {
               id
               ...RoleNodesFragment
+              ...RoleDetailDrawerFragment
             }
           }
         }
@@ -121,7 +125,7 @@ const RBACManagementPage: React.FC = () => {
     },
   );
 
-  const { modal, message } = App.useApp();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
 
   const [commitDeactivateRole] =
@@ -147,17 +151,17 @@ const RBACManagementPage: React.FC = () => {
       }
     `);
 
-  const [commitPurgeRole] = useMutation<RBACManagementPagePurgeRoleMutation>(
-    graphql`
+  const mutatePurgeRole =
+    useMutationWithPromise<RBACManagementPagePurgeRoleMutation>(graphql`
       mutation RBACManagementPagePurgeRoleMutation($input: PurgeRoleInput!) {
         adminPurgeRole(input: $input) {
           id
         }
       }
-    `,
-  );
+    `);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [purgingRole, setPurgingRole] = useState<RoleNodeInList | null>(null);
   const [{ roleDetail: selectedRoleId }, setRoleDetailParam] = useQueryStates(
     {
       roleDetail: parseAsString,
@@ -207,33 +211,14 @@ const RBACManagementPage: React.FC = () => {
   };
 
   const handlePurgeRole = (role: RoleNodeInList) => {
-    modal.confirm({
-      title: t('rbac.PurgeRole'),
-      content: t('rbac.ConfirmPurge', { name: role.name }),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true, type: 'primary' },
-      onOk: () => {
-        commitPurgeRole({
-          variables: { input: { id: toLocalId(role.id) } },
-          onCompleted: (_data, errors) => {
-            if (errors && errors.length > 0) {
-              logger.error(errors[0]);
-              message.error(errors[0]?.message || t('general.ErrorOccurred'));
-              return;
-            }
-            message.success(t('rbac.RolePurged'));
-            updateFetchKey();
-          },
-          onError: (error) => {
-            logger.error(error);
-            message.error(error?.message || t('general.ErrorOccurred'));
-          },
-        });
-      },
-    });
+    setPurgingRole(role);
   };
 
   const roleNodes = queryRef.adminRoles?.edges?.map((edge) => edge?.node) ?? [];
+  // The drawer renders from the selected node's fragment ref — no id-based
+  // fetch of its own. If the node has drifted off the current page (rare:
+  // reload after list churn), the drawer simply stays closed.
+  const selectedRole = roleNodes.find((role) => role?.id === selectedRoleId);
 
   return (
     <BAICard
@@ -265,8 +250,8 @@ const RBACManagementPage: React.FC = () => {
                 { label: t('rbac.Inactive'), value: 'DELETED' },
               ]}
             />
-            <BAIGraphQLPropertyFilter
-              filterProperties={[
+            <BAIGraphQLPropertyFilter<RoleFilter>
+              filterProperties={filterOutEmpty([
                 {
                   key: 'name',
                   propertyLabel: t('rbac.RoleName'),
@@ -276,14 +261,56 @@ const RBACManagementPage: React.FC = () => {
                   key: 'source',
                   propertyLabel: t('rbac.Source'),
                   type: 'enum',
-                  valueMode: 'scalar',
+                  fixedOperator: 'equals',
                   options: [
                     { label: t('rbac.System'), value: 'SYSTEM' },
                     { label: t('rbac.Custom'), value: 'CUSTOM' },
                   ],
                   strictSelection: true,
                 },
-              ]}
+                baiClient?.supports('rbac-filter-assigned-user') && {
+                  key: 'assignedUser.userId',
+                  propertyLabel: t('rbac.AssignedUser'),
+                  type: 'uuid',
+                  fixedOperator: 'equals',
+                  renderInput: ({ onAddCondition }) => (
+                    <BAIUserSelect
+                      valuePropName="id"
+                      value={null}
+                      label={t('rbac.AssignedUser')}
+                      isLabelHidden
+                      onChange={(value, option) =>
+                        // The picker emits the user UUID; forward the option
+                        // label (email) so the condition tag stays readable
+                        // (P3C-1 keeps the 2nd argument on this sibling).
+                        onAddCondition(
+                          value as string | undefined,
+                          Array.isArray(option)
+                            ? option[0]?.label
+                            : option?.label,
+                        )
+                      }
+                      width={200}
+                    />
+                  ),
+                },
+                baiClient?.supports('role-mapped-scope-filter') && {
+                  key: 'mappedScope.scopeType',
+                  propertyLabel: t('rbac.ScopeType'),
+                  type: 'enum',
+                  fixedOperator: 'equals',
+                  options: RBAC_ELEMENT_TYPES.map((type) => ({
+                    label: t(`rbac.types.${type}`, { defaultValue: type }),
+                    value: type,
+                  })),
+                  strictSelection: true,
+                },
+                baiClient?.supports('role-mapped-scope-filter') && {
+                  key: 'mappedScope.scopeId',
+                  propertyLabel: t('rbac.ScopeRawId'),
+                  type: 'string',
+                },
+              ])}
               value={queryParams.filter ?? undefined}
               onChange={(value) => {
                 setQueryParams({ filter: value ?? null });
@@ -321,78 +348,72 @@ const RBACManagementPage: React.FC = () => {
           customizeColumns={(columns) => {
             const isDeletedFilter =
               deferredQueryVariables.filter.status?.in?.[0] === 'DELETED';
-            return [
-              ...columns.map((col) =>
-                col.key === 'name'
-                  ? {
-                      ...col,
-                      render: (name: string, role: RoleNodeInList) => (
-                        <BAILink
-                          type="hover"
-                          onClick={() =>
-                            setRoleDetailParam({ roleDetail: role.id })
-                          }
-                        >
-                          {name}
-                        </BAILink>
-                      ),
-                    }
-                  : col,
-              ),
-              {
-                key: 'control',
-                title: t('general.Control'),
-                fixed: 'left',
-                width: 100,
-                render: (_: unknown, role: RoleNodeInList) => (
-                  <BAIFlex gap={token.marginXXS}>
-                    {isDeletedFilter ? (
-                      <>
-                        <Popconfirm
-                          title={t('rbac.ActivateRole')}
-                          description={role.name}
-                          okText={t('rbac.Activate')}
-                          placement="left"
-                          onConfirm={() => handleActivateRole(role)}
-                        >
-                          <BAIButton
-                            type="text"
-                            title={t('rbac.Activate')}
-                            icon={<UndoIcon />}
-                            size="small"
-                          />
-                        </Popconfirm>
-                        <BAIButton
-                          type="text"
-                          danger
-                          title={t('rbac.PurgeRole')}
-                          icon={<BAITrashBinIcon />}
-                          size="small"
-                          onClick={() => handlePurgeRole(role)}
-                        />
-                      </>
-                    ) : (
-                      <Popconfirm
-                        title={t('rbac.DeactivateRole')}
-                        description={role.name}
-                        okType="danger"
-                        okText={t('rbac.Deactivate')}
-                        placement="left"
-                        onConfirm={() => handleDeactivateRole(role)}
-                      >
-                        <BAIButton
-                          type="text"
-                          danger
-                          title={t('rbac.Deactivate')}
-                          icon={<BanIcon />}
-                          size="small"
-                        />
-                      </Popconfirm>
-                    )}
-                  </BAIFlex>
-                ),
-              },
-            ];
+            return columns.map((col) =>
+              col.key === 'name'
+                ? {
+                    ...col,
+                    render: (name: string, role: RoleNodeInList) => (
+                      <BAINameActionCell
+                        title={name}
+                        showActions="always"
+                        onTitleClick={() =>
+                          setRoleDetailParam({ roleDetail: role.id })
+                        }
+                        actions={filterOutEmpty(
+                          isDeletedFilter
+                            ? [
+                                {
+                                  key: 'activate',
+                                  title: t('rbac.Activate'),
+                                  icon: <UndoIcon />,
+                                  popConfirm: {
+                                    title: t('rbac.ActivateRole'),
+                                    description: role.name,
+                                    okText: t('rbac.Activate'),
+                                    cancelText: t('button.Cancel'),
+                                    onConfirm: () => {
+                                      return new Promise<void>((resolve) => {
+                                        handleActivateRole(role);
+                                        resolve();
+                                      });
+                                    },
+                                  },
+                                },
+                                {
+                                  key: 'purge',
+                                  title: t('rbac.PurgeRole'),
+                                  icon: <Trash2 size="1em" />,
+                                  type: 'danger' as const,
+                                  onClick: () => handlePurgeRole(role),
+                                },
+                              ]
+                            : [
+                                {
+                                  key: 'deactivate',
+                                  title: t('rbac.Deactivate'),
+                                  icon: <BanIcon />,
+                                  type: 'danger' as const,
+                                  popConfirm: {
+                                    title: t('rbac.DeactivateRole'),
+                                    description: role.name,
+                                    okText: t('rbac.Deactivate'),
+                                    cancelText: t('button.Cancel'),
+                                    okButtonProps: { danger: true },
+                                    onConfirm: () => {
+                                      return new Promise<void>((resolve) => {
+                                        handleDeactivateRole(role);
+                                        resolve();
+                                      });
+                                    },
+                                  },
+                                },
+                              ],
+                        )}
+                      />
+                    ),
+                  }
+                : col,
+            );
           }}
           pagination={{
             pageSize: tablePaginationOption.pageSize,
@@ -414,9 +435,39 @@ const RBACManagementPage: React.FC = () => {
         }}
       />
       <RoleDetailDrawer
-        open={!!selectedRoleId}
-        roleId={selectedRoleId || undefined}
+        open={!!selectedRole}
+        roleFrgmt={selectedRole}
         onClose={() => setRoleDetailParam({ roleDetail: null })}
+      />
+      <BAIDeleteConfirmModal
+        open={!!purgingRole}
+        items={
+          purgingRole
+            ? [{ key: purgingRole.id, label: purgingRole.name ?? '' }]
+            : []
+        }
+        title={t('rbac.PurgeRole')}
+        target={t('general.Role')}
+        confirmText={purgingRole?.name ?? ''}
+        requireConfirmInput
+        onOk={() => {
+          if (purgingRole) {
+            return mutatePurgeRole({
+              input: { id: toLocalId(purgingRole.id) },
+            })
+              .then(() => {
+                message.success(t('rbac.RolePurged'));
+                updateFetchKey();
+                setPurgingRole(null);
+              })
+              .catch((error) => {
+                logger.error('Failed to purge role', error);
+                message.error(error?.message || t('general.ErrorOccurred'));
+                setPurgingRole(null);
+              });
+          }
+        }}
+        onCancel={() => setPurgingRole(null)}
       />
     </BAICard>
   );

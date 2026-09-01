@@ -3,12 +3,6 @@
     "playwright-test": {
       "command": "npx",
       "args": ["playwright", "run-test-mcp-server"]
-    },
-    "graphite": {
-      "type": "stdio",
-      "command": "gt",
-      "args": ["mcp"],
-      "env": {}
     }
   }
 }

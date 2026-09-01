@@ -2,60 +2,55 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
-import { useToggle } from 'ahooks';
 import {
-  theme,
-  Col,
-  Row,
-  Statistic,
-  Card,
-  Button,
-  Tooltip,
-  Typography,
-} from 'antd';
+  ReservoirPageQuery,
+  ReservoirPageQuery$data,
+  ReservoirPageQuery$variables,
+  ArtifactType,
+  ArtifactFilter,
+} from '../__generated__/ReservoirPageQuery.graphql';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
+import BAIRadioGroup from '../components/BAIRadioGroup';
+import ScanArtifactModelsFromHuggingFaceModal from '../components/ScanArtifactModelsFromHuggingFaceModal';
+import { buildPath } from '../helper/pathBuilder';
+import { useWebUINavigate } from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { theme } from '../theme-shim';
+import { Button } from '@astryxdesign/core/Button';
+import { Card } from '@astryxdesign/core/Card';
+import { Grid } from '@astryxdesign/core/Grid';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Stat } from '@astryxdesign/lab';
 import {
+  // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
+  BAIImportArtifactModal,
   BAIActivateArtifactsModal,
   BAIActivateArtifactsModalArtifactsFragmentKey,
   BAIArtifactTable,
   BAICard,
   BAIDeactivateArtifactsModal,
   BAIDeactivateArtifactsModalArtifactsFragmentKey,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIHuggingFaceIcon,
-  // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
-  BAIImportArtifactModal,
   BAIImportArtifactModalArtifactFragmentKey,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
+  BAISelectionLabel,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   toLocalId,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import React, { useMemo, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
-import {
-  ReservoirPageQuery,
-  ReservoirPageQuery$data,
-  ReservoirPageQuery$variables,
-  ArtifactType,
-} from 'src/__generated__/ReservoirPageQuery.graphql';
-import BAIRadioGroup from 'src/components/BAIRadioGroup';
-import ScanArtifactModelsFromHuggingFaceModal from 'src/components/ScanArtifactModelsFromHuggingFaceModal';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import {
-  withDefault,
-  JsonParam,
-  StringParam,
-  useQueryParams,
-} from 'use-query-params';
 
 const getStatusFilter = (status: string) => {
   return { availability: [status] };
@@ -71,7 +66,7 @@ const ReservoirPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const { upsertNotification } = useSetBAINotification();
 
   const [selectedArtifactIdList, setSelectedArtifactIdList] = useState<
@@ -104,15 +99,20 @@ const ReservoirPage: React.FC = () => {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 10,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    filter: withDefault(JsonParam, {}),
-    mode: withDefault(StringParam, 'ALIVE'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      filter: parseAsJson<ArtifactFilter>(
+        (value) => value as ArtifactFilter,
+      ).withDefault({}),
+      mode: parseAsString.withDefault('ALIVE'),
+    },
+    { history: 'replace' },
+  );
   const jsonStringFilter = JSON.stringify(queryParams.filter);
 
   const queryVariables: ReservoirPageQuery$variables = useMemo(
@@ -234,35 +234,41 @@ const ReservoirPage: React.FC = () => {
   //   return { type: { eq: type } };
   // };
   // const handleStatisticCardClick = (type: 'IMAGE' | 'PACKAGE' | 'MODEL') => {
-  //   setQuery({ filter: typeFilterGenerator(type) }, 'replaceIn');
+  //   setQuery({ filter: typeFilterGenerator(type) });
   // };
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <Row gutter={[16, 16]}>
-        <Col xs={12} sm={8} lg={6} xl={4}>
-          <Card
-            size="small"
-            variant="borderless"
-            hoverable
-            style={{
-              cursor: 'pointer',
-              border: `1px solid ${token.colorPrimary}`,
-            }}
-          >
-            <Statistic
-              title="MODEL"
-              value={total?.count}
-              prefix={<Brain size={16} />}
-              styles={{
-                content: {
-                  color: token.colorPrimary,
-                },
-              }}
-            />
-          </Card>
-        </Col>
-      </Row>
+      {/* antd `Row gutter={[16,16]}` + a single `Col xs={12} sm={8} lg={6}
+          xl={4}` -> Astryx `Grid` on the RESPONSIVE-POLICY R1 recipe: the
+          widest antd step is `xl={4}` (6-up from 1200px), so minWidth 200 /
+          max 6, gutter 16 -> gap 4. W2A-17: grid children take `width: 100%`
+          and `minWidth: 0` so a filled track cannot push past its column. */}
+      <Grid columns={{ minWidth: 200, max: 6 }} gap={4} width="100%">
+        {/* antd `Statistic` -> lab `Stat` (MAPPING §2 LAB; the canary is
+            already in the graph for Drawer/Stepper/Tour).
+            PILOT-DECISION: `Stat` has no `prefix` slot and no per-value color,
+            so the `Brain` glyph moves INTO the ReactNode `value` beside the
+            number, and the primary tint on both the number and the card border
+            is DROPPED (P19 theme-defaults-first — `Stat` already gives the
+            value display emphasis, and a hand-painted `1px solid colorPrimary`
+            was antd-era chrome).
+            `hoverable` + `cursor: 'pointer'` also go: the click handler that
+            justified them (`handleStatisticCardClick`) is commented out, so
+            the affordance was promising an interaction the card does not
+            have. */}
+        <Card style={{ minWidth: 0 }}>
+          <Stat
+            label="MODEL"
+            value={
+              <HStack gap={1} align="center">
+                <Brain size={16} />
+                {total?.count}
+              </HStack>
+            }
+          />
+        </Card>
+      </Grid>
       <BAICard
         activeTabKey={'artifacts'}
         tabList={[
@@ -301,7 +307,7 @@ const ReservoirPage: React.FC = () => {
                 ]}
                 value={queryParams.mode}
                 onChange={(e) => {
-                  setQuery({ mode: e.target.value }, 'replaceIn');
+                  setQuery({ mode: e.target.value });
                   setTablePaginationOption({ current: 1 });
                   setSelectedArtifactIdList([]);
                   setSelectedArtifacts([]);
@@ -311,7 +317,7 @@ const ReservoirPage: React.FC = () => {
               <BAIGraphQLPropertyFilter
                 combinationMode="AND"
                 onChange={(value) => {
-                  setQuery({ filter: value ?? {} }, 'replaceIn');
+                  setQuery({ filter: value ?? {} });
                 }}
                 value={queryParams.filter}
                 filterProperties={[
@@ -356,50 +362,53 @@ const ReservoirPage: React.FC = () => {
                 ]}
               />
             </BAIFlex>
-            <BAIFlex gap={'sm'} align="center">
+            <BAIFlex gap={'xs'} align="center">
               {selectedArtifactIdList.length > 0 && (
                 <BAIFlex gap="xs">
-                  <Typography.Text>
-                    {t('general.NSelected', {
-                      count: selectedArtifactIdList.length,
-                    })}
-                  </Typography.Text>
-                  <Tooltip
-                    title={
+                  <BAISelectionLabel
+                    count={selectedArtifactIdList.length}
+                    onClearSelection={() => setSelectedArtifactIdList([])}
+                  />
+                  {/* antd `Tooltip` wrapping an icon-only `Button` ->
+                      `IconButton`, which requires `label` and renders the
+                      tooltip itself, so the wrapper disappears and the button
+                      finally has an accessible name. */}
+                  <IconButton
+                    variant="secondary"
+                    label={
                       mode === 'ALIVE'
                         ? t('reservoirPage.Deactivate')
                         : t('reservoirPage.Activate')
                     }
-                  >
-                    <Button
-                      icon={mode === 'ALIVE' ? <BanIcon /> : <UndoIcon />}
-                      style={{
-                        color:
-                          mode === 'ALIVE' ? token.colorError : token.colorInfo,
-                        backgroundColor:
-                          mode === 'ALIVE'
-                            ? token.colorErrorBg
-                            : token.colorInfoBg,
-                        borderColor: token.colorBorder,
-                      }}
-                      onClick={() => {
-                        if (mode === 'ALIVE') {
-                          setSelectedArtifacts(
-                            selectedArtifactIdList.flatMap((arr) => arr.data),
-                          );
-                        } else {
-                          setSelectedRestoreArtifacts(
-                            selectedArtifactIdList.flatMap((arr) => arr.data),
-                          );
-                        }
-                      }}
-                    />
-                  </Tooltip>
+                    tooltip={
+                      mode === 'ALIVE'
+                        ? t('reservoirPage.Deactivate')
+                        : t('reservoirPage.Activate')
+                    }
+                    icon={
+                      mode === 'ALIVE' ? (
+                        <BanIcon style={{ color: token.colorError }} />
+                      ) : (
+                        <UndoIcon style={{ color: token.colorInfo }} />
+                      )
+                    }
+                    onClick={() => {
+                      if (mode === 'ALIVE') {
+                        setSelectedArtifacts(
+                          selectedArtifactIdList.flatMap((arr) => arr.data),
+                        );
+                      } else {
+                        setSelectedRestoreArtifacts(
+                          selectedArtifactIdList.flatMap((arr) => arr.data),
+                        );
+                      }
+                    }}
+                  />
                 </BAIFlex>
               )}
-              <BAIFetchKeyButton
+              <AutoUpdateFetchKeyButton
+                settingId="reservoir"
                 value={fetchKey}
-                autoUpdateDelay={15_000}
                 loading={deferredFetchKey !== fetchKey}
                 onChange={() => {
                   updateFetchKey();
@@ -417,14 +426,15 @@ const ReservoirPage: React.FC = () => {
                 <>
                   {/* TODO(needs-backend): HuggingFace registry token setting button is hidden
                      until storage-proxy applies DB config via Redis stateful state sharing. */}
-                  {/* <Tooltip title={t('button.Settings')}>
-                    <Button
-                      icon={<Settings size={16} />}
-                      onClick={() => toggleHuggingFaceSettingModal()}
-                    />
-                  </Tooltip> */}
+                  {/* <IconButton
+                        variant="secondary"
+                        label={t('button.Settings')}
+                        tooltip={t('button.Settings')}
+                        icon={<Settings size={16} />}
+                        onClick={() => toggleHuggingFaceSettingModal()}
+                      /> */}
                   <Button
-                    type="primary"
+                    variant="primary"
                     icon={
                       <BAIHuggingFaceIcon
                         style={{
@@ -432,10 +442,9 @@ const ReservoirPage: React.FC = () => {
                         }}
                       />
                     }
+                    label={t('reservoirPage.FromHuggingFace')}
                     onClick={() => toggleOpenHuggingFaceModal()}
-                  >
-                    {t('reservoirPage.FromHuggingFace')}
-                  </Button>
+                  />
                 </>
               )}
             </BAIFlex>
@@ -520,16 +529,16 @@ const ReservoirPage: React.FC = () => {
               loading={false}
               filterValue={queryParams.auditFilter}
               onFilterChange={(value) => {
-                setQuery({ auditFilter: value }, 'replaceIn');
+                setQuery({ auditFilter: value });
               }}
               pagination={{
                 pageSize: tablePaginationOption.pageSize,
                 current: tablePaginationOption.current,
                 total: filteredAuditLogs.length,
                 showTotal: (total) => (
-                  <Typography.Text type="secondary">
+                  <BAIText type="secondary">
                     {t('general.TotalItems', { total: total })}
-                  </Typography.Text>
+                  </BAIText>
                 ),
                 onChange: (current, pageSize) => {
                   if (_.isNumber(current) && _.isNumber(pageSize)) {
@@ -539,7 +548,7 @@ const ReservoirPage: React.FC = () => {
               }}
               order={queryParams.auditOrder}
               onChangeOrder={(order) => {
-                setQuery({ auditOrder: order }, 'replaceIn');
+                setQuery({ auditOrder: order });
               }}
             />
           </Suspense>
@@ -575,7 +584,7 @@ const ReservoirPage: React.FC = () => {
                         version: task.version,
                       }),
                       toText: t('reservoirPage.GoToArtifact'),
-                      to: `/reservoir/${task.artifact.id}`,
+                      to: buildPath('admin', `reservoir/${task.artifact.id}`),
                     };
                   },
                   rejected: (_data, _notification) => {
@@ -598,7 +607,7 @@ const ReservoirPage: React.FC = () => {
         open={deferredOpenHuggingFaceModal}
         onRequestClose={(_e, artifactId) => {
           toggleOpenHuggingFaceModal();
-          navigate(`/reservoir/${toLocalId(artifactId)}`);
+          navigate(buildPath('admin', `reservoir/${toLocalId(artifactId)}`));
         }}
         onCancel={toggleOpenHuggingFaceModal}
       />

@@ -1,0 +1,124 @@
+// TODO: Remove after 27.4.0 (legacy compatibility for backends < 26.4.0)
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { MyKeypairInfoModalLegacyQuery } from '../__generated__/MyKeypairInfoModalLegacyQuery.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
+import { useTanQuery } from '../hooks/reactQueryAlias';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAITable,
+  badgeVariantForTagColor,
+  BAIText,
+} from 'backend.ai-ui';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+
+interface MyKeypairInfoModalLegacyProps extends BAIModalProps {
+  onRequestClose: () => void;
+}
+
+const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
+  onRequestClose,
+  ...baiModalProps
+}) => {
+  const { t } = useTranslation();
+  const [userInfo] = useCurrentUserInfo();
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: keypairs } = useTanQuery({
+    queryKey: ['baiClient.keypair.list', baiModalProps.open], // refetch on open state
+    queryFn: () => {
+      return baiModalProps.open
+        ? baiClient.keypair
+            .list(
+              userInfo.email,
+              ['access_key', 'secret_key', 'is_active'],
+              true,
+            )
+            .then((res: any) => res.keypairs)
+        : null;
+    },
+    staleTime: 0,
+  });
+
+  const { user } = useLazyLoadQuery<MyKeypairInfoModalLegacyQuery>(
+    graphql`
+      query MyKeypairInfoModalLegacyQuery($email: String) {
+        user(email: $email) {
+          email
+          main_access_key @since(version: "23.09.7")
+        }
+      }
+    `,
+    {
+      email: userInfo.email,
+    },
+  );
+
+  return (
+    <BAIModal
+      {...baiModalProps}
+      title={t('userSettings.MyKeypairInfo')}
+      centered
+      onCancel={onRequestClose}
+      destroyOnHidden
+      width={'auto'}
+      footer={[
+        <Button
+          key="keypairInfoClose"
+          label={t('button.Close')}
+          onClick={() => {
+            onRequestClose();
+          }}
+        />,
+      ]}
+    >
+      <BAITable
+        scroll={{ x: 'max-content' }}
+        rowKey={'access_key'}
+        dataSource={keypairs}
+        columns={[
+          {
+            title: t('general.AccessKey'),
+            key: 'accessKey',
+            dataIndex: 'access_key',
+            fixed: 'left',
+            render: (value) => (
+              <BAIFlex direction="column" align="start">
+                <BAIText copyable ellipsis={{ tooltip: true }}>
+                  {value}
+                </BAIText>
+                {value === user?.main_access_key && (
+                  <Badge
+                    label={t('credential.MainAccessKey')}
+                    variant={badgeVariantForTagColor('red')}
+                  />
+                )}
+              </BAIFlex>
+            ),
+          },
+          {
+            title: t('general.SecretKey'),
+            key: 'secretKey',
+            dataIndex: 'secret_key',
+            fixed: 'left',
+            render: (value) => (
+              <BAIText copyable ellipsis={{ tooltip: true }}>
+                {value}
+              </BAIText>
+            ),
+          },
+        ]}
+      />
+    </BAIModal>
+  );
+};
+
+export default MyKeypairInfoModalLegacy;

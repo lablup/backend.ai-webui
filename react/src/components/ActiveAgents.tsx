@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../theme-shim';
 import AgentList from './AgentList';
-import { theme } from 'antd';
 import { BAIBoardItemTitle, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -55,7 +55,6 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
         }
       />
 
-      {/* Scrollable Content Section */}
       <BAIFlex
         direction="column"
         align="stretch"
@@ -63,6 +62,7 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
           flex: 1,
           overflowY: 'auto',
           overflowX: 'hidden',
+          marginBottom: token.margin,
         }}
       >
         <AgentList

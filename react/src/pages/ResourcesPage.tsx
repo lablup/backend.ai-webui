@@ -3,58 +3,53 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import AgentList from '../components/AgentList';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ResourceGroupList from '../components/ResourceGroupList';
 import StorageProxyList from '../components/StorageProxyList';
-import { Skeleton } from 'antd';
-import { BAICard } from 'backend.ai-ui';
+import { useTabQuerySnapshot } from '../hooks';
+import { BAISkeleton, BAICard } from 'backend.ai-ui';
+import { parseAsStringLiteral } from 'nuqs';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-
-type TabKey = 'agents' | 'storages' | 'resourceGroup';
 
 interface ResourcesPageProps {}
 
-const tabParam = withDefault(StringParam, 'agents');
+const tabParser = parseAsStringLiteral([
+  'agents',
+  'storages',
+  'resourceGroup',
+]).withDefault('agents');
 
+// QA2-A: folded the hand-inlined `Card` + `VStack` + `TabList` copy back onto
+// `BAICard tabList`, which now renders the strip as the card's header chrome
+// (full-bleed rail, tab label on the body inset). See `AgentSummaryPage`.
 const ResourcesPage: React.FC<ResourcesPageProps> = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam, {
-    updateType: 'replace',
-  });
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
   return (
     <BAICard
-      activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
+      activeTabKey={currentTab}
+      onTabChange={onTabChange}
       tabList={[
-        {
-          key: 'agents',
-          tab: t('agent.Agent'),
-        },
-        {
-          key: 'storages',
-          tab: t('general.StorageProxies'),
-        },
-        {
-          key: 'resourceGroup',
-          tab: t('general.ResourceGroup'),
-        },
+        { key: 'agents', label: t('agent.Agent') },
+        { key: 'storages', label: t('general.StorageProxies') },
+        { key: 'resourceGroup', label: t('general.ResourceGroup') },
       ]}
     >
-      <Suspense fallback={<Skeleton active />}>
-        {curTabKey === 'agents' && (
+      <Suspense fallback={<BAISkeleton />}>
+        {currentTab === 'agents' && (
           <BAIErrorBoundary>
             <AgentList />
           </BAIErrorBoundary>
         )}
-        {curTabKey === 'storages' && (
+        {currentTab === 'storages' && (
           <BAIErrorBoundary>
             <StorageProxyList />
           </BAIErrorBoundary>
         )}
-        {curTabKey === 'resourceGroup' && (
+        {currentTab === 'resourceGroup' && (
           <BAIErrorBoundary>
             <ResourceGroupList />
           </BAIErrorBoundary>

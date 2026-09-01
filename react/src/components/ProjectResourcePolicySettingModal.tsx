@@ -11,21 +11,21 @@ import {
   ModifyProjectResourcePolicyInput,
   ProjectResourcePolicySettingModalModifyMutation,
 } from '../__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
-  Form,
-  Input,
-  Alert,
-  App,
-  theme,
-  InputNumber,
-  FormInstance,
-} from 'antd';
+  AstryxFormNumberInput,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -129,15 +129,15 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       ?.validateFields()
       .then((values) => {
         const props:
-          | CreateProjectResourcePolicyInput
-          | ModifyProjectResourcePolicyInput = {
-          max_vfolder_count: values?.max_vfolder_count || 0,
-          max_quota_scope_size:
-            values?.max_quota_scope_size === -1
-              ? -1
-              : GBToBytes(values?.max_quota_scope_size),
-          max_network_count: values?.max_network_count || -1,
-        };
+          CreateProjectResourcePolicyInput | ModifyProjectResourcePolicyInput =
+          {
+            max_vfolder_count: values?.max_vfolder_count || 0,
+            max_quota_scope_size:
+              values?.max_quota_scope_size === -1
+                ? -1
+                : GBToBytes(values?.max_quota_scope_size),
+            max_network_count: values?.max_network_count || -1,
+          };
         if (!supportMaxNetworkCount) {
           delete props.max_network_count;
         }
@@ -204,8 +204,11 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
     <BAIModal
       title={
         projectResourcePolicy === null
-          ? t('resourcePolicy.CreateResourcePolicy')
-          : t('resourcePolicy.UpdateResourcePolicy')
+          ? t('resourcePolicy.CreateProjectResourcePolicy')
+          : t('resourcePolicy.UpdateProjectResourcePolicy')
+      }
+      okText={
+        projectResourcePolicy === null ? t('button.Create') : t('button.Save')
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
@@ -216,10 +219,9 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       }
       {...baiModalProps}
     >
-      <Alert
+      <Banner
         title={t('storageHost.BeCarefulToSetProjectResourcePolicy')}
-        type="warning"
-        showIcon
+        status="warning"
         style={{ marginBottom: token.marginMD }}
       />
       <Form
@@ -228,7 +230,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         initialValues={initialValues}
         preserve={false}
       >
-        <Form.Item
+        <BAIFormItem
           label={t('resourcePolicy.Name')}
           name="name"
           required
@@ -255,8 +257,11 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             },
           ]}
         >
-          <Input disabled={!!projectResourcePolicy} />
-        </Form.Item>
+          <AstryxFormTextInput
+            label={t('resourcePolicy.Name')}
+            disabled={!!projectResourcePolicy}
+          />
+        </BAIFormItem>
         <BAIFlex
           direction="column"
           align="stretch"
@@ -269,10 +274,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             label={t('resourcePolicy.MaxFolderCount')}
             style={{ width: '100%', margin: 0 }}
           >
-            <InputNumber
+            <AstryxFormNumberInput
+              label={t('resourcePolicy.MaxFolderCount')}
               min={0}
               max={SIGNED_32BIT_MAX_INT}
-              style={{ width: '100%' }}
             />
           </FormItemWithUnlimited>
           <FormItemWithUnlimited
@@ -281,12 +286,12 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             label={t('storageHost.MaxFolderSize')}
             style={{ width: '100%', margin: 0 }}
           >
-            <InputNumber
+            <AstryxFormNumberInput
+              label={t('storageHost.MaxFolderSize')}
               min={0}
               // Maximum safe integer divided by 10^9 to prevent overflow when converting GB to bytes
               max={Math.floor(Number.MAX_SAFE_INTEGER / Math.pow(10, 9))}
-              suffix="GB"
-              style={{ width: '100%' }}
+              units="GB"
             />
           </FormItemWithUnlimited>
           {supportMaxNetworkCount ? (
@@ -296,10 +301,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               label={t('resourcePolicy.MaxNetworkCount')}
               style={{ width: '100%', margin: 0 }}
             >
-              <InputNumber
+              <AstryxFormNumberInput
+                label={t('resourcePolicy.MaxNetworkCount')}
                 min={0}
                 max={SIGNED_32BIT_MAX_INT}
-                style={{ width: '100%' }}
               />
             </FormItemWithUnlimited>
           ) : null}

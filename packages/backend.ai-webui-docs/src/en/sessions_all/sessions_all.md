@@ -1,6 +1,9 @@
+---
+navTitle: Compute Sessions
+---
+
 # Compute Sessions
 
-The most visited pages in the Backend.AI WebUI would be the 'Sessions' and 'Data' pages.
 This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'Sessions' page.
 
 <a id="start-a-new-session"></a>
@@ -9,13 +12,15 @@ This document will cover how to query and create container-based compute session
 ## Start a new session
 
 
-After logging in with a user account, click 'Sessions' on the left sidebar.
+After logging in with a user account, click `Sessions` on the left sidebar.
 'Sessions' page lets you start new sessions or use and manage existing running sessions.
 
 ![](../images/sessions_page.png)
 
+For how the list is organized and filtered, see
+[Session List View](#session-list-view-and-refresh).
 
-Click the 'START' button to start a new compute session.
+Click the `Start Session` button to start a new compute session.
 
 ![](../images/launch_session_type.png)
 
@@ -32,7 +37,6 @@ If needed, setting the name of the session (optional) is also available.
 
   - Interactive compute session
 
-    - This is the type which has been supported from the initial version of the Backend.AI.
     - The compute session is used in a way that the user interacts with after
       creating a session without specifying a pre-defined execution script or
       command.
@@ -41,8 +45,6 @@ If needed, setting the name of the session (optional) is also available.
 
   - Batch compute session
 
-    - This type of session is supported via GUI from Backend.AI 22.03 (CLI has
-      supported the batch-type session before the 22.03).
     - Pre-define the script that will be executed when a compute session is
       ready.
     - This session will execute the script as soon as the compute session is ready, and then
@@ -66,26 +68,26 @@ If needed, setting the name of the session (optional) is also available.
   word will be assigned automatically. Session names only accept alphanumeric
   characters between 4 and 64 without spaces.
 
-If users create a session with the `super admin` or `admin` account,
+If users create a session with the `superadmin` account,
 they can additionally assign a session owner. If you enable the toggle,
 a user email field will appear.
 
 ![](../images/admin_launch_session_owner.png)
 
 Enter the email of the user you want to assign the session to,
-click the 'search' button, and the user's access key will be automatically registered.
+click the `search` button, and the user's access key will be automatically registered.
 You can also select a project and resource group.
 
 ![](../images/admin_launch_session_owner_project.png)
 
 <a id="environments-and-resource-allocation"></a>
 
-### Environments & Resource allocation
+### Environments & Resource Allocation
 
 
-Click the 'Next' button below, or the 'Environments & Resource allocation' menu on the right
+Click the `Next` button below, or the `Environments & Resource Allocation` menu on the right
 to proceed to the next page. If you want to create a session without any further
-settings, press the 'Skip to review' button. In this case, settings on the
+settings, press the `Skip to review` button. In this case, settings on the
 other pages will all use the default values.
 
   ![](../images/launch_session_environments_and_resource.png)
@@ -109,7 +111,7 @@ refer to the following:
 
   ![](../images/launch_session_environments.png)
 
-### Resource allocation
+### Resource Allocation
 
 
 - Resource Group: Specifies the resource group in which to create a compute
@@ -128,7 +130,7 @@ refer to the following:
   ![](../images/launch_session_resource.png)
 
   The meaning of each item is as follows.
-  Clicking the 'Help (?)' button will also give more information.
+  Clicking the `Help (?)` button will also give more information.
 
   * CPU: The CPU performs basic arithmetic, logic, controlling, and input/output
     (I/O) operations specified by the instructions. In general, more CPUs are beneficial for high-performance computing workloads.
@@ -145,20 +147,41 @@ refer to the following:
     matrix/vector computations involved in machine learning. AI accelerators speed
     up training / inference algorithms by orders of magnitude, reducing running
     times from weeks to days.
-  * Sessions: Session is a unit of computational environment that is created
-    according to a specified environment and resources. If this value is set to a
-    value greater than 1, multiple sessions corresponding to the resource set above
-    are created. If there are not enough resources available, requests to create
-    sessions that cannot be created are put on the waiting queue.
+  ![](../images/launch_session_resource_2.png)
 
-  ![](../images/launce_session_resource_2.png)
+:::note
+Some AI accelerators use **unified memory** — they do not have their own dedicated
+memory and share the host memory pool instead. When you select such an accelerator,
+a separate accelerator-memory amount cannot be set; the accelerator automatically
+draws from the host memory pool.
+:::
+
+:::note
+The **Number of sessions** option is no longer set in this form. To launch
+multiple sessions with the same configuration, use the start button's
+dropdown menu on the **Confirm and Launch** step. See
+[Confirm and Launch](#confirm-and-launch) for details.
+:::
 
   * Select Agent: Select the agent to be assigned. By default, the agent is automatically selected
     by the scheduler. The agent selector displays the actual amount of available resources for each agent.
     Currently, this feature is only supported in single-node, single-container environments.
-  * Cluster mode: Cluster mode allows users to create
-    multiple compute sessions at once. For more information, refer to the
+  * Cluster Mode: Choose how a single compute session is laid out across
+    agents. **Single Node** places the main node and all worker nodes on one
+    agent (a physical node or virtual machine), while **Multi Node** splits one
+    main node and one or more worker nodes across several agents. Hover the
+    (`?`) icon next to each option for a short description. After choosing a
+    mode, set the **Cluster Size** with the slider or number input: in
+    Single Node mode the size counts **containers** on one agent, and in
+    Multi Node mode it counts **nodes** spread across agents. The *remaining*
+    mark on the slider shows the largest size that can start immediately with
+    the resources currently allocated — a larger size is allowed, but the
+    session may stay pending until enough resources free up. A Multi Node
+    session with a size of 1 is created as a Single Node session. For more
+    information, refer to the
     [Overview of Backend.AI cluster compute session](#backendai-cluster-compute-session).
+
+    ![](../images/cluster_mode.png)
 
 :::note
 The Agent Select feature may not be available depending on the server environment.
@@ -182,23 +205,21 @@ The Agent Select feature may not be available depending on the server environmen
 ### Data & Storage
 
 
-Click the 'Next' button below, or the 'Data & Storage' menu on the right to proceed to the next page.
+Click the `Next` button below, or the `Data & Storage` menu on the right to proceed to the next page.
 
 When a compute session is destroyed, data deletion is set to default.
 However, data stored in the mounted folders will survive.
 Data in those folders can also be reused by mounting it when creating another compute session.
-For further information on how to mount a folder and run a compute session, refer to
-[Mounting Folders to a Compute Session](#session-mounts).
 
 ![](../images/launch_session_data.png)
 
-users can specify the data folders to mount in the compute session.
+users can specify the storage folders to mount in the compute session.
 Folder explorer can be used by clicking folder name. For further information,
 please refer [Explore Folder](#explore-folder) section.
 
 ![](../images/folder_explorer.png)
 
-New folder can be created by clicking the '+' button next to the search box.
+New folder can be created by clicking the `+` button next to the search box.
 When new folder is created, it will automatically be selected as the folder to mount.
 For further information, please refer [Create Storage Folder](#create-storage-folder) section.
 
@@ -208,7 +229,7 @@ For further information, please refer [Create Storage Folder](#create-storage-fo
 
 ### Network
 
-Click the 'Next' button below, or the 'Network' menu on the right to proceed to the next page.
+Click the `Next` button below, or the `Network` menu on the right to proceed to the next page.
 On this page, Network configuration can be done such as Preopen Ports.
 
 - Set Preopen Ports: Provides an interface for users to set preopen ports in a
@@ -222,24 +243,41 @@ On this page, Network configuration can be done such as Preopen Ports.
 ### Confirm and Launch
 
 
-If you are done with the network setting, click the 'Next' button below, or
-'Confirm and Launch' button on the right to proceed to the last page.
+If you are done with the network setting, click the `Next` button below, or
+`Confirm and Launch` button on the right to proceed to the last page.
 
 On the last page, users could view information of session(s) to create,
 such as environment itself, allocated resources, mount information,
 environment variables set on the previous pages, preopen ports, etc.,
-Review the settings, users could launch the session by clicking 'Launch' button.
-Click the 'Edit' button located at the top right of each card to redirect to relevant page.
+Review the settings, then click the `Launch` button to launch the session.
+Click the `Edit` button located at the top right of each card to redirect to relevant page.
 
 ![](../images/launch_session_confirm.png)
+
+To launch more than one session at once with the same configuration, click the
+more (`...`) icon next to the `Launch` button to open its dropdown menu and
+select **Launch Multiple Sessions**. A dialog appears where you can set the
+**Number of sessions** to create; each session is created independently with
+the resources shown on the form. The single-click `Launch` action still starts
+one session by default.
+
+![](../images/session_start_multiple_dropdown.png)
+
+![](../images/session_start_dropdown.png)
+
+:::note
+Concurrent session launch is capped by the system; if the requested total
+exceeds your remaining session quota, a warning is shown and some sessions may
+be queued until resources become available.
+:::
 
 If there is an issue with the settings, an error message will be displayed as follows.
 Users can edit their settings when this happens.
 
 ![](../images/launch_session_error_card.png)
 
-When you click the 'Launch' button, a warning dialog appears stating that there are no mounted folders.
-If folder mounting is not required, you can ignore the warning and click the 'Start' button in the dialog to proceed.
+When you click the `Launch` button, a warning dialog appears stating that there are no mounted folders.
+If folder mounting is not required, you can ignore the warning and click the `Start` button in the dialog to proceed.
 
 ![](../images/no_folder_notification_dialog.png)
 
@@ -261,8 +299,8 @@ By clicking the app dialog button on the far left, you can view the available ap
 ### Recent History
 
 
-'Session Launcher' page provides a set of options for creating sessions. As of 24.09,
-`Recent History` feature has been added to remember information about previously created sessions.
+'Session Launcher' page provides a set of options for creating sessions. The
+`Recent History` feature remembers information about previously created sessions.
 
 ![](../images/recent_history.png)
 
@@ -285,23 +323,84 @@ network connection problems, and etc. This can be solved by refreshing the
 browser.
 :::
 
+<a id="session-list-view-and-refresh"></a>
+
+## Session List View
+
+The session list groups your sessions into type tabs — **All**, **Interactive**,
+**Batch**, **Inference**, and **Upload Sessions** — and each tab carries a
+**Running** / **Finished** switch and a property filter for **Session Name**,
+**Resource Group**, and **Agent**.
+
+<a id="session-resource-grid"></a>
+
+### Resource grid view
+
+When the experimental **Session resource grid view** feature is enabled in User
+Settings, a **View mode** toggle appears above the list, next to the refresh
+button, and switches the list between **Table** and **Grid**. Refer to the
+[Experimental features](#experimental-features) section for how to turn the
+feature on. The grid uses the same type tabs, **Running** / **Finished** switch,
+and property filter as the table, so you can narrow the list first and then
+switch the view mode.
+
+![](../images/session_resource_grid.png)
+
+In the grid, each session is drawn as a plate of small cells whose color
+reflects the live utilization of the session: a neutral fill below 50%,
+progressively stronger warning colors between 50% and 80%, and a red fill at
+80% or above. A session that reports no live data — one that is not running
+yet, for example — keeps the **No data** color, and a session whose resources
+are still only requested is drawn with a dashed outline. The legend above the
+grid explains each color.
+
+Hover a plate to see a summary of that session: its status, type, cluster mode,
+resource group, image, start time and elapsed time, the utilization of each
+allocated resource, and its disk I/O. Click the plate to open the session
+detail panel.
+
+The controls above the grid decide what a single cell stands for:
+
+- **Grid mode**: **Resource** draws one cell per unit of a single selected
+  resource, while **Kernel** draws one cell per kernel of the session.
+- **Resource** (Resource mode only): The resource to visualize — **CPU**,
+  **Memory**, or any accelerator the listed sessions use. One cell is one CPU
+  core, one memory unit, or one accelerator device, and a fractional
+  accelerator share is drawn as a partially filled cell. Accelerators that
+  report device memory offer two entries, one for utilization (`util`) and one
+  for device memory (`mem`).
+- **Memory unit** (Resource mode, memory resources only): How much memory a
+  single cell stands for — 1, 2, 4, or 8 GiB.
+- **Metric** (Kernel mode only): The live statistic used to color the kernel
+  cells.
+- **Layout**: **Serpentine** runs every other row in the opposite direction, so
+  the cells of a session that wraps stay connected; **Word-wrap** starts every
+  row at the left edge instead.
+
+Notices above the grid explain what the grid leaves out:
+
+- When the current filter matches more sessions than the grid draws, only the
+  first 100 sessions are shown and a notice reports the total.
+- In Resource mode, sessions that hold none of the selected resource are hidden
+  and a notice reports how many were hidden.
+
 <a id="session-detail-panel"></a>
 
-## Session Detail Panel
+## Session detail panel
 
 For detailed information on the session, click the session name in the session list.
 The session details panel shows the information of the session, such as the
 session ID, user ID, status, type, environments, mount information, resource allocation, reserved time,
 elapsed time, agent, cluster mode, resource usage including network I/O, and kernel information.
 
-Click the 'Log' button next to the 'Hostname' in 'Kernels' to view the logs of that kernel directly.
+Click the `Log` button next to the `Hostname` in `Kernels` to view the logs of that kernel directly.
 
 ![](../images/session_detail.png)
 
 Backend.AI provides additional information for sessions in `PENDING`, `TERMINATED`, or `CANCELLED` states.
-Click the 'Info' button to check the details when available.
+Click the `Info` button to check the details when available.
 
-When using Backend.AI Manager v26.2.0 or later, a clock icon button appears next to the session status tag
+A clock icon button appears next to the session status tag
 in the session detail panel. Clicking this icon opens the Session Scheduling History modal, which provides
 a detailed log of all scheduling decisions the system made for the session. For more information, refer to
 the [Session Scheduling History](#session-scheduling-history) section.
@@ -310,7 +409,7 @@ the [Session Scheduling History](#session-scheduling-history) section.
 
 <a id="session-scheduling-history"></a>
 
-### Session Scheduling History
+### Session scheduling history
 
 The Session Scheduling History modal provides transparency into the internal scheduling lifecycle of a
 compute session. It displays a detailed record of every scheduling phase the session went through,
@@ -319,12 +418,7 @@ useful for understanding why a session is delayed, stuck in `PENDING`, or has fa
 
 ![](../images/session_scheduling_history_modal.png)
 
-:::note
-This feature is available from Backend.AI Manager v26.2.0 onwards. If the history icon does not appear
-next to the session status, your Backend.AI Manager may not support this feature yet.
-:::
-
-#### Filter Bar
+#### Filter bar
 
 At the top of the modal, a filter bar allows you to narrow down the scheduling history records. You can
 filter by the following properties:
@@ -336,24 +430,33 @@ filter by the following properties:
 - **To Status**: Filter by the session status after the scheduling step
 - **Error Code**: Filter by error code
 - **Message**: Filter by message content
+- **Created At**: Filter by the record creation time
+- **Updated At**: Filter by the record update time
 
 A refresh button is also available next to the filter bar to reload the scheduling history data.
 
-#### History Table
+#### History table
 
 The scheduling history table displays records with the following columns:
 
-- **Phase**: The name of the scheduling phase
-- **Result**: The outcome of this scheduling step, shown as a color-coded badge
-- **Status Transition (From / To)**: The session status before and after this scheduling step
-- **Attempts**: How many times this scheduling step was attempted
 - **Updated At**: When this record was last updated
 - **Created At**: When this record was created
+- **Phase**: The name of the scheduling phase
+- **Result**: The outcome of this scheduling step, shown as a color-coded badge
+- **From Status**: The session status before this scheduling step
+- **To Status**: The session status after this scheduling step
+- **Attempts**: How many times this scheduling step was attempted
+- **Message**: A summary message for this scheduling step
 
 You can sort the table by the **Created At** or **Updated At** columns to view records in your
 preferred order.
 
-#### Expandable Sub-Steps
+#### History table pagination
+
+The scheduling history table is paginated with offset-based pagination. The default page size is 10
+records per page. Changing a filter or the sort order automatically resets the view back to page 1.
+
+#### Expandable sub-steps
 
 Some history records contain detailed sub-steps. When sub-steps are available, an expand arrow appears
 on the left side of the row. Click it to reveal a nested table showing the individual sub-steps of
@@ -365,12 +468,12 @@ The sub-steps table includes the following columns:
 
 - **Step**: The name of the sub-step
 - **Result**: The outcome of the sub-step, shown as a color-coded badge
-- **Message**: Detailed information or error description
 - **Error Code**: A specific error code if the step failed
+- **Message**: Detailed information or error description
 - **Started At**: When the sub-step began
 - **Ended At**: When the sub-step completed
 
-#### Result Badge Colors
+#### Result badge colors
 
 Each scheduling step and sub-step displays a color-coded result badge indicating its outcome:
 
@@ -383,6 +486,44 @@ Each scheduling step and sub-step displays a color-coded result badge indicating
 | EXPIRED | Red | The scheduling attempt expired |
 | GIVE_UP | Red | The system gave up on scheduling |
 | SKIPPED | Gray | The step was skipped |
+
+<a id="session-audit-log"></a>
+
+### Session audit log
+
+The **Audit Log** tab appears at the bottom of the session detail panel alongside the **Kernels**
+tab. It provides a chronological record of every action taken on the session — such as status
+changes, resource modifications, and administrative operations — along with who triggered each
+action and when.
+
+![](../images/session_audit_log.png)
+
+:::note
+The Audit Log is enforced by the backend and may be visible only to superadmins. Regular users
+may see an empty result even when the tab is accessible.
+:::
+
+#### Audit log columns
+
+The Audit Log table includes the following columns:
+
+- **Triggered By**: The email address and account ID of the actor who initiated the action
+- **Operation**: The type of action performed (for example, session creation, termination, or
+  resource change)
+- **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, or `UNKNOWN`)
+- **Time**: When the action occurred
+
+#### Audit log filters
+
+Use the filter bar above the table to narrow down the log entries:
+
+- **Status**: Filter by action outcome (`SUCCESS`, `ERROR`, `RUNNING`, `UNKNOWN`)
+- **Operation**: Search by operation name or keyword
+- **Triggered By**: Search by actor ID
+- **Time**: Filter by a date-range picker
+
+A **Refresh** button reloads the log. The audit log query is deferred and sent only the first time
+you activate the **Audit Log** tab.
 
 <a id="use_session"></a>
 
@@ -433,7 +574,7 @@ documentation.
 SSH key. If necessary, users can download it and use it for SSH / SFTP access to
 the container.
 
-Click the 'NEW' button at the top right and select the Notebook for Backend.AI,
+Click the `NEW` button at the top right and select the Notebook for Backend.AI,
 then the ipynb window appears where users can enter their own code.
 
 ![](../images/backendai_notebook_menu.png)
@@ -472,16 +613,26 @@ Lab, etc., depending on the type of environments provided by the compute session
 
 ## Query compute session log
 
-Users can view the log of the compute session by clicking the last icon in the
-Control panel of the running compute session.
+Users can view the log of the compute session by clicking the `See Container Logs`
+icon in the session detail panel.
 
 ![](../images/session_log.png)
+
+The log window provides the following controls above the log view:
+
+- **Kernel selector**: Choose which kernel of the session to read. For a
+  single-container session there is only one entry; for a cluster session, each
+  container is listed by its hostname with the first characters of its ID.
+- **Download**: Save the currently displayed log to a text file.
+
+You can also search within the displayed log using the search box built into the
+log view.
 
 <a id="rename-running-session"></a>
 
 ## Rename running session
 
-Name of the active session can be changed. Click the 'Edit' button in the session detail
+Name of the active session can be changed. Click the `Edit` button in the session detail
 panel to change the session name.
 New session name should also follow the [the authoring rule](#session-naming-rule).
 
@@ -493,7 +644,7 @@ New session name should also follow the [the authoring rule](#session-naming-rul
 ## Delete a compute session
 
 To terminate a specific session, simply click on the red power button and click
-'Terminate' button in the dialog. Since the data in the folder inside the compute
+`Terminate` button in the dialog. Since the data in the folder inside the compute
 session is deleted as soon as the compute session ends, it is recommended to
 move the data to the mounted folder or upload it to the mounted folder from the
 beginning.
@@ -508,12 +659,17 @@ Backend.AI supports three types of inactivity (idleness) criteria for automatic 
 collection of compute sessions: Max Session Lifetime, Network Idle Timeout, and Utilization
 Checker.
 
-The criteria for session termination can be found in the 'Idle Checks' section of the session detail panel.
+The criteria that apply to a running session are shown in the **Reclamation Status**
+row of the session detail panel, together with the time remaining before each one
+would terminate the session. The row appears while the session is running and at
+least one of its idle checks has a countdown, whether that countdown still has
+days to go or only minutes.
 
 ![](../images/idle_checks_column.png)
 
-The meaning of idle checkers are as follows, and more detailed explanations can be
-found by clicking the information (i) button in the idle checks section.
+The meaning of idle checkers are as follows. Click the question-mark (`?`) icon
+next to the **Reclamation Status** label to open a dialog with the full
+explanation of each one.
 
 - Max Session Lifetime: Force-terminate sessions after this time from creation.
   This measure prevents sessions from running indefinitely.
@@ -548,16 +704,59 @@ remains low. Briefly using the resources does not extend the grace period.
 Only the average utilization over the last idle timeout is considered.
 :::
 
-Hovering the mouse over the Utilization Checker will display a tooltip with the
-utilization and threshold values. The text color changes to yellow and then red
-as the current utilization approaches the threshold (indicating low resource
-utilization).
-
-
 :::note
-Depending on the environment settings, idle checkers and resource types of
-utilization checker's tooltip may be different.
+Depending on the environment settings, the idle checkers that apply and the
+resource types listed for the utilization checker may be different.
 :::
+
+<a id="reclamation-status"></a>
+
+### Reclamation Status
+
+The session list includes a **Reclamation Status** column that tells you at a
+glance how close each session is to being reclaimed by the utilization checker.
+The same badge replaces the plain label of the utilization entry in the
+**Reclamation Status** row of the session detail panel.
+
+The badge has three levels, described in the popover legend as:
+
+- **Safe**: The current average utilization is comfortably above the threshold.
+- **Warning**: The current average is above the threshold, but close to it.
+- **At risk**: The current average is below the threshold.
+
+The badge changes level before the average actually falls below the threshold, so a
+session can show **At risk** while its current average is still above the configured
+value. Treat it as an early warning that leaves you time to react, not as a report
+that the threshold has already been crossed.
+
+Sessions that the utilization checker does not apply to, and sessions for which
+no measurement is available yet, show `-` in the column. In the session detail
+panel, an entry whose first reclamation decision has not been made yet reads
+**Checking reclamation status** in place of the remaining-time tag.
+
+Hover the information (i) icon next to the badge to open a popover with the
+details behind the level:
+
+- The condition sentence, which states whether resources are reclaimed when
+  **any** of the listed conditions stays at the at-risk level or only when
+  **all** of them do. Which sentence appears depends on how your administrator
+  configured the checker.
+- One row per measured resource, each with its own level badge and the current
+  average against the configured threshold, in the form
+  `(current 12% | threshold 5%)`.
+- A legend describing the criterion for each of the three levels.
+
+Resources without a measurement are listed with a dash and do not affect the
+overall level.
+
+As the countdown on the utilization entry gets short, the remaining-time tag next to
+it takes on the same color as the badge, so a countdown shown in red belongs to a
+session about to be reclaimed. While there is still plenty of time left, the tag
+stays plain even if the badge already shows a risk level.
+
+![](../images/session_reclamation_status_column.png)
+
+![](../images/session_reclamation_status_popover.png)
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 
@@ -567,8 +766,8 @@ To give more convenient workspace for users, Backend.AI supports environment var
 in session launching. In this feature, users can add any envs such as `PATH` by filling out
 variable name and value in environment configuration dialog.
 
-To add environment variable, simply click '+ Add environment variables' button of the Variable.
-Also, you can remove the variable by clicking '-' button of the row that you want to get rid of.
+To add environment variable, simply click `+ Add environment variables` button of the Variable.
+Also, you can remove the variable by clicking `-` button of the row that you want to get rid of.
 
 ![](../images/launch_session_env.png)
 
@@ -586,10 +785,10 @@ To add preopen ports, simply enter multiple values separated by either a comma (
 
 ![](../images/preopen-ports-config.png)
 
-In the forth page of session creation page, users can add, update and delete written preopen ports. To see more detail
-information, please click 'Help (?)'' button.
+On the fourth page of the session creation page, users can add, update and delete written preopen ports. To see more detailed
+information, please click the `Help (?)` button.
 
-Users can put port numbers in between 1024 ~ 65535, to the input fields. Then, press 'Enter'. Users can specify multiple ports, separated by commas (,).
+Users can put port numbers in between 1024 ~ 65535, to the input fields. Then, press `Enter`. Users can specify multiple ports, separated by commas (,).
 Users can check the configured preopen ports in the session app launcher.
 
 ![](../images/session_app_launcher.png)
@@ -606,15 +805,15 @@ before use.
 ## Save session commit
 
 
-Backend.AI supports \"Convert Session to Image\" feature from 24.03. Committing a `RUNNING` session will save the
-current state of the session as a new image. Click the 'Commit' button (the fourth icon) in the session detail panel
+Backend.AI supports the \"Convert Session to Image\" feature. Committing a `RUNNING` session will save the
+current state of the session as a new image. Click the `Commit` button (the fourth icon) in the session detail panel
 to open a dialog displaying the session information. After entering the session name, users can convert the session to
 a new image. The session name must be 4 to 32 characters long and can only contain alphanumeric letters, hyphens (`-`),
 or underscores (`_`).
 
 ![](../images/push_session_to_customized_image.png)
 
-After filling out session name in the input field, click the 'PUSH SESSION TO CUSTOMIZED IMAGE' button.
+After filling out session name in the input field, click the `PUSH SESSION TO CUSTOMIZED IMAGE` button.
 The customized image created in this way can be used in future session creations. However, directories
 mounted to the container for image commits are considered external resources and are not included in
 the final image. Remember that `/home/work` is a mount folder (scratch directory), so it is not included.

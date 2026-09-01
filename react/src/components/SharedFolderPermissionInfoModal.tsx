@@ -1,38 +1,47 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ Ticket 16 — converted to Astryx. antd `Descriptions` becomes `MetadataList`
+ (its `bordered` emphasis has no destination — MAPPING §4 — and is DROPPED,
+ defaults-first), `Alert` becomes `Banner`, `Popconfirm` becomes the
+ `BAIPopconfirm` gap component (reversible-tier confirm per
+ `.claude/rules/destructive-confirmation.md`), and the icon-only leave button
+ becomes an `IconButton` with a real accessible name (P8). The table crossed
+ to the Astryx engine in ticket 30-D.
+*/
 import { SharedFolderPermissionInfoModalFragment$key } from '../__generated__/SharedFolderPermissionInfoModalFragment.graphql';
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { UserOutlined } from '@ant-design/icons';
+import { Banner } from '@astryxdesign/core/Banner';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Heading, Text } from '@astryxdesign/core/Text';
+import { BAIPopconfirm } from 'backend.ai-ui';
 import {
-  Alert,
-  App,
-  Button,
-  Descriptions,
-  Popconfirm,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
-import {
-  BAIModal,
-  BAIModalProps,
   filterOutNullAndUndefined,
   BAITable,
-  BAIUserUnionIcon,
-  BAIFlex,
+  BAIMetadataList,
+  BAIModal,
+  type BAIModalProps,
+  BAIText,
   useErrorMessageResolver,
   toGlobalId,
 } from 'backend.ai-ui';
-import { LogOut } from 'lucide-react';
+import { UserIcon, UsersIcon, LogOutIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-interface SharedFolderPermissionInfoModalProps extends BAIModalProps {
+interface SharedFolderPermissionInfoModalProps extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: consumers outside this area use it. */
+  open?: boolean;
   vfolderFrgmt: SharedFolderPermissionInfoModalFragment$key | null;
   onLeaveFolder?: (folderId: string) => void;
   onRequestClose: (success?: boolean) => void;
@@ -41,8 +50,8 @@ interface SharedFolderPermissionInfoModalProps extends BAIModalProps {
 const SharedFolderPermissionInfoModal: React.FC<
   SharedFolderPermissionInfoModalProps
 > = ({ vfolderFrgmt, onRequestClose, onLeaveFolder, ...modalProps }) => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   const [currentUser] = useCurrentUserInfo();
@@ -73,51 +82,49 @@ const SharedFolderPermissionInfoModal: React.FC<
 
   return (
     <BAIModal
+      isOpen={modalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose();
+      }}
       title={t('data.SharedFolderPermission')}
-      onCancel={() => onRequestClose()}
+      maskClosable={false}
       footer={null}
       {...modalProps}
     >
-      <BAIFlex direction="column" align="stretch" gap="lg">
-        <Alert
-          showIcon
-          type="info"
+      <VStack align="stretch" gap={5}>
+        <Banner
+          status="info"
           title={
             vfolder?.ownership_type === 'user'
               ? t('data.folders.SharedFolderAlertDesc')
               : t('data.folders.ProjectFolderAlertDesc')
           }
         />
-        <Descriptions column={2} bordered title={t('data.FolderInfo')}>
-          <Descriptions.Item label={t('data.folders.Name')}>
-            <Typography.Text copyable>{vfolder?.name}</Typography.Text>
-          </Descriptions.Item>
-          <Descriptions.Item label={t('data.folders.Type')}>
+        <BAIMetadataList title={t('data.FolderInfo')} columns={2}>
+          <MetadataListItem label={t('data.folders.Name')}>
+            <BAIText copyable>{vfolder?.name ?? ''}</BAIText>
+          </MetadataListItem>
+          <MetadataListItem label={t('data.folders.Type')}>
             {vfolder?.ownership_type === 'user' ? (
-              <BAIFlex gap={'xs'}>
-                <Typography.Text>{t('data.User')}</Typography.Text>
-                <UserOutlined style={{ color: token.colorTextTertiary }} />
-              </BAIFlex>
+              <HStack gap={2}>
+                <Text>{t('data.User')}</Text>
+                <UserIcon size="1em" />
+              </HStack>
             ) : (
-              <BAIFlex gap={'xs'}>
-                <Typography.Text>{t('data.Project')}</Typography.Text>
-                <BAIUserUnionIcon style={{ color: token.colorTextTertiary }} />
-              </BAIFlex>
+              <HStack gap={2}>
+                <Text>{t('data.Project')}</Text>
+                <UsersIcon size="1em" />
+              </HStack>
             )}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('data.folders.Owner')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('data.folders.Owner')}>
             {vfolder?.creator || vfolder?.user_email}
-          </Descriptions.Item>
-        </Descriptions>
+          </MetadataListItem>
+        </BAIMetadataList>
 
         {vfolder?.ownership_type === 'user' ? (
-          <BAIFlex direction="column" align="stretch">
-            <Typography.Title
-              level={5}
-              style={{ marginTop: 0, marginBottom: token.marginMD }}
-            >
-              {t('data.folders.Permission')}
-            </Typography.Title>
+          <VStack align="stretch" gap={4}>
+            <Heading level={5}>{t('data.folders.Permission')}</Heading>
             <BAITable
               bordered
               pagination={false}
@@ -139,8 +146,8 @@ const SharedFolderPermissionInfoModal: React.FC<
                   key: 'control',
                   title: t('data.folders.Control'),
                   render: (_, data) => (
-                    <BAIFlex align="stretch" justify="center">
-                      <Popconfirm
+                    <HStack justify="center">
+                      <BAIPopconfirm
                         title={t('data.invitation.LeaveSharedFolderDesc', {
                           folderName: data?.name,
                         })}
@@ -175,29 +182,23 @@ const SharedFolderPermissionInfoModal: React.FC<
                           }
                         }}
                       >
-                        <Tooltip
-                          title={t('data.invitation.LeaveSharedFolder')}
-                          placement="right"
-                        >
-                          <Button
-                            size="small"
-                            type="text"
-                            icon={<LogOut />}
-                            style={{
-                              color: token.colorError,
-                              background: token.colorErrorBg,
-                            }}
-                          />
-                        </Tooltip>
-                      </Popconfirm>
-                    </BAIFlex>
+                        <IconButton
+                          label={t('data.invitation.LeaveSharedFolder')}
+                          tooltip={t('data.invitation.LeaveSharedFolder')}
+                          size="sm"
+                          variant="ghost"
+                          icon={<LogOutIcon />}
+                          className="bai-name-action-cell-danger"
+                        />
+                      </BAIPopconfirm>
+                    </HStack>
                   ),
                 },
               ]}
             />
-          </BAIFlex>
+          </VStack>
         ) : null}
-      </BAIFlex>
+      </VStack>
     </BAIModal>
   );
 };

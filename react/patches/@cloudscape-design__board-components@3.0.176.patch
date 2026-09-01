@@ -1,0 +1,196 @@
+diff --git a/board/interfaces.d.ts b/board/interfaces.d.ts
+index 99b1d6cc98b10d86bbb46f8ed1b4f0b9daa9c4bb..02c048323947660912da6578d068d23d2924469b 100644
+--- a/board/interfaces.d.ts
++++ b/board/interfaces.d.ts
+@@ -60,6 +60,7 @@ export interface BoardProps<D = DataFallbackType> {
+      * When items are loading the slot can be used to render the loading indicator.
+      */
+     empty: ReactNode;
++    className?: string;
+ }
+ export declare namespace BoardProps {
+     type Item<D = DataFallbackType> = BoardItemDefinition<D>;
+diff --git a/board/internal.js b/board/internal.js
+index 64d6ce39b0d58e856593a2fac10aaacef32aba7f..ca5387967a8f1d32b8d2e3e9c0a6269f2050216a 100644
+--- a/board/internal.js
++++ b/board/internal.js
+@@ -22,7 +22,7 @@ import { announcementToString } from "./utils/announcements";
+ import { createTransforms } from "./utils/create-transforms";
+ import { createItemsChangeEvent } from "./utils/events";
+ import styles from "./styles.css.js";
+-export function InternalBoard({ items, renderItem, onItemsChange, empty, i18nStrings, __internalRootRef, ...rest }) {
++export function InternalBoard({ className, items, renderItem, onItemsChange, empty, i18nStrings, __internalRootRef, ...rest }) {
+     var _a, _b;
+     const containerAccessRef = useRef(null);
+     const [currentColumns, containerQueryRef] = useContainerColumns();
+@@ -173,7 +173,7 @@ export function InternalBoard({ items, renderItem, onItemsChange, empty, i18nStr
+     const announcement = transitionAnnouncement
+         ? announcementToString(transitionAnnouncement, items, i18nStrings, itemsLayout.columns)
+         : "";
+-    return (_jsxs("div", { ref: __internalRootRef, ...getDataAttributes(rest), children: [_jsx("div", { ref: containerRef, className: clsx(styles.root, { [styles.empty]: rows === 0 }), children: rows > 0 ? (_jsx(Grid, { isRtl: isRtl, columns: itemsLayout.columns, layout: [...placeholdersLayout.items, ...itemsLayout.items], children: (gridContext) => {
++    return (_jsxs("div", { ref: __internalRootRef, ...getDataAttributes(rest), children: [_jsx("div", { ref: containerRef, className: clsx(styles.root, { [styles.empty]: rows === 0 }, className), children: rows > 0 ? (_jsx(Grid, { isRtl: isRtl, columns: itemsLayout.columns, layout: [...placeholdersLayout.items, ...itemsLayout.items], children: (gridContext) => {
+                         var _a;
+                         const layoutShift = (_a = transition === null || transition === void 0 ? void 0 : transition.layoutShift) !== null && _a !== void 0 ? _a : removeTransition === null || removeTransition === void 0 ? void 0 : removeTransition.layoutShift;
+                         const transforms = layoutShift ? createTransforms(itemsLayout, layoutShift.moves, gridContext) : {};
+diff --git a/board/styles.css.js b/board/styles.css.js
+index c7e471d29f1f749e21d16e06cfed5f95daf11012..c73959b2241713de6b6bea1c1a9ba80392738ec9 100644
+--- a/board/styles.css.js
++++ b/board/styles.css.js
+@@ -1,10 +1,9 @@
+ 
+     import './styles.scoped.css';
+     export default {
+-  "placeholder": "awsui_placeholder_1h7dk_1qq5q_5",
+-  "placeholder--active": "awsui_placeholder--active_1h7dk_1qq5q_9",
+-  "placeholder--hover": "awsui_placeholder--hover_1h7dk_1qq5q_12",
++  "placeholder": "awsui_placeholder_1h7dk_1qq5q_5 bai_board_placeholder",
++  "placeholder--active": "awsui_placeholder--active_1h7dk_1qq5q_9 bai_board_placeholder--active",
++  "placeholder--hover": "awsui_placeholder--hover_1h7dk_1qq5q_12 bai_board_placeholder--hover",
+   "root": "awsui_root_1h7dk_1qq5q_16",
+   "empty": "awsui_empty_1h7dk_1qq5q_20"
+ };
+-  
+\ No newline at end of file
+diff --git a/board/styles.selectors.js b/board/styles.selectors.js
+index bd1be004c3b689c167839df11ac9dfae6e7facab..0235a83b5db411f6377c8f49796d6e5b6ca20515 100644
+--- a/board/styles.selectors.js
++++ b/board/styles.selectors.js
+@@ -2,10 +2,9 @@
+     // es-module interop with Babel and Typescript
+     Object.defineProperty(exports, "__esModule", { value: true });
+     module.exports.default = {
+-  "placeholder": "awsui_placeholder_1h7dk_1qq5q_5",
+-  "placeholder--active": "awsui_placeholder--active_1h7dk_1qq5q_9",
+-  "placeholder--hover": "awsui_placeholder--hover_1h7dk_1qq5q_12",
++  "placeholder": "awsui_placeholder_1h7dk_1qq5q_5 bai_board_placeholder",
++  "placeholder--active": "awsui_placeholder--active_1h7dk_1qq5q_9 bai_board_placeholder--active",
++  "placeholder--hover": "awsui_placeholder--hover_1h7dk_1qq5q_12 bai_board_placeholder--hover",
+   "root": "awsui_root_1h7dk_1qq5q_16",
+   "empty": "awsui_empty_1h7dk_1qq5q_20"
+ };
+-  
+\ No newline at end of file
+diff --git a/board-item/interfaces.d.ts b/board-item/interfaces.d.ts
+index fa11fd825ab3dc160530b92b3f4af87fcca8e745..eff4ce80bf41a85b9cb7739da2da5bc3e39cbfee 100644
+--- a/board-item/interfaces.d.ts
++++ b/board-item/interfaces.d.ts
+@@ -33,6 +33,7 @@ export interface BoardItemProps {
+      * * `resizeHandleTooltipText` (string, optional) - the Text for the resize handle Tooltip.
+      */
+     i18nStrings: BoardItemProps.I18nStrings;
++    className?: string;
+ }
+ export declare namespace BoardItemProps {
+     interface I18nStrings {
+diff --git a/board-item/internal.js b/board-item/internal.js
+index ea4941b17b7d3dc6ad54b0bbf84cd1574d1f3d1c..ab576f9a7ab45314db3b1dce1d6597f7882063ad 100644
+--- a/board-item/internal.js
++++ b/board-item/internal.js
+@@ -20,7 +20,7 @@ const mapToKeyboardDirection = (direction) => {
+     };
+     return directionMap[direction];
+ };
+-export function InternalBoardItem({ children, header, settings, disableContentPaddings, footer, i18nStrings, __internalRootRef, ...rest }) {
++export function InternalBoardItem({ className, children, header, settings, disableContentPaddings, footer, i18nStrings, __internalRootRef, ...rest }) {
+     const { dragHandle, resizeHandle, isActive, isHidden } = useItemContext();
+     const dragHandleAriaLabelledBy = useId();
+     const dragHandleAriaDescribedBy = useId();
+@@ -31,7 +31,7 @@ export function InternalBoardItem({ children, header, settings, disableContentPa
+     if (isHidden) {
+         return null;
+     }
+-    return (_jsxs("div", { ref: __internalRootRef, className: styles.root, ...getDataAttributes(rest), children: [_jsx(Container, { fitHeight: true, disableHeaderPaddings: true, header: _jsx(WidgetContainerHeader, { handle: _jsx(DragHandle, { ref: dragHandle.ref, ariaLabelledBy: dragHandleAriaLabelledBy, ariaDescribedBy: dragHandleAriaDescribedBy, onPointerDown: dragHandle.onPointerDown, onKeyDown: dragHandle.onKeyDown, activeState: dragHandle.activeState, initialShowButtons: dragHandle.initialShowButtons, onDirectionClick: (direction) => dragHandle.onDirectionClick(mapToKeyboardDirection(direction), "drag"), dragHandleTooltipText: i18nStrings.dragHandleTooltipText }), settings: settings, children: header }), footer: footer, disableContentPaddings: disableContentPaddings, className: clsx(styles["container-override"], isActive && styles.active), children: children }), resizeHandle && (_jsx("div", { className: styles.resizer, children: _jsx(ResizeHandle, { ariaLabelledBy: resizeHandleAriaLabelledBy, ariaDescribedBy: resizeHandleAriaDescribedBy, onPointerDown: resizeHandle.onPointerDown, onKeyDown: resizeHandle.onKeyDown, activeState: resizeHandle.activeState, onDirectionClick: (direction) => {
++    return (_jsxs("div", { ref: __internalRootRef, className: clsx(styles.root, className), ...getDataAttributes(rest), children: [_jsx(Container, { fitHeight: true, disableHeaderPaddings: true, header: _jsx(WidgetContainerHeader, { handle: _jsx(DragHandle, { ref: dragHandle.ref, ariaLabelledBy: dragHandleAriaLabelledBy, ariaDescribedBy: dragHandleAriaDescribedBy, onPointerDown: dragHandle.onPointerDown, onKeyDown: dragHandle.onKeyDown, activeState: dragHandle.activeState, initialShowButtons: dragHandle.initialShowButtons, onDirectionClick: (direction) => dragHandle.onDirectionClick(mapToKeyboardDirection(direction), "drag"), dragHandleTooltipText: i18nStrings.dragHandleTooltipText }), settings: settings, children: header }), footer: footer, disableContentPaddings: disableContentPaddings, className: clsx(styles["container-override"], isActive && styles.active), children: children }), resizeHandle && (_jsx("div", { className: styles.resizer, children: _jsx(ResizeHandle, { ariaLabelledBy: resizeHandleAriaLabelledBy, ariaDescribedBy: resizeHandleAriaDescribedBy, onPointerDown: resizeHandle.onPointerDown, onKeyDown: resizeHandle.onKeyDown, activeState: resizeHandle.activeState, onDirectionClick: (direction) => {
+                         resizeHandle.onDirectionClick(mapToKeyboardDirection(direction), "resize");
+                     }, resizeHandleTooltipText: i18nStrings.resizeHandleTooltipText }) })), _jsx(ScreenreaderOnly, { id: dragHandleAriaLabelledBy, children: i18nStrings.dragHandleAriaLabel }), _jsx(ScreenreaderOnly, { id: dragHandleAriaDescribedBy, children: i18nStrings.dragHandleAriaDescription }), _jsx(ScreenreaderOnly, { id: resizeHandleAriaLabelledBy, children: i18nStrings.resizeHandleAriaLabel }), _jsx(ScreenreaderOnly, { id: resizeHandleAriaDescribedBy, children: i18nStrings.resizeHandleAriaDescription })] }));
+ }
+diff --git a/board-item/styles.css.js b/board-item/styles.css.js
+index e1e834bd40adcfc139d833a7fc6c622e1d12893e..aedd1e0036ed5cecb563dd17adc21904e877c907 100644
+--- a/board-item/styles.css.js
++++ b/board-item/styles.css.js
+@@ -2,15 +2,15 @@
+     import './styles.scoped.css';
+     export default {
+   "root": "awsui_root_9ckv7_m9g0k_9",
+-  "container-override": "awsui_container-override_9ckv7_m9g0k_14",
++  "container-override": "awsui_container-override_9ckv7_m9g0k_14 bai_board_container-override",
+   "active": "awsui_active_9ckv7_m9g0k_14",
+-  "header": "awsui_header_9ckv7_m9g0k_34",
++  "header": "awsui_header_9ckv7_m9g0k_34 bai_board_header",
+   "flexible": "awsui_flexible_9ckv7_m9g0k_41",
+-  "handle": "awsui_handle_9ckv7_m9g0k_45",
++  "handle": "awsui_handle_9ckv7_m9g0k_45 bai_board_handle",
+   "refresh": "awsui_refresh_9ckv7_m9g0k_48",
+   "header-content": "awsui_header-content_9ckv7_m9g0k_52",
+   "settings": "awsui_settings_9ckv7_m9g0k_56",
+   "fixed": "awsui_fixed_9ckv7_m9g0k_64",
+-  "resizer": "awsui_resizer_9ckv7_m9g0k_68"
++  "resizer": "awsui_resizer_9ckv7_m9g0k_68 bai_board_resizer",
++  "content": "awsui_content_14iqq_1kla9_304 bai_board_content"
+ };
+-  
+\ No newline at end of file
+diff --git a/board-item/styles.scoped.css b/board-item/styles.scoped.css
+index 7913d643f9c26b02a3cdc142dba6d22b59c4d5c4..c4df7c5dbb296d0a22f47574e175e4520e4d35c8 100644
+--- a/board-item/styles.scoped.css
++++ b/board-item/styles.scoped.css
+@@ -70,3 +70,7 @@
+   inset-block-end: calc(var(--space-static-xs-gnm0mz, 8px) - var(--space-static-xxxs-yidks1, 2px));
+   inset-inline-end: calc(var(--space-static-xs-gnm0mz, 8px) - var(--space-static-xxxs-yidks1, 2px));
+ }
++
++.awsui_content_14iqq_1kla9_304 {
++  padding: 0 !important;
++}
+\ No newline at end of file
+diff --git a/board-item/styles.selectors.js b/board-item/styles.selectors.js
+index 4b52f97fe50333e2a954e3b2ea897477b3a10d03..df69b9ccbbd1d611118aa489ef106fd457f78db2 100644
+--- a/board-item/styles.selectors.js
++++ b/board-item/styles.selectors.js
+@@ -3,15 +3,15 @@
+     Object.defineProperty(exports, "__esModule", { value: true });
+     module.exports.default = {
+   "root": "awsui_root_9ckv7_m9g0k_9",
+-  "container-override": "awsui_container-override_9ckv7_m9g0k_14",
++  "container-override": "awsui_container-override_9ckv7_m9g0k_14 bai_board_container-override",
+   "active": "awsui_active_9ckv7_m9g0k_14",
+-  "header": "awsui_header_9ckv7_m9g0k_34",
++  "header": "awsui_header_9ckv7_m9g0k_34 bai_board_header",
+   "flexible": "awsui_flexible_9ckv7_m9g0k_41",
+-  "handle": "awsui_handle_9ckv7_m9g0k_45",
++  "handle": "awsui_handle_9ckv7_m9g0k_45 bai_board_handle",
+   "refresh": "awsui_refresh_9ckv7_m9g0k_48",
+   "header-content": "awsui_header-content_9ckv7_m9g0k_52",
+   "settings": "awsui_settings_9ckv7_m9g0k_56",
+   "fixed": "awsui_fixed_9ckv7_m9g0k_64",
+-  "resizer": "awsui_resizer_9ckv7_m9g0k_68"
++  "resizer": "awsui_resizer_9ckv7_m9g0k_68 bai_board_resizer",
++  "content": "awsui_content_14iqq_1kla9_304 bai_board_content"
+ };
+-  
+\ No newline at end of file
+diff --git a/internal/grid/styles.css.js b/internal/grid/styles.css.js
+index 6dda7e80d970cfad969bfa7f0dcbac138be6106d..b732e640f904d23f71d4d34d9936bc8f6cde95b2 100644
+--- a/internal/grid/styles.css.js
++++ b/internal/grid/styles.css.js
+@@ -7,6 +7,5 @@
+   "columns-2": "awsui_columns-2_1hw7z_109ya_21",
+   "columns-4": "awsui_columns-4_1hw7z_109ya_25",
+   "columns-6": "awsui_columns-6_1hw7z_109ya_29",
+-  "grid__item": "awsui_grid__item_1hw7z_109ya_33"
++  "grid__item": "awsui_grid__item_1hw7z_109ya_33 bai_grid_item"
+ };
+-  
+\ No newline at end of file
+diff --git a/internal/grid/styles.selectors.js b/internal/grid/styles.selectors.js
+index 8b58991a8106d88dd2de7df5c7e5dd0c9c2a1389..4f54eddfe1982a13747010bb3ccad9cb5b7630dd 100644
+--- a/internal/grid/styles.selectors.js
++++ b/internal/grid/styles.selectors.js
+@@ -8,6 +8,5 @@
+   "columns-2": "awsui_columns-2_1hw7z_109ya_21",
+   "columns-4": "awsui_columns-4_1hw7z_109ya_25",
+   "columns-6": "awsui_columns-6_1hw7z_109ya_29",
+-  "grid__item": "awsui_grid__item_1hw7z_109ya_33"
++  "grid__item": "awsui_grid__item_1hw7z_109ya_33 bai_grid_item"
+ };
+-  

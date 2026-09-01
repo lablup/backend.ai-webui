@@ -5,18 +5,16 @@ import {
   locales,
   mockDeviceMetaData,
 } from '../../tests/storybook-mock-utils';
+import BAIButton from '../BAIButton';
 import { BAIConfigProvider } from '../provider/BAIConfigProvider';
 import { BAIMetaDataProvider } from '../provider/BAIMetaDataProvider';
 import BAIAgentTable, { AgentNodeInList } from './BAIAgentTable';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button } from 'antd';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-const {
-  mockClientPromise,
-  mockAnonymousClientFactory,
-} = createMockClientWithElapsedTime();
+const { mockClientPromise, mockAnonymousClientFactory } =
+  createMockClientWithElapsedTime();
 
 /**
  * BAIAgentTable is a specialized table component for displaying Backend.AI agent information.
@@ -375,12 +373,12 @@ export const WithCustomColumns: Story = {
             fixed: 'left',
             width: 100,
             render: (_value, record) => (
-              <Button
+              <BAIButton
                 size="small"
                 onClick={() => alert(`Managing agent: ${record.row_id}`)}
               >
                 Manage
-              </Button>
+              </BAIButton>
             ),
           },
           ...baseColumns,
@@ -568,13 +566,13 @@ export const RealWorldExample: Story = {
                 fixed: 'left',
                 width: 100,
                 render: (_value, record) => (
-                  <Button
+                  <BAIButton
                     size="small"
                     type="link"
                     onClick={() => setSelectedAgent(record)}
                   >
                     Select
-                  </Button>
+                  </BAIButton>
                 ),
               },
               ...baseColumns,

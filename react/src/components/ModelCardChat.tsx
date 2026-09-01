@@ -6,7 +6,7 @@ import { ModelCardChatQuery } from '../__generated__/ModelCardChatQuery.graphql'
 import { useChatProviderData } from '../pages/ChatPage';
 import ChatCard from './Chat/ChatCard';
 import { useHistory } from './Chat/ChatHistory';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 

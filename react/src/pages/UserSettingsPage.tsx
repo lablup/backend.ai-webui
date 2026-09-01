@@ -2,40 +2,112 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
+import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
+import { App } from '../app-shim';
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ErrorLogList from '../components/ErrorLogList';
-import MyKeypairInfoModal from '../components/MyKeypairInfoModal';
+import LoginHistory, { LoginHistoryQuery } from '../components/LoginHistory';
+import LoginSession, { LoginSessionQuery } from '../components/LoginSession';
+import MyKeypairInfoModalLegacy from '../components/MyKeypairInfoModalLegacy';
+import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
 import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
+import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
+import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
 } from '../hooks/useBAISetting';
+import {
+  DEFAULT_THEME_FAMILY,
+  useCustomThemeConfig,
+} from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { SettingOutlined } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, Button, Skeleton, Typography } from 'antd';
-import Card from 'antd/es/card/Card';
-import { filterOutEmpty } from 'backend.ai-ui';
-import _ from 'lodash';
-import { Suspense, useState } from 'react';
+import { Button } from '@astryxdesign/core/Button';
+import {
+  BAISkeleton,
+  BAICard,
+  filterOutEmpty,
+  useSessionStorageState,
+  useToggle,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
+import { parseAsStringLiteral } from 'nuqs';
+import { Suspense, useEffect, useEffectEvent, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
+import { useQueryLoader } from 'react-relay';
 
-type TabKey = 'general' | 'logs';
 export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 
-const tabParam = withDefault(StringParam, 'general');
+const tabParser = parseAsStringLiteral([
+  'general',
+  'logs',
+  'login-sessions',
+  'login-history',
+]).withDefault('general');
 
 const UserPreferencesPage = () => {
   'use memo';
 
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const baiClient = useSuspendedBackendaiClient();
+  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
+
+  const [loginSessionQueryRef, loadLoginSessionQuery] =
+    useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
+  const [loginHistoryQueryRef, loadLoginHistoryQuery] =
+    useQueryLoader<LoginHistoryQueryType>(LoginHistoryQuery);
+  // Lazily fetch a tab's data only once it becomes active (covers both a tab
+  // click and a direct `?tab=...` URL restore), so neither query runs while the
+  // General/Logs tabs are shown.
+  const ensureActiveTabQueryLoaded = useEffectEvent(() => {
+    if (currentTab === 'login-sessions' && !loginSessionQueryRef) {
+      loadLoginSessionQuery(
+        {
+          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+          limit: 10,
+          offset: 0,
+        },
+        { fetchPolicy: 'store-and-network' },
+      );
+    }
+    if (currentTab === 'login-history' && !loginHistoryQueryRef) {
+      loadLoginHistoryQuery(
+        {
+          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+          limit: 10,
+          offset: 0,
+        },
+        { fetchPolicy: 'store-and-network' },
+      );
+    }
+  });
+  useEffect(
+    function loadActiveTabQueryOnActivation() {
+      ensureActiveTabQueryLoaded();
+    },
+    [currentTab],
+  );
 
   const { themeMode, setThemeMode } = useThemeMode();
+  const {
+    activeThemeFamily: themeFamily,
+    setActiveThemeFamily: setThemeFamily,
+    themeFamilies: families,
+  } = useCustomThemeConfig();
+  const [themeAccent, setThemeAccent] = useBAISettingUserState(
+    'custom_primary_color',
+  );
+  // Branding preview mode shows the edited default theme as-is, so the theme
+  // (family) and primary color settings are hidden there (useCustomThemeConfig
+  // ignores them in that mode).
+  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
+    defaultValue: false,
+  });
 
   const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
     'desktop_notification',
@@ -58,6 +130,14 @@ const UserPreferencesPage = () => {
     useBAISettingUserState('preserve_login');
   const [experimentalAIAgents, setExperimentalAIAgents] =
     useBAISettingUserState('experimental_ai_agents');
+  const [experimentalCustomDashboard, setExperimentalCustomDashboard] =
+    useBAISettingUserState('experimental_custom_dashboard_panels');
+  const [
+    experimentalImportFromHuggingFace,
+    setExperimentalImportFromHuggingFace,
+  ] = useBAISettingUserState('experimental_import_from_huggingface');
+  const [experimentalSessionResourceGrid, setExperimentalSessionResourceGrid] =
+    useBAISettingUserState('experimental_session_resource_grid');
   const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
   const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
     useToggle(false);
@@ -132,6 +212,52 @@ const UserPreferencesPage = () => {
             }
           },
         },
+        // Theme (family) / primary color customization is operator-gated
+        // (config.toml `allowThemeMode`). The family selector additionally
+        // needs more than the `default` family in the catalog (a theme.json
+        // without a `families` block yields a single-entry catalog).
+        baiClient._config.allowThemeMode &&
+        !isThemePreviewMode &&
+        Object.keys(families).length > 1
+          ? {
+              'data-testid': 'items-theme-family',
+              type: 'select',
+              title: t('userSettings.ThemeFamily'),
+              description: t('userSettings.DescThemeFamily'),
+              selectProps: {
+                // Family display names come from theme.json `label` (operator-
+                // provided brand names like "Stained"); the built-in `default`
+                // family falls back to a humanized key ("Default").
+                options: _.map(families, (config, key) => ({
+                  label: config.label ?? _.startCase(key),
+                  value: key,
+                })),
+              },
+              defaultValue: DEFAULT_THEME_FAMILY,
+              value: themeFamily,
+              onChange: (value: string | number | undefined) => {
+                if (typeof value === 'string') {
+                  setThemeFamily(value);
+                }
+              },
+              // Clear the stored selection instead of writing the default key
+              // so resolution keeps following the `default` family.
+              onReset: () => setThemeFamily(undefined),
+            }
+          : null,
+        baiClient._config.allowThemeMode && !isThemePreviewMode
+          ? {
+              'data-testid': 'items-theme-accent',
+              type: 'custom',
+              title: t('userSettings.ThemeAccentColor'),
+              description: t('userSettings.DescThemeAccentColor'),
+              // No defaultValue: unset means "follow the theme.json colors";
+              // reset clears the per-scheme overrides back to that state.
+              value: themeAccent,
+              onReset: () => setThemeAccent(undefined),
+              children: <ThemeAccentColorPicker />,
+            }
+          : null,
         {
           'data-testid': 'items-desktop-notification',
           type: 'checkbox',
@@ -177,27 +303,22 @@ const UserPreferencesPage = () => {
           title: t('userSettings.Language'),
           description: t('userSettings.DescLanguage'),
           selectProps: {
+            // PILOT-DECISION: antd's JSX option label (name + a grey
+            // `Typography.Text type="secondary"` "(Default)" suffix) is
+            // dropped for a plain string (Selector's `SelectorOptionData.
+            // label` is `string`-only, P2) — baked directly into the text
+            // instead of styled separately. `optionFilterProp: 'filterValue'`
+            // always targeted the same text as the label, so it's a no-op
+            // once search runs against the option label directly.
             options: languageOptions.map((item) =>
               item.value === defaultLanguage
                 ? {
                     ...item,
-                    label: (
-                      <>
-                        {item.label}&nbsp;
-                        <Typography.Text type="secondary">
-                          ({t('userSettings.Default')})
-                        </Typography.Text>
-                      </>
-                    ),
-                    filterValue: item.label,
+                    label: `${item.label} (${t('userSettings.Default')})`,
                   }
-                : {
-                    ...item,
-                    filterValue: item.label,
-                  },
+                : item,
             ),
-            showSearch: true,
-            optionFilterProp: 'filterValue',
+            hasSearch: true,
           },
           defaultValue: defaultLanguage,
           value: selectedLanguage || defaultLanguage,
@@ -250,11 +371,10 @@ const UserPreferencesPage = () => {
           description: t('userSettings.DescMyKeypairInfo'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
               onClick={() => toggleSSHKeypairInfoModal()}
-            >
-              {t('button.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -265,11 +385,10 @@ const UserPreferencesPage = () => {
           description: t('userSettings.DescSSHKeypairManagement'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
               onClick={() => toggleSSHKeypairManagementModal()}
-            >
-              {t('button.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -279,27 +398,25 @@ const UserPreferencesPage = () => {
           title: t('userSettings.MaxConcurrentUploads'),
           description: t('userSettings.DescMaxConcurrentUploads'),
           selectProps: {
+            // PILOT-DECISION: option `value` narrows number -> string
+            // (Selector, P3/P4); the item's own `value`/`onChange` narrows
+            // to `string` too (SettingItem.tsx), so the numeric type is
+            // recovered at THIS boundary via `_.toNumber` on the way out
+            // (was already doing that) and `String(num)` on the way in.
             options: _.map([2, 3, 4, 5], (num) =>
               num === 2
                 ? {
-                    label: (
-                      <>
-                        {num}&nbsp;
-                        <Typography.Text type="secondary">
-                          ({t('userSettings.Default')})
-                        </Typography.Text>
-                      </>
-                    ),
-                    value: num,
+                    label: `${num} (${t('userSettings.Default')})`,
+                    value: String(num),
                   }
                 : {
                     label: num.toString(),
-                    value: num,
+                    value: String(num),
                   },
             ),
           },
-          defaultValue: 2,
-          value: maxConcurrentUpload || 2,
+          defaultValue: '2',
+          value: String(maxConcurrentUpload || 2),
           onChange: (value) => setMaxConcurrentUpload(_.toNumber(value)),
         },
       ]),
@@ -314,14 +431,13 @@ const UserPreferencesPage = () => {
           title: t('userSettings.EditBootstrapScript'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
               onClick={() => {
                 setShellInfo('bootstrap');
                 toggleShellScriptEditModal();
               }}
-            >
-              {t('button.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -331,14 +447,13 @@ const UserPreferencesPage = () => {
           title: t('userSettings.EditUserConfigScript'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
               onClick={() => {
                 setShellInfo('userconfig');
                 toggleShellScriptEditModal();
               }}
-            >
-              {t('button.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -358,15 +473,42 @@ const UserPreferencesPage = () => {
           value: experimentalAIAgents,
           onChange: setExperimentalAIAgents,
         },
+        {
+          'data-testid': 'items-experimental-custom-dashboard-panels',
+          type: 'checkbox',
+          title: t('userSettings.CustomDashboardPanels'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalCustomDashboard,
+          onChange: setExperimentalCustomDashboard,
+        },
+        {
+          'data-testid': 'items-experimental-import-from-huggingface',
+          type: 'checkbox',
+          title: t('userSettings.ImportFromHuggingFace'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalImportFromHuggingFace,
+          onChange: setExperimentalImportFromHuggingFace,
+        },
+        {
+          'data-testid': 'items-experimental-session-resource-grid',
+          type: 'checkbox',
+          title: t('userSettings.SessionResourceGrid'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalSessionResourceGrid,
+          onChange: setExperimentalSessionResourceGrid,
+        },
       ],
     },
   ];
 
   return (
     <>
-      <Card
-        activeTabKey={curTabKey}
-        onTabChange={(key) => setCurTabKey(key as TabKey)}
+      <BAICard
+        activeTabKey={currentTab}
+        onTabChange={onTabChange}
         tabList={[
           {
             key: 'general',
@@ -376,10 +518,18 @@ const UserPreferencesPage = () => {
             key: 'logs',
             label: t('userSettings.Logs'),
           },
+          {
+            key: 'login-sessions',
+            label: t('userSettings.LoginSessions'),
+          },
+          {
+            key: 'login-history',
+            label: t('userSettings.LoginHistory'),
+          },
         ]}
       >
-        <Suspense fallback={<Skeleton active />}>
-          {curTabKey === 'general' && (
+        <Suspense fallback={<BAISkeleton />}>
+          {currentTab === 'general' && (
             <BAIErrorBoundary>
               <SettingList
                 settingGroups={settingGroups}
@@ -389,17 +539,48 @@ const UserPreferencesPage = () => {
               />
             </BAIErrorBoundary>
           )}
-          {curTabKey === 'logs' && (
+          {currentTab === 'logs' && (
             <BAIErrorBoundary>
               <ErrorLogList />
             </BAIErrorBoundary>
           )}
+          {currentTab === 'login-sessions' && (
+            <BAIErrorBoundary>
+              {loginSessionQueryRef ? (
+                <LoginSession
+                  queryRef={loginSessionQueryRef}
+                  onReload={loadLoginSessionQuery}
+                />
+              ) : (
+                <BAISkeleton />
+              )}
+            </BAIErrorBoundary>
+          )}
+          {currentTab === 'login-history' && (
+            <BAIErrorBoundary>
+              {loginHistoryQueryRef ? (
+                <LoginHistory
+                  queryRef={loginHistoryQueryRef}
+                  onReload={loadLoginHistoryQuery}
+                />
+              ) : (
+                <BAISkeleton />
+              )}
+            </BAIErrorBoundary>
+          )}
         </Suspense>
-      </Card>
-      <MyKeypairInfoModal
-        open={isOpenSSHKeypairInfoModal}
-        onRequestClose={toggleSSHKeypairInfoModal}
-      />
+      </BAICard>
+      {baiClient?.supports('my-keypairs') ? (
+        <MyKeypairManagementModal
+          open={isOpenSSHKeypairInfoModal}
+          onRequestClose={toggleSSHKeypairInfoModal}
+        />
+      ) : (
+        <MyKeypairInfoModalLegacy
+          open={isOpenSSHKeypairInfoModal}
+          onRequestClose={toggleSSHKeypairInfoModal}
+        />
+      )}
       <SSHKeypairManagementModal
         open={isOpenSSHKeypairManagementModal}
         onRequestClose={toggleSSHKeypairManagementModal}

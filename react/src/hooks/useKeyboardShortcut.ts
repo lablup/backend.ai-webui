@@ -1,8 +1,10 @@
+import { OPEN_MODAL_ROOT_SELECTOR } from '../helper/openModalRoot';
+import { useEventListener } from 'backend.ai-ui';
+
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useEventListener } from 'ahooks';
 
 /**
  * useKeyboardShortcut
@@ -46,7 +48,7 @@ const useKeyboardShortcut = (
     return false;
   };
 
-  const isModalOpen = () => document.querySelector('.ant-modal');
+  const isModalOpen = () => document.querySelector(OPEN_MODAL_ROOT_SELECTOR);
 
   /**
    * Handles the keydown event, invoking the handler if conditions are met.
@@ -74,7 +76,7 @@ const useKeyboardShortcut = (
     handler(event);
   };
 
-  // Use ahooks' useEventListener for global keyboard event management
+  // BUI's `useEventListener` handles the global keydown subscription.
   useEventListener('keydown', handleKeyDown);
 };
 

@@ -2,17 +2,19 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import OverlayNetworkSettingModal from './OverlayNetworkSettingModal';
 import SchedulerSettingModal from './SchedulerSettingModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { SettingOutlined } from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { Alert, App, Button } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { useToggle } from 'backend.ai-ui';
+import { Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export type SchedulerType = 'fifo' | 'lifo' | 'drf';
+export type SchedulerType = 'fifo' | 'lifo' | 'drf' | 'fair-share';
 export type ImagePullingBehavior = 'digest' | 'tag' | 'none';
 export type SchedulerOptions = {
   num_retries_to_skip: string;
@@ -142,6 +144,7 @@ const ConfigurationsSettingList = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mount-only settings fetch; setState only runs in the async response callbacks
     updateSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -173,11 +176,10 @@ const ConfigurationsSettingList = () => {
           description: t('settings.OverlayNetworkConfiguration'),
           children: (
             <Button
-              icon={<SettingOutlined />}
+              icon={<Settings size="1em" />}
+              label={t('settings.Config')}
               onClick={toggleOverlayNetworkModal}
-            >
-              {t('settings.Config')}
-            </Button>
+            />
           ),
           showResetButton: false,
         },
@@ -186,9 +188,11 @@ const ConfigurationsSettingList = () => {
           title: t('settings.Scheduler'),
           description: t('settings.SchedulerConfiguration'),
           children: (
-            <Button icon={<SettingOutlined />} onClick={toggleSchedulerModal}>
-              {t('settings.Config')}
-            </Button>
+            <Button
+              icon={<Settings size="1em" />}
+              label={t('settings.Config')}
+              onClick={toggleSchedulerModal}
+            />
           ),
           showResetButton: false,
         },
@@ -198,7 +202,7 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-plugins',
       title: t('settings.Plugins'),
       description: (
-        <Alert title={t('settings.NoteAboutFixedSetup')} type="info" showIcon />
+        <Banner title={t('settings.NoteAboutFixedSetup')} status="info" />
       ),
       settingItems: [
         {
@@ -237,7 +241,7 @@ const ConfigurationsSettingList = () => {
       'data-testid': 'settings-enterprise',
       title: t('settings.EnterpriseFeatures'),
       description: (
-        <Alert title={t('settings.NoteAboutFixedSetup')} type="info" showIcon />
+        <Banner title={t('settings.NoteAboutFixedSetup')} status="info" />
       ),
       settingItems: [
         {

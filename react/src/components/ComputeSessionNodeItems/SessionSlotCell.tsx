@@ -4,22 +4,32 @@
  */
 import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
 import { convertToBinaryUnit } from '../../helper';
-import { ResourceSlotName } from '../../hooks/backendai';
-import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
-import { displayMemoryUsage } from '../SessionUsageMonitor';
 import {
-  Badge,
-  BadgeProps,
-  Divider,
-  theme,
-  Tooltip,
-  TooltipProps,
-  Typography,
-} from 'antd';
-import { BAIFlex, useResourceSlotsDetails } from 'backend.ai-ui';
-import _ from 'lodash';
+  UTILIZATION_ERROR_PERCENT,
+  UTILIZATION_WARNING_PERCENT,
+} from '../../helper/utilizationThresholds';
+import {
+  ResourceSlotName,
+  useResourceSlotsDetails,
+} from '../../hooks/backendai';
+import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
+import { getUnifiedSlotNameFromTag } from '../SessionFormItems/ResourceAllocationFormItems';
+import { displayMemoryUsage } from '../SessionUsageMonitor';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import * as stylex from '@stylexjs/stylex';
+import type { SemanticColor } from 'backend.ai-ui';
+import { BAIBadge, BAIBadgeProps, BAIFlex } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
+
+const styles = stylex.create({
+  acceleratorDescription: {
+    maxWidth: 200,
+  },
+});
 
 interface OccupiedSlotViewProps {
   sessionFrgmt: SessionSlotCellFragment$key;
@@ -29,7 +39,8 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
   type,
   sessionFrgmt,
 }) => {
-  const { mergedResourceSlots } = useResourceSlotsDetails('');
+  'use memo';
+  const { mergedResourceSlots } = useResourceSlotsDetails();
   const session = useFragment(
     graphql`
       fragment SessionSlotCellFragment on ComputeSessionNode {
@@ -37,6 +48,7 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
         status
         occupied_slots
         requested_slots
+        tag
         ...useSessionNodeLiveStatSessionFragment
       }
     `,
@@ -45,9 +57,13 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
 
   const { liveStat } = useSessionLiveStat(session);
 
+  const parsedOccupiedSlots = JSON.parse(session.occupied_slots || '{}');
   const occupiedSlots: {
     [key in ResourceSlotName]?: string;
-  } = JSON.parse(session.occupied_slots || '{}');
+  } =
+    Object.keys(parsedOccupiedSlots).length > 0
+      ? parsedOccupiedSlots
+      : JSON.parse(session.requested_slots || '{}');
 
   if (type === 'cpu') {
     const CPUOccupiedSlot = parseFloat(occupiedSlots.cpu ?? '1');
@@ -60,12 +76,11 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
       <UsageBadge
         percent={Math.min(CPUUtilPercent / CPUOccupiedSlot, 100)}
         text={CPUOccupiedSlot}
-        tooltip={{
-          title: liveStat.cpu_util
+        tooltip={
+          liveStat.cpu_util
             ? `${CPUUtilPercent.toFixed(1)}% / ${CPUOccupiedSlot * 100}%`
-            : undefined,
-          placement: 'left',
-        }}
+            : undefined
+        }
       />
     ) : (
       '-'
@@ -78,18 +93,31 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
     ) : (
       <UsageBadge
         percent={liveStat.mem?.pct ? parseFloat(liveStat.mem.pct) : 0}
-        tooltip={{
-          // title: liveStat.mem ? `${liveStat.mem.pct} %` : undefined,
-          title: displayMemoryUsage(
-            liveStat.mem?.current,
-            memOccupiedSlot.toString(),
-          ),
-          placement: 'left',
-        }}
+        tooltip={displayMemoryUsage(
+          liveStat.mem?.current,
+          memOccupiedSlot.toString(),
+        )}
         text={convertToBinaryUnit(mem, 'g', 3)?.displayValue}
       />
     );
   } else if (type === 'accelerator') {
+    // Unified-memory accelerators have no separate quantity; if the session is
+    // tagged as unified, show the device description instead of a usage badge.
+    const unifiedSlotName = getUnifiedSlotNameFromTag(session.tag);
+    if (unifiedSlotName) {
+      const description =
+        mergedResourceSlots?.[unifiedSlotName]?.description ?? unifiedSlotName;
+      return (
+        // The session table renders with `scroll={{ x: 'max-content' }}`, so
+        // columns size to their content and text truncation won't trigger on
+        // its own. Pin an explicit max width so a long description actually
+        // truncates and surfaces the overflow tooltip (Astryx `maxLines`
+        // shows a tooltip when truncated).
+        <Text maxLines={1} xstyle={styles.acceleratorDescription}>
+          {description}
+        </Text>
+      );
+    }
     const occupiedAccelerators = _.omit(occupiedSlots, ['cpu', 'mem']);
 
     const filteredAccelerators = _.omitBy(
@@ -116,65 +144,46 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
             >
               <UsageBadge
                 percent={percentNumber}
-                tooltip={{
-                  // title: memStat ? `${memStat.pct} %` : undefined,
-                  title:
-                    displayMemoryUsage(memStat?.current, memStat?.capacity) +
-                    (memStat?.pct !== undefined
-                      ? ` (${percentNumber.toFixed(1)} %)`
-                      : ''),
-                  placement: 'left',
-                }}
+                tooltip={
+                  displayMemoryUsage(memStat?.current, memStat?.capacity) +
+                  (memStat?.pct !== undefined
+                    ? ` (${percentNumber.toFixed(1)} %)`
+                    : '')
+                }
                 text={formattedValue}
               />
-              <Divider type="vertical" />
-              <Typography.Text>
-                {mergedResourceSlots?.[key]?.display_unit}
-              </Typography.Text>
+              <Divider orientation="vertical" />
+              <Text>{mergedResourceSlots?.[key]?.display_unit}</Text>
             </BAIFlex>
           );
         });
   }
 };
 
-interface UsageBadgeProps extends Omit<BadgeProps, 'color' | 'status'> {
+const percentToSemantic = (
+  percent: number,
+): { color?: SemanticColor; processing?: boolean } => {
+  if (!percent) return {};
+  if (percent < UTILIZATION_WARNING_PERCENT) return { color: 'default' };
+  if (percent < UTILIZATION_ERROR_PERCENT) return { color: 'warning' };
+  return { color: 'error', processing: true };
+};
+
+interface UsageBadgeProps extends Omit<BAIBadgeProps, 'color' | 'processing'> {
   percent: number;
-  tooltip?: TooltipProps;
+  /** Tooltip content (antd `TooltipProps` collapsed to its `title`). */
+  tooltip?: React.ReactNode;
 }
 const UsageBadge: React.FC<UsageBadgeProps> = ({
   tooltip,
   percent,
   ...badgeProps
 }) => {
-  const { token } = theme.useToken();
-  const extraProps: Pick<BadgeProps, 'status' | 'color' | 'styles'> = !percent
-    ? {
-        status: 'default',
-        styles: {
-          indicator: {
-            border: '1px solid',
-            borderColor: token.colorTextDisabled,
-            backgroundColor: 'transparent',
-            flexWrap: 'nowrap',
-          },
-        },
-      }
-    : percent < 50
-      ? {
-          status: 'default',
-        }
-      : percent < 80
-        ? {
-            status: 'warning',
-          }
-        : {
-            status: 'processing',
-            color: 'red',
-          };
+  const { color, processing } = percentToSemantic(percent);
   return (
-    <Tooltip {...tooltip}>
+    <Tooltip content={tooltip} placement="start">
       <div>
-        <Badge {...badgeProps} {...extraProps} />
+        <BAIBadge {...badgeProps} color={color} processing={processing} />
       </div>
     </Tooltip>
   );

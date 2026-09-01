@@ -1,0 +1,3 @@
+email,user name,password,full name,domain,resourcepolicy,description,role,status,needpasswordchange,project_name
+alias1@example.com,alias1,Password!23,Alias One,default,default,Uses column aliases,user,active,false,
+alias2@example.com,alias2,Password!23,Alias Two,default,default,All alias headers,user,active,true,

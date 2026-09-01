@@ -17,7 +17,9 @@ test.describe(
   'Start page Visual Regression Test',
   { tag: ['@regression', '@visual'] },
   () => {
-    // FIXME: Start Session button not visible - beforeEach fails
+    // FIXME(FR-3111/stale-baseline): The Start page content changed since
+    // `snapshot/start-page.png` was captured (beforeEach 'Start Session' anchor fails).
+    // Anchor verification + baseline refresh deferred to FR-3115 (frozen backend).
     test.fixme('Start page screenshot', async ({ page }) => {
       await expect(page).toHaveScreenshot('start_page.png', {
         fullPage: true,

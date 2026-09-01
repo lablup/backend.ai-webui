@@ -8,6 +8,7 @@ import {
   ProjectResourcePolicyListQuery$data,
 } from '../__generated__/ProjectResourcePolicyListQuery.graphql';
 import { ProjectResourcePolicySettingModalFragment$key } from '../__generated__/ProjectResourcePolicySettingModalFragment.graphql';
+import { App } from '../app-shim';
 import {
   bytesToGB,
   localeCompare,
@@ -15,28 +16,23 @@ import {
 } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
-import TableColumnsSettingModal from './TableColumnsSettingModal';
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { Button, Dropdown, message, Popconfirm, theme, Tooltip } from 'antd';
-import type { ColumnType } from 'antd/es/table';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
+  BAIButton,
   BAITable,
   BAIFlex,
   useUpdatableState,
+  BAINameActionCell,
+  BAIDeleteConfirmModal,
+  type BAIColumnType,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import { EllipsisIcon } from 'lucide-react';
+import * as _ from 'lodash-es';
+import { Trash2, RotateCw, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -52,18 +48,17 @@ interface ProjectResourcePolicyListProps {}
 const ProjectResourcePolicyList: React.FC<
   ProjectResourcePolicyListProps
 > = () => {
-  const { token } = theme.useToken();
   const { t } = useTranslation();
+  const { message } = App.useApp();
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [projectResourcePolicyFetchKey, updateProjectResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
-  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
-    useToggle();
-  const [inFlightResourcePolicyName, setInFlightResourcePolicyName] =
-    useState<string>();
   const [editingProjectResourcePolicy, setEditingProjectResourcePolicy] =
     useState<ProjectResourcePolicySettingModalFragment$key | null>();
+  const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
+    null,
+  );
 
   const baiClient = useSuspendedBackendaiClient();
   const supportMaxNetworkCount = baiClient?.supports('max_network_count');
@@ -96,23 +91,47 @@ const ProjectResourcePolicyList: React.FC<
       },
     );
 
-  const [commitDelete, isInflightDelete] =
-    useMutation<ProjectResourcePolicyListMutation>(graphql`
-      mutation ProjectResourcePolicyListMutation($name: String!) {
-        delete_project_resource_policy(name: $name) {
-          ok
-          msg
-        }
+  const [commitDelete] = useMutation<ProjectResourcePolicyListMutation>(graphql`
+    mutation ProjectResourcePolicyListMutation($name: String!) {
+      delete_project_resource_policy(name: $name) {
+        ok
+        msg
       }
-    `);
+    }
+  `);
 
-  const columns = filterOutEmpty<ColumnType<ProjectResourcePolicies>>([
+  const columns = filterOutEmpty<BAIColumnType<ProjectResourcePolicies>>([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
       key: 'name',
       fixed: 'left',
       sorter: (a, b) => localeCompare(a?.name, b?.name),
+      render: (name: string, row: ProjectResourcePolicies) => (
+        <BAINameActionCell
+          title={name}
+          showActions="always"
+          actions={[
+            {
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <SquarePenIcon />,
+              onClick: () => {
+                setEditingProjectResourcePolicy(row);
+              },
+            },
+            {
+              key: 'delete',
+              title: t('button.Delete'),
+              icon: <Trash2 size="1em" />,
+              type: 'danger',
+              onClick: () => {
+                setDeletingPolicyName(row?.name ?? null);
+              },
+            },
+          ]}
+        />
+      ),
     },
     {
       title: t('resourcePolicy.MaxVFolderCount'),
@@ -128,7 +147,7 @@ const ProjectResourcePolicyList: React.FC<
         ),
     },
     {
-      title: t('resourcePolicy.MaxQuotaScopeSize'),
+      title: t('resourcePolicy.MaxQuotaScopeSizeGB'),
       dataIndex: 'max_quota_scope_size',
       key: 'max_quota_scope_size',
       render: (text) => (text === -1 ? '∞' : bytesToGB(text)),
@@ -161,107 +180,30 @@ const ProjectResourcePolicyList: React.FC<
       render: (text) => dayjs(text).format('lll'),
       sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
     },
-    {
-      title: t('general.Control'),
-      fixed: 'right',
-      key: 'control',
-      render: (_text: any, row: ProjectResourcePolicies) => (
-        <BAIFlex direction="row" align="stretch">
-          <Button
-            type="text"
-            icon={<SettingOutlined />}
-            style={{
-              color: token.colorInfo,
-            }}
-            onClick={() => {
-              setEditingProjectResourcePolicy(row);
-            }}
-          />
-          <Popconfirm
-            title={t('dialog.ask.DoYouWantToProceed')}
-            description={t('dialog.warning.CannotBeUndone')}
-            okType="danger"
-            okText={t('button.Delete')}
-            onConfirm={() => {
-              if (row?.name) {
-                setInFlightResourcePolicyName(
-                  row.name + projectResourcePolicyFetchKey,
-                );
-                commitDelete({
-                  variables: {
-                    name: row.name,
-                  },
-                  onCompleted: (res, errors) => {
-                    if (!res?.delete_project_resource_policy?.ok) {
-                      message.error(res?.delete_project_resource_policy?.msg);
-                      return;
-                    }
-                    if (errors && errors?.length > 0) {
-                      const errorMsgList = _.map(
-                        errors,
-                        (error) => error.message,
-                      );
-                      for (const error of errorMsgList) {
-                        message.error(error);
-                      }
-                    } else {
-                      startRefetchTransition(() =>
-                        updateProjectResourcePolicyFetchKey(),
-                      );
-                      message.success(t('resourcePolicy.SuccessfullyDeleted'));
-                    }
-                  },
-                  onError(err) {
-                    message.error(err?.message);
-                  },
-                });
-              }
-            }}
-          >
-            <Button
-              type="text"
-              icon={
-                <DeleteOutlined
-                  style={{
-                    color: token.colorError,
-                  }}
-                />
-              }
-              loading={
-                isInflightDelete &&
-                inFlightResourcePolicyName ===
-                  row?.name + projectResourcePolicyFetchKey
-              }
-              disabled={
-                isInflightDelete &&
-                inFlightResourcePolicyName !==
-                  row?.name + projectResourcePolicyFetchKey
-              }
-            />
-          </Popconfirm>
-        </BAIFlex>
-      ),
-    },
   ]);
 
-  const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
-    'ProjectResourcePolicyList',
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ProjectResourcePolicyList',
   );
 
-  const handleExportCSV = () => {
+  const supportedFields = _.compact(
+    _.map(columns, (column) => _.toString(column.key)),
+  );
+
+  const handleExportCSV = (selectedExportKeys: string[]) => {
+    if (selectedExportKeys.length === 0) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
     if (!project_resource_policies) {
       message.error(t('resourcePolicy.NoDataToExport'));
       return;
     }
 
-    const columnkeys = _.without(
-      _.map(columns, (column) => _.toString(column.key)),
-      'control',
-    );
     const responseData = _.map(project_resource_policies, (policy) => {
       return _.pick(
         policy,
-        columnkeys.map((key) => key as keyof ProjectResourcePolicies),
+        selectedExportKeys.map((key) => key as keyof ProjectResourcePolicies),
       );
     });
     exportCSVWithFormattingRules(
@@ -278,87 +220,44 @@ const ProjectResourcePolicyList: React.FC<
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
-        <BAIFlex
-          direction="row"
-          gap={'xs'}
-          wrap="wrap"
-          style={{ flexShrink: 1 }}
-        >
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: 'exportCSV',
-                  label: t('resourcePolicy.ExportCSV'),
-                  onClick: () => {
-                    handleExportCSV();
-                  },
-                },
-              ],
-            }}
-            trigger={['click']}
-          >
-            <Button icon={<EllipsisIcon />} />
-          </Dropdown>
-          <BAIFlex gap={'xs'}>
-            <Tooltip title={t('button.Refresh')}>
-              <Button
-                icon={<ReloadOutlined />}
-                loading={isRefetchPending}
-                onClick={() => {
-                  startRefetchTransition(() =>
-                    updateProjectResourcePolicyFetchKey(),
-                  );
-                }}
-              />
-            </Tooltip>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
+        <BAIFlex gap={'xs'}>
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
+              icon={<RotateCw size="1em" />}
+              loading={isRefetchPending}
               onClick={() => {
-                setIsCreatingPolicySetting(true);
+                startRefetchTransition(() =>
+                  updateProjectResourcePolicyFetchKey(),
+                );
               }}
-            >
-              {t('button.Create')}
-            </Button>
-          </BAIFlex>
+            />
+          </Tooltip>
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon />}
+            onClick={() => {
+              setIsCreatingPolicySetting(true);
+            }}
+          >
+            {t('resourcePolicy.CreatePolicy')}
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       <BAITable
-        rowKey="id"
-        showSorterTooltip={false}
-        columns={_.filter(
-          columns,
-          (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-        )}
-        dataSource={filterOutNullAndUndefined(project_resource_policies)}
         scroll={{ x: 'max-content' }}
-        pagination={{
-          extraContent: (
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
-              onClick={() => {
-                toggleColumnSettingModal();
-              }}
-            />
-          ),
-        }}
-      />
-      <TableColumnsSettingModal
-        open={visibleColumnSettingModal}
-        onRequestClose={(values) => {
-          values?.selectedColumnKeys &&
-            setHiddenColumnKeys(
-              _.difference(
-                columns.map((column) => _.toString(column.key)),
-                values?.selectedColumnKeys,
-              ),
-            );
-          toggleColumnSettingModal();
-        }}
+        rowKey="id"
         columns={columns}
-        hiddenColumnKeys={hiddenColumnKeys}
+        dataSource={filterOutNullAndUndefined(project_resource_policies)}
+        tableSettings={{
+          columnOverrides: columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
+        exportSettings={{
+          supportedFields,
+          onExport: async (selectedExportKeys) => {
+            handleExportCSV(selectedExportKeys);
+          },
+        }}
       />
       <ProjectResourcePolicySettingModal
         existingPolicyNames={_.map(project_resource_policies, 'name')}
@@ -371,6 +270,52 @@ const ProjectResourcePolicyList: React.FC<
           setEditingProjectResourcePolicy(null);
           setIsCreatingPolicySetting(false);
         }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingPolicyName}
+        items={
+          deletingPolicyName
+            ? [{ key: deletingPolicyName, label: deletingPolicyName }]
+            : []
+        }
+        title={t('resourcePolicy.DeletePolicy')}
+        target={t('resourcePolicy.ResourcePolicy')}
+        confirmText={deletingPolicyName ?? ''}
+        requireConfirmInput
+        onOk={() => {
+          if (deletingPolicyName) {
+            return new Promise<void>((resolve) => {
+              commitDelete({
+                variables: { name: deletingPolicyName },
+                onCompleted: (res, errors) => {
+                  if (!res?.delete_project_resource_policy?.ok) {
+                    message.error(res?.delete_project_resource_policy?.msg);
+                    resolve();
+                    return;
+                  }
+                  if (errors && errors?.length > 0) {
+                    for (const error of errors) {
+                      message.error(error.message);
+                    }
+                  } else {
+                    startRefetchTransition(() =>
+                      updateProjectResourcePolicyFetchKey(),
+                    );
+                    message.success(t('resourcePolicy.SuccessfullyDeleted'));
+                  }
+                  setDeletingPolicyName(null);
+                  resolve();
+                },
+                onError(err) {
+                  message.error(err?.message);
+                  setDeletingPolicyName(null);
+                  resolve();
+                },
+              });
+            });
+          }
+        }}
+        onCancel={() => setDeletingPolicyName(null)}
       />
     </BAIFlex>
   );

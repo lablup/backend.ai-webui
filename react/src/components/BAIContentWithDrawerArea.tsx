@@ -2,52 +2,52 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useBAIBreakpoint } from '../theme-shim';
+import './BAIContentWithDrawerArea.css';
 import { isOpenDrawerState } from './BAINotificationButton';
-import { Grid, Layout, theme } from 'antd';
-import { BasicProps } from 'antd/lib/layout/layout';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
-interface Props extends BasicProps {
+// PILOT-DECISION: antd `Layout.Content` (MAPPING §5 `Layout` → COMPOSITION)
+// carried no behaviour here — it is a `<main>`-ish block that this component
+// only uses to hang a className on. It becomes a plain block element, and the
+// props interface drops `antd/lib/layout/layout`'s `BasicProps` for the
+// grepped surface (P1: MainLayout passes `drawerWidth` + `children` only).
+//
+// Ticket 33 retired the `createGlobalStyle` block that used to live here; the
+// rules moved to BAIContentWithDrawerArea.css, which explains how the two
+// dynamic inputs (`drawerWidth`, `drawerStyle`) survive the move.
+interface Props {
   drawerWidth?: number;
+  className?: string;
+  children?: React.ReactNode;
 }
+
+type DrawerStyle = 'margin-style' | 'overlay-style';
+
 const BAIContentWithDrawerArea: React.FC<Props> = ({
   drawerWidth = 256,
   ...contextProps
 }) => {
   const isOpenDrawer = useAtomValue(isOpenDrawerState);
-  const { xl } = Grid.useBreakpoint();
-  const { token } = theme.useToken();
-  const drawerStyle = xl && isOpenDrawer ? 'margin-style' : 'overlay-style';
-  const extraStyle = `
-    .main-layout-main-content{
-      transition: margin-right 0.3s ease;
-    }
-    .main-layout-main-content.margin-style{
-      margin-right: ${drawerWidth}px;
-    }
-    .ant-drawer-content-wrapper {
-      ${
-        drawerStyle === 'margin-style'
-          ? `
-          box-shadow: none !important;
-          border-left: 1px solid ${token.colorBorder};
-        `
-          : ''
-      }
-    }
-  `;
+  // Responsive policy (ticket 14): JS behaviour branch — the drawer style is
+  // a layout MODE, not a track layout, so it stays on the JS-side hook.
+  const { xl } = useBAIBreakpoint();
+  const drawerStyle: DrawerStyle =
+    xl && isOpenDrawer ? 'margin-style' : 'overlay-style';
   return (
-    <>
-      <style>{extraStyle}</style>
-      <Layout.Content
-        {...contextProps}
-        className={
-          `main-layout-main-content ${drawerStyle}` +
-          (contextProps.className || '')
-        }
-      />
-    </>
+    <div
+      {...contextProps}
+      className={
+        `main-layout-main-content ${drawerStyle}` +
+        (contextProps.className || '')
+      }
+      style={
+        {
+          '--bai-drawer-area-width': `${drawerWidth}px`,
+        } as React.CSSProperties
+      }
+    />
   );
 };
 

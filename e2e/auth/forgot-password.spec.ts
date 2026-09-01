@@ -16,6 +16,14 @@
 import { modifyConfigToml, webuiEndpoint } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
+// Astryx's ToastViewport renders every toast twice: once in the visible
+// stack (`role="region"`, named "Notifications") and once in a singleton
+// screen-reader announcer — an unscoped getByText() strict-mode-violates.
+// See preset-crud.spec.ts / registry.spec.ts for the identical pattern.
+function toastRegion(page: Page) {
+  return page.getByRole('region', { name: 'Notifications' });
+}
+
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const TEST_EMAIL = 'test@example.com';
@@ -135,7 +143,7 @@ test.describe('Forgot password email modal', () => {
 
       // 4. Verify success notification appears and modal closes
       await expect(
-        page.getByText('A verification email has been sent.'),
+        toastRegion(page).getByText('A verification email has been sent.'),
       ).toBeVisible({ timeout: 10_000 });
       await expect(
         page.getByRole('dialog', { name: 'Send change password email' }),
@@ -169,7 +177,7 @@ test.describe('Forgot password email modal', () => {
 
       // 4. Verify error notification appears and modal stays open
       await expect(
-        page.getByText(
+        toastRegion(page).getByText(
           'This email address is not registered. Please contact your administrator.',
         ),
       ).toBeVisible({ timeout: 10_000 });
@@ -189,9 +197,12 @@ test.describe('Forgot password email modal', () => {
       // 2. Click Send without entering any email
       await page.getByRole('button', { name: 'Send' }).click();
 
-      // 3. Verify form validation error appears and no API call is attempted
+      // 3. Verify form validation error appears and no API call is attempted.
+      // `LoginFormPanel.tsx`'s `ChangePasswordEmailModal` renders its field
+      // via `BAIFormItem`, whose error line carries
+      // `data-bai-form-item-explain-error` (`BAIFormItem.tsx`).
       await expect(
-        page.locator('.ant-form-item-explain-error').first(),
+        page.locator('[data-bai-form-item-explain-error]').first(),
       ).toBeVisible({ timeout: 10_000 });
     },
   );
@@ -279,7 +290,7 @@ test.describe('Change password page', () => {
         page.getByRole('textbox', { name: 'Enter email address' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('textbox', { name: 'New password', exact: true }),
+        page.getByRole('textbox', { name: 'New Password', exact: true }),
       ).toBeVisible();
       await expect(
         page.getByRole('textbox', { name: 'New password (again)' }),
@@ -321,7 +332,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill(TEST_PASSWORD);
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -363,7 +374,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill(TEST_PASSWORD);
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -439,7 +450,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill(TEST_PASSWORD);
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -482,7 +493,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill('wrong@example.com');
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill(TEST_PASSWORD);
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -520,7 +531,7 @@ test.describe('Change password page', () => {
 
       // 3. Verify validation errors appear for all three fields
       await expect(
-        page.locator('.ant-form-item-explain-error').first(),
+        page.locator('[data-bai-form-item-explain-error]').first(),
       ).toBeVisible({ timeout: 10_000 });
     },
   );
@@ -542,7 +553,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill('abc');
       await page
         .getByRole('textbox', { name: 'New password (again)' })
@@ -552,7 +563,7 @@ test.describe('Change password page', () => {
       await page.getByRole('button', { name: 'Update' }).click();
       await expect(
         page
-          .locator('.ant-form-item-explain-error')
+          .locator('[data-bai-form-item-explain-error]')
           .filter({
             hasText:
               'At least 1 alphabet, 1 number and 1 special character is required with at least 8 chars.',
@@ -579,7 +590,7 @@ test.describe('Change password page', () => {
         .getByRole('textbox', { name: 'Enter email address' })
         .fill(TEST_EMAIL);
       await page
-        .getByRole('textbox', { name: 'New password', exact: true })
+        .getByRole('textbox', { name: 'New Password', exact: true })
         .fill('NewPass1!');
       await page
         .getByRole('textbox', { name: 'New password (again)' })

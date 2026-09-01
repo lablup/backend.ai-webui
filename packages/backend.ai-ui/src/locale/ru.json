@@ -5,6 +5,7 @@
     "Architecture": "Архитектура",
     "DiskPerc": "Диск %",
     "Endpoint": "Конечная точка",
+    "FailedToLoadCellData": "Не удалось загрузить данные.",
     "NoAvailableLiveStat": "Живая статистика недоступна",
     "Region": "Регион",
     "ResourceGroup": "Группа ресурсов",
@@ -25,6 +26,9 @@
     "AreYouSureYouWantToActivateSome": "Вы уверены, что хотите активировать {{count}} артефакты?",
     "FailedToActivateArtifacts": "Не удалось активировать артефакты.",
     "SuccessfullyActivated": "Успешно активированные артефакты."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Выберите политику ресурсов ключевой пары"
   },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Выберите сервис модели"
@@ -63,6 +67,22 @@
     "Updated": "Обновлено",
     "Version": "Версия"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID действия",
+    "Actor": "Исполнитель",
+    "Description": "Описание",
+    "Duration": "Длительность",
+    "EntityId": "ID объекта",
+    "EntityType": "Тип объекта",
+    "Operation": "Операция",
+    "RequestId": "ID запроса",
+    "Status": "Статус",
+    "Time": "Время",
+    "TriggeredBy": "Инициатор"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Выберите пресет"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз позже или обратитесь в службу поддержки, если проблема сохраняется."
   },
@@ -70,6 +90,18 @@
     "Clear": "Очистить",
     "KeepAsIs": "Оставить как есть",
     "UndoChanges": "Отменить изменения"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Ошибка выполнения",
+    "ErrorOccurred": "Произошла ошибка"
+  },
+  "comp:BAIComplexSelect": {
+    "ClearSearch": "Очистить Поиск по вариантам",
+    "NoResults": "Нет результатов",
+    "SearchOptions": "Поиск по вариантам"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Выберите реестр контейнеров"
   },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Вы уверены, что хотите деактивировать {{name}}?",
@@ -88,14 +120,58 @@
     "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
     "Version": "Версия"
   },
+  "comp:BAIDeleteConfirmModal": {
+    "AreYouSureToDelete": "Вы уверены, что хотите удалить?",
+    "AreYouSureToPermanentlyDeleteTarget": "Вы действительно хотите окончательно удалить {{target}}?",
+    "CannotBeUndone": "Это действие нельзя отменить.",
+    "DeleteItem": "Удалить",
+    "DeleteNItems": "Удалить {{count}} элементов",
+    "TypeToConfirm": "Введите <code>{{confirmText}}</code> для подтверждения."
+  },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Создано"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Попытки",
+    "Category": "Категория",
+    "CreatedAt": "Дата создания",
+    "ErrorCode": "Код ошибки",
+    "From": "Исходный статус",
+    "Message": "Сообщение",
+    "Phase": "Этап",
+    "Result": "Результат",
+    "To": "Целевой статус",
+    "UpdatedAt": "Обновлено"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Выберите развёртывание"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Ухудшено",
+    "Deploying": "Развёртывается",
+    "Healthy": "Работает",
+    "NotChecked": "Не проверено",
+    "Pending": "Ожидание",
+    "Ready": "Готово",
+    "Scaling": "Масштабируется",
+    "Stopped": "Остановлено",
+    "Stopping": "Останавливается",
+    "Terminated": "Завершено",
+    "Unhealthy": "Не работает"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Выберите домен"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Amount"
+  },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Автообновление",
+    "EveryHours": "{{count}}ч",
+    "EveryMinutes": "{{count}}м",
+    "EverySeconds": "{{count}}с",
     "LastUpdated": "Обновлено",
+    "Off": "Выкл.",
     "Refresh": "Обновить"
   },
   "comp:BAIGraphQLPropertyFilter": {
@@ -103,6 +179,9 @@
     "operator": {
       "After": "после",
       "Before": "до",
+      "Contains": "содержит",
+      "EndsWith": "заканчивается на",
+      "Equals": "равно",
       "GreaterThan": "больше",
       "GreaterThanOrEqual": "больше или равно",
       "IContains": "содержит",
@@ -116,7 +195,12 @@
       "In": "в",
       "LessThan": "меньше",
       "LessThanOrEqual": "меньше или равно",
-      "NotIn": "не в"
+      "NotContains": "не содержит",
+      "NotEndsWith": "не заканчивается на",
+      "NotEquals": "не равно",
+      "NotIn": "не в",
+      "NotStartsWith": "не начинается с",
+      "StartsWith": "начинается с"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -124,6 +208,9 @@
     "HuggingFaceSettings": "Hugging Face Settings",
     "Token": "Token",
     "TokenUpdatedSuccessfully": "Token updated successfully."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Выбрать образ"
   },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} версии исключены.",
@@ -135,8 +222,36 @@
     "SuccessFullyPulled": "Успешно запрошенные тяги для {{count}} версий.",
     "Version": "Версия"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Размер кластера",
+    "Concurrency": "Одновременные сессии",
+    "CreatedAt": "Создан в",
+    "DefaultForUnspecified": "По умолчанию для неопределенного",
+    "DefaultForUnspecifiedTooltipDesc1": "Устанавливает политику по умолчанию, когда не запрашивается конкретный процессор или память.",
+    "DefaultForUnspecifiedTooltipDesc2": "«Неограниченное» позволяет использовать емкость узла агента, в то время как «ограниченное» отрицает ресурсы, если только явно не установлен. \nВ большинстве случаев рекомендуется «Unlimited».",
+    "IdleTimeout": "Тайм-аут простоя",
+    "MaxConcurrentSFTPSessions": "Максимальные параллельные сеансы SFTP",
+    "MaxPendingSessionCount": "Максимальный счет в ожидании сессии",
+    "MaxPendingSessionResourceSlots": "Максимальный ожидающий сессионные слоты ресурсов",
+    "MaxSessionLifetime": "Максимальное время жизни сеанса",
+    "Name": "Имя",
+    "StorageNodes": "Узлы хранения",
+    "TotalResourceSlots": "Политика ресурсов"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Выберите пару ключей"
+  },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Домен",
+    "FailReason": "Причина сбоя",
+    "LoginTime": "Время входа",
+    "Result": "Результат"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Ключ доступа",
+    "CreatedAt": "Создано в",
+    "InvalidatedAt": "Аннулировано в",
+    "User": "Пользователь"
   },
   "comp:BAIModal": {
     "ExitFullscreen": "Exit fullscreen",
@@ -145,10 +260,51 @@
     "Minimize": "Minimize",
     "Restore": "Restore"
   },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Вы уверены, что хотите удалить развёртывание \"{{deploymentName}}\"? Это действие нельзя отменить.",
+    "CreatedAt": "Создано",
+    "CreatedUser": "Автор",
+    "CurrentRevisionID": "ID текущей ревизии",
+    "Delete": "Удалить",
+    "DeleteDeployment": "Удалить развёртывание",
+    "DeploymentDeleted": "Развёртывание удалено.",
+    "DeploymentID": "ID развёртывания",
+    "DomainName": "Домен",
+    "EndpointURL": "URL конечной точки",
+    "FailedToDeleteDeployment": "Не удалось удалить развёртывание.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Жизненный цикл",
+    "Model": "Модель",
+    "Name": "Имя",
+    "OpenToPublic": "Открыто для всех",
+    "Owner": "Владелец",
+    "PreferredDomainName": "Предпочтительный домен",
+    "Project": "Проект",
+    "ProjectID": "ID проекта",
+    "ReplicaSummary": "Реплики",
+    "ReplicaSummaryTooltip": "Запущенные реплики относительно желаемого количества реплик.",
+    "Replicas": "Реплики",
+    "ResourceGroup": "Группа ресурсов",
+    "RevisionNumber": "Ревизия",
+    "RevisionNumberTooltip": "Текущий номер ревизии развёртывания.",
+    "StrategyType": "Стратегия",
+    "Tags": "Теги",
+    "UpdatedAt": "Обновлено"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "Больше действий"
+  },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Будут обновлены следующие папки.",
+    "FollowingProjectsWillBeUpdated": "Будут обновлены следующие проекты.",
     "ProjectResourcePolicy": "Политика ресурсов проекта",
     "UpdateMultipleProjects": "Обновить несколько проектов"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Создан в",
+    "MaxNetworkCount": "Максимальное количество сетей",
+    "MaxQuotaScopeSize": "Максимальный размер папки",
+    "MaxVFolderCount": "Максимальное количество папок",
+    "Name": "Имя"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Выберите проект"
@@ -176,32 +332,24 @@
     "UpdateProject": "Обновить проект"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Вы уверены, что хотите деактивировать проект {{projectName}}?",
-    "AreYouSureToPurgeProject": "Вы уверены, что хотите полностью удалить {{projectName}}? Это действие необратимо.",
     "ContainerRegistry": "Реестр контейнеров",
-    "Controls": "Элементы управления",
+    "ContainerRegistryProject": "Проект реестра контейнеров",
     "CreatedAt": "Создано",
-    "Deactivate": "Деактивировать",
-    "DeactivateProject": "Деактивировать проект",
     "Description": "Описание",
     "Domain": "Домен",
-    "FailedToDeactivateProject": "Не удалось деактивировать проект.",
-    "FailedToPurgeProject": "Не удалось очистить проект.",
     "IntegrationID": "ID интеграции",
-    "IsActive": "Активный",
     "Name": "Имя",
     "Project": "Проект",
-    "ProjectDeactivated": "Проект деактивирован.",
     "ProjectID": "ID проекта",
-    "ProjectPurged": "Проект был окончательно удалён.",
-    "Purge": "Очистить",
-    "PurgeProject": "Полностью удалить проект",
     "Registry": "Реестр",
     "ResourcePolicy": "Политика ресурсов",
     "ScalingGroups": "Группы ресурсов",
     "StorageNodes": "Узлы хранения",
     "TotalResourceSlots": "Всего ресурсных слотов",
     "Type": "Тип"
+  },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Выбрать папку"
   },
   "comp:BAIPropertyFilter": {
     "PlaceHolder": "Поиск",
@@ -219,22 +367,154 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Выберите группу ресурсов"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Выделено / Запрошено"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Изменить цвет группы",
+    "ResourceGrid": "Сетка ресурсов",
+    "UseColorN": "Использовать цвет {{n}}"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Неограниченный"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Дата создания",
+    "HealthStatus": "Состояние системы",
     "RouteId": "ID маршрута",
+    "SchedulingHistory": "История планирования",
     "SessionId": "ID сессии",
     "Status": "Статус",
     "TrafficRatio": "Доля трафика",
     "TrafficStatus": "Состояние трафика"
   },
-  "comp:BAISchedulingHistoryNodes": {
+  "comp:BAIRouteSchedulingHistoryNodes": {
     "Attempts": "Попытки",
+    "Category": "Категория",
     "CreatedAt": "Дата создания",
-    "From": "От",
+    "ErrorCode": "Код ошибки",
+    "From": "Исходный статус",
+    "Message": "Сообщение",
     "Phase": "Этап",
     "Result": "Результат",
-    "StatusTransition": "Смена статуса",
-    "To": "До",
+    "To": "Целевой статус",
+    "UpdatedAt": "Обновлено"
+  },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Добавить вариант",
+    "Category": "Категория",
+    "CategoryPlaceholder": "например, model_loading",
+    "CategoryTooltip": "Категория интерфейса, используемая для группировки связанных параметров.",
+    "ChoiceLabel": "Метка",
+    "ChoiceLabelPlaceholder": "например, FP16",
+    "ChoiceLabelRequired": "Метка варианта обязательна.",
+    "ChoiceValue": "Значение",
+    "ChoiceValuePlaceholder": "например, fp16",
+    "ChoiceValueRequired": "Значение варианта обязательно.",
+    "Choices": "Варианты",
+    "ChoicesRequired": "Требуется как минимум один вариант.",
+    "CreatePreset": "Создать пресет",
+    "DefaultValue": "Значение по умолчанию",
+    "DefaultValuePlaceholder": "например, 1",
+    "Description": "Описание",
+    "DescriptionPlaceholder": "Опишите, что контролирует этот параметр и как он влияет на поведение инференса.",
+    "DisplayName": "Отображаемое имя",
+    "DisplayNamePlaceholder": "например, Tensor Parallel Size",
+    "DisplayNameTooltip": "Удобочитаемая метка, отображаемая вместо имени параметра в форме развёртывания.",
+    "EditPreset": "Изменить пресет",
+    "Key": "Ключ",
+    "KeyPlaceholder": "например, TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Ключ обязателен.",
+    "Name": "Имя",
+    "NamePlaceholder": "например, Tensor Parallel Size",
+    "NameRequired": "Имя обязательно.",
+    "NumberMax": "Максимум",
+    "NumberMaxMustExceedMin": "Максимальное значение должно быть больше минимального.",
+    "NumberMin": "Минимум",
+    "PresetCreated": "Пресет варианта среды выполнения создан.",
+    "PresetTarget": "Цель пресета",
+    "PresetTargetArgs": "Аргумент командной строки",
+    "PresetTargetEnv": "Переменная среды",
+    "PresetTargetRequired": "Цель пресета обязательна.",
+    "PresetUpdated": "Пресет варианта среды выполнения обновлён.",
+    "Rank": "Ранг",
+    "RankTooltip": "Порядок отображения среди пресетов одного и того же варианта среды выполнения. Меньшие значения отображаются первыми.",
+    "Required": "Обязательно",
+    "RequiredTooltip": "Должен ли этот параметр пресета обязательно указываться при создании ревизии развёртывания.",
+    "Requirement": "Обязательность",
+    "RuntimeVariant": "Вариант среды выполнения",
+    "RuntimeVariantRequired": "Вариант среды выполнения обязателен.",
+    "SliderMax": "Максимум",
+    "SliderMaxMustExceedMin": "Максимальное значение должно быть больше минимального.",
+    "SliderMaxRequired": "Максимальное значение обязательно.",
+    "SliderMin": "Минимум",
+    "SliderMinRequired": "Минимальное значение обязательно.",
+    "SliderStep": "Шаг",
+    "SliderStepMustBePositive": "Шаг должен быть больше 0.",
+    "SliderStepTooltip": "Шаг приращения для ползунка. По умолчанию 1.",
+    "StoredValueTypeMismatch": "Этот пресет сохранён с типом значения {{valueType}}, который тип интерфейса {{uiType}} не может отобразить. Измените тип интерфейса или тип значения.",
+    "TextPlaceholderExample": "например, Введите значение",
+    "TextPlaceholderLabel": "Плейсхолдер поля ввода",
+    "UIType": "Тип интерфейса",
+    "UITypeCheckbox": "Флажок",
+    "UITypeIncompatibleWithValueType": "Выбранный тип интерфейса не может отобразить этот тип значения.",
+    "UITypeNumberInput": "Числовое поле",
+    "UITypeSelect": "Выпадающий список",
+    "UITypeSlider": "Ползунок",
+    "UITypeTextInput": "Текстовое поле",
+    "UITypeTooltip": "Элемент управления, используемый для отображения этого параметра в форме развёртывания.",
+    "ValueType": "Тип значения",
+    "ValueTypeBool": "Логический",
+    "ValueTypeFlag": "Флаг",
+    "ValueTypeFloat": "Число с плавающей точкой",
+    "ValueTypeInt": "Целое число",
+    "ValueTypeRequired": "Тип значения обязателен.",
+    "ValueTypeStr": "Строка"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Категория",
+    "CreatedAt": "Дата создания",
+    "DefaultValue": "Значение по умолчанию",
+    "Description": "Описание",
+    "DisplayName": "Отображаемое имя",
+    "Key": "Ключ",
+    "ModifiedAt": "Дата изменения",
+    "Name": "Имя",
+    "Optional": "Необязательно",
+    "PresetTarget": "Цель пресета",
+    "PresetTargetArgs": "Аргумент командной строки",
+    "PresetTargetEnv": "Переменная среды",
+    "Rank": "Ранг",
+    "RankTooltip": "Порядок отображения среди пресетов одного и того же варианта среды выполнения. Меньшие значения отображаются первыми.",
+    "Required": "Обязательно",
+    "RuntimeVariantId": "ID варианта среды выполнения",
+    "RuntimeVariantWithID": "Вариант среды выполнения (ID)",
+    "UIType": "Тип интерфейса",
+    "UITypeCheckbox": "Флажок",
+    "UITypeNumberInput": "Числовое поле",
+    "UITypeSelect": "Выпадающий список",
+    "UITypeSlider": "Ползунок",
+    "UITypeTextInput": "Текстовое поле",
+    "ValueType": "Тип значения",
+    "ValueTypeBool": "Логический",
+    "ValueTypeFlag": "Флаг",
+    "ValueTypeFloat": "Число с плавающей точкой",
+    "ValueTypeInt": "Целое число",
+    "ValueTypeStr": "Строка"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Выбрать вариант среды выполнения"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Попытки",
+    "Category": "Категория",
+    "CreatedAt": "Дата создания",
+    "ErrorCode": "Код ошибки",
+    "From": "Исходный статус",
+    "Message": "Сообщение",
+    "Phase": "Этап",
+    "Result": "Результат",
+    "To": "Целевой статус",
     "UpdatedAt": "Обновлено"
   },
   "comp:BAISessionAgentIds": {
@@ -250,11 +530,32 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Выберите хост хранилища"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Выберите прокси хранилища"
+  },
+  "comp:BAISubStepNodes": {
+    "Duration": "Длительность",
+    "ErrorCode": "Код ошибки",
+    "Message": "Сообщение",
+    "Result": "Результат",
+    "ResultMarker": "Маркер результата этой попытки",
+    "Step": "Шаг",
+    "Time": "Время"
+  },
   "comp:BAITable": {
+    "Apply": "Применить",
+    "Cancel": "Отмена",
+    "CollapseAll": "Свернуть все",
+    "ExpandAll": "Развернуть все",
+    "ExpandErrorsOnly": "Развернуть только ошибки",
+    "ExpandOptions": "Параметры разворачивания",
+    "ExpandRow": "Развернуть строку",
     "Export": "Экспорт",
     "ExportCSV": "Экспорт в CSV",
     "GoToFirstPage": "Перейти на первую страницу",
     "InvalidPageNumber": "Неверный номер страницы",
+    "NoDataToDisplay": "Нет данных для отображения",
+    "Pagination": "Разбиение на страницы",
     "SearchTableColumn": "Поиск таблицы столбцов",
     "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
     "SettingTable": "Настройки таблицы"
@@ -262,16 +563,39 @@
   "comp:BAITestButton": {
     "Test": "тест"
   },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Создан в",
+    "MaxConcurrentLogins": "Максимум одновременных входов",
+    "MaxCustomizedImageCount": "Максимальное количество индивидуальных изображений",
+    "MaxQuotaScopeSize": "Максимальный размер папки",
+    "MaxSessionCountPerModelSession": "Максимальное количество сеансов на модельный сеанс",
+    "MaxVFolderCount": "Максимальное количество папок",
+    "Name": "Имя"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "Выберите пользователя"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Неверный формат пути.",
+    "AliasOverlapping": "Путь монтирования перекрывается с другой папкой.",
+    "AliasPlaceholder": "Путь монтирования",
+    "AutoMountedFolders": "Папки с автомонтированием",
+    "Name": "Имя",
+    "PathAndAlias": "Путь & Псевдоним",
+    "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
+    "RemoveFolder": "Удалить",
+    "Subpath": "Подпуть",
+    "SubpathInvalid": "Подпуть должен быть относительным путём и не должен содержать '..'.",
+    "SubpathPlaceholder": "напр. dataset/train (необязательно)",
+    "SubpathTooltip": "Монтирует подпапку внутри папки как источник вместо её корня. Оставьте пустым для монтирования корня."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Выбрать папку"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Началась загрузка {{count}} элементов.",
     "ChangeFileExtension": "Изменить расширение файла",
     "ChangeFileExtensionDesc": "Изменение расширения файла может привести к тому, что файл станет непригодным для использования или неверно открытым. \nВы хотите продолжить?",
-    "Controls": "Управление",
     "CreateANewFile": "Create a new file",
     "CreateANewFolder": "Создать новую папку",
     "CreateFile": "Create File",
@@ -279,6 +603,8 @@
     "CreatedAt": "Создан в",
     "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
     "DeleteSelectedItemsDialog": "Удалить подтверждение",
+    "Download": "Скачать",
+    "DownloadSelected": "Скачать",
     "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
     "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить.",
     "DuplicatedFiles": "Перезаписать подтверждение",
@@ -294,10 +620,12 @@
     "MaxFileNameLength": "File name must be 255 characters or less.",
     "MaxFolderNameLength": "Имя папки должно быть 255 символов или меньше.",
     "ModifiedAt": "Модифицирован в",
-    "MoreOptions": "Дополнительные параметры",
     "Name": "Имя",
+    "NoUploadPermissionForHost": "У вас нет разрешения на загрузку для данного хоста.",
+    "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
+    "RenameFile": "Rename",
     "RenameSuccess": "Имя было успешно изменено.",
     "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
     "Size": "Размер",
@@ -317,19 +645,31 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Недоступные данные о ресурсах"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Завершено в",
-    "ErrorCode": "Код ошибки",
-    "Message": "Сообщение",
-    "Result": "Результат",
-    "StartedAt": "Начато в",
-    "Step": "Шаг"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "ИИ-ускоритель",
+    "CPU": "CPU",
+    "ClusterMode": "Режим кластера",
+    "CreatedAt": "Создано",
+    "ElapsedTime": "Прошедшее время",
+    "Environments": "Окружения",
+    "Memory": "Память",
+    "OwnerEmail": "E-mail владельца",
+    "Project": "Проект",
+    "ResourceGroup": "Группа ресурсов",
+    "SessionId": "ID сессии",
+    "SessionName": "Имя сессии",
+    "SessionType": "Тип сессии",
+    "Status": "Статус",
+    "TerminateSession": "Завершить сессию"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "Разрешенные IP клиентов",
-    "ContainerGIDs": "GID контейнера",
-    "ContainerMainGID": "Основной GID контейнера",
+    "ContainerGIDs": "Дополнительные GID",
+    "ContainerGIDsTooltip": "Дополнительные числовые GID, назначаемые процессам контейнера",
+    "ContainerMainGID": "GID контейнера",
+    "ContainerMainGIDTooltip": "Идентификатор группы (GID) по умолчанию, присваиваемый процессам внутри контейнера",
     "ContainerUID": "UID контейнера",
+    "ContainerUIDTooltip": "Числовой идентификатор пользователя (UID), назначаемый процессам внутри контейнера",
     "CreatedAt": "Создано",
     "Description": "Описание",
     "Disabled": "Отключено",
@@ -337,6 +677,8 @@
     "Email": "Электронная почта",
     "Enabled": "Включено",
     "FullName": "Полное имя",
+    "IntegrationName": "Имя интеграции",
+    "MainAccessKey": "Основной ключ доступа",
     "ModifiedAt": "Изменено",
     "NeedPasswordChange": "Требуется смена пароля",
     "Project": "Проект",
@@ -346,20 +688,79 @@
     "StatusInfo": "Информация о статусе",
     "SudoSessionEnabled": "Сеанс Sudo включен",
     "TwoFA": "Двухфакторная аутентификация",
+    "TwoFAActivatedAt": "Двухфакторная аутентификация активирована",
+    "UserID": "ID пользователя",
     "Username": "Имя пользователя"
+  },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Нажмите, чтобы выбрать путь",
+    "SelectAPath": "Выбрать путь",
+    "SelectAPathInFolder": "Выбрать путь в {{folderName}}",
+    "SelectFolderFirst": "Сначала выберите папку",
+    "SelectThisLocation": "Выбрать это расположение",
+    "SelectedPath": "Выбрано"
   },
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
+  "form": {
+    "Optional": "(необязательно)",
+    "validateMessages": {
+      "Default": "Ошибка проверки поля ${label}",
+      "Required": "Пожалуйста, введите ${label}",
+      "Whitespace": "${label} не может быть пустым",
+      "array": {
+        "Len": "Количество элементов ${label} должно быть равно ${len}",
+        "Max": "Количество элементов ${label} должно быть меньше или равно ${max}",
+        "Min": "Количество элементов ${label} должно быть больше или равно ${min}",
+        "Range": "Количество элементов ${label} должно быть между ${min} и ${max}"
+      },
+      "number": {
+        "Len": "${label} должна быть равна ${len}",
+        "Max": "${label} должна быть меньше или равна ${max}",
+        "Min": "${label} должна быть больше или равна ${min}",
+        "Range": "${label} должна быть между ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} не соответствует шаблону ${pattern}"
+      },
+      "string": {
+        "Len": "${label} должна быть ${len} символов",
+        "Max": "${label} должна быть меньше или равна ${max} символов",
+        "Min": "${label} должна быть больше или равна ${min} символов",
+        "Range": "Длина ${label} должна быть между ${min}-${max} символами"
+      },
+      "types": {
+        "Email": "${label} не является типом ${type}",
+        "Number": "${label} не является типом ${type}",
+        "Object": "${label} не является типом ${type}",
+        "String": "${label} не является типом ${type}",
+        "Url": "${label} не является типом ${type}"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Decrease",
+    "DeselectAll": "Снять выделение",
+    "File": "Файл",
+    "Increase": "Increase",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
+    "Project": "Проект",
+    "Search": "Поиск",
+    "Select": "Select",
+    "SelectPlaceholder": "Выберите {{label}}",
     "TotalItems": "Total {{total}} элементы",
+    "Unit": "Unit",
     "button": {
+      "Action": "Action",
+      "Back": "Back",
       "Cancel": "Отмена",
       "Close": "Закрывать",
       "Collapse": "Крах",
+      "Confirm": "Confirm",
       "Copied": "Скопировано",
+      "Copy": "Копировать",
       "CopyAll": "Копировать все",
       "Create": "Создавать",
       "Delete": "Удалить",
