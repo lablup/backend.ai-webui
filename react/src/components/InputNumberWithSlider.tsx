@@ -2,104 +2,50 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- antd `InputNumber` + `Slider` -> Astryx `NumberInput` + `Slider`
- (to-astryx final-A). This file was PARKED in W2-B under the frontier rule:
- its public API is two antd prop bags, and two of the keys its four call sites
- pass (`sliderProps.marks` with a JSX label, `sliderProps.tooltip.open`) had no
- Astryx destination. Both are resolved here; nothing is dropped.
+ Node-labelled marks are drawn in a second, absolutely-positioned layer built
+ from Astryx's own mark formula (`inset-inline-start: ${percent}%`), because
+ `Slider.marks` accepts only string labels. Astryx still draws every tick.
 
- The public contract is unchanged. Per the frontier rule the prop bags stay
- antd-SHAPED — restated locally as `SliderMarks` / `InputNumberBag` /
- `SliderBag` rather than imported from antd, which is what kept this module (and
- everything downstream of the session launcher) in the antd import graph (P15).
-
- Mapping:
-
-   `Space.Compact` + addonBefore/addonAfter -> `InputGroup` (the idiom
-                                               `BAIDynamicUnitInputNumber`
-                                               established in W2-D)
-   `InputNumber`                            -> `NumberInput`
-   `InputNumber.suffix`                     -> `NumberInput.units`
-   `Slider.disabled`                        -> `isDisabled`
-   `Slider.tooltip.formatter`               -> `formatValue`
-   `Slider.tooltip.open === false`          -> `valueDisplay="none"`
-   `Slider.marks`                           -> `marks` + the overlay below
-
- RESOLVED — **`tooltip.open`.** W2-B recorded this as having "no Astryx knob".
- It does: `valueDisplay`. The one consumer that passes it
- (`ResourceAllocationFormItems`, force-hiding the accelerator tooltip when the
- image supports no accelerator) passes `false | undefined` and never `true`, so
- `open === false -> valueDisplay="none"` covers the live behaviour exactly.
- A forced-OPEN tooltip would still have no equivalent; no call site wants one.
-
- RESOLVED — **JSX `marks` labels, via a marks overlay.** Astryx `Slider.marks`
- takes `{value, label?: string}[]` — a plain string — and every consumer places
- a `<RemainingMark />` (the "resources remaining" chevron) at a computed
- position. The sibling `BAIDynamicUnitInputNumberWithSlider` degraded those to
- `nodeToAccessibleLabel` in W2-D, which for `RemainingMark` means an unlabelled
- tick: the chevron disappears.
-
- It does not have to. Astryx's own mark geometry is plain and inset-free —
- `marksContainer` spans the track container edge to edge, each mark sits at
- `inset-inline-start: ${percent}%` with `translateX(-50%)`, and the label sits
- `THUMB_SIZE / 2 + 4` below that (`@astryxdesign/core/src/Slider/Slider.tsx`).
- So the node-valued marks are rendered in a second, absolutely-positioned layer
- built from the SAME formula, over a `position: relative` wrapper sized to the
- slider. Every mark value — string or node — is still handed to Astryx so it
- draws its tick; only the label rendering splits. The layer is
- `pointer-events: none`, so dragging the rail underneath is unaffected.
-
- PILOT-DECISION — **per-mark `style` is honoured, `sliderProps.styles` is not.**
- `RuntimeParameterFormSection` tints its max mark with `{style: {color:
- colorTextSecondary}}`; a mark rendered in our own layer can simply take that
- style, so it is applied (the string-labelled marks Astryx draws cannot, and
- Astryx already paints marks in the secondary text colour — which is what that
- style asked for). `styles.track` / `styles.handle` were only ever set by this
- file itself, for `disableMode="empty"`; see `bai-slider--empty` below.
-
- PILOT-DECISION — **the `useUpdatableState` remount hack is deleted.** It held
- a `key` on the `InputNumber` and bumped it once, on a `setTimeout(0)` after
- mount, under a `FIXME: workaround to fix the issue that the value is not
- updated when the value is controlled`. That is an antd `InputNumber` bug:
- Astryx's `NumberInput` is a plain controlled native input, so remounting it
- fixes nothing and only throws away focus. The same call also made the
- `inputRef` DOM read in `onBlur` necessary (antd's own value could lag the
- input's); the step-snapping now reads the controlled value directly.
+ Astryx's `NumberInput` REJECTS an out-of-range entry (`parseNumberInput`
+ returns null past either bound) rather than clamping it, so `onBlur` reads the
+ raw field text — the only surviving trace — and clamps from there.
 */
 import useControllableState_deprecated from '../hooks/useControllableState';
 import './InputNumberWithSlider.css';
 import { InputGroup } from '@astryxdesign/core/InputGroup';
 import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { Slider } from '@astryxdesign/core/Slider';
-import { HStack } from '@astryxdesign/core/Stack';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useEffect } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/** antd's `SliderMarks`, restated locally (P15 — no antd type imports). */
-export type SliderMarks = Record<
+/** antd-shaped position-keyed marks map — frozen for the call sites. */
+type SliderMarks = Record<
   string | number,
   ReactNode | { style?: CSSProperties; label?: ReactNode }
 >;
 
-/** The `InputNumberProps` slice the four call sites actually pass. */
+/** The number-input prop slice the call sites actually pass. */
 interface InputNumberBag {
   placeholder?: string;
-  /** antd's trailing unit text -> `NumberInput.units`. */
+  /** Trailing unit text -> `NumberInput.units`. */
   suffix?: ReactNode;
-  addonBefore?: ReactNode;
+  /**
+   * Rendered as a direct `InputGroup` child so it welds onto the field — pass
+   * an Astryx-weldable control, or wrap it in `InputGroupText` yourself.
+   */
   addonAfter?: ReactNode;
   style?: CSSProperties;
 }
 
-/** The `SliderSingleProps` slice the four call sites actually pass. */
+/** The slider prop slice the call sites actually pass. */
 interface SliderBag {
   marks?: SliderMarks;
   tooltip?: {
     formatter?: (value?: number) => ReactNode;
-    /** Only `false` is used in the repo — see the header. */
+    /** Only `false` is used in the repo -> `valueDisplay="none"`. */
     open?: boolean;
   };
 }
@@ -131,9 +77,8 @@ interface InputNumberWithSliderProps {
   style?: CSSProperties;
   sliderProps?: SliderBag;
   /**
-   * Accessible name for the pair. Astryx requires one on both controls (antd
-   * required none); surfaced here so a call site can name the field it sits
-   * under instead of taking the generic default.
+   * Accessible name for the pair. Astryx requires one on both controls;
+   * surfaced here so a call site can name the field it sits under.
    */
   label?: string;
 }
@@ -148,7 +93,7 @@ interface NormalizedMark {
   style?: CSSProperties;
 }
 
-/** antd's position-keyed map -> a sorted list, `{label, style}` flattened. */
+/** The position-keyed map -> a sorted list, `{label, style}` flattened. */
 const normalizeMarks = (marks: SliderMarks | undefined): NormalizedMark[] =>
   _.sortBy(
     _.map(marks, (mark, key) => {
@@ -185,6 +130,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
   label,
   ...otherProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const [value, setValue] = useControllableState_deprecated(otherProps);
 
@@ -240,21 +186,17 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
           isLabelHidden
           isDisabled={isDisabled}
         >
-          {inputNumberProps?.addonBefore ? (
-            <HStack align="center">{inputNumberProps.addonBefore}</HStack>
-          ) : null}
           <NumberInput
             label={accessibleLabel}
             isLabelHidden
             max={max}
             min={min}
             step={step ?? undefined}
+            hasNumberSteppers
             isDisabled={isDisabled}
             value={displayValue ?? null}
             placeholder={inputNumberProps?.placeholder}
-            // antd's `suffix` was a unit hint rendered inside the field —
-            // exactly what `units` is. It is typed `ReactNode` on the antd
-            // side but every call site passes a plain unit string.
+            // Typed `ReactNode`, but every call site passes a plain string.
             units={
               _.isString(inputNumberProps?.suffix)
                 ? inputNumberProps.suffix
@@ -265,12 +207,9 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
               setValue(next);
             }}
             onBlur={(event) => {
-              // RESTORED: antd's `InputNumber` CLAMPED an out-of-range entry
-              // on blur. Astryx's rejects it instead — `parseNumberInput`
-              // returns null past either bound, so `onChange` never fires and
-              // the entry silently reverts. The raw field text is the only
-              // surviving trace; clamp from there. (React 19 does not pool
-              // events, so reading `target.value` in the handler is safe.)
+              // Astryx rejects an out-of-range entry instead of clamping it,
+              // so the raw field text is the only surviving trace. (React 19
+              // does not pool events, so reading `target.value` here is safe.)
               const rawText = (event.target as HTMLInputElement).value;
               const typed = rawText.trim() === '' ? NaN : Number(rawText);
               let current = value;
@@ -289,9 +228,6 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
                   setValue(clamped);
                 }
               }
-              // Snap to the nearest step. antd needed the raw DOM value for
-              // this because its own value could lag; Astryx commits on
-              // change, so the controlled value is already current.
               if (_.isNumber(step) && step > 0 && _.isNumber(current)) {
                 if (_.isNumber(max) && max < current) {
                   return; // do not update value if it is greater than max
@@ -310,9 +246,7 @@ const InputNumberWithSlider: React.FC<InputNumberWithSliderProps> = ({
             width="100%"
             style={inputNumberProps?.style}
           />
-          {inputNumberProps?.addonAfter ? (
-            <HStack align="center">{inputNumberProps.addonAfter}</HStack>
-          ) : null}
+          {inputNumberProps?.addonAfter}
         </InputGroup>
       </BAIFlex>
       <BAIFlex direction="column" align="stretch" style={{ flex: 3 }}>
