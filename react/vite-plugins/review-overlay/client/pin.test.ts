@@ -193,6 +193,52 @@ describe('createDeepLinkPin', () => {
       expect(card().style.top).toBe('8px');
     });
 
+    // `getBoundingClientRect` still reports the box of an element a scroller
+    // has clipped out of sight, so the window test alone leaves an orphan pin.
+    it('drops the pin when a scroller clips the element out of sight', () => {
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div id="scroller" style="overflow-x: auto; overflow-y: auto"></div>',
+      );
+      const scroller = document.querySelector('#scroller') as HTMLElement;
+      scroller.getBoundingClientRect = () =>
+        ({
+          left: 0,
+          right: 800,
+          width: 800,
+          top: 400,
+          bottom: 700,
+          height: 300,
+        }) as DOMRect;
+      const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      scroller.append(element);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(marker().classList.contains('found')).toBe(false);
+      expect(card().classList.contains('found')).toBe(false);
+    });
+
+    // A resize is pure geometry: it must not wait on the mutation debounce.
+    it('re-places on resize within a frame', async () => {
+      show();
+      const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      expect(marker().style.top).toBe('106px');
+
+      element.getBoundingClientRect = () =>
+        ({
+          left: 20,
+          right: 420,
+          width: 400,
+          top: 400,
+          bottom: 600,
+          height: 200,
+        }) as DOMRect;
+      window.dispatchEvent(new Event('resize'));
+      await new Promise((resolve) => setTimeout(resolve, 60));
+      expect(marker().style.top).toBe('406px');
+    });
+
     it('drops the marker and the card when the element scrolls away', () => {
       const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
       show();
@@ -246,6 +292,46 @@ describe('createDeepLinkPin', () => {
       expect(marker().classList.contains('found')).toBe(true);
     });
 
+    // Nothing marks a target as "text-scanned": a selector that resolved at
+    // landing goes stale on the very next re-render.
+    it('escalates for a target the selector itself resolved at landing', async () => {
+      show({ s: '#save', tid: undefined, txt: 'Save' });
+      (document.querySelector('#app') as HTMLElement).innerHTML =
+        '<button id="save">Save</button>';
+      expect(pin.locate()).toBe(true);
+
+      (document.querySelector('#app') as HTMLElement).innerHTML =
+        '<section><button>Save</button></section>';
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(pin.locatedElement()?.textContent).toBe('Save');
+      expect(marker().classList.contains('found')).toBe(true);
+    });
+
+    // The escalation is a document-wide text scan; a reviewer who navigates
+    // away must not pay for it on every mutation batch for the tab's life.
+    it('stops re-scanning once the element is gone for good', async () => {
+      stale();
+      expect(pin.locate()).toBe(true);
+      const app = document.querySelector('#app') as HTMLElement;
+      app.innerHTML = '';
+
+      let scans = 0;
+      const real = document.querySelectorAll.bind(document);
+      document.querySelectorAll = ((selector: string) => {
+        if (selector === 'button') scans++;
+        return real(selector);
+      }) as typeof document.querySelectorAll;
+      for (let i = 0; i < 6; i++) {
+        app.append(document.createElement('i'));
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+      document.querySelectorAll = real;
+
+      expect(scans).toBeGreaterThan(0);
+      expect(scans).toBeLessThanOrEqual(3);
+    });
+
     it('escalates when the cheap ladder comes back empty', async () => {
       stale();
       expect(pin.locate()).toBe(true);
@@ -258,6 +344,27 @@ describe('createDeepLinkPin', () => {
       expect(pin.locatedElement()?.textContent).toBe('Save');
       expect(pin.locatedElement()?.parentElement?.tagName).toBe('SECTION');
     });
+  });
+
+  // The marker sits on the element's own top-left corner, so it must not be
+  // what a click lands on; the scroll-back affordance lives on the card.
+  it('scrolls back from the card, not from the marker', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<button data-testid="create">Create</button>',
+    );
+    const element = document.querySelector(
+      '[data-testid="create"]',
+    ) as HTMLElement;
+    let scrolled = 0;
+    element.scrollIntoView = () => {
+      scrolled++;
+    };
+    show();
+    expect(pin.locate()).toBe(true);
+    const after = scrolled;
+    (host.shadowRoot?.querySelector('.card .locate') as HTMLElement).click();
+    expect(scrolled).toBe(after + 1);
   });
 
   it('restores the element’s own outline when the pin is dismissed', () => {

@@ -74,6 +74,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       --bai-review-text-dim: var(--color-text-secondary, #4e606f);
       --bai-review-border: var(--color-border-emphasized, #ccd3db);
       --bai-review-accent: var(--color-icon-orange, #e9690b);
+      --bai-review-accent-soft: color-mix(in srgb, var(--bai-review-accent) 35%, transparent);
       --bai-review-on-accent: var(--color-on-accent, #fff);
       --bai-review-inverted: var(--color-background-inverted, #0a1317);
       --bai-review-on-inverted: var(--color-background-surface, #fff);

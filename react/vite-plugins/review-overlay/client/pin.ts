@@ -18,6 +18,8 @@ const CARD_GAP = 10;
 const VIEWPORT_PAD = 8;
 /** Four 1 s beats of the prototype's arrival pulse, then back to the outline. */
 const PULSE_MS = 4200;
+/** Escalated text scans a lost element gets before the pin stops looking. */
+const MAX_MISSED_SCANS = 3;
 
 const STYLE = `
   .pinlayer {
@@ -28,7 +30,7 @@ const STYLE = `
     border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
     background: var(--bai-review-accent); color: var(--bai-review-on-accent);
     display: none; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; cursor: pointer; pointer-events: auto;
+    font-size: 12px; font-weight: 700; pointer-events: none;
     box-shadow: 0 1px 4px var(--bai-review-shadow);
   }
   .pin.found { display: flex; }
@@ -36,7 +38,7 @@ const STYLE = `
   .pin.pulse { animation: baipulse 1s ease-in-out 4; }
   @keyframes baipulse {
     0%,100% { box-shadow: 0 1px 4px var(--bai-review-shadow); }
-    50% { box-shadow: 0 0 0 8px var(--bai-review-accent); }
+    50% { box-shadow: 0 0 0 8px var(--bai-review-accent-soft); }
   }
   @media (prefers-reduced-motion: reduce) {
     .pin.pulse { animation: none; }
@@ -49,16 +51,20 @@ const STYLE = `
     box-shadow: 0 4px 18px var(--bai-review-shadow);
   }
   .card.found { display: block; }
-  .card .label { font-weight: 600; word-break: break-word; }
+  .card .label {
+    font-weight: 600; word-break: break-word; padding-right: 42px;
+  }
   .card .sub {
     color: var(--bai-review-text-dim); font-size: 13px; margin-top: 3px;
     word-break: break-all;
   }
-  .card .close {
-    position: absolute; top: 2px; right: 4px; cursor: pointer; border: 0;
+  .card .close, .card .locate {
+    position: absolute; top: 2px; cursor: pointer; border: 0;
     background: none; color: var(--bai-review-text-dim); font-size: 14px;
     pointer-events: auto;
   }
+  .card .close { right: 4px; }
+  .card .locate { right: 24px; }
 `;
 
 export interface DeepLinkPinOptions {
@@ -81,7 +87,6 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   layer.className = 'pinlayer';
   const marker = document.createElement('div');
   marker.className = 'pin';
-  marker.title = 'Scroll back to this element';
   const head = document.createElement('span');
   head.textContent = '📍';
   marker.append(head);
@@ -95,7 +100,11 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   close.className = 'close';
   close.textContent = '✕';
   close.title = 'Dismiss this pin';
-  card.append(close, label, sub);
+  const locateButton = document.createElement('button');
+  locateButton.className = 'locate';
+  locateButton.textContent = '📍';
+  locateButton.title = 'Scroll back to this element';
+  card.append(close, locateButton, label, sub);
   layer.append(marker, card);
   root.append(style, layer);
 
@@ -103,8 +112,10 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   let located: Element | null = null;
   let outlined: HTMLElement | null = null;
   let saved: { outline: string; offset: string } | null = null;
-  /** Whether the cheap ladder can repeat what `locate()` found. */
-  let neededFullLadder = false;
+  /** Ancestors that can hide the element without moving its own rect. */
+  let clippers: Element[] = [];
+  /** Escalated scans in a row that found nothing — the page moved on. */
+  let missedScans = 0;
   /** One arrival pulse per link — the outline is what stays. */
   let pulsed = false;
   let pulseTimer = 0;
@@ -117,6 +128,28 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       () => marker.classList.remove('pulse'),
       PULSE_MS,
     );
+  }
+
+  /** Scrollers and `overflow: hidden` boxes between the element and the root. */
+  function collectClippers(node: Element | null): Element[] {
+    const view = node?.ownerDocument?.defaultView;
+    const list: Element[] = [];
+    let parent = view ? node?.parentElement : null;
+    while (parent) {
+      const style = view?.getComputedStyle(parent);
+      if (
+        style &&
+        (style.overflowX !== 'visible' || style.overflowY !== 'visible')
+      )
+        list.push(parent);
+      parent = parent.parentElement;
+    }
+    return list;
+  }
+
+  function setLocated(node: Element | null) {
+    located = node;
+    clippers = node ? collectClippers(node) : [];
   }
 
   function clearHighlight() {
@@ -154,9 +187,24 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     // A scrolled-away element must not leave a floating card behind. A rect
     // with no size at all is jsdom (or `display: contents`), not off-screen.
     const measured = box.width > 0 || box.height > 0;
-    const offscreen =
-      box.bottom <= 0 || box.top >= vh || box.right <= 0 || box.left >= vw;
-    if (measured && offscreen) return hide();
+    const outside = (area: {
+      top: number;
+      bottom: number;
+      left: number;
+      right: number;
+    }) =>
+      box.bottom <= area.top ||
+      box.top >= area.bottom ||
+      box.right <= area.left ||
+      box.left >= area.right;
+    const offscreen = outside({ top: 0, bottom: vh, left: 0, right: vw });
+    // `getBoundingClientRect` reports the geometric box of an element a
+    // scroller has clipped out of sight, so the window test is not enough.
+    const clipped = clippers.some((clip) => {
+      const area = clip.getBoundingClientRect();
+      return (area.width > 0 || area.height > 0) && outside(area);
+    });
+    if (measured && (offscreen || clipped)) return hide();
     marker.classList.add('found');
     card.classList.add('found');
     marker.style.left = `${box.left + 6}px`;
@@ -215,7 +263,8 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
    * Cheap first — it runs on every mutation batch — but a target the text scan
    * resolved cannot be re-found by the selector/landmark step, and a re-render
    * would either lose the pin or slide it onto the landmark. Debounced, so the
-   * expensive scan runs at most once per settle.
+   * expensive scan runs at most once per settle, and budgeted, so a page the
+   * reviewer has navigated away from stops paying for it entirely.
    */
   function reposition() {
     if (!target) return;
@@ -223,10 +272,18 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       located?.isConnected && textMatches(located, target.anchor.txt)
         ? located
         : null;
+    if (held) missedScans = 0;
     let next = held ?? quickFindTarget(target.anchor, { ignore: host });
-    if (!held && neededFullLadder && (!next || isLandmarkFallback(next)))
-      next = findAnchorTarget(target.anchor, { ignore: host }) ?? next;
-    located = next;
+    if (
+      !held &&
+      missedScans < MAX_MISSED_SCANS &&
+      (!next || isLandmarkFallback(next))
+    ) {
+      const full = findAnchorTarget(target.anchor, { ignore: host });
+      missedScans = full ? 0 : missedScans + 1;
+      next = full ?? next;
+    }
+    setLocated(next);
     if (located) highlight(located);
     else clearHighlight();
     place();
@@ -244,7 +301,7 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     schedule();
   });
   observer.observe(document.body, { childList: true, subtree: true });
-  window.addEventListener('resize', schedule);
+  window.addEventListener('resize', placeSoon);
   // Viewport coordinates, so a scroll moves the pin — including a scroll in an
   // overflow ancestor, which a document-coordinate layer would miss.
   window.addEventListener('scroll', placeSoon, {
@@ -252,15 +309,15 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     passive: true,
   });
 
-  marker.addEventListener('click', () =>
+  locateButton.addEventListener('click', () =>
     located?.scrollIntoView?.({ block: 'center', behavior: 'smooth' }),
   );
   close.addEventListener('click', () => dismiss());
 
   function dismiss() {
     target = null;
-    located = null;
-    neededFullLadder = false;
+    setLocated(null);
+    missedScans = 0;
     clearHighlight();
     place();
   }
@@ -293,9 +350,8 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
         findAnchorTarget(target.anchor, { ignore: host }) ??
         (located?.isConnected ? located : null);
       if (!found) return false;
-      located = found;
-      neededFullLadder =
-        found !== quickFindTarget(target.anchor, { ignore: host });
+      setLocated(found);
+      missedScans = 0;
       highlight(found);
       place();
       found.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
@@ -311,7 +367,7 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     /** One pin lives as long as the page; tests make one per case. */
     dispose() {
       observer.disconnect();
-      window.removeEventListener('resize', schedule);
+      window.removeEventListener('resize', placeSoon);
       window.removeEventListener('scroll', placeSoon, { capture: true });
       settleUntil = 0;
       clearTimeout(timer);
