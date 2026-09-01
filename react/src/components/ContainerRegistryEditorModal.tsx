@@ -18,9 +18,9 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useRef } from 'react';
+import React, { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -376,10 +376,6 @@ const ContainerRegistryEditorModal: React.FC<
           >
             {(form) => (
               <BAIFormItem noStyle name={'password'}>
-                {/* antd Input.Password -> Astryx TextInput type="password"
-                    (MAPPING.md §3.6). PILOT-DECISION: the visibility-toggle
-                    eye affordance is antd sugar with no TextInput
-                    counterpart; dropped (simplicity policy). */}
                 <AstryxFormTextInput
                   label={t('registry.Password')}
                   type="password"
@@ -489,16 +485,24 @@ const ContainerRegistryEditorModal: React.FC<
             !(form as FormInstance<RegistryFormInput>).getFieldValue(
               'is_global',
             ) && (
-              <BAIFormItem
-                name="allowed_group_ids"
-                label={t('registry.AllowedProjects')}
+              <Suspense
+                fallback={
+                  <BAIFormItem label={t('registry.AllowedProjects')}>
+                    <BAISelect mode="multiple" loading disabled />
+                  </BAIFormItem>
+                }
               >
-                <ProjectSelectForAdminPage
-                  domain={baiClient._config.domainName}
-                  mode="multiple"
-                  allowClear
-                />
-              </BAIFormItem>
+                <BAIFormItem
+                  name="allowed_group_ids"
+                  label={t('registry.AllowedProjects')}
+                >
+                  <ProjectSelectForAdminPage
+                    domain={baiClient._config.domainName}
+                    mode="multiple"
+                    allowClear
+                  />
+                </BAIFormItem>
+              </Suspense>
             )
           }
         </BAIFormItem>

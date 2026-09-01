@@ -4,7 +4,8 @@
 
  THE acceptance suite for the self-hosted form engine (to-astryx ticket 34).
 
- 29 tests distilled from `answers/08 §5` — the semantics this repository
+ 29 tests distilled from `answers/08 §5` (plus contract 30, added for
+ FR-3705) — the semantics this repository
  actually depends on, each traced to a real call site.
 
  STATUS (final switch): antd is UNINSTALLED. This suite used to run TWICE —
@@ -1539,5 +1540,82 @@ describe.each(IMPLEMENTATIONS)('form engine acceptance [%s]', (_name, Form) => {
       { name: ['max'], errors: ['Max is required'], warnings: [] },
       { name: ['tags', 0, 'key'], errors: ['Key is required'], warnings: [] },
     ]);
+  });
+
+  // 30. ContainerRegistryEditorModal.tsx (FR-3705) — a trap that cost real
+  //     debugging time: a Suspense hide counts as an unmount, so a boundary
+  //     ABOVE the form resets every `preserve={false}` field to its initial
+  //     value on the hide/show cycle. Keep suspending children behind a
+  //     boundary INSIDE the form.
+  it('30. a Suspense hide/show cycle above a `preserve={false}` form resets its fields', async () => {
+    let settled = false;
+    let resolveChild!: () => void;
+    const childPromise = new Promise<void>((res) => {
+      resolveChild = () => {
+        settled = true;
+        res();
+      };
+    });
+    const SuspendingChild: React.FC<any> = (props) => {
+      if (!settled) throw childPromise;
+      return <Input data-testid="lazy-child" {...props} />;
+    };
+    let form!: FormInstance;
+    const captureForm = (instance: FormInstance) => {
+      form = instance;
+    };
+    const Demo = () => {
+      const instance = useTestForm(captureForm);
+      const show = Form.useWatch('show', instance);
+      return (
+        <Form
+          form={instance}
+          preserve={false}
+          initialValues={{ show: false, keep: 'initial' }}
+        >
+          <Form.Item name="show" valuePropName="checked">
+            <Check />
+          </Form.Item>
+          <Form.Item name="keep">
+            <Input />
+          </Form.Item>
+          {show ? (
+            <Form.Item name="lazy">
+              <SuspendingChild />
+            </Form.Item>
+          ) : null}
+        </Form>
+      );
+    };
+    render(
+      <React.Suspense fallback={null}>
+        <Demo />
+      </React.Suspense>,
+    );
+    await settle();
+
+    await act(async () => {
+      form.setFieldValue('keep', 'typed');
+    });
+    await settle();
+    expect(form.getFieldValue('keep')).toBe('typed');
+
+    // Mounting the suspending child hides the whole form behind the outer
+    // boundary until the promise resolves.
+    await act(async () => {
+      form.setFieldValue('show', true);
+    });
+    await settle();
+    await act(async () => {
+      resolveChild();
+      await childPromise;
+    });
+    await settle();
+
+    // EVERY field reset to initial — including `show`, so the lazy item is
+    // gone again and the child never re-renders.
+    expect(form.getFieldValue('keep')).toBe('initial');
+    expect(form.getFieldValue('show')).toBe(false);
+    expect(screen.queryByTestId('lazy-child')).not.toBeInTheDocument();
   });
 });
