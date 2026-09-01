@@ -162,7 +162,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   const compose = el('div', 'compose');
   compose.innerHTML = `
     <div class="pathlabel"></div>
-    <textarea placeholder="Comment on this element… (⌘⏎ to copy the block; may be empty)"></textarea>
+    <textarea aria-label="Review comment on the picked element" placeholder="Comment on this element… (⌘⏎ to copy the block; may be empty)"></textarea>
     <div class="err"></div>
     <div class="actions">
       <button class="btn" data-act="cancel">Cancel</button>
@@ -361,15 +361,18 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       return;
     }
     const copied = copyText(block);
-    const done = (ok: boolean) =>
+    // Close only on success. A failed copy tells the reviewer to press ⌘⏎
+    // again, so the composer and the note they typed have to still be there.
+    const done = (ok: boolean) => {
       showToast(
         ok
           ? 'Copied — paste it into the PR comment, the Teams thread, or Claude 📋'
           : 'Could not reach the clipboard — press ⌘⏎ again',
       );
+      if (ok) closeCompose();
+    };
     if (typeof copied === 'boolean') done(copied);
     else void copied.then(done);
-    closeCompose();
   }
 
   compose.addEventListener('click', (evt) => {

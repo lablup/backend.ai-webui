@@ -80,7 +80,12 @@ export async function decodeAnchor(b64url: string): Promise<AnchorV3 | null> {
     );
     const obj = JSON.parse(new TextDecoder().decode(inflated));
     if (!obj || typeof obj !== 'object') return null;
-    if (obj.p != null && !isSafePath(obj.p)) return null;
+    // The payload came off a URL fragment somebody pasted, so the return type's
+    // guarantees have to be checked, not assumed: `v`, `s` and `p` are the
+    // required keys, and every reader downstream reads them without a guard.
+    if (obj.v !== 3) return null;
+    if (typeof obj.s !== 'string' || !obj.s) return null;
+    if (typeof obj.p !== 'string' || !isSafePath(obj.p)) return null;
     return obj as AnchorV3;
   } catch {
     return null;

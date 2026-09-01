@@ -34,15 +34,19 @@ export async function readBootRecord(): Promise<BootRecord | null> {
  * `served[]` is written BOTTOM-FIRST: the dev-server skill's `advertise.sh`
  * slices `gh stack view`'s bottom-first branch list up to and including the
  * checked-out branch, so the layer actually running here is the LAST entry
- * (its own `running_pr()` reads `jq last`). Match the branch first anyway — a
- * record left behind by a different checkout must not claim this one.
+ * (its own `running_pr()` reads `jq last`).
+ *
+ * The branch decides. Once we know which branch to look for, a record whose
+ * served set does not name it was written by a different checkout, and its
+ * last PR is somebody else's: return nothing so `discoverState()` falls
+ * through to `gh pr list`, which does know this branch. The bottom-first rule
+ * applies only when there is no branch to match at all — a detached HEAD with
+ * a record that names none either.
  */
 export function servedEntry(record: BootRecord | null, branch: string | null) {
   const served = (record?.served ?? []).filter((entry) => entry.pr);
   if (!served.length) return undefined;
   const target = branch || record?.branch || null;
-  const onBranch = target
-    ? served.find((entry) => entry.branch === target)
-    : undefined;
-  return onBranch ?? served[served.length - 1];
+  if (target) return served.find((entry) => entry.branch === target);
+  return served[served.length - 1];
 }

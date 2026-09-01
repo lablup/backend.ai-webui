@@ -22,9 +22,17 @@ describe('servedEntry', () => {
     expect(servedEntry(stack, 'feat/FR-3804-middle')?.pr).toBe(9321);
   });
 
-  it('falls back to the LAST entry, which is the running layer', () => {
-    expect(servedEntry(stack, null)?.pr).toBe(9337);
-    expect(servedEntry(stack, 'some-other-branch')?.pr).toBe(9337);
+  it('falls back to the LAST entry when no branch is known at all', () => {
+    // No git branch and no `branch` on the record: nothing to match, so the
+    // bottom-first rule stands and the last entry is the running layer.
+    const { branch: _unused, ...headless } = stack;
+    expect(servedEntry(headless, null)?.pr).toBe(9337);
+  });
+
+  it('claims nothing when the record does not name the branch we are on', () => {
+    // A record from another checkout: attributing blocks to its last PR would
+    // be worse than none. `discoverState()` falls through to `gh pr list`.
+    expect(servedEntry(stack, 'some-other-branch')).toBeUndefined();
   });
 
   it('uses the record’s own branch when git could not answer', () => {
@@ -36,7 +44,7 @@ describe('servedEntry', () => {
   it('ignores entries without a pr', () => {
     expect(
       servedEntry(
-        { schemaVersion: 1, served: [{ pr: 1, branch: 'a' }, { branch: 'b' }] },
+        { schemaVersion: 1, served: [{ branch: 'b' }, { pr: 1, branch: 'b' }] },
         'b',
       )?.pr,
     ).toBe(1);

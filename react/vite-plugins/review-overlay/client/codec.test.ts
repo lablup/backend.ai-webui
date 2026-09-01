@@ -44,6 +44,21 @@ describe('anchor codec', () => {
     await expect(decodeAnchor('not-a-real-anchor')).resolves.toBeNull();
   });
 
+  it.each([
+    ['an empty object', {}],
+    ['a wrong version', { ...anchor, v: 2 }],
+    ['no selector', { ...anchor, s: undefined }],
+    ['an empty selector', { ...anchor, s: '' }],
+    ['no path', { ...anchor, p: undefined }],
+    ['a non-string path', { ...anchor, p: 3 }],
+  ])(
+    'rejects %s — the return type promises v, s and p',
+    async (_n, payload) => {
+      const encoded = await encodeAnchor(payload as unknown as AnchorV3);
+      await expect(decodeAnchor(encoded)).resolves.toBeNull();
+    },
+  );
+
   it('rejects a payload whose path could navigate off-origin', async () => {
     const encoded = await encodeAnchor({
       ...anchor,
