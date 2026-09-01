@@ -443,6 +443,10 @@ const DeploymentRevisionHistoryTab: React.FC<
               </BAIFlex>
             }
             showActions="always"
+            // Apply must stay a visible button: `moreMenuDisabled` below would
+            // otherwise lock the trigger on a stopped deployment and put its
+            // reason out of reach in the narrow render.
+            minVisibleActions={1}
             // TODO: "AddNewRevisionFromThis" is currently the only menu item.
             // The entire More button is disabled when stopped rather than
             // per-item. When more menu items are added, switch to per-item
