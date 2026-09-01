@@ -45,18 +45,22 @@ function displayName(element: Element): string | null {
   }
 }
 
-/** Ranks a candidate: react-grab positively names the anchor's component. */
-const componentMatches = (element: Element, anchor: AnchorV3): boolean =>
-  !!anchor.c && displayName(element) === anchor.c.name;
-
-/**
- * True only when react-grab names a DIFFERENT component — silence (no
- * react-grab, or an element it cannot name) never makes the ladder worse.
- */
-const componentConflicts = (element: Element, anchor: AnchorV3): boolean => {
+/** Ranks a candidate: react-grab names it as one of the anchor's names. */
+const componentMatches = (element: Element, anchor: AnchorV3): boolean => {
   if (!anchor.c) return false;
   const name = displayName(element);
-  return name !== null && name !== anchor.c.name;
+  return name !== null && (name === anchor.c.dn || name === anchor.c.name);
+};
+
+/**
+ * A veto needs like-for-like: `c.name` is `getSource`'s OWNER component, which
+ * differs from `getDisplayName` on most elements, so only an anchor carrying
+ * `c.dn` — the same API, recorded at pick time — may reject anything.
+ */
+const componentConflicts = (element: Element, anchor: AnchorV3): boolean => {
+  if (!anchor.c?.dn) return false;
+  const name = displayName(element);
+  return name !== null && !componentMatches(element, anchor);
 };
 
 const isOurs = (element: Element | null, ignore?: Element | null) =>
@@ -172,7 +176,10 @@ export function findAnchorTarget(
       // inside one card would otherwise lose; deeper wins within a tier,
       // because the outer wrappers all contain the same words.
       const byComponent = componentMatches(candidate, anchor);
-      if (best && bestByComponent && !byComponent) continue;
+      // A named wrapper must not veto the deeper node it contains: the name
+      // rules between branches, containment still rules within one.
+      if (best && bestByComponent && !byComponent && !best.contains(candidate))
+        continue;
       if (
         !best ||
         (byComponent && !bestByComponent) ||
@@ -202,5 +209,9 @@ export function findAnchorTarget(
     )
       return landmark;
   }
-  return scan(doc) ?? bySelector;
+  // The weak answer both ladders agree on: `quickFindTarget` returns null for
+  // a conflicting selector hit, so this must not hand it back either.
+  const weak =
+    bySelector && !componentConflicts(bySelector, anchor) ? bySelector : null;
+  return scan(doc) ?? weak;
 }

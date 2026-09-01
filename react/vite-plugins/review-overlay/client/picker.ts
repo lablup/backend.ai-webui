@@ -210,9 +210,16 @@ export function createPicker(callbacks: PickerCallbacks) {
       const line = source.lineNumber == null ? '' : `:${source.lineNumber}`;
       const column =
         source.columnNumber == null ? '' : `:${source.columnNumber}`;
+      // `getSource` names the OWNER component and `getDisplayName` the
+      // rendered one; the read side can only compare the latter with itself.
+      const dn =
+        typeof grab.getDisplayName === 'function'
+          ? grab.getDisplayName(element)
+          : null;
       return {
         name: source.componentName,
         src: `${source.filePath}${line}${column}`,
+        ...(dn ? { dn } : {}),
       };
     } catch {
       return undefined;

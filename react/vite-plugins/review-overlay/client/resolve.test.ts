@@ -117,7 +117,10 @@ describe('findAnchorTarget', () => {
 // the same landmark corner.
 describe('the anchor’s component name', () => {
   const withComponent = (over: Partial<AnchorV3> = {}) =>
-    anchor({ c: { name: 'RowActions', src: 'src/Row.tsx:12:4' }, ...over });
+    anchor({
+      c: { name: 'RowActions', src: 'src/Row.tsx:12:4', dn: 'RowActions' },
+      ...over,
+    });
 
   it('breaks the tie between two candidates with the same text', () => {
     mount(`
@@ -151,5 +154,49 @@ describe('the anchor’s component name', () => {
     expect(quickFindTarget(withComponent({ s: 'nope', tid: 'panel' }))).toBe(
       document.querySelector('[data-testid="panel"]'),
     );
+  });
+
+  // `c.name` is `getSource`'s OWNER component and `getDisplayName` answers the
+  // rendered one: on a real page those disagree on nearly every element.
+  it('keeps a hit whose rendered name differs from the owner name', () => {
+    mount('<button data-name="Link">Login</button>');
+    stubReactGrab({ Link: 'Link' });
+    const found = quickFindTarget(
+      anchor({ c: { name: 'WebUILink', src: 'src/L.tsx:1', dn: 'Link' } }),
+    );
+    expect(found?.textContent).toBe('Login');
+  });
+
+  // A pre-`dn` link carries no name the read side can compare with itself.
+  it('never rejects anything on an anchor with no rendered name', () => {
+    mount('<div data-testid="panel" data-name="Layout"><i>Login</i></div>');
+    stubReactGrab({ Layout: 'Layout' });
+    const withOwnerOnly = anchor({
+      s: 'nope',
+      tid: 'panel',
+      c: { name: 'BAIAppShell', src: 'src/A.tsx:1' },
+    });
+    expect(quickFindTarget(withOwnerOnly)).toBe(
+      document.querySelector('[data-testid="panel"]'),
+    );
+  });
+
+  it('lets a named wrapper keep the deeper node it contains', () => {
+    mount('<div data-name="RowActions"><div id="body">Delete</div></div>');
+    stubReactGrab({ RowActions: 'RowActions' });
+    const found = findAnchorTarget(
+      withComponent({ s: 'nope', tag: 'div', txt: 'Delete' }),
+    );
+    expect((found as HTMLElement)?.id).toBe('body');
+  });
+
+  // Both ladders have to agree, or the pin lands on what `quickFindTarget`
+  // refused the moment the debounce runs.
+  it('refuses a conflicting selector hit in both ladders', () => {
+    mount('<button data-name="Toolbar"><svg></svg></button>');
+    stubReactGrab({ Toolbar: 'Toolbar' });
+    const iconOnly = withComponent({ txt: undefined });
+    expect(quickFindTarget(iconOnly)).toBeNull();
+    expect(findAnchorTarget(iconOnly)).toBeNull();
   });
 });

@@ -14,10 +14,12 @@ export interface AnchorRect {
 
 /** React component identity for the picked element, from react-grab. */
 export interface AnchorComponent {
-  /** Component display name, e.g. `LoginView`. */
+  /** `getSource`'s owner component, e.g. `LoginView`. */
   name: string;
   /** Source location, e.g. `src/components/LoginView.tsx:120:8`. */
   src: string;
+  /** `getDisplayName` at pick time — the only name `resolve.ts` compares. */
+  dn?: string;
 }
 
 /**
@@ -41,7 +43,7 @@ export interface AnchorV3 {
   tid?: string;
   /** Position within `tid` when the landmark is an ancestor. */
   rect?: AnchorRect;
-  /** Extra signal — never used for resolution, only for the human reader. */
+  /** Shown to the reader, and a resolution rank (`dn` also a veto). */
   c?: AnchorComponent;
 }
 
