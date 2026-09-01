@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9afd20a4657bf7f190671138bc650d4f>>
+ * @generated SignedSource<<2e5533a6dcd9debff7260cb51038432e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type KeypairResourcePolicyV2OrderField = "CREATED_AT" | "IDLE_TIMEOUT" | "MAX_CONCURRENT_SESSIONS" | "MAX_CONCURRENT_SFTP_SESSIONS" | "MAX_CONTAINERS_PER_SESSION" | "MAX_PENDING_SESSION_COUNT" | "MAX_SESSION_LIFETIME" | "NAME" | "%future added value";
+export type KeypairResourcePolicyV2OrderField = "CREATED_AT" | "IDLE_TIMEOUT" | "MAX_CONCURRENT_SESSIONS" | "MAX_CONCURRENT_SFTP_SESSIONS" | "MAX_CONTAINERS_PER_SESSION" | "MAX_PENDING_SESSION_COUNT" | "MAX_PRIORITY" | "MAX_SESSION_LIFETIME" | "NAME" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type KeypairResourcePolicyV2Filter = {
   AND?: ReadonlyArray<KeypairResourcePolicyV2Filter> | null | undefined;
@@ -23,6 +23,7 @@ export type KeypairResourcePolicyV2Filter = {
   maxConcurrentSftpSessions?: IntFilter | null | undefined;
   maxContainersPerSession?: IntFilter | null | undefined;
   maxPendingSessionCount?: IntFilter | null | undefined;
+  maxPriority?: IntFilter | null | undefined;
   maxSessionLifetime?: IntFilter | null | undefined;
   name?: StringFilter | null | undefined;
 };

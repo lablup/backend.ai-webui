@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<20d9b263090b0a48d012223231ba15f3>>
+ * @generated SignedSource<<0e8f0af9c482e667fc574b53c379a2b5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type KeypairOrderField = "ACCESS_KEY" | "CREATED_AT" | "IS_ACTIVE" | "LAST_USED" | "RESOURCE_POLICY" | "%future added value";
+export type KeypairOrderField = "ACCESS_KEY" | "CREATED_AT" | "IS_ACTIVE" | "IS_DEFAULT" | "LAST_USED" | "RESOURCE_POLICY" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type KeypairFilter = {
   AND?: ReadonlyArray<KeypairFilter> | null | undefined;
@@ -19,6 +19,7 @@ export type KeypairFilter = {
   createdAt?: DateTimeFilter | null | undefined;
   isActive?: boolean | null | undefined;
   isAdmin?: boolean | null | undefined;
+  isDefault?: boolean | null | undefined;
   lastUsed?: DateTimeFilter | null | undefined;
   resourcePolicy?: StringFilter | null | undefined;
   userId?: UUIDFilter | null | undefined;
