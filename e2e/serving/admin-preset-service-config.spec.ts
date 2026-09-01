@@ -157,8 +157,9 @@ async function installLegacyPresetFlagOverride(page: Page): Promise<void> {
  * trigger is a plain `<button>` whose accessible name is the field label
  * (`aria-haspopup="dialog"`, NOT a combobox); its popup is a `role="dialog"`
  * (aria-labelled with the same field label) hosting a search `TextInput` with
- * `role="combobox"` named "Search" and a `role="listbox"` of plain, clickable
- * `role="option"` rows — so the option is clicked directly.
+ * `role="combobox"` named "Search options" (`comp:BAIComplexSelect.SearchOptions`,
+ * FR-3603 / #8914) and a `role="listbox"` of plain, clickable `role="option"`
+ * rows — so the option is clicked directly.
  */
 async function selectComplexSelectOption(
   page: Page,
@@ -170,7 +171,7 @@ async function selectComplexSelectOption(
   await expect(popup).toBeVisible({ timeout: 10000 });
   // Narrow the (server-side) search to the wanted option, then click it.
   await popup
-    .getByRole('combobox', { name: 'Search', exact: true })
+    .getByRole('combobox', { name: 'Search options', exact: true })
     .fill(optionLabel);
   const option = popup.getByRole('option', { name: optionLabel, exact: true });
   await expect(option).toBeVisible({ timeout: 15000 });
@@ -219,11 +220,11 @@ async function setupPresetCreatePage(
   // The Runtime field is an Astryx Selector: its trigger is a plain <button>
   // named by the field label, and the popup hosts plain, clickable
   // `role="option"` rows. Only one option exists (the mock resolves exactly
-  // one variant). Unlike the Add-Revision modal's Runtime select, this
-  // BAIFormItem carries a tooltip, whose help glyph contributes " info" to the
-  // trigger's accessible name — so the button is named "Runtime info", not
-  // just "Runtime".
-  await page.getByRole('button', { name: 'Runtime info', exact: true }).click();
+  // one variant). This BAIFormItem carries a tooltip, so the trigger's
+  // accessible name concatenates the label, the help glyph and the label
+  // again ("Runtime info Runtime") — match the label as a substring rather
+  // than pinning the exact composition.
+  await page.getByRole('button', { name: 'Runtime' }).click();
   const customOption = page.getByRole('option', {
     name: 'custom',
     exact: true,
@@ -291,8 +292,8 @@ async function setupLegacyPresetCreatePage(
 
   // Astryx Selector: plain trigger button + clickable option rows (same
   // idiom as setupPresetCreatePage above — incl. the tooltip glyph joining
-  // the accessible name, so the trigger is 'Runtime info').
-  await page.getByRole('button', { name: 'Runtime info', exact: true }).click();
+  // the accessible name, so match the label as a substring).
+  await page.getByRole('button', { name: 'Runtime' }).click();
   const customOption = page.getByRole('option', {
     name: 'custom',
     exact: true,
@@ -301,9 +302,10 @@ async function setupLegacyPresetCreatePage(
   await customOption.click();
   // Wait for the selection to commit before asserting the negative below —
   // otherwise "not visible yet" and "legacy layout" are indistinguishable.
-  await expect(
-    page.getByRole('button', { name: 'Runtime info', exact: true }),
-  ).toContainText('custom', { timeout: 10000 });
+  await expect(page.getByRole('button', { name: 'Runtime' })).toContainText(
+    'custom',
+    { timeout: 10000 },
+  );
 
   // Legacy: unlike the nullable-capable path, Service Configuration is NOT
   // independently visible in Basic Info — it only appears once Model

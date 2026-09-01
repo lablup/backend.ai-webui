@@ -1,5 +1,6 @@
 // spec: e2e/.agent-output/test-plan-project.md
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import { clickRowAction } from '../utils/user-profile-util';
 import test, { expect, Page } from '@playwright/test';
 
 const TEST_RUN_ID = Date.now().toString(36);
@@ -12,6 +13,23 @@ const UPDATED_DESCRIPTION = 'Updated E2E description';
 // unique within a run.
 function projectName(label: string) {
   return `e2e-test-project-${TEST_RUN_ID}-${label}`;
+}
+
+// `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+// `<button>`s (BAITabList / Astryx `TabList`), never ARIA `tab` elements —
+// the same contract rbac-role-list.spec.ts and registry.spec.ts already use.
+// The active one carries `aria-current="true"` in place of `aria-selected`.
+function projectsTab(page: Page) {
+  return page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name: 'Projects' });
+}
+
+// A BAITable column header's accessible NAME is built from its sort and
+// resize controls ("Sort by name Resize column name"), so it no longer equals
+// the visible label; match the header's TEXT instead.
+function projectColumnHeader(page: Page, label: string) {
+  return page.getByRole('columnheader').filter({ hasText: label });
 }
 
 // Not serial: each CRUD test provisions and cleans up its own uniquely-named
@@ -40,24 +58,36 @@ async function cleanupTestProject(page: Page, projectName: string) {
     // the button's `aria-label` (BAINameActionCell), so target by name —
     // index-based selection breaks when optional actions (e.g. "Set Project
     // Admin" on managers >= 26.8) are prepended.
-    await activeProjectRow.hover();
-    await activeProjectRow
-      .getByRole('button', { name: 'Deactivate', exact: true })
-      .click();
-    const deactivatePopconfirm = page.locator('.ant-popconfirm');
-    await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
-    await deactivatePopconfirm
-      .getByRole('button', { name: 'Deactivate' })
-      .click();
-    await expect(activeProjectRow).toBeHidden({ timeout: 10000 });
+    //
+    // Go through `clickRowAction`: how many actions stay inline vs. collapse
+    // into the "More actions" overflow depends on the rendered column widths.
+    // BAINameActionCell only reveals them on hover, and this table is ~2500px
+    // wide against a 1280px viewport, so scroll the row into view first —
+    // otherwise `click()`'s own scroll moves the row out from under the
+    // pointer and the buttons hide again mid-click. Retry the whole
+    // reveal→confirm step, the same way rbac-role-detail.spec.ts's cleanup
+    // does.
+    await expect(async () => {
+      await activeProjectRow.scrollIntoViewIfNeeded();
+      await clickRowAction(page, activeProjectRow, 'Deactivate');
+      // The deactivate confirm is an anchored `BAIPopconfirm`-style popover
+      // rendered with `role="dialog"` (`BAINameActionCell.tsx`), accessible
+      // name = the row action's title ("Deactivate").
+      const deactivatePopconfirm = page.getByRole('dialog', {
+        name: 'Deactivate',
+      });
+      await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
+      await deactivatePopconfirm
+        .getByRole('button', { name: 'Deactivate' })
+        .click();
+      await expect(activeProjectRow).toBeHidden({ timeout: 10000 });
+    }).toPass({ timeout: 60000 });
   }
 
-  // Switch to Inactive tab and purge
-  // Use the label wrapper (not the hidden radio input) to click the radio button
-  await page
-    .locator('label')
-    .filter({ hasText: /^Inactive$/ })
-    .click();
+  // Switch to Inactive tab and purge. `BAIRadioGroup` renders on Astryx
+  // `SegmentedControl`, whose options are `<button role="radio">` with no
+  // `<label>` wrapper (see `BAIRadioGroup.tsx`).
+  await page.getByRole('radio', { name: 'Inactive', exact: true }).click();
   const inactiveProjectRow = page
     .getByRole('row')
     .filter({ hasText: projectName });
@@ -66,22 +96,24 @@ async function cleanupTestProject(page: Page, projectName: string) {
     .catch(() => false);
 
   if (isInactiveVisible) {
-    await inactiveProjectRow.hover();
-    await inactiveProjectRow
-      .getByRole('button', { name: 'Purge', exact: true })
-      .click();
+    // The Inactive tab shows 3 row actions (Edit, Activate, Purge), one more
+    // than the Active tab fits directly, so Purge collapses into the
+    // "More actions" overflow menu (`BAINameActionCell`). `clickRowAction`
+    // handles both the directly-visible and overflowed cases.
+    await clickRowAction(page, inactiveProjectRow, 'Purge');
     const purgeDialog = page.getByRole('dialog', { name: 'Purge Project' });
     await expect(purgeDialog).toBeVisible({ timeout: 5000 });
-    await purgeDialog.locator('#confirmText').fill(projectName);
+    // `BAIDeleteConfirmModal`'s confirm input has no `#confirmText` id in the
+    // DOM; it is the dialog's only textbox, labeled "Type {name} to confirm.".
+    await purgeDialog.getByRole('textbox').fill(projectName);
     await purgeDialog.getByRole('button', { name: 'Purge' }).click();
     await expect(inactiveProjectRow).toBeHidden({ timeout: 10000 });
   }
 
-  // Return to Active tab for subsequent tests
-  await page
-    .locator('label')
-    .filter({ hasText: /^Active$/ })
-    .click();
+  // Return to Active tab for subsequent tests. `exact: true` is required —
+  // Playwright's accessible-name match is substring-based, so a bare
+  // { name: 'Active' } also matches the "Inactive" radio.
+  await page.getByRole('radio', { name: 'Active', exact: true }).click();
 }
 
 // Creation helper — extracted so each test can provision its own project.
@@ -94,21 +126,19 @@ async function createProject(page: Page, name: string, description: string) {
   await page.getByRole('button', { name: 'Create Project' }).click();
 
   // Verify Create Project dialog appears
-  const modal = page.locator('.ant-modal');
+  const modal = page.getByRole('dialog', { name: 'Create Project' });
   await expect(modal).toBeVisible();
-  await expect(modal.getByText('Create Project')).toBeVisible();
 
   // Fill in the project name and description
   await modal.getByRole('textbox', { name: 'Name' }).fill(name);
   await modal.getByRole('textbox', { name: 'Description' }).fill(description);
 
-  // Select Domain 'default'
-  await modal.getByRole('combobox', { name: 'Domain' }).click();
-  await page.locator('.ant-select-dropdown').waitFor({ state: 'visible' });
-  await page
-    .locator('.ant-select-item-option')
-    .filter({ hasText: 'default' })
-    .click();
+  // Select Domain 'default'. `BAIDomainSelect` renders as a Selector trigger
+  // `button` (not a `combobox`) whose accessible name concatenates the field
+  // label with the placeholder ("Domain Select Domain") — match the label as
+  // a substring rather than exactly.
+  await modal.getByRole('button', { name: 'Domain' }).click();
+  await page.getByRole('option', { name: 'default', exact: true }).click();
 
   // Click OK to create and verify the modal closes
   await modal.getByRole('button', { name: 'OK' }).click();
@@ -138,23 +168,14 @@ test.describe(
 
       // 2. Verify the Projects tab is selected (BAICard tabList label renamed
       // "Project" -> "Projects", see webui.menu.Projects in ProjectPage.tsx)
-      await expect(
-        page.getByRole('tab', { name: 'Projects', selected: true }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(projectsTab(page)).toBeVisible({ timeout: 30000 });
+      await expect(projectsTab(page)).toHaveAttribute('aria-current', 'true');
 
       // 3. Verify table columns are visible
-      await expect(
-        page.getByRole('columnheader', { name: 'Name' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Domain' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Description' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Type' }),
-      ).toBeVisible();
+      await expect(projectColumnHeader(page, 'Name')).toBeVisible();
+      await expect(projectColumnHeader(page, 'Domain')).toBeVisible();
+      await expect(projectColumnHeader(page, 'Description')).toBeVisible();
+      await expect(projectColumnHeader(page, 'Type')).toBeVisible();
 
       // 4. Verify the default project row
       const defaultRow = page
@@ -167,7 +188,10 @@ test.describe(
       // (Active is a filter tab, not a table column; the default project is active by default).
       // `ProjectPage.tsx`'s status toggle is `BAIRadioGroup`, rendered on
       // Astryx `SegmentedControl` since ticket 10 (`BAIRadioGroup.tsx`).
-      await expect(page.getByRole('radio', { name: 'Active' })).toBeChecked();
+      // `exact` matters: a substring match on "Active" also hits "Inactive".
+      await expect(
+        page.getByRole('radio', { name: 'Active', exact: true }),
+      ).toBeChecked();
       await expect(
         defaultRow.getByRole('cell', { name: 'GENERAL' }),
       ).toBeVisible();
@@ -213,9 +237,8 @@ test.describe(
         .click();
 
       // Verify Update Project dialog appears
-      const modal = page.locator('.ant-modal');
+      const modal = page.getByRole('dialog', { name: 'Update Project' });
       await expect(modal).toBeVisible();
-      await expect(modal.getByText('Update Project')).toBeVisible();
 
       // Verify the name field contains the test project name
       await expect(modal.getByRole('textbox', { name: 'Name' })).toHaveValue(
@@ -273,27 +296,29 @@ test.describe(
         { timeout: 10000 },
       );
 
-      // Verify only one data row is visible (excluding header rows)
-      const dataRows = page.locator('tbody tr:not(.ant-table-measure-row)');
+      // Verify only one data row is visible (excluding header rows). There is
+      // no measure row in the Astryx table, so plain `tbody tr` is sufficient.
+      const dataRows = page.locator('tbody tr');
       await expect(dataRows).toHaveCount(1);
 
+      // Self-cleanup runs HERE, while the filter is still applied and the
+      // table holds this one row. On the unfiltered list the row can land
+      // anywhere across a paginated, ~2500px-wide table, and BAINameActionCell
+      // only reveals its row actions on hover — which makes the cleanup's
+      // hover→click depend on where the row happens to sit.
+      await cleanupTestProject(page, name);
+
       // Clear the filter by clicking its token's remove button. Token labels
-      // follow `"<Field>: <operator> <value>"` (`PowerSearch.tsx`
-      // `tokenizerValue` -> `displayLabel`); "name" has no `defaultOperator`
-      // override, so it uses the BUI default `ilike` = "contains". The
-      // remove control carries `aria-label="Remove {label}"`
-      // (`t('@astryx.token.remove', {label})`, `Token.tsx` / locales/en.json).
-      await page
-        .getByRole('button', { name: `Remove Name: contains ${name}` })
-        .click();
+      // follow `"<Field>: <operator>"` (`PowerSearch.tsx` `tokenizerValue` ->
+      // `displayLabel`) -- the value itself is not part of the accessible
+      // name; "name" has no `defaultOperator` override, so it uses the BUI
+      // default `ilike` = "contains".
+      await page.getByRole('button', { name: 'Remove Name: contains' }).click();
 
       // Verify the default project is visible again (filter cleared)
       await expect(
         page.getByRole('cell', { name: 'default', exact: true }).first(),
       ).toBeVisible({ timeout: 10000 });
-
-      // Self-cleanup.
-      await cleanupTestProject(page, name);
     });
 
     test('Admin can delete a project', async ({ page, request }) => {
@@ -317,8 +342,11 @@ test.describe(
         .getByRole('button', { name: 'Deactivate', exact: true })
         .click();
 
-      // Confirm the antd Popconfirm for deactivation
-      const deactivatePopconfirm = page.locator('.ant-popconfirm');
+      // Confirm the anchored deactivate popover (role="dialog", see
+      // `cleanupTestProject` above for details).
+      const deactivatePopconfirm = page.getByRole('dialog', {
+        name: 'Deactivate',
+      });
       await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
       await deactivatePopconfirm
         .getByRole('button', { name: 'Deactivate' })
@@ -328,10 +356,7 @@ test.describe(
       await expect(projectRow).toBeHidden({ timeout: 10000 });
 
       // Switch to the Inactive tab to find the deactivated project
-      await page
-        .locator('label')
-        .filter({ hasText: /^Inactive$/ })
-        .click();
+      await page.getByRole('radio', { name: 'Inactive', exact: true }).click();
 
       // Find the deactivated project row in the Inactive tab
       const inactiveProjectRow = page
@@ -339,18 +364,19 @@ test.describe(
         .filter({ hasText: name });
       await expect(inactiveProjectRow).toBeVisible({ timeout: 10000 });
 
-      // Hover the row and click the Purge button by its accessible name
-      await inactiveProjectRow.hover();
-      await inactiveProjectRow
-        .getByRole('button', { name: 'Purge', exact: true })
-        .click();
+      // Click the Purge action. The Inactive tab shows 3 row actions (Edit,
+      // Activate, Purge), so Purge collapses into the "More actions"
+      // overflow menu; `clickRowAction` handles both cases.
+      await clickRowAction(page, inactiveProjectRow, 'Purge');
 
       // Verify the Purge Project confirmation dialog appears
       const purgeDialog = page.getByRole('dialog', { name: 'Purge Project' });
       await expect(purgeDialog).toBeVisible({ timeout: 5000 });
 
-      // Type the project name into the confirmation input to enable the Purge button
-      await purgeDialog.locator('#confirmText').fill(name);
+      // Type the project name into the confirmation input to enable the
+      // Purge button. `BAIDeleteConfirmModal`'s confirm input has no
+      // `#confirmText` id in the DOM; it is the dialog's only textbox.
+      await purgeDialog.getByRole('textbox').fill(name);
 
       // Click the Purge button to permanently delete the project
       await purgeDialog.getByRole('button', { name: 'Purge' }).click();
