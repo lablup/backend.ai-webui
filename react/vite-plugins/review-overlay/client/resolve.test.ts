@@ -200,3 +200,61 @@ describe('the anchor’s component name', () => {
     expect(findAnchorTarget(iconOnly)).toBeNull();
   });
 });
+
+// The rect projection is the only ladder step with no selector behind it, so a
+// sibling inserted at the recorded spot is whatever `elementFromPoint` says.
+describe('the landmark’s rect projection', () => {
+  const projected = (over: Partial<AnchorV3> = {}) =>
+    anchor({
+      s: 'nope',
+      tag: 'span',
+      tid: 'page-start',
+      rect: { x: 0.1, y: 0.1, w: 0.2, h: 0.2 },
+      ...over,
+    });
+
+  /** jsdom has no layout: give the landmark a box and name the hit. */
+  const stubLayout = (container: Element, hit: Element) => {
+    container.getBoundingClientRect = () =>
+      ({ left: 0, top: 0, width: 400, height: 200 }) as DOMRect;
+    document.elementFromPoint = () => hit;
+  };
+
+  afterEach(() => {
+    delete (document as Partial<Document>).elementFromPoint;
+  });
+
+  it('refuses a same-component decoy that took over the recorded spot', () => {
+    mount(`
+      <section data-testid="page-start">
+        <span data-name="Link">decoy inserted above the anchor</span>
+        <span data-name="Link">Login</span>
+      </section>
+    `);
+    stubReactGrab({ Link: 'Link' });
+    const landmark = document.querySelector('[data-testid="page-start"]');
+    const decoy = document.querySelector('span');
+    stubLayout(landmark as Element, decoy as Element);
+
+    const withName = projected({
+      c: { name: 'BAIMenu', src: 'src/BAIMenu.tsx:109:16', dn: 'Link' },
+    });
+    expect(quickFindTarget(withName)).toBe(landmark);
+    // The landmark answer is what `pin.ts` escalates on, and the full ladder's
+    // text scan then finds the node the decoy displaced.
+    expect(findAnchorTarget(withName)?.textContent).toBe('Login');
+  });
+
+  it('still projects for an anchor that recorded no text', () => {
+    mount(
+      '<section data-testid="page-start"><button><svg></svg></button></section>',
+    );
+    const landmark = document.querySelector('[data-testid="page-start"]');
+    const iconOnly = document.querySelector('button');
+    stubLayout(landmark as Element, iconOnly as Element);
+
+    const noText = projected({ tag: 'button', txt: undefined });
+    expect(quickFindTarget(noText)).toBe(iconOnly);
+    expect(findAnchorTarget(noText)).toBe(iconOnly);
+  });
+});

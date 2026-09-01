@@ -85,7 +85,8 @@ function querySafe(
 /**
  * The fractional rect inside the landmark, projected back onto the page. Only
  * useful in a real browser: jsdom has no layout, so every rect is zero and
- * this returns null there.
+ * this returns null there. Callers must still text-verify the hit: a sibling
+ * inserted at the recorded spot often carries the same display name.
  */
 function rectProjectedTarget(
   container: Element,
@@ -140,7 +141,12 @@ export function quickFindTarget(
       doc,
       options.ignore,
     );
-    if (projected && !componentConflicts(projected, anchor)) return projected;
+    if (
+      projected &&
+      textMatches(projected, anchor.txt) &&
+      !componentConflicts(projected, anchor)
+    )
+      return projected;
     // A landmark that is a different component is the corner-stacking answer
     // R3.6's component signal exists to refuse.
     return componentConflicts(landmark, anchor) ? null : landmark;
@@ -202,7 +208,12 @@ export function findAnchorTarget(
       doc,
       options.ignore,
     );
-    if (projected && !componentConflicts(projected, anchor)) return projected;
+    if (
+      projected &&
+      textMatches(projected, anchor.txt) &&
+      !componentConflicts(projected, anchor)
+    )
+      return projected;
     if (
       textMatches(landmark, anchor.txt) &&
       !componentConflicts(landmark, anchor)
