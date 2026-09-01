@@ -36,7 +36,7 @@ const readEndpointFromLocalStorage = (): string => {
   return stored.replace(/^"+|"+$/g, '').trim();
 };
 
-const resolveEndpoint = async (): Promise<string> => {
+export const resolveApiEndpoint = async (): Promise<string> => {
   const configPath = (globalThis as Record<string, unknown>).isElectron
     ? 'es6://config.toml'
     : '../../config.toml';
@@ -62,7 +62,7 @@ export const useResolvedApiEndpoint = (): string => {
     return cachedEndpoint;
   }
   if (!inflightPromise) {
-    inflightPromise = resolveEndpoint().then(
+    inflightPromise = resolveApiEndpoint().then(
       (endpoint) => {
         if (endpoint) {
           cachedEndpoint = endpoint;
