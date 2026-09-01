@@ -58,24 +58,50 @@ const Harness: React.FC<{
   );
 };
 
+// The row-action cell picks visible buttons over the overflow menu from the
+// container's width, which jsdom always reports as 0. Give it room so the
+// Delete button — and its reason tooltip — is the path under test.
+beforeAll(() => {
+  Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+    configurable: true,
+    value: 800,
+  });
+});
+
+const TOKEN_ROW = {
+  node: {
+    id: btoa('AccessToken:token-0000'),
+    token: 'bai-token-0000',
+  },
+};
+
+let lastEnvironment: RelayMockEnvironment;
+let resolvePayload: (operation: any) => ReturnType<
+  typeof MockPayloadGenerator.generate
+>;
+
 const renderCard = ({
   endpointUrl = 'https://endpoint.example',
+  tokenEdges = [] as Array<typeof TOKEN_ROW>,
   ...props
 }: {
   endpointUrl?: string | null;
+  tokenEdges?: Array<typeof TOKEN_ROW>;
   isOwnedByCurrentUser?: boolean;
   isDeploymentDestroying?: boolean;
 } = {}) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
-  environment.mock.queueOperationResolver((operation: any) =>
+  const resolve = (operation: any) =>
     MockPayloadGenerator.generate(operation, {
       ModelDeployment: () => ({
         id: btoa('ModelDeployment:deployment-0000'),
         networkAccess: { endpointUrl },
-        accessTokens: { count: 0, edges: [] },
+        accessTokens: { count: tokenEdges.length, edges: tokenEdges },
       }),
-    }),
-  );
+    });
+  environment.mock.queueOperationResolver(resolve);
+  lastEnvironment = environment;
+  resolvePayload = resolve;
   render(
     <RelayEnvironmentProvider environment={environment}>
       <Suspense fallback={null}>
@@ -83,6 +109,19 @@ const renderCard = ({
       </Suspense>
     </RelayEnvironmentProvider>,
   );
+};
+
+// The inner table issues its own list query after the card's fragment query
+// has resolved, so the queued resolver alone leaves it suspended. Drain
+// whatever is pending until nothing is.
+const flushPendingOperations = async () => {
+  await waitFor(() => {
+    const pending = lastEnvironment.mock.getAllOperations();
+    pending.forEach((operation) =>
+      lastEnvironment.mock.resolve(operation, resolvePayload(operation)),
+    );
+    expect(lastEnvironment.mock.getAllOperations()).toHaveLength(0);
+  });
 };
 
 const createButton = () =>
@@ -143,5 +182,33 @@ describe('DeploymentAccessTokensCard — disabled create button states (FR-3679)
     expect(await screen.findByRole('dialog')).toHaveTextContent(
       'deployment.accessToken.Expiration',
     );
+  });
+});
+
+describe('DeploymentAccessTokensCard — the row Delete action carries the same reason', () => {
+  const deleteButton = () =>
+    screen.getByRole('button', { name: /deployment\.accessToken\.Delete/ });
+
+  it('names the ownership reason on the row action and stays inert', async () => {
+    renderCard({ tokenEdges: [TOKEN_ROW], isOwnedByCurrentUser: false });
+
+    await flushPendingOperations();
+    const button = await waitFor(deleteButton);
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    expect(
+      screen.getAllByText('deployment.accessToken.OnlyOwnerCanManage').length,
+    ).toBeGreaterThan(0);
+
+    await userEvent.click(button, { pointerEventsCheck: 0 });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('leaves the row action enabled when the deployment is owned and live', async () => {
+    renderCard({ tokenEdges: [TOKEN_ROW] });
+    await flushPendingOperations();
+
+    const button = await waitFor(deleteButton);
+    expect(button).not.toHaveAttribute('aria-disabled');
+    expect(button).not.toBeDisabled();
   });
 });
