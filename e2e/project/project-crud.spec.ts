@@ -15,6 +15,23 @@ function projectName(label: string) {
   return `e2e-test-project-${TEST_RUN_ID}-${label}`;
 }
 
+// `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+// `<button>`s (BAITabList / Astryx `TabList`), never ARIA `tab` elements —
+// the same contract rbac-role-list.spec.ts and registry.spec.ts already use.
+// The active one carries `aria-current="true"` in place of `aria-selected`.
+function projectsTab(page: Page) {
+  return page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name: 'Projects' });
+}
+
+// A BAITable column header's accessible NAME is built from its sort and
+// resize controls ("Sort by name Resize column name"), so it no longer equals
+// the visible label; match the header's TEXT instead.
+function projectColumnHeader(page: Page, label: string) {
+  return page.getByRole('columnheader').filter({ hasText: label });
+}
+
 // Not serial: each CRUD test provisions and cleans up its own uniquely-named
 // project, so the tests are order-independent and a failure in one does not
 // cascade-skip the others. `mode: 'default'` only removes serial's cascade-skip
@@ -41,21 +58,30 @@ async function cleanupTestProject(page: Page, projectName: string) {
     // the button's `aria-label` (BAINameActionCell), so target by name —
     // index-based selection breaks when optional actions (e.g. "Set Project
     // Admin" on managers >= 26.8) are prepended.
-    await activeProjectRow.hover();
-    await activeProjectRow
-      .getByRole('button', { name: 'Deactivate', exact: true })
-      .click();
-    // The deactivate confirm is an anchored `BAIPopconfirm`-style popover
-    // rendered with `role="dialog"` (`BAINameActionCell.tsx`), accessible
-    // name = the row action's title ("Deactivate").
-    const deactivatePopconfirm = page.getByRole('dialog', {
-      name: 'Deactivate',
-    });
-    await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
-    await deactivatePopconfirm
-      .getByRole('button', { name: 'Deactivate' })
-      .click();
-    await expect(activeProjectRow).toBeHidden({ timeout: 10000 });
+    //
+    // Go through `clickRowAction`: how many actions stay inline vs. collapse
+    // into the "More actions" overflow depends on the rendered column widths.
+    // BAINameActionCell only reveals them on hover, and this table is ~2500px
+    // wide against a 1280px viewport, so scroll the row into view first —
+    // otherwise `click()`'s own scroll moves the row out from under the
+    // pointer and the buttons hide again mid-click. Retry the whole
+    // reveal→confirm step, the same way rbac-role-detail.spec.ts's cleanup
+    // does.
+    await expect(async () => {
+      await activeProjectRow.scrollIntoViewIfNeeded();
+      await clickRowAction(page, activeProjectRow, 'Deactivate');
+      // The deactivate confirm is an anchored `BAIPopconfirm`-style popover
+      // rendered with `role="dialog"` (`BAINameActionCell.tsx`), accessible
+      // name = the row action's title ("Deactivate").
+      const deactivatePopconfirm = page.getByRole('dialog', {
+        name: 'Deactivate',
+      });
+      await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
+      await deactivatePopconfirm
+        .getByRole('button', { name: 'Deactivate' })
+        .click();
+      await expect(activeProjectRow).toBeHidden({ timeout: 10000 });
+    }).toPass({ timeout: 60000 });
   }
 
   // Switch to Inactive tab and purge. `BAIRadioGroup` renders on Astryx
@@ -107,9 +133,11 @@ async function createProject(page: Page, name: string, description: string) {
   await modal.getByRole('textbox', { name: 'Name' }).fill(name);
   await modal.getByRole('textbox', { name: 'Description' }).fill(description);
 
-  // Select Domain 'default'. `BAIDomainSelect` renders as a Selector
-  // trigger `button` (not a `combobox`), accessible name "Domain".
-  await modal.getByRole('button', { name: 'Domain', exact: true }).click();
+  // Select Domain 'default'. `BAIDomainSelect` renders as a Selector trigger
+  // `button` (not a `combobox`) whose accessible name concatenates the field
+  // label with the placeholder ("Domain Select Domain") — match the label as
+  // a substring rather than exactly.
+  await modal.getByRole('button', { name: 'Domain' }).click();
   await page.getByRole('option', { name: 'default', exact: true }).click();
 
   // Click OK to create and verify the modal closes
@@ -140,23 +168,14 @@ test.describe(
 
       // 2. Verify the Projects tab is selected (BAICard tabList label renamed
       // "Project" -> "Projects", see webui.menu.Projects in ProjectPage.tsx)
-      await expect(
-        page.getByRole('tab', { name: 'Projects', selected: true }),
-      ).toBeVisible({ timeout: 10000 });
+      await expect(projectsTab(page)).toBeVisible({ timeout: 30000 });
+      await expect(projectsTab(page)).toHaveAttribute('aria-current', 'true');
 
       // 3. Verify table columns are visible
-      await expect(
-        page.getByRole('columnheader', { name: 'Name' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Domain' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Description' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Type' }),
-      ).toBeVisible();
+      await expect(projectColumnHeader(page, 'Name')).toBeVisible();
+      await expect(projectColumnHeader(page, 'Domain')).toBeVisible();
+      await expect(projectColumnHeader(page, 'Description')).toBeVisible();
+      await expect(projectColumnHeader(page, 'Type')).toBeVisible();
 
       // 4. Verify the default project row
       const defaultRow = page
@@ -169,7 +188,10 @@ test.describe(
       // (Active is a filter tab, not a table column; the default project is active by default).
       // `ProjectPage.tsx`'s status toggle is `BAIRadioGroup`, rendered on
       // Astryx `SegmentedControl` since ticket 10 (`BAIRadioGroup.tsx`).
-      await expect(page.getByRole('radio', { name: 'Active' })).toBeChecked();
+      // `exact` matters: a substring match on "Active" also hits "Inactive".
+      await expect(
+        page.getByRole('radio', { name: 'Active', exact: true }),
+      ).toBeChecked();
       await expect(
         defaultRow.getByRole('cell', { name: 'GENERAL' }),
       ).toBeVisible();
@@ -279,6 +301,13 @@ test.describe(
       const dataRows = page.locator('tbody tr');
       await expect(dataRows).toHaveCount(1);
 
+      // Self-cleanup runs HERE, while the filter is still applied and the
+      // table holds this one row. On the unfiltered list the row can land
+      // anywhere across a paginated, ~2500px-wide table, and BAINameActionCell
+      // only reveals its row actions on hover — which makes the cleanup's
+      // hover→click depend on where the row happens to sit.
+      await cleanupTestProject(page, name);
+
       // Clear the filter by clicking its token's remove button. Token labels
       // follow `"<Field>: <operator>"` (`PowerSearch.tsx` `tokenizerValue` ->
       // `displayLabel`) -- the value itself is not part of the accessible
@@ -290,9 +319,6 @@ test.describe(
       await expect(
         page.getByRole('cell', { name: 'default', exact: true }).first(),
       ).toBeVisible({ timeout: 10000 });
-
-      // Self-cleanup.
-      await cleanupTestProject(page, name);
     });
 
     test('Admin can delete a project', async ({ page, request }) => {

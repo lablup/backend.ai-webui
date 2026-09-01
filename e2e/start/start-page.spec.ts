@@ -406,11 +406,13 @@ test.describe(
           `start?type=url&data=${encodeURIComponent(data)}`,
         );
 
-        // 2. Verify the "Start From URL" modal opens automatically
-        const modal = page
-          .getByRole('dialog')
-          .filter({ hasText: 'Start From URL' });
-        await expect(modal).toBeVisible();
+        // 2. Verify the "Start From URL" modal opens automatically. The modal
+        // is driven by the query params on first render, so it can lag a
+        // plain navigation by more than the default expect timeout — and the
+        // dialog carries "Start From URL" as its accessible name, so match on
+        // that rather than filtering the whole dialog by text.
+        const modal = page.getByRole('dialog', { name: 'Start From URL' });
+        await expect(modal).toBeVisible({ timeout: 20000 });
 
         // 3. Verify the "Import Notebook" tab is active
         const tabs = modal.getByRole('navigation', { name: 'Tabs' });
