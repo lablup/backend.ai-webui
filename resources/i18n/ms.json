@@ -738,7 +738,7 @@
       "CSVUnknownProject": "Projek tidak ditemui dalam domain ini: {{project}}",
       "CSVUserNameRequired": "Nama pengguna diperlukan.",
       "CSVUserNameTooLong": "Nama pengguna mestilah 64 aksara atau kurang.",
-      "MaxUserCount": "Bilangan pengguna maksimum ialah {{count}}.",
+      "MaxUserCount": "Bilangan maksimum pengguna yang boleh dicipta sekaligus ialah {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Sila masukkan nilai positif kurang daripada 2^31",
       "PleaseEnterPositiveInteger": "Sila masukkan nilai positif.",
       "PleaseEnterUniqueNumbers": "Sila masukkan nombor yang unik",

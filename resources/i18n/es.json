@@ -738,7 +738,7 @@
       "CSVUnknownProject": "Proyecto no encontrado en este dominio: {{project}}",
       "CSVUserNameRequired": "El nombre de usuario es obligatorio.",
       "CSVUserNameTooLong": "El nombre de usuario debe tener 64 caracteres o menos.",
-      "MaxUserCount": "El número máximo de usuarios es {{count}}.",
+      "MaxUserCount": "El número máximo de usuarios que se pueden crear a la vez es {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Introduzca un valor positivo menor que 2^31",
       "PleaseEnterPositiveInteger": "Por favor, introduzca un valor positivo.",
       "PleaseEnterUniqueNumbers": "Por favor ingrese números únicos",

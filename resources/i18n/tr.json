@@ -738,7 +738,7 @@
       "CSVUnknownProject": "Bu domain'de proje bulunamadı: {{project}}",
       "CSVUserNameRequired": "Kullanıcı adı gereklidir.",
       "CSVUserNameTooLong": "Kullanıcı adı en fazla 64 karakter olmalıdır.",
-      "MaxUserCount": "Maksimum kullanıcı sayısı {{count}}.",
+      "MaxUserCount": "Bir seferde oluşturulabilecek maksimum kullanıcı sayısı {{count}} adettir.",
       "PleaseEnterPositiveAndUnder2_31": "Lütfen 2^31'den küçük pozitif bir değer girin.",
       "PleaseEnterPositiveInteger": "Lütfen pozitif bir değer girin.",
       "PleaseEnterUniqueNumbers": "Lütfen benzersiz sayılar girin",

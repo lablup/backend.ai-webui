@@ -738,7 +738,7 @@
       "CSVUnknownProject": "Το project δεν βρέθηκε σε αυτόν τον τομέα: {{project}}",
       "CSVUserNameRequired": "Το όνομα χρήστη είναι υποχρεωτικό.",
       "CSVUserNameTooLong": "Το όνομα χρήστη πρέπει να είναι έως 64 χαρακτήρες.",
-      "MaxUserCount": "Ο μέγιστος αριθμός χρηστών είναι {{count}}.",
+      "MaxUserCount": "Ο μέγιστος αριθμός χρηστών που μπορούν να δημιουργηθούν ταυτόχρονα είναι {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Παρακαλώ εισαγάγετε μια θετική τιμή μικρότερη από 2^31",
       "PleaseEnterPositiveInteger": "Εισαγάγετε μια θετική τιμή.",
       "PleaseEnterUniqueNumbers": "Παρακαλώ εισάγετε μοναδικούς αριθμούς",

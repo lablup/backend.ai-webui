@@ -738,7 +738,7 @@
       "CSVUnknownProject": "在此域中未找到项目：{{project}}",
       "CSVUserNameRequired": "用户名为必填项。",
       "CSVUserNameTooLong": "用户名不得超过 64 个字符。",
-      "MaxUserCount": "最大用户数为 {{count}}。",
+      "MaxUserCount": "一次最多可创建 {{count}} 个用户。",
       "PleaseEnterPositiveAndUnder2_31": "请输入小于 2^31 的正数",
       "PleaseEnterPositiveInteger": "请输入正数。",
       "PleaseEnterUniqueNumbers": "请输入不重复的数字",

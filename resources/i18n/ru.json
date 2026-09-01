@@ -738,7 +738,7 @@
       "CSVUnknownProject": "Проект не найден в этом домене: {{project}}",
       "CSVUserNameRequired": "Имя пользователя обязательно.",
       "CSVUserNameTooLong": "Имя пользователя должно содержать не более 64 символов.",
-      "MaxUserCount": "Максимальное количество пользователей: {{count}}.",
+      "MaxUserCount": "Максимальное количество пользователей, которых можно создать за один раз — {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Введите положительное значение меньше 2^31",
       "PleaseEnterPositiveInteger": "Введите положительное значение.",
       "PleaseEnterUniqueNumbers": "Пожалуйста, введите уникальные числа",

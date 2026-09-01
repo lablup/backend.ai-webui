@@ -738,7 +738,7 @@
       "CSVUnknownProject": "Энэ домэйнд төсөл олдсонгүй: {{project}}",
       "CSVUserNameRequired": "Хэрэглэгчийн нэр заавал шаардлагатай.",
       "CSVUserNameTooLong": "Хэрэглэгчийн нэр 64-өөс дээш тэмдэгттэй байж болохгүй.",
-      "MaxUserCount": "Хэрэглэгчийн дээд тоо {{count}} байна.",
+      "MaxUserCount": "Нэг удаад үүсгэх боломжтой хэрэглэгчдийн дээд тоо нь {{count}} байна.",
       "PleaseEnterPositiveAndUnder2_31": "2^31-аас бага эерэг утга оруулна уу",
       "PleaseEnterPositiveInteger": "Эерэг утга оруулна уу.",
       "PleaseEnterUniqueNumbers": "Давтагдаагүй тоо оруулна уу",

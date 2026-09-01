@@ -738,7 +738,7 @@
       "CSVUnknownProject": "Projektia ei löydy tästä toimialueesta: {{project}}",
       "CSVUserNameRequired": "Käyttäjänimi on pakollinen.",
       "CSVUserNameTooLong": "Käyttäjänimen on oltava enintään 64 merkkiä.",
-      "MaxUserCount": "Käyttäjien enimmäismäärä on {{count}}.",
+      "MaxUserCount": "Kerralla luotavien käyttäjien enimmäismäärä on {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Syötä positiivinen arvo, joka on pienempi kuin 2^31",
       "PleaseEnterPositiveInteger": "Syötä positiivinen arvo.",
       "PleaseEnterUniqueNumbers": "Syötä yksilöllisiä numeroita",

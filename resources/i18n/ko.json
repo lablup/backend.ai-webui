@@ -738,7 +738,7 @@
       "CSVUnknownProject": "이 도메인에서 프로젝트를 찾을 수 없습니다: {{project}}",
       "CSVUserNameRequired": "사용자 이름은 필수 입력 항목입니다.",
       "CSVUserNameTooLong": "사용자 이름은 64자 이하여야 합니다.",
-      "MaxUserCount": "최대 사용자 수는 {{count}}명입니다.",
+      "MaxUserCount": "한 번에 생성할 수 있는 최대 사용자 수는 {{count}}명입니다.",
       "PleaseEnterPositiveAndUnder2_31": "2^31보다 작은 양수를 입력하세요.",
       "PleaseEnterPositiveInteger": "양수를 입력하세요.",
       "PleaseEnterUniqueNumbers": "중복되지 않는 숫자를 입력하세요",

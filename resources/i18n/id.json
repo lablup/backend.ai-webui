@@ -738,7 +738,7 @@
       "CSVUnknownProject": "Proyek tidak ditemukan di domain ini: {{project}}",
       "CSVUserNameRequired": "Nama pengguna wajib diisi.",
       "CSVUserNameTooLong": "Nama pengguna harus 64 karakter atau kurang.",
-      "MaxUserCount": "Jumlah maksimum pengguna adalah {{count}}.",
+      "MaxUserCount": "Jumlah maksimum pengguna yang dapat dibuat sekaligus adalah {{count}}.",
       "PleaseEnterPositiveAndUnder2_31": "Silakan masukkan nilai positif kurang dari 2^31",
       "PleaseEnterPositiveInteger": "Harap masukkan nilai positif.",
       "PleaseEnterUniqueNumbers": "Silakan masukkan angka yang unik",

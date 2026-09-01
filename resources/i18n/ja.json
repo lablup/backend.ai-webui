@@ -738,7 +738,7 @@
       "CSVUnknownProject": "このドメインにプロジェクトが見つかりません: {{project}}",
       "CSVUserNameRequired": "ユーザー名は必須です。",
       "CSVUserNameTooLong": "ユーザー名は64文字以内にしてください。",
-      "MaxUserCount": "ユーザーの最大数は{{count}}です。",
+      "MaxUserCount": "一度に作成できるユーザーの最大数は{{count}}人です。",
       "PleaseEnterPositiveAndUnder2_31": "2^31未満の正の値を入力してください。",
       "PleaseEnterPositiveInteger": "正の値を入力してください。",
       "PleaseEnterUniqueNumbers": "重複しない数値を入力してください",
