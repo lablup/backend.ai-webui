@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "A form control for choosing a sub path inside a given virtual folder. It renders a BAISelect purely as a trigger — the dropdown never opens; every open gesture, mouse or keyboard, is redirected to `BAIDirectoryPickerModal`, so a path can only be picked by browsing and never typed. The value is the sub path within the vfolder: `''` for the vfolder root, `'sub/path'` below it, and `undefined` while nothing has been picked; the trigger displays it with a leading slash so a chosen root is visibly different from an empty field. The vfolder itself is chosen elsewhere and handed in as `vfolderUuid`. `value`, `defaultValue` and `onChange` follow the controllable-value convention, so the component drops into a Form.Item and works controlled or uncontrolled. Opening the picker preloads the modal's query inside a transition, which is what the trigger shows as its loading state.",
+      "A form control for choosing a sub path inside a given virtual folder. It renders a select-like `ComplexSelector` purely as a display trigger — it has no dropdown of its own; every open gesture, mouse or keyboard, is redirected to `BAIDirectoryPickerModal`, so a path can only be picked by browsing and never typed. The value is the sub path within the vfolder: `''` for the vfolder root, `'sub/path'` below it, and `undefined` while nothing has been picked; the trigger displays it with a leading slash so a chosen root is visibly different from an empty field. The vfolder itself is chosen elsewhere and handed in as `vfolderUuid`. `value`, `defaultValue` and `onChange` follow the controllable-value convention, so the component drops into a Form.Item and works controlled or uncontrolled. Opening the picker preloads the modal's query inside a transition, which is what the trigger shows as its loading state.",
     bestPractices: [
       {
         guidance: true,
@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Set `open`, `onOpenChange`, `loading`, `disabled`, `value` or `onChange` through `selectProps`; those keys are removed from its type because the component drives them to redirect the dropdown into the modal.',
+          'Drive the trigger open state or loading yourself — the component owns both and redirects every open gesture into the directory picker modal.',
       },
       {
         guidance: false,
@@ -80,13 +80,13 @@ export const docs = {
       name: 'style',
       type: 'React.CSSProperties',
       description:
-        'Inline style forwarded to the trigger select, typically to set its width.',
+        'Inline style forwarded to the trigger, typically to set its width.',
     },
     {
-      name: 'selectProps',
-      type: "Omit<BAISelectProps, 'value' | 'onChange' | 'open' | 'onOpenChange' | 'loading' | 'disabled'>",
+      name: 'label',
+      type: 'string',
       description:
-        'Extra props spread onto the trigger select, for things like the placeholder or the accessible label. The six keys the component owns are excluded.',
+        'Accessible name of the trigger; visually hidden (the surrounding Form.Item renders the visible label). Defaults to the picker\'s own "Select a path" copy.',
     },
   ],
   examples: [
