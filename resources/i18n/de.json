@@ -3509,7 +3509,7 @@
     "JsonConfigAppliedSuccessfully": "Theme-Einstellungen wurden erfolgreich angewendet.",
     "PreviewModeAlert": "Sie verwenden derzeit den Theme‑Vorschau‑Modus. Bitte setzen Sie Ihre Arbeit im Originalfenster fort.",
     "ThemeJsonConfiguration": "Theme-JSON-Konfiguration",
-    "ThemeJsonConfigurationDesc": "Importieren Sie eine JSON-Datei, um das Theme zu ändern, oder exportieren Sie das aktuelle Theme als JSON. Um die Änderungen auf Ihrer Website anzuwenden, exportieren Sie die JSON-Datei und kopieren Sie sie in resources/theme.json auf dem WebUI-Webserver.",
+    "ThemeJsonConfigurationDesc": "Importieren Sie eine JSON-Datei, um das Theme zu ändern, oder exportieren Sie das aktuelle Theme als JSON. Mit OK wird es in den Entwurf geladen; „Anwenden“ auf der Branding-Seite speichert das Theme für diese Domäne.",
     "button": {
       "ExportToJson": "Als JSON exportieren",
       "ImportFromJson": "JSON importieren",
@@ -3696,7 +3696,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Das aktualisierte Theme kann nicht sofort angewendet werden. Wenn Sie das Theme anwenden möchten, wenden Sie sich bitte an unser Support‑Team und senden Sie die exportierte Konfigurationsdatei (JSON).",
       "ErrorColor": "Fehlerfarbe",
       "ErrorColorDesc": "Die Farbe, die auf Schaltflächen oder Warnungen angewendet wird, die kritische Aktionen wie das Löschen darstellen, um Warnungen oder Fehler anzuzeigen.",
       "HeaderBg": "Hintergrundfarbe der Kopfzeile",

@@ -3494,7 +3494,7 @@
     "JsonConfigAppliedSuccessfully": "Theme settings have been successfully applied.",
     "PreviewModeAlert": "You are currently using the theme preview mode. Please proceed with your actual work in the original window.",
     "ThemeJsonConfiguration": "Theme JSON Configuration",
-    "ThemeJsonConfigurationDesc": "Import a JSON file to change the theme or export the current theme as JSON. To apply the changes to your site, export the JSON file and copy it to resources/theme.json in the WebUI web server.",
+    "ThemeJsonConfigurationDesc": "Import a JSON file to change the theme or export the current theme as JSON. Press OK to load it into the draft; Apply on the Branding page saves the theme for this domain.",
     "button": {
       "ExportToJson": "Export JSON",
       "ImportFromJson": "Import JSON",
@@ -3681,7 +3681,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "The updated theme cannot be applied immediately. If you would like to apply the theme, please contact our support team with the exported configuration JSON file.",
       "ErrorColor": "Error Color",
       "ErrorColorDesc": "The color applied to buttons or alert representing critical actions, such as deletion, to indicate warnings or errors.",
       "HeaderBg": "Header Background Color",

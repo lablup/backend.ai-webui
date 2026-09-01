@@ -3509,7 +3509,7 @@
     "JsonConfigAppliedSuccessfully": "Cài đặt chủ đề đã được áp dụng thành công.",
     "PreviewModeAlert": "Bạn đang ở chế độ xem trước giao diện. Vui lòng quay lại cửa sổ gốc để thực hiện công việc.",
     "ThemeJsonConfiguration": "Cấu hình JSON chủ đề",
-    "ThemeJsonConfigurationDesc": "Nhập một tệp JSON để thay đổi chủ đề hoặc xuất chủ đề hiện tại dưới dạng JSON. Để áp dụng thay đổi lên trang của bạn, xuất tệp JSON và sao chép vào resources/theme.json trên máy chủ WebUI.",
+    "ThemeJsonConfigurationDesc": "Nhập tệp JSON để thay đổi chủ đề hoặc xuất chủ đề hiện tại dưới dạng JSON. Nhấn OK để tải vào bản nháp; Áp dụng trên trang Branding sẽ lưu chủ đề cho miền này.",
     "button": {
       "ExportToJson": "Xuất JSON",
       "ImportFromJson": "Nhập JSON",
@@ -3696,7 +3696,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Chủ đề vừa cập nhật không thể áp dụng ngay. Nếu bạn muốn áp dụng chủ đề, vui lòng liên hệ bộ phận hỗ trợ của chúng tôi kèm theo tệp JSON cấu hình đã xuất.",
       "ErrorColor": "Màu lỗi",
       "ErrorColorDesc": "Màu được áp dụng cho các nút hoặc cảnh báo thể hiện các hành động quan trọng, chẳng hạn như xóa, để biểu thị cảnh báo hoặc lỗi.",
       "HeaderBg": "Màu nền tiêu đề",
