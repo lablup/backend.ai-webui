@@ -103,6 +103,25 @@ VITE_THEME_HEADER_COLOR=#7C3AED
 
 Vite auto-loads `VITE_*` vars from this file and exposes them on `import.meta.env` for the React app, tinting the header so you can tell multiple instances apart at a glance. You can also export `VITE_THEME_HEADER_COLOR` in the shell — same effect, no file edit needed.
 
+## Review overlay (`VITE_DEV_REVIEW_OVERLAY`)
+
+Off by default. Set it in `.env.development.local` or the shell before `pnpm run dev`:
+
+```bash
+VITE_DEV_REVIEW_OVERLAY=1
+```
+
+With it on, the dev server injects the review overlay (`react/vite-plugins/review-overlay/`). ⌘⌃C — or the dock's **📍 Review** button — picks an element and copies a `#bai=v3` markdown block to paste into the PR comment, the PR's Teams thread, or a Claude prompt. Every such block already posted on the PRs this server serves comes back as a numbered pin on the element it was picked from, with its GitHub state (resolved / replied / reacted / outdated), and opening a block's link lands on that element.
+
+Two endpoints back it, both **GET only, with no request parameters**, both dev-only:
+
+| Endpoint          | Answers                                                        |
+| ----------------- | -------------------------------------------------------------- |
+| `/__review/state` | the running PR, the served set, the repository and `isPrivate` |
+| `/__review/pins`  | every `#bai=v3` block found on the served PRs, merged by id    |
+
+The served set comes from the dev-server skill's boot record (`BAI_REVIEW_BOOT_RECORD`) when there is one — that is the whole stack below the running branch — and from `gh pr list --head <branch>` otherwise. Reads go through the box's own `gh` credentials, are cached for 15 s with one shared upstream fetch however many people are looking, and are **refused entirely for a private repository**. The token never reaches the browser.
+
 ## CLI login (`/cli-login`)
 
 `bai-agent login` (`packages/backend.ai-agent-cli`, the Backend.AI WebUI Agent CLI) hands the CLI the session this dev server is already logged in with, via the `/cli-login` page. The route is always mounted; it is not linked from any menu.
