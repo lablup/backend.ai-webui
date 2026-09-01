@@ -146,7 +146,12 @@ function boot() {
       return;
     }
     if (pathNeedsChange(anchor, location)) {
-      const target = pinUrl(anchor, fragment.id, fragment.anchorB64);
+      const target = pinUrl(
+        anchor,
+        fragment.id,
+        fragment.anchorB64,
+        location.hash,
+      );
       if (guard.shouldNavigate(fragment.id, target)) {
         // Path and query first (R3.3): a full reload, because React Router
         // owns the history and re-running our boot is cheap.

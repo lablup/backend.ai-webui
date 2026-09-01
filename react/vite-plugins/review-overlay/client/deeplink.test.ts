@@ -97,6 +97,26 @@ describe('pinUrl', () => {
       pinUrl(anchor({ q: 'status=RUNNING' }), 'c_zdv3rhz', 'QUJDREVGR0g'),
     ).toBe('/session?status=RUNNING#bai=v3.c_zdv3rhz.QUJDREVGR0g');
   });
+
+  // The pin can ride inside a fragment the app already uses — which is why the
+  // parser accepts `&bai=v3` at all.
+  it('keeps the fragment the app was already using', () => {
+    expect(
+      pinUrl(anchor(), 'c_zdv3rhz', 'QUJDREVGR0g', '#tab=general&x=1'),
+    ).toBe('/session#tab=general&x=1&bai=v3.c_zdv3rhz.QUJDREVGR0g');
+  });
+
+  it('replaces a pin already in the fragment rather than stacking one', () => {
+    expect(
+      pinUrl(anchor(), 'c_new', 'QUJD', '#tab=general&bai=v3.c_old.WkhH'),
+    ).toBe('/session#tab=general&bai=v3.c_new.QUJD');
+  });
+
+  it('leaves a fragment that is only a pin as one pin', () => {
+    expect(pinUrl(anchor(), 'c_new', 'QUJD', '#bai=v3.c_old.WkhH')).toBe(
+      '/session#bai=v3.c_new.QUJD',
+    );
+  });
 });
 
 describe('retryUntil', () => {

@@ -33,13 +33,26 @@ export function pathNeedsChange(
   return anchor.p !== location.pathname || want !== location.search;
 }
 
+/** Everything in the fragment that is not a pin, so the app's own hash lives. */
+export function otherFragment(hash: string): string {
+  return (hash || '')
+    .replace(/^#/, '')
+    .split('&')
+    .filter(
+      (part) => part && !/^bai=v3\./.test(part) && !/^bai-review=/.test(part),
+    )
+    .join('&');
+}
+
 export function pinUrl(
   anchor: AnchorV3,
   id: string,
   anchorB64: string,
+  hash = '',
 ): string {
   const query = anchor.q ? `?${anchor.q}` : '';
-  return `${anchor.p}${query}#bai=v3.${id}.${anchorB64}`;
+  const rest = otherFragment(hash);
+  return `${anchor.p}${query}#${rest ? `${rest}&` : ''}bai=v3.${id}.${anchorB64}`;
 }
 
 /** A path is shown to a human here, so `%ED%95%9C` is not the answer. */
