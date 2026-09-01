@@ -106,6 +106,7 @@ describe('InputNumberWithSlider marks', () => {
 });
 
 const ControlledSlider: React.FC = () => {
+  'use memo';
   const [value, setValue] = useState(0);
   return (
     <InputNumberWithSlider
