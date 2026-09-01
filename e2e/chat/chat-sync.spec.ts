@@ -149,12 +149,13 @@ test.describe(
 
       // In the first pane, click the attachment button. `ChatSender` labels it
       // t('chatui.Attachments'); the antd icon-derived name 'link' is gone.
-      // astryx-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
-      const firstChatCard = page.locator('.astryx-card').nth(1);
-      const secondChatCard = page.locator('.astryx-card').nth(2);
-      const attachButton = firstChatCard
-        .getByRole('button', { name: 'Attachments' })
-        .first();
+      // One such button per pane, in pane order.
+      const attachButtons = page.getByRole('button', {
+        name: 'Attachments',
+        exact: true,
+      });
+      await expect(attachButtons).toHaveCount(2, { timeout: 10000 });
+      const attachButton = attachButtons.nth(0);
 
       // Capture the file chooser before clicking the button
       const fileChooserPromise = page.waitForEvent('filechooser');
@@ -169,17 +170,21 @@ test.describe(
         { name: 'test.png', mimeType: 'image/png', buffer: smallPng },
       ]);
 
+      // `ChatSender` renders each attached image as an Astryx `Thumbnail` with
+      // `alt`/`label` set to the file name, inside a `ChatComposerDrawer`
+      // labelled t('chatui.Attachments'). `ChatCard` exposes no pane-level
+      // role, name or test id (Astryx `Card` renders a bare div), so pane
+      // membership is asserted by count and DOM order rather than by scoping
+      // to a container: exactly one `test.png` thumbnail per pane, meaning the
+      // attachment propagated from pane 1 to pane 2.
+      const attachmentThumbnails = page.getByRole('img', { name: 'test.png' });
+      await expect(attachmentThumbnails).toHaveCount(2, { timeout: 10000 });
+
       // Verify the attachment appears in the first pane
-      const firstPaneAttachArea = firstChatCard.locator(
-        '[class*="attachment"], [class*="Attachment"], [class*="file"]',
-      );
-      await expect(firstPaneAttachArea.first()).toBeVisible({ timeout: 10000 });
+      await expect(attachmentThumbnails.nth(0)).toBeVisible({ timeout: 10000 });
 
       // Verify the attachment also appears in the second pane (sync propagation)
-      const secondPaneAttachArea = secondChatCard.locator(
-        '[class*="attachment"], [class*="Attachment"], [class*="file"]',
-      );
-      await expect(secondPaneAttachArea.first()).toBeVisible({
+      await expect(attachmentThumbnails.nth(1)).toBeVisible({
         timeout: 10000,
       });
     });
