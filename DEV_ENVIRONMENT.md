@@ -103,6 +103,20 @@ VITE_THEME_HEADER_COLOR=#7C3AED
 
 Vite auto-loads `VITE_*` vars from this file and exposes them on `import.meta.env` for the React app, tinting the header so you can tell multiple instances apart at a glance. You can also export `VITE_THEME_HEADER_COLOR` in the shell — same effect, no file edit needed.
 
+## Review overlay (`VITE_DEV_REVIEW_OVERLAY`)
+
+Off by default. Set it in `.env.development.local` or the shell before `pnpm run dev`:
+
+```bash
+VITE_DEV_REVIEW_OVERLAY=1
+```
+
+With it on, the dev server injects the review overlay (`react/vite-plugins/review-overlay/`). ⌘⌃C — or the dock's **📍 Review** button — picks an element and copies a `#bai=v3` markdown block to paste into the PR comment, the PR's Teams thread, or a Claude prompt.
+
+Opening that block's link back on a dev server is the read side, and it is a **deep link only**: the fragment `#bai=v3.<id>.<anchor>` carries the whole anchor, so the page applies the block's path and query, finds the element (retrying for ~10 s while the SPA renders) and pins it with the quoted label from the block. Nothing is looked up anywhere — the dev server reads no channel, serves no pin list and polls nothing; GitHub's unresolved threads are where a pin's state lives. A link with no anchor is plain text, an old `#bai-review=` link gets one toast, and an element that cannot be found gets one toast.
+
+`/__review/state` (GET only, no parameters) is unchanged from the write side: it answers `{pr, repo, branch, source}` so a copied block can carry the PR number.
+
 ## CLI login (`/cli-login`)
 
 `bai-agent login` (`packages/backend.ai-agent-cli`, the Backend.AI WebUI Agent CLI) hands the CLI the session this dev server is already logged in with, via the `/cli-login` page. The route is always mounted; it is not linked from any menu.

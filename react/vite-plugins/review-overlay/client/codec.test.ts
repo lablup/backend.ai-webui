@@ -27,6 +27,13 @@ describe('anchor codec', () => {
     await expect(decodeAnchor(encoded)).resolves.toEqual(anchor);
   });
 
+  // A tiny base64 payload inflates to megabytes; the decoder stops early.
+  it('refuses a payload that inflates past the cap', async () => {
+    const bomb = await encodeAnchor({ ...anchor, s: 'a'.repeat(200_000) });
+    expect(bomb.length).toBeLessThan(2048);
+    await expect(decodeAnchor(bomb)).resolves.toBeNull();
+  });
+
   it('produces a fragment-safe base64url string (no +, /, =)', async () => {
     const encoded = await encodeAnchor({
       ...anchor,
