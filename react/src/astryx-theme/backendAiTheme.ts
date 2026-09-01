@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 21;
+export const THEME_NAME_REV = 22;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -809,6 +809,11 @@ const ANTD_HOVER_PARITY = {
       // truncating trigger's `nowrap` reaches the bubble and its 300px content
       // cap can no longer wrap — the text paints outside the surface. FR-3573.
       whiteSpace: 'normal',
+      // A `Kbd` inside the bubble paints with these; the dark palette's
+      // `--color-neutral` (#262626) equals the composited bubble. FR-3726.
+      '--color-neutral': 'rgba(255,255,255,0.16)',
+      '--color-border-emphasized': 'rgba(255,255,255,0.35)',
+      '--color-text-secondary': 'rgba(255,255,255,0.85)',
     },
   },
   // antd's `.ant-tabs-tab:hover` recolours the LABEL and paints no background.

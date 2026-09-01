@@ -10,7 +10,6 @@ import WEBUINotificationDrawer from './WEBUINotificationDrawer';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Kbd } from '@astryxdesign/core/Kbd';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { MediaTheme } from '@astryxdesign/core/theme';
 import { BAIBadgeCount } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
@@ -58,15 +57,12 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
   });
 
   // TRAP (measured, twice). `Tooltip` and the drawer render as inline SIBLINGS
-  // of the trigger, not through a portal, so a `MediaTheme` wrapper reaches
-  // their panels too — that pinned `color-scheme: dark` on the tooltip in both
-  // app modes and gave white text on a white bubble.
-  //
-  // So the band context sits on the trigger BUTTON via `data-astryx-media`
-  // (MediaTheme's own mechanism, at element scope), and only the tooltip
-  // CONTENT is wrapped. That content's `mode="dark"` is CONSTANT, not the
-  // app's opposite: `ANTD_HOVER_PARITY` pins the bubble to `colorBgSpotlight`
-  // (`rgba(0,0,0,0.85)` / `#424242`), dark in BOTH schemes. QA-FINDINGS Q-10.
+  // of the trigger, not through a portal, so a `MediaTheme` wrapper around the
+  // trigger reaches their panels too. The band context therefore sits on the
+  // trigger BUTTON only, via `data-astryx-media` (QA-FINDINGS Q-10). The
+  // tooltip's `Kbd` is coloured by the tooltip block of `ANTD_HOVER_PARITY`,
+  // not by a `MediaTheme` wrapper — the dark palette's `--color-neutral`
+  // equals the bubble (FR-3726).
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 
   return (
@@ -75,9 +71,9 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
           (Astryx uses logical placements — MAPPING §4). */}
       <Tooltip
         content={
-          <MediaTheme mode="dark">
+          <>
             {t('notification.Notifications')} <Kbd keys="]" />
-          </MediaTheme>
+          </>
         }
         placement="start"
       >

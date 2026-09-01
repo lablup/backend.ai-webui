@@ -40,13 +40,13 @@ import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import { theme } from '../../../theme-shim';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
+import BAIText from '../../BAIText';
 import { AstryxFormTextInput } from '../../astryxFormControls';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import './EditableFileName.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
 import { useMutation } from '@tanstack/react-query';
 import * as _ from 'lodash-es';
 import { File, Folder, PencilIcon } from 'lucide-react';
@@ -190,18 +190,17 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
               style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
             >
               <File size="1em" style={{ flexShrink: 0 }} />
-              <Text
-                maxLines={1}
-                hasTruncateTooltip
+              <BAIText
+                ellipsis={{ tooltip: true }}
                 style={{
-                  maxWidth: '100%',
+                  minWidth: 0,
                   color: isPendingRenamingAndRefreshing
                     ? token.colorTextTertiary
                     : undefined,
                 }}
               >
                 {displayName}
-              </Text>
+              </BAIText>
             </BAIFlex>
           )}
           {isEditable ? (

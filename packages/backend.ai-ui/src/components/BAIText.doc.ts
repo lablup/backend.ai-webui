@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Inline text built on the Astryx Text primitive, adding the treatments Text does not carry on its own: truncation with an optional tooltip and an expand link, a copy-to-clipboard control, and the semantic color, mark and code boxes. The type, strong, delete, ellipsis and copyable props are mapped onto Astryx equivalents internally (type onto Text color, strong onto weight semibold, delete onto hasStrikethrough, ellipsis onto maxLines), so callers keep one vocabulary across the app. Its strings (the copy label, the expand and collapse links) are translated through useBAIi18n. Remaining props pass through to Astryx Text, which also forwards standard HTML attributes.',
+      'Inline text with the antd Typography.Text prop surface and structure, rendered on Astryx tokens: one span that inherits the surrounding font size, plus the semantic colors, the strong/italic/underline/delete decorations, the code, keyboard and mark boxes, CSS truncation (single or multi-line) with an optional tooltip and an expand link, and a copy-to-clipboard control. With ellipsis or copyable the span becomes an inline-flex row holding the clamp box and the controls, so the text still measures its own overflow. Its strings (the copy label, the expand and collapse links) are translated through useBAIi18n. Remaining props are standard HTML attributes and land on the root span.',
     bestPractices: [
       {
         guidance: true,
@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Combine copyable with non-string children and expect the clipboard to receive the rendered output — the copy target falls back to an empty string unless children are a string or a number, or copyable.text is supplied.',
+          'Rely on the rendered children as the copy target when they are truncated or built from elements — pass copyable.text with the full value instead.',
       },
       {
         guidance: false,
@@ -56,7 +56,7 @@ export const docs = {
       name: 'type',
       type: "'secondary' | 'success' | 'warning' | 'danger'",
       description:
-        'Semantic color, mapped onto the matching Astryx Text color. The status colors are defined once in the theme rather than per call site.',
+        'Semantic color, from the theme tokens (--color-text-secondary, --color-success, --color-warning, --color-error).',
     },
     {
       name: 'strong',
@@ -88,7 +88,13 @@ export const docs = {
     {
       name: 'code',
       type: 'boolean',
-      description: 'Wraps the text in an Astryx Code box.',
+      description: 'Wraps the text in an inline code box.',
+    },
+    {
+      name: 'keyboard',
+      type: 'boolean',
+      description:
+        'Renders the text as an Astryx Kbd shortcut; the children are the keys spec (for example "mod+c").',
     },
     {
       name: 'disabled',
@@ -104,8 +110,15 @@ export const docs = {
     },
     {
       name: 'size',
-      type: "TextProps['size']",
-      description: 'Astryx Text size step, forwarded as-is.',
+      type: 'BAITextSize',
+      description:
+        'Font size step on the Astryx scale (4xs … 4xl). Without it the text inherits the surrounding size.',
+    },
+    {
+      name: 'inheritColor',
+      type: 'boolean',
+      description:
+        'Takes the surrounding color instead of the default text color, for a BAIText nested in a link or another element that owns the color. Ignored when type or disabled is set.',
     },
     {
       name: 'ellipsis',
@@ -117,7 +130,7 @@ export const docs = {
       name: 'copyable',
       type: 'boolean | BAITextCopyConfig',
       description:
-        'Appends a copy button beside the text. The object form takes text to copy something other than the children, icon to replace the glyph, and onCopy to observe the click; the button shows a check for 1.5 seconds after copying.',
+        'Appends a copy button beside the text. The object form takes text (a string or a function returning one) to copy something other than the children, icon and tooltips as a node or an antd-style [resting, copied] tuple, and onCopy to observe the click; the button shows the copied state for 1.5 seconds after copying.',
     },
     {
       name: 'style',
