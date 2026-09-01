@@ -14,6 +14,7 @@ import {
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
+import { usersTabButton } from '../utils/user-profile-util';
 import test, { expect } from '@playwright/test';
 
 // FR-3331/FR-3339 (PRs #8303/#8315) renamed the User Setting modal's submit
@@ -109,11 +110,7 @@ test.describe.serial(
       // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
       // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
       // which this app never does (see registry.spec.ts's identical pattern).
-      await expect(
-        page
-          .getByRole('navigation', { name: 'Tabs' })
-          .getByRole('button', { name: 'Users' }),
-      ).toBeVisible();
+      await expect(usersTabButton(page)).toBeVisible();
 
       // 4. Clean up any existing test user from previous runs
       await cleanupTestUser(page);
@@ -159,7 +156,7 @@ test.describe.serial(
       await navigateTo(page, 'credential');
 
       // 3. Wait for the Users tab to confirm the page has fully loaded
-      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      await expect(usersTabButton(page)).toBeVisible();
 
       // 4. Locate the user in the table
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
@@ -220,7 +217,7 @@ test.describe.serial(
 
       // 3. Ensure "Active" filter is selected (should be default)
       // Wait for Users tab to confirm page has fully loaded before interacting with filter
-      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      await expect(usersTabButton(page)).toBeVisible();
       await page.getByText('Active', { exact: true }).click();
 
       // 4. Locate the user to deactivate in the table
