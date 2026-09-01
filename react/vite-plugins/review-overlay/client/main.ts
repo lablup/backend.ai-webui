@@ -183,7 +183,7 @@ function boot() {
     anchoredId = id;
     cancelAnchorRetry();
     cancelAnchorRetry = retryUntil(
-      () => !!panel.locatePin(id, { full: true, quiet: true }),
+      () => !!panel.locatePin(id, { full: true, quiet: true, highlight: true }),
       {
         tries: ANCHOR_TRIES,
         everyMs: ANCHOR_EVERY_MS,

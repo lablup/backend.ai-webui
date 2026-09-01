@@ -361,6 +361,7 @@ export function createPinPanel(options: PinPanelOptions) {
       }
       if (!entry.element) {
         const node = el('div', 'pin');
+        node.dataset.pinId = entry.pin.id;
         node.append(el('span'));
         node.title = 'Show this pin’s comment';
         node.addEventListener('click', () => revealItem(entry.pin.id));
@@ -434,16 +435,21 @@ export function createPinPanel(options: PinPanelOptions) {
     highlightTimer = window.setTimeout(() => {
       highlightId = null;
       items.querySelector('.item.hl')?.classList.remove('hl');
+      pinLayer.querySelector('.pin.pulse')?.classList.remove('pulse');
     }, HIGHLIGHT_MS);
     renderPanel();
     const item = items.querySelector(`.item[data-pin-id="${id}"]`);
     item?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
   }
 
-  /** `full` runs the expensive text scan; the poll loop never does. */
+  /**
+   * `full` runs the expensive text scan; the poll loop never does. `highlight`
+   * is for a deep link: the highlight belongs to the moment the pin lands on
+   * its element, seconds after the payload that described it arrived.
+   */
   function locatePin(
     id: string,
-    { full = false, quiet = false } = {},
+    { full = false, quiet = false, highlight = false } = {},
   ): Element | null {
     const entry = entries.get(id);
     if (!entry?.anchor) return null;
@@ -458,6 +464,8 @@ export function createPinPanel(options: PinPanelOptions) {
       return null;
     }
     entry.located = target;
+    // Before `refreshPinLayer`, so the marker is rebuilt already pulsing.
+    if (highlight) revealItem(id);
     target.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
     flash(target);
     refreshPinLayer();

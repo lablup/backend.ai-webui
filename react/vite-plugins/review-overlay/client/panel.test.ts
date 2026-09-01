@@ -143,9 +143,42 @@ describe('pin panel', () => {
 
   it('draws a numbered pin for an anchor that resolves on this page', () => {
     panel.applyPayload(payload([pin()]));
-    const marker = root.querySelector('.pin');
+    const marker = root.querySelector('.pin') as HTMLElement;
     expect(marker?.textContent).toBe('1');
+    // A page can carry several pins; anything automating one needs its id.
+    expect(marker.dataset.pinId).toBe('c_zdv3rhz');
     expect(counts.at(-1)).toBe(1);
+  });
+
+  // The retry ladder locates the element seconds after the payload arrived,
+  // so a highlight tied to the payload has already expired by then.
+  it('highlights item and pin when the deep link places it, not before', () => {
+    panel.applyPayload(payload([pin()]));
+    expect(root.querySelector('.item.hl')).toBeNull();
+    expect(root.querySelector('.pin.pulse')).toBeNull();
+
+    panel.locatePin('c_zdv3rhz', { full: true, highlight: true });
+    expect((root.querySelector('.item.hl') as HTMLElement)?.dataset.pinId).toBe(
+      'c_zdv3rhz',
+    );
+    expect(
+      (root.querySelector('.pin.pulse') as HTMLElement)?.dataset.pinId,
+    ).toBe('c_zdv3rhz');
+
+    // A poll lands right after: the highlight is state, so it survives.
+    panel.applyPayload(payload([pin({ text: 'off by 9px' })]));
+    expect(root.querySelector('.item.hl')).not.toBeNull();
+    expect(root.querySelector('.pin.pulse')).not.toBeNull();
+  });
+
+  it('stops highlighting item and pin once the highlight expires', () => {
+    vi.useFakeTimers();
+    panel.applyPayload(payload([pin()]));
+    panel.locatePin('c_zdv3rhz', { full: true, highlight: true });
+    vi.advanceTimersByTime(10_000);
+    expect(root.querySelector('.item.hl')).toBeNull();
+    expect(root.querySelector('.pin.pulse')).toBeNull();
+    vi.useRealTimers();
   });
 
   it('keeps an unlocatable pin out of the page but in the list', () => {
