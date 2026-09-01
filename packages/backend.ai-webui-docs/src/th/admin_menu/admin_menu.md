@@ -247,7 +247,6 @@ superadmin สามารถลบบัญชีผู้ใช้ที่ถ
   จากนั้นคลิกปุ่ม **ลบผู้ใช้อย่างถาวร** (ปุ่มถังขยะที่ปรากฏถัดจากจำนวนที่เลือก)
 
 ![](../images/user_purge_inactive_tab.png)
-<!-- TODO: Capture screenshot of user_purge_inactive_tab.png — Inactive Users tab showing the per-row purge (trash) icon and the bulk Permanently Delete Users button -->
 
 ทั้งสองการกระทำจะเปิดโมดัลยืนยัน **ลบผู้ใช้อย่างถาวร** เนื่องจากการดำเนินการนี้
 ไม่สามารถยกเลิกได้ คุณต้องพิมพ์วลียืนยันที่แสดงในโมดัลก่อนที่ปุ่มลบจะเปิดใช้งาน
@@ -284,10 +283,9 @@ superadmin สามารถลบบัญชีผู้ใช้ที่ถ
 ไม่จำเป็นต้องสร้างและกำหนดคีย์แพร์ด้วยตนเองในกรณีส่วนใหญ่
 
 คีย์แพร์สามารถแสดงในแท็บข้อมูลประจำตัวของหน้าผู้ใช้ คีย์แพร์ที่ใช้งานอยู่จะแสดง
-ทันที และหากต้องการดูคีย์แพร์ที่ไม่ได้ใช้งาน ให้คลิกแผงไม่ทำงานที่ด้านล่าง
+ทันที และหากต้องการดูคีย์แพร์ที่ไม่ได้ใช้งาน ให้คลิก **ไม่ทำงาน** ที่ด้านบนของตาราง
 
 ![](../images/credential_list_tab.png)
-<!-- TODO: Re-capture credential_list_tab.png with the sidebar menu expanded (currently collapsed). -->
 
 เช่นเดียวกับในแท็บผู้ใช้ คุณสามารถใช้ปุ่มอินไลน์ในแถวของคีย์แพร์เพื่อดูหรือ
 แก้ไขรายละเอียดคีย์แพร์ คลิกปุ่มไอคอนข้อมูลเพื่อดูรายละเอียดเฉพาะของคีย์แพร์
@@ -716,7 +714,6 @@ Backend.AI ช่วยให้ผู้ดูแลระบบสามาร
 บ่งบอกว่าไม่มีข้อจำกัดทรัพยากรที่ใช้กับทรัพยากรเหล่านั้น
 
 ![](../images/resource_policy_page.png)
-<!-- TODO: Re-capture resource_policy_page.png — needs update. -->
 
 บัญชีผู้ใช้ที่ใช้ในคู่มือนี้ได้รับการกำหนดให้ใช้นโยบายทรัพยากร default ในปัจจุบัน
 ซึ่งสามารถตรวจสอบได้ในแท็บข้อมูลประจำตัวของหน้าผู้ใช้
@@ -795,7 +792,6 @@ Backend.AI ช่วยให้ผู้ดูแลระบบสามาร
 ถูกอัปเดตแล้ว
 
 ![](../images/keypair_resource_policy_update_check.png)
-<!-- TODO: Re-capture keypair_resource_policy_update_check.png — needs update. -->
 
 คุณสามารถสร้างนโยบายทรัพยากรใหม่ได้โดยคลิกปุ่ม **สร้าง** ที่มุมบนขวาของตาราง ค่าการตั้งค่าแต่ละค่า
 เหมือนกับที่อธิบายไว้ข้างต้น
@@ -814,7 +810,6 @@ Backend.AI ช่วยให้ผู้ดูแลระบบสามาร
 พิมพ์ชื่อนโยบายในช่องยืนยัน แล้วคลิกปุ่ม `ลบ` เพื่อลบ
 
 ![](../images/resource_policy_delete_dialog.png)
-<!-- TODO: Re-capture resource_policy_delete_dialog.png — needs update. -->
 
 :::note
 หากมีผู้ใช้ (รวมถึงผู้ใช้ที่ไม่ได้ใช้งาน) ที่ใช้นโยบายทรัพยากรที่ต้องการลบ
@@ -826,7 +821,6 @@ Backend.AI ช่วยให้ผู้ดูแลระบบสามาร
 ตาราง สิ่งนี้จะแสดงกล่องโต้ตอบที่คุณสามารถเลือกคอลัมน์ที่ต้องการแสดงได้
 
 ![](../images/keypair_resource_policy_table_setting.png)
-<!-- TODO: Re-capture keypair_resource_policy_table_setting.png — needs update. -->
 
 <a id="user-resource-policy"></a>
 
@@ -891,7 +885,6 @@ Backend.AI รองรับการจัดการนโยบายทร
 เมื่อคลิกแท็บ 'โปรเจกต์' ของหน้า 'นโยบายทรัพยากร' คุณจะเห็นรายการนโยบายทรัพยากรโปรเจกต์
 
 ![](../images/project_resource_policy_list.png)
-<!-- TODO: Re-capture project_resource_policy_list.png — needs update. -->
 
 ในตารางนโยบายทรัพยากรโปรเจกต์ คุณสามารถตรวจสอบรายการนโยบายและใช้การกระทำแบบอินไลน์ **แก้ไข** และ **ลบ**
 สำหรับแต่ละรายการได้ นอกจากนี้ยังใช้ตัวกรองคุณสมบัติ การเรียงลำดับ และตัวแบ่งหน้าของตารางเพื่อค้นหานโยบายได้อย่างรวดเร็ว
@@ -1279,12 +1272,10 @@ Resource preset ที่กำหนดไว้ล่วงหน้าจะ�
 - **หน่วยความจำที่ใช้ร่วมกัน**: ปริมาณหน่วยความจำที่ใช้ร่วมกันที่จัดสรรให้กับค่าที่กำหนดไว้ล่วงหน้า ค่านี้ต้องน้อยกว่าค่า**หน่วยความจำ**
 
 ![](../images/modify_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Edit (pencil) action on a preset, showing the Edit Resource Preset modal with the Resource Group field. Not captured: the screenshot environment was unreachable on this run. -->
 
 คุณยังสามารถสร้าง resource preset ได้โดยคลิกปุ่ม **สร้างค่าที่กำหนดไว้ล่วงหน้า** ที่มุมบนขวาของแท็บค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร ชื่อของ resource preset ยังคงต้องไม่ซ้ำกัน หากคุณป้อนชื่อที่มีอยู่แล้ว เซิร์ฟเวอร์จะปฏิเสธคำขอเมื่อคุณคลิก **สร้าง** และจะแสดงข้อความแสดงข้อผิดพลาด
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO(screenshot): /environment -> Resource Presets tab -> Create Preset button, showing the Create Resource Preset modal with the Resource Group field now always visible. Not captured: the screenshot environment was unreachable on this run. -->
 
 <a id="manage-agent-nodes"></a>
 
@@ -1395,7 +1386,6 @@ Backend.AI ให้บริการการตั้งค่าโควต
 โดยใช้ฟีเจอร์นี้ ผู้ดูแลระบบสามารถจัดการและตรวจสอบปริมาณการใช้พื้นที่จัดเก็บที่แน่นอนสำหรับแต่ละผู้ใช้และโฟลเดอร์ที่อิงกับโปรเจกต์ได้อย่างง่ายดาย
 
 ![](../images/storage_list.png)
-<!-- TODO: Re-capture storage_list.png — needs update (name-click opens the Storage Host Detail Drawer). -->
 
 ในการจัดการ storage host ให้คลิกชื่อ storage host
 ในรายการ Storages การกระทำนี้จะเปิด **Storage Host Detail Drawer**
@@ -1411,7 +1401,6 @@ Storage Host Detail Drawer เป็นที่เดียวสำหรั�
 ความจุ (โควตา)
 
 ![](../images/storage_host_detail_drawer.png)
-<!-- TODO: Capture screenshot of storage_host_detail_drawer.png — Storage Host detail drawer showing the tab strip (Project Folder Permissions / User Folder Permissions / Capacity) -->
 
 Drawer มีแท็บต่อไปนี้:
 
