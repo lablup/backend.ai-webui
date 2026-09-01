@@ -103,6 +103,8 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   let located: Element | null = null;
   let outlined: HTMLElement | null = null;
   let saved: { outline: string; offset: string } | null = null;
+  /** Whether the cheap ladder can repeat what `locate()` found. */
+  let neededFullLadder = false;
   /** One arrival pulse per link — the outline is what stays. */
   let pulsed = false;
   let pulseTimer = 0;
@@ -203,9 +205,17 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     raf(step);
   }
 
+  /** The cheap ladder settled for the container of the element it wants. */
+  const isLandmarkFallback = (element: Element) =>
+    !!target?.anchor.tid &&
+    !!target.anchor.rect &&
+    element.getAttribute('data-testid') === target.anchor.tid;
+
   /**
-   * Cheap by design — it runs on every mutation batch and every scroll, so it
-   * re-runs the selector/landmark step only, never the document-wide text scan.
+   * Cheap first — it runs on every mutation batch — but a target the text scan
+   * resolved cannot be re-found by the selector/landmark step, and a re-render
+   * would either lose the pin or slide it onto the landmark. Debounced, so the
+   * expensive scan runs at most once per settle.
    */
   function reposition() {
     if (!target) return;
@@ -213,7 +223,10 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       located?.isConnected && textMatches(located, target.anchor.txt)
         ? located
         : null;
-    located = held ?? quickFindTarget(target.anchor, { ignore: host });
+    let next = held ?? quickFindTarget(target.anchor, { ignore: host });
+    if (!held && neededFullLadder && (!next || isLandmarkFallback(next)))
+      next = findAnchorTarget(target.anchor, { ignore: host }) ?? next;
+    located = next;
     if (located) highlight(located);
     else clearHighlight();
     place();
@@ -247,6 +260,7 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   function dismiss() {
     target = null;
     located = null;
+    neededFullLadder = false;
     clearHighlight();
     place();
   }
@@ -280,6 +294,8 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
         (located?.isConnected ? located : null);
       if (!found) return false;
       located = found;
+      neededFullLadder =
+        found !== quickFindTarget(target.anchor, { ignore: host });
       highlight(found);
       place();
       found.scrollIntoView?.({ block: 'center', behavior: 'smooth' });

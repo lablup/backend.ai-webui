@@ -214,6 +214,52 @@ describe('createDeepLinkPin', () => {
     });
   });
 
+  // The normal case: a React `useId` selector is stale on the next reload, so
+  // the text scan is what found the element — and only it can find it again.
+  describe('a target the full ladder resolved', () => {
+    const stale = () =>
+      show({
+        s: '#_r_gone_',
+        tid: 'panel',
+        rect: { x: 0, y: 0, w: 0.4, h: 0.4 },
+        txt: 'Save',
+      });
+    const render = () => {
+      (document.querySelector('#app') as HTMLElement).innerHTML =
+        '<div data-testid="panel"><button>Save</button><button>Cancel</button></div>';
+    };
+
+    beforeEach(() => {
+      document.body.insertAdjacentHTML('beforeend', '<div id="app"></div>');
+      render();
+    });
+
+    it('re-finds it with the full ladder after a re-render, not the landmark', async () => {
+      stale();
+      expect(pin.locate()).toBe(true);
+      expect(pin.locatedElement()?.textContent).toBe('Save');
+
+      render();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(pin.locatedElement()?.textContent).toBe('Save');
+      expect(marker().classList.contains('found')).toBe(true);
+    });
+
+    it('escalates when the cheap ladder comes back empty', async () => {
+      stale();
+      expect(pin.locate()).toBe(true);
+
+      // The landmark is gone too: only the text scan can still answer.
+      (document.querySelector('#app') as HTMLElement).innerHTML =
+        '<section><button>Save</button></section>';
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(pin.locatedElement()?.textContent).toBe('Save');
+      expect(pin.locatedElement()?.parentElement?.tagName).toBe('SECTION');
+    });
+  });
+
   it('restores the element’s own outline when the pin is dismissed', () => {
     document.body.insertAdjacentHTML(
       'beforeend',
