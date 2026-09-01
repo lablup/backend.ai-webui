@@ -3598,7 +3598,6 @@
     "DescScriptCreated": "Käyttäjän konfigurointiskripti luotu. Tätä sovelletaan vain uusiin istuntoihin.",
     "DescScriptDeleted": "Käyttäjän konfigurointiskripti poistettu :",
     "DescScriptUpdated": "Käyttäjän konfigurointiskripti päivitetty. Tätä sovelletaan vain uusiin istuntoihin.",
-    "DescThemeAccentColor": "Aseta teeman ensisijainen väri.",
     "DescThemeFamily": "Aseta teema.",
     "DescThemeMode": "Aseta näyttötila.",
     "DescUseCompactSidebar": "Kompakti sivupalkki tarjoaa enemmän työtilaa. <br />Kun käytössä, kompakti sivupalkki on oletuskäyttöliittymä käynnistyksen yhteydessä.",
@@ -3646,7 +3645,6 @@
     "SessionTerminationDialog": "Istunnon lopettamista ei voi peruuttaa. Haluatko jatkaa istunnon lopettamista?",
     "ShellEnvironments": "Shell-ympäristöt",
     "Theme": "Teema",
-    "ThemeAccentColor": "Ensisijainen väri",
     "ThemeFamily": "Teema",
     "ThemeMode": "Teematila",
     "UseCompactSidebar": "Aseta Kompakti Sivupalkki Oletukseksi",
@@ -3709,9 +3707,7 @@
       "PrimaryColor": "Ensisijainen väri",
       "PrimaryColorDesc": "Pääväri, jota käytetään painikkeissa tai kuvaavassa tekstissä, jotka edustavat avaintoimintoja. \nSitä käytetään myös otsikon logoosion taustavärinä.",
       "SuccessColor": "Menestyksen väri",
-      "SuccessColorDesc": "Väri, jota käytetään painikkeissa, ilmoituksissa tai kuvakkeissa, jotka osoittavat, että käyttäjän toiminto on suoritettu onnistuneesti.",
-      "TextColor": "Tekstin väri",
-      "TextColorDesc": "Yleistekstin väri."
+      "SuccessColorDesc": "Väri, jota käytetään painikkeissa, ilmoituksissa tai kuvakkeissa, jotka osoittavat, että käyttäjän toiminto on suoritettu onnistuneesti."
     }
   },
   "webTerminalUsageGuide": {

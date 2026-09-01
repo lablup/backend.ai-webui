@@ -37,9 +37,9 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   const logoThemeKey = getLogoThemeKey(mode);
   const fallbackKey = getLogoFallbackKey(mode);
   const currentLogoPath =
-    getDefaultThemeValue<string>(`logo.${logoThemeKey}`) ??
+    getDefaultThemeValue<string>(`branding.logo.${logoThemeKey}`) ??
     (fallbackKey
-      ? getDefaultThemeValue<string>(`logo.${fallbackKey}`)
+      ? getDefaultThemeValue<string>(`branding.logo.${fallbackKey}`)
       : undefined);
 
   const handlePickedFile = (file: File | undefined) => {
@@ -51,7 +51,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const base64 = e.target?.result as string;
-      updateDefaultTheme(`logo.${logoThemeKey}`, base64);
+      updateDefaultTheme(`branding.logo.${logoThemeKey}`, base64);
     };
     reader.onerror = () => {
       message.error(t('userSettings.logo.FailedToReadFile'));
@@ -78,7 +78,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
         <BAIUncontrolledInput
           defaultValue={currentLogoPath}
           onCommit={(value) => {
-            updateDefaultTheme(`logo.${logoThemeKey}`, value);
+            updateDefaultTheme(`branding.logo.${logoThemeKey}`, value);
           }}
           style={{ flex: 1 }}
         />

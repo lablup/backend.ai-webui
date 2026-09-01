@@ -3602,7 +3602,6 @@
     "DescScriptCreated": "Skrip konfigurasi pengguna dibuat. Ini hanya akan diterapkan ke sesi baru.",
     "DescScriptDeleted": "Skrip konfigurasi pengguna dihapus:",
     "DescScriptUpdated": "Skrip konfigurasi pengguna diperbarui. Ini hanya akan diterapkan ke sesi baru.",
-    "DescThemeAccentColor": "Atur warna primer tema.",
     "DescThemeFamily": "Atur tema.",
     "DescThemeMode": "Atur mode tampilan.",
     "DescUseCompactSidebar": "Sidebar kompak menyediakan ruang kerja lebih banyak. <br />Ketika diaktifkan, sidebar kompak akan menjadi UI default saat startup.",
@@ -3650,7 +3649,6 @@
     "SessionTerminationDialog": "Penghentian sesi tidak dapat diurungkan. Apakah Anda ingin melanjutkan untuk mengakhiri sesi?",
     "ShellEnvironments": "Lingkungan Shell",
     "Theme": "Tema",
-    "ThemeAccentColor": "Warna Primer",
     "ThemeFamily": "Tema",
     "ThemeMode": "Modus Tema",
     "UseCompactSidebar": "Atur Sidebar Kompak sebagai Default",
@@ -3713,9 +3711,7 @@
       "PrimaryColor": "Warna Primer",
       "PrimaryColorDesc": "Warna utama diterapkan pada tombol atau teks deskriptif yang mewakili tindakan utama. \nIni juga diterapkan sebagai warna latar belakang untuk bagian logo di header.",
       "SuccessColor": "Warna Sukses",
-      "SuccessColorDesc": "Warna yang diterapkan pada tombol, peringatan, atau ikon yang menunjukkan tindakan pengguna telah berhasil diselesaikan.",
-      "TextColor": "Warna Teks",
-      "TextColorDesc": "Warna yang digunakan untuk teks umum."
+      "SuccessColorDesc": "Warna yang diterapkan pada tombol, peringatan, atau ikon yang menunjukkan tindakan pengguna telah berhasil diselesaikan."
     }
   },
   "webTerminalUsageGuide": {

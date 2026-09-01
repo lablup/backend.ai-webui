@@ -3600,7 +3600,6 @@
     "DescScriptCreated": "ユーザー構成スクリプトが作成されました。これは、新しいセッションにのみ適用されます。",
     "DescScriptDeleted": "ユーザー設定スクリプトが削除されました：",
     "DescScriptUpdated": "ユーザー構成スクリプトが更新されました。これは、新しいセッションにのみ適用されます。",
-    "DescThemeAccentColor": "テーマの原色を設定します。",
     "DescThemeFamily": "テーマを設定します。",
     "DescThemeMode": "表示モードを設定します。",
     "DescUseCompactSidebar": "コンパクトサイドバーはより多くのワークスペースを提供します。<br />有効にすると、起動時にコンパクトサイドバーがデフォルトUIになります。",
@@ -3648,7 +3647,6 @@
     "SessionTerminationDialog": "セッションの終了は元に戻せません。セッションの終了に進みますか？",
     "ShellEnvironments": "シェル環境",
     "Theme": "テーマ",
-    "ThemeAccentColor": "原色",
     "ThemeFamily": "テーマ",
     "ThemeMode": "テーマモード",
     "UseCompactSidebar": "コンパクトサイドバーをデフォルトに設定",
@@ -3711,9 +3709,7 @@
       "PrimaryColor": "原色",
       "PrimaryColorDesc": "キーアクションを表すボタンまたは説明テキストに適用されるメインカラー。\nヘッダーのロゴセクションの背景色としても適用されます。",
       "SuccessColor": "サクセスカラー",
-      "SuccessColorDesc": "ユーザーアクションが正常に完了したことを示すボタン、アラート、またはアイコンに適用される色。",
-      "TextColor": "文字の色",
-      "TextColorDesc": "一般的なテキストに使用される色。"
+      "SuccessColorDesc": "ユーザーアクションが正常に完了したことを示すボタン、アラート、またはアイコンに適用される色。"
     }
   },
   "webTerminalUsageGuide": {

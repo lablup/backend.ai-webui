@@ -3598,7 +3598,6 @@
     "DescScriptCreated": "Skrip konfigurasi pengguna dibuat. Ini akan digunakan untuk sesi baru sahaja.",
     "DescScriptDeleted": "Skrip konfigurasi pengguna dipadamkan:",
     "DescScriptUpdated": "Skrip konfigurasi pengguna dikemas kini. Ini akan digunakan untuk sesi baru sahaja.",
-    "DescThemeAccentColor": "Tetapkan warna utama tema.",
     "DescThemeFamily": "Tetapkan tema.",
     "DescThemeMode": "Tetapkan mod paparan.",
     "DescUseCompactSidebar": "Bar sisi padat menyediakan lebih banyak ruang kerja. <br />Apabila dibolehkan, bar sisi padat akan menjadi UI lalai semasa permulaan.",
@@ -3646,7 +3645,6 @@
     "SessionTerminationDialog": "Penamatan sesi tidak boleh dibuat asal. Adakah anda mahu meneruskan untuk menamatkan sesi?",
     "ShellEnvironments": "Persekitaran Shell",
     "Theme": "Tema",
-    "ThemeAccentColor": "Warna utama",
     "ThemeFamily": "Tema",
     "ThemeMode": "Mod Tema",
     "UseCompactSidebar": "Tetapkan Bar Sisi Padat sebagai Lalai",
@@ -3709,9 +3707,7 @@
       "PrimaryColor": "Warna utama",
       "PrimaryColorDesc": "Warna utama yang digunakan untuk butang atau teks deskriptif yang mewakili tindakan utama. \nIa juga digunakan sebagai warna latar belakang untuk bahagian logo di tajuk.",
       "SuccessColor": "Warna kejayaan",
-      "SuccessColorDesc": "Warna yang digunakan untuk butang, makluman, atau ikon yang menunjukkan tindakan pengguna telah berjaya diselesaikan.",
-      "TextColor": "Warna teks",
-      "TextColorDesc": "Warna yang digunakan untuk teks umum."
+      "SuccessColorDesc": "Warna yang digunakan untuk butang, makluman, atau ikon yang menunjukkan tindakan pengguna telah berjaya diselesaikan."
     }
   },
   "webTerminalUsageGuide": {

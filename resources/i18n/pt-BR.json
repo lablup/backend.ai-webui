@@ -3598,7 +3598,6 @@
     "DescScriptCreated": "Script de configuração do usuário criado. Isso será aplicado apenas a novas sessões.",
     "DescScriptDeleted": "Script de configuração do usuário excluído:",
     "DescScriptUpdated": "O script de configuração do usuário foi atualizado. Isso será aplicado apenas a novas sessões.",
-    "DescThemeAccentColor": "Definir a cor primária do tema.",
     "DescThemeFamily": "Definir o tema.",
     "DescThemeMode": "Definir o modo de exibição.",
     "DescUseCompactSidebar": "A barra lateral compacta fornece mais espaço de trabalho. <br />Quando habilitada, a barra lateral compacta será a interface padrão na inicialização.",
@@ -3646,7 +3645,6 @@
     "SessionTerminationDialog": "O encerramento da sessão não pode ser desfeito. Você deseja prosseguir para encerrar a sessão?",
     "ShellEnvironments": "Ambientes Shell",
     "Theme": "Tema",
-    "ThemeAccentColor": "Cor Primária",
     "ThemeFamily": "Tema",
     "ThemeMode": "Modo Tema",
     "UseCompactSidebar": "Definir Barra Lateral Compacta como Padrão",
@@ -3709,9 +3707,7 @@
       "PrimaryColor": "Cor Primária",
       "PrimaryColorDesc": "A cor principal aplicada a botões ou textos descritivos que representam ações principais. \nTambém é aplicada como cor de fundo para a seção do logotipo no cabeçalho.",
       "SuccessColor": "Cor do sucesso",
-      "SuccessColorDesc": "A cor aplicada aos botões, alertas ou ícones que indicam que uma ação do usuário foi concluída com êxito.",
-      "TextColor": "Cor do texto",
-      "TextColorDesc": "A cor usada para texto geral."
+      "SuccessColorDesc": "A cor aplicada aos botões, alertas ou ícones que indicam que uma ação do usuário foi concluída com êxito."
     }
   },
   "webTerminalUsageGuide": {

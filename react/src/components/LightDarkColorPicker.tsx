@@ -27,10 +27,9 @@ export interface LightDarkColorPickerProps {
 
 /**
  * Shared presentational light/dark two-column colour-picker layout. The
- * persistence strategy is injected per scheme via props: the User Settings
- * accent picker (`ThemeAccentColorPicker`) writes the `custom_primary_color`
- * scheme override, while the Branding `ThemeColorPicker` writes the
- * default-theme document paths through `useDefaultTheme`.
+ * persistence strategy is injected per scheme via props: the Branding
+ * `ThemeColorPicker` writes the appearance-document seed paths through
+ * `useDefaultTheme`.
  */
 const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
   light,

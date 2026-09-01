@@ -3602,7 +3602,6 @@
     "DescScriptCreated": "已創建用戶配置腳本。這將僅適用於新會話。",
     "DescScriptDeleted": "用戶配置腳本已刪除：",
     "DescScriptUpdated": "用戶配置腳本已更新。這將僅適用於新會話。",
-    "DescThemeAccentColor": "設定主題的原色。",
     "DescThemeFamily": "設定主題。",
     "DescThemeMode": "設定顯示模式。",
     "DescUseCompactSidebar": "緊湊側邊欄提供更多工作空間。<br />啟用後，緊湊側邊欄將成為啟動時的預設介面。",
@@ -3650,7 +3649,6 @@
     "SessionTerminationDialog": "會話終止無法撤消。您要繼續終止會話嗎？",
     "ShellEnvironments": "外殼環境",
     "Theme": "主題",
-    "ThemeAccentColor": "原色",
     "ThemeFamily": "主題",
     "ThemeMode": "主題模式",
     "UseCompactSidebar": "將緊湊側邊欄設為預設",
@@ -3713,9 +3711,7 @@
       "PrimaryColor": "原色",
       "PrimaryColorDesc": "應用於代表關鍵操作的按鈕或描述性文本的主要顏色。它還用作標題中徽標部分的背景顏色。",
       "SuccessColor": "成功色彩",
-      "SuccessColorDesc": "應用於按鈕、警報或圖標的顏色，指示用戶操作已成功完成。",
-      "TextColor": "文字顏色",
-      "TextColorDesc": "用於一般文本的顏色。"
+      "SuccessColorDesc": "應用於按鈕、警報或圖標的顏色，指示用戶操作已成功完成。"
     }
   },
   "webTerminalUsageGuide": {

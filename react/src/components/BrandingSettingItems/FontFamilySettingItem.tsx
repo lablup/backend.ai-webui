@@ -17,18 +17,14 @@ const FontFamilySettingItem: React.FC = () => {
   const defaultTokens = getDefaultDesignToken('light');
 
   const fontFamily =
-    getDefaultThemeValue<string>('fontFamily') ??
-    getDefaultThemeValue<string>('light.token.fontFamily') ??
+    getDefaultThemeValue<string>('theme.fontFamily') ??
     defaultTokens.fontFamily;
 
   return (
     <BAIUncontrolledInput
       defaultValue={fontFamily}
       onCommit={(v) => {
-        const value = v || undefined;
-        updateDefaultTheme('fontFamily', value);
-        updateDefaultTheme('light.token.fontFamily', value);
-        updateDefaultTheme('dark.token.fontFamily', value);
+        updateDefaultTheme('theme.fontFamily', v || undefined);
       }}
       style={{ alignSelf: 'stretch' }}
     />

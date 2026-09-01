@@ -3598,7 +3598,6 @@
     "DescScriptCreated": "Script di configurazione utente creato. Questo verrà applicato solo alle nuove sessioni.",
     "DescScriptDeleted": "Script di configurazione utente eliminato:",
     "DescScriptUpdated": "Script di configurazione utente aggiornato. Questo verrà applicato solo alle nuove sessioni.",
-    "DescThemeAccentColor": "Imposta il colore primario del tema.",
     "DescThemeFamily": "Imposta il tema.",
     "DescThemeMode": "Imposta la modalità di visualizzazione.",
     "DescUseCompactSidebar": "La barra laterale compatta fornisce più spazio di lavoro. <br />Quando abilitata, la barra laterale compatta sarà l'interfaccia predefinita all'avvio.",
@@ -3646,7 +3645,6 @@
     "SessionTerminationDialog": "La chiusura della sessione non può essere annullata. Vuoi procedere per terminare la sessione?",
     "ShellEnvironments": "Ambienti shell",
     "Theme": "Tema",
-    "ThemeAccentColor": "Colore primario",
     "ThemeFamily": "Tema",
     "ThemeMode": "Modalità tema",
     "UseCompactSidebar": "Imposta Barra Laterale Compatta come Predefinita",
@@ -3709,9 +3707,7 @@
       "PrimaryColor": "Colore primario",
       "PrimaryColorDesc": "Il colore principale applicato ai pulsanti o al testo descrittivo che rappresentano le azioni chiave. \nViene applicato anche come colore di sfondo per la sezione del logo nell'intestazione.",
       "SuccessColor": "Colore del successo",
-      "SuccessColorDesc": "Il colore applicato a pulsanti, avvisi o icone che indicano che un'azione dell'utente è stata completata correttamente.",
-      "TextColor": "Colore del testo",
-      "TextColorDesc": "Il colore utilizzato per il testo generale."
+      "SuccessColorDesc": "Il colore applicato a pulsanti, avvisi o icone che indicano che un'azione dell'utente è stata completata correttamente."
     }
   },
   "webTerminalUsageGuide": {

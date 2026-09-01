@@ -54,6 +54,10 @@
    registration, and identical seed sets share one registration via the
    build cache below.
  */
+import type {
+  BAIThemeConfig,
+  BAIThemeSeedValue,
+} from '../helper/customThemeConfig';
 import { defineTheme, type DefinedTheme } from '@astryxdesign/core/theme';
 import { neutralTheme } from '@astryxdesign/theme-neutral';
 import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
@@ -1187,68 +1191,46 @@ export function buildBackendAiTheme(
  * ---------------------------------------------------------------------- */
 
 /**
- * Minimal structural view of an antd `ThemeConfig` — declared here so this
- * module stays antd-import-free (it must outlive antd removal).
+ * Normalize a v2 seed value (Astryx TokenValue semantics: string = both
+ * schemes, tuple = [light, dark]) into the builder's declared pair. The dark
+ * side still runs through `resolveDarkSeed` at build time (`toTuple`).
  */
-export interface AntdishThemeConfig {
-  token?: {
-    colorPrimary?: string;
-    colorInfo?: string;
-    colorSuccess?: string;
-    colorError?: string;
-    colorWarning?: string;
-  };
-}
-
-export interface AntdishCustomThemeConfig {
-  fontFamily?: string;
-  light?: AntdishThemeConfig;
-  dark?: AntdishThemeConfig;
-}
-
-const seedPairFromConfig = (
-  config: AntdishCustomThemeConfig,
-  key:
-    | 'colorPrimary'
-    | 'colorInfo'
-    | 'colorSuccess'
-    | 'colorError'
-    | 'colorWarning',
+const seedPairFromValue = (
+  value: BAIThemeSeedValue | undefined,
   fallback: BrandSeedPair,
 ): BrandSeedPair => {
-  const light = config.light?.token?.[key];
-  const dark = config.dark?.token?.[key];
-  return {
-    light: typeof light === 'string' ? light : fallback.light,
-    dark:
-      typeof dark === 'string'
-        ? dark
-        : // A config that declares only a light seed reuses it for dark
-          // (antd behaved the same way: dark derived from whatever seed the
-          // dark ThemeConfig carried, falling back to light's).
-          typeof light === 'string'
-          ? light
-          : fallback.dark,
-  };
+  if (typeof value === 'string') {
+    return { light: value, dark: value };
+  }
+  if (Array.isArray(value)) {
+    const light = typeof value[0] === 'string' ? value[0] : fallback.light;
+    return {
+      light,
+      dark: typeof value[1] === 'string' ? value[1] : light,
+    };
+  }
+  return fallback;
 };
 
 /**
- * Derive the full option set for one role from a runtime theme.json document
+ * Derive the full option set for one role from a v2 appearance `theme` half
  * (the operator-editable override path). Role→accent mapping mirrors
- * `usePrimaryColors`: brand=colorPrimary, admin=colorInfo,
- * secondary=colorSuccess.
+ * `usePrimaryColors`: brand=accent, admin=info, secondary=success (FR-1964,
+ * role derivation stays in code — the document carries brand seeds only).
  */
 export const themeOptionsFromConfig = (
-  config: AntdishCustomThemeConfig,
+  config: BAIThemeConfig | undefined,
   role: BrandThemeRole = 'brand',
   family = 'default',
 ): BuildBackendAiThemeOptions => {
-  const accentKey =
+  const seeds =
+    config?.families?.[family]?.seeds ?? config?.families?.default?.seeds;
+  const accentValue =
     role === 'admin'
-      ? 'colorInfo'
+      ? seeds?.info
       : role === 'secondary'
-        ? 'colorSuccess'
-        : 'colorPrimary';
+        ? seeds?.success
+        : seeds?.accent;
   const accentFallback =
     role === 'admin'
       ? BAI_DEFAULT_SEEDS.admin
@@ -1258,23 +1240,15 @@ export const themeOptionsFromConfig = (
   return {
     family,
     role,
-    accent: seedPairFromConfig(config, accentKey, accentFallback),
-    error: seedPairFromConfig(config, 'colorError', BAI_DEFAULT_SEEDS.error),
-    success: seedPairFromConfig(
-      config,
-      'colorSuccess',
-      BAI_DEFAULT_SEEDS.success,
-    ),
-    warning: seedPairFromConfig(
-      config,
-      'colorWarning',
-      BAI_DEFAULT_SEEDS.warning,
-    ),
-    // The info STATUS hue. Read from the same theme.json key the admin ACCENT
-    // uses, but kept as its own seed — a deployment that rebrands `colorInfo`
-    // moves both, and the hash must see it either way.
-    info: seedPairFromConfig(config, 'colorInfo', BAI_DEFAULT_SEEDS.info),
-    fontFamily: config.fontFamily ?? BAI_DEFAULT_SEEDS.fontFamily,
+    accent: seedPairFromValue(accentValue, accentFallback),
+    error: seedPairFromValue(seeds?.error, BAI_DEFAULT_SEEDS.error),
+    success: seedPairFromValue(seeds?.success, BAI_DEFAULT_SEEDS.success),
+    warning: seedPairFromValue(seeds?.warning, BAI_DEFAULT_SEEDS.warning),
+    // The info STATUS hue. Read from the same seed the admin ACCENT uses, but
+    // kept as its own option — a deployment that rebrands `info` moves both,
+    // and the hash must see it either way.
+    info: seedPairFromValue(seeds?.info, BAI_DEFAULT_SEEDS.info),
+    fontFamily: config?.fontFamily ?? BAI_DEFAULT_SEEDS.fontFamily,
   };
 };
 

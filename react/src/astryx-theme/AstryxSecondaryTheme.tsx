@@ -23,9 +23,13 @@ const AstryxSecondaryTheme: React.FC<AstryxSecondaryThemeProps> = ({
   children,
 }) => {
   'use memo';
-  const { themeConfig, activeThemeFamily } = useCustomThemeConfig();
+  const { appearance, activeThemeFamily } = useCustomThemeConfig();
   const { mode } = useTheme();
-  const theme = resolveRoleTheme(themeConfig, 'secondary', activeThemeFamily);
+  const theme = resolveRoleTheme(
+    appearance?.theme,
+    'secondary',
+    activeThemeFamily,
+  );
   return (
     <AstryxTheme theme={theme} mode={mode}>
       {children}
