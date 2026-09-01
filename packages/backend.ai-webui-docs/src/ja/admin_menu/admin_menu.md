@@ -261,7 +261,6 @@ CSV ファイルを選択すると、ダイアログにすべての行を一覧�
   クリックします。
 
 ![](../images/user_purge_inactive_tab.png)
-<!-- TODO: Capture screenshot of user_purge_inactive_tab.png — Inactive Users tab showing the per-row purge (trash) icon and the bulk Permanently Delete Users button -->
 
 いずれの操作でも**ユーザーを完全に削除**確認モーダルが開きます。この操作は元に戻せない
 ため、削除ボタンが有効になる前に、モーダルに表示された確認フレーズを入力する必要が
@@ -737,7 +736,6 @@ Backend.AIでは、管理者は各キーペア、ユーザー、プロジェク�
 （∞）は、該当するリソースに対して制限が適用されていないことを示します。
 
 ![](../images/resource_policy_page.png)
-<!-- TODO: Re-capture resource_policy_page.png — needs update. -->
 
 本ガイドで使用しているユーザーアカウントは、現在defaultリソースポリシーに割り当てられて
 います。これはユーザー管理ページの資格情報タブで確認できます。また、リソースポリシー
@@ -814,7 +812,6 @@ Backend.AIでは、管理者は各キーペア、ユーザー、プロジェク�
 確認します。
 
 ![](../images/keypair_resource_policy_update_check.png)
-<!-- TODO: Re-capture keypair_resource_policy_update_check.png — needs update. -->
 
 テーブルの右上にある **作成** ボタンをクリックして新しいリソースポリシーを作成できます。各設定値は上記の
 説明と同じです。
@@ -832,7 +829,6 @@ Backend.AIでは、管理者は各キーペア、ユーザー、プロジェク�
 入力してから「削除」ボタンをクリックすると削除されます。
 
 ![](../images/resource_policy_delete_dialog.png)
-<!-- TODO: Re-capture resource_policy_delete_dialog.png — needs update. -->
 
 :::note
 削除予定のリソースポリシーに従うユーザー（非アクティブなユーザーを含む）が存在する場合、
@@ -844,7 +840,6 @@ Backend.AIでは、管理者は各キーペア、ユーザー、プロジェク�
 クリックします。表示したいカラムを選択するダイアログが表示されます。
 
 ![](../images/keypair_resource_policy_table_setting.png)
-<!-- TODO: Re-capture keypair_resource_policy_table_setting.png — needs update. -->
 
 <a id="user-resource-policy"></a>
 
@@ -909,7 +904,6 @@ Backend.AIはプロジェクトリソースポリシーの管理をサポート�
 「リソースポリシー」ページの「プロジェクト」タブをクリックすると、プロジェクトリソースポリシーのリストが表示されます。
 
 ![](../images/project_resource_policy_list.png)
-<!-- TODO: Re-capture project_resource_policy_list.png — needs update. -->
 
 プロジェクトリソースポリシーのテーブルでは、ポリシー一覧を確認しながら、各項目のインライン **編集** と
 **削除** アクションを利用できます。さらに、テーブルのプロパティフィルター、並べ替え、ページャで必要な
@@ -1458,7 +1452,6 @@ Backend.AIは、クォータ管理をサポートするストレージに対し�
 できます。
 
 ![](../images/storage_list.png)
-<!-- TODO: Re-capture storage_list.png — needs update (name-click opens the Storage Host Detail Drawer). -->
 
 ストレージホストを管理するには、ストレージ一覧でストレージホスト名をクリックします。
 すると、容量（クォータ）とフォルダ権限を構成する**ストレージホスト詳細Drawer**が
@@ -1473,7 +1466,6 @@ Backend.AIは、クォータ管理をサポートするストレージに対し�
 下部にはフォルダ権限と容量（クォータ）を構成するためのタブが用意されています。
 
 ![](../images/storage_host_detail_drawer.png)
-<!-- TODO: Capture screenshot of storage_host_detail_drawer.png — Storage Host detail drawer showing the tab strip (Project Folder Permissions / User Folder Permissions / Capacity) -->
 
 Drawerには次のタブがあります。
 

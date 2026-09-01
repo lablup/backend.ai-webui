@@ -285,7 +285,6 @@ keypairs). You can purge users in two ways:
   appears next to the selection count).
 
 ![](../images/user_purge_inactive_tab.png)
-<!-- TODO: Capture screenshot of user_purge_inactive_tab.png — Inactive Users tab showing the per-row purge (trash) icon and the bulk Permanently Delete Users button -->
 
 Either action opens the **Permanently Delete Users** confirmation modal. Because
 this operation cannot be undone, you must type the confirmation phrase shown in
@@ -770,7 +769,6 @@ Let's begin by examining the resource policies for keypairs. The infinity symbol
 indicates that no resource restrictions have been applied to those resources.
 
 ![](../images/resource_policy_page.png)
-<!-- TODO: Re-capture resource_policy_page.png — needs update. -->
 
 The user account being used in this guide is currently assigned to the default
 resource policy. This can be verified in the Credentials tab on the Users page.
@@ -850,7 +848,6 @@ In the keypair resource policy list, check that the Resources value of the defau
 policy has been updated.
 
 ![](../images/keypair_resource_policy_update_check.png)
-<!-- TODO: Re-capture keypair_resource_policy_update_check.png — needs update. -->
 
 You can create a new resource policy by clicking the **Create** button at the top right of the table.
 Each setting value is the same as described above.
@@ -870,7 +867,6 @@ in the Name column. When you click the icon, a confirmation dialog appears. Type
 policy name in the confirmation field, then click the `Delete` button to erase.
 
 ![](../images/resource_policy_delete_dialog.png)
-<!-- TODO: Re-capture resource_policy_delete_dialog.png — needs update. -->
 
 :::note
 If there's any users (including inactive users) following a resource policy to be deleted,
@@ -882,7 +878,6 @@ If you want to hide or show specific columns, click the `Setting (Gear)` at the 
 table. This will bring up a dialog where you can select the columns you want to display.
 
 ![](../images/keypair_resource_policy_table_setting.png)
-<!-- TODO: Re-capture keypair_resource_policy_table_setting.png — needs update. -->
 
 <a id="user-resource-policy"></a>
 
@@ -951,7 +946,6 @@ When clicking the `Project` tab of the `Resource Policies` page, you can see the
 resource policy.
 
 ![](../images/project_resource_policy_list.png)
-<!-- TODO: Re-capture project_resource_policy_list.png — needs update. -->
 
 In the project resource policy table, you can review the policy list and use the inline **Edit** and
 **Delete** actions for each item. You can also use the table's property filter, sorting, and pagination
@@ -1575,7 +1569,6 @@ Backend.AI provides per-user/per-project quota setting on storage that supports 
 By using this feature, admin can easily manage and monitor the exact amount of storage usage for each user and project based folder.
 
 ![](../images/storage_list.png)
-<!-- TODO: Re-capture storage_list.png — needs update (name-click opens the Storage Host Detail Drawer). -->
 
 To manage a storage host, click the storage host name in the Storages list. This opens the **Storage Host
 Detail Drawer**, where capacity (quota) and folder permissions are configured.
@@ -1590,7 +1583,6 @@ top displays basic information about the host, while the bottom provides tabs fo
 configuring folder permissions and capacity (quota).
 
 ![](../images/storage_host_detail_drawer.png)
-<!-- TODO: Capture screenshot of storage_host_detail_drawer.png — Storage Host detail drawer showing the tab strip (Project Folder Permissions / User Folder Permissions / Capacity) -->
 
 The drawer contains the following tabs:
 

@@ -241,7 +241,6 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 - **일괄 영구 삭제**: 행 체크박스로 하나 이상의 비활성 사용자를 선택한 다음, 선택 개수 옆에 나타나는 **유저 영구 삭제** 버튼(휴지통 버튼)을 클릭합니다.
 
 ![](../images/user_purge_inactive_tab.png)
-<!-- TODO: Capture screenshot of user_purge_inactive_tab.png — Inactive Users tab showing the per-row purge (trash) icon and the bulk Permanently Delete Users button -->
 
 두 작업 모두 **유저 영구 삭제** 확인 모달을 엽니다. 이 작업은 되돌릴 수 없으므로, 삭제 버튼이 활성화되기 전에 모달에 표시된 확인 문구를 입력해야 합니다. 또한 모달에는 다음 두 가지 옵션이 있습니다.
 
@@ -674,7 +673,6 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 자원 정책 페이지에서 관리자는 등록된 모든 자원 정책의 목록을 볼 수 있습니다. 관리자는 이 페이지에서 키페어, 사용자, 프로젝트에 대해 설정된 자원 정책을 직접 검토할 수 있습니다. 키페어에 대한 자원 정책을 먼저 살펴보겠습니다. 무한대 기호(∞)는 해당 자원에 자원 제한이 적용되지 않았음을 나타냅니다.
 
 ![](../images/resource_policy_page.png)
-<!-- TODO: Re-capture resource_policy_page.png — needs update. -->
 
 이 가이드에서 사용되는 사용자 계정은 현재 default 자원 정책에 할당되어 있습니다. 이는 사용자 페이지의 자격 증명 탭에서 확인할 수 있습니다. 자원 정책 패널에서 모든 자원 정책이 default로 설정되어 있음을 확인할 수도 있습니다.
 
@@ -726,7 +724,6 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 키페어 자원 정책 목록에서 default 정책의 Resources 값이 업데이트되었는지 확인합니다.
 
 ![](../images/keypair_resource_policy_update_check.png)
-<!-- TODO: Re-capture keypair_resource_policy_update_check.png — needs update. -->
 
 테이블 오른쪽 상단의 **생성** 버튼을 클릭하여 새 자원 정책을 생성할 수 있습니다. 각 설정 값은 위에서 설명한 것과 동일합니다.
 
@@ -737,7 +734,6 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 이름 열의 휴지통 아이콘을 클릭하여 각 자원 키페어를 삭제할 수도 있습니다. 아이콘을 클릭하면 확인 대화 상자가 나타납니다. 확인 입력란에 정책 이름을 입력한 다음 `삭제` 버튼을 클릭하여 삭제합니다.
 
 ![](../images/resource_policy_delete_dialog.png)
-<!-- TODO: Re-capture resource_policy_delete_dialog.png — needs update. -->
 
 :::note
 삭제할 자원 정책을 따르는 사용자(비활성 사용자 포함)가 있으면 삭제할 수 없습니다. 자원 정책을 삭제하기 전에 해당 자원 정책 아래에 남아있는 사용자가 없는지 확인하십시오.
@@ -746,7 +742,6 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 특정 열을 숨기거나 표시하려면 테이블 오른쪽 하단의 `설정 (톱니바퀴)`를 클릭합니다. 표시하려는 열을 선택할 수 있는 대화 상자가 나타납니다.
 
 ![](../images/keypair_resource_policy_table_setting.png)
-<!-- TODO: Re-capture keypair_resource_policy_table_setting.png — needs update. -->
 
 <a id="user-resource-policy"></a>
 
@@ -791,7 +786,6 @@ Backend.AI는 프로젝트 자원 정책 관리를 지원합니다. 프로젝트
 `자원 정책` 페이지의 `프로젝트` 탭을 클릭하면 프로젝트 자원 정책 목록을 볼 수 있습니다.
 
 ![](../images/project_resource_policy_list.png)
-<!-- TODO: Re-capture project_resource_policy_list.png — needs update. -->
 
 프로젝트 자원 정책 테이블에서 정책 목록을 확인하고 각 항목의 인라인 **수정** 및 **삭제** 액션을 사용할 수 있습니다.
 테이블의 속성 필터, 정렬, 페이지 이동 컨트롤을 사용해 필요한 정책을 빠르게 찾을 수 있습니다.
@@ -1314,7 +1308,6 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 스토리지 탭에서는 어떤 종류의 마운트 볼륨(일반적으로 NFS)이 존재하는지 확인할 수 있습니다. Backend.AI는 가용량 관리를 지원하는 스토리지에서 사용자별/프로젝트별 가용량 설정을 제공합니다. 이 기능을 사용하면 관리자가 사용자 및 프로젝트 기반 폴더별 정확한 스토리지 사용량을 쉽게 관리하고 모니터링할 수 있습니다.
 
 ![](../images/storage_list.png)
-<!-- TODO: Re-capture storage_list.png — needs update (name-click opens the Storage Host Detail Drawer). -->
 
 스토리지 호스트를 관리하려면 스토리지 목록에서 스토리지 호스트 이름을 클릭합니다. 그러면 가용량과 폴더 권한을 구성하는 **스토리지 호스트 상세 패널**이 열립니다.
 
@@ -1325,7 +1318,6 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 스토리지 호스트 상세 패널은 스토리지 호스트를 확인하고 관리하는 단일 공간입니다. 스토리지 목록에서 이름을 클릭하여 열 수 있으며, 상단에는 호스트에 대한 기본 정보가 표시되고 하단에는 폴더 권한과 가용량을 설정할 수 있는 탭이 제공됩니다.
 
 ![](../images/storage_host_detail_drawer.png)
-<!-- TODO: Capture screenshot of storage_host_detail_drawer.png — Storage Host detail drawer showing the tab strip (Project Folder Permissions / User Folder Permissions / Capacity) -->
 
 패널에는 다음과 같은 탭이 있습니다.
 
