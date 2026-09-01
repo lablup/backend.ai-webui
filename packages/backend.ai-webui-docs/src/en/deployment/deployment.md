@@ -109,9 +109,11 @@ The subsections below describe revision-level fields in detail. They apply both 
 
 Every revision mounts one model storage folder into each replica. The fields directly below the folder selector control where that folder appears inside the container.
 
+![](../images/add_revision_model_folder_mount.png)
+
 - **Model Folder**: The model storage folder to mount on each replica.
 - **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
-- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Leave it empty to mount the folder root.
+- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. The path cannot be typed in — select a **Model Folder** first (the field stays disabled until you do), then click the field to browse the folder's directories and click **Select this location** to choose one. The picked path is shown with a leading `/`, so the folder root appears as `/`. Changing the **Model Folder** clears a subpath you already picked. Leave it unset to mount the folder root.
 
 <a id="service-configuration"></a>
 
