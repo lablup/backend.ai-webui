@@ -1246,7 +1246,7 @@
       "Delete": "删除访问令牌",
       "DeleteConfirm": "确定要删除此访问令牌吗？此操作无法撤销。",
       "Deleted": "访问令牌已删除。",
-      "DeploymentStopped": "部署已停止。",
+      "DeploymentStopped": "该部署正在停止或已不再运行。",
       "EndpointNotIssuedYet": "网络端点尚未发布。",
       "Expiration": "到期时间",
       "NoExpiration": "永不到期",

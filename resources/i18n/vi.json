@@ -1246,7 +1246,7 @@
       "Delete": "Xóa mã thông báo truy cập",
       "DeleteConfirm": "Bạn có chắc chắn muốn xóa mã thông báo truy cập này không? Hành động này không thể hoàn tác.",
       "Deleted": "Mã thông báo truy cập đã được xóa.",
-      "DeploymentStopped": "Triển khai đã dừng.",
+      "DeploymentStopped": "Triển khai đang dừng hoặc không còn hoạt động.",
       "EndpointNotIssuedYet": "Endpoint mạng chưa được phát hành.",
       "Expiration": "Hạn hết hạn",
       "NoExpiration": "Không hết hạn",

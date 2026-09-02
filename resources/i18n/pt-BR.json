@@ -1246,7 +1246,7 @@
       "Delete": "Excluir token de acesso",
       "DeleteConfirm": "Tem certeza de que deseja excluir este token de acesso? Esta ação não pode ser desfeita.",
       "Deleted": "O token de acesso foi excluído.",
-      "DeploymentStopped": "A implantação foi parada.",
+      "DeploymentStopped": "A implantação está sendo parada ou não está mais ativa.",
       "EndpointNotIssuedYet": "O endpoint de rede ainda não foi emitido.",
       "Expiration": "Expiração",
       "NoExpiration": "Sem expiração",

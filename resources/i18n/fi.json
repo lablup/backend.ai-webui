@@ -1246,7 +1246,7 @@
       "Delete": "Poista pääsytunnus",
       "DeleteConfirm": "Haluatko varmasti poistaa tämän pääsytunnuksen? Tätä toimintoa ei voi peruuttaa.",
       "Deleted": "Pääsytunnus on poistettu.",
-      "DeploymentStopped": "Käyttöönotto on pysäytetty.",
+      "DeploymentStopped": "Käyttöönotto on pysähtymässä tai ei ole enää aktiivinen.",
       "EndpointNotIssuedYet": "Verkkopäätepistettä ei ole vielä myönnetty.",
       "Expiration": "Vanhentuminen",
       "NoExpiration": "Ei vanhentumista",

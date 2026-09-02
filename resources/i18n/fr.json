@@ -1246,7 +1246,7 @@
       "Delete": "Supprimer le jeton d'accès",
       "DeleteConfirm": "Êtes-vous sûr de vouloir supprimer ce jeton d'accès ? Cette action est irréversible.",
       "Deleted": "Le jeton d'accès a été supprimé.",
-      "DeploymentStopped": "Le déploiement a été arrêté.",
+      "DeploymentStopped": "Le déploiement est en cours d'arrêt ou n'est plus actif.",
       "EndpointNotIssuedYet": "Le point d'accès réseau n'a pas encore été émis.",
       "Expiration": "Expiration",
       "NoExpiration": "Sans expiration",

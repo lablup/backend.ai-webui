@@ -1246,7 +1246,7 @@
       "Delete": "アクセストークンを削除",
       "DeleteConfirm": "このアクセストークンを削除してもよろしいですか？この操作は取り消せません。",
       "Deleted": "アクセストークンが削除されました。",
-      "DeploymentStopped": "デプロイは停止されています。",
+      "DeploymentStopped": "デプロイは停止中か、すでに稼働していません。",
       "EndpointNotIssuedYet": "ネットワークエンドポイントはまだ発行されていません。",
       "Expiration": "有効期限",
       "NoExpiration": "有効期限なし",

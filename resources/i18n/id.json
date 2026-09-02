@@ -1246,7 +1246,7 @@
       "Delete": "Hapus Token Akses",
       "DeleteConfirm": "Apakah Anda yakin ingin menghapus token akses ini? Tindakan ini tidak dapat dibatalkan.",
       "Deleted": "Token akses telah dihapus.",
-      "DeploymentStopped": "Penerapan telah dihentikan.",
+      "DeploymentStopped": "Penerapan sedang dihentikan atau tidak lagi aktif.",
       "EndpointNotIssuedYet": "Endpoint jaringan belum diterbitkan.",
       "Expiration": "Kedaluwarsa",
       "NoExpiration": "Tanpa Kedaluwarsa",

@@ -1246,7 +1246,7 @@
       "Delete": "Padam Token Akses",
       "DeleteConfirm": "Adakah anda pasti mahu memadam token akses ini? Tindakan ini tidak boleh dibatalkan.",
       "Deleted": "Token akses telah dipadam.",
-      "DeploymentStopped": "Penggunaan telah dihentikan.",
+      "DeploymentStopped": "Penggunaan sedang dihentikan atau tidak lagi aktif.",
       "EndpointNotIssuedYet": "Titik akhir rangkaian belum dikeluarkan.",
       "Expiration": "Tamat Tempoh",
       "NoExpiration": "Tanpa Tamat Tempoh",
