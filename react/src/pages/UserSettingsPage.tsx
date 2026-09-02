@@ -208,10 +208,9 @@ const UserPreferencesPage = () => {
             }
           },
         },
-        // Theme (family) / primary color customization is operator-gated
-        // (config.toml `allowThemeMode`). The family selector additionally
-        // needs more than the `default` family in the catalog (a theme.json
-        // without a `families` block yields a single-entry catalog).
+        // Theme family selection is operator-gated (config.toml
+        // `allowThemeMode`) and needs more than the `default` family in the
+        // catalog (a theme.json without a `families` block yields none).
         baiClient._config.allowThemeMode &&
         !isThemePreviewMode &&
         Object.keys(families).length > 1

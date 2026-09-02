@@ -21,10 +21,10 @@ import { useEffect, useEffectEvent, useState } from 'react';
 export const DEFAULT_THEME_FAMILY = 'default';
 
 /**
- * localStorage mirror of the selected family. Mirrors `themeMode` (NOT under
+ * localStorage key of the selected family. Mirrors `themeMode` (NOT under
  * the `.user.` namespace) because the FOUC bootstrap in `index.html` reads it
- * before paint. The authoritative store is `userConfig.themeFamily`
- * (FR-1964); login syncs it into this mirror, logout clears the mirror.
+ * before paint. A server-side `userConfig.themeFamily` store arrives with
+ * FR-1964; until then this key is the only store.
  */
 export const THEME_FAMILY_STORAGE_KEY = 'backendaiwebui.settings.themeFamily';
 
@@ -105,10 +105,8 @@ export type UseCustomThemeConfigResult = {
   /** The resolved active family key. */
   activeThemeFamily: string;
   /**
-   * Persist a new family selection into the localStorage mirror (by family
-   * key). Pass `undefined` to clear the selection so resolution falls back to
-   * the `default` family. The authoritative `userConfig.themeFamily` write
-   * happens at the settings call site (it needs the Relay environment).
+   * Persist a new family selection (by family key). Pass `undefined` to clear
+   * the selection so resolution falls back to the `default` family.
    */
   setActiveThemeFamily: (family: string | undefined) => void;
   /** All selectable families with their display labels. */
