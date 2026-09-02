@@ -45,7 +45,6 @@ export default defineConfig({
       exclude: [
         "{src,scripts}/**/*.{test,spec}.ts",
         "src/wsproxy/**",
-        "src/lib/backend.ai-client-node.*",
         // Build tooling — instrumenting these slows tests without giving
         // useful coverage signal. They are exercised end-to-end by the
         // tests but the coverage % of build scripts is not actionable.

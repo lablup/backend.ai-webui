@@ -49,8 +49,11 @@ and password in place of access key / secret key.
 
 ## Runtime support
 
-- ESM-only package (`"type": "module"`)
-- Node.js >= 18 (uses the global `fetch` API)
+- Ships ESM and CommonJS entry points (`"type": "module"` with `import` /
+  `require` export conditions; `crypto-es` is bundled into both)
+- Node.js >= 22 (uses the global `fetch` API). Constructing `Client` and
+  signing requests need no DOM — browser storage access no-ops where
+  `localStorage` is absent (see `src/safe-storage.ts`)
 - Modern browsers with `fetch`, `WebCrypto`, and ES2020 support
 
 ## Links

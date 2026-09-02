@@ -1,7 +1,7 @@
 const net = require('net');
 const logger = require('./logger')(__filename);
 const WebSocket = require('ws');
-ai = require('../../lib/backend.ai-client-node');
+const ai = require('backend.ai-client');
 const bind = require('./bindStream');
 const htmldeco = require('./htmldeco');
 const HttpsProxyAgent = require('https-proxy-agent');
@@ -26,6 +26,9 @@ i18next
 module.exports = proxy = class Proxy extends ai.backend.Client {
   constructor(env) {
     super(env);
+    // TODO(FR-3836): in API mode `env` is a ClientConfig, which carries no ext_proxy_url,
+    // so the external-proxy branch in _start never fires (SESSION mode gets it via cf).
+    this._env = env;
     this._running = false;
     this._resolve = undefined;
     this._connectionCount = 0;

@@ -52,14 +52,10 @@ compile: versiontag
 		cp config.toml.sample config.toml; \
 	fi
 	@pnpm run build
-clean_client_node_ts:
-	@printf "$(CYAN)Cleaning backend.ai-client-node.js...$(NC)\n"
-	@rm -f ./src/lib/backend.ai-client-node.js
-compile_client_node_ts: clean_client_node_ts
-	@printf "$(GREEN)Compiling backend.ai-client-node.ts...$(NC)\n"
-	@./node_modules/typescript/bin/tsc src/lib/backend.ai-client-node.ts --outDir src/lib --target es2018 --module commonjs --allowJs true --moduleResolution node --resolveJsonModule true --esModuleInterop false --experimentalDecorators true --allowSyntheticDefaultImports true --skipLibCheck true --lib es6,dom,es2016,es2017,es2020 --strict false --strictNullChecks false --strictFunctionTypes false --strictBindCallApply false --strictPropertyInitialization false --noImplicitThis false --alwaysStrict false --noUnusedLocals false --noImplicitReturns false --noFallthroughCasesInSwitch false
-	@printf "$(YELLOW)backend.ai-client-node.js compiled$(NC)\n"
-compile_wsproxy: compile_client_node_ts
+compile_client_pkg:
+	@printf "$(GREEN)Building backend.ai-client package...$(NC)\n"
+	@pnpm --filter backend.ai-client build
+compile_wsproxy: compile_client_pkg
 	@pnpm -w exec webpack-cli --config src/wsproxy/webpack.config.js
 all: dep
 	@make compile_all_localproxy
@@ -93,6 +89,11 @@ dep_web:
 	fi
 	@if [ ! -f "./src/wsproxy/dist/wsproxy.js" ]; then \
 		make compile_wsproxy; \
+	fi
+	@# The web-build artifact ships src/wsproxy/dist/ but not the client package's
+	@# dist/, and `pkg` (compile_localproxy) packs raw sources that require it.
+	@if [ ! -f "./packages/backend.ai-client/dist/index.cjs" ]; then \
+		make compile_client_pkg; \
 	fi
 # Prepare the Electron app directory. Requires dep_web to have run first.
 # Uses publicPath patching instead of a full second React build (~4-8 min savings).
@@ -164,7 +165,7 @@ compile_localproxy:
 		printf "$(YELLOW)local-proxy $(os)-$(arch) already built, skipping$(NC)\n"; \
 	else \
 		rm -rf ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix); \
-		pnpm exec pkg ./src/wsproxy/local_proxy.js --targets node18-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli; \
+		pnpm exec pkg ./src/wsproxy/local_proxy.js --targets node22-$(os)-$(arch) --output ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) --compress Brotli; \
 		rm -rf ./app/_lp-stage-$(os)-$(arch); \
 		mkdir -p ./app/_lp-stage-$(os)-$(arch); \
 		cp ./app/backend.ai-local-proxy-$(BUILD_VERSION)-$(os)-$(arch)$(local_proxy_postfix) ./app/_lp-stage-$(os)-$(arch)/backend.ai-local-proxy$(local_proxy_postfix); \

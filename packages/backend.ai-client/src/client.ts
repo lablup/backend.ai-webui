@@ -33,6 +33,7 @@ import {
   EduApp,
   utils,
 } from './resources';
+import { safeStorage } from './safe-storage';
 import type {
   FeatureSet,
   GraphQLVariables,
@@ -44,28 +45,23 @@ import type {
 import CryptoES from 'crypto-es';
 
 /**
- * Keys whose values may carry secrets (passwords, API secret keys, tokens,
- * one-time codes, etc.). Request bodies are persisted to localStorage as part
- * of the debug log (`backendaiwebui.logs`); any value stored under one of these
- * keys is masked first so credentials are never written in clear text.
- * Matched case-insensitively against object keys.
+ * Key stems whose values may carry secrets (passwords, API secret keys,
+ * tokens, one-time codes, etc.). Request bodies are persisted to localStorage
+ * as part of the debug log (`backendaiwebui.logs`); any value stored under a
+ * key containing one of these stems (case-insensitive) is masked first so
+ * credentials are never written in clear text — covering snake_case and
+ * camelCase spellings alike (`new_password2`, `refreshToken`, `clientSecret`).
  */
-const SENSITIVE_LOG_KEYS = new Set([
+const SENSITIVE_LOG_KEY_STEMS = [
   'password',
-  'new_password',
-  'old_password',
-  'current_password',
-  'secret_key',
   'secret',
   'token',
-  'access_token',
-  'refresh_token',
   'otp',
   'authorization',
   'passphrase',
   'private_key',
-  'ssh_private_key',
-]);
+  'privatekey',
+];
 
 const REDACTED_PLACEHOLDER = '********';
 
@@ -85,7 +81,10 @@ function redactSensitiveValues(value: unknown): unknown {
       if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
         continue;
       }
-      redacted[key] = SENSITIVE_LOG_KEYS.has(key.toLowerCase())
+      const lowerKey = key.toLowerCase();
+      redacted[key] = SENSITIVE_LOG_KEY_STEMS.some((stem) =>
+        lowerKey.includes(stem),
+      )
         ? REDACTED_PLACEHOLDER
         : redactSensitiveValues(val);
     }
@@ -100,7 +99,7 @@ function redactSensitiveValues(value: unknown): unknown {
  * string bodies (the common case, since signed requests stringify the body).
  * Non-JSON strings and primitives are returned unchanged.
  */
-function redactRequestParameters(params: unknown): unknown {
+export function redactRequestParameters(params: unknown): unknown {
   if (typeof params === 'string') {
     try {
       const parsed = JSON.parse(params);
@@ -237,8 +236,8 @@ export class Client {
     this.abortSignal = this.abortController.signal;
     this.requestTimeout = 30_000;
     this.requestSoftTimeout = 20_000;
-    if (localStorage.getItem('backendaiwebui.sessionid')) {
-      this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
+    if (safeStorage.getItem('backendaiwebui.sessionid')) {
+      this._loginSessionId = safeStorage.getItem('backendaiwebui.sessionid');
     } else {
       this._loginSessionId = '';
     }
@@ -504,7 +503,7 @@ export class Client {
     }
 
     let previous_log = JSON.parse(
-      localStorage.getItem('backendaiwebui.logs') ?? 'null',
+      safeStorage.getItem('backendaiwebui.logs') ?? 'null',
     );
     if (previous_log) {
       if (previous_log.length > 2000) {
@@ -561,15 +560,15 @@ export class Client {
       log_stack = log_stack.concat(previous_log);
     }
     try {
-      localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
+      safeStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
     } catch (e) {
       // console.warn('Local storage is full. Clearing part of the logs.');
       // localStorage is full, we will keep the recent 2/3 of the logs.
       let webuiLogs = JSON.parse(
-        localStorage.getItem('backendaiwebui.logs') || '[]',
+        safeStorage.getItem('backendaiwebui.logs') || '[]',
       );
       webuiLogs = webuiLogs.slice(0, Math.round((webuiLogs.length * 2) / 3));
-      localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
+      safeStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
       // Will not throw exception here since the request should be proceeded
       // even if it is not possible to write log to localStorage.
     }
@@ -1110,7 +1109,7 @@ export class Client {
         'authenticated' in responseBody &&
         responseBody.data
       ) {
-        localStorage.removeItem('backendaiwebui.sessionid');
+        safeStorage.removeItem('backendaiwebui.sessionid');
         throw {
           isLoginError: true,
           data: responseBody.data,
@@ -1135,13 +1134,13 @@ export class Client {
       }
       await this.get_manager_version();
       if (this._loginSessionId !== null && this._loginSessionId !== '') {
-        localStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
+        safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
       }
       return this.check_login();
     }
 
     // HTTP 200 but authenticated === false (TOTP required, etc.)
-    localStorage.removeItem('backendaiwebui.sessionid');
+    safeStorage.removeItem('backendaiwebui.sessionid');
     throw {
       isLoginError: true,
       data: result.data || {},
@@ -1158,11 +1157,11 @@ export class Client {
     let body = {};
     let rqst = this.newSignedRequest('POST', `/server/logout`, body, null);
     // clean up log msg for security reason
-    const currentLogs = localStorage.getItem('backendaiwebui.logs');
+    const currentLogs = safeStorage.getItem('backendaiwebui.logs');
     if (currentLogs) {
-      localStorage.removeItem('backendaiwebui.logs');
+      safeStorage.removeItem('backendaiwebui.logs');
     }
-    localStorage.removeItem('backendaiwebui.sessionid');
+    safeStorage.removeItem('backendaiwebui.sessionid');
     return this._wrapWithPromise(rqst);
   }
 
@@ -1188,7 +1187,7 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          localStorage.setItem(
+          safeStorage.setItem(
             'backendaiwebui.sessionid',
             this._loginSessionId,
           );
@@ -1199,7 +1198,7 @@ export class Client {
         // been persisted by a previous login so that subsequent
         // check_login() calls don't confuse it with a live session.
         // Mirrors the regular login() failure-path behavior.
-        localStorage.removeItem('backendaiwebui.sessionid');
+        safeStorage.removeItem('backendaiwebui.sessionid');
         if (result.data) {
           // Surface both `details` (free-text) and `type` (problem URL) so
           // the webui can classify the failure (`active-login-session-exists`,

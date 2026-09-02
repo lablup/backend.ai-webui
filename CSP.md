@@ -214,7 +214,7 @@ instantiates via a `blob:` URL (used by `BAICodeEditor`, `VFolderTextFileEditorM
 The primary exfil boundary, and the directive most exposed to Backend.AI's dynamic topology.
 It must cover **every** backend service the app talks to, which is more than just the manager:
 
-- **Manager API** — user-entered origin (`src/lib/backend.ai-client-node.ts`,
+- **Manager API** — user-entered origin (`packages/backend.ai-client/src/client.ts`,
   `RelayEnvironment.ts` `/admin/gql`).
 - **Storage-proxy** — vfolder download/upload. The manager returns a download URL on the
   storage-proxy's **own host:port** at runtime, e.g.
@@ -223,10 +223,13 @@ It must cover **every** backend service the app talks to, which is more than jus
 - **App-proxy / per-RG wsproxy** — `config.toml [wsproxy] proxyURL` plus manager-issued
   dynamic `wsproxy_addr` hosts (`react/src/hooks/useBackendAIAppLauncher.tsx:251`).
 
-**ws(s) variants are mandatory** — `RelayEnvironment.ts:119` graphql-sse subscriptions,
-`helper/index.tsx:900` `fetchEventSource`, and `backend.ai-client-node.ts:3729` `EventSource`
-use the ws(s) scheme, and `matchesCspSource` compares protocol exactly (an `https://` source
-does NOT cover `wss://`).
+**ws(s) variants are mandatory for the WebSocket consumers** — the app-proxy /
+wsproxy streams above (`useBackendAIAppLauncher.tsx:251`) connect over `wss://`, and
+`matchesCspSource` compares protocol exactly (an `https://` source does NOT cover
+`wss://`). The SSE-style consumers — `RelayEnvironment.ts:119` graphql-sse
+subscriptions, `helper/index.tsx:900` `fetchEventSource`, and
+`packages/backend.ai-client/src/resources/maintenance.ts:23` `EventSource` — connect
+over plain `http(s)`, so the `https://` sources already cover them.
 
 Because storage-proxy ports and per-RG wsproxy hosts are runtime-issued, enumerating each is
 impractical — use the **deployment-scoped wildcard** from Rule 4: `scheme://HOST:*` for a
@@ -269,9 +272,8 @@ blocks `<object>/<embed>` plugin script execution (none used in source).
 `form-action` has **no `default-src` fallback** — omitting it leaves form POSTs unrestricted
 (a credential-exfil hole). `<MANAGER_API>` is required because SAML and OpenID SSO build a
 real `<form method="POST">` and call `form.submit()` to the (cross-origin, user-entered)
-manager endpoint (`src/lib/loginSessionAuth.ts:361-390`,
-`backend.ai-client-node.ts:1346`). `'self'` alone would break SSO — verify a SAML/OpenID
-login during rollout.
+manager endpoint (`react/src/helper/loginSessionAuth.ts:363-389`). `'self'` alone would
+break SSO — verify a SAML/OpenID login during rollout.
 
 ### `manifest-src 'self'`
 

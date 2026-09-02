@@ -16,7 +16,6 @@ export default [
       'src/wsproxy*/**',
       'src/plastics/**',
       'src/types/**',
-      'src/lib/**',
       'packages/eslint-config-bai/**',
       'react/**',
       'packages/**',
