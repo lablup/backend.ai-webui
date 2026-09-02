@@ -198,7 +198,7 @@ test.describe(
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(
-        page.getByText('Runtime variant preset has been created.'),
+        page.getByText('Runtime parameter has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -235,7 +235,7 @@ test.describe(
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(
-        page.getByText('Runtime variant preset has been created.'),
+        page.getByText('Runtime parameter has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -402,7 +402,7 @@ test.describe(
       await createLabelRows.nth(1).fill('BF16');
       await modal.getByRole('button', { name: 'Create' }).click();
       await expect(
-        page.getByText('Runtime variant preset has been created.'),
+        page.getByText('Runtime parameter has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
