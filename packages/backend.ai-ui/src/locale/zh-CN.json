@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "执行错误",
     "ErrorOccurred": "发生错误"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "清除",
+    "HexValue": "十六进制值",
+    "NoColor": "无颜色",
+    "SelectColor": "选择颜色"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "清除 搜索选项",
     "NoResults": "无结果",
@@ -163,7 +169,7 @@
     "SelectDomain": "选择域"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "数量"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自动刷新",
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "输入您的 Hugging Face 令牌",
+    "HuggingFaceSettings": "Hugging Face 设置",
+    "Token": "令牌",
+    "TokenUpdatedSuccessfully": "令牌更新成功。"
   },
   "comp:BAIImageSelect": {
     "SelectImage": "选择镜像"
@@ -352,8 +358,20 @@
     "SelectFolder": "选择文件夹"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "应用",
     "PlaceHolder": "搜索",
-    "ResetFilter": "重置过滤器"
+    "ResetFilter": "重置过滤器",
+    "SearchLabel": "搜索筛选条件",
+    "operator": {
+      "Contains": "包含",
+      "Equals": "等于",
+      "GreaterThan": "大于",
+      "GreaterThanOrEqual": "大于或等于",
+      "In": "在...中",
+      "LessThan": "小于",
+      "LessThanOrEqual": "小于或等于",
+      "NotEquals": "不等于"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "取消拉力",
@@ -596,10 +614,10 @@
     "ArchiveDownloadStarted": "已开始下载 {{count}} 个项目。",
     "ChangeFileExtension": "更改文件扩展名",
     "ChangeFileExtensionDesc": "更改文件扩展名可能会导致文件变得无法使用或不正确打开。\n你想继续吗？",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "创建新文件",
     "CreateANewFolder": "创建一个新文件夹",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "创建文件",
+    "CreateFolder": "创建文件夹",
     "CreatedAt": "创建在",
     "DeleteSelectedItemDesc": "删除的文件和文件夹无法恢复。\n你想继续吗？",
     "DeleteSelectedItemsDialog": "删除确认",
@@ -610,22 +628,22 @@
     "DuplicatedFiles": "覆盖确认",
     "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",
     "EditFile": "编辑文件",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "文件创建成功。",
+    "FileName": "文件名",
+    "FileNamePlaceholder": "例如 model-definition.yaml",
     "FileTooLargeToEdit": "由于文件大小超过{{size}}MB,浏览器内编辑受到限制。",
     "FolderCreatedSuccessfully": "文件夹成功创建了。",
     "FolderName": "文件夹名称",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "文件名不能超过 255 个字符。",
     "MaxFolderNameLength": "文件夹名称必须为255个字符或更小。",
     "ModifiedAt": "修改为",
     "Name": "姓名",
     "NoUploadPermissionForHost": "您没有此存储主机的上传权限。",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "路径",
+    "PleaseEnterAFileName": "请输入文件名。",
     "PleaseEnterAFolderName": "请输入文件夹名称。",
-    "RenameFile": "Rename",
+    "RenameFile": "重命名",
     "RenameSuccess": "该名称已成功更改。",
     "SelectedItemsDeletedSuccessfully": "选定的文件和文件夹已成功删除。",
     "Size": "尺寸",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "减少",
     "DeselectAll": "取消全选",
     "File": "文件",
-    "Increase": "Increase",
+    "Increase": "增加",
     "NSelected": "{{count}}选择",
     "Optional": "可选",
     "Project": "项目",
     "Search": "搜索",
-    "Select": "Select",
+    "Select": "选择",
     "SelectPlaceholder": "请选择{{label}}",
     "TotalItems": "总计{{total}}项目",
-    "Unit": "Unit",
+    "Unit": "单位",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "操作",
+      "Back": "返回",
       "Cancel": "取消",
       "Close": "关闭",
       "Collapse": "坍塌",
-      "Confirm": "Confirm",
+      "Confirm": "确认",
       "Copied": "已复制",
       "Copy": "复制",
       "CopyAll": "复制全部",

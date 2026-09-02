@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "Гүйцэтгэл амжилтгүй боллоо",
     "ErrorOccurred": "Алдаа гарлаа"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Цэвэрлэх",
+    "HexValue": "Hex утга",
+    "NoColor": "Өнгөгүй",
+    "SelectColor": "Өнгө сонгох"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
     "NoResults": "Үр дүн олдсонгүй",
@@ -163,13 +169,13 @@
     "SelectDomain": "Домен сонгох"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Хэмжээ"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автоматаар сэргээх",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}}ц",
+    "EveryMinutes": "{{count}}м",
+    "EverySeconds": "{{count}}с",
     "LastUpdated": "Сүүлд шинэчлэгдсэн",
     "Off": "Унтраах",
     "Refresh": "Шинэчлэх"
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Hugging Face токеноо оруулна уу",
+    "HuggingFaceSettings": "Hugging Face тохиргоо",
+    "Token": "Токен",
+    "TokenUpdatedSuccessfully": "Токен амжилттай шинэчлэгдлээ."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Зураг сонгох"
@@ -254,11 +260,11 @@
     "User": "Хэрэглэгч"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Бүтэн дэлгэцээс гарах",
+    "Fullscreen": "Бүтэн дэлгэц",
+    "Maximize": "Томруулах",
+    "Minimize": "Жижигрүүлэх",
+    "Restore": "Сэргээх"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "\"{{deploymentName}}\" байршуулалтыг устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй.",
@@ -352,8 +358,20 @@
     "SelectFolder": "Хавтас сонгох"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Хэрэглэх",
     "PlaceHolder": "Хайх",
-    "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
+    "ResetFilter": "Шүүлтүүрийг дахин тохируулах",
+    "SearchLabel": "Шүүлтүүр хайх",
+    "operator": {
+      "Contains": "агуулсан",
+      "Equals": "тэнцүү",
+      "GreaterThan": "их",
+      "GreaterThanOrEqual": "их эсвэл тэнцүү",
+      "In": "дотор",
+      "LessThan": "бага",
+      "LessThanOrEqual": "бага эсвэл тэнцүү",
+      "NotEquals": "тэнцүү биш"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Татах",
@@ -596,10 +614,10 @@
     "ArchiveDownloadStarted": "{{count}} зүйлийн таталт эхэллээ.",
     "ChangeFileExtension": "Файлын өргөтгөлийг өөрчлөх",
     "ChangeFileExtensionDesc": "Файлын өргөтгөлийг өөрчлөх нь файлыг ашиглах боломжгүй эсвэл буруу нээхэд хүргэж болзошгүй юм. \nТа үргэлжлүүлэхийг хүсч байна уу?",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Шинэ файл үүсгэх",
     "CreateANewFolder": "Шинэ хавтас үүсгэх",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Файл үүсгэх",
+    "CreateFolder": "Хавтас үүсгэх",
     "CreatedAt": "Бүтэмж дээр бүтсэн",
     "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
     "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
@@ -610,22 +628,22 @@
     "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих",
     "DuplicatedFilesDesc": "Ижил нэртэй файл эсвэл хавтас аль хэдийн байна. \nТа дарж бичихийг хүсч байна уу?",
     "EditFile": "Файлыг засах",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Файл амжилттай үүслээ.",
+    "FileName": "Файлын нэр",
+    "FileNamePlaceholder": "жишээ нь model-definition.yaml",
     "FileTooLargeToEdit": "Файлын хэмжээ {{size}}MB-ээс хэтэрсэн тул хөтөч дээр засварлах боломжгүй.",
     "FolderCreatedSuccessfully": "Амжилтанд амжилттай бүтээгдсэн.",
     "FolderName": "Хөдөлгөөний нэр",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Файлын нэр 255 тэмдэгтээс хэтрэхгүй байх ёстой.",
     "MaxFolderNameLength": "Фолдерын нэр 255 тэмдэгт буюу түүнээс бага тэмдэгт байх ёстой.",
     "ModifiedAt": "Өөрчлөгдсөн",
     "Name": "Нэр",
     "NoUploadPermissionForHost": "Энэ хостод байршуулах эрх байхгүй байна.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Зам",
+    "PleaseEnterAFileName": "Файлын нэрийг оруулна уу.",
     "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
-    "RenameFile": "Rename",
+    "RenameFile": "Нэр өөрчлөх",
     "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",
     "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
     "Size": "Хэмжээ",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Хасах",
     "DeselectAll": "Бүгдийг сонголтоос хасах",
     "File": "Файл",
-    "Increase": "Increase",
+    "Increase": "Нэмэх",
     "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
     "Project": "Төсөл",
     "Search": "Хайх",
-    "Select": "Select",
+    "Select": "Сонгох",
     "SelectPlaceholder": "{{label}} сонгоно уу",
     "TotalItems": "Нийт {{total}} зүйлүүд",
-    "Unit": "Unit",
+    "Unit": "Нэгж",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Үйлдэл",
+      "Back": "Буцах",
       "Cancel": "Цуаах",
       "Close": "Ойр дөхөм",
       "Collapse": "Сүйрэл",
-      "Confirm": "Confirm",
+      "Confirm": "Баталгаажуулах",
       "Copied": "Хуулсан",
       "Copy": "Хуулах",
       "CopyAll": "Бүгдийг хуулбарлах",

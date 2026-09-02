@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "Pelaksanaan gagal",
     "ErrorOccurred": "Ralat berlaku"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Kosongkan",
+    "HexValue": "Nilai heks",
+    "NoColor": "Tiada warna",
+    "SelectColor": "Pilih warna"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Kosongkan Cari pilihan",
     "NoResults": "Tiada keputusan",
@@ -163,7 +169,7 @@
     "SelectDomain": "Pilih Domain"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Jumlah"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Segar semula automatik",
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
+    "EnterToken": "Masukkan token Hugging Face anda",
+    "HuggingFaceSettings": "Tetapan Hugging Face",
     "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "TokenUpdatedSuccessfully": "Token berjaya dikemas kini."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Pilih Imej"
@@ -254,11 +260,11 @@
     "User": "Pengguna"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Keluar skrin penuh",
+    "Fullscreen": "Skrin penuh",
+    "Maximize": "Maksimumkan",
+    "Minimize": "Minimumkan",
+    "Restore": "Pulihkan"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Adakah anda pasti mahu memadamkan penggunaan \"{{deploymentName}}\"? Tindakan ini tidak boleh dibatalkan.",
@@ -352,8 +358,20 @@
     "SelectFolder": "Pilih Folder"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Guna",
     "PlaceHolder": "Cari",
-    "ResetFilter": "Tetapkan semula penapis"
+    "ResetFilter": "Tetapkan semula penapis",
+    "SearchLabel": "Cari penapis",
+    "operator": {
+      "Contains": "mengandungi",
+      "Equals": "sama dengan",
+      "GreaterThan": "lebih besar daripada",
+      "GreaterThanOrEqual": "lebih besar atau sama",
+      "In": "dalam",
+      "LessThan": "kurang daripada",
+      "LessThanOrEqual": "kurang atau sama",
+      "NotEquals": "tidak sama dengan"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Batalkan tarik",
@@ -596,10 +614,10 @@
     "ArchiveDownloadStarted": "Muat turun untuk {{count}} item telah bermula.",
     "ChangeFileExtension": "Tukar Sambungan Fail",
     "ChangeFileExtensionDesc": "Menukar sambungan fail boleh menyebabkan fail menjadi tidak dapat digunakan atau dibuka dengan tidak betul. \nAdakah anda mahu meneruskan?",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Cipta fail baharu",
     "CreateANewFolder": "Buat folder baru",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Cipta Fail",
+    "CreateFolder": "Cipta Folder",
     "CreatedAt": "Dicipta di",
     "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
     "DeleteSelectedItemsDialog": "Padam pengesahan",
@@ -610,22 +628,22 @@
     "DuplicatedFiles": "Pengesahan Pengesahan",
     "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
     "EditFile": "Edit Fail",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Fail berjaya dicipta.",
+    "FileName": "Nama Fail",
+    "FileNamePlaceholder": "cth. model-definition.yaml",
     "FileTooLargeToEdit": "Penyuntingan dalam pelayar dihadkan kerana saiz fail melebihi {{size}}MB.",
     "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
     "FolderName": "Nama folder",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Nama fail mestilah 255 aksara atau kurang.",
     "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",
     "ModifiedAt": "Diubahsuai di",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak mempunyai kebenaran muat naik untuk hos ini.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Laluan",
+    "PleaseEnterAFileName": "Sila masukkan nama fail.",
     "PleaseEnterAFolderName": "Sila masukkan nama folder.",
-    "RenameFile": "Rename",
+    "RenameFile": "Namakan semula",
     "RenameSuccess": "Nama telah berjaya diubah.",
     "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
     "Size": "Saiz",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Kurangkan",
     "DeselectAll": "Nyahpilih semua",
     "File": "Fail",
-    "Increase": "Increase",
+    "Increase": "Tambah",
     "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
     "Project": "Projek",
     "Search": "Cari",
-    "Select": "Select",
+    "Select": "Pilih",
     "SelectPlaceholder": "Pilih {{label}}",
     "TotalItems": "Jumlah {{total}} item",
     "Unit": "Unit",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Tindakan",
+      "Back": "Kembali",
       "Cancel": "Batalkan",
       "Close": "Tutup",
       "Collapse": "Runtuh",
-      "Confirm": "Confirm",
+      "Confirm": "Sahkan",
       "Copied": "Disalin",
       "Copy": "Salin",
       "CopyAll": "Salin semua",

@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "Ошибка выполнения",
     "ErrorOccurred": "Произошла ошибка"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Очистить",
+    "HexValue": "Шестнадцатеричное значение",
+    "NoColor": "Без цвета",
+    "SelectColor": "Выбрать цвет"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Очистить Поиск по вариантам",
     "NoResults": "Нет результатов",
@@ -163,7 +169,7 @@
     "SelectDomain": "Выберите домен"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Количество"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автообновление",
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Введите свой токен Hugging Face",
+    "HuggingFaceSettings": "Настройки Hugging Face",
+    "Token": "Токен",
+    "TokenUpdatedSuccessfully": "Токен успешно обновлён."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Выбрать образ"
@@ -254,11 +260,11 @@
     "User": "Пользователь"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Выйти из полноэкранного режима",
+    "Fullscreen": "Полноэкранный режим",
+    "Maximize": "Развернуть",
+    "Minimize": "Свернуть",
+    "Restore": "Восстановить"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Вы уверены, что хотите удалить развёртывание \"{{deploymentName}}\"? Это действие нельзя отменить.",
@@ -352,8 +358,20 @@
     "SelectFolder": "Выбрать папку"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Применить",
     "PlaceHolder": "Поиск",
-    "ResetFilter": "Сбросить фильтры"
+    "ResetFilter": "Сбросить фильтры",
+    "SearchLabel": "Поиск фильтров",
+    "operator": {
+      "Contains": "содержит",
+      "Equals": "равно",
+      "GreaterThan": "больше",
+      "GreaterThanOrEqual": "больше или равно",
+      "In": "в",
+      "LessThan": "меньше",
+      "LessThanOrEqual": "меньше или равно",
+      "NotEquals": "не равно"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Отменить тяну",
@@ -596,10 +614,10 @@
     "ArchiveDownloadStarted": "Началась загрузка {{count}} элементов.",
     "ChangeFileExtension": "Изменить расширение файла",
     "ChangeFileExtensionDesc": "Изменение расширения файла может привести к тому, что файл станет непригодным для использования или неверно открытым. \nВы хотите продолжить?",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Создать новый файл",
     "CreateANewFolder": "Создать новую папку",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Создать файл",
+    "CreateFolder": "Создать папку",
     "CreatedAt": "Создан в",
     "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
     "DeleteSelectedItemsDialog": "Удалить подтверждение",
@@ -610,22 +628,22 @@
     "DuplicatedFiles": "Перезаписать подтверждение",
     "DuplicatedFilesDesc": "Файл или папка с тем же именем уже существует. \nВы хотите перезаписать?",
     "EditFile": "Редактировать файл",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Файл успешно создан.",
+    "FileName": "Имя файла",
+    "FileNamePlaceholder": "например, model-definition.yaml",
     "FileTooLargeToEdit": "Редактирование в браузере ограничено, поскольку размер файла превышает {{size}}МБ.",
     "FolderCreatedSuccessfully": "Папка создана успешно.",
     "FolderName": "Имя папки",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Имя файла не должно превышать 255 символов.",
     "MaxFolderNameLength": "Имя папки должно быть 255 символов или меньше.",
     "ModifiedAt": "Модифицирован в",
     "Name": "Имя",
     "NoUploadPermissionForHost": "У вас нет разрешения на загрузку для данного хоста.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Путь",
+    "PleaseEnterAFileName": "Пожалуйста, введите имя файла.",
     "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
-    "RenameFile": "Rename",
+    "RenameFile": "Переименовать",
     "RenameSuccess": "Имя было успешно изменено.",
     "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
     "Size": "Размер",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Уменьшить",
     "DeselectAll": "Снять выделение",
     "File": "Файл",
-    "Increase": "Increase",
+    "Increase": "Увеличить",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "Project": "Проект",
     "Search": "Поиск",
-    "Select": "Select",
+    "Select": "Выбрать",
     "SelectPlaceholder": "Выберите {{label}}",
     "TotalItems": "Total {{total}} элементы",
-    "Unit": "Unit",
+    "Unit": "Единица",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Действие",
+      "Back": "Назад",
       "Cancel": "Отмена",
       "Close": "Закрывать",
       "Collapse": "Крах",
-      "Confirm": "Confirm",
+      "Confirm": "Подтвердить",
       "Copied": "Скопировано",
       "Copy": "Копировать",
       "CopyAll": "Копировать все",

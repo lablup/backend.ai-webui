@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "การดำเนินการล้มเหลว",
     "ErrorOccurred": "เกิดข้อผิดพลาด"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "ล้าง",
+    "HexValue": "ค่าเลขฐานสิบหก",
+    "NoColor": "ไม่มีสี",
+    "SelectColor": "เลือกสี"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "ล้าง ค้นหาตัวเลือก",
     "NoResults": "ไม่พบผลลัพธ์",
@@ -163,7 +169,7 @@
     "SelectDomain": "เลือกโดเมน"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "จำนวน"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "รีเฟรชอัตโนมัติ",
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "กรอกโทเค็น Hugging Face ของคุณ",
+    "HuggingFaceSettings": "การตั้งค่า Hugging Face",
+    "Token": "โทเค็น",
+    "TokenUpdatedSuccessfully": "อัปเดตโทเค็นสำเร็จแล้ว"
   },
   "comp:BAIImageSelect": {
     "SelectImage": "เลือกรูปภาพ"
@@ -217,7 +223,7 @@
     "FailedToPullVersions": "ไม่สามารถดึงเวอร์ชันได้",
     "OnlySCANNEDVersionsCanBePulled": "สามารถดึงรุ่นสแกนได้เท่านั้น",
     "Pull": "ดึง",
-    "PullVersion": "Pull Version",
+    "PullVersion": "ดึงเวอร์ชัน",
     "Size": "ขนาด",
     "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
     "Version": "รุ่น"
@@ -254,11 +260,11 @@
     "User": "ผู้ใช้"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "ออกจากโหมดเต็มหน้าจอ",
+    "Fullscreen": "เต็มหน้าจอ",
+    "Maximize": "ขยายใหญ่สุด",
+    "Minimize": "ย่อเล็กสุด",
+    "Restore": "คืนค่า"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "คุณแน่ใจหรือไม่ว่าต้องการลบการปรับใช้ \"{{deploymentName}}\"? การดำเนินการนี้ไม่สามารถยกเลิกได้",
@@ -352,8 +358,20 @@
     "SelectFolder": "เลือกโฟลเดอร์"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "นำไปใช้",
     "PlaceHolder": "ค้นหา",
-    "ResetFilter": "รีเซ็ตตัวกรอง"
+    "ResetFilter": "รีเซ็ตตัวกรอง",
+    "SearchLabel": "ค้นหาตัวกรอง",
+    "operator": {
+      "Contains": "ประกอบด้วย",
+      "Equals": "เท่ากับ",
+      "GreaterThan": "มากกว่า",
+      "GreaterThanOrEqual": "มากกว่าหรือเท่ากับ",
+      "In": "ใน",
+      "LessThan": "น้อยกว่า",
+      "LessThanOrEqual": "น้อยกว่าหรือเท่ากับ",
+      "NotEquals": "ไม่เท่ากับ"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "ยกเลิกการดึง",
@@ -584,7 +602,7 @@
     "PathAndAlias": "พาธ & Alias",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
     "RemoveFolder": "ลบ",
-    "Subpath": "Subpath",
+    "Subpath": "พาธย่อย",
     "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
     "SubpathPlaceholder": "เช่น dataset/train (ไม่บังคับ)",
     "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root ปล่อยว่างเพื่อ mount จาก root"
@@ -622,10 +640,10 @@
     "ModifiedAt": "ดัดแปลงที่",
     "Name": "ชื่อ",
     "NoUploadPermissionForHost": "คุณไม่มีสิทธิ์อัปโหลดสำหรับโฮสต์นี้",
-    "Path": "Path",
+    "Path": "เส้นทาง",
     "PleaseEnterAFileName": "กรุณากรอกชื่อไฟล์",
     "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
-    "RenameFile": "Rename",
+    "RenameFile": "เปลี่ยนชื่อ",
     "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",
     "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
     "Size": "ขนาด",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "ลด",
     "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
     "File": "ไฟล์",
-    "Increase": "Increase",
+    "Increase": "เพิ่ม",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",
     "Search": "ค้นหา",
-    "Select": "Select",
+    "Select": "เลือก",
     "SelectPlaceholder": "เลือก{{label}}",
     "TotalItems": "รวม {{total}} รายการ",
-    "Unit": "Unit",
+    "Unit": "หน่วย",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "การดำเนินการ",
+      "Back": "ย้อนกลับ",
       "Cancel": "ยกเลิก",
       "Close": "ปิด",
       "Collapse": "ทรุด",
-      "Confirm": "Confirm",
+      "Confirm": "ยืนยัน",
       "Copied": "คัดลอกแล้ว",
       "Copy": "คัดลอก",
       "CopyAll": "คัดลอกทั้งหมด",
