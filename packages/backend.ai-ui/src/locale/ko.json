@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "실행 오류",
     "ErrorOccurred": "문제가 발생했습니다."
   },
+  "comp:BAIColorPicker": {
+    "Clear": "지우기",
+    "HexValue": "16진수 값",
+    "NoColor": "색상 없음",
+    "SelectColor": "색상 선택"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "옵션 검색 지우기",
     "NoResults": "결과 없음",
@@ -163,7 +169,7 @@
     "SelectDomain": "도메인 선택"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "수량"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "자동 새로고침",
@@ -352,8 +358,20 @@
     "SelectFolder": "폴더를 선택해주세요"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "적용",
     "PlaceHolder": "검색",
-    "ResetFilter": "필터 초기화"
+    "ResetFilter": "필터 초기화",
+    "SearchLabel": "필터 검색",
+    "operator": {
+      "Contains": "포함",
+      "Equals": "같음",
+      "GreaterThan": "초과",
+      "GreaterThanOrEqual": "이상",
+      "In": "포함됨",
+      "LessThan": "미만",
+      "LessThanOrEqual": "이하",
+      "NotEquals": "같지 않음"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "가져오기 취소",
@@ -622,10 +640,10 @@
     "ModifiedAt": "수정일",
     "Name": "이름",
     "NoUploadPermissionForHost": "호스트에 대한 업로드 권한이 없습니다.",
-    "Path": "Path",
+    "Path": "경로",
     "PleaseEnterAFileName": "파일 이름을 입력해 주세요.",
     "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
-    "RenameFile": "Rename",
+    "RenameFile": "이름 변경",
     "RenameSuccess": "이름이 변경되었습니다.",
     "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 삭제되었습니다.",
     "Size": "크기",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "감소",
     "DeselectAll": "선택 취소",
     "File": "파일",
-    "Increase": "Increase",
+    "Increase": "증가",
     "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
     "Project": "프로젝트",
     "Search": "검색",
-    "Select": "Select",
+    "Select": "선택",
     "SelectPlaceholder": "{{label}}을(를) 선택해주세요",
     "TotalItems": "총 {{total}} 항목",
-    "Unit": "Unit",
+    "Unit": "단위",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "동작",
+      "Back": "뒤로",
       "Cancel": "취소",
       "Close": "닫기",
       "Collapse": "접기",
-      "Confirm": "Confirm",
+      "Confirm": "확인",
       "Copied": "복사됨",
       "Copy": "복사",
       "CopyAll": "모두 복사",

@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "Wykonanie nie powiodło się",
     "ErrorOccurred": "Wystąpił błąd"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Wyczyść",
+    "HexValue": "Wartość szesnastkowa",
+    "NoColor": "Brak koloru",
+    "SelectColor": "Wybierz kolor"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Wyczyść Szukaj wśród opcji",
     "NoResults": "Brak wyników",
@@ -163,7 +169,7 @@
     "SelectDomain": "Wybierz domenę"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Ilość"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatyczne odświeżanie",
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
+    "EnterToken": "Wprowadź swój token Hugging Face",
+    "HuggingFaceSettings": "Ustawienia Hugging Face",
     "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "TokenUpdatedSuccessfully": "Token został zaktualizowany."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Wybierz Obraz"
@@ -254,11 +260,11 @@
     "User": "Użytkownik"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Wyjdź z pełnego ekranu",
+    "Fullscreen": "Pełny ekran",
+    "Maximize": "Maksymalizuj",
+    "Minimize": "Minimalizuj",
+    "Restore": "Przywróć"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Czy na pewno chcesz usunąć wdrożenie \"{{deploymentName}}\"? Tej operacji nie można cofnąć.",
@@ -352,8 +358,20 @@
     "SelectFolder": "Wybierz folder"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Zastosuj",
     "PlaceHolder": "Wyszukiwanie",
-    "ResetFilter": "Zresetuj filtry"
+    "ResetFilter": "Zresetuj filtry",
+    "SearchLabel": "Szukaj filtrów",
+    "operator": {
+      "Contains": "zawiera",
+      "Equals": "równe",
+      "GreaterThan": "większe niż",
+      "GreaterThanOrEqual": "większe lub równe",
+      "In": "w",
+      "LessThan": "mniejsze niż",
+      "LessThanOrEqual": "mniejsze lub równe",
+      "NotEquals": "nierówne"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Anuluj Pull",
@@ -596,10 +614,10 @@
     "ArchiveDownloadStarted": "Rozpoczęto pobieranie {{count}} elementów.",
     "ChangeFileExtension": "Zmień rozszerzenie pliku",
     "ChangeFileExtensionDesc": "Zmiana rozszerzenia pliku może spowodować, że plik staje się bezużyteczny lub nieprawidłowo otwierać. \nChcesz kontynuować?",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Utwórz nowy plik",
     "CreateANewFolder": "Utwórz nowy folder",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Utwórz plik",
+    "CreateFolder": "Utwórz folder",
     "CreatedAt": "Utworzony w",
     "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
     "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
@@ -610,22 +628,22 @@
     "DuplicatedFiles": "Nadpisz potwierdzenie",
     "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
     "EditFile": "Edytuj plik",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Plik został utworzony.",
+    "FileName": "Nazwa pliku",
+    "FileNamePlaceholder": "np. model-definition.yaml",
     "FileTooLargeToEdit": "Edycja w przeglądarce jest ograniczona, ponieważ rozmiar pliku przekracza {{size}}MB.",
     "FolderCreatedSuccessfully": "Folder utworzony pomyślnie.",
     "FolderName": "Nazwa folderu",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Nazwa pliku może mieć maksymalnie 255 znaków.",
     "MaxFolderNameLength": "Nazwa folderu musi mieć 255 znaków lub mniej.",
     "ModifiedAt": "Zmodyfikowany przy",
     "Name": "Nazwa",
     "NoUploadPermissionForHost": "Nie masz uprawnień do przesyłania plików na ten host.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Ścieżka",
+    "PleaseEnterAFileName": "Wprowadź nazwę pliku.",
     "PleaseEnterAFolderName": "Wprowadź nazwę folderu.",
-    "RenameFile": "Rename",
+    "RenameFile": "Zmień nazwę",
     "RenameSuccess": "Nazwa została pomyślnie zmieniona.",
     "SelectedItemsDeletedSuccessfully": "Wybrane pliki i foldery zostały pomyślnie usunięte.",
     "Size": "Rozmiar",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Zmniejsz",
     "DeselectAll": "Odznacz wszystko",
     "File": "Plik",
-    "Increase": "Increase",
+    "Increase": "Zwiększ",
     "NSelected": "{{count}}",
     "Optional": "Opcjonalne",
     "Project": "Projekt",
     "Search": "Szukaj",
-    "Select": "Select",
+    "Select": "Wybierz",
     "SelectPlaceholder": "Wybierz {{label}}",
     "TotalItems": "Total {{total}}",
-    "Unit": "Unit",
+    "Unit": "Jednostka",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Akcja",
+      "Back": "Wstecz",
       "Cancel": "Anulować",
       "Close": "Zamknąć",
       "Collapse": "Zawalić się",
-      "Confirm": "Confirm",
+      "Confirm": "Potwierdź",
       "Copied": "Skopiowano",
       "Copy": "Kopiuj",
       "CopyAll": "Kopiuj wszystko",

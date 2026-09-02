@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "Yürütme başarısız oldu",
     "ErrorOccurred": "Bir hata oluştu"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Temizle",
+    "HexValue": "Onaltılık değer",
+    "NoColor": "Renk yok",
+    "SelectColor": "Renk seç"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Seçenekleri ara alanını temizle",
     "NoResults": "Sonuç yok",
@@ -163,7 +169,7 @@
     "SelectDomain": "Etki Alanı Seçin"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Miktar"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Otomatik yenileme",
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Hugging Face jetonunuzu girin",
+    "HuggingFaceSettings": "Hugging Face Ayarları",
+    "Token": "Jeton",
+    "TokenUpdatedSuccessfully": "Jeton başarıyla güncellendi."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Görüntü Seç"
@@ -254,11 +260,11 @@
     "User": "Kullanıcı"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Tam ekrandan çık",
+    "Fullscreen": "Tam ekran",
+    "Maximize": "Büyüt",
+    "Minimize": "Küçült",
+    "Restore": "Geri yükle"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "\"{{deploymentName}}\" dağıtımını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
@@ -352,8 +358,20 @@
     "SelectFolder": "Klasör Seç"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Uygula",
     "PlaceHolder": "Arama",
-    "ResetFilter": "Filtreleri sıfırla"
+    "ResetFilter": "Filtreleri sıfırla",
+    "SearchLabel": "Filtre ara",
+    "operator": {
+      "Contains": "içerir",
+      "Equals": "eşit",
+      "GreaterThan": "daha büyük",
+      "GreaterThanOrEqual": "büyük veya eşit",
+      "In": "içinde",
+      "LessThan": "daha küçük",
+      "LessThanOrEqual": "küçük veya eşit",
+      "NotEquals": "eşit değil"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Çekmeyi iptal et",
@@ -596,10 +614,10 @@
     "ArchiveDownloadStarted": "{{count}} öğe indirilmeye başlandı.",
     "ChangeFileExtension": "Dosya Uzantısını Değiştir",
     "ChangeFileExtensionDesc": "Dosya uzantısını değiştirmek dosyanın kullanılamaz hale gelmesine veya hatalı açılmasına neden olabilir. Devam etmek istiyor musunuz?",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Yeni dosya oluştur",
     "CreateANewFolder": "Yeni bir klasör oluşturun",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Dosya Oluştur",
+    "CreateFolder": "Klasör Oluştur",
     "CreatedAt": "Yaratılmış",
     "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
     "DeleteSelectedItemsDialog": "Onay Sil",
@@ -610,22 +628,22 @@
     "DuplicatedFiles": "Üzerine Yazın Onay",
     "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
     "EditFile": "Dosyayı Düzenle",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Dosya başarıyla oluşturuldu.",
+    "FileName": "Dosya Adı",
+    "FileNamePlaceholder": "örn. model-definition.yaml",
     "FileTooLargeToEdit": "Dosya boyutu {{size}}MB'ı aştığı için tarayıcı içi düzenleme kısıtlanmıştır.",
     "FolderCreatedSuccessfully": "Klasör başarıyla oluşturuldu.",
     "FolderName": "Klasör adı",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Dosya adı en fazla 255 karakter olmalıdır.",
     "MaxFolderNameLength": "Klasör adı 255 karakter veya daha az olmalıdır.",
     "ModifiedAt": "Değiştirildi",
     "Name": "İsim",
     "NoUploadPermissionForHost": "Bu depolama sunucusuna yükleme izniniz yok.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Yol",
+    "PleaseEnterAFileName": "Lütfen dosya adını girin.",
     "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
-    "RenameFile": "Rename",
+    "RenameFile": "Yeniden adlandır",
     "RenameSuccess": "İsim başarıyla değiştirildi.",
     "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
     "Size": "Boyut",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Azalt",
     "DeselectAll": "Tüm seçimi kaldır",
     "File": "Dosya",
-    "Increase": "Increase",
+    "Increase": "Artır",
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
     "Search": "Ara",
-    "Select": "Select",
+    "Select": "Seç",
     "SelectPlaceholder": "{{label}} seçin",
     "TotalItems": "Total {{total}} öğeleri",
-    "Unit": "Unit",
+    "Unit": "Birim",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Eylem",
+      "Back": "Geri",
       "Cancel": "İptal etmek",
       "Close": "Kapalı",
       "Collapse": "Yıkılmak",
-      "Confirm": "Confirm",
+      "Confirm": "Onayla",
       "Copied": "Kopyalandı",
       "Copy": "Kopyala",
       "CopyAll": "Hepsini kopyala",

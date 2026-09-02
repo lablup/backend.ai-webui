@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "Thực thi thất bại",
     "ErrorOccurred": "Đã xảy ra lỗi"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Xóa",
+    "HexValue": "Giá trị hex",
+    "NoColor": "Không có màu",
+    "SelectColor": "Chọn màu"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Xóa Tìm trong các tùy chọn",
     "NoResults": "Không có kết quả",
@@ -163,7 +169,7 @@
     "SelectDomain": "Chọn miền"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Số lượng"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Nhập mã thông báo Hugging Face của bạn",
+    "HuggingFaceSettings": "Cài đặt Hugging Face",
+    "Token": "Mã thông báo",
+    "TokenUpdatedSuccessfully": "Đã cập nhật mã thông báo thành công."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Chọn Ảnh"
@@ -254,11 +260,11 @@
     "User": "Người dùng"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Thoát toàn màn hình",
+    "Fullscreen": "Toàn màn hình",
+    "Maximize": "Phóng to",
+    "Minimize": "Thu nhỏ",
+    "Restore": "Khôi phục"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Bạn có chắc chắn muốn xóa triển khai \"{{deploymentName}}\"? Hành động này không thể hoàn tác.",
@@ -352,8 +358,20 @@
     "SelectFolder": "Chọn thư mục"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Áp dụng",
     "PlaceHolder": "Tìm kiếm",
-    "ResetFilter": "Đặt lại bộ lọc"
+    "ResetFilter": "Đặt lại bộ lọc",
+    "SearchLabel": "Tìm bộ lọc",
+    "operator": {
+      "Contains": "chứa",
+      "Equals": "bằng",
+      "GreaterThan": "lớn hơn",
+      "GreaterThanOrEqual": "lớn hơn hoặc bằng",
+      "In": "trong",
+      "LessThan": "nhỏ hơn",
+      "LessThanOrEqual": "nhỏ hơn hoặc bằng",
+      "NotEquals": "không bằng"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Hủy kéo",
@@ -596,10 +614,10 @@
     "ArchiveDownloadStarted": "Đã bắt đầu tải xuống {{count}} mục.",
     "ChangeFileExtension": "Thay đổi phần mở rộng tệp",
     "ChangeFileExtensionDesc": "Thay đổi tiện ích mở rộng tệp có thể khiến tệp trở nên không thể sử dụng hoặc mở không chính xác. \nBạn có muốn tiếp tục không?",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Tạo tệp mới",
     "CreateANewFolder": "Tạo một thư mục mới",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Tạo tệp",
+    "CreateFolder": "Tạo thư mục",
     "CreatedAt": "Được tạo ra tại",
     "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
     "DeleteSelectedItemsDialog": "Xóa xác nhận",
@@ -610,22 +628,22 @@
     "DuplicatedFiles": "Ghi đè xác nhận",
     "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",
     "EditFile": "Chỉnh sửa tệp",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Đã tạo tệp thành công.",
+    "FileName": "Tên tệp",
+    "FileNamePlaceholder": "vd: model-definition.yaml",
     "FileTooLargeToEdit": "Chỉnh sửa trên trình duyệt bị hạn chế vì kích thước tệp vượt quá {{size}}MB.",
     "FolderCreatedSuccessfully": "Thư mục đã tạo thành công.",
     "FolderName": "Tên thư mục",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Tên tệp phải có tối đa 255 ký tự.",
     "MaxFolderNameLength": "Tên thư mục phải là 255 ký tự hoặc ít hơn.",
     "ModifiedAt": "Sửa đổi tại",
     "Name": "Tên",
     "NoUploadPermissionForHost": "Bạn không có quyền tải lên cho máy chủ lưu trữ này.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Đường dẫn",
+    "PleaseEnterAFileName": "Vui lòng nhập tên tệp.",
     "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
-    "RenameFile": "Rename",
+    "RenameFile": "Đổi tên",
     "RenameSuccess": "Tên đã được thay đổi thành công.",
     "SelectedItemsDeletedSuccessfully": "Các tập tin và thư mục được chọn đã bị xóa thành công.",
     "Size": "Kích cỡ",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Giảm",
     "DeselectAll": "Bỏ chọn tất cả",
     "File": "Tệp",
-    "Increase": "Increase",
+    "Increase": "Tăng",
     "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
     "Project": "Dự án",
     "Search": "Tìm kiếm",
-    "Select": "Select",
+    "Select": "Chọn",
     "SelectPlaceholder": "Chọn {{label}}",
     "TotalItems": "Tổng số {{total}} các mục",
-    "Unit": "Unit",
+    "Unit": "Đơn vị",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Hành động",
+      "Back": "Quay lại",
       "Cancel": "Hủy bỏ",
       "Close": "Đóng",
       "Collapse": "Sụp đổ",
-      "Confirm": "Confirm",
+      "Confirm": "Xác nhận",
       "Copied": "Đã sao chép",
       "Copy": "Sao chép",
       "CopyAll": "Sao chép tất cả",

@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "実行エラー",
     "ErrorOccurred": "問題が発生しました。"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "クリア",
+    "HexValue": "16進数の値",
+    "NoColor": "色なし",
+    "SelectColor": "色を選択"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "オプションを検索 をクリア",
     "NoResults": "結果がありません",
@@ -163,7 +169,7 @@
     "SelectDomain": "ドメインを選択"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "数量"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動更新",
@@ -352,8 +358,20 @@
     "SelectFolder": "フォルダを選択"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "適用",
     "PlaceHolder": "検索",
-    "ResetFilter": "フィルターをリセットする"
+    "ResetFilter": "フィルターをリセットする",
+    "SearchLabel": "フィルターを検索",
+    "operator": {
+      "Contains": "含む",
+      "Equals": "等しい",
+      "GreaterThan": "より大きい",
+      "GreaterThanOrEqual": "以上",
+      "In": "含まれる",
+      "LessThan": "より小さい",
+      "LessThanOrEqual": "以下",
+      "NotEquals": "等しくない"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "キャンセルプル",
@@ -622,10 +640,10 @@
     "ModifiedAt": "で変更されました",
     "Name": "名前",
     "NoUploadPermissionForHost": "このホストへのアップロード権限がありません。",
-    "Path": "Path",
+    "Path": "パス",
     "PleaseEnterAFileName": "ファイル名を入力してください。",
     "PleaseEnterAFolderName": "フォルダー名を入力してください。",
-    "RenameFile": "Rename",
+    "RenameFile": "名前を変更",
     "RenameSuccess": "名前は正常に変更されました。",
     "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
     "Size": "サイズ",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "減らす",
     "DeselectAll": "すべて選択解除",
     "File": "ファイル",
-    "Increase": "Increase",
+    "Increase": "増やす",
     "NSelected": "{{count}}選択",
     "Optional": "任意",
     "Project": "プロジェクト",
     "Search": "検索",
-    "Select": "Select",
+    "Select": "選択",
     "SelectPlaceholder": "{{label}}を選択してください",
     "TotalItems": "Total {{total}}アイテム",
-    "Unit": "Unit",
+    "Unit": "単位",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "アクション",
+      "Back": "戻る",
       "Cancel": "キャンセル",
       "Close": "近い",
       "Collapse": "崩壊",
-      "Confirm": "Confirm",
+      "Confirm": "確認",
       "Copied": "コピーしました",
       "Copy": "コピー",
       "CopyAll": "すべてをコピーします",

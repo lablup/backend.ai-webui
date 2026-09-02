@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "Falha na execução",
     "ErrorOccurred": "Ocorreu um erro"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Limpar",
+    "HexValue": "Valor hexadecimal",
+    "NoColor": "Sem cor",
+    "SelectColor": "Selecionar cor"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Limpar Pesquisar opções",
     "NoResults": "Sem resultados",
@@ -163,7 +169,7 @@
     "SelectDomain": "Selecionar Domínio"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Quantidade"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Atualização automática",
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
+    "EnterToken": "Insira seu token do Hugging Face",
+    "HuggingFaceSettings": "Configurações do Hugging Face",
     "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "TokenUpdatedSuccessfully": "Token atualizado com sucesso."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Selecionar Imagem"
@@ -260,11 +266,11 @@
     "User": "Usuário"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Sair da tela cheia",
+    "Fullscreen": "Tela cheia",
+    "Maximize": "Maximizar",
+    "Minimize": "Minimizar",
+    "Restore": "Restaurar"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Tem certeza que deseja excluir o deployment \"{{deploymentName}}\"? Esta ação não pode ser desfeita.",
@@ -358,8 +364,20 @@
     "SelectFolder": "Selecionar pasta"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Aplicar",
     "PlaceHolder": "Pesquisar",
-    "ResetFilter": "Redefinir filtros"
+    "ResetFilter": "Redefinir filtros",
+    "SearchLabel": "Pesquisar filtros",
+    "operator": {
+      "Contains": "contém",
+      "Equals": "igual a",
+      "GreaterThan": "maior que",
+      "GreaterThanOrEqual": "maior ou igual",
+      "In": "em",
+      "LessThan": "menor que",
+      "LessThanOrEqual": "menor ou igual",
+      "NotEquals": "diferente de"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Cancelar puxar",
@@ -602,10 +620,10 @@
     "ArchiveDownloadStarted": "O download de {{count}} item(s) foi iniciado.",
     "ChangeFileExtension": "Alterar a extensão do arquivo",
     "ChangeFileExtensionDesc": "Alterar a extensão do arquivo pode fazer com que o arquivo se torne inutilizável ou aberto incorretamente. \nVocê quer prosseguir?",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Criar um novo arquivo",
     "CreateANewFolder": "Crie uma nova pasta",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Criar arquivo",
+    "CreateFolder": "Criar pasta",
     "CreatedAt": "Criado em",
     "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
     "DeleteSelectedItemsDialog": "Excluir confirmação",
@@ -616,22 +634,22 @@
     "DuplicatedFiles": "Substituição de substituição",
     "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",
     "EditFile": "Editar arquivo",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Arquivo criado com sucesso.",
+    "FileName": "Nome do arquivo",
+    "FileNamePlaceholder": "ex.: model-definition.yaml",
     "FileTooLargeToEdit": "A edição no navegador é restrita porque o tamanho do arquivo excede {{size}}MB.",
     "FolderCreatedSuccessfully": "Pasta criada com sucesso.",
     "FolderName": "Nome da pasta",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "O nome do arquivo deve ter no máximo 255 caracteres.",
     "MaxFolderNameLength": "O nome da pasta deve ter 255 caracteres ou menos.",
     "ModifiedAt": "Modificado em",
     "Name": "Nome",
     "NoUploadPermissionForHost": "Você não tem permissão de upload para este host.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Caminho",
+    "PleaseEnterAFileName": "Por favor, insira o nome do arquivo.",
     "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
-    "RenameFile": "Rename",
+    "RenameFile": "Renomear",
     "RenameSuccess": "O nome foi alterado com sucesso.",
     "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
     "Size": "Tamanho",
@@ -746,25 +764,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Diminuir",
     "DeselectAll": "Desmarcar tudo",
     "File": "Arquivo",
-    "Increase": "Increase",
+    "Increase": "Aumentar",
     "NSelected": "{{count}} selecionado",
     "Optional": "Opcional",
     "Project": "Projeto",
     "Search": "Pesquisar",
-    "Select": "Select",
+    "Select": "Selecionar",
     "SelectPlaceholder": "Selecione {{label}}",
     "TotalItems": "Total {{total}} itens",
-    "Unit": "Unit",
+    "Unit": "Unidade",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Ação",
+      "Back": "Voltar",
       "Cancel": "Cancelar",
       "Close": "Fechar",
       "Collapse": "Colapso",
-      "Confirm": "Confirm",
+      "Confirm": "Confirmar",
       "Copied": "Copiado",
       "Copy": "Copiar",
       "CopyAll": "Copie tudo",

@@ -95,6 +95,12 @@
     "ActionExecutionFailed": "Η εκτέλεση απέτυχε",
     "ErrorOccurred": "Παρουσιάστηκε σφάλμα"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Καθαρισμός",
+    "HexValue": "Δεκαεξαδική τιμή",
+    "NoColor": "Χωρίς χρώμα",
+    "SelectColor": "Επιλογή χρώματος"
+  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
     "NoResults": "Δεν βρέθηκαν αποτελέσματα",
@@ -163,13 +169,13 @@
     "SelectDomain": "Επιλέξτε τομέα"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Ποσότητα"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Αυτόματη ανανέωση",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}}ω",
+    "EveryMinutes": "{{count}}λ",
+    "EverySeconds": "{{count}}δ",
     "LastUpdated": "Τελευταία ενημέρωση",
     "Off": "Απενεργοποίηση",
     "Refresh": "Ανανέωση"
@@ -204,10 +210,10 @@
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Εισαγάγετε το διακριτικό Hugging Face",
+    "HuggingFaceSettings": "Ρυθμίσεις Hugging Face",
+    "Token": "Διακριτικό",
+    "TokenUpdatedSuccessfully": "Το διακριτικό ενημερώθηκε επιτυχώς."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Επιλογή Εικόνας"
@@ -254,11 +260,11 @@
     "User": "Χρήστης"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Έξοδος από πλήρη οθόνη",
+    "Fullscreen": "Πλήρης οθόνη",
+    "Maximize": "Μεγιστοποίηση",
+    "Minimize": "Ελαχιστοποίηση",
+    "Restore": "Επαναφορά"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Είστε σίγουροι ότι θέλετε να διαγράψετε την ανάπτυξη \"{{deploymentName}}\"; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
@@ -352,8 +358,20 @@
     "SelectFolder": "Επιλογή φακέλου"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Εφαρμογή",
     "PlaceHolder": "Αναζήτηση",
-    "ResetFilter": "Επαναφορά φίλτρων"
+    "ResetFilter": "Επαναφορά φίλτρων",
+    "SearchLabel": "Αναζήτηση φίλτρων",
+    "operator": {
+      "Contains": "περιέχει",
+      "Equals": "ίσο με",
+      "GreaterThan": "μεγαλύτερο από",
+      "GreaterThanOrEqual": "μεγαλύτερο ή ίσο",
+      "In": "σε",
+      "LessThan": "μικρότερο από",
+      "LessThanOrEqual": "μικρότερο ή ίσο",
+      "NotEquals": "όχι ίσο με"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Ακυρώσω",
@@ -596,10 +614,10 @@
     "ArchiveDownloadStarted": "Ξεκίνησε η λήψη {{count}} στοιχείων.",
     "ChangeFileExtension": "Αλλαγή επέκτασης αρχείου",
     "ChangeFileExtensionDesc": "Η αλλαγή της επέκτασης του αρχείου μπορεί να προκαλέσει λανθασμένα το αρχείο. \nΘέλετε να προχωρήσετε;",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Δημιουργία νέου αρχείου",
     "CreateANewFolder": "Δημιουργήστε ένα νέο φάκελο",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Δημιουργία αρχείου",
+    "CreateFolder": "Δημιουργία φακέλου",
     "CreatedAt": "Δημιουργήθηκε στο",
     "DeleteSelectedItemDesc": "Τα διαγραμμένα αρχεία και οι φάκελοι δεν μπορούν να αποκατασταθούν. \nΘέλετε να προχωρήσετε;",
     "DeleteSelectedItemsDialog": "Διαγραφή επιβεβαίωσης",
@@ -610,22 +628,22 @@
     "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης",
     "DuplicatedFilesDesc": "Το αρχείο ή ο φάκελος με το ίδιο όνομα υπάρχει ήδη. \nΘέλετε να αντικαταστήσετε;",
     "EditFile": "Επεξεργασία αρχείου",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Το αρχείο δημιουργήθηκε επιτυχώς.",
+    "FileName": "Όνομα αρχείου",
+    "FileNamePlaceholder": "π.χ. model-definition.yaml",
     "FileTooLargeToEdit": "Η επεξεργασία στο πρόγραμμα περιήγησης είναι περιορισμένη επειδή το μέγεθος του αρχείου υπερβαίνει τα {{size}}MB.",
     "FolderCreatedSuccessfully": "Ο φάκελος δημιούργησε με επιτυχία.",
     "FolderName": "Όνομα φακέλου",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Το όνομα αρχείου πρέπει να έχει το πολύ 255 χαρακτήρες.",
     "MaxFolderNameLength": "Το όνομα του φακέλου πρέπει να είναι 255 χαρακτήρες ή λιγότερο.",
     "ModifiedAt": "Τροποποιημένος",
     "Name": "Ονομα",
     "NoUploadPermissionForHost": "Δεν έχετε άδεια μεταφόρτωσης για αυτόν τον κεντρικό χώρο αποθήκευσης.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Διαδρομή",
+    "PleaseEnterAFileName": "Εισαγάγετε το όνομα του αρχείου.",
     "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
-    "RenameFile": "Rename",
+    "RenameFile": "Μετονομασία",
     "RenameSuccess": "Το όνομα έχει αλλάξει με επιτυχία.",
     "SelectedItemsDeletedSuccessfully": "Επιλεγμένα αρχεία και φακέλους έχουν διαγραφεί με επιτυχία.",
     "Size": "Μέγεθος",
@@ -740,25 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Μείωση",
     "DeselectAll": "Αποεπιλογή όλων",
     "File": "Αρχείο",
-    "Increase": "Increase",
+    "Increase": "Αύξηση",
     "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
     "Search": "Αναζήτηση",
-    "Select": "Select",
+    "Select": "Επιλογή",
     "SelectPlaceholder": "Επιλέξτε {{label}}",
     "TotalItems": "Σύνολο {{total}} στοιχεία",
-    "Unit": "Unit",
+    "Unit": "Μονάδα",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Ενέργεια",
+      "Back": "Πίσω",
       "Cancel": "Ματαίωση",
       "Close": "Κοντά",
       "Collapse": "Κατάρρευση",
-      "Confirm": "Confirm",
+      "Confirm": "Επιβεβαίωση",
       "Copied": "Αντιγράφηκε",
       "Copy": "Αντιγραφή",
       "CopyAll": "Αντιγράψτε όλα",
