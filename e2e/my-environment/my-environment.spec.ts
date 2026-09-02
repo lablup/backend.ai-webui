@@ -67,9 +67,11 @@ test.describe(
       await loginAsAdmin(page, request);
       await navigateTo(page, 'my-environment');
 
-      // Scope to the images table
+      // Scope to the images table. "Full image path" is sortable, so match its
+      // visible text rather than its accessible name (see
+      // getSortableColumnHeader).
       const imagesTable = page.locator('table').filter({
-        has: page.getByRole('columnheader', { name: 'Full image path' }),
+        has: getSortableColumnHeader(page, 'Full image path'),
       });
       const dataRows = imagesTable.locator(
         'tbody tr:not(.ant-table-measure-row)',
