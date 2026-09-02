@@ -120,6 +120,10 @@ describe('customThemeConfig (v2 appearance bootstrap)', () => {
       expect(mod.pickSeed('#333333', 'light')).toBe('#333333');
       expect(mod.pickSeed('#333333', 'dark')).toBe('#333333');
       expect(mod.pickSeed(undefined, 'light')).toBeUndefined();
+      // A short or malformed tuple falls back dark -> light (recipe parity)
+      // instead of handing a non-string to the consumer.
+      expect(mod.pickSeed(['#111111'] as never, 'dark')).toBe('#111111');
+      expect(mod.pickSeed([null, '#222222'] as never, 'light')).toBeUndefined();
     });
   });
 
@@ -134,7 +138,27 @@ describe('customThemeConfig (v2 appearance bootstrap)', () => {
       expect(mod.pickValidAppearanceConfig('nope', 'test')).toBeUndefined();
       expect(mod.pickValidAppearanceConfig({}, 'test')).toBeUndefined();
       expect(mod.pickValidAppearanceConfig(V1_THEME, 'test')).toBeUndefined();
-      expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+      // Every rejection is loud, not just the v1 sniff: 'nope', undefined,
+      // a schemaVersion-less object and the v1 document each log once.
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(4);
+      expect(consoleErrorSpy).toHaveBeenLastCalledWith(
+        expect.stringContaining('v1 (antd-shaped)'),
+      );
+    });
+
+    it('warns when theme.families lacks the default entry but still accepts', async () => {
+      const mod = await importFreshModule();
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      const doc = {
+        schemaVersion: 2,
+        theme: { families: { stained: { seeds: { accent: '#8B5CF6' } } } },
+      };
+      expect(mod.pickValidAppearanceConfig(doc, 'test')).toEqual(doc);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('without a "default" entry'),
+      );
     });
   });
 });
