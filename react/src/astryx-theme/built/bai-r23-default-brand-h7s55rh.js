@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r22-default-brand-hg6tffs theme — built by `pnpm exec astryx theme build`
+ * bai-r23-default-brand-h7s55rh theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR22DefaultBrandHg6tffsTheme } from './bai-r22-default-brand-hg6tffs';
- *   import './bai-r22-default-brand-hg6tffs.css';
+ *   import { baiR23DefaultBrandH7s55rhTheme } from './bai-r23-default-brand-h7s55rh';
+ *   import './bai-r23-default-brand-h7s55rh.css';
  */
-export const baiR22DefaultBrandHg6tffsTheme = {
-  name: 'bai-r22-default-brand-hg6tffs',
+export const baiR23DefaultBrandH7s55rhTheme = {
+  name: 'bai-r23-default-brand-h7s55rh',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -189,6 +189,33 @@ export const baiR22DefaultBrandHg6tffsTheme = {
     "--shadow-inset-error": "inset 0px 0px 0px 2px #e33f4a4D",
     "--color-background-inverted": "light-dark(#211A16, #FFFBF8)",
     "--color-track": "light-dark(#B8A89F, #51443C)",
+    "--bai-color-info": "light-dark(#028DF2, #0387bf)",
+    "--bai-color-link": "light-dark(#FF7A00, #be5e06)",
+    "--bai-header-bg": "light-dark(#FF9729, #E88A28)",
+    "--bai-color-error-bg": "light-dark(#fff2f0, #261617)",
+    "--bai-color-info-bg": "light-dark(#e6f9ff, #111f27)",
+    "--bai-color-warning-hover": "light-dark(#ffd666, #7c5914)",
+    "--bai-color-success-border-hover": "light-dark(#45d6b2, #0c5548)",
+    "--bai-color-primary-bg": "light-dark(#fff6e6, #502e0f)",
+    "--bai-color-error-border": "light-dark(#ffccc7, #502223)",
+    "--bai-primary-1": "light-dark(#fff6e6, #fff6e6)",
+    "--bai-primary-2": "light-dark(#ffdca3, #f2d4a2)",
+    "--bai-primary-3": "light-dark(#ffc87a, #e6b775)",
+    "--bai-primary-4": "light-dark(#ffb152, #d9994c)",
+    "--bai-primary-5": "light-dark(#ff9729, #cc7c27)",
+    "--bai-primary-6": "light-dark(#ff7a00, #be5e06)",
+    "--bai-primary-7": "light-dark(#d96200, #994500)",
+    "--bai-primary-8": "light-dark(#b34a00, #733000)",
+    "--bai-primary-9": "light-dark(#8c3600, #4d1d00)",
+    "--bai-primary-10": "light-dark(#662400, #260d00)",
+    "--bai-color-text-tertiary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+    "--bai-color-text-quaternary": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+    "--bai-color-text-description": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+    "--bai-color-fill": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
+    "--bai-color-fill-secondary": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "--bai-color-fill-tertiary": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "--bai-color-fill-quaternary": "light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.04))",
+    "--bai-color-bg-container-disabled": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
     "--size-element-sm": "24px"
   },
   components: {
