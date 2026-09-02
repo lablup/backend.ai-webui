@@ -90,6 +90,11 @@ dep_web:
 	@if [ ! -f "./src/wsproxy/dist/wsproxy.js" ]; then \
 		make compile_wsproxy; \
 	fi
+	@# The web-build artifact ships src/wsproxy/dist/ but not the client package's
+	@# dist/, and `pkg` (compile_localproxy) packs raw sources that require it.
+	@if [ ! -f "./packages/backend.ai-client/dist/index.cjs" ]; then \
+		make compile_client_pkg; \
+	fi
 # Prepare the Electron app directory. Requires dep_web to have run first.
 # Uses publicPath patching instead of a full second React build (~4-8 min savings).
 #
