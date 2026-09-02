@@ -18,15 +18,17 @@ export interface BAINameActionCellAction {
      */
     type?: 'default' | 'danger';
     /**
-     * Whether the action is disabled. Defaults to `!!disabledReason`, so naming
-     * a reason is enough — pass this only to disable without one.
+     * Whether the action is disabled. Pass `{ reason }` to disable it AND say
+     * why — the reason becomes the button tooltip. A bare `true` disables it
+     * without one, which is then a deliberate choice rather than a call site
+     * that let two fields drift apart (FR-3722).
      */
-    disabled?: boolean;
+    disabled?: boolean | {
+        reason: string;
+    };
     /** Loading spinner for progress this cell does not own (e.g. a background
      * delete tracked by the parent). Use `action` when the click itself awaits. */
     loading?: boolean;
-    /** Why the action is disabled. Becomes the button tooltip. */
-    disabledReason?: string;
     /** Custom style override for the action button */
     style?: React.CSSProperties;
     /**
