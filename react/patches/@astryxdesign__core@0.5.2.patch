@@ -1,3 +1,80 @@
+diff --git a/dist/Tooltip/useTooltip.js b/dist/Tooltip/useTooltip.js
+index cc9b4218200ee52a1d1ee3ad8fdc40f8703da83f..81e7be5bb873233def8c2dce4f0e619b0e31063c 100644
+--- a/dist/Tooltip/useTooltip.js
++++ b/dist/Tooltip/useTooltip.js
+@@ -117,6 +117,7 @@ export function useTooltip(options = {}) {
+   const showTimeoutRef = useRef(null);
+   const hideTimeoutRef = useRef(null);
+   const triggerRef = useRef(null);
++  const isHoveringSurfaceRef = useRef(false);
+ 
+   // Clear all timeouts
+   const clearTimeouts = useCallback(() => {
+@@ -138,6 +139,7 @@ export function useTooltip(options = {}) {
+   }, [clearTimeouts, layer]);
+   const hideNow = useCallback(() => {
+     clearTimeouts();
++    isHoveringSurfaceRef.current = false;
+     layer.hide();
+   }, [clearTimeouts, layer]);
+   const touch = useTouchTrigger({
+@@ -173,7 +175,11 @@ export function useTooltip(options = {}) {
+     clearTimeouts();
+     const effectiveHideDelay = hideDelay > 0 ? hideDelay : HOVER_BRIDGE_DELAY;
+     hideTimeoutRef.current = setTimeout(() => {
+-      layer.hide();
++      // Checked here, not cancelled on enter: the surface's React onMouseEnter
++      // arrives before the trigger's mouseleave arms this timer (FR-3680).
++      if (!isHoveringSurfaceRef.current) {
++        layer.hide();
++      }
+     }, effectiveHideDelay);
+   }, [isOpen, clearTimeouts, layer, hideDelay]);
+ 
+@@ -250,7 +256,8 @@ export function useTooltip(options = {}) {
+   // Interaction ref that handles event listeners only
+   const {
+     handlePointerEnter,
+-    clearTapOpen
++    clearTapOpen,
++    isTouchPointerRef
+   } = touch;
+   const interactionRef = useCallback(el => {
+     // Cleanup previous element
+@@ -375,8 +382,22 @@ export function useTooltip(options = {}) {
+       // (WCAG 1.4.13 hoverable). These sit on the layer container — the
+       // element the user actually hovers — not the inner content div, since
+       // mouseenter/leave do not bubble.
+-      onMouseEnter: cancelHide,
+-      onMouseLeave: scheduleHide
++      onMouseEnter: () => {
++        // A tap synthesises these over the tip too; letting it register as
++        // "hovering the surface" would block every later hide.
++        if (isTouchPointerRef.current) {
++          return;
++        }
++        isHoveringSurfaceRef.current = true;
++        cancelHide();
++      },
++      onMouseLeave: () => {
++        if (isTouchPointerRef.current) {
++          return;
++        }
++        isHoveringSurfaceRef.current = false;
++        scheduleHide();
++      }
+     };
+     return layer.render(/*#__PURE__*/_jsx("div", {
+       ...{
+@@ -384,7 +405,7 @@ export function useTooltip(options = {}) {
+       },
+       children: children
+     }), renderProps);
+-  }, [layer, placement, alignment, popoverXstyle, cancelHide, scheduleHide]);
++  }, [layer, placement, alignment, popoverXstyle, cancelHide, scheduleHide, isTouchPointerRef]);
+   return {
+     ref,
+     positionRef: layer.ref,
 diff --git a/dist/hooks/useFocusTrap.js b/dist/hooks/useFocusTrap.js
 index ead7e0af25144043c863026cfe48bcfdaf10f6cf..f3f192ad226e80cffad26e02b2e1c696cd808100 100644
 --- a/dist/hooks/useFocusTrap.js
@@ -28,6 +105,90 @@ index ead7e0af25144043c863026cfe48bcfdaf10f6cf..f3f192ad226e80cffad26e02b2e1c696
        const active = document.activeElement;
        const focusWasLost = active == null || active === document.body || active === document.documentElement || container != null && container.contains(active);
        if (!focusWasLost) {
+diff --git a/src/Tooltip/useTooltip.tsx b/src/Tooltip/useTooltip.tsx
+index 72ef454d13539307bfbd8de34bdc1945cdb36238..46666d287add1ce3438ebb9e873d582c778ab1f4 100644
+--- a/src/Tooltip/useTooltip.tsx
++++ b/src/Tooltip/useTooltip.tsx
+@@ -290,6 +290,7 @@ export function useTooltip(options: TooltipOptions = {}): TooltipReturn {
+   const showTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+   const triggerRef = useRef<HTMLElement | null>(null);
++  const isHoveringSurfaceRef = useRef(false);
+ 
+   // Clear all timeouts
+   const clearTimeouts = useCallback(() => {
+@@ -312,6 +313,7 @@ export function useTooltip(options: TooltipOptions = {}): TooltipReturn {
+ 
+   const hideNow = useCallback(() => {
+     clearTimeouts();
++    isHoveringSurfaceRef.current = false;
+     layer.hide();
+   }, [clearTimeouts, layer]);
+ 
+@@ -348,7 +350,11 @@ export function useTooltip(options: TooltipOptions = {}): TooltipReturn {
+     clearTimeouts();
+     const effectiveHideDelay = hideDelay > 0 ? hideDelay : HOVER_BRIDGE_DELAY;
+     hideTimeoutRef.current = setTimeout(() => {
+-      layer.hide();
++      // Checked here, not cancelled on enter: the surface's React onMouseEnter
++      // arrives before the trigger's mouseleave arms this timer (FR-3680).
++      if (!isHoveringSurfaceRef.current) {
++        layer.hide();
++      }
+     }, effectiveHideDelay);
+   }, [isOpen, clearTimeouts, layer, hideDelay]);
+ 
+@@ -432,7 +438,7 @@ export function useTooltip(options: TooltipOptions = {}): TooltipReturn {
+   );
+ 
+   // Interaction ref that handles event listeners only
+-  const {handlePointerEnter, clearTapOpen} = touch;
++  const {handlePointerEnter, clearTapOpen, isTouchPointerRef} = touch;
+   const interactionRef: RefCallback<HTMLElement> = useCallback(
+     (el: HTMLElement | null) => {
+       // Cleanup previous element
+@@ -588,8 +594,22 @@ export function useTooltip(options: TooltipOptions = {}): TooltipReturn {
+         // (WCAG 1.4.13 hoverable). These sit on the layer container — the
+         // element the user actually hovers — not the inner content div, since
+         // mouseenter/leave do not bubble.
+-        onMouseEnter: cancelHide,
+-        onMouseLeave: scheduleHide,
++        onMouseEnter: () => {
++          // A tap synthesises these over the tip too; letting it register as
++          // "hovering the surface" would block every later hide.
++          if (isTouchPointerRef.current) {
++            return;
++          }
++          isHoveringSurfaceRef.current = true;
++          cancelHide();
++        },
++        onMouseLeave: () => {
++          if (isTouchPointerRef.current) {
++            return;
++          }
++          isHoveringSurfaceRef.current = false;
++          scheduleHide();
++        },
+       };
+ 
+       return layer.render(
+@@ -597,7 +617,15 @@ export function useTooltip(options: TooltipOptions = {}): TooltipReturn {
+         renderProps,
+       );
+     },
+-    [layer, placement, alignment, popoverXstyle, cancelHide, scheduleHide],
++    [
++      layer,
++      placement,
++      alignment,
++      popoverXstyle,
++      cancelHide,
++      scheduleHide,
++      isTouchPointerRef,
++    ],
+   );
+ 
+   return {
 diff --git a/src/hooks/useFocusTrap.ts b/src/hooks/useFocusTrap.ts
 index c05638a06c1e35345b33d9b13ecda5578821a82f..525c410546c39477b787f9cc787ba0341bf3c21d 100644
 --- a/src/hooks/useFocusTrap.ts

@@ -18,17 +18,25 @@
  * the popup renders is Astryx's business and needs a real layout engine.
  */
 import BAIFormItemVisual from './FormItemVisual';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const HELP = 'Computer memory is temporary.';
+
+const renderMemoryItem = () =>
+  render(
+    <BAIFormItemVisual label="Memory" tooltip={HELP}>
+      <input aria-label="memory" />
+    </BAIFormItemVisual>,
+  );
+
+const tooltipTrigger = () =>
+  document.querySelector<HTMLElement>('[data-bai-form-item-tooltip]');
 
 describe('BAIFormItemVisual — tooltip', () => {
   it('puts the tooltip text in an overlay layer, not in the label flow', () => {
-    render(
-      <BAIFormItemVisual label="Memory" tooltip="Computer memory is temporary.">
-        <input aria-label="memory" />
-      </BAIFormItemVisual>,
-    );
-    const text = screen.getByText('Computer memory is temporary.');
+    renderMemoryItem();
+    const text = screen.getByText(HELP);
     // jsdom implements neither the Popover API nor CSS anchor positioning, so
     // Astryx's layer sits in the tree and reads as "visible" here. What makes
     // it a TOOLTIP rather than inline prose is the pair of attributes the
@@ -41,12 +49,8 @@ describe('BAIFormItemVisual — tooltip', () => {
   });
 
   it('renders a focusable trigger after the label', () => {
-    render(
-      <BAIFormItemVisual label="Memory" tooltip="Computer memory is temporary.">
-        <input aria-label="memory" />
-      </BAIFormItemVisual>,
-    );
-    const trigger = document.querySelector('[data-bai-form-item-tooltip]');
+    renderMemoryItem();
+    const trigger = tooltipTrigger();
     expect(trigger).not.toBeNull();
     expect(trigger?.getAttribute('tabindex')).toBe('0');
     // The glyph, not the prose.
@@ -60,19 +64,99 @@ describe('BAIFormItemVisual — tooltip', () => {
         <input aria-label="memory" />
       </BAIFormItemVisual>,
     );
-    expect(document.querySelector('[data-bai-form-item-tooltip]')).toBeNull();
+    expect(tooltipTrigger()).toBeNull();
   });
 
   it('uses antd’s `tooltip.icon` as the trigger glyph when given', () => {
     render(
       <BAIFormItemVisual
         label="Memory"
-        tooltip="Computer memory is temporary."
+        tooltip={HELP}
         tooltipIcon={<span data-testid="custom-glyph">i</span>}
       >
         <input aria-label="memory" />
       </BAIFormItemVisual>,
     );
     expect(screen.getByTestId('custom-glyph')).toBeInTheDocument();
+  });
+});
+
+/*
+ FR-3680 — guards `react/patches/@astryxdesign__core@0.5.2.patch`: the tip must
+ survive the pointer landing on its own surface (mechanism in the commit body).
+ jsdom has no Popover API, so Astryx falls back to `style.display`.
+*/
+describe('BAIFormItemVisual — tooltip stays open on its own surface (FR-3680)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const advance = (ms: number) => {
+    act(() => {
+      vi.advanceTimersByTime(ms);
+    });
+  };
+  const expectOpen = (tip: HTMLElement) =>
+    expect(tip.style.display).toBe('block');
+  const expectClosed = (tip: HTMLElement) =>
+    expect(tip.style.display).toBe('none');
+
+  // The browser's order for a pointer moving from A to B:
+  // mouseout(A) → mouseleave(A) → mouseover(B) → mouseenter(B).
+  // Raw events on purpose: RTL's `fireEvent.mouseLeave` fires a second
+  // `mouseout` AFTER `mouseleave`, the reversed order the bug never sees.
+  const moveTo = (from: HTMLElement, to: HTMLElement) => {
+    act(() => {
+      from.dispatchEvent(
+        new MouseEvent('mouseout', { bubbles: true, relatedTarget: to }),
+      );
+      from.dispatchEvent(new MouseEvent('mouseleave', { relatedTarget: to }));
+      to.dispatchEvent(
+        new MouseEvent('mouseover', { bubbles: true, relatedTarget: from }),
+      );
+      to.dispatchEvent(new MouseEvent('mouseenter', { relatedTarget: from }));
+    });
+  };
+
+  // Open by hover, then park the pointer on the tip.
+  const openOverTip = () => {
+    renderMemoryItem();
+    const trigger = tooltipTrigger() as HTMLElement;
+    const tip = screen.getByRole('tooltip', { hidden: true });
+    moveTo(document.body, trigger);
+    advance(300);
+    expectOpen(tip);
+    moveTo(trigger, tip);
+    advance(500);
+    expectOpen(tip);
+    return { trigger, tip };
+  };
+
+  it('survives the pointer travelling onto the tip and a click on its text', () => {
+    const { tip } = openOverTip();
+    fireEvent.mouseDown(tip);
+    fireEvent.click(tip);
+    advance(500);
+    expectOpen(tip);
+  });
+
+  it('closes once the pointer leaves the tip for elsewhere', () => {
+    const { tip } = openOverTip();
+    moveTo(tip, document.body);
+    advance(500);
+    expectClosed(tip);
+  });
+
+  it('lets the pointer return to the trigger and leave from there', () => {
+    const { trigger, tip } = openOverTip();
+    moveTo(tip, trigger);
+    advance(500);
+    expectOpen(tip);
+    moveTo(trigger, document.body);
+    advance(500);
+    expectClosed(tip);
   });
 });
