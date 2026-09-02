@@ -1530,6 +1530,7 @@
     "PortMustBeUnique": "Port musi być unikalny dla każdej aplikacji",
     "PortReservedForInternalUse": "Porty 2000 do 2003, 2200 i 7681 są zarezerwowane do użytku wewnętrznego",
     "Preset": "Preset",
+    "Private": "Prywatne",
     "ProblemOccurred": "Wystąpił problem",
     "Protocol": "Protokół",
     "ProtocolMustBeOneOfSupported": "Protokół musi być jednym z „http”, „tcp”, „preopen” i „pty”",

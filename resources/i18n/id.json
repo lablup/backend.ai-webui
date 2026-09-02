@@ -1530,6 +1530,7 @@
     "PortMustBeUnique": "Port harus berbeda untuk setiap aplikasi",
     "PortReservedForInternalUse": "Port 2000 hingga 2003, 2200, dan 7681 dicadangkan untuk penggunaan internal",
     "Preset": "Preset",
+    "Private": "Privat",
     "ProblemOccurred": "Masalah terjadi",
     "Protocol": "Protokol",
     "ProtocolMustBeOneOfSupported": "Protokol harus salah satu dari 'http', 'tcp', 'preopen' dan 'pty'",
