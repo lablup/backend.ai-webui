@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionCountDashboardItemFragment$key } from '../__generated__/SessionCountDashboardItemFragment.graphql';
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIBoardItemTitle,
   BAIFlex,
@@ -30,7 +30,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   const [data, refetch] = useRefetchableFragment(
@@ -84,7 +84,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
+        paddingInline: token('--spacing-8'),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
@@ -117,7 +117,7 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
       <BAIFlex direction="row" wrap="wrap" gap={'lg'}>
         <BAIRowWrapWithDividers
           style={{
-            paddingBlock: token.padding,
+            paddingBlock: token('--spacing-4'),
           }}
         >
           {renderBAIPanelItem(

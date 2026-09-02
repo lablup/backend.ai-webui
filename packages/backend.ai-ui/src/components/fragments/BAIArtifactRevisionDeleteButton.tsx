@@ -1,6 +1,6 @@
 import { BAIArtifactRevisionDeleteButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDeleteButtonFragment.graphql';
-import { theme } from '../../theme-shim';
 import BAIButton, { BAIButtonProps } from '../BAIButton';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import { Trash2 } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
@@ -17,7 +17,7 @@ const BAIArtifactRevisionDeleteButton = ({
   revisionsFrgmt,
   ...buttonProps
 }: BAIArtifactRevisionDeleteButtonProps) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const revisions = useFragment<BAIArtifactRevisionDeleteButtonFragment$key>(
     graphql`
@@ -43,10 +43,12 @@ const BAIArtifactRevisionDeleteButton = ({
       disabled={isDisabled}
       type="text"
       style={{
-        color: isDisabled ? token.colorTextDisabled : token.colorError,
+        color: isDisabled
+          ? token('--color-text-disabled')
+          : token('--color-error'),
         background: isDisabled
-          ? token.colorBgContainerDisabled
-          : token.colorErrorBg,
+          ? token('--bai-color-bg-container-disabled')
+          : token('--bai-color-error-bg'),
         ...buttonProps.style,
       }}
       {..._.omit(buttonProps, ['style', 'disabled', 'loading'])}

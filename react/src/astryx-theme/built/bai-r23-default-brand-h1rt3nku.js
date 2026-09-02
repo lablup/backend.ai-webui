@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r23-default-brand-hmvbsp8 theme — built by `pnpm exec astryx theme build`
+ * bai-r23-default-brand-h1rt3nku theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR23DefaultBrandHmvbsp8Theme } from './bai-r23-default-brand-hmvbsp8';
- *   import './bai-r23-default-brand-hmvbsp8.css';
+ *   import { baiR23DefaultBrandH1rt3nkuTheme } from './bai-r23-default-brand-h1rt3nku';
+ *   import './bai-r23-default-brand-h1rt3nku.css';
  */
-export const baiR23DefaultBrandHmvbsp8Theme = {
-  name: 'bai-r23-default-brand-hmvbsp8',
+export const baiR23DefaultBrandH1rt3nkuTheme = {
+  name: 'bai-r23-default-brand-h1rt3nku',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -198,16 +198,7 @@ export const baiR23DefaultBrandHmvbsp8Theme = {
     "--bai-color-success-border-hover": "light-dark(#45d6b2, #0c5548)",
     "--bai-color-primary-bg": "light-dark(#fff6e6, #502e0f)",
     "--bai-color-error-border": "light-dark(#ffccc7, #502223)",
-    "--bai-primary-1": "light-dark(#fff6e6, #fff6e6)",
-    "--bai-primary-2": "light-dark(#ffdca3, #f2d4a2)",
-    "--bai-primary-3": "light-dark(#ffc87a, #e6b775)",
-    "--bai-primary-4": "light-dark(#ffb152, #d9994c)",
     "--bai-primary-5": "light-dark(#ff9729, #cc7c27)",
-    "--bai-primary-6": "light-dark(#ff7a00, #be5e06)",
-    "--bai-primary-7": "light-dark(#d96200, #994500)",
-    "--bai-primary-8": "light-dark(#b34a00, #733000)",
-    "--bai-primary-9": "light-dark(#8c3600, #4d1d00)",
-    "--bai-primary-10": "light-dark(#662400, #260d00)",
     "--bai-color-text-tertiary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
     "--bai-color-text-quaternary": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
     "--bai-color-text-description": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
@@ -216,6 +207,9 @@ export const baiR23DefaultBrandHmvbsp8Theme = {
     "--bai-color-fill-tertiary": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
     "--bai-color-fill-quaternary": "light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.04))",
     "--bai-color-bg-container-disabled": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "--bai-preset-purple-5": "light-dark(#9254de, #51258f)",
+    "--bai-preset-green-5": "light-dark(#73d13d, #3c8618)",
+    "--bai-preset-red-5": "light-dark(#ff4d4f, #a61d24)",
     "--size-element-sm": "24px"
   },
   localTokens: {
@@ -242,7 +236,7 @@ export const baiR23DefaultBrandHmvbsp8Theme = {
     "--astryx-theme-neutral-color-destructive-overlay-hover": "neutral",
     "--astryx-theme-neutral-color-destructive-overlay-pressed": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r23-default-brand-hmvbsp8"],
+  __localTokenLineage: ["neutral","bai-r23-default-brand-h1rt3nku"],
   components: {
     "heading": {
       "level:1": {

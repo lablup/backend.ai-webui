@@ -5,8 +5,8 @@
 import { ScanArtifactModelsFromHuggingFaceModalMutation } from '../__generated__/ScanArtifactModelsFromHuggingFaceModalMutation.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
-import { theme } from '../theme-shim';
 import { AstryxFormTextInput } from './astryxFormControls';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIModal,
@@ -36,7 +36,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
 }: ScanArtifactModelsFromHuggingFaceModalProps) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { logger } = useBAILogger();
   const formRef =
     useRef<FormInstance<ScanArtifactModelsFromHuggingFaceModalInput>>(null);
@@ -141,7 +141,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
       >
         <Form ref={formRef} layout="vertical" preserve={false}>
           <BAIFlex direction="column" align="stretch">
-            <BAIText style={{ marginBottom: token.marginMD }}>
+            <BAIText style={{ marginBottom: token('--spacing-5') }}>
               {t('scanArtifactModelsFromHuggingFaceModal.ModalDescription')}
             </BAIText>
             <Form.Item

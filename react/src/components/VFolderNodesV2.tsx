@@ -21,7 +21,6 @@ import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
-import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -37,6 +36,7 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIAlertIconWithTooltip,
@@ -159,7 +159,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { generateFolderPath } = useFolderExplorerOpener();
   const navigate = useWebUINavigate();
 
@@ -262,7 +262,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       icon={
         <VFolderNodeIdenticonV2
           vfolderNodeIdenticonFrgmt={vfolder}
-          style={{ fontSize: token.fontSizeHeading5 }}
+          style={{ fontSize: token('--font-size-lg') }}
         />
       }
       title={vfolder.metadata?.name}

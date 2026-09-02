@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useActiveErrorBoundaryControl } from '../hooks/useActiveErrorBoundary';
-import { theme } from '../theme-shim';
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { useAtomValue } from 'jotai';
@@ -79,7 +79,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const isExpiredLoginSession = useAtomValue(isLoginSessionExpiredState);
   const { markTriggered, markReset } = useActiveErrorBoundaryControl();
   return (
@@ -223,7 +223,7 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                                 {/* Debug: Show only relevant error information */}
                                 <Text
                                   weight="semibold"
-                                  style={{ marginTop: token.marginXS }}
+                                  style={{ marginTop: token('--spacing-2') }}
                                 >
                                   {t('errorBoundary.DebugInfo')}
                                 </Text>
@@ -262,7 +262,9 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
                                   <>
                                     <Text
                                       weight="semibold"
-                                      style={{ marginTop: token.marginXS }}
+                                      style={{
+                                        marginTop: token('--spacing-2'),
+                                      }}
                                     >
                                       {t('errorBoundary.StackTrace')}
                                     </Text>

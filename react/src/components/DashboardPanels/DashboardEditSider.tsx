@@ -2,12 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../../theme-shim';
 import { panelTypeLabelKeys } from './panelRegistry';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PersistedPanel, ResourceKey } from './types';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIPopconfirm, BAIText } from 'backend.ai-ui';
 import { Plus, RotateCcw, SquarePenIcon, Trash2 } from 'lucide-react';
 import React from 'react';
@@ -42,7 +42,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const availableSet = new Set(availableResources);
 
   return (
@@ -53,8 +53,8 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
       style={{
         width: 320,
         flexShrink: 0,
-        paddingLeft: token.paddingLG,
-        borderLeft: `1px solid ${token.colorBorder}`,
+        paddingLeft: token('--spacing-6'),
+        borderLeft: `1px solid ${token('--color-border-emphasized')}`,
         overflow: 'auto',
       }}
     >
@@ -104,8 +104,8 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                 align="center"
                 gap="sm"
                 style={{
-                  paddingBlock: token.paddingXS,
-                  borderBottom: `1px solid ${token.colorBorderSecondary}`,
+                  paddingBlock: token('--spacing-2'),
+                  borderBottom: `1px solid ${token('--color-border')}`,
                 }}
               >
                 <BAIFlex
@@ -119,7 +119,7 @@ const DashboardEditSider: React.FC<DashboardEditSiderProps> = ({
                     // One line, like the title above it: the caption is up to
                     // three joined segments and wrapping made rows uneven.
                     ellipsis={{ tooltip: caption }}
-                    style={{ fontSize: token.fontSizeSM }}
+                    style={{ fontSize: token('--font-size-sm') }}
                   >
                     {caption}
                   </BAIText>

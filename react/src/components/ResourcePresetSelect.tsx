@@ -9,12 +9,12 @@ import {
 import { localeCompare } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import { theme } from '../theme-shim';
 import type {
   SelectorOptionData,
   SelectorOptionType,
 } from '@astryxdesign/core/Selector';
 import { Selector } from '@astryxdesign/core/Selector';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -80,7 +80,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   });
   const [resourceSlots] = useResourceSlots();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [isPendingUpdate, _startTransition] = useTransition();
   const [controllableValue, setControllableValue] =
     useControllableState_deprecated(selectProps);
@@ -164,7 +164,10 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
             content={t('session.launcher.MiniumAllocationTooltip')}
             focusable={false}
             icon={
-              <Info style={{ color: token.colorTextSecondary }} size="1em" />
+              <Info
+                style={{ color: token('--color-text-secondary') }}
+                size="1em"
+              />
             }
           />
         </BAIFlex>

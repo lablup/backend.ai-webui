@@ -9,12 +9,12 @@ import {
 } from '../helper/announcementSummary';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
-import { theme } from '../theme-shim';
 import './AnnouncementBanner.css';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Markdown } from '@astryxdesign/core/Markdown';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIUnmountAfterClose,
   useSessionStorageState,
@@ -36,7 +36,7 @@ const AnnouncementBanner: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const userRole = useCurrentUserRole();
   const isSuperAdmin = userRole === 'superadmin';
   const [isEditOpen, { toggle: toggleEditModal }] = useToggle(false);
@@ -79,7 +79,7 @@ const AnnouncementBanner: React.FC = () => {
         // is bridged globally as --webui-header-height (CSSTokenVariables).
         style={
           {
-            '--webui-header-padding-inline': `${token.marginLG}px`,
+            '--webui-header-padding-inline': `${token('--spacing-6')}`,
           } as React.CSSProperties
         }
         isDismissable

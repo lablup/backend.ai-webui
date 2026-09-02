@@ -7,11 +7,11 @@ import { Form, FormInstance } from '../form-engine';
 import { useCurrentKeyPairResourcePolicyLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
-import { theme } from '../theme-shim';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { AstryxFormNumberInput } from './astryxFormControls';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIMetadataList,
@@ -54,7 +54,7 @@ const ClusterModeSummary: React.FC<{
 }> = ({ clusterMode, clusterSize }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const label =
     clusterMode === 'single-node'
       ? t('session.launcher.SingleNodeShort')
@@ -63,7 +63,7 @@ const ClusterModeSummary: React.FC<{
     <Text>
       {label}
       &nbsp;
-      <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+      <Text color="secondary" style={{ fontSize: token('--font-size-sm') }}>
         ({clusterSize})
       </Text>
     </Text>

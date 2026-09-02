@@ -20,7 +20,6 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { theme } from '../theme-shim';
 // @ts-ignore
 import ImageMetaIcon from './ImageMetaIcon';
 import {
@@ -34,6 +33,7 @@ import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Divider } from '@astryxdesign/core/Divider';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   badgeVariantForTagColor,
   BAIDoubleTag,
@@ -96,7 +96,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const { t } = useTranslation();
   const [metadata, { getBaseVersion, getImageMeta, getTags, tagAlias }] =
     useBackendAIImageMetaData();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
 
   // antd `RefSelectProps` restated as the one method these two refs ever
@@ -630,7 +630,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               }
                               // style={{ flex: 1 }}
                               style={{
-                                marginLeft: token.marginXS,
+                                marginLeft: token('--spacing-2'),
                                 flexShrink: 1,
                               }}
                               gap="xs"
@@ -705,8 +705,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     <>
                       <BAIFlex
                         style={{
-                          fontWeight: token.fontWeightStrong,
-                          paddingLeft: token.paddingSM,
+                          fontWeight: token('--font-weight-semibold'),
+                          paddingLeft: token('--spacing-3'),
                         }}
                       >
                         {t('session.launcher.Version')}

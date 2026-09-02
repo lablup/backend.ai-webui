@@ -13,7 +13,7 @@
    `placement` -> `placement` + `alignment`, split via `helper/astryxPlacement`
 
  PILOT-DECISION — **the glyph tint moves from a token read to `Text`'s own
- colour scale.** antd painted it `color: token.colorTextTertiary` from the
+ colour scale.** antd painted it `color: token('--bai-color-text-tertiary')` from the
  theme-shim; Astryx has no arbitrary colour slot (P5), and the nearest member
  of its closed `TextColor` enum is `placeholder` (the tertiary/hint step). The
  icon is wrapped in a `Text color="placeholder"` so it inherits that step from
@@ -32,11 +32,11 @@
  in the generic base, `BAIIconWithTooltip`, which this component renders with
  the antd surface translated to Astryx's native prop names at the boundary.
 */
-import BAIIconWithTooltip from './BAIIconWithTooltip';
 import {
   splitAntdPlacement,
   type AntdPlacement,
 } from '../helper/astryxPlacement';
+import BAIIconWithTooltip from './BAIIconWithTooltip';
 import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';

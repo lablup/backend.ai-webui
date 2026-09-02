@@ -7,12 +7,12 @@ import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaP
 import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
 import BAIProgress from './BAIProgress';
 import StorageSelect from './StorageSelect';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
@@ -55,7 +55,7 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
 
@@ -159,16 +159,19 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
       <GridSpan
         columns={12}
         style={{
-          borderRight: `1px solid ${token.colorBorderSecondary}`,
+          borderRight: `1px solid ${token('--color-border')}`,
         }}
       >
         <BAIProgress
           title={
             <BAIFlex direction="column" align="start">
-              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+              <Text
+                color="secondary"
+                style={{ fontSize: token('--font-size-sm') }}
+              >
                 {t('data.Project')}
               </Text>
-              <Text style={{ fontSize: token.fontSize }}>
+              <Text style={{ fontSize: token('--font-size-base') }}>
                 {currentProject?.name}
               </Text>
             </BAIFlex>
@@ -191,10 +194,13 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
           percent={userPercent}
           title={
             <BAIFlex direction="column" align="start">
-              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+              <Text
+                color="secondary"
+                style={{ fontSize: token('--font-size-sm') }}
+              >
                 {t('data.User')}
               </Text>
-              <Text style={{ fontSize: token.fontSize }}>
+              <Text style={{ fontSize: token('--font-size-base') }}>
                 {baiClient?.full_name}
               </Text>
             </BAIFlex>

@@ -10,13 +10,13 @@ import {
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { App } from '../app-shim';
-import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -112,7 +112,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
 
@@ -325,7 +325,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               {activeType === 'active' ? (
                 <Tooltip content={t('credential.Deactivate')}>
                   <BAIButton
-                    icon={<BanIcon style={{ color: token.colorError }} />}
+                    icon={<BanIcon style={{ color: token('--color-error') }} />}
                     loading={isBulkUpdating}
                     onClick={() => handleBulkStatusUpdate(false)}
                   />
@@ -333,7 +333,9 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               ) : (
                 <Tooltip content={t('credential.Activate')}>
                   <BAIButton
-                    icon={<UndoIcon style={{ color: token.colorInfo }} />}
+                    icon={
+                      <UndoIcon style={{ color: token('--bai-color-info') }} />
+                    }
                     loading={isBulkUpdating}
                     onClick={() => handleBulkStatusUpdate(true)}
                   />

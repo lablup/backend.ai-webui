@@ -18,7 +18,6 @@ import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
 import AccessKeySelect from './AccessKeySelect';
 import BAIFormItem from './BAIFormItem';
 import {
@@ -45,6 +44,7 @@ import type {
   SearchableItem,
   SearchSource,
 } from '@astryxdesign/core/Typeahead';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIAlert,
@@ -242,7 +242,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { modal, message } = App.useApp();
   const formRef = useRef<FormInstance<FormValues>>(null);
   const { logger } = useBAILogger();
@@ -749,7 +749,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 ghostInfoBg={false}
                 showIcon
                 description={t('credential.BulkCreateUserDescription')}
-                style={{ marginBottom: token.marginMD }}
+                style={{ marginBottom: token('--spacing-5') }}
               />
               {/* QA-FINDINGS Q-32 — "email prefix 와 email suffix 사이의
                   input margin 이 없음". The gapless `HStack` this replaces put

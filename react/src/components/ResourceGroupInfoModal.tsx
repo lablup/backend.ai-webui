@@ -3,11 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
-import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { Badge } from '@astryxdesign/core/Badge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIMetadataList,
   BAIModal,
@@ -31,7 +31,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const resourceGroup = useFragment(
     graphql`
@@ -83,16 +83,22 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
           </MetadataListItem>
           <MetadataListItem label={t('resourceGroup.Active')}>
             {resourceGroup?.is_active ? (
-              <Check style={{ color: token.colorSuccess }} size="1em" />
+              <Check style={{ color: token('--color-success') }} size="1em" />
             ) : (
-              <X style={{ color: token.colorTextSecondary }} size="1em" />
+              <X
+                style={{ color: token('--color-text-secondary') }}
+                size="1em"
+              />
             )}
           </MetadataListItem>
           <MetadataListItem label={t('resourceGroup.Public')}>
             {resourceGroup?.is_public ? (
-              <Check style={{ color: token.colorSuccess }} size="1em" />
+              <Check style={{ color: token('--color-success') }} size="1em" />
             ) : (
-              <X style={{ color: token.colorTextSecondary }} size="1em" />
+              <X
+                style={{ color: token('--color-text-secondary') }}
+                size="1em"
+              />
             )}
           </MetadataListItem>
           <MetadataListItem label={t('resourceGroup.Driver')}>

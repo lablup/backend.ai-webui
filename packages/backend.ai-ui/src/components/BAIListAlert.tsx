@@ -1,6 +1,6 @@
-import { theme } from '../theme-shim';
 import BAIAlert, { BAIAlertProps } from './BAIAlert';
 import './BAIListAlert.css';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
 
@@ -29,7 +29,7 @@ const BAIListAlert: React.FC<BAIListAlertProps> = ({
   ...alertProps
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   return (
     <BAIAlert
       {...alertProps}
@@ -42,7 +42,7 @@ const BAIListAlert: React.FC<BAIListAlertProps> = ({
             style={{
               margin: 0,
               padding: 0,
-              paddingTop: token.paddingXXS,
+              paddingTop: token('--spacing-1'),
               listStyle: 'circle',
               listStylePosition: 'inside',
               maxHeight,

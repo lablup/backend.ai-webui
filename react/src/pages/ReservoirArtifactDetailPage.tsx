@@ -16,12 +16,12 @@ import ImportArtifactRevisionToFolderModal from '../components/ImportArtifactRev
 import { buildPath } from '../helper/pathBuilder';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Link } from '@astryxdesign/core/Link';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIArtifactRevisionDeleteButton,
   BAIArtifactRevisionDownloadButton,
@@ -62,7 +62,7 @@ type RevisionNode = NonNullable<
 >['edges'][number]['node'];
 
 const ReservoirArtifactDetailPage = () => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
 
@@ -298,7 +298,7 @@ const ReservoirArtifactDetailPage = () => {
     <div>
       <BAIFlex
         align="center"
-        style={{ marginBottom: token.marginLG }}
+        style={{ marginBottom: token('--spacing-6') }}
         justify="between"
       >
         <BAIFlex align="center" gap="xs">
@@ -322,7 +322,7 @@ const ReservoirArtifactDetailPage = () => {
           direction="column"
           gap="sm"
           align="stretch"
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
         >
           {pullingArtifacts.map((frgmt) => (
             <BAIPullingArtifactRevisionAlert
@@ -357,7 +357,7 @@ const ReservoirArtifactDetailPage = () => {
             }
           />
         }
-        style={{ marginBottom: token.marginMD }}
+        style={{ marginBottom: token('--spacing-5') }}
       >
         {/* antd `Descriptions column={2} bordered` -> `MetadataList
             columns={2}` (MAPPING §4: `bordered` has no destination and is
@@ -425,10 +425,10 @@ const ReservoirArtifactDetailPage = () => {
       <BAICard
         title={t('reservoirPage.VersionList')}
         showDivider
-        style={{ marginBottom: token.marginMD }}
+        style={{ marginBottom: token('--spacing-5') }}
         styles={{
           body: {
-            padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
+            padding: `${token('--spacing-3')} ${token('--spacing-6')} ${token('--spacing-6')} ${token('--spacing-6')}`,
           },
         }}
       >
@@ -518,7 +518,7 @@ const ReservoirArtifactDetailPage = () => {
                 <BAIArtifactRevisionDeleteButton
                   title={t('reservoirPage.RemoveSelectedVersions')}
                   style={{
-                    borderColor: token.colorBorder,
+                    borderColor: token('--color-border-emphasized'),
                   }}
                   revisionsFrgmt={selectedRevisionIdList.flatMap(
                     (arr) => arr.data,
@@ -612,7 +612,7 @@ const ReservoirArtifactDetailPage = () => {
       </BAICard>
 
       {/* {artifact.dependencies && artifact.dependencies.length > 0 && (
-        <BAICard title="Dependencies" style={{ marginBottom: token.marginMD }}>
+        <BAICard title="Dependencies" style={{ marginBottom: token('--spacing-5') }}>
           <Space wrap>
             {artifact.dependencies.map((dep) => (
               <Tag key={dep} color="default">

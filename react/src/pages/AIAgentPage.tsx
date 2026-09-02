@@ -7,7 +7,6 @@ import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import './AIAgentPage.css';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
@@ -18,6 +17,7 @@ import {
 } from '@astryxdesign/core/DropdownMenu';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIFlex,
@@ -59,7 +59,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
 }) => {
   const { t } = useTranslation();
   const tags = agent.tags || [];
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   // PILOT-DECISION: antd `danger` (red text on "Delete Agent") has no
   // destination on Astryx `DropdownMenuItemData` (P5, closed shape, no
@@ -98,8 +98,8 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
         <div
           style={{
             position: 'absolute',
-            top: token.paddingXS,
-            right: token.paddingXS,
+            top: token('--spacing-2'),
+            right: token('--spacing-2'),
             zIndex: 1,
           }}
           onClick={(e) => e.stopPropagation()}
@@ -112,7 +112,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
               icon: <EllipsisVertical size="1em" />,
               label: t('button.MoreActions'),
               isIconOnly: true,
-              style: { color: token.colorTextSecondary, opacity: 0 },
+              style: { color: token('--color-text-secondary'), opacity: 0 },
             }}
           />
         </div>
