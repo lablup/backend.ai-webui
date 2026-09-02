@@ -248,7 +248,7 @@ const AdminDeploymentPage: React.FC = () => {
     loadDeploymentPresetQuery(variables, options);
   };
 
-  // --- Runtime variant presets tab ---
+  // --- Runtime parameters tab ---
   const [presetQueryRef, loadPresetQuery] =
     useQueryLoader<AdminRuntimeVariantPresetQueryType>(
       AdminRuntimeVariantPresetQuery,
