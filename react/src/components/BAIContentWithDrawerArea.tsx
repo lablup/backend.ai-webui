@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useBAIBreakpoint } from '../theme-shim';
 import './BAIContentWithDrawerArea.css';
 import { isOpenDrawerState } from './BAINotificationButton';
+import { useBAIBreakpoint } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 

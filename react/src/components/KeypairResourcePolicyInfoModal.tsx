@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
-import { BAI_BREAKPOINTS } from '../theme-shim';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
   filterOutEmpty,
@@ -14,6 +13,7 @@ import {
   BAIAllowedVfolderHostsWithPermission,
   BAIResourceNumberWithIcon,
   BAIText,
+  BAI_BREAKPOINTS,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';

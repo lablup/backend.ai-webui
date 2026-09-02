@@ -77,7 +77,7 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
   // Border appearance is read from `style` (CSS props), the rest passes through
   // to the wrapper element.
   const {
-    // The accent CSS var, not a `theme.useToken()` read: per-menu accents come
+    // The accent CSS var, not a `useTheme()` read: per-menu accents come
     // from a nested Astryx <Theme> subtree the shim's static seeds never see.
     stroke = 'var(--color-accent)',
     strokeWidth = 1.5,

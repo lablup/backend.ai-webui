@@ -1,60 +1,65 @@
 /**
  * Backend.AI brand Astryx theme for Storybook (to-astryx ticket 32).
  *
- * Before this file, no `<Theme>` from `@astryxdesign/core/theme` was ever
- * mounted in the preview — Astryx-native components (`BAITable`,
- * `BAIComplexSelect`, PowerSearch, …) fell back to `@astryxdesign/theme-
- * neutral`'s default palette (imported globally in `astryx.css`), not the
- * Backend.AI brand. `ThemeShimProvider` (ticket 10) only feeds antd-shaped
- * seed tokens to the LEGACY antd-consuming BUI surfaces; it does not mount
- * an Astryx `<Theme>`, so it never themed the Astryx-native ones.
- *
  * Storybook's Vite build lives in a different workspace package than
- * `react/`, so it cannot import the app's real theme builder
- * (`react/src/astryx-theme/backendAiTheme.ts`) — that file is "pure" (no
- * React, no app hooks) but still lives under `react/src`. This mirrors its
- * brand-role recipe (ticket 02: `buildBackendAiTheme({ role: 'brand' })`)
- * using the SAME measured parity tables — re-exported by BUI's own
- * `theme-shim` (ticket 10), so they cannot drift between the app and this
- * file — and the SAME seeds as `resources/theme.json` (mirrored locally as
- * `./theme.json`, which `themeConfig.ts` also feeds to the theme-shim).
+ * `react/`, so it cannot import the app's theme builder
+ * (`react/src/astryx-theme/backendAiTheme.ts`). This mirrors its brand-role
+ * recipe over the SAME inputs: BUI's parity tables and `--bai-*` builder
+ * (`src/theme`), and a copy of `resources/theme.json` (`./theme.json`, v2).
  *
- * KEEP IN SYNC (seed values only, not the glue code) with
- * `react/src/astryx-theme/backendAiTheme.ts` `BAI_DEFAULT_SEEDS` /
+ * KEEP IN SYNC (pinned token values, not the glue code) with
  * `buildBackendAiTheme({ role: 'brand' })`.
  */
 import {
   ANTD_ALIGN_TOKENS,
-  ANTD_DARK_ALGORITHM_OUTPUT,
-} from '../src/theme-shim';
+  buildBaiCustomTokens,
+  toSeedTuple,
+  type BrandSeedPair,
+} from '../src/theme';
 import webuiThemeJson from './theme.json';
 import { defineTheme } from '@astryxdesign/core/theme';
 import { neutralTheme } from '@astryxdesign/theme-neutral';
 
-/** Map a declared dark seed to antd darkAlgorithm's measured output for it. */
-const resolveDarkSeed = (seed: string): string =>
-  ANTD_DARK_ALGORITHM_OUTPUT[seed.toUpperCase()] ?? seed;
-
-const toTuple = (light: string, dark: string): [string, string] => [
-  light,
-  resolveDarkSeed(dark),
-];
+/** v2 seed value -> declared pair (string = both schemes, tuple = split). */
+const toPair = (
+  value: string | string[] | undefined,
+  fallback: BrandSeedPair,
+): BrandSeedPair => {
+  if (typeof value === 'string') return { light: value, dark: value };
+  if (Array.isArray(value) && typeof value[0] === 'string') {
+    return { light: value[0], dark: value[1] ?? value[0] };
+  }
+  return fallback;
+};
 
 /** Astryx muted status surfaces = the status color at ~20%/25% alpha. */
-const toMutedTuple = (tuple: [string, string]): [string, string] | undefined =>
+const toMutedTuple = (
+  tuple: [string, string],
+): [string, string] | undefined =>
   /^#[0-9a-fA-F]{6}$/.test(tuple[0]) && /^#[0-9a-fA-F]{6}$/.test(tuple[1])
     ? [`${tuple[0]}33`, `${tuple[1]}3F`]
     : undefined;
 
-const light = webuiThemeJson.light.token;
-const dark = webuiThemeJson.dark.token;
+const family = webuiThemeJson.theme.families.default;
+const seeds = {
+  accent: toPair(family.seeds.accent, { light: '#FF7A00', dark: '#DC6B03' }),
+  link: toPair(family.seeds.link, { light: '#FF7A00', dark: '#DC6B03' }),
+  info: toPair(family.seeds.info, { light: '#028DF2', dark: '#009BDD' }),
+  error: toPair(family.seeds.error, { light: '#FF4D4F', dark: '#DC4446' }),
+  success: toPair(family.seeds.success, { light: '#00BD9B', dark: '#03A487' }),
+  // theme.json declares no colorWarning for `default` — antd's own seed.
+  warning: toPair(
+    (family.seeds as { warning?: string | string[] }).warning,
+    { light: '#FAAD14', dark: '#FAAD14' },
+  ),
+  headerBg: toPair(family.headerBg, { light: '#FF9729', dark: '#E88A28' }),
+};
 
-const accent = toTuple(light.colorPrimary, dark.colorPrimary);
-const error = toTuple(light.colorError, dark.colorError);
-const success = toTuple(light.colorSuccess, dark.colorSuccess);
-// theme.json declares no colorWarning — antd's own default seed (ticket 02).
-const warning = toTuple('#FAAD14', '#FAAD14');
-const fontFamily = light.fontFamily;
+const accent = toSeedTuple(seeds.accent);
+const error = toSeedTuple(seeds.error);
+const success = toSeedTuple(seeds.success);
+const warning = toSeedTuple(seeds.warning);
+const fontFamily = webuiThemeJson.theme.fontFamily;
 
 const errorMuted = toMutedTuple(error);
 const successMuted = toMutedTuple(success);
@@ -62,9 +67,9 @@ const warningMuted = toMutedTuple(warning);
 
 /**
  * Backend.AI brand Astryx theme — Storybook's build of `backendAiBrandTheme`
- * (ticket 02), and the `webui` half of the "Theme" toolbar (themeConfig.ts).
- * The `astryx` half mounts `neutralTheme` instead, so a story can be checked
- * against a brand-less baseline.
+ * (ticket 02). Mounted unconditionally in `decorators.tsx` so every story
+ * (legacy and Astryx-native alike) renders against the real brand palette in
+ * both light and dark, independent of the "Theme Style" (antd-only) toolbar.
  */
 export const astryxBrandTheme = defineTheme({
   name: 'storybook-bai-brand',
@@ -83,6 +88,7 @@ export const astryxBrandTheme = defineTheme({
     ...(warningMuted ? { '--color-warning-muted': warningMuted } : {}),
     '--font-family-body': fontFamily,
     '--font-family-heading': fontFamily,
+    ...buildBaiCustomTokens(seeds),
     ...ANTD_ALIGN_TOKENS,
     // KEEP IN SYNC with `ANTD_NEUTRAL_TEXT`, `ANTD_NEUTRAL_SURFACES` and
     // `ANTD_NEUTRAL_BORDERS` in `react/src/astryx-theme/backendAiTheme.ts`.
@@ -90,19 +96,19 @@ export const astryxBrandTheme = defineTheme({
     // from the accent and stories render on a warm pink-beige canvas the app
     // never shows (FR-3500 review, 2026-08-12).
     '--color-text-primary': ['#141414', '#FFFFFF'] as [string, string],
-    '--color-text-secondary': [
-      'rgba(0,0,0,0.65)',
-      'rgba(255,255,255,0.65)',
-    ] as [string, string],
+    '--color-text-secondary': ['rgba(0,0,0,0.65)', 'rgba(255,255,255,0.65)'] as [
+      string,
+      string,
+    ],
     '--color-text-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
       string,
       string,
     ],
     '--color-icon-primary': ['#141414', '#FFFFFF'] as [string, string],
-    '--color-icon-secondary': [
-      'rgba(0,0,0,0.45)',
-      'rgba(255,255,255,0.45)',
-    ] as [string, string],
+    '--color-icon-secondary': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'] as [
+      string,
+      string,
+    ],
     '--color-icon-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
       string,
       string,

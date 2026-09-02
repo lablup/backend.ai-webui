@@ -10,7 +10,6 @@ import type {
 } from '../__generated__/AgentSessionsQuery.graphql';
 import { getSessionV2StatusBuckets } from '../helper/sessionStatusBuckets';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useBAIBreakpoint } from '../theme-shim';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
@@ -32,6 +31,7 @@ import {
   BAISkeleton,
   BAIText,
   toLocalId,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
