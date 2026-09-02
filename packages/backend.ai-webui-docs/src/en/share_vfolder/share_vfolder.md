@@ -68,7 +68,10 @@ can also see the `Read only` mark displayed in the Mount Permission column.
 
 Let's navigate inside the `tests` folder by clicking its name in the list. You
 can check the `hello.txt` and `myfolder` that you checked in the User A's
-account again.
+account again. Since User A shared the folder as `Read only`, the write
+actions are disabled in the folder explorer: **Upload**, **Create Folder**,
+**Delete**, and the **Rename** button next to each item cannot be used. User B
+can only browse the folder and download its contents.
 
 ![](../images/folder_explorer_in_B.png)
 
