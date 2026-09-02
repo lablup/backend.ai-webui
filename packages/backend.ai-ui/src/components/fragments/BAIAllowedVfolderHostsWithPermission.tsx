@@ -7,11 +7,11 @@ import {
   type V2AllowedVfolderHostEntry,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIModal from '../BAIModal';
 import { BAITable } from '../Table';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import { CircleCheck, Ban, LockIcon, LockOpenIcon } from 'lucide-react';
 import React from 'react';
@@ -46,7 +46,7 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
   allowedVfolderHostEntries,
 }) => {
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [storageHost, setStorageHost] = React.useState<string | null>();
 
   const keypairResourcePolicy =
@@ -124,7 +124,7 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
                     size={14}
                     aria-hidden="true"
                     focusable={false}
-                    style={{ color: token.colorError }}
+                    style={{ color: token('--color-error') }}
                   />
                 ) : (
                   <LockOpenIcon
@@ -134,8 +134,8 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
                     style={{
                       color:
                         color === 'success'
-                          ? token.colorSuccess
-                          : token.colorWarning,
+                          ? token('--color-success')
+                          : token('--color-warning'),
                     }}
                   />
                 )}
@@ -181,16 +181,16 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
                   {isAllowed ? (
                     <CircleCheck
                       style={{
-                        color: token.green5,
-                        fontSize: token.fontSizeLG,
+                        color: token('--bai-preset-green-5'),
+                        fontSize: token('--font-size-lg'),
                       }}
                       size="1em"
                     />
                   ) : (
                     <Ban
                       style={{
-                        color: token.red5,
-                        fontSize: token.fontSizeLG,
+                        color: token('--bai-preset-red-5'),
+                        fontSize: token('--font-size-lg'),
                       }}
                       size="1em"
                     />

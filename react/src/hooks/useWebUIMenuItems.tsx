@@ -4,7 +4,6 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { buildPath, MENU_KEY_TO_SCOPE_FEATURE } from '../helper/pathBuilder';
-import { theme } from '../theme-shim';
 import { useCurrentUserRole } from './backendai';
 import { useDiagnosticsBadgeSeverity } from './useAutoDiagnostics';
 import { useBAISettingUserState } from './useBAISetting';
@@ -20,6 +19,7 @@ import {
   useWebUIPluginLoadedValue,
   useWebUIPluginValue,
 } from './useWebUIPluginState';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIBadgeCount,
   BAIEndpointsIcon,
@@ -277,7 +277,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
@@ -324,74 +324,74 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const generalMenu = filterOutEmpty<WebUIGeneralMenuItemType>([
     createMenuItem(
       t('webui.menu.Start'),
-      <CirclePlay style={{ color: token.colorPrimary }} size="1em" />,
+      <CirclePlay style={{ color: token('--color-accent') }} size="1em" />,
       'start',
       'none',
     ),
     createMenuItem(
       t('webui.menu.Dashboard'),
-      <Gauge style={{ color: token.colorPrimary }} size="1em" />,
+      <Gauge style={{ color: token('--color-accent') }} size="1em" />,
       'dashboard',
       'none',
     ),
     createMenuItem(
       t('webui.menu.Sessions'),
-      <BAISessionsIcon style={{ color: token.colorPrimary }} />,
+      <BAISessionsIcon style={{ color: token('--color-accent') }} />,
       'session',
       'workload',
     ),
     createMenuItem(
       t('webui.menu.Deployments'),
-      <BAIEndpointsIcon style={{ color: token.colorPrimary }} />,
+      <BAIEndpointsIcon style={{ color: token('--color-accent') }} />,
       'deployments',
       'service',
     ),
     createMenuItem(
       t('data.ModelStore'),
-      <BAIModelStoreIcon style={{ color: token.colorPrimary }} />,
+      <BAIModelStoreIcon style={{ color: token('--color-accent') }} />,
       'model-store',
       'service',
     ),
     experimentalAIAgents &&
       createMenuItem(
         t('webui.menu.AIAgents'),
-        <BotMessageSquare style={{ color: token.colorPrimary }} />,
+        <BotMessageSquare style={{ color: token('--color-accent') }} />,
         'ai-agent',
         'playground',
       ),
     createMenuItem(
       t('webui.menu.Chat'),
-      <MessageSquare style={{ color: token.colorPrimary }} size="1em" />,
+      <MessageSquare style={{ color: token('--color-accent') }} size="1em" />,
       'chat',
       'playground',
     ),
     createMenuItem(
       t('webui.menu.Data'),
-      <CloudUpload style={{ color: token.colorPrimary }} size="1em" />,
+      <CloudUpload style={{ color: token('--color-accent') }} size="1em" />,
       'data',
       'storage',
     ),
     createMenuItem(
       t('webui.menu.MyEnvironments'),
-      <BAIMyEnvironmentsIcon style={{ color: token.colorPrimary }} />,
+      <BAIMyEnvironmentsIcon style={{ color: token('--color-accent') }} />,
       'my-environment',
       'workload',
     ),
     !isHideAgents &&
       createMenuItem(
         t('webui.menu.AgentSummary'),
-        <HardDrive style={{ color: token.colorPrimary }} size="1em" />,
+        <HardDrive style={{ color: token('--color-accent') }} size="1em" />,
         'agent-summary',
         'metrics',
       ),
     createMenuItem(
       t('webui.menu.Statistics'),
-      <ChartColumn style={{ color: token.colorPrimary }} size="1em" />,
+      <ChartColumn style={{ color: token('--color-accent') }} size="1em" />,
       'statistics',
       'metrics',
     ),
     !!fasttrackEndpoint && {
-      icon: <BAIPipelinesIcon style={{ color: token.colorPrimary }} />,
+      icon: <BAIPipelinesIcon style={{ color: token('--color-accent') }} />,
       key: 'pipeline' as MenuKeys,
       onClick: () => {
         window.open(fasttrackEndpoint, '_blank', 'noopener noreferrer');
@@ -407,7 +407,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   // — is MAPPING §3.8's explicit NONE ("no count overlay, no Badge.Ribbon;
   // self-build, build once"). The gap component built for exactly that in
   // ticket 08 is `BAIBadgeCount`, used here in its `dot` form. The
-  // arbitrary `color={token.colorError|colorWarning}` becomes the component's
+  // arbitrary `color={token('--color-error')|colorWarning}` becomes the component's
   // closed `variant` enum.
   const diagnosticsIcon = diagnosticsBadgeSeverity ? (
     <BAIBadgeCount
@@ -416,74 +416,74 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       variant={diagnosticsBadgeSeverity === 'critical' ? 'error' : 'warning'}
       title={t('webui.menu.Diagnostics')}
     >
-      <Activity style={{ color: token.colorInfo }} />
+      <Activity style={{ color: token('--bai-color-info') }} />
     </BAIBadgeCount>
   ) : (
-    <Activity style={{ color: token.colorInfo }} />
+    <Activity style={{ color: token('--bai-color-info') }} />
   );
 
   const fullAdminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
     // --- Operations group ---
     createAdminMenuItem(
       t('webui.menu.Users'),
-      <User style={{ color: token.colorInfo }} size="1em" />,
+      <User style={{ color: token('--bai-color-info') }} size="1em" />,
       'credential',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.ProjectMembers'),
-      <Users style={{ color: token.colorInfo }} size="1em" />,
+      <Users style={{ color: token('--bai-color-info') }} size="1em" />,
       'project-admin-users',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.Data'),
-      <CloudUpload style={{ color: token.colorInfo }} size="1em" />,
+      <CloudUpload style={{ color: token('--bai-color-info') }} size="1em" />,
       'project-data',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.ProjectSessions'),
-      <BAISessionsIcon style={{ color: token.colorInfo }} />,
+      <BAISessionsIcon style={{ color: token('--bai-color-info') }} />,
       'project-admin-session',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.ProjectDeployments'),
-      <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
+      <BAIEndpointsIcon style={{ color: token('--bai-color-info') }} />,
       'project-admin-deployments',
       'admin-operations',
     ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Projects'),
-        <Users style={{ color: token.colorInfo }} size="1em" />,
+        <Users style={{ color: token('--bai-color-info') }} size="1em" />,
         'project',
         'admin-operations',
       ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Data'),
-        <CloudUpload style={{ color: token.colorInfo }} size="1em" />,
+        <CloudUpload style={{ color: token('--bai-color-info') }} size="1em" />,
         'admin-data',
         'admin-operations',
       ),
     createAdminMenuItem(
       t('webui.menu.Sessions'),
-      <BAISessionsIcon style={{ color: token.colorInfo }} />,
+      <BAISessionsIcon style={{ color: token('--bai-color-info') }} />,
       'admin-session',
       'admin-operations',
     ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Deployments'),
-        <BAIEndpointsIcon style={{ color: token.colorInfo }} />,
+        <BAIEndpointsIcon style={{ color: token('--bai-color-info') }} />,
         'admin-deployments',
         'admin-operations',
       ),
     createAdminMenuItem(
       t('webui.menu.Environments'),
-      <FileCheck style={{ color: token.colorInfo }} size="1em" />,
+      <FileCheck style={{ color: token('--bai-color-info') }} size="1em" />,
       'environment',
       'admin-operations',
     ),
@@ -491,20 +491,20 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       baiClient?._config.enableReservoir &&
       createAdminMenuItem(
         t('webui.menu.Reservoir'),
-        <PackagePlus style={{ color: token.colorInfo }} />,
+        <PackagePlus style={{ color: token('--bai-color-info') }} />,
         'reservoir',
         'admin-operations',
       ),
     baiClient?.supports('fair-share-scheduling') &&
       createAdminMenuItem(
         t('webui.menu.Scheduler'),
-        <ClipboardClock style={{ color: token.colorInfo }} />,
+        <ClipboardClock style={{ color: token('--bai-color-info') }} />,
         'scheduler',
         'admin-operations',
       ),
     createAdminMenuItem(
       t('webui.menu.ResourcePolicies'),
-      <FileUser style={{ color: token.colorInfo }} size="1em" />,
+      <FileUser style={{ color: token('--bai-color-info') }} size="1em" />,
       'resource-policy',
       'admin-operations',
     ),
@@ -512,21 +512,24 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Resources'),
-        <HardDrive style={{ color: token.colorInfo }} size="1em" />,
+        <HardDrive style={{ color: token('--bai-color-info') }} size="1em" />,
         'agent',
         'admin-infrastructure',
       ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Configurations'),
-        <SlidersHorizontal style={{ color: token.colorInfo }} size="1em" />,
+        <SlidersHorizontal
+          style={{ color: token('--bai-color-info') }}
+          size="1em"
+        />,
         'settings',
         'admin-infrastructure',
       ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Maintenance'),
-        <Wrench style={{ color: token.colorInfo }} size="1em" />,
+        <Wrench style={{ color: token('--bai-color-info') }} size="1em" />,
         'maintenance',
         'admin-infrastructure',
       ),
@@ -542,7 +545,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       baiClient?.supports('rbac') &&
       createAdminMenuItem(
         t('webui.menu.RBACManagement'),
-        <BadgeCheck style={{ color: token.colorInfo }} size="1em" />,
+        <BadgeCheck style={{ color: token('--bai-color-info') }} size="1em" />,
         'rbac',
         'admin-system',
       ),
@@ -550,14 +553,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       !isThemePreviewMode &&
       createAdminMenuItem(
         t('webui.menu.Branding'),
-        <Palette style={{ color: token.colorInfo }} />,
+        <Palette style={{ color: token('--bai-color-info') }} />,
         'branding',
         'admin-system',
       ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Information'),
-        <Info style={{ color: token.colorInfo }} size="1em" />,
+        <Info style={{ color: token('--bai-color-info') }} size="1em" />,
         'information',
         'admin-system',
       ),

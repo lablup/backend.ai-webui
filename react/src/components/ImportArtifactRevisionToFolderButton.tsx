@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ImportArtifactRevisionToFolderButtonFragment$key } from '../__generated__/ImportArtifactRevisionToFolderButtonFragment.graphql';
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIButton, BAIButtonProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { FolderInput } from 'lucide-react';
@@ -18,7 +18,7 @@ export interface ImportArtifactRevisionToFolderButtonProps extends BAIButtonProp
 const ImportArtifactRevisionToFolderButton: React.FC<
   ImportArtifactRevisionToFolderButtonProps
 > = ({ revisionsFrgmt, ...buttonProps }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const revisions =
     useFragment<ImportArtifactRevisionToFolderButtonFragment$key>(
       graphql`
@@ -44,10 +44,12 @@ const ImportArtifactRevisionToFolderButton: React.FC<
       disabled={isDisabled}
       type="text"
       style={{
-        color: isDisabled ? token.colorTextDisabled : token.colorInfo,
+        color: isDisabled
+          ? token('--color-text-disabled')
+          : token('--bai-color-info'),
         background: isDisabled
-          ? token.colorBgContainerDisabled
-          : token.colorInfoBg,
+          ? token('--bai-color-bg-container-disabled')
+          : token('--bai-color-info-bg'),
         ...buttonProps.style,
       }}
       {..._.omit(buttonProps, ['disabled', 'loading'])}

@@ -10,7 +10,6 @@ import {
   type LegacyVFolderMountScope,
 } from '../../hooks/useSuspendedLegacyVFolders';
 import { BAIUserUnionIcon } from '../../icons';
-import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAICard from '../BAICard';
 import BAIComplexSelect, {
@@ -28,6 +27,7 @@ import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { ArrowRight, PlusIcon, RotateCw, User, XIcon } from 'lucide-react';
@@ -430,7 +430,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   'use memo';
   const { t } = useBAIi18n();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [value, setValue] = useControllableValue<VFolderMountConfigValue[]>(
     props,
     { defaultValue: [] },
@@ -722,11 +722,14 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                         )}
                         icon={
                           <XIcon
-                            size={token.size}
-                            color={token.colorTextQuaternary}
+                            size={token('--spacing-4')}
+                            color={token('--color-text-quaternary')}
                           />
                         }
-                        style={{ flexShrink: 0, height: token.controlHeight }}
+                        style={{
+                          flexShrink: 0,
+                          height: token('--size-element-md'),
+                        }}
                         onClick={() =>
                           setValue((prev) =>
                             prev.filter((m) => m.vfolderId !== entry.vfolderId),

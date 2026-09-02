@@ -7,9 +7,9 @@ import { downloadBlob } from '../../helper/csv-util';
 import { loadMonacoEditor } from '../../helper/monacoEditor';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { theme } from '../../theme-shim';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
+import { useTheme } from '@astryxdesign/core/theme';
 import type { Monaco } from '@monaco-editor/react';
 import {
   BAISkeleton,
@@ -40,7 +40,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { isDarkMode } = useThemeMode();
   const { defaultTheme, setDefaultTheme } = useDefaultTheme();
@@ -56,8 +56,8 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
     <div
       style={{
         alignSelf: 'start',
-        paddingInline: token.paddingContentHorizontal,
-        paddingBlock: token.paddingContentVertical,
+        paddingInline: token('--spacing-4'),
+        paddingBlock: token('--spacing-3'),
         width: '100%',
       }}
     >

@@ -13,10 +13,11 @@ import { UsageBucketChartContent_DomainFragment$key } from '../../__generated__/
 import { UsageBucketChartContent_ProjectFragment$key } from '../../__generated__/UsageBucketChartContent_ProjectFragment.graphql';
 import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/UsageBucketChartContent_UserFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { presetPalettes, theme } from '../../theme-shim';
+import { presetPalettes } from '../../theme-shim';
 import './UsageBucketChartContent.css';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   convertToBinaryUnit,
   INITIAL_FETCH_KEY,
@@ -58,7 +59,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   // antd `Tabs items` rendered the active panel itself; Astryx `TabList` is
   // navigation only (MAPPING §4), so the selected key becomes local state and
@@ -405,7 +406,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
     return (
       <EmptyState
         title={t('fairShare.usageBucket.NoDataAvailable')}
-        style={{ padding: token.paddingLG }}
+        style={{ padding: token('--spacing-6') }}
       />
     );
   }
@@ -454,7 +455,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
           <AreaChart data={chartData.data}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke={token.colorBorderSecondary}
+              stroke={token('--color-border')}
             />
             <XAxis dataKey="periodStart" tick={{ fontSize: 12 }} />
             <YAxis
@@ -483,15 +484,15 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                     direction="column"
                     align="stretch"
                     style={{
-                      backgroundColor: token.colorBgBase,
-                      borderRadius: token.borderRadius,
-                      padding: token.paddingSM,
+                      backgroundColor: token('--color-background-body'),
+                      borderRadius: token('--radius-inner'),
+                      padding: token('--spacing-3'),
                     }}
                   >
                     <BAIText
                       style={{
                         color: 'inherit',
-                        marginBottom: token.marginSM,
+                        marginBottom: token('--spacing-3'),
                       }}
                     >
                       {`${label} - ${t('fairShare.usageBucket.AverageDailyUsage')}`}
@@ -501,7 +502,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                         direction="column"
                         align="stretch"
                         style={{
-                          marginBottom: token.marginXS,
+                          marginBottom: token('--spacing-2'),
                         }}
                       >
                         <BAIText style={{ color: 'inherit' }}>
@@ -509,7 +510,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                         </BAIText>
                         <BAIText
                           style={{
-                            color: token.colorTextTertiary,
+                            color: token('--bai-color-text-tertiary'),
                           }}
                         >
                           {capacityName} :
@@ -525,7 +526,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                               )}
                           <BAIText
                             style={{
-                              fontSize: token.fontSizeSM,
+                              fontSize: token('--font-size-sm'),
                               color: 'inherit',
                             }}
                           >
@@ -554,7 +555,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                                 )}
                             <BAIText
                               style={{
-                                fontSize: token.fontSizeSM,
+                                fontSize: token('--font-size-sm'),
                                 color: 'inherit',
                               }}
                             >
@@ -574,8 +575,8 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                 type="monotone"
                 dataKey={CAPACITY_KEY}
                 name={`${parentScopeLabel} (${capacityName})`}
-                stroke={token.colorFill}
-                fill={token.colorFill}
+                stroke={token('--bai-color-fill')}
+                fill={token('--bai-color-fill')}
                 fillOpacity={0.75}
                 legendType="square"
               />

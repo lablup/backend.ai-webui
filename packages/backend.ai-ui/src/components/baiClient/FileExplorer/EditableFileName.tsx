@@ -37,7 +37,6 @@
 import { App } from '../../../app-shim';
 import { Form } from '../../../form-engine';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
-import { theme } from '../../../theme-shim';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
 import BAIText from '../../BAIText';
@@ -47,6 +46,7 @@ import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import './EditableFileName.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { useTheme } from '@astryxdesign/core/theme';
 import { useMutation } from '@tanstack/react-query';
 import * as _ from 'lodash-es';
 import { File, Folder, PencilIcon } from 'lucide-react';
@@ -80,7 +80,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { modal, message } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const [isEditing, setIsEditing] = useState(false);
@@ -165,7 +165,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
               style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
             >
               <Folder
-                style={{ color: token.colorLink, flexShrink: 0 }}
+                style={{ color: token('--bai-color-link'), flexShrink: 0 }}
                 size="1em"
               />
               <BAILink
@@ -176,7 +176,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
                   color: isPendingRenamingAndRefreshing
-                    ? token.colorTextTertiary
+                    ? token('--bai-color-text-tertiary')
                     : undefined,
                 }}
                 title={fileInfo.name}
@@ -195,7 +195,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
                 style={{
                   minWidth: 0,
                   color: isPendingRenamingAndRefreshing
-                    ? token.colorTextTertiary
+                    ? token('--bai-color-text-tertiary')
                     : undefined,
                 }}
               >

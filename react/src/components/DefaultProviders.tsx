@@ -26,8 +26,9 @@ import '../index.css';
 // 03). Renders no DOM and touches no document attributes — mounting it is
 // visually inert; only files that import `theme` from '../theme-shim'
 // (rewritten by scripts/codemods/antd-theme-to-shim.mjs) consume it.
-import { ThemeShimProvider, theme } from '../theme-shim';
+import { ThemeShimProvider } from '../theme-shim';
 import NotificationHost from './NotificationHost';
+import { useTheme } from '@astryxdesign/core/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   BAIConfigProvider,
@@ -318,7 +319,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
 }> = ({ children }) => {
   const [lang] = useCurrentLanguage();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
 
   const { appearance, activeThemeFamily } = useCustomThemeConfig();
@@ -400,7 +401,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
                         {!required && (
                           <BAIText
                             type="secondary"
-                            style={{ marginLeft: token.marginXXS }}
+                            style={{ marginLeft: token('--spacing-1') }}
                           >
                             ({t('general.Optional')})
                           </BAIText>
