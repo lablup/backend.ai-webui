@@ -95,6 +95,26 @@
   scrollbar-color: var(--color-border-emphasized) transparent;
 }
 
+/*
+ * Electron/macOS (FR-3828): main.js hides the title bar but keeps the traffic
+ * lights at their native position (bottom edge ~24px from the window top), so
+ * the window's topmost band grows by a strip in its own color for the lights.
+ * 16px, not the full 28px native bar: the band's centered content already
+ * carries ~13px of its own top whitespace, which absorbs the rest. The sider
+ * brand band and the header (WebUIHeader.css) grow only when the announcement
+ * banner is not stacked above them; the banner case is AnnouncementBanner.css's.
+ */
+body.electron-macos {
+  --webui-titlebar-height: 16px;
+}
+
+body.electron-macos:not(:has(.webui-announcement-banner))
+  .bai-sider
+  .logo-and-text-container {
+  height: calc(var(--webui-header-height, 60px) + var(--webui-titlebar-height));
+  padding-block-start: var(--webui-titlebar-height);
+}
+
 .bai-sider .draggable {
   -webkit-app-region: drag;
 }
@@ -125,7 +145,7 @@
   justify-content: center;
   margin: calc(var(--spacing-2) * -1);
   padding-inline: var(--spacing-8);
-  height: 60px;
+  height: var(--webui-header-height, 60px);
   background-color: var(--color-accent);
   transition: all 0.2s ease-in-out;
 }

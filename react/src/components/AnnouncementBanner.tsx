@@ -9,6 +9,7 @@ import {
 } from '../helper/announcementSummary';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement';
+import { theme } from '../theme-shim';
 import './AnnouncementBanner.css';
 import AnnouncementEditModal from './AnnouncementEditModal';
 import { Banner } from '@astryxdesign/core/Banner';
@@ -35,6 +36,7 @@ const AnnouncementBanner: React.FC = () => {
   'use memo';
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const userRole = useCurrentUserRole();
   const isSuperAdmin = userRole === 'superadmin';
   const [isEditOpen, { toggle: toggleEditModal }] = useToggle(false);
@@ -71,6 +73,15 @@ const AnnouncementBanner: React.FC = () => {
       <Banner
         status="info"
         container="section"
+        className="webui-announcement-banner"
+        // The header's own inline-padding source (WebUIHeader.tsx), so the two
+        // bands share one rhythm (FR-3828 review feedback); the height token
+        // is bridged globally as --webui-header-height (CSSTokenVariables).
+        style={
+          {
+            '--webui-header-padding-inline': `${token.marginLG}px`,
+          } as React.CSSProperties
+        }
         isDismissable
         onDismiss={() => setDismissedMessage(message)}
         // Collapsible shape: the first line is the title in BOTH states, with
