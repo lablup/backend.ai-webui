@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder on pakollinen."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Luo esiasetus",
+    "CreatePreset": "Luo parametri",
     "Name": "Nimi",
-    "PresetDeleted": "Suoritusaikamuunnoksen esiasetus on poistettu.",
+    "PresetDeleted": "Suoritusajan parametri on poistettu.",
     "RuntimeVariantId": "Suoritusaikamuunnoksen tunnus",
-    "RuntimeVariantPreset": "Suoritusaikamuunnoksen esiasetus",
-    "TabTitle": "Suoritusaikamuunnosten esiasetukset"
+    "RuntimeVariantPreset": "Suoritusajan parametri",
+    "TabTitle": "Suoritusajan Parametrit"
   },
   "adminSession": {
     "PendingSessions": "Odotuksessa olevat istunnot",

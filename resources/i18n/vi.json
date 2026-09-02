@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder là bắt buộc."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Tạo cài đặt sẵn",
+    "CreatePreset": "Tạo tham số",
     "Name": "Tên",
-    "PresetDeleted": "Cài đặt sẵn biến thể thời gian chạy đã được xóa.",
+    "PresetDeleted": "Tham số runtime đã được xóa.",
     "RuntimeVariantId": "ID biến thể thời gian chạy",
-    "RuntimeVariantPreset": "Cài đặt sẵn biến thể thời gian chạy",
-    "TabTitle": "Cài đặt sẵn biến thể thời gian chạy"
+    "RuntimeVariantPreset": "Tham Số Runtime",
+    "TabTitle": "Tham Số Runtime"
   },
   "adminSession": {
     "PendingSessions": "Phiên đang chờ",

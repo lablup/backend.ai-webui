@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder jest wymagany."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Utwórz ustawienie wstępne",
+    "CreatePreset": "Utwórz parametr",
     "Name": "Nazwa",
-    "PresetDeleted": "Ustawienie wstępne wariantu środowiska uruchomieniowego zostało usunięte.",
+    "PresetDeleted": "Parametr runtime został usunięty.",
     "RuntimeVariantId": "ID wariantu środowiska uruchomieniowego",
-    "RuntimeVariantPreset": "Ustawienie wstępne wariantu środowiska uruchomieniowego",
-    "TabTitle": "Ustawienia Wstępne Wariantów Środowiska Uruchomieniowego"
+    "RuntimeVariantPreset": "Parametr Runtime",
+    "TabTitle": "Parametry Runtime"
   },
   "adminSession": {
     "PendingSessions": "Oczekujące sesje",

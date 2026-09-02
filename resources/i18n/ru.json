@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder обязателен."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Создать пресет",
+    "CreatePreset": "Создать параметр",
     "Name": "Имя",
-    "PresetDeleted": "Пресет варианта среды выполнения удалён.",
+    "PresetDeleted": "Параметр runtime удалён.",
     "RuntimeVariantId": "ID варианта среды выполнения",
-    "RuntimeVariantPreset": "Пресет варианта среды выполнения",
-    "TabTitle": "Пресеты вариантов среды выполнения"
+    "RuntimeVariantPreset": "Параметр Runtime",
+    "TabTitle": "Параметры Runtime"
   },
   "adminSession": {
     "PendingSessions": "Ожидающие сессии",

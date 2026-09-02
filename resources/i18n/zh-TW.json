@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder 為必填項。"
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "建立預設",
+    "CreatePreset": "建立參數",
     "Name": "名稱",
-    "PresetDeleted": "執行環境預設已刪除。",
+    "PresetDeleted": "Runtime 參數已刪除。",
     "RuntimeVariantId": "執行環境變體 ID",
-    "RuntimeVariantPreset": "執行環境變體預設",
-    "TabTitle": "執行環境變體預設"
+    "RuntimeVariantPreset": "Runtime 參數",
+    "TabTitle": "Runtime 參數"
   },
   "adminSession": {
     "PendingSessions": "待處理工作階段",

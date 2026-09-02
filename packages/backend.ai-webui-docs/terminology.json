@@ -596,6 +596,19 @@
         "th": "นโยบายทรัพยากร"
       },
       "description": "A named policy defining resource limits (CPU, memory, GPU, session count). WebUI has distinct keypair, user, and project resource policies. KO uses \"자원 정책\" (consistent with 자원 그룹)."
+    },
+    {
+      "id": "runtime-parameter",
+      "category": "Feature-Specific Terms",
+      "status": "approved",
+      "decidingFR": "FR-3840",
+      "preferred": {
+        "en": "Runtime Parameter",
+        "ko": "런타임 파라미터",
+        "ja": "ランタイムパラメータ",
+        "th": "พารามิเตอร์ Runtime"
+      },
+      "description": "A single configurable parameter that an inference runtime (vLLM, SGLang, …) exposes. Administrators define them on the Deployment page's Runtime Parameters tab; users fill in their values in the deployment form's Runtime Parameters section. Definition and value share one term because they are the same entity at two stages — do NOT call the admin-side one a \"preset\". The GraphQL type is `RuntimeVariantPreset`; that name is an internal identifier only and must never surface as a UI label. Distinct from the Deployment Preset, which is a whole saved deployment template. KO uses \"파라미터\" (not \"매개변수\") and JA \"パラメータ\" (not \"パラメーター\"), matching the modelService.RuntimeParam* labels. Documentation section: deployment/deployment_presets.md"
     }
   ],
   "avoid": [
@@ -726,6 +739,54 @@
       "lang": "ja",
       "context": null,
       "conceptId": "resource-group"
+    },
+    {
+      "avoid": "runtime variant preset",
+      "useInstead": "Runtime Parameter",
+      "reason": "UI label renamed in FR-3840; `RuntimeVariantPreset` survives only as the GraphQL type name, never as a user-facing term",
+      "lang": "en",
+      "context": null,
+      "conceptId": "runtime-parameter"
+    },
+    {
+      "avoid": "런타임 프리셋",
+      "useInstead": "런타임 파라미터",
+      "reason": "The admin tab and the user deployment form describe the same entity; the UI label is \"런타임 파라미터\"",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "runtime-parameter"
+    },
+    {
+      "avoid": "매개변수",
+      "useInstead": "파라미터",
+      "reason": "The UI standardizes on the transliteration \"파라미터\" (modelService.RuntimeParamTitle)",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "runtime-parameter"
+    },
+    {
+      "avoid": "ランタイムバリアントプリセット",
+      "useInstead": "ランタイムパラメータ",
+      "reason": "The admin tab and the user deployment form describe the same entity; the UI label is \"ランタイムパラメータ\"",
+      "lang": "ja",
+      "context": null,
+      "conceptId": "runtime-parameter"
+    },
+    {
+      "avoid": "パラメーター",
+      "useInstead": "パラメータ",
+      "reason": "The UI standardizes on the long-vowel-less spelling \"パラメータ\"",
+      "lang": "ja",
+      "context": null,
+      "conceptId": "runtime-parameter"
+    },
+    {
+      "avoid": "พรีเซตตัวแปรรันไทม์",
+      "useInstead": "พารามิเตอร์ Runtime",
+      "reason": "The admin tab and the user deployment form describe the same entity; the UI label is \"พารามิเตอร์ Runtime\"",
+      "lang": "th",
+      "context": null,
+      "conceptId": "runtime-parameter"
     }
   ],
   "verbs": [
@@ -829,7 +890,9 @@
       "id": "verb-edit",
       "intent": "edit",
       "context": "Modify values of an existing entity that was created with initial values (resource group, user, role, preset, deployment, registry, resource policy).",
-      "preferred": { "en": "Edit" },
+      "preferred": {
+        "en": "Edit"
+      },
       "avoid": ["Modify", "Update"],
       "reversible": "reversible",
       "decidingFR": "FR-3331",

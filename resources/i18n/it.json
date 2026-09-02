@@ -199,12 +199,12 @@
     "VFolderRequired": "Il VFolder è obbligatorio."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Crea Preimpostazione",
+    "CreatePreset": "Crea Parametro",
     "Name": "Nome",
-    "PresetDeleted": "La preimpostazione della variante di runtime è stata eliminata.",
+    "PresetDeleted": "Il parametro di runtime è stato eliminato.",
     "RuntimeVariantId": "ID Variante di Runtime",
-    "RuntimeVariantPreset": "Preimpostazione Variante di Runtime",
-    "TabTitle": "Preimpostazioni Varianti di Runtime"
+    "RuntimeVariantPreset": "Parametro di Runtime",
+    "TabTitle": "Parametri di Runtime"
   },
   "adminSession": {
     "PendingSessions": "Sessioni in sospeso",

@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder diperlukan."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Cipta Pratetap",
+    "CreatePreset": "Cipta Parameter",
     "Name": "Nama",
-    "PresetDeleted": "Pratetap varian masa jalan telah dipadam.",
+    "PresetDeleted": "Parameter runtime telah dipadam.",
     "RuntimeVariantId": "ID Varian Masa Jalan",
-    "RuntimeVariantPreset": "Pratetap Varian Masa Jalan",
-    "TabTitle": "Pratetap Varian Masa Jalan"
+    "RuntimeVariantPreset": "Parameter Runtime",
+    "TabTitle": "Parameter Runtime"
   },
   "adminSession": {
     "PendingSessions": "Sesi Tertunda",

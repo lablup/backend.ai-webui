@@ -199,12 +199,12 @@
     "VFolderRequired": "Το VFolder είναι υποχρεωτικό."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Δημιουργία Προεπιλογής",
+    "CreatePreset": "Δημιουργία Παραμέτρου",
     "Name": "Όνομα",
-    "PresetDeleted": "Η προεπιλογή χρόνου εκτέλεσης διαγράφηκε.",
+    "PresetDeleted": "Η παράμετρος χρόνου εκτέλεσης διαγράφηκε.",
     "RuntimeVariantId": "ID Χρόνου Εκτέλεσης",
-    "RuntimeVariantPreset": "Προεπιλογή Χρόνου Εκτέλεσης",
-    "TabTitle": "Προεπιλογές Χρόνου Εκτέλεσης"
+    "RuntimeVariantPreset": "Παράμετρος Χρόνου Εκτέλεσης",
+    "TabTitle": "Παράμετροι Χρόνου Εκτέλεσης"
   },
   "adminSession": {
     "PendingSessions": "Εκκρεμείς συνεδρίες",

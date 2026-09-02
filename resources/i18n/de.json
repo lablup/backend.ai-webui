@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder ist erforderlich."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Voreinstellung erstellen",
+    "CreatePreset": "Parameter erstellen",
     "Name": "Name",
-    "PresetDeleted": "Die Voreinstellung für die Laufzeitvariante wurde gelöscht.",
+    "PresetDeleted": "Der Laufzeitparameter wurde gelöscht.",
     "RuntimeVariantId": "Laufzeitvarianten-ID",
-    "RuntimeVariantPreset": "Laufzeitvarianten-Voreinstellung",
-    "TabTitle": "Laufzeitvarianten-Voreinstellungen"
+    "RuntimeVariantPreset": "Laufzeitparameter",
+    "TabTitle": "Laufzeitparameter"
   },
   "adminSession": {
     "PendingSessions": "Ausstehende Sitzungen",

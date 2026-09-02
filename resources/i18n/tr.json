@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder zorunludur."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Ön Ayar Oluştur",
+    "CreatePreset": "Parametre Oluştur",
     "Name": "Ad",
-    "PresetDeleted": "Çalışma zamanı varyantı ön ayarı silindi.",
+    "PresetDeleted": "Runtime parametresi silindi.",
     "RuntimeVariantId": "Çalışma Zamanı Varyantı ID",
-    "RuntimeVariantPreset": "Çalışma Zamanı Varyantı Ön Ayarı",
-    "TabTitle": "Çalışma Zamanı Varyantı Ön Ayarları"
+    "RuntimeVariantPreset": "Runtime Parametresi",
+    "TabTitle": "Runtime Parametreleri"
   },
   "adminSession": {
     "PendingSessions": "Bekleyen Oturumlar",

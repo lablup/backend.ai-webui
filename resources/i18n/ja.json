@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolderは必須です。"
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "プリセットを作成",
+    "CreatePreset": "パラメータを作成",
     "Name": "名前",
-    "PresetDeleted": "ランタイムバリアントプリセットが削除されました。",
+    "PresetDeleted": "ランタイムパラメータが削除されました。",
     "RuntimeVariantId": "ランタイムバリアント ID",
-    "RuntimeVariantPreset": "ランタイムバリアントプリセット",
-    "TabTitle": "ランタイムバリアントプリセット"
+    "RuntimeVariantPreset": "ランタイムパラメータ",
+    "TabTitle": "ランタイムパラメータ"
   },
   "adminSession": {
     "PendingSessions": "保留中のセッション",
@@ -1998,7 +1998,7 @@
     "LogMessages": "ログメッセージ",
     "Method": "方法",
     "NoLogToDisplay": "ログ情報がありません。",
-    "Parameters": "パラメーター",
+    "Parameters": "パラメータ",
     "RequestUrl": "URLをリクエスト",
     "SearchLogs": "ログの検索",
     "ShowOnlyError": "表示のみのエラー",
