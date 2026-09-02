@@ -499,10 +499,10 @@
         "TopK": "Amostras dos K tokens mais prováveis",
         "TopP": "Amostras de tokens cuja probabilidade acumulada está dentro de P",
         "label": {
-          "FrequencyPenalty": "Penalidade de frequência",
-          "MaxTokens": "Máx. de tokens",
-          "PresencePenalty": "Penalidade de presença",
-          "Temperature": "Temperatura",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

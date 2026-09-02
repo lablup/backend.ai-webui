@@ -499,10 +499,10 @@
         "TopK": "ตัวอย่างจากด้านบน k ที่เป็นไปได้มากที่สุด",
         "TopP": "ตัวอย่างจากโทเค็นที่มีความน่าจะเป็นสะสมอยู่ภายใน P",
         "label": {
-          "FrequencyPenalty": "บทลงโทษความถี่",
-          "MaxTokens": "จำนวนโทเค็นสูงสุด",
-          "PresencePenalty": "บทลงโทษการปรากฏ",
-          "Temperature": "อุณหภูมิ",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

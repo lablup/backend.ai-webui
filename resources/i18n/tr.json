@@ -499,10 +499,10 @@
         "TopK": "En olası K belirteçten örnekler",
         "TopP": "Kümülatif olasılığı P içinde olan belirteçlerden örnekler",
         "label": {
-          "FrequencyPenalty": "Sıklık Cezası",
-          "MaxTokens": "Maks. Belirteç",
-          "PresencePenalty": "Varlık Cezası",
-          "Temperature": "Sıcaklık",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

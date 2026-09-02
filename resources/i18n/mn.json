@@ -499,10 +499,10 @@
         "TopK": "Топ k-ийн хамгийн их магадлалтай токенууд",
         "TopP": "Хуримтлагдсан магадлал p",
         "label": {
-          "FrequencyPenalty": "Давтамжийн торгууль",
-          "MaxTokens": "Макс. токен",
-          "PresencePenalty": "Оршихуйн торгууль",
-          "Temperature": "Температур",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

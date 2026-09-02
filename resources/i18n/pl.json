@@ -499,10 +499,10 @@
         "TopK": "Próbki z K najbardziej prawdopodobnych tokenów",
         "TopP": "Próbki z tokenów, których łączne prawdopodobieństwo mieści się w zakresie P",
         "label": {
-          "FrequencyPenalty": "Kara za częstotliwość",
-          "MaxTokens": "Maks. tokenów",
-          "PresencePenalty": "Kara za obecność",
-          "Temperature": "Temperatura",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

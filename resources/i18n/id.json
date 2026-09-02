@@ -499,10 +499,10 @@
         "TopK": "Sampel dari K teratas kemungkinan besar token",
         "TopP": "Sampel dari token yang probabilitas kumulatifnya berada di dalam P",
         "label": {
-          "FrequencyPenalty": "Penalti Frekuensi",
-          "MaxTokens": "Token Maks",
-          "PresencePenalty": "Penalti Kehadiran",
-          "Temperature": "Temperatur",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

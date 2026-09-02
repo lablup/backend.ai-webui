@@ -499,10 +499,10 @@
         "TopK": "Δείγματα από τα K πιο πιθανά tokens",
         "TopP": "Δείγματα από μάρκες των οποίων η αθροιστική πιθανότητα είναι εντός P",
         "label": {
-          "FrequencyPenalty": "Ποινή συχνότητας",
-          "MaxTokens": "Μέγ. διακριτικά",
-          "PresencePenalty": "Ποινή παρουσίας",
-          "Temperature": "Θερμοκρασία",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

@@ -499,10 +499,10 @@
         "TopK": "Esempi dei primi K token più probabili",
         "TopP": "Campioni di token la cui probabilità cumulativa è entro P",
         "label": {
-          "FrequencyPenalty": "Penalità di frequenza",
-          "MaxTokens": "Token massimi",
-          "PresencePenalty": "Penalità di presenza",
-          "Temperature": "Temperatura",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

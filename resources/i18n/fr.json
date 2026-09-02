@@ -499,10 +499,10 @@
         "TopK": "Échantillons des K jetons les plus probables",
         "TopP": "Échantillons de tokens dont la probabilité cumulée est inférieure à P",
         "label": {
-          "FrequencyPenalty": "Pénalité de fréquence",
-          "MaxTokens": "Nombre max. de jetons",
-          "PresencePenalty": "Pénalité de présence",
-          "Temperature": "Température",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

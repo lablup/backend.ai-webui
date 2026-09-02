@@ -499,10 +499,10 @@
         "TopK": "Выборки из K наиболее вероятных токенов",
         "TopP": "Выборки из лексем, чья кумулятивная вероятность находится в пределах P",
         "label": {
-          "FrequencyPenalty": "Штраф за частоту",
-          "MaxTokens": "Макс. токенов",
-          "PresencePenalty": "Штраф за присутствие",
-          "Temperature": "Температура",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

@@ -499,10 +499,10 @@
         "TopK": "Näytteet K todennäköisimmän merkin joukosta.",
         "TopP": "Näytteet merkinnöistä, joiden kumulatiivinen todennäköisyys on P:n sisällä.",
         "label": {
-          "FrequencyPenalty": "Frekvenssisakko",
-          "MaxTokens": "Tokenien enimmäismäärä",
-          "PresencePenalty": "Läsnäolosakko",
-          "Temperature": "Lämpötila",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

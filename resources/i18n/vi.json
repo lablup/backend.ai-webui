@@ -499,10 +499,10 @@
         "TopK": "Mẫu từ K token có khả năng cao nhất",
         "TopP": "Mẫu từ các token có xác suất tích lũy nằm trong khoảng P",
         "label": {
-          "FrequencyPenalty": "Phạt tần suất",
-          "MaxTokens": "Số token tối đa",
-          "PresencePenalty": "Phạt hiện diện",
-          "Temperature": "Nhiệt độ",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }
