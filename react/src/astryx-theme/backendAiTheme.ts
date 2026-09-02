@@ -892,9 +892,9 @@ export const BAI_DEFAULT_SEEDS = {
   link: { light: '#FF7A00', dark: '#DC6B03' } as BrandSeedPair,
   /** theme.json `families.default.headerBg`. Applied verbatim per scheme. */
   headerBg: { light: '#FF9729', dark: '#E88A28' } as BrandSeedPair,
-  /** colorInfo — what `usePrimaryColors().admin` resolves to */
+  /** colorInfo — the admin role accent */
   admin: { light: '#028DF2', dark: '#009BDD' } as BrandSeedPair,
-  /** colorSuccess — what `usePrimaryColors().secondary` resolves to */
+  /** colorSuccess — the secondary role accent */
   secondary: { light: '#00BD9B', dark: '#03A487' } as BrandSeedPair,
   error: { light: '#FF4D4F', dark: '#DC4446' } as BrandSeedPair,
   success: { light: '#00BD9B', dark: '#03A487' } as BrandSeedPair,
@@ -1009,6 +1009,10 @@ export const BAI_SELF_COLOR_TOKENS: Record<string, [string, string]> = {
     'rgba(0,0,0,0.04)',
     'rgba(255,255,255,0.08)',
   ],
+  // antd preset palette steps (light/dark tables) still consumed by name.
+  '--bai-preset-purple-5': ['#9254de', '#51258f'],
+  '--bai-preset-green-5': ['#73d13d', '#3c8618'],
+  '--bai-preset-red-5': ['#ff4d4f', '#a61d24'],
 };
 
 /**
@@ -1026,19 +1030,19 @@ const deriveTuple = (
 ];
 
 /**
- * The full `--bai-*` set for one resolved seed set. The primary ramp mirrors
- * `usePrimaryColors`: `generate()` (default options) over the mode's palette
- * key-6 map color, per scheme.
+ * The full `--bai-*` set for one resolved seed set. `--bai-primary-5` is the
+ * one antd ramp step still consumed (progress fills): `generate()` (default
+ * options) over the mode's palette key-6 map color, per scheme, index 4.
  */
 const buildBaiCustomTokens = (
   seeds: ResolvedSeeds,
 ): Record<string, string | [string, string]> => {
-  const lightRamp = generate(palette(seeds.accent.light, 'light')(6));
-  const darkRamp = generate(palette(seeds.accent.dark, 'dark')(6));
-  const ramp: Record<string, [string, string]> = {};
-  for (let i = 1; i <= 10; i++) {
-    ramp[`--bai-primary-${i}`] = [lightRamp[i - 1], darkRamp[i - 1]];
-  }
+  const ramp: Record<string, [string, string]> = {
+    '--bai-primary-5': [
+      generate(palette(seeds.accent.light, 'light')(6))[4],
+      generate(palette(seeds.accent.dark, 'dark')(6))[4],
+    ],
+  };
   return {
     '--bai-color-info': toTuple(seeds.info),
     '--bai-color-link': toTuple(seeds.link),
@@ -1312,7 +1316,7 @@ const seedPairFromValue = (
 /**
  * Derive the full option set for one role from a v2 appearance `theme` half
  * (the operator-editable override path). Role→accent mapping mirrors
- * `usePrimaryColors`: brand=accent, admin=info, secondary=success (FR-1964,
+ * the role themes: brand=accent, admin=info, secondary=success (FR-1964,
  * role derivation stays in code — the document carries brand seeds only).
  */
 export const themeOptionsFromConfig = (

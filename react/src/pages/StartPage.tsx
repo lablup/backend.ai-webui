@@ -14,9 +14,9 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { MenuKeys } from '../hooks/useWebUIMenuItems';
-import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   filterOutEmpty,
   BAIFlex,
@@ -41,7 +41,7 @@ interface StartPageBoardItem extends BAIBoardItem {
 const StartPage: React.FC = () => {
   const { t } = useTranslation();
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
   const blockList = baiClient?._config?.blockList ?? [];
@@ -232,7 +232,7 @@ const StartPage: React.FC = () => {
               description={t('start.StartDeploymentDesc')}
               buttonText={t('start.button.StartDeployment')}
               icon={<Grid2x2Plus size="1em" />}
-              themeColor={token.colorSuccess}
+              themeColor={token('--color-success')}
               onClick={() => webuiNavigate(buildProjectPath('deployments'))}
             />
           </AstryxSecondaryTheme>

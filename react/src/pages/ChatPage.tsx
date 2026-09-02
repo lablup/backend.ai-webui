@@ -15,7 +15,6 @@ import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Card } from '@astryxdesign/core/Card';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -24,6 +23,7 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import { Drawer } from '@astryxdesign/lab';
 import { BAIFlex, BAITable, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -131,7 +131,7 @@ const ChatHistoryDrawer = ({
 }: ChatHistoryDrawerProps) => {
   'use memo';
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
 
   return (
@@ -178,7 +178,7 @@ const ChatHistoryDrawer = ({
                   </HStack>
                   <Text
                     color="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
+                    style={{ fontSize: token('--font-size-sm') }}
                   >
                     {dayjs(record.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
                   </Text>
@@ -187,11 +187,11 @@ const ChatHistoryDrawer = ({
             },
             {
               key: 'actions',
-              width: token.sizeXXL,
+              width: token('--spacing-12'),
               render: (_, record) => (
                 <IconButton
                   variant="ghost"
-                  icon={<TrashIcon size={token.size} />}
+                  icon={<TrashIcon size={token('--spacing-4')} />}
                   label={t('chatui.DeleteChattingSession')}
                   onClick={(e) => {
                     e.stopPropagation();

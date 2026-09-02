@@ -40,8 +40,8 @@ import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
-import { theme } from './theme-shim';
 import { toProjectContext } from './types/projectContext';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
@@ -326,13 +326,13 @@ export const mainLayoutChildRoutes: RouteObject[] = [
           {
             path: 'start',
             Component: () => {
-              const { token } = theme.useToken();
+              const { token } = useTheme();
               return (
                 <BAIFlex
                   direction="column"
-                  gap={token.paddingContentVerticalLG}
+                  gap="ms"
                   align="stretch"
-                  style={{ paddingBottom: token.paddingContentVerticalLG }}
+                  style={{ paddingBottom: token('--spacing-4') }}
                 >
                   <LocationStateBreadCrumb />
                   <StorageHostFetchErrorBoundary>

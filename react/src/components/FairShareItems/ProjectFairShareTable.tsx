@@ -7,10 +7,10 @@ import {
   ProjectFairShareTableFragment$data,
   ProjectFairShareTableFragment$key,
 } from '../../__generated__/ProjectFairShareTableFragment.graphql';
-import { theme } from '../../theme-shim';
 import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,
@@ -75,7 +75,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -168,7 +168,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
               ? '-'
               : toFixedFloorWithoutTrailingZeros(weight, 1)}
           </Text>
-          <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+          <Text color="secondary" style={{ fontSize: token('--font-size-sm') }}>
             {record.spec.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
           </Text>
         </BAIFlex>

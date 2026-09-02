@@ -35,8 +35,8 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIBoardItemErrorBoundary,
@@ -62,7 +62,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const DashboardPage: React.FC = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
 
   const currentProject = useCurrentProjectValue();
@@ -200,7 +200,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <SessionCountDashboardItem
@@ -231,7 +231,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <MyResource
                 fetchKey={deferredFetchKey}
@@ -257,7 +259,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <MyResourceWithinResourceGroup
                 fetchKey={deferredFetchKey}
@@ -283,7 +287,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <StorageStatusPanelCard
                 fetchKey={deferredFetchKey}
@@ -316,7 +322,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <QuotaPerStorageVolumeDashboardItem />
             </Suspense>
@@ -355,7 +363,9 @@ const DashboardPage: React.FC = () => {
           content: (
             <Suspense
               fallback={
-                <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+                <BAISkeleton
+                  style={{ padding: `0px ${token('--spacing-5')}` }}
+                />
               }
             >
               <AgentStats
@@ -378,7 +388,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <ActiveAgents

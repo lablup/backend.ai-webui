@@ -6,11 +6,11 @@ import { ProjectFolderPermissionPanelPermissionQuery } from '../__generated__/Pr
 import { ProjectFolderPermissionPanelQuery } from '../__generated__/ProjectFolderPermissionPanelQuery.graphql';
 import { ProjectFolderPermissionPanel_storageVolumeFrgmt$key } from '../__generated__/ProjectFolderPermissionPanel_storageVolumeFrgmt.graphql';
 import { useCurrentDomainValue } from '../hooks';
-import { theme } from '../theme-shim';
 import DomainStoragePermissionTable from './DomainStoragePermissionTable';
 import ProjectStoragePermissionTable from './ProjectStoragePermissionTable';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAICard,
   BAIDomainSelect,
@@ -43,7 +43,7 @@ const ProjectFolderPermissionPanel: React.FC<
 > = ({ storageVolumeFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const storageVolume = useFragment(
     graphql`
@@ -174,13 +174,19 @@ const ProjectFolderPermissionPanel: React.FC<
         extra={
           <BAIFlex gap="sm" align="center" wrap="wrap">
             <BAIFlex gap="xxs" align="center">
-              <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
+              <CircleCheck
+                style={{ color: token('--color-success') }}
+                size="1em"
+              />
               <Text color="secondary" size="xsm">
                 {t('storageHost.permission.LegendProject')}
               </Text>
             </BAIFlex>
             <BAIFlex gap="xxs" align="center">
-              <CircleCheck style={{ color: token.purple5 }} size="1em" />
+              <CircleCheck
+                style={{ color: token('--bai-preset-purple-5') }}
+                size="1em"
+              />
               <Text color="secondary" size="xsm">
                 {t('storageHost.permission.LegendInherited')}
               </Text>

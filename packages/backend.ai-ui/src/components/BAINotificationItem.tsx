@@ -11,9 +11,9 @@
  there was no list semantics to preserve. The div carries a `bai-notification-item`
  class so the stack keeps a stable hook.
 */
-import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import React, { type ReactNode } from 'react';
 
 export interface BAINotificationItemStyles {
@@ -47,7 +47,7 @@ const BAINotificationItem: React.FC<BAINotificationItemProps> = ({
   footer,
   styles,
 }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const renderTextContent = (
     content: ReactNode,
@@ -68,7 +68,7 @@ const BAINotificationItem: React.FC<BAINotificationItemProps> = ({
             style={{
               fontWeight: 500,
               marginRight: 22,
-              marginBottom: token.marginSM,
+              marginBottom: token('--spacing-3'),
               ...styles?.title,
             }}
           >
@@ -98,7 +98,7 @@ const BAINotificationItem: React.FC<BAINotificationItemProps> = ({
           <div
             style={{
               alignSelf: 'flex-end',
-              color: token.colorTextSecondary,
+              color: token('--color-text-secondary'),
               ...styles?.footer,
             }}
           >

@@ -10,7 +10,6 @@ import {
   RuntimeVariantPresetValueEntry,
   useRuntimeParameterSchema,
 } from '../hooks/useRuntimeParameterSchema';
-import { theme } from '../theme-shim';
 import InputNumberWithSlider from './InputNumberWithSlider';
 import {
   AstryxFormCheckbox,
@@ -24,6 +23,7 @@ import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
@@ -359,7 +359,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const supportsRequired = baiClient.supports(
     'runtime-variant-preset-required',
@@ -368,7 +368,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
   const label = param.displayName ?? param.name;
   const tooltip = param.description ?? undefined;
   const formItemStyle = {
-    marginBottom: token.marginXS,
+    marginBottom: token('--spacing-2'),
   };
   const controlOpacity = touched ? undefined : 0.45;
   const controlTransition = 'opacity 0.2s';
@@ -443,7 +443,7 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
               marks: {
                 [min]: min,
                 [max]: {
-                  style: { color: token.colorTextSecondary },
+                  style: { color: token('--color-text-secondary') },
                   label: max,
                 },
               },

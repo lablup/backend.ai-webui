@@ -8,10 +8,10 @@ import {
   ResourceGroupFairShareTableFragment$key,
 } from '../../__generated__/ResourceGroupFairShareTableFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { theme } from '../../theme-shim';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
@@ -60,7 +60,7 @@ const ResourceGroupFairShareTable: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
@@ -167,7 +167,7 @@ const ResourceGroupFairShareTable: React.FC<
                       </Text>
                       <Text
                         color="secondary"
-                        style={{ fontSize: token.sizeXS }}
+                        style={{ fontSize: token('--spacing-2') }}
                       >
                         {mergedResourceSlots?.[resourceType]?.display_unit}
                       </Text>
@@ -221,7 +221,7 @@ const ResourceGroupFairShareTable: React.FC<
                     {rw.weight}
                     <Text
                       color="secondary"
-                      style={{ fontSize: token.fontSizeSM }}
+                      style={{ fontSize: token('--font-size-sm') }}
                     >
                       {rw.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
                     </Text>

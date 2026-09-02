@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
@@ -20,7 +20,7 @@ export const SummaryItem: React.FC<SummaryItemProps> = ({
   onClick,
   icon,
 }: SummaryItemProps) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <BAIFlex direction="column" style={{ width: '100%' }}>
@@ -28,8 +28,10 @@ export const SummaryItem: React.FC<SummaryItemProps> = ({
         style={{
           width: '100%',
           height: contents ? 'auto' : '100%',
-          borderBottom: contents ? `1px solid ${token.colorBorder}` : 'none',
-          padding: token.paddingMD,
+          borderBottom: contents
+            ? `1px solid ${token('--color-border-emphasized')}`
+            : 'none',
+          padding: token('--spacing-5'),
           justifyContent: 'space-between',
           fontWeight: 'bold',
           WebkitUserSelect: 'none',
@@ -57,7 +59,7 @@ export const SummaryItem: React.FC<SummaryItemProps> = ({
         className="drag-cancel-component"
         style={{
           width: '100%',
-          padding: token.paddingMD,
+          padding: token('--spacing-5'),
         }}
       >
         {contents}

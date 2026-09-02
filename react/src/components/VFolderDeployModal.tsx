@@ -8,11 +8,11 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import { ProjectContext } from '../types/projectContext';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,
@@ -113,7 +113,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   // Render-as-you-fetch: the request was already started by the opener's
   // `loadQuery` in the click event, so there is no `open`-derived fetch policy
@@ -323,7 +323,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
               }}
             />
           }
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
         />
       )}
       <Form form={form} layout="vertical">

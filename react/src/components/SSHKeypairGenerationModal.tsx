@@ -4,11 +4,11 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
 import { Button } from '@astryxdesign/core/Button';
 import { Overlay } from '@astryxdesign/core/Overlay';
 import { Spinner } from '@astryxdesign/core/Spinner';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIPopconfirm,
   BAIModal,
@@ -30,7 +30,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
 
   const { data } = useTanQuery<{
@@ -77,7 +77,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
             {data?.ssh_public_key}
           </pre>
           {data?.ssh_public_key ? (
-            <BAIFlex style={{ marginTop: token.margin }}>
+            <BAIFlex style={{ marginTop: token('--spacing-4') }}>
               <BAIText copyable={{ text: data.ssh_public_key }} />
             </BAIFlex>
           ) : null}
@@ -104,7 +104,7 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
             </Text>
           </BAIFlex>
           {data?.ssh_private_key ? (
-            <BAIFlex style={{ marginTop: token.margin }}>
+            <BAIFlex style={{ marginTop: token('--spacing-4') }}>
               <BAIText copyable={{ text: data.ssh_private_key }} />
             </BAIFlex>
           ) : null}

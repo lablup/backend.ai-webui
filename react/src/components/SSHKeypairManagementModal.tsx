@@ -4,11 +4,11 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
 import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
 import { Button } from '@astryxdesign/core/Button';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIModal,
@@ -29,7 +29,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [isPendingRefreshModal, startRefreshModalTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [
@@ -84,7 +84,7 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
             <pre style={{ width: 430, height: 270 }}>
               {data?.ssh_public_key}
             </pre>
-            <BAIFlex style={{ marginTop: token.margin }}>
+            <BAIFlex style={{ marginTop: token('--spacing-4') }}>
               <BAIText copyable={{ text: data.ssh_public_key }} />
             </BAIFlex>
           </BAIFlex>

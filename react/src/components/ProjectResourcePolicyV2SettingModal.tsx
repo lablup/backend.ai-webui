@@ -15,7 +15,6 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
@@ -23,6 +22,7 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
@@ -48,7 +48,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
 
   const formRef = useRef<FormInstance>(null);
@@ -208,7 +208,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
       <Banner
         title={t('storageHost.BeCarefulToSetProjectResourcePolicy')}
         status="warning"
-        style={{ marginBottom: token.marginMD }}
+        style={{ marginBottom: token('--spacing-5') }}
       />
       <Form
         ref={formRef}
@@ -239,7 +239,7 @@ const ProjectResourcePolicyV2SettingModal: React.FC<
           direction="column"
           align="stretch"
           gap={'md'}
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
         >
           <FormItemWithUnlimited
             name={'max_vfolder_count'}
