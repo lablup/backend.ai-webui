@@ -1,7 +1,6 @@
 import { Form } from '../../form-engine';
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
@@ -11,6 +10,7 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import { XIcon } from 'lucide-react';
 import React, { Suspense } from 'react';
@@ -200,7 +200,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [value, setValue] = useControllableValue<VFolderMountConfigValue[]>(
     props,
     { defaultValue: [] },
@@ -294,8 +294,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
               />
             </BAIFlex>
             {/* Spacer aligning the header with the row's remove-button column
-                (kept in sync with the ✕ icon size via token.size). */}
-            <span style={{ width: token.size, flexShrink: 0 }} />
+                (kept in sync with the ✕ icon size via token('--spacing-4')). */}
+            <span style={{ width: token('--spacing-4'), flexShrink: 0 }} />
           </BAIFlex>
           {mountConfigs.map((entry) => {
             const name = entry.name || entry.vfolderId;
@@ -319,7 +319,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     flexShrink: 0,
                     // Match the input control height so the name lines up with
                     // the input row, not the helper-text-inflated row height.
-                    lineHeight: `${token.controlHeight}px`,
+                    lineHeight: `${token('--size-element-md')}`,
                   }}
                 >
                   {name}
@@ -412,14 +412,17 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     )}
                     icon={
                       <XIcon
-                        size={token.size}
-                        color={token.colorTextQuaternary}
+                        size={token('--spacing-4')}
+                        color={token('--bai-color-text-quaternary')}
                       />
                     }
                     // Match the input control height so the remove button
                     // centers on the input row, not the full (helper-inclusive)
                     // row height.
-                    style={{ flexShrink: 0, height: token.controlHeight }}
+                    style={{
+                      flexShrink: 0,
+                      height: token('--size-element-md'),
+                    }}
                     onClick={() =>
                       setValue(
                         mountConfigs.filter(

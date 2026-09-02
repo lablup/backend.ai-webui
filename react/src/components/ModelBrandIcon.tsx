@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { findBrandIconLoader } from '../helper/modelBrandIcons';
-import { theme } from '../theme-shim';
 import type { BrandIconType } from './brandIcons/createBrandIcon';
+import { useTheme } from '@astryxdesign/core/theme';
 import { Bot } from 'lucide-react';
 import React, { Suspense, use } from 'react';
 
@@ -39,13 +39,13 @@ const DefaultIcon: React.FC<{
   className?: string;
 }> = ({ size, style, className }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   return (
     <Bot
       className={className}
       style={{
         fontSize: size,
-        color: token.colorTextSecondary,
+        color: token('--color-text-secondary'),
         flexShrink: 0,
         ...style,
       }}

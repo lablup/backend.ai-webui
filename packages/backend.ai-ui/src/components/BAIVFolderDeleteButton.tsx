@@ -16,7 +16,7 @@
 
  PILOT-DECISIONs:
  - **The icon colour moves from a prop to a CSS var.** antd needed
-   `style={{color: token.colorError}}`; Astryx `IconButton` has no `color` (P5),
+   `style={{color: token('--color-error')}}`; Astryx `IconButton` has no `color` (P5),
    so the danger tint comes from the same
    `.bai-name-action-cell-danger` class the row actions use — one rule, one
    place, and it follows the theme.

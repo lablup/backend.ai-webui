@@ -18,7 +18,6 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
-import { theme } from '../theme-shim';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
@@ -36,6 +35,7 @@ import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIIconWithTooltip,
   BAIModal,
@@ -140,7 +140,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -386,7 +386,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               setSelectedProject(null);
             }}
           />
-          {/* `token.marginSM` is 8px = Astryx spacing step 2. */}
+          {/* `token('--spacing-3')` is 8px = Astryx spacing step 2. */}
           <HStack gap={2}>
             <Button
               variant="secondary"
@@ -430,7 +430,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           analog: `status` carries the colour and the icon, and
           `container="section"` is the closest match to antd's `banner` mode. */}
       {alertMessage ? (
-        <div style={{ marginBottom: token.marginMD }}>
+        <div style={{ marginBottom: token('--spacing-5') }}>
           <Banner status="warning" title={alertMessage} container="section" />
         </div>
       ) : null}
@@ -438,9 +438,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       <VStack
         align="stretch"
         style={{
-          paddingLeft: token.paddingMD,
-          paddingRight: token.paddingMD,
-          paddingTop: alertMessage ? 0 : token.paddingMD,
+          paddingLeft: token('--spacing-5'),
+          paddingRight: token('--spacing-5'),
+          paddingTop: alertMessage ? 0 : token('--spacing-5'),
         }}
       >
         <Form
@@ -454,7 +454,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           // (33.3%, i.e. the `span: 8` above) but its ALIGNMENT did not. Legacy
           // carried a `createStyles` block that set
           // `.ant-form-item-label { display: flex; align-items: start;
-          // padding-left: token.paddingSM }` — left-aligned labels inset 12px.
+          // padding-left: token('--spacing-3') }` — left-aligned labels inset 12px.
           // That block went away with antd-style, and the form engine's own
           // default took over: `[data-bai-form-item-label-col]` is
           // `text-align: end`, which parks every label hard against the control

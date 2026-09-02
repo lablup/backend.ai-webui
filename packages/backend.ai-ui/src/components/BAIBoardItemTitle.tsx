@@ -1,7 +1,7 @@
-import BAIQuestionIconWithTooltip from './BAIQuestionIconWithTooltip';
-import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
+import BAIQuestionIconWithTooltip from './BAIQuestionIconWithTooltip';
 import { Heading } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import React from 'react';
 
 export interface BAIBoardItemTitleProps {
@@ -21,18 +21,18 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
   extra,
   style,
 }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <BAIFlex
       align="center"
       justify="between"
       style={{
-        paddingBlock: token.paddingMD,
+        paddingBlock: token('--spacing-5'),
         flexShrink: 0,
         position: 'sticky',
         top: 0,
-        backgroundColor: token.colorBgContainer,
+        backgroundColor: token('--color-background-surface'),
         zIndex: Z_INDEX_IN_BAI_BOARD_ITEM_TITLE,
         ...style,
       }}

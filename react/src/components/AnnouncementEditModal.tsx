@@ -6,7 +6,6 @@ import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
-import { theme } from '../theme-shim';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
 import { Button } from '@astryxdesign/core/Button';
@@ -14,6 +13,7 @@ import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Markdown } from '@astryxdesign/core/Markdown';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import type { OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -66,7 +66,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message: appMessage, modal } = App.useApp();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -247,12 +247,12 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             <Text weight="semibold">{t('summary.AnnouncementPreview')}</Text>
             <div
               style={{
-                border: `1px solid ${token.colorBorder}`,
-                borderRadius: token.borderRadius,
-                padding: token.paddingLG,
+                border: `1px solid ${token('--color-border-emphasized')}`,
+                borderRadius: token('--radius-inner'),
+                padding: token('--spacing-6'),
                 // Match the editor's outer height (its inner height + the
                 // toolbar bar and the editor wrapper's borders).
-                height: `calc(${EDITOR_HEIGHT} + ${token.controlHeightSM + 2}px)`,
+                height: `calc(${EDITOR_HEIGHT} + ${24 + 2}px)`,
                 boxSizing: 'border-box',
                 overflow: 'auto',
               }}

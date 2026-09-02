@@ -4,7 +4,7 @@
 
  Astryx counterpart of `ThemeSecondaryProvider` (to-astryx ticket 02): wraps
  a region in a nested `<Theme>` carrying the secondary accent (theme.json
- `colorSuccess`, mirroring `usePrimaryColors().secondary`).
+ `colorSuccess`, the secondary role accent).
 
  `mode` is passed explicitly from the nearest ancestor Theme's resolved mode
  — nested Astryx Themes do NOT inherit mode (they fall back to `system`).

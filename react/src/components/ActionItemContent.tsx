@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import WebUILink from './WebUILink';
 import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import { ReactNode, useRef } from 'react';
 import { To } from 'react-router-dom';
@@ -34,9 +34,9 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   type = 'default',
   style,
 }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
-  const accentColor = themeColor ?? token.colorPrimary;
+  const accentColor = themeColor ?? token('--color-accent');
   const accentColorWithAlpha = `rgba(${parseInt(accentColor.slice(1, 3), 16)}, ${parseInt(accentColor.slice(3, 5), 16)}, ${parseInt(accentColor.slice(5, 7), 16)}, 0.15)`;
 
   // PILOT-DECISION: antd `Button type="primary"` hand-painted with
@@ -48,7 +48,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
   // and whitened the label goes away too — `label` is the button's own text.
   //
   // POLISH-3 item 6 — the SIZE comes back. Legacy hand-set `height: 40` on
-  // the button and `fontSize: token.fontSizeHeading5` (16px) on its label;
+  // the button and `fontSize: token('--font-size-lg')` (16px) on its label;
   // the conversion took the default `md` (32px tall, 14px label), which is
   // the size difference the user reads on these cards. Astryx's `lg` step is
   // that metric as a prop, so no hand-set height or font-size returns.
@@ -79,7 +79,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
         gap={type === 'default' ? 'sm' : 'xxs'}
         style={{
           overflow: 'hidden',
-          padding: token.marginMD,
+          padding: token('--spacing-5'),
           paddingBottom: 0,
         }}
       >
@@ -90,7 +90,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
             borderRadius: 25,
             width: 50,
             height: 50,
-            fontSize: token.fontSizeHeading3,
+            fontSize: token('--font-size-2xl'),
             color: accentColor,
             backgroundColor: accentColorWithAlpha,
           }}
@@ -100,7 +100,7 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
         <BAIFlex style={{ minHeight: 60 }}>
           {typeof title === 'string' ? (
             // POLISH-3 item 6 — the card title is 20px, as legacy had it.
-            // Legacy was `Typography.Text strong` at `token.fontSizeHeading4`
+            // Legacy was `Typography.Text strong` at `token('--font-size-xl')`
             // (20px / weight 600). `type="large"` carries the 600 but its
             // size token is `--font-size-lg`, which `ANTD_ALIGN_TOKENS` pins
             // to antd's `fontSizeLG` = 16px — so the title rendered 4px
@@ -130,12 +130,16 @@ const ActionItemContent: React.FC<StartItemContentProps> = ({
           position: 'sticky',
           bottom: 0,
           backgroundColor:
-            type === 'default' ? token.colorBgContainer : undefined,
-          padding: type === 'default' ? token.paddingMD : undefined,
+            type === 'default'
+              ? token('--color-background-surface')
+              : undefined,
+          padding: type === 'default' ? token('--spacing-5') : undefined,
           paddingTop: 0,
         }}
       >
-        {description && <Divider style={{ marginBottom: token.marginMD }} />}
+        {description && (
+          <Divider style={{ marginBottom: token('--spacing-5') }} />
+        )}
         {to ? <WebUILink to={to}>{actionButton}</WebUILink> : actionButton}
       </BAIFlex>
     </BAIFlex>

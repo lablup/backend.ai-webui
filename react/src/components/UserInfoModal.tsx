@@ -4,10 +4,10 @@
  */
 import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import { Badge } from '@astryxdesign/core/Badge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Spinner } from '@astryxdesign/core/Spinner';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -33,7 +33,7 @@ const UserInfoModal: React.FC<Props> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
     useTOTPSupported();
@@ -155,7 +155,10 @@ const UserInfoModal: React.FC<Props> = ({
             <BAIIconWithTooltip
               content={t('credential.FailedToLoadProjects')}
               icon={
-                <TriangleAlert style={{ color: token.colorError }} size="1em" />
+                <TriangleAlert
+                  style={{ color: token('--color-error') }}
+                  size="1em"
+                />
               }
             />
           ) : (

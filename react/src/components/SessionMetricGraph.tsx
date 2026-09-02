@@ -12,10 +12,10 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import './SessionMetricGraph.css';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Heading } from '@astryxdesign/core/Heading';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
@@ -64,7 +64,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = (props) => {
     queryProps: { metricName },
     tooltip,
   } = props;
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const resourceSlotKey = useMemo(() => {
@@ -117,7 +117,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = (props) => {
           <BAIFlex
             direction="column"
             align="stretch"
-            style={{ padding: token.marginMD }}
+            style={{ padding: token('--spacing-5') }}
           >
             <BAISkeleton />
           </BAIFlex>
@@ -135,7 +135,7 @@ const SessionMetricGraphBody: React.FC<PrometheusMetricGraphProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { capacity_metric, current_metric } =
     useLazyLoadQuery<SessionMetricGraphQuery>(
@@ -224,13 +224,16 @@ const SessionMetricGraphBody: React.FC<PrometheusMetricGraphProps> = ({
       _.isEmpty(current_metric?.metrics) ? (
         <EmptyState isCompact title={t('autoScalingRule.NoDataAvailable')} />
       ) : (
-        <ResponsiveContainer style={{ paddingRight: token.marginXL }}>
+        <ResponsiveContainer style={{ paddingRight: token('--spacing-8') }}>
           <LineChart
             data={metricData}
             className="session-metric-graph-recharts"
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="timestamp" minTickGap={token.marginMD} />
+            <XAxis
+              dataKey="timestamp"
+              minTickGap={parseFloat(token('--spacing-5'))}
+            />
             <YAxis domain={[0, 'dataMax']} />
             <ChartTooltip
               formatter={(value) => {
@@ -246,21 +249,21 @@ const SessionMetricGraphBody: React.FC<PrometheusMetricGraphProps> = ({
                 ).number
               }
               label="Avg Used"
-              stroke={token.red}
+              stroke={'#f5222d'}
               strokeWidth={0.6}
               strokeDasharray="6 6"
             />
             <Line
               type="monotone"
               dataKey="capacity"
-              stroke={token.colorSuccess}
+              stroke={token('--color-success')}
               dot={{ r: 0 }}
               strokeWidth={2}
             />
             <Line
               type="monotone"
               dataKey="used"
-              stroke={token.colorError}
+              stroke={token('--color-error')}
               strokeWidth={2}
               dot={{ r: 0 }}
             />

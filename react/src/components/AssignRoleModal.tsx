@@ -7,9 +7,9 @@ import { AssignRoleModalQuery } from '../__generated__/AssignRoleModalQuery.grap
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
-import { theme } from '../theme-shim';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,
@@ -55,7 +55,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
@@ -319,7 +319,10 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         alertDescription={
           <>
             {t('rbac.UserAssignmentsPartialFailureDescription')}{' '}
-            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+            <Text
+              color="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
+            >
               {t('rbac.PermissionsPartialFailureCounts', {
                 succeeded: succeededRequestCount,
                 failed: failedAssignments.length,

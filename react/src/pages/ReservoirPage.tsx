@@ -17,12 +17,12 @@ import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
 import { Grid } from '@astryxdesign/core/Grid';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack } from '@astryxdesign/core/Stack';
+import { useTheme } from '@astryxdesign/core/theme';
 import { Stat } from '@astryxdesign/lab';
 import {
   // TODO(needs-backend): BAIHuggingFaceRegistrySettingModal - uncomment when storage-proxy applies DB config via Redis
@@ -65,7 +65,7 @@ type ArtifactNode = NonNullable<
 const ReservoirPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const navigate = useWebUINavigate();
   const { upsertNotification } = useSetBAINotification();
 
@@ -279,7 +279,7 @@ const ReservoirPage: React.FC = () => {
         ]}
         styles={{
           body: {
-            padding: `${token.paddingSM}px ${token.paddingLG}px ${token.paddingLG}px ${token.paddingLG}px`,
+            padding: `${token('--spacing-3')} ${token('--spacing-6')} ${token('--spacing-6')} ${token('--spacing-6')}`,
           },
         }}
       >
@@ -387,9 +387,11 @@ const ReservoirPage: React.FC = () => {
                     }
                     icon={
                       mode === 'ALIVE' ? (
-                        <BanIcon style={{ color: token.colorError }} />
+                        <BanIcon style={{ color: token('--color-error') }} />
                       ) : (
-                        <UndoIcon style={{ color: token.colorInfo }} />
+                        <UndoIcon
+                          style={{ color: token('--bai-color-info') }}
+                        />
                       )
                     }
                     onClick={() => {

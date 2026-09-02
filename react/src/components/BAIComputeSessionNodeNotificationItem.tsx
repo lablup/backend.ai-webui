@@ -9,11 +9,11 @@ import {
   useSetBAINotification,
 } from '../hooks/useBAINotification';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAILink,
@@ -41,7 +41,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
   const { closeNotification } = useSetBAINotification();
   const { t } = useTranslation();
   const navigate = useWebUINavigate();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const buildProjectPath = useProjectPath();
   const node = useFragment(
     graphql`
@@ -126,7 +126,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
                   <BAIText
                     type="secondary"
                     style={{
-                      fontSize: token.fontSizeSM,
+                      fontSize: token('--font-size-sm'),
                       wordBreak: 'break-word',
                     }}
                   >

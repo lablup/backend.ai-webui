@@ -16,12 +16,12 @@ import { convertToOrderBy } from '../helper';
 import { csvLiteral, downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   BAIDeleteConfirmModal,
@@ -106,7 +106,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -372,7 +372,10 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               status="info"
               icon={
                 <KeyRoundIcon
-                  style={{ width: token.fontSizeLG, height: token.fontSizeLG }}
+                  style={{
+                    width: token('--font-size-lg'),
+                    height: token('--font-size-lg'),
+                  }}
                 />
               }
               title={
@@ -390,7 +393,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             align="start"
             gap="sm"
             wrap="wrap"
-            style={{ marginBottom: token.marginSM }}
+            style={{ marginBottom: token('--spacing-3') }}
           >
             <BAIFlex gap="xs" align="start" wrap="wrap">
               <BAIRadioGroup
@@ -481,7 +484,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                         icon={
                           <KeyRoundIcon
                             size="1em"
-                            style={{ color: token.colorTextSecondary }}
+                            style={{ color: token('--color-text-secondary') }}
                           />
                         }
                         style={{ cursor: 'default' }}
@@ -510,14 +513,14 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                               handleSwitchMainKey(record.accessKey ?? '')
                             }
                           >
-                            {/* PILOT-DECISION: antd's `color: token.colorInfo`
+                            {/* PILOT-DECISION: antd's `color: token('--bai-color-info')`
                                 icon tint has no ghost-`IconButton` colour
                                 escape hatch (P5, closed variant enum) —
                                 dropped, default ghost styling.
                                 QA-FINDINGS Q-37 — SUPERSEDED. The escape hatch
                                 is `className`, not `variant`: legacy was
                                 `BAIButton type="text" style={{ color:
-                                token.colorInfo }}`, and `--color-text-accent`
+                                token('--bai-color-info') }}`, and `--color-text-accent`
                                 carries that hue per route without a token read.
                                 This control is one of two identical-looking
                                 glyphs in the row (the other is the disabled
@@ -686,7 +689,10 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
             status="warning"
             icon={
               <TriangleAlertIcon
-                style={{ width: token.fontSizeLG, height: token.fontSizeLG }}
+                style={{
+                  width: token('--font-size-lg'),
+                  height: token('--font-size-lg'),
+                }}
               />
             }
             title={t('credential.CannotViewAgainWarning')}

@@ -5,7 +5,7 @@
 import { loadMonacoEditor } from '../helper/monacoEditor';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import type { EditorProps } from '@monaco-editor/react';
 import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -57,7 +57,7 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
 }) => {
   'use memo';
   const { isDarkMode } = useThemeMode();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [script, setScript] = useControllableState_deprecated<string>({
     defaultValue: '',
@@ -71,8 +71,8 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
     // `active` is dropped: Astryx skeletons are always animated.
     <BAISkeleton
       style={{
-        paddingInline: token.paddingContentHorizontal,
-        paddingBlock: token.paddingContentVertical,
+        paddingInline: token('--spacing-4'),
+        paddingBlock: token('--spacing-3'),
       }}
     />
   );
@@ -80,8 +80,8 @@ const BAICodeEditor: React.FC<BAICodeEditorProps> = ({
   return (
     <div
       style={{
-        border: `1px solid ${token.colorBorder}`,
-        borderRadius: token.borderRadius,
+        border: `1px solid ${token('--color-border-emphasized')}`,
+        borderRadius: token('--radius-inner'),
         overflow: 'hidden',
         ...style,
       }}

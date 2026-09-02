@@ -1,7 +1,6 @@
 import { App } from '../../app-shim';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useEventNotStable } from '../../hooks/useEventNotStable';
-import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAILink from '../BAILink';
 import BAIText from '../BAIText';
@@ -14,6 +13,7 @@ import {
 import { Popover } from '@astryxdesign/core/Popover';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import classNames from 'classnames';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useEffect, useRef, useState, useTransition } from 'react';
@@ -234,7 +234,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { modal } = App.useApp();
   const [, startTransition] = useTransition();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -265,7 +265,8 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         '.bai-name-action-cell-title-icon',
       );
       const titleIconWidth = titleIcon ? titleIcon.clientWidth : 0;
-      const minTitleReserve = titleIconWidth + token.marginXXS + 40;
+      const minTitleReserve =
+        titleIconWidth + parseFloat(token('--spacing-1')) + 40;
       // Account for the more button which is always shown when menuOnlyActions exist
       const moreButtonReserve =
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
@@ -495,7 +496,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           // (#89001A/#FFC6C1) — which are 4 ramp steps darker than what antd
           // drew and match no antd token. The visible consequence was that the
           // SAME semantic action had two colours: the bulk-selection buttons
-          // kept their inline `token.colorInfo` and stayed #028DF2, while the
+          // kept their inline `token('--bai-color-info')` and stayed #028DF2, while the
           // per-row buttons went through the remap and came out #00458C.
           //
           // The shim's measured antd values close that. `--color-error` happens
@@ -504,10 +505,10 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           // warning only), so both pairs travel the same way for symmetry.
           style={
             {
-              '--bai-nac-info': token.colorInfo,
-              '--bai-nac-info-bg': token.colorInfoBg,
-              '--bai-nac-error': token.colorError,
-              '--bai-nac-error-bg': token.colorErrorBg,
+              '--bai-nac-info': token('--bai-color-info'),
+              '--bai-nac-info-bg': token('--bai-color-info-bg'),
+              '--bai-nac-error': token('--color-error'),
+              '--bai-nac-error-bg': token('--bai-color-error-bg'),
             } as React.CSSProperties
           }
         >

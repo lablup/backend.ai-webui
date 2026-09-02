@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r23-default-brand-h7s55rh theme — built by `pnpm exec astryx theme build`
+ * bai-r23-default-brand-h2hqtmn theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR23DefaultBrandH7s55rhTheme } from './bai-r23-default-brand-h7s55rh';
- *   import './bai-r23-default-brand-h7s55rh.css';
+ *   import { baiR23DefaultBrandH2hqtmnTheme } from './bai-r23-default-brand-h2hqtmn';
+ *   import './bai-r23-default-brand-h2hqtmn.css';
  */
-export const baiR23DefaultBrandH7s55rhTheme = {
-  name: 'bai-r23-default-brand-h7s55rh',
+export const baiR23DefaultBrandH2hqtmnTheme = {
+  name: 'bai-r23-default-brand-h2hqtmn',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -216,6 +216,9 @@ export const baiR23DefaultBrandH7s55rhTheme = {
     "--bai-color-fill-tertiary": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
     "--bai-color-fill-quaternary": "light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.04))",
     "--bai-color-bg-container-disabled": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "--bai-preset-purple-5": "light-dark(#9254de, #51258f)",
+    "--bai-preset-green-5": "light-dark(#73d13d, #3c8618)",
+    "--bai-preset-red-5": "light-dark(#ff4d4f, #a61d24)",
     "--size-element-sm": "24px"
   },
   components: {

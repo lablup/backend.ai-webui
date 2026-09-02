@@ -8,13 +8,13 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
-import { theme } from '../theme-shim';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Heading } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIBoardItemTitle,
@@ -43,7 +43,7 @@ const MyResourceWithinResourceGroup: React.FC<
   MyResourceWithinResourceGroupProps
 > = ({ fetchKey, refetching, extra, ...props }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const currentProject = useCurrentProjectValue();
   if (!currentProject.name) {
@@ -190,8 +190,8 @@ const MyResourceWithinResourceGroup: React.FC<
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
-        paddingBottom: token.padding,
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}

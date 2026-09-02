@@ -5,7 +5,6 @@
 import { AutoScalingRuleEditorModalLegacyFragment$key } from '../__generated__/AutoScalingRuleEditorModalLegacyFragment.graphql';
 import { AutoScalingRuleListLegacyDeleteMutation } from '../__generated__/AutoScalingRuleListLegacyDeleteMutation.graphql';
 import { App } from '../app-shim';
-import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModalLegacy, {
   COMPARATOR_LABELS,
 } from './AutoScalingRuleEditorModalLegacy';
@@ -13,6 +12,7 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIButton,
   BAICard,
@@ -106,7 +106,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const [_isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -193,10 +193,10 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                     style={
                       isEndpointDestroying || !isOwnedByCurrentUser
                         ? {
-                            color: token.colorTextDisabled,
+                            color: token('--color-text-disabled'),
                           }
                         : {
-                            color: token.colorInfo,
+                            color: token('--bai-color-info'),
                           }
                     }
                     isDisabled={isEndpointDestroying || !isOwnedByCurrentUser}
@@ -217,7 +217,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                           isEndpointDestroying
                             ? undefined
                             : {
-                                color: token.colorError,
+                                color: token('--color-error'),
                               }
                         }
                         size="1em"

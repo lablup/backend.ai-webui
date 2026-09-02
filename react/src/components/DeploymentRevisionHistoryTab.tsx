@@ -11,7 +11,6 @@ import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
@@ -20,6 +19,7 @@ import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   type BAIColumnType,
@@ -107,7 +107,7 @@ const DeploymentRevisionHistoryTab: React.FC<
 > = ({ deploymentFrgmt, deploymentId, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isPending, startTransition] = useTransition();
@@ -478,7 +478,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               {
                 key: 'duplicate',
                 title: t('deployment.AddNewRevisionFromThis'),
-                icon: <CopyPlusIcon size={token.fontSize} />,
+                icon: <CopyPlusIcon size={token('--font-size-base')} />,
                 showInMenu: 'always',
                 disabled: isDeploymentInStoppedCategory(deploymentStatus),
                 onClick: () => {
@@ -692,7 +692,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   items={[
                     {
                       label: t('deployment.AddNewRevisionFromThis'),
-                      icon: <CopyPlusIcon size={token.fontSize} />,
+                      icon: <CopyPlusIcon size={token('--font-size-base')} />,
                       isDisabled:
                         isDeploymentInStoppedCategory(deploymentStatus),
                       onClick: () => {
@@ -714,7 +714,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         justify="between"
         align="center"
         gap="xs"
-        style={{ marginBottom: token.marginSM }}
+        style={{ marginBottom: token('--spacing-3') }}
         wrap="wrap"
       >
         <BAIGraphQLPropertyFilter

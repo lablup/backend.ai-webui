@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../../theme-shim';
 import ChatSender, { type ChatSenderProps } from './ChatSender';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
 import { isEmpty, isEqual, isUndefined } from 'lodash-es';
@@ -42,12 +42,12 @@ const ChatInput: React.FC<ChatInputProps> = ({
   disabled,
   dropContainerRef,
 }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const ChatInputStyle: CSSProperties = {
-    borderTop: `1px solid ${token.colorBorderSecondary}`,
-    paddingBlock: token.paddingContentVertical,
-    paddingInline: token.paddingContentHorizontal,
+    borderTop: `1px solid ${token('--color-border')}`,
+    paddingBlock: token('--spacing-3'),
+    paddingInline: token('--spacing-4'),
     // The composer is the one row that must never be compressed — it is the
     // page's primary control. Every other row in the chat column (the message
     // list) is scrollable, so it absorbs the shrink instead. `maxHeight` caps

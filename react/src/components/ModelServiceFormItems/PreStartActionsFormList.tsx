@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../../form-engine';
-import { theme } from '../../theme-shim';
 import { AstryxFormTextInput } from '../astryxFormControls';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';
@@ -23,7 +23,7 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <Form.Item
@@ -32,7 +32,10 @@ const PreStartActionsFormList: React.FC<PreStartActionsFormListProps> = ({
       // antd's Collapse panel used to supply the section's bottom padding;
       // the flat Astryx Collapsible doesn't, so keep an explicit gap below
       // the add button before whatever section follows.
-      style={{ marginBottom: token.marginMD, marginTop: token.marginMD }}
+      style={{
+        marginBottom: token('--spacing-5'),
+        marginTop: token('--spacing-5'),
+      }}
     >
       <Form.List name={[...namePrefix, 'preStartActions']}>
         {(fields, { add, remove }) => (
