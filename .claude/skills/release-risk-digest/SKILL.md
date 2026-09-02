@@ -33,6 +33,9 @@ this skill's job is to run it once, render Korean HTML, and post.
 `$ARGUMENTS` may contain these in any order:
 
 - `--from <ref>` — **required.** The previous release tag, or `origin/main` for a branch.
+  Nothing is inferred: no release tag is an ancestor of `main` in this repository
+  (they live on the release branches), so a guessed base would report a whole
+  release when the caller meant their branch. Ask rather than pick one.
 - `--to <ref>` — defaults to `HEAD`.
 - `--dry-run` — write the HTML to `/tmp/release-risk-digest-preview.html` and skip posting.
 - `--auto` — skip the confirm-before-post prompt (for cron / unattended runs).

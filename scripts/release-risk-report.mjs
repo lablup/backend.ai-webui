@@ -79,6 +79,27 @@ export function parseArgs(argv) {
 }
 
 /**
+ * `--from` has no default on purpose. No release tag is an ancestor of main here
+ * (they live on the release branches), so an inferred base would silently report
+ * a whole release when the caller meant their branch.
+ */
+function usage() {
+  const latestTag =
+    gitOrNull(['tag', '--sort=-creatordate'])?.split('\n')[0]?.trim() ||
+    '<tag>';
+  return [
+    'Usage: node scripts/release-risk-report.mjs --from <ref> [--to <ref>] [--out <file>] [--json]',
+    '',
+    '  --from <ref>  required; --to defaults to HEAD',
+    '',
+    'No default is inferred for --from — pick the one that matches the question:',
+    `  what is queued for the next release   --from ${latestTag}`,
+    `  what a shipped release contained      --from <previous tag> --to ${latestTag}`,
+    '  what my branch adds                   --from origin/main',
+  ].join('\n');
+}
+
+/**
  * Where `to` forked from `from`. Diffing `from..to` directly would also report
  * what `from` changed since — harmless between release tags, wrong for a branch.
  */
@@ -459,9 +480,7 @@ function renderMarkdown(report) {
 function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help || !args.from) {
-    process.stdout.write(
-      'Usage: node scripts/release-risk-report.mjs --from <ref> [--to <ref>] [--out <file>] [--json]\n',
-    );
+    process.stdout.write(`${usage()}\n`);
     process.exit(args.help ? 0 : 2);
   }
 
