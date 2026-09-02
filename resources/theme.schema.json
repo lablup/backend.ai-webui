@@ -26,7 +26,7 @@
     "$schema": { "type": "string" },
     "schemaVersion": {
       "const": 2,
-      "description": "Appearance document format version. v1 (antd-shaped light/dark documents) is not readable since FR-1964 — see the theme migration guide."
+      "description": "Appearance document format version. v1 (antd-shaped light/dark documents) is not readable since FR-3605 — see the theme migration guide."
     },
     "theme": {
       "type": "object",

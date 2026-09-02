@@ -4,6 +4,7 @@
  */
 import { App } from '../../app-shim';
 import { downloadBlob } from '../../helper/csv-util';
+import { pickValidAppearanceConfig } from '../../helper/customThemeConfig';
 import { loadMonacoEditor } from '../../helper/monacoEditor';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { useThemeMode } from '../../hooks/useThemeMode';
@@ -167,7 +168,17 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
                 }
-                setDefaultTheme(parsedValue);
+                // The Monaco markers are advisory (the schema fetch can fail);
+                // this is the gate every draft passes before it is stored.
+                const validated = pickValidAppearanceConfig(
+                  parsedValue,
+                  'the JSON editor',
+                );
+                if (!validated) {
+                  message.error(t('theme.CannotApplyInvalidJsonConfig'));
+                  return;
+                }
+                setDefaultTheme(validated);
                 message.success(t('theme.JsonConfigAppliedSuccessfully'));
                 onRequestClose();
               }}
