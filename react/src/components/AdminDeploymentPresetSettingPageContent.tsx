@@ -19,7 +19,6 @@ import {
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
 import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
-import { useBAIBreakpoint } from '../theme-shim';
 import {
   STEP_KEYS,
   type AdminDeploymentPresetFormValue,
@@ -63,6 +62,7 @@ import {
   BAIFlex,
   toLocalId,
   useDebounceFn,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

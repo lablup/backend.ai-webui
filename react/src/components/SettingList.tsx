@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSettingArrival } from '../hooks/useSettingArrival';
-import { useBAIBreakpoint } from '../theme-shim';
 import SettingItem, { SettingItemProps } from './SettingItem';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
@@ -18,7 +17,13 @@ import { List, ListItem } from '@astryxdesign/core/List';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Toolbar } from '@astryxdesign/core/Toolbar';
-import { BAIButton, BAIFlex, BAIModal, useToggle } from 'backend.ai-ui';
+import {
+  BAIButton,
+  BAIFlex,
+  BAIModal,
+  useToggle,
+  useBAIBreakpoint,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ArrowLeft, ChevronRight, Redo2, Search } from 'lucide-react';
 import React, { useState, ReactNode, CSSProperties } from 'react';

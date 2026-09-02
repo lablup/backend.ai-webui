@@ -13,7 +13,6 @@ import { UsageBucketChartContent_DomainFragment$key } from '../../__generated__/
 import { UsageBucketChartContent_ProjectFragment$key } from '../../__generated__/UsageBucketChartContent_ProjectFragment.graphql';
 import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/UsageBucketChartContent_UserFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { presetPalettes } from '../../theme-shim';
 import './UsageBucketChartContent.css';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
@@ -24,6 +23,7 @@ import {
   toFixedFloorWithoutTrailingZeros,
   BAIFlex,
   BAIText,
+  presetPalettes,
 } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';

@@ -54,7 +54,6 @@ import {
 } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
-import { useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
@@ -90,6 +89,7 @@ import {
   useErrorMessageResolver,
   useToggle,
   useUpdatableState,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
