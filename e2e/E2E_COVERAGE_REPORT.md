@@ -1229,7 +1229,7 @@
 | Validation: Slider Minimum and Maximum both required                        | ✅     | `Superadmin cannot save a SLIDER UI option without Minimum/Maximum`                             |
 | Validation: Slider Step must be positive                                    | ✅     | `Superadmin cannot save a SLIDER UI option with a negative Step`                                |
 
-#### Edit Preset
+#### Edit Parameter
 
 | Feature                                                                     | Status | Test                                                                                             |
 | ---------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------|
