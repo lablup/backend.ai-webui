@@ -1,4 +1,3 @@
-import { BAISelectProps } from '../../BAISelect';
 export interface BAIVFolderPathPickerProps {
     /**
      * UUID of the vfolder to browse. Pair it with a separate vfolder select:
@@ -16,8 +15,12 @@ export interface BAIVFolderPathPickerProps {
     onChange?: (selectedSubPath?: string) => void;
     disabled?: boolean;
     style?: React.CSSProperties;
-    /** Forwarded to the sub path trigger select. */
-    selectProps?: Omit<BAISelectProps, 'value' | 'onChange' | 'open' | 'onOpenChange' | 'loading' | 'disabled'>;
+    /**
+     * Accessible name of the trigger; visually hidden (the surrounding
+     * Form.Item renders the visible label). Defaults to the picker's own
+     * "Select a path" copy.
+     */
+    label?: string;
 }
 /**
  * A sub path picker for a given vfolder: a select-like trigger that opens a

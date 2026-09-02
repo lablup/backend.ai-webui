@@ -88,6 +88,12 @@ export interface BAIColumnType<RecordType = any> {
     fixed?: BAIColumnFixed;
     sorter?: BAIColumnSorter<RecordType>;
     /**
+     * Field name for the server order string (`order` / `onChangeOrder`).
+     * Defaults to the dataIndex path joined with `.` — set this when that path
+     * is not the field the server sorts by (e.g. a nested display path).
+     */
+    sortKey?: string;
+    /**
      * Initial sort direction for this column. Honoured only by CLIENT-sorted
      * tables (no `order` / `onChangeOrder` wiring); a server-sorted table drives
      * its initial state through the `order` string instead, exactly as antd
