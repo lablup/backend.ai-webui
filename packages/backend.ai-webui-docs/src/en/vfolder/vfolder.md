@@ -94,8 +94,6 @@ Inside the left panel you can see all directories and files in the folder. Click
 
 You can create a new folder on the current path with the **Create Folder** button, or upload a local file or folder with the **Upload** button. All of these file operations can also be performed using the above-described method of mounting folders into a compute session.
 
-**Delete**, **Rename**, and **Create Folder** are disabled when your permission on this folder does not include write or delete access — for example, a folder that was shared with you as **Read only**. In that case you can still browse the folder and download its contents.
-
 :::warning
 The **Upload** button (and drag-and-drop upload) is **disabled** unless you have
 **both** the `upload-file` permission on the storage host that hosts this folder
@@ -109,8 +107,7 @@ receive it if **any one** of these grants it for the storage host. If the button
 is disabled, ask your administrator to grant you `upload-file` permission for
 the host that stores this folder. You can identify which host the folder lives
 on from the **Location** column in the folder list or from the folder detail
-drawer. Write permission on the folder comes from owning the folder or from the
-permission you were granted when it was shared with you.
+drawer.
 :::
 
 ![](../images/vfolder_upload_disabled.png)
