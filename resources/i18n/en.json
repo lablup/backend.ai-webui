@@ -894,7 +894,7 @@
       "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s)."
     },
     "folders": {
-      "AdminDataPageAlert": "Only project-owned folders can be created on the Admin Data Page.",
+      "AdminDataPageAlert": "Folders are created as project folders on the Admin Data Page.",
       "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first.",
       "CannotDeletePipelineFolder": "You can't delete pipeline folders.",
       "CannotDeployFromAdminMenu": "Create deployments from a project's Data page — the admin menu does not support it.",
@@ -969,7 +969,7 @@
       "Ownership": "Ownership",
       "Path": "Path",
       "Permission": "Permission",
-      "ProjectAdminDataPageAlert": "Only project-owned folders can be created on the Project Admin Data page.",
+      "ProjectAdminDataPageAlert": "Folders are created as project folders on the Project Admin Data page.",
       "ProjectFolderAlertDesc": "This folder is shared with all members of the project",
       "ProjectFolderCreationHelp": "A folder accessible by \"{{projectName}}\" project users will be created.",
       "Rename": "Rename",

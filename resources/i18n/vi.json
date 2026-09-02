@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Quyền ghi là bắt buộc khi tải lên (các) tệp."
     },
     "folders": {
-      "AdminDataPageAlert": "Trên trang Dữ liệu Quản trị chỉ có thể tạo thư mục dự án.",
+      "AdminDataPageAlert": "Trên trang Dữ liệu Quản trị, thư mục được tạo dưới dạng thư mục dự án.",
       "CannotDeleteFolder": "Không thể xóa thư mục được gắn trong một hoặc nhiều phiên. Vui lòng kết thúc phiên trước.",
       "CannotDeletePipelineFolder": "Bạn không thể xóa các thư mục đường ống.",
       "CannotDeployFromAdminMenu": "Việc triển khai được tạo từ trang Dữ liệu của một dự án; menu quản trị không hỗ trợ việc này.",
@@ -982,7 +982,7 @@
       "Ownership": "Quyền sở hữu",
       "Path": "Đường dẫn lưu trữ",
       "Permission": "Sự cho phép",
-      "ProjectAdminDataPageAlert": "Trên trang Dữ liệu Quản trị Dự án chỉ có thể tạo thư mục dự án.",
+      "ProjectAdminDataPageAlert": "Trên trang Dữ liệu Quản trị Dự án, thư mục được tạo dưới dạng thư mục dự án.",
       "ProjectFolderAlertDesc": "Thư mục này được chia sẻ với tất cả các thành viên của dự án",
       "ProjectFolderCreationHelp": "Một thư mục có thể truy cập bằng \"{{projectName}}\" Người dùng dự án sẽ được tạo.",
       "Rename": "Đổi tên",

@@ -15,9 +15,7 @@ import {
 // plus the engine binding.
 import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { theme } from '../theme-shim';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
@@ -37,7 +35,6 @@ import { Divider } from '@astryxdesign/core/Divider';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import {
-  BAIIconWithTooltip,
   BAIModal,
   BAIQuestionIconWithTooltip,
   toLocalId,
@@ -47,7 +44,6 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { TriangleAlertIcon } from 'lucide-react';
 import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql } from 'react-relay';
@@ -67,7 +63,6 @@ interface FolderCreateFormItemsType {
   host: string | undefined;
   group: string | undefined;
   usage_mode: 'general' | 'model' | 'automount';
-  type: 'user' | 'project';
   permission: 'rw' | 'ro';
   cloneable: boolean;
 }
@@ -102,22 +97,14 @@ export interface FolderCreateModalProps extends Omit<
   initialValidate?: boolean;
   initialValues?: Partial<FolderCreateFormItemsType>;
   /**
-   * Whether to allow creating project-type folders. Should be enabled only on
-   * admin pages — leaving it off ensures project folder creation UI is not
-   * exposed when the same modal is used from user-facing pages, even if the
-   * current user has admin privileges.
-   */
-  allowCreateProjectFolder?: boolean;
-  /**
-   * When set, narrows the form to a specific folder shape.
+   * Decides the folder ownership: unset creates a user folder, both other
+   * values create a project folder (FR-3441 removed the in-form type radio;
+   * the page context now decides).
    *
-   * - `'model_project'`: fully locks structural fields (usage_mode='model',
-   *   type='project', permission='ro', cloneable=true). Used by the Model
-   *   Store admin flow.
-   * - `'project'`: pre-selects type='project' and disables the user-ownership
-   *   and automount radios (kept visible but not selectable, no tooltip).
-   *   usage_mode (general or model) and permission remain editable. Used by
-   *   the project admin data page.
+   * - `'model_project'`: additionally locks usage_mode='model',
+   *   permission='ro', cloneable=true. Used by the Model Store admin flow.
+   * - `'project'`: usage_mode (general or model) and permission remain
+   *   editable; automount is not offered. Used by the admin data pages.
    */
   folderType?: 'model_project' | 'project';
   /**
@@ -133,7 +120,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
   project,
   initialValidate = false,
   initialValues: initialValuesFromProps = {},
-  allowCreateProjectFolder = false,
   folderType,
   alertMessage,
   ...modalProps
@@ -146,7 +132,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
   const formRef = useRef<FormInstance>(null);
   const baiClient = useSuspendedBackendaiClient();
-  const effectiveAdminRole = useEffectiveAdminRole();
   // ADR-0001: the target project comes exclusively from the `project` prop.
   // When it is `null`, the user picks the target project with the in-modal
   // selector below; the chosen value is tracked here so name-keyed gating
@@ -163,14 +148,13 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     host: undefined,
     group: project?.id,
     usage_mode: 'general',
-    type: 'user',
     permission: 'rw',
     cloneable: false,
   };
 
-  // `'model_project'` is the only variant that fully locks the structural
-  // radio groups. `'project'` only hides user/automount options and
-  // pre-selects type='project', so the radio groups stay editable.
+  // Ownership is decided by the page context, not an in-form radio (FR-3441).
+  const isProjectFolder =
+    folderType === 'project' || folderType === 'model_project';
   const isFolderTypeLocked = folderType === 'model_project';
 
   // When folderType narrows the form, these preset values override any
@@ -179,13 +163,10 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     folderType === 'model_project'
       ? {
           usage_mode: 'model',
-          type: 'project',
           permission: 'ro',
           cloneable: true,
         }
-      : folderType === 'project'
-        ? { type: 'project' }
-        : undefined;
+      : undefined;
 
   const mergedInitialValues: FolderCreateFormItemsType = {
     ...INITIAL_FORM_VALUES,
@@ -194,15 +175,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     // Fixed mode: the `project` prop wins over any caller `initialValues.group`.
     ...(project ? { group: project.id } : {}),
   };
-
-  // No V2 equivalent for allowed types — keep using existing REST API approach
-  const { data: allowedTypes, isFetching: isFetchingAllowedTypes } =
-    useTanQuery({
-      queryKey: ['allowedTypes', modalProps.open],
-      enabled: modalProps.open,
-      queryFn: () =>
-        modalProps.open ? baiClient.vfolder.list_allowed_types() : undefined,
-    });
 
   const commitCreateMutation =
     useMutationWithPromise<FolderCreateModalV2Mutation>(graphql`
@@ -234,9 +206,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     `);
 
   // Project-scoped creation uses a separate mutation that takes `projectId` as
-  // a dedicated arg (rather than an optional input field). Access is gated by
-  // project/domain/super admin role — the caller-side radio visibility already
-  // enforces that; this is the corresponding server-side entry point.
+  // a dedicated arg (rather than an optional input field). Access is gated
+  // server-side by project/domain/super admin role; `folderType` is set only
+  // by admin pages.
   const commitCreateInProjectMutation =
     useMutationWithPromise<FolderCreateModalV2ProjectMutation>(graphql`
       mutation FolderCreateModalV2ProjectMutation(
@@ -285,7 +257,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       isAutomount && !_.startsWith(values.name, '.')
         ? `.${values.name}`
         : values.name;
-    const isProjectFolder = values.type === 'project';
 
     // Fields shared in shape (but not in enum typing) between the two
     // mutation inputs. `CreateVFolderV2Input` keeps lowercase strings
@@ -373,39 +344,28 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       onOpenChange={(next) => {
         if (!next) onRequestClose();
       }}
-      loading={isFetchingAllowedTypes}
       title={t('data.CreateANewStorageFolder')}
       maskClosable={false}
       footer={
-        <HStack justify="between">
+        // `token.marginSM` is 8px = Astryx spacing step 2.
+        <HStack justify="end" gap={2}>
           <Button
-            variant="destructive"
-            label={t('button.Reset')}
+            variant="secondary"
+            label={t('button.Cancel')}
             onClick={() => {
-              formRef.current?.resetFields();
-              setSelectedProject(null);
+              onRequestClose();
             }}
           />
-          {/* `token.marginSM` is 8px = Astryx spacing step 2. */}
-          <HStack gap={2}>
-            <Button
-              variant="secondary"
-              label={t('button.Cancel')}
-              onClick={() => {
-                onRequestClose();
-              }}
-            />
-            <Button
-              variant="primary"
-              label={t('data.Create')}
-              // `clickAction` IS Astryx-native async-with-loading; BUI's
-              // `action` prop was a hand-rolled version of exactly this.
-              clickAction={async () => {
-                await handleOk();
-              }}
-              {...({ 'data-testid': 'create-folder-button' } as object)}
-            />
-          </HStack>
+          <Button
+            variant="primary"
+            label={t('data.Create')}
+            // `clickAction` IS Astryx-native async-with-loading; BUI's
+            // `action` prop was a hand-rolled version of exactly this.
+            clickAction={async () => {
+              await handleOk();
+            }}
+            {...({ 'data-testid': 'create-folder-button' } as object)}
+          />
         </HStack>
       }
       width={MODAL_WIDTH}
@@ -417,11 +377,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
         setSelectedProject(null);
         if (initialValidate) {
           formRef.current?.validateFields();
-        } else if (mergedInitialValues.type === 'project') {
-          // The project-folder notice is a warningOnly validator on `type`;
-          // validators run only on interaction, so trigger it here or the
-          // notice stays hidden until the user touches the form.
-          formRef.current?.validateFields(['type']);
         }
       }}
     >
@@ -496,76 +451,18 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                         projectInfo.projectId,
                       );
                       formRef.current?.validateFields(['group']);
-                      // Model-store gating on `type` is keyed off the chosen
-                      // project name; re-validate so it updates immediately.
-                      if (formRef.current?.getFieldValue('type')) {
-                        formRef.current.validateFields(['type']);
-                      }
+                      // Model-store gating on `usage_mode` is keyed off the
+                      // chosen project name; re-validate so it updates
+                      // immediately.
+                      formRef.current?.validateFields(['usage_mode']);
                     }}
                   />
                 </Suspense>
               </BAIFormItem>
-              <Divider />
+              {/* Match the 24px bottom margin form items carry (FR-3441). */}
+              <Divider style={{ marginBottom: token.marginLG }} />
             </>
           )}
-          <BAIFormItem
-            label={t('data.UsageMode')}
-            name={'usage_mode'}
-            layout="horizontal"
-            required
-          >
-            {/* PILOT-DECISION: antd's `<Radio>` accepted arbitrary JSX children
-                (a BAIFlex with a trailing question-mark tooltip). Astryx's
-                `RadioListItem.label` is a plain `string`, with the trailing
-                slot exposed separately as `endContent`. The composite label is
-                therefore split in two. `onChange`-driven cross-field
-                revalidation is preserved by wrapping the injected handler,
-                because Astryx passes the value, not the event. */}
-            <AstryxFormRadioList
-              label={t('data.UsageMode')}
-              disabled={isFolderTypeLocked}
-              onValueChange={() => {
-                // Only validate name field if it has a value to prevent
-                // excessive validation
-                if (formRef.current?.getFieldValue('name')) {
-                  formRef.current.validateFields(['name']);
-                }
-                if (formRef.current?.getFieldValue('type')) {
-                  formRef.current.validateFields(['type']);
-                }
-              }}
-              options={[
-                {
-                  value: 'general',
-                  label: t('data.General'),
-                  'data-testid': 'general-usage-mode',
-                },
-                ...(baiClient._config.enableModelFolders ||
-                folderType === 'model_project' ||
-                folderType === 'project'
-                  ? [
-                      {
-                        value: 'model',
-                        label: t('data.Models'),
-                        'data-testid': 'model-usage-mode',
-                      },
-                    ]
-                  : []),
-                {
-                  value: 'automount',
-                  label: t('data.AutoMount'),
-                  'data-testid': 'automount-usage-mode',
-                  disabled: folderType === 'project',
-                  endContent: (
-                    <BAIQuestionIconWithTooltip
-                      title={t('data.AutomountFolderCreationDesc')}
-                    />
-                  ),
-                },
-              ]}
-            />
-          </BAIFormItem>
-
           <BAIFormItem
             label={t('data.Foldername')}
             name={'name'}
@@ -616,6 +513,91 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
           </BAIFormItem>
 
           <BAIFormItem
+            label={t('data.UsageMode')}
+            name={'usage_mode'}
+            layout="horizontal"
+            required
+            rules={
+              isProjectFolder
+                ? [
+                    {
+                      validator: (__, value) =>
+                        value === 'model' &&
+                        effectiveProject?.name !== MODEL_STORE_PROJECT_NAME
+                          ? Promise.reject(
+                              new Error(
+                                t(
+                                  'data.folders.CreateModelFolderOnlyInExclusiveProject',
+                                ),
+                              ),
+                            )
+                          : Promise.resolve(),
+                    },
+                  ]
+                : undefined
+            }
+          >
+            {/* PILOT-DECISION: antd's `<Radio>` accepted arbitrary JSX children
+                (a BAIFlex with a trailing question-mark tooltip). Astryx's
+                `RadioListItem.label` is a plain `string`, with the trailing
+                slot exposed separately as `endContent`. The composite label is
+                therefore split in two. `onChange`-driven cross-field
+                revalidation is preserved by wrapping the injected handler,
+                because Astryx passes the value, not the event. */}
+            <AstryxFormRadioList
+              label={t('data.UsageMode')}
+              disabled={isFolderTypeLocked}
+              onValueChange={(value) => {
+                // Only validate name field if it has a value to prevent
+                // excessive validation
+                if (formRef.current?.getFieldValue('name')) {
+                  formRef.current.validateFields(['name']);
+                }
+                // Model project folders are read-only (FR-1290); the rw
+                // option is hidden then, so keep the value in sync. The
+                // dependency-driven revalidation ran before this coercion,
+                // so re-validate to clear its stale 'rw' error.
+                if (isProjectFolder && value === 'model') {
+                  formRef.current?.setFieldValue('permission', 'ro');
+                  formRef.current?.validateFields(['permission']);
+                }
+              }}
+              options={[
+                {
+                  value: 'general',
+                  label: t('data.General'),
+                  'data-testid': 'general-usage-mode',
+                },
+                ...(baiClient._config.enableModelFolders || isProjectFolder
+                  ? [
+                      {
+                        value: 'model',
+                        label: t('data.Models'),
+                        'data-testid': 'model-usage-mode',
+                      },
+                    ]
+                  : []),
+                // Project folders cannot be automount folders — hide the
+                // option instead of disabling it (FR-3441).
+                ...(isProjectFolder
+                  ? []
+                  : [
+                      {
+                        value: 'automount',
+                        label: t('data.AutoMount'),
+                        'data-testid': 'automount-usage-mode',
+                        endContent: (
+                          <BAIQuestionIconWithTooltip
+                            title={t('data.AutomountFolderCreationDesc')}
+                          />
+                        ),
+                      },
+                    ]),
+              ]}
+            />
+          </BAIFormItem>
+
+          <BAIFormItem
             label={t('data.folders.Location')}
             name={'host'}
             layout="horizontal"
@@ -635,154 +617,18 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
               />
             </Suspense>
           </BAIFormItem>
-          <Form.Item dependencies={['usage_mode']} noStyle required>
-            {({ getFieldValue }) => {
-              const usageMode = getFieldValue('usage_mode');
-              const shouldDisableProject =
-                (usageMode === 'model' &&
-                  effectiveProject?.name !== MODEL_STORE_PROJECT_NAME) ||
-                usageMode === 'automount';
-
-              return (
-                <BAIFormItem
-                  label={t('data.Type')}
-                  name={'type'}
-                  layout="horizontal"
-                  required
-                  style={{ flex: 1 }}
-                  rules={[
-                    ({ getFieldValue }) => ({
-                      validator(__, value) {
-                        const currentUsageMode = getFieldValue('usage_mode');
-                        const isInvalidModelProjectFolder =
-                          value === 'project' &&
-                          currentUsageMode === 'model' &&
-                          effectiveProject?.name !== MODEL_STORE_PROJECT_NAME;
-                        const isInvalidAutoMountFolder =
-                          value === 'project' &&
-                          currentUsageMode === 'automount';
-
-                        if (isInvalidModelProjectFolder) {
-                          return Promise.reject(
-                            new Error(
-                              t(
-                                'data.folders.CreateModelFolderOnlyInExclusiveProject',
-                              ),
-                            ),
-                          );
-                        } else if (isInvalidAutoMountFolder) {
-                          return Promise.reject(
-                            new Error(
-                              t(
-                                'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Promise.resolve();
-                        }
-                      },
-                    }),
-                    {
-                      warningOnly: true,
-                      validator: async (__, value) => {
-                        // Skip the informational notice until a target
-                        // project is known (prop or in-modal selection).
-                        if (
-                          !shouldDisableProject &&
-                          value === 'project' &&
-                          effectiveProject
-                        ) {
-                          return Promise.reject(
-                            new Error(
-                              t('data.folders.ProjectFolderCreationHelp', {
-                                projectName: effectiveProject.name,
-                              }),
-                            ),
-                          );
-                        }
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
-                >
-                  {/* Visibility rules:
-                   * - 'user' option: requires the 'user' type registered in ETCD.
-                   * - 'project' option: requires either an admin context that
-                   *   opts in via allowCreateProjectFolder, or a folderType that
-                   *   inherently requires project ownership (e.g. 'model_project').
-                   *   Both paths additionally require admin role (defense-in-depth
-                   *   against route-level permission misconfiguration) and the
-                   *   'group' type registered in ETCD.
-                   * When isFolderTypeLocked, the entire group is disabled and
-                   * tooltips/warning icons are suppressed for a clean read-only
-                   * appearance.
-                   */}
-                  <AstryxFormRadioList
-                    label={t('data.Type')}
-                    disabled={isFolderTypeLocked}
-                    options={[
-                      ...(_.includes(allowedTypes, 'user')
-                        ? [
-                            {
-                              value: 'user',
-                              label: t('data.User'),
-                              'data-testid': 'user-type',
-                              disabled: folderType === 'project',
-                            },
-                          ]
-                        : []),
-                      ...((allowCreateProjectFolder ||
-                        folderType === 'model_project' ||
-                        folderType === 'project') &&
-                      effectiveAdminRole !== 'none' &&
-                      _.includes(allowedTypes, 'group')
-                        ? [
-                            {
-                              value: 'project',
-                              label: t('data.Project'),
-                              'data-testid': 'project-type',
-                              disabled: shouldDisableProject,
-                              endContent:
-                                !isFolderTypeLocked && shouldDisableProject ? (
-                                  <BAIIconWithTooltip
-                                    content={
-                                      usageMode === 'model'
-                                        ? t(
-                                            'data.folders.CreateModelFolderOnlyInExclusiveProject',
-                                          )
-                                        : t(
-                                            'data.folders.ChangeTheVFolderTypeToCreateAutoMountFolder',
-                                          )
-                                    }
-                                    focusable={false}
-                                    icon={<TriangleAlertIcon />}
-                                  />
-                                ) : undefined,
-                            },
-                          ]
-                        : []),
-                    ]}
-                  />
-                </BAIFormItem>
-              );
-            }}
-          </Form.Item>
-
           {project !== null && <Form.Item hidden name={'group'} />}
 
-          <Form.Item dependencies={['usage_mode', 'type']} noStyle required>
+          <Form.Item dependencies={['usage_mode']} noStyle required>
             {({ getFieldValue }) => {
-              const usageMode = getFieldValue('usage_mode');
-              const type = getFieldValue('type');
               // Model project folders are forced read-only (FR-1290). The
               // manager used to enforce this server-side (the dropped
               // 'allow-only-ro-permission-for-model-project-folder' capability)
               // and no longer seems to, but we keep enforcing it on the client
               // to preserve that contract until the project-folder behavior is
               // reworked. Mirrored in VFolderNodeDescriptionV2.
-              const shouldDisableRWPermission =
-                usageMode === 'model' && type === 'project';
+              const isReadOnlyPermission =
+                getFieldValue('usage_mode') === 'model' && isProjectFolder;
 
               return (
                 <BAIFormItem
@@ -790,44 +636,37 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                   name={'permission'}
                   layout="horizontal"
                   required
-                  dependencies={['usage_mode', 'type']}
+                  dependencies={['usage_mode']}
                   rules={[
-                    () => ({
-                      validator(__, value) {
-                        if (shouldDisableRWPermission && value === 'rw') {
-                          return Promise.reject(
-                            new Error(
-                              t(
-                                'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                    {
+                      validator: (__, value) =>
+                        isReadOnlyPermission && value === 'rw'
+                          ? Promise.reject(
+                              new Error(
+                                t(
+                                  'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                                ),
                               ),
-                            ),
-                          );
-                        }
-                        return Promise.resolve();
-                      },
-                    }),
+                            )
+                          : Promise.resolve(),
+                    },
                   ]}
                 >
                   <AstryxFormRadioList
                     label={t('data.folders.MountPermission')}
                     disabled={isFolderTypeLocked}
                     options={[
-                      {
-                        value: 'rw',
-                        label: t('data.ReadWrite'),
-                        'data-testid': 'rw-permission',
-                        disabled: shouldDisableRWPermission,
-                        endContent:
-                          !isFolderTypeLocked && shouldDisableRWPermission ? (
-                            <BAIIconWithTooltip
-                              content={t(
-                                'data.folders.ModelProjectFolderRestrictedToReadOnly',
-                              )}
-                              focusable={false}
-                              icon={<TriangleAlertIcon />}
-                            />
-                          ) : undefined,
-                      },
+                      // Hidden (not disabled) when read-only is forced; the
+                      // usage_mode handler coerces the value to 'ro' (FR-3441).
+                      ...(isReadOnlyPermission
+                        ? []
+                        : [
+                            {
+                              value: 'rw',
+                              label: t('data.ReadWrite'),
+                              'data-testid': 'rw-permission',
+                            },
+                          ]),
                       {
                         value: 'ro',
                         label: t('data.ReadOnly'),

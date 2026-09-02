@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Dosya(lar)ı yüklerken yazma izni gereklidir."
     },
     "folders": {
-      "AdminDataPageAlert": "Yönetici Veri sayfasında yalnızca proje klasörleri oluşturulabilir.",
+      "AdminDataPageAlert": "Yönetici Veri sayfasında klasörler proje klasörü olarak oluşturulur.",
       "CannotDeleteFolder": "Bir veya daha fazla oturuma bağlı klasör silinemez. Lütfen önce oturumu sonlandırın.",
       "CannotDeletePipelineFolder": "Boru hattı klasörlerini silemezsiniz.",
       "CannotDeployFromAdminMenu": "Dağıtımlar bir projenin Veri sayfasından oluşturulur; yönetici menüsü bunu desteklemez.",
@@ -982,7 +982,7 @@
       "Ownership": "Mülkiyet",
       "Path": "Depolama yolu",
       "Permission": "izin",
-      "ProjectAdminDataPageAlert": "Proje Yönetici Veri sayfasında yalnızca proje klasörleri oluşturulabilir.",
+      "ProjectAdminDataPageAlert": "Proje Yönetici Veri sayfasında klasörler proje klasörü olarak oluşturulur.",
       "ProjectFolderAlertDesc": "Bu klasör projenin tüm üyeleriyle paylaşılıyor",
       "ProjectFolderCreationHelp": "\"{{projectName}}\" proje kullanıcıları tarafından erişilebilen bir klasör oluşturulacaktır.",
       "Rename": "Adını değiştirmek",

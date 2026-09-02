@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Zum Hochladen von Datei(en) ist eine Schreibberechtigung erforderlich."
     },
     "folders": {
-      "AdminDataPageAlert": "Auf der Admin-Datenseite können nur Projekt-Ordner erstellt werden.",
+      "AdminDataPageAlert": "Auf der Admin-Datenseite werden Ordner als Projekt-Ordner erstellt.",
       "CannotDeleteFolder": "Der in einer oder mehreren Sitzungen bereitgestellte Ordner kann nicht gelöscht werden. Bitte beenden Sie zuerst die Sitzung.",
       "CannotDeletePipelineFolder": "Sie können Pipeline -Ordner nicht löschen.",
       "CannotDeployFromAdminMenu": "Bereitstellungen werden auf der Seite Daten eines Projekts erstellt; das Admin-Menü unterstützt dies nicht.",
@@ -982,7 +982,7 @@
       "Ownership": "Eigentum",
       "Path": "Speicherpfad",
       "Permission": "Genehmigung",
-      "ProjectAdminDataPageAlert": "Auf der Projekt-Admin-Datenseite können nur Projekt-Ordner erstellt werden.",
+      "ProjectAdminDataPageAlert": "Auf der Projekt-Admin-Datenseite werden Ordner als Projekt-Ordner erstellt.",
       "ProjectFolderAlertDesc": "Dieser Ordner wird an alle Mitglieder des Projekts geteilt",
       "ProjectFolderCreationHelp": "Ein Ordner, der von \"{{projectName}}\" -Projektnutzern zugänglich ist, wird erstellt.",
       "Rename": "Umbenennen",
