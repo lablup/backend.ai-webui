@@ -22,6 +22,8 @@ import {
   BAIFlex,
   BAIModal,
   BAINameActionCell,
+  type BAINameActionCellAction,
+  disabledReason,
   BAIQuestionIconWithTooltip,
   BAITable,
   BAIText,
@@ -132,21 +134,22 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
   };
 
   const hasEndpointUrl = !!deployment.networkAccess?.endpointUrl;
-  // The reason IS the disabled flag: `undefined` enables, a string disables and
-  // says why, so "disabled with no reason" — the FR-3679 defect — cannot be
+  // The reason rides inside the disabled flag (`BAINameActionCellAction`'s
+  // union), so "disabled with no reason" — the FR-3679 defect — cannot be
   // expressed. Ordered most- to least-specific.
-  const mutationDisabledReason = isDeploymentDestroying
-    ? t('deployment.accessToken.DeploymentStopped')
-    : !isOwnedByCurrentUser
-      ? t('deployment.accessToken.OnlyOwnerCanManage')
-      : undefined;
+  const mutationDisabled: BAINameActionCellAction['disabled'] =
+    isDeploymentDestroying
+      ? { reason: t('deployment.accessToken.DeploymentStopped') }
+      : !isOwnedByCurrentUser
+        ? { reason: t('deployment.accessToken.OnlyOwnerCanManage') }
+        : false;
   // Creating is additionally blocked until the manager issues a network
   // endpoint — a token would have nothing to authenticate against.
-  const createDisabledReason =
-    mutationDisabledReason ??
-    (!hasEndpointUrl
-      ? t('deployment.accessToken.EndpointNotIssuedYet')
-      : undefined);
+  const createDisabled: BAINameActionCellAction['disabled'] = mutationDisabled
+    ? mutationDisabled
+    : !hasEndpointUrl
+      ? { reason: t('deployment.accessToken.EndpointNotIssuedYet') }
+      : false;
 
   return (
     <>
@@ -170,8 +173,8 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
             <BAIButton
               type="primary"
               icon={<PlusIcon />}
-              disabled={!!createDisabledReason}
-              title={createDisabledReason}
+              disabled={!!createDisabled}
+              title={disabledReason(createDisabled)}
               onClick={() => setIsCreateModalOpen(true)}
             >
               {t('deployment.accessToken.Create')}
@@ -185,7 +188,7 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
             deploymentId={deploymentId}
             fetchKey={deferredFetchKey}
             isPendingRefetch={isPendingRefetch}
-            deleteDisabledReason={mutationDisabledReason}
+            deleteDisabled={mutationDisabled}
             onAfterDelete={handleRefetch}
           />
         </Suspense>
@@ -280,8 +283,8 @@ interface DeploymentAccessTokensTableProps {
   deploymentId: string;
   fetchKey: string;
   isPendingRefetch: boolean;
-  /** Undefined enables deleting; a string disables it and says why. */
-  deleteDisabledReason?: string;
+  /** `{ reason }` disables deleting and says why; `false` enables it. */
+  deleteDisabled?: BAINameActionCellAction['disabled'];
   onAfterDelete: () => void;
 }
 
@@ -291,7 +294,7 @@ const DeploymentAccessTokensTable: React.FC<
   deploymentId,
   fetchKey,
   isPendingRefetch,
-  deleteDisabledReason,
+  deleteDisabled,
   onAfterDelete,
 }) => {
   'use memo';
@@ -391,7 +394,7 @@ const DeploymentAccessTokensTable: React.FC<
                       title: t('deployment.accessToken.Delete'),
                       icon: <Trash2 size="1em" />,
                       type: 'danger',
-                      disabledReason: deleteDisabledReason,
+                      disabled: deleteDisabled,
                       onClick: () =>
                         setDeletingToken({
                           id: row.id,
