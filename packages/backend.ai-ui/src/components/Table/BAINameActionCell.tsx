@@ -69,10 +69,8 @@ export interface BAINameActionCellAction {
   popConfirm?: BAIPopconfirmConfig;
 }
 
-const isActionDisabled = (action: BAINameActionCellAction) => !!action.disabled;
-
-const actionDisabledReason = (action: BAINameActionCellAction) =>
-  typeof action.disabled === 'object' ? action.disabled.reason : undefined;
+const disabledReason = (disabled: BAINameActionCellAction['disabled']) =>
+  typeof disabled === 'object' ? disabled.reason : undefined;
 
 /**
  * The antd `PopconfirmProps` subset every call site actually passes, restated
@@ -359,11 +357,11 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
     // compound path would have to carry the divider / disabled / keyboard
     // behaviour across with it. The reason is folded into the label text
     // instead: still visible, still read out, no tooltip needed.
-    label: actionDisabledReason(action)
-      ? `${action.title} — ${actionDisabledReason(action)}`
+    label: disabledReason(action.disabled)
+      ? `${action.title} — ${disabledReason(action.disabled)}`
       : action.title,
     icon: action.icon,
-    isDisabled: isActionDisabled(action),
+    isDisabled: !!action.disabled,
     onClick: () => {
       if (action.onClick || action.action) {
         action.onClick?.();
@@ -507,7 +505,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           }
         >
           {visibleActions.map((action) => {
-            const disabled = isActionDisabled(action);
+            const disabled = !!action.disabled;
             const buttonClassName = disabled
               ? 'bai-nac-action-button-disabled'
               : action.type === 'danger'
@@ -534,7 +532,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 size="small"
                 icon={action.icon}
                 aria-label={action.title}
-                title={actionDisabledReason(action) || action.title}
+                title={disabledReason(action.disabled) || action.title}
                 disabled={disabled}
                 loading={action.loading}
                 className={buttonClassName}
