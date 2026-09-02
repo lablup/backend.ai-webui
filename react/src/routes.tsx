@@ -428,9 +428,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       },
       {
         path: 'data',
-        Component: () => {
-          return <VFolderNodeListPage />;
-        },
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <VFolderNodeListPage />
+          </Suspense>
+        ),
         handle: {
           scope: 'project',
           menuKey: 'data',
