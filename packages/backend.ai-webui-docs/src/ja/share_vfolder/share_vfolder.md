@@ -49,10 +49,6 @@ navTitle: ストレージフォルダの共有
 リストで`tests`フォルダ名をクリックして、フォルダ内に移動しましょう。ユーザーAのアカウントで確認した`hello.txt`と`myfolder`を再び確認できます。ユーザーAが`読み取り専用`で共有したため、フォルダーエクスプローラーでは書き込み系の操作が無効化されます。**アップロード**、**フォルダー作成**、**消去**の各ボタンと、項目名の隣にある**Rename**ボタンは使用できず、ユーザーBはフォルダの内容の閲覧とダウンロードのみ行えます。
 
 ![](../images/folder_explorer_in_B.png)
-<!-- TODO(screenshot): /data on the invitee account (User B) -> open the
-     read-only shared `tests` folder and show Upload, Create Folder, Delete
-     and Rename disabled. Not recaptured tonight: the invitee account has no
-     vfolder permission on the capture backend (manager returns 403). -->
 
 ユーザーBのアカウントでこのストレージフォルダをマウントしてコンピュートセッションを作成してみましょう。
 

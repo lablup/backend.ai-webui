@@ -74,10 +74,6 @@ actions are disabled in the folder explorer: **Upload**, **Create Folder**,
 can only browse the folder and download its contents.
 
 ![](../images/folder_explorer_in_B.png)
-<!-- TODO(screenshot): /data on the invitee account (User B) -> open the
-     read-only shared `tests` folder and show Upload, Create Folder, Delete
-     and Rename disabled. Not recaptured tonight: the invitee account has no
-     vfolder permission on the capture backend (manager returns 403). -->
 
 Let's create a compute session
 by mounting this storage folder with the User B's account.
