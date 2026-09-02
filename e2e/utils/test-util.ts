@@ -500,6 +500,24 @@ export function getTableRefreshButton(page: Page) {
 }
 
 /**
+ * A BAITable column header's accessible NAME is overridden by its sort
+ * button's aria-label ("Sort by <field>", using the raw field key rather than
+ * the display label) for sortable columns; match the header's visible TEXT
+ * instead. Anchored exactly (`^...$`) so a short label doesn't substring-match
+ * a longer header sharing a prefix. See
+ * `e2e/auto-scaling-rule-preset/preset-crud.spec.ts` (`presetColumnHeader`) /
+ * `e2e/environment/registry.spec.ts` (`registryColumnHeader`) for the
+ * original pattern (ledger id
+ * `e2e/*::sortable-column-header-accessible-name-override`).
+ */
+export function getSortableColumnHeader(scope: Page | Locator, label: string) {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return scope
+    .getByRole('columnheader')
+    .filter({ hasText: new RegExp(`^${escaped}$`) });
+}
+
+/**
  * Runs `assertion` up to `attempts` times, clicking the table refresh button
  * between failures. The vfolder list never refetches on its own after the
  * initial (filtered) response, so when the backend lags a mutation the ONLY
