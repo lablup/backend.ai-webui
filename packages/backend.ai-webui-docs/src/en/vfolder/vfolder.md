@@ -95,10 +95,11 @@ Inside the left panel you can see all directories and files in the folder. Click
 You can create a new folder on the current path with the **Create Folder** button, or upload a local file or folder with the **Upload** button. All of these file operations can also be performed using the above-described method of mounting folders into a compute session.
 
 :::warning
-The **Upload** button (and drag-and-drop upload) is **disabled** when your account
-does not have the `upload-file` permission on the storage host that hosts this
-folder. The button itself remains visible but is greyed out, and tooltips
-explain that uploads are not permitted.
+The **Upload** button (and drag-and-drop upload) is **disabled** unless you have
+**both** the `upload-file` permission on the storage host that hosts this folder
+**and** write permission on the folder itself. If either grant is missing, the
+button remains visible but is greyed out, and tooltips explain that uploads are
+not permitted.
 
 `upload-file` is a host-level capability granted through domain-level
 permissions, project-level permissions, or your keypair resource policy — you
@@ -133,7 +134,7 @@ The text file editor opens in a modal with a code editor interface. The editor a
 The editor supports both light and dark themes matching your UI preferences. You can edit the file content, then click **Save** to upload the modified file, or **Cancel** to discard changes.
 
 :::note
-The **Edit File** action is only available when your access to this storage folder includes the `write_content` permission (granted via folder sharing permission or your role on the folder). Storage-host level settings in the control panel do not affect this. If the file fails to load, an error message will be displayed.
+Saving from the editor uploads the modified file, so the **Edit File** action requires **both** the `write_content` permission on this storage folder (granted via folder sharing permission or your role on the folder) **and** the `upload-file` permission on the storage host that hosts it. If either grant is missing, the action is unavailable. If the file fails to load, an error message will be displayed.
 :::
 
 ### Audit log tab
