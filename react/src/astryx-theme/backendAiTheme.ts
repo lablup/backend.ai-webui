@@ -60,7 +60,12 @@ import type {
 } from '../helper/customThemeConfig';
 import { defineTheme, type DefinedTheme } from '@astryxdesign/core/theme';
 import { neutralTheme } from '@astryxdesign/theme-neutral';
-import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
+import {
+  ANTD_ALIGN_TOKENS,
+  ANTD_DARK_ALGORITHM_OUTPUT,
+  generate,
+  palette,
+} from 'backend.ai-ui';
 
 // The measured parity tables moved into BUI's theme-shim with the shim itself
 // (ticket 10 — BUI cannot import from react/src). Re-exported here so this
@@ -68,7 +73,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 22;
+export const THEME_NAME_REV = 23;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -871,15 +876,22 @@ export interface BrandSeedPair {
 
 /**
  * Map a declared dark seed to the value antd's darkAlgorithm rendered for it.
- * Unknown seeds pass through verbatim (see PILOT-DECISION in the header).
+ * Table for the shipped seeds (measured), the vendored palette for any other
+ * 6-digit hex — the same computation the theme-shim ran live — and verbatim
+ * passthrough for anything the generator cannot parse.
  */
 export const resolveDarkSeed = (seed: string): string =>
-  ANTD_DARK_ALGORITHM_OUTPUT[seed.toUpperCase()] ?? seed;
+  ANTD_DARK_ALGORITHM_OUTPUT[seed.toUpperCase()] ??
+  (/^#[0-9a-fA-F]{6}$/.test(seed) ? palette(seed, 'dark')(6) : seed);
 
 /** Default seeds — verbatim from resources/theme.json (+ antd defaults). */
 export const BAI_DEFAULT_SEEDS = {
   /** colorPrimary / colorLink */
   accent: { light: '#FF7A00', dark: '#DC6B03' } as BrandSeedPair,
+  /** colorLink — theme.json declares it alongside accent. */
+  link: { light: '#FF7A00', dark: '#DC6B03' } as BrandSeedPair,
+  /** theme.json `families.default.headerBg`. Applied verbatim per scheme. */
+  headerBg: { light: '#FF9729', dark: '#E88A28' } as BrandSeedPair,
   /** colorInfo — what `usePrimaryColors().admin` resolves to */
   admin: { light: '#028DF2', dark: '#009BDD' } as BrandSeedPair,
   /** colorSuccess — what `usePrimaryColors().secondary` resolves to */
@@ -912,6 +924,10 @@ export interface BuildBackendAiThemeOptions {
   success?: BrandSeedPair;
   warning?: BrandSeedPair;
   info?: BrandSeedPair;
+  /** Link color pair (`--bai-color-link`); independent of the accent. */
+  link?: BrandSeedPair;
+  /** Header band background pair (`--bai-header-bg`); applied verbatim. */
+  headerBg?: BrandSeedPair;
   fontFamily?: string;
 }
 
@@ -966,6 +982,78 @@ const toOpaqueMutedTuple = (
       ]
     : undefined;
 
+/* -------------------------------------------------------------------------
+ * `--bai-*` custom tokens — the theme-shim's surviving vocabulary (FR-3605)
+ *
+ * The retired ThemeShimProvider served three families of values the Astryx
+ * token set cannot name: the brand link/info seeds, antd's per-status
+ * hover/bg/border palette steps, and antd's neutral text/fill alpha ramp.
+ * They are registered here as app-namespaced theme tokens with the exact
+ * values the shim computed, so the 200-file `token.*` sweep is a rename,
+ * not a redesign. Consumers read them via `useTheme().token('--bai-…')`.
+ * ---------------------------------------------------------------------- */
+
+/** antd's neutral text/fill alpha ramp (was theme-shim `SELF_TOKENS`). */
+export const BAI_SELF_COLOR_TOKENS: Record<string, [string, string]> = {
+  '--bai-color-text-tertiary': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'],
+  '--bai-color-text-quaternary': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'],
+  '--bai-color-text-description': [
+    'rgba(0,0,0,0.45)',
+    'rgba(255,255,255,0.45)',
+  ],
+  '--bai-color-fill': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'],
+  '--bai-color-fill-secondary': ['rgba(0,0,0,0.06)', '#262626'],
+  '--bai-color-fill-tertiary': ['rgba(0,0,0,0.04)', 'rgba(255,255,255,0.08)'],
+  '--bai-color-fill-quaternary': ['rgba(0,0,0,0.02)', 'rgba(255,255,255,0.04)'],
+  '--bai-color-bg-container-disabled': [
+    'rgba(0,0,0,0.04)',
+    'rgba(255,255,255,0.08)',
+  ],
+};
+
+/**
+ * antd palette step for one seed pair, per scheme — the shim's `derive`
+ * verdict verbatim: light = palette(light)(key), dark = palette over the
+ * DECLARED dark seed with the dark algorithm (darkKey when antd diverges).
+ */
+const deriveTuple = (
+  pair: BrandSeedPair,
+  key: number,
+  darkKey?: number,
+): [string, string] => [
+  palette(pair.light, 'light')(key),
+  palette(pair.dark, 'dark')(darkKey ?? key),
+];
+
+/**
+ * The full `--bai-*` set for one resolved seed set. The primary ramp mirrors
+ * `usePrimaryColors`: `generate()` (default options) over the mode's palette
+ * key-6 map color, per scheme.
+ */
+const buildBaiCustomTokens = (
+  seeds: ResolvedSeeds,
+): Record<string, string | [string, string]> => {
+  const lightRamp = generate(palette(seeds.accent.light, 'light')(6));
+  const darkRamp = generate(palette(seeds.accent.dark, 'dark')(6));
+  const ramp: Record<string, [string, string]> = {};
+  for (let i = 1; i <= 10; i++) {
+    ramp[`--bai-primary-${i}`] = [lightRamp[i - 1], darkRamp[i - 1]];
+  }
+  return {
+    '--bai-color-info': toTuple(seeds.info),
+    '--bai-color-link': toTuple(seeds.link),
+    '--bai-header-bg': [seeds.headerBg.light, seeds.headerBg.dark],
+    '--bai-color-error-bg': deriveTuple(seeds.error, 1),
+    '--bai-color-info-bg': deriveTuple(seeds.info, 1),
+    '--bai-color-warning-hover': deriveTuple(seeds.warning, 4),
+    '--bai-color-success-border-hover': deriveTuple(seeds.success, 4),
+    '--bai-color-primary-bg': deriveTuple(seeds.accent, 1, 3),
+    '--bai-color-error-border': deriveTuple(seeds.error, 3),
+    ...ramp,
+    ...BAI_SELF_COLOR_TOKENS,
+  };
+};
+
 /** djb2 — tiny, stable, DOM-attribute-safe (base36). */
 const hashSeeds = (input: string): string => {
   let h = 5381;
@@ -986,6 +1074,8 @@ interface ResolvedSeeds {
   success: BrandSeedPair;
   warning: BrandSeedPair;
   info: BrandSeedPair;
+  link: BrandSeedPair;
+  headerBg: BrandSeedPair;
   fontFamily: string;
 }
 
@@ -999,6 +1089,8 @@ const resolveSeeds = (
   success: options.success ?? BAI_DEFAULT_SEEDS.success,
   warning: options.warning ?? BAI_DEFAULT_SEEDS.warning,
   info: options.info ?? BAI_DEFAULT_SEEDS.info,
+  link: options.link ?? BAI_DEFAULT_SEEDS.link,
+  headerBg: options.headerBg ?? BAI_DEFAULT_SEEDS.headerBg,
   fontFamily: options.fontFamily ?? BAI_DEFAULT_SEEDS.fontFamily,
 });
 
@@ -1019,7 +1111,10 @@ export const computeThemeName = (
       seeds.success,
       seeds.warning,
       seeds.info,
+      seeds.link,
+      seeds.headerBg,
       seeds.fontFamily,
+      BAI_SELF_COLOR_TOKENS,
       ANTD_ALIGN_TOKENS,
       ANTD_NEUTRAL_SURFACES,
       ANTD_NEUTRAL_BORDERS,
@@ -1146,6 +1241,8 @@ export function buildBackendAiTheme(
       // entirely"), which would silently regenerate the type ramp.
       '--font-family-body': seeds.fontFamily,
       '--font-family-heading': seeds.fontFamily,
+      // The `--bai-*` custom vocabulary — see the block above BAI_SELF_COLOR_TOKENS.
+      ...buildBaiCustomTokens(seeds),
       // The 6 antd↔Astryx value differences, pinned to antd values.
       ...ANTD_ALIGN_TOKENS,
       // The neutral background family, pinned to the measured legacy antd
@@ -1223,8 +1320,10 @@ export const themeOptionsFromConfig = (
   role: BrandThemeRole = 'brand',
   family = 'default',
 ): BuildBackendAiThemeOptions => {
-  const seeds =
-    config?.families?.[family]?.seeds ?? config?.families?.default?.seeds;
+  const familyConfig = config?.families?.[family];
+  const seeds = familyConfig?.seeds ?? config?.families?.default?.seeds;
+  const headerBgValue =
+    familyConfig?.headerBg ?? config?.families?.default?.headerBg;
   const accentValue =
     role === 'admin'
       ? seeds?.info
@@ -1248,6 +1347,8 @@ export const themeOptionsFromConfig = (
     // kept as its own option — a deployment that rebrands `info` moves both,
     // and the hash must see it either way.
     info: seedPairFromValue(seeds?.info, BAI_DEFAULT_SEEDS.info),
+    link: seedPairFromValue(seeds?.link, BAI_DEFAULT_SEEDS.link),
+    headerBg: seedPairFromValue(headerBgValue, BAI_DEFAULT_SEEDS.headerBg),
     fontFamily: config?.fontFamily ?? BAI_DEFAULT_SEEDS.fontFamily,
   };
 };
