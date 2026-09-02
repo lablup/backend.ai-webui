@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder 为必填项。"
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "创建预设",
+    "CreatePreset": "创建参数",
     "Name": "名称",
-    "PresetDeleted": "运行时变体预设已删除。",
+    "PresetDeleted": "Runtime 参数已删除。",
     "RuntimeVariantId": "运行时变体 ID",
-    "RuntimeVariantPreset": "运行时变体预设",
-    "TabTitle": "运行时变体预设"
+    "RuntimeVariantPreset": "Runtime 参数",
+    "TabTitle": "Runtime 参数"
   },
   "adminSession": {
     "PendingSessions": "待处理会话",

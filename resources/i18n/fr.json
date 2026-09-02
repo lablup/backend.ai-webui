@@ -199,12 +199,12 @@
     "VFolderRequired": "Le VFolder est obligatoire."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Créer un préréglage",
+    "CreatePreset": "Créer un paramètre",
     "Name": "Nom",
-    "PresetDeleted": "Le préréglage de variante d'exécution a été supprimé.",
+    "PresetDeleted": "Le paramètre d'exécution a été supprimé.",
     "RuntimeVariantId": "ID de la variante d'exécution",
-    "RuntimeVariantPreset": "Préréglage de variante d'exécution",
-    "TabTitle": "Préréglages de variante d'exécution"
+    "RuntimeVariantPreset": "Paramètre d'Exécution",
+    "TabTitle": "Paramètres d'Exécution"
   },
   "adminSession": {
     "PendingSessions": "Sessions en attente",

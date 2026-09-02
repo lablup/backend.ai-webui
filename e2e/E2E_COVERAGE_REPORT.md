@@ -50,7 +50,7 @@
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
 | Deployments              | `/deployments`, `/deployments/:id`     |    17    |   14    | 🔶 82%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new` |    4     |    4    | ✅ 100% |
-| Runtime Variant Preset   | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
+| Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
 | **Total**                |                                        | **482**  | **334** | **69%** |
 
@@ -1212,15 +1212,15 @@
 
 ---
 
-### 31. Admin - Runtime Variant Preset Metadata (`/admin/deployments?tab=runtime-variant-presets`)
+### 31. Admin - Runtime Parameter Metadata (`/admin/deployments?tab=runtime-variant-presets`)
 
 **Test files:** [`e2e/runtime-variant-preset/preset-ui-metadata.spec.ts`](runtime-variant-preset/preset-ui-metadata.spec.ts)
 
 **Requires:** Superadmin login, `runtime-variant-preset-ui-metadata` feature flag (manager ≥ 26.9.0) — tests skip gracefully on older managers instead of failing.
-**Primary action:** "Create Preset" → `BAIRuntimeVariantPresetSettingModal`
-**Row actions:** Edit → `BAIRuntimeVariantPresetSettingModal`, Delete → `BAIDeleteConfirmModal` (`requireConfirmInput`, so the spec types the preset name before confirming)
+**Primary action:** "Create Parameter" → `BAIRuntimeVariantPresetSettingModal`
+**Row actions:** Edit → `BAIRuntimeVariantPresetSettingModal`, Delete → `BAIDeleteConfirmModal` (`requireConfirmInput`, so the spec types the parameter name before confirming)
 
-#### Create Preset — Category / Display Name / UI Option
+#### Create Parameter — Category / Display Name / UI Option
 
 | Feature                                                                    | Status | Test                                                                                          |
 | --------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
@@ -1229,7 +1229,7 @@
 | Validation: Slider Minimum and Maximum both required                        | ✅     | `Superadmin cannot save a SLIDER UI option without Minimum/Maximum`                             |
 | Validation: Slider Step must be positive                                    | ✅     | `Superadmin cannot save a SLIDER UI option with a negative Step`                                |
 
-#### Edit Preset
+#### Edit Parameter
 
 | Feature                                                                     | Status | Test                                                                                             |
 | ---------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------|

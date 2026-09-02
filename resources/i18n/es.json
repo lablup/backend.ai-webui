@@ -199,12 +199,12 @@
     "VFolderRequired": "El VFolder es obligatorio."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Crear Preset",
+    "CreatePreset": "Crear Parámetro",
     "Name": "Nombre",
-    "PresetDeleted": "El preset de runtime ha sido eliminado.",
+    "PresetDeleted": "El parámetro de runtime ha sido eliminado.",
     "RuntimeVariantId": "ID de Runtime",
-    "RuntimeVariantPreset": "Preset de Runtime",
-    "TabTitle": "Presets de Runtime"
+    "RuntimeVariantPreset": "Parámetro de Tiempo de Ejecución",
+    "TabTitle": "Parámetros de Tiempo de Ejecución"
   },
   "adminSession": {
     "PendingSessions": "Sesiones pendientes",

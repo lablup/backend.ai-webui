@@ -1,5 +1,5 @@
 // Covers FR-3476: Category / Display Name / UI Option (slider, number,
-// select, checkbox, text) on the Runtime Variant Preset admin create/update
+// select, checkbox, text) on the Runtime Parameter admin create/update
 // modal. These fields are gated behind the `runtime-variant-preset-ui-metadata`
 // client capability (manager >= 26.9.0) — tests that depend on them skip
 // gracefully against an older manager instead of failing.
@@ -29,7 +29,7 @@ async function supportsUIMetadata(page: Page): Promise<boolean> {
 }
 
 /**
- * Opens the Create Preset modal, selects the first available runtime
+ * Opens the Create Parameter modal, selects the first available runtime
  * variant, and fills the always-required fields.
  *
  * The dev server this suite runs against occasionally drops its Vite HMR
@@ -49,9 +49,9 @@ async function openCreateModalWithRequiredFields(
       await page.goto(PRESET_TAB_URL);
       await page.waitForLoadState('domcontentloaded');
       await expect(
-        page.getByRole('button', { name: /Create Preset/i }),
+        page.getByRole('button', { name: /Create Parameter/i }),
       ).toBeVisible({ timeout: 60000 });
-      await page.getByRole('button', { name: /Create Preset/i }).click();
+      await page.getByRole('button', { name: /Create Parameter/i }).click();
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
 
@@ -123,7 +123,7 @@ async function deletePreset(page: Page, presetName: string): Promise<void> {
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe(
-  'Runtime Variant Preset - UI Metadata - Create',
+  'Runtime Parameter - UI Metadata - Create',
   { tag: ['@runtime-variant-preset', '@admin', '@crud'] },
   () => {
     let presetName: string;
@@ -198,7 +198,7 @@ test.describe(
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(
-        page.getByText('Runtime variant preset has been created.'),
+        page.getByText('Runtime parameter has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -235,7 +235,7 @@ test.describe(
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(
-        page.getByText('Runtime variant preset has been created.'),
+        page.getByText('Runtime parameter has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -346,7 +346,7 @@ test.describe(
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe(
-  'Runtime Variant Preset - UI Metadata - Edit',
+  'Runtime Parameter - UI Metadata - Edit',
   { tag: ['@runtime-variant-preset', '@admin', '@crud'] },
   () => {
     let presetName: string;
@@ -402,7 +402,7 @@ test.describe(
       await createLabelRows.nth(1).fill('BF16');
       await modal.getByRole('button', { name: 'Create' }).click();
       await expect(
-        page.getByText('Runtime variant preset has been created.'),
+        page.getByText('Runtime parameter has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -413,7 +413,7 @@ test.describe(
 
       const editModal = page.getByRole('dialog');
       await expect(editModal).toBeVisible();
-      await expect(editModal).toContainText('Edit Preset');
+      await expect(editModal).toContainText('Edit Parameter');
 
       await expect(
         editModal.getByRole('combobox', { name: /^Category/ }),

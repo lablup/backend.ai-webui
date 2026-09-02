@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder는 필수입니다."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "프리셋 생성",
+    "CreatePreset": "파라미터 생성",
     "Name": "이름",
-    "PresetDeleted": "런타임 프리셋이 삭제되었습니다.",
+    "PresetDeleted": "런타임 파라미터가 삭제되었습니다.",
     "RuntimeVariantId": "런타임 ID",
-    "RuntimeVariantPreset": "런타임 프리셋",
-    "TabTitle": "런타임 프리셋"
+    "RuntimeVariantPreset": "런타임 파라미터",
+    "TabTitle": "런타임 파라미터"
   },
   "adminSession": {
     "PendingSessions": "대기 세션",
@@ -292,7 +292,7 @@
     "Instructions": "지침",
     "InstructionsTooltip": "시스템 프롬프트 외에 모든 작업에 적용되는 상시 지침입니다.",
     "InvalidUrl": "유효한 URL을 입력해 주세요.",
-    "LLMParameters": "LLM 매개변수",
+    "LLMParameters": "LLM 파라미터",
     "MaxIterations": "최대 반복 횟수",
     "MaxTokens": "최대 토큰",
     "MaxToolCalls": "최대 도구 호출 횟수",

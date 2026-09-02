@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder wajib diisi."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Buat Preset",
+    "CreatePreset": "Buat Parameter",
     "Name": "Nama",
-    "PresetDeleted": "Preset varian runtime telah dihapus.",
+    "PresetDeleted": "Parameter runtime telah dihapus.",
     "RuntimeVariantId": "ID Varian Runtime",
-    "RuntimeVariantPreset": "Preset Varian Runtime",
-    "TabTitle": "Preset Varian Runtime"
+    "RuntimeVariantPreset": "Parameter Runtime",
+    "TabTitle": "Parameter Runtime"
   },
   "adminSession": {
     "PendingSessions": "Sesi Tertunda",

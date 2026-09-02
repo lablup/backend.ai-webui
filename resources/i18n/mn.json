@@ -199,12 +199,12 @@
     "VFolderRequired": "VFolder шаардлагатай."
   },
   "adminRuntimeVariantPreset": {
-    "CreatePreset": "Урьдчилсан тохиргоо үүсгэх",
+    "CreatePreset": "Параметр үүсгэх",
     "Name": "Нэр",
-    "PresetDeleted": "Ажиллах орчны урьдчилсан тохиргоо устгагдлаа.",
+    "PresetDeleted": "Runtime параметр устгагдлаа.",
     "RuntimeVariantId": "Ажиллах орчны ID",
-    "RuntimeVariantPreset": "Ажиллах орчны урьдчилсан тохиргоо",
-    "TabTitle": "Ажиллах орчны урьдчилсан тохиргоонууд"
+    "RuntimeVariantPreset": "Runtime параметр",
+    "TabTitle": "Runtime Параметрүүд"
   },
   "adminSession": {
     "PendingSessions": "Хүлээгдэж буй сессүүд",

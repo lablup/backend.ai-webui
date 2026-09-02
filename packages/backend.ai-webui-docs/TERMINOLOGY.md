@@ -63,6 +63,7 @@ The tables below list the approved term for each concept, per language, grouped 
 | rbac-scope-type | scope type | 적용 범위 타입 | スコープタイプ | ประเภทขอบเขต | — | — | The level at which a permission applies. |
 | replica | replica | 복제본 | レプリカ | เรพลิกา | — | — | An individual running instance of a deployed model service. The desired/active count of these is managed by the deployment and auto-scaling rules. Documentation section: deployment/deployment.md |
 | resource-policy | Resource Policy | 자원 정책 | リソースポリシー | นโยบายทรัพยากร | — | FR-3302 | A named policy defining resource limits (CPU, memory, GPU, session count). WebUI has distinct keypair, user, and project resource policies. KO uses "자원 정책" (consistent with 자원 그룹). |
+| runtime-parameter | Runtime Parameter | 런타임 파라미터 | ランタイムパラメータ | พารามิเตอร์ Runtime | — | FR-3840 | A single configurable parameter that an inference runtime (vLLM, SGLang, …) exposes. Administrators define them on the Deployment page's Runtime Parameters tab; users fill in their values in the deployment form's Runtime Parameters section. Definition and value share one term because they are the same entity at two stages — do NOT call the admin-side one a "preset". The GraphQL type is `RuntimeVariantPreset`; that name is an internal identifier only and must never surface as a UI label. Distinct from the Deployment Preset, which is a whole saved deployment template. KO uses "파라미터" (not "매개변수") and JA "パラメータ" (not "パラメーター"), matching the modelService.RuntimeParam* labels. Documentation section: deployment/deployment_presets.md |
 
 ### User Roles
 
@@ -195,11 +196,17 @@ Context-qualified rows are skipped outright on prose because long-form text is f
 | key pair | en | keypair | Incorrect spelling |
 | key-pair | en | keypair | Incorrect spelling |
 | organization (as a Backend.AI scope) | en | domain | Not a Backend.AI scope name; "organization" as an ordinary English noun (your organization's SSO, your organization's hardware, the license text) is fine |
+| runtime variant preset | en | Runtime Parameter | UI label renamed in FR-3840; `RuntimeVariantPreset` survives only as the GraphQL type name, never as a user-facing term |
 | scaling group | en | resource group | Deprecated term |
 | worker node | en | agent node | Reserve "worker node" for model serving context only |
+| พรีเซตตัวแปรรันไทม์ | th | พารามิเตอร์ Runtime | The admin tab and the user deployment form describe the same entity; the UI label is "พารามิเตอร์ Runtime" |
 | スケーリンググループ | ja | リソースグループ | Deprecated term ("scaling group"); the UI and docs use "リソースグループ" |
+| パラメーター | ja | パラメータ | The UI standardizes on the long-vowel-less spelling "パラメータ" |
+| ランタイムバリアントプリセット | ja | ランタイムパラメータ | The admin tab and the user deployment form describe the same entity; the UI label is "ランタイムパラメータ" |
+| 런타임 프리셋 | ko | 런타임 파라미터 | The admin tab and the user deployment form describe the same entity; the UI label is "런타임 파라미터" |
 | 레플리카 | ko | 복제본 | Use the Korean translation, not the transliteration, for consistency |
 | 리소스 그룹 | ko | 자원 그룹 | Use the Korean translation, not the transliteration, for consistency with "자원 정책" |
+| 매개변수 | ko | 파라미터 | The UI standardizes on the transliteration "파라미터" (modelService.RuntimeParamTitle) |
 | 슈퍼관리자 | ko | 슈퍼 관리자 | Use the spaced form for consistency |
 | 슈퍼어드민 | ko | 슈퍼 관리자 | Use the Korean translation, not the transliteration |
 | 스케일링 그룹 | ko | 자원 그룹 | Deprecated term ("scaling group"); the UI and docs use "자원 그룹" |
