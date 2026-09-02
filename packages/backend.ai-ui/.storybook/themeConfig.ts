@@ -1,44 +1,79 @@
+import type { BrandSeeds } from '../src/theme-shim';
+import { astryxBrandTheme } from './astryxBrandTheme';
 import webuiThemeJson from './theme.json';
+import type { DefinedTheme } from '@astryxdesign/core/theme';
+import { neutralTheme } from '@astryxdesign/theme-neutral';
 
-export type ThemeMode = 'light' | 'dark';
-export type ThemeStyle = 'default' | 'webui';
+export type ThemeStyle = 'astryx' | 'webui';
+
+type Seeds = Partial<BrandSeeds>;
 
 /**
- * The seed bag the "Theme Style" toolbar feeds `ThemeShimProvider`.
- *
- * Was `import type { ThemeConfig } from 'antd'`, the shape antd's
- * `ConfigProvider theme` prop took. `.storybook/theme.json` is a copy of the
- * app's `resources/theme.json`, which is still authored in antd token names
- * (that vocabulary is what the theme-shim reads — see
- * `src/theme-shim/tokenType.ts`), so the SHAPE is unchanged; only the type's
- * provenance is. Declared here rather than imported from the shim because
- * only the two keys below are ever read.
+ * A "Theme" toolbar preset. Both layers must move together: Astryx-native
+ * components read the `<Theme>`, while the legacy antd-era ones read the
+ * shim's seed bag — and the shim's `colorPrimary`/`colorSuccess`/… are
+ * `verdict: 'brand'`, i.e. seed-only, never probed from the CSS cascade.
+ * Setting just one layer is what made the pre-FR-3819 toolbar look inert.
  */
-export interface ThemeConfig {
-  token?: Record<string, string | number>;
-  components?: Record<string, Record<string, string | number>>;
+export interface ThemePreset {
+  theme: DefinedTheme;
+  light: Seeds;
+  dark: Seeds;
 }
 
-// Theme seed configs, in antd token vocabulary (see above).
-export const themeConfigs: Record<
-  ThemeStyle,
-  { light: ThemeConfig; dark: ThemeConfig }
-> = {
-  default: {
-    light: {},
-    dark: {
-      token: {
-        colorBgContainer: '#1f2229',
-        colorBgElevated: '#262931',
-        colorBgLayout: '#181b1f',
-        colorBgSpotlight: '#2c2f36',
-        colorBorder: '#3d424d',
-        colorBorderSecondary: '#2c2f36',
-      },
-    },
+/**
+ * Astryx theme-neutral's own palette, read off `@astryxdesign/theme-neutral`'s
+ * `theme.css` (0.5.2) — a monochrome accent, deliberately not a brand hue.
+ * The shim re-runs antd's dark ramp over these seeds, so the dark shades land
+ * near, not exactly on, Astryx's own; the point is the absent brand hue.
+ */
+const ASTRYX_NEUTRAL_SEEDS: { light: Seeds; dark: Seeds } = {
+  light: {
+    colorPrimary: '#262626',
+    colorLink: '#262626',
+    colorInfo: '#00458c',
+    colorError: '#a50c25',
+    colorSuccess: '#007004',
+    colorWarning: '#745b00',
+    fontFamily:
+      'Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+  },
+  dark: {
+    colorPrimary: '#ebebeb',
+    colorLink: '#ebebeb',
+    colorInfo: '#c7d3ff',
+    colorError: '#ffc6c1',
+    colorSuccess: '#9fe59b',
+    colorWarning: '#fdcf4f',
+    fontFamily:
+      'Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+  },
+};
+
+/** The seeds the app feeds `ThemeShimProvider` in `DefaultProviders.tsx`. */
+const webuiSeeds = (mode: 'light' | 'dark'): Seeds => {
+  const t = webuiThemeJson[mode].token;
+  return {
+    colorPrimary: t.colorPrimary,
+    colorLink: t.colorLink ?? t.colorPrimary,
+    colorInfo: t.colorInfo,
+    colorError: t.colorError,
+    colorSuccess: t.colorSuccess,
+    // theme.json declares no colorWarning — the shim falls back to antd's seed.
+    colorWarning: undefined,
+    fontFamily: t.fontFamily,
+  };
+};
+
+export const themePresets: Record<ThemeStyle, ThemePreset> = {
+  astryx: {
+    theme: neutralTheme,
+    light: ASTRYX_NEUTRAL_SEEDS.light,
+    dark: ASTRYX_NEUTRAL_SEEDS.dark,
   },
   webui: {
-    light: webuiThemeJson.light,
-    dark: webuiThemeJson.dark,
+    theme: astryxBrandTheme,
+    light: webuiSeeds('light'),
+    dark: webuiSeeds('dark'),
   },
 };
