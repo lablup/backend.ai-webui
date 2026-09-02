@@ -120,14 +120,16 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
             title: t('comp:FileExplorer.EditFile'),
             icon: <EditIcon size="1em" />,
             showInMenu: 'always' as const,
-            disabledReason: isDirectory
-              ? t('comp:FileExplorer.UnsupportedFileFormat')
+            disabled: isDirectory
+              ? { reason: t('comp:FileExplorer.UnsupportedFileFormat') }
               : isFileTooLarge
-                ? t('comp:FileExplorer.FileTooLargeToEdit', {
-                    size: convertToBinaryUnit(MAX_EDITABLE_FILE_SIZE, 'auto')
-                      ?.numberFixed,
-                  })
-                : undefined,
+                ? {
+                    reason: t('comp:FileExplorer.FileTooLargeToEdit', {
+                      size: convertToBinaryUnit(MAX_EDITABLE_FILE_SIZE, 'auto')
+                        ?.numberFixed,
+                    }),
+                  }
+                : false,
             onClick: onClickEdit,
           },
         ]

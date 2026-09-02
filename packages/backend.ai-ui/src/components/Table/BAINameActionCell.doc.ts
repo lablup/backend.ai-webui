@@ -31,7 +31,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Name `disabledReason` and the action disables itself — the reason becomes the button tooltip and is appended to the label once the action overflows into the more menu. Pass `disabled` only to disable without a reason, or `disabled: false` to keep an action enabled despite one.',
+          'Disable an action with `disabled: { reason }` rather than a bare `true` — the reason becomes the button tooltip and is appended to the label once the action overflows into the more menu. `true` disables it silently, which the type makes a deliberate choice.',
       },
       {
         guidance: true,
@@ -79,7 +79,7 @@ export const docs = {
       name: 'actions',
       type: 'BAINameActionCellAction[]',
       description:
-        'Row actions. Each entry takes `key`, `title`, `icon`, `onClick` or async `action`, `type: "default" | "danger"`, `disabledReason` (which alone disables) with an optional `disabled` override, `showInMenu`, and `popConfirm`.',
+        'Row actions. Each entry takes `key`, `title`, `icon`, `onClick` or async `action`, `type: "default" | "danger"`, `disabled: boolean | { reason: string }`, `showInMenu`, and `popConfirm`.',
     },
     {
       name: 'showActions',

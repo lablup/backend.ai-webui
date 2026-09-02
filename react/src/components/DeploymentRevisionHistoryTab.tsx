@@ -457,7 +457,9 @@ const DeploymentRevisionHistoryTab: React.FC<
                 key: 'deploy',
                 title: t('deployment.Apply'),
                 icon: <CirclePlay size="1em" />,
-                disabledReason: deployDisabledReason,
+                disabled: deployDisabledReason
+                  ? { reason: deployDisabledReason }
+                  : false,
                 popConfirm: {
                   title: t('deployment.ApplyRevision'),
                   description: t('deployment.ApplyConfirm', {

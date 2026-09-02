@@ -37,15 +37,15 @@ export interface BAINameActionCellAction {
    */
   type?: 'default' | 'danger';
   /**
-   * Whether the action is disabled. Defaults to `!!disabledReason`, so naming
-   * a reason is enough — pass this only to disable without one.
+   * Whether the action is disabled. Pass `{ reason }` to disable it AND say
+   * why — the reason becomes the button tooltip. A bare `true` disables it
+   * without one, which is then a deliberate choice rather than a call site
+   * that let two fields drift apart (FR-3722).
    */
-  disabled?: boolean;
+  disabled?: boolean | { reason: string };
   /** Loading spinner for progress this cell does not own (e.g. a background
    * delete tracked by the parent). Use `action` when the click itself awaits. */
   loading?: boolean;
-  /** Why the action is disabled. Becomes the button tooltip. */
-  disabledReason?: string;
   /** Custom style override for the action button */
   style?: React.CSSProperties;
   /**
@@ -69,12 +69,10 @@ export interface BAINameActionCellAction {
   popConfirm?: BAIPopconfirmConfig;
 }
 
-/**
- * A named reason implies the disabled state, so call sites cannot land on
- * "disabled but silent" by letting the two drift apart (FR-3722).
- */
-const isActionDisabled = (action: BAINameActionCellAction) =>
-  action.disabled ?? !!action.disabledReason;
+const isActionDisabled = (action: BAINameActionCellAction) => !!action.disabled;
+
+const actionDisabledReason = (action: BAINameActionCellAction) =>
+  typeof action.disabled === 'object' ? action.disabled.reason : undefined;
 
 /**
  * The antd `PopconfirmProps` subset every call site actually passes, restated
@@ -361,10 +359,9 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
     // compound path would have to carry the divider / disabled / keyboard
     // behaviour across with it. The reason is folded into the label text
     // instead: still visible, still read out, no tooltip needed.
-    label:
-      isActionDisabled(action) && action.disabledReason
-        ? `${action.title} — ${action.disabledReason}`
-        : action.title,
+    label: actionDisabledReason(action)
+      ? `${action.title} — ${actionDisabledReason(action)}`
+      : action.title,
     icon: action.icon,
     isDisabled: isActionDisabled(action),
     onClick: () => {
@@ -537,7 +534,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 size="small"
                 icon={action.icon}
                 aria-label={action.title}
-                title={(disabled && action.disabledReason) || action.title}
+                title={actionDisabledReason(action) || action.title}
                 disabled={disabled}
                 loading={action.loading}
                 className={buttonClassName}

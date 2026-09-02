@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- FR-3722: `disabled` defaults to `!!disabledReason`, so a row action cannot end
- up disabled-but-silent because a call site let the two fields drift apart.
+ FR-3722: `disabled` is `boolean | { reason }`, so a row action carries its
+ reason inside the flag that disables it — the two cannot drift apart, and a
+ silent disable is only reachable by writing `true` on purpose.
 */
 import BAINameActionCell from './BAINameActionCell';
 import type { BAINameActionCellAction } from './BAINameActionCell';
@@ -32,10 +33,10 @@ const renderAction = (action: Partial<BAINameActionCellAction>) =>
 
 const actionButton = () => screen.getByRole('button', { name: /Act/ });
 
-describe('BAINameActionCell — disabled derives from disabledReason (FR-3722)', () => {
-  it('a reason alone disables the action and becomes its tooltip', async () => {
+describe('BAINameActionCell — disabled carries its reason (FR-3722)', () => {
+  it('a reason disables the action and becomes its tooltip', async () => {
     const onClick = vi.fn();
-    renderAction({ disabledReason: 'Deployment is stopped', onClick });
+    renderAction({ disabled: { reason: 'Deployment is stopped' }, onClick });
 
     const button = actionButton();
     expect(button).toHaveAttribute('aria-disabled', 'true');
@@ -57,17 +58,21 @@ describe('BAINameActionCell — disabled derives from disabledReason (FR-3722)',
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('an explicit disabled flag still wins over the absent reason', async () => {
+  it('a bare true disables without a reason and keeps the title as tooltip', async () => {
     const onClick = vi.fn();
     renderAction({ disabled: true, onClick });
 
-    await userEvent.click(actionButton(), { pointerEventsCheck: 0 });
+    const button = actionButton();
+    // The action title is still the tooltip, and Astryx keeps a
+    // tooltip-carrying disabled button focusable via `aria-disabled`.
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(button, { pointerEventsCheck: 0 });
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it('explicit disabled={false} overrides a stray reason', async () => {
+  it('disabled={false} leaves the action enabled', async () => {
     const onClick = vi.fn();
-    renderAction({ disabled: false, disabledReason: 'stale reason', onClick });
+    renderAction({ disabled: false, onClick });
 
     const button = actionButton();
     expect(button).not.toBeDisabled();
@@ -78,7 +83,7 @@ describe('BAINameActionCell — disabled derives from disabledReason (FR-3722)',
   it('a disabled action skips its popConfirm', async () => {
     const onConfirm = vi.fn();
     renderAction({
-      disabledReason: 'Not allowed',
+      disabled: { reason: 'Not allowed' },
       popConfirm: { title: 'Sure?', onConfirm },
     });
 
@@ -88,7 +93,10 @@ describe('BAINameActionCell — disabled derives from disabledReason (FR-3722)',
   });
 
   it('the overflow-menu row folds the reason into its label and disables it', () => {
-    renderAction({ showInMenu: 'always', disabledReason: 'Not allowed' });
+    renderAction({
+      showInMenu: 'always',
+      disabled: { reason: 'Not allowed' },
+    });
 
     const item = screen.getByText('Act — Not allowed');
     expect(item).toBeInTheDocument();
