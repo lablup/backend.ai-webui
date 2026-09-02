@@ -25,8 +25,13 @@ describe('backendAiTheme', () => {
       expect(resolveDarkSeed('#FAAD14')).toBe('#d89614'); // colorWarning
     });
 
-    it('passes unknown (rebranded) seeds through verbatim — PILOT-DECISION', () => {
-      expect(resolveDarkSeed('#123456')).toBe('#123456');
+    it('computes unknown (rebranded) hex seeds with the vendored dark palette — shim parity', () => {
+      // Same computation the theme-shim ran live: palette(seed, 'dark')(6).
+      expect(resolveDarkSeed('#123456')).toBe('#122f4c');
+      // Non-hex input the generator cannot parse still passes through.
+      expect(resolveDarkSeed('rgba(30, 32, 38, 0.15)')).toBe(
+        'rgba(30, 32, 38, 0.15)',
+      );
     });
 
     it('pins the brand accent tuple to [light seed, measured dark]', () => {
@@ -188,9 +193,10 @@ describe('backendAiTheme', () => {
       );
       expect(runtime).not.toBe(builtBackendAiBrandTheme);
       expect(runtime.name).not.toBe(builtBackendAiBrandTheme.name);
-      // Unknown dark seed: verbatim (PILOT-DECISION).
+      // Unknown dark seed: vendored dark palette, matching what the shim
+      // rendered for the same document (parity over passthrough).
       expect(runtime.tokens?.['--color-accent']).toBe(
-        'light-dark(#8B5CF6, #A78BFA)',
+        'light-dark(#8B5CF6, #9179d8)',
       );
     });
   });
