@@ -514,10 +514,18 @@ function main() {
         {
           ...report,
           commits: commits.map(({ files, classified, ...rest }) => rest),
+          // Keep the touched paths: a consumer rendering a digest needs to name
+          // the destructive file, not just the PR.
           risks: Object.fromEntries(
             Object.entries(risks).map(([k, v]) => [
               k,
-              v.map((c) => ({ pr: c.pr, fr: c.fr, subject: c.subject })),
+              v.map((c) => ({
+                pr: c.pr,
+                fr: c.fr,
+                subject: c.subject,
+                ui: c.classified.ui,
+                destructive: c.classified.destructive,
+              })),
             ]),
           ),
         },
