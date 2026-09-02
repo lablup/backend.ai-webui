@@ -7,7 +7,7 @@ import {
   GeneratedKeypairListModalFragment$key,
 } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import { localeCompare } from '../helper';
-import { exportCSVWithFormattingRules } from '../helper/csv-util';
+import { csvLiteral, exportCSVWithFormattingRules } from '../helper/csv-util';
 import { Banner } from '@astryxdesign/core/Banner';
 import {
   BAIFlex,
@@ -71,6 +71,9 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
         };
       }),
       'backendai_api_keypair',
+      // Secret keys are base64url (they can start with "-") and are pasted
+      // into CLI configs, so they must reach the file unmodified.
+      { 'secret key': csvLiteral },
     );
   };
 

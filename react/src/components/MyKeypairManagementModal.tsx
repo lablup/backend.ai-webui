@@ -13,7 +13,7 @@ import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated_
 import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
-import { downloadCSV } from '../helper/csv-util';
+import { csvLiteral, downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
@@ -85,12 +85,14 @@ type KeypairSorterValue =
 // hook once server-side CSV export supports them.
 const downloadCredentialCSV = (credential: KeypairCredential) => {
   const header = 'access_key,secret_key,ssh_public_key';
+  // The secret key is base64url (it can start with "-") and is pasted into CLI
+  // configs, so it must reach the file unmodified.
   const row = [
     credential.accessKey,
-    credential.secretKey,
+    csvLiteral(credential.secretKey),
     credential.sshPublicKey,
   ]
-    .map((v) => `"${v.replace(/"/g, '""')}"`)
+    .map(escapeCsvValue)
     .join(',');
 
   const csvContent = `${header}\n${row}\n`;
