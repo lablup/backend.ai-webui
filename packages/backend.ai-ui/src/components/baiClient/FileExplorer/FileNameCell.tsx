@@ -87,7 +87,6 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
 
   const isDirectory = selectedItem.type === 'DIRECTORY';
   const isFileTooLarge = selectedItem.size > MAX_EDITABLE_FILE_SIZE;
-  const isEditDisabled = isDirectory || isFileTooLarge;
 
   const actions: Array<BAINameActionCellAction> = [
     {
@@ -121,13 +120,16 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
             title: t('comp:FileExplorer.EditFile'),
             icon: <EditIcon size="1em" />,
             showInMenu: 'always' as const,
-            disabled: isEditDisabled,
-            disabledReason: isDirectory
-              ? t('comp:FileExplorer.UnsupportedFileFormat')
-              : t('comp:FileExplorer.FileTooLargeToEdit', {
-                  size: convertToBinaryUnit(MAX_EDITABLE_FILE_SIZE, 'auto')
-                    ?.numberFixed,
-                }),
+            disabled: isDirectory
+              ? { reason: t('comp:FileExplorer.UnsupportedFileFormat') }
+              : isFileTooLarge
+                ? {
+                    reason: t('comp:FileExplorer.FileTooLargeToEdit', {
+                      size: convertToBinaryUnit(MAX_EDITABLE_FILE_SIZE, 'auto')
+                        ?.numberFixed,
+                    }),
+                  }
+                : false,
             onClick: onClickEdit,
           },
         ]

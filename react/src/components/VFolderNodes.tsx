@@ -189,8 +189,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'start-service',
           title: t('modelService.DeployAsService'),
           icon: <RocketIcon />,
-          disabled: !!noDeployTooltip,
-          disabledReason: noDeployTooltip,
+          disabled: noDeployTooltip ? { reason: noDeployTooltip } : false,
           // Use `action` (not `onClick`) so the state update that mounts
           // `<VFolderDeployModal>` (which suspends on its preloaded query)
           // runs inside `startTransition` — the page stays interactive
@@ -217,13 +216,17 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.MoveToTrash'),
           icon: <TrashIcon />,
           type: 'danger' as const,
-          disabled:
-            !hasDeletePermission ||
-            isPipelineFolder ||
-            isProjectFolderManagedElsewhere,
-          disabledReason: isPipelineFolder
-            ? t('data.folders.CannotDeletePipelineFolder')
-            : (projectFolderAdminHint ?? t('data.folders.NoDeletePermission')),
+          disabled: isPipelineFolder
+            ? { reason: t('data.folders.CannotDeletePipelineFolder') }
+            : isProjectFolderManagedElsewhere
+              ? {
+                  reason:
+                    projectFolderAdminHint ??
+                    t('data.folders.NoDeletePermission'),
+                }
+              : !hasDeletePermission
+                ? { reason: t('data.folders.NoDeletePermission') }
+                : false,
           onClick: onDelete,
         }
       : null,
@@ -233,16 +236,17 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           key: 'restore',
           title: t('data.folders.Restore'),
           icon: <RotateCcwIcon />,
-          disabled:
-            vfolder?.status !== 'delete-pending' ||
-            isPipelineFolder ||
-            isProjectFolderManagedElsewhere,
-          disabledReason: isPipelineFolder
-            ? t('data.folders.CannotRestorePipelineFolder')
+          disabled: isPipelineFolder
+            ? { reason: t('data.folders.CannotRestorePipelineFolder') }
             : isProjectFolderManagedElsewhere
-              ? (projectFolderAdminHint ??
-                t('data.folders.NoRestorePermission'))
-              : undefined,
+              ? {
+                  reason:
+                    projectFolderAdminHint ??
+                    t('data.folders.NoRestorePermission'),
+                }
+              : vfolder?.status !== 'delete-pending'
+                ? { reason: t('data.folders.DeletionAlreadyStarted') }
+                : false,
           popConfirm: {
             title: t('data.folders.Restore'),
             description: vfolder?.name ?? undefined,
@@ -259,12 +263,15 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
           title: t('data.folders.Delete'),
           icon: <Trash2Icon />,
           type: 'danger' as const,
-          disabled:
-            vfolder?.status !== 'delete-pending' ||
-            isProjectFolderManagedElsewhere,
-          disabledReason: isProjectFolderManagedElsewhere
-            ? (projectFolderAdminHint ?? t('data.folders.NoDeletePermission'))
-            : undefined,
+          disabled: isProjectFolderManagedElsewhere
+            ? {
+                reason:
+                  projectFolderAdminHint ??
+                  t('data.folders.NoDeletePermission'),
+              }
+            : vfolder?.status !== 'delete-pending'
+              ? { reason: t('data.folders.DeletionAlreadyStarted') }
+              : false,
           onClick: onDeleteForever,
         }
       : null,
