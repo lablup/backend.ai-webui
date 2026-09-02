@@ -1,4 +1,4 @@
-import { useBAIBreakpoint } from './breakpoints';
+import { useBAIBreakpoint } from './useBAIBreakpoint';
 import { act, render, screen } from '@testing-library/react';
 import { beforeAll, describe, expect, it } from 'vitest';
 

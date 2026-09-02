@@ -204,3 +204,5 @@ export {
   useSuspendedLegacyVFolders,
 } from './useSuspendedLegacyVFolders';
 export type { LegacyVFolderMountScope } from './useSuspendedLegacyVFolders';
+
+export * from './useBAIBreakpoint';
