@@ -4,6 +4,7 @@
  */
 // csv-util.test.ts
 import {
+  csvLiteral,
   downloadCSV,
   escapeCsvValue,
   JSONToCSVBody,
@@ -87,6 +88,41 @@ describe('JSONToCSVBody', () => {
     const result = JSONToCSVBody(data);
 
     expect(result).toBe(`"email","name"\n"user@example.com","'=1+2"`);
+  });
+
+  it('keeps a literal column intact while still neutralizing the others', () => {
+    const data = [
+      {
+        email: '=HYPERLINK("http://evil.example","click")',
+        'secret key': '-Ab3_secret',
+      },
+    ];
+
+    const result = JSONToCSVBody(data, { 'secret key': csvLiteral });
+
+    expect(result).toBe(
+      `"email","secret key"\n"'=HYPERLINK(""http://evil.example"",""click"")","-Ab3_secret"`,
+    );
+  });
+});
+
+describe('csvLiteral', () => {
+  it.each([
+    ['-Ab3_xyz', '"-Ab3_xyz"'],
+    ['=1+2', '"=1+2"'],
+    ['+1+2', '"+1+2"'],
+    ['@SUM(A1)', '"@SUM(A1)"'],
+  ])('skips the formula neutralization for %j', (input, expected) => {
+    expect(escapeCsvValue(csvLiteral(input))).toBe(expected);
+  });
+
+  it('still applies RFC 4180 quoting', () => {
+    expect(escapeCsvValue(csvLiteral('a"b,c'))).toBe('"a""b,c"');
+  });
+
+  it('renders null and undefined as an empty quoted cell', () => {
+    expect(escapeCsvValue(csvLiteral(null))).toBe('""');
+    expect(escapeCsvValue(csvLiteral(undefined))).toBe('""');
   });
 });
 

@@ -21,11 +21,35 @@ const startsFormula = (value: string) => {
   );
 };
 
+const CSV_LITERAL = Symbol('csvLiteral');
+
+/** A cell `escapeCsvValue` quotes but never neutralizes. Build one with `csvLiteral`. */
+export interface CsvLiteral {
+  readonly [CSV_LITERAL]: true;
+  readonly value: string;
+}
+
+/**
+ * Opts a cell out of the formula neutralization. Only for server-generated
+ * values that must survive a copy-paste unchanged (a secret key can start
+ * with `-`); never for user input.
+ */
+export const csvLiteral = (value: unknown): CsvLiteral => ({
+  [CSV_LITERAL]: true,
+  value: value === null || value === undefined ? '' : String(value),
+});
+
+const isCsvLiteral = (value: unknown): value is CsvLiteral =>
+  typeof value === 'object' && value !== null && CSV_LITERAL in value;
+
+const quoteCsvValue = (value: string) => `"${value.replace(/"/g, '""')}"`;
+
 /**
  * Escapes a value for CSV formatting.
  *
  * Cells that a spreadsheet would run as a formula are neutralized with a
- * leading `'`, which the spreadsheet renders as text.
+ * leading `'`, which the spreadsheet renders as text, unless the value was
+ * wrapped with `csvLiteral`.
  *
  * @param value - The value to escape.
  * @returns The escaped value.
@@ -33,6 +57,9 @@ const startsFormula = (value: string) => {
 export function escapeCsvValue(value: any) {
   if (value === null || value === undefined) {
     return '';
+  }
+  if (isCsvLiteral(value)) {
+    return quoteCsvValue(value.value);
   }
   if (typeof value === 'number' || typeof value === 'boolean') {
     return String(value);
@@ -45,8 +72,7 @@ export function escapeCsvValue(value: any) {
     value = `'${value}`;
   }
 
-  // Replace double quotes within the value with two double quotes
-  return `"${value.replace(/"/g, '""')}"`;
+  return quoteCsvValue(value);
 }
 
 /**
