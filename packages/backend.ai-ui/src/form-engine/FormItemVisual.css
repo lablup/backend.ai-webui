@@ -1,5 +1,4 @@
 /**
- @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  The form item's entire static stylesheet (to-astryx tickets 05 + 34).
@@ -340,4 +339,3 @@
  since antd is no longer a dependency of this repo at all; CSS, unlike JS,
  carries its text into the minified bundle regardless.
 */
-
