@@ -499,10 +499,10 @@
         "TopK": "Stichproben aus den K wahrscheinlichsten Token",
         "TopP": "Stichproben aus Token, deren kumulative Wahrscheinlichkeit innerhalb von P",
         "label": {
-          "FrequencyPenalty": "Häufigkeitsstrafe",
-          "MaxTokens": "Max. Tokens",
-          "PresencePenalty": "Präsenzstrafe",
-          "Temperature": "Temperatur",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }

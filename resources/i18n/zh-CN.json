@@ -499,10 +499,10 @@
         "TopK": "从 K 个最有可能的代币中提取样本",
         "TopP": "从累计概率在 P",
         "label": {
-          "FrequencyPenalty": "频率惩罚",
-          "MaxTokens": "最大令牌数",
-          "PresencePenalty": "存在惩罚",
-          "Temperature": "温度",
+          "FrequencyPenalty": "Frequency Penalty",
+          "MaxTokens": "Max Tokens",
+          "PresencePenalty": "Presence Penalty",
+          "Temperature": "Temperature",
           "TopK": "Top K",
           "TopP": "Top P"
         }
