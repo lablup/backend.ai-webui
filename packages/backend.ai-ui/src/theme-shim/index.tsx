@@ -335,7 +335,7 @@ export {
 // the vendored copy to the public surface lets those call sites drop the
 // package: the dependency is now dev-only (the parity test's reference
 // implementation), which is exactly where a vendored-port baseline belongs.
-export { generate, presetPalettes } from './vendor/antdColors';
+export { generate, palette, presetPalettes } from './vendor/antdColors';
 export type { GenerateOptions } from './vendor/antdColors';
 
 // Breakpoint system (ticket 08 gap component; policy in ticket 14): the JS
