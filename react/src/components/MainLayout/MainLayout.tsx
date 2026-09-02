@@ -436,6 +436,7 @@ const usePageTestId = () => {
 export const CSSTokenVariables = () => {
   const { token } = theme.useToken();
   const { colorPrimary, colorBgBase, colorBgContainer, colorBorder } = token;
+  const headerHeight = Number(token.Layout?.headerHeight) || 60;
 
   useLayoutEffect(() => {
     const root = document.documentElement;
@@ -444,12 +445,13 @@ export const CSSTokenVariables = () => {
       '--token-colorBgBase': colorBgBase,
       '--token-colorBgContainer': colorBgContainer,
       '--token-colorBorder': colorBorder,
+      '--webui-header-height': `${headerHeight}px`,
     };
     _.forEach(bridged, (value, name) => root.style.setProperty(name, value));
     return () => {
       _.forEach(bridged, (_value, name) => root.style.removeProperty(name));
     };
-  }, [colorPrimary, colorBgBase, colorBgContainer, colorBorder]);
+  }, [colorPrimary, colorBgBase, colorBgContainer, colorBorder, headerHeight]);
 
   return null;
 };

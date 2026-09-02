@@ -74,11 +74,11 @@ const AnnouncementBanner: React.FC = () => {
         status="info"
         container="section"
         className="webui-announcement-banner"
-        // The header's own height/inline-padding sources (WebUIHeader.tsx), so
-        // the two bands share one vertical rhythm (FR-3828 review feedback).
+        // The header's own inline-padding source (WebUIHeader.tsx), so the two
+        // bands share one rhythm (FR-3828 review feedback); the height token
+        // is bridged globally as --webui-header-height (CSSTokenVariables).
         style={
           {
-            '--webui-header-height': `${Number(token.Layout?.headerHeight) || 60}px`,
             '--webui-header-padding-inline': `${token.marginLG}px`,
           } as React.CSSProperties
         }

@@ -21,6 +21,8 @@
    on its root — without it the content centers across the full grown height,
    8px off the sider band. */
 body.electron-macos:not(:has(.webui-announcement-banner)) .bai-webui-header {
-  height: calc(60px + var(--webui-titlebar-height)) !important;
+  height: calc(
+    var(--webui-header-height, 60px) + var(--webui-titlebar-height)
+  ) !important;
   padding-block-start: var(--webui-titlebar-height) !important;
 }

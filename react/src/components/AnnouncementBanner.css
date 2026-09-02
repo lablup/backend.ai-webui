@@ -30,6 +30,13 @@
 body.electron-macos .webui-announcement-banner > .astryx-banner {
   min-height: calc(var(--webui-header-height) + var(--webui-titlebar-height));
   padding-block-start: calc(var(--webui-titlebar-height) + var(--spacing-3));
+  /* Topmost band = window drag surface, like the header (#9345). */
+  -webkit-app-region: drag;
+}
+
+body.electron-macos .webui-announcement-banner button,
+body.electron-macos .webui-announcement-banner a {
+  -webkit-app-region: no-drag;
 }
 
 .webui-announcement-title {

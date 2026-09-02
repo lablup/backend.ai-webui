@@ -111,7 +111,7 @@ body.electron-macos {
 body.electron-macos:not(:has(.webui-announcement-banner))
   .bai-sider
   .logo-and-text-container {
-  height: calc(60px + var(--webui-titlebar-height));
+  height: calc(var(--webui-header-height, 60px) + var(--webui-titlebar-height));
   padding-block-start: var(--webui-titlebar-height);
 }
 
