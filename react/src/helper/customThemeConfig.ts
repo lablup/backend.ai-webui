@@ -92,7 +92,11 @@ export type BAIAppearanceConfig = {
   branding?: BAIBrandingConfig;
 };
 
-/** Resolve a seed value for one scheme (string = both schemes). */
+/**
+ * Resolve a seed value for one scheme (string = both schemes). A tuple with
+ * a missing/non-string dark entry reuses the light one, matching the theme
+ * recipe's `seedPairFromValue`, so both consumers render the same color.
+ */
 export const pickSeed = (
   value: BAIThemeSeedValue | undefined,
   mode: 'light' | 'dark',
@@ -101,49 +105,74 @@ export const pickSeed = (
     return value;
   }
   if (_.isArray(value)) {
-    return mode === 'light' ? value[0] : value[1];
+    const light = _.isString(value[0]) ? value[0] : undefined;
+    if (mode === 'light') {
+      return light;
+    }
+    return _.isString(value[1]) ? value[1] : light;
   }
   return undefined;
 };
 
+// eslint-disable-next-line no-console -- module-scope diagnostics; no logger exists outside React here
+const warn = (message: string) => console.error(`[appearance] ${message}`);
+
 /**
- * Accept only structurally valid v2 documents. A v1 (antd-shaped) document —
- * recognizable by its top-level `light`/`dark` — is rejected loudly so
- * operators find the migration guide instead of a silently default theme.
+ * Accept only structurally valid v2 documents, and say why when one is not:
+ * the operator's next step is the migration guide, never a silently default
+ * theme. `default` must exist in `theme.families` (the family the app boots
+ * into and falls back to).
  */
 export const pickValidAppearanceConfig = (
   input: unknown,
   source: string,
 ): BAIAppearanceConfig | undefined => {
   if (!_.isPlainObject(input)) {
+    warn(`${source} is not a JSON object; using the built-in defaults.`);
     return undefined;
   }
   const doc = input as Record<string, unknown>;
   if (doc.schemaVersion !== APPEARANCE_SCHEMA_VERSION) {
     if (_.isPlainObject(doc.light) || _.isPlainObject(doc.dark)) {
-      // eslint-disable-next-line no-console
-      console.error(
-        `[appearance] ${source} carries a v1 (antd-shaped) theme document; ` +
+      warn(
+        `${source} carries a v1 (antd-shaped) theme document; ` +
           'v2 is required since FR-3605 — see the theme migration guide.',
+      );
+    } else {
+      warn(
+        `${source} has no "schemaVersion": ${APPEARANCE_SCHEMA_VERSION} ` +
+          `(got ${JSON.stringify(doc.schemaVersion)}); using the built-in defaults.`,
       );
     }
     return undefined;
+  }
+  const families = (doc.theme as Record<string, unknown> | undefined)?.families;
+  if (
+    _.isPlainObject(families) &&
+    !_.isPlainObject((families as Record<string, unknown>).default)
+  ) {
+    warn(
+      `${source} declares theme.families without a "default" entry; ` +
+        'the default family falls back to the built-in seeds.',
+    );
   }
   return doc as BAIAppearanceConfig;
 };
 
 type AppearanceStore = {
-  /** The shipped/operator `resources/theme.json` (v2). */
+  /** The shipped/operator `resources/theme.json` (v2), untouched. */
   staticDoc?: BAIAppearanceConfig;
+  /** `staticDoc` plus dev-only overrides — what the providers render. */
+  appliedDoc?: BAIAppearanceConfig;
 };
 
 const store: AppearanceStore = {};
 
 /** The applied document. */
 export const getCustomTheme = (): BAIAppearanceConfig | undefined =>
-  store.staticDoc;
+  store.appliedDoc;
 
-/** The pristine shipped document (Branding editor reset source). */
+/** The pristine shipped document (Branding editor seed/reset source). */
 export const getStaticAppearanceConfig = (): BAIAppearanceConfig | undefined =>
   store.staticDoc;
 
@@ -192,38 +221,64 @@ function injectFontCSS(fontFamilies: string[]) {
 }
 
 const fetchStaticDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
+  let response: Response;
   try {
-    const response = await fetch('resources/theme.json');
+    response = await fetch('resources/theme.json');
+  } catch (error) {
+    warn(`theme.json could not be fetched (${String(error)}).`);
+    return undefined;
+  }
+  if (!response.ok) {
+    warn(`theme.json responded HTTP ${response.status}.`);
+    return undefined;
+  }
+  try {
     return pickValidAppearanceConfig(await response.json(), 'theme.json');
-  } catch {
+  } catch (error) {
+    warn(`theme.json is not valid JSON (${String(error)}).`);
     return undefined;
   }
 };
 
+/** The dev-server header color, applied to a copy so the shipped doc stays pristine. */
+const applyDevOverrides = (
+  doc: BAIAppearanceConfig | undefined,
+): BAIAppearanceConfig | undefined => {
+  const headerColor = import.meta.env.DEV
+    ? import.meta.env.VITE_THEME_HEADER_COLOR
+    : undefined;
+  if (!doc || !headerColor) {
+    return doc;
+  }
+  const applied = _.cloneDeep(doc);
+  for (const family of Object.values(applied.theme?.families ?? {})) {
+    if (_.isPlainObject(family)) {
+      family.headerBg = headerColor;
+    }
+  }
+  return applied;
+};
+
 /**
  * One-shot appearance bootstrap: theme.json is fetched and a single
- * `custom-theme-loaded` event fires once it has settled.
+ * `custom-theme-loaded` event fires once it has settled — including when
+ * the document is unusable, so listeners never wait forever.
  */
 export const loadCustomThemeConfig = () => {
-  fetchStaticDoc().then((staticDoc) => {
-    store.staticDoc = staticDoc;
+  fetchStaticDoc()
+    .then((staticDoc) => {
+      store.staticDoc = staticDoc;
+      store.appliedDoc = applyDevOverrides(staticDoc);
 
-    const resolved = getCustomTheme();
-    if (
-      resolved &&
-      import.meta.env.DEV &&
-      import.meta.env.VITE_THEME_HEADER_COLOR
-    ) {
-      for (const family of Object.values(resolved.theme?.families ?? {})) {
-        family.headerBg = import.meta.env.VITE_THEME_HEADER_COLOR;
+      const fontFamily = store.appliedDoc?.theme?.fontFamily;
+      if (_.isString(fontFamily) && fontFamily) {
+        injectFontCSS(parseFontFamilies(fontFamily));
       }
-    }
-
-    const fontFamily = resolved?.theme?.fontFamily;
-    if (fontFamily) {
-      injectFontCSS(parseFontFamilies(fontFamily));
-    }
-
-    document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
-  });
+    })
+    .catch((error) => {
+      warn(`appearance bootstrap failed (${String(error)}).`);
+    })
+    .finally(() => {
+      document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
+    });
 };
