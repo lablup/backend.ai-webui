@@ -145,7 +145,7 @@ body.electron-macos:not(:has(.webui-announcement-banner))
   justify-content: center;
   margin: calc(var(--spacing-2) * -1);
   padding-inline: var(--spacing-8);
-  height: 60px;
+  height: var(--webui-header-height, 60px);
   background-color: var(--color-accent);
   transition: all 0.2s ease-in-out;
 }

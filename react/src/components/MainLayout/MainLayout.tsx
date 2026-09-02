@@ -436,7 +436,12 @@ const usePageTestId = () => {
 export const CSSTokenVariables = () => {
   const { token } = theme.useToken();
   const { colorPrimary, colorBgBase, colorBgContainer, colorBorder } = token;
-  const headerHeight = Number(token.Layout?.headerHeight) || 60;
+  // The token may be a number or a CSS length string; only a number gets px.
+  const rawHeaderHeight = token.Layout?.headerHeight ?? 60;
+  const headerHeight =
+    typeof rawHeaderHeight === 'number'
+      ? `${rawHeaderHeight}px`
+      : rawHeaderHeight;
 
   useLayoutEffect(() => {
     const root = document.documentElement;
@@ -445,7 +450,7 @@ export const CSSTokenVariables = () => {
       '--token-colorBgBase': colorBgBase,
       '--token-colorBgContainer': colorBgContainer,
       '--token-colorBorder': colorBorder,
-      '--webui-header-height': `${headerHeight}px`,
+      '--webui-header-height': headerHeight,
     };
     _.forEach(bridged, (value, name) => root.style.setProperty(name, value));
     return () => {
