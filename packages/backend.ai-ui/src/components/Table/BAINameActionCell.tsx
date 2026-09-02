@@ -69,8 +69,15 @@ export interface BAINameActionCellAction {
   popConfirm?: BAIPopconfirmConfig;
 }
 
-const disabledReason = (disabled: BAINameActionCellAction['disabled']) =>
-  typeof disabled === 'object' ? disabled.reason : undefined;
+/**
+ * Reads the reason out of the `disabled` union. Exported so a caller threading
+ * a `disabled` value through its own props can render the reason itself — e.g.
+ * on a `BAIButton`, whose `disabled` is a plain boolean beside a `title`
+ * tooltip.
+ */
+export const disabledReason = (
+  disabled: BAINameActionCellAction['disabled'],
+) => (typeof disabled === 'object' ? disabled.reason : undefined);
 
 /**
  * The antd `PopconfirmProps` subset every call site actually passes, restated

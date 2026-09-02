@@ -21,7 +21,10 @@ export type {
   BAITableSettingResult,
   BAITableSettingModalProps,
 } from './BAITableSettingModal';
-export { default as BAINameActionCell } from './BAINameActionCell';
+export {
+  default as BAINameActionCell,
+  disabledReason,
+} from './BAINameActionCell';
 export type {
   BAINameActionCellAction,
   BAINameActionCellProps,
