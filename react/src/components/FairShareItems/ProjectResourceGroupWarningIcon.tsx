@@ -1,7 +1,7 @@
-import { BAIIconWithTooltip } from 'backend.ai-ui';
 import type { ProjectResourceGroupWarningIconFragment$key } from '../../__generated__/ProjectResourceGroupWarningIconFragment.graphql';
 import type { ProjectResourceGroupWarningIconQuery } from '../../__generated__/ProjectResourceGroupWarningIconQuery.graphql';
-import { theme } from '../../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
+import { BAIIconWithTooltip } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,7 @@ const ProjectResourceGroupWarningIcon: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { projectId, domainName, resourceGroupName } = useFragment(
     graphql`
@@ -64,7 +64,7 @@ const ProjectResourceGroupWarningIcon: React.FC<
       content={t('fairShare.ProjectNotAllowedInResourceGroup', {
         resourceGroup: resourceGroupName,
       })}
-      icon={<TriangleAlert style={{ color: token.colorWarning }} />}
+      icon={<TriangleAlert style={{ color: token('--color-warning') }} />}
     />
   );
 };

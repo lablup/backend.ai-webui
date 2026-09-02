@@ -54,7 +54,7 @@ import {
 } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
-import { theme, useBAIBreakpoint } from '../theme-shim';
+import { useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
@@ -74,6 +74,7 @@ import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
 import { VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import { Step, Stepper } from '@astryxdesign/lab';
 import * as stylex from '@stylexjs/stylex';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
@@ -387,7 +388,7 @@ const SessionLauncherPage = () => {
       { history: 'push' },
     );
   };
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { t } = useTranslation();
 
@@ -1266,7 +1267,7 @@ const SessionLauncherPage = () => {
                           width="100%"
                           style={{
                             display: enabled ? 'none' : undefined,
-                            marginTop: token.marginMD,
+                            marginTop: token('--spacing-5'),
                           }}
                         >
                           <Form.Item
@@ -1691,14 +1692,15 @@ const unifiedChipStyles = stylex.create({
 const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   // The description lives only in the backend slot-details response, not in
   // the local device_metadata.json, and is not scoped to a resource group.
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const description = mergedResourceSlots[type]?.description ?? type;
   // One line of the description text, so the icon can be vertically centered
   // against the first line (not the whole wrapped block).
-  const lineHeightPx = token.fontSize * token.lineHeight;
+  const lineHeightPx =
+    parseFloat(token('--font-size-base')) * 1.5714285714285714;
   return (
     <Tooltip
       content={t('session.launcher.UnifiedAcceleratorMemoryNote', {

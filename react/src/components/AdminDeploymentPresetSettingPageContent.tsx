@@ -19,7 +19,7 @@ import {
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
 import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
-import { theme, useBAIBreakpoint } from '../theme-shim';
+import { useBAIBreakpoint } from '../theme-shim';
 import {
   STEP_KEYS,
   type AdminDeploymentPresetFormValue,
@@ -53,6 +53,7 @@ import {
 import './collapsible-section.css';
 import { Button } from '@astryxdesign/core/Button';
 import { Selector } from '@astryxdesign/core/Selector';
+import { useTheme } from '@astryxdesign/core/theme';
 import { Step, Stepper } from '@astryxdesign/lab';
 import {
   BAISkeleton,
@@ -244,7 +245,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const screens = useBAIBreakpoint();
   const baiClient = useSuspendedBackendaiClient();
   // BA-7210 / FR-3481: managers this version+ resolve an omitted model
@@ -922,7 +923,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   <div
                     style={{
                       // Bottom gap comes from the component itself.
-                      marginTop: -token.margin,
+                      marginTop: -token('--spacing-4'),
                     }}
                   >
                     <Suspense fallback={<BAISkeleton />}>
@@ -960,8 +961,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             {readsVfolderConfigFiles && supportsNullableModelDefinition && (
               <div
                 style={{
-                  marginTop: -token.margin,
-                  marginBottom: token.marginLG,
+                  marginTop: -token('--spacing-4'),
+                  marginBottom: token('--spacing-6'),
                 }}
               >
                 {renderServiceConfigurationFormItems()}
@@ -981,7 +982,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="imageId"
               label={t('adminDeploymentPreset.Image')}
               rules={[{ required: true }]}
-              style={{ marginTop: token.marginMD }}
+              style={{ marginTop: token('--spacing-5') }}
             >
               <ImageSelectField />
             </BAIFormItem>
@@ -995,7 +996,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             title={t('adminDeploymentPreset.step.Resources')}
             style={{
               display: currentStepKey === 'basic' ? 'block' : 'none',
-              marginTop: token.marginMD,
+              marginTop: token('--spacing-5'),
             }}
             showDivider
           >
@@ -1044,7 +1045,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             </BAIFormItem>
             <BAIFormItem
               label={t('adminDeploymentPreset.ResourceOpts')}
-              style={{ marginBottom: 0, marginTop: token.marginMD }}
+              style={{ marginBottom: 0, marginTop: token('--spacing-5') }}
             >
               <Form.List name="resourceOpts">
                 {(fields, { add, remove }) => (
@@ -1108,7 +1109,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             <BAIFlex
               gap="md"
               wrap="wrap"
-              style={{ alignItems: 'flex-start', marginTop: token.marginMD }}
+              style={{
+                alignItems: 'flex-start',
+                marginTop: token('--spacing-5'),
+              }}
             >
               <BAIFormItem
                 name="clusterMode"
@@ -1229,7 +1233,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             title={t('adminDeploymentPreset.ModelDefinition')}
             style={{
               display: currentStepKey === 'model' ? 'block' : 'none',
-              marginTop: token.marginMD,
+              marginTop: token('--spacing-5'),
               // `.ant-card` clips with overflow:hidden, which cuts the header
               // switch's focus glow. Allow it to render fully.
               overflow: 'visible',
@@ -1269,7 +1273,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             title={t('adminDeploymentPreset.step.Deployment')}
             style={{
               display: currentStepKey === 'basic' ? 'block' : 'none',
-              marginTop: token.marginMD,
+              marginTop: token('--spacing-5'),
             }}
             showDivider
           >
@@ -1340,7 +1344,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             direction="row"
             justify="end"
             gap="sm"
-            style={{ marginTop: token.marginMD }}
+            style={{ marginTop: token('--spacing-5') }}
             data-test-id="deployment-preset-step-navigation"
           >
             {!isFirstStep && (

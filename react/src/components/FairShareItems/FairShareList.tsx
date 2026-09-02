@@ -3,13 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FairShareListProjectNameQuery } from '../../__generated__/FairShareListProjectNameQuery.graphql';
-import { theme } from '../../theme-shim';
 import DomainFairShareStep from './DomainFairShareStep';
 import ProjectFairShareStep from './ProjectFairShareStep';
 import ResourceGroupFairShareStep from './ResourceGroupFairShareStep';
 import UserFairShareStep from './UserFairShareStep';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Heading } from '@astryxdesign/core/Heading';
+import { useTheme } from '@astryxdesign/core/theme';
 import { Step, Stepper } from '@astryxdesign/lab';
 import {
   BAISkeleton,
@@ -281,7 +281,7 @@ const FairShareListTitle: React.FC<{
   navigateTo: string;
 }> = ({ currentStep, navigateTo }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <BAIFlex gap={'xs'}>
@@ -302,7 +302,7 @@ const FairShareListTitle: React.FC<{
       </Heading>
       <BAIQuestionIconWithTooltip
         style={{
-          fontSize: token.fontSizeHeading4,
+          fontSize: token('--font-size-xl'),
         }}
         title={
           <Trans

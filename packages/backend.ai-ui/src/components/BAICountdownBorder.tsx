@@ -1,5 +1,5 @@
-import { theme } from '../theme-shim';
 import './BAICountdownBorder.css';
+import { useTheme } from '@astryxdesign/core/theme';
 import React, { useEffect, useRef, useState } from 'react';
 
 export interface BAICountdownBorderProps {
@@ -61,7 +61,7 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
   paused = false,
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const ref = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
   useEffect(() => {
@@ -81,7 +81,7 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
     // from a nested Astryx <Theme> subtree the shim's static seeds never see.
     stroke = 'var(--color-accent)',
     strokeWidth = 1.5,
-    borderRadius = token.borderRadius,
+    borderRadius = token('--radius-inner'),
     ...wrapperStyle
   } = style ?? {};
   return (

@@ -2,9 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import usePrimaryColors from '../hooks/usePrimaryColors';
-import { theme } from '../theme-shim';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
@@ -37,8 +36,7 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
   progressStyle,
   ...baiProgressProps
 }) => {
-  const { token } = theme.useToken();
-  const primaryColors = usePrimaryColors();
+  const { token } = useTheme();
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'xs'}>
@@ -46,10 +44,10 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
         <Text style={{ alignContent: 'end' }}>{title}</Text>
         <Text
           style={{
-            fontSize: token.fontSizeHeading3,
+            fontSize: token('--font-size-2xl'),
             color: _.isString(baiProgressProps.strokeColor)
               ? baiProgressProps.strokeColor
-              : primaryColors.primary5,
+              : token('--bai-primary-5'),
             alignContent: 'end',
           }}
         >
@@ -59,10 +57,10 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
       <BAIFlex
         style={{
           padding: 1,
-          backgroundColor: token.colorFill,
+          backgroundColor: token('--bai-color-fill'),
           height: _.isNumber(baiProgressProps.size)
             ? baiProgressProps.size
-            : token.size,
+            : token('--spacing-4'),
           ...progressStyle,
         }}
         direction="column"
@@ -72,16 +70,14 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
           style={{
             height: _.isNumber(baiProgressProps.size)
               ? baiProgressProps.size
-              : token.size,
+              : token('--spacing-4'),
             width: `${!baiProgressProps.percent || _.isNaN(baiProgressProps.percent) ? 0 : _.min([baiProgressProps.percent, 100])}%`,
             position: 'absolute',
             left: 0,
             top: 0,
             backgroundColor: _.isString(baiProgressProps.strokeColor)
-              ? (baiProgressProps.strokeColor ??
-                primaryColors.primary5 ??
-                token.colorPrimary)
-              : (primaryColors.primary5 ?? token.colorPrimary),
+              ? (baiProgressProps.strokeColor ?? token('--bai-primary-5'))
+              : token('--bai-primary-5'),
             zIndex: 0,
             overflow: 'hidden',
           }}
@@ -93,10 +89,8 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             <Text
               style={{
                 color: _.isString(baiProgressProps.strokeColor)
-                  ? (baiProgressProps.strokeColor ??
-                    primaryColors.primary5 ??
-                    token.colorPrimary)
-                  : (primaryColors.primary5 ?? token.colorPrimary),
+                  ? (baiProgressProps.strokeColor ?? token('--bai-primary-5'))
+                  : token('--bai-primary-5'),
               }}
             >
               {used}

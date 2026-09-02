@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import type { DiagnosticResult } from '../types/diagnostics';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
 import { CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +31,7 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   if (loading) {
     return <BAISkeleton rows={2} />;
@@ -53,7 +53,7 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
           status={severityToBannerStatus[result.severity]}
           title={t(result.titleKey, result.interpolationValues)}
           description={
-            <BAIFlex align="start" direction="column" gap={token.paddingXXS}>
+            <BAIFlex align="start" direction="column" gap="xxs">
               <span>
                 {t(result.descriptionKey, result.interpolationValues)}
               </span>
@@ -78,8 +78,8 @@ const DiagnosticResultList: React.FC<DiagnosticResultListProps> = ({
       {passed.map((result) => (
         <BAIFlex key={result.id} gap="xs" align="center">
           <CheckCircle
-            size={token.fontSizeSM}
-            style={{ color: token.colorSuccess, flexShrink: 0 }}
+            size={token('--font-size-sm')}
+            style={{ color: token('--color-success'), flexShrink: 0 }}
           />
           <Text color="secondary">
             {t(result.titleKey, result.interpolationValues)}

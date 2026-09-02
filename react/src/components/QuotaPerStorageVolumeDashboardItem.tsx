@@ -4,11 +4,11 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
 import QuotaPerStorageVolumePanelCard, {
   type VolumeInfo,
 } from './QuotaPerStorageVolumePanelCard';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 const QuotaPerStorageVolumeDashboardItem: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
 
   const { data: vhostInfo } = useSuspenseTanQuery<{
@@ -46,8 +46,8 @@ const QuotaPerStorageVolumeDashboardItem: React.FC = () => {
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
-        paddingBottom: token.padding,
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
       }}
     >
       <BAIBoardItemTitle title={t('data.QuotaPerStorageVolume')} />

@@ -22,7 +22,6 @@ import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import SignupModal from './SignupModal';
 import {
@@ -44,6 +43,7 @@ import {
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAI_Z_INDEX,
   BAIModal,
@@ -131,7 +131,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
   const { appearance } = useCustomThemeConfig();
 
@@ -248,7 +248,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
       >
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (
-          <div style={{ marginBottom: token.marginMD }}>
+          <div style={{ marginBottom: token('--spacing-5') }}>
             <SegmentedControl
               value={connectionMode}
               onChange={(value) =>
@@ -288,7 +288,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   recognise this as a login form. */}
               <BAIFormItem
                 name="user_id"
-                style={{ marginBottom: token.marginSM }}
+                style={{ marginBottom: token('--spacing-3') }}
               >
                 <AstryxFormTextInput
                   label={t('login.E-mailOrUsername', { postProcess: [] })}
@@ -304,7 +304,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               </BAIFormItem>
               <BAIFormItem
                 name="password"
-                style={{ marginBottom: token.marginSM }}
+                style={{ marginBottom: token('--spacing-3') }}
               >
                 <AstryxFormTextInput
                   type="password"
@@ -317,7 +317,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               {otpRequired && (
                 <BAIFormItem
                   name="otp"
-                  style={{ marginBottom: token.marginSM }}
+                  style={{ marginBottom: token('--spacing-3') }}
                 >
                   <AstryxFormTextInput
                     label={t('totp.OTP', { postProcess: [] })}
@@ -335,7 +335,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             <>
               <BAIFormItem
                 name="api_key"
-                style={{ marginBottom: token.marginSM }}
+                style={{ marginBottom: token('--spacing-3') }}
               >
                 <AstryxFormTextInput
                   label={t('login.APIKey', { postProcess: [] })}
@@ -347,7 +347,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               </BAIFormItem>
               <BAIFormItem
                 name="secret_key"
-                style={{ marginBottom: token.marginSM }}
+                style={{ marginBottom: token('--spacing-3') }}
               >
                 <AstryxFormTextInput
                   type="password"
@@ -366,14 +366,14 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               status="error"
               title={loginError.message}
               description={loginError.description}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
               isDismissable
               onDismiss={onClearLoginError}
             />
           )}
 
           {/* Login button */}
-          <BAIFormItem style={{ marginBottom: token.marginSM }}>
+          <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
             <Button
               variant="primary"
               width="100%"
@@ -385,7 +385,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 
           {/* SSO buttons */}
           {loginConfig.singleSignOnVendors.includes('saml') && (
-            <BAIFormItem style={{ marginBottom: token.marginSM }}>
+            <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
               <Button
                 width="100%"
                 onClick={onSAMLLogin}
@@ -394,7 +394,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             </BAIFormItem>
           )}
           {loginConfig.singleSignOnVendors.includes('openid') && (
-            <BAIFormItem style={{ marginBottom: token.marginSM }}>
+            <BAIFormItem style={{ marginBottom: token('--spacing-3') }}>
               <Button
                 width="100%"
                 onClick={onOpenIDLogin}
@@ -407,7 +407,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
 
           {/* Collapsible endpoint section */}
           {showEndpointInput && (
-            <div style={{ marginTop: token.marginSM }}>
+            <div style={{ marginTop: token('--spacing-3') }}>
               {/* `Typography.Link onClick` with no href -> Astryx `Link`
                   is anchor-first (MAPPING §3.16), so the router-less toggle
                   uses `href="#"` + `preventDefault` (the pilot's fallback).
@@ -452,7 +452,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                 <BAIFlex
                   gap="xs"
                   align="center"
-                  style={{ marginTop: token.marginXS }}
+                  style={{ marginTop: token('--spacing-2') }}
                 >
                   {/* antd `Dropdown` wrapped an arbitrary trigger element;
                       Astryx `DropdownMenu` renders its own trigger from
@@ -513,7 +513,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               align="center"
               wrap="wrap"
               style={{
-                marginTop: token.marginLG,
+                marginTop: token('--spacing-6'),
                 fontSize: 13,
               }}
             >
@@ -570,10 +570,10 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
             transform: 'translateY(-50%)',
             width: helpPanelWidth,
             maxHeight: '60vh',
-            background: token.colorBgContainer,
-            borderRadius: token.borderRadiusLG,
-            boxShadow: token.boxShadowSecondary,
-            padding: token.paddingLG,
+            background: token('--color-background-surface'),
+            borderRadius: token('--radius-element'),
+            boxShadow: token('--shadow-med'),
+            padding: token('--spacing-6'),
             overflow: 'auto',
             zIndex: BAI_Z_INDEX.loginSideHelp,
           }}
@@ -581,7 +581,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           <BAIFlex
             justify="between"
             align="center"
-            style={{ marginBottom: token.marginSM }}
+            style={{ marginBottom: token('--spacing-3') }}
           >
             <Text weight="semibold">{effectiveHelpPanel.title}</Text>
             <IconButton
@@ -668,7 +668,7 @@ const ResetPasswordRequiredInline: React.FC<{
 }> = ({ open, username, currentPassword, apiEndpoint, onCancel, onOk }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { logger } = useBAILogger();
   const [form] = Form.useForm<{ newPassword: string; confirm: string }>();
   const anonymousBaiClient = useAnonymousBackendaiClient({
@@ -744,12 +744,15 @@ const ResetPasswordRequiredInline: React.FC<{
         gap="md"
         style={{
           alignSelf: 'stretch',
-          paddingTop: token.paddingMD,
-          paddingBottom: token.paddingMD,
+          paddingTop: token('--spacing-5'),
+          paddingBottom: token('--spacing-5'),
         }}
       >
         <Heading level={3} style={{ margin: 0 }}>
-          <TriangleAlert style={{ color: token.colorWarning }} size="1em" />{' '}
+          <TriangleAlert
+            style={{ color: token('--color-warning') }}
+            size="1em"
+          />{' '}
           {t('webui.menu.PleaseChangeYourPassword')}
         </Heading>
         {t('webui.menu.YouMushChangeYourPassword')}

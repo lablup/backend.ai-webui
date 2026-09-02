@@ -10,7 +10,6 @@ import {
   toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
@@ -24,6 +23,7 @@ import {
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleAlert, History } from 'lucide-react';
@@ -75,7 +75,7 @@ const BAIRouteNodes = ({
 }: BAIRouteNodesProps) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useConnectedBAIClient();
   const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
 
@@ -110,7 +110,7 @@ const BAIRouteNodes = ({
                 size="small"
                 type="text"
                 icon={<CircleAlert size="1em" />}
-                style={{ color: token.colorError }}
+                style={{ color: token('--color-error') }}
                 onClick={() => {
                   onClickErrorData?.(record.errorData);
                 }}

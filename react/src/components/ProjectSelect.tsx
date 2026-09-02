@@ -5,7 +5,6 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { theme } from '../theme-shim';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -42,7 +41,6 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   ...selectProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [value, setValue] = useControllableState_deprecated(selectProps);
   const { projectAdminIds } = useCurrentUserProjectRoles();
@@ -100,7 +98,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             !!project?.id && projectAdminIds.includes(project.id);
           return {
             label: showBadge ? (
-              <BAIFlex gap={token.marginXS} align="center">
+              <BAIFlex gap="xs" align="center">
                 <span>{project?.name}</span>
                 <BAIIconWithTooltip
                   content={t('projectSelect.ProjectAdminBadge')}

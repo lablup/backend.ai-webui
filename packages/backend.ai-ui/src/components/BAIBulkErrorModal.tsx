@@ -3,11 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { theme } from '../theme-shim';
 import BAIAlert from './BAIAlert';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import { BAITable, type BAIColumnsType } from './Table';
+import { useTheme } from '@astryxdesign/core/theme';
 import { TriangleAlert } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -66,7 +66,7 @@ const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
 }: BAIBulkErrorModalProps<RecordType>) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <BAIModal
@@ -75,7 +75,7 @@ const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
       title={
         title ?? (
           <BAIFlex gap="xs" align="center">
-            <TriangleAlert color={token.colorError} size="1em" />
+            <TriangleAlert color={token('--color-error')} size="1em" />
             {t('comp:BAIBulkErrorModal.ActionExecutionFailed')}
           </BAIFlex>
         )

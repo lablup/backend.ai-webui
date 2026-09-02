@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import { Grid } from '@astryxdesign/core/Grid';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIColorPicker,
   BAIFlex,
@@ -37,7 +37,7 @@ const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const schemes = [
     { label: t('userSettings.LightMode'), pickerProps: light },
@@ -61,7 +61,7 @@ const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
           <BAIFlex
             key={label}
             gap="sm"
-            style={{ color: token.colorTextTertiary }}
+            style={{ color: token('--bai-color-text-tertiary') }}
             wrap="wrap"
           >
             {label}:

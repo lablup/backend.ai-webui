@@ -13,7 +13,6 @@ import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { getImageFullName, localeCompare } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import { theme } from '../theme-shim';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import TextHighlighter from './TextHighlighter';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -43,7 +42,6 @@ export type CommittedImage = NonNullable<
 
 const CustomizedImageList: React.FC = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
 
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
@@ -186,7 +184,7 @@ const CustomizedImageList: React.FC = () => {
         </BAIText>
       ),
       sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
-      width: token.screenXS,
+      width: 480,
     },
     {
       title: t('general.Control'),

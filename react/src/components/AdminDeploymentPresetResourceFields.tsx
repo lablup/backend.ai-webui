@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../form-engine';
-import { theme } from '../theme-shim';
 import type { ResourceSlotTypeInfo } from './AdminDeploymentPresetFormTypes';
 import BAIFormItem from './BAIFormItem';
 import {
@@ -13,6 +12,7 @@ import {
   type AstryxFormNumberInputProps,
 } from './astryxFormControls';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIDynamicUnitInputNumber, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus } from 'lucide-react';
 import React from 'react';
@@ -147,7 +147,7 @@ export const FixedResourceSlotField: React.FC<{
 }> = ({ slotName, resourceSlotTypes, required = true }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const slotType = resourceSlotTypes.find((s) => s.slotName === slotName);
   const precision = slotType?.numberFormat?.roundLength ?? 0;
 
@@ -199,7 +199,9 @@ export const FixedResourceSlotField: React.FC<{
         </BAIFormItem>
       )}
       {/* Spacer matching the CircleMinus delete icon in ResourceSlotRow */}
-      <span style={{ visibility: 'hidden', fontSize: token.fontSize }}>
+      <span
+        style={{ visibility: 'hidden', fontSize: token('--font-size-base') }}
+      >
         <CircleMinus size="1em" />
       </span>
     </BAIFlex>

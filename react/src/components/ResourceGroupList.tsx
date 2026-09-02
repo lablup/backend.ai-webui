@@ -18,13 +18,13 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
-import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Token } from '@astryxdesign/core/Token';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIButton,
   BAIColumnsType,
@@ -165,7 +165,7 @@ const ResourceGroupSettingModalWithQuery: React.FC<{
 const ResourceGroupList: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
   // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
@@ -308,9 +308,9 @@ const ResourceGroupList: React.FC = () => {
 
   const renderBooleanCell = (value: boolean | null | undefined) =>
     value ? (
-      <Check style={{ color: token.colorSuccess }} size="1em" />
+      <Check style={{ color: token('--color-success') }} size="1em" />
     ) : (
-      <X style={{ color: token.colorTextSecondary }} size="1em" />
+      <X style={{ color: token('--color-text-secondary') }} size="1em" />
     );
 
   const closeSettingModal = (success: boolean) => {
@@ -566,7 +566,9 @@ const ResourceGroupList: React.FC = () => {
               {/* antd Tooltip + icon-only BAIButton → IconButton with its own
                   `tooltip` (ticket 15/18 idiom: never-disabled icon trigger). */}
               <IconButton
-                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                icon={
+                  <SquarePenIcon style={{ color: token('--bai-color-info') }} />
+                }
                 label={t('general.BulkEdit')}
                 tooltip={t('general.BulkEdit')}
                 onClick={() => setOpenSFTPModal(true)}

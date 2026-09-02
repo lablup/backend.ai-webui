@@ -6,11 +6,11 @@ import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
 import { Form } from '../form-engine';
 import { useAnonymousBackendaiClient } from '../hooks';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIModal, ESMClientErrorResponse } from 'backend.ai-ui';
 import { CircleCheck } from 'lucide-react';
 import React, { useRef, useState } from 'react';
@@ -42,7 +42,7 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
 
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [form] = Form.useForm<ChangePasswordFormValues>();
 
   // token is derived from URL params which are stable for the lifetime of this page
@@ -220,7 +220,10 @@ const ChangePasswordView: React.FC<ChangePasswordViewProps> = ({
       >
         <BAIFlex gap="xs" align="center">
           <CircleCheck
-            style={{ color: token.colorSuccess, fontSize: token.fontSizeLG }}
+            style={{
+              color: token('--color-success'),
+              fontSize: token('--font-size-lg'),
+            }}
             size="1em"
           />
           <Text>{t('login.PasswordChanged')}</Text>

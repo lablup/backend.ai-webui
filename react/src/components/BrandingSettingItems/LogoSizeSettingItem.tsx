@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
-import { theme } from '../../theme-shim';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -38,7 +38,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
 
   const { key: sizeKey, defaultSize } = LOGO_SIZE_CONFIG[logoType];
@@ -69,7 +69,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
         <BAIFlex
           gap="sm"
           wrap="nowrap"
-          style={{ color: token.colorTextTertiary }}
+          style={{ color: token('--bai-color-text-tertiary') }}
         >
           <Text color="secondary">{t('userSettings.logo.size.Width')}:</Text>
           <BAIUncontrolledInput
@@ -84,7 +84,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
         <BAIFlex
           gap="sm"
           wrap="nowrap"
-          style={{ color: token.colorTextTertiary }}
+          style={{ color: token('--bai-color-text-tertiary') }}
         >
           <Text color="secondary">{t('userSettings.logo.size.Height')}:</Text>
           <BAIUncontrolledInput
