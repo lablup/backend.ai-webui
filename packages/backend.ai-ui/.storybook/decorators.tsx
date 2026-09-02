@@ -4,12 +4,11 @@ import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIC
 import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
 import { i18n } from '../src/locale';
 import { ThemeShimProvider, theme } from '../src/theme-shim';
-import { astryxBrandTheme } from './astryxBrandTheme';
-import { themeConfigs, type ThemeStyle } from './themeConfig';
+import { themePresets, type ThemeStyle } from './themeConfig';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { Theme as AstryxThemeProvider } from '@astryxdesign/core/theme';
 import type { Decorator } from '@storybook/react-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -78,21 +77,15 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const currentThemeConfig = themeConfigs[themeStyle];
+  const preset = themePresets[themeStyle];
   const isWebUIStyle = themeStyle === 'webui';
-  const seedToken =
-    (isDarkMode ? currentThemeConfig.dark : currentThemeConfig.light).token ??
-    {};
 
   return (
-    // Astryx brand theme (ticket 32, mirrors the app's always-on
-    // `AstryxBrandTheme` — see DefaultProviders.tsx). Mounted unconditionally
-    // (not gated by the antd-only "Theme Style" toolbar below) so
-    // Astryx-native components (BAITable, BAIComplexSelect,
-    // PowerSearch, …) render the real Backend.AI palette instead of Astryx's
-    // theme-neutral default, in both light and dark.
+    // Both theme layers follow the "Theme" toolbar together: the Astryx
+    // `<Theme>` drives Astryx-native components, the shim's seeds drive the
+    // legacy antd-era ones. See themeConfig.ts for why one alone is inert.
     <AstryxThemeProvider
-      theme={astryxBrandTheme}
+      theme={preset.theme}
       mode={isDarkMode ? 'dark' : 'light'}
     >
       {/* Astryx theme shim (ticket 10): BUI's legacy antd-consuming
@@ -101,37 +94,18 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
           light-mode default seeds. */}
       <ThemeShimProvider
         mode={isDarkMode ? 'dark' : 'light'}
-        seeds={{
-          colorPrimary: seedToken.colorPrimary,
-          colorLink: seedToken.colorLink ?? seedToken.colorPrimary,
-          colorInfo: seedToken.colorInfo,
-          colorSuccess: seedToken.colorSuccess,
-          colorError: seedToken.colorError,
-          colorWarning: seedToken.colorWarning,
-          fontFamily: seedToken.fontFamily,
-        }}
+        seeds={isDarkMode ? preset.dark : preset.light}
       >
-        {/* BAIConfigProvider (ticket 30): the real production wrapper. It
-            used to be antd's ConfigProvider + Astryx's
-            InternationalizationProvider; the final switch removed the antd
-            leg, so it now carries only the locale — which still drives BUI's
-            i18next, dayjs and Astryx's resolver from one `lang`, keeping
-            Astryx chrome strings and plurals on the story's locale instead of
-            the 'en' context default (P13).
-
-            The `theme` / `modal` / `drawer` / `tag` props that used to be
-            passed through here are gone with that leg: each configured an
-            antd component. The mode and seeds the toolbar picks reach the
-            tree through `AstryxThemeProvider` + `ThemeShimProvider` above,
-            which is where they already were. */}
+        {/* The real production wrapper, carrying only the locale — which
+            drives BUI's i18next, dayjs and Astryx's resolver from one `lang`,
+            keeping Astryx chrome strings and plurals on the story's locale
+            instead of the 'en' context default (P13). */}
         <BAIConfigProvider locale={{ lang: locale }}>
           {/* The `form.requiredMark` inversion — no asterisk on required
-              fields, "(Optional)" appended to the rest — moved off
-              `ConfigProvider form={{…}}` onto the self-hosted engine's own
-              provider (tickets 34 + 35), mirroring what
+              fields, "(Optional)" appended to the rest — mirrors what
               `react/src/components/DefaultProviders.tsx` does in the app.
-              Still gated on the WebUI theme style, since it is Backend.AI
-              product behaviour rather than an engine default. */}
+              Gated on the WebUI preset: it is Backend.AI product behaviour,
+              so the Astryx baseline keeps the engine default's asterisk. */}
           <FormConfigProvider
             {...(isWebUIStyle && {
               requiredMark: (label, { required }) => (
