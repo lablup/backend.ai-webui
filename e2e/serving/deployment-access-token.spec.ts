@@ -71,8 +71,10 @@ async function addProvisionedRevision(
   page: Page,
   fixtures: DeploymentFixtures,
 ): Promise<void> {
+  // `BAITabList` / Astryx `TabList` renders a `nav[aria-label="Tabs"]` of
+  // plain `<button>`s — `role="tablist"` is never emitted.
   await page
-    .getByRole('tablist')
+    .getByRole('navigation', { name: 'Tabs' })
     .getByRole('button', { name: 'Add Revision' })
     .click();
   const dialog = page.getByRole('dialog', { name: /Add Revision/ });
@@ -179,10 +181,17 @@ test.describe(
           name: 'Create Access Token',
         });
         await expect(createTokenDialog).toBeVisible({ timeout: 10000 });
-        await expect(
-          createTokenDialog.getByRole('combobox', { name: 'Expiration' }),
-        ).toBeVisible();
-        await expect(createTokenDialog.getByText('7 Days')).toBeVisible();
+        const expirationCombobox = createTokenDialog.getByRole('combobox', {
+          name: 'Expiration',
+        });
+        await expect(expirationCombobox).toBeVisible();
+        // Verify the default expiration is "7 Days", read off the combobox's
+        // own displayed value. An unscoped `getByText('7 Days')` strict-mode-
+        // violates: the dialog also renders a second, unrelated "7 Days" text
+        // node inside a `getByLabel('Days')` element (observed live), so
+        // scope to the combobox we already anchored above instead of an
+        // ambiguous page-wide text search.
+        await expect(expirationCombobox).toHaveText('7 Days');
         await expect(
           createTokenDialog.getByRole('button', { name: 'Cancel' }),
         ).toBeVisible();
