@@ -1,687 +1,1460 @@
-import { transformSorterToOrderString } from '../../helper';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ The project's table: Astryx's `Table` primitive plus a plugin pipeline, behind
+ an antd-v6-shaped prop contract.
+
+ ## The prop contract (read this before touching a call site)
+
+ The public surface is deliberately antd-v6-shaped — `dataSource`, `rowKey`,
+ `size`, `bordered`, `columns` (`BAIColumnsType`) and friends. Several hundred
+ call sites carried over from the antd era use those names; renaming them buys
+ nothing and breaks all of them. See
+ `.claude/rules/component-props-extension.md` ("Frozen antd-v6-shaped prop
+ vocabulary"). Everything Astryx exposes that this file does NOT rename is
+ inherited rather than restated — `InheritedTableProps` (FR-3564).
+
+ ## Plugin order is load-bearing
+
+ Astryx runs columnSettings -> sort -> tree -> selection -> pagination, then
+ unknown names in insertion order. `resize` / `sticky` / `scrollX` / `scrollY` /
+ `cellRow` / `expansion` must stay last: most read the FINAL column list, and
+ `scrollY` must run before `cellRow` so a consumer's `onCell` wins.
+
+ Pagination is deliberately NOT the `useTablePagination` plugin: BUI renders its
+ own bottom bar next to the settings gear, and the plugin hides itself on a
+ single page, which antd never does.
+
+ ## Deliberate capability drops
+
+ Each is documented where it happens: multi-level headers (`flattenColumns`),
+ `expandedRowRender` (`astryxData`), `loading`'s spinner (the dim wrapper),
+ column-level `fixed` (`stickyConfig`), `scroll.x`/`.y` (the `scroll` prop).
+ Row virtualization is DEFERRED by an explicit product decision (2026-08-07) —
+ do not add it without re-opening that decision.
+*/
+import { useControllableValue } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
-import BAIFlex from '../BAIFlex';
-import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { BAIConfigProvider } from '../provider';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
+import './BAITable.css';
 import BAITableColumnCSVExportModal from './BAITableColumnCSVExportModal';
 import BAITableSettingModal from './BAITableSettingModal';
+import type {
+  BAIAnyObject,
+  BAIColumnType,
+  BAIColumnsType,
+  BAIExportSettings,
+  BAITableColumnOverrideItem,
+  BAITableSettings,
+} from './tableTypes';
 import {
-  LoadingOutlined,
-  MoreOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
-import { useControllableValue, useDebounce } from 'ahooks';
+  columnTitleToPlainText,
+  isColumnVisible,
+  renderColumnTitle,
+} from './tableTypes';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Icon } from '@astryxdesign/core/Icon';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Pagination } from '@astryxdesign/core/Pagination';
+import type { PaginationProps } from '@astryxdesign/core/Pagination';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
 import {
-  Dropdown,
-  Pagination,
   Table,
-  type TablePaginationConfig,
-  type TableProps,
-} from 'antd';
-import { createStyles } from 'antd-style';
-import type { AnyObject, GetProps } from 'antd/es/_util/type';
-import type { ColumnType, ColumnsType } from 'antd/es/table';
+  pixel,
+  proportional,
+  useTableColumnResize,
+  useTableColumnSettings,
+  useTableSelection,
+  useTableSortable,
+  useTableStickyColumns,
+} from '@astryxdesign/core/Table';
+import type {
+  TableColumn,
+  TableDensity,
+  TablePlugin,
+  TableProps,
+  TableSortState,
+} from '@astryxdesign/core/Table';
+import { Text } from '@astryxdesign/core/Text';
 import classNames from 'classnames';
-import _ from 'lodash';
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Resizable, type ResizeCallbackData } from 'react-resizable';
+import * as _ from 'lodash-es';
+import {
+  ChevronDown,
+  ChevronRight,
+  FileDown,
+  Inbox,
+  Settings,
+} from 'lucide-react';
+import React, { useState, type ReactNode } from 'react';
+
+/** Internal row shape Astryx's generic constraint requires. */
+type AnyRow = Record<string, unknown>;
+/**
+ * PUBLIC record constraint. Deliberately looser than `AnyRow` so the ~70
+ * consumers that write `BAITableProps<SomeRelayNode>` type-check — a Relay
+ * node interface does not satisfy Astryx's `Record<string, unknown>`. Rows are
+ * cast to `AnyRow` at the Astryx boundary.
+ */
+type AnyRecord = BAIAnyObject;
+
+/** Synthetic key of the injected expand-chevron column. */
+const EXPAND_COLUMN_KEY = '__bai_expand__';
+/**
+ * Key Astryx's selection plugin gives its injected checkbox column. Not
+ * exported by the package, so it is mirrored here — only used to keep the
+ * checkbox inside the pinned start run.
+ */
+const SELECTION_COLUMN_KEY = '__xds_selection';
+/**
+ * Width of that injected column: the 24px first-column inset Astryx applies to
+ * a bleeding table + the 20px checkbox + the 8px trailing cell pad. Without it
+ * the plugin's default 36px leaves 4px of content box and the checkbox
+ * overhangs its own cell (FR-3482 QA finding Q-14).
+ */
+const SELECTION_COLUMN_WIDTH = 52;
+/**
+ * Width of the injected expand-chevron column, derived the same way as
+ * SELECTION_COLUMN_WIDTH: first-column inset + the 24px `size="sm"` IconButton
+ * + the 8px trailing cell pad. A flat 40 left the chevron's 24px hover pill
+ * ending exactly on the cell's right border edge, where the cell's
+ * `overflow: hidden` sheared its rounded corner flat (FR-3556).
+ */
+const EXPAND_COLUMN_WIDTH_FIRST = 56;
+/** Behind a selection column the chevron is no longer `:first-child`, so it
+ * gets the ordinary 8px lead-in instead of the 24px inset. */
+const EXPAND_COLUMN_WIDTH_AFTER_SELECTION = 40;
+/** Marker field placed on the synthetic detail rows. */
+const DETAIL_ROW_MARKER = '__bai_detail_for__';
+
+const EMPTY_STATE_ICON = <Icon icon={Inbox} size="lg" color="secondary" />;
+
+const isDetailRow = (item: unknown): item is Record<string, unknown> =>
+  !!item &&
+  typeof item === 'object' &&
+  DETAIL_ROW_MARKER in (item as Record<string, unknown>);
+
+/** Scroll-mode cell styles; module-scope so cells keep a stable identity. */
+const X_HEADER_RELEASE: React.CSSProperties = {
+  width: 'auto',
+  maxWidth: 'none',
+};
+const X_BODY_RELEASE: React.CSSProperties = { maxWidth: 'none' };
+// Inline beats every @layer, restoring the pinned header's z 3 over the
+// sticky-header rule. Why: BAITable.css.
+const Y_PINNED_HEADER_STACK: React.CSSProperties = { zIndex: 3 };
+
+/** antd scroll values: numbers are px, strings pass through. */
+const toCssLength = (value: number | string): string =>
+  typeof value === 'number' ? `${value}px` : value;
+
+/** Merges inline style onto a cell's html props, keeping what plugins set. */
+const mergeCellStyle = <
+  P extends { htmlProps: { style?: React.CSSProperties } },
+>(
+  props: P,
+  extra: React.CSSProperties,
+): P => ({
+  ...props,
+  htmlProps: {
+    ...props.htmlProps,
+    style: props.htmlProps.style
+      ? { ...props.htmlProps.style, ...extra }
+      : extra,
+  },
+});
+
+/* -------------------------------------------------------------------------- */
+/* Public prop contract                                                        */
+/* -------------------------------------------------------------------------- */
+
+export interface BAITableRowSelection<RecordType> {
+  /** Only `'checkbox'` is implemented; `'radio'` is dropped (see ticket 25). */
+  type?: 'checkbox';
+  selectedRowKeys?: ReadonlyArray<React.Key>;
+  onChange?: (
+    selectedRowKeys: Array<React.Key>,
+    selectedRows: Array<RecordType>,
+  ) => void;
+  /** antd parity: only `disabled` is honoured. */
+  getCheckboxProps?: (record: RecordType) => { disabled?: boolean };
+  /** Keys of rows that are not on the current page survive a select-all. */
+  preserveSelectedRowKeys?: boolean;
+  /** Accessible per-row checkbox label, e.g. `record => record.name`. */
+  getRowLabel?: (record: RecordType) => string;
+}
 
 /**
- * Configuration interface for BAITable pagination
- * Extends Ant Design's TablePaginationConfig but omits 'position' property
+ * Astryx's `Pagination` props, minus what the bottom bar renames or owns.
+ * `pageSize` / `pageSizeOptions` / `size` / `variant` and the rest are
+ * inherited and forwarded, so the bar gains Astryx's knobs without restating
+ * them (FR-3564).
  */
-interface BAITablePaginationConfig extends Omit<
-  TablePaginationConfig,
-  'position'
-> {
-  /** Additional content to display in the pagination area */
+type InheritedPaginationProps = Omit<
+  PaginationProps,
+  // Renamed by the frozen antd vocabulary
+  | 'page' // -> current
+  | 'totalItems' // -> total
+  | 'onChange' // -> onChange(page, pageSize)
+  // Owned by the bottom bar: derived from the table's own state
+  | 'onPageSizeChange'
+  | 'label'
+  | 'ref'
+  // Unsupported: slicing, range text and row indices all derive from `total`,
+  // which the bar always passes as `totalItems`, so neither can drive anything
+  | 'totalPages'
+  | 'hasMore'
+>;
+
+export interface BAITablePaginationConfig extends InheritedPaginationProps {
+  current?: number;
+  defaultCurrent?: number;
+  defaultPageSize?: number;
+  /**
+   * Omit it and the table slices `dataSource` itself. Pass a `total` greater
+   * than `dataSource.length` to declare the rows already sliced server-side,
+   * and the table leaves them alone (antd's `pageData` rule).
+   */
+  total?: number;
+  onChange?: (page: number, pageSize: number) => void;
+  /**
+   * antd parity. Astryx's `Pagination` renders the size selector exactly when
+   * `pageSizeOptions` is passed, so `false` here simply withholds them — the
+   * page-size dropdown is noise inside the small fixed-page modals
+   * (`BAIBulkErrorModal`, the artifact modals) that ask for it.
+   */
+  showSizeChanger?: boolean;
+  /**
+   * antd parity: suppress the whole bottom bar while everything fits on one
+   * page. Only `BAIBulkErrorModal` asks for it (a 3-row failure list should
+   * not grow a pager).
+   */
+  hideOnSinglePage?: boolean;
+  /** Extra node rendered at the end of the bottom bar. */
   extraContent?: ReactNode;
 }
 
-/**
- * Column override properties that can be customized
- * Used to override default column behavior like visibility
- */
-export interface BAITableColumnOverrideItem {
-  /** Override the default visibility of a column */
-  hidden?: boolean;
-  // Future extensibility: width?, pinned?, etc.
-  // order?: number; // Override column order
+export interface BAITableExpandable<RecordType> {
+  expandedRowRender?: (record: RecordType, index: number) => ReactNode;
+  rowExpandable?: (record: RecordType) => boolean;
+  expandedRowKeys?: ReadonlyArray<React.Key>;
+  defaultExpandedRowKeys?: ReadonlyArray<React.Key>;
+  onExpandedRowsChange?: (expandedKeys: ReadonlyArray<React.Key>) => void;
+  /** Header content of the chevron column (the scheduling-history kebab menu). */
+  columnTitle?: ReactNode;
+  columnWidth?: number;
 }
+
 /**
- * Record type mapping column keys to their override configurations
+ * Astryx's own props, minus everything this wrapper renames or owns. The
+ * renamed ones (`data`/`columns`/`idKey`) are also the only generic-in-`T`
+ * props, so the remainder is instantiated at `AnyRow` — which keeps the public
+ * `RecordType` constraint loose enough for the Relay node types call sites
+ * pass, while Astryx's own is `Record<string, unknown>`.
  */
-export type BAITableColumnOverrideRecord = Record<
-  string,
-  BAITableColumnOverrideItem
+type InheritedTableProps = Omit<
+  TableProps<AnyRow>,
+  // Renamed by the frozen antd-v6-shaped vocabulary
+  | 'data' // -> dataSource
+  | 'columns' // -> BAIColumnsType, not TableColumn[]
+  | 'idKey' // -> rowKey
+  | 'density' // -> size
+  | 'dividers' // -> bordered
+  // Owned here: derived from `pagination`, or fixed internally
+  | 'rowIndexStart'
+  | 'rowCount'
+  | 'children'
+  | 'scrollWrapper'
+  | 'ref'
+  // Owned here: a string is wrapped in the default EmptyState (see below)
+  | 'emptyState'
+  // Owned here: these land on the dim/scroll WRAPPER, not on the `<table>`
+  | 'className'
+  | 'style'
+  // Owned here: the pipeline is assembled below and its order is load-bearing
+  | 'plugins'
+  // Not offered: antd's `onChange(pagination, filters, sorter)` habit would
+  // otherwise compile as a form handler on the `<table>`.
+  | 'onChange'
 >;
 
-/**
- * Configuration for table settings including column overrides
- * Supports controllable column visibility and customization
- */
-export interface BAITableSettings {
-  /** Current column property overrides that differ from defaults (controllable) */
-  columnOverrides?: Record<string, BAITableColumnOverrideItem>;
-  /** Default column overrides to use initially */
-  defaultColumnOverrides?: Record<string, BAITableColumnOverrideItem>;
-  /** Callback function called when column overrides change */
-  onColumnOverridesChange?: (
-    overrides: Record<string, BAITableColumnOverrideItem>,
-  ) => void;
-}
-
-export interface BAIExportSettings {
-  supportedFields: string[];
-  onExport: (selectedExportKeys: string[]) => Promise<void>;
-}
-
-/**
- * Extended column type for BAITable with additional properties
- * Extends Ant Design's ColumnType with custom BAI-specific features
- */
-export interface BAIColumnType<
-  RecordType = any,
-> extends ColumnType<RecordType> {
-  /** Whether this column should be hidden by default */
-  defaultHidden?: boolean;
-  /** Whether this column is required and cannot be hidden by users */
-  required?: boolean;
-  /** Key(s) to use for CSV export. If not provided, dataIndex will be used.
-   * When multiple columns share the same exportKey(s), they are grouped
-   * together in the export modal (toggling one toggles all). */
-  exportKey?: string | string[];
-}
-
-export interface BAIColumnGroupType<RecordType = AnyObject> extends Omit<
-  BAIColumnType<RecordType>,
-  'dataIndex'
-> {
-  children: ColumnsType<RecordType>;
-}
-
-/**
- * Array type for BAI table columns
- */
-export type BAIColumnsType<RecordType = any> = (
-  | BAIColumnGroupType<RecordType>
-  | BAIColumnType<RecordType>
-)[];
-
-/**
- * Utility function to determine if a column should be visible
- * Takes into account required columns, overrides, and default visibility
- *
- * @param column - The column configuration
- * @param columnKey - The unique key for the column
- * @param overrides - Column override settings
- * @returns Whether the column should be visible
- */
-export const isColumnVisible = (
-  column: BAIColumnType<any>,
-  columnKey: string,
-  overrides?: Record<string, BAITableColumnOverrideItem>,
-): boolean => {
-  // Required columns are always visible
-  if (column.required) {
-    return true;
-  }
-
-  // Use hidden value from overrides if exists, otherwise use default value (!defaultHidden)
-  const override = overrides?.[columnKey];
-  return override?.hidden !== undefined
-    ? !override.hidden
-    : !column.defaultHidden;
-};
-
-/**
- * Filters columns to return only visible ones based on overrides
- *
- * @param columns - Array of column configurations
- * @param overrides - Column override settings
- * @returns Filtered array of visible columns
- */
-export const getVisibleColumns = (
-  columns: BAIColumnsType,
-  overrides?: Record<string, BAITableColumnOverrideItem>,
-): BAIColumnsType => {
-  return columns.filter((col) => {
-    const key = col.key?.toString();
-    if (!key) return true;
-    return isColumnVisible(col, key, overrides);
-  });
-};
-
-/**
- * Restores a specific column to its default settings by removing its override
- *
- * @param overrides - Current column overrides
- * @param columnKey - Key of the column to restore
- * @returns New overrides object without the specified column override
- */
-export const restoreColumnToDefault = (
-  overrides: Record<string, BAITableColumnOverrideItem>,
-  columnKey: string,
-): Record<string, BAITableColumnOverrideItem> => {
-  const newOverrides = { ...overrides };
-  delete newOverrides[columnKey];
-  return newOverrides;
-};
-
-/**
- * Restores all columns to their default settings by clearing all overrides
- *
- * @returns Empty overrides object
- */
-export const restoreAllColumnsToDefault = (): Record<
-  string,
-  BAITableColumnOverrideItem
-> => {
-  return {};
-};
-type BAITableBaseProps<RecordType> = Omit<TableProps<RecordType>, 'onChange'>;
-
-/**
- * Props interface for BAITable component
- * Extends Ant Design's TableProps with additional BAI-specific features
- */
 export interface BAITableProps<
-  RecordType extends AnyObject,
-> extends BAITableBaseProps<RecordType> {
-  /** Pagination configuration or false to disable pagination */
-  pagination?: false | BAITablePaginationConfig;
-  /** Whether columns should be resizable */
-  resizable?: boolean;
-  /** Current sort order string (e.g., 'name' or '-name' for descending) */
-  order?: string | null;
-  /** Callback function called when sort order changes */
-  onChangeOrder?: (order?: string) => void;
-  /** Table settings including column visibility controls */
-  tableSettings?: BAITableSettings;
-  /** CSV Export settings */
-  exportSettings?: BAIExportSettings;
-  /** Array of column configurations using BAIColumnType */
+  RecordType extends AnyRecord = AnyRecord,
+> extends InheritedTableProps {
   columns?: BAIColumnsType<RecordType>;
+  dataSource?: ReadonlyArray<RecordType>;
+  rowKey?: string | ((record: RecordType) => React.Key);
+  /** antd density names, mapped to Astryx `density`. */
+  size?: 'small' | 'middle' | 'large';
+  /** Dims the rows while a refetch is in flight (no spinner — see header). */
+  loading?: boolean;
+  /** Kept for parity with the retired antd engine; behaves like `loading`. */
   spinnerLoading?: boolean;
+  /** Drag-to-resize column borders. Defaults to on; pass `false` to opt out. */
+  resizable?: boolean;
+  /** Backend.AI order string, e.g. `-created_at`. */
+  order?: string | null;
+  onChangeOrder?: (order?: string) => void;
+  rowSelection?: BAITableRowSelection<RecordType>;
+  pagination?: false | BAITablePaginationConfig;
+  tableSettings?: BAITableSettings;
+  exportSettings?: BAIExportSettings;
+  expandable?: BAITableExpandable<RecordType>;
+  /**
+   * Rendered in place of the body when `dataSource` is empty. A string is
+   * wrapped in the default `EmptyState` (icon + padding); any other node is
+   * rendered as-is; `false` renders nothing.
+   */
+  emptyState?: ReactNode | false;
+  /** antd parity shim — only `emptyText` is honoured, same wrapping rules. */
+  locale?: { emptyText?: ReactNode };
+  /** antd `onRow` — only the returned handlers/style/className are applied. */
+  onRow?: (
+    record: RecordType,
+    index?: number,
+  ) => React.HTMLAttributes<HTMLTableRowElement>;
+  /**
+   * Column pinning. `true` when any column declares `fixed`; the contiguous
+   * run of `fixed: 'left' | true` columns is pinned to the start edge and the
+   * run of `fixed: 'right'` columns to the end edge (Astryx
+   * `useTableStickyColumns` semantics).
+   */
+  sticky?: boolean;
+  /** antd `bordered` -> Astryx `dividers="grid"`. */
+  bordered?: boolean;
+  /**
+   * antd `scroll`, both axes. `x`: width-less columns drop their proportional
+   * width so content defines them and the table goes `table-layout: auto`;
+   * pixel/resized columns stay fixed and keep truncating. `y`: the wrapper is
+   * capped at `y` and every `<th>` sticks. The header's bottom rule belongs to
+   * the COLLAPSED table border, so it scrolls away with the rows.
+   */
+  scroll?: { x?: number | string | true; y?: number | string };
+  /**
+   * Hide the header row. Astryx's `Table` has no such prop (its header carries
+   * the sort controls and the select-all checkbox), so this is done in CSS:
+   * a wrapper class collapses `thead`. Only use it for list-shaped tables with
+   * a single unlabelled column — the ChatPage history drawer is the one call
+   * site. Sorting / selection remain unreachable while it is on.
+   */
+  showHeader?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Column adaptation                                                           */
+/* -------------------------------------------------------------------------- */
+
+const DENSITY_BY_SIZE: Record<string, TableDensity> = {
+  small: 'compact',
+  middle: 'balanced',
+  large: 'spacious',
+};
+
+const toAstryxAlign = (align?: string) =>
+  align === 'right' ? 'end' : align === 'center' ? 'center' : undefined;
+
+/** `sortKey` override, else antd `dataIndex` -> the order-string field name. */
+const sortKeyOf = (column: BAIColumnType<any>, key: string) =>
+  column.sortKey ??
+  (column.dataIndex
+    ? Array.isArray(column.dataIndex)
+      ? column.dataIndex.join('.')
+      : String(column.dataIndex)
+    : key);
+
+const columnKeyOf = (column: BAIColumnType<any>, index: number) =>
+  column.key?.toString() ??
+  (column.dataIndex ? String(column.dataIndex) : `index_${index}`);
+
+/**
+ * The cell VALUE for a column. A column with no `dataIndex` has no value, so
+ * this returns `undefined`; the record reaches `render` through its SECOND
+ * argument (`(value, record, index)`). Do NOT re-implement rc-table's quirk of
+ * returning the whole record for an empty path — call sites write
+ * `render: (_value, row) => …`. Pinned by `BAITable.cellValue.test.tsx`.
+ */
+const readDataIndex = (record: AnyRow, dataIndex: unknown): unknown => {
+  if (dataIndex == null) return undefined;
+  return Array.isArray(dataIndex)
+    ? _.get(record, dataIndex as Array<string>)
+    : (record as AnyRow)[String(dataIndex)];
+};
+
+/**
+ * A column entry after group flattening — the leaf column plus the title of
+ * the group it came from (`undefined` for top-level columns).
+ */
+interface FlatColumn<RecordType> {
+  key: string;
+  column: BAIColumnType<RecordType>;
+  groupTitle?: ReactNode;
 }
 
 /**
- * BAITable - Enhanced table component with column management and sorting
- *
- * A comprehensive table component that extends Ant Design's Table with:
- * - Column visibility controls with settings modal
- * - Resizable columns support
- * - Enhanced sorting with order string support
- * - Persistent column overrides
- * - Custom pagination layout
- *
- * @param props - BAITableProps configuration
- * @returns React element
- *
- * @example
- * ```tsx
- * const columns = [
- *   { title: 'Name', dataIndex: 'name', key: 'name' },
- *   { title: 'Age', dataIndex: 'age', key: 'age', defaultHidden: true }
- * ];
- *
- * <BAITable
- *   columns={columns}
- *   dataSource={data}
- *   tableSettings={{
- *     columnOverrides: {},
- *     onColumnOverridesChange: setColumnOverrides
- *   }}
- * />
- * ```
+ * PILOT-DECISION — multi-level headers. antd renders a spanning `<th>` above
+ * the group's children (`colSpan`). Astryx's data-driven table has one header
+ * row and no span contract, so the group is flattened and its title is
+ * rendered as a muted caption above each child header. Nesting deeper than one
+ * level is flattened recursively the same way (the captions concatenate with
+ * ` / `).
  */
-const BAITable = <RecordType extends object = any>({
-  resizable = false,
+const flattenColumns = <RecordType extends AnyRecord>(
+  columns: BAIColumnsType<RecordType> | undefined,
+  groupTitle?: ReactNode,
+): Array<FlatColumn<RecordType>> =>
+  _.flatMap(columns ?? [], (column, index): Array<FlatColumn<RecordType>> => {
+    if ('children' in column && !_.isEmpty(column.children)) {
+      const ownTitle = renderTitle(column);
+      const nextTitle =
+        groupTitle == null ? (
+          ownTitle
+        ) : (
+          <>
+            {groupTitle} / {ownTitle}
+          </>
+        );
+      return flattenColumns(
+        column.children as BAIColumnsType<RecordType>,
+        nextTitle,
+      );
+    }
+    return [
+      {
+        key: columnKeyOf(column, index),
+        column: column as BAIColumnType<RecordType>,
+        groupTitle,
+      },
+    ];
+  });
+
+/**
+ * `renderColumnTitle` / `columnTitleToPlainText` live in `tableTypes` — they
+ * are facts about the COLUMN MODEL, and the app's legacy
+ * `TableColumnsSettingModal` needs the same flattening.
+ */
+const renderTitle = renderColumnTitle;
+
+/**
+ * The label a column carries in the settings / export modals: its own title,
+ * prefixed by its group's when it has one, so a nested column reads
+ * `Resources / CPU` rather than a bare `CPU` that collides with its siblings
+ * under other groups. Falls back to the column key when the header is textless.
+ */
+const columnPlainLabel = <RecordType extends AnyRecord>({
+  key,
+  column,
+  groupTitle,
+}: FlatColumn<RecordType>): string => {
+  const own = columnTitleToPlainText(renderTitle(column)).trim();
+  const group = columnTitleToPlainText(groupTitle).trim();
+  const label = group && own ? `${group} / ${own}` : own || group;
+  return label || key;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Component                                                                   */
+/* -------------------------------------------------------------------------- */
+
+const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   columns,
-  components,
+  dataSource,
+  rowKey = 'id',
+  size = 'small',
   loading,
   spinnerLoading,
+  resizable = true,
   order,
   onChangeOrder,
+  rowSelection,
+  pagination,
   tableSettings,
   exportSettings,
-  ...tableProps
+  expandable,
+  emptyState,
+  locale,
+  onRow,
+  sticky = true,
+  bordered,
+  isStriped,
+  hasHover = true,
+  textOverflow = 'truncate',
+  verticalAlign,
+  scroll,
+  showHeader = true,
+  className,
+  style,
+  ...restTableProps
 }: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
-  const { t } = useTranslation();
-  const { styles } = useStyles();
-  const [resizedColumnWidths, setResizedColumnWidths] = useState<
-    Record<string, number>
-  >(generateResizedColumnWidths(columns));
-  const [columnOverrides, setColumnOverrides] = useControllableValue(
-    tableSettings || {},
-    {
-      valuePropName: 'columnOverrides',
-      defaultValuePropName: 'defaultColumnOverrides',
-      trigger: 'onColumnOverridesChange',
-      defaultValue: {},
-    },
-  );
-  // Merge defaultColumnOverrides with columnOverrides so that defaults apply
-  // for columns not explicitly overridden by the user.
-  const effectiveColumnOverrides = useMemo(() => {
-    const defaults = tableSettings?.defaultColumnOverrides ?? {};
-    const overrides = columnOverrides ?? {};
-    return { ...defaults, ...overrides };
-  }, [tableSettings, columnOverrides]);
-  const [isColumnSettingModalOpen, setIsColumnSettingModalOpen] =
-    useState(false);
+  const { t } = useBAIi18n();
+  const { token } = theme.useToken();
+
+  // rc-table's own mapping of `scroll` onto CSS lengths (`y` has no `true`).
+  const scrollXWidth =
+    scroll?.x == null
+      ? undefined
+      : scroll.x === true
+        ? 'auto'
+        : toCssLength(scroll.x);
+  const isScrollX = scrollXWidth !== undefined;
+  const scrollYHeight = scroll?.y == null ? undefined : toCssLength(scroll.y);
+  const isScrollY = scrollYHeight !== undefined;
+
+  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useControllableValue(
-    tableProps.pagination ? tableProps.pagination : {},
+
+  /* ---- column overrides (visibility / order / width) --------------------- */
+
+  const [columnOverrides, setColumnOverrides] = useControllableValue<
+    Record<string, BAITableColumnOverrideItem>
+  >(tableSettings || {}, {
+    valuePropName: 'columnOverrides',
+    defaultValuePropName: 'defaultColumnOverrides',
+    trigger: 'onColumnOverridesChange',
+    defaultValue: {},
+  });
+
+  const effectiveColumnOverrides = {
+    ...(tableSettings?.defaultColumnOverrides ?? {}),
+    ...(columnOverrides ?? {}),
+  };
+
+  const isColumnReorderEnabled =
+    !!tableSettings && !tableSettings.disableColumnReorder;
+
+  const flatColumns = flattenColumns<RecordType>(columns);
+
+  /* ---- resized widths ---------------------------------------------------- */
+
+  // Widths live in `columnOverrides[key].width` when the table wires
+  // `tableSettings` (so a resize survives a reload exactly like a visibility
+  // toggle); otherwise they are local component state.
+  const [localColumnWidths, setLocalColumnWidths] = useState<
+    Record<string, number>
+  >({});
+
+  const columnWidths = ((): Record<string, number> => {
+    if (!tableSettings) return localColumnWidths;
+    const fromOverrides: Record<string, number> = {};
+    _.forEach(effectiveColumnOverrides, (override, key) => {
+      if (typeof override?.width === 'number')
+        fromOverrides[key] = override.width;
+    });
+    return fromOverrides;
+  })();
+
+  const handleColumnResizeEnd = (updates: Record<string, number>) => {
+    if (!tableSettings) {
+      setLocalColumnWidths((prev) => ({ ...prev, ...updates }));
+      return;
+    }
+    const next: Record<string, BAITableColumnOverrideItem> = {
+      ...(columnOverrides ?? {}),
+    };
+    _.forEach(updates, (width, key) => {
+      // Never persist the synthetic chrome columns.
+      if (key === EXPAND_COLUMN_KEY) return;
+      next[key] = { ...next[key], width };
+    });
+    setColumnOverrides(next);
+  };
+
+  /* ---- row keys ---------------------------------------------------------- */
+
+  /**
+   * Row identity. Falls back `rowKey` -> `key` -> `id` -> position: 10 call
+   * sites declare none and relied on antd's `'key'` default. Without the
+   * fallback every row keys to `"undefined"`, collapsing reconciliation,
+   * selection and expansion onto one identity (seen live on `ErrorLogList`).
+   */
+  const getRowKey = (record: RecordType): string => {
+    if (typeof rowKey === 'function') return String(rowKey(record));
+    const direct = (record as AnyRow)[rowKey as string];
+    if (direct != null) return String(direct);
+    const fallback = (record as AnyRow).key ?? (record as AnyRow).id;
+    if (fallback != null) return String(fallback);
+    const index = _.indexOf(dataSource, record);
+    return `__row_${index}`;
+  };
+
+  /* ---- sort state (controlled `order`, or internal for client sorting) ---- */
+
+  // A table that wires `onChangeOrder` (or drives `order` itself) is
+  // SERVER-sorted: the header only reports intent and the data arrives already
+  // ordered. A table that instead declares comparator `sorter`s and no order
+  // plumbing is CLIENT-sorted — 9 call sites, mostly modals over an
+  // already-fetched array. The antd engine sorted those rows itself; the sort
+  // state and the actual sorting therefore live here for that case, seeded
+  // from the first column that declares `defaultSortOrder`.
+  const isOrderControlled = !!onChangeOrder || order != null;
+  const [uncontrolledOrder, setUncontrolledOrder] = useState<
+    string | undefined
+  >(() => {
+    const seed = _.find(
+      flattenColumns<RecordType>(columns),
+      ({ column }) => !!column.defaultSortOrder,
+    );
+    if (!seed) return undefined;
+    const field = sortKeyOf(seed.column, seed.key);
+    return seed.column.defaultSortOrder === 'descend' ? `-${field}` : field;
+  });
+  const activeOrder = isOrderControlled ? order : uncontrolledOrder;
+
+  const sortedRows = ((): Array<RecordType> => {
+    const source = dataSource ? [...dataSource] : [];
+    if (isOrderControlled || !activeOrder) return source;
+    const isDescending = activeOrder.startsWith('-');
+    const field = isDescending ? activeOrder.slice(1) : activeOrder;
+    const sorter = _.find(
+      flatColumns,
+      ({ key, column }) => sortKeyOf(column, key) === field,
+    )?.column?.sorter;
+    const compare =
+      typeof sorter === 'function'
+        ? sorter
+        : sorter && typeof sorter === 'object'
+          ? sorter.compare
+          : undefined;
+    if (!compare) return source;
+    return source.sort((a, b) =>
+      isDescending ? -compare(a, b, 'descend') : compare(a, b, 'ascend'),
+    );
+  })();
+
+  /* ---- pagination -------------------------------------------------------- */
+
+  const [currentPage, setCurrentPage] = useControllableValue<number>(
+    pagination ? pagination : {},
     {
       valuePropName: 'current',
+      defaultValuePropName: 'defaultCurrent',
       defaultValue: 1,
       trigger: 'no-trigger',
     },
   );
-  const [currentPageSize, setCurrentPageSize] = useControllableValue(
-    tableProps.pagination ? tableProps.pagination : {},
+  const [currentPageSize, setCurrentPageSize] = useControllableValue<number>(
+    pagination ? pagination : {},
     {
       valuePropName: 'pageSize',
+      defaultValuePropName: 'defaultPageSize',
       defaultValue: 10,
       trigger: 'no-trigger',
     },
   );
 
-  const mergedColumns = useMemo(() => {
-    let processedColumns = columns;
+  const total = pagination
+    ? (pagination.total ?? sortedRows.length)
+    : sortedRows.length;
 
-    // Filter hidden columns based on overrides
-    if (tableSettings) {
-      processedColumns = columns?.filter((column) => {
-        const columnKey = column.key?.toString();
-        if (!columnKey) return true;
-        return isColumnVisible(column, columnKey, effectiveColumnOverrides);
-      });
-    }
+  const lastPage = Math.max(1, Math.ceil(total / currentPageSize));
+  // Filtering can shrink the list under the page the user is on; clamp for
+  // display instead of setting state during render, as antd's `usePagination`
+  // does.
+  const activePage = _.clamp(currentPage, 1, lastPage);
+  // `total: 0` is "no data", not an invalid page (FR-3703).
+  const isPageOutOfRange =
+    pagination !== false &&
+    total > 0 &&
+    (currentPage < 1 || currentPage > lastPage);
 
-    // Apply sort direction based on orderString
-    if (order && processedColumns) {
-      processedColumns = processedColumns.map((column) => {
-        // Skip column groups (with children) or columns without dataIndex
-        if ('children' in column || !column.dataIndex || !column.sorter) {
-          return column;
-        }
+  // A `total` larger than the rows we were handed is the caller declaring them
+  // already sliced server-side, so honour that and never re-slice — otherwise
+  // a page past the first indexes past the end and renders nothing.
+  const isServerSliced = total > sortedRows.length;
+  const pagedRows =
+    pagination !== false &&
+    !isServerSliced &&
+    sortedRows.length > currentPageSize
+      ? sortedRows.slice(
+          (activePage - 1) * currentPageSize,
+          activePage * currentPageSize,
+        )
+      : sortedRows;
+  const rows = isPageOutOfRange ? [] : pagedRows;
 
-        const dataIndex = Array.isArray(column.dataIndex)
-          ? column.dataIndex.join('.')
-          : column.dataIndex.toString();
+  /* ---- expandable -------------------------------------------------------- */
 
-        // Check if this column matches the field in orderString
-        // Remove the "-" prefix if present to compare the field name
-        const orderField = order.startsWith('-') ? order.substring(1) : order;
+  const [uncontrolledExpandedKeys, setUncontrolledExpandedKeys] = useState<
+    Array<React.Key>
+  >(() => [...(expandable?.defaultExpandedRowKeys ?? [])]);
 
-        if (dataIndex === orderField) {
-          return {
-            ...column,
-            sortOrder: order.startsWith('-') ? 'descend' : 'ascend',
-          };
-        }
+  const expandedKeys = expandable?.expandedRowKeys
+    ? expandable.expandedRowKeys
+    : uncontrolledExpandedKeys;
+  const expandedKeySet = new Set(_.map(expandedKeys, String));
 
-        return column;
-      });
-    }
+  const hasExpandable = !!expandable?.expandedRowRender;
+  const expandColumnWidth =
+    expandable?.columnWidth ??
+    (rowSelection
+      ? EXPAND_COLUMN_WIDTH_AFTER_SELECTION
+      : EXPAND_COLUMN_WIDTH_FIRST);
+  /** Detail rows start where the first data column does: past the selection
+   * and chevron columns. */
+  const detailInsetStart =
+    (rowSelection ? SELECTION_COLUMN_WIDTH : 0) + expandColumnWidth;
 
-    return !resizable
-      ? processedColumns
-      : _.map(
-          processedColumns,
-          (column, index) =>
-            ({
-              ...column,
-              width:
-                resizedColumnWidths[columnKeyOrIndexKey(column, index)] ||
-                column.width,
-              onHeaderCell: (column: ColumnType<RecordType>) => {
-                return {
-                  width: column.width,
-                  onResize: (_e, { size }) => {
-                    setResizedColumnWidths((prev) => ({
-                      ...prev,
-                      [columnKeyOrIndexKey(column, index)]: size.width,
-                    }));
-                  },
-                } as GetProps<typeof ResizableTitle>;
-              },
-            }) as ColumnType<RecordType>,
-        );
-  }, [
-    resizable,
-    columns,
-    resizedColumnWidths,
-    order,
-    tableSettings,
-    effectiveColumnOverrides,
-  ]);
-
-  const isValidPageNumber = () => {
-    const total =
-      (tableProps.pagination && tableProps.pagination.total) ||
-      tableProps.dataSource?.length ||
-      0;
-    if (total === 0 && currentPage === 1) {
-      // skip validation when there is no data
-      return true;
-    }
-    const totalPages = Math.ceil(total / currentPageSize);
-    return currentPage >= 1 && currentPage <= totalPages;
+  const toggleExpanded = (key: string) => {
+    const next = expandedKeySet.has(key)
+      ? _.filter(expandedKeys, (k) => String(k) !== key)
+      : [...expandedKeys, key];
+    if (!expandable?.expandedRowKeys) setUncontrolledExpandedKeys(next);
+    expandable?.onExpandedRowsChange?.(next);
   };
 
-  return (
-    <BAIFlex direction="column" align="stretch" gap={'sm'}>
-      <BAIConfigProvider
-        renderEmpty={
-          isValidPageNumber()
+  /** Row index of the ORIGINAL record, needed by antd-shaped `render`. */
+  const rowIndexByKey = new Map<string, number>();
+  _.forEach(rows, (record, index) =>
+    rowIndexByKey.set(getRowKey(record), index),
+  );
+
+  /**
+   * The data actually handed to Astryx: the real rows with a synthetic detail
+   * row interleaved after every expanded one. Detail rows are ordinary objects
+   * carrying a marker field; the expansion plugin recognises them and replaces
+   * their cells with a single full-span `<td>`.
+   */
+  const astryxData = ((): Array<AnyRow> => {
+    if (!hasExpandable) return rows as Array<AnyRow>;
+    const out: Array<AnyRow> = [];
+    _.forEach(rows, (record) => {
+      out.push(record as AnyRow);
+      const key = getRowKey(record);
+      if (
+        expandedKeySet.has(key) &&
+        (expandable?.rowExpandable?.(record) ?? true)
+      ) {
+        out.push({ [DETAIL_ROW_MARKER]: key, id: `${key}__detail` });
+      }
+    });
+    return out;
+  })();
+
+  // Built from the FULL list, not the page: `emitSelection` resolves selected
+  // keys through it, and `preserveSelectedRowKeys` keeps keys from other pages.
+  const recordByKey = new Map<string, RecordType>();
+  _.forEach(sortedRows, (record) => recordByKey.set(getRowKey(record), record));
+
+  /* ---- Astryx columns ---------------------------------------------------- */
+
+  const astryxColumns = ((): Array<TableColumn<AnyRow>> => {
+    const built: Array<TableColumn<AnyRow>> = [];
+
+    if (hasExpandable) {
+      built.push({
+        key: EXPAND_COLUMN_KEY,
+        header: expandable?.columnTitle ?? '',
+        width: pixel(expandColumnWidth),
+        resizable: false,
+        renderCell: (item) => {
+          if (isDetailRow(item)) return null;
+          const record = item as RecordType;
+          if (!(expandable?.rowExpandable?.(record) ?? true)) return null;
+          const key = getRowKey(record);
+          const isExpanded = expandedKeySet.has(key);
+          return (
+            <IconButton
+              label={String(t('comp:BAITable.ExpandRow'))}
+              icon={isExpanded ? <ChevronDown /> : <ChevronRight />}
+              variant="ghost"
+              size="sm"
+              onClick={() => toggleExpanded(key)}
+            />
+          );
+        },
+      });
+    }
+
+    _.forEach(flatColumns, ({ key, column, groupTitle }) => {
+      const width = column.width;
+      const persistedWidth = columnWidths[key];
+      const numericWidth =
+        typeof persistedWidth === 'number'
+          ? persistedWidth
+          : typeof width === 'number'
+            ? width
+            : undefined;
+
+      // Header text is clipped, not overflowed. Astryx puts a plain-string
+      // `header` straight into the `<th>` (which is `overflow: visible`), so a
+      // label longer than its column — `Sudo Session Enabled` in a 120px
+      // column on the user list — visibly runs over the NEXT header instead of
+      // truncating. Wrapping it restores the documented "header cells always
+      // truncate" behaviour without reaching into any design-system class.
+      const header = (
+        <span
+          style={{
+            display: 'block',
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {groupTitle == null ? (
+            renderTitle(column)
+          ) : (
+            <VStack gap={0} align="start">
+              <Text type="supporting" color="secondary">
+                {groupTitle}
+              </Text>
+              <span>{renderTitle(column)}</span>
+            </VStack>
+          )}
+        </span>
+      );
+
+      // x mode: a width-less column carries NO width so its content sizes it;
+      // `column.minWidth` is deliberately ignored there (FR-3500).
+      const astryxWidth =
+        numericWidth != null
+          ? pixel(numericWidth)
+          : isScrollX
             ? undefined
-            : () => (
-                <BAIFlex
-                  direction="column"
-                  align="center"
-                  justify="center"
-                  gap={'sm'}
-                >
-                  <BAIText type="secondary">
-                    {t('comp:BAITable.InvalidPageNumber')}
-                  </BAIText>
-                  <BAIButton
-                    type="primary"
-                    onClick={() => {
-                      setCurrentPage(1);
-                      tableProps.pagination &&
-                        tableProps.pagination.onChange?.(1, currentPageSize);
-                    }}
-                  >
-                    {t('comp:BAITable.GoToFirstPage')}
-                  </BAIButton>
-                </BAIFlex>
-              )
+            : proportional(
+                1,
+                typeof column.minWidth === 'number'
+                  ? { minWidth: column.minWidth }
+                  : undefined,
+              );
+
+      built.push({
+        key,
+        header,
+        align: toAstryxAlign(column.align),
+        sortable: column.sorter ? { sortKey: sortKeyOf(column, key) } : false,
+        resizable: resizable,
+        width: astryxWidth,
+        renderCell: (item) => {
+          if (isDetailRow(item)) return null;
+          const record = item as RecordType;
+          const value = readDataIndex(record, column.dataIndex);
+          const content = column.render
+            ? (column.render(
+                value,
+                record,
+                rowIndexByKey.get(getRowKey(record)) ?? 0,
+              ) as ReactNode)
+            : value == null || value === ''
+              ? null
+              : String(value);
+          // Over budget deliberately: external constraint (Astryx's own plugin
+          // CSS) + a measured value. See comment-density.md.
+          //
+          // Body cells are clipped by the same wrapper the header above uses,
+          // and for the same reason one rung down (FR-3482 QA finding Q-18).
+          //
+          // Astryx DOES clip at the cell — `overflowStyles.cell` sets
+          // `overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+          // max-width:0` when `textOverflow="truncate"`, which this component
+          // requests. But two of its own plugins then re-declare
+          // `overflow: visible` on that same cell so their decoration can bleed
+          // out: `useTableStickyColumns` for the pinned-column shadow, and
+          // `useTableColumnResize` for the full-height drag handle. Only
+          // `overflow` is cancelled — `white-space: nowrap` and `max-width: 0`
+          // survive, so the content has a non-wrapping zero-width box with
+          // nothing clipping it and paints sideways over the next column.
+          // `text-overflow: ellipsis` is inert without `overflow: hidden`.
+          //
+          // Measured on the session scheduling-history nested table: the pinned
+          // `step` cell escaped its box by +30px onto `result`, while an
+          // identically sized NON-pinned cell with 255px of overflow escaped by
+          // 0. Same on `/agent`'s pinned `row_id`.
+          //
+          // Wrapping the CONTENT rather than re-clipping the cell keeps the
+          // plugins' bleed working: the shadow and the drag handle are painted
+          // by the cell, not by this span.
+          if (textOverflow !== 'truncate' || content == null) return content;
+          return (
+            <span
+              style={{
+                display: 'block',
+                minWidth: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {content}
+            </span>
+          );
+        },
+      });
+    });
+
+    return built;
+  })();
+
+  /* ---- visibility + order (feeds the columnSettings plugin) -------------- */
+
+  const activeColumnKeys = ((): Array<string> => {
+    const visible = tableSettings
+      ? _.filter(flatColumns, ({ key, column }) =>
+          isColumnVisible(column, key, effectiveColumnOverrides),
+        )
+      : flatColumns;
+    const ordered = isColumnReorderEnabled
+      ? _.sortBy(
+          visible,
+          ({ key }) =>
+            effectiveColumnOverrides[key]?.order ?? Number.MAX_SAFE_INTEGER,
+        )
+      : visible;
+    return [
+      ...(hasExpandable ? [EXPAND_COLUMN_KEY] : []),
+      ..._.map(ordered, ({ key }) => key),
+    ];
+  })();
+
+  const columnSettingsPlugin = useTableColumnSettings<AnyRow>({
+    columns: [
+      ...(hasExpandable
+        ? [
+            {
+              key: EXPAND_COLUMN_KEY,
+              label: '',
+              isAlwaysVisible: true,
+            },
+          ]
+        : []),
+      ..._.map(flatColumns, (flat) => ({
+        key: flat.key,
+        label: columnPlainLabel(flat),
+        isAlwaysVisible: !!flat.column.required,
+      })),
+    ],
+    activeColumnKeys,
+    // The settings MODAL owns the write path (it also has to preserve `order`
+    // and `width`), so the plugin's own mutation callback is a no-op.
+    onChangeActiveColumnKeys: _.noop,
+  });
+
+  /* ---- sticky (antd column-level `fixed`) -------------------------------- */
+
+  // antd pins per column; Astryx pins a contiguous RUN from each edge, so only
+  // the last `fixed: 'left'` / first `fixed: 'right'` key matters. The
+  // synthetic selection / expand columns sit before every user column, so they
+  // ride along with the start run automatically.
+  const stickyConfig = ((): {
+    startKeys?: Array<string>;
+    endKeys?: Array<string>;
+  } => {
+    if (!sticky) return {};
+    const orderedKeys = _.without(activeColumnKeys, EXPAND_COLUMN_KEY);
+    const columnByKey = _.keyBy(flatColumns, 'key');
+    const startKeys: Array<string> = [];
+    for (const key of orderedKeys) {
+      const fixed = columnByKey[key]?.column?.fixed;
+      if (fixed === 'left' || fixed === true) startKeys.push(key);
+      else break;
+    }
+    const endKeys: Array<string> = [];
+    for (const key of [...orderedKeys].reverse()) {
+      if (columnByKey[key]?.column?.fixed === 'right') endKeys.unshift(key);
+      else break;
+    }
+    if (_.isEmpty(startKeys) && _.isEmpty(endKeys)) return {};
+    return {
+      startKeys: _.isEmpty(startKeys)
+        ? undefined
+        : [
+            ...(rowSelection ? [SELECTION_COLUMN_KEY] : []),
+            ...(hasExpandable ? [EXPAND_COLUMN_KEY] : []),
+            ...startKeys,
+          ],
+      endKeys: _.isEmpty(endKeys) ? undefined : endKeys,
+    };
+  })();
+
+  const stickyPlugin = useTableStickyColumns<AnyRow>(stickyConfig);
+
+  /* ---- per-cell / per-row escape hatches (antd `onCell` / `onRow`) ------- */
+
+  const cellRowPlugin: TablePlugin<AnyRow> = {
+    transformBodyCell: (props, column, item) => {
+      if (isDetailRow(item)) return props;
+      const source = _.find(flatColumns, { key: column.key })?.column;
+      const extra = source?.onCell?.(item as RecordType, 0);
+      if (!extra) return props;
+      return {
+        ...props,
+        htmlProps: {
+          ...props.htmlProps,
+          ...(extra as React.TdHTMLAttributes<HTMLTableCellElement>),
+          style: {
+            ...props.htmlProps.style,
+            ...(extra as { style?: React.CSSProperties }).style,
+          },
+        },
+      };
+    },
+    transformBodyRow: (props, item) => {
+      if (!onRow || isDetailRow(item)) return props;
+      const record = item as RecordType;
+      const extra = onRow(record, rowIndexByKey.get(getRowKey(record)));
+      if (!extra) return props;
+      return {
+        ...props,
+        htmlProps: {
+          ...props.htmlProps,
+          ...extra,
+          style: { ...props.htmlProps.style, ...extra.style },
+        },
+      };
+    },
+  };
+
+  /* ---- x-mode per-column max-width release ------------------------------- */
+
+  // Astryx clips cells with `max-width: 0`; x mode releases width-LESS columns
+  // only, so pixel/resized columns keep truncating (the header release also
+  // cancels the stray % width `resolveColumnWidths` hands width-less columns).
+  const scrollXPlugin: TablePlugin<AnyRow> = {
+    transformHeaderCell: (props, column) =>
+      column.width != null ? props : mergeCellStyle(props, X_HEADER_RELEASE),
+    transformBodyCell: (props, column) =>
+      column.width != null ? props : mergeCellStyle(props, X_BODY_RELEASE),
+  };
+
+  /* ---- y-mode pinned-header z-order restore ------------------------------ */
+
+  const hasPinnedColumns = !!(stickyConfig.startKeys || stickyConfig.endKeys);
+
+  const scrollYPlugin: TablePlugin<AnyRow> = (() => {
+    const pinned = new Set([
+      ...(stickyConfig.startKeys ?? []),
+      ...(stickyConfig.endKeys ?? []),
+    ]);
+    return {
+      transformHeaderCell: (props, column) =>
+        pinned.has(column.key)
+          ? mergeCellStyle(props, Y_PINNED_HEADER_STACK)
+          : props,
+    };
+  })();
+
+  /* ---- sorting ----------------------------------------------------------- */
+
+  const sortState: TableSortState = ((): TableSortState => {
+    if (!activeOrder) return [];
+    const isDescending = activeOrder.startsWith('-');
+    return [
+      {
+        sortKey: isDescending ? activeOrder.slice(1) : activeOrder,
+        direction: isDescending ? 'descending' : 'ascending',
+      },
+    ];
+  })();
+
+  const sortPlugin = useTableSortable<AnyRow>({
+    sort: sortState,
+    allowUnsortedState: true,
+    onSortChange: (next) => {
+      const first = next[0];
+      const nextOrder = !first
+        ? undefined
+        : first.direction === 'descending'
+          ? `-${first.sortKey}`
+          : first.sortKey;
+      if (isOrderControlled) onChangeOrder?.(nextOrder);
+      else setUncontrolledOrder(nextOrder);
+    },
+  });
+
+  /* ---- selection --------------------------------------------------------- */
+
+  const selectedKeySet = new Set(
+    _.map(rowSelection?.selectedRowKeys ?? [], String),
+  );
+
+  const emitSelection = (keys: Array<string>) => {
+    const selectedRows = _.compact(_.map(keys, (key) => recordByKey.get(key)));
+    rowSelection?.onChange?.(keys, selectedRows);
+  };
+
+  const selectionPlugin = useTableSelection<AnyRow>({
+    getIsItemSelectable: (item) => !isDetailRow(item),
+    getIsItemSelected: (item) =>
+      !isDetailRow(item) && selectedKeySet.has(getRowKey(item as RecordType)),
+    getIsItemEnabled: (item) =>
+      isDetailRow(item)
+        ? false
+        : !rowSelection?.getCheckboxProps?.(item as RecordType)?.disabled,
+    getRowLabel: (item) =>
+      isDetailRow(item)
+        ? ''
+        : (rowSelection?.getRowLabel?.(item as RecordType) ??
+          getRowKey(item as RecordType)),
+    getIsAllSelected: () =>
+      rows.length > 0 &&
+      _.every(rows, (record) => selectedKeySet.has(getRowKey(record))),
+    getIsIndeterminate: () =>
+      _.some(rows, (record) => selectedKeySet.has(getRowKey(record))) &&
+      !_.every(rows, (record) => selectedKeySet.has(getRowKey(record))),
+    onSelectItem: ({ item, isSelected }) => {
+      if (isDetailRow(item)) return;
+      const key = getRowKey(item as RecordType);
+      const next = new Set(selectedKeySet);
+      if (isSelected) next.add(key);
+      else next.delete(key);
+      emitSelection(Array.from(next));
+    },
+    onSelectAll: ({ isAllSelected }) => {
+      // `preserveSelectedRowKeys` keeps rows selected on other pages, matching
+      // antd's flag of the same name.
+      const next = new Set(
+        rowSelection?.preserveSelectedRowKeys ? selectedKeySet : [],
+      );
+      _.forEach(rows, (record) => {
+        const key = getRowKey(record);
+        if (isAllSelected) next.add(key);
+        else next.delete(key);
+      });
+      emitSelection(Array.from(next));
+    },
+  });
+
+  /* ---- resize ------------------------------------------------------------ */
+
+  const resizePlugin = useTableColumnResize<AnyRow>({
+    columns: astryxColumns,
+    columnWidths,
+    minWidth: 60,
+    onColumnResizeEnd: handleColumnResizeEnd,
+  });
+
+  /* ---- expansion (custom plugin) ----------------------------------------- */
+
+  const renderedColumnCount = activeColumnKeys.length + (rowSelection ? 1 : 0);
+
+  const expansionPlugin: TablePlugin<AnyRow> = {
+    transformBodyRow: (props, item) => {
+      if (!isDetailRow(item)) return props;
+      const parentKey = String(item[DETAIL_ROW_MARKER]);
+      const record = recordByKey.get(parentKey);
+      if (!record) return props;
+      const index = rowIndexByKey.get(parentKey) ?? 0;
+      return {
+        ...props,
+        children: (
+          <td
+            colSpan={renderedColumnCount}
+            style={{
+              padding: token.paddingSM,
+              paddingInlineStart: detailInsetStart,
+            }}
+          >
+            {expandable?.expandedRowRender?.(record, index)}
+          </td>
+        ),
+      };
+    },
+  };
+
+  /* ---- plugin record ----------------------------------------------------- */
+
+  /**
+   * Give the injected selection column room for its checkbox: the plugin's
+   * default 36px leaves 4px of content box, so the 20px checkbox overhangs
+   * 8px each side. Measured on sessions / admin-users: checkbox left 280 vs a
+   * card content edge of 287 (FR-3482 QA finding Q-14).
+   *
+   * 24 (Astryx first-column inset) + 20 (checkbox) + 8 (trailing pad) = 52.
+   */
+  const selectionWidthPlugin: TablePlugin<AnyRow> = {
+    transformColumns: (cols) =>
+      _.map(cols, (column) =>
+        column.key === SELECTION_COLUMN_KEY
+          ? { ...column, width: pixel(SELECTION_COLUMN_WIDTH) }
+          : column,
+      ),
+  };
+
+  const plugins = ((): Record<string, TablePlugin<AnyRow>> => {
+    const next: Record<string, TablePlugin<AnyRow>> = {
+      // Canonical Astryx order is columnSettings -> sort -> tree -> selection
+      // -> pagination; unknown names (here `resize` / `expansion`) run last.
+      columnSettings: columnSettingsPlugin,
+      sort: sortPlugin,
+    };
+    if (rowSelection) {
+      next.selection = selectionPlugin;
+      next.selectionWidth = selectionWidthPlugin;
+    }
+    if (resizable) next.resize = resizePlugin;
+    next.sticky = stickyPlugin;
+    // Before `cellRow`, so a consumer's `onCell` style still has the last word.
+    if (isScrollX) next.scrollX = scrollXPlugin;
+    // Without pinned columns the y plugin has nothing to lift; the sticky
+    // header itself is pure CSS.
+    if (isScrollY && hasPinnedColumns) next.scrollY = scrollYPlugin;
+    next.cellRow = cellRowPlugin;
+    if (hasExpandable) next.expansion = expansionPlugin;
+    return next;
+  })();
+
+  // Split the BUI-only keys out; anything left in `paginationRest` is a real
+  // `Pagination` prop and is forwarded as-is. The keys this bar computes
+  // itself (`pageSize`, `pageSizeOptions`, `size`) stay in — the explicit
+  // props after the spread win.
+  const {
+    current: _current,
+    defaultCurrent: _defaultCurrent,
+    defaultPageSize: _defaultPageSize,
+    total: _total,
+    onChange: _onChange,
+    showSizeChanger: _showSizeChanger,
+    hideOnSinglePage: _hideOnSinglePage,
+    extraContent: _extraContent,
+    ...paginationRest
+  } = pagination || {};
+
+  const rangeStart = total === 0 ? 0 : (activePage - 1) * currentPageSize + 1;
+  const rangeEnd = Math.min(activePage * currentPageSize, total);
+
+  const isDimmed = !!loading || !!spinnerLoading;
+
+  // antd `hideOnSinglePage`: the pager (not the settings / export buttons)
+  // disappears while everything fits on one page.
+  const isPagerVisible =
+    pagination !== false &&
+    !(pagination?.hideOnSinglePage && total <= currentPageSize);
+
+  const hasBottomBar = isPagerVisible || !!tableSettings || !!exportSettings;
+
+  // Astryx's built-in empty state reads from ITS OWN message catalog
+  // (`@astryx.table.noData`), which ships en/fr only — hence English under a
+  // Korean UI. Owning the node moves the copy onto BUI's catalog and restores
+  // the icon. `false` opts out; a ReactNode override passes through unwrapped.
+  const resolvedEmptyState = emptyState ?? locale?.emptyText;
+  const emptyStateNode = isPageOutOfRange ? (
+    // Product decision (FR-3703): the recovery affordance outranks any
+    // caller-provided empty node, `false` included.
+    <EmptyState
+      isCompact
+      icon={EMPTY_STATE_ICON}
+      title={String(t('comp:BAITable.InvalidPageNumber'))}
+      actions={
+        <BAIButton
+          type="primary"
+          onClick={() => {
+            setCurrentPage(1);
+            pagination?.onChange?.(1, currentPageSize);
+          }}
+        >
+          {t('comp:BAITable.GoToFirstPage')}
+        </BAIButton>
+      }
+    />
+  ) : resolvedEmptyState === false ? (
+    false
+  ) : resolvedEmptyState == null || typeof resolvedEmptyState === 'string' ? (
+    <EmptyState
+      isCompact
+      icon={EMPTY_STATE_ICON}
+      title={resolvedEmptyState ?? String(t('comp:BAITable.NoDataToDisplay'))}
+    />
+  ) : (
+    resolvedEmptyState
+  );
+
+  return (
+    <div className={className} style={style}>
+      {/* PILOT-DECISION: antd's loading overlay (dim + centred spinner over the
+          existing rows) has no Astryx equivalent. Dimming preserves "old data
+          stays readable while refetching"; the spinner is lost. The wrapper
+          holds ONLY the table — Astryx's scroll wrapper claims the full block,
+          so a bottom bar inside it overlaps the last row.
+
+          qa2-c: holding only the table also makes Astryx's scroll wrapper the
+          wrapper's ONLY child, which is why it needs the block-bleed reset
+          below — see BAITable.css. */}
+      <div
+        aria-busy={isDimmed || undefined}
+        className={classNames(
+          // Cancels Astryx's BLOCK-axis container bleed. See
+          // BAITable.css for why this dim wrapper makes the bleed
+          // misfire; without it every table page overlaps its filter row and
+          // its pagination bar by 24px.
+          'bai-table-astryx-dim-layer',
+          !showHeader && 'bai-table-astryx-no-header',
+          // dividers="grid" already draws real column borders; the header
+          // split would double them. See BAITable.css.
+          !bordered && 'bai-table-astryx-header-split',
+          isScrollX && 'bai-table-astryx-scroll-x',
+          isScrollY && 'bai-table-astryx-scroll-y',
+        )}
+        style={
+          {
+            transition: 'opacity .2s ease',
+            ...(isDimmed ? { opacity: 0.5, pointerEvents: 'none' } : null),
+            ...(isScrollX ? { '--bai-table-scroll-x': scrollXWidth } : null),
+            ...(isScrollY ? { '--bai-table-scroll-y': scrollYHeight } : null),
+          } as React.CSSProperties
         }
       >
-        <Table
-          size={tableProps.size || 'small'}
-          showSorterTooltip={false}
-          className={classNames(
-            resizable && styles.resizableTable,
-            styles.neoHeader,
-            tableProps.rowSelection?.columnWidth === 0 &&
-              styles.zeroWithSelectionColumn,
-          )}
-          loading={
-            spinnerLoading
-              ? {
-                  indicator: <LoadingOutlined spin />,
-                  spinning: true,
-                }
+        <Table<AnyRow>
+          {...restTableProps}
+          data={astryxData}
+          columns={astryxColumns}
+          idKey={(item: AnyRow) =>
+            isDetailRow(item)
+              ? `${String(item[DETAIL_ROW_MARKER])}__detail`
+              : getRowKey(item as RecordType)
+          }
+          density={DENSITY_BY_SIZE[size] ?? 'compact'}
+          dividers={bordered ? 'grid' : 'rows'}
+          isStriped={isStriped}
+          hasHover={hasHover}
+          textOverflow={textOverflow}
+          verticalAlign={verticalAlign}
+          emptyState={emptyStateNode}
+          rowCount={total || undefined}
+          rowIndexStart={
+            pagination !== false
+              ? (activePage - 1) * currentPageSize + 1
               : undefined
           }
-          style={{
-            opacity: loading ? 0.6 : 1,
-            transition: 'opacity 0.3s ease',
-          }}
-          components={
-            resizable
-              ? _.merge(components || {}, {
-                  header: {
-                    cell: ResizableTitle,
-                  },
-                })
-              : components
-          }
-          columns={mergedColumns}
-          {...tableProps}
-          onChange={(_pagination, _filters, sorter) => {
-            if (onChangeOrder) {
-              const nextOrder = transformSorterToOrderString(sorter);
-              if (nextOrder !== order) {
-                onChangeOrder(nextOrder);
-              }
-            }
-          }}
-          pagination={
-            tableProps.pagination === false
-              ? false
-              : {
-                  style: {
-                    display: 'none', // Hide default pagination as we're using custom Pagination component below
-                  },
-                  current: currentPage,
-                  pageSize: currentPageSize,
-                }
-          }
+          plugins={plugins}
         />
-      </BAIConfigProvider>
-      {tableProps.pagination !== false && (
-        <BAIFlex justify="end" gap={'xs'}>
-          <Pagination
-            size={tableProps.pagination?.size || 'small'}
-            align="end"
-            pageSizeOptions={['10', '20', '50']}
-            showSizeChanger={true}
-            showTotal={(total, range) => (
-              <BAIPaginationInfoText
-                start={range[0]}
-                end={range[1]}
-                total={total}
-              />
-            )}
-            {...tableProps.pagination}
-            // override props for controlled values
-            total={
-              tableProps.pagination?.total || tableProps.dataSource?.length || 0
-            }
-            onChange={(page, pageSize) => {
-              setCurrentPage(page);
-              setCurrentPageSize(pageSize);
-              if (tableProps.pagination) {
-                tableProps.pagination.onChange?.(page, pageSize);
-              }
-            }}
-            current={currentPage}
-            pageSize={currentPageSize}
-          ></Pagination>
-          <BAIFlex>
-            {tableSettings && (
-              <BAIButton
-                type="text"
-                icon={<SettingOutlined />}
-                onClick={() => setIsColumnSettingModalOpen(true)}
-                size={tableProps.size || 'small'}
-              />
-            )}
-            {exportSettings && (
-              <Dropdown
-                trigger={['click']}
-                menu={{
-                  items: [
-                    {
-                      key: 'export-csv',
-                      label: t('comp:BAITable.ExportCSV'),
-                      onClick: () => setIsExportModalOpen(true),
-                    },
-                  ],
-                }}
-              >
-                <BAIButton
-                  type="text"
-                  icon={<MoreOutlined />}
-                  size={tableProps.size || 'small'}
-                />
-              </Dropdown>
-            )}
-          </BAIFlex>
-          {tableProps.pagination && tableProps.pagination.extraContent}
-        </BAIFlex>
-      )}
+      </div>
 
-      {tableSettings && (
+      {hasBottomBar ? (
+        <HStack
+          justify="end"
+          align="center"
+          gap={2}
+          // Legacy rhythm (qa2-c): the antd `BAITable` root was
+          // `<BAIFlex direction="column" gap="sm">` wrapping [table,
+          // pagination row], i.e. a 12px table->pagination gap. `marginXS`
+          // (8px) shrank it; `marginSM` restores the measured legacy value.
+          style={{ marginTop: token.marginSM }}
+        >
+          {isPagerVisible ? (
+            <>
+              <Text type="supporting" color="secondary">
+                <BAIPaginationInfoText
+                  start={rangeStart}
+                  end={rangeEnd}
+                  total={total}
+                />
+              </Text>
+              <Pagination
+                variant="pages"
+                {...paginationRest}
+                page={activePage}
+                pageSize={currentPageSize}
+                totalItems={total}
+                // Astryx renders the size selector exactly when options are
+                // supplied, so antd's `showSizeChanger={false}` is "no options".
+                pageSizeOptions={
+                  pagination && pagination.showSizeChanger === false
+                    ? undefined
+                    : (pagination?.pageSizeOptions ?? [10, 20, 50])
+                }
+                size={pagination?.size ?? 'sm'}
+                label={String(t('comp:BAITable.Pagination'))}
+                onChange={(page) => {
+                  setCurrentPage(page);
+                  pagination?.onChange?.(page, currentPageSize);
+                }}
+                onPageSizeChange={(pageSize) => {
+                  setCurrentPage(1);
+                  setCurrentPageSize(pageSize);
+                  pagination?.onChange?.(1, pageSize);
+                }}
+              />
+            </>
+          ) : null}
+          {tableSettings ? (
+            <IconButton
+              label={String(t('comp:BAITable.SettingTable'))}
+              icon={<Settings />}
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsSettingModalOpen(true)}
+            />
+          ) : null}
+          {exportSettings ? (
+            <IconButton
+              label={String(t('comp:BAITable.ExportCSV'))}
+              icon={<FileDown />}
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsExportModalOpen(true)}
+            />
+          ) : null}
+          {pagination !== false ? pagination?.extraContent : null}
+        </HStack>
+      ) : null}
+
+      {tableSettings ? (
         <BAIUnmountAfterClose>
           <BAITableSettingModal
-            open={isColumnSettingModalOpen}
-            onRequestClose={(formValues) => {
-              setIsColumnSettingModalOpen(false);
-              if (formValues) {
-                const selectedKeys = formValues.selectedColumnKeys || [];
-                const newOverrides: Record<string, BAITableColumnOverrideItem> =
-                  {};
-
-                // Only store in overrides when different from default values
-                columns?.forEach((col) => {
-                  const key = col.key?.toString();
-                  if (key) {
-                    const shouldBeVisible = selectedKeys.includes(key);
-                    const defaultVisible = !col.defaultHidden;
-
-                    // Only store when different from default
-                    if (shouldBeVisible !== defaultVisible) {
-                      newOverrides[key] = { hidden: !shouldBeVisible };
-                    }
-                  }
-                });
-
-                setColumnOverrides(newOverrides);
-              }
+            open={isSettingModalOpen}
+            columns={_.map(flatColumns, (flat) => ({
+              key: flat.key,
+              label: columnPlainLabel(flat),
+              required: !!flat.column.required,
+            }))}
+            visibleColumnKeys={_.without(activeColumnKeys, EXPAND_COLUMN_KEY)}
+            disableReorder={!isColumnReorderEnabled}
+            onRequestClose={(result) => {
+              setIsSettingModalOpen(false);
+              if (!result) return;
+              const naturalOrder = _.map(flatColumns, ({ key }) => key);
+              const isReordered =
+                isColumnReorderEnabled &&
+                !_.isEqual(result.columnOrder, naturalOrder);
+              const next: Record<string, BAITableColumnOverrideItem> = {};
+              _.forEach(flatColumns, ({ key, column }) => {
+                const override: BAITableColumnOverrideItem = {};
+                const shouldBeVisible = _.includes(
+                  result.selectedColumnKeys,
+                  key,
+                );
+                if (shouldBeVisible === !!column.defaultHidden) {
+                  override.hidden = !shouldBeVisible;
+                }
+                if (isReordered) {
+                  const orderIndex = _.indexOf(result.columnOrder, key);
+                  if (orderIndex !== -1) override.order = orderIndex;
+                }
+                // Resized widths are persisted in the same record; a settings
+                // save must not silently reset them.
+                const persistedWidth = effectiveColumnOverrides[key]?.width;
+                if (typeof persistedWidth === 'number') {
+                  override.width = persistedWidth;
+                }
+                if (!_.isEmpty(override)) next[key] = override;
+              });
+              setColumnOverrides(next);
             }}
-            columns={columns || []}
-            columnOverrides={effectiveColumnOverrides}
-            disableSorter
           />
         </BAIUnmountAfterClose>
-      )}
-      {exportSettings && (
+      ) : null}
+
+      {exportSettings ? (
         <BAIUnmountAfterClose>
           <BAITableColumnCSVExportModal
             open={isExportModalOpen}
-            onRequestClose={() => {
-              setIsExportModalOpen(false);
-            }}
-            columns={columns || []}
+            onRequestClose={() => setIsExportModalOpen(false)}
+            columns={_.map(flatColumns, ({ column }) => column)}
             supportedFields={exportSettings.supportedFields}
             onExport={exportSettings.onExport}
           />
         </BAIUnmountAfterClose>
-      )}
-    </BAIFlex>
+      ) : null}
+    </div>
   );
 };
 
 export default BAITable;
 
-const useStyles = createStyles(({ token, css }) => ({
-  resizableTable: css`
-    .react-resizable-handle {
-      position: absolute;
-      inset-inline-end: 0px;
-      bottom: 0;
-      z-index: 1;
-      width: 10px;
-      height: 100%;
-      cursor: col-resize;
-    }
-    .ant-table-cell {
-      overflow: hidden;
-      white-space: 'pre';
-      word-wrap: 'break-word';
-    }
-  `,
-  neoHeader: css`
-    thead.ant-table-thead > tr > th.ant-table-cell {
-      font-weight: 500;
-      color: ${token.colorTextTertiary};
-    }
-    body:not(.dark-theme) & .ant-table-expanded-row > .ant-table-cell,
-    body:not(.dark-theme) & .ant-table-expanded-row:hover > .ant-table-cell {
-      background: #e3e3e3;
-    }
-  `,
-  zeroWithSelectionColumn: css`
-    .ant-table-selection-column {
-      /* display: none !important; */
-      padding: 0 !important;
-    }
-  `,
-}));
-
-const ResizableTitle = (
-  props: React.HTMLAttributes<any> & {
-    onResize: (
-      e: React.SyntheticEvent<Element> | undefined,
-      data: ResizeCallbackData,
-    ) => void;
-    width: number;
-  },
-) => {
-  const { onResize, width, onClick, ...restProps } = props;
-  const wrapRef = useRef<HTMLTableCellElement>(null);
-  const [isResizing, setIsResizing] = useState(false);
-  const debouncedIsResizing = useDebounce(isResizing, { wait: 100 });
-
-  // This is a workaround for the initial width of resizable columns if the width is not specified
-  useEffect(() => {
-    if (wrapRef.current && _.isUndefined(width)) {
-      onResize?.(undefined, {
-        size: {
-          width: wrapRef.current.offsetWidth,
-          height: wrapRef.current.offsetHeight,
-        },
-        node: wrapRef.current,
-        handle: 'e',
-      });
-    }
-  });
-
-  return _.isUndefined(width) ? (
-    <th ref={wrapRef} {...restProps} />
-  ) : (
-    <Resizable
-      width={width}
-      height={0}
-      handle={
-        <span
-          className="react-resizable-handle"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        />
-      }
-      onResize={onResize}
-      onResizeStart={() => {
-        setIsResizing(true);
-      }}
-      onResizeStop={() => {
-        setIsResizing(false);
-      }}
-      draggableOpts={{ enableUserSelectHack: false }}
-    >
-      <th
-        onClick={(e) => {
-          if (debouncedIsResizing) {
-            e.preventDefault();
-          } else {
-            onClick?.(e);
-          }
-        }}
-        {...restProps}
-      />
-    </Resizable>
-  );
-};
-
-const columnKeyOrIndexKey = (column: any, index: number) =>
-  column.key || `index_${index}`;
-
-const generateResizedColumnWidths = (columns?: ColumnsType<any>) => {
-  const widths: Record<string, number> = {};
-  _.each(columns, (column, index) => {
-    widths[columnKeyOrIndexKey(column, index)] = column.width as number;
-  });
-  return widths;
-};
+/** Re-exported so a migrated call site does not need a second import. */
+export type { BAIColumnType, BAIColumnsType };

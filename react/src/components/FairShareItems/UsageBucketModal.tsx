@@ -2,25 +2,33 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { UsageBucketModal_DomainFragment$key } from '../../__generated__/UsageBucketModal_DomainFragment.graphql';
+import { UsageBucketModal_ProjectFragment$key } from '../../__generated__/UsageBucketModal_ProjectFragment.graphql';
+import { UsageBucketModal_UserFragment$key } from '../../__generated__/UsageBucketModal_UserFragment.graphql';
 import UsageBucketChartContent from './UsageBucketChartContent';
-import { DatePicker, Descriptions, Skeleton } from 'antd';
+import type { ISODateString } from '@astryxdesign/core/Calendar';
+import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
+import type { DateRange } from '@astryxdesign/core/DateRangeInput';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
+  BAISkeleton,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIMetadataList,
   BAIModal,
   BAIModalProps,
   BAITagList,
-  filterOutEmpty,
   useFetchKey,
 } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { UsageBucketModal_DomainFragment$key } from 'src/__generated__/UsageBucketModal_DomainFragment.graphql';
-import { UsageBucketModal_ProjectFragment$key } from 'src/__generated__/UsageBucketModal_ProjectFragment.graphql';
-import { UsageBucketModal_UserFragment$key } from 'src/__generated__/UsageBucketModal_UserFragment.graphql';
+
+/** dayjs → Astryx `ISODateString` (`YYYY-MM-DD`, a template-literal type). */
+const toISODate = (d: Dayjs): ISODateString =>
+  d.format('YYYY-MM-DD') as ISODateString;
 
 interface UsageBucketModalProps extends BAIModalProps {
   domainFairShareFrgmt?: UsageBucketModal_DomainFragment$key | null;
@@ -39,7 +47,6 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { RangePicker } = DatePicker;
 
   const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>([
     dayjs().subtract(7, 'days'),
@@ -161,35 +168,50 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
     >
       <BAIFlex direction="column" gap="md" align="stretch">
         <BAIFlex justify="between" align="center">
-          <RangePicker
-            value={dateRange}
-            onChange={(dates) => {
-              if (dates && dates[0] && dates[1]) {
-                setDateRange([dates[0], dates[1]]);
+          {/* antd `DatePicker.RangePicker` → Astryx `DateRangeInput`
+              (MAPPING §3.13). The dayjs↔ISO boundary lives here so the rest of
+              the modal keeps its `[Dayjs, Dayjs]` state.
+              PILOT-DECISION: `needConfirm` (antd's explicit OK step) has no
+              equivalent — DateRangeInput commits on the second click; the
+              `onChange` guard already ignores half-picked ranges.
+              PILOT-DECISION: `allowClear={false}` → `hasClear={false}`, and
+              `maxDate` → `max`. */}
+          <DateRangeInput
+            label={t('fairShare.UsageHistory')}
+            isLabelHidden
+            hasClear={false}
+            max={toISODate(dayjs())}
+            value={{
+              start: toISODate(dateRange[0]),
+              end: toISODate(dateRange[1]),
+            }}
+            onChange={(range) => {
+              if (range?.start && range?.end) {
+                setDateRange([dayjs(range.start), dayjs(range.end)]);
                 updateFetchKey();
               }
             }}
-            maxDate={dayjs()}
-            allowClear={false}
-            needConfirm
             presets={[
               {
                 label: t('fairShare.usageBucket.Last7Days'),
-                value: [dayjs().subtract(7, 'days'), dayjs()] as [Dayjs, Dayjs],
+                getRange: (): DateRange => ({
+                  start: toISODate(dayjs().subtract(7, 'days')),
+                  end: toISODate(dayjs()),
+                }),
               },
               {
                 label: t('fairShare.usageBucket.Last30Days'),
-                value: [dayjs().subtract(30, 'days'), dayjs()] as [
-                  Dayjs,
-                  Dayjs,
-                ],
+                getRange: (): DateRange => ({
+                  start: toISODate(dayjs().subtract(30, 'days')),
+                  end: toISODate(dayjs()),
+                }),
               },
               {
                 label: t('fairShare.usageBucket.Last90Days'),
-                value: [dayjs().subtract(90, 'days'), dayjs()] as [
-                  Dayjs,
-                  Dayjs,
-                ],
+                getRange: (): DateRange => ({
+                  start: toISODate(dayjs().subtract(90, 'days')),
+                  end: toISODate(dayjs()),
+                }),
               },
             ]}
           />
@@ -202,71 +224,58 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
           />
         </BAIFlex>
 
-        <Descriptions
-          size="small"
-          column={1}
-          items={filterOutEmpty([
-            selectedResourceGroupName && {
-              key: 'resourceGroup',
-              label: t('fairShare.ResourceGroup'),
-              children: selectedResourceGroupName,
-            },
-            selectedDomainName && {
-              key: 'domain',
-              label: t('fairShare.Domain'),
-              children: selectedDomainName,
-            },
-            selectedProjectName && {
-              key: 'project',
-              label: t('fairShare.Project'),
-              children: selectedProjectName,
-            },
-            domainFairShares &&
-              domainFairShares.length > 0 && {
-                key: 'selectedDomains',
-                label: t('fairShare.Domain'),
-                children: (
-                  <BAITagList
-                    items={_.map(
-                      domainFairShares,
-                      (d) => d.domain?.basicInfo?.name || '',
-                    )}
-                    popoverTitle={t('fairShare.Domain')}
-                  />
-                ),
-              },
-            projectFairShares &&
-              projectFairShares.length > 0 && {
-                key: 'selectedProjects',
-                label: t('fairShare.Project'),
-                children: (
-                  <BAITagList
-                    items={_.map(
-                      projectFairShares,
-                      (p) => p?.project?.basicInfo?.name || '',
-                    )}
-                    popoverTitle={t('fairShare.Project')}
-                  />
-                ),
-              },
-            userFairShares &&
-              userFairShares.length > 0 && {
-                key: 'selectedUsers',
-                label: t('fairShare.User'),
-                children: (
-                  <BAITagList
-                    items={_.map(
-                      userFairShares,
-                      (u) => u?.user?.basicInfo?.email || '',
-                    )}
-                    popoverTitle={t('fairShare.User')}
-                  />
-                ),
-              },
-          ])}
-        />
+        {/* antd `Descriptions items` → `MetadataList` children (MAPPING §4).
+            `size="small"` has no destination and is dropped; `column={1}` is
+            `columns="single"`. */}
+        <BAIMetadataList columns="single">
+          {selectedResourceGroupName ? (
+            <MetadataListItem label={t('fairShare.ResourceGroup')}>
+              {selectedResourceGroupName}
+            </MetadataListItem>
+          ) : null}
+          {selectedDomainName ? (
+            <MetadataListItem label={t('fairShare.Domain')}>
+              {selectedDomainName}
+            </MetadataListItem>
+          ) : null}
+          {selectedProjectName ? (
+            <MetadataListItem label={t('fairShare.Project')}>
+              {selectedProjectName}
+            </MetadataListItem>
+          ) : null}
+          {domainFairShares && domainFairShares.length > 0 ? (
+            <MetadataListItem label={t('fairShare.Domain')}>
+              <BAITagList
+                items={_.map(
+                  domainFairShares,
+                  (d) => d.domain?.basicInfo?.name || '',
+                )}
+              />
+            </MetadataListItem>
+          ) : null}
+          {projectFairShares && projectFairShares.length > 0 ? (
+            <MetadataListItem label={t('fairShare.Project')}>
+              <BAITagList
+                items={_.map(
+                  projectFairShares,
+                  (p) => p?.project?.basicInfo?.name || '',
+                )}
+              />
+            </MetadataListItem>
+          ) : null}
+          {userFairShares && userFairShares.length > 0 ? (
+            <MetadataListItem label={t('fairShare.User')}>
+              <BAITagList
+                items={_.map(
+                  userFairShares,
+                  (u) => u?.user?.basicInfo?.email || '',
+                )}
+              />
+            </MetadataListItem>
+          ) : null}
+        </BAIMetadataList>
 
-        <Suspense fallback={<Skeleton active paragraph={{ rows: 8 }} />}>
+        <Suspense fallback={<BAISkeleton variant="paragraph" rows={8} />}>
           <UsageBucketChartContent
             domainFairShareFrgmt={domainFairShares}
             projectFairShareFrgmt={projectFairShares}

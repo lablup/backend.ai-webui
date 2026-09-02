@@ -1,24 +1,27 @@
+import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import { BAIDeleteArtifactRevisionsModalArtifactFragment$key } from '../../__generated__/BAIDeleteArtifactRevisionsModalArtifactFragment.graphql';
 import {
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$data,
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key,
 } from '../../__generated__/BAIDeleteArtifactRevisionsModalArtifactRevisionFragment.graphql';
 import { BAIDeleteArtifactRevisionsModalCleanupVersionMutation } from '../../__generated__/BAIDeleteArtifactRevisionsModalCleanupVersionMutation.graphql';
+import { message } from '../../app-shim';
 import {
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
 } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
+import BAIAlert from '../BAIAlert';
 import BAIFlex from '../BAIFlex';
+import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
-import { QuestionCircleFilled } from '@ant-design/icons';
-import { Alert, message, Modal, theme, Tooltip, type ModalProps } from 'antd';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash-es';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
@@ -31,13 +34,13 @@ export type BAIDeleteArtifactRevisionsModalArtifactRevisionFragmentKey =
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
 
 export interface BAIDeleteArtifactRevisionsModalProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   selectedArtifactFrgmt: BAIDeleteArtifactRevisionsModalArtifactFragment$key | null;
   selectedArtifactRevisionFrgmt: BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$key;
   onOk: (e: React.MouseEvent<HTMLElement>) => void;
-  onCancel: NonNullable<ModalProps['onCancel']>;
+  onCancel: NonNullable<BAIModalProps['onCancel']>;
 }
 
 const BAIDeleteArtifactRevisionsModal = ({
@@ -47,7 +50,7 @@ const BAIDeleteArtifactRevisionsModal = ({
   onCancel,
   ...modalProps
 }: BAIDeleteArtifactRevisionsModalProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
   const [cleanupVersion, isInflightCleanupVersion] =
@@ -117,7 +120,7 @@ const BAIDeleteArtifactRevisionsModal = ({
   ];
   return (
     <BAIUnmountAfterClose>
-      <Modal
+      <BAIModal
         title={t('comp:BAIDeleteArtifactModal.RemoveVersions')}
         centered
         onOk={(e) => {
@@ -139,10 +142,17 @@ const BAIDeleteArtifactRevisionsModal = ({
                 });
                 return;
               }
+              const cleanupArtifactRevisions = res.cleanupArtifactRevisions;
+              if (!cleanupArtifactRevisions) {
+                message.error(
+                  t('comp:BAIDeleteArtifactModal.FailedToRemoveVersions'),
+                );
+                return;
+              }
               message.success(
                 t('comp:BAIDeleteArtifactModal.SuccessFullyRemoved', {
                   count:
-                    res.cleanupArtifactRevisions.artifactRevisions.edges.length,
+                    cleanupArtifactRevisions.artifactRevisions.edges.length,
                 }),
               );
               onOk(e);
@@ -171,20 +181,15 @@ const BAIDeleteArtifactRevisionsModal = ({
         <BAIFlex direction="column" gap={'sm'} align="stretch">
           {filteredSelectedRevisions.length !==
           selectedArtifactRevision.length ? (
-            <Alert
+            <BAIAlert
               icon={
-                <Tooltip
+                <BAIQuestionIconWithTooltip
                   title={t(
                     'comp:BAIDeleteArtifactModal.OnlyVersionsNotInPULLINGOrSCANNED',
                   )}
-                >
-                  <QuestionCircleFilled
-                    style={{
-                      color: token.colorInfo,
-                      marginRight: token.marginXS,
-                    }}
-                  />
-                </Tooltip>
+                  iconProps={{ style: { color: token.colorInfo } }}
+                  style={{ marginRight: token.marginXS }}
+                />
               }
               showIcon
               title={t('comp:BAIDeleteArtifactModal.ExcludedVersions', {
@@ -205,7 +210,7 @@ const BAIDeleteArtifactRevisionsModal = ({
             }}
           />
         </BAIFlex>
-      </Modal>
+      </BAIModal>
     </BAIUnmountAfterClose>
   );
 };

@@ -2,10 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-'use memo';
-
 import { SwitchToProjectButtonQuery } from '../__generated__/SwitchToProjectButtonQuery.graphql';
-import { useSetCurrentProject } from '../hooks/useCurrentProject';
+import { useSwitchProject } from '../hooks/useRouteScope';
 import {
   BAIButton,
   BAIButtonProps,
@@ -24,9 +22,10 @@ const SwitchToProjectButtonContent: React.FC<SwitchToProjectButtonProps> = ({
   projectId,
   ...buttonProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
-  const setCurrentProject = useSetCurrentProject();
   const [isPending, startTransition] = useTransition();
+  const switchProject = useSwitchProject();
 
   const { group_node } = useLazyLoadQuery<SwitchToProjectButtonQuery>(
     graphql`
@@ -45,7 +44,11 @@ const SwitchToProjectButtonContent: React.FC<SwitchToProjectButtonProps> = ({
     const name = group_node?.name;
     if (id && name) {
       startTransition(() => {
-        setCurrentProject({
+        // `useSwitchProject` applies the canonical scope rule (FR-3428): on
+        // project / project-admin scope it rewrites the `:projectName` URL
+        // segment (the URL owns the project since FR-3055); elsewhere it
+        // updates the atom directly.
+        switchProject({
           projectId: id,
           projectName: name,
         });

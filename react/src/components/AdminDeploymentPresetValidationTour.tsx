@@ -1,0 +1,112 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import BAITour from './BAITour';
+import useTourTargets from './useTourTargets';
+import { TourStep } from '@astryxdesign/lab';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
+/**
+ * PILOT-DECISION: public props narrowed from antd's
+ * `Omit<TourProps, 'steps'>` to the two props the sole consumer
+ * (`AdminDeploymentPresetSettingPageContent`) actually passes (`open`,
+ * `onClose`). The lab Tour's surface is entirely different, so the blanket
+ * antd-prop passthrough (`{...otherProps}`) had nothing left to carry.
+ * `onClose` loses antd's mouse-event argument — the consumer ignores it.
+ */
+interface PresetValidationTourProps {
+  open?: boolean;
+  onClose?: () => void;
+}
+
+interface TourTargets {
+  card: HTMLElement;
+  extra: HTMLElement | null;
+  nav: HTMLElement | null;
+}
+
+const PresetValidationTour: React.FC<PresetValidationTourProps> = ({
+  open,
+  onClose,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const [hasOpened, setHasOpened] = useBAISettingUserState(
+    'has_opened_tour_deployment_preset_validation',
+  );
+
+  // PILOT-DECISION: antd Tour took lazy function targets
+  // (`target: () => HTMLElement`); lab `TourStep` anchors through a
+  // `targetRef` whose element must already exist when the step renders, so the
+  // DOM queries run in an effect and the resolved elements are handed to the
+  // steps as literal ref objects. Each target contains a real `<button>` (the
+  // review card's Modify link / the footer nav buttons), satisfying the
+  // Popover anchor contract.
+  // The action-slot anchor is `.bai-card__extra` — `BAICard` emits a
+  // BAI-namespaced class for exactly this purpose (see the comment on its
+  // header row).
+  const isActive = !!open && !hasOpened;
+
+  const targets = useTourTargets<TourTargets>(isActive, () => {
+    const card = document.getElementsByClassName('bai-card-error')?.[0] as
+      HTMLElement | undefined;
+    if (!card) {
+      return null;
+    }
+    return {
+      card,
+      extra: card.querySelector<HTMLElement>('.bai-card__extra'),
+      nav: document.querySelector<HTMLElement>(
+        '[data-test-id="deployment-preset-step-navigation"]',
+      ),
+    };
+  });
+
+  if (!isActive || !targets) return null;
+
+  const handleDismiss = () => {
+    onClose?.();
+    setHasOpened(true);
+  };
+
+  return (
+    <BAITour
+      isActive
+      hasBackdrop
+      isStepCountShown
+      onDismiss={handleDismiss}
+      // One entry per rendered step, in step order (nulls are skipped below).
+      scrollTargets={[targets.card, targets.extra, targets.nav].filter(
+        (el): el is HTMLElement => el != null,
+      )}
+    >
+      <TourStep
+        targetRef={{ current: targets.card }}
+        heading={t('tourGuide.deploymentPreset.ValidationErrorTitle')}
+      >
+        {t('tourGuide.deploymentPreset.ValidationErrorText')}
+      </TourStep>
+      {targets.extra ? (
+        <TourStep
+          targetRef={{ current: targets.extra }}
+          heading={t('tourGuide.deploymentPreset.ValidationErrorTitle')}
+        >
+          {t('tourGuide.deploymentPreset.FixErrorFieldByModifyButton')}
+        </TourStep>
+      ) : null}
+      {targets.nav ? (
+        <TourStep
+          targetRef={{ current: targets.nav }}
+          heading={t('tourGuide.deploymentPreset.ValidationErrorTitle')}
+        >
+          {t('tourGuide.deploymentPreset.FixErrorAndTryAgainText')}
+        </TourStep>
+      ) : null}
+    </BAITour>
+  );
+};
+
+export default PresetValidationTour;

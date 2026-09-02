@@ -21,8 +21,6 @@ yarn-error.log*
 
 merged_schema.graphql
 
-**/__generated__/*.graphql.ts
-
 *storybook.log
 
 storybook-static
@@ -31,3 +29,6 @@ storybook-static
 !.vscode/settings.json.sample
 
 dist
+
+# vitest coverage output
+/coverage

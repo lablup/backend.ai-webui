@@ -22,7 +22,7 @@ test.describe('Information', { tag: ['@functional', '@information'] }, () => {
     await expect(page.getByText('Security', { exact: true })).toBeVisible();
 
     // Verify Component section
-    await expect(page.getByText('Component')).toBeVisible();
+    await expect(page.getByText('Component', { exact: true })).toBeVisible();
     await expect(
       page.getByText('Docker version', { exact: true }),
     ).toBeVisible();

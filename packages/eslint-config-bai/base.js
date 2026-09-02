@@ -18,6 +18,15 @@ export const base = [
   {
     rules: {
       "no-console": "warn",
+      "no-restricted-properties": [
+        "error",
+        {
+          object: "_",
+          property: "chain",
+          message:
+            "_.chain() is incompatible with lodash-es tree-shaking. Use native array methods instead.",
+        },
+      ],
 
       "@typescript-eslint/no-unused-vars": [
         "warn",

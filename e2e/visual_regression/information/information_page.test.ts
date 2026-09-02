@@ -18,7 +18,8 @@ test.describe(
   'Information page Visual Regression Test',
   { tag: ['@regression', '@visual'] },
   () => {
-    // FIXME: Login fails - user-dropdown-button not visible after login
+    // FIXME(FR-3111/auth-infra): Login fails — user-dropdown-button not visible after
+    // login. Not a stale baseline; owned by the login-infra triage category of FR-3109.
     test.fixme('Information page screenshot', async ({ page }) => {
       await expect(page).toHaveScreenshot('information_page.png', {
         fullPage: true,

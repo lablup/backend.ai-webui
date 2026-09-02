@@ -3,31 +3,57 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '.';
-import BAIGeneralNotificationItem from '../components/BAIGeneralNotificationItem';
+import { BAINodeNotificationItemFragment$key } from '../__generated__/BAINodeNotificationItemFragment.graphql';
 import BAIMultiStepNotificationItem from '../components/BAIMultiStepNotificationItem';
+import BAINodeNotificationItem from '../components/BAINodeNotificationItem';
 import { SSEEventHandlerTypes, listenToBackgroundTask } from '../helper';
 import { useBAISettingUserState } from './useBAISetting';
-import { App } from 'antd';
-import { createStyles } from 'antd-style';
-import { ArgsProps } from 'antd/lib/notification';
+import {
+  toBAINotificationStackItems,
+  BAINotificationStack,
+} from 'backend.ai-ui';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import _ from 'lodash';
-import React, { Key, ReactNode, useCallback, useEffect, useRef } from 'react';
+import * as _ from 'lodash-es';
+import React, {
+  Key,
+  ReactNode,
+  useEffect,
+  useEffectEvent,
+  useRef,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { To, createPath } from 'react-router-dom';
-import { BAINodeNotificationItemFragment$key } from 'src/__generated__/BAINodeNotificationItemFragment.graphql';
-import BAINodeNotificationItem from 'src/components/BAINodeNotificationItem';
 import { v4 as uuidv4 } from 'uuid';
 
+/**
+ * Keys that have already been announced. Its only remaining job is the
+ * desktop `Notification` mirror's "is this new?" test — the floating stack
+ * itself is rendered declaratively from `notificationListState` (ticket 29),
+ * so nothing imperative tracks visibility any more.
+ */
 const _activeNotificationKeys: Key[] = [];
 
-const useStyle = createStyles(({ css }) => ({
-  notificationItem: css`
-    .ant-notification-notice-description {
-      margin-top: 0 !important;
-    }
-  `,
-}));
+/**
+ * The base `NotificationState` used to extend antd's `ArgsProps` (ticket 29
+ * removed that import — it was the last antd `notification` dependency in the
+ * repo). Only the fields call sites actually set are kept; anything else
+ * antd's toast accepted was never reaching a renderer.
+ */
+export interface BAINotificationArgs {
+  /** Headline. */
+  title?: ReactNode;
+  /** @deprecated antd's pre-v6 name for `title`; most call sites still use it. */
+  message?: ReactNode;
+  description?: ReactNode;
+  /**
+   * Seconds until the notice auto-closes. `0` (antd's own convention, and the
+   * default this hook applies to a pending background task) or `null` keeps it
+   * open until dismissed. The countdown pauses while the notice is hovered or
+   * focused.
+   */
+  duration?: number | null;
+  type?: 'success' | 'info' | 'warning' | 'error';
+}
 
 // Helper type to ensure promise and onChange.resolved have matching types
 type BackgroundTaskConfig<T> = {
@@ -61,10 +87,7 @@ type BackgroundTaskConfig<T> = {
   promise?: Promise<T> | null;
 };
 
-export interface NotificationState<T = any> extends Omit<
-  ArgsProps,
-  'placement' | 'key' | 'icon'
-> {
+export interface NotificationState<T = any> extends BAINotificationArgs {
   key: React.Key;
   created?: string;
   toTextKey?: string;
@@ -85,21 +108,11 @@ export interface NotificationState<T = any> extends Omit<
     steps: Array<{
       label: string;
       status:
-        | 'idle'
-        | 'pending'
-        | 'resolved'
-        | 'rejected'
-        | 'warned'
-        | 'cancelled';
+        'idle' | 'pending' | 'resolved' | 'rejected' | 'warned' | 'cancelled';
       progress?: number;
     }>;
     overallStatus:
-      | 'idle'
-      | 'running'
-      | 'completed'
-      | 'failed'
-      | 'warned'
-      | 'cancelled';
+      'idle' | 'running' | 'completed' | 'failed' | 'warned' | 'cancelled';
   };
 }
 
@@ -131,18 +144,143 @@ type BackgroundTaskEvent = {
   current_progress: number;
   total_progress: number;
 };
+
 /**
- * Custom hook that listens to background tasks and updates notifications accordingly.
+ * Module-level helper: fires a desktop Notification for the given state.
+ */
+function _upsertDesktopNotification(
+  params: Partial<Omit<NotificationState, 'created'>>,
+  t: (key: string) => string,
+) {
+  // Access `message` via cast: it is deprecated in antd v6 ArgsProps but
+  // existing callers still populate it. Prefer `title` when available.
+  const legacyMessage = (params as { message?: ReactNode }).message;
+  const title =
+    extractTextFromReactNode(params.title ?? legacyMessage) ||
+    `[Backend.AI] ${t('sidePanel.Notification')}`;
+  const options: Partial<Notification> = {
+    body: extractTextFromReactNode(params.description),
+    tag: _.toString(params.key),
+  };
+
+  const notification = new Notification(title, options);
+  notification.onclick = () => {
+    if (params.to) {
+      window.focus();
+      const href =
+        typeof params.to === 'string' ? params.to : createPath(params.to);
+      window.location.href = href;
+    }
+  };
+}
+
+/**
+ * The floating notification stack — the whole visible half of this module.
+ *
+ * Ticket 29 replaced the imperative `app.notification.open()/destroy()` effect
+ * with this component: the jotai list IS the rendered state, so there is no
+ * second source of truth to keep in sync (the class of bug that produced the
+ * "zombie re-open" and the `setHoverKeys` render loop this file used to guard
+ * against). `NotificationHost` mounts it once, app-wide.
+ *
+ * The presentation lives in `BAINotificationStack`; the mapping in
+ * `BAINotificationStackAdapter`. Everything routed, translated or Relay-bound
+ * is injected from here, which is why those two stay antd-free.
+ */
+export const BAINotificationStackHost: React.FC = () => {
+  'use memo';
+  const _notifications = useAtomValue(notificationListState);
+  const { closeNotification } = useSetBAINotification();
+  const webuiNavigate = useWebUINavigate();
+  const { t } = useTranslation();
+
+  const items = toBAINotificationStackItems(_notifications, {
+    onNavigate: (notification) => {
+      if (notification.to) {
+        webuiNavigate(notification.to);
+      }
+      closeNotification(notification.key);
+    },
+    getActionText: (notification) =>
+      notification.toText ??
+      (notification.toTextKey
+        ? t(notification.toTextKey)
+        : t('notification.SeeDetail')),
+    cancelText: t('button.Cancel'),
+    retryText: t('button.Retry'),
+    // `node` and `multiStep` render a complete notice of their own (folder /
+    // session link, status tag, step list), so they take the body outright.
+    renderContent: (notification) =>
+      notification.node ? (
+        <BAINodeNotificationItem
+          notification={notification}
+          nodeFrgmt={notification.node}
+        />
+      ) : notification.multiStep ? (
+        <BAIMultiStepNotificationItem
+          notification={notification}
+          onRetry={notification.onRetry ?? undefined}
+          onCancel={notification.onCancel ?? undefined}
+        />
+      ) : null,
+    // Only the general notice needs the disclosure wired here — the two
+    // renderers above draw their own `extraDescription`.
+    renderExtra: (notification) =>
+      notification.node || notification.multiStep
+        ? null
+        : notification.extraDescription,
+  });
+
+  return (
+    <BAINotificationStack
+      // Newest last = newest nearest the corner, as antd's `bottomRight`
+      // stack ordered it (the jotai list is newest-first).
+      notifications={items.reverse()}
+      onClose={closeNotification}
+    />
+  );
+};
+
+/**
+ * Custom hook that listens to background tasks and updates notifications
+ * accordingly, and mirrors newly opened notifications to the desktop
+ * `Notification` API. Rendering is `BAINotificationStackHost`'s job.
  */
 export const useBAINotificationEffect = () => {
+  'use memo';
   const _notifications = useAtomValue(notificationListState);
 
+  const [desktopNotification] = useBAISettingUserState('desktop_notification');
+  const { t } = useTranslation();
+
   const listeningTaskIdsRef = useRef<(string | undefined)[]>([]);
-  // const closedNotificationKeysRef = useRef<(React.Key | undefined)[]>([]);
   const listeningPromiseKeysRef = useRef<NotificationState['key'][]>([]);
   const { upsertNotification } = useSetBAINotification();
-  // listen to background task if a notification has a background task
-  // and not already listening
+
+  // Desktop mirror. A side effect, so it stays out of the render path: it
+  // fires once per key, the first time that key asks to be shown.
+  const mirrorToDesktop = useEffectEvent(
+    (notifications: NotificationState[]) => {
+      notifications.forEach((notification) => {
+        if (!notification.key) return;
+        const isActive = _activeNotificationKeys.includes(notification.key);
+        if (notification.open === true && !isActive) {
+          _activeNotificationKeys.push(notification.key);
+          if (!notification.skipDesktopNotification && desktopNotification) {
+            _upsertDesktopNotification(notification, t);
+          }
+        } else if (notification.open === false && isActive) {
+          _.remove(_activeNotificationKeys, (k) => k === notification.key);
+        }
+      });
+    },
+  );
+
+  useEffect(() => {
+    mirrorToDesktop(_notifications);
+  }, [_notifications]);
+
+  // Background task listeners
   useEffect(() => {
     _.each(_notifications, (notification) => {
       if (
@@ -199,9 +337,14 @@ export const useBAINotificationEffect = () => {
           listeningTaskIdsRef.current,
           notification.backgroundTask?.taskId,
         ) &&
-        notification.backgroundTask.status === 'pending'
+        notification.backgroundTask.status === 'pending' &&
+        // The host is always mounted (even before login / during logout).
+        // listenToBackgroundTask needs an initialized client to build the SSE
+        // request, so skip attaching until one exists; the effect re-runs on
+        // the next notification change and attaches then.
+        typeof globalThis.backendaiclient !== 'undefined' &&
+        globalThis.backendaiclient !== null
       ) {
-        // sse and update progress
         listeningTaskIdsRef.current.push(notification.backgroundTask?.taskId);
         const SSEEventHandler: SSEEventHandlerTypes<BackgroundTaskEvent> = {
           onUpdated: _.throttle(
@@ -209,7 +352,6 @@ export const useBAINotificationEffect = () => {
               const ratio = data.current_progress / data.total_progress;
               upsertNotification({
                 key: notification.key,
-                message: notification.message,
                 backgroundTask: {
                   status: 'pending',
                   percent: ratio * 100,
@@ -234,7 +376,6 @@ export const useBAINotificationEffect = () => {
             }
             upsertNotification({
               key: notification.key,
-              message: notification.message,
               backgroundTask: {
                 status: 'resolved',
                 percent: 100,
@@ -252,7 +393,6 @@ export const useBAINotificationEffect = () => {
             const ratio = data.current_progress / data.total_progress;
             upsertNotification({
               key: notification.key,
-              message: notification.message,
               backgroundTask: {
                 status: 'rejected',
                 percent: ratio * 100,
@@ -269,7 +409,6 @@ export const useBAINotificationEffect = () => {
           onFailed: (data) => {
             upsertNotification({
               key: notification.key,
-              message: notification.message,
               backgroundTask: {
                 status: 'rejected',
               },
@@ -290,7 +429,6 @@ export const useBAINotificationEffect = () => {
             const ratio = data.current_progress / data.total_progress;
             upsertNotification({
               key: notification.key,
-              message: notification.message,
               backgroundTask: {
                 status: 'rejected',
                 percent: ratio * 100,
@@ -318,231 +456,110 @@ export const useBAINotificationEffect = () => {
 export const useSetBAINotification = () => {
   'use memo';
 
-  // Don't use _notifications carefully when you need to mutate it.
   const setNotifications = useSetAtom(notificationListState);
-  const [desktopNotification] = useBAISettingUserState('desktop_notification');
 
-  const app = App.useApp();
-  const { t } = useTranslation();
-
-  const webuiNavigate = useWebUINavigate();
-  const { styles } = useStyle();
-
-  const closeAllNotifications = useCallback(() => {
+  const closeAllNotifications = () => {
     _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
-    app.notification.destroy();
-  }, [app.notification]);
+    // Mark all notifications as closed. `open` is what the stack renders from,
+    // so this both hides them and keeps them in the drawer.
+    setNotifications((prev) => prev.map((n) => ({ ...n, open: false })));
+  };
 
   /**
    * Function to permanently clear all notifications.
    */
-  const clearAllNotifications = useCallback(() => {
+  const clearAllNotifications = () => {
+    _activeNotificationKeys.splice(0, _activeNotificationKeys.length);
     setNotifications([]);
-    closeAllNotifications();
-  }, [setNotifications, closeAllNotifications]);
+  };
 
   /**
    * Function to hide specific notification. It remains in the drawer.
    */
-  const closeNotification = useCallback(
-    (key: React.Key) => {
-      app.notification.destroy(key);
-    },
-    [app.notification],
-  );
+  const closeNotification = (key: React.Key) => {
+    _.remove(_activeNotificationKeys, (k) => k === key);
+    setNotifications((prevList) => {
+      const idx = prevList.findIndex((n) => n.key === key);
+      if (idx < 0 || prevList[idx].open === false) return prevList;
+      const newList = [...prevList];
+      newList[idx] = { ...newList[idx], open: false };
+      return newList;
+    });
+  };
 
   /**
    * Function to remove specific notification from the list and hide it.
    */
-  const clearNotification = useCallback(
-    (key: React.Key) => {
-      setNotifications((prev) => {
-        return prev.filter((n) => n.key !== key);
-      });
-      closeNotification(key);
-    },
-    [setNotifications, closeNotification],
-  );
+  const clearNotification = (key: React.Key) => {
+    _.remove(_activeNotificationKeys, (k) => k === key);
+    setNotifications((prev) => prev.filter((n) => n.key !== key));
+  };
 
   /**
-   * Function to upsert a notification.
-   * @param params - The parameters for the notification.
-   * @param options - Options for the notification.
+   * Pure state updater — only writes to notificationListState, which
+   * `BAINotificationStackHost` renders directly.
    */
-  const upsertNotification = useCallback(
-    <T = any,>(
-      params: Partial<Omit<NotificationState<T>, 'created'>>,
-      options: NotificationOptions = {},
-    ) => {
-      const { skipDesktopNotification = false } = params;
-      const { skipOverrideByStatus } = options;
-      let currentKey: React.Key | undefined;
-      setNotifications((prevNotifications: NotificationState[]) => {
-        let nextNotifications: NotificationState[];
-        const existingIndex = params.key
-          ? _.findIndex(prevNotifications, { key: params.key })
-          : -1;
-        const existingNotification =
-          existingIndex > -1 ? prevNotifications[existingIndex] : undefined;
-        let newNotification: NotificationState<T> = _.merge(
-          {}, // start with empty object
-          existingNotification,
-          params,
-          {
-            key: params.key || uuidv4(),
-            created: existingNotification?.created ?? new Date().toISOString(),
-          },
-        ) as NotificationState<T>;
+  const upsertNotification = <T = any,>(
+    params: Partial<Omit<NotificationState<T>, 'created'>>,
+    options: NotificationOptions = {},
+  ): React.Key | undefined => {
+    const { skipOverrideByStatus } = options;
+    let currentKey: React.Key | undefined;
 
-        if (!skipOverrideByStatus) {
-          const overrideData = generateOverrideByStatus(newNotification);
-          newNotification = _.merge({}, newNotification, overrideData);
+    setNotifications((prevNotifications: NotificationState[]) => {
+      let nextNotifications: NotificationState[];
+      const existingIndex = params.key
+        ? _.findIndex(prevNotifications, { key: params.key })
+        : -1;
+      const existingNotification =
+        existingIndex > -1 ? prevNotifications[existingIndex] : undefined;
+      let newNotification: NotificationState<T> = _.merge(
+        {},
+        existingNotification,
+        params,
+        {
+          key: params.key || uuidv4(),
+          created: existingNotification?.created ?? new Date().toISOString(),
+        },
+      ) as NotificationState<T>;
+
+      if (!skipOverrideByStatus) {
+        const overrideData = generateOverrideByStatus(newNotification);
+        newNotification = _.merge({}, newNotification, overrideData);
+      }
+
+      // For pending background tasks, default to duration: 0 (stay open) unless explicitly set
+      if (
+        newNotification.backgroundTask?.status === 'pending' &&
+        !('duration' in params)
+      ) {
+        newNotification = {
+          ...newNotification,
+          duration: 0,
+        };
+      }
+
+      if (existingIndex >= 0) {
+        nextNotifications = [
+          ...prevNotifications.slice(0, existingIndex),
+          newNotification,
+          ...prevNotifications.slice(existingIndex + 1),
+        ];
+      } else {
+        nextNotifications = [newNotification, ...prevNotifications];
+        if (nextNotifications.length > 100) {
+          nextNotifications = nextNotifications.slice(
+            nextNotifications.length - 100,
+          );
         }
+      }
 
-        // For pending background tasks, default to duration: 0 (stay open) unless explicitly set
-        if (
-          newNotification.backgroundTask?.status === 'pending' &&
-          !('duration' in params)
-        ) {
-          newNotification = {
-            ...newNotification,
-            duration: 0,
-          };
-        }
+      currentKey = newNotification.key;
+      return nextNotifications;
+    });
 
-        // This is to check if the notification should be updated using ant.d notification
-        const shouldUpdateUsingAPI =
-          (_.isEmpty(params.key) && params.open) ||
-          // if it is already opened(active), then apply change to ant.d notification
-          (newNotification.key &&
-            _activeNotificationKeys.includes(newNotification.key)) ||
-          // if it is not opened(active) and params.open is true, then apply change to ant.d notification (open it)
-          (newNotification.key &&
-            !_activeNotificationKeys.includes(newNotification.key) &&
-            params.open);
-
-        if (existingIndex >= 0) {
-          nextNotifications = [
-            ...prevNotifications.slice(0, existingIndex),
-            newNotification,
-            ...prevNotifications.slice(existingIndex + 1),
-          ];
-        } else {
-          nextNotifications = [newNotification, ...prevNotifications];
-          // If the number of notifications exceeds 100, remove the oldest ones
-          if (nextNotifications.length > 100) {
-            nextNotifications = nextNotifications.slice(
-              nextNotifications.length - 100,
-            );
-          }
-        }
-        if (shouldUpdateUsingAPI) {
-          if (
-            newNotification.key &&
-            newNotification.open &&
-            _activeNotificationKeys.includes(newNotification.key) === false
-          ) {
-            _activeNotificationKeys.push(newNotification.key);
-          }
-
-          if (!skipDesktopNotification && desktopNotification) {
-            upsertDesktopNotification(newNotification);
-          }
-          app.notification.open({
-            ...newNotification,
-            icon: undefined, // override icon to remove default icon from notification, icon displayed in BAINotificationItem
-            type: undefined, // override type to remove default icon from notification, icon displayed in BAINotificationItem
-            placement: 'bottomRight',
-            message: undefined,
-            className: styles.notificationItem,
-            description: newNotification.node ? (
-              <BAINodeNotificationItem
-                notification={newNotification}
-                nodeFrgmt={newNotification.node}
-              />
-            ) : newNotification.multiStep ? (
-              <BAIMultiStepNotificationItem
-                notification={newNotification}
-                onRetry={newNotification.onRetry ?? undefined}
-                onCancel={newNotification.onCancel ?? undefined}
-              />
-            ) : (
-              <BAIGeneralNotificationItem
-                notification={newNotification}
-                onClickAction={() => {
-                  if (newNotification.to) {
-                    webuiNavigate(newNotification.to);
-                  }
-                  closeNotification(newNotification.key);
-                }}
-              />
-            ),
-            onClose() {
-              _.remove(
-                _activeNotificationKeys,
-                (key) => key === newNotification.key,
-              );
-              const idx = _.findIndex(prevNotifications, {
-                key: newNotification.key,
-              });
-              if (idx >= 0) {
-                setNotifications((prevList) => {
-                  // check the notification is removed by clearNotification function. If so, do nothing.
-                  const exists = prevList.some(
-                    (n) => n.key === newNotification.key,
-                  );
-                  if (!exists) return prevList;
-
-                  const newList = [...prevList];
-                  newList[idx] = {
-                    ...newList[idx],
-                    open: false,
-                  };
-                  return newList;
-                });
-              }
-            },
-          });
-        } else if (newNotification.open === false && newNotification.key) {
-          closeNotification(newNotification.key);
-        }
-        currentKey = newNotification.key;
-        return nextNotifications;
-      });
-      return currentKey;
-    },
-    // webuiNavigate is not a dependency because it is not used in the callback of useCallback
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      app.notification,
-      setNotifications,
-      closeNotification,
-      desktopNotification,
-    ],
-  );
-
-  const upsertDesktopNotification = useCallback(
-    (params: Partial<Omit<NotificationState, 'created'>>) => {
-      const title =
-        extractTextFromReactNode(params.message) ||
-        `[Backend.AI] ${t('sidePanel.Notification')}`;
-      const options: Partial<Notification> = {
-        body: extractTextFromReactNode(params.description),
-        tag: _.toString(params.key),
-      };
-
-      const notification = new Notification(title, options);
-      notification.onclick = () => {
-        if (params.to) {
-          window.focus();
-          const href =
-            typeof params.to === 'string' ? params.to : createPath(params.to);
-          window.location.href = href;
-        }
-      };
-    },
-    [t],
-  );
+    return currentKey;
+  };
 
   return {
     upsertNotification,
@@ -574,7 +591,6 @@ function generateOverrideByStatus<T = any>(
       return overrideData;
     }
   } else {
-    // If there is no handler for rejected case, set description using error message
     if (
       notification?.backgroundTask?.status === 'rejected' &&
       dataOrError?.message

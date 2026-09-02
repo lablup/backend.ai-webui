@@ -5,10 +5,10 @@ import {
   mockAnonymousClientFactory,
   mockClientPromise,
 } from '../../tests/storybook-mock-utils';
+import BAIButton from '../BAIButton';
 import { BAIConfigProvider } from '../provider/BAIConfigProvider';
 import BAIArtifactRevisionTable from './BAIArtifactRevisionTable';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button } from 'antd';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -339,9 +339,9 @@ export const WithCustomColumns: Story = {
             title: 'Actions',
             width: 150,
             render: () => (
-              <Button type="primary" size="small">
+              <BAIButton type="primary" size="small">
                 Download
-              </Button>
+              </BAIButton>
             ),
           },
         ]}
@@ -512,13 +512,13 @@ export const RealWorldExample: Story = {
                 title: 'Actions',
                 width: 120,
                 render: (_text, record) => (
-                  <Button
+                  <BAIButton
                     type="link"
                     size="small"
                     onClick={() => setSelectedRevision(record.version)}
                   >
                     Select
-                  </Button>
+                  </BAIButton>
                 ),
               },
             ]}

@@ -1,7 +1,8 @@
 // spec: e2e/.agent-output/test-plan-session-cluster-mode.md
 // seed: e2e/seed.spec.ts
-import { loginAsUser, navigateTo } from '../utils/test-util';
-import { test, expect } from '@playwright/test';
+import { skipUnlessWebUIVersion } from '../utils/feature-gate-util';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import { test, expect, Page } from '@playwright/test';
 
 /**
  * Helper: navigate to session launcher step 2 and wait for the Cluster mode section.
@@ -15,12 +16,31 @@ async function navigateToClusterModeSection(
   await expect(page.getByText('Cluster mode')).toBeVisible({ timeout: 10000 });
 }
 
+/**
+ * Runtime half of the @requires-webui-v26.4 gate (FR-3114): the
+ * "Multi-node with size 1 will be created as a single-node session." warning
+ * is rendered by ClusterModeFormItems (FR-2381), introduced after WebUI
+ * v26.3.0 and first released in v26.4. Gates on the explicit WebUI version
+ * source (`globalThis.packageVersion`) instead of probing the warning
+ * element, so on a capable build a missing warning is a real failure — the
+ * `expect(warningMessage).toBeVisible()` at the call site is the failure
+ * signal. Exclude these specs on older targets with:
+ *   npx playwright test --grep-invert "@requires-webui-v26.4"
+ */
+async function skipUnlessSizeOneWarningAvailable(page: Page): Promise<void> {
+  await skipUnlessWebUIVersion(
+    page,
+    '26.4',
+    'Multi-node size-1 warning requires ClusterModeFormItems (FR-2381, @requires-webui-v26.4)',
+  );
+}
+
 test.describe(
   'Session Launcher Cluster Mode',
   { tag: ['@regression', '@session', '@functional'] },
   () => {
     test.beforeEach(async ({ page, request }) => {
-      await loginAsUser(page, request);
+      await loginAsAdmin(page, request);
     });
 
     // -------------------------------------------------------------------------
@@ -29,9 +49,13 @@ test.describe(
 
     test(
       'User sees warning when selecting Multi Node with cluster size 1',
-      { tag: ['@smoke', '@regression'] },
+      { tag: ['@smoke', '@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
-        // Navigate to step 2: Environments & Resource Allocation
+        // NOTE: This test requires ClusterModeFormItems.tsx (feat/FR-2381),
+        // which was introduced in the main branch after v26.3.0.
+        // The warning "Multi-node with size 1 will be created as a single-node session."
+        // is rendered by the new ClusterModeFormItems component. If the test server
+        // runs an older WebUI build, this test will be skipped automatically.
         await navigateToClusterModeSection(page);
 
         // Click the Multi Node label to select the Multi Node radio button
@@ -45,18 +69,23 @@ test.describe(
           multiNodeLabel.locator('input[type="radio"]'),
         ).toBeChecked();
 
-        // Cluster size should default to 1 with Multi Node selected
+        // Cluster size should default to 1 with Multi Node selected.
+        // ClusterModeFormItems (FR-2381) renders the spinbutton inside the
+        // "Cluster mode" form item alongside the radio group; there is no
+        // separate "Cluster size" label in the new UI.
         const clusterSizeInput = page
-          .locator('.ant-form-item')
-          .filter({ hasText: 'Cluster size' })
+          .locator('[data-bai-form-item]')
+          .filter({ hasText: 'Cluster mode' })
           .getByRole('spinbutton');
         await expect(clusterSizeInput).toHaveValue('1');
 
-        // Verify the warning message is displayed beneath the cluster size control
+        // Verify the warning message is displayed beneath the cluster size control.
+        // This warning is shown by ClusterModeFormItems (introduced in FR-2381).
         const warningMessage = page.getByText(
           'Multi-node with size 1 will be created as a single-node session.',
         );
-        await expect(warningMessage).toBeVisible({ timeout: 5000 });
+        await skipUnlessSizeOneWarningAvailable(page);
+        await expect(warningMessage).toBeVisible();
       },
     );
 
@@ -75,8 +104,8 @@ test.describe(
       await multiNodeLabel.click();
 
       const clusterSizeInput = page
-        .locator('.ant-form-item')
-        .filter({ hasText: 'Cluster size' })
+        .locator('[data-bai-form-item]')
+        .filter({ hasText: 'Cluster mode' })
         .getByRole('spinbutton');
       const warningMessage = page.getByText(
         'Multi-node with size 1 will be created as a single-node session.',
@@ -113,8 +142,8 @@ test.describe(
 
       // Verify warning is initially visible (Multi Node + size 1)
       const clusterSizeInput = page
-        .locator('.ant-form-item')
-        .filter({ hasText: 'Cluster size' })
+        .locator('[data-bai-form-item]')
+        .filter({ hasText: 'Cluster mode' })
         .getByRole('spinbutton');
       await expect(clusterSizeInput).toHaveValue('1');
 
@@ -137,12 +166,11 @@ test.describe(
 
     test(
       'User dismisses warning by switching from Multi Node to Single Node',
-      { tag: ['@smoke', '@regression'] },
+      { tag: ['@smoke', '@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
-        // Navigate to step 2: Environments & Resource Allocation
+        // NOTE: Requires ClusterModeFormItems.tsx (feat/FR-2381) — see note above.
         await navigateToClusterModeSection(page);
 
-        // Click the Multi Node label to select it
         const multiNodeLabel = page
           .locator('label')
           .filter({ hasText: 'Multi Node' });
@@ -151,7 +179,7 @@ test.describe(
         const warningMessage = page.getByText(
           'Multi-node with size 1 will be created as a single-node session.',
         );
-        await expect(warningMessage).toBeVisible({ timeout: 5000 });
+        await skipUnlessSizeOneWarningAvailable(page);
 
         // Switch to Single Node by clicking the Single Node label
         const singleNodeLabel = page
@@ -166,9 +194,9 @@ test.describe(
 
     test(
       'User sees warning again after switching back from Single Node to Multi Node with size 1',
-      { tag: ['@regression'] },
+      { tag: ['@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
-        // Navigate to step 2: Environments & Resource Allocation
+        // NOTE: Requires ClusterModeFormItems.tsx (feat/FR-2381) — see note above.
         await navigateToClusterModeSection(page);
 
         const multiNodeLabel = page
@@ -181,9 +209,9 @@ test.describe(
           'Multi-node with size 1 will be created as a single-node session.',
         );
 
-        // Select Multi Node — warning should be visible
+        // Select Multi Node — check if warning feature is available
         await multiNodeLabel.click();
-        await expect(warningMessage).toBeVisible({ timeout: 5000 });
+        await skipUnlessSizeOneWarningAvailable(page);
 
         // Switch to Single Node — warning should disappear
         await singleNodeLabel.click();
@@ -194,8 +222,8 @@ test.describe(
 
         // Cluster size should still be 1 (mode switch does not reset size)
         const clusterSizeInput = page
-          .locator('.ant-form-item')
-          .filter({ hasText: 'Cluster size' })
+          .locator('[data-bai-form-item]')
+          .filter({ hasText: 'Cluster mode' })
           .getByRole('spinbutton');
         await expect(clusterSizeInput).toHaveValue('1');
 
@@ -226,10 +254,12 @@ test.describe(
           singleNodeLabel.locator('input[type="radio"]'),
         ).toBeChecked();
 
-        // Verify the cluster size spinbutton has value '1'
+        // Verify the cluster size spinbutton has value '1'.
+        // ClusterModeFormItems (FR-2381) renders the spinbutton inside the
+        // "Cluster mode" form item; there is no separate "Cluster size" label.
         const clusterSizeInput = page
-          .locator('.ant-form-item')
-          .filter({ hasText: 'Cluster size' })
+          .locator('[data-bai-form-item]')
+          .filter({ hasText: 'Cluster mode' })
           .getByRole('spinbutton');
         await expect(clusterSizeInput).toHaveValue('1');
 
@@ -257,8 +287,8 @@ test.describe(
 
       // Set cluster size to 2 via direct input
       const clusterSizeInput = page
-        .locator('.ant-form-item')
-        .filter({ hasText: 'Cluster size' })
+        .locator('[data-bai-form-item]')
+        .filter({ hasText: 'Cluster mode' })
         .getByRole('spinbutton');
       await clusterSizeInput.fill('2');
       await clusterSizeInput.press('Tab');

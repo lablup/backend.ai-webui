@@ -5,7 +5,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { Typography } from 'antd';
+import { Text } from '@astryxdesign/core/Text';
 import { BAILink, BAIModal, BAIModalProps } from 'backend.ai-ui';
 
 interface AboutBackendAIModalProps extends BAIModalProps {
@@ -15,7 +15,7 @@ const AboutBackendAIModal = ({
   onRequestClose,
   ...props
 }: AboutBackendAIModalProps) => {
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
   const baiClient = useSuspendedBackendaiClient();
   // @ts-ignore
@@ -25,7 +25,7 @@ const AboutBackendAIModal = ({
   // @ts-ignore
   const packageEdition = globalThis.packageEdition;
   // @ts-ignore
-  const buildVersion = globalThis.buildVersion;
+  const buildNumber = globalThis.buildNumber;
   // @ts-ignore
   const isElectron = globalThis.isElectron;
 
@@ -64,7 +64,7 @@ const AboutBackendAIModal = ({
       width={350}
       {...props}
     >
-      <Typography.Paragraph>
+      <Text as="p" display="block">
         Backend.AI Web UI {packageVersion}
         <br />
         {packageEdition} Edition
@@ -84,13 +84,13 @@ const AboutBackendAIModal = ({
             return '';
           }
         })()}
-      </Typography.Paragraph>
-      <Typography.Paragraph>
+      </Text>
+      <Text as="p" display="block">
         Backend.AI Cluster {baiClient.managerVersion}
         <br />
-        {isElectron ? 'App' : 'WebServer'} Build {buildVersion}
-      </Typography.Paragraph>
-      <Typography.Paragraph>
+        {isElectron ? 'App' : 'WebServer'} Build {buildNumber}
+      </Text>
+      <Text as="p" display="block">
         Powered by{' '}
         <BAILink
           target="_blank"
@@ -116,7 +116,7 @@ const AboutBackendAIModal = ({
         >
           License
         </BAILink>
-      </Typography.Paragraph>
+      </Text>
     </BAIModal>
   );
 };

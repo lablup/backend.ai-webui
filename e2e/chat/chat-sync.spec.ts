@@ -18,13 +18,15 @@ async function addComparePane(
   page: Page,
   expectedCount: number,
 ): Promise<void> {
-  const compareButton = page
-    .locator('.ant-card-head')
-    .nth(1)
-    .getByRole('button')
-    .nth(1);
-  await compareButton.click();
-  await expect(page.getByPlaceholder('Type your message here...')).toHaveCount(
+  // ChatHeader's compare action is a lucide `ArrowRightLeftIcon` IconButton
+  // whose accessible name is t('chatui.CreateCompareChat') = "Add comparison
+  // chat". addComparePane is always called from single-pane state, so this
+  // is unambiguous.
+  const compareButton = page.getByRole('button', {
+    name: 'Add comparison chat',
+  });
+  await compareButton.first().click();
+  await expect(page.getByLabel('Type your message here...')).toHaveCount(
     expectedCount,
     { timeout: 10000 },
   );
@@ -35,7 +37,7 @@ async function addComparePane(
  * Uses nth() on all "Type your message here..." inputs.
  */
 function getChatInput(page: Page, index: number) {
-  return page.getByPlaceholder('Type your message here...').nth(index);
+  return page.getByLabel('Type your message here...').nth(index);
 }
 
 /**
@@ -43,13 +45,43 @@ function getChatInput(page: Page, index: number) {
  * The sync toggle appears only when more than one pane is open.
  */
 function getSyncToggle(page: Page, cardIndex: number) {
-  // ant-card-head nth(0) is the page-level Chat card, nth(1+) are ChatCards
-  // The sync button is always the first button in the ChatCard header (when closable=true)
+  // `.astryx-card` nth(0) is the page-level Chat `Card`, nth(1+) are the
+  // ChatCards (Astryx `Card` renders an `astryx-card` class; antd's
+  // `.ant-card` is gone). The sync toggle is a `SyncSwitch` IconButton whose
+  // accessible name is t('chatui.SyncInput') = "Sync chat input", only
+  // rendered per-pane when closable (multi-pane).
   return page
-    .locator('.ant-card-head')
+    .locator('.astryx-card')
     .nth(cardIndex + 1)
-    .getByRole('button')
-    .nth(0);
+    .getByRole('button', { name: 'Sync chat input' });
+}
+
+/**
+ * Clicks a pane's sync toggle and waits until the new state is actually
+ * committed, as reported by the SyncSwitch icon (ToggleRight = on,
+ * ToggleLeft = off).
+ *
+ * ChatHeader wraps `onChangeSync` in `startTransition`, so the pane keeps its
+ * previous `sync` value for a beat after the click. During that window the
+ * pane still mirrors its input into the shared `synchronizedMessage` atom,
+ * so typing right after the click can still propagate to the other panes.
+ * Asserting on the icon is the only signal that the toggle has landed —
+ * checking that the input was cleared does not work, because the clearing
+ * effect is a no-op whenever the input is already empty.
+ */
+async function setSync(
+  page: Page,
+  cardIndex: number,
+  enabled: boolean,
+): Promise<void> {
+  const toggle = getSyncToggle(page, cardIndex).first();
+  await expect(toggle).toBeVisible({ timeout: 10000 });
+  await toggle.click();
+  await expect(
+    toggle.locator(
+      enabled ? 'svg.lucide-toggle-right' : 'svg.lucide-toggle-left',
+    ),
+  ).toBeVisible({ timeout: 10000 });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -95,7 +127,7 @@ test.describe(
       await getChatInput(page, 0).fill('Synchronized message text');
 
       // Verify the text appears in the second pane's input in real time
-      await expect(getChatInput(page, 1)).toHaveValue(
+      await expect(getChatInput(page, 1)).toHaveText(
         'Synchronized message text',
         {
           timeout: 10000,
@@ -115,13 +147,15 @@ test.describe(
       // Clone a second pane
       await addComparePane(page, 2);
 
-      // In the first pane, click the attachment (LinkOutlined) button
-      // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
-      const firstChatCard = page.locator('.ant-card').nth(1);
-      const secondChatCard = page.locator('.ant-card').nth(2);
-      const attachButton = firstChatCard
-        .getByRole('button', { name: 'link' })
-        .first();
+      // In the first pane, click the attachment button. `ChatSender` labels it
+      // t('chatui.Attachments'); the antd icon-derived name 'link' is gone.
+      // One such button per pane, in pane order.
+      const attachButtons = page.getByRole('button', {
+        name: 'Attachments',
+        exact: true,
+      });
+      await expect(attachButtons).toHaveCount(2, { timeout: 10000 });
+      const attachButton = attachButtons.nth(0);
 
       // Capture the file chooser before clicking the button
       const fileChooserPromise = page.waitForEvent('filechooser');
@@ -136,17 +170,21 @@ test.describe(
         { name: 'test.png', mimeType: 'image/png', buffer: smallPng },
       ]);
 
+      // `ChatSender` renders each attached image as an Astryx `Thumbnail` with
+      // `alt`/`label` set to the file name, inside a `ChatComposerDrawer`
+      // labelled t('chatui.Attachments'). `ChatCard` exposes no pane-level
+      // role, name or test id (Astryx `Card` renders a bare div), so pane
+      // membership is asserted by count and DOM order rather than by scoping
+      // to a container: exactly one `test.png` thumbnail per pane, meaning the
+      // attachment propagated from pane 1 to pane 2.
+      const attachmentThumbnails = page.getByRole('img', { name: 'test.png' });
+      await expect(attachmentThumbnails).toHaveCount(2, { timeout: 10000 });
+
       // Verify the attachment appears in the first pane
-      const firstPaneAttachArea = firstChatCard.locator(
-        '[class*="attachment"], [class*="Attachment"], [class*="file"]',
-      );
-      await expect(firstPaneAttachArea.first()).toBeVisible({ timeout: 10000 });
+      await expect(attachmentThumbnails.nth(0)).toBeVisible({ timeout: 10000 });
 
       // Verify the attachment also appears in the second pane (sync propagation)
-      const secondPaneAttachArea = secondChatCard.locator(
-        '[class*="attachment"], [class*="Attachment"], [class*="file"]',
-      );
-      await expect(secondPaneAttachArea.first()).toBeVisible({
+      await expect(attachmentThumbnails.nth(1)).toBeVisible({
         timeout: 10000,
       });
     });
@@ -167,11 +205,19 @@ test.describe(
       // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
       // Click the endpoint text to open the dropdown (not the combobox input which gets intercepted)
       const secondCardEndpointText = page
-        .locator('.ant-card')
+        .locator('.astryx-card')
         .nth(2)
         .getByText('mock-endpoint')
         .first();
       await secondCardEndpointText.click();
+
+      // Set up the wait for the second pane's own /v1/models fetch (for
+      // endpoint B) before clicking, so we don't miss a fast mocked response.
+      const modelsBResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('mock-chat-endpoint-b') &&
+          response.url().includes('/v1/models'),
+      );
       await page
         .getByRole('option', { name: 'mock-endpoint-b' })
         .or(
@@ -181,6 +227,26 @@ test.describe(
         )
         .first()
         .click();
+      await modelsBResponsePromise;
+
+      const secondChatCardHeader = page.locator('.astryx-card').nth(2);
+
+      // Selecting a new endpoint re-triggers the model list fetch for that
+      // pane (ChatCard's non-suspending isLoadingModels flag), which
+      // disables its ChatInput until the fetch resolves. Wait for the
+      // second pane's input to become enabled again, and for its model
+      // selector to reflect the newly-fetched model — otherwise the synced
+      // send below can race the endpoint/model switch and dispatch against
+      // a stale ('custom') model before React has settled on
+      // 'gpt-mock-model-b'.
+      await expect(getChatInput(page, 1)).toHaveAttribute(
+        'contenteditable',
+        'true',
+        { timeout: 10000 },
+      );
+      await expect(
+        secondChatCardHeader.getByText('gpt-mock-model-b'),
+      ).toBeVisible({ timeout: 10000 });
 
       // Verify both panes have sync ON
       await expect(getSyncToggle(page, 0).first()).toBeVisible({
@@ -195,7 +261,7 @@ test.describe(
       await getChatInput(page, 0).fill('Multi-endpoint test');
 
       // Verify the text propagates to the second pane
-      await expect(getChatInput(page, 1)).toHaveValue('Multi-endpoint test', {
+      await expect(getChatInput(page, 1)).toHaveText('Multi-endpoint test', {
         timeout: 10000,
       });
 
@@ -204,8 +270,8 @@ test.describe(
 
       // First pane: user message and response from endpoint A
       // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
-      const firstChatCard = page.locator('.ant-card').nth(1);
-      const secondChatCard = page.locator('.ant-card').nth(2);
+      const firstChatCard = page.locator('.astryx-card').nth(1);
+      const secondChatCard = page.locator('.astryx-card').nth(2);
 
       await expect(
         firstChatCard.getByText('Multi-endpoint test').first(),
@@ -255,15 +321,11 @@ test.describe(
       // Clone a second pane
       await addComparePane(page, 2);
 
-      // Verify both panes have sync ON
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await expect(syncToggle0).toBeVisible({ timeout: 10000 });
-
-      // Click the sync toggle in the first pane to turn it OFF
-      await syncToggle0.click();
+      // Turn sync OFF on the first pane and wait for the toggle to commit
+      await setSync(page, 0, false);
 
       // The input is cleared when sync is toggled (by design per the spec)
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 5000 });
 
       // Click the text input of the first pane and type isolated text
       await getChatInput(page, 0).click();
@@ -271,15 +333,12 @@ test.describe(
 
       // Verify "Isolated pane text" does NOT appear in the second pane's input
       // Use a small timeout since we expect it NOT to propagate
-      await expect(getChatInput(page, 1)).not.toHaveValue(
-        'Isolated pane text',
-        {
-          timeout: 3000,
-        },
-      );
+      await expect(getChatInput(page, 1)).not.toHaveText('Isolated pane text', {
+        timeout: 3000,
+      });
 
       // The first pane's input shows the isolated text
-      await expect(getChatInput(page, 0)).toHaveValue('Isolated pane text');
+      await expect(getChatInput(page, 0)).toHaveText('Isolated pane text');
     });
 
     test("Turning off sync clears the synced pane's input", async ({
@@ -299,16 +358,15 @@ test.describe(
       await getChatInput(page, 0).fill('Pre-disable text');
 
       // Verify the text propagated to the second pane
-      await expect(getChatInput(page, 1)).toHaveValue('Pre-disable text', {
+      await expect(getChatInput(page, 1)).toHaveText('Pre-disable text', {
         timeout: 10000,
       });
 
       // Click the sync toggle in the first pane to disable sync
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await syncToggle0.click();
+      await setSync(page, 0, false);
 
       // The first pane's input is cleared when sync is disabled
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 10000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 10000 });
     });
 
     test('Sending from an unsynced pane does not trigger send in other panes', async ({
@@ -324,12 +382,10 @@ test.describe(
       await addComparePane(page, 2);
 
       // Turn off sync on the first pane
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await expect(syncToggle0).toBeVisible({ timeout: 10000 });
-      await syncToggle0.click();
+      await setSync(page, 0, false);
 
       // Wait for input to clear after sync toggle
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 5000 });
 
       // Type directly in the first pane's input (isolated)
       await getChatInput(page, 0).click();
@@ -340,8 +396,8 @@ test.describe(
 
       // First pane shows the sent message and receives its reply
       // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
-      const firstChatCard = page.locator('.ant-card').nth(1);
-      const secondChatCard = page.locator('.ant-card').nth(2);
+      const firstChatCard = page.locator('.astryx-card').nth(1);
+      const secondChatCard = page.locator('.astryx-card').nth(2);
       await expect(
         firstChatCard.getByText('First pane only message').first(),
       ).toBeVisible({ timeout: 10000 });
@@ -370,34 +426,31 @@ test.describe(
       // Clone a second pane
       await addComparePane(page, 2);
 
-      const syncToggle0 = getSyncToggle(page, 0).first();
-      await expect(syncToggle0).toBeVisible({ timeout: 10000 });
-
       // Turn off sync on the first pane
-      await syncToggle0.click();
+      await setSync(page, 0, false);
 
       // Wait for input to clear
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 5000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 5000 });
 
       // Type in the first pane — should NOT propagate
       await getChatInput(page, 0).click();
       await getChatInput(page, 0).fill('Not synced text');
-      await expect(getChatInput(page, 1)).not.toHaveValue('Not synced text', {
+      await expect(getChatInput(page, 1)).not.toHaveText('Not synced text', {
         timeout: 3000,
       });
 
       // Re-enable sync on the first pane
-      await syncToggle0.click();
+      await setSync(page, 0, true);
 
       // Input is cleared upon toggling sync back on
-      await expect(getChatInput(page, 0)).toHaveValue('', { timeout: 10000 });
+      await expect(getChatInput(page, 0)).toHaveText('', { timeout: 10000 });
 
       // Type re-synced text in the first pane
       await getChatInput(page, 0).click();
       await getChatInput(page, 0).fill('Re-synced text');
 
       // Verify the text appears in the second pane's input
-      await expect(getChatInput(page, 1)).toHaveValue('Re-synced text', {
+      await expect(getChatInput(page, 1)).toHaveText('Re-synced text', {
         timeout: 10000,
       });
     });

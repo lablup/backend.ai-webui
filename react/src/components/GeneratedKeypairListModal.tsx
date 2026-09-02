@@ -2,9 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  GeneratedKeypairListModalFragment$data,
+  GeneratedKeypairListModalFragment$key,
+} from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import { localeCompare } from '../helper';
-import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { Alert } from 'antd';
+import { csvLiteral, exportCSVWithFormattingRules } from '../helper/csv-util';
+import { Banner } from '@astryxdesign/core/Banner';
 import {
   BAIFlex,
   BAIModal,
@@ -12,15 +16,11 @@ import {
   BAITable,
   BAIText,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { DownloadIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  GeneratedKeypairListModalFragment$data,
-  GeneratedKeypairListModalFragment$key,
-} from 'src/__generated__/GeneratedKeypairListModalFragment.graphql';
 
 type KeypairType = NonNullable<
   NonNullable<GeneratedKeypairListModalFragment$data>[number]
@@ -39,15 +39,20 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const keypairData = useFragment(
     graphql`
-      fragment GeneratedKeypairListModalFragment on KeyPair
+      fragment GeneratedKeypairListModalFragment on CreateKeypairPayload
       @relay(plural: true) {
-        access_key
-        secret_key
-        user_info {
-          email
+        secretKey
+        keypair {
+          accessKey
+          user {
+            basicInfo {
+              email
+            }
+          }
         }
       }
     `,
@@ -60,19 +65,25 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
     exportCSVWithFormattingRules(
       _.map(keypairData, (keypair) => {
         return {
-          email: keypair?.user_info?.email,
-          'access key': keypair?.access_key,
-          'secret key': keypair?.secret_key,
+          email: keypair?.keypair?.user?.basicInfo?.email,
+          'access key': keypair?.keypair?.accessKey,
+          'secret key': keypair?.secretKey,
         };
       }),
       'backendai_api_keypair',
+      // Secret keys are base64url (they can start with "-") and are pasted
+      // into CLI configs, so they must reach the file unmodified.
+      { 'secret key': csvLiteral },
     );
   };
 
   return (
     <BAIModal
       title={t('credential.NewCredentialCreated')}
-      width={600}
+      // 600 left the three columns at 200px each, one of which cannot fit an
+      // access key plus its copy button; 780 clears the table's natural width
+      // so the default view needs no horizontal scroll (FR-3519).
+      width={780}
       destroyOnHidden
       okText={t('button.Download')}
       onOk={handleDownload}
@@ -84,52 +95,59 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <Alert
-          showIcon
-          type="success"
+        <Banner
+          status="success"
           title={t('credential.GeneratedKeypairSuccess')}
         />
-        <Alert
-          showIcon
-          type="warning"
+        <Banner
+          status="warning"
           title={t('credential.GeneratedKeypairWarning')}
         />
         <BAIText>{t('credential.GeneratedKeypairInfo')}</BAIText>
+        {/* No `scroll` prop: Astryx's scroll wrapper owns overflow here, and
+            these columns take their floors from `minWidth`. */}
         <BAITable<KeypairType>
           size="small"
-          style={{ overflowX: 'auto' }}
-          scroll={{ x: 'max-content', y: 500 }}
+          resizable
           pagination={false}
           dataSource={keypairData}
-          rowKey={'access_key'}
+          rowKey={(record) => record?.keypair?.accessKey ?? ''}
           columns={[
             {
               title: t('general.E-Mail'),
-              dataIndex: ['user_info', 'email'],
+              dataIndex: ['keypair', 'user', 'basicInfo', 'email'],
               key: 'email',
               sorter: (a, b) =>
-                localeCompare(a?.user_info?.email, b?.user_info?.email),
+                localeCompare(
+                  a?.keypair?.user?.basicInfo?.email,
+                  b?.keypair?.user?.basicInfo?.email,
+                ),
               defaultSortOrder: 'ascend',
             },
             {
               title: t('credential.AccessKey'),
-              dataIndex: 'access_key',
+              dataIndex: ['keypair', 'accessKey'],
               key: 'access_key',
+              // Widest cell in the table: 20 monospace chars plus the copy
+              // button. Without a floor it takes an equal third and clips the
+              // button, since `<td>` is `overflow: hidden` (FR-3519).
+              minWidth: 240,
               render: (value) => (
                 <BAIText copyable monospace>
                   {value}
                 </BAIText>
               ),
-              sorter: (a, b) => localeCompare(a?.access_key, b?.access_key),
+              sorter: (a, b) =>
+                localeCompare(a?.keypair?.accessKey, b?.keypair?.accessKey),
             },
             {
               title: t('credential.SecretKey'),
-              dataIndex: 'secret_key',
+              dataIndex: 'secretKey',
               key: 'secret_key',
               render: (value) => (
                 <BAIText copyable={{ text: value }}>**********</BAIText>
               ),
-              sorter: (a, b) => localeCompare(a?.secret_key, b?.secret_key),
+              sorter: (a, b) => localeCompare(a?.secretKey, b?.secretKey),
             },
           ]}
         />

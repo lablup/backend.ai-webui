@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from 'antd';
+import { SessionCountDashboardItemFragment$key } from '../__generated__/SessionCountDashboardItemFragment.graphql';
+import { theme } from '../theme-shim';
 import {
   BAIBoardItemTitle,
   BAIFlex,
@@ -11,11 +12,10 @@ import {
   BAIStatistic,
   BAIFetchKeyButton,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
-import { SessionCountDashboardItemFragment$key } from 'src/__generated__/SessionCountDashboardItemFragment.graphql';
 
 interface SessionCountDashboardItemProps extends BAIFlexProps {
   queryRef: SessionCountDashboardItemFragment$key;

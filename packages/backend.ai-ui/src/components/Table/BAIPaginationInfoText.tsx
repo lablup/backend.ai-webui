@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 
 export interface PaginationInfoTextProps {
   start: number;
@@ -11,7 +11,7 @@ const BAIPaginationInfoText = ({
   end,
   total,
 }: PaginationInfoTextProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   return t('comp:PaginationInfoText.Total', {
     start,

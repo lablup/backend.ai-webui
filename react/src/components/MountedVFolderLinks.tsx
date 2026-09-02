@@ -7,13 +7,13 @@ import { MountedVFolderLinksLegacyLazyFolderLinkFragment$key } from '../__genera
 import { MountedVFolderLinksQuery } from '../__generated__/MountedVFolderLinksQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import FolderLink from './FolderLink';
-import { Skeleton } from 'antd';
-import _ from 'lodash';
+import { BAISkeleton } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface MountedVFolderLinksProps {
-  sessionFrgmt: MountedVFolderLinksFragment$key; // Replace with actual type if available
+  sessionFrgmt: MountedVFolderLinksFragment$key;
 }
 
 const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
@@ -21,6 +21,12 @@ const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
 }) => {
   const baiClient = useSuspendedBackendaiClient();
 
+  // TODO(needs-backend): the FR-2619 V2 migration cannot reach this surface
+  // because `ComputeSessionNode` only exposes the V1 `vfolder_nodes`
+  // (`VirtualFolderConnection`) field — there is no V2 `VFolder` connection
+  // on the session type. Migrate `MountedVFolderLinks`, `FolderLink`, and the
+  // session query in `SessionDetailContent` to a V2 fragment once the backend
+  // adds a `VFolder` (Strawberry V2) connection on `ComputeSessionNode`.
   const session = useFragment(
     graphql`
       fragment MountedVFolderLinksFragment on ComputeSessionNode {
@@ -44,7 +50,6 @@ const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
         vfolder?.node && (
           <FolderLink
             key={`mounted-vfolder-${idx}`}
-            showIcon
             vfolderNodeFragment={vfolder.node}
             // TODO: For now, disable state using VirtualFolderNode permissions in FolderLink component.
             // Currently shows Alert.error in Folder Explorer instead due to related bugs
@@ -54,7 +59,11 @@ const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
     })
   ) : session.row_id ? (
     // TODO: This part can be removed once compatibility with v25.4.0 is no longer needed.
-    <Suspense fallback={<Skeleton.Input size="small" active block />}>
+    // antd `Skeleton.Input size="small" active block` → the
+    // `BAISkeleton` input variant (MAPPING "Also COMPOSITION"):
+    // `active` is always-on behaviour and `block` is already the default
+    // full width.
+    <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
       <LegacyLazyMountedVFolderLinks sessionFrgmt={session} />
     </Suspense>
   ) : null;

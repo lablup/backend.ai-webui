@@ -3,40 +3,38 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ImportFromHuggingFaceModalQuery } from '../__generated__/ImportFromHuggingFaceModalQuery.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
+import { theme } from '../theme-shim';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { InputGroup } from '@astryxdesign/core/InputGroup';
+import { Switch } from '@astryxdesign/core/Switch';
+import { Text } from '@astryxdesign/core/Text';
 import {
-  CloudUploadOutlined,
-  FilterOutlined,
-  RocketOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import {
-  App,
-  Button,
-  Card,
-  Empty,
-  Form,
-  FormInstance,
-  Input,
-  Modal,
-  Result,
-  Space,
-  Switch,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
-import {
+  BAICard,
+  BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIFlex,
+  BAIText,
   useErrorMessageResolver,
+  useToggle,
 } from 'backend.ai-ui';
-import _ from 'lodash';
-import { CheckIcon } from 'lucide-react';
+import * as _ from 'lodash-es';
+import {
+  CloudUpload,
+  Filter,
+  Rocket,
+  CheckIcon,
+  CircleCheckBig,
+  CircleX,
+} from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, {
   Suspense,
@@ -67,12 +65,13 @@ type ImportFromHuggingFaceResult = {
 
 const ReadmeFallbackCard = () => {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
   return (
-    <Card
+    <BAICard
       size="small"
       title={
         <BAIFlex direction="row" gap="xs">
-          <FilterOutlined />
+          <Filter size="1em" />
           README.md
         </BAIFlex>
       }
@@ -84,8 +83,12 @@ const ReadmeFallbackCard = () => {
         },
       }}
     >
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-    </Card>
+      {/* antd `Empty image={PRESENTED_IMAGE_SIMPLE}` → `EmptyState`
+          (MAPPING §4). The simple placeholder illustration has no Astryx
+          counterpart and is dropped; `title` is required, so the previously
+          image-only state gains the wording it always implied. */}
+      <EmptyState title={t('autoScalingRule.NoDataAvailable')} isCompact />
+    </BAICard>
   );
 };
 
@@ -108,6 +111,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
     throw new Error('Project ID is required for ImportFromHuggingFaceModal');
   }
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const [isImportOnly, { toggle: toggleIsImportOnly }] = useToggle(false);
   const [huggingFaceURL, setHuggingFaceURL] = useState<string | undefined>();
   const [typedURL, setTypedURL] = useState<string>('');
@@ -265,7 +269,18 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
       >
         <Form ref={formRef} preserve={false} layout="vertical">
           <Form.Item label="Hugging Face URL" required>
-            <Space.Compact style={{ width: '100%' }}>
+            {/* antd `Space.Compact` around an input + button → `InputGroup`
+                (MAPPING §4). `onChange` now receives the value, not the event.
+                PILOT-DECISION: antd's `onPressEnter` shortcut is DROPPED — the
+                shared `AstryxFormTextInput` adapter exposes no Enter hook, and
+                widening it for one call site is out of this batch's scope. The
+                explicit "Check" button beside the field is unchanged and is
+                still the only required path. */}
+            <InputGroup
+              label="Hugging Face URL"
+              isLabelHidden
+              style={{ width: '100%' }}
+            >
               <Form.Item
                 noStyle
                 name="url"
@@ -277,30 +292,25 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                   },
                 ]}
               >
-                <Input
-                  onPressEnter={() => {
-                    handleOnCheck();
-                  }}
-                  onChange={(e) => {
-                    setTypedURL(e.target.value);
+                <AstryxFormTextInput
+                  label="Hugging Face URL"
+                  onChange={(value) => {
+                    setTypedURL(value);
                   }}
                 />
               </Form.Item>
               <Button
-                type={!shouldSkipURLCheck ? 'primary' : 'default'}
-                disabled={shouldSkipURLCheck}
+                variant={!shouldSkipURLCheck ? 'primary' : 'secondary'}
+                isDisabled={shouldSkipURLCheck}
                 onClick={() => {
                   handleOnCheck();
                 }}
-                loading={isPendingCheck}
-              >
-                {shouldSkipURLCheck ? (
-                  <CheckIcon />
-                ) : (
-                  t('data.modelStore.CheckHuggingFaceUrl')
-                )}
-              </Button>
-            </Space.Compact>
+                isLoading={isPendingCheck}
+                icon={shouldSkipURLCheck ? <CheckIcon size="1em" /> : undefined}
+                isIconOnly={shouldSkipURLCheck}
+                label={t('data.modelStore.CheckHuggingFaceUrl')}
+              />
+            </InputGroup>
             <Form.Item
               noStyle
               name=""
@@ -341,21 +351,23 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             label={t('data.modelStore.ModelStoreFolderName')}
             name="folder_name"
           >
-            <Input />
+            <AstryxFormTextInput
+              label={t('data.modelStore.ModelStoreFolderName')}
+            />
           </Form.Item>
           <Form.Item
             label={t('data.modelStore.ServiceName')}
             name="service_name"
           >
-            <Input />
+            <AstryxFormTextInput label={t('data.modelStore.ServiceName')} />
           </Form.Item>
           {huggingFaceURL && huggingFaceModelInfo.data?.markdown ? (
             <Suspense fallback={<ReadmeFallbackCard />}>
-              <Card
+              <BAICard
                 size="small"
                 title={
                   <BAIFlex direction="row" gap="xs">
-                    <FilterOutlined />
+                    <Filter size="1em" />
                     README.md
                   </BAIFlex>
                 }
@@ -368,7 +380,7 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                 }}
               >
                 <Markdown>{huggingFaceModelInfo.data?.markdown}</Markdown>
-              </Card>
+              </BAICard>
             </Suspense>
           ) : (
             <ReadmeFallbackCard />
@@ -377,29 +389,44 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
             gap={'xs'}
             style={{ marginTop: token.marginLG, marginBottom: token.marginLG }}
           >
+            {/* antd `Switch checked` → Astryx `Switch value` (MAPPING §4);
+                `label` is required and the control renders it, so the sibling
+                caption becomes the label and is hidden as duplicate text. */}
             <Switch
-              checked={isImportOnly}
+              value={isImportOnly}
+              label={t('data.modelStore.ImportOnly')}
+              isLabelHidden
               onChange={() => {
                 toggleIsImportOnly();
               }}
             />
-            <Typography.Text>{t('data.modelStore.ImportOnly')}</Typography.Text>
+            <Text>{t('data.modelStore.ImportOnly')}</Text>
           </BAIFlex>
         </Form>
       </BAIModal>
-      <Modal
+      {/* antd `Modal` → `BAIModal` (the Dialog-based BUI modal); antd `Result`
+          → `EmptyState` (MAPPING §"Also COMPOSITION": `subTitle` →
+          `description`, `extra` → `actions`). `status` has no Astryx knob, so
+          the success/error signal becomes the chosen icon. */}
+      <BAIModal
         open={!_.isEmpty(importResult)}
         onCancel={() => setImportResult(undefined)}
         footer={null}
       >
-        <Result
-          status={importAndStartService?.isSuccess ? 'success' : 'error'}
+        <EmptyState
+          icon={
+            importAndStartService?.isSuccess ? (
+              <CircleCheckBig size={48} />
+            ) : (
+              <CircleX size={48} />
+            )
+          }
           title={
             importAndStartService?.isSuccess
               ? t('data.modelStore.ImportSucceeded')
               : t('dialog.ErrorOccurred')
           }
-          subTitle={
+          description={
             importAndStartService?.isSuccess
               ? isImportOnly
                 ? t('data.modelStore.ImportOnlySuccessDesc', {
@@ -411,88 +438,78 @@ const ImportFromHuggingFaceModal: React.FC<ImportFromHuggingFaceModalProps> = ({
                   })
               : getErrorMessage(importAndStartService?.error)
           }
-          extra={
-            importAndStartService?.isSuccess && (
+          actions={
+            importAndStartService?.isSuccess ? (
               <BAIFlex gap={'xs'} justify="center" align="center">
                 {importResult?.folder?.id && (
-                  <Tooltip
-                    title={
+                  // PILOT-DECISION: antd wrapped this (conditionally disabled)
+                  // button in a Tooltip. Astryx forbids that — a disabled
+                  // trigger swallows the hover the wrapper needs — so the
+                  // explanation moves onto the button's own `tooltip`, shown
+                  // only while the button is actually disabled.
+                  <Button
+                    isDisabled={
+                      baiClient?.is_admin && group?.type !== 'MODEL_STORE'
+                    }
+                    tooltip={
                       baiClient?.is_admin && group?.type !== 'MODEL_STORE'
                         ? t(
                             'data.modelStore.ChangeTheCurrentProjectToModelStore',
                           )
-                        : ''
+                        : undefined
                     }
-                  >
-                    <Button
-                      disabled={
-                        baiClient?.is_admin && group?.type !== 'MODEL_STORE'
-                      }
-                      onClick={() => {
-                        webuiNavigate({
-                          pathname: '/data',
-                          search: new URLSearchParams({
-                            tab: 'model',
-                            folder: importResult.folder.id,
-                          }).toString(),
-                        });
-                      }}
-                    >
-                      {t('data.modelStore.OpenModelFolder')}
-                    </Button>
-                  </Tooltip>
+                    label={t('data.modelStore.OpenModelFolder')}
+                    onClick={() => {
+                      webuiNavigate({
+                        pathname: buildProjectPath('data'),
+                        search: new URLSearchParams({
+                          tab: 'model',
+                          folder: importResult.folder.id,
+                        }).toString(),
+                      });
+                    }}
+                  />
                 )}
                 {importResult?.service?.endpoint_id && (
                   <Button
-                    type="primary"
+                    variant="primary"
+                    label={t('data.modelStore.ViewServiceInfo')}
                     onClick={() => {
                       webuiNavigate(
                         `/serving/${importResult.service?.endpoint_id}`,
                       );
                     }}
-                  >
-                    {t('data.modelStore.ViewServiceInfo')}
-                  </Button>
+                  />
                 )}
               </BAIFlex>
-            )
+            ) : undefined
           }
-        >
-          {importAndStartService?.isSuccess && (
-            <div className="desc">
-              <Typography.Paragraph>
-                <Typography.Text strong>
-                  {t('data.modelStore.AddedItems')}
-                </Typography.Text>
-              </Typography.Paragraph>
-              {importResult?.folder?.name && (
-                <Typography.Paragraph>
-                  <Typography.Text>
-                    <CloudUploadOutlined
-                      style={{ marginRight: token.marginXXS }}
-                    />
-                    {t('data.modelStore.ModelFolderName')}:{' '}
-                    <Typography.Text copyable>
-                      {importResult?.folder?.name}
-                    </Typography.Text>
-                  </Typography.Text>
-                </Typography.Paragraph>
-              )}
-              {importResult?.service?.name && (
-                <Typography.Paragraph>
-                  <Typography.Text>
-                    <RocketOutlined style={{ marginRight: token.marginXXS }} />
-                    {t('data.modelStore.ServiceName')}:{' '}
-                    <Typography.Text copyable>
-                      {importResult?.service?.name}
-                    </Typography.Text>
-                  </Typography.Text>
-                </Typography.Paragraph>
-              )}
-            </div>
-          )}
-        </Result>
-      </Modal>
+        />
+        {/* antd `Result` rendered its `children` under the subtitle; EmptyState
+            has no children slot, so the detail block moves below it. */}
+        {importAndStartService?.isSuccess && (
+          <div className="desc">
+            <BAIText strong>{t('data.modelStore.AddedItems')}</BAIText>
+            {importResult?.folder?.name && (
+              <Text as="p" display="block">
+                <CloudUpload
+                  style={{ marginRight: token.marginXXS }}
+                  size="1em"
+                />
+                {t('data.modelStore.ModelFolderName')}:{' '}
+                <BAIText copyable>{importResult?.folder?.name}</BAIText>
+              </Text>
+            )}
+            {importResult?.service?.name && (
+              <Text as="p" display="block">
+                <Rocket style={{ marginRight: token.marginXXS }} size="1em" />
+                {t('data.modelStore.ServiceName')}:{' '}
+                <BAIText copyable>{importResult?.service?.name}</BAIText>
+              </Text>
+            )}
+          </div>
+        )}
+      </BAIModal>
     </>
   );
 };

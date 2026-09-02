@@ -4,7 +4,7 @@
  */
 import { listenToBackgroundTask } from '../helper';
 import { CLOSING_DURATION, useSetBAINotification } from './useBAINotification';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -520,7 +520,6 @@ export function useMultiStepNotification(
 
         const step = steps[i];
 
-        // Update step to pending
         stepStatesRef.current[i] = { status: 'pending' };
         syncState('running', i);
 

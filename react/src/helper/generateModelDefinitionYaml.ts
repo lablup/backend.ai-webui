@@ -36,7 +36,7 @@ export interface ModelDefinitionInput {
  *       port: 8000
  *       health_check:
  *         path: /health
- *         initial_delay: 5.0
+ *         initial_delay: 60
  *         max_retries: 10
  * ```
  */
@@ -78,7 +78,7 @@ ${startCommandLines}
       port: ${input.port}
       health_check:
         path: "${escapeYamlString(input.healthCheckPath)}"
-        initial_delay: ${input.initialDelay ?? 5.0}
+        initial_delay: ${input.initialDelay ?? 60}
         max_retries: ${input.maxRetries ?? 10}
 `;
 }

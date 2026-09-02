@@ -2,29 +2,58 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-// Always use this component instead of directly importing `FluentEmoji` from `@lobehub/fluent-emoji`.
-// eslint-disable-next-line no-restricted-imports
-import { getFluentEmojiCDN as originalGetFluentEmojiCDN } from '@lobehub/fluent-emoji';
-// eslint-disable-next-line no-restricted-imports
-import { EmojiType } from '@lobehub/fluent-emoji/es/getFluentEmojiCDN/utils';
 import React from 'react';
+
+/**
+ * The Fluent Emoji asset families. Matches the set `@lobehub/fluent-emoji`
+ * exposed as `EmojiType` — kept as a local type since ticket 30 removed that
+ * package (it pulled `antd`, `antd-style` and `@lobehub/ui` in behind it for
+ * the sake of one URL-template function).
+ */
+export type EmojiType = 'anim' | 'flat' | 'modern' | 'mono' | '3d';
 
 const CUSTOM_CDN_URL = '/resources/fluentemoji/{type}/assets/{emoji}.{ext}';
 
-export function getFluentEmojiURL(emoji: string, config: { type: EmojiType }) {
-  return originalGetFluentEmojiCDN(emoji, {
-    type: config.type,
-    cdn: CUSTOM_CDN_URL,
-  });
+/**
+ * `😀` → `1f600`, `👨‍👩‍👧` → `1f468-200d-1f469-200d-1f467`.
+ *
+ * Iterating the string (rather than indexing it) walks whole code points, so
+ * surrogate pairs and ZWJ sequences both come out right. This is the same
+ * mapping the upstream `emojiToUnicode` did, and it is what the asset file
+ * names under `/resources/fluentemoji/` are keyed by — do not "simplify" it to
+ * `charCodeAt`.
+ */
+function emojiToUnicode(emoji: string): string {
+  return [...emoji].map((char) => char.codePointAt(0)?.toString(16)).join('-');
 }
 
 /**
- * A component that displays Fluent Emoji icons by loading them from a CDN or local resources.
+ * Build the local asset URL for a Fluent Emoji glyph.
+ *
+ * This is the custom-URL-template branch of the upstream `getFluentEmojiCDN`
+ * — the only branch this app ever took, because `CUSTOM_CDN_URL` points at the
+ * emoji copied into `resources/` rather than at a public CDN. The upstream
+ * npm-registry / unpkg branches are deliberately NOT reproduced: shipping the
+ * assets locally is the whole point (no third-party asset host at runtime).
+ *
+ * `anim` and `3d` are raster (`.webp`); the rest are `.svg` — same rule as
+ * upstream, and the same rule the files in `resources/fluentemoji/` follow.
+ */
+export function getFluentEmojiURL(emoji: string, config: { type: EmojiType }) {
+  const ext = config.type === 'anim' || config.type === '3d' ? 'webp' : 'svg';
+  return CUSTOM_CDN_URL.replace('{emoji}', emojiToUnicode(emoji))
+    .replace('{ext}', ext)
+    .replace('{type}', config.type);
+}
+
+/**
+ * A component that displays Fluent Emoji icons by loading them from the local
+ * `/resources/fluentemoji` folder.
  *
  * @remarks
- * This component is designed to avoid bundling emoji assets directly into the React bundle.
- * Instead, it loads only the necessary emoji images on-demand from the `/resources/fluentemoji` folder
- * or CDN, which significantly reduces the bundle size.
+ * This component is designed to avoid bundling emoji assets directly into the
+ * React bundle. Instead, it loads only the necessary emoji images on-demand,
+ * which significantly reduces the bundle size.
  *
  * @param props - Component properties
  * @param props.emoji - The emoji character to display (default: '😀')
@@ -35,11 +64,6 @@ export function getFluentEmojiURL(emoji: string, config: { type: EmojiType }) {
  * ```tsx
  * <FluentEmojiIcon emoji="🎉" width={32} height={32} />
  * ```
- *
- * @eslint-disable-next-line no-restricted-imports
- * The restricted-imports rule is disabled here because this is the designated wrapper component
- * that properly handles emoji loading without bundling assets. This is the only place where
- * importing from `@lobehub/fluent-emoji` is allowed.
  */
 export const FluentEmojiIcon: React.FC<{
   emoji?: string;

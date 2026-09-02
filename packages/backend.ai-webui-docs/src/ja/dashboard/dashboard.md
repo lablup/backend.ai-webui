@@ -1,54 +1,104 @@
-# Dashboard
+---
+navTitle: ダッシュボード
+---
 
-The **Dashboard** provides an at-a-glance summary of your current resource usage,
-available limits, and session information across all your projects and resource groups.
-It helps you quickly understand how your computing resources are being utilized
-and monitor your recent activities in the system.
-Click the refresh icon in any panel to update the displayed data if it seems outdated.
+<a id="dashboard"></a>
+
+# ダッシュボード
+
+**ダッシュボード**は、すべてのプロジェクトとリソースグループにおける現在のリソース使用状況、利用可能な上限、セッション情報の概要を一目で確認できるページです。コンピューティングリソースの使用状況を素早く把握し、システム内の最近の活動をモニタリングするのに役立ちます。
 
 ![](../images/dashboard.png)
 
-The page is composed of several main panels:
+このページは以下の主要パネルで構成されています：
 
-- My セッション:
-    Shows the number of active sessions by type,
-    such as *インタラクティブ*, *バッチ*, *推論*, and *Upload*.
-    You can quickly see how many sessions of each type are currently running.
+- **私のセッション:**
+    インタラクティブ、バッチ、推論、アップロードなど、タイプ別にアクティブなセッション数を表示します。各タイプのセッションがいくつ実行中かをすばやく確認できます。
 
-- My Total Resources Limit:
-    Displays the total used and free resources across all your projects and resource groups.
-    When multiple limits (domain, project, or keypair) apply,
-    the system uses the **most restrictive** available limit to calculate the remaining resources.
+- **私の総リソース使用量:**
+    すべてのプロジェクトで現在使用しているリソースを表示します。各リソースの数値の下には使用量バーが表示され、バーにマウスを合わせると総リソース制限に対する使用量を確認できます。ドメイン、プロジェクト、キーペアなど複数の制限が同時に適用される場合は、**最も厳しい制限**が適用されます。
 
-- My Resources in Resource Group:
-    Shows your current resource usage and remaining capacity
-    within the selected resource group of your current project.
-    You can switch groups using the dropdown menu.
+- **リソースグループの私のリソース:**
+    現在のプロジェクトの選択されたリソースグループにおけるリソース使用量と残りの容量を表示します。ドロップダウンメニューでグループを切り替えることができます。
 
-- Total Resources in Resource Group:
-    Summarizes the overall used and free resources in the selected resource group.
-    The data is aggregated from all agents that belong to the group.
+- **フォルダーのステータス:**
+    アクセスできるストレージフォルダの数を、**マイフォルダー**、**プロジェクトフォルダー**、**招待されたフォルダー**に分けて表示します。保留中の招待がある場合は、**招待されたフォルダー**の数値をクリックするとデータページで招待内容を確認できます。
 
-- Recently Created セッション:
-    Lists the most recently created active sessions within the current project.
-    Provides session details such as name, status, CPU/memory usage, environment, resource group,
-    session type, and creation time.
-    By default, the latest 5 active sessions are displayed.
+- **ストレージボリュームごとの利用可能量:**
+    各ストレージボリュームで利用可能な容量を表示します。利用可能量の設定に対応したストレージホストがない場合は、代わりに案内メッセージが表示されます。
 
-For super 管理者s, additional information is available.
+- **リソースグループの総リソース:**
+    選択されたリソースグループ全体の使用量と空き容量を要約表示します。グループに属するすべてのエージェントのデータを集計した値です。
 
-![](../images/admin_dashboard.png)
+:::note
+**リソースグループの総リソース**パネルは、システム構成によって表示されない場合があります。
+:::
 
-Except for 'Active セッション', 'Agent 統計', and 'Active Agents', the remaining panels
-display the same information as the ユーザー dashboard.
+- **最近作成されたセッション:**
+    現在のプロジェクトで最近作成されたアクティブなセッション一覧を表示します。セッション名、ステータス、CPU/メモリ使用量、環境、リソースグループ、セッションタイプ、作成日時などの詳細を確認できます。デフォルトでは最新の5つのアクティブなセッションが表示されます。
 
-- Active セッション:
-    Shows the total number of active sessions across current projects,
-    categorized by session type.
+<a id="superadmin-dashboard"></a>
 
-- Agent 統計:
-    Provides all used resources across all agents in the system.
-    The values represent the total used resources by all active sessions.
+スーパー管理者としてログインしている場合、ダッシュボードページには通常のユーザーパネルに加えて、**エージェントの統計**および**アクティブなエージェント**パネルも表示されます。これらのパネルは、クラスター全体のエージェントの状態とリソース使用状況を示します。また、スーパー管理者の場合は**私のセッション**パネルが**アクティブセッション**という名称で表示されますが、集計対象は同じく現在のプロジェクトのセッションです。
 
-- Active Agents:
-    Lists all currently active agents in the system.
+## ダッシュボードレイアウトのカスタマイズ
+
+ボードは特別なモードに切り替えなくても、いつでも並べ替えられます：
+
+- **パネルの移動**: パネルのヘッダーをドラッグして、ボード上の位置を変更できます。
+- **パネルのサイズ変更**: パネルの右下隅をドラッグしてサイズを調整できます。各パネルにはコンテンツの可読性を確保するための最小サイズが設定されています。
+
+![](../images/dashboard_edit_mode.png)
+
+カスタマイズされたレイアウトは自動的に保存され、ブラウザセッション間で保持されます。レイアウトはユーザーごとに保存されるため、各ユーザーが独自の配置を設定できます。配置をデフォルトに戻すには、編集サイドバー下部の**レイアウトを初期化**ボタンをクリックして確認します。レイアウトを初期化してもカスタムパネルは削除されません。
+
+:::tip
+WebUIの更新で新しいダッシュボードパネルが追加された場合、保存済みのカスタムレイアウトが
+あっても、新しいパネルは自動的にダッシュボードに表示されます。
+:::
+
+<a id="custom-panels"></a>
+
+### カスタムパネル
+
+:::note[実験的機能]
+ユーザー設定ページの[実験的特徴](#experimental-features)セクションで
+**カスタムダッシュボードパネル**を有効にするまで、カスタムパネル機能全体は
+非表示になります。後でこの機能を無効にすると、既存のカスタムパネルは
+削除されずに非表示になり、再度有効にすると保存されたボード上の位置のまま
+再表示されます。
+:::
+ページ右上の**編集**ボタンをクリックすると、ボードの右側にカスタムパネルのサイドバーが開き、**閉じる**をクリックすると再び非表示になります。サイドバーにはカスタムパネルの一覧が表示されます。カスタムパネルは、選択したデータソースを指定した条件で絞り込んで表示します。パネルにはタイトルとデータのみが表示されるため、条件がわかるタイトルを付けることをおすすめします。
+
+パネルを追加するには、サイドバーの**追加**ボタンをクリックします。パネルのダイアログには以下の項目があります。**パネル形式**と**データソース**は必須項目で、両方を選択しないとダイアログを送信できません。
+
+- **データソース**: パネルに表示するデータソースです。**セッション**、**デプロイ**、**データストレージ選択**から選択します。
+- **パネル形式**: データソースの表示方法です。**テーブル**または**カウント**から選択します。**セッション**データソースの場合は **グリッド** も選択できます。
+- **タイトル**: パネルのタイトル（オプション）です。省略した場合はデータソース名が使用されます。
+- **条件**: パネルに表示する項目を絞り込むプロパティフィルターです。
+
+入力項目の下のライブプレビューには、現在の条件に一致する行が表示されます。プレビューで列をソートすると、そのソート順がパネルに適用されます。**追加**ボタンをクリックすると、パネルがボードに配置されます。
+
+![](../images/dashboard_panel_modal.png)
+
+**デプロイ**パネルは、デプロイページと同じテーブル（名前、状態、レプリカ概要、モデル、作成日時）を使用して、プロジェクトのモデルデプロイを一覧表示します。デプロイの名前をクリックすると、その詳細ページが開きます。条件フィルターでは、名前、タグ、エンドポイントURL、公開を指定できます。
+
+**グリッド**を選択すると、セッションリソースグリッドが表示されます。条件に一致する各セッションに割り当てられたリソースを、使用率に応じて色分けされたユニットセルとして表示します。セッションをクリックすると、テーブルで行をクリックしたときと同様に詳細ドロワーが開きます。グリッドは条件に一致するセッションのうち最大100件までを表示し、それを超える場合は件数の通知が表示されます。
+
+グリッドの表示設定（リソース／カーネルモード、表示するリソースまたはメトリック、メモリ単位、レイアウト）は、パネルの追加／編集ダイアログのライブプレビューで指定し、パネルとともに保存されます。パネル自体にはこれらの設定を変更するコントロールがないため、別の表示にしたい場合はパネルをもう一つ追加してください。
+
+:::note
+**グリッド**は実験的機能です。**パネル形式**の選択肢に表示されるのは、[実験的特徴](#experimental-features)で**Session resource grid view** がオンになっている場合のみです。後でこの設定をオフにしても、作成済みのグリッドパネルは保存された設定を維持したまま、設定を再度オンにするまでセッションテーブルとして表示されます。
+:::
+
+パネルのデータソース、パネル形式、条件、タイトルを後から変更するには、サイドバーの該当パネルの横、またはボード上のパネルヘッダーにある鉛筆（**編集**）アイコンをクリックし、変更内容を保存します。パネルを削除するには、ゴミ箱（**削除**）アイコンをクリックし、確認ポップアップで承認します。
+
+:::note
+**セッション**および**デプロイ**パネルは現在のプロジェクトのデータを表示し、すべてのプロジェクトメンバーが利用できます。**データストレージ選択**パネルはスーパー管理者のみ利用できます。現在の権限で照会できないデータソースのパネルは、サイドバーの一覧には残りますが、ボードには表示されません。
+:::
+
+<a id="automatic-refresh"></a>
+
+## 自動更新
+
+ダッシュボードのデータは15秒ごとに自動的に更新されるため、ページを再読み込みしなくてもパネルには常に最新の活動が反映されます。カスタムパネルも組み込みパネルと同じサイクルで更新されます。

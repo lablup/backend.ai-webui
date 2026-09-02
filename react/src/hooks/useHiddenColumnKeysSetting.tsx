@@ -9,12 +9,11 @@ type KnownSettingName =
   | 'AgentSummaryList'
   | 'ContainerRegistryList'
   | 'CustomizedImageList'
-  | 'ErrorLogList'
   | 'ImageList'
   | 'KeypairResourcePolicyList'
   | 'ProjectResourcePolicyList'
-  | 'UserResourcePolicyList'
-  | 'EndpointListPage';
+  | 'RoleList'
+  | 'UserResourcePolicyList';
 
 export const useHiddenColumnKeysSetting = (listName: KnownSettingName) => {
   const [hiddenColumnKeys, setHiddenColumnKeys] = useBAISettingUserState(

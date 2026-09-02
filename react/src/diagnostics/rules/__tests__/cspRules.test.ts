@@ -11,7 +11,6 @@ import {
   parseCspConnectSrc,
   parseCspDirective,
 } from '../cspRules';
-import { describe, expect, it } from '@jest/globals';
 
 describe('parseCspConnectSrc', () => {
   it('should return empty array for null/undefined input', () => {

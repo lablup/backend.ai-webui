@@ -1,0 +1,646 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { DeploymentAccessTokensCardCreateMutation } from '../__generated__/DeploymentAccessTokensCardCreateMutation.graphql';
+import { DeploymentAccessTokensCardDeleteMutation } from '../__generated__/DeploymentAccessTokensCardDeleteMutation.graphql';
+import { DeploymentAccessTokensCardListQuery } from '../__generated__/DeploymentAccessTokensCardListQuery.graphql';
+import { DeploymentAccessTokensCard_deployment$key } from '../__generated__/DeploymentAccessTokensCard_deployment.graphql';
+import { App } from '../app-shim';
+import { Form } from '../form-engine';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormSelector } from './astryxFormControls';
+import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
+import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAISkeleton,
+  BAIButton,
+  BAICard,
+  BAIDeleteConfirmModal,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAIModal,
+  BAINameActionCell,
+  type BAINameActionCellAction,
+  disabledReason,
+  BAIQuestionIconWithTooltip,
+  BAITable,
+  BAIText,
+  BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
+  filterOutNullAndUndefined,
+  toLocalId,
+  useBAILogger,
+  useControllableValue,
+  useFetchKey,
+  useMutationWithPromise,
+} from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import { Trash2, PlusIcon } from 'lucide-react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useState,
+  useTransition,
+} from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  graphql,
+  useFragment,
+  useLazyLoadQuery,
+  useMutation,
+} from 'react-relay';
+
+interface DeploymentAccessTokensCardProps {
+  deploymentFrgmt: DeploymentAccessTokensCard_deployment$key;
+  deploymentId: string;
+  isOwnedByCurrentUser?: boolean;
+  isDeploymentDestroying?: boolean;
+  // Optional controlled open state for the create-access-token modal.
+  // When omitted, the tab manages its own state via the header "+" button.
+  // The deployment detail page passes these so the private-deployment
+  // alert can open the same modal without rebuilding the create flow.
+  isCreateModalOpen?: boolean;
+  onCreateModalOpenChange?: (open: boolean) => void;
+  onTokenCreated?: () => void;
+  cardRef?: React.RefObject<HTMLDivElement | null>;
+}
+
+const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
+  deploymentFrgmt,
+  deploymentId,
+  isOwnedByCurrentUser = true,
+  isDeploymentDestroying = false,
+  onTokenCreated,
+  cardRef,
+  ...controlledModalProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [fetchKey, updateFetchKey] = useFetchKey();
+
+  const [isCreateModalOpen, setIsCreateModalOpen] =
+    useControllableValue<boolean>(controlledModalProps, {
+      defaultValue: false,
+      valuePropName: 'isCreateModalOpen',
+      trigger: 'onCreateModalOpenChange',
+    });
+  // After successful creation, show the plaintext token once in a modal.
+  const [createdToken, setCreatedToken] = useState<{
+    token: string;
+    expiresAt: string | null;
+  } | null>(null);
+
+  // useDeferredValue schedules Relay re-renders at low priority so the card
+  // header stays interactive while the list suspends.
+  const deferredFetchKey = useDeferredValue(fetchKey);
+
+  const deployment = useFragment(
+    graphql`
+      fragment DeploymentAccessTokensCard_deployment on ModelDeployment {
+        id
+        networkAccess {
+          endpointUrl
+        }
+      }
+    `,
+    deploymentFrgmt,
+  );
+
+  const commitCreateMutation =
+    useMutationWithPromise<DeploymentAccessTokensCardCreateMutation>(graphql`
+      mutation DeploymentAccessTokensCardCreateMutation(
+        $input: CreateAccessTokenInput!
+      ) {
+        createAccessToken(input: $input) {
+          accessToken {
+            id
+            token
+            createdAt
+            expiresAt
+          }
+        }
+      }
+    `);
+
+  const handleRefetch = () => {
+    startRefetchTransition(() => {
+      updateFetchKey();
+    });
+  };
+
+  const hasEndpointUrl = !!deployment.networkAccess?.endpointUrl;
+  // The reason rides inside the disabled flag (`BAINameActionCellAction`'s
+  // union), so "disabled with no reason" — the FR-3679 defect — cannot be
+  // expressed. Ordered most- to least-specific.
+  const mutationDisabled: BAINameActionCellAction['disabled'] =
+    isDeploymentDestroying
+      ? { reason: t('deployment.accessToken.DeploymentStopped') }
+      : !isOwnedByCurrentUser
+        ? { reason: t('deployment.accessToken.OnlyOwnerCanManage') }
+        : false;
+  // Creating is additionally blocked until the manager issues a network
+  // endpoint — a token would have nothing to authenticate against.
+  const createDisabled: BAINameActionCellAction['disabled'] = mutationDisabled
+    ? mutationDisabled
+    : !hasEndpointUrl
+      ? { reason: t('deployment.accessToken.EndpointNotIssuedYet') }
+      : false;
+
+  return (
+    <>
+      <BAICard
+        ref={cardRef}
+        title={
+          <BAIFlex gap="xs" align="center">
+            {t('deployment.tab.AccessTokens')}
+            <BAIQuestionIconWithTooltip
+              title={t('deployment.tab.description.AccessTokens')}
+            />
+          </BAIFlex>
+        }
+        extra={
+          <BAIFlex gap="xs" align="center">
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              value=""
+              onChange={handleRefetch}
+            />
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              disabled={!!createDisabled}
+              title={disabledReason(createDisabled)}
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              {t('deployment.accessToken.Create')}
+            </BAIButton>
+          </BAIFlex>
+        }
+        styles={{ body: { paddingTop: 0 } }}
+      >
+        <Suspense fallback={<BAISkeleton />}>
+          <DeploymentAccessTokensTable
+            deploymentId={deploymentId}
+            fetchKey={deferredFetchKey}
+            isPendingRefetch={isPendingRefetch}
+            deleteDisabled={mutationDisabled}
+            onAfterDelete={handleRefetch}
+          />
+        </Suspense>
+      </BAICard>
+
+      <BAIUnmountAfterClose>
+        <CreateAccessTokenModal
+          open={isCreateModalOpen}
+          confirmLoading={false}
+          onRequestClose={(result) => {
+            setIsCreateModalOpen(false);
+            if (result) {
+              // Kick off the mutation after the modal closes to avoid
+              // overlapping dialogs.
+              commitCreateMutation({
+                input: {
+                  modelDeploymentId: toLocalId(deployment.id),
+                  // Schema requires DateTime! (non-null); map "no expiration" to a far-future date.
+                  expiresAt:
+                    result.expiresAt ?? new Date('2099-12-31').toISOString(),
+                },
+              })
+                .then((response) => {
+                  const created = response.createAccessToken?.accessToken;
+                  if (created) {
+                    setCreatedToken({
+                      token: created.token,
+                      expiresAt: created.expiresAt ?? null,
+                    });
+                  }
+                  message.success({
+                    key: 'access-token-created',
+                    content: t('deployment.accessToken.Created'),
+                  });
+                  handleRefetch();
+                  onTokenCreated?.();
+                })
+                .catch((error) => {
+                  const errors = Array.isArray(error) ? error : [error];
+                  for (const err of errors) {
+                    message.error(err?.message || t('dialog.ErrorOccurred'));
+                  }
+                  logger.error(error);
+                });
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
+
+      <BAIUnmountAfterClose>
+        <BAIModal
+          open={createdToken !== null}
+          destroyOnHidden
+          title={t('deployment.accessToken.Token')}
+          onCancel={() => setCreatedToken(null)}
+          footer={null}
+          width={520}
+        >
+          <BAIFlex direction="column" align="stretch" gap="sm">
+            <Text>{t('deployment.accessToken.Created')}</Text>
+            {/* `ellipsis` stays a bare boolean on purpose — a truncate tooltip
+                would put the secret behind a hover. Copy is the way. FR-3698. */}
+            {createdToken ? (
+              <BAIText copyable={{ text: createdToken.token }} ellipsis code>
+                {createdToken.token}
+              </BAIText>
+            ) : null}
+            {createdToken?.expiresAt ? (
+              <Text color="secondary">
+                {`${t('deployment.accessToken.Expiration')}: ${dayjs(
+                  createdToken.expiresAt,
+                ).format('ll LT')}`}
+              </Text>
+            ) : (
+              <Text color="secondary">
+                {t('deployment.accessToken.NoExpiration')}
+              </Text>
+            )}
+          </BAIFlex>
+        </BAIModal>
+      </BAIUnmountAfterClose>
+    </>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Inner table component — owns the data fetch and per-row delete mutation so
+// the BAICard header above can remain visible while the list suspends.
+// ---------------------------------------------------------------------------
+
+interface DeploymentAccessTokensTableProps {
+  deploymentId: string;
+  fetchKey: string;
+  isPendingRefetch: boolean;
+  /** `{ reason }` disables deleting and says why; `false` enables it. */
+  deleteDisabled?: BAINameActionCellAction['disabled'];
+  onAfterDelete: () => void;
+}
+
+const DeploymentAccessTokensTable: React.FC<
+  DeploymentAccessTokensTableProps
+> = ({
+  deploymentId,
+  fetchKey,
+  isPendingRefetch,
+  deleteDisabled,
+  onAfterDelete,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const [deletingToken, setDeletingToken] = useState<{
+    id: string;
+    token: string;
+  } | null>(null);
+
+  // First load serves cached tokens immediately + refreshes in the background;
+  // an explicit refresh / a just-created token bumps the (deferred) fetchKey so
+  // those go network-only. Mirrors DeploymentRevisionHistoryTab / Replicas.
+  const isInitialFetch = fetchKey === INITIAL_FETCH_KEY;
+
+  const { deployment: listData } =
+    useLazyLoadQuery<DeploymentAccessTokensCardListQuery>(
+      graphql`
+        query DeploymentAccessTokensCardListQuery($deploymentId: ID!) {
+          deployment(id: $deploymentId) {
+            accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
+              count
+              edges {
+                node {
+                  id
+                  token
+                  createdAt
+                  expiresAt
+                }
+              }
+            }
+          }
+        }
+      `,
+      { deploymentId },
+      {
+        fetchKey,
+        fetchPolicy: isInitialFetch ? 'store-and-network' : 'network-only',
+      },
+    );
+
+  type AccessTokenNode = NonNullable<
+    NonNullable<
+      NonNullable<typeof listData>['accessTokens']
+    >['edges'][number]['node']
+  >;
+
+  const accessTokens = filterOutNullAndUndefined(
+    listData?.accessTokens?.edges?.map((edge) => edge?.node),
+  );
+
+  const [commitDelete, isDeletingToken] =
+    useMutation<DeploymentAccessTokensCardDeleteMutation>(graphql`
+      mutation DeploymentAccessTokensCardDeleteMutation(
+        $input: DeleteAccessTokenInput!
+      ) {
+        deleteAccessToken(input: $input) {
+          id
+        }
+      }
+    `);
+
+  return (
+    <>
+      <BAITable<AccessTokenNode>
+        scroll={{ x: 'max-content' }}
+        rowKey="id"
+        loading={isPendingRefetch || isDeletingToken}
+        dataSource={accessTokens}
+        pagination={false}
+        resizable
+        columns={[
+          {
+            key: 'token',
+            title: t('deployment.accessToken.Token'),
+            dataIndex: 'token',
+            render: (_text, row) => {
+              if (!row) return '-';
+              // `ellipsis` stays a bare boolean on purpose — a truncate tooltip
+              // would put the secret behind a hover. Copy is the way. FR-3698.
+              return (
+                <BAINameActionCell
+                  title={
+                    <BAIText
+                      copyable={{ text: row.token }}
+                      ellipsis
+                      style={{ maxWidth: 200 }}
+                    >
+                      {row.token}
+                    </BAIText>
+                  }
+                  showActions="always"
+                  actions={[
+                    {
+                      key: 'delete',
+                      title: t('deployment.accessToken.Delete'),
+                      icon: <Trash2 size="1em" />,
+                      type: 'danger',
+                      disabled: deleteDisabled,
+                      onClick: () =>
+                        setDeletingToken({
+                          id: row.id,
+                          token: row.token ?? '',
+                        }),
+                    },
+                  ]}
+                />
+              );
+            },
+          },
+          {
+            key: 'createdAt',
+            title: t('deployment.CreatedAt'),
+            dataIndex: 'createdAt',
+            render: (_text, row) =>
+              row?.createdAt ? dayjs(row.createdAt).format('ll LT') : '-',
+          },
+          {
+            key: 'expiresAt',
+            title: t('deployment.accessToken.Expiration'),
+            dataIndex: 'expiresAt',
+            render: (_text, row) =>
+              row?.expiresAt
+                ? dayjs(row.expiresAt).format('ll LT')
+                : t('deployment.accessToken.NoExpiration'),
+          },
+        ]}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingToken}
+        title={t('deployment.accessToken.Delete')}
+        target={t('deployment.AccessToken')}
+        items={
+          deletingToken
+            ? [{ key: deletingToken.id, label: deletingToken.id }]
+            : []
+        }
+        confirmText={t('data.folders.DeleteForeverConfirmText')}
+        requireConfirmInput
+        inputProps={{ placeholder: t('data.folders.DeleteForeverConfirmText') }}
+        okButtonProps={{ loading: isDeletingToken }}
+        onOk={() => {
+          if (!deletingToken) return;
+          commitDelete({
+            variables: {
+              input: { id: toLocalId(deletingToken.id) ?? deletingToken.id },
+            },
+            onCompleted: (_res, errors) => {
+              if (errors && errors.length > 0) {
+                logger.error(errors[0]);
+                message.error(errors[0]?.message ?? t('dialog.ErrorOccurred'));
+                return;
+              }
+              message.success(t('deployment.accessToken.Deleted'));
+              setDeletingToken(null);
+              onAfterDelete();
+            },
+            onError: (err) => {
+              logger.error(err);
+              message.error(err.message ?? t('dialog.ErrorOccurred'));
+            },
+          });
+        }}
+        onCancel={() => setDeletingToken(null)}
+      />
+    </>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Create Access Token modal — presets (7/30/90 days, custom, no expiration).
+// ---------------------------------------------------------------------------
+
+// PILOT-DECISION: antd Select carried number values (7 | 30 | 90) directly;
+// Astryx Selector option values are strings, so the day presets become string
+// literals and are converted with `Number()` at the submit boundary. The
+// public `onRequestClose({ expiresAt })` contract is unchanged.
+type ExpiryOption = '7' | '30' | '90' | 'custom' | 'none';
+
+interface CreateAccessTokenFormValues {
+  expiryOption: ExpiryOption;
+  datetime: dayjs.Dayjs;
+}
+
+/**
+ * Inline value adapter between the antd form (which stores `datetime` as a
+ * dayjs instance — the submit boundary calls `.toISOString()`) and Astryx
+ * `DateTimeInput`, which speaks ISO strings. Conversion happens here so the
+ * form values keep their existing shape.
+ *
+ * PILOT-DECISION: antd DatePicker's explicit `format="YYYY-MM-DD HH:mm:ss"`
+ * display format is dropped — DateTimeInput renders its own locale-aware
+ * date + time fields; `hasSeconds` keeps second precision.
+ */
+const DayjsDateTimeInput: React.FC<{
+  value?: dayjs.Dayjs;
+  onChange?: (value: dayjs.Dayjs | undefined) => void;
+  label: string;
+}> = ({ value, onChange, label }) => {
+  'use memo';
+  return (
+    <DateTimeInput
+      label={label}
+      isLabelHidden
+      hasSeconds
+      width="100%"
+      value={
+        value?.isValid()
+          ? (value.format('YYYY-MM-DDTHH:mm:ss') as ISODateTimeString)
+          : undefined
+      }
+      onChange={(iso) => onChange?.(iso ? dayjs(iso) : undefined)}
+    />
+  );
+};
+
+interface CreateAccessTokenModalProps {
+  open: boolean;
+  confirmLoading?: boolean;
+  onRequestClose: (result?: { expiresAt: string | null }) => void;
+}
+
+const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
+  open,
+  confirmLoading,
+  onRequestClose,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const [form] = Form.useForm<CreateAccessTokenFormValues>();
+
+  // Form.useWatch re-renders this component when expiryOption changes,
+  // replacing the Form.Item dependencies render-prop pattern which only
+  // triggers re-validation (not re-render) when a dependency changes.
+  const expiryOption = Form.useWatch<ExpiryOption>('expiryOption', form) ?? '7';
+
+  const handleOk = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        let expiresAt: string | null;
+        if (values.expiryOption === 'none') {
+          expiresAt = null;
+        } else if (values.expiryOption === 'custom') {
+          expiresAt = values.datetime.toISOString();
+        } else {
+          expiresAt = dayjs()
+            .add(Number(values.expiryOption), 'day')
+            .toISOString();
+        }
+        onRequestClose({ expiresAt });
+      })
+      .catch(() => {
+        // validation failures surface inline; do nothing.
+      });
+  };
+
+  const options: Array<{ value: ExpiryOption; label: string }> = [
+    {
+      value: '7',
+      label: t('general.Days', { num: 7, defaultValue: '7 days' }),
+    },
+    {
+      value: '30',
+      label: t('general.Days', { num: 30, defaultValue: '30 days' }),
+    },
+    {
+      value: '90',
+      label: t('general.Days', { num: 90, defaultValue: '90 days' }),
+    },
+    {
+      value: 'custom',
+      label: t('deployment.accessToken.CustomExpiration'),
+    },
+    {
+      value: 'none',
+      label: t('deployment.accessToken.NoExpiration'),
+    },
+  ];
+
+  return (
+    <BAIModal
+      open={open}
+      destroyOnHidden
+      centered
+      width={420}
+      title={t('deployment.accessToken.Create')}
+      okText={t('deployment.accessToken.Create')}
+      confirmLoading={confirmLoading}
+      onOk={handleOk}
+      onCancel={() => onRequestClose()}
+    >
+      <Form<CreateAccessTokenFormValues>
+        form={form}
+        layout="vertical"
+        initialValues={{
+          expiryOption: '7' as ExpiryOption,
+          datetime: dayjs().add(7, 'day'),
+        }}
+        validateTrigger={['onChange', 'onBlur']}
+      >
+        <BAIFormItem
+          name="expiryOption"
+          label={t('deployment.accessToken.Expiration')}
+          rules={[{ required: true }]}
+        >
+          <AstryxFormSelector
+            label={t('deployment.accessToken.Expiration')}
+            width={200}
+            options={options}
+            onChange={(value) => {
+              const days = Number(value);
+              if (!Number.isNaN(days)) {
+                form.setFieldValue('datetime', dayjs().add(days, 'day'));
+              }
+            }}
+          />
+        </BAIFormItem>
+        {expiryOption === 'custom' && (
+          <BAIFormItem
+            name="datetime"
+            label={t('deployment.accessToken.CustomExpiration')}
+            rules={[
+              {
+                type: 'object' as const,
+                required: true,
+              },
+              () => ({
+                validator(_rule, value) {
+                  if (value && dayjs(value).isAfter(dayjs())) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error(t('dialog.ErrorOccurred')));
+                },
+              }),
+            ]}
+          >
+            <DayjsDateTimeInput
+              label={t('deployment.accessToken.CustomExpiration')}
+            />
+          </BAIFormItem>
+        )}
+      </Form>
+    </BAIModal>
+  );
+};
+
+export default DeploymentAccessTokensCard;

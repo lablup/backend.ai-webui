@@ -13,6 +13,25 @@
  * handled by the useLoginOrchestration hook, replacing the Lit shell's
  * firstUpdated() logic.
  */
+// to-astryx ticket 04: this screen's `App.useApp()` is served by the Astryx
+// app-shim (message → Toast, modal.confirm → AlertDialog) instead of antd.
+import { App } from '../app-shim';
+// The Form ENGINE is self-hosted (ticket 34, live again since ticket 35), so
+// nothing on this screen touches antd's form runtime. Everything else antd
+// used to supply here is gone:
+//   - `App as AntdApp` — the ticket-11 survivor, kept because SignupModal
+//     still read antd's App context. SignupModal is Astryx now (its
+//     `App.useApp()` is the app-shim), so the nested provider goes.
+//   - `ConfigProvider` — it existed ONLY to raise antd Message's
+//     `zIndexPopup` above the block panel. This screen's `App.useApp()` is
+//     served by the Astryx app-shim (see the header comment), so no antd
+//     Message is rendered here at all and the override was already dead.
+import { Form } from '../form-engine';
+import {
+  devApiEndpointOverride,
+  devEmailOverride,
+  devPasswordOverride,
+} from '../helper/devLoginOverrides';
 import {
   getDefaultLoginConfig,
   type LoginConfigState,
@@ -20,11 +39,11 @@ import {
 import {
   createBackendAIClient,
   connectViaGQL,
-  tokenLogin,
   loadConfigFromWebServer,
   loginWithSAML,
   loginWithOpenID,
 } from '../helper/loginSessionAuth';
+import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
@@ -33,16 +52,17 @@ import {
   loginConfigState,
 } from '../hooks/useWebUIConfig';
 import { pluginApiEndpointState } from '../hooks/useWebUIPluginState';
+import { preloadPostLoginChunks } from '../preload';
 import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
-import { App, Button, Form, type MenuProps } from 'antd';
-import {
-  BAIModal,
-  BAIFlex,
-  BAIConfigProvider,
-  useBAILogger,
-} from 'backend.ai-ui';
+// antd's <App> element stays mounted as a nested provider: unmigrated
+// children in this subtree (e.g. SignupModal) still read antd's context.
+import { Button } from '@astryxdesign/core/Button';
+import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
+import { BAIModal, useBAILogger } from 'backend.ai-ui';
+import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { Trash2Icon } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -58,12 +78,29 @@ const extractErrorType = (typeUrl?: string): string => {
   return parts[parts.length - 1] || '';
 };
 
-const LoginView: React.FC = () => {
+const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
+
+const LoginView: React.FC<{
+  /**
+   * When true, delays closing the login panel until MainLayout signals
+   * readiness (`main-layout-ready` event) to prevent a blank screen flash.
+   * Set to false for routes without MainLayout (e.g. /interactive-login).
+   * @default true
+   */
+  waitForMainLayout?: boolean;
+}> = ({ waitForMainLayout = true }) => {
   'use memo';
 
   const { t } = useTranslation();
   const { modal } = App.useApp();
   const { logger } = useBAILogger();
+
+  // Preload commonly needed lazy chunks while the user is on the login screen.
+  // This runs during browser idle time so the JS bundles are already cached
+  // by the time login completes and MainLayout renders.
+  useEffect(() => {
+    preloadPostLoginChunks();
+  }, []);
 
   // Initialize config from config.toml (replaces Lit shell's _parseConfig + loadConfig)
   const {
@@ -86,8 +123,17 @@ const LoginView: React.FC = () => {
   const [connectionMode, setConnectionMode] =
     useState<ConnectionMode>('SESSION');
   const [apiEndpoint, setApiEndpoint] = useState(() => {
-    const stored = localStorage.getItem('backendaiwebui.api_endpoint');
-    return stored ? stored.replace(/^"+|"+$/g, '') : '';
+    // A stored endpoint means a session may be live against that backend, so
+    // it wins over the dev override: silent re-login then reconnects to the
+    // *actual* session server instead of bouncing to the login screen when
+    // VITE_DEFAULT_API_ENDPOINT points elsewhere. The override only fills the
+    // field here when nothing is stored (a genuinely fresh login) — it is never
+    // re-applied after mount, so it can't clobber an endpoint the user types by
+    // hand. A dev-only banner (`DevApiEndpointMismatchAlert`) surfaces any
+    // mismatch once inside the app so multi-server testing doesn't get confusing.
+    const stored = localStorage.getItem(STORED_API_ENDPOINT_KEY);
+    const storedEndpoint = stored ? stored.replace(/^"+|"+$/g, '') : '';
+    return storedEndpoint || devApiEndpointOverride || '';
   });
   const [otpRequired, setOtpRequired] = useState(false);
   const [needsOtpRegistration, setNeedsOtpRegistration] = useState(false);
@@ -146,26 +192,44 @@ const LoginView: React.FC = () => {
     loadConfig();
   }, [loadConfig]);
 
-  // When config finishes loading from the atom, apply it to local state
-  useEffect(() => {
-    if (!isConfigLoaded || !atomLoginConfig) return;
+  const [appliedLoginConfig, setAppliedLoginConfig] = useState<
+    typeof atomLoginConfig | null
+  >(null);
+  if (
+    isConfigLoaded &&
+    atomLoginConfig &&
+    appliedLoginConfig !== atomLoginConfig
+  ) {
+    setAppliedLoginConfig(atomLoginConfig);
 
     const newCfg = atomLoginConfig;
     setLoginConfig(newCfg);
     setConnectionMode(newCfg.connection_mode);
-    setApiEndpoint((prev) => newCfg.api_endpoint || prev);
+    // An already-resolved endpoint (a stored session's server, kept in `prev`)
+    // wins so a dev override never clobbers the backend a live session targets
+    // — that would re-introduce the login-screen bounce. Fall back to the
+    // config.toml value, then the dev override as a last-resort pre-fill for a
+    // fresh login.
+    setApiEndpoint(
+      (prev) => prev || newCfg.api_endpoint || devApiEndpointOverride || '',
+    );
 
     // Handle endpoint visibility
-    if (newCfg.api_endpoint === '') {
+    if (newCfg.api_endpoint === '' || devApiEndpointOverride) {
       setShowEndpointInput(true);
       setIsEndpointDisabled(false);
     } else {
       setShowEndpointInput(false);
       setIsEndpointDisabled(true);
     }
-  }, [isConfigLoaded, atomLoginConfig]);
+  }
 
-  // Load login plugin when config is ready
+  // Load login plugin when config is ready.
+  // Mirrors `PluginLoader.tsx`'s URL resolution so login plugins follow
+  // the same deployment model as page plugins: the file is served by the
+  // backend WebServer (or a Vite/static host that mounts `/dist/plugins/`).
+  // No build-time bundling — plugins can be deployed independently of the
+  // WebUI bundle.
   useEffect(() => {
     if (!isConfigLoaded || !loginPlugin) return;
 
@@ -174,13 +238,19 @@ const LoginView: React.FC = () => {
     const sanitizedPlugin = loginPlugin.replace(/[^a-zA-Z0-9_-]/g, '');
     if (!sanitizedPlugin || sanitizedPlugin !== loginPlugin) return;
 
-    import(
-      /* webpackIgnore: true */
-      `../../../src/plugins/${sanitizedPlugin}`
-    ).catch(() => {
-      setLoginError({ message: t('error.LoginFailed') });
+    const isElectronEnv = (globalThis as Record<string, unknown>).isElectron;
+    const pluginUrl =
+      isElectronEnv && apiEndpoint
+        ? `${apiEndpoint}/dist/plugins/${sanitizedPlugin}.js`
+        : `/dist/plugins/${sanitizedPlugin}.js`;
+
+    // `@vite-ignore` opts out of Vite's static analysis. The URL is an
+    // absolute path (no relative `..` traversal), so esbuild's
+    // optimizeDeps scanner does not treat it as a module specifier.
+    import(/* @vite-ignore */ pluginUrl).catch(() => {
+      setLoginError({ message: t('error.LoginPluginLoadFailed') });
     });
-  }, [isConfigLoaded, loginPlugin, t]);
+  }, [isConfigLoaded, loginPlugin, apiEndpoint, t]);
 
   // Keep configRef in sync
   useEffect(() => {
@@ -197,55 +267,43 @@ const LoginView: React.FC = () => {
     }
   }, [apiEndpoint, form]);
 
-  // Language initialization: bridge selected_language -> general.language
-  // (replaces Lit shell's connectedCallback language setup)
+  // Dev-only: pre-fill SESSION credentials from VITE_DEFAULT_EMAIL /
+  // VITE_DEFAULT_PASSWORD so local dev sessions log in without retyping test
+  // credentials. Runs once on mount; both overrides are `undefined` in
+  // production builds, so this is a no-op there.
   useEffect(() => {
-    const supportLanguageCodes = [
-      'en',
-      'ko',
-      'de',
-      'el',
-      'es',
-      'fi',
-      'fr',
-      'id',
-      'it',
-      'ja',
-      'mn',
-      'ms',
-      'pl',
-      'pt',
-      'pt-BR',
-      'ru',
-      'th',
-      'tr',
-      'vi',
-      'zh-CN',
-      'zh-TW',
-    ];
+    if (devEmailOverride) form.setFieldsValue({ user_id: devEmailOverride });
+    if (devPasswordOverride)
+      form.setFieldsValue({ password: devPasswordOverride });
+    // Mount-only: the override constants are build-time frozen, so no deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Language initialization: bridge selected_language -> general.language
+  // (replaces Lit shell's connectedCallback language setup).
+  //
+  // Shares its supported-language list and detection logic with i18n init
+  // in `DefaultProviders.tsx` via `resolveInitialLanguage`, so the login
+  // screen renders in the browser's language on first paint even when no
+  // value has been persisted yet (incognito / first-visit).
+  useEffect(() => {
+    // `selected_language` is the "user explicitly chose this" signal that
+    // overrides browser detection. If it isn't an explicit supported
+    // choice, fall back to browser detection via the shared helper.
     const selectedLang = (globalThis as any).backendaioptions?.get(
       'selected_language',
     );
+    const lang = resolveInitialLanguage(selectedLang);
 
-    // Try full locale first (e.g., 'zh-CN'), then base language (e.g., 'zh')
-    const browserLang = globalThis.navigator.language;
-    let defaultLang: string;
-    if (supportLanguageCodes.includes(browserLang)) {
-      defaultLang = browserLang;
-    } else {
-      const baseLang = browserLang.split('-')[0];
-      defaultLang = supportLanguageCodes.includes(baseLang) ? baseLang : 'en';
-    }
-
-    let lang: string;
-    if (!selectedLang || selectedLang === 'default') {
-      lang = defaultLang;
-    } else {
-      lang = supportLanguageCodes.includes(selectedLang)
-        ? selectedLang
-        : defaultLang;
-    }
     (globalThis as any).backendaioptions.set('language', lang, 'general');
+
+    // Defensive sync: i18n was already initialized with the same resolver
+    // in DefaultProviders.tsx, so this usually matches. Trigger a switch
+    // only when it doesn't (e.g. a stored explicit choice was added between
+    // init and mount).
+    if (i18n.language !== lang) {
+      i18n.changeLanguage(lang);
+    }
   }, []);
 
   const notification = useCallback((text: string, detail?: string) => {
@@ -261,6 +319,19 @@ const LoginView: React.FC = () => {
     }
     setIsLoginPanelOpen(true);
     setIsBlockPanelOpen(false);
+    // Logged-out: turn the splash into the login backdrop (keep the weave +
+    // version/copyright metadata, hide the loader). The login modal renders
+    // above it. Fall back to full dismissal on older index.html shells that
+    // don't expose __enterLoginBackdrop.
+    const splashApi = globalThis as unknown as {
+      __enterLoginBackdrop?: () => void;
+      __dismissSplash?: () => void;
+    };
+    if (typeof splashApi.__enterLoginBackdrop === 'function') {
+      splashApi.__enterLoginBackdrop();
+    } else {
+      splashApi.__dismissSplash?.();
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const tokenParam = urlParams.get('token');
@@ -318,15 +389,13 @@ const LoginView: React.FC = () => {
     localStorage.removeItem('backendaiwebui.login.password');
   }, []);
 
-  const doGQLConnect = useCallback(
-    async (client: ReturnType<typeof createBackendAIClient>['client']) => {
-      // Read directly from Jotai store to get the latest config synchronously,
-      // including any merged webserver config from loadConfigFromWebServer().
-      // Using configRef.current here would return stale config because React
-      // hasn't re-rendered yet after the Jotai atom update.
-      const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
+  // Shared post-connection setup used by both the regular session login
+  // (doGQLConnect) and the sToken SSO path. Keeps the two flows consistent:
+  // login_attempt/last_login counters, saved-credentials cleanup, panel
+  // close, connected-event dispatch, and endpoint persistence.
+  const postConnectSetup = useCallback(
+    (client: ReturnType<typeof createBackendAIClient>['client']) => {
       const currentTime = Math.floor(Date.now() / 1000);
-
       (globalThis as any).backendaioptions.set(
         'last_login',
         currentTime,
@@ -334,130 +403,57 @@ const LoginView: React.FC = () => {
       );
       (globalThis as any).backendaioptions.set('login_attempt', 0, 'general');
 
-      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
-      setEndpoints(updatedEndpoints);
-
       const event = new CustomEvent('backend-ai-connected', {
         detail: client,
       });
       document.dispatchEvent(event);
-      close();
+      // Delay closing the login panel until MainLayout has rendered to avoid
+      // a blank screen flash between the login modal and the main UI.
+      // Routes without MainLayout (e.g. /interactive-login) pass
+      // waitForMainLayout={false} so the panel closes immediately.
+      if (!waitForMainLayout || (globalThis as any).__mainLayoutReady) {
+        close();
+      } else {
+        document.addEventListener('main-layout-ready', () => close(), {
+          once: true,
+        });
+      }
       forceLoginApprovedRef.current = false;
       clearSavedLoginInfo();
       // Read the endpoint from the connected client to avoid stale closure
       // values. When handleLogin calls setApiEndpoint(ep) then immediately
-      // invokes connectUsingSession, the doGQLConnect closure still captures
-      // the OLD apiEndpoint (often "" on first launch). The client object
-      // always has the correct endpoint that was used for the connection.
+      // invokes connectUsingSession, the closure still captures the OLD
+      // apiEndpoint (often "" on first launch). The client object always
+      // has the correct endpoint that was used for the connection.
       const connectedEndpoint =
         (globalThis as any).backendaiclient?._config?.endpoint || apiEndpoint;
       localStorage.setItem('backendaiwebui.api_endpoint', connectedEndpoint);
       setPluginApiEndpoint(connectedEndpoint);
     },
-    [endpoints, close, clearSavedLoginInfo, apiEndpoint, setPluginApiEndpoint],
+    [
+      close,
+      clearSavedLoginInfo,
+      apiEndpoint,
+      setPluginApiEndpoint,
+      waitForMainLayout,
+    ],
   );
 
-  const connectUsingSession = useCallback(
-    async (showError = true, endpointOverride?: string) => {
-      const ep = (endpointOverride ?? apiEndpoint).trim();
-      if (ep === '') {
-        setIsBlockPanelOpen(false);
-        open();
-        return;
-      }
+  const doGQLConnect = useCallback(
+    async (client: ReturnType<typeof createBackendAIClient>['client']) => {
+      // Read directly from Jotai store to get the latest config synchronously,
+      // including any merged webserver config from loadConfigFromWebServer().
+      // Using configRef.current here would return stale config because React
+      // hasn't re-rendered yet after the Jotai atom update.
+      const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
 
-      const userId = form.getFieldValue('user_id') || '';
-      const password = form.getFieldValue('password') || '';
-      const otp = form.getFieldValue('otp') || '';
+      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
+      setEndpoints(updatedEndpoints);
 
-      const { client } = createBackendAIClient(userId, password, ep, 'SESSION');
-      clientRef.current = client;
-
-      try {
-        await client.get_manager_version();
-      } catch {
-        setIsBlockPanelOpen(false);
-        open();
-        setIsLoading(false);
-        if (showError) {
-          notification(t('error.CannotConnectToServer'));
-        }
-        return;
-      }
-
-      // Check if already logged in
-      let isLogon = false;
-      try {
-        isLogon = !!(await client.check_login());
-      } catch {
-        isLogon = false;
-      }
-
-      if (isLogon) {
-        try {
-          await doGQLConnect(client);
-        } catch (err: unknown) {
-          handleGQLError(err, showError);
-        }
-        return;
-      }
-
-      // Not yet authenticated. Show block panel while connecting (only for user-initiated login).
-      if (showError) {
-        block(t('login.PleaseWait'), t('login.ConnectingToCluster'));
-      }
-
-      // Check for SSO token
-      const urlParams = new URLSearchParams(window.location.search);
-      const sToken = urlParams.get('sToken');
-      if (sToken) {
-        try {
-          document.cookie = `sToken=${sToken}; expires=Session; path=/; Secure; SameSite=Lax`;
-          const updatedEndpoints = await tokenLogin(
-            client,
-            sToken,
-            configRef.current,
-            endpoints,
-          );
-          setEndpoints(updatedEndpoints);
-          window.location.href = '/';
-          return;
-        } catch {
-          notification(t('eduapi.CannotAuthorizeSessionByToken'));
-          window.location.href = '/';
-          return;
-        }
-      }
-
-      // Do session login
-      // client.login() returns only on success (authenticated === true).
-      // All failure cases throw: login errors carry `isLoginError: true` with
-      // `data.type` for classification; server errors carry `isError: true`
-      // with structured info from _wrapWithPromise.
-      try {
-        await client.login(otp, forceLoginApprovedRef.current);
-        await doGQLConnect(client);
-        return;
-      } catch (err: unknown) {
-        setIsBlockPanelOpen(false);
-
-        const handled = handleLoginError(err, showError, userId, password);
-        if (handled === 'keep-open') {
-          // A dedicated modal (password reset, TOTP registration) was opened.
-          // Keep the login panel open to preserve form values for child modals.
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      setIsBlockPanelOpen(false);
-      open();
-      setIsLoading(false);
+      postConnectSetup(client);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
+    [endpoints, postConnectSetup],
   );
-  connectUsingSessionRef.current = connectUsingSession;
 
   /**
    * Unified login error handler. Classifies errors from client.login() and
@@ -541,7 +537,6 @@ const LoginView: React.FC = () => {
                 okText: t('login.Login'),
                 cancelText: t('button.Cancel'),
                 centered: true,
-                zIndex: 10001,
                 onOk: () => {
                   forceLoginApprovedRef.current = true;
                   setIsLoading(true);
@@ -696,6 +691,97 @@ const LoginView: React.FC = () => {
       setIsLoading(false);
     },
     [notification, t, open],
+  );
+
+  const connectUsingSession = useCallback(
+    async (showError = true, endpointOverride?: string) => {
+      const ep = (endpointOverride ?? apiEndpoint).trim();
+      if (ep === '') {
+        setIsBlockPanelOpen(false);
+        open();
+        return;
+      }
+
+      const userId = (form.getFieldValue('user_id') || '').trim();
+      const password = form.getFieldValue('password') || '';
+      const otp = form.getFieldValue('otp') || '';
+
+      const { client } = createBackendAIClient(userId, password, ep, 'SESSION');
+      clientRef.current = client;
+
+      try {
+        await client.get_manager_version();
+      } catch {
+        setIsBlockPanelOpen(false);
+        open();
+        setIsLoading(false);
+        if (showError) {
+          notification(t('error.CannotConnectToServer'));
+        }
+        return;
+      }
+
+      // Check if already logged in
+      let isLogon = false;
+      try {
+        isLogon = !!(await client.check_login());
+      } catch {
+        isLogon = false;
+      }
+
+      if (isLogon) {
+        try {
+          await doGQLConnect(client);
+        } catch (err: unknown) {
+          handleGQLError(err, showError);
+        }
+        return;
+      }
+
+      // Not yet authenticated. Show block panel while connecting (only for user-initiated login).
+      if (showError) {
+        block(t('login.PleaseWait'), t('login.ConnectingToCluster'));
+      }
+
+      // sToken (SSO) URL entry is handled entirely by STokenLoginBoundary
+      // at the route level (see routes.tsx `STokenGuard`). LoginView no
+      // longer reads sToken from the URL; when a token is present the
+      // boundary mounts LoginView only after authentication succeeds.
+
+      // Do session login
+      // client.login() returns only on success (authenticated === true).
+      // All failure cases throw: login errors carry `isLoginError: true` with
+      // `data.type` for classification; server errors carry `isError: true`
+      // with structured info from _wrapWithPromise.
+      try {
+        await client.login(otp, forceLoginApprovedRef.current);
+        await doGQLConnect(client);
+        return;
+      } catch (err: unknown) {
+        setIsBlockPanelOpen(false);
+
+        const handled = handleLoginError(err, showError, userId, password);
+        if (handled === 'keep-open') {
+          // A dedicated modal (password reset, TOTP registration) was opened.
+          // Keep the login panel open to preserve form values for child modals.
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      setIsBlockPanelOpen(false);
+      open();
+      setIsLoading(false);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [apiEndpoint, form, endpoints, doGQLConnect, block, open, notification, t],
+  );
+  // The concurrent-session modal's onOk (in handleLoginError) calls this ref.
+  useEffect(
+    function syncConnectUsingSessionRef() {
+      connectUsingSessionRef.current = connectUsingSession;
+    },
+    [connectUsingSession],
   );
 
   const connectUsingAPI = useCallback(
@@ -940,40 +1026,64 @@ const LoginView: React.FC = () => {
     [endpoints],
   );
 
-  const endpointMenuItems: MenuProps['items'] = [
-    { key: 'header', label: t('login.EndpointHistory'), disabled: true },
-    ...(endpoints.length === 0
-      ? [{ key: 'empty', label: t('login.NoEndpointSaved') }]
-      : endpoints.map((ep) => ({
-          key: ep,
-          label: (
-            <BAIFlex justify="between" align="center" style={{ minWidth: 300 }}>
-              <span>{ep}</span>
-              <Button
-                type="text"
-                size="small"
-                danger
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteEndpoint(ep);
-                }}
-              >
-                {t('button.Delete')}
-              </Button>
-            </BAIFlex>
-          ),
-        }))),
-  ];
+  // Dev-only: pin the VITE_DEFAULT_API_ENDPOINT value at the top of the endpoint
+  // history so it is always selectable (even before the first login) and clearly
+  // tagged as coming from the env — distinct from manually-saved endpoints, which
+  // keep their Delete action. `devApiEndpointOverride` is `undefined` in
+  // production builds, so this whole branch is dead-code eliminated there.
+  const savedEndpoints = devApiEndpointOverride
+    ? endpoints.filter((ep) => ep !== devApiEndpointOverride)
+    : endpoints;
 
-  const handleEndpointMenuClick: MenuProps['onClick'] = useCallback(
-    ({ key }: { key: string }) => {
-      if (key !== 'header' && key !== 'empty') {
-        setApiEndpoint(key);
-        form.setFieldValue('api_endpoint', key);
-      }
+  const selectEndpoint = useCallback(
+    (ep: string) => {
+      setApiEndpoint(ep);
+      form.setFieldValue('api_endpoint', ep);
     },
     [form],
   );
+
+  // PILOT-DECISION: antd `Dropdown` items carried a rendered `label` node and
+  // a single group-level `onClick({key})`; Astryx `DropdownMenuOption` has a
+  // required STRING `label` and a per-item `onClick` (MAPPING §3.7), so the
+  // handler is bound HERE instead of in LoginFormPanel. Consequences:
+  //   - the "Endpoint history" header row becomes a native
+  //     `{type: 'section', title}` (better than antd's disabled fake row);
+  //   - the per-row trailing controls (the blue `env` Tag and the red
+  //     `Delete` button) have no destination — `DropdownMenuItemData` has no
+  //     trailing slot — so the env marker folds into the label text and the
+  //     delete action becomes its own menu row per endpoint.
+  const endpointMenuItems: DropdownMenuOption[] = [
+    {
+      type: 'section',
+      title: t('login.EndpointHistory'),
+      items: [
+        ...(devApiEndpointOverride
+          ? [
+              {
+                label: `${devApiEndpointOverride} (env)`,
+                onClick: () => selectEndpoint(devApiEndpointOverride ?? ''),
+              },
+            ]
+          : []),
+        ...(savedEndpoints.length === 0
+          ? devApiEndpointOverride
+            ? []
+            : [{ label: t('login.NoEndpointSaved'), isDisabled: true }]
+          : savedEndpoints.flatMap((ep) => [
+              {
+                label: ep,
+                onClick: () => selectEndpoint(ep),
+              },
+              {
+                label: `${t('button.Delete')}: ${ep}`,
+                icon: <Trash2Icon size="1em" />,
+                onClick: () => deleteEndpoint(ep),
+              },
+            ])),
+      ],
+    },
+  ];
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -996,94 +1106,75 @@ const LoginView: React.FC = () => {
     loginWithOpenID(client);
   }, [apiEndpoint]);
 
-  // Wrapper creates a stacking context above LoadingCurtain (z-index 9999).
-  // Zero-sized so it doesn't intercept pointer events. Child modals use
-  // position:fixed internally so they are visible and interactive.
-  return (
-    // ConfigProvider is needed to override Message z-index for error notifications
-    // so they appear above the block panel (z-index 10000) instead of behind it.
-    <BAIConfigProvider
-      theme={{
-        components: {
-          Message: { zIndexPopup: 10001 },
-        },
-      }}
-    >
-      <App>
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: 0,
-            height: 0,
-            zIndex: 10000,
-            overflow: 'visible',
-          }}
-        >
-          <LoginFormPanel
-            isOpen={isLoginPanelOpen}
-            isLoading={isLoading}
-            loginError={loginError}
-            onClearLoginError={() => setLoginError(null)}
-            connectionMode={connectionMode}
-            loginConfig={loginConfig}
-            apiEndpoint={apiEndpoint}
-            otpRequired={otpRequired}
-            needsOtpRegistration={needsOtpRegistration}
-            totpRegistrationToken={totpRegistrationToken}
-            needToResetPassword={needToResetPassword}
-            expiredCredentials={expiredCredentialsRef.current}
-            showSignupModal={showSignupModal}
-            signupPreloadedToken={signupPreloadedToken}
-            showEndpointInput={showEndpointInput}
-            isEndpointDisabled={isEndpointDisabled}
-            form={form}
-            endpointMenuItems={endpointMenuItems}
-            onEndpointMenuClick={handleEndpointMenuClick}
-            onKeyDown={handleKeyDown}
-            onLogin={handleLogin}
-            onConnectionModeChange={handleConnectionModeChange}
-            onShowSignupDialog={showSignupDialog}
-            onSAMLLogin={handleSAMLLogin}
-            onOpenIDLogin={handleOpenIDLogin}
-            onSetApiEndpoint={setApiEndpoint}
-            onSetOtpRequired={setOtpRequired}
-            onSetNeedsOtpRegistration={setNeedsOtpRegistration}
-            onSetNeedToResetPassword={(v: boolean) => {
-              setNeedToResetPassword(v);
-              if (!v) expiredCredentialsRef.current = null;
-            }}
-            onSetShowSignupModal={setShowSignupModal}
-          />
+  // Credentials are intentionally held in a ref (not state) to keep plaintext
+  // out of React state/DevTools; the ref is set alongside setNeedToResetPassword
+  // which drives the render that reads it here.
+  // eslint-disable-next-line react-hooks/refs -- see comment above
+  const expiredCredentials = expiredCredentialsRef.current;
 
-          {/* Block/Error Panel */}
-          <BAIModal
-            open={isBlockPanelOpen && blockMessage !== ''}
-            title={blockType || undefined}
-            footer={
-              <Button
-                block
-                onClick={() => {
-                  setIsBlockPanelOpen(false);
-                  open();
-                }}
-              >
-                {t('login.CancelLogin')}
-              </Button>
-            }
-            closable={false}
-            mask={{ closable: false }}
-            getContainer={false}
-            destroyOnHidden
-          >
-            <div style={{ textAlign: 'center', paddingTop: 15 }}>
-              {blockMessage}
-            </div>
-          </BAIModal>
+  // The login screen background (Diagonal Weave + version/copyright metadata)
+  // is the persisted splash from index.html, switched to backdrop mode by
+  // __enterLoginBackdrop().
+  return (
+    <>
+      <LoginFormPanel
+        isOpen={isLoginPanelOpen}
+        isLoading={isLoading}
+        loginError={loginError}
+        onClearLoginError={() => setLoginError(null)}
+        connectionMode={connectionMode}
+        loginConfig={loginConfig}
+        apiEndpoint={apiEndpoint}
+        otpRequired={otpRequired}
+        needsOtpRegistration={needsOtpRegistration}
+        totpRegistrationToken={totpRegistrationToken}
+        needToResetPassword={needToResetPassword}
+        expiredCredentials={expiredCredentials}
+        showSignupModal={showSignupModal}
+        signupPreloadedToken={signupPreloadedToken}
+        showEndpointInput={showEndpointInput}
+        isEndpointDisabled={isEndpointDisabled}
+        form={form}
+        endpointMenuItems={endpointMenuItems}
+        onKeyDown={handleKeyDown}
+        onLogin={handleLogin}
+        onConnectionModeChange={handleConnectionModeChange}
+        onShowSignupDialog={showSignupDialog}
+        onSAMLLogin={handleSAMLLogin}
+        onOpenIDLogin={handleOpenIDLogin}
+        onSetApiEndpoint={setApiEndpoint}
+        onSetOtpRequired={setOtpRequired}
+        onSetNeedsOtpRegistration={setNeedsOtpRegistration}
+        onSetNeedToResetPassword={(v: boolean) => {
+          setNeedToResetPassword(v);
+          if (!v) expiredCredentialsRef.current = null;
+        }}
+        onSetShowSignupModal={setShowSignupModal}
+      />
+
+      {/* Block/Error Panel */}
+      <BAIModal
+        open={isBlockPanelOpen && blockMessage !== ''}
+        title={blockType || undefined}
+        footer={
+          <Button
+            width="100%"
+            onClick={() => {
+              setIsBlockPanelOpen(false);
+              open();
+            }}
+            label={t('login.CancelLogin')}
+          />
+        }
+        closable={false}
+        mask={{ closable: false }}
+        destroyOnHidden
+      >
+        <div style={{ textAlign: 'center', paddingTop: 15 }}>
+          {blockMessage}
         </div>
-      </App>
-    </BAIConfigProvider>
+      </BAIModal>
+    </>
   );
 };
 

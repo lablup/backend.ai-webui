@@ -1,9 +1,9 @@
-import { BAILocale } from '.';
-import zh_CN from 'antd/es/locale/zh_CN';
+import type { BAILocale } from '.';
+import astryxLocale from './astryx/zh-CN.json';
 
 const localeValue: BAILocale = {
   lang: 'zh-CN',
-  antdLocale: zh_CN,
+  astryxLocale,
 };
 
 export default localeValue;

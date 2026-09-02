@@ -2,11 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
-import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { DomainFairShareOrderField } from '../../__generated__/DomainFairShareStepQuery.graphql';
 import {
+  DomainFairShareTableFragment$data,
+  DomainFairShareTableFragment$key,
+} from '../../__generated__/DomainFairShareTableFragment.graphql';
+import { theme } from '../../theme-shim';
+import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
@@ -16,14 +22,11 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  DomainFairShareTableFragment$data,
-  DomainFairShareTableFragment$key,
-} from 'src/__generated__/DomainFairShareTableFragment.graphql';
 
 export type Domain = NonNullable<
   NonNullable<DomainFairShareTableFragment$data[number]>
@@ -37,6 +40,14 @@ const availableDomainFairShareSorterKeys = [
   'fairShareFactor',
   'createdAt',
 ] as const;
+export const domainFairShareOrderFieldMap: Record<
+  (typeof availableDomainFairShareSorterKeys)[number],
+  DomainFairShareOrderField
+> = {
+  domainName: 'DOMAIN_NAME',
+  fairShareFactor: 'FAIR_SHARE_FACTOR',
+  createdAt: 'CREATED_AT',
+};
 export const availableDomainFairShareSorterValues = [
   ...availableDomainFairShareSorterKeys,
   ...availableDomainFairShareSorterKeys.map((key) => `-${key}` as const),
@@ -136,7 +147,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <Settings size="1em" />,
               onClick: () => {
                 onOpenWeightSetting?.(record);
               },
@@ -149,7 +160,9 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.Weight')}
-          <QuestionIconWithTooltip title={t('fairShare.WeightDescription')} />
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.WeightDescription')}
+          />
         </BAIFlex>
       ),
       key: 'weight',
@@ -157,17 +170,16 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       render: (weight, record) => {
         return (
           <BAIFlex gap="xxs">
-            <Typography.Text>
-              {weight ? toFixedFloorWithoutTrailingZeros(weight, 1) : '-'}
-            </Typography.Text>
-            <Typography.Text
-              type="secondary"
-              style={{ fontSize: token.fontSizeSM }}
-            >
+            <Text>
+              {_.isNil(weight)
+                ? '-'
+                : toFixedFloorWithoutTrailingZeros(weight, 1)}
+            </Text>
+            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
               {record.spec.usesDefault
                 ? `(${t('fairShare.UsingDefault')})`
                 : ''}
-            </Typography.Text>
+            </Text>
           </BAIFlex>
         );
       },
@@ -176,13 +188,14 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.FairShareFactor')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.FairShareFactorDescription')}
           />
         </BAIFlex>
       ),
       key: 'fairShareFactor',
       dataIndex: ['calculationSnapshot', 'fairShareFactor'],
+      sortKey: 'fairShareFactor',
       sorter: isEnableSorter('fairShareFactor'),
       render: (fairShareFactor) =>
         fairShareFactor !== null && fairShareFactor !== undefined
@@ -193,7 +206,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.AllocationAverage')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.AllocationAverageDescription')}
           />
         </BAIFlex>
@@ -211,16 +224,12 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
               entries,
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
-                  {index > 0 && (
-                    <Divider type="vertical" style={{ margin: 0 }} />
-                  )}
+                  {index > 0 && <Divider orientation="vertical" />}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Typography.Text type="secondary">
-                        / {t('fairShare.DayUnit')}
-                      </Typography.Text>
+                      <Text color="secondary">/ {t('fairShare.DayUnit')}</Text>
                     }
                   />
                 </BAIFlex>
@@ -247,8 +256,8 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
 
   return (
     <BAITable
-      rowKey={'domainName'}
       scroll={{ x: 'max-content' }}
+      rowKey={'domainName'}
       {...tableProps}
       dataSource={domain || []}
       columns={columns}

@@ -1,7 +1,12 @@
 // spec: e2e/user/bulk-user-creation.spec.ts
 import { BulkCreateUserModal } from '../utils/classes/user/BulkCreateUserModal';
 import { PurgeUsersModal } from '../utils/classes/user/PurgeUsersModal';
+import { KeyPairModal } from '../utils/classes/user/UserSettingModal';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import {
+  createUserMoreButton,
+  usersTabButton,
+} from '../utils/user-profile-util';
 import test, { expect, type Page } from '@playwright/test';
 
 // Generate unique identifiers for this test run to avoid conflicts
@@ -29,7 +34,14 @@ async function cleanupBulkCreatedUsers(
       .catch(() => false);
 
     if (isActive) {
-      await userRow.getByRole('button', { name: 'Deactivate' }).click();
+      // The Deactivate action uses an icon-only button (BanIcon) with no accessible
+      // name, so we target it by position (3rd button, index 2) in the actions area.
+      // Hover first so that hover-only action cells reveal their buttons.
+      await userRow.hover();
+      await userRow
+        .locator('.bai-name-action-cell-actions button')
+        .nth(2)
+        .click();
       const popconfirm = page.locator('.ant-popconfirm');
       await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
       await expect(userRow).toBeHidden({ timeout: 10000 });
@@ -59,7 +71,9 @@ async function cleanupBulkCreatedUsers(
   }
 
   if (hasInactiveUsers) {
-    await page.getByRole('button', { name: 'trash bin' }).click();
+    // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+    // Use .first() to target the header bulk-delete button, not row-level purge buttons.
+    await page.getByRole('button', { name: 'delete' }).first().click();
     const purgeModal = new PurgeUsersModal(page);
     await purgeModal.waitForVisible();
     await purgeModal.confirmDeletion();
@@ -83,24 +97,36 @@ test.describe(
         // 2. Navigate to credential page
         await navigateTo(page, 'credential');
 
-        // 3. Verify the "Users" tab is visible and selected
-        await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+        // 3. Verify the "Users" tab is visible and selected.
+        // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+        // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab`
+        // elements — `role="tab"` is never emitted unless `TabList` is given
+        // `role="tablist"`, which this app never does (see
+        // registry.spec.ts's identical pattern).
+        await expect(usersTabButton(page)).toBeVisible();
 
         // 4. Verify the "Create User" button is visible
         await expect(
           page.getByRole('button', { name: 'Create User' }),
         ).toBeVisible();
 
-        // 5. Click the "ellipsis" dropdown button adjacent to "Create User"
-        await page.getByRole('button', { name: 'ellipsis' }).click();
+        // 5. Click the "More" dropdown button adjacent to "Create User".
+        await createUserMoreButton(page).click();
 
         // 6. Verify the dropdown menu appears containing the item "Bulk Create Users"
+        // exact: true avoids a strict-mode collision with the sibling
+        // "Bulk Create Users from CSV" menu item.
         await expect(
-          page.getByRole('menuitem', { name: 'Bulk Create Users' }),
+          page.getByRole('menuitem', {
+            name: 'Bulk Create Users',
+            exact: true,
+          }),
         ).toBeVisible();
 
         // 7. Click "Bulk Create Users"
-        await page.getByRole('menuitem', { name: 'Bulk Create Users' }).click();
+        await page
+          .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
+          .click();
 
         // 8. Verify a dialog with the title "Bulk Create Users" is visible
         const modal = new BulkCreateUserModal(page);
@@ -157,12 +183,12 @@ test.describe(
             page.getByRole('radio', { name: 'Active', exact: true }),
           ).toBeChecked();
 
-          // 4. Click the "ellipsis" dropdown button next to "Create User"
-          await page.getByRole('button', { name: 'ellipsis' }).click();
+          // 4. Click the "More" dropdown button next to "Create User"
+          await createUserMoreButton(page).click();
 
           // 5. Click "Bulk Create Users"
           await page
-            .getByRole('menuitem', { name: 'Bulk Create Users' })
+            .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
             .click();
 
           // 6. Verify the "Bulk Create Users" dialog is visible
@@ -190,7 +216,15 @@ test.describe(
             page.locator('.ant-message').getByText(/Successfully created/),
           ).toBeVisible({ timeout: 30000 });
 
-          // 13. Verify the modal is no longer visible (confirms mutation completed)
+          // 13. A successful bulk create reveals the generated keypairs in a
+          // follow-up "Keypair for new users" dialog (secret keys are only
+          // shown once) — close it before the Bulk Create Users modal itself
+          // hides.
+          const keyPairModal = new KeyPairModal(page);
+          await keyPairModal.waitForVisible();
+          await keyPairModal.close();
+
+          // 14. Verify the modal is no longer visible (confirms mutation completed)
           await modal.waitForHidden();
 
           // 14. Verify the Users table contains all 3 created users
@@ -203,7 +237,14 @@ test.describe(
           // 15. Deactivate each created user
           for (const email of createdEmails) {
             const userRow = page.getByRole('row').filter({ hasText: email });
-            await userRow.getByRole('button', { name: 'Deactivate' }).click();
+            // The Deactivate action uses an icon-only button (BanIcon) with no
+            // accessible name, so we target it by position (3rd button, index 2).
+            // Hover first so that hover-only action cells reveal their buttons.
+            await userRow.hover();
+            await userRow
+              .locator('.bai-name-action-cell-actions button')
+              .nth(2)
+              .click();
             const popconfirm = page.locator('.ant-popconfirm');
             await popconfirm
               .getByRole('button', { name: 'Deactivate' })
@@ -227,8 +268,10 @@ test.describe(
             await inactiveRow.getByRole('checkbox').click();
           }
 
-          // 18. Click the purge (trash bin) button
-          await page.getByRole('button', { name: 'trash bin' }).click();
+          // 18. Click the purge (trash bin) button.
+          // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+          // Use .first() to target the header bulk-delete button, not row-level purge buttons.
+          await page.getByRole('button', { name: 'delete' }).first().click();
 
           // 19. Confirm permanent deletion in the purge modal
           const purgeModal = new PurgeUsersModal(page);
@@ -256,9 +299,11 @@ test.describe(
         // 2. Navigate to credential page
         await navigateTo(page, 'credential');
 
-        // 3. Click the "ellipsis" dropdown button and select "Bulk Create Users"
-        await page.getByRole('button', { name: 'ellipsis' }).click();
-        await page.getByRole('menuitem', { name: 'Bulk Create Users' }).click();
+        // 3. Click the "More" dropdown button and select "Bulk Create Users"
+        await createUserMoreButton(page).click();
+        await page
+          .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
+          .click();
 
         // 5. Verify the "Bulk Create Users" dialog is visible
         const modal = new BulkCreateUserModal(page);
@@ -311,10 +356,10 @@ test.describe(
           // 2. Navigate to credential page
           await navigateTo(page, 'credential');
 
-          // 3. Click the "ellipsis" dropdown button and select "Bulk Create Users"
-          await page.getByRole('button', { name: 'ellipsis' }).click();
+          // 3. Click the "More" dropdown button and select "Bulk Create Users"
+          await createUserMoreButton(page).click();
           await page
-            .getByRole('menuitem', { name: 'Bulk Create Users' })
+            .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
             .click();
 
           // 4. Verify the "Bulk Create Users" dialog is visible
@@ -343,6 +388,14 @@ test.describe(
             page.locator('.ant-message').getByText(/Successfully created/),
           ).toBeVisible({ timeout: 30000 });
 
+          // 11b. A successful bulk create reveals the generated keypairs in a
+          // follow-up "Keypair for new users" dialog (secret keys are only
+          // shown once) — close it before the Bulk Create Users modal itself
+          // hides.
+          const keyPairModal = new KeyPairModal(page);
+          await keyPairModal.waitForVisible();
+          await keyPairModal.close();
+
           // 12. Verify the modal closes (confirms mutation completed)
           await modal.waitForHidden();
 
@@ -355,7 +408,14 @@ test.describe(
           const userRow = page
             .getByRole('row')
             .filter({ hasText: createdEmail });
-          await userRow.getByRole('button', { name: 'Deactivate' }).click();
+          // The Deactivate action uses an icon-only button (BanIcon) with no
+          // accessible name, so we target it by position (3rd button, index 2).
+          // Hover first so that hover-only action cells reveal their buttons.
+          await userRow.hover();
+          await userRow
+            .locator('.bai-name-action-cell-actions button')
+            .nth(2)
+            .click();
           const popconfirm = page.locator('.ant-popconfirm');
           await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
           await expect(userRow).toBeHidden({ timeout: 10000 });
@@ -372,8 +432,10 @@ test.describe(
             .filter({ hasText: createdEmail });
           await inactiveRow.getByRole('checkbox').click();
 
-          // 17. Click the purge (trash bin) button
-          await page.getByRole('button', { name: 'trash bin' }).click();
+          // 17. Click the purge (trash bin) button.
+          // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
+          // Use .first() to target the header bulk-delete button, not row-level purge buttons.
+          await page.getByRole('button', { name: 'delete' }).first().click();
 
           // 18. Confirm permanent deletion in the purge modal
           const purgeModal = new PurgeUsersModal(page);

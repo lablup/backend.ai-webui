@@ -14,7 +14,9 @@ description: |
   - Plugin interfaces, development setup, infrastructure
   Use when user mentions "Backend.AI", "backend.ai", "Sokovan", component names,
   or asks about the backend platform this WebUI connects to.
- allowed-tools: WebFetch, Read
+  For this deployment's live data, a GraphQL field's meaning, or a status value the UI
+  shows, use the `bai-agent` skill instead — it queries the manager and the schema.
+allowed-tools: WebFetch, Read
 ---
 
 # Backend.AI Guide Skill

@@ -1,0 +1,5 @@
+email,username,password
+dup@example.com,dup-user-1,Password!23
+dup@example.com,dup-user-2,Password!23
+dup@example.com,dup-user-3,Password!23
+unique@example.com,unique-user,Password!23

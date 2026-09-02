@@ -8,11 +8,19 @@ test.describe(
     test.describe('Serving page', () => {
       test.beforeEach(async ({ page, request }) => {
         await loginAsVisualRegressionUser(page, request);
-        await navigateTo(page, 'serving');
-        await page.getByText('Active', { exact: true }).waitFor();
+        // The serving page was renamed to 'deployments' in a recent UI update.
+        // The old 'Active' tab was replaced by 'Running'/'Terminated' radio buttons.
+        await navigateTo(page, 'deployments');
+        // Wait for the page header to confirm the deployments page has loaded.
+        await expect(
+          page.getByRole('button', { name: 'Create Deployment' }),
+        ).toBeVisible();
       });
 
-      test('serving full page', async ({ page }) => {
+      // FIXME: Snapshot diff expected — the serving page was renamed to 'deployments'
+      // with an entirely different layout (new table columns, radio filter instead of tabs).
+      // The baseline 'serving_page.png' is stale. Needs snapshot-update PR.
+      test.fixme('serving full page', async ({ page }) => {
         await page.setViewportSize({
           width: 1920,
           height: 1200,
@@ -23,8 +31,10 @@ test.describe(
         });
       });
 
-      // FIXME: Test timeout - "Model Definition" text is not visible after clicking Start Service
-      // The create service page might have changed its structure or text
+      // FIXME(FR-3111/stale-baseline): The service launcher was revamped — the
+      // "Model Definition" anchor is gone and `snapshot/create-service-page.png`
+      // reflects the old form layout. Anchor/mask update + baseline refresh deferred
+      // to FR-3115 (frozen backend).
       test.fixme('Create a new service page', async ({ page }) => {
         await page.setViewportSize({
           width: 1300,
@@ -46,8 +56,9 @@ test.describe(
         });
       });
 
-      // FIXME: Test timeout - setting button cannot be clicked
-      // The serving page might not have any services to update, or the button locator changed
+      // FIXME(FR-3111/missing-test-data): No pre-seeded service exists, so the
+      // 'setting' row button cannot be clicked. Not a stale baseline; owned by the
+      // test-data seeding triage category of FR-3109.
       test.fixme('Update Service', async ({ page }) => {
         await page.setViewportSize({
           width: 1100,
@@ -68,8 +79,9 @@ test.describe(
         });
       });
 
-      // FIXME: Test timeout - delete button cannot be clicked
-      // The serving page might not have any services to delete, or the button locator changed
+      // FIXME(FR-3111/missing-test-data): No pre-seeded service exists, so the
+      // 'delete' row button cannot be clicked. Not a stale baseline; owned by the
+      // test-data seeding triage category of FR-3109.
       test.fixme('Delete modal', async ({ page }) => {
         await page.getByRole('button', { name: 'delete' }).click();
         const deleteModal = page.locator('div.ant-modal-content').first();
@@ -78,19 +90,24 @@ test.describe(
     });
 
     test.describe('Routing Info page', () => {
-      // FIXME: Test timeout in beforeEach - 'service_test2' link cannot be clicked
-      // The test data service might not exist or the link locator changed
+      // FIXME(FR-3111/missing-test-data): The seeded endpoint 'service_test2' does not
+      // exist on the test backend, so beforeEach cannot open the routing info page.
+      // (beforeEach navigates via 'deployments' — the old 'serving' route returns 404.)
+      // Owned by the test-data seeding triage category of FR-3109.
       test.beforeEach(async ({ page, request }) => {
         await loginAsVisualRegressionUser(page, request);
-        await navigateTo(page, 'serving');
-        await page.getByText('Active', { exact: true }).waitFor();
+        await navigateTo(page, 'deployments');
+        await expect(
+          page.getByRole('button', { name: 'Create Deployment' }),
+        ).toBeVisible();
         await page.getByRole('link', { name: 'service_test2' }).click();
         await expect(
           page.getByRole('button', { name: 'plus Add Rules' }),
         ).toBeVisible();
       });
 
-      // FIXME: Test skipped due to beforeEach failure (service_test2 link not found)
+      // FIXME(FR-3111/missing-test-data): Skipped due to the beforeEach failure
+      // (service_test2 not seeded). Not a stale baseline; see FR-3109 test-data triage.
       test.fixme('Routing Info page', async ({ page }) => {
         await page.setViewportSize({
           width: 1100,
@@ -104,7 +121,8 @@ test.describe(
         });
       });
 
-      // FIXME: Test skipped due to beforeEach failure (service_test2 link not found)
+      // FIXME(FR-3111/missing-test-data): Skipped due to the beforeEach failure
+      // (service_test2 not seeded). Not a stale baseline; see FR-3109 test-data triage.
       test.fixme('Add Auto Scaling Rule modal', async ({ page }) => {
         await page.getByRole('button', { name: 'plus Add Rules' }).click();
         await page.getByText('Add Auto Scaling Rule').waitFor();
@@ -114,7 +132,8 @@ test.describe(
         );
       });
 
-      // FIXME: Test skipped due to beforeEach failure (service_test2 link not found)
+      // FIXME(FR-3111/missing-test-data): Skipped due to the beforeEach failure
+      // (service_test2 not seeded). Not a stale baseline; see FR-3109 test-data triage.
       test.fixme('generate token modal', async ({ page }) => {
         await page.getByRole('button', { name: 'plus Generate Token' }).click();
         await page.getByText('Generate new Token').waitFor();

@@ -5,34 +5,169 @@
 import { getOS, preserveDotStartCase } from '../helper';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { MenuKeys } from './useWebUIMenuItems';
-import _ from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
-import { NavigateOptions, To, useNavigate } from 'react-router-dom';
+import { useEventListener } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import type { SingleParserBuilder } from 'nuqs';
+import { useOptimisticSearchParams } from 'nuqs/adapters/react-router/v6';
+import { useEffect, useMemo, useRef, useState, useEffectEvent } from 'react';
+// eslint-disable-next-line no-restricted-imports
+import { useLocation, useNavigate } from 'react-router-dom';
 
-interface WebUINavigateOptions extends NavigateOptions {
-  params?: any;
-}
-export const useWebUINavigate = () => {
-  const _reactNavigate = useNavigate();
-  // @ts-ignore
-  return (to: To, options?: WebUINavigateOptions) => {
-    _reactNavigate(to, _.omit(options, ['params']));
-    const pathName = _.isString(to) ? to : to.pathname || '';
-    document.dispatchEvent(
-      new CustomEvent('move-to-from-react', {
-        detail: {
-          path: pathName,
-          params: options?.params,
-        },
-      }),
-    );
+/**
+ * Thin wrapper around `useNavigate` from react-router-dom.
+ *
+ * Originally this hook also dispatched `move-to-from-react` and
+ * `backend-ai-usersettings` custom events to bridge navigation to the legacy
+ * Lit shell (with a `params` extension on `NavigateOptions` carrying the
+ * Lit-side Redux action payload). The Lit shell was removed
+ * (`backend-ai-webui.ts` in 428205a79, `backend-ai-usersettings-general-list.ts`
+ * in #2465), so the events and the `params` option no longer have any
+ * consumer. The wrapper is kept as a project-level abstraction point for
+ * future cross-cutting navigation concerns.
+ */
+export const useWebUINavigate = () => useNavigate();
 
-    // dispatch event to update tab of backend-ai-usersettings
-    if (pathName === '/usersettings') {
-      const event = new CustomEvent('backend-ai-usersettings', {});
-      document.dispatchEvent(event);
-    }
+/**
+ * Thin wrapper around `useLocation` from react-router-dom, paired with
+ * `useWebUINavigate`. Kept as a project-level abstraction point so
+ * cross-cutting location concerns can be added in one place.
+ */
+export const useWebUILocation = () => useLocation();
+
+/**
+ * Per-tab query-string snapshot/restore for page-like tab hosts
+ * (pattern A-ii in .specs/FR-3267-tab-url-state). Reads the tab from router
+ * location, not nuqs —
+ * nuqs applies external URL changes in a transition that can hang on the
+ * incoming tab's Suspense.
+ */
+export const useTabQuerySnapshot = <T extends string>(
+  tabParser: ReturnType<SingleParserBuilder<T>['withDefault']>,
+) => {
+  'use memo';
+  const location = useWebUILocation();
+  const navigate = useWebUINavigate();
+
+  const currentTab =
+    tabParser.parse(new URLSearchParams(location.search).get('tab') ?? '') ??
+    tabParser.defaultValue;
+
+  const queryMapRef = useRef<Record<string, string>>({
+    [currentTab]: location.search,
+  });
+
+  useEffect(() => {
+    queryMapRef.current[currentTab] = location.search;
+  }, [currentTab, location.search]);
+
+  const onTabChange = (key: string) => {
+    // No pathname — a partial { search } resolves against the current location.
+    navigate({
+      search:
+        queryMapRef.current[key] ?? `?${new URLSearchParams({ tab: key })}`,
+    });
   };
+
+  return { currentTab, onTabChange };
+};
+
+/**
+ * Per-key value snapshots with an uncontrolled current key. The caller
+ * defines the snapshot shape `V` (e.g. `{ queryParams,
+ * tablePaginationOption }`) and passes its live value every render; the
+ * first-render value — typically parsed from the query string — seeds the
+ * initial key's snapshot.
+ *
+ * `sourceKey` seeds the key state and re-syncs it whenever the argument's
+ * value changes (e.g. the caller derives it from the URL and the user
+ * navigates back/forward). The sync is change-triggered, not
+ * difference-triggered, so a rerender whose `sourceKey` still reports the
+ * departing key cannot undo `setKey`. It runs during render, so
+ * effects only ever observe a settled key/value pair.
+ *
+ * `setKey(nextKey)` snapshots the current key's value and switches the key.
+ * `peekSnapshot(key)` reads the value stored for `key` (`undefined` if never
+ * visited) without touching any state — together they let the caller start a
+ * preloaded query and mirror the URL inside the same event handler
+ * (render-as-you-fetch).
+ */
+export const useKeyedSnapshot = <K extends string, V>(
+  sourceKey: K,
+  value: V,
+): [K, (nextKey: K) => void, (key: K) => V | undefined] => {
+  'use memo';
+  const [currentKey, setCurrentKey] = useState(sourceKey);
+  const [prevSourceKey, setPrevSourceKey] = useState(sourceKey);
+  const snapshotMapRef = useRef<Partial<Record<K, V>>>({
+    [currentKey]: value,
+  } as Partial<Record<K, V>>);
+
+  if (sourceKey !== prevSourceKey) {
+    setPrevSourceKey(sourceKey);
+    if (sourceKey !== currentKey) {
+      setCurrentKey(sourceKey);
+    }
+  }
+
+  useEffect(() => {
+    snapshotMapRef.current[currentKey] = value;
+  }, [currentKey, value]);
+
+  const setKey = (nextKey: K) => {
+    snapshotMapRef.current[currentKey] = value;
+    setCurrentKey(nextKey);
+  };
+
+  // The current key answers with the live value: its ref entry is only as
+  // fresh as the last commit's effect.
+  const peekSnapshot = (key: K): V | undefined =>
+    key === currentKey ? value : snapshotMapRef.current[key];
+
+  return [currentKey, setKey, peekSnapshot];
+};
+
+/** Key order doesn't matter for "are these the same query string?". */
+const normalizeSearch = (search: string | URLSearchParams) => {
+  const params = new URLSearchParams(search);
+  params.sort();
+  return params.toString();
+};
+
+/**
+ * Runs `onSettled` after a browser back/forward, once nuqs' query state
+ * matches the address bar — so callers can read their nuqs state inside the
+ * callback without comparing it against `location.search` themselves.
+ *
+ * The wait is the point: nuqs applies `popstate` inside a `startTransition`,
+ * so for at least one render after the event every `useQueryStates` value
+ * still describes the page the user just left.
+ */
+export const useBrowserPopstateEffect = (onSettled: () => void) => {
+  'use memo';
+  const handleSettled = useEffectEvent(onSettled);
+  // nuqs' view of the URL; a fresh object per popstate re-runs the effect below.
+  const nuqsSearchParams = useOptimisticSearchParams();
+  // Distinguishes back/forward from the page's own `setQueryParams` writes.
+  const isSettlePendingRef = useRef(false);
+
+  useEventListener('popstate', () => {
+    isSettlePendingRef.current = true;
+  });
+
+  useEffect(
+    function runOnceQueryStateCaughtUp() {
+      if (!isSettlePendingRef.current) return;
+      if (
+        normalizeSearch(nuqsSearchParams) !==
+        normalizeSearch(window.location.search)
+      ) {
+        return;
+      }
+      isSettlePendingRef.current = false;
+      handleSettled();
+    },
+    [nuqsSearchParams],
+  );
 };
 
 export const useBackendAIConnectedState = () => {
@@ -160,7 +295,10 @@ export type BackendAIClient = {
       user: string;
       vfolder: string;
     }): Promise<any>;
-    leave_invited(name: string | null): Promise<any>;
+    leave_invited(
+      name: string | null,
+      sharedUserUuid?: string | null,
+    ): Promise<any>;
     info: (name: string) => Promise<any>;
     mkdir: (
       path: string,
@@ -172,6 +310,11 @@ export type BackendAIClient = {
       file: string,
       name: string,
       archive?: boolean,
+    ) => Promise<any>;
+    request_download_archive: (
+      files: Array<string>,
+      name: string,
+      filename?: string,
     ) => Promise<any>;
     create_upload_session: (
       path: string,
@@ -223,6 +366,9 @@ export type BackendAIClient = {
     delete: (key: string, prefix: boolean) => Promise<any>;
   };
   get_resource_slots: () => Promise<any>;
+  start_watcher_agent: (agentId: string) => Promise<any>;
+  stop_watcher_agent: (agentId: string) => Promise<any>;
+  restart_watcher_agent: (agentId: string) => Promise<any>;
   current_group_id: () => string;
   current_group: string;
   user_uuid: string;
@@ -486,20 +632,14 @@ export const useBackendAIImageMetaData = () => {
         return architecture;
       },
       tagAlias: (tag: string) => {
-        return (
-          metadata?.tagAlias[tag] ??
-          _.chain(metadata.tagReplace)
-            .toPairs()
-            .find(([regExpStr]) => new RegExp(regExpStr).test(tag))
-            .thru((pair) => {
-              if (pair) {
-                const [regExpStr, replaceStr] = pair;
-                return _.replace(tag, new RegExp(regExpStr), replaceStr);
-              }
-            })
-            .value() ??
-          preserveDotStartCase(tag)
+        const matchedPair = _.find(
+          _.toPairs(metadata.tagReplace),
+          ([regExpStr]) => new RegExp(regExpStr).test(tag),
         );
+        const replaced = matchedPair
+          ? _.replace(tag, new RegExp(matchedPair[0]), matchedPair[1] as string)
+          : undefined;
+        return metadata?.tagAlias[tag] ?? replaced ?? preserveDotStartCase(tag);
       },
       ...imageParser,
     },
@@ -535,6 +675,45 @@ export const useAppDownloadMap = () => {
     setSelectedOS,
     OS: _.keys(appDownloadMap) as Array<keyof typeof appDownloadMap>,
     architectures: appDownloadMap[selectedOS]?.architecture || [],
+    getDownloadLink,
+  };
+};
+
+export const useCliDownloadMap = () => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const cliDownloadUrl = baiClient?._config?.cliDownloadUrl || '';
+
+  // The Backend.AI CLI is distributed as SCIE (Self-Contained Installable
+  // Executables) — a single binary bundling the Python interpreter + CLI +
+  // dependencies. Asset names follow `backendai-client-<os>-<arch>` (see the
+  // `lablup/backend.ai` GitHub releases). There is no Windows SCIE, and macOS
+  // ships only an Apple-Silicon (aarch64) build.
+  const cliDownloadMap = {
+    Linux: { os: 'linux', architectures: ['x86_64', 'aarch64'] },
+    MacOS: { os: 'macos', architectures: ['aarch64'] },
+  } as const;
+
+  const detectedOS = getOS();
+  const initialOS = detectedOS === 'Windows' ? 'Linux' : detectedOS;
+  const [selectedOS, setSelectedOS] =
+    useState<keyof typeof cliDownloadMap>(initialOS);
+
+  const getDownloadLink = (architecture: 'x86_64' | 'aarch64'): string => {
+    const { os } = cliDownloadMap[selectedOS];
+    // The base URL defaults to the backend.ai core GitHub `latest/download`
+    // (overridable via the `cliDownloadUrl` config), which redirects to the
+    // newest release's asset, so no version segment is needed here. The
+    // fully self-contained "-fat-" variant is also published if preferred.
+    return `${cliDownloadUrl}/backendai-client-${os}-${architecture}`;
+  };
+
+  return {
+    cliDownloadUrl,
+    selectedOS,
+    setSelectedOS,
+    OS: _.keys(cliDownloadMap) as Array<keyof typeof cliDownloadMap>,
+    architectures: cliDownloadMap[selectedOS]?.architectures ?? [],
     getDownloadLink,
   };
 };
@@ -584,6 +763,7 @@ type BackendAIConfig = {
   enableContainerCommit: boolean;
   enableModelFolders: boolean;
   appDownloadUrl: string;
+  cliDownloadUrl: string;
   systemSSHImage: string;
   defaultFileBrowserImage: string;
   fasttrackEndpoint: string;
@@ -605,4 +785,6 @@ type BackendAIConfig = {
   proxyURL: string;
   allowCustomResourceAllocation: boolean;
   allowAppDownloadPanel: boolean;
+  allowThemeMode: boolean;
+  allowCLIDownloadPanel: boolean;
 };

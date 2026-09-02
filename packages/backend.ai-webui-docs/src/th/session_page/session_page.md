@@ -1,39 +1,64 @@
-# Session Page
+---
+navTitle: หน้าเซสชัน
+---
 
-In Backend.AI, a `session` represents an isolated compute environment where ผู้ใช้s can run code, train models, or perform data analysis using allocated resources.
-Each session is created based on ผู้ใช้-defined configurations such as runtime image, resource size, and environment settings.
-Once started, the session provides access to interactive applications, terminals, and logs, allowing ผู้ใช้s to manage and monitor their workloads efficiently.
+<a id="session-page"></a>
+
+# หน้าเซสชัน
+
+ใน Backend.AI `เซสชัน` หมายถึงสภาพแวดล้อมการประมวลผลแบบแยกส่วนที่ผู้ใช้สามารถรันโค้ด ฝึกโมเดล หรือวิเคราะห์ข้อมูลโดยใช้ทรัพยากรที่ได้รับการจัดสรร
+แต่ละเซสชันถูกสร้างขึ้นตามการกำหนดค่าของผู้ใช้ เช่น อิมเมจรันไทม์ ขนาดทรัพยากร และการตั้งค่าสภาพแวดล้อม
+เมื่อเซสชันเริ่มต้นแล้ว ผู้ใช้สามารถเข้าถึงแอปพลิเคชันแบบโต้ตอบ เทอร์มินัล และล็อก เพื่อจัดการและตรวจสอบเวิร์กโหลดได้อย่างมีประสิทธิภาพ
 
 ![](../images/sessions_page.png)
 
 
 <a id="resource-summary-panels"></a>
 
-## Resource สรุป Panels
+## แผงสรุปทรัพยากร
 
-At the top of the 'เซสชัน' page, you can find panels displaying your available computing resources such as CPU, RAM, and AI Accelerators.
-Different panel views — 'My Total Resources Limit', 'My Resources in Resource Group', and 'Total Resources in Resource Group' — can be selected depending on
-the information needed. Use the 'Settings' button to change which panel is displayed.
+ที่ด้านบนของหน้า "เซสชัน" จะมีแผงแสดงทรัพยากรการประมวลผล เช่น CPU, RAM และ AI Accelerator
+สามารถเลือกมุมมองแผงต่างๆ ได้ตามข้อมูลที่ต้องการ เช่น **การใช้ทรัพยากรทั้งหมดของฉัน**, **ทรัพยากรของฉันในกลุ่มทรัพยากร** และ **ทรัพยากรทั้งหมดในกลุ่มทรัพยากร** หากต้องการเปลี่ยนแผงที่แสดง ให้คลิกไอคอนการตั้งค่า (รูปเฟือง) ที่ส่วนหัวของแผง แล้วเลือกมุมมองที่ต้องการใน **การตั้งค่าแผง**
 
 ![](../images/panel_settings.png)
 
-For more detailed information about resource panels and their metrics, please refer to the [dashboard](#dashboard) page.
+แผง **การใช้ทรัพยากรทั้งหมดของฉัน** แสดงทรัพยากรที่คุณกำลังใช้อยู่ในทุกโปรเจกต์
+หากต้องการตรวจสอบขีดจำกัดที่ใช้กับทรัพยากรแต่ละรายการ ให้วางเมาส์เหนือแถบสถานะด้านล่างตัวเลข เมื่อมีการใช้ขีดจำกัดหลายรายการ (โดเมน โปรเจกต์ หรือคีย์แพร์) ระบบจะใช้ขีดจำกัดที่เข้มงวดที่สุด
+
+สำหรับข้อมูลเพิ่มเติมเกี่ยวกับแผงทรัพยากรและตัวชี้วัด โปรดดูที่หน้า[แดชบอร์ด](#dashboard)
 
 
 <a id="session-list"></a>
 
-## Session list
+## รายการเซสชัน
 
-The 'เซสชัน' section displays a list of all active and completed compute sessions.
-You can filter sessions by type — `Interactive`, `Batch`, `Inference`, or `Upload Sessions` — and switch between
-`Running` and `Finished` tabs to manage sessions.
+หน้าเซสชันส่วนตัวจะแสดงเฉพาะเซสชันการประมวลผลที่กำลังทำงานอยู่และที่เสร็จสิ้นแล้วของคุณเองเท่านั้น
+สามารถกรองเซสชันตามประเภท ได้แก่ `ทั้งหมด`, `แบบโต้ตอบ`, `แบบแบตช์`, `การอนุมาน` หรือ `เซสชันอัปโหลด` และสลับระหว่างแท็บ `กำลังทำงาน` กับ `เสร็จสิ้น` เพื่อจัดการเซสชัน
 
-By default, you can view the following columns: session name, status, allocated resources (AI Accelerators, CPU, Memory),
-elapsed time, and for super ผู้ดูแลระบบs, agent and owner email.
-Additional columns can be shown or specific ones hidden by clicking the 'Settings' button at the bottom right of the table to customize the view.
+:::note
+หน้าเซสชันส่วนตัวจะแสดงเฉพาะเซสชันของโปรเจกต์ที่เลือกด้วยตัวเลือกโปรเจกต์ในแถบด้านบน โดยมีที่อยู่ในรูปแบบ `/project/<ชื่อโปรเจกต์>/session`
+และจะแสดงเฉพาะเซสชันของคุณเองเสมอ ไม่ว่าคุณจะมีบทบาทใดก็ตาม
+หากต้องการดูและจัดการเซสชันของผู้ใช้ทั้งหมดในโปรเจกต์ ให้ใช้หน้า **เซสชัน** ใน **การตั้งค่าผู้ดูแลระบบ** ของแถบด้านข้าง
+:::
+
+ตามค่าเริ่มต้น สามารถดูคอลัมน์ต่อไปนี้ได้: ชื่อเซสชัน สถานะ ทรัพยากรที่จัดสรร (AI Accelerator, CPU, หน่วยความจำ) และเวลาที่ผ่านไป
+สามารถแสดงคอลัมน์เพิ่มเติมหรือซ่อนคอลัมน์ที่ต้องการได้โดยคลิกปุ่ม "การตั้งค่า" ที่มุมขวาล่างของตาราง เพื่อปรับแต่งมุมมอง
+นอกจากนี้ ในกล่องโต้ตอบการตั้งค่าคอลัมน์ คุณยังสามารถลากคอลัมน์เพื่อเปลี่ยนลำดับการแสดงผลในตารางได้
 
 ![](../images/session_table_settings.png)
 
 :::tip
-ตั้งแต่ Backend.AI Manager v26.2.0 คุณสามารถดูประวัติการจัดตารางโดยละเอียดสำหรับแต่ละเซสชันจากแผงรายละเอียดเซสชัน ฟีเจอร์นี้ช่วยให้คุณเข้าใจการตัดสินใจในการจัดตาราง ความล่าช้า และความล้มเหลว สำหรับรายละเอียดเพิ่มเติม โปรดดูที่[ประวัติการจัดตารางเซสชัน](#session-scheduling-history)
+สามารถดูประวัติการจัดตารางโดยละเอียดสำหรับแต่ละเซสชันได้จากแผงรายละเอียดเซสชัน ฟีเจอร์นี้ช่วยให้เข้าใจการตัดสินใจในการจัดตาราง ความล่าช้า และความล้มเหลว สำหรับรายละเอียดเพิ่มเติม โปรดดูที่ [ประวัติการจัดตารางเซสชัน](#session-scheduling-history)
+:::
+
+:::note
+ปุ่ม **เริ่ม** ที่ตัวเริ่มเซสชันจะสร้างเพียงหนึ่งเซสชันตามค่าเริ่มต้น
+หากต้องการเริ่มหลายเซสชันด้วยการตั้งค่าเดียวกันในคราวเดียว ให้เปิดเมนูดรอปดาวน์
+ของปุ่มเริ่มแล้วเลือก **เริ่มหลายเซสชัน** ดูรายละเอียดได้ที่
+[ยืนยันและเปิดใช้งาน](#confirm-and-launch)
+:::
+
+:::note
+คุณสามารถส่งออกรายการเซสชันเป็นไฟล์ CSV ได้โดยใช้ปุ่มดาวน์โหลดในแถบเครื่องมือรายการเซสชัน
+การส่งออก CSV จากหน้าเซสชันส่วนตัวจะรวมเฉพาะเซสชันของคุณเองเท่านั้น
 :::

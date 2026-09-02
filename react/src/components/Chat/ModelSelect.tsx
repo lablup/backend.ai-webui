@@ -3,41 +3,41 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { ChatModel } from './ChatModel';
-import { Select, type SelectProps } from 'antd';
-import _ from 'lodash';
+import { BAISelect, type BAISelectProps } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 
-interface ModelSelectProps extends SelectProps {
+interface ModelSelectProps extends BAISelectProps {
   models?: Array<ChatModel>;
+  deploymentName?: string | null;
 }
 
 const ModelSelect: React.FC<ModelSelectProps> = ({
   models,
+  deploymentName,
   ...selectProps
 }) => {
+  'use memo';
+
   const { t } = useTranslation();
 
   return (
-    <Select
+    <BAISelect
       placeholder={t('chatui.SelectModel')}
       style={{
         fontWeight: 'normal',
       }}
       showSearch
-      options={_.chain(models)
-        .groupBy('group')
-        .mapValues((ms) =>
-          _.map(ms, ({ name }) => ({
-            label: name,
-            value: name,
-          })),
-        )
-        .map((v, k) => ({
-          label: k === 'undefined' ? 'Others' : k,
-          options: v,
-        }))
-        .value()}
+      options={_.map(models, ({ name }) => ({
+        label: name,
+        value: name,
+      }))}
       popupMatchSelectWidth={false}
+      header={
+        deploymentName
+          ? t('chatui.DeploymentModels', { name: deploymentName })
+          : undefined
+      }
       {...selectProps}
     />
   );

@@ -2,10 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { Form, type FormItemProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { Form, type FormItemProps, Select, Tag } from 'antd';
-import { TagProps } from 'antd/lib';
-import _ from 'lodash';
+import { AstryxFormTagsInput } from './astryxFormControls';
+import { Badge } from '@astryxdesign/core/Badge';
+import { badgeVariantForTagColor } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import type { CSSProperties, ReactNode } from 'react';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -23,7 +26,6 @@ const PortSelectFormItem: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const form = Form.useFormInstance();
   return (
     <Form.Item
       label={t('session.launcher.PreOpenPortTitle')}
@@ -95,57 +97,71 @@ const PortSelectFormItem: React.FC<Props> = ({
       ]}
       {...formItemProps}
     >
-      <Select
-        mode="tags"
-        tagRender={(props) => {
-          const hasDuplicated =
-            _.filter(
-              transformPortValuesToNumbers(form.getFieldValue(name)),
-              (v) => v === parseInt(props.value),
-            ).length > 1;
-          return (
-            <PortTag
-              inValid={hasDuplicated}
-              closable={props.closable}
-              onClose={props.onClose}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              value={props.value}
-            >
-              {props.label}
-            </PortTag>
-          );
-        }}
-        style={{ width: '100%' }}
-        // placeholder={t('session.launcher.PreOpen')}
-        // options={_.map(portGuides, (v, k) => ({
-        //   value: parseInt(k),
-        //   // label: `${k} - ${v}`,
-        // }))}
-        suffixIcon={null}
-        open={false}
+      {/*
+        PILOT-DECISION: this used to paint an individual chip red (`tagRender`
+        + `PortTag`) when the port string was malformed, out of range, or
+        duplicated. Astryx advises against per-token colors ("Avoid applying
+        custom colors to individual tokens inside a Tokenizer"), and the four
+        `rules` above already surface every one of those conditions as a
+        field-level error message — so the red chip is dropped rather than
+        reproduced. `PortTag` itself stays exported for
+        `SessionLauncherPreview`. `open={false}` / `suffixIcon={null}` map to
+        nothing: the empty search source yields no dropdown and no suffix
+        affordance.
+
+        `tokenSeparators` is RESTORED (input-parity pass) — the `extra` line
+        directly above this field tells the user to separate values with a
+        comma or a space, so dropping it made the UI lie. The adapter splits on
+        commit; see `AstryxFormTagsInputProps.tokenSeparators`.
+      */}
+      <AstryxFormTagsInput
         tokenSeparators={[',', ' ']}
+        label={t('session.launcher.PreOpenPortTitle')}
+        // QA-FINDINGS Q-39: an EMPTY placeholder, deliberately.
+        //
+        // Astryx's `Tokenizer` defaults its input to "Search…", and this field
+        // has no suggestion source at all (`EMPTY_TAG_SEARCH_SOURCE`) — so it
+        // invited the user to search, showed no list, and read as broken. The
+        // `extra` line directly above already says to separate values with a
+        // comma or a space, which is the actual instruction.
+        //
+        // Empty is also exact legacy parity: `git show origin/main:` has the
+        // `placeholder` prop COMMENTED OUT on the antd `Select mode="tags"`, so
+        // legacy rendered no placeholder either.
+        placeholder=""
       />
     </Form.Item>
   );
 };
 
-interface PortTagProps extends TagProps {
+/**
+ * antd `Tag` → Astryx `Badge` (MAPPING §3.5), with the colour routed through
+ * the repo-global lookup (ticket 13) instead of a literal hue.
+ *
+ * P1 note: the props were grepped, not guessed — the only call site
+ * (`SessionLauncherPreview`) passes `value`, `style` and `children`.
+ */
+interface PortTagProps {
   value: string;
   inValid?: boolean;
+  children?: ReactNode;
+  style?: CSSProperties;
+  className?: string;
 }
 
 export const PortTag: React.FC<PortTagProps> = ({
   inValid,
   value,
+  children,
   ...tagProps
 }) => {
   return (
-    <Tag
-      color={!inValid && isValidPortStr(value) ? undefined : 'red'}
+    <Badge
       {...tagProps}
+      variant={badgeVariantForTagColor(
+        !inValid && isValidPortStr(value) ? undefined : 'red',
+      )}
+      label={children ?? value}
     />
   );
 };

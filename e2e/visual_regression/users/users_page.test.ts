@@ -18,7 +18,9 @@ test.describe(
   'User page Visual Regression Test',
   { tag: ['@regression', '@user', '@visual'] },
   () => {
-    // FIXME: Cannot find user2@lablup.com row button - test data may have changed
+    // FIXME(FR-3111/missing-test-data): The seeded account 'user2@lablup.com' is not
+    // present on the test backend, so the row buttons cannot be found. Not a stale
+    // baseline; owned by the test-data seeding triage category of FR-3109.
     test.fixme(`users table`, async ({ page }) => {
       // full page
       await expect(page).toHaveScreenshot('users_table.png', {
@@ -54,10 +56,11 @@ test.describe(
       await page.getByRole('button', { name: 'Close' }).click();
     });
 
-    // NOTE: This test has large visual diff (200194 pixels, 0.08 ratio)
-    // This is likely due to table structure changes, not just theme colors
-    // Needs manual review and snapshot update
-    test(`credentials table`, async ({ page }) => {
+    // FIXME(FR-3111/stale-baseline): Snapshot diff (257812 pixels, ratio 0.11) — the
+    // Credentials table layout changed (new column structure, different test data
+    // ordering). `snapshot/credentials-table.png` needs a refresh in FR-3115
+    // (frozen backend).
+    test.fixme(`credentials table`, async ({ page }) => {
       await navigateTo(page, 'credential');
 
       // credential table

@@ -1,36 +1,130 @@
-import { BAIObjectStorageSelectQuery } from '../../__generated__/BAIObjectStorageSelectQuery.graphql';
-import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
-import BAISelect, { BAISelectProps } from '../BAISelect';
-import BAIText from '../BAIText';
-import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
-import { Skeleton } from 'antd';
-import { GetRef } from 'antd/lib';
-import _ from 'lodash';
-import { useDeferredValue, useEffect, useRef, useState } from 'react';
-import { graphql } from 'relay-runtime';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
-export interface BAIObjectStorageSelectProps
-  extends Omit<BAISelectProps, 'options' | 'labelInValue'> {
+ BAIObjectStorageSelect — ticket-27 Astryx sibling of
+ `BAIObjectStorageSelect`, built on `BAIComplexSelect` (ticket 26),
+ following pattern B of the recipe used across the Astryx migration (copy of
+ `BAIUserSelect.tsx`, the worked example).
+
+ FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
+ `BAIObjectStorageSelect` is NOT touched by this change. It keeps serving
+ every unmigrated call site until ticket 27 moves them. This file is the
+ Astryx-native sibling, and its OUTER value contract is deliberately the same
+ plain key (`string`) the antd wrapper exposes.
+
+ CLASS B (id-valued): the key is the object storage's raw GraphQL `id`.
+
+ PILOT-DECISIONs:
+  - The antd original had NO selected-value resolution query at all — it
+    passed `value`/`onChange` straight through to `BAISelect` WITHOUT
+    `labelInValue`, relying on plain antd `Select`'s fallback of printing the
+    raw value string in the trigger when no matching option is loaded. Astryx
+    has no such fallback (the trigger always reads `value.label`), so per
+    CONVERSION-BRIEF §2.A ("the value query is no longer optional") this file
+    ADDS one, backed by the singular `objectStorage(id: ID!)` field. Because
+    that field only resolves one id at a time (the `objectStorages`
+    connection takes no id-list filter), this wrapper stays single-select
+    only, same as the antd original was exercised in practice (no call site
+    or story ever set `mode="multiple"`).
+  - antd's `labelRender` wrapped the label in `<BAIText>{label}</BAIText>`
+    (a plain, non-monospace `Text`, purely for consistent typography). Dropped
+    — `BAIComplexSelect` requires `label` to be a plain string; no
+    information is lost, only that styling wrapper.
+  - The original called `selectRef.current?.scrollTo(0)` (an antd `BAISelect`
+    imperative ref API) to reset scroll position once a debounced search
+    settled. `BAIComplexSelect` has no imperative ref, so this is dropped —
+    the option list simply re-renders from the top of its DOM on a fresh
+    result set instead of forcing a scroll reset.
+  - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
+    is dropped (see `BAIComplexSelect` header, general policy).
+*/
+import { BAIObjectStorageSelectQuery } from '../../__generated__/BAIObjectStorageSelectQuery.graphql';
+import { BAIObjectStorageSelectValueQuery } from '../../__generated__/BAIObjectStorageSelectValueQuery.graphql';
+import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
+import { useControllableValue } from '../../hooks';
+import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import BAIComplexSelect, {
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+} from '../BAIComplexSelect';
+import * as _ from 'lodash-es';
+import { useDeferredValue, useState } from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+
+export type AstryxObjectStorageNode = NonNullable<
+  NonNullable<
+    BAIObjectStorageSelectQuery['response']['objectStorages']
+  >['edges'][number]
+>['node'];
+
+export interface BAIObjectStorageSelectProps extends Omit<
+  BAIComplexSelectProps,
+  | 'options'
+  | 'value'
+  | 'onChange'
+  | 'searchValue'
+  | 'onSearch'
+  | 'total'
+  // Single-select only — see the header PILOT-DECISION on the value query.
+  | 'multiple'
+> {
+  /** Plain key, as the antd `BAIObjectStorageSelect` exposes. */
+  value?: string | null;
+  onChange?: (value: string | undefined) => void;
   fetchKey?: string;
 }
 
-const BAIObjectStorageSelect = ({
+const BAIObjectStorageSelect: React.FC<BAIObjectStorageSelectProps> = ({
   fetchKey,
-  loading,
-  ...selectPropsWithoutLoading
-}: BAIObjectStorageSelectProps) => {
+  isLoading,
+  ...selectProps
+}) => {
+  'use memo';
+  const [controllableValue, setControllableValue] = useControllableValue<
+    string | null | undefined
+  >(selectProps as Record<string, unknown>, {
+    valuePropName: 'value',
+    trigger: 'onChange',
+  });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
-    selectPropsWithoutLoading,
+    selectProps as Record<string, unknown>,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
     },
   );
-  const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+
   const deferredOpen = useDeferredValue(controllableOpen);
-  const [searchStr, setSearchStr] = useState<string>();
-  const deferredSearchStr = useDeferredValue(searchStr);
+  const [searchStr, setSearchStr] = useState<string>('');
+  const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
+
+  // Deferred so a fresh selection does not immediately re-run the value query.
+  const deferredControllableValue = useDeferredValue(controllableValue);
+  const skipSelected = !deferredControllableValue;
+
+  const { objectStorage: selectedObjectStorage } =
+    useLazyLoadQuery<BAIObjectStorageSelectValueQuery>(
+      graphql`
+        query BAIObjectStorageSelectValueQuery(
+          $id: ID!
+          $skipSelected: Boolean!
+        ) {
+          objectStorage(id: $id) @skip(if: $skipSelected) {
+            id
+            name
+          }
+        }
+      `,
+      {
+        id: deferredControllableValue ?? '',
+        skipSelected,
+      },
+      {
+        fetchPolicy: !skipSelected ? 'store-or-network' : 'store-only',
+        fetchKey,
+      },
+    );
 
   const {
     paginationData,
@@ -39,9 +133,7 @@ const BAIObjectStorageSelect = ({
     isLoadingNext,
   } = useLazyPaginatedQuery<
     BAIObjectStorageSelectQuery,
-    NonNullable<
-      BAIObjectStorageSelectQuery['response']['objectStorages']
-    >['edges'][number]
+    AstryxObjectStorageNode
   >(
     graphql`
       query BAIObjectStorageSelectQuery($offset: Int!, $limit: Int!) {
@@ -56,64 +148,63 @@ const BAIObjectStorageSelect = ({
         }
       }
     `,
-    {
-      limit: 1,
-    },
+    // Preserved verbatim from the antd original — do not widen the page size.
+    { limit: 1 },
     {},
     {
       fetchKey,
       fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
     },
     {
-      getTotal: (result) => result.objectStorages?.count,
-      getItem: (result) => result.objectStorages?.edges,
-      getId: (item) => item?.node.id,
+      getTotal: (r) => r.objectStorages?.count ?? undefined,
+      getItem: (r) => r.objectStorages?.edges?.map((edge) => edge?.node),
+      getId: (item) => item?.id,
     },
   );
 
-  const selectOptions = _.map(paginationData, (item) => ({
-    label: item.node.name,
-    value: item.node.id,
-  }));
+  const options = _.compact(
+    _.map(paginationData, (item) => {
+      const key = item?.id;
+      return key
+        ? {
+            value: key,
+            label: item?.name ?? key,
+          }
+        : null;
+    }),
+  );
 
-  const isValueMatched = searchStr === deferredSearchStr;
-  useEffect(() => {
-    if (isValueMatched) {
-      selectRef.current?.scrollTo(0);
-    }
-  }, [isValueMatched]);
+  const labeledValue: BAIComplexSelectValue = deferredControllableValue
+    ? {
+        label:
+          selectedObjectStorage?.id === deferredControllableValue
+            ? (selectedObjectStorage?.name ?? deferredControllableValue)
+            : deferredControllableValue,
+        value: deferredControllableValue,
+      }
+    : null;
 
   return (
-    <BAISelect
-      ref={selectRef}
+    <BAIComplexSelect
       placeholder="Select Storage"
-      showSearch={{
-        searchValue: searchStr,
-        onSearch: (v) => {
-          setSearchStr(v);
-        },
-        filterOption: false,
-        autoClearSearchValue: true,
+      {...selectProps}
+      isLoading={
+        isLoading ||
+        controllableValue !== deferredControllableValue ||
+        searchStr !== debouncedDeferredValue
+      }
+      isLoadingNext={isLoadingNext}
+      total={objectStorages?.count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const picked = _.isArray(next) ? next[0] : next;
+        setControllableValue(picked?.value, undefined);
       }}
-      labelRender={({ label }: { label: React.ReactNode }) => {
-        return <BAIText>{label}</BAIText>;
-      }}
-      loading={searchStr !== deferredSearchStr || loading}
-      options={selectOptions}
-      {...selectPropsWithoutLoading}
-      endReached={() => loadNext()}
-      open={controllableOpen}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
       onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(objectStorages?.count) && objectStorages?.count > 0 ? (
-          <TotalFooter loading={isLoadingNext} total={objectStorages.count} />
-        ) : undefined
-      }
+      endReached={loadNext}
     />
   );
 };

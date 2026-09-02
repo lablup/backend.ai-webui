@@ -2,8 +2,8 @@ import {
   BAIDynamicUnitInputNumberWithSlider,
   BAIDynamicUnitInputNumberWithSliderProps,
 } from '.';
+import { Form } from '../form-engine';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Form } from 'antd';
 
 /**
  * BAIDynamicUnitInputNumberWithSlider combines a dynamic unit input with a synchronized slider.

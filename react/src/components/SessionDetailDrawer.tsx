@@ -4,24 +4,40 @@
  */
 import { SessionDetailDrawerFragment$key } from '../__generated__/SessionDetailDrawerFragment.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { ProjectContextOrNull } from '../types/projectContext';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
-import { Drawer, Skeleton } from 'antd';
-import { DrawerProps } from 'antd/lib';
-import { BAIFetchKeyButton, useFetchKey } from 'backend.ai-ui';
+import { BAIDrawer, BAISkeleton, useFetchKey } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
-// import { StringParam, useQueryParam } from 'use-query-params';
-
-interface SessionDetailDrawerProps extends DrawerProps {
+// PILOT-DECISION: props no longer extend antd `DrawerProps` (a type-only antd
+// import still blocks the P15 gate). All three consumers
+// (SessionDetailAndContainerLogOpenerLegacy, RecentlyCreatedSession,
+// DeploymentReplicasCard) pass exactly `open` / `sessionId` / `onClose`, so
+// the explicit interface below is the whole live surface. antd spellings are
+// kept and mapped internally (`open` -> `isOpen`).
+interface SessionDetailDrawerProps {
+  /** Whether the drawer is open. antd Drawer's `open`. */
+  open?: boolean;
+  /** Close request handler (Escape, scrim click, close button). */
+  onClose?: () => void;
   sessionId?: string;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3413): pass-through to
+   * `SessionDetailContent`. The mounting page decides the project context
+   * (`null` on super-admin pages suppresses the project-mismatch alert).
+   */
+  project: ProjectContextOrNull;
 }
 const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   sessionId,
-  ...drawerProps
+  open = false,
+  onClose,
+  project,
 }) => {
   const { t } = useTranslation();
   useSuspendedBackendaiClient();
@@ -61,13 +77,17 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   }, []);
 
   return (
-    <Drawer
-      title={t('session.SessionInfo')}
+    <BAIDrawer
+      open={open}
+      onClose={onClose}
+      side="end"
       size={800}
+      title={t('session.SessionInfo')}
       extra={
-        <BAIFetchKeyButton
+        <AutoUpdateFetchKeyButton
+          settingId="session-detail"
+          defaultAutoUpdateDelay={10_000}
           loading={isPendingReload}
-          autoUpdateDelay={7_000}
           value={fetchKey}
           onChange={(newFetchKey) => {
             startReloadTransition(() => {
@@ -76,18 +96,18 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
           }}
         />
       }
-      {...drawerProps}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeleton />}>
         {sessionId && (
           <SessionDetailContent
             id={sessionId}
             fetchKey={fetchKey}
             sessionFrgmt={cachedSessionFrgmt}
+            project={project}
           />
         )}
       </Suspense>
-    </Drawer>
+    </BAIDrawer>
   );
 };
 

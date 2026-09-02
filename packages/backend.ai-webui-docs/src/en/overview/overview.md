@@ -1,3 +1,7 @@
+---
+navTitle: Overview
+---
+
 # Overview
 
 Backend.AI is an open source cloud resource management platform, which makes it
@@ -14,7 +18,7 @@ management, a dedicated Control-Panel for superadmins, and the GPU
 virtualization plug-in.
 
 A GUI client package is provided to easily take advantage of the features
-supported by the Backend.AI server. Backend.AI Web-UI is a GUI client in the form
+supported by the Backend.AI server. Backend.AI WebUI is a GUI client in the form
 of a web service or stand-alone app. It provides a convenient graphical
 interface for accessing the Backend.AI server to utilize computing resources and
 manage its environment. Backend.AI provides pre-made images which enable
@@ -25,7 +29,7 @@ achieves more intuitive use.
 
 <a id="key-concepts"></a>
 
-## Key Concepts
+## Key concepts
 
 ![](../images/key_concepts_2209.png)
 
@@ -73,25 +77,25 @@ achieves more intuitive use.
   user applications (eg DIGITS, Jupyter Notebook, shell terminal, TensorBoard,
   etc.) running within the compute session. You do not need to know the
   container's address and port number directly, but you can use the provided CLI
-  client or GUI Web-UI to directly access the desired daemon of the session.
-- Web-UI: A GUI client that is served as a web or stand-alone app.
+  client or GUI WebUI to directly access the desired daemon of the session.
+- WebUI: A GUI client that is served as a web or stand-alone app.
   You can use the service after logging in by specifying the address of the
   Backend.AI server and entering the user account information.
-- Local wsproxy: Proxy server built into the Web-UI app. Local wsproxy converts
-  general HTTP requests between the server and Web-UI app to websocket and
-  delivers the messages. If the Web-UI app loses its connection to wsproxy or
-  the wsproxy server is dead, it will not be possible to access services such as
+- Local `wsproxy`: Proxy server built into the WebUI app. Local `wsproxy` converts
+  general HTTP requests between the server and WebUI app to websocket and
+  delivers the messages. If the WebUI app loses its connection to `wsproxy` or
+  the `wsproxy` server is dead, it will not be possible to access services such as
   Jupyter Notebook and Terminal.
-- Web wsproxy: In the case of the Web-UI provided in a web, the built-in
-  server cannot be used due to the nature of the browser. In this case, you
-  can use services such as Jupyter Notebook, Terminal, etc. in the web
-  environment by making the wsproxy server as a separate web server
-  so that the Web-UI app can see the web wsproxy.
+- Web App Proxy: In the case of the WebUI provided in a web, the built-in
+  server cannot be used due to the nature of the browser. In this case, the App Proxy
+  is served as a standalone, separate web server that the WebUI app points to,
+  so that you can use services such as Jupyter Notebook, Terminal, etc. in the web
+  environment.
 
 
 <a id="backend-ai-feature-details"></a>
 
-## Backend.AI Feature Details
+## Backend.AI feature details
 
 **Accelerator Support**
 
@@ -99,22 +103,13 @@ achieves more intuitive use.
 | --- | --- | --- |
 | AMD | MI250X or later |  |
 | Furiosa | Warboy / RNGD |  |
+| Google | TPU |  |
 | Graphcore | IPU |  |
 | Groq | Groqcard |  |
-| HyperAccel |  |  |
+| HyperAccel | LPU |  |
 | Intel | Gaudi 2 and 3 | Memory usage based automatic idle resource reclamation |
-| NVIDIA support       | CUDA compute capability 7.5 or later     | (Enterprise) Fractional GPU virtualization and sharing |
-|                      |                                          | for containers                                        |
-|                      | - Model inference: NVIDIA Hopper or later|                                                       |
-|                      |   (depending on the target quantization) |                                                       |
-|                      | - Model training: NVIDIA Ampere or later |                                                       |
-|                      |                                          | Container-level multi GPU                             |
-|                      |                                          | Multiple CUDA library version support                 |
-|                      |                                          | GPUDirect storage support                             |
-|                      |                                          | NGC (NVIDIA GPU Cloud) image integration              |
-|                      |                                          | GPU-GPU Network auto configuration                    |
-| Rebellions           | ATOM / ATOM+                             |                                                       |
-| SambaNova            | SN30/40L                                 |                                                       |
+| NVIDIA support | CUDA compute capability 7.5 or later<br>- Model inference: NVIDIA Hopper or later (depending on the target quantization)<br>- Model training: NVIDIA Ampere or later | (Enterprise) Fractional GPU virtualization and sharing for containers<br>Container-level multi GPU<br>Multiple CUDA library version support<br>GPUDirect storage support<br>NGC (NVIDIA GPU Cloud) image integration<br>GPU-GPU Network auto configuration |
+| Rebellions           | ATOM / ATOM+ / ATOM-Max                             |                                                       |
 | Sapeon               | X220 / X330                              |                                                       |
 | Tenstorrent          | Wormhole                                 |                                                       |
 
@@ -158,34 +153,3 @@ achieves more intuitive use.
 |                      | Customized container image / kernel or kernel repository |
 
 \* ONLY Available on storage supports directory quota management
-
-<a id="accessible-menu-by-user-role"></a>
-
-## Accessible Menu by User Role
-
-:::note
-- Pages with `*` mark are in Administration menu.
-- Features only for admin are listed in [admin menu](#admin-menus) section.
-:::
-
-| page \\ role | user | admin |
-| --- | --- | --- |
-| Start | O | O |
-| Dashboard | O | O |
-| Data | O | O |
-| Sessions | O | O |
-| Serving | O | O |
-| Import & Run | O | O |
-| My Environments | O | O |
-| Chat | O | O |
-| Model Store | O | O |
-| Agent Summary | O | O |
-| Statistics | O | O |
-| Users* | X | O |
-| Environments* | X | O |
-| Scheduler* | X | O |
-| Resource Policies* | X | O |
-| Resources* | X | O |
-| Configurations* | X | O |
-| Maintenance* | X | O |
-| Information* | X | O |

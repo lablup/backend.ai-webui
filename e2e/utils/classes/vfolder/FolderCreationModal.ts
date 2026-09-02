@@ -74,10 +74,18 @@ export class FolderCreationModal {
   }
 
   async getFormItemByLabel(label: string): Promise<Locator> {
+    // Every form item renders the BAI visual shell, whose root carries
+    // `data-bai-form-item`
+    // (`packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`).
     const RadioContainer = this.modal.locator(
-      `.ant-form-item-row:has-text("${label}")`,
+      `[data-bai-form-item]:has-text("${label}")`,
     );
-    await expect(RadioContainer).toBeVisible();
+    // The modal shell becomes visible before its form body finishes
+    // mounting, and on a busy shared cluster that hydration was directly
+    // observed to exceed the 5s default expect timeout — give the first
+    // form-row lookup the same generous margin the deployment/session specs
+    // use for form hydration.
+    await expect(RadioContainer).toBeVisible({ timeout: 20000 });
     return RadioContainer;
   }
 
@@ -156,7 +164,37 @@ export class FolderCreationModal {
     });
   }
 
+  /**
+   * Close any persistent antd notifications that may overlap the modal footer
+   * buttons (e.g. the "Click to check pending invitation(s)" notification that
+   * is rendered with duration=0 and never auto-dismisses). Without dismissing
+   * these, Playwright cannot click the Create button because the notification
+   * subtree intercepts pointer events.
+   */
+  async dismissOverlappingNotifications(): Promise<void> {
+    // `BAINotificationStack` (to-astryx ticket 29 rewire) — each notice is
+    // `[data-notification-key]` inside `[data-testid="bai-notification-stack"]`
+    // (`packages/backend.ai-ui/src/components/BAINotificationStack.tsx`).
+    const notifications = this.page.locator(
+      '[data-testid="bai-notification-stack"] [data-notification-key]',
+    );
+    // Closing a notification removes it from the DOM and shifts the remaining
+    // notices up, so iterating by a snapshotted index skips entries. Always
+    // close the first remaining notice and wait for it to detach.
+    for (let safety = 0; safety < 20; safety++) {
+      const first = notifications.first();
+      // Astryx `Banner`'s built-in dismiss button, accessible name "Dismiss".
+      const closeBtn = first.getByRole('button', { name: 'Dismiss' });
+      const isVisible = await closeBtn.isVisible().catch(() => false);
+      if (!isVisible) return;
+      await closeBtn.click().catch(() => {});
+      await first.waitFor({ state: 'detached', timeout: 2000 }).catch(() => {});
+    }
+  }
+
   async getCreateButton(): Promise<Locator> {
+    // Dismiss any persistent notifications that could block the footer buttons
+    await this.dismissOverlappingNotifications();
     const createButton = this.modal.getByTestId('create-folder-button');
     await expect(createButton).toBeVisible();
     return createButton;

@@ -2,12 +2,18 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
-import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
-import { ColumnsType } from 'antd/es/table';
+import { ResourceGroupOrderField } from '../../__generated__/ResourceGroupFairShareStepQuery.graphql';
 import {
+  ResourceGroupFairShareTableFragment$data,
+  ResourceGroupFairShareTableFragment$key,
+} from '../../__generated__/ResourceGroupFairShareTableFragment.graphql';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { theme } from '../../theme-shim';
+import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAIQuestionIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
   BAITable,
@@ -15,23 +21,26 @@ import {
   BAIUnmountAfterClose,
   convertToBinaryUnit,
   ResourceTypeIcon,
-  useResourceSlotsDetails,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  ResourceGroupFairShareTableFragment$data,
-  ResourceGroupFairShareTableFragment$key,
-} from 'src/__generated__/ResourceGroupFairShareTableFragment.graphql';
 
 type ResourceGroup = NonNullable<
   ResourceGroupFairShareTableFragment$data[number]
 >;
 
 const availableResourceGroupSorterKeys = ['name'] as const;
+export const resourceGroupOrderFieldMap: Record<
+  (typeof availableResourceGroupSorterKeys)[number],
+  ResourceGroupOrderField
+> = {
+  name: 'NAME',
+};
 export const availableResourceGroupSorterValues = [
   ...availableResourceGroupSorterKeys,
   ...availableResourceGroupSorterKeys.map((key) => `-${key}` as const),
@@ -43,17 +52,11 @@ const isEnableSorter = (key: string) => {
 interface ResourceGroupFairShareTableProps extends BAITableProps<ResourceGroup> {
   resourceGroupNodeFragment: ResourceGroupFairShareTableFragment$key | null;
   onClickGroupName?: (resourceGroupName: string) => void;
-  afterUpdate?: (success: boolean) => void;
 }
 
 const ResourceGroupFairShareTable: React.FC<
   ResourceGroupFairShareTableProps
-> = ({
-  resourceGroupNodeFragment,
-  onClickGroupName,
-  afterUpdate,
-  ...tableProps
-}) => {
+> = ({ resourceGroupNodeFragment, onClickGroupName, ...tableProps }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -112,7 +115,7 @@ const ResourceGroupFairShareTable: React.FC<
     resourceGroupNodeFragment,
   );
 
-  const columns: ColumnsType<ResourceGroup> = [
+  const columns: BAIColumnsType<ResourceGroup> = [
     {
       title: t('fairShare.Name'),
       key: 'name',
@@ -128,7 +131,7 @@ const ResourceGroupFairShareTable: React.FC<
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <Settings size="1em" />,
               onClick: () => setSelectedResourceGroup(record),
             },
           ]}
@@ -157,20 +160,20 @@ const ResourceGroupFairShareTable: React.FC<
                           placement: 'left',
                         }}
                       />
-                      <Typography.Text>
+                      <Text>
                         {resourceType === 'mem'
                           ? `${convertToBinaryUnit(usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0, 'g', 0)?.numberFixed ?? 0} / ${convertToBinaryUnit(quantity, 'g', 0)?.numberFixed ?? 0}`
                           : `${usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0} / ${quantity}`}
-                      </Typography.Text>
-                      <Typography.Text
-                        type="secondary"
+                      </Text>
+                      <Text
+                        color="secondary"
                         style={{ fontSize: token.sizeXS }}
                       >
                         {mergedResourceSlots?.[resourceType]?.display_unit}
-                      </Typography.Text>
+                      </Text>
                     </BAIFlex>
                   </BAIFlex>
-                  {index !== capacityEntries.length - 1 && (
+                  {index !== (capacityEntries?.length ?? 0) - 1 && (
                     <Divider orientation="vertical" />
                   )}
                 </React.Fragment>
@@ -184,7 +187,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.ResourceWeights')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.ResourceWeightsDescription')}
           />
         </BAIFlex>
@@ -216,12 +219,12 @@ const ResourceGroupFairShareTable: React.FC<
                       }}
                     />
                     {rw.weight}
-                    <Typography.Text
-                      type="secondary"
+                    <Text
+                      color="secondary"
                       style={{ fontSize: token.fontSizeSM }}
                     >
                       {rw.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
-                    </Typography.Text>
+                    </Text>
                   </BAIFlex>
                   {index !== entries.length - 1 && (
                     <Divider orientation="vertical" />
@@ -237,7 +240,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.DefaultWeight')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.DefaultWeightDescription')}
           />
         </BAIFlex>
@@ -250,7 +253,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.DecayUnitDays')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.DecayUnitDaysDescription')}
           />
         </BAIFlex>
@@ -264,7 +267,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.HalfLifeDays')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.HalfLifeDaysDescription')}
           />
         </BAIFlex>
@@ -277,7 +280,7 @@ const ResourceGroupFairShareTable: React.FC<
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.LookbackDays')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.LookbackDaysDescription')}
           />
         </BAIFlex>
@@ -292,8 +295,8 @@ const ResourceGroupFairShareTable: React.FC<
   return (
     <>
       <BAITable
-        rowKey={'id'}
         scroll={{ x: 'max-content' }}
+        rowKey={'id'}
         {...tableProps}
         dataSource={resourceGroups || []}
         columns={columns}
@@ -311,10 +314,7 @@ const ResourceGroupFairShareTable: React.FC<
         <ResourceGroupFairShareSettingModal
           resourceGroupNodeFrgmt={selectedResourceGroup}
           open={!!selectedResourceGroup}
-          onRequestClose={(success) => {
-            if (success) {
-              afterUpdate?.(true);
-            }
+          onRequestClose={() => {
             setSelectedResourceGroup(null);
           }}
         />

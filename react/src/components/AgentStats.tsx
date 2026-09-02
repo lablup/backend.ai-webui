@@ -2,23 +2,29 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useControllableValue } from 'ahooks';
-import { Segmented, Skeleton, theme, Typography } from 'antd';
+import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import { theme } from '../theme-shim';
 import {
-  useResourceSlotsDetails,
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Heading } from '@astryxdesign/core/Text';
+import {
+  BAISkeleton,
   BAIBoardItemTitle,
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
+  ResourceStatistics,
   convertToNumber,
   processMemoryValue,
-  ResourceStatistics,
+  useControllableValue,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useTransition, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
-import { AgentStatsFragment$key } from 'src/__generated__/AgentStatsFragment.graphql';
 
 interface AgentStatsProps extends BAIFlexProps {
   queryRef: AgentStatsFragment$key;
@@ -34,6 +40,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
   extra,
   ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
@@ -118,34 +125,37 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         }
       : null;
 
-    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
-      .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => {
-        if (!resourceSlot) return null;
+    const accelerators = _.filter(
+      _.compact(
+        _.map(
+          _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
+          (resourceSlot, key) => {
+            if (!resourceSlot) return null;
 
-        const freeValue = free[key] || 0;
-        const usedValue = used[key] || 0;
-        const capacityValue = capacity[key] || 0;
+            const freeValue = free[key] || 0;
+            const usedValue = used[key] || 0;
+            const capacityValue = capacity[key] || 0;
 
-        return {
-          key,
-          used: {
-            current: convertToNumber(usedValue),
-            total: convertToNumber(capacityValue),
+            return {
+              key,
+              used: {
+                current: convertToNumber(usedValue),
+                total: convertToNumber(capacityValue),
+              },
+              free: {
+                current: convertToNumber(freeValue),
+                total: convertToNumber(capacityValue),
+              },
+              metadata: {
+                title: resourceSlot.human_readable_name,
+                displayUnit: resourceSlot.display_unit,
+              },
+            };
           },
-          free: {
-            current: convertToNumber(freeValue),
-            total: convertToNumber(capacityValue),
-          },
-          metadata: {
-            title: resourceSlot.human_readable_name,
-            displayUnit: resourceSlot.display_unit,
-          },
-        };
-      })
-      .compact()
-      .filter((item) => !!(item.used.current || item.used.total))
-      .value();
+        ),
+      ),
+      (item) => !!(item.used.current || item.used.total),
+    );
 
     return { cpu: cpuData, memory: memoryData, accelerators };
   })();
@@ -163,33 +173,31 @@ const AgentStats: React.FC<AgentStatsProps> = ({
     >
       <BAIBoardItemTitle
         title={
-          <Typography.Text
-            style={{
-              fontSize: token.fontSizeHeading5,
-              fontWeight: token.fontWeightStrong,
-            }}
-          >
-            {t('agentStats.AgentStats')}
-          </Typography.Text>
+          // antd Typography.Text styled to fontSizeHeading5 (16px) +
+          // fontWeightStrong. On the restored antd type ramp 16px is
+          // heading-5; `level={3}` tracked the same 16px back when Astryx's
+          // own ramp put 17px there.
+          <Heading level={5}>{t('agentStats.AgentStats')}</Heading>
         }
         tooltip={t('agentStats.AgentStatsDescription')}
         extra={
           <BAIFlex gap={'xs'} wrap="wrap">
-            <Segmented<Exclude<AgentStatsProps['displayType'], undefined>>
-              size="small"
-              options={[
-                {
-                  label: t('dashboard.Used'),
-                  value: 'used',
-                },
-                {
-                  value: 'free',
-                  label: t('dashboard.Free'),
-                },
-              ]}
+            {/* PILOT-DECISION: SegmentedControl.label is aria-only and required;
+                composed from the two existing option labels to avoid adding new
+                i18n keys while page tickets run in parallel. */}
+            <SegmentedControl
+              size="sm"
+              label={`${t('dashboard.Used')}/${t('dashboard.Free')}`}
               value={displayType}
-              onChange={(v) => setDisplayType(v)}
-            />
+              onChange={(v) =>
+                setDisplayType(
+                  v as Exclude<AgentStatsProps['displayType'], undefined>,
+                )
+              }
+            >
+              <SegmentedControlItem value="used" label={t('dashboard.Used')} />
+              <SegmentedControlItem value="free" label={t('dashboard.Free')} />
+            </SegmentedControl>
             <BAIFetchKeyButton
               size="small"
               loading={isPendingRefetch || isRefetching}
@@ -214,7 +222,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
         }
       />
       {resourceSlotsDetails.isLoading ? (
-        <Skeleton active />
+        <BAISkeleton />
       ) : (
         <ResourceStatistics
           resourceData={agentStatsData}

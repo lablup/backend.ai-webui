@@ -3,14 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
+import { theme, useBAIBreakpoint } from '../theme-shim';
 import EditableVFolderName from './EditableVFolderName';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButton from './FileBrowserButton';
 import SFTPServerButton from './SFTPServerButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { theme, Typography, Skeleton, Grid } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -26,7 +26,9 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
   'use memo';
 
   const { token } = theme.useToken();
-  const { lg } = Grid.useBreakpoint();
+  // antd `Grid.useBreakpoint` → `useBAIBreakpoint` (RESPONSIVE-POLICY R2);
+  // Astryx `useMediaQuery` returns false on first render and flashes.
+  const { lg } = useBAIBreakpoint();
 
   const vfolderNode = useFragment(
     graphql`
@@ -34,7 +36,6 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         id
         user
         permission
-        row_id @required(action: THROW)
         unmanaged_path @since(version: "25.04.0")
         ...VFolderNameTitleNodeFragment
         ...VFolderNodeIdenticonFragment
@@ -79,28 +80,23 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
           />
         )}
         {vfolderNode && (
+          // Closes the W2A-13 cross-partition note: `EditableVFolderName` was
+          // rebuilt on Astryx in wave 2 and only KEPT the antd-shaped
+          // `component` / `ellipsis` / `inputProps` props so this file could
+          // stay at zero diff. It no longer needs to — `variant="title"` +
+          // `level` is the real contract, `ellipsis` is always on (Astryx
+          // truncates via `maxLines`), and `inputProps` was already inert.
           <EditableVFolderName
             vfolderFrgmt={vfolderNode}
             enableLink={false}
-            component={Typography.Title}
+            variant="title"
             level={3}
             style={{
               margin: 0,
               width: '100%',
             }}
-            ellipsis
             editable={{
               triggerType: ['icon', 'text'],
-            }}
-            inputProps={{
-              size: 'large',
-              count: {
-                max: 64,
-                show: true,
-              },
-              style: {
-                fontWeight: 'normal',
-              },
             }}
           />
         )}
@@ -111,7 +107,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         gap={token.marginSM}
       >
         {vfolderNode && !vfolderNode?.unmanaged_path ? (
-          <Suspense fallback={<Skeleton.Button active />}>
+          <Suspense fallback={<BAISkeleton variant="button" />}>
             <ErrorBoundaryWithNullFallback>
               <FileBrowserButton vfolderFrgmt={vfolderNode} showTitle={lg} />
             </ErrorBoundaryWithNullFallback>

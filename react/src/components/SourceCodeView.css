@@ -1,0 +1,20 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <SourceCodeView> (to-astryx ticket 33). Replaces the
+ antd-style `createStyles` block; imported by the component itself (P17). The
+ `.shiki` selectors belong to the syntax highlighter and outlive antd (P6).
+
+ Token mapping (P19-checked): token.paddingSM (12px) -> var(--spacing-3).
+*/
+.source-code-view-block .shiki.github-light,
+.source-code-view-block .shiki.github-dark {
+  margin: 0 !important;
+  padding: var(--spacing-3) !important;
+}
+
+.source-code-view-block pre {
+  white-space: pre;
+  word-break: normal;
+}

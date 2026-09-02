@@ -1,10 +1,12 @@
 import BAIFlex from './BAIFlex';
-import { describe, test, jest } from '@jest/globals';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 
-// Mock antd's theme hook
-jest.mock('antd', () => ({
+// Mock the theme shim BAIFlex actually reads (it stopped importing antd's
+// `theme` in the Astryx migration; the old `vi.mock('antd')` here was inert,
+// which is how the missing `sizeSM`/`sizeMS`/`sizeMD`/`sizeLG` rungs — and the
+// resulting `gap: undefined` on ~470 call sites — slipped through).
+vi.mock('../theme-shim', () => ({
   theme: {
     useToken: () => ({
       token: {
@@ -61,5 +63,23 @@ describe('BAIFlex', () => {
     expect(screen.getByTestId('nestedChildComponent')).toBeInTheDocument();
 
     expect(baseElement).toMatchSnapshot();
+  });
+
+  // Regression guard for the collapsed-spacing bug: every named gap MUST
+  // produce a concrete gap. A token name the theme does not provide yields
+  // `undefined`, React omits the declaration, and the flex silently packs to
+  // a 0 gap — visible as "layout broken everywhere", with nothing failing.
+  test.each([
+    ['xxs', '4px'],
+    ['xs', '8px'],
+    ['sm', '12px'],
+    ['ms', '16px'],
+    ['md', '20px'],
+    ['lg', '24px'],
+    ['xl', '32px'],
+    ['xxl', '48px'],
+  ] as const)('gap="%s" resolves to %s', (gap, expected) => {
+    const { container } = render(<BAIFlex gap={gap} />);
+    expect((container.firstChild as HTMLElement).style.gap).toBe(expected);
   });
 });

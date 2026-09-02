@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '../../hooks';
+import { useProjectPath } from '../../hooks/useRouteScope';
 import {
   DEFAULT_CHAT_PARAMETERS,
   type ChatData,
@@ -10,7 +11,7 @@ import {
   type ChatMessage,
 } from './ChatModel';
 import { useBAILogger } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { customAlphabet } from 'nanoid/non-secure';
 import { useEffect, useCallback, useState } from 'react';
 
@@ -92,6 +93,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
   const [history, setHistory] = useState<ChatHistoryData[]>([]);
   const [chat, setChat] = useState<ChatHistoryData | undefined>(undefined);
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const removeHistory = useCallback((id: string) => {
     chatHistoryCache.delete(id);
@@ -131,13 +133,13 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
       if (!getChatById(id)) {
         updateHistory({ ...chat });
-        webuiNavigate(`/chat/${chat.id}`, { replace: true });
+        webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
         return;
       }
 
       updateHistory({ ...chat });
     },
-    [chat, webuiNavigate, updateHistory, logger],
+    [chat, webuiNavigate, buildProjectPath, updateHistory, logger],
   );
 
   const removeChatData = useCallback(
@@ -152,6 +154,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
         return;
       }
 
+      // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
       chat.chats = chat.chats.filter((chat) => chat.id !== id);
 
       updateHistory({ ...chat });
@@ -172,6 +175,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
         return;
       }
 
+      // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
       chat.chats[index] = _.merge({}, chat.chats[index], data);
 
       const currentChat = getChatById(chat.id);
@@ -181,10 +185,10 @@ export function useHistory(id: string, provider: ChatProviderData) {
         updateHistory(currentChat);
       } else {
         updateHistory({ ...chat });
-        webuiNavigate(`/chat/${chat.id}`, { replace: true });
+        webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
       }
     },
-    [chat, updateHistory, webuiNavigate, logger],
+    [chat, updateHistory, webuiNavigate, buildProjectPath, logger],
   );
 
   const saveChatMessage = useCallback(
@@ -205,6 +209,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
       // Overwrite the last message if it is the same message
       if (lastMessage?.id === id) {
+        // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
         chat.chats[index].messages = [
           ...chatData.messages.slice(0, -1),
           _.merge({}, lastMessage, {
@@ -231,6 +236,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
         // Only update label if there's actual text content
         if (textContent) {
+          // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
           chat.label = textContent;
         }
       }
@@ -242,10 +248,10 @@ export function useHistory(id: string, provider: ChatProviderData) {
         updateHistory(currentChat);
       } else {
         updateHistory({ ...chat });
-        webuiNavigate(`/chat/${chat.id}`, { replace: true });
+        webuiNavigate(buildProjectPath(`chat/${chat.id}`), { replace: true });
       }
     },
-    [chat, updateHistory, webuiNavigate, logger],
+    [chat, updateHistory, webuiNavigate, buildProjectPath, logger],
   );
 
   const clearChatMessage = useCallback(
@@ -267,6 +273,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
         return;
       }
 
+      // eslint-disable-next-line react-hooks/immutability -- intentional in-place mutation of cached chat data
       chat.chats[index].messages = [];
 
       updateHistory({ ...chat });
@@ -279,6 +286,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
     const cachedChat = getChatById(id);
     const chat = cachedChat ? cachedChat : createChat({ provider });
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- legacy id-change re-init kept as-is
     setChat(chat);
     setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
     // eslint-disable-next-line react-hooks/exhaustive-deps

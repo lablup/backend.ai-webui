@@ -1,0 +1,46 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIContentWithDrawerArea> (to-astryx ticket 33).
+ Replaces the antd-style `createGlobalStyle` block; imported by the component
+ itself (P17). A bundled same-origin stylesheet is covered by
+ `style-src 'self'` and needs no nonce — which is the whole reason the rules
+ went through `createGlobalStyle` in the first place (a raw <style> element is
+ forbidden under the strict CSP, and `createGlobalStyle` inherited the nonce
+ from antd-style's <StyleProvider>). With the stylesheet bundled, both the
+ emotion cache and the nonce plumbing become unnecessary.
+
+ ## The two dynamic inputs
+
+ `drawerWidth` is a prop, so it arrives as a custom property the component
+ sets inline on its own element (`--bai-drawer-area-width`).
+
+ `drawerStyle` used to select whether the drawer-panel rule was emitted at all.
+ The drawer panel is never a descendant of the content div — non-scrim drawers
+ are top-layer-free native `<dialog>`s and scrimmed ones are `document.body`
+ portals (FR-3585) — so it cannot read a custom property set there. The rule
+ keys off the content div's own `margin-style` class through `:has()` instead
+ (Chromium 105+/Safari 15.4+/Firefox 121+). It fires only while the
+ notification drawer holds the layout in margin-style.
+
+ Token mapping (P19-checked): theme.colorBorder -> var(--color-border-emphasized).
+*/
+.main-layout-main-content {
+  transition: margin-right 0.3s ease;
+  /* FR-3612: fill AppShell's main slot so the scroll column inside can size
+     itself with `height: 100%` (it owned `100vh` before AppShell), and anchor
+     the overlay scrollbar (`BAIOverlayScrollbar`) to the content edge —
+     it follows the notification drawer's margin shift for free. */
+  height: 100%;
+  position: relative;
+}
+
+.main-layout-main-content.margin-style {
+  margin-right: var(--bai-drawer-area-width, 256px);
+}
+
+body:has(.main-layout-main-content.margin-style) .astryx-drawer {
+  box-shadow: none !important;
+  border-left: 1px solid var(--color-border-emphasized);
+}

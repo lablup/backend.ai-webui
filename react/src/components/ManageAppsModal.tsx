@@ -4,21 +4,19 @@
  */
 import { ManageAppsModalMutation } from '../__generated__/ManageAppsModalMutation.graphql';
 import { ManageAppsModal_image$key } from '../__generated__/ManageAppsModal_image.graphql';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import {
-  Input,
-  Button,
-  Form,
-  message,
-  Typography,
-  App,
-  FormInstance,
-  theme,
-} from 'antd';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Trash, PlusIcon } from 'lucide-react';
 import React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface ManageAppsModalProps extends BAIModalProps {
@@ -36,10 +34,8 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
+  const { message } = App.useApp();
   const formRef = React.useRef<FormInstance>(null);
-  const app = App.useApp();
-
-  const { token } = theme.useToken();
 
   const image = useFragment(
     graphql`
@@ -52,7 +48,6 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
         name @deprecatedSince(version: "24.12.0")
         namespace @since(version: "24.12.0")
         architecture
-        installed
         tag
       }
     `,
@@ -125,56 +120,38 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
             }
           },
         );
-        const commitRequest = () =>
-          commitModifyImageInput({
-            variables: {
-              target: `${image?.registry}/${image?.name ?? image.namespace}:${image?.tag}`,
-              architecture: image?.architecture,
-              props: {
-                labels: labels,
-                resource_limits: undefined,
-              },
+        // Service ports are stored as image label metadata read by the
+        // manager at session-creation time, so a modification applies to
+        // newly created sessions immediately without any image reinstall.
+        commitModifyImageInput({
+          variables: {
+            target: `${image?.registry}/${image?.name ?? image.namespace}:${image?.tag}`,
+            architecture: image?.architecture,
+            props: {
+              labels: labels,
+              resource_limits: undefined,
             },
-            onCompleted: (res, errors) => {
-              if (!res?.modify_image?.ok) {
-                message.error(res?.modify_image?.msg);
-                return;
-              }
-              if (errors && errors?.length > 0) {
-                const errorMsgList = _.map(errors, (error) => error.message);
-                for (const error of errorMsgList) {
-                  message.error(error);
-                }
-              } else {
-                message.success(t('environment.DescImagePortsModified'));
-                onRequestClose(true);
-              }
+          },
+          onCompleted: (res, errors) => {
+            if (!res?.modify_image?.ok) {
+              message.error(res?.modify_image?.msg);
               return;
-            },
-            onError: () => {
-              message.error(t('dialog.ErrorOccurred'));
-            },
-          });
-
-        if (image?.installed) {
-          app.modal.confirm({
-            title: 'Image reinstallation required',
-            content: (
-              <>
-                <Trans
-                  i18nKey={
-                    'environment.ModifyImageResourceLimitReinstallRequired'
-                  }
-                />
-              </>
-            ),
-            onOk: commitRequest,
-            getContainer: () => document.body,
-            closable: true,
-          });
-        } else {
-          commitRequest();
-        }
+            }
+            if (errors && errors?.length > 0) {
+              const errorMsgList = _.map(errors, (error) => error.message);
+              for (const error of errorMsgList) {
+                message.error(error);
+              }
+            } else {
+              message.success(t('environment.DescImagePortsModified'));
+              onRequestClose(true);
+            }
+            return;
+          },
+          onError: () => {
+            message.error(t('dialog.ErrorOccurred'));
+          },
+        });
       })
       .catch(() => {});
   };
@@ -189,20 +166,26 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
       title={t('environment.ManageApps')}
       {...baiModalProps}
     >
-      <BAIFlex
-        direction="row"
-        style={{ width: '100%', marginBottom: token.marginXS }}
-      >
-        <Typography.Text strong style={{ width: '32%' }}>
-          {t('environment.AppName')}
-        </Typography.Text>
-        <Typography.Text strong style={{ width: '32%' }}>
-          {t('environment.Protocol')}
-        </Typography.Text>
-        <Typography.Text strong style={{ width: '32%' }}>
-          {t('environment.Port')}
-        </Typography.Text>
-        <BAIFlex></BAIFlex>
+      {/* antd Alert type="info" -> Astryx Banner status="info"; `showIcon` is
+          dropped (Banner shows its icon by default — MAPPING.md §4). The
+          marginBottom token becomes BAIFlex column gaps. */}
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Banner
+          status="info"
+          title={t('environment.AppPortsApplyToNewSessionsOnly')}
+        />
+        <BAIFlex direction="row" style={{ width: '100%' }}>
+          <BAIFlex style={{ width: '32%' }}>
+            <Text weight="semibold">{t('environment.AppName')}</Text>
+          </BAIFlex>
+          <BAIFlex style={{ width: '32%' }}>
+            <Text weight="semibold">{t('environment.Protocol')}</Text>
+          </BAIFlex>
+          <BAIFlex style={{ width: '32%' }}>
+            <Text weight="semibold">{t('environment.Port')}</Text>
+          </BAIFlex>
+          <BAIFlex></BAIFlex>
+        </BAIFlex>
       </BAIFlex>
       <Form
         ref={formRef}
@@ -215,9 +198,9 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
             {(fields, { add, remove }) => (
               <BAIFlex direction="column" style={{ width: '100%' }}>
                 {_.map(fields, (field, index) => (
-                  <Form.Item>
+                  <BAIFormItem>
                     <BAIFlex direction="row" key={field.key} gap={'xs'}>
-                      <Form.Item
+                      <BAIFormItem
                         {...field}
                         name={[field.name, 'app']}
                         noStyle
@@ -228,9 +211,12 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <Input placeholder={t('environment.AppName')} />
-                      </Form.Item>
-                      <Form.Item
+                        <AstryxFormTextInput
+                          label={t('environment.AppName')}
+                          placeholder={t('environment.AppName')}
+                        />
+                      </BAIFormItem>
+                      <BAIFormItem
                         {...field}
                         name={[field.name, 'protocol']}
                         noStyle
@@ -244,9 +230,12 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <Input placeholder={t('environment.Protocol')} />
-                      </Form.Item>
-                      <Form.Item
+                        <AstryxFormTextInput
+                          label={t('environment.Protocol')}
+                          placeholder={t('environment.Protocol')}
+                        />
+                      </BAIFormItem>
+                      <BAIFormItem
                         {...field}
                         name={[field.name, 'port']}
                         noStyle
@@ -299,31 +288,36 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
                           },
                         ]}
                       >
-                        <Input placeholder={t('environment.Port')} />
-                      </Form.Item>
-                      <Button
-                        type="text"
-                        danger
+                        <AstryxFormTextInput
+                          label={t('environment.Port')}
+                          placeholder={t('environment.Port')}
+                        />
+                      </BAIFormItem>
+                      {/* PILOT-DECISION: antd `type="text" danger` -> ghost
+                          IconButton; the red tint is dropped (closed variant
+                          enum, P5/P11). The first-row marginTop nudge against
+                          antd's label offset is obsolete and dropped. */}
+                      <IconButton
+                        variant="ghost"
+                        label={t('button.Delete')}
+                        tooltip={t('button.Delete')}
                         onClick={() => remove(field.name)}
-                        style={
-                          index === 0
-                            ? { width: '10%', marginTop: 8 }
-                            : { width: '10%' }
-                        }
-                        icon={<DeleteOutlined />}
+                        icon={<Trash size="1em" />}
                       />
                     </BAIFlex>
-                  </Form.Item>
+                  </BAIFormItem>
                 ))}
+                {/* PILOT-DECISION: antd `type="dashed"` has no Astryx
+                    equivalent -> `variant="secondary"` (MAPPING.md §3.3);
+                    `block` -> width="100%". */}
                 <Button
-                  type="dashed"
+                  variant="secondary"
                   onClick={() => add()}
-                  block
-                  icon={<PlusOutlined />}
-                  disabled={!image}
-                >
-                  {t('button.Add')}
-                </Button>
+                  width="100%"
+                  icon={<PlusIcon />}
+                  isDisabled={!image}
+                  label={t('button.Add')}
+                />
               </BAIFlex>
             )}
           </Form.List>

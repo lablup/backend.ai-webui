@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useDefaultTheme } from '../hooks/useDefaultTheme';
 import FontFamilySettingItem from './BrandingSettingItems/FontFamilySettingItem';
 import LogoPreviewer, {
   getLogoThemeKey,
@@ -13,19 +14,12 @@ import ThemeColorPicker, {
 } from './BrandingSettingItems/ThemeColorPicker';
 import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { SettingOutlined } from '@ant-design/icons';
-import {
-  BAIAlert,
-  BAIButton,
-  BAIFlex,
-  BAIUnmountAfterClose,
-} from 'backend.ai-ui';
-import _ from 'lodash';
-import { Fullscreen } from 'lucide-react';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
+import { Settings, Fullscreen } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useCustomThemeConfig } from 'src/hooks/useCustomThemeConfig';
-import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 interface BrandingSettingListProps {}
 
@@ -36,26 +30,14 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
-  const themeConfig = useCustomThemeConfig();
-  const { updateUserCustomThemeConfig, resetThemeConfig } =
-    useUserCustomThemeConfig();
+  const { resetDefaultTheme } = useDefaultTheme();
 
   const resetColorThemeConfig = (tokenName: ThemeConfigPath) => {
-    updateUserCustomThemeConfig(
-      'light.' + tokenName,
-      _.get(themeConfig?.light, tokenName) ?? undefined,
-    );
-    updateUserCustomThemeConfig(
-      'dark.' + tokenName,
-      _.get(themeConfig?.dark, tokenName) ?? undefined,
-    );
+    resetDefaultTheme([`light.${tokenName}`, `dark.${tokenName}`]);
   };
 
   const resetLogoThemeConfig = (mode: LogoPreviewerMode) => {
-    updateUserCustomThemeConfig(
-      'logo.' + getLogoThemeKey(mode),
-      _.get(themeConfig?.logo, getLogoThemeKey(mode)) ?? undefined,
-    );
+    resetDefaultTheme([`logo.${getLogoThemeKey(mode)}`]);
   };
 
   const resetLogoSizeConfig = (
@@ -67,32 +49,18 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       login: 'loginLogoSize',
       about: 'aboutLogoSize',
     } as const;
-    const key = keyMap[logoType];
-    updateUserCustomThemeConfig(
-      `logo.${key}`,
-      _.get(themeConfig?.logo, key) ?? undefined,
-    );
-    if (logoType === 'about') {
-      updateUserCustomThemeConfig(
-        'logo.aboutModalSize',
-        _.get(themeConfig?.logo, 'aboutModalSize') ?? undefined,
-      );
-    }
+    resetDefaultTheme([
+      `logo.${keyMap[logoType]}`,
+      ...(logoType === 'about' ? ['logo.aboutModalSize'] : []),
+    ]);
   };
 
   const resetFontFamilyConfig = () => {
-    updateUserCustomThemeConfig(
+    resetDefaultTheme([
       'fontFamily',
-      themeConfig?.fontFamily ?? undefined,
-    );
-    updateUserCustomThemeConfig(
       'light.token.fontFamily',
-      themeConfig?.fontFamily ?? undefined,
-    );
-    updateUserCustomThemeConfig(
       'dark.token.fontFamily',
-      themeConfig?.fontFamily ?? undefined,
-    );
+    ]);
   };
 
   const settingGroups: Array<SettingGroup> = [
@@ -307,23 +275,26 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   return (
     <BAIFlex direction="column" gap="md" align="stretch">
-      <BAIAlert
-        description={t('userSettings.theme.CustomThemeSettingAlert')}
-        type="warning"
-        showIcon
+      {/* antd `Alert description` (no `message`) -> Banner. Banner's `title`
+          is unconditionally required (ground-truth .d.ts, not just the doc
+          narrative) — the single line of text goes there. */}
+      <Banner
+        title={t('userSettings.theme.CustomThemeSettingAlert')}
+        status="warning"
       />
       <SettingList
         showSearchBar
         showResetButton
         onReset={() => {
-          resetThemeConfig();
+          resetDefaultTheme();
         }}
         settingGroups={settingGroups}
         primaryButton={
-          <BAIButton
-            type="primary"
-            icon={<Fullscreen />}
-            action={async () => {
+          <Button
+            variant="primary"
+            icon={<Fullscreen size="1em" />}
+            label={t('userSettings.theme.Preview')}
+            clickAction={async () => {
               const previewWindow = window.open(
                 window.location.origin,
                 '_blank',
@@ -336,19 +307,16 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
                 previewWindow?.location.reload();
               });
             }}
-          >
-            {t('userSettings.theme.Preview')}
-          </BAIButton>
+          />
         }
         extraButton={
-          <BAIButton
-            icon={<SettingOutlined />}
-            action={async () => {
+          <Button
+            icon={<Settings size="1em" />}
+            label={t('theme.button.JsonConfig')}
+            clickAction={async () => {
               setOpenThemeConfigModal(true);
             }}
-          >
-            {t('theme.button.JsonConfig')}
-          </BAIButton>
+          />
         }
       />
       <BAIUnmountAfterClose>

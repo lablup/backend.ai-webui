@@ -1,0 +1,510 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import {
+  ModelCardV2Filter,
+  ModelStoreListPageV2Query,
+} from '../__generated__/ModelStoreListPageV2Query.graphql';
+import { ModelStoreListPageV2_ModelCardV2Fragment$key } from '../__generated__/ModelStoreListPageV2_ModelCardV2Fragment.graphql';
+import AuthorIcon from '../components/AuthorIcon';
+import ModelBrandIcon from '../components/ModelBrandIcon';
+import ModelCardDrawer from '../components/ModelCardDrawer';
+import TextHighlighter from '../components/TextHighlighter';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useModelStoreProject } from '../hooks/useModelStoreProject';
+import { theme } from '../theme-shim';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Card } from '@astryxdesign/core/Card';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Pagination } from '@astryxdesign/core/Pagination';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAIGraphQLPropertyFilter,
+  BAISelect,
+  BAIStorageHostSelect,
+  safeDecodeUuid,
+  useUpdatableState,
+} from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import { ArrowUpDown } from 'lucide-react';
+import {
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
+import React, { useDeferredValue, useEffectEvent } from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+
+const SORT_VALUES = [
+  'NAME_ASC',
+  'NAME_DESC',
+  'CREATED_AT_ASC',
+  'CREATED_AT_DESC',
+] as const;
+
+type SortField = 'NAME' | 'CREATED_AT';
+type SortDirection = 'ASC' | 'DESC';
+
+const parseSortValue = (value: string) => {
+  const parts = value.split('_');
+  const direction = parts.pop() as SortDirection;
+  const field = parts.join('_') as SortField;
+  return { field, direction };
+};
+
+// Walk the filter tree (including AND/OR branches) and return the first
+// name string-match value found (across iContains/iEquals/equals/contains),
+// for use as a highlight keyword.
+const NAME_KEYWORD_OPERATORS = [
+  'iContains',
+  'iEquals',
+  'contains',
+  'equals',
+] as const;
+
+const extractFirstNameKeyword = (
+  filter: ModelCardV2Filter | undefined,
+): string => {
+  if (!filter) return '';
+  const name = filter.name;
+  if (name) {
+    for (const op of NAME_KEYWORD_OPERATORS) {
+      const v = name[op];
+      if (v) return v;
+    }
+  }
+  const branches = [filter.AND, filter.OR];
+  for (const branch of branches) {
+    if (!branch) continue;
+    const items = Array.isArray(branch) ? branch : [branch];
+    for (const item of items) {
+      const found = extractFirstNameKeyword(item);
+      if (found) return found;
+    }
+  }
+  return '';
+};
+
+const ModelCardV2Card: React.FC<{
+  modelCardV2Frgmt: ModelStoreListPageV2_ModelCardV2Fragment$key;
+  searchKeyword?: string;
+  onClick?: () => void;
+}> = ({ modelCardV2Frgmt, searchKeyword, onClick }) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+
+  const modelCard = useFragment(
+    graphql`
+      fragment ModelStoreListPageV2_ModelCardV2Fragment on ModelCardV2 {
+        name
+        metadata {
+          title
+          task
+          author
+        }
+        updatedAt
+        createdAt
+        availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
+          count
+        }
+      }
+    `,
+    modelCardV2Frgmt,
+  );
+
+  const hasNoPresets = modelCard.availablePresets?.count === 0;
+
+  return (
+    // PILOT-DECISION: antd `Card hoverable` (shadow-on-hover affordance) has
+    // no direct Astryx prop equivalent (no `isHoverable`) — `cursor: pointer`
+    // preserves the "this is clickable" affordance; the elevation change on
+    // hover is dropped (simplicity policy).
+    <Card
+      onClick={onClick}
+      padding={3}
+      style={{
+        height: '100%',
+        cursor: 'pointer',
+        opacity: hasNoPresets ? 0.5 : 1,
+      }}
+    >
+      <BAIFlex direction="column" align="stretch" gap="xs">
+        <BAIFlex direction="row" align="center" gap="xs">
+          <ModelBrandIcon modelName={modelCard.name} />
+          <Text weight="semibold" maxLines={1} style={{ flex: 1 }}>
+            <TextHighlighter keyword={searchKeyword}>
+              {modelCard.metadata?.title || modelCard.name}
+            </TextHighlighter>
+          </Text>
+        </BAIFlex>
+        <BAIFlex direction="row" justify="between" wrap="wrap" gap="xs">
+          <BAIFlex direction="row" wrap="wrap" gap="xs">
+            {modelCard.metadata?.task && (
+              <Badge variant="neutral" label={modelCard.metadata.task} />
+            )}
+            {(modelCard.updatedAt || modelCard.createdAt) && (
+              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+                {t('modelStore.RelativeTime', {
+                  time: dayjs(
+                    modelCard.updatedAt ?? modelCard.createdAt,
+                  ).fromNow(),
+                })}
+              </Text>
+            )}
+          </BAIFlex>
+          {modelCard.metadata.author && (
+            <Text
+              color="secondary"
+              style={{
+                fontSize: token.fontSizeSM,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+              }}
+            >
+              <AuthorIcon
+                author={modelCard.metadata.author}
+                size={token.fontSizeSM}
+              />
+              {modelCard.metadata.author}
+            </Text>
+          )}
+        </BAIFlex>
+      </BAIFlex>
+    </Card>
+  );
+};
+
+const ModelCardV2Grid: React.FC<{
+  projectId: string;
+  filter?: ModelCardV2Filter;
+  sortField: SortField;
+  sortDirection: SortDirection;
+  fetchKey: string;
+  searchKeyword?: string;
+  pageSize: number;
+  offset: number;
+  onTotalChange: (total: number) => void;
+  onCardClick?: (id: string) => void;
+}> = ({
+  projectId,
+  filter,
+  sortField,
+  sortDirection,
+  fetchKey,
+  searchKeyword,
+  pageSize,
+  offset,
+  onTotalChange,
+  onCardClick,
+}) => {
+  'use memo';
+
+  const { t } = useTranslation();
+
+  const result = useLazyLoadQuery<ModelStoreListPageV2Query>(
+    graphql`
+      query ModelStoreListPageV2Query(
+        $scope: ProjectModelCardV2Scope!
+        $filter: ModelCardV2Filter
+        $orderBy: [ModelCardV2OrderBy!]
+        $limit: Int!
+        $offset: Int!
+      ) {
+        projectModelCardsV2(
+          scope: $scope
+          filter: $filter
+          orderBy: $orderBy
+          limit: $limit
+          offset: $offset
+        ) {
+          count
+          edges {
+            node {
+              id
+              ...ModelStoreListPageV2_ModelCardV2Fragment
+            }
+          }
+        }
+      }
+    `,
+    {
+      scope: { projectId },
+      filter: filter ?? undefined,
+      orderBy: [{ field: sortField, direction: sortDirection }],
+      limit: pageSize,
+      offset,
+    },
+    {
+      fetchPolicy: 'store-and-network',
+      fetchKey,
+    },
+  );
+
+  const items = result.projectModelCardsV2?.edges ?? [];
+  const total = result.projectModelCardsV2?.count ?? 0;
+
+  const onTotalChanged = useEffectEvent(() => {
+    onTotalChange(total);
+  });
+
+  React.useEffect(() => {
+    onTotalChanged();
+  }, [total]);
+
+  if (items.length === 0) {
+    return <EmptyState title={t('modelStore.NoModelsFound')} />;
+  }
+
+  // PILOT-DECISION (RESPONSIVE-POLICY.md R1): identical recipe to
+  // AIAgentPage's grid — `xs={24} sm={24} lg={12} xl={12} xxl={8} xxxl={6}`
+  // first goes 2-up at `lg` (992px) -> `minWidth: 496`; `xxxl={6}` -> `max: 4`.
+  return (
+    <Grid columns={{ minWidth: 496, max: 4 }} gap={4}>
+      {items.map((edge) => {
+        const item = edge?.node;
+        if (!item) return null;
+        return (
+          <ModelCardV2Card
+            key={item.id}
+            modelCardV2Frgmt={item}
+            searchKeyword={searchKeyword}
+            onClick={() => onCardClick?.(item.id)}
+          />
+        );
+      })}
+    </Grid>
+  );
+};
+
+const ModelStoreListPageV2: React.FC = () => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const modelStoreProject = useModelStoreProject();
+
+  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const deferredFetchKey = useDeferredValue(fetchKey);
+
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      sort: parseAsStringLiteral(SORT_VALUES).withDefault('CREATED_AT_DESC'),
+      modelCard: parseAsString,
+      filter: parseAsJson<ModelCardV2Filter>(
+        (value) => value as ModelCardV2Filter,
+      ),
+    },
+    { history: 'replace' },
+  );
+
+  const { field: sortField, direction: sortDirection } = parseSortValue(
+    queryParams.sort,
+  );
+
+  const filter: ModelCardV2Filter | undefined = queryParams.filter ?? undefined;
+  const deferredFilter = useDeferredValue(filter);
+  const deferredSortField = useDeferredValue(sortField);
+  const deferredSortDirection = useDeferredValue(sortDirection);
+  const [total, setTotal] = React.useState(0);
+
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionStateOnSearchParam({
+    current: 1,
+    pageSize: 10,
+  });
+
+  const deferredLimit = useDeferredValue(baiPaginationOption.limit);
+  const deferredOffset = useDeferredValue(baiPaginationOption.offset);
+
+  // Drawer data is intentionally NOT fetched as part of the main list query
+  // — the per-card drawer fragment (readme, all presets, vfolder metadata)
+  // is heavy, and including it via `...ModelCardDrawerFragment` on every
+  // edge multiplies the list-page payload. `ModelCardDrawer` owns its own
+  // query and gates the fetch on `useDeferredValue(open)` so the network
+  // only kicks in once the drawer actually commits to opening.
+  const selectedModelCardId = queryParams.modelCard;
+  const drawerOpen = !!selectedModelCardId;
+  const localSelectedModelCardId = selectedModelCardId
+    ? safeDecodeUuid(selectedModelCardId)
+    : undefined;
+
+  const isPendingPage =
+    deferredLimit !== baiPaginationOption.limit ||
+    deferredOffset !== baiPaginationOption.offset;
+  const isPendingSort =
+    deferredSortField !== sortField || deferredSortDirection !== sortDirection;
+  const isPendingFilter = deferredFilter !== filter;
+  const isPendingRefetch = deferredFetchKey !== fetchKey;
+  const isPending =
+    isPendingSort || isPendingRefetch || isPendingPage || isPendingFilter;
+
+  const sortOptions = [
+    {
+      value: 'NAME_ASC' as const,
+      label: t('modelStore.SortByNameAsc'),
+    },
+    {
+      value: 'NAME_DESC' as const,
+      label: t('modelStore.SortByNameDesc'),
+    },
+    {
+      value: 'CREATED_AT_ASC' as const,
+      label: t('modelStore.SortByCreatedAtAsc'),
+    },
+    {
+      value: 'CREATED_AT_DESC' as const,
+      label: t('modelStore.SortByCreatedAtDesc'),
+    },
+  ];
+
+  if (!modelStoreProject.id) {
+    return (
+      <Banner
+        status="error"
+        title={t('modelStore.ProjectNotFound')}
+        description={t('modelStore.ProjectNotFoundDescription')}
+      />
+    );
+  }
+
+  const searchKeyword = extractFirstNameKeyword(filter);
+
+  return (
+    <BAIFlex direction="column" align="stretch" justify="center" gap="lg">
+      <BAIFlex justify="between" wrap="wrap" gap="sm">
+        <BAIFlex gap="sm" align="start" style={{ flexShrink: 1 }} wrap="wrap">
+          <BAIGraphQLPropertyFilter<ModelCardV2Filter>
+            combinationMode="AND"
+            value={filter}
+            onChange={(value) => {
+              setQueryParams({ filter: value ?? null });
+              setTablePaginationOption({ current: 1 });
+            }}
+            filterProperties={[
+              {
+                key: 'name',
+                propertyLabel: t('modelStore.ModelName'),
+                type: 'string',
+              },
+              // NOTE(FR-3120): the domain filter is intentionally NOT exposed to
+              // end users on the Model Store list. The list is already scoped to
+              // the current domain's MODEL_STORE project via `scope.projectId`,
+              // so it only ever shows cards available in that project — a
+              // user-facing domain (or project) filter is redundant here.
+              {
+                key: 'storageHost',
+                propertyLabel: t('import.StorageHost'),
+                type: 'string',
+                operators: ['equals', 'notEquals'],
+                defaultOperator: 'equals',
+                renderInput: ({ onAddCondition }) => (
+                  <BAIStorageHostSelect
+                    // The filter row already prints the property label.
+                    label={t('import.StorageHost')}
+                    isLabelHidden
+                    value={null}
+                    onChange={(value) =>
+                      // Single-select mode (no `multiple` prop) always emits a
+                      // single value.
+                      onAddCondition(value as string | undefined)
+                    }
+                  />
+                ),
+              },
+            ]}
+          />
+          <BAISelect
+            style={{ minWidth: 180 }}
+            value={queryParams.sort}
+            onChange={(value) => {
+              setQueryParams({ sort: value });
+              setTablePaginationOption({ current: 1 });
+            }}
+            options={sortOptions}
+            labelRender={({ label }) => (
+              <BAIFlex direction="row" align="center" gap="xxs">
+                <ArrowUpDown size="1em" />
+                {t('modelStore.Sort')}: {label}
+              </BAIFlex>
+            )}
+          />
+        </BAIFlex>
+        <BAIFetchKeyButton
+          loading={isPendingRefetch}
+          value={fetchKey}
+          onChange={(newFetchKey) => {
+            updateFetchKey(newFetchKey);
+          }}
+        />
+      </BAIFlex>
+      <div
+        style={{
+          opacity: isPending ? 0.5 : 1,
+          transition: 'opacity 0.2s',
+          pointerEvents: isPending ? 'none' : undefined,
+        }}
+      >
+        <ModelCardV2Grid
+          projectId={modelStoreProject.id}
+          filter={deferredFilter}
+          sortField={deferredSortField}
+          sortDirection={deferredSortDirection}
+          fetchKey={deferredFetchKey}
+          searchKeyword={searchKeyword}
+          pageSize={deferredLimit}
+          offset={deferredOffset}
+          onTotalChange={setTotal}
+          onCardClick={(id) => {
+            setQueryParams({ modelCard: id });
+          }}
+        />
+      </div>
+      {total > 0 && (
+        // PILOT-DECISION: antd's `ConfigProvider` Pagination component-token
+        // override (transparent item background) has no equivalent — Astryx
+        // `Pagination` has no per-instance background token (MAPPING.md §5.6
+        // notes Astryx theming is semantic-key, not per-call-site CSS).
+        // `variant="count"` replaces `showTotal` (ticket-19 idiom, see
+        // ImageInstallModal).
+        <BAIFlex justify="end" gap="xs">
+          <Pagination
+            size="sm"
+            variant="count"
+            pageSizeOptions={[10, 20, 50]}
+            onPageSizeChange={(pageSize) => {
+              setTablePaginationOption({ pageSize });
+            }}
+            page={tablePaginationOption.current}
+            pageSize={tablePaginationOption.pageSize}
+            totalItems={total}
+            onChange={(page) => {
+              setTablePaginationOption({ current: page });
+            }}
+          />
+        </BAIFlex>
+      )}
+
+      <ModelCardDrawer
+        modelCardId={localSelectedModelCardId}
+        open={drawerOpen}
+        onClose={() => {
+          setQueryParams({ modelCard: null });
+        }}
+      />
+    </BAIFlex>
+  );
+};
+
+export default ModelStoreListPageV2;

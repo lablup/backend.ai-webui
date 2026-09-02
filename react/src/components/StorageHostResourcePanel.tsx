@@ -3,12 +3,29 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHostResourcePanelFragment.graphql';
-import { convertToDecimalUnit, usageIndicatorColor } from '../helper/index';
-import { Progress, Descriptions, Typography, Tag } from 'antd';
-import { BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import { convertToDecimalUnit } from '../helper/index';
+import { Badge } from '@astryxdesign/core/Badge';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { ProgressBar } from '@astryxdesign/core/ProgressBar';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+
+// PILOT-DECISION: antd `Progress strokeColor`/`status="exception"` (P5,
+// closed variant enum) collapses into one threshold function feeding
+// ProgressBar's semantic `variant`. Thresholds match the dropped
+// `usageIndicatorColor` helper exactly (<70 success, <90 warning, else
+// error/exception).
+const usageProgressVariant = (
+  percent: number,
+): 'success' | 'warning' | 'error' => {
+  if (percent < 70) return 'success';
+  if (percent < 90) return 'warning';
+  return 'error';
+};
 
 const StorageHostResourcePanel: React.FC<{
   storageVolumeFrgmt: StorageHostResourcePanelFragment$key | null;
@@ -39,48 +56,42 @@ const StorageHostResourcePanel: React.FC<{
   };
 
   return (
-    <Descriptions size="small" bordered column={3}>
-      <Descriptions.Item label={t('storageHost.Usage')} span={3}>
-        {storageUsage?.percent < 100 ? (
-          <Progress
-            size={[200, 15]}
-            percent={storageUsage?.percent}
-            strokeColor={usageIndicatorColor(storageUsage?.percent)}
-          ></Progress>
-        ) : (
-          <Progress
-            size={[200, 15]}
-            percent={storageUsage?.percent}
-            status="exception"
-          ></Progress>
-        )}
-        <Typography.Text type="secondary">
-          {t('storageHost.Used')}:{' '}
-        </Typography.Text>
-        {convertToDecimalUnit(storageUsage?.used_bytes, 'auto')?.displayValue}
-        <Typography.Text type="secondary">{' / '}</Typography.Text>
-        <Typography.Text type="secondary">
-          {t('storageHost.Total')}:{' '}
-        </Typography.Text>
-        {
-          convertToDecimalUnit(storageUsage?.capacity_bytes, 'auto')
-            ?.displayValue
-        }
-      </Descriptions.Item>
-      <Descriptions.Item label={t('agent.Endpoint')}>
-        {resource?.path}
-      </Descriptions.Item>
-      <Descriptions.Item label={t('agent.BackendType')}>
-        {resource?.backend}
-      </Descriptions.Item>
-      <Descriptions.Item label={t('agent.Capabilities')}>
-        <BAIFlex gap="xs" wrap="wrap">
-          {_.map(resource?.capabilities, (cap) => (
-            <Tag key={cap}>{cap}</Tag>
-          ))}
-        </BAIFlex>
-      </Descriptions.Item>
-    </Descriptions>
+    // antd Descriptions size="small" bordered column={2} → MetadataList
+    // (MAPPING §4). `size`/`bordered` drop; per-item `span={2}` on the Usage
+    // item also drops (PILOT-DECISION, project-wide) — it now shares the
+    // 2-column flow with Backend Type instead of spanning both columns.
+    <BAICard>
+      <BAIMetadataList columns={2}>
+        <MetadataListItem label={t('storageHost.Usage')}>
+          <HStack width={200}>
+            <ProgressBar
+              label={t('storageHost.Usage')}
+              isLabelHidden
+              value={storageUsage?.percent}
+              variant={usageProgressVariant(storageUsage?.percent)}
+            />
+          </HStack>
+          <Text color="secondary">{t('storageHost.Used')}: </Text>
+          {convertToDecimalUnit(storageUsage?.used_bytes, 'auto')?.displayValue}
+          <Text color="secondary">{' / '}</Text>
+          <Text color="secondary">{t('storageHost.Total')}: </Text>
+          {
+            convertToDecimalUnit(storageUsage?.capacity_bytes, 'auto')
+              ?.displayValue
+          }
+        </MetadataListItem>
+        <MetadataListItem label={t('agent.BackendType')}>
+          {resource?.backend}
+        </MetadataListItem>
+        <MetadataListItem label={t('agent.Capabilities')}>
+          <BAIFlex gap="xs" wrap="wrap">
+            {_.map(resource?.capabilities, (cap) => (
+              <Badge key={cap} variant="neutral" label={cap} />
+            ))}
+          </BAIFlex>
+        </MetadataListItem>
+      </BAIMetadataList>
+    </BAICard>
   );
 };
 

@@ -1,3 +1,7 @@
+---
+navTitle: クイックスタート
+---
+
 # クイックスタート
 
 ようこそ、Backend.AI WebUI のクイックスタートガイドへ。このチュートリアルでは、事前知識がなくても Backend.AI を使用するための基本を説明します。
@@ -10,6 +14,7 @@
 - [新しいセッションの開始](#create_session)
 - [Jupyter Notebookの使用](#use_session)
 - [コンピュートセッションの削除](#delete_session)
+- [モデルのデプロイ](#create-deployment)
 
 ### パート2. Backend.AIの高度な使用ガイド
 - [複数のシェルを開く（tmux）](#tmux_guide)

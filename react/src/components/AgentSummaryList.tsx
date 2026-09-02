@@ -11,53 +11,54 @@ import {
   convertToBinaryUnit,
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
-import { ResourceSlotName } from '../hooks/backendai';
-import { useBAIPaginationOptionStateOnSearchParamLegacy } from '../hooks/reactPaginationQueryOptions';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import {
-  CheckCircleOutlined,
-  MinusCircleOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { Button, type TableProps, theme, Tooltip, Typography } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
-import {
-  filterOutNullAndUndefined,
-  BAITable,
   BAIFlex,
-  BAIPropertyFilter,
-  mergeFilterValues,
-  ResourceTypeIcon,
-  useResourceSlotsDetails,
   BAIProgressWithLabel,
-  useFetchKey,
+  BAIPropertyFilter,
+  BAITable,
   INITIAL_FETCH_KEY,
+  ResourceTypeIcon,
+  filterOutNullAndUndefined,
+  mergeFilterValues,
+  type BAIColumnType,
+  type BAIColumnsType,
+  type BAITableProps,
+  useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { CircleCheck, CircleMinus, RotateCw } from 'lucide-react';
+import { parseAsString, useQueryStates } from 'nuqs';
 import React, { useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { StringParam, useQueryParams, withDefault } from 'use-query-params';
 
 type AgentSummary = NonNullable<
-  AgentSummaryListQuery$data['agent_summary_list']
->['items'][number];
+  NonNullable<AgentSummaryListQuery$data['agent_summary_list']>['items'][number]
+>;
 
 interface AgentSummaryListProps {
   containerStyle?: React.CSSProperties;
-  tableProps?: Omit<TableProps, 'dataSource'>;
+  // Typed against the table's own forwarding type — since ticket 30-D that is
+  // the Astryx engine's props, so no antd declaration is reached.
+  tableProps?: Partial<Omit<BAITableProps<AgentSummary>, 'dataSource'>>;
 }
 
 const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
   containerStyle,
   tableProps,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -68,16 +69,19 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParamLegacy({
+  } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
     pageSize: 20,
   });
 
-  const [queryParams, setQuery] = useQueryParams({
-    order: withDefault(StringParam, undefined),
-    filter: withDefault(StringParam, undefined),
-    status: withDefault(StringParam, 'ALIVE'),
-  });
+  const [queryParams, setQuery] = useQueryStates(
+    {
+      order: parseAsString,
+      filter: parseAsString,
+      status: parseAsString.withDefault('ALIVE'),
+    },
+    { history: 'replace' },
+  );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const { sftpResourceGroups } = useResourceGroupsForCurrentProject();
@@ -150,7 +154,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
     },
   );
 
-  const columns: ColumnsType<AgentSummary> = [
+  const columns: BAIColumnsType<AgentSummary> = [
     {
       title: <>ID</>,
       key: 'id',
@@ -159,7 +163,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
       render: (value) => {
         return (
           <BAIFlex direction="column" align="start">
-            <Typography.Text>{value}</Typography.Text>
+            <Text>{value}</Text>
           </BAIFlex>
         );
       },
@@ -199,7 +203,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                     >
                       <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />
-                        <Typography.Text>
+                        <Text>
                           {toFixedFloorWithoutTrailingZeros(
                             parsedOccupiedSlots.cpu || 0,
                             0,
@@ -209,13 +213,10 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                             parsedAvailableSlots.cpu || 0,
                             0,
                           )}
-                        </Typography.Text>
-                        <Typography.Text
-                          type="secondary"
-                          style={{ fontSize: token.sizeXS }}
-                        >
+                        </Text>
+                        <Text color="secondary" size="2xs">
                           {mergedResourceSlots?.cpu?.display_unit}
-                        </Typography.Text>
+                        </Text>
                       </BAIFlex>
                       <BAIProgressWithLabel
                         percent={cpuPercent}
@@ -245,19 +246,16 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                     >
                       <BAIFlex gap="xxs">
                         <ResourceTypeIcon type={'mem'} />
-                        <Typography.Text>
+                        <Text>
                           {convertToBinaryUnit(parsedOccupiedSlots.mem, 'g', 0)
                             ?.numberFixed ?? 0}
                           /
                           {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
                             ?.numberFixed ?? 0}
-                        </Typography.Text>
-                        <Typography.Text
-                          type="secondary"
-                          style={{ fontSize: token.sizeXS }}
-                        >
+                        </Text>
+                        <Text color="secondary" size="2xs">
                           GiB
-                        </Typography.Text>
+                        </Text>
                       </BAIFlex>
                       <BAIProgressWithLabel
                         percent={memPercent}
@@ -288,7 +286,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                     >
                       <BAIFlex gap="xxs">
                         <ResourceTypeIcon key={key} type={key} />
-                        <Typography.Text>
+                        <Text>
                           {toFixedFloorWithoutTrailingZeros(
                             parsedOccupiedSlots[key] || 0,
                             2,
@@ -298,13 +296,10 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                             parsedAvailableSlots[key],
                             2,
                           )}
-                        </Typography.Text>
-                        <Typography.Text
-                          type="secondary"
-                          style={{ fontSize: token.sizeXS }}
-                        >
+                        </Text>
+                        <Text color="secondary" size="2xs">
                           {mergedResourceSlots?.[key]?.display_unit}
-                        </Typography.Text>
+                        </Text>
                       </BAIFlex>
                       <BAIProgressWithLabel
                         percent={percent}
@@ -339,18 +334,20 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
         return (
           <BAIFlex justify="center">
             {value === true ? (
-              <CheckCircleOutlined
+              <CircleCheck
                 style={{
                   color: token.colorSuccess,
                   fontSize: token.fontSizeXL,
                 }}
+                size="1em"
               />
             ) : (
-              <MinusCircleOutlined
+              <CircleMinus
                 style={{
                   color: token.colorTextDisabled,
                   fontSize: token.fontSizeXL,
                 }}
+                size="1em"
               />
             )}
           </BAIFlex>
@@ -386,7 +383,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
             value={queryParams.status}
             onChange={(e) => {
               const value = e.target.value;
-              setQuery({ status: value }, 'replaceIn');
+              setQuery({ status: value });
             }}
           />
 
@@ -413,34 +410,33 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                 ],
               },
             ]}
-            value={queryParams.filter}
+            value={queryParams.filter ?? undefined}
             onChange={(value) => {
-              setQuery({ filter: value }, 'replaceIn');
+              setQuery({ filter: value ?? null });
               setTablePaginationOption({ current: 1 });
             }}
           />
         </BAIFlex>
         <BAIFlex gap="xs">
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              loading={deferredFetchKey !== fetchKey}
-              onClick={() => updateFetchKey()}
-              icon={<ReloadOutlined />}
-            ></Button>
-          </Tooltip>
+          <IconButton
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
+            isLoading={deferredFetchKey !== fetchKey}
+            onClick={() => updateFetchKey()}
+            icon={<RotateCw size="1em" />}
+          />
         </BAIFlex>
       </BAIFlex>
       <BAITable
-        bordered
         scroll={{ x: 'max-content' }}
+        bordered
         rowKey={'id'}
         dataSource={filterOutNullAndUndefined(agent_summary_list?.items)}
-        showSorterTooltip={false}
         columns={
           _.filter(
             columns,
             (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-          ) as ColumnType<AnyObject>[]
+          ) as BAIColumnType<AgentSummary>[]
         }
         pagination={{
           pageSize: tablePaginationOption.pageSize,
@@ -453,7 +449,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           },
         }}
         onChangeOrder={(order) => {
-          setQuery({ order }, 'replaceIn');
+          setQuery({ order: order ?? null });
         }}
         tableSettings={{
           columnOverrides: columnOverrides,

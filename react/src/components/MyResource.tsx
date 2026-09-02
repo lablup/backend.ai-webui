@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ResourceSlotName } from '../hooks/backendai';
+import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
-import { Segmented, theme } from 'antd';
+import { theme } from '../theme-shim';
 import {
   BAIBoardItemTitle,
   BAIFlex,
@@ -14,10 +14,9 @@ import {
   convertToNumber,
   processMemoryValue,
   BAIFetchKeyButton,
-  useResourceSlotsDetails,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ReactNode, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -33,6 +32,7 @@ const MyResource: React.FC<MyResourceProps> = ({
   extra,
   ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const currentProject = useCurrentProjectValue();
@@ -57,15 +57,21 @@ const MyResource: React.FC<MyResourceProps> = ({
   const resourceSlotsDetails = useResourceSlotsDetails();
 
   const resourceData = (() => {
+    // A failed request is a no-data state, not zero usage across every slot.
+    if (!checkPresetInfo) {
+      return { cpu: null, memory: null, accelerators: [] };
+    }
+
+    // Every `keypair_using` read below defaults to 0: the payload omits slots
+    // the keypair holds no allocation for, and `convertToNumber` would read
+    // that absence as unlimited. Only limits are unlimited when absent.
     const cpuSlot = resourceSlotsDetails?.resourceSlotsInRG?.['cpu'];
     const memSlot = resourceSlotsDetails?.resourceSlotsInRG?.['mem'];
-
-    // Helper function to process memory values
 
     const cpuData = cpuSlot
       ? {
           used: {
-            current: convertToNumber(checkPresetInfo?.keypair_using.cpu),
+            current: convertToNumber(checkPresetInfo.keypair_using.cpu ?? 0),
             total: convertToNumber(resourceLimitsWithoutResourceGroup.cpu?.max),
           },
           free: {
@@ -83,7 +89,7 @@ const MyResource: React.FC<MyResourceProps> = ({
       ? {
           used: {
             current: processMemoryValue(
-              checkPresetInfo?.keypair_using.mem,
+              checkPresetInfo.keypair_using.mem ?? 0,
               memSlot.display_unit,
             ),
             total: processMemoryValue(
@@ -108,37 +114,38 @@ const MyResource: React.FC<MyResourceProps> = ({
         }
       : null;
 
-    const accelerators = _.chain(resourceSlotsDetails?.resourceSlotsInRG)
-      .omit(['cpu', 'mem'])
-      .map((resourceSlot, key) => {
-        if (!resourceSlot) return null;
+    const accelerators = _.compact(
+      _.map(
+        _.omit(resourceSlotsDetails?.resourceSlotsInRG, ['cpu', 'mem']),
+        (resourceSlot, key) => {
+          if (!resourceSlot) return null;
 
-        return {
-          key,
-          used: {
-            current: convertToNumber(
-              checkPresetInfo?.keypair_using[key as ResourceSlotName],
-            ),
-            total: convertToNumber(
-              resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
-            ),
-          },
-          free: {
-            current: convertToNumber(
-              remainingWithoutResourceGroup.accelerators[key],
-            ),
-            total: convertToNumber(
-              resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
-            ),
-          },
-          metadata: {
-            title: resourceSlot.human_readable_name,
-            displayUnit: resourceSlot.display_unit,
-          },
-        };
-      })
-      .compact()
-      .value();
+          return {
+            key,
+            used: {
+              current: convertToNumber(
+                checkPresetInfo.keypair_using[key as ResourceSlotName] ?? 0,
+              ),
+              total: convertToNumber(
+                resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
+              ),
+            },
+            free: {
+              current: convertToNumber(
+                remainingWithoutResourceGroup.accelerators[key],
+              ),
+              total: convertToNumber(
+                resourceLimitsWithoutResourceGroup.accelerators[key]?.max,
+              ),
+            },
+            metadata: {
+              title: resourceSlot.human_readable_name,
+              displayUnit: resourceSlot.display_unit,
+            },
+          };
+        },
+      ),
+    );
 
     return { cpu: cpuData, memory: memoryData, accelerators };
   })();
@@ -159,16 +166,6 @@ const MyResource: React.FC<MyResourceProps> = ({
         tooltip={<Trans i18nKey={'webui.menu.MyResourcesDescription'} />}
         extra={
           <BAIFlex gap={'xs'}>
-            <Segmented
-              size="small"
-              options={[
-                {
-                  label: t('dashboard.Used'),
-                  value: 'used',
-                },
-              ]}
-              value={'used'}
-            />
             <BAIFetchKeyButton
               size="small"
               loading={isPending || refetching}

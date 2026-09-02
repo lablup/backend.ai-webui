@@ -1,10 +1,11 @@
 {
   "name": "backend.ai-docs-toolkit",
-  "version": "0.1.0",
+  "version": "26.9.0-alpha.0",
   "description": "A reusable documentation toolkit for generating PDFs and web previews from Markdown content",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-docs-toolkit"
+    "url": "git+https://github.com/lablup/backend.ai-webui.git",
+    "directory": "packages/backend.ai-docs-toolkit"
   },
   "bugs": {
     "url": "https://github.com/lablup/backend.ai-webui/issues"
@@ -23,7 +24,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "docs-toolkit": "./dist/cli.js"
+    "docs-toolkit": "bin/docs-toolkit.js"
   },
   "exports": {
     ".": {
@@ -32,31 +33,40 @@
     }
   },
   "files": [
+    "bin",
     "dist",
     "templates"
   ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "test": "tsx --test src/*.test.ts",
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@pdf-lib/fontkit": "^1.1.1",
-    "handlebars": "^4.7.8",
+    "fontkit": "^2.0.4",
+    "handlebars": "^4.7.9",
     "marked": "^12.0.2",
     "pdf-lib": "^1.17.1",
+    "shiki": "1.29.2",
     "yaml": "^2.8.2"
   },
   "peerDependencies": {
-    "playwright": "^1.40.0"
+    "playwright": "^1.42.0",
+    "sharp": "^0.34.0 || ^0.35.1"
   },
   "peerDependenciesMeta": {
     "playwright": {
       "optional": true
+    },
+    "sharp": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@types/fontkit": "^2.0.9",
     "playwright": "^1.58.2",
+    "sharp": "^0.35.1",
     "tsx": "^4.21.0",
     "typescript": "~5.5.4"
   }

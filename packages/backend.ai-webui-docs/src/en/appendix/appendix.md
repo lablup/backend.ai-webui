@@ -1,3 +1,7 @@
+---
+navTitle: Appendix
+---
+
 # Appendix
 
 <a id="gpu-virtualization-and-fractional-gpu-allocation"></a>
@@ -66,21 +70,21 @@ Alternatively, you can run the `nvidia-smi` command from the web terminal to que
 ## Automated job scheduling
 
 Backend.AI server has a built-in self-developed task scheduler. It automatically
-checks the available resources of all worker nodes and delegates the request to
-create a compute session to the worker that meets the user's resource request.
+checks the available resources of all agent nodes and delegates the request to
+create a compute session to the agent that meets the user's resource request.
 In addition, when resources are insufficient, the user's request to create a
 compute session is registered as a PENDING state in the job queue. Later, when
 the resources become available again, the pended request is resumed to
 create a compute session.
 
 You can check the operation of the job scheduler in a simple way from the
-user Web-UI. When the GPU host can allocate up to 2 fGPUs,
+user WebUI. When the GPU host can allocate up to 2 fGPUs,
 let's create 3 compute sessions at the same time requesting
-allocation of 1 fGPU, respectively. In the Custom allocation section of the session launch
-dialog, there are GPU and Sessions sliders. If you specify a value greater than
-1 in Sessions and click the LAUNCH button, the number of sessions will be
-requested at the same time. Let's set the GPU and Sessions to 1 and 3,
-respectively. This is the situation that 3 sessions requesting a
+allocation of 1 fGPU, respectively. In the Environments & Resource Allocation
+step of the session launcher, set AI Accelerator to 1. Then, on the Confirm and
+Launch step, open the menu next to the Launch button and select Launch Multiple
+Sessions. Set Number of sessions to 3 and click Start, and the three sessions
+are requested at the same time. This is the situation that 3 sessions requesting a
 total of 3 fGPUs are created when only 2 fGPUs exist.
 
 ![](../images/session_launch_dialog_2_sessions.png)
@@ -136,12 +140,12 @@ before. You can see that TensorFlow 1.15(.4) version is installed.
 
 ![](../images/tf115_version_print.png)
 
-Finally, create a compute session using PyTorch version 1.7.
+Finally, create a compute session using PyTorch version 1.9.
 
 ![](../images/session_launch_dialog_pytorch17.png)
 
 Open the web terminal of the created session and run the following Python
-command. You can see that PyTorch 1.8 version is installed.
+command. You can see that PyTorch 1.9 version is installed.
 
 ![](../images/pytorch17_version_print.png)
 
@@ -189,7 +193,7 @@ Docker image.
 
 <a id="backend-ai-server-installation-guide"></a>
 
-## Backend.AI Server Installation Guide
+## Backend.AI server installation guide
 
 For Backend.AI Server daemons/services, following hardware specification should be met. For
 optimal performance, just double the amount of each resources.
@@ -197,7 +201,7 @@ optimal performance, just double the amount of each resources.
 - Manager: 2 cores, 4 GiB memory
 - Agent: 4 cores, 32 GiB memory, NVIDIA GPU (for GPU workload), > 512 GiB SSD
 - Webserver: 2 cores, 4 GiB memory
-- WSProxy: 2 cores, 4 GiB memory
+- App Proxy: 2 cores, 4 GiB memory
 - PostgreSQL DB: 2 cores, 4 GiB memory
 - Redis: 1 core, 2 GiB memory
 - Etcd: 1 core, 2 GiB memory
@@ -205,13 +209,13 @@ optimal performance, just double the amount of each resources.
 The essential host dependent packages that must be pre-installed before installing
 each service are:
 
-- Web-UI: Operating system that can run the latest browsers (Windows, Mac
+- WebUI: Operating system that can run the latest browsers (Windows, Mac
   OS, Ubuntu, etc.)
 - Manager: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Agent: docker (≥19.03), CUDA/CUDA Toolkit (≥8, 11 recommend),
   nvidia-docker v2, Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Webserver: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
-- WSProxy: docker (≥19.03), docker-compose (≥1.24)
+- App Proxy: docker (≥19.03), docker-compose (≥1.24)
 - PostgreSQL DB: docker (≥19.03), docker-compose (≥1.24)
 - Redis: docker (≥19.03), docker-compose (≥1.24)
 - Etcd: docker (≥19.03), docker-compose (≥1.24)
@@ -263,10 +267,10 @@ If you don't have any experience in creating session and executing app inside, p
 look through [How to create a session](#start-a-new-session) section.
 :::
 
-First, launch terminal app "console". and execute the command below, It will start mlflow tracking UI server.
+First, launch the terminal app `Console` and execute the command below. It will start the MLflow Tracking UI server.
 
-```shell
-$ mlflow ui --host 0.0.0.0
+```bash
+mlflow ui --host 0.0.0.0
 ```
 
 Then, Click "MLFlow UI" app in app launcher dialog.
@@ -280,9 +284,9 @@ After few moment, you will see a new page for MLFlow UI.
 By using MLFlow, you can track experiments, such as metrics and parameters every time you run.
 Let's start tracking experiments from simple example.
 
-```shell
-$ wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
-$ python train_diabetes.py
+```bash
+wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
+python train_diabetes.py
 ```
 
 After executing python code, you may see the experiments result in MLFlow.
@@ -291,8 +295,8 @@ After executing python code, you may see the experiments result in MLFlow.
 
 You can also set hyperparameter by giving arguments with code execution.
 
-```shell
-$ python train_diabetes.py 0.2 0.05
+```bash
+python train_diabetes.py 0.2 0.05
 ```
 
 After a few training, you can compare trained models with results.

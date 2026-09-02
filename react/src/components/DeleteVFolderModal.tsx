@@ -4,18 +4,19 @@
  */
 import { DeleteVFolderModalFragment$key } from '../__generated__/DeleteVFolderModalFragment.graphql';
 import { VFolderNodesFragment$data } from '../__generated__/VFolderNodesFragment.graphql';
+import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { Typography, message, theme } from 'antd';
+import { VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
 import {
-  BAIAlert,
-  BAIFlex,
+  BAIListAlert,
   BAIModal,
-  BAIModalProps,
+  type BAIModalProps,
   toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -23,7 +24,12 @@ import { PayloadError } from 'relay-runtime';
 
 type VFolderType = NonNullable<VFolderNodesFragment$data[number]>;
 
-interface DeleteVFolderModalProps extends BAIModalProps {
+interface DeleteVFolderModalProps extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: consumers outside the pilot graph use it. */
+  open?: boolean;
   vfolderFrgmts?: DeleteVFolderModalFragment$key;
   onRequestClose?: (success: boolean) => void;
 }
@@ -36,7 +42,6 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { getErrorMessage } = useErrorMessageResolver();
-  const { token } = theme.useToken();
 
   const vfolders = useFragment(
     graphql`
@@ -65,11 +70,14 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
 
   return (
     <BAIModal
+      isOpen={baiModalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose?.(false);
+      }}
       title={t('data.folders.MoveToTrash')}
-      centered
+      maskClosable={false}
       okText={t('data.folders.Delete')}
       okButtonProps={{ danger: true }}
-      onCancel={() => onRequestClose?.(false)}
       onOk={() => {
         const promises = _.map(
           foldersByPermission.deletable,
@@ -125,32 +133,21 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
       }}
       {...baiModalProps}
     >
-      <BAIFlex direction="column" gap={'sm'} align="stretch">
+      <VStack gap={3} align="stretch">
         {vfolders &&
           vfolders.length !== foldersByPermission.deletable?.length && (
-            <BAIAlert
-              showIcon
-              ghostInfoBg={false}
+            <BAIListAlert
+              banner
               title={t('data.folders.ExcludedFolders', {
                 count: foldersByPermission.undeletable?.length || 0,
               })}
-              description={
-                <ul
-                  style={{
-                    margin: 0,
-                    padding: 0,
-                    paddingTop: token.paddingXXS,
-                    listStyle: 'circle',
-                  }}
-                >
-                  {_.map(foldersByPermission.undeletable, (vfolder) => (
-                    <li key={vfolder.id}>{vfolder.name}</li>
-                  ))}
-                </ul>
-              }
+              items={_.map(foldersByPermission.undeletable, (vfolder) => ({
+                key: vfolder.id,
+                content: vfolder.name,
+              }))}
             />
           )}
-        <Typography.Text>
+        <Text>
           {foldersByPermission.deletable?.length === 1
             ? t('data.folders.MoveToTrashDescription', {
                 folderName: foldersByPermission.deletable?.[0]?.name,
@@ -158,8 +155,8 @@ const DeleteVFolderModal: React.FC<DeleteVFolderModalProps> = ({
             : t('data.folders.MoveToTrashMultipleDescription', {
                 folderLength: foldersByPermission.deletable?.length,
               })}
-        </Typography.Text>
-      </BAIFlex>
+        </Text>
+      </VStack>
     </BAIModal>
   );
 };

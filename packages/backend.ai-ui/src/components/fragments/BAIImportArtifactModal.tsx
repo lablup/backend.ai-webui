@@ -1,24 +1,27 @@
+import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import { BAIImportArtifactModalArtifactFragment$key } from '../../__generated__/BAIImportArtifactModalArtifactFragment.graphql';
 import {
   BAIImportArtifactModalArtifactRevisionFragment$data,
   BAIImportArtifactModalArtifactRevisionFragment$key,
 } from '../../__generated__/BAIImportArtifactModalArtifactRevisionFragment.graphql';
 import { BAIImportArtifactModalImportArtifactsMutation } from '../../__generated__/BAIImportArtifactModalImportArtifactsMutation.graphql';
+import { App } from '../../app-shim';
 import {
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
 } from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
+import { theme } from '../../theme-shim';
+import BAIAlert from '../BAIAlert';
 import BAIFlex from '../BAIFlex';
+import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
-import { QuestionCircleFilled } from '@ant-design/icons';
-import { Alert, App, Modal, theme, Tooltip, type ModalProps } from 'antd';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash-es';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
@@ -30,7 +33,7 @@ export type BAIImportArtifactModalArtifactRevisionFragmentKey =
   BAIImportArtifactModalArtifactRevisionFragment$key;
 
 export interface BAIImportArtifactModalProps extends Omit<
-  ModalProps,
+  BAIModalProps,
   'onOk' | 'onCancel'
 > {
   selectedArtifactFrgmt: BAIImportArtifactModalArtifactFragment$key | null;
@@ -46,7 +49,7 @@ export interface BAIImportArtifactModalProps extends Omit<
       };
     }[],
   ) => void;
-  onCancel: NonNullable<ModalProps['onCancel']>;
+  onCancel: NonNullable<BAIModalProps['onCancel']>;
   connectionIds?: string[];
 }
 
@@ -58,7 +61,7 @@ const BAIImportArtifactModal = ({
   connectionIds,
   ...modalProps
 }: BAIImportArtifactModalProps) => {
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { message } = App.useApp();
   const { token } = theme.useToken();
   const selectedArtifact =
@@ -137,7 +140,7 @@ const BAIImportArtifactModal = ({
 
   return (
     <BAIUnmountAfterClose>
-      <Modal
+      <BAIModal
         title={t('comp:BAIImportArtifactModal.PullVersion')}
         centered
         onOk={(e) => {
@@ -160,14 +163,21 @@ const BAIImportArtifactModal = ({
                 );
                 return;
               }
+              const importArtifacts = res.importArtifacts;
+              if (!importArtifacts) {
+                message.error(
+                  t('comp:BAIImportArtifactModal.FailedToPullVersions'),
+                );
+                return;
+              }
               message.success(
                 t('comp:BAIImportArtifactModal.SuccessFullyPulled', {
-                  count: res.importArtifacts.artifactRevisions.edges.length,
+                  count: importArtifacts.artifactRevisions.edges.length,
                 }),
               );
               onOk(
                 e,
-                res.importArtifacts.tasks
+                importArtifacts.tasks
                   .filter((task) => task.taskId != null)
                   .map((task) => ({
                     taskId: task.taskId!,
@@ -202,20 +212,15 @@ const BAIImportArtifactModal = ({
         <BAIFlex direction="column" gap="md" align="stretch">
           {filteredSelectedRevisions.length !==
             selectedArtifactRevision.length && (
-            <Alert
+            <BAIAlert
               icon={
-                <Tooltip
+                <BAIQuestionIconWithTooltip
                   title={t(
                     'comp:BAIImportArtifactModal.OnlySCANNEDVersionsCanBePulled',
                   )}
-                >
-                  <QuestionCircleFilled
-                    style={{
-                      color: token.colorInfo,
-                      marginRight: token.marginXS,
-                    }}
-                  />
-                </Tooltip>
+                  iconProps={{ style: { color: token.colorInfo } }}
+                  style={{ marginRight: token.marginXS }}
+                />
               }
               showIcon
               title={t('comp:BAIImportArtifactModal.ExcludedVersions', {
@@ -236,7 +241,7 @@ const BAIImportArtifactModal = ({
             }}
           />
         </BAIFlex>
-      </Modal>
+      </BAIModal>
     </BAIUnmountAfterClose>
   );
 };

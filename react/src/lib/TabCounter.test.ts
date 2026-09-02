@@ -30,7 +30,7 @@ import TabCount from './TabCounter';
  * callbacks driven by Date.now() see consistent timestamps.
  */
 function advanceTimers(ms: number): void {
-  jest.advanceTimersByTime(ms);
+  vi.advanceTimersByTime(ms);
 }
 
 // ---------------------------------------------------------------------------
@@ -38,7 +38,7 @@ function advanceTimers(ms: number): void {
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
   localStorage.clear();
   // Provide a stable crypto.randomUUID implementation for the jsdom environment
   if (!globalThis.crypto?.randomUUID) {
@@ -50,9 +50,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  jest.useRealTimers();
+  vi.useRealTimers();
   localStorage.clear();
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 // ---------------------------------------------------------------------------
@@ -78,7 +78,7 @@ describe('TabCount constructor', () => {
   });
 
   it('registers a beforeunload listener that removes the tab from localStorage', () => {
-    const addSpy = jest.spyOn(globalThis, 'addEventListener');
+    const addSpy = vi.spyOn(globalThis, 'addEventListener');
     const tc = new TabCount();
 
     const calls = addSpy.mock.calls.map(([event]) => event);
@@ -183,7 +183,7 @@ describe('tabsCount', () => {
 
   it('does not call onTabCountUpdate when skipCallback is true', () => {
     const tc = new TabCount();
-    const cb = jest.fn();
+    const cb = vi.fn();
     tc.onTabCountUpdate.push(cb);
     tc.tabsCount(true);
     expect(cb).not.toHaveBeenCalled();
@@ -193,7 +193,7 @@ describe('tabsCount', () => {
   it('calls onTabCountUpdate when count changes and skipCallback is false', () => {
     const tc = new TabCount();
     tc.tabsCounter = 99; // Force a different value to ensure a change is detected
-    const cb = jest.fn();
+    const cb = vi.fn();
     tc.onTabCountUpdate.push(cb);
     tc.tabsCount(false);
     expect(cb).toHaveBeenCalled();
@@ -257,7 +257,7 @@ describe('clearList', () => {
 describe('onTabChange', () => {
   it('registers a callback that fires when tab count changes', () => {
     const tc = new TabCount();
-    const cb = jest.fn();
+    const cb = vi.fn();
     tc.onTabChange(cb, false);
     expect(tc.onTabCountUpdate).toContain(cb);
     tc.pause();
@@ -273,7 +273,7 @@ describe('onTabChange', () => {
 
   it('calls the callback immediately when executeNow is true', () => {
     const tc = new TabCount();
-    const cb = jest.fn();
+    const cb = vi.fn();
     tc.onTabChange(cb, true);
     expect(cb).toHaveBeenCalledTimes(1);
     expect(cb).toHaveBeenCalledWith(expect.any(Number));
@@ -282,7 +282,7 @@ describe('onTabChange', () => {
 
   it('does not call the callback immediately when executeNow is false', () => {
     const tc = new TabCount();
-    const cb = jest.fn();
+    const cb = vi.fn();
     tc.onTabChange(cb, false);
     expect(cb).not.toHaveBeenCalled();
     tc.pause();

@@ -1,12 +1,14 @@
 import { BAIArtifactRevisionDeleteButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDeleteButtonFragment.graphql';
-import { BAITrashBinIcon } from '../../icons';
+import { theme } from '../../theme-shim';
 import BAIButton, { BAIButtonProps } from '../BAIButton';
-import { theme } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Trash2 } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 
-export interface BAIArtifactRevisionDeleteButtonProps
-  extends Omit<BAIButtonProps, 'icon'> {
+export interface BAIArtifactRevisionDeleteButtonProps extends Omit<
+  BAIButtonProps,
+  'icon'
+> {
   revisionsFrgmt: BAIArtifactRevisionDeleteButtonFragment$key;
   loading?: boolean;
 }
@@ -37,7 +39,7 @@ const BAIArtifactRevisionDeleteButton = ({
 
   return (
     <BAIButton
-      icon={<BAITrashBinIcon />}
+      icon={<Trash2 size="1em" />}
       disabled={isDisabled}
       type="text"
       style={{

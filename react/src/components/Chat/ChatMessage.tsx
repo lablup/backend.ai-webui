@@ -2,17 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { theme } from '../../theme-shim';
 import {
   ChatMessageContainer,
   ChatMessagePlacement,
 } from './ChatMessageContainer';
-// ES 2015
 import ChatMessageContent from './ChatMessageContent';
 import { UIMessage } from '@ai-sdk/react';
-import { FileCard } from '@ant-design/x';
-import { theme, Image, Collapse, Typography, Spin } from 'antd';
+import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Spinner } from '@astryxdesign/core/Spinner';
+import { Text } from '@astryxdesign/core/Text';
+import { Thumbnail } from '@astryxdesign/core/Thumbnail';
+import { Token } from '@astryxdesign/core/Token';
 import { BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { PaperclipIcon } from 'lucide-react';
 import React, { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -45,20 +49,24 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   // Extract content and reasoning from parts array
-  const content = _.chain(message.parts)
-    .filter((part) => part.type === 'text')
-    .map((part) => part.text)
-    .join('')
-    .value();
+  const content = _.map(
+    _.filter(message.parts, (part) => part.type === 'text'),
+    (part) => part.text,
+  ).join('');
 
-  const reasoningText = _.chain(message.parts)
-    .filter((part) => part.type === 'reasoning')
-    .map((part) => part.text)
-    .join('')
-    .value();
+  const reasoningText = _.map(
+    _.filter(message.parts, (part) => part.type === 'reasoning'),
+    (part) => part.text,
+  ).join('');
 
   // Filter file parts from the message parts array
   const fileParts = _.filter(message.parts, (part) => part.type === 'file');
+
+  // The bubble has no vertical padding; the rendered markdown paragraphs of
+  // `content` supply it. When only reasoning is present (e.g. while the model
+  // is still thinking), there is no paragraph to provide the bottom gap, so the
+  // Collapse has to add it itself.
+  const hasContent = !_.isEmpty(_.trim(content));
 
   return (
     <ChatMessageContainer
@@ -84,7 +92,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             }}
             align="end"
           >
-            <Image
+            <Thumbnail
               src={part?.url}
               alt={filename}
               style={{
@@ -95,11 +103,18 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             />
           </BAIFlex>
         ) : (
-          <FileCard
+          // PILOT-DECISION: `@ant-design/x`'s `FileCard` (icon + name +
+          // description + download link) has no Astryx card equivalent — the
+          // closest primitive is `Token`, which carries the same three
+          // affordances (leading icon, file name, `href` to the attachment)
+          // in a smaller, list-friendly shape. The redundant `description`
+          // (it repeated the file name) is dropped.
+          <Token
             key={`${message?.id}-${index}`}
-            name={filename}
+            label={filename}
             description={filename}
-            src={part?.url}
+            icon={<PaperclipIcon size="1em" />}
+            href={part?.url}
           />
         );
       })}
@@ -119,30 +134,28 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         }}
       >
         {_.trim(reasoningText) && (
-          <Collapse
+          <Collapsible
+            defaultIsOpen={false}
             style={{
               marginTop: token.margin,
+              marginBottom: hasContent ? 0 : token.margin,
               width: '100%',
             }}
-            items={[
-              {
-                key: 'reasoning',
-                label: _.isEmpty(content) ? (
-                  <BAIFlex gap="xs">
-                    <Typography.Text>{t('chatui.Thinking')}</Typography.Text>
-                    <Spin size="small" />
-                  </BAIFlex>
-                ) : (
-                  <Typography.Text>{t('chatui.ViewReasoning')}</Typography.Text>
-                ),
-                children: (
-                  <ChatMessageContent isStreaming={isStreaming}>
-                    {reasoningText}
-                  </ChatMessageContent>
-                ),
-              },
-            ]}
-          />
+            trigger={
+              !hasContent ? (
+                <BAIFlex gap="xs">
+                  <Text>{t('chatui.Thinking')}</Text>
+                  <Spinner size="sm" />
+                </BAIFlex>
+              ) : (
+                <Text>{t('chatui.ViewReasoning')}</Text>
+              )
+            }
+          >
+            <ChatMessageContent isStreaming={isStreaming}>
+              {reasoningText}
+            </ChatMessageContent>
+          </Collapsible>
         )}
         <ChatMessageContent isStreaming={isStreaming}>
           {content + (isStreaming ? '\n' : '')}

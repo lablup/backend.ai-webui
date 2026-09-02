@@ -1,8 +1,10 @@
 import { loginAsVisualRegressionUser, navigateTo } from '../../utils/test-util';
 import { expect, test } from '@playwright/test';
 
-// FIXME: Test timeout in beforeEach - NEO Session list checkbox not found in user settings
-// The NEO Session list preference might have been removed or renamed
+// FIXME(FR-3111/stale-baseline): The 'NEO Session list' usersettings toggle was removed
+// (NEO is now the only session list), so this beforeEach/afterEach toggle logic is dead
+// and the spec should navigate straight to `/session` instead of the legacy `/job`
+// redirect. Rewrite + baseline refresh deferred to FR-3115 (frozen backend).
 test.beforeEach(async ({ page, request }) => {
   // login to visual regression server
   await loginAsVisualRegressionUser(page, request);
@@ -39,7 +41,9 @@ test.describe(
   'Visual Regression Test for NEO Session Page',
   { tag: ['@regression', '@session', '@visual'] },
   () => {
-    // FIXME: Test skipped due to beforeEach failure (NEO Session list checkbox not found)
+    // FIXME(FR-3111/stale-baseline): NEO session list is now the default; the session
+    // launcher UI changed since `snapshot/step1.png`–`step5.png` were captured.
+    // Spec rewrite + baseline refresh deferred to FR-3115 (frozen backend).
     test.fixme('Create a new session step by step', async ({ page }) => {
       // step1.png
       await page.getByRole('button', { name: 'Start Session' }).nth(1).click();
@@ -91,7 +95,8 @@ test.describe(
       });
     });
 
-    // FIXME: Test skipped due to beforeEach failure (NEO Session list checkbox not found)
+    // FIXME(FR-3111/stale-baseline): Same NEO-default change —
+    // `snapshot/session-page.png` is stale. Deferred to FR-3115.
     test.fixme('Before create a new session', async ({ page }) => {
       await page.getByText('Create a Session').waitFor();
       await expect(page).toHaveScreenshot('session_page.png', {

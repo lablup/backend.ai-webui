@@ -4,68 +4,67 @@
  */
 import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBulkMutation.graphql';
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
-import { PurgeUsersModalMutation } from '../__generated__/PurgeUsersModalMutation.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { App, Checkbox, Form, theme } from 'antd';
-import { FormInstance } from 'antd/lib';
+import { App } from '../app-shim';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { VStack } from '@astryxdesign/core/Stack';
 import {
-  BAIAlert,
-  BAIConfirmModalWithInput,
-  BAIFlex,
-  BAIModalProps,
-  BAIText,
+  BAIDeleteConfirmModal,
+  filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
-  useErrorMessageResolver,
-  useMutationWithPromise,
 } from 'backend.ai-ui';
-import _ from 'lodash';
-import React, { useRef, useState } from 'react';
+import * as _ from 'lodash-es';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
-import { PayloadError } from 'relay-runtime';
 
-export interface PurgeUsersModalProps extends Omit<
-  BAIModalProps,
-  'title' | 'okText' | 'okButtonProps'
-> {
+// PILOT-DECISION (matches ticket-16 precedent DeleteForeverVFolderModalV2):
+// full component swap to BUI `BAIDeleteConfirmModal` rather than a
+// piecemeal Form/Checkbox rename. Purge is the permanent-delete flow
+// (`.claude/rules/destructive-confirmation.md`), and BAIDeleteConfirmModal
+// (BUI/antd) has no Astryx equivalent to extend in place. The public prop
+// contract (`usersFrgmt`/`open`/`onOk`/`onCancel`) is kept unchanged so
+// AdminUserManagement.tsx's 2 call sites don't need to change.
+export interface PurgeUsersModalProps {
   usersFrgmt: PurgeUsersModalFragment$key;
-}
-
-interface PurgeUsersFormValues {
-  purgeSharedVfolders: boolean;
-  deleteModelServices: boolean;
+  open?: boolean;
+  onOk?: () => void;
+  onCancel?: () => void;
 }
 
 const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   usersFrgmt,
-  ...baiModalProps
+  open,
+  onOk,
+  onCancel,
 }) => {
   'use memo';
+
+  const userList = filterOutNullAndUndefined(
+    useFragment(
+      graphql`
+        fragment PurgeUsersModalFragment on UserV2 @relay(plural: true) {
+          id
+          basicInfo {
+            email
+          }
+        }
+      `,
+      usersFrgmt,
+    ),
+  );
 
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const formRef = useRef<FormInstance<PurgeUsersFormValues>>(null);
-  const { token } = theme.useToken();
   const [isPending, setIsPending] = useState(false);
-  const { getErrorMessage } = useErrorMessageResolver();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsBulkPurge = baiClient.supports('bulk-purge-users');
+  // The two purge options are independent booleans, not a validated form —
+  // per BAIDeleteConfirmModal's own PILOT-DECISION 1, a form STATE
+  // ENGINE is only warranted when there's something to validate. Plain state
+  // is the whole mechanism here too.
+  const [purgeSharedVfolders, setPurgeSharedVfolders] = useState(false);
+  const [deleteModelServices, setDeleteModelServices] = useState(false);
 
-  const users = useFragment<PurgeUsersModalFragment$key>(
-    graphql`
-      fragment PurgeUsersModalFragment on UserNode @relay(plural: true) {
-        id
-        email
-        username
-        full_name
-      }
-    `,
-    usersFrgmt,
-  );
-
-  // >= 26.3.0: adminBulkPurgeUsersV2
   const [commitBulkPurge, isInFlightBulkPurge] =
     useMutation<PurgeUsersModalBulkMutation>(graphql`
       mutation PurgeUsersModalBulkMutation($input: BulkPurgeUsersV2Input!) {
@@ -79,190 +78,103 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       }
     `);
 
-  // < 26.3.0: legacy purge_user
-  const mutatePurgeUserWithPromise =
-    useMutationWithPromise<PurgeUsersModalMutation>(graphql`
-      mutation PurgeUsersModalMutation(
-        $email: String!
-        $props: PurgeUserInput!
-      ) {
-        purge_user(email: $email, props: $props) {
-          ok
-          msg
-        }
-      }
-    `);
+  const handleAction = () => {
+    return new Promise<void>((resolve, reject) => {
+      setIsPending(true);
+      // checked = delete endpoints (don't delegate), unchecked = delegate ownership
+      const delegateEndpointOwnership = !deleteModelServices;
 
-  const handleOk = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const userList = _.compact(users);
-    formRef.current
-      ?.validateFields()
-      .then((values) => {
-        setIsPending(true);
-        const purgeSharedVfolders = values['purgeSharedVfolders'] || false;
-        // checked = delete endpoints (don't delegate), unchecked = delegate ownership
-        const delegateEndpointOwnership = !(
-          values['deleteModelServices'] || false
-        );
-
-        if (supportsBulkPurge) {
-          const userIds = userList.map((user) => toLocalId(user.id));
-          commitBulkPurge({
-            variables: {
-              input: {
-                userIds,
-                options: {
-                  purgeSharedVfolders,
-                  delegateEndpointOwnership,
-                },
-              },
+      const userIds = userList.map((user) => toLocalId(user.id));
+      commitBulkPurge({
+        variables: {
+          input: {
+            userIds,
+            options: {
+              purgeSharedVfolders,
+              delegateEndpointOwnership,
             },
-            onCompleted: (res) => {
-              const { purgedCount, failed } = res.adminBulkPurgeUsersV2;
+          },
+        },
+        onCompleted: (res, errors) => {
+          setIsPending(false);
+          if (errors && errors.length > 0) {
+            message.error(errors.map((e) => e.message).join(', '));
+            reject(new Error(errors.map((e) => e.message).join(', ')));
+            return;
+          }
+          const adminBulkPurgeUsersV2 = res.adminBulkPurgeUsersV2;
+          if (!adminBulkPurgeUsersV2) {
+            message.error(t('error.UnknownError'));
+            reject(new Error(t('error.UnknownError')));
+            return;
+          }
+          const { purgedCount, failed } = adminBulkPurgeUsersV2;
 
-              if (failed.length > 0) {
-                const failedMessages = failed.map((f) => f.message).join(', ');
-                message.error(failedMessages);
-              }
+          if (failed.length > 0) {
+            const failedMessages = failed.map((f) => f.message).join(', ');
+            message.error(failedMessages);
+          }
 
-              if (purgedCount > 0) {
-                message.success(
-                  t('credential.UsersPermanentlyDeleted', {
-                    total: userList.length,
-                    count: purgedCount,
-                  }),
-                );
-                baiModalProps.onOk?.(e);
-              }
-              setIsPending(false);
-            },
-            onError: (error) => {
-              message.error(error.message);
-              setIsPending(false);
-            },
-          });
-        } else {
-          // < 26.3.0: use legacy purge_user in a loop
-          const promises = userList.map((user) =>
-            mutatePurgeUserWithPromise({
-              email: user.email ?? '',
-              props: {
-                purge_shared_vfolders: purgeSharedVfolders,
-                delegate_endpoint_ownership: delegateEndpointOwnership,
-              },
-            }).catch((error) => {
-              return Promise.reject({ user, error });
-            }),
-          );
-
-          Promise.allSettled(promises)
-            .then((results) => {
-              const fulfilled = results.filter((r) => r.status === 'fulfilled');
-              const rejected = results.filter(
-                (r) => r.status === 'rejected',
-              ) as PromiseRejectedResult[];
-
-              if (rejected.length > 0) {
-                const failedUserNames = rejected
-                  .map((r: PromiseRejectedResult) => {
-                    const reason = r.reason;
-                    return reason.user.email || t('credential.WrongEmail');
-                  })
-                  .join(', ');
-
-                failedUserNames &&
-                  message.error(
-                    t('credential.FailedToDeleteUsers', {
-                      users: failedUserNames,
-                    }),
-                  );
-
-                const error =
-                  rejected[0]?.reason?.error?.length > 0 &&
-                  rejected[0].reason.error[0];
-                error && message.error(getErrorMessage(error as PayloadError));
-              }
-
-              if (fulfilled.length > 0) {
-                message.success(
-                  t('credential.UsersPermanentlyDeleted', {
-                    total: userList.length,
-                    count: fulfilled.length,
-                  }),
-                );
-                baiModalProps.onOk?.(e);
-              }
-            })
-            .finally(() => {
-              setIsPending(false);
-            });
-        }
-      })
-      .catch((e) => {
-        logger.error('Validation failed:', e);
+          if (purgedCount > 0) {
+            message.success(
+              t('credential.UsersPermanentlyDeleted', {
+                total: userList.length,
+                count: purgedCount,
+              }),
+            );
+            onOk?.();
+            resolve();
+          } else {
+            reject(new Error(t('error.UnknownError')));
+          }
+        },
+        onError: (error) => {
+          setIsPending(false);
+          message.error(error.message);
+          logger.error(error);
+          reject(error);
+        },
       });
+    });
   };
 
   return (
-    <BAIConfirmModalWithInput
-      {...baiModalProps}
+    <BAIDeleteConfirmModal
+      isOpen={!!open}
+      onOpenChange={(next) => {
+        if (!next) onCancel?.();
+      }}
       title={t('credential.PermanentlyDeleteUsers')}
-      okText={t('button.Delete')}
-      onOk={(e) => handleOk(e)}
+      maskClosable={false}
       confirmLoading={isPending || isInFlightBulkPurge}
+      items={_.map(userList, (user) => ({
+        key: user.id,
+        label: user.basicInfo.email,
+      }))}
+      requireConfirmInput
+      confirmText={t('credential.PermanentlyDelete')}
       inputLabel={t('credential.TypePermanentlyDelete', {
         text: t('credential.PermanentlyDelete'),
       })}
-      inputProps={{
-        placeholder: t('credential.PermanentlyDelete'),
-      }}
-      confirmText={t('credential.PermanentlyDelete')}
-      content={
-        <BAIFlex direction="column" gap="sm" justify="start" align="stretch">
-          <BAIAlert
-            title={t('credential.PurgeUsersWarningAlertTitle')}
-            type="warning"
-            description={
-              <ul
-                style={{
-                  margin: 0,
-                  padding: 0,
-                  paddingTop: token.paddingXXS,
-                  listStyle: 'circle',
-                  listStylePosition: 'inside',
-                  maxHeight: 165,
-                  overflowY: 'auto',
-                }}
-              >
-                {_.map(users, (user) => (
-                  <li key={user.id}>{user.email}</li>
-                ))}
-              </ul>
-            }
-            showIcon
+      inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
+      cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
+      okText={t('credential.PermanentlyDelete')}
+      cancelText={t('button.Cancel')}
+      extraContent={
+        <VStack gap={1} align="stretch">
+          <CheckboxInput
+            label={t('credential.DeleteSharedVirtualFolders')}
+            value={purgeSharedVfolders}
+            onChange={setPurgeSharedVfolders}
           />
-
-          <BAIText>
-            {t('credential.UsersPermanentlyDeleteConfirmMessage')}
-          </BAIText>
-          <Form ref={formRef} style={{ marginBottom: token.marginSM }}>
-            <Form.Item
-              name="purgeSharedVfolders"
-              valuePropName="checked"
-              style={{ marginBottom: 0 }}
-            >
-              <Checkbox>{t('credential.DeleteSharedVirtualFolders')}</Checkbox>
-            </Form.Item>
-            <Form.Item
-              name="deleteModelServices"
-              valuePropName="checked"
-              style={{ marginBottom: 0 }}
-            >
-              <Checkbox>{t('credential.DeleteModelServicesAsWell')}</Checkbox>
-            </Form.Item>
-          </Form>
-        </BAIFlex>
+          <CheckboxInput
+            label={t('credential.DeleteDeploymentsAsWell')}
+            value={deleteModelServices}
+            onChange={setDeleteModelServices}
+          />
+        </VStack>
       }
+      onOk={handleAction}
     />
   );
 };

@@ -11,13 +11,11 @@ export default [
     ignores: [
       'node_modules/**',
       'dist/**',
-      'docs/**',
       'src/app/**',
       'src/plugin*/**',
       'src/wsproxy*/**',
       'src/plastics/**',
       'src/types/**',
-      'src/lib/**',
       'packages/eslint-config-bai/**',
       'react/**',
       'packages/**',

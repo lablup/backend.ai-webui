@@ -2,22 +2,29 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ConfigurableResourceCardQuery } from '../__generated__/ConfigurableResourceCardQuery.graphql';
+import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
+import { theme } from '../theme-shim';
 import MyResource from './MyResource';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from './TotalResourceWithinResourceGroup';
-import { SettingOutlined } from '@ant-design/icons';
-import { Button, Dropdown, type MenuProps, Skeleton, theme } from 'antd';
-import { filterOutEmpty, BAICard, BAICardProps } from 'backend.ai-ui';
-import _ from 'lodash';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
+import {
+  BAISkeleton,
+  filterOutEmpty,
+  BAICard,
+  BAICardProps,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { ConfigurableResourceCardQuery } from 'src/__generated__/ConfigurableResourceCardQuery.graphql';
-import { useCurrentUserRole } from 'src/hooks/backendai';
-import { useCurrentResourceGroupValue } from 'src/hooks/useCurrentProject';
 
 export type ResourcePanelType =
   | 'MyResource'
@@ -101,37 +108,38 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const menuItems: MenuProps['items'] = [
+  // antd `menu={{ items: [{ type: 'group', children }] }}` -> Astryx
+  // `items: [{ type: 'section', title, items }]` (MAPPING §3.7 — sections are
+  // native here, and better shaped than antd's `children` key).
+  const menuItems: Array<DropdownMenuOption> = [
     {
-      key: 'panel-settings',
-      label: t('session.PanelSettings'),
-      type: 'group',
-      children: _.map(panelOptions, (option) => ({
-        key: option.value,
+      type: 'section',
+      title: t('session.PanelSettings'),
+      items: _.map(panelOptions, (option) => ({
         label: option.label,
         onClick: () => setSelectedPanelType(option.value),
       })),
     },
   ];
 
+  // PILOT-DECISION: antd's `menu.selectable` + `defaultSelectedKeys` check mark
+  // on the active panel is DROPPED. `DropdownMenu` action items carry no
+  // selected state (only `DropdownMenuRadioGroup`, which is a compound-children
+  // form this three-entry menu does not warrant), and the card BELOW the button
+  // already shows which panel is active — the check was a second, weaker
+  // channel for the same information.
   const settingsButton = (
-    <Dropdown
-      menu={{
-        items: menuItems,
-        selectable: true,
-        defaultSelectedKeys: [currentPanelType],
+    <DropdownMenu
+      button={{
+        label: t('session.PanelSettings'),
+        icon: <Settings size="1em" />,
+        isIconOnly: true,
+        variant: 'ghost',
       }}
-      trigger={['click']}
-    >
-      <Button
-        type="text"
-        icon={<SettingOutlined />}
-        style={{
-          backgroundColor: 'transparent',
-          margin: -token.marginXS,
-        }}
-      />
-    </Dropdown>
+      hasChevron={false}
+      alignment="end"
+      items={menuItems}
+    />
   );
 
   const renderResourcePanel = () => {
@@ -163,16 +171,16 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   };
 
   return (
+    // The panel supplies its own inset, so the card must contribute none.
+    // `styles.body` is accepted and ignored by BAICard; `padding` is the knob.
     <BAICard
+      padding={0}
       {..._.omit(props, ['style'])}
       style={{ ...props.style }}
-      styles={{
-        body: { padding: 0 },
-      }}
     >
       <Suspense
         fallback={
-          <Skeleton active style={{ padding: `0px ${token.marginMD}px` }} />
+          <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
         }
       >
         {renderResourcePanel()}

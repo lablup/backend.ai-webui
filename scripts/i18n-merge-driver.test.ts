@@ -1,15 +1,15 @@
-import { readFileSync } from "fs";
+import { mkdtempSync, rmSync, writeFileSync } from "fs";
+import { tmpdir } from "os";
+import { join } from "path";
 
-// Mock fs functions
-jest.mock("fs", () => ({
-  readFileSync: jest.fn(),
-}));
-
-// Mock process.exit to avoid test termination
-const mockExit = jest.fn();
+// Mock process.exit to avoid test termination if the driver triggers it.
+const mockExit = vi.fn();
 process.exit = mockExit as any;
 
-// Import functions from the actual implementation
+// Import functions from the actual CJS driver. Using `require()` (not
+// `vi.mock`) — the driver itself does `require("fs")` internally, and that
+// CJS require slips past Vitest's module mock transform. Tests below that
+// need to exercise file IO use real temp files instead of mocks.
 const {
   readJSON,
   deepEqual,
@@ -18,30 +18,36 @@ const {
   pathKey,
 } = require("./i18n-merge-driver");
 
-const mockReadFileSync = readFileSync as jest.MockedFunction<
-  typeof readFileSync
->;
-
 describe("i18n-merge-driver utility functions", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("readJSON", () => {
+    let tmpDir: string;
+
+    beforeEach(() => {
+      tmpDir = mkdtempSync(join(tmpdir(), "i18n-merge-driver-test-"));
+    });
+
+    afterEach(() => {
+      rmSync(tmpDir, { recursive: true, force: true });
+    });
+
     it("should parse JSON from file correctly", () => {
-      const mockData = '{"test": "value"}';
-      mockReadFileSync.mockReturnValue(mockData);
+      const file = join(tmpDir, "valid.json");
+      writeFileSync(file, '{"test": "value"}', "utf8");
 
-      const result = readJSON("test.json");
+      const result = readJSON(file);
 
-      expect(mockReadFileSync).toHaveBeenCalledWith("test.json", "utf8");
       expect(result).toEqual({ test: "value" });
     });
 
     it("should throw error for invalid JSON", () => {
-      mockReadFileSync.mockReturnValue("{invalid json}");
+      const file = join(tmpDir, "invalid.json");
+      writeFileSync(file, "{invalid json}", "utf8");
 
-      expect(() => readJSON("invalid.json")).toThrow();
+      expect(() => readJSON(file)).toThrow();
     });
   });
 
@@ -193,7 +199,7 @@ describe("i18n-merge-driver utility functions", () => {
 
 describe("i18n-merge-driver integration scenarios", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("should handle typical i18n merge scenario without conflicts", () => {

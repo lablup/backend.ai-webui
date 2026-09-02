@@ -9,7 +9,6 @@ import {
   type ExtractResultError,
   type ExtractResultValue,
 } from './resultTypes';
-import { describe, expect, it } from '@jest/globals';
 
 describe('resultTypes utilities', () => {
   describe('isOkResult', () => {

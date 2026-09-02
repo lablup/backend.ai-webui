@@ -2,12 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import QuestionIconWithTooltip from './QuestionIconWithTooltip';
-import { App, Checkbox, Form, InputNumber } from 'antd';
-import { FormInstance } from 'antd/lib';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import BAIFormItem from './BAIFormItem';
+import {
+  AstryxFormCheckbox,
+  AstryxFormNumberInput,
+} from './astryxFormControls';
+import {
+  BAIQuestionIconWithTooltip,
+  BAIModal,
+  BAIModalProps,
+  BAIFlex,
+} from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -45,7 +54,7 @@ const OverlayNetworkSettingModal = ({
       title={
         <BAIFlex gap="xxs">
           {t('settings.OverlayNetworkSettings')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('settings.OverlayNetworkSettingsDescription')}
           />
         </BAIFlex>
@@ -99,7 +108,11 @@ const OverlayNetworkSettingModal = ({
       destroyOnHidden
     >
       <Form ref={formRef} layout="vertical">
-        <Form.Item label="MTU" tooltip={t('settings.MTUDescription')} required>
+        <BAIFormItem
+          label="MTU"
+          tooltip={t('settings.MTUDescription')}
+          required
+        >
           <BAIFlex gap="sm" align="center">
             <Form.Item noStyle dependencies={['mtu_checkbox']}>
               {() => {
@@ -126,10 +139,13 @@ const OverlayNetworkSettingModal = ({
                       },
                     ]}
                   >
-                    <InputNumber
-                      style={{
-                        flex: 1,
-                      }}
+                    {/* No wrapper element here: `Form.Item` clones its DIRECT
+                        child, so a `<div style={{flex:1}}>` in between
+                        swallowed `value`/`onChange` and the field never bound.
+                        The adapter already defaults to `width="100%"`, which
+                        is what the flex wrapper was for. */}
+                    <AstryxFormNumberInput
+                      label="MTU"
                       min={0}
                       max={15000}
                       disabled={
@@ -142,21 +158,20 @@ const OverlayNetworkSettingModal = ({
               }}
             </Form.Item>
             <Form.Item noStyle name="mtu_checkbox" valuePropName="checked">
-              <Checkbox
+              <AstryxFormCheckbox
+                label={t('settings.Unset')}
                 disabled={isFetchingMtu}
-                onChange={(e) => {
-                  if (e.target.checked) {
+                onChange={(checked) => {
+                  if (checked) {
                     formRef.current?.setFieldsValue({
                       mtu: null,
                     });
                   }
                 }}
-              >
-                {t('settings.Unset')}
-              </Checkbox>
+              />
             </Form.Item>
           </BAIFlex>
-        </Form.Item>
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

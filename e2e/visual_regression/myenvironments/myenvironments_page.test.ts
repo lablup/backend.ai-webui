@@ -15,8 +15,10 @@ test.describe(
       await expect(page.getByRole('button', { name: 'setting' })).toBeVisible();
     });
 
-    // FIXME: Test fails in beforeEach - setting button not visible
-    // The my-environment page might have changed and no longer has a setting button in the expected location
+    // FIXME(FR-3111/stale-baseline): The My Environments page was redesigned and the
+    // 'setting' button the beforeEach anchors on moved/renamed, so
+    // `snapshot/myenvironments-page.png` reflects the old layout.
+    // Locator fix + baseline refresh deferred to FR-3115 (frozen backend).
     test.fixme(`my environments full page`, async ({ page }) => {
       await expect(page).toHaveScreenshot('myenvironments_page.png', {
         fullPage: true,
@@ -24,7 +26,8 @@ test.describe(
       });
     });
 
-    // FIXME: Test fails in beforeEach - setting button not visible
+    // FIXME(FR-3111/stale-baseline): Same My Environments redesign —
+    // `snapshot/column-setting-modal.png` is stale. Deferred to FR-3115.
     test.fixme('column setting modal', async ({ page }) => {
       await page.getByRole('button', { name: 'setting' }).click();
       const columnSettingModal = page.locator('div.ant-modal').first();

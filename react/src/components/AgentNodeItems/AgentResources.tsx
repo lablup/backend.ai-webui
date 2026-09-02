@@ -2,13 +2,19 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AgentResourcesFragment$key } from '../../__generated__/AgentResourcesFragment.graphql';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
 import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Col, Descriptions, Row, Tooltip } from 'antd';
+import { HStack } from '@astryxdesign/core';
+import { Grid } from '@astryxdesign/core/Grid';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
-  BAIButton,
+  BAICard,
   BAIFlex,
+  BAIMetadataList,
+  BAIMetadataListItem,
   BAIText,
   convertToBinaryUnit,
   convertToDecimalUnit,
@@ -16,13 +22,12 @@ import {
   ResourceSlotName,
   ResourceTypeIcon,
   toFixedFloorWithoutTrailingZeros,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Info } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { AgentResourcesFragment$key } from 'src/__generated__/AgentResourcesFragment.graphql';
 
 interface AgentResourcesProps {
   agentNodeFrgmt?: AgentResourcesFragment$key | null;
@@ -60,99 +65,93 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
 
   return (
     <>
-      <Descriptions bordered column={1} labelStyle={{ wordBreak: 'keep-all' }}>
-        <Descriptions.Item label={t('agent.ResourceAllocation')}>
-          <Row gutter={[16, 16]}>
-            {_.map(
-              parsedAvailableSlots,
-              (_value: string | number, key: ResourceSlotName) => {
-                if (key === 'cpu') {
-                  const cpuOccupiedSlot = parseFloat(
-                    parsedOccupiedSlots.cpu ?? '0',
-                  );
-                  const cpuAvailableSlot = parseFloat(
-                    parsedAvailableSlots.cpu ?? '0',
-                  );
-                  return (
-                    <Col xs={24} sm={12} key={key}>
-                      <BAIFlex direction="column" align="stretch" gap={3}>
-                        <SimpleProgressWithLabel
-                          key="cpu"
-                          size="default"
-                          title={
-                            <BAIFlex gap="xxs">
-                              <ResourceTypeIcon key={key} type={key} />
-                              {
-                                mergedResourceSlots?.['cpu']
-                                  ?.human_readable_name
-                              }
-                            </BAIFlex>
-                          }
-                          percent={_.toFinite(
-                            (_.toNumber(parsedOccupiedSlots.cpu ?? 0) /
-                              _.toNumber(parsedAvailableSlots.cpu ?? 1)) *
-                              100,
-                          ).toString()}
-                          description={`${cpuOccupiedSlot} / ${cpuAvailableSlot} ${mergedResourceSlots?.['cpu']?.display_unit}`}
-                        />
-                      </BAIFlex>
-                    </Col>
-                  );
-                } else if (key === 'mem') {
-                  const memOccupiedSlot = convertToBinaryUnit(
-                    parsedOccupiedSlots.mem || '0',
-                    'g',
-                    0,
-                  );
-                  const memAvailableSlot = convertToBinaryUnit(
-                    parsedAvailableSlots.mem || '0',
-                    'g',
-                    0,
-                  );
+      {/* Dropped from the antd original: `labelStyle` word-break. */}
+      <BAICard>
+        <BAIMetadataList columns="single">
+          <MetadataListItem label={t('agent.ResourceAllocation')}>
+            {/* antd Row gutter={[16,16]} + Col xs={24} sm={12} (uniform 2-up
+                from 576px) → Grid columns={{minWidth:280, max:2}}
+                (RESPONSIVE-POLICY R1, container-driven). The gutter is 2, not
+                the mapped 4: a cell is now a whole progress block, so the gap
+                separates blocks rather than a label from its own bar. */}
+            <Grid columns={{ minWidth: 280, max: 2 }} gap={2}>
+              {_.map(
+                parsedAvailableSlots,
+                (_value: string | number, key: ResourceSlotName) => {
+                  if (key === 'cpu') {
+                    const cpuOccupiedSlot = parseFloat(
+                      parsedOccupiedSlots.cpu ?? '0',
+                    );
+                    const cpuAvailableSlot = parseFloat(
+                      parsedAvailableSlots.cpu ?? '0',
+                    );
+                    return (
+                      <SimpleProgressWithLabel
+                        key={key}
+                        size="default"
+                        title={
+                          <BAIFlex gap="xxs">
+                            <ResourceTypeIcon key={key} type={key} />
+                            {mergedResourceSlots?.['cpu']?.human_readable_name}
+                          </BAIFlex>
+                        }
+                        percent={_.toFinite(
+                          (_.toNumber(parsedOccupiedSlots.cpu ?? 0) /
+                            _.toNumber(parsedAvailableSlots.cpu ?? 1)) *
+                            100,
+                        ).toString()}
+                        description={`${cpuOccupiedSlot} / ${cpuAvailableSlot} ${mergedResourceSlots?.['cpu']?.display_unit}`}
+                      />
+                    );
+                  } else if (key === 'mem') {
+                    const memOccupiedSlot = convertToBinaryUnit(
+                      parsedOccupiedSlots.mem || '0',
+                      'g',
+                      0,
+                    );
+                    const memAvailableSlot = convertToBinaryUnit(
+                      parsedAvailableSlots.mem || '0',
+                      'g',
+                      0,
+                    );
 
-                  return (
-                    <Col xs={24} sm={12} key={key}>
-                      <BAIFlex direction="column" align="stretch" gap={3}>
-                        <SimpleProgressWithLabel
-                          key={'mem'}
-                          size="default"
-                          title={
-                            <BAIFlex gap="xxs">
-                              <ResourceTypeIcon key={key} type={key} />
-                              {
-                                mergedResourceSlots?.['mem']
-                                  ?.human_readable_name
-                              }
-                            </BAIFlex>
-                          }
-                          percent={_.toFinite(
-                            ((memOccupiedSlot?.number ?? 0) /
-                              (memAvailableSlot?.number ?? 1)) *
-                              100,
-                          ).toString()}
-                          description={`${toFixedFloorWithoutTrailingZeros(
-                            memOccupiedSlot?.numberFixed || 0,
-                            2,
-                          )}${memOccupiedSlot?.displayUnit} / ${toFixedFloorWithoutTrailingZeros(
-                            memAvailableSlot?.numberFixed || 0,
-                            2,
-                          )}${memAvailableSlot?.displayUnit}`}
-                        />
-                      </BAIFlex>
-                    </Col>
-                  );
-                } else if (parsedAvailableSlots[key]) {
-                  const roundLength =
-                    mergedResourceSlots?.[key]?.number_format?.round_length ||
-                    0;
-                  const formatSlotValue = (v: string | undefined | number) => {
-                    const str = String(v ?? 0);
-                    return roundLength > 0
-                      ? parseFloat(str).toFixed(roundLength)
-                      : str;
-                  };
-                  return (
-                    <Col xs={24} sm={12} key={key}>
+                    return (
+                      <SimpleProgressWithLabel
+                        key={key}
+                        size="default"
+                        title={
+                          <BAIFlex gap="xxs">
+                            <ResourceTypeIcon key={key} type={key} />
+                            {mergedResourceSlots?.['mem']?.human_readable_name}
+                          </BAIFlex>
+                        }
+                        percent={_.toFinite(
+                          ((memOccupiedSlot?.number ?? 0) /
+                            (memAvailableSlot?.number ?? 1)) *
+                            100,
+                        ).toString()}
+                        description={`${toFixedFloorWithoutTrailingZeros(
+                          memOccupiedSlot?.numberFixed || 0,
+                          2,
+                        )}${memOccupiedSlot?.displayUnit} / ${toFixedFloorWithoutTrailingZeros(
+                          memAvailableSlot?.numberFixed || 0,
+                          2,
+                        )}${memAvailableSlot?.displayUnit}`}
+                      />
+                    );
+                  } else if (parsedAvailableSlots[key]) {
+                    const roundLength =
+                      mergedResourceSlots?.[key]?.number_format?.round_length ||
+                      0;
+                    const formatSlotValue = (
+                      v: string | undefined | number,
+                    ) => {
+                      const str = String(v ?? 0);
+                      return roundLength > 0
+                        ? parseFloat(str).toFixed(roundLength)
+                        : str;
+                    };
+                    return (
                       <SimpleProgressWithLabel
                         key={key}
                         size="default"
@@ -169,21 +168,23 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                         ).toString()}
                         description={`${formatSlotValue(parsedOccupiedSlots[key])} / ${formatSlotValue(parsedAvailableSlots[key])} ${mergedResourceSlots?.[key]?.display_unit}`}
                       />
-                    </Col>
-                  );
-                }
-              },
-            )}
-          </Row>
-        </Descriptions.Item>
-        {!_.isEmpty(agent?.gpu_alloc_map) && (
-          <Descriptions.Item label={t('agent.AcceleratorAllocations')}>
-            <Row gutter={[16, 8]}>
-              {_.map(
-                agent?.gpu_alloc_map as Record<string, number> | null,
-                (count, deviceId) => (
-                  <Col xs={24} sm={12} key={deviceId}>
-                    <BAIFlex justify="between" gap="xxs">
+                    );
+                  }
+                },
+              )}
+            </Grid>
+          </MetadataListItem>
+          {!_.isEmpty(agent?.gpu_alloc_map) && (
+            <MetadataListItem label={t('agent.AcceleratorAllocations')}>
+              <Grid
+                columns={{ minWidth: 280, max: 2 }}
+                columnGap={4}
+                rowGap={2}
+              >
+                {_.map(
+                  agent?.gpu_alloc_map as Record<string, number> | null,
+                  (count, deviceId) => (
+                    <BAIFlex key={deviceId} justify="between" gap="xxs">
                       <BAIText
                         ellipsis={{ tooltip: true }}
                         style={{ maxWidth: 140 }}
@@ -193,209 +194,208 @@ const AgentResources: React.FC<AgentResourcesProps> = ({ agentNodeFrgmt }) => {
                       </BAIText>
                       <BAIText>{count}</BAIText>
                     </BAIFlex>
-                  </Col>
-                ),
-              )}
-            </Row>
-          </Descriptions.Item>
-        )}
-        <Descriptions.Item
-          label={
-            <BAIFlex>
-              {t('agent.Utilization')}
-              <Tooltip title={t('agent.DetailedInformation')}>
-                <BAIButton
-                  type="link"
-                  icon={<InfoCircleOutlined />}
+                  ),
+                )}
+              </Grid>
+            </MetadataListItem>
+          )}
+          {/* The antd Tooltip+icon-Button keeps its position AFTER the label
+              text: BAIMetadataListItem widens Astryx's string-typed `label` to
+              a node, so the pair composes the same way it did under antd. */}
+          <BAIMetadataListItem
+            label={
+              <HStack>
+                {t('agent.Utilization')}
+                <IconButton
+                  icon={<Info size="1em" />}
+                  label={t('agent.DetailedInformation')}
+                  tooltip={t('agent.DetailedInformation')}
+                  variant="ghost"
+                  size="sm"
+                  style={{ color: 'inherit' }}
                   onClick={() => {
                     setOpenInfoModal(true);
                   }}
                 />
-              </Tooltip>
-            </BAIFlex>
-          }
-        >
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} key={'cpu_util'}>
-              <SimpleProgressWithLabel
-                key={'cpu_util'}
-                size="default"
-                title={mergedResourceSlots?.cpu?.human_readable_name}
-                percent={(
-                  Math.min(
-                    _.toFinite(parsedLiveStat?.node?.cpu_util?.pct) /
-                      100 /
-                      (_.keys(parsedLiveStat?.devices?.cpu_util).length || 1),
-                    1,
-                  ) * 100
-                ).toString()}
-                description={`${toFixedFloorWithoutTrailingZeros(
-                  Math.min(
-                    _.toFinite(parsedLiveStat?.node?.cpu_util?.pct) /
-                      100 /
-                      (_.keys(parsedLiveStat?.devices?.cpu_util).length || 1),
-                    1,
-                  ) * 100,
-                  2,
-                )}%`}
-              />
-            </Col>
-            <Col xs={24} sm={12} key={'mem'}>
-              <SimpleProgressWithLabel
-                key={'mem'}
-                size="default"
-                title={mergedResourceSlots?.mem?.human_readable_name}
-                percent={toFixedFloorWithoutTrailingZeros(
-                  (parsedLiveStat?.node?.mem?.current /
-                    (parsedAvailableSlots?.mem ||
-                      parsedLiveStat?.node?.mem?.capacity)) *
-                    100 || 0,
-                  2,
-                )}
-                description={`${toFixedFloorWithoutTrailingZeros(
-                  convertToBinaryUnit(
-                    parsedLiveStat?.node?.mem?.current || '0',
-                    convertUnitValue(
-                      _.toString(parsedLiveStat?.node?.mem.capacity),
+              </HStack>
+            }
+          >
+            {_.isEmpty(parsedLiveStat?.node) ? (
+              <BAIText type="secondary">-</BAIText>
+            ) : (
+              <Grid columns={{ minWidth: 280, max: 2 }} gap={2}>
+                <SimpleProgressWithLabel
+                  key={'cpu_util'}
+                  size="default"
+                  title={mergedResourceSlots?.cpu?.human_readable_name}
+                  percent={(
+                    Math.min(
+                      _.toFinite(parsedLiveStat?.node?.cpu_util?.pct) /
+                        100 /
+                        (_.keys(parsedLiveStat?.devices?.cpu_util).length || 1),
+                      1,
+                    ) * 100
+                  ).toString()}
+                  description={`${toFixedFloorWithoutTrailingZeros(
+                    Math.min(
+                      _.toFinite(parsedLiveStat?.node?.cpu_util?.pct) /
+                        100 /
+                        (_.keys(parsedLiveStat?.devices?.cpu_util).length || 1),
+                      1,
+                    ) * 100,
+                    2,
+                  )}%`}
+                />
+                <SimpleProgressWithLabel
+                  key={'mem'}
+                  size="default"
+                  title={mergedResourceSlots?.mem?.human_readable_name}
+                  percent={toFixedFloorWithoutTrailingZeros(
+                    (parsedLiveStat?.node?.mem?.current /
+                      (parsedAvailableSlots?.mem ||
+                        parsedLiveStat?.node?.mem?.capacity)) *
+                      100 || 0,
+                    2,
+                  )}
+                  description={`${toFixedFloorWithoutTrailingZeros(
+                    convertToBinaryUnit(
+                      parsedLiveStat?.node?.mem?.current || '0',
+                      convertUnitValue(
+                        _.toString(parsedLiveStat?.node?.mem?.capacity),
+                        'auto',
+                      )?.unit || 'g',
+                    )?.number || 0,
+                    2,
+                  )} / ${toFixedFloorWithoutTrailingZeros(
+                    convertToBinaryUnit(
+                      parsedAvailableSlots?.mem ||
+                        parsedLiveStat?.node?.mem?.capacity ||
+                        '0',
+                      convertUnitValue(
+                        _.toString(
+                          parsedAvailableSlots?.mem ||
+                            parsedLiveStat?.node?.mem?.capacity,
+                        ),
+                        'auto',
+                      )?.unit || 'g',
+                    )?.number || 0,
+                    2,
+                  )}${
+                    convertToBinaryUnit(
+                      parsedLiveStat?.node?.mem?.capacity || '0',
+                      convertUnitValue(
+                        _.toString(parsedLiveStat?.node?.mem?.capacity),
+                        'auto',
+                      )?.unit || 'g',
+                    )?.displayUnit
+                  }  (${toFixedFloorWithoutTrailingZeros(
+                    parsedLiveStat?.node?.mem?.pct || 0,
+                    2,
+                  )}%)`}
+                />
+                {_.map(_.keys(parsedLiveStat?.node), (statKey) => {
+                  if (['cpu_util', 'mem', 'disk'].includes(statKey)) {
+                    return null;
+                  }
+                  if (_.includes(statKey, '_util')) {
+                    const deviceName =
+                      _.split(statKey, '_').slice(0, -1).join('-') + '.device';
+                    const current = _.toFinite(
+                      parsedLiveStat?.node?.[statKey]?.current,
+                    );
+                    const capacity =
+                      _.toFinite(parsedLiveStat?.node?.[statKey]?.capacity) ||
+                      100;
+                    const percent = (current / capacity) * 100 || 0;
+                    return (
+                      <SimpleProgressWithLabel
+                        key={statKey}
+                        size="default"
+                        title={`${mergedResourceSlots?.[deviceName]?.human_readable_name}(util)`}
+                        percent={toFixedFloorWithoutTrailingZeros(percent, 1)}
+                        description={`${toFixedFloorWithoutTrailingZeros(percent, 1)}%`}
+                      />
+                    );
+                  }
+                  if (_.includes(statKey, '_mem')) {
+                    const deviceName =
+                      _.split(statKey, '_').slice(0, -1).join('-') + '.device';
+                    const current = _.toFinite(
+                      parsedLiveStat?.node?.[statKey]?.current,
+                    );
+                    const capacity = _.toFinite(
+                      parsedLiveStat?.node?.[statKey]?.capacity,
+                    );
+                    const baseUnit =
+                      convertUnitValue(_.toString(capacity), 'auto')?.unit ||
+                      'g';
+                    const percent = (current / capacity) * 100 || 0;
+                    return (
+                      <SimpleProgressWithLabel
+                        key={statKey}
+                        size="default"
+                        title={`${mergedResourceSlots?.[deviceName]?.human_readable_name}(mem)`}
+                        percent={toFixedFloorWithoutTrailingZeros(percent, 1)}
+                        description={`${
+                          convertToBinaryUnit(_.toString(current), baseUnit)
+                            ?.numberFixed
+                        } / ${
+                          convertToBinaryUnit(_.toString(capacity), baseUnit)
+                            ?.displayValue
+                        }`}
+                      />
+                    );
+                  }
+                  if (_.includes(statKey, '_power')) {
+                    const deviceName =
+                      _.split(statKey, '_').slice(0, -1).join('-') + '.device';
+                    const humanReadableName =
+                      mergedResourceSlots?.[deviceName]?.human_readable_name;
+                    return (
+                      <BAIFlex key={statKey} justify="between" gap="xxs">
+                        <BAIText>{`${humanReadableName}(power)`}</BAIText>
+                        <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} ${parsedLiveStat?.node?.[statKey]?.unit_hint ?? ''}`}</BAIText>
+                      </BAIFlex>
+                    );
+                  }
+                  if (_.includes(statKey, '_temperature')) {
+                    const deviceName =
+                      _.split(statKey, '_').slice(0, -1).join('-') + '.device';
+                    const humanReadableName =
+                      mergedResourceSlots?.[deviceName]?.human_readable_name;
+                    return (
+                      <BAIFlex key={statKey} justify="between" gap="xxs">
+                        <BAIText>{`${humanReadableName}(temp)`}</BAIText>
+                        <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} °C`}</BAIText>
+                      </BAIFlex>
+                    );
+                  }
+                  if (['net_rx', 'net_tx'].includes(statKey)) {
+                    const convertedValue = convertToDecimalUnit(
+                      parsedLiveStat?.node?.[statKey]?.current,
                       'auto',
-                    )?.unit || 'g',
-                  )?.number || 0,
-                  2,
-                )} / ${toFixedFloorWithoutTrailingZeros(
-                  convertToBinaryUnit(
-                    parsedAvailableSlots?.mem ||
-                      parsedLiveStat?.node?.mem?.capacity ||
-                      '0',
-                    convertUnitValue(
-                      _.toString(
-                        parsedAvailableSlots?.mem ||
-                          parsedLiveStat?.node?.mem.capacity,
-                      ),
-                      'auto',
-                    )?.unit || 'g',
-                  )?.number || 0,
-                  2,
-                )}${
-                  convertToBinaryUnit(
-                    parsedLiveStat?.node?.mem?.capacity || '0',
-                    convertUnitValue(
-                      _.toString(parsedLiveStat?.node?.mem.capacity),
-                      'auto',
-                    )?.unit || 'g',
-                  )?.displayUnit
-                }  (${toFixedFloorWithoutTrailingZeros(
-                  parsedLiveStat?.node?.mem?.pct || 0,
-                  2,
-                )}%)`}
-              />
-            </Col>
-            {_.map(_.keys(parsedLiveStat?.node), (statKey) => {
-              if (['cpu_util', 'mem', 'disk'].includes(statKey)) {
-                return null;
-              }
-              if (_.includes(statKey, '_util')) {
-                const deviceName = _.split(statKey, '_')[0] + '.device';
-                const current = _.toFinite(
-                  parsedLiveStat?.node?.[statKey]?.current,
-                );
-                const capacity =
-                  _.toFinite(parsedLiveStat?.node?.[statKey]?.capacity) || 100;
-                const percent = (current / capacity) * 100 || 0;
-                return (
-                  <Col xs={24} sm={12} key={statKey}>
-                    <SimpleProgressWithLabel
-                      size="default"
-                      title={`${mergedResourceSlots?.[deviceName]?.human_readable_name}(util)`}
-                      percent={toFixedFloorWithoutTrailingZeros(percent, 1)}
-                      description={`${toFixedFloorWithoutTrailingZeros(percent, 1)}%`}
-                    />
-                  </Col>
-                );
-              }
-              if (_.includes(statKey, '_mem')) {
-                const deviceName = _.split(statKey, '_')[0] + '.device';
-                const current = _.toFinite(
-                  parsedLiveStat?.node?.[statKey]?.current,
-                );
-                const capacity = _.toFinite(
-                  parsedLiveStat?.node?.[statKey]?.capacity,
-                );
-                const baseUnit =
-                  convertUnitValue(_.toString(capacity), 'auto')?.unit || 'g';
-                const percent = (current / capacity) * 100 || 0;
-                return (
-                  <Col xs={24} sm={12} key={statKey}>
-                    <SimpleProgressWithLabel
-                      size="default"
-                      title={`${mergedResourceSlots?.[deviceName]?.human_readable_name}(mem)`}
-                      percent={toFixedFloorWithoutTrailingZeros(percent, 1)}
-                      description={`${
-                        convertToBinaryUnit(_.toString(current), baseUnit)
-                          ?.numberFixed
-                      } / ${
-                        convertToBinaryUnit(_.toString(capacity), baseUnit)
-                          ?.displayValue
-                      }`}
-                    />
-                  </Col>
-                );
-              }
-              if (_.includes(statKey, '_power')) {
-                const deviceName =
-                  _.split(statKey, '_').slice(0, -1).join('-') + '.device';
-                const humanReadableName =
-                  mergedResourceSlots?.[deviceName]?.human_readable_name;
-                return (
-                  <Col xs={24} sm={12} key={statKey}>
-                    <BAIFlex justify="between" gap="xxs">
-                      <BAIText>{`${humanReadableName}(power)`}</BAIText>
-                      <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} ${parsedLiveStat?.node?.[statKey]?.unit_hint ?? ''}`}</BAIText>
+                    );
+                    return (
+                      <BAIFlex key={statKey} justify="between" gap="xxs">
+                        <BAIText>
+                          {statKey === 'net_rx' ? 'Net Rx' : 'Net Tx'}
+                        </BAIText>
+                        <BAIText>{`${convertedValue?.numberFixed ?? 0} ${convertedValue?.unit.toUpperCase() ?? ''}bps`}</BAIText>
+                      </BAIFlex>
+                    );
+                  }
+                  return (
+                    <BAIFlex key={statKey} justify="between" gap="xxs">
+                      <BAIText>{statKey}</BAIText>
+                      <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current ?? 0, 2)}${parsedLiveStat?.node?.[statKey]?.unit_hint ? ` ${parsedLiveStat?.node?.[statKey]?.unit_hint}` : ''}`}</BAIText>
                     </BAIFlex>
-                  </Col>
-                );
-              }
-              if (_.includes(statKey, '_temperature')) {
-                const deviceName =
-                  _.split(statKey, '_').slice(0, -1).join('_') + '.device';
-                const humanReadableName =
-                  mergedResourceSlots?.[deviceName]?.human_readable_name;
-                return (
-                  <Col xs={24} sm={12} key={statKey}>
-                    <BAIFlex justify="between" gap="xxs">
-                      <BAIText>{`${humanReadableName}(temp)`}</BAIText>
-                      <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current, 2)} °C`}</BAIText>
-                    </BAIFlex>
-                  </Col>
-                );
-              }
-              if (['net_rx', 'net_tx'].includes(statKey)) {
-                const convertedValue = convertToDecimalUnit(
-                  parsedLiveStat?.node?.[statKey]?.current,
-                  'auto',
-                );
-                return (
-                  <Col xs={24} sm={12} key={statKey}>
-                    <BAIFlex justify="between" gap="xxs">
-                      <BAIText>
-                        {statKey === 'net_rx' ? 'Net Rx' : 'Net Tx'}
-                      </BAIText>
-                      <BAIText>{`${convertedValue?.numberFixed ?? 0} ${convertedValue?.unit.toUpperCase() ?? ''}bps`}</BAIText>
-                    </BAIFlex>
-                  </Col>
-                );
-              }
-              return (
-                <Col xs={24} sm={12} key={statKey}>
-                  <BAIFlex justify="between" gap="xxs">
-                    <BAIText>{statKey}</BAIText>
-                    <BAIText>{`${toFixedFloorWithoutTrailingZeros(parsedLiveStat?.node?.[statKey]?.current ?? 0, 2)}${parsedLiveStat?.node?.[statKey]?.unit_hint ? ` ${parsedLiveStat?.node?.[statKey]?.unit_hint}` : ''}`}</BAIText>
-                  </BAIFlex>
-                </Col>
-              );
-            })}
-          </Row>
-        </Descriptions.Item>
-      </Descriptions>
+                  );
+                })}
+              </Grid>
+            )}
+          </BAIMetadataListItem>
+        </BAIMetadataList>
+      </BAICard>
       <AgentDetailModal
         agentNodeFrgmt={agent}
         open={openInfoModal}

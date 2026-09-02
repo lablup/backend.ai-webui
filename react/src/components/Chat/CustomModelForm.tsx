@@ -2,12 +2,18 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import EndpointTokenSelect from './EndpointTokenSelect';
-import { ReloadOutlined } from '@ant-design/icons';
+// `Form`/`FormInstance` state engine stays (SHIM); visuals are BAIFormItem.
+import { Form } from '../../form-engine';
+import type { FormInstance } from '../../form-engine';
+import { theme } from '../../theme-shim';
+import BAIFormItem from '../BAIFormItem';
+import { AstryxFormTextInput } from '../astryxFormControls';
+import DeploymentTokenSelect from './DeploymentTokenSelect';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
 import useResizeObserver from '@react-hook/resize-observer';
-import { Alert, Button, Form, Input, theme } from 'antd';
-import type { FormInstance } from 'antd';
 import { BAIFlex } from 'backend.ai-ui';
+import { RotateCw } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,22 +24,25 @@ export type CustomModelFormValues = {
 };
 
 type CustomModelFormProps = {
-  endpointUrl?: string;
+  deploymentUrl?: string;
   basePath?: string;
   token?: string;
-  endpointId?: string | null;
+  deploymentId?: string | null;
   loading: boolean;
+  hasNoDesiredReplicas?: boolean;
   onSubmit?: (formData: CustomModelFormValues) => void;
 };
 
 const CustomModelForm: React.FC<CustomModelFormProps> = ({
-  endpointUrl,
+  deploymentUrl,
   basePath,
   token,
-  endpointId,
+  deploymentId,
   loading,
+  hasNoDesiredReplicas,
   onSubmit,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token: themeToken } = theme.useToken();
   const formRef = useRef<FormInstance>(null);
@@ -62,42 +71,60 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
         layout="horizontal"
         size="small"
         style={{ flex: 1 }}
-        key={endpointUrl}
+        key={deploymentUrl}
         initialValues={{
           basePath: basePath,
           token: token,
         }}
       >
-        <div style={{ marginBottom: themeToken.size }}>
-          <Alert type="warning" showIcon title={t('chatui.CannotFindModel')} />
-        </div>
-        <Form.Item label={t('modelService.BasePath')} name="basePath">
-          <Input
-            placeholder="v1"
-            prefix={shrinkControlSize ? undefined : endpointUrl}
+        {hasNoDesiredReplicas ? (
+          <Banner
+            status="warning"
+            title={t('chatui.NoDesiredReplicas')}
+            style={{ marginBottom: themeToken.size }}
           />
-        </Form.Item>
-        <Form.Item label={t('modelService.Token')} name="token">
-          <EndpointTokenSelect
+        ) : null}
+        <Banner
+          status="warning"
+          title={t('chatui.CannotFindModel')}
+          style={{ marginBottom: themeToken.size }}
+        />
+        <BAIFormItem label={t('modelService.BasePath')} name="basePath">
+          {/* PILOT-DECISION: antd `Input prefix={deploymentUrl}` showed the
+              deployment's base URL as a visual continuation before the path
+              input (e.g. "https://host/" + "v1"). `TextInput.startIcon` is
+              icon-only (MAPPING.md §3.6); an arbitrary text-node prefix needs
+              `InputGroup`, disproportionate for a decorative hint here —
+              dropped (simplicity policy). The URL is still shown in the page
+              header above this form. */}
+          <AstryxFormTextInput
+            label={t('modelService.BasePath')}
+            placeholder="v1"
+            disabled={loading}
+          />
+        </BAIFormItem>
+        <BAIFormItem label={t('modelService.Token')} name="token">
+          <DeploymentTokenSelect
             loading={loading}
-            endpointId={endpointId}
+            disabled={loading}
+            deploymentId={deploymentId}
             style={{
               width: shrinkControlSize ? '100%' : '200px',
             }}
           />
-        </Form.Item>
+        </BAIFormItem>
         <Button
-          icon={<ReloadOutlined />}
-          loading={loading}
+          icon={<RotateCw size="1em" />}
+          isLoading={loading}
+          variant="secondary"
+          label={t('button.RefreshModelInformation')}
           onClick={() => {
             onSubmit?.({
               basePath: formRef.current?.getFieldValue('basePath') ?? '',
               token: formRef.current?.getFieldValue('token'),
             });
           }}
-        >
-          {t('button.RefreshModelInformation')}
-        </Button>
+        />
       </Form>
     </BAIFlex>
   );

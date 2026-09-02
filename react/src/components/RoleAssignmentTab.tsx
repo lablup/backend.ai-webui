@@ -2,87 +2,83 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RoleAssignmentTabBulkAssignMutation } from '../__generated__/RoleAssignmentTabBulkAssignMutation.graphql';
 import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
 import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
-import { RoleAssignmentOrderBy } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+import {
+  RoleAssignmentFilter,
+  RoleAssignmentOrderBy,
+} from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
+import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
 import AssignRoleModal from './AssignRoleModal';
-import { App, Tooltip, theme } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIButton,
+  BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAISelectionLabel,
   BAITable,
-  BAITrashBinIcon,
-  type GraphQLFilter,
+  BAIUnmountAfterClose,
+  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import { PlusIcon } from 'lucide-react';
-import {
-  parseAsInteger,
-  parseAsJson,
-  parseAsStringLiteral,
-  useQueryStates,
-} from 'nuqs';
+import * as _ from 'lodash-es';
+import { Trash2, PlusIcon } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment, useMutation } from 'react-relay';
-import { useSetBAINotification } from 'src/hooks/useBAINotification';
+import { graphql, useRefetchableFragment } from 'react-relay';
 
-const assignmentOrderValues = [
-  'EMAIL_ASC',
-  'EMAIL_DESC',
-  'USERNAME_ASC',
-  'USERNAME_DESC',
-  'GRANTED_AT_ASC',
-  'GRANTED_AT_DESC',
-] as const;
+type AssignmentOrder =
+  | 'EMAIL_ASC'
+  | 'EMAIL_DESC'
+  | 'USERNAME_ASC'
+  | 'USERNAME_DESC'
+  | 'GRANTED_AT_ASC'
+  | 'GRANTED_AT_DESC';
 
 interface RoleAssignmentTabProps {
-  queryRef: RoleAssignmentTabFragment$key;
-  roleId: string;
-  onAssignmentChange?: () => void;
+  roleNodeFrgmt: RoleAssignmentTabFragment$key;
 }
 
 const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
-  queryRef,
-  roleId,
-  onAssignmentChange,
+  roleNodeFrgmt,
 }) => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { modal, message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
+  const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [revokingTargets, setRevokingTargets] = useState<
+    { userId: string; label: string }[] | null
+  >(null);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      current: parseAsInteger.withDefault(1),
-      pageSize: parseAsInteger.withDefault(10),
-      order: parseAsStringLiteral(assignmentOrderValues),
-      filter: parseAsJson<GraphQLFilter>((value) => value as GraphQLFilter),
-    },
-    {
-      history: 'replace',
-      urlKeys: {
-        current: 'aCurrent',
-        pageSize: 'aPageSize',
-        order: 'aOrder',
-        filter: 'aFilter',
-      },
-    },
-  );
+  // Pagination / order / filter live in local React state (not the URL);
+  // they reset whenever the drawer content remounts.
+  const [queryParams, setQueryParams] = useState<{
+    current: number;
+    pageSize: number;
+    order: AssignmentOrder | null;
+    filter: RoleAssignmentFilter | null;
+  }>({
+    current: 1,
+    pageSize: 10,
+    order: null,
+    filter: null,
+  });
 
   const limit = queryParams.pageSize;
   const offset =
@@ -90,15 +86,29 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-      fragment RoleAssignmentTabFragment on Query
+      fragment RoleAssignmentTabFragment on Role
       @argumentDefinitions(
         filter: { type: "RoleAssignmentFilter" }
         orderBy: { type: "[RoleAssignmentOrderBy!]" }
-        limit: { type: "Int" }
-        offset: { type: "Int" }
+        limit: { type: "Int", defaultValue: 10 }
+        offset: { type: "Int", defaultValue: 0 }
       )
       @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
-        adminRoleAssignments(
+        id
+        name
+        source
+        # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
+        # nodes the drawer fragment now composes with, and unaliased fields
+        # with different arguments conflict in one query.
+        firstScope: scopes(first: 1) {
+          edges {
+            node {
+              scopeType
+              scopeId
+            }
+          }
+        }
+        users(
           filter: $filter
           orderBy: $orderBy
           limit: $limit
@@ -123,28 +133,26 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }
       }
     `,
-    queryRef,
+    roleNodeFrgmt,
   );
 
-  const [commitBulkAssignRole, isInFlightBulkAssign] =
-    useMutation<RoleAssignmentTabBulkAssignMutation>(graphql`
-      mutation RoleAssignmentTabBulkAssignMutation(
-        $input: BulkAssignRoleInput!
-      ) {
-        adminBulkAssignRole(input: $input) {
-          assigned {
-            id
-            userId
-            grantedBy
-            grantedAt
-          }
-          failed {
-            userId
-            message
-          }
-        }
-      }
-    `);
+  const roleId = toLocalId(data.id);
+
+  const projectScopeId =
+    data.firstScope?.edges?.[0]?.node?.scopeType === 'PROJECT'
+      ? data.firstScope.edges[0].node.scopeId
+      : undefined;
+
+  // System-generated project admin roles are managed through the project
+  // page's one-click admin setting, which requires manager >= 26.8.0
+  // (role-mapped-scope-filter). Show their assignments read-only there; on
+  // older managers direct assignment here is the only way to grant project
+  // admin, so keep the actions available (FR-3424).
+  const isReadOnly =
+    data.source === 'SYSTEM' &&
+    !!projectScopeId &&
+    !!data.name?.toLowerCase().includes('admin') &&
+    baiClient.supports('role-mapped-scope-filter');
 
   const mutateBulkRevokeRole =
     useMutationWithPromise<RoleAssignmentTabBulkRevokeMutation>(graphql`
@@ -163,11 +171,10 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       }
     `);
 
-  const assignments =
-    data.adminRoleAssignments?.edges?.map((edge) => edge?.node) ?? [];
+  const assignments = data.users?.edges?.map((edge) => edge?.node) ?? [];
 
   const doRefetch = (overrides?: {
-    filter?: GraphQLFilter | null;
+    filter?: RoleAssignmentFilter | null;
     order?: string | null;
     limit?: number;
     offset?: number;
@@ -175,12 +182,10 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     startRefetchTransition(() => {
       refetch(
         {
-          filter: {
-            roleId,
-            ...(overrides?.filter !== undefined
+          filter:
+            overrides?.filter !== undefined
               ? overrides.filter
-              : queryParams.filter),
-          },
+              : queryParams.filter,
           orderBy: convertToOrderBy<RoleAssignmentOrderBy>(
             overrides?.order !== undefined
               ? overrides.order
@@ -194,8 +199,12 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     });
   };
 
-  const handleFilterChange = (newFilter: GraphQLFilter | undefined) => {
-    setQueryParams({ filter: newFilter ?? null, current: 1 });
+  const handleFilterChange = (newFilter: RoleAssignmentFilter | undefined) => {
+    setQueryParams((prev) => ({
+      ...prev,
+      filter: newFilter ?? null,
+      current: 1,
+    }));
     doRefetch({ filter: newFilter ?? null, offset: 0 });
   };
 
@@ -203,84 +212,26 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     doRefetch();
   };
 
-  const handleBulkAssign = (userIds: string[]) => {
-    commitBulkAssignRole({
-      variables: { input: { userIds, roleId } },
-      onCompleted: (data, errors) => {
-        if (errors && errors.length > 0) {
-          logger.error(errors[0]);
-          message.error(errors[0]?.message || t('general.ErrorOccurred'));
-          return;
-        }
-        const failed = data.adminBulkAssignRole?.failed ?? [];
-        if (failed.length > 0) {
-          message.warning(
-            t('rbac.BulkAssignPartialFailure', { count: failed.length }),
-          );
-          _.forEach(failed, (arr) =>
-            upsertNotification({
-              open: true,
-              duration: 0,
-              title: arr.message,
-            }),
-          );
-        } else {
-          message.success(t('rbac.UsersAssigned'));
-        }
-        setIsAssignModalOpen(false);
-        handleRefresh();
-        onAssignmentChange?.();
-      },
-      onError: (error) => {
-        logger.error(error);
-        message.error(error?.message || t('general.ErrorOccurred'));
-      },
-    });
-  };
-
   const handleBulkRevoke = (userIds: string[]) => {
-    modal.confirm({
-      title: t('rbac.DeleteUser'),
-      content:
-        userIds.length > 1
-          ? t('rbac.ConfirmBulkRevoke', { count: userIds.length })
-          : t('rbac.ConfirmRevoke'),
-      okText: t('button.Delete'),
-      okButtonProps: { danger: true, type: 'primary' },
-      onOk: () =>
-        mutateBulkRevokeRole({ input: { userIds, roleId } })
-          .then((data) => {
-            const failed = data.adminBulkRevokeRole?.failed ?? [];
-            if (failed.length > 0) {
-              message.warning(
-                t('rbac.BulkRevokePartialFailure', {
-                  count: failed.length,
-                }),
-              );
-            } else {
-              message.success(t('rbac.UserRevoked'));
-            }
-            setSelectedRowKeys([]);
-            handleRefresh();
-            onAssignmentChange?.();
-          })
-          .catch((error) => {
-            logger.error('Failed to bulk revoke role', error);
-            message.error(error?.message || t('general.ErrorOccurred'));
-          }),
+    const targets = userIds.map((userId) => {
+      const assignment = assignments.find((a) => a?.userId === userId);
+      const label =
+        assignment?.user?.basicInfo?.email ||
+        assignment?.user?.basicInfo?.fullName ||
+        userId;
+      return { userId, label };
     });
+    setRevokingTargets(targets);
   };
 
   return (
-    <>
-      <BAIFlex
-        justify="between"
-        align="start"
-        gap="sm"
-        wrap="wrap"
-        style={{ marginBottom: 12 }}
-      >
-        <BAIGraphQLPropertyFilter
+    <BAIFlex align="stretch" direction="column" gap="sm">
+      {/* `showIcon` dropped — Banner always shows its status icon (MAPPING §4). */}
+      {isReadOnly && (
+        <Banner status="warning" title={t('rbac.SystemRoleNoAssignments')} />
+      )}
+      <BAIFlex justify="between" align="start" gap="sm" wrap="wrap">
+        <BAIGraphQLPropertyFilter<RoleAssignmentFilter>
           filterProperties={[
             {
               key: 'email',
@@ -303,14 +254,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                 count={selectedRowKeys.length}
                 onClearSelection={() => setSelectedRowKeys([])}
               />
-              <Tooltip title={t('rbac.DeleteUser')}>
+              <Tooltip content={t('rbac.RevokeUser')}>
                 <BAIButton
-                  danger
-                  icon={<BAITrashBinIcon />}
-                  style={{
-                    borderColor: token.colorBorder,
-                    background: token.colorErrorBg,
-                  }}
+                  icon={
+                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                  }
                   onClick={() => {
                     const userIds = assignments
                       .filter((a) => selectedRowKeys.includes(a?.id ?? ''))
@@ -327,13 +275,15 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             value=""
             onChange={() => handleRefresh()}
           />
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            onClick={() => setIsAssignModalOpen(true)}
-          >
-            {t('rbac.AssignUser')}
-          </BAIButton>
+          {!isReadOnly && (
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              onClick={() => setIsAssignModalOpen(true)}
+            >
+              {t('rbac.AssignUser')}
+            </BAIButton>
+          )}
         </BAIFlex>
       </BAIFlex>
       <BAITable
@@ -344,23 +294,28 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         pagination={{
           pageSize: queryParams.pageSize,
           current: queryParams.current,
-          total: data.adminRoleAssignments?.count ?? 0,
+          total: data.users?.count ?? 0,
           onChange: (current, pageSize) => {
-            setQueryParams({ current, pageSize });
+            setQueryParams((prev) => ({ ...prev, current, pageSize }));
             const newOffset = current > 1 ? (current - 1) * pageSize : 0;
             doRefetch({ limit: pageSize, offset: newOffset });
           },
         }}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys,
-          onChange: (keys) => setSelectedRowKeys(keys),
-        }}
+        rowSelection={
+          isReadOnly
+            ? undefined
+            : {
+                type: 'checkbox',
+                selectedRowKeys,
+                onChange: (keys) => setSelectedRowKeys(keys),
+              }
+        }
         order={queryParams.order}
         onChangeOrder={(newOrder) => {
-          setQueryParams({
-            order: (newOrder as (typeof assignmentOrderValues)[number]) ?? null,
-          });
+          setQueryParams((prev) => ({
+            ...prev,
+            order: (newOrder as AssignmentOrder) ?? null,
+          }));
           doRefetch({ order: newOrder ?? null });
         }}
         columns={[
@@ -373,15 +328,19 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               <BAINameActionCell
                 title={record?.user?.basicInfo?.email || '-'}
                 showActions="always"
-                actions={[
-                  {
-                    key: 'delete',
-                    title: t('rbac.DeleteUser'),
-                    icon: <BAITrashBinIcon />,
-                    type: 'danger',
-                    onClick: () => handleBulkRevoke([record?.userId]),
-                  },
-                ]}
+                actions={
+                  isReadOnly
+                    ? []
+                    : [
+                        {
+                          key: 'delete',
+                          title: t('rbac.RevokeUser'),
+                          icon: <Trash2 size="1em" />,
+                          type: 'danger',
+                          onClick: () => handleBulkRevoke([record?.userId]),
+                        },
+                      ]
+                }
               />
             ),
             sorter: true,
@@ -405,18 +364,70 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           },
         ]}
       />
-      <AssignRoleModal
-        open={isAssignModalOpen}
-        confirmLoading={isInFlightBulkAssign}
-        onRequestClose={(userIds) => {
-          if (userIds) {
-            handleBulkAssign(userIds);
-          } else {
+      <BAIUnmountAfterClose>
+        <AssignRoleModal
+          open={isAssignModalOpen}
+          roleId={roleId}
+          projectId={projectScopeId}
+          onRequestClose={(success) => {
             setIsAssignModalOpen(false);
-          }
+            if (success) {
+              handleRefresh();
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
+      <BAIDeleteConfirmModal
+        open={!!revokingTargets}
+        title={t('rbac.RevokeUser')}
+        description={t('rbac.ConfirmRevokeWithName')}
+        items={
+          revokingTargets?.map(({ userId, label }) => ({
+            key: userId,
+            label,
+          })) ?? []
+        }
+        reversible
+        okText={t('rbac.RevokeUser')}
+        onOk={() => {
+          if (!revokingTargets) return;
+          const userIds = revokingTargets.map((t) => t.userId);
+          return mutateBulkRevokeRole({
+            input: { userIds, roleId },
+          })
+            .then((data) => {
+              const failed = data.adminBulkRevokeRole?.failed ?? [];
+              if (failed.length > 0) {
+                message.warning(
+                  t('rbac.BulkRevokePartialFailure', {
+                    count: failed.length,
+                  }),
+                );
+                _.forEach(failed, (item) =>
+                  upsertNotification({
+                    key: `rbac-bulk-revoke-failed-${item.userId}`,
+                    open: true,
+                    duration: 0,
+                    type: 'error',
+                    message: item.message,
+                  }),
+                );
+              } else {
+                message.success(t('rbac.UserRevoked'));
+              }
+              setRevokingTargets(null);
+              setSelectedRowKeys([]);
+              handleRefresh();
+            })
+            .catch((error) => {
+              logger.error('Failed to bulk revoke role', error);
+              message.error(error?.message || t('general.ErrorOccurred'));
+              setRevokingTargets(null);
+            });
         }}
+        onCancel={() => setRevokingTargets(null)}
       />
-    </>
+    </BAIFlex>
   );
 };
 

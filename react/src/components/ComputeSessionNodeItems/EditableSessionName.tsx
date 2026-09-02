@@ -4,13 +4,22 @@
  */
 import { EditableSessionNameFragment$key } from '../../__generated__/EditableSessionNameFragment.graphql';
 import { EditableSessionNameRefetchQuery } from '../../__generated__/EditableSessionNameRefetchQuery.graphql';
-import { useBaiSignedRequestWithPromise } from '../../helper';
+import { App } from '../../app-shim';
+import { Form } from '../../form-engine';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
-import { theme, Form, Input, App, type GetProps, Typography } from 'antd';
-import { CornerDownLeftIcon } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+// FRONTIER (ticket 17 / ticket 34): the inline rename editor keeps the antd
+// Form ENGINE (Form + Form.Item) — locked SHIM decision. The control inside
+// the item is Astryx now.
+import { AstryxFormTextInput } from '../astryxFormControls';
+import { Heading } from '@astryxdesign/core/Heading';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { CheckIcon, CopyIcon, PencilIcon } from 'lucide-react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -19,25 +28,31 @@ import {
   useRelayEnvironment,
 } from 'react-relay';
 
+/**
+ * PILOT-DECISION (ticket 17): the antd `Typography.Text/Title editable
+ * copyable` surface (P11 — behaviour delivered by antd Typography itself) is
+ * rebuilt with Astryx primitives: `Heading`/`Text` + ghost `IconButton`s for
+ * copy and rename. The props are Astryx-shaped (`level`, `editable`,
+ * `dimmed`) instead of forwarding antd Typography props; the terminated /
+ * pending "tertiary" text colour maps to the closed `disabled` TextColor.
+ * The after-edit focus restore of the old implementation is dropped
+ * (defaults-first; the edit affordance is a real focusable button now).
+ */
 type EditableSessionNameProps = {
   sessionFrgmt: EditableSessionNameFragment$key;
-} & (
-  | ({ component?: typeof Typography.Text } & Omit<
-      GetProps<typeof Typography.Text>,
-      'children'
-    >)
-  | ({ component: typeof Typography.Title } & Omit<
-      GetProps<typeof Typography.Title>,
-      'children'
-    >)
-);
+  /** Render as a Heading of this level; body text when omitted. */
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
+  /** Allow renaming (further gated by ownership + session status). */
+  editable?: boolean;
+  /** Muted display for terminated/cancelled sessions. */
+  dimmed?: boolean;
+};
 
 const EditableSessionName: React.FC<EditableSessionNameProps> = ({
-  component: Component = Typography.Text,
   sessionFrgmt,
-  editable: editableOfProps,
-  style,
-  ...otherProps
+  level,
+  editable: editableOfProps = false,
+  dimmed = false,
 }) => {
   'use memo';
   const relayEvn = useRelayEnvironment();
@@ -61,23 +76,17 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
   const validationRules = useValidateSessionName(optimisticName);
   const [userInfo] = useCurrentUserInfo();
 
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const baiClient = useSuspendedBackendaiClient();
   const renameSessionMutation = useTanMutation({
     mutationFn: (newName: string) => {
-      return baiRequestWithPromise({
-        method: 'POST',
-        url: `/session/${session.name}/rename`,
-        body: {
-          name: newName,
-        },
-      });
+      return baiClient.rename(session.row_id, newName);
     },
   });
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const [isEditing, setIsEditing] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const isNotPreparingCategoryStatus = ![
     'RESTARTING',
@@ -95,51 +104,64 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
   const isPendingRenamingAndRefreshing =
     renameSessionMutation.isPending || optimisticName !== session.name;
 
-  // focus back to the text component after editing for better UX related to keyboard shortcuts
-  const textRef = useRef<HTMLElement>(null);
-  const focusFallback = () => {
-    setTimeout(() => {
-      textRef.current?.focus();
-    }, 0);
-  };
+  const displayedName =
+    renameSessionMutation.isPending || optimisticName !== session.name
+      ? optimisticName
+      : session.name;
+  const isDimmed = dimmed || isPendingRenamingAndRefreshing;
 
   return (
     <>
       {(!isEditing || isPendingRenamingAndRefreshing) && (
-        <Component
-          ref={textRef}
-          tabIndex={-1}
-          editable={
-            isEditingAllowed && !isPendingRenamingAndRefreshing
-              ? {
-                  onStart: () => {
-                    setIsEditing(true);
-                  },
-                  triggerType: ['icon', 'text'],
-                }
-              : false
-          }
-          copyable
-          style={{
-            // after editing, focus this element, remove outline
-            outline: 'none',
-            ...style,
-            color: isPendingRenamingAndRefreshing
-              ? token.colorTextTertiary
-              : style?.color,
-          }}
-          {...otherProps}
-        >
-          {renameSessionMutation.isPending || optimisticName !== session.name
-            ? optimisticName
-            : session.name}
-        </Component>
+        <HStack gap={1} align="center">
+          {level ? (
+            <Heading level={level} color={isDimmed ? 'disabled' : undefined}>
+              {displayedName}
+            </Heading>
+          ) : (
+            <Text color={isDimmed ? 'disabled' : undefined}>
+              {displayedName}
+            </Text>
+          )}
+          {/* QA-FINDINGS Q-37 — legacy was an antd `Typography.Text` with
+              `copyable` + `editable`, and antd paints BOTH of those operation
+              icons through its `operationUnit` mixin: `color: token.colorLink`.
+              The rebuild into two ghost `IconButton`s dropped that to
+              `--color-text-primary`; the report names these two controls
+              explicitly ("copy, info, rename 버튼"). `.bai-action-accent` puts
+              `colorLink` back via `--color-text-accent`
+              (`packages/backend.ai-ui/src/styles/actionAccent.css`). */}
+          <IconButton
+            className="bai-action-accent"
+            variant="ghost"
+            size="sm"
+            icon={copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}
+            label={t('sourceCodeViewer.Copy')}
+            tooltip={t('sourceCodeViewer.Copy')}
+            isDisabled={copied}
+            onClick={() => {
+              void navigator.clipboard?.writeText(displayedName ?? '');
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1500);
+            }}
+          />
+          {isEditingAllowed && !isPendingRenamingAndRefreshing && (
+            <IconButton
+              className="bai-action-accent"
+              variant="ghost"
+              size="sm"
+              icon={<PencilIcon aria-hidden />}
+              label={t('button.Edit')}
+              tooltip={t('button.Edit')}
+              onClick={() => setIsEditing(true)}
+            />
+          )}
+        </HStack>
       )}
       {isEditing && !isPendingRenamingAndRefreshing && (
         <Form
           onFinish={(values) => {
             setIsEditing(false);
-            focusFallback();
             setOptimisticName(values.sessionName);
             // FIXME: This API does not return any response on success or error.
             renameSessionMutation.mutate(values.sessionName, {
@@ -186,24 +208,24 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
           }}
         >
           <Form.Item name="sessionName" rules={validationRules}>
-            <Input
-              size="large"
-              value={optimisticName || ''}
-              suffix={
-                <CornerDownLeftIcon
-                  style={{
-                    fontSize: '0.8em',
-                    color: token.colorTextTertiary,
-                  }}
-                />
-              }
-              autoFocus
+            {/* PILOT-DECISION (kept): the antd
+                `suffix={<CornerDownLeftIcon/>}` "press Enter" hint is DROPPED
+                — MAPPING §3.6 gives `suffix` no `TextInput` destination, and
+                the only route (`InputGroup`) welds a bordered addon box that
+                reads as a button, not as the faint inline hint this was.
+
+                `size` and `onKeyDown` are on the SHARED adapter now (D10
+                fold-back), so this no longer needs a local copy of the
+                `Form.Item` contracts. */}
+            <AstryxFormTextInput
+              label={t('session.SessionName')}
+              size="lg"
+              hasAutoFocus
               onKeyDown={(e) => {
                 // when press escape key, cancel editing
                 if (e.key === 'Escape') {
                   e.stopPropagation();
                   setIsEditing(false);
-                  focusFallback();
                 }
               }}
             />

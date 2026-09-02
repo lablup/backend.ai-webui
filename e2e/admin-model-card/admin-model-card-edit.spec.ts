@@ -1,0 +1,336 @@
+// spec: e2e/.agent-output/test-plan-admin-model-card.md
+// section: 4. Edit Model Card
+import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
+import {
+  deleteForeverAndVerifyFromTrash,
+  loginAsAdmin,
+  moveToTrashAndVerify,
+  webuiEndpoint,
+} from '../utils/test-util';
+import { test, expect } from '@playwright/test';
+
+// FR-3331/FR-3339 (PRs #8303/#8315) replaced the row's settings-cog icon with a
+// lucide `SquarePenIcon` that carries no accessible name, so the edit action can
+// no longer be located via getByRole('button', { name: 'setting' })
+// (AdminModelCardPage.getSettingButtonForRow/openEditModal, still pending a fix in
+// other in-flight PRs). It is the first button inside the name cell's
+// `.bai-name-action-cell-actions` action group — the second button is the
+// `delete` action, which still has its accessible name.
+async function openEditModalViaRowAction(
+  adminModelCardPage: AdminModelCardPage,
+  name: string,
+): Promise<void> {
+  await adminModelCardPage
+    .getRowByName(name)
+    .locator('.bai-name-action-cell-actions button')
+    .first()
+    .click();
+  await expect(adminModelCardPage.getEditModal()).toBeVisible();
+}
+
+test.describe(
+  'Admin Model Card Management - Edit',
+  { tag: ['@admin-model-card', '@admin', '@crud'] },
+  () => {
+    test.setTimeout(60000);
+    let testCardName: string;
+    let testFolderName: string;
+
+    test.beforeEach(async ({ page, request }, testInfo) => {
+      // Generate unique names per test to avoid parallel worker conflicts
+      const timestamp = Date.now();
+      testCardName = `e2e-test-edit-${testInfo.workerIndex}-${timestamp}`;
+      testFolderName = `e2e-test-edit-folder-${testInfo.workerIndex}-${timestamp}`;
+      await loginAsAdmin(page, request);
+
+      // Create a test model card to edit, self-provisioning its VFolder via "+"
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await adminModelCardPage.waitForTableLoad();
+
+      await adminModelCardPage.getCreateModelCardButton().click();
+      const modal = adminModelCardPage.getCreateModal();
+      await expect(modal).toBeVisible();
+
+      await modal.getByRole('textbox', { name: 'Name' }).fill(testCardName);
+
+      // Create a new VFolder via the "+" button — self-provisions so no pre-existing
+      // group-owned VFolder is required on the test backend.
+      await adminModelCardPage.createNewFolderViaPlus(testFolderName);
+
+      // Select Access Level (required field). Access level options are "Private" (INTERNAL) and "Public".
+      await modal
+        .locator('[data-bai-form-item]')
+        .filter({ hasText: 'Access Level' })
+        .locator('.ant-select-content')
+        .click();
+      const accessDropdown = page
+        .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+        .first();
+      await expect(accessDropdown).toBeVisible();
+      await accessDropdown
+        .locator('.ant-select-item-option')
+        .filter({ hasText: 'Private' })
+        .click();
+
+      // In antd v6, Form.Item tooltip icons contribute to the accessible name.
+      // Use the form item container to locate the textbox by label text.
+      await modal
+        .locator('[data-bai-form-item]')
+        .filter({ hasText: 'Title' })
+        .getByRole('textbox')
+        .fill('Original Title');
+      await adminModelCardPage.getCreateModalSubmitButton().click();
+      await expect(page.getByText('Model card has been created.')).toBeVisible({
+        timeout: 15000,
+      });
+      await expect(modal).toBeHidden();
+    });
+
+    test.afterEach(async ({ page }) => {
+      // Cleanup: delete the test model card
+      try {
+        await page.goto(
+          `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+        );
+        const adminModelCardPage = new AdminModelCardPage(page);
+        await adminModelCardPage.waitForTableLoad();
+        await adminModelCardPage.applyNameFilter(testCardName);
+        // Only delete if the card exists (it may have been deleted by the test)
+        const row = adminModelCardPage.getRowByName(testCardName);
+        if ((await row.count()) > 0) {
+          await adminModelCardPage.deleteModelCardByName(testCardName);
+        }
+      } catch {
+        // Ignore cleanup errors
+      }
+
+      // Cleanup: purge the VFolder created in beforeEach
+      try {
+        await moveToTrashAndVerify(page, testFolderName, 'admin-data', {
+          skipTrashVerify: true,
+        });
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(
+          page,
+          testFolderName,
+          'admin-data',
+        );
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
+      }
+    });
+
+    // 4.1 Superadmin can open the Edit Model Card modal from a table row
+    test('Superadmin can open the Edit Model Card modal from a table row', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Refresh the table to ensure newly created card is visible
+      await adminModelCardPage.getRefreshButton().click();
+      await adminModelCardPage.waitForTableLoad();
+
+      // Filter to find the test card
+      await adminModelCardPage.applyNameFilter(testCardName);
+      // Wait for the filter results — the card may take a moment to appear after creation
+      await expect(adminModelCardPage.getRowByName(testCardName)).toBeVisible({
+        timeout: 15000,
+      });
+
+      // Click the edit icon in the Name cell for the test card
+      await openEditModalViaRowAction(adminModelCardPage, testCardName);
+
+      const modal = adminModelCardPage.getEditModal();
+
+      // Verify the modal title is "Edit Model Card"
+      await expect(modal.getByText('Edit Model Card')).toBeVisible();
+
+      // Verify Name field is pre-filled
+      await expect(adminModelCardPage.getEditModalNameInput()).toHaveValue(
+        testCardName,
+      );
+
+      // Verify Model Storage Folder shows a link (read-only), not a select
+      await expect(modal.getByRole('link')).toBeVisible();
+
+      // Verify Domain field shows plain text (not a select dropdown)
+      await expect(modal.getByText('default')).toBeVisible();
+
+      // Verify the modal footer shows a "Save" button
+      await expect(adminModelCardPage.getEditModalSaveButton()).toBeVisible();
+    });
+
+    // 4.2 Superadmin can update a model card's metadata fields
+    test("Superadmin can update a model card's metadata fields", async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Refresh the table to ensure newly created card is visible
+      await adminModelCardPage.getRefreshButton().click();
+      await adminModelCardPage.waitForTableLoad();
+
+      // Filter to find the test card
+      await adminModelCardPage.applyNameFilter(testCardName);
+      // Wait for the filter results — the card may take a moment to appear after creation
+      await expect(adminModelCardPage.getRowByName(testCardName)).toBeVisible({
+        timeout: 15000,
+      });
+
+      // Open edit modal for the test card
+      await openEditModalViaRowAction(adminModelCardPage, testCardName);
+      const modal = adminModelCardPage.getEditModal();
+
+      // Clear the Title field and type a new value.
+      // In antd v6, tooltip icons alter the accessible name — use form item container.
+      const titleInput = modal
+        .locator('[data-bai-form-item]')
+        .filter({ hasText: 'Title' })
+        .getByRole('textbox');
+      await titleInput.clear();
+      await titleInput.fill('Updated Title');
+
+      // Change Access Level to Public. The form is long, so scroll the field into view
+      // before opening the dropdown to ensure the option is also within the viewport.
+      const accessLevelFormItem = modal
+        .locator('[data-bai-form-item]')
+        .filter({ hasText: 'Access Level' });
+      await accessLevelFormItem.scrollIntoViewIfNeeded();
+      await accessLevelFormItem.locator('.ant-select-content').click();
+      const accessDropdown = page
+        .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+        .first();
+      await expect(accessDropdown).toBeVisible();
+      const publicOption = accessDropdown
+        .locator('.ant-select-item-option')
+        .filter({ hasText: 'Public' });
+      await publicOption.scrollIntoViewIfNeeded();
+      await publicOption.click();
+
+      // Click Save
+      await adminModelCardPage.getEditModalSaveButton().click();
+
+      // Verify success message
+      await expect(page.getByText('Model card has been updated.')).toBeVisible({
+        timeout: 15000,
+      });
+
+      // Verify the modal closes
+      await expect(modal).toBeHidden();
+
+      // Verify the table row reflects updated data
+      const updatedRow = adminModelCardPage.getRowByName(testCardName);
+      await expect(
+        updatedRow.getByRole('cell', { name: 'Updated Title' }),
+      ).toBeVisible({ timeout: 15000 });
+      await expect(
+        updatedRow.getByRole('cell', { name: 'Public' }),
+      ).toBeVisible({ timeout: 15000 });
+    });
+
+    // 4.3 Superadmin cannot save an edit when the Name field is cleared
+    test('Superadmin cannot save an edit when the Name field is cleared', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Refresh the table to ensure newly created card is visible
+      await adminModelCardPage.getRefreshButton().click();
+      await adminModelCardPage.waitForTableLoad();
+
+      // Filter to find the test card
+      await adminModelCardPage.applyNameFilter(testCardName);
+      // Wait for the filter results — the card may take a moment to appear after creation
+      await expect(adminModelCardPage.getRowByName(testCardName)).toBeVisible({
+        timeout: 15000,
+      });
+
+      // Open edit modal
+      await openEditModalViaRowAction(adminModelCardPage, testCardName);
+      const modal = adminModelCardPage.getEditModal();
+
+      // Clear the Name field completely
+      await adminModelCardPage.getEditModalNameInput().clear();
+
+      // Wait for the form to stabilize after clearing (avoids DOM detachment)
+      await expect(adminModelCardPage.getEditModalSaveButton()).toBeVisible();
+
+      // Click Save
+      await adminModelCardPage.getEditModalSaveButton().click();
+
+      // Verify validation error "Name is required."
+      await expect(modal.getByText('Name is required.')).toBeVisible();
+
+      // Verify the modal remains open
+      await expect(modal).toBeVisible();
+    });
+
+    // 4.4 Superadmin can cancel the Edit modal without saving changes
+    test('Superadmin can cancel the Edit modal without saving changes', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Refresh the table to ensure newly created card is visible
+      await adminModelCardPage.getRefreshButton().click();
+      await adminModelCardPage.waitForTableLoad();
+
+      // Filter to find the test card
+      await adminModelCardPage.applyNameFilter(testCardName);
+      // Wait for the filter results — the card may take a moment to appear after creation
+      await expect(adminModelCardPage.getRowByName(testCardName)).toBeVisible({
+        timeout: 15000,
+      });
+
+      // Open edit modal
+      await openEditModalViaRowAction(adminModelCardPage, testCardName);
+      const modal = adminModelCardPage.getEditModal();
+
+      // Change the Title to a value that should not be saved.
+      // In antd v6, tooltip icons alter the accessible name — use form item container.
+      const titleInput = modal
+        .locator('[data-bai-form-item]')
+        .filter({ hasText: 'Title' })
+        .getByRole('textbox');
+      await titleInput.clear();
+      await titleInput.fill('Should Not Save');
+
+      // Click Cancel
+      await adminModelCardPage.getEditModalCancelButton().click();
+
+      // Verify the modal closes
+      await expect(modal).toBeHidden();
+
+      // Verify the original title is preserved in the table
+      const row = adminModelCardPage.getRowByName(testCardName);
+      await expect(
+        row.getByRole('cell', { name: 'Should Not Save' }),
+      ).toBeHidden();
+      await expect(
+        row.getByRole('cell', { name: 'Original Title' }),
+      ).toBeVisible();
+    });
+  },
+);

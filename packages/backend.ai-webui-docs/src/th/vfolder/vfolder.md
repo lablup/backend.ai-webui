@@ -1,44 +1,30 @@
+---
+navTitle: โฟลเดอร์จัดเก็บ
+---
+
+<a id="vfolders"></a>
+
 # การจัดการข้อมูลและโฟลเดอร์เก็บข้อมูล
 
 
-Backend.AI supports dedicated storage to preserve ผู้ใช้'s files. Since the files
-and directories of a compute session are deleted upon session termination, it is
-recommended to save them in a storage folder. List of storage folders can be
-found by selecting the Data page on the sidebar. You can see the information
-such as the folder name and ID, the NFS host name where the folder is located
-(Location), and folder access rights (Permission).
+Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง จึงแนะนำให้บันทึกไว้ในโฟลเดอร์จัดเก็บ คุณสามารถดูรายการโฟลเดอร์จัดเก็บได้โดยเลือกหน้าข้อมูล (Data) ที่แถบด้านข้าง หน้านี้จะแสดงข้อมูลสำคัญ เช่น ชื่อและ ID ของโฟลเดอร์ ชื่อโฮสต์จัดเก็บ (storage host) ที่โฟลเดอร์ตั้งอยู่ (Location) และสิทธิ์การเข้าถึงโฟลเดอร์ (Permission)
 
 
 ![](../images/data_page.png)
 
 โฟลเดอร์จัดเก็บมีสองประเภท: `ผู้ใช้` และ `โปรเจกต์` คุณสามารถแยกความแตกต่างได้ในคอลัมน์ 'ประเภท'
 
-โฟลเดอร์ผู้ใช้ถูกสร้างขึ้นโดยตรงโดยผู้ใช้แต่ละรายเพื่อใช้งานส่วนตัว
-โฟลเดอร์โปรเจกต์ถูกสร้างโดยผู้ดูแลระบบโดเมนสำหรับแต่ละโปรเจกต์
-ผู้ใช้ทั่วไปไม่สามารถสร้างโฟลเดอร์โปรเจกต์ด้วยตนเองได้ พวกเขาสามารถใช้เฉพาะโฟลเดอร์โปรเจกต์ที่สร้างโดยผู้ดูแลระบบเท่านั้น
+## ป้ายคำเชิญและจุดเข้าใช้งาน
 
-![](../images/vfolder_status.png)
+เมื่อมีผู้ใช้รายอื่นเชิญคุณให้ใช้งานโฟลเดอร์จัดเก็บของพวกเขาร่วมกัน ป้ายคำเชิญขนาดเล็กจะ
+ปรากฏที่รายการหน้าข้อมูลในแถบด้านข้าง และข้างกับสรุปสถานะของโฟลเดอร์ ป้ายจะแสดง
+จำนวนคำเชิญที่ค้างอยู่และยังไม่ได้รับการตอบกลับ
 
-The Storage Status and โควตาต่อปริมาตรการจัดเก็บ show the following information:
+![](../images/vfolder_invitation_badge.png)
 
-- Storage Status
-    - Created โฟลเดอร์: The number of folders that the ผู้ใช้ created.
-
-         - ข้อจำกัด: จำนวนโฟลเดอร์สูงสุดที่ผู้ใช้สามารถสร้างได้ภายหลัง ค่าใช้จ่ายนี้ขึ้นอยู่กับนโยบายทรัพยากรที่นำไปใช้กับผู้ใช้และไม่สามารถเปลี่ยนแปลงได้หากไม่เปลี่ยนนโยบายทรัพยากร โฟลเดอร์ที่ไม่ได้สร้างโดยผู้ใช้ (เช่น โฟลเดอร์ที่ถูกเชิญให้แชร์ หรือโฟลเดอร์โปรเจกต์) จะไม่ถูกนับรวม
-
-    * Project โฟลเดอร์: The number of project folders that the ผู้ใช้ created.
-    * Invited โฟลเดอร์: The number of folders that the ผู้ใช้ was invited to share.
-- โควตาต่อปริมาตรการจัดเก็บ
-    * โฮสต์: ชื่อของโฮสต์ที่เก็บข้อมูล。
-    * โครงการ: การใช้งานโฟลเดอร์โครงการปัจจุบัน / ขอบเขตการจัดสรรโฟลเดอร์โครงการปัจจุบัน
-    * ผู้ใช้: การใช้งานโฟลเดอร์ของผู้ใช้ปัจจุบัน / ขอบเขตของโควต้าของโฟลเดอร์ผู้ใช้ปัจจุบัน
-
-
-:::note
-Please remind that quota is only available in storage that provides quota setting
-(e.g. XFS, CephFS, NetApp, Purestorage, etc.). For the quota setting, please refer
-to the [Quota Setting Panel](#quota-setting-panel) section.
-:::
+คลิกที่ป้ายเพื่อเปิดรายการคำเชิญ ซึ่งคุณสามารถยอมรับหรือปฏิเสธคำเชิญที่ค้างอยู่แต่ละ
+รายการได้ โฟลเดอร์ที่ยอมรับแล้วจะปรากฏในรายการโฟลเดอร์ของคุณทันทีด้วยประเภท `เชิญแล้ว` หน้า `/data` เองก็เป็นจุดเข้าใช้งานที่ถูกต้องสำหรับการตรวจสอบคำเชิญด้วย เพียง
+เปิดหน้าข้อมูล คุณก็สามารถเข้าถึงรายการคำเชิญเดียวกันได้จากสรุปสถานะของโฟลเดอร์
 
 <a id="create-storage-folder"></a>
 <a id="create_storage_folder"></a>
@@ -46,62 +32,82 @@ to the [Quota Setting Panel](#quota-setting-panel) section.
 ## สร้างโฟลเดอร์จัดเก็บ
 
 
-To create a new folder, click 'Create Folder' on the Data page. Fill in the fields in
-the creation dialog as follows:
+หากต้องการสร้างโฟลเดอร์ใหม่ ให้คลิก 'สร้างโฟลเดอร์' ในหน้าข้อมูล จากนั้นกรอกข้อมูลในกล่องโต้ตอบการสร้างดังนี้:
 
 ![](../images/vfolder_create_modal.png)
 
-The meaning of each field in the creation dialog is as follows.
+ความหมายของแต่ละช่องในกล่องโต้ตอบการสร้างมีดังต่อไปนี้
 
-- Usage Mode: Set the purpose of the folder.
+- **โหมดการใช้งาน**: กำหนดวัตถุประสงค์ของโฟลเดอร์
 
-   * General: Defines a folder for storing various data in a general-purpose manner.
-   * โมเดลส์: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder's copy availability.
-   * Auto Mount: โฟลเดอร์ automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
+   * ทั่วไป: กำหนดให้เป็นโฟลเดอร์สำหรับจัดเก็บข้อมูลทั่วไปได้หลากหลายประเภท
+   * โมเดล: กำหนดให้เป็นโฟลเดอร์เฉพาะสำหรับการให้บริการโมเดลและการจัดการโมเดล หากเลือกโหมดนี้ คุณจะสามารถตั้งค่าว่าโฟลเดอร์นั้นสามารถคัดลอกได้หรือไม่
+   * ติดตั้งอัตโนมัติ: โฟลเดอร์ที่จะถูกเมาท์โดยอัตโนมัติเมื่อสร้างเซสชัน หากเลือกโหมดนี้ ชื่อโฟลเดอร์ต้องขึ้นต้นด้วยจุด ('.')
 
-- Folder name: The name of the folder (up to 64 characters).
-- Location: Select the NFS host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
-- ประเภท: กำหนดประเภทของโฟลเดอร์ที่จะสร้าง สามารถตั้งค่าเป็นผู้ใช้หรือโครงการ โฟลเดอร์ผู้ใช้คือโฟลเดอร์ที่ผู้ใช้สามารถสร้างและใช้งานได้เพียงคนเดียว และโฟลเดอร์โครงการคือโฟลเดอร์ที่สร้างโดยผู้ดูแลระบบและแชร์โดยผู้ใช้ในโครงการ
-- Project: Shown only when you select project type. Designates the project to which the folder belongs when creating a new project folder. Project folders must belong to a project. However, it does not play any role when creating a ผู้ใช้ folder.
-- สิทธิ์: กำหนดสิทธิ์ของโฟลเดอร์โปรเจกต์สำหรับสมาชิกโปรเจกต์ หากตั้งค่าเป็น "อ่านอย่างเดียว" สมาชิกโปรเจกต์จะไม่สามารถเขียนลงในโฟลเดอร์นี้ภายในเซสชันการคอมพิวเตอร์ของพวกเขาได้
-- Cloneable: Shown only when you select usage model to "Model". Select whether the vfolder you are creating should be cloneable.
+- **ชื่อโฟลเดอร์**: ชื่อของโฟลเดอร์ (สูงสุด 64 ตัวอักษร)
+- **ตำแหน่ง**: เลือกโฮสต์จัดเก็บ (storage host) ที่จะใช้สร้างโฟลเดอร์ หากมีหลายโฮสต์ ให้เลือกหนึ่งในนั้น ตัวบ่งชี้จะแสดงว่ามีพื้นที่ว่างเพียงพอหรือไม่
+- **ประเภท**: กำหนดประเภทของโฟลเดอร์ที่จะสร้าง สามารถตั้งค่าเป็นผู้ใช้ (User) หรือโปรเจกต์ (Project) โฟลเดอร์ผู้ใช้คือโฟลเดอร์ที่ผู้ใช้สร้างและใช้งานได้เพียงคนเดียว ส่วนโฟลเดอร์โปรเจกต์คือโฟลเดอร์ที่สร้างโดยผู้ดูแลระบบและแชร์กับผู้ใช้ในโปรเจกต์
+- **โปรเจกต์**: จะแสดงเฉพาะเมื่อคุณเลือกประเภทเป็นโปรเจกต์ โฟลเดอร์นี้สังกัดโปรเจกต์ที่เลือกอยู่ในแถบด้านบนในปัจจุบัน — ไม่มีตัวเลือกโปรเจกต์แยกต่างหาก และข้อความยืนยันจะระบุว่าโปรเจกต์ใดจะเป็นเจ้าของโฟลเดอร์ การตั้งค่านี้จะไม่มีผลเมื่อสร้างโฟลเดอร์ผู้ใช้
+- **สิทธิ์**: สิทธิ์การเมาท์ที่ใช้เมื่อเมาท์โฟลเดอร์เข้าไปในเซสชันการคำนวณ **อ่านและเขียน** อนุญาตให้เขียนลงในโฟลเดอร์ภายในเซสชัน **อ่านอย่างเดียว** ป้องกันไม่ให้เขียน การตั้งค่านี้ใช้กับทั้งโฟลเดอร์ผู้ใช้และโฟลเดอร์โปรเจกต์ สำหรับโฟลเดอร์โปรเจกต์ การตั้งค่านี้ควบคุมการเข้าถึงสำหรับสมาชิกโปรเจกต์ทั้งหมด
+- **ความสามารถในการคัดลอก**: จะแสดงเฉพาะเมื่อคุณเลือกโหมดการใช้งานเป็น "โมเดล" ใช้สำหรับเลือกว่าโฟลเดอร์เสมือน (vfolder) ที่กำลังสร้างควรสามารถคัดลอกได้หรือไม่
 
-The folders created here can be [mounted](../mount_vfolder/mount_vfolder.md#session-mounts) when creating a compute session. โฟลเดอร์ are mounted
-under the ผู้ใช้'s default working directory, `/home/work/`, and the file stored in the mounted
-directory will not be deleted when the compute session is terminated.
-(If you delete the folder, the file will also be deleted.)
+โฟลเดอร์ที่สร้างขึ้นที่นี่สามารถ[เมาท์](#session-mounts)ได้เมื่อสร้างเซสชันการคำนวณ โฟลเดอร์จะถูกเมาท์ไว้ภายใต้ไดเรกทอรีการทำงานเริ่มต้นของผู้ใช้ คือ `/home/work/` และไฟล์ที่เก็บไว้ในไดเรกทอรีที่เมาท์แล้วจะไม่ถูกลบเมื่อเซสชันการคำนวณสิ้นสุดลง
+(หากคุณลบโฟลเดอร์ ไฟล์ก็จะถูกลบไปด้วยเช่นกัน)
 
 <a id="explore-folder"></a>
 
 ## สำรวจโฟลเดอร์
 
 
-Click the folder name to open a file explorer and view the contents of the folder.
+คลิกที่ชื่อโฟลเดอร์เพื่อเปิดตัวสำรวจไฟล์และดูเนื้อหาภายในโฟลเดอร์
 
 ![](../images/click_folder_name.png)
 
-คุณสามารถเห็นได้ว่าไดเรกทอรีและไฟล์ภายในโฟลเดอร์จะถูกแสดงรายการ หากมีอยู่ คลิกที่ชื่อไดเรกทอรีในคอลัมน์ชื่อเพื่อย้ายไปยังไดเรกทอรีนั้น คุณสามารถคลิกที่ปุ่มดาวน์โหลดหรือปุ่มลบในคอลัมน์การกระทำเพื่อลงดาวน์โหลดหรือลบออกจากไดเรกทอรีโดยสิ้นเชิง คุณสามารถเปลี่ยนชื่อไฟล์/ไดเรกทอรีได้เช่นกัน สำหรับการดำเนินการไฟล์ที่ละเอียดมากขึ้น คุณสามารถทำการเมานต์โฟลเดอร์นี้เมื่อสร้างเซสชันการคอมพิวเตอร์ จากนั้นใช้บริการเช่น Terminal หรือ Jupyter Notebook ทำการดำเนินการดังกล่าว
+ตัวสำรวจโฟลเดอร์ใช้เลย์เอาต์แบบสองแผง:
+
+- **แผงซ้าย**: เบราว์เซอร์ไฟล์ที่แสดงโครงสร้างไดเรกทอรีและรายการไฟล์ในโฟลเดอร์จัดเก็บ
+- **แผงขวา**: ข้อมูลเพิ่มเติมและบันทึก จัดแบ่งออกเป็นสองแท็บ:
+  * **ข้อมูลเมตา**: คำอธิบายและคุณสมบัติของโฟลเดอร์ (เดิมแสดงเป็นแผงด้านข้าง)
+  * **Audit Log**: บันทึกลำดับเวลาของการดำเนินการที่ทำบนโฟลเดอร์นี้
+
+บนหน้าจอขนาดกว้าง (xl) ตัวแบ่งที่ลากได้จะแยกสองแผงออกจากกัน เพื่อให้คุณสามารถปรับขนาดได้ตามความต้องการ บนหน้าจอขนาดแคบ แผงจะเรียงซ้อนกันในแนวตั้ง
 
 ![](../images/folder_explorer.png)
 
-You can create a new directory on the current path with the 'Create' button
-(in the folder explorer), or upload a local file or folder with the 'Upload' button. All
-of these file operations can also be performed using the above-described method
-of mounting folders into a compute session.
+![](../images/split_panel_folder_explorer.png)
 
-ความยาวสูงสุดของไฟล์หรือไดเร็กทอรีภายในโฟลเดอร์อาจขึ้นอยู่กับระบบไฟล์ของโฮสต์ แต่โดยปกติจะไม่สามารถเกิน 255 ตัวอักษร
+### การดำเนินการไฟล์
+
+ภายในแผงซ้าย คุณสามารถเห็นไดเรกทอรีและไฟล์ทั้งหมดในโฟลเดอร์ คลิกที่ชื่อไดเรกทอรีในคอลัมน์ **ชื่อ** เพื่อนำทางเข้าไปในไดเรกทอรีนั้น ปุ่มการดำเนินการของแต่ละแถวจะอยู่ในคอลัมน์ **ชื่อ** ถัดจากชื่อของรายการ คลิก **ดาวน์โหลด** เพื่อดาวน์โหลดไฟล์หรือไดเรกทอรี คลิก **ลบ** เพื่อลบ หรือคลิกปุ่มรูปดินสอ (**เปลี่ยนชื่อ**) ที่อยู่ข้างชื่อเพื่อเปลี่ยนชื่อได้ทันที เมื่อคอลัมน์แคบเกินกว่าจะแสดงปุ่มได้ทั้งหมด การดำเนินการที่เหลือจะย้ายไปอยู่ในเมนู **การดำเนินการเพิ่มเติม** (⋮) ของแถวเดียวกัน สำหรับการดำเนินการไฟล์ที่ละเอียดมากขึ้น คุณสามารถเมาท์โฟลเดอร์นี้เมื่อสร้างเซสชันการคำนวณ จากนั้นใช้บริการเช่น Terminal หรือ Jupyter Notebook
+
+คุณสามารถสร้างไดเรกทอรีใหม่ในพาธปัจจุบันได้ด้วยปุ่ม **สร้างโฟลเดอร์** หรืออัปโหลดไฟล์หรือโฟลเดอร์ภายในเครื่องได้ด้วยปุ่ม **อัปโหลด** การดำเนินการเกี่ยวกับไฟล์ทั้งหมดเหล่านี้ยังสามารถทำได้โดยใช้วิธีการเมาท์โฟลเดอร์เข้าสู่เซสชันการคำนวณตามที่อธิบายไว้ข้างต้น
+
+:::warning
+การอัปโหลดต้องมีทั้งสิทธิ์ `upload-file` บน storage host ที่เก็บโฟลเดอร์นี้ **และ** สิทธิ์การเขียน
+บนตัวโฟลเดอร์เอง หากขาดสิทธิ์ใดสิทธิ์หนึ่ง ปุ่ม **อัปโหลด** (และการอัปโหลดด้วยการลากและวาง)
+จะ **ถูกปิดใช้งาน** ปุ่มจะยังคงปรากฏอยู่แต่จะแสดงเป็นสีเทา และมีคำอธิบายในเครื่องมือแนะนำว่า
+ไม่อนุญาตให้อัปโหลด
+
+`upload-file` คือสิทธิ์ระดับโฮสต์ที่ได้รับผ่านสิทธิ์ระดับโดเมน สิทธิ์ระดับโปรเจกต์
+หรือนโยบายทรัพยากรของคีย์แพร์ — หากมี **อย่างน้อยหนึ่ง** รายการที่มอบสิทธิ์สำหรับ
+storage host นั้น คุณจะสามารถอัปโหลดได้ หากปุ่มถูกปิดใช้งาน โปรดขอให้ผู้ดูแลระบบ
+มอบสิทธิ์ `upload-file` สำหรับโฮสต์ที่เก็บโฟลเดอร์นี้ให้แก่คุณ คุณสามารถระบุได้ว่า
+โฟลเดอร์อยู่บนโฮสต์ใดจากคอลัมน์ **ตำแหน่ง** ในรายการโฟลเดอร์ หรือจากลิ้นชัก
+รายละเอียดของโฟลเดอร์
+:::
+
+![](../images/vfolder_upload_disabled.png)
+
+ความยาวสูงสุดของไฟล์หรือไดเรกทอรีภายในโฟลเดอร์อาจขึ้นอยู่กับระบบไฟล์ของโฮสต์ แต่โดยปกติจะไม่สามารถเกิน 255 ตัวอักษร
 
 
 :::note
-To ensure smooth performance, the screen limits the maximum number of files that can be displayed when a
-directory contains an excessive number of files. If a folder contains a large number of files, some may
-not be shown on the screen. In such cases, please use the terminal or other applications to view all files
-in the directory.
+เพื่อให้การทำงานราบรื่น หน้าจอจะจำกัดจำนวนไฟล์สูงสุดที่สามารถแสดงได้เมื่อไดเรกทอรีมีไฟล์จำนวนมากเกินไป หากโฟลเดอร์มีไฟล์จำนวนมาก บางไฟล์อาจไม่ปรากฏบนหน้าจอ ในกรณีเช่นนี้ โปรดใช้เทอร์มินัลหรือแอปพลิเคชันอื่นเพื่อดูไฟล์ทั้งหมดในไดเรกทอรี
 :::
 
 ### แก้ไขไฟล์ข้อความ
 
-คุณสามารถแก้ไขไฟล์ข้อความได้โดยตรงในโฟลเดอร์เอ็กซ์พลอเรอร์ คลิกที่ชื่อโฟลเดอร์เพื่อเปิดไฟล์เอ็กซ์พลอเรอร์ จากนั้นคลิกที่ปุ่ม 'แก้ไขไฟล์' ในคอลัมน์ควบคุมสำหรับไฟล์ข้อความใด ๆ
+คุณสามารถแก้ไขไฟล์ข้อความได้โดยตรงในโฟลเดอร์เอ็กซ์พลอเรอร์ คลิกที่ชื่อโฟลเดอร์เพื่อเปิดไฟล์เอ็กซ์พลอเรอร์ จากนั้นเปิดเมนู **การดำเนินการเพิ่มเติม** (⋮) ในแถวของไฟล์ข้อความนั้นในคอลัมน์ **ชื่อ** แล้วเลือก **แก้ไขไฟล์**
 
 ![](../images/folder_explorer_edit_button.png)
 
@@ -112,13 +118,30 @@ in the directory.
 ตัวแก้ไขรองรับทั้งธีมสว่างและธีมมืดที่ตรงกับการตั้งค่า UI ของคุณ คุณสามารถแก้ไขเนื้อหาไฟล์ จากนั้นคลิก 'บันทึก' เพื่ออัปโหลดไฟล์ที่แก้ไข หรือ 'ยกเลิก' เพื่อยกเลิกการเปลี่ยนแปลง
 
 :::note
-ปุ่มแก้ไขไฟล์จะใช้งานได้เฉพาะเมื่อคุณมีสิทธิ์ write_content บนโฟลเดอร์จัดเก็บ หากไฟล์โหลดไม่สำเร็จ ข้อความแสดงข้อผิดพลาดจะปรากฏขึ้น
+การบันทึกจากตัวแก้ไขจะอัปโหลดไฟล์ที่แก้ไขแล้ว ดังนั้นการดำเนินการ **แก้ไขไฟล์** จึงต้องมี **ทั้ง** สิทธิ์ `write_content` บนโฟลเดอร์จัดเก็บนี้ (ที่ได้รับผ่านสิทธิ์การแชร์โฟลเดอร์หรือบทบาทของคุณบนโฟลเดอร์) **และ** สิทธิ์ `upload-file` บน storage host ที่เก็บโฟลเดอร์นี้ หากขาดสิทธิ์ใดสิทธิ์หนึ่ง จะไม่สามารถใช้การดำเนินการนี้ได้ หากไฟล์โหลดไม่สำเร็จ ข้อความแสดงข้อผิดพลาดจะปรากฏขึ้น
 :::
+
+### แท็บ Audit Log
+
+แท็บ **Audit Log** ในแผงขวาจะแสดงรายการลำดับเวลาของการดำเนินการทั้งหมดที่ทำบนโฟลเดอร์จัดเก็บนี้ (เหตุการณ์การสร้าง อัปเดต ลบ และอื่น ๆ)
+
+![](../images/vfolder_audit_log_tab.png)
+
+แท็บบันทึกการตรวจสอบจะแสดงคอลัมน์ต่อไปนี้ตามลำดับ:
+
+- **เวลา**: เวลาที่การดำเนินการเกิดขึ้น
+- **การดำเนินการ**: ประเภทของการดำเนินการ (เช่น create, update, หรือ delete)
+- **สถานะ**: ผลลัพธ์ของการดำเนินการ (เช่น SUCCESS หรือ ERROR)
+- **คำอธิบาย**: รายละเอียดเพิ่มเติมเกี่ยวกับการดำเนินการ
+- **ระยะเวลา**: ระยะเวลาที่ใช้ในการดำเนินการ
+- **ผู้กระตุ้น**: ผู้ใช้ที่ดำเนินการ แสดงในรูปแบบ "email (id)"
+
+คุณสามารถกรองบันทึกตามเวลา การดำเนินการ สถานะ และผู้กระตุ้นได้
 
 ## เปลี่ยนชื่อโฟลเดอร์
 
 
-หากคุณมีสิทธิ์ในการเปลี่ยนชื่อโฟลเดอร์จัดเก็บ คุณสามารถเปลี่ยนชื่อได้โดยคลิกที่ปุ่มแก้ไข
+หากคุณมีสิทธิ์ในการเปลี่ยนชื่อโฟลเดอร์จัดเก็บ ให้เปิดลิ้นชักรายละเอียดของโฟลเดอร์แล้วคลิกปุ่มแก้ไขข้างชื่อโฟลเดอร์ การเปลี่ยนชื่อจะดำเนินการภายในลิ้นชักรายละเอียดเท่านั้น
 
 ![](../images/rename_vfolder.png)
 
@@ -130,21 +153,44 @@ in the directory.
 
 ![](../images/move_to_trash.png)
 
-ในสถานะนี้ คุณสามารถกู้คืนโฟลเดอร์โดยคลิกที่ปุ่มกู้คืนในคอลัมน์ควบคุม หากคุณต้องการลบโฟลเดอร์อย่างถาวร กรุณาคลิกที่ปุ่ม 'ถังขยะ' ในคอลัมน์เดียวกัน
+### ลบหลายโฟลเดอร์พร้อมกัน
+
+เลือกช่องทำเครื่องหมายของโฟลเดอร์ที่ต้องการลบ จะมีสรุปการเลือก (`{จำนวน} เลือก`) และ
+ปุ่มถังขยะปรากฏขึ้นเหนือรายการโฟลเดอร์ คลิกปุ่มถังขยะเพื่อเปิดการยืนยัน
+**ย้ายไปที่ถังขยะ** สำหรับโฟลเดอร์ทั้งหมดที่เลือกไว้
+
+![](../images/vfolder_bulk_move_to_trash.png)
+
+หากรายการที่เลือกมีโฟลเดอร์ที่คุณไม่มีสิทธิ์ลบ โมดัลจะแสดงการแจ้งเตือนหัวข้อ
+*"โฟลเดอร์ต่อไปนี้ที่ไม่มีสิทธิ์ลบจะถูกยกเว้น"* พร้อมรายชื่อโฟลเดอร์เหล่านั้น
+โปรดตรวจสอบรายการนี้ก่อนดำเนินการลบ เฉพาะโฟลเดอร์ที่เหลือหลังจากตัดโฟลเดอร์ที่ไม่มี
+สิทธิ์ออกเท่านั้นที่จะย้ายไปยังแท็บถังขยะ และข้อความยืนยันใต้การแจ้งเตือนจะแสดงจำนวน
+เฉพาะโฟลเดอร์ที่ย้ายจริงเท่านั้น
+
+### กู้คืนหรือลบอย่างถาวร
+
+ในสถานะนี้ คุณสามารถกู้คืนโฟลเดอร์โดยคลิกที่ปุ่มกู้คืนในแถวของโฟลเดอร์นั้นในคอลัมน์ **ชื่อ** หากคุณต้องการลบโฟลเดอร์อย่างถาวร กรุณาคลิกที่ปุ่ม 'ถังขยะ' ในแถวเดียวกัน
 
 ![](../images/vfolder_trash_list.png)
 
-โมดัลยืนยันจะปรากฏขึ้นพร้อมกับช่องป้อนข้อมูลที่ระบุว่า `พิมพ์ชื่อโฟลเดอร์เพื่อลบ` ตรวจสอบให้แน่ใจว่าคุณพิมพ์ชื่อโฟลเดอร์ที่ถูกต้องลงในช่อง จากนั้นคลิกปุ่มสีแดง 'ลบถาวร' เพื่อลบโฟลเดอร์อย่างถาวร
+โมดัลยืนยันจะปรากฏขึ้นพร้อมช่องป้อนชื่อโฟลเดอร์ เมื่อพิมพ์ชื่อโฟลเดอร์ถูกต้อง ปุ่ม **ลบถาวร** จะเปิดใช้งาน และคุณสามารถคลิกเพื่อลบโฟลเดอร์อย่างถาวรได้
 
 ![](../images/vfolder_delete_dialog.png)
+
+:::warning[การลบโมเดลการ์ดแบบลูกโซ่]
+หากโฟลเดอร์ที่คุณกำลังลบเชื่อมโยงกับ **โมเดลการ์ด** โมดัลยืนยันจะแสดงตัวเลือก
+*"ลบโฟลเดอร์โมเดลที่เกี่ยวข้องด้วย"* พร้อมคำเตือน *"การลบโฟลเดอร์โมเดลที่เกี่ยวข้องจะลบ
+โมเดลการ์ดทุกตัวที่ใช้งานโฟลเดอร์นั้นด้วย"* การยืนยันการลบจะทำให้โมเดลการ์ดทุกตัวที่
+อาศัยโฟลเดอร์จัดเก็บนี้ถูกลบอย่างถาวร ไม่ใช่เฉพาะไฟล์ในโฟลเดอร์เท่านั้น โปรดตรวจสอบ
+รายการโมเดลการ์ดที่แสดงก่อนยืนยันการลบ เนื่องจากการดำเนินการนี้ไม่สามารถย้อนกลับได้
+:::
+
+![](../images/vfolder_cascading_delete_warning.png)
 
 ## การใช้ FileBrowser
 
 
-Backend.AI supports [FileBrowser](https://filebrowser.org) from version
-20.09. FileBrowser is a program that helps you manage files on a remote server
-through a web browser. This is especially useful when uploading a directory from
-the ผู้ใช้'s local machine.
+Backend.AI รองรับ [FileBrowser](https://filebrowser.org) FileBrowser เป็นโปรแกรมที่ช่วยให้คุณจัดการไฟล์บนเซิร์ฟเวอร์ระยะไกลผ่านเว็บเบราว์เซอร์ ซึ่งมีประโยชน์เป็นพิเศษเมื่อต้องการอัปโหลดไดเรกทอรีจากเครื่องของผู้ใช้
 
 ปัจจุบัน Backend.AI มี FileBrowser เป็นแอปพลิเคชันของเซสชันการคำนวณ ดังนั้น จึงมีเงื่อนไขต่อไปนี้ที่จำเป็นต้องมีเพื่อเรียกใช้มัน
 
@@ -154,18 +200,17 @@ the ผู้ใช้'s local machine.
 
 คุณสามารถเข้าถึง FileBrowser ได้สองวิธี
 
-- Execute FileBrowser from file explorer dialog of a data folder.
+- เรียกใช้ FileBrowser จากกล่องโต้ตอบตัวสำรวจไฟล์ของโฟลเดอร์จัดเก็บ
 - เริ่มเซสชันการคอมพิวเตอร์โดยตรงจากภาพ FileBrowser ในหน้าเซสชัน
 
 
-### Execute FileBrowser from folder explorer dialog
+### เรียกใช้ FileBrowser จากกล่องโต้ตอบตัวสำรวจโฟลเดอร์
 
-Go to the Data page and open the file explorer dialog of target
-data folder. Click the folder name to open the file explorer.
+ไปที่หน้าข้อมูลและเปิดกล่องโต้ตอบตัวสำรวจไฟล์ของโฟลเดอร์จัดเก็บเป้าหมาย คลิกชื่อโฟลเดอร์เพื่อเปิดตัวสำรวจไฟล์
 
 ![](../images/click_folder_name.png)
 
-Click 'Execute filebrowser' button in the upper-right corner of the explorer.
+คลิกปุ่ม 'เรียกใช้เบราว์เซอร์ไฟล์' ที่มุมขวาบนของตัวสำรวจ
 
 ![](../images/folder_explorer.png)
 
@@ -173,35 +218,32 @@ Click 'Execute filebrowser' button in the upper-right corner of the explorer.
 
 ![](../images/filebrowser_with_new_window.png)
 
-เมื่อผู้ใช้คลิกปุ่ม 'EXECUTE FILEBROWSER' ระบบ Backend.AI จะสร้างเซสชันการคำนวณเฉพาะสำหรับแอปโดยอัตโนมัติ ดังนั้นในหน้าเซสชัน คุณควรเห็นเซสชันการคำนวณ FileBrowser เป็นความรับผิดชอบของผู้ใช้ในการลบเซสชันการคำนวณนี้
+เมื่อผู้ใช้คลิกปุ่ม `เรียกใช้เบราว์เซอร์ไฟล์` ระบบ Backend.AI จะสร้างเซสชันการคำนวณเฉพาะสำหรับแอปโดยอัตโนมัติ ดังนั้นในหน้าเซสชัน คุณควรเห็นเซสชันการคำนวณ FileBrowser เป็นความรับผิดชอบของผู้ใช้ในการลบเซสชันการคำนวณนี้
 
 ![](../images/filebrowser_in_session_page.png)
 
 
 :::note
-หากคุณปิดหน้าต่าง FileBrowser โดย accident และต้องการเปิดใหม่เพียงแค่ไปที่หน้า เซสชัน และคลิกปุ่มแอปพลิเคชัน FileBrowser ของเซสชันการคอมพิวเตอร์ FileBrowser
+หากคุณปิดหน้าต่าง FileBrowser โดยไม่ได้ตั้งใจและต้องการเปิดใหม่ เพียงแค่ไปที่หน้าเซสชันและคลิกปุ่มแอปพลิเคชัน FileBrowser ของเซสชันการคำนวณ FileBrowser
 
 ![](../images/app_dialog_with_filebrowser.png)
 
-เมื่อคุณคลิกที่ปุ่ม 'EXECUTE FILEBROWSER' อีกครั้งในตัวสำรวจโฟลเดอร์ข้อมูล จะมีการสร้างเซสชันการคำนวณใหม่และจะมีการแสดงเซสชัน FileBrowser ทั้งหมดสองรายการ
+เมื่อคุณคลิกที่ปุ่ม `เรียกใช้เบราว์เซอร์ไฟล์` อีกครั้งในตัวสำรวจโฟลเดอร์จัดเก็บ จะมีการสร้างเซสชันการคำนวณใหม่และจะมีการแสดงเซสชัน FileBrowser ทั้งหมดสองรายการ
 :::
 
 ### สร้างเซสชันการคำนวณด้วยภาพ FileBrowser
 
-คุณสามารถสร้างเซสชันคอมพิวเตอร์ได้โดยตรงด้วยภาพที่รองรับโดย FileBrowser คุณจำเป็นต้องติดตั้งโฟลเดอร์ข้อมูลอย่างน้อยหนึ่งโฟลเดอร์เพื่อเข้าถึงพวกเขา คุณสามารถใช้ FileBrowser ได้โดยไม่มีปัญหาแม้ว่าคุณจะไม่ติดตั้งโฟลเดอร์ข้อมูลใด ๆ แต่ไฟล์ที่อัปโหลด/อัปเดตทุกไฟล์จะหายไปหลังจากเซสชันสิ้นสุด
+คุณสามารถสร้างเซสชันคอมพิวเตอร์ได้โดยตรงด้วยภาพที่รองรับโดย FileBrowser คุณจำเป็นต้องติดตั้งโฟลเดอร์จัดเก็บอย่างน้อยหนึ่งโฟลเดอร์เพื่อเข้าถึงพวกเขา คุณสามารถใช้ FileBrowser ได้โดยไม่มีปัญหาแม้ว่าคุณจะไม่ติดตั้งโฟลเดอร์จัดเก็บใด ๆ แต่ไฟล์ที่อัปโหลด/อัปเดตทุกไฟล์จะหายไปหลังจากเซสชันสิ้นสุด
 
 
 :::note
-The root directory of FileBrowser will be `/home/work`. Therefore, you
-can access any mounted data folders for the compute session.
+ไดเรกทอรีรากของ FileBrowser จะเป็น `/home/work` ดังนั้นคุณจึงสามารถเข้าถึง
+โฟลเดอร์จัดเก็บที่เมาท์ไว้สำหรับเซสชันการคำนวณได้ทั้งหมด
 :::
 
 ### ตัวอย่างการใช้งานพื้นฐานของ FileBrowser
 
-Here, we present some basic usage examples of FileBrowser in Backend.AI. Most
-of the FileBrowser operations are intuitive, but if you need more detailed
-guide, please refer to the
-[FileBrowser documentation](https://filebrowser.org).
+ในส่วนนี้จะแนะนำตัวอย่างการใช้งานพื้นฐานของ FileBrowser ใน Backend.AI การใช้งาน FileBrowser ส่วนใหญ่นั้นเข้าใจได้ง่ายและเป็นไปโดยสัญชาตญาณ แต่หากคุณต้องการคู่มือที่ละเอียดกว่านี้ โปรดดูที่ [เอกสาร FileBrowser](https://filebrowser.org)
 
 **อัปโหลดไดเรกทอรีท้องถิ่นโดยใช้ FileBrowser**
 
@@ -223,120 +265,94 @@ foo
 +-- test.txt
 ```
 
-After selecting `foo` directory, you can see the directory just uploaded
-successfully.
+หลังจากเลือกไดเรกทอรี `foo` คุณจะเห็นว่าไดเรกทอรีถูกอัปโหลดสำเร็จแล้ว
 
 ![](../images/filebrowser_upload_finished.png)
 
-You can also upload local files and directories by drag and drop.
+คุณยังสามารถอัปโหลดไฟล์และไดเรกทอรีในเครื่องด้วยการลากและวางได้อีกด้วย
 
-**Move files or directories to another directory**
+**ย้ายไฟล์หรือไดเรกทอรีไปยังไดเรกทอรีอื่น**
 
-Moving files or directories in data folder is also possible from FileBrowser.
-You can move files or directories by following steps below.
+นอกจากนี้ คุณยังสามารถย้ายไฟล์หรือไดเรกทอรีภายในโฟลเดอร์จัดเก็บผ่าน FileBrowser ได้ โดยทำตามขั้นตอนดังต่อไปนี้
 
-1. Select directories or files from FileBrowser.
+1. เลือกไดเรกทอรีหรือไฟล์จาก FileBrowser
 
 ![](../images/select_folders.png)
 
-2. Click the 'arrow' button in the upper right corner of FileBrowser
+2. คลิกปุ่ม 'ลูกศร' ที่มุมขวาบนของ FileBrowser
 
 ![](../images/click_arrow_icon.png)
 
-3. Select the destination
+3. เลือกปลายทาง
 
 ![](../images/select_the_destination.png)
 
-4. Click 'MOVE' button
+4. คลิกปุ่ม 'MOVE'
 
-You will see that moving operation is successfully finished.
+คุณจะเห็นว่าการย้ายเสร็จสมบูรณ์แล้ว
 
 ![](../images/moving_operation_in_filebrowser_finished.png)
 
 
 :::note
-FileBrowser is provided via application inside a compute session currently.
-We are planning to update FileBrowser so that it can run independently
-without creating a session.
+ปัจจุบัน FileBrowser ถูกจัดเตรียมไว้ในรูปแบบแอปพลิเคชันภายในเซสชันการคำนวณ
+เรากำลังวางแผนที่จะอัปเดต FileBrowser เพื่อให้สามารถทำงานได้อย่างอิสระโดยไม่ต้องสร้างเซสชัน
 :::
 
-## Using SFTP Server
+## การใช้งานเซิร์ฟเวอร์ SFTP
 
 
-From 22.09, Backend.AI supports SSH / SFTP file upload from both desktop app and
-web-based WebUI. The SFTP server allows you to upload files quickly through reliable
-data streams.
+Backend.AI รองรับการอัปโหลดไฟล์ผ่าน SSH / SFTP จากทั้งแอปเดสก์ท็อปและ WebUI แบบเว็บ เซิร์ฟเวอร์ SFTP ช่วยให้คุณอัปโหลดไฟล์ได้อย่างรวดเร็วผ่านสตรีมข้อมูลที่เชื่อถือได้
 
 
 :::note
-Depending on the system settings, running SFTP server from the file dialog may not
-be allowed.
+ขึ้นอยู่กับการตั้งค่าของระบบ การเรียกใช้เซิร์ฟเวอร์ SFTP จากกล่องโต้ตอบไฟล์อาจ
+ไม่ได้รับอนุญาต
 :::
 
-### Execute SFTP server from folder explorer dialog in Data page
+### เรียกใช้เซิร์ฟเวอร์ SFTP จากกล่องโต้ตอบตัวสำรวจโฟลเดอร์ในหน้าข้อมูล
 
-Go to the Data page and open the file explorer dialog of target data folder.
-Click the folder button or the folder name to open the file explorer.
+ไปที่หน้าข้อมูล (Data) และเปิดกล่องโต้ตอบตัวสำรวจไฟล์ของโฟลเดอร์จัดเก็บเป้าหมาย คลิกปุ่มโฟลเดอร์หรือชื่อโฟลเดอร์เพื่อเปิดตัวสำรวจไฟล์
 
-Click 'Run SFTP server' button in the upper-right corner of the explorer.
+คลิกปุ่ม 'เรียกใช้เซิร์ฟเวอร์ SFTP' ที่มุมขวาบนของตัวสำรวจ
 
 ![](../images/folder_explorer.png)
 
-You can see the SSH / SFTP connection dialog. And a new SFTP session will be created
-automatically. (This session will not affect resource occupancy.)
+กล่องโต้ตอบการเชื่อมต่อ SSH / SFTP จะปรากฏขึ้น และเซสชัน SFTP ใหม่จะถูกสร้างขึ้นโดยอัตโนมัติ (เซสชันนี้จะไม่ส่งผลต่อการใช้ทรัพยากร)
 
 ![](../images/SSH_SFTP_connection.png)
 
-For the connection, click 'Download SSH Key' button to download the SSH private key
-(`id_container`). Also, remember the host and port number. Then, you can copy your
-files to the session using the Connection Example code written in the dialog, or
-referring to the following guide: [SFTP Connection Guide](../sftp_to_container/sftp_to_container.md#for-linux-mac).
-To preserve the files, you need to transfer the files to the data folder. Also,
-the session will be terminated when there is no transfer for some time.
+สำหรับการเชื่อมต่อ ให้คลิกปุ่ม 'ดาวน์โหลดคีย์ SSH' เพื่อดาวน์โหลดคีย์ส่วนตัว SSH (`id_container`) และโปรดจดจำโฮสต์และหมายเลขพอร์ตไว้ จากนั้นคุณสามารถคัดลอกไฟล์ไปยังเซสชันได้โดยใช้โค้ดตัวอย่างการเชื่อมต่อที่ระบุในกล่องโต้ตอบ หรือดูคู่มือต่อไปนี้: [คู่มือการเชื่อมต่อ SFTP](#ssh-sftp-container) หากต้องการรักษาไฟล์ไว้ คุณต้องโอนไฟล์ไปยังโฟลเดอร์จัดเก็บ นอกจากนี้ เซสชันจะถูกยุติเมื่อไม่มีการถ่ายโอนข้อมูลเป็นระยะเวลาหนึ่ง
 
 
 :::note
-If you upload your SSH keypair, the `id_container` will be set with your
-own SSH private key. So, you don't need to download it every time you
-want to connect via SSH to your container. Please refer to
-[managing user's SSH keypair](#user-ssh-keypair-management).
+หากคุณอัปโหลดคีย์แพร์ SSH ของคุณเอง `id_container` จะถูกตั้งค่าเป็นคีย์ส่วนตัว SSH
+ของคุณ ดังนั้นคุณไม่จำเป็นต้องดาวน์โหลดคีย์ทุกครั้งที่ต้องการเชื่อมต่อกับคอนเทนเนอร์
+ผ่าน SSH โปรดดู[การจัดการคีย์แพร์ SSH ของผู้ใช้](#user-ssh-keypair-management)
 :::
 
-## Folder Categories
+## โฟลเดอร์ไปป์ไลน์
 
-
-## Pipeline folders
-
-This tab shows the list of folders that are automatically created when executing a
-pipeline in FastTrack. When a pipeline is created, a new folder is created and mounted
-under `/pipeline` for each instance of work (computing session).
+แท็บนี้จะแสดงรายการโฟลเดอร์ที่ถูกสร้างขึ้นโดยอัตโนมัติเมื่อมีการดำเนินการไปป์ไลน์ใน FastTrack เมื่อมีการสร้างไปป์ไลน์ โฟลเดอร์ใหม่จะถูกสร้างและเมาท์ไว้ภายใต้ `/pipeline` สำหรับแต่ละอินสแตนซ์ของงาน (เซสชันการคำนวณ)
 
 <a id="automount-folder"></a>
 
-## Automount folders
+## โฟลเดอร์เมาท์อัตโนมัติ
 
 
-Data page has an Automount Folders tab. Click this tab to see a
-list of folders whose names prefixed with a dot (`.`). When you create a folder,
-if you specify a name that starts with a dot (`.`), it is added to the Automount
-Folders tab, not the Folders tab. Automount Folders are special folders that are
-automatically mounted in your home directory even if you do not mount them
-manually when creating a compute session. By using this feature, creating and
-using Storage folders such as `.local`, `.linuxbrew`, `.pyenv`, etc.,
-you can configure a certain ผู้ใช้ packages or environments that do not change
-with different kinds of compute session.
+หน้าข้อมูล (Data) มีแท็บโฟลเดอร์เมาท์อัตโนมัติ (Automount Folders) คลิกที่แท็บนี้เพื่อดูรายการโฟลเดอร์ที่มีชื่อขึ้นต้นด้วยจุด (`.`) เมื่อคุณสร้างโฟลเดอร์โดยระบุชื่อที่ขึ้นต้นด้วยจุด (`.`) โฟลเดอร์นั้นจะถูกเพิ่มเข้าไปในแท็บโฟลเดอร์เมาท์อัตโนมัติแทนที่จะเป็นแท็บโฟลเดอร์ โฟลเดอร์เมาท์อัตโนมัติเป็นโฟลเดอร์พิเศษที่จะถูกเมาท์ในไดเรกทอรีโฮมของคุณโดยอัตโนมัติ แม้ว่าคุณจะไม่ได้เมาท์ด้วยตนเองตอนสร้างเซสชันการคำนวณก็ตาม การใช้ฟีเจอร์นี้ในการสร้างและใช้โฟลเดอร์จัดเก็บ เช่น `.local`, `.linuxbrew`, `.pyenv` ฯลฯ จะช่วยให้คุณสามารถกำหนดค่าแพ็กเกจหรือสภาพแวดล้อมของผู้ใช้ที่จะไม่เปลี่ยนแปลงไปตามชนิดของเซสชันการคำนวณ
 
-For more detailed information on the usage of การติดตั้งโฟลเดอร์อัตโนมัติ, refer to
-[examples of using automount folders](#using-automount-folder).
+สำหรับข้อมูลเพิ่มเติมเกี่ยวกับการใช้งานโฟลเดอร์เมาท์อัตโนมัติ โปรดดูที่
+[ตัวอย่างการใช้งานโฟลเดอร์เมาท์อัตโนมัติ](#using-automount-folder)
 
 ![](../images/vfolder_automount_folders.png)
 
 <a id="models"></a>
 
-## โมเดลส์
+## โฟลเดอร์โมเดล
 
 
-The โมเดลส์ tab facilitates straightforward model serving.
-You can store the necessary data, including input data for [model serving](#model-serving) and training data, in the model folder.
+แท็บโมเดลช่วยให้การให้บริการโมเดลเป็นไปอย่างสะดวกและตรงไปตรงมา
+คุณสามารถจัดเก็บข้อมูลที่จำเป็น ซึ่งรวมถึงข้อมูลนำเข้าสำหรับ[การให้บริการโมเดล](#model-serving) และข้อมูลสำหรับการฝึกสอน ไว้ในโฟลเดอร์โมเดลได้
 
 ![](../images/models.png)

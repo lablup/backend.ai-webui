@@ -1,5 +1,7 @@
+import BAIComplexSelect, { BAILabeledValue } from './BAIComplexSelect';
 import BAIGraphQLPropertyFilter from './BAIGraphQLPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { action } from 'storybook/actions';
 
 const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
@@ -21,9 +23,13 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
 
 New in this version:
 - **DateTime support**: When a property has type 'datetime', a DatePicker with time selection is rendered instead of a text input. Values are serialized as ISO strings and displayed in filter tags as 'YYYY-MM-DD HH:mm'.
-- Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'eq') to control how tags are displayed in the UI.
+- **UUID support**: UUID type properties use \`equals\`, \`notEquals\`, \`in\`, \`notIn\` operators and support validation rules.
+- **Custom input via \`renderInput\`**: Replace the default AutoComplete input with any controlled control (e.g., a user/domain picker or async select). The control commits a condition via \`onAddCondition(value, label?)\` as soon as a value is selected (so a single-select picker confirms on selection); pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the condition tag shows the label instead. Give the control \`value={null}\` so it stays controlled and clears after each commit. Keep using a built-in \`type\` (e.g. \`uuid\`) that matches what the control emits.
+- Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'equals') to control how tags are displayed in the UI.
 
 The component generates GraphQL-compatible filter objects that can be directly used in GraphQL queries, enabling powerful and flexible data filtering across the platform.
+
+> **to-astryx ticket 28** — the engine is now Astryx \`PowerSearch\`. The prop contract and the emitted filter object are unchanged, but the antd chrome (property/operator \`Select\`s, \`AutoComplete\`, \`DatePicker\`, closable \`Tag\`s, reset button) is replaced by PowerSearch's typeahead, tokens and built-in clear. Three behaviours moved: \`renderInput\` controls stage a value that the popover's Apply button commits, per-property \`placeholder\` is dropped (PowerSearch has one control-level placeholder), and \`rule.validate\` is advisory — a violating token is reported through the error status instead of being refused. **to-astryx ticket 32** refreshed these stories: the \`renderInput\` demos below now use \`BAIComplexSelect\` (Astryx-native) instead of antd \`Select\`, matching what a migrated call site actually renders.
 
 **GraphQL Filter Object Examples:**
 \`\`\`javascript
@@ -85,6 +91,16 @@ FilterProperty = {
   valueMode?: 'scalar' | 'operator';
   // Visual operator for UI tags when valueMode='scalar' (default 'equals')
   implicitOperator?: FilterOperator;
+  // Custom input renderer — replaces the default AutoComplete with a controlled
+  // control (e.g. BAIUserSelect). \`onAddCondition(value, label?)\` commits the
+  // value as a condition immediately (single-select pickers confirm on
+  // selection) and serializes it per the property's \`type\`. Pass a
+  // human-readable \`label\` when the value is opaque (e.g. a UUID) so the
+  // condition tag stays readable. Give the control \`value={null}\` so it
+  // stays controlled and clears after each commit.
+  renderInput?: (props: {
+    onAddCondition: (value: string | undefined, label?: string) => void;
+  }) => ReactNode;
 }
         `,
       },
@@ -126,6 +142,30 @@ GraphQLFilter = {
         defaultValue: { summary: 'AND' },
       },
     },
+  },
+  // BAIGraphQLPropertyFilter is a controlled component (same as
+  // BAIPropertyFilter): it renders exactly what `value` holds and reports
+  // changes through `onChange`. Storybook args are static, so unless each
+  // change is written back into `value` the filter looks frozen — adding a
+  // condition or removing/clearing a tag has no visible effect. We hold the
+  // value in local state per story instance so every story is independently
+  // interactive. NOTE: do not use Storybook `useArgs` here — in the autodocs
+  // page only the Primary story's `updateArgs` is wired, so every other story
+  // would stay frozen. `useState` works for every instance in both the Canvas
+  // and Docs views. The per-story `onChange: action(...)` handlers still log
+  // to the Actions panel.
+  render: (args) => {
+    const [value, setValue] = useState(args.value);
+    return (
+      <BAIGraphQLPropertyFilter
+        {...args}
+        value={value}
+        onChange={(next) => {
+          args.onChange?.(next);
+          setValue(next);
+        }}
+      />
+    );
   },
 };
 
@@ -788,6 +828,94 @@ export const WithDateTimePrefiltered: Story = {
   },
 };
 
+export const WithUUIDFilters: Story = {
+  name: 'UUID Filters',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'UUID type properties use `equals`, `notEquals`, `in`, `notIn` operators. Combine with a `rule` for format validation.',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'projectId',
+        propertyLabel: 'Project ID',
+        type: 'uuid',
+        rule: {
+          message: 'Must be a valid UUID.',
+          validate: (value: string) =>
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+              value,
+            ),
+        },
+      },
+      {
+        key: 'domainId',
+        propertyLabel: 'Domain ID',
+        type: 'uuid',
+        defaultOperator: 'notEquals',
+      },
+    ],
+    combinationMode: 'AND',
+    value: {
+      projectId: { equals: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' },
+    },
+    onChange: action('UUID filter changed'),
+  },
+};
+
+export const WithRenderInput: Story = {
+  name: 'Custom Input via renderInput',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When `renderInput` is provided, the default AutoComplete is replaced with a custom control. The control commits a condition via `onAddCondition(value, label?)` as soon as it emits a non-empty value; keep it controlled with `value={null}` so it clears after each commit. Useful for async selects (e.g., fetching options from an API).',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+        defaultOperator: 'iContains',
+      },
+      {
+        key: 'storageHost',
+        propertyLabel: 'Storage Host',
+        type: 'string',
+        defaultOperator: 'equals',
+        renderInput: ({ onAddCondition }) => (
+          <BAIComplexSelect
+            label="Storage Host"
+            isLabelHidden
+            placeholder="Select storage host"
+            width={180}
+            hasSearch={false}
+            options={[
+              { label: 'local:volume1', value: 'local:volume1' },
+              { label: 'local:volume2', value: 'local:volume2' },
+              { label: 'nfs:data', value: 'nfs:data' },
+            ]}
+            value={null}
+            onChange={(next) => {
+              const labeled = next as BAILabeledValue | null;
+              onAddCondition(labeled?.value);
+            }}
+          />
+        ),
+      },
+    ],
+    combinationMode: 'AND',
+    onChange: action('renderInput filter changed'),
+  },
+};
+
 export const WithScalarValueModeOnString: Story = {
   name: 'Scalar valueMode on string field',
   parameters: {
@@ -824,5 +952,51 @@ export const WithScalarValueModeOnString: Story = {
       AND: [{ slugExact: 'hello-world' }, { isPublished: true }],
     },
     onChange: action('Scalar mode (string) filter changed'),
+  },
+};
+
+// --- Custom input (onAddCondition) -------------------------------------------
+
+const sampleOwnerOptions = [
+  { label: 'alice@example.com', value: 'owner-uuid-0001' },
+  { label: 'bob@example.com', value: 'owner-uuid-0002' },
+  { label: 'carol@example.com', value: 'owner-uuid-0003' },
+];
+
+export const WithCustomType: Story = {
+  name: 'Custom input (onAddCondition)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "A property whose input is a controlled antd Select supplied via `renderInput`. Selecting an option calls `onAddCondition(value, label)` — the filter commits the value as a condition serialized per `type: 'uuid'` → `{ owner: { id: { equals: <id> } } }`, while the condition tag shows the label (email) instead of the opaque UUID.",
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'owner.id',
+        propertyLabel: 'Owner',
+        type: 'uuid',
+        fixedOperator: 'equals',
+        renderInput: ({ onAddCondition }) => (
+          <BAIComplexSelect
+            label="Owner"
+            isLabelHidden
+            placeholder="Select owner"
+            width={220}
+            options={sampleOwnerOptions}
+            value={null}
+            onChange={(next) => {
+              const labeled = next as BAILabeledValue | null;
+              onAddCondition(labeled?.value, labeled?.label);
+            }}
+          />
+        ),
+      },
+    ],
+    combinationMode: 'AND',
+    onChange: action('custom input filter changed'),
   },
 };

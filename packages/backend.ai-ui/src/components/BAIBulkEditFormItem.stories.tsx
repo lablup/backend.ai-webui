@@ -1,8 +1,14 @@
+import { Form } from '../form-engine';
 import BAIBulkEditFormItem from './BAIBulkEditFormItem';
+import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
 import BAISelect from './BAISelect';
+import {
+  AstryxFormNumberInput,
+  AstryxFormTextArea,
+  AstryxFormTextInput,
+} from './astryxFormControls';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Form, Input, InputNumber, Select, Button } from 'antd';
 import { useState } from 'react';
 
 /**
@@ -146,7 +152,9 @@ export const Default: Story = {
   args: {
     name: 'nickname',
     label: 'Nickname',
-    children: <Input placeholder="Enter nickname" />,
+    children: (
+      <AstryxFormTextInput label="Nickname" placeholder="Enter nickname" />
+    ),
   },
 };
 
@@ -198,7 +206,7 @@ export const WithSelect: Story = {
     name: 'status',
     label: 'User Status',
     children: (
-      <Select
+      <BAISelect
         placeholder="Select status"
         options={[
           { value: 'active', label: 'Active' },
@@ -226,7 +234,9 @@ export const WithInputNumber: Story = {
     name: 'container_uid',
     label: 'Container UID',
     showClear: true,
-    children: <InputNumber placeholder="Enter UID" style={{ width: '100%' }} />,
+    children: (
+      <AstryxFormNumberInput label="Container UID" placeholder="Enter UID" />
+    ),
   },
 };
 
@@ -316,7 +326,7 @@ export const MultipleFields: Story = {
         />
       </BAIBulkEditFormItem>
       <BAIBulkEditFormItem name="status" label="Status">
-        <Select
+        <BAISelect
           placeholder="Select status"
           options={[
             { value: 'active', label: 'Active' },
@@ -325,7 +335,7 @@ export const MultipleFields: Story = {
         />
       </BAIBulkEditFormItem>
       <BAIBulkEditFormItem name="notes" label="Notes" showClear>
-        <Input.TextArea rows={3} placeholder="Add notes" />
+        <AstryxFormTextArea label="Notes" rows={3} placeholder="Add notes" />
       </BAIBulkEditFormItem>
     </>
   ),
@@ -362,7 +372,7 @@ export const WithFormValues: Story = {
         >
           <Story />
           <BAIFlex direction="column" gap="sm" style={{ marginTop: 16 }}>
-            <Button
+            <BAIButton
               type="primary"
               onClick={() => {
                 const formValues = form.getFieldsValue();
@@ -370,7 +380,7 @@ export const WithFormValues: Story = {
               }}
             >
               Get Form Values
-            </Button>
+            </BAIButton>
             <pre
               style={{
                 background: '#f5f5f5',
@@ -398,7 +408,7 @@ export const WithFormValues: Story = {
         />
       </BAIBulkEditFormItem>
       <BAIBulkEditFormItem name="status" label="Status">
-        <Select
+        <BAISelect
           placeholder="Select status"
           options={[
             { value: 'active', label: 'Active' },

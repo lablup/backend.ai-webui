@@ -1,9 +1,5 @@
 // Backend.AI Client Interface
 export interface BAIClient {
-  // Add methods and properties of the client here
-  // Example:
-  // request: (endpoint: string, options?: RequestInit) => Promise<any>;
-  // Add more methods as needed based on the actual Backend.AI client API
   isManagerVersionCompatibleWith: (version: string) => boolean;
   vfolder: {
     info: (name: string) => Promise<vfolderInfo>;
@@ -32,6 +28,11 @@ export interface BAIClient {
       file: string,
       name: string,
       archive?: boolean,
+    ) => Promise<VFolderDownloadToken>;
+    request_download_archive: (
+      files: Array<string>,
+      name: string,
+      filename?: string,
     ) => Promise<VFolderDownloadToken>;
     create_upload_session: (
       path: string,

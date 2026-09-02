@@ -2,11 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Col, Row, theme, Typography } from 'antd';
+import { useDefaultTheme } from '../../hooks/useDefaultTheme';
+import { theme } from '../../theme-shim';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
-import { useCustomThemeConfig } from 'src/hooks/useCustomThemeConfig';
-import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
 
 interface LogoSizeSettingItemProps {
   logoType?: 'wide' | 'collapsed' | 'login' | 'about';
@@ -38,16 +39,20 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { getThemeValue, updateUserCustomThemeConfig } =
-    useUserCustomThemeConfig();
+  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
 
-  const themeConfig = useCustomThemeConfig();
   const { key: sizeKey, defaultSize } = LOGO_SIZE_CONFIG[logoType];
-  const rawSize = getThemeValue<{ width?: number; height?: number }>(sizeKey);
+  const rawSize = getDefaultThemeValue<{ width?: number; height?: number }>(
+    sizeKey,
+  );
 
   // For about logo, fall back to deprecated aboutModalSize before defaults
   const deprecatedAboutSize =
-    logoType === 'about' ? themeConfig?.logo?.aboutModalSize : undefined;
+    logoType === 'about'
+      ? getDefaultThemeValue<{ width?: number; height?: number }>(
+          'logo.aboutModalSize',
+        )
+      : undefined;
 
   const logoSizeConfig = {
     width: rawSize?.width ?? deprecatedAboutSize?.width ?? defaultSize.width,
@@ -57,52 +62,44 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
 
   return (
     <BAIFlex align="stretch" direction="column" style={{ width: '100%' }}>
-      <Row gutter={[12, 4]}>
-        <Col xl={6} lg={24}>
-          <BAIFlex
-            gap="sm"
-            wrap="nowrap"
-            style={{ color: token.colorTextTertiary }}
-          >
-            <Typography.Text type="secondary" style={{ wordBreak: 'keep-all' }}>
-              {t('userSettings.logo.size.Width')}:
-            </Typography.Text>
-            <BAIUncontrolledInput
-              type="number"
-              defaultValue={logoSizeConfig.width?.toString() ?? ''}
-              onCommit={(v) => {
-                updateUserCustomThemeConfig(
-                  `${sizeKey}.width`,
-                  v ? Number(v) : undefined,
-                );
-              }}
-              style={{ maxWidth: 150 }}
-            />
-          </BAIFlex>
-        </Col>
-        <Col xl={6} lg={24}>
-          <BAIFlex
-            gap="sm"
-            wrap="nowrap"
-            style={{ color: token.colorTextTertiary }}
-          >
-            <Typography.Text type="secondary" style={{ wordBreak: 'keep-all' }}>
-              {t('userSettings.logo.size.Height')}:
-            </Typography.Text>
-            <BAIUncontrolledInput
-              type="number"
-              defaultValue={logoSizeConfig.height?.toString() ?? ''}
-              onCommit={(v) => {
-                updateUserCustomThemeConfig(
-                  `${sizeKey}.height`,
-                  v ? Number(v) : undefined,
-                );
-              }}
-              style={{ maxWidth: 150 }}
-            />
-          </BAIFlex>
-        </Col>
-      </Row>
+      {/* Responsive policy (ticket 14): container-driven Astryx Grid replaces
+          `Row gutter={[12,4]}` + `Col xl={6} lg={24}` — same recipe as
+          LightDarkColorPicker's light/dark pair. */}
+      <Grid columns={{ minWidth: 200, max: 2 }} columnGap={3} rowGap={1}>
+        <BAIFlex
+          gap="sm"
+          wrap="nowrap"
+          style={{ color: token.colorTextTertiary }}
+        >
+          <Text color="secondary">{t('userSettings.logo.size.Width')}:</Text>
+          <BAIUncontrolledInput
+            type="number"
+            defaultValue={logoSizeConfig.width?.toString() ?? ''}
+            onCommit={(v) => {
+              updateDefaultTheme(`${sizeKey}.width`, v ? Number(v) : undefined);
+            }}
+            style={{ maxWidth: 150 }}
+          />
+        </BAIFlex>
+        <BAIFlex
+          gap="sm"
+          wrap="nowrap"
+          style={{ color: token.colorTextTertiary }}
+        >
+          <Text color="secondary">{t('userSettings.logo.size.Height')}:</Text>
+          <BAIUncontrolledInput
+            type="number"
+            defaultValue={logoSizeConfig.height?.toString() ?? ''}
+            onCommit={(v) => {
+              updateDefaultTheme(
+                `${sizeKey}.height`,
+                v ? Number(v) : undefined,
+              );
+            }}
+            style={{ maxWidth: 150 }}
+          />
+        </BAIFlex>
+      </Grid>
     </BAIFlex>
   );
 };

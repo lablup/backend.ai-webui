@@ -2,14 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useWebUINavigate } from '../hooks';
+import { VFolderLazyViewQuery } from '../__generated__/VFolderLazyViewQuery.graphql';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { Typography } from 'antd';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, toGlobalId, toLocalId } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useLocation } from 'react-router-dom';
-import { VFolderLazyViewQuery } from 'src/__generated__/VFolderLazyViewQuery.graphql';
 
 interface VFolderLazyViewProps {
   uuid: string;
@@ -19,9 +19,7 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
   uuid,
   clickable,
 }) => {
-  const location = useLocation();
-
-  const webuiNavigate = useWebUINavigate();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
 
   const { vfolder_node } = useLazyLoadQuery<VFolderLazyViewQuery>(
     graphql`
@@ -42,20 +40,16 @@ const VFolderLazyView: React.FC<VFolderLazyViewProps> = ({
         <BAIFlex align="center" gap="xs">
           <VFolderNodeIdenticon vfolderNodeIdenticonFrgmt={vfolder_node} />
           {clickable ? (
-            <Typography.Link
-              onClick={() => {
-                webuiNavigate({
-                  pathname: location.pathname,
-                  search: new URLSearchParams({
-                    folder: toLocalId(vfolder_node.id),
-                  }).toString(),
-                });
-              }}
+            // p3-a D3: a pure-`onClick` link renders link-styled button
+            // semantics on Astryx `Link` (antd emitted a destination-less
+            // `<a>`), which is what this folder-explorer opener actually is.
+            <Link
+              onClick={() => openFolderExplorer(toLocalId(vfolder_node.id))}
             >
               {vfolder_node.name}
-            </Typography.Link>
+            </Link>
           ) : (
-            <Typography.Text>{vfolder_node.name}</Typography.Text>
+            <Text>{vfolder_node.name}</Text>
           )}
         </BAIFlex>
       )}

@@ -3,6 +3,14 @@ import jsonSchemaValidator from "eslint-plugin-json-schema-validator";
 import storybookPlugin from "eslint-plugin-storybook";
 import jsoncParser from "jsonc-eslint-parser";
 import globals from "globals";
+import fs from "node:fs";
+
+// Embedded inline (not referenced by path) so the schema CONTENT is part of
+// the resolved config: editing i18n.schema.json then invalidates `--cache`d
+// lint results for the locale files, which a `$schema` path alone would not.
+const i18nSchema = JSON.parse(
+  fs.readFileSync(new URL("./i18n.schema.json", import.meta.url), "utf8"),
+);
 
 export default [
   ...base,
@@ -25,6 +33,55 @@ export default [
     files: ["**/*.stories.tsx"],
     rules: {
       "react-hooks/rules-of-hooks": "off",
+    },
+  },
+
+  // Enforce that BUI components access translations through the internal
+  // `useBAIi18n` hook only. Direct imports of i18n primitives from
+  // `react-i18next` would re-introduce React-Context-based lookup, which
+  // (under pnpm dedup) shadows the host app's i18n and surfaces raw keys
+  // on screen — the exact class of bug FR-2986 eliminates.
+  //
+  // All three banned bindings (`useTranslation` hook, `withTranslation` HOC,
+  // `<Translation>` render-prop) are different injection mechanisms for the
+  // same thing — a Context-derived `t`. The project is fully function-
+  // component / hook-based (`'use memo'` directive), so `useBAIi18n()` is
+  // the single replacement for all three; we do not maintain a separate
+  // BUI-instance-bound HOC or render-prop component.
+  //
+  // `useBAIi18n.ts` and `BAITrans.tsx` are exempted because they are the
+  // two places that are *allowed* to call into `react-i18next` directly
+  // (with explicit `{ i18n }` binding). Every other BUI source file routes
+  // i18n access through them.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: [
+      "src/hooks/useBAIi18n.ts",
+      "src/components/BAITrans.tsx",
+      "**/*.test.*",
+      "**/*.stories.*",
+      "**/__test__/**",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "react-i18next",
+              importNames: [
+                "useTranslation",
+                "withTranslation",
+                "Translation",
+                "Trans",
+                "I18nextProvider",
+              ],
+              message:
+                "Use `useBAIi18n` from `<relative path>/hooks/useBAIi18n` (replaces useTranslation / withTranslation / Translation) or `BAITrans` from `<relative path>/components/BAITrans` (replaces <Trans>) instead. BUI components must bind explicitly to BUI's i18n instance — see FR-2986 / packages/backend.ai-ui/src/hooks/useBAIi18n.ts.",
+            },
+          ],
+        },
+      ],
     },
   },
 
@@ -60,6 +117,14 @@ export default [
     },
     rules: {
       ...jsonSchemaValidator.configs.recommended.rules,
+      "json-schema-validator/no-invalid": [
+        "error",
+        {
+          schemas: [
+            { fileMatch: ["**/src/locale/*.json"], schema: i18nSchema },
+          ],
+        },
+      ],
     },
   },
 

@@ -1,10 +1,8 @@
+---
+navTitle: Cluster Session
+---
+
 # Backend.AI Cluster Compute Session
-
-
-:::note
-Cluster compute session feature is supported from Backend.AI server 20.09 or
-higher.
-:::
 
 <a id="backendai-cluster-compute-session"></a>
 
@@ -30,7 +28,7 @@ For detailed about Backend.AI cluster session, refer to the following.
 - All containers under a cluster session are created by allocating the same
   amount of resources. In the figure above, all four containers of session X
   are created with the same amount of resources.
-- All containers under a cluster session mount the same data folder specified
+- All containers under a cluster session mount the same storage folder specified
   when creating a compute session.
 - All containers under a cluster session are tied to a private network.
 
@@ -44,7 +42,7 @@ For detailed about Backend.AI cluster session, refer to the following.
 - There are two modes/types of cluster session.
 
    * Single node cluster session: A cluster session composed of two or more
-     containers on one, same agent node. In the figure above, this is session Z,
+     containers on one, same physical node. In the figure above, this is session Z,
      which is bound to a local bridge network.
    * Multi-node cluster session: A cluster session composed of two or more
      containers on different Agent nodes. In the picture above, this is
@@ -54,11 +52,11 @@ For detailed about Backend.AI cluster session, refer to the following.
 
 - A single node cluster session is created in the following cases.
 
-   * When "Single Node" is selected for Cluster mode field when creating a
+   * When "Single Node" is selected for the Cluster Mode field when creating a
      compute session. If there is no single agent with enough resources to
      create all containers at the same time, the session will stay in a pending
      (`PENDING`) state.
-   * “Multi Node” is selected for Cluster mode, but there is a single agent with
+   * “Multi Node” is selected for Cluster Mode, but there is a single agent with
      enough resources that can create all containers at the same time, then, all
      containers are deployed on that agent. This is to reduce network latency as
      much as possible by excluding external network access.
@@ -95,24 +93,24 @@ CPUs, 4 cores are allocated to each container under a cluster session. Please
 note that this is not the amount of resources allocated to entire cluster
 computing session. To create a cluster compute session, server resources equal
 to N times the amount of resources set here are required (N is the cluster
-size). Also, don't forget to mount the data folder for data safekeeping.
+size). Also, don't forget to mount the storage folder for data safekeeping.
 
 ![](../images/session_launch_dialog.png)
 
-In the "Cluster mode" field at the bottom, you can choose what type of cluster
+In the "Cluster Mode" field at the bottom, you can choose what type of cluster
 you want to create.
 
 - Single Node: All containers are created on one Agent node.
 - Multi Node: Containers are created across multiple Agent nodes within a
-  resource group. However, if all containers can be created in one agent node,
+  resource group. However, if all containers can be created in one physical node,
   all of them are created on that node. This is to minimize network latency
   between the containers.
 
-Set the "Cluster size" below it. If set to 3, a total of three containers will
+Set the "Cluster Size" below it. If set to 3, a total of three containers will
 be created including the main container. These three containers are bound under
 a private network to form one compute session.
 
-Click the LAUNCH button to send a request to create a compute session, and wait
+Click the Launch button to send a request to create a compute session, and wait
 for a while to get a cluster session. After the session is created, you can view
 the created containers on the session details page.
 
@@ -145,7 +143,7 @@ distributed learning algorithm.
 
 ### See logs per container
 
-From 24.03, You can check each log of container in logs modal. It will help you
+You can check each log of container in logs modal. It will help you
 to understand what's going on not only in `main` container but also `sub` containers.
 
 ![](../images/log_modal_per_container.png)

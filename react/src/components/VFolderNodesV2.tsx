@@ -1,0 +1,942 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Ticket 16 — converted to Astryx; the table itself crossed in ticket 30-D
+ (`BAITable`, Astryx engine). Cells and satellites are Astryx:
+ `BAINameActionCell`, `Badge` + the ticket-13 status lookup, `Text`,
+ `BAIText copyable`, `BAIModal` (host-quota modal), `BAISkeleton`.
+*/
+import { VFolderDeployModalQuery } from '../__generated__/VFolderDeployModalQuery.graphql';
+import { VFolderNodesV2DeleteMutation } from '../__generated__/VFolderNodesV2DeleteMutation.graphql';
+import {
+  VFolderNodesV2Fragment$data,
+  VFolderNodesV2Fragment$key,
+} from '../__generated__/VFolderNodesV2Fragment.graphql';
+import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
+import { App } from '../app-shim';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
+import { useSuspenseTanQuery, useTanQuery } from '../hooks/reactQueryAlias';
+import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useProjectPath } from '../hooks/useRouteScope';
+import { isDeletedCategory } from '../pages/VFolderNodeListPage';
+import { theme } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
+import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import InviteFolderSettingModal from './InviteFolderSettingModal';
+import QuotaPerStorageVolumePanelCard, {
+  type VolumeInfo,
+} from './QuotaPerStorageVolumePanelCard';
+import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModalV2';
+import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
+import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
+import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Link } from '@astryxdesign/core/Link';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAISkeleton,
+  BAIAlertIconWithTooltip,
+  BAIModal,
+  BAINameActionCell,
+  type BAINameActionCellAction,
+  BAIIconWithTooltip,
+  BAIQuestionIconWithTooltip,
+  BAITable,
+  BAITableProps,
+  BAIUnmountAfterClose,
+  StorageUsageBadge,
+  badgeVariantForStatus,
+  BAIText,
+  filterOutNullAndUndefined,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
+import {
+  RocketIcon,
+  RotateCcwIcon,
+  Share2Icon,
+  Trash2Icon,
+  TrashIcon,
+  UserIcon,
+  UsersIcon,
+} from 'lucide-react';
+import React, { Suspense, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
+
+/**
+ * Legacy antd `Tag` colour map — kept ONLY for the unconverted V1
+ * `VFolderNodeDescription` import; converted call sites in this area use
+ * `badgeVariantForStatus('vfolder', …)` from the ticket-13 lookup instead.
+ */
+export const statusTagColor = {
+  // V2 UPPERCASE enum values (VFolderOperationStatus)
+  // mountable
+  READY: 'warning',
+  CLONING: 'warning',
+  // delete
+  DELETE_PENDING: 'default',
+  DELETE_ONGOING: 'default',
+  DELETE_COMPLETE: 'default',
+  // error
+  DELETE_ERROR: 'error',
+  // Legacy V1 kebab-case values emitted by `VirtualFolderNode.status`.
+  ready: 'warning',
+  performing: 'warning',
+  cloning: 'warning',
+  mounted: 'warning',
+  error: 'error',
+  'delete-pending': 'default',
+  'delete-ongoing': 'default',
+  'delete-complete': 'default',
+  'delete-error': 'error',
+};
+
+export type VFolderNodeInList = NonNullable<
+  VFolderNodesV2Fragment$data[number]
+>;
+
+// V2 `VFolderOrderField` enum values. Legacy fields not present in V2
+// (last_used, cloneable, ownership_type, quota_scope_id, num_files, cur_size,
+// max_files, max_size) are intentionally omitted and kept as unsortable
+// columns. See FR-2573 for the V2 migration scope.
+const availableVFolderSorterKeys = [
+  'name',
+  'host',
+  'usage_mode',
+  'created_at',
+  'status',
+] as const;
+
+export const availableVFolderSorterValues = [
+  ...availableVFolderSorterKeys,
+  ...availableVFolderSorterKeys.map((key) => `-${key}` as const),
+] as const;
+
+const isEnableSorter = (key: string) => {
+  return _.includes(availableVFolderSorterKeys, key);
+};
+
+interface VFolderNameCellProps {
+  vfolder: VFolderNodeInList;
+  onShare: () => void;
+  onDelete: () => void;
+  onRestore: () => void;
+  onDeleteForever: () => void;
+  /**
+   * Called when the definition-check step on "Start Service" raises a
+   * warning (e.g. missing service-definition.toml or ambiguous runtime
+   * variants). The parent uses this to open the preset-selection modal
+   * (FR-2599) for the given vfolder instead of navigating away.
+   */
+  onStartServiceFallback: (vfolderId: string) => void;
+  /**
+   * When set, the "Deploy as service" row action renders disabled with this
+   * string as its tooltip. The component never infers on its own when
+   * deployment should be blocked — the page decides and supplies the
+   * reason (mirrors `FolderExplorerHeaderV2`'s `noProjectTooltip`,
+   * FR-3412). Absent by default, so every current caller
+   * (`ProjectAdminDataPage`, always project-scoped) keeps today's behavior
+   * unchanged. Mirrors `VFolderNodes` (V1, FR-3423).
+   */
+  noDeployTooltip?: string;
+}
+
+const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
+  vfolder,
+  onShare,
+  onDelete,
+  onRestore,
+  onDeleteForever,
+  onStartServiceFallback,
+  noDeployTooltip,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { generateFolderPath } = useFolderExplorerOpener();
+  const navigate = useWebUINavigate();
+
+  const isPipelineFolder = vfolder?.metadata?.usageMode === 'DATA';
+  const isModelFolder = vfolder?.metadata?.usageMode === 'MODEL';
+  const isDeleted = isDeletedCategory(vfolder?.vfolderStatus);
+
+  const vfolderId = toLocalId(vfolder.id ?? '');
+  const folderPath = generateFolderPath(vfolderId);
+
+  const actions: Array<BAINameActionCellAction> = filterOutNullAndUndefined([
+    // Start Service (model folders only, active only)
+    isModelFolder && !isDeleted
+      ? {
+          key: 'start-service',
+          title: t('modelService.DeployAsService'),
+          icon: <RocketIcon />,
+          disabled: noDeployTooltip ? { reason: noDeployTooltip } : false,
+          // Use `action` (not `onClick`) so the state update that mounts
+          // `<VFolderDeployModal>` (which suspends on its preloaded query)
+          // runs inside `startTransition` — the page stays interactive
+          // while the preloaded query resolves and the button shows a
+          // loading spinner, instead of flashing the modal's Suspense
+          // fallback.
+          action: async () => {
+            onStartServiceFallback(vfolderId);
+          },
+        }
+      : null,
+    // Share (active folders only)
+    !isDeleted
+      ? {
+          key: 'share',
+          title: t('button.Share'),
+          icon: <Share2Icon />,
+          onClick: onShare,
+        }
+      : null,
+    // Move to trash (active folders only)
+    !isDeleted
+      ? {
+          key: 'delete',
+          title: t('data.folders.MoveToTrash'),
+          icon: <TrashIcon />,
+          type: 'danger' as const,
+          // TODO(needs-backend): V2 `VFolder` exposes no entity-level action
+          // permission (`accessControl.permission` is mount-level RO/RW/
+          // RW_DELETE), so the backend is what rejects unauthorized deletes.
+          disabled: isPipelineFolder
+            ? { reason: t('data.folders.CannotDeletePipelineFolder') }
+            : false,
+          popConfirm: {
+            title: t('data.folders.MoveToTrash'),
+            description: vfolder?.metadata?.name ?? undefined,
+            okText: t('button.Confirm'),
+            cancelText: t('button.Cancel'),
+            okButtonProps: { danger: true },
+            onConfirm: onDelete,
+          },
+        }
+      : null,
+    // Restore (deleted folders only)
+    isDeleted
+      ? {
+          key: 'restore',
+          title: t('data.folders.Restore'),
+          icon: <RotateCcwIcon />,
+          disabled: isPipelineFolder
+            ? { reason: t('data.folders.CannotRestorePipelineFolder') }
+            : vfolder?.vfolderStatus !== 'DELETE_PENDING'
+              ? { reason: t('data.folders.DeletionAlreadyStarted') }
+              : false,
+          popConfirm: {
+            title: t('data.folders.Restore'),
+            description: vfolder?.metadata?.name ?? undefined,
+            okText: t('button.Confirm'),
+            cancelText: t('button.Cancel'),
+            onConfirm: onRestore,
+          },
+        }
+      : null,
+    // Delete from trash bin (deleted folders only)
+    isDeleted
+      ? {
+          key: 'delete-forever',
+          title: t('data.folders.Delete'),
+          icon: <Trash2Icon />,
+          type: 'danger' as const,
+          disabled:
+            vfolder?.vfolderStatus !== 'DELETE_PENDING'
+              ? { reason: t('data.folders.DeletionAlreadyStarted') }
+              : false,
+          onClick: onDeleteForever,
+        }
+      : null,
+  ]);
+
+  return (
+    <BAINameActionCell
+      icon={
+        <VFolderNodeIdenticonV2
+          vfolderNodeIdenticonFrgmt={vfolder}
+          style={{ fontSize: token.fontSizeHeading5 }}
+        />
+      }
+      title={vfolder.metadata?.name}
+      to={`${folderPath.pathname}?${folderPath.search}`}
+      onTitleClick={() => {
+        navigate(folderPath);
+      }}
+      actions={actions}
+      showActions="always"
+    />
+  );
+};
+
+interface VFolderHostCellProps {
+  host?: string | null;
+}
+
+// Renders a Host column cell: usage badge (if the backend reports one)
+// plus the host name. The badge's data comes from `vfolder.list_hosts()`,
+// cached under the same tan-query key that `StorageSelect` uses, so the
+// payload is fetched once and shared across rows + selects. Uses the
+// non-suspense `useTanQuery` here — a per-cell suspense boundary with a
+// plain-text fallback rendered identically on the loaded-without-usage path,
+// so rows would get stuck in the fallback branch and never pick up the badge
+// after the query resolved.
+const VFolderHostCell: React.FC<VFolderHostCellProps> = ({ host }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+
+  const { data: vhostInfo } = useTanQuery<{
+    volume_info?: Record<string, Omit<VolumeInfo, 'id'>>;
+  } | null>({
+    queryKey: ['vhostInfo'],
+    queryFn: () => baiClient.vfolder.list_hosts(),
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
+  if (!host) return null;
+
+  const volumeInfo = vhostInfo?.volume_info?.[host];
+  const usage = volumeInfo?.usage;
+  const usagePercent = usage?.percentage;
+  // Match `StorageSelect`'s gating: render the badge whenever the backend
+  // attaches a `usage` object — even an empty `{}` — so rows render a neutral
+  // (uncolored) marker while percentage data is unavailable. Color is derived
+  // from percentage inside `StorageUsageBadge` and is `undefined` (neutral)
+  // when the percentage is missing.
+  const usageLabel =
+    usagePercent === undefined
+      ? t('data.usage.Unknown')
+      : usagePercent < 70
+        ? t('data.usage.Adequate')
+        : usagePercent < 90
+          ? t('data.usage.Caution')
+          : t('data.usage.Insufficient');
+
+  return (
+    <HStack gap={2} align="center">
+      {usage ? (
+        <BAIIconWithTooltip
+          content={t('data.usage.HostStatusTooltip', { status: usageLabel })}
+          icon={<StorageUsageBadge percent={usagePercent} />}
+          style={{ alignItems: 'center' }}
+        />
+      ) : null}
+      <Text>{host}</Text>
+    </HStack>
+  );
+};
+
+// Column-header affordance that opens `QuotaPerStorageVolumePanelCard` in a
+// modal, pre-selected on a quota-supporting host so the empty "does not
+// support" state is not the first thing users see. Renders nothing when no
+// volume reports `quota` in its capabilities — removing the modal entry
+// point entirely rather than opening a dialog with no useful content.
+//
+// The trigger (icon) lives inside the column `title`, but the Modal is
+// hoisted to the table-level so React synthetic events from inside the
+// Modal do not bubble up through the React tree to the `<th>` and trigger
+// column sorting (Portal nodes still bubble through the React tree).
+interface HostQuotaTriggerProps {
+  onOpen: () => void;
+}
+
+const HostQuotaTriggerInner: React.FC<HostQuotaTriggerProps> = ({ onOpen }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+
+  const { data: vhostInfo } = useSuspenseTanQuery<{
+    volume_info?: Record<string, Omit<VolumeInfo, 'id'>>;
+  } | null>({
+    queryKey: ['vhostInfo'],
+    queryFn: () => baiClient.vfolder.list_hosts(),
+  });
+
+  const hasQuotaSupportedHost = _.some(
+    _.values(vhostInfo?.volume_info ?? {}),
+    (info) => _.includes(info?.capabilities, 'quota'),
+  );
+  if (!hasQuotaSupportedHost) return null;
+
+  return (
+    <BAIAlertIconWithTooltip
+      title={t('data.QuotaPerStorageVolume')}
+      iconProps={{
+        size: 14,
+        onClick: (e) => {
+          e.stopPropagation();
+          onOpen();
+        },
+        style: { cursor: 'pointer' },
+      }}
+    />
+  );
+};
+
+const HostQuotaTrigger: React.FC<HostQuotaTriggerProps> = (props) => (
+  <Suspense fallback={null}>
+    <HostQuotaTriggerInner {...props} />
+  </Suspense>
+);
+
+const HostQuotaModalContent: React.FC = () => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+
+  const { data: vhostInfo } = useSuspenseTanQuery<{
+    volume_info?: Record<string, Omit<VolumeInfo, 'id'>>;
+  } | null>({
+    queryKey: ['vhostInfo'],
+    queryFn: () => baiClient.vfolder.list_hosts(),
+  });
+
+  const quotaSupportedEntry = _.find(
+    _.entries(vhostInfo?.volume_info ?? {}),
+    ([, info]) => _.includes(info?.capabilities, 'quota'),
+  );
+  if (!quotaSupportedEntry) return null;
+
+  const [host, info] = quotaSupportedEntry;
+  const defaultVolumeInfo: VolumeInfo = { id: host, ...info };
+
+  return (
+    <QuotaPerStorageVolumePanelCard defaultVolumeInfo={defaultVolumeInfo} />
+  );
+};
+
+interface HostQuotaModalProps {
+  open: boolean;
+  onCancel: () => void;
+}
+
+const HostQuotaModal: React.FC<HostQuotaModalProps> = ({ open, onCancel }) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  // PILOT-DECISION: the antd modal put a help-tooltip icon INSIDE the title
+  // JSX; Astryx `DialogHeader.title` is a plain string (P2), so the help icon
+  // moves next to the body content instead.
+  return (
+    <BAIModal
+      isOpen={open}
+      onOpenChange={(next) => {
+        if (!next) onCancel();
+      }}
+      title={t('data.QuotaPerStorageVolume')}
+      width={640}
+      maskClosable={false}
+      footer={null}
+    >
+      <VStack align="stretch" gap={3}>
+        <HStack justify="end">
+          <BAIQuestionIconWithTooltip title={t('data.HostDetails')} />
+        </HStack>
+        <Suspense fallback={<BAISkeleton rows={3} />}>
+          <HostQuotaModalContent />
+        </Suspense>
+      </VStack>
+    </BAIModal>
+  );
+};
+
+interface VFolderNodesV2Props extends Omit<
+  BAITableProps<VFolderNodeInList>,
+  'dataSource' | 'columns'
+> {
+  vfoldersFrgmt: VFolderNodesV2Fragment$key;
+  // Callback when a row is removed from current list
+  onRemoveRow?: (updatedFolderId?: string) => void;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3410). Pass-through for the
+   * deployment-creation escalation modal (`DeploymentSettingModal`): the
+   * parent page decides the project context. Admin pages pass `null` (the
+   * modal then embeds its own required project selector); project/user pages
+   * pass their page-level project.
+   */
+  project: ProjectContextOrNull;
+  /**
+   * Forwarded to each row's name cell (FR-3423). When set, the "Deploy as
+   * service" row action renders disabled with this string as its tooltip.
+   * No current caller passes this — `ProjectAdminDataPage` is always
+   * project-scoped — added for API parity with `VFolderNodes` (V1) so a
+   * future admin-oversight caller of V2 gets the same treatment for free.
+   */
+  noDeployTooltip?: string;
+}
+
+const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
+  vfoldersFrgmt,
+  onRemoveRow,
+  project,
+  noDeployTooltip,
+  ...tableProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const [currentUser] = useCurrentUserInfo();
+  const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
+  const { getErrorMessage } = useErrorMessageResolver();
+  const navigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
+  const { upsertNotification } = useSetBAINotification();
+
+  // Row-level hard-delete reuses the same modal as the bulk toolbar
+  // (typed-input confirmation is required for irreversible deletion). Soft
+  // delete is handled inline via the row action's confirm popover — no
+  // per-row state needed here.
+  const [purgingVFolders, setPurgingVFolders] = useState<
+    Array<VFolderNodeInList>
+  >([]);
+  const [currentSharedVFolder, setCurrentSharedVFolder] =
+    useState<VFolderNodeInList | null>(null);
+  // Preset-selection deploy modal (FR-2599). The query reference is loaded in
+  // the Deploy click handler (render-as-you-fetch); it and the target folder id
+  // are deliberately kept alive after close — only `isDeployModalOpen` toggles,
+  // so the modal's data and its auto-deploy/selection decision stay stable
+  // through the close animation.
+  const [deployQueryRef, loadDeployQuery] =
+    useQueryLoader<VFolderDeployModalQuery>(VFolderDeployQuery);
+  const [deployVfolderId, setDeployVfolderId] = useState<string | null>(null);
+  const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
+  const [isHostQuotaModalOpen, setIsHostQuotaModalOpen] = useState(false);
+
+  // `vfolderStatus: status` aliases the V2 `VFolder.status`
+  // (`VFolderOperationStatus!`) so it doesn't collide with V1
+  // `VirtualFolderNode.status` (`String`) and `ComputeSessionNode.status`
+  // (`String`) — both reachable from here via `BAINodeNotificationItemFragment`.
+  // The Status column key + V2 OrderField sort value stay `status`.
+  const vfolders = useFragment(
+    graphql`
+      fragment VFolderNodesV2Fragment on VFolder @relay(plural: true) {
+        id @required(action: NONE)
+        vfolderStatus: status
+        host
+        unmanagedPath
+        metadata {
+          name
+          usageMode
+          quotaScopeId
+          createdAt
+          lastUsed
+          cloneable
+        }
+        accessControl {
+          permission
+          ownershipType
+        }
+        ownership {
+          userId
+          projectId
+          creatorEmail
+          user {
+            basicInfo {
+              email
+            }
+          }
+          project {
+            basicInfo {
+              name
+            }
+          }
+        }
+        ...VFolderPermissionCellV2Fragment
+        ...VFolderNodeIdenticonV2Fragment
+        ...SharedFolderPermissionInfoModalV2Fragment
+        ...DeleteForeverVFolderModalV2Fragment
+        ...BAINodeNotificationItemFragment @alias(as: "notificationFrgmt")
+      }
+    `,
+    vfoldersFrgmt,
+  );
+
+  const filteredVFolders = filterOutNullAndUndefined(vfolders);
+
+  const [commitDeleteMutation] = useMutation<VFolderNodesV2DeleteMutation>(
+    graphql`
+      mutation VFolderNodesV2DeleteMutation($vfolderId: UUID!) {
+        deleteVfolderV2(vfolderId: $vfolderId) {
+          id
+        }
+      }
+    `,
+  );
+
+  const [commitRestoreMutation] = useMutation<VFolderNodesV2RestoreMutation>(
+    graphql`
+      mutation VFolderNodesV2RestoreMutation($vfolderId: UUID!) {
+        restoreVFolder(vfolderId: $vfolderId) {
+          id
+        }
+      }
+    `,
+  );
+
+  // V2 rich-notification path: now that `BAINodeNotificationItemFragment`
+  // gained a `... on VFolder` branch (FR-2573 follow-up), we can render the
+  // same folder-link + clickable session-IDs UX the V1 `VFolderNodes` flow
+  // uses. Falls back gracefully to a plain description if the error message
+  // doesn't carry an occupied-sessions list.
+  const handleDeleteError = (vfolder: VFolderNodeInList, error: Error) => {
+    const matchString = error?.message.match(/sessions\(ids: (\[.*?\])\)/)?.[1];
+    const occupiedSession = JSON.parse(matchString?.replace(/'/g, '"') || '[]');
+    upsertNotification({
+      open: true,
+      key: `vfolder-error-${vfolder?.id}`,
+      node: vfolder?.notificationFrgmt ?? null,
+      description: getErrorMessage(error).replace(/\(ids[\s\S]*$/, ''),
+      extraDescription: !_.isEmpty(occupiedSession) ? (
+        <VStack align="stretch">
+          <Text color="secondary">{t('data.folders.MountedSessions')}</Text>
+          {_.map(occupiedSession, (sessionId) => (
+            <Link
+              key={sessionId}
+              href="#"
+              style={{ fontWeight: 'normal' }}
+              onClick={(e: React.MouseEvent) => {
+                e.preventDefault();
+                navigate({
+                  pathname: buildProjectPath('session', { scope: 'project' }),
+                  search: new URLSearchParams({
+                    sessionDetail: sessionId,
+                  }).toString(),
+                });
+              }}
+            >
+              {sessionId}
+            </Link>
+          ))}
+        </VStack>
+      ) : null,
+    });
+  };
+
+  return (
+    <>
+      <BAITable
+        scroll={{ x: 'max-content' }}
+        resizable
+        rowKey={(record) => record.id}
+        size="small"
+        dataSource={filteredVFolders}
+        columns={[
+          {
+            key: 'name',
+            title: t('data.folders.Name'),
+            dataIndex: ['metadata', 'name'],
+            required: true,
+            render: (_name, vfolder) => {
+              return (
+                <VFolderNameCell
+                  vfolder={vfolder}
+                  noDeployTooltip={noDeployTooltip}
+                  onShare={() => {
+                    vfolder?.ownership?.userId === currentUser?.uuid
+                      ? setInviteFolderId(toLocalId(vfolder?.id ?? null))
+                      : setCurrentSharedVFolder(vfolder);
+                  }}
+                  onDelete={() => {
+                    const folderId = vfolder?.id;
+                    if (!folderId) return;
+                    commitDeleteMutation({
+                      variables: { vfolderId: toLocalId(folderId) },
+                      onCompleted: (_data, errors) => {
+                        if (errors && errors.length > 0) {
+                          handleDeleteError(
+                            vfolder,
+                            new Error(errors[0]?.message ?? ''),
+                          );
+                          return;
+                        }
+                        onRemoveRow?.(folderId);
+                        message.success(
+                          t('data.folders.MovedToTrashBin', {
+                            folderName: vfolder?.metadata?.name,
+                          }),
+                        );
+                      },
+                      onError: (error) => handleDeleteError(vfolder, error),
+                    });
+                  }}
+                  onRestore={() => {
+                    const folderId = vfolder?.id;
+                    if (!folderId) return;
+                    const handleError = (error: Error) => {
+                      upsertNotification({
+                        key: `vfolder-error-${folderId}`,
+                        node: vfolder?.notificationFrgmt ?? null,
+                        description: getErrorMessage(error),
+                        open: true,
+                      });
+                    };
+                    commitRestoreMutation({
+                      variables: { vfolderId: toLocalId(folderId) },
+                      onCompleted: (_data, errors) => {
+                        if (errors && errors.length > 0) {
+                          handleError(new Error(errors[0]?.message ?? ''));
+                          return;
+                        }
+                        onRemoveRow?.(folderId);
+                        message.success(
+                          t('data.folders.FolderRestored', {
+                            folderName: vfolder?.metadata?.name,
+                          }),
+                        );
+                      },
+                      onError: handleError,
+                    });
+                  }}
+                  onDeleteForever={() => {
+                    setPurgingVFolders(vfolder ? [vfolder] : []);
+                  }}
+                  onStartServiceFallback={(id) => {
+                    // Render-as-you-fetch: start the request in the open event.
+                    loadDeployQuery({}, { fetchPolicy: 'store-and-network' });
+                    setDeployVfolderId(id);
+                    setIsDeployModalOpen(true);
+                  }}
+                />
+              );
+            },
+            sorter: isEnableSorter('name'),
+          },
+          {
+            key: 'status',
+            title: t('data.folders.Status'),
+            dataIndex: 'vfolderStatus',
+            render: (status: string) => {
+              return (
+                <Badge
+                  variant={badgeVariantForStatus('vfolder', status)}
+                  label={status}
+                />
+              );
+            },
+            sorter: isEnableSorter('status'),
+          },
+          {
+            key: 'host',
+            title: (
+              <HStack gap={2} align="center">
+                {t('data.Host')}
+                <HostQuotaTrigger
+                  onOpen={() => setIsHostQuotaModalOpen(true)}
+                />
+              </HStack>
+            ),
+            dataIndex: 'host',
+            render: (host: string | null | undefined) => (
+              <VFolderHostCell host={host} />
+            ),
+            sorter: isEnableSorter('host'),
+          },
+          // TODO(needs-backend): V2 `VFolder` does not expose the legacy
+          // per-user `permissions` array. The Mount Permission column now
+          // derives RO/RW from `accessControl.permission` only; restore or
+          // augment once the backend re-introduces richer permission info.
+          {
+            key: 'permissions',
+            title: t('data.folders.MountPermission'),
+            render: (_perm: string, vfolder) => {
+              return <VFolderPermissionCellV2 vfolderFrgmt={vfolder} />;
+            },
+          },
+          {
+            key: 'ownership_type',
+            title: t('data.folders.Type'),
+            dataIndex: ['accessControl', 'ownershipType'],
+            render: (type: string) => {
+              return type === 'USER' ? (
+                <HStack gap={2}>
+                  <Text>{t('data.User')}</Text>
+                  <UserIcon size="1em" />
+                </HStack>
+              ) : (
+                <HStack gap={2}>
+                  <Text>{t('data.Project')}</Text>
+                  <UsersIcon size="1em" />
+                </HStack>
+              );
+            },
+            // V2 `VFolderOrderField` does not expose ownership_type.
+            sorter: isEnableSorter('ownership_type'),
+          },
+
+          {
+            key: 'owner',
+            title: t('data.folders.Owner'),
+            render: (__, vfolder) =>
+              vfolder.accessControl?.ownershipType === 'USER'
+                ? vfolder?.ownership?.user?.basicInfo?.email
+                : vfolder?.ownership?.project?.basicInfo?.name,
+          },
+          {
+            key: 'usage_mode',
+            title: t('data.UsageMode'),
+            dataIndex: ['metadata', 'usageMode'],
+            defaultHidden: true,
+            sorter: isEnableSorter('usage_mode'),
+            render: (mode: string) => {
+              switch (mode) {
+                case 'GENERAL':
+                  return t('data.General');
+                case 'DATA':
+                  return t('webui.menu.Data');
+                case 'MODEL':
+                  return t('data.Models');
+                default:
+                  return mode;
+              }
+            },
+          },
+          // TODO(needs-backend): V2 `VFolder` does not yet expose file/size
+          // usage statistics (num_files, cur_size) or quota limits
+          // (max_files, max_size). Keep these as hidden placeholder columns
+          // so column order and per-user settings (saved by key) remain
+          // stable; swap `render` back to the real formatter once the
+          // backend fields are available.
+          {
+            key: 'num_files',
+            title: t('data.folders.NumberOfFiles'),
+            defaultHidden: true,
+            sorter: false,
+            render: () => '-',
+          },
+          {
+            key: 'cur_size',
+            title: t('data.folders.FolderUsage'),
+            defaultHidden: true,
+            sorter: false,
+            render: () => '-',
+          },
+          {
+            key: 'max_files',
+            title: t('data.folders.MaxFolderQuota'),
+            defaultHidden: true,
+            sorter: false,
+            render: () => '-',
+          },
+          {
+            key: 'max_size',
+            title: t('data.folders.MaxSize'),
+            defaultHidden: true,
+            sorter: false,
+            render: () => '-',
+          },
+          {
+            key: 'cloneable',
+            title: t('data.folders.Cloneable'),
+            dataIndex: ['metadata', 'cloneable'],
+            defaultHidden: true,
+            // V2 `VFolderOrderField` does not expose cloneable.
+            sorter: isEnableSorter('cloneable'),
+            render: (value: boolean) =>
+              value ? t('button.Yes') : t('button.No'),
+          },
+          {
+            key: 'quota_scope_id',
+            title: t('data.QuotaScopeId'),
+            dataIndex: ['metadata', 'quotaScopeId'],
+            defaultHidden: true,
+            // V2 `VFolderOrderField` does not expose quota_scope_id.
+            sorter: isEnableSorter('quota_scope_id'),
+            render: (value: string) =>
+              value ? <BAIText copyable>{value}</BAIText> : '-',
+          },
+          {
+            key: 'last_used',
+            title: t('credential.LastUsed'),
+            dataIndex: ['metadata', 'lastUsed'],
+            defaultHidden: true,
+            // V2 `VFolderOrderField` does not expose last_used.
+            sorter: isEnableSorter('last_used'),
+            render: (value: string) =>
+              value ? dayjs(value).format('ll LT') : '-',
+          },
+          {
+            key: 'created_at',
+            title: t('data.folders.CreatedAt'),
+            dataIndex: ['metadata', 'createdAt'],
+            defaultHidden: true,
+            sorter: isEnableSorter('created_at'),
+            render: (value: string) =>
+              value ? dayjs(value).format('ll LT') : '-',
+          },
+        ]}
+        {...tableProps}
+      />
+      <DeleteForeverVFolderModalV2
+        vfolderFrgmts={purgingVFolders}
+        open={purgingVFolders.length > 0}
+        onRequestClose={(success) => {
+          if (success) {
+            purgingVFolders.forEach((v) => onRemoveRow?.(v.id));
+          }
+          setPurgingVFolders([]);
+        }}
+      />
+      <InviteFolderSettingModal
+        onRequestClose={() => {
+          setInviteFolderId(null);
+        }}
+        vfolderId={inviteFolderId}
+        open={!!inviteFolderId}
+      />
+      <SharedFolderPermissionInfoModalV2
+        vfolderFrgmt={currentSharedVFolder}
+        open={!!currentSharedVFolder}
+        onLeaveFolder={(id) => {
+          onRemoveRow?.(id);
+        }}
+        onRequestClose={() => {
+          setCurrentSharedVFolder(null);
+        }}
+      />
+      {/* The boundary is required and must stay mounted unconditionally.
+          The Deploy action runs inside `startTransition`
+          (`BAINameActionCell`), which only protects the render that state
+          update causes — the preloaded presets query. The modal also holds
+          suspending sources that start *after* it commits and therefore
+          outside any transition: `useProjectResourceGroups`
+          (`useSuspenseTanQuery`), `BAIProjectResourceGroupSelect` (same
+          hook), and `BAIAvailablePresetSelect`, whose value query re-runs
+          with `skip: false` as soon as the modal preselects the first
+          preset. Without this boundary those escape to the page-level
+          fallback and blank the folder list. Keeping it mounted (rather
+          than rendering it together with the modal) means the initial
+          transition still avoids showing `fallback` at all. */}
+      <Suspense fallback={null}>
+        {deployQueryRef != null &&
+          deployVfolderId != null &&
+          project != null && (
+            <BAIUnmountAfterClose>
+              <VFolderDeployModal
+                open={isDeployModalOpen}
+                project={project}
+                vfolderId={deployVfolderId}
+                queryRef={deployQueryRef}
+                onClose={() => setIsDeployModalOpen(false)}
+                onDeployed={() => setIsDeployModalOpen(false)}
+              />
+            </BAIUnmountAfterClose>
+          )}
+      </Suspense>
+      <HostQuotaModal
+        open={isHostQuotaModalOpen}
+        onCancel={() => setIsHostQuotaModalOpen(false)}
+      />
+    </>
+  );
+};
+
+export default VFolderNodesV2;

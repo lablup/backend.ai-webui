@@ -2,20 +2,29 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
-import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
-import { App, Button, Dropdown, Form, Select, Space, Typography } from 'antd';
+import BAIFormItem from './BAIFormItem';
+import { Button } from '@astryxdesign/core/Button';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Selector } from '@astryxdesign/core/Selector';
+import { Text } from '@astryxdesign/core/Text';
 import {
+  BAIPopconfirm,
   BAIModal,
   BAIModalProps,
   BAIFlex,
+  BAIDeleteConfirmModal,
   useErrorMessageResolver,
   useBAILogger,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Trash2, ChevronDown } from 'lucide-react';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -37,7 +46,8 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { logger } = useBAILogger();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const { getErrorMessage } = useErrorMessageResolver();
   const [rcfileNames, setRcfileNames] = useState<string>('.bashrc');
   const [script, setScript] = useState<string>('');
@@ -190,81 +200,72 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
       footer={
         <BAIFlex justify="between" style={{ width: '100%' }}>
           <BAIFlex>
-            <Space.Compact>
-              <Button
-                type="default"
-                danger
+            <ButtonGroup label={t('button.Reset')}>
+              <IconButton
+                icon={<Trash2 size="1em" />}
+                label={t('button.Delete')}
+                tooltip={t('button.Delete')}
+                variant="destructive"
                 onClick={() => {
-                  modal.confirm({
-                    title: t('dialog.title.LetsDouble-Check'),
-                    content: t('dialog.ask.DoYouWantToDeleteSomething', {
-                      name:
-                        shellInfo === 'bootstrap'
-                          ? t('session.launcher.BootstrapScriptDetail')
-                          : rcfileNames,
-                    }),
-                    onOk: deleteScript,
-                  });
+                  setIsDeleteConfirmOpen(true);
+                }}
+              />
+              {/* PILOT-DECISION: antd's `Popconfirm` wrapping a single-item
+                  `Dropdown` (menu -> confirm, both anchored to one chevron
+                  trigger) collapses into one confirm popover directly on the
+                  chevron — a one-item menu behind a confirm dialog is pure
+                  indirection (simplicity policy, same precedent as
+                  SettingItem.tsx's Reset control). */}
+              <BAIPopconfirm
+                title={t('dialog.title.LetsDouble-Check')}
+                description={t('dialog.ask.DoYouWantToResetChanges')}
+                isDanger
+                onConfirm={() => {
+                  setScript('');
                 }}
               >
-                <DeleteOutlined />
-              </Button>
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: 'reset',
-                      label: t('button.Reset'),
-                      onClick: () => {
-                        modal.confirm({
-                          title: t('dialog.title.LetsDouble-Check'),
-                          content: t('dialog.ask.DoYouWantToResetChanges'),
-                          onOk: () => {
-                            setScript('');
-                          },
-                        });
-                      },
-                      danger: true,
-                    },
-                  ],
-                }}
-              >
-                <Button type="default" danger icon={<DownOutlined />} />
-              </Dropdown>
-            </Space.Compact>
+                <IconButton
+                  icon={<ChevronDown size="1em" />}
+                  label={t('button.Reset')}
+                  tooltip={t('button.Reset')}
+                  variant="destructive"
+                />
+              </BAIPopconfirm>
+            </ButtonGroup>
           </BAIFlex>
           <BAIFlex gap={'sm'}>
             <Button
               key="cancel"
+              variant="secondary"
+              label={t('button.Cancel')}
               onClick={() => onRequestClose()}
-              style={{ width: 'fit-content' }}
-            >
-              {t('button.Cancel')}
-            </Button>
-            <Space.Compact>
+              width="fit-content"
+            />
+            <ButtonGroup label={t('button.SaveAndClose')}>
               <Button
                 key="submit"
-                type="primary"
+                variant="primary"
+                label={t('button.SaveAndClose')}
                 onClick={() => {
                   saveScript();
                 }}
-              >
-                {t('button.SaveAndClose')}
-              </Button>
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: 'save',
-                      label: t('button.SaveWithoutClose'),
-                      onClick: () => saveScript({ closeAfter: false }),
-                    },
-                  ],
+              />
+              <DropdownMenu
+                button={{
+                  icon: <ChevronDown size="1em" />,
+                  isIconOnly: true,
+                  label: t('button.MoreSaveOptions', 'More save options'),
+                  variant: 'primary',
                 }}
-              >
-                <Button type="primary" icon={<DownOutlined />} />
-              </Dropdown>
-            </Space.Compact>
+                hasChevron={false}
+                items={[
+                  {
+                    label: t('button.SaveWithoutClose'),
+                    onClick: () => saveScript({ closeAfter: false }),
+                  },
+                ]}
+              />
+            </ButtonGroup>
           </BAIFlex>
         </BAIFlex>
       }
@@ -273,19 +274,29 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
     >
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
         {shellInfo === 'bootstrap' && (
-          <Typography.Text>
-            {t('userSettings.BootstrapScriptDescription')}
-          </Typography.Text>
+          <Text>{t('userSettings.BootstrapScriptDescription')}</Text>
         )}
         {shellInfo === 'userconfig' && (
-          <Form.Item
+          // Not a bound Form field (no `name` — the antd original didn't
+          // give it one either, driving `rcfileNames`/`script` state by
+          // hand); `BAIFormItem` here is purely the label layout.
+          <BAIFormItem
             style={{
               marginBottom: 0,
             }}
             label={t('userSettings.UserConfigScript')}
           >
-            <Select
-              defaultValue={'.bashrc'}
+            <Selector
+              label={t('userSettings.UserConfigScript')}
+              isLabelHidden
+              value={rcfileNames}
+              options={[
+                '.bashrc',
+                '.zshrc',
+                '.tmux.conf.local',
+                '.vimrc',
+                '.Renviron',
+              ]}
               onChange={(value) => {
                 const selectedScript = _.find(userConfigScript, {
                   path: value,
@@ -293,16 +304,9 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
                 setScript(selectedScript?.data || '');
                 setRcfileNames(value);
               }}
-              options={[
-                { value: '.bashrc' },
-                { value: '.zshrc' },
-                { value: '.tmux.conf.local' },
-                { value: '.vimrc' },
-                { value: '.Renviron' },
-              ]}
-              style={{ width: '200px' }}
+              width={200}
             />
-          </Form.Item>
+          </BAIFormItem>
         )}
         <BAICodeEditor
           onChange={(value) => setScript(value)}
@@ -311,6 +315,30 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           value={script}
         />
       </BAIFlex>
+      <BAIDeleteConfirmModal
+        open={isDeleteConfirmOpen}
+        title={t('dialog.title.LetsDouble-Check')}
+        target={t('general.ShellScript')}
+        items={[
+          {
+            key: shellInfo ?? '',
+            label: shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames,
+          },
+        ]}
+        confirmText={
+          shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames
+        }
+        requireConfirmInput
+        inputProps={{
+          placeholder:
+            shellInfo === 'bootstrap' ? t('button.Delete') : rcfileNames,
+        }}
+        onOk={() => {
+          setIsDeleteConfirmOpen(false);
+          deleteScript();
+        }}
+        onCancel={() => setIsDeleteConfirmOpen(false)}
+      />
     </BAIModal>
   );
 };

@@ -2,17 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Typography } from 'antd';
-import { BAIButton, BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { AppLaunchConfirmationModalFragment$key } from '../../__generated__/AppLaunchConfirmationModalFragment.graphql';
+import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
+import { Button } from '@astryxdesign/core/Button';
+import { Text } from '@astryxdesign/core/Text';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { AppLaunchConfirmationModalFragment$key } from 'src/__generated__/AppLaunchConfirmationModalFragment.graphql';
-import { useBackendAIAppLauncher } from 'src/hooks/useBackendAIAppLauncher';
 
 interface AppLaunchConfirmationModalProps extends BAIModalProps {
   sessionFrgmt: AppLaunchConfirmationModalFragment$key;
   appName: string;
   onRequestClose: () => void;
+  port?: number;
+  openToPublic?: boolean;
+  allowedClientIps?: Array<string>;
 }
 
 /**
@@ -26,6 +30,9 @@ const AppLaunchConfirmationModal: React.FC<AppLaunchConfirmationModalProps> = ({
   sessionFrgmt,
   appName,
   onRequestClose,
+  port,
+  openToPublic,
+  allowedClientIps,
   ...modalProps
 }) => {
   'use memo';
@@ -51,6 +58,9 @@ const AppLaunchConfirmationModal: React.FC<AppLaunchConfirmationModalProps> = ({
 
     await launchAppWithNotification({
       app: appName,
+      port,
+      openToPublic,
+      allowedClientIps,
       onPrepared(workerInfo) {
         // Open app in new window after preparation
         if (workerInfo.appConnectUrl) {
@@ -70,21 +80,20 @@ const AppLaunchConfirmationModal: React.FC<AppLaunchConfirmationModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" gap="md" align="stretch">
-        <Typography.Paragraph>
+        <Text as="p" display="block">
           {t('session.appLauncher.AppMustBeRunDialog')}
-        </Typography.Paragraph>
-        <Typography.Paragraph>
+        </Text>
+        <Text as="p" display="block">
           {t('dialog.ask.DoYouWantToProceed')}
-        </Typography.Paragraph>
+        </Text>
 
-        <BAIButton
-          type="primary"
-          size="large"
-          action={handleConfirmAndRun}
-          block
-        >
-          {t('session.appLauncher.ConfirmAndRun')}
-        </BAIButton>
+        <Button
+          variant="primary"
+          size="lg"
+          width="100%"
+          label={t('session.appLauncher.ConfirmAndRun')}
+          clickAction={handleConfirmAndRun}
+        />
       </BAIFlex>
     </BAIModal>
   );

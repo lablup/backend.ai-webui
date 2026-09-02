@@ -4,8 +4,8 @@
  */
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { Skeleton } from 'antd';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import './documentProse.css';
+import { BAISkeleton, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import DOMPurify from 'dompurify';
 import { Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,7 +37,19 @@ const RenderPrivacyPolicyHtml = () => {
         (response) => response.text(),
       ),
   });
-  return <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }} />;
+  // `bai-document-prose` restores block rhythm and list semantics for this
+  // un-classed fetched document. Astryx's `reset.css` zeroes heading and
+  // paragraph margins and strips list markers and padding — correct for a
+  // component library, and nothing legacy did, since `origin/main` imported no
+  // reset and antd's base rules were scoped to `[class^="ant-"]`. Without it a
+  // 200-item numbered legal document renders unnumbered, unindented and
+  // unspaced, with invisible links. QA-FINDINGS Q-22; derivation in the CSS.
+  return (
+    <div
+      className="bai-document-prose"
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }}
+    />
+  );
 };
 
 const PrivacyPolicyModal = ({
@@ -54,7 +66,7 @@ const PrivacyPolicyModal = ({
       width={'80%'}
       {...props}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeleton rows={4} />}>
         <RenderPrivacyPolicyHtml />
       </Suspense>
     </BAIModal>

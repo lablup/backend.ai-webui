@@ -1,0 +1,28 @@
+/*
+ * Static styles for <WebUIHeader> (to-astryx ticket 24).
+ *
+ * These were an `antd-style` `createStyles` block whose only content was the
+ * Electron title-bar drag regions. They carry no theme token, so they move to
+ * a plain, component-imported stylesheet — P17: replacement CSS belongs in a
+ * file the component itself imports, not the app stylesheet.
+ */
+.bai-webui-header,
+.bai-webui-header .draggable {
+  -webkit-app-region: drag;
+}
+
+.bai-webui-header .non-draggable {
+  -webkit-app-region: no-drag;
+}
+
+/* Electron/macOS (FR-3828): grow by the native title-bar strip when the header
+   is the topmost band (no banner above). Both !important: the 60px height is
+   an inline style in WebUIHeader.tsx, and BAIFlex resets inline `padding: 0`
+   on its root — without it the content centers across the full grown height,
+   8px off the sider band. */
+body.electron-macos:not(:has(.webui-announcement-banner)) .bai-webui-header {
+  height: calc(
+    var(--webui-header-height, 60px) + var(--webui-titlebar-height)
+  ) !important;
+  padding-block-start: var(--webui-titlebar-height) !important;
+}

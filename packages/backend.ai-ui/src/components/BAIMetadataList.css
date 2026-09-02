@@ -1,0 +1,116 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `BAIMetadataList` paint: a lightened item label and top-aligned side labels
+ (always), plus the `bordered` variant — outer frame + a 1px rule between
+ items, on the list's own layout (no forced side labels, no label-column
+ fill).
+
+ ## Why CSS, not a theme variant
+
+ `defineTheme({ components })` can't express it: a custom variant key only
+ renders if the component reflects that prop, and `MetadataList` reflects
+ `columns`/`orientation` only; `metadata-list-item.base` is flat per-component,
+ so it would repaint every list, but bordered is opt-in. So this uses
+ `className` + tokens over the stable `.astryx-*` surface (the preferred
+ surface for new CSS). The rules are unlayered, so they win over Astryx's
+ `@layer astryx-base` atomics without `!important`.
+
+ ## How the rules are drawn
+
+ The `<dl>` is a GRID, and its last row is not addressable (with `columns={2}`
+ a row holds several cells, so no `:nth-last-of-type()` formula drops the final
+ row's rule without hard-coding the column count). So the frame and rules are
+ painted as the GRID GAP: the `<dl>` takes `--color-border` as its background
+ plus a 1px gap and 1px padding, and every direct grid child covers it with an
+ opaque fill. What shows through is exactly a 1px lattice plus a 1px frame, for
+ any column count and any number of rows. Two consequences, both accepted:
+
+  - Cells need an OPAQUE fill (`--bai-metadata-list-cell-bg`, default
+    `--color-background-card`); override it when the list sits on a surface
+    that is not card-coloured.
+  - The frame is padding, not a `border`: `--color-border` is an alpha token,
+    so a border over the background would composite the colour twice and read
+    heavier than the interior rules.
+
+ The direct grid child differs by layout — the item wrapper `<div>` for stacked
+ labels (multi-column default), the `<dt>`/`<dd>` pair for side labels — so the
+ cell rule targets `> dl > *` rather than a specific tag.
+
+ Cell padding: `--spacing-4`/`--spacing-6` (16/24px), stepped down by `size`
+ to 12/24 (`middle`) and 8/16 (`small`).
+*/
+
+/* Label tone. Astryx paints `dt` at `--color-text-secondary` (alpha .65), which
+   reads as heavy as the value next to it; the label is the quieter half of the
+   pair. 83% is the lightest mix that still clears WCAG AA for normal text:
+   alpha .539 composites to #757575 on the light card (4.61:1) and #939393 on
+   the dark one (6.00:1). Going further fails light mode — antd's measured
+   `colorTextTertiary` (.45) lands at 3.41:1, which is why that token is not
+   used here despite being the obvious parity value. Override the variable to
+   retune, and re-check both themes if you do. Applies with or without
+   `bordered`. */
+.bai-metadata-list {
+  --bai-metadata-list-label-color: color-mix(
+    in srgb,
+    var(--color-text-secondary) 83%,
+    transparent
+  );
+}
+
+/* `dt` is a direct grid child for side labels and sits inside the item wrapper
+   for stacked ones, so both depths are matched. */
+.bai-metadata-list > dl > dt,
+.bai-metadata-list > dl > * > dt {
+  color: var(--bai-metadata-list-label-color);
+}
+
+/* A side-label dt stretches to its grid row and Astryx centers it, so it
+   drifts off a multi-line value's first line — pin it to the top (FR-3667). */
+.bai-metadata-list > dl > dt {
+  align-items: flex-start;
+}
+
+.bai-metadata-list--bordered {
+  --bai-metadata-list-cell-bg: var(--color-background-card);
+  --bai-metadata-list-cell-padding-block: var(--spacing-4);
+  --bai-metadata-list-cell-padding-inline: var(--spacing-6);
+}
+
+.bai-metadata-list--bordered-middle {
+  --bai-metadata-list-cell-padding-block: var(--spacing-3);
+}
+
+.bai-metadata-list--bordered-small {
+  --bai-metadata-list-cell-padding-block: var(--spacing-2);
+  --bai-metadata-list-cell-padding-inline: var(--spacing-4);
+}
+
+.bai-metadata-list--bordered > dl {
+  gap: var(--border-width);
+  padding: var(--border-width);
+  background-color: var(--color-border);
+  border-radius: var(--radius-element);
+  /* Astryx aligns the side-label grid on `baseline`, which leaves short cells
+     shorter than their row — the lattice would show through in ragged blocks.
+     A bordered cell is a table cell: it fills its row. */
+  align-items: stretch;
+  /* Clips the corner cells to the rounded frame. antd rounded the corner
+     LABEL cells instead (`border-start-start-radius`), which it could do
+     because a table's corners are addressable; in a grid they are not (see
+     above). Astryx overlays — tooltips, popovers, selects — are all portaled
+     to the body, so nothing that has to escape the box is inside it. */
+  overflow: hidden;
+}
+
+/* Every direct grid child is a cell — the item wrapper for stacked labels, the
+   dt/dd pair for side labels — so target `> *`, not a specific tag. */
+.bai-metadata-list--bordered > dl > * {
+  padding: var(--bai-metadata-list-cell-padding-block)
+    var(--bai-metadata-list-cell-padding-inline);
+  background-color: var(--bai-metadata-list-cell-bg);
+  /* Astryx pins a 24px floor on the bare cells to keep rows even; a padded
+     cell sets its own height and the floor only fights it. */
+  min-height: 0;
+}

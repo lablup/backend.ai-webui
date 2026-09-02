@@ -3,20 +3,37 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RelayEnvironment } from '../RelayEnvironment';
+// antd `App.useApp()` drop-in backed by Astryx (to-astryx ticket 04). It used
+// to sit INSIDE antd's own <App> so a partially-migrated tree kept working;
+// with the final switch it is the ONLY message/modal/notification host left.
+import { BAIAppProvider } from '../app-shim';
+import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
+import { FormConfigProvider } from '../form-engine';
 import { backendaiOptions } from '../global-stores';
 import { buiLanguages } from '../helper/bui-language';
+import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import {
   backendaiClientPromise,
   createAnonymousBackendaiClient,
+  useWebUINavigate,
 } from '../hooks';
+import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-// @ts-ignore
-import indexCss from '../index.css?raw';
+import '../index.css';
+// antd `theme.useToken()` drop-in backed by Astryx tokens (to-astryx ticket
+// 03). Renders no DOM and touches no document attributes — mounting it is
+// visually inert; only files that import `theme` from '../theme-shim'
+// (rewritten by scripts/codemods/antd-theme-to-shim.mjs) consume it.
+import { ThemeShimProvider, theme } from '../theme-shim';
+import NotificationHost from './NotificationHost';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useUpdateEffect } from 'ahooks';
-import { App, type AppProps, theme } from 'antd';
-import { BAIConfigProvider, BAIText, BAIMetaDataProvider } from 'backend.ai-ui';
+import {
+  BAIConfigProvider,
+  BAIMetaDataProvider,
+  BAIText,
+  useUpdateEffect,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -58,10 +75,7 @@ import React, {
 } from 'react';
 import { useTranslation, initReactI18next } from 'react-i18next';
 import { RelayEnvironmentProvider } from 'react-relay/hooks';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useDeviceMetaData } from 'src/hooks/backendai';
-import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
+import { useLocation } from 'react-router-dom';
 
 export const jotaiStore = createStore();
 dayjs.extend(weekday);
@@ -87,6 +101,24 @@ if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('langChanged', { detail: { lang } }));
   };
 }
+
+// Stored-language candidates for `resolveInitialLanguage`, in precedence
+// order. `BackendAISettingsStore` seeds its in-memory options with
+// `'general.language': 'en'`, so `get('language', …, 'general')` alone cannot
+// tell "a language was persisted on a previous visit" apart from "fresh store
+// default" — and treating the seed as an explicit choice would disable
+// browser-language detection entirely (the FR-2981 bug). So:
+//   1. `user.selected_language` — the user's explicit settings-page choice.
+//      Unseeded; `get()` returns null when the user never chose.
+//   2. `general.language` — the last resolved language, but only when the
+//      localStorage key actually exists (i.e. it was persisted, not seeded).
+const getStoredLanguageCandidates = (): Array<string | null | undefined> => [
+  backendaiOptions?.get('selected_language'),
+  typeof localStorage !== 'undefined' &&
+  localStorage.getItem('backendaiwebui.settings.general.language') !== null
+    ? backendaiOptions?.get('language', undefined, 'general')
+    : undefined,
+];
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
@@ -123,10 +155,21 @@ i18n
   .init({
     backend: {
       loadPath: '/resources/i18n/{{lng}}.json',
+      // In dev, bypass HTTP cache so `i18n.reloadResources(lng)` issued by
+      // the HMR listener below always sees the freshly-saved JSON. The
+      // option is forwarded by `i18next-http-backend` to `fetch`.
+      requestOptions:
+        process.env.NODE_ENV === 'development'
+          ? { cache: 'no-store' }
+          : undefined,
     },
     postProcess:
       process.env.NODE_ENV === 'development' ? ['copyableI18nKey'] : [],
-    lng: backendaiOptions?.get('language', 'default', 'general') || 'en',
+    // Resolve the initial language so first-paint screens (notably the login
+    // page) render in the user's browser language even when nothing has been
+    // persisted yet (e.g. private / incognito browsing). See
+    // `helper/resolveInitialLanguage.ts` for the supported-language list.
+    lng: resolveInitialLanguage(...getStoredLanguageCandidates()),
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
@@ -137,18 +180,62 @@ i18n
     },
   });
 
+// Dev-only: react to host i18n JSON edits without a full page reload.
+// `vite.config.ts:devAssetsReloadPlugin` watches `resources/i18n/*.json` and
+// emits `bai:host-i18n-changed` instead of a full reload. Here we re-fetch
+// the affected language and trigger a re-render via `changeLanguage`.
+//
+// `import.meta.hot` is dev-only — Vite tree-shakes the whole branch out of
+// production builds. BUI's locale instance is updated separately by its
+// own HMR boundary in `packages/backend.ai-ui/src/locale/index.ts`.
+if (import.meta.hot) {
+  import.meta.hot.on(
+    'bai:host-i18n-changed',
+    async ({ lng }: { lng: string }) => {
+      try {
+        await i18n.reloadResources(lng);
+        // `loaded` is not in react-i18next's default `bindI18n` set, so we
+        // bounce the language through `changeLanguage` to trigger
+        // `languageChanged`, which IS bound and re-renders subscribers.
+        if (i18n.language === lng) {
+          await i18n.changeLanguage(lng);
+        }
+      } catch (e) {
+        // Last-resort fallback so the dev never gets stuck on a stale view.
+        // useBAILogger is a hook and unavailable here (top-level module
+        // body); plain console.warn is the right tool for a dev-only HMR
+        // diagnostic.
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[bai] host i18n hot-reload failed; falling back to full reload',
+          e,
+        );
+        location.reload();
+      }
+    },
+  );
+}
+
 export const useCurrentLanguage = () => {
+  // Resolve through the same helper as the i18n init above. On first visit
+  // the stored value is absent (legacy code may also have persisted the
+  // 'default' sentinel), and the mount effect below re-applies `lang` via
+  // `changeLanguage`. Without this resolution the effect would bounce i18n
+  // back to 'default' right after init — undoing the browser-language
+  // detection on the login screen — and set `dayjs.locale('default')` /
+  // `<html lang="default">` along the way.
   const [lang, _setLang] = useState(
-    backendaiOptions?.get('language', 'default', 'general') || 'en',
+    resolveInitialLanguage(...getStoredLanguageCandidates()),
   );
   const { i18n } = useTranslation();
 
   useEffect(() => {
     // TODO: remove this hack to initialize i18next
-    setTimeout(() => i18n?.changeLanguage(lang), 0);
+    const timeoutId = setTimeout(() => i18n?.changeLanguage(lang), 0);
     // For changing locale globally, use dayjs.locale instead of dayjs().locale
     dayjs.locale(lang);
     document.documentElement.lang = lang;
+    return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -170,22 +257,37 @@ export const useCurrentLanguage = () => {
   return [lang] as const;
 };
 
-const commonAppProps: AppProps = {
-  message: {
-    duration: 4,
-  },
-};
+/**
+ * Global message config for the app-shim's toast leg. `duration` is in
+ * SECONDS, matching antd's semantics, which `app-shim/bridge.ts` reproduces.
+ */
+const messageConfig = { duration: 4 };
 
-const BAIMetaDataWrapper = ({ children }: { children: ReactNode }) => {
-  const { data } = useDeviceMetaData();
+/**
+ * antd's `message` rendered top-center, and the bottom-right corner belongs to
+ * `.bai-notification-stack` — co-anchoring there let the toast viewport (browser
+ * top layer) paint over the notification cards (FR-3554). Astryx offers no
+ * centered anchor, so `topStart` is the base and `astryxBui.css` centers it.
+ */
+const toastConfig = { position: 'topStart' } as const;
+
+const BAIMetaDataProviderWrapper = ({ children }: { children: ReactNode }) => {
+  const { data: deviceMetaData } = useDeviceMetaData();
+  const { data: imageMetaData } = useImageMetaData();
 
   return (
-    <BAIMetaDataProvider deviceMetaData={data}>{children}</BAIMetaDataProvider>
+    <BAIMetaDataProvider
+      deviceMetaData={deviceMetaData}
+      imageMetaData={imageMetaData}
+      imagePath="resources/icons"
+    >
+      {children}
+    </BAIMetaDataProvider>
   );
 };
 
 export const RoutingEventHandler = () => {
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const location = useLocation();
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
@@ -218,78 +320,130 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
-  const themeConfig = useCustomThemeConfig();
+  const { themeConfig } = useCustomThemeConfig();
+
+  const currentLocale =
+    buiLanguages[lang as keyof typeof buiLanguages] ?? buiLanguages['en'];
 
   return (
     <>
-      <style>{indexCss}</style>
       {RelayEnvironment && (
         <RelayEnvironmentProvider environment={RelayEnvironment}>
           <QueryClientProvider client={queryClient}>
-            <BAIConfigProvider
-              locale={
-                buiLanguages[lang as keyof typeof buiLanguages] ??
-                buiLanguages['en']
-              }
-              theme={{
-                ...(isDarkMode
-                  ? { ...themeConfig?.dark }
-                  : { ...themeConfig?.light }),
-                algorithm: isDarkMode
-                  ? theme.darkAlgorithm
-                  : theme.defaultAlgorithm,
-              }}
-              // @ts-ignore
-              csp={{ nonce: globalThis.baiNonce }}
-              clientPromise={backendaiClientPromise}
-              anonymousClientFactory={createAnonymousBackendaiClient}
-              modal={{
-                mask: {
-                  blur: false,
-                },
-              }}
-              drawer={{
-                mask: {
-                  blur: false,
-                },
-              }}
-              form={{
-                requiredMark: (label, { required }) => (
-                  <>
-                    {label}
-                    {!required && (
-                      <BAIText
-                        type="secondary"
-                        style={{
-                          marginLeft: token.marginXXS,
-                          wordBreak: 'keep-all',
-                        }}
-                      >
-                        ({t('general.Optional')})
-                      </BAIText>
+            {/* to-astryx ticket 24 — the app-wide Astryx `<Theme>`, and
+                since the final switch the app's ONLY theme provider.
+
+                It was introduced wrapping an antd `ConfigProvider` because
+                the two libraries' dark switches were independent (MAPPING §5:
+                antd's `algorithm` vs Astryx's `data-astryx-theme` /
+                `data-theme`), so both had to be driven from one source of
+                truth or converted regions painted light inside a dark page.
+                The antd half is now gone — `ConfigProvider`'s `theme`,
+                `algorithm`, `csp`, `modal`, `drawer` and `tag` props all
+                configured antd components that no longer exist. `mode` still
+                comes from `useThemeMode`, which remains the source of truth
+                and is what `<Theme>` syncs onto `<html>`. */}
+            <AstryxBrandTheme>
+              <ThemeShimProvider
+                mode={isDarkMode ? 'dark' : 'light'}
+                seeds={{
+                  ...(isDarkMode
+                    ? themeConfig?.dark?.token
+                    : themeConfig?.light?.token),
+                  fontFamily: themeConfig?.fontFamily,
+                  components: (isDarkMode
+                    ? themeConfig?.dark?.components
+                    : themeConfig?.light?.components) as never,
+                }}
+              >
+                {/* Now a pure locale + client provider: Astryx's
+                    `InternationalizationProvider`, BUI's i18next instance,
+                    dayjs's locale and the Backend.AI client context. Its antd
+                    `ConfigProvider` leg — and with it the `theme`, `csp`,
+                    `modal`, `drawer` and `tag` props this call site used to
+                    pass through — went away with the final switch. */}
+                <BAIConfigProvider
+                  locale={currentLocale}
+                  clientPromise={backendaiClientPromise}
+                  anonymousClientFactory={createAnonymousBackendaiClient}
+                >
+                  {/* to-astryx tickets 34 + 35 — form configuration lives on
+                      the self-hosted engine's own provider, which is now the
+                      only form runtime in the tree.
+
+                      - `validateMessages` is NOT passed. FormConfigProvider
+                        defaults it to BUI's own localized table, read from
+                        `form.validateMessages` in the BUI locale catalogs via
+                        BUI's i18next instance — the same strings antd shipped
+                        (ported, MIT), now with no antd locale bundle in the
+                        path. It re-resolves on language change like the antd
+                        `locale` prop used to.
+                      - `requiredMark` as a FUNCTION suppresses the asterisk
+                        entirely (antd's rule, reproduced in the engine) and
+                        appends "(Optional)" to non-required labels instead.
+                        That inversion is deliberate product behaviour, not a
+                        default — dropping it would put an asterisk on every
+                        required field across the app. */}
+                  <FormConfigProvider
+                    requiredMark={(label, { required }) => (
+                      <>
+                        {label}
+                        {!required && (
+                          <BAIText
+                            type="secondary"
+                            style={{ marginLeft: token.marginXXS }}
+                          >
+                            ({t('general.Optional')})
+                          </BAIText>
+                        )}
+                      </>
                     )}
-                  </>
-                ),
-              }}
-              tag={{
-                variant: 'outlined',
-              }}
-            >
-              <BAIMetaDataWrapper>
-                <QueryParamProvider adapter={ReactRouter6Adapter}>
-                  <App {...commonAppProps}>
-                    {/* <StyleProvider container={shadowRoot} cache={cache}> */}
-                    <Suspense>
-                      {/* <BrowserRouter> */}
-                      {/* <RoutingEventHandler /> */}
-                      {children}
-                      {/* </BrowserRouter> */}
-                    </Suspense>
-                    {/* </StyleProvider> */}
-                  </App>
-                </QueryParamProvider>
-              </BAIMetaDataWrapper>
-            </BAIConfigProvider>
+                  >
+                    {/*
+                     * No <I18nextProvider> wrap needed here. BUI components
+                     * resolve their translations via `useBAIi18n()` which calls
+                     * `useTranslation(undefined, { i18n: buiI18n })` — explicit
+                     * instance binding bypasses React Context entirely, so the
+                     * host's i18n Context flows through to host components
+                     * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
+                     * useBAIi18n.ts.
+                     */}
+                    <BAIAppProvider message={messageConfig} toast={toastConfig}>
+                      <BAIMetaDataProviderWrapper>
+                        {/* Single app-wide notification renderer. Lives outside
+                            the Suspense below so toasts work on every route and
+                            in both anonymous and authenticated states. */}
+                        <NotificationHost />
+                        {/*
+                         * to-astryx ticket 33 removed the emotion plumbing that
+                         * used to wrap this Suspense: an @emotion/react
+                         * <CacheProvider> (nonce for `createGlobalStyle`) inside
+                         * antd-style's <StyleProvider nonce> (nonce for
+                         * `createStyles`). With the last antd-style call site
+                         * gone, no style engine injects <style> at runtime on
+                         * our behalf — the replacement rules ship as bundled
+                         * same-origin stylesheets, which `style-src 'self'`
+                         * already covers.
+                         *
+                         * The final switch closed the last gap in that story:
+                         * antd's cssinjs — the one runtime style injector left,
+                         * fed the nonce via `<ConfigProvider csp>` — is gone
+                         * too, so NOTHING injects <style> at runtime any more
+                         * and `globalThis.baiNonce` has no remaining consumer
+                         * in the React tree.
+                         */}
+                        <Suspense>
+                          {/* <BrowserRouter> */}
+                          {/* <RoutingEventHandler /> */}
+                          {children}
+                          {/* </BrowserRouter> */}
+                        </Suspense>
+                      </BAIMetaDataProviderWrapper>
+                    </BAIAppProvider>
+                  </FormConfigProvider>
+                </BAIConfigProvider>
+              </ThemeShimProvider>
+            </AstryxBrandTheme>
           </QueryClientProvider>
         </RelayEnvironmentProvider>
       )}

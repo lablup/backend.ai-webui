@@ -2,85 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import './BAIBoard.css';
 import Board, { BoardProps } from '@cloudscape-design/board-components/board';
 import BoardItem from '@cloudscape-design/board-components/board-item';
-import { createStyles } from 'antd-style';
 import classNames from 'classnames';
-
-const useStyles = createStyles(({ css, token }) => {
-  return {
-    board: css`
-      .bai_board_placeholder {
-        border-radius: var(--token-borderRadius) !important;
-      }
-      .bai_board_placeholder--active {
-        background-color: var(--token-colorSplit) !important ;
-      }
-      .bai_board_placeholder--hover {
-        background-color: var(--token-colorPrimaryHover) !important ;
-        // FIXME: global token doesn't exist, so opacity fits color
-        opacity: 0.3;
-      }
-      .bai_board_handle button span {
-        color: ${token.colorTextQuaternary} !important;
-        padding-left: 5px !important;
-      }
-      .bai_board_header {
-        padding: 0 !important;
-        padding-top: ${token.padding - 1}px !important;
-      }
-      .bai_board_resizer button span {
-        color: ${token.colorTextQuaternary} !important;
-      }
-      .bai_board_container-override
-        > div:first-child
-        > div:nth-child(2)
-        > div:first-child {
-        padding: 0 !important;
-      }
-    `,
-    disableResize: css`
-      .bai_board_resizer {
-        display: none !important;
-      }
-    `,
-    disableMove: css`
-      .bai_board_handle {
-        display: none !important;
-      }
-      .bai_board_header {
-        display: none !important;
-      }
-    `,
-    boardItems: css`
-      & > div:first-child {
-        border-radius: var(--token-borderRadius) !important;
-        background-color: var(--token-colorBgContainer) !important;
-        border: 1px solid ${token.colorBorderSecondary} !important;
-      }
-
-      &:has([data-bai-board-item-status='error']) > div:first-child {
-        border-color: ${token.colorError} !important;
-      }
-
-      &:has([data-bai-board-item-status='warning']) > div:first-child {
-        border-color: ${token.colorWarning} !important;
-      }
-
-      & > div:first-child > div:first-child > div:first-child {
-        margin-bottom: var(--token-margin);
-        background-color: var(--token-colorBgContainer) !important;
-        position: absolute;
-        z-index: 1;
-      }
-    `,
-    disableBorder: css`
-      & > div:first-child {
-        border: none !important;
-      }
-    `,
-  };
-});
 
 export interface BAIBoardDataType {
   content?: React.ReactNode;
@@ -102,21 +27,20 @@ const BAIBoard = <T extends BAIBoardDataType>({
   bordered = false,
   ...BoardProps
 }: BAIBoardProps<T>) => {
-  const { styles } = useStyles();
   return (
     <Board<T>
       className={classNames(
-        styles.board,
-        !movable && styles.disableMove,
-        !resizable && styles.disableResize,
+        'bai-board',
+        !movable && 'bai-board-disable-move',
+        !resizable && 'bai-board-disable-resize',
       )}
       empty
       renderItem={(item: BoardProps.Item<T>) => {
         return (
           <BoardItem
             className={classNames(
-              styles.boardItems,
-              !bordered && styles.disableBorder,
+              'bai-board-item',
+              !bordered && 'bai-board-item-disable-border',
             )}
             key={item.id}
             i18nStrings={{

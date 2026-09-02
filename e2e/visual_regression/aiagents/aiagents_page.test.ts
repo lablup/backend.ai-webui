@@ -24,9 +24,11 @@ test.describe(
   'AI Agents page Visual Regression Test',
   { tag: ['@regression', '@visual'] },
   () => {
-    // FIXME: Test timeout in beforeEach - checkbox for AI Agents enable cannot be clicked
-    // Error: locator('div').filter({ hasText: /^AI AgentsEnabled$/ }).getByLabel('Enabled') times out
-    // The AI Agents preference checkbox might have changed its structure or label
+    // FIXME(FR-3111/stale-baseline): The usersettings "AI Agents" toggle markup changed,
+    // so the beforeEach locator (div filter /^AI AgentsEnabled$/) no longer matches and
+    // `snapshot/ai-agents-page.png` was captured against the old UI.
+    // Locator fix + baseline refresh deferred to FR-3115 (dedicated snapshot-refresh PR
+    // against a frozen backend).
     test.fixme('ai agents full page', async ({ page }) => {
       await expect(page).toHaveScreenshot('ai_agents_page.png', {
         fullPage: true,

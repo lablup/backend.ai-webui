@@ -40,18 +40,21 @@ const wrapper = ({ children }: { children: React.ReactNode }) =>
 // ---------------------------------------------------------------------------
 
 // Mock react-i18next so that t() returns the key as-is, making assertions
-// independent of the actual translation strings.
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
+// independent of the actual translation strings. The rest of the module stays
+// intact — BUI's locale bootstrap imports `initReactI18next` from here.
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>();
+  return {
+    ...actual,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
 
 // ---------------------------------------------------------------------------
 // Helper: set up a fake backendaiclient on globalThis
 // ---------------------------------------------------------------------------
 function makeFakeClient(connectionMode: 'SESSION' | 'API' = 'SESSION') {
-  const logoutFn = jest.fn().mockResolvedValue(undefined);
+  const logoutFn = vi.fn().mockResolvedValue(undefined);
   (globalThis as any).backendaiclient = {
     _config: { connectionMode },
     logout: logoutFn,
@@ -360,7 +363,7 @@ describe('useLogoutEventListeners', () => {
   });
 
   it('registers backend-ai-logout listener on mount', () => {
-    const addSpy = jest.spyOn(document, 'addEventListener');
+    const addSpy = vi.spyOn(document, 'addEventListener');
 
     const { unmount } = renderHook(() => useLogoutEventListeners(), {
       wrapper,
@@ -374,7 +377,7 @@ describe('useLogoutEventListeners', () => {
   });
 
   it('removes backend-ai-logout listener on unmount', () => {
-    const removeSpy = jest.spyOn(document, 'removeEventListener');
+    const removeSpy = vi.spyOn(document, 'removeEventListener');
 
     const { unmount } = renderHook(() => useLogoutEventListeners(), {
       wrapper,
@@ -389,7 +392,7 @@ describe('useLogoutEventListeners', () => {
   });
 
   it('registers beforeunload listener on mount', () => {
-    const addSpy = jest.spyOn(globalThis, 'addEventListener');
+    const addSpy = vi.spyOn(globalThis, 'addEventListener');
 
     const { unmount } = renderHook(() => useLogoutEventListeners(), {
       wrapper,
@@ -403,7 +406,7 @@ describe('useLogoutEventListeners', () => {
   });
 
   it('removes beforeunload listener on unmount', () => {
-    const removeSpy = jest.spyOn(globalThis, 'removeEventListener');
+    const removeSpy = vi.spyOn(globalThis, 'removeEventListener');
 
     const { unmount } = renderHook(() => useLogoutEventListeners(), {
       wrapper,
@@ -419,7 +422,7 @@ describe('useLogoutEventListeners', () => {
 
   it('registers backend-ai-app-close listener when isElectron is true', () => {
     (globalThis as any).isElectron = true;
-    const addSpy = jest.spyOn(document, 'addEventListener');
+    const addSpy = vi.spyOn(document, 'addEventListener');
 
     const { unmount } = renderHook(() => useLogoutEventListeners(), {
       wrapper,
@@ -434,7 +437,7 @@ describe('useLogoutEventListeners', () => {
 
   it('does NOT register backend-ai-app-close listener when isElectron is false', () => {
     (globalThis as any).isElectron = false;
-    const addSpy = jest.spyOn(document, 'addEventListener');
+    const addSpy = vi.spyOn(document, 'addEventListener');
 
     const { unmount } = renderHook(() => useLogoutEventListeners(), {
       wrapper,
@@ -507,7 +510,7 @@ describe('LogoutEventHandler component', () => {
   });
 
   it('registers event listeners when mounted', () => {
-    const addSpy = jest.spyOn(document, 'addEventListener');
+    const addSpy = vi.spyOn(document, 'addEventListener');
 
     const { unmount } = render(
       React.createElement(

@@ -2,31 +2,30 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ChatHeader_Endpoint$key } from '../../__generated__/ChatHeader_Endpoint.graphql';
+import { ChatHeader_Deployment$key } from '../../__generated__/ChatHeader_Deployment.graphql';
 import { useWebUINavigate } from '../../hooks';
-import { AIAgent } from '../../hooks/useAIAgent';
+import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useProjectPath } from '../../hooks/useRouteScope';
+import { theme } from '../../theme-shim';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
-import EndpointSelect, { EndpointSelectProps } from './EndpointSelect';
+import DeploymentSelect, { DeploymentSelectProps } from './DeploymentSelect';
 import ModelSelect from './ModelSelect';
 import {
-  CloseOutlined,
-  ControlOutlined,
-  MoreOutlined,
-} from '@ant-design/icons';
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@astryxdesign/core/DropdownMenu';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Popover } from '@astryxdesign/core/Popover';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
+import { isEmpty } from 'lodash-es';
 import {
-  Dropdown,
-  Button,
-  theme,
-  type MenuProps,
-  Popover,
-  Tooltip,
-} from 'antd';
-import { filterOutEmpty, BAIFlex } from 'backend.ai-ui';
-import { isEmpty } from 'lodash';
-import {
+  X,
+  SlidersHorizontal,
+  EllipsisVertical,
   ScaleIcon,
   EraserIcon,
   ToggleRightIcon,
@@ -44,17 +43,17 @@ interface SyncSwitchProps {
 
 const SyncSwitch: React.FC<SyncSwitchProps> = ({ sync, onClick }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   return (
     <>
-      <Tooltip title={t('chatui.SyncInput')}>
-        <Button
-          type="text"
+      <Tooltip content={t('chatui.SyncInput')}>
+        <IconButton
+          variant="ghost"
           icon={sync ? <ToggleRightIcon /> : <ToggleLeftIcon />}
+          label={t('chatui.SyncInput')}
           onClick={() => onClick(!sync)}
           style={{
             marginLeft: 8,
-            color: sync ? token.colorPrimary : undefined,
+            color: sync ? 'var(--color-accent)' : undefined,
           }}
         />
       </Tooltip>
@@ -69,8 +68,8 @@ interface ChatHeaderProps {
   models: ChatModel[];
   modelId: string;
   onChangeModel: (modelId: string) => void;
-  endpointFrgmt?: ChatHeader_Endpoint$key | null;
-  onChangeEndpoint: EndpointSelectProps['onChange'];
+  deploymentFrgmt?: ChatHeader_Deployment$key | null;
+  onChangeDeployment: DeploymentSelectProps['onChange'];
   agents: AIAgent[];
   agent?: AIAgent;
   onChangeAgent: (agent: AIAgent) => void;
@@ -95,8 +94,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   models,
   modelId,
   onChangeModel,
-  endpointFrgmt,
-  onChangeEndpoint,
+  deploymentFrgmt,
+  onChangeDeployment,
   agent,
   onChangeAgent,
   sync,
@@ -112,42 +111,52 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
-  const [isPendingEndpointTransition, startEndpointTransition] =
+  const [isPendingDeploymentTransition, startDeploymentTransition] =
     useTransition();
   const [isPendingAgentTransition, startAgentTransition] = useTransition();
 
-  // Using fragment instead of just endpoint_id to support future EndpointSelect extensions
-  const endpoint = useFragment(
+  // Using fragment instead of just the id to support future DeploymentSelect extensions
+  const deployment = useFragment(
     graphql`
-      fragment ChatHeader_Endpoint on Endpoint {
-        endpoint_id
+      fragment ChatHeader_Deployment on ModelDeployment {
+        id
+        metadata {
+          name
+        }
       }
     `,
-    endpointFrgmt,
+    deploymentFrgmt,
   );
+  // The `deployments` chatting tab and DeploymentSelect both address a
+  // deployment by its local UUID, while the Strawberry node exposes the global
+  // Relay ID.
+  const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
 
-  const items: MenuProps['items'] = filterOutEmpty([
+  // PILOT-DECISION: antd `danger` (red text on the "Delete Chatting Session"
+  // item) has no destination on Astryx `DropdownMenuItemData` (no color/
+  // variant field, closed shape) — dropped (P5: closed enum, no colour
+  // escape hatch).
+  const items: DropdownMenuOption[] = filterOutEmpty([
     showCompareMenuItem && {
-      key: 'compare',
       label: t('chatui.CompareWithOtherModels'),
       icon: <ScaleIcon />,
       onClick: () => {
         webuiNavigate({
-          pathname: '/serving',
+          pathname: buildProjectPath('deployments'),
           search: new URLSearchParams({
             tab: 'chatting',
-            endpointId: endpoint?.endpoint_id ?? '',
+            endpointId: deploymentId ?? '',
             modelId: modelId,
           }).toString(),
         });
       },
     },
     showCompareMenuItem && {
-      type: 'divider',
+      type: 'divider' as const,
     },
     {
-      key: 'clear',
       label: t('chatui.DeleteChatHistory'),
       icon: <EraserIcon />,
       onClick: () => {
@@ -155,13 +164,11 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       },
     },
     closable && {
-      type: 'divider',
+      type: 'divider' as const,
     },
     closable && {
-      key: 'close',
-      danger: true,
       label: t('chatui.DeleteChattingSession'),
-      icon: <CloseOutlined />,
+      icon: <X size="1em" />,
       onClick: () => {
         onRemoveChat?.();
       },
@@ -171,6 +178,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   const [experimentalAIAgents] = useBAISettingUserState(
     'experimental_ai_agents',
   );
+  const { getEndpointBinding } = useAIAgent();
+  const agentBinding = agent ? getEndpointBinding(agent.id) : undefined;
 
   return (
     <BAIFlex
@@ -206,22 +215,23 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }}
           />
         )}
-        {!agent?.endpoint_url && (
-          <EndpointSelect
+        {!agentBinding?.endpoint_url && (
+          <DeploymentSelect
             fetchKey={fetchKey}
-            loading={isPendingEndpointTransition}
+            isLoading={isPendingDeploymentTransition}
             onChange={(id) => {
-              startEndpointTransition(() => {
-                onChangeEndpoint?.(id);
+              startDeploymentTransition(() => {
+                onChangeDeployment?.(id);
               });
             }}
-            value={endpoint?.endpoint_id}
-            popupMatchSelectWidth={false}
+            value={deploymentId}
+            showDetailPageButton
           />
         )}
         {!isEmpty(models) && (
           <ModelSelect
             models={models}
+            deploymentName={deployment?.metadata.name}
             value={modelId}
             onChange={(modelId) => {
               startTransition(() => {
@@ -254,42 +264,47 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
               }}
             />
           }
-          trigger="click"
-          placement="bottomLeft"
+          placement="below"
+          alignment="start"
           style={{
             padding: token.paddingXS,
           }}
         >
-          <Tooltip title={t('chatui.chat.parameter.Title')}>
-            <Button
-              type="text"
+          <Tooltip content={t('chatui.chat.parameter.Title')}>
+            <IconButton
+              variant="ghost"
+              label={t('chatui.chat.parameter.Title')}
               icon={
-                <ControlOutlined
+                <SlidersHorizontal
                   style={{
-                    color: usingParameters ? token.colorPrimary : undefined,
+                    color: usingParameters ? 'var(--color-accent)' : undefined,
                   }}
+                  size="1em"
                 />
               }
             />
           </Tooltip>
         </Popover>
         {cloneable && (
-          <Tooltip title={t('chatui.CreateCompareChat')}>
-            <Button
-              type="text"
+          <Tooltip content={t('chatui.CreateCompareChat')}>
+            <IconButton
+              variant="ghost"
+              label={t('chatui.CreateCompareChat')}
               onClick={() => onAddChat?.()}
               icon={<ArrowRightLeftIcon />}
             />
           </Tooltip>
         )}
-        <Dropdown menu={{ items }} trigger={['click']}>
-          <Button
-            type="text"
-            onClick={(e) => e.preventDefault()}
-            icon={<MoreOutlined />}
-            style={{ color: token.colorTextSecondary }}
-          />
-        </Dropdown>
+        <DropdownMenu
+          items={items}
+          button={{
+            variant: 'ghost',
+            icon: <EllipsisVertical size="1em" />,
+            label: t('button.MoreActions'),
+            isIconOnly: true,
+            style: { color: token.colorTextSecondary },
+          }}
+        />
       </BAIFlex>
     </BAIFlex>
   );

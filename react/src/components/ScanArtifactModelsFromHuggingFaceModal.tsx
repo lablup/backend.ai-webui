@@ -2,7 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { App, Form, type FormInstance, Input, theme } from 'antd';
+import { ScanArtifactModelsFromHuggingFaceModalMutation } from '../__generated__/ScanArtifactModelsFromHuggingFaceModalMutation.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
+import { theme } from '../theme-shim';
+import { AstryxFormTextInput } from './astryxFormControls';
 import {
   BAIFlex,
   BAIModal,
@@ -13,7 +17,6 @@ import {
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation } from 'react-relay';
-import { ScanArtifactModelsFromHuggingFaceModalMutation } from 'src/__generated__/ScanArtifactModelsFromHuggingFaceModalMutation.graphql';
 
 export interface ScanArtifactModelsFromHuggingFaceModalProps extends BAIModalProps {
   onRequestClose?: (
@@ -100,7 +103,7 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
                     return;
                   }
                   const artifactEdges =
-                    res.scanArtifactModels.artifactRevision?.edges ?? [];
+                    res.scanArtifactModels?.artifactRevision?.edges ?? [];
                   const artifactId =
                     artifactEdges[0]?.node?.artifact?.id ?? null;
                   if (!artifactId) {
@@ -147,7 +150,8 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               required
               rules={[{ required: true }]}
             >
-              <Input
+              <AstryxFormTextInput
+                label={t('scanArtifactModelsFromHuggingFaceModal.ModelID')}
                 placeholder={t(
                   'scanArtifactModelsFromHuggingFaceModal.EnterAModelID',
                 )}
@@ -157,7 +161,8 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
               label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
               name="revision"
             >
-              <Input
+              <AstryxFormTextInput
+                label={t('scanArtifactModelsFromHuggingFaceModal.Version')}
                 placeholder={t(
                   'scanArtifactModelsFromHuggingFaceModal.EnterAVersion',
                 )}

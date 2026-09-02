@@ -1,0 +1,139 @@
+# On a published stable release, open a PR that syncs the released minor into
+# `versions:` in `docs-toolkit.config.yaml`:
+#   - brand-new minor  → ADD an archive-branch entry below `next`, promoting it
+#     to `latest: true` iff it is newer than the current latest (older-minor
+#     backfills are added without moving `latest:`);
+#   - existing minor   → bump that entry's `pdfTag` only (`latest:` untouched).
+# A PR (not a direct commit) because merging to `main` is what triggers the
+# docs Amplify rebuild, and the merge stays the human gate. The edit lives in
+# `scripts/set-version-pdftag.mjs`. Companion `docs-archive-orphan-branch.yml`
+# seeds/refreshes the `docs-archive/<minor>` SOURCE on the same event — the
+# entry added here points at that branch. (FR-3246, follow-up to FR-3242;
+# automates RELEASE-RUNBOOK.md step 3 for both the add and the bump cases.)
+
+name: docs-version-pdftag-pr
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to sync into versions: (e.g. v26.7.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# One in-flight PR branch per minor; a later patch on the same minor updates
+# the same branch/PR instead of spawning a second one.
+concurrency:
+  group: docs-version-pdftag-pr-${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  sync-version-pr:
+    # Skip pre-releases (rc/alpha/beta); only a stable release should touch the
+    # site's version selector / PDF pointer. Manual dispatch always runs.
+    if: ${{ github.event_name != 'release' || github.event.release.prerelease == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resolve tag and minor
+        id: resolve
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          DISPATCH_TAG: ${{ inputs.tag }}
+        run: |
+          if [ "$EVENT_NAME" = "release" ]; then TAG="$RELEASE_TAG"; else TAG="$DISPATCH_TAG"; fi
+          # Normalize to a leading `v` and extract MAJOR.MINOR.
+          case "$TAG" in v*) ;; *) TAG="v$TAG" ;; esac
+          MINOR="$(printf '%s' "$TAG" | sed -E 's/^v([0-9]+\.[0-9]+)\..*$/\1/')"
+          if ! printf '%s' "$MINOR" | grep -qE '^[0-9]+\.[0-9]+$'; then
+            echo "ERROR: could not derive MAJOR.MINOR from tag '$TAG'"; exit 1
+          fi
+          {
+            echo "tag=$TAG"
+            echo "minor=$MINOR"
+          } >> "$GITHUB_OUTPUT"
+          echo "Resolved tag=$TAG minor=$MINOR"
+
+      # Check out `main` (NOT the release tag) — we edit main's config and
+      # open the PR against main.
+      - name: Checkout main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Set up Node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version-file: ".nvmrc"
+          # Script is Node-stdlib only; disable the pnpm cache probe (pnpm
+          # isn't installed here, so the default would fail).
+          package-manager-cache: false
+
+      # Emits `action` (added|bumped|noop), `minor`, `tag`, `promoted` to
+      # $GITHUB_OUTPUT. No-op (empty diff) when the entry is already current.
+      - name: Sync versions entry (add new minor or bump existing pdfTag)
+        id: apply
+        env:
+          TAG: ${{ steps.resolve.outputs.tag }}
+        run: node packages/backend.ai-webui-docs/scripts/set-version-pdftag.mjs "$TAG"
+
+      - name: Open or update PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.resolve.outputs.tag }}
+          MINOR: ${{ steps.resolve.outputs.minor }}
+          ACTION: ${{ steps.apply.outputs.action }}
+          PROMOTED: ${{ steps.apply.outputs.promoted }}
+        run: |
+          set -euo pipefail
+          CONFIG=packages/backend.ai-webui-docs/docs-toolkit.config.yaml
+          if git diff --quiet -- "$CONFIG"; then
+            echo "No change needed for ${MINOR} (${TAG}); not opening a PR."
+            exit 0
+          fi
+
+          # Word the PR by what the script actually did.
+          if [ "$ACTION" = "added" ] && [ "$PROMOTED" = "true" ]; then
+            TITLE="feat(docs): publish ${MINOR} to docs version selector (${TAG})"
+            SUMMARY="Adds a ${MINOR} entry to versions: in docs-toolkit.config.yaml (source docs-archive/${MINOR}, pdfTag ${TAG}) and moves latest: onto it, so ${MINOR} becomes the default /latest/ version in the selector."
+          elif [ "$ACTION" = "added" ]; then
+            TITLE="chore(docs): add ${MINOR} to docs version selector (${TAG})"
+            SUMMARY="Adds a ${MINOR} entry to versions: in docs-toolkit.config.yaml (source docs-archive/${MINOR}, pdfTag ${TAG}) as an archived minor. latest: is unchanged because ${MINOR} is not newer than the current latest (older-minor backfill)."
+          else
+            TITLE="chore(docs): bump ${MINOR} pdfTag to ${TAG}"
+            SUMMARY="Bumps the existing ${MINOR} entry's pdfTag in docs-toolkit.config.yaml so the docs site's ${MINOR} version links the ${TAG} release PDFs. latest: is untouched."
+          fi
+
+          BRANCH="automation/docs-version-${MINOR}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add "$CONFIG"
+          git commit -m "$TITLE"
+          # Force-push so a later patch on the same minor refreshes the branch.
+          git push --force origin "$BRANCH"
+          # Open a PR only if one isn't already open for this head branch.
+          if gh pr view "$BRANCH" --json state --jq '.state' 2>/dev/null | grep -q OPEN; then
+            echo "PR for ${BRANCH} already open; the force-push updated it."
+          else
+            # Assemble the body with printf (no heredoc — a heredoc's
+            # unindented lines would break this YAML block scalar).
+            BODY=$(printf '%s\n' \
+              "Automated by docs-version-pdftag-pr.yml (FR-3246) on release ${TAG}." \
+              "" \
+              "${SUMMARY}" \
+              "" \
+              "Merging this PR triggers the docs Amplify rebuild. The archived docs source is seeded/refreshed separately by docs-archive-orphan-branch.yml on the same release." \
+              "" \
+              "Note: PRs opened by GITHUB_TOKEN do not spawn Actions check runs, so required checks may show as pending; merge with admin if branch protection blocks.")
+            gh pr create --base main --head "$BRANCH" \
+              --title "$TITLE" \
+              --body "$BODY"
+          fi

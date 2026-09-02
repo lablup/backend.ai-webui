@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useWebUINavigate } from '.';
 import { backendaiOptions, backendaiUtils } from '../global-stores';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
 /**
  * Clears all Backend.AI login-related localStorage keys and sessionStorage.
@@ -126,12 +126,12 @@ async function performAppCloseCleanup(notificationMessage: string) {
  * - Provides a `logout` function that cleans up session data and redirects
  * - Provides a `closeAppWindow` function for Electron app-close cleanup
  *
- * Must be used within a React Router context (needs `useNavigate`).
+ * Must be used within a React Router context (needs `useWebUINavigate`).
  */
 export function useLogout() {
   'use memo';
 
-  const navigate = useNavigate();
+  const navigate = useWebUINavigate();
   const { t } = useTranslation();
 
   /**

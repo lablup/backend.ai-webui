@@ -1,26 +1,53 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ BAIAdminSessionSelect — ticket-27 Astryx sibling of the antd
+ `BAIAdminSessionSelect` (Relay-paginated, id-valued select pattern B,
+ following the recipe used across the Astryx migration).
+
+ FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
+ `BAIAdminSessionSelect` is NOT touched by this file. It keeps serving every
+ unmigrated call site until a later ticket moves them over. This file is the
+ Astryx-native sibling, and its OUTER value contract is deliberately the same
+ plain key (`string` / `string[]`) the antd wrapper exposes — labelInValue
+ lives strictly between the wrapper and `BAIComplexSelect`.
+
+ PILOT-DECISIONs:
+  - P26-6 The `open ? 'network-only' : 'store-only'` fetchPolicy switch is
+    kept — `BAIComplexSelect.onOpenChange` re-exposes the open state that
+    `ComplexSelector` otherwise keeps private.
+  - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
+    is dropped: the empty state is the shared "No results" text.
+  - The antd original's explicit `onChange?: (value, option: any) => void`
+    override is dropped in favor of the single-argument plain-key contract
+    used by every other Astryx sibling (`BAIUserSelect` included) — no
+    call site of this new component can rely on the antd `option` argument.
+  - This wrapper's antd original had no `optionRender`/`labelRender`, so
+    there is no rich-content-to-`description` migration to record here.
+*/
 import { BAIAdminSessionSelectPaginatedQuery } from '../../__generated__/BAIAdminSessionSelectPaginatedQuery.graphql';
 import { BAIAdminSessionSelectValueQuery } from '../../__generated__/BAIAdminSessionSelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
-import BAISelect, { BAISelectProps } from '../BAISelect';
-import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
-import { GetRef, Skeleton } from 'antd';
-import _ from 'lodash';
+import BAIComplexSelect, {
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
+} from '../BAIComplexSelect';
+import * as _ from 'lodash-es';
 import {
   useDeferredValue,
   useImperativeHandle,
-  useOptimistic,
-  useRef,
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type SessionNode = NonNullable<
+export type AstryxAdminSessionNode = NonNullable<
   NonNullable<
     BAIAdminSessionSelectPaginatedQuery['response']['adminSessionsV2']
   >['edges'][number]
@@ -31,26 +58,31 @@ export interface BAIAdminSessionSelectRef {
 }
 
 export interface BAIAdminSessionSelectProps extends Omit<
-  BAISelectProps,
-  'options' | 'labelInValue' | 'ref'
+  BAIComplexSelectProps,
+  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
-  onChange?: (value: string | string[] | undefined, option: any) => void;
+  /** Plain key(s), as the antd `BAIAdminSessionSelect` exposes. */
+  value?: string | Array<string> | null;
+  onChange?: (value: string | Array<string> | undefined) => void;
   ref?: React.Ref<BAIAdminSessionSelectRef>;
 }
 
 const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
-  loading,
+  multiple = false,
+  isLoading,
   ref,
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
-  const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+  const { t } = useBAIi18n();
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | string[] | undefined
-  >(selectProps);
+    string | Array<string> | null | undefined
+  >(selectProps as Record<string, unknown>, {
+    valuePropName: 'value',
+    trigger: 'onChange',
+  });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
-    selectProps,
+    selectProps as Record<string, unknown>,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
@@ -59,18 +91,21 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
   );
 
   const deferredOpen = useDeferredValue(controllableOpen);
-  const [searchStr, setSearchStr] = useState<string>();
+  const [searchStr, setSearchStr] = useState<string>('');
   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
-  const [optimisticSearchStr, setOptimisticSearchStr] =
-    useOptimistic(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // Defer query refetch to prevent flickering during session selection
+  // Deferred so a fresh selection does not immediately re-run the value query.
   const deferredControllableValue = useDeferredValue(controllableValue);
+  const selectedIds = _.compact(_.castArray(deferredControllableValue ?? []));
 
-  // Use adminSessionsV2 with UUIDFilter to resolve selected value labels
+  /**
+   * The selected-id -> label resolution query. Mandatory on Astryx (the
+   * trigger reads its text from the VALUE, and a value chosen on page 1 is
+   * not in `options` after `loadNext` has paged past it).
+   */
   const { adminSessionsV2: selectedSessionNodes } =
     useLazyLoadQuery<BAIAdminSessionSelectValueQuery>(
       graphql`
@@ -93,29 +128,28 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
         }
       `,
       {
-        filter: !_.isEmpty(deferredControllableValue)
+        filter: selectedIds.length
           ? {
-              id: {
-                in: _.castArray(deferredControllableValue),
-              },
+              id: { in: selectedIds },
               status: {
                 notIn: ['TERMINATING', 'TERMINATED', 'CANCELLED'],
               },
             }
           : null,
-        first: _.castArray(deferredControllableValue).length,
-        skipSelected: _.isEmpty(deferredControllableValue),
+        first: Math.max(selectedIds.length, 1),
+        skipSelected: selectedIds.length === 0,
       },
       {
-        fetchPolicy: !_.isEmpty(deferredControllableValue)
-          ? 'store-or-network'
-          : 'store-only',
+        fetchPolicy: selectedIds.length > 0 ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIAdminSessionSelectPaginatedQuery, SessionNode>(
+    useLazyPaginatedQuery<
+      BAIAdminSessionSelectPaginatedQuery,
+      AstryxAdminSessionNode
+    >(
       graphql`
         query BAIAdminSessionSelectPaginatedQuery(
           $offset: Int!
@@ -147,18 +181,17 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
         },
       },
       {
+        // P26-6: the open state comes back out of the Astryx popup.
         fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.adminSessionsV2?.count ?? undefined,
-        getItem: (result) =>
-          result.adminSessionsV2?.edges?.map((edge) => edge?.node),
+        getTotal: (r) => r.adminSessionsV2?.count ?? undefined,
+        getItem: (r) => r.adminSessionsV2?.edges?.map((edge) => edge?.node),
         getId: (item) => item?.id,
       },
     );
 
-  // Expose refetch function through ref
   useImperativeHandle(
     ref,
     () => ({
@@ -171,118 +204,60 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  // Use raw UUID (toLocalId) as value instead of Relay global ID
-  const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.metadata?.name,
-    value: item?.id ? toLocalId(item.id) : item?.id,
-  }));
+  // id-valued (class B): the raw UUID (`toLocalId`), never the Relay global id.
+  const keyOfNode = (
+    node: { id: string } | null | undefined,
+  ): string | undefined => (node?.id ? toLocalId(node.id) : undefined);
 
-  const controllableValueWithLabel = selectedSessionNodes?.edges
-    ? // Sort by deferredControllableValue order to maintain selection order
-      _.castArray(deferredControllableValue)
-        .map((value) => {
-          const edge = selectedSessionNodes.edges.find(
-            (edge) => edge?.node?.id && toLocalId(edge.node.id) === value,
-          );
-          return edge
-            ? {
-                label: edge.node?.metadata?.name,
-                value: value,
-              }
-            : null;
-        })
-        .filter(
-          (item): item is { label: string; value: string } => item !== null,
-        )
-    : !_.isEmpty(deferredControllableValue)
-      ? _.castArray(deferredControllableValue).map((value) => ({
-          label: value,
-          value: value,
-        }))
-      : undefined;
-
-  const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
-    controllableValueWithLabel,
+  const options = _.compact(
+    _.map(paginationData, (item) => {
+      const key = keyOfNode(item);
+      return key
+        ? {
+            value: key,
+            label: item?.metadata?.name ?? key,
+          }
+        : null;
+    }),
   );
 
+  /** Plain keys -> labelInValue, resolving each label where we can. */
+  const labeledValue: BAIComplexSelectValue = (() => {
+    const labeled: Array<BAILabeledValue> = _.map(selectedIds, (key) => {
+      const edge = _.find(
+        selectedSessionNodes?.edges,
+        (e) => keyOfNode(e?.node) === key,
+      );
+      // Echoing the key as its own label is the antd fallback, made explicit.
+      return { label: edge?.node?.metadata?.name ?? key, value: key };
+    });
+    if (multiple) return labeled;
+    return labeled[0] ?? null;
+  })();
+
   return (
-    <BAISelect
-      ref={selectRef}
+    <BAIComplexSelect
       placeholder={t('comp:BAIAdminSessionSelect.SelectSession')}
-      loading={
-        loading ||
+      {...selectProps}
+      multiple={multiple}
+      isLoading={
+        isLoading ||
         controllableValue !== deferredControllableValue ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
-      {...selectProps}
-      searchAction={async (value) => {
-        setOptimisticSearchStr(value);
-        setSearchStr(value);
-        await selectProps.searchAction?.(value);
+      isLoadingNext={isLoadingNext}
+      total={result.adminSessionsV2?.count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
+        setControllableValue(multiple ? keys : keys[0], undefined);
       }}
-      showSearch={
-        selectProps.showSearch === false
-          ? false
-          : {
-              searchValue: optimisticSearchStr,
-              autoClearSearchValue: true,
-              ...(_.isObject(selectProps.showSearch)
-                ? _.omit(selectProps.showSearch, ['searchValue'])
-                : {}),
-              filterOption: false,
-            }
-      }
-      value={
-        controllableValue !== deferredControllableValue
-          ? optimisticValueWithLabel
-          : controllableValueWithLabel
-      }
-      labelInValue
-      onChange={(value, option) => {
-        // In multiple mode, when removing tags, value.label is a React element
-        // So we need to find the original label from availableOptions
-        const castedValue = _.isEmpty(value) ? [] : _.castArray(value);
-        const valueWithOriginalLabel = castedValue.map((v) => {
-          // If label is string, use it directly; if React element, find from options
-          const label = _.isString(v.label)
-            ? v.label
-            : (availableOptions.find((opt) => opt.value === v.value)?.label ??
-              v.value);
-          return {
-            label,
-            value: v.value,
-          };
-        });
-        setOptimisticValueWithLabel(valueWithOriginalLabel);
-        const isMultiple =
-          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
-        const idArray = castedValue.map((v) => _.toString(v.value));
-        setControllableValue(
-          isMultiple ? idArray : (idArray[0] ?? undefined),
-          option,
-        );
-      }}
-      options={availableOptions}
-      endReached={() => {
-        loadNext();
-      }}
-      open={controllableOpen}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
       onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(result.adminSessionsV2?.count) &&
-        result.adminSessionsV2.count > 0 ? (
-          <TotalFooter
-            loading={isLoadingNext}
-            total={result.adminSessionsV2.count}
-          />
-        ) : undefined
-      }
+      endReached={loadNext}
     />
   );
 };

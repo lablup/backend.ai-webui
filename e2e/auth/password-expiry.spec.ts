@@ -3,8 +3,8 @@
 // When a user's password has expired, the backend responds to POST /server/login with:
 //   { authenticated: false, data: { details: "Password expired on ..." } }
 //
-// The app must display the ResetPasswordRequiredInline modal (zIndex 1002) without
-// it being blocked by the login modal's mask or wrapper.
+// The app must display the ResetPasswordRequiredInline modal without it being
+// blocked by the login modal's mask or wrapper.
 //
 // Mock strategy:
 //   - POST /server/login → password-expired response (mocked in beforeEach)
@@ -58,7 +58,7 @@ async function fillLoginForm(page: Page): Promise<void> {
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
 
-  const endpointInput = page.getByLabel('Endpoint');
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
@@ -71,7 +71,7 @@ async function fillLoginForm(page: Page): Promise<void> {
  */
 async function triggerPasswordExpiryModal(page: Page): Promise<void> {
   await fillLoginForm(page);
-  await page.getByLabel('Login', { exact: true }).click();
+  await page.getByRole('button', { name: 'Login', exact: true }).click();
   await expect(page.getByText('Please change your password.')).toBeVisible({
     timeout: 10_000,
   });
@@ -135,14 +135,14 @@ test(
 
     // The password change modal must be fully interactive — its form fields accessible.
     await expect(
-      page.getByLabel('New password', { exact: true }),
+      page.getByLabel('New Password', { exact: true }),
     ).toBeVisible();
     await expect(page.getByLabel('New password (again)')).toBeVisible();
 
     // Verify the password change form is not visually blocked by clicking and
     // typing into the new password field. If the login modal's mask were covering
     // it, the click would fail or the field would not accept input.
-    const newPasswordInput = page.getByLabel('New password', { exact: true });
+    const newPasswordInput = page.getByLabel('New Password', { exact: true });
     await newPasswordInput.click();
     await newPasswordInput.fill('TestPassword1!');
     await expect(newPasswordInput).toHaveValue('TestPassword1!');
@@ -176,10 +176,11 @@ test(
     await page.getByRole('button', { name: 'Update' }).click();
 
     // Validation error message appears for the required password field.
-    // Ant Design 6 form validation messages use .ant-form-item-explain-error
-    // rather than role="alert".
+    // `ChangePasswordView.tsx` renders its fields via `BAIFormItem`, whose
+    // error line carries `data-bai-form-item-explain-error`
+    // (`BAIFormItem.tsx`; the same element also has `role="alert"`).
     await expect(
-      page.locator('.ant-form-item-explain-error').first(),
+      page.locator('[data-bai-form-item-explain-error]').first(),
     ).toBeVisible();
   },
 );
@@ -191,7 +192,7 @@ test(
     await triggerPasswordExpiryModal(page);
 
     // Fill the new password fields with the same value as the current password
-    await page.getByLabel('New password', { exact: true }).fill(TEST_PASSWORD);
+    await page.getByLabel('New Password', { exact: true }).fill(TEST_PASSWORD);
     await page.getByLabel('New password (again)').fill(TEST_PASSWORD);
     await page.getByRole('button', { name: 'Update' }).click();
 
@@ -290,7 +291,7 @@ test.describe('real account password change flow', () => {
       });
       await page.getByLabel('Email or Username').fill(USER_EMAIL);
       await page.getByLabel('Password').fill(ORIGINAL_PASSWORD);
-      const endpointInput = page.getByLabel('Endpoint');
+      const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
       if (
         !(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))
       ) {
@@ -316,7 +317,7 @@ test.describe('real account password change flow', () => {
         }
       });
 
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // ── Password change modal appears ──
       await expect(page.getByText('Please change your password.')).toBeVisible({
@@ -324,7 +325,7 @@ test.describe('real account password change flow', () => {
       });
 
       // ── Fill new password; submit will go through mocked /server/update-password-no-auth ──
-      await page.getByLabel('New password', { exact: true }).fill(NEW_PASSWORD);
+      await page.getByLabel('New Password', { exact: true }).fill(NEW_PASSWORD);
       await page.getByLabel('New password (again)').fill(NEW_PASSWORD);
 
       // Mock the password update endpoint — the real backend returns "Malformed body"

@@ -3,6 +3,7 @@ import {
   loginAsAdmin,
   loginAsUser,
   modifyConfigToml,
+  navigateTo,
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
 import fs from 'fs';
@@ -49,7 +50,7 @@ test.describe.parallel(
 
         // 4. Verify sidebar has "Open Backend.AI" menuitem
         await expect(
-          page.getByRole('menuitem', { name: 'Open Backend.AI' }),
+          page.getByRole('link', { name: 'Open Backend.AI' }),
         ).toBeVisible();
       });
 
@@ -76,7 +77,7 @@ test.describe.parallel(
 
         // 4. Verify sidebar has "Open Backend.AI" menuitem
         await expect(
-          page.getByRole('menuitem', { name: 'Open Backend.AI' }),
+          page.getByRole('link', { name: 'Open Backend.AI' }),
         ).toBeVisible();
       });
 
@@ -104,12 +105,16 @@ test.describe.parallel(
         // 3. Login as admin after setting up routes
         await loginAsAdmin(page, request);
 
-        // 4. Click "Admin Settings" menu item in sidebar
-        await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
+        // 4. Navigate to a stable admin page to enter admin mode.
+        //    The admin-test-plugin itself immediately calls window.history.back()
+        //    when its component mounts, so clicking "Admin Settings" (which points
+        //    to the plugin URL) would navigate away before the admin sidebar renders.
+        //    Using /credential as a stable admin page triggers the admin sidebar view.
+        await navigateTo(page, 'credential');
 
         // 5. Verify Admin Settings panel has "Admin Tool" menuitem
         await expect(
-          page.getByRole('menuitem', { name: 'Admin Tool' }),
+          page.getByRole('link', { name: 'Admin Tool' }),
         ).toBeVisible();
       });
     });
@@ -128,7 +133,7 @@ test.describe.parallel(
 
         // 2. Verify no "Open Backend.AI" plugin menuitem is shown
         await expect(
-          page.getByRole('menuitem', { name: 'Open Backend.AI' }),
+          page.getByRole('link', { name: 'Open Backend.AI' }),
         ).toBeHidden();
       });
 
@@ -151,12 +156,12 @@ test.describe.parallel(
 
         // 4. Verify no "broken-plugin" menu item appears
         await expect(
-          page.getByRole('menuitem', { name: 'broken-plugin' }),
+          page.getByRole('link', { name: 'broken-plugin' }),
         ).toBeHidden();
 
         // 5. Verify the standard menu items still appear (app works normally)
         await expect(
-          page.getByRole('menuitem', { name: /\bDashboard\b/ }),
+          page.getByRole('link', { name: /\bDashboard\b/ }),
         ).toBeVisible();
       });
     });
@@ -189,7 +194,7 @@ test.describe.parallel(
 
         // 3. Verify the plugin menu item links to the plugin route
         const pluginLink = page
-          .getByRole('menuitem', { name: 'Open Backend.AI' })
+          .getByRole('link', { name: 'Open Backend.AI' })
           .locator('a');
         await expect(pluginLink).toHaveAttribute('href', /\/test-plugin/);
 
@@ -232,7 +237,7 @@ test.describe.parallel(
 
         // 3. Verify "Admin Tool" menuitem is NOT visible
         await expect(
-          page.getByRole('menuitem', { name: 'Admin Tool' }),
+          page.getByRole('link', { name: 'Admin Tool' }),
         ).toBeHidden();
       });
     });
@@ -265,7 +270,7 @@ test.describe.parallel(
 
         // 3. Verify "Open Backend.AI" is NOT visible
         await expect(
-          page.getByRole('menuitem', { name: 'Open Backend.AI' }),
+          page.getByRole('link', { name: 'Open Backend.AI' }),
         ).toBeHidden();
       });
 
@@ -292,13 +297,11 @@ test.describe.parallel(
 
         // 3. Verify "Open Backend.AI" IS visible (plugin not in blocklist)
         await expect(
-          page.getByRole('menuitem', { name: 'Open Backend.AI' }),
+          page.getByRole('link', { name: 'Open Backend.AI' }),
         ).toBeVisible();
 
         // 4. Verify "Chat" IS hidden (it is in the blocklist)
-        await expect(
-          page.getByRole('menuitem', { name: /\bChat\b/ }),
-        ).toBeHidden();
+        await expect(page.getByRole('link', { name: /\bChat\b/ })).toBeHidden();
       });
     });
 
@@ -338,10 +341,10 @@ test.describe.parallel(
 
         // 4. Verify both "Plugin A" and "Plugin B" menuitems are visible
         await expect(
-          page.getByRole('menuitem', { name: 'Plugin A' }),
+          page.getByRole('link', { name: 'Plugin A' }),
         ).toBeVisible();
         await expect(
-          page.getByRole('menuitem', { name: 'Plugin B' }),
+          page.getByRole('link', { name: 'Plugin B' }),
         ).toBeVisible();
       });
 
@@ -372,12 +375,12 @@ test.describe.parallel(
 
         // 4. Verify "Plugin A" IS visible
         await expect(
-          page.getByRole('menuitem', { name: 'Plugin A' }),
+          page.getByRole('link', { name: 'Plugin A' }),
         ).toBeVisible();
 
         // 5. Verify no "broken-plugin" menuitem appears
         await expect(
-          page.getByRole('menuitem', { name: 'broken-plugin' }),
+          page.getByRole('link', { name: 'broken-plugin' }),
         ).toBeHidden();
       });
     });
@@ -416,7 +419,7 @@ test.describe.parallel(
 
         // 3. Verify "Open Backend.AI" is visible before reload
         await expect(
-          page.getByRole('menuitem', { name: 'Open Backend.AI' }),
+          page.getByRole('link', { name: 'Open Backend.AI' }),
         ).toBeVisible();
 
         // 4. Reload the page
@@ -427,7 +430,7 @@ test.describe.parallel(
 
         // 6. Verify "Open Backend.AI" still visible after reload
         await expect(
-          page.getByRole('menuitem', { name: 'Open Backend.AI' }),
+          page.getByRole('link', { name: 'Open Backend.AI' }),
         ).toBeVisible();
       });
     });

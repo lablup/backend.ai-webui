@@ -9,39 +9,41 @@ import {
   KeypairResourcePolicyListQuery$data,
 } from '../__generated__/KeypairResourcePolicyListQuery.graphql';
 import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/KeypairResourcePolicySettingModalFragment.graphql';
+import { App } from '../app-shim';
 import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import KeypairResourcePolicyInfoModal from './KeypairResourcePolicyInfoModal';
 import KeypairResourcePolicySettingModal from './KeypairResourcePolicySettingModal';
-import TableColumnsSettingModal from './TableColumnsSettingModal';
-import {
-  DeleteOutlined,
-  InfoCircleOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, Button, Dropdown, Tooltip } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   useUpdatableState,
   filterOutEmpty,
+  BAIButton,
   BAITable,
   BAIFlex,
   BAIAllowedVfolderHostsWithPermission,
   BAIResourceNumberWithIcon,
   BAINameActionCell,
   BAIDeleteConfirmModal,
+  BAIQuestionIconWithTooltip,
+  type BAIColumnsType,
+  type BAIColumnType,
 } from 'backend.ai-ui';
-import _ from 'lodash';
-import { EllipsisIcon } from 'lucide-react';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
+import { Trash2, Info, RotateCw, PlusIcon, SquarePenIcon } from 'lucide-react';
 import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+
+/**
+ * antd `AnyObject` (`antd/es/_util/type`) restated locally: a type-only antd
+ * import still holds this module — and everything downstream of it — inside
+ * the antd import graph (MAPPING §6 / P15), and the declaration is one line.
+ */
+type AnyObject = Record<PropertyKey, any>;
 
 type KeypairResourcePolicies = NonNullable<
   KeypairResourcePolicyListQuery$data['keypair_resource_policies']
@@ -58,8 +60,6 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   const [keypairResourcePolicyFetchKey, updateKeypairResourcePolicyFetchKey] =
     useUpdatableState('initial-fetch');
   const [isRefetchPending, startRefetchTransition] = useTransition();
-  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
-    useToggle();
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
     useState<KeypairResourcePolicySettingModalFragment$key | null>();
@@ -77,6 +77,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         query KeypairResourcePolicyListQuery {
           keypair_resource_policies {
             name
+            default_for_unspecified
             total_resource_slots
             max_session_lifetime
             max_concurrent_sessions
@@ -85,6 +86,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             allowed_vfolder_hosts
             max_pending_session_count @since(version: "24.03.4")
             max_concurrent_sftp_sessions @since(version: "24.03.4")
+            created_at
             ...KeypairResourcePolicySettingModalFragment
             ...KeypairResourcePolicyInfoModalFragment
             ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment
@@ -110,7 +112,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
     }
   `);
 
-  const columns: ColumnsType<KeypairResourcePolicies> = filterOutEmpty([
+  const columns: BAIColumnsType<KeypairResourcePolicies> = filterOutEmpty([
     {
       title: t('resourcePolicy.Name'),
       dataIndex: 'name',
@@ -125,7 +127,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             {
               key: 'info',
               title: t('button.Info'),
-              icon: <InfoCircleOutlined />,
+              icon: <Info size="1em" />,
               onClick: () => {
                 startInfoModalOpenTransition(() => {
                   setCurrentResourcePolicy(row || null);
@@ -133,9 +135,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
               },
             },
             {
-              key: 'settings',
-              title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <SquarePenIcon />,
               onClick: () => {
                 setEditingKeypairResourcePolicy(row);
               },
@@ -143,7 +145,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             {
               key: 'delete',
               title: t('button.Delete'),
-              icon: <DeleteOutlined />,
+              icon: <Trash2 size="1em" />,
               type: 'danger',
               onClick: () => {
                 setDeletingPolicyName(row?.name ?? null);
@@ -152,6 +154,28 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           ]}
         />
       ),
+    },
+    {
+      title: (
+        <BAIFlex gap="xxs" align="center">
+          {t('resourcePolicy.DefaultForUnspecified')}
+          <BAIQuestionIconWithTooltip
+            title={
+              <>
+                {t('resourcePolicy.DefaultForUnspecifiedTooltipDesc1')}
+                <br />
+                <br />
+                {t('resourcePolicy.DefaultForUnspecifiedTooltipDesc2')}
+              </>
+            }
+          />
+        </BAIFlex>
+      ),
+      dataIndex: 'default_for_unspecified',
+      key: 'default_for_unspecified',
+      sorter: (a, b) =>
+        localeCompare(a?.default_for_unspecified, b?.default_for_unspecified),
+      render: (text) => text ?? '-',
     },
     {
       title: t('resourcePolicy.ResourcePolicy'),
@@ -261,23 +285,37 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         ),
       render: (text) => (text ? text : '∞'),
     },
+    {
+      title: t('resourcePolicy.CreatedAt'),
+      dataIndex: 'created_at',
+      key: 'created_at',
+      sorter: (a, b) => localeCompare(a?.created_at, b?.created_at),
+      render: (text) => (text ? dayjs(text).format('lll') : '-'),
+    },
   ]);
 
-  const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
-    'KeypairResourcePolicyList',
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.KeypairResourcePolicyList',
   );
 
-  const handleExportCSV = () => {
+  const supportedFields = _.compact(
+    _.map(columns, (column) => _.toString(column.key)),
+  );
+
+  const handleExportCSV = (selectedExportKeys: string[]) => {
+    if (selectedExportKeys.length === 0) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
     if (!keypair_resource_policies) {
       message.error(t('resourcePolicy.NoDataToExport'));
       return;
     }
 
-    const columnKeys = _.map(columns, (column) => _.toString(column.key));
     const responseData = _.map(keypair_resource_policies, (policy) => {
       return _.pick(
         policy,
-        columnKeys.map((key) => key as keyof KeypairResourcePolicies),
+        selectedExportKeys.map((key) => key as keyof KeypairResourcePolicies),
       );
     });
 
@@ -294,6 +332,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         max_session_lifetime: (text) => (text ? text : '-'),
         allowed_vfolder_hosts: (text) =>
           _.isEmpty(text) ? '-' : _.keys(JSON.parse(text)).join(', '),
+        created_at: (text) => (text ? dayjs(text).format('lll') : '-'),
       },
     );
   };
@@ -301,91 +340,46 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   return (
     <BAIFlex direction="column" align="stretch" gap="sm" {...props}>
       <BAIFlex direction="row" justify="end" wrap="wrap" gap={'xs'}>
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: 'exportCSV',
-                label: t('resourcePolicy.ExportCSV'),
-                onClick: () => {
-                  handleExportCSV();
-                },
-              },
-            ],
-          }}
-          trigger={['click']}
-        >
-          <Button icon={<EllipsisIcon />} />
-        </Dropdown>
-        <BAIFlex
-          direction="row"
-          gap={'xs'}
-          wrap="wrap"
-          style={{ flexShrink: 1 }}
-        >
-          <BAIFlex gap={'xs'}>
-            <Tooltip title={t('button.Refresh')}>
-              <Button
-                icon={<ReloadOutlined />}
-                loading={isRefetchPending}
-                onClick={() => {
-                  startRefetchTransition(() =>
-                    updateKeypairResourcePolicyFetchKey(),
-                  );
-                }}
-              />
-            </Tooltip>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
+        <BAIFlex gap={'xs'}>
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
+              icon={<RotateCw size="1em" />}
+              loading={isRefetchPending}
               onClick={() => {
-                setIsCreatingPolicySetting(true);
+                startRefetchTransition(() =>
+                  updateKeypairResourcePolicyFetchKey(),
+                );
               }}
-            >
-              {t('button.Create')}
-            </Button>
-          </BAIFlex>
+            />
+          </Tooltip>
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon />}
+            onClick={() => {
+              setIsCreatingPolicySetting(true);
+            }}
+          >
+            {t('resourcePolicy.CreatePolicy')}
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
       <BAITable
-        columns={
-          _.filter(
-            columns,
-            (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-          ) as ColumnType<AnyObject>[]
-        }
+        scroll={{ x: 'max-content' }}
+        columns={columns as BAIColumnType<AnyObject>[]}
         dataSource={
           keypair_resource_policies as readonly AnyObject[] | undefined
         }
         rowKey="name"
-        scroll={{ x: 'max-content' }}
-        pagination={{
-          extraContent: (
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
-              onClick={() => {
-                toggleColumnSettingModal();
-              }}
-            />
-          ),
+        tableSettings={{
+          columnOverrides: columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
         }}
-        showSorterTooltip={false}
-      />
-      <TableColumnsSettingModal
-        open={visibleColumnSettingModal}
-        onRequestClose={(values) => {
-          values?.selectedColumnKeys &&
-            setHiddenColumnKeys(
-              _.difference(
-                columns.map((column) => _.toString(column.key)),
-                values?.selectedColumnKeys,
-              ),
-            );
-          toggleColumnSettingModal();
+        exportSettings={{
+          supportedFields,
+          onExport: async (selectedExportKeys) => {
+            handleExportCSV(selectedExportKeys);
+          },
         }}
-        columns={columns}
-        hiddenColumnKeys={hiddenColumnKeys}
       />
       <Suspense>
         <KeypairResourcePolicySettingModal
@@ -422,7 +416,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             : []
         }
         title={t('resourcePolicy.DeletePolicy')}
-        description={t('resourcePolicy.DeletePolicyDescription')}
+        target={t('resourcePolicy.ResourcePolicy')}
+        confirmText={deletingPolicyName ?? ''}
+        requireConfirmInput
         onOk={() => {
           if (deletingPolicyName) {
             return new Promise<void>((resolve) => {

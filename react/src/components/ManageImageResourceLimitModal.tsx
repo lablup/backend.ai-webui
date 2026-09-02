@@ -7,25 +7,23 @@ import {
   ResourceLimitInput,
 } from '../__generated__/ManageImageResourceLimitModalMutation.graphql';
 import { ManageImageResourceLimitModal_image$key } from '../__generated__/ManageImageResourceLimitModal_image.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
 import { compareNumberWithUnits } from '../helper';
+import { useResourceSlotsDetails } from '../hooks/backendai';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormNumberInput } from './astryxFormControls';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Grid } from '@astryxdesign/core/Grid';
 import {
-  App,
-  Form,
-  type FormInstance,
-  message,
-  InputNumber,
-  Row,
-  Col,
-} from 'antd';
-import {
-  useResourceSlotsDetails,
+  BAIFlex,
   BAIModal,
   BAIModalProps,
   BAIDynamicUnitInputNumber,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { useRef, Fragment } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 const DEFAULT_MIN_MEMORY = '1g'; // Default minimum memory value for resource limits
@@ -40,13 +38,10 @@ interface ManageImageResourceLimitModalProps extends BAIModalProps {
 const ManageImageResourceLimitModal: React.FC<
   ManageImageResourceLimitModalProps
 > = ({ imageFrgmt, open, onRequestClose, ...BAIModalProps }) => {
-  // Differentiate default max value based on manager version.
-  // The difference between validating a variable type as undefined or none for an unsupplied field value.
-  // [Associated PR links] : https://github.com/lablup/backend.ai/pull/1941
-
+  'use memo';
   const { t } = useTranslation();
+  const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
-  const app = App.useApp();
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
   const image = useFragment(
@@ -61,7 +56,6 @@ const ManageImageResourceLimitModal: React.FC<
         name @deprecatedSince(version: "24.12.0")
         namespace @since(version: "24.12.0")
         architecture
-        installed
         tag
       }
     `,
@@ -102,47 +96,33 @@ const ManageImageResourceLimitModal: React.FC<
       }))
       .filter((item) => !_.isEmpty(item?.min));
 
-    const commitRequest = () =>
-      commitModifyImageInput({
-        variables: {
-          target: `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`,
-          architecture: image?.architecture,
-          props: {
-            resource_limits,
-          },
+    // Image resource limits are pure DB metadata read by the scheduler at
+    // session-enqueue time, so a modification applies to newly created
+    // sessions immediately without any image reinstall.
+    commitModifyImageInput({
+      variables: {
+        target: `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`,
+        architecture: image?.architecture,
+        props: {
+          resource_limits,
         },
-        onCompleted: (res, errors) => {
-          if (!res?.modify_image?.ok) {
-            message.error(res?.modify_image?.msg);
-            return;
-          }
-          if (errors?.length) {
-            _.forEach(errors, (error) => message.error(error.message));
-          } else {
-            message.success(t('environment.DescImageResourceModified'));
-            onRequestClose(true);
-          }
-        },
-        onError: () => {
-          message.error(t('dialog.ErrorOccurred'));
-        },
-      });
-
-    if (image?.installed) {
-      app.modal.confirm({
-        title: t('environment.ImageReinstallationRequired'),
-        content: (
-          <Trans
-            i18nKey={'environment.ModifyImageResourceLimitReinstallRequired'}
-          />
-        ),
-        onOk: commitRequest,
-        getContainer: () => document.body,
-        closable: true,
-      });
-    } else {
-      commitRequest();
-    }
+      },
+      onCompleted: (res, errors) => {
+        if (!res?.modify_image?.ok) {
+          message.error(res?.modify_image?.msg);
+          return;
+        }
+        if (errors?.length) {
+          _.forEach(errors, (error) => message.error(error.message));
+        } else {
+          message.success(t('environment.DescImageResourceModified'));
+          onRequestClose(true);
+        }
+      },
+      onError: () => {
+        message.error(t('dialog.ErrorOccurred'));
+      },
+    });
   };
 
   return (
@@ -155,30 +135,45 @@ const ManageImageResourceLimitModal: React.FC<
       confirmLoading={isInFlightModifyImageInput}
       centered
       title={t('environment.ModifyMinimumImageResourceLimit')}
+      okText={t('button.Save')}
       {...BAIModalProps}
     >
-      <Form
-        ref={formRef}
-        layout="vertical"
-        initialValues={_.fromPairs(
-          _.map(image?.resource_limits ?? [], (item) => [item?.key, item?.min]),
-        )}
-      >
-        <Row gutter={[24, 16]}>
-          {_.map(
-            _.chunk(image?.resource_limits ?? [], 2),
-            (resourceLimitChunk, index) => (
-              <Fragment key={index}>
-                {_.map(resourceLimitChunk, (resourceLimit) => {
-                  const key = _.get(resourceLimit, 'key', '');
+      {/* antd Alert type="info" -> Astryx Banner status="info"; `showIcon`
+          dropped (Banner shows its icon by default). Margin becomes the
+          BAIFlex column gap. */}
+      <BAIFlex direction="column" align="stretch" gap="md">
+        <Banner
+          status="info"
+          title={t('environment.ResourceLimitAppliesToNewSessionsOnly')}
+        />
+        <Form
+          ref={formRef}
+          layout="vertical"
+          initialValues={_.fromPairs(
+            _.map(image?.resource_limits ?? [], (item) => [
+              item?.key,
+              item?.min,
+            ]),
+          )}
+        >
+          {/* antd Row gutter={[24,16]} + Col span={12} (no breakpoint props)
+              -> Astryx Grid columns={2} (MAPPING.md §3.9; responsive policy
+              R-fixed: the original was a fixed 2-up grid). */}
+          <Grid columns={2} columnGap={6} rowGap={4} align="start">
+            {_.map(
+              _.chunk(image?.resource_limits ?? [], 2),
+              (resourceLimitChunk, index) => (
+                <Fragment key={index}>
+                  {_.map(resourceLimitChunk, (resourceLimit) => {
+                    const key = _.get(resourceLimit, 'key', '');
 
-                  if (!key) {
-                    return null;
-                  }
+                    if (!key) {
+                      return null;
+                    }
 
-                  return (
-                    <Col span={12} key={key} style={{ alignSelf: 'start' }}>
-                      <Form.Item
+                    return (
+                      <BAIFormItem
+                        key={key}
                         label={
                           _.get(mergedResourceSlots, key)?.description ||
                           _.upperCase(key)
@@ -223,28 +218,33 @@ const ManageImageResourceLimitModal: React.FC<
                             style={{ width: '100%' }}
                           />
                         ) : (
-                          <InputNumber
+                          // antd InputNumber `suffix` -> Astryx NumberInput
+                          // `units` (MAPPING.md §3.17), via the Form adapter.
+                          <AstryxFormNumberInput
+                            label={
+                              _.get(mergedResourceSlots, key)?.description ||
+                              _.upperCase(key)
+                            }
                             min={
                               key === 'cpu'
                                 ? DEFAULT_MIN_CPU
                                 : DEFAULT_MIN_OTHER
                             }
                             step={_.includes(key, '.shares') ? 0.1 : 1}
-                            style={{ width: '100%' }}
-                            suffix={
+                            units={
                               mergedResourceSlots?.[key]?.display_unit || ''
                             }
                           />
                         )}
-                      </Form.Item>
-                    </Col>
-                  );
-                })}
-              </Fragment>
-            ),
-          )}
-        </Row>
-      </Form>
+                      </BAIFormItem>
+                    );
+                  })}
+                </Fragment>
+              ),
+            )}
+          </Grid>
+        </Form>
+      </BAIFlex>
     </BAIModal>
   );
 };

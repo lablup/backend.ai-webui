@@ -3,31 +3,33 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionOwnerSetterCardQuery } from '../__generated__/SessionOwnerSetterCardQuery.graphql';
+import { Form } from '../form-engine';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import HiddenFormItem from './HiddenFormItem';
-import {
-  Button,
-  Card,
-  Col,
-  Descriptions,
-  Form,
-  Input,
-  Row,
-  Select,
-  Switch,
-  theme,
-} from 'antd';
-import { CardProps } from 'antd/lib';
+import { AstryxFormSwitch } from './astryxFormControls';
+// FRONTIER (ticket 17): form-heavy card. `Form.useWatch` / `Form.Item` are
+// self-hosted since ticket 34 (live again since ticket 35); every control and
+// every piece of chrome below is Astryx now.
+import { Card } from '@astryxdesign/core/Card';
+import { Grid, GridSpan } from '@astryxdesign/core/Grid';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { InputGroup } from '@astryxdesign/core/InputGroup';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Selector } from '@astryxdesign/core/Selector';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Heading } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAICard,
   BAICardProps,
   BAIFlex,
+  BAIMetadataList,
   BAISelect,
   BAIProjectResourceGroupSelect,
 } from 'backend.ai-ui';
-import _ from 'lodash';
-import { CheckIcon } from 'lucide-react';
+import * as _ from 'lodash-es';
+import { CheckIcon, SearchIcon } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, fetchQuery, useRelayEnvironment } from 'react-relay';
@@ -52,9 +54,66 @@ export interface SessionOwnerSetterFormValues {
       };
 }
 
-const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
+/**
+ * `Input.Search` has no Astryx counterpart (MAPPING 3.6 -- NONE). This is the
+ * documented composition: a `TextInput` and a trailing `IconButton` welded by
+ * an `InputGroup`. `Form.Item`'s two contracts are honoured inline.
+ */
+const OwnerEmailSearchInput: React.FC<{
+  label: string;
+  isLoading?: boolean;
+  isResolved?: boolean;
+  onSearch: (value: string) => void;
+  onValueChange: () => void;
+  /** Injected by `Form.Item`. */
+  value?: string;
+  /** Injected by `Form.Item`. */
+  onChange?: (value: string) => void;
+}> = ({
+  label,
+  isLoading,
+  isResolved,
+  onSearch,
+  onValueChange,
+  value,
+  onChange,
+}) => {
+  'use memo';
+  const current = value ?? '';
+  return (
+    <InputGroup label={label} isLabelHidden>
+      <TextInput
+        label={label}
+        isLabelHidden
+        width="100%"
+        value={current}
+        onChange={(next) => {
+          onChange?.(next);
+          onValueChange();
+        }}
+        onEnter={() => onSearch(current)}
+      />
+      <IconButton
+        icon={isResolved ? <CheckIcon /> : <SearchIcon />}
+        label={label}
+        isLoading={isLoading}
+        onClick={() => onSearch(current)}
+      />
+    </InputGroup>
+  );
+};
+
+// PILOT-DECISION: the props no longer come from antd's `CardProps` (a
+// type-only antd import still keeps the module in the antd import graph, P15).
+// The sole consumer (`SessionLauncherPage`) passes only `style`.
+interface SessionOwnerSetterCardProps {
+  style?: React.CSSProperties;
+}
+
+const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
+  props,
+) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const form = Form.useFormInstance<SessionOwnerSetterFormValues>();
 
   const isActive = Form.useWatch(['owner', 'enabled'], form);
@@ -97,112 +156,92 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
   const nonExistentOwner = !isFetching && fetchingEmail && !owner;
 
   return (
-    <Card
-      title={t('session.launcher.SetSessionOwner')}
-      extra={
-        <Form.Item name={['owner', 'enabled']} valuePropName="checked" noStyle>
-          <Switch />
-        </Form.Item>
-      }
-      styles={
-        isActive
-          ? undefined
-          : {
-              header: {
-                borderBottom: 'none',
-              },
-              body: {
-                display: isActive ? 'block' : 'none',
-              },
-            }
-      }
-      {...props}
-    >
-      <HiddenFormItem
-        name={['owner', 'domainName']}
-        value={owner?.domain_name}
-      />
-      <Form.Item dependencies={[['owner', 'enabled']]} noStyle>
-        {({ getFieldValue }) => {
-          return (
-            <>
-              <BAIFlex>
-                <Form.Item
-                  name={['owner', 'email']}
-                  label={t('session.launcher.OwnerEmail')}
-                  rules={[
-                    {
-                      required: isActive,
-                    },
-                    {
-                      type: 'email',
-                      message: t('general.validation.InvalidEmailAddress'),
-                    },
-                  ]}
-                  style={{ flex: 1 }}
-                  validateStatus={nonExistentOwner ? 'error' : undefined}
-                  help={
-                    nonExistentOwner
-                      ? t('credential.NoUserToDisplay')
-                      : undefined
-                  }
-                >
-                  <Input.Search
-                    onSearch={(v) => {
-                      // startTransition(()=>{
-                      form
-                        .validateFields([['owner', 'email']])
-                        .then(() => {
-                          setFetchingEmail(v);
-                        })
-                        .catch(() => {});
-                      // })
-                    }}
-                    onChange={() => {
-                      setFetchingEmail('');
-                      form.setFieldsValue({
-                        owner: {
-                          accesskey: '',
-                          project: undefined,
-                          resourceGroup: undefined,
+    // MAPPING 5.1: Astryx `Card` is a BARE container -- the title/extra row is
+    // composition (`HStack justify="between"`), and antd's
+    // `styles.header.borderBottom` opt-out disappears with the header divider
+    // that Astryx's Card never draws. The collapsed state keeps its
+    // `display:none` body so the form fields stay mounted (and registered)
+    // while hidden, exactly as before.
+    <Card {...props}>
+      <VStack gap={4} align="stretch">
+        <HStack justify="between" align="center" gap={2}>
+          <Heading level={5}>{t('session.launcher.SetSessionOwner')}</Heading>
+          <Form.Item
+            name={['owner', 'enabled']}
+            valuePropName="checked"
+            noStyle
+          >
+            {/* The accessible name is the card title, kept visually hidden —
+                which is exactly what the shared adapter does by default
+                (D10 fold-back; the local copy added nothing else). */}
+            <AstryxFormSwitch label={t('session.launcher.SetSessionOwner')} />
+          </Form.Item>
+        </HStack>
+        <div style={{ display: isActive ? 'block' : 'none' }}>
+          <HiddenFormItem
+            name={['owner', 'domainName']}
+            value={owner?.domain_name}
+          />
+          <Form.Item dependencies={[['owner', 'enabled']]} noStyle>
+            {({ getFieldValue }) => {
+              return (
+                <>
+                  <BAIFlex>
+                    <Form.Item
+                      name={['owner', 'email']}
+                      label={t('session.launcher.OwnerEmail')}
+                      rules={[
+                        {
+                          required: isActive,
                         },
-                      });
-                    }}
-                    loading={isFetching}
-                    enterButton={
-                      !isFetching && owner ? (
-                        <Button icon={<CheckIcon />} />
-                      ) : undefined
-                    }
-                  />
-                </Form.Item>
-              </BAIFlex>
-              <Form.Item
-                name={['owner', 'accesskey']}
-                label={t('session.launcher.OwnerAccessKey')}
-                rules={[
-                  {
-                    required: getFieldValue(['owner', 'enabled']),
-                  },
-                ]}
-              >
-                <BAISelect
-                  options={_.map(ownerKeypairs, (k) => {
-                    return {
-                      label: k?.access_key,
-                      value: k?.access_key,
-                    };
-                  })}
-                  autoSelectOption
-                  disabled={_.isEmpty(fetchingEmail) || isFetching}
-                  // defaultActiveFirstOption
-                />
-              </Form.Item>
-              <Row gutter={token.marginSM}>
-                <Col span={12}>
+                        {
+                          type: 'email',
+                          message: t('general.validation.InvalidEmailAddress'),
+                        },
+                      ]}
+                      style={{ flex: 1 }}
+                      validateStatus={nonExistentOwner ? 'error' : undefined}
+                      help={
+                        nonExistentOwner
+                          ? t('credential.NoUserToDisplay')
+                          : undefined
+                      }
+                    >
+                      {/* MAPPING 3.6: `Input.Search` is NONE -- the documented
+                      recipe is `TextInput` + an `IconButton` inside an
+                      `InputGroup`, which is what the local adapter below
+                      builds. `onSearch` fires on Enter or on the trailing
+                      button, exactly like antd's `enterButton`; the button's
+                      check-vs-search glyph keeps signalling the
+                      resolved-owner state. */}
+                      <OwnerEmailSearchInput
+                        label={t('session.launcher.OwnerEmail')}
+                        isLoading={isFetching}
+                        isResolved={!isFetching && !!owner}
+                        onSearch={(v) => {
+                          form
+                            .validateFields([['owner', 'email']])
+                            .then(() => {
+                              setFetchingEmail(v);
+                            })
+                            .catch(() => {});
+                        }}
+                        onValueChange={() => {
+                          setFetchingEmail('');
+                          form.setFieldsValue({
+                            owner: {
+                              accesskey: '',
+                              project: undefined,
+                              resourceGroup: undefined,
+                            },
+                          });
+                        }}
+                      />
+                    </Form.Item>
+                  </BAIFlex>
                   <Form.Item
-                    name={['owner', 'project']}
-                    label={t('session.launcher.OwnerGroup')}
+                    name={['owner', 'accesskey']}
+                    label={t('session.launcher.OwnerAccessKey')}
                     rules={[
                       {
                         required: getFieldValue(['owner', 'enabled']),
@@ -210,69 +249,124 @@ const SessionOwnerSetterCard: React.FC<CardProps> = (props) => {
                     ]}
                   >
                     <BAISelect
-                      options={_.map(owner?.groups, (g) => {
+                      options={_.map(ownerKeypairs, (k) => {
                         return {
-                          label: g?.name,
-                          value: g?.name,
+                          label: k?.access_key,
+                          value: k?.access_key,
                         };
                       })}
                       autoSelectOption
                       disabled={_.isEmpty(fetchingEmail) || isFetching}
+                      // defaultActiveFirstOption
                     />
                   </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item dependencies={[['owner', 'project']]} noStyle>
-                    {({ getFieldValue }) => {
-                      return (
-                        <Suspense
-                          fallback={
-                            <Form.Item
-                              label={t('session.launcher.OwnerResourceGroup')}
-                              rules={[
-                                {
-                                  required: getFieldValue(['owner', 'enabled']),
-                                },
-                              ]}
+                  {/* MAPPING 3.9: `Row gutter` + two `Col span={12}` with NO
+                  breakpoint props is the one Row/Col shape that translates
+                  directly -- `Grid columns={24}` + `GridSpan
+                  columns={12}` (Astryx spells antd's `span` as `columns`). */}
+                  <Grid columns={24} gap={3}>
+                    <GridSpan columns={12}>
+                      <Form.Item
+                        name={['owner', 'project']}
+                        label={t('session.launcher.OwnerGroup')}
+                        rules={[
+                          {
+                            required: getFieldValue(['owner', 'enabled']),
+                          },
+                        ]}
+                      >
+                        <BAISelect
+                          options={_.map(owner?.groups, (g) => {
+                            return {
+                              label: g?.name,
+                              value: g?.name,
+                            };
+                          })}
+                          autoSelectOption
+                          disabled={_.isEmpty(fetchingEmail) || isFetching}
+                        />
+                      </Form.Item>
+                    </GridSpan>
+                    <GridSpan columns={12}>
+                      <Form.Item dependencies={[['owner', 'project']]} noStyle>
+                        {({ getFieldValue }) => {
+                          return (
+                            <Suspense
+                              fallback={
+                                <Form.Item
+                                  label={t(
+                                    'session.launcher.OwnerResourceGroup',
+                                  )}
+                                  rules={[
+                                    {
+                                      required: getFieldValue([
+                                        'owner',
+                                        'enabled',
+                                      ]),
+                                    },
+                                  ]}
+                                >
+                                  {/* Suspense placeholder only -- an inert,
+                                  loading Selector. */}
+                                  <Selector
+                                    label={t(
+                                      'session.launcher.OwnerResourceGroup',
+                                    )}
+                                    isLabelHidden
+                                    isLoading
+                                    options={[]}
+                                    width="100%"
+                                  />
+                                </Form.Item>
+                              }
                             >
-                              <Select loading />
-                            </Form.Item>
-                          }
-                        >
-                          <Form.Item
-                            name={['owner', 'resourceGroup']}
-                            label={t('session.launcher.OwnerResourceGroup')}
-                            rules={[
-                              {
-                                required: getFieldValue(['owner', 'enabled']),
-                              },
-                            ]}
-                          >
-                            {getFieldValue(['owner', 'project']) ? (
-                              <BAIProjectResourceGroupSelect
-                                projectName={getFieldValue([
-                                  'owner',
-                                  'project',
-                                ])}
-                                disabled={
-                                  _.isEmpty(fetchingEmail) || isFetching
-                                }
-                                autoSelectDefault
-                              />
-                            ) : (
-                              <Select disabled />
-                            )}
-                          </Form.Item>
-                        </Suspense>
-                      );
-                    }}
-                  </Form.Item>
-                </Col>
-              </Row>
-            </>
-          );
-        }}
-      </Form.Item>
+                              <Form.Item
+                                name={['owner', 'resourceGroup']}
+                                label={t('session.launcher.OwnerResourceGroup')}
+                                rules={[
+                                  {
+                                    required: getFieldValue([
+                                      'owner',
+                                      'enabled',
+                                    ]),
+                                  },
+                                ]}
+                              >
+                                {getFieldValue(['owner', 'project']) ? (
+                                  <BAIProjectResourceGroupSelect
+                                    projectName={getFieldValue([
+                                      'owner',
+                                      'project',
+                                    ])}
+                                    disabled={
+                                      _.isEmpty(fetchingEmail) || isFetching
+                                    }
+                                    autoSelectDefault
+                                  />
+                                ) : (
+                                  <Selector
+                                    label={t(
+                                      'session.launcher.OwnerResourceGroup',
+                                    )}
+                                    isLabelHidden
+                                    isDisabled
+                                    options={[]}
+                                    width="100%"
+                                  />
+                                )}
+                              </Form.Item>
+                            </Suspense>
+                          );
+                        }}
+                      </Form.Item>
+                    </GridSpan>
+                  </Grid>
+                </>
+              );
+            }}
+          </Form.Item>
+        </div>
+      </VStack>
     </Card>
   );
 };
@@ -302,20 +396,22 @@ export const SessionOwnerSetterPreviewCard: React.FC<BAICardProps> = (
         extraButtonTitle={t('button.Edit')}
         {...props}
       >
-        <Descriptions size="small" column={1}>
-          <Descriptions.Item label={t('session.launcher.OwnerEmail')}>
+        {/* antd `Descriptions size="small" column={1}` -> `MetadataList
+            columns="single"` (MAPPING 4; `size` has no destination). */}
+        <BAIMetadataList columns="single">
+          <MetadataListItem label={t('session.launcher.OwnerEmail')}>
             {form.getFieldValue(['owner', 'email'])}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.launcher.OwnerAccessKey')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.launcher.OwnerAccessKey')}>
             {form.getFieldValue(['owner', 'accesskey'])}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.launcher.OwnerGroup')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.launcher.OwnerGroup')}>
             {form.getFieldValue(['owner', 'project'])}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.launcher.OwnerResourceGroup')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.launcher.OwnerResourceGroup')}>
             {form.getFieldValue(['owner', 'resourceGroup'])}
-          </Descriptions.Item>
-        </Descriptions>
+          </MetadataListItem>
+        </BAIMetadataList>
       </BAICard>
     )
   );

@@ -1,10 +1,13 @@
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   loginAsUser,
   navigateTo,
   createVFolderAndVerify,
   moveToTrashAndVerify,
   deleteForeverAndVerifyFromTrash,
+  selectPropertyFilter,
+  clearAllFilters,
 } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
@@ -13,7 +16,8 @@ const openFolderExplorer = async (
   folderName: string,
 ): Promise<FolderExplorerModal> => {
   await navigateTo(page, 'data');
-  await page.waitForLoadState('networkidle');
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
   const folderLink = page.getByRole('link', { name: folderName }).first();
   await folderLink.waitFor({ state: 'visible' });
   await folderLink.click();
@@ -41,15 +45,12 @@ test.describe(
     });
 
     test.afterAll(async ({ browser, request }) => {
+      // Use an extended timeout to allow for delete-forever operation completion
+      test.setTimeout(180_000);
       const context = await browser.newContext();
       const page = await context.newPage();
       await loginAsUser(page, request);
-      try {
-        await moveToTrashAndVerify(page, testFolderName);
-        await deleteForeverAndVerifyFromTrash(page, testFolderName);
-      } catch {
-        console.log(`Could not delete ${testFolderName}, it may not exist`);
-      }
+      await cleanupVFolderSafely(page, testFolderName);
       await context.close();
     });
 
@@ -215,7 +216,9 @@ test.describe(
       await modal.close();
 
       // Cleanup
-      await moveToTrashAndVerify(page, roFolderName);
+      await moveToTrashAndVerify(page, roFolderName, 'data', {
+        skipTrashVerify: true,
+      });
       await deleteForeverAndVerifyFromTrash(page, roFolderName);
     });
   },

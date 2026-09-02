@@ -1,46 +1,30 @@
+---
+navTitle: ภาคผนวก
+---
+
 # ภาคผนวก
 
 <a id="gpu-virtualization-and-fractional-gpu-allocation"></a>
 
 ## การใช้ GPU เสมือนและการจัดสรร GPU แบบเศษส่วน
 
-Backend.AI supports GPU virtualization technology which allows single physical
-GPU can be divided and shared by multiple ผู้ใช้s simultaneously. Therefore, if
-you want to execute a task that does not require much GPU computation
-capability, you can create a compute session by allocating a portion of the GPU.
-The amount of GPU resources that 1 fGPU actually allocates may vary from system
-to system depending on ผู้ดูแลระบบistrator settings. For example, if the ผู้ดูแลระบบistrator
-has set one physical GPU to be divided into five pieces, 5 fGPU means 1 physical
-GPU, or 1 fGPU means 0.2 physical GPU. If you set 1 fGPU when creating a compute
-session, the session can utilize the streaming multiprocessor (SM) and GPU
-memory equivalent to 0.2 physical GPU.
+Backend.AI รองรับเทคโนโลยีการจำลอง GPU (GPU virtualization) ซึ่งช่วยให้ GPU ทางกายภาพเพียงตัวเดียวสามารถถูกแบ่งและแชร์ให้ผู้ใช้หลายคนใช้งานพร้อมกันได้ ดังนั้น หากคุณต้องการดำเนินงานที่ไม่ต้องใช้กำลังการประมวลผล GPU มากนัก คุณสามารถสร้างเซสชันการคำนวณโดยการจัดสรร GPU เพียงบางส่วนได้ ปริมาณทรัพยากร GPU ที่ 1 fGPU จัดสรรให้จริงอาจแตกต่างกันไปในแต่ละระบบ ขึ้นอยู่กับการตั้งค่าของผู้ดูแลระบบ ตัวอย่างเช่น หากผู้ดูแลระบบตั้งค่าให้หนึ่ง GPU ทางกายภาพถูกแบ่งออกเป็นห้าส่วน 5 fGPU จะหมายถึง 1 GPU ทางกายภาพ หรือ 1 fGPU จะเท่ากับ 0.2 GPU ทางกายภาพ หากคุณตั้งค่า 1 fGPU เมื่อสร้างเซสชันการคำนวณ เซสชันนั้นจะสามารถใช้งานสตรีมมิงมัลติโปรเซสเซอร์ (SM) และหน่วยความจำ GPU เทียบเท่ากับ 0.2 GPU ทางกายภาพได้
 
 ในส่วนนี้ เราจะสร้างเซสชันการคำนวณโดยการจัดสรรส่วนหนึ่งของ GPU แล้วตรวจสอบว่า GPU ที่ถูกตรวจพบภายในคอนเทนเนอร์การคำนวณนั้นตรงกับ GPU ฟิสิกส์บางส่วนจริงหรือไม่
 
-First, let's check the type of physical GPU installed in the
-host node and the amount of memory. The GPU node used in this guide is equipped
-with a GPU with 8 GB of memory as in the following figure. And through the
-ผู้ดูแลระบบistrator settings, 1 fGPU is set to an amount equivalent to 0.5 physical
-GPU (or 1 physical GPU is 2 fGPU).
+ก่อนอื่น ให้ตรวจสอบประเภทของ GPU ทางกายภาพที่ติดตั้งอยู่บนโหนดโฮสต์ รวมถึงปริมาณหน่วยความจำ โหนด GPU ที่ใช้ในคู่มือนี้มี GPU ที่มีหน่วยความจำ 8 GB ติดตั้งอยู่ ดังที่แสดงในภาพต่อไปนี้ และด้วยการตั้งค่าของผู้ดูแลระบบ 1 fGPU ถูกกำหนดให้เท่ากับ 0.5 GPU ทางกายภาพ (หรือ 1 GPU ทางกายภาพเท่ากับ 2 fGPU)
 
 ![](../images/host_gpu.png)
 
-Now let's go to the เซสชัน page and create a compute session by allocating 0.5
-fGPU as follows:
+ตอนนี้ ให้ไปที่หน้าเซสชันและสร้างเซสชันการคำนวณโดยจัดสรร 0.5 fGPU ดังนี้:
 
 ![](../images/session_launch_dialog_with_gpu.png)
 
-In the AI Accelerator panel of the session list, you can see that
-0.5 fGPU is allocated.
+ในแผง AI Accelerator ของรายการเซสชัน คุณจะเห็นว่ามีการจัดสรร 0.5 fGPU
 
 ![](../images/session_list_with_gpu.png)
 
-Now, let's connect directly to the container and check if the allocated GPU
-memory is really equivalent to 0.5 units (~2 GB). Let's bring up a web
-terminal. When the terminal comes up, run the `nvidia-smi` command. As you can
-see in the following figure, you can see that about 2 GB of GPU memory is
-allocated. This shows that the physical GPU is actually divided into quarters and allocated inside the
-container for this compute session, which is not possible by a way like PCI passthrough.
+ตอนนี้ ให้เชื่อมต่อไปยังคอนเทนเนอร์โดยตรง และตรวจสอบว่าหน่วยความจำ GPU ที่ถูกจัดสรรนั้นเทียบเท่ากับ 0.5 หน่วยจริง (~2 GB) หรือไม่ ให้เปิดเว็บเทอร์มินัล เมื่อเทอร์มินัลเปิดขึ้น ให้รันคำสั่ง `nvidia-smi` ดังที่คุณเห็นในภาพต่อไปนี้ คุณจะเห็นว่ามีการจัดสรรหน่วยความจำ GPU ประมาณ 2 GB ซึ่งแสดงให้เห็นว่า GPU ทางกายภาพถูกแบ่งออกและจัดสรรเข้าไปในคอนเทนเนอร์สำหรับเซสชันการคำนวณนี้จริง ซึ่งไม่สามารถทำได้ด้วยวิธีการอย่าง PCI passthrough
 
 ![](../images/nvidia_smi_inside_container.png)
 
@@ -48,24 +32,20 @@ container for this compute session, which is not possible by a way like PCI pass
 
 ![](../images/mnist_train.png)
 
-While training is in progress, connect to the shell of the GPU host node and
-execute the `nvidia-smi` command. You can see that there is one GPU attached
-to the process and this process is occupying about 25% of the resources of the
-physical GPU. (GPU occupancy can vary greatly depending on training code and GPU
-model.)
+ในระหว่างที่กำลังฝึกสอน ให้เชื่อมต่อเข้ากับเชลล์ของโหนดโฮสต์ GPU และรันคำสั่ง `nvidia-smi` คุณจะเห็นว่ามี GPU หนึ่งตัวเชื่อมต่ออยู่กับโปรเซส และโปรเซสนี้กำลังใช้ทรัพยากรประมาณ 25% ของ GPU ทางกายภาพ (อัตราการใช้งาน GPU อาจแตกต่างกันมากขึ้นอยู่กับโค้ดการฝึกสอนและรุ่นของ GPU)
 
 ![](../images/host_nvidia_smi.png)
 
-Alternatively, you can run the `nvidia-smi` command from the web terminal to query the GPU usage history inside the container.
+อีกวิธีหนึ่ง คุณสามารถรันคำสั่ง `nvidia-smi` จากเว็บเทอร์มินัลเพื่อเรียกดูประวัติการใช้งาน GPU ภายในคอนเทนเนอร์ได้
 
 
 <a id="automated-job-scheduling"></a>
 
 ## การกำหนดตารางงานอัตโนมัติ
 
-เซิร์ฟเวอร์ Backend.AI มีตัวจัดตารางงานที่พัฒนาขึ้นเองในตัว มันจะตรวจสอบทรัพยากรที่มีอยู่ของโหนดผู้ทำงานทั้งหมดโดยอัตโนมัติและมอบหมายคำขอในการสร้างเซสชันการคอมพิวเตอร์ไปยังผู้ทำงานที่ตรงตามคำขอทรัพยากรของผู้ใช้ นอกจากนี้ เมื่อทรัพยากรไม่เพียงพอ คำขอของผู้ใช้ในการสร้างเซสชันการคอมพิวเตอร์จะถูกลงทะเบียนในสถานะ PENDING ในคิวงาน ภายหลัง เมื่อทรัพยากรมีให้ใช้งานอีกครั้ง คำขอที่ถูกระงับจะถูกดำเนินการต่อเพื่อสร้างเซสชันการคอมพิวเตอร์
+เซิร์ฟเวอร์ Backend.AI มีตัวจัดตารางงานที่พัฒนาขึ้นเองในตัว มันจะตรวจสอบทรัพยากรที่มีอยู่ของโหนดเอเจนต์ทั้งหมดโดยอัตโนมัติและมอบหมายคำขอในการสร้างเซสชันการคอมพิวเตอร์ไปยังเอเจนต์ที่ตรงตามคำขอทรัพยากรของผู้ใช้ นอกจากนี้ เมื่อทรัพยากรไม่เพียงพอ คำขอของผู้ใช้ในการสร้างเซสชันการคอมพิวเตอร์จะถูกลงทะเบียนในสถานะ PENDING ในคิวงาน ภายหลัง เมื่อทรัพยากรมีให้ใช้งานอีกครั้ง คำขอที่ถูกระงับจะถูกดำเนินการต่อเพื่อสร้างเซสชันการคอมพิวเตอร์
 
-คุณสามารถตรวจสอบการทำงานของตัวจัดกำหนดงานได้ในลักษณะง่าย ๆ จากผู้ใช้ Web-UI เมื่อโฮสต์ GPU สามารถจัดสรร fGPU ได้สูงสุด 2 ตัว ให้เราสร้างเซสชันการคำนวณ 3 เซสชันพร้อมกันโดยขอจัดสรร fGPU 1 ตัวตามลำดับ ในส่วนการจัดสรรแบบกำหนดเองของกล่องโต้ตอบการเปิดเซสชัน จะมีตัวเลื่อนสำหรับ GPU และเซสชัน หากคุณระบุค่าที่มากกว่า 1 ในเซสชันและคลิกปุ่ม LAUNCH จำนวนเซสชันจะถูกขอพร้อมกัน ให้เราตั้งค่า GPU และเซสชันเป็น 1 และ 3 ตามลำดับ นี่คือสถานการณ์ที่มีเซสชัน 3 เซสชันที่ขอ fGPU ทั้งหมด 3 ตัว ในขณะที่มี fGPU เพียง 2 ตัวเท่านั้น
+คุณสามารถตรวจสอบการทำงานของตัวจัดกำหนดงานได้ในลักษณะง่าย ๆ จากผู้ใช้ WebUI เมื่อโฮสต์ GPU สามารถจัดสรร fGPU ได้สูงสุด 2 ตัว ให้เราสร้างเซสชันการคำนวณ 3 เซสชันพร้อมกันโดยขอจัดสรร fGPU 1 ตัวตามลำดับ ในขั้นตอน สภาพแวดล้อม & การจัดสรรทรัพยากร ของตัวเปิดเซสชัน ให้ตั้งค่า ตัวเร่ง AI เป็น 1 จากนั้นในขั้นตอน ยืนยันและเริ่ม ให้เปิดเมนูข้างปุ่ม เริ่ม แล้วเลือก เริ่มหลายเซสชัน ตั้งค่า จำนวนเซสชัน เป็น 3 แล้วคลิก เริ่ม ทั้งสามเซสชันจะถูกร้องขอพร้อมกัน นี่คือสถานการณ์ที่มีเซสชัน 3 เซสชันที่ขอ fGPU ทั้งหมด 3 ตัว ในขณะที่มี fGPU เพียง 2 ตัวเท่านั้น
 
 ![](../images/session_launch_dialog_2_sessions.png)
 
@@ -88,31 +68,27 @@ Backend.AI มีภาพเคอร์เนล ML และ HPC ที่ส
 
 ![](../images/various_kernel_images.png)
 
-Here, let's select the TensorFlow 2.3 environment and created a session.
+ที่นี่ ให้เลือกสภาพแวดล้อม TensorFlow 2.3 และสร้างเซสชัน
 
 ![](../images/session_launch_dialog_tf23.png)
 
-Open the web terminal of the created session and run the following Python
-command. You can see that TensorFlow 2.3 version is installed.
+เปิดเว็บเทอร์มินัลของเซสชันที่สร้างขึ้น และรันคำสั่ง Python ต่อไปนี้ คุณจะเห็นว่ามีการติดตั้ง TensorFlow เวอร์ชัน 2.3 อยู่
 
 ![](../images/tf23_version_print.png)
 
-This time, let's select the TensorFlow 1.15 environment to create a compute
-session. If resources are insufficient, delete the previous session.
+คราวนี้ ให้เลือกสภาพแวดล้อม TensorFlow 1.15 เพื่อสร้างเซสชันการคำนวณ หากทรัพยากรไม่เพียงพอ ให้ลบเซสชันก่อนหน้าออก
 
 ![](../images/session_launch_dialog_tf115.png)
 
-Open the web terminal of the created session and run the same Python command as
-before. You can see that TensorFlow 1.15(.4) version is installed.
+เปิดเว็บเทอร์มินัลของเซสชันที่สร้างขึ้นแล้วรันคำสั่ง Python เดียวกันกับที่ทำก่อนหน้านี้ คุณจะเห็นว่ามีการติดตั้ง TensorFlow เวอร์ชัน 1.15(.4) อยู่
 
 ![](../images/tf115_version_print.png)
 
-Finally, create a compute session using PyTorch version 1.7.
+สุดท้าย ให้สร้างเซสชันการคำนวณโดยใช้ PyTorch เวอร์ชัน 1.9
 
 ![](../images/session_launch_dialog_pytorch17.png)
 
-Open the web terminal of the created session and run the following Python
-command. You can see that PyTorch 1.8 version is installed.
+เปิดเว็บเทอร์มินัลของเซสชันที่สร้างขึ้น และรันคำสั่ง Python ต่อไปนี้ คุณจะเห็นว่ามีการติดตั้ง PyTorch เวอร์ชัน 1.9 อยู่
 
 ![](../images/pytorch17_version_print.png)
 
@@ -151,18 +127,18 @@ command. You can see that PyTorch 1.8 version is installed.
 - Manager: 2 คอร์, 4 GiB หน่วยความจำ
 - Agent: 4 คอร์, 32 GiB หน่วยความจำ, NVIDIA GPU (สำหรับ GPU workload), > 512 GiB SSD
 - Webserver: 2 คอร์, 4 GiB หน่วยความจำ
-- WSProxy: 2 คอร์, 4 GiB หน่วยความจำ
+- App Proxy: 2 คอร์, 4 GiB หน่วยความจำ
 - PostgreSQL DB: 2 คอร์, 4 GiB หน่วยความจำ
 - Redis: 1 คอร์, 2 GiB หน่วยความจำ
 - Etcd: 1 คอร์, 2 GiB หน่วยความจำ
 
 แพ็คเกจที่ต้องติดตั้งล่วงหน้าบนโฮสต์ก่อนติดตั้งแต่ละบริการ:
 
-- Web-UI: ระบบปฏิบัติการที่สามารถรันเบราว์เซอร์ล่าสุดได้ (Windows, Mac OS, Ubuntu เป็นต้น)
+- WebUI: ระบบปฏิบัติการที่สามารถรันเบราว์เซอร์ล่าสุดได้ (Windows, Mac OS, Ubuntu เป็นต้น)
 - Manager: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Agent: docker (≥19.03), CUDA/CUDA Toolkit (≥8, แนะนำ 11), nvidia-docker v2, Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
 - Webserver: Python (≥3.8), pyenv/pyenv-virtualenv (≥1.2)
-- WSProxy: docker (≥19.03), docker-compose (≥1.24)
+- App Proxy: docker (≥19.03), docker-compose (≥1.24)
 - PostgreSQL DB: docker (≥19.03), docker-compose (≥1.24)
 - Redis: docker (≥19.03), docker-compose (≥1.24)
 - Etcd: docker (≥19.03), docker-compose (≥1.24)
@@ -196,8 +172,8 @@ command. You can see that PyTorch 1.8 version is installed.
 
 ก่อนอื่น เปิดแอปเทอร์มินัล "console" และรันคำสั่งด้านล่าง ซึ่งจะเริ่มเซิร์ฟเวอร์ MLFlow tracking UI
 
-```shell
-$ mlflow ui --host 0.0.0.0
+```bash
+mlflow ui --host 0.0.0.0
 ```
 
 จากนั้น คลิกแอป "MLFlow UI" ในกล่องโต้ตอบตัวเปิดแอป
@@ -210,9 +186,9 @@ $ mlflow ui --host 0.0.0.0
 
 การใช้ MLFlow ช่วยให้คุณติดตามการทดลอง เช่น เมตริกและพารามิเตอร์ทุกครั้งที่คุณรัน มาเริ่มติดตามการทดลองจากตัวอย่างง่ายๆ
 
-```shell
-$ wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
-$ python train_diabetes.py
+```bash
+wget https://raw.githubusercontent.com/mlflow/mlflow/master/examples/sklearn_elasticnet_diabetes/linux/train_diabetes.py
+python train_diabetes.py
 ```
 
 หลังจากรันโค้ด Python คุณจะเห็นผลลัพธ์การทดลองใน MLFlow
@@ -221,8 +197,8 @@ $ python train_diabetes.py
 
 คุณยังสามารถตั้งค่าไฮเปอร์พารามิเตอร์โดยส่งอาร์กิวเมนต์กับการรันโค้ด
 
-```shell
-$ python train_diabetes.py 0.2 0.05
+```bash
+python train_diabetes.py 0.2 0.05
 ```
 
 หลังจากการฝึกอบรมไม่กี่ครั้ง คุณสามารถเปรียบเทียบโมเดลที่ฝึกอบรมแล้วกับผลลัพธ์ได้

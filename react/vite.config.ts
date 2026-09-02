@@ -1,0 +1,1142 @@
+import { devReviewOverlayPlugin } from './vite-plugins/review-overlay/index';
+import stylexVite from '@stylexjs/unplugin/vite';
+import react from '@vitejs/plugin-react';
+import compression from 'compression';
+import { execSync } from 'node:child_process';
+import {
+  createReadStream,
+  existsSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} from 'node:fs';
+import { createRequire } from 'node:module';
+import {
+  basename,
+  delimiter,
+  dirname,
+  extname,
+  isAbsolute,
+  join,
+  relative,
+  resolve,
+} from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { defineConfig, loadEnv, normalizePath, type Plugin } from 'vite';
+import checker from 'vite-plugin-checker';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { VitePWA } from 'vite-plugin-pwa';
+import svgr from 'vite-plugin-svgr';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const projectRoot = resolve(__dirname, '..');
+const require = createRequire(import.meta.url);
+
+const baseTsconfigPath = resolve(__dirname, 'tsconfig.json');
+const checkerTsconfigPath = resolve(__dirname, 'tsconfig.checker.json');
+
+// Deletes a path we are abandoning anyway; never throws.
+function removeQuietly(path: string): void {
+  try {
+    rmSync(path, { force: true });
+  } catch {
+    // Cleanup is best-effort.
+  }
+}
+
+// With `enableGlobalVirtualStore: true` (pnpm-workspace.yaml), pnpm hard-links
+// every dependency into a single global store outside this repo, with the
+// virtual `links/` directory living under the store root reported by
+// `pnpm store path` (e.g. `~/Library/pnpm/store/v11` on macOS,
+// `~/.local/share/pnpm/store/v11` on Linux — `links/<pkg>/...` lives inside).
+// Vite resolves `server.fs.allow` against each request's realpath, so allowing
+// only `projectRoot` rejects every dependency CSS/asset served from that store
+// with "outside of Vite serving allow list".
+//
+// `pnpm store path` is pnpm's officially supported discovery command; its
+// output is an ancestor of the `links/` realpaths, so adding it to `fs.allow`
+// admits every hard-linked dependency. We resolve once at dev-server start
+// (the path is stable for that lifetime) and only when actually serving —
+// `vite build` never reads `server.fs.allow`, so we skip the subprocess there.
+// We only shell out on Windows (where `pnpm` is typically a `.cmd` shim that
+// Node cannot execute directly); on POSIX a direct exec avoids the shell's
+// quoting and overhead. The result is also sanity-checked — an empty or
+// non-absolute path would silently widen the allowlist, which is the bug we
+// are trying to fix in the first place.
+function resolvePnpmStorePath(): string | undefined {
+  try {
+    const raw = execSync('pnpm store path --silent', {
+      encoding: 'utf-8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      shell: process.platform === 'win32',
+    }).trim();
+    if (
+      !raw ||
+      !isAbsolute(raw) ||
+      !existsSync(raw) ||
+      !statSync(raw).isDirectory()
+    ) {
+      return undefined;
+    }
+    return raw;
+  } catch (err) {
+    // Leave a breadcrumb so the resulting "outside of Vite serving allow list"
+    // errors are self-diagnosing instead of looking like a fresh regression.
+    console.warn(
+      '[vite] could not resolve pnpm store path; dependencies served from outside projectRoot may be rejected by server.fs.allow:',
+      err instanceof Error ? err.message : err,
+    );
+    return undefined;
+  }
+}
+
+// Excludes the pnpm store from the checker's `tsc` watch program (FR-3214).
+// The worker opens one FD per file in the program, including thousands of
+// immutable store `.d.ts`, so concurrent dev servers hit EMFILE. `watchOptions`
+// excludes drop the watcher but not the read, so type-checking stays complete.
+// vite-plugin-checker exposes no inline watchOptions, leaving the tsconfig it
+// reads as the only injection point, and the exclude must be absolute: TS
+// anchors `**/`-globs under the project basePath, which can never match a store
+// realpath outside the repo. That path is machine-specific, hence a gitignored
+// derived config rather than an entry in the committed tsconfig.
+function resolveCheckerTsconfigPath(storeRoot: string | undefined): string {
+  if (!storeRoot) {
+    // Drop a checker config left by an earlier run; the base tsconfig wins here.
+    removeQuietly(checkerTsconfigPath);
+    return baseTsconfigPath;
+  }
+  // TS watchOptions globs use forward slashes, even on Windows.
+  const storeGlob = `${normalizePath(storeRoot)}/**`;
+  // Publish atomically: `writeFileSync` truncates first, so a concurrent dev
+  // server can read an empty file, whereas `rename(2)` is never observed midway.
+  const tmpPath = `${checkerTsconfigPath}.${process.pid}.tmp`;
+  try {
+    writeFileSync(
+      tmpPath,
+      JSON.stringify(
+        {
+          extends: './tsconfig.json',
+          watchOptions: {
+            excludeDirectories: [storeGlob],
+            excludeFiles: [storeGlob],
+          },
+        },
+        null,
+        2,
+      ) + '\n',
+    );
+    renameSync(tmpPath, checkerTsconfigPath);
+    return checkerTsconfigPath;
+  } catch (err) {
+    removeQuietly(tmpPath);
+    console.warn(
+      '[vite] could not write tsconfig.checker.json; the type-check worker will watch pnpm-store .d.ts files and may hit EMFILE under multi-repo dev:',
+      err instanceof Error ? err.message : err,
+    );
+    return baseTsconfigPath;
+  }
+}
+
+// Dev servers run without the in-process type checker unless asked for it here;
+// `vite build` always type-checks regardless.
+//
+// The checker keeps a resident TypeScript program: `watchOptions` excludes drop
+// the watcher but not the read, so every dependency `.d.ts` is still parsed and
+// held. That is ~1.3 GB per dev server (2,195 MB vs 853 MB measured here), and
+// most servers run next to editors, agents and other worktrees whose callers
+// never read the browser overlay the checker exists to paint.
+//
+// No gate that enforces type safety depends on it — `scripts/verify.sh`, the
+// Husky pre-commit hook and CI each run one-shot `tsc --noEmit`, and the IDE's
+// own tsserver still flags errors while editing. What a checker-less server
+// loses is the in-terminal / in-browser feedback loop, which the startup banner
+// names so such a server can never be mistaken for a type-clean one.
+const isDevTypecheckEnabled = process.env.VITE_DEV_TYPECHECK === 'on';
+
+// `vite-plugin-node-polyfills` injects bare-specifier imports of its own shim
+// paths (`vite-plugin-node-polyfills/shims/{buffer,global,process}`) during
+// production build via `@rollup/plugin-inject`. With
+// `enableGlobalVirtualStore: true` (pnpm-workspace.yaml) the importer of those
+// injected statements lives under `~/Library/pnpm/store/v11/links/...`, and
+// Rollup's walk-up resolution from there cannot reach the plugin in the
+// project tree. Pre-resolving each shim's absolute entry via Node's require
+// once and aliasing makes resolution independent of importer location.
+const polyfillShimAlias = (name: 'buffer' | 'global' | 'process') => ({
+  find: new RegExp(`^vite-plugin-node-polyfills/shims/${name}$`),
+  replacement: require.resolve(`vite-plugin-node-polyfills/shims/${name}`),
+});
+const buiSrc = resolve(projectRoot, 'packages/backend.ai-ui/src');
+const buiArtifactDir = resolve(buiSrc, '__generated__');
+const reactSrc = resolve(__dirname, 'src');
+const reactArtifactDir = resolve(reactSrc, '__generated__');
+
+/**
+ * Project-root paths that craco's devServer.static block (craco.config.cjs:35-45)
+ * serves during dev. Because our Vite `root` is `react/` (so pnpm can resolve
+ * react/react-dom from react/node_modules), we need middleware to serve these
+ * paths from projectRoot ourselves.
+ *
+ * These paths are strict prefixes (end with '/') or exact filenames. They do
+ * NOT include `/react/` or `/src/` — those paths must fall through to Vite's
+ * own handling so the React bundle and source modules are served correctly.
+ */
+const STATIC_PREFIXES_FROM_ROOT = ['/resources/', '/manifest/', '/dist/'];
+const STATIC_FILES_FROM_ROOT = new Set([
+  '/config.toml',
+  '/version.json',
+  '/manifest.json',
+  '/favicon.ico',
+]);
+
+/**
+ * Content-Security-Policy for the **dev server** — ON by default (`enforce`),
+ * opt out with `VITE_DEV_CSP=off`.
+ *
+ * The production strict per-request nonce policy cannot be enforced on the Vite
+ * dev server: dev strips `{{nonce}}` (see `transformIndexHtml` below) and Vite's
+ * HMR injects un-nonced inline `<style>` nodes + a dev client, so a strict
+ * `style-src 'nonce-...'` / no-`unsafe-inline` policy breaks HMR and styling.
+ * Validate the real strict policy with a production build instead (`pnpm run
+ * build` + `serve` with a CSP header + a fixed nonce).
+ *
+ * Controlled by the `VITE_DEV_CSP` env var:
+ *   - unset / 'enforce' → DEFAULT. A relaxed, dev-safe *enforcing* policy:
+ *       `'unsafe-inline'`/`'unsafe-eval'` for script/style (so HMR + the
+ *       nonce-stripped inline scripts work) and permissive resource directives
+ *       (`connect`/`img`/`font`/`media`/`frame` allow the dynamic backend +
+ *       HMR socket), but hardened `object-src 'none'` / `base-uri 'self'`
+ *       (`script-src` still blocks external `<script src>`). Designed never to
+ *       break the dev server while catching egregious injections.
+ *   - 'report' → strict, production-like policy as `Content-Security-Policy-
+ *       Report-Only`. Logs every violation to the console (audit); nothing is
+ *       blocked. Vite's own injected inline styles/scripts are reported too —
+ *       expected noise. `connect-src` allows `ws:`/`wss:` so the HMR socket is
+ *       not flagged.
+ *   - 'off' / 'none' / 'false' / '0' → no CSP header (opt out).
+ */
+function buildDevCspHeaders(): Record<string, string> {
+  const mode = (process.env.VITE_DEV_CSP ?? 'enforce').toLowerCase();
+  if (['off', 'none', 'false', '0', 'disable', 'disabled'].includes(mode)) {
+    return {};
+  }
+
+  if (mode === 'report') {
+    const strict = [
+      `default-src 'self'`,
+      `script-src 'self' 'wasm-unsafe-eval'`,
+      `style-src 'self'`,
+      `style-src-attr 'unsafe-inline'`,
+      `img-src 'self' data: blob:`,
+      `font-src 'self' data:`,
+      `worker-src 'self' blob:`,
+      // ws:/wss: keeps Vite's HMR socket out of the report; backend API
+      // connects still report — showing what prod connect-src must allow.
+      `connect-src 'self' ws: wss:`,
+      `frame-src 'self'`,
+      `object-src 'none'`,
+      `base-uri 'self'`,
+    ].join('; ');
+    return { 'Content-Security-Policy-Report-Only': strict };
+  }
+
+  // 'enforce' (default): relaxed enough to never break the dev server, while
+  // still enforcing the directives that cannot legitimately fire in dev.
+  const relaxed = [
+    `default-src 'self'`,
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval'`,
+    // style-src stays 'self'-only for *elements* (external stylesheets are an
+    // air-gap violation — this app must run offline; the only external one is
+    // the dev-only `react-grab` Geist <link>, which is fine to block). Inline
+    // <style>/style="" are allowed via 'unsafe-inline' (dev strips the nonce).
+    `style-src 'self' 'unsafe-inline'`,
+    // Resource directives stay permissive: in dev these legitimately target an
+    // arbitrary backend (entered at login) and/or the HMR socket, so locking
+    // them down would break image / font / connect / frame loads.
+    `img-src 'self' data: blob: http: https:`,
+    `font-src 'self' data: http: https:`,
+    `media-src 'self' data: blob: http: https:`,
+    `worker-src 'self' blob:`,
+    `connect-src 'self' ws: wss: http: https:`,
+    `frame-src 'self' http: https:`,
+    // Hardened — these never load legitimately in dev.
+    `object-src 'none'`,
+    `base-uri 'self'`,
+  ].join('; ');
+  return { 'Content-Security-Policy': relaxed };
+}
+
+const MIME: Record<string, string> = {
+  '.js': 'application/javascript',
+  '.mjs': 'application/javascript',
+  '.json': 'application/json',
+  '.css': 'text/css',
+  '.html': 'text/html',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.toml': 'text/plain; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8',
+};
+
+/**
+ * Serve static assets from the project root (not from `react/`) and read the
+ * project-root `index.html` as the SPA template. Mirrors the behaviour of the
+ * existing craco devServer.static + HtmlWebpackPlugin setup.
+ */
+/**
+ * Trigger a full page reload whenever a project-root runtime-fetched asset
+ * changes on disk. Mirrors the `fs.watch` / `fs.watchFile` setup in the
+ * craco devServer config (craco.config.cjs:80-147).
+ *
+ * Why this is needed: `i18next-http-backend` fetches `resources/i18n/*.json`
+ * at runtime — those JSONs are NOT part of the Vite module graph, so Vite
+ * will never HMR them on its own. `config.toml`, `resources/theme.json`,
+ * and the project-root `index.html` are in the same category.
+ *
+ * Host i18n JSONs are special-cased: instead of a full reload, we emit a
+ * custom HMR event (`bai:host-i18n-changed`) that the host's i18n bootstrap
+ * (react/src/components/DefaultProviders.tsx) listens for and answers with
+ * `i18n.reloadResources(lng)` + `changeLanguage`. This preserves app state
+ * (open modals, forms, Relay cache) on copy edits.
+ *
+ * BUI's locale JSONs (packages/backend.ai-ui/src/locale/*.json) are NOT
+ * watched here — they are statically imported by BUI's `locale/index.ts`
+ * so Vite already tracks them in the module graph. BUI's bootstrap
+ * registers its own `import.meta.hot.accept` boundary to update its
+ * (separate) i18n instance.
+ *
+ * Debounce: full-reload uses 300ms (matches craco); host i18n hot-reload
+ * uses a tighter 150ms because the update preserves UI state and the
+ * shorter wait makes copy edits feel near-instant. Both debounces exist
+ * because FSEvents on macOS can fire multiple watcher events for a single
+ * save, and editors that use atomic-save (write temp → rename) produce
+ * two events. Debouncing collapses each burst into one signal.
+ */
+function devAssetsReloadPlugin(): Plugin {
+  const i18nHostDir = resolve(projectRoot, 'resources/i18n');
+  const fullReloadTargets = [
+    resolve(projectRoot, 'config.toml'),
+    resolve(projectRoot, 'index.html'),
+    resolve(projectRoot, 'resources/theme.json'),
+  ];
+  const watchTargets = [...fullReloadTargets, i18nHostDir];
+
+  return {
+    name: 'bai-dev-assets-reload',
+    apply: 'serve',
+    configureServer(server) {
+      // Vite's `server.watcher` is a chokidar instance. Add our target
+      // paths so chokidar emits `change`/`add` events for them even when
+      // they are outside the module graph.
+      for (const target of watchTargets) {
+        server.watcher.add(target);
+      }
+
+      let reloadTimer: NodeJS.Timeout | undefined;
+      let i18nTimer: NodeJS.Timeout | undefined;
+
+      const scheduleReload = (changedPath: string) => {
+        clearTimeout(reloadTimer);
+        reloadTimer = setTimeout(() => {
+          server.config.logger.info(
+            `[bai] full reload triggered by ${changedPath}`,
+            { clear: false, timestamp: true },
+          );
+          server.ws.send({ type: 'full-reload' });
+        }, 300);
+      };
+
+      const scheduleI18nUpdate = (lng: string) => {
+        clearTimeout(i18nTimer);
+        i18nTimer = setTimeout(() => {
+          server.config.logger.info(`[bai] host i18n hot-reload: ${lng}`, {
+            clear: false,
+            timestamp: true,
+          });
+          server.ws.send({
+            type: 'custom',
+            event: 'bai:host-i18n-changed',
+            data: { lng },
+          });
+        }, 150);
+      };
+
+      // Use `path.relative` so containment is detected correctly on Windows,
+      // where chokidar emits paths with `\` separators that would never match
+      // a `target + '/'` prefix.
+      const isUnder = (target: string, changedPath: string) => {
+        const rel = relative(target, changedPath);
+        return rel === '' || (!rel.startsWith('..') && !isAbsolute(rel));
+      };
+
+      const handler = (changedPath: string) => {
+        // Host i18n JSON → custom HMR event (no full reload).
+        if (
+          isUnder(i18nHostDir, changedPath) &&
+          changedPath.endsWith('.json')
+        ) {
+          scheduleI18nUpdate(basename(changedPath, '.json'));
+          return;
+        }
+        // Other watched assets → full reload (existing behaviour).
+        if (fullReloadTargets.some((t) => isUnder(t, changedPath))) {
+          scheduleReload(changedPath);
+        }
+      };
+
+      server.watcher.on('change', handler);
+      server.watcher.on('add', handler);
+      server.watcher.on('unlink', handler);
+
+      server.httpServer?.on('close', () => {
+        clearTimeout(reloadTimer);
+        clearTimeout(i18nTimer);
+      });
+    },
+  };
+}
+
+function projectRootStaticPlugin(
+  devCspHeaders: Record<string, string>,
+): Plugin {
+  const rootIndexHtml = resolve(projectRoot, 'index.html');
+
+  return {
+    name: 'bai-project-root-static',
+    configureServer(server) {
+      // Middleware order: this runs before Vite's internal middlewares, so we
+      // can intercept `/` for the project-root index.html and static prefixes
+      // for legacy assets.
+      server.middlewares.use(async (req, res, next) => {
+        if (!req.url) return next();
+        const url = req.url.split('?')[0];
+
+        // This middleware runs before Vite's internal middlewares (so it can
+        // intercept `/`), which means Vite's `server.headers` never reach the
+        // index.html document or legacy static assets served here. Re-apply the
+        // opt-in dev CSP headers ourselves so the document — where the browser
+        // actually reads the policy — carries them. No-op when CSP is disabled.
+        for (const [key, value] of Object.entries(devCspHeaders)) {
+          res.setHeader(key, value);
+        }
+
+        // 1. Serve the project-root index.html at `/` and `/index.html`,
+        //    running the full Vite transform chain (which includes our
+        //    `transformIndexHtml` hook below + Vite's React Refresh and
+        //    client script injection).
+        if (url === '/' || url === '/index.html') {
+          let html = readFileSync(rootIndexHtml, 'utf-8');
+          html = await server.transformIndexHtml(
+            req.url,
+            html,
+            req.originalUrl,
+          );
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+          res.end(html);
+          return;
+        }
+
+        // 2. Serve legacy static assets from projectRoot (mirrors craco
+        //    devServer.static block).
+        const isStaticPrefix = STATIC_PREFIXES_FROM_ROOT.some((p) =>
+          url.startsWith(p),
+        );
+        const isStaticFile = STATIC_FILES_FROM_ROOT.has(url);
+        if (isStaticPrefix || isStaticFile) {
+          const filePath = join(projectRoot, url);
+          if (!filePath.startsWith(projectRoot)) return next();
+          if (existsSync(filePath) && statSync(filePath).isFile()) {
+            const mime =
+              MIME[extname(filePath).toLowerCase()] ??
+              'application/octet-stream';
+            res.setHeader('Content-Type', mime);
+            createReadStream(filePath).pipe(res);
+            return;
+          }
+        }
+
+        next();
+      });
+    },
+
+    transformIndexHtml: {
+      order: 'pre',
+      handler(html, ctx) {
+        // In dev (serve), ctx.server is defined; in build, it's undefined.
+        // The build-time entry at `react/index.html` is a throwaway stub —
+        // we always want to operate on the real project-root template.
+        const realHtml = readFileSync(rootIndexHtml, 'utf-8');
+        const isServe = !!ctx.server;
+
+        // Always inject the app entry script at the REACT_BUNDLE_INJECTING
+        // marker. In dev, Vite serves `/src/index.tsx` directly. In build,
+        // Vite's HTML parser sees this tag, bundles `src/index.tsx`, and
+        // rewrites the src to the hashed chunk URL.
+        let out = realHtml.replace(
+          '<!-- REACT_BUNDLE_INJECTING FOR DEV-->',
+          '<script type="module" nonce="{{nonce}}" src="/src/index.tsx"></script>',
+        );
+
+        if (isServe) {
+          // Dev-only: the webpack/craco pipeline injected a tiny
+          // `process.env.NODE_ENV` shim here so dev-only code like
+          // `if (process.env.NODE_ENV === 'development')` works in the
+          // browser. Also strip `{{nonce}}` — the backend replaces it at
+          // runtime in prod; in local dev we have no server-side CSP.
+          out = out
+            .replace(
+              '// DEV_JS_INJECTING',
+              'globalThis.process = {env: {NODE_ENV: "development"}};',
+            )
+            .replace(/\{\{nonce\}\}/g, '');
+        } else {
+          // Build: remove the dev-only marker comment entirely (so the
+          // inline script block just has the runtime constants) and
+          // PRESERVE `{{nonce}}` so the backend's CSP middleware can
+          // substitute it per-request.
+          out = out.replace('// DEV_JS_INJECTING', '');
+        }
+
+        return out;
+      },
+    },
+  };
+}
+
+/**
+ * Re-stamp the per-request CSP nonce placeholder onto the Vite-emitted bundle
+ * entry `<script type="module">`.
+ *
+ * The `projectRootStaticPlugin` pre-transform injects the entry tag with
+ * `nonce="{{nonce}}"`, but Vite DROPS custom attributes (including `nonce`)
+ * when its core HTML build rewrites that tag's `src` to the hashed chunk URL.
+ * This post-order transform runs AFTER that rewrite and re-adds the nonce so a
+ * strict `script-src 'nonce-…' 'strict-dynamic'` policy accepts the entry
+ * bundle. The negative lookahead prevents double-stamping if the attribute
+ * ever survives.
+ *
+ * Runtime-injected `<link rel="modulepreload">` tags (created by Vite's
+ * `__vitePreload` helper for lazy chunks) are handled separately by the
+ * `<meta property="csp-nonce">` in `index.html`, which that helper reads — so
+ * only the static entry tag Vite writes into the HTML needs fixing here.
+ *
+ * Build only: the dev server has no server-side CSP and the pre-transform
+ * strips `{{nonce}}` from the served document, so stamping in dev would leak a
+ * literal `{{nonce}}` into the page.
+ */
+function cspBundleNoncePlugin(): Plugin {
+  return {
+    name: 'bai-csp-bundle-nonce',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html) {
+        return html.replace(
+          /<script type="module"(?![^>]*\bnonce=)/g,
+          '<script type="module" nonce="{{nonce}}"',
+        );
+      },
+    },
+  };
+}
+
+/**
+ * Serve the Monaco AMD runtime at `/resources/monaco/vs/*` from
+ * `react/node_modules/monaco-editor/min/vs/*` during dev. Mirrors the
+ * `static` directory entry that lived in the deleted `react/craco.config.cjs`.
+ *
+ * `@monaco-editor/react` resolves the URL prefix via
+ *   loader.config({ paths: { vs: '/resources/monaco/vs' } })
+ * (see `react/src/helper/monacoEditor.ts`). Self-hosting keeps Monaco
+ * working in offline / air-gapped deployments where jsDelivr is unreachable.
+ *
+ * Production is unchanged: the root `copymonaco` script (`package.json:32`)
+ * copies the same tree into `build/web/resources/monaco/vs/`.
+ *
+ * `min/vs` is Monaco's prebuilt AMD bundle — used here rather than the ESM
+ * tree because `@monaco-editor/react` consumes the AMD form to keep the
+ * Monaco worker chunks intact for runtime lazy-loading.
+ */
+/**
+ * Gzip-compress every dev-server response. Vite's dev server does NOT compress
+ * by default — source modules, optimized dep bundles, even multi-MB chunks all
+ * go over the wire raw. On a local LAN that's fine; on a high-RTT remote
+ * connection the total session payload (typically 20–40MB on a hard refresh of
+ * this app) saturates available throughput and pulls every parallel HTTP/2
+ * stream's completion time up to the same `total_bytes / bandwidth` value —
+ * which is exactly the "every chunk takes ~8 s regardless of size" pattern.
+ *
+ * Plain `compression` middleware (the same one Express uses) drops aggregate
+ * JS payload by ~75–80%. It's `apply: 'serve'` so the production build is
+ * untouched.
+ *
+ * Why this is placed BEFORE the other middlewares: connect runs middlewares
+ * in registration order, and compression needs to wrap the response stream
+ * before any later middleware writes to it (it hooks `res.write` /
+ * `res.end`). Placing it first means everything downstream — projectRoot
+ * static, Monaco static, Vite's own internal middlewares — flows through
+ * the gzip transform.
+ *
+ * Portless passes through `Content-Encoding` unchanged (verified via curl),
+ * so the gzip frames reach the browser intact and the browser inflates.
+ */
+function devCompressionPlugin(): Plugin {
+  return {
+    name: 'bai-dev-compression',
+    apply: 'serve',
+    configureServer(server) {
+      // `threshold: 0`: compress even tiny responses. The CPU cost of
+      // compressing 1–2 KB is negligible (sub-millisecond) and the benefit
+      // accrues on aggregate session bytes, not per-file.
+      //
+      // Brotli quality stays at the `compression` package default (q4).
+      //
+      // Tried q6 — it produces ~10% smaller wire bytes for a 2.8MB chunk
+      // (508KB → 457KB), but on a hard refresh (100+ concurrent module
+      // requests) the per-request CPU cost climbed enough that libuv's
+      // default 4-thread pool saturated, and total wall time for the slowest
+      // chunk regressed from ~4s to ~6s. The wire-size win is dwarfed by
+      // the compression-queue tail under burst load. q4 is the sweet spot.
+      server.middlewares.use(compression({ threshold: 0 }));
+    },
+  };
+}
+
+function monacoStaticPlugin(): Plugin {
+  const monacoRoot = resolve(__dirname, 'node_modules/monaco-editor/min/vs');
+  const URL_PREFIX = '/resources/monaco/vs/';
+
+  return {
+    name: 'bai-monaco-static',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (!req.url) return next();
+        const url = req.url.split('?')[0];
+        if (!url.startsWith(URL_PREFIX)) return next();
+
+        const rel = url.slice(URL_PREFIX.length);
+        const filePath = join(monacoRoot, rel);
+        // Path-traversal guard: `join` normalizes `..`, so prefix comparison
+        // catches any URL that escapes `monacoRoot`.
+        if (!filePath.startsWith(monacoRoot)) return next();
+        if (!existsSync(filePath) || !statSync(filePath).isFile()) {
+          return next();
+        }
+        const mime =
+          MIME[extname(filePath).toLowerCase()] ?? 'application/octet-stream';
+        res.setHeader('Content-Type', mime);
+        createReadStream(filePath).pipe(res);
+      });
+    },
+  };
+}
+
+export default defineConfig(({ command, mode }) => {
+  const env = loadEnv(mode, projectRoot, '');
+  Object.assign(process.env, env);
+
+  // Resolve the dev CSP headers AFTER loadEnv() + Object.assign above, so a
+  // `VITE_DEV_CSP` set in a `.env*` file is honoured (not only a shell var).
+  // On by default (relaxed `enforce`); `{}` only when explicitly opted out.
+  const devCspHeaders = buildDevCspHeaders();
+
+  // Only resolve the pnpm store when actually serving — `vite build` does not
+  // use `server.fs.allow`, so the subprocess is wasted there. See the
+  // `resolvePnpmStorePath` definition above for the full rationale.
+  const pnpmStorePath =
+    command === 'serve' ? resolvePnpmStorePath() : undefined;
+
+  // Builds always check; dev servers only on request. See the
+  // `isDevTypecheckEnabled` definition above.
+  const runTypeChecker = command !== 'serve' || isDevTypecheckEnabled;
+
+  // vite-plugin-checker's build mode spawns a bare `tsc` with a PATH built by
+  // npm-run-path, which PREPENDS every ancestor `node_modules/.bin` of cwd
+  // that is not already literally on PATH. In a git worktree under
+  // `.claude/worktrees/<name>/` that walk-up passes through the MAIN
+  // checkout's `<repo>/node_modules/.bin`, whose root TypeScript (~5.5.4)
+  // cannot parse some modern dependency `.d.ts` (296 parse errors inside
+  // gpt-tokenizer@3.4.0 alone) — while this workspace's own `.bin` entries,
+  // already placed on PATH by pnpm, are skipped by npm-run-path's dedupe and
+  // stay BEHIND the prepended ancestors. Net effect: `pnpm run
+  // build:react-only` inside a worktree type-checks with the wrong compiler
+  // and fails. Removing react/'s own `.bin` from the inherited PATH makes
+  // npm-run-path re-prepend it at the very front (the walk-up starts at
+  // `react/`), so the spawned `tsc` is always react/'s TypeScript (~6.0.3).
+  if (runTypeChecker && command === 'build' && process.env.PATH) {
+    const ownBinDir = join(__dirname, 'node_modules', '.bin');
+    process.env.PATH = process.env.PATH.split(delimiter)
+      .filter((entry) => entry !== ownBinDir)
+      .join(delimiter);
+  }
+
+  // Say it out loud. A dev server with no type checker looks identical to one
+  // with a passing checker — both just print "ready in Nms" — so without this
+  // line it is easy to read silence as "no type errors".
+  if (!runTypeChecker) {
+    console.warn(
+      '[vite] no TypeScript checking in this dev server (no terminal errors, no ' +
+        'browser overlay). Start with `VITE_DEV_TYPECHECK=on` to enable it, or run ' +
+        '`bash scripts/verify.sh` before committing.',
+    );
+  }
+
+  // Comma-separated list of additional hostnames to whitelist for the dev
+  // server's host check (Vite 6 default-blocks anything outside localhost
+  // since CVE-2025-30208). Example for SwitchHosts users:
+  //   VITE_ALLOWED_HOSTS=local.backend.ai,*.lablup.local
+  // Reads from process.env first (shell override) so CI/scripts can set it
+  // ad-hoc, then falls back to the .env.development.local entry.
+  const allowedHostsRaw =
+    process.env.VITE_ALLOWED_HOSTS ?? env.VITE_ALLOWED_HOSTS;
+  const allowedHosts = allowedHostsRaw
+    ? allowedHostsRaw
+        .split(',')
+        .map((h) => h.trim())
+        .filter(Boolean)
+    : undefined;
+
+  // The Electron target's `es6://` publicPath is applied by
+  // `scripts/patch-electron-publicpath.js` after the single web build
+  // (per FR-2612 policy: one build, post-patch — never a second `vite build`).
+  return {
+    base: '/',
+    // Keep root at `react/` so pnpm's react/react-dom installed in
+    // react/node_modules resolve correctly. Static assets from projectRoot
+    // are handled by projectRootStaticPlugin above.
+    root: __dirname,
+    publicDir: false,
+    envDir: projectRoot,
+    cacheDir: resolve(__dirname, 'node_modules/.vite'),
+
+    resolve: {
+      // Force a single instance of shared singletons across the monorepo.
+      //
+      // Under Option C, BUI still has its own i18n instance, but accesses
+      // it via explicit binding (useBAIi18n → useTranslation({ i18n })) so
+      // dedup'ing react-i18next to one physical copy is now safe: there is
+      // no React-Context-based discovery path that could leak between BUI
+      // and host.
+      dedupe: [
+        'react',
+        'react-dom',
+        'react-relay',
+        'relay-runtime',
+        'jotai',
+        'i18next',
+        'react-i18next',
+      ],
+      // Array form lets us mix regex aliases (for `src/` baseUrl imports) with
+      // the workspace-package aliases. `find` is matched against the import
+      // source; `replacement` replaces the match.
+      alias: [
+        // tsconfig.json baseUrl: "." allows `import 'src/hooks/x'` inside
+        // react/. Replicate that here — regex form ensures we only rewrite
+        // imports that start with `src/`, not ones like `backend.ai-ui/src/`.
+        { find: /^src\//, replacement: reactSrc + '/' },
+
+        // backend.ai-ui workspace package, dev-aliased to source so HMR
+        // tracks it without a BUI rebuild. `locale/*` is the published
+        // export-map alias for dist/locale/* and gets the same treatment.
+        { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
+        {
+          find: /^backend\.ai-ui\/locale(\/|$)/,
+          replacement: buiSrc + '/locale$1',
+        },
+        { find: /^backend\.ai-ui$/, replacement: buiSrc },
+
+        // backend.ai-client workspace package, dev-aliased to source so HMR
+        // tracks the SDK without rebuilding tsup output.
+        {
+          find: /^backend\.ai-client$/,
+          replacement: resolve(
+            projectRoot,
+            'packages/backend.ai-client/src/index.ts',
+          ),
+        },
+
+        // ESM shims for CJS-only transitive deps of `react-i18next`.
+        //
+        // Why: `react-i18next` and `i18next` are intentionally excluded
+        // from Vite's dep optimizer (see `optimizeDeps.exclude` below) so
+        // two physical copies can coexist — that's what preserves BUI's
+        // i18n Context isolation from the host app. The side effect is
+        // that their CJS transitive deps (`void-elements`,
+        // `use-sync-external-store/shim`) never go through the
+        // optimizer's CJS→ESM transform, which breaks the browser's
+        // native ESM `import default from 'cjs-pkg'` expectation.
+        //
+        // These aliases redirect those imports to hand-written ESM
+        // shims under `react/vite-shims/` — `void-elements` is a plain
+        // lookup object, and `use-sync-external-store/shim` re-exports
+        // React 19's native `useSyncExternalStore`.
+        {
+          find: /^void-elements$/,
+          replacement: resolve(__dirname, 'vite-shims/void-elements.mjs'),
+        },
+        {
+          find: /^use-sync-external-store\/shim$/,
+          replacement: resolve(
+            __dirname,
+            'vite-shims/use-sync-external-store-shim.mjs',
+          ),
+        },
+
+        // See `polyfillShimAlias` definition at the top of this file.
+        polyfillShimAlias('buffer'),
+        polyfillShimAlias('global'),
+        polyfillShimAlias('process'),
+      ],
+    },
+
+    optimizeDeps: {
+      // Tell Vite exactly which files to scan for dependency optimization.
+      // Without this, Vite crawls from `root` following all imports, which
+      // pulled in stale legacy Lit plugins under scripts/temp-releases/ on
+      // the first run.
+      entries: ['src/index.tsx', 'src/**/*.{ts,tsx}'],
+      // Pre-declare the heavy dependencies that are imported on the first-paint
+      // path. Without this list, Vite still finds them via the `entries` scan,
+      // but only AFTER scanning the source tree — and the scan + optimize are
+      // serialised. Listing them here lets the dep optimizer kick off immediately
+      // at startup in parallel with the source scan, so by the time the browser
+      // requests `/src/index.tsx` the bundled deps are already on disk.
+      //
+      // Listing rules:
+      // - Top-level packages used by the eagerly-imported component graph
+      //   (index.tsx → App → DefaultProviders → routes → MainLayout / LoginView).
+      // - Subpath imports whose specifier is the actual entry the app uses —
+      //   e.g. `react-dom/client` (for `createRoot`) and
+      //   `nuqs/adapters/react-router/v6` (the only nuqs entry that ships the
+      //   adapter). Listing these saves the optimizer a discover-and-reload
+      //   cycle the first time the source scan reaches them. Pure deep-import
+      //   conveniences with no separate entry are NOT listed — the entries
+      //   scan picks them up automatically.
+      // - Do NOT list anything in `exclude` below (`backend.ai-ui`,
+      //   `backend.ai-client`, `i18next`, `react-i18next`).
+      // - When a new heavy top-level dep starts being imported on the first
+      //   render path, add it here.
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react-router-dom',
+        'jotai',
+        'react-relay',
+        'relay-runtime',
+        '@tanstack/react-query',
+        'nuqs',
+        'nuqs/adapters/react-router/v6',
+        'dayjs',
+        'lodash',
+      ],
+      exclude: [
+        'backend.ai-ui',
+        // backend.ai-client is dev-aliased to its source entry (see
+        // resolve.alias above). Excluding it from the dep optimizer keeps
+        // Vite serving the SDK as on-the-fly source modules so edits in
+        // packages/backend.ai-client/src trigger HMR instead of requiring
+        // a tsup rebuild + full reload.
+        'backend.ai-client',
+        // i18next / react-i18next are NOT excluded here under Option C.
+        // BUI keeps its own i18n instance but accesses it via explicit
+        // `useTranslation(undefined, { i18n: buiI18n })` binding (the
+        // `useBAIi18n` hook). That bypasses React Context entirely, so
+        // pnpm/Vite deduping react-i18next to a single module is fine —
+        // there is no Context-leakage path between BUI and the host.
+      ],
+    },
+
+    server: {
+      // Dev CSP header — on by default (relaxed enforce; VITE_DEV_CSP=off to
+      // disable). Covers responses Vite serves; the project-root middleware
+      // below applies the same headers to the index.html document it serves.
+      headers: devCspHeaders,
+      host: process.env.HOST || '0.0.0.0',
+      port: Number(process.env.PORT) || 9081,
+      strictPort: false,
+      open: false,
+      allowedHosts: allowedHosts,
+      fs: {
+        // Allow Vite to read files from the whole monorepo so that the
+        // alias to `../dist/lib/...` and `../packages/backend.ai-ui/src`
+        // resolves without FS sandbox 403s. Additionally allow the pnpm
+        // global virtual store root (resolved dynamically above) so that
+        // dependencies hard-linked outside the repo can be served — see
+        // `resolvePnpmStorePath` for the full rationale.
+        allow: [projectRoot, ...(pnpmStorePath ? [pnpmStorePath] : [])],
+      },
+      watch: {
+        // Opt-in escape hatch (`VITE_WATCH_USE_POLLING=1` in
+        // `.env.development.local`) for machines whose macOS `fseventsd`
+        // chronically drops FSEvents client streams
+        // (kFSEventStreamEventFlagUserDropped) under filesystem-event
+        // pressure. chokidar 3 + fsevents has no recovery path from a
+        // dropped stream — the watcher goes permanently silent while the
+        // dev server keeps serving stale module transforms ("HMR dead AND
+        // full refresh still shows old code until a dev-server restart").
+        // Stat-polling bypasses FSEvents entirely, at the cost of steady
+        // background CPU, so it stays off unless a machine needs it.
+        usePolling: process.env.VITE_WATCH_USE_POLLING === '1',
+        interval: 500,
+        ignored: [
+          '**/node_modules/**',
+          '**/build/**',
+          '**/.git/**',
+          '**/scripts/temp-releases/**',
+          // Note: do NOT ignore config.toml here — `devAssetsReloadPlugin`
+          // watches it explicitly for full-page-reload on change.
+        ],
+      },
+      // Pre-transform the modules that are *eagerly* imported on first paint,
+      // so they are ready before the browser asks for them. This mainly helps
+      // remote dev sessions where the request waterfall (browser → server →
+      // transform → response, per file) is dominated by RTT: with warmup the
+      // transform cost has already been paid and the response is served from
+      // Vite's in-memory module cache.
+      //
+      // Rules of thumb (per Vite docs):
+      // - Only warm up files on the FIRST-PAINT critical path. Anything
+      //   behind `React.lazy()` / dynamic import will be transformed when
+      //   the user navigates there and warming it up just steals startup CPU.
+      // - Paths are relative to the config root (`react/`).
+      // - Cross-root paths (`../packages/...`) are supported.
+      //
+      // Reference: https://vite.dev/guide/performance#warm-up-frequently-used-files
+      warmup: {
+        clientFiles: [
+          // Entry module the browser fetches first.
+          './src/index.tsx',
+          // index.tsx's synchronous imports.
+          './src/App.tsx',
+          './src/global-stores.ts',
+          './src/RelayEnvironment.ts',
+          './src/helper/customThemeConfig.ts',
+          './src/hooks/useThemeMode.tsx',
+          './src/components/DefaultProviders.tsx',
+          // App.tsx → routes.tsx and everything routes.tsx imports eagerly.
+          // Lazy-loaded pages are intentionally NOT listed here — they are
+          // fetched on navigation. Only the non-lazy imports at the top of
+          // routes.tsx need warmup.
+          './src/routes.tsx',
+          './src/components/BAIErrorBoundary.tsx',
+          './src/components/ErrorBoundaryWithNullFallback.tsx',
+          './src/components/LocationStateBreadCrumb.tsx',
+          './src/components/LoginView.tsx',
+          './src/components/MainLayout/MainLayout.tsx',
+          './src/components/MainLayout/WebUIHeader.tsx',
+          './src/components/MainLayout/WebUISider.tsx',
+          './src/components/STokenLoginBoundary.tsx',
+          './src/components/WebUINavigate.tsx',
+          // Pages marked "High priority" in routes.tsx (eagerly imported,
+          // not behind React.lazy).
+          './src/pages/ComputeSessionListPage.tsx',
+          './src/pages/Page404.tsx',
+          './src/pages/VFolderNodeListPage.tsx',
+          // Hooks barrel — pulled in by virtually every page/component the
+          // first render touches (useSuspendedBackendaiClient, useCurrentProject,
+          // useBAISetting, etc. all re-export from here).
+          './src/hooks/index.tsx',
+          // backend.ai-ui is excluded from `optimizeDeps` (see the long note
+          // above on i18n Context isolation), so its barrel is served as
+          // on-the-fly source modules every time. Warming the barrel — which
+          // is `export *` over components/helper/hooks/icons — primes the
+          // most-frequently-touched BUI surface during startup instead of on
+          // the browser's critical path.
+          '../packages/backend.ai-ui/src/index.ts',
+        ],
+      },
+    },
+
+    plugins: [
+      // Must run before @vitejs/plugin-react so we own the HTML transform
+      // and the index.html resolution. Monaco's narrower prefix is matched
+      // first so the more general projectRoot middleware never has to
+      // reach into the filesystem for a `/resources/monaco/vs/*` request.
+      // Compression must come first so its res.write/res.end hooks wrap
+      // every downstream middleware's writes (see comment on the plugin).
+      devCompressionPlugin(),
+      monacoStaticPlugin(),
+      projectRootStaticPlugin(devCspHeaders),
+      cspBundleNoncePlugin(),
+      devAssetsReloadPlugin(),
+      // FR-3811: dev-only (apply: 'serve') review overlay injection. Off by
+      // default — opt in with VITE_DEV_REVIEW_OVERLAY=1; otherwise the plugin
+      // is inert (no middleware, no script injection). Must come after
+      // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
+      // transforms (see review-overlay/index.ts).
+      devReviewOverlayPlugin(),
+
+      // StyleX compiler for Astryx `xstyle` authoring (to-astryx ticket 01),
+      // wired DIRECTLY via `@stylexjs/unplugin` (sole peer: `unplugin` — no
+      // vite peer) instead of `@astryxdesign/build/vite`, which declares peer
+      // `vite ^8`. The plugin sets `enforce: 'pre'` internally, so StyleX
+      // sees raw TSX ahead of @vitejs/plugin-react, and the React Compiler /
+      // babel-plugin-relay see StyleX-compiled output. It only processes
+      // files that literally import `@stylexjs/stylex`, so Astryx's
+      // precompiled dist/ is never re-transformed.
+      stylexVite({
+        // Unlayered output: StyleX's own `:not(#\#)` priority ladder orders
+        // rules inside the sheet, and unlayered CSS outranks every named
+        // layer — which is exactly what makes `xstyle` overrides beat
+        // Astryx's `@layer astryx-base` component styles. With `true` the
+        // output would land in `@layer priority1..N`, which sits before
+        // `astryx-base` in react/src/index.css's order statement and LOSES.
+        useCSSLayers: false,
+        // MANDATORY. Without this the plugin appends its CSS to "whichever
+        // .css asset rollup emitted first", which in a code-split app can be
+        // a lazy route's stylesheet — silently putting every authored style
+        // behind that route boundary. Pin it to the entry stylesheet.
+        // scripts/verify.sh guards this with a sentinel check on the emitted
+        // entry CSS (see check_stylex_injection there).
+        cssInjectionTarget: (fileName: string) =>
+          /assets\/index-[^/]*\.css$/.test(fileName),
+        // Must differ from Astryx's 'x': content-hashed class names collide
+        // across compilers, and this unlayered output then hijacks Astryx's
+        // own atomics app-wide in production builds (FR-3534).
+        classNamePrefix: 'webui',
+        // Anchor class-name hashing to the repo root so hashes stay stable
+        // across react/ and (future) packages/backend.ai-ui builds.
+        unstable_moduleResolution: { type: 'commonJS', rootDir: projectRoot },
+      }),
+
+      react({
+        babel: (id) => {
+          const isBUI = id.startsWith(buiSrc);
+          const isReactSrc = id.startsWith(reactSrc);
+          const plugins: Array<string | [string, unknown]> = [
+            ['babel-plugin-react-compiler', { compilationMode: 'annotation' }],
+          ];
+          if (isBUI) {
+            plugins.push([
+              'babel-plugin-relay',
+              { artifactDirectory: buiArtifactDir },
+            ]);
+          } else if (isReactSrc) {
+            plugins.push([
+              'babel-plugin-relay',
+              { artifactDirectory: reactArtifactDir },
+            ]);
+          }
+          return { plugins };
+        },
+      }),
+
+      svgr({
+        include: '**/*.svg?react',
+      }),
+
+      nodePolyfills({
+        include: ['buffer', 'stream'],
+        globals: {
+          // Why not `Buffer: true` in dev:
+          //   With `true`, the plugin prepends
+          //     `import __buffer_polyfill from 'vite-plugin-node-polyfills/shims/buffer';`
+          //     `globalThis.Buffer = globalThis.Buffer || __buffer_polyfill;`
+          //   to every chunk that touches Buffer. Vite's dep optimizer also
+          //   wraps that same shim into a CJS-interop chunk — so the chunk
+          //   that *exports* `__vite__cjsImport0_vitePluginNodePolyfills_
+          //   shims_buffer` also *imports* it (via the injected prelude),
+          //   and the import lands in the same chunk before the export is
+          //   initialized → TDZ on first browser load. `'build'` scopes
+          //   the injection to the production rollup build only.
+          //
+          // Why this is safe to do here:
+          //   No app code under `react/src` or `packages/backend.ai-ui/src`
+          //   references the Buffer global. The only Buffer.* call that
+          //   survives into the prod bundle is `Buffer.byteLength` inside
+          //   `cross-fetch/dist/browser-ponyfill.js` (pulled transitively
+          //   by `i18next-http-backend`), and that lives on a Node-only
+          //   code path the browser ponyfill never enters. The polyfill
+          //   itself could likely be removed entirely; see follow-up.
+          Buffer: 'build',
+          global: false,
+          process: false,
+        },
+      }),
+
+      // Service worker generation (build only). Mirrors the options used
+      // by craco's workbox-webpack-plugin GenerateSW call in
+      // craco.config.cjs:390-400.
+      //
+      // Run `tsc --noEmit` in a worker so type errors surface in the dev
+      // terminal and as a browser overlay during `vite dev`. Vite itself
+      // only strips types via esbuild, so without this plugin type
+      // errors are visible only in the IDE or via `scripts/verify.sh`.
+      // `tsconfigPath` pins the checker to the consumer's tsconfig (which has
+      // the `paths` workaround for pnpm-global-virtual-store type resolution —
+      // see FR-2925). During dev it is the derived `tsconfig.checker.json`
+      // that excludes the pnpm store from the watch program (FR-3214) — see
+      // `resolveCheckerTsconfigPath` above; for `vite build` it is the plain
+      // base tsconfig.
+      ...(runTypeChecker
+        ? [
+            checker({
+              typescript: {
+                // Only `serve` owns tsconfig.checker.json; `vite build` reads
+                // the base config and must not write or delete a file a live
+                // dev server uses.
+                tsconfigPath:
+                  command === 'serve'
+                    ? resolveCheckerTsconfigPath(pnpmStorePath)
+                    : baseTsconfigPath,
+              },
+            }),
+          ]
+        : []),
+
+      // Strategy `generateSW` produces a standalone SW file that precaches
+      // the build manifest. We opt out of `registerType: 'autoUpdate'` to
+      // preserve the legacy behaviour where index.html's inline script
+      // registers `/sw.js` itself on load (see ../index.html:126-131).
+      VitePWA({
+        strategies: 'generateSW',
+        filename: 'sw.js',
+        injectRegister: false,
+        // The repo ships its own `manifest.json` under the project root (with
+        // the real Backend.AI icons, name, and colors) and `copyresource`
+        // copies it into `build/web/`. Disable the plugin's auto-generated
+        // `manifest.webmanifest` to avoid shipping two conflicting manifests
+        // — the auto one picks up react/package.json metadata (wrong name,
+        // wrong theme color, no icons) and also injects its own `<link rel=
+        // "manifest">` tag that competes with the existing one in index.html.
+        manifest: false,
+        // Stay silent during dev — the registration happens only in prod.
+        devOptions: { enabled: false },
+        workbox: {
+          skipWaiting: true,
+          clientsClaim: true,
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+          // `index.html` stays OUT of the precache: precache routes are
+          // cache-first and answer `/` via Workbox's `directoryIndex` default,
+          // which served the previous deploy's shell on the first load.
+          globIgnores: ['**/*.map', '**/asset-manifest.json', 'index.html'],
+          // vite-plugin-pwa defaults navigateFallback to 'index.html', which
+          // makes the SW serve cached HTML for ANY GET navigation that doesn't
+          // match a precached asset — including OIDC/SAML callbacks like
+          // /func/openid/redirect. The retired workbox-webpack-plugin had no
+          // such default, so this restores pre-FR-2611 behavior.
+          navigateFallback: null,
+        },
+      }),
+    ],
+
+    build: {
+      outDir: resolve(__dirname, 'build'),
+      emptyOutDir: true,
+      sourcemap: true,
+      // Suppress the warning about chunk size; the app is large and this
+      // matches the existing craco/webpack threshold expectation.
+      chunkSizeWarningLimit: 2000,
+    },
+  };
+});

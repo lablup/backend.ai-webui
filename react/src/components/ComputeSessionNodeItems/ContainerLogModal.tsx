@@ -7,30 +7,38 @@ import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
-import AutoRefreshSwitch from '../AutoRefreshSwitch';
-import { ReloadOutlined } from '@ant-design/icons';
+import { useBAIBreakpoint } from '../../theme-shim';
+import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Heading } from '@astryxdesign/core/Heading';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
-import {
-  Button,
-  Divider,
-  Grid,
-  InputNumber,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
 import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
-import _ from 'lodash';
-import { DownloadIcon } from 'lucide-react';
+import * as _ from 'lodash-es';
+import { CheckIcon, CopyIcon, DownloadIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
 
 interface ContainerLogModalProps extends BAIModalProps {
   sessionFrgmt: ContainerLogModalFragment$key | null;
   defaultKernelId?: string;
 }
+
+/**
+ * Height cap for the log dialog — the `95vh` the sibling full-height viewers
+ * use (`VFolderTextFileEditorModal`, `FolderExplorerModalV2`). Astryx `Dialog`
+ * otherwise caps itself at 75vh, well under the body this viewer asks for.
+ *
+ * The body is measured against that same cap rather than the viewport, so the
+ * two cannot cross over on a tall screen. It subtracts only the chrome above
+ * it: the dialog's own block padding (a published theme token) and the header
+ * row (measured 52px; this modal renders `footer={null}`).
+ */
+const LOG_MODAL_MAX_HEIGHT = '95vh';
+const LOG_MODAL_HEADER_HEIGHT = '52px';
+const LOG_BODY_HEIGHT = `calc(${LOG_MODAL_MAX_HEIGHT} - ${LOG_MODAL_HEADER_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`;
 
 const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
   sessionFrgmt,
@@ -39,15 +47,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
 }) => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
-  const { token } = theme.useToken();
-
-  const [autoRefreshEnabled, setAutoRefreshEnabled] = useBAISettingUserState(
-    'container_log_auto_refresh_enabled',
-  );
-  const [autoRefreshInterval, setAutoRefreshInterval] = useBAISettingUserState(
-    'container_log_auto_refresh_interval',
-  );
-  const autoRefreshIntervalValue = autoRefreshInterval || 5_000;
+  const [copiedSessionId, setCopiedSessionId] = useState(false);
 
   const session = useFragment(
     graphql`
@@ -108,50 +108,62 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         .get_logs(session?.row_id, session?.access_key, selectedKernelId, 15000)
         .then((req: any) => req.result.logs);
     },
-    staleTime: autoRefreshIntervalValue,
   });
 
   const [lastLineNumbers, { resetPrevious: resetPreviousLineNumber }] =
     useMemoWithPrevious(() => logs?.split('\n').length || 0, [logs]);
 
-  const { md } = Grid.useBreakpoint();
+  const { md } = useBAIBreakpoint();
   const { t } = useTranslation();
 
   return (
     <BAIModal
       title={
         <BAIFlex style={{ maxWidth: '100%' }} gap={'sm'}>
-          <Typography.Title level={4} style={{ margin: 0, flexShrink: 0 }}>
-            {t('kernel.ContainerLogs')}
-          </Typography.Title>
+          {/* A modal title: antd's `.ant-modal-title` is 16px, which the
+              restored antd type ramp puts on heading-5 (heading-4 is 20px). */}
+          <Heading level={5}>{t('kernel.ContainerLogs')}</Heading>
           {session ? (
             <>
-              <Typography.Text style={{ fontWeight: 'normal' }} ellipsis>
-                {session?.name}
-              </Typography.Text>
-              <Typography.Text
-                style={{ fontWeight: 'normal', fontFamily: 'monospace' }}
-                copyable={{
-                  text: session?.row_id,
-                  tooltips: t('button.CopySomething', {
-                    name: t('session.SessionId'),
-                  }),
-                }}
-              >
+              <Text maxLines={1}>{session?.name}</Text>
+              <Text type="code">
                 ({md ? session?.row_id : session?.row_id.split('-')?.[0]})
-              </Typography.Text>
+              </Text>
+              <IconButton
+                variant="ghost"
+                size="sm"
+                icon={
+                  copiedSessionId ? (
+                    <CheckIcon aria-hidden />
+                  ) : (
+                    <CopyIcon aria-hidden />
+                  )
+                }
+                label={t('button.CopySomething', {
+                  name: t('session.SessionId'),
+                })}
+                tooltip={t('button.CopySomething', {
+                  name: t('session.SessionId'),
+                })}
+                isDisabled={copiedSessionId}
+                onClick={() => {
+                  void navigator.clipboard?.writeText(session?.row_id ?? '');
+                  setCopiedSessionId(true);
+                  setTimeout(() => setCopiedSessionId(false), 1500);
+                }}
+              />
             </>
           ) : null}
         </BAIFlex>
       }
       width={'100%'}
+      maxHeight={LOG_MODAL_MAX_HEIGHT}
       styles={{
         header: {
           width: '100%',
         },
         body: {
-          height: 'calc(100vh - 100px)',
-          maxHeight: 'calc(100vh - 100px)',
+          height: LOG_BODY_HEIGHT,
         },
       }}
       {...modalProps}
@@ -172,75 +184,53 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
               resetPreviousLineNumber();
             }}
             autoSelectOption
-            options={_.chain(session?.kernel_nodes?.edges)
-              .sortBy((e) => `${e?.node?.cluster_role} ${e?.node?.cluster_idx}`)
-              .map((e) => {
+            options={_.map(
+              _.sortBy(
+                session?.kernel_nodes?.edges,
+                (e) => `${e?.node?.cluster_role} ${e?.node?.cluster_idx}`,
+              ),
+              (e) => {
                 return {
                   label: (
                     <>
                       {e?.node?.cluster_hostname}
-                      <Typography.Text
-                        style={{
-                          fontFamily: 'monospace',
-                          fontSize: token.fontSizeSM,
-                        }}
-                        type="secondary"
-                      >
+                      <Text type="code" color="secondary" size="sm">
                         ({(e?.node?.row_id || '').substring(0, 5)})
-                      </Typography.Text>
+                      </Text>
                     </>
                   ),
                   value: e?.node?.row_id,
                 };
-              })
-              .value()}
+              },
+            )}
           />
-          <Divider type="vertical" />
-          <Tooltip title={t('button.Download')}>
-            <Button
-              size="middle"
-              icon={<DownloadIcon />}
-              disabled={isPending || isRefetching}
-              onClick={() => {
-                const blob = new Blob([logs || ''], { type: 'text/plain' });
-                downloadBlob(
-                  blob,
-                  `${session?.name || 'session'}-logs-${selectedKernelId}-${new Date().toISOString()}.txt`,
-                );
-              }}
-            />
-          </Tooltip>
-          <Tooltip title={t('button.Refresh')}>
-            <Button
-              size="middle"
-              loading={isPending || isRefetching}
-              icon={<ReloadOutlined />}
-              onClick={() => refetch()}
-            />
-          </Tooltip>
-          <BAIFlex gap="xs" align="center">
-            <AutoRefreshSwitch
-              checked={autoRefreshEnabled}
-              onChange={setAutoRefreshEnabled}
-              interval={isRefetching ? null : autoRefreshIntervalValue}
-              onRefresh={() => {
-                refetch();
-              }}
-            >
-              {t('button.AutoRefresh')}:
-            </AutoRefreshSwitch>
-            <InputNumber
-              min={3}
-              value={(autoRefreshIntervalValue ?? 1000) / 1000}
-              onChange={(value) => {
-                if (typeof value === 'number') {
-                  setAutoRefreshInterval(value * 1000);
-                }
-              }}
-              suffix={t('time.Sec')}
-              style={{ maxWidth: 150 }}
-            />
-          </BAIFlex>
+          <Divider orientation="vertical" />
+          <IconButton
+            icon={<DownloadIcon />}
+            label={t('button.Download')}
+            tooltip={t('button.Download')}
+            isDisabled={isPending || isRefetching}
+            onClick={() => {
+              const blob = new Blob([logs || ''], { type: 'text/plain' });
+              downloadBlob(
+                blob,
+                `${session?.name || 'session'}-logs-${selectedKernelId}-${new Date().toISOString()}.txt`,
+              );
+            }}
+          />
+          <AutoUpdateFetchKeyButton
+            settingId="container-log"
+            // Logs are the archetypal live-watch surface: the modal is opened
+            // precisely to watch new lines arrive, so poll by default until the
+            // user picks their own interval (including "Off").
+            defaultAutoUpdateDelay={10_000}
+            size="middle"
+            value=""
+            loading={isPending || isRefetching}
+            onChange={() => {
+              refetch();
+            }}
+          />
         </BAIFlex>
 
         <div
@@ -248,7 +238,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
             height: 'calc(100% - 50px)',
             alignSelf: 'stretch',
 
-            border: `1px solid ${token.colorBorder}`,
+            border: `1px solid var(--color-border)`,
             overflow: 'hidden',
           }}
         >

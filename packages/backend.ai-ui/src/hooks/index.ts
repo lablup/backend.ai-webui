@@ -1,11 +1,7 @@
-import {
-  ResourceSlotName,
-  useBAIDeviceMetaData,
-  useConnectedBAIClient,
-} from '../components';
-import { useSuspenseTanQuery, useTanQuery } from '../helper/reactQueryAlias';
+import useConnectedBAIClient from '../components/provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import { useSuspenseTanQuery } from '../helper/reactQueryAlias';
 import { useEventNotStable } from './useEventNotStable';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useMemo, useState } from 'react';
 import { useRelayEnvironment } from 'react-relay';
 import {
@@ -89,43 +85,6 @@ export type ResourceSlotDetail = {
   display_icon: string;
 };
 
-/**
- * Custom hook to fetch resource slot details by resource group name.
- * @param resourceGroupName - The name of the resource group. if not provided, it will use resource/device_metadata.json
- * @returns An array containing the resource slots and a refresh function.
- */
-export const useResourceSlotsDetails = (resourceGroupName?: string) => {
-  'use memo';
-  const [key, checkUpdate] = useUpdatableState('first');
-  const baiRequestWithPromise = useBAISignedRequestWithPromise();
-  const { data: resourceSlotsInRG, isLoading } = useTanQuery<{
-    [key in ResourceSlotName]?: ResourceSlotDetail | undefined;
-  }>({
-    queryKey: ['useResourceSlots', resourceGroupName, key],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      resourceGroupName && search.set('sgroup', resourceGroupName);
-      const searchParamString = search.toString();
-      return baiRequestWithPromise({
-        method: 'GET',
-        // if `sgroup` is not provided, it will return all resource slots of all resource groups
-        url: `/config/resource-slots/details${searchParamString ? '?' + search.toString() : ''}`,
-      });
-    },
-    staleTime: 3000,
-  });
-
-  const deviceMetaData = useBAIDeviceMetaData();
-
-  return {
-    resourceSlotsInRG,
-    deviceMetaData,
-    mergedResourceSlots: _.merge({}, deviceMetaData, resourceSlotsInRG),
-    refresh: checkUpdate,
-    isLoading,
-  };
-};
-
 export function useMutationWithPromise<T extends MutationParameters>(
   mutation: GraphQLTaggedNode,
 ) {
@@ -149,39 +108,10 @@ export function useMutationWithPromise<T extends MutationParameters>(
     });
   };
 }
-export const baiSignedRequestWithPromise = ({
-  method,
-  url,
-  body = null,
-  client,
-}: {
-  method: string;
-  url: string;
-  body?: any;
-  client: any;
-}) => {
-  const request = client?.newSignedRequest(method, url, body, null);
-  return client?._wrapWithPromise(request);
-};
-
-export const useBAISignedRequestWithPromise = () => {
-  const baliClient = useConnectedBAIClient();
-  return ({
-    method,
-    url,
-    body = null,
-  }: {
-    method: string;
-    url: string;
-    body?: any;
-  }) =>
-    baiSignedRequestWithPromise({
-      method,
-      url,
-      body,
-      client: baliClient,
-    });
-};
+export {
+  baiSignedRequestWithPromise,
+  useBAISignedRequestWithPromise,
+} from './useBAISignedRequestWithPromise';
 
 export { default as useErrorMessageResolver } from './useErrorMessageResolver';
 export { default as useViewer } from './useViewer';
@@ -196,3 +126,56 @@ export {
 } from './useBAILogger';
 export type { LoggerPlugin, LogContext, BAILogger } from './useBAILogger';
 export { useEventNotStable } from './useEventNotStable';
+
+// ── ahooks replacements ────────────────────────────────────────────────────
+// BUI-native ports of the `ahooks` hooks this repo used, so the dependency
+// could be dropped. Each module documents which ahooks hook it mirrors and
+// which parts of the option surface were kept. See
+// `.specs/FR-3482-astryx-migration/issues/ahooks-removal.md`.
+export { default as useControllableValue } from './useControllableValue';
+export type {
+  UseControllableValueOptions,
+  ControllableProps,
+  StandardControllableProps,
+} from './useControllableValue';
+export { default as useDebounce } from './useDebounce';
+export { default as useDebounceFn } from './useDebounceFn';
+export type { DebounceOptions } from './useDebounceFn';
+export { default as useEventListener } from './useEventListener';
+export type {
+  UseEventListenerOptions,
+  UseEventListenerTarget,
+} from './useEventListener';
+export { default as useHover } from './useHover';
+export type { UseHoverOptions } from './useHover';
+export { default as useNetwork } from './useNetwork';
+export type { NetworkState } from './useNetwork';
+export { default as usePrevious } from './usePrevious';
+export type { ShouldUpdateFunc } from './usePrevious';
+export {
+  createUseStorageState,
+  useLocalStorageState,
+  useSessionStorageState,
+  SYNC_STORAGE_EVENT_NAME,
+} from './useStorageState';
+export type {
+  SetStorageState,
+  UseStorageStateOptions,
+} from './useStorageState';
+export { default as useThrottleFn } from './useThrottleFn';
+export type { ThrottleOptions } from './useThrottleFn';
+export { default as useToggle } from './useToggle';
+export type { UseToggleActions } from './useToggle';
+export { default as useUpdateEffect } from './useUpdateEffect';
+// `useBAIi18n` is intentionally NOT re-exported from the package's public
+// surface — it is an internal implementation detail of how BUI components
+// bind to BUI's own i18next instance (see ../hooks/useBAIi18n.ts and the
+// ESLint rule in eslint.config.js that forbids `useTranslation` imports
+// from 'react-i18next' inside packages/backend.ai-ui/src/**). Consumers
+// of the package use their own host i18n; they have no use for BUI's
+// instance binding.
+export {
+  useProjectResourceGroups,
+  StorageHostFetchError,
+} from './useProjectResourceGroups';
+export type { ScalingGroupItem } from './useProjectResourceGroups';

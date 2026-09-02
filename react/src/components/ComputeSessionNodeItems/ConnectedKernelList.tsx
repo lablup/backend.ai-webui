@@ -9,16 +9,21 @@ import {
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
 // import BAIPropertyFilter from '../BAIPropertyFilter';
 import ContainerLogModal from './ContainerLogModal';
-import { Button, Tag, theme, Tooltip, Typography } from 'antd';
-import type { ColumnType } from 'antd/lib/table';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
 import {
+  badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAITable,
   BAIUnmountAfterClose,
   BAIDoubleTag,
+  BAIId,
+  type BAIColumnType,
+  BAIText,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { ScrollTextIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -62,7 +67,6 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
 }) => {
   const { t } = useTranslation();
   const [kernelIdForLogModal, setKernelIdForLogModal] = useState<string>();
-  const { token } = theme.useToken();
 
   const kernelNodes = useFragment(
     graphql`
@@ -81,29 +85,24 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     kernelsFrgmt,
   );
 
-  const columns = filterOutEmpty<ColumnType<Kernel>>([
+  const columns = filterOutEmpty<BAIColumnType<Kernel>>([
     {
       title: t('kernel.Hostname'),
       dataIndex: 'cluster_hostname',
       render: (hostname, record) => {
         return (
           <>
-            <Typography.Text>{hostname}</Typography.Text>
-            <Tooltip title={t('session.SeeContainerLogs')}>
-              <Button
-                icon={<ScrollTextIcon />}
-                type="link"
-                onClick={() => {
-                  record.row_id && setKernelIdForLogModal(record.row_id);
-                }}
-                style={{
-                  width: 'auto',
-                  height: 'auto',
-                  marginInlineStart: token.marginXXS,
-                  border: 'none',
-                }}
-              />
-            </Tooltip>
+            <Text>{hostname}</Text>
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={<ScrollTextIcon />}
+              label={t('session.SeeContainerLogs')}
+              tooltip={t('session.SeeContainerLogs')}
+              onClick={() => {
+                record.row_id && setKernelIdForLogModal(record.row_id);
+              }}
+            />
           </>
         );
       },
@@ -128,7 +127,10 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
                 ]}
               />
             ) : (
-              <Tag color={_.get(kernelStatusTagColor, status)}>{status}</Tag>
+              <Badge
+                variant={badgeVariantForStatus('kernel', status)}
+                label={status}
+              />
             )}
           </>
         );
@@ -137,35 +139,18 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
     {
       title: t('kernel.AgentId'),
       dataIndex: 'agent_id',
-      render: (id) =>
-        _.isEmpty(id) ? '-' : <Typography.Text copyable>{id}</Typography.Text>,
+      render: (id) => (_.isEmpty(id) ? '-' : <BAIText copyable>{id}</BAIText>),
     },
     {
       title: t('kernel.KernelId'),
       fixed: 'left',
       dataIndex: 'row_id',
-      render: (row_id) => (
-        <>
-          <Typography.Text copyable ellipsis>
-            {row_id}
-          </Typography.Text>
-        </>
-      ),
+      render: (row_id) => (_.isEmpty(row_id) ? '-' : <BAIId uuid={row_id} />),
     },
     {
       title: t('kernel.ContainerId'),
       dataIndex: 'container_id',
-      onCell: () => ({
-        style: { maxWidth: 250 },
-      }),
-      render: (id) =>
-        _.isEmpty(id) ? (
-          '-'
-        ) : (
-          <Typography.Text copyable ellipsis>
-            {id}
-          </Typography.Text>
-        ),
+      render: (id) => (_.isEmpty(id) ? '-' : <BAIId uuid={id} />),
     },
   ]);
 
@@ -194,10 +179,10 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         }}
       /> */}
       <BAITable
+        scroll={{ x: 'max-content' }}
         bordered
         // loading={isPendingFilter}
         rowKey="id"
-        scroll={{ x: 'max-content' }}
         columns={columns}
         dataSource={sortedKernels} // TODO: implement pagination when compute_session_node query supports pagination
       />

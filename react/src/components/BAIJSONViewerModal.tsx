@@ -2,9 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useThemeMode } from '../hooks/useThemeMode';
 import BAICodeEditor from './BAICodeEditor';
-import { Alert } from 'antd';
+import { Banner } from '@astryxdesign/core/Banner';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +19,6 @@ const BAIJSONViewerModal: React.FC<BAIJSONViewerModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { isDarkMode } = useThemeMode();
 
   const { formattedJson, hasError } = useMemo(() => {
     if (typeof json === 'string') {
@@ -46,17 +44,15 @@ const BAIJSONViewerModal: React.FC<BAIJSONViewerModalProps> = ({
     <BAIModal footer={null} width={800} {...modalProps}>
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
         {hasError && (
-          <Alert
-            type="warning"
-            title={t('general.InvalidJSONFormat')}
-            showIcon
-          />
+          // antd `Alert type="warning" showIcon` -> Astryx `Banner
+          // status="warning"`; `showIcon` is dropped (Banner always shows the
+          // status icon — MAPPING §4).
+          <Banner status="warning" title={t('general.InvalidJSONFormat')} />
         )}
         {description}
         <BAICodeEditor
           value={formattedJson}
           language={'json'}
-          theme={isDarkMode ? 'dark' : 'light'}
           editable={false}
         />
       </BAIFlex>

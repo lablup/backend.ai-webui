@@ -7,46 +7,173 @@ import {
   ImageListQuery$data,
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
-import { getImageFullName, localeCompare } from '../helper';
-import { useBackendAIImageMetaData } from '../hooks';
-import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { App } from '../app-shim';
+import { getImageFullName } from '../helper';
+import {
+  useBackendAIImageMetaData,
+  useSuspendedBackendaiClient,
+} from '../hooks';
+import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { theme } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
+import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { BAISkeleton } from 'backend.ai-ui';
 import {
-  AppstoreOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-  VerticalAlignBottomOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { App, Button, Tag, theme, Tooltip, Typography } from 'antd';
-import type { ColumnType } from 'antd/es/table';
-import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
-  BAITable,
   BAIResourceNumberWithIcon,
-  useFetchKey,
+  BAITable,
+  BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
+  badgeVariantForTagColor,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  type BAIColumnType,
+  BAIText,
+  useFetchKey,
+  useToggle,
 } from 'backend.ai-ui';
-import _ from 'lodash';
-import { Key, useDeferredValue, useState, useTransition } from 'react';
+import * as _ from 'lodash-es';
+import {
+  LayoutGrid,
+  RotateCw,
+  Settings,
+  ArrowDownToLine,
+  SquarePenIcon,
+} from 'lucide-react';
+import { parseAsStringLiteral, useQueryStates } from 'nuqs';
+import {
+  Key,
+  Suspense,
+  useDeferredValue,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
-import { useBAIPaginationOptionStateOnSearchParam } from 'src/hooks/reactPaginationQueryOptions';
 
 export type EnvironmentImage = NonNullableNodeOnEdges<
   ImageListQuery$data['image_nodes']
 >;
 
-const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
+const availableImageSorterKeys = [
+  'registry',
+  'architecture',
+  'namespace',
+  'base_image_name',
+] as const;
+const availableImageSorterValues = [
+  ...availableImageSorterKeys,
+  ...availableImageSorterKeys.map((key) => `-${key}` as const),
+] as const;
+const isEnableSorter = (key: string) =>
+  _.includes(availableImageSorterKeys, key);
+
+interface ImageListProps {
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3415). The Environments page
+   * owns the (URL-persisted) choice; this component never reads the ambient
+   * current project.
+   *
+   * `null` is NOT an error state: the list then scopes to the whole DOMAIN
+   * (`domain:<domainName>`) and the project becomes an optional filter that
+   * narrows it. See ADR-0001 for why `domain:` and not `system:`.
+   */
+  project: ProjectContextOrNull;
+  /**
+   * Reports the project the user picked — or `null` when the filter is
+   * cleared — in the in-list selector. The project narrows what this list
+   * SHOWS, so the selector is a content-scoped control and lives in this
+   * list's own filter row rather than in the page's card header
+   * (`.claude/rules/use-bai-card.md`).
+   */
+  onChangeProject: (project: ProjectContextOrNull) => void;
+  style?: React.CSSProperties;
+}
+
+const ImageList: React.FC<ImageListProps> = ({
+  project,
+  onChangeProject,
+  style,
+}) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+
+  // `image_nodes(scope_id:)` is NON-NULL, so there is no "omit it" form — but
+  // `ScopeField` accepts `<TYPE>:<ID>` for TYPE in system/domain/project/user
+  // (manager `api/gql_legacy/fields.py`). With no project filter the list
+  // therefore defaults to the caller's own DOMAIN: the widest scope this page
+  // may legitimately show, and an exact match for a domain admin's authority
+  // (`/admin/environment` is `access: 'admin'`). `system:` is deliberately NOT
+  // used — the manager derives it from the caller's own project memberships
+  // and raises `IndexError` for an admin who belongs to zero projects
+  // (`models/image/row.py`). See ADR-0001.
+  const scopeId = project
+    ? `project:${project.id}`
+    : `domain:${baiClient._config.domainName}`;
+
+  const projectSelect = (
+    <BAIFlex gap="xs" align="center" wrap="wrap">
+      <Text color="secondary">{t('general.Project')}</Text>
+      <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
+        <ProjectSelectForAdminPage
+          data-testid="environment-project-select"
+          domain={baiClient._config.domainName}
+          value={project?.id ?? undefined}
+          // An optional FILTER, not a required choice: clearing it puts the
+          // list back on the domain-wide default. antd routes the clear
+          // through `onChange` with no option, so an absent `projectInfo` IS
+          // the "cleared" signal.
+          allowClear
+          placeholder={t('environment.AllProjects')}
+          style={{ minWidth: 180 }}
+          onSelectProject={(projectInfo) => {
+            onChangeProject(
+              projectInfo
+                ? { id: projectInfo.projectId, name: projectInfo.projectName }
+                : null,
+            );
+          }}
+        />
+      </Suspense>
+    </BAIFlex>
+  );
+
+  return (
+    <ImageListInScope
+      scopeId={scopeId}
+      projectSelect={projectSelect}
+      style={style}
+    />
+  );
+};
+
+interface ImageListInScopeProps {
+  /** `project:<id>` when the filter is active, `domain:<name>` otherwise. */
+  scopeId: string;
+  /** The project filter control, rendered inside the filter row. */
+  projectSelect: React.ReactNode;
+  style?: React.CSSProperties;
+}
+
+const ImageListInScope: React.FC<ImageListInScopeProps> = ({
+  scopeId,
+  projectSelect,
+  style,
+}) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -65,8 +192,15 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
-  const [isPendingFilterTransition, startFilterTransition] = useTransition();
-  const currentProject = useCurrentProjectValue();
+
+  // Selected rows belong to one scope. Reset during render rather than
+  // remounting on a `key`, which would discard the deferred scope transition
+  // below (it renders the previous list while the new scope loads).
+  const [selectedRowsScopeId, setSelectedRowsScopeId] = useState(scopeId);
+  if (selectedRowsScopeId !== scopeId) {
+    setSelectedRowsScopeId(scopeId);
+    setSelectedRows([]);
+  }
 
   const {
     baiPaginationOption,
@@ -77,12 +211,19 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     pageSize: 20,
   });
 
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      order: parseAsStringLiteral(availableImageSorterValues),
+    },
+    { history: 'replace' },
+  );
+
   const queryVariables: ImageListQuery$variables = {
-    scopeId: `project:${currentProject.id}`,
+    scopeId,
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
     filter: imageFilter || undefined,
-    order: undefined,
+    order: queryParams.order || undefined,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -152,67 +293,76 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
     image_nodes?.edges?.map((edge) => edge?.node) ?? [],
   );
 
-  const columns: Array<ColumnType<EnvironmentImage>> = filterOutEmpty([
+  const columns: Array<BAIColumnType<EnvironmentImage>> = filterOutEmpty([
     {
       title: t('environment.Status'),
       dataIndex: 'installed',
       key: 'installed',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => {
-        return _.toNumber(a?.installed || 0) - _.toNumber(b?.installed || 0);
-      },
+      // antd `Tag color="gold"` -> Astryx Badge via the repo-global Tag
+      // lookup (ticket 13 policy): gold -> yellow.
       render: (_text, row) =>
         row?.id && installingImages.includes(row.id) ? (
-          <Tag color="gold">{t('environment.Installing')}</Tag>
+          <Badge
+            variant={badgeVariantForTagColor('gold')}
+            label={t('environment.Installing')}
+          />
         ) : row?.installed ? (
-          <Tag color="gold">{t('environment.Installed')}</Tag>
+          <Badge
+            variant={badgeVariantForTagColor('gold')}
+            label={t('environment.Installed')}
+          />
         ) : null,
     },
     {
       title: t('environment.FullImagePath'),
       key: 'fullImagePath',
-      render: (row) => (
-        <Typography.Text
-          copyable={{
-            text: getImageFullName(row) || '',
-          }}
-        >
+      // The record arrives as `render`'s SECOND argument — this column is
+      // computed and has no `dataIndex`, so the first argument (the cell
+      // value) is `undefined`. Reading the row off the first argument is an
+      // rc-table quirk that `BAITable` does not reproduce; taking it
+      // from the second is the Astryx/antd `(value, record, index)` contract.
+      render: (_value, row) => (
+        // `maxLines={1}` for the same reason as the Digest column below:
+        // Astryx's table cell is `white-space: nowrap; overflow: hidden`, so an
+        // untruncated path is CLIPPED rather than wrapped as it was under antd.
+        // One line plus Astryx's built-in truncation tooltip keeps the whole
+        // value reachable and keeps the copy control inside the cell.
+        <BAIText copyable ellipsis={{ tooltip: true }}>
           {getImageFullName(row) || ''}
-        </Typography.Text>
+        </BAIText>
       ),
-      sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
+      // Computed (`getImageFullName`) — not orderable on the server.
       width: token.screenXS,
     },
     {
       title: t('environment.Registry'),
       dataIndex: 'registry',
       key: 'registry',
-      sorter: (a, b) => localeCompare(a?.registry, b?.registry),
+      sorter: isEnableSorter('registry'),
     },
     {
       title: t('environment.Architecture'),
       dataIndex: 'architecture',
       key: 'architecture',
-      sorter: (a, b) => localeCompare(a?.architecture, b?.architecture),
+      sorter: isEnableSorter('architecture'),
     },
     {
       title: t('environment.Namespace'),
       key: 'namespace',
       dataIndex: 'namespace',
-      sorter: (a, b) => localeCompare(a?.namespace, b?.namespace),
+      sorter: isEnableSorter('namespace'),
     },
     {
       title: t('environment.BaseImageName'),
       key: 'base_image_name',
       dataIndex: 'base_image_name',
-      sorter: (a, b) => localeCompare(a?.base_image_name, b?.base_image_name),
+      sorter: isEnableSorter('base_image_name'),
       render: (text) => tagAlias(text),
     },
     {
       title: t('environment.Version'),
       key: 'version',
       dataIndex: 'version',
-      sorter: (a, b) => localeCompare(a?.version, b?.version),
     },
     {
       title: t('environment.Tags'),
@@ -226,11 +376,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
       title: t('environment.Digest'),
       dataIndex: 'digest',
       key: 'digest',
-      sorter: (a, b) => localeCompare(a?.digest || '', b?.digest || ''),
       render: (_text, row) => (
-        <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
-          {row.digest}
-        </Typography.Text>
+        // antd `Text ellipsis={{tooltip}} maxWidth 200` -> Astryx Text
+        // maxLines (truncate tooltip built in); width lives on the BAIFlex
+        // wrapper because Astryx Text has no style/width prop.
+        <BAIFlex style={{ maxWidth: 200 }} align="stretch">
+          <Text maxLines={1}>{row.digest ?? ''}</Text>
+        </BAIFlex>
       ),
     },
     {
@@ -266,26 +418,35 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             e.stopPropagation();
           }}
         >
-          <Button
-            type="text"
-            icon={
-              <SettingOutlined
-                style={{
-                  color: token.colorInfo,
-                }}
-              />
-            }
+          {/* PILOT-DECISION: antd text Buttons with token.colorInfo-tinted
+              icons -> Astryx ghost IconButtons. IconButton's variant enum is
+              closed, so the info-blue icon tint is dropped (P5/P11);
+              accessible labels reuse the modal titles they open (P8).
+              QA-FINDINGS Q-37 — SUPERSEDED for the colour half. The report
+              "/admin/environment 페이지의 control 버튼 색상이 default 입니다"
+              is precisely this drop: measured rgb(20,20,20) light /
+              rgb(255,255,255) dark against antd's `colorInfo` #028DF2/#0387BF.
+              The closed enum still has no colour slot, but `className` does:
+              `--color-text-accent` on this route resolves through
+              `AstryxAdminTheme` to #028DF2/#0387bf, i.e. `colorInfo` exactly,
+              so the class restores the tint without a per-route read. The
+              `type="text"` hover wash (`colorBgTextHover` rgba(0,0,0,0.06)) is
+              already what Astryx's ghost `:hover` paints, so it is untouched.
+              See `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
+          <IconButton
+            className="bai-action-accent"
+            variant="ghost"
+            icon={<SquarePenIcon />}
+            label={t('environment.ModifyMinimumImageResourceLimit')}
+            tooltip={t('environment.ModifyMinimumImageResourceLimit')}
             onClick={() => setManagingResourceLimit(row)}
           />
-          <Button
-            type="text"
-            icon={
-              <AppstoreOutlined
-                style={{
-                  color: token.colorInfo,
-                }}
-              />
-            }
+          <IconButton
+            className="bai-action-accent"
+            variant="ghost"
+            icon={<LayoutGrid size="1em" />}
+            label={t('environment.ManageApps')}
+            tooltip={t('environment.ManageApps')}
             onClick={() => {
               setManagingApp(row);
             }}
@@ -309,93 +470,94 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         }}
         gap="sm"
       >
-        <BAIFlex justify="between">
-          <BAIPropertyFilter
-            filterProperties={filterOutEmpty([
-              {
-                key: 'id',
-                propertyLabel: t('environment.ID'),
-                type: 'string',
-                defaultOperator: '==',
-              },
-              {
-                key: 'image',
-                propertyLabel: t('environment.Image'),
-                type: 'string',
-              },
-              {
-                key: 'name',
-                propertyLabel: t('environment.Name'),
-                type: 'string',
-              },
-              {
-                key: 'registry',
-                propertyLabel: t('environment.Registry'),
-                type: 'string',
-              },
-              {
-                key: 'architecture',
-                propertyLabel: t('environment.Architecture'),
-                type: 'string',
-                strictSelection: true,
-                defaultOperator: '==',
-                options: [
-                  { label: 'x86_64', value: 'x86_64' },
-                  { label: 'aarch64', value: 'aarch64' },
-                ],
-              },
-              {
-                key: 'namespace',
-                propertyLabel: t('environment.Namespace'),
-                type: 'string',
-              },
-              {
-                key: 'base_image_name',
-                propertyLabel: t('environment.BaseImageName'),
-                type: 'string',
-              },
-              {
-                key: 'tag',
-                propertyLabel: t('environment.Tags'),
-                type: 'string',
-              },
-              {
-                key: 'status',
-                propertyLabel: t('environment.Status'),
-                type: 'string',
-                strictSelection: true,
-                defaultOperator: '==',
-                options: [
-                  { label: 'ALIVE', value: 'ALIVE' },
-                  { label: 'DELETED', value: 'DELETED' },
-                ],
-              },
-              {
-                key: 'type',
-                propertyLabel: t('data.Type'),
-                type: 'string',
-                strictSelection: true,
-                defaultOperator: '==',
-                options: [
-                  { label: 'COMPUTE', value: 'COMPUTE' },
-                  { label: 'SERVICE', value: 'SERVICE' },
-                  { label: 'SYSTEM', value: 'SYSTEM' },
-                ],
-              },
-              {
-                key: 'is_local',
-                propertyLabel: t('environment.Local'),
-                type: 'boolean',
-              },
-            ])}
-            value={imageFilter || undefined}
-            onChange={(value) => {
-              startFilterTransition(() => {
+        <BAIFlex justify="between" gap="xs" wrap="wrap">
+          <BAIFlex gap="xs" align="center" wrap="wrap">
+            {projectSelect}
+            <BAIPropertyFilter
+              filterProperties={filterOutEmpty([
+                {
+                  key: 'id',
+                  propertyLabel: t('environment.ID'),
+                  type: 'string',
+                  defaultOperator: '==',
+                },
+                {
+                  key: 'image',
+                  propertyLabel: t('environment.Image'),
+                  type: 'string',
+                },
+                {
+                  key: 'name',
+                  propertyLabel: t('environment.Name'),
+                  type: 'string',
+                },
+                {
+                  key: 'registry',
+                  propertyLabel: t('environment.Registry'),
+                  type: 'string',
+                },
+                {
+                  key: 'architecture',
+                  propertyLabel: t('environment.Architecture'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    { label: 'x86_64', value: 'x86_64' },
+                    { label: 'aarch64', value: 'aarch64' },
+                  ],
+                },
+                {
+                  key: 'namespace',
+                  propertyLabel: t('environment.Namespace'),
+                  type: 'string',
+                },
+                {
+                  key: 'base_image_name',
+                  propertyLabel: t('environment.BaseImageName'),
+                  type: 'string',
+                },
+                {
+                  key: 'tag',
+                  propertyLabel: t('environment.Tags'),
+                  type: 'string',
+                },
+                {
+                  key: 'status',
+                  propertyLabel: t('environment.Status'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    { label: 'ALIVE', value: 'ALIVE' },
+                    { label: 'DELETED', value: 'DELETED' },
+                  ],
+                },
+                {
+                  key: 'type',
+                  propertyLabel: t('data.Type'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    { label: 'COMPUTE', value: 'COMPUTE' },
+                    { label: 'SERVICE', value: 'SERVICE' },
+                    { label: 'SYSTEM', value: 'SYSTEM' },
+                  ],
+                },
+                {
+                  key: 'is_local',
+                  propertyLabel: t('environment.Local'),
+                  type: 'boolean',
+                },
+              ])}
+              value={imageFilter || undefined}
+              onChange={(value) => {
                 setImageFilter(value || '');
                 setTablePaginationOption({ current: 1 });
-              });
-            }}
-          />
+              }}
+            />
+          </BAIFlex>
           <BAIFlex gap={'xs'}>
             {selectedRows.length > 0 ? (
               <BAISelectionLabel
@@ -403,20 +565,24 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                 onClearSelection={() => setSelectedRows([])}
               />
             ) : null}
-            <Tooltip title={t('button.Refresh')}>
-              <Button
-                icon={<ReloadOutlined />}
-                loading={isPendingRefreshTransition}
-                onClick={() => {
-                  setSelectedRows([]);
-                  startRefreshTransition(() => updateFetchKey());
-                }}
-              />
-            </Tooltip>
-
+            <IconButton
+              label={t('button.Refresh')}
+              tooltip={t('button.Refresh')}
+              icon={<RotateCw size="1em" />}
+              isLoading={isPendingRefreshTransition}
+              onClick={() => {
+                setSelectedRows([]);
+                startRefreshTransition(() => updateFetchKey());
+              }}
+            />
+            {/* PILOT-DECISION: the hand-painted primary button
+                (style backgroundColor token.colorPrimary) becomes Astryx
+                `Button variant="primary"` — the brand accent comes from the
+                theme layer, not an inline style (P5). */}
             <Button
-              icon={<VerticalAlignBottomOutlined />}
-              style={{ backgroundColor: token.colorPrimary, color: 'white' }}
+              variant="primary"
+              icon={<ArrowDownToLine size="1em" />}
+              label={t('environment.InstallImage')}
               onClick={() => {
                 if (selectedRows.length === 0) {
                   message.error(t('environment.NoImagesAreSelected'));
@@ -428,15 +594,13 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
                 }
                 message.error(t('environment.AlreadyInstalledImage'));
               }}
-            >
-              {t('environment.Install')}
-            </Button>
+            />
           </BAIFlex>
         </BAIFlex>
         <BAITable
+          scroll={{ x: 'max-content' }}
           resizable
           rowKey="id"
-          scroll={{ x: 'max-content' }}
           pagination={{
             total: image_nodes?.count ?? undefined,
             ...tablePaginationOption,
@@ -444,9 +608,10 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               setTablePaginationOption({ current: page, pageSize });
             },
             extraContent: (
-              <Button
-                type="text"
-                icon={<SettingOutlined />}
+              <IconButton
+                variant="ghost"
+                icon={<Settings size="1em" />}
+                label={t('table.SettingTable')}
                 onClick={() => {
                   toggleColumnSettingModal();
                 }}
@@ -458,7 +623,18 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
             columns,
             (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
           )}
-          loading={isPendingFilterTransition}
+          loading={
+            deferredFetchKey !== fetchKey ||
+            deferredQueryVariables !== queryVariables
+          }
+          order={queryParams.order}
+          onChangeOrder={(order) => {
+            setQueryParams({
+              order: order as
+                (typeof availableImageSorterValues)[number] | null,
+            });
+            setTablePaginationOption({ current: 1 });
+          }}
           rowSelection={{
             type: 'checkbox',
             onChange: (_, selectedRows) => {
@@ -478,7 +654,6 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
               }
             },
           })}
-          showSorterTooltip={false}
         />
       </BAIFlex>
       <ManageImageResourceLimitModal
@@ -503,14 +678,23 @@ const ImageList: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
         }}
         imageFrgmt={managingApp}
       />
-      <ImageInstallModal
-        open={isOpenInstallModal}
-        onRequestClose={() => {
-          setIsOpenInstallModal(false);
-        }}
-        setInstallingImages={setInstallingImages}
-        selectedRows={selectedRows}
-      />
+      {/* No project is handed down: installing an image enqueues a session,
+          and the modal asks for that session's own project and resource group.
+          The list's project filter only decides which images are on screen.
+          Wrapped in `BAIUnmountAfterClose` so the modal keeps its exit
+          animation instead of vanishing instantly, while still fully
+          unmounting between opens - which is what resets the project /
+          resource-group selectors on every fresh open. */}
+      <BAIUnmountAfterClose>
+        <ImageInstallModal
+          open={isOpenInstallModal}
+          onRequestClose={() => {
+            setIsOpenInstallModal(false);
+          }}
+          setInstallingImages={setInstallingImages}
+          selectedRows={selectedRows}
+        />
+      </BAIUnmountAfterClose>
       <TableColumnsSettingModal
         open={visibleColumnSettingModal}
         onRequestClose={(values) => {

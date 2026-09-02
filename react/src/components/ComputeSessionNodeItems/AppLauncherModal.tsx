@@ -3,12 +3,22 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
+import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   ServicePort,
   TemplateItem,
   useSuspendedFilteredAppTemplate,
-} from '../../hooks/useSuspendedFilteredAppTemplate';
+} from '../../hooks/useAppTemplate';
+import {
+  TCP_APPS,
+  useBackendAIAppLauncher,
+} from '../../hooks/useBackendAIAppLauncher';
+import {
+  AstryxFormNumberInput,
+  AstryxFormTagsInput,
+} from '../astryxFormControls';
 import AppLaunchConfirmationModal from './AppLaunchConfirmationModal';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TCPConnectionInfoModal from './TCPConnectionInfoModal';
@@ -16,43 +26,49 @@ import TensorboardPathModal from './TensorboardPathModal';
 import VNCConnectionInfoModal from './VNCConnectionInfoModal';
 import VSCodeDesktopConnectionModal from './VSCodeDesktopConnectionModal';
 import XRDPConnectionInfoModal from './XRDPConnectionInfoModal';
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Heading } from '@astryxdesign/core/Heading';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
+import * as stylex from '@stylexjs/stylex';
+// FRONTIER (ticket 17): the Form ENGINE is self-hosted since ticket 34 (live
+// again since ticket 35). The CONTROLS inside the items are Astryx now — the
+// `astryxFormControls` adapters where a `Form.Item` injects `value`/`onChange`,
+// raw Astryx components where it does not.
 import {
-  App,
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  FormInstance,
-  Image,
-  Input,
-  InputNumber,
-  ModalProps,
-  Row,
-  Typography,
-} from 'antd';
-import {
-  BAIButton,
   BAIFlex,
   BAIModal,
-  BAISelect,
-  BAIText,
+  type BAIModalProps,
   BAIUnmountAfterClose,
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  TCP_APPS,
-  useBackendAIAppLauncher,
-} from 'src/hooks/useBackendAIAppLauncher';
 
-interface AppLauncherModalProps extends ModalProps {
+// PILOT-DECISION: antd `ModalProps` -> BUI `BAIModalProps` (§6 — a type-only
+// antd import is still an antd import). The render was already `BAIModal`, so
+// this only removes the mismatch between the declared and the actual surface.
+interface AppLauncherModalProps extends BAIModalProps {
   onRequestClose: () => void;
   sessionFrgmt: AppLauncherModalFragment$key | null;
 }
+
+const styles = stylex.create({
+  modalTitle: {
+    maxWidth: 375,
+  },
+  // 72px app tile with a 36px logo — off the IconButton size enum, kept as an
+  // explicit layout override (antd BAIButton style height/width 72).
+  appTile: {
+    height: 72,
+    width: 72,
+  },
+});
 
 const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   onRequestClose,
@@ -110,6 +126,10 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       const values = await formRef.current?.validateFields().catch(() => {
         return;
       });
+      const allowedClientIps = openToPublic ? values?.clientIps : undefined;
+      const preferredPort = tryPreferredPort
+        ? values?.preferredPort
+        : undefined;
 
       // Handle special apps that require confirmation before launching (nniboard, mlflow-ui)
       // These apps need to run before tunneling, so show confirmation dialog first
@@ -117,6 +137,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
         setConfirmationModalState({
           open: true,
           appName: app?.name ?? '',
+          port: preferredPort,
+          openToPublic,
+          allowedClientIps,
         });
         return;
       }
@@ -124,7 +147,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       // Tensorboard - show path input modal BEFORE starting proxy
       // This matches legacy behavior where modal is shown first, then proxy starts after path submission
       if (app.name === 'tensorboard') {
-        setOpenTensorboardModal(true);
+        setTensorboardModalState({
+          open: true,
+          port: preferredPort,
+          openToPublic,
+          allowedClientIps,
+        });
         return;
       }
 
@@ -132,9 +160,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       // Errors are handled by the notification system in launchApp
       await launchAppWithNotification({
         app: app?.name ?? '',
-        port: tryPreferredPort ? values?.preferredPort : undefined,
-        openToPublic: openToPublic,
-        allowedClientIps: openToPublic ? values?.clientIps : undefined,
+        port: preferredPort,
+        openToPublic,
+        allowedClientIps,
         onPrepared(workerInfo) {
           // SFTP (SSH) connection
           if (app.name === 'sshd') {
@@ -180,7 +208,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
           // because tensorboard should be handled before launchAppWithNotification
           if (app.name === 'tensorboard') {
             logger.warn('Tensorboard reached onPrepared callback unexpectedly');
-            setOpenTensorboardModal(true);
+            setTensorboardModalState({
+              open: true,
+              port: preferredPort,
+              openToPublic,
+              allowedClientIps,
+            });
             return;
           }
 
@@ -234,14 +267,27 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
     host: '127.0.0.1',
     port: 0,
   });
-  const [openTensorboardModal, setOpenTensorboardModal] = useState(false);
+  const [tensorboardModalState, setTensorboardModalState] = useState<{
+    open: boolean;
+    port?: number;
+    openToPublic?: boolean;
+    allowedClientIps?: Array<string>;
+  }>({
+    open: false,
+  });
   const [tcpModalState, setTcpModalState] = useState({
     open: false,
     appName: '',
     host: '127.0.0.1',
     port: 0,
   });
-  const [confirmationModalState, setConfirmationModalState] = useState({
+  const [confirmationModalState, setConfirmationModalState] = useState<{
+    open: boolean;
+    appName: string;
+    port?: number;
+    openToPublic?: boolean;
+    allowedClientIps?: Array<string>;
+  }>({
     open: false,
     appName: '',
   });
@@ -251,15 +297,9 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
       <BAIModal
         data-testid="app-launcher-modal"
         title={
-          <BAIText
-            ellipsis
-            title={session?.name ?? ''}
-            style={{
-              maxWidth: 375,
-            }}
-          >
+          <Text maxLines={1} xstyle={styles.modalTitle}>
             {`${t('session.appLauncher.App')}: ${session?.name ?? ''}`}
-          </BAIText>
+          </Text>
         }
         width={450}
         onCancel={onRequestClose}
@@ -271,96 +311,120 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
           {_.map(baseAppTemplate, (apps, category) => {
             return (
               <div key={category}>
-                <Typography.Title
+                <Heading
                   level={5}
-                  style={{ marginTop: 0 }}
                   data-testid={`category-${category.split('.')[1]}`}
                 >
                   {category.split('.')[1]}
-                </Typography.Title>
-                <Row gutter={[24, 24]}>
+                </Heading>
+                {/* antd `Row gutter={[24,24]}` + `Col span={6}` (fixed 4-up,
+                    R2 — not responsive) -> Astryx Grid columns={4}. */}
+                <Grid columns={4} gap={6}>
                   {_.map(apps, (app) => {
                     return (
-                      <Col
+                      <BAIFlex
                         key={app?.name}
                         data-testid={`app-${app?.name}`}
-                        span={6}
-                        style={{ alignContent: 'center' }}
+                        direction="column"
+                        gap={'xs'}
+                        style={{ height: '100%' }}
                       >
-                        <BAIFlex
-                          direction="column"
-                          gap={'xs'}
-                          style={{ height: '100%' }}
-                        >
-                          <BAIButton
-                            icon={
-                              <Image
-                                src={app?.src}
-                                alt={app?.name}
-                                preview={false}
-                                style={{ height: 36, width: 36 }}
-                              />
-                            }
-                            action={async () => {
-                              await handleAppLaunch(app);
-                              setOpenToPublic(false);
-                              setTryPreferredPort(false);
-                            }}
-                            style={{ height: 72, width: 72 }}
-                          />
-                          <Typography.Text style={{ textAlign: 'center' }}>
-                            {app?.title}
-                          </Typography.Text>
-                        </BAIFlex>
-                      </Col>
+                        {/* QA-FINDINGS Q-33 — every one of these four
+                            declarations is load-bearing; the icon was
+                            rendering 16x36 from a 1:1 source (a 2.25x
+                            horizontal squash) because TWO independent
+                            constraints each pin the width to 16px:
+
+                            1. `@astryxdesign/core/reset.css` declares
+                               `:where(img, video) { max-width: 100%; height:
+                               auto }`. Astryx's `Button` puts the icon in a
+                               fixed 16x16 `iconWrapper` span, so "100% of the
+                               container" IS 16px. `max-width` beats `width`
+                               whatever the specificity, so the inline
+                               `width: 36` never had a chance — `maxWidth:
+                               'none'` is the only way out. (The `height: 36`
+                               did survive, which is exactly why the box came
+                               out 16 WIDE and 36 TALL rather than 16x16.)
+                            2. that same 16px wrapper is a flex container and
+                               the `<img>` is a flex item at the default
+                               `flex-shrink: 1`, so even with the cap lifted it
+                               would shrink to the slot on the main axis while
+                               the cross-axis height stayed 36.
+
+                            `objectFit: 'contain'` then makes the source's own
+                            ratio the one that wins if the slot is ever resized
+                            again. Legacy drew 36x36 inside a 72x72 button; the
+                            72x72 button survived the migration, only the icon
+                            did not. */}
+                        <IconButton
+                          icon={
+                            <img
+                              src={app?.src}
+                              alt={app?.name}
+                              style={{
+                                height: 36,
+                                width: 36,
+                                maxWidth: 'none',
+                                flexShrink: 0,
+                                objectFit: 'contain',
+                              }}
+                            />
+                          }
+                          label={app?.title ?? app?.name ?? ''}
+                          clickAction={() => handleAppLaunch(app)}
+                          xstyle={styles.appTile}
+                        />
+                        <Text justify="center">{app?.title}</Text>
+                      </BAIFlex>
                     );
                   })}
-                </Row>
+                </Grid>
               </div>
             );
           })}
           {preOpenAppTemplate.length > 0 ? (
             <>
-              <Typography.Title level={5} style={{ marginTop: 0 }}>
+              <Heading level={5}>
                 {t('session.launcher.PreOpenPortTitle')}
-              </Typography.Title>
-              <Row gutter={[12, 12]}>
+              </Heading>
+              <Grid columns={4} gap={3}>
                 {_.map(preOpenAppTemplate, (app) => {
                   return (
-                    <Col
+                    <BAIFlex
                       key={app?.name}
-                      span={6}
-                      style={{ alignContent: 'center' }}
+                      direction="column"
+                      gap={'xs'}
+                      style={{ height: '100%' }}
                     >
-                      <BAIFlex
-                        direction="column"
-                        gap={'xs'}
-                        style={{ height: '100%' }}
-                      >
-                        <Button
-                          icon={
-                            <Image
-                              src={app?.src}
-                              alt={app?.name}
-                              preview={false}
-                              style={{ height: 36, width: 36 }}
-                            />
-                          }
-                          onClick={() => {
-                            handleAppLaunch(app);
-                          }}
-                          style={{ height: 72, width: 72 }}
-                        />
-                        <Typography.Text style={{ textAlign: 'center' }}>
-                          {app?.title}
-                          {app?.ports?.length > 0 &&
-                            ` (${app.ports.join(', ')})`}
-                        </Typography.Text>
-                      </BAIFlex>
-                    </Col>
+                      {/* QA-FINDINGS Q-33 — same reset `max-width` + icon-slot
+                          shrink as the template grid above; see the comment
+                          there for the mechanism. */}
+                      <IconButton
+                        icon={
+                          <img
+                            src={app?.src}
+                            alt={app?.name}
+                            style={{
+                              height: 36,
+                              width: 36,
+                              maxWidth: 'none',
+                              flexShrink: 0,
+                              objectFit: 'contain',
+                            }}
+                          />
+                        }
+                        label={app?.title ?? app?.name ?? ''}
+                        clickAction={() => handleAppLaunch(app)}
+                        xstyle={styles.appTile}
+                      />
+                      <Text justify="center">
+                        {app?.title}
+                        {app?.ports?.length > 0 && ` (${app.ports.join(', ')})`}
+                      </Text>
+                    </BAIFlex>
                   );
                 })}
-              </Row>
+              </Grid>
             </>
           ) : null}
           <Form ref={formRef} layout="vertical" requiredMark={false}>
@@ -371,22 +435,17 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 tooltip={<Trans i18nKey="session.OpenToPublicDesc" />}
                 label={
                   <BAIFlex gap={'xs'}>
-                    <Checkbox
+                    <CheckboxInput
+                      label={t('session.OpenToPublic')}
                       value={openToPublic}
-                      onChange={(value) =>
-                        setOpenToPublic(value.target.checked)
-                      }
-                    >
-                      {t('session.OpenToPublic')}
-                    </Checkbox>
+                      onChange={(checked) => setOpenToPublic(checked)}
+                    />
                   </BAIFlex>
                 }
               >
-                <BAISelect
-                  mode="tags"
-                  suffixIcon={null}
-                  open={false}
+                <AstryxFormTagsInput
                   tokenSeparators={[',', ' ']}
+                  label={t('session.OpenToPublic')}
                   disabled={!openToPublic}
                   placeholder={t('session.AllowedMultipleClientsIps')}
                 />
@@ -397,14 +456,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                 name={'preferredPort'}
                 label={
                   <BAIFlex gap={'xs'}>
-                    <Checkbox
+                    <CheckboxInput
+                      label={t('session.TryPreferredPort')}
                       value={tryPreferredPort}
-                      onChange={(value) =>
-                        setTryPreferredPort(value.target.checked)
-                      }
-                    >
-                      {t('session.TryPreferredPort')}
-                    </Checkbox>
+                      onChange={(checked) => setTryPreferredPort(checked)}
+                    />
                   </BAIFlex>
                 }
                 rules={[
@@ -418,10 +474,10 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                   },
                 ]}
               >
-                <InputNumber
+                <AstryxFormNumberInput
+                  label={t('session.TryPreferredPort')}
                   placeholder="10250"
                   disabled={!tryPreferredPort}
-                  style={{ width: '100%' }}
                 />
               </Form.Item>
             ) : null}
@@ -430,45 +486,43 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
             {globalThis?.backendaiwebui?.debug ? (
               <>
                 <Form.Item
-                  name="subDomain"
                   label={
                     <BAIFlex gap={'xs'}>
-                      <Checkbox
+                      <CheckboxInput
+                        label={t('session.UseSubdomain')}
                         value={useSubDomain}
-                        onChange={(value) =>
-                          setUseSubDomain(value.target.checked)
-                        }
-                      >
-                        {t('session.UseSubdomain')}
-                      </Checkbox>
+                        onChange={(checked) => setUseSubDomain(checked)}
+                      />
                     </BAIFlex>
                   }
                 >
-                  <Input
-                    disabled={!useSubDomain}
+                  {/* Not a bound field (the `Form.Item` has no `name`), so
+                      the raw Astryx control is used rather than an adapter.
+                      `onChange` takes the VALUE, not the event (P3). */}
+                  <TextInput
+                    label={t('session.UseSubdomain')}
+                    isLabelHidden
+                    isDisabled={!useSubDomain}
                     value={subDomainValue}
-                    onChange={(e) => setSubDomainValue(e.target.value)}
+                    onChange={(next) => setSubDomainValue(next)}
+                    width="100%"
                   />
                 </Form.Item>
-                <Form.Item name={'forceUseV1Proxy'}>
-                  <Checkbox
-                    disabled={forceUseV2Proxy}
-                    onChange={(value) =>
-                      setForceUseV1Proxy(value.target.checked)
-                    }
-                  >
-                    {t('session.ForceUseV1Proxy')}
-                  </Checkbox>
+                <Form.Item>
+                  <CheckboxInput
+                    label={t('session.ForceUseV1Proxy')}
+                    value={forceUseV1Proxy}
+                    isDisabled={forceUseV2Proxy}
+                    onChange={(checked) => setForceUseV1Proxy(checked)}
+                  />
                 </Form.Item>
-                <Form.Item name={'forceUseV2Proxy'}>
-                  <Checkbox
-                    disabled={forceUseV1Proxy}
-                    onChange={(value) =>
-                      setForceUseV2Proxy(value.target.checked)
-                    }
-                  >
-                    {t('session.ForceUseV2Proxy')}
-                  </Checkbox>
+                <Form.Item>
+                  <CheckboxInput
+                    label={t('session.ForceUseV2Proxy')}
+                    value={forceUseV2Proxy}
+                    isDisabled={forceUseV1Proxy}
+                    onChange={(checked) => setForceUseV2Proxy(checked)}
+                  />
                 </Form.Item>
               </>
             ) : null}
@@ -528,12 +582,15 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
           <BAIUnmountAfterClose>
             <TensorboardPathModal
               sessionFrgmt={session}
-              open={openTensorboardModal}
+              open={tensorboardModalState.open}
+              port={tensorboardModalState.port}
+              openToPublic={tensorboardModalState.openToPublic}
+              allowedClientIps={tensorboardModalState.allowedClientIps}
               onRequestClose={() => {
-                setOpenTensorboardModal(false);
+                setTensorboardModalState((prev) => ({ ...prev, open: false }));
               }}
               onCancel={() => {
-                setOpenTensorboardModal(false);
+                setTensorboardModalState((prev) => ({ ...prev, open: false }));
               }}
             />
           </BAIUnmountAfterClose>
@@ -558,17 +615,14 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
               sessionFrgmt={session}
               open={confirmationModalState.open}
               appName={confirmationModalState.appName}
+              port={confirmationModalState.port}
+              openToPublic={confirmationModalState.openToPublic}
+              allowedClientIps={confirmationModalState.allowedClientIps}
               onRequestClose={() => {
-                setConfirmationModalState({
-                  open: false,
-                  appName: '',
-                });
+                setConfirmationModalState((prev) => ({ ...prev, open: false }));
               }}
               onCancel={() => {
-                setConfirmationModalState({
-                  open: false,
-                  appName: '',
-                });
+                setConfirmationModalState((prev) => ({ ...prev, open: false }));
               }}
             />
           </BAIUnmountAfterClose>

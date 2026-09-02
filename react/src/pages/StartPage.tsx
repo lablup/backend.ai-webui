@@ -2,17 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AstryxSecondaryTheme } from '../astryx-theme';
 import ActionItemContent from '../components/ActionItemContent';
-import AnnouncementAlert from '../components/AnnouncementAlert';
 import BAIBoard, { BAIBoardItem } from '../components/BAIBoard';
-import FolderCreateModal from '../components/FolderCreateModal';
+import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import StartFromURLModal from '../components/StartFromURLModal';
-import ThemeSecondaryProvider from '../components/ThemeSecondaryProvider';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
+import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
+import { MenuKeys } from '../hooks/useWebUIMenuItems';
+import { theme } from '../theme-shim';
+import { toProjectContext } from '../types/projectContext';
 import { SessionLauncherFormValue } from './SessionLauncherPage';
-import { AppstoreAddOutlined } from '@ant-design/icons';
 import {
   filterOutEmpty,
   BAIFlex,
@@ -23,18 +27,12 @@ import {
   BAINewFolderIcon,
   BAIAlert,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Grid2x2Plus } from 'lucide-react';
+import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
 import { useEffect, useState, useMemo, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { useVFolderInvitations } from 'src/hooks/useVFolderInvitations';
-import { MenuKeys } from 'src/hooks/useWebUIMenuItems';
-import {
-  useQueryParams,
-  withDefault,
-  StringParam,
-  JsonParam,
-} from 'use-query-params';
 
 interface StartPageBoardItem extends BAIBoardItem {
   requiredMenuKey: MenuKeys;
@@ -43,12 +41,15 @@ interface StartPageBoardItem extends BAIBoardItem {
 const StartPage: React.FC = () => {
   const { t } = useTranslation();
 
+  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const currentProject = useCurrentProjectValue();
   const blockList = baiClient?._config?.blockList ?? [];
   const inactiveList = baiClient?._config?.inactiveList ?? [];
   const enableModelFolders = baiClient?._config?.enableModelFolders ?? false;
 
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false);
   const [isOpenStartURLModal, setIsOpenStartURLModal] =
     useState<boolean>(false);
@@ -57,7 +58,7 @@ const StartPage: React.FC = () => {
 
   // State for modal initial data
   const [startModalInitialProps, setStartModalInitialProps] = useState<{
-    initialTab?: 'notebook' | 'github' | 'gitlab';
+    initialTab?: 'notebook' | 'github' | 'gitlab' | 'huggingface';
     initialData?: { url?: string; branch?: string };
   }>();
 
@@ -65,10 +66,15 @@ const StartPage: React.FC = () => {
   const [vFolderInvitations] = useVFolderInvitations();
 
   // Parse query parameters
-  const [queryParams, setQueryParams] = useQueryParams({
-    type: withDefault(StringParam, undefined),
-    data: withDefault(JsonParam, undefined),
-  });
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      type: parseAsString,
+      data: parseAsJson<{ url?: string; branch?: string }>(
+        (value) => value as { url?: string; branch?: string },
+      ),
+    },
+    { history: 'replace' },
+  );
 
   // Handle legacy GitHub URL format (for backward compatibility)
   const legacyGithubPath = useMemo(() => {
@@ -84,6 +90,8 @@ const StartPage: React.FC = () => {
       return pathAfterGithub;
     }
     return null;
+    // `location` is from react-router useLocation() — pathname/search are reactive across navigations.
+    // react-doctor-disable-next-line react-doctor/no-mutable-in-deps
   }, [location.search, queryParams.type]);
 
   const badgeEventHandler = useEffectEvent(() => {
@@ -96,8 +104,8 @@ const StartPage: React.FC = () => {
       setIsOpenStartURLModal(true);
 
       setQueryParams({
-        type: undefined,
-        data: undefined,
+        type: null,
+        data: null,
       });
     } else if (legacyGithubPath) {
       // Handle legacy format: /github?owner/repo/path/notebook.ipynb (via redirect)
@@ -109,19 +117,18 @@ const StartPage: React.FC = () => {
       });
       setIsOpenStartURLModal(true);
 
-      // clear legacy query parameter
-      setQueryParams(
-        {
-          type: undefined,
-          data: undefined,
-        },
-        // clear legacy query parameter
-        'replace',
+      // Clear the entire query string: the legacy `?owner/repo/...` entry is
+      // an unmanaged bare key, so clearing type/data alone would leave it in
+      // the URL and reopen the modal on reload (legacy 'replace' cleared all).
+      webuiNavigate(
+        { pathname: location.pathname, search: '' },
+        { replace: true },
       );
     }
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- mount-only URL-param handling; must run as an effect
     badgeEventHandler();
   }, []);
 
@@ -174,7 +181,7 @@ const StartPage: React.FC = () => {
             description={t('start.StartSessionDesc')}
             buttonText={t('start.button.StartSession')}
             icon={<BAIInteractiveSessionIcon />}
-            onClick={() => webuiNavigate('/session/start')}
+            onClick={() => webuiNavigate(buildProjectPath('session/start'))}
           />
         ),
       },
@@ -199,7 +206,9 @@ const StartPage: React.FC = () => {
               const params = new URLSearchParams();
               params.set('step', '0');
               params.set('formValues', JSON.stringify(launcherValue));
-              webuiNavigate(`/session/start?${params.toString()}`);
+              webuiNavigate(
+                `${buildProjectPath('session/start')}?${params.toString()}`,
+              );
             }}
           />
         ),
@@ -208,20 +217,25 @@ const StartPage: React.FC = () => {
     enableModelFolders && {
       id: 'modelService',
       rowSpan: 3,
-      requiredMenuKey: 'serving',
+      requiredMenuKey: 'deployments',
       columnSpan: 1,
       columnOffset: { 6: 0, 4: 0 },
       data: {
+        // The deployment card takes the SECONDARY accent. `AstryxSecondaryTheme`
+        // reaches the Astryx `Button`; the title/icon read the app-level
+        // theme-shim token object instead (not per-subtree), so they need the
+        // accent passed explicitly via `themeColor`.
         content: (
-          <ThemeSecondaryProvider>
+          <AstryxSecondaryTheme>
             <ActionItemContent
-              title={t('start.ModelService')}
-              description={t('start.ModelServiceDesc')}
-              buttonText={t('start.button.ModelService')}
-              icon={<AppstoreAddOutlined />}
-              onClick={() => webuiNavigate('/service/start')}
+              title={t('start.StartDeployment')}
+              description={t('start.StartDeploymentDesc')}
+              buttonText={t('start.button.StartDeployment')}
+              icon={<Grid2x2Plus size="1em" />}
+              themeColor={token.colorSuccess}
+              onClick={() => webuiNavigate(buildProjectPath('deployments'))}
             />
-          </ThemeSecondaryProvider>
+          </AstryxSecondaryTheme>
         ),
       },
     },
@@ -278,7 +292,6 @@ const StartPage: React.FC = () => {
 
   return (
     <BAIFlex direction="column" gap={'md'} align="stretch">
-      <AnnouncementAlert showIcon closable />
       <BAIBoard
         movable
         items={boardItems}
@@ -294,12 +307,13 @@ const StartPage: React.FC = () => {
         <BAIAlert type="info" description={t('start.NoStartItems')} showIcon />
       )}
       <BAIUnmountAfterClose>
-        <FolderCreateModal
+        <FolderCreateModalV2
           open={isOpenCreateModal}
+          project={toProjectContext(currentProject)}
           onRequestClose={(response) => {
             setIsOpenCreateModal(false);
             if (response) {
-              webuiNavigate('/data');
+              webuiNavigate(buildProjectPath('data'));
             }
           }}
         />

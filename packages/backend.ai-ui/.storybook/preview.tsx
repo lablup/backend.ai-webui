@@ -1,5 +1,6 @@
 import { storybookDarkTheme, storybookLightTheme } from './BackendAITheme';
 import { DocsContainer } from './DocsContainer';
+import './astryx.css';
 import { withGlobalProvider } from './decorators';
 import { localeItems } from './localeConfig';
 import type { Preview } from '@storybook/react-vite';
@@ -33,13 +34,14 @@ const preview: Preview = {
       },
     },
     themeStyle: {
-      name: 'Theme Style',
-      description: 'Theme style preset',
+      name: 'Theme',
+      description:
+        'Astryx theme-neutral baseline vs. the Backend.AI brand theme',
       toolbar: {
         icon: 'paintbrush',
         items: [
-          { value: 'default', title: 'Default (Ant Design)' },
-          { value: 'webui', title: 'WebUI (Backend.AI)' },
+          { value: 'webui', title: 'Backend.AI (WebUI)' },
+          { value: 'astryx', title: 'Astryx (neutral)' },
         ],
         dynamicTitle: true,
       },
@@ -47,7 +49,9 @@ const preview: Preview = {
   },
   initialGlobals: {
     locale: 'en',
-    themeStyle: 'default',
+    // The app's theme is the default — the neutral baseline is the
+    // "does this component assume the brand?" check, not the norm.
+    themeStyle: 'webui',
   },
 };
 

@@ -31,10 +31,13 @@ export class SessionDetailPage extends BasePage {
   }
 
   async verifyPageLoaded(): Promise<void> {
-    // Verify session list table is visible
-    // The session page uses a table element, not vaadin-grid
-    const sessionTable = this.page.locator('table').first();
-    await this.waitForVisible(sessionTable, 10000);
+    // Wait for the session type tab list as a reliable page-ready indicator.
+    // The tab nav (All / Interactive / Batch / Inference / Upload Sessions) is
+    // always rendered, even when no sessions exist or the data API returns an
+    // error. `BAITabList` / Astryx `TabList` renders a `nav[aria-label="Tabs"]`
+    // of plain `<button>`s — `role="tablist"` is never emitted.
+    const tabNav = this.page.getByRole('navigation', { name: 'Tabs' });
+    await this.waitForVisible(tabNav, 10000);
   }
 
   /**

@@ -1,9 +1,9 @@
-import { BAILocale } from '.';
-import ko_KR from 'antd/es/locale/ko_KR';
+import type { BAILocale } from '.';
+import astryxLocale from './astryx/ko.json';
 
 const localeValue: BAILocale = {
   lang: 'ko',
-  antdLocale: ko_KR,
+  astryxLocale,
 };
 
 export default localeValue;

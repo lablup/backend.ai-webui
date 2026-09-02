@@ -8,6 +8,7 @@ import {
   CustomizedImageListQuery$data,
 } from '../__generated__/CustomizedImageListQuery.graphql';
 import { CustomizedImageListUntagMutation } from '../__generated__/CustomizedImageListUntagMutation.graphql';
+import { App } from '../app-shim';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { getImageFullName, localeCompare } from '../helper';
 import {
@@ -15,29 +16,27 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { theme } from '../theme-shim';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import {
-  DeleteOutlined,
-  ReloadOutlined,
-  SearchOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { Alert, App, Button, Input, theme, Typography } from 'antd';
-import { AnyObject } from 'antd/es/_util/type';
-import type { ColumnsType, ColumnType } from 'antd/es/table';
-import {
-  filterOutEmpty,
-  filterOutNullAndUndefined,
+  BAIDeleteConfirmModal,
   BAIFlex,
-  BAIModal,
   BAITable,
   BAIText,
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  type BAIColumnType,
+  type BAIColumnsType,
+  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Trash2, RotateCw, Search, Settings } from 'lucide-react';
 import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -60,6 +59,9 @@ const CustomizedImageList: React.FC = () => {
   const [customizedImageListFetchKey, updateCustomizedImageListFetchKey] =
     useUpdatableState('initial-fetch');
   const [imageSearch, setImageSearch] = useState('');
+  // Urgent mirror of the (transition-deferred) search keyword — a controlled
+  // Astryx TextInput cannot be fed transition state without losing keystrokes.
+  const [imageSearchInput, setImageSearchInput] = useState('');
   const [isPendingSearchTransition, startSearchTransition] = useTransition();
   const [imageToDelete, setImageToDelete] = useState<CommittedImage | null>(
     null,
@@ -124,23 +126,9 @@ const CustomizedImageList: React.FC = () => {
       }
     `);
 
-  // TODO: when BA-1905 resolved.
-  // const [commitPurgeImage, isInFlightPurgeImage] =
-  //   useMutation<CustomizedImageListPurgeMutation>(graphql`
-  //     mutation CustomizedImageListPurgeMutation($id: String!) {
-  //       purge_image_by_id(
-  //         image_id: $id
-  //         options: { remove_from_registry: true }
-  //       ) {
-  //         image {
-  //           id
-  //         }
-  //       }
-  //     }
-  //   `);
+  // BA-1905: purge_image_by_id not yet available
 
   // Sort images by humanized_name to prevent the image list from jumping around when the images are updated
-  // TODO: after `images` query  supports sort order, we should remove this line
   const defaultSortedImages = useMemo(
     () => _.sortBy(customized_images, (image) => image?.humanized_name),
     [customized_images],
@@ -219,11 +207,13 @@ const CustomizedImageList: React.FC = () => {
     });
   }, [imageSearch, imageFilterValues, defaultSortedImages]);
 
-  const columns: ColumnsType<CommittedImage> = filterOutEmpty([
+  const columns: BAIColumnsType<CommittedImage> = filterOutEmpty([
     {
       title: t('environment.FullImagePath'),
       key: 'fullImagePath',
-      render: (row) => (
+      // Computed column (no `dataIndex`), so the record comes from `render`'s
+      // SECOND argument — see `ImageList`'s matching column.
+      render: (_value, row) => (
         <BAIText
           monospace
           copyable={{
@@ -243,13 +233,19 @@ const CustomizedImageList: React.FC = () => {
       key: 'control',
       render: (_text, row) => (
         <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
-          <Button
-            type="text"
-            icon={<DeleteOutlined />}
+          {/* antd `type="text" danger` -> ghost IconButton + the shared
+              `.bai-name-action-cell-danger` tint: Astryx IconButton has no
+              `color` prop (P5) and `destructive` is a solid fill, too loud for
+              a row action. */}
+          <IconButton
+            variant="ghost"
+            className="bai-name-action-cell-danger"
+            icon={<Trash2 size="1em" />}
+            label={t('button.Delete')}
+            tooltip={t('button.Delete')}
             onClick={() => {
               setImageToDelete(row || null);
             }}
-            danger
           />
         </BAIFlex>
       ),
@@ -372,9 +368,13 @@ const CustomizedImageList: React.FC = () => {
       key: 'digest',
       sorter: (a, b) => localeCompare(a?.digest, b?.digest),
       render: (text) => (
-        <Typography.Text ellipsis={{ tooltip: true }} style={{ maxWidth: 200 }}>
-          <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
-        </Typography.Text>
+        // antd `Text ellipsis={{tooltip}} maxWidth 200` -> Astryx Text
+        // maxLines; width lives on the BAIFlex wrapper (Text has no style).
+        <BAIFlex style={{ maxWidth: 200 }} align="stretch">
+          <Text maxLines={1}>
+            <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
+          </Text>
+        </BAIFlex>
       ),
     },
   ]);
@@ -387,26 +387,35 @@ const CustomizedImageList: React.FC = () => {
     <BAIFlex direction="column" align="stretch">
       <BAIFlex direction="column" align="stretch" gap="sm">
         <BAIFlex justify="between" gap="xs" wrap="wrap">
-          <Input
-            allowClear
-            prefix={<SearchOutlined />}
+          {/* antd Input prefix/allowClear -> Astryx TextInput startIcon/
+              hasClear; label is required and visually hidden (P2/P8). The
+              filter input is uncontrolled in the original, so the local
+              search state stays the source of truth here too. */}
+          <TextInput
+            label={t('environment.SearchImages')}
+            isLabelHidden
+            value={imageSearchInput}
+            hasClear
+            startIcon={Search}
             placeholder={t('environment.SearchImages')}
-            onChange={(e) => {
-              startSearchTransition(() => setImageSearch(e.target.value));
+            onChange={(value) => {
+              setImageSearchInput(value);
+              startSearchTransition(() => setImageSearch(value));
             }}
-            style={{
-              width: 200,
-            }}
+            width={200}
           />
-          <Button
-            icon={<ReloadOutlined />}
-            loading={isRefetchPending}
+          <IconButton
+            label={t('button.Refresh')}
+            tooltip={t('button.Refresh')}
+            icon={<RotateCw size="1em" />}
+            isLoading={isRefetchPending}
             onClick={() => {
               startRefetchTransition(() => updateCustomizedImageListFetchKey());
             }}
           />
         </BAIFlex>
         <BAITable
+          scroll={{ x: 'max-content' }}
           resizable
           loading={isPendingSearchTransition}
           columns={
@@ -414,16 +423,16 @@ const CustomizedImageList: React.FC = () => {
               columns,
               (column) =>
                 !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-            ) as ColumnType<AnyObject>[]
+            ) as BAIColumnType<any>[]
           }
           dataSource={filterOutNullAndUndefined(filteredImageData)}
           rowKey="id"
-          scroll={{ x: 'max-content' }}
           pagination={{
             extraContent: (
-              <Button
-                type="text"
-                icon={<SettingOutlined />}
+              <IconButton
+                variant="ghost"
+                icon={<Settings size="1em" />}
+                label={t('table.SettingTable')}
                 onClick={() => {
                   toggleColumnSettingModal();
                 }}
@@ -447,11 +456,30 @@ const CustomizedImageList: React.FC = () => {
         columns={columns}
         hiddenColumnKeys={hiddenColumnKeys}
       />
-      <BAIModal
+      <BAIDeleteConfirmModal
         open={imageToDelete !== null}
-        title={t('dialog.ask.DoYouWantToDelete')}
-        okText={t('button.Delete')}
-        okType="danger"
+        title={t('dialog.title.DeleteSomething', {
+          name: getImageFullName(imageToDelete) ?? '',
+        })}
+        target={t('general.Image')}
+        items={
+          imageToDelete
+            ? [
+                {
+                  key: imageToDelete.id,
+                  label: getImageFullName(imageToDelete) ?? imageToDelete.id,
+                },
+              ]
+            : []
+        }
+        confirmText={t('credential.PermanentlyDelete')}
+        requireConfirmInput
+        inputLabel={t('credential.TypePermanentlyDelete', {
+          text: t('credential.PermanentlyDelete'),
+        })}
+        inputProps={{
+          placeholder: t('credential.PermanentlyDelete'),
+        }}
         confirmLoading={isInFlightForget || isInFlightUntag}
         onOk={() => {
           if (imageToDelete) {
@@ -518,25 +546,7 @@ const CustomizedImageList: React.FC = () => {
         onCancel={() => {
           setImageToDelete(null);
         }}
-      >
-        <Alert
-          type="warning"
-          showIcon
-          title={t('dialog.warning.CannotBeUndone')}
-        />
-        {imageToDelete !== null && (
-          <ul
-            style={{
-              paddingInlineStart: token.marginSM,
-              listStyle: 'circle',
-            }}
-          >
-            <li>
-              <BAIText monospace>{getImageFullName(imageToDelete)}</BAIText>
-            </li>
-          </ul>
-        )}
-      </BAIModal>
+      />
     </BAIFlex>
   );
 };

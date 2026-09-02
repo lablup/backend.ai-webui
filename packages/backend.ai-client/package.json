@@ -1,0 +1,69 @@
+{
+  "name": "backend.ai-client",
+  "version": "26.4.0-alpha.0",
+  "description": "Backend.AI API client library for JavaScript/TypeScript",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lablup/backend.ai-webui.git",
+    "directory": "packages/backend.ai-client"
+  },
+  "homepage": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-client#readme",
+  "bugs": {
+    "url": "https://github.com/lablup/backend.ai-webui/issues"
+  },
+  "author": "Lablup Inc. <contact@lablup.com>",
+  "license": "LGPL-3.0-or-later",
+  "keywords": [
+    "backend.ai",
+    "client",
+    "sdk",
+    "api"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "test": "vitest run",
+    "vitest": "vitest run",
+    "vitest:watch": "vitest",
+    "lint": "eslint ./src",
+    "lint:ci": "eslint ./src",
+    "prepublishOnly": "pnpm lint && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "crypto-es": "^2.1.0",
+    "eslint-config-bai": "workspace:*",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "catalog:",
+    "vitest": "^4.1.4"
+  },
+  "type": "module"
+}

@@ -1,11 +1,10 @@
 // spec: Upload Permission Controls Test Plan
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   loginAsUser,
   navigateTo,
   createVFolderAndVerify,
-  moveToTrashAndVerify,
-  deleteForeverAndVerifyFromTrash,
 } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
@@ -23,6 +22,8 @@ const openFolderExplorer = async (
   return modal;
 };
 
+// Keep serial: the permission-change tests (currently fixme — FR-3110) reuse
+// the RW/RO folders created by the preceding creation tests in this block.
 test.describe.serial(
   'Upload Permission Controls',
   { tag: ['@critical', '@vfolder', '@functional'] },
@@ -35,17 +36,15 @@ test.describe.serial(
     });
 
     test.afterAll(async ({ browser, request }) => {
+      // Use an extended timeout for cleanup since deleteForeverAndVerifyFromTrash
+      // waits up to 15s per folder for the delete button to be enabled
+      test.setTimeout(240_000);
       const context = await browser.newContext();
       const page = await context.newPage();
       await loginAsUser(page, request);
 
       for (const folderName of [rwFolderName, roFolderName]) {
-        try {
-          await moveToTrashAndVerify(page, folderName);
-          await deleteForeverAndVerifyFromTrash(page, folderName);
-        } catch {
-          console.log(`Could not delete ${folderName}, it may not exist`);
-        }
+        await cleanupVFolderSafely(page, folderName);
       }
 
       await context.close();

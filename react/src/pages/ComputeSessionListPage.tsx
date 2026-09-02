@@ -7,7 +7,9 @@ import {
   ComputeSessionListPageQuery$data,
   ComputeSessionListPageQuery$variables,
 } from '../__generated__/ComputeSessionListPageQuery.graphql';
+import { App } from '../app-shim';
 import ActionItemContent from '../components/ActionItemContent';
+import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
@@ -15,50 +17,52 @@ import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
+import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useProjectPath } from '../hooks/useRouteScope';
+import { useBAIBreakpoint } from '../theme-shim';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
+import { Grid, GridSpan } from '@astryxdesign/core/Grid';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  Alert,
-  App,
-  Badge,
-  Button,
-  Col,
-  Grid,
-  Row,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAIAlertIconWithTooltip,
   BAICard,
-  BAIFetchKeyButton,
   BAIFlex,
   BAILink,
   BAIPropertyFilter,
+  BAIResourceUnitGridSkeleton,
   BAISelectionLabel,
   BAISessionsIcon,
-  filterOutEmpty,
+  BAITabCountBadge,
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
-import _ from 'lodash';
-import { PowerOffIcon } from 'lucide-react';
+import * as _ from 'lodash-es';
+import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
-import { useCurrentUserRole } from 'src/hooks/backendai';
-import { useBAISettingUserState } from 'src/hooks/useBAISetting';
-import { useCSVExport } from 'src/hooks/useCSVExport';
 
 const typeFilterValues = [
   'all',
@@ -78,17 +82,29 @@ type SessionNode = NonNullableNodeOnEdges<ComputeSessionNodesData>;
 
 const CARD_MIN_HEIGHT = 200;
 
+const NOT_FINISHED_STATUS_FILTER =
+  'status != "TERMINATED" & status != "CANCELLED"';
+
+const styles = stylex.create({
+  // The title only renders on >=lg, where maxWidth was always 120.
+  actionCardTitle: {
+    maxWidth: 120,
+  },
+});
+
 const ComputeSessionListPage = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
 
   const userRole = useCurrentUserRole();
+  const [currentUser] = useCurrentUserInfo();
+  const baiClient = useSuspendedBackendaiClient();
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const webUINavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const location = useLocation();
   const [selectedSessionList, setSelectedSessionList] = useState<
     Array<SessionNode>
@@ -118,22 +134,36 @@ const ComputeSessionListPage = () => {
       statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
         'running',
       ),
+      view: parseAsStringLiteral(['table', 'grid']).withDefault('table'),
     },
     {
       history: 'replace',
     },
   );
 
+  const [experimentalSessionResourceGrid] = useBAISettingUserState(
+    'experimental_session_resource_grid',
+  );
+  // Grid view is gated behind an experimental opt-in (FR-3570); when off, the
+  // effective view is always 'table' regardless of the `view` URL param, but
+  // the param itself is left untouched so the stored choice comes back if the
+  // flag is re-enabled.
+  const effectiveView = experimentalSessionResourceGrid
+    ? queryParams.view
+    : 'table';
+
+  // `view` is page-level state, not per-tab: keep it out of the snapshots so
+  // restoring a tab never flips the table/grid toggle.
   const queryMapRef = useRef({
     [queryParams.type]: {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     },
   });
 
   useEffect(() => {
     queryMapRef.current[queryParams.type] = {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     };
   }, [queryParams, tablePaginationOption]);
@@ -146,7 +176,7 @@ const ComputeSessionListPage = () => {
   const statusFilter =
     queryParams.statusCategory === 'running' ||
     queryParams.statusCategory === undefined
-      ? 'status != "TERMINATED" & status != "CANCELLED"'
+      ? NOT_FINISHED_STATUS_FILTER
       : 'status == "TERMINATED" | status == "CANCELLED"';
 
   const isNotRunningCategory = (status?: string | null) => {
@@ -155,12 +185,45 @@ const ComputeSessionListPage = () => {
 
   const [fetchKey, updateFetchKey] = useFetchKey();
 
+  // This page is strictly personal: even admins/monitors (who hold read
+  // permission on all project sessions) should only see their own sessions.
+  const currentUserFilter = `user_id == "${currentUser.uuid}"`;
+
   const queryVariables: ComputeSessionListPageQuery$variables = {
     scopeId: `project:${currentProject.id}`,
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.first,
-    filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
+    filter: mergeFilterValues([
+      statusFilter,
+      queryParams.filter,
+      typeFilter,
+      currentUserFilter,
+    ]),
     order: queryParams.order || '-created_at',
+    allFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      currentUserFilter,
+    ]),
+    interactiveFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      'type == "interactive"',
+      currentUserFilter,
+    ]),
+    inferenceFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      'type == "inference"',
+      currentUserFilter,
+    ]),
+    batchFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      'type == "batch"',
+      currentUserFilter,
+    ]),
+    systemFilter: mergeFilterValues([
+      NOT_FINISHED_STATUS_FILTER,
+      'type == "system"',
+      currentUserFilter,
+    ]),
   };
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -168,72 +231,77 @@ const ComputeSessionListPage = () => {
 
   const queryRef = useLazyLoadQuery<ComputeSessionListPageQuery>(
     graphql`
-        query ComputeSessionListPageQuery(
-          $scopeId: ScopeField
-          $first: Int = 20
-          $offset: Int = 0
-          $filter: String
-          $order: String
-        ) {
-          computeSessionNodeResult: compute_session_nodes(
-            scope_id: $scopeId
-            first: $first
-            offset: $offset
-            filter: $filter
-            order: $order
-          ) @catch(to: RESULT) {
-            edges @required(action: THROW) {
-              node @required(action: THROW) {
-                id @required(action: THROW)
-                name @required(action: THROW)
-                ...SessionNodesFragment
-                ...TerminateSessionModalFragment
-              }
+      query ComputeSessionListPageQuery(
+        $scopeId: ScopeField
+        $first: Int = 20
+        $offset: Int = 0
+        $filter: String
+        $order: String
+        $allFilter: String
+        $interactiveFilter: String
+        $inferenceFilter: String
+        $batchFilter: String
+        $systemFilter: String
+      ) {
+        computeSessionNodeResult: compute_session_nodes(
+          scope_id: $scopeId
+          first: $first
+          offset: $offset
+          filter: $filter
+          order: $order
+        ) @catch(to: RESULT) {
+          edges @required(action: THROW) {
+            node @required(action: THROW) {
+              id @required(action: THROW)
+              name @required(action: THROW)
+              ...SessionNodesFragment
+              ...TerminateSessionModalFragment
             }
-            count
           }
-          all: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\""
-          ) {
-            count
-          }
-          interactive: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
-          ) {
-            count
-          }
-          inference: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
-          ) {
-            count
-          }
-          batch: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
-          ) {
-            count
-          }
-          system: compute_session_nodes(
-            scope_id: $scopeId
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
-          ) {
-            count
-          }
+          count
         }
-      `,
+        all: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $allFilter
+        ) {
+          count
+        }
+        interactive: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $interactiveFilter
+        ) {
+          count
+        }
+        inference: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $inferenceFilter
+        ) {
+          count
+        }
+        batch: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $batchFilter
+        ) {
+          count
+        }
+        system: compute_session_nodes(
+          scope_id: $scopeId
+          first: 0
+          offset: 0
+          filter: $systemFilter
+        ) {
+          count
+        }
+      }
+    `,
     deferredQueryVariables,
     {
       fetchPolicy:
@@ -248,42 +316,43 @@ const ComputeSessionListPage = () => {
   const compute_session_nodes = computeSessionNodeResult.ok
     ? computeSessionNodeResult.value
     : null;
-  const { lg } = Grid.useBreakpoint();
+  // Responsive policy R3 (ticket 14): the render tree branches on `lg`
+  // (the action card is unmounted below lg), so the JS hook stays; the antd
+  // Row/Col track layout becomes an Astryx 24-column Grid whose spans are
+  // picked from the same booleans (asymmetric split — the uniform minWidth
+  // model does not apply here).
+  const { lg, xl } = useBAIBreakpoint();
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'md'}>
-      <Row gutter={[16, 16]} align={'stretch'}>
+      <Grid columns={24} gap={4}>
         {lg && (
-          <Col xs={24} lg={8} xl={4} style={{ display: 'flex' }}>
+          <GridSpan columns={xl ? 4 : 8}>
             <BAICard
               style={{
                 width: '100%',
+                height: '100%',
               }}
             >
               <ActionItemContent
                 title={
-                  <Typography.Text
-                    style={{
-                      maxWidth: lg ? 120 : undefined,
-                      wordBreak: 'keep-all',
-                    }}
-                  >
+                  <Text xstyle={styles.actionCardTitle}>
                     {t('start.CreateASession')}
-                  </Typography.Text>
+                  </Text>
                 }
                 buttonText={t('start.button.StartSession')}
                 icon={<BAISessionsIcon />}
                 type="simple"
-                to={'/session/start'}
+                to={buildProjectPath('session/start')}
                 style={{
                   height: '100%',
                 }}
               />
             </BAICard>
-          </Col>
+          </GridSpan>
         )}
 
-        <Col xs={24} lg={16} xl={20} style={{ display: 'flex' }}>
+        <GridSpan columns={lg ? (xl ? 20 : 16) : 24}>
           <ErrorBoundary
             fallbackRender={() => {
               return (
@@ -314,20 +383,21 @@ const ComputeSessionListPage = () => {
               <ConfigurableResourceCard
                 style={{
                   width: '100%',
+                  height: '100%',
                   minHeight: lg ? CARD_MIN_HEIGHT : undefined,
                 }}
                 fetchKey={deferredFetchKey}
               />
             </Suspense>
           </ErrorBoundary>
-        </Col>
-      </Row>
+        </GridSpan>
+      </Grid>
       <BAICard
         variant="borderless"
         title={t('webui.menu.Sessions')}
         extra={
-          <BAILink to={'/session/start'}>
-            <Button type="primary">{t('start.button.StartSession')}</Button>
+          <BAILink to={buildProjectPath('session/start')}>
+            <Button variant="primary" label={t('start.button.StartSession')} />
           </BAILink>
         }
         styles={{
@@ -352,6 +422,7 @@ const ComputeSessionListPage = () => {
             setQueryParams({
               ...storedQuery.queryParams,
               type: key as TypeFilterType,
+              view: queryParams.view,
             });
             setTablePaginationOption(
               storedQuery.tablePaginationOption || { current: 1 },
@@ -368,32 +439,13 @@ const ComputeSessionListPage = () => {
             },
             (label, key) => ({
               key,
-              label: (
-                <BAIFlex justify="center" gap={10}>
-                  {label}
-                  {
-                    // display badge only if count is greater than 0
-                    // @ts-ignore
-                    (sessionCounts[key]?.count || 0) > 0 && (
-                      <Badge
-                        // @ts-ignore
-                        count={sessionCounts[key].count}
-                        color={
-                          queryParams.type === key
-                            ? token.colorPrimary
-                            : token.colorTextDisabled
-                        }
-                        size="small"
-                        showZero
-                        style={{
-                          paddingRight: token.paddingXS,
-                          paddingLeft: token.paddingXS,
-                          fontSize: 10,
-                        }}
-                      />
-                    )
-                  }
-                </BAIFlex>
+              label,
+              endContent: (
+                <BAITabCountBadge
+                  // @ts-ignore
+                  count={sessionCounts[key]?.count}
+                  selected={queryParams.type === key}
+                />
               ),
             }),
           )}
@@ -428,7 +480,7 @@ const ComputeSessionListPage = () => {
                 ]}
               />
               <BAIPropertyFilter
-                filterProperties={filterOutEmpty([
+                filterProperties={[
                   {
                     key: 'name',
                     propertyLabel: t('session.SessionName'),
@@ -444,14 +496,7 @@ const ComputeSessionListPage = () => {
                     propertyLabel: t('session.Agent'),
                     type: 'string',
                   },
-                  (userRole === 'superadmin' ||
-                    userRole === 'admin' ||
-                    userRole === 'monitor') && {
-                    key: 'user_email',
-                    propertyLabel: t('session.launcher.OwnerEmail'),
-                    type: 'string',
-                  },
-                ])}
+                ]}
                 value={queryParams.filter || undefined}
                 onChange={(value) => {
                   setQueryParams({ filter: value || '' });
@@ -460,32 +505,56 @@ const ComputeSessionListPage = () => {
                 }}
               />
             </BAIFlex>
-            <BAIFlex gap={'sm'}>
+            <BAIFlex gap={'xs'}>
               {selectedSessionList.length > 0 && (
                 <>
                   <BAISelectionLabel
                     count={selectedSessionList.length}
                     onClearSelection={() => setSelectedSessionList([])}
                   />
-                  <Tooltip
-                    title={t('session.TerminateSession')}
-                    placement="topLeft"
-                  >
-                    <Button
-                      icon={<PowerOffIcon color={token.colorError} />}
-                      onClick={() => {
-                        setOpenTerminateModal(true);
-                      }}
-                    />
-                  </Tooltip>
+                  <IconButton
+                    label={t('session.TerminateSession')}
+                    tooltip={t('session.TerminateSession')}
+                    icon={<PowerOffIcon color="var(--color-error)" />}
+                    onClick={() => {
+                      setOpenTerminateModal(true);
+                    }}
+                  />
                 </>
               )}
-              <BAIFetchKeyButton
+              {experimentalSessionResourceGrid && (
+                <SegmentedControl
+                  label={t('session.resourceGrid.ViewMode')}
+                  value={queryParams.view}
+                  onChange={(value) =>
+                    setQueryParams({ view: value as 'table' | 'grid' })
+                  }
+                >
+                  <Tooltip content={t('session.resourceGrid.TableView')}>
+                    <SegmentedControlItem
+                      value="table"
+                      label={t('session.resourceGrid.TableView')}
+                      isLabelHidden
+                      icon={<TableIcon size="1em" />}
+                    />
+                  </Tooltip>
+                  <Tooltip content={t('session.resourceGrid.GridView')}>
+                    <SegmentedControlItem
+                      value="grid"
+                      label={t('session.resourceGrid.GridView')}
+                      isLabelHidden
+                      icon={<LayoutGridIcon size="1em" />}
+                    />
+                  </Tooltip>
+                </SegmentedControl>
+              )}
+              <AutoUpdateFetchKeyButton
+                settingId="session-list"
+                defaultAutoUpdateDelay={15_000}
                 loading={
                   deferredQueryVariables !== queryVariables ||
                   deferredFetchKey !== fetchKey
                 }
-                autoUpdateDelay={15_000}
                 // showLastLoadTime
                 value={fetchKey}
                 onChange={(newFetchKey) => {
@@ -494,7 +563,32 @@ const ComputeSessionListPage = () => {
               />
             </BAIFlex>
           </BAIFlex>
-          {computeSessionNodeResult.ok ? (
+          {effectiveView === 'grid' ? (
+            // Keyed by the UNdeferred filter/order: a change remounts the
+            // boundary so its fallback shows immediately, instead of the
+            // refetch being held hidden until the next poll commit. The
+            // fetchKey stays deferred so poll refreshes never flash.
+            <Suspense
+              key={`${queryVariables.filter ?? ''}:${queryVariables.order ?? ''}`}
+              fallback={<BAIResourceUnitGridSkeleton />}
+            >
+              <SessionResourceGrid
+                filter={queryVariables.filter}
+                order={queryVariables.order ?? undefined}
+                projectId={currentProject.id}
+                fetchKey={deferredFetchKey}
+                onClickSession={(sessionId) => {
+                  const newSearchParams = new URLSearchParams(location.search);
+                  newSearchParams.set('sessionDetail', sessionId);
+                  webUINavigate({
+                    pathname: location.pathname,
+                    hash: location.hash,
+                    search: newSearchParams.toString(),
+                  });
+                }}
+              />
+            </Suspense>
+          ) : computeSessionNodeResult.ok ? (
             <SessionNodes
               order={queryParams.order}
               onClickSessionName={(session) => {
@@ -585,6 +679,19 @@ const ComputeSessionListPage = () => {
                         if (queryParams.type && queryParams.type !== 'all') {
                           csvFilter.session_type = [queryParams.type];
                         }
+                        // This page is strictly personal (see currentUserFilter
+                        // above), so the CSV export must be scoped to the current
+                        // user too — otherwise an admin exports every user's
+                        // sessions. Mirrors the table's user_id filter via the
+                        // session export `user.email` filter (BA-6480).
+                        if (
+                          baiClient.supports('session-export-user-filter') &&
+                          currentUser.email
+                        ) {
+                          csvFilter.user = {
+                            email: { equals: currentUser.email },
+                          };
+                        }
                         await exportCSV(selectedExportKeys, csvFilter).catch(
                           (err) => {
                             message.error(t('general.ErrorOccurred'));
@@ -597,11 +704,7 @@ const ComputeSessionListPage = () => {
               }
             />
           ) : (
-            <Alert
-              type="error"
-              showIcon
-              title={t('error.FailedToLoadTableData')}
-            />
+            <Banner status="error" title={t('error.FailedToLoadTableData')} />
           )}
         </BAIFlex>
       </BAICard>

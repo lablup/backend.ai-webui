@@ -1,18 +1,40 @@
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
-  deleteForeverAndVerifyFromTrash,
-  loginAsAdmin,
-  loginAsUser,
-  moveToTrashAndVerify,
-} from '../utils/test-util';
+  getClientProperty,
+  skipUnlessAllowedVFolderType,
+} from '../utils/feature-gate-util';
+import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
 /**
- * Navigate to the Data page and open the Create Folder modal.
+ * Navigate to the regular Data page and open the Create Folder modal.
+ * Used by user-role tests where only the User-type radio should be visible.
  */
 async function openCreateFolderModal(page: Page): Promise<FolderCreationModal> {
   await page.getByRole('link', { name: 'Data' }).click();
-  await page.getByRole('button', { name: 'Create Folder' }).nth(1).click();
+  await page.getByRole('button', { name: 'Create Folder' }).first().click();
+  const modal = new FolderCreationModal(page);
+  await modal.modalToBeVisible();
+  return modal;
+}
+
+/**
+ * Navigate to the Project Admin Data page (/project-data) and open the Create
+ * Folder modal. This page uses folderType="project" which renders both the User
+ * and Project type radios, making it the correct page for admin Project-type
+ * vfolder tests.
+ *
+ * Note: On the /data page (VFolderNodeListPage), allowCreateProjectFolder is
+ * false (default), so the Project radio never renders — even for admin users.
+ * The /project-data page (ProjectAdminDataPage) uses folderType="project" which
+ * satisfies the rendering condition in FolderCreateModalV2.
+ */
+async function openCreateFolderModalAsAdmin(
+  page: Page,
+): Promise<FolderCreationModal> {
+  await navigateTo(page, 'project-data');
+  await page.getByRole('button', { name: 'Create Folder' }).first().click();
   const modal = new FolderCreationModal(page);
   await modal.modalToBeVisible();
   return modal;
@@ -31,8 +53,7 @@ test.describe(
       });
 
       test.afterEach(async ({ page }) => {
-        await moveToTrashAndVerify(page, folderName);
-        await deleteForeverAndVerifyFromTrash(page, folderName);
+        await cleanupVFolderSafely(page, folderName);
       });
 
       test('User can create a User-type vfolder with default selection', async ({
@@ -59,34 +80,41 @@ test.describe(
       });
 
       test.afterEach(async ({ page }) => {
-        try {
-          await moveToTrashAndVerify(page, folderName);
-          await deleteForeverAndVerifyFromTrash(page, folderName);
-        } catch {
-          // Folder may not exist if test was skipped or creation failed
-        }
+        // Project-type folders are created on /project-data but can only be
+        // DELETED from the admin data page (/admin-data); /project-data
+        // (VFolderNodesV2) does not expose the trash/delete actions.
+        await cleanupVFolderSafely(page, folderName, 'admin-data');
       });
 
-      test('Admin can create a Project-type vfolder', async ({ page }) => {
-        const modal = await openCreateFolderModal(page);
-        await modal.fillFolderName(folderName);
+      test(
+        'Admin can create a Project-type vfolder',
+        { tag: ['@requires-vfolder-type-group'] },
+        async ({ page }) => {
+          // Declarative environment gate (FR-3114): Project-type vfolders are
+          // only offered when the cluster's etcd `volumes/_types` config
+          // includes 'group' (FolderCreateModal reads it via
+          // `baiClient.vfolder.list_allowed_types()`).
+          await skipUnlessAllowedVFolderType(
+            page,
+            'group',
+            "Project-type vfolder creation requires the 'group' vfolder type in the cluster's etcd `volumes/_types` config (@requires-vfolder-type-group)",
+          );
 
-        // Project-type radio should be visible for admin
-        const projectTypeRadio = await modal.getProjectTypeRadio();
-        await expect(projectTypeRadio).toBeVisible();
+          const modal = await openCreateFolderModalAsAdmin(page);
+          await modal.fillFolderName(folderName);
 
-        // Check if project type radio is enabled (requires 'group' type in ETCD config)
-        const isDisabled = await projectTypeRadio.isDisabled();
-        if (!isDisabled) {
+          // The environment allows 'group' — the Project-type radio MUST be
+          // present and selectable; a disabled radio here is a real failure.
+          const projectTypeRadio = await modal.getProjectTypeRadio();
+          await expect(projectTypeRadio).toBeVisible();
+          await expect(projectTypeRadio).toBeEnabled();
+
           await projectTypeRadio.check();
           await expect(projectTypeRadio).toBeChecked();
-        } else {
-          // If project type is not available, fall back to user type and skip
-          test.skip(true, 'Project type is not available in this environment');
-        }
 
-        await (await modal.getCreateButton()).click();
-      });
+          await (await modal.getCreateButton()).click();
+        },
+      );
     });
 
     test.describe('Project radio disabled states (admin)', () => {
@@ -95,7 +123,7 @@ test.describe(
       test.beforeEach(async ({ page, request }, testInfo) => {
         folderName = `e2e-test-disabled-project-type-${Date.now()}-${testInfo.workerIndex}`;
         await loginAsAdmin(page, request);
-        await openCreateFolderModal(page);
+        await openCreateFolderModalAsAdmin(page);
       });
 
       test.afterEach(async ({ page }) => {
@@ -105,8 +133,7 @@ test.describe(
             .getByRole('cell', { name: `VFolder Identicon ${folderName}` })
             .filter({ hasText: folderName });
           await folderRow.waitFor({ state: 'visible', timeout: 2000 });
-          await moveToTrashAndVerify(page, folderName);
-          await deleteForeverAndVerifyFromTrash(page, folderName);
+          await cleanupVFolderSafely(page, folderName);
         } catch {
           // Folder was not created; nothing to clean up
         }
@@ -115,6 +142,21 @@ test.describe(
       test('Project radio is disabled when usage mode is model (non-model-store project)', async ({
         page,
       }) => {
+        // Declarative environment gate (FR-3114): this disabled-state
+        // assertion only holds when the admin's active project is NOT the
+        // model-store project (`FolderCreateModal` enables the Project radio
+        // in model mode when `currentProject.name === 'model-store'`). Gate
+        // on the actual capability source (`baiClient.current_group`) instead
+        // of probing the radio's enabled state.
+        const currentProjectName = await getClientProperty(
+          page,
+          'current_group',
+        );
+        test.skip(
+          currentProjectName === 'model-store',
+          "Disabled-state assertion assumes a non-model-store project; the admin's active project is the model-store project.",
+        );
+
         const modal = new FolderCreationModal(page);
         await modal.modalToBeVisible();
         await modal.fillFolderName(folderName);
@@ -128,26 +170,17 @@ test.describe(
         const projectTypeRadio = await modal.getProjectTypeRadio();
         await expect(projectTypeRadio).toBeVisible();
 
-        // If the project radio is enabled here, we are likely in a model-store project.
-        // In that case, this test's assumption ("non-model-store project") does not hold,
-        // so skip to avoid environment-dependent failures.
-        if (await projectTypeRadio.isEnabled()) {
-          test.skip(
-            true,
-            'Current project behaves as model-store; skipping disabled-state assertion.',
-          );
-        }
-
         // Project radio should be disabled when model mode is selected
         // and current project is not model-store
         await expect(projectTypeRadio).toBeDisabled();
 
-        // Tooltip warning should be visible when hovering over the project radio label
+        // Hover the project radio label to surface its tooltip. Ant Design's
+        // disabled wrapper intercepts pointer events, so force the hover.
         const typeFormItem = await modal.getTypeFormItem();
         const projectRadioLabel = typeFormItem.locator(
           '[data-testid="project-type"]',
         );
-        await projectRadioLabel.hover();
+        await projectRadioLabel.hover({ force: true });
 
         // Cancel the modal since we're only testing the disabled state
         await (await modal.getCancelButton()).click();
@@ -156,6 +189,19 @@ test.describe(
       test('Project radio is disabled when usage mode is automount', async ({
         page,
       }) => {
+        // The Project-type radio is only exposed via the /project-data page
+        // (ProjectAdminDataPage with folderType="project"). On that page the
+        // Auto Mount usage-mode radio is itself disabled (folderType="project"
+        // disables it in FolderCreateModalV2), so we cannot drive the UI into
+        // the automount state to verify this interaction. There is no other
+        // page in the current app where both the Project radio is visible and
+        // the automount radio is selectable.
+        test.fixme(
+          true,
+          'Automount radio is disabled on /project-data (folderType="project"), ' +
+            'preventing selection needed to assert project-radio disabled state.',
+        );
+
         const modal = new FolderCreationModal(page);
         await modal.modalToBeVisible();
         await modal.fillFolderName(folderName);
@@ -224,7 +270,7 @@ test.describe(
         request,
       }) => {
         await loginAsAdmin(page, request);
-        const modal = await openCreateFolderModal(page);
+        const modal = await openCreateFolderModalAsAdmin(page);
 
         // Both type radios should be visible for admin
         const userTypeRadio = await modal.getUserTypeRadio();

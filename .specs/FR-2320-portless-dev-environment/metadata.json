@@ -1,0 +1,6 @@
+{
+  "slug": "FR-2320-portless-dev-environment",
+  "epicKey": "FR-2320",
+  "title": "Portless integration for dev environment",
+  "implementationIssue": "FR-2701"
+}

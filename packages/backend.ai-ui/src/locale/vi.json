@@ -5,6 +5,7 @@
     "Architecture": "Kiến trúc",
     "DiskPerc": "Sử dụng đĩa (%)",
     "Endpoint": "Điểm cuối",
+    "FailedToLoadCellData": "Không thể tải dữ liệu.",
     "NoAvailableLiveStat": "Không có số liệu trực tiếp",
     "Region": "Khu vực",
     "ResourceGroup": "Nhóm tài nguyên",
@@ -25,6 +26,9 @@
     "AreYouSureYouWantToActivateSome": "Bạn có chắc là bạn muốn kích hoạt {{count}} Artifacts không?",
     "FailedToActivateArtifacts": "Không thể kích hoạt hiện vật.",
     "SuccessfullyActivated": "Cổ vật được kích hoạt thành công."
+  },
+  "comp:BAIAdminKeypairResourcePolicySelect": {
+    "SelectKeypairResourcePolicy": "Chọn chính sách tài nguyên Keypair"
   },
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Chọn dịch vụ mô hình"
@@ -63,6 +67,22 @@
     "Updated": "Cập nhật",
     "Version": "Phiên bản"
   },
+  "comp:BAIAuditLogNodes": {
+    "ActionId": "ID hành động",
+    "Actor": "Người thực hiện",
+    "Description": "Mô tả",
+    "Duration": "Thời lượng",
+    "EntityId": "ID thực thể",
+    "EntityType": "Loại thực thể",
+    "Operation": "Thao tác",
+    "RequestId": "ID yêu cầu",
+    "Status": "Trạng thái",
+    "Time": "Thời gian",
+    "TriggeredBy": "Kích hoạt bởi"
+  },
+  "comp:BAIAvailablePresetSelect": {
+    "SelectPreset": "Chọn cài đặt sẵn"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Đã xảy ra lỗi bất ngờ. Vui lòng thử lại sau hoặc liên hệ bộ phận hỗ trợ nếu vấn đề vẫn tiếp diễn."
   },
@@ -70,6 +90,24 @@
     "Clear": "Xóa",
     "KeepAsIs": "Giữ nguyên",
     "UndoChanges": "Hoàn tác thay đổi"
+  },
+  "comp:BAIBulkErrorModal": {
+    "ActionExecutionFailed": "Thực thi thất bại",
+    "ErrorOccurred": "Đã xảy ra lỗi"
+  },
+  "comp:BAIColorPicker": {
+    "Clear": "Xóa",
+    "HexValue": "Giá trị hex",
+    "NoColor": "Không có màu",
+    "SelectColor": "Chọn màu"
+  },
+  "comp:BAIComplexSelect": {
+    "ClearSearch": "Xóa Tìm trong các tùy chọn",
+    "NoResults": "Không có kết quả",
+    "SearchOptions": "Tìm trong các tùy chọn"
+  },
+  "comp:BAIContainerRegistrySelect": {
+    "SelectContainerRegistry": "Chọn kho lưu trữ container"
   },
   "comp:BAIDeactivateArtifactsModal": {
     "AreYouSureYouWantToDeactivateOne": "Bạn có chắc bạn muốn hủy kích hoạt {{name}}?",
@@ -90,19 +128,56 @@
   },
   "comp:BAIDeleteConfirmModal": {
     "AreYouSureToDelete": "Bạn có chắc chắn muốn xóa không?",
+    "AreYouSureToPermanentlyDeleteTarget": "Bạn có chắc muốn xóa vĩnh viễn {{target}} không?",
     "CannotBeUndone": "Hành động này không thể hoàn tác.",
     "DeleteItem": "Xóa",
     "DeleteNItems": "Xóa {{count}} mục",
     "TypeToConfirm": "Nhập <code>{{confirmText}}</code> để xác nhận."
   },
+  "comp:BAIDeploymentOwnerInfo": {
+    "CreatedBy": "Được tạo bởi"
+  },
+  "comp:BAIDeploymentSchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
+    "From": "Trạng thái nguồn",
+    "Message": "Tin nhắn",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "To": "Trạng thái đích",
+    "UpdatedAt": "Cập nhật lúc"
+  },
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Chọn triển khai"
+  },
+  "comp:BAIDeploymentStatusTag": {
+    "Degraded": "Bị suy giảm",
+    "Deploying": "Đang triển khai",
+    "Healthy": "Bình thường",
+    "NotChecked": "Chưa kiểm tra",
+    "Pending": "Đang chờ",
+    "Ready": "Sẵn sàng",
+    "Scaling": "Đang mở rộng",
+    "Stopped": "Đã dừng",
+    "Stopping": "Đang dừng",
+    "Terminated": "Đã kết thúc",
+    "Unhealthy": "Không bình thường"
   },
   "comp:BAIDomainSelect": {
     "SelectDomain": "Chọn miền"
   },
+  "comp:BAIDynamicUnitInputNumberWithSlider": {
+    "Amount": "Số lượng"
+  },
   "comp:BAIFetchKeyButton": {
+    "AutoRefresh": "Tự động làm mới",
+    "EveryHours": "{{count}}h",
+    "EveryMinutes": "{{count}}m",
+    "EverySeconds": "{{count}}s",
     "LastUpdated": "Cập nhật lần cuối",
+    "Off": "Tắt",
     "Refresh": "Làm mới"
   },
   "comp:BAIGraphQLPropertyFilter": {
@@ -110,6 +185,9 @@
     "operator": {
       "After": "sau",
       "Before": "trước",
+      "Contains": "chứa",
+      "EndsWith": "kết thúc bằng",
+      "Equals": "bằng",
       "GreaterThan": "lớn hơn",
       "GreaterThanOrEqual": "lớn hơn hoặc bằng",
       "IContains": "chứa",
@@ -123,14 +201,22 @@
       "In": "trong",
       "LessThan": "nhỏ hơn",
       "LessThanOrEqual": "nhỏ hơn hoặc bằng",
-      "NotIn": "không trong"
+      "NotContains": "không chứa",
+      "NotEndsWith": "không kết thúc bằng",
+      "NotEquals": "không bằng",
+      "NotIn": "không trong",
+      "NotStartsWith": "không bắt đầu bằng",
+      "StartsWith": "bắt đầu bằng"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Nhập mã thông báo Hugging Face của bạn",
+    "HuggingFaceSettings": "Cài đặt Hugging Face",
+    "Token": "Mã thông báo",
+    "TokenUpdatedSuccessfully": "Đã cập nhật mã thông báo thành công."
+  },
+  "comp:BAIImageSelect": {
+    "SelectImage": "Chọn Ảnh"
   },
   "comp:BAIImportArtifactModal": {
     "ExcludedVersions": "{{count}} Các phiên bản được loại trừ.",
@@ -142,20 +228,89 @@
     "SuccessFullyPulled": "Yêu cầu kéo thành công cho các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Kích thước cụm",
+    "Concurrency": "Phiên đồng thời",
+    "CreatedAt": "Được tạo tại",
+    "DefaultForUnspecified": "Mặc định cho không xác định",
+    "DefaultForUnspecifiedTooltipDesc1": "Đặt chính sách mặc định khi không yêu cầu CPU hoặc bộ nhớ cụ thể.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' cho phép sử dụng theo công suất của nút đại lý, trong khi 'giới hạn' từ chối tài nguyên trừ khi được thiết lập rõ ràng. \nTrong hầu hết các trường hợp, 'không giới hạn' được khuyến nghị.",
+    "IdleTimeout": "Hết thời gian chờ",
+    "MaxConcurrentSFTPSessions": "Phiên SFTP đồng thời tối đa",
+    "MaxPendingSessionCount": "Số lượng phiên đang chờ xử lý tối đa",
+    "MaxPendingSessionResourceSlots": "Các khe cắm tài nguyên phiên đang chờ xử lý tối đa",
+    "MaxSessionLifetime": "Thời gian tồn tại của phiên tối đa",
+    "Name": "Tên",
+    "StorageNodes": "Nút lưu trữ",
+    "TotalResourceSlots": "Chính sách tài nguyên"
+  },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Chọn cặp khóa"
   },
+  "comp:BAILoginHistoryTable": {
+    "Domain": "Miền",
+    "FailReason": "Lý do thất bại",
+    "LoginTime": "Thời gian đăng nhập",
+    "Result": "Kết quả"
+  },
+  "comp:BAILoginSessionTable": {
+    "AccessKey": "Khóa truy cập",
+    "CreatedAt": "Được tạo tại",
+    "InvalidatedAt": "Bị vô hiệu tại",
+    "User": "Người dùng"
+  },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Thoát toàn màn hình",
+    "Fullscreen": "Toàn màn hình",
+    "Maximize": "Phóng to",
+    "Minimize": "Thu nhỏ",
+    "Restore": "Khôi phục"
+  },
+  "comp:BAIModelDeploymentNodes": {
+    "AreYouSureToDeleteDeployment": "Bạn có chắc chắn muốn xóa triển khai \"{{deploymentName}}\"? Hành động này không thể hoàn tác.",
+    "CreatedAt": "Ngày tạo",
+    "CreatedUser": "Tác giả",
+    "CurrentRevisionID": "ID phiên bản hiện tại",
+    "Delete": "Xóa",
+    "DeleteDeployment": "Xóa triển khai",
+    "DeploymentDeleted": "Đã xóa triển khai.",
+    "DeploymentID": "ID triển khai",
+    "DomainName": "Tên miền",
+    "EndpointURL": "URL điểm cuối",
+    "FailedToDeleteDeployment": "Không thể xóa triển khai.",
+    "HealthySummary": "{{healthy}} / {{total}}",
+    "Lifecycle": "Vòng đời",
+    "Model": "Mô hình",
+    "Name": "Tên",
+    "OpenToPublic": "Mở cho công khai",
+    "Owner": "Chủ sở hữu",
+    "PreferredDomainName": "Tên miền ưa thích",
+    "Project": "Dự án",
+    "ProjectID": "ID dự án",
+    "ReplicaSummary": "Số bản sao",
+    "ReplicaSummaryTooltip": "Số bản sao đang chạy so với số bản sao mong muốn.",
+    "Replicas": "Số bản sao",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "RevisionNumber": "Phiên bản",
+    "RevisionNumberTooltip": "Số phiên bản hiện tại của triển khai.",
+    "StrategyType": "Chiến lược",
+    "Tags": "Thẻ",
+    "UpdatedAt": "Ngày cập nhật"
+  },
+  "comp:BAINameActionCell": {
+    "MoreActions": "Thao tác khác"
   },
   "comp:BAIProjectBulkEditModal": {
-    "FollowingFoldersWillBeUpdated": "Thư mục sau sẽ được cập nhật.",
+    "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "UpdateMultipleProjects": "Cập nhật nhiều dự án"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Được tạo tại",
+    "MaxNetworkCount": "Số lượng mạng tối đa",
+    "MaxQuotaScopeSize": "Kích thước thư mục tối đa",
+    "MaxVFolderCount": "Số lượng thư mục tối đa",
+    "Name": "Tên"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Chọn dự án"
@@ -183,26 +338,15 @@
     "UpdateProject": "Cập nhật dự án"
   },
   "comp:BAIProjectTable": {
-    "AreYouSureToDeactivateProject": "Bạn có chắc chắn muốn vô hiệu hóa dự án {{projectName}}?",
-    "AreYouSureToPurgeProject": "Bạn có chắc chắn muốn xóa vĩnh viễn {{projectName}}? Hành động này không thể hoàn tác.",
     "ContainerRegistry": "Kho lưu trữ container",
-    "Controls": "Điều khiển",
+    "ContainerRegistryProject": "Dự án kho lưu trữ container",
     "CreatedAt": "Ngày tạo",
-    "Deactivate": "Vô hiệu hóa",
-    "DeactivateProject": "Vô hiệu hóa dự án",
     "Description": "Mô tả",
     "Domain": "Miền",
-    "FailedToDeactivateProject": "Không thể vô hiệu hóa dự án.",
-    "FailedToPurgeProject": "Không thể xóa hoàn toàn dự án.",
     "IntegrationID": "ID tích hợp",
-    "IsActive": "Hoạt động",
     "Name": "Tên",
     "Project": "Dự án",
-    "ProjectDeactivated": "Dự án đã bị vô hiệu hóa.",
     "ProjectID": "ID dự án",
-    "ProjectPurged": "Dự án đã bị xóa vĩnh viễn",
-    "Purge": "Xóa sạch",
-    "PurgeProject": "Xóa vĩnh viễn dự án",
     "Registry": "Kho chứa",
     "ResourcePolicy": "Chính sách tài nguyên",
     "ScalingGroups": "Nhóm tài nguyên",
@@ -210,9 +354,24 @@
     "TotalResourceSlots": "Tổng số khe tài nguyên",
     "Type": "Loại"
   },
+  "comp:BAIProjectVfolderSelect": {
+    "SelectFolder": "Chọn thư mục"
+  },
   "comp:BAIPropertyFilter": {
+    "Apply": "Áp dụng",
     "PlaceHolder": "Tìm kiếm",
-    "ResetFilter": "Đặt lại bộ lọc"
+    "ResetFilter": "Đặt lại bộ lọc",
+    "SearchLabel": "Tìm bộ lọc",
+    "operator": {
+      "Contains": "chứa",
+      "Equals": "bằng",
+      "GreaterThan": "lớn hơn",
+      "GreaterThanOrEqual": "lớn hơn hoặc bằng",
+      "In": "trong",
+      "LessThan": "nhỏ hơn",
+      "LessThanOrEqual": "nhỏ hơn hoặc bằng",
+      "NotEquals": "không bằng"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Hủy kéo",
@@ -226,22 +385,154 @@
   "comp:BAIResourceGroupSelect": {
     "SelectResourceGroup": "Chọn nhóm tài nguyên"
   },
+  "comp:BAIResourceNumberWithIcon": {
+    "AllocatedVsRequested": "Đã cấp phát / Đã yêu cầu"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Đổi màu nhóm",
+    "ResourceGrid": "Lưới tài nguyên",
+    "UseColorN": "Dùng màu {{n}}"
+  },
+  "comp:BAIResourceWithSteppedProgress": {
+    "Unlimited": "Không giới hạn"
+  },
   "comp:BAIRouteNodes": {
     "CreatedAt": "Ngày tạo",
+    "HealthStatus": "Trạng thái sức khỏe",
     "RouteId": "ID tuyến",
+    "SchedulingHistory": "Lịch sử lập lịch",
     "SessionId": "ID phiên",
     "Status": "Trạng thái",
     "TrafficRatio": "Tỷ lệ lưu lượng",
     "TrafficStatus": "Trạng thái lưu lượng"
   },
-  "comp:BAISchedulingHistoryNodes": {
+  "comp:BAIRouteSchedulingHistoryNodes": {
     "Attempts": "Số lần thử",
+    "Category": "Danh mục",
     "CreatedAt": "Ngày tạo",
-    "From": "Từ",
+    "ErrorCode": "Mã lỗi",
+    "From": "Trạng thái nguồn",
+    "Message": "Tin nhắn",
     "Phase": "Giai đoạn",
     "Result": "Kết quả",
-    "StatusTransition": "Chuyển đổi trạng thái",
-    "To": "Đến",
+    "To": "Trạng thái đích",
+    "UpdatedAt": "Cập nhật lúc"
+  },
+  "comp:BAIRuntimeVariantPresetSettingModal": {
+    "AddChoice": "Thêm lựa chọn",
+    "Category": "Danh mục",
+    "CategoryPlaceholder": "vd: model_loading",
+    "CategoryTooltip": "Danh mục giao diện dùng để nhóm các tham số liên quan lại với nhau.",
+    "ChoiceLabel": "Nhãn",
+    "ChoiceLabelPlaceholder": "vd: FP16",
+    "ChoiceLabelRequired": "Nhãn lựa chọn là bắt buộc.",
+    "ChoiceValue": "Giá trị",
+    "ChoiceValuePlaceholder": "vd: fp16",
+    "ChoiceValueRequired": "Giá trị lựa chọn là bắt buộc.",
+    "Choices": "Lựa chọn",
+    "ChoicesRequired": "Cần ít nhất một lựa chọn.",
+    "CreatePreset": "Tạo tham số",
+    "DefaultValue": "Giá trị mặc định",
+    "DefaultValuePlaceholder": "vd: 1",
+    "Description": "Mô tả",
+    "DescriptionPlaceholder": "Mô tả tham số này kiểm soát điều gì và cách nó ảnh hưởng đến hành vi suy luận.",
+    "DisplayName": "Tên hiển thị",
+    "DisplayNamePlaceholder": "vd: Tensor Parallel Size",
+    "DisplayNameTooltip": "Nhãn dễ đọc được hiển thị thay cho tên tham số trong biểu mẫu triển khai.",
+    "EditPreset": "Chỉnh sửa tham số",
+    "Key": "Khóa",
+    "KeyPlaceholder": "vd: TENSOR_PARALLEL_SIZE",
+    "KeyRequired": "Khóa là bắt buộc.",
+    "Name": "Tên",
+    "NamePlaceholder": "vd: Tensor Parallel Size",
+    "NameRequired": "Tên là bắt buộc.",
+    "NumberMax": "Giá trị tối đa",
+    "NumberMaxMustExceedMin": "Giá trị tối đa phải lớn hơn giá trị tối thiểu.",
+    "NumberMin": "Giá trị tối thiểu",
+    "PresetCreated": "Tham số runtime đã được tạo.",
+    "PresetTarget": "Mục tiêu tham số",
+    "PresetTargetArgs": "Đối số dòng lệnh",
+    "PresetTargetEnv": "Biến môi trường",
+    "PresetTargetRequired": "Mục tiêu tham số là bắt buộc.",
+    "PresetUpdated": "Tham số runtime đã được cập nhật.",
+    "Rank": "Thứ hạng",
+    "RankTooltip": "Thứ tự hiển thị trong số các tham số của cùng runtime. Giá trị thấp hơn được hiển thị trước.",
+    "Required": "Bắt buộc",
+    "RequiredTooltip": "Liệu tham số này có phải được cung cấp khi tạo bản sửa đổi triển khai hay không.",
+    "Requirement": "Tính bắt buộc",
+    "RuntimeVariant": "Biến thể thời gian chạy",
+    "RuntimeVariantRequired": "Biến thể thời gian chạy là bắt buộc.",
+    "SliderMax": "Giá trị tối đa",
+    "SliderMaxMustExceedMin": "Giá trị tối đa phải lớn hơn giá trị tối thiểu.",
+    "SliderMaxRequired": "Giá trị tối đa là bắt buộc.",
+    "SliderMin": "Giá trị tối thiểu",
+    "SliderMinRequired": "Giá trị tối thiểu là bắt buộc.",
+    "SliderStep": "Bước nhảy",
+    "SliderStepMustBePositive": "Bước nhảy phải lớn hơn 0.",
+    "SliderStepTooltip": "Bước tăng của thanh trượt. Giá trị mặc định là 1.",
+    "StoredValueTypeMismatch": "Tham số này được lưu với loại giá trị {{valueType}}, mà loại giao diện {{uiType}} không thể hiển thị. Hãy thay đổi loại giao diện hoặc loại giá trị.",
+    "TextPlaceholderExample": "vd: Nhập một giá trị",
+    "TextPlaceholderLabel": "Văn bản gợi ý ô nhập",
+    "UIType": "Loại giao diện",
+    "UITypeCheckbox": "Hộp kiểm",
+    "UITypeIncompatibleWithValueType": "Loại giao diện đã chọn không thể hiển thị loại giá trị này.",
+    "UITypeNumberInput": "Ô nhập số",
+    "UITypeSelect": "Danh sách chọn",
+    "UITypeSlider": "Thanh trượt",
+    "UITypeTextInput": "Ô nhập văn bản",
+    "UITypeTooltip": "Điều khiển dùng để hiển thị tham số này trong biểu mẫu triển khai.",
+    "ValueType": "Loại giá trị",
+    "ValueTypeBool": "Boolean",
+    "ValueTypeFlag": "Cờ",
+    "ValueTypeFloat": "Số thực",
+    "ValueTypeInt": "Số nguyên",
+    "ValueTypeRequired": "Loại giá trị là bắt buộc.",
+    "ValueTypeStr": "Chuỗi"
+  },
+  "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "DefaultValue": "Giá trị mặc định",
+    "Description": "Mô tả",
+    "DisplayName": "Tên hiển thị",
+    "Key": "Khóa",
+    "ModifiedAt": "Ngày chỉnh sửa",
+    "Name": "Tên",
+    "Optional": "Không bắt buộc",
+    "PresetTarget": "Mục tiêu tham số",
+    "PresetTargetArgs": "Đối số dòng lệnh",
+    "PresetTargetEnv": "Biến môi trường",
+    "Rank": "Thứ hạng",
+    "RankTooltip": "Thứ tự hiển thị trong số các tham số của cùng runtime. Giá trị thấp hơn được hiển thị trước.",
+    "Required": "Bắt buộc",
+    "RuntimeVariantId": "ID biến thể thời gian chạy",
+    "RuntimeVariantWithID": "Biến thể thời gian chạy (ID)",
+    "UIType": "Loại giao diện",
+    "UITypeCheckbox": "Hộp kiểm",
+    "UITypeNumberInput": "Ô nhập số",
+    "UITypeSelect": "Danh sách chọn",
+    "UITypeSlider": "Thanh trượt",
+    "UITypeTextInput": "Ô nhập văn bản",
+    "ValueType": "Loại giá trị",
+    "ValueTypeBool": "Boolean",
+    "ValueTypeFlag": "Cờ",
+    "ValueTypeFloat": "Số thực",
+    "ValueTypeInt": "Số nguyên",
+    "ValueTypeStr": "Chuỗi"
+  },
+  "comp:BAIRuntimeVariantSelect": {
+    "SelectRuntimeVariant": "Chọn biến thể runtime"
+  },
+  "comp:BAISchedulingHistoryNodes": {
+    "Attempts": "Số lần thử",
+    "Category": "Danh mục",
+    "CreatedAt": "Ngày tạo",
+    "ErrorCode": "Mã lỗi",
+    "From": "Trạng thái nguồn",
+    "Message": "Tin nhắn",
+    "Phase": "Giai đoạn",
+    "Result": "Kết quả",
+    "To": "Trạng thái đích",
     "UpdatedAt": "Cập nhật lúc"
   },
   "comp:BAISessionAgentIds": {
@@ -257,11 +548,32 @@
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Chọn máy chủ lưu trữ"
   },
+  "comp:BAIStorageProxySelect": {
+    "SelectStorageProxy": "Chọn proxy lưu trữ"
+  },
+  "comp:BAISubStepNodes": {
+    "Duration": "Thời lượng",
+    "ErrorCode": "Mã lỗi",
+    "Message": "Tin nhắn",
+    "Result": "Kết quả",
+    "ResultMarker": "Dấu kết quả của lần thử này",
+    "Step": "Bước",
+    "Time": "Thời gian"
+  },
   "comp:BAITable": {
+    "Apply": "Áp dụng",
+    "Cancel": "Hủy",
+    "CollapseAll": "Thu gọn tất cả",
+    "ExpandAll": "Mở rộng tất cả",
+    "ExpandErrorsOnly": "Chỉ mở rộng lỗi",
+    "ExpandOptions": "Tùy chọn mở rộng",
+    "ExpandRow": "Mở rộng hàng",
     "Export": "Xuất",
     "ExportCSV": "Xuất CSV",
     "GoToFirstPage": "Đến trang đầu",
     "InvalidPageNumber": "Số trang không hợp lệ",
+    "NoDataToDisplay": "Không có dữ liệu để hiển thị",
+    "Pagination": "Phân trang",
     "SearchTableColumn": "Các cột bảng tìm kiếm",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SettingTable": "Cài đặt bảng"
@@ -269,42 +581,69 @@
   "comp:BAITestButton": {
     "Test": "kiểm tra"
   },
+  "comp:BAIUserResourcePolicyV2Table": {
+    "CreatedAt": "Được tạo tại",
+    "MaxConcurrentLogins": "Số lần đăng nhập đồng thời tối đa",
+    "MaxCustomizedImageCount": "Số lượng hình ảnh tùy chỉnh tối đa",
+    "MaxQuotaScopeSize": "Kích thước thư mục tối đa",
+    "MaxSessionCountPerModelSession": "Số phiên tối đa trên mỗi phiên mô hình",
+    "MaxVFolderCount": "Số lượng thư mục tối đa",
+    "Name": "Tên"
+  },
   "comp:BAIUserSelect": {
     "SelectUser": "Chọn người dùng"
+  },
+  "comp:BAIVFolderMountConfigInput": {
+    "AliasInvalid": "Định dạng đường dẫn không hợp lệ.",
+    "AliasOverlapping": "Đường dẫn mount trùng lặp với thư mục khác.",
+    "AliasPlaceholder": "Đường dẫn mount",
+    "AutoMountedFolders": "Thư mục tự động mount",
+    "Name": "Tên",
+    "PathAndAlias": "Đường dẫn & Bí danh",
+    "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
+    "RemoveFolder": "Xóa",
+    "Subpath": "Đường dẫn con",
+    "SubpathInvalid": "Đường dẫn con phải là đường dẫn tương đối và không được chứa '..'.",
+    "SubpathPlaceholder": "vd. dataset/train (tùy chọn)",
+    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Để trống để mount từ thư mục gốc."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Chọn thư mục"
   },
   "comp:FileExplorer": {
+    "ArchiveDownloadStarted": "Đã bắt đầu tải xuống {{count}} mục.",
     "ChangeFileExtension": "Thay đổi phần mở rộng tệp",
     "ChangeFileExtensionDesc": "Thay đổi tiện ích mở rộng tệp có thể khiến tệp trở nên không thể sử dụng hoặc mở không chính xác. \nBạn có muốn tiếp tục không?",
-    "Controls": "Kiểm soát",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Tạo tệp mới",
     "CreateANewFolder": "Tạo một thư mục mới",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Tạo tệp",
+    "CreateFolder": "Tạo thư mục",
     "CreatedAt": "Được tạo ra tại",
     "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
     "DeleteSelectedItemsDialog": "Xóa xác nhận",
+    "Download": "Tải xuống",
+    "DownloadSelected": "Tải xuống",
     "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
     "DragAndDropDesc": "Kéo và thả các tập tin vào khu vực này để tải lên.",
     "DuplicatedFiles": "Ghi đè xác nhận",
     "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",
     "EditFile": "Chỉnh sửa tệp",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Đã tạo tệp thành công.",
+    "FileName": "Tên tệp",
+    "FileNamePlaceholder": "vd: model-definition.yaml",
     "FileTooLargeToEdit": "Chỉnh sửa trên trình duyệt bị hạn chế vì kích thước tệp vượt quá {{size}}MB.",
     "FolderCreatedSuccessfully": "Thư mục đã tạo thành công.",
     "FolderName": "Tên thư mục",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Tên tệp phải có tối đa 255 ký tự.",
     "MaxFolderNameLength": "Tên thư mục phải là 255 ký tự hoặc ít hơn.",
     "ModifiedAt": "Sửa đổi tại",
-    "MoreOptions": "Thêm tùy chọn",
     "Name": "Tên",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "NoUploadPermissionForHost": "Bạn không có quyền tải lên cho máy chủ lưu trữ này.",
+    "Path": "Đường dẫn",
+    "PleaseEnterAFileName": "Vui lòng nhập tên tệp.",
     "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
+    "RenameFile": "Đổi tên",
     "RenameSuccess": "Tên đã được thay đổi thành công.",
     "SelectedItemsDeletedSuccessfully": "Các tập tin và thư mục được chọn đã bị xóa thành công.",
     "Size": "Kích cỡ",
@@ -324,19 +663,31 @@
   "comp:ResourceStatistics": {
     "NoResourcesData": "Không có dữ liệu tài nguyên"
   },
-  "comp:SessionHistorySubStepNodes": {
-    "EndedAt": "Kết thúc lúc",
-    "ErrorCode": "Mã lỗi",
-    "Message": "Tin nhắn",
-    "Result": "Kết quả",
-    "StartedAt": "Bắt đầu lúc",
-    "Step": "Bước"
+  "comp:SessionV2Nodes": {
+    "AIAccelerator": "Bộ gia tốc AI",
+    "CPU": "CPU",
+    "ClusterMode": "Chế độ Cluster",
+    "CreatedAt": "Ngày tạo",
+    "ElapsedTime": "Thời gian đã trôi",
+    "Environments": "Môi trường",
+    "Memory": "Bộ nhớ",
+    "OwnerEmail": "Email chủ sở hữu",
+    "Project": "Dự án",
+    "ResourceGroup": "Nhóm tài nguyên",
+    "SessionId": "ID phiên",
+    "SessionName": "Tên phiên",
+    "SessionType": "Loại phiên",
+    "Status": "Trạng thái",
+    "TerminateSession": "Kết thúc phiên"
   },
   "comp:UserNodes": {
     "AllowedClientIps": "IP khách hàng được phép",
-    "ContainerGIDs": "GID của container",
-    "ContainerMainGID": "GID chính của container",
-    "ContainerUID": "UID của container",
+    "ContainerGIDs": "GID bổ sung",
+    "ContainerGIDsTooltip": "Các ID nhóm số bổ sung được gán cho các tiến trình của container",
+    "ContainerMainGID": "GID container",
+    "ContainerMainGIDTooltip": "ID nhóm số mặc định được gán cho các tiến trình trong container",
+    "ContainerUID": "UID container",
+    "ContainerUIDTooltip": "ID người dùng số được gán cho các tiến trình trong container",
     "CreatedAt": "Tạo lúc",
     "Description": "Mô tả",
     "Disabled": "Đã tắt",
@@ -344,6 +695,8 @@
     "Email": "Email",
     "Enabled": "Đã bật",
     "FullName": "Họ và tên",
+    "IntegrationName": "Tên tích hợp",
+    "MainAccessKey": "Khóa truy cập chính",
     "ModifiedAt": "Sửa lúc",
     "NeedPasswordChange": "Cần đổi mật khẩu",
     "Project": "Dự án",
@@ -353,21 +706,79 @@
     "StatusInfo": "Thông tin trạng thái",
     "SudoSessionEnabled": "Phiên Sudo đã bật",
     "TwoFA": "Xác thực hai yếu tố",
+    "TwoFAActivatedAt": "2FA được kích hoạt lúc",
+    "UserID": "ID người dùng",
     "Username": "Tên người dùng"
+  },
+  "comp:VFolderPathPicker": {
+    "ClickToSelectPath": "Nhấp để chọn đường dẫn",
+    "SelectAPath": "Chọn đường dẫn",
+    "SelectAPathInFolder": "Chọn đường dẫn trong {{folderName}}",
+    "SelectFolderFirst": "Vui lòng chọn thư mục trước",
+    "SelectThisLocation": "Chọn vị trí này",
+    "SelectedPath": "Đã chọn"
   },
   "error": {
     "UnknownError": "Một lỗi không xác định xảy ra. \nHãy thử lại."
   },
+  "form": {
+    "Optional": "(Tùy chọn)",
+    "validateMessages": {
+      "Default": "${label} không đáp ứng điều kiện quy định",
+      "Required": "Hãy nhập thông tin cho trường ${label}",
+      "Whitespace": "${label} không được chứa khoảng trắng",
+      "array": {
+        "Len": "Mảng ${label} phải có ${len} phần tử ",
+        "Max": "Mảng ${label} phải chứa tối đa ${max} phần tử ",
+        "Min": "Mảng ${label} phải chứa tối thiểu ${min} phần tử ",
+        "Range": "Mảng ${label} phải chứa từ ${min}-${max} phần tử"
+      },
+      "number": {
+        "Len": "${label} phải bằng ${len}",
+        "Max": "${label} phải nhỏ hơn hoặc bằng ${max}",
+        "Min": "${label} phải lớn hơn hoặc bằng ${min}",
+        "Range": "${label} phải nằm trong khoảng ${min}-${max}"
+      },
+      "pattern": {
+        "Mismatch": "${label} không thỏa mãn mẫu kiểm tra ${pattern}"
+      },
+      "string": {
+        "Len": "${label} phải dài đúng ${len} ký tự",
+        "Max": "Độ dài tối đa trường ${label} là ${max} ký tự",
+        "Min": "Độ dài tối thiểu trường ${label} là ${min} ký tự",
+        "Range": "Độ dài trường ${label} phải từ ${min} đến ${max} ký tự"
+      },
+      "types": {
+        "Email": "${label} không phải kiểu ${type} hợp lệ",
+        "Number": "${label} không phải kiểu ${type} hợp lệ",
+        "Object": "${label} không phải kiểu ${type} hợp lệ",
+        "String": "${label} không phải kiểu ${type} hợp lệ",
+        "Url": "${label} không phải kiểu ${type} hợp lệ"
+      }
+    }
+  },
   "general": {
+    "Decrease": "Giảm",
     "DeselectAll": "Bỏ chọn tất cả",
+    "File": "Tệp",
+    "Increase": "Tăng",
     "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
+    "Project": "Dự án",
+    "Search": "Tìm kiếm",
+    "Select": "Chọn",
+    "SelectPlaceholder": "Chọn {{label}}",
     "TotalItems": "Tổng số {{total}} các mục",
+    "Unit": "Đơn vị",
     "button": {
+      "Action": "Hành động",
+      "Back": "Quay lại",
       "Cancel": "Hủy bỏ",
       "Close": "Đóng",
       "Collapse": "Sụp đổ",
+      "Confirm": "Xác nhận",
       "Copied": "Đã sao chép",
+      "Copy": "Sao chép",
       "CopyAll": "Sao chép tất cả",
       "Create": "Tạo nên",
       "Delete": "Xóa bỏ",

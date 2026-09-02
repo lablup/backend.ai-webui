@@ -1,0 +1,32 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <FolderCreateModal> (to-astryx ticket 33). Replaces the
+ antd-style `createStyles` block; imported by the component itself (P17).
+ Note that the sibling `FolderCreateModalV2` keeps its own copy — the two
+ modals are on different migration tracks and must not share a class.
+
+ to-astryx ticket 35 re-pointed the two surviving rules from `ant-form-item*`
+ to the engine's `[data-bai-form-item*]` anchors: the form engine is
+ self-hosted now, so the antd selectors matched nothing (P6). The third rule,
+ `ant-form-item-label > label::after { display: none }`, is GONE rather than
+ re-pointed — it existed to hide antd's automatic label colon, and the BAI
+ visual shell never renders one.
+
+ to-astryx phase 3 / ticket B dropped the `.folder-create-modal
+ ant-modal-body` padding override: `BAIModal` renders Astryx `Dialog` +
+ `LayoutContent`, so that selector matches nothing and the body padding now
+ comes from the dialog container tokens.
+
+ Token mapping (P19-checked): token.paddingSM (12px) -> var(--spacing-3).
+*/
+.folder-create-modal-form [data-bai-form-item-label] {
+  display: flex;
+  align-items: start;
+  padding-left: var(--spacing-3);
+}
+
+.folder-create-modal-form [data-bai-form-item-control] {
+  padding-right: var(--spacing-3);
+}

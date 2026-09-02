@@ -3,17 +3,24 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ContainerCommitModalFragment$key } from '../../__generated__/ContainerCommitModalFragment.graphql';
+import { Form, FormInstance } from '../../form-engine';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useSetBAINotification } from '../../hooks/useBAINotification';
+// FRONTIER (ticket 17 / ticket 34): Form + Form.Item stay on the antd
+// form engine (locked SHIM decision); the CONTROL inside the item is Astryx,
+// through the `astryxFormControls` adapter that reconciles the three deltas
+// (required non-null `value`, self-rendered `label`, value-not-event
+// `onChange`).
+import { AstryxFormTextInput } from '../astryxFormControls';
+import { Divider } from '@astryxdesign/core/Divider';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Text } from '@astryxdesign/core/Text';
 import {
-  Descriptions,
-  Divider,
-  Form,
-  FormInstance,
-  Input,
-  Typography,
-} from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+  BAIFlex,
+  BAIMetadataList,
+  BAIModal,
+  BAIModalProps,
+} from 'backend.ai-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -56,7 +63,7 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
           backgroundTask: {
             status: 'pending',
             promise: baiClient.computeSession.convertSessionToImage(
-              session?.name ?? '',
+              session?.row_id ?? '',
               values.imageName,
             ),
             onChange: {
@@ -114,19 +121,17 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
         align="stretch"
         style={{ overflow: 'hidden' }}
       >
-        <Typography.Text>{t('session.DescCommitSession')}</Typography.Text>
-        <Descriptions bordered size="small" column={1}>
-          <Descriptions.Item label={t('session.SessionName')}>
+        <Text>{t('session.DescCommitSession')}</Text>
+        <BAIMetadataList columns="single">
+          <MetadataListItem label={t('session.SessionName')}>
             {session?.name}
-          </Descriptions.Item>
-          <Descriptions.Item label={t('session.SessionId')}>
+          </MetadataListItem>
+          <MetadataListItem label={t('session.SessionId')}>
             {session?.row_id}
-          </Descriptions.Item>
+          </MetadataListItem>
           {/* FIXME: need to use legacy_session */}
-          {/* <Descriptions.Item label={t('session.launcher.Environments')}>
-          </Descriptions.Item>  */}
-        </Descriptions>
-        <Divider style={{ marginTop: 12, marginBottom: 12 }} />
+        </BAIMetadataList>
+        <Divider />
         <Form ref={formRef}>
           <Form.Item
             label={t('session.CommitImageName')}
@@ -144,7 +149,10 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
               },
             ]}
           >
-            <Input placeholder={t('inputLimit.4to32chars')} />
+            <AstryxFormTextInput
+              label={t('session.CommitImageName')}
+              placeholder={t('inputLimit.4to32chars')}
+            />
           </Form.Item>
         </Form>
       </BAIFlex>

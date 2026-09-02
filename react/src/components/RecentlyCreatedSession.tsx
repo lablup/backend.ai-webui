@@ -3,9 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
+import { theme } from '../theme-shim';
+import { ProjectContextOrNull } from '../types/projectContext';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
-import { theme } from 'antd';
 import {
   filterOutNullAndUndefined,
   toLocalId,
@@ -14,25 +15,33 @@ import {
   BAIFetchKeyButton,
   BAIBoardItemTitle,
 } from 'backend.ai-ui';
+import { parseAsString, useQueryState } from 'nuqs';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
-import { useQueryParam, StringParam } from 'use-query-params';
 
 interface RecentlyCreatedSessionProps {
   queryRef: RecentlyCreatedSessionFragment$key;
   isRefetching?: boolean;
+  /**
+   * Explicit project prop contract (ADR-0001, FR-3413): pass-through to the
+   * session-detail drawer. The mounting page decides the project context.
+   */
+  project: ProjectContextOrNull;
 }
 
 const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
   queryRef,
   isRefetching,
+  project,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const [sessionDetailId, setSessionDetailId] = useQueryParam(
+  const [sessionDetailId, setSessionDetailId] = useQueryState(
     'sessionDetail',
-    StringParam,
+    // Push so Back closes the drawer (nuqs defaults to replace; the legacy
+    // param pushed history on open/close).
+    parseAsString.withOptions({ history: 'push' }),
   );
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -127,8 +136,9 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
         <SessionDetailDrawer
           open={!!sessionDetailId}
           sessionId={sessionDetailId || undefined}
+          project={project}
           onClose={() => {
-            setSessionDetailId(undefined, 'pushIn');
+            setSessionDetailId(null);
           }}
         />
       </BAIUnmountAfterClose>

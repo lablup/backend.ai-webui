@@ -17,8 +17,10 @@ import {
   refreshConfigFromToml,
   type LoginConfigState,
 } from '../helper/loginConfig';
-import { atom, useAtomValue, useSetAtom } from 'jotai';
-import { useCallback, useEffect } from 'react';
+import { useBAILogger } from 'backend.ai-ui';
+import { atom, useAtomValue, useSetAtom, useStore } from 'jotai';
+import type { createStore } from 'jotai';
+import { useEffect } from 'react';
 import { parse as toml } from 'smol-toml';
 
 // ---------------------------------------------------------------------------
@@ -73,6 +75,12 @@ export const loginConfigState = atom<LoginConfigState | null>(null);
 export const configLoadedState = atom<boolean>(false);
 
 /**
+ * Holds the config.toml parse error, if any.
+ * Set when fetch succeeds but TOML parsing fails (e.g. duplicate keys).
+ */
+export const configParseErrorState = atom<unknown | null>(null);
+
+/**
  * Holds the auto_logout flag extracted from config.
  */
 export const autoLogoutState = atom<boolean>(false);
@@ -88,10 +96,19 @@ export const proxyUrlState = atom<string>('');
 export const loginPluginState = atom<string>('');
 
 /**
- * Module-level flag to ensure config.toml is fetched only once,
- * even when multiple component instances call useInitializeConfig.
+ * Module-level in-flight promise so config.toml is fetched and processed at
+ * most once per page load, even when multiple entry points race to
+ * initialize it (LoginView via `useInitializeConfig`, sToken entry paths via
+ * `initializeConfigOnce` — see FR-3128). Concurrent callers share the same
+ * promise instead of observing a half-initialized state.
  */
-let configInitialized = false;
+let configInitPromise: Promise<void> | null = null;
+
+/**
+ * Jotai store handle shape shared by the app-level `jotaiStore` and the
+ * store returned by `useStore()`.
+ */
+type JotaiStore = ReturnType<typeof createStore>;
 
 // ---------------------------------------------------------------------------
 // TOML fetching and preprocessing
@@ -114,31 +131,50 @@ function preprocessToml(config: RawTomlConfig): void {
 }
 
 /**
+ * Result of fetching and parsing config.toml.
+ * - Fetch failure (network error, non-200, SPA fallback): `{ config: null }` — no error.
+ * - Parse failure (invalid TOML after fetch succeeds): `{ config: null, error }`.
+ */
+interface ConfigFetchResult {
+  config: RawTomlConfig | null;
+  error?: unknown;
+}
+
+/**
  * Fetch and parse config.toml from the given path.
- * Returns the parsed TOML object, or null on failure.
+ * Returns the parsed config and any parse error for diagnostic logging.
  */
 export async function fetchAndParseConfig(
   configPath: string,
-): Promise<RawTomlConfig | null> {
+): Promise<ConfigFetchResult> {
+  let res: Response;
   try {
-    const res = await fetch(configPath);
-    if (res.status !== 200) {
-      return null;
-    }
-    // When config.toml is missing, the dev server's SPA fallback
-    // (historyApiFallback) serves index.html with status 200.  Detect this
-    // by checking the Content-Type header — a real TOML file is served as
-    // text/plain or application/octet-stream, never text/html.
-    const contentType = res.headers.get('content-type') ?? '';
-    if (contentType.includes('text/html')) {
-      return null;
-    }
+    res = await fetch(configPath);
+  } catch {
+    // Network / fetch error — treat as missing config (no error field).
+    return { config: null };
+  }
+
+  if (res.status !== 200) {
+    return { config: null };
+  }
+  // When config.toml is missing, the dev server's SPA fallback
+  // (historyApiFallback) serves index.html with status 200.  Detect this
+  // by checking the Content-Type header — a real TOML file is served as
+  // text/plain or application/octet-stream, never text/html.
+  const contentType = res.headers.get('content-type') ?? '';
+  if (contentType.includes('text/html')) {
+    return { config: null };
+  }
+
+  try {
     const text = await res.text();
     const parsed = toml(text) as RawTomlConfig;
     preprocessToml(parsed);
-    return parsed;
-  } catch {
-    return null;
+    return { config: parsed };
+  } catch (error) {
+    // Parse error — config was fetched but TOML is invalid.
+    return { config: null, error };
   }
 }
 
@@ -210,6 +246,94 @@ function processConfig(config: RawTomlConfig): {
   };
 }
 
+/**
+ * Fetch and process config.toml exactly once per page load, writing the
+ * results into the given Jotai store (the app-level `jotaiStore` in
+ * production — `index.tsx` passes it to the root `JotaiProvider`, so
+ * `useStore()` resolves to the same instance).
+ *
+ * Historically only `LoginView` (via `useInitializeConfig`) triggered this
+ * bootstrap. Entry points that authenticate *before* the regular layout
+ * mounts — e.g. `STokenLoginBoundary` on sToken/SSO URLs — must await this
+ * themselves, otherwise the login sequence runs against
+ * `getDefaultLoginConfig()` and silently drops webserver-configured flags
+ * such as `[resources].allowNonAuthTCP` (FR-3128).
+ *
+ * Missing or unparsable config.toml is not an error: defaults are applied
+ * and the promise resolves, mirroring the previous `useInitializeConfig`
+ * behavior.
+ */
+export function initializeConfigOnce(
+  store: JotaiStore,
+  logger: Pick<Console, 'error' | 'warn'> = console,
+): Promise<void> {
+  if (!configInitPromise) {
+    configInitPromise = (async () => {
+      // Electron uses es6:// protocol which resolves from app/ directory
+      // Web uses relative path from the HTML location
+      const configPath = (globalThis as Record<string, unknown>).isElectron
+        ? 'es6://config.toml'
+        : '../../config.toml';
+
+      const result = await fetchAndParseConfig(configPath);
+
+      if (!result.config) {
+        // config.toml is missing or failed to parse — apply defaults so the
+        // app remains functional (login page renders with empty API endpoint
+        // field).
+        const defaultConfig = getDefaultLoginConfig();
+        store.set(loginConfigState, defaultConfig);
+        store.set(proxyUrlState, defaultConfig.proxy_url);
+        store.set(autoLogoutState, false);
+        store.set(configLoadedState, true);
+
+        // Ensure config-derived globals are set even when config.toml is
+        // missing, so edition-dependent logic behaves consistently with the
+        // normal path.
+        const globalScope = globalThis as Record<string, unknown>;
+        if (globalScope.packageEdition === undefined) {
+          globalScope.packageEdition = 'Open Source';
+        }
+        if (globalScope.packageValidUntil === undefined) {
+          globalScope.packageValidUntil = '';
+        }
+
+        if (result.error) {
+          store.set(configParseErrorState, result.error);
+          logger.error(
+            '[config.toml] Failed to parse — using default configuration:',
+            result.error,
+          );
+        } else {
+          logger.warn('[config.toml] Not found — using default configuration');
+        }
+        return;
+      }
+
+      store.set(rawConfigState, result.config);
+
+      const { autoLogout, proxyUrl, loginPlugin, loginConfig } = processConfig(
+        result.config,
+      );
+
+      store.set(loginConfigState, loginConfig);
+      store.set(autoLogoutState, autoLogout);
+      store.set(proxyUrlState, proxyUrl);
+      store.set(loginPluginState, loginPlugin);
+
+      store.set(configLoadedState, true);
+    })().catch((error) => {
+      // The body above is designed never to reject (fetch/parse failures
+      // resolve through the defaults path). If it somehow does, drop the
+      // cached promise so a later caller can retry instead of permanently
+      // caching the rejection.
+      configInitPromise = null;
+      throw error;
+    });
+  }
+  return configInitPromise;
+}
+
 // ---------------------------------------------------------------------------
 // Hooks
 // ---------------------------------------------------------------------------
@@ -227,76 +351,15 @@ export function useInitializeConfig(): {
   loginConfig: LoginConfigState | null;
   loadConfig: () => Promise<void>;
 } {
-  const setRawConfig = useSetAtom(rawConfigState);
-  const setLoginConfig = useSetAtom(loginConfigState);
-  const setConfigLoaded = useSetAtom(configLoadedState);
-  const setAutoLogout = useSetAtom(autoLogoutState);
-  const setProxyUrl = useSetAtom(proxyUrlState);
-  const setLoginPlugin = useSetAtom(loginPluginState);
+  'use memo';
+  const store = useStore();
+  const { logger } = useBAILogger();
 
   const isLoaded = useAtomValue(configLoadedState);
   const rawConfig = useAtomValue(rawConfigState);
   const currentLoginConfig = useAtomValue(loginConfigState);
 
-  const loadConfig = useCallback(async () => {
-    // Use a module-level flag to prevent multiple LoginView instances
-    // (eager + lazy) from fetching config.toml more than once.
-    // A per-instance useRef is insufficient because each component
-    // instance gets its own ref.
-    if (configInitialized) return;
-    configInitialized = true;
-
-    // Electron uses es6:// protocol which resolves from app/ directory
-    // Web uses relative path from the HTML location
-    const configPath = (globalThis as Record<string, unknown>).isElectron
-      ? 'es6://config.toml'
-      : '../../config.toml';
-
-    const parsed = await fetchAndParseConfig(configPath);
-
-    if (!parsed) {
-      // config.toml is missing or failed to load — apply defaults so the app
-      // remains functional (login page renders with empty API endpoint field).
-      const defaultConfig = getDefaultLoginConfig();
-      setLoginConfig(defaultConfig);
-      setProxyUrl(defaultConfig.proxy_url);
-      setAutoLogout(false);
-      setConfigLoaded(true);
-
-      // Ensure config-derived globals are set even when config.toml is missing,
-      // so edition-dependent logic behaves consistently with the normal path.
-      const globalScope = globalThis as Record<string, unknown>;
-      if (globalScope.packageEdition === undefined) {
-        globalScope.packageEdition = 'Open Source';
-      }
-      if (globalScope.packageValidUntil === undefined) {
-        globalScope.packageValidUntil = '';
-      }
-
-      // eslint-disable-next-line no-console
-      console.warn('config.toml not found — using default configuration');
-      return;
-    }
-
-    setRawConfig(parsed);
-
-    const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
-      processConfig(parsed);
-
-    setLoginConfig(loginConfig);
-    setAutoLogout(autoLogout);
-    setProxyUrl(proxyUrl);
-    setLoginPlugin(loginPlugin);
-
-    setConfigLoaded(true);
-  }, [
-    setRawConfig,
-    setLoginConfig,
-    setConfigLoaded,
-    setAutoLogout,
-    setProxyUrl,
-    setLoginPlugin,
-  ]);
+  const loadConfig = () => initializeConfigOnce(store, logger);
 
   return {
     isLoaded,
@@ -342,28 +405,33 @@ export function useProxyUrl(): string {
 }
 
 /**
+ * Hook to access the config.toml parse error, if any.
+ */
+export function useConfigParseError(): unknown | null {
+  return useAtomValue(configParseErrorState);
+}
+
+/**
  * Hook to update the raw config (e.g., after Electron webserver config merge).
  * Returns a setter that re-processes config after updating.
  */
 export function useUpdateRawConfig(): (config: RawTomlConfig) => void {
+  'use memo';
   const setRawConfig = useSetAtom(rawConfigState);
   const setLoginConfig = useSetAtom(loginConfigState);
   const setAutoLogout = useSetAtom(autoLogoutState);
   const setProxyUrl = useSetAtom(proxyUrlState);
   const setLoginPlugin = useSetAtom(loginPluginState);
 
-  return useCallback(
-    (config: RawTomlConfig) => {
-      setRawConfig(config);
-      const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
-        processConfig(config);
-      setLoginConfig(loginConfig);
-      setAutoLogout(autoLogout);
-      setProxyUrl(proxyUrl);
-      setLoginPlugin(loginPlugin);
-    },
-    [setRawConfig, setLoginConfig, setAutoLogout, setProxyUrl, setLoginPlugin],
-  );
+  return (config: RawTomlConfig) => {
+    setRawConfig(config);
+    const { autoLogout, proxyUrl, loginPlugin, loginConfig } =
+      processConfig(config);
+    setLoginConfig(loginConfig);
+    setAutoLogout(autoLogout);
+    setProxyUrl(proxyUrl);
+    setLoginPlugin(loginPlugin);
+  };
 }
 
 /**

@@ -1,0 +1,97 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIMultiStepNotificationItem> (to-astryx ticket 33).
+ Replaces the antd-style `createStyles` block; imported by the component
+ itself (P17). Nothing here targets `.ant-*` (P6).
+
+ The 300ms slide duration was interpolated from the `SLIDE_DURATION` constant
+ in the component. It is declared once here as `--bai-step-slide-duration`;
+ the component no longer needs to feed it into a style engine, and the TS
+ constant stays the single source for the JS-side timers.
+
+ Token mapping (P19-checked): token.marginXXS (4px) -> var(--spacing-1).
+*/
+.bai-step-slider {
+  --bai-step-slide-duration: 300ms;
+  position: relative;
+  overflow: hidden;
+  height: 20px;
+}
+
+.bai-step-slide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  height: 20px;
+  transition:
+    transform var(--bai-step-slide-duration, 300ms) ease-in-out,
+    opacity var(--bai-step-slide-duration, 300ms) ease-in-out;
+}
+
+/* Visible position (center) */
+.bai-step-slide-center {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Exited upward (out of view) */
+.bai-step-slide-up {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+/* Waiting below (before entering) */
+.bai-step-slide-down {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+/* Instantly position without transition (used to place a new element below
+   before animating it in) */
+.bai-step-slide-no-transition {
+  transition: none !important;
+}
+
+.bai-step-expand-toggle {
+  cursor: pointer;
+  user-select: none;
+}
+
+.bai-step-expand-toggle:hover {
+  opacity: 0.7;
+}
+
+.bai-step-expand-icon {
+  transition: transform 0.2s ease;
+  font-size: 10px;
+}
+
+.bai-step-expand-icon-open {
+  transform: rotate(0deg);
+}
+
+.bai-step-expand-icon-closed {
+  transform: rotate(-90deg);
+}
+
+.bai-step-list {
+  overflow: hidden;
+  transition:
+    max-height 0.25s ease-in-out,
+    opacity 0.25s ease-in-out;
+}
+
+.bai-step-list-expanded {
+  max-height: 200px;
+  opacity: 1;
+}
+
+.bai-step-list-collapsed {
+  max-height: 0;
+  opacity: 0;
+}

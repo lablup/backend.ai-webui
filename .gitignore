@@ -50,6 +50,9 @@ typings/
 # Optional eslint cache
 .eslintcache
 
+# TypeScript incremental build info (verify.sh tsc --incremental)
+*.tsbuildinfo
+
 # Optional REPL history
 .node_repl_history
 
@@ -90,8 +93,6 @@ config.ini
 config.toml
 configs/*.toml
 
-# model card metadata
-resources/model_card_metadata.json
 
 # webpack
 dist
@@ -99,21 +100,11 @@ dist
 # deploy makefile
 deploy
 
-# build output
-src/lib/backend.ai-client-ingen-es6.js
-src/lib/backend.ai-client-node.js
-src/lib/bundles/
-src/lib/web-animations-js/
-src/lib/webcomponents-loader.js
-
 # -E files
 **/*.html-E
 **/*.js-E
 **/*.ts-E
 **/*.json-E
-# Documentation
-
-docs/
 # backend.ai app directory
 backend.ai-app/
 
@@ -172,6 +163,11 @@ data/merged_schema.graphql
 # webui release download temp directories (safe to delete)
 scripts/temp-releases/
 
+# derived type-check tsconfig generated at dev startup (FR-3214): excludes the
+# machine-specific pnpm store path from vite-plugin-checker's TS watch program
+react/tsconfig.checker.json
+react/tsconfig.checker.json.*.tmp
+
 # ignore playwright mcp test files
 .playwright-mcp/
 
@@ -181,3 +177,8 @@ e2e/.agent-output/
 
 
 e2e/recordings/
+
+# Local scratch space — never committed (the FR-3482 migration's working
+# directory briefly lived here; its durable records moved to
+# .specs/FR-3482-astryx-migration/ in FR-3488).
+.scratch/

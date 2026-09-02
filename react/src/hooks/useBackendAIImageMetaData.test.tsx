@@ -23,7 +23,7 @@ describe('useBackendAIImageMetaData', () => {
   );
 
   beforeEach(() => {
-    (global as any).fetch = jest.fn(async () =>
+    (global as any).fetch = vi.fn(async () =>
       Promise.resolve({
         ok: true,
         status: 200,

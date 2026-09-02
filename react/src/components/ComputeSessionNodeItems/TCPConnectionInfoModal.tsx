@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Descriptions } from 'antd';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { BAIMetadataList, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
 interface TCPConnectionInfoModalProps extends BAIModalProps {
@@ -28,18 +28,16 @@ const TCPConnectionInfoModal: React.FC<TCPConnectionInfoModalProps> = ({
       footer={null}
       {...modalProps}
     >
-      <Descriptions
-        column={1}
-        bordered
-        size="small"
+      <BAIMetadataList
+        columns="single"
         title={t('session.ConnectionInformation')}
       >
-        <Descriptions.Item label={t('environment.AppName')}>
+        <MetadataListItem label={t('environment.AppName')}>
           {appName}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('session.Host')}>{host}</Descriptions.Item>
-        <Descriptions.Item label={t('session.Port')}>{port}</Descriptions.Item>
-      </Descriptions>
+        </MetadataListItem>
+        <MetadataListItem label={t('session.Host')}>{host}</MetadataListItem>
+        <MetadataListItem label={t('session.Port')}>{port}</MetadataListItem>
+      </BAIMetadataList>
     </BAIModal>
   );
 };

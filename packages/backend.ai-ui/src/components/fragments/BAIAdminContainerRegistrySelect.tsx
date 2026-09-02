@@ -1,27 +1,58 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ BAIAdminContainerRegistrySelect — ticket-27 Astryx sibling of
+ `BAIAdminContainerRegistrySelect`, built on `BAIComplexSelect` (ticket 26).
+
+ FRONTIER RULE (MIGRATION-SPEC §0 / CONVERSION-BRIEF §2.A): the antd
+ `BAIAdminContainerRegistrySelect` is NOT touched by this file and keeps
+ serving every unmigrated call site until ticket 27 moves them. This is the
+ Astryx-native sibling; its OUTER value contract is deliberately the same
+ plain key (`string` / `string[]`) the antd wrapper exposes today —
+ `labelInValue` lives strictly between this wrapper and `BAIComplexSelect`.
+
+ CLASS: B (id-valued) when `valuePropName === 'id'` (default); A
+ (name-valued, on the `row_id` field) when `valuePropName === 'row_id'`.
+ Both branches echo the antd original's field selection verbatim, including
+ its quirk of NOT `toLocalId`-normalizing the exposed `id`-mode value (only
+ the filter-building step does that conversion) — preserved as-is per the
+ "do not change which field is the key" rule.
+
+ PILOT-DECISIONs:
+  - The antd original passed the raw rc-select `option` object as a second
+    `onChange` argument; `BAIComplexSelect.onChange` only emits the
+    labelInValue-derived value, so that second argument is dropped — no
+    consumer of this wrapper used it.
+  - `notFoundContent={<Skeleton.Input/>}` first-load placeholder dropped
+    (P26-7); the shared "No results" text is used instead.
+  - This wrapper never used `optionRender`/`labelRender`; the antd version
+    already composed a single formatted string label
+    (`"registry_name - project"`), which carries over unchanged.
+*/
 import { BAIAdminContainerRegistrySelectPaginatedQuery } from '../../__generated__/BAIAdminContainerRegistrySelectPaginatedQuery.graphql';
 import { BAIAdminContainerRegistrySelectValueQuery } from '../../__generated__/BAIAdminContainerRegistrySelectValueQuery.graphql';
 import { toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
+import BAIComplexSelect, {
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
+} from '../BAIComplexSelect';
 import { mergeFilterValues } from '../BAIPropertyFilter';
-import BAISelect, { BAISelectProps } from '../BAISelect';
-import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
-import { GetRef, Skeleton } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import {
   useDeferredValue,
   useImperativeHandle,
-  useOptimistic,
-  useRef,
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type ContainerRegistryNode = NonNullable<
+export type AstryxContainerRegistryNode = NonNullable<
   NonNullable<
     BAIAdminContainerRegistrySelectPaginatedQuery['response']['container_registry_nodes']
   >['edges'][number]
@@ -32,29 +63,39 @@ export interface BAIAdminContainerRegistrySelectRef {
 }
 
 export interface BAIAdminContainerRegistrySelectProps extends Omit<
-  BAISelectProps,
-  'options' | 'labelInValue' | 'ref'
+  BAIComplexSelectProps,
+  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
+  /** Plain key(s), as the antd `BAIAdminContainerRegistrySelect` exposes. */
+  value?: string | Array<string> | null;
+  onChange?: (value: string | Array<string> | undefined) => void;
   filter?: string;
   valuePropName?: 'id' | 'row_id';
-  onChange?: (value: string | string[] | undefined, option: any) => void;
+  open?: boolean;
+  defaultOpen?: boolean;
   ref?: React.Ref<BAIAdminContainerRegistrySelectRef>;
 }
 
 const BAIAdminContainerRegistrySelect: React.FC<
   BAIAdminContainerRegistrySelectProps
-> = ({ loading, filter, valuePropName = 'id', ref, ...selectProps }) => {
+> = ({
+  filter,
+  valuePropName = 'id',
+  multiple = false,
+  isLoading,
+  ref,
+  ...selectProps
+}) => {
   'use memo';
-  const { t } = useTranslation();
-  const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+  const { t } = useBAIi18n();
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | string[] | undefined
-  >(selectProps, {
+    string | Array<string> | null | undefined
+  >(selectProps as Record<string, unknown>, {
     valuePropName: 'value',
     trigger: 'onChange',
   });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
-    selectProps,
+    selectProps as Record<string, unknown>,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
@@ -63,17 +104,23 @@ const BAIAdminContainerRegistrySelect: React.FC<
   );
 
   const deferredOpen = useDeferredValue(controllableOpen);
-  const [searchStr, setSearchStr] = useState<string>();
+  const [searchStr, setSearchStr] = useState<string>('');
   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
-  const [optimisticSearchStr, setOptimisticSearchStr] =
-    useOptimistic(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // Defer query refetch to prevent flickering during selection
+  // Deferred so a fresh selection does not immediately re-run the value query.
   const deferredControllableValue = useDeferredValue(controllableValue);
+  const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
+  /**
+   * The selected-key -> label resolution query. In antd this was a NICETY
+   * (antd renders the raw value when no option matches); on Astryx it is
+   * MANDATORY infrastructure — the trigger reads its text from the VALUE,
+   * and a value chosen on page 1 is not in `options` after `loadNext` has
+   * paged past it.
+   */
   const { container_registry_nodes: selectedRegistryNodes } =
     useLazyLoadQuery<BAIAdminContainerRegistrySelectValueQuery>(
       graphql`
@@ -98,9 +145,9 @@ const BAIAdminContainerRegistrySelect: React.FC<
       {
         selectedFilter: mergeFilterValues(
           [
-            !_.isEmpty(deferredControllableValue)
+            selectedKeys.length
               ? mergeFilterValues(
-                  _.castArray(deferredControllableValue).map((value) => {
+                  _.map(selectedKeys, (value) => {
                     // Convert Global ID to local UUID for filtering when valuePropName is 'id'
                     const filterValue =
                       valuePropName === 'id' ? toLocalId(value) : value;
@@ -115,13 +162,11 @@ const BAIAdminContainerRegistrySelect: React.FC<
           ],
           '&',
         ),
-        first: _.castArray(deferredControllableValue).length,
-        skipSelected: _.isEmpty(deferredControllableValue),
+        first: Math.max(selectedKeys.length, 1),
+        skipSelected: selectedKeys.length === 0,
       },
       {
-        fetchPolicy: !_.isEmpty(deferredControllableValue)
-          ? 'store-or-network'
-          : 'store-only',
+        fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
         fetchKey: deferredFetchKey,
       },
     );
@@ -129,7 +174,7 @@ const BAIAdminContainerRegistrySelect: React.FC<
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<
       BAIAdminContainerRegistrySelectPaginatedQuery,
-      ContainerRegistryNode
+      AstryxContainerRegistryNode
     >(
       graphql`
         query BAIAdminContainerRegistrySelectPaginatedQuery(
@@ -169,11 +214,10 @@ const BAIAdminContainerRegistrySelect: React.FC<
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) =>
-          result.container_registry_nodes?.count ?? undefined,
-        getItem: (result) =>
-          result.container_registry_nodes?.edges?.map((edge) => edge?.node),
-        getId: (item) => item?.id,
+        getTotal: (r) => r.container_registry_nodes?.count ?? undefined,
+        getItem: (r) =>
+          r.container_registry_nodes?.edges?.map((edge) => edge?.node),
+        getId: (item) => item?.[valuePropName],
       },
     );
 
@@ -195,131 +239,68 @@ const BAIAdminContainerRegistrySelect: React.FC<
     project?: string | null,
   ) => (project ? `${registryName} - ${project}` : (registryName ?? ''));
 
-  const availableOptions = _.map(paginationData, (item) => ({
-    label: formatLabel(item?.registry_name, item?.project),
-    value: item?.[valuePropName],
-  }));
+  const keyOfNode = (
+    node: { id?: string | null; row_id?: string | null } | null | undefined,
+  ): string | undefined => {
+    if (!node) return undefined;
+    return (valuePropName === 'id' ? node.id : node.row_id) ?? undefined;
+  };
 
-  const controllableValueWithLabel = selectedRegistryNodes?.edges
-    ? // Sort by deferredControllableValue order to maintain selection order
-      _.castArray(deferredControllableValue)
-        .map((value) => {
-          const edge = selectedRegistryNodes.edges.find(
-            (edge) => edge?.node?.[valuePropName] === value,
-          );
-          return edge
-            ? {
-                label: formatLabel(
-                  edge.node?.registry_name,
-                  edge.node?.project,
-                ),
-                value: edge.node?.[valuePropName],
-              }
-            : null;
-        })
-        .filter(
-          (
-            item,
-          ): item is {
-            label: string;
-            value: string | null | undefined;
-          } => item !== null,
-        )
-    : !_.isEmpty(deferredControllableValue)
-      ? _.castArray(deferredControllableValue).map((value) => ({
-          label: value,
-          value: value,
-        }))
-      : undefined;
-
-  const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
-    controllableValueWithLabel,
+  const options = _.compact(
+    _.map(paginationData, (item) => {
+      const key = keyOfNode(item);
+      return key
+        ? {
+            value: key,
+            label: formatLabel(item?.registry_name, item?.project),
+          }
+        : null;
+    }),
   );
 
+  /** Plain keys -> labelInValue, resolving each label where we can. */
+  const labeledValue: BAIComplexSelectValue = (() => {
+    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
+      const edge = _.find(
+        selectedRegistryNodes?.edges,
+        (e) => keyOfNode(e?.node) === key,
+      );
+      return {
+        label: edge?.node
+          ? formatLabel(edge.node.registry_name, edge.node.project)
+          : key,
+        value: key,
+      };
+    });
+    if (multiple) return labeled;
+    return labeled[0] ?? null;
+  })();
+
   return (
-    <BAISelect
-      ref={selectRef}
+    <BAIComplexSelect
       placeholder={t(
         'comp:BAIAdminContainerRegistrySelect.SelectContainerRegistry',
       )}
-      loading={
-        loading ||
+      {...selectProps}
+      multiple={multiple}
+      isLoading={
+        isLoading ||
         controllableValue !== deferredControllableValue ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
-      {...selectProps}
-      searchAction={async (value) => {
-        setOptimisticSearchStr(value);
-        setSearchStr(value);
-        await selectProps.searchAction?.(value);
+      isLoadingNext={isLoadingNext}
+      total={result.container_registry_nodes?.count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
+        setControllableValue(multiple ? keys : keys[0], undefined);
       }}
-      showSearch={
-        selectProps.showSearch === false
-          ? false
-          : {
-              searchValue: optimisticSearchStr,
-              autoClearSearchValue: true,
-              ...(_.isObject(selectProps.showSearch)
-                ? _.omit(selectProps.showSearch, ['searchValue'])
-                : {}),
-              filterOption: false,
-            }
-      }
-      value={
-        controllableValue !== deferredControllableValue
-          ? optimisticValueWithLabel
-          : controllableValueWithLabel
-      }
-      labelInValue
-      onChange={(value, option) => {
-        // _.castArray to handle both single and multiple mode uniformly
-        const valueArray = _.isEmpty(value) ? [] : _.castArray(value);
-
-        // In multiple mode, when removing tags, value.label is a React element
-        // So we need to find the original label from availableOptions
-        const valueWithOriginalLabel = valueArray.map((v) => {
-          // If label is string, use it directly; if React element, find from options
-          const label = _.isString(v.label)
-            ? v.label
-            : (availableOptions.find((opt) => opt.value === v.value)?.label ??
-              v.value);
-          return {
-            label,
-            value: v.value,
-          };
-        });
-
-        setOptimisticValueWithLabel(valueWithOriginalLabel);
-
-        const isMultiple =
-          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
-        const idArray = valueArray.map((v) => _.toString(v.value));
-        setControllableValue(
-          isMultiple ? idArray : (idArray[0] ?? undefined),
-          option,
-        );
-      }}
-      options={availableOptions}
-      endReached={() => {
-        loadNext();
-      }}
-      open={controllableOpen}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
       onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(result.container_registry_nodes?.count) &&
-        result.container_registry_nodes.count > 0 ? (
-          <TotalFooter
-            loading={isLoadingNext}
-            total={result.container_registry_nodes.count}
-          />
-        ) : undefined
-      }
+      endReached={loadNext}
     />
   );
 };

@@ -1,27 +1,58 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ BAIDeploymentSelect — ticket-27 Astryx sibling of `BAIDeploymentSelect`,
+ built on `BAIComplexSelect` (ticket 26), following pattern A of the
+ recipe used across the Astryx migration (copy of `BAIUserSelect.tsx`,
+ the worked example).
+
+ FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
+ `BAIDeploymentSelect` is NOT touched by this change. It keeps serving every
+ unmigrated call site until ticket 27 moves them. This file is the
+ Astryx-native sibling, and its OUTER value contract is deliberately the same
+ plain key (`string` / `string[]`) the antd wrapper exposes — labelInValue
+ lives strictly between this wrapper and `BAIComplexSelect`.
+
+ CLASS B (id-valued): the key is the deployment's raw GraphQL `id` (no
+ `toLocalId` conversion — the antd original used the raw id directly as both
+ the option value and the `deployment(id: ID!)` lookup key, and this file
+ preserves that exactly).
+
+ PILOT-DECISIONs:
+  - Carries over the antd original's own TODO/limitation verbatim: the
+    selected-value resolution query is a single-item `deployment(id: ID!)`
+    lookup (there is no `adminDeployments(filter: { id: { in: [...] } })`-
+    style batch lookup available), so in `multiple` mode only the FIRST
+    selected key resolves to a real label — the rest fall back to printing
+    their own key. This is an existing backend limitation, not something
+    introduced by this migration.
+  - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
+    is dropped (see `BAIComplexSelect` header, general policy).
+*/
 import { BAIDeploymentSelectPaginatedQuery } from '../../__generated__/BAIDeploymentSelectPaginatedQuery.graphql';
 import { BAIDeploymentSelectValueQuery } from '../../__generated__/BAIDeploymentSelectValueQuery.graphql';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
-import { useFetchKey } from '../../hooks';
+import { useControllableValue, useFetchKey } from '../../hooks';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
-import BAISelect, { BAISelectProps } from '../BAISelect';
-import TotalFooter from '../TotalFooter';
-import { useControllableValue } from 'ahooks';
-import { GetRef, Skeleton } from 'antd';
-import _ from 'lodash';
+import BAIComplexSelect, {
+  type BAIComplexSelectProps,
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
+} from '../BAIComplexSelect';
+import * as _ from 'lodash-es';
 import {
   useDeferredValue,
   useImperativeHandle,
-  useOptimistic,
-  useRef,
   useState,
   useTransition,
 } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type DeploymentNode = NonNullable<
+export type AstryxDeploymentNode = NonNullable<
   NonNullable<
-    BAIDeploymentSelectPaginatedQuery['response']['deployments']
+    BAIDeploymentSelectPaginatedQuery['response']['adminDeployments']
   >['edges'][number]
 >['node'];
 
@@ -30,51 +61,54 @@ export interface BAIDeploymentSelectRef {
 }
 
 export interface BAIDeploymentSelectProps extends Omit<
-  BAISelectProps,
-  'options' | 'labelInValue' | 'ref'
+  BAIComplexSelectProps,
+  'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
+  /** Plain key(s), as the antd `BAIDeploymentSelect` exposes. */
+  value?: string | Array<string> | null;
+  onChange?: (value: string | Array<string> | undefined) => void;
   ref?: React.Ref<BAIDeploymentSelectRef>;
 }
 
 const BAIDeploymentSelect: React.FC<BAIDeploymentSelectProps> = ({
-  loading,
+  multiple = false,
+  isLoading,
   ref,
   ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
-  const selectRef = useRef<GetRef<typeof BAISelect>>(null);
+  const { t } = useBAIi18n();
   const [controllableValue, setControllableValue] = useControllableValue<
-    string | string[] | undefined
-  >(selectProps);
+    string | Array<string> | null | undefined
+  >(selectProps as Record<string, unknown>, {
+    valuePropName: 'value',
+    trigger: 'onChange',
+  });
   const [controllableOpen, setControllableOpen] = useControllableValue<boolean>(
-    selectProps,
+    selectProps as Record<string, unknown>,
     {
       valuePropName: 'open',
       trigger: 'onOpenChange',
       defaultValuePropName: 'defaultOpen',
     },
   );
+
   const deferredOpen = useDeferredValue(controllableOpen);
-  const [searchStr, setSearchStr] = useState<string>();
+  const [searchStr, setSearchStr] = useState<string>('');
   const debouncedDeferredValue = useDebouncedDeferredValue(searchStr);
-  const [optimisticSearchStr, setOptimisticSearchStr] =
-    useOptimistic(searchStr);
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // Defer query refetch to prevent flickering during selection
+  // Deferred so a fresh selection does not immediately re-run the value query.
   const deferredControllableValue = useDeferredValue(controllableValue);
+  const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
-  // Use the deployment(id:) single-item query to look up the name when
-  // a value (id) is already set (e.g., editing an existing permission).
   // TODO: This single-item lookup does not work in multi-select mode.
-  //       Multi-select support is pending backend deployment API implementation.
-  const skipSelected = _.isEmpty(deferredControllableValue);
-  const selectedId = skipSelected
-    ? undefined
-    : _.castArray(deferredControllableValue)[0];
+  //       Multi-select support is pending backend deployment API
+  //       implementation (carried over from the antd `BAIDeploymentSelect`).
+  const skipSelected = selectedKeys.length === 0;
+  const selectedId = skipSelected ? undefined : selectedKeys[0];
 
   const { deployment: selectedDeployment } =
     useLazyLoadQuery<BAIDeploymentSelectValueQuery>(
@@ -99,14 +133,17 @@ const BAIDeploymentSelect: React.FC<BAIDeploymentSelectProps> = ({
     );
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIDeploymentSelectPaginatedQuery, DeploymentNode>(
+    useLazyPaginatedQuery<
+      BAIDeploymentSelectPaginatedQuery,
+      AstryxDeploymentNode
+    >(
       graphql`
         query BAIDeploymentSelectPaginatedQuery(
           $offset: Int!
           $limit: Int!
           $filter: DeploymentFilter
         ) {
-          deployments(offset: $offset, limit: $limit, filter: $filter) {
+          adminDeployments(offset: $offset, limit: $limit, filter: $filter) {
             count
             edges {
               node {
@@ -130,14 +167,12 @@ const BAIDeploymentSelect: React.FC<BAIDeploymentSelectProps> = ({
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (result) => result.deployments?.count ?? undefined,
-        getItem: (result) =>
-          result.deployments?.edges?.map((edge) => edge?.node),
+        getTotal: (r) => r.adminDeployments?.count ?? undefined,
+        getItem: (r) => r.adminDeployments?.edges?.map((edge) => edge?.node),
         getId: (item) => item?.id,
       },
     );
 
-  // Expose refetch function through ref
   useImperativeHandle(
     ref,
     () => ({
@@ -150,102 +185,53 @@ const BAIDeploymentSelect: React.FC<BAIDeploymentSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  const availableOptions = _.map(paginationData, (item) => ({
-    label: item?.metadata?.name,
-    value: item?.id,
-  }));
-
-  // Use the fetched deployment name as label, or fall back to the id.
-  const controllableValueWithLabel = !_.isEmpty(deferredControllableValue)
-    ? _.castArray(deferredControllableValue).map((value) => ({
-        label:
-          selectedDeployment?.id === value
-            ? (selectedDeployment?.metadata?.name ?? value)
-            : value,
-        value: value,
-      }))
-    : undefined;
-
-  const [optimisticValueWithLabel, setOptimisticValueWithLabel] = useState(
-    controllableValueWithLabel,
+  const options = _.compact(
+    _.map(paginationData, (item) => {
+      const key = item?.id;
+      return key
+        ? {
+            value: key,
+            label: item?.metadata?.name ?? key,
+          }
+        : null;
+    }),
   );
 
+  const labeledValue: BAIComplexSelectValue = (() => {
+    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => ({
+      label:
+        selectedDeployment?.id === key
+          ? (selectedDeployment?.metadata?.name ?? key)
+          : key,
+      value: key,
+    }));
+    if (multiple) return labeled;
+    return labeled[0] ?? null;
+  })();
+
   return (
-    <BAISelect
-      ref={selectRef}
+    <BAIComplexSelect
       placeholder={t('comp:BAIDeploymentSelect.SelectDeployment')}
-      loading={
-        loading ||
+      {...selectProps}
+      multiple={multiple}
+      isLoading={
+        isLoading ||
         controllableValue !== deferredControllableValue ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
-      {...selectProps}
-      searchAction={async (value) => {
-        setOptimisticSearchStr(value);
-        setSearchStr(value);
-        await selectProps.searchAction?.(value);
+      isLoadingNext={isLoadingNext}
+      total={result.adminDeployments?.count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
+        setControllableValue(multiple ? keys : keys[0], undefined);
       }}
-      showSearch={
-        selectProps.showSearch === false
-          ? false
-          : {
-              searchValue: optimisticSearchStr,
-              autoClearSearchValue: true,
-              ...(_.isObject(selectProps.showSearch)
-                ? _.omit(selectProps.showSearch, ['searchValue'])
-                : {}),
-              filterOption: false,
-            }
-      }
-      value={
-        controllableValue !== deferredControllableValue
-          ? optimisticValueWithLabel
-          : controllableValueWithLabel
-      }
-      labelInValue
-      onChange={(value, option) => {
-        const castedValue = _.isEmpty(value) ? [] : _.castArray(value);
-        const valueWithOriginalLabel = castedValue.map((v) => {
-          // If label is string, use it directly; if React element, find from options
-          const label = _.isString(v.label)
-            ? v.label
-            : (availableOptions.find((opt) => opt.value === v.value)?.label ??
-              v.value);
-          return {
-            label,
-            value: v.value,
-          };
-        });
-        setOptimisticValueWithLabel(valueWithOriginalLabel);
-        const isMultiple =
-          selectProps.mode === 'multiple' || selectProps.mode === 'tags';
-        const idArray = castedValue.map((v) => _.toString(v.value));
-        setControllableValue(
-          isMultiple ? idArray : (idArray[0] ?? undefined),
-          option,
-        );
-      }}
-      options={availableOptions}
-      endReached={() => {
-        loadNext();
-      }}
-      open={controllableOpen}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
       onOpenChange={setControllableOpen}
-      notFoundContent={
-        _.isUndefined(paginationData) ? (
-          <Skeleton.Input active size="small" block />
-        ) : undefined
-      }
-      footer={
-        _.isNumber(result.deployments?.count) &&
-        result.deployments.count > 0 ? (
-          <TotalFooter
-            loading={isLoadingNext}
-            total={result.deployments.count}
-          />
-        ) : undefined
-      }
+      endReached={loadNext}
     />
   );
 };

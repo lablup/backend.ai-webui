@@ -130,7 +130,7 @@ describe('useControllableState', () => {
   });
 
   it('test trigger of options', () => {
-    const trigger = jest.fn();
+    const trigger = vi.fn();
     const props: any = {
       value: 3,
       onChange: trigger,

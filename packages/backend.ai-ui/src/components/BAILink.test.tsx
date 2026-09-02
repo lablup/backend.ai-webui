@@ -111,11 +111,131 @@ describe('BAILink', () => {
       render(<BAILink ellipsis={false}>No ellipsis</BAILink>);
       expect(screen.getByText('No ellipsis')).toBeInTheDocument();
     });
+
+    /*
+     * FR-3686. jsdom does not lay out, so overflow cannot be measured here;
+     * these pin the DOM CONTRACT the fix depends on — the truncating box lives
+     * INSIDE the link (an ancestor can neither shorten an atomic inline box nor
+     * see a child that fits it), and the link carries the width cap that bounds
+     * it. Both are load-bearing and both are invisible to a render-only assert.
+     */
+    it.each([
+      ['onClick (Astryx Link)', undefined],
+      ['to (router link)', '/test'],
+    ])('puts the truncating text inside the link — %s', (_label, to) => {
+      renderWithRouter(
+        <BAILink to={to} ellipsis data-testid="link">
+          Some long name
+        </BAILink>,
+      );
+      const link = screen.getByTestId('link');
+      expect(link).toHaveClass('bai-link-ellipsis');
+      const text = link.querySelector('.bai-text');
+      expect(text).not.toBeNull();
+      expect(link).toContainElement(text as HTMLElement);
+      expect(screen.getByText('Some long name')).toBeInTheDocument();
+    });
+
+    it('keeps the caller class alongside the internal ones', () => {
+      renderWithRouter(
+        <BAILink to="/test" ellipsis className="caller" data-testid="link">
+          Name
+        </BAILink>,
+      );
+      const link = screen.getByTestId('link');
+      // The spread must not overwrite the internal classes, or the width cap
+      // disappears and truncation silently stops working.
+      expect(link).toHaveClass('caller');
+      expect(link).toHaveClass('bai-link-ellipsis');
+      expect(link).toHaveClass('bai-link-hover');
+    });
+
+    it('keeps the custom-tooltip form addressable on the truncating box', () => {
+      render(
+        <BAILink ellipsis={{ tooltip: 'Full text here' }} data-testid="link">
+          Truncated text
+        </BAILink>,
+      );
+      const link = screen.getByTestId('link');
+      // The custom tooltip is gated on the truncating box's own overflow, so
+      // that box has to be the one inside the link — not an ancestor of it.
+      expect(link).toHaveClass('bai-link-ellipsis');
+      expect(link.querySelector('.bai-text')).not.toBeNull();
+    });
+
+    /*
+     * FR-3692. `BAIText` paints the text colour on its own element, so the
+     * truncating box FR-3686 moved inside the link would repaint the link body
+     * text unless it is told to inherit. jsdom computes no CSS, so this
+     * asserts the class BAIText.css keys `color: inherit` off.
+     */
+    it.each([
+      ['onClick (Astryx Link)', undefined],
+      ['to (router link)', '/test'],
+    ])('lets the link keep its own colour — %s', (_label, to) => {
+      renderWithRouter(
+        <BAILink to={to} ellipsis data-testid="link">
+          Some long name
+        </BAILink>,
+      );
+      const text = screen.getByTestId('link').querySelector('.bai-text');
+      expect(text).toHaveClass('bai-text-inherit');
+    });
+
+    /*
+     * FR-3692. Astryx `Link` inserts a `Text color="accent"` of its own between
+     * the root and its children, so one inheriting box is not enough — EVERY
+     * text box in the chain has to defer, or the root's colour stops at the
+     * first one that names its own. This is the `EditableFileName` case: a
+     * caller tints the link root and expects the text to follow.
+     */
+    it.each([
+      ['ellipsized', true],
+      ['plain', false],
+    ])(
+      'defers the whole Text chain to the link root — %s',
+      (_label, ellipsis) => {
+        render(
+          <BAILink
+            ellipsis={ellipsis}
+            style={{ color: 'rgb(0, 128, 0)' }}
+            data-testid="link"
+          >
+            Renaming…
+          </BAILink>,
+        );
+        const link = screen.getByTestId('link');
+        const texts = link.querySelectorAll('.astryx-text');
+        expect(texts.length).toBeGreaterThan(0);
+        texts.forEach((text) =>
+          expect(text).toHaveAttribute('data-color', 'inherit'),
+        );
+        link
+          .querySelectorAll('.bai-text')
+          .forEach((text) => expect(text).toHaveClass('bai-text-inherit'));
+      },
+    );
+
+    // Consequence of the same change: a disabled link's text now follows
+    // `.bai-link-disabled` on the root instead of Astryx `Link`'s `accent`
+    // default, which it was rendering (at 50% opacity) before.
+    it('defers to the root for a disabled link too', () => {
+      render(
+        <BAILink type="disabled" data-testid="link">
+          Disabled
+        </BAILink>,
+      );
+      const texts = screen.getByTestId('link').querySelectorAll('.astryx-text');
+      expect(texts.length).toBeGreaterThan(0);
+      texts.forEach((text) =>
+        expect(text).toHaveAttribute('data-color', 'inherit'),
+      );
+    });
   });
 
   describe('onClick Handler', () => {
     it('should call onClick handler when clicked on react-router Link', async () => {
-      const onClick = jest.fn((e) => e.preventDefault());
+      const onClick = vi.fn((e) => e.preventDefault());
       const user = userEvent.setup();
       renderWithRouter(
         <BAILink to="/test" onClick={onClick}>
@@ -128,7 +248,7 @@ describe('BAILink', () => {
     });
 
     it('should call onClick handler when clicked on Typography.Link', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAILink onClick={onClick}>Clickable Typography Link</BAILink>);
 
@@ -136,18 +256,26 @@ describe('BAILink', () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
 
-    it('should block click interaction when link is disabled', async () => {
-      const onClick = jest.fn();
-      const user = userEvent.setup();
+    it('should mark a disabled link as non-interactive', () => {
+      const onClick = vi.fn();
       render(
         <BAILink type="disabled" onClick={onClick}>
           Disabled Link
         </BAILink>,
       );
 
-      const link = screen.getByText('Disabled Link');
-      // userEvent respects pointer-events: none and blocks the click
-      await expect(user.click(link)).rejects.toThrow(/pointer-events/);
+      // Astryx `Link` renders its children inside a `Text` span, so the text
+      // node is one level below the element that owns the class (phase 3,
+      // ticket A). `closest` re-anchors the query (P7).
+      const link = screen.getByText('Disabled Link').closest('a, button');
+      // This used to click the link and assert that userEvent refused because
+      // of `pointer-events: none`. That assertion only worked while the rule
+      // was injected at runtime by antd-style's emotion cache: to-astryx
+      // ticket 33 moved it into BAILink.css, and Vite stubs `.css` imports
+      // under vitest, so jsdom never sees the declaration. What the component
+      // actually owns is the class — assert that, and let BAILink.css own the
+      // pointer-events rule.
+      expect(link).toHaveClass('bai-link-disabled');
       expect(onClick).not.toHaveBeenCalled();
     });
   });
@@ -219,7 +347,7 @@ describe('BAILink', () => {
 
   describe('Accessibility', () => {
     it('should be keyboard accessible for react-router Link', async () => {
-      const onClick = jest.fn((e) => e.preventDefault());
+      const onClick = vi.fn((e) => e.preventDefault());
       const user = userEvent.setup();
       renderWithRouter(
         <BAILink to="/test" onClick={onClick}>
@@ -235,7 +363,7 @@ describe('BAILink', () => {
     });
 
     it('should call onClick for Typography.Link on click', async () => {
-      const onClick = jest.fn();
+      const onClick = vi.fn();
       const user = userEvent.setup();
       render(<BAILink onClick={onClick}>Typography Click</BAILink>);
 
@@ -246,9 +374,13 @@ describe('BAILink', () => {
     it('should have disabled state when type is disabled', () => {
       render(<BAILink type="disabled">Disabled Link</BAILink>);
 
-      const link = screen.getByText('Disabled Link');
-      // Ant Design adds ant-typography-disabled class for disabled Typography.Link
-      expect(link).toHaveClass('ant-typography-disabled');
+      const link = screen.getByText('Disabled Link').closest('a, button');
+      // Astryx `Link isDisabled` renders an href-less <a> that is out of the
+      // tab order and announces `aria-disabled` (its own docs); that pair is
+      // the contract now, not antd's `ant-typography-disabled` class.
+      expect(link).toHaveAttribute('aria-disabled', 'true');
+      expect(link).toHaveAttribute('tabindex', '-1');
+      expect(link).toHaveClass('bai-link-disabled');
     });
   });
 });

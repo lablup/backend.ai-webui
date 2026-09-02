@@ -4,15 +4,19 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import AnnouncementEditModal from './AnnouncementEditModal';
 import SettingList, { SettingGroup } from './SettingList';
-import { RedoOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button } from '@astryxdesign/core/Button';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
+import { Redo2, SquarePenIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const MaintenanceSettingList = () => {
+  'use memo';
   const [isRecalculating, setIsRecalculating] = useState(false);
   const [isRescanning, setIsRescanning] = useState(false);
+  const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
 
   const { t } = useTranslation();
   const { upsertNotification } = useSetBAINotification();
@@ -94,14 +98,15 @@ const MaintenanceSettingList = () => {
           description: t('maintenance.DescMatchDatabase'),
           children: (
             <Button
-              icon={<RedoOutlined />}
+              icon={<Redo2 size="1em" />}
               onClick={recalculateUsage}
-              loading={isRecalculating}
-            >
-              {isRecalculating
-                ? t('maintenance.Recalculating')
-                : t('maintenance.RecalculateUsage')}
-            </Button>
+              isLoading={isRecalculating}
+              label={
+                isRecalculating
+                  ? t('maintenance.Recalculating')
+                  : t('maintenance.RecalculateUsage')
+              }
+            />
           ),
           showResetButton: false,
         },
@@ -117,14 +122,34 @@ const MaintenanceSettingList = () => {
           description: t('maintenance.DescRescanImageList'),
           children: (
             <Button
-              icon={<RedoOutlined />}
+              icon={<Redo2 size="1em" />}
               onClick={rescanImages}
-              loading={isRescanning}
-            >
-              {isRescanning
-                ? t('maintenance.RescanImageScanning')
-                : t('maintenance.RescanImages')}
-            </Button>
+              isLoading={isRescanning}
+              label={
+                isRescanning
+                  ? t('maintenance.RescanImageScanning')
+                  : t('maintenance.RescanImages')
+              }
+            />
+          ),
+          showResetButton: false,
+        },
+      ],
+    },
+    {
+      'data-testid': 'maintenance-announcement',
+      title: t('maintenance.Announcement'),
+      settingItems: [
+        {
+          type: 'custom',
+          title: t('maintenance.SystemAnnouncement'),
+          description: t('maintenance.DescSystemAnnouncement'),
+          children: (
+            <Button
+              icon={<SquarePenIcon size="1em" />}
+              onClick={() => setIsAnnouncementModalOpen(true)}
+              label={t('summary.EditAnnouncement')}
+            />
           ),
           showResetButton: false,
         },
@@ -132,7 +157,17 @@ const MaintenanceSettingList = () => {
     },
   ];
 
-  return <SettingList settingGroups={settingGroupList} showSearchBar />;
+  return (
+    <>
+      <SettingList settingGroups={settingGroupList} showSearchBar />
+      <BAIUnmountAfterClose>
+        <AnnouncementEditModal
+          open={isAnnouncementModalOpen}
+          onRequestClose={() => setIsAnnouncementModalOpen(false)}
+        />
+      </BAIUnmountAfterClose>
+    </>
+  );
 };
 
 export default MaintenanceSettingList;

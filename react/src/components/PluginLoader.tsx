@@ -13,6 +13,7 @@
  * 5. Updates Jotai plugin state atoms for navigation menu integration
  * 6. Manages plugin active/inactive state based on the current route
  */
+import { useCurrentMenuKey } from '../hooks/useRouteScope';
 import { configLoadedState, rawConfigState } from '../hooks/useWebUIConfig';
 import {
   type PluginPage,
@@ -24,7 +25,6 @@ import {
 import { useBAILogger } from 'backend.ai-ui';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 
 interface PluginPageElement extends HTMLElement {
   active: boolean;
@@ -64,7 +64,7 @@ function PluginLoader() {
   const containerRef = useRef<HTMLDivElement>(null);
   const pluginElementsRef = useRef<Map<string, PluginPageElement>>(new Map());
   const loadingGuardRef = useRef(false);
-  const location = useLocation();
+  const currentMenuKey = useCurrentMenuKey();
 
   const loadPlugins = useCallback(
     async (configString: string) => {
@@ -107,7 +107,10 @@ function PluginLoader() {
               : `/dist/plugins/${sanitizedPage}.js`;
 
           try {
-            await import(/* webpackIgnore: true */ pluginUrl);
+            // `@vite-ignore` = Vite's equivalent of webpack's `webpackIgnore`.
+            // pluginUrl is a runtime-computed path outside the module graph,
+            // so we opt out of static analysis entirely.
+            await import(/* @vite-ignore */ pluginUrl);
 
             const pageItem = document.createElement(page) as PluginPageElement;
             pageItem.classList.add('page');
@@ -217,9 +220,15 @@ function PluginLoader() {
     setPluginLoaded,
   ]);
 
-  // Activate/deactivate plugin pages based on current route
+  // Activate/deactivate plugin pages based on current route.
+  // Match against the scope-aware menu key (route handle) rather than the raw
+  // first pathname segment: under `/project/:name/<feature>` and
+  // `/admin/<feature>` the first segment is the scope prefix. Flat plugin URLs
+  // (`/<plugin-url>`, served by the catch-all) carry no handle, so
+  // `useCurrentMenuKey()` falls back to the first pathname segment for them —
+  // which is exactly the plugin element name.
   useEffect(() => {
-    const currentPage = location.pathname.split('/')[1] || '';
+    const currentPage = currentMenuKey || '';
 
     pluginElementsRef.current.forEach((element, name) => {
       if (name === currentPage) {
@@ -237,7 +246,7 @@ function PluginLoader() {
         element.style.minHeight = '';
       }
     });
-  }, [location.pathname]);
+  }, [currentMenuKey]);
 
   return (
     <div

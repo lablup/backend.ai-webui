@@ -2,11 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
-import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { ProjectFairShareOrderField } from '../../__generated__/ProjectFairShareStepQuery.graphql';
 import {
+  ProjectFairShareTableFragment$data,
+  ProjectFairShareTableFragment$key,
+} from '../../__generated__/ProjectFairShareTableFragment.graphql';
+import { theme } from '../../theme-shim';
+import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
@@ -16,14 +22,11 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  ProjectFairShareTableFragment$data,
-  ProjectFairShareTableFragment$key,
-} from 'src/__generated__/ProjectFairShareTableFragment.graphql';
 
 export type ProjectFairShare = NonNullable<
   ProjectFairShareTableFragment$data[number]
@@ -34,6 +37,14 @@ const availableProjectFairShareSorterKeys = [
   'fairShareFactor',
   'createdAt',
 ] as const;
+export const projectFairShareOrderFieldMap: Record<
+  (typeof availableProjectFairShareSorterKeys)[number],
+  ProjectFairShareOrderField
+> = {
+  projectName: 'PROJECT_NAME',
+  fairShareFactor: 'FAIR_SHARE_FACTOR',
+  createdAt: 'CREATED_AT',
+};
 export const availableProjectFairShareSorterValues = [
   ...availableProjectFairShareSorterKeys,
   ...availableProjectFairShareSorterKeys.map((key) => `-${key}` as const),
@@ -130,7 +141,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <Settings size="1em" />,
               onClick: () => {
                 onOpenWeightSetting?.(record);
               },
@@ -143,22 +154,23 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.Weight')}
-          <QuestionIconWithTooltip title={t('fairShare.WeightDescription')} />
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.WeightDescription')}
+          />
         </BAIFlex>
       ),
       key: 'weight',
       dataIndex: ['spec', 'weight'],
       render: (weight, record) => (
         <BAIFlex gap="xxs">
-          <Typography.Text>
-            {weight ? toFixedFloorWithoutTrailingZeros(weight, 1) : '-'}
-          </Typography.Text>
-          <Typography.Text
-            type="secondary"
-            style={{ fontSize: token.fontSizeSM }}
-          >
+          <Text>
+            {_.isNil(weight)
+              ? '-'
+              : toFixedFloorWithoutTrailingZeros(weight, 1)}
+          </Text>
+          <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
             {record.spec.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
-          </Typography.Text>
+          </Text>
         </BAIFlex>
       ),
     },
@@ -166,13 +178,14 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.FairShareFactor')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.FairShareFactorDescription')}
           />
         </BAIFlex>
       ),
       key: 'fairShareFactor',
       dataIndex: ['calculationSnapshot', 'fairShareFactor'],
+      sortKey: 'fairShareFactor',
       sorter: isEnableSorter('fairShareFactor'),
       render: (fairShareFactor) =>
         fairShareFactor !== null && fairShareFactor !== undefined
@@ -183,7 +196,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.AllocationAverage')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.AllocationAverageDescription')}
           />
         </BAIFlex>
@@ -201,16 +214,12 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
               entries,
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
-                  {index > 0 && (
-                    <Divider type="vertical" style={{ margin: 0 }} />
-                  )}
+                  {index > 0 && <Divider orientation="vertical" />}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Typography.Text type="secondary">
-                        / {t('fairShare.DayUnit')}
-                      </Typography.Text>
+                      <Text color="secondary">/ {t('fairShare.DayUnit')}</Text>
                     }
                   />
                 </BAIFlex>
@@ -238,8 +247,8 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   return (
     <>
       <BAITable
-        rowKey={'id'}
         scroll={{ x: 'max-content' }}
+        rowKey={'id'}
         {...tableProps}
         dataSource={projectFairShares || []}
         columns={columns}

@@ -7,8 +7,16 @@ import { MyKeypairInfoModalLegacyQuery } from '../__generated__/MyKeypairInfoMod
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Button, Table, Typography, Tag } from 'antd';
-import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAITable,
+  badgeVariantForTagColor,
+  BAIText,
+} from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -65,15 +73,14 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
       footer={[
         <Button
           key="keypairInfoClose"
+          label={t('button.Close')}
           onClick={() => {
             onRequestClose();
           }}
-        >
-          {t('button.Close')}
-        </Button>,
+        />,
       ]}
     >
-      <Table
+      <BAITable
         scroll={{ x: 'max-content' }}
         rowKey={'access_key'}
         dataSource={keypairs}
@@ -85,11 +92,14 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
             fixed: 'left',
             render: (value) => (
               <BAIFlex direction="column" align="start">
-                <Typography.Text ellipsis copyable>
+                <BAIText copyable ellipsis={{ tooltip: true }}>
                   {value}
-                </Typography.Text>
+                </BAIText>
                 {value === user?.main_access_key && (
-                  <Tag color={'red'}>{t('credential.MainAccessKey')}</Tag>
+                  <Badge
+                    label={t('credential.MainAccessKey')}
+                    variant={badgeVariantForTagColor('red')}
+                  />
                 )}
               </BAIFlex>
             ),
@@ -100,9 +110,9 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
             dataIndex: 'secret_key',
             fixed: 'left',
             render: (value) => (
-              <Typography.Text ellipsis copyable>
+              <BAIText copyable ellipsis={{ tooltip: true }}>
                 {value}
-              </Typography.Text>
+              </BAIText>
             ),
           },
         ]}

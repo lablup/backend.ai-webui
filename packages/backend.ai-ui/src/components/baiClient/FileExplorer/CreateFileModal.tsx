@@ -1,11 +1,13 @@
+import { App } from '../../../app-shim';
+import { Form, type FormInstance } from '../../../form-engine';
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIModal, { type BAIModalProps } from '../../BAIModal';
+import { AstryxFormTextInput } from '../../astryxFormControls';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
-import { App, Form, Input, type FormInstance } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React, { use, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 interface CreateFileModalProps extends BAIModalProps {
   onRequestClose: (success: boolean) => void;
@@ -16,7 +18,7 @@ const CreateFileModal: React.FC<CreateFileModalProps> = ({
   ...modalProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const { message, modal } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
@@ -137,7 +139,10 @@ const CreateFileModal: React.FC<CreateFileModalProps> = ({
             },
           ]}
         >
-          <Input placeholder={t('comp:FileExplorer.FileNamePlaceholder')} />
+          <AstryxFormTextInput
+            label={t('comp:FileExplorer.FileName')}
+            placeholder={t('comp:FileExplorer.FileNamePlaceholder')}
+          />
         </Form.Item>
       </Form>
     </BAIModal>

@@ -1,18 +1,88 @@
-import { useRuntimeEnvVarConfigs } from './useVariantConfigs';
+import {
+  useCommonEnvVarConfigs,
+  useRuntimeEnvVarConfigs,
+} from './useVariantConfigs';
 import { renderHook } from '@testing-library/react';
 import { useTranslation } from 'react-i18next';
+import type { Mock } from 'vitest';
 
 // Mock react-i18next
-jest.mock('react-i18next', () => ({
-  useTranslation: jest.fn(),
+vi.mock('react-i18next', () => ({
+  useTranslation: vi.fn(),
 }));
 
-describe('useRuntimeEnvVarConfigs', () => {
-  const mockT = jest.fn((key: string) => key);
+describe('useCommonEnvVarConfigs', () => {
+  const mockT = vi.fn((key: string) => key);
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (useTranslation as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    (useTranslation as Mock).mockReturnValue({
+      t: mockT,
+      i18n: {},
+    });
+  });
+
+  it('should include all eight common environment variables', () => {
+    const { result } = renderHook(() => useCommonEnvVarConfigs());
+
+    const expectedVars = [
+      'HF_TOKEN',
+      'WANDB_API_KEY',
+      'AWS_ACCESS_KEY_ID',
+      'AWS_SECRET_ACCESS_KEY',
+      'AWS_DEFAULT_REGION',
+      'HTTP_PROXY',
+      'HTTPS_PROXY',
+      'NO_PROXY',
+    ];
+
+    expect(result.current).toHaveLength(expectedVars.length);
+    expectedVars.forEach((expectedVar) => {
+      const envVar = result.current.find((env) => env.variable === expectedVar);
+      expect(envVar).toBeDefined();
+    });
+  });
+
+  it('should use translation function for every placeholder with the expected key', () => {
+    const { result } = renderHook(() => useCommonEnvVarConfigs());
+
+    const expectedKeysByVar: Record<string, string> = {
+      HF_TOKEN: 'modelService.HfToken',
+      WANDB_API_KEY: 'modelService.WandbApiKey',
+      AWS_ACCESS_KEY_ID: 'modelService.AwsAccessKeyId',
+      AWS_SECRET_ACCESS_KEY: 'modelService.AwsSecretAccessKey',
+      AWS_DEFAULT_REGION: 'modelService.AwsDefaultRegion',
+      HTTP_PROXY: 'modelService.HttpProxy',
+      HTTPS_PROXY: 'modelService.HttpsProxy',
+      NO_PROXY: 'modelService.NoProxy',
+    };
+
+    Object.entries(expectedKeysByVar).forEach(([variable, key]) => {
+      expect(mockT).toHaveBeenCalledWith(key);
+      const envVar = result.current.find((env) => env.variable === variable);
+      expect(envVar?.placeholder).toBe(key);
+    });
+  });
+
+  it('should have a non-empty string placeholder for every variable', () => {
+    const { result } = renderHook(() => useCommonEnvVarConfigs());
+
+    result.current.forEach((envVar) => {
+      expect(envVar).toHaveProperty('variable');
+      expect(envVar).toHaveProperty('placeholder');
+      expect(typeof envVar.variable).toBe('string');
+      expect(typeof envVar.placeholder).toBe('string');
+      expect(envVar.placeholder?.length).toBeGreaterThan(0);
+    });
+  });
+});
+
+describe('useRuntimeEnvVarConfigs', () => {
+  const mockT = vi.fn((key: string) => key);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    (useTranslation as Mock).mockReturnValue({
       t: mockT,
       i18n: {},
     });

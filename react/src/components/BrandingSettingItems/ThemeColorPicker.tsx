@@ -2,19 +2,30 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Col, ColorPicker, type ColorPickerProps, Row, theme } from 'antd';
-import { ComponentTokenMap } from 'antd/es/theme/interface';
-import { AliasToken } from 'antd/lib/theme/internal';
-import { BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import { useUserCustomThemeConfig } from 'src/hooks/useUserCustomThemeConfig';
+import { getDefaultDesignToken } from '../../helper/defaultDesignTokens';
+import { useDefaultTheme } from '../../hooks/useDefaultTheme';
+import LightDarkColorPicker from '../LightDarkColorPicker';
+import * as _ from 'lodash-es';
 
-type TokenPath = `token.${keyof AliasToken & string}`;
-type ComponentPath = `components.${keyof ComponentTokenMap & string}.${string}`;
+/**
+ * The design-token names the shim hands out, reached through its own
+ * signature rather than `import type { AliasToken } from 'antd/lib/theme'` —
+ * a type-only antd specifier still counts against the import-graph gate
+ * (P15), and this set is the same one antd's `AliasToken` described.
+ */
+type DesignTokenName = keyof ReturnType<typeof getDefaultDesignToken> & string;
+
+type TokenPath = `token.${DesignTokenName}`;
+/**
+ * `components.<AntdComponent>.<token>` (e.g. `components.Layout.headerBg`).
+ * The component half was `keyof ComponentTokenMap`; it is a plain string now
+ * for the same reason as above. The leaf was already untyped, and the paths
+ * are literals written at the seven `BrandingSettingList` call sites.
+ */
+type ComponentPath = `components.${string}.${string}`;
 export type ThemeConfigPath = TokenPath | ComponentPath;
 
-interface ThemeColorPickerSettingItemProps extends ColorPickerProps {
+interface ThemeColorPickerSettingItemProps {
   tokenName?: ThemeConfigPath;
 }
 const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
@@ -22,78 +33,37 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { getThemeValue, updateUserCustomThemeConfig } =
-    useUserCustomThemeConfig();
+  const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
 
-  const lightModeColor = getThemeValue<string>(`light.${tokenName}`);
-  const darkModeColor = getThemeValue<string>(`dark.${tokenName}`);
+  const lightModeColor = getDefaultThemeValue<string>(`light.${tokenName}`);
+  const darkModeColor = getDefaultThemeValue<string>(`dark.${tokenName}`);
 
-  const defaultLightTokens = theme.getDesignToken({
-    algorithm: theme.defaultAlgorithm,
-  });
-  const defaultDarkTokens = theme.getDesignToken({
-    algorithm: theme.darkAlgorithm,
-  });
+  // Was `theme.getDesignToken({ algorithm: theme.<mode>Algorithm })`. The
+  // shim-backed replacement reproduces antd's palette algorithm over antd's
+  // own seeds — see helper/defaultDesignTokens.ts for the parity table and
+  // the two documented differences.
+  const defaultLightTokens = getDefaultDesignToken('light');
+  const defaultDarkTokens = getDefaultDesignToken('dark');
 
   return (
-    <BAIFlex
-      align="stretch"
-      direction="column"
-      style={{ alignSelf: 'stretch' }}
-    >
-      <Row gutter={[16, 4]}>
-        <Col xl={6} lg={24}>
-          <BAIFlex
-            gap="sm"
-            style={{ color: token.colorTextTertiary }}
-            wrap="wrap"
-          >
-            {t('userSettings.LightMode')}:
-            <ColorPicker
-              format="hex"
-              showText
-              value={
-                lightModeColor ??
-                _.get(defaultLightTokens, _.last(_.split(tokenName, '.')) || '')
-              }
-              onChangeComplete={(value) => {
-                updateUserCustomThemeConfig(
-                  `light.${tokenName}`,
-                  value.toHexString(),
-                );
-              }}
-              style={{ minWidth: 110 }}
-            />
-          </BAIFlex>
-        </Col>
-        <Col xl={6} lg={24}>
-          <BAIFlex
-            gap="sm"
-            style={{ color: token.colorTextTertiary }}
-            wrap="wrap"
-          >
-            {t('userSettings.DarkMode')}:
-            <ColorPicker
-              format="hex"
-              showText
-              value={
-                darkModeColor ??
-                _.get(defaultDarkTokens, _.last(_.split(tokenName, '.')) || '')
-              }
-              onChangeComplete={(value) => {
-                updateUserCustomThemeConfig(
-                  `dark.${tokenName}`,
-                  value.toHexString(),
-                );
-              }}
-              style={{ minWidth: 110 }}
-            />
-          </BAIFlex>
-        </Col>
-      </Row>
-    </BAIFlex>
+    <LightDarkColorPicker
+      light={{
+        value:
+          lightModeColor ??
+          _.get(defaultLightTokens, _.last(_.split(tokenName, '.')) || ''),
+        onChangeComplete: (value) => {
+          updateDefaultTheme(`light.${tokenName}`, value);
+        },
+      }}
+      dark={{
+        value:
+          darkModeColor ??
+          _.get(defaultDarkTokens, _.last(_.split(tokenName, '.')) || ''),
+        onChangeComplete: (value) => {
+          updateDefaultTheme(`dark.${tokenName}`, value);
+        },
+      }}
+    />
   );
 };
 

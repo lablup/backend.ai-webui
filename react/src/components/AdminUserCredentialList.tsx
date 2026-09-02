@@ -1,0 +1,725 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { AdminUserCredentialListDeleteMutation } from '../__generated__/AdminUserCredentialListDeleteMutation.graphql';
+import { AdminUserCredentialListModifyMutation } from '../__generated__/AdminUserCredentialListModifyMutation.graphql';
+import {
+  AdminUserCredentialListQuery as AdminUserCredentialListQueryType,
+  AdminUserCredentialListQuery$data,
+} from '../__generated__/AdminUserCredentialListQuery.graphql';
+import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
+import { App } from '../app-shim';
+import { theme } from '../theme-shim';
+import BAIRadioGroup from './BAIRadioGroup';
+import KeypairInfoModal from './KeypairInfoModal';
+import KeypairSettingModal from './KeypairSettingModal';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  BAIButton,
+  BAITable,
+  BAIFlex,
+  BAIPropertyFilter,
+  BAINameActionCell,
+  BAIDeleteConfirmModal,
+  BAISelectionLabel,
+  useBAILogger,
+  BAIText,
+  PRIMARY_TAG_VARIANT,
+} from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
+import {
+  Trash2,
+  Info,
+  RotateCw,
+  BanIcon,
+  PlusIcon,
+  SquarePenIcon,
+  UndoIcon,
+} from 'lucide-react';
+import { useDeferredValue, useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  graphql,
+  useMutation,
+  usePreloadedQuery,
+  type PreloadedQuery,
+  type UseQueryLoaderLoadQueryOptions,
+} from 'react-relay';
+
+export const AdminUserCredentialListQuery = graphql`
+  query AdminUserCredentialListQuery(
+    $limit: Int!
+    $offset: Int!
+    $filter: String
+    $order: String
+    $domain_name: String
+    $email: String
+    $is_active: Boolean
+  ) {
+    keypair_list(
+      limit: $limit
+      offset: $offset
+      filter: $filter
+      order: $order
+      domain_name: $domain_name
+      email: $email
+      is_active: $is_active
+    ) {
+      items {
+        id
+        user_id
+        access_key
+        is_admin
+        resource_policy
+        created_at
+        rate_limit
+        num_queries
+        concurrency_used @since(version: "24.09.0")
+
+        ...KeypairSettingModalFragment
+        ...KeypairInfoModalFragment
+      }
+      total_count
+    }
+  }
+`;
+
+type Keypair = NonNullable<
+  NonNullable<
+    AdminUserCredentialListQuery$data['keypair_list']
+  >['items'][number]
+>;
+
+export const CREDENTIAL_LIST_DEFAULT_PAGE_SIZE = 20;
+
+interface AdminUserCredentialListProps {
+  queryRef: PreloadedQuery<AdminUserCredentialListQueryType>;
+  onReload: (
+    variables: AdminUserCredentialListQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) => void;
+}
+
+const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
+  queryRef,
+  onReload,
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { message, modal } = App.useApp();
+  const { logger } = useBAILogger();
+
+  const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
+    useState<KeypairSettingModalFragment$key | null>(null);
+  const [openUserKeypairSettingModal, setOpenUserKeypairSettingModal] =
+    useState(false);
+  const [keypairInfoModalFrgmt, setKeypairInfoModalFrgmt] = useState<any>(null);
+  const [isPendingInfoModalOpen, startInfoModalOpenTransition] =
+    useTransition();
+  const [isPendingSettingModalOpen, startSettingModalOpenTransition] =
+    useTransition();
+  const [deletingKeypair, setDeletingKeypair] = useState<Keypair | null>(null);
+  const [selectedKeypairs, setSelectedKeypairs] = useState<Keypair[]>([]);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
+
+  // The page owns URL state and the fetch; this component derives every
+  // filter/order/pagination control from the last requested variables and
+  // funnels changes back through `onReload`.
+  const variables = queryRef.variables;
+  const activeType = variables.is_active === false ? 'inactive' : 'active';
+  const pageSize = variables.limit ?? CREDENTIAL_LIST_DEFAULT_PAGE_SIZE;
+  const current = Math.floor((variables.offset ?? 0) / pageSize) + 1;
+
+  const deferredQueryRef = useDeferredValue(queryRef);
+  const isPending = deferredQueryRef !== queryRef;
+
+  const { keypair_list } = usePreloadedQuery<AdminUserCredentialListQueryType>(
+    AdminUserCredentialListQuery,
+    deferredQueryRef,
+  );
+
+  const [commitModifyKeypair] =
+    useMutation<AdminUserCredentialListModifyMutation>(graphql`
+      mutation AdminUserCredentialListModifyMutation(
+        $access_key: String!
+        $props: ModifyKeyPairInput!
+      ) {
+        modify_keypair(access_key: $access_key, props: $props) {
+          ok
+          msg
+        }
+      }
+    `);
+
+  const [commitDeleteKeypair] =
+    useMutation<AdminUserCredentialListDeleteMutation>(graphql`
+      mutation AdminUserCredentialListDeleteMutation($access_key: String!) {
+        delete_keypair(access_key: $access_key) {
+          ok
+          msg
+        }
+      }
+    `);
+
+  const handleBulkStatusUpdate = (isActive: boolean) => {
+    modal.confirm({
+      title: isActive
+        ? t('credential.BulkActivateCredentials')
+        : t('credential.BulkDeactivateCredentials'),
+      content: isActive
+        ? t('credential.BulkActivateCredentialsDescription', {
+            count: selectedKeypairs.length,
+          })
+        : t('credential.BulkDeactivateCredentialsDescription', {
+            count: selectedKeypairs.length,
+          }),
+      okButtonProps: {
+        danger: !isActive,
+      },
+      okText: isActive ? t('credential.Activate') : t('credential.Deactivate'),
+      cancelText: t('button.Cancel'),
+      onOk: async () => {
+        setIsBulkUpdating(true);
+        const results = await Promise.allSettled(
+          selectedKeypairs.map(
+            (keypair) =>
+              new Promise<void>((resolve, reject) => {
+                commitModifyKeypair({
+                  variables: {
+                    access_key: keypair.access_key ?? '',
+                    props: {
+                      is_active: isActive,
+                    },
+                  },
+                  onCompleted: (res, errors) => {
+                    if (!res?.modify_keypair?.ok || errors) {
+                      reject(new Error(res?.modify_keypair?.msg ?? ''));
+                      return;
+                    }
+                    resolve();
+                  },
+                  onError: (error) => {
+                    logger.error(error);
+                    reject(error);
+                  },
+                });
+              }),
+          ),
+        );
+        setIsBulkUpdating(false);
+        const failedCount = results.filter(
+          (r) => r.status === 'rejected',
+        ).length;
+        const successCount = results.length - failedCount;
+        if (failedCount > 0) {
+          message.error(
+            isActive
+              ? t('credential.BulkActivatePartialFailure', {
+                  successCount,
+                  failCount: failedCount,
+                })
+              : t('credential.BulkDeactivatePartialFailure', {
+                  successCount,
+                  failCount: failedCount,
+                }),
+          );
+        } else {
+          message.success(
+            isActive
+              ? t('credential.BulkActivateSuccess', { count: successCount })
+              : t('credential.BulkDeactivateSuccess', { count: successCount }),
+          );
+        }
+        setSelectedKeypairs([]);
+        onReload(variables, { fetchPolicy: 'network-only' });
+      },
+    });
+  };
+
+  return (
+    <BAIFlex direction="column" align="stretch" gap="sm">
+      <BAIFlex justify="between" align="start" gap="xs" wrap="wrap">
+        <BAIFlex gap={'sm'} align="start">
+          <BAIRadioGroup
+            value={activeType}
+            onChange={(value) => {
+              onReload({
+                ...variables,
+                is_active: value.target.value === 'active',
+                offset: 0,
+              });
+              setSelectedKeypairs([]);
+            }}
+            optionType="button"
+            options={[
+              {
+                label: t('general.Active'),
+                value: 'active',
+              },
+              {
+                label: t('general.Inactive'),
+                value: 'inactive',
+              },
+            ]}
+          />
+          <BAIPropertyFilter
+            filterProperties={[
+              {
+                key: 'email',
+                propertyLabel: t('credential.UserID'),
+                type: 'string',
+              },
+              {
+                key: 'access_key',
+                propertyLabel: t('credential.AccessKey'),
+                type: 'string',
+              },
+              {
+                key: 'is_admin',
+                propertyLabel: t('credential.Permission'),
+                type: 'boolean',
+                strictSelection: true,
+                defaultOperator: '==',
+                options: [
+                  {
+                    label: 'admin',
+                    value: 'true',
+                  },
+                  {
+                    label: 'user',
+                    value: 'false',
+                  },
+                ],
+              },
+              {
+                key: 'resource_policy',
+                propertyLabel: t('credential.ResourcePolicy'),
+                type: 'string',
+              },
+            ]}
+            value={variables.filter ?? undefined}
+            onChange={(value) => {
+              onReload({
+                ...variables,
+                filter: value ?? null,
+                offset: 0,
+              });
+              setSelectedKeypairs([]);
+            }}
+          />
+        </BAIFlex>
+        <BAIFlex gap={'xs'}>
+          {selectedKeypairs.length > 0 && (
+            <BAIFlex gap="xs">
+              <BAISelectionLabel
+                count={selectedKeypairs.length}
+                onClearSelection={() => setSelectedKeypairs([])}
+              />
+              {activeType === 'active' ? (
+                <Tooltip content={t('credential.Deactivate')}>
+                  <BAIButton
+                    icon={<BanIcon style={{ color: token.colorError }} />}
+                    loading={isBulkUpdating}
+                    onClick={() => handleBulkStatusUpdate(false)}
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip content={t('credential.Activate')}>
+                  <BAIButton
+                    icon={<UndoIcon style={{ color: token.colorInfo }} />}
+                    loading={isBulkUpdating}
+                    onClick={() => handleBulkStatusUpdate(true)}
+                  />
+                </Tooltip>
+              )}
+            </BAIFlex>
+          )}
+          <Tooltip content={t('button.Refresh')}>
+            <BAIButton
+              loading={isPending}
+              onClick={() => {
+                onReload(variables, { fetchPolicy: 'network-only' });
+              }}
+              icon={<RotateCw size="1em" />}
+            />
+          </Tooltip>
+          <BAIButton
+            type="primary"
+            icon={<PlusIcon />}
+            onClick={() => {
+              setOpenUserKeypairSettingModal(true);
+            }}
+          >
+            {t('credential.AddCredential')}
+          </BAIButton>
+        </BAIFlex>
+      </BAIFlex>
+      <BAITable<Keypair>
+        rowKey={'id'}
+        loading={isPending}
+        // Width-less columns otherwise fall to proportional(1) and its 120px
+        // floor, capping this table at ~892px — wide enough to hide the pin at
+        // desktop widths. Restores what the antd file carried pre-migration.
+        scroll={{ x: 'max-content' }}
+        dataSource={filterOutNullAndUndefined(keypair_list?.items)}
+        rowSelection={{
+          type: 'checkbox',
+          selectedRowKeys: _.compact(
+            selectedKeypairs.map((keypair) => keypair.id),
+          ),
+          onChange: (keys) => {
+            const items = filterOutNullAndUndefined(keypair_list?.items);
+            setSelectedKeypairs(
+              items.filter(
+                (keypair) => keypair.id && keys.includes(keypair.id),
+              ),
+            );
+          },
+        }}
+        columns={filterOutEmpty([
+          {
+            key: 'userID',
+            title: t('credential.UserID'),
+            dataIndex: 'email',
+            fixed: 'left',
+            sorter: true,
+            // TODO: user_id field in keypair_list is used as user's email, but sorting is done by email field
+            render: (_value, record) => {
+              const actions = [
+                {
+                  key: 'info',
+                  title: t('button.Info'),
+                  icon: <Info size="1em" />,
+                  onClick: () => {
+                    startInfoModalOpenTransition(() => {
+                      setKeypairInfoModalFrgmt(record);
+                    });
+                  },
+                },
+                {
+                  key: 'edit',
+                  title: t('button.Edit'),
+                  icon: <SquarePenIcon />,
+                  onClick: () => {
+                    startSettingModalOpenTransition(() => {
+                      setKeypairSettingModalFrgmt(record);
+                    });
+                  },
+                },
+                ...(activeType === 'inactive'
+                  ? [
+                      {
+                        key: 'activate',
+                        title: t('credential.Activate'),
+                        icon: <UndoIcon />,
+                        popConfirm: {
+                          title: t('credential.ActivateCredential'),
+                          description: record.user_id,
+                          okText: t('credential.Activate'),
+                          cancelText: t('button.Cancel'),
+                          onConfirm: () => {
+                            return new Promise<void>((resolve) => {
+                              commitModifyKeypair({
+                                variables: {
+                                  access_key: record.access_key ?? '',
+                                  props: {
+                                    is_active: true,
+                                  },
+                                },
+                                onCompleted: (res, errors) => {
+                                  if (!res?.modify_keypair?.ok || errors) {
+                                    message.error(res?.modify_keypair?.msg);
+                                    resolve();
+                                    return;
+                                  }
+                                  message.success(
+                                    t('credential.CredentialStatusUpdated'),
+                                  );
+                                  setSelectedKeypairs((prev) =>
+                                    prev.filter(
+                                      (kp) =>
+                                        kp.access_key !== record.access_key,
+                                    ),
+                                  );
+                                  onReload(variables, {
+                                    fetchPolicy: 'network-only',
+                                  });
+                                  resolve();
+                                },
+                                onError: (error) => {
+                                  message.error(error?.message);
+                                  logger.error(error);
+                                  resolve();
+                                },
+                              });
+                            });
+                          },
+                        },
+                      },
+                    ]
+                  : []),
+                ...(activeType === 'active'
+                  ? [
+                      {
+                        key: 'deactivate',
+                        title: t('credential.Deactivate'),
+                        icon: <BanIcon />,
+                        type: 'danger' as const,
+                        popConfirm: {
+                          title: t('credential.DeactivateCredential'),
+                          description: record.user_id,
+                          okButtonProps: {
+                            danger: true,
+                          },
+                          okText: t('credential.Deactivate'),
+                          cancelText: t('button.Cancel'),
+                          onConfirm: () => {
+                            return new Promise<void>((resolve) => {
+                              commitModifyKeypair({
+                                variables: {
+                                  access_key: record.access_key ?? '',
+                                  props: {
+                                    is_active: false,
+                                  },
+                                },
+                                onCompleted: (res, errors) => {
+                                  if (!res?.modify_keypair?.ok || errors) {
+                                    message.error(res?.modify_keypair?.msg);
+                                    resolve();
+                                    return;
+                                  }
+                                  message.success(
+                                    t('credential.CredentialStatusUpdated'),
+                                  );
+                                  setSelectedKeypairs((prev) =>
+                                    prev.filter(
+                                      (kp) =>
+                                        kp.access_key !== record.access_key,
+                                    ),
+                                  );
+                                  onReload(variables, {
+                                    fetchPolicy: 'network-only',
+                                  });
+                                  resolve();
+                                },
+                                onError: (error) => {
+                                  message.error(error?.message);
+                                  logger.error(error);
+                                  resolve();
+                                },
+                              });
+                            });
+                          },
+                        },
+                      },
+                    ]
+                  : [
+                      {
+                        key: 'delete',
+                        title: t('button.Delete'),
+                        icon: <Trash2 size="1em" />,
+                        type: 'danger' as const,
+                        onClick: () => {
+                          setDeletingKeypair(record);
+                        },
+                      },
+                    ]),
+              ];
+              return (
+                <BAINameActionCell
+                  title={record.user_id}
+                  showActions="always"
+                  actions={actions}
+                />
+              );
+            },
+          },
+          {
+            key: 'accessKey',
+            title: t('credential.AccessKey'),
+            sorter: true,
+            render: (_value, record) => {
+              return <BAIText monospace>{record.access_key}</BAIText>;
+            },
+          },
+          {
+            key: 'permission',
+            title: t('credential.Permission'),
+            dataIndex: 'is_admin',
+            render: (isAdmin) =>
+              isAdmin ? (
+                <BAIFlex gap="xs">
+                  <Badge variant={PRIMARY_TAG_VARIANT} label="admin" />
+                  <Badge variant="green" label="user" />
+                </BAIFlex>
+              ) : (
+                <Badge variant="green" label="user" />
+              ),
+            sorter: true,
+          },
+          {
+            key: 'keyAge',
+            title: t('credential.KeyAge'),
+            dataIndex: 'created_at',
+            render: (createdAt) => {
+              return `${dayjs().diff(createdAt, 'day')}${t('credential.Days')}`;
+            },
+            sorter: true,
+          },
+          {
+            key: 'createdAt',
+            title: t('credential.CreatedAt'),
+            dataIndex: 'created_at',
+            render: (createdAt) => dayjs(createdAt).format('lll'),
+            sorter: true,
+          },
+          {
+            key: 'resourcePolicy',
+            title: t('credential.ResourcePolicy'),
+            dataIndex: 'resource_policy',
+            sorter: true,
+          },
+          {
+            key: 'allocation',
+            title: t('credential.Allocation'),
+            // No `dataIndex` on this column, so the record comes from
+            // `render`'s SECOND argument (Astryx/antd `(value, record)`).
+            render: (_value, record: Keypair) => {
+              // PILOT-DECISION: antd rendered these as one Typography.Text
+              // with a nested secondary-colored/smaller-font unit label,
+              // spaced via inline `marginLeft`. Astryx `Text` has no `style`
+              // prop (only `xstyle`/`stylex.create()`), so the pair becomes
+              // two Text nodes in a BAIFlex row with a small gap instead of a
+              // manual margin (defaults-first / simplicity policy).
+              return (
+                <BAIFlex direction="column" align="start" gap="xxs">
+                  <BAIFlex gap="xxs" align="baseline">
+                    <Text>{record.concurrency_used}</Text>
+                    <Text type="supporting" color="secondary">
+                      {t('credential.Sessions')}
+                    </Text>
+                  </BAIFlex>
+                  <BAIFlex gap="xxs" align="baseline">
+                    <Text type="supporting">{record.rate_limit}</Text>
+                    <Text type="supporting" color="secondary">
+                      {t('credential.ReqPer15Min')}
+                    </Text>
+                  </BAIFlex>
+                  <BAIFlex gap="xxs" align="baseline">
+                    <Text type="supporting">{record.num_queries}</Text>
+                    <Text type="supporting" color="secondary">
+                      {t('credential.Queries')}
+                    </Text>
+                  </BAIFlex>
+                </BAIFlex>
+              );
+            },
+          },
+        ])}
+        pagination={{
+          pageSize,
+          total: keypair_list?.total_count || 0,
+          current,
+          // TODO: need to set more options to export CSV in current page's data
+          onChange(nextCurrent, nextPageSize) {
+            if (_.isNumber(nextCurrent) && _.isNumber(nextPageSize)) {
+              onReload({
+                ...variables,
+                limit: nextPageSize,
+                offset: (nextCurrent - 1) * nextPageSize,
+              });
+              setSelectedKeypairs([]);
+            }
+          },
+        }}
+        onChangeOrder={(nextOrder) => {
+          onReload({
+            ...variables,
+            order: nextOrder ?? null,
+          });
+          setSelectedKeypairs([]);
+        }}
+      />
+      <KeypairInfoModal
+        keypairInfoModalFrgmt={keypairInfoModalFrgmt}
+        open={!!keypairInfoModalFrgmt || isPendingInfoModalOpen}
+        loading={isPendingInfoModalOpen}
+        onRequestClose={() => {
+          setKeypairInfoModalFrgmt(null);
+        }}
+      />
+      <KeypairSettingModal
+        keypairSettingModalFrgmt={keypairSettingModalFrgmt}
+        loading={isPendingSettingModalOpen}
+        open={
+          !!keypairSettingModalFrgmt ||
+          isPendingSettingModalOpen ||
+          openUserKeypairSettingModal
+        }
+        onRequestClose={(success) => {
+          setKeypairSettingModalFrgmt(null);
+          setOpenUserKeypairSettingModal(false);
+          if (success) {
+            onReload(variables, { fetchPolicy: 'network-only' });
+          }
+        }}
+      />
+      <BAIDeleteConfirmModal
+        open={!!deletingKeypair}
+        title={t('credential.DeleteCredential')}
+        target={t('general.Credential')}
+        items={
+          deletingKeypair
+            ? [
+                {
+                  key: deletingKeypair.access_key ?? '',
+                  label: deletingKeypair.access_key ?? '',
+                },
+              ]
+            : []
+        }
+        confirmText={deletingKeypair?.access_key ?? ''}
+        requireConfirmInput
+        onOk={() => {
+          if (deletingKeypair) {
+            commitDeleteKeypair({
+              variables: {
+                access_key: deletingKeypair.access_key ?? '',
+              },
+              onCompleted: (res, errors) => {
+                if (!res?.delete_keypair?.ok || errors) {
+                  message.error(res?.delete_keypair?.msg);
+                  setDeletingKeypair(null);
+                  return;
+                }
+                message.success(t('credential.CredentialSuccessfullyDeleted'));
+                setSelectedKeypairs((prev) =>
+                  prev.filter(
+                    (kp) => kp.access_key !== deletingKeypair.access_key,
+                  ),
+                );
+                setDeletingKeypair(null);
+                onReload(variables, { fetchPolicy: 'network-only' });
+              },
+              onError: (error) => {
+                message.error(error?.message);
+                logger.error(error);
+                setDeletingKeypair(null);
+              },
+            });
+          }
+        }}
+        onCancel={() => setDeletingKeypair(null)}
+      />
+    </BAIFlex>
+  );
+};
+
+export default AdminUserCredentialList;

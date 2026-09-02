@@ -2,27 +2,33 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import { App, Col, Form, Input, InputNumber, Row, theme } from 'antd';
-import { FormInstance } from 'antd/lib';
+import { ResourceGroupFairShareSettingModalFragment$key } from '../../__generated__/ResourceGroupFairShareSettingModalFragment.graphql';
 import {
+  ResourceGroupFairShareSettingModalMutation,
+  ResourceGroupFairShareSettingModalMutation$variables,
+} from '../../__generated__/ResourceGroupFairShareSettingModalMutation.graphql';
+import { App } from '../../app-shim';
+import { Form, FormInstance } from '../../form-engine';
+import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { theme } from '../../theme-shim';
+import {
+  AstryxFormNumberInput,
+  AstryxFormTextInput,
+} from '../astryxFormControls';
+import { Grid } from '@astryxdesign/core/Grid';
+import {
+  BAIQuestionIconWithTooltip,
   BAIAlert,
   BAICard,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   useBAILogger,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
-import { ResourceGroupFairShareSettingModalFragment$key } from 'src/__generated__/ResourceGroupFairShareSettingModalFragment.graphql';
-import {
-  ResourceGroupFairShareSettingModalMutation,
-  ResourceGroupFairShareSettingModalMutation$variables,
-} from 'src/__generated__/ResourceGroupFairShareSettingModalMutation.graphql';
 
 interface ResourceGroupFairShareTableProps extends BAIModalProps {
   resourceGroupNodeFrgmt: ResourceGroupFairShareSettingModalFragment$key | null;
@@ -71,6 +77,17 @@ const ResourceGroupFairShareSettingModal: React.FC<
         resourceGroup {
           id
           name
+          fairShareSpec {
+            halfLifeDays
+            lookbackDays
+            decayUnitDays
+            defaultWeight
+            resourceWeights {
+              resourceType
+              weight
+              usesDefault
+            }
+          }
         }
       }
     }
@@ -79,7 +96,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
   const formRef =
     useRef<
       FormInstance<
-        ResourceGroupFairShareSettingModalMutation$variables['input'] | null
+        ResourceGroupFairShareSettingModalMutation$variables['input']
       >
     >(null);
 
@@ -172,35 +189,50 @@ const ResourceGroupFairShareSettingModal: React.FC<
           name="resourceGroupName"
           required
         >
-          <Input disabled />
+          <AstryxFormTextInput label={t('fairShare.ResourceGroup')} disabled />
         </Form.Item>
 
-        <Row gutter={[24, 16]}>
+        {/* antd `Row gutter={[24,16]}` + `Col span={12}` (a fixed 2-up over
+            antd's 24-column grid, no breakpoint props) -> Astryx `Grid
+            columns={2}`. `gutter` resolves to the spacing steps by VALUE, not
+            by name (P9): 24px = step 6 across, 16px = step 4 down. The `Col`
+            wrappers with `alignSelf: 'start'` become the grid's own
+            `align="start"`. */}
+        <Grid
+          columns={2}
+          columnGap={6}
+          rowGap={4}
+          align="start"
+          width="100%"
+        >
           <Form.Item
             hidden
+            style={{ minWidth: 0 }}
             label={
               <BAIFlex gap="xxs">
                 {t('fairShare.DecayUnitDays')}
-                <QuestionIconWithTooltip
+                <BAIQuestionIconWithTooltip
                   title={t('fairShare.DecayUnitDaysDescription')}
                 />
               </BAIFlex>
             }
             name="decayUnitDays"
           >
-            <InputNumber
+            {/* antd `InputNumber suffix` (a unit string) -> `NumberInput
+                units` (MAPPING §3.17). */}
+            <AstryxFormNumberInput
+              label={t('fairShare.DecayUnitDays')}
               min={1}
               step={1}
-              suffix={t('fairShare.Days')}
-              style={{ width: '100%' }}
+              units={t('fairShare.Days')}
             />
           </Form.Item>
-          <Col span={12} style={{ alignSelf: 'start' }}>
             <Form.Item
+              style={{ minWidth: 0 }}
               label={
                 <BAIFlex gap="xxs">
                   {t('fairShare.HalfLifeDays')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('fairShare.HalfLifeDaysDescription')}
                   />
                 </BAIFlex>
@@ -225,20 +257,19 @@ const ResourceGroupFairShareSettingModal: React.FC<
                 },
               ]}
             >
-              <InputNumber
+              <AstryxFormNumberInput
+                label={t('fairShare.HalfLifeDays')}
                 min={1}
                 step={1}
-                style={{ width: '100%' }}
-                suffix={t('fairShare.Days')}
+                units={t('fairShare.Days')}
               />
             </Form.Item>
-          </Col>
-          <Col span={12} style={{ alignSelf: 'start' }}>
             <Form.Item
+              style={{ minWidth: 0 }}
               label={
                 <BAIFlex gap="xxs">
                   {t('fairShare.LookbackDays')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('fairShare.LookbackDaysDescription')}
                   />
                 </BAIFlex>
@@ -263,20 +294,19 @@ const ResourceGroupFairShareSettingModal: React.FC<
                 },
               ]}
             >
-              <InputNumber
+              <AstryxFormNumberInput
+                label={t('fairShare.LookbackDays')}
                 min={1}
                 step={1}
-                style={{ width: '100%' }}
-                suffix={t('fairShare.Days')}
+                units={t('fairShare.Days')}
               />
             </Form.Item>
-          </Col>
-          <Col span={12} style={{ alignSelf: 'start' }}>
             <Form.Item
+              style={{ minWidth: 0 }}
               label={
                 <BAIFlex gap="xxs">
                   {t('fairShare.DefaultWeight')}
-                  <QuestionIconWithTooltip
+                  <BAIQuestionIconWithTooltip
                     title={t('fairShare.DefaultWeightDescription')}
                   />
                 </BAIFlex>
@@ -291,16 +321,19 @@ const ResourceGroupFairShareSettingModal: React.FC<
                 },
               ]}
             >
-              <InputNumber min={1} step={0.1} style={{ width: '100%' }} />
+              <AstryxFormNumberInput
+                label={t('fairShare.DefaultWeight')}
+                min={0}
+                step={0.1}
+              />
             </Form.Item>
-          </Col>
-        </Row>
+        </Grid>
 
         <Form.Item
           label={
             <BAIFlex gap="xxs">
               {t('fairShare.ResourceWeights')}
-              <QuestionIconWithTooltip
+              <BAIQuestionIconWithTooltip
                 title={t('fairShare.ResourceWeightsDescription')}
               />
             </BAIFlex>
@@ -310,32 +343,33 @@ const ResourceGroupFairShareSettingModal: React.FC<
           <BAICard
             styles={{ body: { paddingBottom: 0, paddingTop: token.padding } }}
           >
-            <Row gutter={[24, 16]}>
+            <Grid
+          columns={2}
+          columnGap={6}
+          rowGap={4}
+          align="start"
+          width="100%"
+        >
               {_.map(resourceGroup?.fairShareSpec?.resourceWeights, (entry) => {
+                const weightLabel =
+                  _.get(mergedResourceSlots, entry?.resourceType)
+                    ?.description || _.upperCase(entry?.resourceType || '');
                 return (
-                  <Col
-                    span={12}
+                  <Form.Item
                     key={entry?.resourceType}
-                    style={{ alignSelf: 'start' }}
+                    style={{ minWidth: 0 }}
+                    label={weightLabel}
+                    name={['resourceWeights', entry?.resourceType]}
                   >
-                    <Form.Item
-                      label={
-                        _.get(mergedResourceSlots, entry?.resourceType)
-                          ?.description ||
-                        _.upperCase(entry?.resourceType || '')
-                      }
-                      name={['resourceWeights', entry?.resourceType]}
-                    >
-                      <InputNumber
-                        min={1}
-                        step={0.1}
-                        style={{ width: '100%' }}
-                      />
-                    </Form.Item>
-                  </Col>
+                    <AstryxFormNumberInput
+                      label={weightLabel}
+                      min={0}
+                      step={0.1}
+                    />
+                  </Form.Item>
                 );
               })}
-            </Row>
+            </Grid>
           </BAICard>
         </Form.Item>
       </Form>

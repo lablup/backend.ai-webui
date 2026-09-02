@@ -11,35 +11,33 @@ import {
   KeypairResourcePolicySettingModalModifyMutation,
   ModifyKeyPairResourcePolicyInput,
 } from '../__generated__/KeypairResourcePolicySettingModalModifyMutation.graphql';
+import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useResourceSlots } from '../hooks/backendai';
+import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
+import { theme } from '../theme-shim';
+import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
-import { QuestionCircleOutlined } from '@ant-design/icons';
 import {
-  App,
-  Card,
-  Col,
-  Form,
-  FormInstance,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+  AstryxFormNumberInput,
+  AstryxFormSelector,
+  AstryxFormTextInput,
+} from './astryxFormControls';
+import { Card } from '@astryxdesign/core/Card';
+import { Icon } from '@astryxdesign/core/Icon';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIDynamicUnitInputNumber,
   BAIAllowedHostNamesSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  useResourceSlotsDetails,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { CircleHelp } from 'lucide-react';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -63,6 +61,7 @@ const KeypairResourcePolicySettingModal: React.FC<
   onRequestClose,
   ...props
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { token } = theme.useToken();
@@ -215,12 +214,12 @@ const KeypairResourcePolicySettingModal: React.FC<
 
         const { _name, ...restValues } = values;
         const props:
-          | CreateKeyPairResourcePolicyInput
-          | ModifyKeyPairResourcePolicyInput = {
-          ..._.omit(restValues, 'parsedTotalResourceSlots', 'name'),
-          total_resource_slots: JSON.stringify(total_resource_slots),
-          allowed_vfolder_hosts: JSON.stringify(allowed_vfolder_hosts),
-        };
+          CreateKeyPairResourcePolicyInput | ModifyKeyPairResourcePolicyInput =
+          {
+            ..._.omit(restValues, 'parsedTotalResourceSlots', 'name'),
+            total_resource_slots: JSON.stringify(total_resource_slots),
+            allowed_vfolder_hosts: JSON.stringify(allowed_vfolder_hosts),
+          };
 
         if (keypairResourcePolicy === null) {
           commitCreateKeypairResourcePolicy({
@@ -297,6 +296,9 @@ const KeypairResourcePolicySettingModal: React.FC<
           ? t('resourcePolicy.CreateKeypairResourcePolicy')
           : t('resourcePolicy.UpdateKeypairResourcePolicy')
       }
+      okText={
+        keypairResourcePolicy === null ? t('button.Create') : t('button.Save')
+      }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
       destroyOnHidden
@@ -306,17 +308,22 @@ const KeypairResourcePolicySettingModal: React.FC<
       {...props}
     >
       <Form
-        // Remove the required mark for the label because it has too many optional fields
-        requiredMark={false}
+        // PILOT-DECISION: `requiredMark={false}` used to globally suppress
+        // the antd asterisk because most fields below pass `required` only
+        // as a cosmetic section-header marker (validation itself runs via
+        // `rules`). `BAIFormItem` renders its own `*` per item with no
+        // Form-level override, so instead of the marker reappearing
+        // everywhere, `required` is simply omitted at each `BAIFormItem`
+        // call site in this file — `rules` (and therefore validation) is
+        // untouched.
         ref={formRef}
         layout="vertical"
         initialValues={initialValues}
         preserve={false}
       >
-        <Form.Item
+        <BAIFormItem
           label={t('resourcePolicy.Name')}
           name="name"
-          required
           rules={[
             {
               required: true,
@@ -340,16 +347,17 @@ const KeypairResourcePolicySettingModal: React.FC<
             },
           ]}
         >
-          <Input disabled={!!keypairResourcePolicy} />
-        </Form.Item>
-        <Form.Item
+          <AstryxFormTextInput
+            label={t('resourcePolicy.Name')}
+            disabled={!!keypairResourcePolicy}
+          />
+        </BAIFormItem>
+        <BAIFormItem
           label={
-            <BAIFlex gap="xxs">
-              <Typography.Text>
-                {t('resourcePolicy.DefaultForUnspecified')}
-              </Typography.Text>
+            <BAIFlex gap="xxs" align="center">
+              {t('resourcePolicy.DefaultForUnspecified')}
               <Tooltip
-                title={
+                content={
                   <>
                     {t('resourcePolicy.DefaultForUnspecifiedTooltipDesc1')}
                     <br />
@@ -357,227 +365,204 @@ const KeypairResourcePolicySettingModal: React.FC<
                     {t('resourcePolicy.DefaultForUnspecifiedTooltipDesc2')}
                   </>
                 }
-                placement="right"
+                placement="end"
               >
-                <QuestionCircleOutlined
-                  style={{ color: token.colorTextSecondary, cursor: 'pointer' }}
-                />
+                <Icon icon={CircleHelp} color="tertiary" size="sm" />
               </Tooltip>
             </BAIFlex>
           }
           name="default_for_unspecified"
         >
-          <Select
+          <AstryxFormSelector
+            label={t('resourcePolicy.DefaultForUnspecified')}
             options={[
               {
-                key: 'unlimited',
                 label: 'UNLIMITED',
                 value: 'UNLIMITED',
               },
               {
-                key: 'limited',
                 label: 'LIMITED',
                 value: 'LIMITED',
               },
             ]}
           />
-        </Form.Item>
-        <Form.Item label={t('resourcePolicy.ResourcePolicy')} required>
-          <Card>
-            {_.chain(resourceSlots)
-              .keys()
-              .chunk(3)
-              .map((resourceSlotKeys, index) => (
-                <Row gutter={[24, 16]} key={index}>
-                  {_.map(resourceSlotKeys, (resourceSlotKey) => (
-                    <Col
-                      xs={{ span: 12 }}
-                      md={{ span: 8 }}
-                      key={resourceSlotKey}
-                      style={{
-                        alignSelf: 'end',
-                        marginBottom: token.marginLG,
-                      }}
-                    >
-                      <FormItemWithUnlimited
-                        unlimitedValue={undefined}
+        </BAIFormItem>
+        <BAIFormItem label={t('resourcePolicy.ResourcePolicy')}>
+          {/* PILOT-DECISION: the antd `Row`/`Col` grid chunked resource
+              slots into rows of 3 with `xs`/`md` breakpoints — Astryx has no
+              breakpoint system (MAPPING §3.9). Replaced with a single
+              wrapping `HStack`; each slot gets a fixed flex-basis instead of
+              a responsive span, so the layout still settles into ~3 columns
+              on the modal's fixed width without a breakpoint concept. */}
+          <Card padding={4}>
+            <HStack wrap="wrap" gap={6}>
+              {_.map(_.keys(resourceSlots), (resourceSlotKey) => (
+                <div
+                  key={resourceSlotKey}
+                  style={{
+                    flex: '1 1 220px',
+                    minWidth: 220,
+                    marginBottom: token.marginLG,
+                  }}
+                >
+                  <FormItemWithUnlimited
+                    unlimitedValue={undefined}
+                    label={
+                      _.get(mergedResourceSlots, resourceSlotKey)
+                        ?.description || resourceSlotKey
+                    }
+                    name={['total_resource_slots', resourceSlotKey]}
+                    rules={[
+                      {
+                        validator(__, value) {
+                          if (
+                            _.includes(resourceSlotKey, 'mem') &&
+                            value &&
+                            // @ts-ignore
+                            convertToBinaryUnit(value, 'p').number >
+                              // @ts-ignore
+                              convertToBinaryUnit('300p', 'p').number
+                          ) {
+                            return Promise.reject(
+                              new Error(
+                                t('resourcePolicy.MemorySizeExceedsLimit'),
+                              ),
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                    style={{ margin: 0, width: '100%' }}
+                  >
+                    {_.includes(resourceSlotKey, 'mem') ? (
+                      <BAIDynamicUnitInputNumber
+                        defaultUnit="g"
+                        style={{ width: '100%' }}
+                      />
+                    ) : (
+                      <AstryxFormNumberInput
                         label={
                           _.get(mergedResourceSlots, resourceSlotKey)
                             ?.description || resourceSlotKey
                         }
-                        name={['total_resource_slots', resourceSlotKey]}
-                        rules={[
-                          {
-                            validator(__, value) {
-                              if (
-                                _.includes(resourceSlotKey, 'mem') &&
-                                value &&
-                                // @ts-ignore
-                                convertToBinaryUnit(value, 'p').number >
-                                  // @ts-ignore
-                                  convertToBinaryUnit('300p', 'p').number
-                              ) {
-                                return Promise.reject(
-                                  new Error(
-                                    t('resourcePolicy.MemorySizeExceedsLimit'),
-                                  ),
-                                );
-                              }
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                        style={{ margin: 0, width: '100%' }}
-                      >
-                        {_.includes(resourceSlotKey, 'mem') ? (
-                          <BAIDynamicUnitInputNumber
-                            defaultUnit="g"
-                            style={{ width: '100%' }}
-                          />
-                        ) : (
-                          <InputNumber
-                            min={0}
-                            max={MAX_CPU_QUOTA}
-                            step={
-                              _.includes(resourceSlotKey, '.shares') ? 0.1 : 1
-                            }
-                            suffix={
-                              _.get(mergedResourceSlots, resourceSlotKey)
-                                ?.display_unit
-                            }
-                            style={{ width: '100%' }}
-                          />
-                        )}
-                      </FormItemWithUnlimited>
-                    </Col>
-                  ))}
-                </Row>
-              ))
-              .value()}
+                        min={0}
+                        max={MAX_CPU_QUOTA}
+                        step={_.includes(resourceSlotKey, '.shares') ? 0.1 : 1}
+                        units={
+                          _.get(mergedResourceSlots, resourceSlotKey)
+                            ?.display_unit
+                        }
+                      />
+                    )}
+                  </FormItemWithUnlimited>
+                </div>
+              ))}
+            </HStack>
           </Card>
-        </Form.Item>
-        <Form.Item label={t('resourcePolicy.Sessions')} required>
-          <Card>
-            <Row gutter={[24, 16]} style={{ alignSelf: 'end' }}>
-              <Col
-                xs={{ span: 12 }}
-                md={{ span: 8 }}
-                style={{ alignSelf: 'end' }}
-              >
+        </BAIFormItem>
+        <BAIFormItem label={t('resourcePolicy.Sessions')}>
+          <Card padding={4}>
+            <HStack wrap="wrap" gap={6}>
+              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
                 <FormItemWithUnlimited
                   label={t('resourcePolicy.ClusterSize')}
                   name="max_containers_per_session"
                   style={{ margin: 0, width: '100%' }}
                   disableUnlimited
                 >
-                  <InputNumber
+                  <AstryxFormNumberInput
+                    label={t('resourcePolicy.ClusterSize')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
-                    style={{ width: '100%' }}
                   />
                 </FormItemWithUnlimited>
-              </Col>
-              <Col
-                xs={{ span: 12 }}
-                md={{ span: 8 }}
-                style={{ alignSelf: 'end' }}
-              >
+              </div>
+              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
                 <FormItemWithUnlimited
                   name={'max_session_lifetime'}
                   unlimitedValue={0}
                   label={t('resourcePolicy.MaxSessionLifetime')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <InputNumber min={0} max={100} style={{ width: '100%' }} />
+                  <AstryxFormNumberInput
+                    label={t('resourcePolicy.MaxSessionLifetime')}
+                    min={0}
+                    max={SIGNED_32BIT_MAX_INT}
+                  />
                 </FormItemWithUnlimited>
-              </Col>
+              </div>
               {baiClient.supports('max-pending-session-count') ? (
-                <Col
-                  xs={{ span: 12 }}
-                  md={{ span: 8 }}
-                  style={{ alignSelf: 'end' }}
-                >
+                <div style={{ flex: '1 1 220px', minWidth: 220 }}>
                   <FormItemWithUnlimited
                     name={'max_pending_session_count'}
                     unlimitedValue={null}
                     label={t('resourcePolicy.MaxPendingSessionCount')}
                     style={{ margin: 0, width: '100%' }}
                   >
-                    <InputNumber
+                    <AstryxFormNumberInput
+                      label={t('resourcePolicy.MaxPendingSessionCount')}
                       min={0}
                       max={SIGNED_32BIT_MAX_INT}
-                      style={{ width: '100%' }}
                     />
                   </FormItemWithUnlimited>
-                </Col>
+                </div>
               ) : null}
-              <Col
-                xs={{ span: 12 }}
-                md={{ span: 8 }}
-                style={{ alignSelf: 'end' }}
-              >
+              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
                 <FormItemWithUnlimited
                   name={'max_concurrent_sessions'}
-                  label={t('resourcePolicy.ConcurrentJobs')}
+                  label={t('resourcePolicy.Concurrency')}
                   unlimitedValue={0}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <InputNumber
+                  <AstryxFormNumberInput
+                    label={t('resourcePolicy.Concurrency')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
-                    style={{ width: '100%' }}
                   />
                 </FormItemWithUnlimited>
-              </Col>
-              <Col
-                xs={{ span: 12 }}
-                md={{ span: 8 }}
-                style={{ alignSelf: 'end' }}
-              >
+              </div>
+              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
                 <FormItemWithUnlimited
                   name={'idle_timeout'}
                   unlimitedValue={0}
                   label={t('resourcePolicy.IdleTimeoutSec')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <InputNumber
+                  <AstryxFormNumberInput
+                    label={t('resourcePolicy.IdleTimeoutSec')}
                     min={0}
                     max={Number.MAX_SAFE_INTEGER}
-                    style={{ width: '100%' }}
                   />
                 </FormItemWithUnlimited>
-              </Col>
-              <Col
-                xs={{ span: 12 }}
-                md={{ span: 8 }}
-                style={{ alignSelf: 'end' }}
-              >
+              </div>
+              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
                 <FormItemWithUnlimited
                   name={'max_concurrent_sftp_sessions'}
                   unlimitedValue={0}
                   label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
                   style={{ margin: 0, width: '100%' }}
                 >
-                  <InputNumber
+                  <AstryxFormNumberInput
+                    label={t('resourcePolicy.MaxConcurrentSFTPSessions')}
                     min={0}
                     max={SIGNED_32BIT_MAX_INT}
-                    style={{ width: '100%' }}
                   />
                 </FormItemWithUnlimited>
-              </Col>
-            </Row>
+              </div>
+            </HStack>
           </Card>
-        </Form.Item>
-        <Form.Item label={t('resourcePolicy.Folders')} required>
-          <Card>
-            <Form.Item
+        </BAIFormItem>
+        <BAIFormItem label={t('resourcePolicy.Folders')}>
+          <Card padding={4}>
+            <BAIFormItem
               label={t('resourcePolicy.AllowedHosts')}
               name="allowed_vfolder_hosts"
             >
               <BAIAllowedHostNamesSelect mode="multiple" />
-            </Form.Item>
+            </BAIFormItem>
           </Card>
-        </Form.Item>
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

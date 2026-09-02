@@ -1,9 +1,14 @@
+---
+navTitle: 参考資料
+---
+
 # 参考文献
 
-- Online API Manual: https://docs.backend.ai
-- Online Client SDK Manual: https://docs.backend.ai/en/latest/client
+- Backend.AI ドキュメント: https://docs.backend.ai
+- オンラインクライアントSDKマニュアル: https://docs.backend.ai/en/latest/client
 
 このドキュメントの最新バージョンは、以下のサイトから見つけることができます。
 
 - https://webui.docs.backend.ai/en/latest (English)
 - https://webui.docs.backend.ai/ko/latest (Korean)
+- https://webui.docs.backend.ai/ja/latest (Japanese)

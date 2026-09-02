@@ -17,37 +17,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+        uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
         with:
-          version: latest
-          run_install: false
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
       - name: Update npm
-        run: npm install -g npm@latest
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      - uses: actions/cache@v5
-        name: Setup pnpm cache
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-      - name: Install Dependencies
-        # CI defaults to --frozen-lockfile, which blocks merging git branch lockfiles.
-        # This workflow runs on pushes to main and version tags (v*); on main,
-        # pnpm-workspace.yaml's mergeGitBranchLockfilesBranchPattern auto-merges
-        # branch lockfiles. --no-frozen-lockfile is needed to allow that merge write.
-        run: pnpm install --no-frozen-lockfile
+        # Pinned. pnpm publish delegates to the npm CLI; OIDC trusted
+        # publishing needs npm >= 11.5.1.
+        run: npm install -g npm@11.16.0
 
       - name: Update to canary version
         if: github.ref_type == 'branch'

@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from 'antd';
-import _ from 'lodash';
+import { theme } from '../theme-shim';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 interface TextHighlighterProps {

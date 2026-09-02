@@ -2,21 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
+import { Form, FormInstance, FormProps } from '../form-engine';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useProjectPath } from '../hooks/useRouteScope';
+import {
+  StartSessionWithDefaultValue,
+  useStartSession,
+} from '../hooks/useStartSession';
 import CopyButton from './Chat/CopyButton';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { EllipsisOutlined } from '@ant-design/icons';
-import {
-  App,
-  Divider,
-  Dropdown,
-  Form,
-  FormInstance,
-  FormProps,
-  Input,
-  Space,
-  Typography,
-} from 'antd';
+import { AstryxFormTextInput } from './astryxFormControls';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { Divider } from '@astryxdesign/core/Divider';
+import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIButton,
   BAIFlex,
@@ -24,13 +24,9 @@ import {
   useBAILogger,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
-import { FolderInput } from 'lucide-react';
+import { Ellipsis, FolderInput } from 'lucide-react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  StartSessionWithDefaultValue,
-  useStartSession,
-} from 'src/hooks/useStartSession';
 
 const regularizeGithubURL = (url: string) => {
   url = url.replace('/blob/', '/');
@@ -66,6 +62,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
   const { t } = useTranslation();
   const app = App.useApp();
   const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
   const baiClient = useSuspendedBackendaiClient();
   const { startSessionWithDefault, upsertSessionNotification } =
     useStartSession();
@@ -92,7 +89,7 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
           } as PrimaryAppOption,
         },
       ]);
-      webuiNavigate('/session');
+      webuiNavigate(buildProjectPath('session'));
     }
 
     if (results?.rejected && results.rejected.length > 0) {
@@ -134,9 +131,16 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
           flex: 1,
         }}
       >
-        <Input placeholder={t('import.NotebookURL')} />
+        <AstryxFormTextInput
+          label={t('import.NotebookURL')}
+          placeholder={t('import.NotebookURL')}
+        />
       </Form.Item>
-      <Space.Compact style={{ width: '100%' }}>
+      {/* antd `Space.Compact` → `ButtonGroup` (MAPPING §4). */}
+      <ButtonGroup
+        label={t('import.GetAndRunNotebook')}
+        style={{ width: '100%' }}
+      >
         <BAIButton
           icon={<FolderInput />}
           type="primary"
@@ -147,54 +151,57 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
         >
           {t('import.GetAndRunNotebook')}
         </BAIButton>
-        <Dropdown
-          trigger={['click']}
-          menu={{
-            items: [
-              {
-                key: 'custom',
-                label: t('import.StartWithOptions'),
-                onClick: () => {
-                  formRef.current
-                    ?.validateFields()
-                    .then(() => {
-                      const url =
-                        formRef.current?.getFieldValue('url') ||
-                        initialUrl ||
-                        '';
-                      const notebookURL = regularizeGithubURL(url);
-                      const launcherValue = createLauncherValue(
-                        notebookURL,
-                        baiClient._config.default_import_environment,
-                      );
-                      const params = new URLSearchParams();
-                      params.set('formValues', JSON.stringify(launcherValue));
-                      params.set('step', '4');
-                      webuiNavigate({
-                        pathname: '/session/start',
-                        search: params.toString(),
-                      });
-                    })
-                    .catch((error) => {
-                      logger.error(error);
-                    });
-                },
-              },
-            ],
+        {/* antd `Dropdown menu={{items}}` (click trigger) → `DropdownMenu`
+            (MAPPING §3.7); the trigger moves into the `button` slot. */}
+        <DropdownMenu
+          button={{
+            label: t('import.StartWithOptions'),
+            icon: <Ellipsis size="1em" />,
+            isIconOnly: true,
+            variant: 'primary',
           }}
-        >
-          <BAIButton icon={<EllipsisOutlined />} type="primary" />
-        </Dropdown>
-      </Space.Compact>
+          hasChevron={false}
+          items={[
+            {
+              label: t('import.StartWithOptions'),
+              onClick: () => {
+                formRef.current
+                  ?.validateFields()
+                  .then(() => {
+                    const url =
+                      formRef.current?.getFieldValue('url') || initialUrl || '';
+                    const notebookURL = regularizeGithubURL(url);
+                    const launcherValue = createLauncherValue(
+                      notebookURL,
+                      baiClient._config.default_import_environment,
+                    );
+                    const params = new URLSearchParams();
+                    params.set('formValues', JSON.stringify(launcherValue));
+                    params.set('step', '4');
+                    webuiNavigate({
+                      pathname: buildProjectPath('session/start'),
+                      search: params.toString(),
+                    });
+                  })
+                  .catch((error) => {
+                    logger.error(error);
+                  });
+              },
+            },
+          ]}
+        />
+      </ButtonGroup>
       <BAIFlex
         direction="column"
         wrap="wrap"
         data-testid="panel-notebook-badge-code-section"
       >
         <Divider />
-        <Typography.Paragraph>
+        {/* antd `Typography.Paragraph` → `Text as="p" display="block"`
+            (MAPPING §4). */}
+        <Text as="p" display="block">
           {t('import.YouCanCreateNotebookCode')}
-        </Typography.Paragraph>
+        </Text>
         <Form.Item dependencies={[['url']]}>
           {({ getFieldValue }) => {
             const url = getFieldValue('url') || '';
@@ -227,25 +234,26 @@ const ImportNotebookForm: React.FC<ImportNotebookFormProps> = ({
               <BAIFlex justify="start" gap={'sm'} wrap="wrap">
                 <img
                   src="/resources/badge.svg"
+                  alt="Run on Backend.AI"
                   style={{ marginTop: 5, marginBottom: 5 }}
                   width="147"
                 />
                 <BAIFlex gap={'sm'}>
                   <CopyButton
-                    size="small"
+                    size="sm"
                     copyable={{
                       text: fullText,
                     }}
-                    disabled={isButtonDisabled}
+                    isDisabled={isButtonDisabled}
                   >
                     {t('import.NotebookBadgeCodeHTML')}
                   </CopyButton>
                   <CopyButton
-                    size="small"
+                    size="sm"
                     copyable={{
                       text: fullTextMarkdown,
                     }}
-                    disabled={isButtonDisabled}
+                    isDisabled={isButtonDisabled}
                   >
                     {t('import.NotebookBadgeCodeMarkdown')}
                   </CopyButton>

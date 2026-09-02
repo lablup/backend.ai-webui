@@ -2,36 +2,49 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import { RoleDetailDrawerContentFragment$key } from '../__generated__/RoleDetailDrawerContentFragment.graphql';
-import { RolePermissionTabFragment$key } from '../__generated__/RolePermissionTabFragment.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
+import LegacyRolePermissionTab from './LegacyRolePermissionTab';
+import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
-import RolePermissionTab from './RolePermissionTab';
-import { Descriptions, Skeleton, Tabs, Tag } from 'antd';
-import { toLocalId } from 'backend.ai-ui';
+import RolePermissionDetailTab from './RolePermissionDetailTab';
+import { Badge } from '@astryxdesign/core/Badge';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
+import {
+  BAICard,
+  BAIMetadataList,
+  BAISkeleton,
+  badgeVariantForStatus,
+  badgeVariantForTagColor,
+  toLocalId,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface RoleDetailDrawerContentProps {
-  roleDetailFrgmt: RoleDetailDrawerContentFragment$key;
-  assignmentQueryRef: RoleAssignmentTabFragment$key;
-  permissionQueryRef: RolePermissionTabFragment$key;
-  onTabReset?: () => void;
-  onDataChange?: () => void;
+  roleNodeFrgmt: RoleDetailDrawerContentFragment$key;
 }
 
 const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
-  roleDetailFrgmt,
-  assignmentQueryRef,
-  permissionQueryRef,
-  onTabReset: _onTabReset,
-  onDataChange,
+  roleNodeFrgmt,
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState('assignments');
+  const baiClient = useSuspendedBackendaiClient();
+  // Auto-assign is only supported on managers >= 26.4.4.
+  const supportsAutoAssign = baiClient.supports('role-auto-assign');
+  // Managers >= 26.8.0 can filter `Role.scopes` by scope type, which the
+  // merged Detailed Permissions view depends on. Older managers get the
+  // legacy separate Scopes / Permissions tabs instead.
+  const supportsDetailedPermissions = baiClient.supports(
+    'role-mapped-scope-filter',
+  );
+  const [activeTab, setActiveTab] = useState(
+    supportsDetailedPermissions ? 'detailedPermissions' : 'scopes',
+  );
 
   const role = useFragment(
     graphql`
@@ -41,95 +54,98 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
         description
         source
         status
+        autoAssign @since(version: "26.4.4")
         createdAt
         updatedAt
         deletedAt
+        ...RoleAssignmentTabFragment
+        ...RolePermissionDetailTab_roleScopeFragment
       }
     `,
-    roleDetailFrgmt,
+    roleNodeFrgmt,
   );
-
-  const roleId = toLocalId(role.id);
-
-  const source = role.source ?? 'CUSTOM';
-  const status = role.status ?? 'ACTIVE';
-  const sourceColor = source === 'SYSTEM' ? 'default' : 'green';
-  const statusColorMap: Record<string, string> = {
-    ACTIVE: 'green',
-    INACTIVE: 'orange',
-    DELETED: 'red',
-  };
 
   return (
     <>
-      <Descriptions
-        column={2}
-        bordered
-        size="small"
-        style={{ marginBottom: 16 }}
-      >
-        <Descriptions.Item label={t('rbac.Source')}>
-          <Tag color={sourceColor}>
-            {source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
-          </Tag>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('rbac.Status')}>
-          <Tag color={statusColorMap[status] || 'default'}>
-            {status === 'ACTIVE'
-              ? t('rbac.Active')
-              : status === 'INACTIVE'
-                ? t('rbac.Inactive')
-                : // The backend does not use INACTIVE status; DELETED serves as a
-                  // soft-delete and is displayed as Inactive in the UI.
-                  t('rbac.Inactive')}
-          </Tag>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('general.CreatedAt')}>
-          {role.createdAt
-            ? dayjs(role.createdAt).format('YYYY-MM-DD HH:mm:ss')
-            : '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('general.UpdatedAt')}>
-          {role.updatedAt
-            ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
-            : '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('rbac.RoleDescription')} span={2}>
-          {role.description || '-'}
-        </Descriptions.Item>
-      </Descriptions>
-      <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        items={[
-          {
-            key: 'assignments',
-            label: t('rbac.RoleAssignments'),
-            children: (
-              <Suspense fallback={<Skeleton active />}>
-                <RoleAssignmentTab
-                  queryRef={assignmentQueryRef}
-                  roleId={roleId}
-                  onAssignmentChange={onDataChange}
-                />
-              </Suspense>
-            ),
-          },
-          {
-            key: 'permissions',
-            label: t('rbac.Permissions'),
-            children: (
-              <Suspense fallback={<Skeleton active />}>
-                <RolePermissionTab
-                  queryRef={permissionQueryRef}
-                  roleId={roleId}
-                  onPermissionChange={onDataChange}
-                />
-              </Suspense>
-            ),
-          },
-        ]}
-      />
+      {/* antd `Descriptions` -> `MetadataList` (MAPPING §4). `bordered`,
+          `size="small"` and per-item `span` have no destination and are
+          dropped — the project-wide decision established in tickets 15/18.
+          The two `span={2}` full-width rows keep their content; they simply
+          flow in the 2-column grid like every other row. */}
+      <BAICard>
+        <BAIMetadataList columns={2} label={{ position: 'start', width: 160 }}>
+          <MetadataListItem label={t('rbac.Source')}>
+            {/* Tag -> Badge through the repo-global lookup (ticket 13); no
+                per-file colour map. */}
+            <Badge
+              variant={badgeVariantForStatus('role', role.source ?? undefined)}
+              label={
+                role.source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')
+              }
+            />
+          </MetadataListItem>
+          <MetadataListItem label={t('rbac.Status')}>
+            <Badge
+              variant={badgeVariantForStatus('role', role.status ?? undefined)}
+              label={
+                role.status === 'ACTIVE' ? t('rbac.Active') : t('rbac.Inactive')
+              }
+            />
+          </MetadataListItem>
+          <MetadataListItem label={t('general.CreatedAt')}>
+            {role.createdAt
+              ? dayjs(role.createdAt).format('YYYY-MM-DD HH:mm:ss')
+              : '-'}
+          </MetadataListItem>
+          <MetadataListItem label={t('general.UpdatedAt')}>
+            {role.updatedAt
+              ? dayjs(role.updatedAt).format('YYYY-MM-DD HH:mm:ss')
+              : '-'}
+          </MetadataListItem>
+          {supportsAutoAssign ? (
+            <MetadataListItem label={t('rbac.AutoAssign')}>
+              <Badge
+                variant={badgeVariantForTagColor(
+                  role.autoAssign ? 'green' : 'default',
+                )}
+                label={
+                  role.autoAssign ? t('general.Active') : t('general.Inactive')
+                }
+              />
+            </MetadataListItem>
+          ) : null}
+          <MetadataListItem label={t('rbac.RoleDescription')}>
+            {role.description || '-'}
+          </MetadataListItem>
+        </BAIMetadataList>
+      </BAICard>
+      {/* antd `Tabs` -> `TabList` + `Tab` (MAPPING §4): navigation only, the
+          panel is rendered by this component below the bar. */}
+      <TabList hasDivider value={activeTab} onChange={setActiveTab}>
+        {supportsDetailedPermissions ? (
+          <Tab value="detailedPermissions" label={t('rbac.Permissions')} />
+        ) : (
+          <>
+            <Tab value="scopes" label={t('rbac.RoleScopes')} />
+            <Tab value="permissions" label={t('rbac.Permissions')} />
+          </>
+        )}
+        <Tab value="assignments" label={t('rbac.RoleAssignments')} />
+      </TabList>
+      <Suspense fallback={<BAISkeleton />}>
+        {activeTab === 'detailedPermissions' && (
+          <RolePermissionDetailTab roleNodeFrgmt={role} />
+        )}
+        {activeTab === 'scopes' && (
+          <LegacyRoleScopeTab roleId={toLocalId(role.id)} />
+        )}
+        {activeTab === 'permissions' && (
+          <LegacyRolePermissionTab roleId={toLocalId(role.id)} />
+        )}
+        {activeTab === 'assignments' && (
+          <RoleAssignmentTab roleNodeFrgmt={role} />
+        )}
+      </Suspense>
     </>
   );
 };

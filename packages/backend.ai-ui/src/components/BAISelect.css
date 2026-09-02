@@ -1,0 +1,101 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAISelect> (imported by the component itself, P17).
+
+ Only the `ghost` variant survives here: Astryx `Selector` has `variant`, not a
+ colour slot (P5), and `ghost` exists for exactly one placement — a select on
+ the app header's brand-accent band.
+
+ That band is a REVERSED surface: its content polarity is the OPPOSITE of the
+ app's, so these read `light-dark(on-dark, on-light)` — white on the orange in
+ light mode, near-black in dark (FR-3502). `light-dark()` is safe on a NORMAL
+ property (it computes at the declaring element); it would NOT be on a custom
+ property, which is substituted at use time.
+
+ The chevron and any slot glyphs take `--color-icon-secondary` from Astryx's own
+ StyleX rules, which a class selector cannot outrank — so the token is
+ re-declared rather than the `color` re-stated.
+*/
+/* `border-color` belongs HERE, on the root: Astryx `Selector` draws the field's
+   rule on `.astryx-selector` itself, and its inner trigger is `border-width: 0`.
+   The structural descendant rule below used to carry it, which meant the band
+   select silently kept Astryx's `--color-border-emphasized` (#D9D9D9 on the
+   orange) instead of the reversed white. */
+.bai-select-ghost {
+  background-color: transparent;
+  border-color: light-dark(var(--color-on-dark), var(--color-on-light));
+  color: light-dark(var(--color-on-dark), var(--color-on-light));
+  --color-icon-secondary: light-dark(
+    var(--color-on-dark),
+    var(--color-on-light)
+  );
+}
+
+/* The inner trigger, targeted structurally rather than by a design-system class
+   name. It carries no border of its own today (see above), so this is the
+   fill/text half only.
+   The hover wash is NOT painted here: `Selector`'s own ghost gradient reads
+   `--color-overlay-hover`, which `WebUIHeader` sets to the band pair, so the
+   trigger hovers identically to the ghost IconButtons beside it (FR-3501). */
+.bai-select-ghost button,
+.bai-select-ghost [role='combobox'] {
+  background-color: transparent;
+  border-color: light-dark(var(--color-on-dark), var(--color-on-light));
+  color: light-dark(var(--color-on-dark), var(--color-on-light));
+}
+
+/* The ghost border is a hard override, which would otherwise swallow the
+   error treatment; restore it at higher specificity so a ghost select (e.g.
+   the header ProjectSelect) can still surface an error state. `aria-invalid`
+   lands on the inner trigger while the border is on the root, hence `:has()`. */
+.bai-select-ghost:has([aria-invalid='true']),
+.bai-select-ghost [aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+/* optionLabelProp="children" (FR-3544): the rich node sits in `Selector`'s
+   icon slot and takes the label's flex share; a bridge until Astryx `Selector`
+   grows `ComplexSelector`'s `triggerLabel` slot. Centering would collapse the
+   node's vertical Dividers to 0 height — keep default stretch. */
+.bai-select-rich-trigger > .bai-select-rich-value {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* The node fills the label area so a row's `justify="between"` keeps pushing
+   its trailing badges to the trigger's right edge. */
+.bai-select-rich-trigger > .bai-select-rich-value > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* The trigger button spans the whole control so its focus, click and
+   voice-control target stays full-size (the container is position:relative).
+   Sibling clear/status buttons become positioned so DOM order keeps them
+   painted — and clickable — above it. */
+.bai-select-rich-trigger > button[aria-haspopup='listbox'] {
+  position: absolute;
+  inset: 0;
+}
+.bai-select-rich-trigger > button:not([aria-haspopup='listbox']) {
+  position: relative;
+}
+
+/* @astryxdesign/core `VisuallyHidden`'s recipe, inlined — the label span is
+   Selector-internal, still the accessible selected-value text. */
+.bai-select-rich-trigger > button[aria-haspopup='listbox'] > span {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  pointer-events: none;
+}

@@ -2,27 +2,30 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import QuestionIconWithTooltip from '../QuestionIconWithTooltip';
-import { SettingOutlined } from '@ant-design/icons';
-import { Divider, theme, Typography } from 'antd';
+import { UserFairShareOrderField } from '../../__generated__/UserFairShareStepQuery.graphql';
 import {
+  UserFairShareTableFragment$data,
+  UserFairShareTableFragment$key,
+} from '../../__generated__/UserFairShareTableFragment.graphql';
+import { theme } from '../../theme-shim';
+import { Divider } from '@astryxdesign/core/Divider';
+import {
+  BAIQuestionIconWithTooltip,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
   BAITable,
+  BAIText,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
-import {
-  UserFairShareTableFragment$data,
-  UserFairShareTableFragment$key,
-} from 'src/__generated__/UserFairShareTableFragment.graphql';
 
 export type UserFairShare = NonNullable<
   UserFairShareTableFragment$data[number]
@@ -34,6 +37,16 @@ const availableUserFairShareSorterKeys = [
   'fairShareFactor',
   'createdAt',
 ] as const;
+// Snake-casing alone would send EMAIL/USERNAME, which the server enum rejects.
+export const userFairShareOrderFieldMap: Record<
+  (typeof availableUserFairShareSorterKeys)[number],
+  UserFairShareOrderField
+> = {
+  email: 'USER_EMAIL',
+  username: 'USER_USERNAME',
+  fairShareFactor: 'FAIR_SHARE_FACTOR',
+  createdAt: 'CREATED_AT',
+};
 export const availableUserFairShareSorterValues = [
   ...availableUserFairShareSorterKeys,
   ...availableUserFairShareSorterKeys.map((key) => `-${key}` as const),
@@ -117,6 +130,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       key: 'email',
       fixed: 'left',
       dataIndex: 'userEmail',
+      sortKey: 'email',
       render: (_text, record) => (
         <BAINameActionCell
           title={record?.user?.basicInfo.email}
@@ -125,7 +139,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
             {
               key: 'settings',
               title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              icon: <Settings size="1em" />,
               onClick: () => {
                 onOpenWeightSetting?.(record);
               },
@@ -140,6 +154,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       key: 'username',
       fixed: 'left',
       dataIndex: 'userUsername',
+      sortKey: 'username',
       render: (_text, record) => record?.user?.basicInfo.username,
       sorter: isEnableSorter('username'),
     },
@@ -147,22 +162,23 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.Weight')}
-          <QuestionIconWithTooltip title={t('fairShare.WeightDescription')} />
+          <BAIQuestionIconWithTooltip
+            title={t('fairShare.WeightDescription')}
+          />
         </BAIFlex>
       ),
       key: 'weight',
       dataIndex: ['spec', 'weight'],
       render: (weight, record) => (
         <BAIFlex gap="xxs">
-          <Typography.Text>
-            {weight ? toFixedFloorWithoutTrailingZeros(weight, 1) : '-'}
-          </Typography.Text>
-          <Typography.Text
-            type="secondary"
-            style={{ fontSize: token.fontSizeSM }}
-          >
+          <BAIText>
+            {_.isNil(weight)
+              ? '-'
+              : toFixedFloorWithoutTrailingZeros(weight, 1)}
+          </BAIText>
+          <BAIText type="secondary" style={{ fontSize: token.fontSizeSM }}>
             {record.spec.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
-          </Typography.Text>
+          </BAIText>
         </BAIFlex>
       ),
     },
@@ -170,13 +186,14 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.FairShareFactor')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.FairShareFactorDescription')}
           />
         </BAIFlex>
       ),
       key: 'fairShareFactor',
       dataIndex: ['calculationSnapshot', 'fairShareFactor'],
+      sortKey: 'fairShareFactor',
       sorter: isEnableSorter('fairShareFactor'),
       render: (fairShareFactor) =>
         fairShareFactor !== null && fairShareFactor !== undefined
@@ -187,7 +204,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       title: (
         <BAIFlex gap="xxs">
           {t('fairShare.AllocationAverage')}
-          <QuestionIconWithTooltip
+          <BAIQuestionIconWithTooltip
             title={t('fairShare.AllocationAverageDescription')}
           />
         </BAIFlex>
@@ -206,15 +223,15 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
                   {index > 0 && (
-                    <Divider type="vertical" style={{ margin: 0 }} />
+                    <Divider orientation="vertical" style={{ margin: 0 }} />
                   )}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Typography.Text type="secondary">
+                      <BAIText type="secondary">
                         / {t('fairShare.DayUnit')}
-                      </Typography.Text>
+                      </BAIText>
                     }
                   />
                 </BAIFlex>
@@ -242,8 +259,8 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
   return (
     <>
       <BAITable
-        rowKey={'userUuid'}
         scroll={{ x: 'max-content' }}
+        rowKey={'userUuid'}
         {...tableProps}
         dataSource={userFairShares || []}
         columns={columns}

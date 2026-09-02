@@ -7,7 +7,12 @@ import {
   AgentSettingModalFragment$key,
 } from '../__generated__/AgentSettingModalFragment.graphql';
 import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMutation.graphql';
-import { App, Form, type FormInstance, Switch } from 'antd';
+import { AgentSettingModalQuery } from '../__generated__/AgentSettingModalQuery.graphql';
+import { App } from '../app-shim';
+import { Form, type FormInstance } from '../form-engine';
+import { useSuspendedBackendaiClient } from '../hooks';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormSwitch } from './astryxFormControls';
 import {
   BAIAdminResourceGroupSelect,
   BAIModal,
@@ -22,8 +27,6 @@ import {
   useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
-import { AgentSettingModalQuery } from 'src/__generated__/AgentSettingModalQuery.graphql';
-import { useSuspendedBackendaiClient } from 'src/hooks';
 
 interface AgentSettingModalProps extends BAIModalProps {
   agentNodeFrgmt?: AgentSettingModalFragment$key | null;
@@ -136,22 +139,26 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
         initialValues={{ ...agent }}
       >
         {baiClient?.supports('admin-resource-group-select') && (
-          <Form.Item
+          <BAIFormItem
             name="scaling_group"
             label={t('agent.ResourceGroup')}
             required={true}
           >
-            <BAIAdminResourceGroupSelect queryRef={queryRef} />
-          </Form.Item>
+            <BAIAdminResourceGroupSelect
+              label={t('agent.ResourceGroup')}
+              isLabelHidden
+              queryRef={queryRef}
+            />
+          </BAIFormItem>
         )}
-        <Form.Item
+        <BAIFormItem
           name="schedulable"
           label={t('agent.Schedulable')}
           valuePropName="checked"
           required={true}
         >
-          <Switch />
-        </Form.Item>
+          <AstryxFormSwitch label={t('agent.Schedulable')} />
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

@@ -1,32 +1,42 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
+
+ Ticket 16 — converted to Astryx. The antd Form ENGINE stays (locked ticket-05
+ decision); its controls become Astryx via the `astryxFormControls` adapters
+ and `BAIFormItem` carries the visuals. The invite row's `Descriptions title`
+ wrapper (used purely as a section heading) becomes a `Heading`; the invitee
+ table is `BAITable` (Astryx engine since ticket 30-D) with Astryx cells.
+
+ PILOT-DECISIONs:
+ - antd `Input.onPressEnter` has no `TextInput` equivalent — Enter-to-invite
+   is preserved through a keydown listener on the field wrapper.
+ - `Select popupMatchSelectWidth={false}` has no destination (MAPPING §3.1);
+   Astryx `Selector` sizes its own popup. Dropped.
+*/
+import { App } from '../app-shim';
+// Ticket 34: `Form` is the self-hosted engine; `Form.Item` IS BAIFormItem.
+import { Form, FormInstance } from '../form-engine';
 import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
-import { CloseCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormSelector, AstryxFormTextInput } from './astryxFormControls';
+import { Button } from '@astryxdesign/core/Button';
+import { IconButton } from '@astryxdesign/core/IconButton';
+import { Selector } from '@astryxdesign/core/Selector';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Heading } from '@astryxdesign/core/Text';
 import {
-  App,
-  Button,
-  Descriptions,
-  Form,
-  FormInstance,
-  Input,
-  Popconfirm,
-  Select,
-  Tooltip,
-  Typography,
-  theme,
-} from 'antd';
-import {
-  BAITable,
-  BAIFlex,
-  useErrorMessageResolver,
-  BAIModalProps,
+  BAIPopconfirm,
   BAIModal,
+  type BAIModalProps,
+  BAIQuestionIconWithTooltip,
+  BAITable,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
+import { CircleXIcon } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -39,7 +49,12 @@ interface Invitee {
   vfolder_id: string;
 }
 
-interface InviteFolderSettingModalProps extends BAIModalProps {
+interface InviteFolderSettingModalProps extends Omit<
+  BAIModalProps,
+  'isOpen' | 'onOpenChange'
+> {
+  /** App-level contract, kept: consumers outside this area use it. */
+  open?: boolean;
   vfolderId: string | null;
   onRequestClose: () => void;
 }
@@ -49,13 +64,13 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
   onRequestClose,
   ...baiModalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
   const inviteFormRef = useRef<FormInstance>(null);
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const { getErrorMessage } = useErrorMessageResolver();
-  const { token } = theme.useToken();
 
   const {
     data: shared,
@@ -69,13 +84,11 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
     ],
     queryFn: () =>
       baiModalProps.open
-        ? baiRequestWithPromise({
+        ? baiRequestWithPromise<{ shared: Array<Invitee> }>({
             method: 'GET',
             url: `/folders/_/shared${vfolderId ? `?${new URLSearchParams({ vfolder_id: vfolderId }).toString()}` : ''}`,
-          }).then((res: { shared: Array<Invitee> }) =>
-            _.sortBy(res.shared, 'shared_to.email'),
-          )
-        : null,
+          }).then((res) => _.sortBy(res.shared, 'shared_to.email'))
+        : [],
     staleTime: 0,
   });
 
@@ -165,101 +178,96 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
   return (
     <BAIModal
       {...baiModalProps}
+      isOpen={baiModalProps.open}
+      onOpenChange={(next) => {
+        if (!next) onRequestClose();
+      }}
       title={t('data.explorer.ShareFolder')}
-      onCancel={onRequestClose}
-      style={{ minWidth: 550 }}
-      destroyOnHidden
+      maskClosable={false}
       footer={null}
+      width={550}
     >
-      <BAIFlex direction="column" gap="xl" align="stretch">
-        <Form
-          ref={inviteFormRef}
-          initialValues={{ name: undefined, permission: 'ro' }}
-        >
-          <Descriptions title={t('data.folders.InviteUsers')}>
-            <Descriptions.Item>
-              <BAIFlex
-                align="start"
-                justify="between"
-                style={{ width: '100%' }}
-              >
-                {/* TODO: support multi invitations */}
-                <Form.Item
-                  name="email"
-                  label={t('general.E-Mail')}
-                  rules={[
-                    {
-                      type: 'email',
-                      message: t('data.InvalidEmail'),
-                    },
-                    {
-                      type: 'string',
-                      max: 64,
-                      message: t('maxLength.64chars'),
-                    },
-                    {
-                      required: true,
-                      message: t('webui.menu.InvalidBlankEmail'),
-                    },
-                  ]}
-                  style={{ marginBottom: 0 }}
-                >
-                  <Input
-                    placeholder={t('data.explorer.EnterEmailAddress')}
-                    onPressEnter={() => {
-                      handleInvite();
-                    }}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="permission"
-                  label={t('data.Permission')}
-                  style={{ marginBottom: 0 }}
-                  required
-                >
-                  <Select
-                    options={[
-                      { label: t('data.ReadOnly'), value: 'ro' },
-                      { label: t('data.ReadWrite'), value: 'rw' },
-                    ]}
-                    popupMatchSelectWidth={false}
-                  />
-                </Form.Item>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    handleInvite();
-                  }}
-                >
-                  {t('general.Add')}
-                </Button>
-              </BAIFlex>
-            </Descriptions.Item>
-          </Descriptions>
-        </Form>
-
-        <BAIFlex direction="column" align="stretch">
-          <Typography.Title
-            level={5}
-            style={{ marginTop: 0, marginBottom: token.marginMD }}
+      <VStack gap={6} align="stretch">
+        <VStack gap={4} align="stretch">
+          <Heading level={5}>{t('data.folders.InviteUsers')}</Heading>
+          <Form
+            ref={inviteFormRef}
+            initialValues={{ name: undefined, permission: 'ro' }}
           >
-            <BAIFlex gap={'xs'}>
-              {t('data.folders.SharedUser')}
-              <Tooltip title={t('data.folders.SharedUserDesc')}>
-                <QuestionCircleOutlined
-                  style={{ color: token.colorTextSecondary }}
+            <HStack align="start" justify="between" gap={2} width="100%">
+              {/* TODO: support multi invitations */}
+              <BAIFormItem
+                name="email"
+                label={t('general.E-Mail')}
+                rules={[
+                  {
+                    type: 'email',
+                    message: t('data.InvalidEmail'),
+                  },
+                  {
+                    type: 'string',
+                    max: 64,
+                    message: t('maxLength.64chars'),
+                  },
+                  {
+                    required: true,
+                    message: t('webui.menu.InvalidBlankEmail'),
+                  },
+                ]}
+                style={{ marginBottom: 0 }}
+              >
+                {/* Enter-to-invite. This used to be a `<span onKeyDown>`
+                    wrapped around the input — but `Form.Item` clones its
+                    DIRECT child, so `value`/`onChange` landed on the span and
+                    the field could not be typed into at all. The adapter's own
+                    `onEnter` (antd's `onPressEnter`) does the same job with
+                    the control back as the direct child. */}
+                <AstryxFormTextInput
+                  label={t('general.E-Mail')}
+                  placeholder={t('data.explorer.EnterEmailAddress')}
+                  maxLength={64}
+                  onEnter={handleInvite}
                 />
-              </Tooltip>
-            </BAIFlex>
-          </Typography.Title>
+              </BAIFormItem>
+              <BAIFormItem
+                name="permission"
+                label={t('data.Permission')}
+                style={{ marginBottom: 0 }}
+                required
+              >
+                <AstryxFormSelector
+                  label={t('data.Permission')}
+                  options={[
+                    { label: t('data.ReadOnly'), value: 'ro' },
+                    { label: t('data.ReadWrite'), value: 'rw' },
+                  ]}
+                />
+              </BAIFormItem>
+              <Button
+                variant="primary"
+                label={t('general.Add')}
+                onClick={() => {
+                  handleInvite();
+                }}
+              />
+            </HStack>
+          </Form>
+        </VStack>
+
+        <VStack align="stretch" gap={4}>
+          <HStack gap={2}>
+            <Heading level={5}>{t('data.folders.SharedUser')}</Heading>
+            <BAIQuestionIconWithTooltip
+              title={t('data.folders.SharedUserDesc')}
+            />
+          </HStack>
 
           <BAITable<Invitee>
+            scroll={{ x: 'max-content' }}
             bordered
             pagination={false}
-            showSorterTooltip={false}
             loading={isFetching}
             dataSource={shared || []}
-            scroll={{ x: 'max-content' }}
             rowKey={(record) => record.shared_to.uuid}
             columns={[
               {
@@ -273,52 +281,47 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
                 dataIndex: 'perm',
                 render: (perm, record) => {
                   return (
-                    <BAIFlex gap="xxs">
-                      <Select
-                        style={{ minWidth: 130 }}
+                    <HStack gap={1}>
+                      <Selector
+                        label={t('data.explorer.Permission')}
+                        isLabelHidden
+                        width={130}
                         options={[
                           { label: t('data.ReadOnly'), value: 'ro' },
                           { label: t('data.ReadWrite'), value: 'rw' },
                         ]}
-                        defaultValue={perm}
+                        value={perm}
                         onChange={(nextPerm) => {
                           handlePermission(record.shared_to.uuid, nextPerm);
                         }}
                       />
-                      <Popconfirm
+                      <BAIPopconfirm
                         title={t('data.folders.KickOutConfirm', {
                           email: record.shared_to.email,
                         })}
                         okText={t('button.Confirm')}
-                        okButtonProps={{
-                          danger: true,
-                        }}
+                        isDanger
                         onConfirm={() => {
                           handlePermission(record.shared_to.uuid);
                         }}
                       >
-                        <Tooltip
-                          title={t('data.folders.KickOut')}
-                          placement="right"
-                          trigger={['hover', 'click']}
-                        >
-                          <Button
-                            type="text"
-                            style={{
-                              color: token.colorError,
-                            }}
-                            icon={<CloseCircleOutlined />}
-                          />
-                        </Tooltip>
-                      </Popconfirm>
-                    </BAIFlex>
+                        <IconButton
+                          label={t('data.folders.KickOut')}
+                          tooltip={t('data.folders.KickOut')}
+                          variant="ghost"
+                          size="sm"
+                          className="bai-name-action-cell-danger"
+                          icon={<CircleXIcon />}
+                        />
+                      </BAIPopconfirm>
+                    </HStack>
                   );
                 },
               },
             ]}
           />
-        </BAIFlex>
-      </BAIFlex>
+        </VStack>
+      </VStack>
     </BAIModal>
   );
 };

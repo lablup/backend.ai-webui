@@ -1,8 +1,39 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `BAIStatistic` on Astryx (to-astryx phase 3, ticket A).
+
+ The dashboard/resource-panel metric: a caption, a 32px value with its unit,
+ and a segmented usage bar. Public props are unchanged — its 64 call sites live
+ in `ResourceStatistics`, which passes them positionally identically.
+
+ Composition:
+   antd `Typography.Text`        -> Astryx `Text` (`size`, `color`)
+   antd `Tooltip`                -> Astryx `Tooltip`
+   antd `Progress steps size=[3,10]` -> see the PILOT-DECISION below
+
+ PILOT-DECISION — the STEPPED bar is rebuilt, not dropped. Astryx `ProgressBar`
+ is a continuous track with no `steps` knob, and the segmented 20-notch bar is
+ the recognisable shape of the resource panel (it is what tells a 3/20 apart
+ from a 4/20 at a glance). Swapping it for a solid bar is a visible redesign of
+ the app's most-looked-at surface, so the notches are composed from tokens in
+ `BAIStatistic.css` — the same geometry antd rendered (`size={[3, 10]}`: 3px
+ wide, 10px tall notches). This is the "legacy fidelity beats a generic
+ convention" corollary of the frontier rule, recorded as required by the
+ per-component-CSS policy.
+
+ PILOT-DECISION — the bar's `role="progressbar"` semantics. antd's `Progress`
+ carried them; the notch strip does too (`role`/`aria-valuenow` below), so no
+ accessibility is lost relative to either antd or `ProgressBar`.
+*/
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
-import { theme, Typography, Tooltip, Progress } from 'antd';
-import _ from 'lodash';
+import './BAIStatistic.css';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import * as _ from 'lodash-es';
 import React, { type ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export interface BAIStatisticProps {
   title: ReactNode;
@@ -16,6 +47,44 @@ export interface BAIStatisticProps {
   style?: React.CSSProperties;
 }
 
+/** The segmented bar antd drew as `<Progress steps={n} size={[3, 10]} />`. */
+const StepBar: React.FC<{
+  steps: number;
+  percent: number;
+  /** `ghost` keeps the layout box but paints nothing (antd: transparent trail). */
+  ghost?: boolean;
+  color?: string;
+  label: string;
+}> = ({ steps, percent, ghost, color, label }) => {
+  const filled = Math.round((percent / 100) * steps);
+  return (
+    <div
+      className="bai-statistic-steps"
+      role="progressbar"
+      aria-label={label}
+      aria-valuenow={percent}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
+      {_.times(steps, (index) => (
+        <span
+          key={index}
+          className={
+            ghost
+              ? 'bai-statistic-step bai-statistic-step--ghost'
+              : index < filled
+                ? 'bai-statistic-step bai-statistic-step--filled'
+                : 'bai-statistic-step'
+          }
+          style={
+            ghost || index >= filled ? undefined : { backgroundColor: color }
+          }
+        />
+      ))}
+    </div>
+  );
+};
+
 const BAIStatistic: React.FC<BAIStatisticProps> = ({
   title,
   current,
@@ -27,8 +96,7 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
   progressSteps = 20,
   style,
 }) => {
-  const { token } = theme.useToken();
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
   const showProgress = progressMode !== 'hidden';
 
   // Format number with precision
@@ -46,24 +114,26 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
 
   const calculatePercent = (): number => {
     if (!showProgress || total === undefined || total === Infinity) return 0;
-    if (!_.isFinite(current) || !isFinite(total) || total === 0) return 100;
+    // Nothing allocated out of a zero quota is empty, not full. Anything else
+    // against a zero quota — including a non-finite current — stays full.
+    if (total === 0) return current === 0 ? 0 : 100;
+    if (!_.isFinite(current) || !isFinite(total)) return 100;
     return _.isUndefined(current) ? 0 : Math.round((current / total) * 100);
   };
 
   const percent = calculatePercent();
+  const accessibleTitle = typeof title === 'string' ? title : 'usage';
 
   return (
     <BAIFlex direction="column" align="start" style={style}>
-      <Typography.Text
-        style={{
-          fontSize: token.fontSizeLG,
-          marginBottom: 16,
-          lineHeight: '1em',
-          color: token.colorTextSecondary,
-        }}
+      <Text
+        size="lg"
+        color="secondary"
+        className="bai-statistic-title"
+        display="block"
       >
         {title}
-      </Typography.Text>
+      </Text>
 
       <BAIFlex
         direction="row"
@@ -74,63 +144,39 @@ const BAIStatistic: React.FC<BAIStatisticProps> = ({
         }}
       >
         {displayCurrent === infinityDisplay ? (
-          <Typography.Text
-            style={{
-              fontSize: 32,
-              lineHeight: '1em',
-            }}
-          >
-            <Typography.Text
-              style={{
-                lineHeight: '1em',
-              }}
-            >
-              {t('comp:BAIStatistic.Unlimited') || 'Unlimited'}
-            </Typography.Text>
-          </Typography.Text>
+          <Text className="bai-statistic-value">
+            {t('comp:BAIStatistic.Unlimited') || 'Unlimited'}
+          </Text>
         ) : (
           <>
-            <Typography.Text
-              style={{
-                fontSize: 32,
-                lineHeight: '1em',
-                color: style?.color ?? token.colorText,
-              }}
+            <Text
+              className="bai-statistic-value"
+              style={style?.color ? { color: style.color } : undefined}
             >
               {displayCurrent}
-            </Typography.Text>
-            {unit && (
-              <Typography.Text
-                style={{
-                  color: token.colorTextSecondary,
-                }}
-              >
-                {unit}
-              </Typography.Text>
-            )}
+            </Text>
+            {unit && <Text color="secondary">{unit}</Text>}
           </>
         )}
       </BAIFlex>
 
       {progressMode === 'normal' && total !== undefined ? (
-        <Tooltip title={`${displayCurrent} ${unit} / ${displayTotal} ${unit}`}>
-          <Progress
-            percent={percent}
-            style={{ width: 100 }}
-            strokeColor={style?.color ?? token.colorTextTertiary}
-            status="active"
+        <Tooltip
+          content={`${displayCurrent} ${unit} / ${displayTotal} ${unit}`}
+        >
+          <StepBar
             steps={progressSteps}
-            size={[3, 10]}
-            showInfo={false}
+            percent={percent}
+            color={style?.color}
+            label={accessibleTitle}
           />
         </Tooltip>
       ) : progressMode === 'ghost' ? (
-        <Progress
-          showInfo={false}
-          trailColor={'transparent'}
-          style={{ width: 100 }}
+        <StepBar
+          ghost
           steps={progressSteps}
-          size={[3, 10]}
+          percent={0}
+          label={accessibleTitle}
         />
       ) : null}
     </BAIFlex>

@@ -10,7 +10,7 @@ import { addNumberWithUnits, convertToBinaryUnit } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import { useSuspenseTanQuery } from './reactQueryAlias';
 import { useResourceGroupsForCurrentProject } from './useCurrentProject';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import { useMemo } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -105,6 +105,16 @@ interface Props {
   currentResourceGroupFrgmtForLimit?: useResourceLimitAndRemainingFragment$key | null;
   ignorePerContainerConfig?: boolean;
   fetchKey?: string;
+  /**
+   * Resource-group names known to be valid for the project identified by
+   * `currentProjectName`. When provided, the guard that decides whether
+   * `currentResourceGroup` may be sent as the preset check's
+   * `scaling_group` param uses this list instead of the ambient current
+   * project's derived resource-group atom. Callers that scope to an
+   * explicit project (ADR-0001, e.g. `ResourceAllocationFormItems`) must
+   * pass it so the check never depends on the ambient header selection.
+   */
+  accessibleResourceGroupNames?: string[];
 }
 
 // determine resource limits and remaining for current resource group and current image in current project
@@ -115,6 +125,7 @@ export const useResourceLimitAndRemaining = ({
   currentProjectName,
   ignorePerContainerConfig = false,
   fetchKey,
+  accessibleResourceGroupNames,
 }: Props) => {
   const baiClient = useSuspendedBackendaiClient();
   const [resourceSlots] = useResourceSlots();
@@ -154,9 +165,11 @@ export const useResourceLimitAndRemaining = ({
         group: currentProjectName,
       };
 
+      const validResourceGroupNames =
+        accessibleResourceGroupNames ?? _.map(nonSftpResourceGroups, 'name');
       if (
         currentResourceGroup &&
-        _.some(nonSftpResourceGroups, (rg) => rg.name === currentResourceGroup)
+        _.includes(validResourceGroupNames, currentResourceGroup)
       ) {
         params.scaling_group = currentResourceGroup;
       }

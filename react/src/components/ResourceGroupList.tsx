@@ -8,33 +8,45 @@ import {
   ResourceGroupListQuery$data,
 } from '../__generated__/ResourceGroupListQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
+import { App } from '../app-shim';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
+import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
+import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
+import { Badge } from '@astryxdesign/core/Badge';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  InfoCircleOutlined,
-  PlusOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
-import { useToggle } from 'ahooks';
-import { Alert, App, Button, Typography, theme } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import {
-  useUpdatableState,
+  BAIButton,
+  BAIColumnsType,
+  BAIDeleteConfirmModal,
+  BAIFetchKeyButton,
+  BAIFlex,
+  BAINameActionCell,
+  BAIQuestionIconWithTooltip,
+  BAISelectionLabel,
+  BAITable,
+  BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  BAITable,
-  BAIFlex,
-  BAIConfirmModalWithInput,
-  BAIFetchKeyButton,
-  BAINameActionCell,
+  useToggle,
+  useUpdatableState,
 } from 'backend.ai-ui';
-import _ from 'lodash';
-import { BanIcon, UndoIcon } from 'lucide-react';
-import { useState, useTransition } from 'react';
+import * as _ from 'lodash-es';
+import {
+  Check,
+  X,
+  Trash2,
+  Info,
+  BanIcon,
+  PlusIcon,
+  SquarePenIcon,
+  UndoIcon,
+} from 'lucide-react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
@@ -55,17 +67,40 @@ type ResourceGroup = NonNullable<
 >;
 
 const ResourceGroupList: React.FC = () => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message, modal } = App.useApp();
+  const { message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [openCreateModal, { toggle: toggleOpenCreateModal }] = useToggle(false);
   const [openInfoModal, { toggle: toggleOpenInfoModal }] = useToggle(false);
+  const [openSFTPModal, setOpenSFTPModal] = useState(false);
   const [selectedResourceGroup, setSelectedResourceGroup] =
     useState<ResourceGroup>();
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
     useState<string>();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ResourceGroupList',
+  );
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  // Read the `proxy -> resource group names` map from etcd (superadmin-only),
+  // non-blocking (the table renders without waiting on it) and invalidated on
+  // every SFTP write so it stays fresh. Inverted to `group name -> proxies`
+  // to show, per row, which storage proxies handle that group's SFTP.
+  const { data: proxyResourceGroups } = useSFTPProxyResourceGroupsQuery({
+    enabled: baiClient.is_superadmin,
+  });
+  const proxiesByGroupName = _.mapValues(
+    _.groupBy(
+      _.flatMap(_.entries(proxyResourceGroups ?? {}), ([proxy, groupNames]) =>
+        _.map(groupNames, (groupName) => ({ proxy, groupName })),
+      ),
+      'groupName',
+    ),
+    (pairs) => _.map(pairs, 'proxy'),
+  );
   const [isActiveTypePending, startActiveTypeTransition] = useTransition();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -118,7 +153,7 @@ const ResourceGroupList: React.FC = () => {
       }
     `);
 
-  const columns: ColumnsType<ResourceGroup> = filterOutEmpty([
+  const columns: BAIColumnsType<ResourceGroup> = filterOutEmpty([
     {
       key: 'name',
       title: t('resourceGroup.Name'),
@@ -131,16 +166,16 @@ const ResourceGroupList: React.FC = () => {
             {
               key: 'info',
               title: t('button.Info'),
-              icon: <InfoCircleOutlined />,
+              icon: <Info size="1em" />,
               onClick: () => {
                 setSelectedResourceGroup(record);
                 toggleOpenInfoModal();
               },
             },
             {
-              key: 'settings',
-              title: t('button.Settings'),
-              icon: <SettingOutlined />,
+              key: 'edit',
+              title: t('button.Edit'),
+              icon: <SquarePenIcon />,
               onClick: () => {
                 setSelectedResourceGroup(record);
                 toggleOpenCreateModal();
@@ -153,72 +188,76 @@ const ResourceGroupList: React.FC = () => {
                 : t('resourceGroup.Activate'),
               icon: record.is_active ? <BanIcon /> : <UndoIcon />,
               type: record.is_active ? 'danger' : 'default',
-              onClick: () => {
-                modal.confirm({
-                  title: record.is_active
-                    ? t('resourceGroup.DeactivateResourceGroup')
-                    : t('resourceGroup.ActivateResourceGroup'),
-                  content: record?.name,
-                  okType: record.is_active ? 'danger' : 'primary',
-                  okText: record.is_active
-                    ? t('resourceGroup.Deactivate')
-                    : t('resourceGroup.Activate'),
-                  onOk: () => {
-                    return new Promise<void>((resolve) => {
-                      commitUpdateResourceGroup({
-                        variables: {
-                          name: record.name ?? '',
-                          input: {
-                            is_active: !record.is_active,
-                          },
+              popConfirm: {
+                title: record.is_active
+                  ? t('resourceGroup.DeactivateResourceGroup')
+                  : t('resourceGroup.ActivateResourceGroup'),
+                description: record?.name,
+                okButtonProps: {
+                  danger: !!record.is_active,
+                },
+                okText: record.is_active
+                  ? t('resourceGroup.Deactivate')
+                  : t('resourceGroup.Activate'),
+                cancelText: t('button.Cancel'),
+                onConfirm: () => {
+                  return new Promise<void>((resolve) => {
+                    commitUpdateResourceGroup({
+                      variables: {
+                        name: record.name ?? '',
+                        input: {
+                          is_active: !record.is_active,
                         },
-                        onCompleted: (
-                          { modify_scaling_group: res },
-                          errors,
-                        ) => {
-                          if (!res?.ok) {
-                            message.error(res?.msg);
-                            resolve();
-                            return;
-                          }
-                          if (errors && errors.length > 0) {
-                            const errorMsgList = _.map(
-                              errors,
-                              (error: PayloadError) => error.message,
-                            );
-                            for (const error of errorMsgList) {
-                              message.error(error);
-                            }
-                            resolve();
-                            return;
-                          }
-                          message.success(
-                            t('resourceGroup.ResourceGroupModified'),
+                      },
+                      onCompleted: ({ modify_scaling_group: res }, errors) => {
+                        if (!res?.ok) {
+                          message.error(res?.msg);
+                          resolve();
+                          return;
+                        }
+                        if (errors && errors.length > 0) {
+                          const errorMsgList = _.map(
+                            errors,
+                            (error: PayloadError) => error.message,
                           );
-                          startRefetchTransition(() => {
-                            updateFetchKey();
-                          });
+                          for (const error of errorMsgList) {
+                            message.error(error);
+                          }
                           resolve();
-                        },
-                        onError: (err) => {
-                          message.error(err.message);
-                          resolve();
-                        },
-                      });
+                          return;
+                        }
+                        message.success(
+                          t('resourceGroup.ResourceGroupModified'),
+                        );
+                        startRefetchTransition(() => {
+                          updateFetchKey();
+                        });
+                        resolve();
+                      },
+                      onError: (err) => {
+                        message.error(err.message);
+                        resolve();
+                      },
                     });
+                  });
+                },
+              },
+            },
+            // Deletion is only offered for deactivated groups (Inactive tab);
+            // active groups are deactivated first.
+            ...(activeType === 'inactive'
+              ? [
+                  {
+                    key: 'delete',
+                    title: t('button.Delete'),
+                    icon: <Trash2 size="1em" />,
+                    type: 'danger' as const,
+                    onClick: () => {
+                      setSelectedResourceGroupName(record?.name || '');
+                    },
                   },
-                });
-              },
-            },
-            {
-              key: 'delete',
-              title: t('button.Delete'),
-              icon: <DeleteOutlined />,
-              type: 'danger',
-              onClick: () => {
-                setSelectedResourceGroupName(record?.name || '');
-              },
-            },
+                ]
+              : []),
           ]}
         />
       ),
@@ -235,9 +274,36 @@ const ResourceGroupList: React.FC = () => {
       dataIndex: 'is_public',
       render: (value) => {
         return value ? (
-          <CheckOutlined style={{ color: token.colorSuccess }} />
+          <Check style={{ color: token.colorSuccess }} size="1em" />
         ) : (
-          <CloseOutlined style={{ color: token.colorTextSecondary }} />
+          <X style={{ color: token.colorTextSecondary }} size="1em" />
+        );
+      },
+    },
+    {
+      key: 'sftp',
+      title: (
+        <BAIFlex gap="xxs">
+          {t('storageProxy.SFTPStorageProxies')}
+          <BAIQuestionIconWithTooltip
+            title={t('storageProxy.SFTPStorageProxiesDescription')}
+          />
+        </BAIFlex>
+      ),
+      // Reading the assignment needs superadmin (raw etcd), so only they see it.
+      hidden: !baiClient.is_superadmin,
+      render: (_value, record) => {
+        const proxies = record.name
+          ? (proxiesByGroupName[record.name] ?? [])
+          : [];
+        return proxies.length > 0 ? (
+          <BAIFlex gap="xxs" wrap="wrap">
+            {_.map(proxies, (proxy) => (
+              <Badge key={proxy} variant="blue" label={proxy} />
+            ))}
+          </BAIFlex>
+        ) : (
+          '-'
         );
       },
     },
@@ -254,7 +320,7 @@ const ResourceGroupList: React.FC = () => {
     },
     {
       key: 'wsproxy_addr',
-      title: t('resourceGroup.WsproxyAddress'),
+      title: t('resourceGroup.AppProxyAddress'),
       dataIndex: 'wsproxy_addr',
       render: (value) => value || '-',
     },
@@ -268,6 +334,7 @@ const ResourceGroupList: React.FC = () => {
           onChange={(value) => {
             startActiveTypeTransition(() => {
               setActiveType(value.target.value);
+              setSelectedRowKeys([]);
             });
           }}
           optionType="button"
@@ -282,7 +349,23 @@ const ResourceGroupList: React.FC = () => {
             },
           ]}
         />
-        <BAIFlex gap="sm">
+        <BAIFlex gap="xs">
+          {baiClient.is_superadmin && selectedRowKeys.length > 0 && (
+            <BAIFlex align="center" gap="xs">
+              <BAISelectionLabel
+                count={selectedRowKeys.length}
+                onClearSelection={() => setSelectedRowKeys([])}
+              />
+              {/* antd Tooltip + icon-only BAIButton → IconButton with its own
+                  `tooltip` (ticket 15/18 idiom: never-disabled icon trigger). */}
+              <IconButton
+                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                label={t('general.BulkEdit')}
+                tooltip={t('general.BulkEdit')}
+                onClick={() => setOpenSFTPModal(true)}
+              />
+            </BAIFlex>
+          )}
           <BAIFetchKeyButton
             loading={isPendingRefetch}
             value={fetchKey}
@@ -292,54 +375,54 @@ const ResourceGroupList: React.FC = () => {
               });
             }}
           />
-          <Button
+          <BAIButton
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<PlusIcon />}
             onClick={() => toggleOpenCreateModal()}
           >
-            {t('button.Create')}
-          </Button>
+            {t('resourceGroup.CreateResourceGroup')}
+          </BAIButton>
         </BAIFlex>
       </BAIFlex>
 
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={'name'}
         resizable
         size="small"
-        scroll={{ x: 'max-content' }}
         columns={columns}
         dataSource={filterOutNullAndUndefined(scaling_groups)}
         loading={isActiveTypePending}
+        rowSelection={
+          baiClient.is_superadmin
+            ? {
+                type: 'checkbox',
+                selectedRowKeys,
+                onChange: (keys) => setSelectedRowKeys(keys),
+              }
+            : undefined
+        }
+        tableSettings={{
+          columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
       />
 
-      <BAIConfirmModalWithInput
+      <BAIDeleteConfirmModal
         open={!!selectedResourceGroupName}
         title={t('resourceGroup.DeleteResourceGroup')}
-        content={
-          <BAIFlex
-            direction="column"
-            gap="md"
-            align="stretch"
-            style={{ marginBottom: token.marginXS, width: '100%' }}
-          >
-            <Alert
-              type="warning"
-              title={t('dialog.warning.DeleteForeverDesc')}
-              style={{ width: '100%' }}
-            />
-            <BAIFlex>
-              <Typography.Text style={{ marginRight: token.marginXXS }}>
-                {t('resourceGroup.TypeResourceGroupNameToDelete')}
-              </Typography.Text>
-              (
-              <Typography.Text code>
-                {selectedResourceGroupName}
-              </Typography.Text>
-              )
-            </BAIFlex>
-          </BAIFlex>
+        target={t('general.ResourceGroup')}
+        items={
+          selectedResourceGroupName
+            ? [
+                {
+                  key: selectedResourceGroupName,
+                  label: selectedResourceGroupName,
+                },
+              ]
+            : []
         }
-        confirmText={selectedResourceGroupName ?? ''}
+        requireConfirmInput
         onOk={() => {
           commitDeleteResourceGroup({
             variables: {
@@ -395,6 +478,18 @@ const ResourceGroupList: React.FC = () => {
           }
         }}
       />
+      <BAIUnmountAfterClose>
+        <UpdateResourceGroupsModal
+          open={openSFTPModal}
+          resourceGroupNames={selectedRowKeys as string[]}
+          onRequestClose={(success) => {
+            setOpenSFTPModal(false);
+            if (success) {
+              setSelectedRowKeys([]);
+            }
+          }}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

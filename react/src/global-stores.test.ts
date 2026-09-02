@@ -228,7 +228,7 @@ describe('BackendAIMetadataStore', () => {
 
   it('has a readImageMetadata method that returns a Promise', () => {
     const originalFetch = global.fetch;
-    global.fetch = jest.fn().mockRejectedValue(new Error('offline'));
+    global.fetch = vi.fn().mockRejectedValue(new Error('offline'));
 
     const result = backendaiMetadata.readImageMetadata();
     expect(result).toBeInstanceOf(Promise);
@@ -245,19 +245,22 @@ describe('BackendAIMetadataStore', () => {
       tagReplace: {},
     };
 
-    global.fetch = jest.fn().mockResolvedValue({
+    global.fetch = vi.fn().mockResolvedValue({
       json: () => Promise.resolve(mockPayload),
     } as unknown as Response);
 
     const events: Event[] = [];
-    document.addEventListener('backend-ai-metadata-image-loaded', (e) =>
-      events.push(e),
+    const onImageLoaded = (e: Event) => events.push(e);
+    document.addEventListener(
+      'backend-ai-metadata-image-loaded',
+      onImageLoaded,
     );
 
     await backendaiMetadata.readImageMetadata();
 
-    document.removeEventListener('backend-ai-metadata-image-loaded', (e) =>
-      events.push(e),
+    document.removeEventListener(
+      'backend-ai-metadata-image-loaded',
+      onImageLoaded,
     );
 
     expect(events).toHaveLength(1);
@@ -265,7 +268,7 @@ describe('BackendAIMetadataStore', () => {
   });
 
   it('silently handles fetch failure without throwing', async () => {
-    global.fetch = jest.fn().mockRejectedValue(new Error('network error'));
+    global.fetch = vi.fn().mockRejectedValue(new Error('network error'));
 
     await expect(
       backendaiMetadata.readImageMetadata(),
@@ -279,25 +282,22 @@ describe('BackendAIMetadataStore', () => {
 
 describe('BackendAITasker', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   describe('add()', () => {
     it('dispatches add-bai-notification event with pending status', () => {
       const events: CustomEvent[] = [];
-      document.addEventListener('add-bai-notification', (e) =>
-        events.push(e as CustomEvent),
-      );
+      const onNotification = (e: Event) => events.push(e as CustomEvent);
+      document.addEventListener('add-bai-notification', onNotification);
 
       backendaiTasker.add('Test Task', null, 'task-001');
 
-      document.removeEventListener('add-bai-notification', (e) =>
-        events.push(e as CustomEvent),
-      );
+      document.removeEventListener('add-bai-notification', onNotification);
 
       expect(events.length).toBeGreaterThanOrEqual(1);
       const firstEvent = events[0];
@@ -320,9 +320,8 @@ describe('BackendAITasker', () => {
 
     it('sets open=false when hiddenNotification is true', () => {
       const events: CustomEvent[] = [];
-      document.addEventListener('add-bai-notification', (e) =>
-        events.push(e as CustomEvent),
-      );
+      const onNotification = (e: Event) => events.push(e as CustomEvent);
+      document.addEventListener('add-bai-notification', onNotification);
 
       backendaiTasker.add(
         'Hidden Task',
@@ -335,9 +334,7 @@ describe('BackendAITasker', () => {
         true,
       );
 
-      document.removeEventListener('add-bai-notification', (e) =>
-        events.push(e as CustomEvent),
-      );
+      document.removeEventListener('add-bai-notification', onNotification);
 
       const firstEvent = events[0];
       expect(firstEvent.detail.open).toBe(false);
@@ -345,24 +342,20 @@ describe('BackendAITasker', () => {
 
     it('dispatches resolved notification when promise resolves', async () => {
       const resolvedEvents: CustomEvent[] = [];
-      document.addEventListener('add-bai-notification', (e) => {
+      const onResolved = (e: Event) => {
         const ce = e as CustomEvent;
         if (ce.detail?.backgroundTask?.status === 'resolved') {
           resolvedEvents.push(ce);
         }
-      });
+      };
+      document.addEventListener('add-bai-notification', onResolved);
 
       const task = Promise.resolve();
       backendaiTasker.add('Async Task', task, 'task-async');
 
       await task;
 
-      document.removeEventListener('add-bai-notification', (e) => {
-        const ce = e as CustomEvent;
-        if (ce.detail?.backgroundTask?.status === 'resolved') {
-          resolvedEvents.push(ce);
-        }
-      });
+      document.removeEventListener('add-bai-notification', onResolved);
 
       expect(resolvedEvents).toHaveLength(1);
       expect(resolvedEvents[0].detail.key).toBe('task:task-async');
@@ -370,24 +363,20 @@ describe('BackendAITasker', () => {
 
     it('dispatches rejected notification when promise rejects', async () => {
       const rejectedEvents: CustomEvent[] = [];
-      document.addEventListener('add-bai-notification', (e) => {
+      const onRejected = (e: Event) => {
         const ce = e as CustomEvent;
         if (ce.detail?.backgroundTask?.status === 'rejected') {
           rejectedEvents.push(ce);
         }
-      });
+      };
+      document.addEventListener('add-bai-notification', onRejected);
 
       const task = Promise.reject(new Error('fail'));
       backendaiTasker.add('Failing Task', task, 'task-fail');
 
       await task.catch(() => {});
 
-      document.removeEventListener('add-bai-notification', (e) => {
-        const ce = e as CustomEvent;
-        if (ce.detail?.backgroundTask?.status === 'rejected') {
-          rejectedEvents.push(ce);
-        }
-      });
+      document.removeEventListener('add-bai-notification', onRejected);
 
       expect(rejectedEvents).toHaveLength(1);
       expect(rejectedEvents[0].detail.key).toBe('task:task-fail');
@@ -404,15 +393,12 @@ describe('BackendAITasker', () => {
   describe('signal()', () => {
     it('dispatches backend-ai-task-changed event with tasks', () => {
       const events: CustomEvent[] = [];
-      document.addEventListener('backend-ai-task-changed', (e) =>
-        events.push(e as CustomEvent),
-      );
+      const onTaskChanged = (e: Event) => events.push(e as CustomEvent);
+      document.addEventListener('backend-ai-task-changed', onTaskChanged);
 
       backendaiTasker.signal();
 
-      document.removeEventListener('backend-ai-task-changed', (e) =>
-        events.push(e as CustomEvent),
-      );
+      document.removeEventListener('backend-ai-task-changed', onTaskChanged);
 
       expect(events).toHaveLength(1);
       expect(events[0].detail.tasks).toBeDefined();

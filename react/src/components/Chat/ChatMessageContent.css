@@ -1,0 +1,147 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Markdown-element chrome for <ChatMessageContent> (to-astryx ticket 33).
+
+ Ticket 24 documented this block as the last `antd-style` FRONTIER and deferred
+ it here: ~110 lines of `tr`/`th`/`td`/`ul`/`ol`/`hr`/`blockquote` styling that
+ was token-interpolated through `createStyles`. It is semantic HTML, not
+ `.ant-*` (P6 does not apply), so the conversion is a pure token-source swap —
+ the same shape as AnnouncementEditModal.css (ticket 22), whose mapping
+ decisions this file follows so the two markdown surfaces stay consistent.
+
+ Token mapping (P19-checked against the declared Astryx set):
+   token.marginMD  (20px) / marginSM (12px) / marginXS (8px) / marginXXS (4px)
+                          -> var(--spacing-5) / -3 / -2 / -1
+   token.padding   (16px) / paddingSM (12px) / paddingLG (24px)
+                          -> var(--spacing-4) / -3 / -6
+   token.lineWidth        -> var(--border-width)
+   token.colorBorderSecondary -> var(--color-border)
+   token.colorFillAlter       -> var(--color-background-muted)   ('self')
+   token.colorFillQuaternary  -> var(--color-overlay-hover)      ('self')
+   token.colorTextSecondary   -> var(--color-text-secondary)
+   token.colorText            -> var(--color-text-primary)
+   token.fontSize             -> var(--font-size-base)
+   token.borderRadiusSM       -> var(--radius-none)
+   token.borderRadiusXS       -> var(--radius-none)  ('self': antd 2px, and
+     theme-neutral has no radius below --radius-none)
+   token.fontWeightStrong     -> var(--font-weight-semibold)
+   token.lineHeight           -> 1.5714 literal ('self': Astryx has no global
+     line-height token; --text-body-leading is 1.4286, a deliberate delta the
+     shim refused to absorb)
+*/
+.chat-markdown-table tr:hover {
+  background-color: var(--color-overlay-hover) !important;
+}
+
+.chat-markdown-table tr:last-child {
+  border-bottom: none !important;
+}
+
+.chat-markdown-table th:last-child,
+.chat-markdown-table td:last-child {
+  border-right: none !important;
+}
+
+.chat-markdown-blockquote {
+  margin: var(--spacing-5) 0;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-left: calc(var(--border-width) * 4) solid var(--color-border);
+  background-color: var(--color-background-muted);
+  border-radius: 0 var(--radius-none) var(--radius-none) 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: 1.5714285714285714;
+}
+
+.chat-markdown-blockquote p {
+  margin: 0 !important;
+}
+
+.chat-markdown-blockquote p:not(:last-child) {
+  margin-bottom: var(--spacing-2) !important;
+}
+
+.chat-markdown-hr {
+  margin: var(--spacing-2) 0;
+  border: none;
+  height: var(--border-width);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-border),
+    transparent
+  );
+  border-radius: var(--radius-none);
+  opacity: 0.8;
+}
+
+.chat-markdown-hr::before {
+  content: '';
+  display: block;
+  height: 100%;
+  background: inherit;
+}
+
+.chat-markdown-ul,
+.chat-markdown-ol {
+  margin: var(--spacing-3) 0;
+  padding-left: var(--spacing-6);
+  line-height: 1.5714285714285714;
+  list-style-position: outside;
+}
+
+.chat-markdown-ul {
+  list-style-type: disc;
+}
+
+.chat-markdown-ol {
+  list-style-type: decimal;
+}
+
+.chat-markdown-ul li,
+.chat-markdown-ol li {
+  margin-bottom: var(--spacing-1);
+  color: var(--color-text-primary);
+  display: list-item;
+}
+
+.chat-markdown-ol li::marker {
+  font-weight: var(--font-weight-semibold);
+}
+
+.chat-markdown-ul ul,
+.chat-markdown-ul ol,
+.chat-markdown-ol ol,
+.chat-markdown-ol ul {
+  margin-top: var(--spacing-1);
+  margin-bottom: 0;
+}
+
+.chat-markdown-ul ul {
+  list-style-type: circle;
+}
+
+.chat-markdown-ul ul ul {
+  list-style-type: square;
+}
+
+.chat-markdown-ol ol {
+  list-style-type: lower-alpha;
+}
+
+.chat-markdown-ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.chat-markdown-code-block .shiki.github-light,
+.chat-markdown-code-block .shiki.github-dark {
+  margin: 0 !important;
+  padding: var(--spacing-3) !important;
+}
+
+.chat-markdown-code-block div[dir='ltr'] {
+  display: table;
+  min-width: 100%;
+}

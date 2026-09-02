@@ -1,8 +1,28 @@
+/**
+ to-astryx TICKET 28 — `BAIPropertyFilter` is now an Astryx `PowerSearch`, so
+ the antd-era DOM tests (property `Select` + `AutoComplete` + `Tag` close
+ buttons) no longer describe anything real. What DOES still have to hold — and
+ what a shared link depends on — is the filter-string contract, so these tests
+ target the serializer / reverse-parser pair directly:
+
+     URL / GraphQL filter string  ->  PowerSearch tokens  ->  the same string
+
+ The `describe('URL filter round-trip …')` block below walks a representative
+ filter string for every page that mounts this component (the ticket-28
+ consumer census) and asserts byte-for-byte stability.
+*/
+import BAIPopconfirm from './BAIPopconfirm';
 import BAIPropertyFilter, {
+  buildFieldSpecs,
+  defaultContentSearchFieldKey,
   mergeFilterValues,
+  parseFilterString,
   parseFilterValue,
+  serializeFilters,
+  type FilterProperty,
 } from './BAIPropertyFilter';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 describe('parseFilterValue', () => {
   it('should correctly parse filter with binary operators', () => {
@@ -55,6 +75,44 @@ describe('parseFilterValue', () => {
       value: '%@example.com',
     });
   });
+
+  it('preserves whitespace inside a double-quoted value', () => {
+    expect(parseFilterValue('name ilike "%hello world%"')).toEqual({
+      property: 'name',
+      operator: 'ilike',
+      value: '%hello world%',
+    });
+  });
+
+  it('keeps inner whitespace of quoted list elements intact', () => {
+    // Exercises the tokenizer edge case where list elements themselves contain
+    // whitespace inside double quotes (must not be split on).
+    expect(parseFilterValue('name in ["READ ONLY", "READ WRITE"]')).toEqual({
+      property: 'name',
+      operator: 'in',
+      value: '["READ ONLY", "READ WRITE"]',
+    });
+  });
+
+  it('treats Unicode whitespace (e.g. non-breaking space) as a separator', () => {
+    // \u00A0 (a non-breaking space) is matched by \s but not by a fixed ASCII list.
+    const NBSP = '\u00A0';
+    expect(parseFilterValue(`name${NBSP}==${NBSP}"value"`)).toEqual({
+      property: 'name',
+      operator: '==',
+      value: 'value',
+    });
+  });
+
+  it('parses adversarial input in linear time (ReDoS guard)', () => {
+    // The previous lookahead regex exhibited catastrophic backtracking on
+    // inputs with many unbalanced quotes/spaces. The linear scan must stay
+    // fast regardless of input shape.
+    const adversarial = 'a ' + '"'.repeat(50000) + ' '.repeat(50000);
+    const start = performance.now();
+    parseFilterValue(adversarial);
+    expect(performance.now() - start).toBeLessThan(1000);
+  });
 });
 
 describe('mergeFilterValues', () => {
@@ -78,343 +136,496 @@ describe('mergeFilterValues', () => {
       '',
       'status == "active"',
     ];
-    const result = mergeFilterValues(filters);
-    expect(result).toBe('(name ilike "%test%")&(status == "active")');
+    expect(mergeFilterValues(filters, '&')).toBe(
+      '(name ilike "%test%")&(status == "active")',
+    );
   });
 
   it('should return undefined when all filters are empty', () => {
-    const filters = [null, undefined, ''];
-    const result = mergeFilterValues(filters);
-    expect(result).toBeUndefined();
+    expect(mergeFilterValues([null, undefined, ''], '&')).toBeUndefined();
   });
 
   it('should handle single filter', () => {
-    const filters = ['name ilike "%test%"'];
-    const result = mergeFilterValues(filters);
-    expect(result).toBe('(name ilike "%test%")');
+    expect(mergeFilterValues(['name ilike "%test%"'], '&')).toBe(
+      '(name ilike "%test%")',
+    );
   });
 
   it('should handle empty array', () => {
-    const filters: string[] = [];
-    const result = mergeFilterValues(filters);
-    expect(result).toBeUndefined();
+    expect(mergeFilterValues([], '&')).toBeUndefined();
   });
 });
 
-describe('BAIPropertyFilter Component', () => {
-  const mockFilterProperties = [
-    {
-      key: 'name',
-      propertyLabel: 'Name',
-      type: 'string' as const,
-      defaultOperator: 'ilike',
-    },
-    {
-      key: 'status',
-      propertyLabel: 'Status',
-      type: 'string' as const,
-      options: [
-        { label: 'Active', value: 'active' },
-        { label: 'Inactive', value: 'inactive' },
-      ],
-    },
-    {
-      key: 'is_enabled',
-      propertyLabel: 'Enabled',
-      type: 'boolean' as const,
-    },
-  ];
+/** The full string -> tokens -> string cycle a shared link goes through. */
+const roundTrip = (
+  filterProperties: Array<FilterProperty>,
+  value: string | undefined,
+) => {
+  const specs = buildFieldSpecs(filterProperties, value);
+  const { filters, rawValues } = parseFilterString(value, specs);
+  return serializeFilters(filters, specs, rawValues);
+};
 
-  it('should render property selector and search input', () => {
-    render(<BAIPropertyFilter filterProperties={mockFilterProperties} />);
-
-    expect(
-      screen.getByLabelText('Filter property selector'),
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText('Filter value search')).toBeInTheDocument();
-  });
-
-  it('should accept value prop and parse filters', async () => {
-    const value = 'name ilike "%test%" & status == "active"';
-    const mockOnChange = jest.fn();
-    render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        value={value}
-        onChange={mockOnChange}
-      />,
-    );
-
-    // Component should render without crashing
-    const searchInput = screen.getByLabelText('Filter value search');
-    expect(searchInput).toBeInTheDocument();
-
-    // The component receives and processes the value internally
-    // We can verify it accepted the value by checking it doesn't call onChange on mount
-    expect(mockOnChange).not.toHaveBeenCalled();
-  });
-
-  it('should call onChange when adding a new filter', async () => {
-    const mockOnChange = jest.fn();
-    render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        onChange={mockOnChange}
-      />,
-    );
-
-    const searchInput = screen.getByLabelText('Filter value search');
-    fireEvent.change(searchInput, { target: { value: 'test' } });
-    fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
-
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalled();
-      const callArg = mockOnChange.mock.calls[0][0];
-      expect(callArg).toContain('name ilike "%test%"');
-    });
-  });
-
-  it('should remove filter tag when close button is clicked', async () => {
-    const mockOnChange = jest.fn();
-    const value = 'name ilike "%test%"';
-    const { container } = render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        value={value}
-        onChange={mockOnChange}
-      />,
-    );
-
-    // Find and click the close button on the tag
-    const closeButton = container.querySelector('.anticon-close');
-    expect(closeButton).toBeInTheDocument();
-    fireEvent.click(closeButton!);
-
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalledWith(undefined);
-    });
-  });
-
-  it('should show reset button when multiple filters exist', () => {
-    const value = 'name ilike "%test%" & status == "active"';
-    render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        value={value}
-      />,
-    );
-
-    const resetButton = screen.getByRole('button', { name: /close-circle/i });
-    expect(resetButton).toBeInTheDocument();
-  });
-
-  it('should clear all filters when reset button is clicked', async () => {
-    const mockOnChange = jest.fn();
-    const value = 'name ilike "%test%" & status == "active"';
-    render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        value={value}
-        onChange={mockOnChange}
-      />,
-    );
-
-    const resetButton = screen.getByRole('button', { name: /close-circle/i });
-    fireEvent.click(resetButton);
-
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalledWith(undefined);
-    });
-  });
-
-  it('should handle boolean type filters with strict selection', async () => {
-    const mockOnChange = jest.fn();
-    render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        onChange={mockOnChange}
-      />,
-    );
-
-    // Select boolean property
-    const propertySelector = screen.getByLabelText('Filter property selector');
-    fireEvent.mouseDown(propertySelector);
-
-    await waitFor(() => {
-      const enabledOption = screen.getByText('Enabled');
-      fireEvent.click(enabledOption);
-    });
-
-    // Enter true value
-    const searchInput = screen.getByLabelText('Filter value search');
-    fireEvent.change(searchInput, { target: { value: 'true' } });
-    fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
-
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalled();
-      const callArg = mockOnChange.mock.calls[0][0];
-      expect(callArg).toContain('is_enabled == true');
-    });
-  });
-
-  it('should show validation error for invalid values', async () => {
-    const filterPropertiesWithValidation = [
-      {
-        key: 'email',
-        propertyLabel: 'Email',
-        type: 'string' as const,
-        rule: {
-          message: 'Invalid email format',
-          validate: (value: string) => /\S+@\S+\.\S+/.test(value),
-        },
-      },
-    ];
-
-    const mockOnChange = jest.fn();
-    render(
-      <BAIPropertyFilter
-        filterProperties={filterPropertiesWithValidation}
-        onChange={mockOnChange}
-      />,
-    );
-
-    const searchInput = screen.getByLabelText('Filter value search');
-
-    // Focus input and enter invalid email
-    fireEvent.focus(searchInput);
-    fireEvent.change(searchInput, { target: { value: 'invalid' } });
-
-    // Try to submit invalid value
-    fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
-
-    // The component validates and doesn't add invalid filter
-    // onChange should not be called for invalid input
-    await waitFor(() => {
-      expect(mockOnChange).not.toHaveBeenCalled();
-    });
-  });
-
-  it('should display option labels in filter tags', () => {
-    const value = 'status == "active"';
-    render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        value={value}
-      />,
-    );
-
-    // Should show label "Active" instead of value "active"
-    expect(screen.getByText(/Status:/)).toBeInTheDocument();
-    expect(screen.getByText(/Active/)).toBeInTheDocument();
-  });
-
-  it('should handle string filters with ilike operator adding wildcards', async () => {
-    const mockOnChange = jest.fn();
-    render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        onChange={mockOnChange}
-      />,
-    );
-
-    const searchInput = screen.getByLabelText('Filter value search');
-    fireEvent.change(searchInput, { target: { value: 'test' } });
-    fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
-
-    await waitFor(() => {
-      expect(mockOnChange).toHaveBeenCalled();
-      const callArg = mockOnChange.mock.calls[0][0];
-      expect(callArg).toContain('name ilike "%test%"');
-    });
-  });
-
-  it('should handle controlled value prop', () => {
-    const { rerender } = render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        value='name ilike "%initial%"'
-      />,
-    );
-
-    expect(screen.getByText(/initial/)).toBeInTheDocument();
-
-    rerender(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        value='name ilike "%updated%"'
-      />,
-    );
-
-    expect(screen.queryByText(/initial/)).not.toBeInTheDocument();
-    expect(screen.getByText(/updated/)).toBeInTheDocument();
-  });
-
-  it('should use defaultValue when value prop is not provided', async () => {
-    const mockOnChange = jest.fn();
-    render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        defaultValue='name ilike "%default%"'
-        onChange={mockOnChange}
-      />,
-    );
-
-    // Component should render without crashing
-    const searchInput = screen.getByLabelText('Filter value search');
-    expect(searchInput).toBeInTheDocument();
-
-    // The component accepts defaultValue and processes it internally
-    // Verify it doesn't call onChange on mount
-    expect(mockOnChange).not.toHaveBeenCalled();
-  });
-
-  it('should not add filter when empty value is submitted', async () => {
-    const mockOnChange = jest.fn();
-    render(
-      <BAIPropertyFilter
-        filterProperties={mockFilterProperties}
-        onChange={mockOnChange}
-      />,
-    );
-
-    const searchInput = screen.getByLabelText('Filter value search');
-    fireEvent.change(searchInput, { target: { value: '' } });
-    fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
-
-    await waitFor(() => {
-      expect(mockOnChange).not.toHaveBeenCalled();
-    });
-  });
-
-  it('should handle strictSelection option', () => {
-    const strictFilterProperties = [
+// One property set per page that mounts `BAIPropertyFilter`, transcribed from
+// the call site, paired with a filter string that page can produce.
+const PAGE_FIXTURES: Array<{
+  page: string;
+  filterProperties: Array<FilterProperty>;
+  filters: Array<string>;
+}> = [
+  {
+    page: 'VFolderNodeListPage / AdminVFolderNodeListPage',
+    filterProperties: [
+      { key: 'name', propertyLabel: 'Name', type: 'string' },
       {
         key: 'status',
         propertyLabel: 'Status',
-        type: 'string' as const,
-        options: [
-          { label: 'Active', value: 'active' },
-          { label: 'Inactive', value: 'inactive' },
-        ],
+        type: 'string',
         strictSelection: true,
+        defaultOperator: '==',
+        options: [
+          { label: 'ready', value: 'ready' },
+          { label: 'delete-pending', value: 'delete-pending' },
+        ],
       },
-    ];
+      { key: 'host', propertyLabel: 'Location', type: 'string' },
+      {
+        key: 'ownership_type',
+        propertyLabel: 'Type',
+        type: 'string',
+        strictSelection: true,
+        defaultOperator: '==',
+        options: [
+          { label: 'user', value: 'user' },
+          { label: 'group', value: 'group' },
+        ],
+      },
+    ],
+    filters: [
+      'name ilike "%project-data%"',
+      'name ilike "%data%" & status == "ready"',
+      'name ilike "%my folder%" & host ilike "%local:volume1%" & ownership_type == "group"',
+    ],
+  },
+  {
+    page: 'ImageList',
+    filterProperties: [
+      {
+        key: 'id',
+        propertyLabel: 'ID',
+        type: 'string',
+        defaultOperator: '==',
+      },
+      { key: 'name', propertyLabel: 'Name', type: 'string' },
+      {
+        key: 'architecture',
+        propertyLabel: 'Architecture',
+        type: 'string',
+        strictSelection: true,
+        defaultOperator: '==',
+        options: [
+          { label: 'x86_64', value: 'x86_64' },
+          { label: 'aarch64', value: 'aarch64' },
+        ],
+      },
+      { key: 'is_local', propertyLabel: 'Local', type: 'boolean' },
+    ],
+    filters: [
+      'name ilike "%python%"',
+      'architecture == "aarch64" & is_local == true',
+      'id == "abc-123" & name ilike "%ngc%" & is_local == false',
+    ],
+  },
+  {
+    page: 'AgentList / AgentSummaryList',
+    filterProperties: [
+      { key: 'id', propertyLabel: 'ID', type: 'string' },
+      {
+        key: 'status',
+        propertyLabel: 'Status',
+        type: 'string',
+        strictSelection: true,
+        defaultOperator: '==',
+        options: [
+          { label: 'ALIVE', value: 'ALIVE' },
+          { label: 'LOST', value: 'LOST' },
+        ],
+      },
+      { key: 'schedulable', propertyLabel: 'Schedulable', type: 'boolean' },
+    ],
+    filters: [
+      'id ilike "%agent-01%"',
+      'status == "ALIVE" & schedulable == true',
+    ],
+  },
+  {
+    page: 'ComputeSessionListPage / AdminComputeSessionListPage',
+    filterProperties: [
+      { key: 'name', propertyLabel: 'Session Name', type: 'string' },
+      {
+        key: 'project_id',
+        propertyLabel: 'Project',
+        type: 'string',
+        defaultOperator: '==',
+        // The page supplies a Relay-backed picker here; serialization is
+        // unaffected by the editor, so the fixture only needs the shape.
+        renderInput: () => null,
+      },
+    ],
+    filters: [
+      'name ilike "%training%"',
+      'name ilike "%job%" & project_id == "3f1c0e7a-0000-4000-8000-000000000001"',
+    ],
+  },
+  {
+    page: 'ProjectPage',
+    filterProperties: [
+      { key: 'name', propertyLabel: 'Name', type: 'string' },
+      { key: 'is_active', propertyLabel: 'Active', type: 'boolean' },
+    ],
+    filters: [
+      'name ilike "%default%"',
+      'name ilike "%ml%" & is_active == true',
+    ],
+  },
+  {
+    page: 'ContainerRegistryList',
+    filterProperties: [
+      { key: 'registry_name', propertyLabel: 'Registry Name', type: 'string' },
+      { key: 'url', propertyLabel: 'URL', type: 'string' },
+    ],
+    filters: [
+      'registry_name ilike "%docker%"',
+      'registry_name ilike "%cr%" & url ilike "%index.docker.io%"',
+    ],
+  },
+  {
+    page: 'AdminUserCredentialList',
+    filterProperties: [
+      { key: 'email', propertyLabel: 'User ID', type: 'string' },
+      {
+        key: 'is_active',
+        propertyLabel: 'Active',
+        type: 'boolean',
+        defaultOperator: '==',
+      },
+    ],
+    filters: [
+      'email ilike "%@lablup.com%"',
+      'email ilike "%admin%" & is_active == true',
+    ],
+  },
+  {
+    page: 'StorageProxyList',
+    filterProperties: [
+      { key: 'id', propertyLabel: 'ID', type: 'string' },
+      { key: 'backend', propertyLabel: 'Backend', type: 'string' },
+    ],
+    filters: ['id ilike "%local%"', 'backend ilike "%vfs%"'],
+  },
+  {
+    page: 'ReservoirAuditLogList',
+    filterProperties: [
+      { key: 'artifactName', propertyLabel: 'Artifact', type: 'string' },
+      {
+        key: 'action',
+        propertyLabel: 'Action',
+        type: 'string',
+        strictSelection: true,
+        defaultOperator: '==',
+        options: [
+          { label: 'IMPORT', value: 'IMPORT' },
+          { label: 'DELETE', value: 'DELETE' },
+        ],
+      },
+    ],
+    filters: [
+      'artifactName ilike "%llama%"',
+      'artifactName ilike "%gpt%" & action == "IMPORT"',
+    ],
+  },
+];
 
-    const mockOnChange = jest.fn();
+describe('URL filter round-trip (no shared-link regression)', () => {
+  it.each(
+    PAGE_FIXTURES.flatMap(({ page, filterProperties, filters }) =>
+      filters.map((filter) => ({ page, filterProperties, filter })),
+    ),
+  )('$page — $filter', ({ filterProperties, filter }) => {
+    expect(roundTrip(filterProperties, filter)).toBe(filter);
+  });
+
+  it('re-parses what it emitted (tokens are stable across a second cycle)', () => {
+    const { filterProperties } = PAGE_FIXTURES[0];
+    const first =
+      'name ilike "%data%" & status == "ready" & host ilike "%local%"';
+    const second = roundTrip(filterProperties, first);
+    expect(roundTrip(filterProperties, second)).toBe(first);
+  });
+
+  it('keeps an empty filter empty', () => {
+    expect(roundTrip(PAGE_FIXTURES[0].filterProperties, undefined)).toBe(
+      undefined,
+    );
+    expect(roundTrip(PAGE_FIXTURES[0].filterProperties, '')).toBe(undefined);
+  });
+});
+
+describe('round-trip edge cases the antd implementation also had to survive', () => {
+  const properties: Array<FilterProperty> = [
+    { key: 'name', propertyLabel: 'Name', type: 'string' },
+    { key: 'is_local', propertyLabel: 'Local', type: 'boolean' },
+  ];
+
+  it('preserves an asymmetric wildcard instead of widening it to %value%', () => {
+    // `ilike "%foo"` is a suffix match. Unwrapping for display and naively
+    // re-wrapping would emit `"%foo%"` and silently broaden the query.
+    expect(roundTrip(properties, 'name ilike "%@example.com"')).toBe(
+      'name ilike "%@example.com"',
+    );
+  });
+
+  it('leaves boolean values unquoted and string values quoted', () => {
+    expect(roundTrip(properties, 'is_local == true')).toBe('is_local == true');
+    expect(roundTrip(properties, 'name == "exact"')).toBe('name == "exact"');
+  });
+
+  it('preserves a condition whose property is not configured', () => {
+    // Old links (and hand-written ones) can name a property this build no
+    // longer declares. The token is synthesised so it stays visible/removable
+    // and re-serializes verbatim.
+    expect(
+      roundTrip(properties, 'name ilike "%a%" & legacy_field == "x"'),
+    ).toBe('name ilike "%a%" & legacy_field == "x"');
+  });
+
+  it('preserves an operator the configured field does not offer', () => {
+    expect(roundTrip(properties, 'name >= "2021-01-01"')).toBe(
+      'name >= "2021-01-01"',
+    );
+  });
+
+  it('preserves values containing whitespace', () => {
+    expect(roundTrip(properties, 'name ilike "%hello world%"')).toBe(
+      'name ilike "%hello world%"',
+    );
+  });
+
+  it('drops a condition with an empty value (as the antd tag list did)', () => {
+    expect(roundTrip(properties, 'name ilike "%%"')).toBe(undefined);
+  });
+});
+
+describe('buildFieldSpecs / defaultContentSearchFieldKey', () => {
+  const properties: Array<FilterProperty> = [
+    {
+      key: 'status',
+      propertyLabel: 'Status',
+      type: 'string',
+      strictSelection: true,
+      defaultOperator: '==',
+      options: [{ label: 'ALIVE', value: 'ALIVE' }],
+    },
+    { key: 'name', propertyLabel: 'Name', type: 'string' },
+  ];
+
+  it('routes bare text to the first free-text property (antd preselect parity)', () => {
+    expect(defaultContentSearchFieldKey(properties)).toBe('name');
+  });
+
+  it('offers the declared default operator first', () => {
+    const specs = buildFieldSpecs(properties, undefined);
+    expect(specs[0].defaultOperator).toBe('==');
+    expect(specs[0].operators[0]).toBe('==');
+    expect(specs[1].defaultOperator).toBe('ilike');
+  });
+
+  it('widens a field with an operator seen only in the inbound value', () => {
+    const specs = buildFieldSpecs(properties, 'name >= "x"');
+    const name = specs.find((spec) => spec.key === 'name');
+    expect(name?.operators).toContain('>=');
+  });
+});
+
+describe('number / datetime / uuid properties', () => {
+  const properties: Array<FilterProperty> = [
+    { key: 'name', propertyLabel: 'Name', type: 'string' },
+    { key: 'priority', propertyLabel: 'Priority', type: 'number' },
+    { key: 'created_at', propertyLabel: 'Created At', type: 'datetime' },
+    { key: 'user_id', propertyLabel: 'User ID', type: 'uuid' },
+  ];
+
+  it('offers comparison operators, defaulting to == for numbers', () => {
+    const specs = buildFieldSpecs(properties, undefined);
+    const priority = specs.find((spec) => spec.key === 'priority');
+    expect(priority?.defaultOperator).toBe('==');
+    expect(priority?.operators).toEqual(['==', '!=', '>', '>=', '<', '<=']);
+  });
+
+  it('offers range operators, defaulting to >= for datetimes', () => {
+    const specs = buildFieldSpecs(properties, undefined);
+    const createdAt = specs.find((spec) => spec.key === 'created_at');
+    expect(createdAt?.defaultOperator).toBe('>=');
+    expect(createdAt?.operators).toEqual(['>=', '<=', '==', '!=']);
+  });
+
+  it('leaves number values unquoted (the DSL parses them as numbers)', () => {
+    expect(roundTrip(properties, 'priority == 10')).toBe('priority == 10');
+    expect(roundTrip(properties, 'priority >= -1')).toBe('priority >= -1');
+  });
+
+  it('quotes datetime values (the backend parses the string into a date)', () => {
+    expect(roundTrip(properties, 'created_at >= "2026-08-01"')).toBe(
+      'created_at >= "2026-08-01"',
+    );
+    expect(roundTrip(properties, 'created_at == "2026-08-01T00:00:00"')).toBe(
+      'created_at == "2026-08-01T00:00:00"',
+    );
+  });
+
+  it('serializes a freshly committed typed token, not just a round-tripped one', () => {
+    // What the `float` / `date_absolute` editors hand back when the user picks
+    // a value, so the DSL stays legal without a round trip to lean on.
+    const specs = buildFieldSpecs(properties, undefined);
+    expect(
+      serializeFilters(
+        [
+          {
+            field: 'priority',
+            operator: '>=',
+            value: { type: 'float', value: 3 },
+          },
+          {
+            field: 'created_at',
+            operator: '>=',
+            value: { type: 'date_absolute', unixSeconds: 1767225600 },
+          },
+        ],
+        specs,
+      ),
+    ).toBe('priority >= 3 & created_at >= "2026-01-01T00:00:00.000Z"');
+  });
+
+  it('offers equality only for uuid (a UUID column has no ilike)', () => {
+    const specs = buildFieldSpecs(properties, undefined);
+    const userId = specs.find((spec) => spec.key === 'user_id');
+    expect(userId?.defaultOperator).toBe('==');
+    expect(userId?.operators).toEqual(['==', '!=']);
+    expect(roundTrip(properties, 'user_id == "a-uuid"')).toBe(
+      'user_id == "a-uuid"',
+    );
+  });
+
+  it('still routes bare typed text to the first free-text property', () => {
+    expect(defaultContentSearchFieldKey(properties)).toBe('name');
+  });
+});
+
+describe('BAIPropertyFilter render', () => {
+  it('renders the PowerSearch input with the supplied placeholder', () => {
     render(
       <BAIPropertyFilter
-        filterProperties={strictFilterProperties}
-        onChange={mockOnChange}
+        data-testid="property-filter"
+        placeholder="Search folders"
+        filterProperties={PAGE_FIXTURES[0].filterProperties}
+        value={'name ilike "%data%"'}
+        onChange={() => {}}
       />,
     );
+    expect(screen.getByTestId('property-filter')).toBeInTheDocument();
+  });
+});
 
-    const searchInput = screen.getByLabelText('Filter value search');
+/*
+ FR-3739 — guards `react/patches/@astryxdesign__core@0.5.0.patch`.
 
-    // Try to enter value not in options
-    fireEvent.change(searchInput, { target: { value: 'invalid' } });
-    fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
+ Astryx's `useFocusTrap` restored focus to whatever held it before the trap
+ activated whenever focus "would otherwise be lost". The suggestion popover
+ opens with `role: 'none'` + `hasAutoFocus: false`, so the input keeps focus
+ the whole time and the trap never holds it — the restore then re-focused the
+ input the dismissal had just blurred, and because the input was already
+ focused, clicking it again fired no `focus` event and the menu stayed shut.
 
-    // Should not call onChange for invalid value
-    expect(mockOnChange).not.toHaveBeenCalled();
+ The patch skips the restore when focus never entered the trap container. The
+ first test is the bug; the second is the behaviour the patch must NOT break —
+ a popup that does take focus still restores it.
+*/
+describe('BAIPropertyFilter dismissal (FR-3739)', () => {
+  const filterProperties: Array<FilterProperty> = [
+    { key: 'name', propertyLabel: 'Name', type: 'string' },
+    { key: 'status', propertyLabel: 'Status', type: 'string' },
+  ];
+
+  const renderFilter = () => {
+    render(
+      <BAIPropertyFilter
+        filterProperties={filterProperties}
+        value=""
+        onChange={() => {}}
+      />,
+    );
+    return screen.getByRole('combobox');
+  };
+
+  it('releases input focus when the suggestions are dismissed', async () => {
+    const input = renderFilter();
+
+    input.focus();
+    await waitFor(() => expect(input).toHaveAttribute('aria-expanded', 'true'));
+
+    // What an outside click does: the browser blurs the input, and the layer
+    // closes. Unpatched, the focus-trap teardown put focus straight back.
+    input.blur();
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-expanded', 'false'),
+    );
+    expect(document.activeElement).not.toBe(input);
+  });
+
+  it('reopens the suggestions when the released input is focused again', async () => {
+    const input = renderFilter();
+
+    input.focus();
+    await waitFor(() => expect(input).toHaveAttribute('aria-expanded', 'true'));
+    input.blur();
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-expanded', 'false'),
+    );
+
+    input.focus();
+    await waitFor(() => expect(input).toHaveAttribute('aria-expanded', 'true'));
+  });
+
+  it('still restores focus to the trigger of a popup that takes focus', async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button" data-testid="outside">
+          outside
+        </button>
+        <BAIPopconfirm
+          title="Delete this?"
+          onConfirm={() => {}}
+          okText="Delete"
+          cancelText="Cancel"
+        >
+          <button type="button" data-testid="trigger">
+            trigger
+          </button>
+        </BAIPopconfirm>
+      </>,
+    );
+
+    const trigger = screen.getByTestId('trigger');
+    await user.click(trigger);
+    const cancel = await screen.findByRole('button', { name: 'Cancel' });
+
+    // Focus genuinely enters this popup, so the trap owns it and must hand it
+    // back to the trigger when the popup closes.
+    cancel.focus();
+    expect(document.activeElement).toBe(cancel);
+    await user.click(cancel);
+
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
 });

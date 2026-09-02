@@ -2,41 +2,39 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import ConfigurationsSettingList from '../components/ConfigurationsSettingList';
-import { Card, Skeleton } from 'antd';
-import { filterOutEmpty } from 'backend.ai-ui';
+import { BAISkeleton, BAICard } from 'backend.ai-ui';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-
-type TabKey = 'configurations';
-
-const tabParam = withDefault(StringParam, 'configurations');
 
 const ConfigurationsPage = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['configurations']).withDefault('configurations'),
+  );
 
   return (
-    <Card
+    <BAICard
       activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
-      tabList={filterOutEmpty([
+      tabList={[
         {
           key: 'configurations',
-          tab: t('webui.menu.Configurations'),
+          label: t('webui.menu.Configurations'),
         },
-      ])}
+      ]}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeleton />}>
         {curTabKey === 'configurations' && (
           <BAIErrorBoundary>
             <ConfigurationsSettingList />
           </BAIErrorBoundary>
         )}
       </Suspense>
-    </Card>
+    </BAICard>
   );
 };
 

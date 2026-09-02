@@ -8,8 +8,9 @@ test.beforeEach(async ({ page, request }) => {
   });
   await loginAsAdmin(page, request);
   await navigateTo(page, 'resource-policy');
-  // FIXME: Strict mode violation - getByText('Name', { exact: true }) resolves to 2 elements
-  // Need to use more specific locator like getByRole('columnheader', { name: 'Name' }).first()
+  // FIXME(FR-3111/brittle-locator): Strict mode violation — getByText('Name',
+  // { exact: true }) resolves to 2 elements; use getByRole('columnheader',
+  // { name: 'Name' }).first(). Owned by the locator-quality triage category of FR-3109.
   await page.getByText('Name', { exact: true }).waitFor();
 });
 
@@ -17,7 +18,9 @@ test.describe(
   'Resource Policy page Visual Regression Test',
   { tag: ['@regression', '@config', '@visual'] },
   () => {
-    // FIXME: Test skipped due to beforeEach strict mode violation
+    // FIXME(FR-3111/brittle-locator): Skipped due to the beforeEach strict mode
+    // violation; modal locators also hard-code the antd hash class. Not a stale
+    // baseline; owned by the locator-quality triage category of FR-3109.
     // Keypair table
     test.fixme(`keypair table`, async ({ page }) => {
       await page.getByRole('tab', { name: 'Keypair' }).click();
@@ -45,7 +48,9 @@ test.describe(
       await page.getByRole('button', { name: 'Cancel' }).click();
     });
 
-    // FIXME: Test skipped due to beforeEach strict mode violation
+    // FIXME(FR-3111/brittle-locator): Skipped due to the beforeEach strict mode
+    // violation; modal locators also hard-code the antd hash class. Not a stale
+    // baseline; owned by the locator-quality triage category of FR-3109.
     // User table
     test.fixme('user table', async ({ page }) => {
       await page.getByRole('tab', { name: 'User' }).click();
@@ -64,7 +69,9 @@ test.describe(
       await page.getByRole('button', { name: 'Cancel' }).click();
     });
 
-    // FIXME: Test skipped due to beforeEach strict mode violation
+    // FIXME(FR-3111/brittle-locator): Skipped due to the beforeEach strict mode
+    // violation; modal locators also hard-code the antd hash class. Not a stale
+    // baseline; owned by the locator-quality triage category of FR-3109.
     // Project table
     test.fixme('project table', async ({ page }) => {
       await page.getByRole('tab', { name: 'Project' }).click();

@@ -2,34 +2,32 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import MaintenanceSettingList from '../components/MaintenanceSettingList';
-import { Skeleton } from 'antd';
-import { BAICard } from 'backend.ai-ui';
+import { BAISkeleton, BAICard } from 'backend.ai-ui';
+import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import BAIErrorBoundary from 'src/components/BAIErrorBoundary';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-
-type TabKey = 'maintenance';
-
-const tabParam = withDefault(StringParam, 'maintenance');
 
 const MaintenancePage = () => {
+  'use memo';
   const { t } = useTranslation();
-  const [curTabKey, setCurTabKey] = useQueryParam('tab', tabParam);
+  const [curTabKey] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['maintenance']).withDefault('maintenance'),
+  );
 
   return (
     <BAICard
       activeTabKey={curTabKey}
-      onTabChange={(key) => setCurTabKey(key as TabKey)}
       tabList={[
         {
           key: 'maintenance',
-          tab: t('webui.menu.Maintenance'),
+          label: t('webui.menu.Maintenance'),
         },
       ]}
     >
-      <Suspense fallback={<Skeleton active />}>
+      <Suspense fallback={<BAISkeleton />}>
         {curTabKey === 'maintenance' && (
           <BAIErrorBoundary>
             <MaintenanceSettingList />

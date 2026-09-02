@@ -1,0 +1,219 @@
+// spec: e2e/.agent-output/test-plan-admin-model-card.md
+// section: 1. Page Load and Table Display
+import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
+import {
+  deleteForeverAndVerifyFromTrash,
+  loginAsAdmin,
+  moveToTrashAndVerify,
+  webuiEndpoint,
+} from '../utils/test-util';
+import { test, expect, type Page } from '@playwright/test';
+
+// Astryx `Pagination` renders its prev/next controls only when the result
+// set actually spans more than one page, so these scenarios need enough
+// seeded model cards to overflow the default page size. Read the total off
+// the "X - Y of Z items" caption and declare the prerequisite rather than
+// failing on a sparsely-populated cluster.
+async function skipUnlessPaginated(page: Page): Promise<void> {
+  const caption = await page
+    .getByText(/\d+ - \d+ of \d+ items/)
+    .first()
+    .textContent();
+  const [, shown, total] = /(\d+) of (\d+) items/.exec(caption ?? '') ?? [];
+  test.skip(
+    !total || Number(total) <= Number(shown),
+    `Model cards fit on a single page (${caption ?? 'no caption'}); pagination controls are not rendered.`,
+  );
+}
+
+test.describe(
+  'Admin Model Card Management - Page Load and Table Display',
+  { tag: ['@admin-model-card', '@admin', '@functional'] },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+    });
+
+    // 1.1 Superadmin can view the Admin Model Card management page
+    test('Superadmin can view the Admin Model Card management page', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+
+      // Navigate to /admin-deployments?tab=model-store-management
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+
+      // Verify the "Model Store Management" tab is active
+      await expect(
+        page.getByText('Model Store Management').first(),
+      ).toBeVisible({ timeout: 15000 });
+
+      // Verify the "Create Model Card" button is visible
+      await expect(adminModelCardPage.getCreateModelCardButton()).toBeVisible();
+
+      // Verify the refresh button is visible
+      await expect(adminModelCardPage.getRefreshButton()).toBeVisible();
+
+      // Verify the table is rendered with the correct column headers
+      await expect(
+        page.getByRole('columnheader', { name: 'Name' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Title' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Category' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Task' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Access Level' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Domain' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Project' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('columnheader', { name: 'Created At' }),
+      ).toBeVisible();
+    });
+
+    // 1.2 Superadmin can see model card rows with correct data in the table
+    // This test creates its own model card to guarantee data exists in the table.
+    test('Superadmin can see model card rows with correct data in the table', async ({
+      page,
+    }, testInfo) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+      const timestamp = Date.now();
+      const cardName = `e2e-test-pageload-${testInfo.workerIndex}-${timestamp}`;
+      const folderName = `e2e-test-pageload-folder-${testInfo.workerIndex}-${timestamp}`;
+
+      // Create a dedicated model card so the table is guaranteed to have data
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.createModelCard({
+        name: cardName,
+        createNewFolderName: folderName,
+      });
+
+      // Navigate back and filter to the created card
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+      await adminModelCardPage.applyNameFilter(cardName);
+
+      // Wait for the filtered row to appear
+      const firstRow = adminModelCardPage.getRowByName(cardName);
+      await expect(firstRow).toBeVisible({ timeout: 15000 });
+
+      // Verify the name cell has edit and delete buttons. The edit action is
+      // a lucide `SquarePenIcon` (FR-3331) whose title is exposed as the
+      // button's `aria-label` by BAINameActionCell.
+      await expect(
+        firstRow.getByRole('button', { name: 'Edit', exact: true }),
+      ).toBeVisible();
+      await expect(
+        firstRow.getByRole('button', { name: 'delete' }),
+      ).toBeVisible();
+
+      // Verify Access Level cell shows a tag (Public, Private, or Internal)
+      // "Private" is the display label for the INTERNAL access level in the UI
+      const accessLevelCell = firstRow.getByRole('cell', {
+        name: /Public|Private|Internal/,
+      });
+      await expect(accessLevelCell).toBeVisible();
+
+      // Verify Created At cell shows a date in YYYY-MM-DD HH:mm format
+      const createdAtCell = firstRow.locator('td').last();
+      await expect(createdAtCell).toHaveText(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}/);
+
+      // Cleanup: delete the created model card, then purge the folder
+      await adminModelCardPage.deleteModelCardByName(cardName);
+      try {
+        await moveToTrashAndVerify(page, folderName, 'admin-data', {
+          skipTrashVerify: true,
+        });
+      } catch {
+        // Folder may already be in Trash or may not exist
+      }
+      try {
+        await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
+      } catch {
+        // Folder may not be in Trash (already purged or never created)
+      }
+    });
+
+    // 1.3 Superadmin can see pagination controls
+    test('Superadmin can see pagination controls and navigate between pages', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+
+      // Navigate to the page
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      await skipUnlessPaginated(page);
+
+      // Verify pagination control is visible with total count
+      await expect(adminModelCardPage.getPaginationInfo()).toBeVisible();
+
+      // Verify next/previous page buttons. Astryx `Pagination` names these
+      // "Go to previous page" / "Go to next page" (not the antd icon names
+      // "left"/"right").
+      await expect(
+        page.getByRole('button', { name: 'Go to previous page' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: 'Go to next page' }),
+      ).toBeVisible();
+
+      // If there are multiple pages, navigate to page 2
+      const nextButton = page.getByRole('button', { name: 'Go to next page' });
+      const isNextEnabled = await nextButton.isEnabled();
+      if (isNextEnabled) {
+        await nextButton.click();
+        // Verify page indicator updates by checking the URL parameter
+        await expect(page).toHaveURL(/current=2/);
+      }
+    });
+
+    // 1.4 Superadmin can change page size
+    test('Superadmin can change page size in the pagination', async ({
+      page,
+    }) => {
+      const adminModelCardPage = new AdminModelCardPage(page);
+
+      // Navigate to the page
+      await page.goto(
+        `${webuiEndpoint}/admin-deployments?tab=model-store-management`,
+      );
+      await adminModelCardPage.waitForTableLoad();
+
+      // Same prerequisite as the pagination-navigation test above.
+      await skipUnlessPaginated(page);
+
+      // Change page size from 10 to 20. The selector is Astryx `Select`
+      // (role="combobox" trigger, role="listbox"/"option" popup), not
+      // antd's `.ant-select-dropdown`.
+      const pageSizeSelector = page.getByRole('combobox', {
+        name: 'Page Size',
+      });
+      await pageSizeSelector.click();
+      await page.getByRole('option', { name: '20', exact: true }).click();
+
+      // Verify pagination reflects 20 items per page via URL parameter
+      await expect(page).toHaveURL(/pageSize=20/);
+    });
+  },
+);

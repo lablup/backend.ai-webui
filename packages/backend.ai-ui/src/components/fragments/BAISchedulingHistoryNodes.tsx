@@ -2,28 +2,31 @@ import {
   BAISchedulingHistoryNodesFragment$data,
   BAISchedulingHistoryNodesFragment$key,
 } from '../../__generated__/BAISchedulingHistoryNodesFragment.graphql';
-import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
+import {
+  filterOutEmpty,
+  filterOutNullAndUndefined,
+  newLineToBrElement,
+} from '../../helper';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAISchedulingResultBadge, {
   SchedulingResult,
 } from '../BAISchedulingResultBadge';
+import BAIText from '../BAIText';
 import {
+  BAITableProps,
   BAIColumnsType,
   BAIColumnType,
   BAITable,
-  BAITableProps,
 } from '../Table';
-import { BAIColumnGroupType } from '../Table/BAITable';
-import BAISessionHistorySubStepNodes from './BAISessionHistorySubStepNodes';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
 export type SchedulingHistoryNodeInList = NonNullable<
   BAISchedulingHistoryNodesFragment$data[number]
 >;
 
-const availableHistorySorterKeys = ['created_at', 'updated_at'] as const;
+const availableHistorySorterKeys = [] as const;
 
 export const availableHistorySorterValues = [
   ...availableHistorySorterKeys,
@@ -56,14 +59,13 @@ const BAISchedulingHistoryNodes = ({
   ...tableProps
 }: BAISchedulingHistoryNodesProps) => {
   'use memo';
-  const { t } = useTranslation();
+  const { t } = useBAIi18n();
 
   const histories = useFragment<BAISchedulingHistoryNodesFragment$key>(
     graphql`
       fragment BAISchedulingHistoryNodesFragment on SessionSchedulingHistory
       @relay(plural: true) {
         id
-        sessionId
         attempts
         createdAt
         updatedAt
@@ -72,19 +74,27 @@ const BAISchedulingHistoryNodes = ({
         message
         phase
         result
-        subSteps {
-          ...BAISessionHistorySubStepNodesFragment
-        }
       }
     `,
     schedulingHistoryFrgmt,
   );
 
   const baseColumns = _.map(
-    filterOutEmpty<
-      | BAIColumnType<SchedulingHistoryNodeInList>
-      | BAIColumnGroupType<SchedulingHistoryNodeInList>
-    >([
+    filterOutEmpty<BAIColumnType<SchedulingHistoryNodeInList>>([
+      {
+        dataIndex: 'updatedAt',
+        title: t('comp:BAISchedulingHistoryNodes.UpdatedAt'),
+        key: 'updatedAt',
+        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
+        sorter: isEnableSorter('updated_at'),
+      },
+      {
+        dataIndex: 'createdAt',
+        title: t('comp:BAISchedulingHistoryNodes.CreatedAt'),
+        key: 'createdAt',
+        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
+        sorter: isEnableSorter('created_at'),
+      },
       {
         dataIndex: 'phase',
         title: t('comp:BAISchedulingHistoryNodes.Phase'),
@@ -105,22 +115,16 @@ const BAISchedulingHistoryNodes = ({
         sorter: isEnableSorter('result'),
       },
       {
-        title: t('comp:BAISchedulingHistoryNodes.StatusTransition'),
-        key: 'statusTransition',
-        children: [
-          {
-            key: 'fromStatus',
-            title: t('comp:BAISchedulingHistoryNodes.From'),
-            dataIndex: 'fromStatus',
-            sorter: isEnableSorter('from_status'),
-          },
-          {
-            key: 'toStatus',
-            title: t('comp:BAISchedulingHistoryNodes.To'),
-            dataIndex: 'toStatus',
-            sorter: isEnableSorter('to_status'),
-          },
-        ],
+        key: 'fromStatus',
+        title: t('comp:BAISchedulingHistoryNodes.From'),
+        dataIndex: 'fromStatus',
+        sorter: isEnableSorter('from_status'),
+      },
+      {
+        key: 'toStatus',
+        title: t('comp:BAISchedulingHistoryNodes.To'),
+        dataIndex: 'toStatus',
+        sorter: isEnableSorter('to_status'),
       },
       {
         dataIndex: 'attempts',
@@ -129,18 +133,19 @@ const BAISchedulingHistoryNodes = ({
         sorter: isEnableSorter('attempts'),
       },
       {
-        dataIndex: 'updatedAt',
-        title: t('comp:BAISchedulingHistoryNodes.UpdatedAt'),
-        key: 'updatedAt',
-        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
-        sorter: isEnableSorter('updated_at'),
-      },
-      {
-        dataIndex: 'createdAt',
-        title: t('comp:BAISchedulingHistoryNodes.CreatedAt'),
-        key: 'createdAt',
-        render: (value) => <span>{dayjs(value).format('ll LTS')}</span>,
-        sorter: isEnableSorter('created_at'),
+        key: 'message',
+        title: t('comp:BAISchedulingHistoryNodes.Message'),
+        dataIndex: 'message',
+        onCell: () => ({ style: { maxWidth: 500 } }),
+        render: (__, record) =>
+          record.message ? (
+            <BAIText title={record.message} style={{ width: '100%' }}>
+              {newLineToBrElement(record.message)}
+            </BAIText>
+          ) : (
+            '-'
+          ),
+        sorter: isEnableSorter('message'),
       },
     ]),
     (column) => {
@@ -151,31 +156,23 @@ const BAISchedulingHistoryNodes = ({
   const allColumns = customizeColumns
     ? customizeColumns(baseColumns)
     : baseColumns;
+
   return (
+    // to-astryx ticket 25: migrated to the Astryx engine — this is the
+    // expandable-row proving ground (`expandable` arrives from
+    // `BAISchedulingHistoryTable` and renders the `BAISubStepNodes` timeline).
     <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(histories)}
       columns={allColumns}
-      scroll={{ x: 'max-content' }}
       onChangeOrder={(order) => {
         onChangeOrder?.(
           (order as (typeof availableHistorySorterValues)[number]) || null,
         );
       }}
-      expandable={{
-        rowExpandable: (record) => !_.isEmpty(record.subSteps),
-        expandedRowRender: (record) => {
-          return (
-            <BAISessionHistorySubStepNodes
-              resizable
-              subStepsFrgmt={record.subSteps}
-              pagination={false}
-            />
-          );
-        },
-      }}
       {...tableProps}
-    ></BAITable>
+    />
   );
 };
 

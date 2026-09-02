@@ -24,7 +24,91 @@ import {
   toFixedWithTypeValidation,
   addNumberWithUnits,
   subNumberWithUnits,
+  compareImageVersions,
+  resolveImageFullName,
+  convertToOrderBy,
+  convertFirstOrderByToString,
 } from './index';
+
+describe('convertToOrderBy', () => {
+  it('returns undefined for empty, null, or undefined input', () => {
+    expect(convertToOrderBy(undefined)).toBeUndefined();
+    expect(convertToOrderBy(null)).toBeUndefined();
+    expect(convertToOrderBy('')).toBeUndefined();
+  });
+  it('snake-cases the field and derives the direction from the prefix', () => {
+    expect(convertToOrderBy('name')).toEqual([
+      { field: 'NAME', direction: 'ASC' },
+    ]);
+    expect(convertToOrderBy('-createdAt')).toEqual([
+      { field: 'CREATED_AT', direction: 'DESC' },
+    ]);
+  });
+  it('uses only the last part of a joined array dataIndex', () => {
+    // '.' is what BAITable emits for array dataIndex; ',' is the antd-era join.
+    expect(convertToOrderBy('-calculationSnapshot.fairShareFactor')).toEqual([
+      { field: 'FAIR_SHARE_FACTOR', direction: 'DESC' },
+    ]);
+    expect(convertToOrderBy('-calculationSnapshot,fairShareFactor')).toEqual([
+      { field: 'FAIR_SHARE_FACTOR', direction: 'DESC' },
+    ]);
+  });
+  it('applies fieldNameMap after extracting the last path segment', () => {
+    expect(
+      convertToOrderBy('-calculationSnapshot.fairShareFactor', {
+        fairShareFactor: 'FAIR_SHARE_FACTOR',
+      }),
+    ).toEqual([{ field: 'FAIR_SHARE_FACTOR', direction: 'DESC' }]);
+  });
+  it('maps the field through fieldNameMap when the key is present', () => {
+    expect(convertToOrderBy('-email', { email: 'USER_EMAIL' })).toEqual([
+      { field: 'USER_EMAIL', direction: 'DESC' },
+    ]);
+    expect(convertToOrderBy('username', { username: 'USER_USERNAME' })).toEqual(
+      [{ field: 'USER_USERNAME', direction: 'ASC' }],
+    );
+  });
+  it('falls back to snake-casing for keys missing from fieldNameMap', () => {
+    expect(convertToOrderBy('createdAt', { email: 'USER_EMAIL' })).toEqual([
+      { field: 'CREATED_AT', direction: 'ASC' },
+    ]);
+  });
+});
+
+describe('convertFirstOrderByToString', () => {
+  it('returns null for empty, null, or undefined input', () => {
+    expect(convertFirstOrderByToString(undefined)).toBeNull();
+    expect(convertFirstOrderByToString(null)).toBeNull();
+    expect(convertFirstOrderByToString([])).toBeNull();
+    expect(convertFirstOrderByToString([{}])).toBeNull();
+  });
+  it('converts an ASC entry to a camelCase string with no prefix', () => {
+    expect(
+      convertFirstOrderByToString([{ field: 'NAME', direction: 'ASC' }]),
+    ).toBe('name');
+  });
+  it('prefixes a DESC entry with a minus sign', () => {
+    expect(
+      convertFirstOrderByToString([{ field: 'NAME', direction: 'DESC' }]),
+    ).toBe('-name');
+  });
+  it('camelCases SCREAMING_SNAKE_CASE enum fields', () => {
+    expect(
+      convertFirstOrderByToString([{ field: 'CREATED_AT', direction: 'ASC' }]),
+    ).toBe('createdAt');
+    expect(
+      convertFirstOrderByToString([{ field: 'CREATED_AT', direction: 'DESC' }]),
+    ).toBe('-createdAt');
+  });
+  it('uses only the first entry', () => {
+    expect(
+      convertFirstOrderByToString([
+        { field: 'NAME', direction: 'DESC' },
+        { field: 'CREATED_AT', direction: 'ASC' },
+      ]),
+    ).toBe('-name');
+  });
+});
 
 describe('isOutsideRange', () => {
   it('should return true if the value is less than the minimum', () => {
@@ -831,8 +915,8 @@ describe('newLineToBrElement', () => {
 describe('baiSignedRequestWithPromise', () => {
   it('should call client methods when client is provided', () => {
     const mockClient = {
-      newSignedRequest: jest.fn().mockReturnValue('mockRequest'),
-      _wrapWithPromise: jest.fn().mockReturnValue('mockPromise'),
+      newSignedRequest: vi.fn().mockReturnValue('mockRequest'),
+      _wrapWithPromise: vi.fn().mockReturnValue('mockPromise'),
     };
 
     const result = baiSignedRequestWithPromise({
@@ -854,8 +938,8 @@ describe('baiSignedRequestWithPromise', () => {
 
   it('should handle body parameter', () => {
     const mockClient = {
-      newSignedRequest: jest.fn().mockReturnValue('mockRequest'),
-      _wrapWithPromise: jest.fn().mockReturnValue('mockPromise'),
+      newSignedRequest: vi.fn().mockReturnValue('mockRequest'),
+      _wrapWithPromise: vi.fn().mockReturnValue('mockPromise'),
     };
 
     baiSignedRequestWithPromise({
@@ -1051,5 +1135,193 @@ describe('subNumberWithUnits', () => {
   it('should handle negative results', () => {
     const result = subNumberWithUnits('2g', '5g', 'g');
     expect(result).toBe('-3g');
+  });
+});
+
+describe('compareImageVersions', () => {
+  it('should treat a higher leading segment as newer', () => {
+    expect(compareImageVersions('3.13', '3.9')).toBe(1);
+    expect(compareImageVersions('3.9', '3.13')).toBe(-1);
+  });
+
+  it('should return 0 for equal versions', () => {
+    expect(compareImageVersions('3.13', '3.13')).toBe(0);
+  });
+
+  it('should pad missing segments with zero', () => {
+    expect(compareImageVersions('3.13.1', '3.13')).toBe(1);
+    expect(compareImageVersions('3.13', '3.13.0')).toBe(0);
+  });
+
+  it('should sort a non-numeric segment as version 0 (inherited launcher behavior)', () => {
+    // `Number('ngc')` is NaN and `NaN || 0` is 0, so a non-numeric leading
+    // segment can never win "latest". Documented here, not endorsed.
+    expect(compareImageVersions('2.1', 'ngc')).toBe(1);
+    expect(compareImageVersions('ngc', '2.1')).toBe(-1);
+    expect(compareImageVersions('ngc', '0')).toBe(0);
+  });
+});
+
+describe('resolveImageFullName', () => {
+  const images = [
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'stable/python',
+      tag: '3.9-ubuntu20.04',
+      architecture: 'x86_64',
+    },
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'stable/python',
+      tag: '3.13-ubuntu24.04',
+      architecture: 'aarch64',
+    },
+    {
+      registry: 'cr.backend.ai',
+      namespace: 'stable/python',
+      tag: '3.13-ubuntu24.04',
+      architecture: 'x86_64',
+    },
+    {
+      // Deliberately newer than every `stable/python` tag: a broken namespace
+      // filter that matches by prefix would leak this into `stable/python`
+      // lookups and change their answer.
+      registry: 'cr.backend.ai',
+      namespace: 'stable/python-ff',
+      tag: '9.99-ubuntu24.04',
+      architecture: 'x86_64',
+    },
+  ];
+
+  it('should return the exact image for a fully qualified reference', () => {
+    expect(
+      resolveImageFullName(
+        'cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64',
+        images,
+      ),
+    ).toBe('cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64');
+  });
+
+  it('should pick the first available architecture when the tag has no architecture', () => {
+    expect(
+      resolveImageFullName(
+        'cr.backend.ai/stable/python:3.13-ubuntu24.04',
+        images,
+      ),
+    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64');
+  });
+
+  it('should pick the latest version when the reference has no tag', () => {
+    expect(resolveImageFullName('cr.backend.ai/stable/python', images)).toBe(
+      'cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64',
+    );
+  });
+
+  it('should not match an environment that merely shares a name prefix', () => {
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/pyth', images),
+    ).toBeUndefined();
+  });
+
+  it('should not leak a longer namespace with a newer tag into the lookup', () => {
+    // `stable/python-ff` carries 9.99 (newer than every `stable/python` tag);
+    // a prefix-style namespace filter would wrongly return it here.
+    expect(resolveImageFullName('cr.backend.ai/stable/python', images)).toBe(
+      'cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64',
+    );
+    expect(resolveImageFullName('cr.backend.ai/stable/python-ff', images)).toBe(
+      'cr.backend.ai/stable/python-ff:9.99-ubuntu24.04@x86_64',
+    );
+  });
+
+  it('should restrict to the requested architecture for an arch-only reference', () => {
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/python@x86_64', images),
+    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@x86_64');
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/python@riscv64', images),
+    ).toBeUndefined();
+  });
+
+  it('should exclude private images like the launcher form does', () => {
+    const privateOnly = [
+      {
+        registry: 'cr.backend.ai',
+        namespace: 'stable/python',
+        tag: '9.99-ubuntu24.04',
+        architecture: 'x86_64',
+        labels: [{ key: 'ai.backend.features', value: 'operation private' }],
+      },
+      ...images,
+    ];
+    // The private 9.99 build must not win the "latest version" pick …
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/python', privateOnly),
+    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@aarch64');
+    // … and must not resolve even when referenced by its exact tag.
+    expect(
+      resolveImageFullName(
+        'cr.backend.ai/stable/python:9.99-ubuntu24.04',
+        privateOnly,
+      ),
+    ).toBeUndefined();
+  });
+
+  it('should return undefined when no registered image matches', () => {
+    expect(
+      resolveImageFullName(
+        'cr.backend.ai/stable/python:0.0-nonexistent',
+        images,
+      ),
+    ).toBeUndefined();
+    expect(
+      resolveImageFullName('cr.backend.ai/missing/image', images),
+    ).toBeUndefined();
+  });
+
+  it('should return undefined for an empty reference or empty image list', () => {
+    expect(resolveImageFullName('', images)).toBeUndefined();
+    expect(resolveImageFullName(undefined, images)).toBeUndefined();
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/python', []),
+    ).toBeUndefined();
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/python', undefined),
+    ).toBeUndefined();
+  });
+
+  it('should fall back to the deprecated name field when namespace is absent', () => {
+    expect(
+      resolveImageFullName('cr.backend.ai/stable/python', [
+        {
+          registry: 'cr.backend.ai',
+          name: 'stable/python',
+          tag: '3.13-ubuntu24.04',
+          architecture: 'x86_64',
+        },
+      ]),
+    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@x86_64');
+  });
+
+  it('should handle a registry with a port', () => {
+    const portImages = [
+      {
+        registry: '127.0.0.1:5000',
+        namespace: 'stable/python',
+        tag: '3.13-ubuntu24.04',
+        architecture: 'x86_64',
+      },
+    ];
+    expect(
+      resolveImageFullName('127.0.0.1:5000/stable/python', portImages),
+    ).toBe('127.0.0.1:5000/stable/python:3.13-ubuntu24.04@x86_64');
+    // The registry colon must not be mistaken for the tag separator when a
+    // tag is present but the architecture is not.
+    expect(
+      resolveImageFullName(
+        '127.0.0.1:5000/stable/python:3.13-ubuntu24.04',
+        portImages,
+      ),
+    ).toBe('127.0.0.1:5000/stable/python:3.13-ubuntu24.04@x86_64');
   });
 });

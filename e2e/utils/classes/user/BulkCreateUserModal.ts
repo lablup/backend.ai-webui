@@ -75,10 +75,13 @@ export class BulkCreateUserModal {
   }
 
   /**
-   * Get the OK button
+   * Get the OK (submit) button.
+   * Shares `UserSettingModal.tsx` with the single-user Create/Edit flow;
+   * bulk create has no `user`, so `okText={user ? t('button.Save') :
+   * t('button.Create')}` resolves to "Create" (FR-3331).
    */
   getOkButton(): Locator {
-    return this.modal.getByRole('button', { name: 'OK' });
+    return this.modal.getByRole('button', { name: 'Create' });
   }
 
   /**

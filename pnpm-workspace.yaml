@@ -1,102 +1,164 @@
 packages:
   - react
-  - packages/backend.ai-ui
-  - packages/eslint-config-bai
-  - packages/backend.ai-docs-toolkit
-  - packages/backend.ai-webui-docs
+  - packages/*
 
 catalog:
-  '@ant-design/icons': ^6.1.0
-  '@babel/core': ^7.29.0
-  '@babel/preset-typescript': ^7.28.5
-  '@eslint/js': ^9.39.4
-  '@jest/expect': 30.2.0
-  '@jest/globals': 30.2.0
-  '@tanstack/react-query': ^5.90.21
-  '@testing-library/jest-dom': ^6.9.1
-  '@testing-library/react': ^16.3.2
-  '@testing-library/user-event': ^14.6.1
-  '@trivago/prettier-plugin-sort-imports': ^6.0.2
-  '@types/big.js': ^6.2.2
-  '@types/jest': ^30.0.0
-  '@types/lodash': ^4.17.24
-  '@types/node': ^22.19.15
-  '@types/react': ^19.2.14
-  '@types/react-copy-to-clipboard': ^5.0.7
-  '@types/react-dom': ^19.2.3
-  '@types/react-relay': ^18.2.1
-  '@types/relay-runtime': ^19.0.3
-  '@types/relay-test-utils': ^19.0.0
-  ahooks: ^3.9.6
-  antd: ^6.3.1
-  antd-style: ^3.7.1
-  babel-jest: ^30.2.0
+  # Astryx pins are exact and move as one set: theme-neutral peer-requires the
+  # exact core version, and the CLI generates artifacts read by that same core.
+  "@astryxdesign/cli": 0.5.2
+  "@astryxdesign/core": 0.5.2
+  "@astryxdesign/lab": 0.3.0-canary.12db2a1
+  "@astryxdesign/theme-neutral": 0.5.2
+  "@babel/core": ^7.29.7
+  "@babel/preset-typescript": ^7.29.7
+  "@eslint/js": ^9.39.5
+  "@jest/expect": 30.3.0
+  "@jest/globals": 30.3.0
+  "@tanstack/react-query": ^5.101.4
+  "@testing-library/jest-dom": ^6.9.1
+  "@testing-library/react": ^16.3.2
+  "@testing-library/user-event": ^14.6.3
+  "@trivago/prettier-plugin-sort-imports": ^6.0.2
+  "@types/big.js": ^6.2.2
+  "@types/jest": ^30.0.0
+  "@types/lodash": ^4.17.25
+  "@types/lodash-es": ^4.17.12
+  "@types/node": ^22.20.1
+  "@types/react": ^19.2.18
+  "@types/react-copy-to-clipboard": ^5.0.7
+  "@types/react-dom": ^19.2.4
+  "@types/react-relay": ^18.2.1
+  "@types/relay-runtime": ^19.0.3
+  "@types/relay-test-utils": ^19.0.0
+  babel-jest: ^30.3.0
   babel-plugin-react-compiler: ^1.0.0
   big.js: ^7.0.1
   classnames: ^2.5.1
-  dayjs: ^1.11.19
-  dompurify: ^3.3.2
-  eslint: ^9.39.4
+  dayjs: ^1.11.21
+  dompurify: ^3.4.12
+  eslint: ^9.39.5
   eslint-plugin-import: ^2.32.0
   eslint-plugin-json-schema-validator: ^5.5.1
   eslint-plugin-react: ^7.37.5
-  eslint-plugin-react-hooks: ^7.0.1
+  eslint-plugin-react-hooks: ^7.1.1
   globals: ^16.5.0
-  graphql: ^16.13.1
-  i18next: ^25.8.14
-  jest: ^30.2.0
-  jest-environment-jsdom: ^30.2.0
+  graphql: ^16.14.2
+  i18next: ^25.10.10
+  jest: ^30.3.0
+  jest-environment-jsdom: ^30.3.0
   jsonc-eslint-parser: ^2.4.2
-  lodash: ^4.17.23
-  lucide-react: ^0.552.0
+  lodash-es: ^4.18.1
+  # ^1.x: single-major convergence with @astryxdesign/theme-neutral@0.5.2,
+  # whose hard dependency is lucide-react ^1.18.0 (to-astryx ticket 07). All
+  # 78 icon names the app imports exist in both 0.552 and 1.x (measured);
+  # converging up dedupes the two installed majors into one instance.
+  lucide-react: ^1.29.0
   marked: ^16.4.2
-  prettier: ^3.8.1
+  prettier: ^3.9.6
   prettier-plugin-sort-json: ^4.2.0
-  react: ^19.2.4
+  qrcode.react: ^4.2.0
+  react: ^19.2.8
   react-copy-to-clipboard: ^5.1.1
-  react-dom: ^19.2.4
-  react-i18next: ^16.5.6
+  react-dom: ^19.2.8
+  react-i18next: ^16.6.6
   react-relay: ^20.1.1
-  react-router-dom: ^6.30.3
+  react-router-dom: ^6.30.4
   relay-compiler: ^20.1.1
   relay-runtime: ^20.1.1
   relay-test-utils: ^20.1.1
-  smol-toml: ^1.6.0
-  ts-jest: ^29.4.6
+  smol-toml: ^1.7.1
+  ts-jest: ^29.4.9
   tus-js-client: ^4.3.1
-  typescript-eslint: ^8.56.1
-  uuid: ^13.0.0
-  webpack: ^5.105.4
+  typescript-eslint: ^8.66.0
+  uuid: ^13.0.2
+  webpack: ^5.106.1
 
-gitBranchLockfile: true
-
-mergeGitBranchLockfilesBranchPattern:
-  - main
+# Dependencies hard-link into a global store outside this repo
+# (e.g. `~/Library/pnpm/store/v11/...`). `react/vite.config.ts` extends
+# `server.fs.allow` with `pnpm store path` so Vite can serve assets from
+# the store; do not remove that extension without also reverting this flag.
+enableGlobalVirtualStore: true
 
 minimumReleaseAge: 10080
 
+# Exclude packages that must be installable before they age out of the
+# `minimumReleaseAge` quarantine. Remove entries once they exceed 7 days.
 minimumReleaseAgeExclude:
-  - node-forge@1.3.2
-  - react@19.2.4
-  - react-dom@19.2.4
-  - '@ant-design/x@2.1.3'
-  - react-i18next@16.5.1
-  - i18next@25.7.4
-  - antd@6.1.3
+  - react@19.2.6
+  - react-dom@19.2.6
+  - nuqs@2.9.2
+  # Astryx 0.5.2: published 2026-08-30, inside the 7-day window at adoption
+  # time. Remove after 2026-09-06.
+  - "@astryxdesign/core@0.5.2"
+  - "@astryxdesign/theme-neutral@0.5.2"
+  - "@astryxdesign/cli@0.5.2"
+  # Astryx Lab canary (to-astryx, ticket 18): MIGRATION-SPEC §1-④ decided
+  # canary adoption with an exact pin; canary releases never age past the
+  # quarantine window by design, so the exclusion is permanent while the
+  # pin exists. Tarball-verified build (MAPPING.md header).
+  - "@astryxdesign/lab@0.3.0-canary.12db2a1"
+minimumReleaseAgeIgnoreMissingTime: false
+resolutionMode: time-based
 
-onlyBuiltDependencies:
-  - bufferutil
-  - core-js
-  - core-js-pure
-  - electron
-  - es5-ext
-  - esbuild
-  - unrs-resolver
-  - utf-8-validate
+allowBuilds:
+  # `false` on purpose for both @astryxdesign entries: each postinstall only
+  # prints an `astryx init` nudge (non-interactive, always exits 0) — no build
+  # output is needed. Without an entry here pnpm 11's verifyDepsBeforeRun
+  # aborts every `pnpm run <script>` with ERR_PNPM_IGNORED_BUILDS.
+  "@astryxdesign/cli": false
+  "@astryxdesign/core": false
+  bufferutil: true
+  core-js: true
+  core-js-pure: true
+  electron: true
+  es5-ext: true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+  utf-8-validate: true
+
+overrides:
+  tar-fs@2: 2.1.4
+  # Build-tooling override. `@electron/packager` and `electron`'s own
+  # install.js both extract their downloaded ZIPs via `extract-zip` → `yauzl`.
+  # yauzl 2.10.0 extracts only the first entry and then lets the process exit
+  # 0 with no error on Node >= 24.16.0 / >= 26.1.0, so desktop packaging
+  # produces no app bundle and the Makefile fails later at the misleading
+  # `mv`/`zip` step (build_mac + build_desktop, since CI's `.nvmrc: 24` floated
+  # 24.15.0 -> 24.16.0). yauzl >= 3.3.1 fixes the silent extraction failure.
+  # See electron/electron#51619 (#51623). Remove once extract-zip ranges to
+  # yauzl >= 3.3.1 on its own.
+  yauzl: ^3.3.1
+  # Runtime security overrides — FR-3014. Pin transitive deps that end up in
+  # the production bundle to the first Dependabot-recommended patched
+  # version. Remove an entry when every upstream consumer ranges to the
+  # patched version on its own.
+  js-cookie: ^3.0.7 # GHSA-… prototype hijack (alert #385)
+  mermaid: ^11.15.0 # HTML/CSS injection + DoS (alerts #379–382)
+  serialize-javascript: ^7.0.5 # RCE via RegExp.flags, CPU DoS (#279, #386)
+  "uuid@^11": ^11.1.1 # buffer bounds check (#387) v11 line
+  "uuid@^13": ^13.0.1 # buffer bounds check (#374) v13 line
+  dompurify: ^3.4.12 # align transitives with catalog bump
+  # Dev-only transitive security overrides — FR-3014. These ship only in
+  # dev/build tooling (not the production bundle), but Dependabot still
+  # surfaces them. Remove an entry when every upstream consumer ranges to
+  # the patched version on its own.
+  qs: ^6.15.2 # crash on null in comma-format arrays (alert #388)
+  "@babel/plugin-transform-modules-systemjs": ^7.29.4 # arbitrary code on malicious input (#378 high)
+  "fast-uri@^3": ^3.1.2 # host confusion + path traversal (#376, #377 high)
+  postcss: ^8.5.10 # XSS via unescaped </style> (#372)
+  "@xmldom/xmldom": ^0.8.13 # XML injection (#318, #368, #369, #371 high)
+  "picomatch@^2": ^2.3.2 # method injection in POSIX char classes (#296)
+  "picomatch@^4": ^4.0.4 # same (#294)
+  "minimatch@^3": ^3.1.4 # ReDoS (#267, #274, #278 high)
+  "js-yaml@^4": ^4.1.1 # prototype pollution in merge (#226)
+  "flatted@^3": ^3.4.2 # prototype pollution via parse() (#291 high)
+  "yaml@^1": ^1.10.3 # stack overflow on deeply nested YAML (#292)
+  lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
 
 patchedDependencies:
-  '@cloudscape-design/board-components@3.0.60': react/patches/@cloudscape-design__board-components@3.0.60.patch
-  '@lobehub/fluent-emoji@2.0.0': react/patches/lobehub__fluent-emoji@2.0.0.patch
-  '@rc-component/form': react/patches/@rc-component__form.patch
+  "@astryxdesign/core@0.5.2": react/patches/@astryxdesign__core@0.5.2.patch
+  "@astryxdesign/lab@0.3.0-canary.12db2a1": react/patches/@astryxdesign__lab@0.3.0-canary.12db2a1.patch
+  "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
   ansi_up@6.0.6: react/patches/ansi_up@6.0.6.patch
-  react-scripts@5.0.1: react/patches/react-scripts@5.0.1.patch
+  relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

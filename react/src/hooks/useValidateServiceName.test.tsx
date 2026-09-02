@@ -2,7 +2,7 @@ import { useValidateServiceName } from './useValidateServiceName';
 import { renderHook } from '@testing-library/react';
 
 // Mock react-i18next
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
   }),

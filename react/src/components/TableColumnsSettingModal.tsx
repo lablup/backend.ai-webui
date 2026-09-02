@@ -1,25 +1,66 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
-import { SearchOutlined } from '@ant-design/icons';
-import { Checkbox, Input, theme, Form } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import { FormInstance } from 'antd/lib';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
-import _ from 'lodash';
-import React, { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+
+ QA-FINDINGS Q-13 — "My Environments, RBAC Management 의 table settings modal
+ 에서만 다른 스타일을 갖고 있습니다. 다른 컴포넌트와 동일한 스타일을 유지하도록
+ 수정이 필요합니다."
+
+ There are two column-settings surfaces in the app. Most tables use the one
+ `BAITable` renders for its `tableSettings` prop
+ (`BAITableSettingModal`): a `Dialog` with a title+subtitle header, an
+ unlabelled search field, drag-to-reorder handles, locked required columns and
+ Cancel/Apply. The five tables that predate that prop — `RoleNodes` (RBAC
+ Management), `CustomizedImageList` (My Environments), `ImageList`,
+ `ContainerRegistryList`, `AgentSummaryList` — reach this component instead,
+ which drew its own `BAIModal` + `Form` with a LABELLED search field, a 220px
+ box, no reordering and OK/Cancel. Same job, visibly different modal.
+
+ So this component keeps its own prop contract and its own persistence, and
+ DELEGATES the rendering. Those five tables store visibility as
+ `hiddenColumnKeys` through `useHiddenColumnKeysSetting`, while
+ `tableSettings` stores a richer `columnOverrides` record (hidden + order +
+ width); migrating them is a storage change that would drop users' saved
+ columns on first load, and it is not what the report asks for. Delegating gets
+ one look out of one implementation with no storage change and no call-site
+ edit.
+
+ Two behaviours are deliberately NOT forwarded, because this contract cannot
+ carry them:
+
+ - **Drag-to-reorder** is disabled (`disableReorder`). `hiddenColumnKeys` has
+   nowhere to put an order, so an order the user set would be silently lost on
+   close. The shared modal already hides its grip handles in that mode.
+ - **Required columns** are not marked. `BAIColumnsType` carries `required`,
+   but these five call sites never set it, so nothing would render differently.
+
+ The label flattening also comes from the shared helper now. The local
+ `onChangeTitleToString` walked only the DIRECT string children of an element,
+ so a header nesting its text one level deeper (a tooltip'd header, an icon +
+ label pair) produced `undefined` and the row showed its raw column key —
+ the same class of defect as Q-12, one narrower.
+*/
+import {
+  BAITableSettingModal,
+  columnTitleToPlainText,
+  renderColumnTitle,
+  type BAIColumnsType,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import React from 'react';
 
 interface FormValues {
-  searchInput?: string;
+  /** Kept for the callers' existing `onRequestClose(values)` handling. */
   selectedColumnKeys?: Array<string>;
 }
 
-interface TableColumnsSettingProps extends BAIModalProps {
+interface TableColumnsSettingProps {
   open: boolean;
   onRequestClose: (formValues?: FormValues) => void;
-  columns: ColumnsType<any>;
+  // Frontier note (ticket 19): typed against BUI's re-exported BAIColumnsType
+  // so this shared modal no longer imports antd types directly; consumers'
+  // antd `ColumnsType` values are structurally identical.
+  columns: BAIColumnsType<any>;
   hiddenColumnKeys?: Array<string>;
 }
 
@@ -28,125 +69,34 @@ const TableColumnsSettingModal: React.FC<TableColumnsSettingProps> = ({
   onRequestClose,
   columns,
   hiddenColumnKeys,
-  ...modalProps
 }) => {
-  const formRef = useRef<FormInstance>(null);
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
-
-  const onChangeTitleToString: any = (element: any) => {
-    const text = React.Children.map(element.props.children, (child) => {
-      if (typeof child === 'string') {
-        return child;
-      }
-    });
-    return text;
-  };
-
-  const columnOptions = _.map(columns, (column) => {
-    if (typeof column.title === 'string') {
-      return {
-        label: column.title,
-        value: _.toString(column.key),
-      };
-    } else if (typeof column.title === 'object' && 'props' in column.title!) {
-      return {
-        label: onChangeTitleToString(column.title),
-        value: _.toString(column.key),
-      };
-    } else {
-      return {
-        label: undefined,
-        value: _.toString(column.key),
-      };
-    }
+  'use memo';
+  const settingColumns = _.map(columns, (column) => {
+    const key = _.toString(column.key);
+    return {
+      key,
+      label: columnTitleToPlainText(renderColumnTitle(column)).trim() || key,
+      required: !!(column as { required?: boolean }).required,
+    };
   });
 
   return (
-    <BAIModal
-      title={t('table.SettingTable')}
+    <BAITableSettingModal
       open={open}
-      destroyOnHidden
-      centered
-      onOk={() => {
-        formRef.current
-          ?.validateFields()
-          .then((values) => {
-            onRequestClose(values);
-          })
-          .catch(() => {});
-      }}
-      onCancel={() => {
-        onRequestClose();
-      }}
-      {...modalProps}
-    >
-      <Form
-        ref={formRef}
-        preserve={false}
-        initialValues={{
-          selectedColumnKeys: _.map(columnOptions, 'value')?.filter(
-            (columnKey) => !_.includes(hiddenColumnKeys, columnKey),
-          ),
-        }}
-        layout="vertical"
-      >
-        <Form.Item
-          name="searchInput"
-          label={t('table.SelectColumnToDisplay')}
-          style={{ marginBottom: 0 }}
-        >
-          <Input
-            prefix={<SearchOutlined />}
-            style={{ marginBottom: token.marginSM }}
-            placeholder={t('table.SearchTableColumn')}
-          />
-        </Form.Item>
-        <Form.Item
-          noStyle
-          shouldUpdate={(prev, cur) => prev.searchInput !== cur.searchInput}
-        >
-          {({ getFieldValue }) => {
-            const searchKeyword = getFieldValue('searchInput')
-              ? _.toLower(getFieldValue('searchInput'))
-              : undefined;
-
-            const filteredColumns = _.map(columnOptions, (columnOption) =>
-              _.toLower(_.toString(columnOption.label)).includes(
-                searchKeyword || '',
-              )
-                ? columnOption
-                : {
-                    ...columnOption,
-                    style: {
-                      display: 'none',
-                    },
-                  },
-            );
-            return (
-              <Form.Item
-                name="selectedColumnKeys"
-                style={{
-                  height: 220,
-                  overflowY: 'auto',
-                }}
-                rules={[
-                  {
-                    required: true,
-                    message: t('general.validation.PleaseSelectOptions'),
-                  },
-                ]}
-              >
-                <Checkbox.Group
-                  options={filteredColumns}
-                  style={{ flexDirection: 'column' }}
-                />
-              </Form.Item>
-            );
-          }}
-        </Form.Item>
-      </Form>
-    </BAIModal>
+      columns={settingColumns}
+      visibleColumnKeys={_.difference(
+        _.map(settingColumns, 'key'),
+        hiddenColumnKeys ?? [],
+      )}
+      disableReorder
+      onRequestClose={(result) =>
+        onRequestClose(
+          result
+            ? { selectedColumnKeys: result.selectedColumnKeys }
+            : undefined,
+        )
+      }
+    />
   );
 };
 

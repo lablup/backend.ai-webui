@@ -16,120 +16,215 @@ export const MOCK_MODEL_ID = 'gpt-mock-model';
 export const MOCK_MODEL_ID_B = 'gpt-mock-model-b';
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Relay global-id helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Mirrors `toGlobalId` from `backend.ai-ui` (`btoa(\`${type}:${id}\`)`), but
+ * implemented locally with `Buffer` since this file runs in the Playwright
+ * Node context, not the browser. The Strawberry `deployment(id:)` field and
+ * `myDeployments` connection nodes address deployments by this global id, and
+ * the app decodes it back to the local UUID with `toLocalId`.
+ */
+function toGlobalId(type: string, id: string): string {
+  return Buffer.from(`${type}:${id}`).toString('base64');
+}
+
+const MOCK_DEPLOYMENT_GLOBAL_ID = toGlobalId(
+  'ModelDeployment',
+  MOCK_ENDPOINT_UUID,
+);
+const MOCK_DEPLOYMENT_GLOBAL_ID_B = toGlobalId(
+  'ModelDeployment',
+  MOCK_ENDPOINT_UUID_B,
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
 // GraphQL mock response factories
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Returns a single mock endpoint for ChatPageQuery.
+ * Returns a single mock deployment for ChatPageQuery (`myDeployments`).
  * Shape matches the wire-format GraphQL response (not Relay TypeScript types).
  */
 export function chatPageQueryMockResponse() {
   return {
-    endpoint_list: {
-      items: [{ endpoint_id: MOCK_ENDPOINT_UUID }],
+    myDeployments: {
+      edges: [{ node: { id: MOCK_DEPLOYMENT_GLOBAL_ID } }],
     },
   };
 }
 
 /**
- * Returns the endpoint list for EndpointSelectQuery (single endpoint).
- * Includes all fields required by EndpointSelectQuery: total_count, name, url.
- */
-export function endpointSelectQueryMockResponse() {
-  return {
-    endpoint_list: {
-      total_count: 1,
-      items: [
-        {
-          endpoint_id: MOCK_ENDPOINT_UUID,
-          name: 'mock-endpoint',
-          url: MOCK_ENDPOINT_URL,
-        },
-      ],
-    },
-  };
-}
-
-/**
- * Returns two endpoints for EndpointSelectQuery (two-endpoint multi-pane tests).
- */
-export function endpointSelectQueryTwoEndpointsMockResponse() {
-  return {
-    endpoint_list: {
-      total_count: 2,
-      items: [
-        {
-          endpoint_id: MOCK_ENDPOINT_UUID,
-          name: 'mock-endpoint',
-          url: MOCK_ENDPOINT_URL,
-        },
-        {
-          endpoint_id: MOCK_ENDPOINT_UUID_B,
-          name: 'mock-endpoint-b',
-          url: MOCK_ENDPOINT_URL_B,
-        },
-      ],
-    },
-  };
-}
-
-/**
- * Returns two mock endpoints for multi-pane tests (ChatPageQuery shape).
+ * Returns two mock deployments for ChatPageQuery's `myDeployments` shape.
+ * Currently unused by the setup helpers below (they only need one default
+ * deployment), kept for parity with `deploymentSelectQueryTwoEndpointsMockResponse`.
  */
 export function chatPageQueryTwoEndpointsMockResponse() {
   return {
-    endpoint_list: {
-      items: [
-        { endpoint_id: MOCK_ENDPOINT_UUID },
-        { endpoint_id: MOCK_ENDPOINT_UUID_B },
+    myDeployments: {
+      edges: [
+        { node: { id: MOCK_DEPLOYMENT_GLOBAL_ID } },
+        { node: { id: MOCK_DEPLOYMENT_GLOBAL_ID_B } },
       ],
     },
   };
 }
 
 /**
- * Returns endpoint detail for ChatCardQuery.
+ * Returns the deployment list for DeploymentSelectQuery (single deployment).
+ * Includes all fields required by DeploymentSelectQuery: count, metadata.name,
+ * networkAccess.endpointUrl.
+ */
+export function deploymentSelectQueryMockResponse() {
+  return {
+    myDeployments: {
+      count: 1,
+      edges: [
+        {
+          node: {
+            id: MOCK_DEPLOYMENT_GLOBAL_ID,
+            metadata: { name: 'mock-endpoint' },
+            networkAccess: { endpointUrl: MOCK_ENDPOINT_URL },
+          },
+        },
+      ],
+    },
+  };
+}
+
+/**
+ * Returns two deployments for DeploymentSelectQuery (two-endpoint multi-pane tests).
+ */
+export function deploymentSelectQueryTwoEndpointsMockResponse() {
+  return {
+    myDeployments: {
+      count: 2,
+      edges: [
+        {
+          node: {
+            id: MOCK_DEPLOYMENT_GLOBAL_ID,
+            metadata: { name: 'mock-endpoint' },
+            networkAccess: { endpointUrl: MOCK_ENDPOINT_URL },
+          },
+        },
+        {
+          node: {
+            id: MOCK_DEPLOYMENT_GLOBAL_ID_B,
+            metadata: { name: 'mock-endpoint-b' },
+            networkAccess: { endpointUrl: MOCK_ENDPOINT_URL_B },
+          },
+        },
+      ],
+    },
+  };
+}
+
+/**
+ * Returns deployment detail for ChatCardQuery.
  *
  * IMPORTANT: ChatCardQuery uses `@catch` in Relay, but that is a client-side
- * transformation. The wire-format GraphQL response still returns the Endpoint
- * object directly (not wrapped in { ok, value }). Relay's normaliser applies
- * the Result wrapping after receiving the response.
+ * transformation. The wire-format GraphQL response still returns the
+ * ModelDeployment object directly (not wrapped in { ok, value }). Relay's
+ * normalizer applies the Result wrapping after receiving the response.
+ *
+ * `deploymentId` here is the value ChatCardQuery actually sends on the wire —
+ * the Relay *global* id (`toGlobalId('ModelDeployment', localId)`), not the
+ * raw local UUID.
  */
-export function chatCardQueryMockResponse(endpointId: string) {
-  const isB = endpointId === MOCK_ENDPOINT_UUID_B;
+export function chatCardQueryMockResponse(deploymentId: string) {
+  const isB = deploymentId === MOCK_DEPLOYMENT_GLOBAL_ID_B;
   return {
-    endpoint: {
-      endpoint_id: endpointId,
-      url: isB ? MOCK_ENDPOINT_URL_B : MOCK_ENDPOINT_URL,
-      name: isB ? 'mock-endpoint-b' : 'mock-endpoint',
+    deployment: {
+      id: deploymentId,
+      networkAccess: {
+        endpointUrl: isB ? MOCK_ENDPOINT_URL_B : MOCK_ENDPOINT_URL,
+      },
+      // `replicaState.desiredReplicaCount` is selected by ChatCardQuery
+      // (FR-3332 migration off the legacy `replicas` scalar). It must be
+      // present in the mock — the query wraps `deployment` in Relay `@catch`,
+      // so a missing field makes the catch result not-ok, nulls the
+      // deployment, and leaves the chat input disabled (no base URL → no
+      // /v1/models fetch).
+      replicaState: { desiredReplicaCount: 1 },
+      metadata: { name: isB ? 'mock-endpoint-b' : 'mock-endpoint' },
     },
   };
 }
 
 /**
- * Returns an endpoint detail with a null URL to test invalid base URL handling.
+ * Returns a deployment detail with a null URL to test invalid base URL handling.
  */
-export function chatCardQueryNullUrlMockResponse(endpointId: string) {
+export function chatCardQueryNullUrlMockResponse(deploymentId: string) {
   return {
-    endpoint: {
-      endpoint_id: endpointId,
-      url: null,
-      name: 'mock-endpoint-no-url',
+    deployment: {
+      id: deploymentId,
+      networkAccess: { endpointUrl: null },
+      // See chatCardQueryMockResponse: `replicaState` must be present for the
+      // Relay `@catch` on `deployment` to resolve to a value (here we are
+      // deliberately exercising the null-URL path, not a missing deployment).
+      replicaState: { desiredReplicaCount: 1 },
+      metadata: { name: 'mock-endpoint-no-url' },
     },
   };
 }
 
 /**
- * Returns endpoint detail for EndpointSelectValueQuery.
- * Variable name is `endpoint_id` (snake_case) — matches the query's variable declaration.
+ * Returns deployment detail for DeploymentSelectValueQuery.
+ * Variable name is `deploymentId` — matches the query's variable declaration,
+ * and is the Relay global id (see chatCardQueryMockResponse).
  */
-export function endpointSelectValueQueryMockResponse(endpointId: string) {
-  const isB = endpointId === MOCK_ENDPOINT_UUID_B;
+export function deploymentSelectValueQueryMockResponse(deploymentId: string) {
+  const isB = deploymentId === MOCK_DEPLOYMENT_GLOBAL_ID_B;
   return {
-    endpoint: {
-      endpoint_id: endpointId,
-      name: isB ? 'mock-endpoint-b' : 'mock-endpoint',
-      url: isB ? MOCK_ENDPOINT_URL_B : MOCK_ENDPOINT_URL,
+    deployment: {
+      id: deploymentId,
+      metadata: {
+        name: isB ? 'mock-endpoint-b' : 'mock-endpoint',
+        // Not exercised by these tests (only read for the cross-project
+        // "go to detail page" confirm flow); a fixed dummy UUID is enough to
+        // satisfy the non-null field.
+        projectId: '00000000-0000-0000-0000-000000000000',
+      },
+      networkAccess: {
+        endpointUrl: isB ? MOCK_ENDPOINT_URL_B : MOCK_ENDPOINT_URL,
+      },
+    },
+  };
+}
+
+/**
+ * Returns an empty access-token list for DeploymentTokenSelectQuery.
+ *
+ * IMPORTANT: This query is NOT part of the chat "happy path" — it is only
+ * triggered transiently by `CustomModelForm`/`DeploymentTokenSelect`, which
+ * mount for a brief instant before the mocked `/v1/models` response resolves
+ * (`_.isEmpty(models)` is true on the very first render). If this operation
+ * is left unmocked, the request falls through to the real backend, which
+ * rejects the mock deployment id's fake local UUID with a "badly formed
+ * hexadecimal UUID string" GraphQL field error. Because `deployment(id: X)`
+ * is the same field+args (same Relay storageKey) that ChatCardQuery and
+ * DeploymentSelectValueQuery also read on `client:root`, that real error
+ * poisons the shared record and makes ChatCardQuery's `@catch` resolve to
+ * not-ok — leaving the chat composer permanently disabled. Mocking this
+ * operation prevents the real backend from ever seeing the fake deployment id.
+ *
+ * `id` MUST be included even though the component only reads `accessTokens`:
+ * Relay's compiler auto-appends `id` to every selection on a `Node`-like type
+ * (see the generated query text), and Relay's normalizer uses that `id` value
+ * to resolve the record's dataID. Omitting it makes Relay fall back to a
+ * client-generated dataID for this response, which — because `deployment(id:
+ * X)` is the exact same field+args (storageKey) as ChatCardQuery and
+ * DeploymentSelectValueQuery on `client:root` — overwrites the shared root
+ * link with an orphan record that only has `accessTokens`, wiping out
+ * `id`/`networkAccess`/`replicaState` for every other reader of that same
+ * root field (including ChatCardQuery's `@catch`).
+ */
+export function deploymentTokenSelectQueryMockResponse(deploymentId: string) {
+  return {
+    deployment: {
+      id: deploymentId,
+      accessTokens: { edges: [] },
     },
   };
 }
@@ -231,11 +326,12 @@ export async function setupChatPage(
   // GraphQL mocks — variable names must match the wire-format query variables
   await setupGraphQLMocks(page, {
     ChatPageQuery: () => chatPageQueryMockResponse(),
-    ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-    EndpointSelectQuery: () => endpointSelectQueryMockResponse(),
-    // EndpointSelectValueQuery uses snake_case `endpoint_id` variable
-    EndpointSelectValueQuery: (vars) =>
-      endpointSelectValueQueryMockResponse(vars.endpoint_id),
+    ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
+    DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+    DeploymentSelectValueQuery: (vars) =>
+      deploymentSelectValueQueryMockResponse(vars.deploymentId),
+    DeploymentTokenSelectQuery: (vars) =>
+      deploymentTokenSelectQueryMockResponse(vars.deploymentId),
   });
 
   // Models API mock
@@ -262,7 +358,7 @@ export async function setupChatPage(
 
 /**
  * Setup variant for two-endpoint multi-pane tests.
- * EndpointSelectQuery returns both endpoints; completions requests are
+ * DeploymentSelectQuery returns both deployments; completions requests are
  * differentiated by URL (alpha vs beta prefix).
  */
 export async function setupChatPageWithTwoEndpoints(
@@ -277,11 +373,13 @@ export async function setupChatPageWithTwoEndpoints(
 
   await setupGraphQLMocks(page, {
     ChatPageQuery: () => chatPageQueryMockResponse(),
-    ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.endpointId),
-    EndpointSelectQuery: () => endpointSelectQueryTwoEndpointsMockResponse(),
-    // EndpointSelectValueQuery uses snake_case `endpoint_id` variable
-    EndpointSelectValueQuery: (vars) =>
-      endpointSelectValueQueryMockResponse(vars.endpoint_id),
+    ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
+    DeploymentSelectQuery: () =>
+      deploymentSelectQueryTwoEndpointsMockResponse(),
+    DeploymentSelectValueQuery: (vars) =>
+      deploymentSelectValueQueryMockResponse(vars.deploymentId),
+    DeploymentTokenSelectQuery: (vars) =>
+      deploymentTokenSelectQueryMockResponse(vars.deploymentId),
   });
 
   // Models API mock — both endpoints respond with their respective model IDs

@@ -1,10 +1,11 @@
-import { Tooltip, theme } from 'antd';
-import _ from 'lodash';
+import { BAIIconWithTooltip } from 'backend.ai-ui';
+import type { ProjectResourceGroupWarningIconFragment$key } from '../../__generated__/ProjectResourceGroupWarningIconFragment.graphql';
+import type { ProjectResourceGroupWarningIconQuery } from '../../__generated__/ProjectResourceGroupWarningIconQuery.graphql';
+import { theme } from '../../theme-shim';
+import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
-import type { ProjectResourceGroupWarningIconFragment$key } from 'src/__generated__/ProjectResourceGroupWarningIconFragment.graphql';
-import type { ProjectResourceGroupWarningIconQuery } from 'src/__generated__/ProjectResourceGroupWarningIconQuery.graphql';
 
 interface ProjectResourceGroupWarningIconProps {
   projectFairShareFrgmt: ProjectResourceGroupWarningIconFragment$key;
@@ -59,17 +60,12 @@ const ProjectResourceGroupWarningIcon: React.FC<
   }
 
   return (
-    <Tooltip
-      title={t('fairShare.ProjectNotAllowedInResourceGroup', {
+    <BAIIconWithTooltip
+      content={t('fairShare.ProjectNotAllowedInResourceGroup', {
         resourceGroup: resourceGroupName,
       })}
-    >
-      <TriangleAlert
-        style={{
-          color: token.colorWarning,
-        }}
-      />
-    </Tooltip>
+      icon={<TriangleAlert style={{ color: token.colorWarning }} />}
+    />
   );
 };
 

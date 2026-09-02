@@ -2,20 +2,28 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
-import { useToggle } from 'ahooks';
-import { Card, List, theme, Typography } from 'antd';
-import { BAIFlex, BAILink, BAINotificationItem, BAIText } from 'backend.ai-ui';
-import dayjs from 'dayjs';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
-import { useNavigate } from 'react-router-dom';
-import { BAIVirtualFolderNodeNotificationItemFragment$key } from 'src/__generated__/BAIVirtualFolderNodeNotificationItemFragment.graphql';
+import { BAIVirtualFolderNodeNotificationItemFragment$key } from '../__generated__/BAIVirtualFolderNodeNotificationItemFragment.graphql';
 import {
   NotificationState,
   useSetBAINotification,
-} from 'src/hooks/useBAINotification';
+} from '../hooks/useBAINotification';
+import { theme } from '../theme-shim';
+import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import { Card } from '@astryxdesign/core/Card';
+import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
+import {
+  BAIFlex,
+  BAILink,
+  BAINotificationItem,
+  BAIText,
+  useToggle,
+} from 'backend.ai-ui';
+import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
+import { graphql, useFragment } from 'react-relay';
 
 interface BAIVirtualFolderNodeNotificationItemProps {
   notification: NotificationState;
@@ -23,12 +31,18 @@ interface BAIVirtualFolderNodeNotificationItemProps {
   showDate?: boolean;
 }
 
+/**
+ * @deprecated Renders V1 `VirtualFolderNode` notifications. The V2 counterpart
+ * `BAIVirtualFolderNodeNotificationItemV2` (operating on `VFolder implements Node` from
+ * the Strawberry GraphQL API, FR-2573) is the preferred path going forward.
+ * This component will be removed once all V1 callers migrate.
+ */
 const BAIVirtualFolderNodeNotificationItem: React.FC<
   BAIVirtualFolderNodeNotificationItemProps
 > = ({ notification, virtualFolderNodeFrgmt, showDate }) => {
   'use memo';
 
-  const navigate = useNavigate();
+  const { open: openFolderExplorer } = useFolderExplorerOpener();
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { closeNotification } = useSetBAINotification();
@@ -59,9 +73,9 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
               }}
               title={node.name || ''}
               onClick={() => {
-                navigate(
-                  `/data${node.row_id ? `?${new URLSearchParams({ folder: node.row_id }).toString()}` : ''}`,
-                );
+                if (node.row_id) {
+                  openFolderExplorer(node.row_id);
+                }
                 closeNotification(notification.key);
               }}
             >
@@ -70,65 +84,64 @@ const BAIVirtualFolderNodeNotificationItem: React.FC<
           </BAIText>
         }
         description={
-          <List.Item>
-            <BAIFlex direction="column" align="stretch" gap={'xxs'}>
-              <BAIFlex
-                direction="row"
-                align="end"
-                gap={'xxs'}
-                justify="between"
+          /* PILOT-DECISION: the `List.Item` here was NESTED inside the one
+             `BAINotificationItem` already renders, so it only added a second
+             padding box. Dropped rather than translated (MAPPING §4 `List`
+             maps `List.Item` to Astryx `ListItem`, a fixed
+             label/description row this body does not fit). */
+          <BAIFlex direction="column" align="stretch" gap={'xxs'}>
+            <BAIFlex direction="row" align="end" gap={'xxs'} justify="between">
+              {_.isString(notification.description) ? (
+                <Text type="supporting" style={{ flex: 1, minWidth: 0 }}>
+                  {_.truncate(notification.description, { length: 300 })}
+                </Text>
+              ) : (
+                notification.description
+              )}
+
+              {notification.extraDescription && !notification?.onCancel ? (
+                <BAIFlex style={{ flexShrink: 0 }}>
+                  <Link
+                    style={{ whiteSpace: 'nowrap' }}
+                    onClick={() => {
+                      toggleShowExtraDescription();
+                    }}
+                  >
+                    {showExtraDescription
+                      ? t('notification.SeeSummary')
+                      : t('notification.SeeDetail')}
+                  </Link>
+                </BAIFlex>
+              ) : null}
+            </BAIFlex>
+
+            {notification.extraDescription && showExtraDescription ? (
+              <Card
+                padding={4}
+                style={{
+                  maxHeight: '300px',
+                  overflow: 'auto',
+                  overflowX: 'hidden',
+                  marginTop: token.marginSM,
+                }}
               >
-                {_.isString(notification.description) ? (
-                  <BAIText>
-                    {_.truncate(notification.description, { length: 300 })}
+                {_.isString(notification.extraDescription) ? (
+                  <BAIText type="secondary" copyable>
+                    {notification.extraDescription}
                   </BAIText>
                 ) : (
-                  notification.description
+                  notification.extraDescription
                 )}
+              </Card>
+            ) : null}
 
-                {notification.extraDescription && !notification?.onCancel ? (
-                  <BAIFlex>
-                    <Typography.Link
-                      onClick={() => {
-                        toggleShowExtraDescription();
-                      }}
-                    >
-                      {showExtraDescription
-                        ? t('notification.SeeSummary')
-                        : t('notification.SeeDetail')}
-                    </Typography.Link>
-                  </BAIFlex>
-                ) : null}
-              </BAIFlex>
-
-              {notification.extraDescription && showExtraDescription ? (
-                <Card
-                  size="small"
-                  style={{
-                    maxHeight: '300px',
-                    overflow: 'auto',
-                    overflowX: 'hidden',
-                    marginTop: token.marginSM,
-                  }}
-                >
-                  {_.isString(notification.extraDescription) ? (
-                    <Typography.Text type="secondary" copyable>
-                      {notification.extraDescription}
-                    </Typography.Text>
-                  ) : (
-                    notification.extraDescription
-                  )}
-                </Card>
-              ) : null}
-
-              {notification.backgroundTask && (
-                <BAINotificationBackgroundProgress
-                  backgroundTask={notification.backgroundTask}
-                  showDate={showDate}
-                />
-              )}
-            </BAIFlex>
-          </List.Item>
+            {notification.backgroundTask && (
+              <BAINotificationBackgroundProgress
+                backgroundTask={notification.backgroundTask}
+                showDate={showDate}
+              />
+            )}
+          </BAIFlex>
         }
         footer={
           showDate ? dayjs(notification.created).format('lll') : undefined

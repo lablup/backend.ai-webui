@@ -2,65 +2,59 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, Result, Skeleton, theme, Tooltip } from 'antd';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
-import _ from 'lodash';
-import { parseAsString, useQueryStates } from 'nuqs';
+import { type ErrorWithGraphQL } from '../components/BAIErrorBoundary';
+import FairShareList from '../components/FairShareItems/FairShareList';
+import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import {
+  BAISkeleton,
+  BAICard,
+  BAIQuestionIconWithTooltip,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { TriangleAlertIcon } from 'lucide-react';
+import {
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryState,
+  useQueryStates,
+} from 'nuqs';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
-import { type ErrorWithGraphQL } from 'src/components/BAIErrorBoundary';
-import FairShareList from 'src/components/FairShareItems/FairShareList';
-import { useWebUINavigate } from 'src/hooks';
-import { StringParam, useQueryParam, withDefault } from 'use-query-params';
-
-const tabParam = withDefault(StringParam, 'fair-share');
 
 interface SchedulerPageProps {}
 
 const SchedulerPage: React.FC<SchedulerPageProps> = () => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const [curTabKey] = useQueryParam('tab', tabParam);
-  const webUINavigate = useWebUINavigate();
+  const [currentTab] = useQueryState(
+    'tab',
+    parseAsStringLiteral(['fair-share']).withDefault('fair-share'),
+  );
 
   return (
     <BAICard
-      activeTabKey={curTabKey}
-      onTabChange={(key) => {
-        webUINavigate(
-          {
-            pathname: '/fair-share',
-            search: new URLSearchParams({
-              tab: key,
-            }).toString(),
-          },
-          {
-            params: {
-              tab: key,
-            },
-          },
-        );
-      }}
+      activeTabKey={currentTab}
       tabList={[
         {
           key: 'fair-share',
-          tab: (
-            <BAIFlex gap="xxs">
-              {t('fairShare.FairShareSetting')}
-              <Tooltip
-                title={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
-              >
-                <QuestionCircleOutlined style={{ fontSize: token.fontSize }} />
-              </Tooltip>
-            </BAIFlex>
+          // The tab's own text stays a plain STRING and the help affordance
+          // moves to `endContent` (added to `BAICardTabItem` in this wave).
+          // A JSX label was rendered twice — once flattened into Astryx `Tab`'s
+          // required string `label`, once again as the trailing node.
+          label: t('fairShare.FairShareSetting'),
+          endContent: (
+            <BAIQuestionIconWithTooltip
+              title={<Trans i18nKey={t('fairShare.SchedulerDescription')} />}
+              style={{ alignItems: 'center' }}
+            />
           ),
         },
       ]}
     >
-      <Suspense fallback={<Skeleton active />}>
-        {curTabKey === 'fair-share' && (
+      <Suspense fallback={<BAISkeleton />}>
+        {currentTab === 'fair-share' && (
           <ErrorBoundary
             fallbackRender={({ error, resetErrorBoundary }) => {
               const gqlError = error as ErrorWithGraphQL;
@@ -99,39 +93,39 @@ const FairShareErrorFallback: React.FC<{
       resourceGroup: parseAsString,
       domain: parseAsString,
       project: parseAsString,
-      user: parseAsString,
     },
     { history: 'push' },
   );
 
   return (
-    <Result
-      status="warning"
+    // antd `Result status="warning"` -> Astryx `EmptyState`, the same route
+    // `BAIErrorBoundary` already took: `subTitle` -> `description`, `extra` ->
+    // `actions`, and the status illustration becomes an explicit lucide icon.
+    <EmptyState
+      icon={<TriangleAlertIcon size={40} />}
       title={
         isInvalidURLParameterError
           ? t('fairShare.InvalidParameterTitle')
           : t('fairShare.UnknownErrorOccurred')
       }
-      subTitle={
+      description={
         isInvalidURLParameterError
           ? t('fairShare.InvalidParameterDescription')
           : t('fairShare.UnknownErrorDescription')
       }
-      extra={
+      actions={
         <Button
-          type="primary"
+          variant="primary"
+          label={t('fairShare.GoBackToFirstStep')}
           onClick={() => {
             setStepQueryParams({
               resourceGroup: null,
               domain: null,
               project: null,
-              user: null,
             });
             onReset();
           }}
-        >
-          {t('fairShare.GoBackToFirstStep')}
-        </Button>
+        />
       }
     />
   );

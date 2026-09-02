@@ -2,6 +2,7 @@ import { StartPage } from '../utils/classes/common/StartPage';
 import {
   loginAsAdmin,
   modifyConfigToml,
+  notFoundPageHeading,
   webuiEndpoint,
 } from '../utils/test-util';
 import { test, expect } from '@playwright/test';
@@ -15,48 +16,58 @@ test.describe.parallel(
       'block list',
       { tag: ['@session', '@summary', '@serving'] },
       async ({ page, request }) => {
-        // modify config.toml to blocklist some menu items
+        // modify config.toml to blocklist some menu items. FR-2664 renamed
+        // the /serving route to /deployments; the menu blocklist key
+        // followed the route name, so use 'deployments' here.
         const requestConfig = {
           menu: {
-            blocklist: 'start,serving,session',
+            blocklist: 'start,deployments,session',
           },
         };
 
         await modifyConfigToml(page, request, requestConfig);
         await loginAsAdmin(page, request);
 
-        // check if the menu items are hidden
+        // check if the menu items are hidden. The 'Serving' route was
+        // renamed to 'Deployments' (FR-2664), and the blocklist key was
+        // renamed in lockstep — `deployments` is now the key that hides
+        // the menu entry (used in the requestConfig above).
         await expect(
           page.getByTestId('webui-breadcrumb').getByText('Start'),
         ).toBeHidden();
+        await expect(page.getByRole('link', { name: 'Sessions' })).toBeHidden();
         await expect(
-          page.getByRole('menuitem', { name: 'Sessions' }),
-        ).toBeHidden();
-        await expect(
-          page.getByRole('menuitem', { name: 'Serving' }),
+          page.getByRole('link', { name: 'Deployments' }),
         ).toBeHidden();
 
         // check if the pages show 404 content when accessed directly
         await page.goto(`${webuiEndpoint}/start`);
-        await expect(page.getByAltText('404 Not Found')).toBeVisible();
+        await expect(notFoundPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
         await page.goto(`${webuiEndpoint}/serving`);
-        await expect(page.getByAltText('404 Not Found')).toBeVisible();
+        await expect(notFoundPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
         await page.goto(`${webuiEndpoint}/job`);
-        await expect(page.getByAltText('404 Not Found')).toBeVisible();
+        await expect(notFoundPageHeading(page)).toBeVisible({
+          timeout: 15_000,
+        });
 
         requestConfig.menu.blocklist = '';
         await modifyConfigToml(page, request, requestConfig);
         await page.reload();
 
-        // check if the menu items are visible
+        // check if the menu items are visible (the reload is a full app
+        // boot against the remote backend, so allow the re-render to settle)
         await expect(
           page.getByRole('link', { name: 'Start', exact: true }),
+        ).toBeVisible({ timeout: 15_000 });
+        await expect(
+          page.getByRole('link', { name: 'Sessions' }),
         ).toBeVisible();
         await expect(
-          page.getByRole('menuitem', { name: 'Sessions' }),
-        ).toBeVisible();
-        await expect(
-          page.getByRole('menuitem', { name: 'Serving' }),
+          page.getByRole('link', { name: 'Deployments' }),
         ).toBeVisible();
       },
     );
@@ -78,8 +89,8 @@ test.describe.parallel(
         await loginAsAdmin(page, request);
 
         // Step 2: Go to Environments page and find an uninstalled image
-        await page.getByRole('menuitem', { name: 'Admin Settings' }).click();
-        await page.getByRole('menuitem', { name: 'Environments' }).click();
+        await page.getByRole('link', { name: 'Admin Settings' }).click();
+        await page.getByRole('link', { name: 'Environments' }).click();
 
         // Wait for the table to load and have data (excluding measure rows and placeholder)
         await page.waitForSelector(

@@ -1,3 +1,7 @@
+---
+navTitle: FAQ＆トラブルシューティング
+---
+
 # FAQとトラブルシューティング
 
 ## ユーザートラブルシューティングガイド
@@ -6,76 +10,97 @@
 
 断続的なネットワークの問題やその他の様々な理由により、セッションリストが正しく表示されない場合があります。ほとんどの場合、この問題はブラウザをリフレッシュするだけで解消されます。
 
-- WebベースのWeb-UI: ブラウザのページをリフレッシュします (Ctrl-Rなど、ブラウザで提供されるショートカットを使用します)。ブラウザのキャッシュが問題を引き起こすことがあるため、キャッシュをバイパスしてページをリフレッシュすることをお勧めします (Shift-Ctrl-Rなど、ただしキーは各ブラウザによって異なる可能性があります)。
-- Web-UIアプリ: アプリを更新するにはCtrl-Rショートカットを押してください。
+- WebベースのWebUI: ブラウザのページをリフレッシュします (Ctrl-Rなど、ブラウザで提供されるショートカットを使用します)。ブラウザのキャッシュが問題を引き起こすことがあるため、キャッシュをバイパスしてページをリフレッシュすることをお勧めします (Shift-Ctrl-Rなど、ただしキーは各ブラウザによって異なる可能性があります)。
+- WebUIアプリ: アプリを更新するにはCtrl-Rショートカットを押してください。
 
 ### 突然、自分のアカウントでログインできなくなりました
 
 認証クッキーの認識に問題がある場合、ユーザーは一時的にログインできないことがあります。プライベートブラウザウィンドウを使用してログインしてみてください。もし成功した場合は、ブラウザのキャッシュおよび/またはアプリケーションデータをクリアしてください。
+
+<a id="offline-banner"></a>
+
+### オフラインであるというバナーが表示されます
+
+ページ上部に赤い**オフライン：どのネットワークにも接続されていない。**バナーが表示された場合は、Backend.AIサーバーに到達できなかったことを意味します。ネットワーク接続を確認し、Backend.AIサーバーが稼働しているかどうかを管理者に確認してください。バナーが表示されている間もWebUIは確認を繰り返すため、サーバーに再び到達できるようになると数秒以内にバナーは自動的に消えます。
+
+<a id="route-error-pages"></a>
+
+### リンクを開くと目的のページではなくエラーページが表示されます
+
+アドレスを開けない場合でも、WebUIは空白のページを残さずアプリケーション内でその理由を説明します。エラーページには開こうとしたアドレスと、利用可能な最初のページへ移動するボタン（**...ページに戻る**）が表示されます。メッセージから次のどの状況かを判断できます。
+
+- **おっと！ページが見つかりません...** — アドレスがWebUIのどのページとも一致しない場合です。アドレスの入力ミス、古いリンク、ページ名が変更される前に保存したブックマークであることがほとんどです。
+- **プロジェクト '...' が見つからないか、アクセス権がありません。** — アドレスで指定されたプロジェクトが存在しないか、ユーザーがそのプロジェクトのメンバーでない場合です。アドレスのうちプロジェクトにあたる部分が示されるため、どの名前が誤っているかをすぐに確認できます。ページ上部のプロジェクトセレクターから利用可能なプロジェクトを選択すると、同じ機能がそのプロジェクトで開きます。
+- **アクセス可能なプロジェクトがありません。** — アカウントがまだどのプロジェクトにも所属していない場合です。メッセージの案内どおり、管理者にプロジェクトへのアクセス権を依頼してください。
+- **不正アクセス** — アドレス自体は有効ですが、ユーザーのロールでは開けない場合です。
 
 
 <a id="installing_apt_pkg"></a>
 
 ### aptパッケージのインストール方法?
 
-Inside a compute session, ユーザーs cannot access `root` account and perform
-operations that require `sudo` privilege for security reasons. Therefore, it
-is not allowed to install packages with `apt` or `yum` since they require
-`sudo`. If it is really required, you can request to 管理者s to allow `sudo`
-permission.
+コンピュートセッション内では、セキュリティ上の理由からユーザーは`root`アカウントにアクセスしたり、
+`sudo`権限が必要な操作を実行したりすることはできません。そのため、`sudo`権限が
+必要な`apt`や`yum`を利用したパッケージのインストールは許可されていません。
+どうしても必要な場合は、管理者に`sudo`権限の付与をリクエストすることができます。
 
-Alternatively, ユーザーs may use Homebrew to install OS packages. Please refer to
-the [guide on using Homebrew with automount folder](../mount_vfolder/mount_vfolder.md#using-linuxbrew-with-automountfolder).
+また、Homebrewを使用してOSパッケージをインストールすることもできます。詳細については、
+[自動マウントフォルダでHomebrewを使用するガイド](#using-linuxbrew-with-automountfolder)を参照してください。
 
 
 <a id="install_pip_pkg"></a>
 
 ### pipでパッケージをインストールする方法
 
-By default, when you install a pip package, it will be installed under
-`~/.local`. So, if you create a automount data folder named `.local`, you
-can keep the installed packages after a compute session is destroyed, and then
-reus them for the next compute session. Just install the packages with pip like:
+pipパッケージをインストールすると、デフォルトで`~/.local`配下にインストールされます。
+そのため、`.local`という名前の自動マウントストレージフォルダを作成すれば、
+コンピュートセッションが削除された後もインストールしたパッケージを保持し、
+次のコンピュートセッションで再利用できます。次のようにpipでパッケージをインストールしてください：
 
-```shell
-$ pip install aiohttp
+```bash
+pip install aiohttp
 ```
-For more information, please refer to the [guide on installing Python
-packages with automount folder](../mount_vfolder/mount_vfolder.md#using-pip-with-automountfolder).
+詳細については、[自動マウントフォルダでPythonパッケージをインストールするガイド](#using-pip-with-automountfolder)を参照してください。
 
-### I have created a compute session, but cannot launch Jupyter Notebook
+### コンピュートセッションを作成しましたが、Jupyter Notebookを起動できません
 
-If you installed a Jupyter package with pip by yourself, it may be conflict with
-the Jupyter package that a compute session provides by default. Especially, if you
-have created `~/.local` directory, the manually installed Jupyter packages
-persists for every compute session. In this case, try to remove the `.local`
-automount folder and then try to launch Jupyter Notebook again.
+pipを使用してJupyterパッケージを手動でインストールした場合、コンピュートセッションが
+デフォルトで提供するJupyterパッケージと競合する可能性があります。特に、
+`~/.local`ディレクトリを作成している場合、手動でインストールしたJupyterパッケージが
+すべてのコンピュートセッションで保持されます。この場合は、`.local`自動マウント
+フォルダを削除してから、再度Jupyter Notebookの起動を試みてください。
 
 ### ページのレイアウトが崩れている
 
-Backend.AI Web-UIは、最新のモダンJavaScriptおよび/またはブラウザ機能を利用しています。最新のモダンブラウザ（Chromeなど）を使用してください。
+Backend.AI WebUIは、最新のモダンJavaScriptおよび/またはブラウザ機能を利用しています。最新のモダンブラウザ（Chromeなど）を使用してください。
+
+<a id="sftp-disconnection"></a>
 
 ### SFTP 切断
 
-Web-UIアプリがSFTP接続を起動するとき、それはアプリに埋め込まれたローカルプロキシサーバーを使用します。SFTPプロトコルによるファイル転送中にWeb-UIアプリを終了すると、ローカルプロキシサーバーを介して確立された接続が切断されるため、転送は即座に失敗します。このため、計算セッションを使用していない場合でも、SFTPを使用している間はWeb-UIアプリを終了しないでください。ページをリフレッシュする必要がある場合は、Ctrl-Rショートカットを使用することをお勧めします。
+この項目は、接続が確立された後に転送が中断される場合を扱います。接続ダイアログがまったく開かず、代わりにエラー通知が表示される場合は、接続情報を解決できなかったということなので、[SSH/SFTP によるコンピュートセッションへの接続](#ssh-sftp-container)章を参照してください。
 
-Web-UIアプリが閉じられ再起動されても、既存のコンピュートセッションに対してSFTPサービスは自動的に開始されません。希望するコンテナでSSH/SFTPサービスを明示的に開始して、SFTP接続を確立する必要があります。
+WebUIアプリがSFTP接続を起動するとき、それはアプリに埋め込まれたローカルプロキシサーバーを使用します。SFTPプロトコルによるファイル転送中にWebUIアプリを終了すると、ローカルプロキシサーバーを介して確立された接続が切断されるため、転送は即座に失敗します。このため、コンピュートセッションを使用していない場合でも、SFTPを使用している間はWebUIアプリを終了しないでください。ページをリフレッシュする必要がある場合は、Ctrl-Rショートカットを使用することをお勧めします。
+
+WebUIアプリが閉じられ再起動されても、既存のコンピュートセッションに対してSFTPサービスは自動的に開始されません。希望するコンテナでSSH/SFTPサービスを明示的に開始して、SFTP接続を確立する必要があります。
 
 
 ## 管理者向けトラブルシューティングガイド
 
 ### ユーザーは Jupyter Notebook のようなアプリを起動できません。
 
-There may be a problem on connecting WSProxy service. Try to stop and restart
-the service by referencing the guide on start/stop/restart WSProxy service.
+App Proxyサービスの接続に問題がある可能性があります。
+App Proxyサービスの開始・停止・再起動ガイドを参照して、サービスを停止してから再起動してみてください。
+
+Webベースのアプリではなく SSH/SFTP を開けないという報告を受けた場合は、通知に表示されたメッセージをそのまま確認してください。メッセージごとに App Proxy 経路の異なる段階を示しており、詳細は[SSH/SFTP によるコンピュートセッションへの接続](#ssh-sftp-container)章を参照してください。
 
 ### 指定されたリソースが実際の割り当てと一致しません。
 
 時々、不安定なネットワーク接続やDockerデーモンのコンテナ管理問題により、Backend.AIによって占有されているリソースとコンテナが実際に使用しているリソースが一致しない場合があります。この場合は、以下の手順に従ってください。
 
 - 管理者アカウントとしてログインします。
-- メンテナンスページを訪問してください。
-- RECALCULATE USAGEボタンをクリックしてリソースの占有状況を手動で修正します。
+- **メンテナンス**ページを訪問してください。
+- **使用量を再計算する**ボタンをクリックしてリソースの占有状況を手動で修正します。
 
 ### Dockerレジストリにプッシュされた後、イメージが表示されません
 
@@ -84,6 +109,10 @@ the service by referencing the guide on start/stop/restart WSProxy service.
 この機能はスーパ管理者にのみ利用可能です。
 :::
 
-新しいイメージがBackend.AIのdockerレジストリの1つにプッシュされた場合、そのイメージのメタデータを更新して計算セッションの作成に使用できるようにする必要があります。メタデータの更新は、メンテナンスページで「イメージの再スキャン」ボタンをクリックすることで実行できます。複数のレジストリがある場合、それに属するすべてのdockerレジストリのメタデータが更新されます。
+新しいイメージがBackend.AIのdockerレジストリの1つにプッシュされた場合、そのイメージのメタデータを更新してコンピュートセッションの作成に使用できるようにする必要があります。メタデータの更新は、**補修(メンテナンス)**ページで**画像を再スキャンする**ボタンをクリックすることで実行できます。複数のレジストリがある場合、それに属するすべてのdockerレジストリのメタデータが更新されます。
 
-特定のDockerレジストリのメタデータを更新したい場合は、環境ページのレジストリタブに移動できます。目的のレジストリのコントロールパネルにある更新ボタンをクリックするだけです。ゴミ箱アイコンをクリックしてレジストリを削除しないように注意してください。
+特定のDockerレジストリのメタデータを更新したい場合は、**環境設定**ページの**Registries**タブを開きます。各レジストリは行（row）として表示され、アクションメニューが付いています。目的のレジストリの行にある**画像を再スキャンする**アクションをクリックすると、そのレジストリのイメージメタデータのみを更新できます。
+
+:::warning
+同じ行には**削除**アクション（ゴミ箱アイコン）もあります。レジストリを削除するとBackend.AIから完全に削除されるため、**画像を再スキャンする**アクションと混同しないように注意してください。
+:::

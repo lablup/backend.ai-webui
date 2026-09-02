@@ -1,8 +1,10 @@
 import { FolderCreationModal } from '../utils/classes/vfolder/FolderCreationModal';
+import { cleanupVFolderSafely } from '../utils/cleanup-util';
 import {
   acceptAllInvitationAndVerifySpecificFolder,
   createVFolderAndVerify,
   deleteForeverAndVerifyFromTrash,
+  leaveSharedFolderAndVerify,
   loginAsUser,
   loginAsUser2,
   moveToTrashAndVerify,
@@ -20,24 +22,33 @@ test.describe(
       await loginAsUser(page, request);
     });
     const folderName = 'e2e-test-folder-user-creation' + new Date().getTime();
+    // Not serial: each creation test uses a unique folder name generated in
+    // beforeEach and cleaned up in afterEach, so a failure doesn't cascade.
+    // mode: 'default' keeps tests sequential on one worker to limit backend load.
     test.describe('vFolder Creation', () => {
+      test.describe.configure({ mode: 'default' });
+      let creationFolderName: string;
       test.beforeEach(async ({ page }) => {
+        creationFolderName =
+          'e2e-test-folder-user-creation-' +
+          Date.now() +
+          '-' +
+          Math.random().toString(36).slice(2, 6);
         await page.getByRole('link', { name: 'Data' }).click();
         await page
           .getByRole('button', { name: 'Create Folder' })
-          .nth(1)
+          .first()
           .click();
       });
       test.afterEach(async ({ page }) => {
-        await moveToTrashAndVerify(page, folderName);
-        await deleteForeverAndVerifyFromTrash(page, folderName);
+        await cleanupVFolderSafely(page, creationFolderName);
       });
       test('User can create a vFolder by selecting a specific location', async ({
         page,
       }) => {
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(folderName);
+        await folderCreationModal.fillFolderName(creationFolderName);
         await folderCreationModal.fillLocationSelector('local');
         await folderCreationModal.selectLocationOptionByText('local');
         await (await folderCreationModal.getCreateButton()).click();
@@ -45,13 +56,13 @@ test.describe(
       test('User can create default vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(folderName);
+        await folderCreationModal.fillFolderName(creationFolderName);
         await (await folderCreationModal.getCreateButton()).click();
       });
       test('User can create Model vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(folderName);
+        await folderCreationModal.fillFolderName(creationFolderName);
         await (await folderCreationModal.getModelUsageModeRadio()).check();
         await expect(
           await folderCreationModal.getModelUsageModeRadio(),
@@ -61,7 +72,7 @@ test.describe(
       test('User can create cloneable Model vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(folderName);
+        await folderCreationModal.fillFolderName(creationFolderName);
         await (await folderCreationModal.getModelUsageModeRadio()).check();
         await expect(
           await folderCreationModal.getModelUsageModeRadio(),
@@ -75,7 +86,7 @@ test.describe(
       test('User can create Read & Write vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(folderName);
+        await folderCreationModal.fillFolderName(creationFolderName);
         await (await folderCreationModal.getReadWritePermissionRadio()).check();
         await expect(
           await folderCreationModal.getReadWritePermissionRadio(),
@@ -85,7 +96,7 @@ test.describe(
       test('User can create Read Only vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
         await folderCreationModal.modalToBeVisible();
-        await folderCreationModal.fillFolderName(folderName);
+        await folderCreationModal.fillFolderName(creationFolderName);
         await (await folderCreationModal.getReadOnlyPermissionRadio()).check();
         await expect(
           await folderCreationModal.getReadOnlyPermissionRadio(),
@@ -93,18 +104,19 @@ test.describe(
         await (await folderCreationModal.getCreateButton()).click();
       });
     });
+    // Auto Mount uses a dedicated folder name (dot-prefixed) that is independent.
+    // Not serial: single test — no ordering dependency.
     test.describe('Auto Mount vFolder Creation', () => {
       const folderName = '.e2e-test-folder-auto-mount' + new Date().getTime();
       test.beforeEach(async ({ page }) => {
         await page.getByRole('link', { name: 'Data' }).click();
         await page
           .getByRole('button', { name: 'Create Folder' })
-          .nth(1)
+          .first()
           .click();
       });
       test.afterEach(async ({ page }) => {
-        await moveToTrashAndVerify(page, folderName);
-        await deleteForeverAndVerifyFromTrash(page, folderName);
+        await cleanupVFolderSafely(page, folderName);
       });
       test('User can create Auto Mount vFolder', async ({ page }) => {
         const folderCreationModal = new FolderCreationModal(page);
@@ -121,6 +133,7 @@ test.describe(
     test('User can create, delete(move to trash), restore, delete forever vFolder', async ({
       page,
     }) => {
+      test.setTimeout(180_000);
       await createVFolderAndVerify(page, folderName);
       await moveToTrashAndVerify(page, folderName);
       await restoreVFolderAndVerify(page, folderName);
@@ -130,18 +143,20 @@ test.describe(
   },
 );
 
+// Not serial: single test — no ordering dependency; the folder is created in
+// beforeEach and cleaned up in afterEach.
 test.describe(
   'VFolder Sharing',
   { tag: ['@critical', '@vfolder', '@functional'] },
   () => {
     const sharingFolderName = 'e2e-test-folder-sharing' + new Date().getTime();
-    test.beforeEach(async ({ page }) => {
-      await loginAsUser(page);
+    test.setTimeout(180_000);
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsUser(page, request);
       await createVFolderAndVerify(page, sharingFolderName);
     });
     test.afterEach(async ({ page }) => {
-      await moveToTrashAndVerify(page, sharingFolderName);
-      await deleteForeverAndVerifyFromTrash(page, sharingFolderName);
+      await cleanupVFolderSafely(page, sharingFolderName);
     });
 
     test('User can share vFolder', async ({ page, browser, request }) => {
@@ -155,7 +170,30 @@ test.describe(
       await acceptAllInvitationAndVerifySpecificFolder(
         user2_page,
         sharingFolderName,
+        userInfo.user.email,
       );
+    });
+
+    // Regression guard for FR-2978: previously the leave_invited client
+    // sent `null` as the request body, which the manager's
+    // BodyParam[LeaveVFolderReq] rejected with HTTP 400.
+    test('Invitee can leave a shared vFolder', async ({
+      page,
+      browser,
+      request,
+    }) => {
+      await shareVFolderAndVerify(
+        page,
+        sharingFolderName,
+        userInfo.user2.email,
+      );
+      const user2_page = await browser.newPage();
+      await loginAsUser2(user2_page, request);
+      await acceptAllInvitationAndVerifySpecificFolder(
+        user2_page,
+        sharingFolderName,
+      );
+      await leaveSharedFolderAndVerify(user2_page, sharingFolderName);
     });
   },
 );

@@ -29,7 +29,7 @@ The user manual is located at `./src/`. It is a multilingual documentation syste
 
 The user may provide one or more of the following. Adapt your approach accordingly:
 
-#### Source A: PR or Graphite Stack (code-driven)
+#### Source A: PR or PR Stack (code-driven)
 When the user references a PR, branch, or stack:
 
 ```bash
@@ -37,8 +37,8 @@ When the user references a PR, branch, or stack:
 git diff main...HEAD --name-only
 git diff main...HEAD --stat
 
-# For Graphite stack
-gt state
+# For a PR stack (GitHub Stacked PRs)
+gh stack view --json
 ```
 
 Analyze the changed files to understand what user-facing changes were made.

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { imageParser } from '.';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 
 describe('Image util functions tests', () => {
   // TODO: Use test hooks to test the functions

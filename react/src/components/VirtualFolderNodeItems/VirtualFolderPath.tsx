@@ -4,9 +4,9 @@
  */
 import { useVirtualFolderNodePathFragment$key } from '../../__generated__/useVirtualFolderNodePathFragment.graphql';
 import { useVirtualFolderPath } from '../../hooks/useVirtualFolderNodePath';
-import { theme } from 'antd';
+import { theme } from '../../theme-shim';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
-import _ from 'lodash';
+import * as _ from 'lodash-es';
 import React from 'react';
 
 interface VirtualFolderPathProps {

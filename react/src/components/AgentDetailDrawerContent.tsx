@@ -2,42 +2,65 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { AgentDetailDrawerContentFragment$key } from '../__generated__/AgentDetailDrawerContentFragment.graphql';
+import type {
+  AgentSessionsQuery as AgentSessionsQueryType,
+  SessionV2OrderBy,
+  SessionV2Status,
+} from '../__generated__/AgentSessionsQuery.graphql';
+import { getSessionV2StatusBuckets } from '../helper/sessionStatusBuckets';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { theme, useBAIBreakpoint } from '../theme-shim';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
+import AgentSessions, {
+  AgentSessionsQuery,
+} from './AgentNodeItems/AgentSessions';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Descriptions, Grid, Tabs, theme, Typography } from 'antd';
+import BAIErrorBoundary from './BAIErrorBoundary';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { Text } from '@astryxdesign/core/Text';
 import {
+  BAICard,
   BAIDoubleTag,
   BAIFlex,
   BAIIntervalView,
+  BAIMetadataList,
+  BAISkeleton,
+  BAIText,
   toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import { useState } from 'react';
+import * as _ from 'lodash-es';
+import { Check, X } from 'lucide-react';
+import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
-import { AgentDetailDrawerContentFragment$key } from 'src/__generated__/AgentDetailDrawerContentFragment.graphql';
-import { useSuspendedBackendaiClient } from 'src/hooks';
+import { graphql, useFragment, useQueryLoader } from 'react-relay';
 
 interface AgentDetailDrawerContentProps {
   agentNodeFrgmt?: AgentDetailDrawerContentFragment$key | null;
 }
 
-type TabKey = 'resources';
+type TabKey = 'resources' | 'sessions';
 
 const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
   agentNodeFrgmt,
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { md } = Grid.useBreakpoint();
+  const { md } = useBAIBreakpoint();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const statusBuckets = getSessionV2StatusBuckets(
+    baiClient.supports('session-preemption-statuses'),
+  );
 
   const [activeTabKey, setActiveTabKey] = useState<TabKey>('resources');
+
+  const [sessionsQueryRef, loadSessionsQuery] =
+    useQueryLoader<AgentSessionsQueryType>(AgentSessionsQuery);
 
   const agent = useFragment(
     graphql`
@@ -62,98 +85,140 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
 
   const regionData = _.split(agent?.region || '', '/');
 
+  const isTerminated = agent?.status === 'TERMINATED';
+
   return (
     <BAIFlex direction="column" gap="lg" align="stretch">
       <BAIFlex justify="between">
         <BAIFlex direction="column" align="stretch">
-          <Typography.Title
-            level={3}
-            style={{
-              margin: 0,
-              color: ['TERMINATED'].includes(agent?.status || '')
-                ? token.colorTextSecondary
-                : undefined,
-            }}
+          {/* Not an <h3>: Astryx has no copyable Heading, so the legacy
+              Title renders as large text with the shared copy control. */}
+          <BAIText
+            strong
+            type={isTerminated ? 'secondary' : undefined}
             copyable
+            style={{
+              fontSize: 'var(--text-large-size)',
+              lineHeight: 'var(--text-large-leading)',
+            }}
           >
             {toLocalId(agent?.id || '')}
-          </Typography.Title>
-          <Typography.Text type="secondary" copyable>
-            {agent?.addr}
-          </Typography.Text>
+          </BAIText>
+          <BAIText type="secondary" copyable>
+            {agent?.addr || ''}
+          </BAIText>
         </BAIFlex>
-        <AgentActionButtons agentNodeFrgmt={agent} size="large" />
+        <AgentActionButtons agentNodeFrgmt={agent} size="lg" />
       </BAIFlex>
 
-      <Descriptions
-        bordered
-        column={md ? 2 : 1}
-        labelStyle={{ wordBreak: 'keep-all' }}
+      {/* Dropped from the antd original: per-item `span`. Column count is
+          `md`-driven (R3). */}
+      <BAICard>
+        <BAIMetadataList columns={md ? 2 : 1}>
+          <MetadataListItem label={t('agent.ResourceGroup')}>
+            {agent?.scaling_group}
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.Region')}>
+            <Text>
+              {regionData.length > 1
+                ? _.join([regionData?.[0], regionData?.[1]], ' / ')
+                : regionData?.[0]}
+            </Text>
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.Schedulable')}>
+            {agent?.schedulable ? (
+              <Check style={{ color: token.colorSuccess }} size="1em" />
+            ) : (
+              <X style={{ color: token.colorTextDisabled }} size="1em" />
+            )}
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.Status')}>
+            <AgentStatusTag agentNodeFrgmt={agent} />
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.ComputePlugins')}>
+            <BAIFlex gap="sm" wrap="wrap">
+              <AgentComputePlugins agentNodeFrgmt={agent} />
+            </BAIFlex>
+          </MetadataListItem>
+          <MetadataListItem label={t('agent.StartsAt')}>
+            <BAIFlex gap="sm">
+              <Text>{dayjs(agent?.first_contact).format('lll')}</Text>
+              {agent?.status === 'ALIVE' && (
+                <BAIIntervalView
+                  callback={() => {
+                    return baiClient.utils.elapsedTime(
+                      agent?.first_contact || '',
+                      Date.now(),
+                    );
+                  }}
+                  delay={1000}
+                  render={(intervalValue) => (
+                    <BAIDoubleTag
+                      values={[
+                        { label: t('agent.ElapsedTime') },
+                        { label: intervalValue },
+                      ]}
+                    />
+                  )}
+                />
+              )}
+            </BAIFlex>
+          </MetadataListItem>
+        </BAIMetadataList>
+      </BAICard>
+
+      {/* antd Tabs → TabList + Tab (MAPPING §4): navigation only, panel is
+          self-rendered below. */}
+      <TabList
+        hasDivider
+        value={activeTabKey}
+        onChange={(key) => {
+          setActiveTabKey(key as TabKey);
+          // Lazy-load: the sessions query is not fetched when the drawer
+          // opens, only on first activation of the sessions tab.
+          if (key === 'sessions' && !sessionsQueryRef && agent?.row_id) {
+            loadSessionsQuery(
+              {
+                agentFilter: { id: { equals: agent.row_id } },
+                sessionFilter: {
+                  status: {
+                    in: statusBuckets.running as readonly SessionV2Status[],
+                  },
+                },
+                orderBy: [
+                  {
+                    field: 'CREATED_AT',
+                    direction: 'DESC',
+                  } as Required<SessionV2OrderBy>,
+                ],
+                limit: 10,
+                offset: 0,
+              },
+              { fetchPolicy: 'store-and-network' },
+            );
+          }
+        }}
       >
-        <Descriptions.Item label={t('agent.ResourceGroup')} span={md ? 2 : 1}>
-          {agent?.scaling_group}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.Region')}>
-          <Typography.Text style={{ minWidth: 200 }}>
-            {regionData.length > 1
-              ? _.join([regionData?.[0], regionData?.[1]], ' / ')
-              : regionData?.[0]}
-          </Typography.Text>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.Schedulable')}>
-          {agent?.schedulable ? (
-            <CheckOutlined style={{ color: token.colorSuccess }} />
-          ) : (
-            <CloseOutlined style={{ color: token.colorTextDisabled }} />
-          )}
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.Status')} span={md ? 2 : 1}>
-          <AgentStatusTag agentNodeFrgmt={agent} />
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.ComputePlugins')} span={md ? 2 : 1}>
-          <BAIFlex gap="sm" wrap="wrap">
-            <AgentComputePlugins agentNodeFrgmt={agent} />
-          </BAIFlex>
-        </Descriptions.Item>
-        <Descriptions.Item label={t('agent.StartsAt')} span={md ? 2 : 1}>
-          <BAIFlex gap="sm">
-            <Typography.Text>
-              {dayjs(agent?.first_contact).format('lll')}
-            </Typography.Text>
-            {agent?.status === 'ALIVE' && (
-              <BAIIntervalView
-                callback={() => {
-                  return baiClient.utils.elapsedTime(
-                    agent?.first_contact || '',
-                    Date.now(),
-                  );
-                }}
-                delay={1000}
-                render={(intervalValue) => (
-                  <BAIDoubleTag
-                    values={[
-                      { label: t('agent.ElapsedTime') },
-                      { label: intervalValue },
-                    ]}
-                  />
-                )}
+        <Tab value="resources" label={t('agent.Resources')} />
+        <Tab value="sessions" label={t('webui.menu.Sessions')} />
+      </TabList>
+      {activeTabKey === 'resources' && (
+        <BAIErrorBoundary>
+          <AgentResources agentNodeFrgmt={agent} />
+        </BAIErrorBoundary>
+      )}
+      {activeTabKey === 'sessions' && (
+        <BAIErrorBoundary>
+          <Suspense fallback={<BAISkeleton />}>
+            {sessionsQueryRef && (
+              <AgentSessions
+                queryRef={sessionsQueryRef}
+                onReload={loadSessionsQuery}
               />
             )}
-          </BAIFlex>
-        </Descriptions.Item>
-      </Descriptions>
-
-      <Tabs
-        activeKey={activeTabKey}
-        onChange={(key) => setActiveTabKey(key as TabKey)}
-        items={[
-          {
-            key: 'resources',
-            label: t('agent.Resources'),
-            children: <AgentResources agentNodeFrgmt={agent} />,
-          },
-        ]}
-      />
+          </Suspense>
+        </BAIErrorBoundary>
+      )}
     </BAIFlex>
   );
 };

@@ -3,8 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ChatCardQuery } from '../../__generated__/ChatCardQuery.graphql';
-import { useSuspenseTanQuery } from '../../hooks/reactQueryAlias';
+import { App } from '../../app-shim';
+import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useAIAgent } from '../../hooks/useAIAgent';
+import { theme } from '../../theme-shim';
 import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
@@ -15,11 +17,12 @@ import {
   ChatModel,
   getLatestUserMessage,
   ChatMessage,
-  mapAgentParamsToChatParams,
 } from './ChatModel';
 import { CustomModelForm } from './CustomModelForm';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
+import { Banner } from '@astryxdesign/core/Banner';
+import { Card } from '@astryxdesign/core/Card';
 import {
   convertToModelMessages,
   DefaultChatTransport,
@@ -27,33 +30,33 @@ import {
   streamText,
   wrapLanguageModel,
 } from 'ai';
-import { Alert, App, Card, type CardProps, theme } from 'antd';
-import { createStyles } from 'antd-style';
 import {
+  BAIFlex,
   BAILogger,
+  toGlobalId,
+  toLocalId,
   useBAILogger,
   useEventNotStable,
   useUpdatableState,
 } from 'backend.ai-ui';
-import classNames from 'classnames';
-import _ from 'lodash';
-import React, {
-  memo,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-} from 'react';
+import * as _ from 'lodash-es';
+import React, { memo, useEffect, useRef, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-interface ChatCardProps extends Omit<CardProps, 'classNames' | 'variant'> {
+// PILOT-DECISION: the antd `CardProps` extension is gone — grepping every
+// call site (ChatPage's PureChatCard usage, ModelCardChat) shows only
+// `style` was ever passed externally; `title`/`styles`/`className`/`ref`
+// were internal to this component. Astryx `Card` (MAPPING.md §5.1) is a bare
+// container, so the header/body split below is hand-composed instead of
+// threaded through Card's (nonexistent) `title`/`styles` slots.
+interface ChatCardProps {
+  style?: React.CSSProperties;
   chat: ChatData;
   onUpdateChat?: (partialChat: DeepPartial<ChatData>) => void;
   onRemoveChat?: (chat: ChatData) => void;
   onAddChat?: (chat: ChatData) => void;
-  onChangeEndpoint?: (endpointId: string) => void;
+  onChangeDeployment?: (deploymentId: string) => void;
   onChangeModel?: (modelId: string) => void;
   onChangeAgent?: (agentId: string) => void;
   onChangeSync?: (sync: boolean) => void;
@@ -62,21 +65,30 @@ interface ChatCardProps extends Omit<CardProps, 'classNames' | 'variant'> {
   closable?: boolean;
   cloneable?: boolean;
   fetchOnClient?: boolean;
-  defaultEndpointId?: string;
+  defaultDeploymentId?: string;
 }
 
-const useStyles = createStyles(({ token, css }) => ({
-  chatCard: css`
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  `,
-  alert: css`
-    margin-block: ${token.paddingContentVertical}px;
-    margin-inline: ${token.paddingContentHorizontal}px;
-  `,
-}));
+function readFileAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // `FileReader.result` is typed `string | ArrayBuffer | null`; only a
+      // string is a valid data URL. Reject instead of casting so a malformed
+      // read can never produce an invalid `url` downstream.
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject(new Error('FileReader did not return a data URL string.'));
+      }
+    };
+    reader.onerror = () =>
+      reject(reader.error ?? new Error('Failed to read the file.'));
+    // Without an abort handler the Promise would hang forever if the read is
+    // aborted (e.g. the file becomes unavailable mid-read).
+    reader.onabort = () => reject(new Error('File reading was aborted.'));
+    reader.readAsDataURL(file);
+  });
+}
 
 function createModelsURL(baseURL: string) {
   const { origin, pathname: path } = new URL(baseURL.trim());
@@ -91,6 +103,7 @@ function useModels(
   baseURL?: string,
   effectiveApiKey?: string,
 ) {
+  'use memo';
   const { t } = useTranslation();
   const getModelsErrorMessage = (status?: number) => {
     switch (status) {
@@ -107,7 +120,7 @@ function useModels(
     }
   };
 
-  const { data: modelsResult } = useSuspenseTanQuery<{
+  const { data: modelsResult, isLoading: isLoadingModels } = useTanQuery<{
     data: Array<ChatModel>;
     error?: number;
   }>({
@@ -120,10 +133,18 @@ function useModels(
 
         const url = createModelsURL(baseURL);
         const authToken = effectiveApiKey ?? provider.apiKey;
+        // FR-3212: An unresponsive endpoint (TCP connects but never returns an
+        // HTTP response) would otherwise hang this fetch forever, leaving the
+        // Suspense boundary spinning indefinitely. Abort after 30s so the
+        // request rejects and falls into the catch below (error: -1), driving
+        // the established CustomModelForm recovery UX. 30s is generous enough
+        // for a slow-but-healthy endpoint (cold start, app-proxy/TLS latency)
+        // while still bounding a dead connection to a recoverable failure.
         const response = await fetch(url, {
           headers: {
             Authorization: authToken ? `Bearer ${authToken}` : '',
           },
+          signal: AbortSignal.timeout(30000),
         });
 
         if (!response.ok) {
@@ -147,26 +168,32 @@ function useModels(
               name: model.id,
             }))
           : [],
+        // Preserve the error code so consumers (modelsError below) can detect
+        // a failed `/models` fetch; otherwise it is dropped by this select.
+        error: res.error,
       };
     },
   });
 
-  const modelId = useMemo(
-    () =>
-      provider.modelId &&
-      _.includes(_.map(modelsResult?.data || [], 'id'), provider.modelId)
-        ? provider.modelId
-        : (modelsResult?.data?.[0]?.id ?? 'custom'),
-    [modelsResult?.data, provider.modelId],
-  );
+  const modelId =
+    provider.modelId &&
+    _.includes(_.map(modelsResult?.data || [], 'id'), provider.modelId)
+      ? provider.modelId
+      : (modelsResult?.data?.[0]?.id ?? 'custom');
 
-  const modelsError =
-    modelsResult.error && getModelsErrorMessage(modelsResult.error);
+  const modelsError = modelsResult?.error
+    ? getModelsErrorMessage(modelsResult.error)
+    : undefined;
 
   return {
-    models: modelsResult?.data,
+    // useTanQuery leaves `data` undefined until the query settles; normalize to
+    // an empty array so consumers (ChatHeader, the CustomModelForm gate) keep a
+    // stable `ChatModel[]` shape. `isLoadingModels` distinguishes the in-flight
+    // window from a genuinely empty result.
+    models: modelsResult?.data ?? [],
     modelId,
     modelsError,
+    isLoadingModels,
   } as const;
 }
 
@@ -177,14 +204,14 @@ const ChatInput = React.memo(PureChatInput);
 function createBaseURL(
   logger: BAILogger,
   basePath?: string,
-  endpointUrl?: string | null,
+  deploymentUrl?: string | null,
 ) {
   try {
-    return endpointUrl
-      ? new URL(basePath ?? '', endpointUrl).toString()
+    return deploymentUrl
+      ? new URL(basePath ?? '', deploymentUrl).toString()
       : undefined;
   } catch {
-    logger.error('Invalid base URL:', basePath, 'endpointUrl', endpointUrl);
+    logger.error('Invalid base URL:', basePath, 'deploymentUrl', deploymentUrl);
   }
 }
 
@@ -198,38 +225,51 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   onAddChat,
   onSaveMessage,
   onClearMessage,
-  styles,
-  className,
-  ...otherCardProps
+  style,
 }) => {
   'use memo';
 
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const { message: appMessage } = App.useApp();
-  const endpointResult = useLazyLoadQuery<ChatCardQuery>(
+  const deploymentResult = useLazyLoadQuery<ChatCardQuery>(
     graphql`
-      query ChatCardQuery($endpointId: UUID!) {
-        endpoint(endpoint_id: $endpointId) @catch {
-          endpoint_id
-          url
-          ...ChatHeader_Endpoint
+      query ChatCardQuery($deploymentId: ID!) {
+        deployment(id: $deploymentId) @catch {
+          id
+          networkAccess {
+            endpointUrl
+          }
+          replicaState {
+            desiredReplicaCount
+          }
+          ...ChatHeader_Deployment
         }
       }
     `,
     {
-      endpointId: chat.provider.endpointId || '',
+      // `chat.provider.deploymentId` holds the deployment's local UUID (it also
+      // travels through the `deploymentId` URL param), while the Strawberry
+      // `deployment(id:)` field takes the global Relay ID. The empty string
+      // keeps the store-only branch below from issuing a network request.
+      deploymentId: chat.provider.deploymentId
+        ? toGlobalId('ModelDeployment', chat.provider.deploymentId)
+        : '',
     },
     {
-      fetchPolicy: chat.provider.endpointId ? 'store-or-network' : 'store-only',
+      fetchPolicy: chat.provider.deploymentId
+        ? 'store-or-network'
+        : 'store-only',
     },
   );
-  const endpoint = endpointResult.endpoint.ok
-    ? endpointResult.endpoint.value
+  const deployment = deploymentResult.deployment.ok
+    ? deploymentResult.deployment.value
     : null;
-  const {
-    styles: { chatCard: chatCardStyle, alert: alertStyle },
-  } = useStyles();
+  const hasNoDesiredReplicas =
+    deployment?.replicaState.desiredReplicaCount === 0;
+  // Consumers below address the deployment by its local UUID, as the chat
+  // provider and the `deploymentId` URL param do.
+  const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
 
   const { token } = theme.useToken();
 
@@ -238,18 +278,20 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const dropContainerRef = useRef<HTMLDivElement>(null);
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [endTime, setEndTime] = useState<number | null>(null);
 
-  const { agents } = useAIAgent();
+  const { agents, getEndpointBinding } = useAIAgent();
   const agent = agents.find((a) => a.id === chat.provider.agentId);
-  const effectiveApiKey = agent?.endpoint_token || chat.provider.apiKey;
-  const agentEndpointUrl = agent?.endpoint_url;
+  const agentEndpoint = agent ? getEndpointBinding(agent.id) : undefined;
+  const effectiveApiKey = agentEndpoint?.endpoint_token || chat.provider.apiKey;
+  const agentEndpointUrl = agentEndpoint?.endpoint_url;
 
   const baseURL = createBaseURL(
     logger,
     chat.provider.basePath,
-    agentEndpointUrl || endpoint?.url,
+    agentEndpointUrl || deployment?.networkAccess.endpointUrl,
   );
-  const { models, modelId, modelsError } = useModels(
+  const { models, modelId, modelsError, isLoadingModels } = useModels(
     chat.provider,
     fetchKey,
     baseURL,
@@ -261,9 +303,6 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const { error, messages, stop, status, sendMessage, setMessages } = useChat({
     experimental_throttle: 100,
     messages: chat.messages,
-    onFinish: () => {
-      setStartTime(null);
-    },
     // Because there is an issue(https://github.com/vercel/ai/issues/8956) with useChat that does not run a new transport without an id change,
     // we have to change the id and use fetch by utilizing useEventNotStable.
     id: `chat-${baseURL}-${modelId}-${effectiveApiKey}`,
@@ -290,12 +329,25 @@ const PureChatCard: React.FC<ChatCardProps> = ({
               abortSignal: init?.signal || undefined,
               model: wrapLanguageModel({
                 model: provider.chatModel(modelId),
-                middleware: extractReasoningMiddleware({
-                  tagName: 'think',
-                }),
+                middleware: [
+                  extractReasoningMiddleware({
+                    tagName: 'think',
+                  }),
+                  // The openai-compatible provider does not advertise any
+                  // `supportedUrls`, so the AI SDK treats a `data:` image
+                  // attachment as a remote asset and tries to *download* it,
+                  // failing with "Failed to download data:image/...". Advertise
+                  // that the model accepts image URLs inline so the SDK passes
+                  // the data URL straight through as an `image_url` part.
+                  {
+                    overrideSupportedUrls: () => ({
+                      'image/*': [/^data:/, /^https?:\/\//],
+                    }),
+                  },
+                ],
               }),
               messages: convertToModelMessages(body?.messages),
-              system: agent?.config.system_prompt || undefined,
+              system: agent?.systemPrompt || undefined,
               ...(chat.usingParameters ? chat.parameters : {}),
             });
 
@@ -305,6 +357,15 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             }
 
             return result.toUIMessageStreamResponse({
+              // Surface the model-reported output token count on the final
+              // message so ChatTokenCounter can use the exact usage value for
+              // TPS instead of the gpt-tokenizer estimate. Only emitted on the
+              // 'finish' event (usage is not known mid-stream).
+              messageMetadata: ({ part }) => {
+                if (part.type === 'finish') {
+                  return { outputTokens: part.totalUsage.outputTokens };
+                }
+              },
               onError: (error) => {
                 return getAIErrorMessage(error);
               },
@@ -329,9 +390,30 @@ const PureChatCard: React.FC<ChatCardProps> = ({
 
   const isStreaming = status === 'streaming' || status === 'submitted';
 
+  // TPS measurement window follows the standard LLM inference convention:
+  // start when the first output token arrives (status transitions to
+  // 'streaming') and stop when streaming ends (success, abort, or error).
+  // This excludes file upload, network RTT, and prefill (TTFT), so the
+  // displayed TPS reflects pure decode rate — the same definition used by
+  // vLLM, Ollama, NVIDIA GenAI-Perf, etc.
+  useEffect(() => {
+    if (status === 'streaming' && startTime === null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- TPS timer; pre-existing in FR-2854 scope, refactor in follow-up
+      setStartTime(Date.now());
+    }
+  }, [status, startTime]);
+
+  useEffect(() => {
+    if (!isStreaming && startTime !== null && endTime === null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- TPS timer; pre-existing in FR-2854 scope, refactor in follow-up
+      setEndTime(Date.now());
+    }
+  }, [isStreaming, startTime, endTime]);
+
   // Helper function to handle message sending with files
   const handleSendMessage = async (textContent: string, files?: File[]) => {
-    setStartTime(Date.now());
+    setStartTime(null);
+    setEndTime(null);
 
     const parts: Array<
       | { type: 'text'; text: string }
@@ -343,17 +425,32 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       parts.push({ type: 'text', text: textContent });
     }
 
-    // Add files if present
+    // Add files if present.
+    // Encode each file as a base64 data URL rather than an object URL: a
+    // `blob:` URL is only resolvable inside the document that created it, so it
+    // cannot be read once the attachment is forwarded to the model endpoint
+    // through the openai-compatible provider. A data URL inlines the bytes and
+    // is delivered to the model as-is.
     if (files && files.length > 0) {
-      files.forEach((file) => {
-        const url = URL.createObjectURL(file);
-        parts.push({
-          type: 'file',
-          url: url,
-          mediaType: file.type || 'application/octet-stream',
-          filename: file.name,
-        });
-      });
+      // `onSendMessage` is fired from ChatInput without awaiting, so a
+      // rejection here would surface as an unhandled promise rejection.
+      // Catch the read failure, surface it to the user, and abort the send
+      // rather than forwarding a half-built message to the model.
+      try {
+        const fileParts = await Promise.all(
+          files.map(async (file) => ({
+            type: 'file' as const,
+            url: await readFileAsDataURL(file),
+            mediaType: file.type || 'application/octet-stream',
+            filename: file.name,
+          })),
+        );
+        parts.push(...fileParts);
+      } catch (error) {
+        logger.error('Failed to read attached file(s) as data URL:', error);
+        appMessage.error(t('theme.FailedToReadFile'));
+        return;
+      }
     }
 
     // Send with parts array if we have content
@@ -369,23 +466,6 @@ const PureChatCard: React.FC<ChatCardProps> = ({
     }
   }, [modelsError, fetchKey, appMessage]);
 
-  // Apply agent params to chat parameters on initial load (e.g., navigating from agent page)
-  const hasAppliedInitialAgentParams = useRef(false);
-  useEffect(() => {
-    if (
-      agent?.params &&
-      !hasAppliedInitialAgentParams.current &&
-      !chat.usingParameters
-    ) {
-      hasAppliedInitialAgentParams.current = true;
-      onUpdateChat?.({
-        usingParameters: true,
-        parameters: mapAgentParamsToChatParams(agent.params),
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agent?.id]);
-
   useEffect(() => {
     if (chat.messages.length > 0) {
       setMessages(chat.messages);
@@ -393,36 +473,37 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   }, [setMessages, chat.messages]);
 
   return (
+    // PILOT-DECISION: Astryx `Card` is a bare container (MAPPING.md §5.1) —
+    // antd's `title`/`styles.header`/`styles.body` header-vs-body split is
+    // hand-composed below instead of routed through a generic BAICard
+    // wrapper (this page's exact anatomy — a full-bleed body, no card
+    // padding — doesn't fit the standard padded-header recipe). `ref` moves
+    // from the antd Card root to the Astryx Card root; both are plain
+    // `HTMLDivElement`s, so `getDropContainer` keeps working unchanged.
     <Card
-      {...otherCardProps}
-      variant="outlined"
-      className={classNames(chatCardStyle, className)}
-      styles={{
-        ...styles,
-        body: {
-          backgroundColor: token.colorFillQuaternary,
-          borderRadius: 0,
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 0,
-          height: '50%',
-          position: 'relative',
-          ...(!_.isFunction(styles) && styles?.body),
-        },
-        actions: {
-          paddingLeft: token.paddingContentHorizontal,
-          paddingRight: token.paddingContentHorizontal,
-          ...(!_.isFunction(styles) && styles?.actions),
-        },
-        header: {
+      ref={dropContainerRef}
+      padding={0}
+      variant="default"
+      style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        ...style,
+      }}
+    >
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        style={{
           zIndex: 1,
           paddingInline: token.paddingContentHorizontal,
           paddingRight: token.paddingXS,
-          ...(!_.isFunction(styles) && styles?.header),
-        },
-      }}
-      title={
+          paddingBlock: token.paddingXS,
+          borderBottom: `1px solid ${token.colorBorderSecondary}`,
+        }}
+      >
         <ChatHeader
           // model
           models={models}
@@ -438,27 +519,22 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           agents={agents}
           agent={agent}
           onChangeAgent={(agent) => {
+            const binding = getEndpointBinding(agent.id);
             onUpdateChat?.({
               provider: {
                 agentId: agent.id,
-                endpointId: agent.endpoint_url ? '' : agent.endpoint_id,
-                apiKey: agent.endpoint_token || undefined,
-                modelId: agent.config?.default_model || undefined,
+                deploymentId: binding?.endpoint_url ? '' : binding?.endpoint_id,
+                apiKey: binding?.endpoint_token || undefined,
+                modelId: agent.modelPreferences?.preferredModelId || undefined,
               },
-              ...(agent.params
-                ? {
-                    usingParameters: true,
-                    parameters: mapAgentParamsToChatParams(agent.params),
-                  }
-                : {}),
             });
           }}
-          // endpoint
-          endpointFrgmt={endpoint}
-          onChangeEndpoint={(endpointId) => {
+          // deployment
+          deploymentFrgmt={deployment}
+          onChangeDeployment={(deploymentId) => {
             onUpdateChat?.({
               provider: {
-                endpointId,
+                deploymentId,
               },
             });
           }}
@@ -492,65 +568,85 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             });
           }}
         />
-      }
-      ref={dropContainerRef}
-    >
-      {baseURL && (endpoint || agentEndpointUrl) && _.isEmpty(models) && (
-        <CustomModelForm
-          endpointUrl={agentEndpointUrl || endpoint?.url || ''}
-          basePath={chat.provider.basePath}
-          token={effectiveApiKey}
-          endpointId={endpoint?.endpoint_id}
-          loading={isPendingUpdate}
-          onSubmit={(data) => {
-            startUpdateTransition(() => {
-              updateFetchKey();
-              onUpdateChat?.({
-                ...chat,
-                provider: {
-                  ...chat.provider,
-                  basePath: data.basePath,
-                  apiKey: data.token,
-                },
+      </BAIFlex>
+      <BAIFlex
+        direction="column"
+        align="stretch"
+        style={{
+          backgroundColor: token.colorFillQuaternary,
+          flex: 1,
+          padding: 0,
+          // `minHeight: 0` (not the old `height: '50%'`): this column owns the
+          // messages/composer height budget. Without it the message list's
+          // automatic minimum size is its min-content height, which lets the
+          // list push the composer past the card's `overflow: hidden` edge.
+          minHeight: 0,
+          position: 'relative',
+        }}
+      >
+        {baseURL && (deployment || agentEndpointUrl) && _.isEmpty(models) && (
+          <CustomModelForm
+            deploymentUrl={
+              agentEndpointUrl || deployment?.networkAccess.endpointUrl || ''
+            }
+            basePath={chat.provider.basePath}
+            token={effectiveApiKey}
+            deploymentId={deploymentId}
+            loading={isPendingUpdate || isLoadingModels}
+            hasNoDesiredReplicas={hasNoDesiredReplicas}
+            onSubmit={(data) => {
+              startUpdateTransition(() => {
+                updateFetchKey();
+                onUpdateChat?.({
+                  ...chat,
+                  provider: {
+                    ...chat.provider,
+                    basePath: data.basePath,
+                    apiKey: data.token,
+                  },
+                });
               });
-            });
-          }}
+            }}
+          />
+        )}
+        {!_.isEmpty(error?.message) ? (
+          <Banner
+            title={error?.message ?? ''}
+            status="error"
+            style={{
+              marginBlock: token.paddingContentVertical,
+              marginInline: token.paddingContentHorizontal,
+            }}
+          />
+        ) : null}
+        {!baseURL ? (
+          <Banner
+            title={t('error.InvalidBaseURL')}
+            status="error"
+            style={{
+              marginBlock: token.paddingContentVertical,
+              marginInline: token.paddingContentHorizontal,
+            }}
+          />
+        ) : null}
+        <ChatMessages
+          messages={messages}
+          input={input}
+          isStreaming={isStreaming}
+          startTime={startTime}
+          endTime={endTime}
         />
-      )}
-      {!_.isEmpty(error?.message) ? (
-        <Alert
-          title={error?.message}
-          type="error"
-          showIcon
-          className={alertStyle}
-          closable
+        <ChatInput
+          disabled={!baseURL || !!modelsError || isLoadingModels}
+          sync={chat.sync}
+          input={input}
+          setInput={setInput}
+          stop={stop}
+          onSendMessage={handleSendMessage}
+          isStreaming={isStreaming}
+          dropContainerRef={dropContainerRef}
         />
-      ) : null}
-      {!baseURL ? (
-        <Alert
-          title={t('error.InvalidBaseURL')}
-          type="error"
-          showIcon
-          className={alertStyle}
-          closable
-        />
-      ) : null}
-      <ChatMessages
-        messages={messages}
-        input={input}
-        isStreaming={isStreaming}
-        startTime={startTime}
-      />
-      <ChatInput
-        disabled={!baseURL}
-        sync={chat.sync}
-        input={input}
-        setInput={setInput}
-        stop={stop}
-        onSendMessage={handleSendMessage}
-        isStreaming={isStreaming}
-        dropContainerRef={dropContainerRef}
-      />
+      </BAIFlex>
     </Card>
   );
 };
