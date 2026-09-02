@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { UserFairShareOrderField } from '../../__generated__/UserFairShareStepQuery.graphql';
 import {
   UserFairShareTableFragment$data,
   UserFairShareTableFragment$key,
@@ -36,6 +37,16 @@ const availableUserFairShareSorterKeys = [
   'fairShareFactor',
   'createdAt',
 ] as const;
+// Snake-casing alone would send EMAIL/USERNAME, which the server enum rejects.
+export const userFairShareOrderFieldMap: Record<
+  (typeof availableUserFairShareSorterKeys)[number],
+  UserFairShareOrderField
+> = {
+  email: 'USER_EMAIL',
+  username: 'USER_USERNAME',
+  fairShareFactor: 'FAIR_SHARE_FACTOR',
+  createdAt: 'CREATED_AT',
+};
 export const availableUserFairShareSorterValues = [
   ...availableUserFairShareSorterKeys,
   ...availableUserFairShareSorterKeys.map((key) => `-${key}` as const),
@@ -119,6 +130,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       key: 'email',
       fixed: 'left',
       dataIndex: 'userEmail',
+      sortKey: 'email',
       render: (_text, record) => (
         <BAINameActionCell
           title={record?.user?.basicInfo.email}
@@ -142,6 +154,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       key: 'username',
       fixed: 'left',
       dataIndex: 'userUsername',
+      sortKey: 'username',
       render: (_text, record) => record?.user?.basicInfo.username,
       sorter: isEnableSorter('username'),
     },
@@ -180,6 +193,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
       ),
       key: 'fairShareFactor',
       dataIndex: ['calculationSnapshot', 'fairShareFactor'],
+      sortKey: 'fairShareFactor',
       sorter: isEnableSorter('fairShareFactor'),
       render: (fairShareFactor) =>
         fairShareFactor !== null && fairShareFactor !== undefined

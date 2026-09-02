@@ -1051,8 +1051,8 @@ export function listenToBackgroundTask<
 
 /**
  * Converts an order string (e.g., 'name' or '-name') to a GraphQL v2 (Strawberry) OrderBy array.
- * If the order string contains commas (from array dataIndex like ['spec', 'weight']),
- * only the last part is used as the field name.
+ * If the order string is a joined array dataIndex path ('.' from BAITable,
+ * ',' from the antd era), only the last segment is used as the field name.
  *
  * @template TOrderBy - The type of the order by object (e.g., ResourceGroupOrderBy)
  * @param order - The order string. Prefix with '-' for descending order.
@@ -1068,17 +1068,16 @@ export function listenToBackgroundTask<
  * // => [{ field: 'NAME', direction: 'DESC' }]
  *
  * @example
- * // With field name mapping for server compatibility
- * convertToOrderBy<DomainFairShareOrderBy>(
- *   '-calculationSnapshot,fairShareFactor',
- *   { fairShareFactor: 'FAIR_SHARE_FACTOR' }
- * )
- * // => [{ field: 'FAIR_SHARE_FACTOR', direction: 'DESC' }]
+ * // With field name mapping for server compatibility. Without the mapping,
+ * // 'email' would become 'EMAIL', which UserFairShareOrderField rejects.
+ * convertToOrderBy<UserFairShareOrderBy>('-email', { email: 'USER_EMAIL' })
+ * // => [{ field: 'USER_EMAIL', direction: 'DESC' }]
  */
 export const convertToOrderBy = <
   TOrderBy extends { field?: string; direction?: string },
 >(
   order: string | null | undefined,
+  fieldNameMap?: Record<string, NonNullable<TOrderBy['field']>>,
 ): ReadonlyArray<TOrderBy> | undefined => {
   if (!order) return undefined;
 
@@ -1086,13 +1085,14 @@ export const convertToOrderBy = <
   const isDescending = order.startsWith('-');
   const cleanOrder = isDescending ? order.slice(1) : order;
 
-  // If order contains comma-separated values, extract the last one
-  const orderParts = cleanOrder.split(',');
+  // A joined array dataIndex path ('.' from BAITable, ',' from the antd-era
+  // table) names the server field in its last segment.
+  const orderParts = cleanOrder.split(/[.,]/);
   const lastOrder = orderParts[orderParts.length - 1].trim();
 
   return [
     {
-      field: _.snakeCase(lastOrder).toUpperCase(),
+      field: fieldNameMap?.[lastOrder] ?? _.snakeCase(lastOrder).toUpperCase(),
       direction: isDescending ? 'DESC' : 'ASC',
     } as TOrderBy,
   ];

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ResourceGroupOrderField } from '../../__generated__/ResourceGroupFairShareStepQuery.graphql';
 import {
   ResourceGroupFairShareTableFragment$data,
   ResourceGroupFairShareTableFragment$key,
@@ -34,6 +35,12 @@ type ResourceGroup = NonNullable<
 >;
 
 const availableResourceGroupSorterKeys = ['name'] as const;
+export const resourceGroupOrderFieldMap: Record<
+  (typeof availableResourceGroupSorterKeys)[number],
+  ResourceGroupOrderField
+> = {
+  name: 'NAME',
+};
 export const availableResourceGroupSorterValues = [
   ...availableResourceGroupSorterKeys,
   ...availableResourceGroupSorterKeys.map((key) => `-${key}` as const),

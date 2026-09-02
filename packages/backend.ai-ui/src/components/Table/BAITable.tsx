@@ -358,13 +358,14 @@ const DENSITY_BY_SIZE: Record<string, TableDensity> = {
 const toAstryxAlign = (align?: string) =>
   align === 'right' ? 'end' : align === 'center' ? 'center' : undefined;
 
-/** antd `dataIndex` -> the field name the order string is built from. */
+/** `sortKey` override, else antd `dataIndex` -> the order-string field name. */
 const sortKeyOf = (column: BAIColumnType<any>, key: string) =>
-  column.dataIndex
+  column.sortKey ??
+  (column.dataIndex
     ? Array.isArray(column.dataIndex)
       ? column.dataIndex.join('.')
       : String(column.dataIndex)
-    : key;
+    : key);
 
 const columnKeyOf = (column: BAIColumnType<any>, index: number) =>
   column.key?.toString() ??

@@ -11,6 +11,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPagin
 import FairShareStepToolbar from './FairShareStepToolbar';
 import ResourceGroupFairShareTable, {
   availableResourceGroupSorterValues,
+  resourceGroupOrderFieldMap,
 } from './ResourceGroupFairShareTable';
 import { BAIFlex, INITIAL_FETCH_KEY, useFetchKey } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -55,9 +56,10 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
     filter: {
       ...(queryParams.filter || {}),
     },
-    order: convertToOrderBy<ResourceGroupOrderBy>(queryParams.order) || [
-      { field: 'NAME', direction: 'DESC' },
-    ],
+    order: convertToOrderBy<ResourceGroupOrderBy>(
+      queryParams.order,
+      resourceGroupOrderFieldMap,
+    ) || [{ field: 'NAME', direction: 'DESC' }],
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
