@@ -62,12 +62,15 @@ Create a branch named `MAJOR.MINOR` (e.g., `26.4`) from `main`:
 git checkout -b 26.4
 ```
 
-If the branch already exists, check it out and merge `main` into it:
+If the branch already exists, check it out and merge the latest `main` into it:
 
 ```bash
+git fetch origin main
 git checkout 26.4
-git merge main -m "chore: merge main into 26.4 for v{VERSION} release"
+git merge origin/main -m "chore: merge main into 26.4 for v{VERSION} release"
 ```
+
+Merge `origin/main`, not the local `main` — a stale local branch would cut the release short.
 
 If the merge has conflicts, warn the user and stop — do not force-resolve conflicts automatically.
 
