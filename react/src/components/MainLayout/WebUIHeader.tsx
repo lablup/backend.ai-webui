@@ -5,7 +5,6 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { useBAIBreakpoint } from '../../theme-shim';
 import BAINotificationButton from '../BAINotificationButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import UserDropdownMenu from '../UserDropdownMenu';
@@ -20,6 +19,7 @@ import {
   ANTD_REVERSED_BAND_OVERLAYS,
   BAIFlex,
   BAIFlexProps,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import { MenuIcon } from 'lucide-react';
 import { Suspense } from 'react';

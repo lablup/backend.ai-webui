@@ -63,8 +63,9 @@ import { neutralTheme } from '@astryxdesign/theme-neutral';
 import {
   ANTD_ALIGN_TOKENS,
   ANTD_DARK_ALGORITHM_OUTPUT,
-  generate,
-  palette,
+  BAI_SELF_COLOR_TOKENS,
+  buildBaiCustomTokens,
+  resolveDarkSeed,
 } from 'backend.ai-ui';
 
 // The measured parity tables moved into BUI's theme-shim with the shim itself
@@ -874,15 +875,8 @@ export interface BrandSeedPair {
   dark: string;
 }
 
-/**
- * Map a declared dark seed to the value antd's darkAlgorithm rendered for it.
- * Table for the shipped seeds (measured), the vendored palette for any other
- * 6-digit hex — the same computation the theme-shim ran live — and verbatim
- * passthrough for anything the generator cannot parse.
- */
-export const resolveDarkSeed = (seed: string): string =>
-  ANTD_DARK_ALGORITHM_OUTPUT[seed.toUpperCase()] ??
-  (/^#[0-9a-fA-F]{6}$/.test(seed) ? palette(seed, 'dark')(6) : seed);
+/** BUI's dark-seed transform, re-exported for the recipe's tests. */
+export { resolveDarkSeed };
 
 /** Default seeds — verbatim from resources/theme.json (+ antd defaults). */
 export const BAI_DEFAULT_SEEDS = {
@@ -981,82 +975,6 @@ const toOpaqueMutedTuple = (
         compositeOver(tuple[1], 0x3f / 255, CARD_SURFACE[1]),
       ]
     : undefined;
-
-/* -------------------------------------------------------------------------
- * `--bai-*` custom tokens — the theme-shim's surviving vocabulary (FR-3605)
- *
- * The retired ThemeShimProvider served three families of values the Astryx
- * token set cannot name: the brand link/info seeds, antd's per-status
- * hover/bg/border palette steps, and antd's neutral text/fill alpha ramp.
- * They are registered here as app-namespaced theme tokens with the exact
- * values the shim computed, so the 200-file `token.*` sweep is a rename,
- * not a redesign. Consumers read them via `useTheme().token('--bai-…')`.
- * ---------------------------------------------------------------------- */
-
-/** antd's neutral text/fill alpha ramp (was theme-shim `SELF_TOKENS`). */
-export const BAI_SELF_COLOR_TOKENS: Record<string, [string, string]> = {
-  '--bai-color-text-tertiary': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'],
-  '--bai-color-text-quaternary': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'],
-  '--bai-color-text-description': [
-    'rgba(0,0,0,0.45)',
-    'rgba(255,255,255,0.45)',
-  ],
-  '--bai-color-fill': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'],
-  '--bai-color-fill-secondary': ['rgba(0,0,0,0.06)', '#262626'],
-  '--bai-color-fill-tertiary': ['rgba(0,0,0,0.04)', 'rgba(255,255,255,0.08)'],
-  '--bai-color-fill-quaternary': ['rgba(0,0,0,0.02)', 'rgba(255,255,255,0.04)'],
-  '--bai-color-bg-container-disabled': [
-    'rgba(0,0,0,0.04)',
-    'rgba(255,255,255,0.08)',
-  ],
-  // antd preset palette steps (light/dark tables) still consumed by name.
-  '--bai-preset-purple-5': ['#9254de', '#51258f'],
-  '--bai-preset-green-5': ['#73d13d', '#3c8618'],
-  '--bai-preset-red-5': ['#ff4d4f', '#a61d24'],
-};
-
-/**
- * antd palette step for one seed pair, per scheme — the shim's `derive`
- * verdict verbatim: light = palette(light)(key), dark = palette over the
- * DECLARED dark seed with the dark algorithm (darkKey when antd diverges).
- */
-const deriveTuple = (
-  pair: BrandSeedPair,
-  key: number,
-  darkKey?: number,
-): [string, string] => [
-  palette(pair.light, 'light')(key),
-  palette(pair.dark, 'dark')(darkKey ?? key),
-];
-
-/**
- * The full `--bai-*` set for one resolved seed set. `--bai-primary-5` is the
- * one antd ramp step still consumed (progress fills): `generate()` (default
- * options) over the mode's palette key-6 map color, per scheme, index 4.
- */
-const buildBaiCustomTokens = (
-  seeds: ResolvedSeeds,
-): Record<string, string | [string, string]> => {
-  const ramp: Record<string, [string, string]> = {
-    '--bai-primary-5': [
-      generate(palette(seeds.accent.light, 'light')(6))[4],
-      generate(palette(seeds.accent.dark, 'dark')(6))[4],
-    ],
-  };
-  return {
-    '--bai-color-info': toTuple(seeds.info),
-    '--bai-color-link': toTuple(seeds.link),
-    '--bai-header-bg': [seeds.headerBg.light, seeds.headerBg.dark],
-    '--bai-color-error-bg': deriveTuple(seeds.error, 1),
-    '--bai-color-info-bg': deriveTuple(seeds.info, 1),
-    '--bai-color-warning-hover': deriveTuple(seeds.warning, 4),
-    '--bai-color-success-border-hover': deriveTuple(seeds.success, 4),
-    '--bai-color-primary-bg': deriveTuple(seeds.accent, 1, 3),
-    '--bai-color-error-border': deriveTuple(seeds.error, 3),
-    ...ramp,
-    ...BAI_SELF_COLOR_TOKENS,
-  };
-};
 
 /** djb2 — tiny, stable, DOM-attribute-safe (base36). */
 const hashSeeds = (input: string): string => {
@@ -1245,7 +1163,7 @@ export function buildBackendAiTheme(
       // entirely"), which would silently regenerate the type ramp.
       '--font-family-body': seeds.fontFamily,
       '--font-family-heading': seeds.fontFamily,
-      // The `--bai-*` custom vocabulary — see the block above BAI_SELF_COLOR_TOKENS.
+      // The `--bai-*` custom vocabulary (BUI `src/theme/baiCustomTokens.ts`).
       ...buildBaiCustomTokens(seeds),
       // The 6 antd↔Astryx value differences, pinned to antd values.
       ...ANTD_ALIGN_TOKENS,

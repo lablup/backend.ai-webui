@@ -14,7 +14,6 @@ import {
 } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
-import { useBAIBreakpoint } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import CodeHighlighterModal from './CodeHighlighterModal';
@@ -60,6 +59,7 @@ import {
   UNSAFELazyUserEmailView,
   useMemoizedJSONParse,
   useToggle,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { History, Info, CircleHelp, TriangleAlert } from 'lucide-react';

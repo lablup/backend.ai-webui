@@ -11,7 +11,6 @@ import AstryxBrandTheme from '../astryx-theme/AstryxBrandTheme';
 import { FormConfigProvider } from '../form-engine';
 import { backendaiOptions } from '../global-stores';
 import { buiLanguages } from '../helper/bui-language';
-import { pickSeed } from '../helper/customThemeConfig';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import {
   backendaiClientPromise,
@@ -19,14 +18,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
-import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
-import { useThemeMode } from '../hooks/useThemeMode';
 import '../index.css';
-// antd `theme.useToken()` drop-in backed by Astryx tokens (to-astryx ticket
-// 03). Renders no DOM and touches no document attributes — mounting it is
-// visually inert; only files that import `theme` from '../theme-shim'
-// (rewritten by scripts/codemods/antd-theme-to-shim.mjs) consume it.
-import { ThemeShimProvider } from '../theme-shim';
 import NotificationHost from './NotificationHost';
 import { useTheme } from '@astryxdesign/core/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -320,25 +312,6 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const [lang] = useCurrentLanguage();
   const { t } = useTranslation();
   const { token } = useTheme();
-  const { isDarkMode } = useThemeMode();
-
-  const { appearance, activeThemeFamily } = useCustomThemeConfig();
-  // Shim seeds for the active family, per scheme. The shim still speaks
-  // antd seed names; the v2 document's tuple seeds are resolved here.
-  const activeFamilyConfig = appearance?.theme?.families?.[activeThemeFamily];
-  const shimMode = isDarkMode ? 'dark' : ('light' as const);
-  const shimSeeds = {
-    colorPrimary: pickSeed(activeFamilyConfig?.seeds?.accent, shimMode),
-    colorLink: pickSeed(activeFamilyConfig?.seeds?.link, shimMode),
-    colorInfo: pickSeed(activeFamilyConfig?.seeds?.info, shimMode),
-    colorError: pickSeed(activeFamilyConfig?.seeds?.error, shimMode),
-    colorSuccess: pickSeed(activeFamilyConfig?.seeds?.success, shimMode),
-    colorWarning: pickSeed(activeFamilyConfig?.seeds?.warning, shimMode),
-    fontFamily: appearance?.theme?.fontFamily,
-    components: {
-      Layout: { headerBg: pickSeed(activeFamilyConfig?.headerBg, shimMode) },
-    } as never,
-  };
 
   const currentLocale =
     buiLanguages[lang as keyof typeof buiLanguages] ?? buiLanguages['en'];
@@ -362,22 +335,18 @@ export const DefaultProvidersForReactRoot: React.FC<{
                 comes from `useThemeMode`, which remains the source of truth
                 and is what `<Theme>` syncs onto `<html>`. */}
             <AstryxBrandTheme>
-              <ThemeShimProvider
-                mode={isDarkMode ? 'dark' : 'light'}
-                seeds={shimSeeds}
-              >
-                {/* Now a pure locale + client provider: Astryx's
+              {/* Now a pure locale + client provider: Astryx's
                     `InternationalizationProvider`, BUI's i18next instance,
                     dayjs's locale and the Backend.AI client context. Its antd
                     `ConfigProvider` leg — and with it the `theme`, `csp`,
                     `modal`, `drawer` and `tag` props this call site used to
                     pass through — went away with the final switch. */}
-                <BAIConfigProvider
-                  locale={currentLocale}
-                  clientPromise={backendaiClientPromise}
-                  anonymousClientFactory={createAnonymousBackendaiClient}
-                >
-                  {/* to-astryx tickets 34 + 35 — form configuration lives on
+              <BAIConfigProvider
+                locale={currentLocale}
+                clientPromise={backendaiClientPromise}
+                anonymousClientFactory={createAnonymousBackendaiClient}
+              >
+                {/* to-astryx tickets 34 + 35 — form configuration lives on
                       the self-hosted engine's own provider, which is now the
                       only form runtime in the tree.
 
@@ -394,65 +363,64 @@ export const DefaultProvidersForReactRoot: React.FC<{
                         That inversion is deliberate product behaviour, not a
                         default — dropping it would put an asterisk on every
                         required field across the app. */}
-                  <FormConfigProvider
-                    requiredMark={(label, { required }) => (
-                      <>
-                        {label}
-                        {!required && (
-                          <BAIText
-                            type="secondary"
-                            style={{ marginLeft: token('--spacing-1') }}
-                          >
-                            ({t('general.Optional')})
-                          </BAIText>
-                        )}
-                      </>
-                    )}
-                  >
-                    {/*
-                     * No <I18nextProvider> wrap needed here. BUI components
-                     * resolve their translations via `useBAIi18n()` which calls
-                     * `useTranslation(undefined, { i18n: buiI18n })` — explicit
-                     * instance binding bypasses React Context entirely, so the
-                     * host's i18n Context flows through to host components
-                     * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
-                     * useBAIi18n.ts.
-                     */}
-                    <BAIAppProvider message={messageConfig} toast={toastConfig}>
-                      <BAIMetaDataProviderWrapper>
-                        {/* Single app-wide notification renderer. Lives outside
+                <FormConfigProvider
+                  requiredMark={(label, { required }) => (
+                    <>
+                      {label}
+                      {!required && (
+                        <BAIText
+                          type="secondary"
+                          style={{ marginLeft: token('--spacing-1') }}
+                        >
+                          ({t('general.Optional')})
+                        </BAIText>
+                      )}
+                    </>
+                  )}
+                >
+                  {/*
+                   * No <I18nextProvider> wrap needed here. BUI components
+                   * resolve their translations via `useBAIi18n()` which calls
+                   * `useTranslation(undefined, { i18n: buiI18n })` — explicit
+                   * instance binding bypasses React Context entirely, so the
+                   * host's i18n Context flows through to host components
+                   * unchanged. See FR-2986 / packages/backend.ai-ui/src/hooks/
+                   * useBAIi18n.ts.
+                   */}
+                  <BAIAppProvider message={messageConfig} toast={toastConfig}>
+                    <BAIMetaDataProviderWrapper>
+                      {/* Single app-wide notification renderer. Lives outside
                             the Suspense below so toasts work on every route and
                             in both anonymous and authenticated states. */}
-                        <NotificationHost />
-                        {/*
-                         * to-astryx ticket 33 removed the emotion plumbing that
-                         * used to wrap this Suspense: an @emotion/react
-                         * <CacheProvider> (nonce for `createGlobalStyle`) inside
-                         * antd-style's <StyleProvider nonce> (nonce for
-                         * `createStyles`). With the last antd-style call site
-                         * gone, no style engine injects <style> at runtime on
-                         * our behalf — the replacement rules ship as bundled
-                         * same-origin stylesheets, which `style-src 'self'`
-                         * already covers.
-                         *
-                         * The final switch closed the last gap in that story:
-                         * antd's cssinjs — the one runtime style injector left,
-                         * fed the nonce via `<ConfigProvider csp>` — is gone
-                         * too, so NOTHING injects <style> at runtime any more
-                         * and `globalThis.baiNonce` has no remaining consumer
-                         * in the React tree.
-                         */}
-                        <Suspense>
-                          {/* <BrowserRouter> */}
-                          {/* <RoutingEventHandler /> */}
-                          {children}
-                          {/* </BrowserRouter> */}
-                        </Suspense>
-                      </BAIMetaDataProviderWrapper>
-                    </BAIAppProvider>
-                  </FormConfigProvider>
-                </BAIConfigProvider>
-              </ThemeShimProvider>
+                      <NotificationHost />
+                      {/*
+                       * to-astryx ticket 33 removed the emotion plumbing that
+                       * used to wrap this Suspense: an @emotion/react
+                       * <CacheProvider> (nonce for `createGlobalStyle`) inside
+                       * antd-style's <StyleProvider nonce> (nonce for
+                       * `createStyles`). With the last antd-style call site
+                       * gone, no style engine injects <style> at runtime on
+                       * our behalf — the replacement rules ship as bundled
+                       * same-origin stylesheets, which `style-src 'self'`
+                       * already covers.
+                       *
+                       * The final switch closed the last gap in that story:
+                       * antd's cssinjs — the one runtime style injector left,
+                       * fed the nonce via `<ConfigProvider csp>` — is gone
+                       * too, so NOTHING injects <style> at runtime any more
+                       * and `globalThis.baiNonce` has no remaining consumer
+                       * in the React tree.
+                       */}
+                      <Suspense>
+                        {/* <BrowserRouter> */}
+                        {/* <RoutingEventHandler /> */}
+                        {children}
+                        {/* </BrowserRouter> */}
+                      </Suspense>
+                    </BAIMetaDataProviderWrapper>
+                  </BAIAppProvider>
+                </FormConfigProvider>
+              </BAIConfigProvider>
             </AstryxBrandTheme>
           </QueryClientProvider>
         </RelayEnvironmentProvider>
