@@ -1,1 +1,0 @@
-var r="Expected a function";function s(t){if(typeof t!="function")throw new TypeError(r);return function(){var n=arguments;switch(n.length){case 0:return!t.call(this);case 1:return!t.call(this,n[0]);case 2:return!t.call(this,n[0],n[1]);case 3:return!t.call(this,n[0],n[1],n[2])}return!t.apply(this,n)}}export{s as n};
