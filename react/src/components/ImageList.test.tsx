@@ -340,9 +340,14 @@ describe('ImageList private marker (FR-70)', () => {
   };
 
   it('marks an image whose `ai.backend.features` label contains `private`', async () => {
-    renderWithImages([{ id: 'img-private', installed: true, features: 'private' }]);
+    // Uninstalled on purpose: an installed fixture here would still pass if
+    // the marker were accidentally gated on install state.
+    renderWithImages([
+      { id: 'img-private', installed: false, features: 'private' },
+    ]);
 
     expect(await screen.findByText('environment.Private')).toBeInTheDocument();
+    expect(screen.queryByText('environment.Installed')).not.toBeInTheDocument();
   });
 
   it('leaves an image without the label unmarked', async () => {
@@ -366,6 +371,9 @@ describe('ImageList private marker (FR-70)', () => {
       { id: 'img-nonprivate', installed: true, features: 'nonprivate' },
     ]);
 
+    // Await the row's own badge first — asserting absence while the list is
+    // still suspended would pass without ever rendering the fixture.
+    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
     expect(screen.queryByText('environment.Private')).not.toBeInTheDocument();
   });
 });
