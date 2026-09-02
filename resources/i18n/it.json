@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Per caricare i file è richiesta l'autorizzazione di scrittura."
     },
     "folders": {
-      "AdminDataPageAlert": "Nella pagina Dati Amministratore si possono creare solo cartelle di progetto.",
+      "AdminDataPageAlert": "Nella pagina Dati Amministratore le cartelle vengono create come cartelle di progetto.",
       "CannotDeleteFolder": "Impossibile eliminare la cartella montata in una o più sessioni. Si prega di terminare prima la sessione.",
       "CannotDeletePipelineFolder": "Non puoi eliminare le cartelle della pipeline.",
       "CannotDeployFromAdminMenu": "Le distribuzioni vengono create dalla pagina Dati di un progetto; il menu di amministrazione non lo supporta.",
@@ -981,7 +981,7 @@
       "Ownership": "Proprietà",
       "Path": "Percorso di archiviazione",
       "Permission": "Autorizzazione",
-      "ProjectAdminDataPageAlert": "Nella pagina Dati Amministratore del Progetto si possono creare solo cartelle di progetto.",
+      "ProjectAdminDataPageAlert": "Nella pagina Dati Amministratore del Progetto le cartelle vengono create come cartelle di progetto.",
       "ProjectFolderAlertDesc": "Questa cartella è condivisa con tutti i membri del progetto",
       "ProjectFolderCreationHelp": "Verrà creata una cartella accessibile da \"{{projectName}}\". Gli utenti del progetto.",
       "Rename": "Rinominare",

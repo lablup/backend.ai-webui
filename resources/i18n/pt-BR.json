@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "A permissão de gravação é necessária ao enviar arquivo (s)."
     },
     "folders": {
-      "AdminDataPageAlert": "Na página Dados do Administrador só é possível criar pastas de projeto.",
+      "AdminDataPageAlert": "Na página Dados do Administrador, as pastas são criadas como pastas de projeto.",
       "CannotDeleteFolder": "Não é possível excluir a pasta montada em uma ou mais sessões. Por favor, termine a sessão primeiro.",
       "CannotDeletePipelineFolder": "Você não pode excluir pastas de pipeline.",
       "CannotDeployFromAdminMenu": "As implantações são criadas na página Dados de um projeto; o menu de administração não oferece suporte a isso.",
@@ -981,7 +981,7 @@
       "Ownership": "Propriedade",
       "Path": "Caminho de armazenamento",
       "Permission": "Permissão",
-      "ProjectAdminDataPageAlert": "Na página Dados do Administrador do Projeto só é possível criar pastas de projeto.",
+      "ProjectAdminDataPageAlert": "Na página Dados do Administrador do Projeto, as pastas são criadas como pastas de projeto.",
       "ProjectFolderAlertDesc": "Esta pasta é compartilhada com todos os membros do projeto",
       "ProjectFolderCreationHelp": "Uma pasta acessível por \"{{projectName}}\" \"os usuários do projeto serão criados.",
       "Rename": "Renomear",

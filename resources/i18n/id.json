@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Izin menulis diperlukan dalam mengunggah file."
     },
     "folders": {
-      "AdminDataPageAlert": "Di halaman Data Admin hanya folder proyek yang dapat dibuat.",
+      "AdminDataPageAlert": "Di halaman Data Admin, folder dibuat sebagai folder proyek.",
       "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang di satu atau beberapa sesi. Mohon hentikan sesi terlebih dahulu.",
       "CannotDeletePipelineFolder": "Anda tidak dapat menghapus folder pipa.",
       "CannotDeployFromAdminMenu": "Penerapan dibuat dari halaman Data pada sebuah proyek; menu admin tidak mendukungnya.",
@@ -981,7 +981,7 @@
       "Ownership": "Kepemilikan",
       "Path": "Jalur penyimpanan",
       "Permission": "Izin",
-      "ProjectAdminDataPageAlert": "Di halaman Data Admin Proyek hanya folder proyek yang dapat dibuat.",
+      "ProjectAdminDataPageAlert": "Di halaman Data Admin Proyek, folder dibuat sebagai folder proyek.",
       "ProjectFolderAlertDesc": "Folder ini dibagikan dengan semua anggota proyek",
       "ProjectFolderCreationHelp": "Folder yang dapat diakses oleh \"{{projectName}}\" pengguna proyek akan dibuat.",
       "Rename": "Ganti nama",

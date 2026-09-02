@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Do przesyłania plików wymagane jest uprawnienie do zapisu."
     },
     "folders": {
-      "AdminDataPageAlert": "Na stronie Dane administratora można tworzyć tylko foldery projektu.",
+      "AdminDataPageAlert": "Na stronie Dane administratora foldery są tworzone jako foldery projektu.",
       "CannotDeleteFolder": "Nie można usunąć folderu zamontowanego w co najmniej jednej sesji. Najpierw zakończ sesję.",
       "CannotDeletePipelineFolder": "Nie możesz usunąć folderów rurociągów.",
       "CannotDeployFromAdminMenu": "Wdrożenia są tworzone ze strony Dane danego projektu; menu administratora tego nie obsługuje.",
@@ -981,7 +981,7 @@
       "Ownership": "Własność",
       "Path": "Ścieżka przechowywania",
       "Permission": "Pozwolenie",
-      "ProjectAdminDataPageAlert": "Na stronie Dane administratora projektu można tworzyć tylko foldery projektu.",
+      "ProjectAdminDataPageAlert": "Na stronie Dane administratora projektu foldery są tworzone jako foldery projektu.",
       "ProjectFolderAlertDesc": "Ten folder jest udostępniany wszystkim członkom projektu",
       "ProjectFolderCreationHelp": "Folder dostępny przez użytkowników projektu „{{projectName}}”.",
       "Rename": "Przemianować",
