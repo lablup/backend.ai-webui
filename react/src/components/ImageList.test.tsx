@@ -297,3 +297,83 @@ describe('ImageList project scope contract (ADR-0001, FR-3415)', () => {
     });
   });
 });
+
+/**
+ * The Status column also carries the private marker (FR-70).
+ *
+ * A private image can be installed but is hidden from the session launcher's
+ * environment picker, so the Environments list is the only place an admin can
+ * learn why it is unselectable. The marker is orthogonal to install state:
+ * both can show on the same row.
+ */
+describe('ImageList private marker (FR-70)', () => {
+  const renderWithImages = (
+    images: Array<{ id: string; installed: boolean; features?: string }>,
+  ) => {
+    const environment: RelayMockEnvironment = createMockEnvironment();
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        ImageConnection: () => ({
+          count: images.length,
+          edges: images.map((image) => ({
+            node: {
+              id: image.id,
+              row_id: image.id,
+              installed: image.installed,
+              labels: image.features
+                ? [{ key: 'ai.backend.features', value: image.features }]
+                : [],
+            },
+          })),
+        }),
+      }),
+    );
+    render(
+      <RelayEnvironmentProvider environment={environment}>
+        <NuqsTestingAdapter searchParams="">
+          <Suspense fallback={null}>
+            <ImageList project={null} onChangeProject={vi.fn()} />
+          </Suspense>
+        </NuqsTestingAdapter>
+      </RelayEnvironmentProvider>,
+    );
+  };
+
+  it('marks an image whose `ai.backend.features` label contains `private`', async () => {
+    // Uninstalled on purpose: an installed fixture here would still pass if
+    // the marker were accidentally gated on install state.
+    renderWithImages([
+      { id: 'img-private', installed: false, features: 'private' },
+    ]);
+
+    expect(await screen.findByText('environment.Private')).toBeInTheDocument();
+    expect(screen.queryByText('environment.Installed')).not.toBeInTheDocument();
+  });
+
+  it('leaves an image without the label unmarked', async () => {
+    renderWithImages([{ id: 'img-public', installed: true }]);
+
+    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(screen.queryByText('environment.Private')).not.toBeInTheDocument();
+  });
+
+  it('shows the install state and the private marker together', async () => {
+    renderWithImages([
+      { id: 'img-private', installed: true, features: 'private' },
+    ]);
+
+    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(screen.getByText('environment.Private')).toBeInTheDocument();
+  });
+
+  it('does not match a feature that merely contains the word', async () => {
+    renderWithImages([
+      { id: 'img-nonprivate', installed: true, features: 'nonprivate' },
+    ]);
+
+    // Await the row's own badge first — asserting absence while the list is
+    // still suspended would pass without ever rendering the fixture.
+    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(screen.queryByText('environment.Private')).not.toBeInTheDocument();
+  });
+});

@@ -8,7 +8,7 @@ import {
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
 import { App } from '../app-shim';
-import { getImageFullName } from '../helper';
+import { getImageFullName, isPrivateImage } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -300,18 +300,29 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       key: 'installed',
       // antd `Tag color="gold"` -> Astryx Badge via the repo-global Tag
       // lookup (ticket 13 policy): gold -> yellow.
-      render: (_text, row) =>
-        row?.id && installingImages.includes(row.id) ? (
-          <Badge
-            variant={badgeVariantForTagColor('gold')}
-            label={t('environment.Installing')}
-          />
-        ) : row?.installed ? (
-          <Badge
-            variant={badgeVariantForTagColor('gold')}
-            label={t('environment.Installed')}
-          />
-        ) : null,
+      render: (_text, row) => (
+        <BAIFlex direction="row" gap="xxs" wrap="wrap">
+          {row?.id && installingImages.includes(row.id) ? (
+            <Badge
+              variant={badgeVariantForTagColor('gold')}
+              label={t('environment.Installing')}
+            />
+          ) : row?.installed ? (
+            <Badge
+              variant={badgeVariantForTagColor('gold')}
+              label={t('environment.Installed')}
+            />
+          ) : null}
+          {/* An installed private image cannot be picked in the session
+              launcher, so surface the label here (FR-70). */}
+          {isPrivateImage(row) ? (
+            <Badge
+              variant={badgeVariantForTagColor('red')}
+              label={t('environment.Private')}
+            />
+          ) : null}
+        </BAIFlex>
+      ),
     },
     {
       title: t('environment.FullImagePath'),
