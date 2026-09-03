@@ -531,15 +531,33 @@ export class AdminModelCardPage {
     await this.getCreateModelCardButton().click();
     await expect(this.getCreateModal()).toBeVisible();
     await this.fillCreateModal(fields);
+    // Synchronize on the mutation itself, not the success toast: the toast is
+    // transient and a leftover one from a previous create would satisfy the
+    // next call even if this mutation failed. The mutation can lag well past
+    // 15s on the shared nightly cluster, hence the 30s window.
+    const createResponsePromise = this.page.waitForResponse(
+      (response) =>
+        response.url().includes('/admin/gql') &&
+        (response.request().postData() ?? '').includes(
+          'AdminModelCardSettingModalCreateMutation',
+        ),
+      { timeout: 30000 },
+    );
     await this.getCreateModalSubmitButton().click();
-    // The mutation can lag well past 15s on the shared nightly cluster (the
-    // create succeeds server-side but the toast lands later), so this window
-    // matches the other slow-mutation waits in this class (e.g.
-    // deleteModelCardByName's 30s).
-    await expect(
-      this.page.getByText('Model card has been created.'),
-    ).toBeVisible({ timeout: 30000 });
-    await expect(this.getCreateModal()).toBeHidden();
+    const createResponse = await createResponsePromise;
+    if (!createResponse.ok()) {
+      throw new Error(
+        `Model card create mutation returned ${createResponse.status()}: ${await createResponse.text()}`,
+      );
+    }
+    const createBody = await createResponse.json();
+    if (createBody.errors) {
+      throw new Error(
+        `Model card create mutation returned errors: ${JSON.stringify(createBody.errors)}`,
+      );
+    }
+    // Durable success signal — the modal only closes once the mutation resolved.
+    await expect(this.getCreateModal()).toBeHidden({ timeout: 30000 });
   }
 
   async deleteModelCardByName(name: string): Promise<void> {

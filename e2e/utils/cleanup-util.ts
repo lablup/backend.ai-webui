@@ -22,7 +22,7 @@ function getTableRefreshButton(page: Page) {
 
 /**
  * Deletes all services matching the given pattern from the serving page.
- * Uses the table refresh button + delete icon button + Ant Design confirm modal.
+ * Uses the table refresh button + delete icon button + the Astryx confirm dialog.
  */
 export async function sweepServices(
   page: Page,
@@ -62,15 +62,21 @@ export async function sweepServices(
     }
     await deleteBtn.click();
 
-    const confirmBtn = page
-      .locator('.ant-modal-confirm')
+    // The confirmation is an Astryx dialog — the old `.ant-modal-confirm`
+    // scope matched nothing, so the click was silently skipped while the
+    // counter still advanced, reporting progress the sweep never made.
+    const confirmDialog = page.getByRole('dialog');
+    const confirmBtn = confirmDialog
       .getByRole('button', { name: 'Delete' })
       .first();
-    if (await confirmBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await confirmBtn.click();
+    if (!(await confirmBtn.isVisible({ timeout: 5000 }).catch(() => false))) {
+      console.log('Delete confirmation dialog did not appear, stopping sweep');
+      break;
     }
-
-    await page.waitForTimeout(3000);
+    await confirmBtn.click();
+    // Only count a service as swept once the dialog closed and the row is gone.
+    await confirmDialog.waitFor({ state: 'hidden', timeout: 30000 });
+    await serviceRow.waitFor({ state: 'detached', timeout: 30000 });
     deleted++;
   }
 
