@@ -539,9 +539,11 @@ function schemaGatingGaps(from, to) {
         hit = asLiteral.test(s.text) && !s.guarded;
       } else if (entry.parentKind === 'input') {
         // Input-object fields are sent as JS values, not selected — @since
-        // cannot apply, so referencing the input type from an unguarded file
-        // is the signal.
-        hit = s.tagLines.some((l) => inputRef.test(l)) && !s.guarded;
+        // cannot apply. Referencing the input type alone is not usage; the
+        // file must also construct the field itself (`field:` object key).
+        const buildsKey = new RegExp(`\\b${entry.field}\\s*:`).test(s.text);
+        hit =
+          s.tagLines.some((l) => inputRef.test(l)) && buildsKey && !s.guarded;
       } else {
         const uses = findSelectionUses(
           s.tagLines,
@@ -549,7 +551,11 @@ function schemaGatingGaps(from, to) {
           entry.parent,
           typeFields,
         );
-        hit = uses.some((u) => !u.annotated) && !s.guarded;
+        // The convention for query fields is @since at the usage (or a gated
+        // ancestor). A supports() call elsewhere in the file guards ITS
+        // operation, not every query the file holds, so it does not excuse an
+        // unannotated selection (ProjectPage.tsx was the counterexample).
+        hit = uses.some((u) => !u.annotated);
       }
       if (hit) ungated.push(s.file);
     }
@@ -565,6 +571,7 @@ function schemaGatingGaps(from, to) {
 export function parseSchemaTypeFields(schemaText) {
   const map = new Map();
   let current = null;
+  let pendingField = null;
   for (const line of schemaText.split('\n')) {
     const block = line.match(/^(?:extend\s+)?(?:type|interface)\s+(\w+)/);
     if (block) {
@@ -577,6 +584,21 @@ export function parseSchemaTypeFields(schemaText) {
       continue;
     }
     if (!current) continue;
+    // Inside a multiline signature the argument lines also look like fields —
+    // only the closing `): ReturnType` matters until it arrives.
+    if (pendingField) {
+      const close = line.match(/^\s*\)\s*:\s*(\S+)/);
+      if (close) {
+        map.get(current).set(pendingField, close[1].replace(/[[\]!]/g, ''));
+        pendingField = null;
+      }
+      continue;
+    }
+    const open = line.match(/^\s{2,}([a-z]\w*)\s*\(\s*$/);
+    if (open) {
+      pendingField = open[1];
+      continue;
+    }
     const f = line.match(/^\s{2,}([a-z]\w*)\s*(?:\([^)]*\))?\s*:\s*(\S+)/);
     if (f) map.get(current).set(f[1], f[2].replace(/[[\]!]/g, ''));
   }
@@ -612,12 +634,18 @@ export function findSelectionUses(tagLines, field, parent, typeFields) {
     }
     chain.reverse(); // root first
 
-    // Resolve the block's type from the outermost `on Type` downward.
+    // Resolve the block's type from the outermost typed root downward: a
+    // fragment/inline `on Type`, or an operation header (query/mutation).
     let cur = null;
     for (const anc of chain) {
       const onType = anc.match(/\bon\s+(\w+)/)?.[1];
       if (onType) {
         cur = onType;
+        continue;
+      }
+      const op = anc.match(/^\s*(query|mutation|subscription)\b/)?.[1];
+      if (op) {
+        cur = op[0].toUpperCase() + op.slice(1);
         continue;
       }
       if (cur === null) continue; // above the first typed root (query header)
@@ -739,6 +767,7 @@ function renderMarkdown(report) {
   L.push(
     `| R2 new schema field used without a version gate | ${gating.gaps.length} |`,
   );
+  L.push(`| R2a new manager feature gate | ${featureMatrix.length} |`);
   L.push(`| R3 locale files with untranslated new keys | ${i18n.length} |`);
   L.push(`| R4 destructive flow touched | ${risks.destructive.length} |`);
   L.push(
@@ -758,6 +787,22 @@ function renderMarkdown(report) {
     for (const g of gating.gaps)
       L.push(
         `| \`${g.key}\`${g.kind === 'enum' ? ' (enum)' : ''} | ${g.version ? `\`${g.version}\`` : '_unannotated_'} | ${g.ungated.map((f) => `\`${f.split('/').pop()}\``).join(', ')} |`,
+      );
+    L.push('');
+  }
+
+  if (featureMatrix.length) {
+    L.push('## R2a — New manager feature gates');
+    L.push('');
+    L.push(
+      'Gates declared inside this range. Exercise each against a manager that **meets** the version and one that does **not** — on the older manager the feature must be hidden, never broken.',
+    );
+    L.push('');
+    L.push('| Feature flag | Requires | Used in app |');
+    L.push('| --- | --- | --- |');
+    for (const f of featureMatrix)
+      L.push(
+        `| \`${f.flag}\` | ${f.version ? `\`${f.version}\`` : '_ungated_'} | ${f.used ? 'yes' : '**no — dead flag**'} |`,
       );
     L.push('');
   }
@@ -824,6 +869,7 @@ function renderMarkdown(report) {
   if (
     !risks.noE2E.length &&
     !gating.gaps.length &&
+    !featureMatrix.length &&
     !undeclared.length &&
     !i18n.length &&
     !risks.destructive.length &&

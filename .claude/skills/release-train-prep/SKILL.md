@@ -3,8 +3,9 @@ name: release-train-prep
 description: >
   Post a Korean release risk digest to a Microsoft Teams thread, grouped by risk
   category. Runs scripts/release-risk-report.mjs over a ref range and renders the
-  result as a short HTML message: version-gating gaps (@since), untranslated
-  keys, destructive flows touched, UI without e2e cover, and manual gaps. Use when
+  result as a short HTML message: new features and change hotspots first, then
+  version-gating gaps (@since), untranslated keys, UI without e2e cover, and
+  manual gaps. Use when
   someone gives a Teams thread URL and asks to summarize a release, an rc, or a
   branch there — "이번 릴리즈 리스크 팀즈에 올려줘", "이 스레드에 정리해서 알려줘",
   "post the release risk report to Teams", "/release-train-prep". With
@@ -122,6 +123,7 @@ current directory. By this point `$FROM` is whatever *Resolving `--from`* settle
 the script itself takes no default and exits 2 without one.
 
 ```bash
+TO="${TO:-HEAD}"   # --to is optional; an empty string would override the script's default
 node scripts/release-risk-report.mjs --from "$FROM" --to "$TO" --json > /tmp/release-risk.json
 ```
 

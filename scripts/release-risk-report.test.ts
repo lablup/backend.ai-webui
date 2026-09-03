@@ -2,6 +2,7 @@
 import {
   classify,
   findSelectionUses,
+  parseSchemaTypeFields,
   extractAddedFeatureFlags,
   extractAddedSchemaFields,
   extractGraphqlTags,
@@ -312,6 +313,16 @@ describe('release risk report', () => {
       expect(uses).toHaveLength(1);
     });
 
+    it('resolves an operation header as the Query root type', () => {
+      const uses = findSelectionUses(
+        ['query Foo {', '  group_nodes {', '    newField', '  }', '}'],
+        'newField',
+        'GroupConnection',
+        new Map([['Query', new Map([['group_nodes', 'GroupConnection']])]]),
+      );
+      expect(uses).toHaveLength(1);
+    });
+
     it('does not attribute the same field under an unrelated owner', () => {
       const uses = findSelectionUses(
         tag,
@@ -320,6 +331,24 @@ describe('release risk report', () => {
         typeFields,
       );
       expect(uses).toHaveLength(0);
+    });
+  });
+
+  describe('parseSchemaTypeFields', () => {
+    it('reads single-line and multiline field signatures', () => {
+      const schema = [
+        'type Query',
+        '{',
+        '  simple: String',
+        '  group_nodes(',
+        '    filter: String',
+        '    first: Int',
+        '  ): GroupConnection',
+        '}',
+      ].join('\n');
+      const map = parseSchemaTypeFields(schema);
+      expect(map.get('Query').get('simple')).toBe('String');
+      expect(map.get('Query').get('group_nodes')).toBe('GroupConnection');
     });
   });
 
