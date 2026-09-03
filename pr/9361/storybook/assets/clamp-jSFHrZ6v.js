@@ -1,0 +1,1 @@
+import{b as m}from"./_baseClamp-DVUOCJN_.js";import{t as i}from"./toFinite-B5bXqnyT.js";function s(d,n,f){return f===void 0&&(f=n,n=void 0),f!==void 0&&(f=i(f),f=f===f?f:0),n!==void 0&&(n=i(n),n=n===n?n:0),m(i(d),n,f)}export{s as c};

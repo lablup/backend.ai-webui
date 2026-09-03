@@ -17,8 +17,8 @@ export declare const toSeedTuple: (pair: BrandSeedPair) => [string, string];
 /** antd's neutral text/fill alpha ramp and the preset steps still consumed. */
 export declare const BAI_SELF_COLOR_TOKENS: Record<string, [string, string]>;
 /**
- * The full `--bai-*` set for one seed set. Each brand-derived token has an
- * Astryx fallback for an undeclared seed. `--bai-primary-5` is the one antd
+ * The full custom token set for one seed set. Each brand-derived token has an
+ * Astryx fallback for an undeclared seed. `--primary-5` is the one antd
  * ramp step still consumed (progress fills): `generate()` (default options)
  * over the mode's palette key-6 map color, per scheme, index 4.
  */
