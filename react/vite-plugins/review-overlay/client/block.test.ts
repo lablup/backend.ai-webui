@@ -6,6 +6,8 @@ import {
   buildBlockText,
   captureForBlock,
   landmarkLabel,
+  LINK_LABEL,
+  LINK_LABEL_HTML,
   resolveRouteLabel,
 } from './block.js';
 import { decodeAnchor } from './codec.js';
@@ -153,7 +155,7 @@ describe('buildBlockHtml', () => {
         '<blockquote>📍 <b>Sessions › login-button › button &quot;Login&quot;</b> · <code>c_abcdefg</code>' +
           '<br>⚛️ in LoginButton (at LoginView.tsx:12)' +
           '<br>&nbsp;&nbsp;in LoginView' +
-          '<br><a href="https://fr-3811.localhost:1355/session/start#bai=v3.c_abcdefg.PAYLOAD">Open on dev server</a>' +
+          '<br><a href="https://fr-3811.localhost:1355/session/start#bai=v3.c_abcdefg.PAYLOAD">Open on dev server ↗</a>' +
           '</blockquote>',
         '<!-- bai-review v3 id=c_abcdefg pr=9330 at=2026-08-31T09:00:00Z -->',
       ].join('\n'),
@@ -204,6 +206,47 @@ describe('buildBlockHtml', () => {
     expect(html).toContain(
       '<!-- bai-review v3 id=c_abcdefg pr=9330 at=2026-08-31T09:00:00Z -->',
     );
+  });
+});
+
+/**
+ * GitHub's comment box runs `@github/paste-markdown`, whose HTML handler takes
+ * `text/plain` as the base and rewrites every `text/html` anchor's own text
+ * where it finds it there into `[text](href)`. This is the invariant that
+ * keeps it from firing inside our markdown link and doubling it.
+ */
+describe('the two flavours cannot collide in a markdown paste target', () => {
+  const base = {
+    label: 'Sessions › login-button › button "Login"',
+    id: 'c_abcdefg',
+    stack: ['in LoginButton (at LoginView.tsx:12)'],
+    text: 'The label is cut off.',
+    url: 'https://fr-3811.localhost:1355/session/start#bai=v3.c_abcdefg.PAYLOAD',
+    pr: 9330,
+    at: '2026-08-31T09:00:00Z',
+  };
+
+  it('never puts the HTML anchor’s link text in the markdown flavour', () => {
+    expect(buildBlockText(base)).not.toContain(LINK_LABEL_HTML);
+  });
+
+  it('still gives each flavour a readable label and the same href', () => {
+    expect(buildBlockText(base)).toContain(`[${LINK_LABEL}](${base.url})`);
+    expect(buildBlockHtml(base)).toContain(
+      `<a href="${base.url}">${LINK_LABEL_HTML}</a>`,
+    );
+  });
+
+  /** The mechanism itself, reduced to the one line of the library that fires. */
+  it('leaves the markdown untouched under the library’s rewrite', () => {
+    const plain = buildBlockText(base);
+    const html = buildBlockHtml(base);
+    const anchorText = html.slice(
+      html.indexOf('">', html.indexOf('<a href=')) + 2,
+      html.indexOf('</a>'),
+    );
+    expect(anchorText).toBe(LINK_LABEL_HTML);
+    expect(plain.indexOf(anchorText)).toBe(-1);
   });
 });
 
@@ -302,7 +345,7 @@ describe('buildBlock', () => {
     );
     // Both flavours come out of the one synchronous render.
     expect(built.html).toContain(
-      `<a href="${built.url}">Open on dev server</a>`,
+      `<a href="${built.url}">${LINK_LABEL_HTML}</a>`,
     );
   });
 

@@ -55,6 +55,18 @@ export interface BlockInput {
   imageUrl?: string;
 }
 
+/** The markdown flavour's link label. */
+export const LINK_LABEL = 'Open on dev server';
+/**
+ * The HTML flavour's link text — and it MUST NOT occur in the markdown one.
+ * GitHub's comment box runs `@github/paste-markdown`, whose HTML handler takes
+ * `text/plain` as the base and rewrites each `text/html` anchor's text where it
+ * finds it there into `[text](href)`. An identical label is found inside our
+ * own `[Open on dev server](url)` and doubles it to `[[…](url)](url)`; an
+ * unmatched one leaves the markdown alone, which is what we want.
+ */
+export const LINK_LABEL_HTML = `${LINK_LABEL} ↗`;
+
 /**
  * One generated line. Both flavours render this same list, so a change to the
  * block's shape cannot land in one and miss the other.
@@ -104,7 +116,7 @@ export function buildBlockText(input: BlockInput): string {
         out.push(`> ![screenshot](${line.url})`);
         break;
       case 'link':
-        out.push(`> [Open on dev server](${line.url})`);
+        out.push(`> [${LINK_LABEL}](${line.url})`);
         break;
     }
   }
@@ -145,7 +157,7 @@ export function buildBlockHtml(input: BlockInput): string {
       case 'image':
         return `<img src="${esc(line.url)}" alt="screenshot">`;
       case 'link':
-        return `<a href="${esc(line.url)}">Open on dev server</a>`;
+        return `<a href="${esc(line.url)}">${LINK_LABEL_HTML}</a>`;
     }
   });
   out.push(`<blockquote>${quoted.join('<br>')}</blockquote>`);
