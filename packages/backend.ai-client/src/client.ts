@@ -908,6 +908,9 @@ export class Client {
       // its root. Older managers reject the unknown input field, so the key is
       // omitted from the mutation entirely on them.
       this._features['model-mount-subpath'] = true;
+      // DeploymentRevisionPreset gained `modelDefinition` (query + input) in
+      // 26.4.4; older managers reject the input key, so it is omitted on them.
+      this._features['preset-model-definition'] = true;
     }
     // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
     // checks are opt-in via `enable: true/false` instead of nulling the whole

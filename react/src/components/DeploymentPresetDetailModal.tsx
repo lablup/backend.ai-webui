@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { Heading } from '@astryxdesign/core/Heading';
@@ -40,6 +41,8 @@ const DeploymentPresetDetailModal: React.FC<
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsModelDefinition = baiClient.supports('preset-model-definition');
 
   const preset = useFragment(
     graphql`
@@ -129,7 +132,9 @@ const DeploymentPresetDetailModal: React.FC<
   // On 26.4.4rc7+ `enable` is authoritative; on older managers `enable` is
   // stripped (undefined), so fall back to presence of the object.
   const isHealthCheckEnabled = healthCheck?.enable ?? !!healthCheck;
-  const hasServiceConfig = (preset?.modelDefinition?.models?.length ?? 0) > 0;
+  const hasServiceConfig =
+    supportsModelDefinition &&
+    (preset?.modelDefinition?.models?.length ?? 0) > 0;
 
   return (
     <BAIModal

@@ -218,6 +218,9 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const supportsNullableModelDefinition = baiClient.supports(
     'preset-model-config-type',
   );
+  // `modelDefinition` exists on the preset input since 26.4.4; older managers
+  // reject the key, so it is left out of the mutation entirely.
+  const supportsModelDefinition = baiClient.supports('preset-model-definition');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -476,13 +479,15 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             // explicit (possibly empty) array so clearing all resource opts is
             // honored instead of being treated as no change. (FR-3127)
             resourceOpts: values.resourceOpts ?? [],
-            modelDefinition: buildModelDefinitionInput(
-              values.modelDefinition,
-              supportsHealthCheckEnable,
-              supportsCommandShell,
-              !!reads,
-              supportsNullableModelDefinition,
-            ),
+            ...(supportsModelDefinition && {
+              modelDefinition: buildModelDefinitionInput(
+                values.modelDefinition,
+                supportsHealthCheckEnable,
+                supportsCommandShell,
+                !!reads,
+                supportsNullableModelDefinition,
+              ),
+            }),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount ?? null,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,
@@ -522,13 +527,15 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             resourceOpts: values.resourceOpts?.length
               ? values.resourceOpts
               : null,
-            modelDefinition: buildModelDefinitionInput(
-              values.modelDefinition,
-              supportsHealthCheckEnable,
-              supportsCommandShell,
-              !!reads,
-              supportsNullableModelDefinition,
-            ),
+            ...(supportsModelDefinition && {
+              modelDefinition: buildModelDefinitionInput(
+                values.modelDefinition,
+                supportsHealthCheckEnable,
+                supportsCommandShell,
+                !!reads,
+                supportsNullableModelDefinition,
+              ),
+            }),
             openToPublic: values.openToPublic ?? null,
             replicaCount: values.replicaCount!,
             revisionHistoryLimit: values.revisionHistoryLimit ?? null,

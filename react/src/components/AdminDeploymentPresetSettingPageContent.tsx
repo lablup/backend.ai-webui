@@ -253,6 +253,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const supportsNullableModelDefinition = baiClient.supports(
     'preset-model-config-type',
   );
+  // Preset model definitions exist since 26.4.4; older managers get no card.
+  const supportsModelDefinition = baiClient.supports('preset-model-definition');
   const commonEnvVars = useCommonEnvVarConfigs();
 
   const preset = useFragment(
@@ -1213,42 +1215,44 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           {/* ----------------------------------------------------------------
               Step 2 (cont.) — Model Definition (its own card; single model)
           ---------------------------------------------------------------- */}
-          <BAICard
-            id="preset-form-card-model-definition"
-            title={t('adminDeploymentPreset.ModelDefinition')}
-            style={{
-              display: currentStepKey === 'model' ? 'block' : 'none',
-              marginTop: token.marginMD,
-              // `.ant-card` clips with overflow:hidden, which cuts the header
-              // switch's focus glow. Allow it to render fully.
-              overflow: 'visible',
-            }}
-            extra={
-              <BAIFormItem
-                name={['modelDefinition', 'enabled']}
-                valuePropName="checked"
-                noStyle
-              >
-                <AstryxFormSwitch
-                  label={t('adminDeploymentPreset.ModelDefinition')}
+          {supportsModelDefinition && (
+            <BAICard
+              id="preset-form-card-model-definition"
+              title={t('adminDeploymentPreset.ModelDefinition')}
+              style={{
+                display: currentStepKey === 'model' ? 'block' : 'none',
+                marginTop: token.marginMD,
+                // `.ant-card` clips with overflow:hidden, which cuts the header
+                // switch's focus glow. Allow it to render fully.
+                overflow: 'visible',
+              }}
+              extra={
+                <BAIFormItem
+                  name={['modelDefinition', 'enabled']}
+                  valuePropName="checked"
+                  noStyle
+                >
+                  <AstryxFormSwitch
+                    label={t('adminDeploymentPreset.ModelDefinition')}
+                  />
+                </BAIFormItem>
+              }
+              // When off, show only the header: hide the divider and zero-pad the
+              // (still-mounted) body to avoid a toggle flicker. `title` overflow
+              // stays visible so the switch's focus glow isn't clipped.
+              showDivider={!!modelDefinitionEnabled}
+              styles={{
+                title: { overflow: 'visible' },
+                ...(modelDefinitionEnabled ? {} : { body: { padding: 0 } }),
+              }}
+            >
+              {modelDefinitionEnabled ? (
+                <ModelConfigItem
+                  readsVfolderConfigFiles={readsVfolderConfigFiles}
                 />
-              </BAIFormItem>
-            }
-            // When off, show only the header: hide the divider and zero-pad the
-            // (still-mounted) body to avoid a toggle flicker. `title` overflow
-            // stays visible so the switch's focus glow isn't clipped.
-            showDivider={!!modelDefinitionEnabled}
-            styles={{
-              title: { overflow: 'visible' },
-              ...(modelDefinitionEnabled ? {} : { body: { padding: 0 } }),
-            }}
-          >
-            {modelDefinitionEnabled ? (
-              <ModelConfigItem
-                readsVfolderConfigFiles={readsVfolderConfigFiles}
-              />
-            ) : null}
-          </BAICard>
+              ) : null}
+            </BAICard>
+          )}
 
           {/* ----------------------------------------------------------------
               Step 1 (cont.) — Deployment Defaults card (within basic step)
