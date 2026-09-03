@@ -92,11 +92,15 @@ describe('buildHits', () => {
     expect(_.uniq(_.map(dataPages, 'scopeText')).sort()).toEqual([
       'Administration',
       'Project administration',
-      'my project',
+      'Project: my project',
     ]);
   });
 
   it('names the active project on a project-scoped row, the label without one', () => {
+    const withProject = _.find(build(), {
+      id: 'page:/project/:projectName/session',
+    });
+    expect(withProject?.scopeText).toBe('Project: my project');
     const withoutProject = buildHits({ menuSources: fullMenu, t: tEn });
     const sessions = _.find(withoutProject, {
       id: 'page:/project/:projectName/session',

@@ -171,7 +171,10 @@ const scopeTextOf = (
 ): string | undefined => {
   switch (scope) {
     case 'project':
-      return projectName || t('webui.search.scope.Project');
+      // Labelled, so a bare project name is not mistaken for page content.
+      return projectName
+        ? `${t('webui.search.scope.Project')}: ${projectName}`
+        : t('webui.search.scope.Project');
     case 'projectAdmin':
       return t('webui.search.scope.ProjectAdministration');
     case 'admin':
