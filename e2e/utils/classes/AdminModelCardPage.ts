@@ -322,9 +322,14 @@ export class AdminModelCardPage {
     await expect(dropdown.getByRole('option').first()).toBeVisible({
       timeout: 15000,
     });
-    // Click the option matching the folder name
+    // Click the option matching the folder name. The option's accessible
+    // name is "<folder name> <vfolder id>" (the id is rendered as trailing
+    // copyable text), so an exact match on the bare name never matches —
+    // anchor on the name as a prefix instead.
     await dropdown
-      .getByRole('option', { name: folderName, exact: true })
+      .getByRole('option', {
+        name: new RegExp(`^${this.escapeRegExp(folderName)}\\b`),
+      })
       .click();
     // Wait for dropdown to close
     await expect(dropdown).toBeHidden({ timeout: 10000 });
@@ -375,8 +380,12 @@ export class AdminModelCardPage {
         timeout: 10000,
       });
       if (fields.vfolderTitle) {
+        // Same trailing-id accessible-name shape as createNewFolderViaPlus —
+        // anchor on the title as a prefix rather than an exact match.
         await dropdown
-          .getByRole('option', { name: fields.vfolderTitle, exact: true })
+          .getByRole('option', {
+            name: new RegExp(`^${this.escapeRegExp(fields.vfolderTitle)}\\b`),
+          })
           .click();
       } else {
         await dropdown.getByRole('option').first().click();
@@ -523,9 +532,13 @@ export class AdminModelCardPage {
     await expect(this.getCreateModal()).toBeVisible();
     await this.fillCreateModal(fields);
     await this.getCreateModalSubmitButton().click();
+    // The mutation can lag well past 15s on the shared nightly cluster (the
+    // create succeeds server-side but the toast lands later), so this window
+    // matches the other slow-mutation waits in this class (e.g.
+    // deleteModelCardByName's 30s).
     await expect(
       this.page.getByText('Model card has been created.'),
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 30000 });
     await expect(this.getCreateModal()).toBeHidden();
   }
 

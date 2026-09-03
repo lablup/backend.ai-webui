@@ -490,13 +490,15 @@ export async function selectPropertyFilter(
 
 /**
  * Locates the table refresh button (BAIFetchKeyButton). The icon is lucide
- * `RotateCw` (no antd `.anticon-reload` class since ticket 12); the button
- * carries the native `title="Refresh"` attribute instead
- * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
- * Clicking it bumps the list's fetchKey, forcing a network-only refetch.
+ * `RotateCw` (no antd `.anticon-reload` class since ticket 12); its hover
+ * text is an Astryx tooltip (not a native `title` attribute), but the
+ * button always carries `aria-label="Refresh"`
+ * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`), so match
+ * on the accessible name instead. Clicking it bumps the list's fetchKey,
+ * forcing a network-only refetch.
  */
 export function getTableRefreshButton(page: Page) {
-  return page.locator('button[title="Refresh"]').first();
+  return page.getByRole('button', { name: 'Refresh', exact: true }).first();
 }
 
 /**

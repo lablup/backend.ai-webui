@@ -192,10 +192,9 @@ test.describe.parallel(
         // 2. Login as admin
         await loginAsAdmin(page, request);
 
-        // 3. Verify the plugin menu item links to the plugin route
-        const pluginLink = page
-          .getByRole('link', { name: 'Open Backend.AI' })
-          .locator('a');
+        // 3. Verify the plugin menu item links to the plugin route. The
+        // sidebar link IS the anchor now (no nested antd `Menu.Item` <a>).
+        const pluginLink = page.getByRole('link', { name: 'Open Backend.AI' });
         await expect(pluginLink).toHaveAttribute('href', /\/test-plugin/);
 
         // 4. Verify clicking opens a new tab (externalLink type plugin)

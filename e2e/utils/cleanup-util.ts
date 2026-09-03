@@ -11,12 +11,13 @@ import { Page } from '@playwright/test';
 
 /**
  * Locates the BAIFetchKeyButton (refresh/reload button). The icon is lucide
- * `RotateCw` (no antd `.anticon-reload` class since ticket 12); the button
- * carries the native `title="Refresh"` attribute instead
+ * `RotateCw` (no antd `.anticon-reload` class since ticket 12); its hover
+ * text is an Astryx tooltip (not a native `title` attribute), but the
+ * button always carries `aria-label="Refresh"`
  * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
  */
 function getTableRefreshButton(page: Page) {
-  return page.locator('button[title="Refresh"]').first();
+  return page.getByRole('button', { name: 'Refresh', exact: true }).first();
 }
 
 /**

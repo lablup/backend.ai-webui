@@ -3,6 +3,7 @@
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
 import {
   deleteForeverAndVerifyFromTrash,
+  getSortableColumnHeader,
   loginAsAdmin,
   moveToTrashAndVerify,
   webuiEndpoint,
@@ -56,31 +57,21 @@ test.describe(
       // Verify the refresh button is visible
       await expect(adminModelCardPage.getRefreshButton()).toBeVisible();
 
-      // Verify the table is rendered with the correct column headers
-      await expect(
-        page.getByRole('columnheader', { name: 'Name' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Title' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Category' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Task' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Access Level' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Domain' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Project' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Created At' }),
-      ).toBeVisible();
+      // Verify the table is rendered with the correct column headers.
+      // A columnheader's accessible name is "<label> Resize column <raw
+      // column key>" (e.g. "Domain Resize column domainName") or, for
+      // sortable columns, "Sort by <raw key>" instead of the label — both
+      // forms can substring-match an unrelated label (e.g. 'Name' matches
+      // "domainName"). Match the header's visible TEXT instead (see
+      // getSortableColumnHeader).
+      await expect(getSortableColumnHeader(page, 'Name')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Title')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Category')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Task')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Access Level')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Domain')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Project')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Created At')).toBeVisible();
     });
 
     // 1.2 Superadmin can see model card rows with correct data in the table
