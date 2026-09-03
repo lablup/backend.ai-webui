@@ -6,14 +6,14 @@
 
  These carry the values the retired theme-shim used to compute at runtime
  for the antd vocabulary Astryx has no token for: the brand link/info
- seeds, antd's per-status hover/bg/border palette steps, and antd's neutral
- text/fill alpha ramp. A seed the document does not declare falls back to an
- Astryx `var()` reference, so the token never goes missing. Shared by the app
- recipe (`react/src/astryx-theme/backendAiTheme.ts`) and the Storybook brand
- theme so the two cannot drift. Consumers read them via
- `useTheme().token('--bai-…')`.
+ seeds, the per-status bg/border/hover tints, and antd's neutral text/fill
+ alpha ramp. The tints are `color-mix()` references over the pinned base
+ tokens, so they follow an operator rebrand without any palette code. A seed
+ the document does not declare falls back to an Astryx `var()` reference, so
+ the token never goes missing. Shared by the app recipe
+ (`react/src/astryx-theme/backendAiTheme.ts`) and the Storybook brand theme
+ so the two cannot drift. Consumers read them via `useTheme().token()`.
  */
-import { generate, palette } from './antdColors';
 
 /** A seed declared per scheme; both sides are applied as declared. */
 export interface BrandSeedPair {
@@ -38,17 +38,14 @@ export const toSeedTuple = (pair: BrandSeedPair): [string, string] => [
 ];
 
 /**
- * antd palette step for one seed pair, per scheme: light = palette(light)(key),
- * dark = palette over the DECLARED dark seed with the dark algorithm
- * (darkKey where antd's dark alias diverges).
+ * A tint of a base token over the page surface: `amount`% of the token, the
+ * rest `--color-background-surface` (white in light, near-black in dark). One
+ * amount per scheme, chosen to sit where antd's palette steps used to
+ * (bg ≈ step 1, border ≈ step 3, hover ≈ step 4, ramp-5 ≈ step 5).
  */
-const deriveTuple = (
-  pair: BrandSeedPair,
-  key: number,
-  darkKey?: number,
-): [string, string] => [
-  palette(pair.light, 'light')(key),
-  palette(pair.dark, 'dark')(darkKey ?? key),
+const tint = (token: string, light: number, dark: number): [string, string] => [
+  `color-mix(in srgb, var(${token}) ${light}%, var(--color-background-surface))`,
+  `color-mix(in srgb, var(${token}) ${dark}%, var(--color-background-surface))`,
 ];
 
 /** antd's neutral text/fill alpha ramp and the preset steps still consumed. */
@@ -72,9 +69,8 @@ export const BAI_SELF_COLOR_TOKENS: Record<string, [string, string]> = {
 
 /**
  * The full custom token set for one seed set. Each brand-derived token has an
- * Astryx fallback for an undeclared seed. `--primary-5` is the one antd
- * ramp step still consumed (progress fills): `generate()` (default options)
- * over the mode's palette key-6 map color, per scheme, index 4.
+ * Astryx fallback for an undeclared seed. `--primary-5` is the accent ramp
+ * step still consumed by progress fills.
  */
 export const buildBaiCustomTokens = (
   seeds: BaiCustomTokenSeeds,
@@ -87,28 +83,25 @@ export const buildBaiCustomTokens = (
     ? [seeds.headerBg.light, seeds.headerBg.dark]
     : 'var(--color-background-surface)',
   '--color-error-bg': seeds.error
-    ? deriveTuple(seeds.error, 1)
+    ? tint('--color-error', 10, 15)
     : 'var(--color-error-muted)',
   '--color-info-bg': seeds.info
-    ? deriveTuple(seeds.info, 1)
+    ? tint('--color-info', 10, 15)
     : 'var(--color-accent-muted)',
   '--color-warning-hover': seeds.warning
-    ? deriveTuple(seeds.warning, 4)
+    ? tint('--color-warning', 65, 45)
     : 'var(--color-warning)',
   '--color-success-border-hover': seeds.success
-    ? deriveTuple(seeds.success, 4)
+    ? tint('--color-success', 65, 45)
     : 'var(--color-success)',
   '--color-primary-bg': seeds.accent
-    ? deriveTuple(seeds.accent, 1, 3)
+    ? tint('--color-accent', 10, 30)
     : 'var(--color-accent-muted)',
   '--color-error-border': seeds.error
-    ? deriveTuple(seeds.error, 3)
+    ? tint('--color-error', 45, 30)
     : 'var(--color-error)',
   '--primary-5': seeds.accent
-    ? [
-        generate(palette(seeds.accent.light, 'light')(6))[4],
-        generate(palette(seeds.accent.dark, 'dark')(6))[4],
-      ]
+    ? tint('--color-accent', 85, 65)
     : 'var(--color-accent)',
   ...BAI_SELF_COLOR_TOKENS,
 });
