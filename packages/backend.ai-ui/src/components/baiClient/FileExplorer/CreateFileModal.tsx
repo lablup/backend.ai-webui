@@ -7,7 +7,7 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { FolderInfoContext } from './BAIFileExplorer';
 import { useMutation } from '@tanstack/react-query';
 import * as _ from 'lodash-es';
-import React, { use, useRef } from 'react';
+import React, { use, useRef, useState } from 'react';
 
 interface CreateFileModalProps extends BAIModalProps {
   onRequestClose: (success: boolean) => void;
@@ -23,6 +23,7 @@ const CreateFileModal: React.FC<CreateFileModalProps> = ({
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
   const formRef = useRef<FormInstance>(null);
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
 
   const createFileMutation = useMutation({
     mutationFn: async ({
@@ -58,17 +59,22 @@ const CreateFileModal: React.FC<CreateFileModalProps> = ({
     },
   });
 
+  // Covers the duplicate-name pre-check too — `createFileMutation.isPending`
+  // alone leaves the button idle while `list_files` is in flight (FR-3674).
+  const isCreating = isCheckingDuplicate || createFileMutation.isPending;
+
   const createFile = () => {
     formRef.current
       ?.validateFields()
       .then(async (values) => {
         const filePath = [currentPath, values.fileName].join('/');
 
-        // Check for duplicate file name before creating
+        setIsCheckingDuplicate(true);
         const isDuplicate = await baiClient.vfolder
           .list_files(currentPath, targetVFolderId)
           .then((res) => _.some(res.items, (f) => f.name === values.fileName))
-          .catch(() => false);
+          .catch(() => false)
+          .finally(() => setIsCheckingDuplicate(false));
 
         if (isDuplicate) {
           modal.confirm({
@@ -110,7 +116,8 @@ const CreateFileModal: React.FC<CreateFileModalProps> = ({
       onCancel={() => onRequestClose(false)}
       okText={t('general.button.Create')}
       onOk={createFile}
-      okButtonProps={{ loading: createFileMutation.isPending }}
+      okButtonProps={{ loading: isCreating }}
+      cancelButtonProps={{ disabled: isCreating }}
       {...modalProps}
       width={400}
     >
@@ -142,6 +149,7 @@ const CreateFileModal: React.FC<CreateFileModalProps> = ({
           <AstryxFormTextInput
             label={t('comp:FileExplorer.FileName')}
             placeholder={t('comp:FileExplorer.FileNamePlaceholder')}
+            disabled={isCreating}
           />
         </Form.Item>
       </Form>
