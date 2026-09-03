@@ -136,6 +136,7 @@ Top-level fields:
 | `commits[]` | `{sha, subject, pr, fr, type, scope}` |
 | `featureMatrix[]` | `{flag, version, used}` — gates **added inside the range** |
 | `gating.gaps[]` | `{key, version, kind, ungated[]}` — new schema fields used without `@since` or a `supports()` guard |
+| `hotspots[]` | `{area, commits, prs[]}` — existing-feature churn, most-changed first (`feat` excluded) |
 | `undeclared[]` | flags used but never declared, i.e. permanently `false` |
 | `risks.noE2E[]` | `{pr, fr, subject, ui[]}` — UI changed, no e2e changed |
 | `risks.destructive[]` | `{pr, fr, subject, destructive[]}` — irreversible-flow files |
@@ -144,14 +145,20 @@ Top-level fields:
 
 ### 3. Render the HTML
 
-Order sections by how much they block a release, not by risk number:
+The digest answers one question for the reader: **릴리즈 준비 때 어떤 기능을
+집중적으로 만져봐야 하는가.** Sections in order:
 
-1. **R2 version-gating gaps** — a query that fails outright on older managers
-2. **R2b undeclared flags** — a feature silently off everywhere (omit when empty)
-3. **R3 untranslated** — ships visibly broken text
-4. **R4 destructive flows** — the typed-confirm gate must be re-verified
+1. **✨ 주요 변경** — the user-facing story: new features, then the existing
+   features that changed the most
+2. **R2 version-gating gaps** — a query that fails outright on older managers
+3. **R2b undeclared flags** — a feature silently off everywhere (omit when empty)
+4. **R3 untranslated** — ships visibly broken text
 5. **R1 UI without e2e** — the manual-pass list
 6. **R5 manual gaps**
+
+R4 (destructive-flow touches) stays in the full `--out` report for reviewers,
+but the digest does not carry it — the team asked for feature-level focus, not
+file-level caution.
 
 **Keep it short.** A Teams message is read on a phone. Per section list at most
 **5** items and append `외 N건` when there are more. For R3, do not list 40 locale
@@ -173,8 +180,20 @@ bare `v26.8.1 → origin/main`, which readers cannot place on the release line.
 Template:
 
 ```html
-<b>🚀 릴리즈 리스크 — {이전 정식} → {다음 버전}(예정, 현재 {to} 기준)</b><br/>
+<b>🚀 릴리즈 준비 — {이전 정식} → {다음 버전}(예정, 현재 {to} 기준)</b><br/>
 커밋 {commits.length}건{, 비교 기준 merge-base <code>{base[0:8]}</code> when divergedFrom}<br/><br/>
+
+<b>✨ 새 기능</b> — {feat 커밋 수}건<br/>
+<ul>
+  <li><a href="{prUrl}">#{pr}</a> {사용자 관점 한 줄 설명}</li>
+</ul>
+{외 N건}<br/>
+
+<b>🔧 많이 바뀐 기존 기능</b><br/>
+<ul>
+  <li><b>{영역 한글명}</b> — 변경 {commits}건 (<a>#{pr}</a>, <a>#{pr}</a>, …)</li>
+</ul>
+<i>릴리즈 테스트에서 이 기능들을 우선적으로 확인해 주세요.</i><br/><br/>
 
 <b>⚙️ 버전 게이팅 누락</b> — {gating.gaps.length}건<br/>
 <ul>
@@ -184,12 +203,6 @@ Template:
 
 <b>🌐 미번역</b> — 신규 영어 키 {addedCount}개<br/>
 {shape line, then outliers}<br/><br/>
-
-<b>⚠️ 파괴적 플로우</b> — {n}건<br/>
-<ul>
-  <li><a href="{frUrl}">{fr}</a> · <a href="{prUrl}">#{pr}</a> — {왜 파괴적인지 한 줄}</li>
-</ul>
-<i>이름을 정확히 입력해야 삭제 버튼이 활성화되는지 재확인이 필요합니다.</i><br/><br/>
 
 <b>🧪 e2e 미커버 UI 변경</b> — {n}건<br/>
 <ul><li><a href="{prUrl}">#{pr}</a> {subject}</li></ul>
@@ -201,17 +214,21 @@ Template:
 <i>🤖 scripts/release-risk-report.mjs · 결함 목록이 아니라 QA 확인 항목입니다</i>
 ```
 
-Two sections render differently from the rest:
+How each special section is written:
 
+- **새 기능**: every `feat` commit, but the line is YOURS to write — a Korean
+  sentence describing what the user can now do, synthesized from the subject
+  ("pick the model mount subpath with a directory picker" → "모델 마운트 경로를
+  디렉터리 탐색기로 선택"). Never paste raw commit subjects here. Cap at ~6
+  lines + `외 N건`.
+- **많이 바뀐 기존 기능**: `hotspots[]` top ~5. Translate the area token into
+  the UI's own term (VFolder → 폴더, Deployment → 배포/디플로이먼트 — the i18n
+  label wins, per the terminology precedence), show the change count and 2–3 PR
+  links. This is the "여기를 우선 테스트" list.
 - **버전 게이팅 (R2)**: gaps ONLY — never enumerate every new gate or schema
   field; a correctly annotated usage is not news. When `gating.gaps` is empty,
   keep the section as the single line `⚙️ 버전 게이팅 누락 — 없음 ✅`: for a
   go/no-go reader, "checked and clean" and "not checked" must not look the same.
-- **파괴적 플로우 (R4)**: links and a reason, NO commit title. Each item is the
-  FR link + PR link, then one line saying *why it is destructive* — derived from
-  the `destructive[]` paths (`TerminateSessionModal.tsx` → 세션 강제 종료 확인
-  모달, a typed-confirm host → 어떤 삭제 확인 플로우인지). The reader decides
-  from the reason, not from a commit subject.
 
 Drop any other section whose count is 0 rather than printing an empty heading.
 If every section is empty, post a single line saying the range has no risk

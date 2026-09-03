@@ -195,6 +195,68 @@ export function hasDestructiveContract(src) {
   return /BAIDeleteConfirmModal|requireConfirmInput/.test(src);
 }
 
+/**
+ * Whether a diff's CHANGED lines reach destructive-flow logic — the confirm
+ * components/props or a destructive action call — as opposed to incidental
+ * edits (styling, layout) inside a file that merely hosts such a flow.
+ */
+export function diffTouchesDestructiveFlow(diff) {
+  const changed = diff
+    .split('\n')
+    .filter(
+      (l) =>
+        (l.startsWith('+') || l.startsWith('-')) &&
+        !l.startsWith('+++') &&
+        !l.startsWith('---'),
+    );
+  return changed.some((l) =>
+    /BAIDeleteConfirmModal|requireConfirmInput|confirmText|BAIPopconfirm|delete|purge|terminate|destroy|revoke/i.test(
+      l,
+    ),
+  );
+}
+
+/**
+ * The feature area a UI file belongs to, from its basename's leading word
+ * (wrapper/role prefixes stripped): BAIUserNodes -> User,
+ * AdminDeploymentPresetTable -> Deployment, VFolderNodesV2 -> VFolder.
+ * Coarse on purpose — it feeds a "which existing features changed the most"
+ * ranking, not a taxonomy.
+ */
+export function areaOf(file) {
+  const base = file
+    .split('/')
+    .pop()
+    .replace(/\.[^.]+$/, '');
+  const m = base.replace(/^(BAI|Admin|Legacy)+/, '').match(/^[A-Z]+[a-z0-9]*/);
+  return m ? m[0] : null;
+}
+
+/**
+ * Existing-feature churn, ranked: user-facing commits grouped by the areas
+ * their UI files belong to. `feat` commits are excluded — new features get
+ * their own digest section straight from the commit list.
+ */
+export function computeHotspots(commits) {
+  const areas = new Map();
+  for (const c of commits) {
+    if (c.type === 'feat' || !USER_FACING_TYPES.has(c.type ?? '')) continue;
+    const seen = new Set();
+    for (const f of c.classified.ui) {
+      const area = areaOf(f);
+      if (!area || seen.has(area)) continue;
+      seen.add(area);
+      if (!areas.has(area)) areas.set(area, { commits: 0, prs: [] });
+      const a = areas.get(area);
+      a.commits += 1;
+      if (c.pr && a.prs.length < 5) a.prs.push(c.pr);
+    }
+  }
+  return [...areas.entries()]
+    .map(([area, a]) => ({ area, ...a }))
+    .sort((x, y) => y.commits - x.commits);
+}
+
 function readFeatureVersionMap(ref) {
   const src = gitOrNull([
     'show',
@@ -808,6 +870,20 @@ function main() {
         (f) => !c.classified.destructive.includes(f) && hostsContract(f),
       ),
     );
+    // Touching a file that hosts a flow is not the signal — CHANGING the flow
+    // is. Only a diff whose changed lines reach the confirm logic counts.
+    if (c.classified.destructive.length) {
+      const diff = gitOrNull([
+        'show',
+        '--unified=0',
+        '--pretty=format:',
+        c.sha,
+        '--',
+        ...c.classified.destructive,
+      ]);
+      if (!diff || !diffTouchesDestructiveFlow(diff))
+        c.classified.destructive = [];
+    }
   }
 
   const userFacing = commits.filter(
@@ -845,6 +921,7 @@ function main() {
     risks,
     featureMatrix,
     gating: schemaGatingGaps(base, args.to),
+    hotspots: computeHotspots(commits),
     undeclared,
     i18n: i18nGaps(base, args.to),
   };
