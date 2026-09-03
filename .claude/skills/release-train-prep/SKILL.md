@@ -11,6 +11,9 @@ description: >
   --train <version> it also opens the release train: creates the
   "Final Train to v<version>" Jira Story and posts the kickoff + digest into
   the thread — "트레인 이슈 만들어줘", "릴리즈 트레인 준비해줘", "release train 시작".
+  PREPARATION ONLY — it never creates a release branch, tag, or GitHub release;
+  "릴리즈 찍어줘 / 릴리즈 만들어줘 / cut the release / rc 릴리즈" is
+  create-release, not this skill.
 argument-hint: "--from <ref> [--to <ref>] [--train <version>] [--dry-run] [--auto] <Teams URL>"
 ---
 
@@ -21,6 +24,12 @@ train's Teams thread grouped by risk category, and (with `--train`) open the
 `Final Train` Jira Story. The analysis is done entirely by
 `scripts/release-risk-report.mjs`; this skill runs it once, renders Korean
 HTML, and posts.
+
+> **Prep, not release.** This skill touches Jira and Teams only — it never
+> creates a release branch, pushes a tag, or publishes a GitHub release.
+> Cutting an rc or a stable is `create-release`; the post-release version bump
+> is `bump-alpha-version`. If the ask is "릴리즈 찍어줘" rather than
+> "릴리즈 준비해줘", stop and use those.
 
 > **Skill reference**: Invoke the `teams-workflow` skill for Teams CLI usage.
 
