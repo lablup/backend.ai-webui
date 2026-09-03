@@ -7,9 +7,11 @@
  These carry the values the retired theme-shim used to compute at runtime
  for the antd vocabulary Astryx has no token for: the brand link/info
  seeds, antd's per-status hover/bg/border palette steps, and antd's neutral
- text/fill alpha ramp. Shared by the app recipe
- (`react/src/astryx-theme/backendAiTheme.ts`) and the Storybook brand theme
- so the two cannot drift. Consumers read them via `useTheme().token('--bai-…')`.
+ text/fill alpha ramp. A seed the document does not declare falls back to an
+ Astryx `var()` reference, so the token never goes missing. Shared by the app
+ recipe (`react/src/astryx-theme/backendAiTheme.ts`) and the Storybook brand
+ theme so the two cannot drift. Consumers read them via
+ `useTheme().token('--bai-…')`.
  */
 import { generate, palette } from './antdColors';
 import { ANTD_DARK_ALGORITHM_OUTPUT } from './antdParity';
@@ -21,13 +23,13 @@ export interface BrandSeedPair {
 }
 
 export type BaiCustomTokenSeeds = {
-  accent: BrandSeedPair;
-  info: BrandSeedPair;
-  link: BrandSeedPair;
-  headerBg: BrandSeedPair;
-  error: BrandSeedPair;
-  success: BrandSeedPair;
-  warning: BrandSeedPair;
+  accent?: BrandSeedPair;
+  info?: BrandSeedPair;
+  link?: BrandSeedPair;
+  headerBg?: BrandSeedPair;
+  error?: BrandSeedPair;
+  success?: BrandSeedPair;
+  warning?: BrandSeedPair;
 };
 
 /**
@@ -83,25 +85,46 @@ export const BAI_SELF_COLOR_TOKENS: Record<string, [string, string]> = {
 };
 
 /**
- * The full `--bai-*` set for one seed set. `--bai-primary-5` is the one antd
+ * The full `--bai-*` set for one seed set. Each brand-derived token has an
+ * Astryx fallback for an undeclared seed. `--bai-primary-5` is the one antd
  * ramp step still consumed (progress fills): `generate()` (default options)
  * over the mode's palette key-6 map color, per scheme, index 4.
  */
 export const buildBaiCustomTokens = (
   seeds: BaiCustomTokenSeeds,
 ): Record<string, string | [string, string]> => ({
-  '--bai-color-info': toSeedTuple(seeds.info),
-  '--bai-color-link': toSeedTuple(seeds.link),
-  '--bai-header-bg': [seeds.headerBg.light, seeds.headerBg.dark],
-  '--bai-color-error-bg': deriveTuple(seeds.error, 1),
-  '--bai-color-info-bg': deriveTuple(seeds.info, 1),
-  '--bai-color-warning-hover': deriveTuple(seeds.warning, 4),
-  '--bai-color-success-border-hover': deriveTuple(seeds.success, 4),
-  '--bai-color-primary-bg': deriveTuple(seeds.accent, 1, 3),
-  '--bai-color-error-border': deriveTuple(seeds.error, 3),
-  '--bai-primary-5': [
-    generate(palette(seeds.accent.light, 'light')(6))[4],
-    generate(palette(seeds.accent.dark, 'dark')(6))[4],
-  ],
+  '--bai-color-info': seeds.info
+    ? toSeedTuple(seeds.info)
+    : 'var(--color-accent)',
+  '--bai-color-link': seeds.link
+    ? toSeedTuple(seeds.link)
+    : 'var(--color-text-accent)',
+  '--bai-header-bg': seeds.headerBg
+    ? [seeds.headerBg.light, seeds.headerBg.dark]
+    : 'var(--color-background-surface)',
+  '--bai-color-error-bg': seeds.error
+    ? deriveTuple(seeds.error, 1)
+    : 'var(--color-error-muted)',
+  '--bai-color-info-bg': seeds.info
+    ? deriveTuple(seeds.info, 1)
+    : 'var(--color-accent-muted)',
+  '--bai-color-warning-hover': seeds.warning
+    ? deriveTuple(seeds.warning, 4)
+    : 'var(--color-warning)',
+  '--bai-color-success-border-hover': seeds.success
+    ? deriveTuple(seeds.success, 4)
+    : 'var(--color-success)',
+  '--bai-color-primary-bg': seeds.accent
+    ? deriveTuple(seeds.accent, 1, 3)
+    : 'var(--color-accent-muted)',
+  '--bai-color-error-border': seeds.error
+    ? deriveTuple(seeds.error, 3)
+    : 'var(--color-error)',
+  '--bai-primary-5': seeds.accent
+    ? [
+        generate(palette(seeds.accent.light, 'light')(6))[4],
+        generate(palette(seeds.accent.dark, 'dark')(6))[4],
+      ]
+    : 'var(--color-accent)',
   ...BAI_SELF_COLOR_TOKENS,
 });
