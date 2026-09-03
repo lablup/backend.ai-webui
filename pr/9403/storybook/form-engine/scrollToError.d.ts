@@ -2,11 +2,11 @@ export interface ScrollToFirstErrorOptions extends ScrollIntoViewOptions {
     /** Move focus as well as the viewport. On unless set to `false`. */
     focus?: boolean;
 }
-/** The first invalid item in DOM order that the user can actually reach. */
-export declare function findFirstErrorItem(root: ParentNode): HTMLElement | undefined;
-export declare function scrollToErrorItem(item: HTMLElement, { focus, ...scrollOptions }?: ScrollToFirstErrorOptions): void;
 /**
- * `data-status` only says "error" once the rejected validation has re-rendered
- * the items, so the read waits for the next frame.
+ * The first of the given items in DOCUMENT order. `errorFields` arrives in
+ * field REGISTRATION order, which disagrees whenever a group mounts
+ * conditionally — `DeploymentAddRevisionModal` hand-rolled a DOM walk for
+ * exactly that reason, and this is what lets it stop.
  */
-export declare function scrollToFirstErrorAfterRender(getRoot: () => ParentNode | null, options?: ScrollToFirstErrorOptions): void;
+export declare function findFirstErrorItem(root: ParentNode, fieldIds: readonly string[]): HTMLElement | undefined;
+export declare function scrollToErrorItem(item: HTMLElement, { focus, ...scrollOptions }?: ScrollToFirstErrorOptions): void;
