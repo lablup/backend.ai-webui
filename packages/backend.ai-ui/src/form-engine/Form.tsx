@@ -41,6 +41,8 @@ import type {
 } from './interface';
 import { mergeValidateMessages } from './messages';
 import type { Store } from './namePath';
+import { scrollToFirstErrorAfterRender } from './scrollToError';
+import type { ScrollToFirstErrorOptions } from './scrollToError';
 import * as React from 'react';
 
 export interface FormProps<Values = any> extends Omit<
@@ -63,7 +65,12 @@ export interface FormProps<Values = any> extends Omit<
   labelWrap?: boolean;
   validateMessages?: ValidateMessages;
   validateTrigger?: string | string[] | false;
-  scrollToFirstError?: boolean | Record<string, unknown>;
+  /**
+   * Scrolls the first invalid field into view and focuses it when a submit
+   * fails. Off unless set, as in antd — and, as in antd, it acts on
+   * `form.submit()`, not on a bare `validateFields()`.
+   */
+  scrollToFirstError?: boolean | ScrollToFirstErrorOptions;
   clearOnDestroy?: boolean;
   onValuesChange?: Callbacks<Values>['onValuesChange'];
   onFieldsChange?: Callbacks<Values>['onFieldsChange'];
@@ -157,6 +164,23 @@ const InternalForm = <Values,>(
     ),
   );
 
+  // `useEffectEvent` so the DOM read happens when the submit fails, not while
+  // rendering — `setCallbacks` runs during render and may not touch the ref.
+  const handleFinishFailed = React.useEffectEvent(
+    (errorInfo: ValidateErrorEntity) => {
+      if (scrollToFirstError && errorInfo.errorFields.length) {
+        // Resolved from the DOM rather than from `errorFields[0]`, which is
+        // field REGISTRATION order — a conditionally mounted group registers
+        // last while sitting first on screen (FR-3683).
+        scrollToFirstErrorAfterRender(
+          () => nativeElementRef.current ?? document,
+          typeof scrollToFirstError === 'object' ? scrollToFirstError : {},
+        );
+      }
+      onFinishFailed?.(errorInfo);
+    },
+  );
+
   setCallbacks({
     onValuesChange,
     onFieldsChange: (changedFields: FieldData[], ...rest) => {
@@ -170,14 +194,7 @@ const InternalForm = <Values,>(
       formProviderContext.triggerFormFinish(name, values);
       onFinish?.(values);
     },
-    onFinishFailed: (errorInfo: ValidateErrorEntity) => {
-      if (scrollToFirstError && errorInfo.errorFields.length) {
-        const options =
-          typeof scrollToFirstError === 'object' ? scrollToFirstError : {};
-        formInstance.scrollToField(errorInfo.errorFields[0].name, options);
-      }
-      onFinishFailed?.(errorInfo);
-    },
+    onFinishFailed: handleFinishFailed,
   });
   setPreserve(preserve);
 
