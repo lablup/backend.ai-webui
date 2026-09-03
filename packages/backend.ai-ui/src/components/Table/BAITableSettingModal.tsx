@@ -105,7 +105,7 @@ const SortableRow: React.FC<{
           style={{
             cursor: 'grab',
             display: 'inline-flex',
-            color: token('--bai-color-text-tertiary'),
+            color: token('--color-text-tertiary'),
           }}
           aria-hidden
         >

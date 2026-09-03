@@ -129,7 +129,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
       )}
       {copyable && (
         <BAIText
-          style={{ color: token('--bai-color-link') }}
+          style={{ color: token('--color-link') }}
           copyable={{
             text: fullName,
           }}

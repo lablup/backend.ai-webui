@@ -484,7 +484,7 @@ export const useSemanticColorMap = (): Record<SemanticColor, string> => {
   const { token } = useTheme();
   return {
     success: token('--color-success'),
-    info: token('--bai-color-info'),
+    info: token('--color-info'),
     warning: token('--color-warning'),
     error: token('--color-error'),
     default: token('--color-border-emphasized'),

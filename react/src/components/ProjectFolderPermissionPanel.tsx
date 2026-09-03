@@ -184,7 +184,7 @@ const ProjectFolderPermissionPanel: React.FC<
             </BAIFlex>
             <BAIFlex gap="xxs" align="center">
               <CircleCheck
-                style={{ color: token('--bai-preset-purple-5') }}
+                style={{ color: token('--preset-purple-5') }}
                 size="1em"
               />
               <Text color="secondary" size="xsm">

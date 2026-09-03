@@ -713,7 +713,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   const cellStyle = (record: ValidatedRow, field: string) => ({
     style: record.fieldErrors[field]
       ? {
-          background: token('--bai-color-error-bg'),
+          background: token('--color-error-bg'),
           padding: `0 ${token('--spacing-2')}`,
         }
       : { padding: `0 ${token('--spacing-2')}` },
@@ -1078,7 +1078,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               style={{
                 border: `1px solid ${token('--color-border')}`,
                 borderRadius: token('--radius-inner'),
-                background: token('--bai-color-fill-quaternary'),
+                background: token('--color-fill-quaternary'),
                 padding: `${token('--spacing-3')} ${token('--spacing-5')}`,
               }}
             >
@@ -1091,7 +1091,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     width: 36,
                     height: 36,
                     borderRadius: token('--radius-inner'),
-                    background: token('--bai-color-primary-bg'),
+                    background: token('--color-primary-bg'),
                     color: token('--color-accent'),
                     fontSize: token('--font-size-lg'),
                     flexShrink: 0,
@@ -1385,9 +1385,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 align="stretch"
                 gap="xs"
                 style={{
-                  border: `1px solid ${token('--bai-color-error-border')}`,
+                  border: `1px solid ${token('--color-error-border')}`,
                   borderRadius: token('--radius-inner'),
-                  background: token('--bai-color-error-bg'),
+                  background: token('--color-error-bg'),
                   padding: `${token('--spacing-3')} ${token('--spacing-5')}`,
                 }}
               >

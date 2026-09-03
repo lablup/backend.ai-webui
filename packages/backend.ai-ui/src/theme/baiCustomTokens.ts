@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- The `--bai-*` custom token layer of the Backend.AI Astryx theme (FR-3605).
+ The custom token layer of the Backend.AI Astryx theme (FR-3605).
 
  These carry the values the retired theme-shim used to compute at runtime
  for the antd vocabulary Astryx has no token for: the brand link/info
@@ -53,63 +53,58 @@ const deriveTuple = (
 
 /** antd's neutral text/fill alpha ramp and the preset steps still consumed. */
 export const BAI_SELF_COLOR_TOKENS: Record<string, [string, string]> = {
-  '--bai-color-text-tertiary': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'],
-  '--bai-color-text-quaternary': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'],
-  '--bai-color-text-description': [
-    'rgba(0,0,0,0.45)',
-    'rgba(255,255,255,0.45)',
-  ],
-  '--bai-color-fill': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'],
-  '--bai-color-fill-secondary': ['rgba(0,0,0,0.06)', '#262626'],
-  '--bai-color-fill-tertiary': ['rgba(0,0,0,0.04)', 'rgba(255,255,255,0.08)'],
-  '--bai-color-fill-quaternary': ['rgba(0,0,0,0.02)', 'rgba(255,255,255,0.04)'],
-  '--bai-color-bg-container-disabled': [
+  '--color-text-tertiary': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'],
+  '--color-text-quaternary': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'],
+  '--color-text-description': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'],
+  '--color-fill': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'],
+  '--color-fill-secondary': ['rgba(0,0,0,0.06)', '#262626'],
+  '--color-fill-tertiary': ['rgba(0,0,0,0.04)', 'rgba(255,255,255,0.08)'],
+  '--color-fill-quaternary': ['rgba(0,0,0,0.02)', 'rgba(255,255,255,0.04)'],
+  '--color-bg-container-disabled': [
     'rgba(0,0,0,0.04)',
     'rgba(255,255,255,0.08)',
   ],
   // antd preset palette steps (light/dark tables) still consumed by name.
-  '--bai-preset-purple-5': ['#9254de', '#51258f'],
-  '--bai-preset-green-5': ['#73d13d', '#3c8618'],
-  '--bai-preset-red-5': ['#ff4d4f', '#a61d24'],
+  '--preset-purple-5': ['#9254de', '#51258f'],
+  '--preset-green-5': ['#73d13d', '#3c8618'],
+  '--preset-red-5': ['#ff4d4f', '#a61d24'],
 };
 
 /**
- * The full `--bai-*` set for one seed set. Each brand-derived token has an
- * Astryx fallback for an undeclared seed. `--bai-primary-5` is the one antd
+ * The full custom token set for one seed set. Each brand-derived token has an
+ * Astryx fallback for an undeclared seed. `--primary-5` is the one antd
  * ramp step still consumed (progress fills): `generate()` (default options)
  * over the mode's palette key-6 map color, per scheme, index 4.
  */
 export const buildBaiCustomTokens = (
   seeds: BaiCustomTokenSeeds,
 ): Record<string, string | [string, string]> => ({
-  '--bai-color-info': seeds.info
-    ? toSeedTuple(seeds.info)
-    : 'var(--color-accent)',
-  '--bai-color-link': seeds.link
+  '--color-info': seeds.info ? toSeedTuple(seeds.info) : 'var(--color-accent)',
+  '--color-link': seeds.link
     ? toSeedTuple(seeds.link)
     : 'var(--color-text-accent)',
-  '--bai-header-bg': seeds.headerBg
+  '--header-bg': seeds.headerBg
     ? [seeds.headerBg.light, seeds.headerBg.dark]
     : 'var(--color-background-surface)',
-  '--bai-color-error-bg': seeds.error
+  '--color-error-bg': seeds.error
     ? deriveTuple(seeds.error, 1)
     : 'var(--color-error-muted)',
-  '--bai-color-info-bg': seeds.info
+  '--color-info-bg': seeds.info
     ? deriveTuple(seeds.info, 1)
     : 'var(--color-accent-muted)',
-  '--bai-color-warning-hover': seeds.warning
+  '--color-warning-hover': seeds.warning
     ? deriveTuple(seeds.warning, 4)
     : 'var(--color-warning)',
-  '--bai-color-success-border-hover': seeds.success
+  '--color-success-border-hover': seeds.success
     ? deriveTuple(seeds.success, 4)
     : 'var(--color-success)',
-  '--bai-color-primary-bg': seeds.accent
+  '--color-primary-bg': seeds.accent
     ? deriveTuple(seeds.accent, 1, 3)
     : 'var(--color-accent-muted)',
-  '--bai-color-error-border': seeds.error
+  '--color-error-border': seeds.error
     ? deriveTuple(seeds.error, 3)
     : 'var(--color-error)',
-  '--bai-primary-5': seeds.accent
+  '--primary-5': seeds.accent
     ? [
         generate(palette(seeds.accent.light, 'light')(6))[4],
         generate(palette(seeds.accent.dark, 'dark')(6))[4],

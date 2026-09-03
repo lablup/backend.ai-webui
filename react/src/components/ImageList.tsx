@@ -427,7 +427,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             e.stopPropagation();
           }}
         >
-          {/* PILOT-DECISION: antd text Buttons with token('--bai-color-info')-tinted
+          {/* PILOT-DECISION: antd text Buttons with token('--color-info')-tinted
               icons -> Astryx ghost IconButtons. IconButton's variant enum is
               closed, so the info-blue icon tint is dropped (P5/P11);
               accessible labels reuse the modal titles they open (P8).

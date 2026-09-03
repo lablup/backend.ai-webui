@@ -459,7 +459,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               />
               <BAIButton
                 icon={
-                  <SquarePenIcon style={{ color: token('--bai-color-info') }} />
+                  <SquarePenIcon style={{ color: token('--color-info') }} />
                 }
                 onClick={toggleUpdateUsersModal}
               />

@@ -204,7 +204,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                     <DownloadIcon
                       style={{
                         color: enableDownload
-                          ? token('--bai-color-info')
+                          ? token('--color-info')
                           : token('--color-text-disabled'),
                       }}
                     />

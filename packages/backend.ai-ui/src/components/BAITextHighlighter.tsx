@@ -30,7 +30,7 @@ const BAITextHighlighter: React.FC<BAITextHighlighterProps> = ({
             <span
               key={i}
               style={{
-                backgroundColor: token('--bai-color-warning-hover'),
+                backgroundColor: token('--color-warning-hover'),
                 ...style,
               }}
             >

@@ -55,7 +55,7 @@ export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
             height: token('--size-element-md'),
             flexShrink: 0,
             borderRadius: '50%',
-            backgroundColor: token('--bai-color-fill-tertiary'),
+            backgroundColor: token('--color-fill-tertiary'),
             fontSize: token('--font-size-2xl'),
             lineHeight: 1,
           }}

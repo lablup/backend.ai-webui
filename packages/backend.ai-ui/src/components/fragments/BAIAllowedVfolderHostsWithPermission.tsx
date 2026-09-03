@@ -181,7 +181,7 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
                   {isAllowed ? (
                     <CircleCheck
                       style={{
-                        color: token('--bai-preset-green-5'),
+                        color: token('--preset-green-5'),
                         fontSize: token('--font-size-lg'),
                       }}
                       size="1em"
@@ -189,7 +189,7 @@ const BAIAllowedVfolderHostsWithPermission: React.FC<
                   ) : (
                     <Ban
                       style={{
-                        color: token('--bai-preset-red-5'),
+                        color: token('--preset-red-5'),
                         fontSize: token('--font-size-lg'),
                       }}
                       size="1em"

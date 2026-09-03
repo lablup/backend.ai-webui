@@ -52,15 +52,13 @@ describe('backendAiTheme', () => {
       expect(bare.tokens?.['--color-accent']).not.toContain('#FF7A00');
     });
 
-    it('resolves the --bai-* vocabulary to Astryx references', () => {
-      expect(bare.tokens?.['--bai-color-info']).toBe('var(--color-accent)');
-      expect(bare.tokens?.['--bai-color-link']).toBe(
-        'var(--color-text-accent)',
-      );
-      expect(bare.tokens?.['--bai-header-bg']).toBe(
+    it('resolves the custom vocabulary to Astryx references', () => {
+      expect(bare.tokens?.['--color-info']).toBe('var(--color-accent)');
+      expect(bare.tokens?.['--color-link']).toBe('var(--color-text-accent)');
+      expect(bare.tokens?.['--header-bg']).toBe(
         'var(--color-background-surface)',
       );
-      expect(bare.tokens?.['--bai-primary-5']).toBe('var(--color-accent)');
+      expect(bare.tokens?.['--primary-5']).toBe('var(--color-accent)');
     });
 
     it('keeps the structural parity pins that are not brand data', () => {
@@ -225,7 +223,7 @@ describe('backendAiTheme', () => {
       expect(bare.tokens?.['--color-accent']).toBe(
         neutralTheme.tokens?.['--color-accent'],
       );
-      expect(bare.tokens?.['--bai-color-info']).toBe('var(--color-accent)');
+      expect(bare.tokens?.['--color-info']).toBe('var(--color-accent)');
     });
 
     it('resolveRoleTheme falls back to a runtime theme for overridden seeds', () => {

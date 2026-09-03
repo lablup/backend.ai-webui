@@ -461,9 +461,7 @@ const ProjectPage = () => {
                 <BAIButton
                   title={t('project.BulkEdit')}
                   icon={
-                    <SquarePenIcon
-                      style={{ color: token('--bai-color-info') }}
-                    />
+                    <SquarePenIcon style={{ color: token('--color-info') }} />
                   }
                   onClick={toggleBulkEditModal}
                 />

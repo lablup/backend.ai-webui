@@ -496,7 +496,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           // (#89001A/#FFC6C1) — which are 4 ramp steps darker than what antd
           // drew and match no antd token. The visible consequence was that the
           // SAME semantic action had two colours: the bulk-selection buttons
-          // kept their inline `token('--bai-color-info')` and stayed #028DF2, while the
+          // kept their inline `token('--color-info')` and stayed #028DF2, while the
           // per-row buttons went through the remap and came out #00458C.
           //
           // The shim's measured antd values close that. `--color-error` happens
@@ -505,10 +505,10 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           // warning only), so both pairs travel the same way for symmetry.
           style={
             {
-              '--bai-nac-info': token('--bai-color-info'),
-              '--bai-nac-info-bg': token('--bai-color-info-bg'),
+              '--bai-nac-info': token('--color-info'),
+              '--bai-nac-info-bg': token('--color-info-bg'),
               '--bai-nac-error': token('--color-error'),
-              '--bai-nac-error-bg': token('--bai-color-error-bg'),
+              '--bai-nac-error-bg': token('--color-error-bg'),
             } as React.CSSProperties
           }
         >

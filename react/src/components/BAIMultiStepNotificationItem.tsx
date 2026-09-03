@@ -59,12 +59,12 @@ const StepIcon: React.FC<{
   if (status === 'pending') {
     return animated ? (
       <LoaderCircle
-        style={{ color: token('--bai-color-info'), fontSize: size }}
+        style={{ color: token('--color-info'), fontSize: size }}
         size="1em"
       />
     ) : (
       <Clock
-        style={{ color: token('--bai-color-info'), fontSize: size }}
+        style={{ color: token('--color-info'), fontSize: size }}
         size="1em"
       />
     );
@@ -162,7 +162,7 @@ const BAIMultiStepNotificationItem: React.FC<{
         size="1em"
       />
     ) : (
-      <Clock style={{ color: token('--bai-color-info') }} size="1em" />
+      <Clock style={{ color: token('--color-info') }} size="1em" />
     );
 
   const stepLabel =

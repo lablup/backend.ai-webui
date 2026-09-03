@@ -479,7 +479,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                               ),
                               extraDescription: !_.isEmpty(occupiedSession) ? (
                                 <VStack align="stretch">
-                                  {/* `token('--bai-color-text-description')` maps to the
+                                  {/* `token('--color-text-description')` maps to the
                                       semantic `color="secondary"` (P5). */}
                                   <Text color="secondary">
                                     {t('data.folders.MountedSessions')}

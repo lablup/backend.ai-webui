@@ -196,7 +196,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                             color: token('--color-text-disabled'),
                           }
                         : {
-                            color: token('--bai-color-info'),
+                            color: token('--color-info'),
                           }
                     }
                     isDisabled={isEndpointDestroying || !isOwnedByCurrentUser}

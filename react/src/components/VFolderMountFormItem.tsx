@@ -274,7 +274,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                       size={16}
                       style={{
                         cursor: 'pointer',
-                        color: token('--bai-color-text-quaternary'),
+                        color: token('--color-text-quaternary'),
                         marginTop: token('--spacing-1'),
                         flexShrink: 0,
                       }}

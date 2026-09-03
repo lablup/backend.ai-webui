@@ -76,9 +76,9 @@ const TOKEN_ROW = {
 };
 
 let lastEnvironment: RelayMockEnvironment;
-let resolvePayload: (operation: any) => ReturnType<
-  typeof MockPayloadGenerator.generate
->;
+let resolvePayload: (
+  operation: any,
+) => ReturnType<typeof MockPayloadGenerator.generate>;
 
 const renderCard = ({
   endpointUrl = 'https://endpoint.example',
