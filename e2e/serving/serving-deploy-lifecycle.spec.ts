@@ -57,11 +57,12 @@ const HEALTH_CHECK_INTERVAL = 5_000; // 5 seconds
 /**
  * Locates the BAIFetchKeyButton (refresh/reload button) on the serving page.
  * The icon is lucide `RotateCw` (no antd `.anticon-reload` class since ticket
- * 12); the button carries the native `title="Refresh"` attribute instead
+ * 12); its hover text is an Astryx tooltip (not a native `title` attribute),
+ * but the button always carries `aria-label="Refresh"`
  * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
  */
 function getTableRefreshButton(page: Page) {
-  return page.locator('button[title="Refresh"]').first();
+  return page.getByRole('button', { name: 'Refresh', exact: true }).first();
 }
 
 /**
@@ -86,7 +87,7 @@ async function uploadFixturesToVFolder(
 
   const [fileChooser] = await Promise.all([
     page.waitForEvent('filechooser'),
-    page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+    page.getByRole('menuitem', { name: 'Upload Files' }).click(),
   ]);
 
   const mockServerContent = fs.readFileSync(

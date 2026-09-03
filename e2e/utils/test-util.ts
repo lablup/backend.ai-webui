@@ -486,17 +486,28 @@ export async function selectPropertyFilter(
     await page.getByRole('combobox', { name: 'Value' }).click();
     await page.getByRole('option', { name: searchValue, exact: true }).click();
   }
+
+  // Committing the value hands focus back to the search bar, which reopens
+  // the field typeahead (listbox "Search results") over the first table rows
+  // and intercepts clicks on their action buttons. Close it before returning.
+  const typeahead = page.getByRole('listbox', { name: 'Search results' });
+  if (await typeahead.isVisible({ timeout: 1000 }).catch(() => false)) {
+    await searchBar.press('Escape');
+    await expect(typeahead).toBeHidden({ timeout: 5000 });
+  }
 }
 
 /**
  * Locates the table refresh button (BAIFetchKeyButton). The icon is lucide
- * `RotateCw` (no antd `.anticon-reload` class since ticket 12); the button
- * carries the native `title="Refresh"` attribute instead
- * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
- * Clicking it bumps the list's fetchKey, forcing a network-only refetch.
+ * `RotateCw` (no antd `.anticon-reload` class since ticket 12); its hover
+ * text is an Astryx tooltip (not a native `title` attribute), but the
+ * button always carries `aria-label="Refresh"`
+ * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`), so match
+ * on the accessible name instead. Clicking it bumps the list's fetchKey,
+ * forcing a network-only refetch.
  */
 export function getTableRefreshButton(page: Page) {
-  return page.locator('button[title="Refresh"]').first();
+  return page.getByRole('button', { name: 'Refresh', exact: true }).first();
 }
 
 /**
@@ -676,11 +687,12 @@ export async function moveToTrashAndVerify(
   });
   await expect(moveToTrashButton).toBeEnabled({ timeout: 10000 });
   await moveToTrashButton.click();
-  // The "Move to trash" confirmation modal uses a standardized "Confirm"
-  // button (t('button.Confirm')) instead of "Move".
+  // The "Move to trash" confirmation is the app-shim `modal.confirm`, which
+  // renders as role="alertdialog" (not "dialog") with a "Confirm" button; the
+  // old `.ant-modal-confirm` scope matched nothing.
   const confirmButton = page
-    .locator('.ant-modal-confirm')
-    .getByRole('button', { name: 'Confirm' });
+    .getByRole('alertdialog')
+    .getByRole('button', { name: 'Confirm', exact: true });
   await expect(confirmButton).toBeVisible();
   // Wait for the DELETE /folders API response so a rejected request fails
   // here with the status/body instead of surfacing as a row-gone timeout.
@@ -753,7 +765,9 @@ export async function deleteForeverAndVerifyFromTrash(
   // Wait for confirmation modal to appear before interacting with it.
   // Use fill() directly (it waits for actionability) to avoid flakiness from
   // click() on a modal still playing its open animation ("element is not stable").
-  const confirmInput = page.locator('#confirmText');
+  // `BAIDeleteConfirmModal`'s typed-confirm input carries no `#confirmText`
+  // id on the Astryx build; it is the dialog's only textbox.
+  const confirmInput = page.getByRole('dialog').getByRole('textbox');
   await expect(confirmInput).toBeVisible();
   await confirmInput.fill(folderName);
   await page.getByRole('button', { name: 'Delete forever' }).click();

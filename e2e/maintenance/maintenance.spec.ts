@@ -8,8 +8,12 @@ import { test, expect } from '@playwright/test';
 test.beforeEach(async ({ page, request }) => {
   await loginAsAdmin(page, request);
   await page.getByRole('link', { name: 'Admin Settings' }).click();
-  await page.getByRole('link', { name: 'tool Maintenance' }).click();
-  await page.waitForLoadState('networkidle');
+  // antd is gone; the sidebar icon no longer prefixes the link's accessible
+  // name with its glyph name ("tool").
+  await page.getByRole('link', { name: 'Maintenance' }).click();
+  await expect(
+    page.getByRole('button', { name: 'Recalculate Usage' }),
+  ).toBeVisible();
 });
 
 test.describe(
