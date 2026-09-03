@@ -27,6 +27,13 @@ describe('anchor codec', () => {
     await expect(decodeAnchor(encoded)).resolves.toEqual(anchor);
   });
 
+  // A tiny base64 payload inflates to megabytes; the decoder stops early.
+  it('refuses a payload that inflates past the cap', async () => {
+    const bomb = await encodeAnchor({ ...anchor, s: 'a'.repeat(200_000) });
+    expect(bomb.length).toBeLessThan(2048);
+    await expect(decodeAnchor(bomb)).resolves.toBeNull();
+  });
+
   it('produces a fragment-safe base64url string (no +, /, =)', async () => {
     const encoded = await encodeAnchor({
       ...anchor,
@@ -95,5 +102,41 @@ describe('anchor codec', () => {
   it('rejects an encoded payload whose path uses a backslash separator', async () => {
     const encoded = await encodeAnchor({ ...anchor, p: '/\\evil.example.com' });
     await expect(decodeAnchor(encoded)).resolves.toBeNull();
+  });
+});
+
+/**
+ * Measured through `deflate-raw`, the codec's own format: this anchor is 342
+ * base64 chars on its own, 418 with a two-line note, 1359 in the worst case
+ * (a SELECTOR_MAX selector plus 280 incompressible CJK chars) — of the 2048
+ * `PIN_BODY_SRC` accepts.
+ */
+describe('an anchor carrying the reviewer note', () => {
+  const noted = (n: string): AnchorV3 => ({ ...anchor, n });
+
+  it('round-trips the note verbatim, newlines and all', async () => {
+    const payload = noted('The button is misaligned.\nIt should sit flush.');
+    const encoded = await encodeAnchor(payload);
+    await expect(decodeAnchor(encoded)).resolves.toEqual(payload);
+  });
+
+  it('stays well inside the link budget at the cap', async () => {
+    const cjk = String.fromCharCode(0xac00).repeat(280);
+    const encoded = await encodeAnchor({ ...noted(cjk), nt: 1 });
+    expect(encoded.length).toBeLessThan(2048);
+  });
+
+  it('refuses a note that is not a string', async () => {
+    const encoded = await encodeAnchor({
+      ...anchor,
+      n: 7,
+    } as unknown as AnchorV3);
+    await expect(decodeAnchor(encoded)).resolves.toBeNull();
+  });
+
+  // Every link copied before the note travelled carries no `n` at all.
+  it('reads a legacy anchor with no note', async () => {
+    const decoded = await decodeAnchor(await encodeAnchor(anchor));
+    expect(decoded?.n).toBeUndefined();
   });
 });

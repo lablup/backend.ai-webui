@@ -5,6 +5,8 @@
  * payload carries redundant signals (testid landmark + fractional rect + tag +
  * text). Resolving them back to an element is the READ side's job (FR-3813).
  */
+import { NOTE_MAX, SELECTOR_MAX } from './anchor-guard.js';
+import { fractionWithin, type Box } from './selection.js';
 import type { AnchorComponent, AnchorV3 } from './types.js';
 
 const esc = (v: string) => (window.CSS && CSS.escape ? CSS.escape(v) : v);
@@ -24,11 +26,28 @@ export const isStableId = (id: string): boolean =>
   !/^:r[0-9a-z]*:$/i.test(id) &&
   !/^_[a-zA-Z0-9]*[rR]_[0-9a-zA-Z]*_/.test(id);
 
+/**
+ * The read side refuses an `s` over `SELECTOR_MAX` and would then throw the
+ * whole anchor away, so never build one: drop outer segments until the tail
+ * fits. It is less specific, and such an anchor resolves by testid/text anyway.
+ */
+function boundSelector(parts: string[], target: Element): string {
+  while (parts.length > 1 && parts.join(' > ').length > SELECTOR_MAX) {
+    parts.shift();
+  }
+  const selector = parts.join(' > ');
+  if (!selector) return 'body';
+  return selector.length <= SELECTOR_MAX
+    ? selector
+    : target.tagName.toLowerCase();
+}
+
 /** `[data-testid=…]` / `#id` when available, else an nth-of-type path up to one. */
 export function buildSelector(target: Element): string {
   const testid = target.getAttribute('data-testid');
-  if (testid) return `[data-testid="${esc(testid)}"]`;
-  if (isStableId(target.id)) return `#${esc(target.id)}`;
+  if (testid) return boundSelector([`[data-testid="${esc(testid)}"]`], target);
+  if (isStableId(target.id))
+    return boundSelector([`#${esc(target.id)}`], target);
   const parts: string[] = [];
   let node: Element | null = target;
   while (node && node.nodeType === 1 && node !== document.body) {
@@ -52,12 +71,14 @@ export function buildSelector(target: Element): string {
     parts.unshift(`${tag}:nth-of-type(${nth})`);
     node = parent;
   }
-  return parts.join(' > ') || 'body';
+  return boundSelector(parts, target);
 }
 
 export function captureAnchorSignals(
   target: Element,
   component?: AnchorComponent,
+  /** A box select's region, in viewport coordinates; see `selection.ts`. */
+  region?: Box | null,
 ): AnchorV3 {
   const anchor: AnchorV3 = {
     v: 3,
@@ -88,6 +109,31 @@ export function captureAnchorSignals(
       }
     }
   }
+  if (region) {
+    const box = target.getBoundingClientRect();
+    const sel = fractionWithin(region, box);
+    if (sel) anchor.sel = sel;
+  }
   if (component) anchor.c = component;
   return anchor;
+}
+
+/**
+ * The anchor's copy of the reviewer's note, so the pin card can show it. Only
+ * the first `NOTE_MAX` chars travel; the comment the block lands in keeps the
+ * whole thing, and `nt` tells the card to say so.
+ */
+export function withNote(anchor: AnchorV3, note: string): AnchorV3 {
+  const next: AnchorV3 = { ...anchor };
+  delete next.n;
+  delete next.nt;
+  const text = note.trim();
+  if (!text) return next;
+  if (text.length <= NOTE_MAX) {
+    next.n = text;
+    return next;
+  }
+  next.n = `${text.slice(0, NOTE_MAX - 1)}…`;
+  next.nt = 1;
+  return next;
 }

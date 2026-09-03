@@ -1,6 +1,6 @@
 /**
- * Overlay chrome: a Shadow-DOM host carrying the dock, the composer, the
- * selection outline and the toast.
+ * Overlay chrome: a Shadow-DOM host carrying the composer, the selection
+ * outline and the toast.
  *
  * The host sits outside React and keeps its own CSS — the project's Astryx
  * rules apply to the app source, not to a dev-server-injected script that must
@@ -11,41 +11,40 @@
  * where the theme has not been applied yet.
  *
  * `data-react-grab-ignore-events` makes react-grab skip our own chrome while
- * its select mode is on, so the dock and the composer stay clickable mid-pick.
+ * its select mode is on, so the composer stays clickable mid-pick.
  */
+import { fractionWithin, projectFraction, type Box } from './selection.js';
+import type { AnchorRect } from './types.js';
 
-const LS_ALWAYS_SHOW = 'bai-review:alwaysShowDock';
+/** Everything the outline needs; a `DOMRect` and a projected region both fit. */
+type RectLike = { left: number; top: number; width: number; height: number };
+
 /** react-grab restores focus asynchronously after a pick; outlast it. */
 const FOCUS_GUARD_MS = 1000;
+const COMPOSE_WIDTH = 300;
+/** Long enough that a typist re-encodes once per pause, not per keystroke. */
+const NOTE_DEBOUNCE_MS = 250;
+const COMPOSE_GAP = 10;
+const VIEWPORT_PAD = 8;
+
+/** One copy, two flavours: a markdown textarea and a rich editor. */
+export interface CopyPayload {
+  text: string;
+  html: string;
+}
 
 export interface OverlayUICallbacks {
-  onStartPick: () => void;
   /**
    * Render the block for this note, SYNCHRONOUSLY — everything async was done
    * at pick time. `null` means the capture is not ready, which the composer
    * prevents by keeping the copy button disabled until it is.
    */
-  onBuildBlock: (text: string) => string | null;
+  onBuildBlock: (text: string) => CopyPayload | null;
+  /** Debounced: the note rides in the anchor, so it has to be re-encoded. */
+  onNoteChanged: (text: string) => void;
   onComposeClosed: () => void;
   onEscape: () => void;
 }
-
-/** Storage throws outright in some privacy modes — the dock is not worth a crash. */
-const readAlwaysShow = (): boolean => {
-  try {
-    return localStorage.getItem(LS_ALWAYS_SHOW) === '1';
-  } catch {
-    return false;
-  }
-};
-
-const writeAlwaysShow = (value: boolean): void => {
-  try {
-    localStorage.setItem(LS_ALWAYS_SHOW, value ? '1' : '0');
-  } catch {
-    return undefined;
-  }
-};
 
 const el = <K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -73,55 +72,47 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       --bai-review-text: var(--color-text-primary, #0a1317);
       --bai-review-text-dim: var(--color-text-secondary, #4e606f);
       --bai-review-border: var(--color-border-emphasized, #ccd3db);
-      --bai-review-accent: var(--color-icon-orange, #e9690b);
-      --bai-review-on-accent: var(--color-on-accent, #fff);
+      /* The pin's own colour, not a theme token — no Astryx --color-* carries
+         it. Dark on-accent: white measures 3.25:1 on it, #0a1317 5.78:1. */
+      --bai-review-accent: #ff0de7;
+      --bai-review-accent-rgb: 255, 13, 231;
+      --bai-review-accent-soft: rgba(var(--bai-review-accent-rgb), .35);
+      --bai-review-on-accent: #0a1317;
       --bai-review-inverted: var(--color-background-inverted, #0a1317);
       --bai-review-on-inverted: var(--color-background-surface, #fff);
       --bai-review-error: var(--color-text-red, #c0392b);
       --bai-review-shadow: var(--color-shadow, rgba(5, 54, 89, .25));
+      /* react-grab 0.1.50's box STYLE — 1px stroke at α.5 over an α.08 fill —
+         in our accent, so every surface of this tool is the one colour. */
+      --bai-review-pick-line: rgba(var(--bai-review-accent-rgb), .5);
+      --bai-review-pick-fill: rgba(var(--bai-review-accent-rgb), .08);
     }
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
-    .dock {
-      position: fixed; right: 16px; bottom: 16px; z-index: 2147483000;
-      display: none; flex-direction: column; align-items: flex-end; gap: 6px;
-    }
-    .dock.show { display: flex; }
-    .alwayschk {
-      font-size: 12px; color: var(--bai-review-text-dim);
-      background: var(--bai-review-surface);
-      border: 1px solid var(--bai-review-border); border-radius: 10px;
-      padding: 3px 9px; display: flex; gap: 5px; align-items: center;
-      cursor: pointer;
-    }
-    .toggle {
-      border: none; border-radius: 24px; padding: 10px 16px; cursor: pointer;
-      background: var(--bai-review-accent); color: var(--bai-review-on-accent);
-      font-size: 14px; font-weight: 600;
-      box-shadow: 0 2px 10px var(--bai-review-shadow);
-    }
-    .toggle.active {
-      background: var(--bai-review-inverted); color: var(--bai-review-on-inverted);
-    }
     .btn {
       border: 1px solid var(--bai-review-border);
       background: var(--bai-review-surface); color: var(--bai-review-text);
       border-radius: 6px; cursor: pointer; font-size: 14px; padding: 5px 10px;
     }
     .btn:disabled { cursor: default; opacity: .5; }
+    /* Quiet on purpose: the accent belongs to the pin, and a filled #FF0DE7
+       button shouted over the page it sits on. */
     .btn.primary {
-      background: var(--bai-review-accent); border-color: var(--bai-review-accent);
-      color: var(--bai-review-on-accent);
+      background: var(--bai-review-inverted); border-color: var(--bai-review-inverted);
+      color: var(--bai-review-on-inverted);
     }
     .hoverbox {
       position: fixed; z-index: 2147482998; pointer-events: none; display: none;
-      border: 2px solid var(--bai-review-accent); border-radius: 3px;
-      background: var(--color-background-orange, rgba(242, 121, 2, .2));
+      border: 1px solid var(--bai-review-pick-line);
+      background: var(--bai-review-pick-fill);
     }
+    /* A viewport too short for the whole box scrolls INSIDE it, so the
+       actions row stays reachable however short the window gets. */
     .compose {
-      position: fixed; z-index: 2147483001; width: 300px;
+      position: fixed; z-index: 2147483001; width: ${COMPOSE_WIDTH}px;
       background: var(--bai-review-surface); color: var(--bai-review-text);
       border: 1px solid var(--bai-review-border); border-radius: 8px;
       padding: 10px; box-shadow: 0 4px 18px var(--bai-review-shadow);
+      max-height: calc(100vh - ${VIEWPORT_PAD * 2}px); overflow-y: auto;
       display: none;
     }
     .compose .pathlabel {
@@ -152,12 +143,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   `;
   root.appendChild(style);
 
-  const toggle = el('button', 'toggle', '📍 Review');
-  const alwaysChk = el('label', 'alwayschk');
-  alwaysChk.innerHTML = '<input type="checkbox" /> Always show';
-  const dock = el('div', 'dock');
-  dock.append(alwaysChk, toggle);
-
   const hoverbox = el('div', 'hoverbox');
   const compose = el('div', 'compose');
   compose.innerHTML = `
@@ -170,7 +155,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     </div>
   `;
   const toast = el('div', 'toast');
-  root.append(dock, hoverbox, compose, toast);
+  root.append(hoverbox, compose, toast);
 
   const composeText = compose.querySelector('textarea') as HTMLTextAreaElement;
   const composeErr = compose.querySelector('.err') as HTMLElement;
@@ -178,35 +163,19 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   const copyButton = compose.querySelector(
     '[data-act="copy"]',
   ) as HTMLButtonElement;
-  const alwaysInput = alwaysChk.querySelector('input') as HTMLInputElement;
-
-  let alwaysShow = readAlwaysShow();
-  alwaysInput.checked = alwaysShow;
-  alwaysInput.addEventListener('change', () => {
-    alwaysShow = alwaysInput.checked;
-    writeAlwaysShow(alwaysShow);
-    updateDock();
-  });
 
   let pickActive = false;
   let pickTarget: Element | null = null;
-  let dockPinned = false;
-  let focusGuardUntil = 0;
-
   /**
-   * The dock is hidden until something is happening — a dev server should not
-   * carry a permanent floating button. "Always show" is inside the dock on
-   * purpose: you reveal it once with ⌘⌃C, then pin it. `dockPinned` is the
-   * escape hatch for when react-grab never loads and ⌘⌃C therefore does
-   * nothing — without it the fallback picker would have no entry point.
+   * A box select's region as a fraction of `pickTarget`, so a scroll or a
+   * resize re-projects it exactly the way the pin will — the anchor stores
+   * this same fraction.
    */
-  function updateDock() {
-    dock.classList.toggle(
-      'show',
-      alwaysShow || dockPinned || pickActive || isComposeOpen(),
-    );
-    toggle.classList.toggle('active', pickActive);
-  }
+  let pickRegion: AnchorRect | null = null;
+  let focusGuardUntil = 0;
+  /** The picked element's box, frozen at pick time, plus the pick's own x. */
+  let composeAnchor: { left: number; top: number; bottom: number } | null =
+    null;
 
   const isComposeOpen = () => compose.style.display === 'block';
   const isOwnEvent = (evt: Event) => evt.composedPath().includes(host);
@@ -221,7 +190,8 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     }, ms);
   }
 
-  function setHoverRect(rect: DOMRect | null) {
+  /** react-grab rounds its box to the element's own corners; so do we. */
+  function setHoverRect(rect: RectLike | null, borderRadius = '0px') {
     if (!rect) {
       hoverbox.style.display = 'none';
       return;
@@ -232,6 +202,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       top: `${rect.top}px`,
       width: `${rect.width}px`,
       height: `${rect.height}px`,
+      borderRadius,
     });
   }
 
@@ -242,28 +213,106 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
    */
   function syncPickHighlight() {
     if (!isComposeOpen() || !pickTarget) return;
-    setHoverRect(pickTarget.getBoundingClientRect());
+    const box = pickTarget.getBoundingClientRect();
+    // A region has no corners of its own — it is a rectangle over the frame,
+    // exactly as react-grab draws its drag box.
+    if (pickRegion) return setHoverRect(projectFraction(box, pickRegion));
+    setHoverRect(box, getComputedStyle(pickTarget).borderRadius);
   }
   window.addEventListener('scroll', syncPickHighlight, true);
-  window.addEventListener('resize', syncPickHighlight);
+  window.addEventListener('resize', () => {
+    syncPickHighlight();
+    placeCompose();
+  });
 
-  function setComposeReady(ready: boolean) {
-    copyButton.disabled = !ready;
+  /**
+   * The note the ready capture was encoded around; `null` while nothing is
+   * ready. The copy gesture may only ever write a block for THIS text.
+   */
+  let readyNote: string | null = null;
+  let noteTimer = 0;
+
+  function syncCopyEnabled() {
+    copyButton.disabled =
+      readyNote === null || composeText.value.trim() !== readyNote;
   }
 
-  function openCompose(target: Element, x: number, y: number) {
+  function setComposeReady(ready: boolean, note = '') {
+    readyNote = ready ? note : null;
+    syncCopyEnabled();
+  }
+
+  function flushNote() {
+    clearTimeout(noteTimer);
+    noteTimer = 0;
+    const note = composeText.value.trim();
+    if (note !== readyNote) callbacks.onNoteChanged(note);
+  }
+
+  composeText.addEventListener('input', () => {
+    syncCopyEnabled();
+    clearTimeout(noteTimer);
+    noteTimer = window.setTimeout(flushNote, NOTE_DEBOUNCE_MS);
+  });
+
+  /**
+   * The box grows AFTER it opens — the path label and the ⚛️ stack land once
+   * react-grab's fiber walk resolves — so its height is measured, never
+   * guessed, and every growth re-places it. Below the picked element when it
+   * fits, above it when it does not, clamped into the viewport either way, so
+   * the actions row is never off-screen.
+   */
+  function placeCompose() {
+    if (!isComposeOpen() || !composeAnchor) return;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const height = compose.offsetHeight;
+    compose.style.left = `${Math.max(VIEWPORT_PAD, Math.min(composeAnchor.left, vw - COMPOSE_WIDTH - 12))}px`;
+    const below = composeAnchor.bottom + COMPOSE_GAP;
+    const top =
+      below + height <= vh - VIEWPORT_PAD
+        ? below
+        : composeAnchor.top - COMPOSE_GAP - height;
+    compose.style.top = `${Math.max(VIEWPORT_PAD, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
+  }
+
+  function openCompose(
+    target: Element,
+    x: number,
+    y: number,
+    region?: Box | null,
+  ) {
     pickTarget = target;
     composeErr.style.display = 'none';
     composeText.value = '';
+    clearTimeout(noteTimer);
     setComposeReady(false);
     compose.style.display = 'block';
-    const width = 300;
-    compose.style.left = `${Math.max(8, Math.min(x, window.innerWidth - width - 12))}px`;
-    compose.style.top = `${Math.max(8, Math.min(y + 10, window.innerHeight - 180))}px`;
+    const frame = target.getBoundingClientRect();
+    pickRegion = region ? fractionWithin(region, frame) : null;
+    // The composer follows what is outlined, so a box select opens under the
+    // region rather than under the frame that happens to hold it.
+    const box: RectLike & { bottom: number } = region
+      ? { ...region, bottom: region.top + region.height }
+      : frame;
+    // A rect with no size at all is jsdom or `display: contents`; the pick
+    // point is then the only thing that says where the element was.
+    const measured = box.width > 0 || box.height > 0;
+    composeAnchor = {
+      left: x,
+      top: measured ? box.top : y,
+      bottom: measured ? box.bottom : y,
+    };
+    placeCompose();
     syncPickHighlight();
-    updateDock();
     focusGuardUntil = Date.now() + FOCUS_GUARD_MS;
     composeText.focus();
+  }
+
+  // A drag on the textarea's resize handle changes the height too, and it goes
+  // through no code path of ours.
+  if (typeof ResizeObserver === 'function') {
+    new ResizeObserver(() => placeCompose()).observe(compose);
   }
 
   /**
@@ -281,20 +330,24 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   function closeCompose() {
     if (!isComposeOpen()) return;
+    clearTimeout(noteTimer);
     compose.style.display = 'none';
     pickTarget = null;
+    pickRegion = null;
+    composeAnchor = null;
     focusGuardUntil = 0;
     setHoverRect(null);
-    updateDock();
     callbacks.onComposeClosed();
   }
 
   function setComposeLabel(text: string) {
     composeLabel.textContent = text;
+    placeCompose();
   }
 
   function appendComposeLabel(text: string) {
     composeLabel.textContent += text;
+    placeCompose();
   }
 
   function getComposeTarget() {
@@ -303,25 +356,31 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   function setPickActive(active: boolean) {
     pickActive = active;
-    updateDock();
-  }
-
-  function pinDock() {
-    dockPinned = true;
-    updateDock();
   }
 
   // ------------------------------------------------------------- clipboard
 
-  function legacyCopy(text: string): boolean {
+  /**
+   * The one-shot `copy` listener is what carries the HTML flavour: on its own
+   * `execCommand` would write the hidden textarea's plain text and nothing else.
+   */
+  function legacyCopy(text: string, html?: string): boolean {
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.style.cssText = 'position:fixed;opacity:0';
     root.appendChild(ta);
     ta.select();
+    const onCopy = (evt: ClipboardEvent) => {
+      if (!evt.clipboardData) return;
+      evt.preventDefault();
+      evt.clipboardData.setData('text/plain', text);
+      if (html) evt.clipboardData.setData('text/html', html);
+    };
+    document.addEventListener('copy', onCopy, true);
     try {
       return document.execCommand('copy');
     } finally {
+      document.removeEventListener('copy', onCopy, true);
       ta.remove();
     }
   }
@@ -330,26 +389,56 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
    * The plain-http gateway origin is not a secure context: no
    * `navigator.clipboard`, so `execCommand` is the only path — and it must run
    * inside the gesture, which is why the block is rendered synchronously.
+   * Every fallback ends at the plain flavour: a copy never writes nothing.
    */
-  function copyText(text: string): boolean | Promise<boolean> {
-    if (navigator.clipboard && window.isSecureContext) {
-      return navigator.clipboard.writeText(text).then(
-        () => true,
-        () => legacyCopy(text),
-      );
+  function copyText(text: string, html?: string): boolean | Promise<boolean> {
+    const plainOnly = (): boolean | Promise<boolean> =>
+      navigator.clipboard
+        ? navigator.clipboard.writeText(text).then(
+            () => true,
+            () => legacyCopy(text),
+          )
+        : legacyCopy(text);
+    if (!navigator.clipboard || !window.isSecureContext) {
+      return legacyCopy(text, html) || plainOnly();
     }
-    return legacyCopy(text);
+    if (
+      html &&
+      navigator.clipboard.write &&
+      typeof ClipboardItem === 'function'
+    ) {
+      try {
+        const item = new ClipboardItem({
+          'text/plain': new Blob([text], { type: 'text/plain' }),
+          'text/html': new Blob([html], { type: 'text/html' }),
+        });
+        return navigator.clipboard
+          .write([item])
+          .then(() => true)
+          .catch(() => legacyCopy(text, html) || plainOnly());
+      } catch {
+        // This browser's `ClipboardItem` refuses one of the types.
+      }
+    }
+    return plainOnly();
   }
 
   // ---------------------------------------------------------------- events
 
-  toggle.addEventListener('click', () => callbacks.onStartPick());
-
   function runCopy() {
     // Empty text is allowed — the block still carries label, stack and link.
-    let block: string | null;
+    const note = composeText.value.trim();
+    // ⌘⏎ can beat the debounce, and the note is part of the anchor now: start
+    // the re-encode this keystroke would have started and let them repeat it.
+    if (readyNote !== null && note !== readyNote) {
+      flushNote();
+      composeErr.textContent = 'Still encoding that note — press ⌘⏎ again.';
+      composeErr.style.display = 'block';
+      return;
+    }
+    let block: CopyPayload | null;
     try {
-      block = callbacks.onBuildBlock(composeText.value.trim());
+      block = callbacks.onBuildBlock(note);
     } catch (e) {
       composeErr.textContent = `Could not build the block: ${e}`;
       composeErr.style.display = 'block';
@@ -360,7 +449,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       composeErr.style.display = 'block';
       return;
     }
-    const copied = copyText(block);
+    const copied = copyText(block.text, block.html);
     // Close only on success. A failed copy tells the reviewer to press ⌘⏎
     // again, so the composer and the note they typed have to still be there.
     const done = (ok: boolean) => {
@@ -393,7 +482,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   // Only when the overlay owns the interaction — otherwise every Escape in the
   // app (closing a modal, clearing a select) would cancel a pick that is not
-  // running and churn the dock.
+  // running.
   document.addEventListener('keydown', (evt) => {
     if (evt.key !== 'Escape') return;
     if (!pickActive && !isComposeOpen()) return;
@@ -405,8 +494,8 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     'mousedown',
     (evt) => {
       if (!isComposeOpen()) return;
-      // The whole shadow host is "inside": the dock and its "Always show"
-      // checkbox are ours too, and closing on them threw away the note.
+      // The whole shadow host is "inside" — closing on our own chrome threw
+      // away the note the reviewer had already typed.
       if (isOwnEvent(evt)) return;
       // Mid-pick an outside mousedown IS the next selection. Closing here
       // would stop the picker before react-grab sees its own pointerup, and
@@ -416,8 +505,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     },
     true,
   );
-
-  updateDock();
 
   return {
     host,
@@ -431,8 +518,9 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     appendComposeLabel,
     setComposeReady,
     getComposeTarget,
+    currentNote: () => composeText.value.trim(),
     setPickActive,
-    pinDock,
+    placeCompose,
     copyText,
     isOwnEvent,
   };

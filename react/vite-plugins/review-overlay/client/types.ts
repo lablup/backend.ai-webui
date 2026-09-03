@@ -14,10 +14,15 @@ export interface AnchorRect {
 
 /** React component identity for the picked element, from react-grab. */
 export interface AnchorComponent {
-  /** Component display name, e.g. `LoginView`. */
+  /** `getSource`'s owner component, e.g. `LoginView`. */
   name: string;
-  /** Source location, e.g. `src/components/LoginView.tsx:120:8`. */
-  src: string;
+  /**
+   * Source location, e.g. `src/components/LoginView.tsx:120:8`. Absent when
+   * the server named no root: an absolute path is the driver's own directory.
+   */
+  src?: string;
+  /** `getDisplayName` at pick time — the only name `resolve.ts` compares. */
+  dn?: string;
 }
 
 /**
@@ -41,8 +46,21 @@ export interface AnchorV3 {
   tid?: string;
   /** Position within `tid` when the landmark is an ancestor. */
   rect?: AnchorRect;
-  /** Extra signal — never used for resolution, only for the human reader. */
+  /**
+   * A box select's region, as a fraction of THIS element's own box. Present
+   * only for a multi-element pick, where the element is the frame the region
+   * is measured in rather than the thing being pointed at.
+   */
+  sel?: AnchorRect;
+  /** Shown to the reader, and a resolution rank (`dn` also a veto). */
   c?: AnchorComponent;
+  /**
+   * The reviewer's note, capped at `NOTE_MAX`. Absent on every link copied
+   * before the note travelled in the anchor, and on a pick with no note.
+   */
+  n?: string;
+  /** The note was longer than the cap, so `n` ends in an ellipsis. */
+  nt?: 1;
 }
 
 declare global {
@@ -59,11 +77,13 @@ declare global {
   }
 }
 
-/** `/__review/state` — the write side needs only the PR number. */
+/** `/__review/state` — the write side needs the PR number and the repo root. */
 export interface ReviewServerState {
   pr: number | null;
   repo: string | null;
   branch: string | null;
   source: 'boot-record' | 'gh' | 'none';
+  /** Absolute repository root, so the client can relativize source paths. */
+  root?: string | null;
   error?: string | null;
 }

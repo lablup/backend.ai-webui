@@ -103,6 +103,20 @@ VITE_THEME_HEADER_COLOR=#7C3AED
 
 Vite auto-loads `VITE_*` vars from this file and exposes them on `import.meta.env` for the React app, tinting the header so you can tell multiple instances apart at a glance. You can also export `VITE_THEME_HEADER_COLOR` in the shell — same effect, no file edit needed.
 
+## Review overlay (`VITE_DEV_REVIEW_OVERLAY`)
+
+**On by default** on a dev server, and never in a production build — the plugin is `apply: 'serve'`, and the host-side route-label component sits behind `import.meta.env.DEV`, so `vite build` drops both. To turn it off for a session, set it in `.env.development.local` or the shell before `pnpm run dev`:
+
+```bash
+VITE_DEV_REVIEW_OVERLAY=0
+```
+
+The dev server injects the review overlay (`react/vite-plugins/review-overlay/`). ⌘⌃C picks an element — react-grab's own selection UI, so a drag selects a region — and copies a `#bai=v3` markdown block to paste into the PR comment, the PR's Teams thread, or a Claude prompt. One copy carries two clipboard flavours: the markdown for a plain textarea, and the rendered HTML for a rich editor such as Teams.
+
+Opening that block's link back on a dev server is the read side, and it is a **deep link only**: the fragment `#bai=v3.<id>.<anchor>` carries the whole anchor, so the page applies the block's path and query, finds the element (retrying for ~10 s while the SPA renders) and pins it with the block's landmark label (`<route> › <landmark> › <tag "text">`) plus the pin id, the component and the reviewer's note, which rides in the anchor. Nothing is looked up anywhere — the dev server reads no channel, serves no pin list and polls nothing; GitHub's unresolved threads are where a pin's state lives. A link with no anchor is plain text, an old `#bai-review=` link gets one toast, and an element that cannot be found gets one toast.
+
+`/__review/state` (GET only, no parameters) answers `{pr, repo, branch, source, root}`. `pr` / `repo` / `branch` / `source` are the write side's, so a copied block can carry the PR number. `root` is `git rev-parse --show-toplevel` on the box, and it is what the client strips off react-grab's source paths: a workspace package lives above the Vite root and is served through `/@fs/<absolute path>`, so without it a stack frame would carry the driver's home directory into a public PR comment. When the endpoint does not answer, the client drops the source location instead of printing it.
+
 ## CLI login (`/cli-login`)
 
 `bai-agent login` (`packages/backend.ai-agent-cli`, the Backend.AI WebUI Agent CLI) hands the CLI the session this dev server is already logged in with, via the `/cli-login` page. The route is always mounted; it is not linked from any menu.

@@ -10,11 +10,14 @@ import { transformWithEsbuild, type Plugin } from 'vite';
 /**
  * FR-3811 — dev-only review overlay, write side. Serves the Shadow-DOM picker
  * client and the `/__review/state` endpoint that answers "which PR is this
- * dev server?". The read side (pins, panel, polling) is FR-3813.
+ * dev server?" plus, since FR-3813, "where is its checkout?" — the client
+ * cannot relativize react-grab's absolute source paths without the root. The
+ * read side (FR-3813) is the deep link and nothing else: the fragment carries
+ * the whole anchor, so this server serves no pin list and polls nothing.
  *
  * Dev-only by construction: `apply: 'serve'` keeps the plugin out of
- * `vite build` entirely, and it is opt-in per session with
- * `VITE_DEV_REVIEW_OVERLAY` (`1` / `true` / `on`).
+ * `vite build` entirely. On a dev server it is ON by default and opts OUT with
+ * `VITE_DEV_REVIEW_OVERLAY` (`0` / `false` / `off`).
  *
  * Registration order matters: this must come AFTER `projectRootStaticPlugin`,
  * whose `order: 'pre'` transformIndexHtml handler discards the incoming html
@@ -37,7 +40,7 @@ const pexecFile = promisify(execFile);
  */
 function isReviewOverlayEnabled(): boolean {
   const flag = (process.env.VITE_DEV_REVIEW_OVERLAY ?? '').toLowerCase();
-  return flag === '1' || flag === 'true' || flag === 'on';
+  return flag !== '0' && flag !== 'false' && flag !== 'off';
 }
 
 // ------------------------------------------------------------- PR discovery
@@ -50,6 +53,20 @@ const NO_STATE: ReviewServerState = {
   branch: null,
   source: 'none',
 };
+
+/**
+ * The prefix the client strips off react-grab's absolute source paths. Git,
+ * not the Vite root: a workspace package lives above `react/`, and what the
+ * block should carry is the path as the repository names it.
+ */
+async function repoRoot(): Promise<string | null> {
+  try {
+    const { stdout } = await pexecFile('git', ['rev-parse', '--show-toplevel']);
+    return stdout.trim() || null;
+  } catch {
+    return null;
+  }
+}
 
 async function currentBranch(): Promise<string | null> {
   try {
@@ -66,7 +83,7 @@ async function currentBranch(): Promise<string | null> {
 }
 
 /** Total by construction: every failure resolves to a `source: 'none'` state. */
-async function discoverState(): Promise<ReviewServerState> {
+async function discoverPrState(): Promise<ReviewServerState> {
   try {
     const branch = await currentBranch();
     const record = await readBootRecord();
@@ -110,6 +127,12 @@ async function discoverState(): Promise<ReviewServerState> {
   } catch (error) {
     return { ...NO_STATE, error: String(error) };
   }
+}
+
+/** The root rides along on every answer, including the failure ones. */
+async function discoverState(): Promise<ReviewServerState> {
+  const [state, root] = await Promise.all([discoverPrState(), repoRoot()]);
+  return { ...state, root };
 }
 
 // -------------------------------------------------------------------- plugin

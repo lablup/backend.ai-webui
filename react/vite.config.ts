@@ -969,9 +969,9 @@ export default defineConfig(({ command, mode }) => {
       projectRootStaticPlugin(devCspHeaders),
       cspBundleNoncePlugin(),
       devAssetsReloadPlugin(),
-      // FR-3811: dev-only (apply: 'serve') review overlay injection. Off by
-      // default — opt in with VITE_DEV_REVIEW_OVERLAY=1; otherwise the plugin
-      // is inert (no middleware, no script injection). Must come after
+      // FR-3811: dev-only (apply: 'serve') review overlay injection. On by
+      // default — opt out with VITE_DEV_REVIEW_OVERLAY=0, which leaves the
+      // plugin inert (no middleware, no script injection). Must come after
       // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
       // transforms (see review-overlay/index.ts).
       devReviewOverlayPlugin(),

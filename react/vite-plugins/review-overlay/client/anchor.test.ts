@@ -1,8 +1,10 @@
+import { isAnchorV3, NOTE_MAX, SELECTOR_MAX } from './anchor-guard.js';
 import {
   buildSelector,
   captureAnchorSignals,
   isStableId,
   normText,
+  withNote,
 } from './anchor.js';
 import { beforeEach, describe, expect, it } from 'vitest';
 
@@ -65,6 +67,21 @@ describe('buildSelector', () => {
 
   it('returns body for body itself', () => {
     expect(buildSelector(document.body)).toBe('body');
+  });
+
+  // The read side rejects an over-long `s` outright, so the write side must
+  // never emit one: a deep testid-less subtree gets a shorter tail instead.
+  it('keeps a deep path inside the bound the read side enforces', () => {
+    mount('<div>'.repeat(70) + 'x' + '</div>'.repeat(70));
+    let deepest: Element = document.body;
+    while (deepest.firstElementChild) deepest = deepest.firstElementChild;
+
+    const selector = buildSelector(deepest);
+    expect(selector.length).toBeLessThanOrEqual(SELECTOR_MAX);
+    expect(() => document.querySelector(selector)).not.toThrow();
+    expect(
+      isAnchorV3({ ...captureAnchorSignals(deepest), s: selector, p: '/' }),
+    ).toBe(true);
   });
 });
 
@@ -133,6 +150,31 @@ describe('captureAnchorSignals', () => {
     expect(anchor.rect).toBeUndefined();
   });
 
+  // A box select's region rides in `sel`, measured against the anchored
+  // element's OWN box — that is the frame the pin projects it back onto.
+  it('records a box select region as a fraction of the element', () => {
+    mount('<div data-testid="grid"><button>Go now</button></div>');
+    const grid = document.querySelector('[data-testid="grid"]') as HTMLElement;
+    grid.getBoundingClientRect = () =>
+      ({ left: 100, top: 200, width: 400, height: 100 }) as DOMRect;
+
+    const anchor = captureAnchorSignals(grid, undefined, {
+      left: 140,
+      top: 220,
+      width: 200,
+      height: 40,
+    });
+    expect(anchor.sel).toEqual({ x: 0.1, y: 0.2, w: 0.5, h: 0.4 });
+  });
+
+  it('carries no region for an ordinary click pick', () => {
+    mount('<div data-testid="card">x</div>');
+    const anchor = captureAnchorSignals(
+      document.querySelector('[data-testid="card"]')!,
+    );
+    expect(anchor.sel).toBeUndefined();
+  });
+
   it('does not throw on an element inside a shadow tree', () => {
     mount('<div id="host"></div>');
     const shadow = (
@@ -150,5 +192,42 @@ describe('normText', () => {
     expect(normText('  a \n\t b  ')).toBe('a b');
     expect(normText(null)).toBe('');
     expect(normText(undefined)).toBe('');
+  });
+});
+
+/**
+ * The note travels with the anchor so the pin card can show it. The comment
+ * the block lands in keeps the untruncated text either way.
+ */
+describe('withNote', () => {
+  const base = { v: 3, s: 'button', p: '/' } as const;
+
+  it('carries a trimmed note, newlines and all', () => {
+    expect(withNote({ ...base }, '  two lines\nof note  ').n).toBe(
+      'two lines\nof note',
+    );
+  });
+
+  it('carries nothing for an empty note', () => {
+    const anchor = withNote({ ...base }, '   ');
+    expect('n' in anchor).toBe(false);
+    expect('nt' in anchor).toBe(false);
+  });
+
+  it('caps a long note with an ellipsis and says it did', () => {
+    const anchor = withNote({ ...base }, 'x'.repeat(400));
+    expect(anchor.n).toHaveLength(NOTE_MAX);
+    expect(anchor.n?.endsWith('…')).toBe(true);
+    expect(anchor.nt).toBe(1);
+    expect(isAnchorV3(anchor)).toBe(true);
+  });
+
+  // Every edit re-encodes from the SAME captured anchor, so a shortened note
+  // must not leave the previous one, or its truncation flag, behind.
+  it('replaces the note it already carried', () => {
+    const long = withNote({ ...base }, 'x'.repeat(400));
+    const short = withNote(long, 'brief');
+    expect(short.n).toBe('brief');
+    expect('nt' in short).toBe(false);
   });
 });
