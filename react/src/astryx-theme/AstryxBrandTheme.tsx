@@ -14,10 +14,7 @@
    `useThemeMode` (localStorage + OS listener); handing Astryx `system`
    would let the OS preference override the user's explicit in-app choice.
  */
-import {
-  useAppearanceSettled,
-  useCustomThemeConfig,
-} from '../hooks/useCustomThemeConfig';
+import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { resolveRoleTheme } from './resolveRoleTheme';
 import { Theme as AstryxTheme } from '@astryxdesign/core/theme';
@@ -37,15 +34,9 @@ const AstryxBrandTheme: React.FC<AstryxBrandThemeProps> = ({
   children,
 }) => {
   'use memo';
-  const settled = useAppearanceSettled();
   const { appearance, activeThemeFamily } = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
   const theme = resolveRoleTheme(appearance?.theme, 'brand', activeThemeFamily);
-  // Hold the first paint until theme.json has settled (the splash stays up);
-  // otherwise the page would paint Astryx's neutral theme and then flip.
-  if (!settled) {
-    return null;
-  }
   return (
     <AstryxTheme theme={theme} mode={mode ?? (isDarkMode ? 'dark' : 'light')}>
       {children}
