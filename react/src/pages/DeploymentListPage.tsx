@@ -73,8 +73,6 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
 
-  useCreateActionArrival(openCreate);
-
   const [editingDeploymentId, setEditingDeploymentId] = useState<string | null>(
     null,
   );
@@ -494,6 +492,7 @@ const DeploymentListPage: React.FC = () => {
   // flag has to be owned here, above the Suspense boundary.
   const [isCreating, { setLeft: closeCreate, setRight: openCreate }] =
     useToggle(false);
+  useCreateActionArrival(openCreate);
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAICard
