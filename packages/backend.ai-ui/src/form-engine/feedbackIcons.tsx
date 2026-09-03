@@ -14,8 +14,7 @@
 
  The path data is COPIED from `@ant-design/icons-svg@4.5.0`
  (`es/asn/{CheckCircle,CloseCircle,ExclamationCircle}Filled.js`,
- `es/asn/LoadingOutlined.js`), MIT-licensed, same vendoring precedent as
- `theme-shim/vendor/antdColors.ts`. Inlining it keeps the visual layer's
+ `es/asn/LoadingOutlined.js`), MIT-licensed. Inlining it keeps the visual layer's
  zero-dependency property: no antd, no BUI, no icon package.
 
  `currentColor` everywhere — the status colour is set on the wrapping span by
