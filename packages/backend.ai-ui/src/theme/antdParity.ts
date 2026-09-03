@@ -8,9 +8,7 @@
  cannot import from react/src; backendAiTheme.ts re-exports these for its
  own consumers).
 
- Both tables are ticket-02/06 MEASUREMENTS, not styling opinions:
- - ANTD_DARK_ALGORITHM_OUTPUT: what antd's darkAlgorithm actually renders for
-   the dark seeds this repo ships (`theme.getDesignToken()` numeric A/B).
+ The tables are ticket-02/06 MEASUREMENTS, not styling opinions:
  - ANTD_ALIGN_TOKENS: the known antd<->Astryx token VALUE differences,
    pinned to the antd values so migrated surfaces keep today's metrics.
    Extended by the audit-1 regression catalog (REGRESSION-CATALOG.md §1.3):
@@ -20,20 +18,6 @@
    `--radius-container`) point at other rungs. The semantic tokens are pinned
    here too, so a pin actually reaches a rendered heading / card / dialog.
  */
-
-/**
- * Measured antd `darkAlgorithm` outputs for the dark seeds this repo ships
- * (source: ticket 06 numeric A/B, `theme.getDesignToken()` against
- * resources/theme.json). Key = declared dark seed (uppercase), value = what
- * antd actually renders today in dark mode.
- */
-export const ANTD_DARK_ALGORITHM_OUTPUT: Record<string, string> = {
-  '#DC6B03': '#be5e06', // colorPrimary / colorLink
-  '#DC4446': '#be3d3f', // colorError
-  '#03A487': '#068e76', // colorSuccess (also the secondary accent)
-  '#009BDD': '#0387bf', // colorInfo (the admin accent)
-  '#FAAD14': '#d89614', // colorWarning (antd default seed)
-};
 
 /**
  * antd `boxShadowSecondary` recipes (light / dark measured from

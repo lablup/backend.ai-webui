@@ -19,15 +19,11 @@
  of its own — a seed the document omits is not pinned, and Astryx's own token
  applies (FR-3605).
 
- ## Dark tuples — SETTLED DECISION (2026-08-07, MIGRATION-SPEC §1-③)
+ ## Dark tuples
 
- antd's `darkAlgorithm` does not merely swap palettes — it transforms the
- brand seeds themselves (`#DC6B03` declared → `#be5e06` rendered). The current
- dark UI shows the TRANSFORMED values, so to keep today's appearance the
- `[light, dark]` tuples pin the dark side to the darkAlgorithm output of the
- declared dark seed: the MEASURED table (`ANTD_DARK_ALGORITHM_OUTPUT`, from
- `theme.getDesignToken()` A/B captures, ticket 06) for the shipped seeds, the
- vendored palette for any other hex (`resolveDarkSeed`).
+ The document's `[light, dark]` values are pinned as declared. The antd
+ `darkAlgorithm` re-mapping of the dark seed (`#DC6B03` → `#be5e06`) went
+ with the shim: what an operator writes is what renders (FR-3605).
 
  ## Theme name numbering (채번 규칙)
 
@@ -59,19 +55,15 @@ import { defineTheme, type DefinedTheme } from '@astryxdesign/core/theme';
 import { neutralTheme } from '@astryxdesign/theme-neutral';
 import {
   ANTD_ALIGN_TOKENS,
-  ANTD_DARK_ALGORITHM_OUTPUT,
   BAI_SELF_COLOR_TOKENS,
   buildBaiCustomTokens,
-  resolveDarkSeed,
 } from 'backend.ai-ui';
 
-// The measured parity tables moved into BUI's theme-shim with the shim itself
-// (ticket 10 — BUI cannot import from react/src). Re-exported here so this
-// module keeps its ticket-02 public API.
-export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
+// Re-exported from BUI so this module keeps its ticket-02 public API.
+export { ANTD_ALIGN_TOKENS };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 23;
+export const THEME_NAME_REV = 24;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -868,21 +860,18 @@ const ANTD_HOVER_PARITY = {
 export interface BrandSeedPair {
   /** Light-scheme seed, as declared in theme.json. */
   light: string;
-  /** Dark-scheme seed AS DECLARED (pre-darkAlgorithm) in theme.json. */
+  /** Dark-scheme value as declared in theme.json; applied verbatim. */
   dark: string;
 }
 
-/** BUI's dark-seed transform, re-exported for the recipe's tests. */
-export { resolveDarkSeed };
-
 export type BrandThemeRole = 'brand' | 'admin' | 'secondary';
 
-export interface BuildBackendAiThemeOptions {
+export interface BuildBackendAIThemeOptions {
   /** Theme-family key (`default`, `stained`, `glass`, `reverie`, `bliss`). */
   family?: string;
   /** Which accent this theme carries. Readability segment of the name. */
   role?: BrandThemeRole;
-  /** Accent seed pair (declared values; dark is mapped through the table). */
+  /** Accent seed pair (declared values, applied verbatim). */
   accent?: BrandSeedPair;
   error?: BrandSeedPair;
   success?: BrandSeedPair;
@@ -895,11 +884,10 @@ export interface BuildBackendAiThemeOptions {
   fontFamily?: string;
 }
 
-/** Resolve tuple = [light seed, measured darkAlgorithm output of dark seed]. */
+/** The declared pair as a `[light, dark]` tuple. */
 const toTuple = (
   pair: BrandSeedPair | undefined,
-): [string, string] | undefined =>
-  pair ? [pair.light, resolveDarkSeed(pair.dark)] : undefined;
+): [string, string] | undefined => (pair ? [pair.light, pair.dark] : undefined);
 
 /**
  * Astryx muted status surfaces are the status color at ~20%/25% alpha
@@ -978,7 +966,7 @@ interface ResolvedSeeds {
 }
 
 const resolveSeeds = (
-  options: BuildBackendAiThemeOptions = {},
+  options: BuildBackendAIThemeOptions = {},
 ): ResolvedSeeds => ({
   ...options,
   family: options.family ?? 'default',
@@ -992,7 +980,7 @@ const resolveSeeds = (
  * runtime theme would register a competing entry for the identical CSS).
  */
 export const computeThemeName = (
-  options: BuildBackendAiThemeOptions = {},
+  options: BuildBackendAIThemeOptions = {},
 ): string => {
   const seeds = resolveSeeds(options);
   const hash = hashSeeds(
@@ -1038,8 +1026,8 @@ const themeCache = new Map<string, DefinedTheme>();
  * Build a Backend.AI theme. Called with no arguments this yields the default
  * brand theme; role/seed overrides yield the admin/secondary/runtime themes.
  */
-export function buildBackendAiTheme(
-  options: BuildBackendAiThemeOptions = {},
+export function buildBackendAITheme(
+  options: BuildBackendAIThemeOptions = {},
 ): DefinedTheme {
   const name = computeThemeName(options);
   const cached = themeCache.get(name);
@@ -1052,6 +1040,7 @@ export function buildBackendAiTheme(
   const error = toTuple(seeds.error);
   const success = toTuple(seeds.success);
   const warning = toTuple(seeds.warning);
+  const accentMuted = accent && toMutedTuple(accent);
   const errorMuted = error && toMutedTuple(error);
   const successMuted = success && toMutedTuple(success);
   const warningMuted = warning && toMutedTuple(warning);
@@ -1088,18 +1077,20 @@ export function buildBackendAiTheme(
     // to recompute correctly on accent swap. No accent seed: neutral's own.
     ...(seeds.accent ? { color: { accent: seeds.accent.light } } : {}),
     tokens: {
-      // The generator takes ONE accent; the light/dark pair is expressed as
-      // explicit [light, dark] tuple overrides, which win over generated
-      // values. Dark side = measured antd darkAlgorithm output (header note).
+      // The generator takes ONE accent; the light/dark pair is pinned as
+      // explicit [light, dark] tuples, which win over generated values. The
+      // muted step is pinned too: useTheme() re-applies neutralTheme's own
+      // input tokens over generated ones, so an unpinned muted resolves grey.
       // Text/icons ON the accent fill stay white: every shipped accent is
-      // dark enough for it at both ends, and white-on-primary is what antd
-      // rendered. Without an accent seed the whole family stays Astryx's.
+      // dark enough for it at both ends. No accent seed: the family stays
+      // Astryx's.
       ...(accent
         ? {
             '--color-accent': accent,
             '--color-text-accent': accent,
             '--color-icon-accent': accent,
             '--color-on-accent': ['#ffffff', '#ffffff'] as [string, string],
+            ...(accentMuted ? { '--color-accent-muted': accentMuted } : {}),
           }
         : {}),
       // Status colors, brand-owned via theme.json (antd colorError /
@@ -1175,8 +1166,7 @@ export function buildBackendAiTheme(
 /**
  * Normalize a v2 seed value (Astryx TokenValue semantics: string = both
  * schemes, tuple = [light, dark]) into the builder's declared pair, or
- * undefined when the document does not declare it (nothing gets pinned). The
- * dark side still runs through `resolveDarkSeed` at build time (`toTuple`).
+ * undefined when the document does not declare it (nothing gets pinned).
  */
 const seedPairFromValue = (
   value: BAIThemeSeedValue | undefined,
@@ -1203,7 +1193,7 @@ export const themeOptionsFromConfig = (
   config: BAIThemeConfig | undefined,
   role: BrandThemeRole = 'brand',
   family = 'default',
-): BuildBackendAiThemeOptions => {
+): BuildBackendAIThemeOptions => {
   const familyConfig = config?.families?.[family];
   const seeds = familyConfig?.seeds ?? config?.families?.default?.seeds;
   const headerBgValue =

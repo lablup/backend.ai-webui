@@ -16,7 +16,7 @@
 import type { BAIThemeConfig } from '../helper/customThemeConfig';
 import {
   type BrandThemeRole,
-  buildBackendAiTheme,
+  buildBackendAITheme,
   computeThemeName,
   themeOptionsFromConfig,
 } from './backendAiTheme';
@@ -38,5 +38,5 @@ export function resolveRoleTheme(
   if (computeThemeName(options) === builtBackendAiBrandTheme.name) {
     return builtBackendAiBrandTheme;
   }
-  return buildBackendAiTheme(options);
+  return buildBackendAITheme(options);
 }

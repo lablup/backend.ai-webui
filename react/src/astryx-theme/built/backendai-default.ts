@@ -23,9 +23,9 @@
  */
 import themeJson from '../../../../resources/theme.json';
 import type { BAIThemeConfig } from '../../helper/customThemeConfig';
-import { buildBackendAiTheme, themeOptionsFromConfig } from '../backendAiTheme';
+import { buildBackendAITheme, themeOptionsFromConfig } from '../backendAiTheme';
 
-export default buildBackendAiTheme(
+export default buildBackendAITheme(
   themeOptionsFromConfig(
     themeJson.theme as unknown as BAIThemeConfig,
     'brand',
