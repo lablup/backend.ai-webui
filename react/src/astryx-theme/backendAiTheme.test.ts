@@ -1,10 +1,7 @@
+import themeJson from '../../../resources/theme.json';
 import type { BAIThemeConfig } from '../helper/customThemeConfig';
 import {
   ANTD_ALIGN_TOKENS,
-  BAI_DEFAULT_SEEDS,
-  backendAiAdminTheme,
-  backendAiBrandTheme,
-  backendAiSecondaryTheme,
   buildBackendAiTheme,
   computeThemeName,
   resolveDarkSeed,
@@ -13,6 +10,13 @@ import {
 } from './backendAiTheme';
 import { builtBackendAiBrandTheme } from './built';
 import { resolveRoleTheme } from './resolveRoleTheme';
+import { neutralTheme } from '@astryxdesign/theme-neutral';
+
+// The shipped document is the only source of brand values: every default the
+// tests reason about is read from it, never restated here.
+const shippedTheme = themeJson.theme as unknown as BAIThemeConfig;
+const shippedOptions = themeOptionsFromConfig(shippedTheme, 'brand');
+const brandTheme = buildBackendAiTheme(shippedOptions);
 
 describe('backendAiTheme', () => {
   describe('dark tuples (settled decision: measured darkAlgorithm outputs)', () => {
@@ -36,9 +40,59 @@ describe('backendAiTheme', () => {
 
     it('pins the brand accent tuple to [light seed, measured dark]', () => {
       // defineTheme normalizes [light, dark] tuples to light-dark() strings.
-      expect(backendAiBrandTheme.tokens?.['--color-accent']).toBe(
+      expect(brandTheme.tokens?.['--color-accent']).toBe(
         'light-dark(#FF7A00, #be5e06)',
       );
+    });
+  });
+
+  describe('no document, no brand (theme.json is the only source of brand values)', () => {
+    const bare = buildBackendAiTheme({});
+
+    it('pins none of the brand families without seeds (Astryx neutral applies)', () => {
+      // `extends: neutralTheme` copies the base tokens, so "not pinned" reads
+      // as "equals Astryx's own value", never as a Backend.AI color.
+      for (const token of [
+        '--color-accent',
+        '--color-on-accent',
+        '--color-error',
+        '--color-success',
+        '--color-warning',
+        '--font-family-body',
+      ]) {
+        expect(bare.tokens?.[token]).toBe(neutralTheme.tokens?.[token]);
+      }
+      expect(bare.tokens?.['--color-accent']).not.toContain('#FF7A00');
+    });
+
+    it('resolves the --bai-* vocabulary to Astryx references', () => {
+      expect(bare.tokens?.['--bai-color-info']).toBe('var(--color-accent)');
+      expect(bare.tokens?.['--bai-color-link']).toBe(
+        'var(--color-text-accent)',
+      );
+      expect(bare.tokens?.['--bai-header-bg']).toBe(
+        'var(--color-background-surface)',
+      );
+      expect(bare.tokens?.['--bai-primary-5']).toBe('var(--color-accent)');
+    });
+
+    it('keeps the structural parity pins that are not brand data', () => {
+      expect(bare.tokens?.['--radius-element']).toBe('8px');
+      expect(bare.tokens?.['--shadow-med']).toBe(
+        ANTD_ALIGN_TOKENS['--shadow-med'],
+      );
+    });
+
+    it('returns undefined options for seeds the document omits', () => {
+      const options = themeOptionsFromConfig(
+        { families: { default: { seeds: { accent: '#123456' } } } },
+        'brand',
+      );
+      expect(options.accent).toEqual({ light: '#123456', dark: '#123456' });
+      expect(options.error).toBeUndefined();
+      expect(options.link).toBeUndefined();
+      expect(options.headerBg).toBeUndefined();
+      expect(options.fontFamily).toBeUndefined();
     });
   });
 
@@ -49,11 +103,11 @@ describe('backendAiTheme', () => {
       ['--font-size-4xl', '38px'], // fontSizeHeading1 (Astryx 35)
       ['--duration-slow', '300ms'], // motionDurationSlow (Astryx 700ms)
     ] as const)('%s -> %s', (token, value) => {
-      expect(backendAiBrandTheme.tokens?.[token]).toBe(value);
+      expect(brandTheme.tokens?.[token]).toBe(value);
     });
 
     it('replaces --shadow-med with the antd boxShadowSecondary recipes', () => {
-      const shadow = backendAiBrandTheme.tokens?.['--shadow-med'];
+      const shadow = brandTheme.tokens?.['--shadow-med'];
       expect(shadow).toBe(ANTD_ALIGN_TOKENS['--shadow-med']);
       // One string, light-dark() per COLOR position — a [light, dark] tuple
       // of full recipes would serialize to invalid CSS (light-dark takes
@@ -70,7 +124,7 @@ describe('backendAiTheme', () => {
     // because it renders as a DOM child of the band. Nothing else guards it:
     // dropping the spread only changes the theme name, so regenerating the
     // artifacts makes every other check pass again.
-    const base = backendAiBrandTheme.components?.['dropdown-menu']?.base as
+    const base = brandTheme.components?.['dropdown-menu']?.base as
       Record<string, string> | undefined;
 
     it.each([
@@ -95,7 +149,7 @@ describe('backendAiTheme', () => {
         '--color-overlay-hover',
         '--color-overlay-pressed',
       ] as const) {
-        expect(base?.[prop]).toBe(backendAiBrandTheme.tokens?.[prop]);
+        expect(base?.[prop]).toBe(brandTheme.tokens?.[prop]);
       }
     });
 
@@ -112,74 +166,79 @@ describe('backendAiTheme', () => {
     // deleting this spread silently hands the header band's inverted wash back
     // to every option row — and only changes the theme name, which regenerating
     // the artifacts makes green again.
-    const base = backendAiBrandTheme.components?.['field']?.base as
+    const base = brandTheme.components?.['field']?.base as
       Record<string, string> | undefined;
 
     it.each(['--color-overlay-hover', '--color-overlay-pressed'] as const)(
       'pins %s to the page token it restores',
       (prop) => {
-        expect(base?.[prop]).toBe(backendAiBrandTheme.tokens?.[prop]);
+        expect(base?.[prop]).toBe(brandTheme.tokens?.[prop]);
       },
     );
   });
 
   describe('theme name numbering', () => {
     it('is deterministic and encodes rev/family/role', () => {
-      const name = computeThemeName();
-      expect(name).toBe(computeThemeName({ family: 'default', role: 'brand' }));
+      const name = computeThemeName(shippedOptions);
+      expect(name).toBe(computeThemeName({ ...shippedOptions }));
       expect(name).toMatch(
         new RegExp(`^bai-r${THEME_NAME_REV}-default-brand-h[a-z0-9]+$`),
       );
     });
 
     it('changes when any CSS-affecting seed changes (no silent first-wins)', () => {
-      const base = computeThemeName();
+      const base = computeThemeName(shippedOptions);
       expect(
-        computeThemeName({ error: { light: '#AA0000', dark: '#AA0000' } }),
+        computeThemeName({
+          ...shippedOptions,
+          error: { light: '#AA0000', dark: '#AA0000' },
+        }),
       ).not.toBe(base);
       expect(
-        computeThemeName({ accent: { light: '#123456', dark: '#123456' } }),
+        computeThemeName({
+          ...shippedOptions,
+          accent: { light: '#123456', dark: '#123456' },
+        }),
       ).not.toBe(base);
+      // No seeds at all is its own name, not the shipped one.
+      expect(computeThemeName({})).not.toBe(base);
     });
 
-    it('gives the three role singletons distinct names', () => {
-      const names = new Set([
-        backendAiBrandTheme.name,
-        backendAiAdminTheme.name,
-        backendAiSecondaryTheme.name,
-      ]);
+    it('gives the three roles distinct names for the shipped document', () => {
+      const names = new Set(
+        (['brand', 'admin', 'secondary'] as const).map((role) =>
+          computeThemeName(themeOptionsFromConfig(shippedTheme, role)),
+        ),
+      );
       expect(names.size).toBe(3);
     });
 
     it('returns the SAME instance for the same seed set (registry-safe)', () => {
-      expect(buildBackendAiTheme()).toBe(backendAiBrandTheme);
+      expect(buildBackendAiTheme(shippedOptions)).toBe(brandTheme);
     });
   });
 
   describe('prebuilt production path', () => {
-    it('built artifact matches the current default recipe (else rebuild — see built/index.ts)', () => {
+    it('built artifact matches the shipped document (else rebuild — see built/index.ts)', () => {
       expect(builtBackendAiBrandTheme.name).toBe(
-        computeThemeName({ role: 'brand' }),
+        computeThemeName(shippedOptions),
       );
       expect(builtBackendAiBrandTheme.__built).toBe(true);
     });
 
-    it('resolveRoleTheme uses the prebuilt theme for the shipped defaults', () => {
-      expect(resolveRoleTheme(undefined, 'brand')).toBe(
+    it('resolveRoleTheme uses the prebuilt theme for the shipped document', () => {
+      expect(resolveRoleTheme(shippedTheme, 'brand')).toBe(
         builtBackendAiBrandTheme,
       );
-      // A theme.json that restates the shipped values is still the built theme.
-      expect(
-        resolveRoleTheme(
-          {
-            fontFamily: BAI_DEFAULT_SEEDS.fontFamily,
-            families: {
-              default: { seeds: { accent: ['#FF7A00', '#DC6B03'] } },
-            },
-          },
-          'brand',
-        ),
-      ).toBe(builtBackendAiBrandTheme);
+    });
+
+    it('resolveRoleTheme without a document is the brand-less runtime theme', () => {
+      const bare = resolveRoleTheme(undefined, 'brand');
+      expect(bare).not.toBe(builtBackendAiBrandTheme);
+      expect(bare.tokens?.['--color-accent']).toBe(
+        neutralTheme.tokens?.['--color-accent'],
+      );
+      expect(bare.tokens?.['--bai-color-info']).toBe('var(--color-accent)');
     });
 
     it('resolveRoleTheme falls back to a runtime theme for overridden seeds', () => {
@@ -262,12 +321,13 @@ describe('backendAiTheme', () => {
         string | undefined;
 
     it('are opaque, and follow an operator rebrand rather than a literal', () => {
-      const dflt = buildBackendAiTheme({});
+      const shipped = buildBackendAiTheme(shippedOptions);
       const rebranded = buildBackendAiTheme({
+        ...shippedOptions,
         error: { light: '#7B1FA2', dark: '#7B1FA2' },
       });
 
-      const defaultBand = fill(dflt, 'banner', '--color-error-muted');
+      const shippedBand = fill(shipped, 'banner', '--color-error-muted');
       const rebrandBand = fill(rebranded, 'banner', '--color-error-muted');
       const rebrandContent = fill(
         rebranded,
@@ -276,12 +336,16 @@ describe('backendAiTheme', () => {
       );
 
       // A floating notice must not show the page through it: no #RRGGBBAA.
-      expect(defaultBand).toBeTruthy();
-      expect(String(defaultBand)).not.toMatch(/#[0-9a-fA-F]{8}/);
+      expect(shippedBand).toBeTruthy();
+      expect(String(shippedBand)).not.toMatch(/#[0-9a-fA-F]{8}/);
       // Seed-derived, not hardcoded — a theme.json rebrand reaches the fill.
-      expect(rebrandBand).not.toEqual(defaultBand);
+      expect(rebrandBand).not.toEqual(shippedBand);
       // Header band and content area stay the same colour.
       expect(rebrandContent).toEqual(rebrandBand);
+      // No error seed, no banner fill of ours — the component keeps Astryx's.
+      expect(
+        fill(buildBackendAiTheme({}), 'banner', '--color-error-muted'),
+      ).toBeUndefined();
     });
   });
 });
