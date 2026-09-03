@@ -69,7 +69,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
         <BAIFlex
           gap="sm"
           wrap="nowrap"
-          style={{ color: token('--bai-color-text-tertiary') }}
+          style={{ color: token('--color-text-tertiary') }}
         >
           <Text color="secondary">{t('userSettings.logo.size.Width')}:</Text>
           <BAIUncontrolledInput
@@ -84,7 +84,7 @@ const LogoSizeSettingItem: React.FC<LogoSizeSettingItemProps> = ({
         <BAIFlex
           gap="sm"
           wrap="nowrap"
-          style={{ color: token('--bai-color-text-tertiary') }}
+          style={{ color: token('--color-text-tertiary') }}
         >
           <Text color="secondary">{t('userSettings.logo.size.Height')}:</Text>
           <BAIUncontrolledInput

@@ -416,74 +416,74 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       variant={diagnosticsBadgeSeverity === 'critical' ? 'error' : 'warning'}
       title={t('webui.menu.Diagnostics')}
     >
-      <Activity style={{ color: token('--bai-color-info') }} />
+      <Activity style={{ color: token('--color-info') }} />
     </BAIBadgeCount>
   ) : (
-    <Activity style={{ color: token('--bai-color-info') }} />
+    <Activity style={{ color: token('--color-info') }} />
   );
 
   const fullAdminMenu: Array<WebUIAdminMenuItemType> = filterOutEmpty([
     // --- Operations group ---
     createAdminMenuItem(
       t('webui.menu.Users'),
-      <User style={{ color: token('--bai-color-info') }} size="1em" />,
+      <User style={{ color: token('--color-info') }} size="1em" />,
       'credential',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.ProjectMembers'),
-      <Users style={{ color: token('--bai-color-info') }} size="1em" />,
+      <Users style={{ color: token('--color-info') }} size="1em" />,
       'project-admin-users',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.Data'),
-      <CloudUpload style={{ color: token('--bai-color-info') }} size="1em" />,
+      <CloudUpload style={{ color: token('--color-info') }} size="1em" />,
       'project-data',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.ProjectSessions'),
-      <BAISessionsIcon style={{ color: token('--bai-color-info') }} />,
+      <BAISessionsIcon style={{ color: token('--color-info') }} />,
       'project-admin-session',
       'admin-operations',
     ),
     createAdminMenuItem(
       t('webui.menu.ProjectDeployments'),
-      <BAIEndpointsIcon style={{ color: token('--bai-color-info') }} />,
+      <BAIEndpointsIcon style={{ color: token('--color-info') }} />,
       'project-admin-deployments',
       'admin-operations',
     ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Projects'),
-        <Users style={{ color: token('--bai-color-info') }} size="1em" />,
+        <Users style={{ color: token('--color-info') }} size="1em" />,
         'project',
         'admin-operations',
       ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Data'),
-        <CloudUpload style={{ color: token('--bai-color-info') }} size="1em" />,
+        <CloudUpload style={{ color: token('--color-info') }} size="1em" />,
         'admin-data',
         'admin-operations',
       ),
     createAdminMenuItem(
       t('webui.menu.Sessions'),
-      <BAISessionsIcon style={{ color: token('--bai-color-info') }} />,
+      <BAISessionsIcon style={{ color: token('--color-info') }} />,
       'admin-session',
       'admin-operations',
     ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Deployments'),
-        <BAIEndpointsIcon style={{ color: token('--bai-color-info') }} />,
+        <BAIEndpointsIcon style={{ color: token('--color-info') }} />,
         'admin-deployments',
         'admin-operations',
       ),
     createAdminMenuItem(
       t('webui.menu.Environments'),
-      <FileCheck style={{ color: token('--bai-color-info') }} size="1em" />,
+      <FileCheck style={{ color: token('--color-info') }} size="1em" />,
       'environment',
       'admin-operations',
     ),
@@ -491,20 +491,20 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       baiClient?._config.enableReservoir &&
       createAdminMenuItem(
         t('webui.menu.Reservoir'),
-        <PackagePlus style={{ color: token('--bai-color-info') }} />,
+        <PackagePlus style={{ color: token('--color-info') }} />,
         'reservoir',
         'admin-operations',
       ),
     baiClient?.supports('fair-share-scheduling') &&
       createAdminMenuItem(
         t('webui.menu.Scheduler'),
-        <ClipboardClock style={{ color: token('--bai-color-info') }} />,
+        <ClipboardClock style={{ color: token('--color-info') }} />,
         'scheduler',
         'admin-operations',
       ),
     createAdminMenuItem(
       t('webui.menu.ResourcePolicies'),
-      <FileUser style={{ color: token('--bai-color-info') }} size="1em" />,
+      <FileUser style={{ color: token('--color-info') }} size="1em" />,
       'resource-policy',
       'admin-operations',
     ),
@@ -512,7 +512,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Resources'),
-        <HardDrive style={{ color: token('--bai-color-info') }} size="1em" />,
+        <HardDrive style={{ color: token('--color-info') }} size="1em" />,
         'agent',
         'admin-infrastructure',
       ),
@@ -520,7 +520,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       createAdminMenuItem(
         t('webui.menu.Configurations'),
         <SlidersHorizontal
-          style={{ color: token('--bai-color-info') }}
+          style={{ color: token('--color-info') }}
           size="1em"
         />,
         'settings',
@@ -529,7 +529,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Maintenance'),
-        <Wrench style={{ color: token('--bai-color-info') }} size="1em" />,
+        <Wrench style={{ color: token('--color-info') }} size="1em" />,
         'maintenance',
         'admin-infrastructure',
       ),
@@ -545,7 +545,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       baiClient?.supports('rbac') &&
       createAdminMenuItem(
         t('webui.menu.RBACManagement'),
-        <BadgeCheck style={{ color: token('--bai-color-info') }} size="1em" />,
+        <BadgeCheck style={{ color: token('--color-info') }} size="1em" />,
         'rbac',
         'admin-system',
       ),
@@ -553,14 +553,14 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
       !isThemePreviewMode &&
       createAdminMenuItem(
         t('webui.menu.Branding'),
-        <Palette style={{ color: token('--bai-color-info') }} />,
+        <Palette style={{ color: token('--color-info') }} />,
         'branding',
         'admin-system',
       ),
     isSuperAdmin &&
       createAdminMenuItem(
         t('webui.menu.Information'),
-        <Info style={{ color: token('--bai-color-info') }} size="1em" />,
+        <Info style={{ color: token('--color-info') }} size="1em" />,
         'information',
         'admin-system',
       ),

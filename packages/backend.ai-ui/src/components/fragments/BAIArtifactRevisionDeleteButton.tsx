@@ -47,8 +47,8 @@ const BAIArtifactRevisionDeleteButton = ({
           ? token('--color-text-disabled')
           : token('--color-error'),
         background: isDisabled
-          ? token('--bai-color-bg-container-disabled')
-          : token('--bai-color-error-bg'),
+          ? token('--color-bg-container-disabled')
+          : token('--color-error-bg'),
         ...buttonProps.style,
       }}
       {..._.omit(buttonProps, ['style', 'disabled', 'loading'])}

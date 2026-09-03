@@ -112,7 +112,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   display: 'flex',
                   height: token('--font-size-base'),
                   overflow: 'hidden',
-                  backgroundColor: token('--bai-color-warning-hover'),
+                  backgroundColor: token('--color-warning-hover'),
                 }}
               >
                 <div
@@ -124,7 +124,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                         (memUnitResult?.number || 1)) *
                       100
                     }%`,
-                    backgroundColor: token('--bai-color-success-border-hover'),
+                    backgroundColor: token('--color-success-border-hover'),
                   }}
                 />
               </div>
@@ -143,7 +143,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   style={{
                     height: token('--font-size-base'),
                     width: token('--font-size-base'),
-                    backgroundColor: token('--bai-color-success-border-hover'),
+                    backgroundColor: token('--color-success-border-hover'),
                   }}
                 ></div>
                 {t('session.launcher.ApplicationMemory', {
@@ -155,7 +155,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   style={{
                     height: token('--font-size-base'),
                     width: token('--font-size-base'),
-                    backgroundColor: token('--bai-color-warning-hover'),
+                    backgroundColor: token('--color-warning-hover'),
                   }}
                 ></div>
                 {getFieldValue('enabledAutomaticShmem') &&

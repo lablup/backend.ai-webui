@@ -360,7 +360,7 @@ const ResourceGroupList: React.FC = () => {
                   `tooltip` (ticket 15/18 idiom: never-disabled icon trigger). */}
               <IconButton
                 icon={
-                  <SquarePenIcon style={{ color: token('--bai-color-info') }} />
+                  <SquarePenIcon style={{ color: token('--color-info') }} />
                 }
                 label={t('general.BulkEdit')}
                 tooltip={t('general.BulkEdit')}

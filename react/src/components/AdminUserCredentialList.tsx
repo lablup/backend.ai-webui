@@ -333,9 +333,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               ) : (
                 <Tooltip content={t('credential.Activate')}>
                   <BAIButton
-                    icon={
-                      <UndoIcon style={{ color: token('--bai-color-info') }} />
-                    }
+                    icon={<UndoIcon style={{ color: token('--color-info') }} />}
                     loading={isBulkUpdating}
                     onClick={() => handleBulkStatusUpdate(true)}
                   />

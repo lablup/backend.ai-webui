@@ -63,7 +63,7 @@ import {
 export { ANTD_ALIGN_TOKENS };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 24;
+export const THEME_NAME_REV = 25;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -890,9 +890,9 @@ export interface BuildBackendAIThemeOptions {
   success?: BrandSeedPair;
   warning?: BrandSeedPair;
   info?: BrandSeedPair;
-  /** Link color pair (`--bai-color-link`); independent of the accent. */
+  /** Link color pair (`--color-link`); independent of the accent. */
   link?: BrandSeedPair;
-  /** Header band background pair (`--bai-header-bg`); applied verbatim. */
+  /** Header band background pair (`--header-bg`); applied verbatim. */
   headerBg?: BrandSeedPair;
   fontFamily?: string;
 }
@@ -962,7 +962,7 @@ const sanitizeNameSegment = (segment: string): string =>
 /**
  * The seeds a theme is built from. Every brand value is optional: a seed the
  * document does not declare is NOT pinned, so Astryx's own token (or, for the
- * `--bai-*` vocabulary, an Astryx `var()` reference) applies. The code holds
+ * custom vocabulary, an Astryx `var()` reference) applies. The code holds
  * no brand values of its own — `resources/theme.json` is the only source.
  */
 interface ResolvedSeeds {
@@ -1110,7 +1110,7 @@ export function buildBackendAITheme(
       // Status colors, brand-owned via theme.json (antd colorError /
       // colorSuccess / colorWarning), so the semantic hues equal the legacy
       // applied values by construction. INFO has no Astryx token family; the
-      // `info` seed reaches the page as `--bai-color-info` and as the admin
+      // `info` seed reaches the page as `--color-info` and as the admin
       // role accent.
       ...(error ? { '--color-error': error } : {}),
       ...(success ? { '--color-success': success } : {}),
@@ -1131,7 +1131,7 @@ export function buildBackendAITheme(
             '--font-family-heading': seeds.fontFamily,
           }
         : {}),
-      // The `--bai-*` custom vocabulary (BUI `src/theme/baiCustomTokens.ts`).
+      // The custom token vocabulary (BUI `src/theme/baiCustomTokens.ts`).
       ...buildBaiCustomTokens(seeds),
       // The 6 antd↔Astryx value differences, pinned to antd values.
       ...ANTD_ALIGN_TOKENS,

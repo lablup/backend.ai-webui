@@ -413,7 +413,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     icon={
                       <XIcon
                         size={token('--spacing-4')}
-                        color={token('--bai-color-text-quaternary')}
+                        color={token('--color-text-quaternary')}
                       />
                     }
                     // Match the input control height so the remove button

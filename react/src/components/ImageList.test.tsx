@@ -353,7 +353,9 @@ describe('ImageList private marker (FR-70)', () => {
   it('leaves an image without the label unmarked', async () => {
     renderWithImages([{ id: 'img-public', installed: true }]);
 
-    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(
+      await screen.findByText('environment.Installed'),
+    ).toBeInTheDocument();
     expect(screen.queryByText('environment.Private')).not.toBeInTheDocument();
   });
 
@@ -362,7 +364,9 @@ describe('ImageList private marker (FR-70)', () => {
       { id: 'img-private', installed: true, features: 'private' },
     ]);
 
-    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(
+      await screen.findByText('environment.Installed'),
+    ).toBeInTheDocument();
     expect(screen.getByText('environment.Private')).toBeInTheDocument();
   });
 
@@ -373,7 +377,9 @@ describe('ImageList private marker (FR-70)', () => {
 
     // Await the row's own badge first — asserting absence while the list is
     // still suspended would pass without ever rendering the fixture.
-    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(
+      await screen.findByText('environment.Installed'),
+    ).toBeInTheDocument();
     expect(screen.queryByText('environment.Private')).not.toBeInTheDocument();
   });
 });

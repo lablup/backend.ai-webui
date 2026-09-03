@@ -163,9 +163,7 @@ const WebUISiderNavigation: React.FC<WebUISiderNavigationProps> = ({
                 firstAvailableAdminMenuItem.key,
                 activeProjectName,
               ),
-              icon: (
-                <ShieldUserIcon style={{ color: token('--bai-color-info') }} />
-              ),
+              icon: <ShieldUserIcon style={{ color: token('--color-info') }} />,
             },
             ...groupedGeneralMenu,
           ])}
