@@ -328,6 +328,18 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     }, 0);
   });
 
+  // A deliberate press on our own chrome ends the guard: dragging across the
+  // path label to select it moves focus off the textarea, and taking it back
+  // collapses the selection the reviewer was making. react-grab's restore —
+  // the only thing the guard exists to beat — lands before any of this.
+  root.addEventListener(
+    'mousedown',
+    (evt) => {
+      if (evt.target !== composeText) focusGuardUntil = 0;
+    },
+    true,
+  );
+
   function closeCompose() {
     if (!isComposeOpen()) return;
     clearTimeout(noteTimer);
