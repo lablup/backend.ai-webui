@@ -32,10 +32,8 @@ this skill's job is to run it once, render Korean HTML, and post.
 
 `$ARGUMENTS` may contain these in any order:
 
-- `--from <ref>` — **required.** The previous release tag, or `origin/main` for a branch.
-  Nothing is inferred: no release tag is an ancestor of `main` in this repository
-  (they live on the release branches), so a guessed base would report a whole
-  release when the caller meant their branch. Ask rather than pick one.
+- `--from <ref>` — the base of the comparison. When absent, **offer the choices
+  below rather than erroring or guessing** (see *Resolving `--from`*).
 - `--to <ref>` — defaults to `HEAD`.
 - `--dry-run` — write the HTML to `/tmp/release-risk-digest-preview.html` and skip posting.
 - `--auto` — skip the confirm-before-post prompt (for cron / unattended runs).
@@ -43,12 +41,55 @@ this skill's job is to run it once, render Korean HTML, and post.
   There is deliberately no default: posting a release summary to the wrong thread
   is not something to get wrong by omission. If the user did not give one, ask.
 
+## Resolving `--from`
+
+Nothing is inferred silently: no release tag is an ancestor of `main` in this
+repository (they live on the release branches, so `git describe` fails on main),
+and defaulting to the newest tag would report a whole release to someone who ran
+this on a feature branch. But an error is a dead end — **offer the choices**.
+
+**Refresh first.** A stale `origin/main` moves the merge base and quietly changes
+every file-based finding, so fetch before offering it:
+
+```bash
+git fetch origin main --quiet
+LATEST_TAG=$(git tag --sort=-creatordate | head -1)
+PREV_RC=$(git tag --sort=-creatordate | sed -n 2p)
+# The previous *stable* release, not the previous rc — see the note below.
+PREV_STABLE=$(git tag --sort=-creatordate | grep -Ev '\-(rc|alpha|beta)\.|\+' | head -1)
+BRANCH=$(git branch --show-current)
+```
+
+Then ask with `AskUserQuestion`, putting the option that matches the current HEAD
+first and marking it `(Recommended)`. On a feature branch that is the branch diff;
+on a release branch or a detached tag it is the release comparison.
+
+| Option | `--from` / `--to` | Answers |
+| --- | --- | --- |
+| 현재 브랜치가 추가한 것 | `origin/main` (just fetched) | what this PR puts into a release |
+| 다음 릴리즈에 쌓인 것 | `$LATEST_TAG` → `HEAD` | what is queued but not yet cut |
+| 이번 릴리즈 전체 | `$PREV_STABLE` → `$LATEST_TAG` | what the release as a whole contains |
+| 직전 rc 이후 | `$PREV_RC` → `$LATEST_TAG` | what changed in the last rc turn |
+
+Offer the last row only when `$LATEST_TAG` is a prerelease. The two release rows
+are far apart in size and answer different questions — at the time of writing,
+`$PREV_STABLE..$LATEST_TAG` was 175 commits and `$PREV_RC..$LATEST_TAG` was 18 —
+so do not collapse them into one "previous tag" option.
+
+`AskUserQuestion` always offers **Other**, which is how the user supplies a ref
+this list does not cover (an older tag, another branch, a SHA) — take that string
+verbatim as `--from`. Do not pre-validate it; the script fails loudly on a bad ref.
+
+Say which ref you resolved to in the reply, so a wrong pick is visible before the
+message reaches Teams.
+
 ## Process
 
 ### 1. Run the report — ONE Bash call
 
 Must run from a `backend.ai-webui` checkout; the script shells out to `git` in the
-current directory. `--from` is required, so a missing one is a usage error, not a guess.
+current directory. By this point `$FROM` is whatever *Resolving `--from`* settled on —
+the script itself takes no default and exits 2 without one.
 
 ```bash
 node scripts/release-risk-report.mjs --from "$FROM" --to "$TO" --json > /tmp/release-risk.json
