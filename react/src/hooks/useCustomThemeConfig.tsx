@@ -5,12 +5,18 @@
 import {
   BAIAppearanceConfig,
   getCustomTheme,
+  isAppearanceSettled,
 } from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
 import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
 import { useSessionStorageState } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useEffect, useEffectEvent, useState } from 'react';
+import {
+  useEffect,
+  useEffectEvent,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 
 /**
  * The family shown before the user picks one. The v2 document must carry a
@@ -81,6 +87,23 @@ export const useRawCustomThemeConfig = (): BAIAppearanceConfig | undefined => {
   }
   return customThemeConfig;
 };
+
+/**
+ * True once the appearance bootstrap has settled (document loaded, or given
+ * up). The theme providers render nothing before that, so the splash stays
+ * up instead of a neutral-then-brand flash.
+ */
+const subscribeToAppearanceSettled = (onChange: () => void) => {
+  document.addEventListener('custom-theme-loaded', onChange);
+  return () => document.removeEventListener('custom-theme-loaded', onChange);
+};
+
+export const useAppearanceSettled = (): boolean =>
+  useSyncExternalStore(
+    subscribeToAppearanceSettled,
+    isAppearanceSettled,
+    () => true,
+  );
 
 export type ThemeFamilyCatalog = Record<string, { label?: string }>;
 
