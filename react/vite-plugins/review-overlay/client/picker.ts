@@ -10,6 +10,7 @@
  * over — and `isReactGrabChord` re-binds react-grab's own chord to it, because
  * the overlay has no button and would otherwise have no entry point at all.
  */
+import { relativizeSourcePaths } from './source-path.js';
 import type { AnchorComponent } from './types.js';
 import type { ReactGrabAPI } from 'react-grab';
 
@@ -21,6 +22,8 @@ export interface PickerCallbacks {
   /** True for events originating inside the overlay's own shadow host. */
   isOwnEvent: (evt: Event) => boolean;
   showHint: (message: string) => void;
+  /** Repository root from `/__review/state`; null until it answers. */
+  sourceRoot: () => string | null | undefined;
 }
 
 const PLUGIN_NAME = 'bai-review-pick';
@@ -236,9 +239,10 @@ export function createPicker(callbacks: PickerCallbacks) {
     if (!grab) return [];
     try {
       const context = await grab.getStackContext(element);
+      const root = callbacks.sourceRoot();
       return String(context || '')
         .split('\n')
-        .map((line) => line.trimEnd())
+        .map((line) => relativizeSourcePaths(line.trimEnd(), root))
         .filter((line) => line.trim());
     } catch {
       return [];
@@ -264,7 +268,10 @@ export function createPicker(callbacks: PickerCallbacks) {
           : null;
       return {
         name: source.componentName,
-        src: `${source.filePath}${line}${column}`,
+        src: relativizeSourcePaths(
+          `${source.filePath}${line}${column}`,
+          callbacks.sourceRoot(),
+        ),
         ...(dn ? { dn } : {}),
       };
     } catch {

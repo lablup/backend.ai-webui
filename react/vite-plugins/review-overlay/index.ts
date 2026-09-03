@@ -53,6 +53,20 @@ const NO_STATE: ReviewServerState = {
   source: 'none',
 };
 
+/**
+ * The prefix the client strips off react-grab's absolute source paths. Git,
+ * not the Vite root: a workspace package lives above `react/`, and what the
+ * block should carry is the path as the repository names it.
+ */
+async function repoRoot(): Promise<string | null> {
+  try {
+    const { stdout } = await pexecFile('git', ['rev-parse', '--show-toplevel']);
+    return stdout.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
 async function currentBranch(): Promise<string | null> {
   try {
     const { stdout } = await pexecFile('git', [
@@ -68,7 +82,7 @@ async function currentBranch(): Promise<string | null> {
 }
 
 /** Total by construction: every failure resolves to a `source: 'none'` state. */
-async function discoverState(): Promise<ReviewServerState> {
+async function discoverPrState(): Promise<ReviewServerState> {
   try {
     const branch = await currentBranch();
     const record = await readBootRecord();
@@ -112,6 +126,12 @@ async function discoverState(): Promise<ReviewServerState> {
   } catch (error) {
     return { ...NO_STATE, error: String(error) };
   }
+}
+
+/** The root rides along on every answer, including the failure ones. */
+async function discoverState(): Promise<ReviewServerState> {
+  const [state, root] = await Promise.all([discoverPrState(), repoRoot()]);
+  return { ...state, root };
 }
 
 // -------------------------------------------------------------------- plugin

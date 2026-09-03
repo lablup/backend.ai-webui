@@ -61,11 +61,13 @@ declare global {
   }
 }
 
-/** `/__review/state` — the write side needs only the PR number. */
+/** `/__review/state` — the write side needs the PR number and the repo root. */
 export interface ReviewServerState {
   pr: number | null;
   repo: string | null;
   branch: string | null;
   source: 'boot-record' | 'gh' | 'none';
+  /** Absolute repository root, so the client can relativize source paths. */
+  root?: string | null;
   error?: string | null;
 }

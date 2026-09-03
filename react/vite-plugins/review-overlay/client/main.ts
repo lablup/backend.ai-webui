@@ -84,6 +84,7 @@ function boot() {
     onHover: (rect, borderRadius) => ui.setHoverRect(rect, borderRadius),
     isOwnEvent: (evt) => ui.isOwnEvent(evt),
     showHint: (message) => ui.showToast(message),
+    sourceRoot: () => serverState?.root,
   });
 
   async function prepare(element: Element, anchor: AnchorV3) {

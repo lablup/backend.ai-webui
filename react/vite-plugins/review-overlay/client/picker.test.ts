@@ -60,6 +60,7 @@ beforeEach(() => {
     onHover: () => undefined,
     isOwnEvent: () => false,
     showHint: () => undefined,
+    sourceRoot: () => null,
   };
 });
 
@@ -237,5 +238,52 @@ describe('the fallback hotkey', () => {
     picker.start();
     expect(picker.isHotkeyArmed()).toBe(false);
     picker.stop();
+  });
+});
+
+/**
+ * react-grab hands back the driver's absolute path for anything outside the
+ * Vite root — every workspace package — and the block it lands in is a public
+ * PR comment. See `source-path.ts`.
+ */
+describe('source paths are repository-relative', () => {
+  const ROOT = '/home/u/ws/webui';
+  const withRoot = () => make({ ...callbacks, sourceRoot: () => ROOT });
+
+  it('strips the root from a stack frame and leaves an app frame alone', async () => {
+    grab.getStackContext = () =>
+      Promise.resolve(
+        `\n  in BAIFlex (at ${ROOT}/packages/backend.ai-ui/src/components/BAIFlex.tsx)` +
+          `\n  in WebUIHeader (at /src/components/MainLayout/WebUIHeader.tsx)`,
+      );
+    const picker = withRoot();
+
+    expect(await picker.getStack(document.body)).toEqual([
+      '  in BAIFlex (at packages/backend.ai-ui/src/components/BAIFlex.tsx)',
+      '  in WebUIHeader (at /src/components/MainLayout/WebUIHeader.tsx)',
+    ]);
+  });
+
+  it("strips the root from the component's own source too", async () => {
+    grab.getSource = () =>
+      Promise.resolve({
+        componentName: 'BAIFlex',
+        filePath: `${ROOT}/packages/backend.ai-ui/src/components/BAIFlex.tsx`,
+        lineNumber: 79,
+        columnNumber: 26,
+      });
+    const picker = withRoot();
+
+    expect((await picker.getComponent(document.body))?.src).toBe(
+      'packages/backend.ai-ui/src/components/BAIFlex.tsx:79:26',
+    );
+  });
+
+  it('leaves everything verbatim until the server names a root', async () => {
+    const line = `  in BAIFlex (at ${ROOT}/packages/backend.ai-ui/src/x.tsx)`;
+    grab.getStackContext = () => Promise.resolve(line);
+    const picker = make(callbacks);
+
+    expect(await picker.getStack(document.body)).toEqual([line]);
   });
 });
