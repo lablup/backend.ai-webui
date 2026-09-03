@@ -52,6 +52,13 @@ export declare function toArray<T>(value: T | T[] | undefined | null): T[];
  * rc-field-form (its `getNamePath` is `toArray`, nothing more).
  */
 export declare function getNamePath(path: NamePath | undefined | null): InternalNamePath;
+/**
+ * The `data-bai-field-id` handle `FormItem` stamps on a control and
+ * `FormStore.getFieldDOMNode` looks up. Not the DOM `id` (`getFieldId`),
+ * which adds the form's `name` and a `parentNode` guard the store cannot
+ * reproduce.
+ */
+export declare function getFieldHandle(namePath: InternalNamePath): string;
 export declare function getValue(entity: any, path: InternalNamePath): any;
 export declare function setValue<T = Store>(entity: T, paths: InternalNamePath, value: any, removeIfUndefined?: boolean): T;
 /**

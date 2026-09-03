@@ -19,6 +19,7 @@ export declare class FormStore {
     private watcherCenter;
     /** Paths of `preserve: false` fields alive at the previous unmount. */
     private prevWithoutPreserves;
+    private rootRef;
     constructor(forceRootUpdate: () => void);
     getForm: () => InternalFormInstance;
     getInternalHooks: (key: string) => InternalHooks | null;
@@ -26,6 +27,7 @@ export declare class FormStore {
     private setCallbacks;
     private setValidateMessages;
     private setPreserve;
+    private setRootRef;
     /**
      * `init` is true only on the very first render, so later `initialValues`
      * prop changes update what `resetFields()` will restore WITHOUT stomping
@@ -86,19 +88,18 @@ export declare class FormStore {
     private triggerOnFieldsChange;
     validateFields: (arg1?: any, arg2?: any) => Promise<Store>;
     submit: () => void;
-    /**
-     * Resolved through the control's generated `id`, which `FormItem` stamps
-     * onto every child. Composing a ref onto arbitrary children would be the
-     * only other way and buys nothing: `getFieldInstance` has zero call sites.
-     */
+    /** The field's DOM node — see `getFieldDOMNode` for what that resolves to. */
     getFieldInstance: (name: NamePath) => HTMLElement | undefined;
-    /**
-     * Thin by design (answers/08 §6.2): `scrollToField` has ONE call site, and
-     * this repo's main scroll-to-error consumer deliberately bypasses it and
-     * walks the DOM itself because registration order and DOM order disagree.
-     */
+    /** Scrolls the NAMED field. `<Form scrollToFirstError>` picks which one. */
     scrollToField: (name: NamePath, options?: ScrollOptions) => void;
     focusField: (name: NamePath) => void;
+    /**
+     * The control carrying `data-bai-field-id` (stamped by `FormItem`; Astryx
+     * inputs drop the `id` they are given but keep `data-*`), else the item
+     * wrapper carrying `data-bai-field-item` (a child that forwards nothing to
+     * the DOM). Scoped to this form's element: two mounted forms may share a
+     * field name, and a document-wide lookup picked the wrong one.
+     */
     private getFieldDOMNode;
 }
 /**
