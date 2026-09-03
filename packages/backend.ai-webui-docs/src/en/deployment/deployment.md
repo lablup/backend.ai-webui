@@ -610,9 +610,9 @@ Each row has an **Apply** button and a **More** menu.
 
 - A green **Current** tag marks the revision that is currently active.
 - A yellow **Applying** tag (with a loading spinner) marks a revision that is being applied.
-- The **Apply** button is disabled for the currently active revision and any revision that is being applied.
+- The **Apply** button is disabled for the currently active revision and any revision that is being applied. It is also unavailable while the deployment is stopped, and while an apply or rollback is already in progress.
 
-Clicking the revision number in any row opens the revision detail drawer, which shows the full configuration of that revision. The drawer also has an **Apply** button and a **New revision based on this** button; the **Apply** button is disabled for the current and applying revisions.
+Clicking the revision number in any row opens the revision detail drawer, which shows the full configuration of that revision. The drawer also has an **Apply** button and a **New revision based on this** button; the **Apply** button is disabled under the same conditions as in the table.
 
 :::note
 The **Runtime Parameters** field also appears in the revision detail drawer for `vLLM` and `SGLang` revisions, showing the same preset parameter values as the Current Revision tab.
@@ -714,7 +714,7 @@ Access tokens are managed in the **Access Tokens** card at the bottom of the Dep
 
 ![](../images/token_generation_dialog.png)
 
-   The `Create Access Token` button is disabled until the manager has issued a network endpoint for the deployment. While it is disabled, its tooltip reads *"The network endpoint has not been issued yet."* It is also disabled for a deployment you do not own and for a deployment that is being deleted.
+   The `Create Access Token` button is disabled until the manager has issued a network endpoint for the deployment; while it is disabled, its tooltip reads *"The network endpoint has not been issued yet."* It is also disabled for a deployment you do not own (*"Only the deployment owner can manage access tokens."*) and for a deployment that is stopping or no longer active (*"The deployment is stopping or no longer active."*). Those last two conditions disable deleting a token as well.
 
 After the token is issued, a **Token** dialog shows the token value once, together with a copy button and the expiration date you chose. Copy the token from this dialog, or from the table afterwards.
 
