@@ -35,6 +35,7 @@ import { Divider } from '@astryxdesign/core/Divider';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import {
+  BAIIconWithTooltip,
   BAIModal,
   BAIQuestionIconWithTooltip,
   toLocalId,
@@ -44,6 +45,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { TriangleAlertIcon } from 'lucide-react';
 import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql } from 'react-relay';
@@ -455,16 +457,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                       // chosen project name; re-validate so it updates
                       // immediately.
                       formRef.current?.validateFields(['usage_mode']);
-                      // Choosing the model-store project while Models is
-                      // already selected forces read-only (FR-1290), same as
-                      // the usage_mode handler below.
-                      if (
-                        projectInfo.projectName === MODEL_STORE_PROJECT_NAME &&
-                        formRef.current?.getFieldValue('usage_mode') === 'model'
-                      ) {
-                        formRef.current?.setFieldValue('permission', 'ro');
-                        formRef.current?.validateFields(['permission']);
-                      }
                     }}
                   />
                 </Suspense>
@@ -557,23 +549,11 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
             <AstryxFormRadioList
               label={t('data.UsageMode')}
               disabled={isFolderTypeLocked}
-              onValueChange={(value) => {
+              onValueChange={() => {
                 // Only validate name field if it has a value to prevent
                 // excessive validation
                 if (formRef.current?.getFieldValue('name')) {
                   formRef.current.validateFields(['name']);
-                }
-                // Model-store project folders are read-only (FR-1290); the
-                // rw option is hidden then, so keep the value in sync. The
-                // dependency-driven revalidation ran before this coercion,
-                // so re-validate to clear its stale 'rw' error.
-                if (
-                  isProjectFolder &&
-                  value === 'model' &&
-                  effectiveProject?.name === MODEL_STORE_PROJECT_NAME
-                ) {
-                  formRef.current?.setFieldValue('permission', 'ro');
-                  formRef.current?.validateFields(['permission']);
                 }
               }}
               options={[
@@ -635,18 +615,14 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
           <Form.Item dependencies={['usage_mode']} noStyle required>
             {({ getFieldValue }) => {
-              // Model-store project folders are forced read-only (FR-1290).
-              // The manager used to enforce this server-side (the dropped
+              // Model project folders are forced read-only (FR-1290). The
+              // manager used to enforce this server-side (the dropped
               // 'allow-only-ro-permission-for-model-project-folder' capability)
               // and no longer seems to, but we keep enforcing it on the client
               // to preserve that contract until the project-folder behavior is
-              // reworked. Mirrored in VFolderNodeDescriptionV2. On any other
-              // project the model+project combination is invalid anyway (the
-              // usage_mode validator above), so permission stays untouched.
-              const isReadOnlyPermission =
-                getFieldValue('usage_mode') === 'model' &&
-                isProjectFolder &&
-                effectiveProject?.name === MODEL_STORE_PROJECT_NAME;
+              // reworked. Mirrored in VFolderNodeDescriptionV2.
+              const shouldDisableRWPermission =
+                getFieldValue('usage_mode') === 'model' && isProjectFolder;
 
               return (
                 <BAIFormItem
@@ -658,7 +634,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                   rules={[
                     {
                       validator: (__, value) =>
-                        isReadOnlyPermission && value === 'rw'
+                        shouldDisableRWPermission && value === 'rw'
                           ? Promise.reject(
                               new Error(
                                 t(
@@ -674,17 +650,22 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                     label={t('data.folders.MountPermission')}
                     disabled={isFolderTypeLocked}
                     options={[
-                      // Hidden (not disabled) when read-only is forced; the
-                      // usage_mode handler coerces the value to 'ro' (FR-3441).
-                      ...(isReadOnlyPermission
-                        ? []
-                        : [
-                            {
-                              value: 'rw',
-                              label: t('data.ReadWrite'),
-                              'data-testid': 'rw-permission',
-                            },
-                          ]),
+                      {
+                        value: 'rw',
+                        label: t('data.ReadWrite'),
+                        'data-testid': 'rw-permission',
+                        disabled: shouldDisableRWPermission,
+                        endContent:
+                          !isFolderTypeLocked && shouldDisableRWPermission ? (
+                            <BAIIconWithTooltip
+                              content={t(
+                                'data.folders.ModelProjectFolderRestrictedToReadOnly',
+                              )}
+                              focusable={false}
+                              icon={<TriangleAlertIcon />}
+                            />
+                          ) : undefined,
+                      },
                       {
                         value: 'ro',
                         label: t('data.ReadOnly'),
