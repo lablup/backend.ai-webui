@@ -239,10 +239,16 @@ describe.skipIf(!realCssPresent)(
       }
     });
 
-    it("the spike's three broken names are genuinely absent", () => {
-      expect(declared.has("--color-text-tertiary")).toBe(false);
+    it("the spike's broken names are genuinely absent", () => {
+      // `--color-text-tertiary`, the spike's third broken name, is a declared
+      // custom token of the brand theme since FR-3605, so it left this list.
       expect(declared.has("--color-text-error")).toBe(false);
       expect(declared.has("--color-background-primary")).toBe(false);
+    });
+
+    it("the brand theme declares the custom tokens the app reads", () => {
+      expect(declared.has("--color-text-tertiary")).toBe(true);
+      expect(declared.has("--color-info")).toBe(true);
     });
 
     it("the spike's fixes resolve to declared names", () => {
