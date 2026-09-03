@@ -2,6 +2,7 @@ import { captureAnchorSignals } from './anchor.js';
 import {
   buildBlock,
   buildBlockFromCapture,
+  buildBlockHtml,
   buildBlockText,
   captureForBlock,
   landmarkLabel,
@@ -118,8 +119,8 @@ describe('buildBlockText', () => {
     );
   });
 
-  // Markdown treats `>` as prose here, so a note that starts with one is the
-  // reviewer quoting someone — not the block quoting the reviewer.
+  // Markdown treats `>` as prose, so a note that itself starts with one is the
+  // reviewer quoting someone, not the block quoting the reviewer.
   it('does not touch a note that already contains markdown', () => {
     expect(
       buildBlockText({ ...base, text: '> not our quote\n**bold**', stack: [] }),
@@ -131,6 +132,78 @@ describe('buildBlockText', () => {
     expect(
       buildBlockText({ ...base, imageUrl: 'https://example.test/a.png' }),
     ).toContain('> ![screenshot](https://example.test/a.png)');
+  });
+});
+
+describe('buildBlockHtml', () => {
+  const base = {
+    label: 'Sessions › login-button › button "Login"',
+    id: 'c_abcdefg',
+    stack: ['in LoginButton (at LoginView.tsx:12)', '  in LoginView'],
+    text: 'The label is cut off\non narrow screens.',
+    url: 'https://fr-3811.localhost:1355/session/start#bai=v3.c_abcdefg.PAYLOAD',
+    pr: 9330,
+    at: '2026-08-31T09:00:00Z',
+  };
+
+  it('renders the note as a paragraph and the generated half as a blockquote', () => {
+    expect(buildBlockHtml(base)).toBe(
+      [
+        '<p>The label is cut off<br>on narrow screens.</p>',
+        '<blockquote>📍 <b>Sessions › login-button › button &quot;Login&quot;</b> · <code>c_abcdefg</code>' +
+          '<br>⚛️ in LoginButton (at LoginView.tsx:12)' +
+          '<br>&nbsp;&nbsp;in LoginView' +
+          '<br><a href="https://fr-3811.localhost:1355/session/start#bai=v3.c_abcdefg.PAYLOAD">Open on dev server</a>' +
+          '</blockquote>',
+        '<!-- bai-review v3 id=c_abcdefg pr=9330 at=2026-08-31T09:00:00Z -->',
+      ].join('\n'),
+    );
+  });
+
+  it('drops the paragraph entirely when the note is empty', () => {
+    const html = buildBlockHtml({ ...base, text: '', stack: [] });
+    expect(html.startsWith('<blockquote>')).toBe(true);
+    expect(html).not.toContain('<p>');
+  });
+
+  // The label carries text copied off the page; a `<` in it must not become
+  // markup, and neither must anything the reviewer typed.
+  it('escapes the note, the label and the id', () => {
+    const html = buildBlockHtml({
+      ...base,
+      label: 'Start › a <b> & "quoted"',
+      text: '<b>&"</b>',
+      stack: ['in <Weird> & co'],
+    });
+    expect(html).toContain('<p>&lt;b&gt;&amp;&quot;&lt;/b&gt;</p>');
+    expect(html).toContain(
+      '<b>Start › a &lt;b&gt; &amp; &quot;quoted&quot;</b>',
+    );
+    expect(html).toContain('⚛️ in &lt;Weird&gt; &amp; co');
+  });
+
+  it('escapes the link href but keeps it a real anchor', () => {
+    expect(
+      buildBlockHtml({ ...base, url: 'http://h/p?a=1&b=2#bai=v3.x.Y' }),
+    ).toContain('<a href="http://h/p?a=1&amp;b=2#bai=v3.x.Y">');
+  });
+
+  it('renders the reserved image slot only when one is supplied', () => {
+    expect(buildBlockHtml(base)).not.toContain('<img');
+    expect(
+      buildBlockHtml({ ...base, imageUrl: 'https://example.test/a.png' }),
+    ).toContain('<img src="https://example.test/a.png" alt="screenshot">');
+  });
+
+  // One model, two renderers — a line added to the block cannot land in one.
+  it('carries every generated line of the markdown flavour', () => {
+    const html = buildBlockHtml(base);
+    for (const piece of ['📍', '⚛️', 'in LoginView', 'Open on dev server']) {
+      expect(html).toContain(piece);
+    }
+    expect(html).toContain(
+      '<!-- bai-review v3 id=c_abcdefg pr=9330 at=2026-08-31T09:00:00Z -->',
+    );
   });
 });
 
@@ -206,6 +279,7 @@ describe('buildBlock', () => {
     });
 
     expect(fromCapture.block).toBe(fromTarget.block);
+    expect(fromCapture.html).toBe(fromTarget.html);
     expect(fromCapture.anchor.c?.name).toBe('LoginView');
     expect(fromCapture.block).toContain('> ⚛️ in LoginButton');
   });
@@ -225,6 +299,10 @@ describe('buildBlock', () => {
     });
     expect(built.url).toBe(
       `https://fr-3811.localhost:1355/#bai=v3.${built.id}.${built.anchorB64}`,
+    );
+    // Both flavours come out of the one synchronous render.
+    expect(built.html).toContain(
+      `<a href="${built.url}">Open on dev server</a>`,
     );
   });
 

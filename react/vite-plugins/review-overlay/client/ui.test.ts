@@ -4,7 +4,7 @@
  * — the label and the ⚛️ stack are appended AFTER the box opens.
  */
 import { createOverlayUI, type OverlayUI } from './ui.js';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 let ui: OverlayUI;
 
@@ -124,5 +124,109 @@ describe('placing the composer', () => {
     setHeight(600);
     ui.placeCompose();
     expect(compose().style.top).toBe('310px');
+  });
+});
+
+/**
+ * One copy has to paste into a markdown textarea (GitHub) and into a rich
+ * editor (Teams), so both clipboard paths write `text/plain` AND `text/html`.
+ */
+describe('copying both flavours', () => {
+  const MD = 'note\n\n> 📍 **x** · `c_a`';
+  const HTML = '<p>note</p>\n<blockquote>📍 <b>x</b></blockquote>';
+
+  /** jsdom has no editing host: `execCommand` never fires its own copy event. */
+  const stubExecCommand = (ok = true) => {
+    const written: Record<string, string> = {};
+    document.execCommand = vi.fn(() => {
+      const evt = new Event('copy', { bubbles: true, cancelable: true });
+      Object.defineProperty(evt, 'clipboardData', {
+        value: {
+          setData: (type: string, value: string) => {
+            written[type] = value;
+          },
+        },
+      });
+      document.dispatchEvent(evt);
+      return ok;
+    });
+    return written;
+  };
+
+  const setClipboard = (clipboard: unknown, secure: boolean) => {
+    Object.defineProperty(navigator, 'clipboard', {
+      value: clipboard,
+      configurable: true,
+    });
+    Object.defineProperty(window, 'isSecureContext', {
+      value: secure,
+      configurable: true,
+    });
+  };
+
+  afterEach(() => {
+    setClipboard(undefined, false);
+    Reflect.deleteProperty(window, 'ClipboardItem');
+  });
+
+  it('carries both on the insecure gateway origin, through execCommand', async () => {
+    setClipboard(undefined, false);
+    const written = stubExecCommand();
+    expect(await ui.copyText(MD, HTML)).toBe(true);
+    expect(written['text/plain']).toBe(MD);
+    expect(written['text/html']).toBe(HTML);
+  });
+
+  it('carries both through ClipboardItem in a secure context', async () => {
+    const write = vi.fn(() => Promise.resolve());
+    setClipboard({ write, writeText: vi.fn() }, true);
+    const items: Array<Record<string, string>> = [];
+    Object.defineProperty(window, 'ClipboardItem', {
+      value: class {
+        constructor(parts: Record<string, Blob>) {
+          items.push(
+            Object.fromEntries(
+              Object.entries(parts).map(([type, blob]) => [type, blob.type]),
+            ),
+          );
+        }
+      },
+      configurable: true,
+    });
+
+    expect(await ui.copyText(MD, HTML)).toBe(true);
+    expect(write).toHaveBeenCalledOnce();
+    expect(items[0]).toEqual({
+      'text/plain': 'text/plain',
+      'text/html': 'text/html',
+    });
+  });
+
+  // The plain flavour is the floor: a browser without `ClipboardItem` still
+  // gets the markdown rather than a failed copy.
+  it('falls back to plain text when ClipboardItem is missing', async () => {
+    const writeText = vi.fn(() => Promise.resolve());
+    setClipboard({ writeText }, true);
+    expect(await ui.copyText(MD, HTML)).toBe(true);
+    expect(writeText).toHaveBeenCalledWith(MD);
+  });
+
+  it('falls back to execCommand when the async write is refused', async () => {
+    setClipboard(
+      {
+        write: vi.fn(() => Promise.reject(new Error('denied'))),
+        writeText: vi.fn(() => Promise.reject(new Error('denied'))),
+      },
+      true,
+    );
+    Object.defineProperty(window, 'ClipboardItem', {
+      value: class {
+        constructor(_parts: Record<string, Blob>) {}
+      },
+      configurable: true,
+    });
+    const written = stubExecCommand();
+    expect(await ui.copyText(MD, HTML)).toBe(true);
+    expect(written['text/html']).toBe(HTML);
   });
 });

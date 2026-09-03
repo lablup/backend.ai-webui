@@ -1,10 +1,12 @@
 /**
- * The `#bai=v3` markdown block — the overlay's only output.
+ * The `#bai=v3` block — the overlay's only output, in two clipboard flavours.
  *
- * It has to survive being pasted into a GitHub PR comment, a Teams reply and a
- * Claude prompt: the reviewer's note is the comment's own prose, the generated
- * half is a quote under it, a tool reads the trailing HTML comment, and the
- * link carries the whole anchor payload so it resolves without any lookup.
+ * It has to survive being pasted into a GitHub PR comment (a plain textarea,
+ * which takes `text/plain`) and into a Teams reply (a rich editor, which takes
+ * `text/html` and would otherwise show the markdown raw), so `buildBlockText`
+ * and `buildBlockHtml` render the same `blockLines` model. The reviewer's note
+ * leads unquoted; the generated half is a quote; the link carries the whole
+ * anchor payload so it resolves without any lookup.
  */
 import { captureAnchorSignals } from './anchor.js';
 import { encodeAnchor } from './codec.js';
@@ -54,24 +56,101 @@ export interface BlockInput {
 }
 
 /**
- * The reviewer's words lead, verbatim, UNQUOTED and unstyled — they are the
- * comment's own prose, not something the block quotes. A blank line separates
- * them from the generated half, which is the quote. No note means no blank
- * line, and the block starts at 📍.
+ * One generated line. Both flavours render this same list, so a change to the
+ * block's shape cannot land in one and miss the other.
+ */
+type BlockLine =
+  | { kind: 'label'; label: string; id: string }
+  | { kind: 'stack'; text: string; first: boolean }
+  | { kind: 'image'; url: string }
+  | { kind: 'link'; url: string };
+
+function blockLines(input: BlockInput): BlockLine[] {
+  const lines: BlockLine[] = [
+    { kind: 'label', label: input.label, id: input.id },
+  ];
+  input.stack.forEach((line, i) =>
+    lines.push({
+      kind: 'stack',
+      text: i === 0 ? line.trim() : line,
+      first: i === 0,
+    }),
+  );
+  if (input.imageUrl) lines.push({ kind: 'image', url: input.imageUrl });
+  lines.push({ kind: 'link', url: input.url });
+  return lines;
+}
+
+const marker = (input: BlockInput) =>
+  `<!-- bai-review v3 id=${input.id} pr=${input.pr} at=${input.at} -->`;
+
+/**
+ * The reviewer's words lead, verbatim, unquoted and unstyled — they are the
+ * comment's own prose. A blank line separates them from the generated half,
+ * which is the quote. No note means no blank line, and the block starts at 📍.
  */
 export function buildBlockText(input: BlockInput): string {
-  const lines: string[] = [];
-  if (input.text) lines.push(input.text, '');
-  lines.push(`> 📍 **${input.label}** · \`${input.id}\``);
-  input.stack.forEach((line, i) => {
-    lines.push(i === 0 ? `> ⚛️ ${line.trim()}` : `> ${line}`);
+  const out: string[] = [];
+  if (input.text) out.push(input.text, '');
+  for (const line of blockLines(input)) {
+    switch (line.kind) {
+      case 'label':
+        out.push(`> 📍 **${line.label}** · \`${line.id}\``);
+        break;
+      case 'stack':
+        out.push(line.first ? `> ⚛️ ${line.text}` : `> ${line.text}`);
+        break;
+      case 'image':
+        out.push(`> ![screenshot](${line.url})`);
+        break;
+      case 'link':
+        out.push(`> [Open on dev server](${line.url})`);
+        break;
+    }
+  }
+  out.push(marker(input));
+  return out.join('\n');
+}
+
+/** Everything reaching the HTML flavour is page text or reviewer text. */
+const esc = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+/** HTML collapses leading spaces; the stack frames only read as a tree with them. */
+const escIndented = (value: string) => {
+  const lead = value.length - value.trimStart().length;
+  return '&nbsp;'.repeat(lead) + esc(value.slice(lead));
+};
+
+/**
+ * The same block for a rich editor. Only tags Teams keeps — `<b>`, `<a>`,
+ * `<br>`, `<blockquote>`, `<code>`, `<p>` — so the link stays clickable there;
+ * the marker is decoration Teams strips and a markdown paste target keeps.
+ */
+export function buildBlockHtml(input: BlockInput): string {
+  const out: string[] = [];
+  if (input.text) {
+    out.push(`<p>${input.text.split('\n').map(esc).join('<br>')}</p>`);
+  }
+  const quoted = blockLines(input).map((line) => {
+    switch (line.kind) {
+      case 'label':
+        return `📍 <b>${esc(line.label)}</b> · <code>${esc(line.id)}</code>`;
+      case 'stack':
+        return line.first ? `⚛️ ${esc(line.text)}` : escIndented(line.text);
+      case 'image':
+        return `<img src="${esc(line.url)}" alt="screenshot">`;
+      case 'link':
+        return `<a href="${esc(line.url)}">Open on dev server</a>`;
+    }
   });
-  if (input.imageUrl) lines.push(`> ![screenshot](${input.imageUrl})`);
-  lines.push(`> [Open on dev server](${input.url})`);
-  lines.push(
-    `<!-- bai-review v3 id=${input.id} pr=${input.pr} at=${input.at} -->`,
-  );
-  return lines.join('\n');
+  out.push(`<blockquote>${quoted.join('<br>')}</blockquote>`);
+  out.push(marker(input));
+  return out.join('\n');
 }
 
 /**
@@ -118,6 +197,8 @@ export interface BlockRenderOptions {
 
 export interface BuiltBlock {
   block: string;
+  /** The same block for a rich paste target; see `buildBlockHtml`. */
+  html: string;
   id: string;
   url: string;
   anchor: AnchorV3;
@@ -136,7 +217,7 @@ export function buildBlockFromCapture(
   const q = anchor.q ? `?${anchor.q}` : '';
   const origin = options.origin ?? location.origin;
   const url = `${origin}${anchor.p}${q}#bai=v3.${id}.${anchorB64}`;
-  const block = buildBlockText({
+  const input = {
     label: landmarkLabel(options.routeLabel, anchor),
     id,
     stack: capture.stack,
@@ -144,8 +225,16 @@ export function buildBlockFromCapture(
     url,
     pr: options.pr,
     at,
-  });
-  return { block, id, url, anchor, anchorB64, at };
+  };
+  return {
+    block: buildBlockText(input),
+    html: buildBlockHtml(input),
+    id,
+    url,
+    anchor,
+    anchorB64,
+    at,
+  };
 }
 
 export interface BuildBlockOptions extends BlockRenderOptions {

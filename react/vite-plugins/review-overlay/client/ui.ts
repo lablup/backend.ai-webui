@@ -20,13 +20,19 @@ const COMPOSE_WIDTH = 300;
 const COMPOSE_GAP = 10;
 const VIEWPORT_PAD = 8;
 
+/** One copy, two flavours: a markdown textarea and a rich editor. */
+export interface CopyPayload {
+  text: string;
+  html: string;
+}
+
 export interface OverlayUICallbacks {
   /**
    * Render the block for this note, SYNCHRONOUSLY — everything async was done
    * at pick time. `null` means the capture is not ready, which the composer
    * prevents by keeping the copy button disabled until it is.
    */
-  onBuildBlock: (text: string) => string | null;
+  onBuildBlock: (text: string) => CopyPayload | null;
   onComposeClosed: () => void;
   onEscape: () => void;
 }
@@ -301,15 +307,27 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   // ------------------------------------------------------------- clipboard
 
-  function legacyCopy(text: string): boolean {
+  /**
+   * The one-shot `copy` listener is what carries the HTML flavour: on its own
+   * `execCommand` would write the hidden textarea's plain text and nothing else.
+   */
+  function legacyCopy(text: string, html?: string): boolean {
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.style.cssText = 'position:fixed;opacity:0';
     root.appendChild(ta);
     ta.select();
+    const onCopy = (evt: ClipboardEvent) => {
+      if (!evt.clipboardData) return;
+      evt.preventDefault();
+      evt.clipboardData.setData('text/plain', text);
+      if (html) evt.clipboardData.setData('text/html', html);
+    };
+    document.addEventListener('copy', onCopy, true);
     try {
       return document.execCommand('copy');
     } finally {
+      document.removeEventListener('copy', onCopy, true);
       ta.remove();
     }
   }
@@ -318,22 +336,45 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
    * The plain-http gateway origin is not a secure context: no
    * `navigator.clipboard`, so `execCommand` is the only path — and it must run
    * inside the gesture, which is why the block is rendered synchronously.
+   * Every fallback ends at the plain flavour: a copy never writes nothing.
    */
-  function copyText(text: string): boolean | Promise<boolean> {
-    if (navigator.clipboard && window.isSecureContext) {
-      return navigator.clipboard.writeText(text).then(
-        () => true,
-        () => legacyCopy(text),
-      );
+  function copyText(text: string, html?: string): boolean | Promise<boolean> {
+    const plainOnly = (): boolean | Promise<boolean> =>
+      navigator.clipboard
+        ? navigator.clipboard.writeText(text).then(
+            () => true,
+            () => legacyCopy(text),
+          )
+        : legacyCopy(text);
+    if (!navigator.clipboard || !window.isSecureContext) {
+      return legacyCopy(text, html) || plainOnly();
     }
-    return legacyCopy(text);
+    if (
+      html &&
+      navigator.clipboard.write &&
+      typeof ClipboardItem === 'function'
+    ) {
+      try {
+        const item = new ClipboardItem({
+          'text/plain': new Blob([text], { type: 'text/plain' }),
+          'text/html': new Blob([html], { type: 'text/html' }),
+        });
+        return navigator.clipboard
+          .write([item])
+          .then(() => true)
+          .catch(() => legacyCopy(text, html) || plainOnly());
+      } catch {
+        // This browser's `ClipboardItem` refuses one of the types.
+      }
+    }
+    return plainOnly();
   }
 
   // ---------------------------------------------------------------- events
 
   function runCopy() {
     // Empty text is allowed — the block still carries label, stack and link.
-    let block: string | null;
+    let block: CopyPayload | null;
     try {
       block = callbacks.onBuildBlock(composeText.value.trim());
     } catch (e) {
@@ -346,7 +387,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       composeErr.style.display = 'block';
       return;
     }
-    const copied = copyText(block);
+    const copied = copyText(block.text, block.html);
     // Close only on success. A failed copy tells the reviewer to press ⌘⏎
     // again, so the composer and the note they typed have to still be there.
     const done = (ok: boolean) => {

@@ -2,8 +2,9 @@
  * Dev review overlay (FR-3811 write side, FR-3813 deep link).
  *
  * Pick an element with react-grab (⌘⌃C, or the same chord bound by the overlay
- * itself when react-grab is missing), type a note, press ⌘⏎: a self-describing `#bai=v3` markdown block lands on the clipboard, ready
- * to paste into a GitHub PR comment, the PR's Teams thread, or a Claude
+ * itself when react-grab is missing), type a note, press ⌘⏎: a self-describing
+ * `#bai=v3` block lands on the clipboard as both markdown and HTML, so it
+ * pastes right into a GitHub PR comment, the PR's Teams thread, or a Claude
  * prompt. Opening that block's link on this server is the read side: the hash
  * carries the whole anchor, so the element is pinned with no lookup at all.
  */
@@ -54,11 +55,12 @@ function boot() {
     onBuildBlock: (text) => {
       const target = ui.getComposeTarget();
       if (!target || capture?.target !== target) return null;
-      return buildBlockFromCapture(capture.value, {
+      const built = buildBlockFromCapture(capture.value, {
         text,
         pr: serverState?.pr ?? 0,
         routeLabel: currentRouteLabel(),
-      }).block;
+      });
+      return { text: built.block, html: built.html };
     },
     onComposeClosed: () => {
       capture = null;
