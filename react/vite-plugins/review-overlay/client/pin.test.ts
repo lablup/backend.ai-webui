@@ -21,6 +21,8 @@ const marker = () => host.shadowRoot?.querySelector('.pin') as HTMLElement;
 const card = () => host.shadowRoot?.querySelector('.card') as HTMLElement;
 const outlined = () =>
   document.querySelector<HTMLElement>('[data-testid="create"]')?.style.outline;
+const markbox = () => host.shadowRoot?.querySelector('.markbox') as HTMLElement;
+const marked = () => markbox().classList.contains('found');
 
 /** jsdom has no layout: the pin reads the element's box and the card's height. */
 const mountSized = (box: Partial<DOMRect>, cardHeight: number) => {
@@ -75,7 +77,7 @@ describe('createDeepLinkPin', () => {
       '<button data-testid="create">Create</button>',
     );
     expect(pin.locate()).toBe(true);
-    expect(outlined()).toContain('3px solid');
+    expect(marked()).toBe(true);
     expect(marker().classList.contains('found')).toBe(true);
     expect(card().textContent).toContain('Start › button');
     expect(card().textContent).toContain('c_zdv3rhz');
@@ -117,7 +119,7 @@ describe('createDeepLinkPin', () => {
     const second = document.querySelector('[data-testid="create"]');
     expect(second).not.toBe(first);
     expect(pin.locatedElement()).toBe(second);
-    expect(outlined()).toContain('3px solid');
+    expect(marked()).toBe(true);
     expect(marker().classList.contains('found')).toBe(true);
   });
 
@@ -367,26 +369,31 @@ describe('createDeepLinkPin', () => {
     expect(scrolled).toBe(after + 1);
   });
 
-  it('restores the element’s own outline when the pin is dismissed', () => {
+  // The pin used to write an outline onto the app's own element and put the
+  // old value back on dismiss. It draws on its own layer now and never
+  // restyles the page.
+  it('never touches the element’s own style, and clears on dismiss', () => {
     document.body.insertAdjacentHTML(
       'beforeend',
       '<button data-testid="create" style="outline: 1px dotted red">Create</button>',
     );
     show();
     pin.locate();
+    expect(outlined()).toBe('1px dotted red');
+    expect(marked()).toBe(true);
     pin.dismiss();
     expect(outlined()).toBe('1px dotted red');
+    expect(marked()).toBe(false);
     expect(pin.isShowing()).toBe(false);
   });
 
-  // A box select anchors to the FRAME it happened inside — outlining that
-  // would highlight something many times the region the reviewer dragged.
+  // A box select anchors to the FRAME it happened inside — marking that would
+  // highlight something many times the region the reviewer dragged.
   describe('a pin whose anchor carries a region', () => {
     const SEL = { x: 0.05, y: 0.1, w: 0.5, h: 0.25 };
-    const region = () =>
-      host.shadowRoot?.querySelector('.region') as HTMLElement;
+    const region = markbox;
 
-    it('draws the projected region instead of outlining the frame', () => {
+    it('draws the projected region instead of the whole frame', () => {
       mountSized(
         {
           left: 100,
@@ -406,7 +413,8 @@ describe('createDeepLinkPin', () => {
       expect(region().style.top).toBe('240px');
       expect(region().style.width).toBe('200px');
       expect(region().style.height).toBe('100px');
-      expect(outlined()).toBe('');
+      // A region has no corners of its own; react-grab's drag box has none either.
+      expect(region().style.borderRadius).toBe('0px');
       // The marker sits on the region, not on the frame's corner.
       expect(marker().style.left).toBe('126px');
     });
@@ -429,7 +437,7 @@ describe('createDeepLinkPin', () => {
       expect(region().classList.contains('found')).toBe(false);
     });
 
-    it('still outlines the element when there is no region', () => {
+    it('marks the element itself when there is no region', () => {
       mountSized(
         {
           left: 100,
@@ -443,8 +451,30 @@ describe('createDeepLinkPin', () => {
       );
       show();
       pin.locate();
-      expect(region().classList.contains('found')).toBe(false);
-      expect(outlined()).toContain('3px solid');
+      expect(marked()).toBe(true);
+      expect(region().style.width).toBe('400px');
+      expect(region().style.height).toBe('400px');
+    });
+  });
+
+  // The arriving overlay is the pick box the reviewer already saw: a thin
+  // stroke over a light fill, rounded to the element's own corners.
+  describe('the box it draws is react-grab’s style', () => {
+    it('strokes thin and fills, from the pick tokens', () => {
+      const css = host.shadowRoot?.querySelector('style')?.textContent ?? '';
+      expect(css).toContain('border: 1px solid var(--bai-review-pick-line)');
+      expect(css).toContain('background: var(--bai-review-pick-fill)');
+      expect(css).not.toContain('3px solid');
+    });
+
+    it('takes the element’s own border radius', () => {
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<button data-testid="create" style="border-radius: 6px">Create</button>',
+      );
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(markbox().style.borderRadius).toBe('6px');
     });
   });
 

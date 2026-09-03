@@ -1,11 +1,11 @@
 /**
  * The pin a `#bai=v3` link drops on its element: one marker, one card with the
- * quoted label the block carried, and a highlight on the element itself.
+ * quoted label the block carried, and a translucent box over the element.
  *
  * The card text comes off a link anyone can write, so it goes in through
- * `textContent` — never `innerHTML`. The highlight is state, not a one-shot
- * effect: a React re-render that replaces the anchored node re-applies it to
- * the new one rather than leaving the outline on a detached element.
+ * `textContent` — never `innerHTML`. The box is state, not a one-shot effect:
+ * a React re-render that replaces the anchored node re-draws it over the new
+ * one rather than leaving it on a detached element.
  */
 import { findAnchorTarget, quickFindTarget, textMatches } from './resolve.js';
 import { projectFraction } from './selection.js';
@@ -17,7 +17,7 @@ const SETTLE_MS = 1200;
 /** Card gap below/above the element, and its margin to the viewport edge. */
 const CARD_GAP = 10;
 const VIEWPORT_PAD = 8;
-/** Four 1 s beats of the prototype's arrival pulse, then back to the outline. */
+/** Four 1 s beats of the prototype's arrival pulse, then just the box. */
 const PULSE_MS = 4200;
 /** Escalated text scans a lost element gets before the pin stops looking. */
 const MAX_MISSED_SCANS = 3;
@@ -66,13 +66,14 @@ const STYLE = `
   }
   .card .close { right: 4px; }
   .card .locate { right: 24px; }
-  /* A box select pinned a REGION, not an element: an outline on the frame
-     would highlight something many times its size. */
-  .region {
+  /* The pick box's own style, so arriving on a link looks like the pick that
+     made it: a thin stroke over a light fill, on our layer — never the app's. */
+  .markbox {
     position: absolute; display: none; pointer-events: none;
-    border: 3px solid var(--bai-review-accent); border-radius: 4px;
+    border: 1px solid var(--bai-review-pick-line);
+    background: var(--bai-review-pick-fill);
   }
-  .region.found { display: block; }
+  .markbox.found { display: block; }
 `;
 
 export interface DeepLinkPinOptions {
@@ -113,20 +114,18 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   locateButton.textContent = '📍';
   locateButton.title = 'Scroll back to this element';
   card.append(close, locateButton, label, sub);
-  const regionBox = document.createElement('div');
-  regionBox.className = 'region';
-  layer.append(regionBox, marker, card);
+  const markBox = document.createElement('div');
+  markBox.className = 'markbox';
+  layer.append(markBox, marker, card);
   root.append(style, layer);
 
   let target: DeepLinkPinTarget | null = null;
   let located: Element | null = null;
-  let outlined: HTMLElement | null = null;
-  let saved: { outline: string; offset: string } | null = null;
   /** Ancestors that can hide the element without moving its own rect. */
   let clippers: Element[] = [];
   /** Escalated scans in a row that found nothing — the page moved on. */
   let missedScans = 0;
-  /** One arrival pulse per link — the outline is what stays. */
+  /** One arrival pulse per link — the box is what stays. */
   let pulsed = false;
   let pulseTimer = 0;
 
@@ -175,37 +174,17 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     return new DOMRect(r.left, r.top, r.width, r.height);
   }
 
-  function clearHighlight() {
-    if (outlined && saved) {
-      outlined.style.outline = saved.outline;
-      outlined.style.outlineOffset = saved.offset;
-    }
-    outlined = null;
-    saved = null;
-    regionBox.classList.remove('found');
-  }
-
-  function highlight(node: Element) {
-    // A region is drawn in `place()`, off the frame's live box, so it follows
-    // a re-layout the way an element outline follows its element.
-    if (target?.anchor.sel) return;
-    if (outlined === node) return;
-    clearHighlight();
-    const element = node as HTMLElement;
-    saved = {
-      outline: element.style.outline,
-      offset: element.style.outlineOffset,
-    };
-    // A page element, outside the shadow root: the accent var does not reach it.
-    element.style.outline = '3px solid #ff0de7';
-    element.style.outlineOffset = '2px';
-    outlined = element;
+  /** react-grab rounds its box to the element's own corners; so do we. */
+  function cornerRadius(node: Element): string {
+    if (target?.anchor.sel) return '0px';
+    const view = node.ownerDocument?.defaultView;
+    return view?.getComputedStyle(node).borderRadius || '0px';
   }
 
   function hide() {
     marker.classList.remove('found');
     card.classList.remove('found');
-    regionBox.classList.remove('found');
+    markBox.classList.remove('found');
   }
 
   function place() {
@@ -236,15 +215,14 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     if (measured && (offscreen || clipped)) return hide();
     marker.classList.add('found');
     card.classList.add('found');
-    if (target?.anchor.sel) {
-      regionBox.classList.add('found');
-      Object.assign(regionBox.style, {
-        left: `${box.left}px`,
-        top: `${box.top}px`,
-        width: `${box.width}px`,
-        height: `${box.height}px`,
-      });
-    }
+    markBox.classList.add('found');
+    Object.assign(markBox.style, {
+      left: `${box.left}px`,
+      top: `${box.top}px`,
+      width: `${box.width}px`,
+      height: `${box.height}px`,
+      borderRadius: cornerRadius(located),
+    });
     marker.style.left = `${box.left + 6}px`;
     marker.style.top = `${box.top + 6}px`;
     card.style.left = `${Math.max(8, Math.min(box.left, vw - 340))}px`;
@@ -322,8 +300,6 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       next = full ?? next;
     }
     setLocated(next);
-    if (located) highlight(located);
-    else clearHighlight();
     place();
   }
 
@@ -356,7 +332,6 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     target = null;
     setLocated(null);
     missedScans = 0;
-    clearHighlight();
     place();
   }
 
@@ -378,7 +353,7 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
 
     /**
      * One attempt at the full resolution ladder. True once the element is on
-     * the page — which is when the pin appears and the highlight fires.
+     * the page — which is when the pin and its box appear.
      */
     locate(): boolean {
       if (!target) return false;
@@ -390,7 +365,6 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       if (!found) return false;
       setLocated(found);
       missedScans = 0;
-      highlight(found);
       place();
       found.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
       placeUntilSettled();
