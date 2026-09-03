@@ -76,12 +76,14 @@ describe('buildBlockText', () => {
     at: '2026-08-31T09:00:00Z',
   };
 
-  it('leads with the verbatim note, then a separator, then the generated lines', () => {
+  // The note is the comment's own prose: it must not read as a quote of
+  // something someone else said.
+  it('leads with the verbatim UNQUOTED note, then the quoted generated lines', () => {
     expect(buildBlockText(base)).toBe(
       [
-        '> The label is cut off',
-        '> on narrow screens.',
-        '>',
+        'The label is cut off',
+        'on narrow screens.',
+        '',
         '> 📍 **Sessions › login-button › button "Login"** · `c_abcdefg`',
         '> ⚛️ in LoginButton (at LoginView.tsx:12)',
         '>   in LoginView',
@@ -91,8 +93,6 @@ describe('buildBlockText', () => {
     );
   });
 
-  // The separator is what makes the two halves readable apart, so it costs a
-  // line only when there are two halves.
   it('still produces a complete block when the note is empty', () => {
     const block = buildBlockText({ ...base, text: '', stack: [] });
     expect(block).toBe(
@@ -104,18 +104,26 @@ describe('buildBlockText', () => {
     );
   });
 
-  it('keeps a one-line note on one line, with one separator', () => {
+  it('keeps a one-line note on one line, with one blank line under it', () => {
     expect(
       buildBlockText({ ...base, text: 'Pin is 8px off.', stack: [] }),
     ).toBe(
       [
-        '> Pin is 8px off.',
-        '>',
+        'Pin is 8px off.',
+        '',
         '> 📍 **Sessions › login-button › button "Login"** · `c_abcdefg`',
         '> [Open on dev server](https://fr-3811.localhost:1355/session/start#bai=v3.c_abcdefg.PAYLOAD)',
         '<!-- bai-review v3 id=c_abcdefg pr=9330 at=2026-08-31T09:00:00Z -->',
       ].join('\n'),
     );
+  });
+
+  // Markdown treats `>` as prose here, so a note that starts with one is the
+  // reviewer quoting someone — not the block quoting the reviewer.
+  it('does not touch a note that already contains markdown', () => {
+    expect(
+      buildBlockText({ ...base, text: '> not our quote\n**bold**', stack: [] }),
+    ).toContain('> not our quote\n**bold**\n\n> 📍');
   });
 
   it('renders the reserved image slot only when one is supplied', () => {
