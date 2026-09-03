@@ -68,13 +68,13 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
  */
 export const useSiderThemeReversed = (): boolean => {
   'use memo';
-  const { appearance } = useCustomThemeConfig();
+  const { rawThemeConfig } = useCustomThemeConfig();
   const { mode } = useTheme();
   const isParentDark = mode === 'dark';
 
   return (
-    (isParentDark && appearance?.theme?.siderMode === 'light') ||
-    (!isParentDark && appearance?.theme?.siderMode === 'dark')
+    (isParentDark && rawThemeConfig?.theme?.siderMode === 'light') ||
+    (!isParentDark && rawThemeConfig?.theme?.siderMode === 'dark')
   );
 };
 

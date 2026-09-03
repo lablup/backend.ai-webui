@@ -114,10 +114,10 @@ export type UseCustomThemeConfigResult = {
   /**
    * The applied v2 appearance document (or the preview draft in branding
    * preview mode). `undefined` until the bootstrap has settled. Theme
-   * providers pass `appearance.theme` to `resolveRoleTheme`; branding
-   * consumers read `appearance.branding`.
+   * providers pass `rawThemeConfig.theme` to `resolveRoleTheme`; branding
+   * consumers read `rawThemeConfig.branding`.
    */
-  appearance: BAIAppearanceConfig | undefined;
+  rawThemeConfig: BAIAppearanceConfig | undefined;
 };
 
 /**
@@ -129,7 +129,7 @@ export type UseCustomThemeConfigResult = {
  */
 export const useCustomThemeConfig = (): UseCustomThemeConfigResult => {
   'use memo';
-  const appearance = useRawCustomThemeConfig();
+  const rawThemeConfig = useRawCustomThemeConfig();
   const [storedFamily, setStoredFamily] = useLocalStorageGlobalState<
     string | undefined
   >(THEME_FAMILY_STORAGE_KEY, undefined);
@@ -137,7 +137,9 @@ export const useCustomThemeConfig = (): UseCustomThemeConfigResult => {
     defaultValue: false,
   });
 
-  const families = resolveThemeFamilyCatalog(appearance);
+  const families = resolveThemeFamilyCatalog(rawThemeConfig);
+
+  console.log('#', families);
 
   // Resolution order: user choice -> `default`. Fall back to `default` if the
   // requested key is absent (e.g. operator removed a family the user had
@@ -162,6 +164,6 @@ export const useCustomThemeConfig = (): UseCustomThemeConfigResult => {
     activeThemeFamily: activeFamily,
     setActiveThemeFamily: setStoredFamily,
     themeFamilies: families,
-    appearance,
+    rawThemeConfig,
   };
 };
