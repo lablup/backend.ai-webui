@@ -44,30 +44,8 @@ type AssignRoleUserSelectProps = Pick<
   'value' | 'onChange' | 'placeholder' | 'status' | 'disabled'
 >;
 
-/**
- * Owns the user options query behind its own Suspense boundary, so mounting
- * the modal never suspends the tab around it (FR-3725).
- */
-const AssignRoleUserSelect: React.FC<AssignRoleUserSelectProps> = (props) => {
-  'use memo';
-  return (
-    <Suspense
-      fallback={
-        <BAISelect
-          mode="multiple"
-          style={{ width: '100%' }}
-          placeholder={props.placeholder}
-          loading
-          disabled
-        />
-      }
-    >
-      <AssignRoleUserSelectOptions {...props} />
-    </Suspense>
-  );
-};
-
-const AssignRoleUserSelectOptions: React.FC<AssignRoleUserSelectProps> = ({
+/** Owns the user options query; render it under a Suspense boundary. */
+const AssignRoleUserSelect: React.FC<AssignRoleUserSelectProps> = ({
   onChange,
   ...selectProps
 }) => {
@@ -308,26 +286,40 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">
-        <Form.Item
-          name="userIds"
-          label={t('credential.Users')}
-          rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+        <Suspense
+          fallback={
+            <Form.Item label={t('credential.Users')}>
+              <BAISelect
+                mode="multiple"
+                style={{ width: '100%' }}
+                placeholder={t('rbac.SelectUsers')}
+                loading
+                disabled
+              />
+            </Form.Item>
+          }
         >
-          <AssignRoleUserSelect
-            placeholder={t('rbac.SelectUsers')}
-            onChange={(value: string[], options) => {
-              _.castArray(options ?? []).forEach((option: any) => {
-                if (option?.value !== undefined) {
-                  userLabelsRef.current.set(
-                    String(option.value),
-                    String(option.label ?? option.value),
-                  );
-                }
-              });
-              setSelectedUserIds(value);
-            }}
-          />
-        </Form.Item>
+          <Form.Item
+            name="userIds"
+            label={t('credential.Users')}
+            rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+          >
+            <AssignRoleUserSelect
+              placeholder={t('rbac.SelectUsers')}
+              onChange={(value: string[], options) => {
+                _.castArray(options ?? []).forEach((option: any) => {
+                  if (option?.value !== undefined) {
+                    userLabelsRef.current.set(
+                      String(option.value),
+                      String(option.label ?? option.value),
+                    );
+                  }
+                });
+                setSelectedUserIds(value);
+              }}
+            />
+          </Form.Item>
+        </Suspense>
       </Form>
       {/* Per-user errors of a partially-failed assignment (FR-3357). The
           assign modal (and the remaining failed selection) stays open behind
