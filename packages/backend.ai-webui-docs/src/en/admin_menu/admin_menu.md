@@ -1223,7 +1223,9 @@ Images tab of the Environments page. In the tab, meta information of all images
 currently in the Backend.AI server is displayed. You can check information such
 as registry, architecture, namespace, image name, digest, and minimum
 resources required for each image. For images downloaded to one or more agent
-nodes, there will be an `installed` tag in the Status column.
+nodes, there will be an `installed` tag in the Status column. Private images
+additionally show a `Private` tag in the Status column, and a private image
+cannot be selected in the session launcher even when it is installed.
 
 :::note
 The feature to install images by selecting specific agents is currently
