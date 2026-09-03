@@ -1,4 +1,4 @@
-/** A seed declared per scheme; `dark` is the DECLARED value, pre-transform. */
+/** A seed declared per scheme; both sides are applied as declared. */
 export interface BrandSeedPair {
     light: string;
     dark: string;
@@ -12,14 +12,7 @@ export type BaiCustomTokenSeeds = {
     success?: BrandSeedPair;
     warning?: BrandSeedPair;
 };
-/**
- * Map a declared dark seed to the value antd's darkAlgorithm rendered for it:
- * the measured table for the shipped seeds, the vendored palette for any
- * other 6-digit hex (the same computation the shim ran live), and verbatim
- * passthrough for anything the generator cannot parse.
- */
-export declare const resolveDarkSeed: (seed: string) => string;
-/** Resolve tuple = [light seed, darkAlgorithm output of the dark seed]. */
+/** The declared pair as a `[light, dark]` tuple. */
 export declare const toSeedTuple: (pair: BrandSeedPair) => [string, string];
 /** antd's neutral text/fill alpha ramp and the preset steps still consumed. */
 export declare const BAI_SELF_COLOR_TOKENS: Record<string, [string, string]>;
