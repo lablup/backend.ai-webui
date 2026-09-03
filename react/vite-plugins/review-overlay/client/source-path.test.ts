@@ -1,4 +1,4 @@
-import { relativizeSourcePaths } from './source-path';
+import { relativizeSourceLocation, relativizeSourcePaths } from './source-path';
 import { describe, expect, it } from 'vitest';
 
 const ROOT =
@@ -42,15 +42,43 @@ describe('relativizeSourcePaths', () => {
     );
   });
 
-  it('passes the text through when the server named no root', () => {
+  // No root means no way to tell a repository path from a home directory, and
+  // the block is a public PR comment.
+  it('drops the frame’s source when the server named no root', () => {
     const line = `  in BAIFlex (at ${ROOT}/packages/backend.ai-ui/src/x.tsx)`;
-    expect(relativizeSourcePaths(line, null)).toBe(line);
-    expect(relativizeSourcePaths(line, undefined)).toBe(line);
-    expect(relativizeSourcePaths(line, '')).toBe(line);
+    for (const root of [null, undefined, '']) {
+      expect(relativizeSourcePaths(line, root)).toBe('  in BAIFlex');
+    }
+  });
+
+  it('drops an app frame’s source too, rather than guessing at it', () => {
+    expect(
+      relativizeSourcePaths(
+        '  in WebUIHeader (at /src/components/MainLayout/WebUIHeader.tsx)',
+        null,
+      ),
+    ).toBe('  in WebUIHeader');
   });
 
   it('does not treat the root as a regex', () => {
     const root = '/home/a+b/(x)';
     expect(relativizeSourcePaths(`${root}/src/a.tsx`, root)).toBe('src/a.tsx');
+  });
+});
+
+describe('relativizeSourceLocation', () => {
+  it('makes the component’s own source repository-relative', () => {
+    expect(
+      relativizeSourceLocation(`${ROOT}/react/src/a.tsx:79:26`, ROOT),
+    ).toBe('react/src/a.tsx:79:26');
+  });
+
+  // A bare path has no component name to fall back on, so there is nothing
+  // safe to keep: the anchor carries the component without a source.
+  it('gives back nothing when the server named no root', () => {
+    const location = `${ROOT}/react/src/a.tsx:79:26`;
+    expect(relativizeSourceLocation(location, null)).toBeUndefined();
+    expect(relativizeSourceLocation(location, undefined)).toBeUndefined();
+    expect(relativizeSourceLocation(location, '')).toBeUndefined();
   });
 });

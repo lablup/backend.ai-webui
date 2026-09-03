@@ -365,8 +365,9 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       note.textContent = next.anchor.n ?? '';
       trunc.classList.toggle('shown', next.anchor.nt === 1 && !!next.anchor.n);
       label.textContent = next.label;
-      sub.textContent = next.anchor.c
-        ? `${next.id} · ${next.anchor.c.name} (${next.anchor.c.src})`
+      const component = next.anchor.c;
+      sub.textContent = component
+        ? `${next.id} · ${component.name}${component.src ? ` (${component.src})` : ''}`
         : next.id;
     },
 

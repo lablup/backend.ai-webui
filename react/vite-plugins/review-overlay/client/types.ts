@@ -16,8 +16,11 @@ export interface AnchorRect {
 export interface AnchorComponent {
   /** `getSource`'s owner component, e.g. `LoginView`. */
   name: string;
-  /** Source location, e.g. `src/components/LoginView.tsx:120:8`. */
-  src: string;
+  /**
+   * Source location, e.g. `src/components/LoginView.tsx:120:8`. Absent when
+   * the server named no root: an absolute path is the driver's own directory.
+   */
+  src?: string;
   /** `getDisplayName` at pick time — the only name `resolve.ts` compares. */
   dn?: string;
 }

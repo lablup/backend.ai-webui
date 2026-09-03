@@ -52,7 +52,8 @@ export function isAnchorV3(value: unknown): value is AnchorV3 {
   if (a.c !== undefined) {
     const c = a.c as Record<string, unknown> | null;
     if (!c || typeof c !== 'object') return false;
-    if (!isText(c.name, NAME_MAX) || !isText(c.src, NAME_MAX)) return false;
+    if (!isText(c.name, NAME_MAX)) return false;
+    if (c.src !== undefined && !isText(c.src, NAME_MAX)) return false;
     if (c.dn !== undefined && !isText(c.dn, NAME_MAX)) return false;
   }
   return true;

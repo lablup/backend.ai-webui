@@ -105,7 +105,26 @@ function boot() {
     sourceRoot: () => serverState?.root,
   });
 
+  /**
+   * `/__review/state` carries the repository root every source path is
+   * relativized against, so the fetch is a gate, not a race: a pick that
+   * outruns it would otherwise copy the driver's absolute worktree path.
+   * A failed fetch leaves the root unknown, and `source-path.ts` then drops
+   * the location rather than leaking it.
+   */
+  const stateReady = fetch('/__review/state')
+    .then((response) => response.json())
+    .then((state: ReviewServerState) => {
+      serverState = state;
+    })
+    .catch(() => {
+      // The PR number stays 0; the block is still usable.
+      return undefined;
+    });
+
   async function prepare(element: Element, anchor: AnchorV3) {
+    await stateReady;
+    if (ui.getComposeTarget() !== element) return;
     const [stack, component] = await Promise.all([
       picker.getStack(element),
       picker.getComponent(element),
@@ -145,16 +164,6 @@ function boot() {
   /** The app publishes this in dev; without it the pathname is the label. */
   const currentRouteLabel = () =>
     resolveRouteLabel(location.pathname, window.__BAI_REVIEW__?.routeLabel);
-
-  fetch('/__review/state')
-    .then((response) => response.json())
-    .then((state: ReviewServerState) => {
-      serverState = state;
-    })
-    .catch(() => {
-      // The PR number stays 0; the block is still usable.
-      return undefined;
-    });
 
   picker.watchForReactGrab();
 

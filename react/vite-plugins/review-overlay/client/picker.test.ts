@@ -354,11 +354,28 @@ describe('source paths are repository-relative', () => {
     );
   });
 
-  it('leaves everything verbatim until the server names a root', async () => {
-    const line = `  in BAIFlex (at ${ROOT}/packages/backend.ai-ui/src/x.tsx)`;
-    grab.getStackContext = () => Promise.resolve(line);
+  // `sourceRoot()` answers null until `/__review/state` does — and forever if
+  // it fails — so this is the state a pick can genuinely land in.
+  it('keeps the component name and drops the path with no root', async () => {
+    grab.getStackContext = () =>
+      Promise.resolve(`  in BAIFlex (at ${ROOT}/packages/backend.ai-ui/x.tsx)`);
     const picker = make(callbacks);
 
-    expect(await picker.getStack(document.body)).toEqual([line]);
+    expect(await picker.getStack(document.body)).toEqual(['  in BAIFlex']);
+  });
+
+  it('omits the component source entirely with no root', async () => {
+    grab.getSource = () =>
+      Promise.resolve({
+        componentName: 'BAIFlex',
+        filePath: `${ROOT}/packages/backend.ai-ui/src/components/BAIFlex.tsx`,
+        lineNumber: 79,
+        columnNumber: 26,
+      });
+    const picker = make(callbacks);
+
+    const component = await picker.getComponent(document.body);
+    expect(component?.name).toBe('BAIFlex');
+    expect(component?.src).toBeUndefined();
   });
 });

@@ -11,7 +11,10 @@
  * the overlay has no button and would otherwise have no entry point at all.
  */
 import { resolveDragPick, type Box } from './selection.js';
-import { relativizeSourcePaths } from './source-path.js';
+import {
+  relativizeSourceLocation,
+  relativizeSourcePaths,
+} from './source-path.js';
 import type { AnchorComponent } from './types.js';
 import type { ReactGrabAPI } from 'react-grab';
 
@@ -300,12 +303,13 @@ export function createPicker(callbacks: PickerCallbacks) {
         typeof grab.getDisplayName === 'function'
           ? grab.getDisplayName(element)
           : null;
+      const src = relativizeSourceLocation(
+        `${source.filePath}${line}${column}`,
+        callbacks.sourceRoot(),
+      );
       return {
         name: source.componentName,
-        src: relativizeSourcePaths(
-          `${source.filePath}${line}${column}`,
-          callbacks.sourceRoot(),
-        ),
+        ...(src ? { src } : {}),
         ...(dn ? { dn } : {}),
       };
     } catch {
