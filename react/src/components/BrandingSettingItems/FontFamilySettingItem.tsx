@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { ANTD_DEFAULT_FONT_FAMILY } from '../../helper/defaultDesignTokens';
+import { getStaticAppearanceConfig } from '../../helper/customThemeConfig';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { BAIUncontrolledInput } from 'backend.ai-ui';
 
@@ -11,9 +11,13 @@ const FontFamilySettingItem: React.FC = () => {
 
   const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
 
+  // Draft first, then the shipped theme.json — the same rule as the color
+  // pickers. Neither declaring a font means the app renders Astryx's own, so
+  // the field is simply empty rather than showing a made-up default.
   const fontFamily =
     getDefaultThemeValue<string>('theme.fontFamily') ??
-    ANTD_DEFAULT_FONT_FAMILY;
+    getStaticAppearanceConfig()?.theme?.fontFamily ??
+    '';
 
   return (
     <BAIUncontrolledInput
