@@ -123,7 +123,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
               whiteSpace: 'pre-wrap',
               ...(isOneLine
                 ? {
-                    backgroundColor: token('--bai-color-bg-container-disabled'),
+                    backgroundColor: token('--color-bg-container-disabled'),
                     border: `1px solid ${token('--color-border-emphasized')}`,
                     padding: '2px 6px',
                     borderRadius: token('--radius-none'),
@@ -222,7 +222,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
               textAlign: 'left',
               fontWeight: token('--font-weight-semibold'),
               fontSize: token('--font-size-sm'),
-              backgroundColor: token('--bai-color-fill-tertiary'),
+              backgroundColor: token('--color-fill-tertiary'),
               borderBottom: `${token('--border-width')} solid ${token('--color-border-emphasized')}`,
               borderRight: `${token('--border-width')} solid ${token('--color-border')}`,
               color: token('--color-text-secondary'),

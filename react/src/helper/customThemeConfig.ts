@@ -17,7 +17,7 @@ export type BAIThemeSeedValue = string | [light: string, dark: string];
 export type BAIThemeSeeds = {
   /** Brand accent (was antd `colorPrimary`). Also seeds the brand role. */
   accent?: BAIThemeSeedValue;
-  /** Link color (was `colorLink`); rendered as `--bai-color-link`. */
+  /** Link color (was `colorLink`); rendered as `--color-link`. */
   link?: BAIThemeSeedValue;
   /** Info color (was `colorInfo`); also seeds the admin role accent. */
   info?: BAIThemeSeedValue;

@@ -58,7 +58,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
           <Text
             style={{
               fontSize: token('--font-size-4xl'),
-              color: color ?? token('--bai-primary-5'),
+              color: color ?? token('--primary-5'),
             }}
           >
             {value}

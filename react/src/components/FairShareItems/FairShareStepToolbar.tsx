@@ -94,7 +94,7 @@ const FairShareStepToolbar: React.FC<FairShareStepToolbarProps> = ({
               <BAIButton
                 icon={
                   <ChartNoAxesCombined
-                    style={{ color: token('--bai-color-info') }}
+                    style={{ color: token('--color-info') }}
                   />
                 }
                 onClick={selection.onShowUsage}
@@ -107,7 +107,7 @@ const FairShareStepToolbar: React.FC<FairShareStepToolbarProps> = ({
             >
               <BAIButton
                 icon={
-                  <SquarePenIcon style={{ color: token('--bai-color-info') }} />
+                  <SquarePenIcon style={{ color: token('--color-info') }} />
                 }
                 onClick={selection.onBulkEdit}
               />

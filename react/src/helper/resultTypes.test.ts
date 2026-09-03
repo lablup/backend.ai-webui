@@ -24,8 +24,7 @@ describe('resultTypes utilities', () => {
 
     it('should narrow type correctly for successful result', () => {
       const result = { ok: true, value: 42 } as
-        | { ok: true; value: number }
-        | { ok: false; errors: string[] };
+        { ok: true; value: number } | { ok: false; errors: string[] };
 
       if (isOkResult(result)) {
         // Type should be narrowed to { ok: true; value: number }
@@ -60,8 +59,7 @@ describe('resultTypes utilities', () => {
 
     it('should narrow type correctly for failed result', () => {
       const result = { ok: false, errors: ['network error'] } as
-        | { ok: true; value: string }
-        | { ok: false; errors: string[] };
+        { ok: true; value: string } | { ok: false; errors: string[] };
 
       if (isErrorResult(result)) {
         // Type should be narrowed to { ok: false; errors: string[] }
@@ -163,8 +161,7 @@ describe('resultTypes utilities', () => {
   describe('Type extraction utilities', () => {
     it('should correctly extract success value type', () => {
       type TestResult =
-        | { ok: true; value: string }
-        | { ok: false; errors: string[] };
+        { ok: true; value: string } | { ok: false; errors: string[] };
       type ValueType = ExtractResultValue<TestResult>;
 
       // This is a type-level test - if it compiles, the type is correct
@@ -174,8 +171,7 @@ describe('resultTypes utilities', () => {
 
     it('should correctly extract error type', () => {
       type TestResult =
-        | { ok: true; value: number }
-        | { ok: false; errors: Error[] };
+        { ok: true; value: number } | { ok: false; errors: Error[] };
       type ErrorType = ExtractResultError<TestResult>;
 
       // This is a type-level test - if it compiles, the type is correct
@@ -222,8 +218,7 @@ describe('resultTypes utilities', () => {
 
     it('should handle nullable result values', () => {
       type NullableResult =
-        | { ok: true; value: string | null }
-        | { ok: false; errors: string[] };
+        { ok: true; value: string | null } | { ok: false; errors: string[] };
 
       const nullValueResult: NullableResult = {
         ok: true,

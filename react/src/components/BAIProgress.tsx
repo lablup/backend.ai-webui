@@ -47,7 +47,7 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             fontSize: token('--font-size-2xl'),
             color: _.isString(baiProgressProps.strokeColor)
               ? baiProgressProps.strokeColor
-              : token('--bai-primary-5'),
+              : token('--primary-5'),
             alignContent: 'end',
           }}
         >
@@ -57,7 +57,7 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
       <BAIFlex
         style={{
           padding: 1,
-          backgroundColor: token('--bai-color-fill'),
+          backgroundColor: token('--color-fill'),
           height: _.isNumber(baiProgressProps.size)
             ? baiProgressProps.size
             : token('--spacing-4'),
@@ -76,8 +76,8 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             left: 0,
             top: 0,
             backgroundColor: _.isString(baiProgressProps.strokeColor)
-              ? (baiProgressProps.strokeColor ?? token('--bai-primary-5'))
-              : token('--bai-primary-5'),
+              ? (baiProgressProps.strokeColor ?? token('--primary-5'))
+              : token('--primary-5'),
             zIndex: 0,
             overflow: 'hidden',
           }}
@@ -89,8 +89,8 @@ const BAIProgress: React.FC<BAIProgressProps> = ({
             <Text
               style={{
                 color: _.isString(baiProgressProps.strokeColor)
-                  ? (baiProgressProps.strokeColor ?? token('--bai-primary-5'))
-                  : token('--bai-primary-5'),
+                  ? (baiProgressProps.strokeColor ?? token('--primary-5'))
+                  : token('--primary-5'),
               }}
             >
               {used}

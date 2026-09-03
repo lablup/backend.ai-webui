@@ -43,10 +43,10 @@ const BAIArtifactRevisionDownloadButton = ({
       style={{
         color: isDisabled
           ? token('--color-text-disabled')
-          : token('--bai-color-info'),
+          : token('--color-info'),
         background: isDisabled
-          ? token('--bai-color-bg-container-disabled')
-          : token('--bai-color-info-bg'),
+          ? token('--color-bg-container-disabled')
+          : token('--color-info-bg'),
       }}
       {..._.omit(buttonProps, ['disabled', 'loading'])}
     />

@@ -218,7 +218,7 @@ const BAIImportArtifactModal = ({
                   title={t(
                     'comp:BAIImportArtifactModal.OnlySCANNEDVersionsCanBePulled',
                   )}
-                  iconProps={{ style: { color: token('--bai-color-info') } }}
+                  iconProps={{ style: { color: token('--color-info') } }}
                   style={{ marginRight: token('--spacing-2') }}
                 />
               }

@@ -341,9 +341,7 @@ const ProjectStoragePermissionTable: React.FC<
               >
                 <BAIButton
                   icon={
-                    <SquarePenIcon
-                      style={{ color: token('--bai-color-info') }}
-                    />
+                    <SquarePenIcon style={{ color: token('--color-info') }} />
                   }
                   onClick={() =>
                     setEditingRows(
@@ -454,7 +452,7 @@ const ProjectStoragePermissionTable: React.FC<
                 if (domainPermissions.has(permKey)) {
                   return (
                     <CircleCheck
-                      style={{ color: token('--bai-preset-purple-5') }}
+                      style={{ color: token('--preset-purple-5') }}
                       size="1em"
                     />
                   );

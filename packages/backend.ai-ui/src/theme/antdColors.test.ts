@@ -4,7 +4,7 @@
 
  Parity of the vendored `@ant-design/colors` port against a frozen capture of
  the upstream package (`antdColorsFixture.ts`). The Astryx theme recipe
- derives every brand-dependent `--bai-*` token and the dark-seed transform
+ derives every brand-dependent custom token
  from this port, so a drift here is a visible brand-color drift.
  */
 import {

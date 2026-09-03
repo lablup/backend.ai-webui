@@ -32,7 +32,7 @@
  for the JS side.
 */
 :where(:root) {
-  --bai-color-text-description: light-dark(
+  --color-text-description: light-dark(
     rgba(0, 0, 0, 0.45),
     rgba(255, 255, 255, 0.45)
   );
@@ -207,7 +207,7 @@
   margin-inline-start: var(--bai-form-item-mark-gap, var(--spacing-1, 4px));
   color: var(
     --bai-form-item-description-color,
-    var(--bai-color-text-description, rgba(0, 0, 0, 0.45))
+    var(--color-text-description, rgba(0, 0, 0, 0.45))
   );
 }
 
@@ -340,4 +340,3 @@
  since antd is no longer a dependency of this repo at all; CSS, unlike JS,
  carries its text into the minified bundle regardless.
 */
-

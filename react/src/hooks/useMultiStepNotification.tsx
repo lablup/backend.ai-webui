@@ -17,12 +17,7 @@ import { useTranslation } from 'react-i18next';
  * - `cancelled`: Step was cancelled before completion
  */
 export type StepStatus =
-  | 'idle'
-  | 'pending'
-  | 'resolved'
-  | 'rejected'
-  | 'warned'
-  | 'cancelled';
+  'idle' | 'pending' | 'resolved' | 'rejected' | 'warned' | 'cancelled';
 
 /**
  * A non-fatal error that stops the step sequence but is displayed as a
@@ -230,12 +225,7 @@ export interface MultiStepNotificationConfig {
  * Overall status of the multi-step notification sequence.
  */
 export type OverallStatus =
-  | 'idle'
-  | 'running'
-  | 'completed'
-  | 'failed'
-  | 'warned'
-  | 'cancelled';
+  'idle' | 'running' | 'completed' | 'failed' | 'warned' | 'cancelled';
 
 /**
  * Aggregated runtime state of the multi-step notification sequence.
