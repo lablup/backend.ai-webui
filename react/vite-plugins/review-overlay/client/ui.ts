@@ -68,25 +68,20 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       --bai-review-text: var(--color-text-primary, #0a1317);
       --bai-review-text-dim: var(--color-text-secondary, #4e606f);
       --bai-review-border: var(--color-border-emphasized, #ccd3db);
-      --bai-review-accent: var(--color-icon-orange, #e9690b);
-      --bai-review-accent-soft: color-mix(in srgb, var(--bai-review-accent) 35%, transparent);
-      --bai-review-on-accent: var(--color-on-accent, #fff);
+      /* The pin's own colour, not a theme token — no Astryx --color-* carries
+         it. Dark on-accent: white measures 3.25:1 on it, #0a1317 5.78:1. */
+      --bai-review-accent: #ff0de7;
+      --bai-review-accent-rgb: 255, 13, 231;
+      --bai-review-accent-soft: rgba(var(--bai-review-accent-rgb), .35);
+      --bai-review-on-accent: #0a1317;
       --bai-review-inverted: var(--color-background-inverted, #0a1317);
       --bai-review-on-inverted: var(--color-background-surface, #fff);
       --bai-review-error: var(--color-text-red, #c0392b);
       --bai-review-shadow: var(--color-shadow, rgba(5, 54, 89, .25));
-      /* react-grab 0.1.50's own selection box, so the pick reads as one tool:
-         1px stroke at α.5 over an α.08 fill of rgb(210, 57, 192). */
-      --bai-review-pick-line: rgba(210, 57, 192, .5);
-      --bai-review-pick-fill: rgba(210, 57, 192, .08);
-    }
-    /* react-grab picks the wider gamut when the display has it, so follow it —
-       otherwise its hover box and ours are different magentas on the same Mac. */
-    @media (color-gamut: p3) {
-      :host {
-        --bai-review-pick-line: color(display-p3 0.84 0.19 0.78 / .5);
-        --bai-review-pick-fill: color(display-p3 0.84 0.19 0.78 / .08);
-      }
+      /* react-grab 0.1.50's box STYLE — 1px stroke at α.5 over an α.08 fill —
+         in our accent, so every surface of this tool is the one colour. */
+      --bai-review-pick-line: rgba(var(--bai-review-accent-rgb), .5);
+      --bai-review-pick-fill: rgba(var(--bai-review-accent-rgb), .08);
     }
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
     .btn {

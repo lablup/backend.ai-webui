@@ -70,7 +70,7 @@ const STYLE = `
      would highlight something many times its size. */
   .region {
     position: absolute; display: none; pointer-events: none;
-    border: 3px solid var(--color-icon-orange, #e9690b); border-radius: 4px;
+    border: 3px solid var(--bai-review-accent); border-radius: 4px;
   }
   .region.found { display: block; }
 `;
@@ -196,7 +196,8 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       outline: element.style.outline,
       offset: element.style.outlineOffset,
     };
-    element.style.outline = '3px solid var(--color-icon-orange, #e9690b)';
+    // A page element, outside the shadow root: the accent var does not reach it.
+    element.style.outline = '3px solid #ff0de7';
     element.style.outlineOffset = '2px';
     outlined = element;
   }

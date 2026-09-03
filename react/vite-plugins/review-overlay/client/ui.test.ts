@@ -230,3 +230,33 @@ describe('copying both flavours', () => {
     expect(written['text/html']).toBe(HTML);
   });
 });
+
+/**
+ * The tool used to be two colours: an orange accent and react-grab's own
+ * magenta on the pick box. One accent now paints both.
+ */
+describe('the pin accent', () => {
+  const css = () => ui.root.querySelector('style')?.textContent ?? '';
+
+  it('is #FF0DE7, and the pick box is drawn from it', () => {
+    expect(css()).toContain('--bai-review-accent: #ff0de7');
+    expect(css()).toContain(
+      '--bai-review-pick-line: rgba(var(--bai-review-accent-rgb), .5)',
+    );
+    expect(css()).toContain(
+      '--bai-review-pick-fill: rgba(var(--bai-review-accent-rgb), .08)',
+    );
+  });
+
+  it('keeps neither the orange it replaced nor react-grab-only magenta', () => {
+    expect(css()).not.toContain('210, 57, 192');
+    expect(css()).not.toContain('display-p3');
+    expect(css()).not.toContain('e9690b');
+  });
+
+  // White on #FF0DE7 is 3.25:1 — under the 4.5:1 AA floor for the 14px
+  // "Copy block" label. #0a1317 on it is 5.78:1.
+  it('carries a dark on-accent so the primary button label passes AA', () => {
+    expect(css()).toContain('--bai-review-on-accent: #0a1317');
+  });
+});
