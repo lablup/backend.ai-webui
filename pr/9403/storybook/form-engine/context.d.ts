@@ -1,6 +1,5 @@
-import { FieldData, FormInstance, InternalFormInstance, InternalHooks, Meta, ValidateMessages } from './interface';
+import { FieldData, FormInstance, InternalFormInstance, InternalHooks, Meta, ScrollOptions, ValidateMessages } from './interface';
 import { InternalNamePath } from './namePath';
-import { ScrollToFirstErrorOptions } from './scrollToError';
 import * as React from 'react';
 /** Guard for `getInternalHooks`; keeps the engine-private API out of reach. */
 export declare const HOOK_MARK = "BAI_FORM_INTERNAL_HOOKS";
@@ -47,7 +46,7 @@ export interface FormConfig {
      * antd's `<Form scrollToFirstError>` default, kept so a consumer without
      * this provider gets antd's behaviour (FR-3683).
      */
-    scrollToFirstError?: boolean | ScrollToFirstErrorOptions;
+    scrollToFirstError?: boolean | ScrollOptions;
 }
 /** What antd sourced from `<ConfigProvider form={{...}}>`. */
 export declare const FormConfigContext: React.Context<FormConfig>;
