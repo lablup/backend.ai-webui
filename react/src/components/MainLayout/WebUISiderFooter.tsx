@@ -39,7 +39,7 @@ const WebUISiderFooter: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const { appearance } = useCustomThemeConfig();
+  const { rawThemeConfig } = useCustomThemeConfig();
   const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
@@ -143,7 +143,7 @@ const WebUISiderFooter: React.FC = () => {
       </HStack>
       <Text type="supporting" size="xsm" as="div">
         <address className="sidebar-footer">
-          {appearance?.branding?.companyName || 'Lablup Inc.'}
+          {rawThemeConfig?.branding?.companyName || 'Lablup Inc.'}
           &nbsp;
           {/* @ts-ignore */}
           {`${globalThis.packageVersion}.${globalThis.buildNumber}`}
