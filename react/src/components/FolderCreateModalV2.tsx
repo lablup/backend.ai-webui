@@ -455,6 +455,16 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                       // chosen project name; re-validate so it updates
                       // immediately.
                       formRef.current?.validateFields(['usage_mode']);
+                      // Choosing the model-store project while Models is
+                      // already selected forces read-only (FR-1290), same as
+                      // the usage_mode handler below.
+                      if (
+                        projectInfo.projectName === MODEL_STORE_PROJECT_NAME &&
+                        formRef.current?.getFieldValue('usage_mode') === 'model'
+                      ) {
+                        formRef.current?.setFieldValue('permission', 'ro');
+                        formRef.current?.validateFields(['permission']);
+                      }
                     }}
                   />
                 </Suspense>
@@ -553,11 +563,15 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                 if (formRef.current?.getFieldValue('name')) {
                   formRef.current.validateFields(['name']);
                 }
-                // Model project folders are read-only (FR-1290); the rw
-                // option is hidden then, so keep the value in sync. The
+                // Model-store project folders are read-only (FR-1290); the
+                // rw option is hidden then, so keep the value in sync. The
                 // dependency-driven revalidation ran before this coercion,
                 // so re-validate to clear its stale 'rw' error.
-                if (isProjectFolder && value === 'model') {
+                if (
+                  isProjectFolder &&
+                  value === 'model' &&
+                  effectiveProject?.name === MODEL_STORE_PROJECT_NAME
+                ) {
                   formRef.current?.setFieldValue('permission', 'ro');
                   formRef.current?.validateFields(['permission']);
                 }
@@ -621,14 +635,18 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 
           <Form.Item dependencies={['usage_mode']} noStyle required>
             {({ getFieldValue }) => {
-              // Model project folders are forced read-only (FR-1290). The
-              // manager used to enforce this server-side (the dropped
+              // Model-store project folders are forced read-only (FR-1290).
+              // The manager used to enforce this server-side (the dropped
               // 'allow-only-ro-permission-for-model-project-folder' capability)
               // and no longer seems to, but we keep enforcing it on the client
               // to preserve that contract until the project-folder behavior is
-              // reworked. Mirrored in VFolderNodeDescriptionV2.
+              // reworked. Mirrored in VFolderNodeDescriptionV2. On any other
+              // project the model+project combination is invalid anyway (the
+              // usage_mode validator above), so permission stays untouched.
               const isReadOnlyPermission =
-                getFieldValue('usage_mode') === 'model' && isProjectFolder;
+                getFieldValue('usage_mode') === 'model' &&
+                isProjectFolder &&
+                effectiveProject?.name === MODEL_STORE_PROJECT_NAME;
 
               return (
                 <BAIFormItem
