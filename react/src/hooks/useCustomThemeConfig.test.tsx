@@ -80,7 +80,7 @@ describe('useCustomThemeConfig', () => {
 
   it('exposes the applied appearance document as-is', () => {
     const { result } = renderHook(() => useCustomThemeConfig());
-    expect(result.current.appearance).toEqual(baseConfig);
+    expect(result.current.rawThemeConfig).toEqual(baseConfig);
   });
 
   it('resolves the user-selected family from the localStorage mirror', () => {
@@ -127,7 +127,7 @@ describe('useCustomThemeConfig', () => {
     setStored('themeFamily', 'stained');
     const { result } = renderHook(() => useCustomThemeConfig());
     expect(result.current.activeThemeFamily).toBe(DEFAULT_THEME_FAMILY);
-    expect(result.current.appearance).toEqual(draft);
+    expect(result.current.rawThemeConfig).toEqual(draft);
   });
 
   it('writes the data-theme-family attribute on body', () => {
@@ -141,7 +141,7 @@ describe('useCustomThemeConfig', () => {
     const { result } = renderHook(() => useCustomThemeConfig());
     expect(result.current.themeFamilies).toEqual({});
     expect(result.current.activeThemeFamily).toBe(DEFAULT_THEME_FAMILY);
-    expect(result.current.appearance).toBeUndefined();
+    expect(result.current.rawThemeConfig).toBeUndefined();
   });
 });
 
