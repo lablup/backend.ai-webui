@@ -1663,8 +1663,8 @@ export const routes: RouteObject[] = [
             <ErrorBoundaryWithNullFallback>
               <RoutingEventHandler />
             </ErrorBoundaryWithNullFallback>
-            {/* Dev-only handoff to the review overlay (FR-3811), gated on
-                the same VITE_DEV_REVIEW_OVERLAY switch as the Vite plugin.
+            {/* Dev-only handoff to the review overlay (FR-3811), on unless
+                VITE_DEV_REVIEW_OVERLAY opts out, as in the Vite plugin.
                 `import.meta.env.DEV` is the literal `false` in a production
                 build, so the whole branch — and the imported module — is dead
                 code there. */}

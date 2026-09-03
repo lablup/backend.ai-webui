@@ -7,12 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { useMatches, type UIMatch } from 'react-router-dom';
 
 /**
- * The same switch the Vite plugin reads (`1` / `true` / `on`). Paired with
- * `import.meta.env.DEV` at the call site so a production build folds the
- * branch — and this module with it — away.
+ * The same switch the Vite plugin reads: on by default, off for
+ * `0` / `false` / `off`. Paired with `import.meta.env.DEV` at the call site so
+ * a production build folds the branch — and this module with it — away.
  */
 export const isDevReviewOverlayEnabled = (): boolean =>
-  ['1', 'true', 'on'].includes(
+  !['0', 'false', 'off'].includes(
     String(import.meta.env.VITE_DEV_REVIEW_OVERLAY ?? '').toLowerCase(),
   );
 

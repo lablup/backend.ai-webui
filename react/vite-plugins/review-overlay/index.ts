@@ -15,8 +15,8 @@ import { transformWithEsbuild, type Plugin } from 'vite';
  * polls nothing.
  *
  * Dev-only by construction: `apply: 'serve'` keeps the plugin out of
- * `vite build` entirely, and it is opt-in per session with
- * `VITE_DEV_REVIEW_OVERLAY` (`1` / `true` / `on`).
+ * `vite build` entirely. On a dev server it is ON by default and opts OUT with
+ * `VITE_DEV_REVIEW_OVERLAY` (`0` / `false` / `off`).
  *
  * Registration order matters: this must come AFTER `projectRootStaticPlugin`,
  * whose `order: 'pre'` transformIndexHtml handler discards the incoming html
@@ -39,7 +39,7 @@ const pexecFile = promisify(execFile);
  */
 function isReviewOverlayEnabled(): boolean {
   const flag = (process.env.VITE_DEV_REVIEW_OVERLAY ?? '').toLowerCase();
-  return flag === '1' || flag === 'true' || flag === 'on';
+  return flag !== '0' && flag !== 'false' && flag !== 'off';
 }
 
 // ------------------------------------------------------------- PR discovery

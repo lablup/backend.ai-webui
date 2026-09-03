@@ -105,15 +105,15 @@ Vite auto-loads `VITE_*` vars from this file and exposes them on `import.meta.en
 
 ## Review overlay (`VITE_DEV_REVIEW_OVERLAY`)
 
-Off by default. Set it in `.env.development.local` or the shell before `pnpm run dev`:
+**On by default** on a dev server, and never in a production build — the plugin is `apply: 'serve'`, and the host-side route-label component sits behind `import.meta.env.DEV`, so `vite build` drops both. To turn it off for a session, set it in `.env.development.local` or the shell before `pnpm run dev`:
 
 ```bash
-VITE_DEV_REVIEW_OVERLAY=1
+VITE_DEV_REVIEW_OVERLAY=0
 ```
 
-With it on, the dev server injects the review overlay (`react/vite-plugins/review-overlay/`). ⌘⌃C — or the dock's **📋 Copy a review block** button — picks an element and copies a `#bai=v3` markdown block to paste into the PR comment, the PR's Teams thread, or a Claude prompt.
+The dev server injects the review overlay (`react/vite-plugins/review-overlay/`). ⌘⌃C picks an element — react-grab's own selection UI, so a drag selects a region — and copies a `#bai=v3` markdown block to paste into the PR comment, the PR's Teams thread, or a Claude prompt. One copy carries two clipboard flavours: the markdown for a plain textarea, and the rendered HTML for a rich editor such as Teams.
 
-Opening that block's link back on a dev server is the read side, and it is a **deep link only**: the fragment `#bai=v3.<id>.<anchor>` carries the whole anchor, so the page applies the block's path and query, finds the element (retrying for ~10 s while the SPA renders) and pins it with the block's landmark label (`<route> › <landmark> › <tag "text">`) plus the pin id and component. The reviewer's note itself is not in the link — it stays in the comment the link was pasted into. Nothing is looked up anywhere — the dev server reads no channel, serves no pin list and polls nothing; GitHub's unresolved threads are where a pin's state lives. A link with no anchor is plain text, an old `#bai-review=` link gets one toast, and an element that cannot be found gets one toast.
+Opening that block's link back on a dev server is the read side, and it is a **deep link only**: the fragment `#bai=v3.<id>.<anchor>` carries the whole anchor, so the page applies the block's path and query, finds the element (retrying for ~10 s while the SPA renders) and pins it with the block's landmark label (`<route> › <landmark> › <tag "text">`) plus the pin id, the component and the reviewer's note, which rides in the anchor. Nothing is looked up anywhere — the dev server reads no channel, serves no pin list and polls nothing; GitHub's unresolved threads are where a pin's state lives. A link with no anchor is plain text, an old `#bai-review=` link gets one toast, and an element that cannot be found gets one toast.
 
 `/__review/state` (GET only, no parameters) is unchanged from the write side: it answers `{pr, repo, branch, source}` so a copied block can carry the PR number.
 
