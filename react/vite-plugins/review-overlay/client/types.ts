@@ -43,6 +43,12 @@ export interface AnchorV3 {
   tid?: string;
   /** Position within `tid` when the landmark is an ancestor. */
   rect?: AnchorRect;
+  /**
+   * A box select's region, as a fraction of THIS element's own box. Present
+   * only for a multi-element pick, where the element is the frame the region
+   * is measured in rather than the thing being pointed at.
+   */
+  sel?: AnchorRect;
   /** Shown to the reader, and a resolution rank (`dn` also a veto). */
   c?: AnchorComponent;
 }

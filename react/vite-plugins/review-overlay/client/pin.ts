@@ -8,6 +8,7 @@
  * the new one rather than leaving the outline on a detached element.
  */
 import { findAnchorTarget, quickFindTarget, textMatches } from './resolve.js';
+import { projectFraction } from './selection.js';
 import type { AnchorV3 } from './types.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
@@ -65,6 +66,13 @@ const STYLE = `
   }
   .card .close { right: 4px; }
   .card .locate { right: 24px; }
+  /* A box select pinned a REGION, not an element: an outline on the frame
+     would highlight something many times its size. */
+  .region {
+    position: absolute; display: none; pointer-events: none;
+    border: 3px solid var(--color-icon-orange, #e9690b); border-radius: 4px;
+  }
+  .region.found { display: block; }
 `;
 
 export interface DeepLinkPinOptions {
@@ -105,7 +113,9 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   locateButton.textContent = '📍';
   locateButton.title = 'Scroll back to this element';
   card.append(close, locateButton, label, sub);
-  layer.append(marker, card);
+  const regionBox = document.createElement('div');
+  regionBox.className = 'region';
+  layer.append(regionBox, marker, card);
   root.append(style, layer);
 
   let target: DeepLinkPinTarget | null = null;
@@ -152,6 +162,19 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     clippers = node ? collectClippers(node) : [];
   }
 
+  /**
+   * The rectangle this pin marks: the located element's own box, or — for a
+   * box select — `sel` projected back onto it, which is the region react-grab
+   * showed while the reviewer dragged.
+   */
+  function markedBox(node: Element): DOMRect {
+    const box = node.getBoundingClientRect();
+    const sel = target?.anchor.sel;
+    if (!sel || !box.width || !box.height) return box;
+    const r = projectFraction(box, sel);
+    return new DOMRect(r.left, r.top, r.width, r.height);
+  }
+
   function clearHighlight() {
     if (outlined && saved) {
       outlined.style.outline = saved.outline;
@@ -159,9 +182,13 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     }
     outlined = null;
     saved = null;
+    regionBox.classList.remove('found');
   }
 
   function highlight(node: Element) {
+    // A region is drawn in `place()`, off the frame's live box, so it follows
+    // a re-layout the way an element outline follows its element.
+    if (target?.anchor.sel) return;
     if (outlined === node) return;
     clearHighlight();
     const element = node as HTMLElement;
@@ -177,11 +204,12 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   function hide() {
     marker.classList.remove('found');
     card.classList.remove('found');
+    regionBox.classList.remove('found');
   }
 
   function place() {
     if (!located) return hide();
-    const box = located.getBoundingClientRect();
+    const box = markedBox(located);
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     // A scrolled-away element must not leave a floating card behind. A rect
@@ -207,6 +235,15 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
     if (measured && (offscreen || clipped)) return hide();
     marker.classList.add('found');
     card.classList.add('found');
+    if (target?.anchor.sel) {
+      regionBox.classList.add('found');
+      Object.assign(regionBox.style, {
+        left: `${box.left}px`,
+        top: `${box.top}px`,
+        width: `${box.width}px`,
+        height: `${box.height}px`,
+      });
+    }
     marker.style.left = `${box.left + 6}px`;
     marker.style.top = `${box.top + 6}px`;
     card.style.left = `${Math.max(8, Math.min(box.left, vw - 340))}px`;

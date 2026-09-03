@@ -13,6 +13,11 @@
  * `data-react-grab-ignore-events` makes react-grab skip our own chrome while
  * its select mode is on, so the composer stays clickable mid-pick.
  */
+import { fractionWithin, projectFraction, type Box } from './selection.js';
+import type { AnchorRect } from './types.js';
+
+/** Everything the outline needs; a `DOMRect` and a projected region both fit. */
+type RectLike = { left: number; top: number; width: number; height: number };
 
 /** react-grab restores focus asynchronously after a pick; outlast it. */
 const FOCUS_GUARD_MS = 1000;
@@ -160,6 +165,12 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   let pickActive = false;
   let pickTarget: Element | null = null;
+  /**
+   * A box select's region as a fraction of `pickTarget`, so a scroll or a
+   * resize re-projects it exactly the way the pin will — the anchor stores
+   * this same fraction.
+   */
+  let pickRegion: AnchorRect | null = null;
   let focusGuardUntil = 0;
   /** The picked element's box, frozen at pick time, plus the pick's own x. */
   let composeAnchor: { left: number; top: number; bottom: number } | null =
@@ -179,7 +190,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   }
 
   /** react-grab rounds its box to the element's own corners; so do we. */
-  function setHoverRect(rect: DOMRect | null, borderRadius = '0px') {
+  function setHoverRect(rect: RectLike | null, borderRadius = '0px') {
     if (!rect) {
       hoverbox.style.display = 'none';
       return;
@@ -201,10 +212,11 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
    */
   function syncPickHighlight() {
     if (!isComposeOpen() || !pickTarget) return;
-    setHoverRect(
-      pickTarget.getBoundingClientRect(),
-      getComputedStyle(pickTarget).borderRadius,
-    );
+    const box = pickTarget.getBoundingClientRect();
+    // A region has no corners of its own — it is a rectangle over the frame,
+    // exactly as react-grab draws its drag box.
+    if (pickRegion) return setHoverRect(projectFraction(box, pickRegion));
+    setHoverRect(box, getComputedStyle(pickTarget).borderRadius);
   }
   window.addEventListener('scroll', syncPickHighlight, true);
   window.addEventListener('resize', () => {
@@ -237,13 +249,24 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     compose.style.top = `${Math.max(VIEWPORT_PAD, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
   }
 
-  function openCompose(target: Element, x: number, y: number) {
+  function openCompose(
+    target: Element,
+    x: number,
+    y: number,
+    region?: Box | null,
+  ) {
     pickTarget = target;
     composeErr.style.display = 'none';
     composeText.value = '';
     setComposeReady(false);
     compose.style.display = 'block';
-    const box = target.getBoundingClientRect();
+    const frame = target.getBoundingClientRect();
+    pickRegion = region ? fractionWithin(region, frame) : null;
+    // The composer follows what is outlined, so a box select opens under the
+    // region rather than under the frame that happens to hold it.
+    const box: RectLike & { bottom: number } = region
+      ? { ...region, bottom: region.top + region.height }
+      : frame;
     // A rect with no size at all is jsdom or `display: contents`; the pick
     // point is then the only thing that says where the element was.
     const measured = box.width > 0 || box.height > 0;
@@ -281,6 +304,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     if (!isComposeOpen()) return;
     compose.style.display = 'none';
     pickTarget = null;
+    pickRegion = null;
     composeAnchor = null;
     focusGuardUntil = 0;
     setHoverRect(null);

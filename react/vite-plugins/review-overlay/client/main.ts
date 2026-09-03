@@ -70,13 +70,13 @@ function boot() {
   });
 
   const picker = createPicker({
-    onPick: (element, x, y) => {
+    onPick: (element, x, y, region) => {
       capture = null;
-      ui.openCompose(element, x, y);
+      ui.openCompose(element, x, y, region);
       // One capture per pick: the label, the anchor payload and the rect all
       // come from this single walk, measured while the page still looks the
       // way the reviewer saw it.
-      const anchor = captureAnchorSignals(element);
+      const anchor = captureAnchorSignals(element, undefined, region);
       ui.setComposeLabel(landmarkLabel(currentRouteLabel(), anchor));
       void prepare(element, anchor);
     },

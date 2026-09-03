@@ -66,6 +66,18 @@ describe('landmarkLabel', () => {
       'Sessions › login-button › button',
     );
   });
+
+  // The element in a box select's anchor is the FRAME the region was measured
+  // in, not the thing picked, so the label must not read as "this button".
+  it('names a box select as a region in its frame', () => {
+    expect(
+      landmarkLabel('Sessions', {
+        ...anchor,
+        tag: 'div',
+        sel: { x: 0.1, y: 0.2, w: 0.5, h: 0.3 },
+      }),
+    ).toBe('Sessions › login-button › region in div "Login"');
+  });
 });
 
 describe('buildBlockText', () => {

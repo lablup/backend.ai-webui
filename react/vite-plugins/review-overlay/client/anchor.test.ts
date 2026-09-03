@@ -149,6 +149,31 @@ describe('captureAnchorSignals', () => {
     expect(anchor.rect).toBeUndefined();
   });
 
+  // A box select's region rides in `sel`, measured against the anchored
+  // element's OWN box — that is the frame the pin projects it back onto.
+  it('records a box select region as a fraction of the element', () => {
+    mount('<div data-testid="grid"><button>Go now</button></div>');
+    const grid = document.querySelector('[data-testid="grid"]') as HTMLElement;
+    grid.getBoundingClientRect = () =>
+      ({ left: 100, top: 200, width: 400, height: 100 }) as DOMRect;
+
+    const anchor = captureAnchorSignals(grid, undefined, {
+      left: 140,
+      top: 220,
+      width: 200,
+      height: 40,
+    });
+    expect(anchor.sel).toEqual({ x: 0.1, y: 0.2, w: 0.5, h: 0.4 });
+  });
+
+  it('carries no region for an ordinary click pick', () => {
+    mount('<div data-testid="card">x</div>');
+    const anchor = captureAnchorSignals(
+      document.querySelector('[data-testid="card"]')!,
+    );
+    expect(anchor.sel).toBeUndefined();
+  });
+
   it('does not throw on an element inside a shadow tree', () => {
     mount('<div id="host"></div>');
     const shadow = (

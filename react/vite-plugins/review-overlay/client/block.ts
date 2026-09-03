@@ -28,12 +28,17 @@ export function resolveRouteLabel(
   return label || readablePath(pathname);
 }
 
-/** `<route label> › <testid landmark> › <tag "text">` */
+/**
+ * `<route label> › <testid landmark> › <tag "text">`, and for a box select
+ * `… › region in <tag> "text"` — the element there is the frame the region was
+ * measured in, so naming it as the pick would be a lie.
+ */
 export function landmarkLabel(routeLabel: string, anchor: AnchorV3): string {
   const parts = [routeLabel];
   if (anchor.tid) parts.push(anchor.tid);
+  const tag = anchor.tag ?? 'element';
   const txt = anchor.txt ? ` "${anchor.txt.slice(0, 40)}"` : '';
-  parts.push(`${anchor.tag ?? 'element'}${txt}`);
+  parts.push(anchor.sel ? `region in ${tag}${txt}` : `${tag}${txt}`);
   return parts.join(' › ');
 }
 

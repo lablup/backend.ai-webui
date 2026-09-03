@@ -379,6 +379,75 @@ describe('createDeepLinkPin', () => {
     expect(pin.isShowing()).toBe(false);
   });
 
+  // A box select anchors to the FRAME it happened inside — outlining that
+  // would highlight something many times the region the reviewer dragged.
+  describe('a pin whose anchor carries a region', () => {
+    const SEL = { x: 0.05, y: 0.1, w: 0.5, h: 0.25 };
+    const region = () =>
+      host.shadowRoot?.querySelector('.region') as HTMLElement;
+
+    it('draws the projected region instead of outlining the frame', () => {
+      mountSized(
+        {
+          left: 100,
+          right: 500,
+          top: 200,
+          bottom: 600,
+          width: 400,
+          height: 400,
+        },
+        60,
+      );
+      show({ sel: SEL });
+      expect(pin.locate()).toBe(true);
+
+      expect(region().classList.contains('found')).toBe(true);
+      expect(region().style.left).toBe('120px');
+      expect(region().style.top).toBe('240px');
+      expect(region().style.width).toBe('200px');
+      expect(region().style.height).toBe('100px');
+      expect(outlined()).toBe('');
+      // The marker sits on the region, not on the frame's corner.
+      expect(marker().style.left).toBe('126px');
+    });
+
+    it('takes the region down with the pin', () => {
+      mountSized(
+        {
+          left: 100,
+          right: 500,
+          top: 200,
+          bottom: 600,
+          width: 400,
+          height: 400,
+        },
+        60,
+      );
+      show({ sel: SEL });
+      pin.locate();
+      pin.dismiss();
+      expect(region().classList.contains('found')).toBe(false);
+    });
+
+    it('still outlines the element when there is no region', () => {
+      mountSized(
+        {
+          left: 100,
+          right: 500,
+          top: 200,
+          bottom: 600,
+          width: 400,
+          height: 400,
+        },
+        60,
+      );
+      show();
+      pin.locate();
+      expect(region().classList.contains('found')).toBe(false);
+      expect(outlined()).toContain('3px solid');
+    });
+  });
+
   it('hides the pin when the element leaves the page', async () => {
     document.body.insertAdjacentHTML(
       'beforeend',

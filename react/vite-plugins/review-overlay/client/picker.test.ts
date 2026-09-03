@@ -137,6 +137,81 @@ describe('the react-grab pick is unconditional', () => {
     await flush();
     expect(picks).toEqual([el('a')]);
   });
+});
+
+/**
+ * react-grab labels a box select with the DRAG RECTANGLE (`Dn`:
+ * `f = l && u ? nr(l) : N(t)`), and the overlay used to keep only the first
+ * element of it — two different regions for one gesture.
+ */
+describe('a box select becomes one frame plus its region', () => {
+  /** jsdom has no layout, so the fixture declares every box. */
+  const sized = (element: Element, box: Partial<DOMRect>) => {
+    const full = { left: 0, top: 0, width: 0, height: 0, ...box };
+    element.getBoundingClientRect = () =>
+      ({
+        ...full,
+        right: full.left + full.width,
+        bottom: full.top + full.height,
+      }) as DOMRect;
+  };
+
+  const drag = (elements: Element[]) => {
+    hooks.onDragEnd?.(elements, { x: 0, y: 0, width: 0, height: 0 });
+    return selectAll(hooks, elements);
+  };
+
+  beforeEach(() => {
+    document.body.innerHTML =
+      '<div id="row"><button id="a">A</button><button id="b">B</button></div>';
+    sized(el('row'), { left: 0, top: 0, width: 400, height: 100 });
+    sized(el('a'), { left: 20, top: 20, width: 100, height: 40 });
+    sized(el('b'), { left: 200, top: 20, width: 100, height: 40 });
+  });
+
+  it('anchors to the frame and hands over the region it covered', async () => {
+    const seen: Array<[Element, unknown]> = [];
+    const picker = make({
+      ...callbacks,
+      onPick: (element, _x, _y, region) => seen.push([element, region]),
+    });
+    picker.watchForReactGrab();
+    grab.activate();
+
+    expect(drag([el('a'), el('b')])).toEqual([]);
+    await flush();
+    expect(seen).toEqual([
+      [el('row'), { left: 20, top: 20, width: 280, height: 40 }],
+    ]);
+  });
+
+  it('leaves a one-element drag exactly as a click pick', async () => {
+    const picker = make(callbacks);
+    picker.watchForReactGrab();
+    grab.activate();
+
+    expect(drag([el('a')])).toEqual([]);
+    await flush();
+    expect(picks).toEqual([el('a')]);
+  });
+
+  it('does not let a stale drag give a later click pick a region', async () => {
+    const seen: Array<[Element, unknown]> = [];
+    const picker = make({
+      ...callbacks,
+      onPick: (element, _x, _y, region) => seen.push([element, region]),
+    });
+    picker.watchForReactGrab();
+    grab.activate();
+
+    hooks.onDragEnd?.([el('a'), el('b')], { x: 0, y: 0, width: 0, height: 0 });
+    // The reviewer let go outside everything, then clicked one element.
+    document.body.insertAdjacentHTML('beforeend', '<button id="c">C</button>');
+    sized(el('c'), { left: 0, top: 200, width: 50, height: 20 });
+    expect(selectAll(hooks, [el('c')])).toEqual([]);
+    await flush();
+    expect(seen).toEqual([[el('c'), null]]);
+  });
 
   it('never lets react-grab build copy content', () => {
     const picker = make(callbacks);

@@ -19,6 +19,14 @@ const isText = (value: unknown, max: number): value is string =>
 const isFraction = (value: unknown): boolean =>
   typeof value === 'number' && Number.isFinite(value);
 
+/** Absent is fine; present means four finite numbers and nothing else. */
+const isFractionRect = (value: unknown): boolean => {
+  if (value === undefined) return true;
+  if (!value || typeof value !== 'object') return false;
+  const r = value as Record<string, unknown>;
+  return ['x', 'y', 'w', 'h'].every((k) => isFraction(r[k]));
+};
+
 export function isAnchorV3(value: unknown): value is AnchorV3 {
   if (!value || typeof value !== 'object') return false;
   const a = value as Record<string, unknown>;
@@ -31,11 +39,8 @@ export function isAnchorV3(value: unknown): value is AnchorV3 {
     return false;
   if (a.txt !== undefined && !isText(a.txt, TXT_MAX)) return false;
   if (a.tid !== undefined && !isText(a.tid, NAME_MAX)) return false;
-  if (a.rect !== undefined) {
-    const r = a.rect as Record<string, unknown> | null;
-    if (!r || typeof r !== 'object') return false;
-    if (!['x', 'y', 'w', 'h'].every((k) => isFraction(r[k]))) return false;
-  }
+  if (!isFractionRect(a.rect)) return false;
+  if (!isFractionRect(a.sel)) return false;
   if (a.c !== undefined) {
     const c = a.c as Record<string, unknown> | null;
     if (!c || typeof c !== 'object') return false;

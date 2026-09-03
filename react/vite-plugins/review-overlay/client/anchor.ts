@@ -6,6 +6,7 @@
  * text). Resolving them back to an element is the READ side's job (FR-3813).
  */
 import { SELECTOR_MAX } from './anchor-guard.js';
+import { fractionWithin, type Box } from './selection.js';
 import type { AnchorComponent, AnchorV3 } from './types.js';
 
 const esc = (v: string) => (window.CSS && CSS.escape ? CSS.escape(v) : v);
@@ -76,6 +77,8 @@ export function buildSelector(target: Element): string {
 export function captureAnchorSignals(
   target: Element,
   component?: AnchorComponent,
+  /** A box select's region, in viewport coordinates; see `selection.ts`. */
+  region?: Box | null,
 ): AnchorV3 {
   const anchor: AnchorV3 = {
     v: 3,
@@ -105,6 +108,11 @@ export function captureAnchorSignals(
         };
       }
     }
+  }
+  if (region) {
+    const box = target.getBoundingClientRect();
+    const sel = fractionWithin(region, box);
+    if (sel) anchor.sel = sel;
   }
   if (component) anchor.c = component;
   return anchor;
