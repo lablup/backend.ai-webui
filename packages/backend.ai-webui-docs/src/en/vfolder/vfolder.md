@@ -190,7 +190,7 @@ alert counts just the folders that are actually moved.
 ### Restore or permanently delete
 
 In this status, you can restore the folder by clicking the restore button on the folder's row in the **Name** column. If you want to permanently delete the folder,
-please click the `trash bin` button on the same row.
+please click the `trash bin` button on the same row. Once permanent deletion has actually started, the folder can no longer be restored or deleted again: both buttons on its row become unavailable and report *"Deletion has already started for this folder."*
 
 ![](../images/vfolder_trash_list.png)
 
