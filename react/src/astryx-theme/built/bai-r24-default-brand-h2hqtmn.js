@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r23-default-brand-h2hqtmn theme — built by `pnpm exec astryx theme build`
+ * bai-r24-default-brand-h2hqtmn theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR23DefaultBrandH2hqtmnTheme } from './bai-r23-default-brand-h2hqtmn';
- *   import './bai-r23-default-brand-h2hqtmn.css';
+ *   import { baiR24DefaultBrandH2hqtmnTheme } from './bai-r24-default-brand-h2hqtmn';
+ *   import './bai-r24-default-brand-h2hqtmn.css';
  */
-export const baiR23DefaultBrandH2hqtmnTheme = {
-  name: 'bai-r23-default-brand-h2hqtmn',
+export const baiR24DefaultBrandH2hqtmnTheme = {
+  name: 'bai-r24-default-brand-h2hqtmn',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -102,8 +102,8 @@ export const baiR23DefaultBrandH2hqtmnTheme = {
     "--color-background-card": "light-dark(#FFFFFF, #141414)",
     "--color-background-popover": "light-dark(#FFFFFF, #1F1F1F)",
     "--color-background-muted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
-    "--color-accent": "light-dark(#FF7A00, #be5e06)",
-    "--color-accent-muted": "light-dark(color-mix(in srgb, var(--color-accent) 20%, transparent), color-mix(in srgb, var(--color-accent) 25%, transparent))",
+    "--color-accent": "light-dark(#FF7A00, #DC6B03)",
+    "--color-accent-muted": "light-dark(#FF7A0033, #DC6B033F)",
     "--color-neutral": "light-dark(rgba(0,0,0,0.06), #262626)",
     "--color-overlay": "light-dark(rgba(0,0,0,0.45), rgba(0,0,0,0.45))",
     "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.08))",
@@ -111,23 +111,23 @@ export const baiR23DefaultBrandH2hqtmnTheme = {
     "--color-text-primary": "light-dark(#141414, #FFFFFF)",
     "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))",
     "--color-text-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
-    "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-text-accent": "light-dark(#FF7A00, #DC6B03)",
     "--color-on-dark": "#ffffff",
     "--color-on-light": "#171717",
     "--color-on-accent": "light-dark(#ffffff, #ffffff)",
     "--color-on-success": "light-dark(#ffffff, #ffffff)",
     "--color-on-error": "light-dark(#ffffff, #ffffff)",
     "--color-on-warning": "#171717",
-    "--color-icon-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-icon-accent": "light-dark(#FF7A00, #DC6B03)",
     "--color-icon-primary": "light-dark(#141414, #FFFFFF)",
     "--color-icon-secondary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
     "--color-icon-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
-    "--color-success": "light-dark(#00BD9B, #068e76)",
-    "--color-error": "light-dark(#FF4D4F, #be3d3f)",
-    "--color-warning": "light-dark(#FAAD14, #d89614)",
-    "--color-success-muted": "light-dark(#00BD9B33, #068e763F)",
-    "--color-error-muted": "light-dark(#FF4D4F33, #be3d3f3F)",
-    "--color-warning-muted": "light-dark(#FAAD1433, #d896143F)",
+    "--color-success": "light-dark(#00BD9B, #03A487)",
+    "--color-error": "light-dark(#FF4D4F, #DC4446)",
+    "--color-warning": "light-dark(#FAAD14, #FAAD14)",
+    "--color-success-muted": "light-dark(#00BD9B33, #03A4873F)",
+    "--color-error-muted": "light-dark(#FF4D4F33, #DC44463F)",
+    "--color-warning-muted": "light-dark(#FAAD1433, #FAAD143F)",
     "--color-border": "light-dark(#F0F0F0, #303030)",
     "--color-border-emphasized": "light-dark(#D9D9D9, #424242)",
     "--color-skeleton": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
@@ -189,8 +189,8 @@ export const baiR23DefaultBrandH2hqtmnTheme = {
     "--shadow-inset-error": "inset 0px 0px 0px 2px #e33f4a4D",
     "--color-background-inverted": "light-dark(#211A16, #FFFBF8)",
     "--color-track": "light-dark(#B8A89F, #51443C)",
-    "--bai-color-info": "light-dark(#028DF2, #0387bf)",
-    "--bai-color-link": "light-dark(#FF7A00, #be5e06)",
+    "--bai-color-info": "light-dark(#028DF2, #009BDD)",
+    "--bai-color-link": "light-dark(#FF7A00, #DC6B03)",
     "--bai-header-bg": "light-dark(#FF9729, #E88A28)",
     "--bai-color-error-bg": "light-dark(#fff2f0, #261617)",
     "--bai-color-info-bg": "light-dark(#e6f9ff, #111f27)",
@@ -428,19 +428,19 @@ export const baiR23DefaultBrandH2hqtmnTheme = {
         "--color-text-primary": "var(--color-text-green)",
         "--color-text-secondary": "var(--color-text-green)",
         "--color-success": "var(--color-text-green)",
-        "--color-success-muted": "light-dark(#CCF2EB, #11322C)"
+        "--color-success-muted": "light-dark(#CCF2EB, #103830)"
       },
       "status:warning": {
         "--color-text-primary": "var(--color-text-yellow)",
         "--color-text-secondary": "var(--color-text-yellow)",
         "--color-warning": "var(--color-text-yellow)",
-        "--color-warning-muted": "light-dark(#FEEFD0, #443414)"
+        "--color-warning-muted": "light-dark(#FEEFD0, #4D3A14)"
       },
       "status:error": {
         "--color-text-primary": "var(--color-text-red)",
         "--color-text-secondary": "var(--color-text-red)",
         "--color-error": "var(--color-text-red)",
-        "--color-error-muted": "light-dark(#FFDBDC, #3E1E1F)"
+        "--color-error-muted": "light-dark(#FFDBDC, #452020)"
       }
     },
     "switch": {
@@ -503,13 +503,13 @@ export const baiR23DefaultBrandH2hqtmnTheme = {
         "--color-background-card": "light-dark(#c4ddfb, #393f50)"
       },
       "status:error": {
-        "--color-background-card": "light-dark(#FFDBDC, #3E1E1F)"
+        "--color-background-card": "light-dark(#FFDBDC, #452020)"
       },
       "status:success": {
-        "--color-background-card": "light-dark(#CCF2EB, #11322C)"
+        "--color-background-card": "light-dark(#CCF2EB, #103830)"
       },
       "status:warning": {
-        "--color-background-card": "light-dark(#FEEFD0, #443414)"
+        "--color-background-card": "light-dark(#FEEFD0, #4D3A14)"
       }
     },
     "dialog": {
