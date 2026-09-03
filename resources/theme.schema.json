@@ -3,12 +3,34 @@
   "type": "object",
   "definitions": {
     "seedValue": {
-      "description": "A color seed: a string applies to both schemes, a [light, dark] tuple splits them (Astryx TokenValue semantics).",
+      "description": "A color seed as a 6-digit hex: a string applies to both schemes, a [light, dark] tuple splits them (Astryx TokenValue semantics).",
       "oneOf": [
-        { "type": "string" },
+        {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
         {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      ]
+    },
+    "colorValue": {
+      "description": "A CSS color applied verbatim: a string applies to both schemes, a [light, dark] tuple splits them.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
           "minItems": 2,
           "maxItems": 2
         }
@@ -17,13 +39,20 @@
     "logoSize": {
       "type": "object",
       "properties": {
-        "width": { "type": "number" },
-        "height": { "type": "number" }
-      }
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "properties": {
-    "$schema": { "type": "string" },
+    "$schema": {
+      "type": "string"
+    },
     "schemaVersion": {
       "const": 2,
       "description": "Appearance document format version. v1 (antd-shaped light/dark documents) is not readable since FR-3605 — see the theme migration guide."
@@ -51,23 +80,38 @@
                 "type": "object",
                 "description": "Brand color seeds. Roles derive from these: brand uses accent, admin uses info, secondary uses success.",
                 "properties": {
-                  "accent": { "$ref": "#/definitions/seedValue" },
-                  "link": { "$ref": "#/definitions/seedValue" },
-                  "info": { "$ref": "#/definitions/seedValue" },
-                  "error": { "$ref": "#/definitions/seedValue" },
-                  "success": { "$ref": "#/definitions/seedValue" },
-                  "warning": { "$ref": "#/definitions/seedValue" }
-                }
+                  "accent": {
+                    "$ref": "#/definitions/seedValue"
+                  },
+                  "link": {
+                    "$ref": "#/definitions/seedValue"
+                  },
+                  "info": {
+                    "$ref": "#/definitions/seedValue"
+                  },
+                  "error": {
+                    "$ref": "#/definitions/seedValue"
+                  },
+                  "success": {
+                    "$ref": "#/definitions/seedValue"
+                  },
+                  "warning": {
+                    "$ref": "#/definitions/seedValue"
+                  }
+                },
+                "additionalProperties": false
               },
               "headerBg": {
-                "$ref": "#/definitions/seedValue",
+                "$ref": "#/definitions/colorValue",
                 "description": "Header band background color."
               }
-            }
+            },
+            "additionalProperties": false
           },
           "required": ["default"]
         }
-      }
+      },
+      "additionalProperties": false
     },
     "branding": {
       "type": "object",
@@ -101,8 +145,12 @@
               "type": "string",
               "description": "The URL that the logo links to."
             },
-            "size": { "$ref": "#/definitions/logoSize" },
-            "sizeCollapsed": { "$ref": "#/definitions/logoSize" },
+            "size": {
+              "$ref": "#/definitions/logoSize"
+            },
+            "sizeCollapsed": {
+              "$ref": "#/definitions/logoSize"
+            },
             "loginLogoSrc": {
               "type": "string",
               "description": "The login form logo for light mode. Falls back to srcDark, then the default path."
@@ -111,7 +159,9 @@
               "type": "string",
               "description": "The login form logo for dark mode. Falls back to src, then the default path."
             },
-            "loginLogoSize": { "$ref": "#/definitions/logoSize" },
+            "loginLogoSize": {
+              "$ref": "#/definitions/logoSize"
+            },
             "aboutLogoSrc": {
               "type": "string",
               "description": "The about modal logo for light mode. Falls back to srcDark, then the default path."
@@ -120,13 +170,16 @@
               "type": "string",
               "description": "The about modal logo for dark mode. Falls back to src, then the default path."
             },
-            "aboutLogoSize": { "$ref": "#/definitions/logoSize" },
+            "aboutLogoSize": {
+              "$ref": "#/definitions/logoSize"
+            },
             "aboutModalSize": {
               "$ref": "#/definitions/logoSize",
               "deprecated": true,
               "description": "Deprecated. Use aboutLogoSize instead."
             }
-          }
+          },
+          "additionalProperties": false
         },
         "companyName": {
           "type": "string",
@@ -139,10 +192,14 @@
         "familyLabels": {
           "type": "object",
           "description": "Family selector labels keyed by family id; falls back to the id.",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
-  "required": ["schemaVersion"]
+  "required": ["schemaVersion"],
+  "additionalProperties": false
 }
