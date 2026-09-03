@@ -16,12 +16,12 @@ from the code, the types, and the surrounding names. If they could, delete it.
 
 ## Why
 
-This project's instructions were, until this rule, asymmetric: at least four
+This project's instructions were, until this rule, asymmetric: several
 sources *demanded* comments (`component-props-extension.md` — "the reason is
 written down in the file header"; `react.instructions.md` — "each BAI wrapper's
-file header documents its deliberate quirks"; the `astryx-fix` skill's
-`PILOT-DECISION` notes; `use-bai-card.md`) and **none** limited them. An
-obligation to justify, with no budget, gets satisfied maximally.
+file header documents its deliberate quirks"; `use-bai-card.md`) and **none**
+limited them. An obligation to justify, with no budget, gets satisfied
+maximally.
 
 Measured on `react/src` + `packages/backend.ai-ui/src` (tests excluded) when
 this rule was written:
@@ -158,6 +158,4 @@ the pointer.
   is a short note plus a pointer, not a restated design history.
 - `use-bai-card.md` — same; `BAICard`'s accepted-and-ignored props are recorded
   as a list, not an essay.
-- `.claude/skills/astryx-fix/SKILL.md` §7–§8 — the mechanism goes in the commit
-  body and the evidence in the PR description, which is the Redirect above.
 - `.github/instructions/react.instructions.md` — the project's React deltas.

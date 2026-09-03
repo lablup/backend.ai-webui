@@ -97,8 +97,6 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - **Storybook**: `storybook-patterns` skill (fw plugin; CSF 3, meta config, story patterns, checklists)
 - **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
-- **Astryx UI fixes**: `astryx-fix` skill (assignee gate before starting, measure-before-you-fix, theme-defaults-first procedure, known traps, verification bar)
-- **Astryx UI bug reporting**: `astryx-bug-report` skill (capture-only intake for visual / behavioral defects and `discussion` items — "is this intended?" / "propose X instead" — filed under epic FR-3491 as Bugs and Tasks respectively, duplicate + relates scan). Use it when the ask is "record this", `astryx-fix` when it is "fix this".
 - **Backend.AI live data, field meanings, GraphQL**: `bai-agent` skill (preflight/login, the `search` -> `docs show`/`schema show`/`explain` -> `query` loop, and pointing the user at the `webui_url` the query result already carries). It ships with the CLI (`packages/backend.ai-agent-cli/skill/`), not as a repository skill: install it per user with `pnpm run bai-agent init --skill --no-login`. Its workflow contract is the generated `BAI-AGENT` block at the bottom of this file.
 - **Relay mutations**: `relay-mutation-store-updates` skill (when a mutation can skip the refetch — update mutations must return their changed fields so Relay patches the normalized store; refetch only when list membership changes)
 
@@ -121,6 +119,14 @@ When terms disagree, precedence is: (1) the live UI i18n label in `resources/i18
 ### Verification Harness
 
 Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and TypeScript. Output ends with `=== ALL PASS ===` on success. Agents should use this script instead of running checks individually.
+
+**`verify.sh` does not run the Astryx token gate.** Run it yourself after touching CSS, theme tokens, or any `var(--…)` — anywhere in the repository, `react/src` and `packages/backend.ai-ui/src` alike:
+
+```bash
+node scripts/migration-gates/astryx-token-gate.mjs --strict
+```
+
+It catches a failure mode nothing else reports: an **undeclared** `var(--name)` produces no compiler, lint or runtime error. With a fallback (`var(--radius-md, 6px)`) the literal wins forever and the token never participates in theming; without one the whole declaration is invalid at computed-value time. The declared set is not guessable — there is no `--color-text-tertiary` and no `--color-text-error` (the semantic error token is the solid `--color-error`) — so run the gate rather than assuming a name. It currently reports pre-existing findings, so the bar is **no new findings**, not zero.
 
 ### PR Review Checklist
 
