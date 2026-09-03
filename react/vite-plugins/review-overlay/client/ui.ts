@@ -16,6 +16,9 @@
 
 /** react-grab restores focus asynchronously after a pick; outlast it. */
 const FOCUS_GUARD_MS = 1000;
+const COMPOSE_WIDTH = 300;
+const COMPOSE_GAP = 10;
+const VIEWPORT_PAD = 8;
 
 export interface OverlayUICallbacks {
   /**
@@ -90,11 +93,14 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       border: 1px solid var(--bai-review-pick-line);
       background: var(--bai-review-pick-fill);
     }
+    /* A viewport too short for the whole box scrolls INSIDE it, so the
+       actions row stays reachable however short the window gets. */
     .compose {
-      position: fixed; z-index: 2147483001; width: 300px;
+      position: fixed; z-index: 2147483001; width: ${COMPOSE_WIDTH}px;
       background: var(--bai-review-surface); color: var(--bai-review-text);
       border: 1px solid var(--bai-review-border); border-radius: 8px;
       padding: 10px; box-shadow: 0 4px 18px var(--bai-review-shadow);
+      max-height: calc(100vh - ${VIEWPORT_PAD * 2}px); overflow-y: auto;
       display: none;
     }
     .compose .pathlabel {
@@ -149,6 +155,9 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   let pickActive = false;
   let pickTarget: Element | null = null;
   let focusGuardUntil = 0;
+  /** The picked element's box, frozen at pick time, plus the pick's own x. */
+  let composeAnchor: { left: number; top: number; bottom: number } | null =
+    null;
 
   const isComposeOpen = () => compose.style.display === 'block';
   const isOwnEvent = (evt: Event) => evt.composedPath().includes(host);
@@ -192,10 +201,34 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     );
   }
   window.addEventListener('scroll', syncPickHighlight, true);
-  window.addEventListener('resize', syncPickHighlight);
+  window.addEventListener('resize', () => {
+    syncPickHighlight();
+    placeCompose();
+  });
 
   function setComposeReady(ready: boolean) {
     copyButton.disabled = !ready;
+  }
+
+  /**
+   * The box grows AFTER it opens — the path label and the ⚛️ stack land once
+   * react-grab's fiber walk resolves — so its height is measured, never
+   * guessed, and every growth re-places it. Below the picked element when it
+   * fits, above it when it does not, clamped into the viewport either way, so
+   * the actions row is never off-screen.
+   */
+  function placeCompose() {
+    if (!isComposeOpen() || !composeAnchor) return;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const height = compose.offsetHeight;
+    compose.style.left = `${Math.max(VIEWPORT_PAD, Math.min(composeAnchor.left, vw - COMPOSE_WIDTH - 12))}px`;
+    const below = composeAnchor.bottom + COMPOSE_GAP;
+    const top =
+      below + height <= vh - VIEWPORT_PAD
+        ? below
+        : composeAnchor.top - COMPOSE_GAP - height;
+    compose.style.top = `${Math.max(VIEWPORT_PAD, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
   }
 
   function openCompose(target: Element, x: number, y: number) {
@@ -204,12 +237,25 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     composeText.value = '';
     setComposeReady(false);
     compose.style.display = 'block';
-    const width = 300;
-    compose.style.left = `${Math.max(8, Math.min(x, window.innerWidth - width - 12))}px`;
-    compose.style.top = `${Math.max(8, Math.min(y + 10, window.innerHeight - 180))}px`;
+    const box = target.getBoundingClientRect();
+    // A rect with no size at all is jsdom or `display: contents`; the pick
+    // point is then the only thing that says where the element was.
+    const measured = box.width > 0 || box.height > 0;
+    composeAnchor = {
+      left: x,
+      top: measured ? box.top : y,
+      bottom: measured ? box.bottom : y,
+    };
+    placeCompose();
     syncPickHighlight();
     focusGuardUntil = Date.now() + FOCUS_GUARD_MS;
     composeText.focus();
+  }
+
+  // A drag on the textarea's resize handle changes the height too, and it goes
+  // through no code path of ours.
+  if (typeof ResizeObserver === 'function') {
+    new ResizeObserver(() => placeCompose()).observe(compose);
   }
 
   /**
@@ -229,6 +275,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     if (!isComposeOpen()) return;
     compose.style.display = 'none';
     pickTarget = null;
+    composeAnchor = null;
     focusGuardUntil = 0;
     setHoverRect(null);
     callbacks.onComposeClosed();
@@ -236,10 +283,12 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   function setComposeLabel(text: string) {
     composeLabel.textContent = text;
+    placeCompose();
   }
 
   function appendComposeLabel(text: string) {
     composeLabel.textContent += text;
+    placeCompose();
   }
 
   function getComposeTarget() {
@@ -367,6 +416,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     setComposeReady,
     getComposeTarget,
     setPickActive,
+    placeCompose,
     copyText,
     isOwnEvent,
   };
