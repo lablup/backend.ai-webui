@@ -1,5 +1,5 @@
 ---
-name: release-risk-digest
+name: release-train-prep
 description: >
   Post a Korean release risk digest to a Microsoft Teams thread, grouped by risk
   category. Runs scripts/release-risk-report.mjs over a ref range and renders the
@@ -7,15 +7,20 @@ description: >
   destructive flows touched, UI without e2e cover, and manual gaps. Use when
   someone gives a Teams thread URL and asks to summarize a release, an rc, or a
   branch there — "이번 릴리즈 리스크 팀즈에 올려줘", "이 스레드에 정리해서 알려줘",
-  "post the release risk report to Teams", "/release-risk-digest".
-argument-hint: "--from <ref> [--to <ref>] [--dry-run] [--auto] <Teams URL>"
+  "post the release risk report to Teams", "/release-train-prep". With
+  --train <version> it also opens the release train: creates the
+  "Final Train to v<version>" Jira Story and posts the kickoff + digest into
+  the thread — "트레인 이슈 만들어줘", "릴리즈 트레인 준비해줘", "release train 시작".
+argument-hint: "--from <ref> [--to <ref>] [--train <version>] [--dry-run] [--auto] <Teams URL>"
 ---
 
-# Release Risk Digest → Teams
+# Release Train Prep → Teams
 
-Turn a ref range into a QA checklist and post it to a Teams thread, grouped by
-risk category. The analysis is done entirely by `scripts/release-risk-report.mjs`;
-this skill's job is to run it once, render Korean HTML, and post.
+Prepare a release train: turn a ref range into a QA checklist, post it to the
+train's Teams thread grouped by risk category, and (with `--train`) open the
+`Final Train` Jira Story. The analysis is done entirely by
+`scripts/release-risk-report.mjs`; this skill runs it once, renders Korean
+HTML, and posts.
 
 > **Skill reference**: Invoke the `teams-workflow` skill for Teams CLI usage.
 
@@ -35,11 +40,17 @@ this skill's job is to run it once, render Korean HTML, and post.
 - `--from <ref>` — the base of the comparison. When absent, **offer the choices
   below rather than erroring or guessing** (see *Resolving `--from`*).
 - `--to <ref>` — defaults to `HEAD`.
-- `--dry-run` — write the HTML to `/tmp/release-risk-digest-preview.html` and skip posting.
+- `--dry-run` — write the HTML to `/tmp/release-train-prep-preview.html` and skip posting.
 - `--auto` — skip the confirm-before-post prompt (for cron / unattended runs).
+- `--train <version>` — also open the release train for `v<version>`: create the
+  `Final Train to v<version>` Jira Story and post the kickoff into the thread.
+  See *Train kickoff* below.
 - A Teams thread URL (`teams.microsoft.com/l/message/...`) — **required unless `--dry-run`.**
   There is deliberately no default: posting a release summary to the wrong thread
   is not something to get wrong by omission. If the user did not give one, ask.
+  The Teams CLI can only **reply** to an existing thread — it cannot open a new
+  channel message — so the thread itself is created by a human first, which
+  matches how the team actually runs a train.
 
 ## Resolving `--from`
 
@@ -201,25 +212,94 @@ fi
 
 Pass `--no-ai-label`: the template already carries its own footer.
 
-For `--dry-run`, write the same HTML to `/tmp/release-risk-digest-preview.html`
+For `--dry-run`, write the same HTML to `/tmp/release-train-prep-preview.html`
 and print the path instead.
+
+## Train kickoff (`--train <version>`)
+
+The team's release ritual: a human opens a `🚂 Final train to vX.Y.Z` thread,
+someone creates the `Final Train to vX.Y.Z` Jira Story, and every bug found
+during release testing is linked onto it — `is blocked by` for blockers,
+`relates to` for the rest. The stable tag is cut when no blocker is left open.
+This mode automates the middle step and seeds the thread with the digest.
+
+Runs **in addition to** the normal digest flow, sharing its range resolution
+and its confirm gate. Steps, in order:
+
+1. **Duplicate scan first.** An existing train for the same version is reused,
+   never doubled:
+
+   ```bash
+   $FW_JIRA search "project = FR AND summary ~ \"Final Train\" AND summary ~ \"$VERSION\"" --limit 5
+   ```
+
+   On a hit, skip creation, use the existing key, and say so in the reply.
+
+2. **Create the Story** (see the `jira-workflow` skill; `$FW_JIRA` as documented
+   there). Type **Story**, exact summary format `Final Train to v$VERSION` —
+   the team greps for this shape (FR-3663, FR-3392, FR-3238 all follow it):
+
+   ```bash
+   $FW_JIRA create --type Story --assignee me \
+     --title "Final Train to v$VERSION" \
+     --desc "Release train for v$VERSION. Bugs found during release testing are
+   linked here: **is blocked by** for release blockers, **relates to** for
+   non-blocking findings. The stable tag is cut when no blocking issue is open.
+
+   Kickoff thread: $TEAMS_URL
+   Risk digest at kickoff: see the thread reply posted alongside this issue."
+   ```
+
+3. **Attach the thread as a web link** so the issue points back at the
+   conversation: `$FW_JIRA weblink $KEY --url "$TEAMS_URL" --title "Kickoff thread"`.
+
+4. **Wait for the GitHub clone.** The webhook mirrors the issue within ~a
+   minute; poll `gh issue list --search "$KEY"` a few times. If it has not
+   appeared after ~2 minutes, continue — mention the pending clone in the
+   reply instead of blocking on it.
+
+5. **Post the kickoff reply** into the thread: the digest as usual, prefixed
+   with the train header:
+
+   ```html
+   <b>🚂 Final Train to v{VERSION}</b> — <a href="https://lablup.atlassian.net/browse/{KEY}">{KEY}</a><br/>
+   릴리즈 테스트에서 발견되는 버그는 이 이슈에 연결해주세요 —
+   블로커는 <b>is blocked by</b>, 그 외는 <b>relates to</b>.<br/><br/>
+   {the normal digest body}
+   ```
+
+What this mode deliberately does **not** do:
+
+- **Link bugs to the train.** Whether a finding blocks the release is a human
+  call, made per bug as it is filed (the `astryx-bug-report` /
+  `jira-github-bridge` flow already covers the mechanics).
+- **Decide go / no-go.** The open-blocker list is one Jira view away
+  (`links` on the train issue); it needs no digest.
+- **Cut any tag or release.** The train issue is bookkeeping; releasing is
+  `create-release`'s job, triggered by a human.
 
 ## Examples
 
 ```bash
+# Open the train for 26.10.0: Jira Story + kickoff digest into the thread
+/release-train-prep --train 26.10.0 --from v26.9.0 <teams-url>
+
 # An rc, posted to the release thread
-/release-risk-digest --from v26.8.1 --to v26.9.0-rc.3 <teams-url>
+/release-train-prep --from v26.8.1 --to v26.9.0-rc.3 <teams-url>
 
 # What is queued for the next release
-/release-risk-digest --from v26.8.1 <teams-url>
+/release-train-prep --from v26.8.1 <teams-url>
 
 # One PR's checklist, previewed locally first
-/release-risk-digest --from origin/main --to FR-3820 --dry-run
+/release-train-prep --from origin/main --to FR-3820 --dry-run
 ```
 
 ## Related
 
 - `scripts/release-risk-report.mjs` — the analysis; `--help` for its own flags
 - `teams-workflow` (fw) — the Teams CLI, mentions, and images
+- `jira-workflow` (fw) — `$FW_JIRA` setup, `create`, `weblink`, `search`
+- `jira-github-bridge` (fw) — the webhook clone and `Resolves #N (KEY)` conventions
 - `merged-pr-digest` (fw) — the same post-to-Teams shape for merged PRs
+- `create-release` — cutting the tag itself; out of this skill's scope
 - `.claude/rules/destructive-confirmation.md` — what R4 asks the reader to re-verify
