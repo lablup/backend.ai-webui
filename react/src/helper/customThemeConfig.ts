@@ -162,7 +162,7 @@ export const pickValidAppearanceConfig = (
 type AppearanceStore = {
   /** The shipped/operator `resources/theme.json` (v2), untouched. */
   staticDoc?: BAIAppearanceConfig;
-  /** `staticDoc` plus dev-only overrides — what the providers render. */
+  /** `staticDoc` with the dev-server header color applied — what the providers render. */
   appliedDoc?: BAIAppearanceConfig;
 };
 
@@ -241,7 +241,7 @@ const fetchStaticDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
 };
 
 /** The dev-server header color, applied to a copy so the shipped doc stays pristine. */
-const applyDevOverrides = (
+const applyDevServerHeaderColorOverride = (
   doc: BAIAppearanceConfig | undefined,
 ): BAIAppearanceConfig | undefined => {
   const headerColor = import.meta.env.DEV
@@ -268,7 +268,7 @@ export const loadCustomThemeConfig = () => {
   fetchStaticDoc()
     .then((staticDoc) => {
       store.staticDoc = staticDoc;
-      store.appliedDoc = applyDevOverrides(staticDoc);
+      store.appliedDoc = applyDevServerHeaderColorOverride(staticDoc);
 
       const fontFamily = store.appliedDoc?.theme?.fontFamily;
       if (_.isString(fontFamily) && fontFamily) {
