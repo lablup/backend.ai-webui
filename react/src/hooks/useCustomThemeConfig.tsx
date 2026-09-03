@@ -139,8 +139,6 @@ export const useCustomThemeConfig = (): UseCustomThemeConfigResult => {
 
   const families = resolveThemeFamilyCatalog(rawThemeConfig);
 
-  console.log('#', families);
-
   // Resolution order: user choice -> `default`. Fall back to `default` if the
   // requested key is absent (e.g. operator removed a family the user had
   // selected). Branding preview mode shows the edited draft as-is, so the
