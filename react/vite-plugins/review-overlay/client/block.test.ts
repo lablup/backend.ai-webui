@@ -367,3 +367,65 @@ describe('buildBlock', () => {
     ).rejects.toThrow(/target.*capture/);
   });
 });
+
+/**
+ * The id fingerprints the encoded anchor, which now contains the note — so it
+ * moves when the note does. Everything the reviewer pastes has to move with it.
+ */
+describe('a block whose anchor carries the note', () => {
+  const options = {
+    pr: 9330,
+    routeLabel: 'Sessions',
+    at: '2026-08-31T09:00:00Z',
+    origin: 'https://fr-3811.localhost:1355',
+    noteInAnchor: true,
+  };
+
+  const build = (text: string) => {
+    document.body.innerHTML = '<button id="go">Login</button>';
+    return buildBlock({
+      ...options,
+      text,
+      target: document.querySelector('#go') as Element,
+      stack: [],
+    });
+  };
+
+  it('carries the note to the pin, and the same id everywhere', async () => {
+    const built = await build(
+      'The button is misaligned.\nIt should sit flush.',
+    );
+    await expect(decodeAnchor(built.anchorB64)).resolves.toMatchObject({
+      n: 'The button is misaligned.\nIt should sit flush.',
+    });
+    // Block body, marker and link: one id, or the reviewer's paste is a lie.
+    expect(built.block).toContain(`\`${built.id}\``);
+    expect(built.block).toContain(`id=${built.id} `);
+    expect(built.url).toContain(`#bai=v3.${built.id}.`);
+    expect(built.html).toContain(built.id);
+  });
+
+  it('gives the same id for the same note, and a new one when it changes', async () => {
+    const first = await build('same note');
+    const again = await build('same note');
+    const edited = await build('edited note');
+    expect(again.id).toBe(first.id);
+    expect(again.anchorB64).toBe(first.anchorB64);
+    expect(edited.id).not.toBe(first.id);
+  });
+
+  it('carries no note key when the reviewer typed nothing', async () => {
+    const built = await build('   ');
+    const decoded = await decodeAnchor(built.anchorB64);
+    expect(decoded && 'n' in decoded).toBe(false);
+  });
+
+  it('caps the anchor copy while the block keeps the whole note', async () => {
+    const long = 'x'.repeat(400);
+    const built = await build(long);
+    const decoded = await decodeAnchor(built.anchorB64);
+    expect(decoded?.n).toHaveLength(280);
+    expect(decoded?.nt).toBe(1);
+    expect(built.block).toContain(long);
+  });
+});

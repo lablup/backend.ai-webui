@@ -8,7 +8,7 @@
  * leads unquoted; the generated half is a quote; the link carries the whole
  * anchor payload so it resolves without any lookup.
  */
-import { captureAnchorSignals } from './anchor.js';
+import { captureAnchorSignals, withNote } from './anchor.js';
 import { encodeAnchor } from './codec.js';
 import { readablePath } from './deeplink.js';
 import { pinId } from './id.js';
@@ -257,6 +257,8 @@ export function buildBlockFromCapture(
 export interface BuildBlockOptions extends BlockRenderOptions {
   /** Skip the capture step — the overlay precomputes this at pick time. */
   capture?: AnchorCapture;
+  /** Carry the note in the anchor too; the overlay does this on every edit. */
+  noteInAnchor?: boolean;
   /** Required unless `capture` is given. */
   target?: Element;
   stack?: string[];
@@ -272,8 +274,9 @@ export async function buildBlock(
     if (!options.target) {
       throw new Error('buildBlock needs either `target` or `capture`');
     }
+    const anchor = captureAnchorSignals(options.target);
     capture = await captureForBlock(
-      captureAnchorSignals(options.target),
+      options.noteInAnchor ? withNote(anchor, options.text) : anchor,
       options.stack ?? [],
       options.component,
     );

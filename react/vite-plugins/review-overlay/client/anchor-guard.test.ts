@@ -28,6 +28,11 @@ describe('isAnchorV3', () => {
     expect(isAnchorV3(anchor())).toBe(true);
   });
 
+  it('accepts the reviewer note, whole or marked truncated', () => {
+    expect(isAnchorV3(anchor({ n: 'two lines\nof note' }))).toBe(true);
+    expect(isAnchorV3(anchor({ n: `${'x'.repeat(279)}…`, nt: 1 }))).toBe(true);
+  });
+
   it.each([
     ['another version', anchor({ v: 2 })],
     ['no selector', { v: 3, p: '/' }],
@@ -39,6 +44,9 @@ describe('isAnchorV3', () => {
     ['a rect missing a side', anchor({ rect: { x: 0, y: 0, w: 1 } })],
     ['a non-finite rect', anchor({ rect: { x: NaN, y: 0, w: 1, h: 1 } })],
     ['a component that is not an object', anchor({ c: 'StartPage' })],
+    ['a note past the cap', anchor({ n: 'x'.repeat(281) })],
+    ['a note that is not text', anchor({ n: 42 })],
+    ['a truncation flag that is not 1', anchor({ n: 'x', nt: true })],
     ['nothing at all', null],
     ['a bare string', 'v3'],
   ])('refuses %s', (_label, value) => {

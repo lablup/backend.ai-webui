@@ -387,6 +387,40 @@ describe('createDeepLinkPin', () => {
     expect(pin.isShowing()).toBe(false);
   });
 
+  // The card leads with the reviewer's own words; the generated label follows.
+  describe('the note the link carries', () => {
+    const note = () => host.shadowRoot?.querySelector('.note') as HTMLElement;
+    const trunc = () => host.shadowRoot?.querySelector('.trunc') as HTMLElement;
+
+    it('shows it above the label, verbatim', () => {
+      show({ n: 'The button is misaligned.\nIt should sit flush.' });
+      expect(note().textContent).toBe(
+        'The button is misaligned.\nIt should sit flush.',
+      );
+      expect(card().textContent?.indexOf('The button')).toBeLessThan(
+        card().textContent?.indexOf('Start › button') ?? -1,
+      );
+      expect(trunc().classList.contains('shown')).toBe(false);
+    });
+
+    it('says so when the note was capped', () => {
+      show({ n: `${'x'.repeat(279)}…`, nt: 1 });
+      expect(trunc().classList.contains('shown')).toBe(true);
+      expect(trunc().textContent).toContain('comment');
+    });
+
+    // Every link copied before the note travelled: no note, and no gap where
+    // one would have been.
+    it('leaves nothing at all for a link without one', () => {
+      show({ n: `${'x'.repeat(279)}…`, nt: 1 });
+      show();
+      expect(note().textContent).toBe('');
+      expect(trunc().classList.contains('shown')).toBe(false);
+      const css = host.shadowRoot?.querySelector('style')?.textContent ?? '';
+      expect(css).toContain('.card .note:empty { display: none; }');
+    });
+  });
+
   // A box select anchors to the FRAME it happened inside — marking that would
   // highlight something many times the region the reviewer dragged.
   describe('a pin whose anchor carries a region', () => {

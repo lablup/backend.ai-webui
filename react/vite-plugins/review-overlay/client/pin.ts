@@ -1,6 +1,6 @@
 /**
- * The pin a `#bai=v3` link drops on its element: one marker, one card with the
- * quoted label the block carried, and a translucent box over the element.
+ * The pin a `#bai=v3` link drops on its element: one marker, one card leading
+ * with the note the reviewer typed, and a translucent box over the element.
  *
  * The card text comes off a link anyone can write, so it goes in through
  * `textContent` — never `innerHTML`. The box is state, not a one-shot effect:
@@ -52,6 +52,18 @@ const STYLE = `
     box-shadow: 0 4px 18px var(--bai-review-shadow);
   }
   .card.found { display: block; }
+  /* The reviewer's own words lead. An anchor from before the note travelled
+     carries none, and :empty leaves no gap where it would have been. */
+  .card .note {
+    white-space: pre-wrap; word-break: break-word; padding-right: 42px;
+    margin-bottom: 6px;
+  }
+  .card .note:empty { display: none; }
+  .card .trunc {
+    color: var(--bai-review-text-dim); font-size: 11px; margin-bottom: 6px;
+    display: none;
+  }
+  .card .trunc.shown { display: block; }
   .card .label {
     font-weight: 600; word-break: break-word; padding-right: 42px;
   }
@@ -101,6 +113,11 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   marker.append(head);
   const card = document.createElement('div');
   card.className = 'card';
+  const note = document.createElement('div');
+  note.className = 'note';
+  const trunc = document.createElement('div');
+  trunc.className = 'trunc';
+  trunc.textContent = 'Note truncated — the comment has the whole of it.';
   const label = document.createElement('div');
   label.className = 'label';
   const sub = document.createElement('div');
@@ -113,7 +130,7 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   locateButton.className = 'locate';
   locateButton.textContent = '📍';
   locateButton.title = 'Scroll back to this element';
-  card.append(close, locateButton, label, sub);
+  card.append(close, locateButton, note, trunc, label, sub);
   const markBox = document.createElement('div');
   markBox.className = 'markbox';
   layer.append(markBox, marker, card);
@@ -345,6 +362,8 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       target = next;
       marker.dataset.pinId = next.id;
       card.dataset.pinId = next.id;
+      note.textContent = next.anchor.n ?? '';
+      trunc.classList.toggle('shown', next.anchor.nt === 1 && !!next.anchor.n);
       label.textContent = next.label;
       sub.textContent = next.anchor.c
         ? `${next.id} · ${next.anchor.c.name} (${next.anchor.c.src})`

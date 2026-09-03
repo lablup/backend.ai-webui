@@ -10,6 +10,12 @@ import type { AnchorV3 } from './types.js';
 export const SELECTOR_MAX = 1024;
 const NAME_MAX = 256;
 const TXT_MAX = 64;
+/**
+ * The note the anchor carries. 280 chars of adversarial CJK on top of a
+ * SELECTOR_MAX selector deflates to 1359 of `PIN_BODY_SRC`'s 2048 base64
+ * chars, and 1763 of `MAX_ANCHOR_BYTES`' 16 KB inflated.
+ */
+export const NOTE_MAX = 280;
 
 /** A tag name reaches `querySelectorAll`; nothing else may look like one. */
 export const TAG_RE = /^[a-z][a-z0-9-]*$/;
@@ -38,6 +44,8 @@ export function isAnchorV3(value: unknown): value is AnchorV3 {
   if (a.tag !== undefined && (!isText(a.tag, NAME_MAX) || !TAG_RE.test(a.tag)))
     return false;
   if (a.txt !== undefined && !isText(a.txt, TXT_MAX)) return false;
+  if (a.n !== undefined && !isText(a.n, NOTE_MAX)) return false;
+  if (a.nt !== undefined && a.nt !== 1) return false;
   if (a.tid !== undefined && !isText(a.tid, NAME_MAX)) return false;
   if (!isFractionRect(a.rect)) return false;
   if (!isFractionRect(a.sel)) return false;

@@ -51,6 +51,13 @@ export interface AnchorV3 {
   sel?: AnchorRect;
   /** Shown to the reader, and a resolution rank (`dn` also a veto). */
   c?: AnchorComponent;
+  /**
+   * The reviewer's note, capped at `NOTE_MAX`. Absent on every link copied
+   * before the note travelled in the anchor, and on a pick with no note.
+   */
+  n?: string;
+  /** The note was longer than the cap, so `n` ends in an ellipsis. */
+  nt?: 1;
 }
 
 declare global {

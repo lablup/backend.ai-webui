@@ -22,6 +22,8 @@ type RectLike = { left: number; top: number; width: number; height: number };
 /** react-grab restores focus asynchronously after a pick; outlast it. */
 const FOCUS_GUARD_MS = 1000;
 const COMPOSE_WIDTH = 300;
+/** Long enough that a typist re-encodes once per pause, not per keystroke. */
+const NOTE_DEBOUNCE_MS = 250;
 const COMPOSE_GAP = 10;
 const VIEWPORT_PAD = 8;
 
@@ -38,6 +40,8 @@ export interface OverlayUICallbacks {
    * prevents by keeping the copy button disabled until it is.
    */
   onBuildBlock: (text: string) => CopyPayload | null;
+  /** Debounced: the note rides in the anchor, so it has to be re-encoded. */
+  onNoteChanged: (text: string) => void;
   onComposeClosed: () => void;
   onEscape: () => void;
 }
@@ -219,9 +223,35 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     placeCompose();
   });
 
-  function setComposeReady(ready: boolean) {
-    copyButton.disabled = !ready;
+  /**
+   * The note the ready capture was encoded around; `null` while nothing is
+   * ready. The copy gesture may only ever write a block for THIS text.
+   */
+  let readyNote: string | null = null;
+  let noteTimer = 0;
+
+  function syncCopyEnabled() {
+    copyButton.disabled =
+      readyNote === null || composeText.value.trim() !== readyNote;
   }
+
+  function setComposeReady(ready: boolean, note = '') {
+    readyNote = ready ? note : null;
+    syncCopyEnabled();
+  }
+
+  function flushNote() {
+    clearTimeout(noteTimer);
+    noteTimer = 0;
+    const note = composeText.value.trim();
+    if (note !== readyNote) callbacks.onNoteChanged(note);
+  }
+
+  composeText.addEventListener('input', () => {
+    syncCopyEnabled();
+    clearTimeout(noteTimer);
+    noteTimer = window.setTimeout(flushNote, NOTE_DEBOUNCE_MS);
+  });
 
   /**
    * The box grows AFTER it opens — the path label and the ⚛️ stack land once
@@ -253,6 +283,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     pickTarget = target;
     composeErr.style.display = 'none';
     composeText.value = '';
+    clearTimeout(noteTimer);
     setComposeReady(false);
     compose.style.display = 'block';
     const frame = target.getBoundingClientRect();
@@ -297,6 +328,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   function closeCompose() {
     if (!isComposeOpen()) return;
+    clearTimeout(noteTimer);
     compose.style.display = 'none';
     pickTarget = null;
     pickRegion = null;
@@ -393,9 +425,18 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   function runCopy() {
     // Empty text is allowed — the block still carries label, stack and link.
+    const note = composeText.value.trim();
+    // ⌘⏎ can beat the debounce, and the note is part of the anchor now: start
+    // the re-encode this keystroke would have started and let them repeat it.
+    if (readyNote !== null && note !== readyNote) {
+      flushNote();
+      composeErr.textContent = 'Still encoding that note — press ⌘⏎ again.';
+      composeErr.style.display = 'block';
+      return;
+    }
     let block: CopyPayload | null;
     try {
-      block = callbacks.onBuildBlock(composeText.value.trim());
+      block = callbacks.onBuildBlock(note);
     } catch (e) {
       composeErr.textContent = `Could not build the block: ${e}`;
       composeErr.style.display = 'block';
@@ -475,6 +516,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     appendComposeLabel,
     setComposeReady,
     getComposeTarget,
+    currentNote: () => composeText.value.trim(),
     setPickActive,
     placeCompose,
     copyText,

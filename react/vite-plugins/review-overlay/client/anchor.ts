@@ -5,7 +5,7 @@
  * payload carries redundant signals (testid landmark + fractional rect + tag +
  * text). Resolving them back to an element is the READ side's job (FR-3813).
  */
-import { SELECTOR_MAX } from './anchor-guard.js';
+import { NOTE_MAX, SELECTOR_MAX } from './anchor-guard.js';
 import { fractionWithin, type Box } from './selection.js';
 import type { AnchorComponent, AnchorV3 } from './types.js';
 
@@ -116,4 +116,24 @@ export function captureAnchorSignals(
   }
   if (component) anchor.c = component;
   return anchor;
+}
+
+/**
+ * The anchor's copy of the reviewer's note, so the pin card can show it. Only
+ * the first `NOTE_MAX` chars travel; the comment the block lands in keeps the
+ * whole thing, and `nt` tells the card to say so.
+ */
+export function withNote(anchor: AnchorV3, note: string): AnchorV3 {
+  const next: AnchorV3 = { ...anchor };
+  delete next.n;
+  delete next.nt;
+  const text = note.trim();
+  if (!text) return next;
+  if (text.length <= NOTE_MAX) {
+    next.n = text;
+    return next;
+  }
+  next.n = `${text.slice(0, NOTE_MAX - 1)}…`;
+  next.nt = 1;
+  return next;
 }

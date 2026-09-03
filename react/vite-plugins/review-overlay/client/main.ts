@@ -9,7 +9,7 @@
  * carries the whole anchor, so the element is pinned with no lookup at all.
  */
 import { isAnchorV3 } from './anchor-guard.js';
-import { captureAnchorSignals } from './anchor.js';
+import { captureAnchorSignals, withNote } from './anchor.js';
 import {
   buildBlockFromCapture,
   captureForBlock,
@@ -27,7 +27,7 @@ import {
 } from './deeplink.js';
 import { createPicker } from './picker.js';
 import { createDeepLinkPin } from './pin.js';
-import type { AnchorV3, ReviewServerState } from './types.js';
+import type { AnchorComponent, AnchorV3, ReviewServerState } from './types.js';
 import { createOverlayUI } from './ui.js';
 
 /** The SPA's own `<Navigate replace>` redirects drop the fragment on login. */
@@ -44,17 +44,32 @@ if (!window.__baiReviewOverlay) {
 function boot() {
   let serverState: ReviewServerState | null = null;
   /**
-   * The pick's async work, done the moment the reviewer picks — NOT when they
-   * press ⌘⏎. `execCommand('copy')` is the only clipboard on the plain-http
-   * gateway origin and it needs the user activation still to be live, so
-   * nothing may be awaited between the gesture and the write.
+   * The pick's fiber walk, done once. The note is not part of it: it changes
+   * while the reviewer types, and only the anchor has to be re-encoded.
    */
-  let capture: { target: Element; value: AnchorCapture } | null = null;
+  let pick: {
+    target: Element;
+    anchor: AnchorV3;
+    stack: string[];
+    component?: AnchorComponent;
+  } | null = null;
+  /**
+   * The encoded anchor for `note`, done the moment the reviewer picks and
+   * again whenever they pause typing — NOT when they press ⌘⏎.
+   * `execCommand('copy')` is the only clipboard on the plain-http gateway
+   * origin and it needs the user activation still to be live, so nothing may
+   * be awaited between the gesture and the write.
+   */
+  let capture: { target: Element; note: string; value: AnchorCapture } | null =
+    null;
+  /** Typing faster than `encodeAnchor` resolves; only the last one counts. */
+  let encodeSeq = 0;
 
   const ui = createOverlayUI({
     onBuildBlock: (text) => {
       const target = ui.getComposeTarget();
-      if (!target || capture?.target !== target) return null;
+      if (!target || capture?.target !== target || capture.note !== text)
+        return null;
       const built = buildBlockFromCapture(capture.value, {
         text,
         pr: serverState?.pr ?? 0,
@@ -62,8 +77,10 @@ function boot() {
       });
       return { text: built.block, html: built.html };
     },
+    onNoteChanged: (text) => void encodeFor(text),
     onComposeClosed: () => {
       capture = null;
+      pick = null;
       picker.stop();
     },
     onEscape: () => picker.stop(),
@@ -72,6 +89,7 @@ function boot() {
   const picker = createPicker({
     onPick: (element, x, y, region) => {
       capture = null;
+      pick = null;
       ui.openCompose(element, x, y, region);
       // One capture per pick: the label, the anchor payload and the rect all
       // come from this single walk, measured while the page still looks the
@@ -92,15 +110,36 @@ function boot() {
       picker.getStack(element),
       picker.getComponent(element),
     ]);
-    const prepared = await captureForBlock(anchor, stack, component);
     if (ui.getComposeTarget() !== element) return;
-    capture = { target: element, value: prepared };
-    ui.setComposeReady(true);
+    pick = { target: element, anchor, stack, component };
+    // Whatever they have typed while the fiber walk ran, not the empty note
+    // this pick started with.
+    await encodeFor(ui.currentNote());
     if (stack.length) {
       ui.appendComposeLabel(
         `\n⚛️ ${stack.map((line) => line.trim()).join('\n')}`,
       );
     }
+  }
+
+  /**
+   * Re-encode the anchor around the note. Async by nature (`CompressionStream`),
+   * so the copy gesture only ever reads what this has already finished — the
+   * copy button stays disabled for any text this has not caught up with.
+   */
+  async function encodeFor(note: string) {
+    const state = pick;
+    if (!state) return;
+    const seq = ++encodeSeq;
+    const prepared = await captureForBlock(
+      withNote(state.anchor, note),
+      state.stack,
+      state.component,
+    );
+    if (seq !== encodeSeq || pick !== state) return;
+    if (ui.getComposeTarget() !== state.target) return;
+    capture = { target: state.target, note, value: prepared };
+    ui.setComposeReady(true, note);
   }
 
   /** The app publishes this in dev; without it the pathname is the label. */

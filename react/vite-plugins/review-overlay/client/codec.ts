@@ -103,6 +103,7 @@ export async function decodeAnchor(b64url: string): Promise<AnchorV3 | null> {
     if (obj.v !== 3) return null;
     if (typeof obj.s !== 'string' || !obj.s) return null;
     if (typeof obj.p !== 'string' || !isSafePath(obj.p)) return null;
+    if (obj.n !== undefined && typeof obj.n !== 'string') return null;
     return obj as AnchorV3;
   } catch {
     return null;

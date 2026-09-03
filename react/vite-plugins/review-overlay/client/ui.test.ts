@@ -7,6 +7,7 @@ import { createOverlayUI, type OverlayUI } from './ui.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 let ui: OverlayUI;
+const noteChanges: string[] = [];
 
 const compose = () => ui.root.querySelector('.compose') as HTMLElement;
 
@@ -39,8 +40,10 @@ beforeEach(() => {
     value: 1024,
     configurable: true,
   });
+  noteChanges.length = 0;
   ui = createOverlayUI({
     onBuildBlock: () => null,
+    onNoteChanged: (text) => noteChanges.push(text),
     onComposeClosed: () => undefined,
     onEscape: () => undefined,
   });
@@ -228,6 +231,62 @@ describe('copying both flavours', () => {
     const written = stubExecCommand();
     expect(await ui.copyText(MD, HTML)).toBe(true);
     expect(written['text/html']).toBe(HTML);
+  });
+});
+
+/**
+ * The note rides in the anchor, so the block can only be built from a capture
+ * encoded around the text that is in the box right now.
+ */
+describe('gating the copy on the note', () => {
+  const textarea = () =>
+    compose().querySelector('textarea') as HTMLTextAreaElement;
+  const copyButton = () =>
+    compose().querySelector('[data-act="copy"]') as HTMLButtonElement;
+  const err = () => compose().querySelector('.err') as HTMLElement;
+  const type = (value: string) => {
+    textarea().value = value;
+    textarea().dispatchEvent(new Event('input'));
+  };
+
+  beforeEach(() => {
+    const target = mountSized({ top: 100, bottom: 300 }, 160);
+    ui.openCompose(target, 40, 306);
+  });
+
+  it('re-disables the button the moment the note leaves the capture', () => {
+    expect(copyButton().disabled).toBe(true);
+    ui.setComposeReady(true, '');
+    expect(copyButton().disabled).toBe(false);
+    type('needs re-encoding');
+    expect(copyButton().disabled).toBe(true);
+    ui.setComposeReady(true, 'needs re-encoding');
+    expect(copyButton().disabled).toBe(false);
+  });
+
+  it('asks for one re-encode per typing pause, not per keystroke', async () => {
+    ui.setComposeReady(true, '');
+    type('a');
+    type('ab');
+    type('abc');
+    expect(noteChanges).toEqual([]);
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    expect(noteChanges).toEqual(['abc']);
+  });
+
+  it('refuses a ⌘⏎ that beat the debounce, and starts the encode', () => {
+    ui.setComposeReady(true, '');
+    type('typed but not encoded');
+    textarea().dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        metaKey: true,
+        bubbles: true,
+      }),
+    );
+    expect(err().style.display).toBe('block');
+    expect(err().textContent).toContain('Still encoding');
+    expect(noteChanges).toEqual(['typed but not encoded']);
   });
 });
 
