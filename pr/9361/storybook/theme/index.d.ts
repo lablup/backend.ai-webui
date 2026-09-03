@@ -7,6 +7,5 @@
  measured alignment tables. What is left of the theme-shim after the
  `useToken()` consumers moved onto `useTheme()` (FR-3605).
  */
-export { generate, palette, presetDarkPalettes, presetPalettes, type GenerateOptions, } from './antdColors';
 export { ANTD_ALIGN_TOKENS, ANTD_REVERSED_BAND_OVERLAYS } from './antdParity';
 export { BAI_SELF_COLOR_TOKENS, buildBaiCustomTokens, toSeedTuple, type BaiCustomTokenSeeds, type BrandSeedPair, } from './baiCustomTokens';
