@@ -38,6 +38,7 @@ import {
   BAIIconWithTooltip,
   BAIModal,
   BAIQuestionIconWithTooltip,
+  BAISelect,
   toLocalId,
   type BAIModalProps,
   useBAILogger,
@@ -439,7 +440,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                 {/* Same manual-wiring pattern as StorageSelect below: the
                     Suspense boundary swallows BAIFormItem's injected props, so
                     the field value is written explicitly. */}
-                <Suspense fallback={<Skeleton height={32} />}>
+                <Suspense fallback={<BAISelect loading disabled />}>
                   <ProjectSelectForAdminPage
                     data-testid="folder-create-project-select"
                     domain={baiClient._config.domainName}
