@@ -10,7 +10,7 @@
  * leaves out is not pinned, so Astryx's default applies.
  *
  * KEEP IN SYNC (pinned token values, not the glue code) with
- * `buildBackendAiTheme({ role: 'brand' })`.
+ * `buildBackendAITheme({ role: 'brand' })`.
  */
 import {
   ANTD_ALIGN_TOKENS,
@@ -44,7 +44,10 @@ const toMutedTuple = (
     : undefined;
 
 const family = webuiThemeJson.theme.families.default;
-const familySeeds = family.seeds as Record<string, string | string[] | undefined>;
+const familySeeds = family.seeds as Record<
+  string,
+  string | string[] | undefined
+>;
 const seeds = {
   accent: toPair(familySeeds.accent),
   link: toPair(familySeeds.link),
@@ -104,19 +107,19 @@ export const astryxBrandTheme = defineTheme({
     // from the accent and stories render on a warm pink-beige canvas the app
     // never shows (FR-3500 review, 2026-08-12).
     '--color-text-primary': ['#141414', '#FFFFFF'] as [string, string],
-    '--color-text-secondary': ['rgba(0,0,0,0.65)', 'rgba(255,255,255,0.65)'] as [
-      string,
-      string,
-    ],
+    '--color-text-secondary': [
+      'rgba(0,0,0,0.65)',
+      'rgba(255,255,255,0.65)',
+    ] as [string, string],
     '--color-text-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
       string,
       string,
     ],
     '--color-icon-primary': ['#141414', '#FFFFFF'] as [string, string],
-    '--color-icon-secondary': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'] as [
-      string,
-      string,
-    ],
+    '--color-icon-secondary': [
+      'rgba(0,0,0,0.45)',
+      'rgba(255,255,255,0.45)',
+    ] as [string, string],
     '--color-icon-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
       string,
       string,
