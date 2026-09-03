@@ -45,6 +45,15 @@ import { mergeValidateMessages } from './messages';
 import type { Store } from './namePath';
 import * as React from 'react';
 
+/** `checkVisibility` where the browser has it; jsdom falls back to markup. */
+function isVisible(el: HTMLElement): boolean {
+  if (typeof el.checkVisibility === 'function') return el.checkVisibility();
+  for (let node: HTMLElement | null = el; node; node = node.parentElement) {
+    if (node.hidden || node.style.display === 'none') return false;
+  }
+  return true;
+}
+
 export interface FormProps<Values = any> extends Omit<
   React.FormHTMLAttributes<HTMLFormElement>,
   'onSubmit' | 'children' | 'onChange' | 'onReset'
@@ -138,6 +147,7 @@ const InternalForm = <Values,>(
     setValidateMessages,
     setPreserve,
     destroyForm,
+    setRootRef,
   } = hooks;
 
   React.useImperativeHandle(
@@ -148,6 +158,10 @@ const InternalForm = <Values,>(
         nativeElement: nativeElementRef.current,
       }) as FormRef<Values>,
   );
+
+  React.useEffect(() => {
+    setRootRef(nativeElementRef);
+  }, [setRootRef]);
 
   React.useEffect(() => {
     formProviderContext.registerForm(name, formInstance);
@@ -165,41 +179,37 @@ const InternalForm = <Values,>(
     ),
   );
 
-  // `useEffectEvent` so the DOM read happens when the submit fails, not while
-  // rendering — `setCallbacks` runs during render and may not touch the ref.
-  const handleFinishFailed = React.useEffectEvent(
-    (errorInfo: ValidateErrorEntity) => {
-      if (scrollToFirstError && errorInfo.errorFields.length) {
-        // `errorFields` is field REGISTRATION order; pick the field that is
-        // first on SCREEN, or a conditionally mounted group loses.
-        const first = errorInfo.errorFields
-          .map((field) => ({
-            name: field.name,
-            node: formInstance.getFieldInstance(field.name) as
-              Element | undefined,
-          }))
-          .filter((field) => field.node)
-          .reduce<{ name: NamePath; node?: Element } | undefined>(
-            (best, field) =>
-              !best ||
-              best.node!.compareDocumentPosition(field.node!) &
-                Node.DOCUMENT_POSITION_PRECEDING
-                ? field
-                : best,
-            undefined,
-          );
-        if (first) {
-          formInstance.scrollToField(first.name, {
-            focus: true,
-            ...(typeof scrollToFirstError === 'object'
-              ? scrollToFirstError
-              : {}),
-          });
-        }
+  const handleFinishFailed = (errorInfo: ValidateErrorEntity) => {
+    if (scrollToFirstError && errorInfo.errorFields.length) {
+      // `errorFields` is field REGISTRATION order; pick the field that is
+      // first on SCREEN, or a conditionally mounted group loses. A hidden
+      // item (`<Form.Item hidden>`, an inactive wizard step) is still
+      // validated but cannot be scrolled to, so it does not compete.
+      const first = errorInfo.errorFields
+        .map((field) => ({
+          name: field.name,
+          node: formInstance.getFieldInstance(field.name) as
+            HTMLElement | undefined,
+        }))
+        .filter((field) => field.node && isVisible(field.node))
+        .reduce<{ name: NamePath; node?: HTMLElement } | undefined>(
+          (best, field) =>
+            !best ||
+            best.node!.compareDocumentPosition(field.node!) &
+              Node.DOCUMENT_POSITION_PRECEDING
+              ? field
+              : best,
+          undefined,
+        );
+      if (first) {
+        formInstance.scrollToField(first.name, {
+          focus: true,
+          ...(typeof scrollToFirstError === 'object' ? scrollToFirstError : {}),
+        });
       }
-      onFinishFailed?.(errorInfo);
-    },
-  );
+    }
+    onFinishFailed?.(errorInfo);
+  };
 
   setCallbacks({
     onValuesChange,
