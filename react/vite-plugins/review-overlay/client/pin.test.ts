@@ -13,6 +13,9 @@ const anchor = (over: Partial<AnchorV3> = {}): AnchorV3 => ({
 
 let host: HTMLElement;
 let pin: DeepLinkPin;
+let copied: string[];
+let toasts: string[];
+let copyResult: boolean | Promise<boolean>;
 
 const show = (over: Partial<AnchorV3> = {}) =>
   pin.show({ id: 'c_zdv3rhz', anchor: anchor(over), label: 'Start › button' });
@@ -55,7 +58,18 @@ beforeEach(() => {
   host = document.createElement('div');
   host.setAttribute('data-bai-review-overlay', '');
   document.body.append(host);
-  pin = createDeepLinkPin({ root: host.attachShadow({ mode: 'open' }), host });
+  copied = [];
+  toasts = [];
+  copyResult = true;
+  pin = createDeepLinkPin({
+    root: host.attachShadow({ mode: 'open' }),
+    host,
+    copyText: (text) => {
+      copied.push(text);
+      return copyResult;
+    },
+    showToast: (message) => toasts.push(message),
+  });
 });
 
 afterEach(() => {
@@ -509,6 +523,83 @@ describe('createDeepLinkPin', () => {
       show();
       expect(pin.locate()).toBe(true);
       expect(markbox().style.borderRadius).toBe('6px');
+    });
+  });
+
+  // FR-3849. The id is what names this comment in the PR thread, a Teams
+  // message or a Claude prompt — reading it off the card and retyping it was
+  // the only way to get it.
+  describe('the id copy control', () => {
+    const idCopy = () =>
+      host.shadowRoot?.querySelector('.idcopy') as HTMLButtonElement;
+    const subText = () =>
+      (host.shadowRoot?.querySelector('.sub') as HTMLElement).textContent;
+
+    it('writes the bare id — no #bai prefix, no URL', () => {
+      show({
+        c: { name: 'CreateButton', src: 'react/src/Create.tsx:12' },
+      } as Partial<AnchorV3>);
+      idCopy().click();
+      expect(copied).toEqual(['c_zdv3rhz']);
+    });
+
+    it('says which id it copied', () => {
+      show();
+      idCopy().click();
+      expect(toasts).toEqual(['Copied c_zdv3rhz 📋']);
+    });
+
+    it('waits for an async clipboard before it claims success', async () => {
+      copyResult = Promise.resolve(false);
+      show();
+      idCopy().click();
+      await copyResult;
+      expect(toasts[0]).toContain('Could not reach the clipboard');
+    });
+
+    it('copies nothing once the pin is dismissed', () => {
+      show();
+      pin.dismiss();
+      idCopy().click();
+      expect(copied).toEqual([]);
+    });
+
+    it('keeps the component line beside the id, not inside the button', () => {
+      show({
+        c: { name: 'CreateButton', src: 'react/src/Create.tsx:12' },
+      } as Partial<AnchorV3>);
+      expect(idCopy().textContent).toBe('📋');
+      expect(subText()).toBe(
+        'c_zdv3rhz📋 · CreateButton (react/src/Create.tsx:12)',
+      );
+    });
+  });
+
+  // FR-3849. G4 made the whole card click-through so it would not swallow
+  // clicks meant for the app; that also made its text unselectable.
+  describe('selectable text on a click-through card', () => {
+    const runs = () =>
+      Array.from(host.shadowRoot?.querySelectorAll('.card .txt') ?? []);
+
+    it('carries every text run in an inline span of its own', () => {
+      show({ n: 'Misaligned.' });
+      expect(runs().map((span) => span.parentElement?.className)).toEqual([
+        'note',
+        'trunc',
+        'label',
+        'sub',
+        'sub',
+      ]);
+    });
+
+    it('gives those spans pointer events and selection, not the card', () => {
+      const css = host.shadowRoot?.querySelector('style')?.textContent ?? '';
+      expect(css).toContain(
+        'padding: 8px 10px; font-size: 14px; pointer-events: none;',
+      );
+      expect(css).toContain(
+        'pointer-events: auto; -webkit-user-select: text; user-select: text;',
+      );
     });
   });
 

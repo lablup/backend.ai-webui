@@ -71,6 +71,18 @@ const STYLE = `
     color: var(--bai-review-text-dim); font-size: 13px; margin-top: 3px;
     word-break: break-all;
   }
+  /* The card stays click-through (G4), so its padding and the space beside a
+     short line still reach the app. Each text run takes pointer events back:
+     an inline box hugs its own lines, so only the words are covered. */
+  .card .txt {
+    pointer-events: auto; -webkit-user-select: text; user-select: text;
+  }
+  .card .idcopy {
+    pointer-events: auto; cursor: pointer; border: 0; background: none;
+    padding: 0 2px; font: inherit; font-size: 11px; line-height: 1;
+    color: var(--bai-review-text-dim);
+  }
+  .card .idcopy:hover { color: var(--bai-review-text); }
   .card .close, .card .locate {
     position: absolute; top: 2px; cursor: pointer; border: 0;
     background: none; color: var(--bai-review-text-dim); font-size: 14px;
@@ -92,6 +104,12 @@ export interface DeepLinkPinOptions {
   root: ShadowRoot;
   /** The overlay's own shadow host — never a valid answer for the anchor. */
   host: Element;
+  /**
+   * The overlay's own clipboard, not `navigator.clipboard`: the gateway origin
+   * is plain http, where `execCommand` is the only path that writes.
+   */
+  copyText: (text: string) => boolean | Promise<boolean>;
+  showToast: (message: string) => void;
 }
 
 export interface DeepLinkPinTarget {
@@ -101,7 +119,12 @@ export interface DeepLinkPinTarget {
   label: string;
 }
 
-export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
+export function createDeepLinkPin({
+  root,
+  host,
+  copyText,
+  showToast,
+}: DeepLinkPinOptions) {
   const style = document.createElement('style');
   style.textContent = STYLE;
   const layer = document.createElement('div');
@@ -113,15 +136,34 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   marker.append(head);
   const card = document.createElement('div');
   card.className = 'card';
+  /** A text run: the line stays click-through, the words do not. */
+  const run = (): HTMLSpanElement => {
+    const span = document.createElement('span');
+    span.className = 'txt';
+    return span;
+  };
   const note = document.createElement('div');
   note.className = 'note';
+  // Appended only when there IS a note, so `.note:empty` still collapses it.
+  const noteText = run();
   const trunc = document.createElement('div');
   trunc.className = 'trunc';
-  trunc.textContent = 'Note truncated — the comment has the whole of it.';
+  const truncText = run();
+  truncText.textContent = 'Note truncated — the comment has the whole of it.';
+  trunc.append(truncText);
   const label = document.createElement('div');
   label.className = 'label';
+  const labelText = run();
+  label.append(labelText);
   const sub = document.createElement('div');
   sub.className = 'sub';
+  const idText = run();
+  const idCopy = document.createElement('button');
+  idCopy.className = 'idcopy';
+  idCopy.textContent = '📋';
+  idCopy.title = 'Copy this comment id';
+  const componentText = run();
+  sub.append(idText, idCopy, componentText);
   const close = document.createElement('button');
   close.className = 'close';
   close.textContent = '✕';
@@ -345,6 +387,23 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
   );
   close.addEventListener('click', () => dismiss());
 
+  /**
+   * The bare id, not the `#bai=v3.` link: what the reader pastes into the PR
+   * thread or a Claude prompt to name this comment. The whole link is already
+   * one ⌘L away in the address bar.
+   */
+  idCopy.addEventListener('click', () => {
+    const id = target?.id;
+    if (!id) return;
+    const done = (ok: boolean) =>
+      showToast(
+        ok ? `Copied ${id} 📋` : 'Could not reach the clipboard — try again',
+      );
+    const copied = copyText(id);
+    if (typeof copied === 'boolean') done(copied);
+    else void copied.then(done);
+  });
+
   function dismiss() {
     target = null;
     setLocated(null);
@@ -362,13 +421,15 @@ export function createDeepLinkPin({ root, host }: DeepLinkPinOptions) {
       target = next;
       marker.dataset.pinId = next.id;
       card.dataset.pinId = next.id;
-      note.textContent = next.anchor.n ?? '';
+      noteText.textContent = next.anchor.n ?? '';
+      note.replaceChildren(...(next.anchor.n ? [noteText] : []));
       trunc.classList.toggle('shown', next.anchor.nt === 1 && !!next.anchor.n);
-      label.textContent = next.label;
+      labelText.textContent = next.label;
+      idText.textContent = next.id;
       const component = next.anchor.c;
-      sub.textContent = component
-        ? `${next.id} · ${component.name}${component.src ? ` (${component.src})` : ''}`
-        : next.id;
+      componentText.textContent = component
+        ? ` · ${component.name}${component.src ? ` (${component.src})` : ''}`
+        : '';
     },
 
     /**
