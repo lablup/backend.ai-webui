@@ -53,6 +53,7 @@ import { mergeValidateMessages } from './messages';
 import NameMap, {
   cloneByNamePathList,
   containsNamePath,
+  getFieldHandle,
   getNamePath,
   getValue,
   matchNamePath,
@@ -170,9 +171,16 @@ class WatcherCenter {
   }
 }
 
-/** What `focusField` may land on when the handle sits on a wrapper. */
-const FOCUSABLE =
-  'input:not([type="hidden"]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),[tabindex]:not([tabindex="-1"])';
+/**
+ * What `focusField` lands on when the handle sits on a wrapper: the editable
+ * control first, then anything tabbable — never a `tabindex="-1"` button, or
+ * a segmented control's first segment and a date picker's calendar toggle
+ * would win over the input.
+ */
+const EDITABLE =
+  'input:not([type="hidden"]):not([disabled]),select:not([disabled]),textarea:not([disabled]),[contenteditable="true"],[role="combobox"],[role="textbox"],[role="spinbutton"]';
+const TABBABLE =
+  'button:not([disabled]):not([tabindex="-1"]),[tabindex]:not([tabindex="-1"])';
 
 export class FormStore {
   private forceRootUpdate: () => void;
@@ -187,6 +195,7 @@ export class FormStore {
   private watcherCenter = new WatcherCenter(this);
   /** Paths of `preserve: false` fields alive at the previous unmount. */
   private prevWithoutPreserves: NameMap<boolean> | null = null;
+  private rootRef: React.RefObject<HTMLElement | null> | null = null;
 
   constructor(forceRootUpdate: () => void) {
     this.forceRootUpdate = forceRootUpdate;
@@ -233,6 +242,7 @@ export class FormStore {
         setPreserve: this.setPreserve,
         getInitialValue: this.getInitialValue,
         registerWatch: this.registerWatch,
+        setRootRef: this.setRootRef,
       };
     }
     if (process.env.NODE_ENV !== 'production') {
@@ -256,6 +266,10 @@ export class FormStore {
 
   private setPreserve = (preserve?: boolean) => {
     this.preserve = preserve;
+  };
+
+  private setRootRef = (ref: React.RefObject<HTMLElement | null>) => {
+    this.rootRef = ref;
   };
 
   /**
@@ -1020,18 +1034,10 @@ export class FormStore {
 
   // ======================= Scroll / focus =========================
 
-  /**
-   * Resolved through the control's generated `id`, which `FormItem` stamps
-   * onto every child. Composing a ref onto arbitrary children would be the
-   * only other way and buys nothing: `getFieldInstance` has zero call sites.
-   */
+  /** The field's DOM node — see `getFieldDOMNode` for what that resolves to. */
   getFieldInstance = (name: NamePath) => this.getFieldDOMNode(name);
 
-  /**
-   * Thin by design (answers/08 §6.2): `scrollToField` has ONE call site, and
-   * this repo's main scroll-to-error consumer deliberately bypasses it and
-   * walks the DOM itself because registration order and DOM order disagree.
-   */
+  /** Scrolls the NAMED field. `<Form scrollToFirstError>` picks which one. */
   scrollToField = (name: NamePath, options: ScrollOptions = {}) => {
     const { focus, ...restOpt } = options;
     const node = this.getFieldDOMNode(name);
@@ -1051,30 +1057,41 @@ export class FormStore {
   focusField = (name: NamePath) => {
     const node = this.getFieldDOMNode(name);
     if (!node) return;
-    // Some controls put the handle on a wrapper (Astryx Switch and
-    // SegmentedControl spread `rest` onto their root div); focus what is
-    // inside it. `preventScroll`: `scrollToField` has just positioned the
-    // item, and the browser's own focus scroll would move it again.
-    const target = node.matches(FOCUSABLE)
+    // The handle may sit on a wrapper (Astryx Switch and SegmentedControl
+    // spread `rest` onto their root div; the item wrapper is the fallback for
+    // a child that forwards nothing), so focus what is inside it.
+    // `preventScroll`: `scrollToField` has just positioned the item.
+    const target = node.matches(EDITABLE)
       ? node
-      : node.querySelector<HTMLElement>(FOCUSABLE);
+      : (node.querySelector<HTMLElement>(EDITABLE) ??
+        (node.matches(TABBABLE)
+          ? node
+          : node.querySelector<HTMLElement>(TABBABLE)));
     target?.focus?.({ preventScroll: true });
   };
 
+  /**
+   * The control carrying `data-bai-field-id` (stamped by `FormItem`; Astryx
+   * inputs drop the `id` they are given but keep `data-*`), else the item
+   * wrapper carrying `data-bai-field-item` (a child that forwards nothing to
+   * the DOM). Scoped to this form's element: two mounted forms may share a
+   * field name, and a document-wide lookup picked the wrong one.
+   */
   private getFieldDOMNode = (name: NamePath): HTMLElement | undefined => {
     if (typeof document === 'undefined') return undefined;
-    const id = getNamePath(name).join('_');
-    // `data-bai-field-id` first: Astryx controls drop the `id` FormItem gives
-    // them but keep the data attribute (FormItem.tsx).
-    const escaped =
-      typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
-        ? CSS.escape(id)
-        : id;
-    return (
-      document.querySelector<HTMLElement>(`[data-bai-field-id="${escaped}"]`) ??
-      document.getElementById(id) ??
-      undefined
-    );
+    const root: ParentNode = this.rootRef?.current ?? document;
+    const handle = getFieldHandle(getNamePath(name));
+    for (const el of root.querySelectorAll<HTMLElement>(
+      '[data-bai-field-id]',
+    )) {
+      if (el.dataset.baiFieldId === handle) return el;
+    }
+    for (const el of root.querySelectorAll<HTMLElement>(
+      '[data-bai-field-item]',
+    )) {
+      if (el.dataset.baiFieldItem === handle) return el;
+    }
+    return undefined;
   };
 }
 

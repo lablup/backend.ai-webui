@@ -153,6 +153,74 @@ const NamedForm: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
   );
 };
 
+/** A child that forwards nothing to the DOM — Astryx RadioList's shape. */
+const OpaqueInput: React.FC<any> = ({ value = '', onChange }) => (
+  <input value={value} onChange={onChange} />
+);
+
+const FormWithOpaqueControl: React.FC<Pick<Props, 'formRef'>> = ({
+  formRef,
+}) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError>
+      <Form.Item name="early" label="Early" rules={[{ required: true }]}>
+        <OpaqueInput />
+      </Form.Item>
+    </Form>
+  );
+};
+
+/** A first field hidden the way a wizard hides an inactive step. */
+const FormWithHiddenFirst: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError>
+      <Form.Item hidden name="early" label="Early" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="late" label="Late" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+    </Form>
+  );
+};
+
+/** A segmented-control shape: handle on the group, first segment tabindex=-1. */
+const SegmentedLike: React.FC<any> = ({
+  value = '',
+  onChange,
+  id: _ignored,
+  ...rest
+}) => (
+  <div role="radiogroup" {...rest}>
+    <button type="button" role="radio" tabIndex={-1} id="seg-a">
+      A
+    </button>
+    <button type="button" role="radio" tabIndex={0} id="seg-b">
+      B
+    </button>
+    <input type="hidden" value={value} onChange={onChange} />
+  </div>
+);
+
+const FormWithSegmented: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError>
+      <Form.Item name="early" label="Early" rules={[{ required: true }]}>
+        <SegmentedLike />
+      </Form.Item>
+    </Form>
+  );
+};
+
 async function submit(form: FormInstance) {
   await act(async () => {
     form.submit();
@@ -263,6 +331,55 @@ describe('scroll to the first invalid field', () => {
 
     expect(scrolledField()).toBe('early');
     expect(document.activeElement).toBe(controlOf('early'));
+  });
+
+  it('falls back to the item wrapper for a child that forwards nothing', async () => {
+    let form!: FormInstance;
+    render(<FormWithOpaqueControl formRef={(f) => (form = f)} />);
+    expect(document.querySelector('[data-bai-field-id]')).toBeNull();
+
+    await submit(form);
+
+    expect(scrolled()?.matches('[data-bai-form-item]')).toBe(true);
+    expect(scrolled()?.getAttribute('data-bai-field-item')).toBe('early');
+    expect(document.activeElement).toBe(scrolled()?.querySelector('input'));
+  });
+
+  it('stays inside its own form when another mounted form shares the name', async () => {
+    let other!: FormInstance;
+    let form!: FormInstance;
+    render(
+      <>
+        <TestForm formRef={(f) => (other = f)} />
+        <TestForm formRef={(f) => (form = f)} scrollToFirstError />
+      </>,
+    );
+    void other;
+    const mine = document.querySelectorAll('[data-bai-field-id="early"]')[1];
+
+    await submit(form);
+
+    expect(scrolled()?.contains(mine)).toBe(true);
+    expect(document.activeElement).toBe(mine);
+  });
+
+  it('does not let a hidden field win over a visible one', async () => {
+    let form!: FormInstance;
+    render(<FormWithHiddenFirst formRef={(f) => (form = f)} />);
+
+    await submit(form);
+
+    expect(scrolledField()).toBe('late');
+  });
+
+  it('does not focus a tabindex=-1 segment when the handle is on the group', async () => {
+    let form!: FormInstance;
+    render(<FormWithSegmented formRef={(f) => (form = f)} />);
+
+    await submit(form);
+
+    expect(scrolledField()).toBe('early');
+    expect((document.activeElement as HTMLElement)?.id).toBe('seg-b');
   });
 
   it('does not scroll when the submit succeeds', async () => {

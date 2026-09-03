@@ -49,7 +49,12 @@ import type {
   RuleObject,
   StoreValue,
 } from './interface';
-import { toArray, type InternalNamePath, type NamePath } from './namePath';
+import {
+  getFieldHandle,
+  toArray,
+  type InternalNamePath,
+  type NamePath,
+} from './namePath';
 import * as React from 'react';
 
 const NAME_SPLIT = '__SPLIT__';
@@ -300,6 +305,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
     baseChildren: React.ReactNode,
     fieldId?: string,
     isRequired?: boolean,
+    fieldHandle?: string,
   ) => {
     const status: FormItemStatusContextValue = {
       status: getStatus(
@@ -371,6 +377,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           style={style}
           hidden={hidden}
           fieldId={fieldId}
+          fieldHandle={fieldHandle}
           htmlFor={htmlFor}
           errors={mergedErrors}
           warnings={mergedWarnings}
@@ -442,7 +449,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           // looks up. The plain joined path, not `fieldId`: the store has no
           // form name to prefix and no reason to apply the DOM-id guard.
           if (mergedName.length) {
-            childProps['data-bai-field-id'] = mergedName.join('_');
+            childProps['data-bai-field-id'] = getFieldHandle(mergedName);
           }
           if (formDisabled && childProps.disabled === undefined) {
             childProps.disabled = true;
@@ -483,7 +490,12 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           childNode = children as React.ReactNode;
         }
 
-        return renderLayout(childNode, fieldId, isRequired);
+        return renderLayout(
+          childNode,
+          fieldId,
+          isRequired,
+          mergedName.length ? getFieldHandle(mergedName) : undefined,
+        );
       }}
     </Field>
   );

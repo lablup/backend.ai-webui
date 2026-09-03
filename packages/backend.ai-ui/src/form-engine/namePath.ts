@@ -92,6 +92,16 @@ export function getNamePath(
   return toArray(path as NamePathSegment);
 }
 
+/**
+ * The `data-bai-field-id` handle `FormItem` stamps on a control and
+ * `FormStore.getFieldDOMNode` looks up. Not the DOM `id` (`getFieldId`),
+ * which adds the form's `name` and a `parentNode` guard the store cannot
+ * reproduce.
+ */
+export function getFieldHandle(namePath: InternalNamePath): string {
+  return namePath.join('_');
+}
+
 export function getValue(entity: any, path: InternalNamePath): any {
   let current = entity;
   for (let i = 0; i < path.length; i += 1) {

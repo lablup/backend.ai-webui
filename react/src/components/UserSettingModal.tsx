@@ -464,7 +464,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     },
   });
 
-  const handleFinish = async (values: FormValues) => {
+  const handleFinish = (values: FormValues) => {
     if (bulkCreate) {
       const bulkValues = values as unknown as BulkFormValues;
       const users = _.range(1, bulkValues.user_count + 1).map((i) => ({
