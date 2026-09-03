@@ -6,6 +6,8 @@
  * (`react/src/astryx-theme/backendAiTheme.ts`). This mirrors its brand-role
  * recipe over the SAME inputs: BUI's parity tables and `--bai-*` builder
  * (`src/theme`), and a copy of `resources/theme.json` (`./theme.json`, v2).
+ * Like the app, it holds no brand values of its own: a seed the document
+ * leaves out is not pinned, so Astryx's default applies.
  *
  * KEEP IN SYNC (pinned token values, not the glue code) with
  * `buildBackendAiTheme({ role: 'brand' })`.
@@ -23,71 +25,77 @@ import { neutralTheme } from '@astryxdesign/theme-neutral';
 /** v2 seed value -> declared pair (string = both schemes, tuple = split). */
 const toPair = (
   value: string | string[] | undefined,
-  fallback: BrandSeedPair,
-): BrandSeedPair => {
+): BrandSeedPair | undefined => {
   if (typeof value === 'string') return { light: value, dark: value };
   if (Array.isArray(value) && typeof value[0] === 'string') {
     return { light: value[0], dark: value[1] ?? value[0] };
   }
-  return fallback;
+  return undefined;
 };
 
 /** Astryx muted status surfaces = the status color at ~20%/25% alpha. */
 const toMutedTuple = (
-  tuple: [string, string],
+  tuple: [string, string] | undefined,
 ): [string, string] | undefined =>
-  /^#[0-9a-fA-F]{6}$/.test(tuple[0]) && /^#[0-9a-fA-F]{6}$/.test(tuple[1])
+  tuple &&
+  /^#[0-9a-fA-F]{6}$/.test(tuple[0]) &&
+  /^#[0-9a-fA-F]{6}$/.test(tuple[1])
     ? [`${tuple[0]}33`, `${tuple[1]}3F`]
     : undefined;
 
 const family = webuiThemeJson.theme.families.default;
+const familySeeds = family.seeds as Record<string, string | string[] | undefined>;
 const seeds = {
-  accent: toPair(family.seeds.accent, { light: '#FF7A00', dark: '#DC6B03' }),
-  link: toPair(family.seeds.link, { light: '#FF7A00', dark: '#DC6B03' }),
-  info: toPair(family.seeds.info, { light: '#028DF2', dark: '#009BDD' }),
-  error: toPair(family.seeds.error, { light: '#FF4D4F', dark: '#DC4446' }),
-  success: toPair(family.seeds.success, { light: '#00BD9B', dark: '#03A487' }),
-  // theme.json declares no colorWarning for `default` — antd's own seed.
-  warning: toPair(
-    (family.seeds as { warning?: string | string[] }).warning,
-    { light: '#FAAD14', dark: '#FAAD14' },
-  ),
-  headerBg: toPair(family.headerBg, { light: '#FF9729', dark: '#E88A28' }),
+  accent: toPair(familySeeds.accent),
+  link: toPair(familySeeds.link),
+  info: toPair(familySeeds.info),
+  error: toPair(familySeeds.error),
+  success: toPair(familySeeds.success),
+  warning: toPair(familySeeds.warning),
+  headerBg: toPair(family.headerBg),
 };
 
-const accent = toSeedTuple(seeds.accent);
-const error = toSeedTuple(seeds.error);
-const success = toSeedTuple(seeds.success);
-const warning = toSeedTuple(seeds.warning);
-const fontFamily = webuiThemeJson.theme.fontFamily;
+const accent = seeds.accent && toSeedTuple(seeds.accent);
+const error = seeds.error && toSeedTuple(seeds.error);
+const success = seeds.success && toSeedTuple(seeds.success);
+const warning = seeds.warning && toSeedTuple(seeds.warning);
+const fontFamily: string | undefined = webuiThemeJson.theme.fontFamily;
 
 const errorMuted = toMutedTuple(error);
 const successMuted = toMutedTuple(success);
 const warningMuted = toMutedTuple(warning);
 
 /**
- * Backend.AI brand Astryx theme — Storybook's build of `backendAiBrandTheme`
- * (ticket 02). Mounted unconditionally in `decorators.tsx` so every story
- * (legacy and Astryx-native alike) renders against the real brand palette in
- * both light and dark, independent of the "Theme Style" (antd-only) toolbar.
+ * Backend.AI brand Astryx theme — Storybook's build of the app's brand theme
+ * (ticket 02), and the `webui` half of the "Theme" toolbar (themeConfig.ts).
+ * The `astryx` half mounts `neutralTheme` instead, so a story can be checked
+ * against a brand-less baseline.
  */
 export const astryxBrandTheme = defineTheme({
   name: 'storybook-bai-brand',
   extends: neutralTheme,
-  color: { accent: light.colorPrimary },
+  ...(seeds.accent ? { color: { accent: seeds.accent.light } } : {}),
   tokens: {
-    '--color-accent': accent,
-    '--color-text-accent': accent,
-    '--color-icon-accent': accent,
-    '--color-on-accent': ['#ffffff', '#ffffff'],
-    '--color-error': error,
-    '--color-success': success,
-    '--color-warning': warning,
+    ...(accent
+      ? {
+          '--color-accent': accent,
+          '--color-text-accent': accent,
+          '--color-icon-accent': accent,
+          '--color-on-accent': ['#ffffff', '#ffffff'] as [string, string],
+        }
+      : {}),
+    ...(error ? { '--color-error': error } : {}),
+    ...(success ? { '--color-success': success } : {}),
+    ...(warning ? { '--color-warning': warning } : {}),
     ...(errorMuted ? { '--color-error-muted': errorMuted } : {}),
     ...(successMuted ? { '--color-success-muted': successMuted } : {}),
     ...(warningMuted ? { '--color-warning-muted': warningMuted } : {}),
-    '--font-family-body': fontFamily,
-    '--font-family-heading': fontFamily,
+    ...(fontFamily
+      ? {
+          '--font-family-body': fontFamily,
+          '--font-family-heading': fontFamily,
+        }
+      : {}),
     ...buildBaiCustomTokens(seeds),
     ...ANTD_ALIGN_TOKENS,
     // KEEP IN SYNC with `ANTD_NEUTRAL_TEXT`, `ANTD_NEUTRAL_SURFACES` and
