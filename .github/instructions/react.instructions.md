@@ -182,19 +182,10 @@ interfaces, enum members.
 are Vitest; E2E is Playwright under `e2e/` (see the `playwright-test-*` agents in
 `.claude/agents/`).
 
-`verify.sh` does **not** run the Astryx token gate. Run it yourself after touching CSS,
-theme tokens, or any `var(--…)`:
-
-```bash
-node scripts/migration-gates/astryx-token-gate.mjs --strict
-```
-
-It catches the silent failure mode: an **undeclared** `var(--name)` produces no compiler,
-lint or runtime error — with a fallback (`var(--radius-md, 6px)`) the literal wins forever
-and the token never participates in theming; without one the whole declaration is invalid at
-computed-value time. The declared set is not guessable (there is no `--color-text-tertiary`
-and no `--color-text-error` — the semantic error token is the solid `--color-error`), so run
-the gate rather than assuming a name.
+`verify.sh` does **not** run the Astryx token gate — run
+`node scripts/migration-gates/astryx-token-gate.mjs --strict` yourself after touching CSS,
+theme tokens, or any `var(--…)`. AGENTS.md § Verification Harness explains what it catches
+and why nothing else reports it.
 
 ## On-demand skills
 

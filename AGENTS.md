@@ -120,6 +120,14 @@ When terms disagree, precedence is: (1) the live UI i18n label in `resources/i18
 
 Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and TypeScript. Output ends with `=== ALL PASS ===` on success. Agents should use this script instead of running checks individually.
 
+**`verify.sh` does not run the Astryx token gate.** Run it yourself after touching CSS, theme tokens, or any `var(--…)` — anywhere in the repository, `react/src` and `packages/backend.ai-ui/src` alike:
+
+```bash
+node scripts/migration-gates/astryx-token-gate.mjs --strict
+```
+
+It catches a failure mode nothing else reports: an **undeclared** `var(--name)` produces no compiler, lint or runtime error. With a fallback (`var(--radius-md, 6px)`) the literal wins forever and the token never participates in theming; without one the whole declaration is invalid at computed-value time. The declared set is not guessable — there is no `--color-text-tertiary` and no `--color-text-error` (the semantic error token is the solid `--color-error`) — so run the gate rather than assuming a name. It currently reports pre-existing findings, so the bar is **no new findings**, not zero.
+
 ### PR Review Checklist
 
 When reviewing PRs (especially agent-generated ones), check:
