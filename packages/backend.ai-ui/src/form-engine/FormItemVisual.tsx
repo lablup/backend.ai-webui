@@ -475,6 +475,9 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
       ref={itemRef}
       className={className}
       data-bai-form-item=""
+      // The control's own `id` is not a reliable handle — Astryx inputs
+      // replace it with their `useId()` — so the item is addressable here.
+      data-bai-form-item-id={fieldId}
       data-layout={layout}
       data-size={size}
       data-status={status || undefined}
