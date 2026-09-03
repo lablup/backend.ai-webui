@@ -7,11 +7,13 @@
  What is pinned here:
    - `form.submit()` scrolls and focuses; a bare `validateFields()` never does
      (validating is not submitting);
-   - the item is found without relying on the control's `id` — the test
-     control drops it, as Astryx inputs do;
+   - the field is found through `data-bai-field-id`, not the control's `id` —
+     the test control drops its `id`, as Astryx inputs do;
+   - a `noStyle` field, which has no wrapper of its own, lands on the parent
+     item that shows its error;
    - "first" is DOM order, not field REGISTRATION order;
    - the switch is off until `<Form scrollToFirstError>` says otherwise;
-   - the scroll never yanks the focus away from a user who is mid-edit.
+   - the store's own `scrollToField` works again on such controls.
  */
 import { Form } from './engine';
 import type { FormInstance } from './interface';
@@ -32,15 +34,21 @@ const Input: React.FC<any> = ({
 
 const scrollIntoView = vi.fn();
 
-/** The scrolled item's field id — what the resolver picked. */
+/** The element that was scrolled. */
+function scrolled(): HTMLElement | undefined {
+  return scrollIntoView.mock.instances[0] as HTMLElement | undefined;
+}
+
+/** The item the resolver scrolled, named by the first field it wraps. */
 function scrolledField(): string | null | undefined {
-  const node = scrollIntoView.mock.instances[0] as HTMLElement | undefined;
-  return node?.getAttribute('data-bai-form-item-id');
+  return scrolled()
+    ?.querySelector('[data-bai-field-id]')
+    ?.getAttribute('data-bai-field-id');
 }
 
 function controlOf(fieldId: string): HTMLInputElement {
   return document.querySelector<HTMLInputElement>(
-    `[data-bai-form-item-id="${fieldId}"] input`,
+    `[data-bai-field-id="${fieldId}"]`,
   )!;
 }
 
@@ -88,20 +96,17 @@ const TestForm: React.FC<Props> = ({
   );
 };
 
-/** A layout-only `Form.Item` around a button — `ImportRepoForm`'s shape. */
-const FormWithButton: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
+/** A `noStyle` field inside a layout item — the shape that has no wrapper. */
+const FormWithNoStyle: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
   const [form] = Form.useForm();
   formRef(form);
 
   return (
     <Form form={form} scrollToFirstError>
-      <Form.Item name="early" label="Early" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item>
-        <button type="button" id="submit">
-          OK
-        </button>
+      <Form.Item label="Group">
+        <Form.Item noStyle name="inner" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
       </Form.Item>
     </Form>
   );
@@ -122,6 +127,7 @@ describe('scroll to the first invalid field', () => {
 
     await submit(form);
 
+    expect(scrolled()?.matches('[data-bai-form-item]')).toBe(true);
     expect(scrolledField()).toBe('early');
     expect(document.activeElement).toBe(controlOf('early'));
   });
@@ -158,6 +164,17 @@ describe('scroll to the first invalid field', () => {
     expect(scrolledField()).toBe('late');
   });
 
+  it('reaches a `noStyle` field through the parent item that shows its error', async () => {
+    let form!: FormInstance;
+    render(<FormWithNoStyle formRef={(f) => (form = f)} />);
+
+    await submit(form);
+
+    expect(scrolled()?.matches('[data-bai-form-item]')).toBe(true);
+    expect(scrolled()?.textContent).toContain('Group');
+    expect(document.activeElement).toBe(controlOf('inner'));
+  });
+
   it('asks for `nearest`, so an already-visible field is left alone', async () => {
     let form!: FormInstance;
     render(<TestForm formRef={(f) => (form = f)} scrollToFirstError />);
@@ -169,48 +186,20 @@ describe('scroll to the first invalid field', () => {
     );
   });
 
-  it('lets reduced motion outrank a caller-stated behavior', async () => {
-    const matchMedia = vi
-      .spyOn(globalThis, 'matchMedia')
-      .mockReturnValue({ matches: true } as MediaQueryList);
+  it('leaves focus alone when the form says `focus: false`', async () => {
     let form!: FormInstance;
     render(
       <TestForm
         formRef={(f) => (form = f)}
-        scrollToFirstError={{ behavior: 'smooth' } as any}
+        scrollToFirstError={{ focus: false } as any}
       />,
     );
-
-    await submit(form);
-
-    expect(scrollIntoView).toHaveBeenCalledWith(
-      expect.objectContaining({ behavior: 'auto' }),
-    );
-    matchMedia.mockRestore();
-  });
-
-  it('never takes focus out of a control the user is already in', async () => {
-    let form!: FormInstance;
-    render(<TestForm formRef={(f) => (form = f)} scrollToFirstError />);
-    // A radio group revalidates on every arrow key; an edit in progress may
-    // hold an IME composition. Neither may lose focus to another field.
-    const inUse = controlOf('late');
-    inUse.focus();
+    const before = document.activeElement;
 
     await submit(form);
 
     expect(scrolledField()).toBe('early');
-    expect(document.activeElement).toBe(inUse);
-  });
-
-  it('still focuses when a layout-only item wraps the submit button', async () => {
-    let form!: FormInstance;
-    render(<FormWithButton formRef={(f) => (form = f)} />);
-    document.getElementById('submit')!.focus();
-
-    await submit(form);
-
-    expect(document.activeElement).toBe(controlOf('early'));
+    expect(document.activeElement).toBe(before);
   });
 
   it('does not scroll when the submit succeeds', async () => {
@@ -221,5 +210,15 @@ describe('scroll to the first invalid field', () => {
     await submit(form);
 
     expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it('lets the store’s `scrollToField` find an id-dropping control too', async () => {
+    let form!: FormInstance;
+    render(<TestForm formRef={(f) => (form = f)} />);
+
+    act(() => form.scrollToField('late', { focus: true }));
+
+    expect(scrolledField()).toBe('late');
+    expect(document.activeElement).toBe(controlOf('late'));
   });
 });

@@ -1032,7 +1032,12 @@ export class FormStore {
     const { focus, ...restOpt } = options;
     const node = this.getFieldDOMNode(name);
     if (node) {
-      node.scrollIntoView({ block: 'nearest', ...restOpt });
+      // The item, when there is one, so the label and the error message come
+      // into view with the control — a `noStyle` field's message lives on
+      // the parent item. Optional call: jsdom ships no `scrollIntoView`.
+      (
+        node.closest<HTMLElement>('[data-bai-form-item]') ?? node
+      ).scrollIntoView?.({ block: 'nearest', ...restOpt });
       if (focus) {
         this.focusField(name);
       }
@@ -1040,18 +1045,25 @@ export class FormStore {
   };
 
   focusField = (name: NamePath) => {
-    const instance = this.getFieldInstance(name);
-    if (typeof instance?.focus === 'function') {
-      instance.focus();
-      return;
-    }
-    this.getFieldDOMNode(name)?.focus?.();
+    // `preventScroll`: `scrollToField` has just positioned the item, and the
+    // browser's own focus scroll would move it again.
+    this.getFieldDOMNode(name)?.focus?.({ preventScroll: true });
   };
 
   private getFieldDOMNode = (name: NamePath): HTMLElement | undefined => {
     if (typeof document === 'undefined') return undefined;
     const id = getNamePath(name).join('_');
-    return document.getElementById(id) ?? undefined;
+    // `data-bai-field-id` first: Astryx controls drop the `id` FormItem gives
+    // them but keep the data attribute (FormItem.tsx).
+    const escaped =
+      typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+        ? CSS.escape(id)
+        : id;
+    return (
+      document.querySelector<HTMLElement>(`[data-bai-field-id="${escaped}"]`) ??
+      document.getElementById(id) ??
+      undefined
+    );
   };
 }
 

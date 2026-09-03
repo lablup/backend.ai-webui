@@ -17,7 +17,6 @@
  (`FolderCreateModal`, `FolderCreateModalV2`, `QuotaSettingModal`) pair that
  silence with a `labelCol` span, which has no meaning in a vertical form.
  */
-import { getFieldId } from './FormItem';
 import useForm, { FormStore } from './FormStore';
 import {
   FieldContext,
@@ -37,13 +36,13 @@ import type {
   FieldData,
   FormInstance,
   InternalFormInstance,
+  NamePath,
+  ScrollOptions,
   ValidateErrorEntity,
   ValidateMessages,
 } from './interface';
 import { mergeValidateMessages } from './messages';
-import { getNamePath, type Store } from './namePath';
-import { findFirstErrorItem, scrollToErrorItem } from './scrollToError';
-import type { ScrollToFirstErrorOptions } from './scrollToError';
+import type { Store } from './namePath';
 import * as React from 'react';
 
 export interface FormProps<Values = any> extends Omit<
@@ -69,9 +68,10 @@ export interface FormProps<Values = any> extends Omit<
   /**
    * Scrolls the first invalid field into view and focuses it when a submit
    * fails. Off unless set, as in antd — and, as in antd, it acts on
-   * `form.submit()`, not on a bare `validateFields()`.
+   * `form.submit()`, not on a bare `validateFields()`. Pass an object to
+   * override the scroll options; `focus: false` keeps focus where it is.
    */
-  scrollToFirstError?: boolean | ScrollToFirstErrorOptions;
+  scrollToFirstError?: boolean | ScrollOptions;
   clearOnDestroy?: boolean;
   onValuesChange?: Callbacks<Values>['onValuesChange'];
   onFieldsChange?: Callbacks<Values>['onFieldsChange'];
@@ -170,17 +170,31 @@ const InternalForm = <Values,>(
   const handleFinishFailed = React.useEffectEvent(
     (errorInfo: ValidateErrorEntity) => {
       if (scrollToFirstError && errorInfo.errorFields.length) {
-        const item = findFirstErrorItem(
-          nativeElementRef.current ?? document,
-          errorInfo.errorFields
-            .map((field) => getFieldId(getNamePath(field.name), name))
-            .filter((id): id is string => !!id),
-        );
-        if (item) {
-          scrollToErrorItem(
-            item,
-            typeof scrollToFirstError === 'object' ? scrollToFirstError : {},
+        // `errorFields` is field REGISTRATION order; pick the field that is
+        // first on SCREEN, or a conditionally mounted group loses.
+        const first = errorInfo.errorFields
+          .map((field) => ({
+            name: field.name,
+            node: formInstance.getFieldInstance(field.name) as
+              Element | undefined,
+          }))
+          .filter((field) => field.node)
+          .reduce<{ name: NamePath; node?: Element } | undefined>(
+            (best, field) =>
+              !best ||
+              best.node!.compareDocumentPosition(field.node!) &
+                Node.DOCUMENT_POSITION_PRECEDING
+                ? field
+                : best,
+            undefined,
           );
+        if (first) {
+          formInstance.scrollToField(first.name, {
+            focus: true,
+            ...(typeof scrollToFirstError === 'object'
+              ? scrollToFirstError
+              : {}),
+          });
         }
       }
       onFinishFailed?.(errorInfo);
