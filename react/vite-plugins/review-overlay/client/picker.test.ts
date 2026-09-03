@@ -5,9 +5,14 @@
  * asynchronously — so a state-gated hook loses the race and the element
  * reaches react-grab's own clipboard instead.
  */
-import { createPicker, type PickerCallbacks } from './picker.js';
+import {
+  createPicker,
+  isReactGrabChord,
+  type Picker,
+  type PickerCallbacks,
+} from './picker.js';
 import type { Plugin, PluginHooks, ReactGrabAPI } from 'react-grab';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * `Tn` in react-grab's core: every element whose hook returned a FALSY value
@@ -55,15 +60,42 @@ beforeEach(() => {
     onHover: () => undefined,
     isOwnEvent: () => false,
     showHint: () => undefined,
-    onReactGrabUnavailable: () => undefined,
   };
 });
 
+/** Both modifiers, so the chord matches whichever one the platform wants. */
+const chord = (over: KeyboardEventInit = {}) =>
+  new KeyboardEvent('keydown', {
+    key: 'c',
+    code: 'KeyC',
+    metaKey: true,
+    ctrlKey: true,
+    bubbles: true,
+    ...over,
+  });
+
 const el = (id: string) => document.getElementById(id) as Element;
+
+/**
+ * A picker's fallback hotkey outlives `stop()` by design, and the callbacks
+ * close over the CURRENT `picks`, so a leaked picker would answer the next
+ * test's chord.
+ */
+let live: Picker[] = [];
+const make = (over: PickerCallbacks) => {
+  const picker = createPicker(over);
+  live.push(picker);
+  return picker;
+};
+
+afterEach(() => {
+  live.forEach((picker) => picker.dispose());
+  live = [];
+});
 
 describe('the react-grab pick is unconditional', () => {
   it('intercepts a pick made while the session is active', async () => {
-    const picker = createPicker(callbacks);
+    const picker = make(callbacks);
     picker.watchForReactGrab();
     grab.activate();
 
@@ -73,7 +105,7 @@ describe('the react-grab pick is unconditional', () => {
   });
 
   it('still intercepts after the keyup deactivate has already fired', async () => {
-    const picker = createPicker(callbacks);
+    const picker = make(callbacks);
     picker.watchForReactGrab();
     grab.activate();
     // react-grab's hold path: releasing ⌘/⌃ runs `Z()` before the deferred
@@ -87,7 +119,7 @@ describe('the react-grab pick is unconditional', () => {
   });
 
   it('intercepts a pick that arrives with no activation at all', async () => {
-    const picker = createPicker(callbacks);
+    const picker = make(callbacks);
     picker.watchForReactGrab();
 
     expect(selectAll(hooks, [el('a')])).toEqual([]);
@@ -96,7 +128,7 @@ describe('the react-grab pick is unconditional', () => {
   });
 
   it('takes a multi-element selection whole and opens one composer', async () => {
-    const picker = createPicker(callbacks);
+    const picker = make(callbacks);
     picker.watchForReactGrab();
     grab.activate();
 
@@ -106,7 +138,7 @@ describe('the react-grab pick is unconditional', () => {
   });
 
   it('never lets react-grab build copy content', () => {
-    const picker = createPicker(callbacks);
+    const picker = make(callbacks);
     picker.watchForReactGrab();
 
     expect(hooks.transformCopyContent?.('<button>A</button>', [el('a')])).toBe(
@@ -118,7 +150,7 @@ describe('the react-grab pick is unconditional', () => {
 describe('the picker still tracks react-grab s activation', () => {
   it('reports active while the session is on, and stops it', () => {
     const modes: boolean[] = [];
-    const picker = createPicker({
+    const picker = make({
       ...callbacks,
       onModeChange: (value) => modes.push(value),
     });
@@ -134,20 +166,76 @@ describe('the picker still tracks react-grab s activation', () => {
   });
 
   it('falls back to its own picker when react-grab will not activate', () => {
-    const unavailable = vi.fn();
     grab.activate = () => undefined;
-    const picker = createPicker({
-      ...callbacks,
-      onReactGrabUnavailable: unavailable,
-    });
+    const picker = make(callbacks);
     picker.watchForReactGrab();
 
     picker.start();
-    expect(unavailable).toHaveBeenCalled();
+    expect(picker.isHotkeyArmed()).toBe(true);
     expect(picker.isActive()).toBe(true);
 
     el('a').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(picks).toEqual([el('a')]);
     expect(picker.isActive()).toBe(false);
+  });
+});
+
+// The overlay has no button any more, so this chord IS the entry point on a
+// page where react-grab never loaded.
+describe('the fallback hotkey', () => {
+  it('matches react-grab s own chord and nothing else', () => {
+    expect(isReactGrabChord(chord())).toBe(true);
+    expect(isReactGrabChord(chord({ code: '', key: 'C' }))).toBe(true);
+    expect(isReactGrabChord(chord({ shiftKey: true }))).toBe(false);
+    expect(isReactGrabChord(chord({ altKey: true }))).toBe(false);
+    expect(isReactGrabChord(chord({ key: 'v', code: 'KeyV' }))).toBe(false);
+    expect(isReactGrabChord(chord({ metaKey: false, ctrlKey: false }))).toBe(
+      false,
+    );
+  });
+
+  it('arms once the react-grab poll gives up, and starts a pick', () => {
+    vi.useFakeTimers();
+    window.__REACT_GRAB__ = undefined;
+    const picker = make(callbacks);
+    picker.watchForReactGrab();
+    expect(picker.isHotkeyArmed()).toBe(false);
+    vi.advanceTimersByTime(500 * 41);
+    vi.useRealTimers();
+    expect(picker.isHotkeyArmed()).toBe(true);
+
+    window.dispatchEvent(chord());
+    expect(picker.isActive()).toBe(true);
+    el('a').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(picks).toEqual([el('a')]);
+    picker.stop();
+  });
+
+  it('stays out of the way inside a text field', () => {
+    grab.activate = () => undefined;
+    const picker = make(callbacks);
+    picker.watchForReactGrab();
+    picker.start();
+    picker.stop();
+
+    document.body.insertAdjacentHTML('beforeend', '<input id="f" />');
+    const field = document.getElementById('f') as HTMLInputElement;
+    field.dispatchEvent(chord());
+    expect(picker.isActive()).toBe(false);
+  });
+
+  it('hands the chord back when react-grab finally shows up', () => {
+    vi.useFakeTimers();
+    window.__REACT_GRAB__ = undefined;
+    const picker = make(callbacks);
+    picker.watchForReactGrab();
+    vi.advanceTimersByTime(500 * 41);
+    vi.useRealTimers();
+    expect(picker.isHotkeyArmed()).toBe(true);
+
+    window.__REACT_GRAB__ = grab;
+    picker.start();
+    expect(picker.isHotkeyArmed()).toBe(false);
+    picker.stop();
   });
 });

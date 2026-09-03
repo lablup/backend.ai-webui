@@ -6,7 +6,9 @@
  * EVERY react-grab pick is a review pick — the plugin never checks its own
  * state before intercepting, because react-grab's keyup deactivate can land
  * first and any state gate would hand that pick to its clipboard instead.
- * When react-grab is missing or disabled, a plain hover/click picker takes over.
+ * When react-grab is missing or disabled, a plain hover/click picker takes
+ * over — and `isReactGrabChord` re-binds react-grab's own chord to it, because
+ * the overlay has no button and would otherwise have no entry point at all.
  */
 import type { AnchorComponent } from './types.js';
 import type { ReactGrabAPI } from 'react-grab';
@@ -19,16 +21,37 @@ export interface PickerCallbacks {
   /** True for events originating inside the overlay's own shadow host. */
   isOwnEvent: (evt: Event) => boolean;
   showHint: (message: string) => void;
-  /** react-grab never showed up, or is present but disabled. */
-  onReactGrabUnavailable: () => void;
 }
 
 const PLUGIN_NAME = 'bai-review-pick';
+
+/** react-grab reads `navigator.platform` first and falls back to the UA. */
+const isMac = (): boolean =>
+  typeof navigator !== 'undefined' &&
+  /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
+
+/**
+ * react-grab 0.1.50's own activation test (`gr` in its core bundle): the
+ * platform modifier — ⌘ on a Mac, ⌃ everywhere else — plus C, no shift, no alt.
+ */
+export function isReactGrabChord(evt: KeyboardEvent): boolean {
+  if (evt.shiftKey || evt.altKey) return false;
+  if (!(isMac() ? evt.metaKey : evt.ctrlKey)) return false;
+  return evt.code === 'KeyC' || evt.key?.toLowerCase() === 'c';
+}
+
+/** react-grab does not activate inside a field either; ⌘C there is copy. */
+const isEditable = (node: EventTarget | null): boolean =>
+  node instanceof HTMLElement &&
+  (node.isContentEditable ||
+    node instanceof HTMLInputElement ||
+    node instanceof HTMLTextAreaElement);
 
 export function createPicker(callbacks: PickerCallbacks) {
   let grabRegistered = false;
   let grabActive = false;
   let fallbackPicking = false;
+  let hotkeyArmed = false;
   /** First element of the current react-grab selection, until the deferred open. */
   let pendingPick: Element | null = null;
 
@@ -88,6 +111,8 @@ export function createPicker(callbacks: PickerCallbacks) {
         },
       });
       grabRegistered = true;
+      // react-grab owns the chord again, so stop shadowing it.
+      disarmHotkey();
       return grab;
     } catch {
       return null;
@@ -95,6 +120,29 @@ export function createPicker(callbacks: PickerCallbacks) {
   }
 
   // ------------------------------------------------------- fallback picker
+
+  function onHotkey(evt: KeyboardEvent) {
+    if (evt.repeat || !isReactGrabChord(evt)) return;
+    if (isEditable(evt.target) || callbacks.isOwnEvent(evt)) return;
+    evt.preventDefault();
+    start();
+  }
+
+  /**
+   * The overlay has no button: without this, a page where react-grab failed to
+   * load or is disabled offers no way into pick mode at all.
+   */
+  function armHotkey() {
+    if (hotkeyArmed) return;
+    hotkeyArmed = true;
+    window.addEventListener('keydown', onHotkey, true);
+  }
+
+  function disarmHotkey() {
+    if (!hotkeyArmed) return;
+    hotkeyArmed = false;
+    window.removeEventListener('keydown', onHotkey, true);
+  }
 
   function onMove(evt: MouseEvent) {
     if (callbacks.isOwnEvent(evt)) {
@@ -134,7 +182,7 @@ export function createPicker(callbacks: PickerCallbacks) {
         );
         return;
       }
-      callbacks.onReactGrabUnavailable();
+      armHotkey();
     }
     if (fallbackPicking) return;
     fallbackPicking = true;
@@ -177,9 +225,7 @@ export function createPicker(callbacks: PickerCallbacks) {
       }
       if (++tries > 40) {
         clearInterval(timer);
-        // No react-grab means no ⌘⌃C, so the dock is the only way in. Show it
-        // rather than leaving the reviewer with an overlay they cannot reach.
-        callbacks.onReactGrabUnavailable();
+        armHotkey();
       }
     }, 500);
   }
@@ -226,11 +272,19 @@ export function createPicker(callbacks: PickerCallbacks) {
     }
   }
 
+  /** Tests and hot reloads: leaves nothing bound to the window. */
+  function dispose() {
+    stop();
+    disarmHotkey();
+  }
+
   return {
     start,
     stop,
+    dispose,
     isActive: () => grabActive || fallbackPicking,
     watchForReactGrab,
+    isHotkeyArmed: () => hotkeyArmed,
     getStack,
     getComponent,
   };

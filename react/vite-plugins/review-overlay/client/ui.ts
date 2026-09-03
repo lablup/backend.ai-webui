@@ -1,6 +1,6 @@
 /**
- * Overlay chrome: a Shadow-DOM host carrying the dock, the composer, the
- * selection outline and the toast.
+ * Overlay chrome: a Shadow-DOM host carrying the composer, the selection
+ * outline and the toast.
  *
  * The host sits outside React and keeps its own CSS — the project's Astryx
  * rules apply to the app source, not to a dev-server-injected script that must
@@ -11,15 +11,13 @@
  * where the theme has not been applied yet.
  *
  * `data-react-grab-ignore-events` makes react-grab skip our own chrome while
- * its select mode is on, so the dock and the composer stay clickable mid-pick.
+ * its select mode is on, so the composer stays clickable mid-pick.
  */
 
-const LS_ALWAYS_SHOW = 'bai-review:alwaysShowDock';
 /** react-grab restores focus asynchronously after a pick; outlast it. */
 const FOCUS_GUARD_MS = 1000;
 
 export interface OverlayUICallbacks {
-  onStartPick: () => void;
   /**
    * Render the block for this note, SYNCHRONOUSLY — everything async was done
    * at pick time. `null` means the capture is not ready, which the composer
@@ -29,23 +27,6 @@ export interface OverlayUICallbacks {
   onComposeClosed: () => void;
   onEscape: () => void;
 }
-
-/** Storage throws outright in some privacy modes — the dock is not worth a crash. */
-const readAlwaysShow = (): boolean => {
-  try {
-    return localStorage.getItem(LS_ALWAYS_SHOW) === '1';
-  } catch {
-    return false;
-  }
-};
-
-const writeAlwaysShow = (value: boolean): void => {
-  try {
-    localStorage.setItem(LS_ALWAYS_SHOW, value ? '1' : '0');
-  } catch {
-    return undefined;
-  }
-};
 
 const el = <K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -94,27 +75,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       }
     }
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
-    .dock {
-      position: fixed; right: 16px; bottom: 16px; z-index: 2147483000;
-      display: none; flex-direction: column; align-items: flex-end; gap: 6px;
-    }
-    .dock.show { display: flex; }
-    .alwayschk {
-      font-size: 12px; color: var(--bai-review-text-dim);
-      background: var(--bai-review-surface);
-      border: 1px solid var(--bai-review-border); border-radius: 10px;
-      padding: 3px 9px; display: flex; gap: 5px; align-items: center;
-      cursor: pointer;
-    }
-    .toggle {
-      border: none; border-radius: 24px; padding: 10px 16px; cursor: pointer;
-      background: var(--bai-review-accent); color: var(--bai-review-on-accent);
-      font-size: 14px; font-weight: 600;
-      box-shadow: 0 2px 10px var(--bai-review-shadow);
-    }
-    .toggle.active {
-      background: var(--bai-review-inverted); color: var(--bai-review-on-inverted);
-    }
     .btn {
       border: 1px solid var(--bai-review-border);
       background: var(--bai-review-surface); color: var(--bai-review-text);
@@ -165,13 +125,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   `;
   root.appendChild(style);
 
-  const toggle = el('button', 'toggle', '📋 Copy a review block');
-  toggle.title = 'Pick an element and copy its review block';
-  const alwaysChk = el('label', 'alwayschk');
-  alwaysChk.innerHTML = '<input type="checkbox" /> Always show';
-  const dock = el('div', 'dock');
-  dock.append(alwaysChk, toggle);
-
   const hoverbox = el('div', 'hoverbox');
   const compose = el('div', 'compose');
   compose.innerHTML = `
@@ -184,7 +137,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     </div>
   `;
   const toast = el('div', 'toast');
-  root.append(dock, hoverbox, compose, toast);
+  root.append(hoverbox, compose, toast);
 
   const composeText = compose.querySelector('textarea') as HTMLTextAreaElement;
   const composeErr = compose.querySelector('.err') as HTMLElement;
@@ -192,35 +145,10 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   const copyButton = compose.querySelector(
     '[data-act="copy"]',
   ) as HTMLButtonElement;
-  const alwaysInput = alwaysChk.querySelector('input') as HTMLInputElement;
-
-  let alwaysShow = readAlwaysShow();
-  alwaysInput.checked = alwaysShow;
-  alwaysInput.addEventListener('change', () => {
-    alwaysShow = alwaysInput.checked;
-    writeAlwaysShow(alwaysShow);
-    updateDock();
-  });
 
   let pickActive = false;
   let pickTarget: Element | null = null;
-  let dockPinned = false;
   let focusGuardUntil = 0;
-
-  /**
-   * The dock is hidden until something is happening — a dev server should not
-   * carry a permanent floating button. "Always show" is inside the dock on
-   * purpose: you reveal it once with ⌘⌃C, then pin it. `dockPinned` is the
-   * escape hatch for when react-grab never loads and ⌘⌃C therefore does
-   * nothing — without it the fallback picker would have no entry point.
-   */
-  function updateDock() {
-    dock.classList.toggle(
-      'show',
-      alwaysShow || dockPinned || pickActive || isComposeOpen(),
-    );
-    toggle.classList.toggle('active', pickActive);
-  }
 
   const isComposeOpen = () => compose.style.display === 'block';
   const isOwnEvent = (evt: Event) => evt.composedPath().includes(host);
@@ -280,7 +208,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     compose.style.left = `${Math.max(8, Math.min(x, window.innerWidth - width - 12))}px`;
     compose.style.top = `${Math.max(8, Math.min(y + 10, window.innerHeight - 180))}px`;
     syncPickHighlight();
-    updateDock();
     focusGuardUntil = Date.now() + FOCUS_GUARD_MS;
     composeText.focus();
   }
@@ -304,7 +231,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     pickTarget = null;
     focusGuardUntil = 0;
     setHoverRect(null);
-    updateDock();
     callbacks.onComposeClosed();
   }
 
@@ -322,12 +248,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   function setPickActive(active: boolean) {
     pickActive = active;
-    updateDock();
-  }
-
-  function pinDock() {
-    dockPinned = true;
-    updateDock();
   }
 
   // ------------------------------------------------------------- clipboard
@@ -361,8 +281,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   }
 
   // ---------------------------------------------------------------- events
-
-  toggle.addEventListener('click', () => callbacks.onStartPick());
 
   function runCopy() {
     // Empty text is allowed — the block still carries label, stack and link.
@@ -412,7 +330,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   // Only when the overlay owns the interaction — otherwise every Escape in the
   // app (closing a modal, clearing a select) would cancel a pick that is not
-  // running and churn the dock.
+  // running.
   document.addEventListener('keydown', (evt) => {
     if (evt.key !== 'Escape') return;
     if (!pickActive && !isComposeOpen()) return;
@@ -424,8 +342,8 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     'mousedown',
     (evt) => {
       if (!isComposeOpen()) return;
-      // The whole shadow host is "inside": the dock and its "Always show"
-      // checkbox are ours too, and closing on them threw away the note.
+      // The whole shadow host is "inside" — closing on our own chrome threw
+      // away the note the reviewer had already typed.
       if (isOwnEvent(evt)) return;
       // Mid-pick an outside mousedown IS the next selection. Closing here
       // would stop the picker before react-grab sees its own pointerup, and
@@ -435,8 +353,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     },
     true,
   );
-
-  updateDock();
 
   return {
     host,
@@ -451,7 +367,6 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     setComposeReady,
     getComposeTarget,
     setPickActive,
-    pinDock,
     copyText,
     isOwnEvent,
   };

@@ -1,8 +1,8 @@
 /**
  * Dev review overlay (FR-3811 write side, FR-3813 deep link).
  *
- * Pick an element with react-grab (⌘⌃C or the dock button), type a note, press
- * ⌘⏎: a self-describing `#bai=v3` markdown block lands on the clipboard, ready
+ * Pick an element with react-grab (⌘⌃C, or the same chord bound by the overlay
+ * itself when react-grab is missing), type a note, press ⌘⏎: a self-describing `#bai=v3` markdown block lands on the clipboard, ready
  * to paste into a GitHub PR comment, the PR's Teams thread, or a Claude
  * prompt. Opening that block's link on this server is the read side: the hash
  * carries the whole anchor, so the element is pinned with no lookup at all.
@@ -51,7 +51,6 @@ function boot() {
   let capture: { target: Element; value: AnchorCapture } | null = null;
 
   const ui = createOverlayUI({
-    onStartPick: () => picker.start(),
     onBuildBlock: (text) => {
       const target = ui.getComposeTarget();
       if (!target || capture?.target !== target) return null;
@@ -83,7 +82,6 @@ function boot() {
     onHover: (rect, borderRadius) => ui.setHoverRect(rect, borderRadius),
     isOwnEvent: (evt) => ui.isOwnEvent(evt),
     showHint: (message) => ui.showToast(message),
-    onReactGrabUnavailable: () => ui.pinDock(),
   });
 
   async function prepare(element: Element, anchor: AnchorV3) {
