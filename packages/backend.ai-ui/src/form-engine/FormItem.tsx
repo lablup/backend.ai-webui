@@ -438,9 +438,12 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
             childProps.id = fieldId;
           }
           // Astryx controls replace `id` with their own `useId()` but pass
-          // `data-*` through to the element, so this is the handle that
-          // survives (scrollToError.ts, FormStore.getFieldDOMNode).
-          childProps['data-bai-field-id'] = fieldId;
+          // `data-*` through, so this is the handle `FormStore.getFieldDOMNode`
+          // looks up. The plain joined path, not `fieldId`: the store has no
+          // form name to prefix and no reason to apply the DOM-id guard.
+          if (mergedName.length) {
+            childProps['data-bai-field-id'] = mergedName.join('_');
+          }
           if (formDisabled && childProps.disabled === undefined) {
             childProps.disabled = true;
           }

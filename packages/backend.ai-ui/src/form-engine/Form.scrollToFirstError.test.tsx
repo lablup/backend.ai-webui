@@ -112,6 +112,47 @@ const FormWithNoStyle: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
   );
 };
 
+/** Like Astryx Switch / SegmentedControl: `rest` lands on a wrapper div. */
+const WrapperInput: React.FC<any> = ({
+  value = '',
+  onChange,
+  id: _ignored,
+  ...rest
+}) => (
+  <div {...rest}>
+    <input value={value} onChange={onChange} />
+  </div>
+);
+
+const FormWithWrapperControl: React.FC<Pick<Props, 'formRef'>> = ({
+  formRef,
+}) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError>
+      <Form.Item name="early" label="Early" rules={[{ required: true }]}>
+        <WrapperInput />
+      </Form.Item>
+    </Form>
+  );
+};
+
+/** A named form: the DOM id gets the `name` prefix, the handle must not. */
+const NamedForm: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} name="signup" scrollToFirstError>
+      <Form.Item name="early" label="Early" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+    </Form>
+  );
+};
+
 async function submit(form: FormInstance) {
   await act(async () => {
     form.submit();
@@ -200,6 +241,28 @@ describe('scroll to the first invalid field', () => {
 
     expect(scrolledField()).toBe('early');
     expect(document.activeElement).toBe(before);
+  });
+
+  it('focuses the control inside a wrapper that carries the handle', async () => {
+    let form!: FormInstance;
+    render(<FormWithWrapperControl formRef={(f) => (form = f)} />);
+
+    await submit(form);
+
+    expect(scrolledField()).toBe('early');
+    expect(document.activeElement).toBe(
+      controlOf('early').querySelector('input'),
+    );
+  });
+
+  it('finds the field in a named form, whose DOM id is prefixed', async () => {
+    let form!: FormInstance;
+    render(<NamedForm formRef={(f) => (form = f)} />);
+
+    await submit(form);
+
+    expect(scrolledField()).toBe('early');
+    expect(document.activeElement).toBe(controlOf('early'));
   });
 
   it('does not scroll when the submit succeeds', async () => {
