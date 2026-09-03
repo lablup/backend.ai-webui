@@ -91,7 +91,7 @@ const DeploymentPresetDetailModal: React.FC<
           presetId
           value
         }
-        modelDefinition {
+        modelDefinition @since(version: "26.4.4") {
           models {
             name
             service {

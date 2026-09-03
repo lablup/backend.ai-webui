@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5bf341b5141aef9bc2e668e1a7765067>>
+ * @generated SignedSource<<cf9a3c2143d1cfc7e5baa931d5a96350>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -591,12 +591,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "328fe6063c904e1c12763424fdc17be5",
+    "cacheID": "b69179c0646dab4420eab12648f49bc3",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPagePresetQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetSettingPagePresetQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  deploymentRevisionPreset(id: $id) @skip(if: $skip) {\n    id\n    ...AdminDeploymentPresetSettingPageContent_preset\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
+    "text": "query AdminDeploymentPresetSettingPagePresetQuery(\n  $id: UUID!\n  $skip: Boolean!\n) {\n  deploymentRevisionPreset(id: $id) @skip(if: $skip) {\n    id\n    ...AdminDeploymentPresetSettingPageContent_preset\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition @since(version: \"26.4.4\") {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
   }
 };
 })();

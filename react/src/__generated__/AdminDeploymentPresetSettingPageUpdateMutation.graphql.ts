@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c717a5eb31f722e09dd3476053bb9f03>>
+ * @generated SignedSource<<773f459710a9f903c0f9b0417d4a937c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -755,12 +755,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7e80f2540f5ea6ef48db1d821cafa664",
+    "cacheID": "04244444cd6a2c0213ed8b46638530ac",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      updatedAt\n      runtimeVariant {\n        id\n        name\n      }\n      image @since(version: \"26.4.4\") {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
+    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      updatedAt\n      runtimeVariant {\n        id\n        name\n      }\n      image @since(version: \"26.4.4\") {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition @since(version: \"26.4.4\") {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
   }
 };
 })();
