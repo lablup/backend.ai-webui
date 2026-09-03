@@ -62,6 +62,9 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const deferredSearch = useDeferredValue(search);
+  // Starts false so a fresh mount (BAIUnmountAfterClose) fetches in a deferred
+  // render: the tab around the modal keeps its content instead of suspending.
+  const deferredOpen = useDeferredValue(baiModalProps.open, false);
   const [isAssigning, setIsAssigning] = useState(false);
   // One row per user the server rejected on the last save; the error modal
   // is open while non-empty.
@@ -100,7 +103,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       first: 50,
     },
     {
-      fetchPolicy: baiModalProps.open ? 'store-and-network' : 'store-only',
+      fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
     },
   );
 
@@ -258,7 +261,9 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
               setSelectedUserIds(value);
               setSearch('');
             }}
-            loading={deferredSearch !== search}
+            loading={
+              deferredSearch !== search || deferredOpen !== baiModalProps.open
+            }
             maxTagCount="responsive"
             allowClear
             maxTagPlaceholder={(omittedValues) => (
