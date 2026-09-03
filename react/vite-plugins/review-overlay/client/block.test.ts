@@ -76,24 +76,41 @@ describe('buildBlockText', () => {
     at: '2026-08-31T09:00:00Z',
   };
 
-  it('emits the quote block, the verbatim stack, the note, the link and the marker', () => {
+  it('leads with the verbatim note, then a separator, then the generated lines', () => {
     expect(buildBlockText(base)).toBe(
       [
+        '> The label is cut off',
+        '> on narrow screens.',
+        '>',
         '> 📍 **Sessions › login-button › button "Login"** · `c_abcdefg`',
         '> ⚛️ in LoginButton (at LoginView.tsx:12)',
         '>   in LoginView',
-        '> The label is cut off',
-        '> on narrow screens.',
         '> [Open on dev server](https://fr-3811.localhost:1355/session/start#bai=v3.c_abcdefg.PAYLOAD)',
         '<!-- bai-review v3 id=c_abcdefg pr=9330 at=2026-08-31T09:00:00Z -->',
       ].join('\n'),
     );
   });
 
+  // The separator is what makes the two halves readable apart, so it costs a
+  // line only when there are two halves.
   it('still produces a complete block when the note is empty', () => {
     const block = buildBlockText({ ...base, text: '', stack: [] });
     expect(block).toBe(
       [
+        '> 📍 **Sessions › login-button › button "Login"** · `c_abcdefg`',
+        '> [Open on dev server](https://fr-3811.localhost:1355/session/start#bai=v3.c_abcdefg.PAYLOAD)',
+        '<!-- bai-review v3 id=c_abcdefg pr=9330 at=2026-08-31T09:00:00Z -->',
+      ].join('\n'),
+    );
+  });
+
+  it('keeps a one-line note on one line, with one separator', () => {
+    expect(
+      buildBlockText({ ...base, text: 'Pin is 8px off.', stack: [] }),
+    ).toBe(
+      [
+        '> Pin is 8px off.',
+        '>',
         '> 📍 **Sessions › login-button › button "Login"** · `c_abcdefg`',
         '> [Open on dev server](https://fr-3811.localhost:1355/session/start#bai=v3.c_abcdefg.PAYLOAD)',
         '<!-- bai-review v3 id=c_abcdefg pr=9330 at=2026-08-31T09:00:00Z -->',

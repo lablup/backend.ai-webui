@@ -2,9 +2,9 @@
  * The `#bai=v3` markdown block — the overlay's only output.
  *
  * It has to survive being pasted into a GitHub PR comment, a Teams reply and a
- * Claude prompt, so it is a plain quote block: a human reads the label and the
- * note, a tool reads the trailing HTML comment, and the link carries the whole
- * anchor payload so it resolves without any lookup.
+ * Claude prompt, so it is a plain quote block: a human reads the note, a tool
+ * reads the trailing HTML comment, and the link carries the whole anchor
+ * payload so it resolves without any lookup.
  */
 import { captureAnchorSignals } from './anchor.js';
 import { encodeAnchor } from './codec.js';
@@ -53,14 +53,21 @@ export interface BlockInput {
   imageUrl?: string;
 }
 
+/**
+ * The reviewer's words lead, verbatim and unstyled; a bare `>` separates them
+ * from the generated half, whose every line keeps its glyph so the two read
+ * apart. No note means no separator, and the block starts at 📍.
+ */
 export function buildBlockText(input: BlockInput): string {
-  const lines = [`> 📍 **${input.label}** · \`${input.id}\``];
+  const lines: string[] = [];
+  if (input.text) {
+    for (const line of input.text.split('\n')) lines.push(`> ${line}`);
+    lines.push('>');
+  }
+  lines.push(`> 📍 **${input.label}** · \`${input.id}\``);
   input.stack.forEach((line, i) => {
     lines.push(i === 0 ? `> ⚛️ ${line.trim()}` : `> ${line}`);
   });
-  if (input.text) {
-    for (const line of input.text.split('\n')) lines.push(`> ${line}`);
-  }
   if (input.imageUrl) lines.push(`> ![screenshot](${input.imageUrl})`);
   lines.push(`> [Open on dev server](${input.url})`);
   lines.push(
