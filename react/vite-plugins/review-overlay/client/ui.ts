@@ -94,9 +94,11 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       border-radius: 6px; cursor: pointer; font-size: 14px; padding: 5px 10px;
     }
     .btn:disabled { cursor: default; opacity: .5; }
+    /* Quiet on purpose: the accent belongs to the pin, and a filled #FF0DE7
+       button shouted over the page it sits on. */
     .btn.primary {
-      background: var(--bai-review-accent); border-color: var(--bai-review-accent);
-      color: var(--bai-review-on-accent);
+      background: var(--bai-review-inverted); border-color: var(--bai-review-inverted);
+      color: var(--bai-review-on-inverted);
     }
     .hoverbox {
       position: fixed; z-index: 2147482998; pointer-events: none; display: none;
