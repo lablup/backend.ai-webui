@@ -113,11 +113,18 @@ const CreateFileModal: React.FC<CreateFileModalProps> = ({
   return (
     <BAIModal
       title={t('comp:FileExplorer.CreateANewFile')}
-      onCancel={() => onRequestClose(false)}
+      onCancel={() => {
+        if (!isCreating) {
+          onRequestClose(false);
+        }
+      }}
       okText={t('general.button.Create')}
       onOk={createFile}
       okButtonProps={{ loading: isCreating }}
       cancelButtonProps={{ disabled: isCreating }}
+      closable={!isCreating}
+      maskClosable={!isCreating}
+      keyboard={!isCreating}
       {...modalProps}
       width={400}
     >
