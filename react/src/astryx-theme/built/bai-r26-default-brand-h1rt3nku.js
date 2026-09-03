@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r25-default-brand-h1rt3nku theme — built by `pnpm exec astryx theme build`
+ * bai-r26-default-brand-h1rt3nku theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR25DefaultBrandH1rt3nkuTheme } from './bai-r25-default-brand-h1rt3nku';
- *   import './bai-r25-default-brand-h1rt3nku.css';
+ *   import { baiR26DefaultBrandH1rt3nkuTheme } from './bai-r26-default-brand-h1rt3nku';
+ *   import './bai-r26-default-brand-h1rt3nku.css';
  */
-export const baiR25DefaultBrandH1rt3nkuTheme = {
-  name: 'bai-r25-default-brand-h1rt3nku',
+export const baiR26DefaultBrandH1rt3nkuTheme = {
+  name: 'bai-r26-default-brand-h1rt3nku',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -236,7 +236,7 @@ export const baiR25DefaultBrandH1rt3nkuTheme = {
     "--astryx-theme-neutral-color-destructive-overlay-hover": "neutral",
     "--astryx-theme-neutral-color-destructive-overlay-pressed": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r25-default-brand-h1rt3nku"],
+  __localTokenLineage: ["neutral","bai-r26-default-brand-h1rt3nku"],
   components: {
     "heading": {
       "level:1": {

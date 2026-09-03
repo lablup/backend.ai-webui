@@ -23,7 +23,6 @@ import {
   toFixedFloorWithoutTrailingZeros,
   BAIFlex,
   BAIText,
-  presetPalettes,
 } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
@@ -619,7 +618,24 @@ export default UsageBucketChartContent;
 
 type EntityType = 'domain' | 'project' | 'user';
 
-const CHART_COLORS = Object.values(presetPalettes).map((palette) => palette[2]);
+// antd preset palettes, step 3 (red, volcano, orange, gold, yellow, lime,
+// green, cyan, blue, geekblue, purple, magenta, grey) — the series colors
+// this chart has always used.
+const CHART_COLORS = [
+  '#ffa39e',
+  '#ffbb96',
+  '#ffd591',
+  '#ffe58f',
+  '#fffb8f',
+  '#eaff8f',
+  '#b7eb8f',
+  '#87e8de',
+  '#91caff',
+  '#adc6ff',
+  '#d3adf7',
+  '#ffadd2',
+  '#8c8c8c',
+];
 
 interface ChartDataPoint {
   periodStart: string;
