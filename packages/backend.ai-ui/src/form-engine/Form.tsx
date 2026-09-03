@@ -17,6 +17,7 @@
  (`FolderCreateModal`, `FolderCreateModalV2`, `QuotaSettingModal`) pair that
  silence with a `labelCol` span, which has no meaning in a vertical form.
  */
+import { getFieldId } from './FormItem';
 import useForm, { FormStore } from './FormStore';
 import {
   FieldContext,
@@ -40,8 +41,8 @@ import type {
   ValidateMessages,
 } from './interface';
 import { mergeValidateMessages } from './messages';
-import type { Store } from './namePath';
-import { scrollToFirstErrorAfterRender } from './scrollToError';
+import { getNamePath, type Store } from './namePath';
+import { findFirstErrorItem, scrollToErrorItem } from './scrollToError';
 import type { ScrollToFirstErrorOptions } from './scrollToError';
 import * as React from 'react';
 
@@ -169,13 +170,18 @@ const InternalForm = <Values,>(
   const handleFinishFailed = React.useEffectEvent(
     (errorInfo: ValidateErrorEntity) => {
       if (scrollToFirstError && errorInfo.errorFields.length) {
-        // Resolved from the DOM rather than from `errorFields[0]`, which is
-        // field REGISTRATION order — a conditionally mounted group registers
-        // last while sitting first on screen (FR-3683).
-        scrollToFirstErrorAfterRender(
-          () => nativeElementRef.current ?? document,
-          typeof scrollToFirstError === 'object' ? scrollToFirstError : {},
+        const item = findFirstErrorItem(
+          nativeElementRef.current ?? document,
+          errorInfo.errorFields
+            .map((field) => getFieldId(getNamePath(field.name), name))
+            .filter((id): id is string => !!id),
         );
+        if (item) {
+          scrollToErrorItem(
+            item,
+            typeof scrollToFirstError === 'object' ? scrollToFirstError : {},
+          );
+        }
       }
       onFinishFailed?.(errorInfo);
     },

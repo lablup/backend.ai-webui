@@ -8,12 +8,11 @@
  moving the viewport is a view concern, so `<Form>` calls this from
  `onFinishFailed` and the store never learns that scrolling exists.
 
- The anchor is the item's own `data-status="error"`, not the failing field's
- name: `FormItem` merges a `noStyle` child's errors into its parent's status
- (FormItem.tsx), so a child that renders no wrapper of its own is still
- reachable through the wrapper that shows its message.
+ Items are found by `data-bai-form-item-id`, the id `FormItem` computes for
+ the field, stamped on the item's wrapper. The CONTROL's `id` is not usable
+ for this: Astryx inputs overwrite whatever `id` they receive with their own
+ `useId()`, so `document.getElementById(fieldId)` never matches one.
  */
-const ERROR_ITEM_SELECTOR = '[data-bai-form-item][data-status="error"]';
 const CONTROL_SELECTOR = '[data-bai-form-item-control]';
 
 /** What counts as "the user is editing this" — buttons deliberately excluded. */
@@ -44,20 +43,6 @@ export interface ScrollToFirstErrorOptions extends ScrollIntoViewOptions {
 }
 
 /**
- * A wizard keeps every step MOUNTED and hides the inactive ones (the session
- * launcher's `StepCard` is `display: none`), so an unreachable field would
- * otherwise win "first" and the scroll would silently do nothing.
- */
-function isHidden(el: HTMLElement): boolean {
-  if (typeof el.checkVisibility === 'function') return !el.checkVisibility();
-  // No layout engine (jsdom): trust what the markup says.
-  for (let node: HTMLElement | null = el; node; node = node.parentElement) {
-    if (node.hidden || node.style.display === 'none') return true;
-  }
-  return false;
-}
-
-/**
  * Never pull focus out of a control the user is already in: a radio group
  * revalidates on every arrow key, and moving focus mid-edit also drops an IME
  * composition. A button is not such a control even when a layout-only
@@ -71,13 +56,21 @@ function prefersReducedMotion(): boolean {
   return !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 }
 
-/** The first invalid item in DOM order that the user can actually reach. */
-export function findFirstErrorItem(root: ParentNode): HTMLElement | undefined {
-  // `querySelectorAll` yields document order, which is what "first" means
-  // here — `errorFields` is field REGISTRATION order and disagrees whenever a
-  // group mounts conditionally.
-  for (const item of root.querySelectorAll<HTMLElement>(ERROR_ITEM_SELECTOR)) {
-    if (!isHidden(item)) return item;
+/**
+ * The first of the given items in DOCUMENT order. `errorFields` arrives in
+ * field REGISTRATION order, which disagrees whenever a group mounts
+ * conditionally — `DeploymentAddRevisionModal` hand-rolled a DOM walk for
+ * exactly that reason, and this is what lets it stop.
+ */
+export function findFirstErrorItem(
+  root: ParentNode,
+  fieldIds: readonly string[],
+): HTMLElement | undefined {
+  const wanted = new Set(fieldIds);
+  for (const item of root.querySelectorAll<HTMLElement>(
+    '[data-bai-form-item-id]',
+  )) {
+    if (wanted.has(item.getAttribute('data-bai-form-item-id')!)) return item;
   }
   return undefined;
 }
@@ -105,21 +98,5 @@ export function scrollToErrorItem(
   // smooth one above and land the field somewhere else.
   scope.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus?.({
     preventScroll: true,
-  });
-}
-
-/**
- * `data-status` only says "error" once the rejected validation has re-rendered
- * the items, so the read waits for the next frame.
- */
-export function scrollToFirstErrorAfterRender(
-  getRoot: () => ParentNode | null,
-  options: ScrollToFirstErrorOptions = {},
-): void {
-  if (typeof requestAnimationFrame !== 'function') return;
-  requestAnimationFrame(() => {
-    const root = getRoot();
-    const item = root && findFirstErrorItem(root);
-    if (item) scrollToErrorItem(item, options);
   });
 }

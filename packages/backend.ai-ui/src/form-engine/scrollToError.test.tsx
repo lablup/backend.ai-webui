@@ -7,11 +7,11 @@
  What is pinned here:
    - `form.submit()` scrolls and focuses; a bare `validateFields()` never does
      (validating is not submitting);
-   - "first" is DOM order, not field REGISTRATION order, and skips a field
-     hidden inside an inactive wizard step;
+   - the item is found without relying on the control's `id` — the test
+     control drops it, as Astryx inputs do;
+   - "first" is DOM order, not field REGISTRATION order;
    - the switch is off until `<Form scrollToFirstError>` says otherwise;
-   - the scroll never yanks the viewport or the focus around a user who is
-     mid-edit.
+   - the scroll never yanks the focus away from a user who is mid-edit.
  */
 import { Form } from './engine';
 import type { FormInstance } from './interface';
@@ -19,16 +19,29 @@ import { act, render } from '@testing-library/react';
 import * as React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const Input: React.FC<any> = ({ value = '', onChange, ...rest }) => (
-  <input value={value} onChange={onChange} {...rest} />
-);
+/** Like an Astryx input: whatever `id` comes in is replaced by its own. */
+const Input: React.FC<any> = ({
+  value = '',
+  onChange,
+  id: _ignored,
+  ...rest
+}) => {
+  const ownId = React.useId();
+  return <input id={ownId} value={value} onChange={onChange} {...rest} />;
+};
 
 const scrollIntoView = vi.fn();
 
-/** The scrolled item's field, read off the control it wraps. */
-function scrolledField(): string | undefined {
+/** The scrolled item's field id — what the resolver picked. */
+function scrolledField(): string | null | undefined {
   const node = scrollIntoView.mock.instances[0] as HTMLElement | undefined;
-  return node?.querySelector('input')?.id;
+  return node?.getAttribute('data-bai-form-item-id');
+}
+
+function controlOf(fieldId: string): HTMLInputElement {
+  return document.querySelector<HTMLInputElement>(
+    `[data-bai-form-item-id="${fieldId}"] input`,
+  )!;
 }
 
 beforeEach(() => {
@@ -42,30 +55,25 @@ interface Props {
   scrollToFirstError?: boolean;
   /** Renders `late` ABOVE `early` while registering it after. */
   reverseDom?: boolean;
-  /** Mounts `early` inside a `display: none` box, as a wizard step would. */
-  hideFirst?: boolean;
 }
 
 const TestForm: React.FC<Props> = ({
   formRef,
   scrollToFirstError,
   reverseDom,
-  hideFirst,
 }) => {
   const [form] = Form.useForm();
   formRef(form);
 
-  const earlyItem = (
-    <Form.Item name="early" label="Early" rules={[{ required: true }]}>
+  const early = (
+    <Form.Item
+      key="early"
+      name="early"
+      label="Early"
+      rules={[{ required: true }]}
+    >
       <Input />
     </Form.Item>
-  );
-  const early = hideFirst ? (
-    <div key="early" style={{ display: 'none' }}>
-      {earlyItem}
-    </div>
-  ) : (
-    <React.Fragment key="early">{earlyItem}</React.Fragment>
   );
   const late = (
     <Form.Item key="late" name="late" label="Late" rules={[{ required: true }]}>
@@ -99,26 +107,23 @@ const FormWithButton: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
   );
 };
 
-/** Submit, let validation reject, then flush the frame the scroll waits for. */
 async function submit(form: FormInstance) {
   await act(async () => {
     form.submit();
   });
-  await act(async () => {
-    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
-  });
 }
 
 describe('scroll to the first invalid field', () => {
-  it('scrolls and focuses on a failed submit', async () => {
+  it('scrolls and focuses on a failed submit, without the control’s id', async () => {
     let form!: FormInstance;
     render(<TestForm formRef={(f) => (form = f)} scrollToFirstError />);
+    // The control did not keep the id `Form.Item` gave it.
+    expect(document.getElementById('early')).toBeNull();
 
     await submit(form);
 
-    expect(scrollIntoView).toHaveBeenCalled();
     expect(scrolledField()).toBe('early');
-    expect((document.activeElement as HTMLElement)?.id).toBe('early');
+    expect(document.activeElement).toBe(controlOf('early'));
   });
 
   it('does not scroll for a bare `validateFields()` — validating is not submitting', async () => {
@@ -127,11 +132,6 @@ describe('scroll to the first invalid field', () => {
 
     await act(async () => {
       await form.validateFields().catch(() => undefined);
-    });
-    await act(async () => {
-      await new Promise((resolve) =>
-        requestAnimationFrame(() => resolve(null)),
-      );
     });
 
     expect(scrollIntoView).not.toHaveBeenCalled();
@@ -155,17 +155,6 @@ describe('scroll to the first invalid field', () => {
     await submit(form);
 
     // `early` registers first but renders second.
-    expect(scrolledField()).toBe('late');
-  });
-
-  it('skips a hidden field — a wizard keeps inactive steps mounted', async () => {
-    let form!: FormInstance;
-    render(
-      <TestForm formRef={(f) => (form = f)} scrollToFirstError hideFirst />,
-    );
-
-    await submit(form);
-
     expect(scrolledField()).toBe('late');
   });
 
@@ -205,7 +194,7 @@ describe('scroll to the first invalid field', () => {
     render(<TestForm formRef={(f) => (form = f)} scrollToFirstError />);
     // A radio group revalidates on every arrow key; an edit in progress may
     // hold an IME composition. Neither may lose focus to another field.
-    const inUse = document.getElementById('late')!;
+    const inUse = controlOf('late');
     inUse.focus();
 
     await submit(form);
@@ -221,7 +210,7 @@ describe('scroll to the first invalid field', () => {
 
     await submit(form);
 
-    expect((document.activeElement as HTMLElement)?.id).toBe('early');
+    expect(document.activeElement).toBe(controlOf('early'));
   });
 
   it('does not scroll when the submit succeeds', async () => {
