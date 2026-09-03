@@ -245,6 +245,12 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
     }
   };
 
+  const userIdsItemProps = {
+    name: 'userIds',
+    label: t('credential.Users'),
+    rules: [{ required: true, message: t('rbac.PleaseSelectUsers') }],
+  };
+
   const failureColumns: BAIColumnsType<FailedAssignment> = [
     {
       key: 'user',
@@ -287,8 +293,10 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
     >
       <Form ref={formRef} layout="vertical">
         <Suspense
+          // Same field on the fallback: keeps `userIds` registered (and its
+          // required rule active) while the options load.
           fallback={
-            <Form.Item label={t('credential.Users')}>
+            <Form.Item {...userIdsItemProps}>
               <BAISelect
                 mode="multiple"
                 style={{ width: '100%' }}
@@ -299,11 +307,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             </Form.Item>
           }
         >
-          <Form.Item
-            name="userIds"
-            label={t('credential.Users')}
-            rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
-          >
+          <Form.Item {...userIdsItemProps}>
             <AssignRoleUserSelect
               placeholder={t('rbac.SelectUsers')}
               onChange={(value: string[], options) => {
