@@ -181,6 +181,22 @@ describe('the anchor’s component name', () => {
     );
   });
 
+  // The owner name is a positive rank, never a pass on the veto: an element
+  // that merely renders under the pick's OWNER is still the wrong element.
+  it('rejects a landmark whose rendered name is only the owner name', () => {
+    mount('<div data-testid="panel" data-name="WebUILink"><i>Login</i></div>');
+    stubReactGrab({ WebUILink: 'WebUILink' });
+    expect(
+      quickFindTarget(
+        anchor({
+          s: 'nope',
+          tid: 'panel',
+          c: { name: 'WebUILink', src: 'src/L.tsx:1', dn: 'Link' },
+        }),
+      ),
+    ).toBeNull();
+  });
+
   it('lets a named wrapper keep the deeper node it contains', () => {
     mount('<div data-name="RowActions"><div id="body">Delete</div></div>');
     stubReactGrab({ RowActions: 'RowActions' });

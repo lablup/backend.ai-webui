@@ -53,14 +53,17 @@ const componentMatches = (element: Element, anchor: AnchorV3): boolean => {
 };
 
 /**
- * A veto needs like-for-like: `c.name` is `getSource`'s OWNER component, which
- * differs from `getDisplayName` on most elements, so only an anchor carrying
- * `c.dn` — the same API, recorded at pick time — may reject anything.
+ * A veto needs like-for-like, so it compares `c.dn` and nothing else. `c.name`
+ * is `getSource`'s OWNER component, which disagrees with `getDisplayName` on
+ * 57 of 58 sampled elements: letting it satisfy the veto (via
+ * `componentMatches`, where it is a positive rank) would clear any candidate
+ * whose display name happens to equal the pick's owner.
  */
 const componentConflicts = (element: Element, anchor: AnchorV3): boolean => {
-  if (!anchor.c?.dn) return false;
+  const dn = anchor.c?.dn;
+  if (!dn) return false;
   const name = displayName(element);
-  return name !== null && !componentMatches(element, anchor);
+  return name !== null && name !== dn;
 };
 
 const isOurs = (element: Element | null, ignore?: Element | null) =>
