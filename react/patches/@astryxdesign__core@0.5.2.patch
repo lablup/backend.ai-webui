@@ -1,3 +1,24 @@
+diff --git a/dist/Button/Button.js b/dist/Button/Button.js
+index 083184d76032a0a6ba3cdb87d7fd6ff7294f863f..647cc56a29e984695e83db633d9085bdc7f11f46 100644
+--- a/dist/Button/Button.js
++++ b/dist/Button/Button.js
+@@ -78,6 +78,7 @@ const styles = {
+   },
+   ariaDisabled: {
+     kKwaWg: "x18o3ruo xuqm82a",
++    k3aq6I: "x1c071of x1pdlv7q",
+     $$css: true
+   },
+   iconOnly: {
+@@ -434,7 +435,7 @@ export function Button({
+   } : null;
+ 
+   // Shared StyleX props for both button and link rendering
+-  const sharedStylexProps = focusOutlineProps.focusVisible(styles.base, sizeStyles[size], isIconOnly && styles.iconOnly, interactionOverlayStyles.backgroundImage, buttonDisabled && styles.disabled, useAriaDisabled && styles.ariaDisabled, renderAsLink && styles.link, !buttonGroup && styles.pressable, buttonGroup && (buttonGroup.orientation === 'horizontal' ? groupStyles.horizontal : groupStyles.vertical), buttonGroup && (variant === 'primary' || variant === 'destructive') && (buttonGroup.orientation === 'horizontal' ? groupStyles.onSolidHorizontal : groupStyles.onSolidVertical),
++  const sharedStylexProps = focusOutlineProps.focusVisible(styles.base, sizeStyles[size], isIconOnly && styles.iconOnly, interactionOverlayStyles.backgroundImage, !buttonGroup && styles.pressable, buttonDisabled && styles.disabled, useAriaDisabled && styles.ariaDisabled, renderAsLink && styles.link, buttonGroup && (buttonGroup.orientation === 'horizontal' ? groupStyles.horizontal : groupStyles.vertical), buttonGroup && (variant === 'primary' || variant === 'destructive') && (buttonGroup.orientation === 'horizontal' ? groupStyles.onSolidHorizontal : groupStyles.onSolidVertical),
+   // Standalone floating buttons only — a grouped button's elevation is owned
+   // by the ButtonGroup so the shared surface lifts as one unit.
+   !buttonGroup && elevationStyles[elevation], width != null && dynamicStyles.width(width),
 diff --git a/dist/hooks/useFocusTrap.js b/dist/hooks/useFocusTrap.js
 index ead7e0af25144043c863026cfe48bcfdaf10f6cf..f3f192ad226e80cffad26e02b2e1c696cd808100 100644
 --- a/dist/hooks/useFocusTrap.js
@@ -28,6 +49,35 @@ index ead7e0af25144043c863026cfe48bcfdaf10f6cf..f3f192ad226e80cffad26e02b2e1c696
        const active = document.activeElement;
        const focusWasLost = active == null || active === document.body || active === document.documentElement || container != null && container.contains(active);
        if (!focusWasLost) {
+diff --git a/src/Button/Button.tsx b/src/Button/Button.tsx
+index f982254829ad1254eda72dbca4bac3333a7f86e0..c1d30075084e6e5d0f7973c5cd83fcd7107633ff 100644
+--- a/src/Button/Button.tsx
++++ b/src/Button/Button.tsx
+@@ -119,6 +119,10 @@ const styles = stylex.create({
+       default: 'none',
+       ':active': 'none',
+     },
++    transform: {
++      default: 'none',
++      ':active': 'none',
++    },
+   },
+   iconOnly: {
+     '--button-icon-only-aspect': '1 / 1',
+@@ -639,10 +643,12 @@ export function Button({
+     sizeStyles[size],
+     isIconOnly && styles.iconOnly,
+     interactionOverlayStyles.backgroundImage,
++    // Before `disabled` / `ariaDisabled`: StyleX is last-wins per property,
++    // so their `transform: none` must come after the press scale.
++    !buttonGroup && styles.pressable,
+     buttonDisabled && styles.disabled,
+     useAriaDisabled && styles.ariaDisabled,
+     renderAsLink && styles.link,
+-    !buttonGroup && styles.pressable,
+     buttonGroup &&
+       (buttonGroup.orientation === 'horizontal'
+         ? groupStyles.horizontal
 diff --git a/src/hooks/useFocusTrap.ts b/src/hooks/useFocusTrap.ts
 index c05638a06c1e35345b33d9b13ecda5578821a82f..525c410546c39477b787f9cc787ba0341bf3c21d 100644
 --- a/src/hooks/useFocusTrap.ts
