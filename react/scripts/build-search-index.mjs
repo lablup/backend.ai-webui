@@ -15,8 +15,8 @@
  *   node scripts/build-search-index.mjs --routes   # route candidates as JSON
  */
 import fs from 'node:fs';
-import path from 'node:path';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // ---------------------------------------------------------------------------
@@ -71,7 +71,6 @@ const ROUTE_CHROME_COMPONENTS = [
   'react/src/components/ErrorBoundaryWithNullFallback.tsx',
   'react/src/components/StorageHostFetchErrorBoundary.tsx',
   'react/src/components/LocationStateBreadCrumb.tsx',
-  'react/src/components/FlexActivityIndicator.tsx',
   'react/src/components/WebUINavigate.tsx',
 ];
 
@@ -500,12 +499,10 @@ function settingTabKeyOf(sf, tabKeys) {
       ts.isBinaryExpression(node) &&
       node.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken &&
       ts.isBinaryExpression(node.left) &&
-      node.left.operatorToken.kind ===
-        ts.SyntaxKind.EqualsEqualsEqualsToken &&
+      node.left.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken &&
       rendersSettingList(node.right)
     ) {
-      const k =
-        textOfString(node.left.right) ?? textOfString(node.left.left);
+      const k = textOfString(node.left.right) ?? textOfString(node.left.left);
       if (k && tabKeys.has(k)) found = k;
     }
     ts.forEachChild(node, visit);
@@ -539,11 +536,14 @@ function paramNameOfParser(call, src) {
 
   const owner = findParserOwnerName(call);
   if (!owner) return null;
-  if (new RegExp(`useTabQuerySnapshot\\(\\s*${owner}\\b`).test(src)) return 'tab';
+  if (new RegExp(`useTabQuerySnapshot\\(\\s*${owner}\\b`).test(src))
+    return 'tab';
   for (const p of ALL) {
     if (new RegExp(`\\b${p}\\s*:\\s*${owner}\\b`).test(src)) return p;
     if (
-      new RegExp(`useQueryState\\(\\s*['"]${p}['"]\\s*,\\s*${owner}\\b`).test(src)
+      new RegExp(`useQueryState\\(\\s*['"]${p}['"]\\s*,\\s*${owner}\\b`).test(
+        src,
+      )
     )
       return p;
   }
@@ -557,27 +557,59 @@ function resolveArrayArg(sf, arg) {
     n = n.expression;
   if (!n) return null;
   if (ts.isArrayLiteralExpression(n)) return n;
-  if (ts.isIdentifier(n)) {
-    let found = null;
-    const scan = (x) => {
-      if (
-        ts.isVariableDeclaration(x) &&
-        ts.isIdentifier(x.name) &&
-        x.name.text === n.text &&
-        x.initializer
-      ) {
-        let init = x.initializer;
-        while (
-          init &&
-          (ts.isAsExpression(init) || ts.isParenthesizedExpression(init))
-        )
-          init = init.expression;
-        if (ts.isArrayLiteralExpression(init)) found = init;
-      }
-      ts.forEachChild(x, scan);
-    };
-    scan(sf);
-    return found;
+  if (ts.isIdentifier(n)) return resolveArrayByName(sf, n.text, 0);
+  return null;
+}
+
+/** `const NAME = [...] as const` declared anywhere in `sf`. */
+function findArrayDecl(sf, name) {
+  let found = null;
+  const scan = (x) => {
+    if (
+      ts.isVariableDeclaration(x) &&
+      ts.isIdentifier(x.name) &&
+      x.name.text === name &&
+      x.initializer
+    ) {
+      let init = x.initializer;
+      while (
+        init &&
+        (ts.isAsExpression(init) || ts.isParenthesizedExpression(init))
+      )
+        init = init.expression;
+      if (ts.isArrayLiteralExpression(init)) found = init;
+    }
+    ts.forEachChild(x, scan);
+  };
+  scan(sf);
+  return found;
+}
+
+/**
+ * A local declaration first; otherwise follow a named import (`import { X as Y }
+ * from './mod'`) into the module that declares it — shared literals such as
+ * `sessionStatusCategoryValues` live in a helper, not the page. Two hops is
+ * enough for one re-export layer without chasing barrels.
+ */
+function resolveArrayByName(sf, name, depth) {
+  const local = findArrayDecl(sf, name);
+  if (local) return local;
+  if (depth >= 2) return null;
+  for (const st of sf.statements) {
+    if (!ts.isImportDeclaration(st)) continue;
+    const nb = st.importClause?.namedBindings;
+    if (!nb || !ts.isNamedImports(nb)) continue;
+    const el = nb.elements.find((e) => e.name.text === name);
+    if (!el) continue;
+    const spec = textOfString(st.moduleSpecifier);
+    const target = spec && resolveSpec(spec, sf.fileName);
+    if (!target || !fs.existsSync(target)) return null;
+    const tsf = sourceFileOf(target, fs.readFileSync(target, 'utf8'));
+    return resolveArrayByName(
+      tsf,
+      (el.propertyName ?? el.name).text,
+      depth + 1,
+    );
   }
   return null;
 }
@@ -585,7 +617,8 @@ function resolveArrayArg(sf, arg) {
 function findParserOwnerName(call) {
   let n = call.parent;
   for (let i = 0; i < 5 && n; i++) {
-    if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name)) return n.name.text;
+    if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name))
+      return n.name.text;
     n = n.parent;
   }
   return null;
@@ -621,11 +654,16 @@ export function parseRoutes() {
         const c = node.importClause;
         if (c.name) compFile.set(c.name.text, r);
         if (c.namedBindings && ts.isNamedImports(c.namedBindings)) {
-          for (const el of c.namedBindings.elements) compFile.set(el.name.text, r);
+          for (const el of c.namedBindings.elements)
+            compFile.set(el.name.text, r);
         }
       }
     }
-    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.initializer
+    ) {
       const init = node.initializer;
       const lazySpec = lazyImportSpec(init);
       if (lazySpec) {
@@ -634,7 +672,8 @@ export function parseRoutes() {
       }
       const arr = ts.isArrayLiteralExpression(init)
         ? init
-        : ts.isAsExpression(init) && ts.isArrayLiteralExpression(init.expression)
+        : ts.isAsExpression(init) &&
+            ts.isArrayLiteralExpression(init.expression)
           ? init.expression
           : null;
       if (arr) arrayVars.set(node.name.text, arr);
@@ -675,7 +714,8 @@ export function parseRoutes() {
 
       if (handle.menuKey || handle.labelKey || handle.title) {
         const isShim =
-          comps.length > 0 && comps.every((c) => SHIM_COMPONENT_FILES.includes(rel(c)));
+          comps.length > 0 &&
+          comps.every((c) => SHIM_COMPONENT_FILES.includes(rel(c)));
         const skipReason = !comps.length
           ? 'no-component'
           : isShim
@@ -704,7 +744,8 @@ export function parseRoutes() {
       let childArr = null;
       if (childrenNode) {
         if (ts.isArrayLiteralExpression(childrenNode)) childArr = childrenNode;
-        else if (ts.isIdentifier(childrenNode)) childArr = arrayVars.get(childrenNode.text);
+        else if (ts.isIdentifier(childrenNode))
+          childArr = arrayVars.get(childrenNode.text);
       }
       if (childArr) walkArray(childArr, full, handle);
     }
@@ -774,14 +815,18 @@ function collectComponents(node, compFile) {
   const out = new Set();
   const add = (name) => {
     const f = compFile.get(name);
-    if (f && !isExternal(f) && !ROUTE_CHROME_COMPONENTS.includes(rel(f))) out.add(f);
+    if (f && !isExternal(f) && !ROUTE_CHROME_COMPONENTS.includes(rel(f)))
+      out.add(f);
   };
   if (ts.isIdentifier(node)) add(node.text);
   const visit = (n) => {
     if (ts.isJsxOpeningElement(n) || ts.isJsxSelfClosingElement(n)) {
       const tag = n.tagName;
       if (ts.isIdentifier(tag)) add(tag.text);
-      else if (ts.isPropertyAccessExpression(tag) && ts.isIdentifier(tag.expression))
+      else if (
+        ts.isPropertyAccessExpression(tag) &&
+        ts.isIdentifier(tag.expression)
+      )
         add(tag.expression.text);
     }
     ts.forEachChild(n, visit);
@@ -864,7 +909,11 @@ export async function buildEntries() {
       const d = depth.get(f);
       for (const k of rec.keys) {
         const prev = keyMap.get(k);
-        if (!prev || d < prev.depth || (d === prev.depth && rel(f) < prev.ownerFile))
+        if (
+          !prev ||
+          d < prev.depth ||
+          (d === prev.depth && rel(f) < prev.ownerFile)
+        )
           keyMap.set(k, { depth: d, ownerFile: rel(f) });
       }
       for (const dk of rec.dynamic) dynamicKeys.add(dk);
@@ -918,7 +967,10 @@ function applyTabOverrides(routePath, tabs) {
   if (!extra) return tabs;
   const m = new Map(tabs.map((t) => [`${t.param}=${t.key}`, t]));
   for (const t of extra)
-    m.set(`${t.param}=${t.key}`, { ...t, primary: TAB_PARAMS.includes(t.param) });
+    m.set(`${t.param}=${t.key}`, {
+      ...t,
+      primary: TAB_PARAMS.includes(t.param),
+    });
   return [...m.values()].sort((a, b) =>
     byString(`${a.param}=${a.key}`, `${b.param}=${b.key}`),
   );
@@ -961,10 +1013,7 @@ function keyPlacement(built) {
     const kept = owners.length
       ? owners
       : [...depths].filter(([, d]) => d === min);
-    placement.set(
-      k,
-      new Set(kept.map(([p]) => p)),
-    );
+    placement.set(k, new Set(kept.map(([p]) => p)));
   }
   return placement;
 }
@@ -1056,7 +1105,9 @@ function reportOn(built, index) {
   const chrome = [...placement.values()].filter((on) => on.size === 0).length;
   const distinct = new Set(index.entries.flatMap((e) => e.keys));
   const componentOf = new Map(built.map((e) => [e.path, e.component]));
-  const tabPages = index.entries.filter((e) => e.tabs.some((t) => t.param === 'tab'));
+  const tabPages = index.entries.filter((e) =>
+    e.tabs.some((t) => t.param === 'tab'),
+  );
   const tabKeys = index.entries.reduce(
     (a, e) => a + e.tabs.filter((t) => t.param === 'tab').length,
     0,
@@ -1076,7 +1127,13 @@ function reportOn(built, index) {
     `dynamic keys (unemitted) ${new Set(built.flatMap((e) => e.dynamicKeys)).size}`,
   );
   console.log('');
-  console.log('menuKey'.padEnd(26) + 'path'.padEnd(44) + 'keys'.padStart(6) + 'tab'.padStart(5) + 'set'.padStart(5));
+  console.log(
+    'menuKey'.padEnd(26) +
+      'path'.padEnd(44) +
+      'keys'.padStart(6) +
+      'tab'.padStart(5) +
+      'set'.padStart(5),
+  );
   for (const e of index.entries) {
     console.log(
       String(e.menuKey ?? '—').padEnd(26) +
@@ -1091,7 +1148,8 @@ function reportOn(built, index) {
   const skipped = parseRoutes().filter((r) => r.skipReason);
   console.log('');
   console.log(`skipped routes (${skipped.length}):`);
-  for (const r of skipped) console.log(`  ${r.skipReason.padEnd(14)} ${r.path}`);
+  for (const r of skipped)
+    console.log(`  ${r.skipReason.padEnd(14)} ${r.path}`);
 }
 
 async function main(argv) {
@@ -1127,6 +1185,9 @@ async function main(argv) {
   return 0;
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
   process.exitCode = await main(process.argv.slice(2));
 }
