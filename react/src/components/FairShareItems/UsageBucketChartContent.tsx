@@ -510,7 +510,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                         </BAIText>
                         <BAIText
                           style={{
-                            color: token('--bai-color-text-tertiary'),
+                            color: token('--color-text-tertiary'),
                           }}
                         >
                           {capacityName} :
@@ -575,8 +575,8 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                 type="monotone"
                 dataKey={CAPACITY_KEY}
                 name={`${parentScopeLabel} (${capacityName})`}
-                stroke={token('--bai-color-fill')}
-                fill={token('--bai-color-fill')}
+                stroke={token('--color-fill')}
+                fill={token('--color-fill')}
                 fillOpacity={0.75}
                 legendType="square"
               />

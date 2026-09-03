@@ -150,14 +150,14 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
             value: displayUnit,
             position: 'top',
             offset: 12,
-            fill: token('--bai-color-text-description'),
+            fill: token('--color-text-description'),
           }}
         />
         <ChartTooltip
           cursor={{
             fill: isDarkMode
-              ? token('--bai-color-fill-secondary')
-              : token('--bai-color-fill-tertiary'),
+              ? token('--color-fill-secondary')
+              : token('--color-fill-tertiary'),
           }}
           labelFormatter={(i: number) => chartData[i]?.tooltipLabel ?? ''}
         />

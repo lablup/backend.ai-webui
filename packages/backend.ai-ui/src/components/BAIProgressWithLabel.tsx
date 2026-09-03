@@ -57,7 +57,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
         padding: 1,
         border: `1px solid ${token('--color-border-emphasized')}`,
         borderRadius: 3,
-        backgroundColor: token('--bai-color-bg-container-disabled'),
+        backgroundColor: token('--color-bg-container-disabled'),
         ...(_.isNumber(width) || _.isString(width)
           ? { width: width }
           : { flex: 1 }),

@@ -33,9 +33,7 @@ const BAIGeneralNotificationItem: React.FC<{
     explicitIcon ||
     (notification.backgroundTask &&
       {
-        pending: (
-          <Clock style={{ color: token('--bai-color-info') }} size="1em" />
-        ),
+        pending: <Clock style={{ color: token('--color-info') }} size="1em" />,
         resolved: (
           <CircleCheck style={{ color: token('--color-success') }} size="1em" />
         ),

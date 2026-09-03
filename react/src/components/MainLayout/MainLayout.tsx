@@ -229,7 +229,7 @@ function MainLayout() {
                       <div
                         style={{
                           height: headerHeight,
-                          backgroundColor: token('--bai-header-bg'),
+                          backgroundColor: token('--header-bg'),
                         }}
                       />
                     }

@@ -200,7 +200,7 @@ const DomainStoragePermissionTable: React.FC<
               render: () =>
                 enabledSet.has(permKey) ? (
                   <CircleCheck
-                    style={{ color: token('--bai-preset-purple-5') }}
+                    style={{ color: token('--preset-purple-5') }}
                     size="1em"
                   />
                 ) : (

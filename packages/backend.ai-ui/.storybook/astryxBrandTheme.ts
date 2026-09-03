@@ -4,7 +4,7 @@
  * Storybook's Vite build lives in a different workspace package than
  * `react/`, so it cannot import the app's theme builder
  * (`react/src/astryx-theme/backendAiTheme.ts`). This mirrors its brand-role
- * recipe over the SAME inputs: BUI's parity tables and `--bai-*` builder
+ * recipe over the SAME inputs: BUI's parity tables and custom token builder
  * (`src/theme`), and a copy of `resources/theme.json` (`./theme.json`, v2).
  * Like the app, it holds no brand values of its own: a seed the document
  * leaves out is not pinned, so Astryx's default applies.
