@@ -173,6 +173,7 @@ export const FormConfigProvider: React.FC<
       config.validateMessages,
       config.requiredMark,
       config.optionalLabel,
+      config.scrollToFirstError,
       localized,
       optionalLabel,
     ],
