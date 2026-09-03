@@ -2,9 +2,8 @@ import themeJson from '../../../resources/theme.json';
 import type { BAIThemeConfig } from '../helper/customThemeConfig';
 import {
   ANTD_ALIGN_TOKENS,
-  buildBackendAiTheme,
+  buildBackendAITheme,
   computeThemeName,
-  resolveDarkSeed,
   themeOptionsFromConfig,
   THEME_NAME_REV,
 } from './backendAiTheme';
@@ -16,38 +15,26 @@ import { neutralTheme } from '@astryxdesign/theme-neutral';
 // tests reason about is read from it, never restated here.
 const shippedTheme = themeJson.theme as unknown as BAIThemeConfig;
 const shippedOptions = themeOptionsFromConfig(shippedTheme, 'brand');
-const brandTheme = buildBackendAiTheme(shippedOptions);
+const brandTheme = buildBackendAITheme(shippedOptions);
 
 describe('backendAiTheme', () => {
-  describe('dark tuples (settled decision: measured darkAlgorithm outputs)', () => {
-    it('maps the shipped dark seeds to the measured antd outputs', () => {
-      expect(resolveDarkSeed('#DC6B03')).toBe('#be5e06'); // colorPrimary
-      expect(resolveDarkSeed('#dc6b03')).toBe('#be5e06'); // case-insensitive
-      expect(resolveDarkSeed('#DC4446')).toBe('#be3d3f'); // colorError
-      expect(resolveDarkSeed('#03A487')).toBe('#068e76'); // colorSuccess
-      expect(resolveDarkSeed('#009BDD')).toBe('#0387bf'); // colorInfo
-      expect(resolveDarkSeed('#FAAD14')).toBe('#d89614'); // colorWarning
-    });
-
-    it('computes unknown (rebranded) hex seeds with the vendored dark palette — shim parity', () => {
-      // Same computation the theme-shim ran live: palette(seed, 'dark')(6).
-      expect(resolveDarkSeed('#123456')).toBe('#122f4c');
-      // Non-hex input the generator cannot parse still passes through.
-      expect(resolveDarkSeed('rgba(30, 32, 38, 0.15)')).toBe(
-        'rgba(30, 32, 38, 0.15)',
+  describe('dark tuples (declared values applied verbatim)', () => {
+    it('pins the brand accent tuple to the declared [light, dark]', () => {
+      // defineTheme normalizes [light, dark] tuples to light-dark() strings.
+      expect(brandTheme.tokens?.['--color-accent']).toBe(
+        'light-dark(#FF7A00, #DC6B03)',
       );
     });
 
-    it('pins the brand accent tuple to [light seed, measured dark]', () => {
-      // defineTheme normalizes [light, dark] tuples to light-dark() strings.
-      expect(brandTheme.tokens?.['--color-accent']).toBe(
-        'light-dark(#FF7A00, #be5e06)',
+    it('pins the muted accent so useTheme() cannot fall back to neutral grey', () => {
+      expect(brandTheme.tokens?.['--color-accent-muted']).toBe(
+        'light-dark(#FF7A0033, #DC6B033F)',
       );
     });
   });
 
   describe('no document, no brand (theme.json is the only source of brand values)', () => {
-    const bare = buildBackendAiTheme({});
+    const bare = buildBackendAITheme({});
 
     it('pins none of the brand families without seeds (Astryx neutral applies)', () => {
       // `extends: neutralTheme` copies the base tokens, so "not pinned" reads
@@ -214,7 +201,7 @@ describe('backendAiTheme', () => {
     });
 
     it('returns the SAME instance for the same seed set (registry-safe)', () => {
-      expect(buildBackendAiTheme(shippedOptions)).toBe(brandTheme);
+      expect(buildBackendAITheme(shippedOptions)).toBe(brandTheme);
     });
   });
 
@@ -252,10 +239,9 @@ describe('backendAiTheme', () => {
       );
       expect(runtime).not.toBe(builtBackendAiBrandTheme);
       expect(runtime.name).not.toBe(builtBackendAiBrandTheme.name);
-      // Unknown dark seed: vendored dark palette, matching what the shim
-      // rendered for the same document (parity over passthrough).
+      // The declared dark value is pinned verbatim: no dark-palette re-mapping.
       expect(runtime.tokens?.['--color-accent']).toBe(
-        'light-dark(#8B5CF6, #9179d8)',
+        'light-dark(#8B5CF6, #A78BFA)',
       );
     });
   });
@@ -313,7 +299,7 @@ describe('backendAiTheme', () => {
 
   describe('banner status fills (FR-3700)', () => {
     const fill = (
-      theme: ReturnType<typeof buildBackendAiTheme>,
+      theme: ReturnType<typeof buildBackendAITheme>,
       target: string,
       token: string,
     ) =>
@@ -321,8 +307,8 @@ describe('backendAiTheme', () => {
         string | undefined;
 
     it('are opaque, and follow an operator rebrand rather than a literal', () => {
-      const shipped = buildBackendAiTheme(shippedOptions);
-      const rebranded = buildBackendAiTheme({
+      const shipped = buildBackendAITheme(shippedOptions);
+      const rebranded = buildBackendAITheme({
         ...shippedOptions,
         error: { light: '#7B1FA2', dark: '#7B1FA2' },
       });
@@ -344,7 +330,7 @@ describe('backendAiTheme', () => {
       expect(rebrandContent).toEqual(rebrandBand);
       // No error seed, no banner fill of ours — the component keeps Astryx's.
       expect(
-        fill(buildBackendAiTheme({}), 'banner', '--color-error-muted'),
+        fill(buildBackendAITheme({}), 'banner', '--color-error-muted'),
       ).toBeUndefined();
     });
   });

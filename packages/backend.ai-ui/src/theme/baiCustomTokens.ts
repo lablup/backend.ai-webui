@@ -14,9 +14,8 @@
  `useTheme().token('--bai-…')`.
  */
 import { generate, palette } from './antdColors';
-import { ANTD_DARK_ALGORITHM_OUTPUT } from './antdParity';
 
-/** A seed declared per scheme; `dark` is the DECLARED value, pre-transform. */
+/** A seed declared per scheme; both sides are applied as declared. */
 export interface BrandSeedPair {
   light: string;
   dark: string;
@@ -32,20 +31,10 @@ export type BaiCustomTokenSeeds = {
   warning?: BrandSeedPair;
 };
 
-/**
- * Map a declared dark seed to the value antd's darkAlgorithm rendered for it:
- * the measured table for the shipped seeds, the vendored palette for any
- * other 6-digit hex (the same computation the shim ran live), and verbatim
- * passthrough for anything the generator cannot parse.
- */
-export const resolveDarkSeed = (seed: string): string =>
-  ANTD_DARK_ALGORITHM_OUTPUT[seed.toUpperCase()] ??
-  (/^#[0-9a-fA-F]{6}$/.test(seed) ? palette(seed, 'dark')(6) : seed);
-
-/** Resolve tuple = [light seed, darkAlgorithm output of the dark seed]. */
+/** The declared pair as a `[light, dark]` tuple. */
 export const toSeedTuple = (pair: BrandSeedPair): [string, string] => [
   pair.light,
-  resolveDarkSeed(pair.dark),
+  pair.dark,
 ];
 
 /**

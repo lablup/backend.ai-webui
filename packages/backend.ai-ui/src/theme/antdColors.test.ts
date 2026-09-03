@@ -9,7 +9,6 @@
  */
 import {
   generate as vendoredGenerate,
-  palette,
   presetDarkPalettes as vendoredDarkPalettes,
   presetPalettes as vendoredPalettes,
 } from './antdColors';
@@ -21,7 +20,6 @@ import {
   ANTD_COLORS_PRESET_PALETTES,
   ANTD_COLORS_REFERENCE_SEEDS,
 } from './antdColorsFixture';
-import { ANTD_DARK_ALGORITHM_OUTPUT } from './antdParity';
 import { describe, expect, it } from 'vitest';
 
 /**
@@ -88,16 +86,6 @@ describe('vendored @ant-design/colors parity', () => {
       expect(vendoredDarkPalettes[hue]).toEqual(
         ANTD_COLORS_PRESET_DARK_PALETTES[hue],
       );
-    }
-  });
-});
-
-describe('dark seed transform', () => {
-  it('palette(seed, dark)(6) reproduces the measured darkAlgorithm outputs', () => {
-    for (const [declared, rendered] of Object.entries(
-      ANTD_DARK_ALGORITHM_OUTPUT,
-    )) {
-      expect(palette(declared, 'dark')(6)).toBe(rendered);
     }
   });
 });
