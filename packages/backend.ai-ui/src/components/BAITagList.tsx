@@ -79,17 +79,35 @@ const BAITagList: React.FC<BAITagListProps> = ({
     return <>{emptyText}</>;
   }
 
-  const restItemsList = (
-    <BAIFlex
-      direction="column"
-      align="start"
-      style={{ maxHeight: 240, overflowY: 'auto' }}
-    >
-      {_.map(restItems, (item, index) => (
-        <Text key={`${item}-${index}`}>{item}</Text>
-      ))}
-    </BAIFlex>
-  );
+  // The chip variant's overflow renders as a disc-bulleted list — the design
+  // FR-3707 asks to keep; the text variant keeps plain lines for dense cells.
+  const restItemsList =
+    variant === 'text' ? (
+      <BAIFlex
+        direction="column"
+        align="start"
+        style={{ maxHeight: 240, overflowY: 'auto' }}
+      >
+        {_.map(restItems, (item, index) => (
+          <Text key={`${item}-${index}`}>{item}</Text>
+        ))}
+      </BAIFlex>
+    ) : (
+      <ul
+        style={{
+          paddingInlineStart: 'var(--spacing-4)',
+          margin: 0,
+          maxHeight: 240,
+          overflow: 'auto',
+        }}
+      >
+        {_.map(restItems, (item, index) => (
+          <li key={`${item}-${index}`} style={{ listStyle: 'disc' }}>
+            <Text>{item}</Text>
+          </li>
+        ))}
+      </ul>
+    );
 
   // Astryx `Popover` wires its handlers onto a `<button>` in the trigger
   // subtree, and `Link` without `href` renders exactly that — so the click

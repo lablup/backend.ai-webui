@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Renders a list of short values with a bounded footprint: the first `maxInline` entries show inline and the remainder collapse into a `+N` affordance that reveals only the overflowed values. The overflow opens on hover in both variants — it is a read-only peek, so it appears on hover and leaves with the pointer. `variant="chip"` draws the inline entries as Astryx `Badge` chips and the `+N` as a keyboard-reachable `Link`; `variant="text"` draws them as nowrap plain text and puts the `+N` in a compact `Badge`. Use the chip variant in modals and detail panels and the text variant in dense table cells. With no items it renders `emptyText` and nothing else.',
+      'Renders a list of short values with a bounded footprint: the first `maxInline` entries show inline and the remainder collapse into a `+N` affordance that reveals only the overflowed values. The overflow opens on hover in both variants — it is a read-only peek, so it appears on hover and leaves with the pointer. `variant="chip"` draws the inline entries as Astryx `Badge` chips and the `+N` as a keyboard-reachable `Link` whose card lists the overflow as a disc-bulleted list; `variant="text"` draws them as nowrap plain text and puts the `+N` in a compact `Badge`. Use the chip variant in modals and detail panels and the text variant in dense table cells. With no items it renders `emptyText` and nothing else.',
     bestPractices: [
       {
         guidance: true,
