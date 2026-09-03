@@ -8,13 +8,15 @@ description: >
   someone gives a Teams thread URL and asks to summarize a release, an rc, or a
   branch there — "이번 릴리즈 리스크 팀즈에 올려줘", "이 스레드에 정리해서 알려줘",
   "post the release risk report to Teams", "/release-train-prep". With
-  --train <version> it also opens the release train: creates the
-  "Final Train to v<version>" Jira Story and posts the kickoff + digest into
-  the thread — "트레인 이슈 만들어줘", "릴리즈 트레인 준비해줘", "release train 시작".
+  --train it also opens the release train: reads the version from the thread's
+  own "Final train to vX.Y.Z" title, creates the "Final Train to v<version>"
+  Jira Story (after user confirm) and posts the kickoff + digest into the
+  thread — "트레인 이슈 만들어줘", "릴리즈 트레인 준비해줘", "이 스레드로 트레인
+  준비해줘", "release train 시작".
   PREPARATION ONLY — it never creates a release branch, tag, or GitHub release;
   "릴리즈 찍어줘 / 릴리즈 만들어줘 / cut the release / rc 릴리즈" is
   create-release, not this skill.
-argument-hint: "--from <ref> [--to <ref>] [--train <version>] [--dry-run] [--auto] <Teams URL>"
+argument-hint: "--from <ref> [--to <ref>] [--train [version]] [--dry-run] [--auto] <Teams URL>"
 ---
 
 # Release Train Prep → Teams
@@ -54,8 +56,9 @@ HTML, and posts.
   `--train` also skip every Jira action (no Story, no weblink) — describe what
   would be created instead. A dry run must never mutate anything.
 - `--auto` — skip the confirm-before-post prompt (for cron / unattended runs).
-- `--train <version>` — also open the release train for `v<version>`: create the
+- `--train [version]` — also open the release train: create the
   `Final Train to v<version>` Jira Story and post the kickoff into the thread.
+  The version may be omitted — it is read from the thread's own title.
   See *Train kickoff* below.
 - A Teams thread URL (`teams.microsoft.com/l/message/...`) — **required unless `--dry-run`.**
   There is deliberately no default: posting a release summary to the wrong thread
@@ -267,7 +270,7 @@ Pass `--no-ai-label`: the template already carries its own footer.
 For `--dry-run`, write the same HTML to `/tmp/release-train-prep-preview.html`
 and print the path instead.
 
-## Train kickoff (`--train <version>`)
+## Train kickoff (`--train [version]`)
 
 The team's release ritual: a human opens a `🚂 Final train to vX.Y.Z` thread,
 someone creates the `Final Train to vX.Y.Z` Jira Story, and every bug found
@@ -275,9 +278,25 @@ during release testing is linked onto it — `is blocked by` for blockers,
 `relates to` for the rest. The stable tag is cut when no blocker is left open.
 This mode automates the middle step and seeds the thread with the digest.
 
-Runs **in addition to** the normal digest flow, sharing its range resolution
-and its confirm gate. The thread URL is **required** here even though
-`--dry-run` normally waives it — the Story embeds it — and under `--dry-run`
+**The whole flow works from just the thread URL.** The human's only manual
+step is opening the thread; version and range are inferred from there:
+
+- **Version** — when `--train` carries no version (or the ask is just "이
+  스레드로 트레인 준비해줘"), read the thread's ROOT message first
+  (`teams_reader.py --no-thread <url>` — its `Subject:` line) and parse the
+  version from the title: `/final train to v?(?:WebUI\s*)?(\d+\.\d+\.\d+)/i`
+  matches the team's `🚂 Final train to vWebUI 26.9.0` shape. If the title
+  yields no version, ask — never guess one from tags.
+- **Range** — train mode defaults to `--from $PREV_STABLE --to HEAD` (the
+  "이전 정식 → 다음 정식(예정)" comparison the digest header speaks in),
+  skipping the usual AskUserQuestion. An explicit `--from` still overrides.
+
+Both inferred values are shown in the Story-creation confirm (step 2), which
+is where a wrong parse gets caught — one confirm, not two.
+
+Runs **in addition to** the normal digest flow, sharing its confirm gate. The
+thread URL is **required** here even though `--dry-run` normally waives it —
+the Story embeds it, and version inference reads it — and under `--dry-run`
 every step below is described, not executed. Steps, in order:
 
 1. **Duplicate scan first.** An existing train for the same version is reused,
@@ -339,7 +358,10 @@ What this mode deliberately does **not** do:
 ## Examples
 
 ```bash
-# Open the train for 26.10.0: Jira Story + kickoff digest into the thread
+# Open the train: version and range inferred from the thread's own title
+/release-train-prep --train <teams-url>
+
+# Same, everything explicit
 /release-train-prep --train 26.10.0 --from v26.9.0 <teams-url>
 
 # An rc, posted to the release thread
