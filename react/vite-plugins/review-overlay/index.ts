@@ -10,9 +10,10 @@ import { transformWithEsbuild, type Plugin } from 'vite';
 /**
  * FR-3811 — dev-only review overlay, write side. Serves the Shadow-DOM picker
  * client and the `/__review/state` endpoint that answers "which PR is this
- * dev server?". The read side (FR-3813) is the deep link and nothing else:
- * the fragment carries the whole anchor, so this server serves no pin list and
- * polls nothing.
+ * dev server?" plus, since FR-3813, "where is its checkout?" — the client
+ * cannot relativize react-grab's absolute source paths without the root. The
+ * read side (FR-3813) is the deep link and nothing else: the fragment carries
+ * the whole anchor, so this server serves no pin list and polls nothing.
  *
  * Dev-only by construction: `apply: 'serve'` keeps the plugin out of
  * `vite build` entirely. On a dev server it is ON by default and opts OUT with

@@ -115,7 +115,7 @@ The dev server injects the review overlay (`react/vite-plugins/review-overlay/`)
 
 Opening that block's link back on a dev server is the read side, and it is a **deep link only**: the fragment `#bai=v3.<id>.<anchor>` carries the whole anchor, so the page applies the block's path and query, finds the element (retrying for ~10 s while the SPA renders) and pins it with the block's landmark label (`<route> › <landmark> › <tag "text">`) plus the pin id, the component and the reviewer's note, which rides in the anchor. Nothing is looked up anywhere — the dev server reads no channel, serves no pin list and polls nothing; GitHub's unresolved threads are where a pin's state lives. A link with no anchor is plain text, an old `#bai-review=` link gets one toast, and an element that cannot be found gets one toast.
 
-`/__review/state` (GET only, no parameters) is unchanged from the write side: it answers `{pr, repo, branch, source}` so a copied block can carry the PR number.
+`/__review/state` (GET only, no parameters) answers `{pr, repo, branch, source, root}`. `pr` / `repo` / `branch` / `source` are the write side's, so a copied block can carry the PR number. `root` is `git rev-parse --show-toplevel` on the box, and it is what the client strips off react-grab's source paths: a workspace package lives above the Vite root and is served through `/@fs/<absolute path>`, so without it a stack frame would carry the driver's home directory into a public PR comment. When the endpoint does not answer, the client drops the source location instead of printing it.
 
 ## CLI login (`/cli-login`)
 
