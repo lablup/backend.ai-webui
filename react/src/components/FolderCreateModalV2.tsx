@@ -43,7 +43,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlertIcon } from 'lucide-react';
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql } from 'react-relay';
 
@@ -131,6 +131,15 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
     null,
   );
   const effectiveProject = project ?? selectedProject;
+
+  // The usage_mode rule closes over `effectiveProject`, so a validateFields
+  // call inside onSelectProject would still run the previous render's rule.
+  // Re-validate only after the selection commits.
+  useEffect(() => {
+    if (formRef.current?.getFieldValue('usage_mode')) {
+      formRef.current.validateFields(['usage_mode']);
+    }
+  }, [selectedProject]);
 
   const { upsertNotification } = useSetBAINotification();
 
@@ -413,9 +422,6 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                         projectInfo.projectId,
                       );
                       formRef.current?.validateFields(['group']);
-                      // Model-store gating on `usage_mode` is keyed off the
-                      // chosen project name; re-validate immediately.
-                      formRef.current?.validateFields(['usage_mode']);
                     }}
                   />
                 </Suspense>
