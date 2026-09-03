@@ -170,6 +170,10 @@ class WatcherCenter {
   }
 }
 
+/** What `focusField` may land on when the handle sits on a wrapper. */
+const FOCUSABLE =
+  'input:not([type="hidden"]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
 export class FormStore {
   private forceRootUpdate: () => void;
   private subscribable = true;
@@ -1045,9 +1049,16 @@ export class FormStore {
   };
 
   focusField = (name: NamePath) => {
-    // `preventScroll`: `scrollToField` has just positioned the item, and the
-    // browser's own focus scroll would move it again.
-    this.getFieldDOMNode(name)?.focus?.({ preventScroll: true });
+    const node = this.getFieldDOMNode(name);
+    if (!node) return;
+    // Some controls put the handle on a wrapper (Astryx Switch and
+    // SegmentedControl spread `rest` onto their root div); focus what is
+    // inside it. `preventScroll`: `scrollToField` has just positioned the
+    // item, and the browser's own focus scroll would move it again.
+    const target = node.matches(FOCUSABLE)
+      ? node
+      : node.querySelector<HTMLElement>(FOCUSABLE);
+    target?.focus?.({ preventScroll: true });
   };
 
   private getFieldDOMNode = (name: NamePath): HTMLElement | undefined => {
