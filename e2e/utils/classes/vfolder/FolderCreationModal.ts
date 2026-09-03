@@ -93,8 +93,14 @@ export class FolderCreationModal {
     return await this.getFormItemByLabel('Usage Mode');
   }
 
-  async getTypeFormItem(): Promise<Locator> {
-    return await this.getFormItemByLabel('Type');
+  /**
+   * FR-3441: folder ownership is derived from the page context, so the modal
+   * renders no Type (User/Project) row at all.
+   */
+  async expectTypeFormItemHidden(): Promise<void> {
+    await expect(
+      this.modal.locator('[data-bai-form-item]:has-text("Type")'),
+    ).toHaveCount(0);
   }
 
   async getPermissionFormItem(): Promise<Locator> {
@@ -134,20 +140,6 @@ export class FolderCreationModal {
   async getAutoMountUsageModeRadio(): Promise<Locator> {
     const usageModeFormItem = await this.getUsageModeFormItem();
     return usageModeFormItem.getByLabel('Auto Mount', { exact: true });
-  }
-
-  async getUserTypeRadio(): Promise<Locator> {
-    const typeFormItem = await this.getTypeFormItem();
-    return typeFormItem.getByLabel('User', {
-      exact: true,
-    });
-  }
-
-  async getProjectTypeRadio(): Promise<Locator> {
-    const typeFormItem = await this.getTypeFormItem();
-    return typeFormItem.getByLabel('Project', {
-      exact: true,
-    });
   }
 
   async getReadWritePermissionRadio(): Promise<Locator> {
@@ -207,14 +199,5 @@ export class FolderCreationModal {
     });
     await expect(cancelButton).toBeVisible();
     return cancelButton;
-  }
-
-  async getResetButton(): Promise<Locator> {
-    const resetButton = this.modal.getByRole('button', {
-      name: 'Reset',
-      exact: true,
-    });
-    await expect(resetButton).toBeVisible();
-    return resetButton;
   }
 }
