@@ -151,7 +151,7 @@ const AgentLifeCycleControlModal: React.FC<AgentLifeCycleControlModalProps> = ({
         <div
           role="list"
           style={{
-            backgroundColor: token('--bai-color-fill-quaternary'),
+            backgroundColor: token('--color-fill-quaternary'),
             border: `1px solid ${token('--color-border')}`,
             borderRadius: token('--radius-none'),
             padding: token('--spacing-2'),

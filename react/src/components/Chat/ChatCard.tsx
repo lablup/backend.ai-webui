@@ -573,7 +573,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
         direction="column"
         align="stretch"
         style={{
-          backgroundColor: token('--bai-color-fill-quaternary'),
+          backgroundColor: token('--color-fill-quaternary'),
           flex: 1,
           padding: 0,
           // `minHeight: 0` (not the old `height: '50%'`): this column owns the

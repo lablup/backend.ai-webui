@@ -389,9 +389,7 @@ const ReservoirPage: React.FC = () => {
                       mode === 'ALIVE' ? (
                         <BanIcon style={{ color: token('--color-error') }} />
                       ) : (
-                        <UndoIcon
-                          style={{ color: token('--bai-color-info') }}
-                        />
+                        <UndoIcon style={{ color: token('--color-info') }} />
                       )
                     }
                     onClick={() => {

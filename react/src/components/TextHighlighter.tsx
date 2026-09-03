@@ -34,7 +34,7 @@ const TextHighlighter: React.FC<TextHighlighterProps> = ({
             <span
               key={i}
               style={{
-                backgroundColor: token('--bai-color-warning-hover'),
+                backgroundColor: token('--color-warning-hover'),
                 ...style,
               }}
               className="text-high-lighter"

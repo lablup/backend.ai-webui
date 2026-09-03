@@ -162,9 +162,7 @@ const PendingSessionNodeList: React.FC = () => {
               >
                 <BAIButton
                   icon={
-                    <SettingsIcon
-                      style={{ color: token('--bai-color-info') }}
-                    />
+                    <SettingsIcon style={{ color: token('--color-info') }} />
                   }
                   onClick={() => {
                     setOpenBulkEditPriorityModal(true);

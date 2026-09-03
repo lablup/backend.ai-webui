@@ -53,7 +53,7 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
   const brokenInk = isDarkMode ? '#F2A045' : '#B25400';
 
   const separator = (
-    <span style={{ color: token('--bai-color-text-quaternary'), opacity: 0.6 }}>
+    <span style={{ color: token('--color-text-quaternary'), opacity: 0.6 }}>
       /
     </span>
   );
@@ -115,7 +115,7 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
                     {segment.text}
                   </span>
                 ) : (
-                  <span style={{ color: token('--bai-color-text-quaternary') }}>
+                  <span style={{ color: token('--color-text-quaternary') }}>
                     {segment.text}
                   </span>
                 )}

@@ -61,7 +61,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
       direction="row"
       style={{
         height: 60,
-        backgroundColor: token('--bai-header-bg'),
+        backgroundColor: token('--header-bg'),
         paddingRight: token('--spacing-6'),
         paddingLeft: token('--spacing-6'),
         // The inherited colour for band content that declares none of its own

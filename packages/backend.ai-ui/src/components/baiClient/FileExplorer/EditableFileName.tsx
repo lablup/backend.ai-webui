@@ -165,7 +165,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
               style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
             >
               <Folder
-                style={{ color: token('--bai-color-link'), flexShrink: 0 }}
+                style={{ color: token('--color-link'), flexShrink: 0 }}
                 size="1em"
               />
               <BAILink
@@ -176,7 +176,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
                   color: isPendingRenamingAndRefreshing
-                    ? token('--bai-color-text-tertiary')
+                    ? token('--color-text-tertiary')
                     : undefined,
                 }}
                 title={fileInfo.name}
@@ -195,7 +195,7 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
                 style={{
                   minWidth: 0,
                   color: isPendingRenamingAndRefreshing
-                    ? token('--bai-color-text-tertiary')
+                    ? token('--color-text-tertiary')
                     : undefined,
                 }}
               >

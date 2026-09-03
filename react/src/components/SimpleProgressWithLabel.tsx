@@ -57,7 +57,7 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
           // verbatim (`selfTokens`, verdict 'self') as a light/dark pair, so
           // routing through it restores the legacy light value EXACTLY and
           // gets rgba(255,255,255,0.25) in dark for free.
-          strokeColor={token('--bai-color-text-quaternary')}
+          strokeColor={token('--color-text-quaternary')}
           progressStyle={{ border: 'none' }}
           showInfo={false}
           labelStyle={{
@@ -81,7 +81,7 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
             height: 12,
             // Same mode-blind hardcode as `strokeColor` above — this bare
             // div IS the small-size variant's bar.
-            backgroundColor: token('--bai-color-text-quaternary'),
+            backgroundColor: token('--color-text-quaternary'),
           }}
         ></BAIFlex>
         {/* PILOT-DECISION: the tight `lineHeight: fontSizeSM` is dropped —

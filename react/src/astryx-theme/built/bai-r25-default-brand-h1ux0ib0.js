@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r24-default-brand-h2hqtmn theme — built by `pnpm exec astryx theme build`
+ * bai-r25-default-brand-h1ux0ib0 theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR24DefaultBrandH2hqtmnTheme } from './bai-r24-default-brand-h2hqtmn';
- *   import './bai-r24-default-brand-h2hqtmn.css';
+ *   import { baiR25DefaultBrandH1ux0ib0Theme } from './bai-r25-default-brand-h1ux0ib0';
+ *   import './bai-r25-default-brand-h1ux0ib0.css';
  */
-export const baiR24DefaultBrandH2hqtmnTheme = {
-  name: 'bai-r24-default-brand-h2hqtmn',
+export const baiR25DefaultBrandH1ux0ib0Theme = {
+  name: 'bai-r25-default-brand-h1ux0ib0',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -189,27 +189,27 @@ export const baiR24DefaultBrandH2hqtmnTheme = {
     "--shadow-inset-error": "inset 0px 0px 0px 2px #e33f4a4D",
     "--color-background-inverted": "light-dark(#211A16, #FFFBF8)",
     "--color-track": "light-dark(#B8A89F, #51443C)",
-    "--bai-color-info": "light-dark(#028DF2, #009BDD)",
-    "--bai-color-link": "light-dark(#FF7A00, #DC6B03)",
-    "--bai-header-bg": "light-dark(#FF9729, #E88A28)",
-    "--bai-color-error-bg": "light-dark(#fff2f0, #261617)",
-    "--bai-color-info-bg": "light-dark(#e6f9ff, #111f27)",
-    "--bai-color-warning-hover": "light-dark(#ffd666, #7c5914)",
-    "--bai-color-success-border-hover": "light-dark(#45d6b2, #0c5548)",
-    "--bai-color-primary-bg": "light-dark(#fff6e6, #502e0f)",
-    "--bai-color-error-border": "light-dark(#ffccc7, #502223)",
-    "--bai-primary-5": "light-dark(#ff9729, #cc7c27)",
-    "--bai-color-text-tertiary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
-    "--bai-color-text-quaternary": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
-    "--bai-color-text-description": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
-    "--bai-color-fill": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
-    "--bai-color-fill-secondary": "light-dark(rgba(0,0,0,0.06), #262626)",
-    "--bai-color-fill-tertiary": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
-    "--bai-color-fill-quaternary": "light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.04))",
-    "--bai-color-bg-container-disabled": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
-    "--bai-preset-purple-5": "light-dark(#9254de, #51258f)",
-    "--bai-preset-green-5": "light-dark(#73d13d, #3c8618)",
-    "--bai-preset-red-5": "light-dark(#ff4d4f, #a61d24)",
+    "--color-info": "light-dark(#028DF2, #009BDD)",
+    "--color-link": "light-dark(#FF7A00, #DC6B03)",
+    "--header-bg": "light-dark(#FF9729, #E88A28)",
+    "--color-error-bg": "light-dark(#fff2f0, #261617)",
+    "--color-info-bg": "light-dark(#e6f9ff, #111f27)",
+    "--color-warning-hover": "light-dark(#ffd666, #7c5914)",
+    "--color-success-border-hover": "light-dark(#45d6b2, #0c5548)",
+    "--color-primary-bg": "light-dark(#fff6e6, #502e0f)",
+    "--color-error-border": "light-dark(#ffccc7, #502223)",
+    "--primary-5": "light-dark(#ff9729, #cc7c27)",
+    "--color-text-tertiary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+    "--color-text-quaternary": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+    "--color-text-description": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+    "--color-fill": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
+    "--color-fill-secondary": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "--color-fill-tertiary": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "--color-fill-quaternary": "light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.04))",
+    "--color-bg-container-disabled": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "--preset-purple-5": "light-dark(#9254de, #51258f)",
+    "--preset-green-5": "light-dark(#73d13d, #3c8618)",
+    "--preset-red-5": "light-dark(#ff4d4f, #a61d24)",
     "--size-element-sm": "24px"
   },
   components: {

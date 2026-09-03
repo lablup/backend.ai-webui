@@ -61,7 +61,7 @@ const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
           <BAIFlex
             key={label}
             gap="sm"
-            style={{ color: token('--bai-color-text-tertiary') }}
+            style={{ color: token('--color-text-tertiary') }}
             wrap="wrap"
           >
             {label}:
