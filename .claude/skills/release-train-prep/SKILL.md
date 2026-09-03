@@ -49,7 +49,10 @@ HTML, and posts.
 - `--from <ref>` — the base of the comparison. When absent, **offer the choices
   below rather than erroring or guessing** (see *Resolving `--from`*).
 - `--to <ref>` — defaults to `HEAD`.
-- `--dry-run` — write the HTML to `/tmp/release-train-prep-preview.html` and skip posting.
+- `--dry-run` — preview only, no side effects anywhere: write the HTML to
+  `/tmp/release-train-prep-preview.html`, skip the Teams post, and with
+  `--train` also skip every Jira action (no Story, no weblink) — describe what
+  would be created instead. A dry run must never mutate anything.
 - `--auto` — skip the confirm-before-post prompt (for cron / unattended runs).
 - `--train <version>` — also open the release train for `v<version>`: create the
   `Final Train to v<version>` Jira Story and post the kickoff into the thread.
@@ -237,7 +240,9 @@ during release testing is linked onto it — `is blocked by` for blockers,
 This mode automates the middle step and seeds the thread with the digest.
 
 Runs **in addition to** the normal digest flow, sharing its range resolution
-and its confirm gate. Steps, in order:
+and its confirm gate. The thread URL is **required** here even though
+`--dry-run` normally waives it — the Story embeds it — and under `--dry-run`
+every step below is described, not executed. Steps, in order:
 
 1. **Duplicate scan first.** An existing train for the same version is reused,
    never doubled:

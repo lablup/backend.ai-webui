@@ -147,18 +147,26 @@ function readCommits(from, to) {
 
 const isGenerated = (f) => f.includes('__generated__');
 const isTestLike = (f) => /\.(test|spec|stories)\.[tj]sx?$/.test(f);
+// BUI component doc stubs are CLI-only, never imported by the library.
+const isDocStub = (f) => /\.doc\.ts$/.test(f);
 
 // Non-runtime corners of the BUI package; everything else under src/ ships.
 const BUI_NON_RUNTIME =
   /^packages\/backend\.ai-ui\/src\/(__test__|tests|astryx-docs|locale)\//;
+
+// Runtime UI is not only TypeScript: components import co-located styles and
+// assets directly, so a style-only commit is still a UI change.
+const UI_EXT = /\.(tsx?|css|scss|svg|png)$/;
 
 export function classify(files) {
   const ui = files.filter(
     (f) =>
       !isGenerated(f) &&
       !isTestLike(f) &&
-      (/^react\/src\/.*\.tsx?$/.test(f) ||
-        (/^packages\/backend\.ai-ui\/src\/.*\.tsx?$/.test(f) &&
+      !isDocStub(f) &&
+      UI_EXT.test(f) &&
+      (f.startsWith('react/src/') ||
+        (f.startsWith('packages/backend.ai-ui/src/') &&
           !BUI_NON_RUNTIME.test(f))),
   );
   return {
@@ -311,14 +319,17 @@ function usedFeatureFlags(ref) {
   const used = new Set();
   const listed = gitOrNull(['ls-tree', '-r', '--name-only', ref]);
   if (!listed) return used;
-  const files = listed
-    .split('\n')
-    .filter(
-      (f) =>
-        /\.(tsx?|jsx?)$/.test(f) &&
-        !isGenerated(f) &&
-        roots.some((r) => f.startsWith(`${r}/`)),
-    );
+  const files = listed.split('\n').filter(
+    (f) =>
+      /\.(tsx?|jsx?)$/.test(f) &&
+      !isGenerated(f) &&
+      // Runtime code only: a supports() inside a test, story, doc stub, or
+      // docs dir must not mark a gate as live in the app.
+      !isTestLike(f) &&
+      !isDocStub(f) &&
+      !BUI_NON_RUNTIME.test(f) &&
+      roots.some((r) => f.startsWith(`${r}/`)),
+  );
   for (const f of files) {
     const src = gitOrNull(['show', `${ref}:${f}`]);
     if (src) for (const flag of extractSupportsUsages(src)) used.add(flag);
@@ -528,16 +539,23 @@ function main() {
     classified: classify(c.files),
   }));
 
+  const base = mergeBase(args.from, args.to);
+
   // R4 by content: a changed UI file hosting the typed-confirm contract is a
-  // destructive-flow touch even when its name carries no action word.
+  // destructive-flow touch even when its name carries no action word. Checked
+  // at BOTH ends of the range — a commit that removes the contract (or the
+  // file) is exactly the regression this signal exists to surface.
   const contractCache = new Map();
-  const hostsContract = (f) => {
-    if (!contractCache.has(f)) {
-      const src = gitOrNull(['show', `${args.to}:${f}`]);
-      contractCache.set(f, Boolean(src && hasDestructiveContract(src)));
+  const refHasContract = (ref, f) => {
+    const key = `${ref}:${f}`;
+    if (!contractCache.has(key)) {
+      const src = gitOrNull(['show', key]);
+      contractCache.set(key, Boolean(src && hasDestructiveContract(src)));
     }
-    return contractCache.get(f);
+    return contractCache.get(key);
   };
+  const hostsContract = (f) =>
+    refHasContract(args.to, f) || refHasContract(base, f);
   for (const c of commits) {
     c.classified.destructive.push(
       ...c.classified.ui.filter(
@@ -563,7 +581,6 @@ function main() {
     ),
   };
 
-  const base = mergeBase(args.from, args.to);
   const versionMap = readFeatureVersionMap(args.to);
   const used = usedFeatureFlags(args.to);
   const featureMatrix = newFeatureFlags(base, args.to).map((flag) => ({

@@ -176,6 +176,18 @@ describe('release risk report', () => {
       ]);
     });
 
+    it('counts co-located styles and assets as UI, but not doc stubs', () => {
+      const c = classify([
+        'react/src/components/AnnouncementBanner.css',
+        'react/src/components/logo.svg',
+        'packages/backend.ai-ui/src/components/BAIDomainSelectV2.doc.ts',
+      ]);
+      expect(c.ui).toEqual([
+        'react/src/components/AnnouncementBanner.css',
+        'react/src/components/logo.svg',
+      ]);
+    });
+
     it('counts only executable specs as e2e, not e2e/ docs', () => {
       const c = classify([
         'e2e/vfolder/delete.spec.ts',
