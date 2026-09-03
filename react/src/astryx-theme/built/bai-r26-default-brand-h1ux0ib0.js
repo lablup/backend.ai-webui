@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r25-default-brand-h1ux0ib0 theme — built by `pnpm exec astryx theme build`
+ * bai-r26-default-brand-h1ux0ib0 theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR25DefaultBrandH1ux0ib0Theme } from './bai-r25-default-brand-h1ux0ib0';
- *   import './bai-r25-default-brand-h1ux0ib0.css';
+ *   import { baiR26DefaultBrandH1ux0ib0Theme } from './bai-r26-default-brand-h1ux0ib0';
+ *   import './bai-r26-default-brand-h1ux0ib0.css';
  */
-export const baiR25DefaultBrandH1ux0ib0Theme = {
-  name: 'bai-r25-default-brand-h1ux0ib0',
+export const baiR26DefaultBrandH1ux0ib0Theme = {
+  name: 'bai-r26-default-brand-h1ux0ib0',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -192,13 +192,13 @@ export const baiR25DefaultBrandH1ux0ib0Theme = {
     "--color-info": "light-dark(#028DF2, #009BDD)",
     "--color-link": "light-dark(#FF7A00, #DC6B03)",
     "--header-bg": "light-dark(#FF9729, #E88A28)",
-    "--color-error-bg": "light-dark(#fff2f0, #261617)",
-    "--color-info-bg": "light-dark(#e6f9ff, #111f27)",
-    "--color-warning-hover": "light-dark(#ffd666, #7c5914)",
-    "--color-success-border-hover": "light-dark(#45d6b2, #0c5548)",
-    "--color-primary-bg": "light-dark(#fff6e6, #502e0f)",
-    "--color-error-border": "light-dark(#ffccc7, #502223)",
-    "--primary-5": "light-dark(#ff9729, #cc7c27)",
+    "--color-error-bg": "light-dark(color-mix(in srgb, var(--color-error) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-error) 15%, var(--color-background-surface)))",
+    "--color-info-bg": "light-dark(color-mix(in srgb, var(--color-info) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-info) 15%, var(--color-background-surface)))",
+    "--color-warning-hover": "light-dark(color-mix(in srgb, var(--color-warning) 65%, var(--color-background-surface)), color-mix(in srgb, var(--color-warning) 45%, var(--color-background-surface)))",
+    "--color-success-border-hover": "light-dark(color-mix(in srgb, var(--color-success) 65%, var(--color-background-surface)), color-mix(in srgb, var(--color-success) 45%, var(--color-background-surface)))",
+    "--color-primary-bg": "light-dark(color-mix(in srgb, var(--color-accent) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-accent) 30%, var(--color-background-surface)))",
+    "--color-error-border": "light-dark(color-mix(in srgb, var(--color-error) 45%, var(--color-background-surface)), color-mix(in srgb, var(--color-error) 30%, var(--color-background-surface)))",
+    "--primary-5": "light-dark(color-mix(in srgb, var(--color-accent) 85%, var(--color-background-surface)), color-mix(in srgb, var(--color-accent) 65%, var(--color-background-surface)))",
     "--color-text-tertiary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
     "--color-text-quaternary": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
     "--color-text-description": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
