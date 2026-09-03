@@ -437,6 +437,10 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           if (!childProps.id) {
             childProps.id = fieldId;
           }
+          // Astryx controls replace `id` with their own `useId()` but pass
+          // `data-*` through to the element, so this is the handle that
+          // survives (scrollToError.ts, FormStore.getFieldDOMNode).
+          childProps['data-bai-field-id'] = fieldId;
           if (formDisabled && childProps.disabled === undefined) {
             childProps.disabled = true;
           }
