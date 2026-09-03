@@ -3,8 +3,8 @@ name: release-train-prep
 description: >
   Post a Korean release risk digest to a Microsoft Teams thread, grouped by risk
   category. Runs scripts/release-risk-report.mjs over a ref range and renders the
-  result as a short HTML message: the manager version matrix, untranslated keys,
-  destructive flows touched, UI without e2e cover, and manual gaps. Use when
+  result as a short HTML message: version-gating gaps (@since), untranslated
+  keys, destructive flows touched, UI without e2e cover, and manual gaps. Use when
   someone gives a Teams thread URL and asks to summarize a release, an rc, or a
   branch there — "이번 릴리즈 리스크 팀즈에 올려줘", "이 스레드에 정리해서 알려줘",
   "post the release risk report to Teams", "/release-train-prep". With
@@ -135,6 +135,7 @@ Top-level fields:
 | `divergedFrom` | true when `to` forked before `from` moved on — mention the base when true |
 | `commits[]` | `{sha, subject, pr, fr, type, scope}` |
 | `featureMatrix[]` | `{flag, version, used}` — gates **added inside the range** |
+| `gating.gaps[]` | `{key, version, kind, ungated[]}` — new schema fields used without `@since` or a `supports()` guard |
 | `undeclared[]` | flags used but never declared, i.e. permanently `false` |
 | `risks.noE2E[]` | `{pr, fr, subject, ui[]}` — UI changed, no e2e changed |
 | `risks.destructive[]` | `{pr, fr, subject, destructive[]}` — irreversible-flow files |
@@ -145,7 +146,7 @@ Top-level fields:
 
 Order sections by how much they block a release, not by risk number:
 
-1. **R2 version matrix** — decides which managers QA needs
+1. **R2 version-gating gaps** — a query that fails outright on older managers
 2. **R2b undeclared flags** — a feature silently off everywhere (omit when empty)
 3. **R3 untranslated** — ships visibly broken text
 4. **R4 destructive flows** — the typed-confirm gate must be re-verified
@@ -165,23 +166,28 @@ PR links are `https://github.com/lablup/backend.ai-webui/pull/{pr}`.
 
 Template:
 
+**Name releases, not refs.** The header speaks in release versions: for an
+upcoming stable cut from main, `26.8.1 → 26.9.0(예정, 현재 main 기준)` — never a
+bare `v26.8.1 → origin/main`, which readers cannot place on the release line.
+
+Template:
+
 ```html
-<b>🚀 릴리즈 리스크 — {from} → {to}</b><br/>
+<b>🚀 릴리즈 리스크 — {이전 정식} → {다음 버전}(예정, 현재 {to} 기준)</b><br/>
 커밋 {commits.length}건{, 비교 기준 merge-base <code>{base[0:8]}</code> when divergedFrom}<br/><br/>
 
-<b>⚙️ 매니저 버전 매트릭스</b> — 신규 게이트 {n}개<br/>
+<b>⚙️ 버전 게이팅 누락</b> — {gating.gaps.length}건<br/>
 <ul>
-  <li><code>{flag}</code> — {version} 이상 필요{, 미사용 when !used}</li>
+  <li><code>{key}</code> ({version} 추가) — <code>{ungated file}</code>에서 @since 없이 사용</li>
 </ul>
-<i>각 항목을 버전을 충족하는 매니저와 충족하지 않는 매니저 양쪽에서 확인해야 합니다.
-낮은 버전에서는 숨겨져야 하고, 깨지면 안 됩니다.</i><br/><br/>
+<i>낮은 버전 매니저에서 이 쿼리는 실패합니다. @since(version:) 주석 또는 supports() 게이트가 필요합니다.</i><br/><br/>
 
 <b>🌐 미번역</b> — 신규 영어 키 {addedCount}개<br/>
 {shape line, then outliers}<br/><br/>
 
 <b>⚠️ 파괴적 플로우</b> — {n}건<br/>
 <ul>
-  <li><a href="{prUrl}">#{pr}</a> {subject} — <code>{basename of destructive[0]}</code></li>
+  <li><a href="{frUrl}">{fr}</a> · <a href="{prUrl}">#{pr}</a> — {왜 파괴적인지 한 줄}</li>
 </ul>
 <i>이름을 정확히 입력해야 삭제 버튼이 활성화되는지 재확인이 필요합니다.</i><br/><br/>
 
@@ -195,8 +201,21 @@ Template:
 <i>🤖 scripts/release-risk-report.mjs · 결함 목록이 아니라 QA 확인 항목입니다</i>
 ```
 
-Drop any section whose count is 0 rather than printing an empty heading. If every
-section is empty, post a single line saying the range has no risk signals.
+Two sections render differently from the rest:
+
+- **버전 게이팅 (R2)**: gaps ONLY — never enumerate every new gate or schema
+  field; a correctly annotated usage is not news. When `gating.gaps` is empty,
+  keep the section as the single line `⚙️ 버전 게이팅 누락 — 없음 ✅`: for a
+  go/no-go reader, "checked and clean" and "not checked" must not look the same.
+- **파괴적 플로우 (R4)**: links and a reason, NO commit title. Each item is the
+  FR link + PR link, then one line saying *why it is destructive* — derived from
+  the `destructive[]` paths (`TerminateSessionModal.tsx` → 세션 강제 종료 확인
+  모달, a typed-confirm host → 어떤 삭제 확인 플로우인지). The reader decides
+  from the reason, not from a commit subject.
+
+Drop any other section whose count is 0 rather than printing an empty heading.
+If every section is empty, post a single line saying the range has no risk
+signals.
 
 The closing italic line matters: these are **actions to check**, not confirmed
 defects. Do not phrase a finding as a bug.
@@ -253,9 +272,13 @@ every step below is described, not executed. Steps, in order:
 
    On a hit, skip creation, use the existing key, and say so in the reply.
 
-2. **Create the Story** (see the `jira-workflow` skill; `$FW_JIRA` as documented
-   there). Type **Story**, exact summary format `Final Train to v$VERSION` —
-   the team greps for this shape (FR-3663, FR-3392, FR-3238 all follow it):
+2. **Create the Story — after explicit user confirmation.** Creating a Jira
+   issue is outward-facing: show the exact title, assignee, and description you
+   are about to submit and ask (AskUserQuestion) before every creation — no
+   batch pre-approval, one confirm per issue. Then (see the `jira-workflow`
+   skill; `$FW_JIRA` as documented there) type **Story**, exact summary format
+   `Final Train to v$VERSION` — the team greps for this shape (FR-3663,
+   FR-3392, FR-3238 all follow it):
 
    ```bash
    $FW_JIRA create --type Story --assignee me \

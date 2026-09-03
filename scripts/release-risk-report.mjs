@@ -338,6 +338,241 @@ function usedFeatureFlags(ref) {
 }
 
 /**
+ * Fields and enum values ADDED to schema.graphql in the diff, each with the
+ * manager version its docstring declares ("Added in X.Y.Z") and the block it
+ * belongs to. Tracks the enclosing type/input/interface/enum from both context
+ * and added lines, so a field added to an existing type is attributed too.
+ */
+export function extractAddedSchemaFields(diff) {
+  const out = [];
+  let block = null;
+  let pendingVersion = null;
+  for (const raw of diff.split('\n')) {
+    const tag = raw[0];
+    if (tag === '-' || raw.startsWith('+++') || raw.startsWith('---')) continue;
+    const line = tag === '+' || tag === ' ' ? raw.slice(1) : raw;
+
+    const blockDecl = line.match(
+      /^\s*(?:extend\s+)?(type|input|interface|enum)\s+(\w+)/,
+    );
+    if (blockDecl) {
+      // A brand-new type's own "Added in" docstring precedes its declaration;
+      // its fields inherit that version unless they declare their own.
+      block = {
+        kind: blockDecl[1],
+        name: blockDecl[2],
+        version: tag === '+' ? pendingVersion : null,
+      };
+      pendingVersion = null;
+      continue;
+    }
+    if (tag !== '+') continue;
+
+    const ver = line.match(/Added in (\d+\.\d+(?:\.\d+)?)/);
+    if (ver) pendingVersion = ver[1];
+
+    if (!block) continue;
+    if (block.kind === 'enum') {
+      const v = line.match(/^\s{2,}([A-Z][A-Z0-9_]*)\s*$/);
+      if (v) {
+        out.push({
+          parent: block.name,
+          parentKind: block.kind,
+          field: v[1],
+          version: pendingVersion ?? block.version,
+          kind: 'enum',
+        });
+        pendingVersion = null;
+      }
+    } else {
+      const f = line.match(/^\s{2,}([a-z]\w*)\s*[(:]/);
+      if (f) {
+        out.push({
+          parent: block.name,
+          parentKind: block.kind,
+          field: f[1],
+          version: pendingVersion ?? block.version,
+          kind: 'field',
+        });
+        pendingVersion = null;
+      }
+    }
+  }
+  return out;
+}
+
+/** The graphql`…` template contents of a source file, joined. */
+export function extractGraphqlTags(src) {
+  return [...src.matchAll(/graphql`([^`]*)`/g)].map((m) => m[1]).join('\n');
+}
+
+const GUARD_RE = /supports\(|isManagerVersionCompatibleWith/;
+
+/**
+ * The convention under test (data/client-directives.graphql): a query field
+ * that entered the schema at a manager version carries `@since(version:)` /
+ * `@sinceMultiple` on its usage, so older managers never receive it. A usage
+ * line without it — in a file with no supports()/isManagerVersionCompatibleWith
+ * guard either — is a gap. Only gaps are reported: a correctly annotated field
+ * needs no QA callout (FR-3673 was exactly an ungated enum value breaking the
+ * Sessions tab on older managers).
+ */
+function schemaGatingGaps(from, to) {
+  const diff = gitOrNull([
+    'diff',
+    `${from}..${to}`,
+    '--',
+    'data/schema.graphql',
+  ]);
+  if (!diff) return { gaps: [] };
+  const added = extractAddedSchemaFields(diff);
+  if (!added.length) return { gaps: [] };
+
+  const schemaText = gitOrNull(['show', `${to}:data/schema.graphql`]) ?? '';
+
+  const roots = ['react/src', 'packages/backend.ai-ui/src'];
+  const listed = gitOrNull(['ls-tree', '-r', '--name-only', to]) ?? '';
+  const files = listed
+    .split('\n')
+    .filter(
+      (f) =>
+        /\.(tsx?)$/.test(f) &&
+        !isGenerated(f) &&
+        !isTestLike(f) &&
+        !isDocStub(f) &&
+        !BUI_NON_RUNTIME.test(f) &&
+        roots.some((r) => f.startsWith(`${r}/`)),
+    );
+
+  // One pass over the tree: cache each file's graphql-tag text, full text,
+  // and whether it carries any version guard.
+  const sources = [];
+  for (const f of files) {
+    const src = gitOrNull(['show', `${to}:${f}`]);
+    if (!src || !src.includes('graphql`')) continue;
+    sources.push({
+      file: f,
+      text: src,
+      tagLines: extractGraphqlTags(src).split('\n'),
+      guarded: GUARD_RE.test(src),
+    });
+  }
+
+  const typeFields = parseSchemaTypeFields(schemaText);
+
+  const gaps = [];
+  const seen = new Set();
+  for (const entry of added) {
+    const key = `${entry.parent}.${entry.field}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    // An enum value reaches the manager as a plain string literal (status
+    // filters); @since cannot annotate it, so only a file guard can gate it.
+    const asLiteral = new RegExp(`['"]${entry.field}['"]`);
+    const inputRef = new RegExp(`\\b${entry.parent}\\b`);
+    const ungated = [];
+    for (const s of sources) {
+      let hit = false;
+      if (entry.kind === 'enum') {
+        hit = asLiteral.test(s.text) && !s.guarded;
+      } else if (entry.parentKind === 'input') {
+        // Input-object fields are sent as JS values, not selected — @since
+        // cannot apply, so referencing the input type from an unguarded file
+        // is the signal.
+        hit = s.tagLines.some((l) => inputRef.test(l)) && !s.guarded;
+      } else {
+        const uses = findSelectionUses(
+          s.tagLines,
+          entry.field,
+          entry.parent,
+          typeFields,
+        );
+        hit = uses.some((u) => !u.annotated) && !s.guarded;
+      }
+      if (hit) ungated.push(s.file);
+    }
+    if (ungated.length) gaps.push({ ...entry, key, ungated });
+  }
+  return { gaps };
+}
+
+/**
+ * type -> Map(field -> bare return type), for every type/interface block in
+ * the schema. The bare name strips list/non-null wrappers and directives.
+ */
+export function parseSchemaTypeFields(schemaText) {
+  const map = new Map();
+  let current = null;
+  for (const line of schemaText.split('\n')) {
+    const block = line.match(/^(?:extend\s+)?(?:type|interface)\s+(\w+)/);
+    if (block) {
+      current = block[1];
+      if (!map.has(current)) map.set(current, new Map());
+      continue;
+    }
+    if (/^\S/.test(line) && line.trim() && !line.startsWith('{')) {
+      if (/^}/.test(line)) current = null;
+      continue;
+    }
+    if (!current) continue;
+    const f = line.match(/^\s{2,}([a-z]\w*)\s*(?:\([^)]*\))?\s*:\s*(\S+)/);
+    if (f) map.get(current).set(f[1], f[2].replace(/[[\]!]/g, ''));
+  }
+  return map;
+}
+
+/**
+ * Occurrences of `field` whose selection block RESOLVES to `parent`, walking
+ * the indentation-derived ancestor chain from the nearest `on Type` root down
+ * through the schema's field types. Strict: a chain that cannot be resolved is
+ * not attributed (no guess, no false positive). A use counts as annotated when
+ * the field line OR any ancestor selection carries @since — a gated ancestor
+ * strips the whole subtree.
+ */
+export function findSelectionUses(tagLines, field, parent, typeFields) {
+  const uses = [];
+  const selRe = new RegExp(`^\\s*${field}\\b`);
+  for (let i = 0; i < tagLines.length; i += 1) {
+    const line = tagLines[i];
+    if (!selRe.test(line)) continue;
+
+    // Ancestor chain, innermost first: every shallower block-opening line.
+    const chain = [];
+    let indent = line.match(/^\s*/)[0].length;
+    for (let j = i - 1; j >= 0 && indent > 0; j -= 1) {
+      const prev = tagLines[j];
+      if (!prev.trim()) continue;
+      const prevIndent = prev.match(/^\s*/)[0].length;
+      if (prevIndent < indent && prev.includes('{')) {
+        chain.push(prev);
+        indent = prevIndent;
+      }
+    }
+    chain.reverse(); // root first
+
+    // Resolve the block's type from the outermost `on Type` downward.
+    let cur = null;
+    for (const anc of chain) {
+      const onType = anc.match(/\bon\s+(\w+)/)?.[1];
+      if (onType) {
+        cur = onType;
+        continue;
+      }
+      if (cur === null) continue; // above the first typed root (query header)
+      const ownerField = anc.match(/^\s*(\w+)/)?.[1];
+      cur = ownerField ? (typeFields.get(cur)?.get(ownerField) ?? null) : null;
+      if (cur === null) break; // unresolvable — stay strict
+    }
+    if (cur !== parent) continue;
+
+    const annotated =
+      /@since/i.test(line) || chain.some((anc) => /@since/i.test(anc));
+    uses.push({ line, annotated });
+  }
+  return uses;
+}
+
+/**
  * Prettier wraps long calls, so the literal may sit on its own line with a
  * trailing comma: supports(\n  'flag',\n).
  */
@@ -407,8 +642,17 @@ function i18nGaps(from, to) {
 }
 
 function renderMarkdown(report) {
-  const { from, to, base, commits, risks, featureMatrix, undeclared, i18n } =
-    report;
+  const {
+    from,
+    to,
+    base,
+    commits,
+    risks,
+    featureMatrix,
+    gating,
+    undeclared,
+    i18n,
+  } = report;
   const L = [];
   const link = (c) =>
     c.pr
@@ -430,7 +674,9 @@ function renderMarkdown(report) {
   L.push('| Risk | Count |');
   L.push('| --- | --- |');
   L.push(`| R1 UI change with no e2e change | ${risks.noE2E.length} |`);
-  L.push(`| R2 new manager feature gate | ${featureMatrix.length} |`);
+  L.push(
+    `| R2 new schema field used without a version gate | ${gating.gaps.length} |`,
+  );
   L.push(`| R3 locale files with untranslated new keys | ${i18n.length} |`);
   L.push(`| R4 destructive flow touched | ${risks.destructive.length} |`);
   L.push(
@@ -438,18 +684,18 @@ function renderMarkdown(report) {
   );
   L.push('');
 
-  if (featureMatrix.length) {
-    L.push('## R2 — Manager version matrix');
+  if (gating.gaps.length) {
+    L.push('## R2 — New schema fields used without a version gate');
     L.push('');
     L.push(
-      'These gates are new in this range. Exercise each one against a manager that **meets** the version and one that does **not** — on the older manager the feature must be hidden, never broken.',
+      'These fields entered the schema in this range and at least one usage carries no `@since(version:)` annotation (data/client-directives.graphql) and no file-level `supports()` guard. Against a manager that predates the field, the query fails instead of the feature hiding — FR-3673 was this class. Correctly annotated usages are not listed.',
     );
     L.push('');
-    L.push('| Feature flag | Requires | Used in app |');
+    L.push('| Field | Added in | Ungated use |');
     L.push('| --- | --- | --- |');
-    for (const f of featureMatrix)
+    for (const g of gating.gaps)
       L.push(
-        `| \`${f.flag}\` | ${f.version ? `\`${f.version}\`` : '_ungated_'} | ${f.used ? 'yes' : '**no — dead flag**'} |`,
+        `| \`${g.key}\`${g.kind === 'enum' ? ' (enum)' : ''} | ${g.version ? `\`${g.version}\`` : '_unannotated_'} | ${g.ungated.map((f) => `\`${f.split('/').pop()}\``).join(', ')} |`,
       );
     L.push('');
   }
@@ -515,7 +761,7 @@ function renderMarkdown(report) {
 
   if (
     !risks.noE2E.length &&
-    !featureMatrix.length &&
+    !gating.gaps.length &&
     !undeclared.length &&
     !i18n.length &&
     !risks.destructive.length &&
@@ -598,6 +844,7 @@ function main() {
     commits,
     risks,
     featureMatrix,
+    gating: schemaGatingGaps(base, args.to),
     undeclared,
     i18n: i18nGaps(base, args.to),
   };

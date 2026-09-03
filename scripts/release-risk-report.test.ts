@@ -1,7 +1,10 @@
 // @ts-nocheck
 import {
   classify,
+  findSelectionUses,
   extractAddedFeatureFlags,
+  extractAddedSchemaFields,
+  extractGraphqlTags,
   extractSupportsUsages,
   flatten,
   hasDestructiveContract,
@@ -206,6 +209,126 @@ describe('release risk report', () => {
       expect(c.e2e).toHaveLength(1);
       expect(c.docs).toHaveLength(1);
       expect(c.i18n).toHaveLength(1);
+    });
+  });
+
+  describe('extractAddedSchemaFields', () => {
+    it('reads added fields and enum values with their Added-in versions', () => {
+      const diff = [
+        '+++ b/data/schema.graphql',
+        ' type RuntimeVariantPresetUIOption',
+        ' {',
+        '+  """Added in 26.9.0. UI category group for organizing parameters."""',
+        '+  category: String',
+        '+',
+        '+  """Human-readable display label."""',
+        '+  displayName: String',
+        ' }',
+        '+enum SessionStatus',
+        '+{',
+        '+  PREEMPTED',
+        '+}',
+        ' enum OldEnum',
+        ' {',
+        '-  REMOVED_VALUE',
+        ' }',
+      ].join('\n');
+      expect(extractAddedSchemaFields(diff)).toEqual([
+        {
+          parent: 'RuntimeVariantPresetUIOption',
+          parentKind: 'type',
+          field: 'category',
+          version: '26.9.0',
+          kind: 'field',
+        },
+        {
+          parent: 'RuntimeVariantPresetUIOption',
+          parentKind: 'type',
+          field: 'displayName',
+          version: null,
+          kind: 'field',
+        },
+        {
+          parent: 'SessionStatus',
+          parentKind: 'enum',
+          field: 'PREEMPTED',
+          version: null,
+          kind: 'enum',
+        },
+      ]);
+    });
+  });
+
+  describe('findSelectionUses', () => {
+    // ModelRevision.modelDefinition -> ModelDefinition.models ->
+    // ModelDefinitionModel.service -> ModelServiceConfig
+    const typeFields = new Map([
+      ['ModelRevision', new Map([['modelDefinition', 'ModelDefinition']])],
+      ['ModelDefinition', new Map([['models', 'ModelDefinitionModel']])],
+      ['ModelDefinitionModel', new Map([['service', 'ModelServiceConfig']])],
+    ]);
+    const tag = [
+      '  fragment F on ModelRevision {',
+      '    modelDefinition {',
+      '      models {',
+      '        service {',
+      '          command @since(version: "26.7.0")',
+      '          startCommand',
+      '        }',
+      '      }',
+      '    }',
+      '  }',
+    ];
+
+    it('attributes a nested selection through its owner field type', () => {
+      const uses = findSelectionUses(
+        tag,
+        'startCommand',
+        'ModelServiceConfig',
+        typeFields,
+      );
+      expect(uses).toHaveLength(1);
+      expect(uses[0].annotated).toBe(false);
+    });
+
+    it('sees @since on the annotated sibling', () => {
+      const uses = findSelectionUses(
+        tag,
+        'command',
+        'ModelServiceConfig',
+        typeFields,
+      );
+      expect(uses).toHaveLength(1);
+      expect(uses[0].annotated).toBe(true);
+    });
+
+    it('attributes a field selected directly under `on Parent`', () => {
+      const uses = findSelectionUses(
+        ['  ... on Foo {', '    bar', '  }'],
+        'bar',
+        'Foo',
+        new Map(),
+      );
+      expect(uses).toHaveLength(1);
+    });
+
+    it('does not attribute the same field under an unrelated owner', () => {
+      const uses = findSelectionUses(
+        tag,
+        'startCommand',
+        'SomeOtherType',
+        typeFields,
+      );
+      expect(uses).toHaveLength(0);
+    });
+  });
+
+  describe('extractGraphqlTags', () => {
+    it('returns only the template contents of graphql tags', () => {
+      const src =
+        'const q = graphql`\n  query Foo { bar @since(version: "26.9.0") }\n`;\nconst other = `not a tag`;';
+      expect(extractGraphqlTags(src)).toContain('bar @since');
+      expect(extractGraphqlTags(src)).not.toContain('not a tag');
     });
   });
 
