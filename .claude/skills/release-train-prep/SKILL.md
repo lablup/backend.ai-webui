@@ -74,9 +74,13 @@ every file-based finding, so fetch before offering it:
 ```bash
 git fetch origin main --quiet
 LATEST_TAG=$(git tag --sort=-creatordate | head -1)
-PREV_RC=$(git tag --sort=-creatordate | sed -n 2p)
-# The previous *stable* release, not the previous rc — see the note below.
-PREV_STABLE=$(git tag --sort=-creatordate | grep -Ev '\-(rc|alpha|beta)\.|\+' | head -1)
+# Previous tag of the SAME release line (v26.9.0-rc.3 -> the v26.9.0 line):
+# an interleaved hotfix tag from another line must not become the "직전 rc".
+RELEASE_LINE=${LATEST_TAG%%-*}
+PREV_RC=$(git tag --sort=-creatordate | grep -F "$RELEASE_LINE" | sed -n 2p)
+# Previous *stable* release, excluding LATEST_TAG itself — when the newest tag
+# is already stable, this must yield the one before it, not an empty range.
+PREV_STABLE=$(git tag --sort=-creatordate | grep -Ev '\-(rc|alpha|beta)\.|\+' | grep -vxF "$LATEST_TAG" | head -1)
 BRANCH=$(git branch --show-current)
 ```
 

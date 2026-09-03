@@ -148,19 +148,26 @@ function readCommits(from, to) {
 const isGenerated = (f) => f.includes('__generated__');
 const isTestLike = (f) => /\.(test|spec|stories)\.[tj]sx?$/.test(f);
 
+// Non-runtime corners of the BUI package; everything else under src/ ships.
+const BUI_NON_RUNTIME =
+  /^packages\/backend\.ai-ui\/src\/(__test__|tests|astryx-docs|locale)\//;
+
 export function classify(files) {
   const ui = files.filter(
     (f) =>
       !isGenerated(f) &&
       !isTestLike(f) &&
       (/^react\/src\/.*\.tsx?$/.test(f) ||
-        /^packages\/backend\.ai-ui\/src\/(components|hooks)\/.*\.tsx?$/.test(
-          f,
-        )),
+        (/^packages\/backend\.ai-ui\/src\/.*\.tsx?$/.test(f) &&
+          !BUI_NON_RUNTIME.test(f))),
   );
   return {
     ui,
-    e2e: files.filter((f) => f.startsWith('e2e/')),
+    // Executable tests only: e2e/ also holds docs and plans (e.g. the
+    // coverage report), and touching those is not test coverage.
+    e2e: files.filter(
+      (f) => f.startsWith('e2e/') && /\.(spec|test)\.[tj]sx?$/.test(f),
+    ),
     docs: files.filter((f) => f.startsWith('packages/backend.ai-webui-docs/')),
     i18n: files.filter(
       (f) =>
@@ -169,6 +176,15 @@ export function classify(files) {
     ),
     destructive: ui.filter((f) => DESTRUCTIVE_NAME.test(f.split('/').pop())),
   };
+}
+
+/**
+ * The typed-confirm contract of rules/destructive-confirmation.md. A file can
+ * host an irreversible flow without carrying an action word in its name
+ * (ProjectPage.tsx holds a purge), so R4 also checks changed UI files' content.
+ */
+export function hasDestructiveContract(src) {
+  return /BAIDeleteConfirmModal|requireConfirmInput/.test(src);
 }
 
 function readFeatureVersionMap(ref) {
@@ -194,6 +210,8 @@ export function parseFeatureVersionMap(src) {
   const map = new Map();
   /** Guards currently in scope, innermost last. blockDepth = depth inside the block. */
   const guards = [];
+  /** A guard whose opening brace prettier moved to a later line. */
+  let pendingGuard = null;
   let depth = 0;
   let entered = false;
 
@@ -203,27 +221,28 @@ export function parseFeatureVersionMap(src) {
     const closes = (line.match(/\}/g) ?? []).length;
     const depthBefore = depth;
 
-    // Prettier may push the value onto the next line: _features['x'] =\n  true;
-    const decl = line.match(/_features\['([^']+)'\]\s*=\s*(true|false)?/);
+    const decl = readFeatureDeclaration(lines, i);
     if (decl) {
-      const value =
-        decl[2] ??
-        lines
-          .slice(i + 1, i + 3)
-          .join(' ')
-          .match(/^\s*(true|false)/)?.[1];
       const active = guards.filter((g) => g.blockDepth <= depthBefore);
-      map.set(decl[1], {
+      map.set(decl.key, {
         version: active.length ? active[active.length - 1].version : null,
-        value: value === 'true',
+        value: decl.value === 'true',
       });
     }
 
+    // Accepts a single version or an array; an array's first entry is the
+    // primary manager line and stands for the guard.
     const guard = line.match(
-      /is(?:Manager|API)VersionCompatibleWith\(\s*'([^']+)'\s*\)/,
+      /is(?:Manager|API)VersionCompatibleWith\(\s*\[?\s*'([^']+)'/,
     );
-    if (guard && opens > 0)
-      guards.push({ version: guard[1], blockDepth: depthBefore + 1 });
+    if (guard) {
+      if (opens > 0)
+        guards.push({ version: guard[1], blockDepth: depthBefore + 1 });
+      else pendingGuard = guard[1];
+    } else if (pendingGuard && opens > 0) {
+      guards.push({ version: pendingGuard, blockDepth: depthBefore + 1 });
+      pendingGuard = null;
+    }
 
     depth = depthBefore + opens - closes;
     if (!entered && depth > 0) entered = true;
@@ -232,6 +251,19 @@ export function parseFeatureVersionMap(src) {
     if (entered && depth <= 0) break;
   }
   return map;
+}
+
+/**
+ * Read one `_features[…] = true|false` anchored at line i. Prettier splits
+ * long declarations three ways — key on its own line inside the brackets,
+ * value on the line after `=` — so match against a small joined window
+ * rather than the single line.
+ */
+function readFeatureDeclaration(lines, i) {
+  if (!lines[i].includes('_features[')) return null;
+  const window = lines.slice(i, i + 5).join(' ');
+  const m = window.match(/_features\[\s*'([^']+)'\s*\]\s*=\s*(true|false)/);
+  return m ? { key: m[1], value: m[2] } : null;
 }
 
 /** Feature flags whose declaration line was ADDED between from and to. */
@@ -247,17 +279,23 @@ function newFeatureFlags(from, to) {
   return extractAddedFeatureFlags(diff);
 }
 
-/** Added `_features['x'] = true`, including the form prettier wraps onto two lines. */
+/**
+ * Added `_features[…] = true`, in any of the shapes prettier emits — single
+ * line, value wrapped, or key wrapped inside the brackets. Joins consecutive
+ * ADDED lines only, so a declaration edited half-in-place (context lines
+ * between the added ones) is out of scope for this heuristic.
+ */
 export function extractAddedFeatureFlags(diff) {
   const lines = diff
     .split('\n')
-    .filter((l) => l.startsWith('+') && !l.startsWith('+++'));
+    .filter((l) => l.startsWith('+') && !l.startsWith('+++'))
+    .map((l) => l.slice(1));
   const added = new Set();
   for (let i = 0; i < lines.length; i += 1) {
-    const m = lines[i].match(/_features\['([^']+)'\]\s*=\s*(true|false)?/);
-    if (!m) continue;
-    const value = m[2] ?? lines[i + 1]?.match(/^\+\s*(true|false)/)?.[1];
-    if (value === 'true') added.add(m[1]);
+    if (!lines[i].includes('_features[')) continue;
+    const window = lines.slice(i, i + 5).join(' ');
+    const m = window.match(/_features\[\s*'([^']+)'\s*\]\s*=\s*(true|false)/);
+    if (m && m[2] === 'true') added.add(m[1]);
   }
   return [...added];
 }
@@ -467,6 +505,7 @@ function renderMarkdown(report) {
   if (
     !risks.noE2E.length &&
     !featureMatrix.length &&
+    !undeclared.length &&
     !i18n.length &&
     !risks.destructive.length &&
     !risks.noDocs.length
@@ -488,6 +527,24 @@ function main() {
     ...c,
     classified: classify(c.files),
   }));
+
+  // R4 by content: a changed UI file hosting the typed-confirm contract is a
+  // destructive-flow touch even when its name carries no action word.
+  const contractCache = new Map();
+  const hostsContract = (f) => {
+    if (!contractCache.has(f)) {
+      const src = gitOrNull(['show', `${args.to}:${f}`]);
+      contractCache.set(f, Boolean(src && hasDestructiveContract(src)));
+    }
+    return contractCache.get(f);
+  };
+  for (const c of commits) {
+    c.classified.destructive.push(
+      ...c.classified.ui.filter(
+        (f) => !c.classified.destructive.includes(f) && hostsContract(f),
+      ),
+    );
+  }
 
   const userFacing = commits.filter(
     (c) => c.type && USER_FACING_TYPES.has(c.type),
@@ -562,5 +619,8 @@ function main() {
 }
 
 // Importing this module (tests) must not run the CLI.
-if (process.argv[1] && realpathSync(process.argv[1]) === fileURLToPath(import.meta.url))
+if (
+  process.argv[1] &&
+  realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)
+)
   main();

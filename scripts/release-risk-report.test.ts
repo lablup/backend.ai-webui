@@ -4,6 +4,7 @@ import {
   extractAddedFeatureFlags,
   extractSupportsUsages,
   flatten,
+  hasDestructiveContract,
   parseArgs,
   parseFeatureVersionMap,
 } from './release-risk-report.mjs';
@@ -31,6 +32,19 @@ const CLIENT_SOURCE = `
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       this._features['allow-only-ro-permission-for-model-project-folder'] =
         true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.09.2')) {
+      this._features[
+        'max-quota-scope-size-in-user-and-project-resource-policy'
+      ] = true;
+    }
+    if (this.isManagerVersionCompatibleWith(['24.03.10'])) {
+      this._features['endpoint-lifecycle-stage-filter'] = true;
+    }
+    if (
+      this.isManagerVersionCompatibleWith(['25.1.0', '24.09.6', '24.03.12'])
+    ) {
+      this._features['vfolder-id-based'] = true;
     }
     this._features['ungated'] = true;
   }
@@ -64,6 +78,25 @@ describe('release risk report', () => {
       expect(entry.value).toBe(true);
     });
 
+    it('reads a declaration whose key prettier wrapped inside the brackets', () => {
+      const entry = map.get(
+        'max-quota-scope-size-in-user-and-project-resource-policy',
+      );
+      expect(entry).toBeDefined();
+      expect(entry.version).toBe('23.09.2');
+      expect(entry.value).toBe(true);
+    });
+
+    it('reads an array guard, taking the first entry as the version', () => {
+      expect(map.get('endpoint-lifecycle-stage-filter').version).toBe(
+        '24.03.10',
+      );
+    });
+
+    it('reads a guard whose opening brace sits on a later line', () => {
+      expect(map.get('vfolder-id-based').version).toBe('25.1.0');
+    });
+
     it('records an unguarded flag with a null version', () => {
       expect(map.get('ungated').version).toBeNull();
     });
@@ -79,28 +112,36 @@ describe('release risk report', () => {
 
   describe('extractSupportsUsages', () => {
     it('finds a single-line call', () => {
-      expect(extractSupportsUsages("baiClient.supports('agent-select')")).toEqual([
-        'agent-select',
-      ]);
+      expect(
+        extractSupportsUsages("baiClient.supports('agent-select')"),
+      ).toEqual(['agent-select']);
     });
 
     it('finds the multi-line form with a trailing comma', () => {
-      const src = "const ok = baiClient.supports(\n  'model-mount-subpath',\n);";
+      const src =
+        "const ok = baiClient.supports(\n  'model-mount-subpath',\n);";
       expect(extractSupportsUsages(src)).toEqual(['model-mount-subpath']);
     });
   });
 
   describe('extractAddedFeatureFlags', () => {
-    it('collects added true declarations, including the wrapped form', () => {
+    it('collects added true declarations, including the wrapped forms', () => {
       const diff = [
         '+++ b/client.ts',
         "+      this._features['one'] = true;",
         "+      this._features['two'] =",
         '+        true;',
-        "+      this._features['three'] = false;",
+        '+      this._features[',
+        "+        'three-with-a-very-long-key'",
+        '+      ] = true;',
+        "+      this._features['four'] = false;",
         "-      this._features['removed'] = true;",
       ].join('\n');
-      expect(extractAddedFeatureFlags(diff).sort()).toEqual(['one', 'two']);
+      expect(extractAddedFeatureFlags(diff).sort()).toEqual([
+        'one',
+        'three-with-a-very-long-key',
+        'two',
+      ]);
     });
   });
 
@@ -116,8 +157,32 @@ describe('release risk report', () => {
     });
 
     it('flags a destructive-flow file by name', () => {
-      const c = classify(['react/src/components/DeleteForeverVFolderModal.tsx']);
+      const c = classify([
+        'react/src/components/DeleteForeverVFolderModal.tsx',
+      ]);
       expect(c.destructive).toHaveLength(1);
+    });
+
+    it('counts BUI runtime dirs beyond components/hooks as UI', () => {
+      const c = classify([
+        'packages/backend.ai-ui/src/app-shim/appShim.tsx',
+        'packages/backend.ai-ui/src/form-engine/Form.tsx',
+        'packages/backend.ai-ui/src/__test__/helpers.tsx',
+        'packages/backend.ai-ui/src/astryx-docs/Intro.tsx',
+      ]);
+      expect(c.ui).toEqual([
+        'packages/backend.ai-ui/src/app-shim/appShim.tsx',
+        'packages/backend.ai-ui/src/form-engine/Form.tsx',
+      ]);
+    });
+
+    it('counts only executable specs as e2e, not e2e/ docs', () => {
+      const c = classify([
+        'e2e/vfolder/delete.spec.ts',
+        'e2e/E2E_COVERAGE_REPORT.md',
+        'e2e/README.md',
+      ]);
+      expect(c.e2e).toEqual(['e2e/vfolder/delete.spec.ts']);
     });
 
     it('separates e2e, docs, and locale changes', () => {
@@ -132,9 +197,21 @@ describe('release risk report', () => {
     });
   });
 
+  describe('hasDestructiveContract', () => {
+    it('detects the typed-confirm contract regardless of filename', () => {
+      expect(
+        hasDestructiveContract('<BAIDeleteConfirmModal requireConfirmInput'),
+      ).toBe(true);
+      expect(hasDestructiveContract('const x = useState()')).toBe(false);
+    });
+  });
+
   describe('flatten', () => {
     it('joins nested keys with dots', () => {
-      expect(flatten({ a: { b: 'x' }, c: 'y' })).toEqual({ 'a.b': 'x', c: 'y' });
+      expect(flatten({ a: { b: 'x' }, c: 'y' })).toEqual({
+        'a.b': 'x',
+        c: 'y',
+      });
     });
   });
 
