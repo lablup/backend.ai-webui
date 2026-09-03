@@ -13,9 +13,11 @@
      wrapper's `data-bai-field-item`;
    - a `noStyle` field, which has no wrapper of its own, lands on the parent
      item that shows its error;
-   - the switch is off until `<Form scrollToFirstError>` says otherwise;
+   - the switch is off until `<Form scrollToFirstError>` or
+     `<FormConfigProvider scrollToFirstError>` says otherwise, form winning;
    - the store's own `scrollToField` works again on such controls.
  */
+import { FormConfigProvider } from './FormConfigProvider';
 import { Form } from './engine';
 import type { FormInstance } from './interface';
 import { act, render } from '@testing-library/react';
@@ -191,6 +193,32 @@ describe('scroll to the first invalid field', () => {
   it('stays off when the form does not ask — antd’s default', async () => {
     let form!: FormInstance;
     render(<TestForm formRef={(f) => (form = f)} />);
+
+    await submit(form);
+
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it('turns on for every form below `FormConfigProvider`', async () => {
+    let form!: FormInstance;
+    render(
+      <FormConfigProvider scrollToFirstError>
+        <TestForm formRef={(f) => (form = f)} />
+      </FormConfigProvider>,
+    );
+
+    await submit(form);
+
+    expect(scrolledField()).toBe('early');
+  });
+
+  it('lets a form override the provider', async () => {
+    let form!: FormInstance;
+    render(
+      <FormConfigProvider scrollToFirstError>
+        <TestForm formRef={(f) => (form = f)} scrollToFirstError={false} />
+      </FormConfigProvider>,
+    );
 
     await submit(form);
 

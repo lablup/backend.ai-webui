@@ -15,6 +15,7 @@ import type {
   InternalFormInstance,
   InternalHooks,
   Meta,
+  ScrollOptions,
   ValidateMessages,
 } from './interface';
 import type { InternalNamePath } from './namePath';
@@ -111,6 +112,12 @@ export interface FormConfig {
    * `form.Optional` catalog entry, ported from the same antd strings.
    */
   optionalLabel?: React.ReactNode;
+  /**
+   * Turns scroll-to-first-error on for every form below. Off unless set —
+   * antd's `<Form scrollToFirstError>` default, kept so a consumer without
+   * this provider gets antd's behaviour (FR-3683).
+   */
+  scrollToFirstError?: boolean | ScrollOptions;
 }
 
 /** What antd sourced from `<ConfigProvider form={{...}}>`. */

@@ -171,9 +171,15 @@ const InternalForm = <Values,>(
       onFinish?.(values);
     },
     onFinishFailed: (errorInfo: ValidateErrorEntity) => {
-      if (scrollToFirstError && errorInfo.errorFields.length) {
+      // The app turns this on for every form through `<FormConfigProvider>`;
+      // a form's own prop still wins either way.
+      const mergedScrollToFirstError =
+        scrollToFirstError ?? formConfig.scrollToFirstError;
+      if (mergedScrollToFirstError && errorInfo.errorFields.length) {
         const options =
-          typeof scrollToFirstError === 'object' ? scrollToFirstError : {};
+          typeof mergedScrollToFirstError === 'object'
+            ? mergedScrollToFirstError
+            : {};
         formInstance.scrollToField(errorInfo.errorFields[0].name, {
           focus: true,
           ...options,
