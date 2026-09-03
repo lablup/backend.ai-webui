@@ -15,7 +15,7 @@ const AboutBackendAIModal = ({
   onRequestClose,
   ...props
 }: AboutBackendAIModalProps) => {
-  const { appearance } = useCustomThemeConfig();
+  const { rawThemeConfig } = useCustomThemeConfig();
   const { isDarkMode } = useThemeMode();
   const baiClient = useSuspendedBackendaiClient();
   // @ts-ignore
@@ -35,24 +35,24 @@ const AboutBackendAIModal = ({
       title={
         <img
           className="about-logo-img"
-          alt={appearance?.branding?.logo?.alt || 'Backend.AI Logo'}
+          alt={rawThemeConfig?.branding?.logo?.alt || 'Backend.AI Logo'}
           src={
             isDarkMode
-              ? appearance?.branding?.logo?.aboutLogoSrcDark ||
-                appearance?.branding?.logo?.src ||
+              ? rawThemeConfig?.branding?.logo?.aboutLogoSrcDark ||
+                rawThemeConfig?.branding?.logo?.src ||
                 '/manifest/backend.ai-white-text.svg'
-              : appearance?.branding?.logo?.aboutLogoSrc ||
-                appearance?.branding?.logo?.srcDark ||
+              : rawThemeConfig?.branding?.logo?.aboutLogoSrc ||
+                rawThemeConfig?.branding?.logo?.srcDark ||
                 '/manifest/backend.ai-white-text.svg'
           }
           style={{
             width:
-              appearance?.branding?.logo?.aboutLogoSize?.width ??
-              appearance?.branding?.logo?.aboutModalSize?.width ??
+              rawThemeConfig?.branding?.logo?.aboutLogoSize?.width ??
+              rawThemeConfig?.branding?.logo?.aboutModalSize?.width ??
               159,
             height:
-              appearance?.branding?.logo?.aboutLogoSize?.height ??
-              appearance?.branding?.logo?.aboutModalSize?.height ??
+              rawThemeConfig?.branding?.logo?.aboutLogoSize?.height ??
+              rawThemeConfig?.branding?.logo?.aboutModalSize?.height ??
               24,
             cursor: 'pointer',
           }}
