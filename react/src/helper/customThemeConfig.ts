@@ -164,6 +164,10 @@ type AppearanceStore = {
   staticDoc?: BAIAppearanceConfig;
   /** `staticDoc` plus dev-only overrides — what the providers render. */
   appliedDoc?: BAIAppearanceConfig;
+  /** `loadCustomThemeConfig` was called (the app entry does; tests may not). */
+  started?: boolean;
+  /** The bootstrap has settled (successfully or not). */
+  settled?: boolean;
 };
 
 const store: AppearanceStore = {};
@@ -171,6 +175,15 @@ const store: AppearanceStore = {};
 /** The applied document. */
 export const getCustomTheme = (): BAIAppearanceConfig | undefined =>
   store.appliedDoc;
+
+/**
+ * Whether there is no appearance bootstrap in flight: it either settled or
+ * was never started (a tree rendered without the app entry). Providers hold
+ * the first paint while one is in flight — rendering before the document
+ * arrives would paint Astryx's neutral theme and then flip to the brand.
+ */
+export const isAppearanceSettled = (): boolean =>
+  !store.started || store.settled === true;
 
 /** The pristine shipped document (Branding editor seed/reset source). */
 export const getStaticAppearanceConfig = (): BAIAppearanceConfig | undefined =>
@@ -265,6 +278,8 @@ const applyDevOverrides = (
  * the document is unusable, so listeners never wait forever.
  */
 export const loadCustomThemeConfig = () => {
+  store.started = true;
+  store.settled = false;
   fetchStaticDoc()
     .then((staticDoc) => {
       store.staticDoc = staticDoc;
@@ -279,6 +294,7 @@ export const loadCustomThemeConfig = () => {
       warn(`appearance bootstrap failed (${String(error)}).`);
     })
     .finally(() => {
+      store.settled = true;
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
     });
 };

@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { BAI_DEFAULT_SEEDS } from '../../astryx-theme/backendAiTheme';
 import {
   BAIThemeSeedValue,
   BAIThemeSeeds,
@@ -39,22 +38,13 @@ const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
     BAIThemeSeedValue | undefined;
   const currentValue = draftValue ?? shippedValue;
 
-  // What the app renders for a scheme the document leaves out: the recipe's
-  // built-in seed for that key, so the untouched swatch keeps its real color
-  // instead of inheriting the color just picked for the other scheme.
-  const seedKey = _.last(seedPath.split('.')) as keyof typeof BAI_DEFAULT_SEEDS;
-  const renderedDefault = (mode: 'light' | 'dark'): string | undefined => {
-    const pair = BAI_DEFAULT_SEEDS[seedKey];
-    return _.isString(pair) ? undefined : pair?.[mode];
-  };
-
   // Seeds are stored whole (string or [light, dark] tuple); editing one
   // scheme rewrites the full tuple so a string seed never gets index-patched
-  // into an object.
+  // into an object. A scheme the document leaves out has no color of its own
+  // (the app renders Astryx's default there), so it takes the picked one.
   const updateScheme = (mode: 'light' | 'dark', value: string) => {
     const other = mode === 'light' ? 'dark' : 'light';
-    const otherValue =
-      pickSeed(currentValue, other) ?? renderedDefault(other) ?? value;
+    const otherValue = pickSeed(currentValue, other) ?? value;
     const next: [string, string] =
       mode === 'light' ? [value, otherValue] : [otherValue, value];
     updateDefaultTheme(seedPath, next);
