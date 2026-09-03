@@ -184,8 +184,7 @@ are Vitest; E2E is Playwright under `e2e/` (see the `playwright-test-*` agents i
 
 ## On-demand skills
 
-`astryx-fix` (visual/behavioural fixes on Astryx UI) · `fw:i18n-patterns` ·
-`fw:storybook-patterns`. For component-authoring patterns, follow existing code:
+`fw:i18n-patterns` · `fw:storybook-patterns`. For component-authoring patterns, follow existing code:
 sibling `*Nodes` tables, `*Select` selects, and `*Modal` components are the
 templates — copy the nearest one and adapt.
 
