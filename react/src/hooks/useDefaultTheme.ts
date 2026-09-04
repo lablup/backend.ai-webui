@@ -72,15 +72,17 @@ export const useDefaultTheme = () => {
 
   /**
    * Restore the whole draft (no args) or only the given paths to the shipped
-   * `theme.json` values.
+   * `theme.json` values. Reads the shipped document like the seed does — in
+   * preview mode `rawThemeConfig` IS the draft, which made Reset a no-op.
    */
   const resetDefaultTheme = (paths?: string[]) => {
+    const shipped = getStaticAppearanceConfig() ?? rawThemeConfig;
     if (!paths) {
-      setDefaultTheme(_.cloneDeep(rawThemeConfig));
+      setDefaultTheme(_.cloneDeep(shipped));
       return;
     }
     for (const path of paths) {
-      updateDefaultTheme(path, _.get(rawThemeConfig, path) ?? undefined);
+      updateDefaultTheme(path, _.get(shipped, path) ?? undefined);
     }
   };
 
