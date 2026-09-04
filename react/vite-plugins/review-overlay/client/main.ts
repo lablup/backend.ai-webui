@@ -399,7 +399,7 @@ function boot() {
     draft = store.pins();
     pruneStacks();
     dock.render(draft);
-    ui.setDraftSize(draft.length);
+    ui.setDraftSize(draft.length, store.isFull());
   }
 
   /** The whole set, from a click; nothing may be awaited before the write. */

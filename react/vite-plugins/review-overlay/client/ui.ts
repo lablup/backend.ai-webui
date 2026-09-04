@@ -245,9 +245,11 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   let noteTimer = 0;
   /** A second ⌘⏎ over an unresolved write would build a second pin. */
   let copyInFlight = false;
+  let draftFull = false;
 
   function syncCopyEnabled() {
     copyButton.disabled =
+      draftFull ||
       copyInFlight ||
       readyNote === null ||
       composeText.value.trim() !== readyNote;
@@ -388,11 +390,16 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
 
   /**
    * The button says what ⌘⏎ will do: with a set already going, the pick joins
-   * it and the whole set is what lands on the clipboard.
+   * it; a full set says so instead of promising a copy it would refuse.
    */
-  function setDraftSize(size: number) {
-    copyButton.textContent =
-      size > 0 ? `Add & copy all (${size + 1})` : '📋 Copy block';
+  function setDraftSize(size: number, full = false) {
+    draftFull = full;
+    copyButton.textContent = full
+      ? `Set is full (${size})`
+      : size > 0
+        ? `Add & copy all (${size + 1})`
+        : '📋 Copy block';
+    syncCopyEnabled();
   }
 
   // ------------------------------------------------------------- clipboard

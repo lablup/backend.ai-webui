@@ -317,6 +317,21 @@ describe('adding to a set', () => {
     expect(storedIds()).toHaveLength(30);
     expect(composeOpen()).toBe(true);
   });
+
+  it('says the set is full on the button, before the ⌘⏎', async () => {
+    seed(
+      Array.from({ length: 30 }, (_, i) =>
+        storedPin(`c_seed${i}`, 'create', `Start › ${i}`),
+      ),
+    );
+    await bootOverlay();
+    stubExecCommand();
+
+    await pick('create', 'one too many');
+
+    expect(copyButton().textContent).toBe('Set is full (30)');
+    expect(copyButton().disabled).toBe(true);
+  });
 });
 
 describe('the set the tab was left with', () => {
