@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { resolveApiEndpoint } from '../hooks/useResolvedApiEndpoint';
-import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import { fetchAppConfigOnce } from '../hooks/useWebUIConfig';
 import * as _ from 'lodash-es';
 
 /**
@@ -235,20 +235,13 @@ function injectFontCSS(fontFamilies: string[]) {
   }
 }
 
-const sessionDomainName = (): string | undefined =>
-  // @ts-ignore
-  globalThis.backendaiclient?._config?.domainName;
-
-// Pre-login fallback: `general.apiDomainName` from config.toml.
-// Webserver-hosted deployments are 1:1 with a domain and expose it there
-// (BA-7405/BA-7406); Electron / direct API mode has no single domain, so
-// this stays undefined and the theme keeps theme.json.
+// `general.apiDomainName` from config.toml: webserver-hosted deployments are
+// 1:1 with a domain and expose it there (BA-7405/BA-7406). Electron / direct
+// API mode has no single domain, so this stays undefined and the theme keeps
+// theme.json.
 const resolveConfigDomainName = async (): Promise<string | undefined> => {
   try {
-    const configPath = (globalThis as Record<string, unknown>).isElectron
-      ? 'es6://config.toml'
-      : '../../config.toml';
-    const { config } = await fetchAndParseConfig(configPath);
+    const { config } = await fetchAppConfigOnce();
     const raw = config?.general?.apiDomainName;
     return typeof raw === 'string' && raw.trim() ? raw.trim() : undefined;
   } catch {
@@ -256,27 +249,24 @@ const resolveConfigDomainName = async (): Promise<string | undefined> => {
   }
 };
 
+// config.toml `apiEndpoint`, else the stored login endpoint.
 const resolveRestBase = async (): Promise<string> => {
-  // Post-login the connected client's endpoint wins; pre-login fall back to
-  // config.toml / the stored login endpoint.
-  const endpoint: string =
-    // @ts-ignore
-    globalThis.backendaiclient?._config?.endpoint ??
-    (await resolveApiEndpoint());
+  const endpoint = await resolveApiEndpoint();
   return endpoint.replace(/^"+|"+$/g, '').replace(/\/+$/, '');
 };
 
 /**
  * `publicConfigByDomain` read path (FR-1964). REST (`POST
- * /func/v2/app-config/public/get`, served anonymously) instead of
- * GraphQL/Relay so the document is fetchable BEFORE login and outside
- * `RelayEnvironmentProvider`. A session that cannot fetch here (no endpoint
- * known yet, or a transient failure) keeps theme.json until the next reload —
- * accepted per FR-1964; there is no retry and no connect listener.
+ * /func/v2/app-config/public/get`, served anonymously) rather than
+ * GraphQL/Relay: this runs once at bootstrap, before login and outside
+ * `RelayEnvironmentProvider`, so the domain and endpoint come from config.toml
+ * (or the stored login endpoint), never from a connected client. A session
+ * that cannot fetch here keeps theme.json until the next reload — accepted per
+ * FR-1964; there is no retry and no connect listener.
  */
 const fetchDomainDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
   try {
-    const domainName = sessionDomainName() ?? (await resolveConfigDomainName());
+    const domainName = await resolveConfigDomainName();
     if (!domainName) {
       return undefined;
     }
@@ -307,7 +297,9 @@ const fetchDomainDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
           `publicConfigByDomain[${domainName}].appearance`,
         );
   } catch (error) {
-    warn(`the domain appearance document could not be fetched (${String(error)}).`);
+    warn(
+      `the domain appearance document could not be fetched (${String(error)}).`,
+    );
     return undefined;
   }
 };
