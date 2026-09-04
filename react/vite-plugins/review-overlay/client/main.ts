@@ -407,12 +407,18 @@ function boot() {
   });
 
   /** What differs about an off-page pin's page, for its dock row (D2). */
-  const awayNote = (pin: SetPin): string =>
-    pin.anchor.p !== location.pathname
-      ? resolveRouteLabel(pin.anchor.p)
-      : pin.anchor.q
-        ? `?${pin.anchor.q}`
-        : 'no query';
+  /**
+   * A stored label leads with the route it was made on; only THIS page's route
+   * can be resolved from here, so that beats a raw path — when it is not one.
+   */
+  const awayNote = (pin: SetPin): string => {
+    if (pin.anchor.p === location.pathname)
+      return pin.anchor.q ? `?${pin.anchor.q}` : 'no query';
+    const route = pin.label.split(' › ')[0]?.trim() ?? '';
+    return route && !route.startsWith('/')
+      ? route
+      : resolveRouteLabel(pin.anchor.p);
+  };
 
   /**
    * A set may span pages. Only its members on THIS page get a view — an
