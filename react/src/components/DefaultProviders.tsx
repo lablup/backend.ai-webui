@@ -383,8 +383,13 @@ export const DefaultProvidersForReactRoot: React.FC<{
                         appends "(Optional)" to non-required labels instead.
                         That inversion is deliberate product behaviour, not a
                         default — dropping it would put an asterisk on every
-                        required field across the app. */}
+                        required field across the app.
+                      - `scrollToFirstError` is the app-wide opt-in (FR-3683):
+                        a failed `form.submit()` lands on the first invalid
+                        field. The engine keeps antd's off-by-default, so a
+                        consumer without this provider is unsurprised. */}
                   <FormConfigProvider
+                    scrollToFirstError
                     requiredMark={(label, { required }) => (
                       <>
                         {label}
