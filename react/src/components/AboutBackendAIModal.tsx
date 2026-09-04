@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { resolveDetailLogoSrc } from '../helper/logoSource';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
@@ -37,13 +38,11 @@ const AboutBackendAIModal = ({
           className="about-logo-img"
           alt={rawThemeConfig?.branding?.logo?.alt || 'Backend.AI Logo'}
           src={
-            isDarkMode
-              ? rawThemeConfig?.branding?.logo?.aboutLogoSrcDark ||
-                rawThemeConfig?.branding?.logo?.src ||
-                '/manifest/backend.ai-white-text.svg'
-              : rawThemeConfig?.branding?.logo?.aboutLogoSrc ||
-                rawThemeConfig?.branding?.logo?.srcDark ||
-                '/manifest/backend.ai-white-text.svg'
+            resolveDetailLogoSrc(
+              rawThemeConfig?.branding?.logo,
+              'about',
+              isDarkMode ? 'dark' : 'light',
+            ).src
           }
           style={{
             width:
