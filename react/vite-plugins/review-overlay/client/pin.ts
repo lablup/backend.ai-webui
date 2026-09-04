@@ -17,10 +17,20 @@ const SETTLE_MS = 1200;
 /** Card gap below/above the element, and its margin to the viewport edge. */
 const CARD_GAP = 10;
 const VIEWPORT_PAD = 8;
+/** `.card`'s `max-width` under the shadow root's `box-sizing: border-box`. */
+const CARD_MAX_WIDTH = 320;
 /** Four 1 s beats of the prototype's arrival pulse, then just the box. */
 const PULSE_MS = 4200;
 /** Escalated text scans a lost element gets before the pin stops looking. */
 const MAX_MISSED_SCANS = 3;
+
+/** The edges of a rectangle the element may have left: viewport or scroller. */
+interface Bounds {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
 
 const STYLE = `
   .pinlayer {
@@ -52,6 +62,13 @@ const STYLE = `
     box-shadow: 0 4px 18px var(--bai-review-shadow);
   }
   .card.found { display: block; }
+  /* The element is gone from the viewport; the card is docked, not anchored. */
+  .card.away { border-style: dashed; opacity: 0.94; }
+  .card .awaynote {
+    color: var(--bai-review-text-dim); font-size: 11px; margin-bottom: 6px;
+    padding-right: 62px;
+  }
+  .card .awaynote:empty { display: none; }
   /* The reviewer's own words lead. An anchor from before the note travelled
      carries none, and :empty leaves no gap where it would have been. */
   .card .note {
@@ -167,6 +184,8 @@ export function createDeepLinkPin({
   const truncText = run();
   truncText.textContent = 'Note truncated — the comment has the whole of it.';
   trunc.append(truncText);
+  const away = document.createElement('div');
+  away.className = 'awaynote';
   const label = document.createElement('div');
   label.className = 'label';
   const labelText = run();
@@ -198,7 +217,7 @@ export function createDeepLinkPin({
   commentCopy.textContent = '⧉';
   commentCopy.title = 'Copy the whole comment';
   commentCopy.setAttribute('aria-label', 'Copy the whole comment');
-  card.append(close, locateButton, commentCopy, note, trunc, label, sub);
+  card.append(close, locateButton, commentCopy, away, note, trunc, label, sub);
   const markBox = document.createElement('div');
   markBox.className = 'markbox';
   layer.append(markBox, marker, card);
@@ -270,10 +289,66 @@ export function createDeepLinkPin({
     return view?.getComputedStyle(node).borderRadius || '0px';
   }
 
+  /**
+   * The card as it will be shown. Read only after `found` is on and the text
+   * is written, or it measures a hidden box. jsdom reports 0 for every layout
+   * value, so the cap stands in and keeps the clamps meaningful there.
+   */
+  const cardWidth = () => card.offsetWidth || CARD_MAX_WIDTH;
+  /** The rightmost `left` that still leaves the card's shadow room to draw. */
+  const rightEdge = () =>
+    Math.max(VIEWPORT_PAD, window.innerWidth - cardWidth() - VIEWPORT_PAD);
+
   function hide() {
     marker.classList.remove('found');
     card.classList.remove('found');
+    card.classList.remove('away');
     markBox.classList.remove('found');
+    away.textContent = '';
+  }
+
+  /**
+   * The element scrolled out of sight. The marker and the box belong ON it and
+   * go with it, but the card is the comment — and the control that scrolls
+   * back lives in it, so hiding the card is what made that button unreachable
+   * exactly when it was wanted. It docks to the edge the element left by.
+   *
+   * `area` is the rectangle the element left — a clipping scroller's, not the
+   * viewport's, when a scroller is what hid it. The card still docks to the
+   * VIEWPORT edge, because it lives on a fixed layer; only the direction comes
+   * from `area`.
+   */
+  function placeAway(box: DOMRect, area: Bounds, vh: number) {
+    marker.classList.remove('found');
+    markBox.classList.remove('found');
+    card.classList.add('found');
+    card.classList.add('away');
+    const up = box.bottom <= area.top;
+    const down = box.top >= area.bottom;
+    // `placeAway` runs only when the element is outside `area` on one of the
+    // four sides, so failing the other three leaves exactly "past the right".
+    const left = box.right <= area.left;
+    // Written BEFORE the measurement: the hint is a line of the card, so a
+    // height read without it docks a bottom-docked card past the fold.
+    away.textContent = up
+      ? '↑ Scrolled above — 📍 goes back'
+      : down
+        ? '↓ Scrolled below — 📍 goes back'
+        : left
+          ? '← Scrolled to the left — 📍 goes back'
+          : '→ Scrolled to the right — 📍 goes back';
+    // A horizontal departure docks to a horizontal edge. Clamping `box.left`
+    // would leave the card mid-screen whenever a scroller — not the window —
+    // is what took the element sideways, with an arrow pointing nowhere.
+    // Measured, not assumed: `.card` is `width: auto`, so a short comment is
+    // far narrower than the cap and an assumed width would not reach the edge.
+    card.style.left =
+      up || down
+        ? `${Math.max(VIEWPORT_PAD, Math.min(box.left, rightEdge()))}px`
+        : `${left ? VIEWPORT_PAD : rightEdge()}px`;
+    card.style.top = up
+      ? `${VIEWPORT_PAD}px`
+      : `${Math.max(VIEWPORT_PAD, vh - card.offsetHeight - VIEWPORT_PAD)}px`;
   }
 
   function place() {
@@ -281,29 +356,31 @@ export function createDeepLinkPin({
     const box = markedBox(located);
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    // A scrolled-away element must not leave a floating card behind. A rect
-    // with no size at all is jsdom (or `display: contents`), not off-screen.
+    // A rect with no size at all is jsdom (or `display: contents`), not a
+    // scrolled-away element.
     const measured = box.width > 0 || box.height > 0;
-    const outside = (area: {
-      top: number;
-      bottom: number;
-      left: number;
-      right: number;
-    }) =>
+    const outside = (area: Bounds) =>
       box.bottom <= area.top ||
       box.top >= area.bottom ||
       box.right <= area.left ||
       box.left >= area.right;
-    const offscreen = outside({ top: 0, bottom: vh, left: 0, right: vw });
+    const viewport: Bounds = { top: 0, bottom: vh, left: 0, right: vw };
     // `getBoundingClientRect` reports the geometric box of an element a
-    // scroller has clipped out of sight, so the window test is not enough.
-    const clipped = clippers.some((clip) => {
+    // scroller has clipped out of sight, so the window test is not enough —
+    // and the scroller's rect, not the viewport's, is what says which way it
+    // went.
+    const clipper = clippers.find((clip) => {
       const area = clip.getBoundingClientRect();
       return (area.width > 0 || area.height > 0) && outside(area);
     });
-    if (measured && (offscreen || clipped)) return hide();
+    const gone = outside(viewport)
+      ? viewport
+      : clipper?.getBoundingClientRect();
+    if (measured && gone) return placeAway(box, gone, vh);
     marker.classList.add('found');
     card.classList.add('found');
+    card.classList.remove('away');
+    away.textContent = '';
     markBox.classList.add('found');
     Object.assign(markBox.style, {
       left: `${box.left}px`,
@@ -314,7 +391,7 @@ export function createDeepLinkPin({
     });
     marker.style.left = `${box.left + 6}px`;
     marker.style.top = `${box.top + 6}px`;
-    card.style.left = `${Math.max(8, Math.min(box.left, vw - 340))}px`;
+    card.style.left = `${Math.max(VIEWPORT_PAD, Math.min(box.left, rightEdge()))}px`;
     // `locate()` centres the element, so anything taller than half the
     // viewport puts `box.bottom` below the fold — and a fixed layer cannot be
     // scrolled to. Flip above, then clamp.

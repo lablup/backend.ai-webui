@@ -236,7 +236,7 @@ describe('createDeepLinkPin', () => {
 
     // `getBoundingClientRect` still reports the box of an element a scroller
     // has clipped out of sight, so the window test alone leaves an orphan pin.
-    it('drops the pin when a scroller clips the element out of sight', () => {
+    it('docks the card when a scroller clips the element out of sight', () => {
       document.body.insertAdjacentHTML(
         'beforeend',
         '<div id="scroller" style="overflow-x: auto; overflow-y: auto"></div>',
@@ -256,7 +256,15 @@ describe('createDeepLinkPin', () => {
       show();
       expect(pin.locate()).toBe(true);
       expect(marker().classList.contains('found')).toBe(false);
-      expect(card().classList.contains('found')).toBe(false);
+      expect(marked()).toBe(false);
+      expect(card().classList.contains('found')).toBe(true);
+      expect(card().classList.contains('away')).toBe(true);
+      // The element sits ABOVE its scroller (100..300 vs 400..700) while still
+      // inside the window, so the direction has to come from the scroller.
+      expect(
+        host.shadowRoot?.querySelector('.awaynote')?.textContent,
+      ).toContain('↑');
+      expect(card().style.top).toBe('8px');
     });
 
     // A resize is pure geometry: it must not wait on the mutation debounce.
@@ -280,7 +288,10 @@ describe('createDeepLinkPin', () => {
       expect(marker().style.top).toBe('406px');
     });
 
-    it('drops the marker and the card when the element scrolls away', () => {
+    // The marker and the box belong ON the element and leave with it; the card
+    // is the comment, and it carries the control that scrolls back — hiding it
+    // is what put that button out of reach exactly when it was wanted.
+    it('drops the marker but docks the card when the element scrolls away', () => {
       const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
       show();
       expect(pin.locate()).toBe(true);
@@ -296,8 +307,158 @@ describe('createDeepLinkPin', () => {
       window.dispatchEvent(new Event('resize'));
       return new Promise((resolve) => setTimeout(resolve, 400)).then(() => {
         expect(marker().classList.contains('found')).toBe(false);
-        expect(card().classList.contains('found')).toBe(false);
+        expect(marked()).toBe(false);
+        expect(card().classList.contains('found')).toBe(true);
+        expect(card().classList.contains('away')).toBe(true);
+        // Scrolled off the top, so the card docks to the top edge.
+        expect(card().style.top).toBe('8px');
+        expect(
+          host.shadowRoot?.querySelector('.awaynote')?.textContent,
+        ).toContain('↑');
       });
+    });
+
+    it('anchors the card again once the element scrolls back', () => {
+      const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      const away = {
+        left: 20,
+        right: 420,
+        width: 400,
+        top: 2000,
+        bottom: 2200,
+        height: 200,
+      } as DOMRect;
+      const back = element.getBoundingClientRect;
+      element.getBoundingClientRect = () => away;
+      window.dispatchEvent(new Event('resize'));
+      return new Promise((resolve) => setTimeout(resolve, 400))
+        .then(() => {
+          expect(card().classList.contains('away')).toBe(true);
+          expect(
+            host.shadowRoot?.querySelector('.awaynote')?.textContent,
+          ).toContain('↓');
+          element.getBoundingClientRect = back;
+          window.dispatchEvent(new Event('resize'));
+          return new Promise((resolve) => setTimeout(resolve, 400));
+        })
+        .then(() => {
+          expect(card().classList.contains('away')).toBe(false);
+          expect(marked()).toBe(true);
+          expect(host.shadowRoot?.querySelector('.awaynote')?.textContent).toBe(
+            '',
+          );
+        });
+    });
+
+    // The hint is a line OF the card, so a height read before it is written
+    // docks a bottom-docked card that many pixels past the fold.
+    it('measures the docked card with its hint already in place', () => {
+      mountSized({ top: 900, bottom: 1100, height: 200 }, 60);
+      Object.defineProperty(card(), 'offsetHeight', {
+        get: () =>
+          host.shadowRoot?.querySelector('.awaynote')?.textContent ? 80 : 60,
+        configurable: true,
+      });
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(card().classList.contains('away')).toBe(true);
+      expect(
+        host.shadowRoot?.querySelector('.awaynote')?.textContent,
+      ).toContain('↓');
+      // 800 − 80 − 8, not 800 − 60 − 8.
+      expect(card().style.top).toBe('712px');
+    });
+
+    // The hint is the cue for where to look, so "off to the side" is not an
+    // answer — and the card's own left clamp already points the same way.
+    it('names left and right apart, and docks the card toward each', () => {
+      const element = mountSized(
+        { left: -500, right: -100, top: 100, bottom: 300, height: 200 },
+        60,
+      );
+      // `.card` is `width: auto`, so a right dock has to measure it — an
+      // assumed width leaves a short comment short of the edge.
+      let width = 300;
+      Object.defineProperty(card(), 'offsetWidth', {
+        get: () => width,
+        configurable: true,
+      });
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(
+        host.shadowRoot?.querySelector('.awaynote')?.textContent,
+      ).toContain('←');
+      expect(card().style.left).toBe('8px');
+
+      const rightOfTheWindow = {
+        left: 1500,
+        right: 1900,
+        width: 400,
+        top: 100,
+        bottom: 300,
+        height: 200,
+      } as DOMRect;
+      element.getBoundingClientRect = () => rightOfTheWindow;
+      window.dispatchEvent(new Event('resize'));
+      return new Promise((resolve) => setTimeout(resolve, 400))
+        .then(() => {
+          expect(
+            host.shadowRoot?.querySelector('.awaynote')?.textContent,
+          ).toContain('→');
+          // 1024 − 300 − 8.
+          expect(card().style.left).toBe('716px');
+          // A narrower card hugs the same edge, not a fixed offset from it.
+          width = 200;
+          window.dispatchEvent(new Event('resize'));
+          return new Promise((resolve) => setTimeout(resolve, 400));
+        })
+        .then(() => {
+          expect(card().style.left).toBe('816px');
+        });
+    });
+
+    // The element is inside the WINDOW the whole time — only its scroller took
+    // it sideways — so clamping its own `left` would leave the card mid-screen
+    // under a ← that points at nothing.
+    it('docks sideways to the viewport edge, not to the element', () => {
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div id="scroller" style="overflow-x: auto; overflow-y: auto"></div>',
+      );
+      const scroller = document.querySelector('#scroller') as HTMLElement;
+      scroller.getBoundingClientRect = () =>
+        ({
+          left: 400,
+          right: 800,
+          width: 400,
+          top: 0,
+          bottom: 700,
+          height: 700,
+        }) as DOMRect;
+      const element = mountSized(
+        { left: 100, right: 300, top: 100, bottom: 300, height: 200 },
+        60,
+      );
+      scroller.append(element);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(
+        host.shadowRoot?.querySelector('.awaynote')?.textContent,
+      ).toContain('←');
+      expect(card().style.left).toBe('8px');
+    });
+
+    it('clears the docked state when the pin is dismissed', () => {
+      mountSized({ top: -900, bottom: -700, height: 200 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(card().classList.contains('away')).toBe(true);
+      pin.dismiss();
+      expect(card().classList.contains('found')).toBe(false);
+      expect(card().classList.contains('away')).toBe(false);
+      expect(host.shadowRoot?.querySelector('.awaynote')?.textContent).toBe('');
     });
   });
 
