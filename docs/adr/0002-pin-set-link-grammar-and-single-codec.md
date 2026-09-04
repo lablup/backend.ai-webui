@@ -52,3 +52,7 @@ than duplicating it.
   set is copied, so re-copying a growing set re-emits stable ids.
 - Fragment length grows linearly (≈300–500 chars per pin); a soft cap of 30
   pins keeps a link pasteable everywhere.
+- Each block carries its own pin's link and the set link is emitted once after
+  the last block, because repeating the set link in every block made the
+  comment O(N²) — 371 KB at 30 pins, past GitHub's 65,536-character comment
+  limit from 13 pins on.
