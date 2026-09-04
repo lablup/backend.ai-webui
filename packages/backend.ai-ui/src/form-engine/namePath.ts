@@ -92,15 +92,6 @@ export function getNamePath(
   return toArray(path as NamePathSegment);
 }
 
-/**
- * The `data-bai-field-id` handle `FormItem` stamps on a control and
- * `FormStore.getFieldDOMNode` looks up. The JSON path, not the `_`-joined
- * DOM `id` (`getFieldId`): `['a_b']` and `['a', 'b']` must not collide.
- */
-export function getFieldHandle(namePath: InternalNamePath): string {
-  return JSON.stringify(namePath);
-}
-
 export function getValue(entity: any, path: InternalNamePath): any {
   let current = entity;
   for (let i = 0; i < path.length; i += 1) {

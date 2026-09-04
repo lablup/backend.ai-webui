@@ -33,12 +33,10 @@ import BAIFormItemVisual from './FormItemVisual';
 import {
   FieldContext,
   FormConfigContext,
-  HOOK_MARK,
   FormItemInputContext,
   FormItemLayoutContext,
   ListContext,
   NoStyleItemContext,
-  SubFieldRegistryContext,
   type FormItemCol,
   type FormItemStatusContextValue,
   type FormLayout,
@@ -51,12 +49,7 @@ import type {
   RuleObject,
   StoreValue,
 } from './interface';
-import {
-  getFieldHandle,
-  toArray,
-  type InternalNamePath,
-  type NamePath,
-} from './namePath';
+import { toArray, type InternalNamePath, type NamePath } from './namePath';
 import * as React from 'react';
 
 const NAME_SPLIT = '__SPLIT__';
@@ -83,18 +76,6 @@ function genEmptyMeta(): Meta {
     validated: false,
   };
 }
-
-/** Registers a wrapper-less field's handle with the enclosing item. */
-const SubFieldRegistration: React.FC<{
-  register: (handle: string) => () => void;
-  handle: string;
-}> = ({ register, handle }) => {
-  'use memo';
-  // Layout effect: the parent's re-render commits before paint, so the
-  // attribute is there before anything can submit.
-  React.useLayoutEffect(() => register(handle), [register, handle]);
-  return null;
-};
 
 function getStatus(
   errors: React.ReactNode[],
@@ -224,7 +205,6 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
   } = props;
 
   const fieldContext = React.useContext(FieldContext);
-  const formId = fieldContext.getInternalHooks(HOOK_MARK)?.getFormId();
   const { optionalLabel } = React.useContext(FormConfigContext);
   const {
     layout: formLayout,
@@ -239,28 +219,6 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
     labelWrap: formLabelWrap,
   } = React.useContext(FormItemLayoutContext);
   const notifyParentMetaChange = React.useContext(NoStyleItemContext);
-  const registerSubFieldUpward = React.useContext(SubFieldRegistryContext);
-  const [subFieldHandles, setSubFieldHandles] = React.useState<string[]>([]);
-  // Created once (a layout-effect dependency in every registering child) and
-  // counted per handle: two `noStyle` fields may share a name, and the first
-  // to unmount must not drop the other.
-  const [registerSubField] = React.useState(() => {
-    const counts = new Map<string, number>();
-    return (handle: string) => {
-      const count = (counts.get(handle) ?? 0) + 1;
-      counts.set(handle, count);
-      if (count === 1) setSubFieldHandles((prev) => [...prev, handle]);
-      return () => {
-        const left = (counts.get(handle) ?? 1) - 1;
-        if (left > 0) {
-          counts.set(handle, left);
-          return;
-        }
-        counts.delete(handle);
-        setSubFieldHandles((prev) => prev.filter((h) => h !== handle));
-      };
-    };
-  });
   const listContext = React.useContext(ListContext);
 
   const layout = propsLayout || formLayout;
@@ -359,17 +317,10 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
     };
 
     // A `noStyle` item contributes state only. Its errors were already sent
-    // upward through `notifyParentMetaChange`; its handle goes the same way,
-    // so a field with no wrapper (and maybe no child) stays reachable.
+    // upward through `notifyParentMetaChange`.
     if (noStyle && !hidden) {
       return (
         <FormItemInputContext.Provider value={status}>
-          {fieldHandle && registerSubFieldUpward ? (
-            <SubFieldRegistration
-              register={registerSubFieldUpward}
-              handle={fieldHandle}
-            />
-          ) : null}
           {baseChildren}
         </FormItemInputContext.Provider>
       );
@@ -422,16 +373,12 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           hidden={hidden}
           fieldId={fieldId}
           fieldHandle={fieldHandle}
-          formId={formId}
-          subFieldHandles={subFieldHandles}
           htmlFor={htmlFor}
           errors={mergedErrors}
           warnings={mergedWarnings}
         >
           <NoStyleItemContext.Provider value={onSubItemMetaChange}>
-            <SubFieldRegistryContext.Provider value={registerSubField}>
-              {baseChildren}
-            </SubFieldRegistryContext.Provider>
+            {baseChildren}
           </NoStyleItemContext.Provider>
         </BAIFormItemVisual>
       </FormItemInputContext.Provider>
@@ -493,12 +440,9 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
             childProps.id = fieldId;
           }
           // Astryx controls replace `id` with their own `useId()` but pass
-          // `data-*` through, so this is the handle `FormStore.getFieldDOMNode`
-          // looks up. The plain joined path, not `fieldId`: the store has no
-          // form name to prefix and no reason to apply the DOM-id guard.
+          // `data-*` through; this is what `FormStore.getFieldDOMNode` finds.
           if (mergedName.length) {
-            childProps['data-bai-field-id'] = getFieldHandle(mergedName);
-            childProps['data-bai-form-id'] = formId;
+            childProps['data-bai-field-id'] = mergedName.join('_');
           }
           if (formDisabled && childProps.disabled === undefined) {
             childProps.disabled = true;
@@ -543,7 +487,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           childNode,
           fieldId,
           isRequired,
-          mergedName.length ? getFieldHandle(mergedName) : undefined,
+          mergedName.length ? mergedName.join('_') : undefined,
         );
       }}
     </Field>

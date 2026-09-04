@@ -192,14 +192,4 @@ export const NoStyleItemContext = React.createContext<
   ((meta: SubItemMeta, uniqueKeys: React.Key[]) => void) | null
 >(null);
 
-/**
- * A wrapper-less `noStyle` field registers its handle with the nearest item
- * that renders a wrapper, which publishes it as `data-bai-field-items` so
- * `FormStore.getFieldDOMNode` can still reach the field. Returns the
- * unregister function.
- */
-export const SubFieldRegistryContext = React.createContext<
-  ((handle: string) => () => void) | null
->(null);
-
 export type { InternalHooks };
