@@ -373,11 +373,18 @@ describe('createDeepLinkPin', () => {
 
     // The hint is the cue for where to look, so "off to the side" is not an
     // answer — and the card's own left clamp already points the same way.
-    it('names left and right apart, and clamps the card toward each', () => {
+    it('names left and right apart, and docks the card toward each', () => {
       const element = mountSized(
         { left: -500, right: -100, top: 100, bottom: 300, height: 200 },
         60,
       );
+      // `.card` is `width: auto`, so a right dock has to measure it — an
+      // assumed width leaves a short comment short of the edge.
+      let width = 300;
+      Object.defineProperty(card(), 'offsetWidth', {
+        get: () => width,
+        configurable: true,
+      });
       show();
       expect(pin.locate()).toBe(true);
       expect(
@@ -385,23 +392,31 @@ describe('createDeepLinkPin', () => {
       ).toContain('←');
       expect(card().style.left).toBe('8px');
 
-      element.getBoundingClientRect = () =>
-        ({
-          left: 1500,
-          right: 1900,
-          width: 400,
-          top: 100,
-          bottom: 300,
-          height: 200,
-        }) as DOMRect;
+      const rightOfTheWindow = {
+        left: 1500,
+        right: 1900,
+        width: 400,
+        top: 100,
+        bottom: 300,
+        height: 200,
+      } as DOMRect;
+      element.getBoundingClientRect = () => rightOfTheWindow;
       window.dispatchEvent(new Event('resize'));
-      return new Promise((resolve) => setTimeout(resolve, 400)).then(() => {
-        expect(
-          host.shadowRoot?.querySelector('.awaynote')?.textContent,
-        ).toContain('→');
-        // 1024 − 340 − 8.
-        expect(card().style.left).toBe('676px');
-      });
+      return new Promise((resolve) => setTimeout(resolve, 400))
+        .then(() => {
+          expect(
+            host.shadowRoot?.querySelector('.awaynote')?.textContent,
+          ).toContain('→');
+          // 1024 − 300 − 8.
+          expect(card().style.left).toBe('716px');
+          // A narrower card hugs the same edge, not a fixed offset from it.
+          width = 200;
+          window.dispatchEvent(new Event('resize'));
+          return new Promise((resolve) => setTimeout(resolve, 400));
+        })
+        .then(() => {
+          expect(card().style.left).toBe('816px');
+        });
     });
 
     // The element is inside the WINDOW the whole time — only its scroller took
