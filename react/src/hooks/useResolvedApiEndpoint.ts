@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { fetchAndParseConfig } from './useWebUIConfig';
+import { fetchAppConfigOnce } from './useWebUIConfig';
 
 /**
  * Resolve the Backend.AI API endpoint from `config.toml` and fallbacks.
@@ -37,11 +37,7 @@ const readEndpointFromLocalStorage = (): string => {
 };
 
 export const resolveApiEndpoint = async (): Promise<string> => {
-  const configPath = (globalThis as Record<string, unknown>).isElectron
-    ? 'es6://config.toml'
-    : '../../config.toml';
-
-  const { config } = await fetchAndParseConfig(configPath);
+  const { config } = await fetchAppConfigOnce();
   const rawEndpoint = config?.general?.apiEndpoint;
   const fromToml = typeof rawEndpoint === 'string' ? rawEndpoint.trim() : '';
 
