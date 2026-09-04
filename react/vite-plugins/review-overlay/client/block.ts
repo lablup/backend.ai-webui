@@ -10,9 +10,9 @@
  */
 import { captureAnchorSignals, withNote } from './anchor.js';
 import { encodeAnchor } from './codec.js';
-import { readablePath } from './deeplink.js';
+import { dedupeById, pinSetUrl, pinUrl, readablePath } from './deeplink.js';
 import { pinId } from './id.js';
-import type { AnchorComponent, AnchorV3 } from './types.js';
+import type { AnchorComponent, AnchorV3, SetPin } from './types.js';
 
 /**
  * The app publishes the current route's ENGLISH i18n label on
@@ -58,6 +58,11 @@ export interface BlockInput {
    * lands it drops in here without changing the block's shape.
    */
   imageUrl?: string;
+  /**
+   * Emit the `<!-- bai-review … -->` marker. False for a pin that came off a
+   * link: its `pr`/`at` never travelled, so a marker would disown its own id.
+   */
+  marker?: boolean;
 }
 
 /** The markdown flavour's link label. */
@@ -125,7 +130,7 @@ export function buildBlockText(input: BlockInput): string {
         break;
     }
   }
-  out.push(marker(input));
+  if (input.marker !== false) out.push(marker(input));
   return out.join('\n');
 }
 
@@ -166,8 +171,84 @@ export function buildBlockHtml(input: BlockInput): string {
     }
   });
   out.push(`<blockquote>${quoted.join('<br>')}</blockquote>`);
-  out.push(marker(input));
+  if (input.marker !== false) out.push(marker(input));
   return out.join('\n');
+}
+
+export interface SetBlockOptions {
+  /** Prepended to the set link; defaults to this document's origin. */
+  origin?: string;
+}
+
+/**
+ * Every block carries a link — a block is pasted on its own as often as the
+ * whole set is, and a block without one carries no anchor at all — but its
+ * OWN link, not the set's: the set URL grows with N, so repeating it in all N
+ * blocks grew the comment as N² and crossed GitHub's 65,536-character body
+ * limit around 12 pins. The set's one URL is emitted once, after the last
+ * block, so the whole set stays one click away.
+ */
+const setBlockInput = (pin: SetPin, url: string): BlockInput => {
+  const input = {
+    label: pin.label,
+    id: pin.id,
+    stack: pin.stack,
+    text: pin.anchor.n ?? '',
+    url,
+  };
+  // No marker to write, so the fields only a marker reads stay blank.
+  return pin.origin === 'pick'
+    ? { ...input, pr: pin.pr, at: pin.at }
+    : { ...input, pr: 0, at: '', marker: false };
+};
+
+const setUrl = (pins: SetPin[], options: SetBlockOptions): string =>
+  `${options.origin ?? location.origin}${pinSetUrl(pins)}`;
+
+/** A pin's own link: the set of one it would be on its own. */
+const ownUrl = (pin: SetPin, options: SetBlockOptions): string =>
+  setUrl([pin], options);
+
+/** The whole set in one URL, emitted once after the last block. */
+export const setLinkLabel = (count: number): string =>
+  `Open all ${count} pins on dev server`;
+/** Distinct from the markdown label, for `LINK_LABEL_HTML`'s reason. */
+export const setLinkLabelHtml = (count: number): string =>
+  `${setLinkLabel(count)} ↗`;
+
+/**
+ * The set as markdown: one block per pin, a blank line between them, then the
+ * set's one link. A set of one IS its pin's link, so it gets no extra line and
+ * stays byte-identical to what the overlay has always copied.
+ */
+export function buildSetText(
+  pins: SetPin[],
+  options: SetBlockOptions = {},
+): string {
+  const set = dedupeById(pins);
+  const parts = set.map((pin) =>
+    buildBlockText(setBlockInput(pin, ownUrl(pin, options))),
+  );
+  if (set.length > 1) {
+    parts.push(`[${setLinkLabel(set.length)}](${setUrl(set, options)})`);
+  }
+  return parts.join('\n\n');
+}
+
+/** The same set for a rich editor. */
+export function buildSetHtml(
+  pins: SetPin[],
+  options: SetBlockOptions = {},
+): string {
+  const set = dedupeById(pins);
+  // Adjacent `<blockquote>`s merge into one in a rich editor; an empty
+  // paragraph between them is the separator Teams keeps.
+  const html = set
+    .map((pin) => buildBlockHtml(setBlockInput(pin, ownUrl(pin, options))))
+    .join('\n<p></p>\n');
+  if (set.length < 2) return html;
+  const href = esc(setUrl(set, options));
+  return `${html}\n<p><a href="${href}">${setLinkLabelHtml(set.length)}</a></p>`;
 }
 
 /**
@@ -210,6 +291,11 @@ export interface BlockRenderOptions {
   /** Injected in tests; defaults to now, truncated to whole seconds. */
   at?: string;
   origin?: string;
+  /**
+   * The fragment the app itself is using, kept on the link so the pin reopens
+   * on the tab it was made on. Defaults to this document's own.
+   */
+  appHash?: string;
 }
 
 export interface BuiltBlock {
@@ -235,9 +321,9 @@ export function buildBlockFromCapture(
   const { anchor, anchorB64 } = capture;
   const at = options.at ?? blockStamp();
   const id = pinId(options.pr, anchorB64, at);
-  const q = anchor.q ? `?${anchor.q}` : '';
   const origin = options.origin ?? location.origin;
-  const url = `${origin}${anchor.p}${q}#bai=v3.${id}.${anchorB64}`;
+  const hash = options.appHash ?? location.hash;
+  const url = `${origin}${pinUrl(anchor, id, anchorB64, hash)}`;
   const input = {
     label: landmarkLabel(options.routeLabel, anchor),
     id,

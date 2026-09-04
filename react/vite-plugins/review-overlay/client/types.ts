@@ -63,6 +63,40 @@ export interface AnchorV3 {
   nt?: 1;
 }
 
+/**
+ * One member of a pin set, as the draft set holds it. `label` and `appHash`
+ * are stamped when the pin joins the set, so a set copied later reproduces
+ * the link and the block the reviewer saw at the time.
+ */
+interface SetPinBase {
+  id: string;
+  /** Includes the note `n`. */
+  anchor: AnchorV3;
+  anchorB64: string;
+  /** `landmarkLabel(...)` output. */
+  label: string;
+  /** `otherFragment(location.hash)` at add time; `''` for a link's pins. */
+  appHash: string;
+  /** `getStackContext()` output, split into lines. */
+  stack: string[];
+}
+
+/** The id hashes from `pr` + anchor + `at`, so a block may claim it. */
+interface PickedSetPin extends SetPinBase {
+  origin: 'pick';
+  at: string;
+  pr: number;
+}
+
+/** A link's pins carry no `at`/`pr`, so their blocks carry no marker. */
+interface LinkedSetPin extends SetPinBase {
+  origin: 'link';
+  at?: never;
+  pr?: never;
+}
+
+export type SetPin = PickedSetPin | LinkedSetPin;
+
 declare global {
   interface Window {
     /** Set by `main.ts` so a second `/__review/*.js` entry is a no-op. */

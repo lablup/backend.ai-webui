@@ -4,6 +4,8 @@ import {
   buildBlockFromCapture,
   buildBlockHtml,
   buildBlockText,
+  buildSetHtml,
+  buildSetText,
   captureForBlock,
   landmarkLabel,
   LINK_LABEL,
@@ -11,7 +13,8 @@ import {
   resolveRouteLabel,
 } from './block.js';
 import { decodeAnchor } from './codec.js';
-import type { AnchorV3 } from './types.js';
+import { MAX_SET_PINS } from './deeplink.js';
+import type { AnchorV3, SetPin } from './types.js';
 import { describe, expect, it } from 'vitest';
 
 const anchor: AnchorV3 = {
@@ -427,5 +430,277 @@ describe('a block whose anchor carries the note', () => {
     expect(decoded?.n).toHaveLength(280);
     expect(decoded?.nt).toBe(1);
     expect(built.block).toContain(long);
+  });
+});
+
+/**
+ * The set format. A pin set of one has to stay byte-identical to what the
+ * overlay has been copying, or every link and block already in the wild reads
+ * differently from the ones written next.
+ */
+describe('a pin set', () => {
+  const ORIGIN = 'https://fr-3856.localhost:1355';
+
+  const first = (): SetPin => ({
+    id: 'c_aaaaaa2',
+    origin: 'pick',
+    anchor: {
+      v: 3,
+      s: '#login',
+      p: '/session/start',
+      q: 'tab=general',
+      n: 'The label is cut off.',
+    },
+    anchorB64: 'PAYLOAD1',
+    label: 'Sessions › login-button › button "Login"',
+    appHash: '',
+    stack: ['in LoginButton (at LoginView.tsx:12)'],
+    at: '2026-08-31T09:00:00Z',
+    pr: 9330,
+  });
+
+  const second = (): SetPin => ({
+    id: 'c_bbbbbb3',
+    origin: 'pick',
+    anchor: {
+      v: 3,
+      s: '#search',
+      p: '/session/start',
+      q: 'tab=general',
+      n: 'Placeholder is stale.',
+    },
+    anchorB64: 'PAYLOAD2',
+    label: 'Sessions › filter-row › input "Search"',
+    appHash: '',
+    stack: [],
+    at: '2026-08-31T09:01:00Z',
+    pr: 9330,
+  });
+
+  /** Off a link: no `at`/`pr` ever travelled, so no marker may be emitted. */
+  const third = (): SetPin => ({
+    id: 'c_cccccc4',
+    origin: 'link',
+    anchor: { v: 3, s: '#create', p: '/start' },
+    anchorB64: 'PAYLOAD3',
+    label: 'Start › page-start › button',
+    appHash: '',
+    stack: ['in StartPage'],
+  });
+
+  describe('of one', () => {
+    it('is the block the overlay copies today', () => {
+      expect(buildSetText([first()], { origin: ORIGIN })).toBe(
+        [
+          'The label is cut off.',
+          '',
+          '> 📍 **Sessions › login-button › button "Login"** · `c_aaaaaa2`',
+          '> ⚛️ in LoginButton (at LoginView.tsx:12)',
+          `> [Open on dev server](${ORIGIN}/session/start?tab=general#bai=v3.c_aaaaaa2.PAYLOAD1)`,
+          '<!-- bai-review v3 id=c_aaaaaa2 pr=9330 at=2026-08-31T09:00:00Z -->',
+        ].join('\n'),
+      );
+    });
+
+    it('keeps the app fragment the pin was made under', () => {
+      expect(
+        buildSetText([{ ...first(), appHash: 'tab=logs' }], { origin: ORIGIN }),
+      ).toContain(
+        `> [Open on dev server](${ORIGIN}/session/start?tab=general#tab=logs&bai=v3.c_aaaaaa2.PAYLOAD1)`,
+      );
+    });
+
+    it('is one blockquote, with nothing separating it from itself', () => {
+      const html = buildSetHtml([first()], { origin: ORIGIN });
+      expect(html).not.toContain('<p></p>');
+      expect(html).toBe(
+        [
+          '<p>The label is cut off.</p>',
+          '<blockquote>📍 <b>Sessions › login-button › button &quot;Login&quot;</b> · <code>c_aaaaaa2</code>' +
+            '<br>⚛️ in LoginButton (at LoginView.tsx:12)' +
+            `<br><a href="${ORIGIN}/session/start?tab=general#bai=v3.c_aaaaaa2.PAYLOAD1">Open on dev server ↗</a>` +
+            '</blockquote>',
+          '<!-- bai-review v3 id=c_aaaaaa2 pr=9330 at=2026-08-31T09:00:00Z -->',
+        ].join('\n'),
+      );
+    });
+  });
+
+  describe('of three', () => {
+    const pins = () => [first(), second(), third()];
+    const HASH =
+      '#bai=v3.c_aaaaaa2.PAYLOAD1&bai=v3.c_bbbbbb3.PAYLOAD2&bai=v3.c_cccccc4.PAYLOAD3';
+    const URL = `${ORIGIN}/session/start?tab=general${HASH}`;
+    const OWN1 = `${ORIGIN}/session/start?tab=general#bai=v3.c_aaaaaa2.PAYLOAD1`;
+    const OWN2 = `${ORIGIN}/session/start?tab=general#bai=v3.c_bbbbbb3.PAYLOAD2`;
+    const OWN3 = `${ORIGIN}/start#bai=v3.c_cccccc4.PAYLOAD3`;
+
+    // A block is pasted on its own as often as the set is, and a block without
+    // a link carries no anchor at all — but the SET's link in every block is
+    // what made the comment grow as N².
+    it('gives every block its own link, and the set link once', () => {
+      const text = buildSetText(pins(), { origin: ORIGIN });
+      for (const own of [OWN1, OWN2, OWN3]) {
+        expect(text.split(`[Open on dev server](${own})`)).toHaveLength(2);
+      }
+      expect(
+        text.split(`[Open all 3 pins on dev server](${URL})`),
+      ).toHaveLength(2);
+    });
+
+    it('separates the markdown blocks with one blank line', () => {
+      const text = buildSetText(pins(), { origin: ORIGIN });
+      expect(text).toContain(
+        '<!-- bai-review v3 id=c_aaaaaa2 pr=9330 at=2026-08-31T09:00:00Z -->\n\nPlaceholder is stale.',
+      );
+      // A link's pin has no marker to close its block with.
+      expect(text).not.toContain('id=c_cccccc4');
+      expect(text.trimEnd().endsWith(')')).toBe(true);
+    });
+
+    it('renders the rich flavour verbatim', () => {
+      const href = URL.replace(/&/g, '&amp;');
+      expect(buildSetHtml(pins(), { origin: ORIGIN })).toBe(
+        [
+          '<p>The label is cut off.</p>',
+          '<blockquote>📍 <b>Sessions › login-button › button &quot;Login&quot;</b> · <code>c_aaaaaa2</code>' +
+            '<br>⚛️ in LoginButton (at LoginView.tsx:12)' +
+            `<br><a href="${OWN1}">Open on dev server ↗</a>` +
+            '</blockquote>',
+          '<!-- bai-review v3 id=c_aaaaaa2 pr=9330 at=2026-08-31T09:00:00Z -->',
+          '<p></p>',
+          '<p>Placeholder is stale.</p>',
+          '<blockquote>📍 <b>Sessions › filter-row › input &quot;Search&quot;</b> · <code>c_bbbbbb3</code>' +
+            `<br><a href="${OWN2}">Open on dev server ↗</a>` +
+            '</blockquote>',
+          '<!-- bai-review v3 id=c_bbbbbb3 pr=9330 at=2026-08-31T09:01:00Z -->',
+          '<p></p>',
+          '<blockquote>📍 <b>Start › page-start › button</b> · <code>c_cccccc4</code>' +
+            '<br>⚛️ in StartPage' +
+            `<br><a href="${OWN3}">Open on dev server ↗</a>` +
+            '</blockquote>',
+          `<p><a href="${href}">Open all 3 pins on dev server ↗</a></p>`,
+        ].join('\n'),
+      );
+    });
+
+    // `@github/paste-markdown` rewrites an HTML anchor whose text it finds in
+    // the plain flavour; the ↗ keeps the set link out of its reach too.
+    it('keeps the rich set label out of the markdown flavour', () => {
+      const text = buildSetText(pins(), { origin: ORIGIN });
+      expect(text).not.toContain('Open all 3 pins on dev server ↗');
+    });
+
+    // The link de-duplicates by id, so the blocks must too — two blocks for
+    // one link part is two markers claiming one pin.
+    it('emits a pin once, however often it was added', () => {
+      const text = buildSetText([first(), second(), first()], {
+        origin: ORIGIN,
+      });
+      expect(text.split('📍')).toHaveLength(3);
+      expect(text.match(/id=c_aaaaaa2 /g)).toHaveLength(1);
+      // Once in its own block's link, once in the set link at the end.
+      expect(text.split('bai=v3.c_aaaaaa2.PAYLOAD1')).toHaveLength(3);
+      expect(
+        buildSetHtml([first(), second(), first()], { origin: ORIGIN }).split(
+          '<p></p>',
+        ),
+      ).toHaveLength(2);
+    });
+  });
+
+  /**
+   * Repeating the set's own URL — which grows with N — in each of the N blocks
+   * made the comment quadratic: 30 pins came to 371 KB, and GitHub refuses a
+   * body over 65,536 characters from about 12 pins on. One link per block plus
+   * one set link is linear, so the D9 cap of 30 is a size the reviewer can
+   * actually paste.
+   */
+  describe('grows linearly with the number of pins', () => {
+    const B64 = 'P'.repeat(380);
+    const many = (count: number): SetPin[] =>
+      Array.from({ length: count }, (_unused, i) => ({
+        ...first(),
+        id: `c_${'abcdefg'.slice(0, 6)}${i.toString(36)}`,
+        anchorB64: `${B64}${i}`,
+      }));
+    const size = (count: number) =>
+      buildSetText(many(count), { origin: ORIGIN }).length;
+
+    it('fits a full set in a GitHub comment body', () => {
+      expect(many(MAX_SET_PINS)).toHaveLength(30);
+      expect(size(MAX_SET_PINS)).toBeLessThan(65536);
+      expect(
+        buildSetHtml(many(MAX_SET_PINS), { origin: ORIGIN }).length,
+      ).toBeLessThan(65536);
+    });
+
+    it('doubles, not quadruples, when the set doubles', () => {
+      // Quadratic growth put this ratio near 4; the constant term keeps it
+      // just under 2 here, and the bound catches any return to N².
+      expect(size(20) / size(10)).toBeLessThan(2.2);
+    });
+  });
+});
+
+describe('the marker a block may not claim', () => {
+  const base = {
+    label: 'Sessions › login-button › button "Login"',
+    id: 'c_abcdefg',
+    stack: [],
+    text: '',
+    url: 'https://dev.test/#bai=v3.c_abcdefg.PAYLOAD1',
+    pr: 0,
+    at: '',
+    marker: false,
+  };
+
+  // The id hashes from `pr` + anchor + `at`; a fabricated marker would name
+  // an id that does not verify against itself.
+  it('is left off both flavours when the pin has no pr/at of its own', () => {
+    expect(buildBlockText(base)).not.toContain('<!-- bai-review');
+    expect(buildBlockHtml(base)).not.toContain('<!-- bai-review');
+  });
+});
+
+/**
+ * The write side used to drop the app's own fragment while the read side kept
+ * it, so a copy made on `#tab=logs` reopened on the wrong tab. One builder now,
+ * and it is the read side's behaviour that survived.
+ */
+describe('the link a fresh pick copies', () => {
+  const build = async (appHash?: string) => {
+    document.body.innerHTML = '<button id="go">Login</button>';
+    const capture = await captureForBlock(
+      captureAnchorSignals(document.querySelector('#go') as Element),
+      [],
+    );
+    return buildBlockFromCapture(capture, {
+      text: '',
+      pr: 9330,
+      routeLabel: 'Sessions',
+      at: '2026-08-31T09:00:00Z',
+      origin: 'https://dev.test',
+      appHash,
+    });
+  };
+
+  it('keeps the fragment it was handed', async () => {
+    const built = await build('#tab=logs');
+    expect(built.url).toBe(
+      `https://dev.test/#tab=logs&bai=v3.${built.id}.${built.anchorB64}`,
+    );
+  });
+
+  it('reads the live fragment otherwise, without the pin already in it', async () => {
+    history.replaceState({}, '', '/#tab=logs&bai=v3.c_zdv3rhz.QUJDREVGR0g');
+    try {
+      const built = await build();
+      expect(built.url).toBe(
+        `https://dev.test/#tab=logs&bai=v3.${built.id}.${built.anchorB64}`,
+      );
+    } finally {
+      history.replaceState({}, '', '/');
+    }
   });
 });
