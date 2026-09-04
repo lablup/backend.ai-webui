@@ -160,3 +160,71 @@ column was missed on the first pass. Scan structurally instead: a
 
 A column that *has* a `dataIndex` is already correct — its `render` receives the
 field value first, as it always did. Nothing to change.
+
+---
+
+## 3. An Astryx slot prop typed `string` is usually a **type**-level constraint, not a structural one — check the render before declaring a capability lost
+
+**Status:** ratified 2026-08-13 (user direction, after the same mistake twice in one day).
+**Applied in:** `VFolderNodeDescriptionV2.tsx` (FR-3517, `MetadataListItem.label`),
+`ResourceAllocationFormItems.tsx` (FR-3531, `SegmentedControlItem.label`).
+
+### The trap
+
+`astryx component <Name>` prints `label | string`, so a composition that needs a
+node there — a copy button beside a metadata label, a help tooltip after a
+segment label — looks impossible, and gets written up as "Astryx forces this".
+It twice produced a PR body claiming a structural constraint that does not exist.
+
+Most of these props are rendered straight through as JSX children:
+
+```tsx
+// @astryxdesign/core/src/MetadataList/MetadataListItem.tsx:158
+{label}
+// @astryxdesign/core/src/SegmentedControl/SegmentedControlItem.tsx:254
+{!isLabelHidden && <span>{label}</span>}
+```
+
+Nothing coerces them, so a `ReactNode` renders correctly today.
+
+### The check that decides it
+
+Read the component source in `react/node_modules/@astryxdesign/core/src/`, and
+ask **where the prop actually lands**:
+
+| Where the prop goes | ReactNode? |
+|---|---|
+| Only `{prop}` as a JSX child | **Safe.** |
+| Also into an attribute (`aria-label={prop}`, `title=`, `alt=`, `placeholder=`) **conditionally** | Safe **only** on the branch that renders it as a child. `SegmentedControlItem` uses `aria-label={isLabelHidden ? label : undefined}` — safe because the call site does not set `isLabelHidden`. Assert that condition, don't assume it. |
+| Into an attribute **unconditionally** | **Unsafe** — React stringifies it. `Layout*`, `Breadcrumbs`, `Pagination`, `Outline`, `ContextMenu`, `CommandPalette` all do `aria-label={label}`. |
+
+Measured 2026-08-13 over `@astryxdesign/core@0.3.0`: **72** `string`-typed
+`label`/`title`/`description`/… props are rendered as children, **39** of them
+with no attribute path at all. So the answer is "check", not "no".
+
+### How to pass it
+
+Not a cast at every call site. Put it behind one wrapper, per
+`.claude/rules/component-props-extension.md`:
+
+```tsx
+export interface BAIFooProps extends Omit<FooProps, 'label'> {
+  label?: ReactNode;
+}
+```
+
+and cast once inside. The wrapper header carries the one-line reason (the prop
+is typed `string` but rendered as a child), not the investigation.
+
+### Two things to verify after using it
+
+1. **The accessible name.** The element's name now comes from its rendered
+   content, so anything you add joins it. Check with a role-based query
+   (`getByRole('radio', { name: '…' })`) that the name is still what it was.
+2. **Sorting / comparison code.** A `string` label may be fed to `localeCompare`
+   or used as a React key somewhere upstream. Grep before widening.
+
+### Upstream
+
+These props want to be `ReactNode` in Astryx itself wherever there is no
+attribute path. Worth reporting rather than carrying wrappers forever.
