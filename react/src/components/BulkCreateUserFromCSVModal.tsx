@@ -979,8 +979,8 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       centered
       destroyOnHidden
       title={
-        <BAIFlex align="center" gap="xs">
-          <Heading level={5}>{t('credential.BulkCreateUserFromCSV')}</Heading>
+        <BAIFlex align="center" gap="xxs">
+          {t('credential.BulkCreateUserFromCSV')}
           <BAIQuestionIconWithTooltip
             title={t('credential.BulkCreateUserFromCSVSubtitle')}
           />
@@ -1038,10 +1038,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           flexShrink: 0,
           borderRight: `1px solid ${token.colorBorderSecondary}`,
           overflowY: 'auto',
-          // The modal body already supplies vertical padding (BAIModal sets
-          // paddingTop/Bottom to paddingMD); only add the matching horizontal
-          // padding here so the content sits evenly inset on all sides.
-          padding: token.paddingMD,
+          // The modal body is already inset on all four sides by Astryx
+          // `LayoutContent`; only the gutter before the divider is ours.
+          paddingRight: token.paddingMD,
         }}
       >
         {/* ── Source file section ── */}
@@ -1322,7 +1321,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           flex: 1,
           minWidth: 0,
           overflowY: 'auto',
-          padding: token.paddingMD,
+          paddingLeft: token.paddingMD,
         }}
       >
         <BAIFlex align="center" gap="xs">
