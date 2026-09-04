@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 317 / 462 features covered (68%)**
+**Overall (in-scope routes): 316 / 462 features covered (68%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -34,7 +34,7 @@
 | Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                                    |    22    |   15    | 🔶 68%  |
+| User Credentials         | `/credential`                                    |    22    |   14    | 🔶 64%  |
 | Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
@@ -737,7 +737,7 @@
 | Bulk create single user                                  | ✅     | `Admin can bulk create a single user`                                                                                       |
 | Bulk create modal open/cancel                            | ✅     | `Admin can open bulk create modal from dropdown` / `Admin can cancel bulk user creation`                                    |
 | Bulk create users from CSV (client-side validation)      | ✅     | `bulk-create-from-csv.spec.ts` (preview stats + submit enable/disable)                                                      |
-| Bulk create users from CSV → real submit + purge cleanup | ✅     | `bulk-create-from-csv-submit.spec.ts` (creates users on backend, then deactivates + purges)                                 |
+| Bulk create users from CSV → real submit + purge cleanup | 🚧     | Skipped: `bulk-create-from-csv-submit.spec.ts` (backend `permissions.operation` column missing)                             |
 | Update user → UserSettingModal                           | ✅     | `Admin can update user information`                                                                                         |
 | Deactivate user                                          | ✅     | `Admin can deactivate a user`                                                                                               |
 | Reactivate user                                          | ✅     | `Admin can reactivate an inactive user`                                                                                     |
@@ -764,7 +764,7 @@
 | Edit keypair → KeypairSettingModal             | ❌     | -                                                     |
 | SSH key management → SSHKeypairManagementModal | ❌     | -                                                     |
 
-**Coverage: 🔶 15/22 features**
+**Coverage: 🔶 14/22 features (1 skipped — the bulk-create-from-CSV submit path fails server-side on a missing `permissions.operation` column)**
 
 ---
 
