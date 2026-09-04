@@ -77,6 +77,12 @@ declare global {
   }
 }
 
+/** One copy, two flavours: a markdown textarea and a rich editor. */
+export interface CopyPayload {
+  text: string;
+  html: string;
+}
+
 /** `/__review/state` — the write side needs the PR number and the repo root. */
 export interface ReviewServerState {
   pr: number | null;

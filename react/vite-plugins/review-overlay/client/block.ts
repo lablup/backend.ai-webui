@@ -223,13 +223,17 @@ export interface BuiltBlock {
   at: string;
 }
 
+/** The block's `at`: an ISO instant, truncated to whole seconds. */
+export const blockStamp = (): string =>
+  new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+
 /** The sync half: safe to call inside the keydown/click that copies. */
 export function buildBlockFromCapture(
   capture: AnchorCapture,
   options: BlockRenderOptions,
 ): BuiltBlock {
   const { anchor, anchorB64 } = capture;
-  const at = options.at ?? new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+  const at = options.at ?? blockStamp();
   const id = pinId(options.pr, anchorB64, at);
   const q = anchor.q ? `?${anchor.q}` : '';
   const origin = options.origin ?? location.origin;
