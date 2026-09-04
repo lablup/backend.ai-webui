@@ -280,6 +280,28 @@ describe('a set that spans pages', () => {
     expect(node('.card.found .count')?.textContent).toBe('2 / 2');
   });
 
+  // Only the page the app is on publishes a route label, so a pin from another
+  // page can be named at all only by the label it was stamped with.
+  it('names an off-page pin by the route its own label leads with', async () => {
+    seed([
+      storedPin(A, 'create', {
+        anchor: {
+          v: 3,
+          s: '[data-testid="create"]',
+          p: '/project/a한국어가능_cde/start',
+          tag: 'button',
+        },
+        label: 'Start › page-start › button "Create"',
+      }),
+    ]);
+
+    await bootOn('');
+
+    const away = dockRows()[0];
+    expect(away.classList.contains('away')).toBe(true);
+    expect(away.querySelector('.where')?.textContent).toBe('Start');
+  });
+
   // The row is the only thing an off-page pin has, and "/" is not a difference.
   it('names the missing query on a pin whose page differs only by it', async () => {
     seed([storedPin(A, 'create')]);
