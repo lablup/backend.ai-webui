@@ -3673,6 +3673,7 @@
       "DarkModeLogoDesc": "Đặt hình ảnh dùng làm logo WebUI ở Chế độ Tối.",
       "DetailLogoCustomizationDesc": "Tùy chỉnh logo cho các khu vực cụ thể như trang đăng nhập. Nếu không được đặt, hình ảnh logo mặc định sẽ được sử dụng. Khi sử dụng hình ảnh mặc định, logo của từng chế độ được áp dụng ngược lại để tăng độ tương phản màu sắc.",
       "FailedToReadFile": "Không thể đọc tệp. Vui lòng thử lại.",
+      "FallbackFollowsItem": "Chưa đặt giá trị nên hình ảnh {{item}} được sử dụng.",
       "Image": "Ảnh",
       "ImagePath": "Đường dẫn",
       "LightModeCollapsedLogo": "Logo thanh bên thu gọn (chế độ sáng)",

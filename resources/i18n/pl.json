@@ -3674,6 +3674,7 @@
       "DarkModeLogoDesc": "Ustaw obraz używany jako logo WebUI w trybie ciemnym.",
       "DetailLogoCustomizationDesc": "Dostosuj loga dla określonych obszarów, takich jak strona logowania. Jeśli nie ustawiono, używany jest domyślny obraz logo. Gdy używany jest obraz domyślny, logo każdego trybu jest stosowane odwrotnie dla kontrastu kolorów.",
       "FailedToReadFile": "Nie udało się odczytać pliku. Spróbuj ponownie.",
+      "FallbackFollowsItem": "Nie ustawiono wartości, więc używany jest obraz „{{item}}”.",
       "Image": "Obraz",
       "ImagePath": "Ścieżka",
       "LightModeCollapsedLogo": "Logo zwiniętego paska bocznego (tryb jasny)",

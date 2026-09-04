@@ -3675,6 +3675,7 @@
       "DarkModeLogoDesc": "Tetapkan gambar yang digunakan sebagai logo WebUI untuk Mode Gelap.",
       "DetailLogoCustomizationDesc": "Sesuaikan logo untuk area tertentu seperti halaman login. Jika tidak diatur, gambar logo default akan digunakan. Ketika gambar default digunakan, logo setiap mode diterapkan secara terbalik untuk kontras warna.",
       "FailedToReadFile": "Gagal membaca file. Silakan coba lagi.",
+      "FallbackFollowsItem": "Tidak ada nilai yang diatur, sehingga gambar {{item}} digunakan.",
       "Image": "Image",
       "ImagePath": "Jalur",
       "LightModeCollapsedLogo": "Logo Sidebar (saat diperkecil, mode terang)",

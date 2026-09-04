@@ -3673,6 +3673,7 @@
       "DarkModeLogoDesc": "Bild für das WebUI-Logo im Dunkelmodus festlegen",
       "DetailLogoCustomizationDesc": "Logos für bestimmte Bereiche wie die Anmeldeseite anpassen. Falls nicht festgelegt, wird das Standard-Logo-Bild verwendet. Wenn das Standard-Bild verwendet wird, wird das Logo des jeweiligen Modus für den Farbkontrast invertiert angewendet.",
       "FailedToReadFile": "Datei konnte nicht gelesen werden. Bitte versuchen Sie es erneut.",
+      "FallbackFollowsItem": "Kein Wert festgelegt, daher wird das Bild „{{item}}“ verwendet.",
       "Image": "Image",
       "ImagePath": "Pfad",
       "LightModeCollapsedLogo": "Eingeklapptes Sider-Logo (Hellmodus)",

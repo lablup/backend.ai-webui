@@ -18,6 +18,7 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';
+import { resolveDetailLogoSrc } from '../helper/logoSource';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
@@ -207,13 +208,11 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           >
             <img
               src={
-                isDarkMode
-                  ? rawThemeConfig?.branding?.logo?.loginLogoSrcDark ||
-                    rawThemeConfig?.branding?.logo?.src ||
-                    'manifest/backend.ai-text-bgdark.svg'
-                  : rawThemeConfig?.branding?.logo?.loginLogoSrc ||
-                    rawThemeConfig?.branding?.logo?.srcDark ||
-                    'manifest/backend.ai-text.svg'
+                resolveDetailLogoSrc(
+                  rawThemeConfig?.branding?.logo,
+                  'login',
+                  isDarkMode ? 'dark' : 'light',
+                ).src
               }
               alt={rawThemeConfig?.branding?.logo?.alt || 'backend.ai'}
               style={{

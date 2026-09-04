@@ -3671,6 +3671,7 @@
       "DarkModeLogoDesc": "Aseta kuva, jota käytetään WebUI:n tumman tilan logona.",
       "DetailLogoCustomizationDesc": "Mukauta logoja tietyille alueille, kuten kirjautumissivulle. Jos ei asetettu, käytetään oletuslogokuvaa. Kun oletuskuvaa käytetään, kunkin tilan logo sovelletaan käänteisesti värikontrastin varmistamiseksi.",
       "FailedToReadFile": "Tiedoston lukeminen epäonnistui. Yritä uudelleen.",
+      "FallbackFollowsItem": "Arvoa ei ole asetettu, joten käytetään kuvaa {{item}}.",
       "Image": "Kuva",
       "ImagePath": "Polku",
       "LightModeCollapsedLogo": "Kutistuneen sivupalkin logo (vaalea tila)",

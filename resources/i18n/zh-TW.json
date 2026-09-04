@@ -3675,6 +3675,7 @@
       "DarkModeLogoDesc": "設定深色模式 WebUI 使用的 Logo 圖片。",
       "DetailLogoCustomizationDesc": "為登入頁面等特定區域自訂 Logo。若未設定，則使用預設 Logo 圖片。使用預設圖片時，各模式的 Logo 將反色套用以確保色彩對比度。",
       "FailedToReadFile": "無法讀取檔案，請再試一次。",
+      "FallbackFollowsItem": "未設定值，因此使用「{{item}}」圖片。",
       "Image": "映像檔",
       "ImagePath": "路徑",
       "LightModeCollapsedLogo": "收合側邊欄 Logo（淺色模式）",

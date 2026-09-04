@@ -3673,6 +3673,7 @@
       "DarkModeLogoDesc": "设置用于暗色模式下 WebUI 徽标的图像。",
       "DetailLogoCustomizationDesc": "为登录页面等特定区域自定义徽标。若未设置，则使用默认徽标图片。使用默认图片时，各模式的徽标将反色应用以确保色彩对比度。",
       "FailedToReadFile": "无法读取文件。请重试。",
+      "FallbackFollowsItem": "未设置值，因此使用“{{item}}”图片。",
       "Image": "镜像",
       "ImagePath": "路径",
       "LightModeCollapsedLogo": "折叠侧栏徽标（浅色模式）",
