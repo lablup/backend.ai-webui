@@ -1,6 +1,6 @@
 import type { SchemaIndex } from '../search/schema-sdl.js';
-import type { ResourceRef } from '../webui-path.js';
-import { resourcePath, webuiUrl } from '../webui-path.js';
+import type { ListResource, ResourceRef } from '../webui-path.js';
+import { listPath, resourcePath, webuiUrl } from '../webui-path.js';
 
 /** Resource kinds a GraphQL result can be deep-linked to. */
 export type LinkedResource = Extract<
@@ -41,6 +41,37 @@ export const RESOURCE_BY_TYPE: Readonly<Record<string, LinkedResource>> = {
 };
 
 /**
+ * GraphQL type name -> the list page its rows live on, for resources whose page
+ * carries **no** per-row URL param. Consulted only when `RESOURCE_BY_TYPE` has
+ * no row link to give, and it yields ONE link per root field, not per row.
+ */
+export const LIST_RESOURCE_BY_TYPE: Readonly<Record<string, ListResource>> = {
+  // users — /admin/users?tab=users
+  User: 'user',
+  UserNode: 'user',
+  UserV2: 'user',
+  // keypairs — /admin/users?tab=credentials
+  KeyPair: 'keypair',
+  // agents — /admin/agent?tab=agents
+  Agent: 'agent',
+  AgentNode: 'agent',
+  AgentV2: 'agent',
+  // resource groups — /admin/agent?tab=resourceGroup
+  ScalingGroup: 'resource_group',
+  ResourceGroup: 'resource_group',
+  // projects (called groups on the Graphene subgraph) — /admin/project
+  Group: 'project',
+  GroupNode: 'project',
+  ProjectV2: 'project',
+  // resource presets — /admin/environment?tab=preset
+  ResourcePreset: 'resource_preset',
+  ResourcePresetV2: 'resource_preset',
+  // images — /admin/environment, whose default tab is the image list
+  Image: 'environment',
+  ImageNode: 'environment',
+};
+
+/**
  * Id fields checked on a node, in **preference** order. `row_id` first: the
  * WebUI pages take the raw UUID, not the base64 Relay global id that `id`
  * carries. (The truncator protects the same names — see `UNCUTTABLE_KEYS` —
@@ -51,8 +82,9 @@ export const ID_FIELDS = ['row_id', 'endpoint_id', 'id'] as const;
 export interface QueryLink {
   /** JSON path of the annotated node inside `data.result`. */
   path: string;
-  resource: LinkedResource;
-  id: string;
+  resource: LinkedResource | ListResource;
+  /** Absent on a list link: the page has no per-row URL param to carry. */
+  id?: string;
   webui_path: string;
   webui_url?: string;
 }
@@ -67,31 +99,67 @@ const namedFieldType = (
     ?.fields.find((field) => field.name === fieldName)?.namedType;
 
 /**
- * The resource a root field's rows belong to, unwrapping the one level of
- * container the schema uses: a Relay `*Connection` (`edges { node }`) or a
- * Graphene `*List` (`items`).
+ * The row types a root field can resolve to, in match order: the field's own
+ * type, then the one container level the schema uses — a Graphene `*List`
+ * (`items`), a Relay `*Connection` (`edges { node }`), or a single-field
+ * Strawberry `*Payload`, which is unambiguous enough to unwrap.
  */
+function rowTypeCandidates(
+  schema: SchemaIndex,
+  rootTypeName: 'Query' | 'Mutation',
+  fieldName: string,
+): string[] {
+  const named = namedFieldType(schema, rootTypeName, fieldName);
+  if (!named) return [];
+  const candidates = [named];
+
+  const items = namedFieldType(schema, named, 'items');
+  if (items) candidates.push(items);
+
+  const edges = namedFieldType(schema, named, 'edges');
+  const node = edges ? namedFieldType(schema, edges, 'node') : undefined;
+  if (node) candidates.push(node);
+
+  const only = schema.byName.get(named)?.fields;
+  if (only?.length === 1) candidates.push(only[0].namedType);
+
+  return candidates;
+}
+
+const lookupRootField = <T>(
+  table: Readonly<Record<string, T>>,
+  schema: SchemaIndex,
+  rootTypeName: 'Query' | 'Mutation',
+  fieldName: string,
+): T | undefined => {
+  for (const candidate of rowTypeCandidates(schema, rootTypeName, fieldName)) {
+    const hit = table[candidate];
+    if (hit) return hit;
+  }
+  return undefined;
+};
+
+/** The resource a root field's rows deep-link to, one row per link. */
 export function resourceForRootField(
   schema: SchemaIndex,
   rootTypeName: 'Query' | 'Mutation',
   fieldName: string,
 ): LinkedResource | undefined {
-  const named = namedFieldType(schema, rootTypeName, fieldName);
-  if (!named) return undefined;
-  const direct = RESOURCE_BY_TYPE[named];
-  if (direct) return direct;
+  return lookupRootField(RESOURCE_BY_TYPE, schema, rootTypeName, fieldName);
+}
 
-  const items = namedFieldType(schema, named, 'items');
-  if (items && RESOURCE_BY_TYPE[items]) return RESOURCE_BY_TYPE[items];
-
-  const edges = namedFieldType(schema, named, 'edges');
-  const node = edges ? namedFieldType(schema, edges, 'node') : undefined;
-  if (node && RESOURCE_BY_TYPE[node]) return RESOURCE_BY_TYPE[node];
-
-  // Strawberry mutations return a single-field `*Payload` wrapper around the
-  // thing they made, so one field is unambiguous enough to unwrap.
-  const only = schema.byName.get(named)?.fields;
-  return only?.length === 1 ? RESOURCE_BY_TYPE[only[0].namedType] : undefined;
+/** The list page a root field's rows live on, when they have no detail page. */
+export function listResourceForRootField(
+  schema: SchemaIndex,
+  rootTypeName: 'Query' | 'Mutation',
+  fieldName: string,
+): ListResource | undefined {
+  return lookupRootField(
+    LIST_RESOURCE_BY_TYPE,
+    schema,
+    rootTypeName,
+    fieldName,
+  );
 }
 
 const refFor = (resource: LinkedResource, id: string): ResourceRef =>
@@ -178,7 +246,31 @@ export const survivingLinks = (
   links.filter((link) => valueAtPath(truncatedResult, link.path) !== undefined);
 
 /**
- * Annotates each root field of a result whose return type maps to a page.
+ * The list-page link for one root field. Carries no `id` and annotates no row:
+ * the page it points at addresses no single row.
+ */
+export function listLink(
+  resource: ListResource,
+  rootPath: string,
+  webuiOrigin: string | undefined,
+): QueryLink {
+  const path = listPath(resource);
+  return {
+    path: rootPath,
+    resource,
+    webui_path: path,
+    ...(webuiOrigin ? { webui_url: webuiUrl(webuiOrigin, path) } : {}),
+  };
+}
+
+const isEmptyRootField = (value: unknown): boolean =>
+  value === null ||
+  value === undefined ||
+  (Array.isArray(value) && value.length === 0);
+
+/**
+ * Annotates each root field of a result whose return type maps to a page: one
+ * link per row where the page addresses rows, else one link to the list page.
  * Root fields with no mapping are left untouched.
  */
 export function annotateResult(
@@ -193,8 +285,14 @@ export function annotateResult(
     result as Record<string, unknown>,
   )) {
     const resource = resourceForRootField(schema, rootTypeName, field);
-    if (!resource) continue;
-    links.push(...annotateLinks(value, resource, field, webuiOrigin));
+    if (resource) {
+      links.push(...annotateLinks(value, resource, field, webuiOrigin));
+      continue;
+    }
+    const listResource = listResourceForRootField(schema, rootTypeName, field);
+    if (listResource && !isEmptyRootField(value)) {
+      links.push(listLink(listResource, field, webuiOrigin));
+    }
   }
   return links;
 }

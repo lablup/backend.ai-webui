@@ -39,3 +39,13 @@ export function compareVersions(a: string, b: string): number {
   }
   return 0;
 }
+
+/**
+ * The release a pre-release belongs to: `26.8.0rc1` -> `26.8.0`. A version
+ * with no trailing pre-release run comes back unchanged.
+ */
+export function baseRelease(version: string): string {
+  const trimmed = version.trim();
+  const match = /^(\d+(?:[._-]\d+)*)[._-]?[a-z][a-z0-9._-]*$/i.exec(trimmed);
+  return match ? match[1] : trimmed;
+}

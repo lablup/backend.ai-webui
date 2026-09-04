@@ -73,13 +73,13 @@ export function renderAgentBlock(
       ? [
           'Agent-facing CLI over a synced Backend.AI WebUI data checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.',
           `CLI: \`${CLI_NAME} <cmd>\` (npm: \`npm i -g backend.ai-agent-cli\`). \`${CLI_NAME} init\` records the endpoint, syncs the data for that manager's version and installs this skill; \`${CLI_NAME} sync\` refreshes the data.`,
-          `Preflight, answer-or-link rules and a ready-to-run query cookbook: the \`${CLI_NAME}\` skill (\`${skillPath}\`).`,
+          `Preflight, answer-or-link rules and a ready-to-run query cookbook: the \`${CLI_NAME}\` skill (\`${skillPath}\`), cookbook at \`${skillPath.replace(/SKILL\.md$/, '')}references/query-cookbook.md\`.`,
         ]
       : [
           'Agent-facing CLI over this checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.',
           `CLI: run every command as \`${PROXY} <cmd>\` from the repository root (shown below as \`${CLI_NAME} ...\`).`,
           `The proxy runs the bundle, so build it first: \`${BUILD}\`. Without the proxy, still from the repository root: \`${DIST} <cmd>\`.`,
-          `Preflight, answer-or-link rules and a ready-to-run query cookbook: the \`${CLI_NAME}\` skill, shipped with the CLI (\`packages/backend.ai-agent-cli/skill/SKILL.md\`) and installed per user by \`${PROXY} init --skill --no-login\`.`,
+          `Preflight, answer-or-link rules and a ready-to-run query cookbook: the \`${CLI_NAME}\` skill, shipped with the CLI (\`packages/backend.ai-agent-cli/skill/SKILL.md\`, cookbook at \`packages/backend.ai-agent-cli/skill/references/query-cookbook.md\`) and installed per user by \`${PROXY} init --skill --no-login\`.`,
         ]),
     '',
     "WORKFLOW — discover, don't guess. Before answering anything about Backend.AI data:",
@@ -89,6 +89,8 @@ export function renderAgentBlock(
     `4. \`${CLI_NAME} query '<document>'\` — ask the manager. Validated against the ${standalone ? 'synced' : "checkout's"} SDL before any network call. Rows come back carrying \`webui_path\` / \`webui_url\` under \`data.links\` — hand that to the user so they can open it themselves.`,
     '',
     `OUTPUT: \`--json\` prints one envelope on stdout — {"apiVersion":"${API_VERSION}","type":…,"data":…}; a failure prints {"apiVersion","error","code","suggestions?","hint?"} on stderr and nothing on stdout. Text is the same data as aligned \`key: value\` records. \`hint\` is a concrete next step — a command to run, or for a refused mutation, the WebUI page to do it on — never prose.`,
+    `\`query\` results: rows are at \`data.result.<rootField>\`, links at \`data.links[]\` (\`webui_path\` / \`webui_url\`); the same fields are also inlined on each linked row.`,
+    "Piping through `| head` hides the exit code and truncates doctor's alignment/session checks — read the JSON `code` field or the exit status instead.",
     `EXIT: ${exitLine()}.`,
     '',
     'RULES:',

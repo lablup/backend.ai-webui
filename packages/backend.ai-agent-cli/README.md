@@ -664,13 +664,13 @@ than blowing past it, and a row that does not survive drops out of
 
 ### WebUI links
 
-Every node whose root field returns a type with a resource page is annotated in
-place with `webui_path` (and `webui_url` when an origin is known), and the same
-set is listed in `data.links`. The origin is `--webui`, else the stored
+Every node whose root field returns a type with a **detail** page is annotated
+in place with `webui_path` (and `webui_url` when an origin is known), and the
+same set is listed in `data.links`. The origin is `--webui`, else the stored
 session's `webui` field; with neither, only `webui_path` is emitted.
 
-The type table (`src/query/links.ts`) is small and hand-maintained on purpose —
-an unrecognised type produces no link rather than a guessed one. One container
+The type tables (`src/query/links.ts`) are small and hand-maintained on purpose
+— an unrecognised type produces no link rather than a guessed one. One container
 level is unwrapped: a Relay `*Connection` (`edges { node }`), a Graphene `*List`
 (`items`), or a single-field Strawberry `*Payload`.
 
@@ -688,6 +688,30 @@ string. **Known limitation:** Strawberry types (`VFolder`, `SessionV2`, …)
 expose no `row_id`, so their annotation falls back to the base64 Relay global
 id, which the pages do not accept. Graphene `*Node` types, which do carry
 `row_id`, produce links that open.
+
+#### List-only resources
+
+Several pages list rows but address none of them — there is no per-row URL
+param to put in a link. A root field resolving to one of these gets **one**
+entry in `data.links` per root field, pointing at the list page, with no `id`
+and no annotation on the rows themselves. An empty or null root field gets no
+link at all.
+
+| Return type                          | Resource        | Page                             |
+| ------------------------------------ | --------------- | -------------------------------- |
+| `User`, `UserNode`, `UserV2`         | user            | `/admin/users?tab=users`         |
+| `KeyPair`                            | keypair         | `/admin/users?tab=credentials`   |
+| `Agent`, `AgentNode`, `AgentV2`      | agent           | `/admin/agent?tab=agents`        |
+| `ScalingGroup`, `ResourceGroup`      | resource_group  | `/admin/agent?tab=resourceGroup` |
+| `Group`, `GroupNode`, `ProjectV2`    | project         | `/admin/project`                 |
+| `ResourcePreset`, `ResourcePresetV2` | resource_preset | `/admin/environment?tab=preset`  |
+| `Image`, `ImageNode`                 | environment     | `/admin/environment`             |
+
+So `user_nodes`, `user_list`, `adminUsersV2` and friends all land on the users
+list; `resource_presets` and `adminResourcePresetsV2` on the environment page's
+preset tab; `scaling_groups` and `adminResourceGroups` on the resources page's
+resource-group tab; `groups`, `group_nodes`, `adminProjectsV2` and
+`domainProjectsV2` on the projects page.
 
 ### Path rules are restated, not imported
 

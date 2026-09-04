@@ -349,10 +349,101 @@ describe('webui link annotation', () => {
   });
 
   it('leaves an unmapped root field alone', async () => {
-    stubFetch({ data: { user: { email: 'a@b.c' } } });
+    stubFetch({ data: { domain: { name: 'default' } } });
 
     await expect(
-      run(['query', 'query { user { email } }', '--json']),
+      run(['query', 'query { domain(name: "default") { name } }', '--json']),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
+});
+
+describe('list-page links', () => {
+  it('points a user_nodes result at the users list page', async () => {
+    stubFetch({
+      data: {
+        user_nodes: {
+          edges: [
+            { node: { id: 'VXNlcjow', username: 'alice' } },
+            { node: { id: 'VXNlcjox', username: 'bob' } },
+          ],
+        },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { user_nodes(first: 2) { edges { node { id username } } } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    const data = jsonOut().data;
+    // One link per root field, not per row, and no id: the page addresses none.
+    expect(data.links).toEqual([
+      {
+        path: 'user_nodes',
+        resource: 'user',
+        webui_path: '/admin/users?tab=users',
+        webui_url: `${WEBUI}/admin/users?tab=users`,
+      },
+    ]);
+    expect(data.result.user_nodes.edges[0].node.webui_path).toBeUndefined();
+  });
+
+  it('points a resource_presets result at the environment preset tab', async () => {
+    stubFetch({ data: { resource_presets: [{ name: 'gpu-1' }] } });
+
+    await expect(
+      run(['query', 'query { resource_presets { name } }', '--json']),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'resource_presets',
+        resource: 'resource_preset',
+        webui_path: '/admin/environment?tab=preset',
+        webui_url: `${WEBUI}/admin/environment?tab=preset`,
+      },
+    ]);
+  });
+
+  it('covers the other list-only root fields the manual points at', async () => {
+    stubFetch({
+      data: {
+        agent_list: { items: [{ id: 'agent-1' }] },
+        scaling_groups: [{ name: 'default' }],
+        groups: [{ id: 'g-1' }],
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        `query {
+          agent_list(limit: 1, offset: 0) { items { id } }
+          scaling_groups { name }
+          groups { id }
+        }`,
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(
+      jsonOut().data.links.map((link: any) => [link.resource, link.webui_path]),
+    ).toEqual([
+      ['agent', '/admin/agent?tab=agents'],
+      ['resource_group', '/admin/agent?tab=resourceGroup'],
+      ['project', '/admin/project'],
+    ]);
+  });
+
+  it('emits no list link for a root field that came back empty', async () => {
+    stubFetch({ data: { resource_presets: [] } });
+
+    await expect(
+      run(['query', 'query { resource_presets { name } }', '--json']),
     ).resolves.toBe(EXIT.ok);
     expect(jsonOut().data.links).toEqual([]);
   });

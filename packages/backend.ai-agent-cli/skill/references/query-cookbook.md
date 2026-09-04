@@ -44,7 +44,10 @@ query Sessions($first: Int!, $filter: String) {
 
 `--var first=20`. Filter by status with `--var 'filter=status == "RUNNING"'`
 (the manager's filter DSL, not GraphQL). Rows carry `webui_path`
-`/session?sessionDetail=<row_id>`.
+`/session?sessionDetail=<row_id>`. A superadmin sees the whole cluster with
+no `scope_id` at all — the field is optional (add it to `compute_session_nodes`
+only to narrow to one domain/project/user), never required to see everyone
+else's sessions.
 
 ### 2. One session in full
 
@@ -75,8 +78,8 @@ row's `webui_url`).
 ### 3. Virtual folders — cursor mode (`first`)
 
 ```graphql
-query VFolders($first: Int!) {
-  vfolder_nodes(first: $first, order: "-created_at") {
+query VFolders($first: Int!, $filter: String) {
+  vfolder_nodes(first: $first, filter: $filter, order: "-created_at") {
     count
     edges {
       node {
@@ -96,7 +99,9 @@ query VFolders($first: Int!) {
 }
 ```
 
-`--var first=20`. Rows carry `webui_path` `/data?folder=<row_id>`.
+`--var first=20`. Narrow it with `--var 'filter=name == "my-folder"'` — every
+connection's `filter` argument is the manager's filter DSL **string**, not a
+GraphQL input object. Rows carry `webui_path` `/data?folder=<row_id>`.
 
 ## Serving
 
@@ -121,7 +126,9 @@ query Deployments($limit: Int!, $offset: Int!) {
 ```
 
 `--var limit=10 --var offset=0`. `limit` and `offset` are non-null here, so
-this connection has no cursor mode at all. Rows carry `webui_path`
+this connection has no cursor mode at all. `lifecycle_stage` comes back
+prefixed with its enum type name, e.g. `EndpointLifecycle.DESTROYED` — match
+on the suffix, not the raw string. Rows carry `webui_path`
 `/deployments/<endpoint_id>`.
 
 ## Cluster

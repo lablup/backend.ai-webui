@@ -658,14 +658,16 @@ const alignmentGroup: CheckGroup = {
     });
 
     const alignment = checkVersionAlignment(
-      { schema: loadSchema(context) },
+      { schema: loadSchema(context), ...(meta ? { schemaTag: meta.tag } : {}) },
       version.manager,
     );
     checks.push({
       group: 'alignment',
       check: 'verdict',
       status: alignment.aligned ? 'ok' : 'warn',
-      detail: `${alignment.summary} (${alignment.checked} marked entries compared)`,
+      detail: `${alignment.summary} (${alignment.checked} marked entries compared${
+        meta ? `, SDL synced from tag ${meta.tag}` : ''
+      })`,
       hint: alignment.hint,
     });
     return checks;

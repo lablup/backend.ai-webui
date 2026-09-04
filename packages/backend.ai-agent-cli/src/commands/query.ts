@@ -262,7 +262,14 @@ export const queryCommand = defineCommand<QueryData>({
         list(
           data.links.map(
             (link) =>
-              `${link.path} ${link.resource} ${link.id} ${link.webui_url ?? link.webui_path}`,
+              [
+                link.path,
+                link.resource,
+                link.id,
+                link.webui_url ?? link.webui_path,
+              ]
+                .filter(Boolean)
+                .join(' '),
           ),
         ),
       );

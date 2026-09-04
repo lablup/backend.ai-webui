@@ -179,7 +179,7 @@ bai-agent · 13 commands
 Agent-facing CLI over this checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.
 CLI: run every command as `pnpm run bai-agent <cmd>` from the repository root (shown below as `bai-agent ...`).
 The proxy runs the bundle, so build it first: `pnpm --filter backend.ai-agent-cli build`. Without the proxy, still from the repository root: `node packages/backend.ai-agent-cli/dist/cli.js <cmd>`.
-Preflight, answer-or-link rules and a ready-to-run query cookbook: the `bai-agent` skill, shipped with the CLI (`packages/backend.ai-agent-cli/skill/SKILL.md`) and installed per user by `pnpm run bai-agent init --skill --no-login`.
+Preflight, answer-or-link rules and a ready-to-run query cookbook: the `bai-agent` skill, shipped with the CLI (`packages/backend.ai-agent-cli/skill/SKILL.md`, cookbook at `packages/backend.ai-agent-cli/skill/references/query-cookbook.md`) and installed per user by `pnpm run bai-agent init --skill --no-login`.
 
 WORKFLOW — discover, don't guess. Before answering anything about Backend.AI data:
 1. `bai-agent doctor` — checkout and stored session in one pass; exit 0 means the environment is ok. Then `bai-agent whoami` — exit 3 means log in (see RULES).
@@ -188,6 +188,8 @@ WORKFLOW — discover, don't guess. Before answering anything about Backend.AI d
 4. `bai-agent query '<document>'` — ask the manager. Validated against the checkout's SDL before any network call. Rows come back carrying `webui_path` / `webui_url` under `data.links` — hand that to the user so they can open it themselves.
 
 OUTPUT: `--json` prints one envelope on stdout — {"apiVersion":"bai-agent/v1","type":…,"data":…}; a failure prints {"apiVersion","error","code","suggestions?","hint?"} on stderr and nothing on stdout. Text is the same data as aligned `key: value` records. `hint` is a concrete next step — a command to run, or for a refused mutation, the WebUI page to do it on — never prose.
+`query` results: rows are at `data.result.<rootField>`, links at `data.links[]` (`webui_path` / `webui_url`); the same fields are also inlined on each linked row.
+Piping through `| head` hides the exit code and truncates doctor's alignment/session checks — read the JSON `code` field or the exit status instead.
 EXIT: 0 ok · 1 error (schema_mismatch, version_mismatch, repo_not_found, repo_incomplete, internal) · 2 usage · 3 auth_required · 4 mutation_refused · 5 not_found.
 
 RULES:

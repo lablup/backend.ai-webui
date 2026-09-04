@@ -9,7 +9,7 @@ import {
   applyVersionAlignmentGate,
   checkVersionAlignment,
 } from './version-align.js';
-import { compareVersions } from './version-order.js';
+import { baseRelease, compareVersions } from './version-order.js';
 import { mkdtempSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -127,6 +127,21 @@ describe('compareVersions', () => {
   });
 });
 
+describe('baseRelease', () => {
+  it('strips a trailing pre-release run', () => {
+    expect(baseRelease('26.8.0rc1')).toBe('26.8.0');
+    expect(baseRelease('26.8.0a1')).toBe('26.8.0');
+    expect(baseRelease('26.8.0b2')).toBe('26.8.0');
+    expect(baseRelease('26.8.0.dev20260901')).toBe('26.8.0');
+    expect(baseRelease('26.8.0-rc.1')).toBe('26.8.0');
+  });
+
+  it('leaves a plain release alone', () => {
+    expect(baseRelease('26.8.0')).toBe('26.8.0');
+    expect(baseRelease('24.09.0')).toBe('24.09.0');
+  });
+});
+
 describe('checkVersionAlignment', () => {
   const schemaCtx = { schema: fakeSchema() };
 
@@ -170,6 +185,56 @@ describe('checkVersionAlignment', () => {
     expect(
       checkVersionAlignment(schemaCtx, '25.6.0', ['Nope.field']).checked,
     ).toBe(0);
+  });
+
+  it('counts a marker as present when the manager is its own pre-release', () => {
+    const alignment = checkVersionAlignment(schemaCtx, '26.9.0rc1', [
+      'SessionNode.future',
+    ]);
+    expect(alignment.newerCount).toBe(0);
+    expect(alignment.aligned).toBe(true);
+    expect(alignment.hint).toBeUndefined();
+  });
+
+  it('still flags a marker the manager release does not carry yet', () => {
+    const alignment = checkVersionAlignment(schemaCtx, '26.7.0', [
+      'SessionNode.future',
+    ]);
+    expect(alignment.newerCount).toBe(1);
+    expect(alignment.aligned).toBe(false);
+    expect(alignment.hint).toBe('bai-agent schema sync --tag 26.7.0');
+  });
+
+  it('reports a deprecation without calling the schema unaligned', () => {
+    const alignment = checkVersionAlignment(schemaCtx, '26.9.0', [
+      'SessionNode.gone',
+    ]);
+    expect(alignment.aligned).toBe(true);
+    expect(alignment.deprecatedCount).toBe(1);
+    expect(alignment.summary).toContain('deprecated by the manager');
+    expect(alignment.hint).toBeUndefined();
+  });
+
+  it("treats the SDL as the manager's own when the synced tag matches", () => {
+    const alignment = checkVersionAlignment(
+      { schema: fakeSchema(), schemaTag: '26.8.0rc1' },
+      '26.8.0rc1',
+    );
+    expect(alignment.aligned).toBe(true);
+    expect(alignment.newerCount).toBe(0);
+    expect(alignment.schemaTag).toBe('26.8.0rc1');
+    expect(alignment.hint).toBeUndefined();
+  });
+
+  it('never hints a re-sync of the tag the SDL already carries', () => {
+    // A manager older than the SDL's own tag: unaligned, but re-syncing that
+    // same tag is not the fix.
+    const alignment = checkVersionAlignment(
+      { schema: fakeSchema(), schemaTag: '25.6.0' },
+      '25.6.0',
+      ['SessionNode.future'],
+    );
+    expect(alignment.hint).toBeUndefined();
   });
 });
 
