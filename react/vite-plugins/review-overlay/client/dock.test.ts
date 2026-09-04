@@ -19,6 +19,7 @@ let toggled: number;
 let located: string[];
 let removed: string[];
 let unhidden: string[];
+let went: string[];
 
 const pin = (id: string, label: string): SetPin => ({
   id,
@@ -80,6 +81,7 @@ beforeEach(() => {
   located = [];
   removed = [];
   unhidden = [];
+  went = [];
   const host = document.createElement('div');
   document.body.append(host);
   root = host.attachShadow({ mode: 'open' });
@@ -91,6 +93,7 @@ beforeEach(() => {
     onRemove: (id) => removed.push(id),
     onUnhide: (id) => unhidden.push(id),
     onToggleCards: () => toggled++,
+    onGo: (id) => went.push(id),
   });
 });
 
@@ -652,6 +655,57 @@ describe('createSetDock', () => {
 
       expect(node('.setdock').style.left).toBe('');
       expect(node('.setdock').style.top).toBe('');
+    });
+  });
+
+  // A set spans pages, and an off-page pin has no card — the row is the only
+  // thing it has on screen.
+  describe('a pin on another page', () => {
+    const spread = () => {
+      dock.render(
+        [pin('c_a', 'Sessions › start'), pin('c_b', 'Start › create')],
+        new Map([['c_b', 'Start']]),
+      );
+    };
+
+    it('says what differs and offers to go there instead of scrolling', () => {
+      spread();
+
+      const away = rows()[1];
+      expect(away.classList.contains('away')).toBe(true);
+      expect(away.querySelector('.where')?.textContent).toBe('Start');
+      expect(away.querySelector('.go')).not.toBeNull();
+    });
+
+    it('leaves the rows on this page scrolling to their own pin', () => {
+      spread();
+
+      expect(rows()[0].classList.contains('away')).toBe(false);
+      expect(rows()[0].querySelector('.go')).toBeNull();
+
+      rows()[0].querySelector<HTMLButtonElement>('.rowlabel')?.click();
+
+      expect(located).toEqual(['c_a']);
+      expect(went).toEqual([]);
+    });
+
+    it('hands back the id of the row whose go was pressed', () => {
+      spread();
+
+      rows()[1].querySelector<HTMLButtonElement>('.go')?.click();
+
+      expect(went).toEqual(['c_b']);
+      expect(located).toEqual([]);
+    });
+
+    // Scrolling to a pin that is not on this page is not a thing to do.
+    it('goes there when the off-page row itself is clicked', () => {
+      spread();
+
+      rows()[1].querySelector<HTMLButtonElement>('.rowlabel')?.click();
+
+      expect(went).toEqual(['c_b']);
+      expect(located).toEqual([]);
     });
   });
 

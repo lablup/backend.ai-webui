@@ -130,10 +130,11 @@ describe('copying the whole comment off a deep link', () => {
       `> ⚛️ in CreateButton (at ${FILE})`,
       `> [Open on dev server](${location.origin}/#bai=v3.${ID}.${anchorB64})`,
     ]);
-    // `at` is this copy's own instant; the id is what carries the identity.
-    expect(lines[5]).toMatch(
-      new RegExp(`^<!-- bai-review v3 id=${ID} pr=42 at=\\S+ -->$`),
-    );
+    // No marker (D5): a link carries no `at`/`pr`, and a fabricated stamp
+    // would write a marker whose id hash does not verify. The link is the
+    // canonical carrier of a pin that came off one.
+    expect(lines).toHaveLength(5);
+    expect(written['text/plain']).not.toContain('<!-- bai-review');
   });
 
   it('writes the rich flavour too, so a Teams paste stays a quote', async () => {

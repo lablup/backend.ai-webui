@@ -33,11 +33,15 @@ export interface DockPos {
 }
 
 /**
- * Where a pin is, as far as the dock is concerned. `waiting` is this page with
- * the element not in the DOM right now — a closed modal, a collapsed section —
+ * Where a pin is, as far as the dock is concerned. `elsewhere` is another
+ * page — `where` is what differs about it. `waiting` is THIS page with the
+ * element not in the DOM right now — a closed modal, a collapsed section —
  * which is not the same as gone, and the row is what says so (R7.3).
  */
-export type PinPlace = { kind: 'here' } | { kind: 'waiting' };
+export type PinPlace =
+  | { kind: 'here' }
+  | { kind: 'elsewhere'; where: string }
+  | { kind: 'waiting' };
 
 /** Component names a reviewer would recognise as "the thing it was inside". */
 const DIALOGISH = /dialog|modal|drawer|sheet|popover/i;
@@ -132,11 +136,13 @@ const STYLE = `
   }
   /* Its card is hidden; the pin is still in the set and still on the page. */
   .setdock .row.off .rowlabel { opacity: 0.55; }
+  /* Its page is not this one; the row is all it has on screen. */
+  .setdock .row.away .rowlabel { color: var(--bai-review-text-dim); }
   /* Its page is this one; its element is not rendered right now. */
   .setdock .row.waiting .rowlabel { opacity: 0.55; }
-  /* Where that pin was — the row is the only thing it has on screen. */
+  /* Where that pin is, or was — the row is the only thing that can say. */
   .setdock .where {
-    flex: none; max-width: 55%; overflow: hidden; text-overflow: ellipsis;
+    flex: none; max-width: 50%; overflow: hidden; text-overflow: ellipsis;
     white-space: nowrap; font-size: 11px; color: var(--bai-review-text-dim);
   }
 ${ICON_STYLE}
@@ -156,6 +162,8 @@ export interface SetDockOptions {
   onUnhide: (id: string) => void;
   /** The header switch: every card off, or on again. */
   onToggleCards: () => void;
+  /** Open the whole set on that pin's own page — it is not on this one (D2). */
+  onGo?: (id: string) => void;
 }
 
 /**
@@ -355,9 +363,10 @@ export function createSetDock(options: SetDockOptions) {
   });
 
   /**
-   * `places` maps a pin to what the layer could do with it; anything missing
-   * is drawn here. `cardsHidden` is the switch's own state; each pin carries
-   * its own ✕.
+   * `places` says where each pin is; anything missing is drawn here. Those
+   * rows are the ONLY thing a pin the layer cannot draw has on screen, so an
+   * `elsewhere` one opens the set on its own page instead of scrolling.
+   * `cardsHidden` is the switch's own state; each pin carries its own ✕.
    */
   function render(
     pins: SetPin[],
@@ -390,14 +399,32 @@ export function createSetDock(options: SetDockOptions) {
         const note = rowNote(pin);
         label.textContent = note ? note.replace(/\s+/g, ' ') : pin.label;
         label.title = note || pin.label;
-        // The card comes back with the pin the reviewer just asked to see.
+        const place = places.get(pin.id);
+        const elsewhere =
+          place?.kind === 'elsewhere' ? place.where : undefined;
+        // The row is the control, and what it does is where its pin is: on
+        // this page, go to it; on another, open the set there.
         label.addEventListener('click', () => {
+          if (elsewhere !== undefined) return options.onGo?.(pin.id);
+          // The card comes back with the pin the reviewer asked to see.
           if (pin.hidden) options.onUnhide(pin.id);
           options.onLocate(pin.id);
         });
         row.append(idx, label);
-        const place = places.get(pin.id);
-        if (place?.kind === 'waiting') {
+        if (elsewhere !== undefined) {
+          row.classList.add('away');
+          const where = document.createElement('span');
+          where.className = 'where';
+          where.textContent = elsewhere;
+          where.title = elsewhere;
+          const go = button(
+            'go',
+            'external-link',
+            'Open the set on this pin’s page',
+          );
+          go.addEventListener('click', () => options.onGo?.(pin.id));
+          row.append(where, go);
+        } else if (place?.kind === 'waiting') {
           row.classList.add('waiting');
           const where = document.createElement('span');
           where.className = 'where';
