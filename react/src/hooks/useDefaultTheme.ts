@@ -3,6 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import {
+  APPEARANCE_SCHEMA_VERSION,
+  getStaticAppearanceConfig,
+} from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
 import { useRawCustomThemeConfig } from './useCustomThemeConfig';
 import * as _ from 'lodash-es';
@@ -10,13 +14,11 @@ import { useEffectEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
- * The *editable* default-theme document (the operator's `theme.json`
+ * The *editable* appearance document (the operator's `theme.json`
  * equivalent) backing the admin Branding page. Kept as a per-user draft in
  * localStorage (`custom_theme_config`) and applied through the theme preview
- * mode. Distinct from `useCustomThemeConfig().themeConfig`, which is the
- * site-applied config with the active family and custom primary color
- * resolved — the draft is seeded from the raw `theme.json` so an active theme
- * family never leaks into the edited default document.
+ * mode. Seeded from the shipped `theme.json`, not from the applied document,
+ * so the user's active family never leaks into the edited default.
  */
 export const useDefaultTheme = () => {
   'use memo';
@@ -28,12 +30,20 @@ export const useDefaultTheme = () => {
     'custom_theme_config',
   );
 
-  // Initialize the draft from theme.json on first load.
+  // Seed the draft from the SHIPPED document (never from `rawThemeConfig`:
+  // in preview mode that IS the draft, so reseeding from it would loop). A
+  // draft from before the v2 format (no schemaVersion) is reseeded rather
+  // than edited — its v1 paths no longer mean anything to the editor.
   // Note: useBAISettingUserState returns null (not undefined) when
   // localStorage has no value.
   const initializeDefaultTheme = useEffectEvent(() => {
-    if (_.isNil(defaultTheme) && !_.isNil(rawThemeConfig)) {
-      setDefaultTheme(_.cloneDeep(rawThemeConfig));
+    const shipped = getStaticAppearanceConfig();
+    if (
+      (_.isNil(defaultTheme) ||
+        defaultTheme.schemaVersion !== APPEARANCE_SCHEMA_VERSION) &&
+      !_.isNil(shipped)
+    ) {
+      setDefaultTheme(_.cloneDeep(shipped));
     }
   });
   useEffect(() => {
@@ -62,15 +72,17 @@ export const useDefaultTheme = () => {
 
   /**
    * Restore the whole draft (no args) or only the given paths to the shipped
-   * `theme.json` values.
+   * `theme.json` values. Reads the shipped document like the seed does — in
+   * preview mode `rawThemeConfig` IS the draft, which made Reset a no-op.
    */
   const resetDefaultTheme = (paths?: string[]) => {
+    const shipped = getStaticAppearanceConfig() ?? rawThemeConfig;
     if (!paths) {
-      setDefaultTheme(_.cloneDeep(rawThemeConfig));
+      setDefaultTheme(_.cloneDeep(shipped));
       return;
     }
     for (const path of paths) {
-      updateDefaultTheme(path, _.get(rawThemeConfig, path) ?? undefined);
+      updateDefaultTheme(path, _.get(shipped, path) ?? undefined);
     }
   };
 

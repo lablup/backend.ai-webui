@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { NotificationState } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import './BAINotificationListItem.css';
 import { Card } from '@astryxdesign/core/Card';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -25,7 +25,7 @@ const BAIGeneralNotificationItem: React.FC<{
   showDate?: boolean;
 }> = ({ notification, onClickAction, showDate }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [showExtraDescription, setShowExtraDescription] = useState(false);
 
   const explicitIcon = notification.icon === 'folder' ? <FolderIcon /> : null;
@@ -33,16 +33,18 @@ const BAIGeneralNotificationItem: React.FC<{
     explicitIcon ||
     (notification.backgroundTask &&
       {
-        pending: <Clock style={{ color: token.colorInfo }} size="1em" />,
+        pending: <Clock style={{ color: token('--color-info') }} size="1em" />,
         resolved: (
-          <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
+          <CircleCheck style={{ color: token('--color-success') }} size="1em" />
         ),
-        rejected: <CircleX style={{ color: token.colorError }} size="1em" />,
+        rejected: (
+          <CircleX style={{ color: token('--color-error') }} size="1em" />
+        ),
       }[notification.backgroundTask.status]) ||
     (notification.type === 'error' ? (
-      <CircleX style={{ color: token.colorError }} size="1em" />
+      <CircleX style={{ color: token('--color-error') }} size="1em" />
     ) : notification.type === 'success' ? (
-      <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
+      <CircleCheck style={{ color: token('--color-success') }} size="1em" />
     ) : null);
 
   return (
@@ -59,7 +61,7 @@ const BAIGeneralNotificationItem: React.FC<{
             align="start"
             gap={'xs'}
             style={{
-              paddingRight: token.paddingMD,
+              paddingRight: token('--spacing-5'),
             }}
           >
             {icon && <BAIFlex style={{ height: 22 }}>{icon}</BAIFlex>}
@@ -114,7 +116,9 @@ const BAIGeneralNotificationItem: React.FC<{
             {notification?.onCancel ? (
               <BAIFlex style={{ flexShrink: 0 }}>
                 {/* antd `Button type="link"` -> `Link` (MAPPING §3.3). */}
-                <Link onClick={notification.onCancel}>{t('button.Cancel')}</Link>
+                <Link onClick={notification.onCancel}>
+                  {t('button.Cancel')}
+                </Link>
               </BAIFlex>
             ) : null}
             {notification.extraDescription && !notification?.onCancel ? (
@@ -144,7 +148,7 @@ const BAIGeneralNotificationItem: React.FC<{
                 maxHeight: '300px',
                 overflow: 'auto',
                 overflowX: 'hidden',
-                marginTop: token.marginSM,
+                marginTop: token('--spacing-3'),
               }}
             >
               {_.isString(notification.extraDescription) ? (

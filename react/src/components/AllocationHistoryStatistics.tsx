@@ -10,10 +10,10 @@ import {
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
-import { theme } from '../theme-shim';
 import { Period } from './AllocationHistory';
 import './AllocationHistoryStatistics.css';
 import { Heading } from '@astryxdesign/core/Heading';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAICard, BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -88,7 +88,7 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
   height = 200,
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
 
   const formatValue = (value: number) => {
@@ -136,10 +136,7 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
         data={chartData}
         margin={{ top: 24, right: 16, bottom: 8, left: 8 }}
       >
-        <CartesianGrid
-          strokeDasharray="3 3"
-          stroke={token.colorBorderSecondary}
-        />
+        <CartesianGrid strokeDasharray="3 3" stroke={token('--color-border')} />
         <XAxis
           dataKey="index"
           type="number"
@@ -153,21 +150,21 @@ const UsageBarChart: React.FC<UsageBarChartProps> = ({
             value: displayUnit,
             position: 'top',
             offset: 12,
-            fill: token.colorTextDescription,
+            fill: token('--color-text-description'),
           }}
         />
         <ChartTooltip
           cursor={{
             fill: isDarkMode
-              ? token.colorFillSecondary
-              : token.colorFillTertiary,
+              ? token('--color-fill-secondary')
+              : token('--color-fill-tertiary'),
           }}
           labelFormatter={(i: number) => chartData[i]?.tooltipLabel ?? ''}
         />
         <Bar
           dataKey="value"
           name={displayUnit}
-          fill={token.colorPrimary}
+          fill={token('--color-accent')}
           isAnimationActive
           animationDuration={400}
           animationEasing="ease-out"

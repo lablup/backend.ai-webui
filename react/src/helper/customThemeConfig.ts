@@ -5,24 +5,40 @@
 import * as _ from 'lodash-es';
 
 /**
- * The antd `ThemeConfig` import is replaced by the slice this file's consumers
- * actually read out of `resources/theme.json`: the brand seed tokens (named
- * explicitly so they stay assignable to `BrandSeeds` in
- * `packages/backend.ai-ui/src/theme-shim`) plus the per-component override map.
- * The open `Record` keeps any other antd token the document carries — theme.json
- * is parsed from untyped JSON, so nothing in it is narrowed away.
+ * The v2 appearance document (FR-3605): `theme` carries what feeds the Astryx
+ * pipeline, `branding` the structural metadata no token can express. The same
+ * shape is shipped as `resources/theme.json`. Seed values follow Astryx
+ * `TokenValue` semantics: a string applies to both schemes, a `[light, dark]`
+ * tuple splits them. v1 (antd-shaped) documents are NOT readable — see the
+ * migration guide in the FR-3605 release notes.
  */
-export type ThemeConfig = {
-  token?: {
-    colorPrimary?: string;
-    colorLink?: string;
-    colorError?: string;
-    colorSuccess?: string;
-    colorWarning?: string;
-    colorInfo?: string;
-    fontFamily?: string;
-  } & Record<string, unknown>;
-  components?: Record<string, Record<string, unknown>>;
+export type BAIThemeSeedValue = string | [light: string, dark: string];
+
+export type BAIThemeSeeds = {
+  /** Brand accent (was antd `colorPrimary`). Also seeds the brand role. */
+  accent?: BAIThemeSeedValue;
+  /** Link color (was `colorLink`); rendered as `--color-link`. */
+  link?: BAIThemeSeedValue;
+  /** Info color (was `colorInfo`); also seeds the admin role accent. */
+  info?: BAIThemeSeedValue;
+  error?: BAIThemeSeedValue;
+  /** Success color; also seeds the secondary role accent. */
+  success?: BAIThemeSeedValue;
+  warning?: BAIThemeSeedValue;
+};
+
+export type BAIThemeFamily = {
+  seeds?: BAIThemeSeeds;
+  /** Header band background (was `components.Layout.headerBg`). */
+  headerBg?: BAIThemeSeedValue;
+};
+
+export type BAIThemeConfig = {
+  fontFamily?: string;
+  /** Forces the sider chrome's polarity regardless of the page scheme. */
+  siderMode?: 'light' | 'dark';
+  /** Selectable families keyed by family id; `default` must exist. */
+  families?: Record<string, BAIThemeFamily>;
 };
 
 export type LogoConfig = {
@@ -58,62 +74,107 @@ export type LogoConfig = {
     height?: number;
   };
 };
-export type SiderConfig = {
-  theme?: 'light' | 'dark';
-};
-export type BrandingConfig = {
+
+export type BAIBrandingConfig = {
+  logo?: LogoConfig;
   companyName?: string;
   brandName?: string;
-};
-export type ThemeFamilyConfig = {
-  /** Ant Design theme config for the light scheme of this family. */
-  light: ThemeConfig;
-  /** Ant Design theme config for the dark scheme of this family. */
-  dark: ThemeConfig;
-  /** Human-readable label shown in the family selector. Falls back to the key. */
-  label?: string;
+  /** Family selector labels keyed by family id; falls back to the id. */
+  familyLabels?: Record<string, string>;
 };
 
-export type CustomThemeConfig = {
-  fontFamily?: string;
-  light: ThemeConfig;
-  dark: ThemeConfig;
-  /**
-   * Selectable theme families keyed by family id (e.g. `stained`, `glass`).
-   * The `default` family is always synthesized from the top-level
-   * `light`/`dark` above — a `default` key here is ignored — so pre-family
-   * theme.json files (no `families` block) keep working as a single-entry
-   * catalog.
-   */
-  families?: Record<string, ThemeFamilyConfig>;
-  logo: LogoConfig;
-  sider?: SiderConfig;
-  branding?: BrandingConfig;
+export const APPEARANCE_SCHEMA_VERSION = 2;
+
+export type BAIAppearanceConfig = {
+  $schema?: string;
+  schemaVersion: typeof APPEARANCE_SCHEMA_VERSION;
+  theme?: BAIThemeConfig;
+  branding?: BAIBrandingConfig;
 };
-
-let _customTheme: CustomThemeConfig | undefined;
-
-export const getCustomTheme = () => _customTheme;
 
 /**
- * Keep only structurally valid family entries (each must carry both `light`
- * and `dark` theme configs) so a malformed `families` block in theme.json
- * degrades to fewer families instead of a broken catalog.
+ * Resolve a seed value for one scheme (string = both schemes). A tuple with
+ * a missing/non-string dark entry reuses the light one, matching the theme
+ * recipe's `seedPairFromValue`, so both consumers render the same color.
  */
-export function pickValidThemeFamilies(
+export const pickSeed = (
+  value: BAIThemeSeedValue | undefined,
+  mode: 'light' | 'dark',
+): string | undefined => {
+  if (_.isString(value)) {
+    return value;
+  }
+  if (_.isArray(value)) {
+    const light = _.isString(value[0]) ? value[0] : undefined;
+    if (mode === 'light') {
+      return light;
+    }
+    return _.isString(value[1]) ? value[1] : light;
+  }
+  return undefined;
+};
+
+// eslint-disable-next-line no-console -- module-scope diagnostics; no logger exists outside React here
+const warn = (message: string) => console.error(`[appearance] ${message}`);
+
+/**
+ * Accept only structurally valid v2 documents, and say why when one is not:
+ * the operator's next step is the migration guide, never a silently default
+ * theme. `default` must exist in `theme.families` (the family the app boots
+ * into and falls back to).
+ */
+export const pickValidAppearanceConfig = (
   input: unknown,
-): Record<string, ThemeFamilyConfig> | undefined {
+  source: string,
+): BAIAppearanceConfig | undefined => {
   if (!_.isPlainObject(input)) {
+    warn(`${source} is not a JSON object; using the built-in defaults.`);
     return undefined;
   }
-  return _.pickBy(
-    input as Record<string, ThemeFamilyConfig>,
-    (family) =>
-      _.isPlainObject(family) &&
-      _.isPlainObject(family.light) &&
-      _.isPlainObject(family.dark),
-  );
-}
+  const doc = input as Record<string, unknown>;
+  if (doc.schemaVersion !== APPEARANCE_SCHEMA_VERSION) {
+    if (_.isPlainObject(doc.light) || _.isPlainObject(doc.dark)) {
+      warn(
+        `${source} carries a v1 (antd-shaped) theme document; ` +
+          'v2 is required since FR-3605 — see the theme migration guide.',
+      );
+    } else {
+      warn(
+        `${source} has no "schemaVersion": ${APPEARANCE_SCHEMA_VERSION} ` +
+          `(got ${JSON.stringify(doc.schemaVersion)}); using the built-in defaults.`,
+      );
+    }
+    return undefined;
+  }
+  const families = (doc.theme as Record<string, unknown> | undefined)?.families;
+  if (
+    _.isPlainObject(families) &&
+    !_.isPlainObject((families as Record<string, unknown>).default)
+  ) {
+    warn(
+      `${source} declares theme.families without a "default" entry; ` +
+        'the default family falls back to the built-in seeds.',
+    );
+  }
+  return doc as BAIAppearanceConfig;
+};
+
+type AppearanceStore = {
+  /** The shipped/operator `resources/theme.json` (v2), untouched. */
+  staticDoc?: BAIAppearanceConfig;
+  /** `staticDoc` with the dev-server header color applied — what the providers render. */
+  appliedDoc?: BAIAppearanceConfig;
+};
+
+const store: AppearanceStore = {};
+
+/** The applied document. */
+export const getCustomTheme = (): BAIAppearanceConfig | undefined =>
+  store.appliedDoc;
+
+/** The pristine shipped document (Branding editor seed/reset source). */
+export const getStaticAppearanceConfig = (): BAIAppearanceConfig | undefined =>
+  store.staticDoc;
 
 const GENERIC_FAMILIES = new Set([
   'serif',
@@ -159,51 +220,65 @@ function injectFontCSS(fontFamilies: string[]) {
   }
 }
 
+const fetchStaticDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
+  let response: Response;
+  try {
+    response = await fetch('resources/theme.json');
+  } catch (error) {
+    warn(`theme.json could not be fetched (${String(error)}).`);
+    return undefined;
+  }
+  if (!response.ok) {
+    warn(`theme.json responded HTTP ${response.status}.`);
+    return undefined;
+  }
+  try {
+    return pickValidAppearanceConfig(await response.json(), 'theme.json');
+  } catch (error) {
+    warn(`theme.json is not valid JSON (${String(error)}).`);
+    return undefined;
+  }
+};
+
+/** The dev-server header color, applied to a copy so the shipped doc stays pristine. */
+const applyDevServerHeaderColorOverride = (
+  doc: BAIAppearanceConfig | undefined,
+): BAIAppearanceConfig | undefined => {
+  const headerColor = import.meta.env.DEV
+    ? import.meta.env.VITE_THEME_HEADER_COLOR
+    : undefined;
+  if (!doc || !headerColor) {
+    return doc;
+  }
+  const applied = _.cloneDeep(doc);
+  for (const family of Object.values(applied.theme?.families ?? {})) {
+    if (_.isPlainObject(family)) {
+      family.headerBg = headerColor;
+    }
+  }
+  return applied;
+};
+
+/**
+ * One-shot appearance bootstrap: theme.json is fetched and a single
+ * `custom-theme-loaded` event fires once it has settled — including when
+ * the document is unusable, so listeners never wait forever.
+ */
 export const loadCustomThemeConfig = () => {
-  fetch('resources/theme.json')
-    .then((response) => response.json())
-    .then((theme) => {
-      if (_.isUndefined(theme.light)) {
-        _customTheme = { light: theme, dark: theme, logo: theme.logo };
-      } else {
-        _customTheme = theme;
-      }
-      if (
-        _customTheme &&
-        import.meta.env.DEV &&
-        import.meta.env.VITE_THEME_HEADER_COLOR
-      ) {
-        _.set(
-          _customTheme,
-          'light.components.Layout.headerBg',
-          import.meta.env.VITE_THEME_HEADER_COLOR,
-        );
-        _.set(
-          _customTheme,
-          'dark.components.Layout.headerBg',
-          import.meta.env.VITE_THEME_HEADER_COLOR,
-        );
-      }
+  fetchStaticDoc()
+    .then((staticDoc) => {
+      store.staticDoc = staticDoc;
+      store.appliedDoc = applyDevServerHeaderColorOverride(staticDoc);
 
-      // Propagate top-level fontFamily into light/dark tokens so Ant Design receives it
-      if (_customTheme) {
-        const topLevelFont = _customTheme.fontFamily;
-        if (topLevelFont) {
-          _.set(_customTheme, 'light.token.fontFamily', topLevelFont);
-          _.set(_customTheme, 'dark.token.fontFamily', topLevelFont);
-        }
-
-        // Auto-load font CSS based on fontFamily in theme config
-        const fontFamily =
-          topLevelFont ??
-          (_.get(_customTheme, 'light.token.fontFamily') as
-            string | undefined) ??
-          (_.get(_customTheme, 'dark.token.fontFamily') as string | undefined);
-        if (fontFamily) {
-          injectFontCSS(parseFontFamilies(fontFamily));
-        }
+      const fontFamily = store.appliedDoc?.theme?.fontFamily;
+      if (_.isString(fontFamily) && fontFamily) {
+        injectFontCSS(parseFontFamilies(fontFamily));
       }
-
+    })
+    .catch((error) => {
+      warn(`appearance bootstrap failed (${String(error)}).`);
+    })
+    .finally(() => {
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
     });
 };

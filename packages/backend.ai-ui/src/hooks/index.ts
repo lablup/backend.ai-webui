@@ -179,3 +179,5 @@ export {
   StorageHostFetchError,
 } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
+
+export * from './useBAIBreakpoint';

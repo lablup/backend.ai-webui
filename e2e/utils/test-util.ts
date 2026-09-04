@@ -74,26 +74,29 @@ type ThemeLogoConfig = {
   };
 };
 
-type ThemeSiderConfig = {
-  theme?: 'dark' | 'light' | 'auto';
+type ThemeSeedValue = string | [light: string, dark: string];
+
+type ThemeFamilyConfig = {
+  seeds?: Record<string, ThemeSeedValue | undefined>;
+  headerBg?: ThemeSeedValue;
 };
 
 type ThemeBrandingConfig = {
+  logo?: ThemeLogoConfig;
   companyName?: string;
   brandName?: string;
+  familyLabels?: Record<string, string>;
 };
 
-type AntdThemeConfig = {
-  token?: Record<string, any>;
-  components?: Record<string, any>;
-};
-
+/** The v2 `{theme, branding}` appearance document (FR-3605). */
 export type ThemeConfig = {
   $schema?: string;
-  light?: AntdThemeConfig;
-  dark?: AntdThemeConfig;
-  logo?: ThemeLogoConfig;
-  sider?: ThemeSiderConfig;
+  schemaVersion?: 2;
+  theme?: {
+    fontFamily?: string;
+    siderMode?: 'light' | 'dark';
+    families?: Record<string, ThemeFamilyConfig>;
+  };
   branding?: ThemeBrandingConfig;
 };
 
@@ -1349,12 +1352,11 @@ export async function modifyConfigToml(
  * @param themeConfig - The theme configuration object to merge
  *
  * @example
- * // Modify light mode primary color
+ * // Rebrand the default family's accent (light, dark)
  * await modifyThemeJson(page, request, {
- *   light: {
- *     token: {
- *       colorPrimary: '#FF0000',
- *       colorLink: '#FF0000',
+ *   theme: {
+ *     families: {
+ *       default: { seeds: { accent: ['#FF0000', '#CC0000'] } },
  *     },
  *   },
  * });
@@ -1362,8 +1364,10 @@ export async function modifyConfigToml(
  * @example
  * // Remove logo href (set to undefined explicitly)
  * await modifyThemeJson(page, request, {
- *   logo: {
- *     href: undefined,
+ *   branding: {
+ *     logo: {
+ *       href: undefined,
+ *     },
  *   },
  * });
  *
@@ -1405,41 +1409,31 @@ export async function modifyThemeJson(
         error,
       );
       theme = {
-        light: {
-          token: {
-            fontFamily: "'Ubuntu', Roboto, sans-serif",
-            colorPrimary: '#FF7A00',
-            colorLink: '#FF7A00',
-            colorText: '#141414',
-            colorInfo: '#028DF2',
-            colorError: '#FF4D4F',
-            colorSuccess: '#00BD9B',
+        schemaVersion: 2,
+        theme: {
+          fontFamily: "'Ubuntu', Roboto, sans-serif",
+          families: {
+            default: {
+              seeds: {
+                accent: ['#FF7A00', '#DC6B03'],
+                link: ['#FF7A00', '#DC6B03'],
+                info: ['#028DF2', '#009BDD'],
+                error: ['#FF4D4F', '#DC4446'],
+                success: ['#00BD9B', '#03A487'],
+              },
+              headerBg: ['#FF9729', '#E88A28'],
+            },
           },
-          components: {},
         },
-        dark: {
-          token: {
-            fontFamily: "'Ubuntu', Roboto, sans-serif",
-            colorPrimary: '#DC6B03',
-            colorLink: '#DC6B03',
-            colorText: '#FFF',
-            colorInfo: '#009BDD',
-            colorError: '#DC4446',
-            colorSuccess: '#03A487',
-            colorFillSecondary: '#262626',
-          },
-          components: {},
-        },
-        logo: {
-          src: '/manifest/backend.ai-webui-white.svg',
-          srcCollapsed: '/manifest/backend.ai-brand-simple-white.svg',
-          srcDark: '/manifest/backend.ai-webui-black.svg',
-          srcCollapsedDark: '/manifest/backend.ai-brand-simple-black.svg',
-          alt: 'Backend.AI Logo',
-          href: '/start',
-        },
-        sider: {},
         branding: {
+          logo: {
+            src: '/manifest/backend.ai-webui-white.svg',
+            srcCollapsed: '/manifest/backend.ai-brand-simple-white.svg',
+            srcDark: '/manifest/backend.ai-webui-black.svg',
+            srcCollapsedDark: '/manifest/backend.ai-brand-simple-black.svg',
+            alt: 'Backend.AI Logo',
+            href: '/start',
+          },
           companyName: 'Lablup Inc.',
           brandName: 'Backend.AI',
         },

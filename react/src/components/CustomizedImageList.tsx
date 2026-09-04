@@ -16,7 +16,6 @@ import {
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import { theme } from '../theme-shim';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
 import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
@@ -47,7 +46,6 @@ export type CommittedImage = NonNullable<
 
 const CustomizedImageList: React.FC = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
   const supportExtendedImageInfo =
@@ -226,7 +224,7 @@ const CustomizedImageList: React.FC = () => {
         </BAIText>
       ),
       sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
-      width: token.screenXS,
+      width: 480,
     },
     {
       title: t('general.Control'),

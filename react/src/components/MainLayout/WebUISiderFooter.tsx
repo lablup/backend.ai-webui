@@ -4,7 +4,6 @@
  */
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
-import { theme } from '../../theme-shim';
 import AboutBackendAIModal from '../AboutBackendAIModal';
 import PrivacyPolicyModal from '../PrivacyPolicyModal';
 import SignoutModal from '../SignoutModal';
@@ -13,6 +12,7 @@ import { Divider } from '@astryxdesign/core/Divider';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { colorVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import { useToggle } from 'backend.ai-ui';
@@ -38,8 +38,8 @@ const styles = stylex.create({
 const WebUISiderFooter: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { themeConfig } = useCustomThemeConfig();
+  const { token } = useTheme();
+  const { rawThemeConfig } = useCustomThemeConfig();
   const baiClient = useSuspendedBackendaiClient();
 
   const [isOpenSignoutModal, { toggle: toggleSignoutModal }] = useToggle(false);
@@ -77,7 +77,7 @@ const WebUISiderFooter: React.FC = () => {
       gap={2}
       align="center"
       className="terms-of-use"
-      style={{ textAlign: 'center', paddingBlockEnd: token.paddingSM }}
+      style={{ textAlign: 'center', paddingBlockEnd: token('--spacing-3') }}
     >
       <Divider />
       <HStack gap={1} justify="center" wrap="wrap">
@@ -143,7 +143,7 @@ const WebUISiderFooter: React.FC = () => {
       </HStack>
       <Text type="supporting" size="xsm" as="div">
         <address className="sidebar-footer">
-          {themeConfig?.branding?.companyName || 'Lablup Inc.'}
+          {rawThemeConfig?.branding?.companyName || 'Lablup Inc.'}
           &nbsp;
           {/* @ts-ignore */}
           {`${globalThis.packageVersion}.${globalThis.buildNumber}`}

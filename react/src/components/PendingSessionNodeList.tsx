@@ -13,12 +13,12 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIAlert,
   BAIButton,
@@ -43,7 +43,7 @@ type PendingSessionNode = NonNullableNodeOnEdges<
 const PendingSessionNodeList: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   // Editing priority is only safe on managers that sequence all pending
   // workloads in a single scheduling tick (BA-6788, backend.ai#12668,
@@ -161,7 +161,9 @@ const PendingSessionNodeList: React.FC = () => {
                 alignment="start"
               >
                 <BAIButton
-                  icon={<SettingsIcon style={{ color: token.colorInfo }} />}
+                  icon={
+                    <SettingsIcon style={{ color: token('--color-info') }} />
+                  }
                   onClick={() => {
                     setOpenBulkEditPriorityModal(true);
                   }}

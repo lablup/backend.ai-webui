@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import { Grid } from '@astryxdesign/core/Grid';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIColorPicker,
   BAIFlex,
@@ -27,10 +27,9 @@ export interface LightDarkColorPickerProps {
 
 /**
  * Shared presentational light/dark two-column colour-picker layout. The
- * persistence strategy is injected per scheme via props: the User Settings
- * accent picker (`ThemeAccentColorPicker`) writes the `custom_primary_color`
- * scheme override, while the Branding `ThemeColorPicker` writes the
- * default-theme document paths through `useDefaultTheme`.
+ * persistence strategy is injected per scheme via props: the Branding
+ * `ThemeColorPicker` writes the appearance-document seed paths through
+ * `useDefaultTheme`.
  */
 const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
   light,
@@ -38,7 +37,7 @@ const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const schemes = [
     { label: t('userSettings.LightMode'), pickerProps: light },
@@ -62,7 +61,7 @@ const LightDarkColorPicker: React.FC<LightDarkColorPickerProps> = ({
           <BAIFlex
             key={label}
             gap="sm"
-            style={{ color: token.colorTextTertiary }}
+            style={{ color: token('--color-text-tertiary') }}
             wrap="wrap"
           >
             {label}:

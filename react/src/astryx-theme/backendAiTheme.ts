@@ -12,25 +12,18 @@
 
  ## Seeds
 
- Seeded from `resources/theme.json` (the operator-editable runtime document):
- `colorPrimary` (brand accent), `colorInfo` (admin accent), `colorSuccess`
- (secondary accent + success), `colorError`, `fontFamily`. `colorWarning` is
- not declared there, so the antd default seed applies.
+ Every brand value comes from the appearance document (`resources/theme.json`
+ shipped, the operator's document at runtime): `accent` (brand), `info`
+ (admin accent + info), `success` (secondary accent + success), `error`,
+ `warning`, `link`, `headerBg`, `fontFamily`. This module holds NO defaults
+ of its own — a seed the document omits is not pinned, and Astryx's own token
+ applies (FR-3605).
 
- ## Dark tuples — SETTLED DECISION (2026-08-07, MIGRATION-SPEC §1-③)
+ ## Dark tuples
 
- antd's `darkAlgorithm` does not merely swap palettes — it transforms the
- brand seeds themselves (`#DC6B03` declared → `#be5e06` rendered). The current
- dark UI shows the TRANSFORMED values, so to keep today's appearance the
- `[light, dark]` tuples pin the dark side to the MEASURED darkAlgorithm
- outputs (see `ANTD_DARK_ALGORITHM_OUTPUT`), not the raw theme.json seeds.
- Measurements come from `theme.getDesignToken()` A/B captures (ticket 06).
-
- PILOT-DECISION (ticket 02): for dark seeds NOT in the measured table (an
- operator rebrands via theme.json at runtime), the declared dark seed is used
- verbatim instead of re-implementing antd's dark derivation (~250 LOC vendor).
- A rebranded deployment then gets "seed-direct" dark colors — acceptable per
- the simplicity policy; revisit only if a real deployment reports it.
+ The document's `[light, dark]` values are pinned as declared. The antd
+ `darkAlgorithm` re-mapping of the dark seed (`#DC6B03` → `#be5e06`) went
+ with the shim: what an operator writes is what renders (FR-3605).
 
  ## Theme name numbering (채번 규칙)
 
@@ -54,17 +47,23 @@
    registration, and identical seed sets share one registration via the
    build cache below.
  */
+import type {
+  BAIThemeConfig,
+  BAIThemeSeedValue,
+} from '../helper/customThemeConfig';
 import { defineTheme, type DefinedTheme } from '@astryxdesign/core/theme';
 import { neutralTheme } from '@astryxdesign/theme-neutral';
-import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
+import {
+  ANTD_ALIGN_TOKENS,
+  BAI_SELF_COLOR_TOKENS,
+  buildBaiCustomTokens,
+} from 'backend.ai-ui';
 
-// The measured parity tables moved into BUI's theme-shim with the shim itself
-// (ticket 10 — BUI cannot import from react/src). Re-exported here so this
-// module keeps its ticket-02 public API.
-export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
+// Re-exported from BUI so this module keeps its ticket-02 public API.
+export { ANTD_ALIGN_TOKENS };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 22;
+export const THEME_NAME_REV = 26;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -388,9 +387,9 @@ const ANTD_NEUTRAL_BORDERS = {
 /**
  * STATUS (SEMANTIC) COLOR FAMILY — pinned to the legacy antd values.
  *
- * The status HUES themselves already come from `resources/theme.json` through
- * `BAI_DEFAULT_SEEDS` (`--color-error`/`--color-success`/`--color-warning`
- * below, plus their `-muted` steps), so those needed no change. What was
+ * The status HUES themselves already come from `resources/theme.json` seeds
+ * (`--color-error`/`--color-success`/`--color-warning` below, plus their
+ * `-muted` steps), so those needed no change. What was
  * NOT pinned is the ON-colour — the text/icon that sits on a solid status
  * fill — which `neutralTheme` derives for contrast and therefore FLIPS with
  * the mode:
@@ -861,61 +860,34 @@ const ANTD_HOVER_PARITY = {
 export interface BrandSeedPair {
   /** Light-scheme seed, as declared in theme.json. */
   light: string;
-  /** Dark-scheme seed AS DECLARED (pre-darkAlgorithm) in theme.json. */
+  /** Dark-scheme value as declared in theme.json; applied verbatim. */
   dark: string;
 }
 
-/**
- * Map a declared dark seed to the value antd's darkAlgorithm rendered for it.
- * Unknown seeds pass through verbatim (see PILOT-DECISION in the header).
- */
-export const resolveDarkSeed = (seed: string): string =>
-  ANTD_DARK_ALGORITHM_OUTPUT[seed.toUpperCase()] ?? seed;
-
-/** Default seeds — verbatim from resources/theme.json (+ antd defaults). */
-export const BAI_DEFAULT_SEEDS = {
-  /** colorPrimary / colorLink */
-  accent: { light: '#FF7A00', dark: '#DC6B03' } as BrandSeedPair,
-  /** colorInfo — what `usePrimaryColors().admin` resolves to */
-  admin: { light: '#028DF2', dark: '#009BDD' } as BrandSeedPair,
-  /** colorSuccess — what `usePrimaryColors().secondary` resolves to */
-  secondary: { light: '#00BD9B', dark: '#03A487' } as BrandSeedPair,
-  error: { light: '#FF4D4F', dark: '#DC4446' } as BrandSeedPair,
-  success: { light: '#00BD9B', dark: '#03A487' } as BrandSeedPair,
-  /** theme.json declares no colorWarning — antd default seed. */
-  warning: { light: '#FAAD14', dark: '#FAAD14' } as BrandSeedPair,
-  /**
-   * colorInfo — the INFORMATIONAL status hue. Same declared pair as `admin`
-   * because antd overloads one seed for both roles (`colorInfo` is the admin
-   * accent AND the info-status colour); they are named separately so the two
-   * roles can diverge in theme.json without one silently dragging the other.
-   */
-  info: { light: '#028DF2', dark: '#009BDD' } as BrandSeedPair,
-  /** theme.json `fontFamily` */
-  fontFamily: "'Ubuntu', Roboto, sans-serif",
-};
-
 export type BrandThemeRole = 'brand' | 'admin' | 'secondary';
 
-export interface BuildBackendAiThemeOptions {
+export interface BuildBackendAIThemeOptions {
   /** Theme-family key (`default`, `stained`, `glass`, `reverie`, `bliss`). */
   family?: string;
   /** Which accent this theme carries. Readability segment of the name. */
   role?: BrandThemeRole;
-  /** Accent seed pair (declared values; dark is mapped through the table). */
+  /** Accent seed pair (declared values, applied verbatim). */
   accent?: BrandSeedPair;
   error?: BrandSeedPair;
   success?: BrandSeedPair;
   warning?: BrandSeedPair;
   info?: BrandSeedPair;
+  /** Link color pair (`--color-link`); independent of the accent. */
+  link?: BrandSeedPair;
+  /** Header band background pair (`--header-bg`); applied verbatim. */
+  headerBg?: BrandSeedPair;
   fontFamily?: string;
 }
 
-/** Resolve tuple = [light seed, measured darkAlgorithm output of dark seed]. */
-const toTuple = (pair: BrandSeedPair): [string, string] => [
-  pair.light,
-  resolveDarkSeed(pair.dark),
-];
+/** The declared pair as a `[light, dark]` tuple. */
+const toTuple = (
+  pair: BrandSeedPair | undefined,
+): [string, string] | undefined => (pair ? [pair.light, pair.dark] : undefined);
 
 /**
  * Astryx muted status surfaces are the status color at ~20%/25% alpha
@@ -974,28 +946,31 @@ const hashSeeds = (input: string): string => {
 const sanitizeNameSegment = (segment: string): string =>
   segment.toLowerCase().replace(/[^a-z0-9-]+/g, '-');
 
+/**
+ * The seeds a theme is built from. Every brand value is optional: a seed the
+ * document does not declare is NOT pinned, so Astryx's own token (or, for the
+ * custom vocabulary, an Astryx `var()` reference) applies. The code holds
+ * no brand values of its own — `resources/theme.json` is the only source.
+ */
 interface ResolvedSeeds {
   family: string;
   role: BrandThemeRole;
-  accent: BrandSeedPair;
-  error: BrandSeedPair;
-  success: BrandSeedPair;
-  warning: BrandSeedPair;
-  info: BrandSeedPair;
-  fontFamily: string;
+  accent?: BrandSeedPair;
+  error?: BrandSeedPair;
+  success?: BrandSeedPair;
+  warning?: BrandSeedPair;
+  info?: BrandSeedPair;
+  link?: BrandSeedPair;
+  headerBg?: BrandSeedPair;
+  fontFamily?: string;
 }
 
 const resolveSeeds = (
-  options: BuildBackendAiThemeOptions = {},
+  options: BuildBackendAIThemeOptions = {},
 ): ResolvedSeeds => ({
+  ...options,
   family: options.family ?? 'default',
   role: options.role ?? 'brand',
-  accent: options.accent ?? BAI_DEFAULT_SEEDS.accent,
-  error: options.error ?? BAI_DEFAULT_SEEDS.error,
-  success: options.success ?? BAI_DEFAULT_SEEDS.success,
-  warning: options.warning ?? BAI_DEFAULT_SEEDS.warning,
-  info: options.info ?? BAI_DEFAULT_SEEDS.info,
-  fontFamily: options.fontFamily ?? BAI_DEFAULT_SEEDS.fontFamily,
 });
 
 /**
@@ -1005,7 +980,7 @@ const resolveSeeds = (
  * runtime theme would register a competing entry for the identical CSS).
  */
 export const computeThemeName = (
-  options: BuildBackendAiThemeOptions = {},
+  options: BuildBackendAIThemeOptions = {},
 ): string => {
   const seeds = resolveSeeds(options);
   const hash = hashSeeds(
@@ -1015,7 +990,10 @@ export const computeThemeName = (
       seeds.success,
       seeds.warning,
       seeds.info,
+      seeds.link,
+      seeds.headerBg,
       seeds.fontFamily,
+      BAI_SELF_COLOR_TOKENS,
       ANTD_ALIGN_TOKENS,
       ANTD_NEUTRAL_SURFACES,
       ANTD_NEUTRAL_BORDERS,
@@ -1048,8 +1026,8 @@ const themeCache = new Map<string, DefinedTheme>();
  * Build a Backend.AI theme. Called with no arguments this yields the default
  * brand theme; role/seed overrides yield the admin/secondary/runtime themes.
  */
-export function buildBackendAiTheme(
-  options: BuildBackendAiThemeOptions = {},
+export function buildBackendAITheme(
+  options: BuildBackendAIThemeOptions = {},
 ): DefinedTheme {
   const name = computeThemeName(options);
   const cached = themeCache.get(name);
@@ -1062,18 +1040,19 @@ export function buildBackendAiTheme(
   const error = toTuple(seeds.error);
   const success = toTuple(seeds.success);
   const warning = toTuple(seeds.warning);
-  const errorMuted = toMutedTuple(error);
-  const successMuted = toMutedTuple(success);
-  const warningMuted = toMutedTuple(warning);
+  const accentMuted = accent && toMutedTuple(accent);
+  const errorMuted = error && toMutedTuple(error);
+  const successMuted = success && toMutedTuple(success);
+  const warningMuted = warning && toMutedTuple(warning);
   // Seed-derived opaque fills for the floating banner surfaces (FR-3700).
   const bannerFill = (
     token: string,
     tuple: [string, string] | undefined,
   ): Record<string, string> =>
     tuple ? { [token]: `light-dark(${tuple[0]}, ${tuple[1]})` } : {};
-  const errorFill = toOpaqueMutedTuple(error);
-  const successFill = toOpaqueMutedTuple(success);
-  const warningFill = toOpaqueMutedTuple(warning);
+  const errorFill = error && toOpaqueMutedTuple(error);
+  const successFill = success && toOpaqueMutedTuple(success);
+  const warningFill = warning && toOpaqueMutedTuple(warning);
   const bannerStatusSurfaces = {
     banner: {
       'status:error': bannerFill('--color-error-muted', errorFill),
@@ -1095,53 +1074,51 @@ export function buildBackendAiTheme(
     extends: neutralTheme,
     // Runs the HCT generator over the light seed so the DERIVED accent ramp
     // (hover/active/surface steps) follows the brand — measured in the pilot
-    // to recompute correctly on accent swap.
-    color: { accent: seeds.accent.light },
+    // to recompute correctly on accent swap. No accent seed: neutral's own.
+    ...(seeds.accent ? { color: { accent: seeds.accent.light } } : {}),
     tokens: {
-      // The generator takes ONE accent; the light/dark pair is expressed as
-      // explicit [light, dark] tuple overrides, which win over generated
-      // values. Dark side = measured antd darkAlgorithm output (header note).
-      '--color-accent': accent,
-      '--color-text-accent': accent,
-      '--color-icon-accent': accent,
-      // Text/icons ON the accent fill. All shipped accents (orange, admin
-      // blue, secondary teal) are dark enough for white at both ends — and
-      // white-on-primary is what antd rendered.
-      '--color-on-accent': ['#ffffff', '#ffffff'],
+      // The generator takes ONE accent; the light/dark pair is pinned as
+      // explicit [light, dark] tuples, which win over generated values. The
+      // muted step is pinned too: useTheme() re-applies neutralTheme's own
+      // input tokens over generated ones, so an unpinned muted resolves grey.
+      // Text/icons ON the accent fill stay white: every shipped accent is
+      // dark enough for it at both ends. No accent seed: the family stays
+      // Astryx's.
+      ...(accent
+        ? {
+            '--color-accent': accent,
+            '--color-text-accent': accent,
+            '--color-icon-accent': accent,
+            '--color-on-accent': ['#ffffff', '#ffffff'] as [string, string],
+            ...(accentMuted ? { '--color-accent-muted': accentMuted } : {}),
+          }
+        : {}),
       // Status colors, brand-owned via theme.json (antd colorError /
       // colorSuccess / colorWarning), so the semantic hues equal the legacy
-      // applied values by construction.
-      //
-      // INFO — the fourth status role — has no Astryx token to pin. Astryx
-      // ships no `--color-info*` family at all: `CoreTokenName` (see
-      // `@astryxdesign/core/theme/defineTheme.d.ts` + `tokens.stylex.js`)
-      // enumerates error / success / warning and nothing else, and the
-      // `--color-info-*` variables visible in the page are StyleX-hashed
-      // component-private vars, not theme surface. The informational blue in
-      // this app is therefore rendered by the antd engine (`Alert type="info"`,
-      // `message.info`), which takes its ramp from `colorInfo` — resolved by
-      // the theme-shim from the SAME seed declared here (`seeds.info`, i.e.
-      // resources/theme.json `#028DF2` / `#009BDD`→`#0387bf`). That makes the
-      // blue an intentional, theme-declared legacy value rather than an
-      // accident of the shim's fallback table: SWEEP-1 row 5 is sanctioned,
-      // not outstanding. The seed participates in the theme-name hash below,
-      // so a deployment that rebrands `colorInfo` still forces a fresh
-      // registration.
-      '--color-error': error,
-      '--color-success': success,
-      '--color-warning': warning,
+      // applied values by construction. INFO has no Astryx token family; the
+      // `info` seed reaches the page as `--color-info` and as the admin
+      // role accent.
+      ...(error ? { '--color-error': error } : {}),
+      ...(success ? { '--color-success': success } : {}),
+      ...(warning ? { '--color-warning': warning } : {}),
       ...(errorMuted ? { '--color-error-muted': errorMuted } : {}),
       ...(successMuted ? { '--color-success-muted': successMuted } : {}),
       ...(warningMuted ? { '--color-warning-muted': warningMuted } : {}),
       // Text/icons ON a solid status fill — antd `colorTextLightSolid`.
       // See ANTD_STATUS_ON_COLORS.
       ...ANTD_STATUS_ON_COLORS,
-      // theme.json fontFamily (Ubuntu stack). Token-level override rather
-      // than `typography` config: a partial `typography` block REPLACES the
-      // base scale config wholesale (docs: "child config replaces base
-      // entirely"), which would silently regenerate the type ramp.
-      '--font-family-body': seeds.fontFamily,
-      '--font-family-heading': seeds.fontFamily,
+      // theme.json fontFamily. Token-level override rather than `typography`
+      // config: a partial `typography` block REPLACES the base scale config
+      // wholesale (docs: "child config replaces base entirely"), which would
+      // silently regenerate the type ramp.
+      ...(seeds.fontFamily
+        ? {
+            '--font-family-body': seeds.fontFamily,
+            '--font-family-heading': seeds.fontFamily,
+          }
+        : {}),
+      // The custom token vocabulary (BUI `src/theme/baiCustomTokens.ts`).
+      ...buildBaiCustomTokens(seeds),
       // The 6 antd↔Astryx value differences, pinned to antd values.
       ...ANTD_ALIGN_TOKENS,
       // The neutral background family, pinned to the measured legacy antd
@@ -1187,112 +1164,62 @@ export function buildBackendAiTheme(
  * ---------------------------------------------------------------------- */
 
 /**
- * Minimal structural view of an antd `ThemeConfig` — declared here so this
- * module stays antd-import-free (it must outlive antd removal).
+ * Normalize a v2 seed value (Astryx TokenValue semantics: string = both
+ * schemes, tuple = [light, dark]) into the builder's declared pair, or
+ * undefined when the document does not declare it (nothing gets pinned).
  */
-export interface AntdishThemeConfig {
-  token?: {
-    colorPrimary?: string;
-    colorInfo?: string;
-    colorSuccess?: string;
-    colorError?: string;
-    colorWarning?: string;
-  };
-}
-
-export interface AntdishCustomThemeConfig {
-  fontFamily?: string;
-  light?: AntdishThemeConfig;
-  dark?: AntdishThemeConfig;
-}
-
-const seedPairFromConfig = (
-  config: AntdishCustomThemeConfig,
-  key:
-    | 'colorPrimary'
-    | 'colorInfo'
-    | 'colorSuccess'
-    | 'colorError'
-    | 'colorWarning',
-  fallback: BrandSeedPair,
-): BrandSeedPair => {
-  const light = config.light?.token?.[key];
-  const dark = config.dark?.token?.[key];
-  return {
-    light: typeof light === 'string' ? light : fallback.light,
-    dark:
-      typeof dark === 'string'
-        ? dark
-        : // A config that declares only a light seed reuses it for dark
-          // (antd behaved the same way: dark derived from whatever seed the
-          // dark ThemeConfig carried, falling back to light's).
-          typeof light === 'string'
-          ? light
-          : fallback.dark,
-  };
+const seedPairFromValue = (
+  value: BAIThemeSeedValue | undefined,
+): BrandSeedPair | undefined => {
+  if (typeof value === 'string') {
+    return { light: value, dark: value };
+  }
+  if (Array.isArray(value) && typeof value[0] === 'string') {
+    return {
+      light: value[0],
+      dark: typeof value[1] === 'string' ? value[1] : value[0],
+    };
+  }
+  return undefined;
 };
 
 /**
- * Derive the full option set for one role from a runtime theme.json document
+ * Derive the full option set for one role from a v2 appearance `theme` half
  * (the operator-editable override path). Role→accent mapping mirrors
- * `usePrimaryColors`: brand=colorPrimary, admin=colorInfo,
- * secondary=colorSuccess.
+ * the role themes: brand=accent, admin=info, secondary=success (FR-1964,
+ * role derivation stays in code — the document carries brand seeds only).
  */
 export const themeOptionsFromConfig = (
-  config: AntdishCustomThemeConfig,
+  config: BAIThemeConfig | undefined,
   role: BrandThemeRole = 'brand',
   family = 'default',
-): BuildBackendAiThemeOptions => {
-  const accentKey =
+): BuildBackendAIThemeOptions => {
+  const familyConfig = config?.families?.[family];
+  const seeds = familyConfig?.seeds ?? config?.families?.default?.seeds;
+  const headerBgValue =
+    familyConfig?.headerBg ?? config?.families?.default?.headerBg;
+  const accentValue =
     role === 'admin'
-      ? 'colorInfo'
+      ? seeds?.info
       : role === 'secondary'
-        ? 'colorSuccess'
-        : 'colorPrimary';
-  const accentFallback =
-    role === 'admin'
-      ? BAI_DEFAULT_SEEDS.admin
-      : role === 'secondary'
-        ? BAI_DEFAULT_SEEDS.secondary
-        : BAI_DEFAULT_SEEDS.accent;
+        ? seeds?.success
+        : seeds?.accent;
   return {
     family,
     role,
-    accent: seedPairFromConfig(config, accentKey, accentFallback),
-    error: seedPairFromConfig(config, 'colorError', BAI_DEFAULT_SEEDS.error),
-    success: seedPairFromConfig(
-      config,
-      'colorSuccess',
-      BAI_DEFAULT_SEEDS.success,
-    ),
-    warning: seedPairFromConfig(
-      config,
-      'colorWarning',
-      BAI_DEFAULT_SEEDS.warning,
-    ),
-    // The info STATUS hue. Read from the same theme.json key the admin ACCENT
-    // uses, but kept as its own seed — a deployment that rebrands `colorInfo`
-    // moves both, and the hash must see it either way.
-    info: seedPairFromConfig(config, 'colorInfo', BAI_DEFAULT_SEEDS.info),
-    fontFamily: config.fontFamily ?? BAI_DEFAULT_SEEDS.fontFamily,
+    accent: seedPairFromValue(accentValue),
+    error: seedPairFromValue(seeds?.error),
+    success: seedPairFromValue(seeds?.success),
+    warning: seedPairFromValue(seeds?.warning),
+    // The info STATUS hue. Read from the same seed the admin ACCENT uses, but
+    // kept as its own option — a deployment that rebrands `info` moves both,
+    // and the hash must see it either way.
+    info: seedPairFromValue(seeds?.info),
+    link: seedPairFromValue(seeds?.link),
+    headerBg: seedPairFromValue(headerBgValue),
+    fontFamily:
+      typeof config?.fontFamily === 'string' && config.fontFamily
+        ? config.fontFamily
+        : undefined,
   };
 };
-
-/* -------------------------------------------------------------------------
- * Default singletons (the shipped theme.json values)
- * ---------------------------------------------------------------------- */
-
-/** Backend.AI brand (orange) — the app-wide default. */
-export const backendAiBrandTheme = buildBackendAiTheme({ role: 'brand' });
-
-/** Admin sections (colorInfo blue) — `ThemeAdminProvider` counterpart. */
-export const backendAiAdminTheme = buildBackendAiTheme({
-  role: 'admin',
-  accent: BAI_DEFAULT_SEEDS.admin,
-});
-
-/** Secondary sections (colorSuccess teal) — `ThemeSecondaryProvider` counterpart. */
-export const backendAiSecondaryTheme = buildBackendAiTheme({
-  role: 'secondary',
-  accent: BAI_DEFAULT_SEEDS.secondary,
-});

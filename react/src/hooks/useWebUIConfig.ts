@@ -444,8 +444,7 @@ export function useConfigRefreshPageEffect(): void {
   useEffect(() => {
     const handleConnected = () => {
       const client = (globalThis as Record<string, unknown>).backendaiclient as
-        | { proxyURL?: string }
-        | undefined;
+        { proxyURL?: string } | undefined;
       if (client) {
         client.proxyURL = proxyUrl;
       }

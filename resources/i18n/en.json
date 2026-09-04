@@ -3585,7 +3585,6 @@
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
     "DescScriptDeleted": "User config script deleted : ",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
-    "DescThemeAccentColor": "Set the theme's primary color.",
     "DescThemeFamily": "Set the theme.",
     "DescThemeMode": "Set the display mode.",
     "DescUseCompactSidebar": "Compact sidebar provides more workspace. <br />When enabled, the compact sidebar will be the default UI at startup.",
@@ -3633,7 +3632,6 @@
     "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "ShellEnvironments": "Shell Environments",
     "Theme": "Theme",
-    "ThemeAccentColor": "Primary Color",
     "ThemeFamily": "Theme",
     "ThemeMode": "Theme Mode",
     "UseCompactSidebar": "Set Compact Sidebar as Default",
@@ -3660,6 +3658,7 @@
       "DarkModeLogoDesc": "Set the image used as the Dark Mode WebUI logo.",
       "DetailLogoCustomizationDesc": "Customize logos for specific areas such as the login page. If not set, the default logo image is used. When the default image is used, each mode's logo is applied inversely for color contrast.",
       "FailedToReadFile": "Failed to read the file. Please try again.",
+      "FallbackFollowsItem": "No value is set, so the {{item}} image is used.",
       "Image": "Image",
       "ImagePath": "Path",
       "LightModeCollapsedLogo": "Collapsed Sider Logo (light mode)",
@@ -3696,9 +3695,7 @@
       "PrimaryColor": "Primary Color",
       "PrimaryColorDesc": "The main color applied to buttons or descriptive text that represent key actions. It is also applied as the background color for the logo section in the header.",
       "SuccessColor": "Success Color",
-      "SuccessColorDesc": "The color applied to buttons, alerts, or icons that indicate a user action has been successfully completed.",
-      "TextColor": "Text Color",
-      "TextColorDesc": "The color used for general text."
+      "SuccessColorDesc": "The color applied to buttons, alerts, or icons that indicate a user action has been successfully completed."
     }
   },
   "webTerminalUsageGuide": {

@@ -4,7 +4,6 @@ import {
   localeCompare,
 } from '../../../helper';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
-import { theme } from '../../../theme-shim';
 import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
@@ -21,6 +20,7 @@ import { BreadcrumbItem, Breadcrumbs } from '@astryxdesign/core/Breadcrumbs';
 import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { File, Folder, HouseIcon } from 'lucide-react';
@@ -113,7 +113,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   'use memo';
 
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   // The container ref is parent-owned; the hook captures its element when
   // dragging starts.
@@ -240,7 +240,10 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           // interactive — only directories can be entered and chosen.
           return (
             <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-              <File style={{ color: token.colorTextDisabled }} size="1em" />
+              <File
+                style={{ color: token('--color-text-disabled') }}
+                size="1em"
+              />
               <Text color="disabled" maxLines={1} style={{ maxWidth: 200 }}>
                 {name}
               </Text>
@@ -347,7 +350,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           <Breadcrumbs
             label={t('comp:FileExplorer.Path')}
             style={{
-              marginLeft: token.marginXXS,
+              marginLeft: token('--spacing-1'),
             }}
           >
             {breadCrumbItems.map((item, index) => (

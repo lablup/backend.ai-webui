@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import { Heading, Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +13,7 @@ const IdleCheckDescriptionModal: React.FC<IdleCheckDescriptionModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <BAIModal
@@ -39,7 +39,7 @@ const IdleCheckDescriptionModal: React.FC<IdleCheckDescriptionModalProps> = ({
       <BAIFlex
         direction="column"
         align="stretch"
-        style={{ marginLeft: token.marginMD }}
+        style={{ marginLeft: token('--spacing-5') }}
       >
         <Heading level={5} style={{ margin: 0 }}>
           {t('session.GracePeriod')}

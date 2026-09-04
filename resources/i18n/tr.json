@@ -3598,7 +3598,6 @@
     "DescScriptCreated": "Kullanıcı yapılandırma komut dosyası oluşturuldu. Bu sadece yeni oturumlara uygulanacaktır.",
     "DescScriptDeleted": "Kullanıcı yapılandırma komut dosyası silindi:",
     "DescScriptUpdated": "Kullanıcı yapılandırma komut dosyası güncellendi. Bu sadece yeni oturumlara uygulanacaktır.",
-    "DescThemeAccentColor": "Temanın ana rengini ayarlayın.",
     "DescThemeFamily": "Temayı ayarlayın.",
     "DescThemeMode": "Görüntüleme modunu ayarlayın.",
     "DescUseCompactSidebar": "Kompakt kenar çubuğu daha fazla çalışma alanı sağlar. <br />Etkinleştirildiğinde, kompakt kenar çubuğu başlangıçta varsayılan UI olacaktır.",
@@ -3646,7 +3645,6 @@
     "SessionTerminationDialog": "Oturum sonlandırma geri alınamaz. Oturumu sonlandırmak için devam etmek istiyor musunuz?",
     "ShellEnvironments": "Kabuk Ortamları",
     "Theme": "Tema",
-    "ThemeAccentColor": "Ana Renk",
     "ThemeFamily": "Tema",
     "ThemeMode": "Tema Modu",
     "UseCompactSidebar": "Kompakt Kenar Çubuğunu Varsayılan Olarak Ayarla",
@@ -3673,6 +3671,7 @@
       "DarkModeLogoDesc": "Karanlık Mod WebUI logosu olarak kullanılacak resmi ayarla.",
       "DetailLogoCustomizationDesc": "Giriş sayfası gibi belirli alanlar için logoları özelleştirin. Ayarlanmazsa varsayılan logo görüntüsü kullanılır. Varsayılan görüntü kullanıldığında, renk kontrastı için her modun logosu ters olarak uygulanır.",
       "FailedToReadFile": "Dosya okunamadı. Lütfen tekrar deneyin.",
+      "FallbackFollowsItem": "Bir değer ayarlanmadığından {{item}} görseli kullanılır.",
       "Image": "Görüntü",
       "ImagePath": "Yol",
       "LightModeCollapsedLogo": "Daraltılmış Sider Logosu (açık mod)",
@@ -3709,9 +3708,7 @@
       "PrimaryColor": "Ana Renk",
       "PrimaryColorDesc": "Anahtar eylemleri temsil eden düğmelere veya açıklayıcı metne uygulanan ana renk. \nAyrıca başlıktaki logo bölümünün arka plan rengi olarak da uygulanır.",
       "SuccessColor": "Başarı Rengi",
-      "SuccessColorDesc": "Bir kullanıcı eyleminin başarıyla tamamlandığını gösteren düğmelere, uyarılara veya simgelere uygulanan renk.",
-      "TextColor": "Metin Rengi",
-      "TextColorDesc": "Genel metin için kullanılan renk."
+      "SuccessColorDesc": "Bir kullanıcı eyleminin başarıyla tamamlandığını gösteren düğmelere, uyarılara veya simgelere uygulanan renk."
     }
   },
   "webTerminalUsageGuide": {

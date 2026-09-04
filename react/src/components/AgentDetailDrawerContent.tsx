@@ -10,7 +10,6 @@ import type {
 } from '../__generated__/AgentSessionsQuery.graphql';
 import { getSessionV2StatusBuckets } from '../helper/sessionStatusBuckets';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { theme, useBAIBreakpoint } from '../theme-shim';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
 import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
@@ -22,6 +21,7 @@ import BAIErrorBoundary from './BAIErrorBoundary';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAICard,
   BAIDoubleTag,
@@ -31,6 +31,7 @@ import {
   BAISkeleton,
   BAIText,
   toLocalId,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -51,7 +52,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const { md } = useBAIBreakpoint();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const statusBuckets = getSessionV2StatusBuckets(
     baiClient.supports('session-preemption-statuses'),
@@ -127,9 +128,9 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
           </MetadataListItem>
           <MetadataListItem label={t('agent.Schedulable')}>
             {agent?.schedulable ? (
-              <Check style={{ color: token.colorSuccess }} size="1em" />
+              <Check style={{ color: token('--color-success') }} size="1em" />
             ) : (
-              <X style={{ color: token.colorTextDisabled }} size="1em" />
+              <X style={{ color: token('--color-text-disabled') }} size="1em" />
             )}
           </MetadataListItem>
           <MetadataListItem label={t('agent.Status')}>

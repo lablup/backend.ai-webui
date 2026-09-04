@@ -3600,7 +3600,6 @@
     "DescScriptCreated": "Đã tạo tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
     "DescScriptDeleted": "Tập lệnh cấu hình người dùng đã bị xóa:",
     "DescScriptUpdated": "Đã cập nhật tập lệnh cấu hình người dùng. Điều này sẽ chỉ được áp dụng cho các phiên mới.",
-    "DescThemeAccentColor": "Đặt màu cơ bản của chủ đề.",
     "DescThemeFamily": "Đặt chủ đề.",
     "DescThemeMode": "Đặt chế độ hiển thị.",
     "DescUseCompactSidebar": "Thanh bên gọn gàng cung cấp nhiều không gian làm việc hơn. <br />Khi được kích hoạt, thanh bên gọn gàng sẽ là giao diện mặc định khi khởi động.",
@@ -3648,7 +3647,6 @@
     "SessionTerminationDialog": "Không thể hoàn tác việc kết thúc phiên. Bạn có muốn tiếp tục kết thúc phiên này không?",
     "ShellEnvironments": "Môi trường Shell",
     "Theme": "chủ đề",
-    "ThemeAccentColor": "Màu cơ bản",
     "ThemeFamily": "Chủ đề",
     "ThemeMode": "Chế độ chủ đề",
     "UseCompactSidebar": "Đặt Thanh bên Gọn gàng làm Mặc định",
@@ -3675,6 +3673,7 @@
       "DarkModeLogoDesc": "Đặt hình ảnh dùng làm logo WebUI ở Chế độ Tối.",
       "DetailLogoCustomizationDesc": "Tùy chỉnh logo cho các khu vực cụ thể như trang đăng nhập. Nếu không được đặt, hình ảnh logo mặc định sẽ được sử dụng. Khi sử dụng hình ảnh mặc định, logo của từng chế độ được áp dụng ngược lại để tăng độ tương phản màu sắc.",
       "FailedToReadFile": "Không thể đọc tệp. Vui lòng thử lại.",
+      "FallbackFollowsItem": "Chưa đặt giá trị nên hình ảnh {{item}} được sử dụng.",
       "Image": "Ảnh",
       "ImagePath": "Đường dẫn",
       "LightModeCollapsedLogo": "Logo thanh bên thu gọn (chế độ sáng)",
@@ -3711,9 +3710,7 @@
       "PrimaryColor": "Màu cơ bản",
       "PrimaryColorDesc": "Màu chính được áp dụng cho các nút hoặc văn bản mô tả thể hiện các hành động chính. \nNó cũng được áp dụng làm màu nền cho phần logo ở phần header.",
       "SuccessColor": "Màu thành công",
-      "SuccessColorDesc": "Màu áp dụng cho các nút, cảnh báo hoặc biểu tượng cho biết hành động của người dùng đã được hoàn tất thành công.",
-      "TextColor": "Màu văn bản",
-      "TextColorDesc": "Màu được sử dụng cho văn bản chung."
+      "SuccessColorDesc": "Màu áp dụng cho các nút, cảnh báo hoặc biểu tượng cho biết hành động của người dùng đã được hoàn tất thành công."
     }
   },
   "webTerminalUsageGuide": {

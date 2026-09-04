@@ -3601,7 +3601,6 @@
     "DescScriptCreated": "Utworzono skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
     "DescScriptDeleted": "Skrypt konfiguracji użytkownika został usunięty :",
     "DescScriptUpdated": "Zaktualizowano skrypt konfiguracji użytkownika. Zostanie to zastosowane tylko do nowych sesji.",
-    "DescThemeAccentColor": "Ustaw podstawowy kolor tematu.",
     "DescThemeFamily": "Ustaw temat.",
     "DescThemeMode": "Ustaw tryb wyświetlania.",
     "DescUseCompactSidebar": "Kompaktowy pasek boczny zapewnia więcej przestrzeni roboczej. <br />Po włączeniu kompaktowy pasek boczny będzie domyślnym interfejsem użytkownika przy uruchomieniu.",
@@ -3649,7 +3648,6 @@
     "SessionTerminationDialog": "Zakończenia sesji nie można cofnąć. Czy chcesz kontynuować, aby zakończyć sesję?",
     "ShellEnvironments": "Środowiska powłoki",
     "Theme": "Temat",
-    "ThemeAccentColor": "Kolor podstawowy",
     "ThemeFamily": "Temat",
     "ThemeMode": "Tryb tematyczny",
     "UseCompactSidebar": "Ustaw Kompaktowy Pasek Boczny jako Domyślny",
@@ -3676,6 +3674,7 @@
       "DarkModeLogoDesc": "Ustaw obraz używany jako logo WebUI w trybie ciemnym.",
       "DetailLogoCustomizationDesc": "Dostosuj loga dla określonych obszarów, takich jak strona logowania. Jeśli nie ustawiono, używany jest domyślny obraz logo. Gdy używany jest obraz domyślny, logo każdego trybu jest stosowane odwrotnie dla kontrastu kolorów.",
       "FailedToReadFile": "Nie udało się odczytać pliku. Spróbuj ponownie.",
+      "FallbackFollowsItem": "Nie ustawiono wartości, więc używany jest obraz „{{item}}”.",
       "Image": "Obraz",
       "ImagePath": "Ścieżka",
       "LightModeCollapsedLogo": "Logo zwiniętego paska bocznego (tryb jasny)",
@@ -3712,9 +3711,7 @@
       "PrimaryColor": "Kolor podstawowy",
       "PrimaryColorDesc": "Główny kolor stosowany do przycisków lub tekstu opisowego reprezentującego kluczowe działania. \nJest on również stosowany jako kolor tła sekcji logo w nagłówku.",
       "SuccessColor": "Kolor sukcesu",
-      "SuccessColorDesc": "Kolor zastosowany do przycisków, alertów lub ikon wskazujących, że czynność użytkownika została pomyślnie wykonana.",
-      "TextColor": "Kolor tekstu",
-      "TextColorDesc": "Kolor używany w tekście ogólnym."
+      "SuccessColorDesc": "Kolor zastosowany do przycisków, alertów lub ikon wskazujących, że czynność użytkownika została pomyślnie wykonana."
     }
   },
   "webTerminalUsageGuide": {

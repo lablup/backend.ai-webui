@@ -23,12 +23,12 @@ import {
   getPathFromMenuKey,
   useWebUIMenuItems,
 } from '../hooks/useWebUIMenuItems';
-import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Heading } from '@astryxdesign/core/Heading';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIButton,
   BAIDeploymentStatus,
@@ -74,7 +74,7 @@ const scrollSectionIntoView = (
 const DeploymentDetailPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [currentUser] = useCurrentUserInfo();
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
@@ -130,10 +130,7 @@ const DeploymentDetailPage: React.FC = () => {
         '#revisions': revisionsSectionRef,
         '#access-tokens': accessTokensSectionRef,
       };
-    scrollSectionIntoView(
-      sectionRefByHash[hash]?.current ?? null,
-      token.Layout?.headerHeight ?? 60,
-    );
+    scrollSectionIntoView(sectionRefByHash[hash]?.current ?? null, 60);
   });
   useEffect(() => {
     scrollToHashSection();
@@ -312,10 +309,7 @@ const DeploymentDetailPage: React.FC = () => {
         // refresh or a tab re-mount.
         updateReplicaFetchKey();
       });
-      scrollSectionIntoView(
-        revisionsSectionRef.current,
-        token.Layout?.headerHeight ?? 60,
-      );
+      scrollSectionIntoView(revisionsSectionRef.current, 60);
     }
   };
 
@@ -353,7 +347,7 @@ const DeploymentDetailPage: React.FC = () => {
             !isChatBlocked && (
               <Button
                 variant="primary"
-                icon={<BotMessageSquareIcon size={token.fontSizeLG} />}
+                icon={<BotMessageSquareIcon size={token('--font-size-lg')} />}
                 label={t('deployment.StartChatTest')}
                 onClick={() => {
                   webuiNavigate({
@@ -461,10 +455,7 @@ const DeploymentDetailPage: React.FC = () => {
           // otherwise the "Private deployment" alert (which is gated on
           // `hasAccessTokens === false`) stays visible after creation.
           handleRefetch();
-          scrollSectionIntoView(
-            accessTokensSectionRef.current,
-            token.Layout?.headerHeight ?? 60,
-          );
+          scrollSectionIntoView(accessTokensSectionRef.current, 60);
         }}
       />
       {/* No page-level Suspense boundary needed: the modal renders its chrome

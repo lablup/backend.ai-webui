@@ -15,7 +15,7 @@ import AdminDeploymentPresetTable, {
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -83,7 +83,7 @@ const AdminDeploymentPreset = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
 
@@ -221,7 +221,7 @@ const AdminDeploymentPreset = ({
           }}
         />
       ) : (
-        <BAIFlex justify="center" style={{ padding: token.paddingXL }}>
+        <BAIFlex justify="center" style={{ padding: token('--spacing-8') }}>
           {t('adminDeploymentPreset.NotSupported')}
         </BAIFlex>
       )}

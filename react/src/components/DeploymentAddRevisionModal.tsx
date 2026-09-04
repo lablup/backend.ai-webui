@@ -46,7 +46,6 @@ import {
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
 import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
-import { theme } from '../theme-shim';
 import type { ProjectContextOrNull } from '../types/projectContext';
 import {
   type ModelHealthCheckFormValue,
@@ -90,6 +89,7 @@ import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIAvailablePresetSelect,
@@ -386,7 +386,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const relayEnvironment = useRelayEnvironment();
 
@@ -1883,7 +1883,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           justify="between"
           gap="md"
           wrap="wrap"
-          style={{ paddingRight: token.paddingLG }}
+          style={{ paddingRight: token('--spacing-6') }}
         >
           <span>{t('deployment.AddRevision')}</span>
           {/* PILOT-DECISION: antd's `style={{fontWeight: 'normal'}}` counter-
@@ -1953,7 +1953,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       {!deploymentProject ? (
         <Banner
           status="warning"
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
           title={t('deployment.CannotResolveDeploymentProject')}
         />
       ) : null}
@@ -1962,7 +1962,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         // the status icon; `action` → `endContent`).
         <Banner
           status="info"
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
           title={t('deployment.CurrentRevisionAvailableDescription')}
           endContent={
             <Button
@@ -1979,7 +1979,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           // guide the user to switch to Custom Mode.
           <Banner
             status="info"
-            style={{ marginTop: token.marginXS }}
+            style={{ marginTop: token('--spacing-2') }}
             title={t('deployment.NoPresetsAvailable')}
             description={t('deployment.NoPresetsAvailableSwitchToCustom')}
           />
@@ -1988,7 +1988,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             key="preset-form"
             form={presetForm}
             layout="vertical"
-            style={{ marginTop: token.marginXS }}
+            style={{ marginTop: token('--spacing-2') }}
             onFinish={handlePresetFinish}
             onFinishFailed={handleFinishFailed}
             onValuesChange={(changed) => {
@@ -2283,7 +2283,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           key="custom-form"
           form={customForm}
           layout="vertical"
-          style={{ marginTop: token.marginXS }}
+          style={{ marginTop: token('--spacing-2') }}
           onFinish={handleCustomFinish}
           onFinishFailed={handleFinishFailed}
           initialValues={_.merge({}, RESOURCE_ALLOCATION_INITIAL_FORM_VALUES, {
@@ -2464,7 +2464,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 v?.readsVfolderConfigFiles ?? variantName === 'custom';
               if (!variantName || reads) return null;
               return (
-                <div style={{ marginBottom: token.marginMD }}>
+                <div style={{ marginBottom: token('--spacing-5') }}>
                   <Suspense fallback={null}>
                     <RuntimeParameterFormSection
                       runtimeVariant={variantName}

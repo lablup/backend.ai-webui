@@ -1,4 +1,4 @@
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import React from 'react';
 
@@ -13,12 +13,12 @@ const BAITextHighlighter: React.FC<BAITextHighlighterProps> = ({
   keyword,
   style,
 }) => {
+  const { token } = useTheme();
   if (!children) return null;
 
   if (_.isEmpty(keyword)) {
     return <span>{children}</span>;
   } else {
-    const { token } = theme.useToken() || '#F1A239';
     const parts = children.split(
       new RegExp(`(${_.escapeRegExp(keyword)})`, 'gi'),
     );
@@ -29,7 +29,10 @@ const BAITextHighlighter: React.FC<BAITextHighlighterProps> = ({
           part.toLowerCase() === keyword?.toLowerCase() ? (
             <span
               key={i}
-              style={{ backgroundColor: token.colorWarningHover, ...style }}
+              style={{
+                backgroundColor: token('--color-warning-hover'),
+                ...style,
+              }}
             >
               {part}
             </span>

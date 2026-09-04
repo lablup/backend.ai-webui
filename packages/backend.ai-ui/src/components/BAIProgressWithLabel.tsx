@@ -2,14 +2,14 @@
  to-astryx W2-D: antd `Typography.Text` -> Astryx `Text`, and the antd
  `ProgressProps` type import is replaced by the single key call sites use.
 
- `color: token.colorTextDisabled` becomes `color="disabled"` — a real member of
+ `color: token('--color-text-disabled')` becomes `color="disabled"` — a real member of
  Astryx's closed `TextColor` enum, so it follows the theme instead of a
  resolved hex. The remaining `token.*` reads are the theme-shim's job
  (final-switch material) and stay.
 */
-import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import React from 'react';
 
@@ -43,21 +43,21 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
   showInfo = true,
   size = 'small',
 }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const fontSize =
     size === 'small'
-      ? token.fontSizeSM
+      ? token('--font-size-sm')
       : size === 'middle'
-        ? token.fontSize
-        : token.fontSizeLG;
+        ? token('--font-size-base')
+        : token('--font-size-lg');
   return (
     <BAIFlex
       style={{
         padding: 1,
-        border: `1px solid ${token.colorBorder}`,
+        border: `1px solid ${token('--color-border-emphasized')}`,
         borderRadius: 3,
-        backgroundColor: token.colorBgContainerDisabled,
+        backgroundColor: token('--color-bg-container-disabled'),
         ...(_.isNumber(width) || _.isString(width)
           ? { width: width }
           : { flex: 1 }),
@@ -73,7 +73,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
           position: 'absolute',
           left: 0,
           top: 0,
-          backgroundColor: strokeColor ?? token.colorSuccess,
+          backgroundColor: strokeColor ?? token('--color-success'),
           opacity: 0.7,
           zIndex: 0,
           overflow: 'hidden',
@@ -87,7 +87,7 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
           }
           style={{
             fontSize,
-            minHeight: token.sizeXXS,
+            minHeight: token('--spacing-1'),
             ...labelStyle,
           }}
         >

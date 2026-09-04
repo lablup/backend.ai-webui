@@ -14,7 +14,6 @@ import { FairShareWeightSettingModal_ResourceGroupFragment$key } from '../../__g
 import { FairShareWeightSettingModal_UserFragment$key } from '../../__generated__/FairShareWeightSettingModal_UserFragment.graphql';
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
-import { theme } from '../../theme-shim';
 import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
@@ -23,6 +22,7 @@ import DomainResourceGroupAlert from './DomainResourceGroupAlert';
 import ProjectResourceGroupAlert from './ProjectResourceGroupAlert';
 import UserResourceGroupAlert from './UserResourceGroupAlert';
 import { Banner } from '@astryxdesign/core/Banner';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIQuestionIconWithTooltip,
@@ -60,7 +60,7 @@ const FairShareWeightSettingModal: React.FC<
 
   const { t } = useTranslation();
   const { logger } = useBAILogger();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
 
   const resourceGroup = useFragment(
@@ -542,21 +542,21 @@ const FairShareWeightSettingModal: React.FC<
             title={t('fairShare.SchedulerDoesNotAppliedToResourceGroup', {
               resourceGroup: resourceGroup?.name || '',
             })}
-            style={{ marginBottom: token.marginMD }}
+            style={{ marginBottom: token('--spacing-5') }}
           />
         )}
         {!isBulkEdit && domainsFairShares?.[0] && (
           <DomainResourceGroupAlert
             domainFairShareFrgmt={domainsFairShares[0]}
             isModalOpen={modalProps?.open ?? false}
-            style={{ marginBottom: token.marginMD }}
+            style={{ marginBottom: token('--spacing-5') }}
           />
         )}
         {!isBulkEdit && projectFairShares?.[0] && (
           <ProjectResourceGroupAlert
             projectFairShareFrgmt={projectFairShares[0]}
             isModalOpen={modalProps?.open ?? false}
-            style={{ marginBottom: token.marginMD }}
+            style={{ marginBottom: token('--spacing-5') }}
           />
         )}
         {!isBulkEdit && userFairShares?.[0] && (
@@ -565,13 +565,13 @@ const FairShareWeightSettingModal: React.FC<
             resourceGroupName={INITIAL_FORM_VALUES.resourceGroupName}
             domainName={INITIAL_FORM_VALUES.domainName}
             projectId={INITIAL_FORM_VALUES.projectId}
-            style={{ marginBottom: token.marginMD }}
+            style={{ marginBottom: token('--spacing-5') }}
           />
         )}
         <Banner
           status="info"
           title={t('fairShare.FairShareSettingDescription')}
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
         />
         <Form
           ref={formRef}

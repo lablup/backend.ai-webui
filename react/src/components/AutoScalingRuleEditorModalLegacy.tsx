@@ -524,9 +524,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <AstryxFormNumberInput
-            label={t('autoScalingRule.CoolDownSeconds')}
-          />
+          <AstryxFormNumberInput label={t('autoScalingRule.CoolDownSeconds')} />
         </Form.Item>
       </Form>
     </BAIModal>

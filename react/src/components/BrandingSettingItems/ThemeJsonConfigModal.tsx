@@ -4,12 +4,13 @@
  */
 import { App } from '../../app-shim';
 import { downloadBlob } from '../../helper/csv-util';
+import { pickValidAppearanceConfig } from '../../helper/customThemeConfig';
 import { loadMonacoEditor } from '../../helper/monacoEditor';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { theme } from '../../theme-shim';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
+import { useTheme } from '@astryxdesign/core/theme';
 import type { Monaco } from '@monaco-editor/react';
 import {
   BAISkeleton,
@@ -40,7 +41,7 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { isDarkMode } = useThemeMode();
   const { defaultTheme, setDefaultTheme } = useDefaultTheme();
@@ -56,8 +57,8 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
     <div
       style={{
         alignSelf: 'start',
-        paddingInline: token.paddingContentHorizontal,
-        paddingBlock: token.paddingContentVertical,
+        paddingInline: token('--spacing-4'),
+        paddingBlock: token('--spacing-3'),
         width: '100%',
       }}
     >
@@ -167,7 +168,17 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
                 }
-                setDefaultTheme(parsedValue);
+                // The Monaco markers are advisory (the schema fetch can fail);
+                // this is the gate every draft passes before it is stored.
+                const validated = pickValidAppearanceConfig(
+                  parsedValue,
+                  'the JSON editor',
+                );
+                if (!validated) {
+                  message.error(t('theme.CannotApplyInvalidJsonConfig'));
+                  return;
+                }
+                setDefaultTheme(validated);
                 message.success(t('theme.JsonConfigAppliedSuccessfully'));
                 onRequestClose();
               }}
@@ -225,10 +236,9 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                 });
             };
 
-            const [themeSchema, antdSchema] = await Promise.all([
-              loadSchema('/resources/theme.schema.json'),
-              loadSchema('/resources/antdThemeConfig.schema.json'),
-            ]);
+            const themeSchema = await loadSchema(
+              '/resources/theme.schema.json',
+            );
             monacoRef.current = monaco;
             monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
               validate: true,
@@ -239,11 +249,6 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   uri: 'inmemory://model/theme.schema.json',
                   fileMatch: ['*'],
                   schema: themeSchema,
-                },
-                {
-                  uri: 'inmemory://model/antdThemeConfig.schema.json',
-                  fileMatch: ['*'],
-                  schema: antdSchema,
                 },
               ],
             });

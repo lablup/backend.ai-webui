@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCreatedSessionFragment.graphql';
-import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   filterOutNullAndUndefined,
   toLocalId,
@@ -36,7 +36,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
   project,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [sessionDetailId, setSessionDetailId] = useQueryState(
     'sessionDetail',
     // Push so Back closes the drawer (nuqs defaults to replace; the legacy
@@ -76,7 +76,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
         direction="column"
         align="stretch"
         style={{
-          paddingInline: token.paddingXL,
+          paddingInline: token('--spacing-8'),
           height: '100%',
         }}
       >
@@ -116,7 +116,7 @@ const RecentlyCreatedSession: React.FC<RecentlyCreatedSessionProps> = ({
             flex: 1,
             overflowY: 'auto',
             overflowX: 'hidden',
-            marginBottom: token.margin,
+            marginBottom: token('--spacing-4'),
           }}
         >
           <SessionNodes

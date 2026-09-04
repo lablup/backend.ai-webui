@@ -3598,7 +3598,6 @@
     "DescScriptCreated": "Script de configuración de usuario creado. Esto se aplicará sólo a las nuevas sesiones.",
     "DescScriptDeleted": "Script de configuración de usuario borrado :",
     "DescScriptUpdated": "Script de configuración de usuario actualizado. Esto se aplicará sólo a las nuevas sesiones.",
-    "DescThemeAccentColor": "Establecer el color primario del tema.",
     "DescThemeFamily": "Establecer el tema.",
     "DescThemeMode": "Establecer el modo de visualización.",
     "DescUseCompactSidebar": "La barra lateral compacta le permite utilizar más espacio de trabajo. <br />Si esta opción está activada, la barra lateral compacta se convierte en la interfaz de usuario inicial al arrancar.",
@@ -3646,7 +3645,6 @@
     "SessionTerminationDialog": "La finalización de la sesión no se puede deshacer. ¿Desea finalizar la sesión?",
     "ShellEnvironments": "Entornos de conchas",
     "Theme": "Tema",
-    "ThemeAccentColor": "Color primario",
     "ThemeFamily": "Tema",
     "ThemeMode": "Modo temático",
     "UseCompactSidebar": "Utilizar la barra lateral compacta por defecto",
@@ -3673,6 +3671,7 @@
       "DarkModeLogoDesc": "Establecer la imagen que se usará como logo de la WebUI en modo oscuro.",
       "DetailLogoCustomizationDesc": "Personalice los logotipos para áreas específicas como la página de inicio de sesión. Si no se configura, se utiliza la imagen de logo predeterminada. Cuando se usa la imagen predeterminada, el logo de cada modo se aplica de forma inversa para contraste de color.",
       "FailedToReadFile": "No se pudo leer el archivo. Inténtelo de nuevo.",
+      "FallbackFollowsItem": "No hay ningún valor configurado, por lo que se usa la imagen de {{item}}.",
       "Image": "Imagen",
       "ImagePath": "Ruta",
       "LightModeCollapsedLogo": "Logotipo del panel lateral colapsado (modo claro)",
@@ -3709,9 +3708,7 @@
       "PrimaryColor": "Color primario",
       "PrimaryColorDesc": "El color principal aplicado a botones o texto descriptivo que representan acciones clave. \nTambién se aplica como color de fondo para la sección del logotipo en el encabezado.",
       "SuccessColor": "Color del éxito",
-      "SuccessColorDesc": "El color aplicado a los botones, alertas o íconos que indican que una acción del usuario se completó exitosamente.",
-      "TextColor": "Color del texto",
-      "TextColorDesc": "El color utilizado para el texto general."
+      "SuccessColorDesc": "El color aplicado a los botones, alertas o íconos que indican que una acción del usuario se completó exitosamente."
     }
   },
   "webTerminalUsageGuide": {

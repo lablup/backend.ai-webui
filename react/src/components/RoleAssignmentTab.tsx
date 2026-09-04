@@ -12,10 +12,10 @@ import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import AssignRoleModal from './AssignRoleModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -54,7 +54,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -257,7 +257,10 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
               <Tooltip content={t('rbac.RevokeUser')}>
                 <BAIButton
                   icon={
-                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                    <Trash2
+                      style={{ color: token('--color-error') }}
+                      size="1em"
+                    />
                   }
                   onClick={() => {
                     const userIds = assignments

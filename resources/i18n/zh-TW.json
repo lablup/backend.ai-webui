@@ -3602,7 +3602,6 @@
     "DescScriptCreated": "已創建用戶配置腳本。這將僅適用於新會話。",
     "DescScriptDeleted": "用戶配置腳本已刪除：",
     "DescScriptUpdated": "用戶配置腳本已更新。這將僅適用於新會話。",
-    "DescThemeAccentColor": "設定主題的原色。",
     "DescThemeFamily": "設定主題。",
     "DescThemeMode": "設定顯示模式。",
     "DescUseCompactSidebar": "緊湊側邊欄提供更多工作空間。<br />啟用後，緊湊側邊欄將成為啟動時的預設介面。",
@@ -3650,7 +3649,6 @@
     "SessionTerminationDialog": "會話終止無法撤消。您要繼續終止會話嗎？",
     "ShellEnvironments": "外殼環境",
     "Theme": "主題",
-    "ThemeAccentColor": "原色",
     "ThemeFamily": "主題",
     "ThemeMode": "主題模式",
     "UseCompactSidebar": "將緊湊側邊欄設為預設",
@@ -3677,6 +3675,7 @@
       "DarkModeLogoDesc": "設定深色模式 WebUI 使用的 Logo 圖片。",
       "DetailLogoCustomizationDesc": "為登入頁面等特定區域自訂 Logo。若未設定，則使用預設 Logo 圖片。使用預設圖片時，各模式的 Logo 將反色套用以確保色彩對比度。",
       "FailedToReadFile": "無法讀取檔案，請再試一次。",
+      "FallbackFollowsItem": "未設定值，因此使用「{{item}}」圖片。",
       "Image": "映像檔",
       "ImagePath": "路徑",
       "LightModeCollapsedLogo": "收合側邊欄 Logo（淺色模式）",
@@ -3713,9 +3712,7 @@
       "PrimaryColor": "原色",
       "PrimaryColorDesc": "應用於代表關鍵操作的按鈕或描述性文本的主要顏色。它還用作標題中徽標部分的背景顏色。",
       "SuccessColor": "成功色彩",
-      "SuccessColorDesc": "應用於按鈕、警報或圖標的顏色，指示用戶操作已成功完成。",
-      "TextColor": "文字顏色",
-      "TextColorDesc": "用於一般文本的顏色。"
+      "SuccessColorDesc": "應用於按鈕、警報或圖標的顏色，指示用戶操作已成功完成。"
     }
   },
   "webTerminalUsageGuide": {

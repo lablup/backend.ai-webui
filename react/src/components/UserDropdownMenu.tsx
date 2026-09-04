@@ -10,7 +10,6 @@ import {
   useTOTPSupported,
 } from '../hooks/backendai';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { useBAIBreakpoint } from '../theme-shim';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
@@ -23,6 +22,7 @@ import {
   filterOutEmpty,
   useFetchKey,
   useToggle,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {

@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../../theme-shim';
 import PureChatTokenCounter from './ChatTokenCounter';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { UIMessage } from '@ai-sdk/react';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { memo } from 'react';
 
@@ -28,7 +28,7 @@ const ChatMessages: React.FC<ChatMessageProps> = ({
   startTime,
   endTime,
 }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   return (
     // `minHeight: 0` lets this pane absorb the shrink when the composer grows
     // (attachment drawer open, multi-line input) instead of the composer being
@@ -46,7 +46,7 @@ const ChatMessages: React.FC<ChatMessageProps> = ({
           position: 'absolute',
           bottom: 0,
           right: 0,
-          margin: token.margin,
+          margin: token('--spacing-4'),
         }}
       >
         <ChatTokenCounter

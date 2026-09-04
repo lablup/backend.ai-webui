@@ -8,10 +8,10 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIModal,
@@ -45,7 +45,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const agent = useFragment(
     graphql`
@@ -153,7 +153,7 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
         <Grid
           columns={{ minWidth: 280, max: 2 }}
           gap={6}
-          style={{ marginBottom: token.marginSM }}
+          style={{ marginBottom: token('--spacing-3') }}
         >
           {_.map(_.keys(parsedLiveStat?.devices), (key) => {
             if (['cpu_util', 'mem', 'disk', 'net_rx', 'net_tx'].includes(key)) {

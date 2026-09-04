@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r22-default-brand-hg6tffs theme — built by `pnpm exec astryx theme build`
+ * bai-r26-default-brand-h1ux0ib0 theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR22DefaultBrandHg6tffsTheme } from './bai-r22-default-brand-hg6tffs';
- *   import './bai-r22-default-brand-hg6tffs.css';
+ *   import { baiR26DefaultBrandH1ux0ib0Theme } from './bai-r26-default-brand-h1ux0ib0';
+ *   import './bai-r26-default-brand-h1ux0ib0.css';
  */
-export const baiR22DefaultBrandHg6tffsTheme = {
-  name: 'bai-r22-default-brand-hg6tffs',
+export const baiR26DefaultBrandH1ux0ib0Theme = {
+  name: 'bai-r26-default-brand-h1ux0ib0',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -102,8 +102,8 @@ export const baiR22DefaultBrandHg6tffsTheme = {
     "--color-background-card": "light-dark(#FFFFFF, #141414)",
     "--color-background-popover": "light-dark(#FFFFFF, #1F1F1F)",
     "--color-background-muted": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
-    "--color-accent": "light-dark(#FF7A00, #be5e06)",
-    "--color-accent-muted": "light-dark(color-mix(in srgb, var(--color-accent) 20%, transparent), color-mix(in srgb, var(--color-accent) 25%, transparent))",
+    "--color-accent": "light-dark(#FF7A00, #DC6B03)",
+    "--color-accent-muted": "light-dark(#FF7A0033, #DC6B033F)",
     "--color-neutral": "light-dark(rgba(0,0,0,0.06), #262626)",
     "--color-overlay": "light-dark(rgba(0,0,0,0.45), rgba(0,0,0,0.45))",
     "--color-overlay-hover": "light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.08))",
@@ -111,23 +111,23 @@ export const baiR22DefaultBrandHg6tffsTheme = {
     "--color-text-primary": "light-dark(#141414, #FFFFFF)",
     "--color-text-secondary": "light-dark(rgba(0,0,0,0.65), rgba(255,255,255,0.65))",
     "--color-text-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
-    "--color-text-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-text-accent": "light-dark(#FF7A00, #DC6B03)",
     "--color-on-dark": "#ffffff",
     "--color-on-light": "#171717",
     "--color-on-accent": "light-dark(#ffffff, #ffffff)",
     "--color-on-success": "light-dark(#ffffff, #ffffff)",
     "--color-on-error": "light-dark(#ffffff, #ffffff)",
     "--color-on-warning": "#171717",
-    "--color-icon-accent": "light-dark(#FF7A00, #be5e06)",
+    "--color-icon-accent": "light-dark(#FF7A00, #DC6B03)",
     "--color-icon-primary": "light-dark(#141414, #FFFFFF)",
     "--color-icon-secondary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
     "--color-icon-disabled": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
-    "--color-success": "light-dark(#00BD9B, #068e76)",
-    "--color-error": "light-dark(#FF4D4F, #be3d3f)",
-    "--color-warning": "light-dark(#FAAD14, #d89614)",
-    "--color-success-muted": "light-dark(#00BD9B33, #068e763F)",
-    "--color-error-muted": "light-dark(#FF4D4F33, #be3d3f3F)",
-    "--color-warning-muted": "light-dark(#FAAD1433, #d896143F)",
+    "--color-success": "light-dark(#00BD9B, #03A487)",
+    "--color-error": "light-dark(#FF4D4F, #DC4446)",
+    "--color-warning": "light-dark(#FAAD14, #FAAD14)",
+    "--color-success-muted": "light-dark(#00BD9B33, #03A4873F)",
+    "--color-error-muted": "light-dark(#FF4D4F33, #DC44463F)",
+    "--color-warning-muted": "light-dark(#FAAD1433, #FAAD143F)",
     "--color-border": "light-dark(#F0F0F0, #303030)",
     "--color-border-emphasized": "light-dark(#D9D9D9, #424242)",
     "--color-skeleton": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
@@ -189,6 +189,27 @@ export const baiR22DefaultBrandHg6tffsTheme = {
     "--shadow-inset-error": "inset 0px 0px 0px 2px #e33f4a4D",
     "--color-background-inverted": "light-dark(#211A16, #FFFBF8)",
     "--color-track": "light-dark(#B8A89F, #51443C)",
+    "--color-info": "light-dark(#028DF2, #009BDD)",
+    "--color-link": "light-dark(#FF7A00, #DC6B03)",
+    "--header-bg": "light-dark(#FF9729, #E88A28)",
+    "--color-error-bg": "light-dark(color-mix(in srgb, var(--color-error) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-error) 15%, var(--color-background-surface)))",
+    "--color-info-bg": "light-dark(color-mix(in srgb, var(--color-info) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-info) 15%, var(--color-background-surface)))",
+    "--color-warning-hover": "light-dark(color-mix(in srgb, var(--color-warning) 65%, var(--color-background-surface)), color-mix(in srgb, var(--color-warning) 45%, var(--color-background-surface)))",
+    "--color-success-border-hover": "light-dark(color-mix(in srgb, var(--color-success) 65%, var(--color-background-surface)), color-mix(in srgb, var(--color-success) 45%, var(--color-background-surface)))",
+    "--color-primary-bg": "light-dark(color-mix(in srgb, var(--color-accent) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-accent) 30%, var(--color-background-surface)))",
+    "--color-error-border": "light-dark(color-mix(in srgb, var(--color-error) 45%, var(--color-background-surface)), color-mix(in srgb, var(--color-error) 30%, var(--color-background-surface)))",
+    "--primary-5": "light-dark(color-mix(in srgb, var(--color-accent) 85%, var(--color-background-surface)), color-mix(in srgb, var(--color-accent) 65%, var(--color-background-surface)))",
+    "--color-text-tertiary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+    "--color-text-quaternary": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+    "--color-text-description": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+    "--color-fill": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
+    "--color-fill-secondary": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "--color-fill-tertiary": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "--color-fill-quaternary": "light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.04))",
+    "--color-bg-container-disabled": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "--preset-purple-5": "light-dark(#9254de, #51258f)",
+    "--preset-green-5": "light-dark(#73d13d, #3c8618)",
+    "--preset-red-5": "light-dark(#ff4d4f, #a61d24)",
     "--size-element-sm": "24px"
   },
   components: {
@@ -407,19 +428,19 @@ export const baiR22DefaultBrandHg6tffsTheme = {
         "--color-text-primary": "var(--color-text-green)",
         "--color-text-secondary": "var(--color-text-green)",
         "--color-success": "var(--color-text-green)",
-        "--color-success-muted": "light-dark(#CCF2EB, #11322C)"
+        "--color-success-muted": "light-dark(#CCF2EB, #103830)"
       },
       "status:warning": {
         "--color-text-primary": "var(--color-text-yellow)",
         "--color-text-secondary": "var(--color-text-yellow)",
         "--color-warning": "var(--color-text-yellow)",
-        "--color-warning-muted": "light-dark(#FEEFD0, #443414)"
+        "--color-warning-muted": "light-dark(#FEEFD0, #4D3A14)"
       },
       "status:error": {
         "--color-text-primary": "var(--color-text-red)",
         "--color-text-secondary": "var(--color-text-red)",
         "--color-error": "var(--color-text-red)",
-        "--color-error-muted": "light-dark(#FFDBDC, #3E1E1F)"
+        "--color-error-muted": "light-dark(#FFDBDC, #452020)"
       }
     },
     "switch": {
@@ -482,13 +503,13 @@ export const baiR22DefaultBrandHg6tffsTheme = {
         "--color-background-card": "light-dark(#c4ddfb, #393f50)"
       },
       "status:error": {
-        "--color-background-card": "light-dark(#FFDBDC, #3E1E1F)"
+        "--color-background-card": "light-dark(#FFDBDC, #452020)"
       },
       "status:success": {
-        "--color-background-card": "light-dark(#CCF2EB, #11322C)"
+        "--color-background-card": "light-dark(#CCF2EB, #103830)"
       },
       "status:warning": {
-        "--color-background-card": "light-dark(#FEEFD0, #443414)"
+        "--color-background-card": "light-dark(#FEEFD0, #4D3A14)"
       }
     },
     "dialog": {

@@ -7,7 +7,6 @@ import { useWebUINavigate } from '../../hooks';
 import { AIAgent, useAIAgent } from '../../hooks/useAIAgent';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
-import { theme } from '../../theme-shim';
 import AIAgentSelect from './AIAgentSelect';
 import type { ChatModel, ChatParameters } from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
@@ -20,6 +19,7 @@ import {
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Popover } from '@astryxdesign/core/Popover';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {
@@ -109,7 +109,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onClearMessage,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
 
@@ -190,8 +190,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       style={{
         minHeight: '56px',
         width: '100%',
-        paddingTop: token.paddingXS,
-        paddingBottom: token.paddingXS,
+        paddingTop: token('--spacing-2'),
+        paddingBottom: token('--spacing-2'),
       }}
     >
       <BAIFlex
@@ -267,7 +267,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           placement="below"
           alignment="start"
           style={{
-            padding: token.paddingXS,
+            padding: token('--spacing-2'),
           }}
         >
           <Tooltip content={t('chatui.chat.parameter.Title')}>
@@ -302,7 +302,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             icon: <EllipsisVertical size="1em" />,
             label: t('button.MoreActions'),
             isIconOnly: true,
-            style: { color: token.colorTextSecondary },
+            style: { color: token('--color-text-secondary') },
           }}
         />
       </BAIFlex>

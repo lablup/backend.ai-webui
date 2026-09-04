@@ -22,7 +22,6 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
-import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
@@ -35,6 +34,7 @@ import type { BadgeVariant } from '@astryxdesign/core/Badge';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAITable,
   BAITableProps,
@@ -155,7 +155,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { generateFolderPath } = useFolderExplorerOpener();
   const navigate = useWebUINavigate();
   const effectiveAdminRole = useEffectiveAdminRole();
@@ -282,7 +282,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       icon={
         <VFolderNodeIdenticon
           vfolderNodeIdenticonFrgmt={vfolder}
-          style={{ fontSize: token.fontSizeHeading5 }}
+          style={{ fontSize: token('--font-size-lg') }}
         />
       }
       title={vfolder.name}
@@ -479,7 +479,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                               ),
                               extraDescription: !_.isEmpty(occupiedSession) ? (
                                 <VStack align="stretch">
-                                  {/* `token.colorTextDescription` maps to the
+                                  {/* `token('--color-text-description')` maps to the
                                       semantic `color="secondary"` (P5). */}
                                   <Text color="secondary">
                                     {t('data.folders.MountedSessions')}

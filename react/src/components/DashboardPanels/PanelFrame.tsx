@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../../theme-shim';
 import PanelEditControls from './PanelEditControls';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIBoardItemTitle,
   BAIFetchKeyButton,
@@ -35,7 +35,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
   children,
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [localFetchKey, updateLocalFetchKey] = useFetchKey();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -43,7 +43,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
     <BAIFlex
       direction="column"
       align="stretch"
-      style={{ paddingInline: token.paddingXL, height: '100%' }}
+      style={{ paddingInline: token('--spacing-8'), height: '100%' }}
     >
       <BAIBoardItemTitle
         title={title}
@@ -76,7 +76,7 @@ const PanelFrame: React.FC<PanelFrameProps> = ({
           flex: 1,
           overflowY: 'auto',
           overflowX: 'hidden',
-          marginBottom: token.margin,
+          marginBottom: token('--spacing-4'),
         }}
       >
         {children(localFetchKey)}
