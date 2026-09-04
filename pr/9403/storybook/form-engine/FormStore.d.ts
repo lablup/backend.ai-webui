@@ -6,13 +6,6 @@ import { NamePath, Store } from './namePath';
  * of the previous render's.
  */
 export declare function delayFrame(): Promise<void>;
-/**
- * `checkVisibility` where the browser has it — with the `visibility`
- * property, which the bare call ignores; jsdom falls back to markup.
- */
-export declare function isVisible(el: HTMLElement): boolean;
-/** `scrollIntoView` with antd's `nearest` default; reduced motion wins over `smooth`. */
-export declare function scrollIntoView(el: HTMLElement, options?: ScrollIntoViewOptions): void;
 export declare class FormStore {
     private forceRootUpdate;
     private subscribable;
@@ -26,8 +19,6 @@ export declare class FormStore {
     private watcherCenter;
     /** Paths of `preserve: false` fields alive at the previous unmount. */
     private prevWithoutPreserves;
-    /** Stamped as `data-bai-form-id` on every item of this form. */
-    private readonly formId;
     constructor(forceRootUpdate: () => void);
     getForm: () => InternalFormInstance;
     getInternalHooks: (key: string) => InternalHooks | null;
@@ -95,20 +86,13 @@ export declare class FormStore {
     private triggerOnFieldsChange;
     validateFields: (arg1?: any, arg2?: any) => Promise<Store>;
     submit: () => void;
-    /** The field's DOM node — see `getFieldDOMNode` for what that resolves to. */
     getFieldInstance: (name: NamePath) => HTMLElement | undefined;
-    /** Scrolls the NAMED field. `<Form scrollToFirstError>` picks which one. */
     scrollToField: (name: NamePath, options?: ScrollOptions) => void;
     focusField: (name: NamePath) => void;
     /**
-     * The control carrying `data-bai-field-id` (stamped by `FormItem`; Astryx
-     * inputs drop the `id` they are given but keep `data-*`), else the item
-     * wrapper carrying `data-bai-field-item` (a child that forwards nothing to
-     * the DOM), else the enclosing item whose `data-bai-field-items` lists the
-     * handle (a wrapper-less `noStyle` field). Only elements stamped with this
-     * form's id are candidates, so two mounted forms sharing a field name stay
-     * apart — a `component={false}` form has no element to scope by. A name
-     * mounted twice (a field repeated across tabs) resolves to the visible one.
+     * The control carrying `data-bai-field-id` (Astryx inputs drop the `id`
+     * `FormItem` gives them but keep `data-*`), else the item wrapper carrying
+     * `data-bai-field-item` (a child that forwards nothing to the DOM).
      */
     private getFieldDOMNode;
 }

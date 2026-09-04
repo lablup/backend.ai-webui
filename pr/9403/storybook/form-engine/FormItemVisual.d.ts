@@ -49,16 +49,8 @@ export interface BAIFormItemVisualProps {
     status?: FormItemStatus;
     hasFeedback?: boolean;
     fieldId?: string;
-    /**
-     * The field handle (`getFieldHandle`), published as `data-bai-field-item`
-     * so a field whose child forwards no props to the DOM is still reachable
-     * by `FormStore.getFieldDOMNode`.
-     */
+    /** Same handle as the control's `data-bai-field-id`, for a child that forwards nothing to the DOM. */
     fieldHandle?: string;
-    /** The owning form's token; on every item, named or not. */
-    formId?: string;
-    /** Handles of wrapper-less `noStyle` fields this item stands in for. */
-    subFieldHandles?: string[];
     htmlFor?: string;
     className?: string;
     style?: React.CSSProperties;

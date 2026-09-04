@@ -193,8 +193,6 @@ export interface InternalHooks {
     setPreserve: (preserve?: boolean) => void;
     getInitialValue: (namePath: InternalNamePath) => StoreValue;
     registerWatch: (callback: WatchCallBack) => () => void;
-    /** This instance's token; `FormItem` stamps it so a DOM lookup stays in-form. */
-    getFormId: () => string;
 }
 export type WatchCallBack = (values: Store, allValues: Store) => void;
 export type ReducerAction = {

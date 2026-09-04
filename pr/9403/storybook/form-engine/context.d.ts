@@ -100,11 +100,4 @@ export type SubItemMeta = Partial<Meta> & {
  * it their children's messages vanish (answers/08 §3).
  */
 export declare const NoStyleItemContext: React.Context<((meta: SubItemMeta, uniqueKeys: React.Key[]) => void) | null>;
-/**
- * A wrapper-less `noStyle` field registers its handle with the nearest item
- * that renders a wrapper, which publishes it as `data-bai-field-items` so
- * `FormStore.getFieldDOMNode` can still reach the field. Returns the
- * unregister function.
- */
-export declare const SubFieldRegistryContext: React.Context<((handle: string) => () => void) | null>;
 export type { InternalHooks };

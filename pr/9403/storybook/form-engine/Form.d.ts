@@ -1,6 +1,6 @@
 import { default as useForm, FormStore } from './FormStore';
 import { FormItemCol, FormLayout, FormSize, RequiredMark } from './context';
-import { Callbacks, FieldData, FormInstance, ScrollOptions, ValidateMessages } from './interface';
+import { Callbacks, FieldData, FormInstance, ValidateMessages } from './interface';
 import { Store } from './namePath';
 import * as React from 'react';
 export interface FormProps<Values = any> extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'children' | 'onChange' | 'onReset'> {
@@ -20,13 +20,7 @@ export interface FormProps<Values = any> extends Omit<React.FormHTMLAttributes<H
     labelWrap?: boolean;
     validateMessages?: ValidateMessages;
     validateTrigger?: string | string[] | false;
-    /**
-     * Scrolls the first invalid field into view and focuses it when a submit
-     * fails. Off unless set, as in antd — and, as in antd, it acts on
-     * `form.submit()`, not on a bare `validateFields()`. Pass an object to
-     * override the scroll options; `focus: false` keeps focus where it is.
-     */
-    scrollToFirstError?: boolean | ScrollOptions;
+    scrollToFirstError?: boolean | Record<string, unknown>;
     clearOnDestroy?: boolean;
     onValuesChange?: Callbacks<Values>['onValuesChange'];
     onFieldsChange?: Callbacks<Values>['onFieldsChange'];
