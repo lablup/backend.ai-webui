@@ -1,5 +1,9 @@
-import { createDeepLinkPin, type DeepLinkPin } from './pin.js';
-import type { AnchorV3 } from './types.js';
+import {
+  createDeepLinkPin,
+  type DeepLinkPin,
+  type DeepLinkPinTarget,
+} from './pin.js';
+import type { AnchorV3, CopyPayload } from './types.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const anchor = (over: Partial<AnchorV3> = {}): AnchorV3 => ({
@@ -14,11 +18,21 @@ const anchor = (over: Partial<AnchorV3> = {}): AnchorV3 => ({
 let host: HTMLElement;
 let pin: DeepLinkPin;
 let copied: string[];
+let copiedHtml: (string | undefined)[];
 let toasts: string[];
 let copyResult: boolean | Promise<boolean>;
+let located: (Element | null)[];
+/** What `main.ts` would render for this pin; null stands for "cannot". */
+let comment: CopyPayload | null;
+let commentFor: DeepLinkPinTarget | null;
 
 const show = (over: Partial<AnchorV3> = {}) =>
-  pin.show({ id: 'c_zdv3rhz', anchor: anchor(over), label: 'Start › button' });
+  pin.show({
+    id: 'c_zdv3rhz',
+    anchor: anchor(over),
+    anchorB64: 'PAYLOAD',
+    label: 'Start › button',
+  });
 
 const marker = () => host.shadowRoot?.querySelector('.pin') as HTMLElement;
 const card = () => host.shadowRoot?.querySelector('.card') as HTMLElement;
@@ -59,16 +73,26 @@ beforeEach(() => {
   host.setAttribute('data-bai-review-overlay', '');
   document.body.append(host);
   copied = [];
+  copiedHtml = [];
   toasts = [];
+  located = [];
   copyResult = true;
+  comment = { text: 'the whole comment', html: '<p>the whole comment</p>' };
+  commentFor = null;
   pin = createDeepLinkPin({
     root: host.attachShadow({ mode: 'open' }),
     host,
-    copyText: (text) => {
+    copyText: (text, html) => {
       copied.push(text);
+      copiedHtml.push(html);
       return copyResult;
     },
     showToast: (message) => toasts.push(message),
+    buildComment: (target) => {
+      commentFor = target;
+      return comment;
+    },
+    onLocated: (element) => located.push(element),
   });
 });
 
@@ -100,6 +124,7 @@ describe('createDeepLinkPin', () => {
   it('names the component the block carried under the label', () => {
     pin.show({
       id: 'c_zdv3rhz',
+      anchorB64: 'PAYLOAD',
       anchor: anchor({ c: { name: 'StartPage', src: 'src/StartPage.tsx:4' } }),
       label: 'Start › button',
     });
@@ -545,13 +570,14 @@ describe('createDeepLinkPin', () => {
 
     it('names every icon-only control for a screen reader', () => {
       show();
-      const named = ['.idcopy', '.close', '.locate'].map((sel) =>
+      const named = ['.idcopy', '.close', '.locate', '.copyall'].map((sel) =>
         host.shadowRoot?.querySelector(sel)?.getAttribute('aria-label'),
       );
       expect(named).toEqual([
         'Copy this comment id',
         'Dismiss this pin',
         'Scroll back to this element',
+        'Copy the whole comment',
       ]);
     });
 
@@ -584,6 +610,92 @@ describe('createDeepLinkPin', () => {
       expect(subText()).toBe(
         'c_zdv3rhz📋 · CreateButton (react/src/Create.tsx:12)',
       );
+    });
+  });
+
+  // FR-3851. The id names the comment; the comment is what gets forwarded.
+  describe('the whole-comment copy control', () => {
+    const commentCopy = () =>
+      host.shadowRoot?.querySelector('.copyall') as HTMLButtonElement;
+
+    it('writes both flavours of the block the owner rendered', () => {
+      show({ n: 'The label is cut off.' });
+      commentCopy().click();
+      expect(copied).toEqual(['the whole comment']);
+      expect(copiedHtml).toEqual(['<p>the whole comment</p>']);
+      expect(toasts).toEqual(['Copied the whole comment 📋']);
+    });
+
+    it('hands the owner the pin it is showing, payload included', () => {
+      show({ n: 'Misaligned.' });
+      commentCopy().click();
+      expect(commentFor).toMatchObject({
+        id: 'c_zdv3rhz',
+        anchorB64: 'PAYLOAD',
+        label: 'Start › button',
+      });
+      expect(commentFor?.anchor.n).toBe('Misaligned.');
+    });
+
+    // The link caps the note it carries, so a copy off a capped link is short.
+    it('says so when the link only carries a shortened note', () => {
+      show({ n: 'A very long note…', nt: 1 });
+      commentCopy().click();
+      expect(toasts).toEqual([
+        'Copied — the note is the shortened one the link carries 📋',
+      ]);
+    });
+
+    it('copies nothing once the pin is dismissed', () => {
+      show();
+      pin.dismiss();
+      commentCopy().click();
+      expect(copied).toEqual([]);
+      expect(toasts).toEqual([]);
+    });
+
+    it('says so rather than writing a half-read block', () => {
+      comment = null;
+      show();
+      commentCopy().click();
+      expect(copied).toEqual([]);
+      expect(toasts).toEqual(['Still reading this element — try again']);
+    });
+
+    it('waits for an async clipboard before it claims success', async () => {
+      copyResult = Promise.resolve(false);
+      show();
+      commentCopy().click();
+      await copyResult;
+      expect(toasts[0]).toContain('Could not reach the clipboard');
+    });
+  });
+
+  // The ⚛️ stack is not in the anchor: the owner re-reads it from whatever
+  // element the pin is on, so it has to hear about every move.
+  describe('the located-element handoff', () => {
+    it('reports the element it settled on, and the loss of it', () => {
+      show();
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<button data-testid="create">Create</button>',
+      );
+      const element = document.querySelector('[data-testid="create"]');
+      expect(pin.locate()).toBe(true);
+      expect(located).toEqual([element]);
+      pin.dismiss();
+      expect(located).toEqual([element, null]);
+    });
+
+    it('stays quiet while the pin holds the same element', () => {
+      show();
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<button data-testid="create">Create</button>',
+      );
+      expect(pin.locate()).toBe(true);
+      expect(pin.locate()).toBe(true);
+      expect(located).toHaveLength(1);
     });
   });
 

@@ -11,7 +11,10 @@
 import { isAnchorV3 } from './anchor-guard.js';
 import { captureAnchorSignals, withNote } from './anchor.js';
 import {
+  blockStamp,
   buildBlockFromCapture,
+  buildBlockHtml,
+  buildBlockText,
   captureForBlock,
   landmarkLabel,
   resolveRouteLabel,
@@ -26,8 +29,13 @@ import {
   retryUntil,
 } from './deeplink.js';
 import { createPicker } from './picker.js';
-import { createDeepLinkPin } from './pin.js';
-import type { AnchorComponent, AnchorV3, ReviewServerState } from './types.js';
+import { createDeepLinkPin, type DeepLinkPinTarget } from './pin.js';
+import type {
+  AnchorComponent,
+  AnchorV3,
+  CopyPayload,
+  ReviewServerState,
+} from './types.js';
 import { createOverlayUI } from './ui.js';
 
 /** The SPA's own `<Navigate replace>` redirects drop the fragment on login. */
@@ -169,11 +177,70 @@ function boot() {
 
   // ------------------------------------------------- deep link (FR-3813)
 
+  /** A pin that locates before react-grab registers, retried into a stack. */
+  const STACK_TRIES = 8;
+  const STACK_RETRY_MS = 500;
+  /**
+   * The ⚛️ stack the copied comment quotes. The anchor does not carry it — it
+   * is re-read here, from the element this pin landed on, the same way the
+   * composer read it when the comment was written.
+   */
+  let pinStack: string[] = [];
+  let stackOf: Element | null = null;
+  /** False until `pr` and the stack are both this element's — see `buildComment`. */
+  let pinReady = false;
+
+  async function readPinStack(element: Element | null) {
+    stackOf = element;
+    pinStack = [];
+    pinReady = false;
+    if (!element) return;
+    // `pr` is part of the block, so the copy waits for the same gate the
+    // composer waits for rather than writing `pr=0`.
+    await stateReady;
+    for (let left = STACK_TRIES; ; left--) {
+      const stack = await picker.getStack(element);
+      if (stackOf !== element) return;
+      pinStack = stack;
+      pinReady = true;
+      // An empty stack is the answer once react-grab is there; before that it
+      // only means the app has not finished booting.
+      if (stack.length || left <= 0 || picker.hasReactGrab()) return;
+      await new Promise((resolve) => setTimeout(resolve, STACK_RETRY_MS));
+      if (stackOf !== element) return;
+    }
+  }
+
+  /**
+   * The comment this pin was written as, re-rendered here. The note, the label
+   * and the link all come off the fragment, so they are the reviewer's own;
+   * `pr` and `at` describe this copy, and the id is what carries the identity.
+   * `null` while the element's own reads are still in flight — a block missing
+   * its stack, or claiming `pr=0`, is not the comment that was written.
+   */
+  function buildComment(target: DeepLinkPinTarget): CopyPayload | null {
+    if (!pinReady) return null;
+    const input = {
+      label: target.label,
+      id: target.id,
+      stack: pinStack,
+      text: target.anchor.n ?? '',
+      // The app's own fragment rides alongside the pin (`#tab=logs&bai=v3.…`),
+      // and dropping it would reopen the page on a different tab.
+      url: `${location.origin}${pinUrl(target.anchor, target.id, target.anchorB64, location.hash)}`,
+      pr: serverState?.pr ?? 0,
+      at: blockStamp(),
+    };
+    return { text: buildBlockText(input), html: buildBlockHtml(input) };
+  }
+
   const pin = createDeepLinkPin({
     root: ui.root,
     host: ui.host,
     copyText: ui.copyText,
     showToast: ui.showToast,
+    buildComment,
+    onLocated: (element) => void readPinStack(element),
   });
   const guard = createNavigationGuard();
   let cancelRetry = () => undefined as void;
@@ -216,6 +283,7 @@ function boot() {
     pin.show({
       id: fragment.id,
       anchor,
+      anchorB64: fragment.anchorB64,
       label: landmarkLabel(anchorRouteLabel(anchor), anchor),
     });
     cancelRetry = retryUntil(() => pin.locate(), {

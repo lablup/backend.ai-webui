@@ -9,7 +9,7 @@
  */
 import { findAnchorTarget, quickFindTarget, textMatches } from './resolve.js';
 import { projectFraction } from './selection.js';
-import type { AnchorV3 } from './types.js';
+import type { AnchorV3, CopyPayload } from './types.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
 /** Long enough for a `behavior: 'smooth'` scroll and its momentum to stop. */
@@ -55,7 +55,7 @@ const STYLE = `
   /* The reviewer's own words lead. An anchor from before the note travelled
      carries none, and :empty leaves no gap where it would have been. */
   .card .note {
-    white-space: pre-wrap; word-break: break-word; padding-right: 42px;
+    white-space: pre-wrap; word-break: break-word; padding-right: 62px;
     margin-bottom: 6px;
   }
   .card .note:empty { display: none; }
@@ -65,7 +65,7 @@ const STYLE = `
   }
   .card .trunc.shown { display: block; }
   .card .label {
-    font-weight: 600; word-break: break-word; padding-right: 42px;
+    font-weight: 600; word-break: break-word; padding-right: 62px;
   }
   .card .sub {
     color: var(--bai-review-text-dim); font-size: 13px; margin-top: 3px;
@@ -83,13 +83,15 @@ const STYLE = `
     color: var(--bai-review-text-dim);
   }
   .card .idcopy:hover { color: var(--bai-review-text); }
-  .card .close, .card .locate {
+  .card .close, .card .locate, .card .copyall {
     position: absolute; top: 2px; cursor: pointer; border: 0;
     background: none; color: var(--bai-review-text-dim); font-size: 14px;
     pointer-events: auto;
   }
   .card .close { right: 4px; }
   .card .locate { right: 24px; }
+  .card .copyall { right: 44px; }
+  .card .copyall:hover { color: var(--bai-review-text); }
   /* The pick box's own style, so arriving on a link looks like the pick that
      made it: a thin stroke over a light fill, on our layer — never the app's. */
   .markbox {
@@ -106,15 +108,27 @@ export interface DeepLinkPinOptions {
   host: Element;
   /**
    * The overlay's own clipboard, not `navigator.clipboard`: the gateway origin
-   * is plain http, where `execCommand` is the only path that writes.
+   * is plain http, where `execCommand` is the only path that writes. The HTML
+   * flavour is what makes a paste into Teams a quote instead of raw markdown.
    */
-  copyText: (text: string) => boolean | Promise<boolean>;
+  copyText: (text: string, html?: string) => boolean | Promise<boolean>;
   showToast: (message: string) => void;
+  /**
+   * Re-render this pin's whole comment, SYNCHRONOUSLY — the copy runs through
+   * `execCommand` on the gateway origin, so nothing may be awaited inside the
+   * gesture. `main.ts` owns it: the server state and the stack live there, and
+   * `null` means those reads have not landed for this element yet.
+   */
+  buildComment: (target: DeepLinkPinTarget) => CopyPayload | null;
+  /** The pin settled on a different element — or on none. */
+  onLocated?: (element: Element | null) => void;
 }
 
 export interface DeepLinkPinTarget {
   id: string;
   anchor: AnchorV3;
+  /** The link's own anchor payload, so a copy can rebuild the link itself. */
+  anchorB64: string;
   /** `<route> › <landmark> › <tag "quoted text">` from the block. */
   label: string;
 }
@@ -124,6 +138,8 @@ export function createDeepLinkPin({
   host,
   copyText,
   showToast,
+  buildComment,
+  onLocated,
 }: DeepLinkPinOptions) {
   const style = document.createElement('style');
   style.textContent = STYLE;
@@ -177,7 +193,12 @@ export function createDeepLinkPin({
   locateButton.textContent = '📍';
   locateButton.title = 'Scroll back to this element';
   locateButton.setAttribute('aria-label', 'Scroll back to this element');
-  card.append(close, locateButton, note, trunc, label, sub);
+  const commentCopy = document.createElement('button');
+  commentCopy.className = 'copyall';
+  commentCopy.textContent = '⧉';
+  commentCopy.title = 'Copy the whole comment';
+  commentCopy.setAttribute('aria-label', 'Copy the whole comment');
+  card.append(close, locateButton, commentCopy, note, trunc, label, sub);
   const markBox = document.createElement('div');
   markBox.className = 'markbox';
   layer.append(markBox, marker, card);
@@ -221,8 +242,12 @@ export function createDeepLinkPin({
   }
 
   function setLocated(node: Element | null) {
+    const moved = node !== located;
     located = node;
     clippers = node ? collectClippers(node) : [];
+    // The ⚛️ stack a copy quotes belongs to the element the pin is on now, and
+    // a re-render moves it — so this fires on every change, not just the first.
+    if (moved) onLocated?.(node);
   }
 
   /**
@@ -392,6 +417,14 @@ export function createDeepLinkPin({
   );
   close.addEventListener('click', () => dismiss());
 
+  function write(text: string, html: string | undefined, ok: string) {
+    const done = (written: boolean) =>
+      showToast(written ? ok : 'Could not reach the clipboard — try again');
+    const copied = copyText(text, html);
+    if (typeof copied === 'boolean') done(copied);
+    else void copied.then(done);
+  }
+
   /**
    * The bare id, not the `#bai=v3.` link: what the reader pastes into the PR
    * thread or a Claude prompt to name this comment. The whole link is already
@@ -400,13 +433,29 @@ export function createDeepLinkPin({
   idCopy.addEventListener('click', () => {
     const id = target?.id;
     if (!id) return;
-    const done = (ok: boolean) =>
-      showToast(
-        ok ? `Copied ${id} 📋` : 'Could not reach the clipboard — try again',
-      );
-    const copied = copyText(id);
-    if (typeof copied === 'boolean') done(copied);
-    else void copied.then(done);
+    write(id, undefined, `Copied ${id} 📋`);
+  });
+
+  /**
+   * The comment itself, in the shape the composer wrote it — so opening a pin
+   * and forwarding it costs one click instead of retyping the note.
+   */
+  commentCopy.addEventListener('click', () => {
+    if (!target) return;
+    const payload = buildComment(target);
+    if (!payload) {
+      showToast('Still reading this element — try again');
+      return;
+    }
+    write(
+      payload.text,
+      payload.html,
+      // The link caps the note it carries, and a copy that quietly loses the
+      // rest is worse than one that says so.
+      target.anchor.nt === 1
+        ? 'Copied — the note is the shortened one the link carries 📋'
+        : 'Copied the whole comment 📋',
+    );
   });
 
   function dismiss() {

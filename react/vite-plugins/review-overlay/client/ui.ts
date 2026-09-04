@@ -14,7 +14,7 @@
  * its select mode is on, so the composer stays clickable mid-pick.
  */
 import { fractionWithin, projectFraction, type Box } from './selection.js';
-import type { AnchorRect } from './types.js';
+import type { AnchorRect, CopyPayload } from './types.js';
 
 /** Everything the outline needs; a `DOMRect` and a projected region both fit. */
 type RectLike = { left: number; top: number; width: number; height: number };
@@ -26,12 +26,6 @@ const COMPOSE_WIDTH = 300;
 const NOTE_DEBOUNCE_MS = 250;
 const COMPOSE_GAP = 10;
 const VIEWPORT_PAD = 8;
-
-/** One copy, two flavours: a markdown textarea and a rich editor. */
-export interface CopyPayload {
-  text: string;
-  html: string;
-}
 
 export interface OverlayUICallbacks {
   /**

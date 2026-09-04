@@ -328,6 +328,8 @@ export function createPicker(callbacks: PickerCallbacks) {
     stop,
     dispose,
     isActive: () => grabActive || fallbackPicking,
+    /** react-grab loads with the app: before it does, `getStack` is empty. */
+    hasReactGrab: () => !!api(),
     watchForReactGrab,
     isHotkeyArmed: () => hotkeyArmed,
     getStack,
