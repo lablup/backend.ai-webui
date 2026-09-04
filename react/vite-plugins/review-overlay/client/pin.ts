@@ -17,6 +17,8 @@ const SETTLE_MS = 1200;
 /** Card gap below/above the element, and its margin to the viewport edge. */
 const CARD_GAP = 10;
 const VIEWPORT_PAD = 8;
+/** `.card`'s `max-width` plus its border and padding — its widest rendering. */
+const CARD_WIDTH = 340;
 /** Four 1 s beats of the prototype's arrival pulse, then just the box. */
 const PULSE_MS = 4200;
 /** Escalated text scans a lost element gets before the pin stops looking. */
@@ -325,7 +327,14 @@ export function createDeepLinkPin({
         : left
           ? '← Scrolled to the left — 📍 goes back'
           : '→ Scrolled to the right — 📍 goes back';
-    card.style.left = `${Math.max(8, Math.min(box.left, vw - 340))}px`;
+    // A horizontal departure docks to a horizontal edge. Clamping `box.left`
+    // would leave the card mid-screen whenever a scroller — not the window —
+    // is what took the element sideways, with an arrow pointing nowhere.
+    const rightEdge = Math.max(VIEWPORT_PAD, vw - CARD_WIDTH - VIEWPORT_PAD);
+    card.style.left =
+      up || down
+        ? `${Math.max(VIEWPORT_PAD, Math.min(box.left, vw - CARD_WIDTH))}px`
+        : `${left ? VIEWPORT_PAD : rightEdge}px`;
     card.style.top = up
       ? `${VIEWPORT_PAD}px`
       : `${Math.max(VIEWPORT_PAD, vh - card.offsetHeight - VIEWPORT_PAD)}px`;
@@ -371,7 +380,7 @@ export function createDeepLinkPin({
     });
     marker.style.left = `${box.left + 6}px`;
     marker.style.top = `${box.top + 6}px`;
-    card.style.left = `${Math.max(8, Math.min(box.left, vw - 340))}px`;
+    card.style.left = `${Math.max(VIEWPORT_PAD, Math.min(box.left, vw - CARD_WIDTH))}px`;
     // `locate()` centres the element, so anything taller than half the
     // viewport puts `box.bottom` below the fold — and a fixed layer cannot be
     // scrolled to. Flip above, then clamp.

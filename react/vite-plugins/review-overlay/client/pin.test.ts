@@ -399,8 +399,40 @@ describe('createDeepLinkPin', () => {
         expect(
           host.shadowRoot?.querySelector('.awaynote')?.textContent,
         ).toContain('→');
-        expect(card().style.left).toBe('684px');
+        // 1024 − 340 − 8.
+        expect(card().style.left).toBe('676px');
       });
+    });
+
+    // The element is inside the WINDOW the whole time — only its scroller took
+    // it sideways — so clamping its own `left` would leave the card mid-screen
+    // under a ← that points at nothing.
+    it('docks sideways to the viewport edge, not to the element', () => {
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div id="scroller" style="overflow-x: auto; overflow-y: auto"></div>',
+      );
+      const scroller = document.querySelector('#scroller') as HTMLElement;
+      scroller.getBoundingClientRect = () =>
+        ({
+          left: 400,
+          right: 800,
+          width: 400,
+          top: 0,
+          bottom: 700,
+          height: 700,
+        }) as DOMRect;
+      const element = mountSized(
+        { left: 100, right: 300, top: 100, bottom: 300, height: 200 },
+        60,
+      );
+      scroller.append(element);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(
+        host.shadowRoot?.querySelector('.awaynote')?.textContent,
+      ).toContain('←');
+      expect(card().style.left).toBe('8px');
     });
 
     it('clears the docked state when the pin is dismissed', () => {
