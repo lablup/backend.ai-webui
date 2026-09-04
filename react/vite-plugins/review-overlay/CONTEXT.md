@@ -38,15 +38,15 @@ selector, landmark, text, and the note. Travels compressed inside the link.
 _Avoid_: payload, target, locator
 
 **Link**:
-The dev-server URL that carries a pin set in its fragment. A pin set has
-exactly one link, whatever its size.
+The dev-server URL that carries pins in its fragment. Every pin has its own
+one-pin link, and a set also has a set link that carries all of its pins.
 _Avoid_: deep link (the act of opening it), permalink, share URL
 
 **Block**:
 The markdown a pin is rendered as for pasting: the reviewer's note, a quoted
 label, the ⚛️ component stack, the link, and the marker comment. One block per
-pin; every block of a pin set carries the set's one link, so a block pasted on
-its own still opens.
+pin; every block carries its own pin's link, so a block pasted on its own still
+opens, and the set's link follows the last block once.
 _Avoid_: snippet, template, card (the on-screen thing)
 
 **Label**:
