@@ -10,9 +10,9 @@
  */
 import { captureAnchorSignals, withNote } from './anchor.js';
 import { encodeAnchor } from './codec.js';
-import { readablePath } from './deeplink.js';
+import { dedupeById, pinSetUrl, pinUrl, readablePath } from './deeplink.js';
 import { pinId } from './id.js';
-import type { AnchorComponent, AnchorV3 } from './types.js';
+import type { AnchorComponent, AnchorV3, SetPin } from './types.js';
 
 /**
  * The app publishes the current route's ENGLISH i18n label on
@@ -58,6 +58,11 @@ export interface BlockInput {
    * lands it drops in here without changing the block's shape.
    */
   imageUrl?: string;
+  /**
+   * Emit the `<!-- bai-review … -->` marker. False for a pin that came off a
+   * link: its `pr`/`at` never travelled, so a marker would disown its own id.
+   */
+  marker?: boolean;
 }
 
 /** The markdown flavour's link label. */
@@ -125,7 +130,7 @@ export function buildBlockText(input: BlockInput): string {
         break;
     }
   }
-  out.push(marker(input));
+  if (input.marker !== false) out.push(marker(input));
   return out.join('\n');
 }
 
@@ -166,8 +171,59 @@ export function buildBlockHtml(input: BlockInput): string {
     }
   });
   out.push(`<blockquote>${quoted.join('<br>')}</blockquote>`);
-  out.push(marker(input));
+  if (input.marker !== false) out.push(marker(input));
   return out.join('\n');
+}
+
+export interface SetBlockOptions {
+  /** Prepended to the set link; defaults to this document's origin. */
+  origin?: string;
+}
+
+/**
+ * Every block of a pin set carries the SAME link — the set's one URL — because
+ * a block is pasted on its own as often as the whole set is, and a block
+ * without a link carries no anchor at all.
+ */
+const setBlockInput = (pin: SetPin, url: string): BlockInput => {
+  const input = {
+    label: pin.label,
+    id: pin.id,
+    stack: pin.stack,
+    text: pin.anchor.n ?? '',
+    url,
+  };
+  // No marker to write, so the fields only a marker reads stay blank.
+  return pin.origin === 'pick'
+    ? { ...input, pr: pin.pr, at: pin.at }
+    : { ...input, pr: 0, at: '', marker: false };
+};
+
+const setUrl = (pins: SetPin[], options: SetBlockOptions): string =>
+  `${options.origin ?? location.origin}${pinSetUrl(pins)}`;
+
+/** The set as markdown: one block per pin, a blank line between them. */
+export function buildSetText(
+  pins: SetPin[],
+  options: SetBlockOptions = {},
+): string {
+  const set = dedupeById(pins);
+  const url = setUrl(set, options);
+  return set.map((pin) => buildBlockText(setBlockInput(pin, url))).join('\n\n');
+}
+
+/** The same set for a rich editor. */
+export function buildSetHtml(
+  pins: SetPin[],
+  options: SetBlockOptions = {},
+): string {
+  const set = dedupeById(pins);
+  const url = setUrl(set, options);
+  // Adjacent `<blockquote>`s merge into one in a rich editor; an empty
+  // paragraph between them is the separator Teams keeps.
+  return set
+    .map((pin) => buildBlockHtml(setBlockInput(pin, url)))
+    .join('\n<p></p>\n');
 }
 
 /**
@@ -210,6 +266,11 @@ export interface BlockRenderOptions {
   /** Injected in tests; defaults to now, truncated to whole seconds. */
   at?: string;
   origin?: string;
+  /**
+   * The fragment the app itself is using, kept on the link so the pin reopens
+   * on the tab it was made on. Defaults to this document's own.
+   */
+  appHash?: string;
 }
 
 export interface BuiltBlock {
@@ -235,9 +296,9 @@ export function buildBlockFromCapture(
   const { anchor, anchorB64 } = capture;
   const at = options.at ?? blockStamp();
   const id = pinId(options.pr, anchorB64, at);
-  const q = anchor.q ? `?${anchor.q}` : '';
   const origin = options.origin ?? location.origin;
-  const url = `${origin}${anchor.p}${q}#bai=v3.${id}.${anchorB64}`;
+  const hash = options.appHash ?? location.hash;
+  const url = `${origin}${pinUrl(anchor, id, anchorB64, hash)}`;
   const input = {
     label: landmarkLabel(options.routeLabel, anchor),
     id,
