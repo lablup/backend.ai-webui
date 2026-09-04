@@ -313,13 +313,18 @@ export function createDeepLinkPin({
     card.classList.add('away');
     const up = box.bottom <= area.top;
     const down = box.top >= area.bottom;
+    // `placeAway` runs only when the element is outside `area` on one of the
+    // four sides, so failing the other three leaves exactly "past the right".
+    const left = box.right <= area.left;
     // Written BEFORE the measurement: the hint is a line of the card, so a
     // height read without it docks a bottom-docked card past the fold.
     away.textContent = up
       ? '↑ Scrolled above — 📍 goes back'
       : down
         ? '↓ Scrolled below — 📍 goes back'
-        : '↔ Off to the side — 📍 goes back';
+        : left
+          ? '← Scrolled to the left — 📍 goes back'
+          : '→ Scrolled to the right — 📍 goes back';
     card.style.left = `${Math.max(8, Math.min(box.left, vw - 340))}px`;
     card.style.top = up
       ? `${VIEWPORT_PAD}px`

@@ -371,6 +371,38 @@ describe('createDeepLinkPin', () => {
       expect(card().style.top).toBe('712px');
     });
 
+    // The hint is the cue for where to look, so "off to the side" is not an
+    // answer — and the card's own left clamp already points the same way.
+    it('names left and right apart, and clamps the card toward each', () => {
+      const element = mountSized(
+        { left: -500, right: -100, top: 100, bottom: 300, height: 200 },
+        60,
+      );
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(
+        host.shadowRoot?.querySelector('.awaynote')?.textContent,
+      ).toContain('←');
+      expect(card().style.left).toBe('8px');
+
+      element.getBoundingClientRect = () =>
+        ({
+          left: 1500,
+          right: 1900,
+          width: 400,
+          top: 100,
+          bottom: 300,
+          height: 200,
+        }) as DOMRect;
+      window.dispatchEvent(new Event('resize'));
+      return new Promise((resolve) => setTimeout(resolve, 400)).then(() => {
+        expect(
+          host.shadowRoot?.querySelector('.awaynote')?.textContent,
+        ).toContain('→');
+        expect(card().style.left).toBe('684px');
+      });
+    });
+
     it('clears the docked state when the pin is dismissed', () => {
       mountSized({ top: -900, bottom: -700, height: 200 }, 60);
       show();
