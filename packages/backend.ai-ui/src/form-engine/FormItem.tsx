@@ -33,6 +33,7 @@ import BAIFormItemVisual from './FormItemVisual';
 import {
   FieldContext,
   FormConfigContext,
+  HOOK_MARK,
   FormItemInputContext,
   FormItemLayoutContext,
   ListContext,
@@ -210,6 +211,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
   } = props;
 
   const fieldContext = React.useContext(FieldContext);
+  const formId = fieldContext.getInternalHooks(HOOK_MARK)?.getFormId();
   const { optionalLabel } = React.useContext(FormConfigContext);
   const {
     layout: formLayout,
@@ -378,6 +380,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           hidden={hidden}
           fieldId={fieldId}
           fieldHandle={fieldHandle}
+          formId={formId}
           htmlFor={htmlFor}
           errors={mergedErrors}
           warnings={mergedWarnings}
@@ -450,6 +453,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           // form name to prefix and no reason to apply the DOM-id guard.
           if (mergedName.length) {
             childProps['data-bai-field-id'] = getFieldHandle(mergedName);
+            childProps['data-bai-form-id'] = formId;
           }
           if (formDisabled && childProps.disabled === undefined) {
             childProps.disabled = true;

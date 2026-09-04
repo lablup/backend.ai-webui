@@ -94,12 +94,11 @@ export function getNamePath(
 
 /**
  * The `data-bai-field-id` handle `FormItem` stamps on a control and
- * `FormStore.getFieldDOMNode` looks up. Not the DOM `id` (`getFieldId`),
- * which adds the form's `name` and a `parentNode` guard the store cannot
- * reproduce.
+ * `FormStore.getFieldDOMNode` looks up. The JSON path, not the `_`-joined
+ * DOM `id` (`getFieldId`): `['a_b']` and `['a', 'b']` must not collide.
  */
 export function getFieldHandle(namePath: InternalNamePath): string {
-  return namePath.join('_');
+  return JSON.stringify(namePath);
 }
 
 export function getValue(entity: any, path: InternalNamePath): any {

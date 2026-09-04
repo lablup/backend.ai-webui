@@ -13,7 +13,10 @@
      item that shows its error;
    - "first" is DOM order, not field REGISTRATION order;
    - the switch is off until `<Form scrollToFirstError>` says otherwise;
-   - the store's own `scrollToField` works again on such controls.
+   - the store's own `scrollToField` works again on such controls;
+   - the lookup is scoped by the form's token, not by its element, and the
+     handle is the JSON path, so neither a sibling form nor a look-alike
+     name is mistaken for the field.
  */
 import { Form } from './engine';
 import type { FormInstance } from './interface';
@@ -39,17 +42,29 @@ function scrolled(): HTMLElement | undefined {
   return scrollIntoView.mock.instances[0] as HTMLElement | undefined;
 }
 
-/** The item the resolver scrolled, named by the first field it wraps. */
-function scrolledField(): string | null | undefined {
-  return scrolled()
-    ?.querySelector('[data-bai-field-id]')
-    ?.getAttribute('data-bai-field-id');
+/** The handle `FormItem` stamps: the JSON name path. */
+function handleOf(...name: (string | number)[]): string {
+  return JSON.stringify(name);
 }
 
-function controlOf(fieldId: string): HTMLInputElement {
-  return document.querySelector<HTMLInputElement>(
-    `[data-bai-field-id="${fieldId}"]`,
-  )!;
+/** The item the resolver scrolled, named by the first field it wraps. */
+function scrolledField(): string | undefined {
+  const handle = scrolled()
+    ?.querySelector('[data-bai-field-id]')
+    ?.getAttribute('data-bai-field-id');
+  return handle ? JSON.parse(handle).join('.') : undefined;
+}
+
+function controlsOf(...name: (string | number)[]): HTMLInputElement[] {
+  return Array.from(
+    document.querySelectorAll<HTMLInputElement>(
+      `[data-bai-field-id='${handleOf(...name)}']`,
+    ),
+  );
+}
+
+function controlOf(...name: (string | number)[]): HTMLInputElement {
+  return controlsOf(...name)[0];
 }
 
 beforeEach(() => {
@@ -221,6 +236,60 @@ const FormWithSegmented: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
   );
 };
 
+/** A form with no element of its own — nothing to scope a lookup by. */
+const BareForm: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} component={false} scrollToFirstError>
+      <Form.Item name="early" label="Early" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+    </Form>
+  );
+};
+
+/** Names whose `_`-joined spelling is the same: `a_b` and `['a', 'b']`. */
+const FormWithLookalikeNames: React.FC<Pick<Props, 'formRef'>> = ({
+  formRef,
+}) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError initialValues={{ a_b: 'set' }}>
+      <Form.Item name="a_b" label="Flat">
+        <Input />
+      </Form.Item>
+      <Form.Item name={['a', 'b']} label="Nested" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+    </Form>
+  );
+};
+
+/** One name mounted twice, the first hidden — a field repeated across tabs. */
+const FormWithTwinFields: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError>
+      <Form.Item hidden name="early" label="Early (tab 1)">
+        <Input />
+      </Form.Item>
+      <Form.Item
+        name="early"
+        label="Early (tab 2)"
+        rules={[{ required: true }]}
+      >
+        <Input />
+      </Form.Item>
+    </Form>
+  );
+};
+
 async function submit(form: FormInstance) {
   await act(async () => {
     form.submit();
@@ -341,7 +410,9 @@ describe('scroll to the first invalid field', () => {
     await submit(form);
 
     expect(scrolled()?.matches('[data-bai-form-item]')).toBe(true);
-    expect(scrolled()?.getAttribute('data-bai-field-item')).toBe('early');
+    expect(scrolled()?.getAttribute('data-bai-field-item')).toBe(
+      handleOf('early'),
+    );
     expect(document.activeElement).toBe(scrolled()?.querySelector('input'));
   });
 
@@ -355,7 +426,7 @@ describe('scroll to the first invalid field', () => {
       </>,
     );
     void other;
-    const mine = document.querySelectorAll('[data-bai-field-id="early"]')[1];
+    const mine = controlsOf('early')[1];
 
     await submit(form);
 
@@ -380,6 +451,46 @@ describe('scroll to the first invalid field', () => {
 
     expect(scrolledField()).toBe('early');
     expect((document.activeElement as HTMLElement)?.id).toBe('seg-b');
+  });
+
+  it('stays inside its own form even when it has no element (`component={false}`)', async () => {
+    let other!: FormInstance;
+    let form!: FormInstance;
+    render(
+      <>
+        <TestForm formRef={(f) => (other = f)} />
+        <BareForm formRef={(f) => (form = f)} />
+      </>,
+    );
+    void other;
+    const mine = controlsOf('early')[1];
+
+    await submit(form);
+
+    expect(scrolled()?.contains(mine)).toBe(true);
+    expect(document.activeElement).toBe(mine);
+  });
+
+  it('does not confuse `a_b` with `["a", "b"]`', async () => {
+    let form!: FormInstance;
+    render(<FormWithLookalikeNames formRef={(f) => (form = f)} />);
+
+    await submit(form);
+
+    expect(scrolledField()).toBe('a.b');
+    expect(document.activeElement).toBe(controlOf('a', 'b'));
+    expect(document.activeElement).not.toBe(controlOf('a_b'));
+  });
+
+  it('resolves a name mounted twice to the visible one', async () => {
+    let form!: FormInstance;
+    render(<FormWithTwinFields formRef={(f) => (form = f)} />);
+    const visible = controlsOf('early')[1];
+
+    act(() => form.scrollToField('early', { focus: true }));
+
+    expect(scrolled()?.contains(visible)).toBe(true);
+    expect(document.activeElement).toBe(visible);
   });
 
   it('does not scroll when the submit succeeds', async () => {
