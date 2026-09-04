@@ -259,6 +259,12 @@ describe('createDeepLinkPin', () => {
       expect(marked()).toBe(false);
       expect(card().classList.contains('found')).toBe(true);
       expect(card().classList.contains('away')).toBe(true);
+      // The element sits ABOVE its scroller (100..300 vs 400..700) while still
+      // inside the window, so the direction has to come from the scroller.
+      expect(
+        host.shadowRoot?.querySelector('.awaynote')?.textContent,
+      ).toContain('↑');
+      expect(card().style.top).toBe('8px');
     });
 
     // A resize is pure geometry: it must not wait on the mutation debounce.

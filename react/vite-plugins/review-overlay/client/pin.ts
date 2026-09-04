@@ -22,6 +22,14 @@ const PULSE_MS = 4200;
 /** Escalated text scans a lost element gets before the pin stops looking. */
 const MAX_MISSED_SCANS = 3;
 
+/** The edges of a rectangle the element may have left: viewport or scroller. */
+interface Bounds {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
 const STYLE = `
   .pinlayer {
     position: fixed; inset: 0; z-index: 2147482999; pointer-events: none;
@@ -292,14 +300,19 @@ export function createDeepLinkPin({
    * go with it, but the card is the comment — and the control that scrolls
    * back lives in it, so hiding the card is what made that button unreachable
    * exactly when it was wanted. It docks to the edge the element left by.
+   *
+   * `area` is the rectangle the element left — a clipping scroller's, not the
+   * viewport's, when a scroller is what hid it. The card still docks to the
+   * VIEWPORT edge, because it lives on a fixed layer; only the direction comes
+   * from `area`.
    */
-  function placeAway(box: DOMRect, vh: number, vw: number) {
+  function placeAway(box: DOMRect, area: Bounds, vh: number, vw: number) {
     marker.classList.remove('found');
     markBox.classList.remove('found');
     card.classList.add('found');
     card.classList.add('away');
-    const up = box.bottom <= 0;
-    const down = box.top >= vh;
+    const up = box.bottom <= area.top;
+    const down = box.top >= area.bottom;
     // Written BEFORE the measurement: the hint is a line of the card, so a
     // height read without it docks a bottom-docked card past the fold.
     away.textContent = up
@@ -321,24 +334,24 @@ export function createDeepLinkPin({
     // A rect with no size at all is jsdom (or `display: contents`), not a
     // scrolled-away element.
     const measured = box.width > 0 || box.height > 0;
-    const outside = (area: {
-      top: number;
-      bottom: number;
-      left: number;
-      right: number;
-    }) =>
+    const outside = (area: Bounds) =>
       box.bottom <= area.top ||
       box.top >= area.bottom ||
       box.right <= area.left ||
       box.left >= area.right;
-    const offscreen = outside({ top: 0, bottom: vh, left: 0, right: vw });
+    const viewport: Bounds = { top: 0, bottom: vh, left: 0, right: vw };
     // `getBoundingClientRect` reports the geometric box of an element a
-    // scroller has clipped out of sight, so the window test is not enough.
-    const clipped = clippers.some((clip) => {
+    // scroller has clipped out of sight, so the window test is not enough —
+    // and the scroller's rect, not the viewport's, is what says which way it
+    // went.
+    const clipper = clippers.find((clip) => {
       const area = clip.getBoundingClientRect();
       return (area.width > 0 || area.height > 0) && outside(area);
     });
-    if (measured && (offscreen || clipped)) return placeAway(box, vh, vw);
+    const gone = outside(viewport)
+      ? viewport
+      : clipper?.getBoundingClientRect();
+    if (measured && gone) return placeAway(box, gone, vh, vw);
     marker.classList.add('found');
     card.classList.add('found');
     card.classList.remove('away');
