@@ -181,9 +181,12 @@ export interface SetBlockOptions {
 }
 
 /**
- * Every block of a pin set carries the SAME link — the set's one URL — because
- * a block is pasted on its own as often as the whole set is, and a block
- * without a link carries no anchor at all.
+ * Every block carries a link — a block is pasted on its own as often as the
+ * whole set is, and a block without one carries no anchor at all — but its
+ * OWN link, not the set's: the set URL grows with N, so repeating it in all N
+ * blocks grew the comment as N² and crossed GitHub's 65,536-character body
+ * limit around 12 pins. The set's one URL is emitted once, after the last
+ * block, so the whole set stays one click away.
  */
 const setBlockInput = (pin: SetPin, url: string): BlockInput => {
   const input = {
@@ -202,14 +205,34 @@ const setBlockInput = (pin: SetPin, url: string): BlockInput => {
 const setUrl = (pins: SetPin[], options: SetBlockOptions): string =>
   `${options.origin ?? location.origin}${pinSetUrl(pins)}`;
 
-/** The set as markdown: one block per pin, a blank line between them. */
+/** A pin's own link: the set of one it would be on its own. */
+const ownUrl = (pin: SetPin, options: SetBlockOptions): string =>
+  setUrl([pin], options);
+
+/** The whole set in one URL, emitted once after the last block. */
+export const setLinkLabel = (count: number): string =>
+  `Open all ${count} pins on dev server`;
+/** Distinct from the markdown label, for `LINK_LABEL_HTML`'s reason. */
+export const setLinkLabelHtml = (count: number): string =>
+  `${setLinkLabel(count)} ↗`;
+
+/**
+ * The set as markdown: one block per pin, a blank line between them, then the
+ * set's one link. A set of one IS its pin's link, so it gets no extra line and
+ * stays byte-identical to what the overlay has always copied.
+ */
 export function buildSetText(
   pins: SetPin[],
   options: SetBlockOptions = {},
 ): string {
   const set = dedupeById(pins);
-  const url = setUrl(set, options);
-  return set.map((pin) => buildBlockText(setBlockInput(pin, url))).join('\n\n');
+  const parts = set.map((pin) =>
+    buildBlockText(setBlockInput(pin, ownUrl(pin, options))),
+  );
+  if (set.length > 1) {
+    parts.push(`[${setLinkLabel(set.length)}](${setUrl(set, options)})`);
+  }
+  return parts.join('\n\n');
 }
 
 /** The same set for a rich editor. */
@@ -218,12 +241,14 @@ export function buildSetHtml(
   options: SetBlockOptions = {},
 ): string {
   const set = dedupeById(pins);
-  const url = setUrl(set, options);
   // Adjacent `<blockquote>`s merge into one in a rich editor; an empty
   // paragraph between them is the separator Teams keeps.
-  return set
-    .map((pin) => buildBlockHtml(setBlockInput(pin, url)))
+  const html = set
+    .map((pin) => buildBlockHtml(setBlockInput(pin, ownUrl(pin, options))))
     .join('\n<p></p>\n');
+  if (set.length < 2) return html;
+  const href = esc(setUrl(set, options));
+  return `${html}\n<p><a href="${href}">${setLinkLabelHtml(set.length)}</a></p>`;
 }
 
 /**
