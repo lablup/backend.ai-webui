@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Une autorisation d'écriture est requise pour le téléchargement de fichiers."
     },
     "folders": {
-      "AdminDataPageAlert": "La page Données de l'administrateur ne permet de créer que des dossiers de projet.",
+      "AdminDataPageAlert": "Sur la page Données de l'administrateur, les dossiers sont créés en tant que dossiers de projet.",
       "CannotDeleteFolder": "Impossible de supprimer le dossier monté dans une ou plusieurs sessions. Veuillez d'abord terminer la session.",
       "CannotDeletePipelineFolder": "Vous ne pouvez pas supprimer les dossiers du pipeline.",
       "CannotDeployFromAdminMenu": "Les déploiements sont créés depuis la page Données d'un projet ; le menu d'administration ne le permet pas.",
@@ -982,7 +982,7 @@
       "Ownership": "La possession",
       "Path": "Chemin de stockage",
       "Permission": "Autorisation",
-      "ProjectAdminDataPageAlert": "La page Données de l’administrateur du projet ne permet de créer que des dossiers de projet.",
+      "ProjectAdminDataPageAlert": "Sur la page Données de l’administrateur du projet, les dossiers sont créés en tant que dossiers de projet.",
       "ProjectFolderAlertDesc": "Ce dossier est partagé avec tous les membres du projet",
       "ProjectFolderCreationHelp": "Un dossier accessible par \"{{projectName}}\" Les utilisateurs du projet seront créés.",
       "Rename": "Renommer",

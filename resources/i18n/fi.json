@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Tiedoston (tiedostojen) lataaminen edellyttää kirjoitusoikeutta."
     },
     "folders": {
-      "AdminDataPageAlert": "Järjestelmänvalvojan tiedot -sivulla voi luoda vain projektin kansioita.",
+      "AdminDataPageAlert": "Järjestelmänvalvojan tiedot -sivulla kansiot luodaan projektikansioina.",
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",
       "CannotDeletePipelineFolder": "Et voi poistaa putkilinjan kansioita.",
       "CannotDeployFromAdminMenu": "Käyttöönotot luodaan projektin Tiedot-sivulta; hallintavalikko ei tue tätä.",
@@ -982,7 +982,7 @@
       "Ownership": "Omistus",
       "Path": "Säilytyspolku",
       "Permission": "Lupa",
-      "ProjectAdminDataPageAlert": "Projektin järjestelmänvalvojan tiedot -sivulla voi luoda vain projektin kansioita.",
+      "ProjectAdminDataPageAlert": "Projektin järjestelmänvalvojan tiedot -sivulla kansiot luodaan projektikansioina.",
       "ProjectFolderAlertDesc": "Tämä kansio on jaettu kaikkien projektin jäsenten kanssa",
       "ProjectFolderCreationHelp": "Projektin käyttäjät luodaan kansioon, johon pääsee \"{{projectName}}\".",
       "Rename": "Nimeä uudelleen",

@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "上传文件需要写权限。"
     },
     "folders": {
-      "AdminDataPageAlert": "管理员数据页面仅可创建项目文件夹。",
+      "AdminDataPageAlert": "在管理员数据页面，文件夹将创建为项目文件夹。",
       "CannotDeleteFolder": "无法删除安装在一个或多个会话中的文件夹。请先终止会话。",
       "CannotDeletePipelineFolder": "您无法删除管道文件夹。",
       "CannotDeployFromAdminMenu": "部署需要在项目的数据页面中创建；管理员菜单不支持此操作。",
@@ -982,7 +982,7 @@
       "Ownership": "所有权",
       "Path": "存储路径",
       "Permission": "允许",
-      "ProjectAdminDataPageAlert": "项目管理员数据页面仅可创建项目文件夹。",
+      "ProjectAdminDataPageAlert": "在项目管理员数据页面，文件夹将创建为项目文件夹。",
       "ProjectFolderAlertDesc": "该文件夹与项目的所有成员共享",
       "ProjectFolderCreationHelp": "将创建一个可以通过“{{projectName}}”项目用户访问的文件夹。",
       "Rename": "改名",
