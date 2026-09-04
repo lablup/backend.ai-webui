@@ -119,9 +119,13 @@ test.describe(
         await navigateTo(page, 'deployments');
 
         // 2. Inspect the page header area and table.
+        // Scope to the sidebar nav (named "Side navigation") rather than an
+        // unscoped `getByRole('navigation')`, which also matches the
+        // "Breadcrumb" navigation — both render a "Deployments" text node,
+        // causing a strict-mode violation on the unscoped `getByText`.
         await expect(
           page
-            .getByRole('navigation')
+            .getByRole('navigation', { name: 'Side navigation' })
             .getByText('Deployments', { exact: true }),
         ).toBeVisible({ timeout: 20000 });
         await expect(page.getByRole('radio', { name: 'Running' })).toBeChecked({
@@ -138,7 +142,7 @@ test.describe(
           page.getByRole('radio', { name: 'Terminated' }),
         ).toBeVisible();
         await expect(
-          page.getByRole('button', { name: 'reload' }),
+          page.getByRole('button', { name: 'Refresh', exact: true }),
         ).toBeVisible();
         await expect(
           page.getByRole('button', { name: 'Create Deployment' }),
@@ -160,8 +164,10 @@ test.describe(
         await expect(
           page.getByRole('columnheader', { name: 'Model' }),
         ).toBeVisible();
+        // The sortable column's accessible name is the sort button's own
+        // label ("Sort by createdAt"), not the visible "Created At" text.
         await expect(
-          page.getByRole('columnheader', { name: 'Created At' }),
+          page.getByRole('columnheader', { name: /Created ?At/i }),
         ).toBeVisible();
       },
     );

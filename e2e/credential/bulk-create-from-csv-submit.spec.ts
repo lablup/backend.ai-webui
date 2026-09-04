@@ -7,6 +7,7 @@
 // leaves no residue. Requires a running Backend.AI cluster.
 import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import { KeyPairModal } from '../utils/classes/user/UserSettingModal';
 import test, {
   expect,
   type APIRequestContext,
@@ -38,16 +39,22 @@ function buildCSV(users: ReturnType<typeof makeUser>[]): Buffer {
   return Buffer.from(lines.join('\n'), 'utf-8');
 }
 
+/** Astryx `ToastViewport`'s `role="region"` — the visible toasts live here. */
+function toastViewport(page: Page) {
+  return page.getByRole('region', { name: 'Notifications' });
+}
+
 async function openBulkCreateCSVModal(page: Page) {
   await navigateTo(page, 'credential?tab=users');
+  // Wait for UserManagement to fully load
   await expect(page.getByRole('button', { name: 'Create User' })).toBeVisible({
     timeout: 15000,
   });
-  const createUserBtn = page.getByRole('button', { name: 'Create User' });
-  await createUserBtn
-    .locator('xpath=ancestor::*[contains(@class,"ant-space-compact")]')
-    .getByRole('button', { name: 'ellipsis' })
-    .click();
+  // Click the "More" dropdown trigger — scoped to the Astryx `ButtonGroup`
+  // (role="group", aria-label="Create User") that wraps it alongside the
+  // "Create User" button, to avoid matching unrelated "More" buttons.
+  const createUserGroup = page.getByRole('group', { name: 'Create User' });
+  await createUserGroup.getByRole('button', { name: 'More' }).click();
   await page
     .getByRole('menuitem', { name: 'Bulk Create Users from CSV' })
     .click();
@@ -112,9 +119,14 @@ test.describe(
       const dialog = page.getByRole('dialog', {
         name: 'Bulk Create Users from CSV',
       });
-      // The dialog has two file inputs: a hidden "Replace File" ref input and
-      // the Upload.Dragger's input[name="file"]. Target the dragger's input.
-      const fileInput = dialog.locator('input[name="file"]');
+      // The empty-state picker is Astryx `FileInput` (`mode="dropzone"`), whose
+      // `<label>` points at its native `<input type="file">` (FieldLabel renders
+      // `htmlFor={inputID}`). The label also names FileInput's visually-hidden
+      // trigger button, so narrow to the input — that also excludes the sibling
+      // hidden `<input type="file">` backing the "Replace File" button.
+      const fileInput = dialog
+        .getByLabel('Click or drag a CSV file to this area to upload')
+        .and(dialog.locator('input[type="file"]'));
       await fileInput.setInputFiles({
         name: `bulk-${RUN_ID}.csv`,
         mimeType: 'text/csv',
@@ -129,10 +141,22 @@ test.describe(
 
       await submitButton.click();
 
-      // Success toast confirms server-side creation.
+      // Success toast confirms server-side creation. `message.success` renders
+      // an Astryx `Toast` inside the shared `ToastViewport` — scope to it
+      // since a bare `getByText` would also match the viewport's
+      // visually-hidden screen-reader announcer node (same text, twice).
       await expect(
-        page.locator('.ant-message').getByText(/Successfully created/),
+        toastViewport(page)
+          .getByRole('status')
+          .filter({ hasText: /Successfully created/ }),
       ).toBeVisible({ timeout: 30000 });
+
+      // A successful bulk create reveals the generated keypairs in a
+      // follow-up "Keypair for new users" dialog (secret keys are only shown
+      // once) — close it before the Bulk Create Users modal itself hides.
+      const keyPairModal = new KeyPairModal(page);
+      await keyPairModal.waitForVisible();
+      await keyPairModal.close();
 
       // Modal closes on full success.
       await expect(dialog).toBeHidden({ timeout: 10000 });
