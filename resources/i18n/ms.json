@@ -3823,6 +3823,7 @@
       "ResourcePolicies": "Dasar Sumber",
       "Resources": "Sumber",
       "Scheduler": "Penjadual",
+      "Search": "Cari",
       "Serving": "Melayan",
       "Sessions": "Sesi",
       "Settings": "Tetapan",
@@ -3846,6 +3847,7 @@
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "YouMushChangeYourPassword": "Adalah disyorkan untuk menukar kata laluan anda secara berkala atas sebab keselamatan. \nMemandangkan tempoh masa tertentu telah berlalu sejak kali terakhir anda menukar kata laluan anda, anda mesti menukarnya untuk terus menggunakan perkhidmatan tersebut.",
       "groupName": {
+        "General": "Umum",
         "Metrics": "Metrik",
         "Mlops": "MLOps",
         "Playground": "Taman permainan",
@@ -3857,6 +3859,31 @@
           "Operations": "Operasi",
           "System": "Sistem"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Ditemui dalam {{text}}",
+      "NoResults": "Tiada keputusan",
+      "Placeholder": "Cari halaman, tab dan tetapan",
+      "Recent": "Terkini",
+      "action": {
+        "ChangeLanguage": "Tukar bahasa antara muka",
+        "OpenManual": "Buka manual untuk halaman ini",
+        "OpenNotifications": "Buka pemberitahuan",
+        "OpenUserSettings": "Buka tetapan pengguna",
+        "SwitchToDarkMode": "Tukar ke Mod Gelap",
+        "SwitchToLightMode": "Tukar ke Mod Terang",
+        "ToggleSidebar": "Tunjuk atau sembunyikan bar sisi",
+        "UseSystemTheme": "Gunakan Tetapan Sistem"
+      },
+      "group": {
+        "Appearance": "Paparan",
+        "Create": "Buat",
+        "PanelsAndHelp": "Panel & bantuan"
+      },
+      "scope": {
+        "Project": "Projek",
+        "ProjectAdministration": "Pentadbiran projek"
       }
     }
   }

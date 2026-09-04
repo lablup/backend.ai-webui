@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import './SettingItem.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -11,7 +12,13 @@ import { Text } from '@astryxdesign/core/Text';
 import { BAIFlex, BAIModal, useToggle } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { Settings } from 'lucide-react';
-import React, { ReactElement, ReactNode, useState } from 'react';
+import React, {
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 type BaseSettingItemProps = {
   'data-testid'?: string;
@@ -20,6 +27,8 @@ type BaseSettingItemProps = {
   children?: ReactNode;
   showResetButton?: boolean;
   onReset?: () => void;
+  /** Set by `SettingList` for the item a `?setting=` deep link addresses. */
+  isArrivalTarget?: boolean;
 };
 
 type CheckboxSettingItemProps = BaseSettingItemProps & {
@@ -83,10 +92,16 @@ const SettingItem: React.FC<SettingItemProps> = ({
   selectProps,
   checkboxProps,
   showResetButton = true,
+  isArrivalTarget = false,
 }) => {
   'use memo';
 
+  const rootRef = useRef<HTMLDivElement>(null);
   const [isRowHovered, setIsRowHovered] = useState(false);
+
+  useEffect(() => {
+    if (isArrivalTarget) rootRef.current?.scrollIntoView({ block: 'center' });
+  }, [isArrivalTarget]);
   const [isOpenResetChangesModal, { toggle: setIsOpenResetChangesModal }] =
     useToggle(false);
 
@@ -105,7 +120,10 @@ const SettingItem: React.FC<SettingItemProps> = ({
 
   return (
     <BAIFlex
+      ref={rootRef}
       data-testid={dataTestId}
+      className="bai-setting-item"
+      data-arrival={isArrivalTarget || undefined}
       direction="column"
       align="stretch"
       gap={'xxs'}

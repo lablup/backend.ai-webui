@@ -1,0 +1,201 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useOpenHelp } from '../../hooks/useHelpURL';
+import { useActiveProjectName } from '../../hooks/useRouteScope';
+import {
+  useNotificationDrawerState,
+  useSiderCollapsedState,
+} from '../../hooks/useShellPanels';
+import { useThemeMode } from '../../hooks/useThemeMode';
+// Swizzled: seeds its first render with `searchSource.bootstrapSync()`, so the
+// dialog's first painted frame already carries the whole bootstrap list.
+import { CommandPalette } from './astryx/CommandPalette/CommandPalette';
+// Reads the swizzled copy's context, so it has to come from beside it.
+import { CommandPaletteInput } from './astryx/CommandPalette/CommandPaletteInput';
+import { plainText } from './rank';
+import type { PaletteActionContext, SearchHit } from './types';
+import {
+  toSearchConfigFlags,
+  toTranslator,
+  useGlobalSearchSource,
+} from './useGlobalSearchSource';
+import { useRecentSearchHits } from './useRecentSearchHits';
+import { Kbd } from '@astryxdesign/core/Kbd';
+import { Skeleton } from '@astryxdesign/core/Skeleton';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { textSizeVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
+import { useBAILogger } from 'backend.ai-ui';
+import { Settings } from 'lucide-react';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+
+// The header trigger warms the artifacts through this re-export, in the same
+// idle callback that preloads this chunk — the index must not reach the entry
+// bundle through a static import from the button.
+export { warmGlobalSearch } from './searchArtifacts';
+
+const styles = stylex.create({
+  // Flex items default to `min-width: auto`, which lets a long "found in" line
+  // push past the dialog instead of truncating at `maxLines`.
+  rowText: { minWidth: 0 },
+  // A long secondary line must eat the text column, never the glyph.
+  iconSlot: {
+    flexShrink: 0,
+    width: textSizeVars['--font-size-xl'],
+    height: textSizeVars['--font-size-xl'],
+  },
+  // Placeholder bars sized off the same type scale the two row lines use.
+  placeholderColumn: { flexGrow: 1, minWidth: 0 },
+  placeholderLabel: { width: '40%', height: textSizeVars['--font-size-base'] },
+  placeholderSecondary: {
+    width: '24%',
+    height: textSizeVars['--font-size-sm'],
+  },
+});
+
+export interface GlobalSearchPaletteProps {
+  open: boolean;
+  onRequestClose: () => void;
+}
+
+// Astryx's own default width, capped so the dialog never outgrows a phone
+// viewport (standing decision 8 — the header trigger stays visible below `sm`).
+const PALETTE_WIDTH = 'min(640px, 92vw)';
+
+// Unreachable while `bootstrapSync()` seeds the first commit; kept for the
+// async path (a bootstrap that genuinely returns nothing), where text would read
+// as "no results" and rows shaped like the real ones read as loading instead.
+const BOOTSTRAP_PLACEHOLDER = (
+  <VStack gap={2} width="100%">
+    {[0, 1, 2].map((index) => (
+      <HStack key={index} gap={2} align="center" width="100%">
+        <Skeleton index={index} radius={2} xstyle={styles.iconSlot} />
+        <VStack gap={0.5} xstyle={styles.placeholderColumn}>
+          <Skeleton index={index} radius={1} xstyle={styles.placeholderLabel} />
+          <Skeleton
+            index={index}
+            radius={1}
+            xstyle={styles.placeholderSecondary}
+          />
+        </VStack>
+      </HStack>
+    ))}
+  </VStack>
+);
+
+const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
+  open,
+  onRequestClose,
+}) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const { logger } = useBAILogger();
+  const navigate = useWebUINavigate();
+  const baiClient = useSuspendedBackendaiClient();
+  const projectName = useActiveProjectName();
+  const { setThemeMode } = useThemeMode();
+  const [, setNotificationDrawerOpen] = useNotificationDrawerState();
+  const [, setSiderCollapsed] = useSiderCollapsedState();
+  const openHelp = useOpenHelp();
+  // Deliberately undebounced: the index is in-memory and `search()` is
+  // synchronous, so Astryx commits its optimistic narrowing and the ranked
+  // rows in one paint. A delay splits that into a visible two-phase jump.
+  const searchSource = useGlobalSearchSource();
+  const [, { push }] = useRecentSearchHits();
+
+  const actionContext: PaletteActionContext = {
+    navigate,
+    projectName: projectName ?? null,
+    config: toSearchConfigFlags(baiClient),
+    setThemeMode,
+    openNotifications: () => setNotificationDrawerOpen(true),
+    toggleSider: () => setSiderCollapsed((collapsed) => !collapsed),
+    openHelp,
+  };
+
+  const translate = toTranslator(t);
+
+  // Body-key matches surface as the page row, so the secondary line says where
+  // the word was found instead of repeating the page's own breadcrumb. Page rows
+  // have no breadcrumb and fall back to their scope, which is what keeps the
+  // twin Data / Sessions pages apart.
+  const secondaryTextOf = (hit: SearchHit) => {
+    if (hit.matchedIn) {
+      return t('webui.search.FoundIn', {
+        text: plainText(translate(hit.matchedIn.key)),
+      });
+    }
+    return (
+      hit.breadcrumbKeys.map(translate).join(' › ') || (hit.scopeText ?? '')
+    );
+  };
+
+  return (
+    <CommandPalette
+      isOpen={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onRequestClose();
+      }}
+      label={t('webui.menu.Search')}
+      width={PALETTE_WIDTH}
+      searchSource={searchSource}
+      input={
+        <CommandPaletteInput
+          placeholder={t('webui.search.Placeholder')}
+          endContent={<Kbd keys="mod+k" />}
+        />
+      }
+      emptyBootstrapText={BOOTSTRAP_PLACEHOLDER}
+      emptySearchText={t('webui.search.NoResults')}
+      onValueChange={(value) => {
+        const hit = searchSource.getHit(value);
+        if (!hit) {
+          logger.warn('GlobalSearchPalette: no hit for', value);
+          return;
+        }
+        push(hit);
+        if (hit.run) {
+          Promise.resolve(hit.run(actionContext)).catch((error) =>
+            logger.error('GlobalSearchPalette: action failed', hit.id, error),
+          );
+        } else if (hit.target) {
+          navigate({
+            pathname: hit.target.path,
+            search: new URLSearchParams(hit.target.search ?? {}).toString(),
+          });
+        }
+        onRequestClose();
+      }}
+      renderItem={(hit: SearchHit) => {
+        const secondaryText = secondaryTextOf(hit);
+        return (
+          <HStack gap={2} align="center" width="100%">
+            <HStack align="center" justify="center" xstyle={styles.iconSlot}>
+              {/* Pages the sidebar never lists (user settings) carry no menu
+                  icon; the fallback keeps every row's text on one baseline. */}
+              {hit.icon ?? <Settings size="1em" />}
+            </HStack>
+            <VStack gap={0} xstyle={styles.rowText}>
+              <Text type="body" maxLines={1}>
+                {hit.label}
+              </Text>
+              {!!secondaryText && (
+                <Text type="supporting" maxLines={1}>
+                  {secondaryText}
+                </Text>
+              )}
+            </VStack>
+          </HStack>
+        );
+      }}
+    />
+  );
+};
+
+export default GlobalSearchPalette;

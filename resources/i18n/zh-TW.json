@@ -3827,6 +3827,7 @@
       "ResourcePolicies": "資源政策",
       "Resources": "資源",
       "Scheduler": "調度程序",
+      "Search": "搜尋",
       "Serving": "服务",
       "Sessions": "會話",
       "Settings": "設置",
@@ -3850,6 +3851,7 @@
       "WelcomeMessage": "歡迎，{{ userName }}",
       "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。",
       "groupName": {
+        "General": "一般",
         "Metrics": "衡量标准",
         "Mlops": "MLOps",
         "Playground": "游乐场",
@@ -3861,6 +3863,31 @@
           "Operations": "營運",
           "System": "系統"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "在 {{text}} 中找到",
+      "NoResults": "無結果",
+      "Placeholder": "搜尋頁面、分頁與設置",
+      "Recent": "最近使用",
+      "action": {
+        "ChangeLanguage": "變更介面語言",
+        "OpenManual": "開啟本頁手冊",
+        "OpenNotifications": "開啟通知",
+        "OpenUserSettings": "開啟使用者設置",
+        "SwitchToDarkMode": "切換至深色模式",
+        "SwitchToLightMode": "切換至淺色模式",
+        "ToggleSidebar": "收合/展開側邊欄",
+        "UseSystemTheme": "使用系統設定"
+      },
+      "group": {
+        "Appearance": "外觀",
+        "Create": "建立",
+        "PanelsAndHelp": "面板與幫助"
+      },
+      "scope": {
+        "Project": "項目",
+        "ProjectAdministration": "項目管理"
       }
     }
   }

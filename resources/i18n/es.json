@@ -3823,6 +3823,7 @@
       "ResourcePolicies": "Políticas de recursos",
       "Resources": "Recursos",
       "Scheduler": "Planificador",
+      "Search": "Buscar",
       "Serving": "Sirviendo a",
       "Sessions": "Sesiones",
       "Settings": "Ajustes",
@@ -3846,6 +3847,7 @@
       "WelcomeMessage": "Bienvenido, {{ userName }}.",
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",
       "groupName": {
+        "General": "General",
         "Metrics": "Métricas",
         "Mlops": "MLOps",
         "Playground": "Parque infantil",
@@ -3857,6 +3859,31 @@
           "Operations": "Operaciones",
           "System": "Sistema"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Encontrado en {{text}}",
+      "NoResults": "Sin resultados",
+      "Placeholder": "Buscar páginas, pestañas y ajustes",
+      "Recent": "Recientes",
+      "action": {
+        "ChangeLanguage": "Cambiar el idioma de la interfaz",
+        "OpenManual": "Abrir el manual de esta página",
+        "OpenNotifications": "Abrir notificaciones",
+        "OpenUserSettings": "Abrir ajustes de usuario",
+        "SwitchToDarkMode": "Cambiar al modo oscuro",
+        "SwitchToLightMode": "Cambiar al modo claro",
+        "ToggleSidebar": "Mostrar u ocultar la barra lateral",
+        "UseSystemTheme": "Usar configuración del sistema"
+      },
+      "group": {
+        "Appearance": "Apariencia",
+        "Create": "Crear",
+        "PanelsAndHelp": "Paneles y ayuda"
+      },
+      "scope": {
+        "Project": "Proyecto",
+        "ProjectAdministration": "Administración del proyecto"
       }
     }
   }

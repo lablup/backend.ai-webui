@@ -18,6 +18,7 @@ import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
@@ -122,7 +123,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     setSelectedFolderList([]);
   }
 
-  const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
+  const [
+    isOpenCreateModal,
+    { toggle: toggleCreateModal, setRight: openCreateModal },
+  ] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
 
@@ -203,6 +207,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   useEffect(() => {
     refetchOnInvitationChange();
   }, [invitations.length]);
+
+  useCreateActionArrival(openCreateModal);
 
   const { vfolder_nodes, ...folderCounts } =
     useLazyLoadQuery<VFolderNodeListPageQuery>(

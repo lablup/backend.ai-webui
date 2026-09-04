@@ -3825,6 +3825,7 @@
       "ResourcePolicies": "Ressourcenrichtlinien",
       "Resources": "Ressourcen",
       "Scheduler": "Scheduler",
+      "Search": "Suche",
       "Serving": "Bedienung von",
       "Sessions": "Sitzungen",
       "Settings": "die Einstellungen",
@@ -3848,6 +3849,7 @@
       "WelcomeMessage": "Willkommen, {{ userName }}.",
       "YouMushChangeYourPassword": "Es wird empfohlen, Ihr Passwort aus Sicherheitsgründen regelmäßig zu ändern. Da seit der letzten Änderung Ihres Passworts eine gewisse Zeit verstrichen ist, müssen Sie es ändern, um den Dienst weiterhin nutzen zu können.",
       "groupName": {
+        "General": "Allgemein",
         "Metrics": "Metriken",
         "Mlops": "MLOps",
         "Playground": "Spielplatz",
@@ -3859,6 +3861,31 @@
           "Operations": "Betrieb",
           "System": "System"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Gefunden in {{text}}",
+      "NoResults": "Keine Ergebnisse",
+      "Placeholder": "Seiten, Tabs und Einstellungen durchsuchen",
+      "Recent": "Zuletzt verwendet",
+      "action": {
+        "ChangeLanguage": "UI-Sprache ändern",
+        "OpenManual": "Handbuch zu dieser Seite öffnen",
+        "OpenNotifications": "Benachrichtigungen öffnen",
+        "OpenUserSettings": "Benutzereinstellungen öffnen",
+        "SwitchToDarkMode": "Zum Dunkelmodus wechseln",
+        "SwitchToLightMode": "Zum Hellmodus wechseln",
+        "ToggleSidebar": "Seitenleiste ein-/ausklappen",
+        "UseSystemTheme": "Systemeinstellung verwenden"
+      },
+      "group": {
+        "Appearance": "Darstellung",
+        "Create": "Erstellen",
+        "PanelsAndHelp": "Panels & Hilfe"
+      },
+      "scope": {
+        "Project": "Projekt",
+        "ProjectAdministration": "Projektverwaltung"
       }
     }
   }

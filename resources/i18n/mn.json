@@ -3825,6 +3825,7 @@
       "ResourcePolicies": "Нөөцийн бодлогууд",
       "Resources": "Нөөц",
       "Scheduler": "Хуваарийн өгөх",
+      "Search": "Хайх",
       "Serving": "Үйлчилж байна",
       "Sessions": "Session-үүд",
       "Settings": "Тохиргоо",
@@ -3848,6 +3849,7 @@
       "WelcomeMessage": "Тавтай морилно уу, {{ userName }}.",
       "YouMushChangeYourPassword": "Аюулгүй байдлын үүднээс нууц үгээ үе үе өөрчлөхийг зөвлөж байна. \nТа нууц үгээ хамгийн сүүлд сольсноос хойш тодорхой хугацаа өнгөрсөн тул үйлчилгээгээ үргэлжлүүлэн ашиглахын тулд үүнийг өөрчлөх шаардлагатай.",
       "groupName": {
+        "General": "Ерөнхий",
         "Metrics": "Газрын чанартай",
         "Mlops": "MLOps",
         "Playground": "Тоглоомын талбай",
@@ -3859,6 +3861,31 @@
           "Operations": "Үйл ажиллагаа",
           "System": "Систем"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "{{text}} дотроос олдсон",
+      "NoResults": "Үр дүн олдсонгүй",
+      "Placeholder": "Хуудас, таб, тохиргоо хайх",
+      "Recent": "Сүүлийн үеийн",
+      "action": {
+        "ChangeLanguage": "Интерфейсийн хэлийг өөрчлөх",
+        "OpenManual": "Энэ хуудасны гарын авлагыг нээх",
+        "OpenNotifications": "Мэдэгдлийг нээх",
+        "OpenUserSettings": "Хэрэглэгчийн тохиргоог нээх",
+        "SwitchToDarkMode": "Харанхуй горим руу шилжих",
+        "SwitchToLightMode": "Цайвар горим руу шилжих",
+        "ToggleSidebar": "Хажуугийн самбарыг нээх/хаах",
+        "UseSystemTheme": "Системийн тохиргоог ашиглах"
+      },
+      "group": {
+        "Appearance": "Харагдац",
+        "Create": "Үүсгэх",
+        "PanelsAndHelp": "Самбар ба тусламж"
+      },
+      "scope": {
+        "Project": "Төсөл",
+        "ProjectAdministration": "Төслийн удирдлага"
       }
     }
   }

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useSettingArrival } from '../hooks/useSettingArrival';
 import { useBAIBreakpoint } from '../theme-shim';
 import SettingItem, { SettingItemProps } from './SettingItem';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -78,8 +79,15 @@ const GroupSettingItems: React.FC<
     // Narrow drill-down already names the section beside the back button
     // (settings-sidebar template), so the in-pane heading would be a duplicate.
     hideTitle?: boolean;
+    arrivalTitle?: string | null;
   } & React.HTMLAttributes<HTMLDivElement>
-> = ({ group, hideEmpty = true, hideTitle = false, ...props }) => {
+> = ({
+  group,
+  hideEmpty = true,
+  hideTitle = false,
+  arrivalTitle = null,
+  ...props
+}) => {
   if (hideEmpty && group.settingItems.length === 0) return false;
   return (
     <BAIFlex direction="column" align="stretch" gap="md" {...props}>
@@ -102,7 +110,11 @@ const GroupSettingItems: React.FC<
       <BAIFlex direction="column" align="stretch" gap={'lg'}>
         {group.alert}
         {group.settingItems.map((item, idx) => (
-          <SettingItem key={item.title + idx} {...item} />
+          <SettingItem
+            key={item.title + idx}
+            {...item}
+            isArrivalTarget={!!arrivalTitle && item.title === arrivalTitle}
+          />
         ))}
       </BAIFlex>
     </BAIFlex>
@@ -170,6 +182,21 @@ const SettingList: React.FC<SettingPageProps> = ({
     (group) => group.settingItems.length,
   );
 
+  const activeGroup =
+    activeTabKey === ALL_NAV_KEY
+      ? undefined
+      : filteredSettingGroups[Number(activeTabKey.replace('index', ''))];
+
+  // `?setting=` arrival only fires for an item that is actually on screen: the
+  // nav view below `md` and a selected group both hide items the filter kept.
+  const renderedSettingItems =
+    isNarrow && narrowView === 'nav'
+      ? []
+      : activeTabKey === ALL_NAV_KEY
+        ? _.flatMap(filteredSettingGroups, 'settingItems')
+        : (activeGroup?.settingItems ?? []);
+  const arrivalTitle = useSettingArrival(_.map(renderedSettingItems, 'title'));
+
   const navItems = [
     {
       key: ALL_NAV_KEY,
@@ -184,10 +211,6 @@ const SettingList: React.FC<SettingPageProps> = ({
   ];
   const activeNavItem =
     _.find(navItems, (item) => item.key === activeTabKey) ?? navItems[0];
-  const activeGroup =
-    activeTabKey === ALL_NAV_KEY
-      ? undefined
-      : filteredSettingGroups[Number(activeTabKey.replace('index', ''))];
 
   const selectNavItem = (key: string) => {
     setActiveTabKey(key);
@@ -226,6 +249,7 @@ const SettingList: React.FC<SettingPageProps> = ({
               key={group.title}
               group={group}
               hideEmpty
+              arrivalTitle={arrivalTitle}
             />
           ))}
         </BAIFlex>
@@ -234,7 +258,12 @@ const SettingList: React.FC<SettingPageProps> = ({
       )
     ) : activeGroup && activeGroup.settingItems.length > 0 ? (
       <BAIFlex direction="column" align="stretch" gap={'xl'}>
-        <GroupSettingItems group={activeGroup} hideEmpty hideTitle={isNarrow} />
+        <GroupSettingItems
+          group={activeGroup}
+          hideEmpty
+          hideTitle={isNarrow}
+          arrivalTitle={arrivalTitle}
+        />
       </BAIFlex>
     ) : (
       <EmptyState title={t('settings.NoChangesToDisplay')} isCompact />

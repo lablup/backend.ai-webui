@@ -3823,6 +3823,7 @@
       "ResourcePolicies": "Kaynak Politikaları",
       "Resources": "Kaynaklar",
       "Scheduler": "Zamanlayıcı",
+      "Search": "Arama",
       "Serving": "Servis",
       "Sessions": "Oturumlar",
       "Settings": "Ayarlar",
@@ -3846,6 +3847,7 @@
       "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
       "YouMushChangeYourPassword": "Güvenlik nedeniyle şifrenizi periyodik olarak değiştirmeniz önerilir. Şifrenizi en son değiştirdiğinizden bu yana belirli bir süre geçtiğinden, hizmeti kullanmaya devam etmek için şifrenizi değiştirmeniz gerekir.",
       "groupName": {
+        "General": "Genel",
         "Metrics": "Metrikler",
         "Mlops": "MLOps",
         "Playground": "Oyun Alanı",
@@ -3857,6 +3859,31 @@
           "Operations": "Operasyonlar",
           "System": "Sistem"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "{{text}} içinde bulundu",
+      "NoResults": "Sonuç yok",
+      "Placeholder": "Sayfalarda, sekmelerde ve ayarlarda ara",
+      "Recent": "Son kullanılanlar",
+      "action": {
+        "ChangeLanguage": "Arayüz dilini değiştir",
+        "OpenManual": "Bu sayfanın el kitabını aç",
+        "OpenNotifications": "Bildirimleri aç",
+        "OpenUserSettings": "Kullanıcı ayarlarını aç",
+        "SwitchToDarkMode": "Karanlık Moda geç",
+        "SwitchToLightMode": "Açık Moda geç",
+        "ToggleSidebar": "Kenar çubuğunu aç/kapat",
+        "UseSystemTheme": "Sistem Ayarını Kullan"
+      },
+      "group": {
+        "Appearance": "Görünüm",
+        "Create": "Oluştur",
+        "PanelsAndHelp": "Paneller ve yardım"
+      },
+      "scope": {
+        "Project": "Proje",
+        "ProjectAdministration": "Proje yönetimi"
       }
     }
   }

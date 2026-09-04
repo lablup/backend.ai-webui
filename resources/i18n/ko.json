@@ -3826,6 +3826,7 @@
       "ResourcePolicies": "자원 정책",
       "Resources": "자원",
       "Scheduler": "스케줄러",
+      "Search": "검색",
       "Serving": "모델 서빙",
       "Sessions": "세션",
       "Settings": "설정",
@@ -3849,6 +3850,7 @@
       "WelcomeMessage": "환영합니다. {{ userName }}님",
       "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다.",
       "groupName": {
+        "General": "일반",
         "Metrics": "메트릭",
         "Mlops": "MLOps",
         "Playground": "플레이그라운드",
@@ -3860,6 +3862,31 @@
           "Operations": "운영",
           "System": "시스템"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "{{text}}에서 찾음",
+      "NoResults": "검색 결과 없음",
+      "Placeholder": "페이지, 탭, 설정 검색",
+      "Recent": "최근 항목",
+      "action": {
+        "ChangeLanguage": "UI 언어 변경",
+        "OpenManual": "현재 페이지 매뉴얼 열기",
+        "OpenNotifications": "알림 열기",
+        "OpenUserSettings": "사용자 설정 열기",
+        "SwitchToDarkMode": "다크 모드로 전환",
+        "SwitchToLightMode": "라이트 모드로 전환",
+        "ToggleSidebar": "사이드바 접기/펼치기",
+        "UseSystemTheme": "시스템 설정 사용"
+      },
+      "group": {
+        "Appearance": "화면",
+        "Create": "만들기",
+        "PanelsAndHelp": "패널 및 도움말"
+      },
+      "scope": {
+        "Project": "프로젝트",
+        "ProjectAdministration": "프로젝트 관리"
       }
     }
   }

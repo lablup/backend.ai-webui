@@ -3827,6 +3827,7 @@
       "ResourcePolicies": "Kebijakan Sumber Daya",
       "Resources": "Sumber Daya",
       "Scheduler": "Penjadwal",
+      "Search": "Pencarian",
       "Serving": "Penyajian",
       "Sessions": "Sesi",
       "Settings": "Pengaturan",
@@ -3850,6 +3851,7 @@
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "YouMushChangeYourPassword": "Disarankan untuk mengubah kata sandi Anda secara berkala untuk alasan keamanan. Karena sejumlah waktu telah berlalu sejak terakhir kali Anda mengubah kata sandi, Anda harus mengubahnya agar dapat terus menggunakan layanan ini.",
       "groupName": {
+        "General": "Umum",
         "Metrics": "Metrik",
         "Mlops": "MLOps",
         "Playground": "Taman bermain",
@@ -3861,6 +3863,31 @@
           "Operations": "Operasi",
           "System": "Sistem"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Ditemukan di {{text}}",
+      "NoResults": "Tidak ada hasil",
+      "Placeholder": "Cari halaman, tab, dan pengaturan",
+      "Recent": "Terbaru",
+      "action": {
+        "ChangeLanguage": "Ubah bahasa antarmuka",
+        "OpenManual": "Buka manual untuk halaman ini",
+        "OpenNotifications": "Buka pemberitahuan",
+        "OpenUserSettings": "Buka pengaturan pengguna",
+        "SwitchToDarkMode": "Beralih ke Mode Gelap",
+        "SwitchToLightMode": "Beralih ke Mode Terang",
+        "ToggleSidebar": "Tampilkan atau sembunyikan sidebar",
+        "UseSystemTheme": "Gunakan Pengaturan Sistem"
+      },
+      "group": {
+        "Appearance": "Tampilan",
+        "Create": "Buat",
+        "PanelsAndHelp": "Panel & bantuan"
+      },
+      "scope": {
+        "Project": "Proyek",
+        "ProjectAdministration": "Administrasi proyek"
       }
     }
   }

@@ -3825,6 +3825,7 @@
       "ResourcePolicies": "资源政策",
       "Resources": "资源",
       "Scheduler": "调度程序",
+      "Search": "搜索",
       "Serving": "服务",
       "Sessions": "会话",
       "Settings": "设置",
@@ -3848,6 +3849,7 @@
       "WelcomeMessage": "欢迎，{{ userName }}.",
       "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。",
       "groupName": {
+        "General": "常规",
         "Metrics": "衡量标准",
         "Mlops": "MLOps",
         "Playground": "游乐场",
@@ -3859,6 +3861,31 @@
           "Operations": "运营",
           "System": "系统"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "在 {{text}} 中找到",
+      "NoResults": "无结果",
+      "Placeholder": "搜索页面、标签页和设置",
+      "Recent": "最近使用",
+      "action": {
+        "ChangeLanguage": "更改界面语言",
+        "OpenManual": "打开本页手册",
+        "OpenNotifications": "打开通知",
+        "OpenUserSettings": "打开用户设置",
+        "SwitchToDarkMode": "切换到深色模式",
+        "SwitchToLightMode": "切换到浅色模式",
+        "ToggleSidebar": "折叠/展开侧边栏",
+        "UseSystemTheme": "使用系统设置"
+      },
+      "group": {
+        "Appearance": "外观",
+        "Create": "创建",
+        "PanelsAndHelp": "面板与帮助"
+      },
+      "scope": {
+        "Project": "项目",
+        "ProjectAdministration": "项目管理"
       }
     }
   }
