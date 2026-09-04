@@ -32,6 +32,7 @@
    of mount.
  */
 import { HOOK_MARK } from './context';
+import { isVisible } from './dom';
 import {
   FieldEntity,
   FieldData,
@@ -182,6 +183,8 @@ const EDITABLE =
 const TABBABLE =
   'button:not([disabled]):not([tabindex="-1"]),[tabindex]:not([tabindex="-1"])';
 
+let formSeq = 0;
+
 export class FormStore {
   private forceRootUpdate: () => void;
   private subscribable = true;
@@ -195,7 +198,8 @@ export class FormStore {
   private watcherCenter = new WatcherCenter(this);
   /** Paths of `preserve: false` fields alive at the previous unmount. */
   private prevWithoutPreserves: NameMap<boolean> | null = null;
-  private rootRef: React.RefObject<HTMLElement | null> | null = null;
+  /** Stamped as `data-bai-form-id` on every item of this form. */
+  private readonly formId = `f${++formSeq}`;
 
   constructor(forceRootUpdate: () => void) {
     this.forceRootUpdate = forceRootUpdate;
@@ -242,7 +246,7 @@ export class FormStore {
         setPreserve: this.setPreserve,
         getInitialValue: this.getInitialValue,
         registerWatch: this.registerWatch,
-        setRootRef: this.setRootRef,
+        getFormId: () => this.formId,
       };
     }
     if (process.env.NODE_ENV !== 'production') {
@@ -266,10 +270,6 @@ export class FormStore {
 
   private setPreserve = (preserve?: boolean) => {
     this.preserve = preserve;
-  };
-
-  private setRootRef = (ref: React.RefObject<HTMLElement | null>) => {
-    this.rootRef = ref;
   };
 
   /**
@@ -1074,24 +1074,27 @@ export class FormStore {
    * The control carrying `data-bai-field-id` (stamped by `FormItem`; Astryx
    * inputs drop the `id` they are given but keep `data-*`), else the item
    * wrapper carrying `data-bai-field-item` (a child that forwards nothing to
-   * the DOM). Scoped to this form's element: two mounted forms may share a
-   * field name, and a document-wide lookup picked the wrong one.
+   * the DOM). Only elements stamped with this form's id are candidates, so
+   * two mounted forms sharing a field name stay apart — a `component={false}`
+   * form has no element to scope by. A name mounted twice (a field repeated
+   * across tabs) resolves to the visible one.
    */
   private getFieldDOMNode = (name: NamePath): HTMLElement | undefined => {
     if (typeof document === 'undefined') return undefined;
-    const root: ParentNode = this.rootRef?.current ?? document;
     const handle = getFieldHandle(getNamePath(name));
-    for (const el of root.querySelectorAll<HTMLElement>(
-      '[data-bai-field-id]',
-    )) {
-      if (el.dataset.baiFieldId === handle) return el;
-    }
-    for (const el of root.querySelectorAll<HTMLElement>(
-      '[data-bai-field-item]',
-    )) {
-      if (el.dataset.baiFieldItem === handle) return el;
-    }
-    return undefined;
+    const stamped = document.querySelectorAll<HTMLElement>(
+      `[data-bai-form-id="${this.formId}"]`,
+    );
+    const pick = (attr: 'baiFieldId' | 'baiFieldItem') => {
+      let first: HTMLElement | undefined;
+      for (const el of stamped) {
+        if (el.dataset[attr] !== handle) continue;
+        if (isVisible(el)) return el;
+        first ??= el;
+      }
+      return first;
+    };
+    return pick('baiFieldId') ?? pick('baiFieldItem');
   };
 }
 

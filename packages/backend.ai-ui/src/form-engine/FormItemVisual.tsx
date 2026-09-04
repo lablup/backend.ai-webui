@@ -167,6 +167,8 @@ export interface BAIFormItemVisualProps {
    * by `FormStore.getFieldDOMNode`.
    */
   fieldHandle?: string;
+  /** The owning form's token, stamped beside `fieldHandle`. */
+  formId?: string;
   htmlFor?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -237,6 +239,7 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
   hasFeedback,
   fieldId,
   fieldHandle,
+  formId,
   htmlFor,
   className,
   style,
@@ -483,6 +486,7 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
       className={className}
       data-bai-form-item=""
       data-bai-field-item={fieldHandle}
+      data-bai-form-id={fieldHandle ? formId : undefined}
       data-layout={layout}
       data-size={size}
       data-status={status || undefined}

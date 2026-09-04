@@ -464,7 +464,14 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     },
   });
 
+  const isInFlight =
+    isInFlightUpdateUserV2 ||
+    isInFlightCommitCreateUser ||
+    isInFlightBulkCreateUsers;
+
   const handleFinish = (values: FormValues) => {
+    // Enter in a text input submits too; the OK button's lock does not cover it.
+    if (isInFlight) return;
     if (bulkCreate) {
       const bulkValues = values as unknown as BulkFormValues;
       const users = _.range(1, bulkValues.user_count + 1).map((i) => ({
@@ -669,11 +676,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       okText={user ? t('button.Save') : t('button.Create')}
       destroyOnHidden
       onOk={() => formRef.current?.submit()}
-      confirmLoading={
-        isInFlightUpdateUserV2 ||
-        isInFlightCommitCreateUser ||
-        isInFlightBulkCreateUsers
-      }
+      confirmLoading={isInFlight}
       // A bulk create that partially failed leaves this form open, so its
       // Cancel still has to report the users that *were* created — otherwise
       // the list behind it never refetches. Uses the session-wide

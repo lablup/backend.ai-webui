@@ -31,6 +31,7 @@ import {
   type FormSize,
   type RequiredMark,
 } from './context';
+import { isVisible } from './dom';
 import type {
   Callbacks,
   FieldData,
@@ -44,15 +45,6 @@ import type {
 import { mergeValidateMessages } from './messages';
 import type { Store } from './namePath';
 import * as React from 'react';
-
-/** `checkVisibility` where the browser has it; jsdom falls back to markup. */
-function isVisible(el: HTMLElement): boolean {
-  if (typeof el.checkVisibility === 'function') return el.checkVisibility();
-  for (let node: HTMLElement | null = el; node; node = node.parentElement) {
-    if (node.hidden || node.style.display === 'none') return false;
-  }
-  return true;
-}
 
 export interface FormProps<Values = any> extends Omit<
   React.FormHTMLAttributes<HTMLFormElement>,
@@ -147,7 +139,6 @@ const InternalForm = <Values,>(
     setValidateMessages,
     setPreserve,
     destroyForm,
-    setRootRef,
   } = hooks;
 
   React.useImperativeHandle(
@@ -158,10 +149,6 @@ const InternalForm = <Values,>(
         nativeElement: nativeElementRef.current,
       }) as FormRef<Values>,
   );
-
-  React.useEffect(() => {
-    setRootRef(nativeElementRef);
-  }, [setRootRef]);
 
   React.useEffect(() => {
     formProviderContext.registerForm(name, formInstance);
