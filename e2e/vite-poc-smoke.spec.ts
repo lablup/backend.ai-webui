@@ -66,7 +66,7 @@ test('Vite PoC: app mounts at :9081 with host i18n translations rendered', async
   // A few positive-example translations that should appear on the login
   // page in English. (If the page adds/removes these someday, adjust the
   // list — the negative match above is the primary check.)
-  expect(bodyText).toMatch(/Forgot password\?/);
+  expect(bodyText).toMatch(/Forgot password/);
   expect(bodyText).toMatch(/Sign up/);
 
   expect(pageErrors, 'no uncaught page errors').toEqual([]);

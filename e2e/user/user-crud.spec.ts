@@ -385,7 +385,7 @@ test.describe.serial(
 
       // 2. Attempt to login as the deleted user
       await page.goto(webuiEndpoint);
-      await page.getByLabel('Email or Username').fill(EMAIL);
+      await page.getByLabel('Email').fill(EMAIL);
       await page.getByRole('textbox', { name: 'Password' }).fill(NEW_PASSWORD);
       await page
         .getByRole('textbox', { name: 'Endpoint' })
@@ -398,7 +398,7 @@ test.describe.serial(
       ).toBeVisible({ timeout: 10000 });
 
       // 4. Verify user is still on login page
-      await expect(page.getByLabel('Email or Username')).toBeVisible();
+      await expect(page.getByLabel('Email')).toBeVisible();
     });
   },
 );

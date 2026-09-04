@@ -1,0 +1,44 @@
+/* The login screen is a standalone landing surface, not an in-app form: its
+   fields read one type step larger than the app default. Astryx `TextInput`
+   has a `size` prop but no type-scale prop, so the step is applied here
+   (FR-3560). */
+.bai-login-form input:not([type='checkbox']) {
+  font-size: var(--font-size-lg);
+}
+
+/* "Remember ID" is a quiet, secondary affordance next to the credentials —
+   body size, normal weight, secondary colour. */
+.bai-login-remember-id {
+  font-size: var(--font-size-base);
+}
+
+.bai-login-remember-id .astryx-text,
+.bai-login-remember-id label,
+.bai-login-remember-id label > * {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-secondary);
+}
+
+/* Astryx `Button` exposes no font-weight prop, and the login CTA is
+   deliberately heavier than the default label weight (FR-3560). */
+.bai-login-submit button,
+.bai-login-submit button > * {
+  font-weight: var(--font-weight-semibold);
+}
+
+/* "Forgot password" is an emphasised label, not a second call to action, so
+   it drops the accent colour Astryx `Link` carries by default — only Login
+   and Sign up stay branded (FR-3560). */
+.bai-login-find-password a,
+.bai-login-find-password a * {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+}
+
+.bai-login-find-password a:hover,
+.bai-login-find-password a:hover *,
+.bai-login-find-password a:focus-visible {
+  color: var(--color-text-primary);
+}

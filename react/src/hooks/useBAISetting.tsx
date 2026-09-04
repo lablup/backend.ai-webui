@@ -76,6 +76,13 @@ interface GeneralSettings {
   last_login?: number;
   login_attempt?: number;
   language?: string;
+  /**
+   * "Remember ID" checkbox state. Written only after a successful SESSION
+   * login (see `LoginView#postConnectSetup`); unchecking clears it at once.
+   */
+  remember_login_id?: boolean;
+  /** The remembered login identifier. Never the password. */
+  saved_login_id?: string;
 }
 
 export const useBAISettingUserState = <K extends keyof UserSettings>(

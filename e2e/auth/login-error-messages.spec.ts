@@ -68,7 +68,7 @@ async function setupBaseMocks(page: Page): Promise<void> {
 }
 
 async function fillLoginForm(page: Page): Promise<void> {
-  await page.getByLabel('Email or Username').fill(TEST_EMAIL);
+  await page.getByLabel('Email').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
 
   const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });

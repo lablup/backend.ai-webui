@@ -99,14 +99,10 @@ async function setupBaseMocks(page: Page): Promise<void> {
  * Fill the SESSION login form with test credentials and endpoint.
  */
 async function fillLoginForm(page: Page): Promise<void> {
-  await page.getByLabel('Email or Username').fill(TEST_EMAIL);
+  await page.getByLabel('Email').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
 
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
-  await endpointInput.fill(webServerEndpoint);
+  await page.getByRole('textbox', { name: 'Endpoint' }).fill(webServerEndpoint);
 }
 
 /**
@@ -213,10 +209,8 @@ test.describe(
       await concurrentModal.getByRole('button', { name: 'Cancel' }).click();
 
       await expect(concurrentModal).toBeHidden();
-      await expect(page.getByLabel('Email or Username')).toBeVisible();
-      await expect(page.getByLabel('Email or Username')).toHaveValue(
-        TEST_EMAIL,
-      );
+      await expect(page.getByLabel('Email')).toBeVisible();
+      await expect(page.getByLabel('Email')).toHaveValue(TEST_EMAIL);
       await expect(page.getByLabel('Password')).toBeVisible();
       await expect(page.getByLabel('Password')).toHaveValue(TEST_PASSWORD);
       await expect(page.getByRole('textbox', { name: 'Endpoint' })).toHaveValue(
@@ -436,7 +430,7 @@ test.describe(
       await page.reload();
 
       // Wait for the login form to appear (silent re-login failed → login panel opens)
-      await expect(page.getByLabel('Email or Username')).toBeVisible({
+      await expect(page.getByLabel('Email')).toBeVisible({
         timeout: 10_000,
       });
 
