@@ -346,6 +346,25 @@ describe('createDeepLinkPin', () => {
         });
     });
 
+    // The hint is a line OF the card, so a height read before it is written
+    // docks a bottom-docked card that many pixels past the fold.
+    it('measures the docked card with its hint already in place', () => {
+      mountSized({ top: 900, bottom: 1100, height: 200 }, 60);
+      Object.defineProperty(card(), 'offsetHeight', {
+        get: () =>
+          host.shadowRoot?.querySelector('.awaynote')?.textContent ? 80 : 60,
+        configurable: true,
+      });
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(card().classList.contains('away')).toBe(true);
+      expect(
+        host.shadowRoot?.querySelector('.awaynote')?.textContent,
+      ).toContain('↓');
+      // 800 − 80 − 8, not 800 − 60 − 8.
+      expect(card().style.top).toBe('712px');
+    });
+
     it('clears the docked state when the pin is dismissed', () => {
       mountSized({ top: -900, bottom: -700, height: 200 }, 60);
       show();

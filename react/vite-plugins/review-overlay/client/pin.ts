@@ -298,9 +298,10 @@ export function createDeepLinkPin({
     markBox.classList.remove('found');
     card.classList.add('found');
     card.classList.add('away');
-    const height = card.offsetHeight;
     const up = box.bottom <= 0;
     const down = box.top >= vh;
+    // Written BEFORE the measurement: the hint is a line of the card, so a
+    // height read without it docks a bottom-docked card past the fold.
     away.textContent = up
       ? '↑ Scrolled above — 📍 goes back'
       : down
@@ -309,7 +310,7 @@ export function createDeepLinkPin({
     card.style.left = `${Math.max(8, Math.min(box.left, vw - 340))}px`;
     card.style.top = up
       ? `${VIEWPORT_PAD}px`
-      : `${Math.max(VIEWPORT_PAD, vh - height - VIEWPORT_PAD)}px`;
+      : `${Math.max(VIEWPORT_PAD, vh - card.offsetHeight - VIEWPORT_PAD)}px`;
   }
 
   function place() {
