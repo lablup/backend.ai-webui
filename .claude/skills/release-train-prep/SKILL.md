@@ -18,6 +18,7 @@ description: >
   "릴리즈 찍어줘 / 릴리즈 만들어줘 / cut the release / rc 릴리즈" is
   create-release, not this skill.
 argument-hint: "--from <ref> [--to <ref>] [--train [version]] [--dry-run] [--auto] <Teams URL>"
+disable-model-invocation: true
 ---
 
 # Release Train Prep → Teams
