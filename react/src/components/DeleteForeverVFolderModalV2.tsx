@@ -5,6 +5,7 @@
 import { DeleteForeverVFolderModalV2Fragment$key } from '../__generated__/DeleteForeverVFolderModalV2Fragment.graphql';
 import { DeleteForeverVFolderModalV2Mutation } from '../__generated__/DeleteForeverVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
   BAIDeleteConfirmModal,
   type BAIDeleteConfirmModalProps,
@@ -33,6 +34,12 @@ const DeleteForeverVFolderModalV2: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
+  // `failed` has existed since 26.4.4, but `successes` did not — selecting it
+  // on an older manager rejects the whole document, so both move behind the
+  // flag and the deprecated count is selected instead.
+  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
+    'bulk-mutation-per-id-results',
+  );
 
   const vfolders = useFragment(
     graphql`
@@ -51,9 +58,15 @@ const DeleteForeverVFolderModalV2: React.FC<
     useMutation<DeleteForeverVFolderModalV2Mutation>(graphql`
       mutation DeleteForeverVFolderModalV2Mutation(
         $input: BulkPurgeVFoldersV2Input!
+        $supportsPerIdResults: Boolean!
       ) {
         bulkPurgeVfoldersV2(input: $input) {
-          purgedCount
+          successes @include(if: $supportsPerIdResults)
+          failed @include(if: $supportsPerIdResults) {
+            vfolderId
+            message
+          }
+          purgedCount @skip(if: $supportsPerIdResults)
         }
       }
     `);
@@ -103,22 +116,44 @@ const DeleteForeverVFolderModalV2: React.FC<
         }
         const ids = _.map(purgeable, (vfolder) => toLocalId(vfolder.id));
         commitBulkPurgeMutation({
-          variables: { input: { ids } },
+          variables: { input: { ids }, supportsPerIdResults },
           onCompleted: (data, errors) => {
             if (errors && errors.length > 0) {
               const firstError = errors[0];
               message.error(firstError?.message ?? getErrorMessage(firstError));
               return;
             }
-            const purgedCount = data?.bulkPurgeVfoldersV2?.purgedCount ?? 0;
-            if (purgedCount === 0) {
+            const purgedCount = supportsPerIdResults
+              ? (data?.bulkPurgeVfoldersV2?.successes?.length ?? 0)
+              : (data?.bulkPurgeVfoldersV2?.purgedCount ?? 0);
+            const failed = data?.bulkPurgeVfoldersV2?.failed ?? [];
+            // The mutation answers per id, so a partial failure arrives as a
+            // success with `failed` populated rather than as a top-level error.
+            if (failed.length > 0) {
+              const nameByLocalId = _.fromPairs(
+                _.map(purgeable, (v) => [toLocalId(v.id), v.metadata?.name]),
+              );
               message.error(
                 t('data.folders.FailedToDeleteFolders', {
-                  folderNames: _.map(purgeable, (v) => v?.metadata?.name).join(
-                    ', ',
-                  ),
+                  folderNames: _.map(failed, (f) =>
+                    nameByLocalId[f.vfolderId]
+                      ? `${nameByLocalId[f.vfolderId]} (${f.message})`
+                      : f.message,
+                  ).join(', '),
                 }),
               );
+            }
+            if (purgedCount === 0) {
+              if (failed.length === 0) {
+                message.error(
+                  t('data.folders.FailedToDeleteFolders', {
+                    folderNames: _.map(
+                      purgeable,
+                      (v) => v?.metadata?.name,
+                    ).join(', '),
+                  }),
+                );
+              }
               return;
             }
             if (purgeable.length === 1) {
