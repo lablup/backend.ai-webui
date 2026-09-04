@@ -129,7 +129,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
             <Text color="secondary" style={{ visibility: 'hidden' }}>
               {pathLabel}
             </Text>
-            <Text color="warning" data-testid="logo-fallback-hint">
+            <Text color="secondary" data-testid="logo-fallback-hint">
               {t('userSettings.logo.FallbackFollowsItem', {
                 item: t(
                   fallbackKey === 'src'
