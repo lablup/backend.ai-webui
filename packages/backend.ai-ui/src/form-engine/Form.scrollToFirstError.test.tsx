@@ -290,6 +290,46 @@ const FormWithTwinFields: React.FC<Pick<Props, 'formRef'>> = ({ formRef }) => {
   );
 };
 
+/** A validator-only `noStyle` field with no child — the Hugging Face URL check. */
+const FormWithValidatorOnly: React.FC<Pick<Props, 'formRef'>> = ({
+  formRef,
+}) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError>
+      <Form.Item label="URL">
+        <Input />
+        <Form.Item
+          noStyle
+          name=""
+          rules={[{ validator: () => Promise.reject(new Error('bad')) }]}
+        />
+      </Form.Item>
+    </Form>
+  );
+};
+
+/** The same name twice: a hidden forwarding control, then a visible opaque one. */
+const FormWithHiddenTwinControl: React.FC<Pick<Props, 'formRef'>> = ({
+  formRef,
+}) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError>
+      <Form.Item hidden name="early" label="Early (tab 1)">
+        <Input />
+      </Form.Item>
+      <Form.Item name="early" label="Early (tab 2)">
+        <OpaqueInput />
+      </Form.Item>
+    </Form>
+  );
+};
+
 async function submit(form: FormInstance) {
   await act(async () => {
     form.submit();
@@ -491,6 +531,51 @@ describe('scroll to the first invalid field', () => {
 
     expect(scrolled()?.contains(visible)).toBe(true);
     expect(document.activeElement).toBe(visible);
+  });
+
+  it('reaches a validator-only `noStyle` field through the parent item in error', async () => {
+    let form!: FormInstance;
+    render(<FormWithValidatorOnly formRef={(f) => (form = f)} />);
+
+    await submit(form);
+
+    expect(scrolled()?.getAttribute('data-bai-field-items')).toBe(
+      `[${handleOf('')}]`,
+    );
+    expect(document.activeElement).toBe(scrolled()?.querySelector('input'));
+  });
+
+  it('drops `smooth` when the user prefers reduced motion', async () => {
+    let form!: FormInstance;
+    render(<TestForm formRef={(f) => (form = f)} />);
+    const matchMedia = vi.fn().mockReturnValue({ matches: true });
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: matchMedia,
+    });
+    try {
+      act(() => form.scrollToField('early', { behavior: 'smooth' }));
+    } finally {
+      Reflect.deleteProperty(window, 'matchMedia');
+    }
+
+    expect(matchMedia).toHaveBeenCalledWith('(prefers-reduced-motion: reduce)');
+    expect(scrollIntoView).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: 'auto' }),
+    );
+  });
+
+  it('does not let a hidden control outrank the visible wrapper of the same name', async () => {
+    let form!: FormInstance;
+    render(<FormWithHiddenTwinControl formRef={(f) => (form = f)} />);
+
+    act(() => form.scrollToField('early', { focus: true }));
+
+    expect(scrolled()?.getAttribute('data-bai-field-item')).toBe(
+      handleOf('early'),
+    );
+    expect(scrolled()?.hasAttribute('data-hidden')).toBe(false);
+    expect(document.activeElement).toBe(scrolled()?.querySelector('input'));
   });
 
   it('does not scroll when the submit succeeds', async () => {

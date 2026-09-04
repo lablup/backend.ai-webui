@@ -32,7 +32,7 @@
    of mount.
  */
 import { HOOK_MARK } from './context';
-import { isVisible } from './dom';
+import { isVisible, scrollIntoView } from './dom';
 import {
   FieldEntity,
   FieldData,
@@ -1044,10 +1044,11 @@ export class FormStore {
     if (node) {
       // The item, when there is one, so the label and the error message come
       // into view with the control — a `noStyle` field's message lives on
-      // the parent item. Optional call: jsdom ships no `scrollIntoView`.
-      (
-        node.closest<HTMLElement>('[data-bai-form-item]') ?? node
-      ).scrollIntoView?.({ block: 'nearest', ...restOpt });
+      // the parent item.
+      scrollIntoView(
+        node.closest<HTMLElement>('[data-bai-form-item]') ?? node,
+        restOpt as ScrollIntoViewOptions,
+      );
       if (focus) {
         this.focusField(name);
       }
@@ -1074,10 +1075,11 @@ export class FormStore {
    * The control carrying `data-bai-field-id` (stamped by `FormItem`; Astryx
    * inputs drop the `id` they are given but keep `data-*`), else the item
    * wrapper carrying `data-bai-field-item` (a child that forwards nothing to
-   * the DOM). Only elements stamped with this form's id are candidates, so
-   * two mounted forms sharing a field name stay apart — a `component={false}`
-   * form has no element to scope by. A name mounted twice (a field repeated
-   * across tabs) resolves to the visible one.
+   * the DOM), else the enclosing item whose `data-bai-field-items` lists the
+   * handle (a wrapper-less `noStyle` field). Only elements stamped with this
+   * form's id are candidates, so two mounted forms sharing a field name stay
+   * apart — a `component={false}` form has no element to scope by. A name
+   * mounted twice (a field repeated across tabs) resolves to the visible one.
    */
   private getFieldDOMNode = (name: NamePath): HTMLElement | undefined => {
     if (typeof document === 'undefined') return undefined;
@@ -1085,16 +1087,26 @@ export class FormStore {
     const stamped = document.querySelectorAll<HTMLElement>(
       `[data-bai-form-id="${this.formId}"]`,
     );
-    const pick = (attr: 'baiFieldId' | 'baiFieldItem') => {
-      let first: HTMLElement | undefined;
-      for (const el of stamped) {
-        if (el.dataset[attr] !== handle) continue;
-        if (isVisible(el)) return el;
-        first ??= el;
+    const carries = [
+      (el: HTMLElement) => el.dataset.baiFieldId === handle,
+      (el: HTMLElement) => el.dataset.baiFieldItem === handle,
+      (el: HTMLElement) =>
+        !!el.dataset.baiFieldItems &&
+        (JSON.parse(el.dataset.baiFieldItems) as unknown[]).some(
+          (path) => JSON.stringify(path) === handle,
+        ),
+    ];
+    // Visible candidates of any kind before any hidden one, or a hidden
+    // control would outrank the visible wrapper of the same field.
+    const pick = (visibleOnly: boolean) => {
+      for (const carry of carries) {
+        for (const el of stamped) {
+          if (carry(el) && (!visibleOnly || isVisible(el))) return el;
+        }
       }
-      return first;
+      return undefined;
     };
-    return pick('baiFieldId') ?? pick('baiFieldItem');
+    return pick(true) ?? pick(false);
   };
 }
 

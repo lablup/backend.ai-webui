@@ -11,3 +11,19 @@ export function isVisible(el: HTMLElement): boolean {
   }
   return true;
 }
+
+/** `scrollIntoView` with antd's `nearest` default; reduced motion wins over `smooth`. */
+export function scrollIntoView(
+  el: HTMLElement,
+  options: ScrollIntoViewOptions = {},
+): void {
+  const reduceMotion =
+    typeof matchMedia === 'function' &&
+    matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Optional call: jsdom ships no `scrollIntoView`.
+  el.scrollIntoView?.({
+    block: 'nearest',
+    ...options,
+    ...(reduceMotion ? { behavior: 'auto' as const } : {}),
+  });
+}
