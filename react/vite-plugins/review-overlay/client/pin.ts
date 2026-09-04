@@ -228,8 +228,11 @@ interface PinView {
   readonly card: HTMLElement;
   id(): string;
   show(next: DeepLinkPinTarget): void;
-  /** Set order, for the marker glyph and the `3 / 5` header. */
-  setOrdinal(index: number, total: number): void;
+  /**
+   * Set order, for the marker glyph and the `3 / 5` header; `null` for a pin
+   * the set does not hold.
+   */
+  setOrdinal(index: number | null, total: number): void;
   setCollapsed(collapsed: boolean): void;
   /** This card alone; the pin keeps its marker and its box. */
   setHidden(hidden: boolean): void;
@@ -243,6 +246,10 @@ interface PinView {
   reposition(): void;
   dismiss(): void;
   isShowing(): boolean;
+  /** False for a drawn pin the set does not count, e.g. a link's. */
+  isMember(): boolean;
+  /** Already this pin, payload and all — nothing to re-adopt. */
+  holds(next: DeepLinkPinTarget): boolean;
   isLocated(): boolean;
   locatedElement(): Element | null;
   dispose(): void;
@@ -329,6 +336,8 @@ function createPinView(deps: ViewDeps): PinView {
   let missedScans = 0;
   /** The landmark at the last batch; its return re-arms the escalated scan. */
   let hadLandmark = false;
+  /** False for a pin the set does not hold: it stays a lone 📍. */
+  let member = true;
   /** One arrival pulse per link — the box is what stays. */
   let pulsed = false;
   let pulseTimer = 0;
@@ -633,10 +642,11 @@ function createPinView(deps: ViewDeps): PinView {
       payload.text,
       payload.html,
       // The link caps the note it carries, and a copy that quietly loses the
-      // rest is worse than one that says so.
-      target.anchor.nt === 1
-        ? 'Copied — the note is the shortened one the link carries'
-        : 'Copied the whole comment',
+      // rest is worse than one that says so — unless the payload says better.
+      payload.toast ??
+        (target.anchor.nt === 1
+          ? 'Copied — the note is the shortened one the link carries'
+          : 'Copied the whole comment'),
     );
   });
 
@@ -679,11 +689,13 @@ function createPinView(deps: ViewDeps): PinView {
     },
 
     // A set of one is what a single pin has always been — the map-pin glyph
-    // and no header. Only a real set numbers itself.
-    setOrdinal(index: number, total: number) {
-      if (total > 1) head.textContent = String(index + 1);
+    // and no header. Only a real set numbers itself; `null` is not a member.
+    setOrdinal(index: number | null, total: number) {
+      member = index !== null;
+      const numbered = index !== null && total > 1;
+      if (numbered) head.textContent = String(index + 1);
       else head.replaceChildren(icon('map-pin', MARKER_ICON_SIZE));
-      count.textContent = total > 1 ? `${index + 1} / ${total}` : '';
+      count.textContent = numbered ? `${index + 1} / ${total}` : '';
     },
 
     setCollapsed(next: boolean) {
@@ -731,6 +743,10 @@ function createPinView(deps: ViewDeps): PinView {
 
     dismiss,
     isShowing: () => !!target,
+    isMember: () => member,
+    /** Same pin, same payload — nothing to re-adopt. */
+    holds: (next: DeepLinkPinTarget) =>
+      target?.id === next.id && target.anchorB64 === next.anchorB64,
     isLocated: () => !!located,
     locatedElement: () => located,
 
@@ -755,6 +771,8 @@ export function createPinLayer(options: PinLayerOptions) {
   /** The dock's switch: every card off, markers and boxes still on the page. */
   let cardsHidden = false;
   let focusId: string | null = null;
+  /** False while the set is only being re-drawn: nothing scrolls, nothing pulses. */
+  let autoFocus = true;
   let frame = 0;
   let settleUntil = 0;
   let timer = 0;
@@ -851,19 +869,20 @@ export function createPinLayer(options: PinLayerOptions) {
 
   /** A set one pin shorter says so: the glyphs and the `n / N` heads move up. */
   function renumber() {
-    const shown = showingViews();
-    for (const [index, view] of shown.entries())
-      view.setOrdinal(index, shown.length);
+    const members = showingViews().filter((view) => view.isMember());
+    for (const [index, view] of members.entries())
+      view.setOrdinal(index, members.length);
   }
 
   function locateAll(skipLocated: boolean): boolean {
     const shown = showingViews();
     // A stored focus id can name a pin this set does not have; the set still
     // has to scroll somewhere.
-    const focus =
-      shown.find((view) => view.id() === focusId)?.id() ??
-      shown[0]?.id() ??
-      null;
+    const focus = autoFocus
+      ? (shown.find((view) => view.id() === focusId)?.id() ??
+        shown[0]?.id() ??
+        null)
+      : null;
     let missing = 0;
     let landed = false;
     for (const view of shown) {
@@ -938,14 +957,27 @@ export function createPinLayer(options: PinLayerOptions) {
     /**
      * Draw exactly these pins, in set order, and start the one retry driver
      * that resolves whatever is not on the page yet. `focusId` names the pin
-     * that scrolls and pulses; the first pin is the default.
+     * that scrolls and pulses; the first pin is the default, and an explicit
+     * `null` is a re-draw — an authoring set must not move the page under the
+     * reviewer every time they add a pin to it. `setSize` is how many of the
+     * leading targets the SET holds; the rest are drawn as lone pins.
      */
-    show(targets: DeepLinkPinTarget[], opts: { focusId?: string } = {}) {
+    show(
+      targets: DeepLinkPinTarget[],
+      opts: { focusId?: string | null; setSize?: number } = {},
+    ) {
       resize(targets.length);
+      autoFocus = opts.focusId !== null;
       focusId = opts.focusId ?? targets[0]?.id ?? null;
+      const size = opts.setSize ?? targets.length;
+      // Only the pin this call focuses is re-adopted: the rest keep the
+      // element `reposition()` may be holding through a re-render.
+      const arriving =
+        opts.focusId === undefined ? (targets[0]?.id ?? null) : opts.focusId;
       targets.forEach((target, index) => {
-        views[index].show(target);
-        views[index].setOrdinal(index, targets.length);
+        const view = views[index];
+        if (target.id === arriving || !view.holds(target)) view.show(target);
+        view.setOrdinal(index < size ? index : null, size);
       });
       startRetry();
     },

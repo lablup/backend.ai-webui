@@ -641,6 +641,45 @@ describe('a pin set', () => {
       expect(size(20) / size(10)).toBeLessThan(2.2);
     });
   });
+
+  describe('with a note longer than the link carries', () => {
+    const long = `${'x'.repeat(300)} and the rest of what was typed`;
+    const short = `${long.slice(0, 279)}…`;
+
+    /** `withNote` caps `anchor.n` at `NOTE_MAX` and flags it with `nt`. */
+    const capped = (): SetPin => {
+      const pin = first();
+      return { ...pin, anchor: { ...pin.anchor, n: short, nt: 1 }, note: long };
+    };
+
+    it('leads the block with the whole note, not the shortened one', () => {
+      const text = buildSetText([capped()], { origin: ORIGIN });
+
+      expect(text.split('\n')[0]).toBe(long);
+      expect(text).toContain(
+        `> [Open on dev server](${ORIGIN}/session/start?tab=general#bai=v3.c_aaaaaa2.PAYLOAD1)`,
+      );
+    });
+
+    // A link's pin never travelled with the note the reviewer typed; the
+    // shortened one the anchor carries is all there is.
+    it('falls back to the anchor for a pin that came off a link', () => {
+      const pin = capped();
+      const fromLink: SetPin = {
+        id: pin.id,
+        origin: 'link',
+        anchor: pin.anchor,
+        anchorB64: pin.anchorB64,
+        label: pin.label,
+        appHash: '',
+        stack: [],
+      };
+
+      expect(buildSetText([fromLink], { origin: ORIGIN }).split('\n')[0]).toBe(
+        short,
+      );
+    });
+  });
 });
 
 describe('the marker a block may not claim', () => {
