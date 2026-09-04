@@ -98,6 +98,9 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
   const supportsNullableModelDefinition = baiClient.supports(
     'preset-model-config-type',
   );
+  // A restored create-mode URL can carry `modelDefinition.enabled` even on a
+  // manager that predates preset model definitions; submit omits the field.
+  const supportsModelDefinition = baiClient.supports('preset-model-definition');
   // `true` includes untouched fields and arrays (e.g. modelDefinition.models)
   // that getFieldsValue() omits; its overload returns `any`, so annotate here.
   const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);
@@ -453,7 +456,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
               Configuration/Health Check/Pre-Start Actions here (mirroring
               the input form's nesting), since those fields can only be
               submitted alongside a real name/modelPath pre-BA-7210. */}
-          {values.modelDefinition?.enabled &&
+          {supportsModelDefinition &&
+            values.modelDefinition?.enabled &&
             (() => {
               const m = values.modelDefinition.models?.[0];
               if (!m) return null;

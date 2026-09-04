@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<966c2205761daf614572b06456f5dfc3>>
+ * @generated SignedSource<<7ead33066219bb9f01ad76bc39622d16>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -442,12 +442,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ccd4b84ef4b7bf255f7a95f4bbbacd00",
+    "cacheID": "3dacfe3b2e761d7412352bf0a0581053",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalPresetDetailQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalPresetDetailQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    ...DeploymentPresetDetailModalFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalPresetDetailQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    ...DeploymentPresetDetailModalFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition @since(version: \"26.4.4\") {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
