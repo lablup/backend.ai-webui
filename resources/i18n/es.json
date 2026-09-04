@@ -3671,6 +3671,7 @@
       "DarkModeLogoDesc": "Establecer la imagen que se usará como logo de la WebUI en modo oscuro.",
       "DetailLogoCustomizationDesc": "Personalice los logotipos para áreas específicas como la página de inicio de sesión. Si no se configura, se utiliza la imagen de logo predeterminada. Cuando se usa la imagen predeterminada, el logo de cada modo se aplica de forma inversa para contraste de color.",
       "FailedToReadFile": "No se pudo leer el archivo. Inténtelo de nuevo.",
+      "FallbackFollowsItem": "No hay ningún valor configurado, por lo que se usa la imagen de {{item}}.",
       "Image": "Imagen",
       "ImagePath": "Ruta",
       "LightModeCollapsedLogo": "Logotipo del panel lateral colapsado (modo claro)",

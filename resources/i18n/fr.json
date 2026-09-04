@@ -3674,6 +3674,7 @@
       "DarkModeLogoDesc": "Définir l'image utilisée comme logo du WebUI en mode sombre.",
       "DetailLogoCustomizationDesc": "Personnalisez les logos pour des zones spécifiques telles que la page de connexion. Si non défini, l'image de logo par défaut est utilisée. Lorsque l'image par défaut est utilisée, le logo de chaque mode est appliqué en inversé pour le contraste des couleurs.",
       "FailedToReadFile": "Impossible de lire le fichier. Veuillez réessayer.",
+      "FallbackFollowsItem": "Aucune valeur n’est définie, l’image « {{item}} » est donc utilisée.",
       "Image": "Image",
       "ImagePath": "Chemin d'accès",
       "LightModeCollapsedLogo": "Logo de la barre latérale réduite (mode clair)",

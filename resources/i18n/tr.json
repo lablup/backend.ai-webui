@@ -3671,6 +3671,7 @@
       "DarkModeLogoDesc": "Karanlık Mod WebUI logosu olarak kullanılacak resmi ayarla.",
       "DetailLogoCustomizationDesc": "Giriş sayfası gibi belirli alanlar için logoları özelleştirin. Ayarlanmazsa varsayılan logo görüntüsü kullanılır. Varsayılan görüntü kullanıldığında, renk kontrastı için her modun logosu ters olarak uygulanır.",
       "FailedToReadFile": "Dosya okunamadı. Lütfen tekrar deneyin.",
+      "FallbackFollowsItem": "Bir değer ayarlanmadığından {{item}} görseli kullanılır.",
       "Image": "Görüntü",
       "ImagePath": "Yol",
       "LightModeCollapsedLogo": "Daraltılmış Sider Logosu (açık mod)",

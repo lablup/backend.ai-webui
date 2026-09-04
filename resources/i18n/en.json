@@ -3658,6 +3658,7 @@
       "DarkModeLogoDesc": "Set the image used as the Dark Mode WebUI logo.",
       "DetailLogoCustomizationDesc": "Customize logos for specific areas such as the login page. If not set, the default logo image is used. When the default image is used, each mode's logo is applied inversely for color contrast.",
       "FailedToReadFile": "Failed to read the file. Please try again.",
+      "FallbackFollowsItem": "No value is set, so the {{item}} image is used.",
       "Image": "Image",
       "ImagePath": "Path",
       "LightModeCollapsedLogo": "Collapsed Sider Logo (light mode)",
