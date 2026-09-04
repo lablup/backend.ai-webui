@@ -38,6 +38,7 @@ import {
   FormItemLayoutContext,
   ListContext,
   NoStyleItemContext,
+  SubFieldRegistryContext,
   type FormItemCol,
   type FormItemStatusContextValue,
   type FormLayout,
@@ -82,6 +83,17 @@ function genEmptyMeta(): Meta {
     validated: false,
   };
 }
+
+/** Registers a wrapper-less field's handle with the enclosing item. */
+const SubFieldRegistration: React.FC<{
+  register: (handle: string) => () => void;
+  handle: string;
+}> = ({ register, handle }) => {
+  // Layout effect: the parent's re-render commits before paint, so the
+  // attribute is there before anything can submit.
+  React.useLayoutEffect(() => register(handle), [register, handle]);
+  return null;
+};
 
 function getStatus(
   errors: React.ReactNode[],
@@ -226,6 +238,15 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
     labelWrap: formLabelWrap,
   } = React.useContext(FormItemLayoutContext);
   const notifyParentMetaChange = React.useContext(NoStyleItemContext);
+  const registerSubFieldUpward = React.useContext(SubFieldRegistryContext);
+  const [subFieldHandles, setSubFieldHandles] = React.useState<string[]>([]);
+  // Stable: it is a layout-effect dependency in every registering child.
+  const registerSubField = React.useCallback((handle: string) => {
+    setSubFieldHandles((prev) =>
+      prev.includes(handle) ? prev : [...prev, handle],
+    );
+    return () => setSubFieldHandles((prev) => prev.filter((h) => h !== handle));
+  }, []);
   const listContext = React.useContext(ListContext);
 
   const layout = propsLayout || formLayout;
@@ -324,10 +345,17 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
     };
 
     // A `noStyle` item contributes state only. Its errors were already sent
-    // upward through `notifyParentMetaChange`.
+    // upward through `notifyParentMetaChange`; its handle goes the same way,
+    // so a field with no wrapper (and maybe no child) stays reachable.
     if (noStyle && !hidden) {
       return (
         <FormItemInputContext.Provider value={status}>
+          {fieldHandle && registerSubFieldUpward ? (
+            <SubFieldRegistration
+              register={registerSubFieldUpward}
+              handle={fieldHandle}
+            />
+          ) : null}
           {baseChildren}
         </FormItemInputContext.Provider>
       );
@@ -381,12 +409,15 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           fieldId={fieldId}
           fieldHandle={fieldHandle}
           formId={formId}
+          subFieldHandles={subFieldHandles}
           htmlFor={htmlFor}
           errors={mergedErrors}
           warnings={mergedWarnings}
         >
           <NoStyleItemContext.Provider value={onSubItemMetaChange}>
-            {baseChildren}
+            <SubFieldRegistryContext.Provider value={registerSubField}>
+              {baseChildren}
+            </SubFieldRegistryContext.Provider>
           </NoStyleItemContext.Provider>
         </BAIFormItemVisual>
       </FormItemInputContext.Provider>
