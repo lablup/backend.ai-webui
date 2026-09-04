@@ -206,7 +206,7 @@ describe('the first pin of a set', () => {
 });
 
 describe('adding to a set', () => {
-  it('copies every pin so far, behind one link', async () => {
+  it('copies every pin so far, behind its own link and one set link', async () => {
     await bootOverlay();
     stubExecCommand();
     await pickAndCopy('create', 'The label is cut off.');
@@ -218,12 +218,20 @@ describe('adding to a set', () => {
     expect(text.split('📍')).toHaveLength(3);
     expect(text).toContain('The label is cut off.');
     expect(text).toContain('And this one is unreachable.');
-    // One URL, in both blocks, carrying both pins.
+    // One link per block carrying that pin alone, then one carrying both —
+    // repeating the set's URL in every block made the comment grow as N².
     const urls = [...text.matchAll(/\(http[^)]+\)/g)].map((m) => m[0]);
-    expect(urls).toHaveLength(2);
-    expect(new Set(urls).size).toBe(1);
-    expect(urls[0].split('bai=v3.')).toHaveLength(3);
-    for (const id of storedIds()) expect(urls[0]).toContain(id);
+    expect(urls).toHaveLength(3);
+    expect(new Set(urls).size).toBe(3);
+    const ids = storedIds();
+    ids.forEach((id, i) => {
+      expect(urls[i].split('bai=v3.')).toHaveLength(2);
+      expect(urls[i]).toContain(id);
+    });
+    const setUrl = urls[urls.length - 1];
+    expect(setUrl.split('bai=v3.')).toHaveLength(3);
+    for (const id of ids) expect(setUrl).toContain(id);
+    expect(text).toContain(`[Open all 2 pins on dev server]${setUrl}`);
     expect(toast()).toBe('Copied all 2 pins — replaces your last paste');
   });
 
