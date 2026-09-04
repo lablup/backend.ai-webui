@@ -89,6 +89,7 @@ const SubFieldRegistration: React.FC<{
   register: (handle: string) => () => void;
   handle: string;
 }> = ({ register, handle }) => {
+  'use memo';
   // Layout effect: the parent's re-render commits before paint, so the
   // attribute is there before anything can submit.
   React.useLayoutEffect(() => register(handle), [register, handle]);
@@ -240,13 +241,26 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
   const notifyParentMetaChange = React.useContext(NoStyleItemContext);
   const registerSubFieldUpward = React.useContext(SubFieldRegistryContext);
   const [subFieldHandles, setSubFieldHandles] = React.useState<string[]>([]);
-  // Stable: it is a layout-effect dependency in every registering child.
-  const registerSubField = React.useCallback((handle: string) => {
-    setSubFieldHandles((prev) =>
-      prev.includes(handle) ? prev : [...prev, handle],
-    );
-    return () => setSubFieldHandles((prev) => prev.filter((h) => h !== handle));
-  }, []);
+  // Created once (a layout-effect dependency in every registering child) and
+  // counted per handle: two `noStyle` fields may share a name, and the first
+  // to unmount must not drop the other.
+  const [registerSubField] = React.useState(() => {
+    const counts = new Map<string, number>();
+    return (handle: string) => {
+      const count = (counts.get(handle) ?? 0) + 1;
+      counts.set(handle, count);
+      if (count === 1) setSubFieldHandles((prev) => [...prev, handle]);
+      return () => {
+        const left = (counts.get(handle) ?? 1) - 1;
+        if (left > 0) {
+          counts.set(handle, left);
+          return;
+        }
+        counts.delete(handle);
+        setSubFieldHandles((prev) => prev.filter((h) => h !== handle));
+      };
+    };
+  });
   const listContext = React.useContext(ListContext);
 
   const layout = propsLayout || formLayout;

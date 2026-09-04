@@ -3,11 +3,25 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 
-/** `checkVisibility` where the browser has it; jsdom falls back to markup. */
+/**
+ * `checkVisibility` where the browser has it — with the `visibility`
+ * property, which the bare call ignores; jsdom falls back to markup.
+ */
 export function isVisible(el: HTMLElement): boolean {
-  if (typeof el.checkVisibility === 'function') return el.checkVisibility();
+  if (typeof el.checkVisibility === 'function') {
+    return el.checkVisibility({
+      visibilityProperty: true,
+      checkVisibilityCSS: true,
+    });
+  }
   for (let node: HTMLElement | null = el; node; node = node.parentElement) {
-    if (node.hidden || node.style.display === 'none') return false;
+    if (
+      node.hidden ||
+      node.style.display === 'none' ||
+      node.style.visibility === 'hidden'
+    ) {
+      return false;
+    }
   }
   return true;
 }
