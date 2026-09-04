@@ -6,6 +6,13 @@ import { NamePath, Store } from './namePath';
  * of the previous render's.
  */
 export declare function delayFrame(): Promise<void>;
+/**
+ * `checkVisibility` where the browser has it — with the `visibility`
+ * property, which the bare call ignores; jsdom falls back to markup.
+ */
+export declare function isVisible(el: HTMLElement): boolean;
+/** `scrollIntoView` with antd's `nearest` default; reduced motion wins over `smooth`. */
+export declare function scrollIntoView(el: HTMLElement, options?: ScrollIntoViewOptions): void;
 export declare class FormStore {
     private forceRootUpdate;
     private subscribable;
