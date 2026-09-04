@@ -1,0 +1,388 @@
+---
+name: release-train-prep
+description: >
+  Post a Korean release risk digest to a Microsoft Teams thread, grouped by risk
+  category. Runs scripts/release-risk-report.mjs over a ref range and renders the
+  result as a short HTML message: new features and change hotspots first, then
+  version-gating gaps (@since), untranslated keys, UI without e2e cover, and
+  manual gaps. Use when
+  someone gives a Teams thread URL and asks to summarize a release, an rc, or a
+  branch there — "이번 릴리즈 리스크 팀즈에 올려줘", "이 스레드에 정리해서 알려줘",
+  "post the release risk report to Teams", "/release-train-prep". With
+  --train it also opens the release train: reads the version from the thread's
+  own "Final train to vX.Y.Z" title, creates the "Final Train to v<version>"
+  Jira Story (after user confirm) and posts the kickoff + digest into the
+  thread — "트레인 이슈 만들어줘", "릴리즈 트레인 준비해줘", "이 스레드로 트레인
+  준비해줘", "release train 시작".
+  PREPARATION ONLY — it never creates a release branch, tag, or GitHub release;
+  "릴리즈 찍어줘 / 릴리즈 만들어줘 / cut the release / rc 릴리즈" is
+  create-release, not this skill.
+argument-hint: "--from <ref> [--to <ref>] [--train [version]] [--dry-run] [--auto] <Teams URL>"
+disable-model-invocation: true
+---
+
+# Release Train Prep → Teams
+
+Prepare a release train: turn a ref range into a QA checklist, post it to the
+train's Teams thread grouped by risk category, and (with `--train`) open the
+`Final Train` Jira Story. The analysis is done entirely by
+`scripts/release-risk-report.mjs`; this skill runs it once, renders Korean
+HTML, and posts.
+
+> **Prep, not release.** This skill touches Jira and Teams only — it never
+> creates a release branch, pushes a tag, or publishes a GitHub release.
+> Cutting an rc or a stable is `create-release`; the post-release version bump
+> is `bump-alpha-version`. If the ask is "릴리즈 찍어줘" rather than
+> "릴리즈 준비해줘", stop and use those.
+
+> **Skill reference**: Invoke the `teams-workflow` skill for Teams CLI usage.
+
+## Token economics — read this first
+
+- **Data gathering is ONE Bash call**: the script emits the whole report as JSON.
+  Never loop `gh pr view` over the findings — everything needed is already there.
+- **No repository exploration.** Do not open source files, run `git log`, or grep
+  the tree to "understand" a finding. The digest reports what the tool found; the
+  reader opens the PR if they want detail.
+- **No TodoWrite / TaskCreate.** This is linear: run → render → post.
+
+## Arguments
+
+`$ARGUMENTS` may contain these in any order:
+
+- `--from <ref>` — the base of the comparison. When absent, **offer the choices
+  below rather than erroring or guessing** (see *Resolving `--from`*).
+- `--to <ref>` — defaults to `HEAD`.
+- `--dry-run` — preview only, no side effects anywhere: write the HTML to
+  `/tmp/release-train-prep-preview.html`, skip the Teams post, and with
+  `--train` also skip every Jira action (no Story, no weblink) — describe what
+  would be created instead. A dry run must never mutate anything.
+- `--auto` — skip the confirm-before-post prompt (for cron / unattended runs).
+- `--train [version]` — also open the release train: create the
+  `Final Train to v<version>` Jira Story and post the kickoff into the thread.
+  The version may be omitted — it is read from the thread's own title.
+  See *Train kickoff* below.
+- A Teams thread URL (`teams.microsoft.com/l/message/...`) — **required unless `--dry-run`.**
+  There is deliberately no default: posting a release summary to the wrong thread
+  is not something to get wrong by omission. If the user did not give one, ask.
+  The Teams CLI can only **reply** to an existing thread — it cannot open a new
+  channel message — so the thread itself is created by a human first, which
+  matches how the team actually runs a train.
+
+## Resolving `--from`
+
+Nothing is inferred silently: no release tag is an ancestor of `main` in this
+repository (they live on the release branches, so `git describe` fails on main),
+and defaulting to the newest tag would report a whole release to someone who ran
+this on a feature branch. But an error is a dead end — **offer the choices**.
+
+**Refresh first.** A stale `origin/main` moves the merge base and quietly changes
+every file-based finding, so fetch before offering it:
+
+```bash
+git fetch origin main --quiet
+LATEST_TAG=$(git tag --sort=-creatordate | head -1)
+# Previous tag of the SAME release line (v26.9.0-rc.3 -> the v26.9.0 line):
+# an interleaved hotfix tag from another line must not become the "직전 rc".
+RELEASE_LINE=${LATEST_TAG%%-*}
+PREV_RC=$(git tag --sort=-creatordate | grep -F "$RELEASE_LINE" | sed -n 2p)
+# Previous *stable* release, excluding LATEST_TAG itself — when the newest tag
+# is already stable, this must yield the one before it, not an empty range.
+PREV_STABLE=$(git tag --sort=-creatordate | grep -Ev '\-(rc|alpha|beta)\.|\+' | grep -vxF "$LATEST_TAG" | head -1)
+BRANCH=$(git branch --show-current)
+```
+
+Then ask with `AskUserQuestion`, putting the option that matches the current HEAD
+first and marking it `(Recommended)`. On a feature branch that is the branch diff;
+on a release branch or a detached tag it is the release comparison.
+
+| Option | `--from` / `--to` | Answers |
+| --- | --- | --- |
+| 현재 브랜치가 추가한 것 | `origin/main` (just fetched) | what this PR puts into a release |
+| 다음 릴리즈에 쌓인 것 | `$LATEST_TAG` → `HEAD` | what is queued but not yet cut |
+| 이번 릴리즈 전체 | `$PREV_STABLE` → `$LATEST_TAG` | what the release as a whole contains |
+| 직전 rc 이후 | `$PREV_RC` → `$LATEST_TAG` | what changed in the last rc turn |
+
+Offer the last row only when `$LATEST_TAG` is a prerelease. The two release rows
+are far apart in size and answer different questions — at the time of writing,
+`$PREV_STABLE..$LATEST_TAG` was 175 commits and `$PREV_RC..$LATEST_TAG` was 18 —
+so do not collapse them into one "previous tag" option.
+
+`AskUserQuestion` always offers **Other**, which is how the user supplies a ref
+this list does not cover (an older tag, another branch, a SHA) — take that string
+verbatim as `--from`. Do not pre-validate it; the script fails loudly on a bad ref.
+
+Say which ref you resolved to in the reply, so a wrong pick is visible before the
+message reaches Teams.
+
+## Process
+
+### 1. Run the report — ONE Bash call
+
+Must run from a `backend.ai-webui` checkout; the script shells out to `git` in the
+current directory. By this point `$FROM` is whatever *Resolving `--from`* settled on —
+the script itself takes no default and exits 2 without one.
+
+```bash
+TO="${TO:-HEAD}"   # --to is optional; an empty string would override the script's default
+node scripts/release-risk-report.mjs --from "$FROM" --to "$TO" --json > /tmp/release-risk.json
+```
+
+If the script exits non-zero, report the message and stop. Do not fall back to
+reading git history by hand.
+
+### 2. Read the JSON
+
+Top-level fields:
+
+| Field | Meaning |
+| --- | --- |
+| `from`, `to`, `base` | the range, and the merge base file comparisons ran from |
+| `divergedFrom` | true when `to` forked before `from` moved on — mention the base when true |
+| `commits[]` | `{sha, subject, pr, fr, type, scope}` |
+| `featureMatrix[]` | `{flag, version, used}` — gates **added inside the range** |
+| `gating.gaps[]` | `{key, version, kind, ungated[]}` — new schema fields used without `@since` or a `supports()` guard |
+| `hotspots[]` | `{area, commits, prs[]}` — existing-feature churn, most-changed first (`feat` excluded) |
+| `undeclared[]` | flags used but never declared, i.e. permanently `false` |
+| `risks.noE2E[]` | `{pr, fr, subject, ui[]}` — UI changed, no e2e changed |
+| `risks.destructive[]` | `{pr, fr, subject, destructive[]}` — irreversible-flow files |
+| `risks.noDocs[]` | `{pr, fr, subject}` — user-visible `feat:` with no manual change |
+| `i18n[]` | `{file, addedCount, missing[], placeholder[]}` per locale file |
+
+### 3. Render the HTML
+
+The digest answers one question for the reader: **릴리즈 준비 때 어떤 기능을
+집중적으로 만져봐야 하는가.** Sections in order:
+
+1. **✨ 주요 변경** — the user-facing story: new features, then the existing
+   features that changed the most
+2. **R2 version-gating gaps** — a query that fails outright on older managers
+3. **R2b undeclared flags** — a feature silently off everywhere (omit when empty)
+4. **R3 untranslated** — ships visibly broken text
+5. **R1 UI without e2e** — the manual-pass list
+6. **R5 manual gaps**
+
+R4 (destructive-flow touches) stays in the full `--out` report for reviewers,
+but the digest does not carry it — the team asked for feature-level focus, not
+file-level caution.
+
+**Keep it short.** A Teams message is read on a phone. Per section list at most
+**5** items and append `외 N건` when there are more. For R3, do not list 40 locale
+files — collapse to the shape (`대부분의 언어에서 placeholder N개 / 누락 M개`) and
+name only the outliers.
+
+**HTML safety**: escape `&`, `<`, `>`, `"`, `'` in every string taken from the JSON
+(PR subjects, file paths, flag names) before inserting it. Emit only `<b>`, `<i>`,
+`<br/>`, `<ul>`, `<li>`, `<a href="...">`, `<code>`, `<hr/>`. Escape `&` in URLs too.
+
+PR links are `https://github.com/lablup/backend.ai-webui/pull/{pr}`.
+
+Template:
+
+**Name releases, not refs.** The header speaks in release versions: for an
+upcoming stable cut from main, `26.8.1 → 26.9.0(예정, 현재 main 기준)` — never a
+bare `v26.8.1 → origin/main`, which readers cannot place on the release line.
+
+Template:
+
+```html
+<b>🚀 릴리즈 준비 — {이전 정식} → {다음 버전}(예정, 현재 {to} 기준)</b><br/>
+커밋 {commits.length}건{, 비교 기준 merge-base <code>{base[0:8]}</code> when divergedFrom}<br/><br/>
+
+<b>✨ 새 기능</b> — {feat 커밋 수}건<br/>
+<ul>
+  <li><a href="{prUrl}">#{pr}</a> {사용자 관점 한 줄 설명}</li>
+</ul>
+{외 N건}<br/>
+
+<b>🔧 많이 바뀐 기존 기능</b><br/>
+<ul>
+  <li><b>{영역 한글명}</b> — 변경 {commits}건 (<a>#{pr}</a>, <a>#{pr}</a>, …)</li>
+</ul>
+<i>릴리즈 테스트에서 이 기능들을 우선적으로 확인해 주세요.</i><br/><br/>
+
+<b>⚙️ 버전 게이팅 누락</b> — {gating.gaps.length}건<br/>
+<ul>
+  <li><code>{key}</code> ({version} 추가) — <code>{ungated file}</code>에서 @since 없이 사용</li>
+</ul>
+<i>낮은 버전 매니저에서 이 쿼리는 실패합니다. @since(version:) 주석 또는 supports() 게이트가 필요합니다.</i><br/><br/>
+
+<b>🌐 미번역</b> — 신규 영어 키 {addedCount}개<br/>
+{shape line, then outliers}<br/><br/>
+
+<b>🧪 e2e 미커버 UI 변경</b> — {n}건<br/>
+<ul><li><a href="{prUrl}">#{pr}</a> {subject}</li></ul>
+{외 N건}<br/><br/>
+
+<b>📖 매뉴얼 미반영</b> — {n}건<br/>
+<ul><li><a href="{prUrl}">#{pr}</a> {subject}</li></ul>
+<hr/>
+<i>🤖 scripts/release-risk-report.mjs · 결함 목록이 아니라 QA 확인 항목입니다</i>
+```
+
+How each special section is written:
+
+- **새 기능**: every `feat` commit, but the line is YOURS to write — a Korean
+  sentence describing what the user can now do, synthesized from the subject
+  ("pick the model mount subpath with a directory picker" → "모델 마운트 경로를
+  디렉터리 탐색기로 선택"). Never paste raw commit subjects here. Cap at ~6
+  lines + `외 N건`.
+- **많이 바뀐 기존 기능**: `hotspots[]` top ~5. Translate the area token into
+  the UI's own term (VFolder → 폴더, Deployment → 배포/디플로이먼트 — the i18n
+  label wins, per the terminology precedence), show the change count and 2–3 PR
+  links. This is the "여기를 우선 테스트" list.
+- **버전 게이팅 (R2)**: gaps ONLY — never enumerate every new gate or schema
+  field; a correctly annotated usage is not news. When `gating.gaps` is empty,
+  keep the section as the single line `⚙️ 버전 게이팅 누락 — 없음 ✅`: for a
+  go/no-go reader, "checked and clean" and "not checked" must not look the same.
+
+Drop any other section whose count is 0 rather than printing an empty heading.
+If every section is empty, post a single line saying the range has no risk
+signals.
+
+The closing italic line matters: these are **actions to check**, not confirmed
+defects. Do not phrase a finding as a bug.
+
+### 4. Confirm
+
+Unless `--auto`, show the rendered HTML and ask for approval before posting.
+Posting to Teams is outward-facing and cannot be unsent cleanly.
+
+### 5. Post
+
+```bash
+TEAMS_READER=$(find ~/.claude/plugins -name teams_reader.py 2>/dev/null | head -1)
+[ -z "$TEAMS_READER" ] && { echo "FAIL: teams_reader.py not found. Install the fw plugin."; exit 1; }
+TEAMS_PYTHON="${TEAMS_PYTHON:-python3}"
+export TEAMS_TENANT_ID="${TEAMS_TENANT_ID:-13c6a44d-9b52-4b9e-aa34-0513ee7131f2}"
+export TEAMS_CLIENT_ID="${TEAMS_CLIENT_ID:-7a2e1945-3a1c-407f-9780-c573119d1c1b}"
+
+BODY=$(mktemp); LOG=$(mktemp)
+cat > "$BODY" <<'HTMLEOF'
+<HTML HERE>
+HTMLEOF
+if "$TEAMS_PYTHON" "$TEAMS_READER" --no-ai-label --reply "$(cat "$BODY")" "$TEAMS_URL" >"$LOG" 2>&1; then
+  rm -f "$BODY" "$LOG"; echo "OK"
+else
+  cat "$LOG"; rm -f "$BODY" "$LOG"; exit 1
+fi
+```
+
+Pass `--no-ai-label`: the template already carries its own footer.
+
+For `--dry-run`, write the same HTML to `/tmp/release-train-prep-preview.html`
+and print the path instead.
+
+## Train kickoff (`--train [version]`)
+
+The team's release ritual: a human opens a `🚂 Final train to vX.Y.Z` thread,
+someone creates the `Final Train to vX.Y.Z` Jira Story, and every bug found
+during release testing is linked onto it — `is blocked by` for blockers,
+`relates to` for the rest. The stable tag is cut when no blocker is left open.
+This mode automates the middle step and seeds the thread with the digest.
+
+**The whole flow works from just the thread URL.** The human's only manual
+step is opening the thread; version and range are inferred from there:
+
+- **Version** — when `--train` carries no version (or the ask is just "이
+  스레드로 트레인 준비해줘"), read the thread's ROOT message first
+  (`teams_reader.py --no-thread <url>` — its `Subject:` line) and parse the
+  version from the title: `/final train to v?(?:WebUI\s*)?(\d+\.\d+\.\d+)/i`
+  matches the team's `🚂 Final train to vWebUI 26.9.0` shape. If the title
+  yields no version, ask — never guess one from tags.
+- **Range** — train mode defaults to `--from $PREV_STABLE --to HEAD` (the
+  "이전 정식 → 다음 정식(예정)" comparison the digest header speaks in),
+  skipping the usual AskUserQuestion. An explicit `--from` still overrides.
+
+Both inferred values are shown in the Story-creation confirm (step 2), which
+is where a wrong parse gets caught — one confirm, not two.
+
+Runs **in addition to** the normal digest flow, sharing its confirm gate. The
+thread URL is **required** here even though `--dry-run` normally waives it —
+the Story embeds it, and version inference reads it — and under `--dry-run`
+every step below is described, not executed. Steps, in order:
+
+1. **Duplicate scan first.** An existing train for the same version is reused,
+   never doubled:
+
+   ```bash
+   $FW_JIRA search "project = FR AND summary ~ \"Final Train\" AND summary ~ \"$VERSION\"" --limit 5
+   ```
+
+   On a hit, skip creation, use the existing key, and say so in the reply.
+
+2. **Create the Story — after explicit user confirmation.** Creating a Jira
+   issue is outward-facing: show the exact title, assignee, and description you
+   are about to submit and ask (AskUserQuestion) before every creation — no
+   batch pre-approval, one confirm per issue. Then (see the `jira-workflow`
+   skill; `$FW_JIRA` as documented there) type **Story**, exact summary format
+   `Final Train to v$VERSION` — the team greps for this shape (FR-3663,
+   FR-3392, FR-3238 all follow it):
+
+   ```bash
+   $FW_JIRA create --type Story --assignee me \
+     --title "Final Train to v$VERSION" \
+     --desc "Release train for v$VERSION. Bugs found during release testing are
+   linked here: **is blocked by** for release blockers, **relates to** for
+   non-blocking findings. The stable tag is cut when no blocking issue is open.
+
+   Kickoff thread: $TEAMS_URL
+   Risk digest at kickoff: see the thread reply posted alongside this issue."
+   ```
+
+3. **Attach the thread as a web link** so the issue points back at the
+   conversation: `$FW_JIRA weblink $KEY --url "$TEAMS_URL" --title "Kickoff thread"`.
+
+4. **Wait for the GitHub clone.** The webhook mirrors the issue within ~a
+   minute; poll `gh issue list --search "$KEY"` a few times. If it has not
+   appeared after ~2 minutes, continue — mention the pending clone in the
+   reply instead of blocking on it.
+
+5. **Post the kickoff reply** into the thread: the digest as usual, prefixed
+   with the train header:
+
+   ```html
+   <b>🚂 Final Train to v{VERSION}</b> — <a href="https://lablup.atlassian.net/browse/{KEY}">{KEY}</a><br/>
+   릴리즈 테스트에서 발견되는 버그는 이 이슈에 연결해주세요 —
+   블로커는 <b>is blocked by</b>, 그 외는 <b>relates to</b>.<br/><br/>
+   {the normal digest body}
+   ```
+
+What this mode deliberately does **not** do:
+
+- **Link bugs to the train.** Whether a finding blocks the release is a human
+  call, made per bug as it is filed (the `astryx-bug-report` /
+  `jira-github-bridge` flow already covers the mechanics).
+- **Decide go / no-go.** The open-blocker list is one Jira view away
+  (`links` on the train issue); it needs no digest.
+- **Cut any tag or release.** The train issue is bookkeeping; releasing is
+  `create-release`'s job, triggered by a human.
+
+## Examples
+
+```bash
+# Open the train: version and range inferred from the thread's own title
+/release-train-prep --train <teams-url>
+
+# Same, everything explicit
+/release-train-prep --train 26.10.0 --from v26.9.0 <teams-url>
+
+# An rc, posted to the release thread
+/release-train-prep --from v26.8.1 --to v26.9.0-rc.3 <teams-url>
+
+# What is queued for the next release
+/release-train-prep --from v26.8.1 <teams-url>
+
+# One PR's checklist, previewed locally first
+/release-train-prep --from origin/main --to FR-3820 --dry-run
+```
+
+## Related
+
+- `scripts/release-risk-report.mjs` — the analysis; `--help` for its own flags
+- `teams-workflow` (fw) — the Teams CLI, mentions, and images
+- `jira-workflow` (fw) — `$FW_JIRA` setup, `create`, `weblink`, `search`
+- `jira-github-bridge` (fw) — the webhook clone and `Resolves #N (KEY)` conventions
+- `merged-pr-digest` (fw) — the same post-to-Teams shape for merged PRs
+- `create-release` — cutting the tag itself; out of this skill's scope
+- `.claude/rules/destructive-confirmation.md` — what R4 asks the reader to re-verify
