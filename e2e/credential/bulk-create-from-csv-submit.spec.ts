@@ -6,8 +6,8 @@
 // users in teardown via the admin GraphQL API so the test is repeatable and
 // leaves no residue. Requires a running Backend.AI cluster.
 import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { KeyPairModal } from '../utils/classes/user/UserSettingModal';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, {
   expect,
   type APIRequestContext,

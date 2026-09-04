@@ -7,6 +7,7 @@ import {
   moveToTrashAndVerify,
   webuiEndpoint,
 } from '../utils/test-util';
+import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect } from '@playwright/test';
 
 test.describe(
@@ -38,10 +39,12 @@ test.describe(
       // In antd v6, Form.Item tooltip icons contribute "question-circle" to the accessible
       // name, so we locate fields by form item label text rather than exact accessible name.
       await expect(modal.getByRole('textbox', { name: 'Name' })).toBeVisible();
-      // The label text renders twice: once as the form-item label, once as the
-      // ComplexSelector trigger's own internal label — scope to .first().
-      await expect(modal.getByText('Model Storage Folder').first()).toBeVisible();
-      await expect(modal.getByText('Domain').first()).toBeVisible({
+      // The label text renders twice (form-item label + ComplexSelector's own
+      // internal label), so assert the form item itself rather than the text.
+      await expect(
+        getFormItemControlByLabel(page, 'Model Storage Folder'),
+      ).toBeVisible();
+      await expect(getFormItemControlByLabel(page, 'Domain')).toBeVisible({
         timeout: 10000,
       });
       await expect(
@@ -123,10 +126,10 @@ test.describe(
     // 'min_resource'" (backendai_generic_internal-error). The locators in this
     // test are correct; the mutation itself cannot succeed until the manager
     // is fixed.
-    test.fixme(
-      'Superadmin can create a model card with only required fields',
-      async ({ page }) => {
-        test.setTimeout(90000);
+    test.fixme('Superadmin can create a model card with only required fields', async ({
+      page,
+    }) => {
+      test.setTimeout(90000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const timestamp = Date.now();
       const cardName = `e2e-test-required-only-${timestamp}`;
@@ -211,8 +214,7 @@ test.describe(
       } catch {
         // Folder may not be in Trash (already purged or never created)
       }
-      },
-    );
+    });
 
     // 3.3 Superadmin can create a model card with all fields populated
     // BLOCKED BY BACKEND: `adminCreateModelCardV2` currently fails server-side
@@ -220,10 +222,10 @@ test.describe(
     // 'min_resource'" (backendai_generic_internal-error). The locators in this
     // test are correct; the mutation itself cannot succeed until the manager
     // is fixed.
-    test.fixme(
-      'Superadmin can create a model card with all fields populated',
-      async ({ page }) => {
-        test.setTimeout(90000);
+    test.fixme('Superadmin can create a model card with all fields populated', async ({
+      page,
+    }) => {
+      test.setTimeout(90000);
       const adminModelCardPage = new AdminModelCardPage(page);
       const timestamp = Date.now();
       const cardName = `e2e-test-full-card-${timestamp}`;
@@ -363,8 +365,7 @@ test.describe(
       } catch {
         // Folder may not be in Trash (already purged or never created)
       }
-      },
-    );
+    });
 
     // 3.4 Superadmin cannot create a model card without a Name
     test('Superadmin cannot create a model card without a Name', async ({
@@ -434,9 +435,9 @@ test.describe(
       // Wait for the VFolder select to load out of Suspense before filling the name,
       // so the form field is registered and will fire validation on submit.
       // The VFolder picker is Astryx `ComplexSelector` (role="button" trigger).
-      await expect(adminModelCardPage.getCreateModalVFolderSelect()).toBeVisible(
-        { timeout: 15000 },
-      );
+      await expect(
+        adminModelCardPage.getCreateModalVFolderSelect(),
+      ).toBeVisible({ timeout: 15000 });
       await modal
         .getByRole('textbox', { name: 'Name' })
         .fill('test-no-vfolder');

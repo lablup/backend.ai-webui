@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-08-22
+> **Last Updated:** 2026-09-04
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -14,45 +14,45 @@
 
 **Overall (in-scope routes): 317 / 462 features covered (68%)**
 
-| Page                     | Route                                  | Features | Covered | Status  |
-| ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
-| Authentication           | `/interactive-login`                   |    37    |   35    | 🔶 95%  |
-| Change Password          | `/change-password`                     |    9     |    9    | ✅ 100% |
-| Start Page               | `/start`                               |    8     |    6    | 🔶 75%  |
-| Dashboard                | `/dashboard`                           |    11    |    9    | 🔶 82%  |
-| Session List             | `/session`                             |    23    |   15    | 🔶 65%  |
-| Session Launcher         | `/session/start`                       |    14    |    3    | 🔶 21%  |
-| Serving                  | `/serving`                             |    7     |    2    | 🔶 29%  |
-| Endpoint Detail          | `/serving/:serviceId`                  |    20    |    9    | 🔶 45%  |
-| Service Launcher         | `/service/start`                       |    5     |    1    | 🔶 20%  |
-| VFolder / Data           | `/data`                                |    48    |   35    | 🔶 73%  |
-| Model Store              | `/model-store`                         |    6     |    6    | ✅ 100% |
-| Admin Model Store        | `/admin-model-store`                   |    28    |   28    | ✅ 100% |
-| Storage Host             | `/storage-settings/:hostname`          |    3     |    0    |  ❌ 0%  |
-| My Environment           | `/my-environment`                      |    2     |    2    | ✅ 100% |
-| Environment              | `/environment`                         |    27    |   21    | 🔶 78%  |
-| Configurations           | `/settings`                            |    11    |    9    | 🔶 82%  |
-| Resources                | `/agent-summary`, `/agent`             |    10    |    3    | 🔶 30%  |
-| Resource Policy          | `/resource-policy`                     |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                          |    22    |   15    | 🔶 68%  |
-| Maintenance              | `/maintenance`                         |    3     |    2    | 🔶 67%  |
-| User Settings            | `/usersettings`                        |    10    |    1    | 🔶 10%  |
-| Project                  | `/project`                             |    6     |    5    | 🔶 83%  |
-| Statistics               | `/statistics`                          |    2     |    2    | ✅ 100% |
-| Scheduler                | `/scheduler`                           |    6     |    0    |  ❌ 0%  |
-| Information              | `/information`                         |    2     |    2    | ✅ 100% |
-| Reservoir                | `/reservoir`, `/reservoir/:artifactId` |    18    |    0    |  ❌ 0%  |
-| Branding                 | `/branding`                            |    14    |    0    |  ❌ 0%  |
-| App Launcher             | (modal)                                |    19    |   11    | 🔶 58%  |
-| Chat                     | `/chat/:id?`                           |    7     |    7    | ✅ 100% |
-| Plugin System            | (config-based)                         |    12    |   12    | ✅ 100% |
-| RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
-| Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`     |    17    |   14    | 🔶 82%  |
-| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new` |    4     |    4    | ✅ 100% |
+| Page                     | Route                                            | Features | Covered | Status  |
+| ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
+| Authentication           | `/interactive-login`                             |    37    |   35    | 🔶 95%  |
+| Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
+| Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
+| Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
+| Session List             | `/session`                                       |    23    |   15    | 🔶 65%  |
+| Session Launcher         | `/session/start`                                 |    14    |    3    | 🔶 21%  |
+| Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
+| Endpoint Detail          | `/serving/:serviceId`                            |    20    |    9    | 🔶 45%  |
+| Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
+| VFolder / Data           | `/data`                                          |    48    |   35    | 🔶 73%  |
+| Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
+| Admin Model Store        | `/admin-model-store`                             |    28    |   22    | 🔶 79%  |
+| Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
+| My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
+| Environment              | `/environment`                                   |    27    |   21    | 🔶 78%  |
+| Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
+| Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
+| Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
+| User Credentials         | `/credential`                                    |    22    |   15    | 🔶 68%  |
+| Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
+| User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
+| Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
+| Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
+| Scheduler                | `/scheduler`                                     |    6     |    0    |  ❌ 0%  |
+| Information              | `/information`                                   |    2     |    2    | ✅ 100% |
+| Reservoir                | `/reservoir`, `/reservoir/:artifactId`           |    18    |    0    |  ❌ 0%  |
+| Branding                 | `/branding`                                      |    14    |    0    |  ❌ 0%  |
+| App Launcher             | (modal)                                          |    19    |   11    | 🔶 58%  |
+| Chat                     | `/chat/:id?`                                     |    7     |    7    | ✅ 100% |
+| Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
+| RBAC Management          | `/rbac`                                          |    22    |   21    | 🔶 95%  |
+| Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    17    |   14    | 🔶 82%  |
+| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    4     |    4    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
-| Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
-| **Total**                |                                        | **482**  | **334** | **69%** |
+| Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
+| **Total**                |                                                  | **482**  | **328** | **68%** |
 
 ---
 
@@ -475,38 +475,38 @@
 **Row actions:** Edit (setting icon), Delete (trash icon)
 **Bulk actions:** Bulk delete via header checkbox selection
 
-| Feature                                                   | Status | Test                                      |
-| --------------------------------------------------------- | ------ | ----------------------------------------- |
-| Page load and table rendering                             | ✅     | `admin-model-card-page-load.spec.ts`      |
-| Column visibility and pagination                          | ✅     | `admin-model-card-page-load.spec.ts`      |
-| Name filter search                                        | ✅     | `admin-model-card-filter.spec.ts`         |
-| Filter clear and empty state                              | ✅     | `admin-model-card-filter.spec.ts`         |
-| Open create modal                                         | ✅     | `admin-model-card-create.spec.ts`         |
-| Create with required fields only                          | ✅     | `admin-model-card-create.spec.ts`         |
-| Create with all fields                                    | ✅     | `admin-model-card-create.spec.ts`         |
-| Create validation (name required)                         | ✅     | `admin-model-card-create.spec.ts`         |
-| Create validation (VFolder required)                      | ✅     | `admin-model-card-create.spec.ts`         |
-| Cancel create modal                                       | ✅     | `admin-model-card-create.spec.ts`         |
-| Open edit modal                                           | ✅     | `admin-model-card-edit.spec.ts`           |
-| Update model card fields                                  | ✅     | `admin-model-card-edit.spec.ts`           |
-| Edit validation                                           | ✅     | `admin-model-card-edit.spec.ts`           |
-| Cancel edit modal                                         | ✅     | `admin-model-card-edit.spec.ts`           |
-| Single delete with confirmation                           | ✅     | `admin-model-card-delete.spec.ts`         |
-| Cancel single delete                                      | ✅     | `admin-model-card-delete.spec.ts`         |
-| Delete card + folder together (checkbox)                  | ✅     | `admin-model-card-delete.spec.ts`         |
-| Notification + Go to Trash with folder filter             | ✅     | `admin-model-card-delete.spec.ts`         |
-| Delete card only, folder kept notification                | ✅     | `admin-model-card-delete.spec.ts`         |
-| Go to Trash without folder filter                         | ✅     | `admin-model-card-delete.spec.ts`         |
-| Bulk select and delete                                    | ✅     | `admin-model-card-delete.spec.ts`         |
-| Cancel bulk delete                                        | ✅     | `admin-model-card-delete.spec.ts`         |
-| Clear selection                                           | ✅     | `admin-model-card-delete.spec.ts`         |
-| Select all via header checkbox                            | ✅     | `admin-model-card-delete.spec.ts`         |
-| Bulk delete + move folders to trash (checkbox)            | ✅     | `admin-model-card-delete.spec.ts`         |
-| Bulk delete notification → Go to Trash (no folder filter) | ✅     | `admin-model-card-delete.spec.ts`         |
-| Non-admin access blocked                                  | ✅     | `admin-model-card-access-control.spec.ts` |
-| URL state persistence (filter/sort/pagination)            | ✅     | `admin-model-card-url-state.spec.ts`      |
+| Feature                                                   | Status | Test                                                                                                   |
+| --------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
+| Page load and table rendering                             | ✅     | `admin-model-card-page-load.spec.ts`                                                                   |
+| Column visibility and pagination                          | ✅     | `admin-model-card-page-load.spec.ts`                                                                   |
+| Name filter search                                        | ✅     | `admin-model-card-filter.spec.ts`                                                                      |
+| Filter clear and empty state                              | ✅     | `admin-model-card-filter.spec.ts`                                                                      |
+| Open create modal                                         | ✅     | `admin-model-card-create.spec.ts`                                                                      |
+| Create with required fields only                          | 🚧     | Skipped: `Superadmin can create a model card with only required fields` (backend `min_resource` kwarg) |
+| Create with all fields                                    | 🚧     | Skipped: `Superadmin can create a model card with all fields populated` (backend `min_resource` kwarg) |
+| Create validation (name required)                         | ✅     | `admin-model-card-create.spec.ts`                                                                      |
+| Create validation (VFolder required)                      | ✅     | `admin-model-card-create.spec.ts`                                                                      |
+| Cancel create modal                                       | ✅     | `admin-model-card-create.spec.ts`                                                                      |
+| Open edit modal                                           | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
+| Update model card fields                                  | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
+| Edit validation                                           | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
+| Cancel edit modal                                         | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
+| Single delete with confirmation                           | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Cancel single delete                                      | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Delete card + folder together (checkbox)                  | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Notification + Go to Trash with folder filter             | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Delete card only, folder kept notification                | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Go to Trash without folder filter                         | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Bulk select and delete                                    | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Cancel bulk delete                                        | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Clear selection                                           | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Select all via header checkbox                            | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Bulk delete + move folders to trash (checkbox)            | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Bulk delete notification → Go to Trash (no folder filter) | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Non-admin access blocked                                  | ✅     | `admin-model-card-access-control.spec.ts`                                                              |
+| URL state persistence (filter/sort/pagination)            | ✅     | `admin-model-card-url-state.spec.ts`                                                                   |
 
-**Coverage: ✅ 28/28 features**
+**Coverage: 🔶 22/28 features (6 skipped — `adminCreateModelCardV2` fails server-side with an unexpected `min_resource` kwarg)**
 
 ---
 
@@ -1222,18 +1222,18 @@
 
 #### Create Parameter — Category / Display Name / UI Option
 
-| Feature                                                                    | Status | Test                                                                                          |
-| --------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------- |
-| Create with Category, Display Name, SELECT UI option (add + remove a choice row) | ✅     | `Superadmin can create a preset with Category, Display Name, and a SELECT UI option`            |
-| Create with a SLIDER UI option, values round-trip on reopen                 | ✅     | `Superadmin can create a preset with a SLIDER UI option`                                        |
-| Validation: Slider Minimum and Maximum both required                        | ✅     | `Superadmin cannot save a SLIDER UI option without Minimum/Maximum`                             |
-| Validation: Slider Step must be positive                                    | ✅     | `Superadmin cannot save a SLIDER UI option with a negative Step`                                |
+| Feature                                                                          | Status | Test                                                                                 |
+| -------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------ |
+| Create with Category, Display Name, SELECT UI option (add + remove a choice row) | ✅     | `Superadmin can create a preset with Category, Display Name, and a SELECT UI option` |
+| Create with a SLIDER UI option, values round-trip on reopen                      | ✅     | `Superadmin can create a preset with a SLIDER UI option`                             |
+| Validation: Slider Minimum and Maximum both required                             | ✅     | `Superadmin cannot save a SLIDER UI option without Minimum/Maximum`                  |
+| Validation: Slider Step must be positive                                         | ✅     | `Superadmin cannot save a SLIDER UI option with a negative Step`                     |
 
 #### Edit Parameter
 
-| Feature                                                                     | Status | Test                                                                                             |
-| ---------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------|
-| Edit round-trip preserves Category, Display Name, and multiple choice rows   | ✅     | `Editing a SELECT preset re-populates category, display name, and every choice row`               |
+| Feature                                                                    | Status | Test                                                                                |
+| -------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------- |
+| Edit round-trip preserves Category, Display Name, and multiple choice rows | ✅     | `Editing a SELECT preset re-populates category, display name, and every choice row` |
 
 **Coverage: ✅ 5/5 features**
 
