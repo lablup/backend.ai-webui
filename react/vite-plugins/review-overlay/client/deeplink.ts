@@ -7,20 +7,46 @@
  * a link without an anchor is plain text now — never an error.
  */
 import { isSafePath, PIN_BODY_SRC } from './codec.js';
-import type { AnchorV3 } from './types.js';
+import type { AnchorV3, SetPin } from './types.js';
 
 /** `[#&]` because the pin can ride inside a fragment the app already uses. */
-const HASH_RE = new RegExp(`[#&]bai=v3\\.${PIN_BODY_SRC}`);
+const HASH_RE_SRC = `[#&]bai=v3\\.${PIN_BODY_SRC}`;
 /** v1/v2 links are not carried forward — recognised only to say so. */
 const LEGACY_RE = /[#&]bai-review=/;
 
 export type Fragment =
   { kind: 'v3'; id: string; anchorB64: string } | { kind: 'legacy' } | null;
 
+/** How many pins a set may hold; the reader bounds a pasted hash by it too. */
+export const MAX_SET_PINS = 30;
+
+/**
+ * Every pin the fragment carries, in link order — a set is the same part
+ * repeated after `&`, which the anchor alphabet excludes. Fresh regex per
+ * call: a `g` regex carries `lastIndex` between them.
+ */
+export function parseFragments(hash: string): Array<{
+  id: string;
+  anchorB64: string;
+}> {
+  const re = new RegExp(HASH_RE_SRC, 'g');
+  const text = hash || '';
+  const parts: Array<{ id: string; anchorB64: string }> = [];
+  for (let m = re.exec(text); m; m = re.exec(text)) {
+    // Each part costs a decode and a drawn view, and a hash is untrusted.
+    if (parts.length >= MAX_SET_PINS) break;
+    parts.push({ id: m[1], anchorB64: m[2] });
+  }
+  return parts;
+}
+
+export const hasLegacyFragment = (hash: string): boolean =>
+  LEGACY_RE.test(hash || '');
+
 export function parseFragment(hash: string): Fragment {
-  const match = HASH_RE.exec(hash || '');
-  if (match) return { kind: 'v3', id: match[1], anchorB64: match[2] };
-  return LEGACY_RE.test(hash || '') ? { kind: 'legacy' } : null;
+  const [first] = parseFragments(hash);
+  if (first) return { kind: 'v3', ...first };
+  return hasLegacyFragment(hash) ? { kind: 'legacy' } : null;
 }
 
 /** Path AND query, so a filtered list or a tab reproduces (R3.3). */
@@ -44,15 +70,52 @@ export function otherFragment(hash: string): string {
     .join('&');
 }
 
+/**
+ * First-seen wins, in set order. The link and the blocks render off the same
+ * list, or a pin added twice would be one part and two blocks.
+ */
+export function dedupeById<T extends { id: string }>(pins: T[]): T[] {
+  const seen = new Set<string>();
+  return pins.filter((pin) => {
+    if (seen.has(pin.id)) return false;
+    seen.add(pin.id);
+    return true;
+  });
+}
+
+/** The pin parts of a set's fragment, de-duplicated by id, in set order. */
+export function pinSetFragment(
+  pins: Array<{ id: string; anchorB64: string }>,
+): string {
+  return dedupeById(pins)
+    .map((pin) => `bai=v3.${pin.id}.${pin.anchorB64}`)
+    .join('&');
+}
+
+/** Everything of a pin a URL reads; the rest of `SetPin` never reaches one. */
+type UrlPin = Pick<SetPin, 'id' | 'anchorB64' | 'anchor' | 'appHash'>;
+
+/**
+ * The one link a pin set has, origin-relative. Path, query and the app's own
+ * fragment come from the FIRST pin — the set may span pages, and that is the
+ * page the link opens on.
+ */
+export function pinSetUrl(pins: UrlPin[]): string {
+  const first = pins[0];
+  if (!first) return '';
+  const query = first.anchor.q ? `?${first.anchor.q}` : '';
+  const app = first.appHash;
+  return `${first.anchor.p}${query}#${app ? `${app}&` : ''}${pinSetFragment(pins)}`;
+}
+
+/** A pin set of one. */
 export function pinUrl(
   anchor: AnchorV3,
   id: string,
   anchorB64: string,
   hash = '',
 ): string {
-  const query = anchor.q ? `?${anchor.q}` : '';
-  const rest = otherFragment(hash);
-  return `${anchor.p}${query}#${rest ? `${rest}&` : ''}bai=v3.${id}.${anchorB64}`;
+  return pinSetUrl([{ id, anchor, anchorB64, appHash: otherFragment(hash) }]);
 }
 
 /** A path is shown to a human here, so `%ED%95%9C` is not the answer. */

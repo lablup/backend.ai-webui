@@ -1,12 +1,17 @@
 import {
   createNavigationGuard,
+  hasLegacyFragment,
+  MAX_SET_PINS,
   parseFragment,
+  parseFragments,
   pathNeedsChange,
+  pinSetFragment,
+  pinSetUrl,
   pinUrl,
   readablePath,
   retryUntil,
 } from './deeplink.js';
-import type { AnchorV3 } from './types.js';
+import type { AnchorV3, SetPin } from './types.js';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const anchor = (over: Partial<AnchorV3> = {}): AnchorV3 => ({
@@ -226,5 +231,152 @@ describe('createNavigationGuard', () => {
     expect(guard.shouldNavigate('c_zdv3rhz', target)).toBe(true);
     guard.reset();
     expect(guard.shouldNavigate('c_zdv3rhz', target)).toBe(true);
+  });
+});
+
+describe('parseFragments', () => {
+  const A = 'QUJDREVGR0g';
+  const B = 'SUpLTU5PUFE';
+
+  it('reads a set as its parts, in link order', () => {
+    expect(
+      parseFragments(`#bai=v3.c_zdv3rhz.${A}&bai=v3.c_abcdef2.${B}`),
+    ).toEqual([
+      { id: 'c_zdv3rhz', anchorB64: A },
+      { id: 'c_abcdef2', anchorB64: B },
+    ]);
+  });
+
+  it('keeps the app’s own fragment out of the list', () => {
+    expect(parseFragments(`#tab=logs&bai=v3.c_zdv3rhz.${A}`)).toEqual([
+      { id: 'c_zdv3rhz', anchorB64: A },
+    ]);
+  });
+
+  it('is the one part `parseFragment` reports for a single pin', () => {
+    expect(parseFragment(`#bai=v3.c_zdv3rhz.${A}`)).toEqual({
+      kind: 'v3',
+      ...parseFragments(`#bai=v3.c_zdv3rhz.${A}`)[0],
+    });
+  });
+
+  it('has no state to carry between calls', () => {
+    const hash = `#bai=v3.c_zdv3rhz.${A}&bai=v3.c_abcdef2.${B}`;
+    expect(parseFragments(hash)).toEqual(parseFragments(hash));
+  });
+
+  // A pasted hash is untrusted: one unreadable part must not cost the others.
+  it('skips a part the grammar refuses and keeps the rest', () => {
+    expect(
+      parseFragments(
+        `#bai=v3.c_zdv3rhz.${'A'.repeat(4000)}&bai=v3.c_abcdef2.${B}`,
+      ),
+    ).toEqual([{ id: 'c_abcdef2', anchorB64: B }]);
+    expect(parseFragments(`#bai=v3.nope.${A}&bai=v3.c_abcdef2.${B}`)).toEqual([
+      { id: 'c_abcdef2', anchorB64: B },
+    ]);
+  });
+
+  // Every part costs a decode and a drawn view, and the set cap is what a
+  // producer may write — the reader may be handed anything.
+  it('stops at the set cap, however many parts were pasted', () => {
+    const ids = 'abcdefghijklmnopqrstuvwxyz234567'.split('');
+    const hash = `#${ids
+      .flatMap((c) => [
+        `bai=v3.c_${c.repeat(7)}.${A}`,
+        `bai=v3.c_${c}zzzzzz.${B}`,
+      ])
+      .join('&')}`;
+    expect(parseFragments(hash)).toHaveLength(MAX_SET_PINS);
+    expect(parseFragments(hash)[0]).toEqual({ id: 'c_aaaaaaa', anchorB64: A });
+  });
+
+  it('is empty for a fragment with no pin in it', () => {
+    expect(parseFragments('#section-2')).toEqual([]);
+    expect(parseFragments('')).toEqual([]);
+  });
+});
+
+describe('hasLegacyFragment', () => {
+  it('recognises a v1 link, and nothing else', () => {
+    expect(hasLegacyFragment('#bai-review=eJyrVkrLz1eyUlAqSS0uUaoFAB')).toBe(
+      true,
+    );
+    expect(hasLegacyFragment('#bai=v3.c_zdv3rhz.QUJDREVGR0g')).toBe(false);
+    expect(hasLegacyFragment('')).toBe(false);
+  });
+});
+
+describe('pinSetFragment', () => {
+  it('repeats the part after `&`, in set order', () => {
+    expect(
+      pinSetFragment([
+        { id: 'c_zdv3rhz', anchorB64: 'QUJD' },
+        { id: 'c_abcdef2', anchorB64: 'WkhH' },
+      ]),
+    ).toBe('bai=v3.c_zdv3rhz.QUJD&bai=v3.c_abcdef2.WkhH');
+  });
+
+  it('emits a pin once, at its first place in the set', () => {
+    expect(
+      pinSetFragment([
+        { id: 'c_zdv3rhz', anchorB64: 'QUJD' },
+        { id: 'c_abcdef2', anchorB64: 'WkhH' },
+        { id: 'c_zdv3rhz', anchorB64: 'QUJD' },
+      ]),
+    ).toBe('bai=v3.c_zdv3rhz.QUJD&bai=v3.c_abcdef2.WkhH');
+  });
+
+  it('is empty for an empty set', () => {
+    expect(pinSetFragment([])).toBe('');
+  });
+});
+
+describe('pinSetUrl', () => {
+  type PickedPin = Extract<SetPin, { origin: 'pick' }>;
+  const setPin = (over: Partial<PickedPin> = {}): PickedPin => ({
+    id: 'c_zdv3rhz',
+    origin: 'pick',
+    anchor: anchor(),
+    anchorB64: 'QUJDREVGR0g',
+    label: '',
+    appHash: '',
+    stack: [],
+    at: '2026-09-04T00:00:00Z',
+    pr: 9400,
+    ...over,
+  });
+
+  // A set may span pages; the link opens on the first pin's page, whatever
+  // the others say.
+  it('takes path, query and the app fragment from the first pin', () => {
+    expect(
+      pinSetUrl([
+        setPin({
+          anchor: anchor({ q: 'status=RUNNING' }),
+          appHash: 'tab=logs',
+        }),
+        setPin({
+          id: 'c_abcdef2',
+          anchorB64: 'WkhHSUpLTA',
+          anchor: anchor({ p: '/start', q: 'x=1' }),
+          appHash: 'tab=other',
+        }),
+      ]),
+    ).toBe(
+      '/session?status=RUNNING#tab=logs&bai=v3.c_zdv3rhz.QUJDREVGR0g&bai=v3.c_abcdef2.WkhHSUpLTA',
+    );
+  });
+
+  it('is byte-identical to the single-pin link for a set of one', () => {
+    for (const hash of ['', '#tab=logs&x=1']) {
+      expect(pinSetUrl([setPin({ appHash: hash.replace(/^#/, '') })])).toBe(
+        pinUrl(anchor(), 'c_zdv3rhz', 'QUJDREVGR0g', hash),
+      );
+    }
+  });
+
+  it('has no link to build for an empty set', () => {
+    expect(pinSetUrl([])).toBe('');
   });
 });

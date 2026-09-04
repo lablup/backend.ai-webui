@@ -1,8 +1,9 @@
 import { API_VERSION, main, parsePins, parseResult } from './cli.js';
-import { buildBlockFromCapture } from './client/block.js';
+import { buildBlockFromCapture, buildSetText } from './client/block.js';
 import { encodeAnchor } from './client/codec.js';
+import { pinSetUrl } from './client/deeplink.js';
 import { pinId } from './client/id.js';
-import type { AnchorV3 } from './client/types.js';
+import type { AnchorV3, SetPin } from './client/types.js';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -126,6 +127,23 @@ describe('parse — links on their own', () => {
       const pins = await parsePins(text);
       expect(pins).toHaveLength(1);
       expect(pins[0].url).toBe(full);
+    }
+  });
+
+  // Pin count breaks a tie inside a tier; a pasted link must not outrank the
+  // matching one by carrying more parts than the tiebreak has room for.
+  it('prefers the matching link over a longer set on another page', async () => {
+    const anchorB64 = await encodeAnchor(anchor);
+    const match = `http://x/project/default/session/start?tab=general#bai=v3.c_abcdef2.${anchorB64}`;
+    const padding = Array.from(
+      { length: 200 },
+      (_, i) =>
+        `&bai=v3.c_${'abcdefghijklmnopqrstuvwxyz234567'[i % 32].repeat(7)}.QUJDREVGR0g`,
+    ).join('');
+    const longer = `http://x/elsewhere#bai=v3.c_abcdef2.${anchorB64}${padding}`;
+    for (const text of [`${match}\n\n${longer}`, `${longer}\n\n${match}`]) {
+      const pins = await parsePins(text);
+      expect(pins[0].url).toBe(match);
     }
   });
 
@@ -273,5 +291,98 @@ describe('the envelope and the exit codes', () => {
       write.mockRestore();
       errors.mockRestore();
     }
+  });
+});
+
+describe('parse — a pin set in one link', () => {
+  type PickedPin = Extract<SetPin, { origin: 'pick' }>;
+  const setPin = (over: Partial<PickedPin>): PickedPin => ({
+    id: 'c_aaaaaa2',
+    origin: 'pick',
+    anchor,
+    anchorB64: '',
+    label: 'Start › page-start › button "Create Deployment"',
+    appHash: '',
+    stack: [],
+    at: '2026-09-04T00:00:00Z',
+    pr: 9400,
+    ...over,
+  });
+
+  /** Three real anchors, each with the id its own marker would claim. */
+  const threePins = async (): Promise<SetPin[]> => {
+    const at = '2026-09-04T00:00:00Z';
+    const anchors: AnchorV3[] = [
+      { ...anchor, n: 'first' },
+      { ...anchor, s: '#second', n: 'second' },
+      { v: 3, s: '#third', p: '/start', tag: 'button', n: 'third' },
+    ];
+    const pins: SetPin[] = [];
+    for (const each of anchors) {
+      const anchorB64 = await encodeAnchor(each);
+      pins.push(
+        setPin({
+          id: pinId(9400, anchorB64, at),
+          anchor: each,
+          anchorB64,
+          stack: [],
+        }),
+      );
+    }
+    return pins;
+  };
+
+  it('reads every pin of a bare set link, and hands each the whole link', async () => {
+    const pins = await threePins();
+    const url = `https://fr-3856.localhost:1355${pinSetUrl(pins)}`;
+    const parsed = await parsePins(`please look at ${url} — all three`);
+    expect(parsed.map((pin) => pin.id)).toEqual(pins.map((pin) => pin.id));
+    expect(parsed.map((pin) => pin.url)).toEqual([url, url, url]);
+    // A bare link carries the note in the anchor and nothing to prove the id.
+    expect(parsed.map((pin) => pin.note)).toEqual(['first', 'second', 'third']);
+    expect(parsed.map((pin) => pin.idVerified)).toEqual([null, null, null]);
+  });
+
+  it('reads a set GitHub quote-escaped the `&` of', async () => {
+    const pins = await threePins();
+    const url = `http://x${pinSetUrl(pins)}`;
+    const quoted = `&gt; [Open on dev server](${url
+      .replace('#', '%23')
+      .replace(/&/g, '%26')
+      .replace(/=v3/g, '%3Dv3')})`;
+    const parsed = await parsePins(quoted);
+    expect(parsed.map((pin) => pin.id)).toEqual(pins.map((pin) => pin.id));
+  });
+
+  it('reads a set whose `&` arrived as an HTML entity', async () => {
+    const pins = await threePins();
+    const url = `http://x${pinSetUrl(pins)}`;
+    const parsed = await parsePins(url.replace(/&/g, '&amp;'));
+    expect(parsed.map((pin) => pin.id)).toEqual(pins.map((pin) => pin.id));
+    // The escaped copy carries only the first pin, so the whole set wins.
+    expect(parsed.map((pin) => pin.url)).toEqual([url, url, url]);
+  });
+
+  it('reads back the blocks the set producer wrote', async () => {
+    const pins = await threePins();
+    // Off a link: `at`/`pr` never travelled, so no marker may be written.
+    const linkOnly: SetPin = {
+      ...pins[2],
+      origin: 'link',
+      at: undefined,
+      pr: undefined,
+    };
+    const text = buildSetText([pins[0], pins[1], linkOnly], {
+      origin: 'https://fr-3856.localhost:1355',
+    });
+    const parsed = await parsePins(text);
+    expect(parsed.map((pin) => pin.id)).toEqual(pins.map((pin) => pin.id));
+    expect(parsed.map((pin) => pin.note)).toEqual(['first', 'second', 'third']);
+    expect(parsed[0].label).toBe(
+      'Start › page-start › button "Create Deployment"',
+    );
+    // The two picked pins carry markers; the link's pin has none to be proved
+    // by, and its whole block still reads.
+    expect(parsed.map((pin) => pin.idVerified)).toEqual([true, true, null]);
   });
 });
