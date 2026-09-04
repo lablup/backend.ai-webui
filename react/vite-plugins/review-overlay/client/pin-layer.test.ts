@@ -200,6 +200,60 @@ describe('createPinLayer', () => {
       expect(scrolled).toEqual(['two']);
       expect(markerOf('c_b').classList.contains('pulse')).toBe(true);
     });
+
+    // Growing a set is not an arrival: an explicit `null` draws every pin
+    // without moving the page the reviewer is picking on.
+    it('is nobody at all when the caller passes null', () => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')], {
+        focusId: null,
+      });
+
+      expect(scrolled).toEqual([]);
+      expect(markerOf('c_a').classList.contains('pulse')).toBe(false);
+      expect(markerOf('c_b').classList.contains('pulse')).toBe(false);
+      expect(cardOf('c_a').classList.contains('found')).toBe(true);
+      expect(cardOf('c_b').classList.contains('found')).toBe(true);
+    });
+  });
+
+  // `reposition()` can hold an element `findAnchorTarget` would no longer
+  // find; re-adopting the pin would drop it and give up on a drawn card.
+  it('leaves a drawn pin on its element when the set grows around it', () => {
+    const one = mount('one');
+    layer.show([target('c_a', 'one')], { focusId: null });
+    layer.locate();
+    expect(layer.locatedElement('c_a')).toBe(one);
+    // A re-render the pin survived: nothing about the anchor resolves now.
+    one.setAttribute('data-testid', 'renamed');
+    one.textContent = 'renamed';
+
+    mount('two');
+    layer.show([target('c_a', 'one'), target('c_b', 'two')], {
+      focusId: null,
+    });
+
+    expect(layer.locatedElement('c_a')).toBe(one);
+    expect(cardOf('c_a').classList.contains('found')).toBe(true);
+    expect(toasts).toEqual([]);
+  });
+
+  // A link's pin rides along with the draft set without joining it, so the
+  // glyphs must not claim a membership the copied comment does not have.
+  it('numbers only the pins the set holds', () => {
+    mount('one');
+    mount('two');
+    mount('three');
+    layer.show(
+      [target('c_a', 'one'), target('c_b', 'two'), target('c_link', 'three')],
+      { focusId: null, setSize: 2 },
+    );
+
+    expect(markerOf('c_a').textContent).toBe('1');
+    expect(countOf('c_b')).toBe('2 / 2');
+    expect(markerOf('c_link').textContent).toBe('📍');
+    expect(countOf('c_link')).toBe('');
   });
 
   describe('dismissing one pin of a set', () => {

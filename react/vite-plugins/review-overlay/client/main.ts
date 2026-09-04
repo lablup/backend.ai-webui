@@ -1,20 +1,23 @@
 /**
- * Dev review overlay (FR-3811 write side, FR-3813 deep link).
+ * Dev review overlay (FR-3811 write side, FR-3813 deep link, FR-3858 sets).
  *
  * Pick an element with react-grab (⌘⌃C, or the same chord bound by the overlay
  * itself when react-grab is missing), type a note, press ⌘⏎: a self-describing
  * `#bai=v3` block lands on the clipboard as both markdown and HTML, so it
  * pastes right into a GitHub PR comment, the PR's Teams thread, or a Claude
- * prompt. Opening that block's link on this server is the read side: the hash
- * carries the whole anchor, so the element is pinned with no lookup at all.
+ * prompt. The pin stays in the DRAFT SET, so the next ⌘⏎ copies every pin so
+ * far as one comment behind one link. Opening that link on this server is the
+ * read side: the hash carries the whole anchor, so the element is pinned with
+ * no lookup at all.
  */
 import { isAnchorV3 } from './anchor-guard.js';
 import { captureAnchorSignals, withNote } from './anchor.js';
 import {
   blockStamp,
-  buildBlockFromCapture,
   buildBlockHtml,
   buildBlockText,
+  buildSetHtml,
+  buildSetText,
   captureForBlock,
   landmarkLabel,
   resolveRouteLabel,
@@ -23,10 +26,14 @@ import {
 import { decodeAnchor } from './codec.js';
 import {
   createNavigationGuard,
+  otherFragment,
   parseFragment,
   pathNeedsChange,
   pinUrl,
 } from './deeplink.js';
+import { createSetDock } from './dock.js';
+import { createDraftStore, MAX_SET_PINS } from './draft.js';
+import { pinId } from './id.js';
 import { createPicker } from './picker.js';
 import { createPinLayer, type DeepLinkPinTarget } from './pin.js';
 import type {
@@ -34,8 +41,9 @@ import type {
   AnchorV3,
   CopyPayload,
   ReviewServerState,
+  SetPin,
 } from './types.js';
-import { createOverlayUI } from './ui.js';
+import { COPIED_ONE, createOverlayUI } from './ui.js';
 
 /** The SPA's own `<Navigate replace>` redirects drop the fragment on login. */
 const BOOT_HASH = location.hash;
@@ -69,24 +77,54 @@ function boot() {
   /** Typing faster than `encodeAnchor` resolves; only the last one counts. */
   let encodeSeq = 0;
   let pickActive = false;
+
+  // ------------------------------------------------- the draft set (FR-3858)
+
+  const store = createDraftStore();
+  let draft: SetPin[] = store.pins();
+  /** The pin a link opened; FR-3859 merges it into the draft instead. */
+  let linkTarget: DeepLinkPinTarget | null = null;
+
   /**
-   * Drawn cards sit over the app, so the next pick would land on one. The
-   * markers are click-through already; only the cards have to fold away.
+   * Drawn chrome sits over the app, so the next pick would land on it. The
+   * markers are click-through already; the cards and the dock fold away.
    */
-  const syncCollapse = () =>
-    pins.setCollapsed(pickActive || ui.getComposeTarget() !== null);
+  function syncCollapse() {
+    const busy = pickActive || ui.getComposeTarget() !== null;
+    pins.setCollapsed(busy);
+    dock.setCollapsed(busy);
+  }
+
+  /** The set's success line, whatever wrote it. */
+  const copiedToast = (count: number) =>
+    count > 1
+      ? `Copied all ${count} pins — replaces your last paste`
+      : COPIED_ONE;
 
   const ui = createOverlayUI({
     onBuildBlock: (text) => {
       const target = ui.getComposeTarget();
       if (!target || capture?.target !== target || capture.note !== text)
         return null;
-      const built = buildBlockFromCapture(capture.value, {
-        text,
-        pr: serverState?.pr ?? 0,
-        routeLabel: currentRouteLabel(),
-      });
-      return { text: built.block, html: built.html };
+      if (store.isFull())
+        return {
+          refused: `Your set is full at ${MAX_SET_PINS} pins — clear it or dismiss one`,
+        };
+      const pin = pickedPin(capture.value, text);
+      if (store.has(pin.id)) return { refused: 'Already pinned' };
+      const set = [...draft, pin];
+      return {
+        text: buildSetText(set),
+        html: buildSetHtml(set),
+        toast: copiedToast(set.length),
+        // The pin joins the set only once THIS write has landed: a copy that
+        // failed, or a composer closed while it was in flight, adds nothing.
+        commit: () => {
+          store.add(pin);
+          syncDraft();
+          redraw();
+        },
+      };
     },
     onNoteChanged: (text) => void encodeFor(text),
     onComposeClosed: () => {
@@ -182,55 +220,110 @@ function boot() {
   const currentRouteLabel = () =>
     resolveRouteLabel(location.pathname, window.__BAI_REVIEW__?.routeLabel);
 
+  /**
+   * The pin the composer would add, stamped now: `at` fixes the identity, and
+   * the label and the app fragment are what the reviewer sees at this moment.
+   * Every part of it is synchronous — the anchor was encoded at pick time.
+   */
+  function pickedPin(value: AnchorCapture, note: string): SetPin {
+    const at = blockStamp();
+    const pr = serverState?.pr ?? 0;
+    return {
+      id: pinId(pr, value.anchorB64, at),
+      origin: 'pick',
+      anchor: value.anchor,
+      anchorB64: value.anchorB64,
+      label: landmarkLabel(currentRouteLabel(), value.anchor),
+      appHash: otherFragment(location.hash),
+      stack: value.stack,
+      note,
+      at,
+      pr,
+    };
+  }
+
   // ------------------------------------------------- deep link (FR-3813)
 
   /** A pin that locates before react-grab registers, retried into a stack. */
   const STACK_TRIES = 8;
   const STACK_RETRY_MS = 500;
   /**
-   * The ⚛️ stack the copied comment quotes. The anchor does not carry it — it
-   * is re-read here, from the element this pin landed on, the same way the
-   * composer read it when the comment was written.
+   * The ⚛️ stack a copied comment quotes, per pin. The anchor does not carry
+   * it — it is re-read from the element that pin landed on, the same way the
+   * composer read it when the comment was written. A pin the reviewer picked
+   * on this tab already has its stack stored, so only a link's pins pay this.
    */
-  let pinStack: string[] = [];
-  let stackOf: Element | null = null;
-  /** False until `pr` and the stack are both this element's — see `buildComment`. */
-  let pinReady = false;
+  interface PinStack {
+    element: Element;
+    stack: string[];
+    /** False until `pr` and the stack are both this element's. */
+    ready: boolean;
+  }
+  const stacks = new Map<string, PinStack>();
 
-  async function readPinStack(element: Element | null) {
-    stackOf = element;
-    pinStack = [];
-    pinReady = false;
-    if (!element) return;
+  /** A pin nothing draws any more must not keep its element alive. */
+  function pruneStacks() {
+    for (const id of stacks.keys())
+      if (!store.has(id) && linkTarget?.id !== id) stacks.delete(id);
+  }
+
+  async function readPinStack(
+    target: DeepLinkPinTarget | null,
+    element: Element | null,
+  ) {
+    if (!target) return;
+    const id = target.id;
+    if (draft.some((pin) => pin.id === id && pin.origin === 'pick')) return;
+    if (!element) {
+      stacks.delete(id);
+      return;
+    }
+    const held = stacks.get(id);
+    if (held?.element === element && held.ready) return;
+    // The entry IS the cancellation token: a later locate replaces it, and
+    // every await below drops out when the map no longer holds this one.
+    const entry: PinStack = { element, stack: [], ready: false };
+    stacks.set(id, entry);
     // `pr` is part of the block, so the copy waits for the same gate the
     // composer waits for rather than writing `pr=0`.
     await stateReady;
     for (let left = STACK_TRIES; ; left--) {
       const stack = await picker.getStack(element);
-      if (stackOf !== element) return;
-      pinStack = stack;
-      pinReady = true;
+      if (stacks.get(id) !== entry) return;
+      entry.stack = stack;
+      entry.ready = true;
       // An empty stack is the answer once react-grab is there; before that it
       // only means the app has not finished booting.
       if (stack.length || left <= 0 || picker.hasReactGrab()) return;
       await new Promise((resolve) => setTimeout(resolve, STACK_RETRY_MS));
-      if (stackOf !== element) return;
+      if (stacks.get(id) !== entry) return;
     }
   }
 
   /**
-   * The comment this pin was written as, re-rendered here. The note, the label
-   * and the link all come off the fragment, so they are the reviewer's own;
-   * `pr` and `at` describe this copy, and the id is what carries the identity.
-   * `null` while the element's own reads are still in flight — a block missing
-   * its stack, or claiming `pr=0`, is not the comment that was written.
+   * What the card's ⧉ writes. A pin the draft set holds copies the WHOLE set —
+   * one comment, one link, whichever card was pressed. A pin that only a link
+   * put on screen is re-rendered here instead: the note, the label and the
+   * link come off the fragment, `pr` and `at` describe this copy, and the id
+   * is what carries the identity. `null` while this element's own reads are
+   * still in flight — a block missing its stack, or claiming `pr=0`, is not
+   * the comment that was written.
    */
   function buildComment(target: DeepLinkPinTarget): CopyPayload | null {
-    if (!pinReady) return null;
+    if (draft.some((pin) => pin.id === target.id))
+      return {
+        text: buildSetText(draft),
+        html: buildSetHtml(draft),
+        // The card would otherwise describe one pin, and claim a truncated
+        // note the set's blocks do not have.
+        toast: copiedToast(draft.length),
+      };
+    const read = stacks.get(target.id);
+    if (!read?.ready) return null;
     const input = {
       label: target.label,
       id: target.id,
-      stack: pinStack,
+      stack: read.stack,
       text: target.anchor.n ?? '',
       // The app's own fragment rides alongside the pin (`#tab=logs&bai=v3.…`),
       // and dropping it would reopen the page on a different tab.
@@ -247,12 +340,80 @@ function boot() {
     copyText: ui.copyText,
     showToast: ui.showToast,
     buildComment,
-    onLocated: (element) => void readPinStack(element),
+    onLocated: (element, target) => void readPinStack(target, element),
+    onDismiss: (target) => {
+      stacks.delete(target.id);
+      if (linkTarget?.id === target.id) linkTarget = null;
+      if (!store.has(target.id)) return;
+      store.remove(target.id);
+      syncDraft();
+    },
   });
-  // After the layer: registering the plugin can activate react-grab straight
-  // away, and `syncCollapse` reaches `pins`.
+  const dock = createSetDock({
+    root: ui.root,
+    onCopyAll: copySet,
+    onClear: () => {
+      store.clear();
+      syncDraft();
+      redraw();
+    },
+    onLocate: (id) => {
+      const element = pins.locatedElement(id);
+      // The one control that reaches every pin has to answer for the ones the
+      // layer never found; FR-3859 turns that into the "go" button.
+      if (!element) return ui.showToast('That pin is not on this page');
+      element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+    },
+  });
+  // After the layer and the dock: registering the plugin can activate
+  // react-grab straight away, and `syncCollapse` reaches both.
   picker.watchForReactGrab();
   const guard = createNavigationGuard();
+
+  const targetOf = (pin: SetPin): DeepLinkPinTarget => ({
+    id: pin.id,
+    anchor: pin.anchor,
+    anchorB64: pin.anchorB64,
+    label: pin.label,
+  });
+
+  function drawnTargets(): DeepLinkPinTarget[] {
+    const targets = draft.map(targetOf);
+    const link = linkTarget;
+    if (link && !draft.some((pin) => pin.id === link.id)) targets.push(link);
+    return targets;
+  }
+
+  /**
+   * `focusId: null` by default: restoring a set, or growing one, must not
+   * scroll the page out from under the reviewer. Only a link names a pin.
+   */
+  function redraw(focusId: string | null = null) {
+    // Only the draft is the set; a link's pin is drawn beside it, uncounted,
+    // so the glyphs never claim a membership the copy does not have.
+    pins.show(drawnTargets(), { focusId, setSize: draft.length });
+  }
+
+  /** The store is the truth; the dock and the composer's button follow it. */
+  function syncDraft() {
+    draft = store.pins();
+    pruneStacks();
+    dock.render(draft);
+    ui.setDraftSize(draft.length);
+  }
+
+  /** The whole set, from a click; nothing may be awaited before the write. */
+  function copySet() {
+    if (!draft.length) return;
+    const count = draft.length;
+    const copied = ui.copyText(buildSetText(draft), buildSetHtml(draft));
+    const done = (ok: boolean) =>
+      ui.showToast(
+        ok ? copiedToast(count) : 'Could not reach the clipboard — try again',
+      );
+    if (typeof copied === 'boolean') done(copied);
+    else void copied.then(done);
+  }
 
   /** The route the pin was made on, not the one the reader happens to be on. */
   const anchorRouteLabel = (anchor: AnchorV3) =>
@@ -289,15 +450,14 @@ function boot() {
       guard.landed();
     }
     // The layer owns the retry ladder: one driver for however many pins the
-    // link carried, and one give-up sentence for all of them.
-    pins.show([
-      {
-        id: fragment.id,
-        anchor,
-        anchorB64: fragment.anchorB64,
-        label: landmarkLabel(anchorRouteLabel(anchor), anchor),
-      },
-    ]);
+    // draft set and the link add up to, and one give-up sentence for them all.
+    linkTarget = {
+      id: fragment.id,
+      anchor,
+      anchorB64: fragment.anchorB64,
+      label: landmarkLabel(anchorRouteLabel(anchor), anchor),
+    };
+    redraw(fragment.id);
   }
 
   window.addEventListener('hashchange', () => {
@@ -305,5 +465,7 @@ function boot() {
     void applyFragment(location.hash);
   });
 
+  syncDraft();
+  if (draft.length) redraw();
   void applyFragment(BOOT_HASH);
 }

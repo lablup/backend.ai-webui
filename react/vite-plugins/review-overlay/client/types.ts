@@ -79,6 +79,11 @@ interface SetPinBase {
   appHash: string;
   /** `getStackContext()` output, split into lines. */
   stack: string[];
+  /**
+   * The reviewer's whole note. `anchor.n` is the shortened one the link
+   * carries (`NOTE_MAX`), and the block is what keeps the rest.
+   */
+  note?: string;
 }
 
 /** The id hashes from `pr` + anchor + `at`, so a block may claim it. */
@@ -96,6 +101,12 @@ interface LinkedSetPin extends SetPinBase {
 }
 
 export type SetPin = PickedSetPin | LinkedSetPin;
+
+/** The pin set a tab is building right now, as `sessionStorage` holds it. */
+export interface DraftSet {
+  v: 1;
+  pins: SetPin[];
+}
 
 declare global {
   interface Window {
@@ -115,6 +126,8 @@ declare global {
 export interface CopyPayload {
   text: string;
   html: string;
+  /** Replaces the default success line — a set says how many pins it wrote. */
+  toast?: string;
 }
 
 /** `/__review/state` — the write side needs the PR number and the repo root. */

@@ -27,13 +27,31 @@ const NOTE_DEBOUNCE_MS = 250;
 const COMPOSE_GAP = 10;
 const VIEWPORT_PAD = 8;
 
+/** What the composer copies, and what to run once it has. */
+export interface ComposedCopy extends CopyPayload {
+  /**
+   * Runs only when THIS copy landed on the clipboard, so a write that failed —
+   * or a composer the reviewer closed while it was in flight — adds nothing.
+   */
+  commit?: () => void;
+}
+
+/** Nothing is copied and the composer stays open; the toast says why. */
+export interface RefusedCopy {
+  refused: string;
+}
+
+/** The composer's success line for a single pin; a set writes its own. */
+export const COPIED_ONE =
+  'Copied — paste it into the PR comment, the Teams thread, or Claude 📋';
+
 export interface OverlayUICallbacks {
   /**
    * Render the block for this note, SYNCHRONOUSLY — everything async was done
    * at pick time. `null` means the capture is not ready, which the composer
    * prevents by keeping the copy button disabled until it is.
    */
-  onBuildBlock: (text: string) => CopyPayload | null;
+  onBuildBlock: (text: string) => ComposedCopy | RefusedCopy | null;
   /** Debounced: the note rides in the anchor, so it has to be re-encoded. */
   onNoteChanged: (text: string) => void;
   onComposeClosed: () => void;
@@ -225,10 +243,14 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
    */
   let readyNote: string | null = null;
   let noteTimer = 0;
+  /** A second ⌘⏎ over an unresolved write would build a second pin. */
+  let copyInFlight = false;
 
   function syncCopyEnabled() {
     copyButton.disabled =
-      readyNote === null || composeText.value.trim() !== readyNote;
+      copyInFlight ||
+      readyNote === null ||
+      composeText.value.trim() !== readyNote;
   }
 
   function setComposeReady(ready: boolean, note = '') {
@@ -364,6 +386,15 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     pickActive = active;
   }
 
+  /**
+   * The button says what ⌘⏎ will do: with a set already going, the pick joins
+   * it and the whole set is what lands on the clipboard.
+   */
+  function setDraftSize(size: number) {
+    copyButton.textContent =
+      size > 0 ? `Add & copy all (${size + 1})` : '📋 Copy block';
+  }
+
   // ------------------------------------------------------------- clipboard
 
   /**
@@ -432,6 +463,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   // ---------------------------------------------------------------- events
 
   function runCopy() {
+    if (copyInFlight) return;
     // Empty text is allowed — the block still carries label, stack and link.
     const note = composeText.value.trim();
     // ⌘⏎ can beat the debounce, and the note is part of the anchor now: start
@@ -442,32 +474,48 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       composeErr.style.display = 'block';
       return;
     }
-    let block: CopyPayload | null;
+    let built: ComposedCopy | RefusedCopy | null;
     try {
-      block = callbacks.onBuildBlock(note);
+      built = callbacks.onBuildBlock(note);
     } catch (e) {
       composeErr.textContent = `Could not build the block: ${e}`;
       composeErr.style.display = 'block';
       return;
     }
-    if (!block) {
+    // A full set is not a broken composer: it is a set-level answer, and it
+    // leaves the note where the reviewer typed it.
+    if (built && 'refused' in built) {
+      showToast(built.refused);
+      return;
+    }
+    if (!built) {
       composeErr.textContent = 'Still reading the element — try again.';
       composeErr.style.display = 'block';
       return;
     }
+    const block = built;
     const copied = copyText(block.text, block.html);
     // Close only on success. A failed copy tells the reviewer to press ⌘⏎
     // again, so the composer and the note they typed have to still be there.
     const done = (ok: boolean) => {
+      copyInFlight = false;
+      // Bound to this block, not to whatever the composer holds by now: the
+      // reviewer can close it while an async write is still in flight.
+      if (ok) block.commit?.();
+      syncCopyEnabled();
       showToast(
         ok
-          ? 'Copied — paste it into the PR comment, the Teams thread, or Claude 📋'
+          ? (block.toast ?? COPIED_ONE)
           : 'Could not reach the clipboard — press ⌘⏎ again',
       );
       if (ok) closeCompose();
     };
     if (typeof copied === 'boolean') done(copied);
-    else void copied.then(done);
+    else {
+      copyInFlight = true;
+      syncCopyEnabled();
+      void copied.then(done);
+    }
   }
 
   compose.addEventListener('click', (evt) => {
@@ -523,6 +571,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     setComposeLabel,
     appendComposeLabel,
     setComposeReady,
+    setDraftSize,
     getComposeTarget,
     currentNote: () => composeText.value.trim(),
     setPickActive,
