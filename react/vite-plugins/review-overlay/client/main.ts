@@ -169,7 +169,12 @@ function boot() {
 
   // ------------------------------------------------- deep link (FR-3813)
 
-  const pin = createDeepLinkPin({ root: ui.root, host: ui.host });
+  const pin = createDeepLinkPin({
+    root: ui.root,
+    host: ui.host,
+    copyText: ui.copyText,
+    showToast: ui.showToast,
+  });
   const guard = createNavigationGuard();
   let cancelRetry = () => undefined as void;
 

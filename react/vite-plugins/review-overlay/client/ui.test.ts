@@ -70,6 +70,42 @@ describe('the dock is gone', () => {
   });
 });
 
+// FR-3849. The guard exists to beat react-grab's async focus restore; taking
+// focus back also collapsed a selection the reviewer was dragging in our chrome.
+describe('the focus guard on the composer', () => {
+  const textarea = () => compose().querySelector('textarea') as HTMLElement;
+
+  it('holds focus against a blur from outside the overlay', async () => {
+    const target = mountSized({ top: 100, bottom: 300 }, 160);
+    ui.openCompose(target, 40, 306);
+    const focus = vi.spyOn(textarea(), 'focus');
+    textarea().dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(focus).toHaveBeenCalled();
+  });
+
+  it('lets go the moment the reviewer presses on our own chrome', async () => {
+    const target = mountSized({ top: 100, bottom: 300 }, 160);
+    ui.openCompose(target, 40, 306);
+    const label = compose().querySelector('.pathlabel') as HTMLElement;
+    label.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    const focus = vi.spyOn(textarea(), 'focus');
+    textarea().dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(focus).not.toHaveBeenCalled();
+  });
+
+  it('keeps holding when the press was on the textarea itself', async () => {
+    const target = mountSized({ top: 100, bottom: 300 }, 160);
+    ui.openCompose(target, 40, 306);
+    textarea().dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    const focus = vi.spyOn(textarea(), 'focus');
+    textarea().dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(focus).toHaveBeenCalled();
+  });
+});
+
 describe('placing the composer', () => {
   it('hangs it under an element that leaves room', () => {
     const target = mountSized({ top: 100, bottom: 300 }, 160);
