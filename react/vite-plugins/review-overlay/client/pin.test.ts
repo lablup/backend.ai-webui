@@ -543,6 +543,18 @@ describe('createDeepLinkPin', () => {
       expect(copied).toEqual(['c_zdv3rhz']);
     });
 
+    it('names every icon-only control for a screen reader', () => {
+      show();
+      const named = ['.idcopy', '.close', '.locate'].map((sel) =>
+        host.shadowRoot?.querySelector(sel)?.getAttribute('aria-label'),
+      );
+      expect(named).toEqual([
+        'Copy this comment id',
+        'Dismiss this pin',
+        'Scroll back to this element',
+      ]);
+    });
+
     it('says which id it copied', () => {
       show();
       idCopy().click();

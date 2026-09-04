@@ -161,17 +161,22 @@ export function createDeepLinkPin({
   const idCopy = document.createElement('button');
   idCopy.className = 'idcopy';
   idCopy.textContent = '📋';
+  // The glyph is the accessible name unless one is given, and "clipboard" is
+  // not the action; `title` stays the visual tooltip.
   idCopy.title = 'Copy this comment id';
+  idCopy.setAttribute('aria-label', 'Copy this comment id');
   const componentText = run();
   sub.append(idText, idCopy, componentText);
   const close = document.createElement('button');
   close.className = 'close';
   close.textContent = '✕';
   close.title = 'Dismiss this pin';
+  close.setAttribute('aria-label', 'Dismiss this pin');
   const locateButton = document.createElement('button');
   locateButton.className = 'locate';
   locateButton.textContent = '📍';
   locateButton.title = 'Scroll back to this element';
+  locateButton.setAttribute('aria-label', 'Scroll back to this element');
   card.append(close, locateButton, note, trunc, label, sub);
   const markBox = document.createElement('div');
   markBox.className = 'markbox';
