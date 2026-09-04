@@ -175,6 +175,12 @@ export interface DeepLinkPinTarget {
   anchorB64: string;
   /** `<route> › <landmark> › <tag "quoted text">` from the block. */
   label: string;
+  /**
+   * Zero-based place in the SET, when only part of one is drawn — a set that
+   * spans pages leaves its off-page members to the dock, and pin 3 of 5 still
+   * has to say 3.
+   */
+  index?: number;
 }
 
 interface ViewDeps {
@@ -870,7 +876,8 @@ export function createPinLayer(options: PinLayerOptions) {
       targets.forEach((target, index) => {
         const view = views[index];
         if (target.id === arriving || !view.holds(target)) view.show(target);
-        view.setOrdinal(index < size ? index : null, size);
+        const place = target.index ?? index;
+        view.setOrdinal(place < size ? place : null, size);
       });
       startRetry();
     },

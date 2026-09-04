@@ -70,6 +70,9 @@ export function otherFragment(hash: string): string {
     .join('&');
 }
 
+/** The scrub a merged link leaves behind: the app's own parts only (D4). */
+export const stripPinParts = otherFragment;
+
 /**
  * First-seen wins, in set order. The link and the blocks render off the same
  * list, or a pin added twice would be one part and two blocks.
@@ -96,16 +99,47 @@ export function pinSetFragment(
 type UrlPin = Pick<SetPin, 'id' | 'anchorB64' | 'anchor' | 'appHash'>;
 
 /**
+ * The set's one link, opened on the page of ONE of its pins — the whole set
+ * still rides in the fragment, and the app's own fragment is THAT pin's, so
+ * the set reopens on the tab it was made on. An id the set no longer holds
+ * falls back to the first pin, so a stale "go" opens the link rather than
+ * nothing.
+ */
+export function pinSetUrlAt(
+  pins: UrlPin[],
+  id: string,
+  appHash?: string,
+): string {
+  const at = pins.find((pin) => pin.id === id) ?? pins[0];
+  if (!at) return '';
+  const query = at.anchor.q ? `?${at.anchor.q}` : '';
+  const fragment = appHash ?? at.appHash;
+  return `${at.anchor.p}${query}#${fragment ? `${fragment}&` : ''}${pinSetFragment(pins)}`;
+}
+
+/**
  * The one link a pin set has, origin-relative. Path, query and the app's own
  * fragment come from the FIRST pin — the set may span pages, and that is the
  * page the link opens on.
  */
 export function pinSetUrl(pins: UrlPin[]): string {
   const first = pins[0];
-  if (!first) return '';
-  const query = first.anchor.q ? `?${first.anchor.q}` : '';
-  const app = first.appHash;
-  return `${first.anchor.p}${query}#${app ? `${app}&` : ''}${pinSetFragment(pins)}`;
+  return first ? pinSetUrlAt(pins, first.id) : '';
+}
+
+/**
+ * The one pin that navigates, scrolls and pulses (D2): the id a dock "go"
+ * handed over if the set still holds it, else the first pin this page can
+ * draw, else the head of the set.
+ */
+export function focusPinId(
+  pins: Array<{ id: string; anchor: AnchorV3 }>,
+  location: { pathname: string; search: string },
+  stored: string | null = null,
+): string | null {
+  if (stored && pins.some((pin) => pin.id === stored)) return stored;
+  const here = pins.find((pin) => !pathNeedsChange(pin.anchor, location));
+  return here?.id ?? pins[0]?.id ?? null;
 }
 
 /** A pin set of one. */
@@ -188,6 +222,87 @@ export function createNavigationGuard(
     reset() {
       navigatedHere = false;
     },
+  };
+}
+
+/** The focus pin a "go" hands to the document `location.assign` starts (D2). */
+const FOCUS_KEY = 'bai-review:focus';
+/** The merge sentence a link computed before it navigated to the set's page. */
+const NOTE_KEY = 'bai-review:note';
+
+export interface FocusStore {
+  /** One-shot: the value is cleared as it is read, so a reload does not repeat it. */
+  take(): string | null;
+  set(value: string): void;
+}
+
+function createHandover(key: string, storage: Storage | null): FocusStore {
+  return {
+    take() {
+      try {
+        const value = storage?.getItem(key) ?? null;
+        storage?.removeItem(key);
+        return value;
+      } catch {
+        return null;
+      }
+    },
+    set(value) {
+      try {
+        storage?.setItem(key, value);
+      } catch {
+        // The set still opens on that pin's page; only the pulse moves.
+      }
+    },
+  };
+}
+
+export const createFocusStore = (
+  storage: Storage | null = safeStorage(),
+): FocusStore => createHandover(FOCUS_KEY, storage);
+
+/**
+ * What the open that navigated found, carried to the page it navigated to:
+ * that page re-merges the very pins it was just handed, and would otherwise
+ * report them as duplicates of themselves.
+ */
+export const createNoteStore = (
+  storage: Storage | null = safeStorage(),
+): FocusStore => createHandover(NOTE_KEY, storage);
+
+/** Dispatched by the patched `history`, so every listener hears one navigation. */
+const ROUTE_EVENT = 'bai-review:route';
+
+/**
+ * React Router owns the history and changes route without a reload, so a
+ * `popstate` listener alone misses every in-app navigation. Patched once per
+ * document: a second overlay boot adds a listener, not another wrapper.
+ */
+function patchHistory(): void {
+  const patched = history as History & { __baiReviewRouted?: true };
+  if (patched.__baiReviewRouted) return;
+  patched.__baiReviewRouted = true;
+  for (const name of ['pushState', 'replaceState'] as const) {
+    const original = history[name];
+    history[name] = function (
+      this: History,
+      ...args: Parameters<History['pushState']>
+    ) {
+      const result = original.apply(this, args);
+      window.dispatchEvent(new Event(ROUTE_EVENT));
+      return result;
+    };
+  }
+}
+
+/** Every SPA navigation, so the set can re-partition into views and rows. */
+export function watchRoute(onChange: () => void): () => void {
+  patchHistory();
+  window.addEventListener(ROUTE_EVENT, onChange);
+  window.addEventListener('popstate', onChange);
+  return () => {
+    window.removeEventListener(ROUTE_EVENT, onChange);
+    window.removeEventListener('popstate', onChange);
   };
 }
 
