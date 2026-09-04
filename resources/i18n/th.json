@@ -3576,6 +3576,7 @@
     "BootstrapScriptEmpty": "สคริปต์ว่างเปล่า \nกรุณาป้อนสคริปต์",
     "BootstrapScriptUpdated": "อัปเดตสคริปต์บูตสแตรปแล้ว",
     "ClearSSHKeypairInput": "คู่คีย์ SSH ที่เขียนไว้จะถูกลบ คุณแน่ใจหรือไม่ที่จะดำเนินการต่อ?",
+    "CommandPalette": "แผงคำสั่ง",
     "ConfigFilename": "ชื่อไฟล์การกำหนดค่า",
     "CurrentSSHPublicKey": "คีย์สาธารณะปัจจุบัน: ",
     "CustomDashboardPanels": "แผงแดชบอร์ดที่กำหนดเอง",

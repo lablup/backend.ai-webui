@@ -132,6 +132,8 @@ const UserPreferencesPage = () => {
     useBAISettingUserState('experimental_ai_agents');
   const [experimentalCustomDashboard, setExperimentalCustomDashboard] =
     useBAISettingUserState('experimental_custom_dashboard_panels');
+  const [experimentalGlobalSearch, setExperimentalGlobalSearch] =
+    useBAISettingUserState('experimental_global_search');
   const [
     experimentalImportFromHuggingFace,
     setExperimentalImportFromHuggingFace,
@@ -481,6 +483,15 @@ const UserPreferencesPage = () => {
           defaultValue: false,
           value: experimentalCustomDashboard,
           onChange: setExperimentalCustomDashboard,
+        },
+        {
+          'data-testid': 'items-experimental-command-palette',
+          type: 'checkbox',
+          title: t('userSettings.CommandPalette'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalGlobalSearch,
+          onChange: setExperimentalGlobalSearch,
         },
         {
           'data-testid': 'items-experimental-import-from-huggingface',

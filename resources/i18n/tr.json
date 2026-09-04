@@ -3574,6 +3574,7 @@
     "BootstrapScriptEmpty": "Senaryo boş. \nLütfen betiği girin.",
     "BootstrapScriptUpdated": "Önyükleme komut dosyası güncellendi.",
     "ClearSSHKeypairInput": "Yazılı SSH Anahtar Çifti kaldırılacaktır. Devam etmek istediğine emin misin?",
+    "CommandPalette": "Komut paleti",
     "ConfigFilename": "Yapılandırma dosyası adı",
     "CurrentSSHPublicKey": "Geçerli ortak anahtar:",
     "CustomDashboardPanels": "Özel kontrol paneli panelleri",

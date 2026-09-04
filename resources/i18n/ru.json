@@ -3574,6 +3574,7 @@
     "BootstrapScriptEmpty": "Скрипт пуст. \nПожалуйста, введите сценарий.",
     "BootstrapScriptUpdated": "Обновлен скрипт начальной загрузки.",
     "ClearSSHKeypairInput": "Записанная пара ключей SSH будет удалена. Вы уверены что хотите продолжить?",
+    "CommandPalette": "Палитра команд",
     "ConfigFilename": "Имя файла конфигурации",
     "CurrentSSHPublicKey": "Текущий открытый ключ:",
     "CustomDashboardPanels": "Пользовательские панели информационной панели",

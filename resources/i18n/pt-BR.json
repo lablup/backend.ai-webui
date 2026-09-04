@@ -3574,6 +3574,7 @@
     "BootstrapScriptEmpty": "O script está vazio. \nPor favor insira o roteiro.",
     "BootstrapScriptUpdated": "Script de bootstrap atualizado.",
     "ClearSSHKeypairInput": "O par de chaves SSH gravado será removido. Você tem certeza que quer continuar?",
+    "CommandPalette": "Paleta de comandos",
     "ConfigFilename": "Nome do arquivo de configuração",
     "CurrentSSHPublicKey": "Chave pública atual:",
     "CustomDashboardPanels": "Painéis personalizados do painel",

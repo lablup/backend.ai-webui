@@ -3574,6 +3574,7 @@
     "BootstrapScriptEmpty": "Skripnya kosong. \nSila masukkan skrip.",
     "BootstrapScriptUpdated": "Skrip bootstrap dikemas kini.",
     "ClearSSHKeypairInput": "Pad Kekunci SSH yang ditulis akan dikeluarkan. Adakah anda pasti mahu meneruskan?",
+    "CommandPalette": "Palet perintah",
     "ConfigFilename": "Konfigurasi nama fail",
     "CurrentSSHPublicKey": "Kunci awam semasa:",
     "CustomDashboardPanels": "Panel papan pemuka tersuai",

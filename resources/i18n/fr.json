@@ -3577,6 +3577,7 @@
     "BootstrapScriptEmpty": "Le script est vide. \nVeuillez entrer le script.",
     "BootstrapScriptUpdated": "Script d'amorçage mis à jour.",
     "ClearSSHKeypairInput": "La paire de clés SSH écrite sera supprimée. Es-tu sur de vouloir continuer?",
+    "CommandPalette": "Palette de commandes",
     "ConfigFilename": "Nom du fichier de configuration",
     "CurrentSSHPublicKey": "Clé publique actuelle :",
     "CustomDashboardPanels": "Panneaux de tableau de bord personnalisés",

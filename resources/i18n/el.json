@@ -3574,6 +3574,7 @@
     "BootstrapScriptEmpty": "Το σενάριο είναι κενό. \nΕισαγάγετε το σενάριο.",
     "BootstrapScriptUpdated": "Το σενάριο Bootstrap ενημερώθηκε.",
     "ClearSSHKeypairInput": "Το γραπτό πληκτρολόγιο SSH θα αφαιρεθεί. Εισαι σιγουρος οτι θελεις να συνεχισεις?",
+    "CommandPalette": "Παλέτα εντολών",
     "ConfigFilename": "Διαμόρφωση ονόματος αρχείου",
     "CurrentSSHPublicKey": "Τρέχον δημόσιο κλειδί:",
     "CustomDashboardPanels": "Προσαρμοσμένα πάνελ πίνακα ελέγχου",

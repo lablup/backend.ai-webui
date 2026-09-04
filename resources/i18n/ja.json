@@ -3576,6 +3576,7 @@
     "BootstrapScriptEmpty": "スクリプトが空です。\nスクリプトを入力してください。",
     "BootstrapScriptUpdated": "ブートストラップスクリプトが更新されました。",
     "ClearSSHKeypairInput": "書き込まれたSSHキーペアは削除されます。続行してもよろしいですか？",
+    "CommandPalette": "コマンドパレット",
     "ConfigFilename": "構成ファイル名",
     "CurrentSSHPublicKey": "現在の公開鍵：",
     "CustomDashboardPanels": "カスタムダッシュボードパネル",

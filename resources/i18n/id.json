@@ -3578,6 +3578,7 @@
     "BootstrapScriptEmpty": "Skripnya kosong. \nSilakan masukkan skripnya.",
     "BootstrapScriptUpdated": "Skrip Bootstrap diperbarui.",
     "ClearSSHKeypairInput": "Pasangan Kunci SSH tertulis akan dihapus. Apakah anda yakin ingin melanjutkan?",
+    "CommandPalette": "Palet perintah",
     "ConfigFilename": "Nama file konfigurasi",
     "CurrentSSHPublicKey": "Kunci publik saat ini: ",
     "CustomDashboardPanels": "Panel dasbor kustom",

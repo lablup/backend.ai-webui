@@ -3574,6 +3574,7 @@
     "BootstrapScriptEmpty": "La sceneggiatura è vuota. \nInserisci la sceneggiatura.",
     "BootstrapScriptUpdated": "Script di bootstrap aggiornato.",
     "ClearSSHKeypairInput": "La coppia di chiavi SSH scritta verrà rimossa. Sei sicuro di voler continuare?",
+    "CommandPalette": "Palette dei comandi",
     "ConfigFilename": "Nome del file di configurazione",
     "CurrentSSHPublicKey": "Chiave pubblica attuale:",
     "CustomDashboardPanels": "Pannelli dashboard personalizzati",

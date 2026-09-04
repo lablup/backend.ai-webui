@@ -3576,6 +3576,7 @@
     "BootstrapScriptEmpty": "Das Skript ist leer. \nBitte geben Sie das Skript ein.",
     "BootstrapScriptUpdated": "Bootstrap-Skript aktualisiert.",
     "ClearSSHKeypairInput": "Geschriebenes SSH-Schlüsselpaar wird entfernt. Sind Sie sicher, dass Sie fortfahren möchten?",
+    "CommandPalette": "Befehlspalette",
     "ConfigFilename": "Name der Konfigurationsdatei",
     "CurrentSSHPublicKey": "Aktueller öffentlicher Schlüssel:",
     "CustomDashboardPanels": "Benutzerdefinierte Dashboard-Panels",

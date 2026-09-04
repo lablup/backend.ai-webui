@@ -3576,6 +3576,7 @@
     "BootstrapScriptEmpty": "Скрипт хоосон байна. \nСкриптийг оруулна уу.",
     "BootstrapScriptUpdated": "Ачаалагч скрипт шинэчлэгдсэн.",
     "ClearSSHKeypairInput": "Бичсэн SSH товчлуурыг устгах болно. Үргэлжлүүлэхийг хүсч байна уу?",
+    "CommandPalette": "Тушаалын палитр",
     "ConfigFilename": "Файлын нэрийг тохируулах",
     "CurrentSSHPublicKey": "Одоогийн нийтийн түлхүүр:",
     "CustomDashboardPanels": "Захиалгат хяналтын самбарын панель",

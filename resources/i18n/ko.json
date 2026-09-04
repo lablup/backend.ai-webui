@@ -3577,6 +3577,7 @@
     "BootstrapScriptEmpty": "스크립트가 비어있습니다. 스크립트를 입력해 주세요.",
     "BootstrapScriptUpdated": "부트스트랩 스크립트가 갱신되었습니다.",
     "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
+    "CommandPalette": "커맨드 팔레트",
     "ConfigFilename": "구성 파일 이름 선택",
     "CurrentSSHPublicKey": "현재 공개 키: ",
     "CustomDashboardPanels": "사용자 정의 대시보드 패널",

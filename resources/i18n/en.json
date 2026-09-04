@@ -3561,6 +3561,7 @@
     "BootstrapScriptEmpty": "The script is empty. \nPlease enter the script.",
     "BootstrapScriptUpdated": "Bootstrap script updated.",
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
+    "CommandPalette": "Command palette",
     "ConfigFilename": "Config file name",
     "CurrentSSHPublicKey": "Current public key: ",
     "CustomDashboardPanels": "Custom dashboard panels",
