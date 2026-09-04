@@ -17,7 +17,7 @@
  (`FolderCreateModal`, `FolderCreateModalV2`, `QuotaSettingModal`) pair that
  silence with a `labelCol` span, which has no meaning in a vertical form.
  */
-import useForm, { FormStore } from './FormStore';
+import useForm, { FormStore, isVisible } from './FormStore';
 import {
   FieldContext,
   FormConfigContext,
@@ -31,7 +31,6 @@ import {
   type FormSize,
   type RequiredMark,
 } from './context';
-import { isVisible } from './dom';
 import type {
   Callbacks,
   FieldData,
