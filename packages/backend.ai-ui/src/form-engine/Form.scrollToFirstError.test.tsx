@@ -330,6 +330,48 @@ const FormWithHiddenTwinControl: React.FC<Pick<Props, 'formRef'>> = ({
   );
 };
 
+/** Two validator-only `noStyle` fields sharing a name under one item. */
+const FormWithTwinSubFields: React.FC<
+  Pick<Props, 'formRef'> & { both: boolean }
+> = ({ formRef, both }) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError>
+      <Form.Item label="URL">
+        <Input />
+        <Form.Item noStyle name="check" />
+        {both ? <Form.Item noStyle name="check" /> : null}
+      </Form.Item>
+    </Form>
+  );
+};
+
+/** A first field hidden by `visibility`, which a bare `checkVisibility()` misses. */
+const FormWithInvisibleFirst: React.FC<Pick<Props, 'formRef'>> = ({
+  formRef,
+}) => {
+  const [form] = Form.useForm();
+  formRef(form);
+
+  return (
+    <Form form={form} scrollToFirstError>
+      <Form.Item
+        style={{ visibility: 'hidden' }}
+        name="early"
+        label="Early"
+        rules={[{ required: true }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item name="late" label="Late" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+    </Form>
+  );
+};
+
 async function submit(form: FormInstance) {
   await act(async () => {
     form.submit();
@@ -576,6 +618,31 @@ describe('scroll to the first invalid field', () => {
     );
     expect(scrolled()?.hasAttribute('data-hidden')).toBe(false);
     expect(document.activeElement).toBe(scrolled()?.querySelector('input'));
+  });
+
+  it('keeps a shared sub-field handle while one of two same-named fields unmounts', async () => {
+    let form!: FormInstance;
+    const view = render(
+      <FormWithTwinSubFields formRef={(f) => (form = f)} both />,
+    );
+    view.rerender(
+      <FormWithTwinSubFields formRef={(f) => (form = f)} both={false} />,
+    );
+
+    act(() => form.scrollToField('check'));
+
+    expect(scrolled()?.getAttribute('data-bai-field-items')).toBe(
+      `[${handleOf('check')}]`,
+    );
+  });
+
+  it('does not let a `visibility: hidden` field win over a visible one', async () => {
+    let form!: FormInstance;
+    render(<FormWithInvisibleFirst formRef={(f) => (form = f)} />);
+
+    await submit(form);
+
+    expect(scrolledField()).toBe('late');
   });
 
   it('does not scroll when the submit succeeds', async () => {
