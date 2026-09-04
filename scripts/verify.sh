@@ -72,6 +72,23 @@ check_relay_drift() {
   return 0
 }
 
+check_search_index_drift() {
+  # The global search palette's index (FR-3558) is generated from routes.tsx
+  # and the i18n keys of everything each route transitively renders, then
+  # committed. Any route/tab/setting/`t()` change without a rebuild leaves the
+  # palette pointing at a stale map, so rebuild and diff like Relay does.
+  pnpm --prefix ./react run search-index || return 1
+  local dirty
+  dirty=$(git status --porcelain -- 'react/src/generated/searchIndex.json')
+  if [ -n "$dirty" ]; then
+    echo "$dirty"
+    echo "The search index is out of sync with the source."
+    echo "Run \`pnpm run search-index\` and commit react/src/generated/searchIndex.json."
+    return 1
+  fi
+  return 0
+}
+
 check_terminology_drift() {
   # Deterministic terminology checker (read-only). Scans i18n VALUES *and* the
   # user manual's prose (FR-3373) against
@@ -206,6 +223,7 @@ check_z_index_ladder() {
 }
 
 run_check "Relay" check_relay_drift
+run_check "Search index" check_search_index_drift
 # lint:ci = the cached eslint variant CI runs (content-hash cache; modified
 # files are always re-linted). Uncached equivalent: `pnpm -r lint`.
 # backend.ai-client's and backend.ai-agent-cli's lint:ci are deliberately
