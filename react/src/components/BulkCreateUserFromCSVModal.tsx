@@ -1001,7 +1001,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           minHeight: 0,
           overflow: 'hidden',
         },
-        header: { paddingBottom: token.paddingSM },
       }}
       footer={
         <BAIFlex justify="end" gap="sm">
