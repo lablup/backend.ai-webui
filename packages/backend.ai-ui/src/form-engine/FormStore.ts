@@ -53,7 +53,6 @@ import { mergeValidateMessages } from './messages';
 import NameMap, {
   cloneByNamePathList,
   containsNamePath,
-  getFieldHandle,
   getNamePath,
   getValue,
   matchNamePath,
@@ -171,57 +170,9 @@ class WatcherCenter {
   }
 }
 
-/**
- * `checkVisibility` where the browser has it — with the `visibility`
- * property, which the bare call ignores; jsdom falls back to markup.
- */
-export function isVisible(el: HTMLElement): boolean {
-  if (typeof el.checkVisibility === 'function') {
-    return el.checkVisibility({
-      visibilityProperty: true,
-      checkVisibilityCSS: true,
-    });
-  }
-  for (let node: HTMLElement | null = el; node; node = node.parentElement) {
-    if (
-      node.hidden ||
-      node.style.display === 'none' ||
-      node.style.visibility === 'hidden'
-    ) {
-      return false;
-    }
-  }
-  return true;
-}
-
-/** `scrollIntoView` with antd's `nearest` default; reduced motion wins over `smooth`. */
-export function scrollIntoView(
-  el: HTMLElement,
-  options: ScrollIntoViewOptions = {},
-): void {
-  const reduceMotion =
-    typeof matchMedia === 'function' &&
-    matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // Optional call: jsdom ships no `scrollIntoView`.
-  el.scrollIntoView?.({
-    block: 'nearest',
-    ...options,
-    ...(reduceMotion ? { behavior: 'auto' as const } : {}),
-  });
-}
-
-/**
- * What `focusField` lands on when the handle sits on a wrapper: the editable
- * control first, then anything tabbable — never a `tabindex="-1"` button, or
- * a segmented control's first segment and a date picker's calendar toggle
- * would win over the input.
- */
+/** What `focusField` lands on when the handle sits on a wrapper. */
 const EDITABLE =
   'input:not([type="hidden"]):not([disabled]),select:not([disabled]),textarea:not([disabled]),[contenteditable="true"],[role="combobox"],[role="textbox"],[role="spinbutton"]';
-const TABBABLE =
-  'button:not([disabled]):not([tabindex="-1"]),[tabindex]:not([tabindex="-1"])';
-
-let formSeq = 0;
 
 export class FormStore {
   private forceRootUpdate: () => void;
@@ -236,8 +187,6 @@ export class FormStore {
   private watcherCenter = new WatcherCenter(this);
   /** Paths of `preserve: false` fields alive at the previous unmount. */
   private prevWithoutPreserves: NameMap<boolean> | null = null;
-  /** Stamped as `data-bai-form-id` on every item of this form. */
-  private readonly formId = `f${++formSeq}`;
 
   constructor(forceRootUpdate: () => void) {
     this.forceRootUpdate = forceRootUpdate;
@@ -284,7 +233,6 @@ export class FormStore {
         setPreserve: this.setPreserve,
         getInitialValue: this.getInitialValue,
         registerWatch: this.registerWatch,
-        getFormId: () => this.formId,
       };
     }
     if (process.env.NODE_ENV !== 'production') {
@@ -1072,21 +1020,17 @@ export class FormStore {
 
   // ======================= Scroll / focus =========================
 
-  /** The field's DOM node — see `getFieldDOMNode` for what that resolves to. */
   getFieldInstance = (name: NamePath) => this.getFieldDOMNode(name);
 
-  /** Scrolls the NAMED field. `<Form scrollToFirstError>` picks which one. */
   scrollToField = (name: NamePath, options: ScrollOptions = {}) => {
     const { focus, ...restOpt } = options;
     const node = this.getFieldDOMNode(name);
     if (node) {
-      // The item, when there is one, so the label and the error message come
-      // into view with the control — a `noStyle` field's message lives on
-      // the parent item.
-      scrollIntoView(
-        node.closest<HTMLElement>('[data-bai-form-item]') ?? node,
-        restOpt as ScrollIntoViewOptions,
-      );
+      // The item, so the label and message come along; a `noStyle` field's
+      // message lives on the parent item.
+      (
+        node.closest<HTMLElement>('[data-bai-form-item]') ?? node
+      ).scrollIntoView({ block: 'nearest', ...restOpt });
       if (focus) {
         this.focusField(name);
       }
@@ -1096,55 +1040,33 @@ export class FormStore {
   focusField = (name: NamePath) => {
     const node = this.getFieldDOMNode(name);
     if (!node) return;
-    // The handle may sit on a wrapper (Astryx Switch and SegmentedControl
-    // spread `rest` onto their root div; the item wrapper is the fallback for
-    // a child that forwards nothing), so focus what is inside it.
-    // `preventScroll`: `scrollToField` has just positioned the item.
+    // The handle may sit on a wrapper (Astryx Switch / SegmentedControl spread
+    // `rest` onto their root; the item wrapper is the fallback).
     const target = node.matches(EDITABLE)
       ? node
-      : (node.querySelector<HTMLElement>(EDITABLE) ??
-        (node.matches(TABBABLE)
-          ? node
-          : node.querySelector<HTMLElement>(TABBABLE)));
-    target?.focus?.({ preventScroll: true });
+      : (node.querySelector<HTMLElement>(EDITABLE) ?? node);
+    target.focus?.({ preventScroll: true });
   };
 
   /**
-   * The control carrying `data-bai-field-id` (stamped by `FormItem`; Astryx
-   * inputs drop the `id` they are given but keep `data-*`), else the item
-   * wrapper carrying `data-bai-field-item` (a child that forwards nothing to
-   * the DOM), else the enclosing item whose `data-bai-field-items` lists the
-   * handle (a wrapper-less `noStyle` field). Only elements stamped with this
-   * form's id are candidates, so two mounted forms sharing a field name stay
-   * apart — a `component={false}` form has no element to scope by. A name
-   * mounted twice (a field repeated across tabs) resolves to the visible one.
+   * The control carrying `data-bai-field-id` (Astryx inputs drop the `id`
+   * `FormItem` gives them but keep `data-*`), else the item wrapper carrying
+   * `data-bai-field-item` (a child that forwards nothing to the DOM).
    */
   private getFieldDOMNode = (name: NamePath): HTMLElement | undefined => {
     if (typeof document === 'undefined') return undefined;
-    const handle = getFieldHandle(getNamePath(name));
-    const stamped = document.querySelectorAll<HTMLElement>(
-      `[data-bai-form-id="${this.formId}"]`,
-    );
-    const carries = [
-      (el: HTMLElement) => el.dataset.baiFieldId === handle,
-      (el: HTMLElement) => el.dataset.baiFieldItem === handle,
-      (el: HTMLElement) =>
-        !!el.dataset.baiFieldItems &&
-        (JSON.parse(el.dataset.baiFieldItems) as unknown[]).some(
-          (path) => JSON.stringify(path) === handle,
-        ),
-    ];
-    // Visible candidates of any kind before any hidden one, or a hidden
-    // control would outrank the visible wrapper of the same field.
-    const pick = (visibleOnly: boolean) => {
-      for (const carry of carries) {
-        for (const el of stamped) {
-          if (carry(el) && (!visibleOnly || isVisible(el))) return el;
-        }
-      }
-      return undefined;
-    };
-    return pick(true) ?? pick(false);
+    const handle = getNamePath(name).join('_');
+    for (const el of document.querySelectorAll<HTMLElement>(
+      '[data-bai-field-id]',
+    )) {
+      if (el.dataset.baiFieldId === handle) return el;
+    }
+    for (const el of document.querySelectorAll<HTMLElement>(
+      '[data-bai-field-item]',
+    )) {
+      if (el.dataset.baiFieldItem === handle) return el;
+    }
+    return undefined;
   };
 }
 

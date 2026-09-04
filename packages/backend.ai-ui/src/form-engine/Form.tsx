@@ -17,7 +17,7 @@
  (`FolderCreateModal`, `FolderCreateModalV2`, `QuotaSettingModal`) pair that
  silence with a `labelCol` span, which has no meaning in a vertical form.
  */
-import useForm, { FormStore, isVisible } from './FormStore';
+import useForm, { FormStore } from './FormStore';
 import {
   FieldContext,
   FormConfigContext,
@@ -36,8 +36,6 @@ import type {
   FieldData,
   FormInstance,
   InternalFormInstance,
-  NamePath,
-  ScrollOptions,
   ValidateErrorEntity,
   ValidateMessages,
 } from './interface';
@@ -65,13 +63,7 @@ export interface FormProps<Values = any> extends Omit<
   labelWrap?: boolean;
   validateMessages?: ValidateMessages;
   validateTrigger?: string | string[] | false;
-  /**
-   * Scrolls the first invalid field into view and focuses it when a submit
-   * fails. Off unless set, as in antd — and, as in antd, it acts on
-   * `form.submit()`, not on a bare `validateFields()`. Pass an object to
-   * override the scroll options; `focus: false` keeps focus where it is.
-   */
-  scrollToFirstError?: boolean | ScrollOptions;
+  scrollToFirstError?: boolean | Record<string, unknown>;
   clearOnDestroy?: boolean;
   onValuesChange?: Callbacks<Values>['onValuesChange'];
   onFieldsChange?: Callbacks<Values>['onFieldsChange'];
@@ -165,38 +157,6 @@ const InternalForm = <Values,>(
     ),
   );
 
-  const handleFinishFailed = (errorInfo: ValidateErrorEntity) => {
-    if (scrollToFirstError && errorInfo.errorFields.length) {
-      // `errorFields` is field REGISTRATION order; pick the field that is
-      // first on SCREEN, or a conditionally mounted group loses. A hidden
-      // item (`<Form.Item hidden>`, an inactive wizard step) is still
-      // validated but cannot be scrolled to, so it does not compete.
-      const first = errorInfo.errorFields
-        .map((field) => ({
-          name: field.name,
-          node: formInstance.getFieldInstance(field.name) as
-            HTMLElement | undefined,
-        }))
-        .filter((field) => field.node && isVisible(field.node))
-        .reduce<{ name: NamePath; node?: HTMLElement } | undefined>(
-          (best, field) =>
-            !best ||
-            best.node!.compareDocumentPosition(field.node!) &
-              Node.DOCUMENT_POSITION_PRECEDING
-              ? field
-              : best,
-          undefined,
-        );
-      if (first) {
-        formInstance.scrollToField(first.name, {
-          focus: true,
-          ...(typeof scrollToFirstError === 'object' ? scrollToFirstError : {}),
-        });
-      }
-    }
-    onFinishFailed?.(errorInfo);
-  };
-
   setCallbacks({
     onValuesChange,
     onFieldsChange: (changedFields: FieldData[], ...rest) => {
@@ -210,7 +170,17 @@ const InternalForm = <Values,>(
       formProviderContext.triggerFormFinish(name, values);
       onFinish?.(values);
     },
-    onFinishFailed: handleFinishFailed,
+    onFinishFailed: (errorInfo: ValidateErrorEntity) => {
+      if (scrollToFirstError && errorInfo.errorFields.length) {
+        const options =
+          typeof scrollToFirstError === 'object' ? scrollToFirstError : {};
+        formInstance.scrollToField(errorInfo.errorFields[0].name, {
+          focus: true,
+          ...options,
+        });
+      }
+      onFinishFailed?.(errorInfo);
+    },
   });
   setPreserve(preserve);
 
