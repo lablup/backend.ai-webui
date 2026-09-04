@@ -295,6 +295,9 @@ export function createDeepLinkPin({
    * value, so the cap stands in and keeps the clamps meaningful there.
    */
   const cardWidth = () => card.offsetWidth || CARD_MAX_WIDTH;
+  /** The rightmost `left` that still leaves the card's shadow room to draw. */
+  const rightEdge = () =>
+    Math.max(VIEWPORT_PAD, window.innerWidth - cardWidth() - VIEWPORT_PAD);
 
   function hide() {
     marker.classList.remove('found');
@@ -315,7 +318,7 @@ export function createDeepLinkPin({
    * VIEWPORT edge, because it lives on a fixed layer; only the direction comes
    * from `area`.
    */
-  function placeAway(box: DOMRect, area: Bounds, vh: number, vw: number) {
+  function placeAway(box: DOMRect, area: Bounds, vh: number) {
     marker.classList.remove('found');
     markBox.classList.remove('found');
     card.classList.add('found');
@@ -339,11 +342,10 @@ export function createDeepLinkPin({
     // is what took the element sideways, with an arrow pointing nowhere.
     // Measured, not assumed: `.card` is `width: auto`, so a short comment is
     // far narrower than the cap and an assumed width would not reach the edge.
-    const rightEdge = Math.max(VIEWPORT_PAD, vw - cardWidth() - VIEWPORT_PAD);
     card.style.left =
       up || down
-        ? `${Math.max(VIEWPORT_PAD, Math.min(box.left, vw - cardWidth()))}px`
-        : `${left ? VIEWPORT_PAD : rightEdge}px`;
+        ? `${Math.max(VIEWPORT_PAD, Math.min(box.left, rightEdge()))}px`
+        : `${left ? VIEWPORT_PAD : rightEdge()}px`;
     card.style.top = up
       ? `${VIEWPORT_PAD}px`
       : `${Math.max(VIEWPORT_PAD, vh - card.offsetHeight - VIEWPORT_PAD)}px`;
@@ -374,7 +376,7 @@ export function createDeepLinkPin({
     const gone = outside(viewport)
       ? viewport
       : clipper?.getBoundingClientRect();
-    if (measured && gone) return placeAway(box, gone, vh, vw);
+    if (measured && gone) return placeAway(box, gone, vh);
     marker.classList.add('found');
     card.classList.add('found');
     card.classList.remove('away');
@@ -389,7 +391,7 @@ export function createDeepLinkPin({
     });
     marker.style.left = `${box.left + 6}px`;
     marker.style.top = `${box.top + 6}px`;
-    card.style.left = `${Math.max(VIEWPORT_PAD, Math.min(box.left, vw - cardWidth()))}px`;
+    card.style.left = `${Math.max(VIEWPORT_PAD, Math.min(box.left, rightEdge()))}px`;
     // `locate()` centres the element, so anything taller than half the
     // viewport puts `box.bottom` below the fold — and a fixed layer cannot be
     // scrolled to. Flip above, then clamp.
