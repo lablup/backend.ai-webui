@@ -227,35 +227,36 @@ export function generateWebStyles(
   --bai-content-max: 820px;
   --bai-gutter: 32px;
 
-  /* Outer shell cap. The three-column grid (sider + article + TOC) used
-     to stretch to the full viewport width, so on ultrawide displays
-     (21:9 and wider) the sider stuck to the far-left edge and the TOC to
-     the far-right one, leaving the 820px article marooned between two
-     ~600px voids. Capping the shell and centering it keeps the three
-     columns as one readable block; the leftover width becomes symmetric
-     page margin instead of intra-layout dead space.
-
-     1536px = 280 (sider) + 240 (TOC) + 1016 for the article column,
-     which gives the 820px prose ~98px of slack per side — the same
-     column-to-prose ratio the reference layout uses. Below this width
-     nothing changes, so laptop/1440p viewports render exactly as before. */
+  /* FR-3420: cap for the shell (sider + article + TOC). Uncapped, the
+     grid stretched to the viewport, so on 21:9 displays the sider and TOC
+     stuck to opposite screen edges with the article marooned between two
+     ~600px voids. 1536 = 280 sider + 240 TOC + 1016 article column, which
+     leaves the 820px prose ~98px of slack per side. */
   --bai-layout-max: 1536px;
 
-  /* The rail's vertical grid line, measured from the shell's left edge.
-     The sider already puts its VERSION label, the Introduction icon and
-     every group icon at exactly 24px in, at every viewport width. The
-     topbar brand and the banner icon have to land on that same line, or
-     the logo and the menu beneath it read as two different grids.
+  /* FR-3420: distance from the shell's edge to left-aligned content. The
+     sider already sits its VERSION label and every group icon here, so the
+     topbar and banner adopt it rather than inventing a second grid.
 
-     Both bars are full-bleed, so they reach it by adding this inset on
-     top of the centering gutter rather than by being capped:
-       padding-inline: calc(max(0px, (100% - cap) / 2) + inset)
-     Below the cap the gutter term is 0 and the inset alone applies;
-     above it the gutter grows while the inset holds the content on the
-     grid. Using max(inset, gutter) instead — the obvious-looking form —
-     is what breaks it: the brand would sit at +inset below the cap and
-     snap to +0 above it, so the grid shifts as the window is resized. */
+     24px is where the nav items land structurally: .doc-sidebar__scroll's
+     8px padding + .doc-sidebar-group's 6px margin + the summary's 10px
+     inner padding (FR-2758). Everything else on this line is matched to
+     that, so change those three and this together or the grid breaks. */
   --bai-rail-inset: 24px;
+
+  /* FR-3420: the sider's vertical rhythm — above the version pill, pill to
+     its separator, separator to the first nav item. One value so the three
+     cannot drift apart. */
+  --bai-rail-gap: 14px;
+
+  /* FR-3420: inline padding for the full-bleed bars (topbar, banner). They
+     are not capped, so they reach the grid by adding the inset ON TOP of
+     the centering margin. max(inset, margin) is the trap: it drops the
+     inset once the margin wins, snapping content to the shell edge and
+     visibly shifting the grid as the window crosses the cap. */
+  --bai-bar-inline: calc(
+    max(0px, (100% - var(--bai-layout-max)) / 2) + var(--bai-rail-inset)
+  );
 
   /* Legacy aliases used by F3 grid rules (resolve to BAI tokens). */
   --doc-sidebar-width: var(--bai-sider-w);
@@ -359,18 +360,13 @@ body {
   align-items: center;
   gap: 14px;
   height: var(--bai-topbar-h);
-  /* Full-bleed bar with shell-aligned content: the background and bottom
-     border still span the viewport (a sticky bar that stopped short of
-     the edges would read as a floating card), but the brand / search /
-     action row is inset so the logo lands on the sider's +24px grid line
-     and the icon cluster ends on the TOC's right edge, instead of both
-     clinging to the screen corners on ultrawide displays. See
-     --bai-rail-inset for why this is gutter-plus-inset and not
-     max(inset, gutter). */
+  /* FR-3420: full-bleed bar, shell-aligned content. Background and bottom
+     border still span the viewport — a sticky bar stopping short of the
+     edges reads as a floating card — while the brand / search / action row
+     is inset onto the rail grid instead of clinging to the screen corners
+     on ultrawide displays. See --bai-bar-inline. */
   padding-block: 0;
-  padding-inline: calc(
-    max(0px, (100% - var(--bai-layout-max)) / 2) + var(--bai-rail-inset)
-  );
+  padding-inline: var(--bai-bar-inline);
   background: var(--bai-bg);
   border-bottom: 1px solid var(--bai-border);
 }
@@ -814,13 +810,18 @@ body.bai-palette-open .bai-palette {
 }
 
 /* The version popup anchors to the whole .doc-sidebar-version row (the
-   positioned ancestor); right: 24px matches the row's horizontal
-   padding so the popup's right edge lines up with the pill's. The row
-   has 10px bottom padding below the pill, so top: calc(100% - 4px)
-   yields the same ~6px visual gap as the lang popup. */
+   positioned ancestor); the inset matches the row's inline padding so the
+   popup's right edge lines up with the pill's.
+
+   The offset compensates for the row's bottom padding so the popup keeps
+   the same ~6px visual gap below the pill as the lang popup's
+   top: calc(100% + 6px). It therefore depends on that padding: FR-3420
+   changed it from 10px to --bai-rail-gap + 1px (15px), so this went from
+   calc(100% - 4px) to calc(100% - 9px). Re-derive it if the row's
+   padding-bottom changes again — 6px - padding-bottom. */
 .bai-select__list--version {
-  top: calc(100% - 4px);
-  right: 24px;
+  top: calc(100% - 9px);
+  right: var(--bai-rail-inset);
   min-width: 132px;
   max-width: calc(100% - 48px);
 }
@@ -1018,24 +1019,13 @@ body.bai-drawer-open .bai-scrim {
   flex-direction: column;
   overflow: hidden;
   border-right: 1px solid var(--bai-border);
-  /* FR-3420: the in-flow rail carries no surface tint of its own — the
-     page is one continuous surface and the border-right above (paired
-     with .doc-toc's border-left) is what separates the three columns.
-
-     It used to use --bai-bg-sider, which is only 3/255 away from
-     --bai-bg. While the shell was full-bleed that tint was hidden
-     against the viewport edge, but once the shell is capped and centered
-     the rail detaches from the edge and the tint becomes a band with no
-     boundary on its left — too weak to read as a deliberate rail, too
-     strong to read as nothing. Dropping it is the treatment Fumadocs,
-     Tailwind and the React docs use. The alternative (commit to the tint
-     and give the shell a real outer edge on a recessed canvas) needs a
-     new canvas token and changes every viewport, so it stays a separate
-     decision.
-
-     The ≤880px drawer keeps --bai-bg-sider: there the sider is a fixed
-     overlay floating above the article with its own shadow, so it does
-     want a surface distinct from the content beneath it. */
+  /* FR-3420: the in-flow rail carries no surface tint — the page is one
+     continuous surface, and border-right above (paired with .doc-toc's
+     border-left) separates the three columns. Its old --bai-bg-sider is
+     only 3/255 from --bai-bg, which the capped shell turned into a band
+     with no boundary on its left. The ≤880px drawer keeps --bai-bg-sider:
+     there the sider floats above the article with its own shadow, so it
+     does want a surface distinct from the content beneath. */
   background: var(--bai-bg);
 }
 
@@ -1052,14 +1042,13 @@ body.bai-drawer-open .bai-scrim {
      bubbling out and scrolling the article. Same defense applied to
      the mobile drawer override below. */
   overscroll-behavior: contain;
-  /* FR-3420: padding-top is the sole owner of the gap between the
-     version row's separator and the first nav item, and matches the
-     14px on either side of that separator. .doc-sidebar-intro's
-     margin-top is zeroed for this reason — when the gap was a sum of
-     this padding (10px) plus that margin (6px) it was easy to change one
-     and silently shift the rhythm. The 8px sides are load-bearing for
-     the rail grid (8 + 6 group margin + 10 summary padding = 24px). */
-  padding: 14px 8px 24px;
+  /* FR-3420: padding-block's start solely owns the gap from the version
+     row's separator to the first nav item. .doc-sidebar-intro's margin-top
+     is zeroed for this reason — as a sum of this padding (10px) and that
+     margin (6px) it was easy to change one and shift the rhythm. The 8px
+     sides feed --bai-rail-inset; see that token before changing them. */
+  padding-block: var(--bai-rail-gap) 24px;
+  padding-inline: 8px;
 }
 
 .doc-sidebar__scroll::-webkit-scrollbar {
@@ -1181,70 +1170,50 @@ body.bai-drawer-open .bai-scrim {
    image, BAI primary focus outline) so the two site-level controls feel
    like a coordinated pair. */
 .doc-sidebar-version {
-  /* FR-2768: horizontal layout matching the design handoff —
-     uppercase label on the left, switcher pill on the right, soft
-     bottom rule separating it from the scrolling nav below. The
-     wrapper is a fixed-height row outside the scrollport so it stays
-     visible while the nav scrolls.
-
-     Horizontal padding is 24px (vs. the design's 18px) to align with
-     the indentation of nav items below: the .doc-sidebar__scroll
-     wrapper adds 8px padding and .doc-sidebar-group adds 6px margin
-     plus the summary's 10px inner padding (FR-2758 introduced this
-     extra margin). 8 + 6 + 10 = 24px from the sider edge to the
-     category label — the version label needs to sit at the same
-     x-coordinate so the grid aligns. */
+  /* FR-2768: horizontal layout matching the design handoff — uppercase
+     label on the left, switcher pill on the right, and (FR-3420) an inset
+     rule below separating it from the scrolling nav. The wrapper is a
+     fixed-height row outside the scrollport so it stays visible while the
+     nav scrolls. Inline padding comes from --bai-rail-inset (24px, vs the
+     design's 18px) so the label shares the nav items' grid line. */
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   flex: 0 0 auto;
-  /* FR-3420: symmetric vertical padding so the space above the switcher
-     pill equals the space between the pill and the ::after separator
-     below. It used to be 14px/10px, which pulled the rule toward the
-     pill and made the version block look top-heavy against the 16px
-     that sat on the other side of the rule.
+  /* FR-3420: block padding tuned so the space above the switcher pill, the
+     space from the pill down to the ::after separator, and the space from
+     the separator to the first nav item are all --bai-rail-gap. It was
+     14px/10px, which pulled the rule toward the pill and made the block
+     look top-heavy against the 16px on the other side.
 
-     The three gaps in this rail are now all 14px, measured box to box
-     (the convention .doc-toc__divider already follows with its
-     symmetric 18px margins):
-       sider top    -> pill top          14px  (this padding-top)
-       pill bottom  -> separator         14px  (this padding-bottom)
-       separator    -> first nav item    14px  (.doc-sidebar__scroll)
-     Horizontal padding stays 24px — see the rail-grid note below. */
-  padding: 14px 24px;
+     The +1px is the separator's own height: it is positioned bottom: 0
+     INSIDE this padding box, so it eats the last pixel. Without the +1 the
+     rendered gaps are 14/13/14 rather than 14/14/14. (.doc-toc__divider
+     needs no such correction — it is an in-flow div whose margins sit
+     outside it.) */
+  padding-block: var(--bai-rail-gap) calc(var(--bai-rail-gap) + 1px);
+  padding-inline: var(--bai-rail-inset);
   /* FR-3265: positioning anchor for the .bai-select__list--version
      popup injected by interactions.js. Also the containing block for
      the ::after separator below. */
   position: relative;
 }
 
-/* FR-3420: separate the version row from the nav with an INSET rule,
-   matching .doc-toc__divider (which is inset by the TOC's own padding
-   and separates the outline from the Get-help block).
+/* FR-3420: separate the version row from the nav with an INSET rule on the
+   rail grid, matching .doc-toc__divider. This was a border-bottom on the
+   row, and a border sits outside the padding box, so it always spanned the
+   sider edge to edge — a hard full-width line cutting the rail in two.
 
-   This used to be a border-bottom on the row itself. A border sits
-   outside the padding box, so it always spanned the sider edge to edge
-   — a hard full-width line cutting the rail in two, which reads as
-   heavier than the divider doing the equivalent job in the TOC.
-
-   Inset by the row's own 24px horizontal padding, so the rule starts on
-   the same +24px rail grid as the VERSION label, the group icons and
-   the topbar brand, and ends where the version popup's right edge does
-   (.bai-select__list--version is also right: 24px). Same
-   --bai-border-soft token as the TOC divider, so only the extent
-   differs, not the weight or colour.
-
-   A pseudo-element rather than a real <div> like the TOC's: the version
-   row lives outside .doc-sidebar__scroll, so this needs no markup
-   change and cannot disturb the scrollport's flex sizing. It carries no
-   z-index, so the version popup (z-index 110, opaque) still paints over
-   it. */
+   A pseudo-element rather than a real <div> like the TOC's: the version row
+   lives outside .doc-sidebar__scroll, so this needs no markup change and
+   cannot disturb the scrollport's flex sizing. It carries no z-index, so
+   the version popup (z-index 110, opaque) still paints over it. */
 .doc-sidebar-version::after {
   content: "";
   position: absolute;
-  left: 24px;
-  right: 24px;
+  left: var(--bai-rail-inset);
+  right: var(--bai-rail-inset);
   bottom: 0;
   height: 1px;
   background: var(--bai-border-soft);
@@ -3259,13 +3228,10 @@ export function generateWebsiteStyles(branding?: StyleBrandingTokens): string {
   display: flex;
   align-items: center;
   gap: 10px;
-  /* Same full-bleed-bar / shell-aligned-content split as .bai-topbar, so
-     the banner icon starts on the same +24px rail grid as the brand above
-     it and the sider's icons below it. */
+  /* FR-3420: same full-bleed-bar / shell-aligned-content split as
+     .bai-topbar, so the banner icon starts on the rail grid too. */
   padding-block: 10px;
-  padding-inline: calc(
-    max(0px, (100% - var(--bai-layout-max)) / 2) + var(--bai-rail-inset)
-  );
+  padding-inline: var(--bai-bar-inline);
   border-bottom: 1px solid var(--bai-border);
   /* FR-2758: banner sits sticky right under the topbar so it stays
      visible during scroll (the operator wants this notice to be a
@@ -3360,8 +3326,31 @@ export function generateWebsiteStyles(branding?: StyleBrandingTokens): string {
   background: rgba(255, 255, 255, 0.10);
 }
 
+/* FR-3420: below 880px the sider is hidden, so there is no rail for the
+   full-bleed bars to align to — the article's own 16px gutter (.doc-main)
+   becomes the page grid. Pull both bars onto it so the brand, the banner
+   text and the body text share one left edge on phones; at
+   --bai-rail-inset they would sit 8px outside the article.
+
+   This block has to live AFTER both bars' base rules: .docs-banner is
+   declared further down the sheet than the other ≤880px block, so an
+   override placed up there loses the cascade to it at equal specificity.
+
+   The drawer keeps the sider's internal 24px grid — it is an overlay panel
+   with its own edge, and its nav items derive that 24 structurally. */
+@media (max-width: 880px) {
+  .bai-topbar,
+  .docs-banner {
+    padding-inline: 16px;
+  }
+}
+
 @media (max-width: 640px) {
-  .docs-banner { padding: 10px 16px; font-size: 12.5px; }
+  /* FR-3420: padding-block only. This was a padding shorthand, whose
+     inline half reset the bars' shared inline padding and dropped the
+     banner icon to 16px while the topbar stayed at 24px — 8px off the rail
+     grid. Narrow the vertical padding here if needed, never the inline. */
+  .docs-banner { padding-block: 10px; font-size: 12.5px; }
 }
 .docs-notice {
   display: flex;
