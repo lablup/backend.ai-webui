@@ -11,6 +11,7 @@ let root: ShadowRoot;
 let copied: number;
 let cleared: number;
 let located: string[];
+let went: string[];
 
 const pin = (id: string, label: string): SetPin => ({
   id,
@@ -34,6 +35,7 @@ beforeEach(() => {
   copied = 0;
   cleared = 0;
   located = [];
+  went = [];
   const host = document.createElement('div');
   document.body.append(host);
   root = host.attachShadow({ mode: 'open' });
@@ -42,6 +44,7 @@ beforeEach(() => {
     onCopyAll: () => copied++,
     onClear: () => cleared++,
     onLocate: (id) => located.push(id),
+    onGo: (id) => went.push(id),
   });
 });
 
@@ -137,6 +140,44 @@ describe('createSetDock', () => {
 
       expect(node('.setdock').classList.contains('confirming')).toBe(false);
       expect(node('.clear').textContent).toBe('🗑 Clear all (1)');
+    });
+  });
+
+  // A set spans pages, and an off-page pin has no card — the row is the only
+  // thing it has on screen.
+  describe('a pin on another page', () => {
+    const spread = () => {
+      dock.render(
+        [pin('c_a', 'Sessions › start'), pin('c_b', 'Start › create')],
+        new Map([['c_b', 'Start']]),
+      );
+    };
+
+    it('says what differs and offers to go there instead of scrolling', () => {
+      spread();
+
+      const away = rows()[1];
+      expect(away.classList.contains('away')).toBe(true);
+      expect(away.querySelector('.where')?.textContent).toBe('Start');
+      expect(away.querySelector('.locate')).toBeNull();
+      expect(away.querySelector('.go')).not.toBeNull();
+    });
+
+    it('leaves the pins on this page their scroll-back button', () => {
+      spread();
+
+      expect(rows()[0].classList.contains('away')).toBe(false);
+      expect(rows()[0].querySelector('.go')).toBeNull();
+      expect(rows()[0].querySelector('.locate')).not.toBeNull();
+    });
+
+    it('hands back the id of the row whose go was pressed', () => {
+      spread();
+
+      rows()[1].querySelector<HTMLButtonElement>('.go')?.click();
+
+      expect(went).toEqual(['c_b']);
+      expect(located).toEqual([]);
     });
   });
 

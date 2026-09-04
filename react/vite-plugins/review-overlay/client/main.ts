@@ -7,15 +7,14 @@
  * pastes right into a GitHub PR comment, the PR's Teams thread, or a Claude
  * prompt. The pin stays in the DRAFT SET, so the next ⌘⏎ copies every pin so
  * far as one comment behind one link. Opening that link on this server is the
- * read side: the hash carries the whole anchor, so the element is pinned with
- * no lookup at all.
+ * read side (FR-3859): the hash carries every pin's whole anchor, so they are
+ * MERGED into the draft set and pinned with no lookup at all — the ones on
+ * this page as cards, the rest as rows in the dock.
  */
 import { isAnchorV3 } from './anchor-guard.js';
 import { captureAnchorSignals, withNote } from './anchor.js';
 import {
   blockStamp,
-  buildBlockHtml,
-  buildBlockText,
   buildSetHtml,
   buildSetText,
   captureForBlock,
@@ -25,11 +24,18 @@ import {
 } from './block.js';
 import { decodeAnchor } from './codec.js';
 import {
+  createFocusStore,
   createNavigationGuard,
+  createNoteStore,
+  dedupeById,
+  focusPinId,
+  hasLegacyFragment,
   otherFragment,
-  parseFragment,
+  parseFragments,
   pathNeedsChange,
-  pinUrl,
+  pinSetUrlAt,
+  stripPinParts,
+  watchRoute,
 } from './deeplink.js';
 import { createSetDock } from './dock.js';
 import { createDraftStore, MAX_SET_PINS } from './draft.js';
@@ -82,8 +88,8 @@ function boot() {
 
   const store = createDraftStore();
   let draft: SetPin[] = store.pins();
-  /** The pin a link opened; FR-3859 merges it into the draft instead. */
-  let linkTarget: DeepLinkPinTarget | null = null;
+  const focus = createFocusStore();
+  const carried = createNoteStore();
 
   /**
    * Drawn chrome sits over the app, so the next pick would land on it. The
@@ -262,9 +268,31 @@ function boot() {
   const stacks = new Map<string, PinStack>();
 
   /** A pin nothing draws any more must not keep its element alive. */
-  function pruneStacks() {
+  function pruneStacks(drawn: DeepLinkPinTarget[]) {
+    const live = new Set(drawn.map((target) => target.id));
     for (const id of stacks.keys())
-      if (!store.has(id) && linkTarget?.id !== id) stacks.delete(id);
+      if (!store.has(id) || !live.has(id)) stacks.delete(id);
+  }
+
+  /**
+   * A link's pin joins the set with no stack — the wire does not carry one —
+   * so the first element it lands on gives it one, and that is what its block
+   * quotes from then on.
+   */
+  function freezeStack(id: string, stack: string[]) {
+    const pins = store.pins();
+    const pin = pins.find((held) => held.id === id);
+    if (!pin || pin.origin !== 'link') return;
+    if (
+      pin.stack.length === stack.length &&
+      pin.stack.every((line, index) => line === stack[index])
+    )
+      return;
+    store.save({
+      v: 1,
+      pins: pins.map((held) => (held.id === id ? { ...held, stack } : held)),
+    });
+    syncDraft();
   }
 
   async function readPinStack(
@@ -273,7 +301,10 @@ function boot() {
   ) {
     if (!target) return;
     const id = target.id;
-    if (draft.some((pin) => pin.id === id && pin.origin === 'pick')) return;
+    // A pin the reviewer picked here already has its stack, and a link's is
+    // frozen once it has one; only an empty one is still worth re-reading.
+    const member = draft.find((pin) => pin.id === id);
+    if (member && (member.origin === 'pick' || member.stack.length)) return;
     if (!element) {
       stacks.delete(id);
       return;
@@ -292,6 +323,7 @@ function boot() {
       if (stacks.get(id) !== entry) return;
       entry.stack = stack;
       entry.ready = true;
+      freezeStack(id, stack);
       // An empty stack is the answer once react-grab is there; before that it
       // only means the app has not finished booting.
       if (stack.length || left <= 0 || picker.hasReactGrab()) return;
@@ -301,37 +333,26 @@ function boot() {
   }
 
   /**
-   * What the card's ⧉ writes. A pin the draft set holds copies the WHOLE set —
-   * one comment, one link, whichever card was pressed. A pin that only a link
-   * put on screen is re-rendered here instead: the note, the label and the
-   * link come off the fragment, `pr` and `at` describe this copy, and the id
-   * is what carries the identity. `null` while this element's own reads are
-   * still in flight — a block missing its stack, or claiming `pr=0`, is not
-   * the comment that was written.
+   * What the card's ⧉ writes: the WHOLE set — one comment, one link, whichever
+   * card was pressed. Every pin on screen is a member of it, because a link
+   * merges into the draft (D4). `null` while a link's pin is still having its
+   * ⚛️ stack read off the element it landed on — a block missing its frames is
+   * not the comment that was written.
    */
+  const stackPending = (pin: SetPin): boolean =>
+    pin.origin === 'link' && !pin.stack.length && !stacks.get(pin.id)?.ready;
+
   function buildComment(target: DeepLinkPinTarget): CopyPayload | null {
-    if (draft.some((pin) => pin.id === target.id))
-      return {
-        text: buildSetText(draft),
-        html: buildSetHtml(draft),
-        // The card would otherwise describe one pin, and claim a truncated
-        // note the set's blocks do not have.
-        toast: copiedToast(draft.length),
-      };
-    const read = stacks.get(target.id);
-    if (!read?.ready) return null;
-    const input = {
-      label: target.label,
-      id: target.id,
-      stack: read.stack,
-      text: target.anchor.n ?? '',
-      // The app's own fragment rides alongside the pin (`#tab=logs&bai=v3.…`),
-      // and dropping it would reopen the page on a different tab.
-      url: `${location.origin}${pinUrl(target.anchor, target.id, target.anchorB64, location.hash)}`,
-      pr: serverState?.pr ?? 0,
-      at: blockStamp(),
+    const pin = draft.find((held) => held.id === target.id);
+    if (!pin) return null;
+    if (stackPending(pin)) return null;
+    return {
+      text: buildSetText(draft),
+      html: buildSetHtml(draft),
+      // The card would otherwise describe one pin, and claim a truncated
+      // note the set's blocks do not have.
+      toast: copiedToast(draft.length),
     };
-    return { text: buildBlockText(input), html: buildBlockHtml(input) };
   }
 
   const pins = createPinLayer({
@@ -343,10 +364,10 @@ function boot() {
     onLocated: (element, target) => void readPinStack(target, element),
     onDismiss: (target) => {
       stacks.delete(target.id);
-      if (linkTarget?.id === target.id) linkTarget = null;
       if (!store.has(target.id)) return;
       store.remove(target.id);
       syncDraft();
+      redraw();
     },
   });
   const dock = createSetDock({
@@ -359,10 +380,17 @@ function boot() {
     },
     onLocate: (id) => {
       const element = pins.locatedElement(id);
-      // The one control that reaches every pin has to answer for the ones the
-      // layer never found; FR-3859 turns that into the "go" button.
+      // On this page but never resolved — the ladder gave up, or the app has
+      // not rendered it. An off-page pin gets the "go" button instead.
       if (!element) return ui.showToast('That pin is not on this page');
       element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+    },
+    onGo: (id) => {
+      // Built from the DRAFT SET, never from `location.hash`: the hash was
+      // scrubbed the moment the link merged (D4), and the tab this pin belongs
+      // on is the one it stored, not the one the reviewer stands on.
+      focus.set(id);
+      location.assign(pinSetUrlAt(draft, id));
     },
   });
   // After the layer and the dock: registering the plugin can activate
@@ -370,18 +398,36 @@ function boot() {
   picker.watchForReactGrab();
   const guard = createNavigationGuard();
 
-  const targetOf = (pin: SetPin): DeepLinkPinTarget => ({
+  const targetOf = (pin: SetPin, index: number): DeepLinkPinTarget => ({
     id: pin.id,
     anchor: pin.anchor,
     anchorB64: pin.anchorB64,
     label: pin.label,
+    index,
   });
 
-  function drawnTargets(): DeepLinkPinTarget[] {
-    const targets = draft.map(targetOf);
-    const link = linkTarget;
-    if (link && !draft.some((pin) => pin.id === link.id)) targets.push(link);
-    return targets;
+  /** What differs about an off-page pin's page, for its dock row (D2). */
+  const awayNote = (pin: SetPin): string =>
+    pin.anchor.p !== location.pathname
+      ? resolveRouteLabel(pin.anchor.p)
+      : pin.anchor.q
+        ? `?${pin.anchor.q}`
+        : 'no query';
+
+  /**
+   * A set may span pages. Only its members on THIS page get a view — an
+   * off-page pin runs no resolution ladder, so an identical testid on another
+   * page cannot draw it; the dock row is all it has.
+   */
+  function partition() {
+    const here: DeepLinkPinTarget[] = [];
+    const away = new Map<string, string>();
+    draft.forEach((pin, index) => {
+      if (pathNeedsChange(pin.anchor, location))
+        away.set(pin.id, awayNote(pin));
+      else here.push(targetOf(pin, index));
+    });
+    return { here, away };
   }
 
   /**
@@ -389,22 +435,28 @@ function boot() {
    * scroll the page out from under the reviewer. Only a link names a pin.
    */
   function redraw(focusId: string | null = null) {
-    // Only the draft is the set; a link's pin is drawn beside it, uncounted,
-    // so the glyphs never claim a membership the copy does not have.
-    pins.show(drawnTargets(), { focusId, setSize: draft.length });
+    const { here } = partition();
+    pins.show(here, { focusId, setSize: draft.length });
+    // What the layer no longer draws holds an element from a page we left.
+    pruneStacks(here);
   }
 
   /** The store is the truth; the dock and the composer's button follow it. */
   function syncDraft() {
     draft = store.pins();
-    pruneStacks();
-    dock.render(draft);
+    dock.render(draft, partition().away);
     ui.setDraftSize(draft.length, store.isFull());
   }
 
   /** The whole set, from a click; nothing may be awaited before the write. */
   function copySet() {
     if (!draft.length) return;
+    // The same gate the card's ⧉ has: a block missing the ⚛️ frames of the
+    // element its pin just landed on is not the comment that was written.
+    if (draft.some((pin) => stackPending(pin) && pins.locatedElement(pin.id))) {
+      ui.showToast('Still reading a pin — try again');
+      return;
+    }
     const count = draft.length;
     const copied = ui.copyText(buildSetText(draft), buildSetHtml(draft));
     const done = (ok: boolean) =>
@@ -421,27 +473,119 @@ function boot() {
       ? currentRouteLabel()
       : resolveRouteLabel(anchor.p);
 
+  /**
+   * A pin a link brought. It carries no `at`/`pr` — the wire has none — so its
+   * block emits no marker comment: a fabricated stamp would produce one whose
+   * hash does not verify (D5). The app's own fragment travels with it, or the
+   * set would reopen on a different tab.
+   */
+  const linkPin = (
+    part: { id: string; anchorB64: string },
+    anchor: AnchorV3,
+    appHash: string,
+  ): SetPin => ({
+    id: part.id,
+    origin: 'link',
+    anchor,
+    anchorB64: part.anchorB64,
+    label: landmarkLabel(anchorRouteLabel(anchor), anchor),
+    appHash,
+    stack: [],
+  });
+
+  /** One sentence for the whole link, however many parts it turned out to have. */
+  function mergeToast(
+    parts: number,
+    added: number,
+    present: number,
+    unread: number,
+    refused: number,
+  ): string {
+    const said: string[] = [];
+    if (added)
+      said.push(`Added ${added} ${added === 1 ? 'pin' : 'pins'} from the link`);
+    else if (present)
+      said.push(
+        present === 1
+          ? 'That pin is already in your set'
+          : `All ${present} pins are already in your set`,
+      );
+    if (unread)
+      said.push(
+        parts === 1
+          ? 'Could not read the anchor in that link'
+          : `${unread} of ${parts} pins could not be read`,
+      );
+    if (refused)
+      said.push(`${refused} did not fit — your set is full at ${MAX_SET_PINS}`);
+    return said.join(' · ');
+  }
+
+  /** A reload must not re-apply the link and resurrect a dismissed pin (D4). */
+  function scrubPinParts() {
+    const rest = stripPinParts(location.hash);
+    const url = `${location.pathname}${location.search}${rest ? `#${rest}` : ''}`;
+    try {
+      history.replaceState(history.state, '', url);
+    } catch {
+      // A browser that refuses the rewrite still shows the set; only a reload
+      // would re-apply the link.
+    }
+  }
+
   async function applyFragment(hash: string) {
-    const fragment = parseFragment(hash);
-    if (!fragment) return;
-    if (fragment.kind === 'legacy') {
-      ui.showToast('That is an old #bai-review link — pick the element again');
+    // One-shot handovers from the document that navigated here, read before
+    // the first `await` so a hash the SPA rewrites cannot lose them.
+    const handover = focus.take();
+    const carriedNote = carried.take();
+    const parts = parseFragments(hash);
+    if (!parts.length) {
+      if (hasLegacyFragment(hash))
+        ui.showToast(
+          'That is an old #bai-review link — pick the element again',
+        );
       return;
     }
-    const anchor = await decodeAnchor(fragment.anchorB64);
+    const appHash = stripPinParts(hash);
+    const decoded = await Promise.all(
+      parts.map((part) => decodeAnchor(part.anchorB64)),
+    );
     // The link is a stranger's: `decodeAnchor` checks `v`, `s` and `p`, the
-    // rest of the payload reaches `querySelector` and the DOM unchecked.
-    if (!anchor || !isAnchorV3(anchor)) {
-      ui.showToast('Could not read the anchor in that link');
-      return;
-    }
-    if (pathNeedsChange(anchor, location)) {
-      // The fragment this call was handed, not the live one: the SPA can
-      // rewrite the hash while `decodeAnchor` is still in flight.
-      const target = pinUrl(anchor, fragment.id, fragment.anchorB64, hash);
-      if (guard.shouldNavigate(fragment.id, target)) {
-        // Path and query first (R3.3): a full reload, because React Router
-        // owns the history and re-running our boot is cheap.
+    // rest of the payload reaches `querySelector` and the DOM unchecked. A
+    // part that fails costs only itself.
+    const opened = parts.flatMap((part, index) => {
+      const anchor = decoded[index];
+      return anchor && isAnchorV3(anchor)
+        ? [linkPin(part, anchor, appHash)]
+        : [];
+    });
+    const { added, present } = store.merge(opened);
+    syncDraft();
+    const message = mergeToast(
+      parts.length,
+      added,
+      // Our own "go" re-opens the set it just persisted; reporting those back
+      // as duplicates would answer an action the reviewer never took.
+      handover ? 0 : present,
+      parts.length - opened.length,
+      dedupeById(opened).length - added - present,
+    );
+
+    const set = store.pins();
+    const focusId = focusPinId(set, location, handover);
+    // Path and query are applied only when NO member is here (D2): arriving on
+    // pin 3's page must not bounce the reviewer back to pin 1's.
+    if (focusId && !set.some((pin) => !pathNeedsChange(pin.anchor, location))) {
+      // The focus pin's own fragment, not the live hash: the SPA can rewrite
+      // that while `decodeAnchor` is in flight, and it belongs to this page.
+      const target = pinSetUrlAt(set, focusId);
+      if (guard.shouldNavigate(focusId, target)) {
+        focus.set(focusId);
+        // The counts belong to this open; the page it lands on sees only its
+        // own pins coming back.
+        if (message) carried.set(message);
+        // A full reload, because React Router owns the history and re-running
+        // our boot is cheap.
         location.assign(target);
         return;
       }
@@ -449,20 +593,29 @@ function boot() {
     } else {
       guard.landed();
     }
-    // The layer owns the retry ladder: one driver for however many pins the
-    // draft set and the link add up to, and one give-up sentence for them all.
-    linkTarget = {
-      id: fragment.id,
-      anchor,
-      anchorB64: fragment.anchorB64,
-      label: landmarkLabel(anchorRouteLabel(anchor), anchor),
-    };
-    redraw(fragment.id);
+    scrubPinParts();
+    const said = carriedNote ?? message;
+    if (said) ui.showToast(said);
+    // The layer owns the retry ladder: one driver for every on-page member,
+    // and one give-up sentence for them all.
+    redraw(focusId);
   }
 
   window.addEventListener('hashchange', () => {
     guard.reset();
+    // A hash that changed only the app's own part carries no part to hydrate,
+    // and the partition reads path and query only — so nothing else moves.
     void applyFragment(location.hash);
+  });
+
+  /** An SPA navigation re-partitions the set: new views here, rows for the rest. */
+  let routeKey = location.pathname + location.search;
+  watchRoute(() => {
+    const key = location.pathname + location.search;
+    if (key === routeKey) return;
+    routeKey = key;
+    syncDraft();
+    redraw();
   });
 
   syncDraft();

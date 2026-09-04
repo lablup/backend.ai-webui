@@ -75,7 +75,7 @@ interface SetPinBase {
   anchorB64: string;
   /** `landmarkLabel(...)` output. */
   label: string;
-  /** `otherFragment(location.hash)` at add time; `''` for a link's pins. */
+  /** The app's own fragment the pin was picked — or opened from a link — with. */
   appHash: string;
   /** `getStackContext()` output, split into lines. */
   stack: string[];

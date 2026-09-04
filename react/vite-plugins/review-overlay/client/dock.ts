@@ -47,6 +47,12 @@ const STYLE = `
     flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .setdock .row.away .rowlabel { color: var(--bai-review-text-dim); }
+  /* What differs about that pin's page — the row is the only thing it has. */
+  .setdock .where {
+    flex: none; max-width: 45%; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; font-size: 11px; color: var(--bai-review-text-dim);
+  }
 `;
 
 export interface SetDockOptions {
@@ -57,6 +63,8 @@ export interface SetDockOptions {
   onClear: () => void;
   /** Scroll the page back to this pin. */
   onLocate: (id: string) => void;
+  /** Open the whole set on that pin's own page — it is not on this one (D2). */
+  onGo?: (id: string) => void;
 }
 
 const button = (
@@ -112,7 +120,15 @@ export function createSetDock(options: SetDockOptions) {
     options.onClear();
   });
 
-  function render(pins: SetPin[]) {
+  /**
+   * `away` maps a pin the layer cannot draw here to what differs about its
+   * page. Those rows are the ONLY thing an off-page pin has on screen, so they
+   * carry the difference and a "go" instead of the scroll-back button.
+   */
+  function render(
+    pins: SetPin[],
+    away: ReadonlyMap<string, string> = new Map(),
+  ) {
     setConfirming(false);
     dock.classList.toggle('shown', pins.length > 0);
     title.textContent = `📍 ${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
@@ -130,9 +146,22 @@ export function createSetDock(options: SetDockOptions) {
         label.className = 'rowlabel';
         label.textContent = pin.label;
         label.title = pin.label;
-        const locate = button('locate', '📍', 'Scroll back to this element');
-        locate.addEventListener('click', () => options.onLocate(pin.id));
-        row.append(idx, label, locate);
+        row.append(idx, label);
+        const elsewhere = away.get(pin.id);
+        if (elsewhere === undefined) {
+          const locate = button('locate', '📍', 'Scroll back to this element');
+          locate.addEventListener('click', () => options.onLocate(pin.id));
+          row.append(locate);
+          return row;
+        }
+        row.classList.add('away');
+        const where = document.createElement('span');
+        where.className = 'where';
+        where.textContent = elsewhere;
+        where.title = elsewhere;
+        const go = button('go', '↗', 'Open the set on this pin’s page');
+        go.addEventListener('click', () => options.onGo?.(pin.id));
+        row.append(where, go);
         return row;
       }),
     );
