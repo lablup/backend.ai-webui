@@ -135,7 +135,7 @@ function preprocessToml(config: RawTomlConfig): void {
  * - Fetch failure (network error, non-200, SPA fallback): `{ config: null }` — no error.
  * - Parse failure (invalid TOML after fetch succeeds): `{ config: null, error }`.
  */
-interface ConfigFetchResult {
+export interface ConfigFetchResult {
   config: RawTomlConfig | null;
   error?: unknown;
 }
@@ -176,6 +176,37 @@ export async function fetchAndParseConfig(
     // Parse error — config was fetched but TOML is invalid.
     return { config: null, error };
   }
+}
+
+/** The app's own config.toml: `es6://` resolves from app/ inside Electron. */
+export const getAppConfigPath = (): string =>
+  (globalThis as Record<string, unknown>).isElectron
+    ? 'es6://config.toml'
+    : '../../config.toml';
+
+let appConfigPromise: Promise<ConfigFetchResult> | null = null;
+
+/**
+ * Fetch the app's config.toml once per page load and share the result with
+ * every caller (config init, endpoint resolution, appearance bootstrap). A
+ * missing or unparsable file is not cached, so a later caller can retry.
+ */
+export function fetchAppConfigOnce(): Promise<ConfigFetchResult> {
+  if (!appConfigPromise) {
+    appConfigPromise = fetchAndParseConfig(getAppConfigPath()).then(
+      (result) => {
+        if (!result.config) {
+          appConfigPromise = null;
+        }
+        return result;
+      },
+      (error) => {
+        appConfigPromise = null;
+        throw error;
+      },
+    );
+  }
+  return appConfigPromise;
 }
 
 /**
@@ -269,13 +300,7 @@ export function initializeConfigOnce(
 ): Promise<void> {
   if (!configInitPromise) {
     configInitPromise = (async () => {
-      // Electron uses es6:// protocol which resolves from app/ directory
-      // Web uses relative path from the HTML location
-      const configPath = (globalThis as Record<string, unknown>).isElectron
-        ? 'es6://config.toml'
-        : '../../config.toml';
-
-      const result = await fetchAndParseConfig(configPath);
+      const result = await fetchAppConfigOnce();
 
       if (!result.config) {
         // config.toml is missing or failed to parse — apply defaults so the
