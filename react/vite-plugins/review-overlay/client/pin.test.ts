@@ -236,7 +236,7 @@ describe('createDeepLinkPin', () => {
 
     // `getBoundingClientRect` still reports the box of an element a scroller
     // has clipped out of sight, so the window test alone leaves an orphan pin.
-    it('drops the pin when a scroller clips the element out of sight', () => {
+    it('docks the card when a scroller clips the element out of sight', () => {
       document.body.insertAdjacentHTML(
         'beforeend',
         '<div id="scroller" style="overflow-x: auto; overflow-y: auto"></div>',
@@ -256,7 +256,9 @@ describe('createDeepLinkPin', () => {
       show();
       expect(pin.locate()).toBe(true);
       expect(marker().classList.contains('found')).toBe(false);
-      expect(card().classList.contains('found')).toBe(false);
+      expect(marked()).toBe(false);
+      expect(card().classList.contains('found')).toBe(true);
+      expect(card().classList.contains('away')).toBe(true);
     });
 
     // A resize is pure geometry: it must not wait on the mutation debounce.
@@ -280,7 +282,10 @@ describe('createDeepLinkPin', () => {
       expect(marker().style.top).toBe('406px');
     });
 
-    it('drops the marker and the card when the element scrolls away', () => {
+    // The marker and the box belong ON the element and leave with it; the card
+    // is the comment, and it carries the control that scrolls back — hiding it
+    // is what put that button out of reach exactly when it was wanted.
+    it('drops the marker but docks the card when the element scrolls away', () => {
       const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
       show();
       expect(pin.locate()).toBe(true);
@@ -296,8 +301,60 @@ describe('createDeepLinkPin', () => {
       window.dispatchEvent(new Event('resize'));
       return new Promise((resolve) => setTimeout(resolve, 400)).then(() => {
         expect(marker().classList.contains('found')).toBe(false);
-        expect(card().classList.contains('found')).toBe(false);
+        expect(marked()).toBe(false);
+        expect(card().classList.contains('found')).toBe(true);
+        expect(card().classList.contains('away')).toBe(true);
+        // Scrolled off the top, so the card docks to the top edge.
+        expect(card().style.top).toBe('8px');
+        expect(
+          host.shadowRoot?.querySelector('.awaynote')?.textContent,
+        ).toContain('↑');
       });
+    });
+
+    it('anchors the card again once the element scrolls back', () => {
+      const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      const away = {
+        left: 20,
+        right: 420,
+        width: 400,
+        top: 2000,
+        bottom: 2200,
+        height: 200,
+      } as DOMRect;
+      const back = element.getBoundingClientRect;
+      element.getBoundingClientRect = () => away;
+      window.dispatchEvent(new Event('resize'));
+      return new Promise((resolve) => setTimeout(resolve, 400))
+        .then(() => {
+          expect(card().classList.contains('away')).toBe(true);
+          expect(
+            host.shadowRoot?.querySelector('.awaynote')?.textContent,
+          ).toContain('↓');
+          element.getBoundingClientRect = back;
+          window.dispatchEvent(new Event('resize'));
+          return new Promise((resolve) => setTimeout(resolve, 400));
+        })
+        .then(() => {
+          expect(card().classList.contains('away')).toBe(false);
+          expect(marked()).toBe(true);
+          expect(host.shadowRoot?.querySelector('.awaynote')?.textContent).toBe(
+            '',
+          );
+        });
+    });
+
+    it('clears the docked state when the pin is dismissed', () => {
+      mountSized({ top: -900, bottom: -700, height: 200 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(card().classList.contains('away')).toBe(true);
+      pin.dismiss();
+      expect(card().classList.contains('found')).toBe(false);
+      expect(card().classList.contains('away')).toBe(false);
+      expect(host.shadowRoot?.querySelector('.awaynote')?.textContent).toBe('');
     });
   });
 

@@ -52,6 +52,13 @@ const STYLE = `
     box-shadow: 0 4px 18px var(--bai-review-shadow);
   }
   .card.found { display: block; }
+  /* The element is gone from the viewport; the card is docked, not anchored. */
+  .card.away { border-style: dashed; opacity: 0.94; }
+  .card .awaynote {
+    color: var(--bai-review-text-dim); font-size: 11px; margin-bottom: 6px;
+    padding-right: 62px;
+  }
+  .card .awaynote:empty { display: none; }
   /* The reviewer's own words lead. An anchor from before the note travelled
      carries none, and :empty leaves no gap where it would have been. */
   .card .note {
@@ -167,6 +174,8 @@ export function createDeepLinkPin({
   const truncText = run();
   truncText.textContent = 'Note truncated — the comment has the whole of it.';
   trunc.append(truncText);
+  const away = document.createElement('div');
+  away.className = 'awaynote';
   const label = document.createElement('div');
   label.className = 'label';
   const labelText = run();
@@ -198,7 +207,7 @@ export function createDeepLinkPin({
   commentCopy.textContent = '⧉';
   commentCopy.title = 'Copy the whole comment';
   commentCopy.setAttribute('aria-label', 'Copy the whole comment');
-  card.append(close, locateButton, commentCopy, note, trunc, label, sub);
+  card.append(close, locateButton, commentCopy, away, note, trunc, label, sub);
   const markBox = document.createElement('div');
   markBox.className = 'markbox';
   layer.append(markBox, marker, card);
@@ -273,7 +282,34 @@ export function createDeepLinkPin({
   function hide() {
     marker.classList.remove('found');
     card.classList.remove('found');
+    card.classList.remove('away');
     markBox.classList.remove('found');
+    away.textContent = '';
+  }
+
+  /**
+   * The element scrolled out of sight. The marker and the box belong ON it and
+   * go with it, but the card is the comment — and the control that scrolls
+   * back lives in it, so hiding the card is what made that button unreachable
+   * exactly when it was wanted. It docks to the edge the element left by.
+   */
+  function placeAway(box: DOMRect, vh: number, vw: number) {
+    marker.classList.remove('found');
+    markBox.classList.remove('found');
+    card.classList.add('found');
+    card.classList.add('away');
+    const height = card.offsetHeight;
+    const up = box.bottom <= 0;
+    const down = box.top >= vh;
+    away.textContent = up
+      ? '↑ Scrolled above — 📍 goes back'
+      : down
+        ? '↓ Scrolled below — 📍 goes back'
+        : '↔ Off to the side — 📍 goes back';
+    card.style.left = `${Math.max(8, Math.min(box.left, vw - 340))}px`;
+    card.style.top = up
+      ? `${VIEWPORT_PAD}px`
+      : `${Math.max(VIEWPORT_PAD, vh - height - VIEWPORT_PAD)}px`;
   }
 
   function place() {
@@ -281,8 +317,8 @@ export function createDeepLinkPin({
     const box = markedBox(located);
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    // A scrolled-away element must not leave a floating card behind. A rect
-    // with no size at all is jsdom (or `display: contents`), not off-screen.
+    // A rect with no size at all is jsdom (or `display: contents`), not a
+    // scrolled-away element.
     const measured = box.width > 0 || box.height > 0;
     const outside = (area: {
       top: number;
@@ -301,9 +337,11 @@ export function createDeepLinkPin({
       const area = clip.getBoundingClientRect();
       return (area.width > 0 || area.height > 0) && outside(area);
     });
-    if (measured && (offscreen || clipped)) return hide();
+    if (measured && (offscreen || clipped)) return placeAway(box, vh, vw);
     marker.classList.add('found');
     card.classList.add('found');
+    card.classList.remove('away');
+    away.textContent = '';
     markBox.classList.add('found');
     Object.assign(markBox.style, {
       left: `${box.left}px`,
