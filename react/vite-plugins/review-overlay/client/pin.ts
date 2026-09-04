@@ -116,7 +116,8 @@ export interface DeepLinkPinOptions {
   /**
    * Re-render this pin's whole comment, SYNCHRONOUSLY — the copy runs through
    * `execCommand` on the gateway origin, so nothing may be awaited inside the
-   * gesture. `main.ts` owns it: the server state and the stack live there.
+   * gesture. `main.ts` owns it: the server state and the stack live there, and
+   * `null` means those reads have not landed for this element yet.
    */
   buildComment: (target: DeepLinkPinTarget) => CopyPayload | null;
   /** The pin settled on a different element — or on none. */
@@ -443,7 +444,7 @@ export function createDeepLinkPin({
     if (!target) return;
     const payload = buildComment(target);
     if (!payload) {
-      showToast('Could not rebuild that comment');
+      showToast('Still reading this element — try again');
       return;
     }
     write(

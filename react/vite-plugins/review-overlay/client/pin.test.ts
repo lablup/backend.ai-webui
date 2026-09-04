@@ -654,12 +654,12 @@ describe('createDeepLinkPin', () => {
       expect(toasts).toEqual([]);
     });
 
-    it('says so rather than writing nothing when the block cannot be built', () => {
+    it('says so rather than writing a half-read block', () => {
       comment = null;
       show();
       commentCopy().click();
       expect(copied).toEqual([]);
-      expect(toasts).toEqual(['Could not rebuild that comment']);
+      expect(toasts).toEqual(['Still reading this element — try again']);
     });
 
     it('waits for an async clipboard before it claims success', async () => {

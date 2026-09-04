@@ -31,8 +31,22 @@ function stubExecCommand(): Record<string, string> {
   return written;
 }
 
+interface OpenPinOptions {
+  /** Extra fragment parts the pin rides alongside, e.g. `tab=logs`. */
+  otherHash?: string;
+  /** Withhold react-grab, the way a pin that beats the app's boot sees it. */
+  withoutReactGrab?: boolean;
+  /** Hold `/__review/state` open, so the pin locates before `pr` is known. */
+  slowState?: boolean;
+  /** Boot ticks to run; short enough to catch the pin mid-read. */
+  ticks?: number;
+}
+
 /** Boot the overlay on a `#bai=v3` link to `[data-testid="create"]`. */
-async function openPin(over: Partial<AnchorV3> = {}): Promise<string> {
+async function openPin(
+  over: Partial<AnchorV3> = {},
+  options: OpenPinOptions = {},
+): Promise<string> {
   const anchor: AnchorV3 = {
     v: 3,
     s: '[data-testid="create"]',
@@ -44,29 +58,40 @@ async function openPin(over: Partial<AnchorV3> = {}): Promise<string> {
   };
   const anchorB64 = await encodeAnchor(anchor);
   document.body.innerHTML = '<button data-testid="create">Create</button>';
-  history.replaceState({}, '', `/#bai=v3.${ID}.${anchorB64}`);
-  window.__REACT_GRAB__ = {
-    activate: () => undefined,
-    deactivate: () => undefined,
-    isActive: () => false,
-    registerPlugin: (_plugin: Plugin) => undefined,
-    getStackContext: () =>
-      Promise.resolve(`  in CreateButton (at ${ROOT}/${FILE})`),
-    getSource: () => Promise.resolve(null),
-  } as unknown as ReactGrabAPI;
+  const rest = options.otherHash ? `${options.otherHash}&` : '';
+  history.replaceState({}, '', `/#${rest}bai=v3.${ID}.${anchorB64}`);
+  if (options.withoutReactGrab) delete window.__REACT_GRAB__;
+  else
+    window.__REACT_GRAB__ = {
+      activate: () => undefined,
+      deactivate: () => undefined,
+      isActive: () => false,
+      registerPlugin: (_plugin: Plugin) => undefined,
+      getStackContext: () =>
+        Promise.resolve(`  in CreateButton (at ${ROOT}/${FILE})`),
+      getSource: () => Promise.resolve(null),
+    } as unknown as ReactGrabAPI;
+  const state = { json: () => Promise.resolve({ pr: 42, root: ROOT }) };
   vi.stubGlobal('fetch', () =>
-    Promise.resolve({ json: () => Promise.resolve({ pr: 42, root: ROOT }) }),
+    options.slowState
+      ? new Promise((resolve) => setTimeout(() => resolve(state), 5000))
+      : Promise.resolve(state),
   );
 
   vi.resetModules();
   delete window.__baiReviewOverlay;
   await import('./main.js');
   // The state gate, the anchor inflate, the locate ladder and the stack read.
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < (options.ticks ?? 12); i++) {
     await new Promise((resolve) => setTimeout(resolve, 10));
   }
   return anchorB64;
 }
+
+const toast = () =>
+  document
+    .querySelector('[data-bai-review-overlay]')
+    ?.shadowRoot?.querySelector('.toast')?.textContent ?? '';
 
 const click = (selector: string) =>
   document
@@ -129,5 +154,60 @@ describe('copying the whole comment off a deep link', () => {
     click('.copyall');
 
     expect(written['text/plain'].startsWith('> 📍 ')).toBe(true);
+  });
+
+  // The pin can ride inside a fragment the app already uses; a link that
+  // reopens on the wrong tab is not the link that was shared.
+  it('keeps the app fragment the pin rides alongside', async () => {
+    const anchorB64 = await openPin({}, { otherHash: 'tab=logs' });
+    const written = stubExecCommand();
+
+    click('.copyall');
+
+    expect(written['text/plain']).toContain(
+      `(${location.origin}/#tab=logs&bai=v3.${ID}.${anchorB64})`,
+    );
+  });
+
+  // `pr` and the ⚛️ stack are read per element; a block written before they
+  // land would claim `pr=0` and quietly drop the frames.
+  it('refuses to write until this element has been read', async () => {
+    await openPin({}, { slowState: true });
+    const card = document
+      .querySelector('[data-bai-review-overlay]')
+      ?.shadowRoot?.querySelector('.card');
+    // The pin is drawn — it is only `pr` and the stack that have not landed.
+    expect(card?.classList.contains('found')).toBe(true);
+    const written = stubExecCommand();
+
+    click('.copyall');
+
+    expect(written['text/plain']).toBeUndefined();
+    expect(toast()).toBe('Still reading this element — try again');
+  });
+
+  // react-grab arrives with the app, so a pin that locates first sees an
+  // empty stack — and `onLocated` will not fire again for the same element.
+  it('retries the stack for a pin that beat react-grab to the page', async () => {
+    await openPin({}, { withoutReactGrab: true, ticks: 4 });
+    window.__REACT_GRAB__ = {
+      activate: () => undefined,
+      deactivate: () => undefined,
+      isActive: () => false,
+      registerPlugin: (_plugin: Plugin) => undefined,
+      getStackContext: () =>
+        Promise.resolve(`  in CreateButton (at ${ROOT}/${FILE})`),
+      getSource: () => Promise.resolve(null),
+    } as unknown as ReactGrabAPI;
+    for (let i = 0; i < 8; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+    const written = stubExecCommand();
+
+    click('.copyall');
+
+    expect(written['text/plain']).toContain(
+      `> ⚛️ in CreateButton (at ${FILE})`,
+    );
   });
 });
