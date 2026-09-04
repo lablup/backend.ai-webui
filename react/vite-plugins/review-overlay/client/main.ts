@@ -26,10 +26,9 @@ import {
   parseFragment,
   pathNeedsChange,
   pinUrl,
-  retryUntil,
 } from './deeplink.js';
 import { createPicker } from './picker.js';
-import { createDeepLinkPin, type DeepLinkPinTarget } from './pin.js';
+import { createPinLayer, type DeepLinkPinTarget } from './pin.js';
 import type {
   AnchorComponent,
   AnchorV3,
@@ -40,9 +39,6 @@ import { createOverlayUI } from './ui.js';
 
 /** The SPA's own `<Navigate replace>` redirects drop the fragment on login. */
 const BOOT_HASH = location.hash;
-/** 10 s of SPA boot at 500 ms — the login form is lazy behind the splash. */
-const ANCHOR_TRIES = 20;
-const ANCHOR_EVERY_MS = 500;
 
 if (!window.__baiReviewOverlay) {
   window.__baiReviewOverlay = true;
@@ -72,6 +68,13 @@ function boot() {
     null;
   /** Typing faster than `encodeAnchor` resolves; only the last one counts. */
   let encodeSeq = 0;
+  let pickActive = false;
+  /**
+   * Drawn cards sit over the app, so the next pick would land on one. The
+   * markers are click-through already; only the cards have to fold away.
+   */
+  const syncCollapse = () =>
+    pins.setCollapsed(pickActive || ui.getComposeTarget() !== null);
 
   const ui = createOverlayUI({
     onBuildBlock: (text) => {
@@ -90,6 +93,7 @@ function boot() {
       capture = null;
       pick = null;
       picker.stop();
+      syncCollapse();
     },
     onEscape: () => picker.stop(),
   });
@@ -99,6 +103,7 @@ function boot() {
       capture = null;
       pick = null;
       ui.openCompose(element, x, y, region);
+      syncCollapse();
       // One capture per pick: the label, the anchor payload and the rect all
       // come from this single walk, measured while the page still looks the
       // way the reviewer saw it.
@@ -106,7 +111,11 @@ function boot() {
       ui.setComposeLabel(landmarkLabel(currentRouteLabel(), anchor));
       void prepare(element, anchor);
     },
-    onModeChange: (active) => ui.setPickActive(active),
+    onModeChange: (active) => {
+      pickActive = active;
+      ui.setPickActive(active);
+      syncCollapse();
+    },
     onHover: (rect, borderRadius) => ui.setHoverRect(rect, borderRadius),
     isOwnEvent: (evt) => ui.isOwnEvent(evt),
     showHint: (message) => ui.showToast(message),
@@ -173,8 +182,6 @@ function boot() {
   const currentRouteLabel = () =>
     resolveRouteLabel(location.pathname, window.__BAI_REVIEW__?.routeLabel);
 
-  picker.watchForReactGrab();
-
   // ------------------------------------------------- deep link (FR-3813)
 
   /** A pin that locates before react-grab registers, retried into a stack. */
@@ -234,7 +241,7 @@ function boot() {
     return { text: buildBlockText(input), html: buildBlockHtml(input) };
   }
 
-  const pin = createDeepLinkPin({
+  const pins = createPinLayer({
     root: ui.root,
     host: ui.host,
     copyText: ui.copyText,
@@ -242,8 +249,10 @@ function boot() {
     buildComment,
     onLocated: (element) => void readPinStack(element),
   });
+  // After the layer: registering the plugin can activate react-grab straight
+  // away, and `syncCollapse` reaches `pins`.
+  picker.watchForReactGrab();
   const guard = createNavigationGuard();
-  let cancelRetry = () => undefined as void;
 
   /** The route the pin was made on, not the one the reader happens to be on. */
   const anchorRouteLabel = (anchor: AnchorV3) =>
@@ -279,18 +288,16 @@ function boot() {
     } else {
       guard.landed();
     }
-    cancelRetry();
-    pin.show({
-      id: fragment.id,
-      anchor,
-      anchorB64: fragment.anchorB64,
-      label: landmarkLabel(anchorRouteLabel(anchor), anchor),
-    });
-    cancelRetry = retryUntil(() => pin.locate(), {
-      tries: ANCHOR_TRIES,
-      everyMs: ANCHOR_EVERY_MS,
-      onGiveUp: () => ui.showToast('Could not find that element on this page'),
-    });
+    // The layer owns the retry ladder: one driver for however many pins the
+    // link carried, and one give-up sentence for all of them.
+    pins.show([
+      {
+        id: fragment.id,
+        anchor,
+        anchorB64: fragment.anchorB64,
+        label: landmarkLabel(anchorRouteLabel(anchor), anchor),
+      },
+    ]);
   }
 
   window.addEventListener('hashchange', () => {
