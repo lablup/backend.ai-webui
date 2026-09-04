@@ -464,201 +464,203 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     },
   });
 
-  const handleOk = () => {
-    formRef.current
-      ?.validateFields()
-      .then(async (values) => {
-        if (bulkCreate) {
-          const bulkValues = values as unknown as BulkFormValues;
-          const users = _.range(1, bulkValues.user_count + 1).map((i) => ({
-            email: formatBulkEmail(
-              bulkValues.email_prefix,
-              bulkValues.email_suffix,
-              i,
-              bulkValues.user_count,
+  const isInFlight =
+    isInFlightUpdateUserV2 ||
+    isInFlightCommitCreateUser ||
+    isInFlightBulkCreateUsers;
+
+  const handleFinish = (values: FormValues) => {
+    // Enter in a text input submits too; the OK button's lock does not cover it.
+    if (isInFlight) return;
+    if (bulkCreate) {
+      const bulkValues = values as unknown as BulkFormValues;
+      const users = _.range(1, bulkValues.user_count + 1).map((i) => ({
+        email: formatBulkEmail(
+          bulkValues.email_prefix,
+          bulkValues.email_suffix,
+          i,
+          bulkValues.user_count,
+        ),
+        username: formatBulkUsername(
+          bulkValues.email_prefix,
+          i,
+          bulkValues.user_count,
+        ),
+        password: bulkValues.password as string,
+        domainName: bulkValues.domain_name,
+        needPasswordChange: bulkValues.need_password_change || false,
+        status: statusToV2[bulkValues.status] || 'ACTIVE',
+        role: roleToV2[bulkValues.role] || 'USER',
+        description: bulkValues.description || null,
+        groupIds: bulkValues.group_ids || null,
+        allowedClientIp: bulkValues.allowed_client_ip || null,
+        resourcePolicy: bulkValues.resource_policy || 'default',
+        sudoSessionEnabled: bulkValues.sudo_session_enabled || false,
+      }));
+
+      commitBulkCreateUsers({
+        variables: {
+          input: { users },
+        },
+        onCompleted: (res, errors) => {
+          if (errors?.[0]) {
+            message.error(errors[0].message || t('error.UnknownError'));
+            logger.error(errors);
+            return;
+          }
+
+          const createdList =
+            res.adminBulkCreateUsersWithKeypairV2?.created ?? [];
+          const succeededCount = createdList.length;
+          const failedList =
+            res.adminBulkCreateUsersWithKeypairV2?.failed ?? [];
+          setCreatedCount(succeededCount);
+          if (succeededCount > 0) {
+            setHasCreatedAny(true);
+          }
+
+          // Reveal the generated keypairs (secret keys are returned once).
+          const keypairs = _.map(createdList, (created) => created.keypair);
+          if (keypairs.length > 0) {
+            setCreatedKeypairs(keypairs);
+          }
+
+          if (failedList.length > 0) {
+            // Immediate failure notice as a toast on top of the detail
+            // modal (matches FR-3357's AssignRoleModal) — the modal
+            // carries the per-user table, the message the at-a-glance cue.
+            message.error(
+              t('credential.BulkCreateUserPartialFailure', {
+                successCount: succeededCount,
+                failCount: failedList.length,
+              }),
+            );
+            // The per-user reasons only reach the admin through the error
+            // modal — this form (or the keypair list of the users that were
+            // created) stays open behind it, so nothing closes here.
+            setFailedUsers(toFailedUserCreations(failedList));
+            return;
+          }
+
+          message.success(
+            t('credential.BulkCreateUserSuccess', {
+              count: succeededCount,
+            }),
+          );
+          if (keypairs.length === 0) {
+            onRequestClose(true);
+          }
+        },
+        onError: (err) => {
+          message.error(t('dialog.ErrorOccurred'));
+          logger.error(err);
+        },
+      });
+      return;
+    }
+
+    const formValues = values as FormValues;
+
+    if (user) {
+      commitUpdateUserV2({
+        variables: {
+          userId: toLocalId(user.id),
+          input: {
+            username: formValues.username,
+            password: formValues.password || undefined,
+            fullName: formValues.full_name,
+            description: formValues.description,
+            status: formValues.status
+              ? statusToV2[formValues.status]
+              : undefined,
+            role: formValues.role ? roleToV2[formValues.role] : undefined,
+            domainName: formValues.domain_name,
+            groupIds: formValues.group_ids,
+            allowedClientIp: formValues.allowed_client_ip,
+            needPasswordChange: formValues.need_password_change || false,
+            resourcePolicy: formValues.resource_policy,
+            sudoSessionEnabled: formValues.sudo_session_enabled,
+            mainAccessKey: formValues.main_access_key,
+            containerUid: formValues.container_uid,
+            containerMainGid: formValues.container_main_gid,
+            containerGids: _.map(formValues.container_gids, (v) =>
+              _.toNumber(v),
             ),
-            username: formatBulkUsername(
-              bulkValues.email_prefix,
-              i,
-              bulkValues.user_count,
-            ),
-            password: bulkValues.password as string,
-            domainName: bulkValues.domain_name,
-            needPasswordChange: bulkValues.need_password_change || false,
-            status: statusToV2[bulkValues.status] || 'ACTIVE',
-            role: roleToV2[bulkValues.role] || 'USER',
-            description: bulkValues.description || null,
-            groupIds: bulkValues.group_ids || null,
-            allowedClientIp: bulkValues.allowed_client_ip || null,
-            resourcePolicy: bulkValues.resource_policy || 'default',
-            sudoSessionEnabled: bulkValues.sudo_session_enabled || false,
-          }));
+          },
+          isNotSupportTotp: !isTOTPSupported,
+        },
+        onCompleted: (_res, errors) => {
+          if (errors?.[0]) {
+            message.error(errors[0].message || t('error.UnknownError'));
+            logger.error(errors);
+            return;
+          }
+          message.success(t('environment.SuccessfullyModified'));
+          onRequestClose(true);
+        },
+        onError: (err) => {
+          message.error(t('dialog.ErrorOccurred'));
+          logger.error(err);
+        },
+      });
+    } else {
+      commitCreateUser({
+        variables: {
+          input: {
+            email: formValues.email,
+            username: formValues.username,
+            password: formValues.password as string,
+            domainName: formValues.domain_name,
+            needPasswordChange: formValues.need_password_change || false,
+            status: statusToV2[formValues.status] || 'ACTIVE',
+            role: roleToV2[formValues.role] || 'USER',
+            fullName: formValues.full_name || null,
+            description: formValues.description || null,
+            groupIds: formValues.group_ids || null,
+            allowedClientIp: formValues.allowed_client_ip || null,
+            totpActivated: formValues.totp_activated || false,
+            resourcePolicy: formValues.resource_policy || 'default',
+            sudoSessionEnabled: formValues.sudo_session_enabled || false,
+            containerUid: formValues.container_uid ?? null,
+            containerMainGid: formValues.container_main_gid ?? null,
+            containerGids: formValues.container_gids
+              ? _.map(formValues.container_gids, (v) => _.toNumber(v))
+              : null,
+          },
+          isNotSupportTotp: !isTOTPSupported,
+        },
+        onCompleted: (res, errors) => {
+          // adminCreateUserV2 reports failures via GraphQL errors
+          // (at most one).
+          const errorMessage = errors?.[0]?.message;
 
-          commitBulkCreateUsers({
-            variables: {
-              input: { users },
-            },
-            onCompleted: (res, errors) => {
-              if (errors?.[0]) {
-                message.error(errors[0].message || t('error.UnknownError'));
-                logger.error(errors);
-                return;
-              }
+          // Handle "user already exists" error separately to show a more
+          // user-friendly message.
+          if (errorMessage && errorMessage.includes('already exists')) {
+            message.error(t('credential.UserAccountCreatedError'));
+            logger.error(errorMessage);
+            return;
+          }
 
-              const createdList =
-                res.adminBulkCreateUsersWithKeypairV2?.created ?? [];
-              const succeededCount = createdList.length;
-              const failedList =
-                res.adminBulkCreateUsersWithKeypairV2?.failed ?? [];
-              setCreatedCount(succeededCount);
-              if (succeededCount > 0) {
-                setHasCreatedAny(true);
-              }
+          if (errors?.[0]) {
+            message.error(errorMessage || t('error.UnknownError'));
+            logger.error(errors);
+            return;
+          }
 
-              // Reveal the generated keypairs (secret keys are returned once).
-              const keypairs = _.map(createdList, (created) => created.keypair);
-              if (keypairs.length > 0) {
-                setCreatedKeypairs(keypairs);
-              }
-
-              if (failedList.length > 0) {
-                // Immediate failure notice as a toast on top of the detail
-                // modal (matches FR-3357's AssignRoleModal) — the modal
-                // carries the per-user table, the message the at-a-glance cue.
-                message.error(
-                  t('credential.BulkCreateUserPartialFailure', {
-                    successCount: succeededCount,
-                    failCount: failedList.length,
-                  }),
-                );
-                // The per-user reasons only reach the admin through the error
-                // modal — this form (or the keypair list of the users that were
-                // created) stays open behind it, so nothing closes here.
-                setFailedUsers(toFailedUserCreations(failedList));
-                return;
-              }
-
-              message.success(
-                t('credential.BulkCreateUserSuccess', {
-                  count: succeededCount,
-                }),
-              );
-              if (keypairs.length === 0) {
-                onRequestClose(true);
-              }
-            },
-            onError: (err) => {
-              message.error(t('dialog.ErrorOccurred'));
-              logger.error(err);
-            },
-          });
-          return;
-        }
-
-        const formValues = values as FormValues;
-
-        if (user) {
-          commitUpdateUserV2({
-            variables: {
-              userId: toLocalId(user.id),
-              input: {
-                username: formValues.username,
-                password: formValues.password || undefined,
-                fullName: formValues.full_name,
-                description: formValues.description,
-                status: formValues.status
-                  ? statusToV2[formValues.status]
-                  : undefined,
-                role: formValues.role ? roleToV2[formValues.role] : undefined,
-                domainName: formValues.domain_name,
-                groupIds: formValues.group_ids,
-                allowedClientIp: formValues.allowed_client_ip,
-                needPasswordChange: formValues.need_password_change || false,
-                resourcePolicy: formValues.resource_policy,
-                sudoSessionEnabled: formValues.sudo_session_enabled,
-                mainAccessKey: formValues.main_access_key,
-                containerUid: formValues.container_uid,
-                containerMainGid: formValues.container_main_gid,
-                containerGids: _.map(formValues.container_gids, (v) =>
-                  _.toNumber(v),
-                ),
-              },
-              isNotSupportTotp: !isTOTPSupported,
-            },
-            onCompleted: (_res, errors) => {
-              if (errors?.[0]) {
-                message.error(errors[0].message || t('error.UnknownError'));
-                logger.error(errors);
-                return;
-              }
-              message.success(t('environment.SuccessfullyModified'));
-              onRequestClose(true);
-            },
-            onError: (err) => {
-              message.error(t('dialog.ErrorOccurred'));
-              logger.error(err);
-            },
-          });
-        } else {
-          commitCreateUser({
-            variables: {
-              input: {
-                email: formValues.email,
-                username: formValues.username,
-                password: formValues.password as string,
-                domainName: formValues.domain_name,
-                needPasswordChange: formValues.need_password_change || false,
-                status: statusToV2[formValues.status] || 'ACTIVE',
-                role: roleToV2[formValues.role] || 'USER',
-                fullName: formValues.full_name || null,
-                description: formValues.description || null,
-                groupIds: formValues.group_ids || null,
-                allowedClientIp: formValues.allowed_client_ip || null,
-                totpActivated: formValues.totp_activated || false,
-                resourcePolicy: formValues.resource_policy || 'default',
-                sudoSessionEnabled: formValues.sudo_session_enabled || false,
-                containerUid: formValues.container_uid ?? null,
-                containerMainGid: formValues.container_main_gid ?? null,
-                containerGids: formValues.container_gids
-                  ? _.map(formValues.container_gids, (v) => _.toNumber(v))
-                  : null,
-              },
-              isNotSupportTotp: !isTOTPSupported,
-            },
-            onCompleted: (res, errors) => {
-              // adminCreateUserV2 reports failures via GraphQL errors
-              // (at most one).
-              const errorMessage = errors?.[0]?.message;
-
-              // Handle "user already exists" error separately to show a more
-              // user-friendly message.
-              if (errorMessage && errorMessage.includes('already exists')) {
-                message.error(t('credential.UserAccountCreatedError'));
-                logger.error(errorMessage);
-                return;
-              }
-
-              if (errors?.[0]) {
-                message.error(errorMessage || t('error.UnknownError'));
-                logger.error(errors);
-                return;
-              }
-
-              if (res.adminCreateUserV2?.keypair) {
-                // Show the created keypair modal (secret key returned once).
-                setCreatedKeypairs([res.adminCreateUserV2.keypair]);
-              } else {
-                onRequestClose(true);
-              }
-            },
-            onError: (err) => {
-              message.error(t('dialog.ErrorOccurred'));
-              logger.error(err);
-            },
-          });
-        }
-      })
-      .catch((e) => logger.error(e));
+          if (res.adminCreateUserV2?.keypair) {
+            // Show the created keypair modal (secret key returned once).
+            setCreatedKeypairs([res.adminCreateUserV2.keypair]);
+          } else {
+            onRequestClose(true);
+          }
+        },
+        onError: (err) => {
+          message.error(t('dialog.ErrorOccurred'));
+          logger.error(err);
+        },
+      });
+    }
   };
 
   return (
@@ -673,12 +675,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       }
       okText={user ? t('button.Save') : t('button.Create')}
       destroyOnHidden
-      onOk={handleOk}
-      confirmLoading={
-        isInFlightUpdateUserV2 ||
-        isInFlightCommitCreateUser ||
-        isInFlightBulkCreateUsers
-      }
+      onOk={() => formRef.current?.submit()}
+      confirmLoading={isInFlight}
       // A bulk create that partially failed leaves this form open, so its
       // Cancel still has to report the users that *were* created — otherwise
       // the list behind it never refetches. Uses the session-wide
@@ -694,6 +692,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         <Form
           ref={formRef}
           preserve={false}
+          onFinish={handleFinish}
+          scrollToFirstError
           validateTrigger={['onChange', 'onBlur']}
           initialValues={
             user

@@ -447,6 +447,7 @@ export const AstryxFormSegmented: React.FC<AstryxFormSegmentedProps> = ({
   label,
   options,
   disabled,
+  ...rest
 }) => {
   'use memo';
   return (
@@ -455,6 +456,9 @@ export const AstryxFormSegmented: React.FC<AstryxFormSegmentedProps> = ({
       onChange={(next) => onChange?.(next)}
       label={label}
       isDisabled={disabled}
+      // `Form.Item`'s `data-bai-field-id` rides through to the root, which is
+      // what lets scroll-to-first-error find this field.
+      {...(rest as object)}
     >
       {options.map((option) => (
         <SegmentedControlItem

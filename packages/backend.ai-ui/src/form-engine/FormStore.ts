@@ -170,6 +170,10 @@ class WatcherCenter {
   }
 }
 
+/** What `focusField` lands on when the handle sits on a wrapper. */
+const EDITABLE =
+  'input:not([type="hidden"]):not([disabled]),select:not([disabled]),textarea:not([disabled]),[contenteditable="true"],[role="combobox"],[role="textbox"],[role="spinbutton"]';
+
 export class FormStore {
   private forceRootUpdate: () => void;
   private subscribable = true;
@@ -1016,23 +1020,17 @@ export class FormStore {
 
   // ======================= Scroll / focus =========================
 
-  /**
-   * Resolved through the control's generated `id`, which `FormItem` stamps
-   * onto every child. Composing a ref onto arbitrary children would be the
-   * only other way and buys nothing: `getFieldInstance` has zero call sites.
-   */
   getFieldInstance = (name: NamePath) => this.getFieldDOMNode(name);
 
-  /**
-   * Thin by design (answers/08 §6.2): `scrollToField` has ONE call site, and
-   * this repo's main scroll-to-error consumer deliberately bypasses it and
-   * walks the DOM itself because registration order and DOM order disagree.
-   */
   scrollToField = (name: NamePath, options: ScrollOptions = {}) => {
     const { focus, ...restOpt } = options;
     const node = this.getFieldDOMNode(name);
     if (node) {
-      node.scrollIntoView({ block: 'nearest', ...restOpt });
+      // The item, so the label and message come along; a `noStyle` field's
+      // message lives on the parent item.
+      (
+        node.closest<HTMLElement>('[data-bai-form-item]') ?? node
+      ).scrollIntoView({ block: 'nearest', ...restOpt });
       if (focus) {
         this.focusField(name);
       }
@@ -1040,18 +1038,35 @@ export class FormStore {
   };
 
   focusField = (name: NamePath) => {
-    const instance = this.getFieldInstance(name);
-    if (typeof instance?.focus === 'function') {
-      instance.focus();
-      return;
-    }
-    this.getFieldDOMNode(name)?.focus?.();
+    const node = this.getFieldDOMNode(name);
+    if (!node) return;
+    // The handle may sit on a wrapper (Astryx Switch / SegmentedControl spread
+    // `rest` onto their root; the item wrapper is the fallback).
+    const target = node.matches(EDITABLE)
+      ? node
+      : (node.querySelector<HTMLElement>(EDITABLE) ?? node);
+    target.focus?.({ preventScroll: true });
   };
 
+  /**
+   * The control carrying `data-bai-field-id` (Astryx inputs drop the `id`
+   * `FormItem` gives them but keep `data-*`), else the item wrapper carrying
+   * `data-bai-field-item` (a child that forwards nothing to the DOM).
+   */
   private getFieldDOMNode = (name: NamePath): HTMLElement | undefined => {
     if (typeof document === 'undefined') return undefined;
-    const id = getNamePath(name).join('_');
-    return document.getElementById(id) ?? undefined;
+    const handle = getNamePath(name).join('_');
+    for (const el of document.querySelectorAll<HTMLElement>(
+      '[data-bai-field-id]',
+    )) {
+      if (el.dataset.baiFieldId === handle) return el;
+    }
+    for (const el of document.querySelectorAll<HTMLElement>(
+      '[data-bai-field-item]',
+    )) {
+      if (el.dataset.baiFieldItem === handle) return el;
+    }
+    return undefined;
   };
 }
 
