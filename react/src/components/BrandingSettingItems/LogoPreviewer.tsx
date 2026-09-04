@@ -37,17 +37,12 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   const logoThemeKey = getLogoThemeKey(mode);
   const fallbackKey = getLogoFallbackKey(mode);
   const logoPath = `branding.logo.${logoThemeKey}`;
-  // The input edits this item's own key only; the preview shows the
-  // inherited sider logo when the key is unset, and says so.
-  const ownLogoSrc = getDefaultThemeValue<string>(logoPath);
-  const fallbackLogoSrc = fallbackKey
-    ? getDefaultThemeValue<string>(`branding.logo.${fallbackKey}`)
-    : undefined;
-  const isInherited = !ownLogoSrc && !!fallbackLogoSrc;
+  // Only this item's own key is edited and previewed; an unset login/About
+  // key shows which sider logo the page borrows instead of a preview.
+  const logoSrc = getDefaultThemeValue<string>(logoPath);
 
   const commitLogoSrc = (value: string) => {
-    // An emptied path hands the item back to the fallback; storing ''
-    // would blank the preview while the page still falls back.
+    // An emptied path removes the key so the page falls back again.
     updateDefaultTheme(logoPath, value.trim() === '' ? undefined : value);
   };
 
@@ -76,7 +71,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
             field types, so they sit side by side rather than fused; the
             picker is a hidden native file input behind an IconButton. */}
         <BAIUncontrolledInput
-          defaultValue={ownLogoSrc ?? ''}
+          defaultValue={logoSrc ?? ''}
           onCommit={commitLogoSrc}
           style={{ flex: 1 }}
         />
@@ -97,39 +92,42 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
           onClick={() => fileInputRef.current?.click()}
         />
       </BAIFlex>
-      {isInherited && (
-        <Text type="supporting" data-testid="logo-fallback-hint">
-          {t('userSettings.logo.FallbackFollowsItem', {
-            item: t(
-              fallbackKey === 'src'
-                ? 'userSettings.logo.LightModeLogo'
-                : 'userSettings.logo.DarkModeLogo',
-            ),
-          })}
-        </Text>
-      )}
-      <BAIFlex
-        style={{
-          background:
-            'repeating-conic-gradient(#e0e0e0 0% 25%, #f5f5f5 0% 50%) 50% / 20px 20px',
-        }}
-        align="center"
-        justify="center"
-      >
-        {/* PILOT-DECISION: a plain <img> keeps the logo's arbitrary aspect
-            ratio (Thumbnail would square-crop it); a broken path swaps in a
-            1x1 placeholder via onError. */}
-        <img
-          height={100}
-          style={{ width: 'auto', maxWidth: 250 }}
-          src={ownLogoSrc || fallbackLogoSrc}
-          alt={t('userSettings.logo.ImagePath')}
-          onError={(e) => {
-            e.currentTarget.src =
-              'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+      {logoSrc ? (
+        <BAIFlex
+          style={{
+            background:
+              'repeating-conic-gradient(#e0e0e0 0% 25%, #f5f5f5 0% 50%) 50% / 20px 20px',
           }}
-        />
-      </BAIFlex>
+          align="center"
+          justify="center"
+        >
+          {/* PILOT-DECISION: a plain <img> keeps the logo's arbitrary aspect
+              ratio (Thumbnail would square-crop it); a broken path swaps in
+              a 1x1 placeholder via onError. */}
+          <img
+            height={100}
+            style={{ width: 'auto', maxWidth: 250 }}
+            src={logoSrc}
+            alt={t('userSettings.logo.ImagePath')}
+            onError={(e) => {
+              e.currentTarget.src =
+                'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+            }}
+          />
+        </BAIFlex>
+      ) : (
+        fallbackKey && (
+          <Text type="supporting" data-testid="logo-fallback-hint">
+            {t('userSettings.logo.FallbackFollowsItem', {
+              item: t(
+                fallbackKey === 'src'
+                  ? 'userSettings.logo.LightModeLogo'
+                  : 'userSettings.logo.DarkModeLogo',
+              ),
+            })}
+          </Text>
+        )
+      )}
     </BAIFlex>
   );
 };
