@@ -97,10 +97,11 @@ export declare class FormStore {
      * The control carrying `data-bai-field-id` (stamped by `FormItem`; Astryx
      * inputs drop the `id` they are given but keep `data-*`), else the item
      * wrapper carrying `data-bai-field-item` (a child that forwards nothing to
-     * the DOM). Only elements stamped with this form's id are candidates, so
-     * two mounted forms sharing a field name stay apart — a `component={false}`
-     * form has no element to scope by. A name mounted twice (a field repeated
-     * across tabs) resolves to the visible one.
+     * the DOM), else the enclosing item whose `data-bai-field-items` lists the
+     * handle (a wrapper-less `noStyle` field). Only elements stamped with this
+     * form's id are candidates, so two mounted forms sharing a field name stay
+     * apart — a `component={false}` form has no element to scope by. A name
+     * mounted twice (a field repeated across tabs) resolves to the visible one.
      */
     private getFieldDOMNode;
 }

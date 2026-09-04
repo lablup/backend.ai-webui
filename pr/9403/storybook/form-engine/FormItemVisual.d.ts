@@ -55,8 +55,10 @@ export interface BAIFormItemVisualProps {
      * by `FormStore.getFieldDOMNode`.
      */
     fieldHandle?: string;
-    /** The owning form's token, stamped beside `fieldHandle`. */
+    /** The owning form's token; on every item, named or not. */
     formId?: string;
+    /** Handles of wrapper-less `noStyle` fields this item stands in for. */
+    subFieldHandles?: string[];
     htmlFor?: string;
     className?: string;
     style?: React.CSSProperties;
