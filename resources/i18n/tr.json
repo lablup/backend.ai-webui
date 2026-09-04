@@ -3507,7 +3507,7 @@
     "JsonConfigAppliedSuccessfully": "Tema ayarları başarıyla uygulandı.",
     "PreviewModeAlert": "Şu anda tema önizleme modundasınız. Lütfen asıl çalışmanızı orijinal pencerede sürdürün.",
     "ThemeJsonConfiguration": "Tema JSON Yapılandırması",
-    "ThemeJsonConfigurationDesc": "Temayı değiştirmek için bir JSON dosyası içe aktarın veya mevcut temayı JSON olarak dışa aktarın. Değişikliklerin sitenize uygulanması için JSON dosyasını dışa aktarın ve WebUI web sunucusundaki resources/theme.json dosyasına kopyalayın.",
+    "ThemeJsonConfigurationDesc": "Temayı değiştirmek için bir JSON dosyası içe aktarın veya mevcut temayı JSON olarak dışa aktarın. Tamam'a bastığınızda taslağa yüklenir; Branding sayfasındaki Uygula bu alan adı için temayı kaydeder.",
     "button": {
       "ExportToJson": "JSON'u Dışa Aktar",
       "ImportFromJson": "JSON'u İçe Aktar",
@@ -3694,7 +3694,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Güncellenen tema hemen uygulanamıyor. Temayı uygulamak istiyorsanız, lütfen dışa aktarılan yapılandırma JSON dosyasıyla destek ekibimizle iletişime geçin.",
       "ErrorColor": "Hata Rengi",
       "ErrorColorDesc": "Uyarıları veya hataları belirtmek için silme gibi kritik eylemleri temsil eden düğmelere veya uyarıya uygulanan renk.",
       "HeaderBg": "Başlık Arka Plan Rengi",

@@ -3510,7 +3510,7 @@
     "JsonConfigAppliedSuccessfully": "Ustawienia motywu zostały pomyślnie zastosowane.",
     "PreviewModeAlert": "Obecnie korzystasz z trybu podglądu motywu. Kontynuuj swoją pracę w oryginalnym oknie.",
     "ThemeJsonConfiguration": "Konfiguracja motywu (JSON)",
-    "ThemeJsonConfigurationDesc": "Zaimportuj plik JSON, aby zmienić motyw lub wyeksportuj bieżący motyw jako JSON. Aby zastosować zmiany na swojej stronie, wyeksportuj plik JSON i skopiuj go do resources/theme.json na serwerze WebUI.",
+    "ThemeJsonConfigurationDesc": "Zaimportuj plik JSON, aby zmienić motyw, lub wyeksportuj bieżący motyw jako JSON. Naciśnięcie OK wczytuje go do wersji roboczej; Zastosuj na stronie Branding zapisuje motyw dla tej domeny.",
     "button": {
       "ExportToJson": "Eksportuj JSON",
       "ImportFromJson": "Importuj JSON",
@@ -3697,7 +3697,6 @@
       }
     },
     "theme": {
-      "CustomThemeSettingAlert": "Zaktualizowanego motywu nie można zastosować od razu. Jeśli chcesz go zastosować, skontaktuj się z naszym zespołem wsparcia i dołącz wyeksportowany plik konfiguracyjny w formacie JSON.",
       "ErrorColor": "Kolor błędu",
       "ErrorColorDesc": "Kolor zastosowany do przycisków lub alertów reprezentujących krytyczne działania, takie jak usuwanie, w celu wskazania ostrzeżeń lub błędów.",
       "HeaderBg": "Kolor tła nagłówka",
