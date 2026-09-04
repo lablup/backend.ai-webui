@@ -9,20 +9,19 @@ import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
 import { theme } from '../theme-shim';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,
-  BAIFlex,
   BAIModal,
   BAIModalProps,
   BAISelect,
+  type BAISelectProps,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useDeferredValue, useRef, useState } from 'react';
+import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -40,47 +39,19 @@ interface FailedAssignment {
   message: string;
 }
 
-/**
- * Assigns users to a role via `adminBulkAssignRole` (FR-3357). On partial
- * failure the modal stays open: successfully assigned users are deselected,
- * only the failed users remain in the select (marked with an error border),
- * and the shared `BAIBulkErrorModal` lists each failure — pressing Assign
- * again retries just the remaining users.
- */
-const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
-  roleId,
-  projectId,
-  onRequestClose,
-  ...baiModalProps
+type AssignRoleUserSelectProps = Pick<
+  BAISelectProps<string[]>,
+  'value' | 'onChange' | 'placeholder' | 'status' | 'disabled'
+>;
+
+/** Owns the user options query; render it under a Suspense boundary. */
+const AssignRoleUserSelect: React.FC<AssignRoleUserSelectProps> = ({
+  onChange,
+  ...selectProps
 }) => {
   'use memo';
-  const { t } = useTranslation();
-  const { token } = theme.useToken();
-  const { message } = App.useApp();
-  const { logger } = useBAILogger();
-  const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
-  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const deferredSearch = useDeferredValue(search);
-  // Starts false so a fresh mount (BAIUnmountAfterClose) fetches in a deferred
-  // render: the tab around the modal keeps its content instead of suspending.
-  const deferredOpen = useDeferredValue(baiModalProps.open, false);
-  const [isAssigning, setIsAssigning] = useState(false);
-  // One row per user the server rejected on the last save; the error modal
-  // is open while non-empty.
-  const [failedAssignments, setFailedAssignments] = useState<
-    FailedAssignment[]
-  >([]);
-  // Whether any assignment already reached the backend (partial success) —
-  // the parent must refetch on close even if the user then cancels.
-  const [hasAssignedAny, setHasAssignedAny] = useState(false);
-  // How many of the last save's requests the backend accepted — shown next to
-  // the partial-failure notice as "(Success: n, Failed: m)".
-  const [succeededRequestCount, setSucceededRequestCount] = useState(0);
-  // Labels of every user selected so far, for failure rows — the options
-  // list only holds the current search results, so failed users may no
-  // longer be in it when the failure arrives.
-  const userLabelsRef = useRef(new Map<string, string>());
 
   const data = useLazyLoadQuery<AssignRoleModalQuery>(
     graphql`
@@ -102,10 +73,87 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       filter: deferredSearch ? { email: { contains: deferredSearch } } : null,
       first: 50,
     },
-    {
-      fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
-    },
+    { fetchPolicy: 'store-and-network' },
   );
+
+  const users = data.adminUsersV2?.edges?.map((edge) => edge?.node) ?? [];
+
+  return (
+    <BAISelect
+      mode="multiple"
+      style={{ width: '100%' }}
+      onChange={(value: string[], options) => {
+        setSearch('');
+        onChange?.(value, options);
+      }}
+      loading={deferredSearch !== search}
+      allowClear
+      showSearch={{
+        searchValue: search,
+        onSearch: (v) => setSearch(v),
+        filterOption: false,
+      }}
+      options={users.map((user) => ({
+        value: user?.id ? toLocalId(user.id) : undefined,
+        label: user?.basicInfo?.email || user?.id,
+        description: user?.basicInfo?.fullName,
+      }))}
+      optionRender={(option) => (
+        <div>
+          <div>{option.label}</div>
+          {option.data?.description && (
+            <div
+              style={{
+                fontSize: 12,
+                color: 'var(--color-text-secondary)',
+              }}
+            >
+              {option.data.description}
+            </div>
+          )}
+        </div>
+      )}
+      {...selectProps}
+    />
+  );
+};
+
+/**
+ * Assigns users to a role via `adminBulkAssignRole` (FR-3357). On partial
+ * failure the modal stays open: successfully assigned users are deselected,
+ * only the failed users remain in the select (marked with an error border),
+ * and the shared `BAIBulkErrorModal` lists each failure — pressing Assign
+ * again retries just the remaining users.
+ */
+const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
+  roleId,
+  projectId,
+  onRequestClose,
+  ...baiModalProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [isAssigning, setIsAssigning] = useState(false);
+  // One row per user the server rejected on the last save; the error modal
+  // is open while non-empty.
+  const [failedAssignments, setFailedAssignments] = useState<
+    FailedAssignment[]
+  >([]);
+  // Whether any assignment already reached the backend (partial success) —
+  // the parent must refetch on close even if the user then cancels.
+  const [hasAssignedAny, setHasAssignedAny] = useState(false);
+  // How many of the last save's requests the backend accepted — shown next to
+  // the partial-failure notice as "(Success: n, Failed: m)".
+  const [succeededRequestCount, setSucceededRequestCount] = useState(0);
+  // Labels of every user selected so far, for failure rows — the options
+  // list only holds the current search results, so failed users may no
+  // longer be in it when the failure arrives.
+  const userLabelsRef = useRef(new Map<string, string>());
 
   const bulkAssignRole =
     useMutationWithPromise<AssignRoleModalBulkAssignMutation>(graphql`
@@ -124,8 +172,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         }
       }
     `);
-
-  const users = data.adminUsersV2?.edges?.map((edge) => edge?.node) ?? [];
 
   const userLabelOf = (userId: string) =>
     userLabelsRef.current.get(userId) ?? userId;
@@ -199,6 +245,12 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
     }
   };
 
+  const userIdsItemProps = {
+    name: 'userIds',
+    label: t('credential.Users'),
+    rules: [{ required: true, message: t('rbac.PleaseSelectUsers') }],
+  };
+
   const failureColumns: BAIColumnsType<FailedAssignment> = [
     {
       key: 'user',
@@ -240,76 +292,38 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">
-        <Form.Item
-          name="userIds"
-          label={t('credential.Users')}
-          rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+        <Suspense
+          // Same field on the fallback: keeps `userIds` registered (and its
+          // required rule active) while the options load.
+          fallback={
+            <Form.Item {...userIdsItemProps}>
+              <BAISelect
+                mode="multiple"
+                style={{ width: '100%' }}
+                placeholder={t('rbac.SelectUsers')}
+                loading
+                disabled
+              />
+            </Form.Item>
+          }
         >
-          <BAISelect
-            mode="multiple"
-            style={{ width: '100%' }}
-            placeholder={t('rbac.SelectUsers')}
-            onChange={(value: string[], options) => {
-              _.castArray(options ?? []).forEach((option: any) => {
-                if (option?.value !== undefined) {
-                  userLabelsRef.current.set(
-                    String(option.value),
-                    String(option.label ?? option.value),
-                  );
-                }
-              });
-              setSelectedUserIds(value);
-              setSearch('');
-            }}
-            loading={
-              deferredSearch !== search || deferredOpen !== baiModalProps.open
-            }
-            maxTagCount="responsive"
-            allowClear
-            maxTagPlaceholder={(omittedValues) => (
-              <Tooltip
-                content={
-                  <BAIFlex direction="column" align="start" gap="xxs">
-                    {omittedValues.map((v) => (
-                      <Text key={v.value} color="inherit">
-                        {v.label}
-                      </Text>
-                    ))}
-                  </BAIFlex>
-                }
-              >
-                <span>+{omittedValues.length} ...</span>
-              </Tooltip>
-            )}
-            showSearch={{
-              searchValue: search,
-              onSearch: (v) => setSearch(v),
-              filterOption: false,
-            }}
-            options={users.map((user) => ({
-              value: user?.id ? toLocalId(user.id) : undefined,
-              label: user?.basicInfo?.email || user?.id,
-              description: user?.basicInfo?.fullName,
-            }))}
-            optionRender={(option) => (
-              <div>
-                <div>{option.label}</div>
-                {option.data?.description && (
-                  // Mode-blind hardcode fixed (sweep #4): `#999` was antd's
-                  // secondary/description text gray, identical in both modes.
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {option.data.description}
-                  </div>
-                )}
-              </div>
-            )}
-          />
-        </Form.Item>
+          <Form.Item {...userIdsItemProps}>
+            <AssignRoleUserSelect
+              placeholder={t('rbac.SelectUsers')}
+              onChange={(value: string[], options) => {
+                _.castArray(options ?? []).forEach((option: any) => {
+                  if (option?.value !== undefined) {
+                    userLabelsRef.current.set(
+                      String(option.value),
+                      String(option.label ?? option.value),
+                    );
+                  }
+                });
+                setSelectedUserIds(value);
+              }}
+            />
+          </Form.Item>
+        </Suspense>
       </Form>
       {/* Per-user errors of a partially-failed assignment (FR-3357). The
           assign modal (and the remaining failed selection) stays open behind
