@@ -55,6 +55,8 @@ export interface BAIFormItemVisualProps {
      * by `FormStore.getFieldDOMNode`.
      */
     fieldHandle?: string;
+    /** The owning form's token, stamped beside `fieldHandle`. */
+    formId?: string;
     htmlFor?: string;
     className?: string;
     style?: React.CSSProperties;

@@ -19,7 +19,8 @@ export declare class FormStore {
     private watcherCenter;
     /** Paths of `preserve: false` fields alive at the previous unmount. */
     private prevWithoutPreserves;
-    private rootRef;
+    /** Stamped as `data-bai-form-id` on every item of this form. */
+    private readonly formId;
     constructor(forceRootUpdate: () => void);
     getForm: () => InternalFormInstance;
     getInternalHooks: (key: string) => InternalHooks | null;
@@ -27,7 +28,6 @@ export declare class FormStore {
     private setCallbacks;
     private setValidateMessages;
     private setPreserve;
-    private setRootRef;
     /**
      * `init` is true only on the very first render, so later `initialValues`
      * prop changes update what `resetFields()` will restore WITHOUT stomping
@@ -97,8 +97,10 @@ export declare class FormStore {
      * The control carrying `data-bai-field-id` (stamped by `FormItem`; Astryx
      * inputs drop the `id` they are given but keep `data-*`), else the item
      * wrapper carrying `data-bai-field-item` (a child that forwards nothing to
-     * the DOM). Scoped to this form's element: two mounted forms may share a
-     * field name, and a document-wide lookup picked the wrong one.
+     * the DOM). Only elements stamped with this form's id are candidates, so
+     * two mounted forms sharing a field name stay apart — a `component={false}`
+     * form has no element to scope by. A name mounted twice (a field repeated
+     * across tabs) resolves to the visible one.
      */
     private getFieldDOMNode;
 }
