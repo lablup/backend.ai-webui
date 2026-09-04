@@ -40,6 +40,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   // Only this item's own key is edited and previewed; an unset login/About
   // key shows which sider logo the page borrows instead of a preview.
   const logoSrc = getDefaultThemeValue<string>(logoPath);
+  const pathLabel = `${t('userSettings.logo.ImagePath')}:`;
 
   const commitLogoSrc = (value: string) => {
     // An emptied path removes the key so the page falls back again.
@@ -64,9 +65,9 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   };
 
   return (
-    <BAIFlex gap="sm" align="stretch" direction="column">
+    <BAIFlex align="stretch" direction="column">
       <BAIFlex gap="sm">
-        <Text color="secondary">{t('userSettings.logo.ImagePath')}:</Text>
+        <Text color="secondary">{pathLabel}</Text>
         {/* PILOT-DECISION: the path field and the picker are two different
             field types, so they sit side by side rather than fused; the
             picker is a hidden native file input behind an IconButton. */}
@@ -95,6 +96,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
       {logoSrc ? (
         <BAIFlex
           style={{
+            marginTop: 'var(--spacing-3)',
             background:
               'repeating-conic-gradient(#e0e0e0 0% 25%, #f5f5f5 0% 50%) 50% / 20px 20px',
           }}
@@ -117,15 +119,26 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
         </BAIFlex>
       ) : (
         fallbackKey && (
-          <Text type="supporting" data-testid="logo-fallback-hint">
-            {t('userSettings.logo.FallbackFollowsItem', {
-              item: t(
-                fallbackKey === 'src'
-                  ? 'userSettings.logo.LightModeLogo'
-                  : 'userSettings.logo.DarkModeLogo',
-              ),
-            })}
-          </Text>
+          <BAIFlex
+            gap="sm"
+            align="start"
+            style={{ marginTop: 'var(--spacing-0-5)' }}
+          >
+            {/* Invisible copy of the row label so the hint starts under the
+                input, like a form item's explain row. */}
+            <Text color="secondary" style={{ visibility: 'hidden' }}>
+              {pathLabel}
+            </Text>
+            <Text color="warning" data-testid="logo-fallback-hint">
+              {t('userSettings.logo.FallbackFollowsItem', {
+                item: t(
+                  fallbackKey === 'src'
+                    ? 'userSettings.logo.LightModeLogo'
+                    : 'userSettings.logo.DarkModeLogo',
+                ),
+              })}
+            </Text>
+          </BAIFlex>
         )
       )}
     </BAIFlex>
