@@ -1,15 +1,15 @@
 import type { BAIAppearanceConfig } from './customThemeConfig';
 import type { Mock } from 'vitest';
 
-// The loader resolves the pre-login domain and REST base through these two
-// helpers; both are controlled per test via the hoisted state below.
+// The loader resolves the domain and REST base through these two helpers;
+// both are controlled per test via the hoisted state below.
 const resolverState = vi.hoisted(() => ({
   apiDomainName: undefined as string | undefined,
   apiEndpoint: '' as string,
 }));
 
 vi.mock('../hooks/useWebUIConfig', () => ({
-  fetchAndParseConfig: vi.fn(async () => ({
+  fetchAppConfigOnce: vi.fn(async () => ({
     config: { general: { apiDomainName: resolverState.apiDomainName } },
   })),
 }));
@@ -62,8 +62,6 @@ describe('customThemeConfig (v2 appearance bootstrap)', () => {
     global.fetch = fetchMock as unknown as typeof global.fetch;
     resolverState.apiDomainName = undefined;
     resolverState.apiEndpoint = '';
-    // @ts-ignore
-    delete globalThis.backendaiclient;
     document.head
       .querySelectorAll('link[rel="stylesheet"]')
       .forEach((el) => el.remove());
@@ -233,34 +231,6 @@ describe('customThemeConfig (v2 appearance bootstrap)', () => {
 
       expect(mod.getCustomTheme()).toEqual(V2_THEME);
       expect(consoleErrorSpy).toHaveBeenCalled();
-    });
-
-    it('prefers the connected session domain and endpoint over config.toml', async () => {
-      resolverState.apiDomainName = 'from-toml';
-      globalThis.backendaiclient = {
-        _config: {
-          domainName: 'session-domain',
-          endpoint: 'https://session.example.com/',
-        },
-      } as never;
-      const mod = await importFreshModule();
-      mockFetchRoutes({
-        staticDoc: V2_THEME,
-        publicConfigByDomain: {
-          'session-domain': { appearance: V2_DOMAIN_THEME },
-        },
-      });
-
-      mod.loadCustomThemeConfig();
-      await flush();
-
-      expect(mod.getCustomTheme()).toEqual(V2_DOMAIN_THEME);
-      const restCall = fetchMock.mock.calls.find(([url]) =>
-        String(url).includes('app-config'),
-      );
-      expect(String(restCall?.[0])).toBe(
-        'https://session.example.com/func/v2/app-config/public/get',
-      );
     });
   });
 
