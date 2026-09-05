@@ -4,10 +4,12 @@ import { describe, expect, it } from 'vitest';
 import {
   annotateLinks,
   LIST_RESOURCE_BY_TYPE,
+  listLink,
   listResourceForRootField,
   NO_LINK_HINT,
   resolveLinkId,
   resourceForRootField,
+  SELF_SCOPED_LIST_BY_ROOT_FIELD,
 } from './links.js';
 
 const UUID = '4a3b2c1d-0e9f-4a8b-9c7d-6e5f4a3b2c1d';
@@ -138,7 +140,6 @@ describe('listResourceForRootField', () => {
       ['group_nodes', 'project'],
       ['image_nodes', 'environment'],
       ['adminUsersV2', 'user'],
-      ['myKeypairs', 'keypair'],
       ['adminKeypairsV2', 'keypair'],
       ['adminProjectsV2', 'project'],
       ['domainProjectsV2', 'project'],
@@ -161,5 +162,70 @@ describe('listResourceForRootField', () => {
       'vfolder',
     );
     expect(resourceForRootField(schema, 'Query', 'endpoint')).toBe('deployment');
+  });
+
+  it('gives a self-scoped root field the user-scope page, or none', () => {
+    // `customized_images` is the field `/my-environment` itself runs, and its
+    // rows are `ImageNode` — the type table alone would send a regular account
+    // to the admin-only `/admin/environment`.
+    expect(listOf('customized_images')).toBe('my_environment');
+    // `myKeypairs` resolves to the same `KeyPairV2` the admin field returns,
+    // but the only keypair list lives on the admin-gated credentials tab.
+    expect(listOf('myKeypairs')).toBeUndefined();
+    // The admin-wide twin is unaffected.
+    expect(listOf('adminKeypairsV2')).toBe('keypair');
+    expect(listOf('images')).toBe('environment');
+  });
+
+  it('applies the self-scoped override to Query only', () => {
+    expect(
+      listResourceForRootField(schema, 'Mutation', 'customized_images'),
+    ).toBeUndefined();
+  });
+
+  it('names every self-scoped override for the reader', () => {
+    expect(SELF_SCOPED_LIST_BY_ROOT_FIELD).toEqual({
+      myKeypairs: null,
+      customized_images: 'my_environment',
+    });
+  });
+});
+
+describe('link access marker', () => {
+  it('marks a list link with the access its page demands', () => {
+    expect(listLink('keypair', 'keypairs', undefined).requires).toBe('admin');
+    expect(listLink('user', 'users', undefined).requires).toBe('admin');
+    expect(listLink('agent', 'agents', undefined).requires).toBe('superadmin');
+    expect(listLink('project', 'groups', undefined).requires).toBe(
+      'superadmin',
+    );
+  });
+
+  it('omits the marker on a page any authenticated account can open', () => {
+    const link = listLink('my_environment', 'customized_images', undefined);
+    expect(link).toEqual({
+      path: 'customized_images',
+      resource: 'my_environment',
+      webui_path: '/my-environment',
+    });
+    expect('requires' in link).toBe(false);
+    expect('requires' in listLink('session', 'sessions', undefined)).toBe(
+      false,
+    );
+  });
+
+  it('marks a per-row link on an admin-gated detail page too', () => {
+    const encoded = globalId('RoleNode', UUID);
+    const [roleLink] = annotateLinks({ id: encoded }, 'role', 'node', undefined);
+    expect(roleLink.resource).toBe('role');
+    expect(roleLink.webui_path.startsWith('/admin/rbac?roleDetail=')).toBe(true);
+    expect(roleLink.requires).toBe('superadmin');
+    expect(
+      annotateLinks({ id: UUID }, 'artifact', 'node', undefined)[0].requires,
+    ).toBe('admin');
+    // A project-scope detail page still carries no marker.
+    expect(
+      annotateLinks({ id: UUID }, 'session', 'node', undefined)[0],
+    ).not.toHaveProperty('requires');
   });
 });

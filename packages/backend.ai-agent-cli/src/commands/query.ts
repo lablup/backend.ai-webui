@@ -94,11 +94,20 @@ function readStdinSync(): string {
 
 const MAX_LINKS_SHOWN = 5;
 
-/** `links: <n> — <resource> <url>[, ...]`, capped at `MAX_LINKS_SHOWN`. */
+/**
+ * `links: <n> — <resource>[ (<requires>)] <url>[, ...]`, capped at
+ * `MAX_LINKS_SHOWN`. The parenthesised role is the access the destination page
+ * demands; its absence means any authenticated account can open the link.
+ */
 function formatLinksNotice(links: QueryLink[]): string {
   const shown = links
     .slice(0, MAX_LINKS_SHOWN)
-    .map((link) => `${link.resource} ${link.webui_url ?? link.webui_path}`)
+    .map(
+      (link) =>
+        `${link.resource}${link.requires ? ` (${link.requires})` : ''} ${
+          link.webui_url ?? link.webui_path
+        }`,
+    )
     .join(', ');
   const more = links.length > MAX_LINKS_SHOWN ? ', …' : '';
   return `links: ${links.length} — ${shown}${more}`;

@@ -5,7 +5,8 @@
       "type": "session",
       "id": "sess-1"
     },
-    "expected": "/session?sessionDetail=sess-1"
+    "expected": "/session?sessionDetail=sess-1",
+    "access": "user"
   },
   {
     "name": "session detail",
@@ -14,7 +15,8 @@
       "id": "sess-1",
       "view": "detail"
     },
-    "expected": "/session?sessionDetail=sess-1"
+    "expected": "/session?sessionDetail=sess-1",
+    "access": "user"
   },
   {
     "name": "session scheduling history opens the same drawer (no URL state yet)",
@@ -23,7 +25,8 @@
       "id": "sess-1",
       "view": "scheduling_history"
     },
-    "expected": "/session?sessionDetail=sess-1"
+    "expected": "/session?sessionDetail=sess-1",
+    "access": "user"
   },
   {
     "name": "session container log opens the same drawer (no URL state yet)",
@@ -32,7 +35,8 @@
       "id": "sess-1",
       "view": "container_log"
     },
-    "expected": "/session?sessionDetail=sess-1"
+    "expected": "/session?sessionDetail=sess-1",
+    "access": "user"
   },
   {
     "name": "session id is percent-encoded in the query",
@@ -40,7 +44,8 @@
       "type": "session",
       "id": "a b/c"
     },
-    "expected": "/session?sessionDetail=a+b%2Fc"
+    "expected": "/session?sessionDetail=a+b%2Fc",
+    "access": "user"
   },
   {
     "name": "vfolder without a path",
@@ -48,7 +53,8 @@
       "type": "vfolder",
       "id": "vf-1"
     },
-    "expected": "/data?folder=vf-1"
+    "expected": "/data?folder=vf-1",
+    "access": "user"
   },
   {
     "name": "vfolder with an inner path",
@@ -57,7 +63,8 @@
       "id": "vf-1",
       "path": "models/llama"
     },
-    "expected": "/data?folder=vf-1&path=models%2Fllama"
+    "expected": "/data?folder=vf-1&path=models%2Fllama",
+    "access": "user"
   },
   {
     "name": "vfolder with an empty path still emits the param",
@@ -66,7 +73,8 @@
       "id": "vf-1",
       "path": ""
     },
-    "expected": "/data?folder=vf-1&path="
+    "expected": "/data?folder=vf-1&path=",
+    "access": "user"
   },
   {
     "name": "deployment without a view defaults to detail",
@@ -74,7 +82,8 @@
       "type": "deployment",
       "id": "dep-1"
     },
-    "expected": "/deployments/dep-1"
+    "expected": "/deployments/dep-1",
+    "access": "user"
   },
   {
     "name": "deployment detail",
@@ -83,7 +92,8 @@
       "id": "dep-1",
       "view": "detail"
     },
-    "expected": "/deployments/dep-1"
+    "expected": "/deployments/dep-1",
+    "access": "user"
   },
   {
     "name": "deployment revisions",
@@ -92,7 +102,8 @@
       "id": "dep-1",
       "view": "revisions"
     },
-    "expected": "/deployments/dep-1#revisions"
+    "expected": "/deployments/dep-1#revisions",
+    "access": "user"
   },
   {
     "name": "deployment access tokens",
@@ -101,7 +112,8 @@
       "id": "dep-1",
       "view": "access_tokens"
     },
-    "expected": "/deployments/dep-1#access-tokens"
+    "expected": "/deployments/dep-1#access-tokens",
+    "access": "user"
   },
   {
     "name": "deployment id is percent-encoded in the path segment",
@@ -109,7 +121,8 @@
       "type": "deployment",
       "id": "dep/1"
     },
-    "expected": "/deployments/dep%2F1"
+    "expected": "/deployments/dep%2F1",
+    "access": "user"
   },
   {
     "name": "model card",
@@ -117,7 +130,8 @@
       "type": "model_card",
       "id": "mc-1"
     },
-    "expected": "/model-store?modelCard=mc-1"
+    "expected": "/model-store?modelCard=mc-1",
+    "access": "user"
   },
   {
     "name": "role",
@@ -125,7 +139,8 @@
       "type": "role",
       "id": "role-1"
     },
-    "expected": "/admin/rbac?roleDetail=role-1"
+    "expected": "/admin/rbac?roleDetail=role-1",
+    "access": "superadmin"
   },
   {
     "name": "artifact",
@@ -133,7 +148,8 @@
       "type": "artifact",
       "id": "art-1"
     },
-    "expected": "/admin/reservoir/art-1"
+    "expected": "/admin/reservoir/art-1",
+    "access": "admin"
   },
   {
     "name": "list sessions",
@@ -141,7 +157,8 @@
       "type": "list",
       "resource": "session"
     },
-    "expected": "/session"
+    "expected": "/session",
+    "access": "user"
   },
   {
     "name": "list deployments",
@@ -149,7 +166,8 @@
       "type": "list",
       "resource": "deployment"
     },
-    "expected": "/deployments"
+    "expected": "/deployments",
+    "access": "user"
   },
   {
     "name": "list vfolders",
@@ -157,7 +175,8 @@
       "type": "list",
       "resource": "vfolder"
     },
-    "expected": "/data"
+    "expected": "/data",
+    "access": "user"
   },
   {
     "name": "list model cards",
@@ -165,7 +184,8 @@
       "type": "list",
       "resource": "model_card"
     },
-    "expected": "/model-store"
+    "expected": "/model-store",
+    "access": "user"
   },
   {
     "name": "list environment (images / resource presets / registries)",
@@ -173,7 +193,27 @@
       "type": "list",
       "resource": "environment"
     },
-    "expected": "/admin/environment"
+    "expected": "/admin/environment",
+    "access": "admin"
+  },
+  {
+    "name": "list my-environment (the caller's own customized images)",
+    "ref": {
+      "type": "list",
+      "resource": "my_environment"
+    },
+    "expected": "/my-environment",
+    "access": "user"
+  },
+  {
+    "name": "my-environment list drops a filter the page does not parse",
+    "ref": {
+      "type": "list",
+      "resource": "my_environment",
+      "filter": "name ilike \"%torch%\""
+    },
+    "expected": "/my-environment",
+    "access": "user"
   },
   {
     "name": "list roles",
@@ -181,7 +221,8 @@
       "type": "list",
       "resource": "role"
     },
-    "expected": "/admin/rbac"
+    "expected": "/admin/rbac",
+    "access": "superadmin"
   },
   {
     "name": "list artifacts",
@@ -189,7 +230,8 @@
       "type": "list",
       "resource": "artifact"
     },
-    "expected": "/admin/reservoir"
+    "expected": "/admin/reservoir",
+    "access": "admin"
   },
   {
     "name": "list agents pins the shared page tab",
@@ -197,7 +239,8 @@
       "type": "list",
       "resource": "agent"
     },
-    "expected": "/admin/agent?tab=agents"
+    "expected": "/admin/agent?tab=agents",
+    "access": "superadmin"
   },
   {
     "name": "list users pins the shared page tab",
@@ -205,7 +248,8 @@
       "type": "list",
       "resource": "user"
     },
-    "expected": "/admin/users?tab=users"
+    "expected": "/admin/users?tab=users",
+    "access": "admin"
   },
   {
     "name": "list keypairs pins the shared page tab",
@@ -213,7 +257,8 @@
       "type": "list",
       "resource": "keypair"
     },
-    "expected": "/admin/users?tab=credentials"
+    "expected": "/admin/users?tab=credentials",
+    "access": "admin"
   },
   {
     "name": "list projects",
@@ -221,7 +266,8 @@
       "type": "list",
       "resource": "project"
     },
-    "expected": "/admin/project"
+    "expected": "/admin/project",
+    "access": "superadmin"
   },
   {
     "name": "list resource presets pins the environment page's preset tab",
@@ -229,7 +275,8 @@
       "type": "list",
       "resource": "resource_preset"
     },
-    "expected": "/admin/environment?tab=preset"
+    "expected": "/admin/environment?tab=preset",
+    "access": "admin"
   },
   {
     "name": "list resource groups pins the resources page's tab",
@@ -237,7 +284,8 @@
       "type": "list",
       "resource": "resource_group"
     },
-    "expected": "/admin/agent?tab=resourceGroup"
+    "expected": "/admin/agent?tab=resourceGroup",
+    "access": "superadmin"
   },
   {
     "name": "session list with a free-text filter",
@@ -246,7 +294,8 @@
       "resource": "session",
       "filter": "name ilike \"%train%\""
     },
-    "expected": "/session?filter=name+ilike+%22%25train%25%22"
+    "expected": "/session?filter=name+ilike+%22%25train%25%22",
+    "access": "user"
   },
   {
     "name": "deployment list with a JSON filter",
@@ -255,7 +304,8 @@
       "resource": "deployment",
       "filter": "{\"status\":{\"in\":[\"RUNNING\"]}}"
     },
-    "expected": "/deployments?filter=%7B%22status%22%3A%7B%22in%22%3A%5B%22RUNNING%22%5D%7D%7D"
+    "expected": "/deployments?filter=%7B%22status%22%3A%7B%22in%22%3A%5B%22RUNNING%22%5D%7D%7D",
+    "access": "user"
   },
   {
     "name": "model card list with a filter and no status param",
@@ -264,7 +314,8 @@
       "resource": "model_card",
       "filter": "{\"name\":\"llama\"}"
     },
-    "expected": "/model-store?filter=%7B%22name%22%3A%22llama%22%7D"
+    "expected": "/model-store?filter=%7B%22name%22%3A%22llama%22%7D",
+    "access": "user"
   },
   {
     "name": "session list status uses statusCategory",
@@ -273,7 +324,8 @@
       "resource": "session",
       "statusCategory": "finished"
     },
-    "expected": "/session?statusCategory=finished"
+    "expected": "/session?statusCategory=finished",
+    "access": "user"
   },
   {
     "name": "deployment list status uses statusCategory",
@@ -282,7 +334,8 @@
       "resource": "deployment",
       "statusCategory": "finished"
     },
-    "expected": "/deployments?statusCategory=finished"
+    "expected": "/deployments?statusCategory=finished",
+    "access": "user"
   },
   {
     "name": "vfolder list status uses statusCategory",
@@ -291,7 +344,8 @@
       "resource": "vfolder",
       "statusCategory": "deleted"
     },
-    "expected": "/data?statusCategory=deleted"
+    "expected": "/data?statusCategory=deleted",
+    "access": "user"
   },
   {
     "name": "role list status uses status",
@@ -300,7 +354,8 @@
       "resource": "role",
       "statusCategory": "DELETED"
     },
-    "expected": "/admin/rbac?status=DELETED"
+    "expected": "/admin/rbac?status=DELETED",
+    "access": "superadmin"
   },
   {
     "name": "artifact list status uses mode",
@@ -309,7 +364,8 @@
       "resource": "artifact",
       "statusCategory": "DELETED"
     },
-    "expected": "/admin/reservoir?mode=DELETED"
+    "expected": "/admin/reservoir?mode=DELETED",
+    "access": "admin"
   },
   {
     "name": "agent list status uses status",
@@ -318,7 +374,8 @@
       "resource": "agent",
       "statusCategory": "TERMINATED"
     },
-    "expected": "/admin/agent?tab=agents&status=TERMINATED"
+    "expected": "/admin/agent?tab=agents&status=TERMINATED",
+    "access": "superadmin"
   },
   {
     "name": "user list status uses status",
@@ -327,7 +384,8 @@
       "resource": "user",
       "statusCategory": "INACTIVE"
     },
-    "expected": "/admin/users?tab=users&status=INACTIVE"
+    "expected": "/admin/users?tab=users&status=INACTIVE",
+    "access": "admin"
   },
   {
     "name": "keypair list status uses activeType",
@@ -336,7 +394,8 @@
       "resource": "keypair",
       "statusCategory": "inactive"
     },
-    "expected": "/admin/users?tab=credentials&activeType=inactive"
+    "expected": "/admin/users?tab=credentials&activeType=inactive",
+    "access": "admin"
   },
   {
     "name": "project list status uses status",
@@ -345,7 +404,8 @@
       "resource": "project",
       "statusCategory": "inactive"
     },
-    "expected": "/admin/project?status=inactive"
+    "expected": "/admin/project?status=inactive",
+    "access": "superadmin"
   },
   {
     "name": "resource preset list drops a filter the page does not parse",
@@ -354,7 +414,8 @@
       "resource": "resource_preset",
       "filter": "name ilike \"%gpu%\""
     },
-    "expected": "/admin/environment?tab=preset"
+    "expected": "/admin/environment?tab=preset",
+    "access": "admin"
   },
   {
     "name": "list combines tab, filter and status in a stable order",
@@ -364,6 +425,7 @@
       "filter": "{\"username\":\"bob\"}",
       "statusCategory": "INACTIVE"
     },
-    "expected": "/admin/users?tab=users&filter=%7B%22username%22%3A%22bob%22%7D&status=INACTIVE"
+    "expected": "/admin/users?tab=users&filter=%7B%22username%22%3A%22bob%22%7D&status=INACTIVE",
+    "access": "admin"
   }
 ]

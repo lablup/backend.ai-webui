@@ -1,6 +1,12 @@
 import type { SchemaField, SchemaIndex } from '../search/schema-sdl.js';
-import type { ListResource, ResourceRef } from '../webui-path.js';
-import { listPath, resourcePath, webuiUrl } from '../webui-path.js';
+import type { ListResource, ResourceRef, RouteAccess } from '../webui-path.js';
+import {
+  listAccess,
+  listPath,
+  resourceAccess,
+  resourcePath,
+  webuiUrl,
+} from '../webui-path.js';
 
 /** Resource kinds a GraphQL result can be deep-linked to. */
 export type LinkedResource = Extract<
@@ -74,6 +80,31 @@ export const LIST_RESOURCE_BY_TYPE: Readonly<Record<string, ListResource>> = {
 };
 
 /**
+ * Root fields the manager scopes to the **calling account**, overriding what
+ * `LIST_RESOURCE_BY_TYPE` would say from the row type alone. The row type is
+ * shared with the admin-wide field (`myKeypairs` and `adminKeypairsV2` both
+ * resolve to `KeyPairV2`), so the distinction only exists at the field.
+ *
+ * `null` means "emit no link": the rows are the caller's own, but no page in
+ * the app lists them for a non-admin, and a wrong link is worse than none.
+ *
+ * - `myKeypairs` -> null. The only keypair list is the credentials tab of
+ *   `/admin/users`, which the `/admin/*` subtree gates on domain admin.
+ *   `/my-environment` is NOT it: that page renders `CustomizedImageList`
+ *   only — images, no keypairs (`MyEnvironmentPage.tsx`).
+ * - `customized_images` -> `/my-environment`, which is exactly the page that
+ *   runs this field (`CustomizedImageList.tsx`). Its rows are `ImageNode`, so
+ *   the type table would otherwise send a regular account to the admin-only
+ *   `/admin/environment`.
+ */
+export const SELF_SCOPED_LIST_BY_ROOT_FIELD: Readonly<
+  Record<string, ListResource | null>
+> = {
+  myKeypairs: null,
+  customized_images: 'my_environment',
+};
+
+/**
  * Id fields checked on a node, in **preference** order. `row_id` first: most
  * WebUI pages take the raw UUID, not the base64 Relay global id that `id`
  * carries. (The truncator protects the same names — see `UNCUTTABLE_KEYS` —
@@ -128,7 +159,19 @@ export interface QueryLink {
   id?: string;
   webui_path: string;
   webui_url?: string;
+  /**
+   * The role the destination page demands, when it demands one. Omitted for a
+   * page open to any authenticated account, so the field's presence alone is
+   * the "warn the user before handing this over" signal.
+   */
+  requires?: Exclude<RouteAccess, 'user'>;
 }
+
+/** `{ requires }` for a page that gates, `{}` for one that does not. */
+const requiresOf = (
+  access: RouteAccess,
+): { requires?: Exclude<RouteAccess, 'user'> } =>
+  access === 'user' ? {} : { requires: access };
 
 const fieldOf = (
   schema: SchemaIndex,
@@ -235,6 +278,10 @@ export function listResourceForRootField(
   rootTypeName: 'Query' | 'Mutation',
   fieldName: string,
 ): ListResource | undefined {
+  if (rootTypeName === 'Query') {
+    const scoped = SELF_SCOPED_LIST_BY_ROOT_FIELD[fieldName];
+    if (scoped !== undefined) return scoped ?? undefined;
+  }
   return lookupRootField(
     LIST_RESOURCE_BY_TYPE,
     schema,
@@ -286,13 +333,15 @@ export function annotateLinks(
         object.webui_link_hint = NO_LINK_HINT;
         return;
       }
-      const path_ = resourcePath(refFor(resource, id));
+      const ref = refFor(resource, id);
+      const path_ = resourcePath(ref);
       const link: QueryLink = {
         path,
         resource,
         id,
         webui_path: path_,
         ...(webuiOrigin ? { webui_url: webuiUrl(webuiOrigin, path_) } : {}),
+        ...requiresOf(resourceAccess(ref)),
       };
       object.webui_path = link.webui_path;
       if (link.webui_url) object.webui_url = link.webui_url;
@@ -349,6 +398,7 @@ export function listLink(
     resource,
     webui_path: path,
     ...(webuiOrigin ? { webui_url: webuiUrl(webuiOrigin, path) } : {}),
+    ...requiresOf(listAccess(resource)),
   };
 }
 
