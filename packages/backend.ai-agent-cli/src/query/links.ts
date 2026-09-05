@@ -425,26 +425,38 @@ const isEmptyRootField = (value: unknown): boolean => {
  * Annotates each root field of a result whose return type maps to a page: one
  * link per row where the page addresses rows, else one link to the list page.
  * Root fields with no mapping are left untouched.
+ *
+ * A result object is keyed by **response key**, which is the alias when the
+ * document gave one — so `fieldNameByResponseKey` (from `parseDocument`) is
+ * what turns a key back into the schema field every lookup here needs. Without
+ * it `customized_images: images` would be read as the self-scoped field it is
+ * aliased to, and `sessions: compute_session_nodes` would resolve nothing.
+ * The map is optional and falls back to identity, which is exactly the
+ * behaviour of a document that uses no aliases.
+ *
+ * `QueryLink.path` keeps using the response key: it points into the response.
  */
 export function annotateResult(
   schema: SchemaIndex,
   rootTypeName: 'Query' | 'Mutation',
   result: unknown,
   webuiOrigin: string | undefined,
+  fieldNameByResponseKey: Readonly<Record<string, string>> = {},
 ): QueryLink[] {
   if (result === null || typeof result !== 'object') return [];
   const links: QueryLink[] = [];
-  for (const [field, value] of Object.entries(
+  for (const [responseKey, value] of Object.entries(
     result as Record<string, unknown>,
   )) {
+    const field = fieldNameByResponseKey[responseKey] ?? responseKey;
     const resource = resourceForRootField(schema, rootTypeName, field);
     if (resource) {
-      links.push(...annotateLinks(value, resource, field, webuiOrigin));
+      links.push(...annotateLinks(value, resource, responseKey, webuiOrigin));
       continue;
     }
     const listResource = listResourceForRootField(schema, rootTypeName, field);
     if (listResource && !isEmptyRootField(value)) {
-      links.push(listLink(listResource, field, webuiOrigin));
+      links.push(listLink(listResource, responseKey, webuiOrigin));
     }
   }
   return links;

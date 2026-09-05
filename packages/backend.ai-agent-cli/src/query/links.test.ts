@@ -3,6 +3,7 @@ import { loadSchema } from '../search/schema-sdl.js';
 import { describe, expect, it } from 'vitest';
 import {
   annotateLinks,
+  annotateResult,
   LIST_RESOURCE_BY_TYPE,
   listLink,
   listResourceForRootField,
@@ -227,5 +228,76 @@ describe('link access marker', () => {
     expect(
       annotateLinks({ id: UUID }, 'session', 'node', undefined)[0],
     ).not.toHaveProperty('requires');
+  });
+});
+
+describe('annotateResult with root-field aliases', () => {
+  const schema = loadSchema(resolveRepoContext(import.meta.dirname));
+  const annotate = (
+    result: unknown,
+    fieldNameByResponseKey?: Record<string, string>,
+  ) => annotateResult(schema, 'Query', result, undefined, fieldNameByResponseKey);
+
+  it('resolves the schema field, not the alias, for a list link', () => {
+    // `customized_images` is a self-scoped root field; as an ALIAS of `images`
+    // it must not drag `/my-environment` onto the admin image list.
+    expect(
+      annotate({ customized_images: [{ id: 'i-1' }] }, {
+        customized_images: 'images',
+      }),
+    ).toEqual([
+      {
+        path: 'customized_images',
+        resource: 'environment',
+        webui_path: '/admin/environment',
+        requires: 'admin',
+      },
+    ]);
+  });
+
+  it('does not let an alias trip the null self-scoped override', () => {
+    // `myKeypairs` maps to `null` — "emit no link". Aliasing the admin-wide
+    // field to that name used to suppress its link entirely.
+    expect(
+      annotate({ myKeypairs: { edges: [{ node: { id: 'k-1' } }] } }, {
+        myKeypairs: 'adminKeypairsV2',
+      }),
+    ).toEqual([
+      {
+        path: 'myKeypairs',
+        resource: 'keypair',
+        webui_path: '/admin/users?tab=credentials',
+        requires: 'admin',
+      },
+    ]);
+  });
+
+  it('keeps the response key in the path of a per-row link', () => {
+    const links = annotate(
+      { sessions: { edges: [{ node: { row_id: UUID } }] } },
+      { sessions: 'compute_session_nodes' },
+    );
+    expect(links).toEqual([
+      {
+        path: 'sessions.edges[0].node',
+        resource: 'session',
+        id: UUID,
+        webui_path: `/session?sessionDetail=${UUID}`,
+      },
+    ]);
+  });
+
+  it('treats a missing map as identity, unchanged from before', () => {
+    const result = { compute_session_nodes: { edges: [{ node: { row_id: UUID } }] } };
+    expect(annotate(result)).toEqual(
+      annotate(result, { compute_session_nodes: 'compute_session_nodes' }),
+    );
+    expect(annotate({ customized_images: [{ id: 'i-1' }] })).toEqual([
+      {
+        path: 'customized_images',
+        resource: 'my_environment',
+        webui_path: '/my-environment',
+      },
+    ]);
   });
 });

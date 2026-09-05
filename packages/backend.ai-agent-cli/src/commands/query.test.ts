@@ -711,6 +711,111 @@ describe('list-page links', () => {
   });
 });
 
+describe('root-field aliases', () => {
+  it('reads the schema field, not the alias, for a list link', async () => {
+    // The alias happens to be a self-scoped root field's name. It must not
+    // send the admin image list to `/my-environment`.
+    stubFetch({
+      data: { customized_images: [{ id: rowUuid(3), namespace: 'ns' }] },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { customized_images: images { id namespace } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'customized_images',
+        resource: 'environment',
+        webui_path: '/admin/environment',
+        webui_url: `${WEBUI}/admin/environment`,
+        requires: 'admin',
+      },
+    ]);
+  });
+
+  it('does not let an alias suppress a link via the null override', async () => {
+    stubFetch({
+      data: {
+        myKeypairs: {
+          edges: [{ node: { id: 'S2V5UGFpclYyOjA=', accessKey: 'AKIA' } }],
+          count: 1,
+        },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { myKeypairs: adminKeypairsV2(first: 1) { edges { node { id accessKey } } count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'myKeypairs',
+        resource: 'keypair',
+        webui_path: '/admin/users?tab=credentials',
+        webui_url: `${WEBUI}/admin/users?tab=credentials`,
+        requires: 'admin',
+      },
+    ]);
+  });
+
+  it('annotates per-row links under an aliased root field', async () => {
+    // The alias used to resolve no root field at all, so an aliased session
+    // query silently got no links.
+    stubFetch({ data: { sessions: { edges: sessionEdges(2) } } });
+
+    await expect(
+      run([
+        'query',
+        'query { sessions: compute_session_nodes(first: 2) { edges { node { id row_id name } } } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    const data = jsonOut().data;
+    // The path uses the response key, so it still resolves inside `result`.
+    expect(data.links.map((link: any) => link.path)).toEqual([
+      'sessions.edges[0].node',
+      'sessions.edges[1].node',
+    ]);
+    expect(data.links[0]).toMatchObject({
+      resource: 'session',
+      id: rowUuid(0),
+      webui_path: `/session?sessionDetail=${rowUuid(0)}`,
+    });
+    expect(data.result.sessions.edges[1].node.webui_path).toBe(
+      `/session?sessionDetail=${rowUuid(1)}`,
+    );
+  });
+
+  it('leaves an unaliased document behaving exactly as before', async () => {
+    stubFetch({
+      data: { customized_images: [{ id: 'SW1hZ2VOb2RlOjA=', namespace: 'ns' }] },
+    });
+
+    await expect(
+      run(['query', 'query { customized_images { id namespace } }', '--json']),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'customized_images',
+        resource: 'my_environment',
+        webui_path: '/my-environment',
+        webui_url: `${WEBUI}/my-environment`,
+      },
+    ]);
+  });
+});
+
 describe('auth', () => {
   it('exits 3 with a login hint when nothing is stored', async () => {
     process.env.BAI_AGENT_CONFIG_DIR = mkdtempSync(

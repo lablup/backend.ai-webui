@@ -265,6 +265,8 @@ export const queryCommand = defineCommand<QueryData>({
       primary.operation === 'mutation' ? 'Mutation' : 'Query',
       raw,
       webui,
+      // Result keys are response keys; the schema lookups need field names.
+      primary.rootFieldByResponseKey,
     );
     const cut = truncateToBudget(raw, maxBytes);
     const links = survivingLinks(annotated, cut.value);

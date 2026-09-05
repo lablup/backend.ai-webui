@@ -77,6 +77,13 @@ export interface ParsedOperation {
   name?: string;
   /** Root selection field names, in document order. */
   rootFields: string[];
+  /**
+   * Response key -> schema field name for the root selection set. The response
+   * key is what a result object is keyed by, which is the **alias** when the
+   * document gave one; every schema lookup needs the field name instead. An
+   * unaliased field maps to itself, so an identity map is the no-alias case.
+   */
+  rootFieldByResponseKey: Record<string, string>;
 }
 
 export interface ParsedDocument {
@@ -84,23 +91,33 @@ export interface ParsedDocument {
   operations: ParsedOperation[];
 }
 
-/** Root field names of one operation, following top-level fragment spreads. */
-function rootFieldsOf(
+/** One root selection: how the result keys it, and what the schema calls it. */
+interface RootSelection {
+  /** The alias when the document gave one, else the field name. */
+  responseKey: string;
+  fieldName: string;
+}
+
+/** Root selections of one operation, following top-level fragment spreads. */
+function rootSelectionsOf(
   document: DocumentNode,
   selections: readonly SelectionNode[],
-): string[] {
+): RootSelection[] {
   const fragments = new Map(
     document.definitions
       .filter((node) => node.kind === 'FragmentDefinition')
       .map((node) => [node.name.value, node] as const),
   );
-  const names: string[] = [];
+  const found: RootSelection[] = [];
   const seenFragments = new Set<string>();
 
   const walk = (nodes: readonly SelectionNode[]): void => {
     for (const node of nodes) {
       if (node.kind === 'Field') {
-        names.push(node.name.value);
+        found.push({
+          responseKey: (node.alias ?? node.name).value,
+          fieldName: node.name.value,
+        });
       } else if (node.kind === 'InlineFragment') {
         walk(node.selectionSet.selections);
       } else if (!seenFragments.has(node.name.value)) {
@@ -111,7 +128,22 @@ function rootFieldsOf(
     }
   };
   walk(selections);
-  return names;
+  return found;
+}
+
+/**
+ * `{ [responseKey]: fieldName }` for one operation's root selection set.
+ * Response keys are unique per selection set (the validator rejects two
+ * incompatible fields sharing one), so the first spelling wins.
+ */
+function rootFieldByResponseKey(
+  selections: RootSelection[],
+): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const { responseKey, fieldName } of selections) {
+    map[responseKey] ??= fieldName;
+  }
+  return map;
 }
 
 export function parseDocument(source: string): ParsedDocument {
@@ -130,11 +162,18 @@ export function parseDocument(source: string): ParsedDocument {
 
   const operations = document.definitions
     .filter((node) => node.kind === 'OperationDefinition')
-    .map((node) => ({
-      operation: node.operation,
-      ...(node.name ? { name: node.name.value } : {}),
-      rootFields: rootFieldsOf(document, node.selectionSet.selections),
-    }));
+    .map((node) => {
+      const selections = rootSelectionsOf(
+        document,
+        node.selectionSet.selections,
+      );
+      return {
+        operation: node.operation,
+        ...(node.name ? { name: node.name.value } : {}),
+        rootFields: selections.map((selection) => selection.fieldName),
+        rootFieldByResponseKey: rootFieldByResponseKey(selections),
+      };
+    });
 
   if (operations.length === 0) {
     throw new CliError(
