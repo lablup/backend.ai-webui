@@ -710,11 +710,18 @@ path that opens nothing.
 #### List-only resources
 
 Several pages list rows but address none of them — there is no per-row URL
-param to put in a link. A root field resolving to one of these gets **one**
-entry in `data.links` per root field, pointing at the list page, with no `id`
-and no annotation on the rows themselves. An empty root field gets no link at
-all — null, `[]`, a Relay connection whose `edges` is empty, or a Graphene list
-whose `items` is empty.
+param to put in a link. A **list-shaped** root field resolving to one of these
+gets **one** entry in `data.links` per root field, pointing at the list page,
+with no `id` and no annotation on the rows themselves.
+
+List-shaped is read off the SDL, not off the response: the root field's type is
+a GraphQL list (`[User]`), a Relay connection (`edges`), or a Graphene list
+container (`items`). A singular root field returning a bare object of the same
+type — `user`, `keypair`, `image`, `group`, `resource_preset` — gets **no**
+link: a list page is not where one row lives, and most of these pages are
+admin-only, so a non-admin would get a link they cannot open. An empty
+list-shaped root field gets no link either — null, `[]`, a connection whose
+`edges` is empty, or a Graphene list whose `items` is empty.
 
 | Return type                            | Resource        | Page                             |
 | -------------------------------------- | --------------- | -------------------------------- |

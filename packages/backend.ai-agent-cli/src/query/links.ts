@@ -1,4 +1,4 @@
-import type { SchemaIndex } from '../search/schema-sdl.js';
+import type { SchemaField, SchemaIndex } from '../search/schema-sdl.js';
 import type { ListResource, ResourceRef } from '../webui-path.js';
 import { listPath, resourcePath, webuiUrl } from '../webui-path.js';
 
@@ -130,14 +130,26 @@ export interface QueryLink {
   webui_url?: string;
 }
 
-const namedFieldType = (
+const fieldOf = (
   schema: SchemaIndex,
   typeName: string,
   fieldName: string,
-): string | undefined =>
-  schema.byName
-    .get(typeName)
-    ?.fields.find((field) => field.name === fieldName)?.namedType;
+): SchemaField | undefined =>
+  schema.byName.get(typeName)?.fields.find((field) => field.name === fieldName);
+
+/** `[X]`, `[X!]!`, … — a printed type reference carrying a list wrapper. */
+const isListType = (printed: string): boolean => printed.includes('[');
+
+/**
+ * A row type a root field resolves to, plus whether the way there ran through
+ * a list. That is what separates a root field returning MANY rows from one
+ * returning a single object of the same type — `Query.user_nodes` and
+ * `Query.user` both resolve to `User`.
+ */
+interface RowTypeCandidate {
+  typeName: string;
+  listShaped: boolean;
+}
 
 /**
  * The row types a root field can resolve to, in match order: the field's own
@@ -149,20 +161,38 @@ function rowTypeCandidates(
   schema: SchemaIndex,
   rootTypeName: 'Query' | 'Mutation',
   fieldName: string,
-): string[] {
-  const named = namedFieldType(schema, rootTypeName, fieldName);
-  if (!named) return [];
-  const candidates = [named];
+): RowTypeCandidate[] {
+  const root = fieldOf(schema, rootTypeName, fieldName);
+  if (!root) return [];
+  const named = root.namedType;
+  const candidates: RowTypeCandidate[] = [
+    { typeName: named, listShaped: isListType(root.type) },
+  ];
 
-  const items = namedFieldType(schema, named, 'items');
-  if (items) candidates.push(items);
+  const items = fieldOf(schema, named, 'items');
+  if (items) {
+    candidates.push({
+      typeName: items.namedType,
+      listShaped: isListType(items.type),
+    });
+  }
 
-  const edges = namedFieldType(schema, named, 'edges');
-  const node = edges ? namedFieldType(schema, edges, 'node') : undefined;
-  if (node) candidates.push(node);
+  const edges = fieldOf(schema, named, 'edges');
+  const node = edges ? fieldOf(schema, edges.namedType, 'node') : undefined;
+  if (edges && node) {
+    candidates.push({
+      typeName: node.namedType,
+      listShaped: isListType(edges.type),
+    });
+  }
 
   const only = schema.byName.get(named)?.fields;
-  if (only?.length === 1) candidates.push(only[0].namedType);
+  if (only?.length === 1) {
+    candidates.push({
+      typeName: only[0].namedType,
+      listShaped: isListType(only[0].type),
+    });
+  }
 
   return candidates;
 }
@@ -172,9 +202,12 @@ const lookupRootField = <T>(
   schema: SchemaIndex,
   rootTypeName: 'Query' | 'Mutation',
   fieldName: string,
+  /** Skip candidates the root field reaches with no list on the way. */
+  listShapedOnly = false,
 ): T | undefined => {
   for (const candidate of rowTypeCandidates(schema, rootTypeName, fieldName)) {
-    const hit = table[candidate];
+    if (listShapedOnly && !candidate.listShaped) continue;
+    const hit = table[candidate.typeName];
     if (hit) return hit;
   }
   return undefined;
@@ -189,7 +222,14 @@ export function resourceForRootField(
   return lookupRootField(RESOURCE_BY_TYPE, schema, rootTypeName, fieldName);
 }
 
-/** The list page a root field's rows live on, when they have no detail page. */
+/**
+ * The list page a root field's rows live on, when they have no detail page.
+ *
+ * List-shaped root fields only. A list-page link answers "where do these rows
+ * live", which a singular field (`Query.user: User`) never asked; and several
+ * of these pages are admin-only, so a regular account running a query it is
+ * allowed to run would get a link it cannot open.
+ */
 export function listResourceForRootField(
   schema: SchemaIndex,
   rootTypeName: 'Query' | 'Mutation',
@@ -200,6 +240,7 @@ export function listResourceForRootField(
     schema,
     rootTypeName,
     fieldName,
+    true,
   );
 }
 

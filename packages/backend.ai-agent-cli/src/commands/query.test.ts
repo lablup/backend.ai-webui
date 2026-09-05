@@ -626,6 +626,39 @@ describe('list-page links', () => {
       jsonOut().data.links.map((link: any) => link.webui_path),
     ).toEqual(['/admin/users?tab=users']);
   });
+
+  it('emits no list link for a singular root field', async () => {
+    // `Query.user` returns `User`, the same type `user_nodes` lists — but the
+    // users page is a list of many, and it is admin-only, so a regular account
+    // asking for its own row would have got a link it cannot open.
+    stubFetch({ data: { user: { email: 'alice@example.com' } } });
+
+    await expect(
+      run(['query', 'query { user { email } }', '--json']),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
+
+  it('emits no list link for a singular image or keypair either', async () => {
+    stubFetch({
+      data: {
+        image: { name: 'python' },
+        keypair: { access_key: 'AKIA' },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        `query {
+          image(reference: "python") { name }
+          keypair(access_key: "AKIA") { access_key }
+        }`,
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
 });
 
 describe('auth', () => {

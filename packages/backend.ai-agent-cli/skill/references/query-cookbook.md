@@ -157,8 +157,10 @@ query Agents($first: Int!) {
 }
 ```
 
-`--var first=20`. Agents have no detail page yet, so no `webui_path` — point
-the user at the list page instead: `/admin/agent?tab=agents`.
+`--var first=20`. Agents have no detail page yet, so the rows carry no
+`webui_path`; because the root field is list-shaped, `data.links` carries one
+entry for the whole field, pointing at `/admin/agent?tab=agents`. Hand that
+over. A singular root field (`agent(agent_id: …)`) gets no link at all.
 
 ### 6. Resource groups (scaling groups)
 
@@ -285,9 +287,9 @@ pnpm run bai-agent query --allow-mutation --json \
 `createVfolderV2` is one of the three names on
 `packages/backend.ai-agent-cli/src/mutation-allowlist.ts`. The result's
 `data.links` entry is annotated with a `webui_path` / `webui_url` built from
-`vfolder.id`, which is a base64 Relay global id — the Data page wants the raw
-UUID, so that link does **not** open the folder until the id is decoded. Known
-limitation; see "Known limitation" in `packages/backend.ai-agent-cli/README.md`.
+`vfolder.id`: that is a base64 Relay global id (`VFolder:<uuid>`) and the Data
+page wants the raw UUID, so the CLI decodes it first. Hand the user the emitted
+`webui_url` — it opens the folder that was just created.
 
 ### 11. Delete a VFolder — refused on purpose
 
