@@ -132,6 +132,7 @@ bai-agent manifest             # every command with its description and flags
 bai-agent init                 # set this machine up (see The init wizard below)
 bai-agent init --features agents  # the CLAUDE.md agent block (see The agent block below)
 bai-agent doctor               # environment + checkout + auth diagnostics
+bai-agent doctor --brief       # the auth/alignment/checkout lines + only what warns
 bai-agent sync                 # fetch the checkout data for use outside a checkout
 bai-agent search "<query>"     # one ranked list over docs + schema + terminology
 bai-agent docs search "<q>"    # alias of `search --domain docs`
@@ -143,6 +144,7 @@ bai-agent login                # hand this machine a WebUI session (see Auth bel
 bai-agent whoami               # who the stored session belongs to
 bai-agent logout               # delete the stored session file
 bai-agent query '<document>'   # raw GraphQL, SDL-validated (see Query below)
+bai-agent cookbook [<n>|<field>]  # one ready-to-run query from the skill cookbook
 bai-agent explain <target>     # what a type, field or value means to a user
 bai-agent --help               # generated from the same registry as `manifest`
 ```
@@ -604,8 +606,14 @@ validator message under `suggestions`, and a hint naming the nearest type:
 error: The document does not match the checkout's schema (1 problem(s)).
 code:  schema_mismatch
 - Cannot query field "nope_field" on type "ComputeSessionNode".
+- bai-agent cookbook compute_session_nodes
 hint:  bai-agent schema show ComputeSessionNode
 ```
+
+The last suggestion is the [cookbook](#cookbook) entry for the root field the
+document tried to use — a rejected document is nearly always a hand-written
+one, and the cookbook has a working version. It falls back to
+`bai-agent cookbook --list` when no entry covers the field.
 
 A message that names only built-in scalars — a variable's nullability, say —
 falls back to the operation's root field (`bai-agent schema show
@@ -684,10 +692,13 @@ level is unwrapped: a Relay `*Connection` (`edges { node }`), a Graphene `*List`
 | `Artifact`, `ArtifactNode`                          | artifact   | `/admin/reservoir/<id>`       |
 
 The id is the first of `row_id`, `endpoint_id`, `id` that carries a non-empty
-string. **Known limitation:** Strawberry types (`VFolder`, `SessionV2`, …)
-expose no `row_id`, so their annotation falls back to the base64 Relay global
-id, which the pages do not accept. Graphene `*Node` types, which do carry
-`row_id`, produce links that open.
+string, **resolved to the form the page reads**: these pages take the raw uuid,
+so a base64 Relay global id (`<TypeName>:<uuid>` — all a Strawberry type like
+`VFolder` or `SessionV2` exposes) is decoded to the uuid first. `/admin/rbac` is
+the exception: it matches `roleDetail` against the node's global `id`, so a role
+link keeps it. An id that is neither a uuid nor a decodable global id produces
+**no** link — the node carries `webui_link_hint` ("select row_id") instead of a
+path that opens nothing.
 
 #### List-only resources
 
@@ -721,6 +732,24 @@ host app, so nothing is imported. `src/webui-path.fixture.json` pins the
 expected path per resource ref and `webui-path.test.ts` asserts every case.
 When the app renames a route or a query param, update the rule and the fixture
 together.
+
+## Cookbook
+
+`bai-agent cookbook` reads the same file the skill points at —
+`skill/references/query-cookbook.md`, shipped in the package next to `dist/` and
+located at runtime the way the skill installer locates it (`shippedSkillDir()`),
+so it works from a checkout and from the npm install alike.
+
+```bash
+bai-agent cookbook --list          # number, title and root field(s) per entry
+bai-agent cookbook 3               # one entry: heading, prose, GraphQL document
+bai-agent cookbook vfolder_nodes   # the entry whose document uses that root field
+```
+
+An argument that is all digits selects by entry number; anything else is matched
+against the root fields parsed out of each entry's `graphql` block. No match
+exits **5** `not_found` with the whole list under `suggestions`. `--json` returns
+`{ entries: [...] }` for the list and `{ entry }` for one entry.
 
 ## Explain
 

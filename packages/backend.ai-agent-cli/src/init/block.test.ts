@@ -2,6 +2,7 @@ import { EXIT } from '../errors.js';
 import { COMMANDS } from '../registry.js';
 import { resolveRepoContext } from '../repo-context.js';
 import { runCli } from '../run.js';
+import { installedSkillPath } from '../skill-path.js';
 import {
   AGENTS_MD,
   applyBlock,
@@ -9,7 +10,6 @@ import {
   BLOCK_START,
   CLAUDE_MD,
   findBlockRegion,
-  INSTALLED_SKILL_PATH,
   renderAgentBlock,
   resolveBlockTarget,
 } from './block.js';
@@ -102,12 +102,38 @@ describe('init', () => {
   it('renders the standalone block for an installed skill', () => {
     const block = renderAgentBlock(COMMANDS, { mode: 'standalone' });
     expect(block).toContain('npm i -g backend.ai-agent-cli');
-    expect(block).toContain(INSTALLED_SKILL_PATH);
+    expect(block).toContain(installedSkillPath());
     expect(block).not.toContain('pnpm run bai-agent');
     expect(block).not.toContain('.claude/rules/graphql-pagination.md');
     expect(normalise(renderAgentBlock(COMMANDS))).toBe(
       normalise(renderAgentBlock(COMMANDS, { mode: 'checkout' })),
     );
+  });
+
+  it('names the directory the skill was installed into, not a fixed ~/.claude', () => {
+    const skillPath = '/opt/cfg/skills/bai-agent/SKILL.md';
+    const block = renderAgentBlock(COMMANDS, { mode: 'standalone', skillPath });
+    expect(block).toContain(skillPath);
+    expect(block).toContain(
+      '/opt/cfg/skills/bai-agent/references/query-cookbook.md',
+    );
+    expect(block).not.toContain(installedSkillPath());
+  });
+
+  it('states the preflight, link and session rules the skill relies on', () => {
+    for (const mode of ['checkout', 'standalone'] as const) {
+      const block = renderAgentBlock(COMMANDS, { mode });
+      expect(block).toContain('doctor --json');
+      expect(block).toContain('doctor --brief');
+      expect(block).toContain("only when doctor's session check is `warn`");
+      expect(block).not.toContain('Then `bai-agent whoami`');
+      expect(block).toContain('Empty `data.links`');
+      expect(block).toContain('pick the link by `id`');
+      expect(block).toContain('print `data.links` too');
+      expect(block).toContain('~/.config/backend.ai-agent/sessions');
+      expect(block).toContain('never `cd` first');
+      expect(block).toContain('no React source');
+    }
   });
 
   it('rejects an unknown feature as a usage error', async () => {

@@ -175,20 +175,20 @@ The ASTRYX block above is `astryx init --features agents` output (run from `reac
 The block's `pnpm exec astryx <cmd>` assumes you are **inside `react/`**. `@astryxdesign/cli` is a devDependency of that workspace only, so the root `node_modules/.bin` has no `astryx` binary — and `pnpm exec` resolves binaries, not package scripts, so it fails at the root with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL`. **From the repository root, run `pnpm run astryx <cmd>` instead** (root `package.json` proxies it to the same CLI). Both forms take identical arguments.
 
 <!-- BAI-AGENT:start -->
-bai-agent · 13 commands
+bai-agent · 14 commands
 Agent-facing CLI over this checkout: the user manual, the GraphQL schema, the i18n stores and — once logged in — the live manager.
 CLI: run every command as `pnpm run bai-agent <cmd>` from the repository root (shown below as `bai-agent ...`).
 The proxy runs the bundle, so build it first: `pnpm --filter backend.ai-agent-cli build`. Without the proxy, still from the repository root: `node packages/backend.ai-agent-cli/dist/cli.js <cmd>`.
 Preflight, answer-or-link rules and a ready-to-run query cookbook: the `bai-agent` skill, shipped with the CLI (`packages/backend.ai-agent-cli/skill/SKILL.md`, cookbook at `packages/backend.ai-agent-cli/skill/references/query-cookbook.md`) and installed per user by `pnpm run bai-agent init --skill --no-login`.
 
 WORKFLOW — discover, don't guess. Before answering anything about Backend.AI data:
-1. `bai-agent doctor` — checkout and stored session in one pass; exit 0 means the environment is ok. Then `bai-agent whoami` — exit 3 means log in (see RULES).
+1. `bai-agent doctor --brief` (`doctor --json` for a specific field) — run it ONCE: checkout and stored session in one pass; exit 0 means the environment is ok. Run `bai-agent whoami` only when doctor's session check is `warn` — exit 3 means log in (see RULES).
 2. `bai-agent search "<english UI term>"` — START HERE: one ranked list over manual + schema + terminology. Every hit carries the `command:` that opens it.
 3. `bai-agent docs show <id>` · `schema show <Type>.<field>` · `explain <Type>.<field>=<VALUE>` — the hit in full. `schema show` is what the SDL declares; `explain` is what it means to a user.
 4. `bai-agent query '<document>'` — ask the manager. Validated against the checkout's SDL before any network call. Rows come back carrying `webui_path` / `webui_url` under `data.links` — hand that to the user so they can open it themselves.
 
 OUTPUT: `--json` prints one envelope on stdout — {"apiVersion":"bai-agent/v1","type":…,"data":…}; a failure prints {"apiVersion","error","code","suggestions?","hint?"} on stderr and nothing on stdout. Text is the same data as aligned `key: value` records. `hint` is a concrete next step — a command to run, or for a refused mutation, the WebUI page to do it on — never prose.
-`query` results: rows are at `data.result.<rootField>`, links at `data.links[]` (`webui_path` / `webui_url`); the same fields are also inlined on each linked row.
+`query` results: rows are at `data.result.<rootField>`, links at `data.links[]` (`webui_path` / `webui_url`); the same fields are also inlined on each linked row. When you post-process the envelope (jq/python), print `data.links` too — a filter that drops it drops the answer's link.
 Piping through `| head` hides the exit code and truncates doctor's alignment/session checks — read the JSON `code` field or the exit status instead.
 EXIT: 0 ok · 1 error (schema_mismatch, version_mismatch, repo_not_found, repo_incomplete, internal) · 2 usage · 3 auth_required · 4 mutation_refused · 5 not_found.
 
@@ -200,6 +200,9 @@ RULES:
 - Destructive actions (delete, purge, terminate, revoke) are never run from here. Give the human the WebUI page from the refusal's `hint` and let them press the button.
 - Exit 3 `auth_required` → `bai-agent login --endpoint <url>`; take the endpoint and the account from the `webui-connection-info` skill. The CLI never handles a password: `login` borrows the browser's session, and `--paste` covers a browser that cannot reach this machine.
 - Cite what the CLI returned: `search`, `docs show` and `explain` carry a deployed-docs `url`. `explain` prints `MISSING` for a piece nothing curates — report that, never fill it in from memory.
+- Empty `data.links` means the resource has no addressable page: say so, never compose a WebUI path by hand. A row carrying `webui_link_hint` is the other case — the id you selected cannot build a link; re-run selecting `row_id`. When several rows share a name, pick the link by `id`.
+- Never read the session store (`~/.config/backend.ai-agent/sessions`) or reuse its session id outside `bai-agent` — the mutation gate only applies to calls that go through the CLI.
+- Run `bai-agent` from wherever you already are, never `cd` first. The synced data copy holds schema, i18n and docs only — no React source, so do not grep it for `.tsx`.
 - Re-run `bai-agent init --features agents` after any CLI change and re-sync this block.
 
 COMMANDS:
@@ -215,6 +218,7 @@ COMMANDS:
   logout    Delete the stored session file. The manager is not contacted.
   whoami    Show the account the stored session belongs to.
   query     Run a raw GraphQL document against the manager, pre-validated against the checkout SDL.
+  cookbook  Print a ready-to-run query from the skill cookbook, by entry number or root field.
   explain   Explain what a schema type, field or value means to a WebUI user, tagged by where each piece came from.
 <!-- BAI-AGENT:end -->
 

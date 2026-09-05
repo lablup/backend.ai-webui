@@ -42,11 +42,18 @@ const jsonErr = () =>
     suggestions?: string[];
   };
 
+/** A per-row uuid — the form the WebUI pages actually take. */
+const rowUuid = (index: number) =>
+  `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`;
+
+const globalId = (type: string, id: string) =>
+  Buffer.from(`${type}:${id}`, 'utf8').toString('base64');
+
 const sessionEdges = (count: number) =>
   Array.from({ length: count }, (_, index) => ({
     node: {
-      id: `Q29tcHV0ZVNlc3Npb246${index}`,
-      row_id: `row-${index}`,
+      id: globalId('ComputeSessionNode', rowUuid(index)),
+      row_id: rowUuid(index),
       name: `session-${index}`,
       status_info: 'x'.repeat(400),
     },
@@ -323,14 +330,85 @@ describe('webui link annotation', () => {
     expect(data.links[0]).toMatchObject({
       path: 'compute_session_nodes.edges[0].node',
       resource: 'session',
-      id: 'row-0',
-      webui_path: '/session?sessionDetail=row-0',
-      webui_url: `${WEBUI}/session?sessionDetail=row-0`,
+      id: rowUuid(0),
+      webui_path: `/session?sessionDetail=${rowUuid(0)}`,
+      webui_url: `${WEBUI}/session?sessionDetail=${rowUuid(0)}`,
     });
     // The annotation is on the node itself, not only in `links`.
     expect(
       data.result.compute_session_nodes.edges[1].node.webui_path,
-    ).toBe('/session?sessionDetail=row-1');
+    ).toBe(`/session?sessionDetail=${rowUuid(1)}`);
+  });
+
+  it('decodes the Relay global id when only `id` was selected', async () => {
+    stubFetch({
+      data: {
+        compute_session_nodes: {
+          edges: [{ node: { id: globalId('ComputeSessionNode', rowUuid(7)) } }],
+        },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { compute_session_nodes(first: 1) { edges { node { id } } } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    // The base64 global id itself opens nothing — the page takes the uuid.
+    expect(jsonOut().data.links[0]).toMatchObject({
+      id: rowUuid(7),
+      webui_path: `/session?sessionDetail=${rowUuid(7)}`,
+    });
+  });
+
+  it('links the created folder of a createVfolderV2 payload', async () => {
+    stubFetch({
+      data: {
+        createVfolderV2: { vfolder: { id: globalId('VFolder', rowUuid(3)) } },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'mutation { createVfolderV2(input: {name: "x"}) { vfolder { id } } }',
+        '--allow-mutation',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'createVfolderV2.vfolder',
+        resource: 'vfolder',
+        id: rowUuid(3),
+        webui_path: `/data?folder=${rowUuid(3)}`,
+        webui_url: `${WEBUI}/data?folder=${rowUuid(3)}`,
+      },
+    ]);
+  });
+
+  it('hints instead of linking when the id resolves to no uuid', async () => {
+    stubFetch({
+      data: { compute_session_nodes: { edges: [{ node: { id: 'row-0' } }] } },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { compute_session_nodes(first: 1) { edges { node { id } } } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    const data = jsonOut().data;
+    expect(data.links).toEqual([]);
+    const node = data.result.compute_session_nodes.edges[0].node;
+    expect(node.webui_path).toBeUndefined();
+    expect(node.webui_link_hint).toContain('select row_id');
   });
 
   it('prefers --webui over the stored origin', async () => {
@@ -344,7 +422,7 @@ describe('webui link annotation', () => {
       '--json',
     ]);
     expect(jsonOut().data.links[0].webui_url).toBe(
-      'https://ui.example.com/session?sessionDetail=row-0',
+      `https://ui.example.com/session?sessionDetail=${rowUuid(0)}`,
     );
   });
 
@@ -469,6 +547,26 @@ describe('auth', () => {
   });
 });
 
+describe('--json links notice', () => {
+  it('prints a links summary to stderr, not stdout', async () => {
+    stubFetch({ data: { compute_session_nodes: { edges: sessionEdges(1) } } });
+
+    await expect(
+      run([
+        'query',
+        'query { compute_session_nodes(first: 1) { edges { node { id row_id name } } } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    const notice = err.join('');
+    expect(notice).toBe(
+      `links: 1 — session ${WEBUI}/session?sessionDetail=${rowUuid(0)}\n`,
+    );
+    expect(jsonOut().data.links).toHaveLength(1);
+  });
+});
+
 describe('text output', () => {
   it('mirrors the JSON surface', async () => {
     stubFetch({ data: { compute_session_nodes: { edges: sessionEdges(1) } } });
@@ -482,7 +580,7 @@ describe('text output', () => {
 
     const printed = out.join('');
     expect(printed).toContain('operation:');
-    expect(printed).toContain('/session?sessionDetail=row-0');
+    expect(printed).toContain(`/session?sessionDetail=${rowUuid(0)}`);
     expect(printed).toContain('session-0');
   });
 });

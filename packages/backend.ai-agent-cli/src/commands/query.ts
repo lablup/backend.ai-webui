@@ -21,6 +21,7 @@ import {
   validateAgainstSchema,
 } from '../query/document.js';
 import { DEFAULT_MAX_BYTES, jsonBytes, truncateToBudget } from '../query/truncate.js';
+import { cookbookCommandFor } from './cookbook.js';
 import { ENDPOINT_FLAG } from './whoami.js';
 import { readFileSync } from 'node:fs';
 
@@ -91,6 +92,18 @@ function readStdinSync(): string {
   }
 }
 
+const MAX_LINKS_SHOWN = 5;
+
+/** `links: <n> — <resource> <url>[, ...]`, capped at `MAX_LINKS_SHOWN`. */
+function formatLinksNotice(links: QueryLink[]): string {
+  const shown = links
+    .slice(0, MAX_LINKS_SHOWN)
+    .map((link) => `${link.resource} ${link.webui_url ?? link.webui_path}`)
+    .join(', ');
+  const more = links.length > MAX_LINKS_SHOWN ? ', …' : '';
+  return `links: ${links.length} — ${shown}${more}`;
+}
+
 function parseMaxBytes(raw: string | undefined): number {
   if (raw === undefined) return DEFAULT_MAX_BYTES;
   const parsed = Number(raw);
@@ -118,6 +131,23 @@ function refuseMutation(field: string, allowFlagGiven: boolean): CliError {
       ...(page ? [`do it in the WebUI at ${page}`] : []),
     ],
     hint: page ?? `${CLI_NAME} query --help`,
+  });
+}
+
+/**
+ * A document the local SDL rejects is a hand-written one; carry the cookbook
+ * entry for its root field next to the validator messages.
+ */
+function withCookbookPointer(error: unknown, rootFields: string[]): unknown {
+  if (!(error instanceof CliError) || error.code !== 'schema_mismatch') {
+    return error;
+  }
+  return new CliError('schema_mismatch', error.message, {
+    suggestions: [
+      ...(error.suggestions ?? []),
+      cookbookCommandFor(rootFields),
+    ],
+    hint: error.hint,
   });
 }
 
@@ -171,7 +201,14 @@ export const queryCommand = defineCommand<QueryData>({
     const variables = parseVariables(flagList(context.flags, 'var'));
 
     const { document, operations } = parseDocument(source);
-    validateAgainstSchema(executableSchema(repo), document);
+    try {
+      validateAgainstSchema(executableSchema(repo), document);
+    } catch (error) {
+      throw withCookbookPointer(
+        error,
+        operations.flatMap((operation) => operation.rootFields),
+      );
+    }
 
     const allowMutation = context.flags['allow-mutation'] === true;
     const mutations = operations.filter(
@@ -222,6 +259,12 @@ export const queryCommand = defineCommand<QueryData>({
     );
     const cut = truncateToBudget(raw, maxBytes);
     const links = survivingLinks(annotated, cut.value);
+
+    // Text mode renders links in its own block; --json's stdout is a single
+    // envelope, so this is the only place a --json caller sees them at all.
+    if (context.json && links.length > 0) {
+      context.notify(formatLinksNotice(links));
+    }
 
     return {
       endpoint,

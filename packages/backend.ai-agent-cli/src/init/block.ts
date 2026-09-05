@@ -2,6 +2,7 @@ import type { AnyCommand } from '../command.js';
 import { CliError, exitLine } from '../errors.js';
 import { CLI_NAME } from '../meta.js';
 import { API_VERSION } from '../output.js';
+import { installedSkillPath } from '../skill-path.js';
 import type { Stats } from 'node:fs';
 import {
   existsSync,
@@ -44,12 +45,9 @@ export type BlockMode = 'checkout' | 'standalone';
 
 export interface BlockOptions {
   mode?: BlockMode;
-  /** Standalone: where the skill was actually installed (defaults to `~/.claude`). */
+  /** Standalone: where the skill was actually installed; the installer passes it. */
   skillPath?: string;
 }
-
-/** Where the installed skill lives by default, as the standalone block names it. */
-export const INSTALLED_SKILL_PATH = `~/.claude/skills/${CLI_NAME}/SKILL.md`;
 
 const pad = (rows: Array<[string, string]>): string[] => {
   const width = Math.max(0, ...rows.map(([left]) => left.length));
@@ -65,7 +63,7 @@ export function renderAgentBlock(
   options: BlockOptions = {},
 ): string {
   const standalone = options.mode === 'standalone';
-  const skillPath = options.skillPath ?? INSTALLED_SKILL_PATH;
+  const skillPath = options.skillPath ?? installedSkillPath();
   const lines = [
     BLOCK_START,
     `${CLI_NAME} · ${commands.length} commands`,
@@ -83,13 +81,13 @@ export function renderAgentBlock(
         ]),
     '',
     "WORKFLOW — discover, don't guess. Before answering anything about Backend.AI data:",
-    `1. \`${CLI_NAME} doctor\` — ${standalone ? 'synced data' : 'checkout'} and stored session in one pass; exit 0 means the environment is ok. Then \`${CLI_NAME} whoami\` — exit 3 means log in (see RULES).`,
+    `1. \`${CLI_NAME} doctor --brief\` (\`doctor --json\` for a specific field) — run it ONCE: ${standalone ? 'synced data' : 'checkout'} and stored session in one pass; exit 0 means the environment is ok. Run \`${CLI_NAME} whoami\` only when doctor's session check is \`warn\` — exit 3 means log in (see RULES).`,
     `2. \`${CLI_NAME} search "<english UI term>"\` — START HERE: one ranked list over manual + schema + terminology. Every hit carries the \`command:\` that opens it.`,
     `3. \`${CLI_NAME} docs show <id>\` · \`schema show <Type>.<field>\` · \`explain <Type>.<field>=<VALUE>\` — the hit in full. \`schema show\` is what the SDL declares; \`explain\` is what it means to a user.`,
     `4. \`${CLI_NAME} query '<document>'\` — ask the manager. Validated against the ${standalone ? 'synced' : "checkout's"} SDL before any network call. Rows come back carrying \`webui_path\` / \`webui_url\` under \`data.links\` — hand that to the user so they can open it themselves.`,
     '',
     `OUTPUT: \`--json\` prints one envelope on stdout — {"apiVersion":"${API_VERSION}","type":…,"data":…}; a failure prints {"apiVersion","error","code","suggestions?","hint?"} on stderr and nothing on stdout. Text is the same data as aligned \`key: value\` records. \`hint\` is a concrete next step — a command to run, or for a refused mutation, the WebUI page to do it on — never prose.`,
-    `\`query\` results: rows are at \`data.result.<rootField>\`, links at \`data.links[]\` (\`webui_path\` / \`webui_url\`); the same fields are also inlined on each linked row.`,
+    `\`query\` results: rows are at \`data.result.<rootField>\`, links at \`data.links[]\` (\`webui_path\` / \`webui_url\`); the same fields are also inlined on each linked row. When you post-process the envelope (jq/python), print \`data.links\` too — a filter that drops it drops the answer's link.`,
     "Piping through `| head` hides the exit code and truncates doctor's alignment/session checks — read the JSON `code` field or the exit status instead.",
     `EXIT: ${exitLine()}.`,
     '',
@@ -101,6 +99,9 @@ export function renderAgentBlock(
     "- Destructive actions (delete, purge, terminate, revoke) are never run from here. Give the human the WebUI page from the refusal's `hint` and let them press the button.",
     `- Exit 3 \`auth_required\` → \`${CLI_NAME} login --endpoint <url>\`; ${standalone ? `the endpoint is the one \`${CLI_NAME} init\` recorded (\`${CLI_NAME} doctor\` shows it)` : 'take the endpoint and the account from the `webui-connection-info` skill'}. The CLI never handles a password: \`login\` borrows the browser's session, and \`--paste\` covers a browser that cannot reach this machine.`,
     '- Cite what the CLI returned: `search`, `docs show` and `explain` carry a deployed-docs `url`. `explain` prints `MISSING` for a piece nothing curates — report that, never fill it in from memory.',
+    '- Empty `data.links` means the resource has no addressable page: say so, never compose a WebUI path by hand. A row carrying `webui_link_hint` is the other case — the id you selected cannot build a link; re-run selecting `row_id`. When several rows share a name, pick the link by `id`.',
+    `- Never read the session store (\`~/.config/backend.ai-agent/sessions\`) or reuse its session id outside \`${CLI_NAME}\` — the mutation gate only applies to calls that go through the CLI.`,
+    `- Run \`${CLI_NAME}\` from wherever you already are, never \`cd\` first. The synced data copy holds schema, i18n and docs only — no React source, so do not grep it for \`.tsx\`.`,
     standalone
       ? `- Re-run \`${CLI_NAME} init\` after upgrading the CLI; it rewrites this block and the skill.`
       : `- Re-run \`${CLI_NAME} init --features ${FEATURE_AGENTS}\` after any CLI change and re-sync this block.`,

@@ -25,10 +25,11 @@ in, when to answer versus link, and which neighbour owns what.
 
 ## Preflight
 
-Run `bai-agent doctor --json` once, from wherever you already are — never `cd`
-first. Its `checkout detection` check says whether you are in a checkout or
-running on synced data; its session/auth check says whether you are logged
-in. Run `bai-agent whoami` only when that check is `warn`.
+Run `bai-agent doctor --brief` once, from wherever you already are — never
+`cd` first. It is the one-step preflight: checkout-vs-synced-data and
+session/auth in one line each. Fall back to `bai-agent doctor --json` only
+when you need a specific field out of it. Run `bai-agent whoami` only when
+the auth check is `warn`.
 
 The workflow contract is already loaded: in a checkout it is the `BAI-AGENT`
 block in `CLAUDE.md`; installed, it is `references/agent-block.md`. Read
@@ -58,8 +59,8 @@ A "what does X mean" question never requires logging in — go straight to it.
 | --- | --- |
 | to understand a status value ("what does status X mean") | Try `explain <Type>.<field>=<VALUE>` first — e.g. `explain ComputeSessionNode.status=PENDING`, `explain UserNode.status=before-verification`. Fall back to `explain <Type>.<field>` (no value) or `docs show` for a term or field in general. |
 | to understand a term or field | `explain` (meaning) or `docs show` (the manual). Answer in the words the UI uses, and cite the deployed-docs `url` the CLI returned. |
-| a count, a list, a value | `query` — start from the Cookbook below, adapt, never invent a shape. Summarise the rows; do not paste the raw envelope. |
-| to see it, or act on it | Give the `webui_url` (or `webui_path`) `query` already annotated onto the row, under `data.links`, so the user can open it themselves. Never describe a click path you could report directly. If `data.links` is empty for a result, say the resource has no addressable page — do not compose a path by hand. When several rows share a name, pick the link by `id`, never by name. |
+| a count, a list, a value | Start every live query from `bai-agent cookbook <root field>` (or `--list`) — never search the filesystem for the cookbook; a `schema_mismatch` error names the entry to read. Adapt it, never invent a shape. Summarise the rows; do not paste the raw envelope. |
+| to see it, or act on it | Give the `webui_url` (or `webui_path`) `query` already annotated onto the row, under `data.links`, so the user can open it themselves. When you post-process the `--json` envelope yourself, also print `data.links` — the link must reach the user. Never describe a click path you could report directly. If `data.links` is empty for a result, say the resource has no addressable page — do not compose a path by hand; but a row carrying `webui_link_hint` instead means the id you selected cannot build one, so re-run selecting `row_id`. When several rows share a name, pick the link by `id`, never by name. |
 | something destructive | Give them the `hint` page from the refusal and stop. A `mutation_refused` (exit 4) is the answer, not an obstacle to route around. |
 
 `explain` prints `MISSING` for a piece nothing curates. Say it is not documented
@@ -90,23 +91,21 @@ guess at runtime.
 - **Session detail views share one URL.** `/session?sessionDetail=<id>` is a
   drawer, the only addressable surface — there is no per-row session link to
   offer beyond that.
-- **Never read the session file, or reuse its session id, outside `bai-agent`.**
-  It exists so the CLI itself can hold the credential; the mutation gate only
-  applies when calls go through the CLI, so bypassing it defeats the point.
-- **The synced data copy holds schema, i18n and docs only — no React source.**
-  Do not grep it for `.tsx`, and never report that emptiness as a fact about
-  the WebUI itself.
+
+The block's RULES apply beyond these (session file, empty `data.links`, no
+React source in a synced copy, never `cd` before `doctor`, and more) — read
+them there rather than restated here.
 
 ## Cookbook
 
-`<this skill's directory>/references/query-cookbook.md` (next to this file) —
-11 documents that validate against the checkout's SDL, one per resource, plus
-the allow-listed mutation and the refused destructive one. A test re-validates
-them, so a stale one fails CI, not a user. Checkout location:
-`packages/backend.ai-agent-cli/skill/references/query-cookbook.md`; installed:
-`~/.claude/skills/bai-agent/references/query-cookbook.md`, or
-`$CLAUDE_CONFIG_DIR/skills/...` when that is set. Never search the filesystem
-for it.
+`bai-agent cookbook --list` names every entry; `bai-agent cookbook <n>` and
+`bai-agent cookbook <root field>` print one, prose and document. That command
+is how you read it — it locates the file itself, so never search the
+filesystem for a path and never `cat` one. The entries are 11 documents that
+validate against the SDL, one per resource, plus the allow-listed mutation and
+the refused destructive one; a test re-validates them, so a stale one fails CI,
+not a user. Maintainers edit
+`packages/backend.ai-agent-cli/skill/references/query-cookbook.md`.
 
 ## Keeping this in sync (maintainers, in a checkout)
 

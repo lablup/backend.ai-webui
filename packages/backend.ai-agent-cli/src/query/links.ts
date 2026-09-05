@@ -72,12 +72,51 @@ export const LIST_RESOURCE_BY_TYPE: Readonly<Record<string, ListResource>> = {
 };
 
 /**
- * Id fields checked on a node, in **preference** order. `row_id` first: the
+ * Id fields checked on a node, in **preference** order. `row_id` first: most
  * WebUI pages take the raw UUID, not the base64 Relay global id that `id`
  * carries. (The truncator protects the same names — see `UNCUTTABLE_KEYS` —
  * but that list is about what may be cut, not which id wins.)
  */
 export const ID_FIELDS = ['row_id', 'endpoint_id', 'id'] as const;
+
+/**
+ * The id form each detail page's URL param takes. A `uuid` page reads the raw
+ * uuid and opens nothing when handed a global id; `/admin/rbac` matches
+ * `roleDetail` against the node's global `id` (`RBACManagementPage.tsx`).
+ */
+export const ID_FORM: Readonly<Record<LinkedResource, 'uuid' | 'global'>> = {
+  session: 'uuid',
+  vfolder: 'uuid',
+  deployment: 'uuid',
+  model_card: 'uuid',
+  artifact: 'uuid',
+  role: 'global',
+};
+
+/** Annotated on a node whose id cannot produce a link the page would open. */
+export const NO_LINK_HINT =
+  'no WebUI link: this id is neither a uuid nor a Relay global id — select row_id';
+
+const UUID =
+  /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-f]{32})$/i;
+
+const GLOBAL_ID = /^[A-Za-z_][A-Za-z0-9_]*:(.+)$/;
+
+/**
+ * The id to put in a `uuid` page's URL. A Relay global id is base64 of
+ * `<TypeName>:<uuid>`, which those pages reject, so it is decoded; a value
+ * that is neither yields no link rather than one that opens nothing.
+ */
+export function resolveLinkId(
+  resource: LinkedResource,
+  raw: string,
+): string | undefined {
+  if (ID_FORM[resource] === 'global' || UUID.test(raw)) return raw;
+  const inner = GLOBAL_ID.exec(
+    Buffer.from(raw, 'base64').toString('utf8'),
+  )?.[1];
+  return inner !== undefined && UUID.test(inner) ? inner : undefined;
+}
 
 export interface QueryLink {
   /** JSON path of the annotated node inside `data.result`. */
@@ -177,9 +216,11 @@ const idOf = (node: Record<string, unknown>): string | undefined => {
  * Annotates every identifiable node under `value` with `webui_path` (and
  * `webui_url` when an origin is known), **in place**.
  *
- * "Identifiable" is one of `ID_FIELDS` carrying a non-empty string. The walk
- * does not descend into a node it annotated: the first object with an id under
- * a root field IS the row, and its children belong to other types.
+ * "Identifiable" is one of `ID_FIELDS` carrying a non-empty string that
+ * `resolveLinkId` can turn into the id the page takes; a node whose id it
+ * refuses gets `webui_link_hint` instead of a link that opens nothing. The
+ * walk does not descend into a node it saw an id on: the first object with an
+ * id under a root field IS the row, and its children belong to other types.
  */
 export function annotateLinks(
   value: unknown,
@@ -195,8 +236,13 @@ export function annotateLinks(
     }
     if (node === null || typeof node !== 'object') return;
     const object = node as Record<string, unknown>;
-    const id = idOf(object);
-    if (id !== undefined) {
+    const raw = idOf(object);
+    if (raw !== undefined) {
+      const id = resolveLinkId(resource, raw);
+      if (id === undefined) {
+        object.webui_link_hint = NO_LINK_HINT;
+        return;
+      }
       const path_ = resourcePath(refFor(resource, id));
       const link: QueryLink = {
         path,
