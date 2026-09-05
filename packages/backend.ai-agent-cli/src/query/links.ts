@@ -448,7 +448,13 @@ export function annotateResult(
   for (const [responseKey, value] of Object.entries(
     result as Record<string, unknown>,
   )) {
-    const field = fieldNameByResponseKey[responseKey] ?? responseKey;
+    // Only trust a mapped value that is actually a field name string: a
+    // dangerous alias (`constructor`, `toString`, `__proto__`) looked up on
+    // an ordinary object literal (the default `{}` included) resolves to an
+    // inherited `Object.prototype` member instead of `undefined`, which is
+    // truthy and not a string.
+    const mapped = fieldNameByResponseKey[responseKey];
+    const field = typeof mapped === 'string' ? mapped : responseKey;
     const resource = resourceForRootField(schema, rootTypeName, field);
     if (resource) {
       links.push(...annotateLinks(value, resource, responseKey, webuiOrigin));

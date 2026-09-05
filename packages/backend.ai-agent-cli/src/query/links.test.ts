@@ -1,5 +1,6 @@
 import { resolveRepoContext } from '../repo-context.js';
 import { loadSchema } from '../search/schema-sdl.js';
+import { parseDocument } from './document.js';
 import { describe, expect, it } from 'vitest';
 import {
   annotateLinks,
@@ -300,4 +301,28 @@ describe('annotateResult with root-field aliases', () => {
       },
     ]);
   });
+
+  it.each(['constructor', 'toString', '__proto__'] as const)(
+    'links a list field aliased as the dangerous name %s, from a null-prototype map',
+    (alias) => {
+      // A plain `{}` inherits these three from `Object.prototype`, so a
+      // response-key lookup for any of them is truthy before the real field
+      // name is ever recorded. `parseDocument` is the code that actually
+      // builds this map in production; go through it rather than hand-rolling
+      // one, so the assertion below is on the real fix.
+      const { operations } = parseDocument(`query { ${alias}: images { id } }`);
+      const map = operations[0].rootFieldByResponseKey;
+      expect(map[alias]).toBe('images');
+      expect(Object.getPrototypeOf(map)).toBeNull();
+
+      expect(annotate({ [alias]: [{ id: 'i-1' }] }, map)).toEqual([
+        {
+          path: alias,
+          resource: 'environment',
+          webui_path: '/admin/environment',
+          requires: 'admin',
+        },
+      ]);
+    },
+  );
 });

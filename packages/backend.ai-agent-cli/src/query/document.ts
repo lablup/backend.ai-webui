@@ -135,11 +135,18 @@ function rootSelectionsOf(
  * `{ [responseKey]: fieldName }` for one operation's root selection set.
  * Response keys are unique per selection set (the validator rejects two
  * incompatible fields sharing one), so the first spelling wins.
+ *
+ * Built with a null prototype: a response key can legally be `constructor`,
+ * `toString`, or `__proto__` (a valid GraphQL alias), and a plain object
+ * literal already has those as inherited, truthy `Object.prototype` members —
+ * `??=` would then see the alias as "already set" and never record its real
+ * field name. `Object.create(null)` has no inherited keys, so every response
+ * key is stored and read back as plain data.
  */
 function rootFieldByResponseKey(
   selections: RootSelection[],
 ): Record<string, string> {
-  const map: Record<string, string> = {};
+  const map: Record<string, string> = Object.create(null);
   for (const { responseKey, fieldName } of selections) {
     map[responseKey] ??= fieldName;
   }

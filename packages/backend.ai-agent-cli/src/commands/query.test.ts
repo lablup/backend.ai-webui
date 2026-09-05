@@ -796,6 +796,32 @@ describe('root-field aliases', () => {
     );
   });
 
+  it.each(['constructor', 'toString', '__proto__'] as const)(
+    'still links a list field aliased as the dangerous name %s',
+    async (alias) => {
+      // These aliases collide with inherited `Object.prototype` members on a
+      // plain response-key dictionary, which used to make the real field name
+      // ('images') silently never get recorded — and the link vanish.
+      stubFetch({
+        data: { [alias]: [{ id: rowUuid(3), namespace: 'ns' }] },
+      });
+
+      await expect(
+        run(['query', `query { ${alias}: images { id namespace } }`, '--json']),
+      ).resolves.toBe(EXIT.ok);
+
+      expect(jsonOut().data.links).toEqual([
+        {
+          path: alias,
+          resource: 'environment',
+          webui_path: '/admin/environment',
+          webui_url: `${WEBUI}/admin/environment`,
+          requires: 'admin',
+        },
+      ]);
+    },
+  );
+
   it('leaves an unaliased document behaving exactly as before', async () => {
     stubFetch({
       data: { customized_images: [{ id: 'SW1hZ2VOb2RlOjA=', namespace: 'ns' }] },
