@@ -430,6 +430,13 @@ endpoint answers; a manager with introspection disabled reports nothing and the
 schema still comes from the committed SDL. Without a stored session none of this
 happens and no request is made.
 
+A recorded tag equal to the manager's version means the SDL **is** the
+manager's, so nothing can be ahead of it and every finding is suppressed. That
+short-circuit is taken only while `data/schema.meta.json`'s `sha256` still
+hashes the committed SDL — a stale meta file describes some other bytes, so the
+gate (and `doctor`'s verdict) ignores its tag and falls back to the marker
+comparison, with the metadata warning reported separately.
+
 Field-level markers are compared through `markerSource`: a member with no marker
 of its own inherits its type's. A **named** selection uses that effective marker;
 a whole-schema comparison counts only markers a member owns, because its type
@@ -705,24 +712,27 @@ path that opens nothing.
 Several pages list rows but address none of them — there is no per-row URL
 param to put in a link. A root field resolving to one of these gets **one**
 entry in `data.links` per root field, pointing at the list page, with no `id`
-and no annotation on the rows themselves. An empty or null root field gets no
-link at all.
+and no annotation on the rows themselves. An empty root field gets no link at
+all — null, `[]`, a Relay connection whose `edges` is empty, or a Graphene list
+whose `items` is empty.
 
-| Return type                          | Resource        | Page                             |
-| ------------------------------------ | --------------- | -------------------------------- |
-| `User`, `UserNode`, `UserV2`         | user            | `/admin/users?tab=users`         |
-| `KeyPair`                            | keypair         | `/admin/users?tab=credentials`   |
-| `Agent`, `AgentNode`, `AgentV2`      | agent           | `/admin/agent?tab=agents`        |
-| `ScalingGroup`, `ResourceGroup`      | resource_group  | `/admin/agent?tab=resourceGroup` |
-| `Group`, `GroupNode`, `ProjectV2`    | project         | `/admin/project`                 |
-| `ResourcePreset`, `ResourcePresetV2` | resource_preset | `/admin/environment?tab=preset`  |
-| `Image`, `ImageNode`                 | environment     | `/admin/environment`             |
+| Return type                            | Resource        | Page                             |
+| -------------------------------------- | --------------- | -------------------------------- |
+| `User`, `UserNode`, `UserV2`           | user            | `/admin/users?tab=users`         |
+| `KeyPair`, `KeyPairV2`                 | keypair         | `/admin/users?tab=credentials`   |
+| `Agent`, `AgentNode`, `AgentV2`        | agent           | `/admin/agent?tab=agents`        |
+| `ScalingGroup`, `ResourceGroup`        | resource_group  | `/admin/agent?tab=resourceGroup` |
+| `Group`, `GroupNode`, `ProjectV2`      | project         | `/admin/project`                 |
+| `ResourcePreset`, `ResourcePresetV2`   | resource_preset | `/admin/environment?tab=preset`  |
+| `Image`, `ImageNode`, `ImageV2`        | environment     | `/admin/environment`             |
 
 So `user_nodes`, `user_list`, `adminUsersV2` and friends all land on the users
 list; `resource_presets` and `adminResourcePresetsV2` on the environment page's
 preset tab; `scaling_groups` and `adminResourceGroups` on the resources page's
 resource-group tab; `groups`, `group_nodes`, `adminProjectsV2` and
-`domainProjectsV2` on the projects page.
+`domainProjectsV2` on the projects page; `keypair_list`, `myKeypairs` and
+`adminKeypairsV2` on the credentials tab; `images`, `image_nodes` and
+`adminImagesV2` on the environment page.
 
 ### Path rules are restated, not imported
 

@@ -52,6 +52,7 @@ export const LIST_RESOURCE_BY_TYPE: Readonly<Record<string, ListResource>> = {
   UserV2: 'user',
   // keypairs — /admin/users?tab=credentials
   KeyPair: 'keypair',
+  KeyPairV2: 'keypair',
   // agents — /admin/agent?tab=agents
   Agent: 'agent',
   AgentNode: 'agent',
@@ -69,6 +70,7 @@ export const LIST_RESOURCE_BY_TYPE: Readonly<Record<string, ListResource>> = {
   // images — /admin/environment, whose default tab is the image list
   Image: 'environment',
   ImageNode: 'environment',
+  ImageV2: 'environment',
 };
 
 /**
@@ -309,10 +311,24 @@ export function listLink(
   };
 }
 
-const isEmptyRootField = (value: unknown): boolean =>
-  value === null ||
-  value === undefined ||
-  (Array.isArray(value) && value.length === 0);
+/**
+ * Empty enough that a list link would point at rows the result does not have.
+ * Besides a null and a bare `[]`, that covers the two containers the schema
+ * wraps rows in: a Relay connection (`edges`) and a Graphene list (`items`).
+ * Conservative on purpose — an object carrying neither key says nothing about
+ * emptiness, so it keeps its link.
+ */
+const isEmptyRootField = (value: unknown): boolean => {
+  if (value === null || value === undefined) return true;
+  if (Array.isArray(value)) return value.length === 0;
+  if (typeof value !== 'object') return false;
+  const container = value as Record<string, unknown>;
+  for (const key of ['edges', 'items'] as const) {
+    const rows = container[key];
+    if (Array.isArray(rows)) return rows.length === 0;
+  }
+  return false;
+};
 
 /**
  * Annotates each root field of a result whose return type maps to a page: one

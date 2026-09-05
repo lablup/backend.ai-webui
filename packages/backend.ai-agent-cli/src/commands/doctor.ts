@@ -658,8 +658,17 @@ const alignmentGroup: CheckGroup = {
       detail: `${version.manager} at ${endpoint} (via ${version.source}${session ? '' : ', no session'})`,
     });
 
+    // A tag whose sha256 no longer hashes the SDL describes some other file:
+    // forwarding it would let `schemaTag === managerVersion` declare the SDL
+    // the manager's own and hide every marker finding. The metadata warn above
+    // already reported the mismatch; here the verdict just falls back to the
+    // marker comparison.
+    const trustedTag = meta !== null && shaMatches ? meta.tag : undefined;
     const alignment = checkVersionAlignment(
-      { schema: loadSchema(context), ...(meta ? { schemaTag: meta.tag } : {}) },
+      {
+        schema: loadSchema(context),
+        ...(trustedTag ? { schemaTag: trustedTag } : {}),
+      },
       version.manager,
     );
     checks.push({
@@ -667,7 +676,11 @@ const alignmentGroup: CheckGroup = {
       check: 'verdict',
       status: alignment.aligned ? 'ok' : 'warn',
       detail: `${alignment.summary} (${alignment.checked} marked entries compared${
-        meta ? `, SDL synced from tag ${meta.tag}` : ''
+        meta === null
+          ? ''
+          : shaMatches
+            ? `, SDL synced from tag ${meta.tag}`
+            : `, tag ${meta.tag} ignored: ${SCHEMA_META_FILE} does not describe the SDL on disk`
       })`,
       hint: alignment.hint,
     });

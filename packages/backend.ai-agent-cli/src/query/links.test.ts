@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { annotateLinks, NO_LINK_HINT, resolveLinkId } from './links.js';
+import {
+  annotateLinks,
+  LIST_RESOURCE_BY_TYPE,
+  NO_LINK_HINT,
+  resolveLinkId,
+} from './links.js';
 
 const UUID = '4a3b2c1d-0e9f-4a8b-9c7d-6e5f4a3b2c1d';
 const globalId = (type: string, id: string) =>
@@ -57,5 +62,29 @@ describe('annotateLinks', () => {
     expect(annotateLinks(value, 'session', 'node', undefined)).toEqual([]);
     expect(value.webui_link_hint).toBe(NO_LINK_HINT);
     expect(value.webui_path).toBeUndefined();
+  });
+});
+
+describe('LIST_RESOURCE_BY_TYPE', () => {
+  it('carries both subgraph spellings of every resource it covers', () => {
+    // The Strawberry rows the table used to be missing: `adminKeypairsV2`
+    // resolves to `KeyPairV2` and `adminImagesV2` to `ImageV2`, so without
+    // them the V2 lists got no link although their Graphene twins did.
+    expect(LIST_RESOURCE_BY_TYPE.KeyPairV2).toBe('keypair');
+    expect(LIST_RESOURCE_BY_TYPE.ImageV2).toBe('environment');
+
+    for (const [graphene, strawberry] of [
+      ['User', 'UserV2'],
+      ['KeyPair', 'KeyPairV2'],
+      ['Agent', 'AgentV2'],
+      ['ScalingGroup', 'ResourceGroup'],
+      ['Group', 'ProjectV2'],
+      ['ResourcePreset', 'ResourcePresetV2'],
+      ['Image', 'ImageV2'],
+    ] as const) {
+      expect(LIST_RESOURCE_BY_TYPE[strawberry]).toBe(
+        LIST_RESOURCE_BY_TYPE[graphene],
+      );
+    }
   });
 });

@@ -6,7 +6,7 @@ import { CLI_NAME } from './meta.js';
 import type { Block } from './output.js';
 import { list, record, section } from './output.js';
 import { tryResolveRepoContext } from './repo-context.js';
-import { readSchemaMeta } from './schema-meta.js';
+import { readCommittedSchema, readSchemaMeta } from './schema-meta.js';
 import type {
   MarkerSource,
   SchemaIndex,
@@ -336,14 +336,22 @@ export interface AlignmentGateResult {
   manager?: ManagerReachability;
 }
 
-/** The tag `schema sync` recorded, unless the caller already knows it. */
+/**
+ * The tag `schema sync` recorded, unless the caller already knows it.
+ *
+ * Forwarded only while the recorded `sha256` still hashes the committed SDL:
+ * a stale meta file whose tag happens to equal the manager version would
+ * otherwise trip the `sdlIsTheManagers` short-circuit and hide every finding.
+ */
 function syncedSchemaTag(options: AlignmentGateOptions): string | undefined {
   if (options.schemaCtx.schemaTag !== undefined)
     return options.schemaCtx.schemaTag;
   const resolved = tryResolveRepoContext(options.cwd);
-  return resolved.ok
-    ? (readSchemaMeta(resolved.context)?.tag ?? undefined)
-    : undefined;
+  if (!resolved.ok) return undefined;
+  const meta = readSchemaMeta(resolved.context);
+  if (!meta) return undefined;
+  const sdl = readCommittedSchema(resolved.context);
+  return sdl?.sha256 === meta.sha256 ? meta.tag : undefined;
 }
 
 /**

@@ -525,6 +525,107 @@ describe('list-page links', () => {
     ).resolves.toBe(EXIT.ok);
     expect(jsonOut().data.links).toEqual([]);
   });
+
+  it('points a Strawberry keypair list at the credentials tab', async () => {
+    stubFetch({
+      data: {
+        adminKeypairsV2: {
+          edges: [{ node: { id: 'S2V5UGFpclYyOjA=', accessKey: 'AKIA' } }],
+          count: 1,
+        },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { adminKeypairsV2(first: 1) { edges { node { id accessKey } } count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'adminKeypairsV2',
+        resource: 'keypair',
+        webui_path: '/admin/users?tab=credentials',
+        webui_url: `${WEBUI}/admin/users?tab=credentials`,
+      },
+    ]);
+  });
+
+  it('points a Strawberry image list at the environment page', async () => {
+    stubFetch({
+      data: {
+        adminImagesV2: {
+          edges: [{ node: { id: 'SW1hZ2VWMjow' } }],
+          count: 1,
+        },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { adminImagesV2(first: 1) { edges { node { id } } count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'adminImagesV2',
+        resource: 'environment',
+        webui_path: '/admin/environment',
+        webui_url: `${WEBUI}/admin/environment`,
+      },
+    ]);
+  });
+
+  it('emits no list link for a connection whose edges came back empty', async () => {
+    stubFetch({ data: { user_nodes: { edges: [], count: 0 } } });
+
+    await expect(
+      run([
+        'query',
+        'query { user_nodes(first: 2) { edges { node { id } } count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
+
+  it('emits no list link for a Graphene list whose items came back empty', async () => {
+    stubFetch({ data: { agent_list: { items: [], total_count: 0 } } });
+
+    await expect(
+      run([
+        'query',
+        'query { agent_list(limit: 1, offset: 0) { items { id } total_count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
+
+  it('keeps the list link when the connection carries rows', async () => {
+    stubFetch({
+      data: {
+        user_nodes: { edges: [{ node: { id: 'VXNlcjow' } }], count: 1 },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { user_nodes(first: 2) { edges { node { id } } count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+    expect(
+      jsonOut().data.links.map((link: any) => link.webui_path),
+    ).toEqual(['/admin/users?tab=users']);
+  });
 });
 
 describe('auth', () => {
