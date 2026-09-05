@@ -1,5 +1,13 @@
-import type { ResourceRef } from './webui-path.js';
-import { listPath, resourceLocation, resourcePath, webuiUrl } from './webui-path.js';
+import type { ResourceRef, RouteAccess } from './webui-path.js';
+import {
+  LIST_PAGES,
+  listAccess,
+  listPath,
+  resourceAccess,
+  resourceLocation,
+  resourcePath,
+  webuiUrl,
+} from './webui-path.js';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -8,6 +16,8 @@ interface ParityCase {
   name: string;
   ref: ResourceRef;
   expected: string;
+  /** The `handle.access` the destination route declares (`routes.tsx`). */
+  access: RouteAccess;
 }
 
 /**
@@ -27,6 +37,7 @@ describe('webui-path against the WebUI URL scheme', () => {
     '%s',
     (_name, parityCase) => {
       expect(resourcePath(parityCase.ref)).toBe(parityCase.expected);
+      expect(resourceAccess(parityCase.ref)).toBe(parityCase.access);
     },
   );
 
@@ -71,6 +82,39 @@ describe('listPath', () => {
     expect(listPath('project')).toBe('/admin/project');
     expect(listPath('resource_preset')).toBe('/admin/environment?tab=preset');
     expect(listPath('resource_group')).toBe('/admin/agent?tab=resourceGroup');
+    expect(listPath('my_environment')).toBe('/my-environment');
+  });
+});
+
+describe('list page access', () => {
+  it('marks each list page with the access its route declares', () => {
+    // The `/admin/*` subtree default, and the leaves that raise it to
+    // superadmin (`routes.tsx` — agent, project and rbac carry their own
+    // `access: 'superadmin'` handle).
+    expect(listAccess('user')).toBe('admin');
+    expect(listAccess('keypair')).toBe('admin');
+    expect(listAccess('environment')).toBe('admin');
+    expect(listAccess('resource_preset')).toBe('admin');
+    expect(listAccess('artifact')).toBe('admin');
+    expect(listAccess('agent')).toBe('superadmin');
+    expect(listAccess('resource_group')).toBe('superadmin');
+    expect(listAccess('project')).toBe('superadmin');
+    expect(listAccess('role')).toBe('superadmin');
+    // Project-scope pages declare no `access` handle at all.
+    expect(listAccess('session')).toBe('user');
+    expect(listAccess('deployment')).toBe('user');
+    expect(listAccess('vfolder')).toBe('user');
+    expect(listAccess('model_card')).toBe('user');
+    expect(listAccess('my_environment')).toBe('user');
+  });
+
+  it('gives every `/admin/` page a non-user access marker', () => {
+    for (const [resource, spec] of Object.entries(LIST_PAGES)) {
+      expect([resource, spec.pathname.startsWith('/admin/')]).toEqual([
+        resource,
+        spec.access === 'admin' || spec.access === 'superadmin',
+      ]);
+    }
   });
 });
 
