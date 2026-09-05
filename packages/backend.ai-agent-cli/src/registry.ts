@@ -1,4 +1,5 @@
 import type { AnyCommand } from './command.js';
+import { cookbookCommand } from './commands/cookbook.js';
 import { docsCommand } from './commands/docs.js';
 import { doctorCommand } from './commands/doctor.js';
 import { explainCommand } from './commands/explain.js';
@@ -27,6 +28,7 @@ export const COMMANDS: AnyCommand[] = [
   logoutCommand,
   whoamiCommand,
   queryCommand,
+  cookbookCommand,
   explainCommand,
 ];
 

@@ -10,7 +10,8 @@ import {
 import { MAPPINGS_DIR_NAME } from '../mappings/load.js';
 import { resolveMappings } from '../mappings/resolve.js';
 import { CLI_NAME, MIN_NODE_MAJOR } from '../meta.js';
-import { record, renderBlocks, section } from '../output.js';
+import type { Block } from '../output.js';
+import { list, record, renderBlocks, section, text } from '../output.js';
 import type { RepoContext } from '../repo-context.js';
 import {
   CHECKOUT_ENV,
@@ -657,15 +658,30 @@ const alignmentGroup: CheckGroup = {
       detail: `${version.manager} at ${endpoint} (via ${version.source}${session ? '' : ', no session'})`,
     });
 
+    // A tag whose sha256 no longer hashes the SDL describes some other file:
+    // forwarding it would let `schemaTag === managerVersion` declare the SDL
+    // the manager's own and hide every marker finding. The metadata warn above
+    // already reported the mismatch; here the verdict just falls back to the
+    // marker comparison.
+    const trustedTag = meta !== null && shaMatches ? meta.tag : undefined;
     const alignment = checkVersionAlignment(
-      { schema: loadSchema(context) },
+      {
+        schema: loadSchema(context),
+        ...(trustedTag ? { schemaTag: trustedTag } : {}),
+      },
       version.manager,
     );
     checks.push({
       group: 'alignment',
       check: 'verdict',
       status: alignment.aligned ? 'ok' : 'warn',
-      detail: `${alignment.summary} (${alignment.checked} marked entries compared)`,
+      detail: `${alignment.summary} (${alignment.checked} marked entries compared${
+        meta === null
+          ? ''
+          : shaMatches
+            ? `, SDL synced from tag ${meta.tag}`
+            : `, tag ${meta.tag} ignored: ${SCHEMA_META_FILE} does not describe the SDL on disk`
+      })`,
       hint: alignment.hint,
     });
     return checks;
@@ -693,17 +709,109 @@ export function selectGroups(context: RunContext): CheckGroup[] {
 export interface DoctorData {
   checks: DoctorCheck[];
   summary: { total: number; ok: number; warn: number; fail: number };
+  /** Text-only: `--json` carries every check either way. */
+  brief: boolean;
+}
+
+/** `--brief`: the headline checks, then only what warns or fails. */
+export const BRIEF_FLAG = 'brief';
+
+/** Keeps the report one line per check however long a detail grows. */
+const MAX_DETAIL = 140;
+
+/** Enough issues to act on; the rest are one `--json` away. */
+const MAX_BRIEF_ISSUES = 18;
+
+const clamp = (value: string): string =>
+  value.length <= MAX_DETAIL ? value : `${value.slice(0, MAX_DETAIL - 1)}…`;
+
+/**
+ * The lines the brief report leads with, in reading order: is this machine
+ * logged in, is the SDL the manager's, and what data is being read.
+ */
+const BRIEF_HEADLINE: Array<{
+  label: string;
+  group: string;
+  checks: string[];
+}> = [
+  {
+    label: 'auth',
+    group: 'auth',
+    checks: ['whoami', 'session file', 'endpoint'],
+  },
+  { label: 'alignment', group: 'alignment', checks: ['verdict'] },
+  { label: 'checkout', group: 'checkout', checks: ['checkout detection'] },
+  { label: 'data', group: 'checkout', checks: ['synced data'] },
+  { label: 'docs', group: 'docs', checks: ['manual sources'] },
+  { label: 'schema', group: 'schema', checks: ['sdl parses'] },
+];
+
+export function briefHeadline(checks: DoctorCheck[]): {
+  rows: Array<[string, string]>;
+  shown: Set<DoctorCheck>;
+} {
+  const rows: Array<[string, string]> = [];
+  const shown = new Set<DoctorCheck>();
+  for (const { label, group, checks: names } of BRIEF_HEADLINE) {
+    const found = names
+      .map((name) =>
+        checks.find((check) => check.group === group && check.check === name),
+      )
+      .find((check) => check !== undefined);
+    if (!found) continue;
+    rows.push([label, `${found.status} — ${clamp(found.detail)}`]);
+    shown.add(found);
+  }
+  return { rows, shown };
+}
+
+export function renderBrief(data: DoctorData): string {
+  const { rows, shown } = briefHeadline(data.checks);
+  const issues = data.checks.filter(
+    (check) => check.status !== 'ok' && !shown.has(check),
+  );
+  const blocks: Block[] = [section(`${CLI_NAME} doctor --${BRIEF_FLAG}`)];
+  if (rows.length > 0) blocks.push(record(rows));
+  if (issues.length > 0) {
+    blocks.push(
+      section(`Warn / fail, beyond the headline (${issues.length})`),
+      list([
+        ...issues
+          .slice(0, MAX_BRIEF_ISSUES)
+          .map(
+            (check) =>
+              `${check.status} ${check.group}/${check.check}: ${clamp(check.detail)}`,
+          ),
+        ...(issues.length > MAX_BRIEF_ISSUES
+          ? [
+              `${issues.length - MAX_BRIEF_ISSUES} more — ${CLI_NAME} doctor --json`,
+            ]
+          : []),
+      ]),
+    );
+  }
+  const { total, ok, warn, fail } = data.summary;
+  blocks.push(
+    text(`summary: ${total} check(s) — ${ok} ok, ${warn} warn, ${fail} fail`),
+  );
+  return renderBlocks(blocks);
 }
 
 export const doctorCommand = defineCommand<DoctorData>({
   name: 'doctor',
   summary: 'Diagnose the CLI environment and the detected checkout.',
-  usage: `${CLI_NAME} doctor [--${MAPPINGS_GROUP}] [--json]`,
+  usage: `${CLI_NAME} doctor [--${MAPPINGS_GROUP}] [--${BRIEF_FLAG}] [--json]`,
   flags: [
     {
       flag: `--${MAPPINGS_GROUP}`,
       description:
         'Run only the mappings group: validate every mappings/<Type>.yaml and resolve its references.',
+      type: 'boolean',
+    },
+    {
+      flag: `--${BRIEF_FLAG}`,
+      description:
+        'Text output: the auth, alignment and checkout/data lines, then only the checks that warn or fail.',
       type: 'boolean',
     },
   ],
@@ -716,6 +824,7 @@ export const doctorCommand = defineCommand<DoctorData>({
       )
     ).flat();
     return {
+      brief: context.flags[BRIEF_FLAG] === true,
       checks,
       summary: {
         total: checks.length,
@@ -726,6 +835,7 @@ export const doctorCommand = defineCommand<DoctorData>({
     };
   },
   render: (data, { verbosity }) => {
+    if (data.brief) return renderBrief(data);
     const blocks = [section(`${CLI_NAME} doctor`)];
     for (const check of data.checks) {
       blocks.push(
@@ -750,6 +860,9 @@ export const doctorCommand = defineCommand<DoctorData>({
         ['ok', data.summary.ok],
         ['warn', data.summary.warn],
         ['fail', data.summary.fail],
+        ...(verbosity === 'detail'
+          ? ([[BRIEF_FLAG, data.brief]] as Array<[string, boolean]>)
+          : []),
       ]),
     );
     return renderBlocks(blocks);

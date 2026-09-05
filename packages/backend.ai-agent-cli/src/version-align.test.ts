@@ -2,6 +2,7 @@ import { updateConfig } from './config.js';
 import { EXIT } from './errors.js';
 import { clearManagerVersionCache } from './manager.js';
 import { resolveRepoContext } from './repo-context.js';
+import { sha256Of } from './schema-meta.js';
 import { runCli } from './run.js';
 import type { SchemaIndex } from './search/schema-sdl.js';
 import { saveSession } from './session.js';
@@ -9,8 +10,14 @@ import {
   applyVersionAlignmentGate,
   checkVersionAlignment,
 } from './version-align.js';
-import { compareVersions } from './version-order.js';
-import { mkdtempSync, symlinkSync, writeFileSync } from 'node:fs';
+import { baseRelease, compareVersions } from './version-order.js';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -40,6 +47,45 @@ function fakeCheckout(apiEndpoint?: string): string {
   }
   return root;
 }
+/**
+ * A checkout whose `data/` is real (so `schema.meta.json` can be written into
+ * it) while the SDL itself is the repository's own, symlinked in.
+ */
+function checkoutWithMeta(meta: { tag: string; sha256: string }): string {
+  const real = resolveRepoContext(repoCwd).repoRoot;
+  const root = mkdtempSync(join(tmpdir(), 'bai-agent-meta-checkout-'));
+  writeFileSync(
+    join(root, 'package.json'),
+    JSON.stringify({ name: 'backend.ai-webui', version: '0.0.0-meta' }),
+  );
+  for (const dir of ['resources', 'packages', 'react']) {
+    symlinkSync(join(real, dir), join(root, dir), 'dir');
+  }
+  mkdirSync(join(root, 'data'));
+  symlinkSync(
+    join(real, 'data/schema.graphql'),
+    join(root, 'data/schema.graphql'),
+    'file',
+  );
+  writeFileSync(
+    join(root, 'data/schema.meta.json'),
+    `${JSON.stringify(
+      {
+        ...meta,
+        fetchedAt: new Date().toISOString(),
+        source: 'https://example.invalid/schema.graphql',
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  return root;
+}
+
+/** The hash a fresh `schema sync` would have recorded for the SDL on disk. */
+const committedSchemaSha = (): string =>
+  sha256Of(readFileSync(resolveRepoContext(repoCwd).schemaPath));
+
 const ENDPOINT = 'http://manager.test.invalid:8090';
 const SESSION_ID = 'abcdefghijklmnopqrstuvwxyz012345';
 
@@ -127,6 +173,21 @@ describe('compareVersions', () => {
   });
 });
 
+describe('baseRelease', () => {
+  it('strips a trailing pre-release run', () => {
+    expect(baseRelease('26.8.0rc1')).toBe('26.8.0');
+    expect(baseRelease('26.8.0a1')).toBe('26.8.0');
+    expect(baseRelease('26.8.0b2')).toBe('26.8.0');
+    expect(baseRelease('26.8.0.dev20260901')).toBe('26.8.0');
+    expect(baseRelease('26.8.0-rc.1')).toBe('26.8.0');
+  });
+
+  it('leaves a plain release alone', () => {
+    expect(baseRelease('26.8.0')).toBe('26.8.0');
+    expect(baseRelease('24.09.0')).toBe('24.09.0');
+  });
+});
+
 describe('checkVersionAlignment', () => {
   const schemaCtx = { schema: fakeSchema() };
 
@@ -170,6 +231,56 @@ describe('checkVersionAlignment', () => {
     expect(
       checkVersionAlignment(schemaCtx, '25.6.0', ['Nope.field']).checked,
     ).toBe(0);
+  });
+
+  it('counts a marker as present when the manager is its own pre-release', () => {
+    const alignment = checkVersionAlignment(schemaCtx, '26.9.0rc1', [
+      'SessionNode.future',
+    ]);
+    expect(alignment.newerCount).toBe(0);
+    expect(alignment.aligned).toBe(true);
+    expect(alignment.hint).toBeUndefined();
+  });
+
+  it('still flags a marker the manager release does not carry yet', () => {
+    const alignment = checkVersionAlignment(schemaCtx, '26.7.0', [
+      'SessionNode.future',
+    ]);
+    expect(alignment.newerCount).toBe(1);
+    expect(alignment.aligned).toBe(false);
+    expect(alignment.hint).toBe('bai-agent schema sync --tag 26.7.0');
+  });
+
+  it('reports a deprecation without calling the schema unaligned', () => {
+    const alignment = checkVersionAlignment(schemaCtx, '26.9.0', [
+      'SessionNode.gone',
+    ]);
+    expect(alignment.aligned).toBe(true);
+    expect(alignment.deprecatedCount).toBe(1);
+    expect(alignment.summary).toContain('deprecated by the manager');
+    expect(alignment.hint).toBeUndefined();
+  });
+
+  it("treats the SDL as the manager's own when the synced tag matches", () => {
+    const alignment = checkVersionAlignment(
+      { schema: fakeSchema(), schemaTag: '26.8.0rc1' },
+      '26.8.0rc1',
+    );
+    expect(alignment.aligned).toBe(true);
+    expect(alignment.newerCount).toBe(0);
+    expect(alignment.schemaTag).toBe('26.8.0rc1');
+    expect(alignment.hint).toBeUndefined();
+  });
+
+  it('never hints a re-sync of the tag the SDL already carries', () => {
+    // A manager older than the SDL's own tag: unaligned, but re-syncing that
+    // same tag is not the fix.
+    const alignment = checkVersionAlignment(
+      { schema: fakeSchema(), schemaTag: '25.6.0' },
+      '25.6.0',
+      ['SessionNode.future'],
+    );
+    expect(alignment.hint).toBeUndefined();
   });
 });
 
@@ -279,6 +390,41 @@ describe('the version gate', () => {
     });
     expect(result).toEqual({});
     expect(notices).toEqual([]);
+  });
+
+  it('ignores a schema.meta.json tag that no longer hashes the SDL', async () => {
+    // The tag equals the manager version, so trusting it would trip the
+    // `sdlIsTheManagers` short-circuit and hide every marker finding.
+    const cwd = checkoutWithMeta({ tag: '26.8.0', sha256: 'f'.repeat(64) });
+    const { alignment } = await applyVersionAlignmentGate({
+      cwd,
+      schemaCtx: { schema: fakeSchema() },
+      notify: () => {},
+      fetchImpl: fakeManager('26.8.0').impl,
+      endpointFlag: ENDPOINT,
+    });
+    expect(alignment?.schemaTag).toBeUndefined();
+    expect(alignment?.aligned).toBe(false);
+    expect(alignment?.newer.map((finding) => finding.id)).toContain(
+      'SessionNode.future',
+    );
+  });
+
+  it('trusts the recorded tag while it still hashes the SDL', async () => {
+    const cwd = checkoutWithMeta({
+      tag: '26.8.0',
+      sha256: committedSchemaSha(),
+    });
+    const { alignment } = await applyVersionAlignmentGate({
+      cwd,
+      schemaCtx: { schema: fakeSchema() },
+      notify: () => {},
+      fetchImpl: fakeManager('26.8.0').impl,
+      endpointFlag: ENDPOINT,
+    });
+    expect(alignment?.schemaTag).toBe('26.8.0');
+    expect(alignment?.aligned).toBe(true);
+    expect(alignment?.newerCount).toBe(0);
   });
 
   it('skips introspection silently when the manager has it disabled', async () => {
@@ -447,5 +593,84 @@ describe('doctor schema alignment', () => {
       alignment.every((check: { status: string }) => check.status !== 'fail'),
     ).toBe(true);
     expect(data.summary.fail).toBe(0);
+  });
+
+  /** Any URL answers; only `/func/` carries a version. */
+  const stubManager = (managerVersion: string) =>
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: Parameters<typeof fetch>[0]) =>
+        String(input).endsWith('/func/')
+          ? new Response(
+              JSON.stringify({
+                version: 'v8.20240915',
+                manager: managerVersion,
+              }),
+              { status: 200 },
+            )
+          : new Response(
+              JSON.stringify({
+                data: { __schema: { queryType: { name: 'Query' } } },
+              }),
+              { status: 200 },
+            ),
+      ),
+    );
+
+  const alignmentChecks = (stdout: string) =>
+    (
+      JSON.parse(stdout).data.checks as Array<{
+        group: string;
+        check: string;
+        status: string;
+        detail: string;
+      }>
+    ).filter((check) => check.group === 'alignment');
+
+  const loggedIn = () =>
+    saveSession({
+      endpoint: ENDPOINT,
+      webui: 'https://fr-3770.localhost:1355',
+      sessionId: SESSION_ID,
+      savedAt: new Date().toISOString(),
+    });
+
+  it('falls back to the marker comparison when the recorded tag is stale', async () => {
+    loggedIn();
+    stubManager('25.6.0');
+    const cwd = checkoutWithMeta({ tag: '25.6.0', sha256: 'f'.repeat(64) });
+
+    const { stdout } = await invoke(['doctor', '--json'], cwd);
+    const checks = alignmentChecks(stdout);
+    const meta = checks.find((check) => check.check === 'data/schema.meta.json');
+    const verdict = checks.find((check) => check.check === 'verdict');
+
+    // The separate metadata warn still fires …
+    expect(meta?.status).toBe('warn');
+    expect(meta?.detail).toContain('sha256 does NOT match');
+    // … and the verdict no longer takes the untrusted tag's word for it.
+    expect(verdict?.status).toBe('warn');
+    expect(verdict?.detail).toContain('not aligned with manager 25.6.0');
+    expect(verdict?.detail).toContain('ignored');
+    expect(verdict?.detail).not.toContain('SDL synced from tag');
+  });
+
+  it('keeps the recorded tag in the verdict while it hashes the SDL', async () => {
+    loggedIn();
+    stubManager('25.6.0');
+    const cwd = checkoutWithMeta({
+      tag: '25.6.0',
+      sha256: committedSchemaSha(),
+    });
+
+    const { stdout } = await invoke(['doctor', '--json'], cwd);
+    const checks = alignmentChecks(stdout);
+    const meta = checks.find((check) => check.check === 'data/schema.meta.json');
+    const verdict = checks.find((check) => check.check === 'verdict');
+
+    expect(meta?.status).toBe('ok');
+    expect(verdict?.status).toBe('ok');
+    expect(verdict?.detail).toContain('schema matches manager 25.6.0');
+    expect(verdict?.detail).toContain('SDL synced from tag 25.6.0');
   });
 });

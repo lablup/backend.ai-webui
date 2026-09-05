@@ -2,6 +2,7 @@ import type { AnyCommand } from './command.js';
 import { CliError } from './errors.js';
 import { renderAgentBlock } from './init/block.js';
 import { CLI_NAME } from './meta.js';
+import { displayPath, installedSkillDir } from './skill-path.js';
 import {
   existsSync,
   mkdirSync,
@@ -11,7 +12,6 @@ import {
   statSync,
   writeFileSync,
 } from 'node:fs';
-import { homedir } from 'node:os';
 import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -43,15 +43,12 @@ export function shippedSkillDir(): string {
   );
 }
 
-/** `~/.claude/skills` — or under `$CLAUDE_CONFIG_DIR`, which Claude Code honours. */
-export function claudeSkillsDir(env: Env = process.env): string {
-  const base = env.CLAUDE_CONFIG_DIR?.trim() || join(homedir(), '.claude');
-  return join(base, 'skills');
-}
-
-export function installedSkillDir(env: Env = process.env): string {
-  return join(claudeSkillsDir(env), SKILL_NAME);
-}
+export {
+  claudeSkillsDir,
+  displayPath,
+  installedSkillDir,
+  installedSkillPath,
+} from './skill-path.js';
 
 function walk(root: string, dir = root): string[] {
   const files: string[] = [];
@@ -61,12 +58,6 @@ function walk(root: string, dir = root): string[] {
     else files.push(relative(root, path).split(sep).join('/'));
   }
   return files.sort();
-}
-
-/** `~`-relative when under the home directory, as a human would write it. */
-export function displayPath(path: string): string {
-  const home = homedir();
-  return path.startsWith(home + sep) ? `~${path.slice(home.length)}` : path;
 }
 
 export type SkillInstallOutcome = 'installed' | 'updated' | 'unchanged';

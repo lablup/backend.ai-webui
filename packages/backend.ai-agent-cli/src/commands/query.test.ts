@@ -42,11 +42,18 @@ const jsonErr = () =>
     suggestions?: string[];
   };
 
+/** A per-row uuid — the form the WebUI pages actually take. */
+const rowUuid = (index: number) =>
+  `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`;
+
+const globalId = (type: string, id: string) =>
+  Buffer.from(`${type}:${id}`, 'utf8').toString('base64');
+
 const sessionEdges = (count: number) =>
   Array.from({ length: count }, (_, index) => ({
     node: {
-      id: `Q29tcHV0ZVNlc3Npb246${index}`,
-      row_id: `row-${index}`,
+      id: globalId('ComputeSessionNode', rowUuid(index)),
+      row_id: rowUuid(index),
       name: `session-${index}`,
       status_info: 'x'.repeat(400),
     },
@@ -323,14 +330,85 @@ describe('webui link annotation', () => {
     expect(data.links[0]).toMatchObject({
       path: 'compute_session_nodes.edges[0].node',
       resource: 'session',
-      id: 'row-0',
-      webui_path: '/session?sessionDetail=row-0',
-      webui_url: `${WEBUI}/session?sessionDetail=row-0`,
+      id: rowUuid(0),
+      webui_path: `/session?sessionDetail=${rowUuid(0)}`,
+      webui_url: `${WEBUI}/session?sessionDetail=${rowUuid(0)}`,
     });
     // The annotation is on the node itself, not only in `links`.
     expect(
       data.result.compute_session_nodes.edges[1].node.webui_path,
-    ).toBe('/session?sessionDetail=row-1');
+    ).toBe(`/session?sessionDetail=${rowUuid(1)}`);
+  });
+
+  it('decodes the Relay global id when only `id` was selected', async () => {
+    stubFetch({
+      data: {
+        compute_session_nodes: {
+          edges: [{ node: { id: globalId('ComputeSessionNode', rowUuid(7)) } }],
+        },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { compute_session_nodes(first: 1) { edges { node { id } } } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    // The base64 global id itself opens nothing — the page takes the uuid.
+    expect(jsonOut().data.links[0]).toMatchObject({
+      id: rowUuid(7),
+      webui_path: `/session?sessionDetail=${rowUuid(7)}`,
+    });
+  });
+
+  it('links the created folder of a createVfolderV2 payload', async () => {
+    stubFetch({
+      data: {
+        createVfolderV2: { vfolder: { id: globalId('VFolder', rowUuid(3)) } },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'mutation { createVfolderV2(input: {name: "x"}) { vfolder { id } } }',
+        '--allow-mutation',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'createVfolderV2.vfolder',
+        resource: 'vfolder',
+        id: rowUuid(3),
+        webui_path: `/data?folder=${rowUuid(3)}`,
+        webui_url: `${WEBUI}/data?folder=${rowUuid(3)}`,
+      },
+    ]);
+  });
+
+  it('hints instead of linking when the id resolves to no uuid', async () => {
+    stubFetch({
+      data: { compute_session_nodes: { edges: [{ node: { id: 'row-0' } }] } },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { compute_session_nodes(first: 1) { edges { node { id } } } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    const data = jsonOut().data;
+    expect(data.links).toEqual([]);
+    const node = data.result.compute_session_nodes.edges[0].node;
+    expect(node.webui_path).toBeUndefined();
+    expect(node.webui_link_hint).toContain('select row_id');
   });
 
   it('prefers --webui over the stored origin', async () => {
@@ -344,15 +422,240 @@ describe('webui link annotation', () => {
       '--json',
     ]);
     expect(jsonOut().data.links[0].webui_url).toBe(
-      'https://ui.example.com/session?sessionDetail=row-0',
+      `https://ui.example.com/session?sessionDetail=${rowUuid(0)}`,
     );
   });
 
   it('leaves an unmapped root field alone', async () => {
-    stubFetch({ data: { user: { email: 'a@b.c' } } });
+    stubFetch({ data: { domain: { name: 'default' } } });
+
+    await expect(
+      run(['query', 'query { domain(name: "default") { name } }', '--json']),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
+});
+
+describe('list-page links', () => {
+  it('points a user_nodes result at the users list page', async () => {
+    stubFetch({
+      data: {
+        user_nodes: {
+          edges: [
+            { node: { id: 'VXNlcjow', username: 'alice' } },
+            { node: { id: 'VXNlcjox', username: 'bob' } },
+          ],
+        },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { user_nodes(first: 2) { edges { node { id username } } } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    const data = jsonOut().data;
+    // One link per root field, not per row, and no id: the page addresses none.
+    expect(data.links).toEqual([
+      {
+        path: 'user_nodes',
+        resource: 'user',
+        webui_path: '/admin/users?tab=users',
+        webui_url: `${WEBUI}/admin/users?tab=users`,
+      },
+    ]);
+    expect(data.result.user_nodes.edges[0].node.webui_path).toBeUndefined();
+  });
+
+  it('points a resource_presets result at the environment preset tab', async () => {
+    stubFetch({ data: { resource_presets: [{ name: 'gpu-1' }] } });
+
+    await expect(
+      run(['query', 'query { resource_presets { name } }', '--json']),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'resource_presets',
+        resource: 'resource_preset',
+        webui_path: '/admin/environment?tab=preset',
+        webui_url: `${WEBUI}/admin/environment?tab=preset`,
+      },
+    ]);
+  });
+
+  it('covers the other list-only root fields the manual points at', async () => {
+    stubFetch({
+      data: {
+        agent_list: { items: [{ id: 'agent-1' }] },
+        scaling_groups: [{ name: 'default' }],
+        groups: [{ id: 'g-1' }],
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        `query {
+          agent_list(limit: 1, offset: 0) { items { id } }
+          scaling_groups { name }
+          groups { id }
+        }`,
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(
+      jsonOut().data.links.map((link: any) => [link.resource, link.webui_path]),
+    ).toEqual([
+      ['agent', '/admin/agent?tab=agents'],
+      ['resource_group', '/admin/agent?tab=resourceGroup'],
+      ['project', '/admin/project'],
+    ]);
+  });
+
+  it('emits no list link for a root field that came back empty', async () => {
+    stubFetch({ data: { resource_presets: [] } });
+
+    await expect(
+      run(['query', 'query { resource_presets { name } }', '--json']),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
+
+  it('points a Strawberry keypair list at the credentials tab', async () => {
+    stubFetch({
+      data: {
+        adminKeypairsV2: {
+          edges: [{ node: { id: 'S2V5UGFpclYyOjA=', accessKey: 'AKIA' } }],
+          count: 1,
+        },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { adminKeypairsV2(first: 1) { edges { node { id accessKey } } count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'adminKeypairsV2',
+        resource: 'keypair',
+        webui_path: '/admin/users?tab=credentials',
+        webui_url: `${WEBUI}/admin/users?tab=credentials`,
+      },
+    ]);
+  });
+
+  it('points a Strawberry image list at the environment page', async () => {
+    stubFetch({
+      data: {
+        adminImagesV2: {
+          edges: [{ node: { id: 'SW1hZ2VWMjow' } }],
+          count: 1,
+        },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { adminImagesV2(first: 1) { edges { node { id } } count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    expect(jsonOut().data.links).toEqual([
+      {
+        path: 'adminImagesV2',
+        resource: 'environment',
+        webui_path: '/admin/environment',
+        webui_url: `${WEBUI}/admin/environment`,
+      },
+    ]);
+  });
+
+  it('emits no list link for a connection whose edges came back empty', async () => {
+    stubFetch({ data: { user_nodes: { edges: [], count: 0 } } });
+
+    await expect(
+      run([
+        'query',
+        'query { user_nodes(first: 2) { edges { node { id } } count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
+
+  it('emits no list link for a Graphene list whose items came back empty', async () => {
+    stubFetch({ data: { agent_list: { items: [], total_count: 0 } } });
+
+    await expect(
+      run([
+        'query',
+        'query { agent_list(limit: 1, offset: 0) { items { id } total_count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
+
+  it('keeps the list link when the connection carries rows', async () => {
+    stubFetch({
+      data: {
+        user_nodes: { edges: [{ node: { id: 'VXNlcjow' } }], count: 1 },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        'query { user_nodes(first: 2) { edges { node { id } } count } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+    expect(
+      jsonOut().data.links.map((link: any) => link.webui_path),
+    ).toEqual(['/admin/users?tab=users']);
+  });
+
+  it('emits no list link for a singular root field', async () => {
+    // `Query.user` returns `User`, the same type `user_nodes` lists — but the
+    // users page is a list of many, and it is admin-only, so a regular account
+    // asking for its own row would have got a link it cannot open.
+    stubFetch({ data: { user: { email: 'alice@example.com' } } });
 
     await expect(
       run(['query', 'query { user { email } }', '--json']),
+    ).resolves.toBe(EXIT.ok);
+    expect(jsonOut().data.links).toEqual([]);
+  });
+
+  it('emits no list link for a singular image or keypair either', async () => {
+    stubFetch({
+      data: {
+        image: { name: 'python' },
+        keypair: { access_key: 'AKIA' },
+      },
+    });
+
+    await expect(
+      run([
+        'query',
+        `query {
+          image(reference: "python") { name }
+          keypair(access_key: "AKIA") { access_key }
+        }`,
+        '--json',
+      ]),
     ).resolves.toBe(EXIT.ok);
     expect(jsonOut().data.links).toEqual([]);
   });
@@ -378,6 +681,26 @@ describe('auth', () => {
   });
 });
 
+describe('--json links notice', () => {
+  it('prints a links summary to stderr, not stdout', async () => {
+    stubFetch({ data: { compute_session_nodes: { edges: sessionEdges(1) } } });
+
+    await expect(
+      run([
+        'query',
+        'query { compute_session_nodes(first: 1) { edges { node { id row_id name } } } }',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.ok);
+
+    const notice = err.join('');
+    expect(notice).toBe(
+      `links: 1 — session ${WEBUI}/session?sessionDetail=${rowUuid(0)}\n`,
+    );
+    expect(jsonOut().data.links).toHaveLength(1);
+  });
+});
+
 describe('text output', () => {
   it('mirrors the JSON surface', async () => {
     stubFetch({ data: { compute_session_nodes: { edges: sessionEdges(1) } } });
@@ -391,7 +714,7 @@ describe('text output', () => {
 
     const printed = out.join('');
     expect(printed).toContain('operation:');
-    expect(printed).toContain('/session?sessionDetail=row-0');
+    expect(printed).toContain(`/session?sessionDetail=${rowUuid(0)}`);
     expect(printed).toContain('session-0');
   });
 });

@@ -66,6 +66,11 @@ describe('listPath', () => {
     expect(listPath('session')).toBe('/session');
     expect(listPath('vfolder')).toBe('/data');
     expect(listPath('keypair')).toBe('/admin/users?tab=credentials');
+    expect(listPath('user')).toBe('/admin/users?tab=users');
+    expect(listPath('agent')).toBe('/admin/agent?tab=agents');
+    expect(listPath('project')).toBe('/admin/project');
+    expect(listPath('resource_preset')).toBe('/admin/environment?tab=preset');
+    expect(listPath('resource_group')).toBe('/admin/agent?tab=resourceGroup');
   });
 });
 
