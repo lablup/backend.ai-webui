@@ -106,9 +106,9 @@ beforeEach(() => {
 
 afterEach(() => {
   // The pin outlives the module and keeps a MutationObserver on `body`; with
-  // no target it schedules nothing, so dismissing it first keeps the observer
-  // from firing into a torn-down jsdom.
-  click('.close');
+  // no target it schedules nothing, so removing it first keeps the observer
+  // from firing into a torn-down jsdom. ✕ only hides the card now.
+  click('.remove');
   vi.unstubAllGlobals();
   document.querySelector('[data-bai-review-overlay]')?.remove();
   document.body.innerHTML = '';
