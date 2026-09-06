@@ -692,6 +692,12 @@ function boot() {
       guard.landed();
     }
     scrubPinParts();
+    // The pin a link opens on is an explicit "show me this one": a card the
+    // reviewer had tidied away comes back rather than leaving a bare marker.
+    if (focusId && opened.some((pin) => pin.id === focusId)) {
+      store.hide(focusId, false);
+      syncDraft();
+    }
     const said = carriedNote ?? message;
     if (said) ui.showToast(said);
     // The layer owns the retry ladder: one driver for every on-page member,

@@ -182,6 +182,19 @@ describe('opening a link that carries a set', () => {
     expect(dockRows()).toHaveLength(0);
   });
 
+  // Opening a link at a pin whose card was tidied away must not land the
+  // reviewer on a bare marker: the link is what asked to see it.
+  it('brings back the card of the pin it opens on', async () => {
+    seed([storedPin(A, 'create', { hidden: true })]);
+
+    await bootOn(await part({ id: A, testid: 'create' }));
+
+    expect(storedPins()[0].hidden).toBeUndefined();
+    expect(
+      node(`.card[data-pin-id="${A}"]`)?.classList.contains('hidden'),
+    ).toBe(false);
+  });
+
   // A reload must not re-apply the link and resurrect a pin just dismissed.
   it('takes the pins out of the address bar and leaves the app’s fragment', async () => {
     const hash = `tab=logs&${await part({ id: A, testid: 'create' })}`;
