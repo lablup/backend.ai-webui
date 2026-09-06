@@ -690,15 +690,23 @@ describe('the set the tab was left with', () => {
   });
 
   // The dock is the one control that reaches every pin, including the ones
-  // the layer never found.
-  it('says so when the dock cannot reach a pin', async () => {
-    seed([storedPin('c_goneaaa', 'missing', 'Start › missing')]);
+  // the layer never found. R7.3: waiting is not gone, so the row says where
+  // the element was rather than that the pin missed the page.
+  it('says where a pin it cannot reach was', async () => {
+    seed([
+      {
+        ...storedPin('c_goneaaa', 'missing', 'Start › missing'),
+        anchor: { v: 3, s: '[data-testid="missing"]', p: '/', tid: 'missing' },
+      },
+    ]);
     await bootOverlay();
     await ticks(2);
 
     node<HTMLButtonElement>('.setdock .rowlabel').click();
 
-    expect(toast()).toBe('That pin is not on this page');
+    expect(toast()).toBe(
+      '1 pin is waiting for its element (it was inside missing)',
+    );
   });
 
   it('ends the set once the dock asks twice', async () => {
@@ -743,6 +751,45 @@ describe('the cards switch as show-all', () => {
     expect(hiddenCard('c_twoaaaa')).toBe(false);
     expect(hiddenCard('c_threeaa')).toBe(false);
     expect(storedPins().some((pin) => pin.hidden)).toBe(false);
+  });
+
+  /**
+   * R8.3. The row's reveal while the switch is on means "that one, alone":
+   * the switch goes off and the rest take the per-pin flag, so no card is
+   * shown in spite of the switch.
+   */
+  it('reveals one card alone, and the switch still brings them all back', async () => {
+    mount('save', 'Save');
+    seed([
+      storedPin('c_oneaaaa', 'create', 'Start › create'),
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
+      storedPin('c_threeaa', 'save', 'Start › save'),
+    ]);
+    await bootOverlay();
+    await ticks(2);
+    cardsSwitch().click();
+    expect(hiddenCard('c_twoaaaa')).toBe(true);
+
+    node<HTMLButtonElement>(
+      '.setdock .row[data-pin-id="c_twoaaaa"] .unhide',
+    ).click();
+
+    expect(hiddenCard('c_oneaaaa')).toBe(true);
+    expect(hiddenCard('c_twoaaaa')).toBe(false);
+    expect(hiddenCard('c_threeaa')).toBe(true);
+    expect(storedSet().cardsHidden).toBeUndefined();
+    expect(storedPins().map((pin) => pin.hidden)).toEqual([
+      true,
+      undefined,
+      true,
+    ]);
+
+    cardsSwitch().click();
+    cardsSwitch().click();
+
+    expect(storedPins().some((pin) => pin.hidden)).toBe(false);
+    expect(hiddenCard('c_oneaaaa')).toBe(false);
+    expect(hiddenCard('c_threeaa')).toBe(false);
   });
 
   // Off is not "remember what was hidden and hide everything else".

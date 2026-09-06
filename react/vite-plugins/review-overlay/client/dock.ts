@@ -15,7 +15,9 @@ import type { SetPin } from './types.js';
 /** ⌘⇧H / Ctrl⇧H — plain ⌘H hides the app and Ctrl+H opens history. */
 export const CARDS_CHORD = isMac() ? '⌘⇧H' : 'Ctrl⇧H';
 
-const CARDS_LABEL = `Pin cards (${CARDS_CHORD})`;
+/** A toggle is named for what pressing it DOES, never for its state (R8.1). */
+const HIDE_CARDS_LABEL = `Hide every card (${CARDS_CHORD})`;
+const SHOW_CARDS_LABEL = `Show every card (${CARDS_CHORD})`;
 
 /** Where a dragged dock is parked, per tab. Cleared with the tab, not the set. */
 export const DOCK_POS_KEY = 'bai-review:dock-pos';
@@ -33,11 +35,22 @@ export interface DockPos {
 }
 
 /**
- * Where a pin is, as far as the dock is concerned. `waiting` is this page with
- * the element not in the DOM right now — a closed modal, a collapsed section —
- * which is not the same as gone, and the row is what says so (R7.3).
+ * Where a pin is (R7): another page — `where` is what differs — or this one
+ * with its element not in the DOM right now, which is not the same as gone.
  */
-export type PinPlace = { kind: 'here' } | { kind: 'waiting' };
+export type PinPlace =
+  | { kind: 'here' }
+  /** `href` is absolute: the row is a real link, so the browser owns it too. */
+  | { kind: 'elsewhere'; where: string; href: string }
+  | { kind: 'waiting' };
+
+/** A plain left-click is ours; every other click is the browser's (R7.1). */
+const plainClick = (evt: MouseEvent): boolean =>
+  evt.button === 0 &&
+  !evt.metaKey &&
+  !evt.ctrlKey &&
+  !evt.shiftKey &&
+  !evt.altKey;
 
 /** Component names a reviewer would recognise as "the thing it was inside". */
 const DIALOGISH = /dialog|modal|drawer|sheet|popover/i;
@@ -132,11 +145,16 @@ const STYLE = `
   }
   /* Its card is hidden; the pin is still in the set and still on the page. */
   .setdock .row.off .rowlabel { opacity: 0.55; }
+  /* Its page is not this one; the row is all it has on screen. */
+  .setdock .row.away .rowlabel { color: var(--bai-review-text-dim); }
+  /* An off-page row is a real link, and a link is not underlined here. */
+  .setdock a.rowlabel { display: block; text-decoration: none; }
+  .setdock a.act { text-decoration: none; }
   /* Its page is this one; its element is not rendered right now. */
   .setdock .row.waiting .rowlabel { opacity: 0.55; }
-  /* Where that pin was — the row is the only thing it has on screen. */
+  /* Where that pin is, or was — the row is the only thing that can say. */
   .setdock .where {
-    flex: none; max-width: 55%; overflow: hidden; text-overflow: ellipsis;
+    flex: none; max-width: 50%; overflow: hidden; text-overflow: ellipsis;
     white-space: nowrap; font-size: 11px; color: var(--bai-review-text-dim);
   }
 ${ICON_STYLE}
@@ -156,6 +174,8 @@ export interface SetDockOptions {
   onUnhide: (id: string) => void;
   /** The header switch: every card off, or on again. */
   onToggleCards: () => void;
+  /** Open the whole set on that pin's own page — it is not on this one (D2). */
+  onGo?: (id: string) => void;
 }
 
 /**
@@ -182,12 +202,33 @@ const button = (
   return node;
 };
 
+/** The same chrome as `button`, as a real link (R7.1). */
+const link = (
+  className: string,
+  name: IconName,
+  label: string,
+  href: string,
+): HTMLAnchorElement => {
+  const node = document.createElement('a');
+  node.className = `act ${className}`;
+  node.href = href;
+  node.append(icon(name));
+  node.title = label;
+  node.setAttribute('aria-label', label);
+  return node;
+};
+
 const setText = (node: HTMLElement, text: string) => {
   (node.querySelector('.lbl') as HTMLElement).textContent = text;
 };
 
 const setIcon = (node: HTMLElement, name: IconName) => {
   node.querySelector('svg')?.replaceWith(icon(name));
+};
+
+const setLabel = (node: HTMLElement, label: string) => {
+  node.title = label;
+  node.setAttribute('aria-label', label);
 };
 
 /** A tab that refuses storage still drags; it just forgets on reload. */
@@ -228,7 +269,7 @@ export function createSetDock(options: SetDockOptions) {
     'Copy all',
   );
   const clear = button('clear', 'trash-2', 'Clear the whole set', 'Clear all');
-  const cards = button('cards', 'eye', CARDS_LABEL, 'Cards');
+  const cards = button('cards', 'eye-off', HIDE_CARDS_LABEL, 'Cards');
   const chord = document.createElement('span');
   chord.className = 'chord';
   chord.textContent = CARDS_CHORD;
@@ -355,9 +396,10 @@ export function createSetDock(options: SetDockOptions) {
   });
 
   /**
-   * `places` maps a pin to what the layer could do with it; anything missing
-   * is drawn here. `cardsHidden` is the switch's own state; each pin carries
-   * its own ✕.
+   * `places` says where each pin is; anything missing is drawn here. Those
+   * rows are the ONLY thing a pin the layer cannot draw has on screen, so an
+   * `elsewhere` one opens the set on its own page instead of scrolling.
+   * `cardsHidden` is the switch's own state; each pin carries its own ✕.
    */
   function render(
     pins: SetPin[],
@@ -373,10 +415,11 @@ export function createSetDock(options: SetDockOptions) {
     titleText.textContent = `${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
     setText(clear, `Clear all (${pins.length})`);
     confirmText.textContent = `Clear all ${pins.length}?`;
-    // A toggle's name is stable and `aria-pressed` carries the state; naming
-    // it after the action it would take announces the opposite of the state.
-    setIcon(cards, cardsHidden ? 'eye-off' : 'eye');
-    cards.setAttribute('aria-pressed', String(cardsHidden));
+    // Glyph and name are the ACTION (R8.1), and the name is the whole story:
+    // `aria-pressed` on a name that changes with the action reads out as its
+    // own contradiction — "Show every card, pressed" while they are hidden.
+    setIcon(cards, cardsHidden ? 'eye' : 'eye-off');
+    setLabel(cards, cardsHidden ? SHOW_CARDS_LABEL : HIDE_CARDS_LABEL);
     rows.replaceChildren(
       ...pins.map((pin, index) => {
         const row = document.createElement('div');
@@ -385,27 +428,59 @@ export function createSetDock(options: SetDockOptions) {
         const idx = document.createElement('span');
         idx.className = 'idx';
         idx.textContent = String(index + 1);
-        const label = document.createElement('button');
+        const place = places.get(pin.id);
+        const off = place?.kind === 'elsewhere' ? place : null;
+        // An off-page row IS a link: the platform already has both intents, so
+        // ⌘/Ctrl-click and middle-click reach the browser untouched (R7.1).
+        const label: HTMLElement = document.createElement(off ? 'a' : 'button');
         label.className = 'rowlabel';
         const note = rowNote(pin);
         label.textContent = note ? note.replace(/\s+/g, ' ') : pin.label;
         label.title = note || pin.label;
-        // The card comes back with the pin the reviewer just asked to see.
-        label.addEventListener('click', () => {
-          if (pin.hidden) options.onUnhide(pin.id);
-          options.onLocate(pin.id);
-        });
+        // The row is the control, and what it does is where its pin is: on
+        // this page, go to it; on another, open the set there.
+        const go = (evt: MouseEvent) => {
+          if (!plainClick(evt)) return;
+          evt.preventDefault();
+          options.onGo?.(pin.id);
+        };
+        if (off) {
+          (label as HTMLAnchorElement).href = off.href;
+          label.addEventListener('click', go);
+        } else {
+          label.addEventListener('click', () => {
+            // The card comes back with the pin the reviewer asked to see.
+            if (pin.hidden) options.onUnhide(pin.id);
+            options.onLocate(pin.id);
+          });
+        }
         row.append(idx, label);
-        const place = places.get(pin.id);
-        if (place?.kind === 'waiting') {
+        if (off) {
+          row.classList.add('away');
+          const where = document.createElement('span');
+          where.className = 'where';
+          where.textContent = off.where;
+          where.title = off.where;
+          const open = link(
+            'go',
+            'external-link',
+            'Open the set on this pin’s page',
+            off.href,
+          );
+          open.addEventListener('click', go);
+          row.append(where, open);
+        } else if (place?.kind === 'waiting') {
           row.classList.add('waiting');
           const where = document.createElement('span');
           where.className = 'where';
           where.textContent = `waiting — ${whereItWas(pin)}`;
           where.title = pin.label;
           row.append(where);
-        } else if (pin.hidden) {
-          row.classList.add('off');
+        } else if (pin.hidden || cardsHidden) {
+          // Whatever hid the card — its own ✕ or the switch — the row is what
+          // offers it back (R8.2). Only an individual hide dims the row: with
+          // the switch thrown the header already says so, for every row.
+          if (pin.hidden) row.classList.add('off');
           const unhide = button('unhide', 'eye', 'Show this pin’s card again');
           unhide.addEventListener('click', () => options.onUnhide(pin.id));
           row.append(unhide);

@@ -8,6 +8,7 @@ import {
   DOCK_POS_KEY,
   type SetDock,
 } from './dock.js';
+import { ICON_NODES } from './icons.js';
 import type { SetPin } from './types.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -19,6 +20,7 @@ let toggled: number;
 let located: string[];
 let removed: string[];
 let unhidden: string[];
+let went: string[];
 
 const pin = (id: string, label: string): SetPin => ({
   id,
@@ -80,6 +82,7 @@ beforeEach(() => {
   located = [];
   removed = [];
   unhidden = [];
+  went = [];
   const host = document.createElement('div');
   document.body.append(host);
   root = host.attachShadow({ mode: 'open' });
@@ -91,6 +94,7 @@ beforeEach(() => {
     onRemove: (id) => removed.push(id),
     onUnhide: (id) => unhidden.push(id),
     onToggleCards: () => toggled++,
+    onGo: (id) => went.push(id),
   });
 });
 
@@ -337,24 +341,60 @@ describe('createSetDock', () => {
       expect(toggled).toBe(1);
     });
 
-    // The dock is the switch's home, so it says which way it is thrown.
-    it('says the cards are off once the owner says so', () => {
+    // A name that changes with the action carries the state already, and
+    // `aria-pressed` on top of it announces the opposite of what it does:
+    // "Show every card, pressed" is what a screen reader said with the cards
+    // hidden. The name is the whole story, so nothing states it twice.
+    it('leaves the state to the name it just changed', () => {
       dock.render([pin('c_a', 'a')], new Map(), true);
 
       expect(node('.cards').textContent).toBe('Cards');
-      expect(node('.cards').getAttribute('aria-pressed')).toBe('true');
+      expect(node('.cards').getAttribute('aria-label')).toBe(
+        `Show every card (${CARDS_CHORD})`,
+      );
+      expect(node('.cards').hasAttribute('aria-pressed')).toBe(false);
+
+      dock.render([pin('c_a', 'a')], new Map(), false);
+
+      expect(node('.cards').getAttribute('aria-label')).toBe(
+        `Hide every card (${CARDS_CHORD})`,
+      );
+      expect(node('.cards').hasAttribute('aria-pressed')).toBe(false);
     });
 
-    // A pressed toggle named after the action that un-presses it announces
-    // the opposite of its own state.
-    it('keeps one name whichever way it is thrown', () => {
+    // R8.1: the glyph and the name are what pressing it DOES.
+    it('names and draws the action, not the state', () => {
       dock.render([pin('c_a', 'a')]);
-      const named = node('.cards').getAttribute('aria-label');
+
+      const hide = node('.cards').getAttribute('aria-label');
+      expect(hide).toContain('Hide');
+      expect(node('.cards').title).toBe(hide);
+      expect(node('.cards svg path')?.getAttribute('d')).toBe(
+        ICON_NODES['eye-off'][0][1].d,
+      );
 
       dock.render([pin('c_a', 'a')], new Map(), true);
 
-      expect(node('.cards').getAttribute('aria-label')).toBe(named);
-      expect(node('.cards').title).toBe(named);
+      const show = node('.cards').getAttribute('aria-label');
+      expect(show).toContain('Show');
+      expect(node('.cards').title).toBe(show);
+      expect(node('.cards svg path')?.getAttribute('d')).toBe(
+        ICON_NODES.eye[0][1].d,
+      );
+    });
+
+    // R8.2: with the switch thrown, a row that offered nothing was a dead end.
+    it('offers every row a reveal while it is hiding the cards', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')], new Map(), true);
+
+      expect(rows().every((row) => row.querySelector('.unhide'))).toBe(true);
+      // The header already says the switch is thrown; dimming is for a card
+      // hidden on its own.
+      expect(rows().some((row) => row.classList.contains('off'))).toBe(false);
+
+      rows()[1].querySelector<HTMLButtonElement>('.unhide')?.click();
+
+      expect(unhidden).toEqual(['c_b']);
     });
 
     // A 260px header wraps; a hint stranded on the title's line reads as part
@@ -652,6 +692,108 @@ describe('createSetDock', () => {
 
       expect(node('.setdock').style.left).toBe('');
       expect(node('.setdock').style.top).toBe('');
+    });
+  });
+
+  // A set spans pages, and an off-page pin has no card — the row is the only
+  // thing it has on screen.
+  describe('a pin on another page', () => {
+    const spread = () => {
+      dock.render(
+        [pin('c_a', 'Sessions › start'), pin('c_b', 'Start › create')],
+        new Map([
+          [
+            'c_b',
+            {
+              kind: 'elsewhere',
+              where: 'Start',
+              href: 'http://dev.test/start#bai=v3.c_b.PAYLOAD',
+            },
+          ],
+        ]),
+      );
+    };
+
+    it('says what differs and offers to go there instead of scrolling', () => {
+      spread();
+
+      const away = rows()[1];
+      expect(away.classList.contains('away')).toBe(true);
+      expect(away.querySelector('.where')?.textContent).toBe('Start');
+      expect(away.querySelector('.go')).not.toBeNull();
+    });
+
+    it('leaves the rows on this page scrolling to their own pin', () => {
+      spread();
+
+      expect(rows()[0].classList.contains('away')).toBe(false);
+      expect(rows()[0].querySelector('.go')).toBeNull();
+
+      rows()[0].querySelector<HTMLButtonElement>('.rowlabel')?.click();
+
+      expect(located).toEqual(['c_a']);
+      expect(went).toEqual([]);
+    });
+
+    /**
+     * R7.1: the platform already has "here" and "in a new tab"; we take only
+     * the plain click and leave every other one to the browser.
+     */
+    it('is a real link, so the browser owns the other intents', () => {
+      spread();
+
+      const link = rows()[1].querySelector<HTMLAnchorElement>('a.rowlabel');
+      expect(link?.getAttribute('href')).toBe(
+        'http://dev.test/start#bai=v3.c_b.PAYLOAD',
+      );
+      expect(rows()[1].querySelector<HTMLAnchorElement>('a.go')?.href).toBe(
+        link?.href,
+      );
+      // A row on this page stays a button: it scrolls, it does not navigate.
+      expect(rows()[0].querySelector('a.rowlabel')).toBeNull();
+    });
+
+    it('leaves a modifier or middle click to the browser', () => {
+      spread();
+      const link = rows()[1].querySelector<HTMLAnchorElement>(
+        'a.rowlabel',
+      ) as HTMLAnchorElement;
+
+      for (const init of [
+        { metaKey: true },
+        { ctrlKey: true },
+        { shiftKey: true },
+        { altKey: true },
+        { button: 1 },
+      ]) {
+        const evt = new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          ...init,
+        });
+        link.dispatchEvent(evt);
+        expect(evt.defaultPrevented).toBe(false);
+      }
+      expect(went).toEqual([]);
+    });
+
+    it('hands back the id of the row whose go was pressed', () => {
+      spread();
+
+      rows()[1].querySelector<HTMLButtonElement>('.go')?.click();
+
+      expect(went).toEqual(['c_b']);
+      expect(located).toEqual([]);
+    });
+
+    // Scrolling to a pin that is not on this page is not a thing to do.
+    it('goes there when the off-page row itself is clicked', () => {
+      spread();
+
+      rows()[1].querySelector<HTMLButtonElement>('.rowlabel')?.click();
+
+      expect(went).toEqual(['c_b']);
+      expect(located).toEqual([]);
     });
   });
 
