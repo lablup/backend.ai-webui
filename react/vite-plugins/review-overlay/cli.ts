@@ -89,13 +89,16 @@ export function htmlUnescape(text: string): string {
 }
 
 /**
- * GitHub's "Quote reply" percent-encodes the link's `#` and `=`; that one
- * sequence is decoded and nothing else (see the commit body).
+ * GitHub's "Quote reply" percent-encodes the link's `#`, `&` and `=`; those
+ * sequences are decoded and nothing else (see the commit body). `&amp;` is a
+ * plain `&` by the time this runs — `htmlUnescape` goes first.
  */
-const PIN_MARKER_ESCAPE_RE = /(?:%23|#)bai(?:%3[Dd]|=)v3/g;
+const PIN_MARKER_ESCAPE_RE = /(%23|%26|[#&])bai(?:%3[Dd]|=)v3/g;
 
 export const decodeBody = (text: string): string =>
-  htmlUnescape(text).replace(PIN_MARKER_ESCAPE_RE, '#bai=v3');
+  htmlUnescape(text).replace(PIN_MARKER_ESCAPE_RE, (_whole, lead: string) =>
+    lead === '#' || lead === '%23' ? '#bai=v3' : '&bai=v3',
+  );
 
 /**
  * The body as written, then its unescaped copies. A link is taken from the
@@ -120,11 +123,24 @@ interface PinRef {
   url: string;
 }
 
-/** The link is whatever runs up to the match, back to the nearest delimiter. */
+/** Sticky, so a set's later parts are read off the end of the earlier one. */
+const SET_TAIL_RE = new RegExp(`&bai=v3\\.${PIN_BODY_SRC}`, 'y');
+
+/**
+ * The link is whatever runs up to the match, back to the nearest delimiter —
+ * then on past it through the rest of the set, so every pin of a set link is
+ * handed the whole set's URL rather than a prefix of it.
+ */
 function expandUrl(text: string, start: number, end: number): string {
   let left = start;
   while (left > 0 && !' \t\n\r"\'<>()[]`'.includes(text[left - 1])) left -= 1;
-  return text.slice(left, end);
+  let right = end;
+  for (;;) {
+    SET_TAIL_RE.lastIndex = right;
+    if (!SET_TAIL_RE.exec(text)) break;
+    right = SET_TAIL_RE.lastIndex;
+  }
+  return text.slice(left, right);
 }
 
 /**
@@ -287,23 +303,42 @@ function verifyId(ref: PinRef, block: ParsedBlock | null): boolean | null {
 
 const beforeHash = (link: string) => link.split('#')[0];
 
+/** Its own instance: `findPinRefs` is mid-scan over the shared one. */
+const COUNT_PIN_RE = new RegExp(`[#&]bai=v3\\.${PIN_BODY_SRC}`, 'g');
+
+const countPins = (link: string): number => {
+  COUNT_PIN_RE.lastIndex = 0;
+  let pins = 0;
+  while (COUNT_PIN_RE.exec(link)) pins += 1;
+  return pins;
+};
+
 /**
- * How much a link deserves to be handed back: 2 the overlay's own — path and
- * query still match the anchor it carries; 1 any other `#bai=v3` link; 0 none.
+ * How much a link deserves to be handed back: the overlay's own — path and
+ * query still match the anchor it carries — outranks any other `#bai=v3` link,
+ * which outranks no link at all. Pins carried breaks the tie WITHIN a tier, so
+ * a set beats the prefix of itself an escaped copy leaves behind — and a
+ * pasted link cannot buy its way up a tier by carrying more parts.
  */
-async function linkRank(link: string): Promise<number> {
-  if (!link) return 0;
+async function linkRank(link: string): Promise<[tier: number, pins: number]> {
+  if (!link) return [0, 0];
   const match = ONE_PIN_RE.exec(link);
-  if (!match) return 0;
+  if (!match) return [0, 0];
   const anchor = await decodeAnchor(match[2]);
-  if (!anchor) return 1;
+  const pins = countPins(link);
+  if (!anchor) return [1, pins];
   const [path, query = ''] = beforeHash(link).split('?');
   const pathname = path.replace(/^[a-zA-Z][\w+.-]*:\/\/[^/]*/, '');
-  return pathname === anchor.p && query === (anchor.q ?? '') ? 2 : 1;
+  const same = pathname === anchor.p && query === (anchor.q ?? '');
+  return [same ? 2 : 1, pins];
 }
 
-const betterLink = async (first: string, second: string): Promise<string> =>
-  (await linkRank(second)) > (await linkRank(first)) ? second : first;
+const betterLink = async (first: string, second: string): Promise<string> => {
+  const [tier, pins] = await linkRank(first);
+  const [otherTier, otherPins] = await linkRank(second);
+  const better = otherTier !== tier ? otherTier > tier : otherPins > pins;
+  return better ? second : first;
+};
 
 /** One pin per id: first non-empty value wins, best-ranked link wins. */
 async function mergePins(pins: CliPin[]): Promise<CliPin[]> {
