@@ -4,7 +4,7 @@
  * comment behind one link. Only `main.ts` composes the store, the composer,
  * the layer and the dock, so this is where the flow can be asserted at all.
  */
-import { DRAFT_KEY } from './draft.js';
+import { DRAFT_KEY, MAX_SET_PINS } from './draft.js';
 import type { SetPin } from './types.js';
 import type { Plugin, ReactGrabAPI } from 'react-grab';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -160,10 +160,24 @@ beforeEach(() => {
   mount('cancel', 'Cancel');
 });
 
+/**
+ * Views are reused BY POSITION and popped from the END, so a snapshot of the
+ * buttons goes stale on the first click — the trailing ones then belong to
+ * disposed views and do nothing. Drain the live ones instead.
+ */
+function tearDownPins() {
+  for (let left = MAX_SET_PINS; left > 0; left--) {
+    const remove = all('.card .remove')[0] as HTMLButtonElement | undefined;
+    if (!remove) return;
+    remove.click();
+  }
+}
+
 afterEach(() => {
-  // The layer outlives the module and keeps a MutationObserver on `body`;
-  // taking every pin down first keeps it from firing into a torn-down jsdom.
-  for (const remove of all('.card .remove')) remove.click();
+  // The layer outlives the module and keeps a MutationObserver on `body` plus
+  // a 10 s retry driver; taking every pin down first keeps them from firing
+  // into a torn-down jsdom.
+  tearDownPins();
   vi.unstubAllGlobals();
   // A secure-context run is one test's business, never the next one's.
   Reflect.deleteProperty(navigator, 'clipboard');
@@ -510,6 +524,24 @@ describe('the set the tab was left with', () => {
     ).toEqual([]);
     expect(hiddenCard('c_one')).toBe(true);
     scan.mockRestore();
+  });
+
+  // A teardown that halves the set leaves a live layer — MutationObserver and
+  // retry driver — running into the next test file.
+  it('takes every pin down when the set is torn down', async () => {
+    seed([
+      storedPin('c_one', 'create', 'Start › create'),
+      storedPin('c_two', 'cancel', 'Start › cancel'),
+      storedPin('c_three', 'create', 'Start › create'),
+    ]);
+    await bootOverlay();
+    await ticks(2);
+
+    tearDownPins();
+
+    expect(storedIds()).toEqual([]);
+    expect(all('.card')).toHaveLength(0);
+    expect(dockRows()).toHaveLength(0);
   });
 
   describe('the cards switch', () => {
