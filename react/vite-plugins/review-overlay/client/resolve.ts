@@ -122,6 +122,22 @@ function uniqueLandmark(
   return isOurs(found[0], ignore) ? null : found[0];
 }
 
+/**
+ * Is the anchor's landmark on the page at all? One selector, so the retry loop
+ * can tell "the frame it lived in is back" from "still nothing".
+ */
+export function hasLandmark(
+  anchor: AnchorV3 | null,
+  doc: Document = document,
+): boolean {
+  if (!anchor?.tid) return false;
+  try {
+    return !!doc.querySelector(`[data-testid="${esc(anchor.tid)}"]`);
+  } catch {
+    return false;
+  }
+}
+
 /** Cheap enough to run on every reposition: no text scan, no projection. */
 export function quickFindTarget(
   anchor: AnchorV3 | null,

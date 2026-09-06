@@ -16,6 +16,7 @@ let layer: PinLayer;
 let toasts: string[];
 let dismissed: string[];
 let scrolled: string[];
+let pending: string[][];
 
 const shadow = () => host.shadowRoot as ShadowRoot;
 const cards = () => Array.from(shadow().querySelectorAll<HTMLElement>('.card'));
@@ -84,6 +85,7 @@ beforeEach(() => {
   toasts = [];
   dismissed = [];
   scrolled = [];
+  pending = [];
   host = document.createElement('div');
   host.setAttribute('data-bai-review-overlay', '');
   document.body.append(host);
@@ -303,6 +305,104 @@ describe('createPinLayer', () => {
       vi.advanceTimersByTime(20 * 500);
 
       expect(toasts).toEqual([]);
+    });
+
+    // The owner knows whether a pending pin is on another page or waiting for
+    // its element; the layer only knows which ids are still unresolved.
+    it('hands the still-pending ids to an owner that wants them', () => {
+      layer.dispose();
+      layer = createPinLayer({
+        root: shadow(),
+        host,
+        copyText: () => true,
+        showToast: (message) => toasts.push(message),
+        buildComment: () => ({ text: 'block', html: '<p>block</p>' }),
+        onGiveUp: (ids) => pending.push(ids),
+      });
+      mount('one');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+
+      vi.advanceTimersByTime(20 * 500);
+
+      expect(pending).toEqual([['c_b']]);
+      expect(toasts).toEqual([]);
+    });
+  });
+
+  /**
+   * R7.2: the ladder is 10 s of SPA boot, not the pin's whole life. A pin
+   * whose element is inside a closed modal has to appear the moment the
+   * reviewer opens it again, however long after that is.
+   */
+  describe('a pin still waiting for its element', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    /** One mutation batch, through the layer's own debounce. */
+    const churn = async (times = 1) => {
+      for (let i = 0; i < times; i++) {
+        document.body.insertAdjacentHTML('beforeend', '<i>churn</i>');
+        await Promise.resolve();
+        vi.advanceTimersByTime(400);
+      }
+    };
+
+    it('draws it when the element arrives after the ladder gave up', async () => {
+      layer.show([target('c_a', 'late')]);
+      vi.advanceTimersByTime(20 * 500);
+      expect(toasts).toEqual(['Could not find that element on this page']);
+
+      mount('late');
+      await churn();
+
+      expect(markerOf('c_a').classList.contains('found')).toBe(true);
+      expect(layer.locatedElement('c_a')).toBe(
+        document.querySelector('[data-testid="late"]'),
+      );
+    });
+
+    // The escalated scan's budget is spent by the page's own churn long before
+    // the modal opens; the landmark coming back is what buys it a new one.
+    it('escalates again when the landmark it lived in comes back', async () => {
+      layer.show([
+        target('c_a', 'unused', {
+          s: '#never-matches',
+          tid: 'panel',
+          rect: { x: 0.1, y: 0.1, w: 0.2, h: 0.2 },
+          txt: 'Deploy',
+        }),
+      ]);
+      vi.advanceTimersByTime(20 * 500);
+      await churn(5);
+
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div data-testid="panel"><button>Deploy</button></div>',
+      );
+      await churn();
+
+      expect(layer.locatedElement('c_a')).toBe(
+        document.querySelector('[data-testid="panel"] button'),
+      );
+    });
+
+    // One `querySelector` per waiting pin per batch is the budget; the
+    // document-wide text scan keeps the cap it has always had.
+    it('does not re-run the document-wide scan on every mutation', async () => {
+      layer.show([target('c_a', 'gone')]);
+      vi.advanceTimersByTime(20 * 500);
+      const wide = vi.spyOn(document, 'querySelectorAll');
+
+      await churn(6);
+
+      const scans = wide.mock.calls.filter(([sel]) => sel === 'button').length;
+      expect(scans).toBeLessThanOrEqual(3);
+      wide.mockRestore();
     });
   });
 

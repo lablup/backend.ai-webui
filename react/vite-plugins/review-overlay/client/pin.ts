@@ -12,7 +12,12 @@
  */
 import { retryUntil } from './deeplink.js';
 import { icon, ICON_STYLE } from './icons.js';
-import { findAnchorTarget, quickFindTarget, textMatches } from './resolve.js';
+import {
+  findAnchorTarget,
+  hasLandmark,
+  quickFindTarget,
+  textMatches,
+} from './resolve.js';
 import { projectFraction } from './selection.js';
 import type { AnchorV3, CopyPayload } from './types.js';
 
@@ -184,6 +189,12 @@ export interface PinLayerOptions {
   ) => void;
   /** The reviewer pressed ✕; whoever owns the set decides what that means. */
   onDismiss?: (target: DeepLinkPinTarget) => void;
+  /**
+   * The ladder ran out with these pins still unresolved. They stay pending —
+   * the observer keeps re-resolving them — so the owner can say where each one
+   * was rather than that it is gone. Without it the layer keeps its own line.
+   */
+  onGiveUp?: (pendingIds: string[]) => void;
 }
 
 /** The one-view layer `main.ts` opened a link with before pin sets. */
@@ -317,6 +328,8 @@ function createPinView(deps: ViewDeps): PinView {
   let clippers: Element[] = [];
   /** Escalated scans in a row that found nothing — the page moved on. */
   let missedScans = 0;
+  /** The landmark at the last batch; its return re-arms the escalated scan. */
+  let hadLandmark = false;
   /** One arrival pulse per link — the box is what stays. */
   let pulsed = false;
   let pulseTimer = 0;
@@ -552,6 +565,12 @@ function createPinView(deps: ViewDeps): PinView {
    */
   function reposition() {
     if (!target) return;
+    // The frame the pin lived in is back — a modal reopened, a section
+    // expanded. The escalated scan gets its budget again, or the SPA's own
+    // boot churn would have spent it long before the reviewer opened anything.
+    const landmark = hasLandmark(target.anchor);
+    if (landmark && !hadLandmark) missedScans = 0;
+    hadLandmark = landmark;
     const held =
       located?.isConnected && textMatches(located, target.anchor.txt)
         ? located
@@ -639,6 +658,7 @@ function createPinView(deps: ViewDeps): PinView {
     /** Adopt a link's anchor. Nothing is drawn until `locate()` finds it. */
     show(next: DeepLinkPinTarget) {
       dismiss();
+      hadLandmark = false;
       hidden = false;
       syncHidden();
       pulsed = false;
@@ -862,15 +882,22 @@ export function createPinLayer(options: PinLayerOptions) {
     cancelRetry = () => undefined;
   }
 
-  /** N=1 says what the overlay has always said; a set counts itself instead. */
+  /**
+   * The ladder ends; the pin does not (R7.2) — the observer keeps re-resolving
+   * every pending view. Whoever owns the set knows whether a pending pin is on
+   * another page or waiting for its element, so it gets the ids; a layer built
+   * without that keeps the overlay's own sentence.
+   */
   function giveUp() {
     const shown = showingViews();
-    const missing = shown.filter((view) => !view.isLocated()).length;
-    if (!missing) return;
+    const pending = shown.filter((view) => !view.isLocated());
+    if (!pending.length) return;
+    if (options.onGiveUp)
+      return options.onGiveUp(pending.map((view) => view.id()));
     showToast(
       shown.length === 1
         ? 'Could not find that element on this page'
-        : `${missing} of ${shown.length} pins are not on this page`,
+        : `${pending.length} of ${shown.length} pins are not on this page`,
     );
   }
 
