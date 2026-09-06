@@ -22,6 +22,8 @@ export const DOCK_POS_KEY = 'bai-review:dock-pos';
 
 /** The dock's own `width`, for a jsdom clamp that has no layout to read. */
 const DOCK_WIDTH = 260;
+/** Stand-in height while the dock is still `display: none` and measures 0. */
+const DOCK_HEIGHT = 160;
 /** Margin the dock keeps to every viewport edge, dragged or default. */
 const EDGE_PAD = 8;
 
@@ -200,7 +202,7 @@ export function createSetDock(options: SetDockOptions) {
 
   function clamp({ left, top }: DockPos): DockPos {
     const width = dock.offsetWidth || DOCK_WIDTH;
-    const height = dock.offsetHeight;
+    const height = dock.offsetHeight || DOCK_HEIGHT;
     return {
       left: Math.min(
         Math.max(left, EDGE_PAD),
@@ -338,6 +340,9 @@ export function createSetDock(options: SetDockOptions) {
         return row;
       }),
     );
+    // The restore clamped against the stand-in height, with the dock still
+    // `display: none`; shown and filled, it has a real box to clamp against.
+    reclamp();
   }
 
   return {

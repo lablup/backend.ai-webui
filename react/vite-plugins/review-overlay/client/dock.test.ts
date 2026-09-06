@@ -48,6 +48,24 @@ const viewport = (width: number, height: number) => {
   });
 };
 
+/**
+ * jsdom lays nothing out, so every `offsetHeight` is 0 — including the one a
+ * real browser reports for a shown dock. Returns its own undo.
+ */
+const measureShownDockAs = (height: number) => {
+  const proto = HTMLElement.prototype;
+  const own = Object.getOwnPropertyDescriptor(proto, 'offsetHeight');
+  Object.defineProperty(proto, 'offsetHeight', {
+    configurable: true,
+    get(this: HTMLElement) {
+      return this.classList.contains('shown') ? height : 0;
+    },
+  });
+  return () => {
+    if (own) Object.defineProperty(proto, 'offsetHeight', own);
+  };
+};
+
 beforeEach(() => {
   document.body.innerHTML = '';
   sessionStorage.clear();
@@ -360,7 +378,8 @@ describe('createSetDock', () => {
       dragTo(4000, 4000);
 
       expect(node('.setdock').style.left).toBe('756px');
-      expect(node('.setdock').style.top).toBe('760px');
+      // 768 - 160 stand-in height - 8: jsdom measures every box as 0.
+      expect(node('.setdock').style.top).toBe('600px');
     });
 
     it('restores a stored position, clamped into a smaller window', () => {
@@ -381,7 +400,39 @@ describe('createSetDock', () => {
       });
 
       expect(node('.setdock').style.left).toBe('332px');
-      expect(node('.setdock').style.top).toBe('392px');
+      expect(node('.setdock').style.top).toBe('232px');
+    });
+
+    // Restore runs before the first `render`, while the dock is still
+    // `display: none` and measures 0 — clamping against that parks a dock
+    // stored low in a tall window below the fold of a short one, where its
+    // rows, its actions and the set they reach cannot be got at.
+    it('re-clamps against its real height once it is shown', () => {
+      const measured = measureShownDockAs(300);
+      try {
+        dock.dispose();
+        sessionStorage.setItem(
+          DOCK_POS_KEY,
+          JSON.stringify({ left: 900, top: 740 }),
+        );
+        viewport(1280, 480);
+        dock = createSetDock({
+          root,
+          onCopyAll: () => copied++,
+          onClear: () => cleared++,
+          onLocate: (id) => located.push(id),
+          onRemove: (id) => removed.push(id),
+          onUnhide: (id) => unhidden.push(id),
+          onToggleCards: () => toggled++,
+        });
+        dock.render([pin('c_a', 'a')]);
+
+        // 480 - 300 - 8: the whole dock, not the eight pixels of its top
+        // border that the stand-in height alone would have left on screen.
+        expect(node('.setdock').style.top).toBe('172px');
+      } finally {
+        measured();
+      }
     });
 
     it('pulls a parked dock back in when the window shrinks', () => {
@@ -392,7 +443,7 @@ describe('createSetDock', () => {
       window.dispatchEvent(new Event('resize'));
 
       expect(node('.setdock').style.left).toBe('132px');
-      expect(node('.setdock').style.top).toBe('292px');
+      expect(node('.setdock').style.top).toBe('132px');
     });
 
     it('leaves the default corner alone until something moves it', () => {
