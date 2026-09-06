@@ -137,6 +137,11 @@ export interface CopyPayload {
   toast?: string;
 }
 
+/** A card's ⧉: whoever renders the block owns what the toast claims it wrote. */
+export interface PinCopyPayload extends CopyPayload {
+  toast: string;
+}
+
 /** `/__review/state` — the write side needs the PR number and the repo root. */
 export interface ReviewServerState {
   pr: number | null;

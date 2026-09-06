@@ -415,6 +415,8 @@ describe('the set the tab was left with', () => {
     expect(storedIds()).toEqual(['c_two']);
     expect(dockRows()).toHaveLength(1);
     expect(copyButton().textContent).toBe('Add & copy all (2)');
+    // Same action, same sentence, whichever 🗑 the reviewer reached for.
+    expect(toast()).toBe('Removed pin 1 of 2');
   });
 
   // ✕ is about the card being in the way of the thing under it, and the

@@ -19,7 +19,7 @@ import {
   textMatches,
 } from './resolve.js';
 import { projectFraction } from './selection.js';
-import type { AnchorV3, CopyPayload } from './types.js';
+import type { AnchorV3, PinCopyPayload } from './types.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
 /** Long enough for a `behavior: 'smooth'` scroll and its momentum to stop. */
@@ -181,7 +181,7 @@ export interface PinLayerOptions {
    * gesture. `main.ts` owns it: the server state and the stack live there, and
    * `null` means those reads have not landed for this element yet.
    */
-  buildComment: (target: DeepLinkPinTarget) => CopyPayload | null;
+  buildComment: (target: DeepLinkPinTarget) => PinCopyPayload | null;
   /** The pin settled on a different element — or on none. */
   onLocated?: (
     element: Element | null,
@@ -661,16 +661,7 @@ function createPinView(deps: ViewDeps): PinView {
       deps.showToast('Still reading this element — try again');
       return;
     }
-    write(
-      payload.text,
-      payload.html,
-      // The link caps the note it carries, and a copy that quietly loses the
-      // rest is worse than one that says so — unless the payload says better.
-      payload.toast ??
-        (target.anchor.nt === 1
-          ? 'Copied — the note is the shortened one the link carries'
-          : 'Copied the whole comment'),
-    );
+    write(payload.text, payload.html, payload.toast);
   });
 
   function dismiss() {

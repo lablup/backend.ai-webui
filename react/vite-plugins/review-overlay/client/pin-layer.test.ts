@@ -104,7 +104,11 @@ beforeEach(() => {
     host,
     copyText: () => true,
     showToast: (message) => toasts.push(message),
-    buildComment: () => ({ text: 'block', html: '<p>block</p>' }),
+    buildComment: () => ({
+      text: 'block',
+      html: '<p>block</p>',
+      toast: 'Copied 1 pin',
+    }),
     onDismiss: (pin) => dismissed.push(pin.id),
     onHide: (pin) => hidden.push(pin.id),
   });

@@ -355,7 +355,7 @@ function boot() {
     showToast: ui.showToast,
     buildComment,
     onLocated: (element, target) => void readPinStack(target, element),
-    onDismiss: (target) => removePin(target.id),
+    onDismiss: (target) => removeFromSet(target.id),
     onHide: (target) => setHidden(target.id, true),
   });
   const dock = createSetDock({
@@ -375,13 +375,7 @@ function boot() {
       // The arrival beat is long spent — this is a deliberate "that one".
       pins.pulse(id);
     },
-    onRemove: (id) => {
-      const index = draft.findIndex((pin) => pin.id === id);
-      if (index < 0) return;
-      const size = draft.length;
-      removePin(id);
-      ui.showToast(`Removed pin ${index + 1} of ${size}`);
-    },
+    onRemove: removeFromSet,
     onUnhide: (id) => setHidden(id, false),
     onToggleCards: toggleCards,
   });
@@ -417,7 +411,16 @@ function boot() {
     for (const pin of draft) pins.setCardHidden(pin.id, pin.hidden === true);
   }
 
-  /** 🗑, from a card or from a dock row. */
+  /** 🗑, wherever it was pressed: the card and the row say the same thing. */
+  function removeFromSet(id: string) {
+    const index = draft.findIndex((pin) => pin.id === id);
+    if (index < 0) return removePin(id);
+    const size = draft.length;
+    removePin(id);
+    ui.showToast(`Removed pin ${index + 1} of ${size}`);
+  }
+
+  /** The store, the stacks and the layer, one pin shorter. */
   function removePin(id: string) {
     stacks.delete(id);
     if (linkTarget?.id === id) linkTarget = null;
