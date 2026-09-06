@@ -290,6 +290,13 @@ describe('gating the copy on the note', () => {
     ui.openCompose(target, 40, 306);
   });
 
+  // R5.2: the whole chrome is lucide at one size, emoji nowhere.
+  it('labels the copy button with a lucide icon, not an emoji', () => {
+    expect(copyButton().querySelector('svg')).not.toBeNull();
+    expect(copyButton().textContent).toBe('Copy block');
+    expect(compose().textContent).not.toMatch(/\p{Extended_Pictographic}/u);
+  });
+
   it('re-disables the button the moment the note leaves the capture', () => {
     expect(copyButton().disabled).toBe(true);
     ui.setComposeReady(true, '');

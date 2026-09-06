@@ -29,6 +29,9 @@ const markerOf = (id: string) =>
   ) as HTMLElement;
 const countOf = (id: string) =>
   cardOf(id).querySelector<HTMLElement>('.count')?.textContent;
+/** A set of one draws lucide's map-pin where a set draws its index. */
+const markerGlyph = (id: string) =>
+  markerOf(id).querySelector('svg') ? 'map-pin' : markerOf(id).textContent;
 
 /** The layer places on a rAF; give it one frame to land. */
 const settle = () => new Promise((resolve) => setTimeout(resolve, 60));
@@ -153,7 +156,7 @@ describe('createPinLayer', () => {
     mount('one');
     layer.show([target('c_a', 'one')]);
 
-    expect(markerOf('c_a').textContent).toBe('📍');
+    expect(markerGlyph('c_a')).toBe('map-pin');
     expect(countOf('c_a')).toBe('');
   });
 
@@ -164,7 +167,7 @@ describe('createPinLayer', () => {
     layer.show([target('c_a', 'one')]);
 
     expect(shadow().querySelectorAll('.card')).toHaveLength(1);
-    expect(markerOf('c_a').textContent).toBe('📍');
+    expect(markerGlyph('c_a')).toBe('map-pin');
   });
 
   describe('the focus pin', () => {
@@ -245,10 +248,10 @@ describe('createPinLayer', () => {
     });
 
     // Two pins minus one is a set of one, which never numbered itself.
-    it('drops back to a lone 📍 when ✕ leaves one pin', () => {
+    it('drops back to a lone map-pin when ✕ leaves one pin', () => {
       cardOf('c_a').querySelector<HTMLButtonElement>('.close')?.click();
 
-      expect(markerOf('c_b').textContent).toBe('📍');
+      expect(markerGlyph('c_b')).toBe('map-pin');
       expect(countOf('c_b')).toBe('');
     });
 
@@ -343,7 +346,7 @@ describe('createPinLayer', () => {
       await settle();
 
       expect(markerOf('c_a').classList.contains('found')).toBe(true);
-      expect(markerOf('c_a').style.left).toBe('46px');
+      expect(markerOf('c_a').style.left).toBe('40px');
     });
 
     // A folded card measures 0 high, and a card placed on that lands off-screen.

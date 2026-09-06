@@ -11,6 +11,7 @@
  * one rather than leaving it on a detached element.
  */
 import { retryUntil } from './deeplink.js';
+import { icon, ICON_STYLE } from './icons.js';
 import { findAnchorTarget, quickFindTarget, textMatches } from './resolve.js';
 import { projectFraction } from './selection.js';
 import type { AnchorV3, CopyPayload } from './types.js';
@@ -32,6 +33,16 @@ const MAX_MISSED_SCANS = 3;
 /** 10 s of SPA boot at 500 ms — the login form is lazy behind the splash. */
 const ANCHOR_TRIES = 20;
 const ANCHOR_EVERY_MS = 500;
+/**
+ * The teardrop is a 24px square rotated -45°, so its point is 12·√2 below its
+ * centre and the whole glyph fits in a 34px diamond. `MARKER_SPAN` is what it
+ * needs OUTSIDE the marked region: the tip's gap plus the glyph itself.
+ */
+const MARKER_TIP = 17;
+const MARKER_GAP = 2;
+const MARKER_SPAN = MARKER_GAP + MARKER_TIP * 2;
+/** The marker's own glyph, smaller than the chrome's — it sits in 24px. */
+const MARKER_ICON_SIZE = 12;
 
 /** The edges of a rectangle the element may have left: viewport or scroller. */
 interface Bounds {
@@ -57,7 +68,11 @@ const STYLE = `
     box-shadow: 0 1px 4px var(--bai-review-shadow);
   }
   .pin.found { display: flex; }
-  .pin > span { transform: rotate(45deg); }
+  .pin > span { transform: rotate(45deg); display: flex; }
+  /* No room above the region: the point goes to the top and the body hangs
+     below it, so the glyph still leaves the marked rectangle alone. */
+  .pin.flip { transform: rotate(135deg); }
+  .pin.flip > span { transform: rotate(-135deg); }
   .pin.pulse { animation: baipulse 1s ease-in-out 4; }
   @keyframes baipulse {
     0%,100% { box-shadow: 0 1px 4px var(--bai-review-shadow); }
@@ -117,19 +132,23 @@ const STYLE = `
   }
   .card .idcopy {
     pointer-events: auto; cursor: pointer; border: 0; background: none;
-    padding: 0 2px; font: inherit; font-size: 11px; line-height: 1;
-    color: var(--bai-review-text-dim);
+    padding: 0 3px; font: inherit; line-height: 1; display: inline-flex;
+    color: var(--bai-review-text-dim); vertical-align: -3px;
   }
   .card .idcopy:hover { color: var(--bai-review-text); }
   .card .close, .card .locate, .card .copyall {
-    position: absolute; top: 2px; cursor: pointer; border: 0;
-    background: none; color: var(--bai-review-text-dim); font-size: 14px;
-    pointer-events: auto;
+    position: absolute; top: 4px; cursor: pointer; border: 0; padding: 0;
+    background: none; color: var(--bai-review-text-dim);
+    display: flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; pointer-events: auto;
   }
   .card .close { right: 4px; }
   .card .locate { right: 24px; }
   .card .copyall { right: 44px; }
-  .card .copyall:hover { color: var(--bai-review-text); }
+  .card .close:hover, .card .locate:hover, .card .copyall:hover {
+    color: var(--bai-review-text);
+  }
+${ICON_STYLE}
   /* The pick box's own style, so arriving on a link looks like the pick that
      made it: a thin stroke over a light fill, on our layer — never the app's. */
   .markbox {
@@ -224,7 +243,7 @@ function createPinView(deps: ViewDeps): PinView {
   const marker = document.createElement('div');
   marker.className = 'pin';
   const head = document.createElement('span');
-  head.textContent = '📍';
+  head.append(icon('map-pin', MARKER_ICON_SIZE));
   marker.append(head);
   const card = document.createElement('div');
   card.className = 'card';
@@ -256,26 +275,26 @@ function createPinView(deps: ViewDeps): PinView {
   const idText = run();
   const idCopy = document.createElement('button');
   idCopy.className = 'idcopy';
-  idCopy.textContent = '📋';
-  // The glyph is the accessible name unless one is given, and "clipboard" is
-  // not the action; `title` stays the visual tooltip.
+  idCopy.append(icon('clipboard'));
+  // The icon is `aria-hidden`, so the label below is the accessible name;
+  // `title` stays the visual tooltip.
   idCopy.title = 'Copy this comment id';
   idCopy.setAttribute('aria-label', 'Copy this comment id');
   const componentText = run();
   sub.append(idText, idCopy, componentText);
   const close = document.createElement('button');
   close.className = 'close';
-  close.textContent = '✕';
+  close.append(icon('x'));
   close.title = 'Dismiss this pin';
   close.setAttribute('aria-label', 'Dismiss this pin');
   const locateButton = document.createElement('button');
   locateButton.className = 'locate';
-  locateButton.textContent = '📍';
+  locateButton.append(icon('crosshair'));
   locateButton.title = 'Scroll back to this element';
   locateButton.setAttribute('aria-label', 'Scroll back to this element');
   const commentCopy = document.createElement('button');
   commentCopy.className = 'copyall';
-  commentCopy.textContent = '⧉';
+  commentCopy.append(icon('copy'));
   commentCopy.title = 'Copy the whole comment';
   commentCopy.setAttribute('aria-label', 'Copy the whole comment');
   card.append(
@@ -414,12 +433,12 @@ function createPinView(deps: ViewDeps): PinView {
     // Written BEFORE the measurement: the hint is a line of the card, so a
     // height read without it docks a bottom-docked card past the fold.
     away.textContent = up
-      ? '↑ Scrolled above — 📍 goes back'
+      ? '↑ Scrolled above — the crosshair goes back'
       : down
-        ? '↓ Scrolled below — 📍 goes back'
+        ? '↓ Scrolled below — the crosshair goes back'
         : left
-          ? '← Scrolled to the left — 📍 goes back'
-          : '→ Scrolled to the right — 📍 goes back';
+          ? '← Scrolled to the left — the crosshair goes back'
+          : '→ Scrolled to the right — the crosshair goes back';
     if (cardOff()) return null;
     // A horizontal departure docks to a horizontal edge. Clamping `box.left`
     // would leave the card mid-screen whenever a scroller — not the window —
@@ -474,19 +493,36 @@ function createPinView(deps: ViewDeps): PinView {
       height: `${box.height}px`,
       borderRadius: cornerRadius(located),
     });
-    marker.style.left = `${box.left + 6}px`;
-    marker.style.top = `${box.top + 6}px`;
+    // The marker points AT the region from outside it: the teardrop's tip
+    // touches the top-left corner and the glyph sits above, clear of the very
+    // content the box is pointing at. With no room above it flips under.
+    const flip = box.top - MARKER_SPAN < VIEWPORT_PAD;
+    marker.classList.toggle('flip', flip);
+    // Against the left edge it slides along the region's top rather than
+    // off-screen; `style.left`/`top` are the glyph's CENTRE (negative margins).
+    const markerRight = Math.max(
+      VIEWPORT_PAD + MARKER_TIP,
+      vw - VIEWPORT_PAD - MARKER_TIP,
+    );
+    const markerTop = flip
+      ? box.bottom + MARKER_GAP + MARKER_TIP
+      : box.top - MARKER_GAP - MARKER_TIP;
+    marker.style.left = `${Math.min(Math.max(box.left, VIEWPORT_PAD + MARKER_TIP), markerRight)}px`;
+    marker.style.top = `${Math.min(Math.max(markerTop, VIEWPORT_PAD + MARKER_TIP), Math.max(VIEWPORT_PAD + MARKER_TIP, vh - VIEWPORT_PAD - MARKER_TIP))}px`;
     // A card that is off measures 0 high, which would place it past the fold;
     // showing it again re-places it with a height to read.
     if (cardOff()) return null;
     card.style.left = `${Math.max(VIEWPORT_PAD, Math.min(box.left, rightEdge()))}px`;
     // `locate()` centres the element, so anything taller than half the
     // viewport puts `box.bottom` below the fold — and a fixed layer cannot be
-    // scrolled to. Flip above, then clamp.
+    // scrolled to. Flip above, then clamp. Whichever side the marker took, the
+    // card starts past it: they share the region's left edge.
     const height = card.offsetHeight;
-    const below = box.bottom + CARD_GAP;
+    const below = box.bottom + CARD_GAP + (flip ? MARKER_SPAN : 0);
     const top =
-      below + height <= vh - VIEWPORT_PAD ? below : box.top - CARD_GAP - height;
+      below + height <= vh - VIEWPORT_PAD
+        ? below
+        : box.top - CARD_GAP - height - (flip ? 0 : MARKER_SPAN);
     card.style.top = `${Math.max(VIEWPORT_PAD, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
     return null;
   }
@@ -551,7 +587,7 @@ function createPinView(deps: ViewDeps): PinView {
   idCopy.addEventListener('click', () => {
     const id = target?.id;
     if (!id) return;
-    write(id, undefined, `Copied ${id} 📋`);
+    write(id, undefined, `Copied ${id}`);
   });
 
   /**
@@ -571,8 +607,8 @@ function createPinView(deps: ViewDeps): PinView {
       // The link caps the note it carries, and a copy that quietly loses the
       // rest is worse than one that says so.
       target.anchor.nt === 1
-        ? 'Copied — the note is the shortened one the link carries 📋'
-        : 'Copied the whole comment 📋',
+        ? 'Copied — the note is the shortened one the link carries'
+        : 'Copied the whole comment',
     );
   });
 
@@ -613,10 +649,11 @@ function createPinView(deps: ViewDeps): PinView {
         : '';
     },
 
-    // A set of one is what a single pin has always been — the 📍 glyph and no
-    // header. Only a real set numbers itself.
+    // A set of one is what a single pin has always been — the map-pin glyph
+    // and no header. Only a real set numbers itself.
     setOrdinal(index: number, total: number) {
-      head.textContent = total > 1 ? String(index + 1) : '📍';
+      if (total > 1) head.textContent = String(index + 1);
+      else head.replaceChildren(icon('map-pin', MARKER_ICON_SIZE));
       count.textContent = total > 1 ? `${index + 1} / ${total}` : '';
     },
 
