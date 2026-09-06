@@ -125,10 +125,24 @@ beforeEach(() => {
   mount('deploy');
 });
 
+/**
+ * Views are reused BY POSITION and popped from the END, so a snapshot of the
+ * buttons goes stale on the first click — the trailing ones then belong to
+ * disposed views and do nothing. Drain the live ones instead.
+ */
+function tearDownPins() {
+  for (let left = MAX_SET_PINS; left > 0; left--) {
+    const remove = all('.card .remove')[0] as HTMLButtonElement | undefined;
+    if (!remove) return;
+    remove.click();
+  }
+}
+
 afterEach(() => {
-  // The layer outlives the module and keeps a MutationObserver on `body`;
-  // taking every pin down first keeps it from firing into a torn-down jsdom.
-  for (const remove of all('.card .remove')) remove.click();
+  // The layer outlives the module and keeps a MutationObserver on `body` plus
+  // a 10 s retry driver; taking every pin down first keeps them from firing
+  // into a torn-down jsdom.
+  tearDownPins();
   vi.unstubAllGlobals();
   document.querySelector('[data-bai-review-overlay]')?.remove();
   document.body.innerHTML = '';
@@ -149,6 +163,23 @@ describe('opening a link that carries a set', () => {
     expect(cards()).toHaveLength(2);
     expect(all('.pin').map((marker) => marker.textContent)).toEqual(['1', '2']);
     expect(toast()).toBe('Added 2 pins from the link');
+  });
+
+  // A teardown that halves the set leaves a live layer — MutationObserver and
+  // retry driver — running into the next test file.
+  it('takes every pin down when the set is torn down', async () => {
+    const hash = [
+      await part({ id: A, testid: 'create' }),
+      await part({ id: B, testid: 'cancel' }),
+      await part({ id: 'c_ddddddd', testid: 'deploy' }),
+    ].join('&');
+    await bootOn(hash);
+
+    tearDownPins();
+
+    expect(storedIds()).toEqual([]);
+    expect(all('.card')).toHaveLength(0);
+    expect(dockRows()).toHaveLength(0);
   });
 
   // A reload must not re-apply the link and resurrect a pin just dismissed.
