@@ -534,10 +534,13 @@ ${ICON_STYLE}
   }
 
   compose.addEventListener('click', (evt) => {
-    const button = evt.target;
-    if (!(button instanceof HTMLButtonElement)) return;
-    if (button.dataset.act === 'cancel') closeCompose();
-    if (button.dataset.act === 'copy') runCopy();
+    // `closest`, not the target: the copy button holds an icon and a label
+    // span, so a click on the words never reaches the button itself (R5.2).
+    const target = evt.target instanceof Element ? evt.target : null;
+    const act =
+      target?.closest<HTMLButtonElement>('button[data-act]')?.dataset.act;
+    if (act === 'cancel') closeCompose();
+    if (act === 'copy') runCopy();
   });
 
   composeText.addEventListener('keydown', (evt) => {

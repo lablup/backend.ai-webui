@@ -297,6 +297,21 @@ describe('gating the copy on the note', () => {
     expect(compose().textContent).not.toMatch(/\p{Extended_Pictographic}/u);
   });
 
+  /**
+   * R5.2 put an icon and a label span inside the copy button, so a click on
+   * the words has the span as its target and the delegated handler saw no
+   * button at all — the composer answered only the keyboard.
+   */
+  it('copies from a click on the button’s own label, not just its padding', () => {
+    ui.setComposeReady(true, '');
+
+    copyButton()
+      .querySelector('.lbl')
+      ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    expect(err().textContent).toBe('Still reading the element — try again.');
+  });
+
   it('re-disables the button the moment the note leaves the capture', () => {
     expect(copyButton().disabled).toBe(true);
     ui.setComposeReady(true, '');
