@@ -199,6 +199,22 @@ describe('createDeepLinkPin', () => {
     expect(marker().classList.contains('pulse')).toBe(true);
   });
 
+  // The compat surface passes `onHide` straight through, so a layer built
+  // without one used to leave ✕ inert.
+  it('puts the card away on ✕ with no owner wired to hear it', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<button data-testid="create">Create</button>',
+    );
+    show();
+    pin.locate();
+
+    (host.shadowRoot?.querySelector('.close') as HTMLButtonElement).click();
+
+    expect(card().classList.contains('hidden')).toBe(true);
+    expect(marker().classList.contains('found')).toBe(true);
+  });
+
   describe('place', () => {
     beforeEach(() => {
       Object.defineProperty(window, 'innerHeight', {

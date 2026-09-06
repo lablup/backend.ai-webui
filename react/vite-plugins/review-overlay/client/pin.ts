@@ -615,7 +615,13 @@ function createPinView(deps: ViewDeps): PinView {
   // ✕ takes the card off the element, not the pin off the set: the reviewer
   // wants to see what they pinned. 🗑 is what ends a pin.
   close.addEventListener('click', () => {
-    if (target) deps.onHide?.(target);
+    if (!target) return;
+    // The card goes now, not when the owner answers: the button is honest
+    // even in a layer built without `onHide`, and the owner re-applies it.
+    hidden = true;
+    syncHidden();
+    deps.placeSoon();
+    deps.onHide?.(target);
   });
   removeButton.addEventListener('click', () => {
     const dismissed = target;

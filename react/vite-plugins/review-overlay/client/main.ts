@@ -427,21 +427,24 @@ function boot() {
     redraw();
   }
 
-  /** ✕ on a card, or 👁 on its row: the pin stays in the set, the card goes. */
+  /**
+   * ✕ on a card, or its row's eye. Visibility only — `redraw()` would restart
+   * the resolution ladder and re-toast its give-up line at every flip.
+   */
   function setHidden(id: string, hidden: boolean) {
-    // A pin only a link put on screen is in nobody's set, and its card is
-    // still the reviewer's to close.
-    if (!store.has(id)) return pins.setCardHidden(id, hidden);
+    pins.setCardHidden(id, hidden);
+    // A pin only a link put on screen is in nobody's set; the card is still
+    // the reviewer's to close, but there is no draft flag to persist.
+    if (!store.has(id)) return;
     store.hide(id, hidden);
     syncDraft();
-    redraw();
   }
 
-  /** The dock's 👁 switch and its chord, one path. */
+  /** The dock's cards switch and its chord, one path — visibility only. */
   function toggleCards() {
     store.hideCards(!store.cardsHidden());
+    pins.setCardsHidden(store.cardsHidden());
     syncDraft();
-    redraw();
   }
 
   /** The store is the truth; the dock and the composer's button follow it. */

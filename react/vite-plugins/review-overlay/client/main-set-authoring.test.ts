@@ -487,6 +487,29 @@ describe('the set the tab was left with', () => {
     expect(marker.classList.contains('pulse')).toBe(true);
   });
 
+  // Nothing about hiding a card changes what can be resolved, and re-running
+  // the ladder re-toasts its 10 s give-up line once per flip.
+  it('does not re-run the resolution ladder to hide a card', async () => {
+    seed([
+      storedPin('c_one', 'create', 'Start › create'),
+      storedPin('c_gone', 'missing', 'Start › missing'),
+    ]);
+    await bootOverlay();
+    await ticks(2);
+    const scan = vi.spyOn(document, 'querySelector');
+
+    node<HTMLButtonElement>('.setdock .cards').click();
+    node<HTMLButtonElement>('.card[data-pin-id="c_one"] .close').click();
+
+    expect(
+      scan.mock.calls.filter(([selector]) =>
+        String(selector).includes('missing'),
+      ),
+    ).toEqual([]);
+    expect(hiddenCard('c_one')).toBe(true);
+    scan.mockRestore();
+  });
+
   describe('the cards switch', () => {
     beforeEach(async () => {
       seed([
