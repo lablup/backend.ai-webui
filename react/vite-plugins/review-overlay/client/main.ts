@@ -390,10 +390,10 @@ function boot() {
       redraw();
     },
     onLocate: (id) => {
-      // Its page matches but the element is not rendered: one more pass of the
-      // full ladder, then say where it was rather than that it is gone (R7.3).
+      // Its page matches but the element is not rendered: one more pass of
+      // THAT pin's ladder — the rest of the set is not what was asked (R7.3).
       const element =
-        pins.locatedElement(id) ?? (pins.locate(), pins.locatedElement(id));
+        pins.locatedElement(id) ?? (pins.locate(id), pins.locatedElement(id));
       if (!element) return ui.showToast(waitingLine([id]));
       element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
       // The arrival beat is long spent — this is a deliberate "that one".

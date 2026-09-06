@@ -500,6 +500,33 @@ describe('a set that spans pages', () => {
     }, 30_000);
   });
 
+  /**
+   * R7.3: the row of a pin whose element is not rendered re-runs ITS resolve.
+   * A link's arrival leaves the layer with a focus pin, so re-running the whole
+   * layer would scroll the page to a pin the reviewer did not click.
+   */
+  it('re-resolves the clicked pin alone, scrolling nothing', async () => {
+    const hash = [
+      await part({ id: A, testid: 'create' }),
+      await part({ id: B, testid: 'gone' }),
+    ].join('&');
+    await bootOn(hash);
+    const scrolled: string[] = [];
+    for (const testid of ['create', 'cancel', 'deploy']) {
+      const element = document.querySelector<HTMLElement>(
+        `[data-testid="${testid}"]`,
+      ) as HTMLElement;
+      element.scrollIntoView = () => scrolled.push(testid);
+    }
+
+    dockRows()[1].querySelector<HTMLButtonElement>('.rowlabel')?.click();
+
+    expect(scrolled).toEqual([]);
+    expect(toast()).toBe(
+      '1 pin is waiting for its element (it was inside button "gone")',
+    );
+  });
+
   // Arriving on pin 2's page must not bounce the reviewer back to pin 1's.
   it('stays put while any member of the set is on this page', async () => {
     await bootOn(await spread());
