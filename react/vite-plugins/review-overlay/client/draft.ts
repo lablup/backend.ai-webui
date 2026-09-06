@@ -80,7 +80,7 @@ export function removePin(set: DraftSet, id: string): DraftSet {
 }
 
 /**
- * ✕ on a card. The pin keeps its place, its note and its identity — only its
+ * A card hidden. The pin keeps its place, its note and its identity — only its
  * card goes, and the flag is stored so a reload does not bring it back.
  */
 export function hidePin(set: DraftSet, id: string, hidden: boolean): DraftSet {
@@ -102,7 +102,7 @@ export function hideCards(set: DraftSet, hidden: boolean): DraftSet {
 
 /**
  * R5.5. The switch is hide-all / SHOW-all, not suspend-and-restore: turning it
- * on clears every per-pin ✕ so nothing is left stranded behind a control that
+ * on clears every per-pin hide so nothing is left stranded behind a control that
  * says the cards are shown.
  */
 export function showAllPins(set: DraftSet): DraftSet {
@@ -159,7 +159,7 @@ export interface DraftStore {
   remove(id: string): void;
   clear(): void;
   merge(pins: SetPin[]): MergeResult;
-  /** ✕ on one card. */
+  /** Hide or show one card. */
   hide(id: string, hidden: boolean): void;
   cardsHidden(): boolean;
   /** Turning the switch back ON also un-hides every individually hidden pin. */

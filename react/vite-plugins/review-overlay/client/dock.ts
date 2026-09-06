@@ -99,9 +99,9 @@ export interface SetDockOptions {
   onClear: () => void;
   /** Scroll the page back to this pin, and beat its marker again. */
   onLocate: (id: string) => void;
-  /** 🗑 on one row: that pin leaves the set. No confirm — one pin is cheap. */
+  /** A row's remove button: that pin leaves the set. No confirm — it is one pin. */
   onRemove: (id: string) => void;
-  /** Its card comes back: the row's 👁, or the row itself. */
+  /** Its card comes back: the row's eye button, or the row itself. */
   onUnhide: (id: string) => void;
   /** The header switch: every card off, or on again. */
   onToggleCards: () => void;

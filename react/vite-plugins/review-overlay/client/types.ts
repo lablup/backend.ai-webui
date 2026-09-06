@@ -85,7 +85,7 @@ interface SetPinBase {
    */
   note?: string;
   /**
-   * The reviewer pressed ✕ on this pin's card. Draft-only — the wire carries
+   * The reviewer hid this pin's card. Draft-only — the wire carries
    * no such thing — and persisted, so a reload does not bring the card back.
    */
   hidden?: true;
@@ -111,7 +111,7 @@ export type SetPin = PickedSetPin | LinkedSetPin;
 export interface DraftSet {
   v: 1;
   pins: SetPin[];
-  /** The dock's 👁 switch: every card off at once, markers and boxes drawn. */
+  /** The dock's cards switch: every card off at once, markers and boxes drawn. */
   cardsHidden?: true;
 }
 
@@ -137,7 +137,7 @@ export interface CopyPayload {
   toast?: string;
 }
 
-/** A card's ⧉: whoever renders the block owns what the toast claims it wrote. */
+/** A card's copy: whoever renders the block owns what the toast claims. */
 export interface PinCopyPayload extends CopyPayload {
   toast: string;
 }

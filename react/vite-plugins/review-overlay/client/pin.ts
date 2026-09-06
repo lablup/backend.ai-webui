@@ -187,10 +187,10 @@ export interface PinLayerOptions {
     element: Element | null,
     target: DeepLinkPinTarget | null,
   ) => void;
-  /** The reviewer pressed 🗑; whoever owns the set decides what that means. */
+  /** The reviewer removed the pin; whoever owns the set decides what that means. */
   onDismiss?: (target: DeepLinkPinTarget) => void;
   /**
-   * The reviewer pressed ✕: the card is in the way, the pin is not. The owner
+   * The reviewer hid the card: it is in the way, the pin is not. The owner
    * persists that and hides the card — the marker and the box stay drawn.
    */
   onHide?: (target: DeepLinkPinTarget) => void;
@@ -612,8 +612,8 @@ function createPinView(deps: ViewDeps): PinView {
   locateButton.addEventListener('click', () =>
     located?.scrollIntoView?.({ block: 'center', behavior: 'smooth' }),
   );
-  // ✕ takes the card off the element, not the pin off the set: the reviewer
-  // wants to see what they pinned. 🗑 is what ends a pin.
+  // Hiding takes the card off the element, not the pin off the set: the
+  // reviewer wants to see what they pinned. Removing is what ends a pin.
   close.addEventListener('click', () => {
     if (!target) return;
     // The card goes now, not when the owner answers: the button is honest
