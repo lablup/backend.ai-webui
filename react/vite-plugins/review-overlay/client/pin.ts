@@ -496,7 +496,13 @@ function createPinView(deps: ViewDeps): PinView {
     // The marker points AT the region from outside it: the teardrop's tip
     // touches the top-left corner and the glyph sits above, clear of the very
     // content the box is pointing at. With no room above it flips under.
-    const flip = box.top - MARKER_SPAN < VIEWPORT_PAD;
+    const roomAbove = box.top - MARKER_SPAN >= VIEWPORT_PAD;
+    const roomBelow = box.bottom + MARKER_SPAN <= vh - VIEWPORT_PAD;
+    const flip = !roomAbove && roomBelow;
+    // A region taller than the viewport has no outside on screen. Unflipped it
+    // clamps to the top edge, by the region's leading corner; flipped it would
+    // clamp onto the middle of the content.
+    const crowded = !roomAbove && !roomBelow;
     marker.classList.toggle('flip', flip);
     // Against the left edge it slides along the region's top rather than
     // off-screen; `style.left`/`top` are the glyph's CENTRE (negative margins).
@@ -523,7 +529,11 @@ function createPinView(deps: ViewDeps): PinView {
       below + height <= vh - VIEWPORT_PAD
         ? below
         : box.top - CARD_GAP - height - (flip ? 0 : MARKER_SPAN);
-    card.style.top = `${Math.max(VIEWPORT_PAD, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
+    // Crowded, both land at the top: the card starts under the clamped marker.
+    const topFloor = crowded
+      ? VIEWPORT_PAD + MARKER_TIP * 2 + CARD_GAP
+      : VIEWPORT_PAD;
+    card.style.top = `${Math.max(topFloor, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
     return null;
   }
 

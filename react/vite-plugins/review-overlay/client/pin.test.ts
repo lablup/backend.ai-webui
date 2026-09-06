@@ -232,7 +232,8 @@ describe('createDeepLinkPin', () => {
       mountSized({ top: -50, bottom: 900, height: 950 }, 60);
       show();
       expect(pin.locate()).toBe(true);
-      expect(card().style.top).toBe('8px');
+      // 8 pad + the 34px marker clamped to the same edge + its 10px gap.
+      expect(card().style.top).toBe('52px');
     });
 
     // `getBoundingClientRect` still reports the box of an element a scroller
@@ -308,6 +309,19 @@ describe('createDeepLinkPin', () => {
         expect(pin.locate()).toBe(true);
 
         expect(card().style.top).toBe('266px');
+      });
+
+      // A region taller than the window has no outside left: flipping would put
+      // the marker in the middle of the content it points at.
+      it('keeps the marker at the leading edge of a region taller than the window', () => {
+        mountSized({ left: 40, right: 440, top: -100, bottom: 900 }, 60);
+        show();
+        expect(pin.locate()).toBe(true);
+
+        expect(marker().classList.contains('flip')).toBe(false);
+        // Clamped to the top edge, not to `vh - 25` down at the fold.
+        expect(marker().style.top).toBe('25px');
+        expect(marker().style.left).toBe('40px');
       });
 
       it('slides along the top edge instead of off the left of the window', () => {
