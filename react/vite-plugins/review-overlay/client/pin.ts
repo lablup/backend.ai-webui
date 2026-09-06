@@ -953,8 +953,18 @@ export function createPinLayer(options: PinLayerOptions) {
       startRetry();
     },
 
-    /** One pass of the full ladder over every drawn pin. */
-    locate: () => locateAll(false),
+    /**
+     * One pass of the full ladder: over every drawn pin, or — given an id —
+     * over that ONE, which never scrolls; asking about a pin is not arriving.
+     */
+    locate(id?: string): boolean {
+      if (id === undefined) return locateAll(false);
+      const view = views.find((held) => held.id() === id);
+      if (!view?.isShowing()) return false;
+      const found = view.locate(false);
+      if (found) placeSoon();
+      return found;
+    },
 
     /** No id dismisses every pin; the cards stay for the next set. */
     dismiss(id?: string) {

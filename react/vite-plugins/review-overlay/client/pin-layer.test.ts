@@ -265,6 +265,35 @@ describe('createPinLayer', () => {
     });
   });
 
+  // A row asking about ITS pin must not move the page to the focus pin, which
+  // is exactly where a link's arrival leaves the layer (R7.3).
+  describe('resolving one named pin', () => {
+    beforeEach(() => {
+      mount('one');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')], {
+        focusId: 'c_a',
+      });
+      scrolled = [];
+    });
+
+    it('draws the pin that arrived late and scrolls nothing', () => {
+      const two = mount('two');
+
+      expect(layer.locate('c_b')).toBe(true);
+      expect(layer.locatedElement('c_b')).toBe(two);
+      expect(scrolled).toEqual([]);
+    });
+
+    it('is the difference from re-running the whole ladder', () => {
+      layer.locate('c_b');
+      expect(scrolled).toEqual([]);
+
+      layer.locate();
+
+      expect(scrolled).toEqual(['one']);
+    });
+  });
+
   describe('the retry driver', () => {
     beforeEach(() => {
       vi.useFakeTimers();
