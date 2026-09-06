@@ -14,9 +14,6 @@ import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
-import BAICard from '../components/astryx-bui/BAICardAstryx';
-import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
-import BAIVFolderDeleteButton from '../components/astryx-bui/BAIVFolderDeleteButtonAstryx';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -24,14 +21,17 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIVFolderDeleteButton,
+  BAICard,
   BAIPropertyFilter,
+  BAISelectionLabel,
+  BAITabCountBadge,
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
@@ -41,7 +41,13 @@ import {
 import * as _ from 'lodash-es';
 import { RotateCcwIcon } from 'lucide-react';
 import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
+import React, {
+  useDeferredValue,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -188,10 +194,14 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  useEffect(() => {
+  // An eslint suppression here made the React Compiler skip this whole
+  // component, so `queryVariables` lost memoization and any re-render (e.g. row
+  // selection) flashed the deferred-comparison loading states (FR-3510).
+  const refetchOnInvitationChange = useEffectEvent(() => {
     updateFetchKey();
-    // Update fetchKey when invitation count changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+  useEffect(() => {
+    refetchOnInvitationChange();
   }, [invitations.length]);
 
   const { vfolder_nodes, ...folderCounts } =
@@ -226,7 +236,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 ...RestoreVFolderModalFragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
-                ...BAIVFolderDeleteButtonAstryxFragment
+                ...BAIVFolderDeleteButtonFragment
               }
             }
             count
@@ -319,22 +329,13 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               // slot, so the original's BAIFlex-wrapped JSX label is split in
               // two. This also restores a correct `aria-label` on the tab.
               label,
-              endContent:
-                // display badge only if count is greater than 0
-                // @ts-ignore
-                (folderCounts[key]?.count || 0) > 0 ? (
-                  // PILOT-DECISION: antd's Badge took an arbitrary `color`
-                  // (brand accent when selected, disabled grey otherwise)
-                  // plus explicit padding/fontSize. Astryx's Badge exposes
-                  // only a closed `variant` set.
-                  <Badge
-                    // @ts-ignore
-                    label={folderCounts[key].count}
-                    variant={
-                      queryParams.statusCategory === key ? 'info' : 'neutral'
-                    }
-                  />
-                ) : undefined,
+              endContent: (
+                <BAITabCountBadge
+                  // @ts-ignore
+                  count={folderCounts[key]?.count}
+                  selected={queryParams.statusCategory === key}
+                />
+              ),
             }),
           )}
         />
@@ -383,9 +384,6 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 applyLabel={t('button.Apply')}
                 // Free text with no field prefix becomes a `name ilike` token.
                 contentSearchFieldKey="name"
-                resultCount={t('general.TotalItems', {
-                  total: vfolder_nodes?.count ?? 0,
-                })}
                 filterProperties={[
                   {
                     key: 'name',

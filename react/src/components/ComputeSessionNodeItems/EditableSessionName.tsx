@@ -6,7 +6,7 @@ import { EditableSessionNameFragment$key } from '../../__generated__/EditableSes
 import { EditableSessionNameRefetchQuery } from '../../__generated__/EditableSessionNameRefetchQuery.graphql';
 import { App } from '../../app-shim';
 import { Form } from '../../form-engine';
-import { useBaiSignedRequestWithPromise } from '../../helper';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
 import { useTanMutation } from '../../hooks/reactQueryAlias';
 import { useValidateSessionName } from '../../hooks/useValidateSessionName';
@@ -76,16 +76,10 @@ const EditableSessionName: React.FC<EditableSessionNameProps> = ({
   const validationRules = useValidateSessionName(optimisticName);
   const [userInfo] = useCurrentUserInfo();
 
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const baiClient = useSuspendedBackendaiClient();
   const renameSessionMutation = useTanMutation({
     mutationFn: (newName: string) => {
-      return baiRequestWithPromise({
-        method: 'POST',
-        url: `/session/${session.name}/rename`,
-        body: {
-          name: newName,
-        },
-      });
+      return baiClient.rename(session.row_id, newName);
     },
   });
 

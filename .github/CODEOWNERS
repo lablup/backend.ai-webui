@@ -26,5 +26,9 @@
 # Translations
 /resources/i18n/                             @agatha197 @ironAiken2
 
+# Curated `bai-agent explain` mappings — hand-written product meaning, not
+# generated data. A change here changes what agents are told a field means.
+/packages/backend.ai-agent-cli/mappings/     @yomybaby @agatha197
+
 # Repository / CI configuration
 /.github/                                    @yomybaby

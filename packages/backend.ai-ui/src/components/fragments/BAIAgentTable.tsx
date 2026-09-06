@@ -23,7 +23,7 @@ import BAIText from '../BAIText';
 import {
   BAIColumnType,
   BAIColumnsType,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
 } from '../Table';
 import {
@@ -778,7 +778,8 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
   const mergedColumns = customizeColumns ? customizeColumns(columns) : columns;
 
   return (
-    <BAITableAstryx<AgentNodeInList>
+    <BAITable<AgentNodeInList>
+      scroll={{ x: 'max-content' }}
       {...tableProps}
       rowKey={(record) => record.id}
       dataSource={agents}

@@ -19,31 +19,13 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v5
-        name: Install pnpm
+      - uses: ./.github/actions/setup-node-pnpm
         with:
-          run_install: false
-      - name: Install Node.js
-        uses: actions/setup-node@v6.4.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
       - name: Update npm
-        run: npm install -g npm@latest
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      - uses: actions/cache@v5
-        name: Setup pnpm cache
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        # Pinned. pnpm publish delegates to the npm CLI; OIDC trusted
+        # publishing needs npm >= 11.5.1.
+        run: npm install -g npm@11.16.0
 
       - name: Update to canary version
         if: github.ref_type == 'branch'

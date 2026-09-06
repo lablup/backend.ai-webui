@@ -18,7 +18,7 @@ import {
   BAICard,
   BAIDeleteConfirmModal,
   BAIFlex,
-  BAITableAstryx,
+  BAITable,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
@@ -148,7 +148,8 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
         }
         styles={{ body: { paddingTop: 0 } }}
       >
-        <BAITableAstryx
+        <BAITable
+          scroll={{ x: 'max-content' }}
           rowKey={'id'}
           columns={[
             {
@@ -182,7 +183,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
                 // per-state `color` inline styles are kept verbatim rather
                 // than mapped to `variant="destructive"` — that variant is a
                 // filled treatment, far heavier than this text-button row
-                // (the same call `BAINameActionCellAstryx` records).
+                // (the same call `BAINameActionCell` records).
                 <BAIFlex direction="row" align="stretch">
                   <IconButton
                     variant="ghost"
@@ -294,7 +295,7 @@ const AutoScalingRuleListLegacy: React.FC<AutoScalingRuleListLegacyProps> = ({
           ]}
           pagination={false}
           dataSource={autoScalingRules}
-        ></BAITableAstryx>
+        ></BAITable>
       </BAICard>
       <BAIUnmountAfterClose>
         <AutoScalingRuleEditorModalLegacy

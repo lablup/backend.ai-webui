@@ -12,6 +12,7 @@ import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgre
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { Card } from '@astryxdesign/core/Card';
 import { Link } from '@astryxdesign/core/Link';
+import { Text } from '@astryxdesign/core/Text';
 import {
   BAIFlex,
   BAILink,
@@ -91,9 +92,9 @@ const BAIVirtualFolderNodeNotificationItemV2: React.FC<
         <BAIFlex direction="column" align="stretch" gap={'xxs'}>
           <BAIFlex direction="row" align="end" gap={'xxs'} justify="between">
             {_.isString(notification.description) ? (
-              <BAIText style={{ flex: 1, minWidth: 0 }}>
+              <Text type="supporting" style={{ flex: 1, minWidth: 0 }}>
                 {_.truncate(notification.description, { length: 300 })}
-              </BAIText>
+              </Text>
             ) : (
               notification.description
             )}

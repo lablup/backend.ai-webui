@@ -31,7 +31,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAISelectionLabel,
-  BAITableAstryx,
+  BAITable,
   type BAITableProps,
   BAIUnmountAfterClose,
   toLocalId,
@@ -357,7 +357,8 @@ const ProjectStoragePermissionTable: React.FC<
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         size="small"
         {...tableProps}
         locale={{

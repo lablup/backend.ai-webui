@@ -15,6 +15,8 @@ import {
   addIpTags,
   removeAllIpTags,
   deriveDifferentIp,
+  profileModal,
+  usersTabButton,
 } from '../utils/user-profile-util';
 import test, { expect } from '@playwright/test';
 
@@ -39,7 +41,11 @@ test.describe.serial(
 
       // 2. Navigate to credential page
       await navigateTo(page, 'credential');
-      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+      // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
+      // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+      // which this app never does (see registry.spec.ts's identical pattern).
+      await expect(usersTabButton(page)).toBeVisible();
 
       // 3. Create the test user
       await page.getByRole('button', { name: 'Create User' }).click();
@@ -75,8 +81,7 @@ test.describe.serial(
       expect(currentClientIp).toBeTruthy();
 
       // Close profile modal
-      await userPage
-        .locator('.ant-modal')
+      await profileModal(userPage)
         .getByRole('button', { name: 'Cancel' })
         .click();
 
@@ -87,7 +92,7 @@ test.describe.serial(
 
       await loginAsAdmin(adminPage, adminRequest);
       await navigateTo(adminPage, 'credential');
-      await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible();
+      await expect(usersTabButton(adminPage)).toBeVisible();
 
       // Find and edit the test user
       const userRow = adminPage.getByRole('row').filter({ hasText: EMAIL });
@@ -144,7 +149,7 @@ test.describe.serial(
 
       await loginAsAdmin(adminPage, adminRequest);
       await navigateTo(adminPage, 'credential');
-      await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible();
+      await expect(usersTabButton(adminPage)).toBeVisible();
 
       // Find and edit the test user
       const userRow = adminPage.getByRole('row').filter({ hasText: EMAIL });
@@ -196,7 +201,7 @@ test.describe.serial(
       // 2. Navigate directly to the Active users view and filter by this user's email
       // to reliably find the user regardless of table pagination.
       await navigateTo(page, 'credential');
-      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      await expect(usersTabButton(page)).toBeVisible();
       await page.getByText('Active', { exact: true }).click();
 
       // Use the filter to search for this specific user's email.
@@ -241,7 +246,7 @@ test.describe.serial(
       // Click the Inactive radio (URL param is `activeType`, not `status`,
       // so a query-string navigate won't toggle the view).
       await page.getByText('Inactive', { exact: true }).click();
-      await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+      await expect(usersTabButton(page)).toBeVisible();
 
       // Apply the same email filter on the Inactive tab
       const inactiveFilterInput = page

@@ -10,7 +10,7 @@ import {
   BAIColumnType,
   BAINameActionCell,
   BAISessionClusterMode,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAIText,
   BooleanTag,
@@ -167,7 +167,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
             : record.execution?.imageId;
           if (!label) return '-';
           return (
-            <BAIText copyable style={{ wordBreak: 'break-all' }}>
+            <BAIText copyable ellipsis={{ tooltip: true }}>
               {label}
             </BAIText>
           );
@@ -257,7 +257,8 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey="id"
       dataSource={filteredPresets}
       columns={allColumns}

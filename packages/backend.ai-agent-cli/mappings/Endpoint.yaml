@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=./schema.json
+type: Endpoint
+concept: endpoint
+docs: deployment#deployment-detail-page
+meaning: One model deployment — the served endpoint a model is reachable at, plus the replicas behind it.
+fields:
+  name:
+    meaning: The deployment's name, which is what the Deployments page lists it under.
+    docs: deployment#deployments-page
+  status:
+    meaning: Health and lifecycle of the deployment as a whole, aggregated over its replicas.
+    docs: deployment#service-information
+    values:
+      PENDING:
+        label: Pending
+        meaning: The deployment was accepted but none of its replicas have started yet.
+        variant: info
+      DEPLOYING:
+        label: Deploying
+        meaning: Replicas are being created and are not serving traffic yet.
+        variant: info
+      SCALING:
+        label: Scaling
+        meaning: The replica count is being changed, by an auto scaling rule or by hand.
+        concept: autoscaling-rule
+        variant: info
+      READY:
+        label: Ready
+        meaning: Enough replicas are up for the endpoint to take requests.
+        variant: success
+      HEALTHY:
+        label: Healthy
+        meaning: Every replica passes its health check.
+        variant: success
+      DEGRADED:
+        label: Degraded
+        meaning: Some replicas are unhealthy, so the endpoint serves with reduced capacity.
+        variant: warning
+      UNHEALTHY:
+        label: Unhealthy
+        meaning: No replica passes its health check, so requests are failing.
+        variant: warning
+      NOT_CHECKED:
+        label: Not Checked
+        meaning: No health check has run yet, so the endpoint's health is unknown.
+        variant: neutral
+      STOPPING:
+        label: Stopping
+        meaning: The deployment is being torn down and its replicas are terminating.
+        variant: warning
+      STOPPED:
+        label: Stopped
+        meaning: The deployment holds no replicas and serves nothing.
+        variant: neutral
+      TERMINATED:
+        label: Terminated
+        meaning: The deployment was destroyed and only its history remains.
+        variant: neutral
+  url:
+    label: Endpoint URL
+    meaning: The address clients send inference requests to, served through the App Proxy.
+    concept: app-proxy
+    docs: deployment#accessing-your-deployment
+  routings:
+    label: Routings
+    meaning: The routes traffic is spread across, one per replica session behind the endpoint.
+    concept: replica
+    docs: deployment#replicas
+  replicas:
+    meaning: How many replica sessions the deployment is asked to keep running.
+    concept: replica
+    docs: deployment#replicas
+  open_to_public:
+    label: Open To Public
+    meaning: Whether the endpoint answers without an authentication token.
+    docs: deployment#generating-tokens
+  runtime_variant:
+    label: Runtime Variant
+    meaning: The inference runtime serving the model, such as vLLM or a custom command.
+    docs: deployment#add-revision
+  model:
+    meaning: The storage folder holding the model files the endpoint serves.
+    concept: storage-folder
+    docs: deployment#add-revision
+  resource_group:
+    meaning: The resource group whose agents the endpoint's replica sessions run on.
+    concept: resource-group
+    docs: admin_menu#resource-group
+  errors:
+    label: Errors
+    meaning: The failures reported by replica sessions that could not start, shown as the deployment's alerts.
+    docs: deployment#deployment-alerts

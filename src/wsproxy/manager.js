@@ -12,10 +12,10 @@ const { rateLimit } = require('express-rate-limit');
 const logger = require('./lib/logger')(__filename);
 
 // The Backend.AI client and the proxy gateways are required lazily (inside the
-// handlers that use them) rather than at module load. They — and their
-// transitive deps such as backend.ai-ws-appproxy — are build artifacts that do
-// not exist in a source-only checkout, so eager requires would make the module
-// impossible to import without a full build (e.g. from the unit test).
+// handlers that use them) rather than at module load. The client is the
+// backend.ai-client package, which resolves only once its dist/ is built
+// (`pnpm --filter backend.ai-client build`), so eager requires would make the
+// module impossible to import without a build (e.g. from the unit test).
 const htmldeco = require('./lib/htmldeco');
 const { escapeHtml } = require('./lib/htmldeco');
 const crypto = require('crypto');
@@ -240,7 +240,7 @@ class Manager extends EventEmitter {
         cf['mode'] = 'API';
         cf['access_key'] = req.body.access_key;
         cf['secret_key'] = req.body.secret_key;
-        const ai = require('../lib/backend.ai-client-node');
+        const ai = require('backend.ai-client');
         let config = new ai.backend.ClientConfig(
           req.body.access_key,
           req.body.secret_key,

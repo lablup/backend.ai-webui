@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { DomainFairShareOrderField } from '../../__generated__/DomainFairShareStepQuery.graphql';
 import {
   DomainFairShareTableFragment$data,
   DomainFairShareTableFragment$key,
@@ -16,7 +17,7 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
@@ -39,6 +40,14 @@ const availableDomainFairShareSorterKeys = [
   'fairShareFactor',
   'createdAt',
 ] as const;
+export const domainFairShareOrderFieldMap: Record<
+  (typeof availableDomainFairShareSorterKeys)[number],
+  DomainFairShareOrderField
+> = {
+  domainName: 'DOMAIN_NAME',
+  fairShareFactor: 'FAIR_SHARE_FACTOR',
+  createdAt: 'CREATED_AT',
+};
 export const availableDomainFairShareSorterValues = [
   ...availableDomainFairShareSorterKeys,
   ...availableDomainFairShareSorterKeys.map((key) => `-${key}` as const),
@@ -186,6 +195,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
       ),
       key: 'fairShareFactor',
       dataIndex: ['calculationSnapshot', 'fairShareFactor'],
+      sortKey: 'fairShareFactor',
       sorter: isEnableSorter('fairShareFactor'),
       render: (fairShareFactor) =>
         fairShareFactor !== null && fairShareFactor !== undefined
@@ -214,16 +224,12 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
               entries,
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
-                  {index > 0 && (
-                    <Divider orientation="vertical" />
-                  )}
+                  {index > 0 && <Divider orientation="vertical" />}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Text color="secondary">
-                        / {t('fairShare.DayUnit')}
-                      </Text>
+                      <Text color="secondary">/ {t('fairShare.DayUnit')}</Text>
                     }
                   />
                 </BAIFlex>
@@ -249,7 +255,8 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   ];
 
   return (
-    <BAITableAstryx
+    <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey={'domainName'}
       {...tableProps}
       dataSource={domain || []}

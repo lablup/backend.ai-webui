@@ -8,15 +8,14 @@ import { theme } from '../../../theme-shim';
 import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
-import { BAIColumnsType, BAITableAstryx, BAITableProps } from '../../Table';
+import { BAIColumnsType, BAITable, BAITableProps } from '../../Table';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
 import DragAndDrop from './DragAndDrop';
-import EditableFileName from './EditableFileName';
 import ExplorerActionControls from './ExplorerActionControls';
-import FileItemControls from './FileItemControls';
-import { useSearchVFolderFiles } from './hooks';
+import FileNameCell from './FileNameCell';
+import { useDragOverlay, useSearchVFolderFiles } from './hooks';
 import type { RcFile } from './hooks';
 import { BreadcrumbItem, Breadcrumbs } from '@astryxdesign/core/Breadcrumbs';
 import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
@@ -116,10 +115,13 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
 
-  const [isDragMode, setIsDragMode] = useState(false);
-  // The container ref is parent-owned; capture its element when dragging starts.
-  const [dragPortalContainer, setDragPortalContainer] =
-    useState<HTMLElement | null>(null);
+  // The container ref is parent-owned; the hook captures its element when
+  // dragging starts.
+  const {
+    isDragMode,
+    portalContainer: dragPortalContainer,
+    close: closeDragOverlay,
+  } = useDragOverlay(fileDropContainerRef);
   const [selectedItems, setSelectedItems] = useState<Array<VFolderFile>>([]);
   const [selectedSingleItem, setSelectedSingleItem] =
     useState<VFolderFile | null>(null);
@@ -232,40 +234,20 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       title: t('comp:FileExplorer.Name'),
       dataIndex: 'name',
       sorter: (a, b) => localeCompare(a.name, b.name),
-      render: (name, record) =>
-        isDirectoryPicker && record.type !== 'DIRECTORY' ? (
+      render: (name, record) => {
+        if (isDirectoryPicker && record.type !== 'DIRECTORY') {
           // In the directory picker, files are shown for context but are not
           // interactive — only directories can be entered and chosen.
-          <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-            <File style={{ color: token.colorTextDisabled }} size="1em" />
-            <Text color="disabled" maxLines={1} style={{ maxWidth: 200 }}>
-              {name}
-            </Text>
-          </BAIFlex>
-        ) : (
-          <EditableFileName
-            fileInfo={record}
-            existingFiles={files?.items || []}
-            disabled={!enableWrite}
-            onEndEdit={() => {
-              refetch();
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              const targetEl = e.target as HTMLElement;
-              if (targetEl.closest('button')) return;
-              if (record.type === 'DIRECTORY') {
-                navigateDown(name);
-                setSelectedItems([]);
-              }
-            }}
-          />
-        ),
-    },
-    {
-      title: t('comp:FileExplorer.Controls'),
-      width: 80,
-      render: (_controls, record) => {
+          return (
+            <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
+              <File style={{ color: token.colorTextDisabled }} size="1em" />
+              <Text color="disabled" maxLines={1} style={{ maxWidth: 200 }}>
+                {name}
+              </Text>
+            </BAIFlex>
+          );
+        }
+
         // true if the file is being deleted or its parent directory is being deleted
         const isPendingDelete =
           _.includes(deletingFilePaths, `${currentPath}/${record.name}`) ||
@@ -276,14 +258,27 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             ),
           );
 
-        if (isDirectoryPicker && record.type !== 'DIRECTORY') {
-          return null;
-        }
-
         return (
-          <Suspense fallback={<Skeleton height={24} width={80} />}>
-            <FileItemControls
+          <Suspense fallback={<Skeleton height={24} />}>
+            <FileNameCell
               selectedItem={record}
+              existingFiles={files?.items || []}
+              enableRename={enableWrite}
+              onEndRename={() => {
+                refetch();
+              }}
+              onClickName={(e) => {
+                e.stopPropagation();
+                // The directory name itself is an Astryx `Link` <button> (no
+                // href), so excluding every <button> swallowed the navigating
+                // click; the rename trigger stops propagation on its own, and
+                // only its inline <form> has to be excluded here (FR-3602).
+                if ((e.target as HTMLElement).closest('form')) return;
+                if (record.type === 'DIRECTORY') {
+                  navigateDown(name);
+                  setSelectedItems([]);
+                }
+              }}
               onClickDelete={() => {
                 setSelectedSingleItem(record);
               }}
@@ -291,7 +286,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
               enableDownload={!isDirectoryPicker && enableDownload}
               enableDelete={enableDelete}
               enableEdit={!isDirectoryPicker && enableEdit}
-              deleteButtonProps={{ loading: isPendingDelete }}
+              isPendingDelete={isPendingDelete}
             />
           </Suspense>
         );
@@ -324,39 +319,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     },
   ]);
 
-  useEffect(() => {
-    const handleDragEnter = (e: DragEvent) => {
-      e.preventDefault();
-      setDragPortalContainer(fileDropContainerRef?.current ?? null);
-      setIsDragMode(true);
-    };
-    const handleDragLeave = (e: DragEvent) => {
-      e.preventDefault();
-      if (!e.relatedTarget || !document.contains(e.relatedTarget as Node)) {
-        setIsDragMode(false);
-      }
-    };
-    const handleDragOver = (e: DragEvent) => {
-      e.preventDefault();
-    };
-    const handleDrop = (e: DragEvent) => {
-      e.preventDefault();
-      setIsDragMode(false);
-    };
-
-    document.addEventListener('dragenter', handleDragEnter);
-    document.addEventListener('dragleave', handleDragLeave);
-    document.addEventListener('dragover', handleDragOver);
-    document.addEventListener('drop', handleDrop);
-
-    return () => {
-      document.removeEventListener('dragenter', handleDragEnter);
-      document.removeEventListener('dragleave', handleDragLeave);
-      document.removeEventListener('dragover', handleDragOver);
-      document.removeEventListener('drop', handleDrop);
-    };
-  }, [fileDropContainerRef]);
-
   return (
     <FolderInfoContext.Provider
       value={{
@@ -368,6 +330,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       {isDragMode && enableUpload && (
         <DragAndDrop
           portalContainer={dragPortalContainer || undefined}
+          onDragEnd={closeDragOverlay}
           onUpload={(files, currentPath) => onUpload?.(files, currentPath)}
         />
       )}
@@ -378,7 +341,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         gap="md"
         style={{ height: '100%', ...style }}
       >
-        <BAIFlex align="center" justify="between">
+        {/* Wraps so a narrow container stacks the path above the actions
+            instead of pushing them out of a clipped pane (FR-3590). */}
+        <BAIFlex align="center" justify="between" wrap="wrap" gap="xs">
           <Breadcrumbs
             label={t('comp:FileExplorer.Path')}
             style={{
@@ -449,7 +414,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           />
         </BAIFlex>
 
-        <BAITableAstryx
+        <BAITable
           rowKey="name"
           dataSource={files?.items}
           columns={tableColumns}

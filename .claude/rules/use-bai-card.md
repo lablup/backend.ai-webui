@@ -71,7 +71,7 @@ import { BAICard } from 'backend.ai-ui';
 >
   <BAIFlex direction="column" align="stretch" gap="sm">
     <BAIGraphQLPropertyFilter style={{ flex: 1 }} {...filterProps} />
-    <BAITableAstryx {...tableProps} />
+    <BAITable {...tableProps} />
   </BAIFlex>
 </BAICard>
 ```
@@ -105,7 +105,7 @@ When a card's content is data-driven and uses Suspense, place the Suspense bound
 
 ```tsx
 <BAICard title={t('section.Title')}>
-  <Suspense fallback={<BAISkeleton active />}>
+  <Suspense fallback={<BAISkeleton />}>
     <DataDrivenContent />
   </Suspense>
 </BAICard>

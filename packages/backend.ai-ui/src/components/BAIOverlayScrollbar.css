@@ -1,0 +1,64 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIOverlayScrollbar> (FR-3612).
+
+ `@layer components` per the order statement in `styles/backend.ai-ui.css`.
+*/
+@layer components {
+  /* The component sets the attribute only after it measures that this
+     platform's bars are NOT already overlays — mobile and macOS trackpads keep
+     their native indicator untouched. Keyed on the attribute alone so any
+     scroll column can opt in.
+
+     `!important` is load-bearing, not styling zeal: this rule lives in
+     `@layer components`, and a HOST's unlayered global scrollbar styling
+     (e.g. `* { scrollbar-width: ... }`) would otherwise outrank any layered
+     declaration and un-hide the native bar under the overlay thumb. A layered
+     important declaration beats unlayered CSS of every kind, so the hiding
+     holds in any host. */
+  [data-bai-custom-scrollbar='true'] {
+    scrollbar-width: none !important;
+  }
+
+  [data-bai-custom-scrollbar='true']::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .bai-overlay-scrollbar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 8px;
+    /* Never intercept clicks meant for content under it — only the thumb does. */
+    pointer-events: none;
+    /* Must clear the host's sticky content chrome (the Backend.AI shell's
+       sticky header sits at z-index 100). */
+    z-index: 101;
+  }
+
+  /* Presence IS the scrollability cue: the thumb stays put the whole time the
+     content overflows rather than fading out when scrolling stops. */
+  .bai-overlay-scrollbar[data-scrollable='false'] {
+    display: none;
+  }
+
+  .bai-overlay-scrollbar-thumb {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    width: 6px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-border-emphasized);
+    pointer-events: auto;
+    cursor: default;
+    transition: background-color 0.15s ease;
+  }
+
+  .bai-overlay-scrollbar-thumb:hover,
+  .bai-overlay-scrollbar[data-dragging='true'] .bai-overlay-scrollbar-thumb {
+    background-color: var(--color-text-disabled);
+  }
+}

@@ -412,9 +412,8 @@ const ProjectAdminDeploymentsContent: React.FC<
         <DeploymentSettingModal
           open
           deploymentFrgmt={editingDeployment}
-          onRequestClose={(success) => {
+          onRequestClose={() => {
             setEditingDeploymentId(null);
-            if (success) updateFetchKey();
           }}
         />
       )}

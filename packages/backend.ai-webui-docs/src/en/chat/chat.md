@@ -23,7 +23,7 @@ You can dismiss this banner by clicking the close button, and it will not reappe
 ## Selecting models
 
 Users can select the deployment and model from the top left corner of each chat card on the Chat page.
-Clicking the **Deployment** field (indicated by a deployment icon prefix; the field reads **Select Endpoint** while it is empty) opens a dropdown showing available deployments under a "Deployment" header.
+Clicking the **Deployment** field opens a dropdown listing the available deployments, along with the total number of deployments.
 Once a deployment is selected, the model dropdown header updates to show "{deployment name}'s Models", listing the models associated with that deployment.
 
 ![](../images/chat_deployment_select.png)
@@ -94,7 +94,7 @@ Please be cautious as this will delete all entered content.
 
 ## Clear chat history
 
-Clicking the `more` button will reveal the `Clear chat` option.
+Clicking the `more` button will reveal the `Clear Chat` option.
 By selecting this, users will erase all chat history associated with the card,
 although the card session itself will remain active.
 
@@ -104,8 +104,8 @@ although the card session itself will remain active.
 
 ## Synchronize input
 
-The `Sync Input` button, located at the top right, enables the synchronization of input across chat cards where the option is enabled.
-Enabling 'Sync input' means that pressing `Enter` or clicking the `Send` button on
+The `Sync chat input` button, located at the top right, enables the synchronization of input across chat cards where the option is enabled.
+Enabling 'Sync chat input' means that pressing `Enter` or clicking the `Send` button on
 any card will submit the input from the card users are currently working on.
 This functionality is beneficial for comparing the outputs of various models using identical input data.
 

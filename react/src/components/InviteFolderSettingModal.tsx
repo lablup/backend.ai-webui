@@ -6,7 +6,7 @@
  decision); its controls become Astryx via the `astryxFormControls` adapters
  and `BAIFormItem` carries the visuals. The invite row's `Descriptions title`
  wrapper (used purely as a section heading) becomes a `Heading`; the invitee
- table is `BAITableAstryx` (Astryx engine since ticket 30-D) with Astryx cells.
+ table is `BAITable` (Astryx engine since ticket 30-D) with Astryx cells.
 
  PILOT-DECISIONs:
  - antd `Input.onPressEnter` has no `TextInput` equivalent — Enter-to-invite
@@ -21,17 +21,20 @@ import { localeCompare, useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
-import BAIPopconfirm from './astryx-bui/BAIPopconfirmAstryx';
-import BAIQuestionIconWithTooltip from './astryx-bui/BAIQuestionIconWithTooltipAstryx';
 import { AstryxFormSelector, AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading } from '@astryxdesign/core/Text';
-import { BAITableAstryx, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIPopconfirm,
+  BAIModal,
+  type BAIModalProps,
+  BAIQuestionIconWithTooltip,
+  BAITable,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleXIcon } from 'lucide-react';
 import React, { useRef } from 'react';
@@ -180,6 +183,8 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
         if (!next) onRequestClose();
       }}
       title={t('data.explorer.ShareFolder')}
+      maskClosable={false}
+      footer={null}
       width={550}
     >
       <VStack gap={6} align="stretch">
@@ -257,7 +262,8 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
             />
           </HStack>
 
-          <BAITableAstryx<Invitee>
+          <BAITable<Invitee>
+            scroll={{ x: 'max-content' }}
             bordered
             pagination={false}
             loading={isFetching}

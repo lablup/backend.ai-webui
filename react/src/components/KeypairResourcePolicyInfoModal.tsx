@@ -204,18 +204,7 @@ const KeypairResourcePolicyInfoModal: React.FC<InfoModalProps> = ({
       width={BAI_BREAKPOINTS.sm}
       {...modalProps}
     >
-      {/*
-        `bordered` is back (to-astryx approved-2). On main this was
-        `<Descriptions bordered column={1} items={descriptionItems} />`; the
-        conversion had to drop `bordered` because Astryx's `MetadataList` has
-        no counterpart, and this modal is the surface where the loss showed
-        most — nineteen unruled label/value pairs in a scrolling dialog read as
-        one undifferentiated block. `BAIMetadataList` restores exactly that
-        column={1} bordered table. It is opt-in, so this is the only surface
-        adopting it for now; the rest of the converted `Descriptions` sites are
-        a deliberate follow-up choice, not an oversight.
-      */}
-      <BAIMetadataList bordered>
+      <BAIMetadataList>
         {descriptionItems.map((item) => (
           <MetadataListItem key={item.key} label={item.label}>
             {item.children}

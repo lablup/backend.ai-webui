@@ -15,33 +15,40 @@ import TerminateSessionModal from '../components/ComputeSessionNodeItems/Termina
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
+import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
+import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  BAIAdminProjectSelectAstryx,
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
+import {
+  BAIAdminProjectSelect,
   BAIFlex,
   BAIPropertyFilter,
+  BAIResourceUnitGridSkeleton,
   BAISelectionLabel,
+  BAITabCountBadge,
   filterOutEmpty,
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
-  PRIMARY_TAG_VARIANT,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PowerOffIcon } from 'lucide-react';
+import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { useDeferredValue, useEffect, useRef, useState } from 'react';
+import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useLocation } from 'react-router-dom';
@@ -62,6 +69,18 @@ type ComputeSessionNodesData = ExtractResultValue<
 
 type SessionNode = NonNullableNodeOnEdges<ComputeSessionNodesData>;
 
+// Passed as query variables: inlining these in the graphql tag needs `\"`
+// escapes, and a tagged template whose cooked text differs from its raw text
+// makes the React Compiler bail out of the whole component (FR-3510 symptom).
+const NOT_FINISHED_FILTER = 'status != "TERMINATED" & status != "CANCELLED"';
+const COUNT_FILTERS = {
+  all: NOT_FINISHED_FILTER,
+  interactive: `${NOT_FINISHED_FILTER} & type == "interactive"`,
+  inference: `${NOT_FINISHED_FILTER} & type == "inference"`,
+  batch: `${NOT_FINISHED_FILTER} & type == "batch"`,
+  system: `${NOT_FINISHED_FILTER} & type == "system"`,
+};
+
 const AdminComputeSessionListPage = () => {
   'use memo';
 
@@ -79,6 +98,9 @@ const AdminComputeSessionListPage = () => {
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AdminComputeSessionListPage',
+  );
+  const [experimentalSessionResourceGrid] = useBAISettingUserState(
+    'experimental_session_resource_grid',
   );
 
   const { supportedFields, exportCSV } = useCSVExport('sessions');
@@ -100,22 +122,25 @@ const AdminComputeSessionListPage = () => {
       statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
         'running',
       ),
+      view: parseAsStringLiteral(['table', 'grid']).withDefault('table'),
     },
     {
       history: 'replace',
     },
   );
 
+  // `view` is page-level state, not per-tab — excluded from the snapshots
+  // and re-applied on tab change so switching tabs cannot flip the mode.
   const queryMapRef = useRef({
     [queryParams.type]: {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     },
   });
 
   useEffect(() => {
     queryMapRef.current[queryParams.type] = {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     };
   }, [queryParams, tablePaginationOption]);
@@ -128,7 +153,7 @@ const AdminComputeSessionListPage = () => {
   const statusFilter =
     queryParams.statusCategory === 'running' ||
     queryParams.statusCategory === undefined
-      ? 'status != "TERMINATED" & status != "CANCELLED"'
+      ? NOT_FINISHED_FILTER
       : 'status == "TERMINATED" | status == "CANCELLED"';
 
   const isNotRunningCategory = (status?: string | null) => {
@@ -143,72 +168,95 @@ const AdminComputeSessionListPage = () => {
     first: baiPaginationOption.first,
     filter: mergeFilterValues([statusFilter, queryParams.filter, typeFilter]),
     order: queryParams.order || '-created_at',
+    filterForAllCount: COUNT_FILTERS.all,
+    filterForInteractiveCount: COUNT_FILTERS.interactive,
+    filterForInferenceCount: COUNT_FILTERS.inference,
+    filterForBatchCount: COUNT_FILTERS.batch,
+    filterForSystemCount: COUNT_FILTERS.system,
   };
+
+  // The grid's legacy compute_session_list has no `project_id` queryfilter
+  // field — lift the filter UI's project condition to the query's group_id
+  // argument when that is provably semantics-preserving; anything else
+  // passes through and surfaces as the grid's error banner (see
+  // helper/adminSessionProjectLift.ts).
+  const { projectId: gridProjectId, remainder: gridUserFilter } =
+    liftProjectPredicate(queryParams.filter ?? '');
+  const gridFilter = mergeFilterValues([
+    statusFilter,
+    gridUserFilter,
+    typeFilter,
+  ]);
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   const queryRef = useLazyLoadQuery<AdminComputeSessionListPageQuery>(
     graphql`
-        query AdminComputeSessionListPageQuery(
-          $first: Int = 20
-          $offset: Int = 0
-          $filter: String
-          $order: String
-        ) {
-          computeSessionNodeResult: compute_session_nodes(
-            first: $first
-            offset: $offset
-            filter: $filter
-            order: $order
-          ) @catch(to: RESULT) {
-            edges @required(action: THROW) {
-              node @required(action: THROW) {
-                id @required(action: THROW)
-                name @required(action: THROW)
-                ...SessionNodesFragment
-                ...TerminateSessionModalFragment
-              }
+      query AdminComputeSessionListPageQuery(
+        $first: Int = 20
+        $offset: Int = 0
+        $filter: String
+        $order: String
+        $filterForAllCount: String
+        $filterForInteractiveCount: String
+        $filterForInferenceCount: String
+        $filterForBatchCount: String
+        $filterForSystemCount: String
+      ) {
+        computeSessionNodeResult: compute_session_nodes(
+          first: $first
+          offset: $offset
+          filter: $filter
+          order: $order
+        ) @catch(to: RESULT) {
+          edges @required(action: THROW) {
+            node @required(action: THROW) {
+              id @required(action: THROW)
+              name @required(action: THROW)
+              ...SessionNodesFragment
+              ...TerminateSessionModalFragment
             }
-            count
           }
-          all: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\""
-          ) {
-            count
-          }
-          interactive: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
-          ) {
-            count
-          }
-          inference: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
-          ) {
-            count
-          }
-          batch: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
-          ) {
-            count
-          }
-          system: compute_session_nodes(
-            first: 0
-            offset: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
-          ) {
-            count
-          }
+          count
         }
-      `,
+        all: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForAllCount
+        ) {
+          count
+        }
+        interactive: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForInteractiveCount
+        ) {
+          count
+        }
+        inference: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForInferenceCount
+        ) {
+          count
+        }
+        batch: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForBatchCount
+        ) {
+          count
+        }
+        system: compute_session_nodes(
+          first: 0
+          offset: 0
+          filter: $filterForSystemCount
+        ) {
+          count
+        }
+      }
+    `,
     deferredQueryVariables,
     {
       fetchPolicy:
@@ -239,6 +287,7 @@ const AdminComputeSessionListPage = () => {
           setQueryParams({
             ...storedQuery.queryParams,
             type: key as TypeFilterType,
+            view: queryParams.view,
           });
           setTablePaginationOption(
             storedQuery.tablePaginationOption || { current: 1 },
@@ -253,38 +302,20 @@ const AdminComputeSessionListPage = () => {
             inference: t('session.Inference'),
             system: t('session.System'),
           },
-          (label, key) => ({
-            key,
-            label: (
-              <BAIFlex justify="center" gap={10}>
-                {label}
-                {
-                  // display badge only if count is greater than 0
-                  // @ts-ignore
-                  (sessionCounts[key]?.count || 0) > 0 && (
-                    <Badge
-                      // PILOT-DECISION: antd count Badge (brand color when the
-                      // tab is active, gray otherwise) -> Astryx Badge pill.
-                      // Arbitrary token colors are inexpressible (P5); the
-                      // active state maps to PRIMARY_TAG_VARIANT (policy
-                      // class 4) and the inactive state to `neutral`. The
-                      // 10px font-size / paddingXS tweaks are dropped
-                      // (defaults-first).
-                      variant={
-                        queryParams.type === key
-                          ? PRIMARY_TAG_VARIANT
-                          : 'neutral'
-                      }
-                      label={
-                        // @ts-ignore
-                        sessionCounts[key].count
-                      }
-                    />
-                  )
-                }
-              </BAIFlex>
-            ),
-          }),
+          (label, key) => {
+            const count =
+              sessionCounts[key as keyof typeof sessionCounts]?.count ?? 0;
+            return {
+              key,
+              label,
+              endContent: (
+                <BAITabCountBadge
+                  count={count}
+                  selected={queryParams.type === key}
+                />
+              ),
+            };
+          },
         )}
       />
       <BAIFlex direction="column" align="stretch" gap={'sm'}>
@@ -326,7 +357,7 @@ const AdminComputeSessionListPage = () => {
                   type: 'string',
                   defaultOperator: '==',
                   renderInput: ({ onAddCondition }) => (
-                    <BAIAdminProjectSelectAstryx
+                    <BAIAdminProjectSelect
                       // The filter row already prints the property label.
                       label={t('data.Project')}
                       isLabelHidden
@@ -390,6 +421,32 @@ const AdminComputeSessionListPage = () => {
                 />
               </>
             )}
+            {experimentalSessionResourceGrid && (
+              <SegmentedControl
+                label={t('session.resourceGrid.ViewMode')}
+                value={queryParams.view}
+                onChange={(value) =>
+                  setQueryParams({ view: value as 'table' | 'grid' })
+                }
+              >
+                <Tooltip content={t('session.resourceGrid.TableView')}>
+                  <SegmentedControlItem
+                    value="table"
+                    label={t('session.resourceGrid.TableView')}
+                    isLabelHidden
+                    icon={<TableIcon size="1em" />}
+                  />
+                </Tooltip>
+                <Tooltip content={t('session.resourceGrid.GridView')}>
+                  <SegmentedControlItem
+                    value="grid"
+                    label={t('session.resourceGrid.GridView')}
+                    isLabelHidden
+                    icon={<LayoutGridIcon size="1em" />}
+                  />
+                </Tooltip>
+              </SegmentedControl>
+            )}
             <AutoUpdateFetchKeyButton
               settingId="admin-session-list"
               defaultAutoUpdateDelay={15_000}
@@ -404,7 +461,32 @@ const AdminComputeSessionListPage = () => {
             />
           </BAIFlex>
         </BAIFlex>
-        {computeSessionNodeResult.ok ? (
+        {experimentalSessionResourceGrid && queryParams.view === 'grid' ? (
+          // Keyed by the UNdeferred filter/order: a change remounts the
+          // boundary so its fallback shows immediately, instead of the
+          // refetch being held hidden until the next poll commit. The
+          // fetchKey stays deferred so poll refreshes never flash.
+          <Suspense
+            key={`${gridFilter ?? ''}:${gridProjectId ?? ''}:${queryVariables.order ?? ''}`}
+            fallback={<BAIResourceUnitGridSkeleton />}
+          >
+            <SessionResourceGrid
+              filter={gridFilter}
+              projectId={gridProjectId}
+              order={queryVariables.order ?? undefined}
+              fetchKey={deferredFetchKey}
+              onClickSession={(sessionId) => {
+                const newSearchParams = new URLSearchParams(location.search);
+                newSearchParams.set('sessionDetail', sessionId);
+                webUINavigate({
+                  pathname: location.pathname,
+                  hash: location.hash,
+                  search: newSearchParams.toString(),
+                });
+              }}
+            />
+          </Suspense>
+        ) : computeSessionNodeResult.ok ? (
           <SessionNodes
             order={queryParams.order}
             onClickSessionName={(session) => {

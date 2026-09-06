@@ -33,8 +33,8 @@ If a folder named `tests` already exists in User B's account, User A's
 `tests` folder cannot be shared with User B.
 :::
 
-Back to User A's account, click the share button in the Control column on the
-`tests` folder in the list.
+Back to User A's account, click the share button next to the `tests` folder's
+name in the list.
 
 ![](../images/share_button_on_list.png)
 
@@ -46,12 +46,14 @@ both view and modify the folder. Click the `Add` button to send the invitation.
 
 ![](../images/send_vfolder_invitation.png)
 
-Switch back to User B's account. An invitation badge appears next to the Data page entry in the sidebar and next to the folder status summary at the top of the folder list. The badge shows the count of pending invitations.
+Switch back to User B's account and go to the Data page. When invitations are
+waiting for a response, a **Pending invitations** link appears at the top right
+of the folder list, showing the number of pending invitations.
 
 ![](../images/vfolder_invitation_badge.png)
 
-Clicking the badge opens an invitation list modal, where pending folder invitations
-can be accepted or declined.
+Clicking the link opens the **Invited Folders** modal, where pending folder
+invitations can be accepted or declined.
 
 ![](../images/invitation_accept.png)
 
@@ -64,9 +66,12 @@ can also see the `Read only` mark displayed in the Mount Permission column.
 
 ![](../images/test_vfolder_listed_in_B.png)
 
-Let's navigate inside the `tests` folder by clicking the folder icon in the
-Control panel of `tests`. You can check the `hello.txt` and `myfolder`
-that you checked in the User A's account again.
+Let's navigate inside the `tests` folder by clicking its name in the list. You
+can check the `hello.txt` and `myfolder` that you checked in the User A's
+account again. Since User A shared the folder as `Read only`, the write
+actions are disabled in the folder explorer: **Upload**, **Create Folder**,
+**Delete**, and the **Rename** button next to each item cannot be used. User B
+can only browse the folder and download its contents.
 
 ![](../images/folder_explorer_in_B.png)
 
@@ -117,7 +122,7 @@ include renaming the folder.
 ## Stop sharing a folder
 
 To stop sharing a folder as the inviter, open the Share Folder modal by
-clicking the share button in the Control column of the folder list. In the
+clicking the share button next to the folder's name in the folder list. In the
 **Shared Users** table, click the stop sharing icon (red close circle) next to
 the permission dropdown in the row of the user you want to remove. A
 confirmation dialog will appear asking you to confirm. Click `Confirm` to

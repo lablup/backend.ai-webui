@@ -625,7 +625,9 @@ describe('ImageInstallModal in-flight behaviour while installing (FR-3415)', () 
 
     // Before installing: closable and Cancel are both available.
     expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
-    expect(screen.getByText('general.button.Cancel').closest('button')).toBeEnabled();
+    expect(
+      screen.getByText('general.button.Cancel').closest('button'),
+    ).toBeEnabled();
 
     await chooseTargetsAndInstall(user);
 
@@ -633,7 +635,9 @@ describe('ImageInstallModal in-flight behaviour while installing (FR-3415)', () 
     expect(
       screen.queryByRole('button', { name: 'Close' }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText('general.button.Cancel').closest('button')).toBeDisabled();
+    expect(
+      screen.getByText('general.button.Cancel').closest('button'),
+    ).toBeDisabled();
 
     deferred.resolve({ sessionId: 'installed-session-id' });
 
@@ -716,7 +720,9 @@ describe('ImageInstallModal exit animation + state reset (FR-3415)', () => {
 
     // Close via Cancel and wait for `BAIUnmountAfterClose` to fully unmount
     // the modal after its exit animation.
-    await user.click(screen.getByText('general.button.Cancel').closest('button')!);
+    await user.click(
+      screen.getByText('general.button.Cancel').closest('button')!,
+    );
     await waitFor(() => {
       flushPendingCloseTransitions();
       expect(

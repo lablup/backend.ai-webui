@@ -15,7 +15,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAIUserSelectAstryx,
+  BAIUserSelect,
   INITIAL_FETCH_KEY,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -156,7 +156,7 @@ const UserFolderPermissionPanelV2: React.FC<
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition }) => (
-                    <BAIUserSelectAstryx
+                    <BAIUserSelect
                       // The filter row already prints the property label.
                       label={t('storageHost.permission.User')}
                       isLabelHidden

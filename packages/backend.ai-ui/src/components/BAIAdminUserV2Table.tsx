@@ -2,7 +2,7 @@ import {
   BAIColumnType,
   BAIFlex,
   BAIQuestionIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAITagList,
   BAIText,
@@ -85,8 +85,16 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           mainAccessKey
         }
         security {
-          totpActivated @skipOnClient(if: $isNotSupportTotp)
-          totpActivatedAt @skipOnClient(if: $isNotSupportTotp)
+          # @skipOnClient strips the field from the request text; the standard
+          # @skip keeps Relay's own operation in step, so the store is not left
+          # permanently missing these fields (which would defeat every
+          # store-or-network cache hit).
+          totpActivated
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
+          totpActivatedAt
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
           sudoSessionEnabled
           allowedClientIp
         }
@@ -127,7 +135,12 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         title: t('comp:UserNodes.UserID'),
         exportKey: 'uuid',
         render: (__, record) => (
-          <BAIText copyable ellipsis monospace style={{ maxWidth: 100 }}>
+          <BAIText
+            copyable
+            ellipsis={{ tooltip: true }}
+            monospace
+            style={{ maxWidth: 100 }}
+          >
             {toLocalId(record.id)}
           </BAIText>
         ),
@@ -150,7 +163,6 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         title: t('comp:UserNodes.DomainName'),
         dataIndex: 'domainName',
         exportKey: 'domain_name',
-        minWidth: 100,
         sorter: isEnableSorter('domainName'),
         render: (__, record) => record.organization?.domainName || '-',
       },
@@ -177,7 +189,12 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         exportKey: 'main_access_key',
         render: (__, record) =>
           record.organization?.mainAccessKey ? (
-            <BAIText copyable ellipsis monospace style={{ maxWidth: 120 }}>
+            <BAIText
+              copyable
+              ellipsis={{ tooltip: true }}
+              monospace
+              style={{ maxWidth: 120 }}
+            >
               {record.organization.mainAccessKey}
             </BAIText>
           ) : (
@@ -321,7 +338,8 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx<UserV2InList>
+    <BAITable<UserV2InList>
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey="id"
       size="small"

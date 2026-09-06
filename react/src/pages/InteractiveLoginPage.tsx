@@ -6,11 +6,8 @@ import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { Button } from '@astryxdesign/core/Button';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
-import { BAICard, BAIFlex } from 'backend.ai-ui';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { BAI_Z_INDEX, BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,8 +37,8 @@ const Children = () => {
   // UI". Put the splash into login-backdrop mode (keeps the Diagonal Weave +
   // version/copyright as the background, hides the loader) — the same backdrop
   // the login screen uses — and render the card above it. Without this the
-  // splash (z-index 10000) is never dismissed and covers the card, leaving the
-  // screen stuck on the loading curtain.
+  // splash is never dismissed and covers the card, leaving the screen stuck on
+  // the loading curtain.
   useEffect(() => {
     (
       globalThis as typeof globalThis & { __enterLoginBackdrop?: () => void }
@@ -53,7 +50,7 @@ const Children = () => {
       direction="column"
       align="center"
       justify="center"
-      style={{ position: 'fixed', inset: 0, zIndex: 10001 }}
+      style={{ position: 'fixed', inset: 0, zIndex: BAI_Z_INDEX.loginHost }}
     >
       <BAICard title={t('interactiveLogin.InteractiveLoginWithBackendAI')}>
         <BAIFlex direction="column" gap={'sm'} align="stretch">
@@ -64,14 +61,14 @@ const Children = () => {
           {/* antd `Descriptions` -> `MetadataList` (MAPPING §4).
               `bordered` has no destination (project-wide PILOT-DECISION since
               ticket 20); `column={1}` becomes `columns="single"`. */}
-          <MetadataList columns="single">
+          <BAIMetadataList columns="single">
             <MetadataListItem label={t('interactiveLogin.ServiceName')}>
               {name}
             </MetadataListItem>
             <MetadataListItem label="URL">
               {callback ? new URL(callback).origin : '-'}
             </MetadataListItem>
-          </MetadataList>
+          </BAIMetadataList>
           <BAIFlex
             direction="row"
             justify="between"

@@ -11,7 +11,7 @@ import {
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAIText,
   badgeVariantForTagColor,
@@ -136,7 +136,7 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
       sorter: isEnableSorter('id'),
       onCell: () => ({ style: { maxWidth: 120 } }),
       render: (id: string) => (
-        <BAIText copyable ellipsis monospace title={toLocalId(id)}>
+        <BAIText copyable ellipsis={{ tooltip: true }} monospace>
           {toLocalId(id)}
         </BAIText>
       ),
@@ -182,7 +182,7 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
       sorter: isEnableSorter('categoryId'),
       onCell: () => ({ style: { maxWidth: 120 } }),
       render: (_value: unknown, row) => (
-        <BAIText ellipsis copyable monospace title={row.category?.id ?? '-'}>
+        <BAIText ellipsis={{ tooltip: true }} copyable monospace>
           {row.category?.id ?? '-'}
         </BAIText>
       ),
@@ -290,7 +290,8 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
+      scroll={{ x: 'max-content' }}
       size="small"
       rowKey="id"
       dataSource={filterOutNullAndUndefined(presets)}

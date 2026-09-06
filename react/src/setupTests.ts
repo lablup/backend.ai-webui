@@ -15,15 +15,24 @@ import '@testing-library/jest-dom';
 // polling uses `setTimeout`, which never fires under faked timers.
 // (None of our test code references `jest.*` directly anymore; this is
 // purely a `@testing-library/dom` integration hook.)
+import { configure } from '@testing-library/react';
 import { vi } from 'vitest';
 
 (globalThis as any).jest = vi;
 
-// jsdom implements `<dialog>` as an element but not its modal API, so any
-// component built on Astryx `Dialog` (every `BAIModalAstryx`, drawer and
-// popover-dialog) throws `dialog.showModal is not a function` the moment it
-// mounts open. Give the element the three methods Astryx calls and keep the
-// `open` attribute in sync, which is what testing-library queries see.
+// `waitFor`'s 1000ms default leaves almost no headroom: the ADR-0001
+// project-prop-contract tests (`DeploymentSettingModal`, `FolderCreateModalV2`)
+// measure 621–787ms on an idle 8-core dev box and 1502ms on a CI runner, where
+// they intermittently failed with `expected [] to have a length of 1` — the
+// Relay mutation had simply not been dispatched inside the window. Raising the
+// budget cannot mask a real defect: a mutation that never fires still fails,
+// just 5s later. `testTimeout` in vitest.config.ts is raised past this so the
+// assertion's own diff surfaces instead of a bare test timeout. FR-3617.
+configure({ asyncUtilTimeout: 5000 });
+
+// jsdom implements `<dialog>` as an element but not its modal API; Astryx
+// `Dialog` and the lab `Drawer` call showModal/show/close the moment they mount.
+// Mirrors `packages/backend.ai-ui/setupTests.ts` — keep the two in step.
 if (typeof HTMLDialogElement !== 'undefined') {
   const proto = HTMLDialogElement.prototype as HTMLDialogElement & {
     showModal?: () => void;

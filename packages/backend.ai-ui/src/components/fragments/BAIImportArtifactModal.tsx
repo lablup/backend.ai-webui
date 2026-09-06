@@ -1,3 +1,4 @@
+import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import { BAIImportArtifactModalArtifactFragment$key } from '../../__generated__/BAIImportArtifactModalArtifactFragment.graphql';
 import {
   BAIImportArtifactModalArtifactRevisionFragment$data,
@@ -18,11 +19,9 @@ import BAIFlex from '../BAIFlex';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { BAIColumnsType, BAITableAstryx } from '../Table';
+import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
-import { CircleHelp } from 'lucide-react';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 type ArtifactRevision =
@@ -215,19 +214,13 @@ const BAIImportArtifactModal = ({
             selectedArtifactRevision.length && (
             <BAIAlert
               icon={
-                <Tooltip
-                  content={t(
+                <BAIQuestionIconWithTooltip
+                  title={t(
                     'comp:BAIImportArtifactModal.OnlySCANNEDVersionsCanBePulled',
                   )}
-                >
-                  <CircleHelp
-                    style={{
-                      color: token.colorInfo,
-                      marginRight: token.marginXS,
-                    }}
-                    size="1em"
-                  />
-                </Tooltip>
+                  iconProps={{ style: { color: token.colorInfo } }}
+                  style={{ marginRight: token.marginXS }}
+                />
               }
               showIcon
               title={t('comp:BAIImportArtifactModal.ExcludedVersions', {
@@ -240,7 +233,7 @@ const BAIImportArtifactModal = ({
           {selectedArtifact && (
             <BAIArtifactDescriptions artifactFrgmt={selectedArtifact} />
           )}
-          <BAITableAstryx<ArtifactRevision>
+          <BAITable<ArtifactRevision>
             columns={filterOutEmpty(columns)}
             dataSource={filterOutNullAndUndefined(filteredSelectedRevisions)}
             pagination={{

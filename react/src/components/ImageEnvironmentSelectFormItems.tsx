@@ -13,7 +13,6 @@ import {
   isPrivateImage,
   localeCompare,
   parseImageString,
-  preserveDotStartCase,
   removeArchitectureFromImageFullName,
 } from '../helper';
 import {
@@ -24,7 +23,13 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
 // @ts-ignore
 import ImageMetaIcon from './ImageMetaIcon';
-import { ImageTags } from './ImageTags';
+import {
+  imageNodeTagFacts,
+  imageTagFacts,
+  ImageMetaDivider,
+  ImageTagBadges,
+  ImageTags,
+} from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -34,11 +39,8 @@ import {
   BAIDoubleTag,
   BAIFlex,
   BAISelect,
-  // `BAISelect` was rebuilt on Astryx in wave 2 and still accepts antd's
-  // children option API — it flattens the element tree by reading PROPS, never
-  // the element type. So `Select.Option` / `Select.OptGroup` are replaced by
-  // BUI's own render-null carriers, and the rich JSX option rows below (image
-  // icon + highlighted name + metadata badges) stay exactly as they are.
+  // BAISelect still accepts antd's children option API via BUI's render-null
+  // carriers; the rich JSX option rows below survive through `renderOption`.
   BAISelectOptionItem as SelectOption,
   BAISelectOptionGroup as SelectOptGroup,
   BAIText,
@@ -92,7 +94,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   );
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
-  const [metadata, { getBaseVersion, getImageMeta, tagAlias }] =
+  const [metadata, { getBaseVersion, getImageMeta, getTags, tagAlias }] =
     useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
@@ -405,498 +407,507 @@ const ImageEnvironmentSelectFormItems: React.FC<
 
   return (
     <>
-      <Form.Item
-        className="image-environment-select-form-item"
-        name={['environments', 'environment']}
-        label={
-          <BAIText
-            copyable={{
-              text: getImageFullName(
-                form.getFieldValue(['environments', 'image']),
-              ),
-            }}
-          >
-            {t('session.launcher.Environments')} /{' '}
-            {t('session.launcher.Version')}
-          </BAIText>
-        }
-        rules={[
-          {
-            required: _.isEmpty(environments?.manual),
-            message: t('general.ValueRequired', {
-              name: t('session.launcher.Environments'),
-            }),
-          },
-        ]}
-        style={{ marginBottom: 10 }}
-      >
-        <BAISelect
-          ref={envSelectRef}
-          open={envSelectOpen}
-          onOpenChange={(visible) => {
-            // Return to uncontrolled mode once the user interacts
-            if (!visible) {
-              setEnvSelectOpen(undefined);
-            }
-          }}
-          showSearch={{
-            searchValue: environmentSearch,
-            onSearch: setEnvironmentSearch,
-            optionFilterProp: 'filterValue',
-          }}
-          popupMatchSelectWidth={false}
-          defaultActiveFirstOption={true}
-          onChange={(value) => {
-            if (fullNameMatchedImage) {
-              form.setFieldsValue({
-                environments: {
-                  environment:
-                    (supportExtendedImageInfo
-                      ? fullNameMatchedImage?.namespace
-                      : fullNameMatchedImage?.name) || '',
-                  version: getImageFullName(fullNameMatchedImage),
-                  image: fullNameMatchedImage,
-                },
-              });
-            } else {
-              // NOTE: when user set environment only then set the version to the first item
-              //
-              // FR-3499 — write the OPTION's own key back, not the image's
-              // bare namespace. Every option in this select is keyed by
-              // `environmentGroup.environmentName`, i.e. `registry/namespace`,
-              // and the rest of the component agrees: the version select finds
-              // `selectedEnvironmentGroup` by `environmentName`, and the
-              // auto-select effect stores `nextEnvironment.environmentName`.
-              // Storing the registry-less `namespace` produced a value no
-              // option matched, so Astryx `Selector` fell back to its
-              // placeholder — the environment trigger read "Select…" and the
-              // version select, keyed off the same field, emptied with it.
-              // Choosing a DIFFERENT environment masked this, because the
-              // resulting `version` change re-ran the effect and it rewrote the
-              // field correctly; choosing the environment that was already
-              // selected left the broken value in place, so on a cluster with a
-              // single environment no image could be selected at all.
-              const selectedEnvironmentGroup = _.find(
-                _.flatMap(imageGroups, (group) => group.environmentGroups),
-                (envGroup) => envGroup.environmentName === value,
-              );
-              const firstInListImage: Image | undefined =
-                selectedEnvironmentGroup?.images[0];
-              form.setFieldsValue({
-                environments: {
-                  environment: selectedEnvironmentGroup?.environmentName ?? '',
-                  version: getImageFullName(firstInListImage),
-                  image: firstInListImage,
-                },
-              });
-            }
-          }}
-          disabled={
-            baiClient._config.allow_manual_image_name_for_session &&
-            !_.isEmpty(environments?.manual)
+      {/* The environment and version selects are one field. */}
+      <BAIFlex direction="column" align="stretch" gap="xs">
+        <Form.Item
+          className="image-environment-select-form-item"
+          // The wrapper's gap is the pair's spacing.
+          style={{ marginBottom: 0 }}
+          name={['environments', 'environment']}
+          label={
+            <BAIText
+              copyable={{
+                text: getImageFullName(
+                  form.getFieldValue(['environments', 'image']),
+                ),
+              }}
+            >
+              {t('session.launcher.Environments')} /{' '}
+              {t('session.launcher.Version')}
+            </BAIText>
           }
+          rules={[
+            {
+              required: _.isEmpty(environments?.manual),
+              message: t('general.ValueRequired', {
+                name: t('session.launcher.Environments'),
+              }),
+            },
+          ]}
         >
-          {fullNameMatchedImage ? (
-            <SelectOption
-              value={
-                supportExtendedImageInfo
-                  ? fullNameMatchedImage?.namespace
-                  : fullNameMatchedImage?.name
+          <BAISelect
+            ref={envSelectRef}
+            optionLabelProp="children"
+            open={envSelectOpen}
+            onOpenChange={(visible) => {
+              // Return to uncontrolled mode once the user interacts
+              if (!visible) {
+                setEnvSelectOpen(undefined);
               }
-              filterValue={getImageFullName(fullNameMatchedImage)}
-            >
-              <BAIFlex
-                direction="row"
-                align="center"
-                gap="xs"
-                style={{ display: 'inline-flex' }}
-              >
-                <ImageMetaIcon
-                  image={getImageFullName(fullNameMatchedImage) || ''}
-                  style={{
-                    width: 15,
-                    height: 15,
-                  }}
-                />
-                {getImageFullName(fullNameMatchedImage)}
-              </BAIFlex>
-            </SelectOption>
-          ) : (
-            _.map(imageGroups, (group) => {
-              return (
-                <SelectOptGroup key={group.groupName} label={group.groupName}>
-                  {_.map(group.environmentGroups, (environmentGroup) => {
-                    const firstImage = environmentGroup.images[0];
-                    const currentMetaImageInfo =
-                      metadata?.imageInfo[
-                        environmentGroup.environmentName.split('/')?.[2]
-                      ];
-
-                    const extraFilterValues: string[] = [];
-                    let environmentPrefixTag = null;
-                    if (
-                      environmentGroup.prefix &&
-                      !['lablup', 'cloud', 'stable'].includes(
-                        environmentGroup.prefix,
-                      )
-                    ) {
-                      extraFilterValues.push(environmentGroup.prefix);
-                      // antd `Tag color` → Astryx `Badge variant` through the
-                      // repo-global lookup (ticket 13). Never a raw hue/hex.
-                      environmentPrefixTag = (
-                        <Badge
-                          variant={badgeVariantForTagColor('purple')}
-                          label={
-                            <TextHighlighter keyword={environmentSearch}>
-                              {environmentGroup.prefix}
-                            </TextHighlighter>
-                          }
-                        />
-                      );
-                    }
-
-                    const tagsFromMetaImageInfoLabel = _.map(
-                      currentMetaImageInfo?.label,
-                      (label) => {
-                        if (
-                          _.isUndefined(label.category) &&
-                          label.tag &&
-                          label.color
-                        ) {
-                          extraFilterValues.push(label.tag);
-                          // `label.color` is a runtime-arbitrary string from
-                          // the image metadata JSON; the lookup normalises it
-                          // and falls back to `neutral` for anything it does
-                          // not recognise (ticket 13 §5).
-                          return (
-                            <Badge
-                              key={label.tag}
-                              variant={badgeVariantForTagColor(label.color)}
-                              label={
-                                <TextHighlighter
-                                  keyword={environmentSearch}
-                                  key={label.tag}
-                                >
-                                  {label.tag}
-                                </TextHighlighter>
-                              }
-                            />
-                          );
-                        }
-                        return null;
-                      },
-                    );
-                    return (
-                      <SelectOption
-                        key={environmentGroup.environmentName}
-                        value={environmentGroup.environmentName}
-                        filterValue={
-                          environmentGroup.displayName +
-                          '\t' +
-                          extraFilterValues.join('\t')
-                        }
-                      >
-                        <BAIFlex direction="row" justify="between">
-                          <BAIFlex direction="row" align="center" gap="xs">
-                            <ImageMetaIcon
-                              image={getImageFullName(firstImage) || ''}
-                              style={{
-                                width: 15,
-                                height: 15,
-                              }}
-                            />
-                            <TextHighlighter keyword={environmentSearch}>
-                              {environmentGroup.displayName}
-                            </TextHighlighter>
-                          </BAIFlex>
-                          <BAIFlex
-                            direction="row"
-                            // set specific class name to handle flex wrap using css
-                            className={
-                              isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
-                            }
-                            // style={{ flex: 1 }}
-                            style={{
-                              marginLeft: token.marginXS,
-                              flexShrink: 1,
-                            }}
-                            gap="xs"
-                          >
-                            {environmentPrefixTag}
-                            {tagsFromMetaImageInfoLabel}
-                          </BAIFlex>
-                        </BAIFlex>
-                      </SelectOption>
-                    );
-                  })}
-                </SelectOptGroup>
-              );
-            })
-          )}
-        </BAISelect>
-      </Form.Item>
-      <Form.Item
-        noStyle
-        shouldUpdate={(prev, cur) =>
-          prev.environments?.environment !== cur.environments?.environment
-        }
-      >
-        {({ getFieldValue }) => {
-          let selectedEnvironmentGroup:
-            ImageGroup['environmentGroups'][0] | undefined;
-          _.find(imageGroups, (group) => {
-            return _.find(group.environmentGroups, (environment) => {
-              if (
-                environment.environmentName ===
-                getFieldValue('environments')?.environment
-              ) {
-                selectedEnvironmentGroup = environment;
-                return true;
+            }}
+            showSearch={{
+              searchValue: environmentSearch,
+              onSearch: setEnvironmentSearch,
+              optionFilterProp: 'filterValue',
+            }}
+            popupMatchSelectWidth={false}
+            defaultActiveFirstOption={true}
+            onChange={(value) => {
+              if (fullNameMatchedImage) {
+                form.setFieldsValue({
+                  environments: {
+                    environment:
+                      (supportExtendedImageInfo
+                        ? fullNameMatchedImage?.namespace
+                        : fullNameMatchedImage?.name) || '',
+                    version: getImageFullName(fullNameMatchedImage),
+                    image: fullNameMatchedImage,
+                  },
+                });
               } else {
-                return false;
+                // NOTE: when user set environment only then set the version to the first item
+                //
+                // FR-3499 — write the OPTION's own key back, not the image's
+                // bare namespace. Every option in this select is keyed by
+                // `environmentGroup.environmentName`, i.e. `registry/namespace`,
+                // and the rest of the component agrees: the version select finds
+                // `selectedEnvironmentGroup` by `environmentName`, and the
+                // auto-select effect stores `nextEnvironment.environmentName`.
+                // Storing the registry-less `namespace` produced a value no
+                // option matched, so Astryx `Selector` fell back to its
+                // placeholder — the environment trigger read "Select…" and the
+                // version select, keyed off the same field, emptied with it.
+                // Choosing a DIFFERENT environment masked this, because the
+                // resulting `version` change re-ran the effect and it rewrote the
+                // field correctly; choosing the environment that was already
+                // selected left the broken value in place, so on a cluster with a
+                // single environment no image could be selected at all.
+                const selectedEnvironmentGroup = _.find(
+                  _.flatMap(imageGroups, (group) => group.environmentGroups),
+                  (envGroup) => envGroup.environmentName === value,
+                );
+                const firstInListImage: Image | undefined =
+                  selectedEnvironmentGroup?.images[0];
+                form.setFieldsValue({
+                  environments: {
+                    environment:
+                      selectedEnvironmentGroup?.environmentName ?? '',
+                    version: getImageFullName(firstInListImage),
+                    image: firstInListImage,
+                  },
+                });
               }
-            });
-          });
-          return (
-            <Form.Item
-              className="image-environment-select-form-item"
-              name={['environments', 'version']}
-              rules={[
-                {
-                  required: _.isEmpty(environments?.manual),
-                  message: t('general.ValueRequired', {
-                    name: t('session.launcher.Version'),
-                  }),
-                },
-              ]}
-            >
-              <BAISelect
-                ref={versionSelectRef}
-                popupMatchSelectWidth={false}
-                onChange={(value) => {
-                  const selectedImage = _.find(images, (image) => {
-                    return getImageFullName(image) === value;
-                  });
-                  form.setFieldValue(['environments', 'image'], selectedImage);
-                }}
-                showSearch={{
-                  searchValue: versionSearch,
-                  onSearch: setVersionSearch,
-                  optionFilterProp: 'filterValue',
-                }}
-                popupRender={(menu) => (
-                  <>
-                    <BAIFlex
-                      style={{
-                        fontWeight: token.fontWeightStrong,
-                        paddingLeft: token.paddingSM,
-                      }}
-                    >
-                      {t('session.launcher.Version')}
-                      <Divider orientation="vertical" />
-                      {t('session.launcher.Architecture')}
-                      <Divider orientation="vertical" />
-                      {t('session.launcher.Tags')}
-                    </BAIFlex>
-                    <Divider style={{ margin: '8px 0' }} />
-                    {menu}
-                  </>
-                )}
-                disabled={
-                  baiClient._config.allow_manual_image_name_for_session &&
-                  !_.isEmpty(environments?.manual)
+            }}
+            disabled={
+              baiClient._config.allow_manual_image_name_for_session &&
+              !_.isEmpty(environments?.manual)
+            }
+          >
+            {fullNameMatchedImage ? (
+              <SelectOption
+                value={
+                  supportExtendedImageInfo
+                    ? fullNameMatchedImage?.namespace
+                    : fullNameMatchedImage?.name
                 }
+                filterValue={getImageFullName(fullNameMatchedImage)}
               >
-                {_.map(
-                  _.uniqBy(selectedEnvironmentGroup?.images, 'id'),
+                <BAIFlex
+                  direction="row"
+                  align="center"
+                  gap="xs"
+                  style={{ display: 'inline-flex' }}
+                >
+                  <ImageMetaIcon
+                    image={getImageFullName(fullNameMatchedImage) || ''}
+                    style={{
+                      width: 15,
+                      height: 15,
+                    }}
+                  />
+                  {getImageFullName(fullNameMatchedImage)}
+                </BAIFlex>
+              </SelectOption>
+            ) : (
+              _.map(imageGroups, (group) => {
+                return (
+                  <SelectOptGroup key={group.groupName} label={group.groupName}>
+                    {_.map(group.environmentGroups, (environmentGroup) => {
+                      const firstImage = environmentGroup.images[0];
+                      const currentMetaImageInfo =
+                        metadata?.imageInfo[
+                          environmentGroup.environmentName.split('/')?.[2]
+                        ];
 
-                  (image) => {
-                    const [version, tag, ...requirements] = image?.tag?.split(
-                      '-',
-                    ) || ['', '', ''];
-
-                    let metadataTagAlias = metadata?.tagAlias[tag];
-                    if (!metadataTagAlias) {
-                      for (const [key, replaceString] of Object.entries(
-                        metadata?.tagReplace || {},
-                      )) {
-                        const pattern = new RegExp(key);
-                        if (pattern.test(tag)) {
-                          metadataTagAlias = tag?.replace(
-                            pattern,
-                            replaceString,
-                          );
-                        }
-                      }
-                      if (!metadataTagAlias) {
-                        metadataTagAlias = tag;
-                      }
-                    }
-
-                    const extraFilterValues: string[] = [];
-                    const requirementTags = _.map(
-                      _.filter(
-                        requirements,
-                        (requirement) => !requirement.startsWith('customized_'),
-                      ),
-                      (requirement, idx) => (
-                        <BAIDoubleTag
-                          key={idx}
-                          values={_.split(
-                            metadata?.tagAlias[requirement] || requirement,
-                            ':',
-                          ).map((str) => {
-                            extraFilterValues.push(str);
-                            return {
-                              label: str,
-                              highlightKeyword: versionSearch,
-                            };
-                          })}
-                        />
-                      ),
-                    );
-                    const imageLabels = image?.labels;
-                    if (imageLabels) {
-                      const customizedImageNameLabelIdx = _.findIndex(
-                        imageLabels,
-                        (item) =>
-                          item !== null &&
-                          item?.key === 'ai.backend.customized-image.name',
-                      );
+                      const extraFilterValues: string[] = [];
+                      let environmentPrefixTag = null;
                       if (
-                        customizedImageNameLabelIdx &&
-                        imageLabels[customizedImageNameLabelIdx]
+                        environmentGroup.prefix &&
+                        !['lablup', 'cloud', 'stable'].includes(
+                          environmentGroup.prefix,
+                        )
                       ) {
-                        const tag =
-                          imageLabels[customizedImageNameLabelIdx]?.value || '';
-                        extraFilterValues.push('Customized');
-                        extraFilterValues.push(tag);
-                        requirementTags.push(
-                          <BAIDoubleTag
-                            key={requirementTags.length + 1}
-                            highlightKeyword={versionSearch}
-                            values={[
-                              {
-                                label: 'Customized',
-                                color: 'cyan',
-                              },
-                              {
-                                label: tag ?? '',
-                                color: 'cyan',
-                              },
-                            ]}
-                          />,
+                        extraFilterValues.push(environmentGroup.prefix);
+                        // antd `Tag color` → Astryx `Badge variant` through the
+                        // repo-global lookup (ticket 13). Never a raw hue/hex.
+                        environmentPrefixTag = (
+                          <Badge
+                            variant={badgeVariantForTagColor('purple')}
+                            label={
+                              <TextHighlighter keyword={environmentSearch}>
+                                {environmentGroup.prefix}
+                              </TextHighlighter>
+                            }
+                          />
                         );
                       }
-                    }
-                    return (
-                      <SelectOption
-                        key={image?.id}
-                        value={getImageFullName(image)}
-                        filterValue={[
-                          version,
-                          metadataTagAlias,
-                          image?.architecture,
-                          ...extraFilterValues,
-                        ].join('\t')}
-                      >
-                        {supportExtendedImageInfo ? (
-                          <BAIFlex direction="row">
-                            <TextHighlighter keyword={versionSearch}>
-                              {image?.version}
-                            </TextHighlighter>
-                            <Divider orientation="vertical" />
-                            <TextHighlighter keyword={versionSearch}>
-                              {image?.architecture}
-                            </TextHighlighter>
-                            <Divider orientation="vertical" />
-                            <BAIFlex direction="row" align="start" gap="xs">
-                              {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                              {_.map(
-                                image?.tags,
-                                (tag: { key: string; value: string }) => {
-                                  const isCustomized = _.includes(
-                                    tag.key,
-                                    'customized_',
-                                  );
-                                  const tagValue = isCustomized
-                                    ? _.find(image?.labels, {
-                                        key: 'ai.backend.customized-image.name',
-                                      })?.value
-                                    : tag.value;
-                                  const aliasedTag = tagAlias(
-                                    tag.key + tagValue,
-                                  );
-                                  return _.isEqual(
-                                    aliasedTag,
-                                    preserveDotStartCase(tag.key + tagValue),
-                                  ) || isCustomized ? (
-                                    <BAIDoubleTag
-                                      key={tag.key}
-                                      highlightKeyword={versionSearch}
-                                      values={[
-                                        {
-                                          label: tagAlias(tag.key),
-                                          color: isCustomized ? 'cyan' : 'blue',
-                                        },
-                                        {
-                                          label: tagValue ?? '',
-                                          color: isCustomized ? 'cyan' : 'blue',
-                                        },
-                                      ]}
-                                    />
-                                  ) : (
-                                    <Badge
-                                      key={tag.key}
-                                      variant={badgeVariantForTagColor(
-                                        isCustomized ? 'cyan' : 'blue',
-                                      )}
-                                      label={
-                                        <TextHighlighter
-                                          keyword={versionSearch}
-                                        >
-                                          {aliasedTag}
-                                        </TextHighlighter>
-                                      }
-                                    />
-                                  );
-                                },
-                              )}
+
+                      const tagsFromMetaImageInfoLabel = _.map(
+                        currentMetaImageInfo?.label,
+                        (label) => {
+                          if (
+                            _.isUndefined(label.category) &&
+                            label.tag &&
+                            label.color
+                          ) {
+                            extraFilterValues.push(label.tag);
+                            // `label.color` is a runtime-arbitrary string from
+                            // the image metadata JSON; the lookup normalises it
+                            // and falls back to `neutral` for anything it does
+                            // not recognise (ticket 13 §5).
+                            return (
+                              <Badge
+                                key={label.tag}
+                                variant={badgeVariantForTagColor(label.color)}
+                                label={
+                                  <TextHighlighter
+                                    keyword={environmentSearch}
+                                    key={label.tag}
+                                  >
+                                    {label.tag}
+                                  </TextHighlighter>
+                                }
+                              />
+                            );
+                          }
+                          return null;
+                        },
+                      );
+                      return (
+                        <SelectOption
+                          key={environmentGroup.environmentName}
+                          value={environmentGroup.environmentName}
+                          // The prefix/meta badge texts live in Badge props, so
+                          // the accessible/search label restates them (FR-3544).
+                          label={_.compact([
+                            environmentGroup.displayName,
+                            ...extraFilterValues,
+                          ]).join(' | ')}
+                          filterValue={
+                            environmentGroup.displayName +
+                            '\t' +
+                            extraFilterValues.join('\t')
+                          }
+                        >
+                          <BAIFlex direction="row" justify="between">
+                            <BAIFlex direction="row" align="center" gap="xs">
+                              <ImageMetaIcon
+                                image={getImageFullName(firstImage) || ''}
+                                style={{
+                                  width: 15,
+                                  height: 15,
+                                }}
+                              />
+                              <TextHighlighter keyword={environmentSearch}>
+                                {environmentGroup.displayName}
+                              </TextHighlighter>
+                            </BAIFlex>
+                            <BAIFlex
+                              direction="row"
+                              // set specific class name to handle flex wrap using css
+                              className={
+                                isDarkMode ? 'tag-wrap-dark' : 'tag-wrap-light'
+                              }
+                              // style={{ flex: 1 }}
+                              style={{
+                                marginLeft: token.marginXS,
+                                flexShrink: 1,
+                              }}
+                              gap="xs"
+                            >
+                              {environmentPrefixTag}
+                              {tagsFromMetaImageInfoLabel}
                             </BAIFlex>
                           </BAIFlex>
-                        ) : (
-                          <BAIFlex direction="row" justify="between">
+                        </SelectOption>
+                      );
+                    })}
+                  </SelectOptGroup>
+                );
+              })
+            )}
+          </BAISelect>
+        </Form.Item>
+        <Form.Item
+          noStyle
+          shouldUpdate={(prev, cur) =>
+            prev.environments?.environment !== cur.environments?.environment
+          }
+        >
+          {({ getFieldValue }) => {
+            let selectedEnvironmentGroup:
+              ImageGroup['environmentGroups'][0] | undefined;
+            _.find(imageGroups, (group) => {
+              return _.find(group.environmentGroups, (environment) => {
+                if (
+                  environment.environmentName ===
+                  getFieldValue('environments')?.environment
+                ) {
+                  selectedEnvironmentGroup = environment;
+                  return true;
+                } else {
+                  return false;
+                }
+              });
+            });
+            return (
+              <Form.Item
+                className="image-environment-select-form-item"
+                name={['environments', 'version']}
+                rules={[
+                  {
+                    required: _.isEmpty(environments?.manual),
+                    message: t('general.ValueRequired', {
+                      name: t('session.launcher.Version'),
+                    }),
+                  },
+                ]}
+              >
+                <BAISelect
+                  ref={versionSelectRef}
+                  optionLabelProp="children"
+                  popupMatchSelectWidth={false}
+                  onChange={(value) => {
+                    const selectedImage = _.find(images, (image) => {
+                      return getImageFullName(image) === value;
+                    });
+                    form.setFieldValue(
+                      ['environments', 'image'],
+                      selectedImage,
+                    );
+                  }}
+                  showSearch={{
+                    searchValue: versionSearch,
+                    onSearch: setVersionSearch,
+                    optionFilterProp: 'filterValue',
+                  }}
+                  popupRender={(menu) => (
+                    <>
+                      <BAIFlex
+                        style={{
+                          fontWeight: token.fontWeightStrong,
+                          paddingLeft: token.paddingSM,
+                        }}
+                      >
+                        {t('session.launcher.Version')}
+                        <Divider orientation="vertical" />
+                        {t('session.launcher.Architecture')}
+                        <Divider orientation="vertical" />
+                        {t('session.launcher.Tags')}
+                      </BAIFlex>
+                      <Divider style={{ margin: '8px 0' }} />
+                      {menu}
+                    </>
+                  )}
+                  disabled={
+                    baiClient._config.allow_manual_image_name_for_session &&
+                    !_.isEmpty(environments?.manual)
+                  }
+                >
+                  {_.map(
+                    _.uniqBy(selectedEnvironmentGroup?.images, 'id'),
+
+                    (image) => {
+                      const imageFullName = getImageFullName(image);
+                      const [version, tag, ...requirements] = image?.tag?.split(
+                        '-',
+                      ) || ['', '', ''];
+
+                      let metadataTagAlias = metadata?.tagAlias[tag];
+                      if (!metadataTagAlias) {
+                        for (const [key, replaceString] of Object.entries(
+                          metadata?.tagReplace || {},
+                        )) {
+                          const pattern = new RegExp(key);
+                          if (pattern.test(tag)) {
+                            metadataTagAlias = tag?.replace(
+                              pattern,
+                              replaceString,
+                            );
+                          }
+                        }
+                        if (!metadataTagAlias) {
+                          metadataTagAlias = tag;
+                        }
+                      }
+
+                      const extraFilterValues: string[] = [];
+                      const requirementTags = _.map(
+                        _.filter(
+                          requirements,
+                          (requirement) =>
+                            !requirement.startsWith('customized_'),
+                        ),
+                        (requirement, idx) => (
+                          <BAIDoubleTag
+                            key={idx}
+                            values={_.split(
+                              metadata?.tagAlias[requirement] || requirement,
+                              ':',
+                            ).map((str) => {
+                              extraFilterValues.push(str);
+                              return {
+                                label: str,
+                                highlightKeyword: versionSearch,
+                              };
+                            })}
+                          />
+                        ),
+                      );
+                      const imageLabels = image?.labels;
+                      if (imageLabels) {
+                        const customizedImageNameLabelIdx = _.findIndex(
+                          imageLabels,
+                          (item) =>
+                            item !== null &&
+                            item?.key === 'ai.backend.customized-image.name',
+                        );
+                        if (
+                          customizedImageNameLabelIdx &&
+                          imageLabels[customizedImageNameLabelIdx]
+                        ) {
+                          const tag =
+                            imageLabels[customizedImageNameLabelIdx]?.value ||
+                            '';
+                          extraFilterValues.push('Customized');
+                          extraFilterValues.push(tag);
+                          requirementTags.push(
+                            <BAIDoubleTag
+                              key={requirementTags.length + 1}
+                              highlightKeyword={versionSearch}
+                              values={[
+                                {
+                                  label: 'Customized',
+                                  color: 'cyan',
+                                },
+                                {
+                                  label: tag ?? '',
+                                  color: 'cyan',
+                                },
+                              ]}
+                            />,
+                          );
+                        }
+                      }
+                      // The closed trigger renders a plain string (BAISelect
+                      // FR-3544): compute each tag's display facts once, then
+                      // derive both the trigger text and the option row from them.
+                      const tagFacts = supportExtendedImageInfo
+                        ? imageNodeTagFacts(
+                            image?.tags as Array<{
+                              key: string;
+                              value: string;
+                            }>,
+                            image?.labels as Array<{
+                              key: string;
+                              value: string;
+                            }>,
+                            tagAlias,
+                          )
+                        : imageTagFacts(
+                            getTags(
+                              image?.tag || '',
+                              image?.labels as Array<{
+                                key: string;
+                                value: string;
+                              }>,
+                            ),
+                            tagAlias,
+                          );
+                      const selectedLabel = _.compact([
+                        supportExtendedImageInfo
+                          ? image?.version
+                          : getBaseVersion(imageFullName || ''),
+                        image?.architecture,
+                        ..._.map(tagFacts, (fact) =>
+                          fact.isDouble
+                            ? _.trim(
+                                `${fact.keyAlias ?? ''} ${fact.value ?? ''}`,
+                              )
+                            : fact.aliasedTag,
+                        ),
+                      ]).join(' | ');
+                      return (
+                        <SelectOption
+                          key={image?.id}
+                          value={imageFullName}
+                          label={selectedLabel}
+                          filterValue={[
+                            version,
+                            metadataTagAlias,
+                            image?.architecture,
+                            ...extraFilterValues,
+                          ].join('\t')}
+                        >
+                          {supportExtendedImageInfo ? (
                             <BAIFlex direction="row">
                               <TextHighlighter keyword={versionSearch}>
-                                {getBaseVersion(getImageFullName(image) || '')}
+                                {image?.version}
                               </TextHighlighter>
-                              <Divider orientation="vertical" />
+                              <ImageMetaDivider />
                               <TextHighlighter keyword={versionSearch}>
                                 {image?.architecture}
                               </TextHighlighter>
-                              <Divider orientation="vertical" />
-                              <ImageTags
-                                tag={image?.tag || ''}
+                              <ImageMetaDivider />
+                              <ImageTagBadges
+                                facts={tagFacts}
                                 highlightKeyword={versionSearch}
-                                labels={
-                                  image?.labels as Array<{
-                                    key: string;
-                                    value: string;
-                                  }>
-                                }
                               />
                             </BAIFlex>
-                          </BAIFlex>
-                        )}
-                      </SelectOption>
-                    );
-                  },
-                )}
-              </BAISelect>
-            </Form.Item>
-          );
-        }}
-      </Form.Item>
+                          ) : (
+                            <BAIFlex direction="row" justify="between">
+                              <BAIFlex direction="row" gap="xxs">
+                                <TextHighlighter keyword={versionSearch}>
+                                  {getBaseVersion(imageFullName || '')}
+                                </TextHighlighter>
+                                <ImageMetaDivider />
+                                <TextHighlighter keyword={versionSearch}>
+                                  {image?.architecture}
+                                </TextHighlighter>
+                                <ImageMetaDivider />
+                                <ImageTags
+                                  tag={image?.tag || ''}
+                                  highlightKeyword={versionSearch}
+                                  labels={
+                                    image?.labels as Array<{
+                                      key: string;
+                                      value: string;
+                                    }>
+                                  }
+                                />
+                              </BAIFlex>
+                            </BAIFlex>
+                          )}
+                        </SelectOption>
+                      );
+                    },
+                  )}
+                </BAISelect>
+              </Form.Item>
+            );
+          }}
+        </Form.Item>
+      </BAIFlex>
       <Form.Item
         label={t('session.launcher.ManualImageName')}
         name={['environments', 'manual']}

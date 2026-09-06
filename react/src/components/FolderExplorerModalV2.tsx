@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Ticket 16 — converted to Astryx.
- - Modal shell: `BAIModalAstryx` with the custom `headerContent` slot (the
+ - Modal shell: BUI `BAIModal` with the custom `headerContent` slot (the
    explorer header is JSX — identicon + editable name + action buttons — and
    Astryx `DialogHeader.title` is a plain string, P2) and `bodyRef` (the file
    drag-and-drop container).
@@ -38,8 +38,6 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
 import { VStack } from '@astryxdesign/core/Stack';
@@ -48,7 +46,10 @@ import {
   BAIFileExplorer,
   BAIFileExplorerRef,
   BAILink,
+  BAIModal,
+  type BAIModalProps,
   BAIUnmountAfterClose,
+  toGlobalId,
   useFetchKey,
   useInterval,
   VFolderFile,
@@ -72,6 +73,21 @@ import { graphql, useLazyLoadQuery, useQueryLoader } from 'react-relay';
  * against, so the two must stay written as one value.
  */
 const EXPLORER_MAX_HEIGHT = '95vh';
+
+// Floor for the explorer pane, so the drag cannot shrink it until `overflow:
+// hidden` clips its toolbar out of reach. Measured: the action group needs
+// 419px and the whole toolbar 437px (viewport 1600, `xl` two-pane layout).
+const EXPLORER_MIN_WIDTH = 440;
+
+// The row's non-panel width: `--spacing-2` on each side of the 1px handle.
+// Measured 1392 - 655 - 720 = 17 at viewport 1600.
+const SPLIT_HANDLE_WIDTH = 17;
+
+// Stacked (< xl) info panel height: default fits the metadata list without an
+// inner scroll (measured 430px at viewport 800); min keeps the tab strip and
+// a few rows reachable.
+const STACKED_INFO_PANEL_DEFAULT_HEIGHT = 440;
+const STACKED_INFO_PANEL_MIN_HEIGHT = 160;
 
 export interface FolderExplorerElement extends HTMLDivElement {
   _fetchVFolder: () => void;
@@ -129,10 +145,39 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
+  // Observed so the drag can be clamped against the real row width. Without a
+  // `maxSizePx` the resizable's size keeps growing past what flexbox renders,
+  // and dragging back has to unwind that dead travel first (measured 685px).
+  const [splitRowWidth, setSplitRowWidth] = useState(0);
+  const observeSplitRow = (node: HTMLDivElement | null) => {
+    if (!node) return;
+    // `offsetWidth`, not `getBoundingClientRect()`: the latter is scaled by the
+    // dialog's entrance transform, so the first read lands at 95% and the
+    // observer never corrects it (the layout box never changed).
+    const measure = () => setSplitRowWidth(node.offsetWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => ro.disconnect();
+  };
+
   // The info panel keeps its antd-Splitter geometry: default 45%, min 550px.
   const infoPanel = useResizable({
     defaultSize: '45%',
     minSizePx: 550,
+    maxSizePx:
+      splitRowWidth > 0
+        ? Math.max(550, splitRowWidth - EXPLORER_MIN_WIDTH - SPLIT_HANDLE_WIDTH)
+        : undefined,
+  });
+
+  // Below `xl` the panes stack, so the split flips to the block axis: the
+  // handle sits above the info panel and drags its HEIGHT (FR-3516). A pixel
+  // default — useResizable resolves '%' against window.innerWidth, the wrong
+  // axis here.
+  const stackedInfoPanel = useResizable({
+    defaultSize: STACKED_INFO_PANEL_DEFAULT_HEIGHT,
+    minSizePx: STACKED_INFO_PANEL_MIN_HEIGHT,
   });
 
   const deferredOpen = useDeferredValue(modalProps.open);
@@ -142,36 +187,52 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // dashed form via the shared `formatToUUID` helper.
   const vfolderUuid =
     vfolderID.length === 32 ? formatToUUID(vfolderID) : vfolderID;
-  const { vfolderNode } = useLazyLoadQuery<FolderExplorerModalV2Query>(
-    graphql`
-      query FolderExplorerModalV2Query($vfolderId: UUID!) {
-        vfolderNode: vfolderV2(vfolderId: $vfolderId) {
-          unmanagedPath
-          host
-          id
-          metadata {
-            name
+  const { vfolderNode, legacyVFolderNode } =
+    useLazyLoadQuery<FolderExplorerModalV2Query>(
+      graphql`
+        query FolderExplorerModalV2Query(
+          $vfolderId: UUID!
+          $vfolderGlobalId: String!
+        ) {
+          # TODO(needs-backend): stopgap for FR-3800 — vfolderV2 exposes only
+          # the mount permission (accessControl.permission), not the caller's
+          # effective permission set, so write/delete gating reads the legacy
+          # per-user RBAC list here. Replace with the V2 field once the
+          # backend adds it (FR-2619 follow-up).
+          legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {
+            id
+            permissions
           }
-          ownership {
-            projectId
-            project {
-              basicInfo {
-                name
+          vfolderNode: vfolderV2(vfolderId: $vfolderId) {
+            unmanagedPath
+            host
+            id
+            metadata {
+              name
+            }
+            ownership {
+              projectId
+              project {
+                basicInfo {
+                  name
+                }
               }
             }
+            ...FolderExplorerHeaderV2Fragment
+            ...VFolderNodeDescriptionV2Fragment
           }
-          ...FolderExplorerHeaderV2Fragment
-          ...VFolderNodeDescriptionV2Fragment
         }
-      }
-    `,
-    { vfolderId: vfolderUuid },
-    {
-      // Only fetch when both deferredOpen and modalProps.open are true to prevent unnecessary requests during React transitions
-      fetchPolicy:
-        deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
-    },
-  );
+      `,
+      {
+        vfolderId: vfolderUuid,
+        vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderID),
+      },
+      {
+        // Only fetch when both deferredOpen and modalProps.open are true to prevent unnecessary requests during React transitions
+        fetchPolicy:
+          deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
+      },
+    );
 
   // Permission calculation follows the folder's own ownership project when
   // the folder is project-owned (what the user can do must not depend on the
@@ -256,25 +317,25 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   );
   // `upload-file` on the storage host gates the actual upload pipeline:
   // upload buttons (file/folder), drag-drop, and the in-app text editor save
-  // (which overwrites the file via the upload API). mkdir / create-file /
-  // rename are kept enabled — there is no corresponding host-level
-  // capability for them today, and FR-2619 will revisit the effective
-  // permission set.
-  const hasUploadContentPermission = _.includes(
+  // (which overwrites the file via the upload API).
+  const hasUploadHostPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
     'upload-file',
   );
-  // TODO(needs-backend): write/delete capability should be derived from the
-  // caller's *effective* permission set on this entity (e.g.,
-  // `delete_content`, `write_content`), not from the folder's mount
-  // permission. The V2 schema currently exposes only the mount permission via
-  // `accessControl.permission` (`READ_ONLY` / `READ_WRITE` / `RW_DELETE`),
-  // which is what the folder is mounted *as* into a session — not what the
-  // caller is allowed to do on the folder itself. Until the backend exposes a
-  // proper effective permission set, allow all callers and let the server
-  // enforce authorization. See FR-2619 follow-up.
-  const hasDeleteContentPermission = true;
-  const hasWriteContentPermission = true;
+  // Share-permission gating (FR-3800) reads the legacy per-user RBAC list —
+  // see the TODO(needs-backend) on the query above.
+  const hasDeleteContentPermission = _.includes(
+    legacyVFolderNode?.permissions,
+    'delete_content',
+  );
+  const hasWriteContentPermission = _.includes(
+    legacyVFolderNode?.permissions,
+    'write_content',
+  );
+  // Upload/editor write through the upload API: both the host capability and
+  // the folder-level write permission are required.
+  const hasUploadContentPermission =
+    hasUploadHostPermission && hasWriteContentPermission;
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
@@ -342,7 +403,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       enableEdit={hasUploadContentPermission}
       // NOTE: the legacy `tableProps.scroll` ({x:'max-content'} at `xl`,
       // plus a `y: calc(100vh - 400px)` body cap below it) is gone on purpose:
-      // `BAITableAstryx` accepts and ignores `scroll` (Astryx's own scroll
+      // `BAITable` accepts and ignores `scroll` (Astryx's own scroll
       // wrapper owns horizontal overflow), and the dialog body is the scroll
       // container for the vertical axis now.
       style={{
@@ -430,8 +491,10 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       // `Layout` restores the legacy proportion: the dialog cap minus the
       // dialog's own block padding, which the theme publishes as
       // `--astryx-dialog-padding-block-*` on `.astryx-dialog`.
-      style={{
-        minHeight: `calc(${EXPLORER_MAX_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`,
+      styles={{
+        container: {
+          minHeight: `calc(${EXPLORER_MAX_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`,
+        },
       }}
       headerContent={
         vfolderNode ? (
@@ -453,6 +516,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
       }
       closeLabel={t('button.Close')}
       bodyRef={bodyRef}
+      maskClosable={false}
+      footer={null}
       isOpen={modalProps.open}
       onOpenChange={(next) => {
         if (!next) onRequestClose();
@@ -511,15 +576,13 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
 
             {vfolderNode && !hasNoPermissions ? (
               xl ? (
-                // antd `Splitter` → Astryx `useResizable` + `ResizeHandle`:
-                // explorer fills the remaining space, the info panel keeps a
-                // drag-resizable width (default 45%, min 550px). `gap` restores
-                // the legacy `Splitter style={{ gap: token.size }}` — 16px of
-                // total separation between the two panes, which the conversion
-                // dropped (the 1px handle sat flush against both). The flex gap
-                // applies on BOTH sides of the handle, so half the legacy value
-                // (`--spacing-2`) reproduces it: 8 + 1 + 8 = 17px.
+                // antd `Splitter` owned containment — panel sizes always summed
+                // to the container and each panel clipped. `useResizable` only
+                // yields a number, so the panes carry it themselves (FR-3590).
+                // `gap` applies on BOTH sides of the handle, so half the legacy
+                // `Splitter style={{ gap: token.size }}` reproduces 8 + 1 + 8.
                 <div
+                  ref={observeSplitRow}
                   style={{
                     display: 'flex',
                     flex: 1,
@@ -527,7 +590,13 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                     gap: 'var(--spacing-2)',
                   }}
                 >
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      flex: 1,
+                      minWidth: EXPLORER_MIN_WIDTH,
+                      overflow: 'hidden',
+                    }}
+                  >
                     {fileExplorerElement}
                   </div>
                   {/* The handle's own `height: 100%` resolves to `auto` here —
@@ -540,18 +609,47 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                       direction="horizontal"
                       isReversed
                       hasDivider
+                      // `center` also routes the grab zone away from
+                      // `hitAreaOffsetX`, whose block-axis `-50%` shifts a
+                      // `top/bottom: 0` box off the divider (FR-3591).
+                      pillPlacement="center"
                       label={t('explorer.Metadata')}
                       resizable={infoPanel.props}
                     />
                   </div>
-                  <div style={{ width: infoPanel.size, flexShrink: 0 }}>
+                  <div
+                    style={{
+                      width: infoPanel.size,
+                      flexShrink: 1,
+                      minWidth: 0,
+                      overflow: 'hidden',
+                    }}
+                  >
                     {vFolderInfoPanelElement}
                   </div>
                 </div>
               ) : (
                 <VStack align="stretch" gap={6}>
                   {fileExplorerElement}
-                  {vFolderInfoPanelElement}
+                  <ResizeHandle
+                    direction="vertical"
+                    isReversed
+                    hasDivider
+                    // `center` routes the grab zone away from `hitAreaOffsetY`,
+                    // the inline-axis mirror of the FR-3591 offset bug.
+                    pillPlacement="center"
+                    label={t('explorer.Metadata')}
+                    resizable={stackedInfoPanel.props}
+                  />
+                  <div
+                    style={{
+                      height: stackedInfoPanel.size,
+                      flexShrink: 0,
+                      overflow: 'auto',
+                    }}
+                  >
+                    {vFolderInfoPanelElement}
+                  </div>
                 </VStack>
               )
             ) : null}

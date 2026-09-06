@@ -15,12 +15,12 @@ import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
-import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
+import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   type BAIColumnType,
   BAIFetchKeyButton,
@@ -28,7 +28,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITag,
   BAIUnmountAfterClose,
   BAIId,
@@ -389,13 +389,16 @@ const DeploymentRevisionHistoryTab: React.FC<
         const recordLocalId = toLocalId(record.id);
         const isCurrent = recordLocalId === currentRevisionId;
         const isDeploying = recordLocalId === deployingRevisionId;
+        // The reason carries the disabled state — every branch that blocks
+        // Apply names itself, so none of them can go silent.
         const deployDisabledReason =
-          isCurrent || isDeploying ? t('deployment.ApplyDisabled') : undefined;
-        const isDeployDisabled =
-          isCurrent ||
-          isDeploying ||
-          isDeploymentInStoppedCategory(deploymentStatus) ||
-          rollingBackRevisionId === record.id;
+          isCurrent || isDeploying
+            ? t('deployment.ApplyDisabled')
+            : isDeploymentInStoppedCategory(deploymentStatus)
+              ? t('deployment.ApplyDisabledDeploymentStopped')
+              : rollingBackRevisionId === record.id
+                ? t('deployment.ApplyDisabledWhileRollingBack')
+                : undefined;
         return (
           <BAINameActionCell
             title={
@@ -440,6 +443,10 @@ const DeploymentRevisionHistoryTab: React.FC<
               </BAIFlex>
             }
             showActions="always"
+            // Apply must stay a visible button: `moreMenuDisabled` below would
+            // otherwise lock the trigger on a stopped deployment and put its
+            // reason out of reach in the narrow render.
+            minVisibleActions={1}
             // TODO: "AddNewRevisionFromThis" is currently the only menu item.
             // The entire More button is disabled when stopped rather than
             // per-item. When more menu items are added, switch to per-item
@@ -450,8 +457,9 @@ const DeploymentRevisionHistoryTab: React.FC<
                 key: 'deploy',
                 title: t('deployment.Apply'),
                 icon: <CirclePlay size="1em" />,
-                disabled: isDeployDisabled,
-                disabledReason: deployDisabledReason,
+                disabled: deployDisabledReason
+                  ? { reason: deployDisabledReason }
+                  : false,
                 popConfirm: {
                   title: t('deployment.ApplyRevision'),
                   description: t('deployment.ApplyConfirm', {
@@ -641,7 +649,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                     of the WRAPPER and left it with a full pill next to the
                     menu's `0 8px 8px 0`. The render prop hands the trigger
                     wiring to the button itself and emits no wrapper. */}
-                <BAIPopconfirmAstryx
+                <BAIPopconfirm
                   title={t('deployment.ApplyRevision')}
                   description={t('deployment.ApplyConfirm', {
                     revisionNumber: drawerRevision.frgmt.revisionNumber,
@@ -668,7 +676,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                       }
                     />
                   )}
-                </BAIPopconfirmAstryx>
+                </BAIPopconfirm>
                 {/* TODO: "AddNewRevisionFromThis" is the only menu item.
                     Disable the entire button when stopped. When more items
                     are added, disable per-item instead. */}
@@ -725,7 +733,8 @@ const DeploymentRevisionHistoryTab: React.FC<
           onChange={() => handleRefresh()}
         />
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         dataSource={revisions}
         columns={columns}

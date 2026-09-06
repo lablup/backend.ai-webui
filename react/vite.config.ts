@@ -1,4 +1,4 @@
-import { devReviewOverlayPlugin } from './vite-plugins/reviewOverlay';
+import { devReviewOverlayPlugin } from './vite-plugins/review-overlay/index';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
@@ -930,7 +930,6 @@ export default defineConfig(({ command, mode }) => {
           './src/routes.tsx',
           './src/components/BAIErrorBoundary.tsx',
           './src/components/ErrorBoundaryWithNullFallback.tsx',
-          './src/components/FlexActivityIndicator.tsx',
           './src/components/LocationStateBreadCrumb.tsx',
           './src/components/LoginView.tsx',
           './src/components/MainLayout/MainLayout.tsx',
@@ -970,11 +969,11 @@ export default defineConfig(({ command, mode }) => {
       projectRootStaticPlugin(devCspHeaders),
       cspBundleNoncePlugin(),
       devAssetsReloadPlugin(),
-      // FR-3309: dev-only (apply: 'serve') review overlay injection. Off by
-      // default — opt in with VITE_DEV_REVIEW_OVERLAY=1; otherwise the plugin
-      // is inert (no middleware, no script injection). Must come after
+      // FR-3811: dev-only (apply: 'serve') review overlay injection. On by
+      // default — opt out with VITE_DEV_REVIEW_OVERLAY=0, which leaves the
+      // plugin inert (no middleware, no script injection). Must come after
       // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
-      // transforms (see reviewOverlay.ts).
+      // transforms (see review-overlay/index.ts).
       devReviewOverlayPlugin(),
 
       // StyleX compiler for Astryx `xstyle` authoring (to-astryx ticket 01),
@@ -1117,7 +1116,10 @@ export default defineConfig(({ command, mode }) => {
           skipWaiting: true,
           clientsClaim: true,
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-          globIgnores: ['**/*.map', '**/asset-manifest.json'],
+          // `index.html` stays OUT of the precache: precache routes are
+          // cache-first and answer `/` via Workbox's `directoryIndex` default,
+          // which served the previous deploy's shell on the first load.
+          globIgnores: ['**/*.map', '**/asset-manifest.json', 'index.html'],
           // vite-plugin-pwa defaults navigateFallback to 'index.html', which
           // makes the SW serve cached HTML for ANY GET navigation that doesn't
           // match a precached asset — including OIDC/SAML callbacks like

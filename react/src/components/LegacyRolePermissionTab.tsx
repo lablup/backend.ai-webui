@@ -24,7 +24,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   toLocalId,
@@ -399,7 +399,7 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
         rowKey="id"
         dataSource={permissions}
         loading={isLoading}
@@ -512,7 +512,7 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
                 {
                   key: deletingPermission.id,
                   label: (
-                    <BAITableAstryx
+                    <BAITable
                       rowKey="id"
                       size="small"
                       resizable={false}

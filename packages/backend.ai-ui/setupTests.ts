@@ -32,11 +32,12 @@ import { vi } from 'vitest';
 
 // Polyfill the native <dialog> API for jsdom (to-astryx phase 3 / ticket B).
 //
-// Astryx `Dialog` — now the surface under `BAIModal`, `BAIDeleteConfirmModal`
-// and the app-shim's imperative modals — renders a real <dialog> and calls
-// `showModal()` / `close()` in an effect. jsdom implements the element but
-// none of its methods, so every test that opens a modal throws
-// "dialog.showModal is not a function" during the passive-effect commit.
+// Astryx `Dialog` renders a real <dialog> and calls `showModal()` / `close()`
+// in an effect; jsdom implements the element but none of its methods, so such a
+// test throws "dialog.showModal is not a function" during the passive-effect
+// commit. Since FR-3578 the modal family goes through `BAIDialogPortal`
+// instead, so this now covers only surfaces still on the native element — the
+// lab `Drawer` and a direct `Dialog` render.
 //
 // The polyfill reproduces the observable contract the component depends on:
 // `open` flips, `close` is dispatched, and `returnValue` is recorded. The

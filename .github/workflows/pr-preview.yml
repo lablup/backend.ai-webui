@@ -1,0 +1,126 @@
+# Build the per-PR Storybook preview and the data behind the PR Analysis Report.
+#
+# This is the UNPRIVILEGED half. It runs on `pull_request`, so on a fork PR it
+# gets a read-only token and can neither push to gh-pages nor comment — which is
+# exactly why it does neither. It only produces artifacts; `pr-preview-publish.yml`
+# picks them up from the trusted `workflow_run` context and does the writing.
+#
+# Gated on `packages/backend.ai-ui/**` at event level: measured over the last 120
+# PRs, 35 (29%) touch it, so the other ~71% never start a runner.
+
+name: PR Preview
+
+on:
+  pull_request:
+    paths:
+      - packages/backend.ai-ui/**
+      - .github/workflows/pr-preview.yml
+      - .github/scripts/pr-preview/**
+
+permissions:
+  contents: read
+
+concurrency:
+  # Keyed by PR number, not branch name: branch names are unique only within a
+  # repository, so two fork PRs both using e.g. `patch-1` would share a group and
+  # cancel each other's runs.
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Enough history for a three-dot diff against the base in the common
+          # case; analyze-pr.mjs deepens on its own when the base has moved past
+          # this window.
+          fetch-depth: 50
+
+      - name: Fetch base branch
+        run: git fetch --depth=50 origin "+refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}"
+
+      - uses: ./.github/actions/setup-node-pnpm
+
+      - name: Build Storybook
+        working-directory: ./packages/backend.ai-ui
+        run: pnpm run build-storybook
+
+      # Only the artifact NAME is derived here, and only from the head SHA. The
+      # PR number and the preview URL are deliberately NOT passed downstream:
+      # this workflow runs from the PR's own head, so anything it writes is
+      # attacker-controlled on a fork PR. pr-preview-publish.yml re-derives both
+      # from the trusted `workflow_run` payload instead — see its header.
+      - name: Compute the artifact suffix
+        id: urls
+        run: echo "short_hash=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+      - name: Analyze changed components
+        run: |
+          node .github/scripts/pr-preview/analyze-pr.mjs \
+            --base "origin/${{ github.base_ref }}" \
+            --head HEAD \
+            --storybook-index packages/backend.ai-ui/storybook-static/index.json \
+            --output analysis.json
+
+      - name: Build and measure the package bundle (head)
+        run: |
+          pnpm --filter backend.ai-ui build
+          node .github/scripts/pr-preview/measure-dist.mjs \
+            --dist packages/backend.ai-ui/dist \
+            --output bundle-head.json
+
+      # Rebuild the same package from the base's sources to get a comparable
+      # number. Only `src/` is swapped, so node_modules stays put — which is also
+      # why the delta is abandoned outright when the PR touches anything else
+      # that feeds the build. Swapping only `src/` under a changed vite config or
+      # a changed dependency set would build the "base" with the HEAD's bundling,
+      # and report a delta (often a reassuring zero) that describes no real
+      # comparison. Runs LAST, and best-effort: a failure costs the delta column
+      # and nothing else.
+      - name: Build and measure the package bundle (base)
+        id: bundle-base
+        continue-on-error: true
+        run: |
+          BUILD_INPUTS=(
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+            package.json
+            packages/backend.ai-ui/package.json
+            packages/backend.ai-ui/vite.config.ts
+            packages/backend.ai-ui/tsconfig.json
+            relay.config.js
+          )
+          if ! git diff --quiet "origin/${{ github.base_ref }}...HEAD" -- "${BUILD_INPUTS[@]}"; then
+            echo "A build input outside src/ changed — skipping the base build (not comparable)."
+            git diff --name-only "origin/${{ github.base_ref }}...HEAD" -- "${BUILD_INPUTS[@]}"
+            exit 0
+          fi
+          rm -rf packages/backend.ai-ui/src
+          git checkout "origin/${{ github.base_ref }}" -- packages/backend.ai-ui/src
+          pnpm --filter backend.ai-ui build
+          node .github/scripts/pr-preview/measure-dist.mjs \
+            --dist packages/backend.ai-ui/dist \
+            --output bundle-base.json
+
+      - name: Upload Storybook artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-preview-storybook-${{ steps.urls.outputs.short_hash }}
+          path: packages/backend.ai-ui/storybook-static/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload analysis artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: pr-preview-analysis
+          path: |
+            analysis.json
+            bundle-head.json
+            bundle-base.json
+          if-no-files-found: error
+          retention-days: 7

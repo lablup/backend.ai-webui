@@ -30,6 +30,9 @@ vi.mock('../../helper', () => ({
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (k: string) => k }),
+  // BUI's locale module (pulled in via the backend.ai-ui barrel) initializes
+  // its own i18next instance at import time.
+  initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
 vi.mock('../../components/BAINodeNotificationItem', () => ({

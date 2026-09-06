@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=./schema.json
+# The Strawberry V2 shape of `ScalingGroup`, split into nested config objects.
+type: ResourceGroup
+concept: resource-group
+docs: admin_menu#resource-group
+meaning: One resource group, read through the V2 API that groups its settings into nested config objects.
+fields:
+  name:
+    meaning: The resource group's name, which is what the launcher's Resource Group selector shows.
+    docs: admin_menu#resource-group
+  status:
+    meaning: Whether the group takes new sessions and whether every project may use it.
+    docs: admin_menu#resource-group
+  scheduler:
+    label: Scheduler
+    meaning: The scheduling policy and its options for this group's pending queue.
+    concept: fair-share-scheduler
+    docs: admin_menu#fair-share-scheduler
+  network:
+    label: Network
+    meaning: The group's App Proxy and host-network settings.
+    concept: app-proxy
+    docs: deployment#accessing-your-deployment
+  fairShareSpec:
+    label: Fair Share
+    meaning: The fair-share weights this group's scheduler divides capacity by.
+    concept: fair-share
+    docs: admin_menu#resource-group-fair-share-settings
+  resourceInfo:
+    label: Resources
+    meaning: The total and allocated resource slots across the group's agents.
+    docs: agent_summary#columns
+  defaultSessionOptions:
+    label: Default Session Options
+    meaning: The launcher defaults a session created in this group starts from.
+    docs: sessions_all#start-a-new-session
+  defaultDeploymentOptions:
+    label: Default Deployment Options
+    meaning: The defaults a deployment created in this group starts from.
+    docs: deployment#creating-a-deployment

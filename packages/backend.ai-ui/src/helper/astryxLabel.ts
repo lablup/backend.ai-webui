@@ -16,6 +16,10 @@
  A node built only from non-textual leaves (an icon, an `<img>`) yields `''`,
  which callers must treat as "no name available" — either `isLabelHidden` plus
  an `endContent` render (Token/Badge), or an explicit translated fallback.
+
+ The walk also cannot see PROP-carried text (`Badge label=`, `BAIDoubleTag
+ values=`) — such call sites name the text explicitly instead (`title` on
+ `BAISelect`'s options path, `label` on its children carrier — FR-3544).
 */
 import React from 'react';
 import type { ReactNode } from 'react';

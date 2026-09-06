@@ -13,7 +13,7 @@ import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
 import {
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   type BAITableProps,
   BAIUnmountAfterClose,
   BAIText,
@@ -41,7 +41,7 @@ export interface KeypairResourcePolicyStoragePermissionTableProps extends BAITab
   /** Fragment for the storage host — its `id` is read internally. */
   storageVolumeFrgmt: KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt$key;
   /**
-   * Policy names picked via `BAIAdminKeypairResourcePolicySelectAstryx`
+   * Policy names picked via `BAIAdminKeypairResourcePolicySelect`
    * (`multiple`).
    * Empty array keeps the query skipped. Passed as `filter.name.in` to
    * `adminKeypairResourcePoliciesV2` and as `name` to
@@ -199,7 +199,8 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         size="small"
         {...tableProps}
         rowKey="id"

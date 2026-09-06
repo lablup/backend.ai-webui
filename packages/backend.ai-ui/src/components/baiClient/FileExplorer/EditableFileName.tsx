@@ -40,13 +40,13 @@ import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import { theme } from '../../../theme-shim';
 import BAIFlex from '../../BAIFlex';
 import BAILink from '../../BAILink';
+import BAIText from '../../BAIText';
 import { AstryxFormTextInput } from '../../astryxFormControls';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import './EditableFileName.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
 import { useMutation } from '@tanstack/react-query';
 import * as _ from 'lodash-es';
 import { File, Folder, PencilIcon } from 'lucide-react';
@@ -156,35 +156,51 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
           onClick={onClick}
         >
           {fileInfo?.type === 'DIRECTORY' ? (
-            <BAILink
-              type="hover"
-              style={{
-                maxWidth: 180,
-                color: isPendingRenamingAndRefreshing
-                  ? token.colorTextTertiary
-                  : undefined,
-              }}
-              ellipsis
-              title={fileInfo.name}
+            // The icon sits beside the link rather than inside it: as inline
+            // siblings they break apart onto two lines once the cell narrows.
+            // `flex` overrides BAIFlex's base `flexShrink: 0`, without which
+            // this box stays at max-content and the name clips with no ellipsis.
+            <BAIFlex
+              gap="xs"
+              style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
             >
-              <Folder style={{ color: token.colorLink }} size="1em" /> &nbsp;
-              {displayName}
-            </BAILink>
-          ) : (
-            <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-              <File size="1em" />
-              <Text
-                maxLines={1}
-                hasTruncateTooltip
+              <Folder
+                style={{ color: token.colorLink, flexShrink: 0 }}
+                size="1em"
+              />
+              <BAILink
+                type="hover"
                 style={{
-                  maxWidth: 200,
+                  minWidth: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  color: isPendingRenamingAndRefreshing
+                    ? token.colorTextTertiary
+                    : undefined,
+                }}
+                title={fileInfo.name}
+              >
+                {displayName}
+              </BAILink>
+            </BAIFlex>
+          ) : (
+            <BAIFlex
+              gap="xs"
+              style={{ display: 'inline-flex', flex: '0 1 auto', minWidth: 0 }}
+            >
+              <File size="1em" style={{ flexShrink: 0 }} />
+              <BAIText
+                ellipsis={{ tooltip: true }}
+                style={{
+                  minWidth: 0,
                   color: isPendingRenamingAndRefreshing
                     ? token.colorTextTertiary
                     : undefined,
                 }}
               >
                 {displayName}
-              </Text>
+              </BAIText>
             </BAIFlex>
           )}
           {isEditable ? (

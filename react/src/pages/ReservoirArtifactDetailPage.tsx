@@ -20,10 +20,7 @@ import { theme } from '../theme-shim';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Link } from '@astryxdesign/core/Link';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIArtifactRevisionDeleteButton,
@@ -38,6 +35,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIImportArtifactModal,
   BAIImportArtifactModalArtifactRevisionFragmentKey,
+  BAIMetadataList,
   BAIPullingArtifactRevisionAlert,
   BAIText,
   convertToDecimalUnit,
@@ -369,7 +367,7 @@ const ReservoirArtifactDetailPage = () => {
             Last updated and Description — move OUT of the 2-column list into
             their own single-column list below it. That keeps them full width
             without a span mechanism, and keeps the short fields paired. */}
-        <MetadataList columns={2}>
+        <BAIMetadataList columns={2}>
           <MetadataListItem label={t('reservoirPage.Name')}>
             {artifact?.name}
           </MetadataListItem>
@@ -404,8 +402,8 @@ const ReservoirArtifactDetailPage = () => {
                 : 'N/A'}
             </Text>
           </MetadataListItem>
-        </MetadataList>
-        <MetadataList columns="single">
+        </BAIMetadataList>
+        <BAIMetadataList columns="single">
           <MetadataListItem label={t('reservoirPage.LastUpdated')}>
             {artifact?.updatedAt
               ? dayjs(artifact?.updatedAt).format('lll')
@@ -421,7 +419,7 @@ const ReservoirArtifactDetailPage = () => {
               'N/A'
             )}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
       </BAICard>
 
       <BAICard

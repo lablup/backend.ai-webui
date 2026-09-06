@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8273fa80a0a9d04479459a298281cbfc>>
+ * @generated SignedSource<<288387103880e1c2771071943f67624f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -30,6 +30,10 @@ export type PrometheusQueryPresetEditorModalUpdateMutation$variables = {
 export type PrometheusQueryPresetEditorModalUpdateMutation$data = {
   readonly adminModifyPrometheusQueryPreset: {
     readonly preset: {
+      readonly category: {
+        readonly id: string;
+        readonly name: string;
+      } | null | undefined;
       readonly categoryId: string | null | undefined;
       readonly description: string | null | undefined;
       readonly id: string;
@@ -42,6 +46,7 @@ export type PrometheusQueryPresetEditorModalUpdateMutation$data = {
       readonly queryTemplate: string;
       readonly rank: number;
       readonly timeWindow: string | null | undefined;
+      readonly updatedAt: string;
     };
   } | null | undefined;
 };
@@ -63,7 +68,21 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v3 = [
   {
     "alias": null,
     "args": [
@@ -91,20 +110,8 @@ v1 = [
         "name": "preset",
         "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
+          (v1/*: any*/),
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -171,6 +178,26 @@ v1 = [
               }
             ],
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "updatedAt",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "QueryPresetCategory",
+            "kind": "LinkedField",
+            "name": "category",
+            "plural": false,
+            "selections": [
+              (v1/*: any*/),
+              (v2/*: any*/)
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -185,7 +212,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "PrometheusQueryPresetEditorModalUpdateMutation",
-    "selections": (v1/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -194,19 +221,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "PrometheusQueryPresetEditorModalUpdateMutation",
-    "selections": (v1/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "1c8c8b3b74fc622ca8886afd8905d5bd",
+    "cacheID": "d6e16fb460c6f3c2cb06714955c53308",
     "id": null,
     "metadata": {},
     "name": "PrometheusQueryPresetEditorModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation PrometheusQueryPresetEditorModalUpdateMutation(\n  $id: ID!\n  $input: ModifyQueryDefinitionInput!\n) {\n  adminModifyPrometheusQueryPreset(id: $id, input: $input) {\n    preset {\n      id\n      name\n      description\n      rank\n      categoryId\n      metricName\n      queryTemplate\n      timeWindow\n      options {\n        filterLabels\n        groupLabels\n      }\n    }\n  }\n}\n"
+    "text": "mutation PrometheusQueryPresetEditorModalUpdateMutation(\n  $id: ID!\n  $input: ModifyQueryDefinitionInput!\n) {\n  adminModifyPrometheusQueryPreset(id: $id, input: $input) {\n    preset {\n      id\n      name\n      description\n      rank\n      categoryId\n      metricName\n      queryTemplate\n      timeWindow\n      options {\n        filterLabels\n        groupLabels\n      }\n      updatedAt\n      category @since(version: \"26.4.3\") {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "da8459808883cdd50d75428c02c26b59";
+(node as any).hash = "dd0cf0fcdb7c8df0b805cbc366c84447";
 
 export default node;

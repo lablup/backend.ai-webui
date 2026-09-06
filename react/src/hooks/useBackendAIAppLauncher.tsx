@@ -200,7 +200,7 @@ export const useBackendAIAppLauncher = (
     const response = await sendRequest(rqst);
     if (response === undefined) {
       throw new AppLaunchError(
-        'Proxy configurator is not responding.',
+        t('session.launcher.ProxyConfiguratorNotResponding'),
         'configuring',
       );
     }
@@ -243,8 +243,11 @@ export const useBackendAIAppLauncher = (
       );
 
       if (tokenResponse === undefined) {
+        // The manager answered but without a token payload. This is NOT the
+        // proxy configurator (v1 `/conf`) case — the AppProxy coordinator has
+        // not been contacted at this point in the flow (FR-3478).
         throw new AppLaunchError(
-          'Proxy configurator is not responding.',
+          t('session.appLauncher.FailedToStartAppService'),
           'configuring',
         );
       }
@@ -267,15 +270,22 @@ export const useBackendAIAppLauncher = (
         throw new AppLaunchError(
           t('session.appLauncher.SessionNotAccessible'),
           'configuring',
-          err instanceof Error ? err : undefined,
+          err,
         );
       }
+      // The Backend.AI client rejects with a plain object
+      // (`{ statusCode, title, msg, error_code, ... }`), never an Error, so
+      // resolve the manager's own message instead of pattern-matching on
+      // `instanceof Error` — that check made every start-service failure
+      // surface as "Proxy configurator is not responding." (FR-3478).
       throw new AppLaunchError(
-        err instanceof Error
-          ? err.message
-          : 'Proxy configurator is not responding.',
+        resolveStartServiceErrorMessage(
+          err,
+          getErrorMessage,
+          t('session.appLauncher.FailedToStartAppService'),
+        ),
         'configuring',
-        err instanceof Error ? err : undefined,
+        err,
       );
     }
   };
@@ -422,13 +432,10 @@ export const useBackendAIAppLauncher = (
     try {
       return await sendRequest(rqst_proxy);
     } catch (err) {
-      // Wrap error in AppLaunchError with proper stage
       throw new AppLaunchError(
-        err instanceof Error && err.message
-          ? err.message
-          : 'Failed to connect to coordinator',
+        getErrorMessage(err, 'Failed to connect to coordinator'),
         'requesting',
-        err instanceof Error ? err : undefined,
+        err,
       );
     }
   };
@@ -802,7 +809,7 @@ export const useBackendAIAppLauncher = (
           rejected: (error: any) => {
             return {
               description: getErrorMessage(error),
-              extraDescription: error?.stack || JSON.stringify(error, null, 2),
+              extraDescription: buildAppLaunchFailureExtraDescription(error),
               duration: 0, // Persistent error notification
             };
           },
@@ -1084,30 +1091,49 @@ export const useBackendAIAppLauncher = (
  * the response, so the user-facing copy covers both.
  *
  * Called exclusively from `_resolveV2ProxyUri`'s catch (the `startService`
- * call site). At that endpoint any 404 is by definition "session lookup
- * failed" — the manager produces a `SessionNotFound` exception there with
+ * call site). The manager produces a `SessionNotFound` exception there with
  * varying English titles (`"No such session."`, `"Session ... not found"`,
- * etc.). Keying off `statusCode === 404` alone is therefore the safest
- * heuristic: it is robust against title wording changes, against
- * locale-translated manager responses, and against `_wrapWithPromise`
+ * etc.), so branching on title wording is fragile — it breaks on wording
+ * changes, locale-translated manager responses, and `_wrapWithPromise`
  * reformatting (it concatenates `statusText` into `title`, which is empty
  * on some manager versions).
+ *
+ * A bare `statusCode === 404` is not enough either: start-service also
+ * returns 404 for a missing *app* (`error_code: "backendai_read_not-found"`,
+ * e.g. the app name is not in the session's service_ports), which must NOT
+ * be presented as "session not accessible". Manager ≥24.09 sends a stable
+ * `error_code` ("{domain}_{operation}_{detail}"), so when one is present we
+ * exclude that one known app-not-found code; when absent (older managers)
+ * we keep the 404-only heuristic from FR-2586.
  */
-function isSessionNotFoundError(err: unknown): boolean {
+export function isSessionNotFoundError(err: unknown): boolean {
   if (!err || typeof err !== 'object') return false;
-  const e = err as { statusCode?: unknown };
-  return e.statusCode === 404;
+  const e = err as { statusCode?: unknown; error_code?: unknown };
+  if (e.statusCode !== 404) return false;
+  if (typeof e.error_code === 'string') {
+    // `backendai_read_not-found` means the *app* is absent from service_ports,
+    // not the session. Deliberately a denylist rather than an allowlist on the
+    // `session_` domain: this backend contract cannot be verified from the
+    // frontend, so an unrecognized code must keep the FR-2586 behaviour instead
+    // of silently dropping the localized recovery guidance.
+    return e.error_code !== 'backendai_read_not-found';
+  }
+  return true;
 }
 
 // Custom error class for app launch errors
-class AppLaunchError extends Error {
+export class AppLaunchError extends Error {
   stage: 'detecting' | 'configuring' | 'requesting' | 'connecting';
-  originalError?: Error;
+  // The Backend.AI client rejects with a plain object, not an Error
+  // (see `_wrapWithPromise` in packages/backend.ai-client), so this must be
+  // `unknown` — typing it `Error` silently dropped the manager's payload
+  // (statusCode/error_code/traceback) at wrap time (FR-3478).
+  originalError?: unknown;
 
   constructor(
     message: string,
     stage: 'detecting' | 'configuring' | 'requesting' | 'connecting',
-    originalError?: Error,
+    originalError?: unknown,
   ) {
     super(message);
     this.name = 'AppLaunchError';
@@ -1121,6 +1147,66 @@ class AppLaunchError extends Error {
 }
 
 /**
+ * Resolve the user-facing message for a start-service rejection.
+ *
+ * The client's `message` is a debug string ("server responded failure:
+ * 503 Service Unavailable - …") and its `msg` is always undefined —
+ * `_wrapWithPromise` copies it off the fetch `Response`, which never carries
+ * one. The clean manager text lives in `description` / `response.msg`, so
+ * slot it into the resolver's preferred field before delegating.
+ */
+export function resolveStartServiceErrorMessage(
+  err: unknown,
+  getErrorMessage: (error: unknown, defaultMessage?: string) => string,
+  fallback: string,
+): string {
+  if (err && typeof err === 'object' && !(err instanceof Error)) {
+    const e = err as {
+      msg?: unknown;
+      description?: unknown;
+      response?: { msg?: unknown; title?: unknown } | null;
+    };
+    const clean = [
+      e.msg,
+      e.description,
+      e.response?.msg,
+      e.response?.title,
+    ].find((v): v is string => typeof v === 'string' && v.length > 0);
+    if (clean) {
+      return getErrorMessage({ ...e, msg: clean }, fallback);
+    }
+  }
+  return getErrorMessage(err, fallback);
+}
+
+/**
+ * Diagnostic payload for the failure notification's copyable details.
+ * Prefers the original rejection (manager problem+json with
+ * statusCode/error_code/traceback) over the AppLaunchError wrapper stack.
+ * `requestParameters` is omitted: it echoes the raw start-service request
+ * body — login_session_token and possibly secret-bearing app envs/args.
+ */
+export function buildAppLaunchFailureExtraDescription(
+  error: unknown,
+): string | undefined {
+  const original =
+    error && typeof error === 'object' && 'originalError' in error
+      ? (error as { originalError?: unknown }).originalError
+      : undefined;
+  if (original instanceof Error) {
+    return original.stack;
+  }
+  if (original && typeof original === 'object') {
+    return JSON.stringify(_.omit(original, 'requestParameters'), null, 2);
+  }
+  if (original) {
+    return JSON.stringify(original, null, 2);
+  }
+  const e = error as { stack?: string } | null | undefined;
+  return e?.stack || JSON.stringify(error, null, 2);
+}
+
+/**
  * Detect the error-object shape that {@link sendRequest} resolves to for non-OK
  * HTTP responses (`{ status, statusText, body }`). It returns this object
  * instead of throwing so retry logic can inspect the status code; call sites
@@ -1128,7 +1214,7 @@ class AppLaunchError extends Error {
  * response (which carries no success payload) flows downstream as a
  * pseudo-success. (FR-3027)
  */
-function isSendRequestErrorResponse(
+export function isSendRequestErrorResponse(
   response: unknown,
 ): response is { status: number; statusText?: string; body?: unknown } {
   return (
@@ -1147,7 +1233,7 @@ function isSendRequestErrorResponse(
  * with `title: "Worker not available."`. Prefer `msg` / `title` / `message`
  * from the parsed body, then fall back to `statusText`, then the default.
  */
-function getAppProxyErrorMessage(
+export function getAppProxyErrorMessage(
   response: { status: number; statusText?: string; body?: unknown },
   fallback: string,
 ): string {
@@ -1186,11 +1272,11 @@ const PROXY_REQUEST_TIMEOUT_MS = 30000;
  * @param request - Request configuration object
  * @returns Parsed response body or error object with status
  */
-interface SendRequestConfig extends RequestInit {
+export interface SendRequestConfig extends RequestInit {
   uri: string;
   method?: string;
 }
-async function sendRequest(request: SendRequestConfig) {
+export async function sendRequest(request: SendRequestConfig) {
   try {
     if (request.method === 'GET') {
       request.body = undefined;

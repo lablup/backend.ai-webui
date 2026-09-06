@@ -8,8 +8,8 @@ import { useState } from 'react';
 /**
  * BAIComplexSelect is the Astryx-based select foundation (to-astryx ticket
  * 26) built on Astryx's `ComplexSelector`. It is the popup-body layer the
- * ~18 Relay-backed `*SelectAstryx` wrappers (`BAIUserSelectAstryx`,
- * `BAIAdminProjectSelectAstryx`, …) share — see `BAIUserSelectAstryx.stories.tsx`
+ * ~18 Relay-backed `*Select` wrappers (`BAIUserSelect`,
+ * `BAIAdminProjectSelect`, …) share — see `BAIUserSelect.stories.tsx`
  * for a Relay-connected example with infinite scroll.
  *
  * Value contract is deliberately identical to antd `labelInValue`:
@@ -34,7 +34,7 @@ const meta: Meta<typeof BAIComplexSelect> = {
 - No \`allowClear\`, controlled \`open\`, or imperative \`ref.focus()\`.
 
 ## Relay wiring
-Server-paginated consumers pass \`endReached\` (-> Relay \`loadNext\`), \`isLoadingNext\`, \`total\`, and toggle \`onOpenChange\` to flip \`fetchPolicy\` between \`network-only\`/\`store-only\`. See \`BAIUserSelectAstryx\` for the full pattern.
+Server-paginated consumers pass \`endReached\` (-> Relay \`loadNext\`), \`isLoadingNext\`, \`total\`, and toggle \`onOpenChange\` to flip \`fetchPolicy\` between \`network-only\`/\`store-only\`. See \`BAIUserSelect\` for the full pattern.
         `,
       },
     },

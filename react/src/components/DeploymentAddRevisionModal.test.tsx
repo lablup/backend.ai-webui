@@ -5,6 +5,7 @@
 import '../../__test__/matchMedia.mock.js';
 import type { DeploymentAddRevisionModalTestQuery } from '../__generated__/DeploymentAddRevisionModalTestQuery.graphql';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import { Suspense } from 'react';
@@ -141,10 +142,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
-    // The folder select crossed to Astryx (`…Astryx`, `isDisabled` instead of
-    // `disabled`); stub both names so the mock cannot silently miss the one
-    // the component renders.
-    BAIVFolderSelectAstryx: (props: any) =>
+    BAIVFolderSelect: (props: any) =>
       React.createElement(
         'button',
         {
@@ -156,7 +154,6 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         'select-model-folder',
       ),
     BAIAvailablePresetSelect: () => null,
-    BAIAvailablePresetSelectAstryx: () => null,
     BAIRuntimeVariantSelect: () => null,
   };
 });
@@ -191,6 +188,7 @@ const TestRenderer: React.FC = () => {
 
 const renderModal = (metadata: DeploymentMetadataMock) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
+  const queryClient = new QueryClient();
   environment.mock.queueOperationResolver((operation) =>
     MockPayloadGenerator.generate(operation, {
       ModelDeploymentMetadata: () => metadata,
@@ -200,13 +198,15 @@ const renderModal = (metadata: DeploymentMetadataMock) => {
     }),
   );
   render(
-    <RelayEnvironmentProvider environment={environment}>
-      <>
-        <Suspense fallback={null}>
-          <TestRenderer />
-        </Suspense>
-      </>
-    </RelayEnvironmentProvider>,
+    <QueryClientProvider client={queryClient}>
+      <RelayEnvironmentProvider environment={environment}>
+        <>
+          <Suspense fallback={null}>
+            <TestRenderer />
+          </Suspense>
+        </>
+      </RelayEnvironmentProvider>
+    </QueryClientProvider>,
   );
   return { environment };
 };

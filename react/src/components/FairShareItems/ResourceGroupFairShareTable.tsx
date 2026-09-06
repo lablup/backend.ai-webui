@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ResourceGroupOrderField } from '../../__generated__/ResourceGroupFairShareStepQuery.graphql';
 import {
   ResourceGroupFairShareTableFragment$data,
   ResourceGroupFairShareTableFragment$key,
@@ -15,7 +16,7 @@ import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
   convertToBinaryUnit,
@@ -34,6 +35,12 @@ type ResourceGroup = NonNullable<
 >;
 
 const availableResourceGroupSorterKeys = ['name'] as const;
+export const resourceGroupOrderFieldMap: Record<
+  (typeof availableResourceGroupSorterKeys)[number],
+  ResourceGroupOrderField
+> = {
+  name: 'NAME',
+};
 export const availableResourceGroupSorterValues = [
   ...availableResourceGroupSorterKeys,
   ...availableResourceGroupSorterKeys.map((key) => `-${key}` as const),
@@ -45,17 +52,11 @@ const isEnableSorter = (key: string) => {
 interface ResourceGroupFairShareTableProps extends BAITableProps<ResourceGroup> {
   resourceGroupNodeFragment: ResourceGroupFairShareTableFragment$key | null;
   onClickGroupName?: (resourceGroupName: string) => void;
-  afterUpdate?: (success: boolean) => void;
 }
 
 const ResourceGroupFairShareTable: React.FC<
   ResourceGroupFairShareTableProps
-> = ({
-  resourceGroupNodeFragment,
-  onClickGroupName,
-  afterUpdate,
-  ...tableProps
-}) => {
+> = ({ resourceGroupNodeFragment, onClickGroupName, ...tableProps }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -164,7 +165,10 @@ const ResourceGroupFairShareTable: React.FC<
                           ? `${convertToBinaryUnit(usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0, 'g', 0)?.numberFixed ?? 0} / ${convertToBinaryUnit(quantity, 'g', 0)?.numberFixed ?? 0}`
                           : `${usedEntries?.find((e) => e.resourceType === resourceType)?.quantity ?? 0} / ${quantity}`}
                       </Text>
-                      <Text color="secondary" style={{ fontSize: token.sizeXS }}>
+                      <Text
+                        color="secondary"
+                        style={{ fontSize: token.sizeXS }}
+                      >
                         {mergedResourceSlots?.[resourceType]?.display_unit}
                       </Text>
                     </BAIFlex>
@@ -215,7 +219,10 @@ const ResourceGroupFairShareTable: React.FC<
                       }}
                     />
                     {rw.weight}
-                    <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+                    <Text
+                      color="secondary"
+                      style={{ fontSize: token.fontSizeSM }}
+                    >
                       {rw.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
                     </Text>
                   </BAIFlex>
@@ -287,7 +294,8 @@ const ResourceGroupFairShareTable: React.FC<
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={'id'}
         {...tableProps}
         dataSource={resourceGroups || []}
@@ -306,10 +314,7 @@ const ResourceGroupFairShareTable: React.FC<
         <ResourceGroupFairShareSettingModal
           resourceGroupNodeFrgmt={selectedResourceGroup}
           open={!!selectedResourceGroup}
-          onRequestClose={(success) => {
-            if (success) {
-              afterUpdate?.(true);
-            }
+          onRequestClose={() => {
             setSelectedResourceGroup(null);
           }}
         />

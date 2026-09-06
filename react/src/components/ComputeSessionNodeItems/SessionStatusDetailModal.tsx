@@ -7,13 +7,16 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import SessionStatusTag from './SessionStatusTag';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import * as stylex from '@stylexjs/stylex';
-import { BAIFlex, BAIModal, type BAIModalProps, BAIText } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIMetadataList,
+  BAIModal,
+  type BAIModalProps,
+  BAIText,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleX } from 'lucide-react';
@@ -114,7 +117,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
           PILOT-DECISION: `size="small"` and `Descriptions.Item span` have no
           MetadataList equivalent (MAPPING.md §4) and are dropped; the nested
           "Predicate checks" Descriptions collapses into a labeled item. */}
-      <MetadataList columns="single">
+      <BAIMetadataList columns="single">
         <MetadataListItem label={t('session.SessionName')}>
           <BAIText copyable ellipsis={{ tooltip: true }}>
             {session.name ?? ''}
@@ -215,7 +218,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
               );
             })
           : null}
-      </MetadataList>
+      </BAIMetadataList>
     </BAIModal>
   );
 };

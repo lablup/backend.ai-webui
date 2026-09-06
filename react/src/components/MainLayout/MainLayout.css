@@ -16,9 +16,12 @@
 */
 
 /* Scrollbar styling, app-wide. */
-/* Firefox */
+/* Firefox — `scrollbar-width` only accepts auto|thin|none; the `2px` this
+   rule carried since the antd era was invalid and parse-dropped, so Firefox
+   was showing full-width default bars. `thin` is the valid analogue of the
+   2px webkit bar below. */
 * {
-  scrollbar-width: 2px;
+  scrollbar-width: thin;
   scrollbar-color: var(--color-border) var(--color-background-popover);
 }
 
@@ -35,6 +38,10 @@
 *::-webkit-scrollbar-thumb {
   background-color: var(--color-border);
 }
+
+/* The sideNav-panel overflow fix and the main column's overlay scrollbar moved
+   to BUI with the shell itself (FR-3612): see `BAIAppShell.css` and
+   `BAIOverlayScrollbar.css` in packages/backend.ai-ui. */
 
 /* Top/bottom breathing room for the stacked layout alerts. */
 .main-layout-alert-wrapper > *:first-child {

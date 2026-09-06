@@ -90,11 +90,16 @@
   border-color: var(--color-warning) !important;
 }
 
+/* Drag-handle header must beat the sticky BAIBoardItemTitle (z-index 50) in
+   the hit-test, or drags only start left of the title; stay under the active
+   outline ::before (60). It must NOT be opaque while it does: the strip
+   overlaps the first characters of the item's title, and a surface fill there
+   clipped them. */
 .bai-board-item > div:first-child > div:first-child > div:first-child {
   margin-bottom: var(--spacing-4);
-  background-color: var(--color-background-surface) !important;
+  background-color: transparent !important;
   position: absolute;
-  z-index: 1;
+  z-index: 51;
 }
 
 .bai-board-item-disable-border > div:first-child {

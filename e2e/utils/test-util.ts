@@ -140,8 +140,12 @@ export async function login(
     .catch(() => {});
   await page.getByLabel('Email or Username').fill(username);
   await page.getByLabel('Password').fill(password);
-  // Expand the endpoint section if it's not already visible
-  const endpointInput = page.getByLabel('Endpoint');
+  // Astryx Button exposes no aria-label — its accessible name is the visible text.
+  const loginButton = page.getByRole('button', { name: 'Login', exact: true });
+  // Expand the endpoint section if it's not already visible. Must be the role
+  // locator: getByLabel('Endpoint') also matches the 'Endpoint History' /
+  // 'About Endpoint' controls once the section is open.
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
@@ -161,17 +165,14 @@ export async function login(
   const maxAttempts = 3;
   const retryDelayMs = 5000;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    await page.getByLabel('Login', { exact: true }).click();
+    await loginButton.click();
     try {
       await page.waitForSelector('[data-testid="user-dropdown-button"]', {
         timeout: 30000,
       });
       return;
     } catch (error) {
-      const stillOnLoginForm = await page
-        .getByLabel('Login', { exact: true })
-        .isVisible()
-        .catch(() => false);
+      const stillOnLoginForm = await loginButton.isVisible().catch(() => false);
       if (!stillOnLoginForm) {
         // The login was accepted (the form is gone) and the app is just
         // booting slowly — keep waiting instead of re-submitting.
@@ -485,17 +486,46 @@ export async function selectPropertyFilter(
     await page.getByRole('combobox', { name: 'Value' }).click();
     await page.getByRole('option', { name: searchValue, exact: true }).click();
   }
+
+  // Committing the value hands focus back to the search bar, which reopens
+  // the field typeahead (listbox "Search results") over the first table rows
+  // and intercepts clicks on their action buttons. Close it before returning.
+  const typeahead = page.getByRole('listbox', { name: 'Search results' });
+  if (await typeahead.isVisible({ timeout: 1000 }).catch(() => false)) {
+    await searchBar.press('Escape');
+    await expect(typeahead).toBeHidden({ timeout: 5000 });
+  }
 }
 
 /**
  * Locates the table refresh button (BAIFetchKeyButton). The icon is lucide
- * `RotateCw` (no antd `.anticon-reload` class since ticket 12); the button
- * carries the native `title="Refresh"` attribute instead
- * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
- * Clicking it bumps the list's fetchKey, forcing a network-only refetch.
+ * `RotateCw` (no antd `.anticon-reload` class since ticket 12); its hover
+ * text is an Astryx tooltip (not a native `title` attribute), but the
+ * button always carries `aria-label="Refresh"`
+ * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`), so match
+ * on the accessible name instead. Clicking it bumps the list's fetchKey,
+ * forcing a network-only refetch.
  */
 export function getTableRefreshButton(page: Page) {
-  return page.locator('button[title="Refresh"]').first();
+  return page.getByRole('button', { name: 'Refresh', exact: true }).first();
+}
+
+/**
+ * A BAITable column header's accessible NAME is overridden by its sort
+ * button's aria-label ("Sort by <field>", using the raw field key rather than
+ * the display label) for sortable columns; match the header's visible TEXT
+ * instead. Anchored exactly (`^...$`) so a short label doesn't substring-match
+ * a longer header sharing a prefix. See
+ * `e2e/auto-scaling-rule-preset/preset-crud.spec.ts` (`presetColumnHeader`) /
+ * `e2e/environment/registry.spec.ts` (`registryColumnHeader`) for the
+ * original pattern (ledger id
+ * `e2e/*::sortable-column-header-accessible-name-override`).
+ */
+export function getSortableColumnHeader(scope: Page | Locator, label: string) {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return scope
+    .getByRole('columnheader')
+    .filter({ hasText: new RegExp(`^${escaped}$`) });
 }
 
 /**
@@ -553,7 +583,18 @@ export async function verifyVFolder(
 ) {
   // Use navigateTo for reliable navigation regardless of current page state
   await navigateTo(page, dataPath);
-  await page.getByRole('tab', { name: statusTab }).click();
+  // The Active/Trash tabs render a count Badge in their endContent when any
+  // folder exists, which joins the tab's accessible name ("Active 3") — so a
+  // whole-string name match fails exactly when there is something to clean
+  // up. Match on the label prefix instead (all tab sites below do the same).
+  // The Active/Trash tabs currently render as BUTTONS (not role=tab)
+  // whose accessible name is the label doubled plus the count Badge
+  // ("ActiveActive27") — accept either role, match the label prefix.
+  await page
+    .getByRole('tab', { name: new RegExp(`^${statusTab}`) })
+    .or(page.getByRole('button', { name: new RegExp(`^${statusTab}`) }))
+    .first()
+    .click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
   const row = getVFolderRow(page, folderName);
@@ -618,7 +659,11 @@ export async function moveToTrashAndVerify(
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
-  await page.getByRole('tab', { name: 'Active' }).click();
+  await page
+    .getByRole('tab', { name: /^Active/ })
+    .or(page.getByRole('button', { name: /^Active/ }))
+    .first()
+    .click();
   await selectPropertyFilter(page, 'Name', folderName);
 
   // Fail fast (with a bounded wait) if the folder is not in Active — for example,
@@ -642,11 +687,12 @@ export async function moveToTrashAndVerify(
   });
   await expect(moveToTrashButton).toBeEnabled({ timeout: 10000 });
   await moveToTrashButton.click();
-  // The "Move to trash" confirmation modal uses a standardized "Confirm"
-  // button (t('button.Confirm')) instead of "Move".
+  // The "Move to trash" confirmation is the app-shim `modal.confirm`, which
+  // renders as role="alertdialog" (not "dialog") with a "Confirm" button; the
+  // old `.ant-modal-confirm` scope matched nothing.
   const confirmButton = page
-    .locator('.ant-modal-confirm')
-    .getByRole('button', { name: 'Confirm' });
+    .getByRole('alertdialog')
+    .getByRole('button', { name: 'Confirm', exact: true });
   await expect(confirmButton).toBeVisible();
   // Wait for the DELETE /folders API response so a rejected request fails
   // here with the status/body instead of surfacing as a row-gone timeout.
@@ -681,7 +727,11 @@ export async function deleteForeverAndVerifyFromTrash(
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
-  await page.getByRole('tab', { name: 'Trash' }).click();
+  await page
+    .getByRole('tab', { name: /^Trash/ })
+    .or(page.getByRole('button', { name: /^Trash/ }))
+    .first()
+    .click();
 
   // Clear any existing filters before searching for the folder to delete
   await clearAllFilters(page);
@@ -715,7 +765,9 @@ export async function deleteForeverAndVerifyFromTrash(
   // Wait for confirmation modal to appear before interacting with it.
   // Use fill() directly (it waits for actionability) to avoid flakiness from
   // click() on a modal still playing its open animation ("element is not stable").
-  const confirmInput = page.locator('#confirmText');
+  // `BAIDeleteConfirmModal`'s typed-confirm input carries no `#confirmText`
+  // id on the Astryx build; it is the dialog's only textbox.
+  const confirmInput = page.getByRole('dialog').getByRole('textbox');
   await expect(confirmInput).toBeVisible();
   await confirmInput.fill(folderName);
   await page.getByRole('button', { name: 'Delete forever' }).click();
@@ -929,7 +981,11 @@ export async function leaveSharedFolderAndVerify(
   folderName: string,
 ) {
   await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Active' }).click();
+  await page
+    .getByRole('tab', { name: /^Active/ })
+    .or(page.getByRole('button', { name: /^Active/ }))
+    .first()
+    .click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
 
@@ -970,7 +1026,11 @@ export async function leaveSharedFolderAndVerify(
   // This mirrors how the other *AndVerify helpers force a clean reload before
   // asserting a row's disappearance.
   await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Active' }).click();
+  await page
+    .getByRole('tab', { name: /^Active/ })
+    .or(page.getByRole('button', { name: /^Active/ }))
+    .first()
+    .click();
   await clearAllFilters(page);
   await selectPropertyFilter(page, 'Name', folderName);
   await expect(
@@ -981,7 +1041,11 @@ export async function leaveSharedFolderAndVerify(
 
 export async function restoreVFolderAndVerify(page: Page, folderName: string) {
   await navigateTo(page, 'data');
-  await page.getByRole('tab', { name: 'Trash' }).click();
+  await page
+    .getByRole('tab', { name: /^Trash/ })
+    .or(page.getByRole('button', { name: /^Trash/ }))
+    .first()
+    .click();
 
   // Clear any existing filters before searching
   await clearAllFilters(page);

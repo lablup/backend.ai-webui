@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "Гүйцэтгэл амжилтгүй боллоо",
     "ErrorOccurred": "Алдаа гарлаа"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Цэвэрлэх",
+    "HexValue": "Hex утга",
+    "NoColor": "Өнгөгүй",
+    "SelectColor": "Өнгө сонгох"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
     "NoResults": "Үр дүн олдсонгүй",
-    "Search": "Хайх"
+    "SearchOptions": "Сонголтуудаас хайх"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
@@ -162,13 +169,13 @@
     "SelectDomain": "Домен сонгох"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Хэмжээ"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Автоматаар сэргээх",
-    "EveryHours": "{{count}}h",
-    "EveryMinutes": "{{count}}m",
-    "EverySeconds": "{{count}}s",
+    "EveryHours": "{{count}}ц",
+    "EveryMinutes": "{{count}}м",
+    "EverySeconds": "{{count}}с",
     "LastUpdated": "Сүүлд шинэчлэгдсэн",
     "Off": "Унтраах",
     "Refresh": "Шинэчлэх"
@@ -178,6 +185,8 @@
     "operator": {
       "After": "дараа",
       "Before": "өмнө",
+      "Contains": "агуулсан",
+      "EndsWith": "төгсдөг",
       "Equals": "тэнцүү",
       "GreaterThan": "их",
       "GreaterThanOrEqual": "их эсвэл тэнцүү",
@@ -192,15 +201,19 @@
       "In": "дотор",
       "LessThan": "бага",
       "LessThanOrEqual": "бага эсвэл тэнцүү",
+      "NotContains": "агуулаагүй",
+      "NotEndsWith": "төгсдөггүй",
       "NotEquals": "тэнцүү биш",
-      "NotIn": "дотор биш"
+      "NotIn": "дотор биш",
+      "NotStartsWith": "эхэлдэггүй",
+      "StartsWith": "эхэлдэг"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Hugging Face токеноо оруулна уу",
+    "HuggingFaceSettings": "Hugging Face тохиргоо",
+    "Token": "Токен",
+    "TokenUpdatedSuccessfully": "Токен амжилттай шинэчлэгдлээ."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Зураг сонгох"
@@ -214,6 +227,22 @@
     "Size": "Хэмжээ",
     "SuccessFullyPulled": "{{count} хувилбарыг амжилттай хийхийг хүсч байна.",
     "Version": "Таамаглал"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Кластерийн хэмжээ",
+    "Concurrency": "Зэрэгцээ сессүүд",
+    "CreatedAt": "Үүсгэсэн",
+    "DefaultForUnspecified": "Тодорхойлогдоогүй тохиолдолд анхдагч",
+    "DefaultForUnspecifiedTooltipDesc1": "Тодорхой CPU эсвэл санах ой байхгүй үед үндсэн бодлогыг тохируулна.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Хязгааргүй' нь агент зангилааны хүчин чадлыг ашиглах боломжийг олгодог бөгөөд 'Хязгаарлагдмал' нөөцийг ашиглахгүй бол нөөцийг үгүйсгэхгүй. \nИхэнх тохиолдолд 'Хязгааргүй' зөвлөж байна.",
+    "IdleTimeout": "Сул зогсолтын хугацаа",
+    "MaxConcurrentSFTPSessions": "Макс тохиролцсон SFTP хуралдаанууд",
+    "MaxPendingSessionCount": "Макс хүлээгдэж буй хуралдааны тоо",
+    "MaxPendingSessionResourceSlots": "Макс хүлээгдэж буй сешний нөөцийн слотууд",
+    "MaxSessionLifetime": "Хамгийн их сессийн ашиглалтын хугацаа",
+    "Name": "Нэр",
+    "StorageNodes": "Хадгалах цэгүүд",
+    "TotalResourceSlots": "Нөөцийн бодлого"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Түлхүүрийн хос сонгох"
@@ -231,11 +260,11 @@
     "User": "Хэрэглэгч"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Бүтэн дэлгэцээс гарах",
+    "Fullscreen": "Бүтэн дэлгэц",
+    "Maximize": "Томруулах",
+    "Minimize": "Жижигрүүлэх",
+    "Restore": "Сэргээх"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "\"{{deploymentName}}\" байршуулалтыг устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй.",
@@ -269,12 +298,19 @@
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Бусад үйлдэл"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Дараах төсөл(үүд) шинэчлэгдэх болно.",
     "ProjectResourcePolicy": "Төслийн нөөцийн бодлого",
     "UpdateMultipleProjects": "Олон төслийг шинэчлэх"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Үүсгэсэн",
+    "MaxNetworkCount": "Хамгийн их сүлжээний тоо",
+    "MaxQuotaScopeSize": "Хавтасны хамгийн их хэмжээ",
+    "MaxVFolderCount": "Хамгийн их хавтасны тоо",
+    "Name": "Нэр"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Төсөл сонгох"
@@ -322,8 +358,20 @@
     "SelectFolder": "Хавтас сонгох"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Хэрэглэх",
     "PlaceHolder": "Хайх",
-    "ResetFilter": "Шүүлтүүрийг дахин тохируулах"
+    "ResetFilter": "Шүүлтүүрийг дахин тохируулах",
+    "SearchLabel": "Шүүлтүүр хайх",
+    "operator": {
+      "Contains": "агуулсан",
+      "Equals": "тэнцүү",
+      "GreaterThan": "их",
+      "GreaterThanOrEqual": "их эсвэл тэнцүү",
+      "In": "дотор",
+      "LessThan": "бага",
+      "LessThanOrEqual": "бага эсвэл тэнцүү",
+      "NotEquals": "тэнцүү биш"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Татах",
@@ -339,6 +387,11 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Хуваарилсан / Хүссэн"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Бүлгийн өнгийг өөрчлөх",
+    "ResourceGrid": "Нөөцийн тор",
+    "UseColorN": "Өнгө {{n}} ашиглах"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Хязгааргүй"
@@ -366,30 +419,68 @@
     "UpdatedAt": "Шинэчлэгдсэн огноо"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "CreatePreset": "Урьдчилсан тохиргоо үүсгэх",
+    "AddChoice": "Сонголт нэмэх",
+    "Category": "Ангилал",
+    "CategoryPlaceholder": "жн: model_loading",
+    "CategoryTooltip": "Холбоотой параметрүүдийг хамтад нь бүлэглэхэд ашиглагдах UI ангилал.",
+    "ChoiceLabel": "Шошго",
+    "ChoiceLabelPlaceholder": "жн: FP16",
+    "ChoiceLabelRequired": "Сонголтын шошго заавал шаардлагатай.",
+    "ChoiceValue": "Утга",
+    "ChoiceValuePlaceholder": "жн: fp16",
+    "ChoiceValueRequired": "Сонголтын утга заавал шаардлагатай.",
+    "Choices": "Сонголтууд",
+    "ChoicesRequired": "Дор хаяж нэг сонголт шаардлагатай.",
+    "CreatePreset": "Параметр үүсгэх",
     "DefaultValue": "Өгөгдмөл утга",
     "DefaultValuePlaceholder": "жн: 1",
     "Description": "Тайлбар",
     "DescriptionPlaceholder": "Энэ параметр юуг удирдаж, дүгнэлтийн ажиллагаанд хэрхэн нөлөөлдгийг тайлбарлана уу.",
-    "EditPreset": "Урьдчилсан тохиргоо засах",
+    "DisplayName": "Харагдах нэр",
+    "DisplayNamePlaceholder": "жн: Tensor Parallel Size",
+    "DisplayNameTooltip": "Байршуулалтын маягтад параметрийн нэрний оронд харагдах, амархан ойлгогдох шошго.",
+    "EditPreset": "Параметр засах",
     "Key": "Түлхүүр",
     "KeyPlaceholder": "жн: TENSOR_PARALLEL_SIZE",
     "KeyRequired": "Түлхүүр заавал шаардлагатай.",
     "Name": "Нэр",
     "NamePlaceholder": "жн: Tensor Parallel Size",
     "NameRequired": "Нэр заавал бөглөх ёстой.",
-    "PresetCreated": "Ажиллах орчны урьдчилсан тохиргоо үүсгэгдлээ.",
-    "PresetTarget": "Урьдчилсан тохиргооны зорилт",
+    "NumberMax": "Дээд утга",
+    "NumberMaxMustExceedMin": "Дээд утга нь доод утгаас их байх ёстой.",
+    "NumberMin": "Доод утга",
+    "PresetCreated": "Runtime параметр үүсгэгдлээ.",
+    "PresetTarget": "Параметрийн зорилт",
     "PresetTargetArgs": "Тушаалын мөрийн аргумент",
     "PresetTargetEnv": "Орчны хувьсагч",
-    "PresetTargetRequired": "Урьдчилсан тохиргооны зорилт заавал шаардлагатай.",
-    "PresetUpdated": "Ажиллах орчны урьдчилсан тохиргоо шинэчлэгдлээ.",
+    "PresetTargetRequired": "Параметрийн зорилт заавал шаардлагатай.",
+    "PresetUpdated": "Runtime параметр шинэчлэгдлээ.",
     "Rank": "Зэрэглэл",
-    "RankTooltip": "Ижил ажиллах орчны урьдчилсан тохиргоонуудын дэлгэцийн дараалал. Бага утга эхэлж харагдана.",
+    "RankTooltip": "Ижил runtime-ийн параметрүүдийн дэлгэцийн дараалал. Бага утга эхэлж харагдана.",
     "Required": "Шаардлагатай",
-    "RequiredTooltip": "Байршуулалтын шинэчлэл (revision) бүтээх үед энэ урьдчилсан тохиргооны параметрийг заавал өгөх ёстой эсэх.",
+    "RequiredTooltip": "Байршуулалтын шинэчлэл (revision) бүтээх үед энэ параметрийг заавал өгөх ёстой эсэх.",
+    "Requirement": "Заавал эсэх",
     "RuntimeVariant": "Ажиллах орчин",
     "RuntimeVariantRequired": "Ажиллах орчин заавал шаардлагатай.",
+    "SliderMax": "Дээд утга",
+    "SliderMaxMustExceedMin": "Дээд утга нь доод утгаас их байх ёстой.",
+    "SliderMaxRequired": "Дээд утга заавал шаардлагатай.",
+    "SliderMin": "Доод утга",
+    "SliderMinRequired": "Доод утга заавал шаардлагатай.",
+    "SliderStep": "Алхам",
+    "SliderStepMustBePositive": "Алхам 0-ээс их байх ёстой.",
+    "SliderStepTooltip": "Гулсагчийн өсөх алхам. Анхны утга нь 1.",
+    "StoredValueTypeMismatch": "Энэ параметр нь {{valueType}} утгын төрлөөр хадгалагдсан бөгөөд {{uiType}} UI төрөл үүнийг харуулж чадахгүй. UI төрөл эсвэл утгын төрлийг өөрчилнө үү.",
+    "TextPlaceholderExample": "жн: Утга оруулна уу",
+    "TextPlaceholderLabel": "Оролтын түр бичвэр",
+    "UIType": "UI төрөл",
+    "UITypeCheckbox": "Чекбокс",
+    "UITypeIncompatibleWithValueType": "Сонгосон UI төрөл энэ утгын төрлийг харуулж чадахгүй.",
+    "UITypeNumberInput": "Тооны оролт",
+    "UITypeSelect": "Сонгох",
+    "UITypeSlider": "Гулсагч",
+    "UITypeTextInput": "Текст оролт",
+    "UITypeTooltip": "Энэ параметрийг байршуулалтын маягтад харуулахад ашиглагдах хяналт.",
     "ValueType": "Утгын төрөл",
     "ValueTypeBool": "Логик утга",
     "ValueTypeFlag": "Флаг",
@@ -399,21 +490,29 @@
     "ValueTypeStr": "Тэмдэгт мөр"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Ангилал",
     "CreatedAt": "Үүсгэсэн огноо",
     "DefaultValue": "Өгөгдмөл утга",
     "Description": "Тайлбар",
+    "DisplayName": "Харагдах нэр",
     "Key": "Түлхүүр",
     "ModifiedAt": "Өөрчлөлтийн огноо",
     "Name": "Нэр",
     "Optional": "Заавал биш",
-    "PresetTarget": "Урьдчилсан тохиргооны зорилт",
+    "PresetTarget": "Параметрийн зорилт",
     "PresetTargetArgs": "Тушаалын мөрийн аргумент",
     "PresetTargetEnv": "Орчны хувьсагч",
     "Rank": "Зэрэглэл",
-    "RankTooltip": "Ижил ажиллах орчны урьдчилсан тохиргоонуудын дэлгэцийн дараалал. Бага утга эхэлж харагдана.",
+    "RankTooltip": "Ижил runtime-ийн параметрүүдийн дэлгэцийн дараалал. Бага утга эхэлж харагдана.",
     "Required": "Шаардлагатай",
-    "RuntimeVariant": "Ажиллах орчин",
     "RuntimeVariantId": "Ажиллах орчны ID",
+    "RuntimeVariantWithID": "Ажиллах орчин (ID)",
+    "UIType": "UI төрөл",
+    "UITypeCheckbox": "Чекбокс",
+    "UITypeNumberInput": "Тооны оролт",
+    "UITypeSelect": "Сонгох",
+    "UITypeSlider": "Гулсагч",
+    "UITypeTextInput": "Текст оролт",
     "ValueType": "Утгын төрөл",
     "ValueTypeBool": "Логик утга",
     "ValueTypeFlag": "Флаг",
@@ -453,12 +552,13 @@
     "SelectStorageProxy": "Хадгалалтын прокси сонгох"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Дууссан цаг",
+    "Duration": "Үргэлжлэх хугацаа",
     "ErrorCode": "Алдааны код",
     "Message": "Зурвас",
     "Result": "Үр дүн",
-    "StartedAt": "Эхэлсэн цаг",
-    "Step": "Алхам"
+    "ResultMarker": "Энэ оролдлогын үр дүнгийн тэмдэглэгээ",
+    "Step": "Алхам",
+    "Time": "Цаг"
   },
   "comp:BAITable": {
     "Apply": "Хэрэглэх",
@@ -514,37 +614,36 @@
     "ArchiveDownloadStarted": "{{count}} зүйлийн таталт эхэллээ.",
     "ChangeFileExtension": "Файлын өргөтгөлийг өөрчлөх",
     "ChangeFileExtensionDesc": "Файлын өргөтгөлийг өөрчлөх нь файлыг ашиглах боломжгүй эсвэл буруу нээхэд хүргэж болзошгүй юм. \nТа үргэлжлүүлэхийг хүсч байна уу?",
-    "Controls": "Удирдлага",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Шинэ файл үүсгэх",
     "CreateANewFolder": "Шинэ хавтас үүсгэх",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Файл үүсгэх",
+    "CreateFolder": "Хавтас үүсгэх",
     "CreatedAt": "Бүтэмж дээр бүтсэн",
     "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
     "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
+    "Download": "Татаж авах",
     "DownloadSelected": "Татаж авах",
     "DownloadStarted": "Файл \"{{fileName}} нь\" Татаж авах ажил эхэллээ.",
     "DragAndDropDesc": "Байршуулахын тулд энэ газарт файлуудыг чирч, буулгана уу.",
     "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих",
     "DuplicatedFilesDesc": "Ижил нэртэй файл эсвэл хавтас аль хэдийн байна. \nТа дарж бичихийг хүсч байна уу?",
     "EditFile": "Файлыг засах",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Файл амжилттай үүслээ.",
+    "FileName": "Файлын нэр",
+    "FileNamePlaceholder": "жишээ нь model-definition.yaml",
     "FileTooLargeToEdit": "Файлын хэмжээ {{size}}MB-ээс хэтэрсэн тул хөтөч дээр засварлах боломжгүй.",
     "FolderCreatedSuccessfully": "Амжилтанд амжилттай бүтээгдсэн.",
     "FolderName": "Хөдөлгөөний нэр",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Файлын нэр 255 тэмдэгтээс хэтрэхгүй байх ёстой.",
     "MaxFolderNameLength": "Фолдерын нэр 255 тэмдэгт буюу түүнээс бага тэмдэгт байх ёстой.",
     "ModifiedAt": "Өөрчлөгдсөн",
-    "MoreOptions": "Нэмэлт сонголтууд",
     "Name": "Нэр",
     "NoUploadPermissionForHost": "Энэ хостод байршуулах эрх байхгүй байна.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Зам",
+    "PleaseEnterAFileName": "Файлын нэрийг оруулна уу.",
     "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
-    "RenameFile": "Rename",
+    "RenameFile": "Нэр өөрчлөх",
     "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",
     "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
     "Size": "Хэмжээ",
@@ -659,23 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Хасах",
     "DeselectAll": "Бүгдийг сонголтоос хасах",
     "File": "Файл",
-    "Increase": "Increase",
+    "Increase": "Нэмэх",
     "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
     "Project": "Төсөл",
-    "Select": "Select",
+    "Search": "Хайх",
+    "Select": "Сонгох",
+    "SelectPlaceholder": "{{label}} сонгоно уу",
     "TotalItems": "Нийт {{total}} зүйлүүд",
-    "Unit": "Unit",
+    "Unit": "Нэгж",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Үйлдэл",
+      "Back": "Буцах",
       "Cancel": "Цуаах",
       "Close": "Ойр дөхөм",
       "Collapse": "Сүйрэл",
-      "Confirm": "Confirm",
+      "Confirm": "Баталгаажуулах",
       "Copied": "Хуулсан",
       "Copy": "Хуулах",
       "CopyAll": "Бүгдийг хуулбарлах",

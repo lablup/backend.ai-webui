@@ -9,6 +9,7 @@ import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
 import { Badge } from '@astryxdesign/core/Badge';
+import { Divider } from '@astryxdesign/core/Divider';
 import {
   BAIDoubleTag,
   BAIFlex,
@@ -115,6 +116,127 @@ interface ImageTagsProps extends ImageTagColorProps {
   labels: Array<{ key: string; value: string }>;
   highlightKeyword?: string;
 }
+
+// One rule for "how does a parsed image tag display" — every surface that
+// shows image tags (select rows, the closed trigger's text, the launcher
+// review step) reads these facts (FR-3544).
+export interface ImageTagFact {
+  key: string;
+  value?: string;
+  isCustomized: boolean;
+  aliasedTag: string;
+  isDouble: boolean;
+  keyAlias?: string;
+}
+
+const toFact = (
+  key: string,
+  value: string | undefined,
+  isCustomized: boolean,
+  tagAlias: (tag: string) => string,
+): ImageTagFact => {
+  const aliasedTag = tagAlias(key + value);
+  const isDouble =
+    _.isEqual(aliasedTag, preserveDotStartCase(key + value)) || isCustomized;
+  return {
+    key,
+    value,
+    isCustomized,
+    aliasedTag,
+    isDouble,
+    keyAlias: isDouble ? tagAlias(key) : undefined,
+  };
+};
+
+/** Facts from `getTags`-parsed tags (servers without extended image info). */
+export const imageTagFacts = (
+  tags: Array<{ key: string; value: string }>,
+  tagAlias: (tag: string) => string,
+): Array<ImageTagFact> =>
+  _.map(tags, (tag) =>
+    toFact(tag.key, tag.value, tag.key === 'Customized', tagAlias),
+  );
+
+/** Facts from an image node's own `tags` (extended image info). */
+export const imageNodeTagFacts = (
+  tags: Array<{ key: string; value: string }> | null | undefined,
+  labels: Array<{ key: string; value: string }> | null | undefined,
+  tagAlias: (tag: string) => string,
+): Array<ImageTagFact> =>
+  _.map(tags ?? [], (tag) => {
+    const isCustomized = _.includes(tag.key, 'customized_');
+    // A customized tag's value is a hash; the readable name is in the labels.
+    const value = isCustomized
+      ? _.find(labels ?? [], { key: 'ai.backend.customized-image.name' })?.value
+      : tag.value;
+    return toFact(tag.key, value, isCustomized, tagAlias);
+  });
+
+/**
+ * Astryx's vertical `Divider` is `height: 100%`, which a centered flex row
+ * collapses to 0; these are antd's metrics, shared by every image meta row.
+ */
+export const ImageMetaDivider: React.FC = () => {
+  'use memo';
+  const { token } = theme.useToken();
+  return (
+    <Divider
+      orientation="vertical"
+      style={{
+        alignSelf: 'center',
+        height: '0.9em',
+        marginInline: token.marginXXS,
+      }}
+    />
+  );
+};
+
+interface ImageTagBadgesProps {
+  facts: Array<ImageTagFact>;
+  highlightKeyword?: string;
+}
+/** The badge row every image meta surface renders from {@link ImageTagFact}s. */
+export const ImageTagBadges: React.FC<ImageTagBadgesProps> = ({
+  facts,
+  highlightKeyword,
+}) => {
+  'use memo';
+  return (
+    <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
+      {_.map(facts, (fact) =>
+        fact.isDouble ? (
+          <BAIDoubleTag
+            key={fact.key}
+            highlightKeyword={highlightKeyword}
+            values={[
+              {
+                label: fact.keyAlias ?? '',
+                color: fact.isCustomized ? 'cyan' : 'blue',
+              },
+              {
+                label: fact.value ?? '',
+                color: fact.isCustomized ? 'cyan' : 'blue',
+              },
+            ]}
+          />
+        ) : (
+          <Badge
+            key={fact.key}
+            variant={badgeVariantForTagColor(
+              fact.isCustomized ? 'cyan' : 'blue',
+            )}
+            label={
+              <TextHighlighter keyword={highlightKeyword}>
+                {fact.aliasedTag}
+              </TextHighlighter>
+            }
+          />
+        ),
+      )}
+    </BAIFlex>
+  );
+};
+
 export const ImageTags: React.FC<ImageTagsProps> = ({
   tag,
   labels,
@@ -123,43 +245,13 @@ export const ImageTags: React.FC<ImageTagsProps> = ({
 }) => {
   labels = labels || [];
   const [, { getTags, tagAlias }] = useBackendAIImageMetaData();
-  const tags = getTags(tag, labels);
   return (
-    <React.Fragment {...props}>
-      {_.map(tags, (tag: { key: string; value: string }, index) => {
-        const isCustomized = tag.key === 'Customized';
-        const aliasedTag = tagAlias(tag.key + tag.value);
-        return _.isEqual(
-          aliasedTag,
-          preserveDotStartCase(tag.key + tag.value),
-        ) ? (
-          <BAIDoubleTag
-            key={tag.key}
-            highlightKeyword={highlightKeyword}
-            values={[
-              {
-                label: tagAlias(tag.key),
-                color: isCustomized ? 'cyan' : 'blue',
-              },
-              {
-                label: tag.value,
-                color: isCustomized ? 'cyan' : 'blue',
-              },
-            ]}
-          />
-        ) : (
-          <Badge
-            key={tag.key}
-            variant={badgeVariantForTagColor(isCustomized ? 'cyan' : 'blue')}
-            label={
-              <TextHighlighter keyword={highlightKeyword} key={index}>
-                {aliasedTag}
-              </TextHighlighter>
-            }
-          />
-        );
-      })}
-    </React.Fragment>
+    <span {...props}>
+      <ImageTagBadges
+        facts={imageTagFacts(getTags(tag, labels), tagAlias)}
+        highlightKeyword={highlightKeyword}
+      />
+    </span>
   );
 };
 

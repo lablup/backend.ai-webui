@@ -18,16 +18,14 @@ async function addComparePane(
   page: Page,
   expectedCount: number,
 ): Promise<void> {
-  // Button layout in .ant-card-head nth(1):
-  //   Single pane: nth(0)=detail-page, nth(1)=control, nth(2)=compare, nth(3)=more
-  //   Multi-pane:  nth(0)=detail-page, nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
-  // addComparePane is always called from single-pane state, so compare is at nth(2)
-  const compareButton = page
-    .locator('.ant-card-head')
-    .nth(1)
-    .getByRole('button')
-    .nth(2);
-  await compareButton.click();
+  // ChatHeader's compare action is a lucide `ArrowRightLeftIcon` IconButton
+  // whose accessible name is t('chatui.CreateCompareChat') = "Add comparison
+  // chat". addComparePane is always called from single-pane state, so this
+  // is unambiguous.
+  const compareButton = page.getByRole('button', {
+    name: 'Add comparison chat',
+  });
+  await compareButton.first().click();
   await expect(page.getByLabel('Type your message here...')).toHaveCount(
     expectedCount,
     { timeout: 10000 },
@@ -47,14 +45,15 @@ function getChatInput(page: Page, index: number) {
  * The sync toggle appears only when more than one pane is open.
  */
 function getSyncToggle(page: Page, cardIndex: number) {
-  // ant-card-head nth(0) is the page-level Chat card, nth(1+) are ChatCards
-  // Button layout in .ant-card-head nth(cardIndex+1) when closable=true (multi-pane):
-  //   nth(0)=detail-page (EndpointSelect compact btn), nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
+  // `.astryx-card` nth(0) is the page-level Chat `Card`, nth(1+) are the
+  // ChatCards (Astryx `Card` renders an `astryx-card` class; antd's
+  // `.ant-card` is gone). The sync toggle is a `SyncSwitch` IconButton whose
+  // accessible name is t('chatui.SyncInput') = "Sync chat input", only
+  // rendered per-pane when closable (multi-pane).
   return page
-    .locator('.ant-card-head')
+    .locator('.astryx-card')
     .nth(cardIndex + 1)
-    .getByRole('button')
-    .nth(1);
+    .getByRole('button', { name: 'Sync chat input' });
 }
 
 /**
@@ -148,13 +147,15 @@ test.describe(
       // Clone a second pane
       await addComparePane(page, 2);
 
-      // In the first pane, click the attachment (LinkOutlined) button
-      // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
-      const firstChatCard = page.locator('.ant-card').nth(1);
-      const secondChatCard = page.locator('.ant-card').nth(2);
-      const attachButton = firstChatCard
-        .getByRole('button', { name: 'link' })
-        .first();
+      // In the first pane, click the attachment button. `ChatSender` labels it
+      // t('chatui.Attachments'); the antd icon-derived name 'link' is gone.
+      // One such button per pane, in pane order.
+      const attachButtons = page.getByRole('button', {
+        name: 'Attachments',
+        exact: true,
+      });
+      await expect(attachButtons).toHaveCount(2, { timeout: 10000 });
+      const attachButton = attachButtons.nth(0);
 
       // Capture the file chooser before clicking the button
       const fileChooserPromise = page.waitForEvent('filechooser');
@@ -169,17 +170,21 @@ test.describe(
         { name: 'test.png', mimeType: 'image/png', buffer: smallPng },
       ]);
 
+      // `ChatSender` renders each attached image as an Astryx `Thumbnail` with
+      // `alt`/`label` set to the file name, inside a `ChatComposerDrawer`
+      // labelled t('chatui.Attachments'). `ChatCard` exposes no pane-level
+      // role, name or test id (Astryx `Card` renders a bare div), so pane
+      // membership is asserted by count and DOM order rather than by scoping
+      // to a container: exactly one `test.png` thumbnail per pane, meaning the
+      // attachment propagated from pane 1 to pane 2.
+      const attachmentThumbnails = page.getByRole('img', { name: 'test.png' });
+      await expect(attachmentThumbnails).toHaveCount(2, { timeout: 10000 });
+
       // Verify the attachment appears in the first pane
-      const firstPaneAttachArea = firstChatCard.locator(
-        '[class*="attachment"], [class*="Attachment"], [class*="file"]',
-      );
-      await expect(firstPaneAttachArea.first()).toBeVisible({ timeout: 10000 });
+      await expect(attachmentThumbnails.nth(0)).toBeVisible({ timeout: 10000 });
 
       // Verify the attachment also appears in the second pane (sync propagation)
-      const secondPaneAttachArea = secondChatCard.locator(
-        '[class*="attachment"], [class*="Attachment"], [class*="file"]',
-      );
-      await expect(secondPaneAttachArea.first()).toBeVisible({
+      await expect(attachmentThumbnails.nth(1)).toBeVisible({
         timeout: 10000,
       });
     });
@@ -200,7 +205,7 @@ test.describe(
       // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
       // Click the endpoint text to open the dropdown (not the combobox input which gets intercepted)
       const secondCardEndpointText = page
-        .locator('.ant-card')
+        .locator('.astryx-card')
         .nth(2)
         .getByText('mock-endpoint')
         .first();
@@ -224,7 +229,7 @@ test.describe(
         .click();
       await modelsBResponsePromise;
 
-      const secondChatCardHeader = page.locator('.ant-card').nth(2);
+      const secondChatCardHeader = page.locator('.astryx-card').nth(2);
 
       // Selecting a new endpoint re-triggers the model list fetch for that
       // pane (ChatCard's non-suspending isLoadingModels flag), which
@@ -265,8 +270,8 @@ test.describe(
 
       // First pane: user message and response from endpoint A
       // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
-      const firstChatCard = page.locator('.ant-card').nth(1);
-      const secondChatCard = page.locator('.ant-card').nth(2);
+      const firstChatCard = page.locator('.astryx-card').nth(1);
+      const secondChatCard = page.locator('.astryx-card').nth(2);
 
       await expect(
         firstChatCard.getByText('Multi-endpoint test').first(),
@@ -391,8 +396,8 @@ test.describe(
 
       // First pane shows the sent message and receives its reply
       // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
-      const firstChatCard = page.locator('.ant-card').nth(1);
-      const secondChatCard = page.locator('.ant-card').nth(2);
+      const firstChatCard = page.locator('.astryx-card').nth(1);
+      const secondChatCard = page.locator('.astryx-card').nth(2);
       await expect(
         firstChatCard.getByText('First pane only message').first(),
       ).toBeVisible({ timeout: 10000 });

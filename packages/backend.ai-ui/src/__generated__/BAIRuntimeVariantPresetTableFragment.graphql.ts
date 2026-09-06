@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1206630e72ca1eb6760d5e0f444ebf92>>
+ * @generated SignedSource<<dc6fdc72d4f30986c4fa89e204bf8c49>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,8 +13,10 @@ export type PresetTarget = "ARGS" | "ENV" | "%future added value";
 export type PresetValueType = "BOOL" | "FLAG" | "FLOAT" | "INT" | "STR" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAIRuntimeVariantPresetTableFragment$data = ReadonlyArray<{
+  readonly category: string | null | undefined;
   readonly createdAt: string;
   readonly description: string | null | undefined;
+  readonly displayName: string | null | undefined;
   readonly id: string;
   readonly name: string;
   readonly rank: number;
@@ -29,6 +31,9 @@ export type BAIRuntimeVariantPresetTableFragment$data = ReadonlyArray<{
     readonly presetTarget: PresetTarget;
     readonly valueType: PresetValueType;
   };
+  readonly uiOption: {
+    readonly uiType: string;
+  } | null | undefined;
   readonly updatedAt: string | null | undefined;
   readonly " $fragmentType": "BAIRuntimeVariantPresetTableFragment";
 } | null | undefined>;
@@ -99,6 +104,20 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "category",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "displayName",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "rank",
       "storageKey": null
     },
@@ -151,6 +170,24 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "UIOption",
+      "kind": "LinkedField",
+      "name": "uiOption",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "uiType",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
       "name": "createdAt",
       "storageKey": null
@@ -168,6 +205,6 @@ return {
 };
 })();
 
-(node as any).hash = "863d9d003726925365a8e55a18254afc";
+(node as any).hash = "fc05bd03d297952139d05fd622d40768";
 
 export default node;

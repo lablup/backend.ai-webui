@@ -18,7 +18,7 @@ import { useReducer, useRef, useState, type SetStateAction } from 'react';
  *   resolved value plus any extra arguments, in both modes. When the value is
  *   controlled the internal state is *not* written — the parent owns it.
  * - A `trigger` naming a prop that does not exist (the `'no-trigger'` idiom
- *   used by `BAITableAstryx`) simply means "notify nobody".
+ *   used by `BAITable`) simply means "notify nobody".
  * - The setter identity is stable for the component's whole lifetime.
  */
 export interface UseControllableValueOptions<T> {

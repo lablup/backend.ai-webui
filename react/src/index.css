@@ -19,6 +19,19 @@
 @import '@astryxdesign/lab/lab.css';
 @import '@astryxdesign/theme-neutral/theme.css';
 
+/* FR-3580: Astryx recolours a Banner's whole subtree to its status hue —
+   `.astryx-banner.info` rebinds `--color-accent` to the info blue, which is
+   right for the banner's own prose but not for a control that is deliberately
+   brand-primary (the session notice's app launcher, drawn in the `content`
+   slot). Bank the nearest theme's accent, where no component-status scope can
+   reach it, and restore it on those controls only. */
+[data-astryx-theme] {
+  --bai-theme-accent: var(--color-accent);
+}
+.bai-accent-pinned {
+  --color-accent: var(--bai-theme-accent);
+}
+
 /* FR-3506: secondary buttons are outlined (theme `variant:secondary`). Inside a
    ButtonGroup the outline moves to the GROUP: per-member borders double at
    seams and leave half-open chips when a disabled member renders ghost. The
@@ -75,15 +88,29 @@
   ) !important;
 }
 
-/* fix: match the icon size between Lucide and Ant.d icons */
+/* A lucide glyph is text-sized and sits on the text baseline. `display` is
+   load-bearing: Astryx's reset blockifies every `svg` (reset.css "Media"), and
+   a block box ignores `vertical-align` — without this the icon is inert-aligned
+   and a bare-icon line box measures 14px against a text line's 22px.
+   Inert where the icon is a flex/grid item, which is nearly every call site. */
 .lucide {
+  display: inline-block !important;
   width: 1em !important;
   height: 1em !important;
   vertical-align: -0.125em !important;
 }
 
-:lang(ko) *,
-:lang(ja) *,
-:lang(zh) * {
+/* `keep-all` is a Korean-specific prescription: it stops a break landing
+   between Hangul syllables, leaving the space as the only break point.
+   Japanese and Chinese have no inter-word spaces, so the same rule left them
+   with NO break opportunity at all and the text overflowed its container
+   instead of wrapping (FR-3695). */
+:lang(ko) * {
   word-break: keep-all;
+}
+
+/* `strict` keeps CJ-class characters (ー, small kana) off the start of a line;
+   UAX #14 leaves them breakable under the `auto`/`normal` default. */
+:lang(ja) * {
+  line-break: strict;
 }

@@ -1,0 +1,215 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAISubStepNodes> (P17). Imported by the component.
+
+ Design 3a — the sub-steps of a scheduling-history row as a compact inline
+ table, one 32px row per step, with an order connector in a narrow rail column.
+
+ Deliberately UNLAYERED. Wrapped in `@layer`, `BAITable.css`'s unguarded
+ `.bai-table-astryx-no-header thead` / dim-layer `thead th` rules would outrank
+ the nested header's own tint.
+
+ Geometry only — every colour and every font size comes from the theme.
+*/
+.bai-substep-panel {
+  /* 3a's table figure. The column widths, the 26px rail and the 7px/11px rail
+     nodes are a drawing, not spacing rungs, so no theme token carries them. */
+  --bai-substep-rail-col: 26px;
+  --bai-substep-col-step: 200px;
+  --bai-substep-col-result: 116px;
+  --bai-substep-col-duration: 74px;
+  --bai-substep-col-time: 150px;
+  --bai-substep-col-code: 96px;
+  --bai-substep-cell-inline: 10px;
+  --bai-substep-dot-size: 7px;
+  --bai-substep-marker-size: 11px;
+
+  /* Nothing in here should inherit the PAGE's text metrics: bare cells take
+     their line box from whatever they inherit — 16px/24px — which both
+     stretched the rows and staggered inline items against each other. */
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-leading);
+}
+
+/* The card is the scroller, so its border and radius stay put while the
+   columns slide underneath — the alternative, truncating, hides exactly the
+   values people open this panel to read (step names, error codes, and the
+   scheduler's placement-failure text all outrun any workable column width).
+   `overflow-y` must be stated: a `visible` axis next to a scrolling one
+   computes to `auto` and would add a stray vertical scrollbar. */
+.bai-substep-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--color-background-card);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-element);
+}
+
+.bai-substep-table {
+  /* `auto` + `max-content`: the `<col>` widths become the resting layout, and
+     any column whose content needs more takes it, widening the table past the
+     card and turning on the scrollbar. */
+  width: 100%;
+  min-width: max-content;
+  table-layout: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.bai-substep-col-rail {
+  width: var(--bai-substep-rail-col);
+}
+.bai-substep-col-step {
+  width: var(--bai-substep-col-step);
+}
+.bai-substep-col-result {
+  width: var(--bai-substep-col-result);
+}
+.bai-substep-col-duration {
+  width: var(--bai-substep-col-duration);
+}
+.bai-substep-col-time {
+  width: var(--bai-substep-col-time);
+}
+.bai-substep-col-code {
+  width: var(--bai-substep-col-code);
+}
+
+.bai-substep-table th,
+.bai-substep-table td {
+  height: var(--spacing-8);
+  padding: 0 var(--bai-substep-cell-inline);
+  text-align: start;
+  vertical-align: middle;
+  /* Nothing wraps: a cell `height` is only a minimum, so a second line box
+     would push the row past 32px. Content that does not fit widens its column
+     and scrolls instead. */
+  white-space: nowrap;
+}
+
+/* Typography lives on the header's `Text`; only the band is here. */
+.bai-substep-table thead th {
+  background: var(--color-background-muted);
+}
+
+.bai-substep-table tbody td {
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+/* Both selectors carry the table class: the `th, td` rule above is (0,2,0), so
+   a bare `.bai-substep-num` would lose to it and the column would stay
+   start-aligned (measured). */
+.bai-substep-table th.bai-substep-num,
+.bai-substep-table td.bai-substep-num {
+  text-align: end;
+}
+
+.bai-substep-row--marker > td {
+  background: var(--color-background-muted);
+}
+
+/* ---- rail ---------------------------------------------------------------
+   A hand-rolled table, so the rail cell may overflow its box; an Astryx
+   `TableCell` sets `overflow: hidden` unconditionally and would clip the
+   connector at every row boundary. */
+.bai-substep-table td.bai-substep-rail-cell {
+  position: relative;
+  padding: 0;
+}
+
+/* The connector runs the full row height, and is trimmed to a half at the two
+   ends so the line starts and stops at a node rather than at the card edge. */
+.bai-substep-rail-cell::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 50%;
+  width: var(--border-width);
+  transform: translateX(-50%);
+  background: var(--color-border-emphasized);
+}
+.bai-substep-table tbody tr:first-child .bai-substep-rail-cell::before {
+  inset-block-start: 50%;
+}
+.bai-substep-table tbody tr:last-child .bai-substep-rail-cell::before {
+  inset-block-end: 50%;
+}
+.bai-substep-table tbody tr:only-child .bai-substep-rail-cell::before {
+  display: none;
+}
+
+.bai-substep-rail-cell::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  width: var(--bai-substep-dot-size);
+  height: var(--bai-substep-dot-size);
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-full);
+  background: var(--bai-substep-node-color);
+}
+
+/* The trailing lifecycle entry is a RESULT MARKER, not executed work. */
+.bai-substep-row--marker .bai-substep-rail-cell::after {
+  width: var(--bai-substep-marker-size);
+  height: var(--bai-substep-marker-size);
+  border: calc(2 * var(--border-width)) dashed var(--bai-substep-node-color);
+  background: var(--color-background-card);
+}
+
+/* ---- semantic colour ----------------------------------------------------
+   One `data-variant` per row drives the rail node and the result chip, so the
+   two can never disagree. The tinted triples are the theme's own hue ramps,
+   which are built to be used together. */
+.bai-substep-row {
+  --bai-substep-node-color: var(--color-border-emphasized);
+  --bai-substep-chip-bg: var(--color-background-muted);
+  --bai-substep-chip-border: var(--color-border-emphasized);
+  --bai-substep-chip-ink: var(--color-text-secondary);
+}
+.bai-substep-row[data-variant='success'] {
+  --bai-substep-node-color: var(--color-success);
+  --bai-substep-chip-bg: var(--color-background-green);
+  --bai-substep-chip-border: var(--color-border-green);
+  --bai-substep-chip-ink: var(--color-text-green);
+}
+.bai-substep-row[data-variant='error'] {
+  --bai-substep-node-color: var(--color-error);
+  --bai-substep-chip-bg: var(--color-background-red);
+  --bai-substep-chip-border: var(--color-border-red);
+  --bai-substep-chip-ink: var(--color-text-red);
+}
+.bai-substep-row[data-variant='warning'] {
+  --bai-substep-node-color: var(--color-warning);
+  --bai-substep-chip-bg: var(--color-background-orange);
+  --bai-substep-chip-border: var(--color-border-orange);
+  --bai-substep-chip-ink: var(--color-text-orange);
+}
+.bai-substep-row[data-variant='info'] {
+  --bai-substep-node-color: var(--color-text-accent);
+  --bai-substep-chip-bg: var(--color-background-blue);
+  --bai-substep-chip-border: var(--color-border-blue);
+  --bai-substep-chip-ink: var(--color-text-blue);
+}
+
+.bai-substep-result {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--spacing-1-5);
+  border: var(--border-width) solid var(--bai-substep-chip-border);
+  border-radius: var(--radius-inner);
+  background: var(--bai-substep-chip-bg);
+  color: var(--bai-substep-chip-ink);
+}
+
+.bai-substep-code {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--spacing-1-5);
+  border: var(--border-width) solid var(--color-border-emphasized);
+  border-radius: var(--radius-inner);
+  background: var(--color-background-card);
+}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d35b12fa9af59cbf1aa4a79bd58fe12f>>
+ * @generated SignedSource<<53b26acd2ef51beb3b8d2916bc5b4950>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -85,23 +85,35 @@ v8 = {
 },
 v9 = {
   "enumValues": null,
-  "nullable": false,
+  "nullable": true,
   "plural": false,
-  "type": "ID"
+  "type": "String"
 },
 v10 = {
   "enumValues": null,
   "nullable": false,
   "plural": false,
-  "type": "String"
+  "type": "ID"
 },
 v11 = {
   "enumValues": null,
   "nullable": false,
   "plural": false,
-  "type": "Float"
+  "type": "String"
 },
 v12 = {
+  "enumValues": null,
+  "nullable": false,
+  "plural": false,
+  "type": "Boolean"
+},
+v13 = {
+  "enumValues": null,
+  "nullable": false,
+  "plural": false,
+  "type": "Float"
+},
+v14 = {
   "enumValues": null,
   "nullable": false,
   "plural": false,
@@ -215,6 +227,19 @@ return {
                 "plural": false,
                 "selections": [
                   (v4/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "VirtualFolderNode",
+                    "kind": "LinkedField",
+                    "name": "vfolder",
+                    "plural": false,
+                    "selections": [
+                      (v2/*: any*/),
+                      (v3/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
                   (v5/*: any*/),
                   {
                     "alias": null,
@@ -222,8 +247,22 @@ return {
                     "kind": "ScalarField",
                     "name": "definitionPath",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "subpath",
+                    "storageKey": null
                   }
                 ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "revisionPresetId",
                 "storageKey": null
               },
               {
@@ -345,6 +384,13 @@ return {
                     "plural": false,
                     "selections": [
                       (v3/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "readsVfolderConfigFiles",
+                        "storageKey": null
+                      },
                       (v2/*: any*/)
                     ],
                     "storageKey": null
@@ -428,6 +474,20 @@ return {
                             "alias": null,
                             "args": null,
                             "kind": "ScalarField",
+                            "name": "command",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "shell",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
                             "name": "startCommand",
                             "storageKey": null
                           },
@@ -436,6 +496,31 @@ return {
                             "args": null,
                             "kind": "ScalarField",
                             "name": "port",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "PreStartAction",
+                            "kind": "LinkedField",
+                            "name": "preStartActions",
+                            "plural": true,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "action",
+                                "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "args",
+                                "storageKey": null
+                              }
+                            ],
                             "storageKey": null
                           },
                           {
@@ -554,7 +639,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6a7deb7c8ea21133307686916d8423e7",
+    "cacheID": "c8f3634577c5c974adaed87e62b7b063",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -592,29 +677,24 @@ return {
           "plural": true,
           "type": "ExtraVFolderMountInfo"
         },
-        "deployment.currentRevision.extraMounts.mountDestination": {
-          "enumValues": null,
-          "nullable": true,
-          "plural": false,
-          "type": "String"
-        },
-        "deployment.currentRevision.extraMounts.vfolderId": (v9/*: any*/),
-        "deployment.currentRevision.id": (v9/*: any*/),
+        "deployment.currentRevision.extraMounts.mountDestination": (v9/*: any*/),
+        "deployment.currentRevision.extraMounts.vfolderId": (v10/*: any*/),
+        "deployment.currentRevision.id": (v10/*: any*/),
         "deployment.currentRevision.imageV2": {
           "enumValues": null,
           "nullable": true,
           "plural": false,
           "type": "ImageV2"
         },
-        "deployment.currentRevision.imageV2.id": (v9/*: any*/),
+        "deployment.currentRevision.imageV2.id": (v10/*: any*/),
         "deployment.currentRevision.imageV2.identity": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
           "type": "ImageV2IdentityInfo"
         },
-        "deployment.currentRevision.imageV2.identity.architecture": (v10/*: any*/),
-        "deployment.currentRevision.imageV2.identity.canonicalName": (v10/*: any*/),
+        "deployment.currentRevision.imageV2.identity.architecture": (v11/*: any*/),
+        "deployment.currentRevision.imageV2.identity.canonicalName": (v11/*: any*/),
         "deployment.currentRevision.modelDefinition": {
           "enumValues": null,
           "nullable": true,
@@ -627,33 +707,43 @@ return {
           "plural": true,
           "type": "ModelConfig"
         },
-        "deployment.currentRevision.modelDefinition.models.modelPath": (v10/*: any*/),
-        "deployment.currentRevision.modelDefinition.models.name": (v10/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.modelPath": (v11/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.name": (v11/*: any*/),
         "deployment.currentRevision.modelDefinition.models.service": {
           "enumValues": null,
           "nullable": true,
           "plural": false,
           "type": "ModelServiceConfig"
         },
+        "deployment.currentRevision.modelDefinition.models.service.command": (v9/*: any*/),
         "deployment.currentRevision.modelDefinition.models.service.healthCheck": {
           "enumValues": null,
           "nullable": true,
           "plural": false,
           "type": "ModelHealthCheck"
         },
-        "deployment.currentRevision.modelDefinition.models.service.healthCheck.enable": {
+        "deployment.currentRevision.modelDefinition.models.service.healthCheck.enable": (v12/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.healthCheck.expectedStatusCode": (v8/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.healthCheck.initialDelay": (v13/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.healthCheck.interval": (v13/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.healthCheck.maxRetries": (v8/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.healthCheck.maxWaitTime": (v13/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.healthCheck.path": (v11/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.port": (v8/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.preStartActions": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": true,
+          "type": "PreStartAction"
+        },
+        "deployment.currentRevision.modelDefinition.models.service.preStartActions.action": (v11/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.preStartActions.args": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
-          "type": "Boolean"
+          "type": "JSON"
         },
-        "deployment.currentRevision.modelDefinition.models.service.healthCheck.expectedStatusCode": (v8/*: any*/),
-        "deployment.currentRevision.modelDefinition.models.service.healthCheck.initialDelay": (v11/*: any*/),
-        "deployment.currentRevision.modelDefinition.models.service.healthCheck.interval": (v11/*: any*/),
-        "deployment.currentRevision.modelDefinition.models.service.healthCheck.maxRetries": (v8/*: any*/),
-        "deployment.currentRevision.modelDefinition.models.service.healthCheck.maxWaitTime": (v11/*: any*/),
-        "deployment.currentRevision.modelDefinition.models.service.healthCheck.path": (v10/*: any*/),
-        "deployment.currentRevision.modelDefinition.models.service.port": (v8/*: any*/),
+        "deployment.currentRevision.modelDefinition.models.service.shell": (v9/*: any*/),
         "deployment.currentRevision.modelDefinition.models.service.startCommand": {
           "enumValues": null,
           "nullable": true,
@@ -666,9 +756,18 @@ return {
           "plural": false,
           "type": "ModelMountConfig"
         },
-        "deployment.currentRevision.modelMountConfig.definitionPath": (v10/*: any*/),
-        "deployment.currentRevision.modelMountConfig.mountDestination": (v10/*: any*/),
-        "deployment.currentRevision.modelMountConfig.vfolderId": (v9/*: any*/),
+        "deployment.currentRevision.modelMountConfig.definitionPath": (v11/*: any*/),
+        "deployment.currentRevision.modelMountConfig.mountDestination": (v11/*: any*/),
+        "deployment.currentRevision.modelMountConfig.subpath": (v9/*: any*/),
+        "deployment.currentRevision.modelMountConfig.vfolder": {
+          "enumValues": null,
+          "nullable": true,
+          "plural": false,
+          "type": "VirtualFolderNode"
+        },
+        "deployment.currentRevision.modelMountConfig.vfolder.id": (v10/*: any*/),
+        "deployment.currentRevision.modelMountConfig.vfolder.name": (v9/*: any*/),
+        "deployment.currentRevision.modelMountConfig.vfolderId": (v10/*: any*/),
         "deployment.currentRevision.modelRuntimeConfig": {
           "enumValues": null,
           "nullable": false,
@@ -687,25 +786,26 @@ return {
           "plural": true,
           "type": "EnvironmentVariableEntry"
         },
-        "deployment.currentRevision.modelRuntimeConfig.environ.entries.name": (v10/*: any*/),
-        "deployment.currentRevision.modelRuntimeConfig.environ.entries.value": (v10/*: any*/),
+        "deployment.currentRevision.modelRuntimeConfig.environ.entries.name": (v11/*: any*/),
+        "deployment.currentRevision.modelRuntimeConfig.environ.entries.value": (v11/*: any*/),
         "deployment.currentRevision.modelRuntimeConfig.runtimeVariant": {
           "enumValues": null,
           "nullable": true,
           "plural": false,
           "type": "RuntimeVariant"
         },
-        "deployment.currentRevision.modelRuntimeConfig.runtimeVariant.id": (v9/*: any*/),
-        "deployment.currentRevision.modelRuntimeConfig.runtimeVariant.name": (v10/*: any*/),
-        "deployment.currentRevision.modelRuntimeConfig.runtimeVariantId": (v12/*: any*/),
+        "deployment.currentRevision.modelRuntimeConfig.runtimeVariant.id": (v10/*: any*/),
+        "deployment.currentRevision.modelRuntimeConfig.runtimeVariant.name": (v11/*: any*/),
+        "deployment.currentRevision.modelRuntimeConfig.runtimeVariant.readsVfolderConfigFiles": (v12/*: any*/),
+        "deployment.currentRevision.modelRuntimeConfig.runtimeVariantId": (v14/*: any*/),
         "deployment.currentRevision.modelRuntimeConfig.runtimeVariantPresetValues": {
           "enumValues": null,
           "nullable": false,
           "plural": true,
           "type": "RuntimeVariantPresetValue"
         },
-        "deployment.currentRevision.modelRuntimeConfig.runtimeVariantPresetValues.presetId": (v12/*: any*/),
-        "deployment.currentRevision.modelRuntimeConfig.runtimeVariantPresetValues.value": (v10/*: any*/),
+        "deployment.currentRevision.modelRuntimeConfig.runtimeVariantPresetValues.presetId": (v14/*: any*/),
+        "deployment.currentRevision.modelRuntimeConfig.runtimeVariantPresetValues.value": (v11/*: any*/),
         "deployment.currentRevision.resourceConfig": {
           "enumValues": null,
           "nullable": false,
@@ -724,8 +824,8 @@ return {
           "plural": true,
           "type": "ResourceOptsEntry"
         },
-        "deployment.currentRevision.resourceConfig.resourceOpts.entries.name": (v10/*: any*/),
-        "deployment.currentRevision.resourceConfig.resourceOpts.entries.value": (v10/*: any*/),
+        "deployment.currentRevision.resourceConfig.resourceOpts.entries.name": (v11/*: any*/),
+        "deployment.currentRevision.resourceConfig.resourceOpts.entries.value": (v11/*: any*/),
         "deployment.currentRevision.resourceSlots": {
           "enumValues": null,
           "nullable": true,
@@ -738,15 +838,21 @@ return {
           "plural": false,
           "type": "Decimal"
         },
-        "deployment.currentRevision.resourceSlots.slotName": (v10/*: any*/),
-        "deployment.id": (v9/*: any*/),
+        "deployment.currentRevision.resourceSlots.slotName": (v11/*: any*/),
+        "deployment.currentRevision.revisionPresetId": {
+          "enumValues": null,
+          "nullable": true,
+          "plural": false,
+          "type": "UUID"
+        },
+        "deployment.id": (v10/*: any*/),
         "deployment.metadata": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
           "type": "ModelDeploymentMetadata"
         },
-        "deployment.metadata.projectId": (v9/*: any*/),
+        "deployment.metadata.projectId": (v10/*: any*/),
         "deployment.metadata.projectV2": {
           "enumValues": null,
           "nullable": true,
@@ -759,14 +865,14 @@ return {
           "plural": false,
           "type": "ProjectBasicInfo"
         },
-        "deployment.metadata.projectV2.basicInfo.name": (v10/*: any*/),
-        "deployment.metadata.projectV2.id": (v9/*: any*/),
-        "deployment.metadata.resourceGroupName": (v10/*: any*/)
+        "deployment.metadata.projectV2.basicInfo.name": (v11/*: any*/),
+        "deployment.metadata.projectV2.id": (v10/*: any*/),
+        "deployment.metadata.resourceGroupName": (v11/*: any*/)
       }
     },
     "name": "DeploymentAddRevisionModalTestQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalTestQuery(\n  $id: ID!\n) {\n  deployment(id: $id) {\n    ...DeploymentAddRevisionModal_deployment\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_deployment on ModelDeployment {\n  id\n  metadata {\n    resourceGroupName\n    projectId\n    projectV2 @since(version: \"26.4.3\") {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  currentRevision @since(version: \"26.4.3\") {\n    modelMountConfig {\n      vfolderId\n    }\n    ...DeploymentAddRevisionModal_revisionSource\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_revisionSource on ModelRevision {\n  clusterConfig {\n    mode\n    size\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n  }\n  modelRuntimeConfig {\n    runtimeVariantId\n    runtimeVariant {\n      name\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        startCommand\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4\")\n          path\n          maxRetries\n          initialDelay\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalTestQuery(\n  $id: ID!\n) {\n  deployment(id: $id) {\n    ...DeploymentAddRevisionModal_deployment\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_deployment on ModelDeployment {\n  id\n  metadata {\n    resourceGroupName\n    projectId\n    projectV2 @since(version: \"26.4.3\") {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  currentRevision @since(version: \"26.4.3\") {\n    modelMountConfig {\n      vfolderId\n    }\n    ...DeploymentAddRevisionModal_revisionSource\n    id\n  }\n}\n\nfragment DeploymentAddRevisionModal_revisionSource on ModelRevision {\n  revisionPresetId @since(version: \"26.4.4\")\n  clusterConfig {\n    mode\n    size\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n  }\n  modelRuntimeConfig {\n    runtimeVariantId\n    runtimeVariant {\n      name\n      readsVfolderConfigFiles @since(version: \"26.8.0\")\n      id\n    }\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    vfolder {\n      id\n      name\n    }\n    mountDestination\n    definitionPath\n    subpath @since(version: \"26.4.4\")\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        shell @since(version: \"26.7.0\")\n        startCommand\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          enable @since(version: \"26.4.4\")\n          path\n          maxRetries\n          initialDelay\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n  imageV2 {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n}\n"
   }
 };
 })();

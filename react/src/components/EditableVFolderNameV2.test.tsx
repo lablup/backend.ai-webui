@@ -10,12 +10,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { Suspense } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import {
   graphql,
   RelayEnvironmentProvider,
   useLazyLoadQuery,
 } from 'react-relay';
+import { MemoryRouter } from 'react-router-dom';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 

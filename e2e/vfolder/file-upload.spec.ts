@@ -130,7 +130,7 @@ test.describe(
       // 4. In the dropdown, click "Upload Files" button and handle file chooser
       const [fileChooser] = await Promise.all([
         page.waitForEvent('filechooser'),
-        page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+        page.getByRole('menuitem', { name: 'Upload Files' }).click(),
       ]);
 
       // 5. Upload a single test file
@@ -160,7 +160,7 @@ test.describe(
       // 4. In the dropdown, click "Upload Files" and handle file chooser
       const [fileChooser] = await Promise.all([
         page.waitForEvent('filechooser'),
-        page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+        page.getByRole('menuitem', { name: 'Upload Files' }).click(),
       ]);
 
       // 5. Upload multiple test files

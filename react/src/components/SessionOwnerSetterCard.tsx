@@ -15,10 +15,7 @@ import { Card } from '@astryxdesign/core/Card';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { InputGroup } from '@astryxdesign/core/InputGroup';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading } from '@astryxdesign/core/Text';
@@ -27,6 +24,7 @@ import {
   BAICard,
   BAICardProps,
   BAIFlex,
+  BAIMetadataList,
   BAISelect,
   BAIProjectResourceGroupSelect,
 } from 'backend.ai-ui';
@@ -400,7 +398,7 @@ export const SessionOwnerSetterPreviewCard: React.FC<BAICardProps> = (
       >
         {/* antd `Descriptions size="small" column={1}` -> `MetadataList
             columns="single"` (MAPPING 4; `size` has no destination). */}
-        <MetadataList columns="single">
+        <BAIMetadataList columns="single">
           <MetadataListItem label={t('session.launcher.OwnerEmail')}>
             {form.getFieldValue(['owner', 'email'])}
           </MetadataListItem>
@@ -413,7 +411,7 @@ export const SessionOwnerSetterPreviewCard: React.FC<BAICardProps> = (
           <MetadataListItem label={t('session.launcher.OwnerResourceGroup')}>
             {form.getFieldValue(['owner', 'resourceGroup'])}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
       </BAICard>
     )
   );

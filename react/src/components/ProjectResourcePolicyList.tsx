@@ -23,7 +23,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
-  BAITableAstryx,
+  BAITable,
   BAIFlex,
   useUpdatableState,
   BAINameActionCell,
@@ -243,7 +243,8 @@ const ProjectResourcePolicyList: React.FC<
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         columns={columns}
         dataSource={filterOutNullAndUndefined(project_resource_policies)}

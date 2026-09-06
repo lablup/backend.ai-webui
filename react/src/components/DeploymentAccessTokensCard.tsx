@@ -8,13 +8,11 @@ import { DeploymentAccessTokensCardListQuery } from '../__generated__/Deployment
 import { DeploymentAccessTokensCard_deployment$key } from '../__generated__/DeploymentAccessTokensCard_deployment.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormSelector } from './astryx-bui/astryxFormControls';
+import { AstryxFormSelector } from './astryxFormControls';
 import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
 import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
   BAIButton,
@@ -24,7 +22,10 @@ import {
   BAIFlex,
   BAIModal,
   BAINameActionCell,
-  BAITableAstryx,
+  type BAINameActionCellAction,
+  disabledReason,
+  BAIQuestionIconWithTooltip,
+  BAITable,
   BAIText,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -36,7 +37,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import { Trash2, CircleHelp, PlusIcon } from 'lucide-react';
+import { Trash2, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -77,7 +78,6 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
@@ -134,11 +134,22 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
   };
 
   const hasEndpointUrl = !!deployment.networkAccess?.endpointUrl;
-  const isMutationDisabled = isDeploymentDestroying || !isOwnedByCurrentUser;
-  // The create button is also blocked while the manager has not yet
-  // issued a network endpoint — a token would have nothing to authenticate
-  // against. Surface the reason via a Tooltip on the disabled button.
-  const isCreateDisabled = isMutationDisabled || !hasEndpointUrl;
+  // The reason rides inside the disabled flag (`BAINameActionCellAction`'s
+  // union), so "disabled with no reason" — the FR-3679 defect — cannot be
+  // expressed. Ordered most- to least-specific.
+  const mutationDisabled: BAINameActionCellAction['disabled'] =
+    isDeploymentDestroying
+      ? { reason: t('deployment.accessToken.DeploymentStopped') }
+      : !isOwnedByCurrentUser
+        ? { reason: t('deployment.accessToken.OnlyOwnerCanManage') }
+        : false;
+  // Creating is additionally blocked until the manager issues a network
+  // endpoint — a token would have nothing to authenticate against.
+  const createDisabled: BAINameActionCellAction['disabled'] = mutationDisabled
+    ? mutationDisabled
+    : !hasEndpointUrl
+      ? { reason: t('deployment.accessToken.EndpointNotIssuedYet') }
+      : false;
 
   return (
     <>
@@ -147,12 +158,9 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
         title={
           <BAIFlex gap="xs" align="center">
             {t('deployment.tab.AccessTokens')}
-            <Tooltip content={t('deployment.tab.description.AccessTokens')}>
-              <CircleHelp
-                style={{ color: token.colorTextDescription }}
-                size="1em"
-              />
-            </Tooltip>
+            <BAIQuestionIconWithTooltip
+              title={t('deployment.tab.description.AccessTokens')}
+            />
           </BAIFlex>
         }
         extra={
@@ -162,15 +170,11 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
               value=""
               onChange={handleRefetch}
             />
-            {/* PILOT-DECISION (P18): the antd Tooltip that explained WHY the
-                disabled Create button is disabled ("endpoint not issued yet")
-                is dropped — Astryx forbids wrapping a disabled control in
-                Tooltip (disabled controls emit no hover events), and BAIButton
-                (frontier) has no `disabledMessage` slot to carry the reason. */}
             <BAIButton
               type="primary"
               icon={<PlusIcon />}
-              disabled={isCreateDisabled}
+              disabled={!!createDisabled}
+              title={disabledReason(createDisabled)}
               onClick={() => setIsCreateModalOpen(true)}
             >
               {t('deployment.accessToken.Create')}
@@ -184,7 +188,7 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
             deploymentId={deploymentId}
             fetchKey={deferredFetchKey}
             isPendingRefetch={isPendingRefetch}
-            isDeleteDisabled={isMutationDisabled}
+            deleteDisabled={mutationDisabled}
             onAfterDelete={handleRefetch}
           />
         </Suspense>
@@ -245,6 +249,8 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
         >
           <BAIFlex direction="column" align="stretch" gap="sm">
             <Text>{t('deployment.accessToken.Created')}</Text>
+            {/* `ellipsis` stays a bare boolean on purpose — a truncate tooltip
+                would put the secret behind a hover. Copy is the way. FR-3698. */}
             {createdToken ? (
               <BAIText copyable={{ text: createdToken.token }} ellipsis code>
                 {createdToken.token}
@@ -277,7 +283,8 @@ interface DeploymentAccessTokensTableProps {
   deploymentId: string;
   fetchKey: string;
   isPendingRefetch: boolean;
-  isDeleteDisabled: boolean;
+  /** `{ reason }` disables deleting and says why; `false` enables it. */
+  deleteDisabled?: BAINameActionCellAction['disabled'];
   onAfterDelete: () => void;
 }
 
@@ -287,7 +294,7 @@ const DeploymentAccessTokensTable: React.FC<
   deploymentId,
   fetchKey,
   isPendingRefetch,
-  isDeleteDisabled,
+  deleteDisabled,
   onAfterDelete,
 }) => {
   'use memo';
@@ -353,7 +360,8 @@ const DeploymentAccessTokensTable: React.FC<
 
   return (
     <>
-      <BAITableAstryx<AccessTokenNode>
+      <BAITable<AccessTokenNode>
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         loading={isPendingRefetch || isDeletingToken}
         dataSource={accessTokens}
@@ -366,6 +374,8 @@ const DeploymentAccessTokensTable: React.FC<
             dataIndex: 'token',
             render: (_text, row) => {
               if (!row) return '-';
+              // `ellipsis` stays a bare boolean on purpose — a truncate tooltip
+              // would put the secret behind a hover. Copy is the way. FR-3698.
               return (
                 <BAINameActionCell
                   title={
@@ -384,7 +394,7 @@ const DeploymentAccessTokensTable: React.FC<
                       title: t('deployment.accessToken.Delete'),
                       icon: <Trash2 size="1em" />,
                       type: 'danger',
-                      disabled: isDeleteDisabled,
+                      disabled: deleteDisabled,
                       onClick: () =>
                         setDeletingToken({
                           id: row.id,

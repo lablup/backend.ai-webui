@@ -28,7 +28,8 @@ export interface BAICountdownBorderProps {
   /**
    * Style for the wrapper element. The border's own appearance is taken from
    * the same object via standard CSS properties:
-   * - `stroke` — border color (default `colorPrimaryHover`)
+   * - `stroke` — border color (default `var(--color-accent)`, so it follows the
+   *   accent of whichever Astryx theme subtree the border is rendered in)
    * - `strokeWidth` — border thickness (default `1.5`)
    * - `borderRadius` — corner radius (default the `borderRadius` token)
    */
@@ -41,7 +42,7 @@ export interface BAICountdownBorderProps {
  * each cycle — a countdown progress border. Used like antd's `BorderBeam`:
  *
  * ```tsx
- * <BAICountdownBorder durationMs={5000} style={{ stroke: token.colorPrimary }}>
+ * <BAICountdownBorder durationMs={5000} style={{ stroke: 'var(--color-error)' }}>
  *   <SomeControl />
  * </BAICountdownBorder>
  * ```
@@ -76,7 +77,9 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
   // Border appearance is read from `style` (CSS props), the rest passes through
   // to the wrapper element.
   const {
-    stroke = token.colorPrimaryHover,
+    // The accent CSS var, not a `theme.useToken()` read: per-menu accents come
+    // from a nested Astryx <Theme> subtree the shim's static seeds never see.
+    stroke = 'var(--color-accent)',
     strokeWidth = 1.5,
     borderRadius = token.borderRadius,
     ...wrapperStyle
@@ -120,12 +123,14 @@ const BAICountdownBorder: React.FC<BAICountdownBorderProps> = ({
             rx={borderRadius}
             ry={borderRadius}
             fill="none"
-            stroke={stroke}
             strokeWidth={strokeWidth}
             pathLength={100}
             strokeDasharray={100}
             className="bai-countdown-border-fill"
             style={{
+              // As a CSS property, not the `stroke` presentation attribute —
+              // `var()` does not substitute in presentation attributes.
+              stroke,
               animationDuration: `${durationMs}ms`,
               animationPlayState: paused ? 'paused' : 'running',
             }}

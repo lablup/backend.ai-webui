@@ -4,7 +4,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { loadBookConfig, normalizeTitle } from "./book-config.js";
+import {
+  loadBookConfig,
+  normalizeTitle,
+  resolveBookTitle,
+} from "./book-config.js";
 
 function withSrcDir(yaml: string, fn: (dir: string) => void): void {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "book-config-"));
@@ -193,6 +197,112 @@ languages: [en]
       const cfg = loadBookConfig(dir);
       assert.deepEqual(cfg.navigation, {});
       assert.deepEqual(cfg.navigationGroups, {});
+    },
+  );
+});
+
+// ── Per-language title ────────────────────────────────────────────
+
+test("title — a plain string resolves identically for every language", () => {
+  withSrcDir(
+    ["title: Backend.AI WebUI User Guide", "languages: [en, ko]", "navigation: {}"].join("\n"),
+    (dir) => {
+      const cfg = loadBookConfig(dir);
+      assert.equal(cfg.title, "Backend.AI WebUI User Guide");
+      assert.equal(resolveBookTitle(cfg, "en").title, "Backend.AI WebUI User Guide");
+      assert.equal(resolveBookTitle(cfg, "ko").title, "Backend.AI WebUI User Guide");
+      // A language absent from the config still resolves, never undefined.
+      assert.equal(resolveBookTitle(cfg, "xx").title, "Backend.AI WebUI User Guide");
+    },
+  );
+});
+
+test("title — a block scalar keeps its line breaks in titleMultiline", () => {
+  withSrcDir(
+    ["title: |", "  Backend.AI WebUI", "  User Guide", "languages: [en]", "navigation: {}"].join("\n"),
+    (dir) => {
+      const cfg = loadBookConfig(dir);
+      assert.equal(cfg.title, "Backend.AI WebUI User Guide");
+      assert.equal(cfg.titleMultiline, "Backend.AI WebUI\nUser Guide");
+      assert.equal(
+        resolveBookTitle(cfg, "en").titleMultiline,
+        "Backend.AI WebUI\nUser Guide",
+      );
+    },
+  );
+});
+
+test("title — a per-language map resolves each language to its own title", () => {
+  withSrcDir(
+    [
+      "title:",
+      '  default: "Backend.AI WebUI User Guide"',
+      '  ko: "Backend.AI WebUI 사용자 가이드"',
+      "languages: [en, ko]",
+      "navigation: {}",
+    ].join("\n"),
+    (dir) => {
+      const cfg = loadBookConfig(dir);
+      assert.equal(resolveBookTitle(cfg, "ko").title, "Backend.AI WebUI 사용자 가이드");
+      // No `en` key — falls back to `default`, not to the ko entry.
+      assert.equal(resolveBookTitle(cfg, "en").title, "Backend.AI WebUI User Guide");
+      // `title` remains the default for language-unaware callers.
+      assert.equal(cfg.title, "Backend.AI WebUI User Guide");
+    },
+  );
+});
+
+test("title — a map without `default` falls back to its first entry", () => {
+  withSrcDir(
+    ["title:", '  ko: "한국어 제목"', "languages: [ko]", "navigation: {}"].join("\n"),
+    (dir) => {
+      const cfg = loadBookConfig(dir);
+      assert.equal(cfg.title, "한국어 제목");
+      assert.equal(resolveBookTitle(cfg, "ja").title, "한국어 제목");
+    },
+  );
+});
+
+test("title — per-language block scalars keep their line breaks", () => {
+  withSrcDir(
+    [
+      "title:",
+      "  default: |",
+      "    Backend.AI WebUI",
+      "    User Guide",
+      "  ko: |",
+      "    Backend.AI WebUI",
+      "    사용자 가이드",
+      "languages: [en, ko]",
+      "navigation: {}",
+    ].join("\n"),
+    (dir) => {
+      const cfg = loadBookConfig(dir);
+      assert.equal(
+        resolveBookTitle(cfg, "ko").titleMultiline,
+        "Backend.AI WebUI\n사용자 가이드",
+      );
+      assert.equal(resolveBookTitle(cfg, "ko").title, "Backend.AI WebUI 사용자 가이드");
+      assert.equal(
+        resolveBookTitle(cfg, "en").titleMultiline,
+        "Backend.AI WebUI\nUser Guide",
+      );
+    },
+  );
+});
+
+test("title — a non-string map entry is dropped, not rendered", () => {
+  withSrcDir(
+    [
+      "title:",
+      '  default: "Good"',
+      "  ko: 42",
+      "languages: [en, ko]",
+      "navigation: {}",
+    ].join("\n"),
+    (dir) => {
+      const cfg = loadBookConfig(dir);
+      assert.equal(resolveBookTitle(cfg, "ko").title, "Good");
     },
   );
 });

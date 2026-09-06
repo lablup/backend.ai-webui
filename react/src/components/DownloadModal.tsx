@@ -12,15 +12,13 @@ import SourceCodeView from './SourceCodeView';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
+  BAIMetadataList,
   BAIModal,
   BAIModalProps,
   filterOutEmpty,
@@ -40,7 +38,7 @@ const DesktopAppDownloadTab: React.FC = () => {
     // antd `Descriptions column={1} bordered` -> Astryx `MetadataList
     // columns="single"` (MAPPING §4). `bordered` has NO destination and is
     // dropped: MetadataList lays out label/value rows without a grid frame.
-    <MetadataList columns="single">
+    <BAIMetadataList columns="single">
       <MetadataListItem label={t('summary.OS')}>
         {/* antd `Select` with `Select.Option` children -> `Selector` with an
             `options` array; `label` is required and hidden because the
@@ -81,7 +79,7 @@ const DesktopAppDownloadTab: React.FC = () => {
           ))}
         </BAIFlex>
       </MetadataListItem>
-    </MetadataList>
+    </BAIMetadataList>
   );
 };
 
@@ -154,7 +152,7 @@ const CLIDownloadTab: React.FC = () => {
         <>
           <BAIFlex direction="column" align="stretch" gap="sm">
             <Text weight="semibold">{t('summary.CLIDownloadExecutable')}</Text>
-            <MetadataList columns="single">
+            <BAIMetadataList columns="single">
               <MetadataListItem label={t('summary.OS')}>
                 <Selector
                   label={t('summary.OS')}
@@ -191,7 +189,7 @@ const CLIDownloadTab: React.FC = () => {
                   ))}
                 </BAIFlex>
               </MetadataListItem>
-            </MetadataList>
+            </BAIMetadataList>
             {selectedOS === 'MacOS' ? (
               <Banner
                 status="warning"

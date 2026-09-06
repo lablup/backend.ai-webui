@@ -8,8 +8,7 @@ import BAIRouteSchedulingHistoryNodeTable, {
   BAIRouteSchedulingHistoryNodesProps,
   RouteSchedulingHistoryNodeInList,
 } from './BAIRouteSchedulingHistoryNodeTable';
-import BAISubStepNodes from './BAISubStepNodes';
-import * as _ from 'lodash-es';
+import BAISubStepNodes, { countExecutedSubSteps } from './BAISubStepNodes';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIRouteSchedulingHistoryTableProps extends Omit<
@@ -40,8 +39,12 @@ const BAIRouteSchedulingHistoryTable = ({
       fragment BAIRouteSchedulingHistoryTableFragment on RouteHistory
       @relay(plural: true) {
         id
+        phase
         result
         subSteps {
+          # Read alongside the spread so the table can tell a row that holds
+          # only the trailing lifecycle marker from one with real sub-steps.
+          step
           ...BAISubStepNodesFragment
         }
         ...BAIRouteSchedulingHistoryNodeTableFragment
@@ -55,6 +58,8 @@ const BAIRouteSchedulingHistoryTable = ({
     useSchedulingHistoryExpandable(dataSource, {
       mode: expandMode,
       onModeChange: onExpandModeChange,
+      isExpandable: (record) =>
+        countExecutedSubSteps(record.subSteps ?? [], record.phase) > 0,
     });
 
   return (
@@ -65,14 +70,16 @@ const BAIRouteSchedulingHistoryTable = ({
         expandedRowKeys,
         onExpandedRowsChange,
         rowExpandable: (record: RouteSchedulingHistoryNodeInList) =>
-          !_.isEmpty(dataSource.find((h) => h.id === record.id)?.subSteps),
+          countExecutedSubSteps(
+            dataSource.find((h) => h.id === record.id)?.subSteps ?? [],
+            record.phase,
+          ) > 0,
         expandedRowRender: (record: RouteSchedulingHistoryNodeInList) => (
           <BAISubStepNodes
-            resizable
             subStepsFrgmt={
               dataSource.find((h) => h.id === record.id)?.subSteps ?? []
             }
-            pagination={false}
+            parentPhase={record.phase}
           />
         ),
       }}

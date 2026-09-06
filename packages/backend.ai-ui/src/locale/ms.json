@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "Pelaksanaan gagal",
     "ErrorOccurred": "Ralat berlaku"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Kosongkan",
+    "HexValue": "Nilai heks",
+    "NoColor": "Tiada warna",
+    "SelectColor": "Pilih warna"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Kosongkan Cari pilihan",
     "NoResults": "Tiada keputusan",
-    "Search": "Cari"
+    "SearchOptions": "Cari pilihan"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Kontena"
@@ -162,7 +169,7 @@
     "SelectDomain": "Pilih Domain"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Jumlah"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Segar semula automatik",
@@ -178,6 +185,8 @@
     "operator": {
       "After": "selepas",
       "Before": "sebelum",
+      "Contains": "mengandungi",
+      "EndsWith": "berakhir dengan",
       "Equals": "sama dengan",
       "GreaterThan": "lebih besar daripada",
       "GreaterThanOrEqual": "lebih besar atau sama",
@@ -192,15 +201,19 @@
       "In": "dalam",
       "LessThan": "kurang daripada",
       "LessThanOrEqual": "kurang atau sama",
+      "NotContains": "tidak mengandungi",
+      "NotEndsWith": "tidak berakhir dengan",
       "NotEquals": "tidak sama dengan",
-      "NotIn": "tidak dalam"
+      "NotIn": "tidak dalam",
+      "NotStartsWith": "tidak bermula dengan",
+      "StartsWith": "bermula dengan"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
+    "EnterToken": "Masukkan token Hugging Face anda",
+    "HuggingFaceSettings": "Tetapan Hugging Face",
     "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "TokenUpdatedSuccessfully": "Token berjaya dikemas kini."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Pilih Imej"
@@ -214,6 +227,22 @@
     "Size": "Saiz",
     "SuccessFullyPulled": "Berjaya meminta tarik untuk {{count}} versi.",
     "Version": "Versi"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Saiz Kluster",
+    "Concurrency": "Sesi Serentak",
+    "CreatedAt": "Dicipta Pada",
+    "DefaultForUnspecified": "Lalai untuk tidak ditentukan",
+    "DefaultForUnspecifiedTooltipDesc1": "Menetapkan dasar lalai apabila tiada CPU atau memori tertentu diminta.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' membolehkan penggunaan sehingga kapasiti node ejen, sementara 'Limited' menafikan sumber kecuali secara jelas ditetapkan. \nDalam kebanyakan kes, 'tidak terhad' disyorkan.",
+    "IdleTimeout": "Tamat Masa Terbiar",
+    "MaxConcurrentSFTPSessions": "Sesi SFTP bersamaan Max",
+    "MaxPendingSessionCount": "Kiraan sesi maksimum yang belum selesai",
+    "MaxPendingSessionResourceSlots": "Slot sumber sesi maksimum yang belum selesai",
+    "MaxSessionLifetime": "Sepanjang Hayat Sesi Maks",
+    "Name": "Nama",
+    "StorageNodes": "Nod Penyimpanan",
+    "TotalResourceSlots": "Dasar Sumber"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Pilih Pasangan Kunci"
@@ -231,11 +260,11 @@
     "User": "Pengguna"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Keluar skrin penuh",
+    "Fullscreen": "Skrin penuh",
+    "Maximize": "Maksimumkan",
+    "Minimize": "Minimumkan",
+    "Restore": "Pulihkan"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Adakah anda pasti mahu memadamkan penggunaan \"{{deploymentName}}\"? Tindakan ini tidak boleh dibatalkan.",
@@ -269,12 +298,19 @@
     "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Tindakan lain"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Projek berikut akan dikemas kini.",
     "ProjectResourcePolicy": "Polisi Sumber Projek",
     "UpdateMultipleProjects": "Kemas kini Beberapa Projek"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Dicipta Pada",
+    "MaxNetworkCount": "Kiraan Rangkaian Maks",
+    "MaxQuotaScopeSize": "Saiz Folder Maks",
+    "MaxVFolderCount": "Kiraan Folder Maks",
+    "Name": "Nama"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Pilih Projek"
@@ -322,8 +358,20 @@
     "SelectFolder": "Pilih Folder"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Guna",
     "PlaceHolder": "Cari",
-    "ResetFilter": "Tetapkan semula penapis"
+    "ResetFilter": "Tetapkan semula penapis",
+    "SearchLabel": "Cari penapis",
+    "operator": {
+      "Contains": "mengandungi",
+      "Equals": "sama dengan",
+      "GreaterThan": "lebih besar daripada",
+      "GreaterThanOrEqual": "lebih besar atau sama",
+      "In": "dalam",
+      "LessThan": "kurang daripada",
+      "LessThanOrEqual": "kurang atau sama",
+      "NotEquals": "tidak sama dengan"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Batalkan tarik",
@@ -339,6 +387,11 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Diperuntukkan / Diminta"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Tukar warna kumpulan",
+    "ResourceGrid": "Grid sumber",
+    "UseColorN": "Guna warna {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Tidak terhad"
@@ -366,30 +419,68 @@
     "UpdatedAt": "Dikemas kini pada"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "CreatePreset": "Cipta Pratetap",
+    "AddChoice": "Tambah Pilihan",
+    "Category": "Kategori",
+    "CategoryPlaceholder": "cth., model_loading",
+    "CategoryTooltip": "Kategori UI yang digunakan untuk menyusun parameter berkaitan bersama.",
+    "ChoiceLabel": "Label",
+    "ChoiceLabelPlaceholder": "cth., FP16",
+    "ChoiceLabelRequired": "Label pilihan diperlukan.",
+    "ChoiceValue": "Nilai",
+    "ChoiceValuePlaceholder": "cth., fp16",
+    "ChoiceValueRequired": "Nilai pilihan diperlukan.",
+    "Choices": "Pilihan",
+    "ChoicesRequired": "Sekurang-kurangnya satu pilihan diperlukan.",
+    "CreatePreset": "Cipta Parameter",
     "DefaultValue": "Nilai Lalai",
     "DefaultValuePlaceholder": "cth., 1",
     "Description": "Penerangan",
     "DescriptionPlaceholder": "Terangkan parameter ini mengawal apa dan bagaimana ia menjejaskan tingkah laku inferens.",
-    "EditPreset": "Edit Pratetap",
+    "DisplayName": "Nama Paparan",
+    "DisplayNamePlaceholder": "cth., Tensor Parallel Size",
+    "DisplayNameTooltip": "Label mudah dibaca yang dipaparkan menggantikan nama parameter dalam borang penggunaan.",
+    "EditPreset": "Edit Parameter",
     "Key": "Kunci",
     "KeyPlaceholder": "cth., TENSOR_PARALLEL_SIZE",
     "KeyRequired": "Kunci diperlukan.",
     "Name": "Nama",
     "NamePlaceholder": "cth., Tensor Parallel Size",
     "NameRequired": "Nama diperlukan.",
-    "PresetCreated": "Pratetap varian masa jalan telah dicipta.",
-    "PresetTarget": "Sasaran Pratetap",
+    "NumberMax": "Maksimum",
+    "NumberMaxMustExceedMin": "Nilai maksimum mesti lebih besar daripada nilai minimum.",
+    "NumberMin": "Minimum",
+    "PresetCreated": "Parameter runtime telah dicipta.",
+    "PresetTarget": "Sasaran Parameter",
     "PresetTargetArgs": "Argumen Baris Perintah",
     "PresetTargetEnv": "Pembolehubah Persekitaran",
-    "PresetTargetRequired": "Sasaran pratetap diperlukan.",
-    "PresetUpdated": "Pratetap varian masa jalan telah dikemaskini.",
+    "PresetTargetRequired": "Sasaran parameter diperlukan.",
+    "PresetUpdated": "Parameter runtime telah dikemaskini.",
     "Rank": "Kedudukan",
-    "RankTooltip": "Susunan paparan antara pratetap bagi varian masa jalan yang sama. Nilai yang lebih rendah dipaparkan dahulu.",
+    "RankTooltip": "Susunan paparan antara parameter bagi runtime yang sama. Nilai yang lebih rendah dipaparkan dahulu.",
     "Required": "Diperlukan",
-    "RequiredTooltip": "Sama ada parameter pratetap ini mesti disediakan semasa membina semakan penggunaan.",
+    "RequiredTooltip": "Sama ada parameter ini mesti disediakan semasa membina semakan penggunaan.",
+    "Requirement": "Kewajipan",
     "RuntimeVariant": "Varian Masa Jalan",
     "RuntimeVariantRequired": "Varian masa jalan diperlukan.",
+    "SliderMax": "Maksimum",
+    "SliderMaxMustExceedMin": "Nilai maksimum mesti lebih besar daripada nilai minimum.",
+    "SliderMaxRequired": "Nilai maksimum diperlukan.",
+    "SliderMin": "Minimum",
+    "SliderMinRequired": "Nilai minimum diperlukan.",
+    "SliderStep": "Langkah",
+    "SliderStepMustBePositive": "Langkah mesti lebih besar daripada 0.",
+    "SliderStepTooltip": "Kenaikan langkah untuk penggelangsar. Lalai kepada 1.",
+    "StoredValueTypeMismatch": "Parameter ini disimpan dengan jenis nilai {{valueType}}, yang tidak boleh dipaparkan oleh jenis antara muka {{uiType}}. Tukar jenis antara muka atau jenis nilai.",
+    "TextPlaceholderExample": "cth., Masukkan nilai",
+    "TextPlaceholderLabel": "Ruang Letak Input",
+    "UIType": "Jenis UI",
+    "UITypeCheckbox": "Kotak Semak",
+    "UITypeIncompatibleWithValueType": "Jenis antara muka yang dipilih tidak boleh memaparkan jenis nilai ini.",
+    "UITypeNumberInput": "Input Nombor",
+    "UITypeSelect": "Pilih",
+    "UITypeSlider": "Penggelangsar",
+    "UITypeTextInput": "Input Teks",
+    "UITypeTooltip": "Kawalan yang digunakan untuk memaparkan parameter ini dalam borang penggunaan.",
     "ValueType": "Jenis Nilai",
     "ValueTypeBool": "Boolean",
     "ValueTypeFlag": "Bendera",
@@ -399,21 +490,29 @@
     "ValueTypeStr": "Rentetan"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Kategori",
     "CreatedAt": "Tarikh dicipta",
     "DefaultValue": "Nilai Lalai",
     "Description": "Penerangan",
+    "DisplayName": "Nama Paparan",
     "Key": "Kunci",
     "ModifiedAt": "Tarikh diubah",
     "Name": "Nama",
     "Optional": "Pilihan",
-    "PresetTarget": "Sasaran Pratetap",
+    "PresetTarget": "Sasaran Parameter",
     "PresetTargetArgs": "Argumen Baris Perintah",
     "PresetTargetEnv": "Pembolehubah Persekitaran",
     "Rank": "Kedudukan",
-    "RankTooltip": "Susunan paparan antara pratetap bagi varian masa jalan yang sama. Nilai yang lebih rendah dipaparkan dahulu.",
+    "RankTooltip": "Susunan paparan antara parameter bagi runtime yang sama. Nilai yang lebih rendah dipaparkan dahulu.",
     "Required": "Diperlukan",
-    "RuntimeVariant": "Varian Masa Jalan",
     "RuntimeVariantId": "ID Varian Masa Jalan",
+    "RuntimeVariantWithID": "Varian Masa Jalan (ID)",
+    "UIType": "Jenis UI",
+    "UITypeCheckbox": "Kotak Semak",
+    "UITypeNumberInput": "Input Nombor",
+    "UITypeSelect": "Pilih",
+    "UITypeSlider": "Penggelangsar",
+    "UITypeTextInput": "Input Teks",
     "ValueType": "Jenis Nilai",
     "ValueTypeBool": "Boolean",
     "ValueTypeFlag": "Bendera",
@@ -453,12 +552,13 @@
     "SelectStorageProxy": "Pilih Proksi Storan"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Berakhir pada",
+    "Duration": "Tempoh",
     "ErrorCode": "Kod Ralat",
     "Message": "Mesej",
     "Result": "Hasil",
-    "StartedAt": "Mula pada",
-    "Step": "Langkah"
+    "ResultMarker": "Penanda keputusan bagi percubaan ini",
+    "Step": "Langkah",
+    "Time": "Masa"
   },
   "comp:BAITable": {
     "Apply": "Guna",
@@ -514,37 +614,36 @@
     "ArchiveDownloadStarted": "Muat turun untuk {{count}} item telah bermula.",
     "ChangeFileExtension": "Tukar Sambungan Fail",
     "ChangeFileExtensionDesc": "Menukar sambungan fail boleh menyebabkan fail menjadi tidak dapat digunakan atau dibuka dengan tidak betul. \nAdakah anda mahu meneruskan?",
-    "Controls": "Kawalan",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Cipta fail baharu",
     "CreateANewFolder": "Buat folder baru",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Cipta Fail",
+    "CreateFolder": "Cipta Folder",
     "CreatedAt": "Dicipta di",
     "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
     "DeleteSelectedItemsDialog": "Padam pengesahan",
+    "Download": "Muat turun",
     "DownloadSelected": "Muat turun",
     "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
     "DragAndDropDesc": "Seret dan lepaskan fail ke kawasan ini untuk dimuat naik.",
     "DuplicatedFiles": "Pengesahan Pengesahan",
     "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
     "EditFile": "Edit Fail",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Fail berjaya dicipta.",
+    "FileName": "Nama Fail",
+    "FileNamePlaceholder": "cth. model-definition.yaml",
     "FileTooLargeToEdit": "Penyuntingan dalam pelayar dihadkan kerana saiz fail melebihi {{size}}MB.",
     "FolderCreatedSuccessfully": "Folder dibuat dengan jayanya.",
     "FolderName": "Nama folder",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Nama fail mestilah 255 aksara atau kurang.",
     "MaxFolderNameLength": "Nama folder mestilah 255 aksara atau kurang.",
     "ModifiedAt": "Diubahsuai di",
-    "MoreOptions": "Pilihan lanjut",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak mempunyai kebenaran muat naik untuk hos ini.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Laluan",
+    "PleaseEnterAFileName": "Sila masukkan nama fail.",
     "PleaseEnterAFolderName": "Sila masukkan nama folder.",
-    "RenameFile": "Rename",
+    "RenameFile": "Namakan semula",
     "RenameSuccess": "Nama telah berjaya diubah.",
     "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
     "Size": "Saiz",
@@ -659,23 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Kurangkan",
     "DeselectAll": "Nyahpilih semua",
     "File": "Fail",
-    "Increase": "Increase",
+    "Increase": "Tambah",
     "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
     "Project": "Projek",
-    "Select": "Select",
+    "Search": "Cari",
+    "Select": "Pilih",
+    "SelectPlaceholder": "Pilih {{label}}",
     "TotalItems": "Jumlah {{total}} item",
     "Unit": "Unit",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Tindakan",
+      "Back": "Kembali",
       "Cancel": "Batalkan",
       "Close": "Tutup",
       "Collapse": "Runtuh",
-      "Confirm": "Confirm",
+      "Confirm": "Sahkan",
       "Copied": "Disalin",
       "Copy": "Salin",
       "CopyAll": "Salin semua",

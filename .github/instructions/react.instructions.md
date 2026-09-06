@@ -29,7 +29,7 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 ## Component system: BAI first, Astryx second, antd never
 
 - **Reach for a `backend.ai-ui` component first** — `BAIFlex`, `BAIButton`, `BAIModal`,
-  `BAICard`, `BAIText`, `BAITableAstryx`, … They own this project's defaults and wrap the
+  `BAICard`, `BAIText`, `BAITable`, … They own this project's defaults and wrap the
   Astryx internals.
 - When no BAI equivalent exists, use **Astryx** (`@astryxdesign/core`) directly. Discover
   before writing: `astryx search "<thing>"`, `astryx component <Name>`. The CLI lives in
@@ -182,11 +182,15 @@ interfaces, enum members.
 are Vitest; E2E is Playwright under `e2e/` (see the `playwright-test-*` agents in
 `.claude/agents/`).
 
+`verify.sh` does **not** run the Astryx token gate — run
+`node scripts/migration-gates/astryx-token-gate.mjs --strict` yourself after touching CSS,
+theme tokens, or any `var(--…)`. AGENTS.md § Verification Harness explains what it catches
+and why nothing else reports it.
+
 ## On-demand skills
 
-`astryx-fix` (visual/behavioural fixes on Astryx UI) · `fw:i18n-patterns` ·
-`fw:storybook-patterns`. For component-authoring patterns, follow existing code:
-sibling `*Nodes` tables, `*SelectAstryx` selects, and `*Modal` components are the
+`fw:i18n-patterns` · `fw:storybook-patterns`. For component-authoring patterns, follow existing code:
+sibling `*Nodes` tables, `*Select` selects, and `*Modal` components are the
 templates — copy the nearest one and adapt.
 
 ## Review checklist (project-specific)
@@ -204,5 +208,6 @@ templates — copy the nearest one and adapt.
 - [ ] i18n: correct hook for the package (`useTranslation` vs `useBAIi18n`), no hard-coded
       user-facing strings.
 - [ ] `useBAILogger` instead of `console.*`; no empty catch; pre-defined error boundaries.
-- [ ] Tokens/`var(--…)` instead of hard-coded colours or px; works in light and dark.
+- [ ] Tokens/`var(--…)` instead of hard-coded colours or px; works in light and dark;
+      `node scripts/migration-gates/astryx-token-gate.mjs --strict` reports no new findings.
 - [ ] `bash scripts/verify.sh` passes.

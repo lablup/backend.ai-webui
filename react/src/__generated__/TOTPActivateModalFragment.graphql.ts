@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d38d6a0fa40427f3feb26e4ecf1da514>>
+ * @generated SignedSource<<9859b31d3c8377334607578564096061>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,7 +15,7 @@ export type TOTPActivateModalFragment$data = {
     readonly email: string;
   };
   readonly security: {
-    readonly totpActivated: boolean | null | undefined;
+    readonly totpActivated?: boolean | null | undefined;
   };
   readonly " $fragmentType": "TOTPActivateModalFragment";
 };
@@ -62,11 +62,18 @@ const node: ReaderFragment = {
       "plural": false,
       "selections": [
         {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "totpActivated",
-          "storageKey": null
+          "condition": "isNotSupportTotp",
+          "kind": "Condition",
+          "passingValue": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "totpActivated",
+              "storageKey": null
+            }
+          ]
         }
       ],
       "storageKey": null
@@ -76,6 +83,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "ea5b0c796463b95ee22c460285ab0847";
+(node as any).hash = "a8097421cb683bde50a7bd7cb9d7c67a";
 
 export default node;

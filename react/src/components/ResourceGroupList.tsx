@@ -28,7 +28,7 @@ import {
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
   BAISelectionLabel,
-  BAITableAstryx,
+  BAITable,
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -385,7 +385,8 @@ const ResourceGroupList: React.FC = () => {
         </BAIFlex>
       </BAIFlex>
 
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={'name'}
         resizable
         size="small"

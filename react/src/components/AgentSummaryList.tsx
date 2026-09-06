@@ -25,7 +25,7 @@ import {
   BAIFlex,
   BAIProgressWithLabel,
   BAIPropertyFilter,
-  BAITableAstryx,
+  BAITable,
   INITIAL_FETCH_KEY,
   ResourceTypeIcon,
   filterOutNullAndUndefined,
@@ -427,7 +427,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         bordered
         rowKey={'id'}
         dataSource={filterOutNullAndUndefined(agent_summary_list?.items)}

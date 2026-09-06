@@ -77,9 +77,10 @@
       card's borders and re-adds the inset as padding.
 
  MEASURED after: rail 265→1575 on a 264→1576 card (border to border), first tab
- label at x=288 = the body's content inset, header band 58px vs antd's 56px
- `headerHeight`. Applies to all 19 `tabList` call sites with no edit at any of
- them. The two tab LOOKS themselves live in `BAITabList`.
+ label at x=288 = the body's content inset. Applies to all 19 `tabList` call
+ sites with no edit at any of them. The two tab LOOKS themselves live in
+ `BAITabList`. The header BAND is 50px — `.bai-card__tabs--top` in `BAICard.css`
+ deliberately sits 8px tighter than antd's 56px `headerHeight`.
 
  PILOT-DECISION — **`title` becomes a real heading element (`<h5>`).** antd
  rendered the card title as a `<div>`; Astryx's `Heading` emits a heading
@@ -160,6 +161,13 @@ export interface BAICardProps extends Omit<
   /** Callback function triggered when the extra button is clicked */
   onClickExtraButton?: () => void;
   size?: 'default' | 'small';
+  /**
+   * Astryx `Card` padding step; overrides the `size`-derived default (6, or 3
+   * for `size="small"`). The full-bleed tab strip follows it (BAICard.css).
+   */
+  padding?: React.ComponentProps<typeof Card>['padding'];
+  /** Astryx `Card` width passthrough. */
+  width?: React.ComponentProps<typeof Card>['width'];
   /** antd's nested/inner card treatment. */
   type?: 'inner';
   /** antd v5 `bordered` / antd v6 `variant` — both mean the same thing here. */
@@ -189,6 +197,8 @@ const BAICard: React.FC<BAICardProps> = ({
   extra,
   title,
   size,
+  padding,
+  width,
   type,
   bordered: _bordered,
   variant: _variant,
@@ -246,9 +256,6 @@ const BAICard: React.FC<BAICardProps> = ({
       {...cardProps}
       className={[
         'bai-card',
-        // `padding` is a StyleX prop with no reflected data attribute, so the
-        // card's own inset is republished as a class the co-located CSS can
-        // read (`--bai-card-inset`, used by the full-bleed tab strip).
         size === 'small' ? 'bai-card--compact' : '',
         status !== 'default' ? `bai-card--${status}` : '',
         // Kept verbatim: `.bai-card-error` is an existing hook the app styles
@@ -260,7 +267,8 @@ const BAICard: React.FC<BAICardProps> = ({
         .filter(Boolean)
         .join(' ')}
       variant={type === 'inner' ? 'muted' : 'default'}
-      padding={size === 'small' ? 3 : 6}
+      padding={padding ?? (size === 'small' ? 3 : 6)}
+      width={width}
     >
       <VStack gap={4} align="stretch">
         {cover}
@@ -278,7 +286,7 @@ const BAICard: React.FC<BAICardProps> = ({
           <HStack
             className="bai-card__head"
             justify={title ? 'between' : 'end'}
-            align="center"
+            align="start"
             wrap="wrap"
             gap={2}
           >

@@ -739,17 +739,13 @@ export function isValidIPv4(ip: string): boolean {
   if (parts.length !== 4) return false;
 
   for (const part of parts) {
-    // Empty octet
     if (part.length === 0) return false;
 
-    // Leading zero check (except '0' itself)
     if (part.length > 1 && part[0] === '0') return false;
 
-    // Must be numeric
     const num = Number(part);
     if (isNaN(num) || num < 0 || num > 255) return false;
 
-    // Must not have non-numeric characters
     if (!/^\d+$/.test(part)) return false;
   }
 
@@ -768,7 +764,6 @@ export function isValidIPv4(ip: string): boolean {
  * - Case-insensitive hex digits allowed
  */
 export function isValidIPv6(ip: string): boolean {
-  // Quick format check
   if (!ip || ip.trim() !== ip) return false;
 
   // Reject zone identifiers
@@ -781,16 +776,13 @@ export function isValidIPv6(ip: string): boolean {
   const doubleColonCount = (ip.match(/::/g) || []).length;
   if (doubleColonCount > 1) return false; // Only one :: allowed
 
-  // Split by ::
   if (ip.includes('::')) {
     const [left, right] = ip.split('::');
     const leftGroups = left ? left.split(':') : [];
     const rightGroups = right ? right.split(':') : [];
 
-    // Check if total groups <= 8
     if (leftGroups.length + rightGroups.length >= 8) return false;
 
-    // Validate each group
     const allGroups = [...leftGroups, ...rightGroups];
     for (const group of allGroups) {
       if (group.length === 0) continue; // Empty group is ok in split result
@@ -1059,8 +1051,8 @@ export function listenToBackgroundTask<
 
 /**
  * Converts an order string (e.g., 'name' or '-name') to a GraphQL v2 (Strawberry) OrderBy array.
- * If the order string contains commas (from array dataIndex like ['spec', 'weight']),
- * only the last part is used as the field name.
+ * If the order string is a joined array dataIndex path ('.' from BAITable,
+ * ',' from the antd era), only the last segment is used as the field name.
  *
  * @template TOrderBy - The type of the order by object (e.g., ResourceGroupOrderBy)
  * @param order - The order string. Prefix with '-' for descending order.
@@ -1076,17 +1068,16 @@ export function listenToBackgroundTask<
  * // => [{ field: 'NAME', direction: 'DESC' }]
  *
  * @example
- * // With field name mapping for server compatibility
- * convertToOrderBy<DomainFairShareOrderBy>(
- *   '-calculationSnapshot,fairShareFactor',
- *   { fairShareFactor: 'FAIR_SHARE_FACTOR' }
- * )
- * // => [{ field: 'FAIR_SHARE_FACTOR', direction: 'DESC' }]
+ * // With field name mapping for server compatibility. Without the mapping,
+ * // 'email' would become 'EMAIL', which UserFairShareOrderField rejects.
+ * convertToOrderBy<UserFairShareOrderBy>('-email', { email: 'USER_EMAIL' })
+ * // => [{ field: 'USER_EMAIL', direction: 'DESC' }]
  */
 export const convertToOrderBy = <
   TOrderBy extends { field?: string; direction?: string },
 >(
   order: string | null | undefined,
+  fieldNameMap?: Record<string, NonNullable<TOrderBy['field']>>,
 ): ReadonlyArray<TOrderBy> | undefined => {
   if (!order) return undefined;
 
@@ -1094,13 +1085,14 @@ export const convertToOrderBy = <
   const isDescending = order.startsWith('-');
   const cleanOrder = isDescending ? order.slice(1) : order;
 
-  // If order contains comma-separated values, extract the last one
-  const orderParts = cleanOrder.split(',');
+  // A joined array dataIndex path ('.' from BAITable, ',' from the antd-era
+  // table) names the server field in its last segment.
+  const orderParts = cleanOrder.split(/[.,]/);
   const lastOrder = orderParts[orderParts.length - 1].trim();
 
   return [
     {
-      field: _.snakeCase(lastOrder).toUpperCase(),
+      field: fieldNameMap?.[lastOrder] ?? _.snakeCase(lastOrder).toUpperCase(),
       direction: isDescending ? 'DESC' : 'ASC',
     } as TOrderBy,
   ];
@@ -1108,7 +1100,7 @@ export const convertToOrderBy = <
 
 /**
  * Reverses `convertToOrderBy`: converts the first entry of a GraphQL v2
- * OrderBy array back to a UI order string (e.g., for a `BAITableAstryx`'s `order`
+ * OrderBy array back to a UI order string (e.g., for a `BAITable`'s `order`
  * prop, or to persist the current sort to the URL).
  *
  * @param orderBy - An OrderBy array (or its first entry's `field`/`direction`).

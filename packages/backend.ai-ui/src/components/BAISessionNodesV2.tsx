@@ -10,7 +10,7 @@ import {
   BAIIntervalView,
   BAISessionClusterModeV2,
   BAISessionTypeTagV2,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAITag,
   filterOutEmpty,
@@ -34,6 +34,10 @@ dayjs.extend(duration);
 export type SessionV2InList = NonNullable<
   BAISessionNodesV2Fragment$data[number]
 >;
+
+// Canonical home for the status union: hosts filter session lists by it and
+// must not each pin it to an unrelated query artifact.
+export type { SessionV2Status };
 
 const availableSessionV2SorterKeys = [
   'name',
@@ -382,7 +386,8 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
 
   return (
     <BAIFlex direction="column" align="stretch">
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         resizable
         rowKey="id"
         size="small"

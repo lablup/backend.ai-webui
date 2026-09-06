@@ -11,6 +11,7 @@ import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useSuspendedAppTemplateConfig } from '../hooks/useAppTemplate';
 import AppLauncherModal from './ComputeSessionNodeItems/AppLauncherModal';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
+import SessionAccessKey from './ComputeSessionNodeItems/SessionAccessKey';
 import SessionReclamationStatusCell from './ComputeSessionNodeItems/SessionReclamationStatusCell';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
@@ -24,7 +25,7 @@ import {
   filterOutNullAndUndefined,
   BAIColumnType,
   BAIFlex,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAISessionAgentIds,
   BAIAppIcon,
@@ -118,6 +119,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         ...AppLauncherModalFragment
         ...TerminateSessionModalFragment
         ...EditSessionPriorityModalFragment
+        ...SessionAccessKeyFragment
         kernel_nodes {
           edges {
             node {
@@ -223,18 +225,6 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         key: 'status',
         title: t('session.Status'),
         dataIndex: 'status',
-        // QA-FINDINGS Q-35 — a column that declares neither `width` nor
-        // `minWidth` is handed `proportional(1)`, i.e. a STRICT 1/N equal share
-        // of the table, and the cell clips (`overflow: hidden`) rather than
-        // pushing back. The worst real cell here is `PENDING` + `#n` + the
-        // "Queue Position" tooltip label, which needs 124px of content box;
-        // the equal share gives 120px minus 8/8 cell padding = 104px, so the
-        // tag was cut mid-glyph on `/admin-session` at every width and on
-        // `/session` below 1600. antd's engine measured content and grew the
-        // column, so the column definition itself is byte-identical to legacy's
-        // — the fallback is what changed. 140 = 124 content + the 16px of cell
-        // padding the engine does not add on its own.
-        minWidth: 140,
         render: (__, session) => {
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
           return <SessionStatusTag sessionFrgmt={session} />;
@@ -382,6 +372,13 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         sorter: isEnableSorter('created_at'),
         render: (created_at: string) => dayjs(created_at).format('LLL') || '-',
       },
+      {
+        key: 'access_key',
+        title: t('general.AccessKey'),
+        defaultHidden: true,
+        exportKey: 'access_key',
+        render: (__, session) => <SessionAccessKey sessionFrgmt={session} />,
+      },
       // The method of directly fetching project name is currently not possible through GraphQL's query. Until backend work is completed, id will be displayed.
       {
         key: 'project_id',
@@ -415,7 +412,8 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         resizable
         rowKey={'id'}
         size="small"

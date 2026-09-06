@@ -6,12 +6,14 @@ import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGro
 import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import {
+  BAIMetadataList,
+  BAIModal,
+  BAIModalProps,
+  BAIFlex,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Check, X } from 'lucide-react';
 import { useMemo } from 'react';
@@ -69,7 +71,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
           natively supported. The three blocks are separated by BAIFlex gap
           instead of a bare `<br/>`. */}
       <BAIFlex direction="column" align="stretch" gap="md">
-        <MetadataList
+        <BAIMetadataList
           title={t('resourceGroup.Information')}
           label={{ position: 'start', width: '50%' }}
         >
@@ -102,8 +104,8 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
           <MetadataListItem label={t('resourceGroup.AppProxyAddress')}>
             {resourceGroup?.wsproxy_addr || '-'}
           </MetadataListItem>
-        </MetadataList>
-        <MetadataList
+        </BAIMetadataList>
+        <BAIMetadataList
           title={t('resourceGroup.SchedulerOptions')}
           label={{ position: 'start', width: '50%' }}
         >
@@ -149,11 +151,11 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
               ? `${schedulerOpts.config.num_retries_to_skip} ${t('resourceGroup.RetriesToSkip')}`
               : '-'}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
         {/* FIXME: Currently, the driver options feature is unimplemented. After the feature is implemented,
         it should be changed to show each type instead of the map type. */}
         {!_.isEmpty(driverOpts) ? (
-          <MetadataList
+          <BAIMetadataList
             title={t('resourceGroup.DriverOptions')}
             label={{ position: 'start', width: '50%' }}
           >
@@ -174,7 +176,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
                 </MetadataListItem>
               );
             })}
-          </MetadataList>
+          </BAIMetadataList>
         ) : null}
       </BAIFlex>
     </BAIModal>

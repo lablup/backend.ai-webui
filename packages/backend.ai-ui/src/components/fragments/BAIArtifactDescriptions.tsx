@@ -17,11 +17,9 @@
 import { BAIArtifactDescriptionsFragment$key } from '../../__generated__/BAIArtifactDescriptionsFragment.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAILink from '../BAILink';
+import BAIMetadataList from '../BAIMetadataList';
 import BAIArtifactTypeTag from './BAIArtifactTypeTag';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -53,7 +51,7 @@ const BAIArtifactDescriptions = ({
   );
 
   return (
-    <MetadataList columns="multi">
+    <BAIMetadataList columns="multi">
       <MetadataListItem label={t('comp:BAIArtifactDescriptions.Name')}>
         {artifact.name}
       </MetadataListItem>
@@ -74,7 +72,7 @@ const BAIArtifactDescriptions = ({
           'N/A'
         )}
       </MetadataListItem>
-    </MetadataList>
+    </BAIMetadataList>
   );
 };
 

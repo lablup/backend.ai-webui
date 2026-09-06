@@ -13,17 +13,16 @@ import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated_
 import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
-import { downloadCSV } from '../helper/csv-util';
+import { csvLiteral, downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
-import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -31,12 +30,13 @@ import {
   BAIGraphQLPropertyFilter,
   BAIModal,
   BAIModalProps,
-  BAITableAstryx,
+  BAITable,
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
   type GraphQLFilter,
   INITIAL_FETCH_KEY,
+  BAIIconWithTooltip,
   useBAILogger,
   useErrorMessageResolver,
   useFetchKey,
@@ -85,12 +85,14 @@ type KeypairSorterValue =
 // hook once server-side CSV export supports them.
 const downloadCredentialCSV = (credential: KeypairCredential) => {
   const header = 'access_key,secret_key,ssh_public_key';
+  // The secret key is base64url (it can start with "-") and is pasted into CLI
+  // configs, so it must reach the file unmodified.
   const row = [
     credential.accessKey,
-    credential.secretKey,
+    csvLiteral(credential.secretKey),
     credential.sshPublicKey,
   ]
-    .map((v) => `"${v.replace(/"/g, '""')}"`)
+    .map(escapeCsvValue)
     .join(',');
 
   const csvContent = `${header}\n${row}\n`;
@@ -448,7 +450,8 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               />
             </BAIFlex>
           </BAIFlex>
-          <BAITableAstryx<KeypairNode>
+          <BAITable<KeypairNode>
+            scroll={{ x: 'max-content' }}
             rowKey="id"
             loading={deferredQueryVariables !== queryVariables}
             dataSource={keypairNodes}
@@ -473,25 +476,16 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                       {value}
                     </BAIText>
                     {value === mainAccessKey && (
-                      // Astryx `Tooltip` anchors to an interactive child (see
-                      // `BAIQuestionIconWithTooltipAstryx`) — this decorative
-                      // status icon gets the same unstyled-button wrapper.
-                      <Tooltip content={t('credential.MainAccessKey')}>
-                        <button
-                          type="button"
-                          aria-label={t('credential.MainAccessKey')}
-                          style={{
-                            all: 'unset',
-                            cursor: 'default',
-                            display: 'inline-flex',
-                          }}
-                        >
+                      <BAIIconWithTooltip
+                        content={t('credential.MainAccessKey')}
+                        icon={
                           <KeyRoundIcon
                             size="1em"
                             style={{ color: token.colorTextSecondary }}
                           />
-                        </button>
-                      </Tooltip>
+                        }
+                        style={{ cursor: 'default' }}
+                      />
                     )}
                   </BAIFlex>
                 ),
@@ -506,7 +500,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                     return (
                       <BAIFlex gap="xxs">
                         {!isMain && (
-                          <BAIPopconfirmAstryx
+                          <BAIPopconfirm
                             title={t('credential.SetAsMain')}
                             description={t('credential.SetAsMainConfirm')}
                             okText={t('button.Confirm')}
@@ -538,7 +532,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                               variant="ghost"
                               size="sm"
                             />
-                          </BAIPopconfirmAstryx>
+                          </BAIPopconfirm>
                         )}
                         {isMain ? (
                           // PILOT-DECISION (P18, ticket-18 precedent): antd's
@@ -554,7 +548,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                             isDisabled
                           />
                         ) : (
-                          <BAIPopconfirmAstryx
+                          <BAIPopconfirm
                             title={t('credential.Deactivate')}
                             description={t('credential.DeactivateConfirm')}
                             okText={t('button.Confirm')}
@@ -572,14 +566,14 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                               variant="destructive"
                               size="sm"
                             />
-                          </BAIPopconfirmAstryx>
+                          </BAIPopconfirm>
                         )}
                       </BAIFlex>
                     );
                   }
                   return (
                     <BAIFlex gap="xxs">
-                      <BAIPopconfirmAstryx
+                      <BAIPopconfirm
                         title={t('credential.Restore')}
                         description={t('credential.RestoreConfirm')}
                         okText={t('button.Confirm')}
@@ -596,7 +590,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                           variant="ghost"
                           size="sm"
                         />
-                      </BAIPopconfirmAstryx>
+                      </BAIPopconfirm>
                       <IconButton
                         icon={<Trash2Icon size="1em" />}
                         label={t('credential.DeleteKeypair')}

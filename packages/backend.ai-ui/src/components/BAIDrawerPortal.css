@@ -1,0 +1,60 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIDrawerPortal> — the scrim and stacking a scrimmed
+ lab `Drawer` used to get from the top layer, restated for a portalled tree
+ (FR-3585). The panel geometry stays lab's: the inner <dialog> is
+ `position: fixed` and anchors itself to its own edge.
+*/
+
+@layer components {
+  /* One stack with `BAIDialog`: `dialogLevelStack.ts` resolves and writes
+     `--bai-dialog-z` on this root too, so a modal opened later paints over the
+     drawer. The band base is the fallback for a root that has not claimed. */
+  .bai-drawer-portal {
+    position: fixed;
+    inset: 0;
+    z-index: var(--bai-dialog-z, var(--bai-z-modal-base));
+  }
+
+  /* Closed but still rendered: lab keeps the panel sliding out for one
+     `--duration-medium` before its delayed `dialog.close()`. */
+  .bai-drawer-portal--closed {
+    pointer-events: none;
+  }
+
+  /* Set by the component once that slide-out is over. Children stay mounted,
+     as the native drawer's did. */
+  .bai-drawer-portal[data-bai-drawer-hidden] {
+    display: none;
+  }
+
+  /* lab's `::backdrop` overlay color on the same duration — minus its
+     blur, dropped on request (FR-3585). */
+  .bai-drawer-portal__mask {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-overlay);
+    transition: opacity var(--duration-medium) var(--ease-standard);
+  }
+
+  /* The scrim fades in on the frame the root leaves `display: none`; a plain
+     transition cannot start from an unrendered element. */
+  @starting-style {
+    .bai-drawer-portal__mask {
+      opacity: 0;
+    }
+  }
+
+  .bai-drawer-portal--closed .bai-drawer-portal__mask {
+    opacity: 0;
+  }
+
+  /* lab's own reduced-motion duration, so scrim and panel stay in step. */
+  @media (prefers-reduced-motion: reduce) {
+    .bai-drawer-portal__mask {
+      transition-duration: 0.01s;
+    }
+  }
+}

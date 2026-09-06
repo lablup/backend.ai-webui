@@ -52,11 +52,11 @@ For detailed about Backend.AI cluster session, refer to the following.
 
 - A single node cluster session is created in the following cases.
 
-   * When "Single Node" is selected for Cluster mode field when creating a
+   * When "Single Node" is selected for the Cluster Mode field when creating a
      compute session. If there is no single agent with enough resources to
      create all containers at the same time, the session will stay in a pending
      (`PENDING`) state.
-   * “Multi Node” is selected for Cluster mode, but there is a single agent with
+   * “Multi Node” is selected for Cluster Mode, but there is a single agent with
      enough resources that can create all containers at the same time, then, all
      containers are deployed on that agent. This is to reduce network latency as
      much as possible by excluding external network access.
@@ -97,7 +97,7 @@ size). Also, don't forget to mount the storage folder for data safekeeping.
 
 ![](../images/session_launch_dialog.png)
 
-In the "Cluster mode" field at the bottom, you can choose what type of cluster
+In the "Cluster Mode" field at the bottom, you can choose what type of cluster
 you want to create.
 
 - Single Node: All containers are created on one Agent node.
@@ -106,11 +106,11 @@ you want to create.
   all of them are created on that node. This is to minimize network latency
   between the containers.
 
-Set the "Cluster size" below it. If set to 3, a total of three containers will
+Set the "Cluster Size" below it. If set to 3, a total of three containers will
 be created including the main container. These three containers are bound under
 a private network to form one compute session.
 
-Click the LAUNCH button to send a request to create a compute session, and wait
+Click the Launch button to send a request to create a compute session, and wait
 for a while to get a cluster session. After the session is created, you can view
 the created containers on the session details page.
 

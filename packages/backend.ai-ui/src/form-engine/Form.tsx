@@ -292,11 +292,11 @@ const Form = React.forwardRef(InternalForm) as <Values = any>(
 export interface FormProviderProps {
   validateMessages?: ValidateMessages;
   onFormChange?: (
-    name: string,
+    name: string | undefined,
     info: { changedFields: FieldData[]; forms: Record<string, FormInstance> },
   ) => void;
   onFormFinish?: (
-    name: string,
+    name: string | undefined,
     info: { values: Store; forms: Record<string, FormInstance> },
   ) => void;
   children?: React.ReactNode;
@@ -323,16 +323,14 @@ export const FormProvider: React.FC<FormProviderProps> = ({
       ...parent.validateMessages,
       ...validateMessages,
     },
+    // Unnamed forms fire too, with `name` undefined — rc-field-form parity.
+    // Guarding on the name silenced SessionLauncherPage's URL sync (FR-3530).
     triggerFormChange: (formName, changedFields) => {
-      if (onFormChange && formName) {
-        onFormChange(formName, { changedFields, forms: formsRef.current });
-      }
+      onFormChange?.(formName, { changedFields, forms: formsRef.current });
       parent.triggerFormChange(formName, changedFields);
     },
     triggerFormFinish: (formName, values) => {
-      if (onFormFinish && formName) {
-        onFormFinish(formName, { values, forms: formsRef.current });
-      }
+      onFormFinish?.(formName, { values, forms: formsRef.current });
       parent.triggerFormFinish(formName, values);
     },
     registerForm: (formName, formInstance) => {

@@ -5,10 +5,12 @@ import {
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
 import {
+  getSortableColumnHeader,
   loginAsAdmin,
   loginAsCreatedAccount,
   navigateTo,
 } from '../utils/test-util';
+import { usersTabButton } from '../utils/user-profile-util';
 import test, { expect, type APIRequestContext } from '@playwright/test';
 
 // Helper to open the My Keypair Management modal
@@ -160,9 +162,9 @@ test.describe(
         // remote test backend that boot takes ~5s after goto() returns —
         // right at the 5s default expect timeout — so give it explicit
         // headroom like the sanity check below already does.
-        await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible(
-          { timeout: 15000 },
-        );
+        await expect(usersTabButton(adminPage)).toBeVisible({
+          timeout: 15000,
+        });
         await adminPage.getByRole('button', { name: 'Create User' }).click();
         const userSettingModal = new UserSettingModal(adminPage);
         await userSettingModal.createUser(
@@ -232,30 +234,34 @@ test.describe(
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
       await expect(modal).toBeVisible();
 
-      // Verify alert banner shows the main access key
-      await expect(modal.getByRole('alert')).toContainText('Main Access Key:');
+      // Verify banner shows the main access key. The banner (Astryx `Banner`)
+      // renders with role="status", not role="alert" — confirmed against the
+      // live DOM. Scope by its content since the modal also contains several
+      // other role="status" elements (loading spinners on buttons).
+      const mainAccessKeyBanner = modal
+        .getByRole('status')
+        .filter({ hasText: 'Main Access Key:' });
+      await expect(mainAccessKeyBanner).toContainText('Main Access Key:');
 
       // Verify the Active radio button is selected by default
       await expect(
         modal.getByRole('radio', { name: 'Active', exact: true }),
       ).toBeChecked();
 
-      // Verify table columns are visible
-      await expect(
-        modal.getByRole('columnheader', { name: 'Access Key' }),
-      ).toBeVisible();
+      // Verify table columns are visible. "Access Key", "Resource Policy",
+      // "Created At", and "Last Used" are sortable — their columnheaders'
+      // accessible names are overridden by the sort button's aria-label (the
+      // raw field key, e.g. "Sort by accessKey") rather than the display
+      // label, so match the visible text instead (see getSortableColumnHeader).
+      await expect(getSortableColumnHeader(modal, 'Access Key')).toBeVisible();
       await expect(
         modal.getByRole('columnheader', { name: 'Controls' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'Resource Policy' }),
+        getSortableColumnHeader(modal, 'Resource Policy'),
       ).toBeVisible();
-      await expect(
-        modal.getByRole('columnheader', { name: 'Created At' }),
-      ).toBeVisible();
-      await expect(
-        modal.getByRole('columnheader', { name: 'Last Used' }),
-      ).toBeVisible();
+      await expect(getSortableColumnHeader(modal, 'Created At')).toBeVisible();
+      await expect(getSortableColumnHeader(modal, 'Last Used')).toBeVisible();
 
       // Verify at least one keypair row exists
       const rows = getKeypairTableRows(page);
@@ -529,7 +535,7 @@ test.describe(
         await expect(nonMainRow).toBeVisible({ timeout: 10000 });
 
         // Click the Set as Main button. `MyKeypairManagementModal.tsx` wraps
-        // it in `BAIPopconfirmAstryx` (built on Astryx `Popover`, ticket 08
+        // it in `BAIPopconfirm` (built on Astryx `Popover`, ticket 08
         // gap component); the trigger is an `IconButton` with
         // `label={t('credential.SetAsMain')}`, so it's addressable by its
         // accessible name directly (no more "first non-dangerous button in
@@ -538,7 +544,7 @@ test.describe(
 
         // Verify Popconfirm appears. `Popover`'s content defaults to
         // `role="dialog"`, `aria-label={title}` — here "Set as Main"
-        // (`BAIPopconfirmAstryx.tsx`).
+        // (`BAIPopconfirm.tsx`).
         const visiblePopconfirm = page.getByRole('dialog', {
           name: 'Set as Main',
         });
@@ -766,7 +772,7 @@ test.describe(
         await expect(targetRow).toBeVisible();
 
         await expect(async () => {
-          // `MyKeypairManagementModal.tsx` wraps this in `BAIPopconfirmAstryx`;
+          // `MyKeypairManagementModal.tsx` wraps this in `BAIPopconfirm`;
           // the trigger is an `IconButton` with `label={t('credential.Restore')}`
           // = "Restore" (not antd's icon-derived "undo" aria-label).
           await targetRow

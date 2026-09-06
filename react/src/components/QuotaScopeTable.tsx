@@ -10,7 +10,8 @@ import QuotaSettingModal from './QuotaSettingModal';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import {
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
+  BAIText,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
 import { X, SquarePenIcon } from 'lucide-react';
@@ -112,7 +113,7 @@ const QuotaScopeTable: React.FC<Props> = ({ scopeId, hostName }) => {
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
         rowKey="id"
         pagination={false}
         loading={queryVariables !== deferredQueryVariables}
@@ -123,7 +124,11 @@ const QuotaScopeTable: React.FC<Props> = ({ scopeId, hostName }) => {
             key: 'quota_scope_id',
             render: (value: string, record) => (
               <BAINameActionCell
-                title={<code>{value}</code>}
+                title={
+                  <BAIText ellipsis={{ tooltip: true }} style={{ minWidth: 0 }}>
+                    <code>{value}</code>
+                  </BAIText>
+                }
                 showActions="always"
                 actions={[
                   {

@@ -10,7 +10,7 @@ import BAIText from '../BAIText';
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
 } from '../Table';
 import dayjs from 'dayjs';
@@ -208,7 +208,8 @@ const BAIAuditLogNodes = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey="id"
       size="small"

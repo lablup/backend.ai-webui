@@ -26,7 +26,7 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAISelect,
-  BAIStorageHostSelectAstryx,
+  BAIStorageHostSelect,
   safeDecodeUuid,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -410,7 +410,7 @@ const ModelStoreListPageV2: React.FC = () => {
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
                 renderInput: ({ onAddCondition }) => (
-                  <BAIStorageHostSelectAstryx
+                  <BAIStorageHostSelect
                     // The filter row already prints the property label.
                     label={t('import.StorageHost')}
                     isLabelHidden

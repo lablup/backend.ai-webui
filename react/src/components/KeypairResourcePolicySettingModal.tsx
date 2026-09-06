@@ -24,7 +24,7 @@ import {
   AstryxFormNumberInput,
   AstryxFormSelector,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Card } from '@astryxdesign/core/Card';
 import { Icon } from '@astryxdesign/core/Icon';
 import { HStack } from '@astryxdesign/core/Stack';
@@ -488,7 +488,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   <AstryxFormNumberInput
                     label={t('resourcePolicy.MaxSessionLifetime')}
                     min={0}
-                    max={100}
+                    max={SIGNED_32BIT_MAX_INT}
                   />
                 </FormItemWithUnlimited>
               </div>

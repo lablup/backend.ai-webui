@@ -42,14 +42,14 @@ prop surface (\`open\`, \`onOk\`/\`onCancel\`, \`okButtonProps\`, \`footer\`,
 | \`minimizedPlacement\` | \`'bottomRight' \\| 'bottomLeft' \\| 'topRight' \\| 'topLeft'\` | \`'bottomRight'\` | Placement of the minimized modal bar |
 
 ## Additional Features
-- **Always centered**: a native \`<dialog>\` centres itself; \`centered\` is accepted and ignored
+- **Always centered**: the portal centres the dialog; \`centered\` is accepted and ignored
 - **Consistent styling**: Astryx \`DialogHeader\` / \`LayoutContent\` / \`LayoutFooter\` slots with dividers
 - **Window controls**: Minimize (compact bar), maximize (viewport with margin), fullscreen (full viewport)
 - **Unmounts when closed**: \`destroyOnHidden\` semantics are unconditional
 
 ## Dropped in the Astryx conversion
-- **\`draggable\`**: a native \`<dialog>\` lives in the CSS top layer; the prop is accepted and ignored (zero app call sites used it)
-- **Page interaction while minimized**: \`showModal()\` always paints a backdrop, so a minimized modal is still modal
+- **\`draggable\`**: antd's positioned wrapper is gone; the prop is accepted and ignored (zero app call sites used it)
+- **Page interaction while minimized**: the portal always paints a mask, so a minimized modal is still modal
 - **\`stickyTitle\`**: unconditionally true — the Astryx \`Layout\` header slot sits outside the scrolling content
         `,
       },
@@ -488,8 +488,8 @@ export const MinimizedState: Story = {
 - The dialog collapses to its title bar and parks at \`minimizedPlacement\`
 - Body and footer are unmounted; only the header row renders
 - Use the restore control in the header (or Escape) to bring the modal back
-- PILOT-DECISION: a native \`<dialog>\` opened with \`showModal()\` always paints
-  a backdrop, so — unlike the antd version — the page behind stays inert`,
+- PILOT-DECISION: the portal always paints a mask, so — unlike the antd
+  version — the page behind is not reachable while minimized`,
       },
     },
   },

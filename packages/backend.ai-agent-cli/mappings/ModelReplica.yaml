@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=./schema.json
+type: ModelReplica
+concept: replica
+docs: deployment#replicas
+meaning: One replica of a deployment — a single inference session serving the deployment's model.
+fields:
+  status:
+    label: Status
+    meaning: Where the replica's own session is in its lifecycle, independent of whether it passes health checks.
+    docs: deployment#replicas
+    values:
+      PROVISIONING:
+        label: Provisioning
+        meaning: The replica's session is being scheduled and its containers are not up yet.
+        variant: info
+      RUNNING:
+        label: Running
+        meaning: The replica's session is up and can take traffic once it is healthy.
+        variant: success
+      TERMINATING:
+        label: Terminating
+        meaning: The replica is being removed and is draining its traffic.
+        variant: warning
+      TERMINATED:
+        label: Terminated
+        meaning: The replica is gone and no longer counts towards the deployment's capacity.
+        variant: neutral
+      FAILED_TO_START:
+        label: Failed To Start
+        meaning: The replica's session never came up; the reason shows in the deployment's alerts.
+        variant: error
+  healthStatus:
+    label: Health
+    meaning: What the deployment's health check most recently said about this replica.
+    docs: deployment#replicas
+  trafficStatus:
+    label: Traffic
+    meaning: Whether the App Proxy is currently routing requests to this replica.
+    concept: app-proxy
+    docs: deployment#accessing-your-deployment
+  session:
+    label: Session
+    meaning: The inference session backing the replica, which is where its logs and utilization live.
+    concept: session-type-inference
+    docs: sessions_all#session-detail-panel
+  revision:
+    label: Revision
+    meaning: The deployment revision this replica was created from, which fixes its image and settings.
+    docs: deployment#revisions-tab

@@ -20,8 +20,8 @@ import {
   useCurrentMenuKey,
   useSwitchProject,
 } from '../../hooks/useRouteScope';
-import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useThemeMode } from '../../hooks/useThemeMode';
+import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import { useBAIBreakpoint } from '../../theme-shim';
 import ProjectSelect from '../ProjectSelect';

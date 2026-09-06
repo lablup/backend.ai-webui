@@ -5,12 +5,12 @@
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import { useThemeMode } from '../hooks/useThemeMode';
+import './BAINotificationButton.css';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
-import BAIBadgeCountAstryx from './astryx-bui/BAIBadgeCountAstryx';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Kbd } from '@astryxdesign/core/Kbd';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { MediaTheme } from '@astryxdesign/core/theme';
+import { BAIBadgeCount } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { atom, useAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -57,15 +57,12 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
   });
 
   // TRAP (measured, twice). `Tooltip` and the drawer render as inline SIBLINGS
-  // of the trigger, not through a portal, so a `MediaTheme` wrapper reaches
-  // their panels too — that pinned `color-scheme: dark` on the tooltip in both
-  // app modes and gave white text on a white bubble.
-  //
-  // So the band context sits on the trigger BUTTON via `data-astryx-media`
-  // (MediaTheme's own mechanism, at element scope), and only the tooltip
-  // CONTENT is wrapped. That content's `mode="dark"` is CONSTANT, not the
-  // app's opposite: `ANTD_HOVER_PARITY` pins the bubble to `colorBgSpotlight`
-  // (`rgba(0,0,0,0.85)` / `#424242`), dark in BOTH schemes. QA-FINDINGS Q-10.
+  // of the trigger, not through a portal, so a `MediaTheme` wrapper around the
+  // trigger reaches their panels too. The band context therefore sits on the
+  // trigger BUTTON only, via `data-astryx-media` (QA-FINDINGS Q-10). The
+  // tooltip's `Kbd` is coloured by the tooltip block of `ANTD_HOVER_PARITY`,
+  // not by a `MediaTheme` wrapper — the dark palette's `--color-neutral`
+  // equals the bubble (FR-3726).
   const bandMediaMode = isDarkMode ? 'light' : 'dark';
 
   return (
@@ -74,9 +71,9 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
           (Astryx uses logical placements — MAPPING §4). */}
       <Tooltip
         content={
-          <MediaTheme mode="dark">
+          <>
             {t('notification.Notifications')} <Kbd keys="]" />
-          </MediaTheme>
+          </>
         }
         placement="start"
       >
@@ -84,7 +81,7 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
             variant="ghost"`, which requires the accessible name antd let
             this button ship without (P8). The `Badge dot` overlay is
             MAPPING §3.8's NONE branch, already self-built once as
-            `BAIBadgeCountAstryx`; antd `color="red"` becomes
+            `BAIBadgeCount`; antd `color="red"` becomes
             `variant="error"` (the closed-enum equivalent). */}
         <IconButton
           // `data-astryx-media` IS `MediaTheme`'s whole mechanism, applied at
@@ -93,7 +90,9 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
           variant="ghost"
           label={t('notification.Notifications')}
           icon={
-            <BAIBadgeCountAstryx
+            <BAIBadgeCount
+              // The band's inversion stops at the overlay — see the .css.
+              className="bai-notification-badge"
               hasDot={hasRunningBackgroundTask}
               variant="error"
               title={t('notification.Notifications')}
@@ -102,7 +101,7 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
                   declares its own `color`, so it intercepts inheritance before
                   the icon sees it. `MediaTheme` remaps the token above. */}
               <Bell size="1em" style={{ color: 'var(--color-icon-primary)' }} />
-            </BAIBadgeCountAstryx>
+            </BAIBadgeCount>
           }
           onClick={() => setIsOpenDrawer((v) => !v)}
           {...props}

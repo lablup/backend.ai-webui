@@ -332,6 +332,58 @@ The session list groups your sessions into type tabs — **All**, **Interactive*
 **Running** / **Finished** switch and a property filter for **Session Name**,
 **Resource Group**, and **Agent**.
 
+<a id="session-resource-grid"></a>
+
+### Resource grid view
+
+When the experimental **Session resource grid view** feature is enabled in User
+Settings, a **View mode** toggle appears above the list, next to the refresh
+button, and switches the list between **Table** and **Grid**. Refer to the
+[Experimental features](#experimental-features) section for how to turn the
+feature on. The grid uses the same type tabs, **Running** / **Finished** switch,
+and property filter as the table, so you can narrow the list first and then
+switch the view mode.
+
+![](../images/session_resource_grid.png)
+
+In the grid, each session is drawn as a plate of small cells whose color
+reflects the live utilization of the session: a neutral fill below 50%,
+progressively stronger warning colors between 50% and 80%, and a red fill at
+80% or above. A session that reports no live data — one that is not running
+yet, for example — keeps the **No data** color, and a session whose resources
+are still only requested is drawn with a dashed outline. The legend above the
+grid explains each color.
+
+Hover a plate to see a summary of that session: its status, type, cluster mode,
+resource group, image, start time and elapsed time, the utilization of each
+allocated resource, and its disk I/O. Click the plate to open the session
+detail panel.
+
+The controls above the grid decide what a single cell stands for:
+
+- **Grid mode**: **Resource** draws one cell per unit of a single selected
+  resource, while **Kernel** draws one cell per kernel of the session.
+- **Resource** (Resource mode only): The resource to visualize — **CPU**,
+  **Memory**, or any accelerator the listed sessions use. One cell is one CPU
+  core, one memory unit, or one accelerator device, and a fractional
+  accelerator share is drawn as a partially filled cell. Accelerators that
+  report device memory offer two entries, one for utilization (`util`) and one
+  for device memory (`mem`).
+- **Memory unit** (Resource mode, memory resources only): How much memory a
+  single cell stands for — 1, 2, 4, or 8 GiB.
+- **Metric** (Kernel mode only): The live statistic used to color the kernel
+  cells.
+- **Layout**: **Serpentine** runs every other row in the opposite direction, so
+  the cells of a session that wraps stay connected; **Word-wrap** starts every
+  row at the left edge instead.
+
+Notices above the grid explain what the grid leaves out:
+
+- When the current filter matches more sessions than the grid draws, only the
+  first 100 sessions are shown and a notice reports the total.
+- In Resource mode, sessions that hold none of the selected resource are hidden
+  and a notice reports how many were hidden.
+
 <a id="session-detail-panel"></a>
 
 ## Session detail panel

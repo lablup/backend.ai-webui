@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f6035bc86ada9fa10cde721d6f610f2>>
+ * @generated SignedSource<<d10d623d36f02316e8e61a844863d52d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -41,6 +41,7 @@ export type DeploymentRevisionDetail_revision$data = {
       readonly modelPath: string;
       readonly name: string;
       readonly service: {
+        readonly command: string | null | undefined;
         readonly healthCheck: {
           readonly expectedStatusCode: number;
           readonly initialDelay: number;
@@ -62,6 +63,7 @@ export type DeploymentRevisionDetail_revision$data = {
   readonly modelMountConfig: {
     readonly definitionPath: string;
     readonly mountDestination: string;
+    readonly subpath: string | null | undefined;
     readonly vfolder: {
       readonly id: string;
       readonly name: string | null | undefined;
@@ -397,6 +399,13 @@ return {
           "name": "definitionPath",
           "storageKey": null
         },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "subpath",
+          "storageKey": null
+        },
         (v6/*: any*/)
       ],
       "storageKey": null
@@ -491,6 +500,13 @@ return {
               "name": "service",
               "plural": false,
               "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "command",
+                  "storageKey": null
+                },
                 {
                   "alias": null,
                   "args": null,
@@ -605,6 +621,6 @@ return {
 };
 })();
 
-(node as any).hash = "2089b3e0f5f1bade4cac6ca6fe0ca065";
+(node as any).hash = "4c2f94d9a40e3d061f87b3a18542fba0";
 
 export default node;

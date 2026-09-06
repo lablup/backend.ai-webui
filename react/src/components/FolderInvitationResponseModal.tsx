@@ -16,17 +16,17 @@ import {
   useVFolderInvitations,
 } from '../hooks/useVFolderInvitations';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { List, ListItem } from '@astryxdesign/core/List';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack } from '@astryxdesign/core/Stack';
-import { useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIMetadataList,
+  BAIModal,
+  type BAIModalProps,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { FolderIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
@@ -64,14 +64,14 @@ const FolderInvitationResponseModal: React.FC<
       label={item.vfolder_name ?? ''}
       startContent={<FolderIcon size="1em" />}
       description={
-        <MetadataList columns="single">
+        <BAIMetadataList columns="single">
           <MetadataListItem label={t('data.From')}>
             {item.inviter_user_email || item.inviter || '-'}
           </MetadataListItem>
           <MetadataListItem label={t('data.Permission')}>
             <VFolderPermissionCell permission={item.perm} />
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
       }
       endContent={
         <HStack gap={2}>
@@ -144,6 +144,8 @@ const FolderInvitationResponseModal: React.FC<
         if (!next) onCancel?.();
       }}
       title={t('data.InvitedFolders')}
+      maskClosable={false}
+      footer={null}
       {...baiModalProps}
     >
       {_.isEmpty(invitations) ? (

@@ -353,12 +353,21 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
 
   return session ? (
     <>
+      {/* These are the app's own controls, so the primary one keeps the brand
+          accent even on a status-coloured surface (the notification Banner
+          rebinds `--color-accent`). Rule in `index.css`. FR-3580. */}
       {compact ? (
-        <ButtonGroup label={t('data.explorer.Actions')} size={astryxSize}>
+        <ButtonGroup
+          className="bai-accent-pinned"
+          label={t('data.explorer.Actions')}
+          size={astryxSize}
+        >
           {buttons}
         </ButtonGroup>
       ) : (
-        <HStack gap={1}>{buttons}</HStack>
+        <HStack className="bai-accent-pinned" gap={1}>
+          {buttons}
+        </HStack>
       )}
 
       <Suspense fallback={null}>

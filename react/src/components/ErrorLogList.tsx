@@ -3,28 +3,24 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
-import TableColumnsSettingModal from './TableColumnsSettingModal';
 import TextHighlighter from './TextHighlighter';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIFlex,
   BAIModal,
-  BAITableAstryx,
-  BAIUnmountAfterClose,
+  BAITable,
   type BAIColumnsType,
-  useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { Trash2, Search, Settings, RotateCw } from 'lucide-react';
+import { Trash2, Search, RotateCw } from 'lucide-react';
 import React, { useState, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -47,8 +43,6 @@ const ErrorLogList: React.FC<{
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
-  const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
-    useToggle();
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
   const [logSearch, setLogSearch] = useState('');
   const [updateKey, checkUpdateKey] = useUpdatableState('first');
@@ -177,8 +171,9 @@ const ErrorLogList: React.FC<{
     },
   ];
 
-  const [hiddenColumnKeys, setHiddenColumnKeys] =
-    useHiddenColumnKeysSetting('ErrorLogList');
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ErrorLogList',
+  );
 
   const storageLogData = useMemo(() => {
     const raw: LogType[] = JSON.parse(
@@ -258,7 +253,14 @@ const ErrorLogList: React.FC<{
           </BAIFlex>
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
+        scroll={{
+          x: 'max-content',
+          y:
+            _.filter(filteredLogData, (log) => log.isError).length === 0
+              ? undefined
+              : 'calc(100vh - 400px)',
+        }}
         pagination={{
           showSizeChanger: false,
         }}
@@ -266,9 +268,6 @@ const ErrorLogList: React.FC<{
         // a refetch is in flight but has no spinner slot, so the antd
         // `{ indicator }` object collapses to a boolean.
         loading={isPendingSearchTransition}
-        // PILOT-DECISION (ticket 25 §5): `scroll.y` — a fixed body height with
-        // a sticky header — is DROPPED. This log list now scrolls with the
-        // page instead of inside its own viewport-height box.
         dataSource={
           checkedShowOnlyError
             ? _.filter(filteredLogData, (log) => {
@@ -276,33 +275,17 @@ const ErrorLogList: React.FC<{
               })
             : (filteredLogData as LogType[])
         }
-        columns={_.filter(
-          columns,
-          (column) => !_.includes(hiddenColumnKeys, _.toString(column?.key)),
-        )}
+        columns={columns}
+        tableSettings={{
+          columnOverrides,
+          onColumnOverridesChange: setColumnOverrides,
+        }}
         onRow={(record) => {
           return {
             style: { color: record.isError ? token.colorError : '' },
           };
         }}
       />
-      <BAIFlex
-        justify="end"
-        style={{
-          paddingRight: token.paddingXS,
-          paddingBottom: token.paddingXS,
-        }}
-      >
-        <IconButton
-          icon={<Settings size="1em" />}
-          label={t('logs.ColumnSettings', 'Column settings')}
-          tooltip={t('logs.ColumnSettings', 'Column settings')}
-          variant="ghost"
-          onClick={() => {
-            toggleColumnSettingModal();
-          }}
-        />
-      </BAIFlex>
       <BAIModal
         open={isOpenClearLogsModal}
         title={t('dialog.warning.LogDeletion')}
@@ -321,23 +304,6 @@ const ErrorLogList: React.FC<{
       >
         <Banner status="warning" title={t('dialog.warning.CannotBeUndone')} />
       </BAIModal>
-      <BAIUnmountAfterClose>
-        <TableColumnsSettingModal
-          open={visibleColumnSettingModal}
-          onRequestClose={(values) => {
-            values?.selectedColumnKeys &&
-              setHiddenColumnKeys(
-                _.difference(
-                  columns.map((column) => _.toString(column.key)),
-                  values?.selectedColumnKeys,
-                ),
-              );
-            toggleColumnSettingModal();
-          }}
-          columns={columns}
-          hiddenColumnKeys={hiddenColumnKeys}
-        />
-      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

@@ -5,18 +5,18 @@
 import { DeploymentAutoScalingCardDeleteMutation } from '../__generated__/DeploymentAutoScalingCardDeleteMutation.graphql';
 import {
   AutoScalingRuleFilter,
+  AutoScalingRuleOrderBy,
   DeploymentAutoScalingCardListQuery,
 } from '../__generated__/DeploymentAutoScalingCardListQuery.graphql';
 import { DeploymentAutoScalingCardPresetsQuery } from '../__generated__/DeploymentAutoScalingCardPresetsQuery.graphql';
 import { DeploymentAutoScalingCard_deployment$key } from '../__generated__/DeploymentAutoScalingCard_deployment.graphql';
 import { App } from '../app-shim';
+import { convertToOrderBy } from '../helper';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
   BAIButton,
@@ -25,6 +25,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIQuestionIconWithTooltip,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
@@ -33,8 +34,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleHelp, PlusIcon } from 'lucide-react';
-import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import { PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
   useDeferredValue,
@@ -64,7 +64,6 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [currentUser] = useCurrentUserInfo();
 
   const deployment = useFragment(
@@ -99,12 +98,9 @@ const DeploymentAutoScalingCard: React.FC<DeploymentAutoScalingCardProps> = ({
       title={
         <BAIFlex gap="xs" align="center">
           {t('deployment.tab.AutoScaling')}
-          <Tooltip content={t('deployment.tab.description.AutoScaling')}>
-            <CircleHelp
-              style={{ color: token.colorTextDescription }}
-              size="1em"
-            />
-          </Tooltip>
+          <BAIQuestionIconWithTooltip
+            title={t('deployment.tab.description.AutoScaling')}
+          />
         </BAIFlex>
       }
       styles={{ body: { paddingTop: 0 } }}
@@ -151,40 +147,26 @@ const DeploymentAutoScalingCardContent: React.FC<
     'table_column_overrides.AutoScalingRuleList',
   );
 
-  // BAITableAstryx order string: "createdAt" (ASC) | "-createdAt" (DESC)
-  const [queryParams, setQueryParams] = useQueryStates(
-    {
-      order: parseAsStringLiteral([
-        'createdAt',
-        '-createdAt',
-      ] as const).withDefault('-createdAt'),
-      filter: parseAsJson<AutoScalingRuleFilter>(
-        (value) => value as AutoScalingRuleFilter,
-      ),
-    },
-    { history: 'replace' },
-  );
-
-  const orderString = queryParams.order;
-  const graphQLFilter = queryParams.filter ?? undefined;
+  // Card-local state, not URL state: this card is one section among several on
+  // the detail page, so its sort/filter/page are not page-level navigation.
+  const [orderString, setOrderString] = useState<
+    'createdAt' | '-createdAt' | null
+  >('-createdAt');
+  const [graphQLFilter, setGraphQLFilter] = useState<
+    AutoScalingRuleFilter | undefined
+  >(undefined);
 
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
-  } = useBAIPaginationOptionStateOnSearchParam({ current: 1, pageSize: 10 });
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
 
   const queryVariables = {
     deploymentId,
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.limit,
-    orderBy: [
-      {
-        field: 'CREATED_AT' as const,
-        direction: (orderString.startsWith('-') ? 'DESC' : 'ASC') as
-          'ASC' | 'DESC',
-      },
-    ],
+    orderBy: convertToOrderBy<AutoScalingRuleOrderBy>(orderString),
     filter: graphQLFilter ?? null,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -284,9 +266,9 @@ const DeploymentAutoScalingCardContent: React.FC<
   return (
     <>
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <BAIFlex align="center" gap="xs">
+        <BAIFlex align="center" justify="between" wrap="wrap" gap="xs">
           <BAIGraphQLPropertyFilter<AutoScalingRuleFilter>
-            style={{ flex: 1 }}
+            style={{ flexShrink: 1 }}
             filterProperties={[
               {
                 key: 'createdAt',
@@ -306,29 +288,31 @@ const DeploymentAutoScalingCardContent: React.FC<
             value={graphQLFilter}
             onChange={(filter) => {
               startRefetchTransition(() => {
-                setQueryParams({ filter: filter ?? null });
+                setGraphQLFilter(filter ?? undefined);
                 setTablePaginationOption({ current: 1 });
               });
             }}
           />
-          <BAIFetchKeyButton
-            loading={isPendingRefetch}
-            value=""
-            onChange={() => {
-              startRefetchTransition(() => updateFetchKey());
-            }}
-          />
-          <BAIButton
-            type="primary"
-            icon={<PlusIcon />}
-            disabled={isEndpointDestroying || !isOwnedByCurrentUser}
-            onClick={() => {
-              setEditingRuleId(null);
-              setIsOpenEditorModal(true);
-            }}
-          >
-            {t('modelService.AddRules')}
-          </BAIButton>
+          <BAIFlex align="center" gap="xs">
+            <BAIFetchKeyButton
+              loading={isPendingRefetch}
+              value=""
+              onChange={() => {
+                startRefetchTransition(() => updateFetchKey());
+              }}
+            />
+            <BAIButton
+              type="primary"
+              icon={<PlusIcon />}
+              disabled={isEndpointDestroying || !isOwnedByCurrentUser}
+              onClick={() => {
+                setEditingRuleId(null);
+                setIsOpenEditorModal(true);
+              }}
+            >
+              {t('modelService.AddRules')}
+            </BAIButton>
+          </BAIFlex>
         </BAIFlex>
         <AutoScalingRuleListNodes
           autoScalingRulesFrgmt={autoScalingRuleNodes}
@@ -343,9 +327,9 @@ const DeploymentAutoScalingCardContent: React.FC<
           }}
           onChangeOrder={(order) => {
             startRefetchTransition(() => {
-              setQueryParams({
-                order: order ? (order as 'createdAt' | '-createdAt') : null,
-              });
+              setOrderString(
+                order ? (order as 'createdAt' | '-createdAt') : null,
+              );
             });
           }}
           pagination={{
@@ -376,10 +360,10 @@ const DeploymentAutoScalingCardContent: React.FC<
               : null
           }
           onRequestClose={(success) => {
-            setIsOpenEditorModal(false);
-            if (success) {
+            if (success && !editingRuleId) {
               handleRefetch();
             }
+            setIsOpenEditorModal(false);
           }}
           afterClose={() => {
             setEditingRuleId(null);

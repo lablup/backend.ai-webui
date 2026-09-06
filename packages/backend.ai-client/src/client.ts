@@ -33,6 +33,7 @@ import {
   EduApp,
   utils,
 } from './resources';
+import { safeStorage } from './safe-storage';
 import type {
   FeatureSet,
   GraphQLVariables,
@@ -44,28 +45,23 @@ import type {
 import CryptoES from 'crypto-es';
 
 /**
- * Keys whose values may carry secrets (passwords, API secret keys, tokens,
- * one-time codes, etc.). Request bodies are persisted to localStorage as part
- * of the debug log (`backendaiwebui.logs`); any value stored under one of these
- * keys is masked first so credentials are never written in clear text.
- * Matched case-insensitively against object keys.
+ * Key stems whose values may carry secrets (passwords, API secret keys,
+ * tokens, one-time codes, etc.). Request bodies are persisted to localStorage
+ * as part of the debug log (`backendaiwebui.logs`); any value stored under a
+ * key containing one of these stems (case-insensitive) is masked first so
+ * credentials are never written in clear text — covering snake_case and
+ * camelCase spellings alike (`new_password2`, `refreshToken`, `clientSecret`).
  */
-const SENSITIVE_LOG_KEYS = new Set([
+const SENSITIVE_LOG_KEY_STEMS = [
   'password',
-  'new_password',
-  'old_password',
-  'current_password',
-  'secret_key',
   'secret',
   'token',
-  'access_token',
-  'refresh_token',
   'otp',
   'authorization',
   'passphrase',
   'private_key',
-  'ssh_private_key',
-]);
+  'privatekey',
+];
 
 const REDACTED_PLACEHOLDER = '********';
 
@@ -85,7 +81,10 @@ function redactSensitiveValues(value: unknown): unknown {
       if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
         continue;
       }
-      redacted[key] = SENSITIVE_LOG_KEYS.has(key.toLowerCase())
+      const lowerKey = key.toLowerCase();
+      redacted[key] = SENSITIVE_LOG_KEY_STEMS.some((stem) =>
+        lowerKey.includes(stem),
+      )
         ? REDACTED_PLACEHOLDER
         : redactSensitiveValues(val);
     }
@@ -100,7 +99,7 @@ function redactSensitiveValues(value: unknown): unknown {
  * string bodies (the common case, since signed requests stringify the body).
  * Non-JSON strings and primitives are returned unchanged.
  */
-function redactRequestParameters(params: unknown): unknown {
+export function redactRequestParameters(params: unknown): unknown {
   if (typeof params === 'string') {
     try {
       const parsed = JSON.parse(params);
@@ -237,8 +236,8 @@ export class Client {
     this.abortSignal = this.abortController.signal;
     this.requestTimeout = 30_000;
     this.requestSoftTimeout = 20_000;
-    if (localStorage.getItem('backendaiwebui.sessionid')) {
-      this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
+    if (safeStorage.getItem('backendaiwebui.sessionid')) {
+      this._loginSessionId = safeStorage.getItem('backendaiwebui.sessionid');
     } else {
       this._loginSessionId = '';
     }
@@ -504,7 +503,7 @@ export class Client {
     }
 
     let previous_log = JSON.parse(
-      localStorage.getItem('backendaiwebui.logs') ?? 'null',
+      safeStorage.getItem('backendaiwebui.logs') ?? 'null',
     );
     if (previous_log) {
       if (previous_log.length > 2000) {
@@ -561,15 +560,15 @@ export class Client {
       log_stack = log_stack.concat(previous_log);
     }
     try {
-      localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
+      safeStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
     } catch (e) {
       // console.warn('Local storage is full. Clearing part of the logs.');
       // localStorage is full, we will keep the recent 2/3 of the logs.
       let webuiLogs = JSON.parse(
-        localStorage.getItem('backendaiwebui.logs') || '[]',
+        safeStorage.getItem('backendaiwebui.logs') || '[]',
       );
       webuiLogs = webuiLogs.slice(0, Math.round((webuiLogs.length * 2) / 3));
-      localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
+      safeStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
       // Will not throw exception here since the request should be proceeded
       // even if it is not possible to write log to localStorage.
     }
@@ -821,7 +820,6 @@ export class Client {
       this._features['vfolder-mounts'] = true;
     }
     if (this.isManagerVersionCompatibleWith('25.4.0')) {
-      this._features['resource-presets-per-resource-group'] = true;
       this._features['vfolder_nodes_in_session_node'] = true;
     }
     if (this.isManagerVersionCompatibleWith('25.5.0')) {
@@ -872,8 +870,6 @@ export class Client {
     }
     if (this.isManagerVersionCompatibleWith('26.1.0')) {
       this._features['model-try-content-button'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('26.1.0')) {
       this._features['admin-resource-group-select'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.2.0')) {
@@ -904,9 +900,19 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.4')) {
+      // RBAC filter support assigned user.
+      this._features['rbac-filter-assigned-user'] = true;
+      // ModelMountConfigInput / ExtraVFolderMountInput gained `subpath` in
+      // 26.4.4 (BA-6242): mount a subfolder inside the model vfolder instead of
+      // its root. Older managers reject the unknown input field, so the key is
+      // omitted from the mutation entirely on them.
+      this._features['model-mount-subpath'] = true;
+    }
     // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
     // checks are opt-in via `enable: true/false` instead of nulling the whole
-    // object. Pinned to the rc7 tag for the same staging-manager reason as above.
+    // object. Pinned to the rc7 tag so the flag also activates against staging
+    // managers built from that tag.
     // TODO(FR-3056): simplify to '26.4.4' once the final release ships.
     if (this.isManagerVersionCompatibleWith('26.4.4rc7')) {
       this._features['model-health-check-enable'] = true;
@@ -933,10 +939,6 @@ export class Client {
       // TODO(FR-3139): simplify to '26.4.4' once rc builds are out of use.
       this._features['model-runtime-variant-preset-values'] = true;
     }
-    if (this.isManagerVersionCompatibleWith('26.4.4')) {
-      // RBAC filter support assigned user.
-      this._features['rbac-filter-assigned-user'] = true;
-    }
     if (this.isManagerVersionCompatibleWith('26.7.0')) {
       // Strawberry V2 filter inputs gained the AND/OR/NOT sub-filter
       // combinators (schema: "Added in 26.7.0"), which
@@ -959,6 +961,52 @@ export class Client {
       // BA-6809 / backend PR #12708 — RuntimeVariantPreset.runtimeVariant
       // nested field (DataLoader-resolved name/description). FR-3256.
       this._features['runtime-variant-preset-runtime-variant-field'] = true;
+      // RuntimeVariant gained `readsVfolderConfigFiles` (whether the variant
+      // reads its model config from the mounted vfolder) and
+      // `defaultModelDefinition` in 26.8.0 (FR-3342). Older managers omit both,
+      // so call sites treat `readsVfolderConfigFiles` as authoritative only
+      // when this flag is set and otherwise fall back to the legacy
+      // `name === 'custom'` heuristic.
+      this._features['model-runtime-variant-reads-vfolder-config-files'] = true;
+      // Single-string `command` + nullable `shell` on the model-service config
+      // (FR-3205 / BA-6551). The field pair actually landed in 26.7.0, but the
+      // GraphQL input default `shell: String = "/bin/bash"` (BA-6742,
+      // lablup/backend.ai#12622) did not: it merged after the 26.7.0 tag, so on
+      // a 26.7.0 manager an omitted `shell` is null, which silently disables
+      // shell wrapping (the preset form still omits it when no command is
+      // typed). Worse, a manager built from `main` after BA-6742 still reports
+      // `26.7.0`, so the two cannot be told apart by version. BA-6742 ships
+      // together with the 26.8.0 fields below (both are in `main`), so gating
+      // the whole command/shell path at 26.8.0 removes the ambiguity — 26.7.0
+      // managers keep using the deprecated `startCommand` token list and never
+      // receive `shell`.
+      this._features['model-service-command-string'] = true;
+      // `PREEMPTED` / `RESCHEDULING` join the `SessionV2Status` enum (BA-6749,
+      // lablup/backend.ai#13126, FR-3673). Enum coercion rejects the whole
+      // query on an older manager, so status filters must omit them.
+      this._features['session-preemption-statuses'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
+      // .modelDefinition` moves from `ModelDefinition` to a new
+      // `PresetModelDefinition` type (mirrored down to `PresetModelConfig` /
+      // `PresetModelServiceConfig`), with `name`/`modelPath`/`port` now
+      // nullable — a sparse preset omits them to inherit the runtime variant
+      // baseline's name / the model mount destination / the variant
+      // baseline's port at revision resolution. Older managers keep
+      // returning the old non-null shape, so call sites must not treat an
+      // omitted field as "inherit from variant" unless this flag is set.
+      this._features['preset-model-config-type'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // BA-7234 / backend #13538 — DomainV2 `id` became the domain uuid, and
+      // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
+      // managers expect the domain name there instead. FR-3618.
+      this._features['rbac-domain-scope-uuid'] = true;
+      // BA-7253 / backend PR #13562 — category/displayName/uiOption became
+      // writable on Create/UpdateRuntimeVariantPresetInput (previously
+      // read-only on the RuntimeVariantPreset type). FR-3476.
+      this._features['runtime-variant-preset-ui-metadata'] = true;
     }
   }
 
@@ -1061,7 +1109,7 @@ export class Client {
         'authenticated' in responseBody &&
         responseBody.data
       ) {
-        localStorage.removeItem('backendaiwebui.sessionid');
+        safeStorage.removeItem('backendaiwebui.sessionid');
         throw {
           isLoginError: true,
           data: responseBody.data,
@@ -1086,13 +1134,13 @@ export class Client {
       }
       await this.get_manager_version();
       if (this._loginSessionId !== null && this._loginSessionId !== '') {
-        localStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
+        safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
       }
       return this.check_login();
     }
 
     // HTTP 200 but authenticated === false (TOTP required, etc.)
-    localStorage.removeItem('backendaiwebui.sessionid');
+    safeStorage.removeItem('backendaiwebui.sessionid');
     throw {
       isLoginError: true,
       data: result.data || {},
@@ -1109,11 +1157,11 @@ export class Client {
     let body = {};
     let rqst = this.newSignedRequest('POST', `/server/logout`, body, null);
     // clean up log msg for security reason
-    const currentLogs = localStorage.getItem('backendaiwebui.logs');
+    const currentLogs = safeStorage.getItem('backendaiwebui.logs');
     if (currentLogs) {
-      localStorage.removeItem('backendaiwebui.logs');
+      safeStorage.removeItem('backendaiwebui.logs');
     }
-    localStorage.removeItem('backendaiwebui.sessionid');
+    safeStorage.removeItem('backendaiwebui.sessionid');
     return this._wrapWithPromise(rqst);
   }
 
@@ -1139,7 +1187,7 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          localStorage.setItem(
+          safeStorage.setItem(
             'backendaiwebui.sessionid',
             this._loginSessionId,
           );
@@ -1150,7 +1198,7 @@ export class Client {
         // been persisted by a previous login so that subsequent
         // check_login() calls don't confuse it with a live session.
         // Mirrors the regular login() failure-path behavior.
-        localStorage.removeItem('backendaiwebui.sessionid');
+        safeStorage.removeItem('backendaiwebui.sessionid');
         if (result.data) {
           // Surface both `details` (free-text) and `type` (problem URL) so
           // the webui can classify the failure (`active-login-session-exists`,
@@ -1707,12 +1755,12 @@ export class Client {
   /**
    * Rename session to another name.
    *
-   * @param {string} sessionId - current session name
-   * @param {string} newId - new session name
+   * @param {string} sessionId - ID (UUID) of the session
+   * @param {string} newName - new session name
    */
-  async rename(sessionId: string, newId: string): Promise<any> {
+  async rename(sessionId: string, newName: string): Promise<any> {
     let params = {
-      name: newId,
+      name: newName,
     };
     let rqst = this.newSignedRequest(
       'POST',

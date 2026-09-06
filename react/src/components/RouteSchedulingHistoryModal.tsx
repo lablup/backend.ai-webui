@@ -111,15 +111,7 @@ const RouteSchedulingHistoryModal = ({
     <BAIModal
       title={t('route.RouteSchedulingHistory')}
       open={open}
-      width={'90%'}
-      style={{
-        maxWidth: 1600,
-      }}
-      styles={{
-        body: {
-          minHeight: '80vh',
-        },
-      }}
+      variant="fullscreen"
       footer={null}
       onCancel={onCancel}
       {...modalProps}

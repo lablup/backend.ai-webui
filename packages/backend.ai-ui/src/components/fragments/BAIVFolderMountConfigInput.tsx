@@ -6,7 +6,7 @@ import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
-import BAIVFolderSelectAstryx from './BAIVFolderSelectAstryx';
+import BAIVFolderSelect from './BAIVFolderSelect';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { TextInput } from '@astryxdesign/core/TextInput';
@@ -160,7 +160,7 @@ export const isVFolderMountConfigValid = (
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * Users pick vfolders with {@link BAIVFolderSelectAstryx} (in `row_id` mode, so the
+ * Users pick vfolders with {@link BAIVFolderSelect} (in `row_id` mode, so the
  * value is the vfolder UUID); each selected folder appears as a row below the
  * select where its mount destination (alias) and an optional subpath can be
  * edited. The alias input follows VFolderTable's rule (relative inputs are
@@ -206,7 +206,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     { defaultValue: [] },
   );
   const mountConfigs = value ?? [];
-  // `vfolderId` is the vfolder UUID; BAIVFolderSelectAstryx runs in `row_id` mode so
+  // `vfolderId` is the vfolder UUID; BAIVFolderSelect runs in `row_id` mode so
   // its value, options, and resolved name map are all keyed by the same UUID.
   const selectedIds = mountConfigs.map((entry) => entry.vfolderId);
 
@@ -220,7 +220,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       <Suspense fallback={<Skeleton height={28} width="100%" />}>
-        <BAIVFolderSelectAstryx
+        <BAIVFolderSelect
           multiple
           label={t('comp:BAIVFolderSelect.SelectFolder')}
           isLabelHidden

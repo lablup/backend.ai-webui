@@ -27,13 +27,16 @@
  `mouseEnterDelay` describe antd's overlay DOM, which Astryx replaces with CSS
  anchor positioning + the Popover API. No call site passes any of them
  (measured: `title` ×63, `placement` ×3, `style` ×2, `iconProps` ×2).
+
+ The trigger mechanics (focusable reset button, FR-3589 anchor-name note) live
+ in the generic base, `BAIIconWithTooltip`, which this component renders with
+ the antd surface translated to Astryx's native prop names at the boundary.
 */
+import BAIIconWithTooltip from './BAIIconWithTooltip';
 import {
   splitAntdPlacement,
   type AntdPlacement,
 } from '../helper/astryxPlacement';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { CircleHelp } from 'lucide-react';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
@@ -50,6 +53,8 @@ export interface BAIQuestionIconWithTooltipProps {
   style?: CSSProperties;
   className?: string;
   iconProps?: React.ComponentProps<typeof CircleHelp>;
+  /** See BAIIconWithTooltip — `false` for triggers nested in interactive elements. */
+  focusable?: boolean;
 }
 
 const BAIQuestionIconWithTooltip = ({
@@ -61,26 +66,23 @@ const BAIQuestionIconWithTooltip = ({
   style,
   className,
   iconProps,
+  focusable,
 }: BAIQuestionIconWithTooltipProps) => {
   const { placement: astryxPlacement, alignment } =
     splitAntdPlacement(placement);
   return (
-    <Tooltip
+    <BAIIconWithTooltip
+      icon={<CircleHelp {...iconProps} size="1em" />}
       content={title}
       placement={astryxPlacement}
       alignment={alignment}
       isOpen={open}
       onOpenChange={onOpenChange}
       delay={mouseEnterDelay === undefined ? undefined : mouseEnterDelay * 1000}
-    >
-      <Text
-        color="placeholder"
-        className={className}
-        style={{ cursor: 'help', display: 'inline-flex', ...style }}
-      >
-        <CircleHelp {...iconProps} size="1em" />
-      </Text>
-    </Tooltip>
+      style={style}
+      className={className}
+      focusable={focusable}
+    />
   );
 };
 

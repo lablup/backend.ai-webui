@@ -12,7 +12,7 @@ import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
 import BAITag from '../BAITag';
 import BAIText from '../BAIText';
-import { BAIColumnType, BAITableAstryx, BAITableProps } from '../Table';
+import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactStatusTag from './BAIArtifactStatusTag';
 import { Badge } from '@astryxdesign/core/Badge';
 import dayjs from 'dayjs';
@@ -79,7 +79,6 @@ const BAIArtifactRevisionTable = ({
         title: t('comp:BAIArtifactRevisionTable.Version'),
         dataIndex: 'version',
         key: 'version',
-        width: '30%',
         render: (version: string, record: ArtifactRevision) => (
           <div>
             <BAIFlex align="center" gap={'xs'}>
@@ -103,7 +102,6 @@ const BAIArtifactRevisionTable = ({
         title: t('comp:BAIArtifactRevisionTable.Status'),
         dataIndex: 'status',
         key: 'status',
-        width: '15%',
         render: (_value: string, record: ArtifactRevision) => {
           return <BAIArtifactStatusTag artifactRevisionFrgmt={record} />;
         },
@@ -112,7 +110,6 @@ const BAIArtifactRevisionTable = ({
         title: t('comp:BAIArtifactRevisionTable.Size'),
         dataIndex: 'size',
         key: 'size',
-        width: '15%',
         render: (size: number) => {
           if (!size) return <BAIText monospace>N/A</BAIText>;
           return (
@@ -126,7 +123,6 @@ const BAIArtifactRevisionTable = ({
         title: t('comp:BAIArtifactTable.Updated'),
         dataIndex: 'updatedAt',
         key: 'updatedAt',
-        width: '15%',
         render: (updated_at: string) =>
           updated_at ? (
             <BAIText type="secondary" title={dayjs(updated_at).toString()}>
@@ -144,13 +140,17 @@ const BAIArtifactRevisionTable = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx<ArtifactRevision>
+    <BAITable<ArtifactRevision>
+      // Restores the pre-migration pairing. The percentage column widths that
+      // used to sit alongside it are gone: BAITable keeps only NUMERIC widths
+      // in x mode, so they were inert. Use numbers if proportions are wanted.
+      scroll={{ x: 'max-content' }}
       rowKey={(record) => record.id}
       resizable
       columns={allColumns}
       dataSource={artifactRevision}
       {...tableProps}
-    ></BAITableAstryx>
+    ></BAITable>
   );
 };
 

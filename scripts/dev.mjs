@@ -6,7 +6,13 @@
 // Similarly, the resolved Portless app name is exposed via
 // VITE_DEV_SERVER_NAME so the React app can show it in the browser tab title
 // (dev only), keeping multiple dev-server tabs distinguishable.
+// When this box has joined the team dev gateway, the shareable URL is printed
+// at startup and exposed as VITE_DEV_SHARE_URL.
 import { spawn, spawnSync } from 'node:child_process';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { resolveAppName } from './portless-app-name.mjs';
 
 const env = { ...process.env };
 
@@ -58,33 +64,109 @@ spawnSync('portless', proxyArgs, { stdio: 'inherit' });
 const portFlag = process.env.PORT ? `--app-port ${process.env.PORT} ` : '';
 delete env.PORT; // Avoid leaking to portless / CRA before Portless reassigns it.
 
-// Decide the portless app name (`https://<name>.localhost:1355`).
-// Priority:
-//   1. PORTLESS_APP_NAME env var (caller-provided; sanitized here so callers
-//      can pass arbitrary strings — e.g. a Claude Code session name — without
-//      worrying about subdomain validity).
-//   2. FR-XXXX issue number in the current git branch (e.g. `fr-2701`).
-//   3. `portless run` (auto-derived from branch — long branch-prefixed
-//      hostnames may break Portless's HTTPS cert generation, so prefer 1 or 2).
-function sanitizeAppName(raw) {
-  if (!raw) return null;
-  const slug = raw
-    .toString()
-    .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-')
-    .replace(/-{2,}/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 40);
-  return slug || null;
-}
+// Decide the portless app name (`https://<name>.localhost:1355`) — the issue key,
+// the PR number and a word for what this branch is: `fr-3665-pr9049-statusline`.
+// Composition rules and fallbacks live in portless-app-name.mjs.
+//
+// PORTLESS_APP_NAME supplies only the descriptive word (the dev-server skill fills
+// it from `/rename`); the identifiers are added here so callers cannot forget them.
+// PORTLESS_APP_NAME_EXACT=1 opts out entirely, for a caller that owns the hostname.
 const branch = spawnSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).stdout?.trim() || '';
-const issueMatch = branch.match(/(?:^|[-_/])(fr-?\d+)/i);
-const branchAppName = issueMatch ? issueMatch[1].toLowerCase().replace(/^fr/, 'fr-').replace(/-{2,}/g, '-') : null;
-const appName = sanitizeAppName(process.env.PORTLESS_APP_NAME) ?? branchAppName;
+
+// One `gh` call per boot (~0.65s, and it returns number and title together). It is
+// allowed to fail: no gh, not logged in, no PR yet, or offline all just mean the
+// name loses its `prNNNN` part. The last good answer is cached so an offline boot
+// keeps the URL it had rather than silently renaming the dev server.
+function lookupPr(branchName) {
+  if (!branchName || process.env.PORTLESS_SKIP_PR_LOOKUP) return null;
+  const cacheFile = join(
+    homedir(), '.cache', 'backend.ai-webui',
+    `pr-${branchName.replace(/[^A-Za-z0-9]+/g, '-')}.json`,
+  );
+  const probe = spawnSync(
+    'gh',
+    ['pr', 'view', branchName, '--json', 'number,title'],
+    { encoding: 'utf8', timeout: 4000, stdio: ['ignore', 'pipe', 'ignore'] },
+  );
+  if (probe.status === 0 && probe.stdout) {
+    let pr = null;
+    try {
+      pr = JSON.parse(probe.stdout);
+    } catch {
+      pr = null; // unparseable output — fall through to the cache
+    }
+    if (pr?.number) {
+      // Persisting is an optimization for the next offline boot, so a read-only
+      // ~/.cache or an over-long filename must not throw away the answer we have.
+      try {
+        mkdirSync(dirname(cacheFile), { recursive: true });
+        writeFileSync(cacheFile, JSON.stringify(pr));
+      } catch {
+        // Best-effort; the fresh lookup below is still good.
+      }
+      return pr;
+    }
+  }
+  try {
+    return JSON.parse(readFileSync(cacheFile, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+// Exact mode discards every identifier, so it must not pay for the lookup that
+// produces one — up to the 4s timeout on a box with no network.
+const exactAppName = !!process.env.PORTLESS_APP_NAME_EXACT?.trim();
+const appName = resolveAppName({
+  envName: process.env.PORTLESS_APP_NAME,
+  branch,
+  pr: exactAppName ? null : lookupPr(branch),
+  exact: exactAppName,
+});
 if (appName) {
   // Surface the app name to the React bundle for the dev-only tab title.
   env.VITE_DEV_SERVER_NAME = appName;
 }
+
+// Team share URL, present only when this box has run `dev-gw join` once.
+// The gateway rewrites Host to `<app>.localhost:<target_port>`, so routing
+// works with no Portless/Vite change here — only the URL differs.
+const devGwConfigPath =
+  process.env.DEV_GW_CONFIG?.trim() || join(homedir(), '.config', 'fw', 'dev-gw.json');
+let devGwConfig = null;
+try {
+  devGwConfig = JSON.parse(readFileSync(devGwConfigPath, 'utf8'));
+} catch {
+  // Not joined (ENOENT), unreadable, or malformed — no share URL to print.
+}
+// A parseable file can still be the wrong shape; only a URL template is usable.
+const devGwShareBase =
+  typeof devGwConfig?.share_base === 'string' &&
+  /^https?:\/\/\{app\}\./.test(devGwConfig.share_base)
+    ? devGwConfig.share_base
+    : null;
+// The gateway forwards to the port recorded at join time forever, so a server
+// on a different port would be proxied to nothing. `portless_port` is the
+// pre-rename spelling, still on boxes that have not re-joined.
+const portlessPort = process.env.PORTLESS_PORT?.trim() || '1355';
+const devGwTargetPort = devGwConfig?.target_port ?? devGwConfig?.portless_port;
+const devGwPortMismatch =
+  devGwTargetPort != null && String(devGwTargetPort) !== portlessPort;
+if (devGwShareBase && devGwPortMismatch) {
+  console.log(
+    `-- Team share URL unavailable: the gateway was joined with Portless :${devGwTargetPort}, this server uses :${portlessPort} — re-run \`dev-gw join\``,
+  );
+} else if (devGwShareBase && appName) {
+  const shareUrl = devGwShareBase.replace('{app}', appName);
+  env.VITE_DEV_SHARE_URL = shareUrl;
+  console.log(`-- Team share URL: ${shareUrl} (dev VPN, via dev-gw)`);
+} else if (devGwShareBase) {
+  // `portless run` derives the app name itself, so it is unknown until it prints.
+  console.log(
+    `-- Team share URL: ${devGwShareBase.replace('{app}', '<app>')} — <app> is the name Portless prints below (dev VPN, via dev-gw)`,
+  );
+}
+
 const portlessSpec = appName
   ? `portless ${appName} --force ${portFlag}`
   : `portless run --force ${portFlag}`;

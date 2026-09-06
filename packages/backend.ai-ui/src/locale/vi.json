@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "Thực thi thất bại",
     "ErrorOccurred": "Đã xảy ra lỗi"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Xóa",
+    "HexValue": "Giá trị hex",
+    "NoColor": "Không có màu",
+    "SelectColor": "Chọn màu"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Xóa Tìm trong các tùy chọn",
     "NoResults": "Không có kết quả",
-    "Search": "Tìm kiếm"
+    "SearchOptions": "Tìm trong các tùy chọn"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Chọn kho lưu trữ container"
@@ -162,7 +169,7 @@
     "SelectDomain": "Chọn miền"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Số lượng"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Tự động làm mới",
@@ -178,6 +185,8 @@
     "operator": {
       "After": "sau",
       "Before": "trước",
+      "Contains": "chứa",
+      "EndsWith": "kết thúc bằng",
       "Equals": "bằng",
       "GreaterThan": "lớn hơn",
       "GreaterThanOrEqual": "lớn hơn hoặc bằng",
@@ -192,15 +201,19 @@
       "In": "trong",
       "LessThan": "nhỏ hơn",
       "LessThanOrEqual": "nhỏ hơn hoặc bằng",
+      "NotContains": "không chứa",
+      "NotEndsWith": "không kết thúc bằng",
       "NotEquals": "không bằng",
-      "NotIn": "không trong"
+      "NotIn": "không trong",
+      "NotStartsWith": "không bắt đầu bằng",
+      "StartsWith": "bắt đầu bằng"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Nhập mã thông báo Hugging Face của bạn",
+    "HuggingFaceSettings": "Cài đặt Hugging Face",
+    "Token": "Mã thông báo",
+    "TokenUpdatedSuccessfully": "Đã cập nhật mã thông báo thành công."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Chọn Ảnh"
@@ -214,6 +227,22 @@
     "Size": "Kích cỡ",
     "SuccessFullyPulled": "Yêu cầu kéo thành công cho các phiên bản {{count}}.",
     "Version": "Phiên bản"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Kích thước cụm",
+    "Concurrency": "Phiên đồng thời",
+    "CreatedAt": "Được tạo tại",
+    "DefaultForUnspecified": "Mặc định cho không xác định",
+    "DefaultForUnspecifiedTooltipDesc1": "Đặt chính sách mặc định khi không yêu cầu CPU hoặc bộ nhớ cụ thể.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' cho phép sử dụng theo công suất của nút đại lý, trong khi 'giới hạn' từ chối tài nguyên trừ khi được thiết lập rõ ràng. \nTrong hầu hết các trường hợp, 'không giới hạn' được khuyến nghị.",
+    "IdleTimeout": "Hết thời gian chờ",
+    "MaxConcurrentSFTPSessions": "Phiên SFTP đồng thời tối đa",
+    "MaxPendingSessionCount": "Số lượng phiên đang chờ xử lý tối đa",
+    "MaxPendingSessionResourceSlots": "Các khe cắm tài nguyên phiên đang chờ xử lý tối đa",
+    "MaxSessionLifetime": "Thời gian tồn tại của phiên tối đa",
+    "Name": "Tên",
+    "StorageNodes": "Nút lưu trữ",
+    "TotalResourceSlots": "Chính sách tài nguyên"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Chọn cặp khóa"
@@ -231,11 +260,11 @@
     "User": "Người dùng"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Thoát toàn màn hình",
+    "Fullscreen": "Toàn màn hình",
+    "Maximize": "Phóng to",
+    "Minimize": "Thu nhỏ",
+    "Restore": "Khôi phục"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Bạn có chắc chắn muốn xóa triển khai \"{{deploymentName}}\"? Hành động này không thể hoàn tác.",
@@ -269,12 +298,19 @@
     "UpdatedAt": "Ngày cập nhật"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Thao tác khác"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Dự án sau sẽ được cập nhật.",
     "ProjectResourcePolicy": "Chính sách tài nguyên dự án",
     "UpdateMultipleProjects": "Cập nhật nhiều dự án"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Được tạo tại",
+    "MaxNetworkCount": "Số lượng mạng tối đa",
+    "MaxQuotaScopeSize": "Kích thước thư mục tối đa",
+    "MaxVFolderCount": "Số lượng thư mục tối đa",
+    "Name": "Tên"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Chọn dự án"
@@ -322,8 +358,20 @@
     "SelectFolder": "Chọn thư mục"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Áp dụng",
     "PlaceHolder": "Tìm kiếm",
-    "ResetFilter": "Đặt lại bộ lọc"
+    "ResetFilter": "Đặt lại bộ lọc",
+    "SearchLabel": "Tìm bộ lọc",
+    "operator": {
+      "Contains": "chứa",
+      "Equals": "bằng",
+      "GreaterThan": "lớn hơn",
+      "GreaterThanOrEqual": "lớn hơn hoặc bằng",
+      "In": "trong",
+      "LessThan": "nhỏ hơn",
+      "LessThanOrEqual": "nhỏ hơn hoặc bằng",
+      "NotEquals": "không bằng"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Hủy kéo",
@@ -339,6 +387,11 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Đã cấp phát / Đã yêu cầu"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Đổi màu nhóm",
+    "ResourceGrid": "Lưới tài nguyên",
+    "UseColorN": "Dùng màu {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Không giới hạn"
@@ -366,30 +419,68 @@
     "UpdatedAt": "Cập nhật lúc"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "CreatePreset": "Tạo cài đặt sẵn",
+    "AddChoice": "Thêm lựa chọn",
+    "Category": "Danh mục",
+    "CategoryPlaceholder": "vd: model_loading",
+    "CategoryTooltip": "Danh mục giao diện dùng để nhóm các tham số liên quan lại với nhau.",
+    "ChoiceLabel": "Nhãn",
+    "ChoiceLabelPlaceholder": "vd: FP16",
+    "ChoiceLabelRequired": "Nhãn lựa chọn là bắt buộc.",
+    "ChoiceValue": "Giá trị",
+    "ChoiceValuePlaceholder": "vd: fp16",
+    "ChoiceValueRequired": "Giá trị lựa chọn là bắt buộc.",
+    "Choices": "Lựa chọn",
+    "ChoicesRequired": "Cần ít nhất một lựa chọn.",
+    "CreatePreset": "Tạo tham số",
     "DefaultValue": "Giá trị mặc định",
     "DefaultValuePlaceholder": "vd: 1",
     "Description": "Mô tả",
     "DescriptionPlaceholder": "Mô tả tham số này kiểm soát điều gì và cách nó ảnh hưởng đến hành vi suy luận.",
-    "EditPreset": "Chỉnh sửa cài đặt sẵn",
+    "DisplayName": "Tên hiển thị",
+    "DisplayNamePlaceholder": "vd: Tensor Parallel Size",
+    "DisplayNameTooltip": "Nhãn dễ đọc được hiển thị thay cho tên tham số trong biểu mẫu triển khai.",
+    "EditPreset": "Chỉnh sửa tham số",
     "Key": "Khóa",
     "KeyPlaceholder": "vd: TENSOR_PARALLEL_SIZE",
     "KeyRequired": "Khóa là bắt buộc.",
     "Name": "Tên",
     "NamePlaceholder": "vd: Tensor Parallel Size",
     "NameRequired": "Tên là bắt buộc.",
-    "PresetCreated": "Cài đặt sẵn biến thể thời gian chạy đã được tạo.",
-    "PresetTarget": "Mục tiêu cài đặt sẵn",
+    "NumberMax": "Giá trị tối đa",
+    "NumberMaxMustExceedMin": "Giá trị tối đa phải lớn hơn giá trị tối thiểu.",
+    "NumberMin": "Giá trị tối thiểu",
+    "PresetCreated": "Tham số runtime đã được tạo.",
+    "PresetTarget": "Mục tiêu tham số",
     "PresetTargetArgs": "Đối số dòng lệnh",
     "PresetTargetEnv": "Biến môi trường",
-    "PresetTargetRequired": "Mục tiêu cài đặt sẵn là bắt buộc.",
-    "PresetUpdated": "Cài đặt sẵn biến thể thời gian chạy đã được cập nhật.",
+    "PresetTargetRequired": "Mục tiêu tham số là bắt buộc.",
+    "PresetUpdated": "Tham số runtime đã được cập nhật.",
     "Rank": "Thứ hạng",
-    "RankTooltip": "Thứ tự hiển thị trong số các cài đặt sẵn của cùng biến thể thời gian chạy. Giá trị thấp hơn được hiển thị trước.",
+    "RankTooltip": "Thứ tự hiển thị trong số các tham số của cùng runtime. Giá trị thấp hơn được hiển thị trước.",
     "Required": "Bắt buộc",
-    "RequiredTooltip": "Liệu tham số cài đặt sẵn này có phải được cung cấp khi tạo bản sửa đổi triển khai hay không.",
+    "RequiredTooltip": "Liệu tham số này có phải được cung cấp khi tạo bản sửa đổi triển khai hay không.",
+    "Requirement": "Tính bắt buộc",
     "RuntimeVariant": "Biến thể thời gian chạy",
     "RuntimeVariantRequired": "Biến thể thời gian chạy là bắt buộc.",
+    "SliderMax": "Giá trị tối đa",
+    "SliderMaxMustExceedMin": "Giá trị tối đa phải lớn hơn giá trị tối thiểu.",
+    "SliderMaxRequired": "Giá trị tối đa là bắt buộc.",
+    "SliderMin": "Giá trị tối thiểu",
+    "SliderMinRequired": "Giá trị tối thiểu là bắt buộc.",
+    "SliderStep": "Bước nhảy",
+    "SliderStepMustBePositive": "Bước nhảy phải lớn hơn 0.",
+    "SliderStepTooltip": "Bước tăng của thanh trượt. Giá trị mặc định là 1.",
+    "StoredValueTypeMismatch": "Tham số này được lưu với loại giá trị {{valueType}}, mà loại giao diện {{uiType}} không thể hiển thị. Hãy thay đổi loại giao diện hoặc loại giá trị.",
+    "TextPlaceholderExample": "vd: Nhập một giá trị",
+    "TextPlaceholderLabel": "Văn bản gợi ý ô nhập",
+    "UIType": "Loại giao diện",
+    "UITypeCheckbox": "Hộp kiểm",
+    "UITypeIncompatibleWithValueType": "Loại giao diện đã chọn không thể hiển thị loại giá trị này.",
+    "UITypeNumberInput": "Ô nhập số",
+    "UITypeSelect": "Danh sách chọn",
+    "UITypeSlider": "Thanh trượt",
+    "UITypeTextInput": "Ô nhập văn bản",
+    "UITypeTooltip": "Điều khiển dùng để hiển thị tham số này trong biểu mẫu triển khai.",
     "ValueType": "Loại giá trị",
     "ValueTypeBool": "Boolean",
     "ValueTypeFlag": "Cờ",
@@ -399,21 +490,29 @@
     "ValueTypeStr": "Chuỗi"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Danh mục",
     "CreatedAt": "Ngày tạo",
     "DefaultValue": "Giá trị mặc định",
     "Description": "Mô tả",
+    "DisplayName": "Tên hiển thị",
     "Key": "Khóa",
     "ModifiedAt": "Ngày chỉnh sửa",
     "Name": "Tên",
     "Optional": "Không bắt buộc",
-    "PresetTarget": "Mục tiêu cài đặt sẵn",
+    "PresetTarget": "Mục tiêu tham số",
     "PresetTargetArgs": "Đối số dòng lệnh",
     "PresetTargetEnv": "Biến môi trường",
     "Rank": "Thứ hạng",
-    "RankTooltip": "Thứ tự hiển thị trong số các cài đặt sẵn của cùng biến thể thời gian chạy. Giá trị thấp hơn được hiển thị trước.",
+    "RankTooltip": "Thứ tự hiển thị trong số các tham số của cùng runtime. Giá trị thấp hơn được hiển thị trước.",
     "Required": "Bắt buộc",
-    "RuntimeVariant": "Biến thể thời gian chạy",
     "RuntimeVariantId": "ID biến thể thời gian chạy",
+    "RuntimeVariantWithID": "Biến thể thời gian chạy (ID)",
+    "UIType": "Loại giao diện",
+    "UITypeCheckbox": "Hộp kiểm",
+    "UITypeNumberInput": "Ô nhập số",
+    "UITypeSelect": "Danh sách chọn",
+    "UITypeSlider": "Thanh trượt",
+    "UITypeTextInput": "Ô nhập văn bản",
     "ValueType": "Loại giá trị",
     "ValueTypeBool": "Boolean",
     "ValueTypeFlag": "Cờ",
@@ -453,12 +552,13 @@
     "SelectStorageProxy": "Chọn proxy lưu trữ"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Kết thúc lúc",
+    "Duration": "Thời lượng",
     "ErrorCode": "Mã lỗi",
     "Message": "Tin nhắn",
     "Result": "Kết quả",
-    "StartedAt": "Bắt đầu lúc",
-    "Step": "Bước"
+    "ResultMarker": "Dấu kết quả của lần thử này",
+    "Step": "Bước",
+    "Time": "Thời gian"
   },
   "comp:BAITable": {
     "Apply": "Áp dụng",
@@ -514,37 +614,36 @@
     "ArchiveDownloadStarted": "Đã bắt đầu tải xuống {{count}} mục.",
     "ChangeFileExtension": "Thay đổi phần mở rộng tệp",
     "ChangeFileExtensionDesc": "Thay đổi tiện ích mở rộng tệp có thể khiến tệp trở nên không thể sử dụng hoặc mở không chính xác. \nBạn có muốn tiếp tục không?",
-    "Controls": "Kiểm soát",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Tạo tệp mới",
     "CreateANewFolder": "Tạo một thư mục mới",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Tạo tệp",
+    "CreateFolder": "Tạo thư mục",
     "CreatedAt": "Được tạo ra tại",
     "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
     "DeleteSelectedItemsDialog": "Xóa xác nhận",
+    "Download": "Tải xuống",
     "DownloadSelected": "Tải xuống",
     "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
     "DragAndDropDesc": "Kéo và thả các tập tin vào khu vực này để tải lên.",
     "DuplicatedFiles": "Ghi đè xác nhận",
     "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",
     "EditFile": "Chỉnh sửa tệp",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Đã tạo tệp thành công.",
+    "FileName": "Tên tệp",
+    "FileNamePlaceholder": "vd: model-definition.yaml",
     "FileTooLargeToEdit": "Chỉnh sửa trên trình duyệt bị hạn chế vì kích thước tệp vượt quá {{size}}MB.",
     "FolderCreatedSuccessfully": "Thư mục đã tạo thành công.",
     "FolderName": "Tên thư mục",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Tên tệp phải có tối đa 255 ký tự.",
     "MaxFolderNameLength": "Tên thư mục phải là 255 ký tự hoặc ít hơn.",
     "ModifiedAt": "Sửa đổi tại",
-    "MoreOptions": "Thêm tùy chọn",
     "Name": "Tên",
     "NoUploadPermissionForHost": "Bạn không có quyền tải lên cho máy chủ lưu trữ này.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Đường dẫn",
+    "PleaseEnterAFileName": "Vui lòng nhập tên tệp.",
     "PleaseEnterAFolderName": "Vui lòng nhập tên thư mục.",
-    "RenameFile": "Rename",
+    "RenameFile": "Đổi tên",
     "RenameSuccess": "Tên đã được thay đổi thành công.",
     "SelectedItemsDeletedSuccessfully": "Các tập tin và thư mục được chọn đã bị xóa thành công.",
     "Size": "Kích cỡ",
@@ -659,23 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Giảm",
     "DeselectAll": "Bỏ chọn tất cả",
     "File": "Tệp",
-    "Increase": "Increase",
+    "Increase": "Tăng",
     "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
     "Project": "Dự án",
-    "Select": "Select",
+    "Search": "Tìm kiếm",
+    "Select": "Chọn",
+    "SelectPlaceholder": "Chọn {{label}}",
     "TotalItems": "Tổng số {{total}} các mục",
-    "Unit": "Unit",
+    "Unit": "Đơn vị",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Hành động",
+      "Back": "Quay lại",
       "Cancel": "Hủy bỏ",
       "Close": "Đóng",
       "Collapse": "Sụp đổ",
-      "Confirm": "Confirm",
+      "Confirm": "Xác nhận",
       "Copied": "Đã sao chép",
       "Copy": "Sao chép",
       "CopyAll": "Sao chép tất cả",

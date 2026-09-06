@@ -15,9 +15,6 @@ import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
-import BAICard from '../components/astryx-bui/BAICardAstryx';
-import BAISelectionLabel from '../components/astryx-bui/BAISelectionLabel';
-import BAIVFolderDeleteButton from '../components/astryx-bui/BAIVFolderDeleteButtonAstryx';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -29,7 +26,10 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIVFolderDeleteButton,
+  BAICard,
   BAIPropertyFilter,
+  BAISelectionLabel,
   filterOutEmpty,
   filterOutNullAndUndefined,
   mergeFilterValues,
@@ -39,7 +39,7 @@ import {
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon } from 'lucide-react';
 import { parseAsString, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useRef, useState } from 'react';
+import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -106,11 +106,16 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     [queryParams.statusCategory]: { queryParams, tablePaginationOption },
   });
 
-  // eslint-disable-next-line react-hooks/refs
-  queryMapRef.current[queryParams.statusCategory] = {
-    queryParams,
-    tablePaginationOption,
-  };
+  // Written in an effect: a render-phase ref write is a react-hooks/refs
+  // violation that made the React Compiler bail out of this component, which
+  // re-created `queryVariables` every render and flashed the deferred-value
+  // loading states on unrelated re-renders (same symptom as FR-3510).
+  useEffect(() => {
+    queryMapRef.current[queryParams.statusCategory] = {
+      queryParams,
+      tablePaginationOption,
+    };
+  }, [queryParams, tablePaginationOption]);
 
   function getUsageModeFilter(mode: string) {
     switch (mode) {
@@ -181,7 +186,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 ...RestoreVFolderModalFragment
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
-                ...BAIVFolderDeleteButtonAstryxFragment
+                ...BAIVFolderDeleteButtonFragment
               }
             }
             count
@@ -250,28 +255,31 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 active: t('data.Active'),
                 deleted: t('data.folders.TrashBin'),
               },
-              (label, key) => ({
-                key,
-                // Astryx `Tab` takes a STRING label plus a native `endContent`
-                // slot, so the original's BAIFlex-wrapped JSX label is split in
-                // two. This also restores a correct `aria-label` on the tab.
-                label,
-                endContent:
-                  // display badge only if count is greater than 0
-                  // @ts-ignore
-                  (folderCounts[key]?.count || 0) > 0 ? (
-                    // PILOT-DECISION: antd's Badge took an arbitrary `color`
-                    // (brand accent when selected, disabled grey otherwise).
-                    // Astryx's Badge exposes only a closed `variant` set.
-                    <Badge
-                      // @ts-ignore
-                      label={folderCounts[key].count}
-                      variant={
-                        queryParams.statusCategory === key ? 'info' : 'neutral'
-                      }
-                    />
-                  ) : undefined,
-              }),
+              (label, key) => {
+                const count =
+                  folderCounts[key as keyof typeof folderCounts]?.count ?? 0;
+                return {
+                  key,
+                  // Astryx `Tab` takes a STRING label plus a native `endContent`
+                  // slot, so the original's BAIFlex-wrapped JSX label is split in
+                  // two. This also restores a correct `aria-label` on the tab.
+                  label,
+                  endContent:
+                    count > 0 ? (
+                      // PILOT-DECISION: antd's Badge took an arbitrary `color`
+                      // (brand accent when selected, disabled grey otherwise).
+                      // Astryx's Badge exposes only a closed `variant` set.
+                      <Badge
+                        label={count}
+                        variant={
+                          queryParams.statusCategory === key
+                            ? 'info'
+                            : 'neutral'
+                        }
+                      />
+                    ) : undefined,
+                };
+              },
             )}
           />
           <VStack align="stretch" gap={3}>
@@ -320,9 +328,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                   placeholder={t('data.SearchByName')}
                   applyLabel={t('button.Apply')}
                   contentSearchFieldKey="name"
-                  resultCount={t('general.TotalItems', {
-                    total: vfolder_nodes?.count ?? 0,
-                  })}
                   filterProperties={[
                     {
                       key: 'name',

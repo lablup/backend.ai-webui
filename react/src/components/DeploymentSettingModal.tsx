@@ -16,7 +16,7 @@ import {
   AstryxFormNumberInput,
   AstryxFormTagsInput,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
@@ -156,6 +156,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               name
               tags
               resourceGroupName
+              updatedAt
             }
             networkAccess {
               openToPublic

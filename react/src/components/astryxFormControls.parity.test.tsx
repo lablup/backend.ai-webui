@@ -117,6 +117,41 @@ describe('AstryxFormNumberInput — clamp on blur', () => {
     fireEvent.blur(screen.getByLabelText('Port'), { target: { value: '443' } });
     expect(onChange).not.toHaveBeenCalled();
   });
+
+  it('rounds a decimal in an UNBOUNDED integer-only field', () => {
+    // Astryx's parser rejects a decimal exactly the way it rejects an
+    // out-of-range value, so without `isIntegerOnly` counting as a repairable
+    // constraint the entry would vanish on blur. FR-3634.
+    const onChange = vi.fn();
+    render(
+      <AstryxFormNumberInput
+        label="Replicas"
+        value={2}
+        isIntegerOnly
+        onChange={onChange}
+      />,
+    );
+    fireEvent.blur(screen.getByLabelText('Replicas'), {
+      target: { value: '3.5' },
+    });
+    expect(onChange).toHaveBeenCalledWith(4);
+  });
+
+  it('leaves a whole number alone in an unbounded integer-only field', () => {
+    const onChange = vi.fn();
+    render(
+      <AstryxFormNumberInput
+        label="Replicas"
+        value={2}
+        isIntegerOnly
+        onChange={onChange}
+      />,
+    );
+    fireEvent.blur(screen.getByLabelText('Replicas'), {
+      target: { value: '7' },
+    });
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });
 
 describe('AstryxFormTagsInput — tokenSeparators', () => {

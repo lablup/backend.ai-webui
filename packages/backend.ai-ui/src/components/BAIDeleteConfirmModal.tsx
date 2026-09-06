@@ -32,8 +32,8 @@
  2. **"This action cannot be undone." becomes a `Banner status="error"`.**
     Astryx `Text` has no danger colour (its `color` set is
     primary/secondary/disabled/placeholder/accent/inherit), and the banner
-    restores both the colour and an icon. Same call as the already-shipped
-    `BAIDeleteConfirmModalAstryx`, so the two delete surfaces still look alike.
+    restores both the colour and an icon.
+
  3. **`inputLabel` stays `ReactNode`.** `TextInput.label` is a plain `string`
     that doubles as the accessible name, so a rich label is rendered above the
     field and the field carries the flattened text with `isLabelHidden`.
@@ -112,6 +112,8 @@ export interface BAIDeleteConfirmModalProps extends Omit<
   inputProps?: BAIDeleteConfirmModalInputProps;
   /** Content rendered between the input field and "cannot be undone" text (e.g. checkboxes). */
   extraContent?: React.ReactNode;
+  /** Override for "This action cannot be undone." Defaults to the localized string. */
+  cannotBeUndoneText?: string;
   /** Max height (px) of the scrollable item list. Default: 200. Set 0 for no limit. */
   itemListMaxHeight?: number;
   /**
@@ -152,6 +154,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   inputLabel,
   inputProps,
   extraContent,
+  cannotBeUndoneText,
   itemListMaxHeight = 200,
   plainItems = false,
   onOk,
@@ -174,8 +177,6 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
     if (isOpen) setTypedText('');
   }
 
-  const needsInput = !reversible && (items.length > 1 || requireConfirmInput);
-
   const resolvedTitle =
     title ??
     (items.length > 1
@@ -189,6 +190,16 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
     (items.length === 1
       ? (extractTextFromNode(items[0]?.label) ?? t('general.button.Delete'))
       : t('general.button.Delete'));
+
+  // An explicitly empty `confirmText` (e.g. the target row is not resolved
+  // yet) must not arm the gate with an already-satisfied empty comparison —
+  // and must not enable OK without a gate either, so the input is hidden but
+  // the confirm stays disabled until a confirm text exists.
+  const wantsInput = !reversible && (items.length > 1 || requireConfirmInput);
+  const needsInput = wantsInput && !!resolvedConfirmText;
+
+  const resolvedWarning =
+    cannotBeUndoneText ?? t('comp:BAIDeleteConfirmModal.CannotBeUndone');
 
   const resolvedDescription =
     description ??
@@ -262,8 +273,8 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
       okText={resolvedOkText}
       okButtonProps={{
         danger: true,
-        disabled: needsInput
-          ? typedText !== resolvedConfirmText
+        disabled: wantsInput
+          ? !resolvedConfirmText || typedText !== resolvedConfirmText
           : items.length === 0,
         ...okButtonProps,
       }}
@@ -299,15 +310,18 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
               hasClear
               htmlName="confirmText"
             />
+            {/* QA-FINDINGS Q-17: with the input present the warning is a danger
+                Text directly under it (legacy position), not a trailing Banner
+                below the option checkboxes. */}
+            <Text color="danger">{resolvedWarning}</Text>
           </VStack>
         ) : null}
-        {!reversible ? (
-          <Banner
-            status="error"
-            title={t('comp:BAIDeleteConfirmModal.CannotBeUndone')}
-          />
-        ) : null}
         {extraContent}
+        {/* A reversible-tier modal never had a warning; a non-input one has no
+            input to sit under, so it keeps the banner. */}
+        {!needsInput && !reversible ? (
+          <Banner status="error" title={resolvedWarning} />
+        ) : null}
       </VStack>
     </BAIModal>
   );

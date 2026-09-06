@@ -1,0 +1,63 @@
+diff --git a/dist/hooks/useFocusTrap.js b/dist/hooks/useFocusTrap.js
+index ead7e0af25144043c863026cfe48bcfdaf10f6cf..f3f192ad226e80cffad26e02b2e1c696cd808100 100644
+--- a/dist/hooks/useFocusTrap.js
++++ b/dist/hooks/useFocusTrap.js
+@@ -223,7 +223,25 @@ export function useFocusTrap(options) {
+     const previouslyFocused = document.activeElement;
+     // Snapshot the container now; by cleanup it may be detached or unmounted.
+     const container = containerRef.current;
++    // A popup that never takes focus (`role: 'none'` + `hasAutoFocus: false`,
++    // e.g. a Typeahead/PowerSearch listbox anchored to an input that keeps
++    // focus) has nothing to restore: the element that held focus throughout
++    // still holds it, or the user's outside click has just blurred it on
++    // purpose. Restoring there re-focuses the input the click dismissed, so the
++    // next click on it fires no focus event and the menu will not reopen.
++    let hadFocusInside = container?.contains(document.activeElement) ?? false;
++    const markFocusInside = event => {
++      const target = event.target;
++      if (target != null && containerRef.current?.contains(target)) {
++        hadFocusInside = true;
++      }
++    };
++    document.addEventListener('focusin', markFocusInside, true);
+     return () => {
++      document.removeEventListener('focusin', markFocusInside, true);
++      if (!hadFocusInside) {
++        return;
++      }
+       const active = document.activeElement;
+       const focusWasLost = active == null || active === document.body || active === document.documentElement || container != null && container.contains(active);
+       if (!focusWasLost) {
+diff --git a/src/hooks/useFocusTrap.ts b/src/hooks/useFocusTrap.ts
+index c05638a06c1e35345b33d9b13ecda5578821a82f..525c410546c39477b787f9cc787ba0341bf3c21d 100644
+--- a/src/hooks/useFocusTrap.ts
++++ b/src/hooks/useFocusTrap.ts
+@@ -253,7 +253,28 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>(
+     // Snapshot the container now; by cleanup it may be detached or unmounted.
+     const container = containerRef.current;
+ 
++    // A popup that never takes focus (`role: 'none'` + `hasAutoFocus: false`,
++    // e.g. a Typeahead/PowerSearch listbox anchored to an input that keeps
++    // focus) has nothing to restore: the element that held focus throughout
++    // still holds it, or the user's outside click has just blurred it on
++    // purpose. Restoring there re-focuses the input the click dismissed, so the
++    // next click on it fires no focus event and the menu will not reopen.
++    let hadFocusInside = container?.contains(document.activeElement) ?? false;
++    const markFocusInside = (event: FocusEvent) => {
++      const target = event.target as Node | null;
++      if (target != null && containerRef.current?.contains(target)) {
++        hadFocusInside = true;
++      }
++    };
++    document.addEventListener('focusin', markFocusInside, true);
++
+     return () => {
++      document.removeEventListener('focusin', markFocusInside, true);
++
++      if (!hadFocusInside) {
++        return;
++      }
++
+       const active = document.activeElement;
+       const focusWasLost =
+         active == null ||

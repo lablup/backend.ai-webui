@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=./schema.json
+# `ScalingGroup` is the schema's name for what the UI calls a resource group.
+type: ScalingGroup
+concept: resource-group
+docs: admin_menu#resource-group
+meaning: One resource group — the pool of agents a session or a deployment can be scheduled onto.
+fields:
+  name:
+    meaning: The resource group's name, which is what the launcher's Resource Group selector shows.
+    docs: admin_menu#resource-group
+  description:
+    meaning: The free-text note an administrator left on the resource group.
+    docs: admin_menu#resource-group
+  is_active:
+    label: Active
+    meaning: Whether the scheduler may place new sessions on this resource group's agents.
+    docs: admin_menu#resource-group
+  is_public:
+    label: Public
+    meaning: Whether every project can use the resource group, or only the ones explicitly bound to it.
+    docs: admin_menu#resource-group
+  scheduler:
+    meaning: Which scheduling policy decides the order pending sessions in this group are served in.
+    concept: fair-share-scheduler
+    docs: admin_menu#fair-share-scheduler
+  scheduler_opts:
+    label: Scheduler Options
+    meaning: The scheduler's tuning knobs for this group, such as its allowed session types and its retry policy.
+    docs: admin_menu#fair-share-scheduler
+  wsproxy_addr:
+    label: App Proxy Server Address
+    meaning: The App Proxy this group's sessions publish their apps and endpoints through.
+    concept: app-proxy-server-address
+    docs: deployment#accessing-your-deployment
+  wsproxy_api_token:
+    label: App Proxy API Token
+    meaning: The token the manager authenticates to this group's App Proxy with.
+    concept: app-proxy-api-token
+    docs: deployment#generating-tokens
+  agent_count_by_status:
+    label: Agents
+    meaning: How many of the group's agents are in each status, which is what the resource panels total.
+    concept: agent
+    docs: agent_summary#columns
+  accelerator_quantum_size:
+    label: Accelerator Quantum Size
+    meaning: The smallest fraction of an accelerator a session in this group may request.
+    concept: fractional-gpu
+    docs: appendix#gpu-virtualization-and-fractional-gpu-allocation

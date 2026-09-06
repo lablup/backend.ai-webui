@@ -26,7 +26,7 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIDeleteConfirmModal,
   BAIFlex,
-  BAITableAstryx,
+  BAITable,
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -126,23 +126,9 @@ const CustomizedImageList: React.FC = () => {
       }
     `);
 
-  // TODO: when BA-1905 resolved.
-  // const [commitPurgeImage, isInFlightPurgeImage] =
-  //   useMutation<CustomizedImageListPurgeMutation>(graphql`
-  //     mutation CustomizedImageListPurgeMutation($id: String!) {
-  //       purge_image_by_id(
-  //         image_id: $id
-  //         options: { remove_from_registry: true }
-  //       ) {
-  //         image {
-  //           id
-  //         }
-  //       }
-  //     }
-  //   `);
+  // BA-1905: purge_image_by_id not yet available
 
   // Sort images by humanized_name to prevent the image list from jumping around when the images are updated
-  // TODO: after `images` query  supports sort order, we should remove this line
   const defaultSortedImages = useMemo(
     () => _.sortBy(customized_images, (image) => image?.humanized_name),
     [customized_images],
@@ -247,12 +233,13 @@ const CustomizedImageList: React.FC = () => {
       key: 'control',
       render: (_text, row) => (
         <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
-          {/* PILOT-DECISION: antd `type="text" danger` (red-tinted ghost) ->
-              Astryx ghost IconButton; IconButton's closed variant enum has no
-              ghost-destructive, and a solid `destructive` per row is louder
-              than the original — the red tint is dropped (P5/P11). */}
+          {/* antd `type="text" danger` -> ghost IconButton + the shared
+              `.bai-name-action-cell-danger` tint: Astryx IconButton has no
+              `color` prop (P5) and `destructive` is a solid fill, too loud for
+              a row action. */}
           <IconButton
             variant="ghost"
+            className="bai-name-action-cell-danger"
             icon={<Trash2 size="1em" />}
             label={t('button.Delete')}
             tooltip={t('button.Delete')}
@@ -427,7 +414,8 @@ const CustomizedImageList: React.FC = () => {
             }}
           />
         </BAIFlex>
-        <BAITableAstryx
+        <BAITable
+          scroll={{ x: 'max-content' }}
           resizable
           loading={isPendingSearchTransition}
           columns={

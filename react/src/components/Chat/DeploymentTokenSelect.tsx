@@ -12,9 +12,9 @@ import type { SelectorOptionData } from '@astryxdesign/core/Selector';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
+  BAIIconWithTooltip,
   filterOutNullAndUndefined,
   toGlobalId,
   useControllableValue,
@@ -182,12 +182,16 @@ const DeploymentTokenSelectWithQuery: React.FC<
         aria-label={t('deployment.AccessTokenSettings')}
         style={{ flexShrink: 0, display: 'inline-flex' }}
       >
-        <Tooltip content={t('deployment.AccessTokenSettings')}>
-          <Settings
-            style={{ color: 'var(--color-text-secondary)' }}
-            size="1em"
-          />
-        </Tooltip>
+        <BAIIconWithTooltip
+          content={t('deployment.AccessTokenSettings')}
+          focusable={false}
+          icon={
+            <Settings
+              style={{ color: 'var(--color-text-secondary)' }}
+              size="1em"
+            />
+          }
+        />
       </WebUILink>
     </BAIFlex>
   );

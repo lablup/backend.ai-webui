@@ -1,0 +1,78 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Header/body geometry for <BAIDrawer> (qa2-c).
+
+ Every value below is the antd 6.5.0 `Drawer` value it replaces, read from
+ `antd/lib/drawer/style/index.js` and mapped through the theme-shim's token
+ table (`packages/backend.ai-ui/src/theme-shim/mapping.ts`), so the migrated
+ drawers keep the legacy arrangement pixel for pixel:
+
+   ant-drawer-header  padding: `padding` `paddingLG`  -> 16px 24px
+                       border-bottom: `lineWidth` solid `colorSplit`
+                       font-size: `fontSizeLG`         -> 16px
+   ant-drawer-close   margin-inline-end: `marginXS`   -> 8px
+   ant-drawer-title   flex: 1; font-weight: `fontWeightStrong`
+   ant-drawer-extra   flex: none
+   ant-drawer-body    padding: `paddingLG`            -> 24px; overflow: auto
+
+ Token names come from the declared Astryx variable set only (P19) — the same
+ `--spacing-*` / `--color-*` / `--font-*` ladder the theme-shim maps antd's
+ tokens onto. No `.ant-*` selector is touched.
+*/
+@layer components {
+  .bai-drawer-header {
+    flex: 0 0 auto;
+    padding: var(--spacing-4) var(--spacing-6);
+    border-block-end: var(--border-width) solid var(--color-border);
+    /* antd's header sets the base font size for the row; the title element
+       inherits it. */
+    font-size: var(--font-size-lg);
+  }
+
+  .bai-drawer-header-title {
+    /* ant-drawer-header-title: flex: 1, so the extra slot is pushed to the
+       trailing edge and a long title truncates instead of shoving it off. */
+    flex: 1;
+    min-width: 0;
+    /* ant-drawer-close: margin-inline-end: marginXS. Applied to the button's
+       sibling gap rather than the button itself so the IconButton keeps its
+       own hit area. */
+    column-gap: var(--spacing-2);
+  }
+
+  .bai-drawer-title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    /* ant-drawer-title truncates rather than wrapping the header to 2 rows. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bai-drawer-extra {
+    /* ant-drawer-extra: flex: none */
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  .bai-drawer-body {
+    padding: var(--spacing-6);
+  }
+
+  /* antd call sites that passed `styles={{ body: { padding: 0 } }}` — the body
+     region still scrolls, the content owns its own padding. */
+  .bai-drawer-body-flush {
+    padding: 0;
+  }
+
+  /* BAIHelpDrawer's body is a single full-bleed iframe sized at `height:100%`,
+     so the body box has to be a definite height rather than shrink-to-fit. */
+  .bai-help-drawer-body {
+    height: 100%;
+  }
+}

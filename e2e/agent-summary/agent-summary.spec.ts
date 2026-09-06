@@ -1,5 +1,9 @@
 // spec: Agent Summary page tests
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import {
+  getSortableColumnHeader,
+  loginAsAdmin,
+  navigateTo,
+} from '../utils/test-util';
 import test, { expect } from '@playwright/test';
 
 test.describe(
@@ -13,10 +17,14 @@ test.describe(
       await loginAsAdmin(page, request);
       await navigateTo(page, 'agent-summary');
 
-      // Verify Agent Summary tab is selected
-      await expect(
-        page.getByRole('tab', { name: 'Agent Summary', selected: true }),
-      ).toBeVisible();
+      // Verify Agent Summary tab is selected. `BAITabList` / Astryx `TabList`
+      // renders a `nav[aria-label="Tabs"]` of plain `<button>`s — `role="tab"`
+      // is never emitted — and marks the active one with `aria-current="true"`.
+      const agentSummaryTab = page
+        .getByRole('navigation', { name: 'Tabs' })
+        .getByRole('button', { name: 'Agent Summary' });
+      await expect(agentSummaryTab).toBeVisible();
+      await expect(agentSummaryTab).toHaveAttribute('aria-current', 'true');
 
       // Verify table columns
       await expect(
@@ -28,8 +36,11 @@ test.describe(
       await expect(
         page.getByRole('columnheader', { name: 'Allocation' }),
       ).toBeVisible();
+      // "Resource Group" is sortable — its columnheader's accessible name is
+      // overridden by the sort button's aria-label ("Sort by scaling_group"),
+      // so match the visible text instead (see getSortableColumnHeader).
       await expect(
-        page.getByRole('columnheader', { name: 'Resource Group' }),
+        getSortableColumnHeader(page, 'Resource Group'),
       ).toBeVisible();
       await expect(
         page.getByRole('columnheader', { name: 'Schedulable' }),

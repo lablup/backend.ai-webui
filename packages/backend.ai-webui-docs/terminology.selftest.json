@@ -77,6 +77,72 @@
         "自動スケーリングルールを追加します。",
         "リソースグループのスケジューラを設定します。"
       ]
+    },
+    {
+      "lang": "ko",
+      "avoid": "런타임 프리셋",
+      "positiveFixtures": [
+        "런타임 프리셋이 삭제되었습니다.",
+        "런타임 프리셋 탭에서 파라미터를 정의합니다."
+      ],
+      "negativeFixtures": [
+        "런타임 파라미터가 삭제되었습니다.",
+        "같은 런타임의 파라미터 간 표시 순서입니다.",
+        "배포 프리셋을 생성합니다.",
+        "프리셋 대상을 선택하세요."
+      ]
+    },
+    {
+      "lang": "ko",
+      "avoid": "매개변수",
+      "positiveFixtures": [
+        "관련 매개변수를 함께 그룹화합니다.",
+        "LLM 매개변수"
+      ],
+      "negativeFixtures": [
+        "관련 파라미터를 함께 그룹화합니다.",
+        "런타임 파라미터",
+        "변경하지 않은 파라미터는 런타임 기본값이 사용됩니다."
+      ]
+    },
+    {
+      "lang": "ja",
+      "avoid": "ランタイムバリアントプリセット",
+      "positiveFixtures": [
+        "ランタイムバリアントプリセットが削除されました。",
+        "ランタイムバリアントプリセットを作成します。"
+      ],
+      "negativeFixtures": [
+        "ランタイムパラメータが削除されました。",
+        "同じランタイムのパラメータ間の表示順序です。",
+        "デプロイメントプリセットを作成します。"
+      ]
+    },
+    {
+      "lang": "ja",
+      "avoid": "パラメーター",
+      "positiveFixtures": [
+        "パラメーターを入力してください。",
+        "ランタイムパラメーター"
+      ],
+      "negativeFixtures": [
+        "パラメータを入力してください。",
+        "ランタイムパラメータ",
+        "変更されていないパラメータはランタイムのデフォルト値を使用します。"
+      ]
+    },
+    {
+      "lang": "th",
+      "avoid": "พรีเซตตัวแปรรันไทม์",
+      "positiveFixtures": [
+        "ลบพรีเซตตัวแปรรันไทม์เรียบร้อยแล้ว",
+        "สร้างพรีเซตตัวแปรรันไทม์เรียบร้อยแล้ว"
+      ],
+      "negativeFixtures": [
+        "ลบพารามิเตอร์ runtime เรียบร้อยแล้ว",
+        "พารามิเตอร์ Runtime",
+        "พารามิเตอร์ที่ไม่เปลี่ยนแปลงจะใช้ค่าเริ่มต้นของ runtime"
+      ]
     }
   ],
   "negativeControls": [
@@ -91,6 +157,12 @@
       "avoid": "セッション",
       "expectAtLeastLiveHits": 50,
       "$comment": "Bare concept noun; substring of コンピュートセッション and every session-type compound. Measured 196 legitimate ja values at FR-3051 authoring time; floor 50 is intentionally conservative, same rationale as the ko control."
+    },
+    {
+      "lang": "th",
+      "avoid": "เซสชัน",
+      "expectAtLeastLiveHits": 50,
+      "$comment": "Bare concept noun; substring of the preferred compound เซสชันการคำนวณ. Measured 222 legitimate th values (resources/i18n + BUI locale) when the th avoid row was added — a row like this MUST always blow the falsePositiveBudget. Floor 50 (~22% of measured) matches the conservative ko/ja controls."
     }
   ]
 }

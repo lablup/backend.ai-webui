@@ -5,14 +5,61 @@
 import * as _ from 'lodash-es';
 
 /**
+ * Excel/Sheets evaluate a cell starting with one of these as a formula when
+ * the CSV is opened (CSV formula injection); quoting does not prevent it.
+ */
+const FORMULA_TRIGGER = /^[=@\t\r]/;
+
+const startsFormula = (value: string) => {
+  if (FORMULA_TRIGGER.test(value)) {
+    return true;
+  }
+  // "+"/"-" starts are dangerous too ("-1+2" evaluates), but signed numbers
+  // and the bare "-" placeholder must survive unchanged.
+  return (
+    /^[+-]/.test(value) && value !== '-' && !Number.isFinite(Number(value))
+  );
+};
+
+const CSV_LITERAL = Symbol('csvLiteral');
+
+/** A cell `escapeCsvValue` quotes but never neutralizes. Build one with `csvLiteral`. */
+export interface CsvLiteral {
+  readonly [CSV_LITERAL]: true;
+  readonly value: string;
+}
+
+/**
+ * Opts a cell out of the formula neutralization. Only for server-generated
+ * values that must survive a copy-paste unchanged (a secret key can start
+ * with `-`); never for user input.
+ */
+export const csvLiteral = (value: unknown): CsvLiteral => ({
+  [CSV_LITERAL]: true,
+  value: value === null || value === undefined ? '' : String(value),
+});
+
+const isCsvLiteral = (value: unknown): value is CsvLiteral =>
+  typeof value === 'object' && value !== null && CSV_LITERAL in value;
+
+const quoteCsvValue = (value: string) => `"${value.replace(/"/g, '""')}"`;
+
+/**
  * Escapes a value for CSV formatting.
+ *
+ * Cells that a spreadsheet would run as a formula are neutralized with a
+ * leading `'`, which the spreadsheet renders as text, unless the value was
+ * wrapped with `csvLiteral`.
  *
  * @param value - The value to escape.
  * @returns The escaped value.
  */
-function escapeCsvValue(value: any) {
+export function escapeCsvValue(value: any) {
   if (value === null || value === undefined) {
     return '';
+  }
+  if (isCsvLiteral(value)) {
+    return quoteCsvValue(value.value);
   }
   if (typeof value === 'number' || typeof value === 'boolean') {
     return String(value);
@@ -21,8 +68,11 @@ function escapeCsvValue(value: any) {
   // Convert non-string values to string using JSON.stringify
   value = _.isString(value) ? value : JSON.stringify(value);
 
-  // Replace double quotes within the value with two double quotes
-  return `"${value.replace(/"/g, '""')}"`;
+  if (startsFormula(value)) {
+    value = `'${value}`;
+  }
+
+  return quoteCsvValue(value);
 }
 
 /**

@@ -68,15 +68,16 @@ test.describe.serial(
 
       if (isActiveVisible) {
         // Deactivate button is the first (and only) action button in Active view.
-        // It is wrapped in a Popconfirm that requires a second "Deactivate" click.
+        // It is wrapped in a BAINameActionCell popConfirm (Astryx Popover,
+        // role="dialog" labeled by the action's title) that requires a second
+        // "Deactivate" click.
         await activeRow
           .locator('.bai-name-action-cell-actions button')
           .first()
           .click();
-        // Confirm the Popconfirm
         await page
-          .locator('.ant-popconfirm')
-          .getByRole('button', { name: 'Deactivate' })
+          .getByRole('dialog', { name: 'Deactivate' })
+          .getByRole('button', { name: 'Deactivate', exact: true })
           .click();
         await expect(activeRow).toBeHidden({ timeout: 10000 });
       }
@@ -95,13 +96,12 @@ test.describe.serial(
           .locator('.bai-name-action-cell-actions button')
           .last()
           .click();
-        // BAIDeleteConfirmModal requires typing the role name into its dedicated
-        // #confirmText textbox before the Delete button is enabled.
-        const purgeModal = page
-          .locator('.ant-modal')
-          .filter({ hasText: 'Purge Role' });
+        // BAIDeleteConfirmModal requires typing the role name into its
+        // textbox (carries `name="confirmText"`, not `id`) before Delete
+        // enables.
+        const purgeModal = page.getByRole('dialog', { name: 'Purge Role' });
         await expect(purgeModal).toBeVisible({ timeout: 5000 });
-        await purgeModal.locator('#confirmText').fill(roleName);
+        await purgeModal.getByRole('textbox').fill(roleName);
         await purgeModal.getByRole('button', { name: 'Delete' }).click();
         await expect(inactiveRow).toBeHidden({ timeout: 10000 });
       }
@@ -128,10 +128,9 @@ test.describe.serial(
       // 4. Click the "Create Role" button
       await page.getByRole('button', { name: 'Create Role' }).click();
 
-      // 5. Verify a modal titled "Create Role" appears
-      const modal = page
-        .locator('.ant-modal')
-        .filter({ hasText: 'Create Role' });
+      // 5. Verify a modal titled "Create Role" appears (RoleFormModal renders
+      // BAIModal, an Astryx dialog whose accessible name is its title).
+      const modal = page.getByRole('dialog', { name: 'Create Role' });
       await expect(modal).toBeVisible();
 
       // 6. Verify the modal has Role Name (required) and Description fields
@@ -159,42 +158,23 @@ test.describe.serial(
       await modal.getByLabel('Description').fill(ROLE_DESCRIPTION);
 
       // 11. Fill in the required "Scope Type / Target" field.
-      // The Create Role modal now requires at least one scope entry.
-      // AntD Form.List generates input IDs: scopes_0_scopeType and scopes_0_scopeId.
-      // Click the parent .ant-select container (not the input directly) to open dropdowns.
-      const scopeTypeContainer = modal
-        .locator('input#scopes_0_scopeType')
-        .locator('xpath=ancestor::div[contains(@class,"ant-select")][1]');
-      await scopeTypeContainer.click();
-      await page
-        .locator(
-          '.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option',
-        )
-        .filter({ hasText: 'Domain' })
-        .first()
-        .click();
+      // ScopeRow renders BAISelect (Scope Type) and ScopeIdSelect (Target) as
+      // Astryx Selector triggers (`role="button"`), each opening a floating
+      // `listbox`/`option` panel — not an antd `.ant-select`.
+      await modal.getByRole('button', { name: 'Scope Type' }).click();
+      await page.getByRole('option', { name: 'Domain', exact: true }).click();
 
-      // Wait for Scope Type dropdown to fully close before interacting with Target
-      await expect(
-        page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)'),
-      ).toHaveCount(0, { timeout: 5000 });
-
-      // Wait for Target (scopeId) container to become enabled (DomainScopeIdSelect loads asynchronously)
-      const scopeIdContainer = modal
-        .locator('input#scopes_0_scopeId')
-        .locator('xpath=ancestor::div[contains(@class,"ant-select")][1]');
-      await expect(scopeIdContainer).not.toHaveClass(/ant-select-disabled/, {
-        timeout: 5000,
-      });
-      await scopeIdContainer.click();
-      // Wait for domain options to load and select the first available option
-      const domainDropdownOptions = page.locator(
-        '.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option',
-      );
-      await expect(domainDropdownOptions.first()).toBeVisible({
-        timeout: 10000,
-      });
-      await domainDropdownOptions.first().click();
+      // Wait for the Target select to become enabled (DomainScopeIdSelect
+      // loads its options asynchronously once a scope type is picked) and
+      // pick the first available domain.
+      const targetTrigger = modal.getByRole('button', { name: 'Target' });
+      await expect(targetTrigger).toBeEnabled({ timeout: 5000 });
+      await targetTrigger.click();
+      const targetOptions = page
+        .getByRole('listbox', { name: 'Target' })
+        .getByRole('option');
+      await expect(targetOptions.first()).toBeVisible({ timeout: 10000 });
+      await targetOptions.first().click();
 
       // 12. Click OK to submit
       await modal.getByRole('button', { name: 'OK' }).click();
@@ -202,10 +182,12 @@ test.describe.serial(
       // 12. Verify the modal closes
       await expect(modal).toBeHidden({ timeout: 10000 });
 
-      // 13. Verify a success notification "Role created successfully." appears
+      // 13. Verify a success notification "Role created successfully." appears.
+      // RoleFormModal reports through the app-shim's `message.success`, which
+      // is backed by an Astryx toast (role="status"), not BAINotificationStack.
       await expect(
         page
-          .locator('.ant-message-notice-wrapper')
+          .getByRole('status')
           .filter({ hasText: /Role created successfully/i }),
       ).toBeVisible({ timeout: 10000 });
 
@@ -503,16 +485,25 @@ test.describe(
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
 
-      // 3. Find the Source column index. Columns: Role Name(1) Description(2) Scope Type(3)
-      //    Scope ID(4) Source(5) Created At(6) Updated At(7).
-      // Locate system roles using a column-header-based approach to find
-      // a row where the Source cell value is exactly "System", excluding "monitor" (known bug).
-      // If no system row is visible on page 1, navigate to the last page where they accumulate.
+      // 3. Wait for the table's first data row. The header row renders before
+      // the query resolves, so only a data row proves the list loaded — and
+      // the 3s system-row probe below is conditional, so an unloaded table
+      // silently sends the test to a pagination bar that does not exist yet.
+      await expect(page.getByRole('row').nth(1)).toBeVisible({
+        timeout: 30000,
+      });
+
+      // 4. Locate system roles by their "Source" cell value being exactly
+      // "System", excluding "monitor" (known bug). Real rows/cells come from
+      // `BAITable`'s semantic `<table>`, so role-based locators reach them —
+      // the header row has `columnheader`s, not `cell`s, so it never matches.
+      // If no system row is visible on page 1, navigate to the last page
+      // where they accumulate.
       const systemRoleRowLocator = () =>
         page
-          .locator('tr.ant-table-row')
+          .getByRole('row')
           .filter({
-            has: page.locator('td:nth-child(5)', { hasText: /^System$/ }),
+            has: page.getByRole('cell', { name: 'System', exact: true }),
           })
           .filter({ hasNotText: /monitor/i })
           .first();
@@ -522,45 +513,55 @@ test.describe(
         .isVisible({ timeout: 3000 })
         .catch(() => false);
       if (!isSystemVisible) {
-        // Navigate to last page to find system roles
-        const lastPageButton = page.locator('.ant-pagination-item').last();
+        // Navigate to the last page button in the pagination bar.
+        const lastPageButton = page
+          .getByRole('button', { name: /^Go to page \d+$/ })
+          .last();
         await lastPageButton.click();
-        await expect(page.locator('.ant-table-row').first()).toBeVisible({
-          timeout: 10000,
-        });
         systemRoleRow = systemRoleRowLocator();
       }
       await expect(systemRoleRow).toBeVisible({ timeout: 10000 });
 
-      // 4. Click the role name to open the detail drawer.
+      // 5. Click the role name to open the detail drawer. BAINameActionCell
+      // renders the title as a button when `onTitleClick` is set, and it is
+      // the first control in the row's first cell (actions come after it).
       const titleElement = systemRoleRow
         .getByRole('cell')
         .first()
-        .locator('.ant-typography')
+        .getByRole('button')
         .first();
       // Extract name for later verification (must be done before click to avoid stale ref)
       const systemRoleName = (await titleElement.textContent())?.trim() ?? null;
       await titleElement.click();
 
-      // 5. Verify the drawer title "RBAC Role Info" appears
-      const drawer = page.locator('.ant-drawer');
-      await expect(drawer.getByText('RBAC Role Info')).toBeVisible();
+      // 6. Verify the drawer title "RBAC Role Info" appears. `RoleDetailDrawer`
+      // renders `BAIDrawer` (Astryx lab `Drawer`), an Astryx dialog whose
+      // accessible name is its fixed `label` — the role name is the visible
+      // heading text, not the dialog's name.
+      const drawer = page.getByRole('dialog', { name: 'RBAC Role Info' });
+      await expect(drawer).toBeVisible();
 
-      // 6. Verify the drawer heading matches the role name we clicked
+      // 7. Verify the drawer heading matches the role name we clicked.
+      // `BAIDrawer`'s title renders through Astryx `Heading level={5}`.
       if (systemRoleName) {
         await expect(
-          drawer.locator('h3').filter({ hasText: systemRoleName }),
+          drawer
+            .getByRole('heading', { level: 5 })
+            .filter({ hasText: systemRoleName }),
         ).toBeVisible({
           timeout: 5000,
         });
       }
 
-      // 7. Verify the Edit button is NOT present for system roles
-      // The Edit Role button would have size="large" (CSS class .ant-btn-lg) if present
-      await expect(drawer.locator('.ant-btn-lg').first()).toBeHidden();
+      // 8. Verify the Edit button is NOT present for system roles.
+      // `RoleDetailDrawer` only renders the Edit Role `IconButton` (aria-label
+      // "Edit Role") when `role.source === 'CUSTOM'`.
+      await expect(
+        drawer.getByRole('button', { name: 'Edit Role' }),
+      ).toBeHidden();
 
       // Close the drawer
-      await drawer.getByRole('button', { name: 'close' }).click();
+      await drawer.getByRole('button', { name: 'Close' }).click();
     });
   },
 );

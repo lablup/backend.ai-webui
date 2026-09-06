@@ -3,12 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useTokenCount } from '../../hooks/useTokenizer';
-import BAIQuestionIconWithTooltipAstryx from '../astryx-bui/BAIQuestionIconWithTooltipAstryx';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Text } from '@astryxdesign/core/Text';
 import { UIMessage } from 'ai';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { map, last } from 'lodash-es';
 import React, { useEffect, useState } from 'react';
@@ -103,7 +102,7 @@ const ChatTokenCounter: React.FC<ChatTokenCounterProps> = ({
             <Divider orientation="vertical" />
             <Text>{totalTokenCount}</Text>
             <Text color="secondary">tokens</Text>
-            <BAIQuestionIconWithTooltipAstryx
+            <BAIQuestionIconWithTooltip
               title={t('chatui.TokenCounterTooltip')}
             />
           </BAIFlex>

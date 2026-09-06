@@ -17,6 +17,7 @@ import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
+import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -27,12 +28,16 @@ import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { useBAIBreakpoint } from '../theme-shim';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIAlertIconWithTooltip,
@@ -40,17 +45,18 @@ import {
   BAIFlex,
   BAILink,
   BAIPropertyFilter,
+  BAIResourceUnitGridSkeleton,
   BAISelectionLabel,
   BAISessionsIcon,
+  BAITabCountBadge,
   filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   mergeFilterValues,
-  PRIMARY_TAG_VARIANT,
   useBAILogger,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PowerOffIcon } from 'lucide-react';
+import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -80,11 +86,9 @@ const NOT_FINISHED_STATUS_FILTER =
   'status != "TERMINATED" & status != "CANCELLED"';
 
 const styles = stylex.create({
-  // antd `Typography.Text style={{maxWidth:120, wordBreak:'keep-all'}}` — the
-  // title only renders on >=lg, where maxWidth was always 120.
+  // The title only renders on >=lg, where maxWidth was always 120.
   actionCardTitle: {
     maxWidth: 120,
-    wordBreak: 'keep-all',
   },
 });
 
@@ -130,22 +134,36 @@ const ComputeSessionListPage = () => {
       statusCategory: parseAsStringLiteral(['running', 'finished']).withDefault(
         'running',
       ),
+      view: parseAsStringLiteral(['table', 'grid']).withDefault('table'),
     },
     {
       history: 'replace',
     },
   );
 
+  const [experimentalSessionResourceGrid] = useBAISettingUserState(
+    'experimental_session_resource_grid',
+  );
+  // Grid view is gated behind an experimental opt-in (FR-3570); when off, the
+  // effective view is always 'table' regardless of the `view` URL param, but
+  // the param itself is left untouched so the stored choice comes back if the
+  // flag is re-enabled.
+  const effectiveView = experimentalSessionResourceGrid
+    ? queryParams.view
+    : 'table';
+
+  // `view` is page-level state, not per-tab: keep it out of the snapshots so
+  // restoring a tab never flips the table/grid toggle.
   const queryMapRef = useRef({
     [queryParams.type]: {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     },
   });
 
   useEffect(() => {
     queryMapRef.current[queryParams.type] = {
-      queryParams,
+      queryParams: _.omit(queryParams, ['view']),
       tablePaginationOption,
     };
   }, [queryParams, tablePaginationOption]);
@@ -404,6 +422,7 @@ const ComputeSessionListPage = () => {
             setQueryParams({
               ...storedQuery.queryParams,
               type: key as TypeFilterType,
+              view: queryParams.view,
             });
             setTablePaginationOption(
               storedQuery.tablePaginationOption || { current: 1 },
@@ -420,33 +439,13 @@ const ComputeSessionListPage = () => {
             },
             (label, key) => ({
               key,
-              label: (
-                <BAIFlex justify="center" gap={10}>
-                  {label}
-                  {
-                    // display badge only if count is greater than 0
-                    // @ts-ignore
-                    (sessionCounts[key]?.count || 0) > 0 && (
-                      <Badge
-                        // PILOT-DECISION: antd count Badge (brand color when
-                        // active, gray otherwise) -> Astryx Badge pill.
-                        // Arbitrary token colors are inexpressible (P5);
-                        // active maps to PRIMARY_TAG_VARIANT (policy class 4),
-                        // inactive to `neutral`. Font/padding tweaks dropped
-                        // (defaults-first).
-                        variant={
-                          queryParams.type === key
-                            ? PRIMARY_TAG_VARIANT
-                            : 'neutral'
-                        }
-                        label={
-                          // @ts-ignore
-                          sessionCounts[key].count
-                        }
-                      />
-                    )
-                  }
-                </BAIFlex>
+              label,
+              endContent: (
+                <BAITabCountBadge
+                  // @ts-ignore
+                  count={sessionCounts[key]?.count}
+                  selected={queryParams.type === key}
+                />
               ),
             }),
           )}
@@ -523,6 +522,32 @@ const ComputeSessionListPage = () => {
                   />
                 </>
               )}
+              {experimentalSessionResourceGrid && (
+                <SegmentedControl
+                  label={t('session.resourceGrid.ViewMode')}
+                  value={queryParams.view}
+                  onChange={(value) =>
+                    setQueryParams({ view: value as 'table' | 'grid' })
+                  }
+                >
+                  <Tooltip content={t('session.resourceGrid.TableView')}>
+                    <SegmentedControlItem
+                      value="table"
+                      label={t('session.resourceGrid.TableView')}
+                      isLabelHidden
+                      icon={<TableIcon size="1em" />}
+                    />
+                  </Tooltip>
+                  <Tooltip content={t('session.resourceGrid.GridView')}>
+                    <SegmentedControlItem
+                      value="grid"
+                      label={t('session.resourceGrid.GridView')}
+                      isLabelHidden
+                      icon={<LayoutGridIcon size="1em" />}
+                    />
+                  </Tooltip>
+                </SegmentedControl>
+              )}
               <AutoUpdateFetchKeyButton
                 settingId="session-list"
                 defaultAutoUpdateDelay={15_000}
@@ -538,7 +563,32 @@ const ComputeSessionListPage = () => {
               />
             </BAIFlex>
           </BAIFlex>
-          {computeSessionNodeResult.ok ? (
+          {effectiveView === 'grid' ? (
+            // Keyed by the UNdeferred filter/order: a change remounts the
+            // boundary so its fallback shows immediately, instead of the
+            // refetch being held hidden until the next poll commit. The
+            // fetchKey stays deferred so poll refreshes never flash.
+            <Suspense
+              key={`${queryVariables.filter ?? ''}:${queryVariables.order ?? ''}`}
+              fallback={<BAIResourceUnitGridSkeleton />}
+            >
+              <SessionResourceGrid
+                filter={queryVariables.filter}
+                order={queryVariables.order ?? undefined}
+                projectId={currentProject.id}
+                fetchKey={deferredFetchKey}
+                onClickSession={(sessionId) => {
+                  const newSearchParams = new URLSearchParams(location.search);
+                  newSearchParams.set('sessionDetail', sessionId);
+                  webUINavigate({
+                    pathname: location.pathname,
+                    hash: location.hash,
+                    search: newSearchParams.toString(),
+                  });
+                }}
+              />
+            </Suspense>
+          ) : computeSessionNodeResult.ok ? (
             <SessionNodes
               order={queryParams.order}
               onClickSessionName={(session) => {

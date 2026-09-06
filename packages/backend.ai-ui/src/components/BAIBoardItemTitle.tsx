@@ -1,8 +1,7 @@
+import BAIQuestionIconWithTooltip from './BAIQuestionIconWithTooltip';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import { Heading } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { CircleHelp } from 'lucide-react';
 import React from 'react';
 
 export interface BAIBoardItemTitleProps {
@@ -12,8 +11,8 @@ export interface BAIBoardItemTitleProps {
   style?: React.CSSProperties;
 }
 
-// Z-index for sticky title in BAIBoardItem. Should be higher than antd table fixed columns
-// (dynamically calculated based on column count) but lower than MainLayout header (z-index: 100).
+// Context-local: above the table's fixed columns (calculated per column count),
+// below `BAI_Z_INDEX.appHeader` (see `styles/zIndexLadder.ts`).
 const Z_INDEX_IN_BAI_BOARD_ITEM_TITLE = 50;
 
 const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
@@ -51,14 +50,7 @@ const BAIBoardItemTitle: React.FC<BAIBoardItemTitleProps> = ({
         ) : (
           title
         )}
-        {tooltip ? (
-          <Tooltip content={tooltip}>
-            <CircleHelp
-              style={{ color: token.colorTextSecondary }}
-              size="1em"
-            />
-          </Tooltip>
-        ) : null}
+        {tooltip ? <BAIQuestionIconWithTooltip title={tooltip} /> : null}
       </BAIFlex>
 
       <BAIFlex

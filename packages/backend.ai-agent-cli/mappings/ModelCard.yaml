@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=./schema.json
+type: ModelCard
+concept: model-store
+docs: deployment#model-card-details
+meaning: One model in the Model Store — the metadata card users browse before deploying the model behind it.
+fields:
+  name:
+    meaning: The model's name, which is what the Model Store grid lists it under.
+    docs: deployment#browsing-and-searching-models
+  title:
+    meaning: The display title from the model's own card file, used instead of the folder name when present.
+    docs: deployment#model-card-details
+  author:
+    meaning: Who published the model, as the card file declares it.
+    docs: deployment#model-card-details
+  version:
+    meaning: The revision of the model the card describes.
+    docs: deployment#model-card-details
+  task:
+    label: Task
+    meaning: What the model is for, such as text generation or classification; the store filters on it.
+    docs: deployment#browsing-and-searching-models
+  category:
+    label: Category
+    meaning: The store grouping the model is filed under.
+    docs: deployment#browsing-and-searching-models
+  architecture:
+    label: Architecture
+    meaning: The model architecture, which decides which runtime variants can serve it.
+    docs: deployment#add-revision
+  framework:
+    label: Framework
+    meaning: The frameworks the model was built with, shown as tags on its card.
+    docs: deployment#model-card-details
+  license:
+    label: License
+    meaning: The licence the model is published under, which governs how it may be used.
+    docs: deployment#model-card-details
+  min_resource:
+    label: Minimum Resources
+    meaning: The smallest resource allocation the model is expected to serve on.
+    docs: deployment#deploying-a-model
+  readme:
+    label: README
+    meaning: The model's long description, rendered as the body of its card.
+    docs: deployment#model-card-details
+  vfolder_node:
+    label: Model Folder
+    meaning: The storage folder holding the model files a deployment mounts.
+    concept: storage-folder
+    docs: vfolder#models

@@ -715,7 +715,9 @@ test.describe(
       // 3. Click the expand icon/arrow on that row
       await expandableRow.getByLabel('Expand row').click();
 
-      // 4. Verify the sub-steps table columns are visible
+      // 4. Verify the sub-steps table columns are visible.
+      // The sub-step panel carries one Time column (the step's start) plus a
+      // Duration, not the Started At / Ended At pair it used to show.
       await expect(
         modal.getByRole('columnheader', { name: 'Step' }),
       ).toBeVisible();
@@ -729,10 +731,10 @@ test.describe(
         modal.getByRole('columnheader', { name: 'Error Code' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'Started At' }),
+        modal.getByRole('columnheader', { name: 'Duration' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'Ended At' }),
+        modal.getByRole('columnheader', { name: 'Time' }),
       ).toBeVisible();
 
       // 5. Verify at least one sub-step row is visible.
@@ -903,10 +905,10 @@ test.describe(
         modal.getByRole('columnheader', { name: 'Step' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'Started At' }),
+        modal.getByRole('columnheader', { name: 'Duration' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'Ended At' }),
+        modal.getByRole('columnheader', { name: 'Time' }),
       ).toBeVisible();
 
       // 7. Verify sub-step data is displayed.

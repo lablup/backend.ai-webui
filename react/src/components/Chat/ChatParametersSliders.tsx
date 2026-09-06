@@ -6,12 +6,11 @@
 import { Form } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
 import InputNumberWithSlider from '../InputNumberWithSlider';
-import BAIQuestionIconWithTooltipAstryx from '../astryx-bui/BAIQuestionIconWithTooltipAstryx';
 import { DEFAULT_CHAT_PARAMETERS, type ChatParameters } from './ChatModel';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIFlex } from 'backend.ai-ui';
+import { BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import { t } from 'i18next';
 import { useRef } from 'react';
 
@@ -49,9 +48,7 @@ export const ChatParameterSliderFormItem = ({
         <BAIFlex justify="between">
           <BAIFlex gap={'xxs'}>
             <Text style={{ fontSize: 'var(--font-size-sm)' }}>{label}</Text>
-            {description && (
-              <BAIQuestionIconWithTooltipAstryx title={description} />
-            )}
+            {description && <BAIQuestionIconWithTooltip title={description} />}
           </BAIFlex>
         </BAIFlex>
       }

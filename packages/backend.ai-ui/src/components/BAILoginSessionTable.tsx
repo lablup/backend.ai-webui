@@ -1,7 +1,7 @@
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   BAIText,
   filterOutEmpty,
@@ -133,7 +133,8 @@ const BAILoginSessionTable = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey="id"
       size="small"

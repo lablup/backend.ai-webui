@@ -8,10 +8,13 @@ import { message } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { Text } from '@astryxdesign/core/Text';
-import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  type BAIModalProps,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -63,8 +66,9 @@ const RestoreVFolderModal: React.FC<RestoreVFolderModalProps> = ({
         if (!next) onRequestClose?.(false);
       }}
       title={t('data.folders.Restore')}
-      actionLabel={t('data.folders.Restore')}
-      onAction={() => {
+      maskClosable={false}
+      okText={t('data.folders.Restore')}
+      onOk={() => {
         const promises = _.map(vfolders, (vfolder: VFolderType) =>
           restoreMutation.mutateAsync(vfolder.id).catch((error) => {
             upsertNotification({

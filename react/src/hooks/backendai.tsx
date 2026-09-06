@@ -306,6 +306,27 @@ export const useTOTPSupported = () => {
   return { isTOTPSupported: isManagerSupportingTOTP, isLoading };
 };
 
+/**
+ * Suspending counterpart of `useTOTPSupported`, for callers that must not
+ * render — or issue a query — while the capability is still `undefined`
+ * (e.g. a page that builds `isNotSupportTotp` into preloaded query variables
+ * once). Shares the same TanQuery key, so it resolves from the cache the app
+ * shell has usually already filled.
+ */
+export const useSuspendedTOTPSupported = () => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const { data: isTOTPSupported } = useSuspenseTanQuery<boolean>({
+    queryKey: ['isManagerSupportingTOTP'],
+    queryFn: () => {
+      return baiClient.isManagerSupportingTOTP();
+    },
+    staleTime: 1000,
+  });
+
+  return isTOTPSupported;
+};
+
 export interface InvitationItem {
   id: string;
   vfolder_id: string;

@@ -6,8 +6,8 @@
 
  PILOT-DECISION: antd `Layout.Sider` → Astryx `SideNav` (MAPPING §5:
  `Layout`/`Sider` → `AppShell` + `SideNav`, "richer than antd"). The sibling
- half of that recipe — `AppShell` — is deliberately NOT adopted; see
- `MainLayout.tsx` for that decision and its reasons.
+ half of that recipe — `AppShell` — was adopted in FR-3612; this shell now
+ mounts inside AppShell's `sideNav` slot (see `MainLayout.tsx`).
 
  Mapping applied:
    width={240}          -> theme default `components['side-nav'].width`.
@@ -46,17 +46,14 @@
 
  THE SHELL WRAPPER (regression fix, 2026-08-08)
  ----------------------------------------------
- `SideNav` is designed to be mounted by Astryx `AppShell`, which owns the
- flex contract of the rail. `MainLayout` deliberately does NOT adopt
- `AppShell` (see its header), and `SideNav`'s own StyleX rule is only
- `width: 260` — no `flex-shrink: 0`. As a flex item in `MainLayout`'s row,
- next to a `flex: auto` content column whose intrinsic basis is far wider
- than the viewport, the rail therefore SHRANK: measured 117px against the
- declared 260px, which truncated every menu label ("Admin …", "Dashbo…")
- and read as "the sider is the wrong size / density". antd `Layout.Sider`
- emitted `flex: 0 0 <width>px` for exactly this reason; this wrapper restores
- that contract. It is a LAYOUT contract, not a visual value — there is no
- Astryx token for "do not shrink", and the sizes themselves stay Astryx's.
+ `SideNav`'s own StyleX rule is only `width: 260` — no `flex-shrink: 0` — so
+ as a flex item next to a wide content column the rail SHRANK (measured 117px
+ against the declared 260px, truncating every menu label). antd `Layout.Sider`
+ emitted `flex: 0 0 <width>px` for exactly this reason; this wrapper keeps
+ that contract. Since FR-3612 the rail mounts inside AppShell's `sideNav`
+ panel (itself `flex-shrink: 0`), so this is now defence in depth, and the
+ heights are `100%` — the shell fills the panel, which the AppShell `banner`
+ slot may shorten below the viewport.
 
  It also un-clips the hover-revealed collapse toggle. `SideNav`'s root sets
  `overflow: hidden` and its scrollable column adds `overflow-x: hidden`, so
@@ -128,7 +125,7 @@ const BAISider: React.FC<BAISiderProps> = ({
         // `flex: 0 0 <width>` contract antd's Layout.Sider provided and
         // Astryx delegates to AppShell.
         flexShrink: 0,
-        height: '100vh',
+        height: '100%',
       }}
     >
       <SideNav
@@ -143,7 +140,7 @@ const BAISider: React.FC<BAISiderProps> = ({
         )}
         style={{
           boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.10)',
-          height: '100vh',
+          height: '100%',
         }}
         collapsible={{
           isCollapsed: collapsed,

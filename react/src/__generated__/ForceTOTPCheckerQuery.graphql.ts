@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<34fe6fd50d15a60b11fc3b90537753b1>>
+ * @generated SignedSource<<046a28e8ac5f53ed36fbe824ae3eccc4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -126,12 +126,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8fb38b90c90755984db4944f61e7d954",
+    "cacheID": "e9f21b8619bfe5b4c180b49104246aba",
     "id": null,
     "metadata": {},
     "name": "ForceTOTPCheckerQuery",
     "operationKind": "query",
-    "text": "query ForceTOTPCheckerQuery(\n  $isNotSupportTotp: Boolean!\n) {\n  myUserV2 {\n    security {\n      totpActivated @skipOnClient(if: $isNotSupportTotp)\n    }\n    ...TOTPActivateModalFragment\n    id\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n"
+    "text": "query ForceTOTPCheckerQuery(\n  $isNotSupportTotp: Boolean!\n) {\n  myUserV2 {\n    security {\n      totpActivated @skipOnClient(if: $isNotSupportTotp)\n    }\n    ...TOTPActivateModalFragment\n    id\n  }\n}\n\nfragment TOTPActivateModalFragment on UserV2 {\n  basicInfo {\n    email\n  }\n  security {\n    totpActivated @skip(if: $isNotSupportTotp) @skipOnClient(if: $isNotSupportTotp)\n  }\n}\n"
   }
 };
 })();

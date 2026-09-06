@@ -15,7 +15,7 @@ import {
   BAIColumnType,
   BAIColumnsType,
   BAINameActionCell,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
@@ -336,7 +336,12 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         defaultHidden: true,
         render: (__, record) =>
           record.currentRevisionId ? (
-            <BAIText copyable ellipsis monospace style={{ maxWidth: 160 }}>
+            <BAIText
+              copyable
+              ellipsis={{ tooltip: true }}
+              monospace
+              style={{ maxWidth: 160 }}
+            >
               {record.currentRevisionId}
             </BAIText>
           ) : (
@@ -427,7 +432,8 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx<ModelDeploymentNodeInList>
+    <BAITable<ModelDeploymentNodeInList>
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey="id"
       size="small"

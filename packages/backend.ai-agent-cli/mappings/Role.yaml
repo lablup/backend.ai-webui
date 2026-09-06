@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=./schema.json
+type: Role
+concept: rbac-role
+docs: rbac_management#role-list
+meaning: One RBAC role — a named set of permissions that can be assigned to users over a scope.
+fields:
+  name:
+    label: Role Name
+    meaning: The role's name, which is what the RBAC Management role list shows.
+    docs: rbac_management#role-list
+  description:
+    meaning: The free-text note explaining what the role is for.
+    docs: rbac_management#create-a-role
+  status:
+    label: Status
+    meaning: Whether the role still grants anything, and whether it can be assigned.
+    docs: rbac_management#view-role-details
+    values:
+      ACTIVE:
+        label: Active
+        meaning: The role grants its permissions and can be assigned to users.
+        variant: success
+      INACTIVE:
+        label: Inactive
+        meaning: The role is kept but grants nothing until it is activated again.
+        variant: warning
+      DELETED:
+        label: Deleted
+        meaning: The role was removed; existing assignments no longer grant anything.
+        variant: error
+  source:
+    label: Source
+    meaning: Whether Backend.AI ships the role or an administrator created it, which decides if it can be edited.
+    docs: rbac_management#system-vs-custom-roles
+    values:
+      SYSTEM:
+        label: System
+        meaning: A built-in role Backend.AI defines; its permissions cannot be edited.
+        variant: neutral
+      CUSTOM:
+        label: Custom
+        meaning: A role an administrator created, whose permissions and assignments can be changed.
+        variant: success
+  permissions:
+    label: Permissions
+    meaning: The operations the role allows, grouped by the entity type they act on.
+    concept: rbac-permission
+    docs: rbac_management#manage-permissions
+  users:
+    label: Users
+    meaning: The accounts the role is currently assigned to.
+    concept: rbac-role-assignment
+    docs: rbac_management#manage-user-assignments
+  scopes:
+    label: Scopes
+    meaning: The domains, projects or users the role's permissions apply within.
+    concept: rbac-scope-type
+    docs: rbac_management#scope-type-cards
+  autoAssign:
+    label: Auto Assign
+    meaning: Whether new accounts matching the role's scope receive it without an administrator acting.
+    docs: rbac_management#manage-user-assignments

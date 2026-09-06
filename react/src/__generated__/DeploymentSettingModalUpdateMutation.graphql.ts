@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ade1997e9750299a4b03d2ecd53e09c9>>
+ * @generated SignedSource<<561efcd307b8ee76d0e2faad28eaa910>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -47,6 +47,7 @@ export type DeploymentSettingModalUpdateMutation$data = {
         readonly name: string;
         readonly resourceGroupName: string;
         readonly tags: ReadonlyArray<string>;
+        readonly updatedAt: string;
       };
       readonly networkAccess: {
         readonly openToPublic: boolean;
@@ -128,6 +129,13 @@ v1 = [
                 "kind": "ScalarField",
                 "name": "resourceGroupName",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "updatedAt",
+                "storageKey": null
               }
             ],
             "storageKey": null
@@ -193,16 +201,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "66f0f082c918737b0cbfd64e4b071f37",
+    "cacheID": "ac9e20ce5b931369ce4ca5f78ca57923",
     "id": null,
     "metadata": {},
     "name": "DeploymentSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation DeploymentSettingModalUpdateMutation(\n  $input: UpdateDeploymentInput!\n) {\n  updateModelDeployment(input: $input) {\n    deployment {\n      id\n      metadata {\n        name\n        tags\n        resourceGroupName\n      }\n      networkAccess {\n        openToPublic\n      }\n      replicaState {\n        desiredReplicaCount\n      }\n    }\n  }\n}\n"
+    "text": "mutation DeploymentSettingModalUpdateMutation(\n  $input: UpdateDeploymentInput!\n) {\n  updateModelDeployment(input: $input) {\n    deployment {\n      id\n      metadata {\n        name\n        tags\n        resourceGroupName\n        updatedAt\n      }\n      networkAccess {\n        openToPublic\n      }\n      replicaState {\n        desiredReplicaCount\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4c636c058bf69ea1cd7761b401f5a4d0";
+(node as any).hash = "bdc119d19a1ff9cb9611a02edc900367";
 
 export default node;

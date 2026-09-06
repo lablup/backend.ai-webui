@@ -1,0 +1,78 @@
+# One workflow per vitest suite (react / backend.ai-ui / root): the event-level
+# `paths:` below IS the suite filter, so GitHub skips non-matching PRs before
+# allocating any runner — no gate job, no dorny/paths-filter, no wasted slot.
+# Because the filter is event-level, a non-matching PR produces no check-run;
+# these workflows must not be made required checks as-is (same caveat as
+# typecheck.yml's header).
+name: Vitest (react)
+
+on:
+  pull_request:
+    paths:
+      - react/src/**
+      - react/vite-plugins/**
+      - react/package.json
+      - react/vitest.config.ts
+      - .github/workflows/vitest-react.yml
+
+permissions:
+  contents: read
+  # `davelosert/vitest-coverage-report-action` writes a PR comment with the
+  # coverage diff; needs write access on pull-requests for that.
+  pull-requests: write
+
+concurrency:
+  # Keyed by PR number, not branch name: branch names are unique only within a
+  # repository, so two fork PRs both using e.g. `patch-1` would share a group and
+  # cancel each other's runs.
+  group: vitest-react-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ESLint in its own job so it runs beside the test job instead of ahead of it
+  # (it used to add ~40s to the suite's critical path).
+  react-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+      - uses: actions/cache@v6
+        name: ESLint results cache
+        with:
+          path: react/.eslintcache
+          key: ${{ runner.os }}-eslint-react-${{ hashFiles('**/pnpm-lock.yaml', 'react/eslint.config.js', 'packages/eslint-config-bai/**') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-react-${{ hashFiles('**/pnpm-lock.yaml', 'react/eslint.config.js', 'packages/eslint-config-bai/**') }}-
+      - name: Run ESLint on React
+        working-directory: ./react
+        run: pnpm run lint:ci
+
+  react-vitest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./react
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+      # Persists vitest's experimental fsModuleCache (enabled in
+      # react/vitest.config.ts under CI) across runs of the same PR. The
+      # `-react-` namespace is load-bearing: the backend.ai-ui workflow can run
+      # on the same sha and must not share this entry.
+      - uses: actions/cache@v6
+        name: Vitest fs-module cache
+        with:
+          path: node_modules/.experimental-vitest-cache
+          key: ${{ runner.os }}-vitest-fsmod-react-${{ hashFiles('**/pnpm-lock.yaml', 'react/vitest.config.ts') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-vitest-fsmod-react-${{ hashFiles('**/pnpm-lock.yaml', 'react/vitest.config.ts') }}-
+      - name: Run relay-compiler
+        run: pnpm run relay
+      - name: Run Vitest with coverage
+        run: pnpm exec vitest run --coverage
+      - name: Report coverage on PR
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: ./react
+          name: react-coverage

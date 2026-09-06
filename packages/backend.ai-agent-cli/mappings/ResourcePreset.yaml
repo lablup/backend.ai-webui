@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=./schema.json
+type: ResourcePreset
+docs: admin_menu#manage-resource-preset
+meaning: One resource preset — a named resource bundle the session launcher offers instead of hand-typed slots.
+fields:
+  name:
+    meaning: The preset's name, which is what the launcher's preset selector shows.
+    docs: admin_menu#manage-resource-preset
+  resource_slots:
+    label: Resource Slots
+    meaning: The CPU, memory and accelerator amounts picking this preset fills the launcher with.
+    docs: sessions_all#resource-allocation
+  shared_memory:
+    label: Shared Memory
+    meaning: The /dev/shm size the preset's sessions get, which some frameworks need raised.
+    docs: sessions_all#resource-allocation
+  scaling_group_name:
+    label: Resource Group
+    meaning: The resource group this preset is offered in; an empty value offers it everywhere.
+    concept: resource-group
+    docs: admin_menu#resource-group

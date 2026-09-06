@@ -19,6 +19,16 @@ const openStartFromURLModal = async (page: Page) => {
   ).toBeVisible();
 };
 
+// `BAITabs`/`BAITabList` renders Astryx `TabList` items as plain `<button>`s
+// (class `astryx-tab`) inside a `navigation "Tabs"` landmark, not
+// `role="tab"` (see `start-page.spec.ts`). The active tab carries
+// `aria-current="true"` (no `aria-selected`).
+const getTabs = (page: Page) =>
+  page
+    .getByRole('dialog')
+    .filter({ hasText: 'Start From URL' })
+    .getByRole('navigation', { name: 'Tabs' });
+
 // The user-settings atom reads localStorage at app boot, so write the flag
 // and reload instead of toggling through the settings UI.
 const enableHuggingFaceImportSetting = async (page: Page) => {
@@ -44,13 +54,14 @@ test.describe(
       await navigateTo(page, 'start');
       await openStartFromURLModal(page);
 
-      await expect(page.getByRole('tab', { name: HF_TAB_NAME })).toHaveCount(0);
+      const tabs = getTabs(page);
+      await expect(tabs.getByRole('button', { name: HF_TAB_NAME })).toHaveCount(
+        0,
+      );
       // The Import Notebook tab stays the default active tab.
       await expect(
-        page
-          .locator('.ant-tabs-tab-active')
-          .filter({ hasText: /Import Notebook/i }),
-      ).toBeVisible();
+        tabs.getByRole('button', { name: /Import Notebook/i }),
+      ).toHaveAttribute('aria-current', 'true');
     });
 
     test('User sees the Hugging Face import tab first and active after enabling the experimental setting', async ({
@@ -62,11 +73,9 @@ test.describe(
       await navigateTo(page, 'start');
       await openStartFromURLModal(page);
 
-      const tabs = page.getByRole('dialog').getByRole('tab');
+      const tabs = getTabs(page).getByRole('button');
       await expect(tabs.first()).toHaveText(HF_TAB_NAME);
-      await expect(
-        page.locator('.ant-tabs-tab-active').filter({ hasText: HF_TAB_NAME }),
-      ).toBeVisible();
+      await expect(tabs.first()).toHaveAttribute('aria-current', 'true');
 
       // The form renders its key fields.
       await expect(
@@ -91,9 +100,12 @@ test.describe(
       await navigateTo(page, 'start');
       await openStartFromURLModal(page);
 
-      await expect(page.getByRole('tab', { name: HF_TAB_NAME })).toHaveCount(0);
+      const tabs = getTabs(page);
+      await expect(tabs.getByRole('button', { name: HF_TAB_NAME })).toHaveCount(
+        0,
+      );
       await expect(
-        page.getByRole('tab', { name: /Import Notebook/i }),
+        tabs.getByRole('button', { name: /Import Notebook/i }),
       ).toBeVisible();
     });
 

@@ -18,8 +18,8 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
-  BAITableAstryx,
-  BAIUserSelectAstryx,
+  BAITable,
+  BAIUserSelect,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
@@ -280,7 +280,7 @@ const ProjectAdminSettingModal = ({
                 ]}
                 style={{ flex: 1, marginBottom: 0 }}
               >
-                <BAIUserSelectAstryx
+                <BAIUserSelect
                   multiple
                   valuePropName="id"
                   label={t('rbac.SelectUsers')}
@@ -294,7 +294,7 @@ const ProjectAdminSettingModal = ({
             </BAIButton>
           </BAIFlex>
         </Form>
-        <BAITableAstryx
+        <BAITable
           rowKey="id"
           size="small"
           dataSource={assignments}

@@ -15,7 +15,7 @@ import BAIText from '../BAIText';
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
 } from '../Table';
 import dayjs from 'dayjs';
@@ -179,7 +179,8 @@ const BAIDeploymentSchedulingHistoryNodes = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(histories)}
       columns={allColumns}

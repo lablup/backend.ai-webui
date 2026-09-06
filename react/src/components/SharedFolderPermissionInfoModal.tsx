@@ -5,7 +5,7 @@
  Ticket 16 — converted to Astryx. antd `Descriptions` becomes `MetadataList`
  (its `bordered` emphasis has no destination — MAPPING §4 — and is DROPPED,
  defaults-first), `Alert` becomes `Banner`, `Popconfirm` becomes the
- `BAIPopconfirmAstryx` gap component (reversible-tier confirm per
+ `BAIPopconfirm` gap component (reversible-tier confirm per
  `.claude/rules/destructive-confirmation.md`), and the icon-only leave button
  becomes an `IconButton` with a real accessible name (P8). The table crossed
  to the Astryx engine in ticket 30-D.
@@ -16,20 +16,18 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
-import BAIPopconfirm from './astryx-bui/BAIPopconfirmAstryx';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
+import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   filterOutNullAndUndefined,
-  BAITableAstryx,
+  BAITable,
+  BAIMetadataList,
+  BAIModal,
+  type BAIModalProps,
   BAIText,
   useErrorMessageResolver,
   toGlobalId,
@@ -89,6 +87,8 @@ const SharedFolderPermissionInfoModal: React.FC<
         if (!next) onRequestClose();
       }}
       title={t('data.SharedFolderPermission')}
+      maskClosable={false}
+      footer={null}
       {...modalProps}
     >
       <VStack align="stretch" gap={5}>
@@ -100,7 +100,7 @@ const SharedFolderPermissionInfoModal: React.FC<
               : t('data.folders.ProjectFolderAlertDesc')
           }
         />
-        <MetadataList title={t('data.FolderInfo')} columns={2}>
+        <BAIMetadataList title={t('data.FolderInfo')} columns={2}>
           <MetadataListItem label={t('data.folders.Name')}>
             <BAIText copyable>{vfolder?.name ?? ''}</BAIText>
           </MetadataListItem>
@@ -120,12 +120,12 @@ const SharedFolderPermissionInfoModal: React.FC<
           <MetadataListItem label={t('data.folders.Owner')}>
             {vfolder?.creator || vfolder?.user_email}
           </MetadataListItem>
-        </MetadataList>
+        </BAIMetadataList>
 
         {vfolder?.ownership_type === 'user' ? (
           <VStack align="stretch" gap={4}>
             <Heading level={5}>{t('data.folders.Permission')}</Heading>
-            <BAITableAstryx
+            <BAITable
               bordered
               pagination={false}
               dataSource={filterOutNullAndUndefined([vfolder])}

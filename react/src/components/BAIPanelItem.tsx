@@ -47,7 +47,6 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
         <Text
           style={{
             fontSize: token.fontSizeHeading5,
-            wordBreak: 'keep-all',
             textAlign: 'left',
           }}
         >

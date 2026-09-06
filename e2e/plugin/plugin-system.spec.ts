@@ -18,6 +18,14 @@ const ADMIN_PLUGIN_JS = readPluginFixture('admin-test-plugin.js');
 const PLUGIN_A_JS = readPluginFixture('plugin-a.js');
 const PLUGIN_B_JS = readPluginFixture('plugin-b.js');
 
+// Vite's dev server appends `?import` to dynamically imported module URLs
+// (`/dist/plugins/<name>.js?import`), which a `**/<name>.js` glob does not
+// match, so the plugin silently 404s on a dev server while the production
+// bundle requests the bare path. Match both.
+function pluginScript(name: string): RegExp {
+  return new RegExp(`/dist/plugins/${name}\\.js(\\?.*)?$`);
+}
+
 test.describe.parallel(
   'Plugin System',
   { tag: ['@plugin', '@functional', '@regression'] },
@@ -37,7 +45,7 @@ test.describe.parallel(
         });
 
         // 2. Serve the plugin JS inline
-        await page.route('**/dist/plugins/test-plugin.js', async (route) => {
+        await page.route(pluginScript('test-plugin'), async (route) => {
           await route.fulfill({
             status: 200,
             contentType: 'application/javascript',
@@ -64,7 +72,7 @@ test.describe.parallel(
         });
 
         // 2. Serve the plugin JS inline
-        await page.route('**/dist/plugins/test-plugin.js', async (route) => {
+        await page.route(pluginScript('test-plugin'), async (route) => {
           await route.fulfill({
             status: 200,
             contentType: 'application/javascript',
@@ -91,16 +99,13 @@ test.describe.parallel(
         });
 
         // 2. Serve the admin plugin JS inline
-        await page.route(
-          '**/dist/plugins/admin-test-plugin.js',
-          async (route) => {
-            await route.fulfill({
-              status: 200,
-              contentType: 'application/javascript',
-              body: ADMIN_PLUGIN_JS,
-            });
-          },
-        );
+        await page.route(pluginScript('admin-test-plugin'), async (route) => {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/javascript',
+            body: ADMIN_PLUGIN_JS,
+          });
+        });
 
         // 3. Login as admin after setting up routes
         await loginAsAdmin(page, request);
@@ -147,7 +152,7 @@ test.describe.parallel(
         });
 
         // 2. Route the plugin JS to return 404
-        await page.route('**/dist/plugins/broken-plugin.js', async (route) => {
+        await page.route(pluginScript('broken-plugin'), async (route) => {
           await route.fulfill({ status: 404 });
         });
 
@@ -181,7 +186,7 @@ test.describe.parallel(
           plugin: { page: 'test-plugin' },
         });
 
-        await page.route('**/dist/plugins/test-plugin.js', async (route) => {
+        await page.route(pluginScript('test-plugin'), async (route) => {
           await route.fulfill({
             status: 200,
             contentType: 'application/javascript',
@@ -192,10 +197,9 @@ test.describe.parallel(
         // 2. Login as admin
         await loginAsAdmin(page, request);
 
-        // 3. Verify the plugin menu item links to the plugin route
-        const pluginLink = page
-          .getByRole('link', { name: 'Open Backend.AI' })
-          .locator('a');
+        // 3. Verify the plugin menu item links to the plugin route. The
+        // sidebar link IS the anchor now (no nested antd `Menu.Item` <a>).
+        const pluginLink = page.getByRole('link', { name: 'Open Backend.AI' });
         await expect(pluginLink).toHaveAttribute('href', /\/test-plugin/);
 
         // 4. Verify clicking opens a new tab (externalLink type plugin)
@@ -221,16 +225,13 @@ test.describe.parallel(
           plugin: { page: 'admin-test-plugin' },
         });
 
-        await page.route(
-          '**/dist/plugins/admin-test-plugin.js',
-          async (route) => {
-            await route.fulfill({
-              status: 200,
-              contentType: 'application/javascript',
-              body: ADMIN_PLUGIN_JS,
-            });
-          },
-        );
+        await page.route(pluginScript('admin-test-plugin'), async (route) => {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/javascript',
+            body: ADMIN_PLUGIN_JS,
+          });
+        });
 
         // 2. Login as USER (not admin)
         await loginAsUser(page, request);
@@ -257,7 +258,7 @@ test.describe.parallel(
           menu: { blocklist: 'test-plugin' },
         });
 
-        await page.route('**/dist/plugins/test-plugin.js', async (route) => {
+        await page.route(pluginScript('test-plugin'), async (route) => {
           await route.fulfill({
             status: 200,
             contentType: 'application/javascript',
@@ -284,7 +285,7 @@ test.describe.parallel(
           menu: { blocklist: 'chat' },
         });
 
-        await page.route('**/dist/plugins/test-plugin.js', async (route) => {
+        await page.route(pluginScript('test-plugin'), async (route) => {
           await route.fulfill({
             status: 200,
             contentType: 'application/javascript',
@@ -320,7 +321,7 @@ test.describe.parallel(
         });
 
         // 2. Route both plugin JS files
-        await page.route('**/dist/plugins/plugin-a.js', async (route) => {
+        await page.route(pluginScript('plugin-a'), async (route) => {
           await route.fulfill({
             status: 200,
             contentType: 'application/javascript',
@@ -328,7 +329,7 @@ test.describe.parallel(
           });
         });
 
-        await page.route('**/dist/plugins/plugin-b.js', async (route) => {
+        await page.route(pluginScript('plugin-b'), async (route) => {
           await route.fulfill({
             status: 200,
             contentType: 'application/javascript',
@@ -358,7 +359,7 @@ test.describe.parallel(
         });
 
         // 2. Route plugin-a with valid JS, broken-plugin with 404
-        await page.route('**/dist/plugins/plugin-a.js', async (route) => {
+        await page.route(pluginScript('plugin-a'), async (route) => {
           await route.fulfill({
             status: 200,
             contentType: 'application/javascript',
@@ -366,7 +367,7 @@ test.describe.parallel(
           });
         });
 
-        await page.route('**/dist/plugins/broken-plugin.js', async (route) => {
+        await page.route(pluginScript('broken-plugin'), async (route) => {
           await route.fulfill({ status: 404 });
         });
 
@@ -406,7 +407,7 @@ test.describe.parallel(
           plugin: { page: 'test-plugin' },
         });
 
-        await page.route('**/dist/plugins/test-plugin.js', async (route) => {
+        await page.route(pluginScript('test-plugin'), async (route) => {
           await route.fulfill({
             status: 200,
             contentType: 'application/javascript',

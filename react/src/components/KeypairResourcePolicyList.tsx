@@ -21,7 +21,7 @@ import {
   useUpdatableState,
   filterOutEmpty,
   BAIButton,
-  BAITableAstryx,
+  BAITable,
   BAIFlex,
   BAIAllowedVfolderHostsWithPermission,
   BAIResourceNumberWithIcon,
@@ -363,7 +363,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         columns={columns as BAIColumnType<AnyObject>[]}
         dataSource={
           keypair_resource_policies as readonly AnyObject[] | undefined

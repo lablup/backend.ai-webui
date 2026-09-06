@@ -12,6 +12,8 @@ export { default as BAICard } from './BAICard';
 export type { BAICardProps, BAICardTabItem } from './BAICard';
 export { default as BAITabList } from './BAITabList';
 export type { BAITabListProps } from './BAITabList';
+export { default as BAITabCountBadge } from './BAITabCountBadge';
+export type { BAITabCountBadgeProps } from './BAITabCountBadge';
 export { default as BAICompactGroup } from './BAICompactGroup';
 export type { BAICompactGroupProps } from './BAICompactGroup';
 export { default as BAIMetadataList } from './BAIMetadataList';
@@ -47,6 +49,10 @@ export { default as ResourceStatistics } from './ResourceStatistics';
 export { processMemoryValue, convertToNumber } from './ResourceStatistics';
 export { default as BAIUnmountAfterClose } from './BAIUnmountAfterClose';
 export { default as BAIAlertIconWithTooltip } from './BAIAlertIconWithTooltip';
+export {
+  default as BAIIconWithTooltip,
+  type BAIIconWithTooltipProps,
+} from './BAIIconWithTooltip';
 export { default as BAIQuestionIconWithTooltip } from './BAIQuestionIconWithTooltip';
 export { default as BAILink } from './BAILink';
 export type { BAILinkProps } from './BAILink';
@@ -117,6 +123,10 @@ export { default as BAIDynamicUnitInputNumberWithSlider } from './BAIDynamicUnit
 export type { BAIDynamicUnitInputNumberWithSliderProps } from './BAIDynamicUnitInputNumberWithSlider';
 export { default as BAIAlert } from './BAIAlert';
 export type { BAIAlertProps } from './BAIAlert';
+export { default as BAIAppShell } from './BAIAppShell';
+export type { BAIAppShellProps, BAIAppShellDrawer } from './BAIAppShell';
+export { default as BAIOverlayScrollbar } from './BAIOverlayScrollbar';
+export type { BAIOverlayScrollbarProps } from './BAIOverlayScrollbar';
 export { default as BAIColorPicker, toHexColor } from './BAIColorPicker';
 export type { BAIColorPickerProps } from './BAIColorPicker';
 export { default as BAIListAlert } from './BAIListAlert';
@@ -155,7 +165,7 @@ export {
   default as BAISessionNodesV2,
   availableSessionV2SorterValues,
 } from './BAISessionNodesV2';
-export type { SessionV2InList } from './BAISessionNodesV2';
+export type { SessionV2InList, SessionV2Status } from './BAISessionNodesV2';
 export {
   default as BAIUserResourcePolicyV2Table,
   availableUserResourcePolicySorterValues,
@@ -164,6 +174,22 @@ export type {
   BAIUserResourcePolicyV2TableProps,
   UserResourcePolicyV2InList,
 } from './BAIUserResourcePolicyV2Table';
+export {
+  default as BAIKeypairResourcePolicyV2Table,
+  availableKeypairResourcePolicySorterValues,
+} from './BAIKeypairResourcePolicyV2Table';
+export type {
+  BAIKeypairResourcePolicyV2TableProps,
+  KeypairResourcePolicyV2InList,
+} from './BAIKeypairResourcePolicyV2Table';
+export {
+  default as BAIProjectResourcePolicyV2Table,
+  availableProjectResourcePolicySorterValues,
+} from './BAIProjectResourcePolicyV2Table';
+export type {
+  BAIProjectResourcePolicyV2TableProps,
+  ProjectResourcePolicyV2InList,
+} from './BAIProjectResourcePolicyV2Table';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
 export { default as BAITag } from './BAITag';
@@ -200,6 +226,42 @@ export type {
 export { default as StorageUsageBadge } from './StorageUsageBadge';
 export type { StorageUsageBadgeProps } from './StorageUsageBadge';
 export { default as BAIBoardItemErrorBoundary } from './BAIBoardItemErrorBoundary';
+export { default as BAIResourceUnitGrid } from './BAIResourceUnitGrid';
+export type {
+  BAIResourceUnitGridProps,
+  BAIUnitGridGroup,
+  BAIUnitGridUnit,
+} from './BAIResourceUnitGrid';
+export { default as BAIResourceUnitGridSkeleton } from './BAIResourceUnitGridSkeleton';
+export type { BAIResourceUnitGridSkeletonProps } from './BAIResourceUnitGridSkeleton';
+export { default as BAISegmentedControlItem } from './BAISegmentedControlItem';
+export type { BAISegmentedControlItemProps } from './BAISegmentedControlItem';
+export { default as BAIPopconfirm } from './BAIPopconfirm';
+export type { BAIPopconfirmProps } from './BAIPopconfirm';
+export { default as BAIBadgeCount } from './BAIBadgeCount';
+export type { BAIBadgeCountProps } from './BAIBadgeCount';
+export { default as BAINotificationStack } from './BAINotificationStack';
+export type {
+  BAINotificationStackProps,
+  BAINotificationStackItem,
+} from './BAINotificationStack';
+export { toBAINotificationStackItems } from './BAINotificationStackAdapter';
+export type {
+  BAINotificationSource,
+  ToBAINotificationStackItemsOptions,
+} from './BAINotificationStackAdapter';
+export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
+export type { BAIVFolderDeleteButtonProps } from './BAIVFolderDeleteButton';
+export { default as BAIVFolderDeleteButtonV2 } from './BAIVFolderDeleteButtonV2';
+export type { BAIVFolderDeleteButtonV2Props } from './BAIVFolderDeleteButtonV2';
+export { default as BAIDrawer } from './BAIDrawer';
+export type { BAIDrawerProps } from './BAIDrawer';
+export { default as BAIDialog } from './BAIDialog';
+export type { BAIDialogProps } from './BAIDialog';
+export { default as BAIAlertDialog } from './BAIAlertDialog';
+export type { BAIAlertDialogProps } from './BAIAlertDialog';
+// `react/`'s `BAIDrawerPortal` joins this stack — one ladder for both (FR-3585).
+export { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 export * from './Table';
 export * from './fragments';
 export * from './provider';

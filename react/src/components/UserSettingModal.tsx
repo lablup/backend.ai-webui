@@ -21,6 +21,11 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import AccessKeySelect from './AccessKeySelect';
 import BAIFormItem from './BAIFormItem';
+import {
+  BulkCreateUserErrorModal,
+  type FailedUserCreation,
+  toFailedUserCreations,
+} from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
 import TOTPActivateModal from './TOTPActivateModal';
@@ -32,7 +37,7 @@ import {
   AstryxFormTagsInput,
   AstryxFormTextArea,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
 import { Tokenizer } from '@astryxdesign/core/Tokenizer';
@@ -255,6 +260,24 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const [createdKeypairs, setCreatedKeypairs] =
     useState<GeneratedKeypairListModalFragment$key | null>();
 
+  // Users the server refused to create. Reported inside the generated-keypair
+  // result modal when some users were created, or in a standalone modal over
+  // this form when none were.
+  const [failedUsers, setFailedUsers] = useState<FailedUserCreation[]>([]);
+  // The server's own created count for the LAST submit — the mutation may
+  // reject users the form considered valid, so this is not derived from the
+  // requested count. Per-attempt on purpose: it labels that attempt's failure
+  // report ("Success: n, Failed: m"), so a retry must overwrite it.
+  const [createdCount, setCreatedCount] = useState(0);
+  // Whether any user reached the backend during this modal session. Separate
+  // from `createdCount` because that one is per-attempt: retrying a partially
+  // successful bulk create can succeed 0 times, which would otherwise reset
+  // the count to 0 and make the close below report "nothing created" even
+  // though the first attempt did create users. Monotonic, and never cleared —
+  // the modal is unmounted on close (BAIUnmountAfterClose), so the next
+  // session starts from false. Mirrors `AssignRoleModal`'s `hasAssignedAny`.
+  const [hasCreatedAny, setHasCreatedAny] = useState(false);
+
   const user = useFragment(
     graphql`
       fragment UserSettingModalFragment on UserV2 {
@@ -276,7 +299,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           mainAccessKey
         }
         security {
-          totpActivated @skipOnClient(if: $isNotSupportTotp)
+          totpActivated
+            @skipOnClient(if: $isNotSupportTotp)
+            @skip(if: $isNotSupportTotp)
           sudoSessionEnabled
           allowedClientIp
         }
@@ -304,6 +329,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       mutation UserSettingModalUpdateMutation(
         $userId: UUID!
         $input: UpdateUserV2Input!
+        $isNotSupportTotp: Boolean!
       ) {
         adminUpdateUserV2(userId: $userId, input: $input) {
           user {
@@ -322,8 +348,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               mainAccessKey
             }
             security {
-              totpActivated
-              totpActivatedAt
+              totpActivated @skipOnClient(if: $isNotSupportTotp)
+              totpActivatedAt @skipOnClient(if: $isNotSupportTotp)
               sudoSessionEnabled
               allowedClientIp
             }
@@ -336,6 +362,16 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               containerUid
               containerMainGid
               containerGids
+            }
+            projects {
+              edges {
+                node {
+                  id
+                  basicInfo {
+                    name
+                  }
+                }
+              }
             }
             timestamps {
               createdAt
@@ -350,7 +386,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   // keypair (secret key shown once), so single create runs fully on v2.
   const [commitCreateUser, isInFlightCommitCreateUser] =
     useMutation<UserSettingModalCreateMutation>(graphql`
-      mutation UserSettingModalCreateMutation($input: CreateUserV2Input!) {
+      mutation UserSettingModalCreateMutation(
+        $input: CreateUserV2Input!
+        $isNotSupportTotp: Boolean!
+      ) {
         adminCreateUserV2(input: $input) {
           user {
             id
@@ -368,8 +407,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               mainAccessKey
             }
             security {
-              totpActivated
-              totpActivatedAt
+              totpActivated @skipOnClient(if: $isNotSupportTotp)
+              totpActivatedAt @skipOnClient(if: $isNotSupportTotp)
               sudoSessionEnabled
               allowedClientIp
             }
@@ -468,31 +507,43 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
 
               const createdList =
                 res.adminBulkCreateUsersWithKeypairV2?.created ?? [];
-              const createdCount = createdList.length;
+              const succeededCount = createdList.length;
               const failedList =
                 res.adminBulkCreateUsersWithKeypairV2?.failed ?? [];
-
-              if (failedList.length > 0) {
-                message.warning(
-                  t('credential.BulkCreateUserPartialFailure', {
-                    successCount: createdCount,
-                    failCount: failedList.length,
-                  }),
-                );
-                logger.error('Bulk create partial failures:', failedList);
-              } else {
-                message.success(
-                  t('credential.BulkCreateUserSuccess', {
-                    count: createdCount,
-                  }),
-                );
+              setCreatedCount(succeededCount);
+              if (succeededCount > 0) {
+                setHasCreatedAny(true);
               }
 
               // Reveal the generated keypairs (secret keys are returned once).
               const keypairs = _.map(createdList, (created) => created.keypair);
               if (keypairs.length > 0) {
                 setCreatedKeypairs(keypairs);
-              } else {
+              }
+
+              if (failedList.length > 0) {
+                // Immediate failure notice as a toast on top of the detail
+                // modal (matches FR-3357's AssignRoleModal) — the modal
+                // carries the per-user table, the message the at-a-glance cue.
+                message.error(
+                  t('credential.BulkCreateUserPartialFailure', {
+                    successCount: succeededCount,
+                    failCount: failedList.length,
+                  }),
+                );
+                // The per-user reasons only reach the admin through the error
+                // modal — this form (or the keypair list of the users that were
+                // created) stays open behind it, so nothing closes here.
+                setFailedUsers(toFailedUserCreations(failedList));
+                return;
+              }
+
+              message.success(
+                t('credential.BulkCreateUserSuccess', {
+                  count: succeededCount,
+                }),
+              );
+              if (keypairs.length === 0) {
                 onRequestClose(true);
               }
             },
@@ -532,6 +583,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   _.toNumber(v),
                 ),
               },
+              isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (_res, errors) => {
               if (errors?.[0]) {
@@ -540,7 +592,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 return;
               }
               message.success(t('environment.SuccessfullyModified'));
-              onRequestClose(false);
+              onRequestClose(true);
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -571,6 +623,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   ? _.map(formValues.container_gids, (v) => _.toNumber(v))
                   : null,
               },
+              isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (res, errors) => {
               // adminCreateUserV2 reports failures via GraphQL errors
@@ -595,7 +648,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 // Show the created keypair modal (secret key returned once).
                 setCreatedKeypairs([res.adminCreateUserV2.keypair]);
               } else {
-                onRequestClose(false);
+                onRequestClose(true);
               }
             },
             onError: (err) => {
@@ -626,7 +679,14 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
         isInFlightCommitCreateUser ||
         isInFlightBulkCreateUsers
       }
-      onCancel={() => onRequestClose(false)}
+      // A bulk create that partially failed leaves this form open, so its
+      // Cancel still has to report the users that *were* created — otherwise
+      // the list behind it never refetches. Uses the session-wide
+      // `hasCreatedAny` rather than the per-attempt `createdCount`, so a retry
+      // that creates nothing cannot erase an earlier attempt's success. Stays
+      // false on the single-create and edit paths, which keeps their behaviour
+      // unchanged.
+      onCancel={() => onRequestClose(hasCreatedAny)}
       loading={deferredOpen !== baiModalProps.open}
       {...baiModalProps}
     >
@@ -1289,11 +1349,29 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             open={!!createdKeypairs}
             keypairFragment={filterOutNullAndUndefined(createdKeypairs)}
             onRequestClose={() => {
+              const hadFailures = !_.isEmpty(failedUsers);
               setCreatedKeypairs(null);
-              onRequestClose(true);
+              if (!hadFailures) {
+                // Full success — nothing left to review, finish the whole flow.
+                onRequestClose(true);
+              }
+              // Partial failure: leave failedUsers as-is. BulkCreateUserErrorModal
+              // below is the next step — its `open` gate flips true now that
+              // createdKeypairs is cleared, showing the failures over the
+              // still-open form (FR-3419).
             }}
           />
         </BAIUnmountAfterClose>
+        {/* The failure report — shown immediately when every user failed (no
+            keypairs to show first), or as the step after the admin dismisses
+            the keypair modal above when some users succeeded. Never shown
+            together with the keypair modal (FR-3419). */}
+        <BulkCreateUserErrorModal
+          open={!createdKeypairs && !_.isEmpty(failedUsers)}
+          failedUsers={failedUsers}
+          createdCount={createdCount}
+          onRequestClose={() => setFailedUsers([])}
+        />
       </Suspense>
     </BAIModal>
   );

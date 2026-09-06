@@ -12,9 +12,9 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import { AstryxFormSwitch } from './astryx-bui/astryxFormControls';
+import { AstryxFormSwitch } from './astryxFormControls';
 import {
-  BAIAdminResourceGroupSelectAstryx,
+  BAIAdminResourceGroupSelect,
   BAIModal,
   BAIModalProps,
   toLocalId,
@@ -49,7 +49,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
   const queryRef = useLazyLoadQuery<AgentSettingModalQuery>(
     graphql`
       query AgentSettingModalQuery {
-        ...BAIAdminResourceGroupSelectAstryx_resourceGroupsFragment
+        ...BAIAdminResourceGroupSelect_resourceGroupsFragment
       }
     `,
     {},
@@ -144,7 +144,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
             label={t('agent.ResourceGroup')}
             required={true}
           >
-            <BAIAdminResourceGroupSelectAstryx
+            <BAIAdminResourceGroupSelect
               label={t('agent.ResourceGroup')}
               isLabelHidden
               queryRef={queryRef}

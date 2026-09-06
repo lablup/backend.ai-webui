@@ -8,7 +8,7 @@ import {
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
 import { App } from '../app-shim';
-import { getImageFullName } from '../helper';
+import { getImageFullName, isPrivateImage } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -23,7 +23,6 @@ import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import BAISelectionLabel from './astryx-bui/BAISelectionLabel';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -32,8 +31,9 @@ import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
   BAIPropertyFilter,
+  BAISelectionLabel,
   BAIResourceNumberWithIcon,
-  BAITableAstryx,
+  BAITable,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
@@ -300,18 +300,29 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       key: 'installed',
       // antd `Tag color="gold"` -> Astryx Badge via the repo-global Tag
       // lookup (ticket 13 policy): gold -> yellow.
-      render: (_text, row) =>
-        row?.id && installingImages.includes(row.id) ? (
-          <Badge
-            variant={badgeVariantForTagColor('gold')}
-            label={t('environment.Installing')}
-          />
-        ) : row?.installed ? (
-          <Badge
-            variant={badgeVariantForTagColor('gold')}
-            label={t('environment.Installed')}
-          />
-        ) : null,
+      render: (_text, row) => (
+        <BAIFlex direction="row" gap="xxs" wrap="wrap">
+          {row?.id && installingImages.includes(row.id) ? (
+            <Badge
+              variant={badgeVariantForTagColor('gold')}
+              label={t('environment.Installing')}
+            />
+          ) : row?.installed ? (
+            <Badge
+              variant={badgeVariantForTagColor('gold')}
+              label={t('environment.Installed')}
+            />
+          ) : null}
+          {/* An installed private image cannot be picked in the session
+              launcher, so surface the label here (FR-70). */}
+          {isPrivateImage(row) ? (
+            <Badge
+              variant={badgeVariantForTagColor('red')}
+              label={t('environment.Private')}
+            />
+          ) : null}
+        </BAIFlex>
+      ),
     },
     {
       title: t('environment.FullImagePath'),
@@ -319,7 +330,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // The record arrives as `render`'s SECOND argument — this column is
       // computed and has no `dataIndex`, so the first argument (the cell
       // value) is `undefined`. Reading the row off the first argument is an
-      // rc-table quirk that `BAITableAstryx` does not reproduce; taking it
+      // rc-table quirk that `BAITable` does not reproduce; taking it
       // from the second is the Astryx/antd `(value, record, index)` contract.
       render: (_value, row) => (
         // `maxLines={1}` for the same reason as the Digest column below:
@@ -597,7 +608,8 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             />
           </BAIFlex>
         </BAIFlex>
-        <BAITableAstryx
+        <BAITable
+          scroll={{ x: 'max-content' }}
           resizable
           rowKey="id"
           pagination={{

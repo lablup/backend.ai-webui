@@ -12,8 +12,8 @@ import { useState } from 'react';
 
 /**
  * Minimal shape shared by every scheduling-history row type
- * (session / deployment / route). A row is expandable when it has sub-steps,
- * and it is expanded by default unless its result is a success.
+ * (session / deployment / route). A row is expandable when `isExpandable` says
+ * so, and it is expanded by default unless its result is a success.
  */
 export interface SchedulingHistoryExpandableRow {
   readonly id: string;
@@ -31,23 +31,26 @@ export type SchedulingHistoryExpandMode =
 export const DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE: SchedulingHistoryExpandMode =
   'errors-only';
 
-const isRowExpandable = (record: SchedulingHistoryExpandableRow) =>
+const hasAnySubStep = (record: SchedulingHistoryExpandableRow) =>
   !_.isEmpty(record.subSteps);
-
-// "Collapse success only": every non-success row stays open by default so
-// failures / retries / expirations are visible at a glance.
-const shouldExpandByDefault = (record: SchedulingHistoryExpandableRow) =>
-  isRowExpandable(record) && record.result !== 'SUCCESS';
 
 const computeExpandedRowKeysForMode = (
   dataSource: ReadonlyArray<SchedulingHistoryExpandableRow>,
   mode: SchedulingHistoryExpandMode,
+  isExpandable: (record: SchedulingHistoryExpandableRow) => boolean,
 ): React.Key[] =>
   mode === 'expand-all'
-    ? dataSource.filter(isRowExpandable).map((record) => record.id)
+    ? dataSource.filter(isExpandable).map((record) => record.id)
     : mode === 'collapse-all'
       ? []
-      : dataSource.filter(shouldExpandByDefault).map((record) => record.id);
+      : // "Collapse success only": every non-success row that HAS detail stays
+        // open by default so failures / retries / expirations are visible at a
+        // glance.
+        dataSource
+          .filter(
+            (record) => isExpandable(record) && record.result !== 'SUCCESS',
+          )
+          .map((record) => record.id);
 
 export interface UseSchedulingHistoryExpandableResult {
   /**
@@ -89,15 +92,26 @@ export const useSchedulingHistoryExpandable = <
   options?: {
     mode?: SchedulingHistoryExpandMode;
     onModeChange?: (mode: SchedulingHistoryExpandMode) => void;
+    /**
+     * Which rows have detail worth opening. Defaults to "has any sub-step",
+     * but a caller that can tell a real sub-step from the trailing lifecycle
+     * marker should pass the same predicate it gives `rowExpandable`, so the
+     * master modes never open a row the table renders as non-expandable.
+     */
+    isExpandable?: (record: T) => boolean;
   },
 ): UseSchedulingHistoryExpandableResult => {
   'use memo';
   const { t } = useBAIi18n();
 
   const mode = options?.mode ?? DEFAULT_SCHEDULING_HISTORY_EXPAND_MODE;
+  const isExpandable = (record: SchedulingHistoryExpandableRow) =>
+    options?.isExpandable
+      ? options.isExpandable(record as T)
+      : hasAnySubStep(record);
 
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>(() =>
-    computeExpandedRowKeysForMode(dataSource, mode),
+    computeExpandedRowKeysForMode(dataSource, mode, isExpandable),
   );
 
   // The signature changes only on real data changes — not on the new array
@@ -106,7 +120,7 @@ export const useSchedulingHistoryExpandable = <
   const dataSignature = dataSource
     .map(
       (record) =>
-        `${record.id}:${record.result ?? ''}:${isRowExpandable(record) ? 1 : 0}`,
+        `${record.id}:${record.result ?? ''}:${isExpandable(record) ? 1 : 0}`,
     )
     .join('|');
 
@@ -117,11 +131,13 @@ export const useSchedulingHistoryExpandable = <
   if (dataSignature !== prevDataSignature || mode !== prevMode) {
     setPrevDataSignature(dataSignature);
     setPrevMode(mode);
-    setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, mode));
+    setExpandedRowKeys(
+      computeExpandedRowKeysForMode(dataSource, mode, isExpandable),
+    );
   }
 
   const expandableRowKeys = dataSource
-    .filter(isRowExpandable)
+    .filter(isExpandable)
     .map((record) => record.id);
 
   const onExpandedRowsChange = (expandedKeys: readonly React.Key[]) => {
@@ -138,7 +154,9 @@ export const useSchedulingHistoryExpandable = <
     // Apply eagerly so the uncontrolled case (no onModeChange) still reacts. In
     // the controlled case onModeChange updates `mode`, and the `[mode]` effect
     // re-applies the same (idempotent) keys — a harmless redundant set.
-    setExpandedRowKeys(computeExpandedRowKeysForMode(dataSource, next));
+    setExpandedRowKeys(
+      computeExpandedRowKeysForMode(dataSource, next, isExpandable),
+    );
     options?.onModeChange?.(next);
   };
 

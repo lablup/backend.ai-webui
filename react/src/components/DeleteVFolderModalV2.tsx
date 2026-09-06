@@ -5,10 +5,13 @@
 import { DeleteVFolderModalV2Fragment$key } from '../__generated__/DeleteVFolderModalV2Fragment.graphql';
 import { DeleteVFolderModalV2Mutation } from '../__generated__/DeleteVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
-import BAIModal from './astryx-bui/BAIModalAstryx';
-import type { BAIModalAstryxProps as BAIModalProps } from './astryx-bui/BAIModalAstryx';
 import { Text } from '@astryxdesign/core/Text';
-import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIModal,
+  type BAIModalProps,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -72,10 +75,11 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         if (!next) onRequestClose?.(false);
       }}
       title={t('data.folders.MoveToTrash')}
-      actionLabel={t('data.folders.Delete')}
-      actionVariant="destructive"
-      isActionLoading={isInFlightBulkDelete}
-      onAction={() => {
+      maskClosable={false}
+      okText={t('data.folders.Delete')}
+      okButtonProps={{ danger: true }}
+      confirmLoading={isInFlightBulkDelete}
+      onOk={() => {
         if (folders.length === 0) {
           onRequestClose?.(false);
           return;

@@ -75,10 +75,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
     useProjectResourceGroups: (projectName: string) => ({
       resourceGroups: projectName ? [{ name: 'rg-a' }, { name: 'rg-b' }] : [],
     }),
-    // The preset select crossed to Astryx (`…Astryx`); stub both names so the
-    // mock does not silently miss the one the component actually renders.
     BAIAvailablePresetSelect: () => null,
-    BAIAvailablePresetSelectAstryx: () => null,
     BAIProjectResourceGroupSelect: (props: any) =>
       React.createElement(
         'button',

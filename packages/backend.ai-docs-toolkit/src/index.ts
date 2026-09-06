@@ -122,7 +122,11 @@ export type {
   RawBookConfig,
   RawNavigation,
 } from "./book-config.js";
-export { loadBookConfig, normalizeTitle } from "./book-config.js";
+export {
+  loadBookConfig,
+  normalizeTitle,
+  resolveBookTitle,
+} from "./book-config.js";
 
 // ── SEO (F2) ────────────────────────────────────────────────────
 export type { OgTagOptions, TwitterCardOptions, JsonLdOptions } from "./seo.js";

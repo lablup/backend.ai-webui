@@ -94,7 +94,12 @@ describe('NetworkStatusBanner offline gating', () => {
     renderBanner();
 
     expect(screen.queryByText(OFFLINE_TEXT)).not.toBeInTheDocument();
-    expect(fetchSpy).not.toHaveBeenCalled();
+    // Assert on the probe itself, not global fetch quiescence — deferred app
+    // bootstrap fetches (i18n, image metadata) may land in this window.
+    expect(fetchSpy).not.toHaveBeenCalledWith(
+      'https://api.test/health',
+      expect.anything(),
+    );
   });
 
   it('shows the offline banner when the browser is offline AND the probe is non-OK', async () => {

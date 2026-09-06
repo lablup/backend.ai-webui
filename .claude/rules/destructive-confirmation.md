@@ -13,7 +13,7 @@ This convention was applied project-wide in FR-2479 ("standardize confirmation U
 > `BAIDeleteConfirmModal` with `requireConfirmInput`. antd was then removed
 > from the project entirely, so antd's `Popconfirm` — the reversible-tier
 > component this rule used to name — is gone too; the anchored confirm is now
-> `BAIPopconfirmAstryx` (Astryx `Popover` + a `Button` pair). Both tiers, and
+> `BAIPopconfirm` (Astryx `Popover` + a `Button` pair). Both tiers, and
 > the boundary between them, are unchanged.
 
 ## The components
@@ -21,8 +21,7 @@ This convention was applied project-wide in FR-2479 ("standardize confirmation U
 | Tier | Use | Where |
 |---|---|---|
 | Irreversible | `BAIDeleteConfirmModal` + `requireConfirmInput` | `backend.ai-ui` (`packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx`) |
-| Irreversible (react-app variant) | `BAIDeleteConfirmModalAstryx` | `react/src/components/astryx-bui/BAIDeleteConfirmModalAstryx.tsx` |
-| Reversible — anchored | `BAIPopconfirmAstryx` | `react/src/components/astryx-bui/BAIPopconfirmAstryx.tsx` |
+| Reversible — anchored | `BAIPopconfirm` | `backend.ai-ui` (`packages/backend.ai-ui/src/components/BAIPopconfirm.tsx`) |
 | Reversible — inside a table row | `BAINameActionCell` action's `popConfirm` | `packages/backend.ai-ui/src/components/Table/BAINameActionCell.tsx` |
 | Reversible — imperative | `App.useApp().modal.confirm({ … })` | the **app-shim**, `packages/backend.ai-ui/src/app-shim/` |
 
@@ -33,7 +32,7 @@ Icons are `lucide-react` glyphs (`Trash2`, `BanIcon`, `UndoIcon`, …). `@ant-de
 ## Rules
 
 1. **Irreversible actions → `BAIDeleteConfirmModal` with `requireConfirmInput`** (from `backend.ai-ui`). The user must type `confirmText` (usually the resource's name) before the danger button enables. Examples: permanently delete a VFolder, terminate a model service endpoint, purge a user, delete an image, delete a resource preset, remove a shell script.
-2. **Reversible / low-impact actions → `BAIPopconfirmAstryx`**, a `BAINameActionCell` action's `popConfirm`, or `App.useApp().modal.confirm({ … })`. Examples: deactivating (not deleting) a user, canceling an in-progress action, hiding an item, marking inactive, resetting an unsaved form.
+2. **Reversible / low-impact actions → `BAIPopconfirm`**, a `BAINameActionCell` action's `popConfirm`, or `App.useApp().modal.confirm({ … })`. Examples: deactivating (not deleting) a user, canceling an in-progress action, hiding an item, marking inactive, resetting an unsaved form.
 3. **Never use an anchored confirm popover for permanent deletion**, even when the action is guarded server-side. The UX contract is about *user intent*, not backend safety.
 4. Do **not** reintroduce `PopConfirmWithInput`, `BAIConfirmModalWithInput`, or any ad-hoc "modal with a text input" for destructive flows — use the shared `BAIDeleteConfirmModal`. This keeps the copy, layout, danger styling, and accessibility consistent.
 5. The confirmation string should be something the user sees on screen and can copy unambiguously (e.g., the resource's `name` or `id`). Avoid opaque tokens.
@@ -44,13 +43,13 @@ Icons are `lucide-react` glyphs (`Trash2`, `BanIcon`, `UndoIcon`, …). `@ant-de
 ### ❌ Wrong — an anchored confirm popover for permanent deletion
 
 ```tsx
-<BAIPopconfirmAstryx
+<BAIPopconfirm
   title={t('dialog.ask.DoYouWantToDeleteSomething', { name: row.name })}
   isDanger
   onConfirm={() => deleteForever(row.id)}
 >
   <IconButton icon={<Trash2 size="1em" />} label={t('button.Delete')} variant="destructive" />
-</BAIPopconfirmAstryx>
+</BAIPopconfirm>
 ```
 
 ### ❌ Wrong — single-click `modal.confirm` for permanent deletion
@@ -102,15 +101,15 @@ const [deletingTarget, setDeletingTarget] = useState<Row | null>(null);
 ### ✅ Correct — anchored confirm for a reversible action
 
 ```tsx
-import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
+import { BAIPopconfirm } from 'backend.ai-ui';
 
-<BAIPopconfirmAstryx
+<BAIPopconfirm
   title={t('dialog.ask.DoYouWantToInactivateSomething', { name: row.name })}
   isDanger
   onConfirm={() => setInactive(row.id)}
 >
   <IconButton icon={<BanIcon size="1em" />} label={t('credential.Deactivate')} />
-</BAIPopconfirmAstryx>
+</BAIPopconfirm>
 ```
 
 `onConfirm` may return a promise — it is handed to Astryx's `clickAction`, which renders the confirm button's pending state, closes the popover on resolve, and keeps it open on reject.
@@ -141,7 +140,7 @@ import BAIPopconfirmAstryx from './astryx-bui/BAIPopconfirmAstryx';
 
 Ask: *"If the user clicks OK by accident, can they recover the state in <30 seconds without contacting support?"*
 
-- **Yes** → an anchored confirm (`BAIPopconfirmAstryx` / `popConfirm`) or `modal.confirm` is fine.
+- **Yes** → an anchored confirm (`BAIPopconfirm` / `popConfirm`) or `modal.confirm` is fine.
 - **No** → `BAIDeleteConfirmModal` with `requireConfirmInput`.
 
 Soft-delete / trash-bin flows count as reversible **only if** the UI actually exposes a restore path the user can reach on their own. If restoration requires admin intervention or database access, treat it as irreversible.
@@ -155,8 +154,8 @@ Soft-delete / trash-bin flows count as reversible **only if** the UI actually ex
 
 ## Related
 
-- `BAIDeleteConfirmModal` — `packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx` (react-app variant: `react/src/components/astryx-bui/BAIDeleteConfirmModalAstryx.tsx`)
-- `BAIPopconfirmAstryx` — `react/src/components/astryx-bui/BAIPopconfirmAstryx.tsx`
+- `BAIDeleteConfirmModal` — `packages/backend.ai-ui/src/components/BAIDeleteConfirmModal.tsx`
+- `BAIPopconfirm` — `packages/backend.ai-ui/src/components/BAIPopconfirm.tsx`
 - `BAINameActionCell` / `BAIPopconfirmConfig` — `packages/backend.ai-ui/src/components/Table/BAINameActionCell.tsx`
 - App shim (`App.useApp()`, `message`, `modal`) — `packages/backend.ai-ui/src/app-shim/`
 - `component-props-extension.md` — the frozen antd-v6-shaped prop vocabulary section explains why `okButtonProps.danger` and friends still carry antd names on these surfaces

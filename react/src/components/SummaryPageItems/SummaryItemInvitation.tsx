@@ -16,13 +16,11 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Heading } from '@astryxdesign/core/Heading';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import {
   BAICard,
   BAIFlex,
+  BAIMetadataList,
   badgeVariantForStatus,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
@@ -115,14 +113,14 @@ const SummaryItemInvitation: React.FC = () => {
               <Heading level={6}>
                 {`From: ${invitation.inviter_user_email || invitation.inviter || '-'}`}
               </Heading>
-              <MetadataList columns="single">
+              <BAIMetadataList columns="single">
                 <MetadataListItem label={t('summary.FolderName')}>
                   {invitation.vfolder_name}
                 </MetadataListItem>
                 <MetadataListItem label={t('summary.Permission')}>
                   {permissionIndicator(invitation.perm)}
                 </MetadataListItem>
-              </MetadataList>
+              </BAIMetadataList>
               <BAIFlex gap="xs" justify="end">
                 {/* MAPPING §3.3: a `default` button whose only child was a
                     `type="danger"` Text is a `destructive` Button — the

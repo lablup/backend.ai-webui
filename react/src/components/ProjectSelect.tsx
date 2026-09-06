@@ -6,8 +6,12 @@ import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { theme } from '../theme-shim';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAIFlex, BAISelect, BAISelectProps } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIIconWithTooltip,
+  BAISelect,
+  BAISelectProps,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Info, ShieldUser } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
@@ -98,9 +102,11 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             label: showBadge ? (
               <BAIFlex gap={token.marginXS} align="center">
                 <span>{project?.name}</span>
-                <Tooltip content={t('projectSelect.ProjectAdminBadge')}>
-                  <ShieldUser />
-                </Tooltip>
+                <BAIIconWithTooltip
+                  content={t('projectSelect.ProjectAdminBadge')}
+                  focusable={false}
+                  icon={<ShieldUser />}
+                />
               </BAIFlex>
             ) : (
               project?.name

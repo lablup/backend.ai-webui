@@ -21,7 +21,7 @@ import {
   BAIFlex,
   BAILink,
   BAIPureStorageIcon,
-  BAITableAstryx,
+  BAITable,
   BAIProgressWithLabel,
   BAIDoubleTag,
   BAIUnmountAfterClose,
@@ -276,7 +276,8 @@ const StorageProxyList = () => {
           }}
         />
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         resizable
         size="small"
         rowKey={'id'}

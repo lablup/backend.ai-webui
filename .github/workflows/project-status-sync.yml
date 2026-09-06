@@ -56,8 +56,20 @@ on:
 permissions:
   pull-requests: read
 
+concurrency:
+  # Runs serialize per PR; each run writes an absolute status, so
+  # last-event-wins is correct — do NOT cancel-in-progress here.
+  group: project-status-sync-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
 jobs:
   sync-project-status:
+    # Approved/commented reviews are a no-op (see the event matrix above) —
+    # skip them before a runner is allocated. The in-step `case` fallback
+    # stays as defensive depth.
+    if: >-
+      github.event_name != 'pull_request_review' ||
+      github.event.review.state == 'changes_requested'
     runs-on: ubuntu-latest
     env:
       ORGANIZATION: ${{ vars.PROJECT_ORGANIZATION }}

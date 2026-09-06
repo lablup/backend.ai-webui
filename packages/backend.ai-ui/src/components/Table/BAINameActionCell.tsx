@@ -14,7 +14,6 @@ import {
 import { Popover } from '@astryxdesign/core/Popover';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import classNames from 'classnames';
 import { EllipsisVertical } from 'lucide-react';
 import React, { useEffect, useRef, useState, useTransition } from 'react';
@@ -37,10 +36,16 @@ export interface BAINameActionCellAction {
    * - 'danger': colorError text on colorErrorBg background
    */
   type?: 'default' | 'danger';
-  /** Whether the action is disabled */
-  disabled?: boolean;
-  /** Tooltip text when disabled */
-  disabledReason?: string;
+  /**
+   * Whether the action is disabled. Pass `{ reason }` to disable it AND say
+   * why — the reason becomes the button tooltip. A bare `true` disables it
+   * without one, which is then a deliberate choice rather than a call site
+   * that let two fields drift apart (FR-3722).
+   */
+  disabled?: boolean | { reason: string };
+  /** Loading spinner for progress this cell does not own (e.g. a background
+   * delete tracked by the parent). Use `action` when the click itself awaits. */
+  loading?: boolean;
   /** Custom style override for the action button */
   style?: React.CSSProperties;
   /**
@@ -63,6 +68,16 @@ export interface BAINameActionCellAction {
    */
   popConfirm?: BAIPopconfirmConfig;
 }
+
+/**
+ * Reads the reason out of the `disabled` union. Exported so a caller threading
+ * a `disabled` value through its own props can render the reason itself — e.g.
+ * on a `BAIButton`, whose `disabled` is a plain boolean beside a `title`
+ * tooltip.
+ */
+export const disabledReason = (
+  disabled: BAINameActionCellAction['disabled'],
+) => (typeof disabled === 'object' ? disabled.reason : undefined);
 
 /**
  * The antd `PopconfirmProps` subset every call site actually passes, restated
@@ -127,8 +142,8 @@ const ACTIONS_GAP = 2;
  *
  * PILOT-DECISION (to-astryx W2-D): MAPPING §2 grades `Popconfirm` as **NONE** —
  * "compose `Popover` + buttons, or escalate to `AlertDialog`". This is the
- * compose branch, and it is the same shape the pilot's
- * `BAINameActionCellAstryx` already shipped, so the two implementations agree.
+ * compose branch — the same shape the pilot
+ * cell shipped before it was folded onto this component.
  * What changes against antd: the confirm/cancel pair is a real `HStack` of
  * `Button`s inside the popover body rather than antd's built-in footer, and
  * `okButtonProps.danger` maps onto `variant="destructive"`. What is preserved:
@@ -349,12 +364,11 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
     // compound path would have to carry the divider / disabled / keyboard
     // behaviour across with it. The reason is folded into the label text
     // instead: still visible, still read out, no tooltip needed.
-    label:
-      action.disabled && action.disabledReason
-        ? `${action.title} — ${action.disabledReason}`
-        : action.title,
+    label: disabledReason(action.disabled)
+      ? `${action.title} — ${disabledReason(action.disabled)}`
+      : action.title,
     icon: action.icon,
-    isDisabled: action.disabled,
+    isDisabled: !!action.disabled,
     onClick: () => {
       if (action.onClick || action.action) {
         action.onClick?.();
@@ -411,13 +425,10 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           <BAILink
             to={to}
             type="hover"
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              display: 'block',
-              minWidth: 0,
-            }}
+            ellipsis
+            // Block + shrinkable so the Text `ellipsis` injects has a width to
+            // truncate against; the clip and the tooltip live on that Text.
+            style={{ display: 'block', minWidth: 0 }}
           >
             {title}
           </BAILink>
@@ -432,6 +443,12 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           </BAILink>
         </BAIText>
       );
+    }
+    // Only plain text gets the default truncation treatment. A node title
+    // brings its own — wrapping it would nest a second `BAIText` around it, or
+    // swallow an interactive one (the file explorer's inline-rename field).
+    if (typeof title !== 'string' && typeof title !== 'number') {
+      return title;
     }
     return (
       <BAIText
@@ -495,27 +512,14 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           }
         >
           {visibleActions.map((action) => {
-            const buttonClassName = action.disabled
+            const disabled = !!action.disabled;
+            const buttonClassName = disabled
               ? 'bai-nac-action-button-disabled'
               : action.type === 'danger'
                 ? 'bai-nac-action-button-danger'
                 : 'bai-nac-action-button-default';
 
-            const button = (
-              <BAIButton
-                type="text"
-                size="small"
-                icon={action.icon}
-                aria-label={action.title}
-                disabled={action.disabled}
-                className={buttonClassName}
-                style={action.style}
-                onClick={action.onClick}
-                action={action.action}
-              />
-            );
-
-            if (action.popConfirm && !action.disabled) {
+            if (action.popConfirm && !disabled) {
               return (
                 <ConfirmPopoverButton
                   key={action.key}
@@ -525,16 +529,24 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 />
               );
             }
+            // The tooltip must ride the button itself (`title` → Astryx
+            // `tooltip`), which keeps a disabled control focusable via
+            // `aria-disabled` so keyboard users can still reach the reason.
             return (
-              <Tooltip
+              <BAIButton
                 key={action.key}
-                content={action.disabled ? action.disabledReason : action.title}
-                isEnabled={
-                  !!(action.disabled ? action.disabledReason : action.title)
-                }
-              >
-                {button}
-              </Tooltip>
+                type="text"
+                size="small"
+                icon={action.icon}
+                aria-label={action.title}
+                title={disabledReason(action.disabled) || action.title}
+                disabled={disabled}
+                loading={action.loading}
+                className={buttonClassName}
+                style={action.style}
+                onClick={action.onClick}
+                action={action.action}
+              />
             );
           })}
           {hasMoreMenu && (

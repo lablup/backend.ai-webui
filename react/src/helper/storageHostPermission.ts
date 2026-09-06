@@ -2,6 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import {
+  v2PermissionToKey,
+  type V2AllowedVfolderHostEntry,
+} from 'backend.ai-ui';
 
 /**
  * Display label mapping for the canonical 8 permission keys. The actual column
@@ -102,43 +106,16 @@ export const hasMountWithoutFileOps = (
  * `[VFolderHostPermissionEntry!]!` array instead of the V1 JSONString. The
  * permission elements are `VFolderHostPermissionV2` enum values
  * (`CREATE_VFOLDER`, `MOUNT_IN_SESSION`, …) — convert them to the canonical
- * kebab keys (`create-vfolder`, `mount-in-session`, …) used by
- * `PERMISSION_DISPLAY_MAP` and the V1 mutations' JSONString payload.
+ * kebab keys used by `PERMISSION_DISPLAY_MAP` and the V1 mutations' payload.
+ *
+ * The conversion itself lives in BUI (`helper/vfolderHostPermission.ts`)
+ * because BUI components render V2 host permissions too; it is re-exported
+ * here so app-side call sites keep one import path.
  *
  * Domain still uses the V1 path because `DomainV2` does not expose
  * `allowedVfolderHosts` (only `ProjectV2` / `KeypairResourcePolicyV2` do).
  */
-
-/**
- * V2 enum → V1 kebab key. Most entries follow the lowercase-and-dash rule,
- * but `SET_USER_PERM` ↔ `set-user-specific-permission` is asymmetric, so we
- * spell out the full mapping. Without this, the V2 `SET_USER_PERM` would
- * naively convert to `set-user-perm`, which then fails to match the canonical
- * column key `set-user-specific-permission` (read from
- * `vfolder_host_permissions.vfolder_host_permission_list`) — the "권한 설정"
- * checkbox would silently appear unchecked even when the entity has it, and
- * a save would drop the asymmetric mapping for other hosts' entries too.
- */
-const V2_TO_V1_PERMISSION: Record<string, string> = {
-  CREATE_VFOLDER: 'create-vfolder',
-  MODIFY_VFOLDER: 'modify-vfolder',
-  DELETE_VFOLDER: 'delete-vfolder',
-  MOUNT_IN_SESSION: 'mount-in-session',
-  UPLOAD_FILE: 'upload-file',
-  DOWNLOAD_FILE: 'download-file',
-  INVITE_OTHERS: 'invite-others',
-  SET_USER_PERM: 'set-user-specific-permission',
-};
-
-/** Convert a V2 permission enum value to the canonical V1 kebab key. */
-export const v2PermissionToKey = (perm: string): string =>
-  V2_TO_V1_PERMISSION[perm] ?? perm.toLowerCase().replace(/_/g, '-');
-
-/** V2 `VFolderHostPermissionEntry` shape (host name + permission enum list). */
-export interface V2AllowedVfolderHostEntry {
-  readonly host: string;
-  readonly permissions: ReadonlyArray<string>;
-}
+export { v2PermissionToKey, type V2AllowedVfolderHostEntry };
 
 /**
  * Rebuild the V1 `allowed_vfolder_hosts` JSONString from V2 structured
@@ -147,9 +124,7 @@ export interface V2AllowedVfolderHostEntry {
  */
 export const buildAllowedHostsPayloadFromV2 = (
   allowedVfolderHosts:
-    | ReadonlyArray<V2AllowedVfolderHostEntry>
-    | null
-    | undefined,
+    ReadonlyArray<V2AllowedVfolderHostEntry> | null | undefined,
   storageHostId: string,
   enabledKeys: string[],
 ): string => {

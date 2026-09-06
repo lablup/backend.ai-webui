@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "Yürütme başarısız oldu",
     "ErrorOccurred": "Bir hata oluştu"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Temizle",
+    "HexValue": "Onaltılık değer",
+    "NoColor": "Renk yok",
+    "SelectColor": "Renk seç"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Seçenekleri ara alanını temizle",
     "NoResults": "Sonuç yok",
-    "Search": "Arama"
+    "SearchOptions": "Seçenekleri ara"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
@@ -162,7 +169,7 @@
     "SelectDomain": "Etki Alanı Seçin"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Miktar"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Otomatik yenileme",
@@ -178,6 +185,8 @@
     "operator": {
       "After": "sonra",
       "Before": "önce",
+      "Contains": "içerir",
+      "EndsWith": "ile biter",
       "Equals": "eşit",
       "GreaterThan": "daha büyük",
       "GreaterThanOrEqual": "büyük veya eşit",
@@ -192,15 +201,19 @@
       "In": "içinde",
       "LessThan": "daha küçük",
       "LessThanOrEqual": "küçük veya eşit",
+      "NotContains": "içermez",
+      "NotEndsWith": "ile bitmez",
       "NotEquals": "eşit değil",
-      "NotIn": "içinde değil"
+      "NotIn": "içinde değil",
+      "NotStartsWith": "ile başlamaz",
+      "StartsWith": "ile başlar"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Hugging Face jetonunuzu girin",
+    "HuggingFaceSettings": "Hugging Face Ayarları",
+    "Token": "Jeton",
+    "TokenUpdatedSuccessfully": "Jeton başarıyla güncellendi."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Görüntü Seç"
@@ -214,6 +227,22 @@
     "Size": "Boyut",
     "SuccessFullyPulled": "{{count}} sürümleri için başarıyla talep edildi.",
     "Version": "Versiyon"
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Küme boyutu",
+    "Concurrency": "Eşzamanlı Oturumlar",
+    "CreatedAt": "Oluşturulma Tarihi",
+    "DefaultForUnspecified": "Belirtilmemiş için varsayılan",
+    "DefaultForUnspecifiedTooltipDesc1": "Belirli bir CPU veya bellek istendiğinde varsayılan ilkeyi ayarlar.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Sınırsız', aracı düğümünün kapasitesine kadar kullanım sağlarken, 'Limited' açıkça ayarlanmadıkça kaynakları reddeder. \nÇoğu durumda, 'sınırsız' önerilir.",
+    "IdleTimeout": "Boşta Kalma Zaman Aşımı",
+    "MaxConcurrentSFTPSessions": "Maksimum eşzamanlı SFTP oturumları",
+    "MaxPendingSessionCount": "Max bekleyen oturum sayısı",
+    "MaxPendingSessionResourceSlots": "Max Bekleyen Oturum Kaynak Yuvaları",
+    "MaxSessionLifetime": "Maksimum Oturum Ömrü",
+    "Name": "isim",
+    "StorageNodes": "Depolama Düğümleri",
+    "TotalResourceSlots": "Kaynak Politikası"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Anahtar Çifti Seçin"
@@ -231,11 +260,11 @@
     "User": "Kullanıcı"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Tam ekrandan çık",
+    "Fullscreen": "Tam ekran",
+    "Maximize": "Büyüt",
+    "Minimize": "Küçült",
+    "Restore": "Geri yükle"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "\"{{deploymentName}}\" dağıtımını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
@@ -269,12 +298,19 @@
     "UpdatedAt": "Güncellenme Tarihi"
   },
   "comp:BAINameActionCell": {
-    "MoreActions": "More actions"
+    "MoreActions": "Diğer işlemler"
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "Aşağıdaki proje(ler) güncellenecek.",
     "ProjectResourcePolicy": "Proje Kaynak Politikası",
     "UpdateMultipleProjects": "Birden Çok Projeyi Güncelle"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Oluşturulma Tarihi",
+    "MaxNetworkCount": "Maksimum Ağ Sayısı",
+    "MaxQuotaScopeSize": "Maksimum Klasör Boyutu",
+    "MaxVFolderCount": "Maksimum Klasör Sayısı",
+    "Name": "isim"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Proje seç"
@@ -322,8 +358,20 @@
     "SelectFolder": "Klasör Seç"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Uygula",
     "PlaceHolder": "Arama",
-    "ResetFilter": "Filtreleri sıfırla"
+    "ResetFilter": "Filtreleri sıfırla",
+    "SearchLabel": "Filtre ara",
+    "operator": {
+      "Contains": "içerir",
+      "Equals": "eşit",
+      "GreaterThan": "daha büyük",
+      "GreaterThanOrEqual": "büyük veya eşit",
+      "In": "içinde",
+      "LessThan": "daha küçük",
+      "LessThanOrEqual": "küçük veya eşit",
+      "NotEquals": "eşit değil"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Çekmeyi iptal et",
@@ -339,6 +387,11 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Ayrılan / İstenen"
+  },
+  "comp:BAIResourceUnitGrid": {
+    "ChangeGroupColor": "Grup rengini değiştir",
+    "ResourceGrid": "Kaynak ızgarası",
+    "UseColorN": "Renk {{n}} kullan"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Sınırsız"
@@ -366,30 +419,68 @@
     "UpdatedAt": "Güncelleme Tarihi"
   },
   "comp:BAIRuntimeVariantPresetSettingModal": {
-    "CreatePreset": "Ön Ayar Oluştur",
+    "AddChoice": "Seçenek Ekle",
+    "Category": "Kategori",
+    "CategoryPlaceholder": "örn. model_loading",
+    "CategoryTooltip": "İlgili parametreleri bir arada düzenlemek için kullanılan UI kategorisi.",
+    "ChoiceLabel": "Etiket",
+    "ChoiceLabelPlaceholder": "örn. FP16",
+    "ChoiceLabelRequired": "Seçenek etiketi zorunludur.",
+    "ChoiceValue": "Değer",
+    "ChoiceValuePlaceholder": "örn. fp16",
+    "ChoiceValueRequired": "Seçenek değeri zorunludur.",
+    "Choices": "Seçenekler",
+    "ChoicesRequired": "En az bir seçenek gereklidir.",
+    "CreatePreset": "Parametre Oluştur",
     "DefaultValue": "Varsayılan Değer",
     "DefaultValuePlaceholder": "örn. 1",
     "Description": "Açıklama",
     "DescriptionPlaceholder": "Bu parametrenin neyi kontrol ettiğini ve çıkarım davranışını nasıl etkilediğini açıklayın.",
-    "EditPreset": "Ön Ayarı Düzenle",
+    "DisplayName": "Görünen Ad",
+    "DisplayNamePlaceholder": "örn. Tensor Parallel Size",
+    "DisplayNameTooltip": "Dağıtım formunda parametre adı yerine gösterilen okunabilir etiket.",
+    "EditPreset": "Parametreyi Düzenle",
     "Key": "Anahtar",
     "KeyPlaceholder": "örn. TENSOR_PARALLEL_SIZE",
     "KeyRequired": "Anahtar zorunludur.",
     "Name": "Ad",
     "NamePlaceholder": "örn. Tensor Parallel Size",
     "NameRequired": "Ad zorunludur.",
-    "PresetCreated": "Çalışma zamanı varyantı ön ayarı oluşturuldu.",
-    "PresetTarget": "Ön Ayar Hedefi",
+    "NumberMax": "Maksimum",
+    "NumberMaxMustExceedMin": "Maksimum değer, minimum değerden büyük olmalıdır.",
+    "NumberMin": "Minimum",
+    "PresetCreated": "Runtime parametresi oluşturuldu.",
+    "PresetTarget": "Parametre Hedefi",
     "PresetTargetArgs": "Komut Satırı Argümanı",
     "PresetTargetEnv": "Ortam Değişkeni",
-    "PresetTargetRequired": "Ön ayar hedefi zorunludur.",
-    "PresetUpdated": "Çalışma zamanı varyantı ön ayarı güncellendi.",
+    "PresetTargetRequired": "Parametre hedefi zorunludur.",
+    "PresetUpdated": "Runtime parametresi güncellendi.",
     "Rank": "Sıra",
-    "RankTooltip": "Aynı çalışma zamanı varyantının ön ayarları arasında görüntüleme sırası. Düşük değerler önce görünür.",
+    "RankTooltip": "Aynı runtime'ın parametreleri arasında görüntüleme sırası. Düşük değerler önce görünür.",
     "Required": "Zorunlu",
-    "RequiredTooltip": "Bu ön ayar parametresinin bir dağıtım revizyonu oluşturulurken sağlanması gerekip gerekmediği.",
+    "RequiredTooltip": "Bu parametrenin bir dağıtım revizyonu oluşturulurken sağlanması gerekip gerekmediği.",
+    "Requirement": "Zorunluluk",
     "RuntimeVariant": "Çalışma Zamanı Varyantı",
     "RuntimeVariantRequired": "Çalışma zamanı varyantı zorunludur.",
+    "SliderMax": "Maksimum",
+    "SliderMaxMustExceedMin": "Maksimum değer, minimum değerden büyük olmalıdır.",
+    "SliderMaxRequired": "Maksimum değer zorunludur.",
+    "SliderMin": "Minimum",
+    "SliderMinRequired": "Minimum değer zorunludur.",
+    "SliderStep": "Adım",
+    "SliderStepMustBePositive": "Adım 0'dan büyük olmalıdır.",
+    "SliderStepTooltip": "Kaydırıcı için artış adımı. Varsayılan değer 1'dir.",
+    "StoredValueTypeMismatch": "Bu parametre {{valueType}} değer türüyle kaydedilmiş ve {{uiType}} arayüz türü bunu gösteremez. Arayüz türünü veya değer türünü değiştirin.",
+    "TextPlaceholderExample": "örn. Bir değer girin",
+    "TextPlaceholderLabel": "Giriş Yer Tutucusu",
+    "UIType": "UI Türü",
+    "UITypeCheckbox": "Onay Kutusu",
+    "UITypeIncompatibleWithValueType": "Seçilen arayüz türü bu değer türünü gösteremez.",
+    "UITypeNumberInput": "Sayı Girişi",
+    "UITypeSelect": "Seçim",
+    "UITypeSlider": "Kaydırıcı",
+    "UITypeTextInput": "Metin Girişi",
+    "UITypeTooltip": "Bu parametrenin dağıtım formunda gösterilmesi için kullanılan kontrol.",
     "ValueType": "Değer Türü",
     "ValueTypeBool": "Boole",
     "ValueTypeFlag": "Bayrak",
@@ -399,21 +490,29 @@
     "ValueTypeStr": "Metin"
   },
   "comp:BAIRuntimeVariantPresetTable": {
+    "Category": "Kategori",
     "CreatedAt": "Oluşturulma tarihi",
     "DefaultValue": "Varsayılan Değer",
     "Description": "Açıklama",
+    "DisplayName": "Görünen Ad",
     "Key": "Anahtar",
     "ModifiedAt": "Değiştirilme tarihi",
     "Name": "Ad",
     "Optional": "İsteğe Bağlı",
-    "PresetTarget": "Ön Ayar Hedefi",
+    "PresetTarget": "Parametre Hedefi",
     "PresetTargetArgs": "Komut Satırı Argümanı",
     "PresetTargetEnv": "Ortam Değişkeni",
     "Rank": "Sıra",
-    "RankTooltip": "Aynı çalışma zamanı varyantının ön ayarları arasında görüntüleme sırası. Düşük değerler önce görünür.",
+    "RankTooltip": "Aynı runtime'ın parametreleri arasında görüntüleme sırası. Düşük değerler önce görünür.",
     "Required": "Zorunlu",
-    "RuntimeVariant": "Çalışma Zamanı Varyantı",
     "RuntimeVariantId": "Çalışma Zamanı Varyantı ID",
+    "RuntimeVariantWithID": "Çalışma Zamanı Varyantı (ID)",
+    "UIType": "UI Türü",
+    "UITypeCheckbox": "Onay Kutusu",
+    "UITypeNumberInput": "Sayı Girişi",
+    "UITypeSelect": "Seçim",
+    "UITypeSlider": "Kaydırıcı",
+    "UITypeTextInput": "Metin Girişi",
     "ValueType": "Değer Türü",
     "ValueTypeBool": "Boole",
     "ValueTypeFlag": "Bayrak",
@@ -453,12 +552,13 @@
     "SelectStorageProxy": "Depolama Proxy'si Seç"
   },
   "comp:BAISubStepNodes": {
-    "EndedAt": "Bitiş Zamanı",
+    "Duration": "Süre",
     "ErrorCode": "Hata Kodu",
     "Message": "Mesaj",
     "Result": "Sonuç",
-    "StartedAt": "Başlama zamanı",
-    "Step": "Adım"
+    "ResultMarker": "Bu denemenin sonuç işareti",
+    "Step": "Adım",
+    "Time": "Zaman"
   },
   "comp:BAITable": {
     "Apply": "Uygula",
@@ -514,37 +614,36 @@
     "ArchiveDownloadStarted": "{{count}} öğe indirilmeye başlandı.",
     "ChangeFileExtension": "Dosya Uzantısını Değiştir",
     "ChangeFileExtensionDesc": "Dosya uzantısını değiştirmek dosyanın kullanılamaz hale gelmesine veya hatalı açılmasına neden olabilir. Devam etmek istiyor musunuz?",
-    "Controls": "Kontroller",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Yeni dosya oluştur",
     "CreateANewFolder": "Yeni bir klasör oluşturun",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Dosya Oluştur",
+    "CreateFolder": "Klasör Oluştur",
     "CreatedAt": "Yaratılmış",
     "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
     "DeleteSelectedItemsDialog": "Onay Sil",
+    "Download": "İndir",
     "DownloadSelected": "İndir",
     "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
     "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın.",
     "DuplicatedFiles": "Üzerine Yazın Onay",
     "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
     "EditFile": "Dosyayı Düzenle",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Dosya başarıyla oluşturuldu.",
+    "FileName": "Dosya Adı",
+    "FileNamePlaceholder": "örn. model-definition.yaml",
     "FileTooLargeToEdit": "Dosya boyutu {{size}}MB'ı aştığı için tarayıcı içi düzenleme kısıtlanmıştır.",
     "FolderCreatedSuccessfully": "Klasör başarıyla oluşturuldu.",
     "FolderName": "Klasör adı",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Dosya adı en fazla 255 karakter olmalıdır.",
     "MaxFolderNameLength": "Klasör adı 255 karakter veya daha az olmalıdır.",
     "ModifiedAt": "Değiştirildi",
-    "MoreOptions": "Daha fazla seçenek",
     "Name": "İsim",
     "NoUploadPermissionForHost": "Bu depolama sunucusuna yükleme izniniz yok.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Yol",
+    "PleaseEnterAFileName": "Lütfen dosya adını girin.",
     "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
-    "RenameFile": "Rename",
+    "RenameFile": "Yeniden adlandır",
     "RenameSuccess": "İsim başarıyla değiştirildi.",
     "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
     "Size": "Boyut",
@@ -659,23 +758,25 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Azalt",
     "DeselectAll": "Tüm seçimi kaldır",
     "File": "Dosya",
-    "Increase": "Increase",
+    "Increase": "Artır",
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
-    "Select": "Select",
+    "Search": "Ara",
+    "Select": "Seç",
+    "SelectPlaceholder": "{{label}} seçin",
     "TotalItems": "Total {{total}} öğeleri",
-    "Unit": "Unit",
+    "Unit": "Birim",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Eylem",
+      "Back": "Geri",
       "Cancel": "İptal etmek",
       "Close": "Kapalı",
       "Collapse": "Yıkılmak",
-      "Confirm": "Confirm",
+      "Confirm": "Onayla",
       "Copied": "Kopyalandı",
       "Copy": "Kopyala",
       "CopyAll": "Hepsini kopyala",

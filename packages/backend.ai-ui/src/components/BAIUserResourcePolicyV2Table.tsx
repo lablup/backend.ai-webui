@@ -1,7 +1,7 @@
 import {
   BAIColumnsType,
   BAIColumnType,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   convertToDecimalUnit,
   filterOutEmpty,
@@ -149,7 +149,8 @@ const BAIUserResourcePolicyV2Table = ({
     : baseColumns;
 
   return (
-    <BAITableAstryx
+    <BAITable
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey="id"
       dataSource={filterOutNullAndUndefined(userResourcePolicies)}

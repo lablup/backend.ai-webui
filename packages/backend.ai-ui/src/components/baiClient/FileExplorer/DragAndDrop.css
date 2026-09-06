@@ -1,0 +1,15 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <DragAndDrop>, imported by the component itself (P17).
+
+ Astryx paints a dropzone's drag-over fill with `--color-accent-muted`. That is
+ a hint on the 350px field its templates show; this dropzone is stretched over
+ the whole explorer, where the same 20% accent reads as an orange wash on the
+ file list. Only the area fill is scale-dependent, so it goes neutral and the
+ accent dashed border stays as the drop cue (FR-3575).
+*/
+.bai-file-explorer-dropzone {
+  --color-accent-muted: var(--color-background-muted);
+}

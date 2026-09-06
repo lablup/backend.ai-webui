@@ -1,4 +1,5 @@
 import { badgeVariantForTagColor } from '../helper/astryxTagVariant';
+import './BAIDoubleTag.css';
 import BAITextHighlighter from './BAITextHighlighter';
 import { Badge } from '@astryxdesign/core/Badge';
 import { HStack } from '@astryxdesign/core/Stack';
@@ -11,12 +12,12 @@ import React from 'react';
 // repo-global Tag lookup (ticket 13 policy — unknown runtime strings drop to
 // neutral).
 //
-// PILOT-DECISION: the antd "welded" double-tag look (margin: 0 / -1px between
-// the two Tags) is inexpressible with Badge's closed styling and is dropped —
-// the pair renders as two adjacent badges (HStack gap 0.5). The 150px
-// max-width ellipsis + tooltip on each segment is likewise dropped (Astryx
-// Text cannot be width-capped inside a Badge without xstyle); tag labels
-// render in full (simplicity policy, MIGRATION-SPEC §0).
+// The pair is welded in BAIDoubleTag.css: Badge's radius is theme-owned and
+// adjacency-conditional styling has no prop or defineTheme route (FR-3687).
+//
+// PILOT-DECISION: the 150px max-width ellipsis + tooltip on each segment is
+// dropped (Astryx Text cannot be width-capped inside a Badge without xstyle);
+// tag labels render in full (simplicity policy, MIGRATION-SPEC §0).
 export type DoubleTagObjectValue = {
   label: string;
   color?: string;
@@ -50,7 +51,7 @@ const BAIDoubleTag: React.FC<BAIDoubleTagProps> = ({
   }
 
   return (
-    <HStack gap={0.5} align="center">
+    <HStack gap={0} align="center" className="bai-double-tag">
       {_.map(objectValues, (objValue, idx) =>
         !_.isEmpty(objValue.label) ? (
           <Badge

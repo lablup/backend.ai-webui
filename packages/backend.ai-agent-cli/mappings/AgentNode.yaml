@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=./schema.json
+type: AgentNode
+concept: agent
+docs: admin_menu#manage-agent-nodes
+meaning: One agent — the Backend.AI daemon on a physical node that actually runs a session's containers.
+fields:
+  status:
+    meaning: Whether the manager can still reach the agent, and therefore whether it can take new sessions.
+    docs: admin_menu#manage-agent-nodes
+    values:
+      ALIVE:
+        label: Alive
+        meaning: The agent is reporting in and can be scheduled onto.
+        variant: success
+      LOST:
+        label: Lost
+        meaning: The agent stopped reporting in; its sessions are unreachable until it comes back.
+        variant: error
+      RESTARTING:
+        label: Restarting
+        meaning: The agent is coming back up and is not schedulable yet.
+        variant: warning
+      TERMINATED:
+        label: Terminated
+        meaning: The agent was shut down and left the cluster.
+        variant: neutral
+  status_changed:
+    label: Status Changed
+    meaning: When the agent last changed status, which is how long it has been in this state.
+    docs: admin_menu#manage-agent-nodes
+  schedulable:
+    meaning: Whether an administrator allows the scheduler to place new sessions on this agent.
+    docs: admin_menu#manage-agent-nodes
+  scaling_group:
+    meaning: The resource group this agent contributes its resources to.
+    concept: resource-group
+    docs: admin_menu#resource-group
+  available_slots:
+    label: Total Resources
+    meaning: Every resource slot the agent owns, whether or not it is in use.
+    docs: agent_summary#columns
+  occupied_slots:
+    label: Allocated Resources
+    meaning: The resource slots the agent's running sessions currently hold.
+    docs: agent_summary#columns
+  container_count:
+    label: Containers
+    meaning: How many session containers the agent is running right now.
+    concept: container
+    docs: agent_summary#columns
+  region:
+    meaning: The cloud region or platform the agent's node sits in.
+    concept: physical-node
+    docs: admin_menu#manage-agent-nodes
+  architecture:
+    meaning: The CPU architecture of the agent's node, which decides which images can run on it.
+    concept: kernel-image
+    docs: admin_menu#manage-agent-nodes

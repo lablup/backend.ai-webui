@@ -14,7 +14,7 @@ import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
-  BAIAvailablePresetSelectAstryx,
+  BAIAvailablePresetSelect,
   BAIFlex,
   BAILink,
   BAIModal,
@@ -333,7 +333,7 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
           required
         >
           <BAIFlex direction="row" gap="xs">
-            <BAIAvailablePresetSelectAstryx
+            <BAIAvailablePresetSelect
               label={t('modelStore.Preset')}
               isLabelHidden
               value={effectivePresetId}

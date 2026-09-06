@@ -14,10 +14,6 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
 import { Badge } from '@astryxdesign/core/Badge';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
@@ -26,6 +22,8 @@ import {
   BAIUserUnionIcon,
   toLocalId,
   BAIFlex,
+  BAIMetadataList,
+  BAIMetadataListItem,
   useErrorMessageResolver,
   badgeVariantForStatus,
   BAIText,
@@ -109,8 +107,8 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
   const items = filterOutEmpty([
     !vfolderNode?.unmanaged_path && {
       key: 'path',
-      // PILOT-DECISION (V2 precedent): the copy affordance moves from the
-      // LABEL to the VALUE — `MetadataListItem.label` is a plain string (P2).
+      // PILOT-DECISION (V2 precedent): the copy affordance sits on the VALUE,
+      // next to the path it copies, not on the label.
       label: t('data.folders.Path'),
       children: (
         <HStack gap={1} align="start" wrap="wrap">
@@ -273,13 +271,13 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
   // `styles.content` word-break override goes with them: MetadataList wraps
   // long values itself.
   return (
-    <MetadataList columns="single">
+    <BAIMetadataList columns="single">
       {items.map((item) => (
-        <MetadataListItem key={item.key} label={item.label as string}>
+        <BAIMetadataListItem key={item.key} label={item.label}>
           {item.children}
-        </MetadataListItem>
+        </BAIMetadataListItem>
       ))}
-    </MetadataList>
+    </BAIMetadataList>
   );
 };
 

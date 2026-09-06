@@ -5,10 +5,10 @@
 import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBulkMutation.graphql';
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { App } from '../app-shim';
-import BAIDeleteConfirmModalAstryx from './astryx-bui/BAIDeleteConfirmModalAstryx';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { VStack } from '@astryxdesign/core/Stack';
 import {
+  BAIDeleteConfirmModal,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 // PILOT-DECISION (matches ticket-16 precedent DeleteForeverVFolderModalV2):
-// full component swap to `BAIDeleteConfirmModalAstryx` rather than a
+// full component swap to BUI `BAIDeleteConfirmModal` rather than a
 // piecemeal Form/Checkbox rename. Purge is the permanent-delete flow
 // (`.claude/rules/destructive-confirmation.md`), and BAIDeleteConfirmModal
 // (BUI/antd) has no Astryx equivalent to extend in place. The public prop
@@ -59,7 +59,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   const { logger } = useBAILogger();
   const [isPending, setIsPending] = useState(false);
   // The two purge options are independent booleans, not a validated form —
-  // per BAIDeleteConfirmModalAstryx's own PILOT-DECISION 1, a form STATE
+  // per BAIDeleteConfirmModal's own PILOT-DECISION 1, a form STATE
   // ENGINE is only warranted when there's something to validate. Plain state
   // is the whole mechanism here too.
   const [purgeSharedVfolders, setPurgeSharedVfolders] = useState(false);
@@ -139,13 +139,14 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   };
 
   return (
-    <BAIDeleteConfirmModalAstryx
+    <BAIDeleteConfirmModal
       isOpen={!!open}
       onOpenChange={(next) => {
         if (!next) onCancel?.();
       }}
       title={t('credential.PermanentlyDeleteUsers')}
-      isActionLoading={isPending || isInFlightBulkPurge}
+      maskClosable={false}
+      confirmLoading={isPending || isInFlightBulkPurge}
       items={_.map(userList, (user) => ({
         key: user.id,
         label: user.basicInfo.email,
@@ -155,10 +156,10 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       inputLabel={t('credential.TypePermanentlyDelete', {
         text: t('credential.PermanentlyDelete'),
       })}
-      inputPlaceholder={t('credential.PermanentlyDelete')}
+      inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
       cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
-      actionLabel={t('credential.PermanentlyDelete')}
-      cancelLabel={t('button.Cancel')}
+      okText={t('credential.PermanentlyDelete')}
+      cancelText={t('button.Cancel')}
       extraContent={
         <VStack gap={1} align="stretch">
           <CheckboxInput
@@ -173,7 +174,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
           />
         </VStack>
       }
-      onAction={handleAction}
+      onOk={handleAction}
     />
   );
 };

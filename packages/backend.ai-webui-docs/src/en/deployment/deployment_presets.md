@@ -28,9 +28,11 @@ Each preset stores the following deployment defaults:
 - **Resources**: Resource slots (CPU, memory, GPU), shared memory (SHM), and resource options.
 - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
 - **Execution**: Startup command, environment variables, and bootstrap script.
+- **Service Configuration**: Execution mode (Shell or Exec), shell, command, and port — stored for runtimes that read their configuration from the model folder, such as Custom.
 - **Deployment Defaults**: Replica count, revision history limit, and the *Open to Public* visibility default.
 - **Health Check**: Optional periodic health check, gated behind an *Enable Health Check* toggle.
-- **Advanced**: Model definition JSON (when needed for a custom runtime).
+- **Pre-Start Actions**: Actions to run before the model service starts.
+- **Model Definition** (optional): The served model's name and path, plus optional metadata.
 
 <a id="managing-deployment-presets"></a>
 
@@ -77,33 +79,41 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
       * **Rank**: Display ordering among presets of the same runtime. Lower values appear first.
    - **Image**: The container image to use when deploying. Images are listed in `<canonicalName>@<architecture>` format (for example, `cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64`). This format helps distinguish images by CPU architecture on mixed-architecture clusters. The same format appears on the Review step.
    - **Runtime Parameters** (appears when a non-Custom runtime such as vLLM or SGLang is selected): Configure the serving framework parameters for this preset. Parameters are organized in tabs — for example, **Model Loading**, **Resource Memory**, **Serving Performance**, **Multimodal**, and **Tool Reasoning** for vLLM. Saved parameter values are applied when a deployment is created from this preset; parameters you leave unchanged will use the runtime's defaults when the deployment runs.
+   - **Service Configuration** (appears when the selected runtime reads its configuration from the model folder, such as Custom): **Execution** (**Shell** or **Exec**), **Shell**, **Command** / **Command (argv)**, and **Port** — the same fields as the Add Revision modal, described in [Service configuration](#service-configuration) on the Deployments page. Leaving **Port** blank makes deployments created from this preset inherit the runtime variant's default port.
+
+      :::note[Where the section appears]
+      **Service Configuration**, **Health Check**, and **Pre-Start Actions** all sit on the **Basic Info** step, below the runtime fields, and are saved independently of the model definition.
+      :::
    - **Resources**: Resource slots (CPU, memory, GPU), shared memory, and resource options (key/value pairs).
-   - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size.
+   - **Cluster**: Cluster mode (Single Node or Multi Node) and cluster size. New presets default to **Single Node**. Selecting **Multi Node** shows the warning *"If multi-node is not configured on the cluster, sessions created from this preset will fail to start."* — the warning does not block saving, so choose Multi Node only when your cluster is set up for it.
    - **Execution**: **Startup Command**, environment variables, and bootstrap script. The Startup Command field shows a shell-syntax hint (`Shell syntax: /bin/bash -c "cmd1; cmd2"`) because the command is executed as `/bin/bash -c <command>`. This means you can use shell operators such as `;`, `|`, and `&&` directly in the field.
 
-      :::note[Startup Command is not the Start Command]
-      The two commands are different, and each field now carries its own description so they are easier to tell apart.
+      :::note[Startup Command is not the Command]
+      The two commands are different, and each field carries its own description so they are easier to tell apart.
 
       | Field | Where it lives | What it does | Example |
       |---|---|---|---|
       | **Startup Command** | Execution section of the preset | *"The command that prepares the environment before the model framework starts (e.g., installing packages such as vllm)."* | `pip install vllm` |
-      | **Start Command** | Model Definition section of the preset | *"The CLI command to start the model serving process."* | `vllm serve /models --tp 2` |
+      | **Command** (**Command (argv)** in Exec mode) | Service Configuration section of the preset | The command that starts the model serving process. | `vllm serve /models --tp 2` |
 
-      Use **Startup Command** for preparation work — installing packages, fetching assets, writing config files. Use **Start Command** for the command that actually launches the serving framework. The placeholder text on each field shows an example of the right kind of command.
+      Use **Startup Command** for preparation work — installing packages, fetching assets, writing config files. Use **Command** for the command that actually launches the serving framework. The placeholder text on each field shows an example of the right kind of command.
       :::
    - **Deployment Defaults**:
       * **Replica Count**: Default number of replicas created from this preset.
       * **Revision History Limit**: Number of past revisions kept for each deployment created from this preset.
       * **Open to Public**: Whether the endpoint of deployments created from this preset is reachable without an access token by default.
    - **Health Check**: This section has an **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
-   - **Advanced** (optional): Model definition JSON for custom runtimes.
+   - **Pre-Start Actions**: Actions to execute before the model service starts. Click **Add Pre-Start Action** to add a row, then fill in **Action** and **Args (JSON)**.
+   - **Model Definition** (optional): A switch in the card header turns the model definition on. When it is on, fill in **Model Name** and **Model Path** — both required — and, optionally, expand the **Metadata** section for the served model's title, author, version, license, description, task, category, architecture, framework, and labels.
 
    ![](../images/deployment_preset_create_modal.png)
+
+   ![](../images/deployment_preset_service_configuration.png)
 
 3. On the **Review** step, check the summary and click `Create` to save. A success notification confirms the preset has been created.
 
 :::tip
-If a required field is missing or invalid, the submit button on the Review step stays disabled until the error is resolved, and the card that contains the offending field is outlined in red. Required fields show inline validation messages as you type.
+If a required field is missing or invalid, the submit button on the Review step stays disabled until the error is resolved. The Review card that contains the offending field is outlined in red with an error icon next to its **Edit** link, and the step it belongs to is marked as failed in the step list on the right — so you can see which step to go back to even for a field on a step you have not visited. Required fields show inline validation messages as you type.
 :::
 
 <a id="preset-review-step"></a>
@@ -119,6 +129,8 @@ The **Basic Info** card summarizes, in the order the fields appear on step 1:
 - **Runtime**: The runtime variant the preset uses, shown as its display name.
 - **Image**: In `<canonicalName>@<architecture>` format.
 - **Runtime Parameters** (only for a non-Custom runtime with configured values)
+- **Shell**, **Command**, and **Port**: The service configuration values, shown only for a runtime that reads its configuration from the model folder. **Shell** is omitted in Exec mode, because no shell is used then.
+- **Enable Health Check**, followed by the configured health check values when it is enabled.
 
 The remaining cards summarize **Resources** (resource slots, resource options, cluster mode, cluster size), **Deployment** (replica count, revision history limit, Open to Public), and **Model & Execution** (startup command, bootstrap script, environment variables, and the model definition when enabled).
 
@@ -152,6 +164,72 @@ Editing a preset only changes the defaults for **future** deployments. Existing 
 
 :::danger
 Deleting a deployment preset is **irreversible**. The preset itself is removed, but deployments that were already created from it continue to run unaffected. Future deployments can no longer reference this preset.
+:::
+
+<a id="runtime-variant-presets"></a>
+
+## Runtime parameters
+
+The **Runtime Parameters** tab on the Admin Deployments page (`/admin/deployments`) defines the individual parameters that a runtime exposes. Each entry describes one parameter — the key it is passed to the container as, its value type, its default, and how it is rendered — and together they make up the **Runtime Parameters** tabs that users fill in when they add a deployment revision (see [Runtime parameters](#runtime-parameters) on the Deployments page).
+
+![](../images/runtime_variant_preset_list.png)
+<!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
+
+Above the table sit a property filter (**Name**, **Runtime Variant ID**), a refresh button, and the **Create Parameter** button. The following columns are shown by default:
+
+- **Name**: The parameter's name. This column also carries the per-row edit and delete buttons.
+- **Runtime Variant (ID)**: The runtime the parameter belongs to, shown as the runtime's name followed by its ID in parentheses. The ID has a copy button next to it. On a server that does not serve the runtime variant name, the column is titled **Runtime Variant ID** and shows the ID on its own.
+- **Parameter Target**: How the value reaches the container — **Environment Variable** or **Command-line Argument**.
+- **Value Type**: **String**, **Integer**, **Float**, **Boolean**, or **Flag**.
+- **UI Type**: The control this parameter is rendered with in the deployment form — **Text Input**, **Number Input**, **Checkbox**, **Select**, or **Slider**. A control that this version of the WebUI does not recognize is shown as its stored value, and `-` means no control is configured. In the deployment form, a parameter whose configured control cannot render its value type falls back to a plain text input.
+- **Key**: The environment variable name or command-line argument the value is passed as.
+- **Default Value**: The value the runtime uses when the user leaves the parameter unchanged.
+- **Required**: Whether the parameter must be supplied when a revision is built from this runtime.
+- **Rank**: Display ordering among parameters of the same runtime. Lower values are shown first.
+- **Created At**: When the parameter was created.
+
+**Description**, **Category**, **Display Name**, and **Modified At** are hidden by default and can be shown with the column visibility gear button (⚙) at the right of the table header.
+
+### Create or edit a runtime parameter
+
+Click **Create Parameter** above the table to open the **Create Parameter** modal, or the edit button on a row to open **Edit Parameter** with the current values pre-filled. The runtime variant of an existing parameter cannot be changed.
+
+<!-- TODO(screenshot): /admin/deployments -> Runtime Parameters tab -> Create Parameter modal, showing the UI Type selector and its Choices rows. Still blocked as of 2026-08-28: every reachable server runs manager 26.8.0rc1 or 26.8.1, and these fields require 26.9.0. -->
+
+The modal contains the following fields, in the order they appear:
+
+- **Runtime Variant**: The runtime this parameter belongs to. Required.
+- **Name**: A readable name for the parameter, for example `Tensor Parallel Size`. Required.
+- **Description**: What the parameter controls and how it affects inference behavior. Shown as the field's tooltip in the deployment form.
+- **Category**: The UI category used to organize related parameters together. Categories become the tabs of the **Runtime Parameters** section, so parameters sharing a category are shown on the same tab. The field is free text; categories already in use are listed in its placeholder as a hint.
+- **Display Name**: The human-readable label shown in place of the parameter name in the deployment form.
+- **Parameter Target**: **Environment Variable** or **Command-line Argument**. Required.
+- **Value Type**: **String**, **Integer**, **Float**, **Boolean**, or **Flag**. Required. Choose the value type before the **UI Type** below: changing it clears the selected control, because a control picked for the previous type may no longer be able to render the new one.
+- **UI Type**: The control used to render this parameter in the deployment form. Leave it empty to render the parameter as a plain text input. Only the controls that can render the selected **Value Type** can be chosen; the others are disabled. Choosing a type reveals its own settings:
+   * **Text Input** (String, Integer, Float): **Input Placeholder** — the hint text shown while the field is empty.
+   * **Number Input** (Integer, Float): **Minimum** and **Maximum**. A value outside the range is reported as a validation error on the deployment form.
+   * **Checkbox** (Boolean, Flag): No additional settings.
+   * **Select** (String): **Choices** — one **Value** / **Label** row per option. Click **Add Choice** to add a row and the trash button to remove one; at least one choice is required.
+   * **Slider** (Integer, Float): **Minimum** and **Maximum** (both required, and the maximum must be greater than the minimum) and **Step**, the increment the slider moves by (defaults to `1`).
+- **Key**: The environment variable name or command-line argument the value is passed as, for example `TENSOR_PARALLEL_SIZE`. Required.
+- **Default Value**: The value the runtime uses when the user leaves the parameter unchanged. It is shown as the field's placeholder in the deployment form rather than pre-filled, so a required parameter still asks for an explicit value.
+- **Requirement**: Select the **Required** checkbox to make users supply this parameter when they build a revision. Required parameters show a red asterisk (★) in the deployment form.
+- **Rank** *(edit only)*: Display ordering among parameters of the same runtime. Lower values are shown first.
+
+:::note
+A parameter that was stored with a control and a value type that do not fit each other — for example one created through the API — opens with a warning that the saved value type cannot be rendered by the saved UI type, and the offending field is marked with **The selected UI type cannot render this value type.** Change either half to resolve it before saving.
+
+On a server that does not offer the **UI Type** field, the pairing is enforced from the other side: the control already stored on the parameter restricts which **Value Type** entries you can choose.
+:::
+
+Click `Create` (or `Save` when editing) to store the parameter. A notification confirms that the runtime parameter has been created or updated, and the list refreshes.
+
+### Delete a runtime parameter
+
+Click the delete button on the parameter row. A typed-confirmation dialog appears asking you to type the parameter's name; the **Delete** button stays disabled until the typed value matches exactly.
+
+:::danger
+Deleting a runtime parameter is **irreversible**. The parameter disappears from the **Runtime Parameters** section of every deployment form that uses this runtime variant.
 :::
 
 ## Using a preset when deploying a model

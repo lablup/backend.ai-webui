@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ProjectFairShareOrderField } from '../../__generated__/ProjectFairShareStepQuery.graphql';
 import {
   ProjectFairShareTableFragment$data,
   ProjectFairShareTableFragment$key,
@@ -16,7 +17,7 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIResourceNumberWithIcon,
-  BAITableAstryx,
+  BAITable,
   BAITableProps,
   toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
@@ -36,6 +37,14 @@ const availableProjectFairShareSorterKeys = [
   'fairShareFactor',
   'createdAt',
 ] as const;
+export const projectFairShareOrderFieldMap: Record<
+  (typeof availableProjectFairShareSorterKeys)[number],
+  ProjectFairShareOrderField
+> = {
+  projectName: 'PROJECT_NAME',
+  fairShareFactor: 'FAIR_SHARE_FACTOR',
+  createdAt: 'CREATED_AT',
+};
 export const availableProjectFairShareSorterValues = [
   ...availableProjectFairShareSorterKeys,
   ...availableProjectFairShareSorterKeys.map((key) => `-${key}` as const),
@@ -176,6 +185,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       ),
       key: 'fairShareFactor',
       dataIndex: ['calculationSnapshot', 'fairShareFactor'],
+      sortKey: 'fairShareFactor',
       sorter: isEnableSorter('fairShareFactor'),
       render: (fairShareFactor) =>
         fairShareFactor !== null && fairShareFactor !== undefined
@@ -204,16 +214,12 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
               entries,
               (entry: { resourceType: string; quantity: number }, index) => (
                 <BAIFlex key={entry.resourceType} gap="sm" align="center">
-                  {index > 0 && (
-                    <Divider orientation="vertical" />
-                  )}
+                  {index > 0 && <Divider orientation="vertical" />}
                   <BAIResourceNumberWithIcon
                     type={entry.resourceType}
                     value={toFixedFloorWithoutTrailingZeros(entry.quantity, 2)}
                     extra={
-                      <Text color="secondary">
-                        / {t('fairShare.DayUnit')}
-                      </Text>
+                      <Text color="secondary">/ {t('fairShare.DayUnit')}</Text>
                     }
                   />
                 </BAIFlex>
@@ -240,7 +246,8 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
 
   return (
     <>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={'id'}
         {...tableProps}
         dataSource={projectFairShares || []}

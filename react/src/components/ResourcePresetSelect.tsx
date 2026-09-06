@@ -15,9 +15,9 @@ import type {
   SelectorOptionType,
 } from '@astryxdesign/core/Selector';
 import { Selector } from '@astryxdesign/core/Selector';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
+  BAIIconWithTooltip,
   BAIResourceNumberWithIcon,
   useThrottleFn,
   useUpdatableState,
@@ -160,14 +160,13 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       return (
         <BAIFlex gap={'xs'}>
           {t('session.launcher.MiniumAllocation')}
-          <Tooltip content={t('session.launcher.MiniumAllocationTooltip')}>
-            <Info
-              style={{
-                color: token.colorTextSecondary,
-              }}
-              size="1em"
-            />
-          </Tooltip>
+          <BAIIconWithTooltip
+            content={t('session.launcher.MiniumAllocationTooltip')}
+            focusable={false}
+            icon={
+              <Info style={{ color: token.colorTextSecondary }} size="1em" />
+            }
+          />
         </BAIFlex>
       );
     }

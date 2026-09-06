@@ -125,6 +125,38 @@ export const Default: Story = {
   },
 };
 
+export const NumberAndDatetime: Story = {
+  name: 'Number and Datetime Properties',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Numeric and time properties offer comparison operators. Numbers serialize bare (`priority >= 10`); datetimes stay quoted (`created_at >= "2026-08-01"`) because the backend parses the string into a date.',
+      },
+    },
+  },
+  args: {
+    filterProperties: [
+      {
+        key: 'name',
+        propertyLabel: 'Name',
+        type: 'string',
+      },
+      {
+        key: 'priority',
+        propertyLabel: 'Priority',
+        type: 'number',
+      },
+      {
+        key: 'created_at',
+        propertyLabel: 'Created At',
+        type: 'datetime',
+      },
+    ],
+    value: 'priority >= 10 & created_at >= "2026-08-01"',
+  },
+};
+
 export const WithCustomValidation: Story = {
   name: 'Custom Validation',
   parameters: {

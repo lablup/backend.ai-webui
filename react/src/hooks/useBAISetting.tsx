@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIBoardItem } from '../components/BAIBoard';
+import type { PersistedPanel } from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
 import { backendaiOptions } from '../global-stores';
 import { CustomThemeConfig } from '../helper/customThemeConfig';
@@ -31,12 +32,16 @@ export interface UserSettings {
   start_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   start_page_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   experimental_ai_agents?: boolean;
+  experimental_custom_dashboard_panels?: boolean;
   experimental_import_from_huggingface?: boolean;
+  experimental_session_resource_grid?: boolean;
   extra_ai_agents?: Array<AgentProfile>;
   agent_endpoints?: AgentEndpointBindings;
   session_metrics_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
   admin_dashboard_board_items?: Array<Omit<BAIBoardItem, 'data'>>;
+  /** Decoupled-dashboard custom panels (serialized descriptors + layout). */
+  custom_dashboard_panels?: Array<PersistedPanel>;
   resource_panel_type?:
     | 'MyResource'
     | 'MyResourceWithinResourceGroup'
@@ -53,6 +58,9 @@ export interface UserSettings {
   custom_theme_config?: CustomThemeConfig;
   custom_primary_color?: { light?: string; dark?: string };
   deploymentRevisionCreationMode?: 'preset' | 'custom';
+  // Session resource grid: per-session group-color overrides, keyed by
+  // session id, valued by palette index (FR-3570).
+  sessionResourceGridHueOverrides?: Record<string, number>;
   schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
   chat_intro_alert_dismissed?: boolean;
 }

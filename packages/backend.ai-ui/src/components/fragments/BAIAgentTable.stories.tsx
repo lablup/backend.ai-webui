@@ -67,7 +67,7 @@ Use with prefix \`-\` for descending order (e.g., \`'-first_contact'\`).
 - **Status**: Agent status, CUDA version, plugin info
 - **Schedulable**: Whether agent can schedule new sessions
 
-For other props (loading, pagination, etc.), refer to [BAITableAstryx](?path=/docs/table-baitable--docs).
+For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/table-baitable--docs).
         `,
       },
     },

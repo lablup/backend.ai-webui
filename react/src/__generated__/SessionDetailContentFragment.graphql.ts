@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<62c2a953cd829bbd8b9f20106ec915f0>>
+ * @generated SignedSource<<41a29c6b31017fcf9cccdcef8d37a634>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -73,7 +73,7 @@ export type SessionDetailContentFragment$data = {
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "ContainerCommitModalFragment" | "ContainerLogModalFragment" | "EditableSessionNameFragment" | "MountedVFolderLinksFragment" | "SessionActionButtonsFragment" | "SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusDetailModalFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "ContainerCommitModalFragment" | "ContainerLogModalFragment" | "EditableSessionNameFragment" | "MountedVFolderLinksFragment" | "SessionAccessKeyFragment" | "SessionActionButtonsFragment" | "SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusDetailModalFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment">;
   readonly " $fragmentType": "SessionDetailContentFragment";
 } | null | undefined;
 export type SessionDetailContentFragment$key = {
@@ -465,6 +465,11 @@ return {
       "args": null,
       "kind": "FragmentSpread",
       "name": "BAISessionClusterModeFragment"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "SessionAccessKeyFragment"
     }
   ],
   "type": "ComputeSessionNode",
@@ -472,6 +477,6 @@ return {
 };
 })();
 
-(node as any).hash = "1f228b44f4bfe0b596275be5ffb3d0fd";
+(node as any).hash = "a6ab9f7d99863931c4fa11da127bb44c";
 
 export default node;

@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-08-11
+> **Last Updated:** 2026-09-04
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,45 +12,47 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 313 / 458 features covered (68%)**
+**Overall (in-scope routes): 317 / 462 features covered (68%)**
 
-| Page                     | Route                                  | Features | Covered | Status  |
-| ------------------------ | -------------------------------------- | :------: | :-----: | :-----: |
-| Authentication           | `/interactive-login`                   |    37    |   35    | 🔶 95%  |
-| Change Password          | `/change-password`                     |    9     |    9    | ✅ 100% |
-| Start Page               | `/start`                               |    8     |    6    | 🔶 75%  |
-| Dashboard                | `/dashboard`                           |    9     |    7    | 🔶 78%  |
-| Session List             | `/session`                             |    22    |   14    | 🔶 64%  |
-| Session Launcher         | `/session/start`                       |    14    |    3    | 🔶 21%  |
-| Serving                  | `/serving`                             |    7     |    2    | 🔶 29%  |
-| Endpoint Detail          | `/serving/:serviceId`                  |    20    |    9    | 🔶 45%  |
-| Service Launcher         | `/service/start`                       |    5     |    1    | 🔶 20%  |
-| VFolder / Data           | `/data`                                |    48    |   35    | 🔶 73%  |
-| Model Store              | `/model-store`                         |    6     |    6    | ✅ 100% |
-| Admin Model Store        | `/admin-model-store`                   |    28    |   28    | ✅ 100% |
-| Storage Host             | `/storage-settings/:hostname`          |    3     |    0    |  ❌ 0%  |
-| My Environment           | `/my-environment`                      |    2     |    2    | ✅ 100% |
-| Environment              | `/environment`                         |    27    |   21    | 🔶 78%  |
-| Configurations           | `/settings`                            |    11    |    9    | 🔶 82%  |
-| Resources                | `/agent-summary`, `/agent`             |    10    |    3    | 🔶 30%  |
-| Resource Policy          | `/resource-policy`                     |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                          |    22    |   15    | 🔶 68%  |
-| Maintenance              | `/maintenance`                         |    3     |    2    | 🔶 67%  |
-| User Settings            | `/usersettings`                        |    10    |    1    | 🔶 10%  |
-| Project                  | `/project`                             |    6     |    5    | 🔶 83%  |
-| Statistics               | `/statistics`                          |    2     |    2    | ✅ 100% |
-| Scheduler                | `/scheduler`                           |    6     |    0    |  ❌ 0%  |
-| Information              | `/information`                         |    2     |    2    | ✅ 100% |
-| Reservoir                | `/reservoir`, `/reservoir/:artifactId` |    18    |    0    |  ❌ 0%  |
-| Branding                 | `/branding`                            |    14    |    0    |  ❌ 0%  |
-| App Launcher             | (modal)                                |    19    |   11    | 🔶 58%  |
-| Chat                     | `/chat/:id?`                           |    7     |    7    | ✅ 100% |
-| Plugin System            | (config-based)                         |    12    |   12    | ✅ 100% |
-| RBAC Management          | `/rbac`                                |    22    |   21    | 🔶 95%  |
-| Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule` |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`     |    16    |   12    | 🔶 75%  |
-| Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)  |    5     |    5    | ✅ 100% |
-| **Total**                |                                        | **475**  | **326** | **69%** |
+| Page                     | Route                                            | Features | Covered | Status  |
+| ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
+| Authentication           | `/interactive-login`                             |    37    |   35    | 🔶 95%  |
+| Change Password          | `/change-password`                               |    9     |    9    | ✅ 100% |
+| Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
+| Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
+| Session List             | `/session`                                       |    23    |   15    | 🔶 65%  |
+| Session Launcher         | `/session/start`                                 |    14    |    3    | 🔶 21%  |
+| Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
+| Endpoint Detail          | `/serving/:serviceId`                            |    20    |    9    | 🔶 45%  |
+| Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
+| VFolder / Data           | `/data`                                          |    48    |   35    | 🔶 73%  |
+| Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
+| Admin Model Store        | `/admin-model-store`                             |    28    |   22    | 🔶 79%  |
+| Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
+| My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
+| Environment              | `/environment`                                   |    27    |   21    | 🔶 78%  |
+| Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
+| Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
+| Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
+| User Credentials         | `/credential`                                    |    22    |   15    | 🔶 68%  |
+| Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
+| User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
+| Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
+| Statistics               | `/statistics`                                    |    2     |    2    | ✅ 100% |
+| Scheduler                | `/scheduler`                                     |    6     |    0    |  ❌ 0%  |
+| Information              | `/information`                                   |    2     |    2    | ✅ 100% |
+| Reservoir                | `/reservoir`, `/reservoir/:artifactId`           |    18    |    0    |  ❌ 0%  |
+| Branding                 | `/branding`                                      |    14    |    0    |  ❌ 0%  |
+| App Launcher             | (modal)                                          |    19    |   11    | 🔶 58%  |
+| Chat                     | `/chat/:id?`                                     |    7     |    7    | ✅ 100% |
+| Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
+| RBAC Management          | `/rbac`                                          |    22    |   21    | 🔶 95%  |
+| Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    17    |   14    | 🔶 82%  |
+| Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    4     |    4    | ✅ 100% |
+| Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
+| Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
+| **Total**                |                                                  | **482**  | **328** | **68%** |
 
 ---
 
@@ -168,46 +170,49 @@
 | Active agents list (admin)          | ❌     | -                                                                            |
 | Recent sessions list                | ✅     | `Admin can view the recently created sessions list on the Dashboard`         |
 | Auto-refresh (15s)                  | ❌     | -                                                                            |
-| Dashboard item drag/resize          | ✅     | `Admin can see resizable and movable widgets on the Dashboard`               |
+| Dashboard item drag/resize          | ✅     | `Admin sees drag and resize handles on the dashboard board`                  |
+| Edit sider open/close (breadcrumb)  | ✅     | `Admin can open and close the dashboard edit sider`                          |
+| Custom panel add (edit sider/modal) | ✅     | `Admin can add a custom table panel from the dashboard edit sider`           |
 
-**Coverage: 🔶 7/9 features**
+**Coverage: 🔶 9/11 features**
 
 ---
 
 ### 4. Session List (`/session`)
 
-**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts)
+**Test files:** [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-lifecycle.spec.ts`](session/session-lifecycle.spec.ts), [`e2e/session/session-scheduling-history-modal.spec.ts`](session/session-scheduling-history-modal.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts), [`e2e/session/session-detail-drawer-transition-delay.spec.ts`](session/session-detail-drawer-transition-delay.spec.ts)
 
 **Tabs:** `all` | `interactive` | `batch` | `inference` | `system`
 **Sub-tabs:** Running | Finished
 **Modals/Drawers:** `TerminateSessionModal`, `SessionDetailDrawer` (via name click), `SessionSchedulingHistoryModal`
 
-| Feature                                                  | Status | Test                                                                                                   |
-| -------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
-| Create interactive session (Start page)                  | ✅     | `User can create interactive session on the Start page`                                                |
-| Create batch session (Start page)                        | ✅     | `User can create batch session on the Start page`                                                      |
-| Create interactive session (Session page)                | ✅     | `User can create interactive session from the quick-action card`                                       |
-| Create batch session (Session page)                      | ✅     | Via session creation tests                                                                             |
-| Session lifecycle (create/monitor/terminate)             | ✅     | `Create, monitor, and terminate interactive session`                                                   |
-| Batch session auto-completion                            | ✅     | `Create and wait for batch session completion`                                                         |
-| View container logs                                      | ✅     | `View session container logs`                                                                          |
-| Monitor resource usage                                   | ✅     | `Monitor session resource usage`                                                                       |
-| Status transitions                                       | ✅     | `Session status transitions are correct`                                                               |
-| Bulk terminate disabled for terminated                   | ✅     | `Cannot select terminated sessions for bulk operations`                                                |
-| Sensitive env vars cleared on reload                     | ✅     | `Sensitive environment variables are cleared`                                                          |
-| Scheduling history modal                                 | ✅     | `Session Scheduling History Modal` (via mocked GraphQL)                                                |
-| Session name click → SessionDetailDrawer                 | 🚧     | `Session detail drawer renders correctly and can show dependency info` (fixme: requires running agent) |
-| Dependencies column toggle                               | ✅     | `Dependencies column can be enabled via table settings`                                                |
-| Session type filtering (interactive/batch/inference)     | ❌     | -                                                                                                      |
-| Running/Finished status toggle                           | ❌     | -                                                                                                      |
-| Property filtering (name, resource group, agent)         | ❌     | -                                                                                                      |
-| Session table sorting                                    | ❌     | -                                                                                                      |
-| Pagination                                               | ❌     | -                                                                                                      |
-| Batch terminate → TerminateSessionModal                  | ❌     | -                                                                                                      |
-| Scheduling history modal → SessionSchedulingHistoryModal | ✅     | `Admin can see the scheduling history button` + 18 more tests                                          |
-| Resource policy warnings                                 | 🚧     | Skipped: `superadmin to modify keypair resource policy`                                                |
+| Feature                                                  | Status | Test                                                                                                                                                 |
+| -------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Create interactive session (Start page)                  | ✅     | `User can create interactive session on the Start page`                                                                                              |
+| Create batch session (Start page)                        | ✅     | `User can create batch session on the Start page`                                                                                                    |
+| Create interactive session (Session page)                | ✅     | `User can create interactive session from the quick-action card`                                                                                     |
+| Create batch session (Session page)                      | ✅     | Via session creation tests                                                                                                                           |
+| Session lifecycle (create/monitor/terminate)             | ✅     | `Create, monitor, and terminate interactive session`                                                                                                 |
+| Batch session auto-completion                            | ✅     | `Create and wait for batch session completion`                                                                                                       |
+| View container logs                                      | ✅     | `View session container logs`                                                                                                                        |
+| Monitor resource usage                                   | ✅     | `Monitor session resource usage`                                                                                                                     |
+| Status transitions                                       | ✅     | `Session status transitions are correct`                                                                                                             |
+| Bulk terminate disabled for terminated                   | ✅     | `Cannot select terminated sessions for bulk operations`                                                                                              |
+| Sensitive env vars cleared on reload                     | ✅     | `Sensitive environment variables are cleared`                                                                                                        |
+| Scheduling history modal                                 | ✅     | `Session Scheduling History Modal` (via mocked GraphQL)                                                                                              |
+| Session name click → SessionDetailDrawer                 | 🚧     | `Session detail drawer renders correctly and can show dependency info` (fixme: requires running agent)                                               |
+| Drawer opens promptly under held refetch (FR-3568)       | ✅     | `User can open the session detail drawer promptly while a session-list refetch is held in flight` (`session-detail-drawer-transition-delay.spec.ts`) |
+| Dependencies column toggle                               | ✅     | `Dependencies column can be enabled via table settings`                                                                                              |
+| Session type filtering (interactive/batch/inference)     | ❌     | -                                                                                                                                                    |
+| Running/Finished status toggle                           | ❌     | -                                                                                                                                                    |
+| Property filtering (name, resource group, agent)         | ❌     | -                                                                                                                                                    |
+| Session table sorting                                    | ❌     | -                                                                                                                                                    |
+| Pagination                                               | ❌     | -                                                                                                                                                    |
+| Batch terminate → TerminateSessionModal                  | ❌     | -                                                                                                                                                    |
+| Scheduling history modal → SessionSchedulingHistoryModal | ✅     | `Admin can see the scheduling history button` + 18 more tests                                                                                        |
+| Resource policy warnings                                 | 🚧     | Skipped: `superadmin to modify keypair resource policy`                                                                                              |
 
-**Coverage: 🔶 14/22 features**
+**Coverage: 🔶 15/23 features**
 
 ---
 
@@ -299,15 +304,63 @@
 
 ### 7b. Deployment — Add Revision (`/deployments/:deploymentId`)
 
-**Test files:** [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+**Test files:**
+
+- [`e2e/serving/add-revision-manual-image.spec.ts`](serving/add-revision-manual-image.spec.ts) (integration; requires a live backend with an existing deployment)
+- [`e2e/serving/add-revision-command-shell.spec.ts`](serving/add-revision-command-shell.spec.ts) (hybrid mock — real deployment shell + live model folder, modal-internal GraphQL stubbed; FR-3205)
+- [`e2e/serving/add-revision-runtime-defaults.spec.ts`](serving/add-revision-runtime-defaults.spec.ts) (hybrid mock — real deployment shell, runtime-variant / defaults GraphQL stubbed; FR-3342)
+
+**Shared drivers / mocks:** [`e2e/serving/add-revision-support.ts`](serving/add-revision-support.ts), [`e2e/serving/mocking/add-revision-mock.ts`](serving/mocking/add-revision-mock.ts)
 
 **Modal:** `DeploymentAddRevisionModal` (Advanced/Custom mode)
 
-| Feature                                                                      | Status | Test                                                                     |
-| ---------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------ |
-| Manual image name accepted → revision mutation carries resolved id (FR-3278) | ✅     | `a manually entered image is accepted and submitted as a resolved image` |
+| Feature                                                                                                                                                                                                                            | Status | Test                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Manual image name accepted → revision mutation carries resolved id (FR-3278)                                                                                                                                                       | ✅     | `a manually entered image is accepted and submitted as a resolved image`                                                              |
+| Custom-mode Start Command: Execution (Shell/Exec) + Shell input appear immediately, no Basic/Advanced toggle (FR-3205; toggle removed per devops feedback, 2026-08-07)                                                             | ✅     | `Admin sees Execution and Shell controls immediately, and Exec hides Shell`                                                           |
+| Start Command is optional — empty submit reaches the mutation (FR-3205)                                                                                                                                                            | ✅     | `Admin can add a revision with an empty Start Command (the command is optional)`                                                      |
+| Raw command sent verbatim (no tokenization), shell = `/bin/bash` by default when left unchanged (FR-3205)                                                                                                                          | ✅     | `Admin submits the raw command verbatim, with shell = /bin/bash (the default) when left unchanged`                                    |
+| Shell mode submits `shell` = the chosen shell binary (FR-3205)                                                                                                                                                                     | ✅     | `Admin submits shell = the chosen shell binary when Shell mode overrides the default`                                                 |
+| Exec mode submits `shell` = null (FR-3205)                                                                                                                                                                                         | ✅     | `Admin submits shell = null in Exec mode`                                                                                             |
+| Model Definition File Path restored under Advanced Settings, optional (FR-3205)                                                                                                                                                    | ✅     | `Admin finds the restored Model Definition File Path under Advanced Settings`                                                         |
+| Config-reading variant shows Service Configuration; hides runtime-parameter presets (FR-3342)                                                                                                                                      | ✅     | `Admin sees the Service Configuration section for a config-reading variant (custom)`                                                  |
+| Non-config-reading variant shows runtime presets + default-command warning note (FR-3342)                                                                                                                                          | ✅     | `Admin sees runtime-parameter presets and the default-command note for a non-config-reading variant (vllm)`                           |
+| DB `defaultModelDefinition` drives command / port / health-check placeholders (FR-3342)                                                                                                                                            | ✅     | `Admin sees the variant defaultModelDefinition fill the command / port / health-check placeholders`                                   |
+| vfolder `model-definition.yaml` overrides DB-default placeholders (two-layer precedence) (FR-3342)                                                                                                                                 | ✅     | `Admin sees a selected model folder’s model-definition.yaml override the DB-default … placeholders`                                   |
+| Partial vfolder `model-definition.yaml` overrides only its defined fields; the rest fall back to the DB baseline field-by-field (FR-3342)                                                                                          | ✅     | `Admin sees a partial model-definition.yaml override only the fields it defines, falling back to the DB baseline for the rest`        |
+| Model Definition File Path value does not feed back into the command placeholder (FR-3342)                                                                                                                                         | ✅     | `Admin sees the Model Definition File Path leave the command placeholder unchanged`                                                   |
+| Model Definition File Path hidden for a non-config-reading variant (FR-3342)                                                                                                                                                       | ✅     | asserted inside `… default-command note for a non-config-reading variant (vllm)`                                                      |
+| Old-manager name-based `readsVfolderConfigFiles` fallback, reachable from a fresh variant select — `BAIRuntimeVariantSelect` resolves the omitted flag via `?? name === 'custom'` before the modal ever sees `undefined` (FR-3342) | ✅     | `Admin sees the custom service config for an old-manager variant (readsVfolderConfigFiles omitted, name === custom)`                  |
+| Old-manager name-based `readsVfolderConfigFiles` fallback via the "Load current revision" prefill path                                                                                                                             | ⏸️     | deferred — needs a full `DeploymentDetailPageQuery` mock with a `currentRevision` whose variant name is `custom` and the flag omitted |
+| Command prefill suppressed when the source revision's variant does not read config files (FR-3342)                                                                                                                                 | ⏸️     | same prefill path as the row above — needs the deferred `DeploymentDetailPageQuery` mock                                              |
+| `definitionPath` sent as null for a non-config-reading variant (FR-3342)                                                                                                                                                           | ⏸️     | submit-path guard; the field is unreachable in the UI for those variants, so only the mutation payload shows it                       |
 
-**Coverage: 🔶 1 feature (regression guard for FR-3278)**
+**Coverage: ✅ 15 features (FR-3278 regression guard + FR-3205 Start Command redesign + FR-3342 runtime-variant defaults); 3 deferred**
+
+> The FR-3205 preset-side change (the Admin Deployment Preset form no longer coerces
+> Basic mode's `shell` to the client default) has its own suite — see
+> "7c. Admin Deployment Preset — Service Configuration" below.
+
+---
+
+### 7c. Admin Deployment Preset — Service Configuration (`/admin/deployments/deployment-presets/new`)
+
+**Test files:**
+
+- [`e2e/serving/admin-preset-service-config.spec.ts`](serving/admin-preset-service-config.spec.ts) (hybrid mock — real login + navigation to the create-preset wizard, page-internal GraphQL stubbed by operation name; FR-3474)
+
+**Shared mocks:** [`e2e/serving/mocking/admin-preset-mock.ts`](serving/mocking/admin-preset-mock.ts)
+
+**Page:** `AdminDeploymentPresetSettingPageContent` (create-preset wizard, Basic Info step)
+
+| Feature                                                                                                                                                                                                                                                                                                     | Status | Test                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service Configuration shown for a config-reading variant; Start Command / Port optional (BA-6613); Execution/Shell always visible, no Basic/Advanced toggle; Shell pre-filled with the backend default; Exec hides Shell (FR-3474)                                                                          | ✅     | `Admin sees Service Configuration is optional, Execution/Shell always visible with Shell pre-filled, and Exec hides Shell`                         |
+| Full Create submission carries Service Configuration / Health Check / Pre-Start Actions in the expected nested `modelDefinition.models[0].service` shape (FR-3474)                                                                                                                                          | ✅     | `Admin creates a preset carrying Service Configuration, Health Check, and a Pre-Start Action`                                                      |
+| Leaving Start Command and Port blank still submits successfully — `command` omitted, `port` falls back to the submit-mapping layer's default (FR-3474/BA-6613)                                                                                                                                              | ✅     | `Admin creates a preset with Start Command and Port left blank`                                                                                    |
+| Legacy manager (`preset-model-config-type` off): Service Configuration/Health Check/Pre-Start Actions render nested inside Model Definition rather than independently in Basic Info, and the create mutation still carries the required `name`/`modelPath` plus the full nested `service` payload (FR-3481) | ✅     | `Admin sees Service Configuration/Health Check/Pre-Start Actions nested inside Model Definition, and the mutation carries required name/modelPath` |
+
+**Coverage: ✅ 4 features**
 
 ---
 
@@ -422,38 +475,38 @@
 **Row actions:** Edit (setting icon), Delete (trash icon)
 **Bulk actions:** Bulk delete via header checkbox selection
 
-| Feature                                                   | Status | Test                                      |
-| --------------------------------------------------------- | ------ | ----------------------------------------- |
-| Page load and table rendering                             | ✅     | `admin-model-card-page-load.spec.ts`      |
-| Column visibility and pagination                          | ✅     | `admin-model-card-page-load.spec.ts`      |
-| Name filter search                                        | ✅     | `admin-model-card-filter.spec.ts`         |
-| Filter clear and empty state                              | ✅     | `admin-model-card-filter.spec.ts`         |
-| Open create modal                                         | ✅     | `admin-model-card-create.spec.ts`         |
-| Create with required fields only                          | ✅     | `admin-model-card-create.spec.ts`         |
-| Create with all fields                                    | ✅     | `admin-model-card-create.spec.ts`         |
-| Create validation (name required)                         | ✅     | `admin-model-card-create.spec.ts`         |
-| Create validation (VFolder required)                      | ✅     | `admin-model-card-create.spec.ts`         |
-| Cancel create modal                                       | ✅     | `admin-model-card-create.spec.ts`         |
-| Open edit modal                                           | ✅     | `admin-model-card-edit.spec.ts`           |
-| Update model card fields                                  | ✅     | `admin-model-card-edit.spec.ts`           |
-| Edit validation                                           | ✅     | `admin-model-card-edit.spec.ts`           |
-| Cancel edit modal                                         | ✅     | `admin-model-card-edit.spec.ts`           |
-| Single delete with confirmation                           | ✅     | `admin-model-card-delete.spec.ts`         |
-| Cancel single delete                                      | ✅     | `admin-model-card-delete.spec.ts`         |
-| Delete card + folder together (checkbox)                  | ✅     | `admin-model-card-delete.spec.ts`         |
-| Notification + Go to Trash with folder filter             | ✅     | `admin-model-card-delete.spec.ts`         |
-| Delete card only, folder kept notification                | ✅     | `admin-model-card-delete.spec.ts`         |
-| Go to Trash without folder filter                         | ✅     | `admin-model-card-delete.spec.ts`         |
-| Bulk select and delete                                    | ✅     | `admin-model-card-delete.spec.ts`         |
-| Cancel bulk delete                                        | ✅     | `admin-model-card-delete.spec.ts`         |
-| Clear selection                                           | ✅     | `admin-model-card-delete.spec.ts`         |
-| Select all via header checkbox                            | ✅     | `admin-model-card-delete.spec.ts`         |
-| Bulk delete + move folders to trash (checkbox)            | ✅     | `admin-model-card-delete.spec.ts`         |
-| Bulk delete notification → Go to Trash (no folder filter) | ✅     | `admin-model-card-delete.spec.ts`         |
-| Non-admin access blocked                                  | ✅     | `admin-model-card-access-control.spec.ts` |
-| URL state persistence (filter/sort/pagination)            | ✅     | `admin-model-card-url-state.spec.ts`      |
+| Feature                                                   | Status | Test                                                                                                   |
+| --------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
+| Page load and table rendering                             | ✅     | `admin-model-card-page-load.spec.ts`                                                                   |
+| Column visibility and pagination                          | ✅     | `admin-model-card-page-load.spec.ts`                                                                   |
+| Name filter search                                        | ✅     | `admin-model-card-filter.spec.ts`                                                                      |
+| Filter clear and empty state                              | ✅     | `admin-model-card-filter.spec.ts`                                                                      |
+| Open create modal                                         | ✅     | `admin-model-card-create.spec.ts`                                                                      |
+| Create with required fields only                          | 🚧     | Skipped: `Superadmin can create a model card with only required fields` (backend `min_resource` kwarg) |
+| Create with all fields                                    | 🚧     | Skipped: `Superadmin can create a model card with all fields populated` (backend `min_resource` kwarg) |
+| Create validation (name required)                         | ✅     | `admin-model-card-create.spec.ts`                                                                      |
+| Create validation (VFolder required)                      | ✅     | `admin-model-card-create.spec.ts`                                                                      |
+| Cancel create modal                                       | ✅     | `admin-model-card-create.spec.ts`                                                                      |
+| Open edit modal                                           | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
+| Update model card fields                                  | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
+| Edit validation                                           | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
+| Cancel edit modal                                         | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
+| Single delete with confirmation                           | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Cancel single delete                                      | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Delete card + folder together (checkbox)                  | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Notification + Go to Trash with folder filter             | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Delete card only, folder kept notification                | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Go to Trash without folder filter                         | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Bulk select and delete                                    | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Cancel bulk delete                                        | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Clear selection                                           | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Select all via header checkbox                            | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Bulk delete + move folders to trash (checkbox)            | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Bulk delete notification → Go to Trash (no folder filter) | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
+| Non-admin access blocked                                  | ✅     | `admin-model-card-access-control.spec.ts`                                                              |
+| URL state persistence (filter/sort/pagination)            | ✅     | `admin-model-card-url-state.spec.ts`                                                                   |
 
-**Coverage: ✅ 28/28 features**
+**Coverage: 🔶 22/28 features (6 skipped — `adminCreateModelCardV2` fails server-side with an unexpected `min_resource` kwarg)**
 
 ---
 
@@ -1159,6 +1212,53 @@
 
 ---
 
+### 31. Admin - Runtime Parameter Metadata (`/admin/deployments?tab=runtime-variant-presets`)
+
+**Test files:** [`e2e/runtime-variant-preset/preset-ui-metadata.spec.ts`](runtime-variant-preset/preset-ui-metadata.spec.ts)
+
+**Requires:** Superadmin login, `runtime-variant-preset-ui-metadata` feature flag (manager ≥ 26.9.0) — tests skip gracefully on older managers instead of failing.
+**Primary action:** "Create Parameter" → `BAIRuntimeVariantPresetSettingModal`
+**Row actions:** Edit → `BAIRuntimeVariantPresetSettingModal`, Delete → `BAIDeleteConfirmModal` (`requireConfirmInput`, so the spec types the parameter name before confirming)
+
+#### Create Parameter — Category / Display Name / UI Option
+
+| Feature                                                                          | Status | Test                                                                                 |
+| -------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------ |
+| Create with Category, Display Name, SELECT UI option (add + remove a choice row) | ✅     | `Superadmin can create a preset with Category, Display Name, and a SELECT UI option` |
+| Create with a SLIDER UI option, values round-trip on reopen                      | ✅     | `Superadmin can create a preset with a SLIDER UI option`                             |
+| Validation: Slider Minimum and Maximum both required                             | ✅     | `Superadmin cannot save a SLIDER UI option without Minimum/Maximum`                  |
+| Validation: Slider Step must be positive                                         | ✅     | `Superadmin cannot save a SLIDER UI option with a negative Step`                     |
+
+#### Edit Parameter
+
+| Feature                                                                    | Status | Test                                                                                |
+| -------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------- |
+| Edit round-trip preserves Category, Display Name, and multiple choice rows | ✅     | `Editing a SELECT preset re-populates category, display name, and every choice row` |
+
+**Coverage: ✅ 5/5 features**
+
+---
+
+### 32. Project-Agnostic Scope — header project context (the project-agnostic `/admin/*` routes)
+
+**Test files:** [`e2e/admin-scope/admin-header-project-selector.spec.ts`](admin-scope/admin-header-project-selector.spec.ts), [`e2e/admin-scope/admin-data-folder-create.spec.ts`](admin-scope/admin-data-folder-create.spec.ts)
+
+FR-3414 / FR-3415 / ADR-0001: the project-agnostic routes — every `/admin/*`
+route except `admin-dashboard`, which still depends on the ambient project and
+is deliberately out of scope — operate above project scope — the header project selector is hidden there, folder creation asks for the target project inside the modal, and the Environments page selects its project in the page. The route list is derived from `react/src/helper/projectAgnosticRoutes.ts` (minus the feature-flag-gated `scheduler` / `rbac` / `reservoir`, which are not navigable on every test cluster), so a newly gated page is covered automatically.
+
+| Feature                                                                  | Covered | Test                                                                               |
+| ------------------------------------------------------------------------ | :-----: | ---------------------------------------------------------------------------------- |
+| Header project selector absent on every project-agnostic route           |   ✅    | `selector is absent on every project-agnostic route`                               |
+| Environments page offers in-page project selection instead               |   ✅    | `the Environments page selects its project in the page, not the header`            |
+| Header project selector present on the user Data page                    |   ✅    | `selector is present on the user Data page`                                        |
+| Leaving an admin route restores the previous selection untouched         |   ✅    | `leaving an admin route restores the previous selection untouched`                 |
+| Folder created from admin Data page lands in the in-modal chosen project |   ✅    | `folder created from the admin Data page lands in the project chosen in the modal` |
+
+**Coverage: 5 / 5 features (100%)**
+
+---
+
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
@@ -1261,26 +1361,6 @@ To efficiently build new E2E tests, these POMs should be created:
 
 ---
 
-### 30. Project-Agnostic Scope — header project context (the project-agnostic `/admin/*` routes)
-
-**Test files:** [`e2e/admin-scope/admin-header-project-selector.spec.ts`](admin-scope/admin-header-project-selector.spec.ts), [`e2e/admin-scope/admin-data-folder-create.spec.ts`](admin-scope/admin-data-folder-create.spec.ts)
-
-FR-3414 / FR-3415 / ADR-0001: the project-agnostic routes — every `/admin/*`
-route except `admin-dashboard`, which still depends on the ambient project and
-is deliberately out of scope — operate above project scope — the header project selector is hidden there, folder creation asks for the target project inside the modal, and the Environments page selects its project in the page. The route list is derived from `react/src/helper/projectAgnosticRoutes.ts` (minus the feature-flag-gated `scheduler` / `rbac` / `reservoir`, which are not navigable on every test cluster), so a newly gated page is covered automatically.
-
-| Feature                                                                  | Covered | Test                                                                               |
-| ------------------------------------------------------------------------ | :-----: | ---------------------------------------------------------------------------------- |
-| Header project selector absent on every project-agnostic route           |   ✅    | `selector is absent on every project-agnostic route`                               |
-| Environments page offers in-page project selection instead               |   ✅    | `the Environments page selects its project in the page, not the header`            |
-| Header project selector present on the user Data page                    |   ✅    | `selector is present on the user Data page`                                        |
-| Leaving an admin route restores the previous selection untouched         |   ✅    | `leaving an admin route restores the previous selection untouched`                 |
-| Folder created from admin Data page lands in the in-modal chosen project |   ✅    | `folder created from the admin Data page lands in the project chosen in the modal` |
-
-**Coverage: 5 / 5 features (100%)**
-
----
-
 ## Coverage Matrix (Quick Reference)
 
 | Page Route                             | Functional Tests | Visual Tests | Priority |
@@ -1318,7 +1398,6 @@ is deliberately out of scope — operate above project scope — the header proj
 | App Launcher (modal)                   |        🔶        |      ❌      |    -     |
 | Plugin System (config-based)           |        ✅        |      ❌      |    -     |
 | `/admin-serving?tab=auto-scaling-rule` |        🔶        |      ❌      |    -     |
-| `/admin/{session,deployments,data}`    |        ✅        |      ❌      |    -     |
 
 ---
 

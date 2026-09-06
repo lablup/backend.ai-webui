@@ -25,7 +25,7 @@ import {
   BAIFlex,
   BAINameActionCell,
   BAIPropertyFilter,
-  BAITableAstryx,
+  BAITable,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
   filterOutNullAndUndefined,
@@ -60,6 +60,7 @@ export type ContainerRegistry = NonNullable<
 const ContainerRegistryList: React.FC<{
   style?: React.CSSProperties;
 }> = ({ style }) => {
+  'use memo';
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -479,7 +480,8 @@ const ContainerRegistryList: React.FC<{
           />
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={(record) => record.id}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
@@ -528,13 +530,13 @@ const ContainerRegistryList: React.FC<{
               key: 'registry-added',
               content: t('registry.RegistrySuccessfullyAdded'),
             });
+            updateFetchKey();
           } else if (type === 'modify') {
             message.success({
               key: 'registry-modified',
               content: t('registry.RegistrySuccessfullyModified'),
             });
           }
-          updateFetchKey();
           setEditingRegistry(null);
           setIsNewModalOpen(false);
         }}

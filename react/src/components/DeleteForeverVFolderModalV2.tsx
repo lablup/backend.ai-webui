@@ -5,17 +5,20 @@
 import { DeleteForeverVFolderModalV2Fragment$key } from '../__generated__/DeleteForeverVFolderModalV2Fragment.graphql';
 import { DeleteForeverVFolderModalV2Mutation } from '../__generated__/DeleteForeverVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
-import BAIDeleteConfirmModal from './astryx-bui/BAIDeleteConfirmModalAstryx';
-import type { BAIDeleteConfirmModalAstryxProps } from './astryx-bui/BAIDeleteConfirmModalAstryx';
-import { toLocalId, useErrorMessageResolver } from 'backend.ai-ui';
+import {
+  BAIDeleteConfirmModal,
+  type BAIDeleteConfirmModalProps,
+  toLocalId,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface DeleteForeverVFolderModalV2Props extends Omit<
-  BAIDeleteConfirmModalAstryxProps,
-  'confirmText' | 'items' | 'title' | 'onAction' | 'isOpen' | 'onOpenChange'
+  BAIDeleteConfirmModalProps,
+  'confirmText' | 'items' | 'title' | 'onOk' | 'isOpen' | 'onOpenChange'
 > {
   /** App-level contract, kept: consumers outside this area use it. */
   open?: boolean;
@@ -80,9 +83,10 @@ const DeleteForeverVFolderModalV2: React.FC<
             })
           : undefined
       }
-      actionLabel={t('data.folders.DeleteForever')}
-      cancelLabel={t('button.Cancel')}
-      isActionLoading={isInFlightBulkPurge}
+      maskClosable={false}
+      okText={t('data.folders.DeleteForever')}
+      cancelText={t('button.Cancel')}
+      confirmLoading={isInFlightBulkPurge}
       items={_.map(purgeable, (vfolder) => ({
         key: vfolder.id ?? '',
         label: vfolder.metadata?.name ?? '',
@@ -90,9 +94,9 @@ const DeleteForeverVFolderModalV2: React.FC<
       requireConfirmInput
       confirmText={confirmText}
       inputLabel={t('dialog.PleaseTypeToConfirm', { confirmText })}
-      inputPlaceholder={confirmText}
+      inputProps={{ placeholder: confirmText }}
       cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
-      onAction={() => {
+      onOk={() => {
         if (purgeable.length === 0) {
           onRequestClose?.(false);
           return;

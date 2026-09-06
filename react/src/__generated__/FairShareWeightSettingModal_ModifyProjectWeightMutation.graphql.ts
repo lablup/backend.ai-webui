@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<396a0b321092f41cd83ed26af33f368b>>
+ * @generated SignedSource<<04f6d87b27b50eca25c6ff65e16e9743>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,11 @@ export type FairShareWeightSettingModal_ModifyProjectWeightMutation$data = {
   readonly adminUpsertProjectFairShareWeight: {
     readonly projectFairShare: {
       readonly id: string;
+      readonly spec: {
+        readonly usesDefault: boolean;
+        readonly weight: any;
+      };
+      readonly updatedAt: string;
     };
   } | null | undefined;
 };
@@ -67,6 +72,38 @@ v1 = [
             "kind": "ScalarField",
             "name": "id",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "FairShareSpec",
+            "kind": "LinkedField",
+            "name": "spec",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "weight",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "usesDefault",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "updatedAt",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -93,16 +130,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "57da9877f8e9de7e9e6493d1b18ece4b",
+    "cacheID": "3d7b671d2e4874fa7b9d5e0334deca1f",
     "id": null,
     "metadata": {},
     "name": "FairShareWeightSettingModal_ModifyProjectWeightMutation",
     "operationKind": "mutation",
-    "text": "mutation FairShareWeightSettingModal_ModifyProjectWeightMutation(\n  $input: UpsertProjectFairShareWeightInput!\n) {\n  adminUpsertProjectFairShareWeight(input: $input) {\n    projectFairShare {\n      id\n    }\n  }\n}\n"
+    "text": "mutation FairShareWeightSettingModal_ModifyProjectWeightMutation(\n  $input: UpsertProjectFairShareWeightInput!\n) {\n  adminUpsertProjectFairShareWeight(input: $input) {\n    projectFairShare {\n      id\n      spec {\n        weight\n        usesDefault\n      }\n      updatedAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c706d161db116c6b402955210682f8a1";
+(node as any).hash = "f9d0cec3d28e695a0c66dedd50a8754e";
 
 export default node;

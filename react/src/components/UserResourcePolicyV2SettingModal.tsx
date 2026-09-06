@@ -21,7 +21,7 @@ import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

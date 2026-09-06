@@ -6,14 +6,12 @@ import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/D
 import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { Heading } from '@astryxdesign/core/Heading';
-import {
-  MetadataList,
-  MetadataListItem,
-} from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAICard,
   BAIFlex,
+  BAIMetadataList,
   BAIModal,
   BAIModalProps,
   BAIText,
@@ -158,7 +156,7 @@ const DeploymentPresetDetailModal: React.FC<
             title={t('adminDeploymentPreset.SectionImage')}
             styles={{ body: { paddingTop: 0 } }}
           >
-            <MetadataList columns={1}>
+            <BAIMetadataList columns={1}>
               <MetadataListItem label={t('adminDeploymentPreset.Image')}>
                 {imageCanonicalName ? (
                   <BAIText copyable>{imageCanonicalName}</BAIText>
@@ -169,21 +167,21 @@ const DeploymentPresetDetailModal: React.FC<
               <MetadataListItem label={t('adminDeploymentPreset.Runtime')}>
                 {preset.runtimeVariant?.name ?? preset.runtimeVariantId}
               </MetadataListItem>
-            </MetadataList>
+            </BAIMetadataList>
           </BAICard>
           <BAICard
             size="small"
             title={t('adminDeploymentPreset.SectionCluster')}
             styles={{ body: { paddingTop: 0 } }}
           >
-            <MetadataList columns={2}>
+            <BAIMetadataList columns={2}>
               <MetadataListItem label={t('adminDeploymentPreset.ClusterMode')}>
                 {preset.cluster?.clusterMode || '-'}
               </MetadataListItem>
               <MetadataListItem label={t('adminDeploymentPreset.ClusterSize')}>
                 {preset.cluster?.clusterSize ?? '-'}
               </MetadataListItem>
-            </MetadataList>
+            </BAIMetadataList>
           </BAICard>
           <BAICard
             size="small"
@@ -207,7 +205,7 @@ const DeploymentPresetDetailModal: React.FC<
               />
               {(preset.resource?.resourceOpts?.filter((o) => o.name !== 'shmem')
                 .length ?? 0) > 0 && (
-                <MetadataList columns={2}>
+                <BAIMetadataList columns={2}>
                   {(preset.resource?.resourceOpts ?? [])
                     .filter((opt) => opt.name !== 'shmem')
                     .map((opt) => (
@@ -215,7 +213,7 @@ const DeploymentPresetDetailModal: React.FC<
                         {opt.value}
                       </MetadataListItem>
                     ))}
-                </MetadataList>
+                </BAIMetadataList>
               )}
             </BAIFlex>
           </BAICard>
@@ -224,7 +222,7 @@ const DeploymentPresetDetailModal: React.FC<
             title={t('adminDeploymentPreset.SectionDeploymentDefaults')}
             styles={{ body: { paddingTop: 0 } }}
           >
-            <MetadataList columns={2}>
+            <BAIMetadataList columns={2}>
               <MetadataListItem label={t('adminDeploymentPreset.Replicas')}>
                 {preset.deploymentDefaults?.replicaCount ?? '-'}
               </MetadataListItem>
@@ -243,7 +241,7 @@ const DeploymentPresetDetailModal: React.FC<
                     : t('button.No')
                   : '-'}
               </MetadataListItem>
-            </MetadataList>
+            </BAIMetadataList>
           </BAICard>
           {hasServiceConfig && (
             <BAICard
@@ -251,7 +249,7 @@ const DeploymentPresetDetailModal: React.FC<
               title={t('adminDeploymentPreset.SectionHealthCheck')}
               styles={{ body: { paddingTop: 0 } }}
             >
-              <MetadataList columns={isHealthCheckEnabled ? 2 : 1}>
+              <BAIMetadataList columns={isHealthCheckEnabled ? 2 : 1}>
                 <MetadataListItem
                   label={t('adminDeploymentPreset.modelDef.EnableHealthCheck')}
                 >
@@ -305,7 +303,7 @@ const DeploymentPresetDetailModal: React.FC<
                     </MetadataListItem>
                   </>
                 )}
-              </MetadataList>
+              </BAIMetadataList>
             </BAICard>
           )}
         </BAIFlex>

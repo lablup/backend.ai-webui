@@ -102,7 +102,7 @@ async function fillLoginForm(page: Page): Promise<void> {
   await page.getByLabel('Email or Username').fill(TEST_EMAIL);
   await page.getByLabel('Password').fill(TEST_PASSWORD);
 
-  const endpointInput = page.getByLabel('Endpoint');
+  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
@@ -164,7 +164,7 @@ test.describe(
       });
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       const concurrentModal = page.getByRole('dialog', {
         name: 'Logged in elsewhere',
@@ -201,7 +201,7 @@ test.describe(
       });
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       const concurrentModal = page.getByRole('dialog', {
         name: 'Logged in elsewhere',
@@ -219,7 +219,9 @@ test.describe(
       );
       await expect(page.getByLabel('Password')).toBeVisible();
       await expect(page.getByLabel('Password')).toHaveValue(TEST_PASSWORD);
-      await expect(page.getByLabel('Endpoint')).toHaveValue(webServerEndpoint);
+      await expect(page.getByRole('textbox', { name: 'Endpoint' })).toHaveValue(
+        webServerEndpoint,
+      );
     });
 
     // ── 3. Force login sends force=true ──────────────────────────────────
@@ -270,7 +272,7 @@ test.describe(
       });
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Modal appears
       const concurrentModal = page.getByRole('dialog', {
@@ -361,7 +363,7 @@ test.describe(
       });
 
       await fillLoginForm(page);
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Step 1: Concurrent session modal
       const concurrentModal = page.getByRole('dialog', {
@@ -381,7 +383,7 @@ test.describe(
 
       // Step 4: Enter OTP and submit
       await page.getByPlaceholder('One-time password').fill('123456');
-      await page.getByLabel('Login', { exact: true }).click();
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Wait for the 3rd login call to be captured
       await expect

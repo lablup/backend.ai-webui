@@ -1,0 +1,35 @@
+# See vitest-react.yml's header for the one-workflow-per-suite rationale.
+name: Vitest (root)
+
+on:
+  pull_request:
+    paths:
+      - scripts/**
+      - src/**
+      - vitest.config.ts
+      - .github/workflows/vitest-root.yml
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  # Keyed by PR number, not branch name: branch names are unique only within a
+  # repository, so two fork PRs both using e.g. `patch-1` would share a group and
+  # cancel each other's runs.
+  group: vitest-root-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  root-vitest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+      - name: Run Vitest with coverage
+        run: pnpm exec vitest run --coverage
+      - name: Report coverage on PR
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          name: root-coverage

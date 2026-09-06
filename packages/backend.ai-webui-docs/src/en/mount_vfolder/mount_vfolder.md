@@ -73,7 +73,8 @@ Please note the contents of the file can be chekced with `cat` command.
 
 Now delete the compute session and go to the Storage page.
 Locate the `user2-vfolder folder`, open a file explorer and check that the `test_file` exists.
-Click the `download` button in `Actions` tab to download the file to the local machine and open it
+Click the `Download` button on the file's row, which appears in the `Name` column,
+to download the file to the local machine and open it
 to confirm that the contents are \"file inside user2-vfolder\".
 
 ![](../images/download_file_from_folder.png)

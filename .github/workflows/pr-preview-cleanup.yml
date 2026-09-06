@@ -1,0 +1,161 @@
+# Keep gh-pages bounded.
+#
+# Two independent chores, both cheap and both necessary because GitHub Pages has
+# a hard 1 GB published-site ceiling and this repository is already large:
+#
+#   cleanup  — delete `pr/<n>/` for every PR that is no longer open. At ~18 MB
+#              per preview and ~29% of PRs qualifying for one, the ~98 open PRs
+#              project to ~520 MB; without this the merged ones never leave.
+#   compact  — squash gh-pages history to a single orphan commit once a week, so
+#              the branch's *history* of those 18 MB trees stops growing the
+#              repository.
+#
+# The cleanup reconciles against the live open-PR list on every run, so it needs
+# no `closed` event to be correct — firing on any preview build (plus the daily
+# cron) is enough to garbage-collect.
+#
+# SAFETY: never checks out or runs PR-controlled code. It only edits gh-pages.
+
+name: PR Preview Cleanup
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # daily — reclaim closed PRs' previews
+    - cron: "17 9 * * 1" # Mondays — compact gh-pages history
+  workflow_run:
+    workflows: ["PR Preview"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List what would be deleted without deleting it"
+        type: boolean
+        default: false
+      compact:
+        description: "Also squash gh-pages history"
+        type: boolean
+        default: false
+
+permissions: {}
+
+concurrency:
+  # Deliberately its own group, not shared with the deploy: joining that group
+  # could cancel a pending deploy and leave the site stale. Races against a
+  # concurrent deploy are handled by the push retry instead.
+  group: pr-preview-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    # Skip on the weekly compaction cron — that fires the `compact` job instead.
+    if: >-
+      github.event_name != 'schedule' || github.event.schedule == '0 6 * * *'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Check out the maintenance scripts
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts/pr-preview
+
+      - name: Remove previews for closed PRs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+          WORK_DIR="$PWD"
+          PAGES_DIR="${RUNNER_TEMP}/gh-pages"
+          MAX_ATTEMPTS=5
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # One list for the whole run: an open PR that closes mid-run keeps its
+          # preview until tomorrow, which is the harmless direction to err in.
+          OPEN_PRS="$(gh pr list --repo "${{ github.repository }}" --state open --limit 500 --json number --jq '.[].number' | sort -u)"
+          echo "Open PRs: $(echo "$OPEN_PRS" | wc -w)"
+
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            echo "::group::Attempt ${attempt} of ${MAX_ATTEMPTS}"
+            cd "$WORK_DIR"
+            rm -rf "$PAGES_DIR"
+
+            if ! git clone --depth=1 --single-branch --branch gh-pages "$REPO_URL" "$PAGES_DIR" 2>/dev/null; then
+              echo "No gh-pages branch — nothing to clean."
+              echo "::endgroup::"
+              exit 0
+            fi
+
+            REMOVED=0
+            if [ -d "${PAGES_DIR}/pr" ]; then
+              for dir in "${PAGES_DIR}"/pr/*/; do
+                [ -d "$dir" ] || continue
+                n="$(basename "$dir")"
+                case "$n" in ''|*[!0-9]*) echo "Skipping non-numeric entry: $n"; continue ;; esac
+                if echo "$OPEN_PRS" | grep -qx "$n"; then continue; fi
+                SIZE="$(du -sh "$dir" | cut -f1)"
+                if [ "${DRY_RUN:-false}" = "true" ]; then
+                  echo "DRY RUN — would delete pr/${n} (${SIZE})"
+                else
+                  echo "Deleting pr/${n} (${SIZE}) — PR is not open."
+                  rm -rf "$dir"
+                  REMOVED=$((REMOVED + 1))
+                fi
+              done
+            fi
+
+            if [ "${DRY_RUN:-false}" = "true" ]; then
+              echo "Dry run complete; nothing was pushed."
+              echo "::endgroup::"
+              exit 0
+            fi
+
+            node .github/scripts/pr-preview/write-index.mjs --root "$PAGES_DIR"
+
+            cd "$PAGES_DIR"
+            git add -A
+            git commit -m "Clean up ${REMOVED} stale PR preview(s)" \
+              || { echo "Nothing to clean up."; echo "::endgroup::"; exit 0; }
+
+            if git push origin gh-pages; then
+              echo "Removed ${REMOVED} preview(s) on attempt ${attempt}."
+              echo "::endgroup::"
+              exit 0
+            fi
+
+            echo "Push failed (likely a concurrent deploy); retrying in $((attempt * 2))s."
+            echo "::endgroup::"
+            sleep $((attempt * 2))
+          done
+
+          echo "::error::Failed to push the cleanup after ${MAX_ATTEMPTS} attempts."
+          exit 1
+
+  compact:
+    # Sequenced after `cleanup`, never beside it. On a manual dispatch with
+    # compact=true the cleanup condition is also true, and two jobs cloning the
+    # same tip and pushing would race — the compaction would rewrite history
+    # that the cleanup had just changed. `always()` keeps this running on the
+    # weekly cron, where `cleanup` is skipped rather than run.
+    needs: [cleanup]
+    if: >-
+      always() &&
+      (needs.cleanup.result == 'success' || needs.cleanup.result == 'skipped') &&
+      (github.event.schedule == '17 9 * * 1' || github.event.inputs.compact == 'true')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts/pr-preview
+
+      - name: Compact gh-pages history
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash .github/scripts/pr-preview/compact-gh-pages-history.sh

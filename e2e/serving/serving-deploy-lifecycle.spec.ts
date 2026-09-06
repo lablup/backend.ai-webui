@@ -57,11 +57,12 @@ const HEALTH_CHECK_INTERVAL = 5_000; // 5 seconds
 /**
  * Locates the BAIFetchKeyButton (refresh/reload button) on the serving page.
  * The icon is lucide `RotateCw` (no antd `.anticon-reload` class since ticket
- * 12); the button carries the native `title="Refresh"` attribute instead
+ * 12); its hover text is an Astryx tooltip (not a native `title` attribute),
+ * but the button always carries `aria-label="Refresh"`
  * (`packages/backend.ai-ui/src/components/BAIFetchKeyButton.tsx`).
  */
 function getTableRefreshButton(page: Page) {
-  return page.locator('button[title="Refresh"]').first();
+  return page.getByRole('button', { name: 'Refresh', exact: true }).first();
 }
 
 /**
@@ -86,7 +87,7 @@ async function uploadFixturesToVFolder(
 
   const [fileChooser] = await Promise.all([
     page.waitForEvent('filechooser'),
-    page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+    page.getByRole('menuitem', { name: 'Upload Files' }).click(),
   ]);
 
   const mockServerContent = fs.readFileSync(
@@ -176,23 +177,12 @@ async function createServiceViaUI(
     .first()
     .click({ timeout: 10000 });
 
-  // Switch Model Definition mode from the default "Enter Command" to
-  // "Use Config File" so the service reads the uploaded `model-definition.yaml`
-  // instead of requiring a startCommand input. The uploaded fixture already
-  // defines the start command, port, and health check — toggling here keeps
-  // the test free of duplicated command wiring that has to be maintained in
-  // lockstep with the yaml.
-  //
-  // This toggle is `DeploymentAddRevisionModal.tsx`'s `DefinitionModeSegmented`,
-  // built on Astryx `SegmentedControl` (`@astryxdesign/core/SegmentedControl`)
-  // — a real, directly-clickable `<button role="radio">`
-  // (`SegmentedControlItem.tsx`), unlike antd's Segmented (visually-hidden
-  // input behind a clickable label div), so no separate label click is needed.
-  const useConfigFileRadio = page.getByRole('radio', {
-    name: 'Use Config File',
-  });
-  await useConfigFileRadio.click({ timeout: 10000 });
-  await expect(useConfigFileRadio).toBeChecked({ timeout: 3000 });
+  // FR-3205 removed the "Enter Command" / "Use Config File" mode toggle
+  // (`DefinitionModeSegmented`): whether the service reads the uploaded
+  // `model-definition.yaml` is now driven by the selected runtime variant's
+  // `readsVfolderConfigFiles` (the default `custom` variant reads it), so no
+  // mode switch is needed here — the uploaded fixture's start command, port,
+  // and health check apply as-is.
 
   // Select resource group - click to open dropdown, search, then select option
   const resourceGroupSelect = page
@@ -283,7 +273,7 @@ async function createServiceViaUI(
   // scans all three error channels and surfaces whichever it finds.
   // The floating notification stack is now `BAINotificationStack` (ticket 29
   // rewire) — an error notice carries `data-status="error"` on its item root
-  // (`react/src/components/astryx-bui/BAINotificationStackAstryx.tsx:217`).
+  // (`packages/backend.ai-ui/src/components/BAINotificationStack.tsx`).
   // The toast channel (`App.useApp().message`) is unmigrated antd, so
   // `.ant-message-error` stays.
   const errorNotification = page

@@ -56,10 +56,14 @@ test.describe(
         timeout: 10000,
       });
 
-      // Verify the model gpt-mock-model is available (loaded from mock)
-      await expect(page.getByText(MOCK_MODEL_ID)).toBeVisible({
-        timeout: 10000,
-      });
+      // Verify the model gpt-mock-model is offered as an option (loaded from
+      // mock) — open the selector and assert the option itself, so an
+      // options-loading regression cannot pass on the trigger's label alone.
+      await page.getByText(MOCK_MODEL_ID).first().click();
+      await expect(
+        page.getByRole('option', { name: MOCK_MODEL_ID, exact: true }),
+      ).toBeVisible({ timeout: 10000 });
+      await page.keyboard.press('Escape');
     });
 
     test('User can send a message and receive a streaming response', async ({
@@ -306,11 +310,7 @@ test.describe(
       });
 
       // Click the History (clock/history icon) button
-      const historyButton = page
-        .locator('.ant-card-head-title')
-        .first()
-        .getByRole('button')
-        .last();
+      const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
       // The history drawer opens
@@ -318,7 +318,7 @@ test.describe(
       await expect(drawer).toBeVisible({ timeout: 10000 });
 
       // At least one history entry appears (rendered as table rows in BAITable)
-      const historyItems = drawer.locator('tbody tr.ant-table-row');
+      const historyItems = drawer.getByRole('row');
       await expect(historyItems.first()).toBeVisible({ timeout: 10000 });
     });
 
@@ -347,11 +347,7 @@ test.describe(
       });
 
       // Click the History icon button to open drawer
-      const historyButton = page
-        .locator('.ant-card-head-title')
-        .first()
-        .getByRole('button')
-        .last();
+      const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
       // The history drawer opens
@@ -387,11 +383,7 @@ test.describe(
       });
 
       // Click the "New Chat" (plus icon) button to start a new conversation
-      const newChatButton = page
-        .locator('.ant-card-head-title')
-        .first()
-        .getByRole('button')
-        .nth(1);
+      const newChatButton = page.getByRole('button', { name: 'New Chat' });
       await newChatButton.first().click();
 
       // The message thread should be empty in the new session
@@ -407,11 +399,7 @@ test.describe(
       });
 
       // Open the history drawer
-      const historyButton = page
-        .locator('.ant-card-head-title')
-        .first()
-        .getByRole('button')
-        .last();
+      const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
       const drawer = page.getByRole('dialog', { name: 'History' });
@@ -453,11 +441,8 @@ test.describe(
       });
 
       // Click on the edit (pencil) icon next to the chat session title
-      // The edit button is in the page card head title, with aria-label="Edit"
-      const editButton = page
-        .locator('.ant-card-head-title')
-        .first()
-        .getByRole('button', { name: 'Edit' });
+      // (EditableChatTitle's IconButton, label t('button.Edit') = "Edit")
+      const editButton = page.getByRole('button', { name: 'Edit' });
       await editButton.first().click();
 
       // Clear the existing title and type a new one
@@ -472,11 +457,7 @@ test.describe(
       });
 
       // Open the history drawer and verify the renamed entry
-      const historyButton = page
-        .locator('.ant-card-head-title')
-        .first()
-        .getByRole('button')
-        .last();
+      const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
       const drawer = page.getByRole('dialog', { name: 'History' });
@@ -509,11 +490,7 @@ test.describe(
       });
 
       // Start new session
-      const newChatButton = page
-        .locator('.ant-card-head-title')
-        .first()
-        .getByRole('button')
-        .nth(1);
+      const newChatButton = page.getByRole('button', { name: 'New Chat' });
       await newChatButton.first().click();
 
       // Second session
@@ -524,11 +501,7 @@ test.describe(
       });
 
       // Open history drawer
-      const historyButton = page
-        .locator('.ant-card-head-title')
-        .first()
-        .getByRole('button')
-        .last();
+      const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
       const drawer = page.getByRole('dialog', { name: 'History' });
@@ -543,7 +516,7 @@ test.describe(
       // Click the trash icon on the first session (not the currently active one)
       // History entries are table rows; find by text content
       const firstSessionEntry = drawer
-        .locator('tbody tr.ant-table-row')
+        .getByRole('row')
         .filter({ hasText: 'First session' })
         .first();
       // The trash button is the only button in the row's second cell
@@ -577,11 +550,7 @@ test.describe(
       });
 
       // Open history drawer
-      const historyButton = page
-        .locator('.ant-card-head-title')
-        .first()
-        .getByRole('button')
-        .last();
+      const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
       const drawer = page.getByRole('dialog', { name: 'History' });
@@ -589,7 +558,7 @@ test.describe(
 
       // Click the trash icon on the only visible history entry (current session)
       // History entries are table rows; the trash button is the only button in each row
-      const historyEntry = drawer.locator('tbody tr.ant-table-row').first();
+      const historyEntry = drawer.getByRole('row').first();
       const trashButton = historyEntry.getByRole('button').first();
       await trashButton.click();
 
@@ -666,13 +635,14 @@ test.describe(
       await chatInput.fill('Trigger an error');
       await chatInput.press('Enter');
 
-      // Verify an error alert banner is visible within the chat card
-      await expect(
-        page
-          .locator('.ant-alert-error')
-          .or(page.locator('[role="alert"]'))
-          .first(),
-      ).toBeVisible({ timeout: 15000 });
+      // ChatCard renders the completion failure as an Astryx `Banner
+      // status="error"` (ChatCard.tsx), and Banner stamps `role="alert"` on
+      // error/warning. The old CSS `[role="alert"]` fallback resolved to a
+      // hidden, empty live region first; the role locator only matches the
+      // banner that is actually in the accessibility tree.
+      const errorAlert = page.getByRole('alert');
+      await expect(errorAlert).toBeVisible({ timeout: 15000 });
+      await expect(errorAlert).toContainText(/error/i);
     });
 
     test.fixme('User sees an error alert when the endpoint URL is invalid', async ({
@@ -821,29 +791,23 @@ test.describe(
         timeout: 10000,
       });
 
-      // Locate and click the "Compare" button (ArrowRightLeftIcon or tooltip "Create Compare Chat")
-      // Button layout in .ant-card-head nth(1) for single pane:
-      //   nth(0)=detail-page (EndpointSelect compact btn), nth(1)=control, nth(2)=compare, nth(3)=more
-      const compareButton = page
-        .locator('.ant-card-head')
-        .nth(1)
-        .getByRole('button')
-        .nth(2);
+      // Locate and click the "Compare" button (ArrowRightLeftIcon, accessible
+      // name t('chatui.CreateCompareChat') = "Add comparison chat")
+      const compareButton = page.getByRole('button', {
+        name: 'Add comparison chat',
+      });
       await compareButton.first().click();
 
       // A second ChatCard should now be visible
       const chatInputs = page.getByLabel('Type your message here...');
       await expect(chatInputs).toHaveCount(2, { timeout: 10000 });
 
-      // The sync toggle should be visible in both panes (only shown when closable/multi-pane)
-      // Button layout in .ant-card-head nth(1) for multi-pane:
-      //   nth(0)=detail-page, nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
-      const syncTogglePane1 = page
-        .locator('.ant-card-head')
-        .nth(1)
-        .getByRole('button')
-        .nth(1);
-      await expect(syncTogglePane1).toBeVisible({ timeout: 10000 });
+      // The sync toggle should be visible in both panes (only shown when
+      // closable/multi-pane) — SyncSwitch's accessible name is "Sync chat input"
+      const syncTogglePane1 = page.getByRole('button', {
+        name: 'Sync chat input',
+      });
+      await expect(syncTogglePane1.first()).toBeVisible({ timeout: 10000 });
     });
 
     test('User can close a chat pane when multiple panes are open', async ({
@@ -859,11 +823,9 @@ test.describe(
 
       // Clone a second pane
       // Button layout for single pane: nth(0)=detail-page, nth(1)=control, nth(2)=compare, nth(3)=more
-      const compareButton = page
-        .locator('.ant-card-head')
-        .nth(1)
-        .getByRole('button')
-        .nth(2);
+      const compareButton = page.getByRole('button', {
+        name: 'Add comparison chat',
+      });
       await compareButton.first().click();
 
       // Verify two panes are visible
@@ -874,12 +836,14 @@ test.describe(
         },
       );
 
-      // In the second pane, click the "More" menu button
-      // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
+      // In the second pane, click the "More actions" menu button.
+      // `.astryx-card` nth(0)=page card, nth(1)=first chat card,
+      // nth(2)=second chat card (Astryx `Card` renders `astryx-card`; antd's
+      // `.ant-card` is gone).
       const secondCardMoreButton = page
-        .locator('.ant-card')
+        .locator('.astryx-card')
         .nth(2)
-        .getByRole('button', { name: 'more' });
+        .getByRole('button', { name: 'More actions' });
       await secondCardMoreButton.click();
 
       // Click "Delete Chat" in the dropdown menu (chatui.DeleteChattingSession = "Delete Chat")
@@ -897,12 +861,9 @@ test.describe(
       );
 
       // The sync toggle is no longer visible (single pane has no sync toggle)
-      // In single pane mode, the ChatCard header has:
-      //   detail-page(0) + control(1) + compare(2) + more(3) = 4 buttons (no sync)
-      // Check by ensuring the card head only has 4 buttons (no sync button)
       await expect(
-        page.locator('.ant-card-head').nth(1).getByRole('button'),
-      ).toHaveCount(4, { timeout: 5000 });
+        page.getByRole('button', { name: 'Sync chat input' }),
+      ).toHaveCount(0, { timeout: 5000 });
     });
 
     test('User cannot add more than 10 chat panes', async ({
@@ -916,18 +877,13 @@ test.describe(
         timeout: 10000,
       });
 
-      // Click the "Compare" button 10 times to bring the total to 11 panes.
-      // isClonable(chatLength) = chatLength <= 10, so cloneable becomes false at 11 panes.
-      // Button layout (single pane): nth(0)=detail-page, nth(1)=control, nth(2)=compare, nth(3)=more
-      // Button layout (multi-pane):  nth(0)=detail-page, nth(1)=sync, nth(2)=control, nth(3)=compare, nth(4)=more
+      // Click the "Add comparison chat" button 10 times to bring the total to
+      // 11 panes. isClonable(chatLength) = chatLength <= 10, so cloneable
+      // becomes false at 11 panes.
       for (let i = 0; i < 10; i++) {
-        // First iteration: single pane, compare is nth(2); subsequent: multi-pane, compare is nth(3)
-        const compareButtonIndex = i === 0 ? 2 : 3;
         const compareButton = page
-          .locator('.ant-card-head')
-          .nth(1)
-          .getByRole('button')
-          .nth(compareButtonIndex);
+          .getByRole('button', { name: 'Add comparison chat' })
+          .first();
         await compareButton.click();
         // Wait for the new pane to appear before clicking again
         await expect(page.getByLabel('Type your message here...')).toHaveCount(
@@ -944,12 +900,11 @@ test.describe(
         },
       );
 
-      // The "Compare" button should no longer be visible (cloneable = false when count > 10)
-      // With 11 panes, the card head has:
-      //   detail-page(0) + sync(1) + control(2) + more(3) = 4 buttons (no compare)
+      // The "Add comparison chat" button should no longer be visible
+      // (cloneable = false when count > 10)
       await expect(
-        page.locator('.ant-card-head').nth(1).getByRole('button'),
-      ).toHaveCount(4, { timeout: 5000 });
+        page.getByRole('button', { name: 'Add comparison chat' }),
+      ).toHaveCount(0, { timeout: 5000 });
     });
 
     test('User can select different endpoints in each chat pane', async ({
@@ -965,11 +920,9 @@ test.describe(
 
       // Clone a second pane
       // Button layout for single pane: nth(0)=detail-page, nth(1)=control, nth(2)=compare, nth(3)=more
-      const compareButton = page
-        .locator('.ant-card-head')
-        .nth(1)
-        .getByRole('button')
-        .nth(2);
+      const compareButton = page.getByRole('button', {
+        name: 'Add comparison chat',
+      });
       await compareButton.first().click();
 
       // Verify two panes are visible
@@ -980,40 +933,31 @@ test.describe(
         },
       );
 
+      // One deployment selector per pane, in pane order. `DeploymentSelect`
+      // renders a `BAIComplexSelect` with `label={t('chatui.Deployment')}` +
+      // `isLabelHidden`, so its trigger button's accessible name is
+      // "Deployment" and its text content is the selected deployment name —
+      // no `.astryx-card` index and no `[title]` attribute needed.
+      const deploymentTriggers = page.getByRole('button', {
+        name: 'Deployment',
+        exact: true,
+      });
+      await expect(deploymentTriggers).toHaveCount(2, { timeout: 10000 });
+
       // In the second pane, open the endpoint selector dropdown
-      // ant-card nth(0)=page card, nth(1)=first chat card, nth(2)=second chat card
-      // Click the endpoint text (not the combobox input) to open the dropdown
-      const secondCardEndpointText = page
-        .locator('.ant-card')
-        .nth(2)
-        .getByText('mock-endpoint')
-        .first();
+      await deploymentTriggers.nth(1).click();
 
-      await secondCardEndpointText.click();
-
-      // Select the second mock endpoint
-      await page
-        .getByRole('option', { name: 'mock-endpoint-b' })
-        .or(
-          page
-            .locator('.ant-select-item-option')
-            .filter({ hasText: 'mock-endpoint-b' }),
-        )
-        .first()
-        .click();
+      // Select the second mock endpoint (BAIComplexSelect popup rows are
+      // `role="option"` — see P26-2 in BAIComplexSelect.tsx)
+      await page.getByRole('option', { name: 'mock-endpoint-b' }).click();
 
       // The second pane's endpoint selector shows the second endpoint
-      // Use [title] to target the visible select display value (avoids hidden aria-live elements)
-      await expect(
-        page.locator('.ant-card').nth(2).locator('[title="mock-endpoint-b"]'),
-      ).toBeVisible({
+      await expect(deploymentTriggers.nth(1)).toHaveText('mock-endpoint-b', {
         timeout: 10000,
       });
 
       // The first pane's endpoint selector still shows the original endpoint
-      await expect(
-        page.locator('.ant-card').nth(1).locator('[title="mock-endpoint"]'),
-      ).toBeVisible({
+      await expect(deploymentTriggers.nth(0)).toHaveText('mock-endpoint', {
         timeout: 5000,
       });
     });
@@ -1044,34 +988,37 @@ test.describe('Chat Parameters', { tag: ['@chat', '@functional'] }, () => {
       timeout: 10000,
     });
 
-    // Click the "Parameters" (ControlOutlined) button in the chat card header
-    const parametersButton = page.getByRole('button', { name: 'control' });
-    await parametersButton.first().click();
+    // The parameters trigger is a `SlidersHorizontal` IconButton labelled
+    // t('chatui.chat.parameter.Title') = "Parameters" (ChatHeader.tsx); the
+    // antd icon-derived name 'control' is gone.
+    const parametersButton = page.getByRole('button', { name: 'Parameters' });
+    await parametersButton.click();
 
-    // Verify a popover with parameter sliders appears (rendered as tooltip role)
-    const popover = page.getByRole('tooltip', { name: /parameters/i });
-    await expect(popover.first()).toBeVisible({ timeout: 10000 });
+    // Astryx `Popover` stamps role="dialog" on its content wrapper
+    // (usePopover.tsx, default role). ChatHeader passes no `label`, so the
+    // dialog is unnamed and has to be identified by its content.
+    const popover = page.getByRole('dialog').filter({ hasText: 'Parameters' });
+    await expect(popover).toBeVisible({ timeout: 10000 });
 
-    // Verify the "Use Parameters" switch is present (it's a switch with no accessible name)
-    const useParamsToggle = popover.first().getByRole('switch');
-    await expect(useParamsToggle.first()).toBeVisible({ timeout: 10000 });
+    // The "use parameters" toggle is an Astryx `Switch` (role="switch")
+    // labelled "Parameters" with `isLabelHidden` (ChatParametersSliders.tsx)
+    const useParamsToggle = popover.getByRole('switch', { name: 'Parameters' });
+    await expect(useParamsToggle).toBeVisible({ timeout: 10000 });
 
     // Enable the "Use Parameters" option by clicking the switch
-    await useParamsToggle.first().click();
+    await useParamsToggle.click();
 
-    // Verify "Temperature" slider is present (translation key resolves to "Temperature")
-    const temperatureLabel = popover.first().getByText(/temperature/i);
-    await expect(temperatureLabel.first()).toBeVisible({ timeout: 10000 });
+    // Verify the "Temperature" slider is present
+    // (chatui.chat.parameter.label.Temperature = "Temperature")
+    await expect(popover.getByText('Temperature')).toBeVisible({
+      timeout: 10000,
+    });
 
     // Close the popover by clicking somewhere outside of it (e.g., the chat message area)
     await page.getByLabel('Type your message here...').click();
 
-    // Verify the popover closed — check that its inner content is hidden
-    // (ant-popover-container stays in DOM; check the inner content div instead)
-    await expect(
-      page
-        .locator('.ant-popover:not(.ant-popover-hidden)')
-        .filter({ hasText: /parameters/i }),
-    ).not.toBeVisible({ timeout: 5000 });
+    // Verify the popover closed — the native popover leaves the subtree in the
+    // DOM, so assert it left the accessibility tree instead.
+    await expect(popover).toHaveCount(0, { timeout: 5000 });
   });
 });

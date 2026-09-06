@@ -10,7 +10,7 @@ import BAIFormItem from './BAIFormItem';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
-} from './astryx-bui/astryxFormControls';
+} from './astryxFormControls';
 import {
   BAIQuestionIconWithTooltip,
   BAIModal,

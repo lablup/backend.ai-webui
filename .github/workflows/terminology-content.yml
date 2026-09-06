@@ -61,6 +61,11 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  # Read-only whole-repo scan — cancelling a superseded run loses nothing.
+  group: terminology-content-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   terminology-content:
     runs-on: ubuntu-latest
@@ -70,7 +75,7 @@ jobs:
       # The checker is dependency-free (native Node only) — no pnpm install.
       # package-manager-cache must be off: with pnpm absent from the job, the
       # default cache resolution (`pnpm store path`) would fail setup-node.
-      - uses: actions/setup-node@v6.4.0
+      - uses: actions/setup-node@v7.0.0
         with:
           node-version-file: ".nvmrc"
           package-manager-cache: false

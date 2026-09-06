@@ -12,7 +12,6 @@ import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteScheduli
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { ProjectContextOrNull } from '../types/projectContext';
-import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -22,19 +21,18 @@ import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
-  BAIButton,
   BAICard,
   BAIColumnType,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIId,
   BAIQuestionIconWithTooltip,
-  BAITableAstryx,
+  BAITable,
   BAITag,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -47,7 +45,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { History, CircleHelp } from 'lucide-react';
+import { History } from 'lucide-react';
 import {
   parseAsInteger,
   parseAsString,
@@ -123,19 +121,15 @@ const DeploymentReplicasCard: React.FC<DeploymentReplicasCardProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   return (
     <BAICard
       title={
         <BAIFlex gap="xs" align="center">
           {t('deployment.tab.Replicas')}
-          <Tooltip content={t('deployment.tab.description.Replicas')}>
-            <CircleHelp
-              style={{ color: token.colorTextDescription }}
-              size="1em"
-            />
-          </Tooltip>
+          <BAIQuestionIconWithTooltip
+            title={t('deployment.tab.description.Replicas')}
+          />
         </BAIFlex>
       }
       styles={{ body: { paddingTop: 0 } }}
@@ -377,30 +371,33 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         <BAIFlex align="center" gap="xs">
           <ReplicaStatusTag status={toReplicaTagStatus(value)} />
           {supportsRouteSchedulingHistory && (
-            <Tooltip content={t('route.RouteSchedulingHistory')}>
-              <BAIButton
-                type="link"
-                icon={<History size="1em" />}
-                size="small"
-                style={{ padding: 0 }}
-                action={async () => {
-                  const id = safeDecodeUuid(record.id) ?? record.id;
-                  // Render-as-you-fetch: start the request in the open event.
-                  loadRouteHistoryQuery(
-                    {
-                      scope: { routeId: id },
-                      orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
-                      limit: 10,
-                      offset: 0,
-                    },
-                    {
-                      fetchPolicy: 'store-and-network',
-                    },
-                  );
-                  setIsRouteHistoryOpen(true);
-                }}
-              />
-            </Tooltip>
+            // `IconButton`'s own `label`/`tooltip` — the wrapping `Tooltip` left
+            // the button with no accessible name (it resolved to "Action"),
+            // and `type="link"` lost the accent tint (FR-3572).
+            <IconButton
+              className="bai-action-accent"
+              variant="ghost"
+              size="sm"
+              icon={<History size="1em" />}
+              label={t('route.RouteSchedulingHistory')}
+              tooltip={t('route.RouteSchedulingHistory')}
+              clickAction={async () => {
+                const id = safeDecodeUuid(record.id) ?? record.id;
+                // Render-as-you-fetch: start the request in the open event.
+                loadRouteHistoryQuery(
+                  {
+                    scope: { routeId: id },
+                    orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                    limit: 10,
+                    offset: 0,
+                  },
+                  {
+                    fetchPolicy: 'store-and-network',
+                  },
+                );
+                setIsRouteHistoryOpen(true);
+              }}
+            />
           )}
         </BAIFlex>
       ),
@@ -581,7 +578,8 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
           }}
         />
       </BAIFlex>
-      <BAITableAstryx<ReplicaNode>
+      <BAITable<ReplicaNode>
+        scroll={{ x: 'max-content' }}
         rowKey={(record) => record.id}
         dataSource={replicas}
         columns={columns}

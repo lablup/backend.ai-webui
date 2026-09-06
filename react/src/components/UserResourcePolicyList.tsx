@@ -23,7 +23,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   BAIButton,
-  BAITableAstryx,
+  BAITable,
   BAIFlex,
   BAINameActionCell,
   BAIDeleteConfirmModal,
@@ -244,7 +244,8 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
           </BAIButton>
         </BAIFlex>
       </BAIFlex>
-      <BAITableAstryx
+      <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         columns={columns}
         dataSource={filterOutNullAndUndefined(user_resource_policies)}

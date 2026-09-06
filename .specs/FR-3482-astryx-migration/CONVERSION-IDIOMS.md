@@ -126,7 +126,7 @@ sections that select what fills the pane beside it.
 A column with no `dataIndex` renders blank (or throws) after the flip. rc-table's
 `getPathValue` returns the **whole record** when the path is empty, so under antd
 `render: (row) => …` on a computed column works and the app is full of it. The
-tempting fix is to teach `BAITableAstryx.readDataIndex` the same trick, so every
+tempting fix is to teach `BAITable.readDataIndex` the same trick, so every
 call site recovers untouched.
 
 Don't. Reproducing a quirk of the engine being retired inside the engine
@@ -140,7 +140,7 @@ points at; no `dataIndex` means no value, so `value` is `undefined` and the
 record comes from the **second** argument.
 
 ```tsx
-// ❌ antd/rc-table idiom — `row` is undefined under BAITableAstryx
+// ❌ antd/rc-table idiom — `row` is undefined under BAITable
 { key: 'fullImagePath', render: (row) => <Foo>{compute(row)}</Foo> }
 
 // ✅ Astryx-native

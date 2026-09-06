@@ -29,7 +29,6 @@ import {
 } from '../ImageEnvironmentSelectFormItems';
 import InputNumberWithSlider from '../InputNumberWithSlider';
 import ResourcePresetSelect from '../ResourcePresetSelect';
-import BAISegmentedControlItemAstryx from '../astryx-bui/BAISegmentedControlItemAstryx';
 import RemainingMark from './RemainingMark';
 import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
@@ -39,19 +38,20 @@ import { Card } from '@astryxdesign/core/Card';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
 import { VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
+  BAIDynamicUnitInputNumberWithSlider,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
+  BAIProjectResourceGroupSelect,
+  BAISegmentedControlItem,
+  BAISelect,
   useEventNotStable,
   useUpdatableState,
-  BAIDynamicUnitInputNumberWithSlider,
-  BAIProjectResourceGroupSelect,
-  BAISelect,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { CircleHelp, RotateCw } from 'lucide-react';
+import { RotateCw } from 'lucide-react';
 import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -213,15 +213,16 @@ const ClusterModeSegmented: React.FC<{
       {items.map((item) => (
         // FR-3531: the help affordance is a small view that trails the label,
         // not a leading `icon` — Astryx renders the `icon` slot first.
-        <BAISegmentedControlItemAstryx
+        <BAISegmentedControlItem
           key={item.value}
           value={item.value}
           label={
             <span {...stylex.props(clusterModeSegmentedStyles.label)}>
               {item.label}
-              <Tooltip content={item.tooltip}>
-                <CircleHelp size="1em" />
-              </Tooltip>
+              <BAIQuestionIconWithTooltip
+                title={item.tooltip}
+                focusable={false}
+              />
             </span>
           }
         />
@@ -1404,22 +1405,23 @@ const ResourceAllocationFormItems: React.FC<
                               (supportedAcceleratorTypesInRGByImage?.length ??
                                 0) > 0 ? (
                                 <Form.Item
+                                  noStyle
                                   name={['resource', 'acceleratorType']}
                                   initialValue={_.first(
                                     _.keys(acceleratorSlotsInRG),
                                   )}
-                                  style={{
-                                    marginBottom: 0,
-                                    maxWidth: 100,
-                                  }}
                                 >
                                   <BAISelect
+                                    // In an InputGroup the trigger resolves to
+                                    // width:100%; size it to content, bounded,
+                                    // so the number field keeps the row.
                                     style={{
-                                      width: '100%',
+                                      flex: '0 0 auto',
+                                      width: 'auto',
+                                      maxWidth: 100,
                                     }}
                                     autoSelectOption
                                     tabIndex={-1}
-                                    // Do not delete disabled prop. It is necessary to prevent the user from changing the value.
                                     suffixIcon={
                                       _.size(acceleratorSlotsInRG) > 1
                                         ? undefined

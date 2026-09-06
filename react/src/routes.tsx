@@ -7,8 +7,10 @@ import {
   DefaultProvidersForReactRoot,
   RoutingEventHandler,
 } from './components/DefaultProviders';
+import DevReviewRouteLabel, {
+  isDevReviewOverlayEnabled,
+} from './components/DevReviewRouteLabel';
 import ErrorBoundaryWithNullFallback from './components/ErrorBoundaryWithNullFallback';
-import FlexActivityIndicator from './components/FlexActivityIndicator';
 import LocationStateBreadCrumb from './components/LocationStateBreadCrumb';
 import LoginView from './components/LoginView';
 import AdminScopeLayout from './components/MainLayout/AdminScopeLayout';
@@ -38,8 +40,8 @@ import ComputeSessionListPage from './pages/ComputeSessionListPage';
 import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
-import { toProjectContext } from './types/projectContext';
 import { theme } from './theme-shim';
+import { toProjectContext } from './types/projectContext';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
@@ -88,6 +90,7 @@ const DeploymentDetailPage = React.lazy(
 const AdminDeploymentPage = React.lazy(
   () => import('./pages/AdminDeploymentPage'),
 );
+const CliLoginPage = React.lazy(() => import('./pages/CliLoginPage'));
 const InteractiveLoginPage = React.lazy(
   () => import('./pages/InteractiveLoginPage'),
 );
@@ -412,7 +415,7 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         Component: () => {
           useSuspendedBackendaiClient();
           return (
-            <Suspense fallback={<FlexActivityIndicator spinSize="large" />}>
+            <Suspense fallback={<BAISkeleton rows={4} />}>
               <ChatPage />
             </Suspense>
           );
@@ -425,9 +428,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       },
       {
         path: 'data',
-        Component: () => {
-          return <VFolderNodeListPage />;
-        },
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <VFolderNodeListPage />
+          </Suspense>
+        ),
         handle: {
           scope: 'project',
           menuKey: 'data',
@@ -1516,6 +1521,26 @@ export const routes: RouteObject[] = [
     ),
   },
   {
+    // Browser-delegated Agent CLI login (FR-3763). Not linked from any menu.
+    path: '/cli-login',
+    errorElement: <ErrorView />,
+    element: (
+      <BAIErrorBoundary>
+        <DefaultProvidersForReactRoot>
+          <STokenGuard>
+            <Suspense>
+              <LoginView waitForMainLayout={false} />
+            </Suspense>
+            <LogoutEventHandler />
+            <Suspense fallback={<BAISkeleton rows={4} />}>
+              <CliLoginPage />
+            </Suspense>
+          </STokenGuard>
+        </DefaultProvidersForReactRoot>
+      </BAIErrorBoundary>
+    ),
+  },
+  {
     path: '/verify-email',
     errorElement: <ErrorView />,
     element: (
@@ -1640,6 +1665,16 @@ export const routes: RouteObject[] = [
             <ErrorBoundaryWithNullFallback>
               <RoutingEventHandler />
             </ErrorBoundaryWithNullFallback>
+            {/* Dev-only handoff to the review overlay (FR-3811), on unless
+                VITE_DEV_REVIEW_OVERLAY opts out, as in the Vite plugin.
+                `import.meta.env.DEV` is the literal `false` in a production
+                build, so the whole branch — and the imported module — is dead
+                code there. */}
+            {import.meta.env.DEV && isDevReviewOverlayEnabled() ? (
+              <ErrorBoundaryWithNullFallback>
+                <DevReviewRouteLabel />
+              </ErrorBoundaryWithNullFallback>
+            ) : null}
             <Suspense>
               <ErrorBoundaryWithNullFallback>
                 <AutoDiagnosticsEffect />
