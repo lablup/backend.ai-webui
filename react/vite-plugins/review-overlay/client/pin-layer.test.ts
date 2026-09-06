@@ -381,6 +381,106 @@ describe('createPinLayer', () => {
     });
   });
 
+  // ✕ on a card, and the dock's own switch, both take the card off the page —
+  // the marker and the box are what say where the pin is, and they stay.
+  describe('cards taken off screen', () => {
+    beforeEach(() => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+      layer.locate();
+    });
+
+    it('hides one card and leaves its pin drawn', () => {
+      layer.setCardHidden('c_a', true);
+
+      expect(cardOf('c_a').classList.contains('hidden')).toBe(true);
+      expect(markerOf('c_a').classList.contains('found')).toBe(true);
+      expect(cardOf('c_b').classList.contains('hidden')).toBe(false);
+
+      layer.setCardHidden('c_a', false);
+      expect(cardOf('c_a').classList.contains('hidden')).toBe(false);
+    });
+
+    it('hides every card at once, and the markers stay', () => {
+      layer.setCardsHidden(true);
+
+      expect(cards().every((card) => card.classList.contains('hidden'))).toBe(
+        true,
+      );
+      expect(markerOf('c_b').classList.contains('found')).toBe(true);
+
+      layer.setCardsHidden(false);
+      expect(cards().some((card) => card.classList.contains('hidden'))).toBe(
+        false,
+      );
+    });
+
+    // The switch outlives the set it was thrown on.
+    it('reaches a pin drawn after the switch was thrown', () => {
+      layer.setCardsHidden(true);
+      mount('three');
+      layer.show([
+        target('c_a', 'one'),
+        target('c_b', 'two'),
+        target('c_c', 'three'),
+      ]);
+
+      expect(cardOf('c_c').classList.contains('hidden')).toBe(true);
+    });
+
+    // Adopting a pin is a fresh card: the last pin's ✕ is not this one's.
+    it('shows the card again when the view takes a new pin', () => {
+      layer.setCardHidden('c_b', true);
+
+      layer.show([target('c_a', 'one'), target('c_c', 'two')]);
+
+      expect(cardOf('c_c').classList.contains('hidden')).toBe(false);
+    });
+  });
+
+  // A hidden card is `display: none`, so it measures 0 high — counting it into
+  // the column would leave a gap where nothing is drawn.
+  it('leaves a hidden away card out of the docked column', async () => {
+    const gone = { top: -300, bottom: -100 };
+    mount('one', gone);
+    mount('two', gone);
+    layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+    layer.locate();
+    for (const card of cards()) {
+      Object.defineProperty(card, 'offsetHeight', {
+        value: 60,
+        configurable: true,
+      });
+    }
+    layer.setCardHidden('c_a', true);
+    await settle();
+
+    expect(cardOf('c_b').style.top).toBe('8px');
+  });
+
+  // The arrival pulse is spent once; a deliberate "this one" — the set dock's
+  // row click — has to beat the marker again.
+  describe('beating a marker again', () => {
+    it('re-pulses a pin that already had its arrival beat', () => {
+      mount('one');
+      layer.show([target('c_a', 'one')]);
+      expect(markerOf('c_a').classList.contains('pulse')).toBe(true);
+      markerOf('c_a').classList.remove('pulse');
+
+      layer.pulse('c_a');
+
+      expect(markerOf('c_a').classList.contains('pulse')).toBe(true);
+    });
+
+    it('says nothing about a pin the layer does not draw', () => {
+      mount('one');
+      layer.show([target('c_a', 'one')]);
+
+      expect(() => layer.pulse('c_gone')).not.toThrow();
+    });
+  });
+
   // FR-3853 docks an away card to the edge the element left by. Two of them
   // at the same edge would sit on top of each other.
   it('stacks away cards into a column, the first where it always was', async () => {

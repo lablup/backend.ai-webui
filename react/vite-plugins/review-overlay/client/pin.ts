@@ -78,6 +78,8 @@ const STYLE = `
   .card.away { border-style: dashed; opacity: 0.94; }
   /* Mid-pick the cards fold away; the markers are click-through already. */
   .card.collapsed { display: none; }
+  /* ✕ or the dock's switch: the card is off, the marker and the box stay. */
+  .card.hidden { display: none; }
   .card .count {
     color: var(--bai-review-text-dim); font-size: 11px; font-weight: 600;
     margin-bottom: 4px; padding-right: 62px;
@@ -200,6 +202,12 @@ interface PinView {
   /** Set order, for the marker glyph and the `3 / 5` header. */
   setOrdinal(index: number, total: number): void;
   setCollapsed(collapsed: boolean): void;
+  /** ✕ on this card alone; the pin keeps its marker and its box. */
+  setHidden(hidden: boolean): void;
+  /** The dock's switch, applied to every card at once. */
+  setCardsHidden(hidden: boolean): void;
+  /** `force` replays the arrival beat on a pin that already had one. */
+  pulse(force?: boolean): void;
   /** The edge the card docked to, or null while it is anchored or hidden. */
   place(): DockEdge | null;
   locate(focus: boolean): boolean;
@@ -295,10 +303,22 @@ function createPinView(deps: ViewDeps): PinView {
   let pulseTimer = 0;
   /** Folded away for a pick: a hidden card measures 0 high, so it is not moved. */
   let collapsed = false;
+  /** ✕ on this card. */
+  let hidden = false;
+  /** The dock's switch — every card at once. */
+  let allHidden = false;
+  /** No card on screen, so none is measured and none joins the column. */
+  const cardOff = () => collapsed || hidden || allHidden;
+  const syncHidden = () => card.classList.toggle('hidden', hidden || allHidden);
 
-  function pulse() {
-    if (pulsed) return;
+  function pulse(force = false) {
+    if (pulsed && !force) return;
     pulsed = true;
+    clearTimeout(pulseTimer);
+    // Re-adding the class in the same frame restarts nothing; the removal has
+    // to be committed to layout first.
+    marker.classList.remove('pulse');
+    void marker.offsetWidth;
     marker.classList.add('pulse');
     pulseTimer = window.setTimeout(
       () => marker.classList.remove('pulse'),
@@ -382,7 +402,7 @@ function createPinView(deps: ViewDeps): PinView {
    * VIEWPORT edge, because it lives on a fixed layer; only the direction comes
    * from `area`.
    */
-  function placeAway(box: DOMRect, area: Bounds, vh: number): DockEdge {
+  function placeAway(box: DOMRect, area: Bounds, vh: number): DockEdge | null {
     marker.classList.remove('found');
     markBox.classList.remove('found');
     card.classList.add('found');
@@ -401,7 +421,7 @@ function createPinView(deps: ViewDeps): PinView {
         : left
           ? '← Scrolled to the left — 📍 goes back'
           : '→ Scrolled to the right — 📍 goes back';
-    if (collapsed) return up ? 'top' : 'bottom';
+    if (cardOff()) return null;
     // A horizontal departure docks to a horizontal edge. Clamping `box.left`
     // would leave the card mid-screen whenever a scroller — not the window —
     // is what took the element sideways, with an arrow pointing nowhere.
@@ -457,9 +477,9 @@ function createPinView(deps: ViewDeps): PinView {
     });
     marker.style.left = `${box.left + 6}px`;
     marker.style.top = `${box.top + 6}px`;
-    // A folded card measures 0 high, which would place it past the fold;
-    // `setCollapsed(false)` re-places it with a height to read.
-    if (collapsed) return null;
+    // A card that is off measures 0 high, which would place it past the fold;
+    // showing it again re-places it with a height to read.
+    if (cardOff()) return null;
     card.style.left = `${Math.max(VIEWPORT_PAD, Math.min(box.left, rightEdge()))}px`;
     // `locate()` centres the element, so anything taller than half the
     // viewport puts `box.bottom` below the fold — and a fixed layer cannot be
@@ -574,6 +594,8 @@ function createPinView(deps: ViewDeps): PinView {
     /** Adopt a link's anchor. Nothing is drawn until `locate()` finds it. */
     show(next: DeepLinkPinTarget) {
       dismiss();
+      hidden = false;
+      syncHidden();
       pulsed = false;
       clearTimeout(pulseTimer);
       marker.classList.remove('pulse');
@@ -603,6 +625,18 @@ function createPinView(deps: ViewDeps): PinView {
       collapsed = next;
       card.classList.toggle('collapsed', next);
     },
+
+    setHidden(next: boolean) {
+      hidden = next;
+      syncHidden();
+    },
+
+    setCardsHidden(next: boolean) {
+      allHidden = next;
+      syncHidden();
+    },
+
+    pulse,
 
     place,
     reposition,
@@ -653,6 +687,8 @@ export function createPinLayer(options: PinLayerOptions) {
 
   const views: PinView[] = [];
   let collapsed = false;
+  /** The dock's switch: every card off, markers and boxes still on the page. */
+  let cardsHidden = false;
   let focusId: string | null = null;
   let frame = 0;
   let settleUntil = 0;
@@ -740,6 +776,7 @@ export function createPinLayer(options: PinLayerOptions) {
     while (views.length < count) {
       const view = createPinView(deps);
       view.setCollapsed(collapsed);
+      view.setCardsHidden(cardsHidden);
       layer.append(...view.nodes);
       views.push(view);
     }
@@ -864,6 +901,30 @@ export function createPinLayer(options: PinLayerOptions) {
       collapsed = next;
       for (const view of views) view.setCollapsed(next);
       placeSoon();
+    },
+
+    /** One card off, by the reviewer's own ✕: the pin itself stays drawn. */
+    setCardHidden(id: string, hidden: boolean) {
+      const view = views.find((held) => held.id() === id);
+      if (!view) return;
+      view.setHidden(hidden);
+      placeSoon();
+    },
+
+    /** Every card off at once, and the ones drawn after it stay off too. */
+    setCardsHidden(next: boolean) {
+      if (cardsHidden === next) return;
+      cardsHidden = next;
+      for (const view of views) view.setCardsHidden(next);
+      placeSoon();
+    },
+
+    /**
+     * Beat the marker again on purpose — the set dock's way of saying "this
+     * one", after the arrival pulse a pin gets once has already been spent.
+     */
+    pulse(id: string) {
+      views.find((view) => view.id() === id)?.pulse(true);
     },
 
     ids: () => showingViews().map((view) => view.id()),
