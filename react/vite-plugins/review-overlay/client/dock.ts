@@ -337,6 +337,9 @@ export function createSetDock(options: SetDockOptions) {
   const setConfirming = (on: boolean) =>
     dock.classList.toggle('confirming', on);
 
+  /** The set the rows were last built from, as ids: what a re-render compares. */
+  let listed = '';
+
   copyAll.addEventListener('click', () => options.onCopyAll());
   cards.addEventListener('click', () => options.onToggleCards());
   clear.addEventListener('click', () => setConfirming(true));
@@ -356,7 +359,11 @@ export function createSetDock(options: SetDockOptions) {
     places: ReadonlyMap<string, PinPlace> = new Map(),
     cardsHidden = false,
   ) {
-    setConfirming(false);
+    // Ordinary page churn re-renders these rows; only a changed set changes
+    // the answer to "clear all N?", so only that takes the question back.
+    const ids = pins.map((pin) => pin.id).join(' ');
+    if (ids !== listed) setConfirming(false);
+    listed = ids;
     dock.classList.toggle('shown', pins.length > 0);
     titleText.textContent = `${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
     setText(clear, `Clear all (${pins.length})`);

@@ -411,6 +411,19 @@ describe('createSetDock', () => {
       expect(node('.setdock').classList.contains('confirming')).toBe(false);
     });
 
+    // The rows re-render whenever a pin lands or loses its element; the ✓/✕
+    // must not vanish from under the cursor because the app re-rendered.
+    it('keeps the question through a re-render of the same set', () => {
+      node<HTMLButtonElement>('.clear').click();
+
+      dock.render(
+        [pin('c_a', 'a'), pin('c_b', 'b'), pin('c_c', 'c')],
+        new Map([['c_b', { kind: 'waiting' }]]),
+      );
+
+      expect(node('.setdock').classList.contains('confirming')).toBe(true);
+    });
+
     // A pin added or dismissed while the question is up changes the answer.
     it('takes the question back when the set changes under it', () => {
       node<HTMLButtonElement>('.clear').click();
