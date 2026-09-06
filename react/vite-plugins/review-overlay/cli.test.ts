@@ -269,6 +269,14 @@ describe('the envelope and the exit codes', () => {
       await expect(main(['parse', '/dev/null'])).resolves.toBe(5);
       await expect(main(['pins', file])).resolves.toBe(2);
       await expect(main(['parse', `${file}.missing`])).resolves.toBe(2);
+      // A second operand is refused rather than dropped, so the pins in the
+      // file the shell added are never silently missing from the answer.
+      const before = write.mock.calls.length;
+      await expect(main(['parse', file, file])).resolves.toBe(2);
+      expect(write.mock.calls.length).toBe(before);
+      expect(String(errors.mock.calls.at(-1)?.[0])).toContain(
+        'parse takes one file at most',
+      );
     } finally {
       write.mockRestore();
       errors.mockRestore();

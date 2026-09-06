@@ -420,6 +420,14 @@ export async function main(argv: string[]): Promise<number> {
     process.stderr.write(`unknown command: ${args[0]}\n${USAGE}\n`);
     return 2;
   }
+  // One file, or stdin: reading only the first of several operands would drop
+  // the rest of the reviewer's pins without saying so.
+  if (args.length > 2) {
+    process.stderr.write(
+      `parse takes one file at most; got ${args.length - 1}\n${USAGE}\n`,
+    );
+    return 2;
+  }
   const source = args[1] ?? '-';
   let text: string;
   try {
