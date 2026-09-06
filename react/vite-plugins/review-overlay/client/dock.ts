@@ -40,8 +40,21 @@ export interface DockPos {
  */
 export type PinPlace =
   | { kind: 'here' }
-  | { kind: 'elsewhere'; where: string }
+  /** `href` is absolute: the row is a real link, so the browser owns it too. */
+  | { kind: 'elsewhere'; where: string; href: string }
   | { kind: 'waiting' };
+
+/**
+ * A plain left-click is ours; every other click is the browser's — ⌘/Ctrl and
+ * middle open the set in a new tab, where the link rehydrates it, and "copy
+ * link address" needs the href untouched (R7.1).
+ */
+const plainClick = (evt: MouseEvent): boolean =>
+  evt.button === 0 &&
+  !evt.metaKey &&
+  !evt.ctrlKey &&
+  !evt.shiftKey &&
+  !evt.altKey;
 
 /** Component names a reviewer would recognise as "the thing it was inside". */
 const DIALOGISH = /dialog|modal|drawer|sheet|popover/i;
@@ -138,6 +151,9 @@ const STYLE = `
   .setdock .row.off .rowlabel { opacity: 0.55; }
   /* Its page is not this one; the row is all it has on screen. */
   .setdock .row.away .rowlabel { color: var(--bai-review-text-dim); }
+  /* An off-page row is a real link, and a link is not underlined here. */
+  .setdock a.rowlabel { display: block; text-decoration: none; }
+  .setdock a.act { text-decoration: none; }
   /* Its page is this one; its element is not rendered right now. */
   .setdock .row.waiting .rowlabel { opacity: 0.55; }
   /* Where that pin is, or was — the row is the only thing that can say. */
@@ -185,6 +201,22 @@ const button = (
     span.textContent = text;
     node.append(span);
   }
+  node.title = label;
+  node.setAttribute('aria-label', label);
+  return node;
+};
+
+/** The same chrome as `button`, as a real link (R7.1). */
+const link = (
+  className: string,
+  name: IconName,
+  label: string,
+  href: string,
+): HTMLAnchorElement => {
+  const node = document.createElement('a');
+  node.className = `act ${className}`;
+  node.href = href;
+  node.append(icon(name));
   node.title = label;
   node.setAttribute('aria-label', label);
   return node;
@@ -394,36 +426,47 @@ export function createSetDock(options: SetDockOptions) {
         const idx = document.createElement('span');
         idx.className = 'idx';
         idx.textContent = String(index + 1);
-        const label = document.createElement('button');
+        const place = places.get(pin.id);
+        const off = place?.kind === 'elsewhere' ? place : null;
+        // An off-page row IS a link: the platform already has both intents, so
+        // ⌘/Ctrl-click and middle-click reach the browser untouched (R7.1).
+        const label: HTMLElement = document.createElement(off ? 'a' : 'button');
         label.className = 'rowlabel';
         const note = rowNote(pin);
         label.textContent = note ? note.replace(/\s+/g, ' ') : pin.label;
         label.title = note || pin.label;
-        const place = places.get(pin.id);
-        const elsewhere =
-          place?.kind === 'elsewhere' ? place.where : undefined;
         // The row is the control, and what it does is where its pin is: on
         // this page, go to it; on another, open the set there.
-        label.addEventListener('click', () => {
-          if (elsewhere !== undefined) return options.onGo?.(pin.id);
-          // The card comes back with the pin the reviewer asked to see.
-          if (pin.hidden) options.onUnhide(pin.id);
-          options.onLocate(pin.id);
-        });
+        const go = (evt: MouseEvent) => {
+          if (!plainClick(evt)) return;
+          evt.preventDefault();
+          options.onGo?.(pin.id);
+        };
+        if (off) {
+          (label as HTMLAnchorElement).href = off.href;
+          label.addEventListener('click', go);
+        } else {
+          label.addEventListener('click', () => {
+            // The card comes back with the pin the reviewer asked to see.
+            if (pin.hidden) options.onUnhide(pin.id);
+            options.onLocate(pin.id);
+          });
+        }
         row.append(idx, label);
-        if (elsewhere !== undefined) {
+        if (off) {
           row.classList.add('away');
           const where = document.createElement('span');
           where.className = 'where';
-          where.textContent = elsewhere;
-          where.title = elsewhere;
-          const go = button(
+          where.textContent = off.where;
+          where.title = off.where;
+          const open = link(
             'go',
             'external-link',
             'Open the set on this pin’s page',
+            off.href,
           );
-          go.addEventListener('click', () => options.onGo?.(pin.id));
-          row.append(where, go);
+          open.addEventListener('click', go);
+          row.append(where, open);
         } else if (place?.kind === 'waiting') {
           row.classList.add('waiting');
           const where = document.createElement('span');

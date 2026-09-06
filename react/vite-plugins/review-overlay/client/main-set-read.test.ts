@@ -34,6 +34,9 @@ const storedPins = (): SetPin[] => {
 };
 const storedIds = () => storedPins().map((pin) => pin.id);
 
+/** `ANCHOR_TRIES` + a beat: the give-up sentence lands after the ladder. */
+const LADDER_TICKS = 22;
+
 const ticks = async (count: number, ms = 10) => {
   for (let i = 0; i < count; i++) {
     await new Promise((resolve) => setTimeout(resolve, ms));
@@ -126,13 +129,14 @@ beforeEach(() => {
 });
 
 /**
- * Views are reused BY POSITION and popped from the END, so a snapshot of the
- * buttons goes stale on the first click — the trailing ones then belong to
- * disposed views and do nothing. Drain the live ones instead.
+ * The dock row's 🗑 is the only remove control (R6.2). Its rows are rebuilt on
+ * every render, so a snapshot goes stale on the first click — take the live
+ * head of the list each time.
  */
 function tearDownPins() {
   for (let left = MAX_SET_PINS; left > 0; left--) {
-    const remove = all('.card .remove')[0] as HTMLButtonElement | undefined;
+    const remove = all('.setdock .row .remove')[0] as
+      HTMLButtonElement | undefined;
     if (!remove) return;
     remove.click();
   }
@@ -383,6 +387,117 @@ describe('a set that spans pages', () => {
     dockRows()[1].querySelector<HTMLButtonElement>('.go')?.click();
 
     expect(sessionStorage.getItem(FOCUS_KEY)).toBe(B);
+  });
+
+  /**
+   * R7.1: an off-page row is a real link. The platform already has both
+   * intents — this tab, or a new one — so we intercept only the plain click
+   * and leave ⌘/Ctrl-click, middle-click and "copy link address" alone.
+   */
+  describe('the link an off-page row is', () => {
+    const awayLink = () =>
+      dockRows()[1].querySelector<HTMLAnchorElement>('a.rowlabel') as
+        HTMLAnchorElement | undefined;
+
+    it('carries the whole set behind an absolute href', async () => {
+      await bootOn(await spread());
+
+      const href = awayLink()?.getAttribute('href') ?? '';
+      expect(href.startsWith(`${location.origin}/start#`)).toBe(true);
+      expect(href).toContain(`bai=v3.${A}.`);
+      expect(href).toContain(`bai=v3.${B}.`);
+      expect(dockRows()[1].querySelector<HTMLAnchorElement>('a.go')?.href).toBe(
+        href,
+      );
+    });
+
+    it('keeps a plain click in this tab', async () => {
+      await bootOn(await spread());
+      const evt = new MouseEvent('click', { bubbles: true, cancelable: true });
+
+      awayLink()?.dispatchEvent(evt);
+
+      expect(evt.defaultPrevented).toBe(true);
+      expect(sessionStorage.getItem(FOCUS_KEY)).toBe(B);
+    });
+
+    it('lets a modifier or middle click reach the browser', async () => {
+      await bootOn(await spread());
+
+      for (const init of [
+        { metaKey: true },
+        { ctrlKey: true },
+        { shiftKey: true },
+        { altKey: true },
+        { button: 1 },
+      ]) {
+        const evt = new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          ...init,
+        });
+        awayLink()?.dispatchEvent(evt);
+        expect(evt.defaultPrevented).toBe(false);
+      }
+      expect(sessionStorage.getItem(FOCUS_KEY)).toBeNull();
+    });
+  });
+
+  /**
+   * R7.4: "N of M pins are not on this page" answered two different questions
+   * with one sentence. Another page is opened from the list; this page with no
+   * element yet is waiting, and will draw itself when the element appears.
+   */
+  describe('what the set says about the pins it cannot draw', () => {
+    it('names the pins that are on other pages', async () => {
+      await bootOn(await spread());
+
+      expect(toast()).toBe(
+        'Added 2 pins from the link · ' +
+          '1 pin is on another page — open it from the list',
+      );
+    });
+
+    it('says what a waiting pin was inside', async () => {
+      seed([
+        storedPin(A, 'create', {
+          anchor: { v: 3, s: '[data-testid="gone"]', p: '/', tid: 'gone' },
+        }),
+      ]);
+
+      await bootOn('');
+      await ticks(LADDER_TICKS, 500);
+
+      expect(toast()).toBe(
+        '1 pin is waiting for its element (it was inside gone)',
+      );
+    }, 30_000);
+
+    // Two different facts arrive at two different moments: the page a pin is
+    // on is known at once, that its element never turned up is not.
+    it('says each in its own moment when the set is spread both ways', async () => {
+      seed([
+        storedPin(A, 'create', {
+          anchor: { v: 3, s: '[data-testid="gone"]', p: '/', tid: 'gone' },
+        }),
+        storedPin(B, 'deploy', {
+          anchor: { v: 3, s: '[data-testid="gone2"]', p: '/', tid: 'gone2' },
+        }),
+        storedPin('c_c', 'create', {
+          anchor: { v: 3, s: '[data-testid="create"]', p: '/start' },
+          label: 'Start › create',
+        }),
+      ]);
+
+      await bootOn('');
+      expect(toast()).toBe('1 pin is on another page — open it from the list');
+
+      await ticks(LADDER_TICKS, 500);
+
+      expect(toast()).toBe(
+        '2 pins are waiting for their elements — the list says where',
+      );
+    }, 30_000);
   });
 
   // Arriving on pin 2's page must not bounce the reviewer back to pin 1's.

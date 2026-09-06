@@ -664,7 +664,16 @@ describe('createSetDock', () => {
     const spread = () => {
       dock.render(
         [pin('c_a', 'Sessions › start'), pin('c_b', 'Start › create')],
-        new Map([['c_b', 'Start']]),
+        new Map([
+          [
+            'c_b',
+            {
+              kind: 'elsewhere',
+              where: 'Start',
+              href: 'http://dev.test/start#bai=v3.c_b.PAYLOAD',
+            },
+          ],
+        ]),
       );
     };
 
@@ -686,6 +695,48 @@ describe('createSetDock', () => {
       rows()[0].querySelector<HTMLButtonElement>('.rowlabel')?.click();
 
       expect(located).toEqual(['c_a']);
+      expect(went).toEqual([]);
+    });
+
+    /**
+     * R7.1: the platform already has "here" and "in a new tab"; we take only
+     * the plain click and leave every other one to the browser.
+     */
+    it('is a real link, so the browser owns the other intents', () => {
+      spread();
+
+      const link = rows()[1].querySelector<HTMLAnchorElement>('a.rowlabel');
+      expect(link?.getAttribute('href')).toBe(
+        'http://dev.test/start#bai=v3.c_b.PAYLOAD',
+      );
+      expect(rows()[1].querySelector<HTMLAnchorElement>('a.go')?.href).toBe(
+        link?.href,
+      );
+      // A row on this page stays a button: it scrolls, it does not navigate.
+      expect(rows()[0].querySelector('a.rowlabel')).toBeNull();
+    });
+
+    it('leaves a modifier or middle click to the browser', () => {
+      spread();
+      const link = rows()[1].querySelector<HTMLAnchorElement>(
+        'a.rowlabel',
+      ) as HTMLAnchorElement;
+
+      for (const init of [
+        { metaKey: true },
+        { ctrlKey: true },
+        { shiftKey: true },
+        { altKey: true },
+        { button: 1 },
+      ]) {
+        const evt = new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          ...init,
+        });
+        link.dispatchEvent(evt);
+        expect(evt.defaultPrevented).toBe(false);
+      }
       expect(went).toEqual([]);
     });
 

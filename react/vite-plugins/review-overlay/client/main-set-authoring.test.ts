@@ -690,15 +690,23 @@ describe('the set the tab was left with', () => {
   });
 
   // The dock is the one control that reaches every pin, including the ones
-  // the layer never found.
-  it('says so when the dock cannot reach a pin', async () => {
-    seed([storedPin('c_goneaaa', 'missing', 'Start › missing')]);
+  // the layer never found. R7.3: waiting is not gone, so the row says where
+  // the element was rather than that the pin missed the page.
+  it('says where a pin it cannot reach was', async () => {
+    seed([
+      {
+        ...storedPin('c_goneaaa', 'missing', 'Start › missing'),
+        anchor: { v: 3, s: '[data-testid="missing"]', p: '/', tid: 'missing' },
+      },
+    ]);
     await bootOverlay();
     await ticks(2);
 
     node<HTMLButtonElement>('.setdock .rowlabel').click();
 
-    expect(toast()).toBe('That pin is not on this page');
+    expect(toast()).toBe(
+      '1 pin is waiting for its element (it was inside missing)',
+    );
   });
 
   it('ends the set once the dock asks twice', async () => {

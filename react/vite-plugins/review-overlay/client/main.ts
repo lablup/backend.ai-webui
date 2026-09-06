@@ -37,7 +37,7 @@ import {
   stripPinParts,
   watchRoute,
 } from './deeplink.js';
-import { createSetDock, type PinPlace } from './dock.js';
+import { createSetDock, whereItWas, type PinPlace } from './dock.js';
 import { createDraftStore, MAX_SET_PINS } from './draft.js';
 import { pinId } from './id.js';
 import { createPicker, isEditable, isMac } from './picker.js';
@@ -377,6 +377,9 @@ function boot() {
       void readPinStack(target, element);
     },
     onHide: (target) => setHidden(target.id, true),
+    // The ladder ended with these still unresolved. Only the set knows that
+    // this is a closed modal rather than a missed page, so it does the talking.
+    onGiveUp: (ids) => ui.showToast(waitingLine(ids)),
   });
   const dock = createSetDock({
     root: ui.root,
@@ -387,10 +390,11 @@ function boot() {
       redraw();
     },
     onLocate: (id) => {
-      const element = pins.locatedElement(id);
-      // On this page but never resolved — the ladder gave up, or the app has
-      // not rendered it. An off-page pin gets the "go" button instead.
-      if (!element) return ui.showToast('That pin is not on this page');
+      // Its page matches but the element is not rendered: one more pass of the
+      // full ladder, then say where it was rather than that it is gone (R7.3).
+      const element =
+        pins.locatedElement(id) ?? (pins.locate(), pins.locatedElement(id));
+      if (!element) return ui.showToast(waitingLine([id]));
       element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
       // The arrival beat is long spent — this is a deliberate "that one".
       pins.pulse(id);
@@ -518,12 +522,48 @@ function boot() {
     const map = new Map<string, PinPlace>();
     for (const pin of draft) {
       const where = away.get(pin.id);
-      if (where !== undefined) map.set(pin.id, { kind: 'elsewhere', where });
+      if (where !== undefined)
+        map.set(pin.id, {
+          kind: 'elsewhere',
+          where,
+          // Absolute, so the browser's own "copy link address" yields a URL
+          // someone else can open (R7.1).
+          href: `${location.origin}${pinSetUrlAt(draft, pin.id)}`,
+        });
       else if (!pins.locatedElement(pin.id))
         map.set(pin.id, { kind: 'waiting' });
     }
     return map;
   }
+
+  /** One pin says what it was inside; a handful says to read the list. */
+  function waitingLine(ids: string[]): string {
+    if (ids.length === 1) {
+      const pin = draft.find((held) => held.id === ids[0]);
+      const where = pin ? whereItWas(pin) : 'that page';
+      return `1 pin is waiting for its element (it was inside ${where})`;
+    }
+    return `${ids.length} pins are waiting for their elements — the list says where`;
+  }
+
+  /**
+   * R7.4: "not on this page" answered two different questions with one
+   * sentence. A pin on ANOTHER page is opened from the list — this line, said
+   * on arrival and after a re-partition; a pin on THIS one is waiting for its
+   * element and gets `waitingLine` when the ladder ends.
+   */
+  function elsewhereLine(): string {
+    const count = partition().away.size;
+    if (!count) return '';
+    return count === 1
+      ? '1 pin is on another page — open it from the list'
+      : `${count} pins are on other pages — open them from the list`;
+  }
+
+  const sayElsewhere = () => {
+    const line = elsewhereLine();
+    if (line) ui.showToast(line);
+  };
 
   const placesKey = (map: ReadonlyMap<string, PinPlace>): string =>
     [...map].map(([id, place]) => `${id}:${place.kind}`).join(' ');
@@ -642,6 +682,9 @@ function boot() {
         ui.showToast(
           'That is an old #bai-review link — pick the element again',
         );
+      // A stored set the tab was left with: nothing was added, but part of it
+      // may still be on another page, and only the rows can reach that.
+      else sayElsewhere();
       return;
     }
     const appHash = stripPinParts(hash);
@@ -698,7 +741,9 @@ function boot() {
       store.hide(focusId, false);
       syncDraft();
     }
-    const said = carriedNote ?? message;
+    const said = [carriedNote ?? message, elsewhereLine()]
+      .filter(Boolean)
+      .join(' · ');
     if (said) ui.showToast(said);
     // The layer owns the retry ladder: one driver for every on-page member,
     // and one give-up sentence for them all.
@@ -731,6 +776,9 @@ function boot() {
     routeKey = key;
     syncDraft();
     redraw();
+    // A re-partition moves pins between views and rows; what is now off this
+    // page is only reachable from the list.
+    sayElsewhere();
   });
 
   syncDraft();
