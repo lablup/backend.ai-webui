@@ -695,6 +695,232 @@ describe('createSetDock', () => {
     });
   });
 
+  // FR-3862. The grip was a bare `<span>` with only pointer listeners, so the
+  // dock could not be moved without a mouse. Every keyboard move goes through
+  // the same `clamp`/`savePos` the drag does.
+  describe('moving the dock with the keyboard', () => {
+    const grip = () => node<HTMLButtonElement>('.grip');
+    const press = (key: string, shiftKey = false) => {
+      const evt = new KeyboardEvent('keydown', {
+        key,
+        shiftKey,
+        bubbles: true,
+        cancelable: true,
+      });
+      grip().dispatchEvent(evt);
+      return evt;
+    };
+    const point = (type: string, x: number, y: number) =>
+      grip().dispatchEvent(
+        new MouseEvent(type, {
+          clientX: x,
+          clientY: y,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+    const dragTo = (x: number, y: number) => {
+      point('pointerdown', 0, 0);
+      point('pointermove', x, y);
+      point('pointerup', x, y);
+    };
+    const left = () => node('.setdock').style.left;
+    const top = () => node('.setdock').style.top;
+    /** 1024 - 260 wide - 12 inset, and 768 - 160 stand-in height - 12. */
+    const CORNER = { left: 752, top: 596 };
+
+    it('is a button with an accessible name, not a bare span', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      expect(grip().tagName).toBe('BUTTON');
+      expect(grip().type).toBe('button');
+      expect(grip().getAttribute('aria-label')).toBeTruthy();
+      expect(grip().title).toBe(grip().getAttribute('aria-label'));
+    });
+
+    // Dev-only chrome floating over the app: it takes a tab stop while the
+    // reviewer can see it, and gives it back the moment it is out of sight.
+    it('is a tab stop only while the dock is on screen', () => {
+      expect(grip().tabIndex).toBe(-1);
+
+      dock.render([pin('c_a', 'a')]);
+      expect(grip().tabIndex).toBe(0);
+
+      dock.setCollapsed(true);
+      expect(grip().tabIndex).toBe(-1);
+
+      dock.setCollapsed(false);
+      expect(grip().tabIndex).toBe(0);
+
+      dock.render([]);
+      expect(grip().tabIndex).toBe(-1);
+    });
+
+    it('steps away from the default corner with an arrow key', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      press('ArrowLeft');
+
+      expect(left()).toBe(`${CORNER.left - 8}px`);
+      expect(top()).toBe(`${CORNER.top}px`);
+      expect(node('.setdock').style.right).toBe('auto');
+      expect(node('.setdock').style.bottom).toBe('auto');
+    });
+
+    it('moves on every arrow, and the presses accumulate', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      press('ArrowUp');
+      press('ArrowUp');
+      press('ArrowLeft');
+
+      expect(left()).toBe(`${CORNER.left - 8}px`);
+      expect(top()).toBe(`${CORNER.top - 16}px`);
+    });
+
+    it('takes a bigger step with Shift held', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      press('ArrowLeft', true);
+
+      expect(left()).toBe(`${CORNER.left - 64}px`);
+    });
+
+    // Otherwise the page scrolls under a dock that is moving over it.
+    it('takes the arrow key rather than letting the page scroll', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      expect(press('ArrowDown').defaultPrevented).toBe(true);
+    });
+
+    it('leaves a modified arrow to the browser', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      const evt = new KeyboardEvent('keydown', {
+        key: 'ArrowLeft',
+        metaKey: true,
+        bubbles: true,
+        cancelable: true,
+      });
+      grip().dispatchEvent(evt);
+
+      expect(evt.defaultPrevented).toBe(false);
+      expect(left()).toBe('');
+    });
+
+    it('keeps a keyboard move inside the viewport', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      for (let i = 0; i < 10; i++) press('ArrowRight', true);
+      for (let i = 0; i < 20; i++) press('ArrowDown', true);
+
+      // The same edges the drag clamps to: 1024 - 260 - 8, 768 - 160 - 8.
+      expect(left()).toBe('756px');
+      expect(top()).toBe('600px');
+    });
+
+    // A drag holds an unclamped position on purpose, so a window that grows
+    // again gives it back. An arrow steps from what is on screen instead.
+    it('comes back off the edge on the very next press', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      for (let i = 0; i < 10; i++) press('ArrowRight', true);
+      press('ArrowLeft');
+
+      expect(left()).toBe('748px');
+    });
+
+    // The pointer saves on release, not on every move; Enter is the release.
+    it('keeps the position for the tab once the move is committed', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      press('ArrowLeft');
+      expect(sessionStorage.getItem(DOCK_POS_KEY)).toBeNull();
+
+      press('Enter');
+
+      expect(sessionStorage.getItem(DOCK_POS_KEY)).toBe(
+        JSON.stringify({ left: CORNER.left - 8, top: CORNER.top }),
+      );
+    });
+
+    it('commits when the grip loses focus', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      press('ArrowUp');
+      grip().dispatchEvent(new FocusEvent('blur'));
+
+      expect(sessionStorage.getItem(DOCK_POS_KEY)).toBe(
+        JSON.stringify({ left: CORNER.left, top: CORNER.top - 8 }),
+      );
+    });
+
+    // Enter is what activates a button; it must not also reach the page.
+    it('takes the committing Enter', () => {
+      dock.render([pin('c_a', 'a')]);
+      press('ArrowUp');
+
+      expect(press('Enter').defaultPrevented).toBe(true);
+    });
+
+    it('puts the dock back where the move started when Escape cancels', () => {
+      dock.render([pin('c_a', 'a')]);
+      dragTo(300, 200);
+
+      press('ArrowLeft', true);
+      press('ArrowUp', true);
+      expect(left()).toBe('236px');
+
+      press('Escape');
+
+      expect(left()).toBe('300px');
+      expect(top()).toBe('200px');
+      expect(sessionStorage.getItem(DOCK_POS_KEY)).toBe(
+        JSON.stringify({ left: 300, top: 200 }),
+      );
+    });
+
+    // The corner is a position like any other: a dock that never moved has to
+    // be able to get all the way back to it.
+    it('cancels back to the default corner it started from', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      press('ArrowLeft');
+      press('ArrowUp', true);
+      expect(left()).toBe(`${CORNER.left - 8}px`);
+
+      press('Escape');
+
+      expect(left()).toBe('');
+      expect(top()).toBe('');
+      expect(node('.setdock').style.right).toBe('');
+      expect(sessionStorage.getItem(DOCK_POS_KEY)).toBeNull();
+    });
+
+    // Escape after the move is committed is not the app's Escape to eat.
+    it('leaves Escape alone when no keyboard move is running', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      expect(press('Escape').defaultPrevented).toBe(false);
+
+      press('ArrowLeft');
+      press('Enter');
+
+      expect(press('Escape').defaultPrevented).toBe(false);
+      expect(left()).toBe(`${CORNER.left - 8}px`);
+    });
+
+    it('drops the keyboard move a drag takes over from', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      press('ArrowLeft');
+      dragTo(300, 200);
+      press('Escape');
+
+      expect(left()).toBe('300px');
+    });
+  });
+
   // A set spans pages, and an off-page pin has no card — the row is the only
   // thing it has on screen.
   describe('a pin on another page', () => {

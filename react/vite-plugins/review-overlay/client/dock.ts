@@ -28,6 +28,23 @@ const DOCK_WIDTH = 260;
 const DOCK_HEIGHT = 160;
 /** Margin the dock keeps to every viewport edge, dragged or default. */
 const EDGE_PAD = 8;
+/** The corner the CSS parks an unmoved dock at, as `right`/`bottom`. */
+const EDGE_INSET = 12;
+/** One arrow press: the dock's own spacing unit. */
+const KEY_STEP = EDGE_PAD;
+/** Shift+arrow — eight of those, so a 1280px viewport is 20 presses wide. */
+const KEY_STEP_BIG = EDGE_PAD * 8;
+
+/** Named for what it DOES (R8.1), and dragging is no longer the only way. */
+const GRIP_LABEL = 'Move the dock (drag, or arrow keys)';
+
+/** Which edge each arrow pushes the dock towards. */
+const ARROWS: Readonly<Record<string, DockPos | undefined>> = {
+  ArrowLeft: { left: -1, top: 0 },
+  ArrowRight: { left: 1, top: 0 },
+  ArrowUp: { left: 0, top: -1 },
+  ArrowDown: { left: 0, top: 1 },
+};
 
 export interface DockPos {
   left: number;
@@ -91,8 +108,9 @@ const rowNote = (pin: SetPin): string =>
 
 const STYLE = `
   .setdock {
-    position: fixed; right: 12px; bottom: 12px; z-index: 2147483000;
-    display: none; flex-direction: column; width: 260px;
+    position: fixed; right: ${EDGE_INSET}px; bottom: ${EDGE_INSET}px;
+    z-index: 2147483000;
+    display: none; flex-direction: column; width: ${DOCK_WIDTH}px;
     background: var(--bai-review-surface); color: var(--bai-review-text);
     border: 1px solid var(--bai-review-border); border-radius: 8px;
     box-shadow: 0 4px 18px var(--bai-review-shadow);
@@ -110,8 +128,16 @@ const STYLE = `
     flex: none; display: flex; align-items: center; cursor: grab;
     color: var(--bai-review-text-dim); touch-action: none;
     -webkit-user-select: none; user-select: none;
+    border: 0; background: none; padding: 0; font: inherit; border-radius: 4px;
   }
   .setdock.dragging .grip { cursor: grabbing; }
+  /* Nothing of the app's focus styling crosses the shadow boundary, so every
+     focusable in here is invisible to a keyboard without its own ring. */
+  .setdock .grip:focus-visible,
+  .setdock .act:focus-visible,
+  .setdock .rowlabel:focus-visible {
+    outline: 2px solid var(--bai-review-accent); outline-offset: 1px;
+  }
   .setdock .title {
     font-weight: 600; margin-right: auto; display: flex; align-items: center;
     gap: 4px;
@@ -253,10 +279,13 @@ export function createSetDock(options: SetDockOptions) {
   dock.className = 'setdock';
   const head = document.createElement('div');
   head.className = 'head';
-  const grip = document.createElement('span');
+  const grip = document.createElement('button');
+  grip.type = 'button';
   grip.className = 'grip';
+  // A dock nobody has revealed yet is not a tab stop; `render` opens it.
+  grip.tabIndex = -1;
   grip.append(icon('grip-vertical'));
-  grip.title = 'Drag the dock';
+  setLabel(grip, GRIP_LABEL);
   const title = document.createElement('span');
   title.className = 'title';
   title.append(icon('map-pin'));
@@ -307,9 +336,17 @@ export function createSetDock(options: SetDockOptions) {
     };
   }
 
-  /** `right`/`bottom` are the CSS default; a placed dock has to drop them. */
-  function moveTo(next: DockPos) {
+  /** `right`/`bottom` are the CSS default; a placed dock has to drop them, and
+   *  `null` — the corner a cancelled keyboard move goes back to — restores them. */
+  function moveTo(next: DockPos | null) {
     wanted = next;
+    if (!next) {
+      dock.style.left = '';
+      dock.style.top = '';
+      dock.style.right = '';
+      dock.style.bottom = '';
+      return;
+    }
     const at = clamp(next);
     dock.style.left = `${at.left}px`;
     dock.style.top = `${at.top}px`;
@@ -318,21 +355,41 @@ export function createSetDock(options: SetDockOptions) {
   }
 
   function savePos() {
-    if (!wanted) return;
     try {
-      sessionStorage.setItem(DOCK_POS_KEY, JSON.stringify(wanted));
+      if (wanted) sessionStorage.setItem(DOCK_POS_KEY, JSON.stringify(wanted));
+      else sessionStorage.removeItem(DOCK_POS_KEY);
     } catch {
-      // Storage off or full: the dock still sits where it was dragged.
+      // Storage off or full: the dock still sits where it was put.
     }
+  }
+
+  /** Where an unmoved dock sits — what an arrow key steps away from. */
+  function cornerPos(): DockPos {
+    const box = dock.getBoundingClientRect();
+    if (box.width || box.height) return { left: box.left, top: box.top };
+    // jsdom, and a dock still `display: none`: no layout to read.
+    return {
+      left: window.innerWidth - (dock.offsetWidth || DOCK_WIDTH) - EDGE_INSET,
+      top: window.innerHeight - (dock.offsetHeight || DOCK_HEIGHT) - EDGE_INSET,
+    };
   }
 
   /** Grab offset inside the dock, so it does not jump to the cursor. */
   let grab: { dx: number; dy: number } | null = null;
 
+  /**
+   * Where the keyboard move in flight began, so Escape can undo the whole run
+   * of presses and not just the last one. `at` is `null` for the default
+   * corner, which is a position like any other.
+   */
+  let keyFrom: { at: DockPos | null } | null = null;
+
   grip.addEventListener('pointerdown', (evt) => {
     if (evt.button) return;
     const box = dock.getBoundingClientRect();
     grab = { dx: evt.clientX - box.left, dy: evt.clientY - box.top };
+    // The pointer takes over: there is no keyboard move left to cancel.
+    keyFrom = null;
     // Without this the gesture becomes a text selection, and react-grab's
     // select mode would read it as a pick.
     evt.preventDefault();
@@ -366,6 +423,55 @@ export function createSetDock(options: SetDockOptions) {
   };
   grip.addEventListener('pointerup', endDrag);
   grip.addEventListener('pointercancel', endDrag);
+
+  /** Lifting the pointer commits; so do Enter, and tabbing away. */
+  const endKeyMove = () => {
+    if (!keyFrom) return;
+    keyFrom = null;
+    savePos();
+  };
+
+  grip.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Enter') {
+      if (!keyFrom) return;
+      // Enter is the button's own activation key; neither may reach the page.
+      evt.preventDefault();
+      evt.stopPropagation();
+      if (evt.key === 'Enter') {
+        endKeyMove();
+        return;
+      }
+      const { at } = keyFrom;
+      keyFrom = null;
+      moveTo(at);
+      savePos();
+      return;
+    }
+    const arrow = ARROWS[evt.key];
+    if (!arrow || evt.metaKey || evt.ctrlKey || evt.altKey) return;
+    // Otherwise the page scrolls under a dock that is moving over it.
+    evt.preventDefault();
+    evt.stopPropagation();
+    keyFrom ??= { at: wanted };
+    const step = evt.shiftKey ? KEY_STEP_BIG : KEY_STEP;
+    // Stepping from what is on screen, not from an unclamped drag: a dock
+    // held against an edge has to come back on the very next press.
+    const from = wanted ? clamp(wanted) : cornerPos();
+    moveTo(
+      clamp({
+        left: from.left + arrow.left * step,
+        top: from.top + arrow.top * step,
+      }),
+    );
+  });
+
+  grip.addEventListener('blur', endKeyMove);
+
+  /** Hidden or folded the dock is `display: none`; say so in the tab order too. */
+  const syncTabStop = () => {
+    const list = dock.classList;
+    grip.tabIndex = list.contains('shown') && !list.contains('folded') ? 0 : -1;
+  };
 
   /**
    * Folded, the dock is `display: none` and measures the stand-in box, so a
@@ -412,6 +518,7 @@ export function createSetDock(options: SetDockOptions) {
     if (ids !== listed) setConfirming(false);
     listed = ids;
     dock.classList.toggle('shown', pins.length > 0);
+    syncTabStop();
     titleText.textContent = `${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
     setText(clear, `Clear all (${pins.length})`);
     confirmText.textContent = `Clear all ${pins.length}?`;
@@ -509,6 +616,7 @@ export function createSetDock(options: SetDockOptions) {
      */
     setCollapsed(next: boolean) {
       dock.classList.toggle('folded', next);
+      syncTabStop();
       if (!next) reclamp();
     },
     /** Tests and hot reloads: one dock lives as long as the page. */
