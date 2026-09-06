@@ -552,15 +552,26 @@ function boot() {
    * on arrival and after a re-partition; a pin on THIS one is waiting for its
    * element and gets `waitingLine` when the ladder ends.
    */
+  /** The off-page pins this line was last said for (R7.4). */
+  let saidAway = '';
+
+  const awayKey = () => [...partition().away.keys()].sort().join(' ');
+
   function elsewhereLine(): string {
     const count = partition().away.size;
+    saidAway = awayKey();
     if (!count) return '';
     return count === 1
       ? '1 pin is on another page — open it from the list'
       : `${count} pins are on other pages — open them from the list`;
   }
 
+  /**
+   * Only a re-partition that MOVED something is news: the app writes its own
+   * hashes and queries, and the same sentence twice reads as a second pin.
+   */
   const sayElsewhere = () => {
+    if (awayKey() === saidAway) return;
     const line = elsewhereLine();
     if (line) ui.showToast(line);
   };

@@ -527,6 +527,38 @@ describe('a set that spans pages', () => {
     );
   });
 
+  /**
+   * R7.4 says the line on arrival and after a re-partition. The app writes its
+   * own fragment — its "Skip to content" link is one — and that moves nothing.
+   */
+  describe('repeating the off-page line', () => {
+    it('stays quiet when only the app’s own fragment changed', async () => {
+      await bootOn(await spread());
+      expect(toast()).toContain('1 pin is on another page');
+      const banner = node('.toast') as HTMLElement;
+      banner.textContent = '';
+
+      history.replaceState({}, '', '/#astryx-app-shell-main');
+      window.dispatchEvent(new Event('hashchange'));
+      await ticks(4);
+
+      expect(banner.textContent).toBe('');
+    });
+
+    it('says it again when a navigation moved a pin off the page', async () => {
+      await bootOn(await spread());
+      const banner = node('.toast') as HTMLElement;
+      banner.textContent = '';
+
+      history.pushState({}, '', '/start');
+      await ticks(4);
+
+      expect(banner.textContent).toBe(
+        '1 pin is on another page — open it from the list',
+      );
+    });
+  });
+
   // Arriving on pin 2's page must not bounce the reviewer back to pin 1's.
   it('stays put while any member of the set is on this page', async () => {
     await bootOn(await spread());
