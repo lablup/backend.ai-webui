@@ -22,10 +22,16 @@ export const LIST_RESOURCES_WITH_STATUS = [
   'agent',
   'user',
   'keypair',
+  'project',
 ] as const;
 
 /** List resources whose page has no status param at all. */
-export const LIST_RESOURCES_WITHOUT_STATUS = ['model_card', 'environment'] as const;
+export const LIST_RESOURCES_WITHOUT_STATUS = [
+  'model_card',
+  'environment',
+  'resource_preset',
+  'resource_group',
+] as const;
 
 export type ListResourceWithStatus =
   (typeof LIST_RESOURCES_WITH_STATUS)[number];
@@ -34,8 +40,9 @@ export type ListResourceWithoutStatus =
 export type ListResource = ListResourceWithStatus | ListResourceWithoutStatus;
 
 /**
- * A reference to something the UI can open. `agent`, `user` and `keypair` have
- * list entries but no detail member: their pages carry no per-row URL param.
+ * A reference to something the UI can open. `agent`, `user`, `keypair`,
+ * `project`, `resource_preset` and `resource_group` have list entries but no
+ * detail member: their pages carry no per-row URL param.
  */
 export type ResourceRef =
   | { type: 'session'; id: string; view?: SessionView }
@@ -69,7 +76,8 @@ interface ListPageSpec {
   pathname: string;
   /** Params that select the resource's surface on a shared page (e.g. a tab). */
   fixedParams?: Readonly<Record<string, string>>;
-  filterParam: string;
+  /** Absent when the page parses no free-text filter — a `filter` is dropped. */
+  filterParam?: string;
   statusParam?: string;
 }
 
@@ -122,6 +130,23 @@ export const LIST_PAGES: Readonly<Record<ListResource, ListPageSpec>> = {
     fixedParams: { tab: 'credentials' },
     filterParam: 'filter',
     statusParam: 'activeType',
+  },
+  project: {
+    // Single-tab page, so no tab param — `ProjectPage.tsx` parses `filter`
+    // and a `status` of active | inactive.
+    pathname: '/admin/project',
+    filterParam: 'filter',
+    statusParam: 'status',
+  },
+  resource_preset: {
+    // Presets are the environment page's second tab (`EnvironmentPage.tsx`).
+    pathname: '/admin/environment',
+    fixedParams: { tab: 'preset' },
+  },
+  resource_group: {
+    // Resource groups are the resources page's third tab (`ResourcesPage.tsx`).
+    pathname: '/admin/agent',
+    fixedParams: { tab: 'resourceGroup' },
   },
 };
 
@@ -188,7 +213,7 @@ export const resourceLocation = (ref: ResourceRef): ResourceLocation => {
       const params: Array<[string, string]> = Object.entries(
         spec.fixedParams ?? {},
       );
-      if (ref.filter !== undefined) {
+      if (ref.filter !== undefined && spec.filterParam) {
         params.push([spec.filterParam, ref.filter]);
       }
       if (ref.statusCategory !== undefined && spec.statusParam) {

@@ -132,6 +132,7 @@ bai-agent manifest             # every command with its description and flags
 bai-agent init                 # set this machine up (see The init wizard below)
 bai-agent init --features agents  # the CLAUDE.md agent block (see The agent block below)
 bai-agent doctor               # environment + checkout + auth diagnostics
+bai-agent doctor --brief       # the auth/alignment/checkout lines + only what warns
 bai-agent sync                 # fetch the checkout data for use outside a checkout
 bai-agent search "<query>"     # one ranked list over docs + schema + terminology
 bai-agent docs search "<q>"    # alias of `search --domain docs`
@@ -143,6 +144,7 @@ bai-agent login                # hand this machine a WebUI session (see Auth bel
 bai-agent whoami               # who the stored session belongs to
 bai-agent logout               # delete the stored session file
 bai-agent query '<document>'   # raw GraphQL, SDL-validated (see Query below)
+bai-agent cookbook [<n>|<field>]  # one ready-to-run query from the skill cookbook
 bai-agent explain <target>     # what a type, field or value means to a user
 bai-agent --help               # generated from the same registry as `manifest`
 ```
@@ -428,6 +430,13 @@ endpoint answers; a manager with introspection disabled reports nothing and the
 schema still comes from the committed SDL. Without a stored session none of this
 happens and no request is made.
 
+A recorded tag equal to the manager's version means the SDL **is** the
+manager's, so nothing can be ahead of it and every finding is suppressed. That
+short-circuit is taken only while `data/schema.meta.json`'s `sha256` still
+hashes the committed SDL — a stale meta file describes some other bytes, so the
+gate (and `doctor`'s verdict) ignores its tag and falls back to the marker
+comparison, with the metadata warning reported separately.
+
 Field-level markers are compared through `markerSource`: a member with no marker
 of its own inherits its type's. A **named** selection uses that effective marker;
 a whole-schema comparison counts only markers a member owns, because its type
@@ -604,8 +613,14 @@ validator message under `suggestions`, and a hint naming the nearest type:
 error: The document does not match the checkout's schema (1 problem(s)).
 code:  schema_mismatch
 - Cannot query field "nope_field" on type "ComputeSessionNode".
+- bai-agent cookbook compute_session_nodes
 hint:  bai-agent schema show ComputeSessionNode
 ```
+
+The last suggestion is the [cookbook](#cookbook) entry for the root field the
+document tried to use — a rejected document is nearly always a hand-written
+one, and the cookbook has a working version. It falls back to
+`bai-agent cookbook --list` when no entry covers the field.
 
 A message that names only built-in scalars — a variable's nullability, say —
 falls back to the operation's root field (`bai-agent schema show
@@ -664,13 +679,13 @@ than blowing past it, and a row that does not survive drops out of
 
 ### WebUI links
 
-Every node whose root field returns a type with a resource page is annotated in
-place with `webui_path` (and `webui_url` when an origin is known), and the same
-set is listed in `data.links`. The origin is `--webui`, else the stored
+Every node whose root field returns a type with a **detail** page is annotated
+in place with `webui_path` (and `webui_url` when an origin is known), and the
+same set is listed in `data.links`. The origin is `--webui`, else the stored
 session's `webui` field; with neither, only `webui_path` is emitted.
 
-The type table (`src/query/links.ts`) is small and hand-maintained on purpose —
-an unrecognised type produces no link rather than a guessed one. One container
+The type tables (`src/query/links.ts`) are small and hand-maintained on purpose
+— an unrecognised type produces no link rather than a guessed one. One container
 level is unwrapped: a Relay `*Connection` (`edges { node }`), a Graphene `*List`
 (`items`), or a single-field Strawberry `*Payload`.
 
@@ -684,10 +699,47 @@ level is unwrapped: a Relay `*Connection` (`edges { node }`), a Graphene `*List`
 | `Artifact`, `ArtifactNode`                          | artifact   | `/admin/reservoir/<id>`       |
 
 The id is the first of `row_id`, `endpoint_id`, `id` that carries a non-empty
-string. **Known limitation:** Strawberry types (`VFolder`, `SessionV2`, …)
-expose no `row_id`, so their annotation falls back to the base64 Relay global
-id, which the pages do not accept. Graphene `*Node` types, which do carry
-`row_id`, produce links that open.
+string, **resolved to the form the page reads**: these pages take the raw uuid,
+so a base64 Relay global id (`<TypeName>:<uuid>` — all a Strawberry type like
+`VFolder` or `SessionV2` exposes) is decoded to the uuid first. `/admin/rbac` is
+the exception: it matches `roleDetail` against the node's global `id`, so a role
+link keeps it. An id that is neither a uuid nor a decodable global id produces
+**no** link — the node carries `webui_link_hint` ("select row_id") instead of a
+path that opens nothing.
+
+#### List-only resources
+
+Several pages list rows but address none of them — there is no per-row URL
+param to put in a link. A **list-shaped** root field resolving to one of these
+gets **one** entry in `data.links` per root field, pointing at the list page,
+with no `id` and no annotation on the rows themselves.
+
+List-shaped is read off the SDL, not off the response: the root field's type is
+a GraphQL list (`[User]`), a Relay connection (`edges`), or a Graphene list
+container (`items`). A singular root field returning a bare object of the same
+type — `user`, `keypair`, `image`, `group`, `resource_preset` — gets **no**
+link: a list page is not where one row lives, and most of these pages are
+admin-only, so a non-admin would get a link they cannot open. An empty
+list-shaped root field gets no link either — null, `[]`, a connection whose
+`edges` is empty, or a Graphene list whose `items` is empty.
+
+| Return type                            | Resource        | Page                             |
+| -------------------------------------- | --------------- | -------------------------------- |
+| `User`, `UserNode`, `UserV2`           | user            | `/admin/users?tab=users`         |
+| `KeyPair`, `KeyPairV2`                 | keypair         | `/admin/users?tab=credentials`   |
+| `Agent`, `AgentNode`, `AgentV2`        | agent           | `/admin/agent?tab=agents`        |
+| `ScalingGroup`, `ResourceGroup`        | resource_group  | `/admin/agent?tab=resourceGroup` |
+| `Group`, `GroupNode`, `ProjectV2`      | project         | `/admin/project`                 |
+| `ResourcePreset`, `ResourcePresetV2`   | resource_preset | `/admin/environment?tab=preset`  |
+| `Image`, `ImageNode`, `ImageV2`        | environment     | `/admin/environment`             |
+
+So `user_nodes`, `user_list`, `adminUsersV2` and friends all land on the users
+list; `resource_presets` and `adminResourcePresetsV2` on the environment page's
+preset tab; `scaling_groups` and `adminResourceGroups` on the resources page's
+resource-group tab; `groups`, `group_nodes`, `adminProjectsV2` and
+`domainProjectsV2` on the projects page; `keypair_list`, `myKeypairs` and
+`adminKeypairsV2` on the credentials tab; `images`, `image_nodes` and
+`adminImagesV2` on the environment page.
 
 ### Path rules are restated, not imported
 
@@ -697,6 +749,24 @@ host app, so nothing is imported. `src/webui-path.fixture.json` pins the
 expected path per resource ref and `webui-path.test.ts` asserts every case.
 When the app renames a route or a query param, update the rule and the fixture
 together.
+
+## Cookbook
+
+`bai-agent cookbook` reads the same file the skill points at —
+`skill/references/query-cookbook.md`, shipped in the package next to `dist/` and
+located at runtime the way the skill installer locates it (`shippedSkillDir()`),
+so it works from a checkout and from the npm install alike.
+
+```bash
+bai-agent cookbook --list          # number, title and root field(s) per entry
+bai-agent cookbook 3               # one entry: heading, prose, GraphQL document
+bai-agent cookbook vfolder_nodes   # the entry whose document uses that root field
+```
+
+An argument that is all digits selects by entry number; anything else is matched
+against the root fields parsed out of each entry's `graphql` block. No match
+exits **5** `not_found` with the whole list under `suggestions`. `--json` returns
+`{ entries: [...] }` for the list and `{ entry }` for one entry.
 
 ## Explain
 

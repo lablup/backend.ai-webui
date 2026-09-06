@@ -5,13 +5,15 @@ import { fetchManagerVersion, probeIntrospection } from './manager.js';
 import { CLI_NAME } from './meta.js';
 import type { Block } from './output.js';
 import { list, record, section } from './output.js';
+import { tryResolveRepoContext } from './repo-context.js';
+import { readCommittedSchema, readSchemaMeta } from './schema-meta.js';
 import type {
   MarkerSource,
   SchemaIndex,
   SchemaMarker,
 } from './search/schema-sdl.js';
 import { loadSession, resolveEndpoint } from './session.js';
-import { compareVersions } from './version-order.js';
+import { baseRelease, compareVersions } from './version-order.js';
 
 /** Every command that runs the gate takes the same flag. */
 export const STRICT_FLAG: FlagSpec = {
@@ -28,6 +30,8 @@ export const STRICT_FLAG: FlagSpec = {
  */
 export interface SchemaAlignmentContext {
   schema: SchemaIndex;
+  /** `data/schema.meta.json`'s tag — the release the SDL was synced from. */
+  schemaTag?: string;
 }
 
 export interface AlignmentFinding {
@@ -40,6 +44,8 @@ export interface AlignmentFinding {
 
 export interface VersionAlignment {
   managerVersion: string;
+  /** The release tag the committed SDL was synced from, when it is recorded. */
+  schemaTag?: string;
   /** Marked entries compared against the manager. */
   checked: number;
   /** Entries the manager is too old to have. */
@@ -48,6 +54,7 @@ export interface VersionAlignment {
   deprecatedCount: number;
   newer: AlignmentFinding[];
   deprecated: AlignmentFinding[];
+  /** Only `newerCount` decides it; a deprecation is informational. */
   aligned: boolean;
   /** The one line `--json`-free callers print on stderr. */
   summary: string;
@@ -157,6 +164,11 @@ function summarize(
  * compared, counting only entries carrying a marker of their own — a type
  * already stands for the fields that inherit from it.
  *
+ * A pre-release manager (`26.8.0rc1`) counts as its own release for markers,
+ * and `schemaCtx.schemaTag` equal to the manager version means the SDL is the
+ * manager's own, so nothing is flagged. Only `Added in` markers ahead of the
+ * manager make it not aligned; a deprecation is reported, not a mismatch.
+ *
  * Pure: it performs no I/O. `applyVersionAlignmentGate` is the wrapper that
  * finds the session, fetches the manager version and reports.
  */
@@ -169,6 +181,14 @@ export function checkVersionAlignment(
     ? selectedEntries(schemaCtx.schema, selectedFields)
     : everyMarkedEntry(schemaCtx.schema);
 
+  const { schemaTag } = schemaCtx;
+  // The SDL came out of the release the manager is running: it IS the
+  // manager's schema, so no marker can be ahead of it.
+  const sdlIsTheManagers =
+    schemaTag !== undefined && schemaTag === managerVersion;
+  // `26.8.0rc1` runs the 26.8.0 code, so an `Added in 26.8.0` marker is there.
+  const managerRelease = baseRelease(managerVersion);
+
   const newer: AlignmentFinding[] = [];
   const deprecated: AlignmentFinding[] = [];
   let checked = 0;
@@ -176,7 +196,11 @@ export function checkVersionAlignment(
     const { addedIn, deprecatedSince } = entry.marker;
     if (!addedIn && !deprecatedSince) continue;
     checked += 1;
-    if (addedIn && compareVersions(addedIn, managerVersion) > 0) {
+    if (
+      !sdlIsTheManagers &&
+      addedIn &&
+      compareVersions(addedIn, managerRelease) > 0
+    ) {
       newer.push({
         id: entry.id,
         version: addedIn,
@@ -185,7 +209,7 @@ export function checkVersionAlignment(
     }
     if (
       deprecatedSince &&
-      compareVersions(deprecatedSince, managerVersion) <= 0
+      compareVersions(deprecatedSince, managerRelease) <= 0
     ) {
       deprecated.push({
         id: entry.id,
@@ -195,30 +219,38 @@ export function checkVersionAlignment(
     }
   }
 
-  const aligned = newer.length === 0 && deprecated.length === 0;
-  const parts = [
-    newer.length > 0
-      ? summarize(newer, newer.length, 'not in the manager yet')
-      : undefined,
+  const aligned = newer.length === 0;
+  const deprecatedNote =
     deprecated.length > 0
       ? summarize(deprecated, deprecated.length, 'deprecated by the manager')
-      : undefined,
-  ].filter(Boolean);
+      : undefined;
+  const summary = aligned
+    ? [`schema matches manager ${managerVersion}`, deprecatedNote]
+        .filter(Boolean)
+        .join('; ')
+    : [
+        `schema is not aligned with manager ${managerVersion}: ${summarize(newer, newer.length, 'not in the manager yet')}`,
+        deprecatedNote,
+      ]
+        .filter(Boolean)
+        .join('; ');
+  // Re-syncing the tag the SDL already carries fixes nothing.
+  const hint =
+    aligned || schemaTag === managerVersion
+      ? undefined
+      : `${CLI_NAME} schema sync --tag ${managerVersion}`;
 
   return {
     managerVersion,
+    ...(schemaTag ? { schemaTag } : {}),
     checked,
     newerCount: newer.length,
     deprecatedCount: deprecated.length,
     newer: newer.slice(0, ALIGNMENT_SAMPLE_LIMIT),
     deprecated: deprecated.slice(0, ALIGNMENT_SAMPLE_LIMIT),
     aligned,
-    summary: aligned
-      ? `schema matches manager ${managerVersion}`
-      : `schema is not aligned with manager ${managerVersion}: ${parts.join('; ')}`,
-    ...(aligned
-      ? {}
-      : { hint: `${CLI_NAME} schema sync --tag ${managerVersion}` }),
+    summary,
+    ...(hint ? { hint } : {}),
   };
 }
 
@@ -238,6 +270,7 @@ export function renderAlignment(alignment: VersionAlignment): Block[] {
     section('Version alignment'),
     record([
       ['manager', alignment.managerVersion],
+      ['schemaTag', alignment.schemaTag],
       ['verdict', alignment.aligned ? 'aligned' : 'not aligned'],
       ['checked', alignment.checked],
       ['newer', alignment.newerCount],
@@ -304,6 +337,24 @@ export interface AlignmentGateResult {
 }
 
 /**
+ * The tag `schema sync` recorded, unless the caller already knows it.
+ *
+ * Forwarded only while the recorded `sha256` still hashes the committed SDL:
+ * a stale meta file whose tag happens to equal the manager version would
+ * otherwise trip the `sdlIsTheManagers` short-circuit and hide every finding.
+ */
+function syncedSchemaTag(options: AlignmentGateOptions): string | undefined {
+  if (options.schemaCtx.schemaTag !== undefined)
+    return options.schemaCtx.schemaTag;
+  const resolved = tryResolveRepoContext(options.cwd);
+  if (!resolved.ok) return undefined;
+  const meta = readSchemaMeta(resolved.context);
+  if (!meta) return undefined;
+  const sdl = readCommittedSchema(resolved.context);
+  return sdl?.sha256 === meta.sha256 ? meta.tag : undefined;
+}
+
+/**
  * The gate `whoami`, `schema show` — and later `query` / `explain` — run.
  *
  * Without a stored session it does nothing and touches the network zero times.
@@ -327,7 +378,7 @@ export async function applyVersionAlignmentGate(
   }
 
   const alignment = checkVersionAlignment(
-    options.schemaCtx,
+    { ...options.schemaCtx, schemaTag: syncedSchemaTag(options) },
     version.manager,
     options.selectedFields,
   );

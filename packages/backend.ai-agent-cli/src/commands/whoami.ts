@@ -27,6 +27,8 @@ export interface WhoamiData extends WhoAmI {
   /** Masked; the raw id is never rendered. */
   sessionId: string;
   sessionFile: string;
+  /** The WebUI checkout's own version — not the manager's, not the SDL tag. */
+  repoVersion?: string;
   /** Absent outside a checkout, or when the manager version is unreadable. */
   manager?: ManagerReachability;
   alignment?: VersionAlignment;
@@ -83,6 +85,7 @@ export const whoamiCommand = defineCommand<WhoamiData>({
         endpoint,
         sessionId: maskSessionId(stored.sessionId),
         sessionFile: stored.path,
+        ...(repo.ok ? { repoVersion: repo.context.repoVersion } : {}),
         ...(gate.manager ? { manager: gate.manager } : {}),
         ...(gate.alignment ? { alignment: gate.alignment } : {}),
       };
@@ -104,6 +107,8 @@ export const whoamiCommand = defineCommand<WhoamiData>({
         ['domain', data.domainName],
         ['endpoint', data.endpoint],
         ['manager', data.manager?.managerVersion],
+        ['schemaTag', data.alignment?.schemaTag],
+        ['repoVersion', data.repoVersion],
         ...(verbosity === 'dense'
           ? []
           : ([

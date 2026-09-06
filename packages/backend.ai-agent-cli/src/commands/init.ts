@@ -190,7 +190,7 @@ export const initCommand = defineCommand<InitData>({
     {
       flag: '--skill',
       description:
-        'Install the Claude Code skill into ~/.claude/skills (asked for when neither --skill nor --no-skill is given).',
+        'Install the Claude Code skill into $CLAUDE_CONFIG_DIR/skills, else ~/.claude/skills (asked for when neither --skill nor --no-skill is given).',
       type: 'boolean',
     },
     {

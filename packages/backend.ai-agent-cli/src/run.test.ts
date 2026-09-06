@@ -103,6 +103,7 @@ describe('success envelope', () => {
       'logout',
       'whoami',
       'query',
+      'cookbook',
       'explain',
     ]);
   });

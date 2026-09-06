@@ -216,6 +216,30 @@
     "expected": "/admin/users?tab=credentials"
   },
   {
+    "name": "list projects",
+    "ref": {
+      "type": "list",
+      "resource": "project"
+    },
+    "expected": "/admin/project"
+  },
+  {
+    "name": "list resource presets pins the environment page's preset tab",
+    "ref": {
+      "type": "list",
+      "resource": "resource_preset"
+    },
+    "expected": "/admin/environment?tab=preset"
+  },
+  {
+    "name": "list resource groups pins the resources page's tab",
+    "ref": {
+      "type": "list",
+      "resource": "resource_group"
+    },
+    "expected": "/admin/agent?tab=resourceGroup"
+  },
+  {
     "name": "session list with a free-text filter",
     "ref": {
       "type": "list",
@@ -313,6 +337,24 @@
       "statusCategory": "inactive"
     },
     "expected": "/admin/users?tab=credentials&activeType=inactive"
+  },
+  {
+    "name": "project list status uses status",
+    "ref": {
+      "type": "list",
+      "resource": "project",
+      "statusCategory": "inactive"
+    },
+    "expected": "/admin/project?status=inactive"
+  },
+  {
+    "name": "resource preset list drops a filter the page does not parse",
+    "ref": {
+      "type": "list",
+      "resource": "resource_preset",
+      "filter": "name ilike \"%gpu%\""
+    },
+    "expected": "/admin/environment?tab=preset"
   },
   {
     "name": "list combines tab, filter and status in a stable order",

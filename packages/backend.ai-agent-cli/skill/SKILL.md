@@ -25,46 +25,42 @@ in, when to answer versus link, and which neighbour owns what.
 
 ## Preflight
 
-The CLI runs in one of two places; find out which first.
+Run `bai-agent doctor --brief` once, from wherever you already are — never
+`cd` first. It is the one-step preflight: checkout-vs-synced-data and
+session/auth in one line each. Fall back to `bai-agent doctor --json` only
+when you need a specific field out of it. Run `bai-agent whoami` only when
+the auth check is `warn`.
 
-- **Inside a `backend.ai-webui` checkout** — `pnpm --filter backend.ai-agent-cli
-  build` once per session, then every command as `pnpm run bai-agent <cmd>`
-  from the repository root (the proxy runs the bundle, not the source). The
-  data is the checkout's own.
-- **Anywhere else** — `bai-agent <cmd>` from the npm package
-  (`npm i -g backend.ai-agent-cli`). The data is a synced copy that
-  `bai-agent init` fetched for the manager's version; `bai-agent sync`
-  refreshes it. The workflow contract lives next to this file in
-  `references/agent-block.md` (generated at install), not in a CLAUDE.md.
+The workflow contract is already loaded: in a checkout it is the `BAI-AGENT`
+block in `CLAUDE.md`; installed, it is `references/agent-block.md`. Read
+whichever applies — don't `cat` it unless the block is absent — and don't grep
+for a CLAUDE.md outside a checkout; there isn't one.
 
-Then:
+**When `whoami` says `auth_required` (exit 3):**
 
-1. `bai-agent doctor --json` — data and session in one pass. It only ever
-   exits 0 or 1, and a missing session is a `warn`, so exit 0 means the
-   environment is ok — not that you are logged in. `fail` with no data at all
-   means `bai-agent init` (or `bai-agent sync`) has not run on this machine.
-2. `bai-agent whoami` — the auth check; exit 3 (`auth_required`) means log in:
-   - In a checkout, get the endpoint and the account from the
-     **`webui-connection-info`** skill; elsewhere the endpoint is the one
-     `init` recorded (`doctor` prints it). Never ask the user for a password,
-     and never put one in a command.
-   - Browser on this machine: `bai-agent login --endpoint <url>`, then confirm on
-     the `/cli-login` page it opens. That page is the WebUI's; in a checkout it
-     is the dev server, elsewhere the endpoint's own origin — pass
-     `--webui <origin>` when the UI lives somewhere else.
-   - Browser anywhere else, or a tunnelled/HTTPS tab: `bai-agent login --paste
-     --endpoint <url>` and paste the session id the page reveals.
-   - `bai-agent logout` when you are done with a borrowed session.
-3. **`search`, `docs show`, `schema show` and `explain` need no session at all.**
-   A "what does X mean" question never requires logging in — go straight to it.
+- Get the endpoint and the account from the **`webui-connection-info`** skill
+  in a checkout; elsewhere the endpoint is the one `init` recorded (`doctor`
+  prints it). Never ask the user for a password, and never put one in a
+  command.
+- Browser on this machine: `bai-agent login --endpoint <url>`, then confirm on
+  the `/cli-login` page it opens. That page is the WebUI's; in a checkout it
+  is the dev server, elsewhere the endpoint's own origin — pass
+  `--webui <origin>` when the UI lives somewhere else.
+- Browser anywhere else, or a tunnelled/HTTPS tab: `bai-agent login --paste
+  --endpoint <url>` and paste the session id the page reveals.
+- `bai-agent logout` when you are done with a borrowed session.
+
+**`search`, `docs show`, `schema show` and `explain` need no session at all.**
+A "what does X mean" question never requires logging in — go straight to it.
 
 ## Answer, or link
 
 | The user wants | Do this |
 | --- | --- |
-| to understand a term, field or status value | `explain` (meaning) or `docs show` (the manual). Answer in the words the UI uses, and cite the deployed-docs `url` the CLI returned. |
-| a count, a list, a value | `query` — start from `references/query-cookbook.md`, adapt, never invent a shape. Summarise the rows; do not paste the raw envelope. |
-| to see it, or act on it | Give the `webui_url` (or `webui_path`) `query` already annotated onto the row, under `data.links`, so the user can open it themselves. Never describe a click path you could report directly. |
+| to understand a status value ("what does status X mean") | Try `explain <Type>.<field>=<VALUE>` first — e.g. `explain ComputeSessionNode.status=PENDING`, `explain UserNode.status=before-verification`. Fall back to `explain <Type>.<field>` (no value) or `docs show` for a term or field in general. |
+| to understand a term or field | `explain` (meaning) or `docs show` (the manual). Answer in the words the UI uses, and cite the deployed-docs `url` the CLI returned. |
+| a count, a list, a value | Start every live query from `bai-agent cookbook <root field>` (or `--list`) — never search the filesystem for the cookbook; a `schema_mismatch` error names the entry to read. Adapt it, never invent a shape. Summarise the rows; do not paste the raw envelope. |
+| to see it, or act on it | Give the `webui_url` (or `webui_path`) `query` already annotated onto the row, under `data.links`, so the user can open it themselves. When you post-process the `--json` envelope yourself, also print `data.links` — the link must reach the user. Never describe a click path you could report directly. If `data.links` is empty for a result, say the resource has no addressable page — do not compose a path by hand; but a row carrying `webui_link_hint` instead means the id you selected cannot build one, so re-run selecting `row_id`. When several rows share a name, pick the link by `id`, never by name. |
 | something destructive | Give them the `hint` page from the refusal and stop. A `mutation_refused` (exit 4) is the answer, not an obstacle to route around. |
 
 `explain` prints `MISSING` for a piece nothing curates. Say it is not documented
@@ -96,11 +92,20 @@ guess at runtime.
   drawer, the only addressable surface — there is no per-row session link to
   offer beyond that.
 
+The block's RULES apply beyond these (session file, empty `data.links`, no
+React source in a synced copy, never `cd` before `doctor`, and more) — read
+them there rather than restated here.
+
 ## Cookbook
 
-`references/query-cookbook.md` — 11 documents that validate against this
-checkout's SDL, one per resource, plus the allow-listed mutation and the refused
-destructive one. A test re-validates them, so a stale one fails CI, not a user.
+`bai-agent cookbook --list` names every entry; `bai-agent cookbook <n>` and
+`bai-agent cookbook <root field>` print one, prose and document. That command
+is how you read it — it locates the file itself, so never search the
+filesystem for a path and never `cat` one. The entries are 11 documents that
+validate against the SDL, one per resource, plus the allow-listed mutation and
+the refused destructive one; a test re-validates them, so a stale one fails CI,
+not a user. Maintainers edit
+`packages/backend.ai-agent-cli/skill/references/query-cookbook.md`.
 
 ## Keeping this in sync (maintainers, in a checkout)
 

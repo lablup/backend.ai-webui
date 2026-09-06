@@ -1,10 +1,11 @@
-import { BLOCK_START, INSTALLED_SKILL_PATH } from './init/block.js';
+import { BLOCK_START } from './init/block.js';
 import { COMMANDS } from './registry.js';
 import {
   AGENT_BLOCK_FILE,
   claudeSkillsDir,
   installSkill,
   installedSkillDir,
+  installedSkillPath,
   shippedSkillDir,
 } from './skill-install.js';
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
@@ -14,9 +15,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('skill install', () => {
   it("resolves the package's own skill/ directory", () => {
-    expect(shippedSkillDir()).toMatch(
-      /[\\/]backend\.ai-agent-cli[\\/]skill$/,
-    );
+    expect(shippedSkillDir()).toMatch(/[\\/]backend\.ai-agent-cli[\\/]skill$/);
     expect(existsSync(join(shippedSkillDir(), 'SKILL.md'))).toBe(true);
   });
 
@@ -25,7 +24,10 @@ describe('skill install', () => {
     expect(claudeSkillsDir({ CLAUDE_CONFIG_DIR: '/cfg' })).toBe(
       join('/cfg', 'skills'),
     );
-    expect(INSTALLED_SKILL_PATH).toBe('~/.claude/skills/bai-agent/SKILL.md');
+    expect(installedSkillPath({})).toBe('~/.claude/skills/bai-agent/SKILL.md');
+    expect(installedSkillPath({ CLAUDE_CONFIG_DIR: '/cfg' })).toBe(
+      join('/cfg', 'skills', 'bai-agent', 'SKILL.md'),
+    );
   });
 
   it('copies the skill, generates the standalone block, and is idempotent', () => {
@@ -44,7 +46,7 @@ describe('skill install', () => {
     expect(block).toContain(BLOCK_START);
     // The block names where the skill actually went, not a fixed ~/.claude.
     expect(block).toContain(join(targetDir, 'SKILL.md'));
-    expect(block).not.toContain(INSTALLED_SKILL_PATH);
+    expect(block).not.toContain(installedSkillPath({}));
     expect(block).toContain('npm i -g backend.ai-agent-cli');
     expect(block).not.toContain('pnpm run bai-agent');
     for (const command of COMMANDS) expect(block).toContain(command.name);
