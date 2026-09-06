@@ -44,7 +44,7 @@ export interface RefusedCopy {
 
 /** The composer's success line for a single pin; a set writes its own. */
 export const COPIED_ONE =
-  'Copied — paste it into the PR comment, the Teams thread, or Claude 📋';
+  'Copied — paste it into the PR comment, the Teams thread, or Claude';
 
 export interface OverlayUICallbacks {
   /**
@@ -402,11 +402,11 @@ ${ICON_STYLE}
    */
   function setDraftSize(size: number, full = false) {
     draftFull = full;
-    copyButton.textContent = full
+    copyLabel.textContent = full
       ? `Set is full (${size})`
       : size > 0
         ? `Add & copy all (${size + 1})`
-        : '📋 Copy block';
+        : 'Copy block';
     syncCopyEnabled();
   }
 

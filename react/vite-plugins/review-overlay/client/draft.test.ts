@@ -127,6 +127,31 @@ describe('what the set says is on screen', () => {
     expect(stored().map((p) => p.hidden)).toEqual([undefined, undefined]);
   });
 
+  // R5.5. The switch is hide-all / show-all; nothing may stay hidden behind a
+  // control that says the cards are shown.
+  it('clears every per-pin ✕ when the switch goes back on', () => {
+    const store = createDraftStore();
+    store.add(pin('c_a'));
+    store.add(pin('c_b'));
+    store.hide('c_a', true);
+    store.hideCards(true);
+
+    store.hideCards(false);
+
+    expect(store.pins().map((p) => p.hidden)).toEqual([undefined, undefined]);
+    expect(stored().map((p) => p.hidden)).toEqual([undefined, undefined]);
+  });
+
+  it('leaves those flags alone when the switch goes off', () => {
+    const store = createDraftStore();
+    store.add(pin('c_a'));
+    store.hide('c_a', true);
+
+    store.hideCards(true);
+
+    expect(store.pins()[0].hidden).toBe(true);
+  });
+
   it('remembers the switch across a reload of the tab', () => {
     const store = createDraftStore();
     store.add(pin('c_a'));

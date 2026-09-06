@@ -2,7 +2,12 @@
  * The set dock (FR-3858): the list that reaches every pin of the draft set,
  * whatever the layer managed to draw, plus the two set-wide actions.
  */
-import { CARDS_CHORD, createSetDock, type SetDock } from './dock.js';
+import {
+  CARDS_CHORD,
+  createSetDock,
+  DOCK_POS_KEY,
+  type SetDock,
+} from './dock.js';
 import type { SetPin } from './types.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -32,8 +37,21 @@ const node = <T extends HTMLElement>(selector: string) =>
 const rows = () => Array.from(root.querySelectorAll<HTMLElement>('.row'));
 const shown = () => node('.setdock').classList.contains('shown');
 
+const viewport = (width: number, height: number) => {
+  Object.defineProperty(window, 'innerWidth', {
+    value: width,
+    configurable: true,
+  });
+  Object.defineProperty(window, 'innerHeight', {
+    value: height,
+    configurable: true,
+  });
+};
+
 beforeEach(() => {
   document.body.innerHTML = '';
+  sessionStorage.clear();
+  viewport(1024, 768);
   copied = 0;
   cleared = 0;
   toggled = 0;
@@ -70,7 +88,7 @@ describe('createSetDock', () => {
     dock.render([pin('c_a', 'Sessions › start'), pin('c_b', 'Sessions › end')]);
 
     expect(shown()).toBe(true);
-    expect(node('.title').textContent).toBe('📍 2 pins');
+    expect(node('.title').textContent).toBe('2 pins');
     expect(rows().map((row) => row.dataset.pinId)).toEqual(['c_a', 'c_b']);
     expect(rows().map((row) => row.querySelector('.idx')?.textContent)).toEqual(
       ['1', '2'],
@@ -83,7 +101,7 @@ describe('createSetDock', () => {
   it('counts one pin as a pin', () => {
     dock.render([pin('c_a', 'Sessions › start')]);
 
-    expect(node('.title').textContent).toBe('📍 1 pin');
+    expect(node('.title').textContent).toBe('1 pin');
   });
 
   // The row IS the control: one click goes to the pin it names.
@@ -119,8 +137,10 @@ describe('createSetDock', () => {
       expect(rows()[1].classList.contains('off')).toBe(true);
       expect(rows()[1].querySelector('.unhide')).not.toBeNull();
       expect(rows()[0].querySelector('.unhide')).toBeNull();
-      // 🙈 says "hidden" in the header; the row's button is what reveals.
-      expect(rows()[1].querySelector('.unhide')?.textContent).toBe('👁');
+      // The header's own icon says "hidden"; the row's button is what reveals.
+      expect(
+        rows()[1].querySelector('.unhide')?.getAttribute('aria-label'),
+      ).toBe('Show this pin’s card again');
     });
 
     it('shows it again from the row’s own button', () => {
@@ -146,7 +166,7 @@ describe('createSetDock', () => {
     it('asks the owner to flip it, and shows the chord that does too', () => {
       dock.render([pin('c_a', 'a')]);
 
-      expect(node('.cards').textContent).toBe('👁 Cards');
+      expect(node('.cards').textContent).toBe('Cards');
       expect(node('.chord').textContent).toBe(CARDS_CHORD);
       expect(node('.cards').getAttribute('aria-label')).toContain(CARDS_CHORD);
 
@@ -159,7 +179,7 @@ describe('createSetDock', () => {
     it('says the cards are off once the owner says so', () => {
       dock.render([pin('c_a', 'a')], true);
 
-      expect(node('.cards').textContent).toBe('🙈 Cards');
+      expect(node('.cards').textContent).toBe('Cards');
       expect(node('.cards').getAttribute('aria-pressed')).toBe('true');
     });
 
@@ -204,7 +224,7 @@ describe('createSetDock', () => {
 
     // Clear is the one action with no undo, so one click only asks.
     it('asks before it clears, naming how many it would take', () => {
-      expect(node('.clear').textContent).toBe('🗑 Clear all (3)');
+      expect(node('.clear').textContent).toBe('Clear all (3)');
 
       node<HTMLButtonElement>('.clear').click();
 
@@ -238,7 +258,151 @@ describe('createSetDock', () => {
       dock.render([pin('c_a', 'a')]);
 
       expect(node('.setdock').classList.contains('confirming')).toBe(false);
-      expect(node('.clear').textContent).toBe('🗑 Clear all (1)');
+      expect(node('.clear').textContent).toBe('Clear all (1)');
+    });
+  });
+
+  // R5.2. The dock's row of emoji drew at whatever size each OS font chose,
+  // so the buttons were different heights.
+  describe('the chrome', () => {
+    const EMOJI = /\p{Extended_Pictographic}/u;
+
+    it('is lucide svgs, with no emoji left in it', () => {
+      dock.render([
+        { ...pin('c_a', 'Sessions › start'), hidden: true },
+        pin('c_b', 'Sessions › end'),
+      ]);
+
+      const buttons = Array.from(
+        node('.setdock').querySelectorAll('button.act'),
+      );
+      expect(buttons.length).toBeGreaterThan(0);
+      for (const button of buttons) {
+        expect(button.querySelector('svg')).not.toBeNull();
+        expect(button.getAttribute('aria-label')).toBeTruthy();
+      }
+      // The chord (⌘⇧H) is a key name, not an icon, so it stays.
+      expect(node('.setdock').textContent).not.toMatch(EMOJI);
+    });
+  });
+
+  // R5.1. A dock nailed to the bottom-right corner sits on whatever the
+  // reviewer wants to look at there.
+  describe('dragging the dock', () => {
+    const grip = () => node('.grip');
+    const point = (type: string, x: number, y: number) =>
+      grip().dispatchEvent(
+        new MouseEvent(type, {
+          clientX: x,
+          clientY: y,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+    /** Grab at the dock's own origin, so the cursor IS the new top-left. */
+    const dragTo = (x: number, y: number) => {
+      point('pointerdown', 0, 0);
+      point('pointermove', x, y);
+      point('pointerup', x, y);
+    };
+
+    it('moves the dock and drops the default corner', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      dragTo(300, 200);
+
+      expect(node('.setdock').style.left).toBe('300px');
+      expect(node('.setdock').style.top).toBe('200px');
+      expect(node('.setdock').style.right).toBe('auto');
+      expect(node('.setdock').style.bottom).toBe('auto');
+    });
+
+    // A pick starts on a mousedown the page can see, and a drag across the
+    // header would otherwise select the labels it passes over.
+    it('takes the gesture, so it is neither a selection nor a pick', () => {
+      const down = new MouseEvent('pointerdown', {
+        clientX: 0,
+        clientY: 0,
+        bubbles: true,
+        cancelable: true,
+      });
+      grip().dispatchEvent(down);
+
+      expect(down.defaultPrevented).toBe(true);
+    });
+
+    // Pointer capture keeps every move on the grip; no row ever sees one.
+    it('runs no row action while the dock is being dragged', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+      dragTo(300, 200);
+
+      expect(located).toEqual([]);
+      expect(removed).toEqual([]);
+      expect(unhidden).toEqual([]);
+    });
+
+    it('keeps the position for the tab', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      dragTo(300, 200);
+
+      expect(sessionStorage.getItem(DOCK_POS_KEY)).toBe(
+        JSON.stringify({ left: 300, top: 200 }),
+      );
+    });
+
+    // The dock is 260px wide; 1024 - 260 - 8 is the rightmost `left` that
+    // still leaves it a margin.
+    it('clamps a drag past the edge back into the viewport', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      dragTo(4000, 4000);
+
+      expect(node('.setdock').style.left).toBe('756px');
+      expect(node('.setdock').style.top).toBe('760px');
+    });
+
+    it('restores a stored position, clamped into a smaller window', () => {
+      dock.dispose();
+      sessionStorage.setItem(
+        DOCK_POS_KEY,
+        JSON.stringify({ left: 900, top: 700 }),
+      );
+      viewport(600, 400);
+      dock = createSetDock({
+        root,
+        onCopyAll: () => copied++,
+        onClear: () => cleared++,
+        onLocate: (id) => located.push(id),
+        onRemove: (id) => removed.push(id),
+        onUnhide: (id) => unhidden.push(id),
+        onToggleCards: () => toggled++,
+      });
+
+      expect(node('.setdock').style.left).toBe('332px');
+      expect(node('.setdock').style.top).toBe('392px');
+    });
+
+    it('pulls a parked dock back in when the window shrinks', () => {
+      dock.render([pin('c_a', 'a')]);
+      dragTo(700, 500);
+
+      viewport(400, 300);
+      window.dispatchEvent(new Event('resize'));
+
+      expect(node('.setdock').style.left).toBe('132px');
+      expect(node('.setdock').style.top).toBe('292px');
+    });
+
+    it('leaves the default corner alone until something moves it', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      viewport(400, 300);
+      window.dispatchEvent(new Event('resize'));
+
+      expect(node('.setdock').style.left).toBe('');
+      expect(node('.setdock').style.top).toBe('');
     });
   });
 

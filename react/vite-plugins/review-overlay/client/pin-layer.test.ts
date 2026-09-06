@@ -264,7 +264,7 @@ describe('createPinLayer', () => {
 
     expect(markerOf('c_a').textContent).toBe('1');
     expect(countOf('c_b')).toBe('2 / 2');
-    expect(markerOf('c_link').textContent).toBe('📍');
+    expect(markerGlyph('c_link')).toBe('map-pin');
     expect(countOf('c_link')).toBe('');
   });
 

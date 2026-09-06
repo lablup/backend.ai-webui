@@ -101,6 +101,21 @@ export function hideCards(set: DraftSet, hidden: boolean): DraftSet {
 }
 
 /**
+ * R5.5. The switch is hide-all / SHOW-all, not suspend-and-restore: turning it
+ * on clears every per-pin ✕ so nothing is left stranded behind a control that
+ * says the cards are shown.
+ */
+export function showAllPins(set: DraftSet): DraftSet {
+  return {
+    ...set,
+    pins: set.pins.map((pin) => {
+      const { hidden: _was, ...rest } = pin;
+      return rest as SetPin;
+    }),
+  };
+}
+
+/**
  * A link merges into the set rather than replacing it: what is already there
  * keeps its place and the data it was stored with, and the rest is appended
  * in link order. The cap is what stops a pasted hash from growing it forever.
@@ -147,6 +162,7 @@ export interface DraftStore {
   /** ✕ on one card. */
   hide(id: string, hidden: boolean): void;
   cardsHidden(): boolean;
+  /** Turning the switch back ON also un-hides every individually hidden pin. */
   hideCards(hidden: boolean): void;
 }
 
@@ -203,7 +219,8 @@ export function createDraftStore(
     },
     cardsHidden: () => current.cardsHidden === true,
     hideCards(hidden) {
-      write(hideCards(current, hidden));
+      const next = hideCards(current, hidden);
+      write(hidden ? next : showAllPins(next));
     },
   };
 }

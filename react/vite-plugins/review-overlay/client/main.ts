@@ -443,6 +443,10 @@ function boot() {
   function toggleCards() {
     store.hideCards(!store.cardsHidden());
     pins.setCardsHidden(store.cardsHidden());
+    // Switching back ON cleared every pin's own ✕ (R5.5); the layer has to
+    // hear about that or the cards it hid one at a time stay hidden.
+    for (const pin of store.pins())
+      pins.setCardHidden(pin.id, pin.hidden === true);
     syncDraft();
   }
 

@@ -228,7 +228,7 @@ describe('the first pin of a set', () => {
   it('says what the next ⌘⏎ will do', async () => {
     await bootOverlay();
     stubExecCommand();
-    expect(copyButton().textContent).toBe('📋 Copy block');
+    expect(copyButton().textContent).toBe('Copy block');
 
     await pickAndCopy('create', 'The label is cut off.');
 
@@ -637,5 +637,49 @@ describe('the set the tab was left with', () => {
     expect(sessionStorage.getItem(DRAFT_KEY)).toBeNull();
     expect(node('.setdock').classList.contains('shown')).toBe(false);
     expect(all('.card.found')).toHaveLength(0);
+  });
+});
+
+/**
+ * R5.5. The switch is hide-all / SHOW-all, not suspend-and-restore: a reviewer
+ * who presses "show" expects to see everything, not everything except what
+ * they hid one card at a time.
+ */
+describe('the cards switch as show-all', () => {
+  const cardsSwitch = () => node<HTMLButtonElement>('.setdock .cards');
+
+  it('shows every card again, including the ones hidden one by one', async () => {
+    mount('save', 'Save');
+    seed([
+      { ...storedPin('c_one', 'create', 'Start › create'), hidden: true },
+      storedPin('c_two', 'cancel', 'Start › cancel'),
+      { ...storedPin('c_three', 'save', 'Start › save'), hidden: true },
+    ]);
+    await bootOverlay();
+    await ticks(2);
+    expect(hiddenCard('c_one')).toBe(true);
+    expect(hiddenCard('c_three')).toBe(true);
+
+    cardsSwitch().click();
+    cardsSwitch().click();
+
+    expect(hiddenCard('c_one')).toBe(false);
+    expect(hiddenCard('c_two')).toBe(false);
+    expect(hiddenCard('c_three')).toBe(false);
+    expect(storedPins().some((pin) => pin.hidden)).toBe(false);
+  });
+
+  // Off is not "remember what was hidden and hide everything else".
+  it('leaves the per-pin flags alone on the way off', async () => {
+    seed([
+      { ...storedPin('c_one', 'create', 'Start › create'), hidden: true },
+      storedPin('c_two', 'cancel', 'Start › cancel'),
+    ]);
+    await bootOverlay();
+    await ticks(2);
+
+    cardsSwitch().click();
+
+    expect(storedPins()[0].hidden).toBe(true);
   });
 });

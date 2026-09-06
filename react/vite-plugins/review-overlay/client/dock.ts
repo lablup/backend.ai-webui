@@ -8,14 +8,27 @@
  * in through `textContent`. Copy-all runs inside the click that asked for it:
  * the gateway origin has only `execCommand`, so nothing may be awaited first.
  */
+import { icon, ICON_STYLE, type IconName } from './icons.js';
 import { isMac } from './picker.js';
 import type { SetPin } from './types.js';
 
 /** ⌘⇧H / Ctrl⇧H — plain ⌘H hides the app and Ctrl+H opens history. */
 export const CARDS_CHORD = isMac() ? '⌘⇧H' : 'Ctrl⇧H';
 
-/** 🙈 in this dock means "hidden"; 👁 on a row is the action that undoes it. */
 const CARDS_LABEL = `Pin cards (${CARDS_CHORD})`;
+
+/** Where a dragged dock is parked, per tab. Cleared with the tab, not the set. */
+export const DOCK_POS_KEY = 'bai-review:dock-pos';
+
+/** The dock's own `width`, for a jsdom clamp that has no layout to read. */
+const DOCK_WIDTH = 260;
+/** Margin the dock keeps to every viewport edge, dragged or default. */
+const EDGE_PAD = 8;
+
+export interface DockPos {
+  left: number;
+  top: number;
+}
 
 const STYLE = `
   .setdock {
@@ -32,10 +45,22 @@ const STYLE = `
     display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
     padding: 6px 8px; border-bottom: 1px solid var(--bai-review-border);
   }
-  .setdock .title { font-weight: 600; margin-right: auto; }
+  /* The whole dock moves from here, so it takes the pointer and never lets
+     the gesture reach the page as a selection or a pick. */
+  .setdock .grip {
+    flex: none; display: flex; align-items: center; cursor: grab;
+    color: var(--bai-review-text-dim); touch-action: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  .setdock.dragging .grip { cursor: grabbing; }
+  .setdock .title {
+    font-weight: 600; margin-right: auto; display: flex; align-items: center;
+    gap: 4px;
+  }
   .setdock .act {
     cursor: pointer; border: 0; background: none; padding: 2px 4px;
     font: inherit; color: var(--bai-review-text-dim); border-radius: 4px;
+    display: inline-flex; align-items: center; gap: 4px;
   }
   .setdock .act:hover { color: var(--bai-review-text); }
   .setdock .confirm { display: none; align-items: center; gap: 4px; }
@@ -61,6 +86,7 @@ const STYLE = `
   }
   /* Its card is hidden; the pin is still in the set and still on the page. */
   .setdock .row.off .rowlabel { opacity: 0.55; }
+${ICON_STYLE}
 `;
 
 export interface SetDockOptions {
@@ -79,18 +105,51 @@ export interface SetDockOptions {
   onToggleCards: () => void;
 }
 
+/**
+ * The icon is `aria-hidden`, so `label` is the button's whole accessible name
+ * whether or not it also shows `text`.
+ */
 const button = (
   className: string,
-  text: string,
+  name: IconName,
   label: string,
+  text?: string,
 ): HTMLButtonElement => {
   const node = document.createElement('button');
   node.className = `act ${className}`;
-  node.textContent = text;
-  // The glyph is the accessible name unless one is given, and "⧉" is not it.
+  node.append(icon(name));
+  if (text !== undefined) {
+    const span = document.createElement('span');
+    span.className = 'lbl';
+    span.textContent = text;
+    node.append(span);
+  }
   node.title = label;
   node.setAttribute('aria-label', label);
   return node;
+};
+
+const setText = (node: HTMLElement, text: string) => {
+  (node.querySelector('.lbl') as HTMLElement).textContent = text;
+};
+
+const setIcon = (node: HTMLElement, name: IconName) => {
+  node.querySelector('svg')?.replaceWith(icon(name));
+};
+
+/** A tab that refuses storage still drags; it just forgets on reload. */
+const readPos = (): DockPos | null => {
+  try {
+    const raw = sessionStorage.getItem(DOCK_POS_KEY);
+    const value = raw ? (JSON.parse(raw) as unknown) : null;
+    if (!value || typeof value !== 'object') return null;
+    const { left, top } = value as Record<string, unknown>;
+    if (typeof left !== 'number' || typeof top !== 'number') return null;
+    if (!Number.isFinite(left) || !Number.isFinite(top)) return null;
+    return { left, top };
+  } catch {
+    return null;
+  }
 };
 
 export function createSetDock(options: SetDockOptions) {
@@ -100,29 +159,126 @@ export function createSetDock(options: SetDockOptions) {
   dock.className = 'setdock';
   const head = document.createElement('div');
   head.className = 'head';
+  const grip = document.createElement('span');
+  grip.className = 'grip';
+  grip.append(icon('grip-vertical'));
+  grip.title = 'Drag the dock';
   const title = document.createElement('span');
   title.className = 'title';
+  title.append(icon('map-pin'));
+  const titleText = document.createElement('span');
+  title.append(titleText);
   const copyAll = button(
     'copyall',
-    '⧉ Copy all',
+    'files',
     'Copy every pin as one comment',
+    'Copy all',
   );
-  const clear = button('clear', '🗑 Clear all', 'Clear the whole set');
-  const cards = button('cards', '👁 Cards', CARDS_LABEL);
+  const clear = button('clear', 'trash-2', 'Clear the whole set', 'Clear all');
+  const cards = button('cards', 'eye', CARDS_LABEL, 'Cards');
   const chord = document.createElement('span');
   chord.className = 'chord';
   chord.textContent = CARDS_CHORD;
   const confirm = document.createElement('span');
   confirm.className = 'confirm';
   const confirmText = document.createElement('span');
-  const yes = button('yes', '✓', 'Yes, clear the whole set');
-  const no = button('no', '✕', 'Keep the set');
+  const yes = button('yes', 'check', 'Yes, clear the whole set');
+  const no = button('no', 'x', 'Keep the set');
   confirm.append(confirmText, yes, no);
-  head.append(title, cards, chord, copyAll, clear, confirm);
+  head.append(grip, title, cards, chord, copyAll, clear, confirm);
   const rows = document.createElement('div');
   rows.className = 'rows';
   dock.append(head, rows);
   options.root.append(style, dock);
+
+  /**
+   * Dragged position, or `null` for the default bottom-right corner. Clamped
+   * on every move, on resize and on restore, so a dock parked at the edge of a
+   * wide window is still reachable in a narrow one.
+   */
+  let pos: DockPos | null = null;
+
+  function clamp({ left, top }: DockPos): DockPos {
+    const width = dock.offsetWidth || DOCK_WIDTH;
+    const height = dock.offsetHeight;
+    return {
+      left: Math.min(
+        Math.max(left, EDGE_PAD),
+        Math.max(EDGE_PAD, window.innerWidth - width - EDGE_PAD),
+      ),
+      top: Math.min(
+        Math.max(top, EDGE_PAD),
+        Math.max(EDGE_PAD, window.innerHeight - height - EDGE_PAD),
+      ),
+    };
+  }
+
+  /** `right`/`bottom` are the CSS default; a placed dock has to drop them. */
+  function moveTo(next: DockPos) {
+    pos = clamp(next);
+    dock.style.left = `${pos.left}px`;
+    dock.style.top = `${pos.top}px`;
+    dock.style.right = 'auto';
+    dock.style.bottom = 'auto';
+  }
+
+  function savePos() {
+    if (!pos) return;
+    try {
+      sessionStorage.setItem(DOCK_POS_KEY, JSON.stringify(pos));
+    } catch {
+      // Storage off or full: the dock still sits where it was dragged.
+    }
+  }
+
+  /** Grab offset inside the dock, so it does not jump to the cursor. */
+  let grab: { dx: number; dy: number } | null = null;
+
+  grip.addEventListener('pointerdown', (evt) => {
+    if (evt.button) return;
+    const box = dock.getBoundingClientRect();
+    grab = { dx: evt.clientX - box.left, dy: evt.clientY - box.top };
+    // Without this the gesture becomes a text selection, and react-grab's
+    // select mode would read it as a pick.
+    evt.preventDefault();
+    evt.stopPropagation();
+    dock.classList.add('dragging');
+    // Capture keeps the moves — and the click the release synthesises — on the
+    // grip, so a drag that ends over a row never fires that row's action.
+    try {
+      grip.setPointerCapture(evt.pointerId);
+    } catch {
+      // jsdom, and any browser that refuses a capture it has no pointer for.
+    }
+  });
+
+  grip.addEventListener('pointermove', (evt) => {
+    if (!grab) return;
+    evt.preventDefault();
+    moveTo({ left: evt.clientX - grab.dx, top: evt.clientY - grab.dy });
+  });
+
+  const endDrag = (evt: PointerEvent) => {
+    if (!grab) return;
+    grab = null;
+    dock.classList.remove('dragging');
+    try {
+      grip.releasePointerCapture(evt.pointerId);
+    } catch {
+      // Never captured; nothing to release.
+    }
+    savePos();
+  };
+  grip.addEventListener('pointerup', endDrag);
+  grip.addEventListener('pointercancel', endDrag);
+
+  const reclamp = () => {
+    if (pos) moveTo(pos);
+  };
+  window.addEventListener('resize', reclamp);
+
+  const stored = readPos();
+  if (stored) moveTo(stored);
 
   /** Clearing is the one action with no undo, so it is asked twice. */
   const setConfirming = (on: boolean) =>
@@ -141,12 +297,12 @@ export function createSetDock(options: SetDockOptions) {
   function render(pins: SetPin[], cardsHidden = false) {
     setConfirming(false);
     dock.classList.toggle('shown', pins.length > 0);
-    title.textContent = `📍 ${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
-    clear.textContent = `🗑 Clear all (${pins.length})`;
+    titleText.textContent = `${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
+    setText(clear, `Clear all (${pins.length})`);
     confirmText.textContent = `Clear all ${pins.length}?`;
     // A toggle's name is stable and `aria-pressed` carries the state; naming
     // it after the action it would take announces the opposite of the state.
-    cards.textContent = cardsHidden ? '🙈 Cards' : '👁 Cards';
+    setIcon(cards, cardsHidden ? 'eye-off' : 'eye');
     cards.setAttribute('aria-pressed', String(cardsHidden));
     rows.replaceChildren(
       ...pins.map((pin, index) => {
@@ -168,11 +324,15 @@ export function createSetDock(options: SetDockOptions) {
         row.append(idx, label);
         if (pin.hidden) {
           row.classList.add('off');
-          const unhide = button('unhide', '👁', 'Show this pin’s card again');
+          const unhide = button('unhide', 'eye', 'Show this pin’s card again');
           unhide.addEventListener('click', () => options.onUnhide(pin.id));
           row.append(unhide);
         }
-        const remove = button('remove', '🗑', 'Remove this pin from the set');
+        const remove = button(
+          'remove',
+          'trash-2',
+          'Remove this pin from the set',
+        );
         remove.addEventListener('click', () => options.onRemove(pin.id));
         row.append(remove);
         return row;
@@ -189,6 +349,7 @@ export function createSetDock(options: SetDockOptions) {
     setCollapsed: (next: boolean) => dock.classList.toggle('folded', next),
     /** Tests and hot reloads: one dock lives as long as the page. */
     dispose() {
+      window.removeEventListener('resize', reclamp);
       dock.remove();
       style.remove();
     },
