@@ -303,7 +303,6 @@ function createPinView(deps: ViewDeps): PinView {
   let pulseTimer = 0;
   /** Folded away for a pick: a hidden card measures 0 high, so it is not moved. */
   let collapsed = false;
-  /** ✕ on this card. */
   let hidden = false;
   /** The dock's switch — every card at once. */
   let allHidden = false;
@@ -919,10 +918,7 @@ export function createPinLayer(options: PinLayerOptions) {
       placeSoon();
     },
 
-    /**
-     * Beat the marker again on purpose — the set dock's way of saying "this
-     * one", after the arrival pulse a pin gets once has already been spent.
-     */
+    /** Beat the marker again on purpose, once its arrival pulse is spent. */
     pulse(id: string) {
       views.find((view) => view.id() === id)?.pulse(true);
     },
