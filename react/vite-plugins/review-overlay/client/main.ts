@@ -111,7 +111,7 @@ function boot() {
       ? `Copied all ${count} pins — replaces your last paste`
       : COPIED_ONE;
 
-  /** One card's ⧉: a link's pin has only the capped note the link carries. */
+  /** One card's copy: a link's pin has only the capped note it carries. */
   const onePinToast = (pin: { note?: string; anchor: AnchorV3 }): string =>
     pin.note === undefined && pin.anchor.nt === 1
       ? 'Copied 1 pin — the note is the shortened one the link carries'
@@ -343,8 +343,8 @@ function boot() {
   }
 
   /**
-   * What the card's ⧉ writes: THAT pin, one block behind its own link. The set
-   * as a whole is the dock's ⧉ — a card is where the reviewer points at one
+   * What the card's copy writes: THAT pin, one block behind its own link. The
+   * set as a whole is the dock's — a card is where the reviewer points at one
    * thing, so it hands over one thing. Every drawn pin is a member of the
    * draft, because a link merges into it (D4). `null` while a link's pin is
    * still having its ⚛️ stack read off the element it landed on — a block
@@ -460,7 +460,7 @@ function boot() {
     pins.setCardsHidden(store.cardsHidden());
     const { here } = partition();
     pins.show(here, { focusId, setSize: draft.length });
-    // Adopting a pin gives it a fresh card, so its ✕ is re-applied here.
+    // Adopting a pin gives it a fresh card, so hidden is re-applied here.
     for (const pin of draft) pins.setCardHidden(pin.id, pin.hidden === true);
     // What the layer no longer draws holds an element from a page we left.
     pruneStacks(here);
@@ -487,7 +487,7 @@ function boot() {
   }
 
   /**
-   * ✕ on a card, or its row's eye. Visibility only — `redraw()` would restart
+   * A card hidden, or its row's eye. Visibility only — `redraw()` would restart
    * the resolution ladder and re-toast its give-up line at every flip.
    */
   function setHidden(id: string, hidden: boolean) {
@@ -501,7 +501,7 @@ function boot() {
   function toggleCards() {
     store.hideCards(!store.cardsHidden());
     pins.setCardsHidden(store.cardsHidden());
-    // Switching back ON cleared every pin's own ✕ (R5.5); the layer has to
+    // Switching back ON cleared every per-pin hide (R5.5); the layer has to
     // hear about that or the cards it hid one at a time stay hidden.
     for (const pin of store.pins())
       pins.setCardHidden(pin.id, pin.hidden === true);
@@ -549,7 +549,7 @@ function boot() {
   /** The whole set, from a click; nothing may be awaited before the write. */
   function copySet() {
     if (!draft.length) return;
-    // The same gate the card's ⧉ has: a block missing the ⚛️ frames of the
+    // The same gate the card's copy has: a block missing the ⚛️ frames of the
     // element its pin just landed on is not the comment that was written.
     if (draft.some((pin) => stackPending(pin) && pins.locatedElement(pin.id))) {
       ui.showToast('Still reading a pin — try again');
