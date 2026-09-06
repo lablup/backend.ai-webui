@@ -817,17 +817,18 @@ describe('createDeepLinkPin', () => {
 
     it('names every icon-only control for a screen reader', () => {
       show();
-      const named = ['.idcopy', '.close', '.locate', '.copyall', '.remove'].map(
-        (sel) =>
-          host.shadowRoot?.querySelector(sel)?.getAttribute('aria-label'),
+      const named = ['.idcopy', '.close', '.locate', '.copyall'].map((sel) =>
+        host.shadowRoot?.querySelector(sel)?.getAttribute('aria-label'),
       );
       expect(named).toEqual([
         'Copy this comment id',
         'Hide this card',
         'Scroll back to this element',
         'Copy this pin',
-        'Remove this pin from the set',
       ]);
+      // R6.2: removing a pin lives in the dock, where the rows are far enough
+      // apart that a reach for ⧉ cannot end one.
+      expect(host.shadowRoot?.querySelector('.card .remove')).toBeNull();
     });
 
     it('says which id it copied', () => {

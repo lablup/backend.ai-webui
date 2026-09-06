@@ -14,7 +14,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 let host: HTMLElement;
 let layer: PinLayer;
 let toasts: string[];
-let dismissed: string[];
 let hidden: string[];
 let scrolled: string[];
 let pending: string[][];
@@ -84,7 +83,6 @@ const mount = (testid: string, box: Partial<DOMRect> = {}): HTMLElement => {
 beforeEach(() => {
   document.body.innerHTML = '';
   toasts = [];
-  dismissed = [];
   hidden = [];
   scrolled = [];
   pending = [];
@@ -109,7 +107,6 @@ beforeEach(() => {
       html: '<p>block</p>',
       toast: 'Copied 1 pin',
     }),
-    onDismiss: (pin) => dismissed.push(pin.id),
     onHide: (pin) => hidden.push(pin.id),
   });
 });
@@ -287,12 +284,10 @@ describe('createPinLayer', () => {
       expect(markerOf('c_b').classList.contains('found')).toBe(true);
     });
 
-    // 🗑 is a set edit, and only the set's owner knows what that costs.
-    it('hands the pin back to the owner when 🗑 is what did it', () => {
-      cardOf('c_b').querySelector<HTMLButtonElement>('.remove')?.click();
-
-      expect(dismissed).toEqual(['c_b']);
-      expect(layer.ids()).toEqual(['c_a']);
+    // R6.2: the card destroys nothing — its 🗑 sat 20px from ⧉, so reaching
+    // for copy ended the pin. Removing one is the dock row's alone now.
+    it('carries no remove control on any card', () => {
+      expect(shadow().querySelector('.card .remove')).toBeNull();
     });
 
     // ✕ is about the card being in the way, not about the pin.
@@ -300,7 +295,6 @@ describe('createPinLayer', () => {
       cardOf('c_b').querySelector<HTMLButtonElement>('.close')?.click();
 
       expect(hidden).toEqual(['c_b']);
-      expect(dismissed).toEqual([]);
       expect(layer.ids()).toEqual(['c_a', 'c_b']);
       expect(markerOf('c_b').classList.contains('found')).toBe(true);
     });
@@ -321,8 +315,8 @@ describe('createPinLayer', () => {
     });
 
     // Two pins minus one is a set of one, which never numbered itself.
-    it('drops back to a lone map-pin when 🗑 leaves one pin', () => {
-      cardOf('c_a').querySelector<HTMLButtonElement>('.remove')?.click();
+    it('drops back to a lone map-pin when one pin is left', () => {
+      layer.dismiss('c_a');
 
       expect(markerGlyph('c_b')).toBe('map-pin');
       expect(countOf('c_b')).toBe('');
@@ -416,7 +410,11 @@ describe('createPinLayer', () => {
         host,
         copyText: () => true,
         showToast: (message) => toasts.push(message),
-        buildComment: () => ({ text: 'block', html: '<p>block</p>' }),
+        buildComment: () => ({
+          text: 'block',
+          html: '<p>block</p>',
+          toast: 'Copied 1 pin',
+        }),
         onGiveUp: (ids) => pending.push(ids),
       });
       mount('one');

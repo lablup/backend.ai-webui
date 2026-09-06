@@ -32,6 +32,43 @@ export interface DockPos {
   top: number;
 }
 
+/**
+ * Where a pin is, as far as the dock is concerned. `waiting` is this page with
+ * the element not in the DOM right now — a closed modal, a collapsed section —
+ * which is not the same as gone, and the row is what says so (R7.3).
+ */
+export type PinPlace = { kind: 'here' } | { kind: 'waiting' };
+
+/** Component names a reviewer would recognise as "the thing it was inside". */
+const DIALOGISH = /dialog|modal|drawer|sheet|popover/i;
+
+/** `  in CreateButton (at /src/Create.tsx:12:8)` → `CreateButton`. */
+const frameName = (line: string): string =>
+  /\bin\s+([\w$.]+)/.exec(line)?.[1] ?? line.trim();
+
+/**
+ * Where the reviewer last saw a waiting pin's element, in the order R7.3
+ * gives: the landmark, else the dialog-ish frame of its ⚛️ stack, else the
+ * component, else the element itself.
+ */
+export function whereItWas(pin: SetPin): string {
+  const { tid, c, tag, txt } = pin.anchor;
+  if (tid) return tid;
+  const frame = pin.stack.find((line) => DIALOGISH.test(line));
+  if (frame) return frameName(frame);
+  const name = c?.dn ?? c?.name;
+  if (name) return name;
+  if (txt) return `${tag ?? 'element'} "${txt.slice(0, 40)}"`;
+  return tag ?? 'that element';
+}
+
+/**
+ * The row is one line: the reviewer's own note names the pin, and only a pin
+ * with none falls back to the landmark label (R6.1). Whitespace is no note.
+ */
+const rowNote = (pin: SetPin): string =>
+  (pin.note ?? pin.anchor.n ?? '').trim();
+
 const STYLE = `
   .setdock {
     position: fixed; right: 12px; bottom: 12px; z-index: 2147483000;
@@ -88,6 +125,13 @@ const STYLE = `
   }
   /* Its card is hidden; the pin is still in the set and still on the page. */
   .setdock .row.off .rowlabel { opacity: 0.55; }
+  /* Its page is this one; its element is not rendered right now. */
+  .setdock .row.waiting .rowlabel { opacity: 0.55; }
+  /* Where that pin was — the row is the only thing it has on screen. */
+  .setdock .where {
+    flex: none; max-width: 55%; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; font-size: 11px; color: var(--bai-review-text-dim);
+  }
 ${ICON_STYLE}
 `;
 
@@ -295,8 +339,16 @@ export function createSetDock(options: SetDockOptions) {
     options.onClear();
   });
 
-  /** `cardsHidden` is the switch's own state; each pin carries its own ✕. */
-  function render(pins: SetPin[], cardsHidden = false) {
+  /**
+   * `places` maps a pin to what the layer could do with it; anything missing
+   * is drawn here. `cardsHidden` is the switch's own state; each pin carries
+   * its own ✕.
+   */
+  function render(
+    pins: SetPin[],
+    places: ReadonlyMap<string, PinPlace> = new Map(),
+    cardsHidden = false,
+  ) {
     setConfirming(false);
     dock.classList.toggle('shown', pins.length > 0);
     titleText.textContent = `${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
@@ -316,15 +368,24 @@ export function createSetDock(options: SetDockOptions) {
         idx.textContent = String(index + 1);
         const label = document.createElement('button');
         label.className = 'rowlabel';
-        label.textContent = pin.label;
-        label.title = pin.label;
+        const note = rowNote(pin);
+        label.textContent = note ? note.replace(/\s+/g, ' ') : pin.label;
+        label.title = note || pin.label;
         // The card comes back with the pin the reviewer just asked to see.
         label.addEventListener('click', () => {
           if (pin.hidden) options.onUnhide(pin.id);
           options.onLocate(pin.id);
         });
         row.append(idx, label);
-        if (pin.hidden) {
+        const place = places.get(pin.id);
+        if (place?.kind === 'waiting') {
+          row.classList.add('waiting');
+          const where = document.createElement('span');
+          where.className = 'where';
+          where.textContent = `waiting — ${whereItWas(pin)}`;
+          where.title = pin.label;
+          row.append(where);
+        } else if (pin.hidden) {
           row.classList.add('off');
           const unhide = button('unhide', 'eye', 'Show this pin’s card again');
           unhide.addEventListener('click', () => options.onUnhide(pin.id));

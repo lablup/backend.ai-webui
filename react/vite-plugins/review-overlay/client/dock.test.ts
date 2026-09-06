@@ -35,6 +35,8 @@ const pin = (id: string, label: string): SetPin => ({
 const node = <T extends HTMLElement>(selector: string) =>
   root.querySelector<T>(selector) as T;
 const rows = () => Array.from(root.querySelectorAll<HTMLElement>('.row'));
+const labelNode = () => node<HTMLElement>('.row .rowlabel');
+const label = () => labelNode().textContent;
 const shown = () => node('.setdock').classList.contains('shown');
 
 const viewport = (width: number, height: number) => {
@@ -140,6 +142,116 @@ describe('createSetDock', () => {
     expect(located).toEqual([]);
   });
 
+  /**
+   * R6.1: the reviewer wrote a sentence about the element; that sentence is
+   * what tells one row from another, not the route › landmark › tag path.
+   */
+  describe('what a row is called', () => {
+    const noted = (note?: string, n?: string): SetPin => ({
+      ...pin('c_a', 'Sessions › list › button "Start"'),
+      note,
+      anchor: { ...pin('c_a', 'x').anchor, n },
+    });
+
+    it('leads with the reviewer’s note', () => {
+      dock.render([noted('The label is cut off.')]);
+
+      expect(label()).toBe('The label is cut off.');
+      expect(labelNode().title).toBe('The label is cut off.');
+    });
+
+    // The row is one line high; the whole note is in the tooltip and the block.
+    it('collapses a multi-line note to one line, whole in the title', () => {
+      dock.render([noted('First line\n\n  second line')]);
+
+      expect(label()).toBe('First line second line');
+      expect(labelNode().title).toBe('First line\n\n  second line');
+    });
+
+    // A link's pin has only the capped note the anchor carries.
+    it('falls back to the note the link carried', () => {
+      dock.render([noted(undefined, 'From the link…')]);
+
+      expect(label()).toBe('From the link…');
+    });
+
+    it('keeps the landmark label when there is no note', () => {
+      dock.render([noted()]);
+
+      expect(label()).toBe('Sessions › list › button "Start"');
+    });
+
+    it('counts a whitespace-only note as none', () => {
+      dock.render([noted('   \n  ')]);
+
+      expect(label()).toBe('Sessions › list › button "Start"');
+    });
+  });
+
+  /**
+   * R7.3: the page matches but the element is not in the DOM right now — a
+   * closed modal, a collapsed section. That is not "not on this page", and the
+   * row is the only thing that can say so.
+   */
+  describe('a pin waiting for its element', () => {
+    const waiting = (over: Partial<SetPin> = {}) =>
+      dock.render(
+        [{ ...pin('c_a', 'Data › rw-permission › span'), ...over } as SetPin],
+        new Map([['c_a', { kind: 'waiting' }]]),
+      );
+
+    it('dims the row and says where the element was', () => {
+      waiting({ anchor: { v: 3, s: '#x', p: '/', tid: 'rw-permission' } });
+
+      expect(rows()[0].classList.contains('waiting')).toBe(true);
+      expect(rows()[0].querySelector('.where')?.textContent).toBe(
+        'waiting — rw-permission',
+      );
+      expect(rows()[0].querySelector<HTMLElement>('.where')?.title).toBe(
+        'Data › rw-permission › span',
+      );
+    });
+
+    it('names the dialog frame of the ⚛️ stack when there is no landmark', () => {
+      waiting({
+        anchor: { v: 3, s: '#x', p: '/', c: { name: 'RadioList' } },
+        stack: [
+          '  in RadioListItem (at /src/a.tsx:1:1)',
+          '  in FolderCreateModalV2 (at /src/b.tsx:2:2)',
+        ],
+      });
+
+      expect(rows()[0].querySelector('.where')?.textContent).toBe(
+        'waiting — FolderCreateModalV2',
+      );
+    });
+
+    it('falls back to the component, then to the element itself', () => {
+      waiting({ anchor: { v: 3, s: '#x', p: '/', c: { name: 'RadioList' } } });
+      expect(rows()[0].querySelector('.where')?.textContent).toBe(
+        'waiting — RadioList',
+      );
+
+      waiting({
+        anchor: { v: 3, s: '#x', p: '/', tag: 'button', txt: 'Save' },
+      });
+      expect(rows()[0].querySelector('.where')?.textContent).toBe(
+        'waiting — button "Save"',
+      );
+    });
+
+    // It is still in the set, and it is still the reviewer's to drop.
+    it('keeps the row a control', () => {
+      waiting();
+
+      rows()[0].querySelector<HTMLButtonElement>('.rowlabel')?.click();
+      rows()[0].querySelector<HTMLButtonElement>('.remove')?.click();
+
+      expect(located).toEqual(['c_a']);
+      expect(removed).toEqual(['c_a']);
+    });
+  });
+
   // ✕ on a card is not ✕ on the pin: the row is what still reaches it.
   describe('a pin whose card is hidden', () => {
     const withHidden = () =>
@@ -195,7 +307,7 @@ describe('createSetDock', () => {
 
     // The dock is the switch's home, so it says which way it is thrown.
     it('says the cards are off once the owner says so', () => {
-      dock.render([pin('c_a', 'a')], true);
+      dock.render([pin('c_a', 'a')], new Map(), true);
 
       expect(node('.cards').textContent).toBe('Cards');
       expect(node('.cards').getAttribute('aria-pressed')).toBe('true');
@@ -207,7 +319,7 @@ describe('createSetDock', () => {
       dock.render([pin('c_a', 'a')]);
       const named = node('.cards').getAttribute('aria-label');
 
-      dock.render([pin('c_a', 'a')], true);
+      dock.render([pin('c_a', 'a')], new Map(), true);
 
       expect(node('.cards').getAttribute('aria-label')).toBe(named);
       expect(node('.cards').title).toBe(named);

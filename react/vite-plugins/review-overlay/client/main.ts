@@ -31,7 +31,7 @@ import {
   pathNeedsChange,
   pinUrl,
 } from './deeplink.js';
-import { createSetDock } from './dock.js';
+import { createSetDock, type PinPlace } from './dock.js';
 import { createDraftStore, MAX_SET_PINS } from './draft.js';
 import { pinId } from './id.js';
 import { createPicker, isEditable, isMac } from './picker.js';
@@ -82,6 +82,10 @@ function boot() {
 
   const store = createDraftStore();
   let draft: SetPin[] = store.pins();
+  /** The waiting ids the dock's rows were last built from. */
+  let drawn = '';
+  /** True while `redraw()` is resolving pins, so the dock is built once. */
+  let drawing = false;
   /** The pin a link opened; FR-3859 merges it into the draft instead. */
   let linkTarget: DeepLinkPinTarget | null = null;
 
@@ -350,8 +354,12 @@ function boot() {
     copyText: ui.copyText,
     showToast: ui.showToast,
     buildComment,
-    onLocated: (element, target) => void readPinStack(target, element),
-    onDismiss: (target) => removeFromSet(target.id),
+    onLocated: (element, target) => {
+      // A pin that finally landed — or lost its element — changes what its
+      // row says, and the rows are all a waiting pin has (R7.3).
+      if (!drawing) renderDockIfPlacesMoved();
+      void readPinStack(target, element);
+    },
     onHide: (target) => setHidden(target.id, true),
   });
   const dock = createSetDock({
@@ -399,15 +407,20 @@ function boot() {
    * scroll the page out from under the reviewer. Only a link names a pin.
    */
   function redraw(focusId: string | null = null) {
+    // Every pin `show()` resolves calls back into `onLocated`; the dock is
+    // rendered once here instead of once per pin.
+    drawing = true;
     pins.setCardsHidden(store.cardsHidden());
     // Only the draft is the set; a link's pin is drawn beside it, uncounted,
     // so the glyphs never claim a membership the copy does not have.
     pins.show(drawnTargets(), { focusId, setSize: draft.length });
     // Adopting a pin gives it a fresh card, so its ✕ is re-applied here.
     for (const pin of draft) pins.setCardHidden(pin.id, pin.hidden === true);
+    drawing = false;
+    renderDockIfPlacesMoved();
   }
 
-  /** 🗑, wherever it was pressed: the card and the row say the same thing. */
+  /** The dock row's 🗑 — the one control that ends a pin (R6.2). */
   function removeFromSet(id: string) {
     const index = draft.findIndex((pin) => pin.id === id);
     if (index < 0) return removePin(id);
@@ -450,11 +463,33 @@ function boot() {
     syncDraft();
   }
 
+  /**
+   * A pin the layer has not resolved is waiting for its element, not gone: the
+   * ladder ends, the observer does not (R7.2), so the row says where it was.
+   */
+  const waitingIds = (): string[] =>
+    draft.filter((pin) => !pins.locatedElement(pin.id)).map((pin) => pin.id);
+
+  function renderDock() {
+    const ids = waitingIds();
+    drawn = ids.join(' ');
+    dock.render(
+      draft,
+      new Map(ids.map((id) => [id, { kind: 'waiting' } as PinPlace])),
+      store.cardsHidden(),
+    );
+  }
+
+  /** Rebuilding every row on every `locate()` is O(N²) rows for one redraw. */
+  function renderDockIfPlacesMoved() {
+    if (waitingIds().join(' ') !== drawn) renderDock();
+  }
+
   /** The store is the truth; the dock and the composer's button follow it. */
   function syncDraft() {
     draft = store.pins();
     pruneStacks();
-    dock.render(draft, store.cardsHidden());
+    renderDock();
     ui.setDraftSize(draft.length, store.isFull());
   }
 

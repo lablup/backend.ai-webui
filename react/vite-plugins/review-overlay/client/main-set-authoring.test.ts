@@ -161,13 +161,14 @@ beforeEach(() => {
 });
 
 /**
- * Views are reused BY POSITION and popped from the END, so a snapshot of the
- * buttons goes stale on the first click — the trailing ones then belong to
- * disposed views and do nothing. Drain the live ones instead.
+ * The dock row's 🗑 is the only remove control (R6.2). Its rows are rebuilt on
+ * every render, so a snapshot goes stale on the first click — take the live
+ * head of the list each time.
  */
 function tearDownPins() {
   for (let left = MAX_SET_PINS; left > 0; left--) {
-    const remove = all('.card .remove')[0] as HTMLButtonElement | undefined;
+    const remove = all('.setdock .row .remove')[0] as
+      HTMLButtonElement | undefined;
     if (!remove) return;
     remove.click();
   }
@@ -416,7 +417,9 @@ describe('the set the tab was left with', () => {
     expect(toast()).toBe('Copied all 2 pins — replaces your last paste');
   });
 
-  it('drops one pin when its 🗑 is pressed', async () => {
+  // R6.2: the card's 🗑 sat 20px from ⧉, so reaching for copy ended the pin.
+  // The dock row is the one place a pin can be removed from now.
+  it('drops one pin when its row’s 🗑 is pressed', async () => {
     seed([
       storedPin('c_one', 'create', 'Start › create'),
       storedPin('c_two', 'cancel', 'Start › cancel'),
@@ -424,12 +427,14 @@ describe('the set the tab was left with', () => {
     await bootOverlay();
     await ticks(2);
 
-    node<HTMLButtonElement>('.card[data-pin-id="c_one"] .remove').click();
+    expect(all('.card .remove')).toHaveLength(0);
+    node<HTMLButtonElement>(
+      '.setdock .row[data-pin-id="c_one"] .remove',
+    ).click();
 
     expect(storedIds()).toEqual(['c_two']);
     expect(dockRows()).toHaveLength(1);
     expect(copyButton().textContent).toBe('Add & copy all (2)');
-    // Same action, same sentence, whichever 🗑 the reviewer reached for.
     expect(toast()).toBe('Removed pin 1 of 2');
   });
 
@@ -524,6 +529,32 @@ describe('the set the tab was left with', () => {
     ).toEqual([]);
     expect(hiddenCard('c_one')).toBe(true);
     scan.mockRestore();
+  });
+
+  /**
+   * R7.2/R7.3: the element is not rendered right now — a closed modal — which
+   * is a different thing from gone, and the row is what has to say so.
+   */
+  it('dims the row of a pin whose element is not on the page', async () => {
+    seed([
+      {
+        ...storedPin('c_gone', 'missing', 'Start › missing'),
+        anchor: { v: 3, s: '[data-testid="missing"]', p: '/', tid: 'missing' },
+      },
+    ]);
+    await bootOverlay();
+    await ticks(2);
+
+    expect(dockRows()[0].classList.contains('waiting')).toBe(true);
+    expect(dockRows()[0].querySelector('.where')?.textContent).toBe(
+      'waiting — missing',
+    );
+
+    mount('missing', 'Missing');
+    await ticks(60);
+
+    expect(dockRows()[0].classList.contains('waiting')).toBe(false);
+    expect(dockRows()[0].querySelector('.where')).toBeNull();
   });
 
   // A teardown that halves the set leaves a live layer — MutationObserver and
