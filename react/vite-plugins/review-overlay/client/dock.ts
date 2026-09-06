@@ -326,8 +326,12 @@ export function createSetDock(options: SetDockOptions) {
   grip.addEventListener('pointerup', endDrag);
   grip.addEventListener('pointercancel', endDrag);
 
+  /**
+   * Folded, the dock is `display: none` and measures the stand-in box, so a
+   * clamp made then parks the real one off the bottom. It waits for the unfold.
+   */
   const reclamp = () => {
-    if (wanted) moveTo(wanted);
+    if (wanted && !dock.classList.contains('folded')) moveTo(wanted);
   };
   window.addEventListener('resize', reclamp);
 
@@ -425,9 +429,13 @@ export function createSetDock(options: SetDockOptions) {
     render,
     /**
      * Mid-pick the dock is 260px of the page the reviewer cannot pick through,
-     * the same way the cards are — so it folds away with them.
+     * the same way the cards are — so it folds away with them. Adding a pin
+     * re-renders it while it is folded, so the clamp it skipped happens here.
      */
-    setCollapsed: (next: boolean) => dock.classList.toggle('folded', next),
+    setCollapsed(next: boolean) {
+      dock.classList.toggle('folded', next);
+      if (!next) reclamp();
+    },
     /** Tests and hot reloads: one dock lives as long as the page. */
     dispose() {
       window.removeEventListener('resize', reclamp);

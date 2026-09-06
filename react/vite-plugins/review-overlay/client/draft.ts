@@ -7,6 +7,7 @@
  * still keeps its set until it reloads.
  */
 import { isAnchorV3 } from './anchor-guard.js';
+import { PIN_BODY_SRC } from './codec.js';
 import { dedupeById, MAX_SET_PINS } from './deeplink.js';
 import type { DraftSet, SetPin } from './types.js';
 
@@ -18,13 +19,22 @@ export const emptyDraft = (): DraftSet => ({ v: 1, pins: [] });
 const isStrings = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every((line) => typeof line === 'string');
 
+/**
+ * The `<id>.<anchor>` a stored pin has to be able to emit — the same grammar
+ * `parseFragments` reads back, so what the store keeps is what a link carries.
+ */
+const PIN_BODY_RE = new RegExp(`^${PIN_BODY_SRC}$`);
+
 /** Storage is ours, but a half-written or hand-edited value is not a set. */
 export function isSetPin(value: unknown): value is SetPin {
   if (!value || typeof value !== 'object') return false;
   const pin = value as Record<string, unknown>;
-  if (typeof pin.id !== 'string' || !pin.id) return false;
+  if (typeof pin.id !== 'string' || typeof pin.anchorB64 !== 'string')
+    return false;
+  // A pin whose id or payload no reader could parse is a pin whose link is
+  // dropped on arrival; the set is better off without it than carrying it.
+  if (!PIN_BODY_RE.test(`${pin.id}.${pin.anchorB64}`)) return false;
   if (pin.origin !== 'pick' && pin.origin !== 'link') return false;
-  if (typeof pin.anchorB64 !== 'string' || !pin.anchorB64) return false;
   if (typeof pin.label !== 'string') return false;
   if (typeof pin.appHash !== 'string') return false;
   if (pin.note !== undefined && typeof pin.note !== 'string') return false;

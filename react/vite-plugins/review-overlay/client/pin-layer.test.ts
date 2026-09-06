@@ -248,6 +248,34 @@ describe('createPinLayer', () => {
     expect(toasts).toEqual([]);
   });
 
+  // The twin of the above, for a removal from the MIDDLE. Trimming the tail
+  // to the new length first drops the LAST pin's card and re-seats that pin
+  // onto its neighbour's, losing the element it had already located.
+  it('leaves a drawn pin on its element when the set shrinks around it', () => {
+    mount('one');
+    mount('two');
+    const three = mount('three');
+    layer.show(
+      [target('c_a', 'one'), target('c_b', 'two'), target('c_c', 'three')],
+      { focusId: null },
+    );
+    layer.locate();
+    expect(layer.locatedElement('c_c')).toBe(three);
+    // A re-render the pin survived: nothing about the anchor resolves now.
+    three.setAttribute('data-testid', 'renamed');
+    three.textContent = 'renamed';
+
+    layer.show([target('c_a', 'one'), target('c_c', 'three')], {
+      focusId: null,
+    });
+
+    expect(layer.locatedElement('c_c')).toBe(three);
+    expect(cardOf('c_c').classList.contains('found')).toBe(true);
+    expect(cardOf('c_b')).toBeNull();
+    expect(countOf('c_c')).toBe('2 / 2');
+    expect(toasts).toEqual([]);
+  });
+
   // A link's pin rides along with the draft set without joining it, so the
   // glyphs must not claim a membership the copied comment does not have.
   it('numbers only the pins the set holds', () => {

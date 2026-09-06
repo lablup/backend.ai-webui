@@ -52,7 +52,8 @@ const viewport = (width: number, height: number) => {
 
 /**
  * jsdom lays nothing out, so every `offsetHeight` is 0 — including the one a
- * real browser reports for a shown dock. Returns its own undo.
+ * real browser reports for a shown dock. A folded one is `display: none` and
+ * really does measure 0. Returns its own undo.
  */
 const measureShownDockAs = (height: number) => {
   const proto = HTMLElement.prototype;
@@ -60,7 +61,8 @@ const measureShownDockAs = (height: number) => {
   Object.defineProperty(proto, 'offsetHeight', {
     configurable: true,
     get(this: HTMLElement) {
-      return this.classList.contains('shown') ? height : 0;
+      const list = this.classList;
+      return list.contains('shown') && !list.contains('folded') ? height : 0;
     },
   });
   return () => {
@@ -584,6 +586,32 @@ describe('createSetDock', () => {
 
         // 480 - 300 - 8: the whole dock, not the eight pixels of its top
         // border that the stand-in height alone would have left on screen.
+        expect(node('.setdock').style.top).toBe('172px');
+      } finally {
+        measured();
+      }
+    });
+
+    // Committing a pin re-renders the dock while the composer still has it
+    // folded, where it is `display: none` and measures the stand-in box. The
+    // clamp that follows would let a 300px dock sit at 312px of a 480px window.
+    it('waits for the unfold to clamp a dock the composer folded', () => {
+      const measured = measureShownDockAs(300);
+      try {
+        dock.render([pin('c_a', 'a')]);
+        dragTo(400, 400);
+        expect(node('.setdock').style.top).toBe('400px');
+
+        dock.setCollapsed(true);
+        viewport(1280, 480);
+        dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+        // 480 - 160 stand-in - 8 is what a measurement of the folded dock buys.
+        expect(node('.setdock').style.top).not.toBe('312px');
+
+        dock.setCollapsed(false);
+
+        // 480 - 300 - 8: the whole dock, clamped against the box it really has.
         expect(node('.setdock').style.top).toBe('172px');
       } finally {
         measured();

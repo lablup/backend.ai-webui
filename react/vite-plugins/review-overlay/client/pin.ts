@@ -850,16 +850,37 @@ export function createPinLayer(options: PinLayerOptions) {
     followScroll,
   };
 
-  /** Views are reused BY POSITION, so a card the set keeps keeps its node. */
+  function newView(): PinView {
+    const view = createPinView(deps);
+    view.setCollapsed(collapsed);
+    view.setCardsHidden(cardsHidden);
+    layer.append(...view.nodes);
+    return view;
+  }
+
+  /** Only ever grows or trims the tail; `adopt` is what re-seats a set. */
   function resize(count: number) {
     while (views.length > count) views.pop()?.dispose();
-    while (views.length < count) {
-      const view = createPinView(deps);
-      view.setCollapsed(collapsed);
-      view.setCardsHidden(cardsHidden);
-      layer.append(...view.nodes);
-      views.push(view);
-    }
+    while (views.length < count) views.push(newView());
+  }
+
+  /**
+   * Line the views up with the pins, BY ID: the view that already holds a pin
+   * keeps it, wherever the pin has moved to. Trimming the tail first would
+   * drop the last card and re-seat every pin after a removal onto its
+   * neighbour's, losing the element each had already located.
+   */
+  function adopt(targets: DeepLinkPinTarget[]) {
+    const spare = [...views];
+    const held = targets.map((target) => {
+      const at = spare.findIndex(
+        (view) => view.isShowing() && view.id() === target.id,
+      );
+      return at < 0 ? null : spare.splice(at, 1)[0];
+    });
+    views.length = 0;
+    for (const view of held) views.push(view ?? spare.shift() ?? newView());
+    for (const view of spare) view.dispose();
   }
 
   const showingViews = () => views.filter((view) => view.isShowing());
@@ -963,7 +984,7 @@ export function createPinLayer(options: PinLayerOptions) {
       targets: DeepLinkPinTarget[],
       opts: { focusId?: string | null; setSize?: number } = {},
     ) {
-      resize(targets.length);
+      adopt(targets);
       autoFocus = opts.focusId !== null;
       focusId = opts.focusId ?? targets[0]?.id ?? null;
       const size = opts.setSize ?? targets.length;

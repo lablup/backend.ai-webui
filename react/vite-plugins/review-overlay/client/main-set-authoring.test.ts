@@ -148,6 +148,11 @@ const storedPin = (id: string, testid: string, label: string): SetPin => ({
   pr: 42,
 });
 
+const LETTERS = 'abcdefghijklmnopqrstuvwxyz';
+/** A distinct WELL-FORMED id per index — base32 is `a`-`z` and `2`-`7`. */
+const nthId = (i: number) =>
+  `c_s${LETTERS[i % 26]}${LETTERS[Math.floor(i / 26)]}aaaa`;
+
 const seed = (pins: SetPin[]) =>
   sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ v: 1, pins }));
 
@@ -372,7 +377,7 @@ describe('adding to a set', () => {
   it('refuses the pin that would overflow the set', async () => {
     seed(
       Array.from({ length: 30 }, (_, i) =>
-        storedPin(`c_seed${i}`, 'create', `Start › ${i}`),
+        storedPin(nthId(i), 'create', `Start › ${i}`),
       ),
     );
     await bootOverlay();
@@ -389,7 +394,7 @@ describe('adding to a set', () => {
   it('says the set is full on the button, before the ⌘⏎', async () => {
     seed(
       Array.from({ length: 30 }, (_, i) =>
-        storedPin(`c_seed${i}`, 'create', `Start › ${i}`),
+        storedPin(nthId(i), 'create', `Start › ${i}`),
       ),
     );
     await bootOverlay();
@@ -404,7 +409,9 @@ describe('adding to a set', () => {
 
 describe('the set the tab was left with', () => {
   it('is drawn and listed again at boot', async () => {
-    seed([storedPin('c_kept', 'create', 'Start › create › button "Create"')]);
+    seed([
+      storedPin('c_keptaaa', 'create', 'Start › create › button "Create"'),
+    ]);
 
     await bootOverlay();
     await ticks(4);
@@ -419,14 +426,14 @@ describe('the set the tab was left with', () => {
   // The dock's ⧉ is the set; a card is where the reviewer points at one thing.
   it('copies one pin, and only that one, from its own card', async () => {
     seed([
-      storedPin('c_one', 'create', 'Start › create'),
-      storedPin('c_two', 'cancel', 'Start › cancel'),
+      storedPin('c_oneaaaa', 'create', 'Start › create'),
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
     ]);
     await bootOverlay();
     await ticks(2);
     const written = stubExecCommand();
 
-    node<HTMLButtonElement>('.card[data-pin-id="c_two"] .copyall').click();
+    node<HTMLButtonElement>('.card[data-pin-id="c_twoaaaa"] .copyall').click();
 
     const text = written['text/plain'];
     expect(text.split('📍')).toHaveLength(2);
@@ -434,15 +441,15 @@ describe('the set the tab was left with', () => {
     expect(text).not.toContain('Start › create');
     const urls = [...text.matchAll(/\(http[^)]+\)/g)].map((m) => m[0]);
     expect(urls).toHaveLength(1);
-    expect(urls[0]).toContain('c_two');
+    expect(urls[0]).toContain('c_twoaaaa');
     expect(urls[0].split('bai=v3.')).toHaveLength(2);
     expect(toast()).toBe('Copied 1 pin');
   });
 
   it('copies from the dock, from one click', async () => {
     seed([
-      storedPin('c_one', 'create', 'Start › create'),
-      storedPin('c_two', 'cancel', 'Start › cancel'),
+      storedPin('c_oneaaaa', 'create', 'Start › create'),
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
     ]);
     await bootOverlay();
     const written = stubExecCommand();
@@ -457,18 +464,18 @@ describe('the set the tab was left with', () => {
   // The dock row is the one place a pin can be removed from now.
   it('drops one pin when its row’s 🗑 is pressed', async () => {
     seed([
-      storedPin('c_one', 'create', 'Start › create'),
-      storedPin('c_two', 'cancel', 'Start › cancel'),
+      storedPin('c_oneaaaa', 'create', 'Start › create'),
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
     ]);
     await bootOverlay();
     await ticks(2);
 
     expect(all('.card .remove')).toHaveLength(0);
     node<HTMLButtonElement>(
-      '.setdock .row[data-pin-id="c_one"] .remove',
+      '.setdock .row[data-pin-id="c_oneaaaa"] .remove',
     ).click();
 
-    expect(storedIds()).toEqual(['c_two']);
+    expect(storedIds()).toEqual(['c_twoaaaa']);
     expect(dockRows()).toHaveLength(1);
     expect(copyButton().textContent).toBe('Add & copy all (2)');
     expect(toast()).toBe('Removed pin 1 of 2');
@@ -478,55 +485,57 @@ describe('the set the tab was left with', () => {
   // reviewer should not lose a pin by tidying the screen.
   it('only puts the card away when its ✕ is pressed, and remembers', async () => {
     seed([
-      storedPin('c_one', 'create', 'Start › create'),
-      storedPin('c_two', 'cancel', 'Start › cancel'),
+      storedPin('c_oneaaaa', 'create', 'Start › create'),
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
     ]);
     await bootOverlay();
     await ticks(2);
 
-    node<HTMLButtonElement>('.card[data-pin-id="c_one"] .close').click();
+    node<HTMLButtonElement>('.card[data-pin-id="c_oneaaaa"] .close').click();
 
-    expect(storedIds()).toEqual(['c_one', 'c_two']);
+    expect(storedIds()).toEqual(['c_oneaaaa', 'c_twoaaaa']);
     expect(storedPins()[0].hidden).toBe(true);
-    expect(hiddenCard('c_one')).toBe(true);
-    expect(hiddenCard('c_two')).toBe(false);
+    expect(hiddenCard('c_oneaaaa')).toBe(true);
+    expect(hiddenCard('c_twoaaaa')).toBe(false);
     // The marker is what still says where the pin is.
-    expect(node('.pin[data-pin-id="c_one"]').classList.contains('found')).toBe(
-      true,
-    );
+    expect(
+      node('.pin[data-pin-id="c_oneaaaa"]').classList.contains('found'),
+    ).toBe(true);
     expect(dockRows()[0].classList.contains('off')).toBe(true);
   });
 
   it('draws a hidden pin’s card again from its dock row', async () => {
-    seed([{ ...storedPin('c_one', 'create', 'Start › create'), hidden: true }]);
+    seed([
+      { ...storedPin('c_oneaaaa', 'create', 'Start › create'), hidden: true },
+    ]);
     await bootOverlay();
     await ticks(2);
-    expect(hiddenCard('c_one')).toBe(true);
+    expect(hiddenCard('c_oneaaaa')).toBe(true);
 
     node<HTMLButtonElement>('.setdock .row .unhide').click();
 
-    expect(hiddenCard('c_one')).toBe(false);
+    expect(hiddenCard('c_oneaaaa')).toBe(false);
     expect(storedPins()[0].hidden).toBeUndefined();
   });
 
   it('removes the pin the row’s 🗑 names, and renumbers the rest', async () => {
     seed([
-      storedPin('c_one', 'create', 'Start › create'),
-      storedPin('c_two', 'cancel', 'Start › cancel'),
+      storedPin('c_oneaaaa', 'create', 'Start › create'),
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
     ]);
     await bootOverlay();
     await ticks(2);
 
     node<HTMLButtonElement>('.setdock .row .remove').click();
 
-    expect(storedIds()).toEqual(['c_two']);
+    expect(storedIds()).toEqual(['c_twoaaaa']);
     expect(toast()).toBe('Removed pin 1 of 2');
     expect(all('.setdock .idx').map((idx) => idx.textContent)).toEqual(['1']);
   });
 
   // The marker is the only thing that says which of them is meant.
   it('scrolls to the pin the row names and beats its marker again', async () => {
-    seed([storedPin('c_one', 'create', 'Start › create')]);
+    seed([storedPin('c_oneaaaa', 'create', 'Start › create')]);
     const scrolled: string[] = [];
     (
       document.querySelector('[data-testid="create"]') as HTMLElement
@@ -535,7 +544,7 @@ describe('the set the tab was left with', () => {
     };
     await bootOverlay();
     await ticks(2);
-    const marker = node('.pin[data-pin-id="c_one"]');
+    const marker = node('.pin[data-pin-id="c_oneaaaa"]');
     marker.classList.remove('pulse');
 
     node<HTMLButtonElement>('.setdock .rowlabel').click();
@@ -548,22 +557,22 @@ describe('the set the tab was left with', () => {
   // the ladder re-toasts its 10 s give-up line once per flip.
   it('does not re-run the resolution ladder to hide a card', async () => {
     seed([
-      storedPin('c_one', 'create', 'Start › create'),
-      storedPin('c_gone', 'missing', 'Start › missing'),
+      storedPin('c_oneaaaa', 'create', 'Start › create'),
+      storedPin('c_goneaaa', 'missing', 'Start › missing'),
     ]);
     await bootOverlay();
     await ticks(2);
     const scan = vi.spyOn(document, 'querySelector');
 
     node<HTMLButtonElement>('.setdock .cards').click();
-    node<HTMLButtonElement>('.card[data-pin-id="c_one"] .close').click();
+    node<HTMLButtonElement>('.card[data-pin-id="c_oneaaaa"] .close').click();
 
     expect(
       scan.mock.calls.filter(([selector]) =>
         String(selector).includes('missing'),
       ),
     ).toEqual([]);
-    expect(hiddenCard('c_one')).toBe(true);
+    expect(hiddenCard('c_oneaaaa')).toBe(true);
     scan.mockRestore();
   });
 
@@ -574,7 +583,7 @@ describe('the set the tab was left with', () => {
   it('dims the row of a pin whose element is not on the page', async () => {
     seed([
       {
-        ...storedPin('c_gone', 'missing', 'Start › missing'),
+        ...storedPin('c_goneaaa', 'missing', 'Start › missing'),
         anchor: { v: 3, s: '[data-testid="missing"]', p: '/', tid: 'missing' },
       },
     ]);
@@ -597,9 +606,9 @@ describe('the set the tab was left with', () => {
   // retry driver — running into the next test file.
   it('takes every pin down when the set is torn down', async () => {
     seed([
-      storedPin('c_one', 'create', 'Start › create'),
-      storedPin('c_two', 'cancel', 'Start › cancel'),
-      storedPin('c_three', 'create', 'Start › create'),
+      storedPin('c_oneaaaa', 'create', 'Start › create'),
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
+      storedPin('c_threeaa', 'create', 'Start › create'),
     ]);
     await bootOverlay();
     await ticks(2);
@@ -614,8 +623,8 @@ describe('the set the tab was left with', () => {
   describe('the cards switch', () => {
     beforeEach(async () => {
       seed([
-        storedPin('c_one', 'create', 'Start › create'),
-        storedPin('c_two', 'cancel', 'Start › cancel'),
+        storedPin('c_oneaaaa', 'create', 'Start › create'),
+        storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
       ]);
       await bootOverlay();
       await ticks(2);
@@ -624,25 +633,25 @@ describe('the set the tab was left with', () => {
     it('takes every card off the page from the dock, and remembers', () => {
       node<HTMLButtonElement>('.setdock .cards').click();
 
-      expect(hiddenCard('c_one')).toBe(true);
-      expect(hiddenCard('c_two')).toBe(true);
+      expect(hiddenCard('c_oneaaaa')).toBe(true);
+      expect(hiddenCard('c_twoaaaa')).toBe(true);
       expect(storedSet().cardsHidden).toBe(true);
       expect(
-        node('.pin[data-pin-id="c_one"]').classList.contains('found'),
+        node('.pin[data-pin-id="c_oneaaaa"]').classList.contains('found'),
       ).toBe(true);
 
       node<HTMLButtonElement>('.setdock .cards').click();
-      expect(hiddenCard('c_one')).toBe(false);
+      expect(hiddenCard('c_oneaaaa')).toBe(false);
       expect(storedSet().cardsHidden).toBeUndefined();
     });
 
     it('flips from the chord too', () => {
       pressCardsChord();
 
-      expect(hiddenCard('c_one')).toBe(true);
+      expect(hiddenCard('c_oneaaaa')).toBe(true);
 
       pressCardsChord();
-      expect(hiddenCard('c_one')).toBe(false);
+      expect(hiddenCard('c_oneaaaa')).toBe(false);
     });
 
     // Every key belongs to the note while one is being typed.
@@ -651,7 +660,7 @@ describe('the set the tab was left with', () => {
 
       pressCardsChord();
 
-      expect(hiddenCard('c_one')).toBe(false);
+      expect(hiddenCard('c_oneaaaa')).toBe(false);
     });
 
     // The switch is about the cards; the composer is how the next pin is made.
@@ -667,7 +676,7 @@ describe('the set the tab was left with', () => {
   // The dock is 260px of chrome over the app; the next pick has to reach
   // whatever is under it, the same way it reaches under a card.
   it('folds the dock away while the next pick is being composed', async () => {
-    seed([storedPin('c_one', 'create', 'Start › create')]);
+    seed([storedPin('c_oneaaaa', 'create', 'Start › create')]);
     await bootOverlay();
     await ticks(2);
     expect(node('.setdock').classList.contains('folded')).toBe(false);
@@ -683,7 +692,7 @@ describe('the set the tab was left with', () => {
   // The dock is the one control that reaches every pin, including the ones
   // the layer never found.
   it('says so when the dock cannot reach a pin', async () => {
-    seed([storedPin('c_gone', 'missing', 'Start › missing')]);
+    seed([storedPin('c_goneaaa', 'missing', 'Start › missing')]);
     await bootOverlay();
     await ticks(2);
 
@@ -693,12 +702,12 @@ describe('the set the tab was left with', () => {
   });
 
   it('ends the set once the dock asks twice', async () => {
-    seed([storedPin('c_one', 'create', 'Start › create')]);
+    seed([storedPin('c_oneaaaa', 'create', 'Start › create')]);
     await bootOverlay();
     await ticks(2);
 
     node<HTMLButtonElement>('.setdock .clear').click();
-    expect(storedIds()).toEqual(['c_one']);
+    expect(storedIds()).toEqual(['c_oneaaaa']);
     node<HTMLButtonElement>('.setdock .yes').click();
 
     expect(sessionStorage.getItem(DRAFT_KEY)).toBeNull();
@@ -718,29 +727,29 @@ describe('the cards switch as show-all', () => {
   it('shows every card again, including the ones hidden one by one', async () => {
     mount('save', 'Save');
     seed([
-      { ...storedPin('c_one', 'create', 'Start › create'), hidden: true },
-      storedPin('c_two', 'cancel', 'Start › cancel'),
-      { ...storedPin('c_three', 'save', 'Start › save'), hidden: true },
+      { ...storedPin('c_oneaaaa', 'create', 'Start › create'), hidden: true },
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
+      { ...storedPin('c_threeaa', 'save', 'Start › save'), hidden: true },
     ]);
     await bootOverlay();
     await ticks(2);
-    expect(hiddenCard('c_one')).toBe(true);
-    expect(hiddenCard('c_three')).toBe(true);
+    expect(hiddenCard('c_oneaaaa')).toBe(true);
+    expect(hiddenCard('c_threeaa')).toBe(true);
 
     cardsSwitch().click();
     cardsSwitch().click();
 
-    expect(hiddenCard('c_one')).toBe(false);
-    expect(hiddenCard('c_two')).toBe(false);
-    expect(hiddenCard('c_three')).toBe(false);
+    expect(hiddenCard('c_oneaaaa')).toBe(false);
+    expect(hiddenCard('c_twoaaaa')).toBe(false);
+    expect(hiddenCard('c_threeaa')).toBe(false);
     expect(storedPins().some((pin) => pin.hidden)).toBe(false);
   });
 
   // Off is not "remember what was hidden and hide everything else".
   it('leaves the per-pin flags alone on the way off', async () => {
     seed([
-      { ...storedPin('c_one', 'create', 'Start › create'), hidden: true },
-      storedPin('c_two', 'cancel', 'Start › cancel'),
+      { ...storedPin('c_oneaaaa', 'create', 'Start › create'), hidden: true },
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
     ]);
     await bootOverlay();
     await ticks(2);
