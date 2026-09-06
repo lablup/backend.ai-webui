@@ -34,7 +34,7 @@ import {
 import { createSetDock } from './dock.js';
 import { createDraftStore, MAX_SET_PINS } from './draft.js';
 import { pinId } from './id.js';
-import { createPicker } from './picker.js';
+import { createPicker, isEditable, isMac } from './picker.js';
 import { createPinLayer, type DeepLinkPinTarget } from './pin.js';
 import type {
   AnchorComponent,
@@ -100,6 +100,16 @@ function boot() {
     count > 1
       ? `Copied all ${count} pins — replaces your last paste`
       : COPIED_ONE;
+
+  /**
+   * One card's ⧉. A link caps the note it carries, and a block rendered from
+   * that cap — a link's pin has no fuller copy — says so rather than losing it
+   * quietly.
+   */
+  const onePinToast = (pin: { note?: string; anchor: AnchorV3 }): string =>
+    pin.note === undefined && pin.anchor.nt === 1
+      ? 'Copied 1 pin — the note is the shortened one the link carries'
+      : 'Copied 1 pin';
 
   const ui = createOverlayUI({
     onBuildBlock: (text) => {
@@ -301,22 +311,22 @@ function boot() {
   }
 
   /**
-   * What the card's ⧉ writes. A pin the draft set holds copies the WHOLE set —
-   * one comment, one link, whichever card was pressed. A pin that only a link
-   * put on screen is re-rendered here instead: the note, the label and the
-   * link come off the fragment, `pr` and `at` describe this copy, and the id
-   * is what carries the identity. `null` while this element's own reads are
-   * still in flight — a block missing its stack, or claiming `pr=0`, is not
-   * the comment that was written.
+   * What the card's ⧉ writes: THAT pin, one block behind its own link. The
+   * set as a whole is the dock's ⧉ — a card is where the reviewer points at
+   * one thing, so it hands over one thing. A pin that only a link put on
+   * screen is re-rendered here instead: the note, the label and the link come
+   * off the fragment, `pr` and `at` describe this copy, and the id is what
+   * carries the identity. `null` while this element's own reads are still in
+   * flight — a block missing its stack, or claiming `pr=0`, is not the
+   * comment that was written.
    */
   function buildComment(target: DeepLinkPinTarget): CopyPayload | null {
-    if (draft.some((pin) => pin.id === target.id))
+    const pin = draft.find((held) => held.id === target.id);
+    if (pin)
       return {
-        text: buildSetText(draft),
-        html: buildSetHtml(draft),
-        // The card would otherwise describe one pin, and claim a truncated
-        // note the set's blocks do not have.
-        toast: copiedToast(draft.length),
+        text: buildSetText([pin]),
+        html: buildSetHtml([pin]),
+        toast: onePinToast(pin),
       };
     const read = stacks.get(target.id);
     if (!read?.ready) return null;
@@ -331,7 +341,11 @@ function boot() {
       pr: serverState?.pr ?? 0,
       at: blockStamp(),
     };
-    return { text: buildBlockText(input), html: buildBlockHtml(input) };
+    return {
+      text: buildBlockText(input),
+      html: buildBlockHtml(input),
+      toast: onePinToast({ anchor: target.anchor }),
+    };
   }
 
   const pins = createPinLayer({
@@ -341,13 +355,8 @@ function boot() {
     showToast: ui.showToast,
     buildComment,
     onLocated: (element, target) => void readPinStack(target, element),
-    onDismiss: (target) => {
-      stacks.delete(target.id);
-      if (linkTarget?.id === target.id) linkTarget = null;
-      if (!store.has(target.id)) return;
-      store.remove(target.id);
-      syncDraft();
-    },
+    onDismiss: (target) => removePin(target.id),
+    onHide: (target) => setHidden(target.id, true),
   });
   const dock = createSetDock({
     root: ui.root,
@@ -363,7 +372,18 @@ function boot() {
       // layer never found; FR-3859 turns that into the "go" button.
       if (!element) return ui.showToast('That pin is not on this page');
       element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+      // The arrival beat is long spent — this is a deliberate "that one".
+      pins.pulse(id);
     },
+    onRemove: (id) => {
+      const index = draft.findIndex((pin) => pin.id === id);
+      if (index < 0) return;
+      const size = draft.length;
+      removePin(id);
+      ui.showToast(`Removed pin ${index + 1} of ${size}`);
+    },
+    onUnhide: (id) => setHidden(id, false),
+    onToggleCards: toggleCards,
   });
   // After the layer and the dock: registering the plugin can activate
   // react-grab straight away, and `syncCollapse` reaches both.
@@ -389,16 +409,46 @@ function boot() {
    * scroll the page out from under the reviewer. Only a link names a pin.
    */
   function redraw(focusId: string | null = null) {
+    pins.setCardsHidden(store.cardsHidden());
     // Only the draft is the set; a link's pin is drawn beside it, uncounted,
     // so the glyphs never claim a membership the copy does not have.
     pins.show(drawnTargets(), { focusId, setSize: draft.length });
+    // Adopting a pin gives it a fresh card, so its ✕ is re-applied here.
+    for (const pin of draft) pins.setCardHidden(pin.id, pin.hidden === true);
+  }
+
+  /** 🗑, from a card or from a dock row. */
+  function removePin(id: string) {
+    stacks.delete(id);
+    if (linkTarget?.id === id) linkTarget = null;
+    if (!store.has(id)) return;
+    store.remove(id);
+    syncDraft();
+    redraw();
+  }
+
+  /** ✕ on a card, or 👁 on its row: the pin stays in the set, the card goes. */
+  function setHidden(id: string, hidden: boolean) {
+    // A pin only a link put on screen is in nobody's set, and its card is
+    // still the reviewer's to close.
+    if (!store.has(id)) return pins.setCardHidden(id, hidden);
+    store.hide(id, hidden);
+    syncDraft();
+    redraw();
+  }
+
+  /** The dock's 👁 switch and its chord, one path. */
+  function toggleCards() {
+    store.hideCards(!store.cardsHidden());
+    syncDraft();
+    redraw();
   }
 
   /** The store is the truth; the dock and the composer's button follow it. */
   function syncDraft() {
     draft = store.pins();
     pruneStacks();
-    dock.render(draft);
+    dock.render(draft, store.cardsHidden());
     ui.setDraftSize(draft.length, store.isFull());
   }
 
@@ -459,6 +509,22 @@ function boot() {
     };
     redraw(fragment.id);
   }
+
+  /**
+   * The switch's chord. Plain ⌘H hides the Mac app and Ctrl+H opens the
+   * browser's history, so Shift is what makes this one ours. It belongs to the
+   * dock, so it does nothing without a set — and nothing at all while a note
+   * is being typed, where every key belongs to the note.
+   */
+  document.addEventListener('keydown', (evt) => {
+    if (!evt.shiftKey || evt.altKey) return;
+    if (!(isMac() ? evt.metaKey : evt.ctrlKey)) return;
+    if (evt.code !== 'KeyH' && evt.key?.toLowerCase() !== 'h') return;
+    if (!draft.length || ui.isTyping() || isEditable(document.activeElement))
+      return;
+    evt.preventDefault();
+    toggleCards();
+  });
 
   window.addEventListener('hashchange', () => {
     guard.reset();

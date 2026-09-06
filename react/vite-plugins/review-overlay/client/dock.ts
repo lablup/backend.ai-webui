@@ -8,7 +8,11 @@
  * in through `textContent`. Copy-all runs inside the click that asked for it:
  * the gateway origin has only `execCommand`, so nothing may be awaited first.
  */
+import { isMac } from './picker.js';
 import type { SetPin } from './types.js';
+
+/** ⌘⇧H / Ctrl⇧H — plain ⌘H hides the app and Ctrl+H opens history. */
+export const CARDS_CHORD = isMac() ? '⌘⇧H' : 'Ctrl⇧H';
 
 const STYLE = `
   .setdock {
@@ -34,6 +38,9 @@ const STYLE = `
   .setdock .confirm { display: none; align-items: center; gap: 4px; }
   .setdock.confirming .confirm { display: flex; }
   .setdock.confirming .clear { display: none; }
+  .setdock .chord {
+    font-size: 11px; color: var(--bai-review-text-dim);
+  }
   .setdock .rows { max-height: 40vh; overflow-y: auto; }
   .setdock .row {
     display: flex; align-items: center; gap: 6px; padding: 4px 8px;
@@ -42,11 +49,15 @@ const STYLE = `
     flex: none; width: 16px; text-align: right;
     color: var(--bai-review-text-dim); font-size: 11px; font-weight: 600;
   }
-  /* One line per pin: the whole label is in the block, not in this list. */
+  /* One line per pin: the whole label is in the block, not in this list. The
+     row IS the control — clicking it goes to the pin and beats its marker. */
   .setdock .rowlabel {
     flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: nowrap; text-align: left; cursor: pointer; border: 0;
+    background: none; padding: 0; font: inherit; color: inherit;
   }
+  /* Its card is hidden; the pin is still in the set and still on the page. */
+  .setdock .row.off .rowlabel { opacity: 0.55; }
 `;
 
 export interface SetDockOptions {
@@ -55,8 +66,14 @@ export interface SetDockOptions {
   /** Runs inside the click: build and write the set, synchronously. */
   onCopyAll: () => void;
   onClear: () => void;
-  /** Scroll the page back to this pin. */
+  /** Scroll the page back to this pin, and beat its marker again. */
   onLocate: (id: string) => void;
+  /** 🗑 on one row: that pin leaves the set. No confirm — one pin is cheap. */
+  onRemove: (id: string) => void;
+  /** Its card comes back: the row's 👁, or the row itself. */
+  onUnhide: (id: string) => void;
+  /** The header switch: every card off, or on again. */
+  onToggleCards: () => void;
 }
 
 const button = (
@@ -88,13 +105,17 @@ export function createSetDock(options: SetDockOptions) {
     'Copy every pin as one comment',
   );
   const clear = button('clear', '🗑 Clear all', 'Clear the whole set');
+  const cards = button('cards', '👁 Cards', 'Hide every pin card');
+  const chord = document.createElement('span');
+  chord.className = 'chord';
+  chord.textContent = CARDS_CHORD;
   const confirm = document.createElement('span');
   confirm.className = 'confirm';
   const confirmText = document.createElement('span');
   const yes = button('yes', '✓', 'Yes, clear the whole set');
   const no = button('no', '✕', 'Keep the set');
   confirm.append(confirmText, yes, no);
-  head.append(title, copyAll, clear, confirm);
+  head.append(title, chord, cards, copyAll, clear, confirm);
   const rows = document.createElement('div');
   rows.className = 'rows';
   dock.append(head, rows);
@@ -105,6 +126,7 @@ export function createSetDock(options: SetDockOptions) {
     dock.classList.toggle('confirming', on);
 
   copyAll.addEventListener('click', () => options.onCopyAll());
+  cards.addEventListener('click', () => options.onToggleCards());
   clear.addEventListener('click', () => setConfirming(true));
   no.addEventListener('click', () => setConfirming(false));
   yes.addEventListener('click', () => {
@@ -112,12 +134,20 @@ export function createSetDock(options: SetDockOptions) {
     options.onClear();
   });
 
-  function render(pins: SetPin[]) {
+  /** `cardsHidden` is the switch's own state; each pin carries its own ✕. */
+  function render(pins: SetPin[], cardsHidden = false) {
     setConfirming(false);
     dock.classList.toggle('shown', pins.length > 0);
     title.textContent = `📍 ${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
     clear.textContent = `🗑 Clear all (${pins.length})`;
     confirmText.textContent = `Clear all ${pins.length}?`;
+    cards.textContent = cardsHidden ? '🙈 Cards' : '👁 Cards';
+    cards.setAttribute('aria-pressed', String(cardsHidden));
+    const cardsLabel = cardsHidden
+      ? `Show every pin card (${CARDS_CHORD})`
+      : `Hide every pin card (${CARDS_CHORD})`;
+    cards.title = cardsLabel;
+    cards.setAttribute('aria-label', cardsLabel);
     rows.replaceChildren(
       ...pins.map((pin, index) => {
         const row = document.createElement('div');
@@ -126,13 +156,25 @@ export function createSetDock(options: SetDockOptions) {
         const idx = document.createElement('span');
         idx.className = 'idx';
         idx.textContent = String(index + 1);
-        const label = document.createElement('span');
+        const label = document.createElement('button');
         label.className = 'rowlabel';
         label.textContent = pin.label;
         label.title = pin.label;
-        const locate = button('locate', '📍', 'Scroll back to this element');
-        locate.addEventListener('click', () => options.onLocate(pin.id));
-        row.append(idx, label, locate);
+        // The card comes back with the pin the reviewer just asked to see.
+        label.addEventListener('click', () => {
+          if (pin.hidden) options.onUnhide(pin.id);
+          options.onLocate(pin.id);
+        });
+        row.append(idx, label);
+        if (pin.hidden) {
+          row.classList.add('off');
+          const unhide = button('unhide', '🙈', 'Show this pin’s card again');
+          unhide.addEventListener('click', () => options.onUnhide(pin.id));
+          row.append(unhide);
+        }
+        const remove = button('remove', '🗑', 'Remove this pin from the set');
+        remove.addEventListener('click', () => options.onRemove(pin.id));
+        row.append(remove);
         return row;
       }),
     );

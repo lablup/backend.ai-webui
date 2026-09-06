@@ -113,6 +113,58 @@ describe('the set as a value', () => {
   });
 });
 
+// ✕ on a card, and the dock's switch: what is drawn, not what is pinned.
+describe('what the set says is on screen', () => {
+  it('marks one pin hidden, and takes the mark off again', () => {
+    const store = createDraftStore();
+    store.add(pin('c_a'));
+    store.add(pin('c_b'));
+
+    store.hide('c_b', true);
+    expect(stored().map((p) => p.hidden)).toEqual([undefined, true]);
+
+    store.hide('c_b', false);
+    expect(stored().map((p) => p.hidden)).toEqual([undefined, undefined]);
+  });
+
+  it('remembers the switch across a reload of the tab', () => {
+    const store = createDraftStore();
+    store.add(pin('c_a'));
+
+    store.hideCards(true);
+
+    expect(createDraftStore().cardsHidden()).toBe(true);
+  });
+
+  // The stack write-back re-saves the set; the switch is not its business.
+  it('keeps the switch through a save that does not mention it', () => {
+    const store = createDraftStore();
+    store.add(pin('c_a'));
+    store.hideCards(true);
+
+    store.save({ pins: [{ ...store.pins()[0], stack: ['in Thing'] }] });
+
+    expect(store.cardsHidden()).toBe(true);
+    expect(store.pins()[0].stack).toEqual(['in Thing']);
+  });
+
+  it('reads a hand-edited flag as no flag at all', () => {
+    sessionStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify({
+        v: 1,
+        cardsHidden: 'yes',
+        pins: [{ ...pin('c_a'), hidden: 'yes' }],
+      }),
+    );
+
+    const store = createDraftStore();
+
+    expect(store.cardsHidden()).toBe(false);
+    expect(store.pins()).toEqual([]);
+  });
+});
+
 describe('the stored mirror', () => {
   it('is written on every change and read back at construction', () => {
     const store = createDraftStore();
@@ -120,7 +172,11 @@ describe('the stored mirror', () => {
     store.add(pin('c_b'));
 
     expect(stored().map((p) => p.id)).toEqual(['c_a', 'c_b']);
-    expect(createDraftStore().pins().map((p) => p.id)).toEqual(['c_a', 'c_b']);
+    expect(
+      createDraftStore()
+        .pins()
+        .map((p) => p.id),
+    ).toEqual(['c_a', 'c_b']);
   });
 
   it('says whether the pin joined, and answers `has` and `isFull`', () => {
@@ -196,10 +252,11 @@ describe('the stored mirror', () => {
         }),
       );
 
-      expect(createDraftStore().pins().map((p) => p.id)).toEqual([
-        'c_a',
-        'c_g',
-      ]);
+      expect(
+        createDraftStore()
+          .pins()
+          .map((p) => p.id),
+      ).toEqual(['c_a', 'c_g']);
     });
   });
 

@@ -15,6 +15,7 @@ let host: HTMLElement;
 let layer: PinLayer;
 let toasts: string[];
 let dismissed: string[];
+let hidden: string[];
 let scrolled: string[];
 let pending: string[][];
 
@@ -84,6 +85,7 @@ beforeEach(() => {
   document.body.innerHTML = '';
   toasts = [];
   dismissed = [];
+  hidden = [];
   scrolled = [];
   pending = [];
   host = document.createElement('div');
@@ -104,6 +106,7 @@ beforeEach(() => {
     showToast: (message) => toasts.push(message),
     buildComment: () => ({ text: 'block', html: '<p>block</p>' }),
     onDismiss: (pin) => dismissed.push(pin.id),
+    onHide: (pin) => hidden.push(pin.id),
   });
 });
 
@@ -280,12 +283,22 @@ describe('createPinLayer', () => {
       expect(markerOf('c_b').classList.contains('found')).toBe(true);
     });
 
-    // ✕ is a set edit, and only the set's owner knows what that costs.
-    it('hands the pin back to the owner when ✕ is what did it', () => {
-      cardOf('c_b').querySelector<HTMLButtonElement>('.close')?.click();
+    // 🗑 is a set edit, and only the set's owner knows what that costs.
+    it('hands the pin back to the owner when 🗑 is what did it', () => {
+      cardOf('c_b').querySelector<HTMLButtonElement>('.remove')?.click();
 
       expect(dismissed).toEqual(['c_b']);
       expect(layer.ids()).toEqual(['c_a']);
+    });
+
+    // ✕ is about the card being in the way, not about the pin.
+    it('leaves the pin in the set when ✕ is what did it', () => {
+      cardOf('c_b').querySelector<HTMLButtonElement>('.close')?.click();
+
+      expect(hidden).toEqual(['c_b']);
+      expect(dismissed).toEqual([]);
+      expect(layer.ids()).toEqual(['c_a', 'c_b']);
+      expect(markerOf('c_b').classList.contains('found')).toBe(true);
     });
 
     it('renumbers what is left, so the heads still count the set', () => {
@@ -304,8 +317,8 @@ describe('createPinLayer', () => {
     });
 
     // Two pins minus one is a set of one, which never numbered itself.
-    it('drops back to a lone map-pin when ✕ leaves one pin', () => {
-      cardOf('c_a').querySelector<HTMLButtonElement>('.close')?.click();
+    it('drops back to a lone map-pin when 🗑 leaves one pin', () => {
+      cardOf('c_a').querySelector<HTMLButtonElement>('.remove')?.click();
 
       expect(markerGlyph('c_b')).toBe('map-pin');
       expect(countOf('c_b')).toBe('');

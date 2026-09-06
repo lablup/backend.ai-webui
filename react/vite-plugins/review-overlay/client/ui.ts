@@ -588,6 +588,8 @@ ${ICON_STYLE}
     setComposeReady,
     setDraftSize,
     getComposeTarget,
+    /** The reviewer is typing a note; a bare-letter chord is not for us. */
+    isTyping: () => root.activeElement === composeText,
     currentNote: () => composeText.value.trim(),
     setPickActive,
     placeCompose,

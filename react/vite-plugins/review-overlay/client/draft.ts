@@ -28,6 +28,7 @@ export function isSetPin(value: unknown): value is SetPin {
   if (typeof pin.label !== 'string') return false;
   if (typeof pin.appHash !== 'string') return false;
   if (pin.note !== undefined && typeof pin.note !== 'string') return false;
+  if (pin.hidden !== undefined && pin.hidden !== true) return false;
   if (!isStrings(pin.stack)) return false;
   if (
     pin.origin === 'pick' &&
@@ -52,6 +53,7 @@ export function parseDraft(raw: string | null): DraftSet {
   return {
     v: 1,
     pins: dedupeById(set.pins.filter(isSetPin)).slice(0, MAX_SET_PINS),
+    ...(set.cardsHidden === true ? { cardsHidden: true as const } : {}),
   };
 }
 
@@ -70,11 +72,32 @@ export interface MergeResult {
 export function addPin(set: DraftSet, pin: SetPin): DraftSet & AddResult {
   if (set.pins.length >= MAX_SET_PINS || set.pins.some((p) => p.id === pin.id))
     return { ...set, added: false };
-  return { v: 1, pins: [...set.pins, pin], added: true };
+  return { ...set, pins: [...set.pins, pin], added: true };
 }
 
 export function removePin(set: DraftSet, id: string): DraftSet {
-  return { v: 1, pins: set.pins.filter((pin) => pin.id !== id) };
+  return { ...set, pins: set.pins.filter((pin) => pin.id !== id) };
+}
+
+/**
+ * ✕ on a card. The pin keeps its place, its note and its identity — only its
+ * card goes, and the flag is stored so a reload does not bring it back.
+ */
+export function hidePin(set: DraftSet, id: string, hidden: boolean): DraftSet {
+  return {
+    ...set,
+    pins: set.pins.map((pin) => {
+      if (pin.id !== id) return pin;
+      const { hidden: _was, ...rest } = pin;
+      return (hidden ? { ...rest, hidden: true } : rest) as SetPin;
+    }),
+  };
+}
+
+/** The dock's switch, over the whole set. */
+export function hideCards(set: DraftSet, hidden: boolean): DraftSet {
+  const { cardsHidden: _was, ...rest } = set;
+  return hidden ? { ...rest, cardsHidden: true } : rest;
 }
 
 /**
@@ -98,7 +121,7 @@ export function mergePins(
     next.push(pin);
     added++;
   }
-  return { v: 1, pins: next, added, present };
+  return { ...set, pins: next, added, present };
 }
 
 const safeStorage = (): Storage | null => {
@@ -112,7 +135,8 @@ const safeStorage = (): Storage | null => {
 
 export interface DraftStore {
   load(): DraftSet;
-  save(set: DraftSet): void;
+  /** Fields the given set does not name — the switch, say — are kept. */
+  save(set: Partial<DraftSet> & { pins: SetPin[] }): void;
   pins(): SetPin[];
   has(id: string): boolean;
   isFull(): boolean;
@@ -120,6 +144,10 @@ export interface DraftStore {
   remove(id: string): void;
   clear(): void;
   merge(pins: SetPin[]): MergeResult;
+  /** ✕ on one card. */
+  hide(id: string, hidden: boolean): void;
+  cardsHidden(): boolean;
+  hideCards(hidden: boolean): void;
 }
 
 export function createDraftStore(
@@ -145,7 +173,12 @@ export function createDraftStore(
   return {
     load: () => (current = read()),
     save: (set) =>
-      write({ v: 1, pins: dedupeById(set.pins).slice(0, MAX_SET_PINS) }),
+      write({
+        ...current,
+        ...set,
+        v: 1,
+        pins: dedupeById(set.pins).slice(0, MAX_SET_PINS),
+      }),
     pins: () => current.pins,
     has: (id) => current.pins.some((pin) => pin.id === id),
     isFull: () => current.pins.length >= MAX_SET_PINS,
@@ -164,6 +197,13 @@ export function createDraftStore(
       const { added, present, ...set } = mergePins(current, pins);
       if (added) write(set);
       return { added, present };
+    },
+    hide(id, hidden) {
+      write(hidePin(current, id, hidden));
+    },
+    cardsHidden: () => current.cardsHidden === true,
+    hideCards(hidden) {
+      write(hideCards(current, hidden));
     },
   };
 }

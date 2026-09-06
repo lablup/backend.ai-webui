@@ -797,14 +797,16 @@ describe('createDeepLinkPin', () => {
 
     it('names every icon-only control for a screen reader', () => {
       show();
-      const named = ['.idcopy', '.close', '.locate', '.copyall'].map((sel) =>
-        host.shadowRoot?.querySelector(sel)?.getAttribute('aria-label'),
+      const named = ['.idcopy', '.close', '.locate', '.copyall', '.remove'].map(
+        (sel) =>
+          host.shadowRoot?.querySelector(sel)?.getAttribute('aria-label'),
       );
       expect(named).toEqual([
         'Copy this comment id',
-        'Dismiss this pin',
+        'Hide this card',
         'Scroll back to this element',
-        'Copy the whole comment',
+        'Copy this pin',
+        'Remove this pin from the set',
       ]);
     });
 

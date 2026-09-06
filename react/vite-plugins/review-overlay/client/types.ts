@@ -84,6 +84,11 @@ interface SetPinBase {
    * carries (`NOTE_MAX`), and the block is what keeps the rest.
    */
   note?: string;
+  /**
+   * The reviewer pressed ✕ on this pin's card. Draft-only — the wire carries
+   * no such thing — and persisted, so a reload does not bring the card back.
+   */
+  hidden?: true;
 }
 
 /** The id hashes from `pr` + anchor + `at`, so a block may claim it. */
@@ -106,6 +111,8 @@ export type SetPin = PickedSetPin | LinkedSetPin;
 export interface DraftSet {
   v: 1;
   pins: SetPin[];
+  /** The dock's 👁 switch: every card off at once, markers and boxes drawn. */
+  cardsHidden?: true;
 }
 
 declare global {

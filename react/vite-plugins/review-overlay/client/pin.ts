@@ -102,18 +102,18 @@ const STYLE = `
   .card.hidden { display: none; }
   .card .count {
     color: var(--bai-review-text-dim); font-size: 11px; font-weight: 600;
-    margin-bottom: 4px; padding-right: 62px;
+    margin-bottom: 4px; padding-right: 82px;
   }
   .card .count:empty { display: none; }
   .card .awaynote {
     color: var(--bai-review-text-dim); font-size: 11px; margin-bottom: 6px;
-    padding-right: 62px;
+    padding-right: 82px;
   }
   .card .awaynote:empty { display: none; }
   /* The reviewer's own words lead. An anchor from before the note travelled
      carries none, and :empty leaves no gap where it would have been. */
   .card .note {
-    white-space: pre-wrap; word-break: break-word; padding-right: 62px;
+    white-space: pre-wrap; word-break: break-word; padding-right: 82px;
     margin-bottom: 6px;
   }
   .card .note:empty { display: none; }
@@ -123,7 +123,7 @@ const STYLE = `
   }
   .card .trunc.shown { display: block; }
   .card .label {
-    font-weight: 600; word-break: break-word; padding-right: 62px;
+    font-weight: 600; word-break: break-word; padding-right: 82px;
   }
   .card .sub {
     color: var(--bai-review-text-dim); font-size: 13px; margin-top: 3px;
@@ -141,7 +141,7 @@ const STYLE = `
     color: var(--bai-review-text-dim); vertical-align: -3px;
   }
   .card .idcopy:hover { color: var(--bai-review-text); }
-  .card .close, .card .locate, .card .copyall {
+  .card .close, .card .locate, .card .copyall, .card .remove {
     position: absolute; top: 4px; cursor: pointer; border: 0; padding: 0;
     background: none; color: var(--bai-review-text-dim);
     display: flex; align-items: center; justify-content: center;
@@ -150,9 +150,9 @@ const STYLE = `
   .card .close { right: 4px; }
   .card .locate { right: 24px; }
   .card .copyall { right: 44px; }
-  .card .close:hover, .card .locate:hover, .card .copyall:hover {
-    color: var(--bai-review-text);
-  }
+  .card .remove { right: 64px; }
+  .card .close:hover, .card .locate:hover, .card .copyall:hover,
+  .card .remove:hover { color: var(--bai-review-text); }
 ${ICON_STYLE}
   /* The pick box's own style, so arriving on a link looks like the pick that
      made it: a thin stroke over a light fill, on our layer — never the app's. */
@@ -187,8 +187,13 @@ export interface PinLayerOptions {
     element: Element | null,
     target: DeepLinkPinTarget | null,
   ) => void;
-  /** The reviewer pressed ✕; whoever owns the set decides what that means. */
+  /** The reviewer pressed 🗑; whoever owns the set decides what that means. */
   onDismiss?: (target: DeepLinkPinTarget) => void;
+  /**
+   * The reviewer pressed ✕: the card is in the way, the pin is not. The owner
+   * persists that and hides the card — the marker and the box stay drawn.
+   */
+  onHide?: (target: DeepLinkPinTarget) => void;
   /**
    * The ladder ran out with these still unresolved; they stay pending (R7.2).
    * Without it the layer keeps its own line.
@@ -215,6 +220,7 @@ interface ViewDeps {
   buildComment: PinLayerOptions['buildComment'];
   onLocated?: PinLayerOptions['onLocated'];
   onDismiss?: PinLayerOptions['onDismiss'];
+  onHide?: PinLayerOptions['onHide'];
   /** One layout read per frame, however many views ask for one. */
   placeSoon: () => void;
   /** A smooth scroll ends after `locate()` returns; follow it to its stop. */
@@ -301,9 +307,14 @@ function createPinView(deps: ViewDeps): PinView {
   sub.append(idText, idCopy, componentText);
   const close = document.createElement('button');
   close.className = 'close';
-  close.append(icon('x'));
-  close.title = 'Dismiss this pin';
-  close.setAttribute('aria-label', 'Dismiss this pin');
+  close.append(icon('eye-off'));
+  close.title = 'Hide this card';
+  close.setAttribute('aria-label', 'Hide this card');
+  const removeButton = document.createElement('button');
+  removeButton.className = 'remove';
+  removeButton.append(icon('trash-2'));
+  removeButton.title = 'Remove this pin from the set';
+  removeButton.setAttribute('aria-label', 'Remove this pin from the set');
   const locateButton = document.createElement('button');
   locateButton.className = 'locate';
   locateButton.append(icon('crosshair'));
@@ -312,12 +323,13 @@ function createPinView(deps: ViewDeps): PinView {
   const commentCopy = document.createElement('button');
   commentCopy.className = 'copyall';
   commentCopy.append(icon('copy'));
-  commentCopy.title = 'Copy the whole comment';
-  commentCopy.setAttribute('aria-label', 'Copy the whole comment');
+  commentCopy.title = 'Copy this pin';
+  commentCopy.setAttribute('aria-label', 'Copy this pin');
   card.append(
     close,
     locateButton,
     commentCopy,
+    removeButton,
     count,
     away,
     note,
@@ -600,7 +612,12 @@ function createPinView(deps: ViewDeps): PinView {
   locateButton.addEventListener('click', () =>
     located?.scrollIntoView?.({ block: 'center', behavior: 'smooth' }),
   );
+  // ✕ takes the card off the element, not the pin off the set: the reviewer
+  // wants to see what they pinned. 🗑 is what ends a pin.
   close.addEventListener('click', () => {
+    if (target) deps.onHide?.(target);
+  });
+  removeButton.addEventListener('click', () => {
     const dismissed = target;
     dismiss();
     if (dismissed) deps.onDismiss?.(dismissed);
@@ -849,6 +866,7 @@ export function createPinLayer(options: PinLayerOptions) {
       renumber();
       options.onDismiss?.(target);
     },
+    onHide: options.onHide,
     placeSoon,
     followScroll,
   };
