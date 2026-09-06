@@ -327,7 +327,7 @@ patchedDependencies:
   '@astryxdesign/core@0.5.2': c9b0d04ba4d03f2fed56352870de082e2a58f9d92b509e247342e59c951918ed
   '@astryxdesign/lab@0.3.0-canary.12db2a1': 0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08
   '@cloudscape-design/board-components@3.0.176': 06f6366f1016801dd543a4b968e088fbcbf34ee1a4473bc09a07e35206597a98
-  ansi_up@6.0.6: 99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459
+  ansi_up@6.0.6: 66f22f79b0d7ff59b6b5eb3ead486278dd736097ccf6f7578f29dd7eaf04f6c4
   relay-runtime@20.1.1: cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6
 
 importers:
@@ -963,7 +963,7 @@ importers:
         version: 8.20.0
       ansi_up:
         specifier: ^6.0.6
-        version: 6.0.6(patch_hash=99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459)
+        version: 6.0.6(patch_hash=66f22f79b0d7ff59b6b5eb3ead486278dd736097ccf6f7578f29dd7eaf04f6c4)
       backend.ai-client:
         specifier: workspace:*
         version: link:../packages/backend.ai-client
@@ -16117,7 +16117,7 @@ snapshots:
 
   ansi-styles@6.2.3: {}
 
-  ansi_up@6.0.6(patch_hash=99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459): {}
+  ansi_up@6.0.6(patch_hash=66f22f79b0d7ff59b6b5eb3ead486278dd736097ccf6f7578f29dd7eaf04f6c4): {}
 
   any-promise@1.3.0: {}
 
