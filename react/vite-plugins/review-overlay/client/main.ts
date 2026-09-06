@@ -688,6 +688,7 @@ function boot() {
     } catch {
       // A browser that refuses the rewrite still shows the set; only a reload
       // would re-apply the link.
+      return;
     }
   }
 

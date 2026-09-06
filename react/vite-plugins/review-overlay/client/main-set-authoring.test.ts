@@ -761,22 +761,22 @@ describe('the cards switch as show-all', () => {
   it('reveals one card alone, and the switch still brings them all back', async () => {
     mount('save', 'Save');
     seed([
-      storedPin('c_one', 'create', 'Start › create'),
-      storedPin('c_two', 'cancel', 'Start › cancel'),
-      storedPin('c_three', 'save', 'Start › save'),
+      storedPin('c_oneaaaa', 'create', 'Start › create'),
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
+      storedPin('c_threeaa', 'save', 'Start › save'),
     ]);
     await bootOverlay();
     await ticks(2);
     cardsSwitch().click();
-    expect(hiddenCard('c_two')).toBe(true);
+    expect(hiddenCard('c_twoaaaa')).toBe(true);
 
     node<HTMLButtonElement>(
-      '.setdock .row[data-pin-id="c_two"] .unhide',
+      '.setdock .row[data-pin-id="c_twoaaaa"] .unhide',
     ).click();
 
-    expect(hiddenCard('c_one')).toBe(true);
-    expect(hiddenCard('c_two')).toBe(false);
-    expect(hiddenCard('c_three')).toBe(true);
+    expect(hiddenCard('c_oneaaaa')).toBe(true);
+    expect(hiddenCard('c_twoaaaa')).toBe(false);
+    expect(hiddenCard('c_threeaa')).toBe(true);
     expect(storedSet().cardsHidden).toBeUndefined();
     expect(storedPins().map((pin) => pin.hidden)).toEqual([
       true,
@@ -788,8 +788,8 @@ describe('the cards switch as show-all', () => {
     cardsSwitch().click();
 
     expect(storedPins().some((pin) => pin.hidden)).toBe(false);
-    expect(hiddenCard('c_one')).toBe(false);
-    expect(hiddenCard('c_three')).toBe(false);
+    expect(hiddenCard('c_oneaaaa')).toBe(false);
+    expect(hiddenCard('c_threeaa')).toBe(false);
   });
 
   // Off is not "remember what was hidden and hide everything else".

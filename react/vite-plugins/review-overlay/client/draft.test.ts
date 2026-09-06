@@ -169,12 +169,12 @@ describe('what the set says is on screen', () => {
   // one expression: the switch goes off and the rest carry the flag.
   it('reveals one card by hiding every other pin', () => {
     const store = createDraftStore();
-    store.add(pin('c_a'));
-    store.add(pin('c_b'));
-    store.add(pin('c_c'));
+    store.add(pin('c_aaaaaaa'));
+    store.add(pin('c_bbbbbbb'));
+    store.add(pin('c_ccccccc'));
     store.hideCards(true);
 
-    store.showOnly('c_b');
+    store.showOnly('c_bbbbbbb');
 
     expect(store.cardsHidden()).toBe(false);
     expect(store.pins().map((p) => p.hidden)).toEqual([true, undefined, true]);

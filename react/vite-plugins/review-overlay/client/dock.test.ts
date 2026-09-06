@@ -341,16 +341,28 @@ describe('createSetDock', () => {
       expect(toggled).toBe(1);
     });
 
-    // The dock is the switch's home, so it says which way it is thrown.
-    it('says the cards are off once the owner says so', () => {
+    // A name that changes with the action carries the state already, and
+    // `aria-pressed` on top of it announces the opposite of what it does:
+    // "Show every card, pressed" is what a screen reader said with the cards
+    // hidden. The name is the whole story, so nothing states it twice.
+    it('leaves the state to the name it just changed', () => {
       dock.render([pin('c_a', 'a')], new Map(), true);
 
       expect(node('.cards').textContent).toBe('Cards');
-      expect(node('.cards').getAttribute('aria-pressed')).toBe('true');
+      expect(node('.cards').getAttribute('aria-label')).toBe(
+        `Show every card (${CARDS_CHORD})`,
+      );
+      expect(node('.cards').hasAttribute('aria-pressed')).toBe(false);
+
+      dock.render([pin('c_a', 'a')], new Map(), false);
+
+      expect(node('.cards').getAttribute('aria-label')).toBe(
+        `Hide every card (${CARDS_CHORD})`,
+      );
+      expect(node('.cards').hasAttribute('aria-pressed')).toBe(false);
     });
 
-    // R8.1: the glyph and the name are what pressing it DOES; the state it is
-    // in is `aria-pressed`, which a glyph cannot say twice.
+    // R8.1: the glyph and the name are what pressing it DOES.
     it('names and draws the action, not the state', () => {
       dock.render([pin('c_a', 'a')]);
 

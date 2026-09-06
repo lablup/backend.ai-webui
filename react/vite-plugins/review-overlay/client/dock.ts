@@ -415,10 +415,11 @@ export function createSetDock(options: SetDockOptions) {
     titleText.textContent = `${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
     setText(clear, `Clear all (${pins.length})`);
     confirmText.textContent = `Clear all ${pins.length}?`;
-    // Glyph and name are the ACTION; `aria-pressed` is where the state goes.
+    // Glyph and name are the ACTION (R8.1), and the name is the whole story:
+    // `aria-pressed` on a name that changes with the action reads out as its
+    // own contradiction — "Show every card, pressed" while they are hidden.
     setIcon(cards, cardsHidden ? 'eye' : 'eye-off');
     setLabel(cards, cardsHidden ? SHOW_CARDS_LABEL : HIDE_CARDS_LABEL);
-    cards.setAttribute('aria-pressed', String(cardsHidden));
     rows.replaceChildren(
       ...pins.map((pin, index) => {
         const row = document.createElement('div');

@@ -252,6 +252,7 @@ function createHandover(key: string, storage: Storage | null): FocusStore {
         storage?.setItem(key, value);
       } catch {
         // The set still opens on that pin's page; only the pulse moves.
+        return;
       }
     },
   };

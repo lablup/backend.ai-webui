@@ -91,6 +91,11 @@ const storedPin = (
   return Object.assign(pin, over);
 };
 
+const LETTERS = 'abcdefghijklmnopqrstuvwxyz';
+/** A distinct WELL-FORMED id per index — base32 is `a`-`z` and `2`-`7`. */
+const nthId = (i: number) =>
+  `c_s${LETTERS[i % 26]}${LETTERS[Math.floor(i / 26)]}aaaa`;
+
 const seed = (pins: SetPin[]) =>
   sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ v: 1, pins }));
 
@@ -259,7 +264,7 @@ describe('opening a link that carries a set', () => {
   it('says what the link brought that the full set could not take', async () => {
     seed(
       Array.from({ length: MAX_SET_PINS }, (_, index) =>
-        storedPin(`c_seed${index}`, 'create'),
+        storedPin(nthId(index), 'create'),
       ),
     );
 
@@ -483,7 +488,7 @@ describe('a set that spans pages', () => {
         storedPin(B, 'deploy', {
           anchor: { v: 3, s: '[data-testid="gone2"]', p: '/', tid: 'gone2' },
         }),
-        storedPin('c_c', 'create', {
+        storedPin('c_ccccccc', 'create', {
           anchor: { v: 3, s: '[data-testid="create"]', p: '/start' },
           label: 'Start › create',
         }),
