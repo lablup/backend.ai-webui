@@ -226,6 +226,36 @@ describe('createSetDock', () => {
       );
     });
 
+    // Every frame carries its source path, so a component that merely LIVES
+    // in a `*Modal.tsx` is not the thing the pin was inside.
+    it('reads the frame name, not the file path it was declared in', () => {
+      waiting({
+        stack: [
+          '  in RadioListItem (at /src/components/VFolderCreateModal.tsx:31:7)',
+          '  in FolderDrawer (at /src/components/panels.tsx:8:3)',
+        ],
+      });
+
+      expect(rows()[0].querySelector('.where')?.textContent).toBe(
+        'waiting — FolderDrawer',
+      );
+    });
+
+    // react-grab emits frames that name only a file; the row must not read
+    // `waiting — in /src/components/FolderCreateModalV2.tsx`.
+    it('names a file-only frame by its basename', () => {
+      waiting({
+        stack: [
+          '  in RadioListItem (@astryxdesign/core)',
+          '  in /src/components/FolderCreateModalV2.tsx',
+        ],
+      });
+
+      expect(rows()[0].querySelector('.where')?.textContent).toBe(
+        'waiting — FolderCreateModalV2',
+      );
+    });
+
     it('falls back to the component, then to the element itself', () => {
       waiting({ anchor: { v: 3, s: '#x', p: '/', c: { name: 'RadioList' } } });
       expect(rows()[0].querySelector('.where')?.textContent).toBe(

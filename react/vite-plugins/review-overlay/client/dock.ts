@@ -42,9 +42,14 @@ export type PinPlace = { kind: 'here' } | { kind: 'waiting' };
 /** Component names a reviewer would recognise as "the thing it was inside". */
 const DIALOGISH = /dialog|modal|drawer|sheet|popover/i;
 
-/** `  in CreateButton (at /src/Create.tsx:12:8)` → `CreateButton`. */
+/**
+ * `  in CreateButton (at /src/Create.tsx:12:8)` → `CreateButton`; a frame that
+ * names only its file (`  in /src/FolderModal.tsx`) → `FolderModal`.
+ */
 const frameName = (line: string): string =>
-  /\bin\s+([\w$.]+)/.exec(line)?.[1] ?? line.trim();
+  /\bin\s+([\w$.]+)/.exec(line)?.[1] ??
+  /([\w$.-]+)\.[jt]sx?\b/.exec(line)?.[1] ??
+  line.trim();
 
 /**
  * Where the reviewer last saw a waiting pin's element, in the order R7.3
@@ -54,7 +59,9 @@ const frameName = (line: string): string =>
 export function whereItWas(pin: SetPin): string {
   const { tid, c, tag, txt } = pin.anchor;
   if (tid) return tid;
-  const frame = pin.stack.find((line) => DIALOGISH.test(line));
+  // The NAME, never the raw line: every frame carries its source path, and
+  // `RadioListItem (at …/VFolderCreateModal.tsx)` is not a dialog.
+  const frame = pin.stack.find((line) => DIALOGISH.test(frameName(line)));
   if (frame) return frameName(frame);
   const name = c?.dn ?? c?.name;
   if (name) return name;
