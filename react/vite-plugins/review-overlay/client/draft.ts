@@ -126,6 +126,22 @@ export function showAllPins(set: DraftSet): DraftSet {
 }
 
 /**
+ * R8.3. One card revealed while the switch hides them all: the switch goes off
+ * and every OTHER pin takes the per-pin flag, so visibility stays the single
+ * expression it is instead of gaining a "shown in spite of the switch" state.
+ */
+export function showOnlyPin(set: DraftSet, id: string): DraftSet {
+  const { cardsHidden: _was, ...rest } = set;
+  return {
+    ...rest,
+    pins: set.pins.map((pin) => {
+      const { hidden: _flag, ...bare } = pin;
+      return (pin.id === id ? bare : { ...bare, hidden: true }) as SetPin;
+    }),
+  };
+}
+
+/**
  * A link merges into the set rather than replacing it: what is already there
  * keeps its place and the data it was stored with, and the rest is appended
  * in link order. The cap is what stops a pasted hash from growing it forever.
@@ -174,6 +190,8 @@ export interface DraftStore {
   cardsHidden(): boolean;
   /** Turning the switch back ON also un-hides every individually hidden pin. */
   hideCards(hidden: boolean): void;
+  /** Show this pin's card and no other: the switch goes off, the rest hide. */
+  showOnly(id: string): void;
 }
 
 export function createDraftStore(
@@ -231,6 +249,9 @@ export function createDraftStore(
     hideCards(hidden) {
       const next = hideCards(current, hidden);
       write(hidden ? next : showAllPins(next));
+    },
+    showOnly(id) {
+      write(showOnlyPin(current, id));
     },
   };
 }

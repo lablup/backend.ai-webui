@@ -165,6 +165,22 @@ describe('what the set says is on screen', () => {
     expect(stored().map((p) => p.hidden)).toEqual([undefined, undefined]);
   });
 
+  // R8.3. Revealing one card while the switch hides them all keeps visibility
+  // one expression: the switch goes off and the rest carry the flag.
+  it('reveals one card by hiding every other pin', () => {
+    const store = createDraftStore();
+    store.add(pin('c_a'));
+    store.add(pin('c_b'));
+    store.add(pin('c_c'));
+    store.hideCards(true);
+
+    store.showOnly('c_b');
+
+    expect(store.cardsHidden()).toBe(false);
+    expect(store.pins().map((p) => p.hidden)).toEqual([true, undefined, true]);
+    expect(stored().map((p) => p.hidden)).toEqual([true, undefined, true]);
+  });
+
   it('leaves those flags alone when the switch goes off', () => {
     const store = createDraftStore();
     store.add(pin('c_aaaaaaa'));

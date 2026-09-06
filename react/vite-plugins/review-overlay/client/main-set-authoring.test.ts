@@ -753,6 +753,45 @@ describe('the cards switch as show-all', () => {
     expect(storedPins().some((pin) => pin.hidden)).toBe(false);
   });
 
+  /**
+   * R8.3. The row's reveal while the switch is on means "that one, alone":
+   * the switch goes off and the rest take the per-pin flag, so no card is
+   * shown in spite of the switch.
+   */
+  it('reveals one card alone, and the switch still brings them all back', async () => {
+    mount('save', 'Save');
+    seed([
+      storedPin('c_one', 'create', 'Start › create'),
+      storedPin('c_two', 'cancel', 'Start › cancel'),
+      storedPin('c_three', 'save', 'Start › save'),
+    ]);
+    await bootOverlay();
+    await ticks(2);
+    cardsSwitch().click();
+    expect(hiddenCard('c_two')).toBe(true);
+
+    node<HTMLButtonElement>(
+      '.setdock .row[data-pin-id="c_two"] .unhide',
+    ).click();
+
+    expect(hiddenCard('c_one')).toBe(true);
+    expect(hiddenCard('c_two')).toBe(false);
+    expect(hiddenCard('c_three')).toBe(true);
+    expect(storedSet().cardsHidden).toBeUndefined();
+    expect(storedPins().map((pin) => pin.hidden)).toEqual([
+      true,
+      undefined,
+      true,
+    ]);
+
+    cardsSwitch().click();
+    cardsSwitch().click();
+
+    expect(storedPins().some((pin) => pin.hidden)).toBe(false);
+    expect(hiddenCard('c_one')).toBe(false);
+    expect(hiddenCard('c_three')).toBe(false);
+  });
+
   // Off is not "remember what was hidden and hide everything else".
   it('leaves the per-pin flags alone on the way off', async () => {
     seed([

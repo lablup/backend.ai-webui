@@ -8,6 +8,7 @@ import {
   DOCK_POS_KEY,
   type SetDock,
 } from './dock.js';
+import { ICON_NODES } from './icons.js';
 import type { SetPin } from './types.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -348,16 +349,40 @@ describe('createSetDock', () => {
       expect(node('.cards').getAttribute('aria-pressed')).toBe('true');
     });
 
-    // A pressed toggle named after the action that un-presses it announces
-    // the opposite of its own state.
-    it('keeps one name whichever way it is thrown', () => {
+    // R8.1: the glyph and the name are what pressing it DOES; the state it is
+    // in is `aria-pressed`, which a glyph cannot say twice.
+    it('names and draws the action, not the state', () => {
       dock.render([pin('c_a', 'a')]);
-      const named = node('.cards').getAttribute('aria-label');
+
+      const hide = node('.cards').getAttribute('aria-label');
+      expect(hide).toContain('Hide');
+      expect(node('.cards').title).toBe(hide);
+      expect(node('.cards svg path')?.getAttribute('d')).toBe(
+        ICON_NODES['eye-off'][0][1].d,
+      );
 
       dock.render([pin('c_a', 'a')], new Map(), true);
 
-      expect(node('.cards').getAttribute('aria-label')).toBe(named);
-      expect(node('.cards').title).toBe(named);
+      const show = node('.cards').getAttribute('aria-label');
+      expect(show).toContain('Show');
+      expect(node('.cards').title).toBe(show);
+      expect(node('.cards svg path')?.getAttribute('d')).toBe(
+        ICON_NODES.eye[0][1].d,
+      );
+    });
+
+    // R8.2: with the switch thrown, a row that offered nothing was a dead end.
+    it('offers every row a reveal while it is hiding the cards', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')], new Map(), true);
+
+      expect(rows().every((row) => row.querySelector('.unhide'))).toBe(true);
+      // The header already says the switch is thrown; dimming is for a card
+      // hidden on its own.
+      expect(rows().some((row) => row.classList.contains('off'))).toBe(false);
+
+      rows()[1].querySelector<HTMLButtonElement>('.unhide')?.click();
+
+      expect(unhidden).toEqual(['c_b']);
     });
 
     // A 260px header wraps; a hint stranded on the title's line reads as part

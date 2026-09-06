@@ -15,7 +15,9 @@ import type { SetPin } from './types.js';
 /** ⌘⇧H / Ctrl⇧H — plain ⌘H hides the app and Ctrl+H opens history. */
 export const CARDS_CHORD = isMac() ? '⌘⇧H' : 'Ctrl⇧H';
 
-const CARDS_LABEL = `Pin cards (${CARDS_CHORD})`;
+/** A toggle is named for what pressing it DOES, never for its state (R8.1). */
+const HIDE_CARDS_LABEL = `Hide every card (${CARDS_CHORD})`;
+const SHOW_CARDS_LABEL = `Show every card (${CARDS_CHORD})`;
 
 /** Where a dragged dock is parked, per tab. Cleared with the tab, not the set. */
 export const DOCK_POS_KEY = 'bai-review:dock-pos';
@@ -224,6 +226,11 @@ const setIcon = (node: HTMLElement, name: IconName) => {
   node.querySelector('svg')?.replaceWith(icon(name));
 };
 
+const setLabel = (node: HTMLElement, label: string) => {
+  node.title = label;
+  node.setAttribute('aria-label', label);
+};
+
 /** A tab that refuses storage still drags; it just forgets on reload. */
 const readPos = (): DockPos | null => {
   try {
@@ -262,7 +269,7 @@ export function createSetDock(options: SetDockOptions) {
     'Copy all',
   );
   const clear = button('clear', 'trash-2', 'Clear the whole set', 'Clear all');
-  const cards = button('cards', 'eye', CARDS_LABEL, 'Cards');
+  const cards = button('cards', 'eye-off', HIDE_CARDS_LABEL, 'Cards');
   const chord = document.createElement('span');
   chord.className = 'chord';
   chord.textContent = CARDS_CHORD;
@@ -408,9 +415,9 @@ export function createSetDock(options: SetDockOptions) {
     titleText.textContent = `${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
     setText(clear, `Clear all (${pins.length})`);
     confirmText.textContent = `Clear all ${pins.length}?`;
-    // A toggle's name is stable and `aria-pressed` carries the state; naming
-    // it after the action it would take announces the opposite of the state.
-    setIcon(cards, cardsHidden ? 'eye-off' : 'eye');
+    // Glyph and name are the ACTION; `aria-pressed` is where the state goes.
+    setIcon(cards, cardsHidden ? 'eye' : 'eye-off');
+    setLabel(cards, cardsHidden ? SHOW_CARDS_LABEL : HIDE_CARDS_LABEL);
     cards.setAttribute('aria-pressed', String(cardsHidden));
     rows.replaceChildren(
       ...pins.map((pin, index) => {
@@ -468,8 +475,11 @@ export function createSetDock(options: SetDockOptions) {
           where.textContent = `waiting — ${whereItWas(pin)}`;
           where.title = pin.label;
           row.append(where);
-        } else if (pin.hidden) {
-          row.classList.add('off');
+        } else if (pin.hidden || cardsHidden) {
+          // Whatever hid the card — its own ✕ or the switch — the row is what
+          // offers it back (R8.2). Only an individual hide dims the row: with
+          // the switch thrown the header already says so, for every row.
+          if (pin.hidden) row.classList.add('off');
           const unhide = button('unhide', 'eye', 'Show this pin’s card again');
           unhide.addEventListener('click', () => options.onUnhide(pin.id));
           row.append(unhide);

@@ -400,7 +400,7 @@ function boot() {
       pins.pulse(id);
     },
     onRemove: removeFromSet,
-    onUnhide: (id) => setHidden(id, false),
+    onUnhide: revealPin,
     onToggleCards: toggleCards,
     onGo: (id) => {
       // Built from the DRAFT SET, never from `location.hash`: the hash was
@@ -497,6 +497,21 @@ function boot() {
     if (!store.has(id)) return;
     store.hide(id, hidden);
     pins.setCardHidden(id, hidden);
+    syncDraft();
+  }
+
+  /**
+   * A row's reveal. While the switch hides everything, showing one card means
+   * showing it ALONE: the switch goes off and the rest take the per-pin flag,
+   * so nothing is shown in spite of the switch (R8.3).
+   */
+  function revealPin(id: string) {
+    if (!store.has(id)) return;
+    if (!store.cardsHidden()) return setHidden(id, false);
+    store.showOnly(id);
+    pins.setCardsHidden(false);
+    for (const pin of store.pins())
+      pins.setCardHidden(pin.id, pin.hidden === true);
     syncDraft();
   }
 
