@@ -39,7 +39,7 @@ import { createPinLayer, type DeepLinkPinTarget } from './pin.js';
 import type {
   AnchorComponent,
   AnchorV3,
-  CopyPayload,
+  PinCopyPayload,
   ReviewServerState,
   SetPin,
 } from './types.js';
@@ -316,7 +316,7 @@ function boot() {
    * flight — a block missing its stack, or claiming `pr=0`, is not the
    * comment that was written.
    */
-  function buildComment(target: DeepLinkPinTarget): CopyPayload | null {
+  function buildComment(target: DeepLinkPinTarget): PinCopyPayload | null {
     const pin = draft.find((held) => held.id === target.id);
     if (pin)
       return {
