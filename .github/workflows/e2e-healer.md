@@ -58,9 +58,7 @@ steps:
   - uses: actions/setup-node@v4
     with:
       node-version-file: '.nvmrc'
-  - uses: pnpm/action-setup@v5
-    with:
-      version: 11
+  - uses: pnpm/action-setup@v6.1.0
   - name: Print E2E endpoints
     run: |
       echo "=== E2E Test Configuration ==="

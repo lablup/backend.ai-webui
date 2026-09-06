@@ -107,7 +107,7 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version-file: ".nvmrc"
-      - uses: pnpm/action-setup@a8198c4bff370c8506180b035930dea56dbd5288
+      - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b
       - name: Print E2E endpoints
         run: "echo \"=== E2E Test Configuration ===\"\necho \"E2E_WEBUI_ENDPOINT: $E2E_WEBUI_ENDPOINT\"\necho \"E2E_WEBSERVER_ENDPOINT: $E2E_WEBSERVER_ENDPOINT\"\n"
       - run: pnpm install --frozen-lockfile --prefer-offline

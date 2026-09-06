@@ -143,8 +143,9 @@ pnpm update --recursive --latest --workspace
 cd react && pnpm update
 cd packages/backend.ai-ui && pnpm update
 
-# If engine constraints block:
-pnpm update --ignore-engines
+# If engine constraints block: pnpm 12 removed `--ignore-engines`; use the
+# `engineStrict` setting instead (per-invocation via `--config.engine-strict`).
+pnpm update --config.engine-strict=false
 
 # Install to update lockfile
 pnpm install
