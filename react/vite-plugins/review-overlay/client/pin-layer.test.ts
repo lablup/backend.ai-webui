@@ -1,0 +1,665 @@
+/**
+ * The layer side of `pin.ts` (FR-3857): one `<style>`, one observer, one retry
+ * driver and one docked column over N pin views. `pin.test.ts` covers what a
+ * single view does; this covers what only a set can show.
+ */
+import {
+  createPinLayer,
+  type DeepLinkPinTarget,
+  type PinLayer,
+} from './pin.js';
+import type { AnchorV3 } from './types.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+let host: HTMLElement;
+let layer: PinLayer;
+let toasts: string[];
+let dismissed: string[];
+let scrolled: string[];
+let pending: string[][];
+
+const shadow = () => host.shadowRoot as ShadowRoot;
+const cards = () => Array.from(shadow().querySelectorAll<HTMLElement>('.card'));
+const cardOf = (id: string) =>
+  shadow().querySelector<HTMLElement>(
+    `.card[data-pin-id="${id}"]`,
+  ) as HTMLElement;
+const markerOf = (id: string) =>
+  shadow().querySelector<HTMLElement>(
+    `.pin[data-pin-id="${id}"]`,
+  ) as HTMLElement;
+const countOf = (id: string) =>
+  cardOf(id).querySelector<HTMLElement>('.count')?.textContent;
+/** A set of one draws lucide's map-pin where a set draws its index. */
+const markerGlyph = (id: string) =>
+  markerOf(id).querySelector('svg') ? 'map-pin' : markerOf(id).textContent;
+
+/** The layer places on a rAF; give it one frame to land. */
+const settle = () => new Promise((resolve) => setTimeout(resolve, 60));
+
+const target = (
+  id: string,
+  testid: string,
+  over: Partial<AnchorV3> = {},
+): DeepLinkPinTarget => ({
+  id,
+  anchor: {
+    v: 3,
+    s: `[data-testid="${testid}"]`,
+    p: '/',
+    tag: 'button',
+    txt: testid,
+    ...over,
+  },
+  anchorB64: `PAYLOAD_${id}`,
+  label: `Start › ${testid}`,
+});
+
+/** jsdom has no layout, so every element the layer measures is given a box. */
+const mount = (testid: string, box: Partial<DOMRect> = {}): HTMLElement => {
+  document.body.insertAdjacentHTML(
+    'beforeend',
+    `<button data-testid="${testid}">${testid}</button>`,
+  );
+  const element = document.querySelector<HTMLElement>(
+    `[data-testid="${testid}"]`,
+  ) as HTMLElement;
+  element.getBoundingClientRect = () =>
+    ({
+      left: 20,
+      right: 420,
+      width: 400,
+      top: 100,
+      bottom: 300,
+      height: 200,
+      ...box,
+    }) as DOMRect;
+  element.scrollIntoView = () => {
+    scrolled.push(testid);
+  };
+  return element;
+};
+
+beforeEach(() => {
+  document.body.innerHTML = '';
+  toasts = [];
+  dismissed = [];
+  scrolled = [];
+  pending = [];
+  host = document.createElement('div');
+  host.setAttribute('data-bai-review-overlay', '');
+  document.body.append(host);
+  Object.defineProperty(window, 'innerHeight', {
+    value: 800,
+    configurable: true,
+  });
+  Object.defineProperty(window, 'innerWidth', {
+    value: 1024,
+    configurable: true,
+  });
+  layer = createPinLayer({
+    root: host.attachShadow({ mode: 'open' }),
+    host,
+    copyText: () => true,
+    showToast: (message) => toasts.push(message),
+    buildComment: () => ({ text: 'block', html: '<p>block</p>' }),
+    onDismiss: (pin) => dismissed.push(pin.id),
+  });
+});
+
+afterEach(() => {
+  layer.dispose();
+});
+
+describe('createPinLayer', () => {
+  it('draws one view per pin, tagged with its own id', () => {
+    mount('one');
+    mount('two');
+    layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+
+    expect(layer.locate()).toBe(true);
+    expect(cards().map((card) => card.dataset.pinId)).toEqual(['c_a', 'c_b']);
+    expect(cardOf('c_b').textContent).toContain('Start › two');
+    expect(layer.locatedElement('c_b')).toBe(
+      document.querySelector('[data-testid="two"]'),
+    );
+  });
+
+  // One layer means one stylesheet and one fixed plane, however many pins.
+  it('keeps a single style and a single plane for the whole set', () => {
+    mount('one');
+    mount('two');
+    mount('three');
+    layer.show([
+      target('c_a', 'one'),
+      target('c_b', 'two'),
+      target('c_c', 'three'),
+    ]);
+
+    expect(shadow().querySelectorAll('style')).toHaveLength(1);
+    expect(shadow().querySelectorAll('.pinlayer')).toHaveLength(1);
+    expect(shadow().querySelectorAll('.card')).toHaveLength(3);
+    expect(shadow().querySelectorAll('.markbox')).toHaveLength(3);
+  });
+
+  it('numbers the markers and heads each card with its place in the set', () => {
+    mount('one');
+    mount('two');
+    layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+
+    expect(markerOf('c_a').textContent).toBe('1');
+    expect(markerOf('c_b').textContent).toBe('2');
+    expect(countOf('c_a')).toBe('1 / 2');
+    expect(countOf('c_b')).toBe('2 / 2');
+  });
+
+  // A set of one is what a single pin has always been.
+  it('leaves a set of one unnumbered', () => {
+    mount('one');
+    layer.show([target('c_a', 'one')]);
+
+    expect(markerGlyph('c_a')).toBe('map-pin');
+    expect(countOf('c_a')).toBe('');
+  });
+
+  it('shrinks back to one view when the set does', () => {
+    mount('one');
+    mount('two');
+    layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+    layer.show([target('c_a', 'one')]);
+
+    expect(shadow().querySelectorAll('.card')).toHaveLength(1);
+    expect(markerGlyph('c_a')).toBe('map-pin');
+  });
+
+  describe('the focus pin', () => {
+    it('is the only one that scrolls the page and pulses', () => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+
+      expect(scrolled).toEqual(['one']);
+      expect(markerOf('c_a').classList.contains('pulse')).toBe(true);
+      expect(markerOf('c_b').classList.contains('pulse')).toBe(false);
+    });
+
+    // A stored focus id outlives the pin it named; the set still scrolls.
+    it('falls back to the first pin when the named one is not in the set', () => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')], {
+        focusId: 'c_gone',
+      });
+
+      expect(scrolled).toEqual(['one']);
+      expect(markerOf('c_a').classList.contains('pulse')).toBe(true);
+    });
+
+    it('is whichever pin the caller names', () => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')], {
+        focusId: 'c_b',
+      });
+
+      expect(scrolled).toEqual(['two']);
+      expect(markerOf('c_b').classList.contains('pulse')).toBe(true);
+    });
+  });
+
+  describe('dismissing one pin of a set', () => {
+    beforeEach(() => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+      layer.locate();
+    });
+
+    it('takes that one down and leaves the rest drawn', () => {
+      layer.dismiss('c_a');
+
+      expect(layer.ids()).toEqual(['c_b']);
+      expect(layer.isShowing('c_a')).toBe(false);
+      expect(cardOf('c_a').classList.contains('found')).toBe(false);
+      expect(markerOf('c_a').classList.contains('found')).toBe(false);
+      expect(cardOf('c_b').classList.contains('found')).toBe(true);
+      expect(markerOf('c_b').classList.contains('found')).toBe(true);
+    });
+
+    // ✕ is a set edit, and only the set's owner knows what that costs.
+    it('hands the pin back to the owner when ✕ is what did it', () => {
+      cardOf('c_b').querySelector<HTMLButtonElement>('.close')?.click();
+
+      expect(dismissed).toEqual(['c_b']);
+      expect(layer.ids()).toEqual(['c_a']);
+    });
+
+    it('renumbers what is left, so the heads still count the set', () => {
+      mount('three');
+      layer.show([
+        target('c_a', 'one'),
+        target('c_b', 'two'),
+        target('c_c', 'three'),
+      ]);
+
+      layer.dismiss('c_a');
+
+      expect(markerOf('c_b').textContent).toBe('1');
+      expect(countOf('c_b')).toBe('1 / 2');
+      expect(countOf('c_c')).toBe('2 / 2');
+    });
+
+    // Two pins minus one is a set of one, which never numbered itself.
+    it('drops back to a lone map-pin when ✕ leaves one pin', () => {
+      cardOf('c_a').querySelector<HTMLButtonElement>('.close')?.click();
+
+      expect(markerGlyph('c_b')).toBe('map-pin');
+      expect(countOf('c_b')).toBe('');
+    });
+
+    it('takes the whole set down when no pin is named', () => {
+      layer.dismiss();
+
+      expect(layer.ids()).toEqual([]);
+      expect(layer.isShowing()).toBe(false);
+    });
+  });
+
+  // A row asking about ITS pin must not move the page to the focus pin, which
+  // is exactly where a link's arrival leaves the layer (R7.3).
+  describe('resolving one named pin', () => {
+    beforeEach(() => {
+      mount('one');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')], {
+        focusId: 'c_a',
+      });
+      scrolled = [];
+    });
+
+    it('draws the pin that arrived late and scrolls nothing', () => {
+      const two = mount('two');
+
+      expect(layer.locate('c_b')).toBe(true);
+      expect(layer.locatedElement('c_b')).toBe(two);
+      expect(scrolled).toEqual([]);
+    });
+
+    it('is the difference from re-running the whole ladder', () => {
+      layer.locate('c_b');
+      expect(scrolled).toEqual([]);
+
+      layer.locate();
+
+      expect(scrolled).toEqual(['one']);
+    });
+  });
+
+  describe('the retry driver', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    // One driver, one sentence: a pin per toast would bury the page in them.
+    it('gives up once for the whole set, counting what is missing', () => {
+      mount('one');
+      layer.show([
+        target('c_a', 'one'),
+        target('c_b', 'two'),
+        target('c_c', 'three'),
+      ]);
+
+      vi.advanceTimersByTime(20 * 500);
+
+      expect(toasts).toEqual(['2 of 3 pins are not on this page']);
+    });
+
+    // The sentence a single pin has always given up with.
+    it('says what it always said for a set of one', () => {
+      layer.show([target('c_a', 'one')]);
+
+      vi.advanceTimersByTime(20 * 500);
+
+      expect(toasts).toEqual(['Could not find that element on this page']);
+    });
+
+    it('says nothing at all once every pin has landed', () => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+
+      vi.advanceTimersByTime(20 * 500);
+
+      expect(toasts).toEqual([]);
+    });
+
+    // The owner knows whether a pending pin is on another page or waiting for
+    // its element; the layer only knows which ids are still unresolved.
+    it('hands the still-pending ids to an owner that wants them', () => {
+      layer.dispose();
+      layer = createPinLayer({
+        root: shadow(),
+        host,
+        copyText: () => true,
+        showToast: (message) => toasts.push(message),
+        buildComment: () => ({ text: 'block', html: '<p>block</p>' }),
+        onGiveUp: (ids) => pending.push(ids),
+      });
+      mount('one');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+
+      vi.advanceTimersByTime(20 * 500);
+
+      expect(pending).toEqual([['c_b']]);
+      expect(toasts).toEqual([]);
+    });
+  });
+
+  /**
+   * R7.2: the ladder is 10 s of SPA boot, not the pin's whole life. A pin
+   * whose element is inside a closed modal has to appear the moment the
+   * reviewer opens it again, however long after that is.
+   */
+  describe('a pin still waiting for its element', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    /** One mutation batch, through the layer's own debounce. */
+    const churn = async (times = 1) => {
+      for (let i = 0; i < times; i++) {
+        document.body.insertAdjacentHTML('beforeend', '<i>churn</i>');
+        await Promise.resolve();
+        vi.advanceTimersByTime(400);
+      }
+    };
+
+    it('draws it when the element arrives after the ladder gave up', async () => {
+      layer.show([target('c_a', 'late')]);
+      vi.advanceTimersByTime(20 * 500);
+      expect(toasts).toEqual(['Could not find that element on this page']);
+
+      mount('late');
+      await churn();
+
+      expect(markerOf('c_a').classList.contains('found')).toBe(true);
+      expect(layer.locatedElement('c_a')).toBe(
+        document.querySelector('[data-testid="late"]'),
+      );
+    });
+
+    // The escalated scan's budget is spent by the page's own churn long before
+    // the modal opens; the landmark coming back is what buys it a new one.
+    it('escalates again when the landmark it lived in comes back', async () => {
+      layer.show([
+        target('c_a', 'unused', {
+          s: '#never-matches',
+          tid: 'panel',
+          rect: { x: 0.1, y: 0.1, w: 0.2, h: 0.2 },
+          txt: 'Deploy',
+        }),
+      ]);
+      vi.advanceTimersByTime(20 * 500);
+      await churn(5);
+
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div data-testid="panel"><button>Deploy</button></div>',
+      );
+      await churn();
+
+      expect(layer.locatedElement('c_a')).toBe(
+        document.querySelector('[data-testid="panel"] button'),
+      );
+    });
+
+    // One `querySelector` per waiting pin per batch is the budget; the
+    // document-wide text scan keeps the cap it has always had.
+    it('does not re-run the document-wide scan on every mutation', async () => {
+      layer.show([target('c_a', 'gone')]);
+      vi.advanceTimersByTime(20 * 500);
+      const wide = vi.spyOn(document, 'querySelectorAll');
+
+      await churn(6);
+
+      const scans = wide.mock.calls.filter(([sel]) => sel === 'button').length;
+      expect(scans).toBeLessThanOrEqual(3);
+      wide.mockRestore();
+    });
+  });
+
+  // Mid-pick a card would swallow the click meant for the element under it.
+  describe('folding away for a pick', () => {
+    it('collapses every card and leaves the markers', () => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+      layer.locate();
+
+      layer.setCollapsed(true);
+      expect(
+        cards().every((card) => card.classList.contains('collapsed')),
+      ).toBe(true);
+      expect(markerOf('c_a').classList.contains('found')).toBe(true);
+
+      layer.setCollapsed(false);
+      expect(cards().some((card) => card.classList.contains('collapsed'))).toBe(
+        false,
+      );
+    });
+
+    // Only the card folds: the marker is what still says where the pin is.
+    it('keeps the marker on the element while the card is folded', async () => {
+      const element = mount('one');
+      layer.show([target('c_a', 'one')]);
+      layer.locate();
+      layer.setCollapsed(true);
+
+      element.getBoundingClientRect = () =>
+        ({
+          left: 40,
+          right: 440,
+          width: 400,
+          top: 200,
+          bottom: 400,
+          height: 200,
+        }) as DOMRect;
+      window.dispatchEvent(new Event('resize'));
+      await settle();
+
+      expect(markerOf('c_a').classList.contains('found')).toBe(true);
+      expect(markerOf('c_a').style.left).toBe('40px');
+    });
+
+    // A folded card measures 0 high, and a card placed on that lands off-screen.
+    it('leaves the folded card where it was and re-places it on the way out', async () => {
+      mount('one', { top: 900, bottom: 1100 });
+      layer.show([target('c_a', 'one')]);
+      layer.locate();
+      Object.defineProperty(cardOf('c_a'), 'offsetHeight', {
+        value: 60,
+        configurable: true,
+      });
+      await settle();
+      expect(cardOf('c_a').style.top).toBe('732px');
+
+      layer.setCollapsed(true);
+      Object.defineProperty(window, 'innerHeight', {
+        value: 600,
+        configurable: true,
+      });
+      window.dispatchEvent(new Event('resize'));
+      await settle();
+      expect(cardOf('c_a').style.top).toBe('732px');
+
+      layer.setCollapsed(false);
+      await settle();
+      expect(cardOf('c_a').style.top).toBe('532px');
+    });
+
+    it('reaches a pin drawn after the pick began', () => {
+      mount('one');
+      layer.setCollapsed(true);
+      layer.show([target('c_a', 'one')]);
+
+      expect(cardOf('c_a').classList.contains('collapsed')).toBe(true);
+    });
+  });
+
+  // ✕ on a card, and the dock's own switch, both take the card off the page —
+  // the marker and the box are what say where the pin is, and they stay.
+  describe('cards taken off screen', () => {
+    beforeEach(() => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+      layer.locate();
+    });
+
+    it('hides one card and leaves its pin drawn', () => {
+      layer.setCardHidden('c_a', true);
+
+      expect(cardOf('c_a').classList.contains('hidden')).toBe(true);
+      expect(markerOf('c_a').classList.contains('found')).toBe(true);
+      expect(cardOf('c_b').classList.contains('hidden')).toBe(false);
+
+      layer.setCardHidden('c_a', false);
+      expect(cardOf('c_a').classList.contains('hidden')).toBe(false);
+    });
+
+    it('hides every card at once, and the markers stay', () => {
+      layer.setCardsHidden(true);
+
+      expect(cards().every((card) => card.classList.contains('hidden'))).toBe(
+        true,
+      );
+      expect(markerOf('c_b').classList.contains('found')).toBe(true);
+
+      layer.setCardsHidden(false);
+      expect(cards().some((card) => card.classList.contains('hidden'))).toBe(
+        false,
+      );
+    });
+
+    // The switch outlives the set it was thrown on.
+    it('reaches a pin drawn after the switch was thrown', () => {
+      layer.setCardsHidden(true);
+      mount('three');
+      layer.show([
+        target('c_a', 'one'),
+        target('c_b', 'two'),
+        target('c_c', 'three'),
+      ]);
+
+      expect(cardOf('c_c').classList.contains('hidden')).toBe(true);
+    });
+
+    // Adopting a pin is a fresh card: the last pin's ✕ is not this one's.
+    it('shows the card again when the view takes a new pin', () => {
+      layer.setCardHidden('c_b', true);
+
+      layer.show([target('c_a', 'one'), target('c_c', 'two')]);
+
+      expect(cardOf('c_c').classList.contains('hidden')).toBe(false);
+    });
+  });
+
+  // A hidden card is `display: none`, so it measures 0 high — counting it into
+  // the column would leave a gap where nothing is drawn.
+  it('leaves a hidden away card out of the docked column', async () => {
+    const gone = { top: -300, bottom: -100 };
+    mount('one', gone);
+    mount('two', gone);
+    layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+    layer.locate();
+    for (const card of cards()) {
+      Object.defineProperty(card, 'offsetHeight', {
+        value: 60,
+        configurable: true,
+      });
+    }
+    layer.setCardHidden('c_a', true);
+    await settle();
+
+    expect(cardOf('c_b').style.top).toBe('8px');
+  });
+
+  // The arrival pulse is spent once; a deliberate "this one" — the set dock's
+  // row click — has to beat the marker again.
+  describe('beating a marker again', () => {
+    it('re-pulses a pin that already had its arrival beat', () => {
+      mount('one');
+      layer.show([target('c_a', 'one')]);
+      expect(markerOf('c_a').classList.contains('pulse')).toBe(true);
+      markerOf('c_a').classList.remove('pulse');
+
+      layer.pulse('c_a');
+
+      expect(markerOf('c_a').classList.contains('pulse')).toBe(true);
+    });
+
+    it('says nothing about a pin the layer does not draw', () => {
+      mount('one');
+      layer.show([target('c_a', 'one')]);
+
+      expect(() => layer.pulse('c_gone')).not.toThrow();
+    });
+  });
+
+  // FR-3853 docks an away card to the edge the element left by. Two of them
+  // at the same edge would sit on top of each other.
+  it('stacks away cards into a column, the first where it always was', async () => {
+    const gone = { top: -300, bottom: -100 };
+    mount('one', gone);
+    mount('two', gone);
+    layer.show([target('c_a', 'one'), target('c_b', 'two')]);
+    layer.locate();
+    for (const card of cards()) {
+      Object.defineProperty(card, 'offsetHeight', {
+        value: 60,
+        configurable: true,
+      });
+    }
+    // No resize, no mutation: locating the set is what lays the column out.
+    await settle();
+
+    expect(cardOf('c_a').classList.contains('away')).toBe(true);
+    expect(cardOf('c_b').classList.contains('away')).toBe(true);
+    // The head of the column keeps FR-3853's own geometry; the next clears it.
+    expect(cardOf('c_a').style.top).toBe('8px');
+    expect(cardOf('c_b').style.top).toBe('74px');
+  });
+
+  // A pin that lands on a later retry tick has no scroll to follow and no
+  // draw of the set to ride on: locating it is what must lay the column out.
+  it('stacks the column for a pin that lands after the set was drawn', async () => {
+    const gone = { top: -300, bottom: -100 };
+    mount('one', gone);
+    layer.show(
+      [target('c_x', 'missing'), target('c_a', 'one'), target('c_b', 'two')],
+      { focusId: 'c_x' },
+    );
+    layer.locate();
+    for (const card of cards()) {
+      Object.defineProperty(card, 'offsetHeight', {
+        value: 60,
+        configurable: true,
+      });
+    }
+    await settle();
+    expect(cardOf('c_a').style.top).toBe('8px');
+
+    mount('two', gone);
+    layer.locate();
+    await settle();
+
+    expect(cardOf('c_b').style.top).toBe('74px');
+  });
+});

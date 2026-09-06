@@ -13,6 +13,7 @@
  * `data-react-grab-ignore-events` makes react-grab skip our own chrome while
  * its select mode is on, so the composer stays clickable mid-pick.
  */
+import { icon, ICON_STYLE } from './icons.js';
 import { fractionWithin, projectFraction, type Box } from './selection.js';
 import type { AnchorRect, CopyPayload } from './types.js';
 
@@ -124,6 +125,9 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     .compose .actions {
       display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px;
     }
+    .compose .btn.primary {
+      display: inline-flex; align-items: center; gap: 5px;
+    }
     .compose .err {
       color: var(--bai-review-error); font-size: 11px; margin-top: 4px;
       display: none;
@@ -134,6 +138,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       color: var(--bai-review-on-inverted); font-size: 14px; padding: 8px 14px;
       border-radius: 16px; display: none; max-width: 70vw;
     }
+${ICON_STYLE}
   `;
   root.appendChild(style);
 
@@ -145,7 +150,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     <div class="err"></div>
     <div class="actions">
       <button class="btn" data-act="cancel">Cancel</button>
-      <button class="btn primary" data-act="copy">📋 Copy block</button>
+      <button class="btn primary" data-act="copy"><span class="lbl"></span></button>
     </div>
   `;
   const toast = el('div', 'toast');
@@ -157,6 +162,9 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   const copyButton = compose.querySelector(
     '[data-act="copy"]',
   ) as HTMLButtonElement;
+  const copyLabel = copyButton.querySelector('.lbl') as HTMLElement;
+  copyButton.prepend(icon('copy'));
+  copyLabel.textContent = 'Copy block';
 
   let pickActive = false;
   let pickTarget: Element | null = null;
@@ -461,7 +469,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     const done = (ok: boolean) => {
       showToast(
         ok
-          ? 'Copied — paste it into the PR comment, the Teams thread, or Claude 📋'
+          ? 'Copied — paste it into the PR comment, the Teams thread, or Claude'
           : 'Could not reach the clipboard — press ⌘⏎ again',
       );
       if (ok) closeCompose();

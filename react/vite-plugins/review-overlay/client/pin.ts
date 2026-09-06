@@ -1,13 +1,23 @@
 /**
- * The pin a `#bai=v3` link drops on its element: one marker, one card leading
- * with the note the reviewer typed, and a translucent box over the element.
+ * The pins a `#bai=v3` link drops on their elements. One LAYER owns the
+ * `<style>`, the mutation observer, the scroll/resize listeners, the placement
+ * batch, the retry driver and the docked column; one VIEW per pin owns its
+ * marker, its card leading with the note the reviewer typed, and the
+ * translucent box over the element.
  *
  * The card text comes off a link anyone can write, so it goes in through
  * `textContent` — never `innerHTML`. The box is state, not a one-shot effect:
  * a React re-render that replaces the anchored node re-draws it over the new
  * one rather than leaving it on a detached element.
  */
-import { findAnchorTarget, quickFindTarget, textMatches } from './resolve.js';
+import { retryUntil } from './deeplink.js';
+import { icon, ICON_STYLE } from './icons.js';
+import {
+  findAnchorTarget,
+  hasLandmark,
+  quickFindTarget,
+  textMatches,
+} from './resolve.js';
 import { projectFraction } from './selection.js';
 import type { AnchorV3, CopyPayload } from './types.js';
 
@@ -17,12 +27,27 @@ const SETTLE_MS = 1200;
 /** Card gap below/above the element, and its margin to the viewport edge. */
 const CARD_GAP = 10;
 const VIEWPORT_PAD = 8;
+/** Between two cards of the docked column. */
+const DOCK_GAP = 6;
 /** `.card`'s `max-width` under the shadow root's `box-sizing: border-box`. */
 const CARD_MAX_WIDTH = 320;
 /** Four 1 s beats of the prototype's arrival pulse, then just the box. */
 const PULSE_MS = 4200;
 /** Escalated text scans a lost element gets before the pin stops looking. */
 const MAX_MISSED_SCANS = 3;
+/** 10 s of SPA boot at 500 ms — the login form is lazy behind the splash. */
+const ANCHOR_TRIES = 20;
+const ANCHOR_EVERY_MS = 500;
+/**
+ * The teardrop is a 24px square rotated -45°, so its point is 12·√2 below its
+ * centre and the whole glyph fits in a 34px diamond. `MARKER_SPAN` is what it
+ * needs OUTSIDE the marked region: the tip's gap plus the glyph itself.
+ */
+const MARKER_TIP = 17;
+const MARKER_GAP = 2;
+const MARKER_SPAN = MARKER_GAP + MARKER_TIP * 2;
+/** The marker's own glyph, smaller than the chrome's — it sits in 24px. */
+const MARKER_ICON_SIZE = 12;
 
 /** The edges of a rectangle the element may have left: viewport or scroller. */
 interface Bounds {
@@ -31,6 +56,9 @@ interface Bounds {
   left: number;
   right: number;
 }
+
+/** Which viewport edge a card docked to, so the layer can stack the column. */
+type DockEdge = 'top' | 'bottom';
 
 const STYLE = `
   .pinlayer {
@@ -45,7 +73,11 @@ const STYLE = `
     box-shadow: 0 1px 4px var(--bai-review-shadow);
   }
   .pin.found { display: flex; }
-  .pin > span { transform: rotate(45deg); }
+  .pin > span { transform: rotate(45deg); display: flex; }
+  /* No room above the region: the point goes to the top and the body hangs
+     below it, so the glyph still leaves the marked rectangle alone. */
+  .pin.flip { transform: rotate(135deg); }
+  .pin.flip > span { transform: rotate(-135deg); }
   .pin.pulse { animation: baipulse 1s ease-in-out 4; }
   @keyframes baipulse {
     0%,100% { box-shadow: 0 1px 4px var(--bai-review-shadow); }
@@ -64,6 +96,15 @@ const STYLE = `
   .card.found { display: block; }
   /* The element is gone from the viewport; the card is docked, not anchored. */
   .card.away { border-style: dashed; opacity: 0.94; }
+  /* Mid-pick the cards fold away; the markers are click-through already. */
+  .card.collapsed { display: none; }
+  /* Hidden by its own button or the dock's switch: marker and box stay. */
+  .card.hidden { display: none; }
+  .card .count {
+    color: var(--bai-review-text-dim); font-size: 11px; font-weight: 600;
+    margin-bottom: 4px; padding-right: 62px;
+  }
+  .card .count:empty { display: none; }
   .card .awaynote {
     color: var(--bai-review-text-dim); font-size: 11px; margin-bottom: 6px;
     padding-right: 62px;
@@ -96,19 +137,23 @@ const STYLE = `
   }
   .card .idcopy {
     pointer-events: auto; cursor: pointer; border: 0; background: none;
-    padding: 0 2px; font: inherit; font-size: 11px; line-height: 1;
-    color: var(--bai-review-text-dim);
+    padding: 0 3px; font: inherit; line-height: 1; display: inline-flex;
+    color: var(--bai-review-text-dim); vertical-align: -3px;
   }
   .card .idcopy:hover { color: var(--bai-review-text); }
   .card .close, .card .locate, .card .copyall {
-    position: absolute; top: 2px; cursor: pointer; border: 0;
-    background: none; color: var(--bai-review-text-dim); font-size: 14px;
-    pointer-events: auto;
+    position: absolute; top: 4px; cursor: pointer; border: 0; padding: 0;
+    background: none; color: var(--bai-review-text-dim);
+    display: flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; pointer-events: auto;
   }
   .card .close { right: 4px; }
   .card .locate { right: 24px; }
   .card .copyall { right: 44px; }
-  .card .copyall:hover { color: var(--bai-review-text); }
+  .card .close:hover, .card .locate:hover, .card .copyall:hover {
+    color: var(--bai-review-text);
+  }
+${ICON_STYLE}
   /* The pick box's own style, so arriving on a link looks like the pick that
      made it: a thin stroke over a light fill, on our layer — never the app's. */
   .markbox {
@@ -119,7 +164,7 @@ const STYLE = `
   .markbox.found { display: block; }
 `;
 
-export interface DeepLinkPinOptions {
+export interface PinLayerOptions {
   root: ShadowRoot;
   /** The overlay's own shadow host — never a valid answer for the anchor. */
   host: Element;
@@ -138,8 +183,21 @@ export interface DeepLinkPinOptions {
    */
   buildComment: (target: DeepLinkPinTarget) => CopyPayload | null;
   /** The pin settled on a different element — or on none. */
-  onLocated?: (element: Element | null) => void;
+  onLocated?: (
+    element: Element | null,
+    target: DeepLinkPinTarget | null,
+  ) => void;
+  /** The reviewer pressed ✕; whoever owns the set decides what that means. */
+  onDismiss?: (target: DeepLinkPinTarget) => void;
+  /**
+   * The ladder ran out with these still unresolved; they stay pending (R7.2).
+   * Without it the layer keeps its own line.
+   */
+  onGiveUp?: (pendingIds: string[]) => void;
 }
+
+/** The one-view layer `main.ts` opened a link with before pin sets. */
+export type DeepLinkPinOptions = PinLayerOptions;
 
 export interface DeepLinkPinTarget {
   id: string;
@@ -150,22 +208,52 @@ export interface DeepLinkPinTarget {
   label: string;
 }
 
-export function createDeepLinkPin({
-  root,
-  host,
-  copyText,
-  showToast,
-  buildComment,
-  onLocated,
-}: DeepLinkPinOptions) {
-  const style = document.createElement('style');
-  style.textContent = STYLE;
-  const layer = document.createElement('div');
-  layer.className = 'pinlayer';
+interface ViewDeps {
+  host: Element;
+  copyText: PinLayerOptions['copyText'];
+  showToast: PinLayerOptions['showToast'];
+  buildComment: PinLayerOptions['buildComment'];
+  onLocated?: PinLayerOptions['onLocated'];
+  onDismiss?: PinLayerOptions['onDismiss'];
+  /** One layout read per frame, however many views ask for one. */
+  placeSoon: () => void;
+  /** A smooth scroll ends after `locate()` returns; follow it to its stop. */
+  followScroll: () => void;
+}
+
+interface PinView {
+  /** Marker, box and card, for the layer to mount and unmount. */
+  readonly nodes: Element[];
+  /** The card itself, so the layer can stack the docked column. */
+  readonly card: HTMLElement;
+  id(): string;
+  show(next: DeepLinkPinTarget): void;
+  /** Set order, for the marker glyph and the `3 / 5` header. */
+  setOrdinal(index: number, total: number): void;
+  setCollapsed(collapsed: boolean): void;
+  /** This card alone; the pin keeps its marker and its box. */
+  setHidden(hidden: boolean): void;
+  /** The dock's switch, applied to every card at once. */
+  setCardsHidden(hidden: boolean): void;
+  /** `force` replays the arrival beat on a pin that already had one. */
+  pulse(force?: boolean): void;
+  /** The edge the card docked to, or null while it is anchored or hidden. */
+  place(): DockEdge | null;
+  locate(focus: boolean): boolean;
+  reposition(): void;
+  dismiss(): void;
+  isShowing(): boolean;
+  isLocated(): boolean;
+  locatedElement(): Element | null;
+  dispose(): void;
+}
+
+function createPinView(deps: ViewDeps): PinView {
+  const { host } = deps;
   const marker = document.createElement('div');
   marker.className = 'pin';
   const head = document.createElement('span');
-  head.textContent = '📍';
+  head.append(icon('map-pin', MARKER_ICON_SIZE));
   marker.append(head);
   const card = document.createElement('div');
   card.className = 'card';
@@ -175,6 +263,8 @@ export function createDeepLinkPin({
     span.className = 'txt';
     return span;
   };
+  const count = document.createElement('div');
+  count.className = 'count';
   const note = document.createElement('div');
   note.className = 'note';
   // Appended only when there IS a note, so `.note:empty` still collapses it.
@@ -195,33 +285,41 @@ export function createDeepLinkPin({
   const idText = run();
   const idCopy = document.createElement('button');
   idCopy.className = 'idcopy';
-  idCopy.textContent = '📋';
-  // The glyph is the accessible name unless one is given, and "clipboard" is
-  // not the action; `title` stays the visual tooltip.
+  idCopy.append(icon('clipboard'));
+  // The icon is `aria-hidden`, so the label below is the accessible name;
+  // `title` stays the visual tooltip.
   idCopy.title = 'Copy this comment id';
   idCopy.setAttribute('aria-label', 'Copy this comment id');
   const componentText = run();
   sub.append(idText, idCopy, componentText);
   const close = document.createElement('button');
   close.className = 'close';
-  close.textContent = '✕';
+  close.append(icon('x'));
   close.title = 'Dismiss this pin';
   close.setAttribute('aria-label', 'Dismiss this pin');
   const locateButton = document.createElement('button');
   locateButton.className = 'locate';
-  locateButton.textContent = '📍';
+  locateButton.append(icon('crosshair'));
   locateButton.title = 'Scroll back to this element';
   locateButton.setAttribute('aria-label', 'Scroll back to this element');
   const commentCopy = document.createElement('button');
   commentCopy.className = 'copyall';
-  commentCopy.textContent = '⧉';
+  commentCopy.append(icon('copy'));
   commentCopy.title = 'Copy the whole comment';
   commentCopy.setAttribute('aria-label', 'Copy the whole comment');
-  card.append(close, locateButton, commentCopy, away, note, trunc, label, sub);
+  card.append(
+    close,
+    locateButton,
+    commentCopy,
+    count,
+    away,
+    note,
+    trunc,
+    label,
+    sub,
+  );
   const markBox = document.createElement('div');
   markBox.className = 'markbox';
-  layer.append(markBox, marker, card);
-  root.append(style, layer);
 
   let target: DeepLinkPinTarget | null = null;
   let located: Element | null = null;
@@ -229,13 +327,28 @@ export function createDeepLinkPin({
   let clippers: Element[] = [];
   /** Escalated scans in a row that found nothing — the page moved on. */
   let missedScans = 0;
+  /** The landmark at the last batch; its return re-arms the escalated scan. */
+  let hadLandmark = false;
   /** One arrival pulse per link — the box is what stays. */
   let pulsed = false;
   let pulseTimer = 0;
+  /** Folded away for a pick: a hidden card measures 0 high, so it is not moved. */
+  let collapsed = false;
+  let hidden = false;
+  /** The dock's switch — every card at once. */
+  let allHidden = false;
+  /** No card on screen, so none is measured and none joins the column. */
+  const cardOff = () => collapsed || hidden || allHidden;
+  const syncHidden = () => card.classList.toggle('hidden', hidden || allHidden);
 
-  function pulse() {
-    if (pulsed) return;
+  function pulse(force = false) {
+    if (pulsed && !force) return;
     pulsed = true;
+    clearTimeout(pulseTimer);
+    // Re-adding the class in the same frame restarts nothing; the removal has
+    // to be committed to layout first.
+    marker.classList.remove('pulse');
+    void marker.offsetWidth;
     marker.classList.add('pulse');
     pulseTimer = window.setTimeout(
       () => marker.classList.remove('pulse'),
@@ -266,7 +379,7 @@ export function createDeepLinkPin({
     clippers = node ? collectClippers(node) : [];
     // The ⚛️ stack a copy quotes belongs to the element the pin is on now, and
     // a re-render moves it — so this fires on every change, not just the first.
-    if (moved) onLocated?.(node);
+    if (moved) deps.onLocated?.(node, target);
   }
 
   /**
@@ -299,12 +412,13 @@ export function createDeepLinkPin({
   const rightEdge = () =>
     Math.max(VIEWPORT_PAD, window.innerWidth - cardWidth() - VIEWPORT_PAD);
 
-  function hide() {
+  function hide(): null {
     marker.classList.remove('found');
     card.classList.remove('found');
     card.classList.remove('away');
     markBox.classList.remove('found');
     away.textContent = '';
+    return null;
   }
 
   /**
@@ -318,7 +432,7 @@ export function createDeepLinkPin({
    * VIEWPORT edge, because it lives on a fixed layer; only the direction comes
    * from `area`.
    */
-  function placeAway(box: DOMRect, area: Bounds, vh: number) {
+  function placeAway(box: DOMRect, area: Bounds, vh: number): DockEdge | null {
     marker.classList.remove('found');
     markBox.classList.remove('found');
     card.classList.add('found');
@@ -331,12 +445,13 @@ export function createDeepLinkPin({
     // Written BEFORE the measurement: the hint is a line of the card, so a
     // height read without it docks a bottom-docked card past the fold.
     away.textContent = up
-      ? '↑ Scrolled above — 📍 goes back'
+      ? '↑ Scrolled above — the crosshair goes back'
       : down
-        ? '↓ Scrolled below — 📍 goes back'
+        ? '↓ Scrolled below — the crosshair goes back'
         : left
-          ? '← Scrolled to the left — 📍 goes back'
-          : '→ Scrolled to the right — 📍 goes back';
+          ? '← Scrolled to the left — the crosshair goes back'
+          : '→ Scrolled to the right — the crosshair goes back';
+    if (cardOff()) return null;
     // A horizontal departure docks to a horizontal edge. Clamping `box.left`
     // would leave the card mid-screen whenever a scroller — not the window —
     // is what took the element sideways, with an arrow pointing nowhere.
@@ -349,9 +464,10 @@ export function createDeepLinkPin({
     card.style.top = up
       ? `${VIEWPORT_PAD}px`
       : `${Math.max(VIEWPORT_PAD, vh - card.offsetHeight - VIEWPORT_PAD)}px`;
+    return up ? 'top' : 'bottom';
   }
 
-  function place() {
+  function place(): DockEdge | null {
     if (!located) return hide();
     const box = markedBox(located);
     const vw = window.innerWidth;
@@ -389,50 +505,48 @@ export function createDeepLinkPin({
       height: `${box.height}px`,
       borderRadius: cornerRadius(located),
     });
-    marker.style.left = `${box.left + 6}px`;
-    marker.style.top = `${box.top + 6}px`;
+    // The marker points AT the region from outside it: the teardrop's tip
+    // touches the top-left corner and the glyph sits above, clear of the very
+    // content the box is pointing at. With no room above it flips under.
+    const roomAbove = box.top - MARKER_SPAN >= VIEWPORT_PAD;
+    const roomBelow = box.bottom + MARKER_SPAN <= vh - VIEWPORT_PAD;
+    const flip = !roomAbove && roomBelow;
+    // A region taller than the viewport has no outside on screen. Unflipped it
+    // clamps to the top edge, by the region's leading corner; flipped it would
+    // clamp onto the middle of the content.
+    const crowded = !roomAbove && !roomBelow;
+    marker.classList.toggle('flip', flip);
+    // Against the left edge it slides along the region's top rather than
+    // off-screen; `style.left`/`top` are the glyph's CENTRE (negative margins).
+    const markerRight = Math.max(
+      VIEWPORT_PAD + MARKER_TIP,
+      vw - VIEWPORT_PAD - MARKER_TIP,
+    );
+    const markerTop = flip
+      ? box.bottom + MARKER_GAP + MARKER_TIP
+      : box.top - MARKER_GAP - MARKER_TIP;
+    marker.style.left = `${Math.min(Math.max(box.left, VIEWPORT_PAD + MARKER_TIP), markerRight)}px`;
+    marker.style.top = `${Math.min(Math.max(markerTop, VIEWPORT_PAD + MARKER_TIP), Math.max(VIEWPORT_PAD + MARKER_TIP, vh - VIEWPORT_PAD - MARKER_TIP))}px`;
+    // A card that is off measures 0 high, which would place it past the fold;
+    // showing it again re-places it with a height to read.
+    if (cardOff()) return null;
     card.style.left = `${Math.max(VIEWPORT_PAD, Math.min(box.left, rightEdge()))}px`;
     // `locate()` centres the element, so anything taller than half the
     // viewport puts `box.bottom` below the fold — and a fixed layer cannot be
-    // scrolled to. Flip above, then clamp.
+    // scrolled to. Flip above, then clamp. Whichever side the marker took, the
+    // card starts past it: they share the region's left edge.
     const height = card.offsetHeight;
-    const below = box.bottom + CARD_GAP;
+    const below = box.bottom + CARD_GAP + (flip ? MARKER_SPAN : 0);
     const top =
-      below + height <= vh - VIEWPORT_PAD ? below : box.top - CARD_GAP - height;
-    card.style.top = `${Math.max(VIEWPORT_PAD, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
-  }
-
-  let frame = 0;
-  /** Called, never aliased: a detached `requestAnimationFrame` throws. */
-  const raf = (callback: FrameRequestCallback): number =>
-    typeof requestAnimationFrame === 'function'
-      ? requestAnimationFrame(callback)
-      : window.setTimeout(() => callback(0), 16);
-
-  /** One layout read per frame, however many scrollers report a scroll. */
-  function placeSoon() {
-    if (frame) return;
-    frame = raf(() => {
-      frame = 0;
-      place();
-    });
-  }
-
-  let settleUntil = 0;
-  /** A smooth scroll ends after `locate()` returns; follow it to its stop. */
-  function placeUntilSettled() {
-    const first = settleUntil === 0;
-    settleUntil = Date.now() + SETTLE_MS;
-    if (!first) return;
-    const step = () => {
-      place();
-      if (Date.now() >= settleUntil) {
-        settleUntil = 0;
-        return;
-      }
-      raf(step);
-    };
-    raf(step);
+      below + height <= vh - VIEWPORT_PAD
+        ? below
+        : box.top - CARD_GAP - height - (flip ? 0 : MARKER_SPAN);
+    // Crowded, both land at the top: the card starts under the clamped marker.
+    const topFloor = crowded
+      ? VIEWPORT_PAD + MARKER_TIP * 2 + CARD_GAP
+      : VIEWPORT_PAD;
+    card.style.top = `${Math.max(topFloor, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
+    return null;
   }
 
   /** The cheap ladder settled for the container of the element it wants. */
@@ -444,12 +558,18 @@ export function createDeepLinkPin({
   /**
    * Cheap first — it runs on every mutation batch — but a target the text scan
    * resolved cannot be re-found by the selector/landmark step, and a re-render
-   * would either lose the pin or slide it onto the landmark. Debounced, so the
-   * expensive scan runs at most once per settle, and budgeted, so a page the
-   * reviewer has navigated away from stops paying for it entirely.
+   * would either lose the pin or slide it onto the landmark. Debounced by the
+   * layer, so the expensive scan runs at most once per settle, and budgeted,
+   * so a page the reviewer has navigated away from stops paying for it.
    */
   function reposition() {
     if (!target) return;
+    // The frame the pin lived in is back — a modal reopened, a section
+    // expanded. The escalated scan gets its budget again, or the SPA's own
+    // boot churn would have spent it long before the reviewer opened anything.
+    const landmark = hasLandmark(target.anchor);
+    if (landmark && !hadLandmark) missedScans = 0;
+    hadLandmark = landmark;
     const held =
       located?.isConnected && textMatches(located, target.anchor.txt)
         ? located
@@ -466,38 +586,23 @@ export function createDeepLinkPin({
       next = full ?? next;
     }
     setLocated(next);
-    place();
   }
-
-  let timer = 0;
-  const schedule = () => {
-    clearTimeout(timer);
-    timer = window.setTimeout(reposition, REPOSITION_DEBOUNCE_MS);
-  };
-
-  const observer = new MutationObserver((records) => {
-    if (!target) return;
-    if (records.every((record) => host.contains(record.target as Node))) return;
-    schedule();
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  window.addEventListener('resize', placeSoon);
-  // Viewport coordinates, so a scroll moves the pin — including a scroll in an
-  // overflow ancestor, which a document-coordinate layer would miss.
-  window.addEventListener('scroll', placeSoon, {
-    capture: true,
-    passive: true,
-  });
 
   locateButton.addEventListener('click', () =>
     located?.scrollIntoView?.({ block: 'center', behavior: 'smooth' }),
   );
-  close.addEventListener('click', () => dismiss());
+  close.addEventListener('click', () => {
+    const dismissed = target;
+    dismiss();
+    if (dismissed) deps.onDismiss?.(dismissed);
+  });
 
   function write(text: string, html: string | undefined, ok: string) {
     const done = (written: boolean) =>
-      showToast(written ? ok : 'Could not reach the clipboard — try again');
-    const copied = copyText(text, html);
+      deps.showToast(
+        written ? ok : 'Could not reach the clipboard — try again',
+      );
+    const copied = deps.copyText(text, html);
     if (typeof copied === 'boolean') done(copied);
     else void copied.then(done);
   }
@@ -510,7 +615,7 @@ export function createDeepLinkPin({
   idCopy.addEventListener('click', () => {
     const id = target?.id;
     if (!id) return;
-    write(id, undefined, `Copied ${id} 📋`);
+    write(id, undefined, `Copied ${id}`);
   });
 
   /**
@@ -519,9 +624,9 @@ export function createDeepLinkPin({
    */
   commentCopy.addEventListener('click', () => {
     if (!target) return;
-    const payload = buildComment(target);
+    const payload = deps.buildComment(target);
     if (!payload) {
-      showToast('Still reading this element — try again');
+      deps.showToast('Still reading this element — try again');
       return;
     }
     write(
@@ -530,8 +635,8 @@ export function createDeepLinkPin({
       // The link caps the note it carries, and a copy that quietly loses the
       // rest is worse than one that says so.
       target.anchor.nt === 1
-        ? 'Copied — the note is the shortened one the link carries 📋'
-        : 'Copied the whole comment 📋',
+        ? 'Copied — the note is the shortened one the link carries'
+        : 'Copied the whole comment',
     );
   });
 
@@ -540,18 +645,28 @@ export function createDeepLinkPin({
     setLocated(null);
     missedScans = 0;
     place();
+    // The docked column is one pin shorter now.
+    deps.placeSoon();
   }
 
   return {
+    nodes: [markBox, marker, card],
+    card,
+    id: () => target?.id ?? '',
+
     /** Adopt a link's anchor. Nothing is drawn until `locate()` finds it. */
     show(next: DeepLinkPinTarget) {
       dismiss();
+      hadLandmark = false;
+      hidden = false;
+      syncHidden();
       pulsed = false;
       clearTimeout(pulseTimer);
       marker.classList.remove('pulse');
       target = next;
       marker.dataset.pinId = next.id;
       card.dataset.pinId = next.id;
+      markBox.dataset.pinId = next.id;
       noteText.textContent = next.anchor.n ?? '';
       note.replaceChildren(...(next.anchor.n ? [noteText] : []));
       trunc.classList.toggle('shown', next.anchor.nt === 1 && !!next.anchor.n);
@@ -563,11 +678,40 @@ export function createDeepLinkPin({
         : '';
     },
 
+    // A set of one is what a single pin has always been — the map-pin glyph
+    // and no header. Only a real set numbers itself.
+    setOrdinal(index: number, total: number) {
+      if (total > 1) head.textContent = String(index + 1);
+      else head.replaceChildren(icon('map-pin', MARKER_ICON_SIZE));
+      count.textContent = total > 1 ? `${index + 1} / ${total}` : '';
+    },
+
+    setCollapsed(next: boolean) {
+      collapsed = next;
+      card.classList.toggle('collapsed', next);
+    },
+
+    setHidden(next: boolean) {
+      hidden = next;
+      syncHidden();
+    },
+
+    setCardsHidden(next: boolean) {
+      allHidden = next;
+      syncHidden();
+    },
+
+    pulse,
+
+    place,
+    reposition,
+
     /**
      * One attempt at the full resolution ladder. True once the element is on
-     * the page — which is when the pin and its box appear.
+     * the page — which is when the pin and its box appear. Only the focus pin
+     * scrolls the page to itself and pulses; the rest are drawn quietly.
      */
-    locate(): boolean {
+    locate(focus: boolean): boolean {
       if (!target) return false;
       // The debounced observer runs the cheap ladder and can land first; a pin
       // already drawn must not also report "could not find that element".
@@ -578,28 +722,330 @@ export function createDeepLinkPin({
       setLocated(found);
       missedScans = 0;
       place();
+      if (!focus) return true;
       found.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
-      placeUntilSettled();
+      deps.followScroll();
       pulse();
       return true;
     },
 
     dismiss,
     isShowing: () => !!target,
+    isLocated: () => !!located,
     locatedElement: () => located,
 
-    /** One pin lives as long as the page; tests make one per case. */
+    dispose() {
+      clearTimeout(pulseTimer);
+      dismiss();
+      for (const node of [markBox, marker, card]) node.remove();
+    },
+  };
+}
+
+export function createPinLayer(options: PinLayerOptions) {
+  const { root, host, showToast } = options;
+  const style = document.createElement('style');
+  style.textContent = STYLE;
+  const layer = document.createElement('div');
+  layer.className = 'pinlayer';
+  root.append(style, layer);
+
+  const views: PinView[] = [];
+  let collapsed = false;
+  /** The dock's switch: every card off, markers and boxes still on the page. */
+  let cardsHidden = false;
+  let focusId: string | null = null;
+  let frame = 0;
+  let settleUntil = 0;
+  let timer = 0;
+  let cancelRetry: () => void = () => undefined;
+
+  /** Called, never aliased: a detached `requestAnimationFrame` throws. */
+  const raf = (callback: FrameRequestCallback): number =>
+    typeof requestAnimationFrame === 'function'
+      ? requestAnimationFrame(callback)
+      : window.setTimeout(() => callback(0), 16);
+
+  /**
+   * Away cards form a column at the edge they left by, in set order. The head
+   * of the column keeps the geometry it placed itself at, so a set of one —
+   * and the first card of any set — docks exactly where it always has.
+   */
+  function layoutDocked(docked: Array<{ card: HTMLElement; edge: DockEdge }>) {
+    if (docked.length < 2) return;
+    const vh = window.innerHeight;
+    const run: Record<DockEdge, number> = { top: 0, bottom: 0 };
+    for (const { card, edge } of docked) {
+      const height = card.offsetHeight;
+      if (run[edge])
+        card.style.top =
+          edge === 'top'
+            ? `${VIEWPORT_PAD + run[edge]}px`
+            : `${Math.max(VIEWPORT_PAD, vh - height - VIEWPORT_PAD - run[edge])}px`;
+      run[edge] += height + DOCK_GAP;
+    }
+  }
+
+  function placeAll() {
+    const docked: Array<{ card: HTMLElement; edge: DockEdge }> = [];
+    for (const view of views) {
+      const edge = view.place();
+      if (edge) docked.push({ card: view.card, edge });
+    }
+    // A folded column measures 0 high; it is stacked again on the way out.
+    if (!collapsed) layoutDocked(docked);
+  }
+
+  /** One layout read per frame, however many scrollers report a scroll. */
+  function placeSoon() {
+    if (frame) return;
+    frame = raf(() => {
+      frame = 0;
+      placeAll();
+    });
+  }
+
+  /** A smooth scroll ends after `locate()` returns; follow it to its stop. */
+  function followScroll() {
+    const first = settleUntil === 0;
+    settleUntil = Date.now() + SETTLE_MS;
+    if (!first) return;
+    const step = () => {
+      placeAll();
+      if (Date.now() >= settleUntil) {
+        settleUntil = 0;
+        return;
+      }
+      raf(step);
+    };
+    raf(step);
+  }
+
+  const deps: ViewDeps = {
+    host,
+    copyText: options.copyText,
+    showToast,
+    buildComment: options.buildComment,
+    onLocated: options.onLocated,
+    onDismiss: (target) => {
+      renumber();
+      options.onDismiss?.(target);
+    },
+    placeSoon,
+    followScroll,
+  };
+
+  /** Views are reused BY POSITION, so a card the set keeps keeps its node. */
+  function resize(count: number) {
+    while (views.length > count) views.pop()?.dispose();
+    while (views.length < count) {
+      const view = createPinView(deps);
+      view.setCollapsed(collapsed);
+      view.setCardsHidden(cardsHidden);
+      layer.append(...view.nodes);
+      views.push(view);
+    }
+  }
+
+  const showingViews = () => views.filter((view) => view.isShowing());
+
+  /** A set one pin shorter says so: the glyphs and the `n / N` heads move up. */
+  function renumber() {
+    const shown = showingViews();
+    for (const [index, view] of shown.entries())
+      view.setOrdinal(index, shown.length);
+  }
+
+  function locateAll(skipLocated: boolean): boolean {
+    const shown = showingViews();
+    // A stored focus id can name a pin this set does not have; the set still
+    // has to scroll somewhere.
+    const focus =
+      shown.find((view) => view.id() === focusId)?.id() ??
+      shown[0]?.id() ??
+      null;
+    let missing = 0;
+    let landed = false;
+    for (const view of shown) {
+      if (skipLocated && view.isLocated()) continue;
+      if (view.locate(view.id() === focus)) landed = true;
+      else missing++;
+    }
+    // Each view placed itself; the column between them is the layer's to lay.
+    if (landed) placeSoon();
+    return missing === 0;
+  }
+
+  function stopRetry() {
+    cancelRetry();
+    cancelRetry = () => undefined;
+  }
+
+  /**
+   * The ladder ends; the pin does not (R7.2). Only the owner knows why a pin
+   * is pending — another page, or a closed modal — so it gets the ids.
+   */
+  function giveUp() {
+    const shown = showingViews();
+    const pending = shown.filter((view) => !view.isLocated());
+    if (!pending.length) return;
+    if (options.onGiveUp)
+      return options.onGiveUp(pending.map((view) => view.id()));
+    showToast(
+      shown.length === 1
+        ? 'Could not find that element on this page'
+        : `${pending.length} of ${shown.length} pins are not on this page`,
+    );
+  }
+
+  /** One driver for the whole layer: every unlocated view, once per tick. */
+  function startRetry() {
+    stopRetry();
+    if (!showingViews().length) return;
+    cancelRetry = retryUntil(() => locateAll(true), {
+      tries: ANCHOR_TRIES,
+      everyMs: ANCHOR_EVERY_MS,
+      onGiveUp: giveUp,
+    });
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    timer = window.setTimeout(() => {
+      for (const view of views) view.reposition();
+      placeAll();
+    }, REPOSITION_DEBOUNCE_MS);
+  }
+
+  const observer = new MutationObserver((records) => {
+    if (!showingViews().length) return;
+    if (records.every((record) => host.contains(record.target as Node))) return;
+    schedule();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  window.addEventListener('resize', placeSoon);
+  // Viewport coordinates, so a scroll moves the pin — including a scroll in an
+  // overflow ancestor, which a document-coordinate layer would miss.
+  window.addEventListener('scroll', placeSoon, {
+    capture: true,
+    passive: true,
+  });
+
+  return {
+    /** Build this many cards up front, before any pin is adopted. */
+    reserve: (count: number) => resize(Math.max(views.length, count)),
+
+    /**
+     * Draw exactly these pins, in set order, and start the one retry driver
+     * that resolves whatever is not on the page yet. `focusId` names the pin
+     * that scrolls and pulses; the first pin is the default.
+     */
+    show(targets: DeepLinkPinTarget[], opts: { focusId?: string } = {}) {
+      resize(targets.length);
+      focusId = opts.focusId ?? targets[0]?.id ?? null;
+      targets.forEach((target, index) => {
+        views[index].show(target);
+        views[index].setOrdinal(index, targets.length);
+      });
+      startRetry();
+    },
+
+    /**
+     * One pass of the full ladder: over every drawn pin, or — given an id —
+     * over that ONE, which never scrolls; asking about a pin is not arriving.
+     */
+    locate(id?: string): boolean {
+      if (id === undefined) return locateAll(false);
+      const view = views.find((held) => held.id() === id);
+      if (!view?.isShowing()) return false;
+      const found = view.locate(false);
+      if (found) placeSoon();
+      return found;
+    },
+
+    /** No id dismisses every pin; the cards stay for the next set. */
+    dismiss(id?: string) {
+      for (const view of views)
+        if (id === undefined || view.id() === id) view.dismiss();
+      if (id === undefined || id === focusId) focusId = null;
+      renumber();
+      if (!showingViews().length) stopRetry();
+    },
+
+    /**
+     * Mid-pick the cards are in the way of the next pick — the markers are
+     * click-through already, so they stay and the cards fold away.
+     */
+    setCollapsed(next: boolean) {
+      if (collapsed === next) return;
+      collapsed = next;
+      for (const view of views) view.setCollapsed(next);
+      placeSoon();
+    },
+
+    /** One card off, by its own hide button: the pin itself stays drawn. */
+    setCardHidden(id: string, hidden: boolean) {
+      const view = views.find((held) => held.id() === id);
+      if (!view) return;
+      view.setHidden(hidden);
+      placeSoon();
+    },
+
+    /** Every card off at once, and the ones drawn after it stay off too. */
+    setCardsHidden(next: boolean) {
+      if (cardsHidden === next) return;
+      cardsHidden = next;
+      for (const view of views) view.setCardsHidden(next);
+      placeSoon();
+    },
+
+    /** Beat the marker again on purpose, once its arrival pulse is spent. */
+    pulse(id: string) {
+      views.find((view) => view.id() === id)?.pulse(true);
+    },
+
+    ids: () => showingViews().map((view) => view.id()),
+    isShowing: (id?: string) =>
+      id === undefined
+        ? showingViews().length > 0
+        : showingViews().some((view) => view.id() === id),
+    locatedElement: (id?: string) =>
+      (id === undefined
+        ? showingViews()[0]
+        : views.find((view) => view.id() === id)
+      )?.locatedElement() ?? null,
+
+    /** One layer lives as long as the page; tests make one per case. */
     dispose() {
       observer.disconnect();
       window.removeEventListener('resize', placeSoon);
       window.removeEventListener('scroll', placeSoon, { capture: true });
+      stopRetry();
       settleUntil = 0;
       clearTimeout(timer);
-      clearTimeout(pulseTimer);
-      dismiss();
+      resize(0);
       layer.remove();
       style.remove();
     },
+  };
+}
+
+export type PinLayer = ReturnType<typeof createPinLayer>;
+
+/**
+ * A pin set of one, with the surface `pin.test.ts` has always called: the card
+ * exists from construction and `show` re-targets it in place.
+ */
+export function createDeepLinkPin(options: DeepLinkPinOptions) {
+  const layer = createPinLayer(options);
+  layer.reserve(1);
+  return {
+    show: (next: DeepLinkPinTarget) => layer.show([next]),
+    locate: () => layer.locate(),
+    dismiss: () => layer.dismiss(),
+    isShowing: () => layer.isShowing(),
+    locatedElement: () => layer.locatedElement(),
+    dispose: () => layer.dispose(),
   };
 }
 
