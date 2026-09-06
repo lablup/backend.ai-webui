@@ -14,6 +14,9 @@ import type { SetPin } from './types.js';
 /** ⌘⇧H / Ctrl⇧H — plain ⌘H hides the app and Ctrl+H opens history. */
 export const CARDS_CHORD = isMac() ? '⌘⇧H' : 'Ctrl⇧H';
 
+/** 🙈 in this dock means "hidden"; 👁 on a row is the action that undoes it. */
+const CARDS_LABEL = `Pin cards (${CARDS_CHORD})`;
+
 const STYLE = `
   .setdock {
     position: fixed; right: 12px; bottom: 12px; z-index: 2147483000;
@@ -105,7 +108,7 @@ export function createSetDock(options: SetDockOptions) {
     'Copy every pin as one comment',
   );
   const clear = button('clear', '🗑 Clear all', 'Clear the whole set');
-  const cards = button('cards', '👁 Cards', 'Hide every pin card');
+  const cards = button('cards', '👁 Cards', CARDS_LABEL);
   const chord = document.createElement('span');
   chord.className = 'chord';
   chord.textContent = CARDS_CHORD;
@@ -115,7 +118,7 @@ export function createSetDock(options: SetDockOptions) {
   const yes = button('yes', '✓', 'Yes, clear the whole set');
   const no = button('no', '✕', 'Keep the set');
   confirm.append(confirmText, yes, no);
-  head.append(title, chord, cards, copyAll, clear, confirm);
+  head.append(title, cards, chord, copyAll, clear, confirm);
   const rows = document.createElement('div');
   rows.className = 'rows';
   dock.append(head, rows);
@@ -141,13 +144,10 @@ export function createSetDock(options: SetDockOptions) {
     title.textContent = `📍 ${pins.length} ${pins.length === 1 ? 'pin' : 'pins'}`;
     clear.textContent = `🗑 Clear all (${pins.length})`;
     confirmText.textContent = `Clear all ${pins.length}?`;
+    // A toggle's name is stable and `aria-pressed` carries the state; naming
+    // it after the action it would take announces the opposite of the state.
     cards.textContent = cardsHidden ? '🙈 Cards' : '👁 Cards';
     cards.setAttribute('aria-pressed', String(cardsHidden));
-    const cardsLabel = cardsHidden
-      ? `Show every pin card (${CARDS_CHORD})`
-      : `Hide every pin card (${CARDS_CHORD})`;
-    cards.title = cardsLabel;
-    cards.setAttribute('aria-label', cardsLabel);
     rows.replaceChildren(
       ...pins.map((pin, index) => {
         const row = document.createElement('div');
@@ -168,7 +168,7 @@ export function createSetDock(options: SetDockOptions) {
         row.append(idx, label);
         if (pin.hidden) {
           row.classList.add('off');
-          const unhide = button('unhide', '🙈', 'Show this pin’s card again');
+          const unhide = button('unhide', '👁', 'Show this pin’s card again');
           unhide.addEventListener('click', () => options.onUnhide(pin.id));
           row.append(unhide);
         }

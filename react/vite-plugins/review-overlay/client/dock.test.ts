@@ -119,6 +119,8 @@ describe('createSetDock', () => {
       expect(rows()[1].classList.contains('off')).toBe(true);
       expect(rows()[1].querySelector('.unhide')).not.toBeNull();
       expect(rows()[0].querySelector('.unhide')).toBeNull();
+      // 🙈 says "hidden" in the header; the row's button is what reveals.
+      expect(rows()[1].querySelector('.unhide')?.textContent).toBe('👁');
     });
 
     it('shows it again from the row’s own button', () => {
@@ -159,6 +161,29 @@ describe('createSetDock', () => {
 
       expect(node('.cards').textContent).toBe('🙈 Cards');
       expect(node('.cards').getAttribute('aria-pressed')).toBe('true');
+    });
+
+    // A pressed toggle named after the action that un-presses it announces
+    // the opposite of its own state.
+    it('keeps one name whichever way it is thrown', () => {
+      dock.render([pin('c_a', 'a')]);
+      const named = node('.cards').getAttribute('aria-label');
+
+      dock.render([pin('c_a', 'a')], true);
+
+      expect(node('.cards').getAttribute('aria-label')).toBe(named);
+      expect(node('.cards').title).toBe(named);
+    });
+
+    // A 260px header wraps; a hint stranded on the title's line reads as part
+    // of it, so it travels with the button it names.
+    it('puts the chord after the button it names', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      const head = Array.from(node('.head').children).map(
+        (child) => child.className,
+      );
+      expect(head.indexOf('chord')).toBe(head.indexOf('act cards') + 1);
     });
   });
 
