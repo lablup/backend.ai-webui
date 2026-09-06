@@ -245,11 +245,11 @@ export function createSetDock(options: SetDockOptions) {
   options.root.append(style, dock);
 
   /**
-   * Dragged position, or `null` for the default bottom-right corner. Clamped
-   * on every move, on resize and on restore, so a dock parked at the edge of a
-   * wide window is still reachable in a narrow one.
+   * Where the reviewer dragged it, or `null` for the default corner. The paint
+   * clamps a COPY of it, so a window too small to hold that spot borrows it
+   * for as long as it is small rather than overwriting it.
    */
-  let pos: DockPos | null = null;
+  let wanted: DockPos | null = null;
 
   function clamp({ left, top }: DockPos): DockPos {
     const width = dock.offsetWidth || DOCK_WIDTH;
@@ -268,17 +268,18 @@ export function createSetDock(options: SetDockOptions) {
 
   /** `right`/`bottom` are the CSS default; a placed dock has to drop them. */
   function moveTo(next: DockPos) {
-    pos = clamp(next);
-    dock.style.left = `${pos.left}px`;
-    dock.style.top = `${pos.top}px`;
+    wanted = next;
+    const at = clamp(next);
+    dock.style.left = `${at.left}px`;
+    dock.style.top = `${at.top}px`;
     dock.style.right = 'auto';
     dock.style.bottom = 'auto';
   }
 
   function savePos() {
-    if (!pos) return;
+    if (!wanted) return;
     try {
-      sessionStorage.setItem(DOCK_POS_KEY, JSON.stringify(pos));
+      sessionStorage.setItem(DOCK_POS_KEY, JSON.stringify(wanted));
     } catch {
       // Storage off or full: the dock still sits where it was dragged.
     }
@@ -326,7 +327,7 @@ export function createSetDock(options: SetDockOptions) {
   grip.addEventListener('pointercancel', endDrag);
 
   const reclamp = () => {
-    if (pos) moveTo(pos);
+    if (wanted) moveTo(wanted);
   };
   window.addEventListener('resize', reclamp);
 

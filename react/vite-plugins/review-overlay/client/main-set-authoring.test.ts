@@ -333,6 +333,42 @@ describe('adding to a set', () => {
     expect(dockRows()).toHaveLength(1);
   });
 
+  /**
+   * The write settles long after the composer it ran from is gone, and the
+   * reviewer is by then typing into the next pick.
+   */
+  it('never closes a composer opened after the copy it settles for', async () => {
+    await bootOverlay();
+    let landed: () => void = () => undefined;
+    const writeText = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          landed = resolve;
+        }),
+    );
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+    Object.defineProperty(window, 'isSecureContext', {
+      value: true,
+      configurable: true,
+    });
+
+    await pick('create', 'one');
+    pressCopy();
+    await ticks(1);
+    pressEscape();
+    await pick('cancel', 'two');
+    landed();
+    await ticks(2);
+
+    expect(composeOpen()).toBe(true);
+    expect(textarea().value).toBe('two');
+    // The first pick still joined the set: closing did not cancel its write.
+    expect(storedIds()).toHaveLength(1);
+  });
+
   it('refuses the pin that would overflow the set', async () => {
     seed(
       Array.from({ length: 30 }, (_, i) =>

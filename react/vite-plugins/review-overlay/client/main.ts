@@ -118,7 +118,7 @@ function boot() {
         return null;
       if (store.isFull())
         return {
-          refused: `Your set is full at ${MAX_SET_PINS} pins — clear it or dismiss one`,
+          refused: `Your set is full at ${MAX_SET_PINS} pins — clear it or remove a pin`,
         };
       const pin = pickedPin(capture.value, text);
       if (store.has(pin.id)) return { refused: 'Already pinned' };

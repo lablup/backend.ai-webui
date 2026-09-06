@@ -31,8 +31,8 @@ const VIEWPORT_PAD = 8;
 /** What the composer copies, and what to run once it has. */
 export interface ComposedCopy extends CopyPayload {
   /**
-   * Runs only when THIS copy landed on the clipboard, so a write that failed —
-   * or a composer the reviewer closed while it was in flight — adds nothing.
+   * Runs only when THIS copy landed on the clipboard; closing the composer
+   * mid-write does not cancel it, so a write that failed adds nothing.
    */
   commit?: () => void;
 }
@@ -253,6 +253,8 @@ ${ICON_STYLE}
   let noteTimer = 0;
   /** A second ⌘⏎ over an unresolved write would build a second pin. */
   let copyInFlight = false;
+  /** Bumped by every open: a settled copy may only close the composer it ran from. */
+  let composeEpoch = 0;
   let draftFull = false;
 
   function syncCopyEnabled() {
@@ -308,6 +310,7 @@ ${ICON_STYLE}
     y: number,
     region?: Box | null,
   ) {
+    composeEpoch += 1;
     pickTarget = target;
     composeErr.style.display = 'none';
     composeText.value = '';
@@ -509,6 +512,7 @@ ${ICON_STYLE}
       return;
     }
     const block = built;
+    const epoch = composeEpoch;
     const copied = copyText(block.text, block.html);
     // Close only on success. A failed copy tells the reviewer to press ⌘⏎
     // again, so the composer and the note they typed have to still be there.
@@ -523,7 +527,9 @@ ${ICON_STYLE}
           ? (block.toast ?? COPIED_ONE)
           : 'Could not reach the clipboard — press ⌘⏎ again',
       );
-      if (ok) closeCompose();
+      // Only the composer this copy ran from: an async write that settles after
+      // the reviewer moved on must not close the pick they are typing into now.
+      if (ok && epoch === composeEpoch) closeCompose();
     };
     if (typeof copied === 'boolean') done(copied);
     else {

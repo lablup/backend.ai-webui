@@ -601,6 +601,21 @@ describe('createSetDock', () => {
       expect(node('.setdock').style.top).toBe('132px');
     });
 
+    // Shrinking used to overwrite the dragged position with the clamped one,
+    // so the reviewer's spot was gone the moment the window came back.
+    it('puts the dock back where it was dragged when the window grows again', () => {
+      dock.render([pin('c_a', 'a')]);
+      dragTo(700, 500);
+
+      viewport(400, 300);
+      window.dispatchEvent(new Event('resize'));
+      viewport(1024, 768);
+      window.dispatchEvent(new Event('resize'));
+
+      expect(node('.setdock').style.left).toBe('700px');
+      expect(node('.setdock').style.top).toBe('500px');
+    });
+
     it('leaves the default corner alone until something moves it', () => {
       dock.render([pin('c_a', 'a')]);
 
