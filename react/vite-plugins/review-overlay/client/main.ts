@@ -101,11 +101,7 @@ function boot() {
       ? `Copied all ${count} pins — replaces your last paste`
       : COPIED_ONE;
 
-  /**
-   * One card's ⧉. A link caps the note it carries, and a block rendered from
-   * that cap — a link's pin has no fuller copy — says so rather than losing it
-   * quietly.
-   */
+  /** One card's ⧉: a link's pin has only the capped note the link carries. */
   const onePinToast = (pin: { note?: string; anchor: AnchorV3 }): string =>
     pin.note === undefined && pin.anchor.nt === 1
       ? 'Copied 1 pin — the note is the shortened one the link carries'
@@ -516,12 +512,7 @@ function boot() {
     redraw(fragment.id);
   }
 
-  /**
-   * The switch's chord. Plain ⌘H hides the Mac app and Ctrl+H opens the
-   * browser's history, so Shift is what makes this one ours. It belongs to the
-   * dock, so it does nothing without a set — and nothing at all while a note
-   * is being typed, where every key belongs to the note.
-   */
+  /** The cards chord: no set, no switch — and never while a note is typed. */
   document.addEventListener('keydown', (evt) => {
     if (!evt.shiftKey || evt.altKey) return;
     if (!(isMac() ? evt.metaKey : evt.ctrlKey)) return;
