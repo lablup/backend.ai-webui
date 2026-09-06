@@ -93,7 +93,7 @@ const STYLE = `
   .card.away { border-style: dashed; opacity: 0.94; }
   /* Mid-pick the cards fold away; the markers are click-through already. */
   .card.collapsed { display: none; }
-  /* ✕ or the dock's switch: the card is off, the marker and the box stay. */
+  /* Hidden by its own button or the dock's switch: marker and box stay. */
   .card.hidden { display: none; }
   .card .count {
     color: var(--bai-review-text-dim); font-size: 11px; font-weight: 600;
@@ -221,7 +221,7 @@ interface PinView {
   /** Set order, for the marker glyph and the `3 / 5` header. */
   setOrdinal(index: number, total: number): void;
   setCollapsed(collapsed: boolean): void;
-  /** ✕ on this card alone; the pin keeps its marker and its box. */
+  /** This card alone; the pin keeps its marker and its box. */
   setHidden(hidden: boolean): void;
   /** The dock's switch, applied to every card at once. */
   setCardsHidden(hidden: boolean): void;
@@ -949,7 +949,7 @@ export function createPinLayer(options: PinLayerOptions) {
       placeSoon();
     },
 
-    /** One card off, by the reviewer's own ✕: the pin itself stays drawn. */
+    /** One card off, by its own hide button: the pin itself stays drawn. */
     setCardHidden(id: string, hidden: boolean) {
       const view = views.find((held) => held.id() === id);
       if (!view) return;
