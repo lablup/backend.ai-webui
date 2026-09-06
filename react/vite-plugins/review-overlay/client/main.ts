@@ -423,10 +423,9 @@ function boot() {
     index,
   });
 
-  /** What differs about an off-page pin's page, for its dock row (D2). */
   /**
-   * A stored label leads with the route it was made on; only THIS page's route
-   * can be resolved from here, so that beats a raw path — when it is not one.
+   * What differs about an off-page pin's page, for its dock row (D2). A stored
+   * label leads with the route it was made on, and beats a raw path.
    */
   const awayNote = (pin: SetPin): string => {
     if (pin.anchor.p === location.pathname)
@@ -546,17 +545,12 @@ function boot() {
     return `${ids.length} pins are waiting for their elements — the list says where`;
   }
 
-  /**
-   * R7.4: "not on this page" answered two different questions with one
-   * sentence. A pin on ANOTHER page is opened from the list — this line, said
-   * on arrival and after a re-partition; a pin on THIS one is waiting for its
-   * element and gets `waitingLine` when the ladder ends.
-   */
   /** The off-page pins this line was last said for (R7.4). */
   let saidAway = '';
 
   const awayKey = () => [...partition().away.keys()].sort().join(' ');
 
+  /** R7.4: an off-page pin is opened from the list; a waiting one cannot be. */
   function elsewhereLine(): string {
     const count = partition().away.size;
     saidAway = awayKey();

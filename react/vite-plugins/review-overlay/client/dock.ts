@@ -33,10 +33,8 @@ export interface DockPos {
 }
 
 /**
- * Where a pin is, as far as the dock is concerned. `elsewhere` is another
- * page — `where` is what differs about it. `waiting` is THIS page with the
- * element not in the DOM right now — a closed modal, a collapsed section —
- * which is not the same as gone, and the row is what says so (R7.3).
+ * Where a pin is (R7): another page — `where` is what differs — or this one
+ * with its element not in the DOM right now, which is not the same as gone.
  */
 export type PinPlace =
   | { kind: 'here' }
@@ -44,11 +42,7 @@ export type PinPlace =
   | { kind: 'elsewhere'; where: string; href: string }
   | { kind: 'waiting' };
 
-/**
- * A plain left-click is ours; every other click is the browser's — ⌘/Ctrl and
- * middle open the set in a new tab, where the link rehydrates it, and "copy
- * link address" needs the href untouched (R7.1).
- */
+/** A plain left-click is ours; every other click is the browser's (R7.1). */
 const plainClick = (evt: MouseEvent): boolean =>
   evt.button === 0 &&
   !evt.metaKey &&
