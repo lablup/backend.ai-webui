@@ -190,9 +190,8 @@ export interface PinLayerOptions {
   /** The reviewer pressed ✕; whoever owns the set decides what that means. */
   onDismiss?: (target: DeepLinkPinTarget) => void;
   /**
-   * The ladder ran out with these pins still unresolved. They stay pending —
-   * the observer keeps re-resolving them — so the owner can say where each one
-   * was rather than that it is gone. Without it the layer keeps its own line.
+   * The ladder ran out with these still unresolved; they stay pending (R7.2).
+   * Without it the layer keeps its own line.
    */
   onGiveUp?: (pendingIds: string[]) => void;
 }
@@ -883,10 +882,8 @@ export function createPinLayer(options: PinLayerOptions) {
   }
 
   /**
-   * The ladder ends; the pin does not (R7.2) — the observer keeps re-resolving
-   * every pending view. Whoever owns the set knows whether a pending pin is on
-   * another page or waiting for its element, so it gets the ids; a layer built
-   * without that keeps the overlay's own sentence.
+   * The ladder ends; the pin does not (R7.2). Only the owner knows why a pin
+   * is pending — another page, or a closed modal — so it gets the ids.
    */
   function giveUp() {
     const shown = showingViews();
