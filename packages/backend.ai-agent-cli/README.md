@@ -689,14 +689,14 @@ The type tables (`src/query/links.ts`) are small and hand-maintained on purpose
 level is unwrapped: a Relay `*Connection` (`edges { node }`), a Graphene `*List`
 (`items`), or a single-field Strawberry `*Payload`.
 
-| Return type                                         | Resource   | Page                          |
-| --------------------------------------------------- | ---------- | ----------------------------- |
-| `ComputeSessionNode`, `ComputeSession`, `SessionV2` | session    | `/session?sessionDetail=<id>` |
-| `VirtualFolderNode`, `VirtualFolder`, `VFolder`     | vfolder    | `/data?folder=<id>`           |
-| `Endpoint`, `EndpointNode`                          | deployment | `/deployments/<id>`           |
-| `ModelCard`, `ModelCardV2`                          | model_card | `/model-store?modelCard=<id>` |
-| `Role`, `RoleNode`                                  | role       | `/admin/rbac?roleDetail=<id>` |
-| `Artifact`, `ArtifactNode`                          | artifact   | `/admin/reservoir/<id>`       |
+| Return type                                         | Resource   | Page                          | `requires`   |
+| --------------------------------------------------- | ---------- | ----------------------------- | ------------ |
+| `ComputeSessionNode`, `ComputeSession`, `SessionV2` | session    | `/session?sessionDetail=<id>` | —            |
+| `VirtualFolderNode`, `VirtualFolder`, `VFolder`     | vfolder    | `/data?folder=<id>`           | —            |
+| `Endpoint`, `EndpointNode`                          | deployment | `/deployments/<id>`           | —            |
+| `ModelCard`, `ModelCardV2`                          | model_card | `/model-store?modelCard=<id>` | —            |
+| `Role`, `RoleNode`                                  | role       | `/admin/rbac?roleDetail=<id>` | `superadmin` |
+| `Artifact`, `ArtifactNode`                          | artifact   | `/admin/reservoir/<id>`       | `admin`      |
 
 The id is the first of `row_id`, `endpoint_id`, `id` that carries a non-empty
 string, **resolved to the form the page reads**: these pages take the raw uuid,
@@ -723,23 +723,64 @@ admin-only, so a non-admin would get a link they cannot open. An empty
 list-shaped root field gets no link either — null, `[]`, a connection whose
 `edges` is empty, or a Graphene list whose `items` is empty.
 
-| Return type                            | Resource        | Page                             |
-| -------------------------------------- | --------------- | -------------------------------- |
-| `User`, `UserNode`, `UserV2`           | user            | `/admin/users?tab=users`         |
-| `KeyPair`, `KeyPairV2`                 | keypair         | `/admin/users?tab=credentials`   |
-| `Agent`, `AgentNode`, `AgentV2`        | agent           | `/admin/agent?tab=agents`        |
-| `ScalingGroup`, `ResourceGroup`        | resource_group  | `/admin/agent?tab=resourceGroup` |
-| `Group`, `GroupNode`, `ProjectV2`      | project         | `/admin/project`                 |
-| `ResourcePreset`, `ResourcePresetV2`   | resource_preset | `/admin/environment?tab=preset`  |
-| `Image`, `ImageNode`, `ImageV2`        | environment     | `/admin/environment`             |
+| Return type                          | Resource        | Page                             | `requires`   |
+| ------------------------------------ | --------------- | -------------------------------- | ------------ |
+| `User`, `UserNode`, `UserV2`         | user            | `/admin/users?tab=users`         | `admin`      |
+| `KeyPair`, `KeyPairV2`               | keypair         | `/admin/users?tab=credentials`   | `admin`      |
+| `Agent`, `AgentNode`, `AgentV2`      | agent           | `/admin/agent?tab=agents`        | `superadmin` |
+| `ScalingGroup`, `ResourceGroup`      | resource_group  | `/admin/agent?tab=resourceGroup` | `superadmin` |
+| `Group`, `GroupNode`, `ProjectV2`    | project         | `/admin/project`                 | `superadmin` |
+| `ResourcePreset`, `ResourcePresetV2` | resource_preset | `/admin/environment?tab=preset`  | `admin`      |
+| `Image`, `ImageNode`, `ImageV2`      | environment     | `/admin/environment`             | `admin`      |
 
 So `user_nodes`, `user_list`, `adminUsersV2` and friends all land on the users
 list; `resource_presets` and `adminResourcePresetsV2` on the environment page's
 preset tab; `scaling_groups` and `adminResourceGroups` on the resources page's
 resource-group tab; `groups`, `group_nodes`, `adminProjectsV2` and
-`domainProjectsV2` on the projects page; `keypair_list`, `myKeypairs` and
-`adminKeypairsV2` on the credentials tab; `images`, `image_nodes` and
-`adminImagesV2` on the environment page.
+`domainProjectsV2` on the projects page; `keypair_list` and `adminKeypairsV2`
+on the credentials tab; `images`, `image_nodes` and `adminImagesV2` on the
+environment page.
+
+#### Every link says what the page will demand
+
+A link's `requires` names the role the destination route gates on, taken from
+`handle.access` in the app's `routes.tsx`: `admin` for the `/admin/*` subtree
+(super or domain admin), `superadmin` for the leaves under it that raise the
+bar (`/admin/agent`, `/admin/project`, `/admin/rbac`), `projectAdmin` for
+`/project/:name/admin/*`. The field is **omitted** on a page any authenticated
+account can open — `/session`, `/data`, `/deployments`, `/model-store`,
+`/my-environment` — so its mere presence is the "warn them first" signal. It
+applies to per-row links too: a `role` row points at `/admin/rbac`, so it
+carries `requires: "superadmin"`.
+
+This matters because permission to run a query is not permission to open the
+page: an ordinary account may legitimately list its own keypairs while the only
+keypair *page* is admin-only. The one-line stderr notice carries it too:
+
+```
+links: 1 — resource_preset (admin) https://webui.example.com/admin/environment?tab=preset
+```
+
+`requires` is additive — every field that was in `data.links` before is
+unchanged, so a consumer that ignores it behaves exactly as it did.
+
+#### Caller-scoped root fields
+
+A handful of root fields are scoped to the calling account, and their row type
+is the same one the admin-wide field returns (`myKeypairs` and
+`adminKeypairsV2` both resolve to `KeyPairV2`), so the distinction only exists
+at the field. `SELF_SCOPED_LIST_BY_ROOT_FIELD` in `src/query/links.ts` overrides
+the type table for those:
+
+| Root field          | Link                                                        |
+| ------------------- | ----------------------------------------------------------- |
+| `customized_images` | `/my-environment` — the page that runs this very field       |
+| `myKeypairs`        | **none** — see below                                          |
+
+`myKeypairs` gets no link at all. `/my-environment` is not a keypair page: it
+renders `CustomizedImageList` only (images). The single keypair list in the app
+is the credentials tab of `/admin/users`, which the `/admin/*` subtree gates on
+domain admin, and a link a caller cannot open is worse than no link.
 
 ### Path rules are restated, not imported
 

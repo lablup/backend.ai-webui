@@ -1,13 +1,17 @@
 import { resolveRepoContext } from '../repo-context.js';
 import { loadSchema } from '../search/schema-sdl.js';
+import { parseDocument } from './document.js';
 import { describe, expect, it } from 'vitest';
 import {
   annotateLinks,
+  annotateResult,
   LIST_RESOURCE_BY_TYPE,
+  listLink,
   listResourceForRootField,
   NO_LINK_HINT,
   resolveLinkId,
   resourceForRootField,
+  SELF_SCOPED_LIST_BY_ROOT_FIELD,
 } from './links.js';
 
 const UUID = '4a3b2c1d-0e9f-4a8b-9c7d-6e5f4a3b2c1d';
@@ -138,7 +142,6 @@ describe('listResourceForRootField', () => {
       ['group_nodes', 'project'],
       ['image_nodes', 'environment'],
       ['adminUsersV2', 'user'],
-      ['myKeypairs', 'keypair'],
       ['adminKeypairsV2', 'keypair'],
       ['adminProjectsV2', 'project'],
       ['domainProjectsV2', 'project'],
@@ -162,4 +165,164 @@ describe('listResourceForRootField', () => {
     );
     expect(resourceForRootField(schema, 'Query', 'endpoint')).toBe('deployment');
   });
+
+  it('gives a self-scoped root field the user-scope page, or none', () => {
+    // `customized_images` is the field `/my-environment` itself runs, and its
+    // rows are `ImageNode` — the type table alone would send a regular account
+    // to the admin-only `/admin/environment`.
+    expect(listOf('customized_images')).toBe('my_environment');
+    // `myKeypairs` resolves to the same `KeyPairV2` the admin field returns,
+    // but the only keypair list lives on the admin-gated credentials tab.
+    expect(listOf('myKeypairs')).toBeUndefined();
+    // The admin-wide twin is unaffected.
+    expect(listOf('adminKeypairsV2')).toBe('keypair');
+    expect(listOf('images')).toBe('environment');
+  });
+
+  it('applies the self-scoped override to Query only', () => {
+    expect(
+      listResourceForRootField(schema, 'Mutation', 'customized_images'),
+    ).toBeUndefined();
+  });
+
+  it('names every self-scoped override for the reader', () => {
+    expect(SELF_SCOPED_LIST_BY_ROOT_FIELD).toEqual({
+      myKeypairs: null,
+      customized_images: 'my_environment',
+    });
+  });
+});
+
+describe('link access marker', () => {
+  it('marks a list link with the access its page demands', () => {
+    expect(listLink('keypair', 'keypairs', undefined).requires).toBe('admin');
+    expect(listLink('user', 'users', undefined).requires).toBe('admin');
+    expect(listLink('agent', 'agents', undefined).requires).toBe('superadmin');
+    expect(listLink('project', 'groups', undefined).requires).toBe(
+      'superadmin',
+    );
+  });
+
+  it('omits the marker on a page any authenticated account can open', () => {
+    const link = listLink('my_environment', 'customized_images', undefined);
+    expect(link).toEqual({
+      path: 'customized_images',
+      resource: 'my_environment',
+      webui_path: '/my-environment',
+    });
+    expect('requires' in link).toBe(false);
+    expect('requires' in listLink('session', 'sessions', undefined)).toBe(
+      false,
+    );
+  });
+
+  it('marks a per-row link on an admin-gated detail page too', () => {
+    const encoded = globalId('RoleNode', UUID);
+    const [roleLink] = annotateLinks({ id: encoded }, 'role', 'node', undefined);
+    expect(roleLink.resource).toBe('role');
+    expect(roleLink.webui_path.startsWith('/admin/rbac?roleDetail=')).toBe(true);
+    expect(roleLink.requires).toBe('superadmin');
+    expect(
+      annotateLinks({ id: UUID }, 'artifact', 'node', undefined)[0].requires,
+    ).toBe('admin');
+    // A project-scope detail page still carries no marker.
+    expect(
+      annotateLinks({ id: UUID }, 'session', 'node', undefined)[0],
+    ).not.toHaveProperty('requires');
+  });
+});
+
+describe('annotateResult with root-field aliases', () => {
+  const schema = loadSchema(resolveRepoContext(import.meta.dirname));
+  const annotate = (
+    result: unknown,
+    fieldNameByResponseKey?: Record<string, string>,
+  ) => annotateResult(schema, 'Query', result, undefined, fieldNameByResponseKey);
+
+  it('resolves the schema field, not the alias, for a list link', () => {
+    // `customized_images` is a self-scoped root field; as an ALIAS of `images`
+    // it must not drag `/my-environment` onto the admin image list.
+    expect(
+      annotate({ customized_images: [{ id: 'i-1' }] }, {
+        customized_images: 'images',
+      }),
+    ).toEqual([
+      {
+        path: 'customized_images',
+        resource: 'environment',
+        webui_path: '/admin/environment',
+        requires: 'admin',
+      },
+    ]);
+  });
+
+  it('does not let an alias trip the null self-scoped override', () => {
+    // `myKeypairs` maps to `null` — "emit no link". Aliasing the admin-wide
+    // field to that name used to suppress its link entirely.
+    expect(
+      annotate({ myKeypairs: { edges: [{ node: { id: 'k-1' } }] } }, {
+        myKeypairs: 'adminKeypairsV2',
+      }),
+    ).toEqual([
+      {
+        path: 'myKeypairs',
+        resource: 'keypair',
+        webui_path: '/admin/users?tab=credentials',
+        requires: 'admin',
+      },
+    ]);
+  });
+
+  it('keeps the response key in the path of a per-row link', () => {
+    const links = annotate(
+      { sessions: { edges: [{ node: { row_id: UUID } }] } },
+      { sessions: 'compute_session_nodes' },
+    );
+    expect(links).toEqual([
+      {
+        path: 'sessions.edges[0].node',
+        resource: 'session',
+        id: UUID,
+        webui_path: `/session?sessionDetail=${UUID}`,
+      },
+    ]);
+  });
+
+  it('treats a missing map as identity, unchanged from before', () => {
+    const result = { compute_session_nodes: { edges: [{ node: { row_id: UUID } }] } };
+    expect(annotate(result)).toEqual(
+      annotate(result, { compute_session_nodes: 'compute_session_nodes' }),
+    );
+    expect(annotate({ customized_images: [{ id: 'i-1' }] })).toEqual([
+      {
+        path: 'customized_images',
+        resource: 'my_environment',
+        webui_path: '/my-environment',
+      },
+    ]);
+  });
+
+  it.each(['constructor', 'toString', '__proto__'] as const)(
+    'links a list field aliased as the dangerous name %s, from a null-prototype map',
+    (alias) => {
+      // A plain `{}` inherits these three from `Object.prototype`, so a
+      // response-key lookup for any of them is truthy before the real field
+      // name is ever recorded. `parseDocument` is the code that actually
+      // builds this map in production; go through it rather than hand-rolling
+      // one, so the assertion below is on the real fix.
+      const { operations } = parseDocument(`query { ${alias}: images { id } }`);
+      const map = operations[0].rootFieldByResponseKey;
+      expect(map[alias]).toBe('images');
+      expect(Object.getPrototypeOf(map)).toBeNull();
+
+      expect(annotate({ [alias]: [{ id: 'i-1' }] }, map)).toEqual([
+        {
+          path: alias,
+          resource: 'environment',
+          webui_path: '/admin/environment',
+          requires: 'admin',
+        },
+      ]);
+    },
+  );
 });
