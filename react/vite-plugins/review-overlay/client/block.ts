@@ -193,7 +193,8 @@ const setBlockInput = (pin: SetPin, url: string): BlockInput => {
     label: pin.label,
     id: pin.id,
     stack: pin.stack,
-    text: pin.anchor.n ?? '',
+    // The link carries the shortened note; the block is what keeps the rest.
+    text: pin.note ?? pin.anchor.n ?? '',
     url,
   };
   // No marker to write, so the fields only a marker reads stay blank.

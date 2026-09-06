@@ -3,7 +3,7 @@ import {
   type DeepLinkPin,
   type DeepLinkPinTarget,
 } from './pin.js';
-import type { AnchorV3, CopyPayload } from './types.js';
+import type { AnchorV3, PinCopyPayload } from './types.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const anchor = (over: Partial<AnchorV3> = {}): AnchorV3 => ({
@@ -23,7 +23,7 @@ let toasts: string[];
 let copyResult: boolean | Promise<boolean>;
 let located: (Element | null)[];
 /** What `main.ts` would render for this pin; null stands for "cannot". */
-let comment: CopyPayload | null;
+let comment: PinCopyPayload | null;
 let commentFor: DeepLinkPinTarget | null;
 
 const show = (over: Partial<AnchorV3> = {}) =>
@@ -77,7 +77,11 @@ beforeEach(() => {
   toasts = [];
   located = [];
   copyResult = true;
-  comment = { text: 'the whole comment', html: '<p>the whole comment</p>' };
+  comment = {
+    text: 'the whole comment',
+    html: '<p>the whole comment</p>',
+    toast: 'Copied 1 pin',
+  };
   commentFor = null;
   pin = createDeepLinkPin({
     root: host.attachShadow({ mode: 'open' }),
@@ -197,6 +201,22 @@ describe('createDeepLinkPin', () => {
     show();
     pin.locate();
     expect(marker().classList.contains('pulse')).toBe(true);
+  });
+
+  // The compat surface passes `onHide` straight through, so a layer built
+  // without one used to leave ✕ inert.
+  it('puts the card away on ✕ with no owner wired to hear it', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<button data-testid="create">Create</button>',
+    );
+    show();
+    pin.locate();
+
+    (host.shadowRoot?.querySelector('.close') as HTMLButtonElement).click();
+
+    expect(card().classList.contains('hidden')).toBe(true);
+    expect(marker().classList.contains('found')).toBe(true);
   });
 
   describe('place', () => {
@@ -802,10 +822,13 @@ describe('createDeepLinkPin', () => {
       );
       expect(named).toEqual([
         'Copy this comment id',
-        'Dismiss this pin',
+        'Hide this card',
         'Scroll back to this element',
-        'Copy the whole comment',
+        'Copy this pin',
       ]);
+      // R6.2: removing a pin lives in the dock, where the rows are far enough
+      // apart that a reach for ⧉ cannot end one.
+      expect(host.shadowRoot?.querySelector('.card .remove')).toBeNull();
     });
 
     it('says which id it copied', () => {
@@ -850,7 +873,7 @@ describe('createDeepLinkPin', () => {
       commentCopy().click();
       expect(copied).toEqual(['the whole comment']);
       expect(copiedHtml).toEqual(['<p>the whole comment</p>']);
-      expect(toasts).toEqual(['Copied the whole comment']);
+      expect(toasts).toEqual(['Copied 1 pin']);
     });
 
     it('hands the owner the pin it is showing, payload included', () => {
@@ -864,12 +887,18 @@ describe('createDeepLinkPin', () => {
       expect(commentFor?.anchor.n).toBe('Misaligned.');
     });
 
-    // The link caps the note it carries, so a copy off a capped link is short.
-    it('says so when the link only carries a shortened note', () => {
+    // The owner renders the block, so the owner owns what the toast claims —
+    // whether the note it wrote is the capped one a link carries.
+    it('says what the owner’s payload says it wrote', () => {
+      comment = {
+        text: 'the whole comment',
+        html: '<p>the whole comment</p>',
+        toast: 'Copied 1 pin — the note is the shortened one the link carries',
+      };
       show({ n: 'A very long note…', nt: 1 });
       commentCopy().click();
       expect(toasts).toEqual([
-        'Copied — the note is the shortened one the link carries',
+        'Copied 1 pin — the note is the shortened one the link carries',
       ]);
     });
 

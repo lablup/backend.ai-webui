@@ -3,7 +3,8 @@
  * `<style>`, the mutation observer, the scroll/resize listeners, the placement
  * batch, the retry driver and the docked column; one VIEW per pin owns its
  * marker, its card leading with the note the reviewer typed, and the
- * translucent box over the element.
+ * translucent box over the element. Nothing on a card destroys anything:
+ * removing a pin is the dock's, so a reach for ⧉ cannot end one (R6.2).
  *
  * The card text comes off a link anyone can write, so it goes in through
  * `textContent` — never `innerHTML`. The box is state, not a one-shot effect:
@@ -19,7 +20,7 @@ import {
   textMatches,
 } from './resolve.js';
 import { projectFraction } from './selection.js';
-import type { AnchorV3, CopyPayload } from './types.js';
+import type { AnchorV3, PinCopyPayload } from './types.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
 /** Long enough for a `behavior: 'smooth'` scroll and its momentum to stop. */
@@ -150,9 +151,8 @@ const STYLE = `
   .card .close { right: 4px; }
   .card .locate { right: 24px; }
   .card .copyall { right: 44px; }
-  .card .close:hover, .card .locate:hover, .card .copyall:hover {
-    color: var(--bai-review-text);
-  }
+  .card .close:hover, .card .locate:hover,
+  .card .copyall:hover { color: var(--bai-review-text); }
 ${ICON_STYLE}
   /* The pick box's own style, so arriving on a link looks like the pick that
      made it: a thin stroke over a light fill, on our layer — never the app's. */
@@ -181,14 +181,17 @@ export interface PinLayerOptions {
    * gesture. `main.ts` owns it: the server state and the stack live there, and
    * `null` means those reads have not landed for this element yet.
    */
-  buildComment: (target: DeepLinkPinTarget) => CopyPayload | null;
+  buildComment: (target: DeepLinkPinTarget) => PinCopyPayload | null;
   /** The pin settled on a different element — or on none. */
   onLocated?: (
     element: Element | null,
     target: DeepLinkPinTarget | null,
   ) => void;
-  /** The reviewer pressed ✕; whoever owns the set decides what that means. */
-  onDismiss?: (target: DeepLinkPinTarget) => void;
+  /**
+   * The reviewer hid the card: it is in the way, the pin is not. The owner
+   * persists that and hides the card — the marker and the box stay drawn.
+   */
+  onHide?: (target: DeepLinkPinTarget) => void;
   /**
    * The ladder ran out with these still unresolved; they stay pending (R7.2).
    * Without it the layer keeps its own line.
@@ -214,7 +217,7 @@ interface ViewDeps {
   showToast: PinLayerOptions['showToast'];
   buildComment: PinLayerOptions['buildComment'];
   onLocated?: PinLayerOptions['onLocated'];
-  onDismiss?: PinLayerOptions['onDismiss'];
+  onHide?: PinLayerOptions['onHide'];
   /** One layout read per frame, however many views ask for one. */
   placeSoon: () => void;
   /** A smooth scroll ends after `locate()` returns; follow it to its stop. */
@@ -228,8 +231,11 @@ interface PinView {
   readonly card: HTMLElement;
   id(): string;
   show(next: DeepLinkPinTarget): void;
-  /** Set order, for the marker glyph and the `3 / 5` header. */
-  setOrdinal(index: number, total: number): void;
+  /**
+   * Set order, for the marker glyph and the `3 / 5` header; `null` for a pin
+   * the set does not hold.
+   */
+  setOrdinal(index: number | null, total: number): void;
   setCollapsed(collapsed: boolean): void;
   /** This card alone; the pin keeps its marker and its box. */
   setHidden(hidden: boolean): void;
@@ -243,6 +249,10 @@ interface PinView {
   reposition(): void;
   dismiss(): void;
   isShowing(): boolean;
+  /** False for a drawn pin the set does not count, e.g. a link's. */
+  isMember(): boolean;
+  /** Already this pin, payload and all — nothing to re-adopt. */
+  holds(next: DeepLinkPinTarget): boolean;
   isLocated(): boolean;
   locatedElement(): Element | null;
   dispose(): void;
@@ -294,9 +304,9 @@ function createPinView(deps: ViewDeps): PinView {
   sub.append(idText, idCopy, componentText);
   const close = document.createElement('button');
   close.className = 'close';
-  close.append(icon('x'));
-  close.title = 'Dismiss this pin';
-  close.setAttribute('aria-label', 'Dismiss this pin');
+  close.append(icon('eye-off'));
+  close.title = 'Hide this card';
+  close.setAttribute('aria-label', 'Hide this card');
   const locateButton = document.createElement('button');
   locateButton.className = 'locate';
   locateButton.append(icon('crosshair'));
@@ -305,8 +315,8 @@ function createPinView(deps: ViewDeps): PinView {
   const commentCopy = document.createElement('button');
   commentCopy.className = 'copyall';
   commentCopy.append(icon('copy'));
-  commentCopy.title = 'Copy the whole comment';
-  commentCopy.setAttribute('aria-label', 'Copy the whole comment');
+  commentCopy.title = 'Copy this pin';
+  commentCopy.setAttribute('aria-label', 'Copy this pin');
   card.append(
     close,
     locateButton,
@@ -329,6 +339,8 @@ function createPinView(deps: ViewDeps): PinView {
   let missedScans = 0;
   /** The landmark at the last batch; its return re-arms the escalated scan. */
   let hadLandmark = false;
+  /** False for a pin the set does not hold: it stays a lone 📍. */
+  let member = true;
   /** One arrival pulse per link — the box is what stays. */
   let pulsed = false;
   let pulseTimer = 0;
@@ -591,10 +603,16 @@ function createPinView(deps: ViewDeps): PinView {
   locateButton.addEventListener('click', () =>
     located?.scrollIntoView?.({ block: 'center', behavior: 'smooth' }),
   );
+  // Hiding takes the card off the element, not the pin off the set: the
+  // reviewer wants to see what they pinned. Removing is what ends a pin.
   close.addEventListener('click', () => {
-    const dismissed = target;
-    dismiss();
-    if (dismissed) deps.onDismiss?.(dismissed);
+    if (!target) return;
+    // The card goes now, not when the owner answers: the button is honest
+    // even in a layer built without `onHide`, and the owner re-applies it.
+    hidden = true;
+    syncHidden();
+    deps.placeSoon();
+    deps.onHide?.(target);
   });
 
   function write(text: string, html: string | undefined, ok: string) {
@@ -629,15 +647,7 @@ function createPinView(deps: ViewDeps): PinView {
       deps.showToast('Still reading this element — try again');
       return;
     }
-    write(
-      payload.text,
-      payload.html,
-      // The link caps the note it carries, and a copy that quietly loses the
-      // rest is worse than one that says so.
-      target.anchor.nt === 1
-        ? 'Copied — the note is the shortened one the link carries'
-        : 'Copied the whole comment',
-    );
+    write(payload.text, payload.html, payload.toast);
   });
 
   function dismiss() {
@@ -679,11 +689,13 @@ function createPinView(deps: ViewDeps): PinView {
     },
 
     // A set of one is what a single pin has always been — the map-pin glyph
-    // and no header. Only a real set numbers itself.
-    setOrdinal(index: number, total: number) {
-      if (total > 1) head.textContent = String(index + 1);
+    // and no header. Only a real set numbers itself; `null` is not a member.
+    setOrdinal(index: number | null, total: number) {
+      member = index !== null;
+      const numbered = index !== null && total > 1;
+      if (numbered) head.textContent = String(index + 1);
       else head.replaceChildren(icon('map-pin', MARKER_ICON_SIZE));
-      count.textContent = total > 1 ? `${index + 1} / ${total}` : '';
+      count.textContent = numbered ? `${index + 1} / ${total}` : '';
     },
 
     setCollapsed(next: boolean) {
@@ -731,6 +743,10 @@ function createPinView(deps: ViewDeps): PinView {
 
     dismiss,
     isShowing: () => !!target,
+    isMember: () => member,
+    /** Same pin, same payload — nothing to re-adopt. */
+    holds: (next: DeepLinkPinTarget) =>
+      target?.id === next.id && target.anchorB64 === next.anchorB64,
     isLocated: () => !!located,
     locatedElement: () => located,
 
@@ -755,6 +771,8 @@ export function createPinLayer(options: PinLayerOptions) {
   /** The dock's switch: every card off, markers and boxes still on the page. */
   let cardsHidden = false;
   let focusId: string | null = null;
+  /** False while the set is only being re-drawn: nothing scrolls, nothing pulses. */
+  let autoFocus = true;
   let frame = 0;
   let settleUntil = 0;
   let timer = 0;
@@ -827,43 +845,62 @@ export function createPinLayer(options: PinLayerOptions) {
     showToast,
     buildComment: options.buildComment,
     onLocated: options.onLocated,
-    onDismiss: (target) => {
-      renumber();
-      options.onDismiss?.(target);
-    },
+    onHide: options.onHide,
     placeSoon,
     followScroll,
   };
 
-  /** Views are reused BY POSITION, so a card the set keeps keeps its node. */
+  function newView(): PinView {
+    const view = createPinView(deps);
+    view.setCollapsed(collapsed);
+    view.setCardsHidden(cardsHidden);
+    layer.append(...view.nodes);
+    return view;
+  }
+
+  /** Only ever grows or trims the tail; `adopt` is what re-seats a set. */
   function resize(count: number) {
     while (views.length > count) views.pop()?.dispose();
-    while (views.length < count) {
-      const view = createPinView(deps);
-      view.setCollapsed(collapsed);
-      view.setCardsHidden(cardsHidden);
-      layer.append(...view.nodes);
-      views.push(view);
-    }
+    while (views.length < count) views.push(newView());
+  }
+
+  /**
+   * Line the views up with the pins, BY ID: the view that already holds a pin
+   * keeps it, wherever the pin has moved to. Trimming the tail first would
+   * drop the last card and re-seat every pin after a removal onto its
+   * neighbour's, losing the element each had already located.
+   */
+  function adopt(targets: DeepLinkPinTarget[]) {
+    const spare = [...views];
+    const held = targets.map((target) => {
+      const at = spare.findIndex(
+        (view) => view.isShowing() && view.id() === target.id,
+      );
+      return at < 0 ? null : spare.splice(at, 1)[0];
+    });
+    views.length = 0;
+    for (const view of held) views.push(view ?? spare.shift() ?? newView());
+    for (const view of spare) view.dispose();
   }
 
   const showingViews = () => views.filter((view) => view.isShowing());
 
   /** A set one pin shorter says so: the glyphs and the `n / N` heads move up. */
   function renumber() {
-    const shown = showingViews();
-    for (const [index, view] of shown.entries())
-      view.setOrdinal(index, shown.length);
+    const members = showingViews().filter((view) => view.isMember());
+    for (const [index, view] of members.entries())
+      view.setOrdinal(index, members.length);
   }
 
   function locateAll(skipLocated: boolean): boolean {
     const shown = showingViews();
     // A stored focus id can name a pin this set does not have; the set still
     // has to scroll somewhere.
-    const focus =
-      shown.find((view) => view.id() === focusId)?.id() ??
-      shown[0]?.id() ??
-      null;
+    const focus = autoFocus
+      ? (shown.find((view) => view.id() === focusId)?.id() ??
+        shown[0]?.id() ??
+        null)
+      : null;
     let missing = 0;
     let landed = false;
     for (const view of shown) {
@@ -938,14 +975,27 @@ export function createPinLayer(options: PinLayerOptions) {
     /**
      * Draw exactly these pins, in set order, and start the one retry driver
      * that resolves whatever is not on the page yet. `focusId` names the pin
-     * that scrolls and pulses; the first pin is the default.
+     * that scrolls and pulses; the first pin is the default, and an explicit
+     * `null` is a re-draw — an authoring set must not move the page under the
+     * reviewer every time they add a pin to it. `setSize` is how many of the
+     * leading targets the SET holds; the rest are drawn as lone pins.
      */
-    show(targets: DeepLinkPinTarget[], opts: { focusId?: string } = {}) {
-      resize(targets.length);
+    show(
+      targets: DeepLinkPinTarget[],
+      opts: { focusId?: string | null; setSize?: number } = {},
+    ) {
+      adopt(targets);
+      autoFocus = opts.focusId !== null;
       focusId = opts.focusId ?? targets[0]?.id ?? null;
+      const size = opts.setSize ?? targets.length;
+      // Only the pin this call focuses is re-adopted: the rest keep the
+      // element `reposition()` may be holding through a re-render.
+      const arriving =
+        opts.focusId === undefined ? (targets[0]?.id ?? null) : opts.focusId;
       targets.forEach((target, index) => {
-        views[index].show(target);
-        views[index].setOrdinal(index, targets.length);
+        const view = views[index];
+        if (target.id === arriving || !view.holds(target)) view.show(target);
+        view.setOrdinal(index < size ? index : null, size);
       });
       startRetry();
     },

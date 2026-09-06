@@ -37,7 +37,7 @@ export interface PickerCallbacks {
 const PLUGIN_NAME = 'bai-review-pick';
 
 /** react-grab reads `navigator.platform` first and falls back to the UA. */
-const isMac = (): boolean =>
+export const isMac = (): boolean =>
   typeof navigator !== 'undefined' &&
   /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
 
@@ -52,7 +52,7 @@ export function isReactGrabChord(evt: KeyboardEvent): boolean {
 }
 
 /** react-grab does not activate inside a field either; ⌘C there is copy. */
-const isEditable = (node: EventTarget | null): boolean =>
+export const isEditable = (node: EventTarget | null): boolean =>
   node instanceof HTMLElement &&
   (node.isContentEditable ||
     node instanceof HTMLInputElement ||

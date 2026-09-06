@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 let host: HTMLElement;
 let layer: PinLayer;
 let toasts: string[];
-let dismissed: string[];
+let hidden: string[];
 let scrolled: string[];
 let pending: string[][];
 
@@ -83,7 +83,7 @@ const mount = (testid: string, box: Partial<DOMRect> = {}): HTMLElement => {
 beforeEach(() => {
   document.body.innerHTML = '';
   toasts = [];
-  dismissed = [];
+  hidden = [];
   scrolled = [];
   pending = [];
   host = document.createElement('div');
@@ -102,8 +102,12 @@ beforeEach(() => {
     host,
     copyText: () => true,
     showToast: (message) => toasts.push(message),
-    buildComment: () => ({ text: 'block', html: '<p>block</p>' }),
-    onDismiss: (pin) => dismissed.push(pin.id),
+    buildComment: () => ({
+      text: 'block',
+      html: '<p>block</p>',
+      toast: 'Copied 1 pin',
+    }),
+    onHide: (pin) => hidden.push(pin.id),
   });
 });
 
@@ -205,6 +209,88 @@ describe('createPinLayer', () => {
       expect(scrolled).toEqual(['two']);
       expect(markerOf('c_b').classList.contains('pulse')).toBe(true);
     });
+
+    // Growing a set is not an arrival: an explicit `null` draws every pin
+    // without moving the page the reviewer is picking on.
+    it('is nobody at all when the caller passes null', () => {
+      mount('one');
+      mount('two');
+      layer.show([target('c_a', 'one'), target('c_b', 'two')], {
+        focusId: null,
+      });
+
+      expect(scrolled).toEqual([]);
+      expect(markerOf('c_a').classList.contains('pulse')).toBe(false);
+      expect(markerOf('c_b').classList.contains('pulse')).toBe(false);
+      expect(cardOf('c_a').classList.contains('found')).toBe(true);
+      expect(cardOf('c_b').classList.contains('found')).toBe(true);
+    });
+  });
+
+  // `reposition()` can hold an element `findAnchorTarget` would no longer
+  // find; re-adopting the pin would drop it and give up on a drawn card.
+  it('leaves a drawn pin on its element when the set grows around it', () => {
+    const one = mount('one');
+    layer.show([target('c_a', 'one')], { focusId: null });
+    layer.locate();
+    expect(layer.locatedElement('c_a')).toBe(one);
+    // A re-render the pin survived: nothing about the anchor resolves now.
+    one.setAttribute('data-testid', 'renamed');
+    one.textContent = 'renamed';
+
+    mount('two');
+    layer.show([target('c_a', 'one'), target('c_b', 'two')], {
+      focusId: null,
+    });
+
+    expect(layer.locatedElement('c_a')).toBe(one);
+    expect(cardOf('c_a').classList.contains('found')).toBe(true);
+    expect(toasts).toEqual([]);
+  });
+
+  // The twin of the above, for a removal from the MIDDLE. Trimming the tail
+  // to the new length first drops the LAST pin's card and re-seats that pin
+  // onto its neighbour's, losing the element it had already located.
+  it('leaves a drawn pin on its element when the set shrinks around it', () => {
+    mount('one');
+    mount('two');
+    const three = mount('three');
+    layer.show(
+      [target('c_a', 'one'), target('c_b', 'two'), target('c_c', 'three')],
+      { focusId: null },
+    );
+    layer.locate();
+    expect(layer.locatedElement('c_c')).toBe(three);
+    // A re-render the pin survived: nothing about the anchor resolves now.
+    three.setAttribute('data-testid', 'renamed');
+    three.textContent = 'renamed';
+
+    layer.show([target('c_a', 'one'), target('c_c', 'three')], {
+      focusId: null,
+    });
+
+    expect(layer.locatedElement('c_c')).toBe(three);
+    expect(cardOf('c_c').classList.contains('found')).toBe(true);
+    expect(cardOf('c_b')).toBeNull();
+    expect(countOf('c_c')).toBe('2 / 2');
+    expect(toasts).toEqual([]);
+  });
+
+  // A link's pin rides along with the draft set without joining it, so the
+  // glyphs must not claim a membership the copied comment does not have.
+  it('numbers only the pins the set holds', () => {
+    mount('one');
+    mount('two');
+    mount('three');
+    layer.show(
+      [target('c_a', 'one'), target('c_b', 'two'), target('c_link', 'three')],
+      { focusId: null, setSize: 2 },
+    );
+
+    expect(markerOf('c_a').textContent).toBe('1');
+    expect(countOf('c_b')).toBe('2 / 2');
+    expect(markerGlyph('c_link')).toBe('map-pin');
+    expect(countOf('c_link')).toBe('');
   });
 
   describe('dismissing one pin of a set', () => {
@@ -226,12 +312,19 @@ describe('createPinLayer', () => {
       expect(markerOf('c_b').classList.contains('found')).toBe(true);
     });
 
-    // ✕ is a set edit, and only the set's owner knows what that costs.
-    it('hands the pin back to the owner when ✕ is what did it', () => {
+    // R6.2: the card destroys nothing — its 🗑 sat 20px from ⧉, so reaching
+    // for copy ended the pin. Removing one is the dock row's alone now.
+    it('carries no remove control on any card', () => {
+      expect(shadow().querySelector('.card .remove')).toBeNull();
+    });
+
+    // ✕ is about the card being in the way, not about the pin.
+    it('leaves the pin in the set when ✕ is what did it', () => {
       cardOf('c_b').querySelector<HTMLButtonElement>('.close')?.click();
 
-      expect(dismissed).toEqual(['c_b']);
-      expect(layer.ids()).toEqual(['c_a']);
+      expect(hidden).toEqual(['c_b']);
+      expect(layer.ids()).toEqual(['c_a', 'c_b']);
+      expect(markerOf('c_b').classList.contains('found')).toBe(true);
     });
 
     it('renumbers what is left, so the heads still count the set', () => {
@@ -250,8 +343,8 @@ describe('createPinLayer', () => {
     });
 
     // Two pins minus one is a set of one, which never numbered itself.
-    it('drops back to a lone map-pin when ✕ leaves one pin', () => {
-      cardOf('c_a').querySelector<HTMLButtonElement>('.close')?.click();
+    it('drops back to a lone map-pin when one pin is left', () => {
+      layer.dismiss('c_a');
 
       expect(markerGlyph('c_b')).toBe('map-pin');
       expect(countOf('c_b')).toBe('');
@@ -345,7 +438,11 @@ describe('createPinLayer', () => {
         host,
         copyText: () => true,
         showToast: (message) => toasts.push(message),
-        buildComment: () => ({ text: 'block', html: '<p>block</p>' }),
+        buildComment: () => ({
+          text: 'block',
+          html: '<p>block</p>',
+          toast: 'Copied 1 pin',
+        }),
         onGiveUp: (ids) => pending.push(ids),
       });
       mount('one');
