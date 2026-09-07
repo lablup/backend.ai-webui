@@ -1711,8 +1711,7 @@ const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
   const description = mergedResourceSlots[type]?.description ?? type;
   // One line of the description text, so the icon can be vertically centered
   // against the first line (not the whole wrapped block).
-  const lineHeightPx =
-    parseFloat(token('--font-size-base')) * 1.5714285714285714;
+  const lineHeight = `calc(${token('--text-body-size')} * ${token('--text-body-leading')})`;
   return (
     <Tooltip
       content={t('session.launcher.UnifiedAcceleratorMemoryNote', {
@@ -1727,7 +1726,7 @@ const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
       >
         {/* Match the icon box to one text line and center the icon so it stays
             aligned with the first line when the description wraps. */}
-        <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeightPx }}>
+        <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeight }}>
           <ResourceTypeIcon type={type} showTooltip={false} />
         </BAIFlex>
         <Text xstyle={unifiedChipStyles.description}>{description}</Text>

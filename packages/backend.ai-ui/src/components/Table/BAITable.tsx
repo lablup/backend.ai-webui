@@ -773,12 +773,16 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     _.forEach(flatColumns, ({ key, column, groupTitle }) => {
       const width = column.width;
       const persistedWidth = columnWidths[key];
+      // A `px` string is a pixel width too: a spacing token read through
+      // `useTheme().token()` arrives as `'48px'`.
       const numericWidth =
         typeof persistedWidth === 'number'
           ? persistedWidth
           : typeof width === 'number'
             ? width
-            : undefined;
+            : typeof width === 'string' && /^\d+(\.\d+)?px$/.test(width.trim())
+              ? parseFloat(width)
+              : undefined;
 
       // Header text is clipped, not overflowed. Astryx puts a plain-string
       // `header` straight into the `<th>` (which is `overflow: visible`), so a
