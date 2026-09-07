@@ -129,6 +129,7 @@ export const useReclamationColorMap = (): Record<
   ReclamationColor,
   { variant: 'success' | 'warning' | 'error'; label: string }
 > => {
+  'use memo';
   const { t } = useTranslation();
   return {
     red: {
