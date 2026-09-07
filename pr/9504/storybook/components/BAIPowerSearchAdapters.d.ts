@@ -22,6 +22,13 @@ export type FilterRenderInput = (props: {
 }) => ReactNode;
 /** Only string-ish labels survive into a token; anything else falls back. */
 export declare const optionLabelToString: (label: ReactNode, fallback: string) => string;
+type PickedOption = {
+    label?: ReactNode;
+} | ReadonlyArray<{
+    label?: ReactNode;
+}> | null | undefined;
+/** Adapts a select's `onChange(value, option)` to `onAddCondition(value, label)`. Single pick only. */
+export declare const stagePickedOption: (onAddCondition: (value: string | undefined, label?: string) => void) => (next: string | ReadonlyArray<string> | null | undefined, option?: PickedOption) => void;
 /** BUI option list -> PowerSearch enum items (both fields are required there). */
 export declare function toEnumItems(options: ReadonlyArray<FilterPropertyOption> | undefined): Array<EnumItem>;
 /**
@@ -81,3 +88,4 @@ export interface BAIPowerSearchChromeProps {
     className?: string;
     'data-testid'?: string;
 }
+export {};

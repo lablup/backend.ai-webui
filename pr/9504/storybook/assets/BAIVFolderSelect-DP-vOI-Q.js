@@ -1,0 +1,35 @@
+import{a as X,r as u,j as Y}from"./iframe-AcEiVkqu.js";import{t as b}from"./index-B7WSTLga.js";import{u as Z,a as ee}from"./useDebounce-BnVC9uXJ.js";import{a as ne}from"./index-DflwYQwJ.js";import{c as ae,B as le,s as te}from"./BAIComplexSelect-B9dKz9kv.js";import{m as p}from"./BAIPropertyFilter-DUlWbpHe.js";import{r as re}from"./index-C3xv-Xo3.js";import{u as D}from"./useControllableValue-DD2RtZJO.js";import{c as B}from"./compact-CU4PNV0P.js";import{m as h}from"./map-TvWgrxlt.js";import{f as ie}from"./find-CcMQOZJg.js";const T=(function(){var t={defaultValue:null,kind:"LocalArgument",name:"first"},o={defaultValue:null,kind:"LocalArgument",name:"scopeId"},s={defaultValue:null,kind:"LocalArgument",name:"selectedFilter"},a={defaultValue:null,kind:"LocalArgument",name:"skipSelectedVFolder"},d=[{condition:"skipSelectedVFolder",kind:"Condition",passingValue:!1,selections:[{alias:null,args:[{kind:"Variable",name:"filter",variableName:"selectedFilter"},{kind:"Variable",name:"first",variableName:"first"},{kind:"Literal",name:"permission",value:"read_attribute"},{kind:"Variable",name:"scope_id",variableName:"scopeId"}],concreteType:"VirtualFolderConnection",kind:"LinkedField",name:"vfolder_nodes",plural:!1,selections:[{alias:null,args:null,concreteType:"VirtualFolderEdge",kind:"LinkedField",name:"edges",plural:!0,selections:[{alias:null,args:null,concreteType:"VirtualFolderNode",kind:"LinkedField",name:"node",plural:!1,selections:[{alias:null,args:null,kind:"ScalarField",name:"name",storageKey:null},{alias:null,args:null,kind:"ScalarField",name:"id",storageKey:null},{alias:null,args:null,kind:"ScalarField",name:"row_id",storageKey:null}],storageKey:null}],storageKey:null}],storageKey:null}]}];return{fragment:{argumentDefinitions:[t,o,s,a],kind:"Fragment",metadata:null,name:"BAIVFolderSelectValueQuery",selections:d,type:"Query",abstractKey:null},kind:"Request",operation:{argumentDefinitions:[s,t,a,o],kind:"Operation",name:"BAIVFolderSelectValueQuery",selections:d},params:{cacheID:"10b4d03752ab72bdea0c8473bffc577d",id:null,metadata:{},name:"BAIVFolderSelectValueQuery",operationKind:"query",text:`query BAIVFolderSelectValueQuery(
+  $selectedFilter: String
+  $first: Int!
+  $skipSelectedVFolder: Boolean!
+  $scopeId: ScopeField
+) {
+  vfolder_nodes(scope_id: $scopeId, filter: $selectedFilter, first: $first, permission: "read_attribute") @skip(if: $skipSelectedVFolder) {
+    edges {
+      node {
+        name
+        id
+        row_id
+      }
+    }
+  }
+}
+`}}})();T.hash="f2f9fac35a9f022e6de82b4592e8acf2";const x=(function(){var t={defaultValue:null,kind:"LocalArgument",name:"filter"},o={defaultValue:null,kind:"LocalArgument",name:"limit"},s={defaultValue:null,kind:"LocalArgument",name:"offset"},a={defaultValue:null,kind:"LocalArgument",name:"permission"},d={defaultValue:null,kind:"LocalArgument",name:"scopeId"},m=[{alias:null,args:[{kind:"Variable",name:"filter",variableName:"filter"},{kind:"Variable",name:"first",variableName:"limit"},{kind:"Variable",name:"offset",variableName:"offset"},{kind:"Literal",name:"order",value:"-created_at"},{kind:"Variable",name:"permission",variableName:"permission"},{kind:"Variable",name:"scope_id",variableName:"scopeId"}],concreteType:"VirtualFolderConnection",kind:"LinkedField",name:"vfolder_nodes",plural:!1,selections:[{alias:null,args:null,kind:"ScalarField",name:"count",storageKey:null},{alias:null,args:null,concreteType:"VirtualFolderEdge",kind:"LinkedField",name:"edges",plural:!0,selections:[{alias:null,args:null,concreteType:"VirtualFolderNode",kind:"LinkedField",name:"node",plural:!1,selections:[{alias:null,args:null,kind:"ScalarField",name:"id",storageKey:null},{alias:null,args:null,kind:"ScalarField",name:"name",storageKey:null},{alias:null,args:null,kind:"ScalarField",name:"row_id",storageKey:null}],storageKey:null}],storageKey:null}],storageKey:null}];return{fragment:{argumentDefinitions:[t,o,s,a,d],kind:"Fragment",metadata:null,name:"BAIVFolderSelectPaginatedQuery",selections:m,type:"Query",abstractKey:null},kind:"Request",operation:{argumentDefinitions:[s,o,d,t,a],kind:"Operation",name:"BAIVFolderSelectPaginatedQuery",selections:m},params:{cacheID:"eddda0f4ea4f7ad2fb75f7f417cfe31d",id:null,metadata:{},name:"BAIVFolderSelectPaginatedQuery",operationKind:"query",text:`query BAIVFolderSelectPaginatedQuery(
+  $offset: Int!
+  $limit: Int!
+  $scopeId: ScopeField
+  $filter: String
+  $permission: VFolderPermissionValueField
+) {
+  vfolder_nodes(scope_id: $scopeId, offset: $offset, first: $limit, filter: $filter, permission: $permission, order: "-created_at") {
+    count
+    edges {
+      node {
+        id
+        name
+        row_id
+      }
+    }
+  }
+}
+`}}})();x.hash="7a6826cee67c39bf1f4841f69c578621";const oe='status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"',Fe=({currentProjectId:t,filter:o,excludeDeleted:s,valuePropName:a="id",requiredPermission:d="read_attribute",onResolvedNamesChange:m,fallbackLabels:g,multiple:V=!1,isLoading:O,ref:C,...y})=>{"use memo";var A;const{t:N}=X(),[I,Q]=D(y,{valuePropName:"value",trigger:"onChange"}),[R,w]=D(y,{valuePropName:"open",trigger:"onOpenChange",defaultValuePropName:"defaultOpen"}),q=u.useDeferredValue(R),[k,P]=u.useState(""),F=Z(k),[G,L]=u.useTransition(),_=p([s?oe:null,o]),[M,K]=ne(),$=u.useDeferredValue(M),E=u.useDeferredValue(I),c=B(ae(E??[])),v=n=>{if(n)return a==="id"?n.id:n.row_id??void 0},{vfolder_nodes:r}=re.useLazyLoadQuery(T,{selectedFilter:p([c.length?p(h(c,n=>{const e=a==="id"?b(n):n;return`${a} == "${e}"`}),"|"):null,_],"&"),first:Math.max(c.length,1),skipSelectedVFolder:c.length===0,scopeId:t?`project:${t}`:void 0},{fetchPolicy:c.length?"store-or-network":"store-only",fetchKey:$}),{paginationData:j,result:z,loadNext:H,isLoadingNext:J}=ee(x,{limit:10},{filter:p([_,F?`name ilike "%${F}%"`:null]),scopeId:t?`project:${t}`:void 0,permission:d},{fetchPolicy:q?"network-only":"store-only",fetchKey:$},{getTotal:n=>{var e;return((e=n.vfolder_nodes)==null?void 0:e.count)??void 0},getItem:n=>{var e,l;return(l=(e=n.vfolder_nodes)==null?void 0:e.edges)==null?void 0:l.map(i=>i==null?void 0:i.node)},getId:n=>n==null?void 0:n.id});u.useImperativeHandle(C,()=>({refetch:()=>{L(()=>{K()})}}),[K,L]),u.useEffect(()=>{if(m&&(r!=null&&r.edges)){const n={};r.edges.forEach(e=>{var f;const l=v(e==null?void 0:e.node),i=(f=e==null?void 0:e.node)==null?void 0:f.name;l&&i&&(n[l]=i)}),m(n)}},[r]);const U=B(h(j,n=>{const e=v(n);if(!e)return null;const l=a==="id"?b(e):e;return{value:e,label:(n==null?void 0:n.name)??e,description:l}})),W=(()=>{const n=h(c,e=>{var f;const l=ie(r==null?void 0:r.edges,S=>v(S==null?void 0:S.node)===e),i=(g==null?void 0:g[e])??(a==="id"?b(e)??e:e);return{label:((f=l==null?void 0:l.node)==null?void 0:f.name)??i,value:e}});return V?n:n[0]??null})();return Y.jsx(le,{placeholder:N("comp:BAIVFolderSelect.SelectFolder"),...y,multiple:V,isLoading:O||I!==E||k!==F||G,isLoadingNext:J,total:((A=z.vfolder_nodes)==null?void 0:A.count)??void 0,options:U,value:W,onChange:n=>{const e=te(n,V);Q(e.value,e.option)},searchValue:k,onSearch:P,onOpenChange:w,endReached:H})};export{Fe as B};
