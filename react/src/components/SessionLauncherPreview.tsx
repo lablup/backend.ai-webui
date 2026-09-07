@@ -7,7 +7,6 @@ import { App } from '../app-shim';
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
-import { DEFAULT_ALIAS_BASE_PATH } from '../helper/vfolderMounts';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -37,9 +36,8 @@ import {
   BAITable,
   BAIText,
   imageNodeTagFacts,
-  type VFolderMountConfigValue,
   filterOutEmpty,
-  inputToMountDestination,
+  resolveVFolderMounts,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -102,23 +100,7 @@ const SessionLauncherPreview: React.FC<{
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentProject = useCurrentProjectValue();
 
-  const mountRows = _.map(
-    form.getFieldValue('vfolderMounts') ?? [],
-    (mount: VFolderMountConfigValue) => {
-      const name = mount.name || mount.vfolderId;
-      return {
-        key: mount.vfolderId,
-        name,
-        alias: inputToMountDestination(
-          name,
-          mount.mountDestination,
-          DEFAULT_ALIAS_BASE_PATH,
-        ),
-        isDefaultAlias: _.isEmpty(mount.mountDestination?.trim()),
-        subpath: mount.subpath?.trim() ?? '',
-      };
-    },
-  );
+  const mountRows = resolveVFolderMounts(form.getFieldValue('vfolderMounts'));
   const hasAnySubpath = _.some(mountRows, (row) => !!row.subpath);
 
   return (
@@ -394,7 +376,7 @@ const SessionLauncherPreview: React.FC<{
         <BAIFlex direction="column" align="stretch" gap={'xs'}>
           {mountRows.length > 0 ? (
             <BAITable
-              rowKey="key"
+              rowKey="vfolderId"
               size="small"
               pagination={false}
               columns={filterOutEmpty([
@@ -403,7 +385,7 @@ const SessionLauncherPreview: React.FC<{
                   title: t('data.folders.Name'),
                 },
                 {
-                  dataIndex: 'alias',
+                  dataIndex: 'mountDestination',
                   title: t('session.launcher.FolderAlias'),
                   render: (
                     value: string,
