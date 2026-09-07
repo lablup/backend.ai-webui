@@ -2974,6 +2974,7 @@
       "FolderAliasInvalid": "อนุญาตเฉพาะตัวอักษร ตัวเลข ขีดล่าง (_) เครื่องหมายทับ (/) จุด (.) และขีดกลาง (-)",
       "FolderAliasOverlapping": "ชื่อแฝงซ้ำกับชื่ออื่นที่มีอยู่แล้ว",
       "FolderAliasOverlappingToAutoMount": "มีโฟลเดอร์ที่เมาท์อัตโนมัติที่มีชื่อเดียวกันอยู่แล้ว",
+      "FolderSubpath": "พาธย่อย",
       "FolderSubpathInvalid": "พาธย่อยต้องเป็นพาธสัมพัทธ์ภายในโฟลเดอร์",
       "FolderToMount": "โฟลเดอร์ที่จะเมาท์",
       "FolderToMountList": "โฟลเดอร์ที่จะเมาท์",

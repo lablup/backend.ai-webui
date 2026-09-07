@@ -2974,6 +2974,7 @@
       "FolderAliasInvalid": "Зөвхөн үсэг, тоон тэмдэгт, доогуур зураас (_), ташуу зураас (/), цэг (.), зураас (-) зэргийг зөвшөөрнө.",
       "FolderAliasOverlapping": "Фолдерын хоч нэр давхцалт",
       "FolderAliasOverlappingToAutoMount": "Ижил нэртэй автоматаар холбох хавтас байна.",
+      "FolderSubpath": "Дэд зам",
       "FolderSubpathInvalid": "Дэд зам нь фолдер доторх харьцангуй зам байх ёстой.",
       "FolderToMount": "Холбох фолдер",
       "FolderToMountList": "Холбох фолдер",

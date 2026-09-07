@@ -2976,6 +2976,7 @@
       "FolderAliasInvalid": "僅允許使用字母數字字元、底線 (_)、斜線 (/)、點 (.) 和破折號 (-)。",
       "FolderAliasOverlapping": "别名与已存在的其他名称重叠",
       "FolderAliasOverlappingToAutoMount": "存在同名的自动挂载文件夹。",
+      "FolderSubpath": "子路徑",
       "FolderSubpathInvalid": "子路徑必須是資料夾內的相對路徑。",
       "FolderToMount": "要掛載的文件夾",
       "FolderToMountList": "要掛載的文件夾",

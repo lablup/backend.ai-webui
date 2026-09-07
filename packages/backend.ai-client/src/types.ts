@@ -39,6 +39,13 @@ export interface SessionResources {
     mount_id_map?: {
       [key: string]: string;
     };
+    /**
+     * Per-mount overrides keyed by vfolder id. `subpath` names the folder
+     * inside the vfolder to mount as the source; absent or `.` = its root.
+     */
+    mount_options?: {
+      [key: string]: { permission?: string; subpath?: string };
+    };
     environ?: {
       [key: string]: string;
     };

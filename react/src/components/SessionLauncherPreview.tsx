@@ -43,6 +43,7 @@ import {
   BAITable,
   BAIText,
   type VFolderMountConfigValue,
+  filterOutEmpty,
   inputToMountDestination,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -106,9 +107,11 @@ const SessionLauncherPreview: React.FC<{
           DEFAULT_ALIAS_BASE_PATH,
         ),
         isDefaultAlias: _.isEmpty(mount.mountDestination?.trim()),
+        subpath: mount.subpath?.trim() ?? '',
       };
     },
   );
+  const hasAnySubpath = _.some(mountRows, (row) => !!row.subpath);
 
   return (
     <>
@@ -507,7 +510,7 @@ const SessionLauncherPreview: React.FC<{
               rowKey="key"
               size="small"
               pagination={false}
-              columns={[
+              columns={filterOutEmpty([
                 {
                   dataIndex: 'name',
                   title: t('data.folders.Name'),
@@ -525,7 +528,12 @@ const SessionLauncherPreview: React.FC<{
                       value
                     ),
                 },
-              ]}
+                hasAnySubpath && {
+                  dataIndex: 'subpath',
+                  title: t('session.launcher.FolderSubpath'),
+                  render: (value: string) => `/${value}`,
+                },
+              ])}
               dataSource={mountRows}
             />
           ) : (
