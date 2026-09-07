@@ -24,6 +24,7 @@ import ResourceAllocationFormItems, {
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
 import SessionLauncherFormIncompatibleValueChecker from '../components/SessionLauncherFormIncompatibleValueChecker';
 import SessionLauncherPreview from '../components/SessionLauncherPreview';
+import SessionLauncherStorageStep from '../components/SessionLauncherStorageStep';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -41,10 +42,7 @@ import {
 } from '../components/astryxFormControls';
 import { Form } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
-import {
-  DEFAULT_ALIAS_BASE_PATH,
-  normalizeLegacyMountFields,
-} from '../helper/vfolderMounts';
+import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentUserRole,
@@ -78,20 +76,17 @@ import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { Step, Stepper } from '@astryxdesign/lab';
 import * as stylex from '@stylexjs/stylex';
+import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {
   BAIPopconfirm,
   BAIFlex,
   BAIIntervalView,
-  BAILegacyVFolderSelect,
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
-  BAIVFolderMountConfigInput,
   ResourceTypeIcon,
   type VFolderMountConfigValue,
   filterOutEmpty,
   generateRandomString,
-  getVFolderMountConfigStatuses,
-  inputToMountDestination,
   useBAILogger,
   useDebounceFn,
   useErrorMessageResolver,
@@ -99,7 +94,6 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import type { TFunction } from 'i18next';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
 import {
@@ -157,20 +151,16 @@ export interface SessionResources {
       shmem?: string;
       allow_fractional_resource_fragmentation?: boolean;
     };
-    mount_ids?: string[];
-    mount_id_map?: {
-      [key: string]: string;
-    };
-    mount_options?: {
-      [key: string]: { subpath?: string };
-    };
     environ?: {
       [key: string]: string;
     };
     scaling_group?: string;
     preopen_ports?: number[];
     agent_list?: string[];
-  };
+  } & Pick<
+    NonNullable<ClientSessionResources['config']>,
+    'mount_ids' | 'mount_id_map' | 'mount_options'
+  >;
 }
 
 interface SessionLauncherValue {
@@ -302,47 +292,6 @@ const SessionTypeRadioList: React.FC<{
   );
 };
 
-/**
- * Gate the launch on the mount configuration, rejecting with the most specific
- * of the alias / subpath messages.
- */
-const validateVFolderMounts = (
-  value: VFolderMountConfigValue[] | undefined,
-  autoMountedFolderNames: string[],
-  t: TFunction,
-) => {
-  const statuses = _.values(
-    getVFolderMountConfigStatuses(value, { autoMountedFolderNames }),
-  );
-  if (_.some(statuses, (status) => status.aliasError === 'invalidFormat')) {
-    return Promise.reject(t('session.launcher.FolderAliasInvalid'));
-  }
-  const autoMountDestinations = new Set(
-    _.map(autoMountedFolderNames, (name) =>
-      inputToMountDestination(name, '', DEFAULT_ALIAS_BASE_PATH),
-    ),
-  );
-  if (
-    _.some(
-      statuses,
-      (status) =>
-        status.aliasError === 'overlapping' &&
-        autoMountDestinations.has(status.mountDestination),
-    )
-  ) {
-    return Promise.reject(
-      t('session.launcher.FolderAliasOverlappingToAutoMount'),
-    );
-  }
-  if (_.some(statuses, (status) => status.aliasError === 'overlapping')) {
-    return Promise.reject(t('session.launcher.FolderAliasOverlapping'));
-  }
-  if (_.some(statuses, (status) => status.subpathError)) {
-    return Promise.reject(t('session.launcher.FolderSubpathInvalid'));
-  }
-  return Promise.resolve();
-};
-
 const SessionLauncherPage = () => {
   const app = App.useApp();
   const { logger } = useBAILogger();
@@ -367,8 +316,13 @@ const SessionLauncherPage = () => {
   const { startSession, defaultFormValues, upsertSessionNotification } =
     useStartSession();
   const StepParam = parseAsInteger.withDefault(0);
+  // Migrate at the parser so every reader of `formValuesFromQueryParams` sees
+  // `vfolderMounts`, never the legacy mount fields.
   const FormValuesParam = parseAsJson<DeepPartial<SessionLauncherFormValue>>(
-    (value) => value as DeepPartial<SessionLauncherFormValue>,
+    (value) =>
+      normalizeLegacyMountFields(
+        value as DeepPartial<SessionLauncherFormValue>,
+      ),
   ).withDefault(defaultFormValues);
   const AppOptionParam = parseAsJson<AppOption>(
     (value) => value as AppOption,
@@ -474,7 +428,7 @@ const SessionLauncherPage = () => {
       {},
       defaultFormValues,
       RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-      normalizeLegacyMountFields(formValuesFromQueryParams),
+      formValuesFromQueryParams,
     ) as SessionLauncherFormValue;
   }, [defaultFormValues, formValuesFromQueryParams]);
 
@@ -1388,73 +1342,10 @@ const SessionLauncherPage = () => {
                   title={t('webui.menu.Data&Storage')}
                   hidden={currentStepKey !== 'storage'}
                 >
-                  <Form.Item hidden name="autoMountedFolderNames">
-                    <div />
-                  </Form.Item>
-                  {/* Deprecated mount-by-name field, kept registered so
-                      SessionLauncherFormIncompatibleValueChecker can clear it. */}
-                  <Form.Item hidden name="mounts">
-                    <div />
-                  </Form.Item>
-                  <Form.Item
-                    noStyle
-                    dependencies={['owner', 'autoMountedFolderNames']}
-                  >
-                    {({ getFieldValue }) => {
-                      const ownerInfo = getFieldValue('owner');
-                      const isValidOwner =
-                        ownerInfo?.enabled &&
-                        _.every(_.omit(ownerInfo, 'enabled'), (key) => {
-                          return key !== undefined;
-                        });
-                      const ownerEmail = isValidOwner
-                        ? ownerInfo?.email
-                        : undefined;
-                      const autoMountedFolderNames: string[] =
-                        getFieldValue('autoMountedFolderNames') ?? [];
-
-                      return (
-                        <Form.Item
-                          name="vfolderMounts"
-                          rules={[
-                            {
-                              validator(_rule, value) {
-                                return validateVFolderMounts(
-                                  value,
-                                  autoMountedFolderNames,
-                                  t,
-                                );
-                              },
-                            },
-                          ]}
-                        >
-                          <BAIVFolderMountConfigInput
-                            currentProjectId={currentProjectContext.id}
-                            autoMountedFolderNames={autoMountedFolderNames}
-                            renderFolderSelect={(api) => (
-                              <BAILegacyVFolderSelect
-                                {...api}
-                                // A different owner is a different folder
-                                // list; remount so no stale selection shows.
-                                key={ownerEmail}
-                                ownerEmail={ownerEmail}
-                                filter={(folder) =>
-                                  folder.status === 'ready' &&
-                                  !folder.name.startsWith('.')
-                                }
-                                onAutoMountedFoldersChange={(names) => {
-                                  form.setFieldValue(
-                                    'autoMountedFolderNames',
-                                    names,
-                                  );
-                                }}
-                              />
-                            )}
-                          />
-                        </Form.Item>
-                      );
-                    }}
-                  </Form.Item>
+                  <SessionLauncherStorageStep
+                    form={form}
+                    currentProjectId={currentProjectContext.id}
+                  />
                 </StepCard>
 
                 {/* Step Start*/}
