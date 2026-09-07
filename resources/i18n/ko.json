@@ -1209,6 +1209,7 @@
     "ResourcePreset": "리소스 프리셋",
     "Resources": "리소스",
     "Result": "결과",
+    "RevertToLoadedRevisionValue": "불러온 리비전 값으로 되돌리기",
     "Revision": "리비전",
     "RevisionAdded": "리비전이 추가되었습니다.",
     "RevisionDetail": "리비전 상세",

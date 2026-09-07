@@ -108,7 +108,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Info, RotateCw, FolderOpenIcon, PlusIcon } from 'lucide-react';
+import { Info, RotateCw, FolderOpenIcon, PlusIcon, Undo2 } from 'lucide-react';
 import React, {
   Suspense,
   startTransition,
@@ -271,6 +271,60 @@ const VariantDefaultModelDefinitionLoader: React.FC<{
   }, [data.runtimeVariant?.defaultModelDefinition]);
 
   return null;
+};
+
+// Custom-form fields that carry a per-field "revert to the loaded revision's
+// value" affordance (FR-3468). Limited to the fields this modal renders itself
+// — the shared form-item components own their own layout.
+const REVERTIBLE_FIELD_NAMES = [
+  'modelFolderId',
+  'modelMountDestination',
+  'modelSubpath',
+  'runtimeVariantId',
+  'definitionPath',
+] as const;
+
+type RevertibleFieldName = (typeof REVERTIBLE_FIELD_NAMES)[number];
+
+type RevisionBaseline = Partial<Pick<FormValues, RevertibleFieldName>>;
+
+// A cleared text input yields '' where the baseline holds `undefined`; the two
+// submit identically, so neither counts as a divergence.
+const normalizeFieldValue = (value: unknown) =>
+  value === '' || value === null ? undefined : value;
+
+// Reverts a single field back to the revision the Custom form was loaded from,
+// and renders nothing at all while that field still matches it.
+// `useWatch` rather than a `dependencies` render prop: the latter re-renders
+// only on user input, so the button would survive its own click.
+const RevertToRevisionValueButton: React.FC<{
+  name: RevertibleFieldName;
+  baseline: RevisionBaseline | null;
+  form: FormInstance<FormValues>;
+}> = ({ name, baseline, form }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const currentValue = Form.useWatch(name, form);
+  if (!baseline) return null;
+  const loadedValue = baseline[name];
+  if (
+    _.isEqual(
+      normalizeFieldValue(currentValue),
+      normalizeFieldValue(loadedValue),
+    )
+  ) {
+    return null;
+  }
+  return (
+    <IconButton
+      variant="ghost"
+      size="sm"
+      icon={<Undo2 size="1em" />}
+      label={t('deployment.RevertToLoadedRevisionValue')}
+      tooltip={t('deployment.RevertToLoadedRevisionValue')}
+      onClick={() => form.setFieldValue(name, loadedValue)}
+    />
+  );
 };
 
 const SectionHeader: React.FC<{ children: React.ReactNode }> = ({
@@ -609,6 +663,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   // After the user clicks "Load current revision" the alert vanishes — there
   // is nothing else to load and the form already reflects the prefill.
   const [hasLoadedCurrent, setHasLoadedCurrent] = useState(false);
+  // Snapshot of the values the Custom form was last loaded with from a
+  // revision — the deployment's current revision, or the source revision the
+  // modal was opened from. Drives the per-field revert buttons (FR-3468);
+  // stays null until a revision is actually loaded, so a from-scratch Custom
+  // form shows no revert affordance at all.
+  const [revisionBaseline, setRevisionBaseline] =
+    useState<RevisionBaseline | null>(null);
   // Apply the source-revision prefill exactly once on first Custom-mode
   // render so toggling Preset → Custom later does not re-stomp values the
   // user has since edited. When the modal opens in Preset mode (per the
@@ -1008,6 +1069,9 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       setSelectedCardVfolderId(null);
     }
     customForm.resetFields();
+    // The Custom edits (and therefore the revision they were loaded from) are
+    // discarded here, so the revert baseline must go with them.
+    setRevisionBaseline(null);
     setPresetTransferPrefill(null);
     setCustomTransferPrefill(
       Object.keys(carryOver).length > 0 ? carryOver : null,
@@ -1104,7 +1168,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       );
     }
 
-    customForm.setFieldsValue({
+    const nextValues = {
       cluster_mode:
         rev.clusterConfig?.mode === 'SINGLE_NODE'
           ? 'single-node'
@@ -1210,7 +1274,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             port: service.port,
           }
         : {}),
-    });
+    };
+
+    customForm.setFieldsValue(nextValues);
+    // Baseline for the per-field revert affordance (FR-3468). Snapshotted from
+    // the DERIVED values, not the raw revision, so the icon only appears where
+    // the user actually diverged from what was loaded.
+    setRevisionBaseline(_.pick(nextValues, REVERTIBLE_FIELD_NAMES));
   };
 
   // One-shot consumption of preset-transfer prefill when the user transitions
@@ -2370,6 +2440,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   );
                 }}
               </BAIFormItem>
+              <RevertToRevisionValueButton
+                name="modelFolderId"
+                baseline={revisionBaseline}
+                form={customForm}
+              />
             </BAIFlex>
           </BAIFormItem>
           {/* Model-folder mount config (FR-3205): the destination path and an
@@ -2378,33 +2453,49 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
               config-file sections. */}
           <BAIFlex gap="sm" align="start">
             <BAIFormItem
-              name="modelMountDestination"
               label={t('modelService.ModelMountDestination')}
               tooltip={t('modelService.ModelMountTooltip')}
               style={{ flex: 1 }}
             >
-              <AstryxFormTextInput
-                label={t('modelService.ModelMountDestination')}
-                hasClear
-                placeholder={modelDefinitionDefaults?.modelMountDestination}
-              />
+              <BAIFlex direction="row" gap="xs">
+                <BAIFormItem name="modelMountDestination" noStyle>
+                  <AstryxFormTextInput
+                    label={t('modelService.ModelMountDestination')}
+                    hasClear
+                    placeholder={modelDefinitionDefaults?.modelMountDestination}
+                  />
+                </BAIFormItem>
+                <RevertToRevisionValueButton
+                  name="modelMountDestination"
+                  baseline={revisionBaseline}
+                  form={customForm}
+                />
+              </BAIFlex>
             </BAIFormItem>
             {supportsMountSubpath && (
               <BAIFormItem
-                name="modelSubpath"
                 label={t('modelService.Subpath')}
                 tooltip={t('modelService.SubpathTooltip')}
                 style={{ flex: 1 }}
               >
-                <BAIVFolderPathPicker
-                  label={t('modelService.Subpath')}
-                  vfolderUuid={
-                    watchedModelFolderId
-                      ? toLocalId(watchedModelFolderId)
-                      : undefined
-                  }
-                  disabled={!watchedModelFolderId}
-                />
+                <BAIFlex direction="row" gap="xs">
+                  <BAIFormItem name="modelSubpath" noStyle>
+                    <BAIVFolderPathPicker
+                      label={t('modelService.Subpath')}
+                      vfolderUuid={
+                        watchedModelFolderId
+                          ? toLocalId(watchedModelFolderId)
+                          : undefined
+                      }
+                      disabled={!watchedModelFolderId}
+                    />
+                  </BAIFormItem>
+                  <RevertToRevisionValueButton
+                    name="modelSubpath"
+                    baseline={revisionBaseline}
+                    form={customForm}
+                  />
+                </BAIFlex>
               </BAIFormItem>
             )}
           </BAIFlex>
@@ -2414,40 +2505,53 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             }
           >
             <BAIFormItem
-              name="runtimeVariantId"
               label={t('deployment.RuntimeVariant')}
               tooltip={t('deployment.RuntimeVariantTooltip')}
-              rules={[
-                { required: true },
-                {
-                  warningOnly: true,
-                  validator: async (_rule, value: string) => {
-                    const v = runtimeVariantMap[value];
-                    // Warn for variants that do NOT read the vfolder config
-                    // files: their default command is applied by the backend.
-                    // Fall back to the legacy `name === 'custom'` heuristic on
-                    // pre-26.8.0 managers (field stripped → undefined).
-                    const reads =
-                      v?.readsVfolderConfigFiles ?? v?.name === 'custom';
-                    if (v && !reads) {
-                      return Promise.reject(
-                        t(
-                          'modelService.RuntimeVariantDefaultCommandAppliedNote',
-                        ),
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
+              required
             >
-              <BAIRuntimeVariantSelect
-                label={t('deployment.RuntimeVariant')}
-                isLabelHidden
-                onResolvedVariantsChange={(map) =>
-                  setRuntimeVariantMap((prev) => ({ ...prev, ...map }))
-                }
-              />
+              <BAIFlex direction="row" gap="xs">
+                <BAIFormItem
+                  name="runtimeVariantId"
+                  messageVariables={{ label: t('deployment.RuntimeVariant') }}
+                  noStyle
+                  rules={[
+                    { required: true },
+                    {
+                      warningOnly: true,
+                      validator: async (_rule, value: string) => {
+                        const v = runtimeVariantMap[value];
+                        // Warn for variants that do NOT read the vfolder config
+                        // files: their default command is applied by the backend.
+                        // Fall back to the legacy `name === 'custom'` heuristic on
+                        // pre-26.8.0 managers (field stripped → undefined).
+                        const reads =
+                          v?.readsVfolderConfigFiles ?? v?.name === 'custom';
+                        if (v && !reads) {
+                          return Promise.reject(
+                            t(
+                              'modelService.RuntimeVariantDefaultCommandAppliedNote',
+                            ),
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <BAIRuntimeVariantSelect
+                    label={t('deployment.RuntimeVariant')}
+                    isLabelHidden
+                    onResolvedVariantsChange={(map) =>
+                      setRuntimeVariantMap((prev) => ({ ...prev, ...map }))
+                    }
+                  />
+                </BAIFormItem>
+                <RevertToRevisionValueButton
+                  name="runtimeVariantId"
+                  baseline={revisionBaseline}
+                  form={customForm}
+                />
+              </BAIFlex>
             </BAIFormItem>
           </Suspense>
 
@@ -2567,17 +2671,31 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   does not read the vfolder config files. */}
               {readsVfolderConfigFiles && (
                 <BAIFormItem
-                  name="definitionPath"
                   label={t('deployment.ModelDefinitionPath')}
                   tooltip={t('modelService.ModelDefinitionPathTooltip')}
-                  rules={[{ whitespace: true }]}
-                  preserve={false}
                 >
-                  <AstryxFormTextInput
-                    label={t('deployment.ModelDefinitionPath')}
-                    hasClear
-                    placeholder="model-definition.yaml"
-                  />
+                  <BAIFlex direction="row" gap="xs">
+                    <BAIFormItem
+                      name="definitionPath"
+                      messageVariables={{
+                        label: t('deployment.ModelDefinitionPath'),
+                      }}
+                      noStyle
+                      rules={[{ whitespace: true }]}
+                      preserve={false}
+                    >
+                      <AstryxFormTextInput
+                        label={t('deployment.ModelDefinitionPath')}
+                        hasClear
+                        placeholder="model-definition.yaml"
+                      />
+                    </BAIFormItem>
+                    <RevertToRevisionValueButton
+                      name="definitionPath"
+                      baseline={revisionBaseline}
+                      form={customForm}
+                    />
+                  </BAIFlex>
                 </BAIFormItem>
               )}
               <BAIFormItem

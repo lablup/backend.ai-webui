@@ -8,6 +8,7 @@ import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -186,7 +187,12 @@ const TestRenderer: React.FC = () => {
   );
 };
 
-const renderModal = (metadata: DeploymentMetadataMock) => {
+type MockResolvers = Parameters<typeof MockPayloadGenerator.generate>[1];
+
+const renderModal = (
+  metadata: DeploymentMetadataMock,
+  mockResolvers: MockResolvers = {},
+) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const queryClient = new QueryClient();
   environment.mock.queueOperationResolver((operation) =>
@@ -195,6 +201,7 @@ const renderModal = (metadata: DeploymentMetadataMock) => {
       // Keep the "Load current revision" path quiet: no current revision.
       ModelDeployment: () => ({ currentRevision: null }),
       DeploymentRevisionPresetConnection: () => ({ count: 1 }),
+      ...mockResolvers,
     }),
   );
   render(
@@ -289,5 +296,68 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
     expect(
       screen.queryByTestId('mock-resource-allocation-form'),
     ).not.toBeInTheDocument();
+  });
+});
+
+/**
+ * Per-field revert-to-loaded-revision affordance (FR-3468). It is a
+ * dirty-field-only control: hidden while the Custom form still matches the
+ * revision it was loaded from, and it reverts only the field it sits next to.
+ */
+describe('DeploymentAddRevisionModal per-field revert (FR-3468)', () => {
+  const LOADED_MOUNT_DESTINATION = '/models/loaded';
+  const REVERT_LABEL = 'deployment.RevertToLoadedRevisionValue';
+
+  afterEach(() => {
+    mockMode = 'preset';
+  });
+
+  const loadCurrentRevision = async (
+    user: ReturnType<typeof userEvent.setup>,
+  ) => {
+    mockMode = 'custom';
+    renderModal(DEPLOYMENT_METADATA, {
+      // Let the generator build a full current revision, but pin the one
+      // field this spec reads back.
+      ModelDeployment: () => ({}),
+      ModelMountConfig: () => ({
+        mountDestination: LOADED_MOUNT_DESTINATION,
+      }),
+    });
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'deployment.LoadCurrentRevision',
+      }),
+    );
+    return screen.findByDisplayValue(LOADED_MOUNT_DESTINATION);
+  };
+
+  it('shows no revert affordance while every field still matches the loaded revision', async () => {
+    const user = userEvent.setup();
+    await loadCurrentRevision(user);
+
+    expect(
+      screen.queryByRole('button', { name: REVERT_LABEL }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('reverts an edited field back to the loaded revision value', async () => {
+    const user = userEvent.setup();
+    const input = await loadCurrentRevision(user);
+
+    await user.type(input, '-edited');
+    expect(input).toHaveValue(`${LOADED_MOUNT_DESTINATION}-edited`);
+
+    await user.click(await screen.findByRole('button', { name: REVERT_LABEL }));
+
+    await waitFor(() => {
+      expect(input).toHaveValue(LOADED_MOUNT_DESTINATION);
+    });
+    // Back in sync with the revision → the affordance withdraws again.
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('button', { name: REVERT_LABEL }),
+      ).not.toBeInTheDocument();
+    });
   });
 });

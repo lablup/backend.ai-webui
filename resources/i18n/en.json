@@ -1196,6 +1196,7 @@
     "ResourcePreset": "Resource Preset",
     "Resources": "Resources",
     "Result": "Result",
+    "RevertToLoadedRevisionValue": "Revert to loaded revision value",
     "Revision": "Revision",
     "RevisionAdded": "Revision has been added.",
     "RevisionDetail": "Revision Detail",
