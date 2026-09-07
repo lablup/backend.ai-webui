@@ -10,6 +10,7 @@ import {
 import { Image } from '../ImageEnvironmentSelectFormItems';
 import {
   getAllocatablePresetNames,
+  getAutoSelectedAllocationPreset,
   getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
 } from './ResourceAllocationFormItems';
@@ -195,5 +196,54 @@ describe('getAllocatablePresetNames', () => {
     );
     // Only compare with resource limits
     expect(result).toEqual(['cpu1_mem2g']);
+  });
+});
+
+describe('getAutoSelectedAllocationPreset', () => {
+  it('starts on "minimum-required" when custom resource allocation is allowed', () => {
+    expect(
+      getAutoSelectedAllocationPreset({
+        allocatablePresetNames: ['small', 'medium', 'large'],
+        enableResourcePresets: true,
+        allowCustomResourceAllocation: true,
+      }),
+    ).toBe('minimum-required');
+  });
+
+  it('starts on "minimum-required" even when no preset is allocatable', () => {
+    expect(
+      getAutoSelectedAllocationPreset({
+        allocatablePresetNames: [],
+        enableResourcePresets: true,
+        allowCustomResourceAllocation: true,
+      }),
+    ).toBe('minimum-required');
+  });
+
+  it('falls back to the alphabetically first allocatable preset when "minimum-required" is not offered', () => {
+    expect(
+      getAutoSelectedAllocationPreset({
+        allocatablePresetNames: ['small', 'medium', 'large'],
+        enableResourcePresets: true,
+        allowCustomResourceAllocation: false,
+      }),
+    ).toBe('large');
+  });
+
+  it('returns null when presets are disabled or none is allocatable and "minimum-required" is not offered', () => {
+    expect(
+      getAutoSelectedAllocationPreset({
+        allocatablePresetNames: ['small'],
+        enableResourcePresets: false,
+        allowCustomResourceAllocation: false,
+      }),
+    ).toBeNull();
+    expect(
+      getAutoSelectedAllocationPreset({
+        allocatablePresetNames: [],
+        enableResourcePresets: true,
+        allowCustomResourceAllocation: false,
+      }),
+    ).toBeNull();
   });
 });

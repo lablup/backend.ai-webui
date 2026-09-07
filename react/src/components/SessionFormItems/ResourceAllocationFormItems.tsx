@@ -664,16 +664,24 @@ const ResourceAllocationFormItems: React.FC<
           )
         ) {
           // if the current preset is available in the current resource group, do nothing.
-        } else if (enableResourcePresets && allocatablePresetNames[0]) {
-          const autoSelectedPreset = _.sortBy(allocatablePresetNames)[0];
-          form.setFieldsValue({
-            allocationPreset: autoSelectedPreset,
-          });
-          updateResourceFieldsBasedOnPreset(autoSelectedPreset);
         } else {
-          // if the current preset is not available in the current resource group, set to "minimum-required".
-          if (baiClient._config.allowCustomResourceAllocation) {
-            form.setFieldValue('allocationPreset', 'minimum-required');
+          const autoSelectedPreset = getAutoSelectedAllocationPreset({
+            allocatablePresetNames,
+            enableResourcePresets,
+            allowCustomResourceAllocation:
+              baiClient._config.allowCustomResourceAllocation,
+          });
+          if (autoSelectedPreset === 'minimum-required') {
+            // resource fields are filled by the image-driven effect below.
+            form.setFieldsValue({
+              allocationPreset: 'minimum-required',
+              enabledAutomaticShmem: true,
+            });
+          } else if (autoSelectedPreset) {
+            form.setFieldsValue({
+              allocationPreset: autoSelectedPreset,
+            });
+            updateResourceFieldsBasedOnPreset(autoSelectedPreset);
           } else {
             form.setFieldValue('allocationPreset', null);
           }
@@ -1816,6 +1824,27 @@ const MemoizedResourceAllocationFormItems = React.memo(
 );
 
 export default MemoizedResourceAllocationFormItems;
+
+// The preset the launcher starts with (FR-1973). `minimum-required` is only
+// rendered when `allowCustomResourceAllocation` is on, so without it the
+// fallback has to stay a real preset or the field becomes unselectable.
+export const getAutoSelectedAllocationPreset = ({
+  allocatablePresetNames,
+  enableResourcePresets,
+  allowCustomResourceAllocation,
+}: {
+  allocatablePresetNames: Array<string>;
+  enableResourcePresets?: boolean;
+  allowCustomResourceAllocation?: boolean;
+}): string | null => {
+  if (allowCustomResourceAllocation) {
+    return 'minimum-required';
+  }
+  if (enableResourcePresets && allocatablePresetNames[0]) {
+    return _.sortBy(allocatablePresetNames)[0];
+  }
+  return null;
+};
 
 export const getAllocatablePresetNames = (
   presets: Array<ResourcePreset> | undefined,
