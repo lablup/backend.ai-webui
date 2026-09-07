@@ -205,7 +205,10 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
                     // invitation semantics are restated explicitly (the
                     // per-site colour decision BAIBadgeCount documents).
                     variant="error"
-                    offset={[-token('--spacing-2'), -token('--spacing-2')]}
+                    offset={[
+                      -parseFloat(token('--spacing-2')),
+                      -parseFloat(token('--spacing-2')),
+                    ]}
                     // As in the antd version: lift the overlay above the
                     // sticky BAIBoardItemTitle band so the pill is not
                     // painted over (the original passed zIndex 50 to Badge).
