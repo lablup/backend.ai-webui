@@ -143,6 +143,27 @@ describe('createLocalStorageCache persistence', () => {
     expect(cache.getAll().map(({ id }) => id)).toEqual(['a', 'b']);
   });
 
+  it('keeps the full payload path after a write failure that stored nothing', () => {
+    setItem.mockImplementation(() => {
+      throw quotaError();
+    });
+    const cache = createLocalStorageCache<Entry>('test.cache', oldestFirst);
+
+    expect(cache.set('a', entry('2026-01-01T00:00:00.000Z')).status).toBe(
+      'failed',
+    );
+
+    // Storage recovers: the next write must retry the full payload rather than
+    // reporting `ok` while silently storing stripped attachments.
+    setItem.mockImplementation(() => {});
+
+    expect(cache.set('b', entry('2026-01-02T00:00:00.000Z'))).toEqual({
+      status: 'ok',
+      unpersistedKeys: [],
+    });
+    expect(lastWrittenValue(setItem)).toContain('data:image/png;base64,');
+  });
+
   it('does not throw out of delete()', () => {
     const cache = createLocalStorageCache<Entry>('test.cache', oldestFirst);
     cache.set('a', entry('2026-01-01T00:00:00.000Z'));

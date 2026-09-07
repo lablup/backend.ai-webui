@@ -127,6 +127,7 @@ export function createLocalStorageCache<T>(
       dropsAttachments = true;
       return { status, unpersistedKeys: [] };
     }
+    const wasDroppingAttachments = dropsAttachments;
     dropsAttachments = true;
 
     const dropOrder = entries.slice();
@@ -145,8 +146,11 @@ export function createLocalStorageCache<T>(
     }
 
     // Nothing fits: keep the previously stored copy rather than wiping a still
-    // valid one, and take back the exclusions that bought nothing.
+    // valid one, and take back the exclusions that bought nothing. Stripping
+    // only becomes sticky once a stripped write actually succeeded, or a later
+    // write that could hold the full payload would silently drop attachments.
     dropped.forEach((key) => unpersistedKeys.delete(key));
+    dropsAttachments = wasDroppingAttachments;
     return { status: 'failed', unpersistedKeys: [] };
   };
 
