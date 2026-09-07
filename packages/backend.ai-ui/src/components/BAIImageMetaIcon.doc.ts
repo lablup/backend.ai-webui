@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The framework icon for a Backend.AI container image. It reads image metadata through `useBAIImageMetaData()` and joins the host-supplied `imagePath` with the icon filename declared for that image (falling back to `default.png`), then renders a 1em square `<img>` aligned to the surrounding text. It renders nothing when the host application has not provided an `imagePath` — the package resolves no asset paths of its own — so a consumer must sit under `BAIMetaDataProvider` for an icon to appear.',
+      'The framework icon for a Backend.AI container image. It reads image metadata through `useBAIImageMetaData()` and joins the host-supplied `imagePath` with the icon filename declared for that image, then renders a 1em square `<img>` aligned to the surrounding text. An image whose metadata declares no icon renders a themed inline `</>` glyph instead of a raster fallback, so it stays legible in both light and dark themes. It renders nothing when the host application has not provided an `imagePath` — the package resolves no asset paths of its own — so a consumer must sit under `BAIMetaDataProvider` for an icon to appear.',
     bestPractices: [
       {
         guidance: true,
