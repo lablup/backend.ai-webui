@@ -9,6 +9,7 @@ import {
 } from '../../__generated__/ConnectedKernelListV2Query.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
 import { convertToOrderBy } from '../../helper';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionState } from '../../hooks/reactPaginationQueryOptions';
 import ContainerLogModal from './ContainerLogModal';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -51,6 +52,11 @@ const KERNEL_STATUSES = [
   'CANCELLED',
 ];
 
+// Keeps the main kernel first, matching the legacy list's client-side
+// `orderBy(['cluster_role', 'cluster_idx'])`. Offset pagination needs a
+// deterministic order, so this is restored whenever sorting is cleared.
+const DEFAULT_ORDER = 'cluster.clusterIdx';
+
 interface ConnectedKernelListV2Props {
   sessionId: string;
   sessionFrgmtForLogModal: ContainerLogModalFragment$key;
@@ -64,9 +70,13 @@ const ConnectedKernelListV2: React.FC<ConnectedKernelListV2Props> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
+  // capability; 26.2-26.6 serve `sessionKernelsV2` but reject them.
+  const supportsSubFilter = baiClient.supports('sub-filter');
   const [kernelIdForLogModal, setKernelIdForLogModal] = useState<string>();
   const [filter, setFilter] = useState<KernelV2Filter>();
-  const [order, setOrder] = useState<string | null>('cluster.clusterIdx');
+  const [order, setOrder] = useState<string | null>(DEFAULT_ORDER);
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -188,6 +198,7 @@ const ConnectedKernelListV2: React.FC<ConnectedKernelListV2Props> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIGraphQLPropertyFilter
+        singleCondition={!supportsSubFilter}
         value={filter}
         onChange={(next) => {
           setFilter(next);
@@ -225,7 +236,7 @@ const ConnectedKernelListV2: React.FC<ConnectedKernelListV2Props> = ({
         dataSource={_.map(sessionKernelsV2?.edges, 'node')}
         order={order}
         onChangeOrder={(nextOrder) => {
-          setOrder(nextOrder ?? null);
+          setOrder(nextOrder ?? DEFAULT_ORDER);
           setTablePaginationOption({ current: 1 });
         }}
         pagination={{

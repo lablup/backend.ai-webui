@@ -24,6 +24,16 @@ vi.mock('react-i18next', async () => {
   };
 });
 
+vi.mock('../../hooks', async (importOriginal) => {
+  const originalModule = await importOriginal<typeof import('../../hooks')>();
+  return {
+    ...originalModule,
+    useSuspendedBackendaiClient: () => ({
+      supports: (feature: string) => feature === 'sub-filter',
+    }),
+  };
+});
+
 const KERNEL_UUID = '11111111-1111-1111-1111-111111111111';
 
 const renderList = () => {

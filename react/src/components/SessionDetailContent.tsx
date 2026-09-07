@@ -674,6 +674,10 @@ const SessionDetailContent: React.FC<{
           <Suspense fallback={<BAISkeleton />}>
             {baiClient.supports('session-kernels-v2') && session.row_id ? (
               <ConnectedKernelListV2
+                // Navigating to a dependent/dependency session swaps `row_id`
+                // without unmounting this component; remount so the filter,
+                // page and sort do not carry over.
+                key={session.row_id}
                 sessionId={session.row_id}
                 sessionFrgmtForLogModal={session}
                 fetchKey={fetchKey}
