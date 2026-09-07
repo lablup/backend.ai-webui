@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e98fcfd310a1be6d21e4406ab5662b69>>
+ * @generated SignedSource<<3423d6c56df3f7a5784c47b00d53863f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,11 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type VFolderMountFormItemAutoMountQuery$variables = {
+export type useAutoMountedFolderNamesQuery$variables = {
   filter?: string | null | undefined;
   scopeId?: any | null | undefined;
 };
-export type VFolderMountFormItemAutoMountQuery$data = {
+export type useAutoMountedFolderNamesQuery$data = {
   readonly vfolder_nodes: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -23,9 +23,9 @@ export type VFolderMountFormItemAutoMountQuery$data = {
     } | null | undefined>;
   } | null | undefined;
 };
-export type VFolderMountFormItemAutoMountQuery = {
-  response: VFolderMountFormItemAutoMountQuery$data;
-  variables: VFolderMountFormItemAutoMountQuery$variables;
+export type useAutoMountedFolderNamesQuery = {
+  response: useAutoMountedFolderNamesQuery$data;
+  variables: useAutoMountedFolderNamesQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -83,7 +83,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "VFolderMountFormItemAutoMountQuery",
+    "name": "useAutoMountedFolderNamesQuery",
     "selections": [
       {
         "alias": null,
@@ -131,7 +131,7 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "VFolderMountFormItemAutoMountQuery",
+    "name": "useAutoMountedFolderNamesQuery",
     "selections": [
       {
         "alias": null,
@@ -178,16 +178,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2ea69c4b80c3e6b0400d0d35b712b6e4",
+    "cacheID": "5b6c371b0512a8cbbbe25de6b34ba475",
     "id": null,
     "metadata": {},
-    "name": "VFolderMountFormItemAutoMountQuery",
+    "name": "useAutoMountedFolderNamesQuery",
     "operationKind": "query",
-    "text": "query VFolderMountFormItemAutoMountQuery(\n  $scopeId: ScopeField\n  $filter: String\n) {\n  vfolder_nodes(scope_id: $scopeId, filter: $filter, first: 100, permission: \"read_attribute\") {\n    edges {\n      node {\n        name\n        status\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useAutoMountedFolderNamesQuery(\n  $scopeId: ScopeField\n  $filter: String\n) {\n  vfolder_nodes(scope_id: $scopeId, filter: $filter, first: 100, permission: \"read_attribute\") {\n    edges {\n      node {\n        name\n        status\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "da5e26b789f151e5d2563d6166d764fa";
+(node as any).hash = "0e657d4d12da28be7b05e3877ccf2a6d";
 
 export default node;

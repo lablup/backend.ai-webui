@@ -137,6 +137,9 @@ const FileBrowserButtonWithProject: React.FC<
       fragment FileBrowserButtonV2Fragment on VFolder {
         id
         host
+        metadata {
+          name
+        }
       }
     `,
     vfolderNodeFrgmt,
@@ -167,7 +170,12 @@ const FileBrowserButtonWithProject: React.FC<
     allocationPreset: 'minimum-required',
     cluster_mode: 'single-node',
     cluster_size: 1,
-    vfolderMounts: [{ vfolderId: toLocalId(vfolderNode.id || '') }],
+    vfolderMounts: [
+      {
+        vfolderId: toLocalId(vfolderNode.id || ''),
+        name: vfolderNode.metadata.name,
+      },
+    ],
     reuseIfExists: true,
   });
 

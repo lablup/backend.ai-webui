@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3db6e9e415b4afc749f7aa3634f6cd29>>
+ * @generated SignedSource<<3f9532f21d448e4b20f3fd3269bc6c53>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type FileBrowserButtonFragment$data = {
   readonly host: string | null | undefined;
   readonly id: string;
+  readonly name: string | null | undefined;
   readonly " $fragmentType": "FileBrowserButtonFragment";
 };
 export type FileBrowserButtonFragment$key = {
@@ -39,12 +40,19 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "host",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
     }
   ],
   "type": "VirtualFolderNode",
   "abstractKey": null
 };
 
-(node as any).hash = "b96df1a5289fd1330848207e43880ddd";
+(node as any).hash = "593cdf98aae673545e15d0a63063671c";
 
 export default node;

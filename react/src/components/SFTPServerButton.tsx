@@ -81,6 +81,7 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
       fragment SFTPServerButtonFragment on VirtualFolderNode {
         id
         host
+        name
       }
     `,
     vfolderFrgmt,
@@ -128,7 +129,12 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
         }),
     cluster_mode: 'single-node',
     cluster_size: 1,
-    vfolderMounts: [{ vfolderId: toLocalId(vfolder?.id || '') }],
+    vfolderMounts: [
+      {
+        vfolderId: toLocalId(vfolder?.id || ''),
+        name: vfolder?.name ?? undefined,
+      },
+    ],
     resourceGroup: sftpScalingGroupByCurrentProject?.[0],
     reuseIfExists: true,
   });

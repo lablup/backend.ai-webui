@@ -138,6 +138,9 @@ const SFTPServerButtonWithProject: React.FC<
       fragment SFTPServerButtonV2Fragment on VFolder {
         id
         host
+        metadata {
+          name
+        }
       }
     `,
     vfolderNodeFrgmt,
@@ -184,7 +187,12 @@ const SFTPServerButtonWithProject: React.FC<
         }),
     cluster_mode: 'single-node',
     cluster_size: 1,
-    vfolderMounts: [{ vfolderId: toLocalId(vfolderNode?.id || '') }],
+    vfolderMounts: [
+      {
+        vfolderId: toLocalId(vfolderNode?.id || ''),
+        name: vfolderNode?.metadata.name,
+      },
+    ],
     resourceGroup: sftpScalingGroupsByProject?.[0],
     reuseIfExists: true,
   });

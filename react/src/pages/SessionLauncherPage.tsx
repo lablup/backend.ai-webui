@@ -124,7 +124,7 @@ import { useLocation } from 'react-router-dom';
 
 type SessionLauncherFormData = Omit<
   Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
-  'autoMountedFolderNames' | 'mounts'
+  'mounts'
 >;
 
 export interface SessionResources {
@@ -186,7 +186,6 @@ interface SessionLauncherValue {
 
 export interface SessionLauncherVFolderMountValues {
   vfolderMounts?: VFolderMountConfigValue[];
-  autoMountedFolderNames?: string[];
   /**
    * Deprecated mount-by-name field. Only `SessionLauncherFormIncompatibleValueChecker`
    * still reads it, to warn about and clear a stale `?formValues=` param.
@@ -364,7 +363,6 @@ const SessionLauncherPage = () => {
           _.omit(form.getFieldsValue(), [
             'environments.image',
             'environments.customizedTag',
-            'autoMountedFolderNames',
             'owner',
             'envvars',
           ]),
@@ -1593,7 +1591,6 @@ const SessionLauncherPage = () => {
                 sessionName: '',
                 ports: [],
                 vfolderMounts: [],
-                autoMountedFolderNames: [],
                 bootstrap_script: '',
                 num_of_sessions: 1,
                 owner: {
@@ -1614,8 +1611,7 @@ const SessionLauncherPage = () => {
                 },
                 reuseIfExists: false,
                 agent: ['auto'], // Add the missing 'agent' property
-              } as SessionLauncherFormData &
-                Pick<SessionLauncherFormValue, 'autoMountedFolderNames'>,
+              } as SessionLauncherFormData,
               normalizeLegacyMountFields(formValue),
             );
 

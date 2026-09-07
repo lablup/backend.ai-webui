@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2aa0d450b0a8a53405558be7ff8f4627>>
+ * @generated SignedSource<<bfad94b82abcd97a7931f01cadac9a90>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,9 @@ import { FragmentRefs } from "relay-runtime";
 export type SFTPServerButtonV2Fragment$data = {
   readonly host: string;
   readonly id: string;
+  readonly metadata: {
+    readonly name: string;
+  };
   readonly " $fragmentType": "SFTPServerButtonV2Fragment";
 };
 export type SFTPServerButtonV2Fragment$key = {
@@ -39,12 +42,30 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "host",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "VFolderMetadataInfo",
+      "kind": "LinkedField",
+      "name": "metadata",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "name",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
     }
   ],
   "type": "VFolder",
   "abstractKey": null
 };
 
-(node as any).hash = "2f5e3fcd4a3628503f3a7834810de34b";
+(node as any).hash = "97d22dc6a9ff3ed4b16f2c89b13714e1";
 
 export default node;
