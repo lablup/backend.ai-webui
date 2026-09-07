@@ -1209,7 +1209,7 @@
     "ResourcePreset": "リソースプリセット",
     "Resources": "リソース",
     "Result": "結果",
-    "RevertToLoadedRevisionValue": "__NOT_TRANSLATED__",
+    "RevertToLoadedRevisionValue": "読み込んだ Revision の値に戻す",
     "Revision": "リビジョン",
     "RevisionAdded": "リビジョンが追加されました。",
     "RevisionDetail": "Revision 詳細",

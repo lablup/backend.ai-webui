@@ -305,7 +305,20 @@ const RevertToRevisionValueButton: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const currentValue = Form.useWatch(name, form);
+  const currentModelFolderId = Form.useWatch('modelFolderId', form);
   if (!baseline) return null;
+  // A subpath belongs to the folder it was picked from, so while the folder
+  // itself diverges the loaded subpath would land in the wrong folder. The
+  // folder's own revert restores the pair together.
+  if (
+    name === 'modelSubpath' &&
+    !_.isEqual(
+      normalizeFieldValue(currentModelFolderId),
+      normalizeFieldValue(baseline.modelFolderId),
+    )
+  ) {
+    return null;
+  }
   const loadedValue = baseline[name];
   if (
     _.isEqual(

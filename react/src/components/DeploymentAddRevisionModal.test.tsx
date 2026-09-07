@@ -46,12 +46,16 @@ vi.mock('react-i18next', async () => {
   };
 });
 
+// The subpath field only renders on managers advertising the feature.
+let mockSupportsMountSubpath = false;
+
 vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      supports: () => false,
+      supports: (feature: string) =>
+        feature === 'model-mount-subpath' ? mockSupportsMountSubpath : false,
       _config: { allowCustomResourceAllocation: true },
     }),
     useWebUINavigate: () => vi.fn(),
@@ -149,11 +153,24 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         {
           'data-testid': 'mock-vfolder-select',
           'data-current-project-id': props.currentProjectId ?? '',
+          'data-value': props.value ?? '',
           disabled: props.isDisabled ?? props.disabled,
           type: 'button',
+          // Clicking stands in for picking a different folder, so the form's
+          // own onChange cleanup runs exactly as it does in the app.
+          onClick: () =>
+            props.onChange?.(
+              btoa('VirtualFolderNode:22222222-2222-2222-2222-222222222222'),
+            ),
         },
         'select-model-folder',
       ),
+    BAIVFolderPathPicker: (props: any) =>
+      React.createElement('input', {
+        'data-testid': 'mock-subpath-picker',
+        value: props.value ?? '',
+        readOnly: true,
+      }),
     BAIAvailablePresetSelect: () => null,
     BAIRuntimeVariantSelect: () => null,
   };
@@ -306,10 +323,12 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
  */
 describe('DeploymentAddRevisionModal per-field revert (FR-3468)', () => {
   const LOADED_MOUNT_DESTINATION = '/models/loaded';
+  const LOADED_SUBPATH = 'loaded/subdir';
   const REVERT_LABEL = 'deployment.RevertToLoadedRevisionValue';
 
   afterEach(() => {
     mockMode = 'preset';
+    mockSupportsMountSubpath = false;
   });
 
   const loadCurrentRevision = async (
@@ -359,5 +378,54 @@ describe('DeploymentAddRevisionModal per-field revert (FR-3468)', () => {
         screen.queryByRole('button', { name: REVERT_LABEL }),
       ).not.toBeInTheDocument();
     });
+  });
+
+  // A subpath belongs to the folder it was picked from, so the two revert
+  // together: while the folder diverges the subpath offers no revert of its
+  // own, and reverting the folder restores the loaded pair.
+  it('reverts the model folder and its subpath as a pair', async () => {
+    const user = userEvent.setup();
+    mockSupportsMountSubpath = true;
+    mockMode = 'custom';
+    renderModal(DEPLOYMENT_METADATA, {
+      ModelDeployment: () => ({}),
+      ModelMountConfig: () => ({
+        mountDestination: LOADED_MOUNT_DESTINATION,
+        subpath: LOADED_SUBPATH,
+      }),
+    });
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'deployment.LoadCurrentRevision',
+      }),
+    );
+    await screen.findByDisplayValue(LOADED_MOUNT_DESTINATION);
+
+    const folderSelect = screen.getByTestId('mock-vfolder-select');
+    const subpathPicker = screen.getByTestId('mock-subpath-picker');
+    const loadedFolderId = folderSelect.getAttribute('data-value');
+    expect(subpathPicker).toHaveValue(LOADED_SUBPATH);
+
+    // Picking another folder clears the subpath that belonged to the old one.
+    await user.click(folderSelect);
+    await waitFor(() => {
+      expect(subpathPicker).toHaveValue('');
+    });
+
+    // Only the folder offers a revert; the subpath's own would restore the
+    // loaded path into the newly picked folder.
+    const revertButtons = await screen.findAllByRole('button', {
+      name: REVERT_LABEL,
+    });
+    expect(revertButtons).toHaveLength(1);
+
+    await user.click(revertButtons[0]);
+    await waitFor(() => {
+      expect(subpathPicker).toHaveValue(LOADED_SUBPATH);
+    });
+    expect(folderSelect).toHaveAttribute('data-value', loadedFolderId);
+    expect(
+      screen.queryByRole('button', { name: REVERT_LABEL }),
+    ).not.toBeInTheDocument();
   });
 });
