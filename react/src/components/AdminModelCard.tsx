@@ -346,12 +346,13 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 type: 'string',
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
-                renderInput: ({ onAddCondition }) => (
+                renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIStorageHostSelect
                     // The filter row already prints the property label.
                     label={t('import.StorageHost')}
                     isLabelHidden
-                    value={null}
+                    value={value}
+                    isDisabled={isDisabled}
                     onChange={(value) =>
                       // Single-select mode (no `multiple` prop) always emits a
                       // single value.

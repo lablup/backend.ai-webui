@@ -283,13 +283,19 @@ const sampleOwnerOptions = [
   { label: 'carol@example.com', value: 'owner-uuid-0003' },
 ];
 
+/** `renderInput`'s staged string -> the labeled object `BAIComplexSelect` takes. */
+const toLabeledValue = <T extends { value: string }>(
+  options: ReadonlyArray<T>,
+  value: string | null,
+): T | null => options.find((option) => option.value === value) ?? null;
+
 export const WithRenderInput: Story = {
   name: 'Custom Input via renderInput',
   parameters: {
     docs: {
       description: {
         story:
-          'When `renderInput` is provided, the default AutoComplete is replaced with a custom control. The control commits a condition via `onAddCondition(value, label?)` as soon as it emits a non-empty value; keep it controlled with `value={null}` so it clears after each commit. Pass the option label as the second argument so the condition tag shows a human-readable label (e.g. an email) instead of the opaque committed value (e.g. a UUID). Same contract as the one `BAIGraphQLPropertyFilter` adopts in FR-3011 (#8082), so controls become interchangeable once both land.',
+          "When `renderInput` is provided, the built-in value editor is replaced with a custom control. The control stages a value via `onAddCondition(value, label?)` and the edit popover's Apply button commits it; feed the render prop's `value` back into the control so the staged pick stays visible (and when an existing token is reopened for editing). Pass the option label as the second argument so the token shows a human-readable label (e.g. an email) instead of the opaque committed value (e.g. a UUID). Same contract as `BAIGraphQLPropertyFilter`, so controls are interchangeable.",
       },
     },
   },
@@ -306,14 +312,15 @@ export const WithRenderInput: Story = {
         propertyLabel: 'Owner',
         type: 'string',
         defaultOperator: '==',
-        renderInput: ({ onAddCondition }) => (
+        renderInput: ({ onAddCondition, value, isDisabled }) => (
           <BAIComplexSelect
             label="Owner"
             isLabelHidden
             placeholder="Select owner"
             width={220}
             options={sampleOwnerOptions}
-            value={null}
+            isDisabled={isDisabled}
+            value={toLabeledValue(sampleOwnerOptions, value)}
             onChange={(next) => {
               const labeled = next as BAILabeledValue | null;
               onAddCondition(labeled?.value, labeled?.label);

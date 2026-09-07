@@ -50,7 +50,12 @@ export type FilterPropertyOption = {
 
 /** The `renderInput` escape hatch shared by both filters (FR-3011 / FR-3258). */
 export type FilterRenderInput = (props: {
+  /** Stages a value; the edit popover's Apply button commits it. */
   onAddCondition: (value: string | undefined, label?: string) => void;
+  /** The staged (or committed) value — feed it back so the pick stays visible. */
+  value: string | null;
+  /** The popover's disabled state. */
+  isDisabled?: boolean;
 }) => ReactNode;
 
 /** Only string-ish labels survive into a token; anything else falls back. */
@@ -123,11 +128,7 @@ type EditorProps = {
 
 /**
  * Builds (and caches) one `custom` operator value per `renderInput` property.
- *
- * PILOT-DECISION: the antd filter committed a condition the instant the
- * control emitted a value. PowerSearch owns the commit (its popover has an
- * Apply button), so the control now stages the value and the user confirms.
- * One extra click; the alternative was reimplementing the popover.
+ * The control stages a value; the popover's Apply button commits it.
  */
 export function useRenderInputEditors({
   recordLabel,
@@ -150,24 +151,29 @@ export function useRenderInputEditors({
     const cached = editorCacheRef.current.get(propertyKey);
     if (cached) return cached;
 
-    const Editor: ComponentType<EditorProps> = ({ onChange }) => {
+    const Editor: ComponentType<EditorProps> = ({
+      onChange,
+      value,
+      isDisabled,
+    }) => {
       const render = latestRenderInputRef.current[propertyKey];
       return (
-        // The consumer's control is very often an antd Select whose dropdown
-        // lives in a body portal. Stop pointer events from bubbling out of the
-        // editor so the popover's dismiss-on-outside-click does not fire while
-        // the user is picking an option.
+        // The consumer's control usually opens its dropdown in a body portal;
+        // stop pointer events here so the popover's dismiss-on-outside-click
+        // does not fire while the user is picking an option.
         <div
           onPointerDown={(event) => event.stopPropagation()}
           onMouseDown={(event) => event.stopPropagation()}
         >
           {render?.({
-            onAddCondition: (value, label) => {
+            value,
+            isDisabled,
+            onAddCondition: (committed, label) => {
               // Truthy guard: an empty label would blank the token.
-              if (value != null && label) {
-                recordLabel(propertyKey, value, label);
+              if (committed != null && label) {
+                recordLabel(propertyKey, committed, label);
               }
-              onChange(value ?? null);
+              onChange(committed ?? null);
             },
           })}
         </div>

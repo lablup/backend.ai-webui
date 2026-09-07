@@ -363,12 +363,13 @@ const AdminComputeSessionListPage = () => {
                   propertyLabel: t('data.Project'),
                   type: 'string',
                   defaultOperator: '==',
-                  renderInput: ({ onAddCondition }) => (
+                  renderInput: ({ onAddCondition, value, isDisabled }) => (
                     <BAIAdminProjectSelect
                       // The filter row already prints the property label.
                       label={t('data.Project')}
                       isLabelHidden
-                      value={null}
+                      value={value}
+                      isDisabled={isDisabled}
                       width={200}
                       onChange={(value, option) => {
                         // P3C-1: the second argument survives on this wrapper so

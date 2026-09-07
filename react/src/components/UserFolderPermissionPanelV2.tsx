@@ -155,13 +155,14 @@ const UserFolderPermissionPanelV2: React.FC<
                   propertyLabel: t('storageHost.permission.User'),
                   type: 'uuid',
                   fixedOperator: 'equals',
-                  renderInput: ({ onAddCondition }) => (
+                  renderInput: ({ onAddCondition, value, isDisabled }) => (
                     <BAIUserSelect
                       // The filter row already prints the property label.
                       label={t('storageHost.permission.User')}
                       isLabelHidden
                       valuePropName="id"
-                      value={null}
+                      value={value}
+                      isDisabled={isDisabled}
                       onChange={(value, option) =>
                         // Single-select mode (no `multiple` prop) always emits
                         // a single value, so the P3C-1 `option` argument is the
