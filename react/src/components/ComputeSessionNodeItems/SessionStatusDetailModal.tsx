@@ -113,61 +113,77 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
           ) : null}
           {hasRenderableScheduler(statusData?.scheduler) ? (
             <>
-              <MetadataListItem label={t('session.LastTry')}>
-                {dayjs(statusData?.scheduler?.last_try).format('lll')}
-              </MetadataListItem>
-              <MetadataListItem label={t('session.TotalRetries')}>
-                {statusData?.scheduler?.retries}
-              </MetadataListItem>
+              {/* Each row renders only when its own field is present:
+                  `dayjs(undefined)` would otherwise print the current time as
+                  a Last Try that never happened. */}
+              {statusData?.scheduler?.last_try ? (
+                <MetadataListItem label={t('session.LastTry')}>
+                  {dayjs(statusData?.scheduler?.last_try).format('lll')}
+                </MetadataListItem>
+              ) : null}
+              {!_.isNil(statusData?.scheduler?.retries) ? (
+                <MetadataListItem label={t('session.TotalRetries')}>
+                  {statusData?.scheduler?.retries}
+                </MetadataListItem>
+              ) : null}
               {statusData?.scheduler?.msg && (
                 <MetadataListItem label={t('session.Message')}>
                   {statusData?.scheduler?.msg}
                 </MetadataListItem>
               )}
-              <MetadataListItem label={t('session.PredicateChecks')}>
-                <BAIFlex direction="column" gap="md" align="stretch">
-                  {_.map(statusData?.scheduler?.failed_predicates, (p) => {
-                    return (
-                      <BAIFlex gap="xs" align="start" key={p.name}>
-                        <CircleX
-                          style={{
-                            color: 'var(--color-error)',
-                            marginTop: 4,
-                            flexShrink: 0,
-                          }}
-                          size={16}
-                        />
-                        <BAIFlex direction="column" align="stretch">
-                          <Text>{p.name}</Text>
-                          <Text color="secondary" xstyle={styles.predicateMsg}>
-                            {p.msg}
-                          </Text>
+              {!_.isEmpty(statusData?.scheduler?.failed_predicates) ||
+              !_.isEmpty(statusData?.scheduler?.passed_predicates) ? (
+                <MetadataListItem label={t('session.PredicateChecks')}>
+                  <BAIFlex direction="column" gap="md" align="stretch">
+                    {_.map(statusData?.scheduler?.failed_predicates, (p) => {
+                      return (
+                        <BAIFlex gap="xs" align="start" key={p.name}>
+                          <CircleX
+                            style={{
+                              color: 'var(--color-error)',
+                              marginTop: 4,
+                              flexShrink: 0,
+                            }}
+                            size={16}
+                          />
+                          <BAIFlex direction="column" align="stretch">
+                            <Text>{p.name}</Text>
+                            <Text
+                              color="secondary"
+                              xstyle={styles.predicateMsg}
+                            >
+                              {p.msg}
+                            </Text>
+                          </BAIFlex>
                         </BAIFlex>
-                      </BAIFlex>
-                    );
-                  })}
-                  {_.map(statusData?.scheduler?.passed_predicates, (p) => {
-                    return (
-                      <BAIFlex gap="xs" align="start" key={p.name}>
-                        <CircleCheck
-                          style={{
-                            color: 'var(--color-success)',
-                            marginTop: 4,
-                            flexShrink: 0,
-                          }}
-                          size={16}
-                        />
-                        <BAIFlex direction="column" align="stretch">
-                          <Text>{p.name}</Text>
-                          <Text color="secondary" xstyle={styles.predicateMsg}>
-                            {p.msg}
-                          </Text>
+                      );
+                    })}
+                    {_.map(statusData?.scheduler?.passed_predicates, (p) => {
+                      return (
+                        <BAIFlex gap="xs" align="start" key={p.name}>
+                          <CircleCheck
+                            style={{
+                              color: 'var(--color-success)',
+                              marginTop: 4,
+                              flexShrink: 0,
+                            }}
+                            size={16}
+                          />
+                          <BAIFlex direction="column" align="stretch">
+                            <Text>{p.name}</Text>
+                            <Text
+                              color="secondary"
+                              xstyle={styles.predicateMsg}
+                            >
+                              {p.msg}
+                            </Text>
+                          </BAIFlex>
                         </BAIFlex>
-                      </BAIFlex>
-                    );
-                  })}
-                </BAIFlex>
-              </MetadataListItem>
+                      );
+                    })}
+                  </BAIFlex>
+                </MetadataListItem>
+              ) : null}
             </>
           ) : null}
           {statusData?.error
