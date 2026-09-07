@@ -609,7 +609,8 @@
     "SelectFolder": "Selecionar pasta",
     "Subpath": "Subcaminho",
     "SubpathInvalid": "O subcaminho deve ser um caminho relativo e não deve conter '..'.",
-    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da sua raiz. Clique no campo para navegar pela pasta e escolher uma; / é a raiz da pasta."
+    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da sua raiz. Clique no campo para navegar pela pasta e escolher uma; / é a raiz da pasta.",
+    "UnmountableFoldersRemoved": "As pastas que já não pode montar foram removidas da seleção."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Selecionar pasta"

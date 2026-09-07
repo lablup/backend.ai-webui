@@ -609,7 +609,8 @@
     "SelectFolder": "Wybierz folder",
     "Subpath": "Podścieżka",
     "SubpathInvalid": "Podścieżka musi być ścieżką względną i nie może zawierać '..'.",
-    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Kliknij pole, aby przeglądać folder i wybrać podfolder; / oznacza katalog główny folderu."
+    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Kliknij pole, aby przeglądać folder i wybrać podfolder; / oznacza katalog główny folderu.",
+    "UnmountableFoldersRemoved": "Foldery, których nie możesz już zamontować, zostały usunięte z zaznaczenia."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Wybierz folder"

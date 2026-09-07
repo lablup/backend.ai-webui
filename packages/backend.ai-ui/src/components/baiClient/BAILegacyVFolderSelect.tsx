@@ -3,21 +3,19 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { convertToUUID } from '../../helper';
-import { useSuspenseTanQuery } from '../../helper/reactQueryAlias';
-import {
-  useBAISignedRequestWithPromise,
-  useControllableValue,
-} from '../../hooks';
+import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { useMergedAllowedVFolderHosts } from '../../hooks/useMergedAllowedVFolderHosts';
 import BAIComplexSelect, {
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
-import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import {
+  isMountableLegacyVFolder,
+  useLegacyVFolderList,
+} from './useLegacyVFolderList';
 import * as _ from 'lodash-es';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useState } from 'react';
 
 /**
  * A folder as the REST `GET /folders` endpoint returns it. Distinct from the
@@ -51,115 +49,95 @@ export interface BAILegacyVFolderSelectProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
-  /** Dashed vfolder UUID(s). A 32-hex REST id is accepted and normalized. */
-  value?: string | Array<string> | null;
-  defaultValue?: string | Array<string> | null;
-  onChange?: (value: string | Array<string> | undefined) => void;
   /**
-   * Project scope. Folders owned by another project are dropped, and the
-   * project's `allowed_vfolder_hosts` join the mountable-host gate.
+   * `labelInValue`-shaped, array iff `multiple`: `value` is the dashed vfolder
+   * UUID (a 32-hex REST id is accepted and normalized) and `label` its name. A
+   * missing or stale label is re-resolved from the loaded list.
    */
+  value?: BAIComplexSelectValue;
+  defaultValue?: BAIComplexSelectValue;
+  onChange?: (value: BAIComplexSelectValue) => void;
+  /** Project scope: folders owned by another project are dropped. */
   currentProjectId?: string;
   /** Lists the folders of this user instead of the caller's own. */
   ownerEmail?: string;
+  /**
+   * Hosts granting `mount-in-session`. Which policies merge into that list is
+   * the host app's business, so it is supplied rather than queried here.
+   */
+  mountableHosts: Array<string>;
+  /**
+   * Folders the session mounts on its own. They are dropped from the options —
+   * offering a folder that is mounted regardless is noise — while a caller
+   * still uses the names for its own overlap checks.
+   */
+  autoMountedFolderNames?: Array<string>;
   /**
    * Display-only filter, applied after the mount gates. A folder that is
    * already selected stays visible even when it filters out — the same rule
    * VFolderTable applies to its `rowFilter`.
    */
   filter?: (folder: LegacyVFolder) => boolean;
-  /** Names of the mountable, ready dotfile folders the session auto-mounts. */
-  onAutoMountedFoldersChange?: (names: Array<string>) => void;
-  /** key -> name for every mountable folder, so callers can label a selection. */
-  onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
 }
 
+const toLabeledArray = (
+  value: BAIComplexSelectValue,
+): Array<BAILabeledValue> =>
+  value === null || value === undefined ? [] : _.castArray(value);
+
 /**
- * Folder picker over the REST `GET /folders` list, gated as the session
- * launcher gates its mounts: `mount-in-session` hosts only, project-reachable
- * folders only. Value is the dashed vfolder UUID. See the `.doc.ts` beside it.
+ * Folder picker over the REST `GET /folders` list, gated to the mountable
+ * hosts and the reachable folders of `currentProjectId`. See the `.doc.ts`.
  */
 const BAILegacyVFolderSelect: React.FC<BAILegacyVFolderSelectProps> = ({
   currentProjectId,
   ownerEmail,
+  mountableHosts,
+  autoMountedFolderNames,
   filter,
-  onAutoMountedFoldersChange,
-  onResolvedNamesChange,
   multiple = false,
   ...selectProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const baiClient = useConnectedBAIClient();
-  const baiRequestWithPromise = useBAISignedRequestWithPromise();
-  const [value, setValue] = useControllableValue<
-    string | Array<string> | null | undefined
-  >(selectProps as Record<string, unknown>, {
-    valuePropName: 'value',
-    trigger: 'onChange',
-  });
+  const allFolderList = useLegacyVFolderList(ownerEmail);
+  const [value, setValue] = useControllableValue<BAIComplexSelectValue>(
+    selectProps as Record<string, unknown>,
+    { valuePropName: 'value', trigger: 'onChange' },
+  );
   const [searchStr, setSearchStr] = useState('');
 
-  const selectedKeys = _.map(
-    _.compact(_.castArray(value ?? [])),
-    convertToUUID,
-  );
-  const selectedKeySet = new Set(selectedKeys);
-
-  const { data: allFolderList } = useSuspenseTanQuery<Array<LegacyVFolder>>({
-    // The request itself carries no project scope — that filter is applied
-    // client-side below (same as VFolderTable).
-    queryKey: ['BAILegacyVFolderSelectFolders', ownerEmail ?? ''],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      if (ownerEmail) search.set('owner_user_email', ownerEmail);
-      const query = search.toString();
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/folders${query ? `?${query}` : ''}`,
-      }) as Promise<Array<LegacyVFolder>>;
-    },
-    staleTime: 30 * 1000,
-  });
-
-  const { mountableHosts } = useMergedAllowedVFolderHosts({
-    domainName: baiClient._config?.domainName ?? '',
-    projectId: currentProjectId,
-  });
   const mountableHostSet = new Set(mountableHosts);
+  const autoMountedNameSet = new Set(autoMountedFolderNames ?? []);
 
   const mountableFolders = _.filter(
-    allFolderList ?? [],
+    allFolderList,
     (folder) =>
-      (folder.ownership_type === 'user' ||
-        !folder.group ||
-        folder.group === currentProjectId) &&
-      mountableHostSet.has(folder.host),
+      isMountableLegacyVFolder(folder, {
+        mountableHosts: mountableHostSet,
+        currentProjectId,
+      }) && !autoMountedNameSet.has(folder.name),
   );
 
-  const autoMountedFolderNames = _.map(
-    _.filter(
-      mountableFolders,
-      (folder) => folder.status === 'ready' && folder.name?.startsWith('.'),
-    ),
-    (folder) => folder.name,
-  );
-  const nameMap = _.fromPairs(
+  const nameByKey = _.fromPairs(
     _.map(mountableFolders, (folder) => [
       convertToUUID(folder.id),
       folder.name,
     ]),
   );
 
-  // `mountableFolders` is a stable reference under `'use memo'`, so it changes
-  // only when the underlying list or a gate does.
-  const report = useEffectEvent(() => {
-    onResolvedNamesChange?.(nameMap);
-    onAutoMountedFoldersChange?.(autoMountedFolderNames);
-  });
-  useEffect(() => {
-    report();
-  }, [mountableFolders]);
+  // Normalize a stored 32-hex id and re-resolve a stale label, so a selection
+  // restored from a URL or a template labels itself from the loaded list. A
+  // selection the gates no longer offer keeps rendering — the gates shape the
+  // OPTIONS only, never the value.
+  const selected: Array<BAILabeledValue> = _.map(
+    toLabeledArray(value),
+    (item) => {
+      const key = convertToUUID(item.value);
+      return { value: key, label: nameByKey[key] ?? item.label ?? key };
+    },
+  );
+  const selectedKeySet = new Set(_.map(selected, (item) => item.value));
 
   const displayingFolders = _.filter(mountableFolders, (folder) => {
     if (selectedKeySet.has(convertToUUID(folder.id))) return true;
@@ -173,14 +151,6 @@ const BAILegacyVFolderSelect: React.FC<BAILegacyVFolderSelectProps> = ({
     description: folder.host,
   }));
 
-  const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => ({
-    label: nameMap[key] ?? key,
-    value: key,
-  }));
-  const labeledValue: BAIComplexSelectValue = multiple
-    ? labeled
-    : (labeled[0] ?? null);
-
   return (
     <BAIComplexSelect
       placeholder={t('comp:BAILegacyVFolderSelect.SelectFolder')}
@@ -188,11 +158,8 @@ const BAILegacyVFolderSelect: React.FC<BAILegacyVFolderSelectProps> = ({
       multiple={multiple}
       total={displayingFolders.length}
       options={options}
-      value={labeledValue}
-      onChange={(next) => {
-        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
-        setValue(multiple ? keys : keys[0], undefined);
-      }}
+      value={multiple ? selected : (selected[0] ?? null)}
+      onChange={(next) => setValue(next, undefined)}
       searchValue={searchStr}
       onSearch={setSearchStr}
     />

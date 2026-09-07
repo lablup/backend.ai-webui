@@ -3,7 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  parseAllowedHosts,
   v2PermissionToKey,
   type V2AllowedVfolderHostEntry,
 } from 'backend.ai-ui';
@@ -56,10 +55,22 @@ export const PERMISSION_DISPLAY_MAP: Record<
   },
 };
 
-// Lives in BUI (`helper/vfolderHostPermission.ts`) because BUI's own
-// allowed-hosts hook parses the same JSONString; re-exported so app-side call
-// sites keep one import path.
-export { parseAllowedHosts };
+/**
+ * Parse the `allowed_vfolder_hosts` JSONString returned by the backend.
+ * Returns a record mapping each storage host name to its enabled permission
+ * keys, or an empty object when the input is missing or unparseable.
+ */
+export const parseAllowedHosts = (
+  raw: string | null | undefined,
+): Record<string, string[]> => {
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    return typeof parsed === 'object' && parsed !== null ? parsed : {};
+  } catch {
+    return {};
+  }
+};
 
 /**
  * Rebuild the `allowed_vfolder_hosts` JSONString preserving entries for all

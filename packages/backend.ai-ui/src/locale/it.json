@@ -609,7 +609,8 @@
     "SelectFolder": "Seleziona cartella",
     "Subpath": "Sottopercorso",
     "SubpathInvalid": "Il sottopercorso deve essere un percorso relativo e non deve contenere '..'.",
-    "SubpathTooltip": "Monta una sottocartella all'interno della cartella come sorgente invece della sua radice. Fare clic sul campo per esplorare la cartella e sceglierne una; / è la radice della cartella."
+    "SubpathTooltip": "Monta una sottocartella all'interno della cartella come sorgente invece della sua radice. Fare clic sul campo per esplorare la cartella e sceglierne una; / è la radice della cartella.",
+    "UnmountableFoldersRemoved": "Le cartelle che non puoi più montare sono state rimosse dalla selezione."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleziona cartella"

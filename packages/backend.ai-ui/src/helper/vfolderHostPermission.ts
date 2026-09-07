@@ -11,14 +11,11 @@
  * lowercase-and-dash yields `set-user-perm`, which matches no catalog key, so
  * the permission silently reads as "not granted".
  */
-/** The permission a host must grant before a session can mount a folder on it. */
-export const MOUNT_IN_SESSION_PERMISSION = 'mount-in-session';
-
 const V2_TO_V1_PERMISSION: Record<string, string> = {
   CREATE_VFOLDER: 'create-vfolder',
   MODIFY_VFOLDER: 'modify-vfolder',
   DELETE_VFOLDER: 'delete-vfolder',
-  MOUNT_IN_SESSION: MOUNT_IN_SESSION_PERMISSION,
+  MOUNT_IN_SESSION: 'mount-in-session',
   UPLOAD_FILE: 'upload-file',
   DOWNLOAD_FILE: 'download-file',
   INVITE_OTHERS: 'invite-others',
@@ -28,22 +25,6 @@ const V2_TO_V1_PERMISSION: Record<string, string> = {
 /** Convert a V2 permission enum value to the canonical V1 kebab key. */
 export const v2PermissionToKey = (perm: string): string =>
   V2_TO_V1_PERMISSION[perm] ?? perm.toLowerCase().replace(/_/g, '-');
-
-/**
- * Parse the `allowed_vfolder_hosts` JSONString returned by the backend into a
- * `{ host: permissionKeys[] }` record; `{}` when missing or unparseable.
- */
-export const parseAllowedHosts = (
-  raw: string | null | undefined,
-): Record<string, string[]> => {
-  if (!raw) return {};
-  try {
-    const parsed = JSON.parse(raw);
-    return typeof parsed === 'object' && parsed !== null ? parsed : {};
-  } catch {
-    return {};
-  }
-};
 
 /** V2 `VFolderHostPermissionEntry` shape (host name + permission enum list). */
 export interface V2AllowedVfolderHostEntry {

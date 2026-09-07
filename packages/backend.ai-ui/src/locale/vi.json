@@ -609,7 +609,8 @@
     "SelectFolder": "Chọn thư mục",
     "Subpath": "Đường dẫn con",
     "SubpathInvalid": "Đường dẫn con phải là đường dẫn tương đối và không được chứa '..'.",
-    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Nhấp vào trường này để duyệt thư mục và chọn một thư mục con; / là thư mục gốc."
+    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Nhấp vào trường này để duyệt thư mục và chọn một thư mục con; / là thư mục gốc.",
+    "UnmountableFoldersRemoved": "Các thư mục bạn không còn gắn kết được đã bị loại khỏi lựa chọn."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Chọn thư mục"

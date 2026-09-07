@@ -3,6 +3,7 @@ import { convertToUUID } from '../../helper';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_LEGACY_PROJECT_ID,
+  MOCK_MOUNTABLE_HOSTS,
   mockLegacyVFolder,
   mockLegacyVFolders,
   mockVFolderFile as entry,
@@ -68,29 +69,24 @@ const createTrees = (): MockVFolderFileTrees => ({
 
 /**
  * Controlled wrapper that renders the component the way the session launcher
- * does — scoped to a project, dotfiles hidden by `filter`, auto-mounted names
- * fed back from the select — and prints the current form value as text, so the
- * emitted `VFolderMountConfigValue[]` is visible while selecting folders and
- * picking aliases / subpaths. `mountDestination` is stored as the raw alias;
- * the resolved full path is shown inline per row.
+ * does — scoped to a project, with the host-supplied mount gates — and prints
+ * the current form value as text, so the emitted `VFolderMountConfigValue[]`
+ * is visible while selecting folders and picking aliases / subpaths.
+ * `mountDestination` is stored as the raw alias; the resolved full path is
+ * shown inline per row.
  */
 const ControlledDemo = ({
   initialValue = [],
   ...props
-}: BAIVFolderMountConfigInputProps & {
+}: Partial<BAIVFolderMountConfigInputProps> & {
   initialValue?: VFolderMountConfigValue[];
 }) => {
   const [value, setValue] = useState<VFolderMountConfigValue[]>(initialValue);
-  const [autoMountedFolderNames, setAutoMountedFolderNames] = useState<
-    string[]
-  >([]);
   return (
     <div style={{ width: DEMO_WIDTH }}>
       <BAIVFolderMountConfigInput
         currentProjectId={MOCK_LEGACY_PROJECT_ID}
-        filter={(folder) => !folder.name.startsWith('.')}
-        autoMountedFolderNames={autoMountedFolderNames}
-        onAutoMountedFoldersChange={setAutoMountedFolderNames}
+        mountableHosts={MOCK_MOUNTABLE_HOSTS}
         {...props}
         value={value}
         onChange={setValue}
@@ -128,24 +124,24 @@ for configuring vfolder mounts.
 - Composes [BAILegacyVFolderSelect](/?path=/docs/input-bailegacyvfolderselect--docs)
   to pick folders from the REST \`GET /folders\` list under the session launcher's
   mount gates — the only source that also reports the auto-mounted dotfiles.
-  \`ownerEmail\` / \`filter\` / \`onAutoMountedFoldersChange\` / \`onResolvedNamesChange\`
-  are forwarded straight to it.
+  \`ownerEmail\` / \`mountableHosts\` / \`autoMountedFolderNames\` / \`filter\` are
+  forwarded straight to it.
 - Each selected folder appears as a row with a **mount path (alias)** input and an
   optional **subpath** picker (which subfolder of the vfolder to mount as the source; \`/\` = root),
   which opens a directory browser instead of accepting typed text.
 - \`mountDestination\` stores the **raw alias** the user typed — \`''\` mounts at the default
   \`/home/work/<name>\`, a relative segment like \`data\` resolves to \`/home/work/data\`, and an
   absolute path like \`/data\` is used as-is. Resolve it with the exported \`inputToMountDestination\`.
-- \`autoMountedFolderNames\` are folded into the overlap check (a user alias colliding with an
-  auto-mounted folder is flagged) and shown as read-only tags at the bottom.
+- \`autoMountedFolderNames\` drop out of the select's options, join the overlap check (a user
+  alias colliding with an auto-mounted folder is flagged) and are shown as read-only tags at the bottom.
 - Emits a single \`VFolderMountConfigValue[]\`. The inline per-row errors are advisory UX; to gate a
   form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
   \`useVFolderMountConfigFormRule\` (see the **WithFormValidation** story).
 
-The stories below mock the REST folder list and the allowed-host policy, so of the
-six fixture folders \`cold-archive\` is dropped (its host has no \`mount-in-session\`
-permission), \`other-team-data\` belongs to another project, and \`.config\` is hidden
-by \`filter\` while being reported through \`onAutoMountedFoldersChange\`.
+The stories below mock the REST folder list, so of the six fixture folders
+\`cold-archive\` is dropped (its host is not in \`mountableHosts\`), \`other-team-data\`
+belongs to another project, and \`.config\` is dropped wherever the story passes it
+in \`autoMountedFolderNames\`.
 `,
       },
     },
@@ -204,9 +200,19 @@ by \`filter\` while being reported through \`onAutoMountedFoldersChange\`.
     autoMountedFolderNames: {
       control: { type: 'object' },
       description:
-        'Names of auto-mounted folders: folded into the overlap check and shown as read-only tags',
+        "Names of auto-mounted folders: dropped from the select's options, folded into the overlap check and shown as read-only tags",
       table: { type: { summary: 'string[]' } },
     },
+    mountableHosts: {
+      control: { type: 'object' },
+      description:
+        'Hosts granting `mount-in-session`, supplied by the host app',
+      table: { type: { summary: 'string[]' } },
+    },
+  },
+  args: {
+    mountableHosts: MOCK_MOUNTABLE_HOSTS,
+    autoMountedFolderNames: ['.config'],
   },
 };
 
@@ -310,7 +316,7 @@ export const WithAutoMountedFolders: Story = {
     docs: {
       description: {
         story:
-          'The select reports `.config` — a mountable, ready dotfile it hides from the list — through `onAutoMountedFoldersChange`, which the demo feeds straight back into `autoMountedFolderNames`, rendering it as a read-only tag below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
+          "`autoMountedFolderNames={['.config']}` drops that folder from the select and renders it as a read-only tag below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.",
       },
     },
   },
@@ -353,12 +359,9 @@ export const WithFormValidation: Story = {
     const FormValidationDemo = () => {
       const [form] = Form.useForm();
       const [result, setResult] = useState<string>('');
-      const [autoMountedFolderNames, setAutoMountedFolderNames] = useState<
-        string[]
-      >([]);
       const mountConfigRule = useVFolderMountConfigFormRule({
         aliasBasePath: args.aliasBasePath,
-        autoMountedFolderNames,
+        autoMountedFolderNames: args.autoMountedFolderNames,
       });
       return (
         <Form
@@ -389,10 +392,7 @@ export const WithFormValidation: Story = {
           >
             <BAIVFolderMountConfigInput
               currentProjectId={MOCK_LEGACY_PROJECT_ID}
-              filter={(folder) => !folder.name.startsWith('.')}
               {...args}
-              autoMountedFolderNames={autoMountedFolderNames}
-              onAutoMountedFoldersChange={setAutoMountedFolderNames}
             />
           </Form.Item>
           <BAIButton
