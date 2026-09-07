@@ -16,17 +16,17 @@ export const docs = {
   ],
   usage: {
     description:
-      "Form control for choosing vfolders and configuring how each one is mounted. It renders a multi-select folder picker inside its own Suspense boundary — so the folder list is loaded internally and no queryRef is needed — and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. The picker is BAIVFolderSelect in `row_id` mode by default; `renderFolderSelect` swaps in any select that emits vfolder UUIDs — BAILegacyVFolderSelect for a session mount field, which is the only source that can apply the launcher's mount gates and report its auto-mounted dotfiles. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the vfolder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. Resolve it with the exported `inputToMountDestination`. The inline per-row errors are advisory only; gate a form on validity by calling the exported `isVFolderMountConfigValid` (or `getVFolderMountConfigStatuses` for the per-entry detail) from a `Form.Item` `rules` validator.",
+      "Form control for choosing vfolders and configuring how each one is mounted. It renders a multi-select folder picker inside its own Suspense boundary — so the folder list is loaded internally and no queryRef is needed — and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. The picker is BAIVFolderSelect in `row_id` mode by default; `renderFolderSelect` swaps in any select that emits vfolder UUIDs — BAILegacyVFolderSelect for a session mount field, which is the only source that can apply the launcher's mount gates and report its auto-mounted dotfiles. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the vfolder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. The module owns the whole mount-value vocabulary so a consumer never restates it: `DEFAULT_ALIAS_BASE_PATH`, `inputToMountDestination` / `mountDestinationToInput` (the two directions of the alias rule), `resolveVFolderMounts` (every entry's name, resolved path, default-alias flag and subpath in one pass), `toMountCreationConfig` (the manager `creation_config` mount fields), `getVFolderMountConfigStatuses` / `isVFolderMountConfigValid` (per-entry validity), and `useVFolderMountConfigFormRule` (a ready `Form.Item` `rules` entry with BUI-translated messages). The inline per-row errors are advisory only; the form rule is what makes `form.validateFields()` reject.",
     bestPractices: [
       {
         guidance: true,
         description:
-          'Wrap it in one named `Form.Item` with an `isVFolderMountConfigValid` validator, passing the same `aliasBasePath` and `autoMountedFolderNames` you gave the component, so `form.validateFields()` actually rejects invalid mounts.',
+          'Wrap it in one named `Form.Item` whose `rules` carry `useVFolderMountConfigFormRule({ aliasBasePath, autoMountedFolderNames })` — the same options you gave the component — so `form.validateFields()` rejects invalid mounts with the already-translated message.',
       },
       {
         guidance: true,
         description:
-          'Convert `mountDestination` with `inputToMountDestination` before sending it to a mount mutation — the emitted value is the raw alias, not the resolved container path.',
+          'Build the mount payload with `toMountCreationConfig` (or `resolveVFolderMounts` for display) rather than resolving `mountDestination` by hand — the emitted value is the raw alias, not the resolved container path.',
       },
       {
         guidance: true,
@@ -114,29 +114,35 @@ export const docs = {
       name: 'autoMountedFolderNames',
       type: 'string[]',
       description:
-        'Names of folders mounted automatically. Their default mount paths join the overlap check, so a user alias colliding with one is flagged, and the names are listed as read-only chips below the rows.',
+        'Names of folders mounted automatically. Their default mount paths join the overlap check, so a user alias colliding with one is flagged with its own `overlappingWithAutoMount` kind and message, and the names are listed as read-only chips below the rows.',
     },
   ],
   examples: [
     {
       label: 'Inside a form, gated on validity',
       code: `<Form.Item
-  name="mounts"
+  name="vfolderMounts"
   label={t('session.launcher.MountedFolders')}
-  rules={[
-    {
-      validator: (__, value) =>
-        isVFolderMountConfigValid(value, { autoMountedFolderNames })
-          ? Promise.resolve()
-          : Promise.reject(new Error(t('session.launcher.FolderAliasOverlapping'))),
-    },
-  ]}
+  rules={[useVFolderMountConfigFormRule({ autoMountedFolderNames })]}
 >
   <BAIVFolderMountConfigInput
     currentProjectId={currentProject.id}
     autoMountedFolderNames={autoMountedFolderNames}
   />
 </Form.Item>`,
+    },
+    {
+      label: 'Turning the value into a session creation_config',
+      code: `const { mount_ids, mount_id_map, mount_options } = toMountCreationConfig(
+  form.getFieldValue('vfolderMounts'),
+);
+
+await baiClient.createIfNotExists(image, sessionName, {
+  ...resources,
+  mount_ids,
+  mount_id_map,
+  mount_options,
+});`,
     },
     {
       label: 'Session mount field over the legacy folder list',
