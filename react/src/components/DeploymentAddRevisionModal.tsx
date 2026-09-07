@@ -322,7 +322,14 @@ const RevertToRevisionValueButton: React.FC<{
       icon={<Undo2 size="1em" />}
       label={t('deployment.RevertToLoadedRevisionValue')}
       tooltip={t('deployment.RevertToLoadedRevisionValue')}
-      onClick={() => form.setFieldValue(name, loadedValue)}
+      onClick={() => {
+        form.setFieldValue(name, loadedValue);
+        // A subpath belongs to the folder it was picked from, and
+        // `setFieldValue` skips the select's own onChange cleanup.
+        if (name === 'modelFolderId') {
+          form.setFieldValue('modelSubpath', baseline.modelSubpath);
+        }
+      }}
     />
   );
 };
