@@ -1143,7 +1143,7 @@
     "FailedToDeleteDeployment": "刪除部署失敗。",
     "FailedToRollback": "回滾到所選 Revision 失敗。",
     "FailedToUpdateDeployment": "更新部署失敗。",
-    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
+    "FolderAccessDisabledWhileAddingRevision": "新增 Revision 期間無法存取文件夾。",
     "FromStatus": "來源狀態",
     "GoToDetailPage": "檢視部署詳細資訊",
     "HealthStatus": "健康狀態",

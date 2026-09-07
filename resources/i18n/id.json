@@ -1142,7 +1142,7 @@
     "FailedToDeleteDeployment": "Gagal menghapus penerapan.",
     "FailedToRollback": "Gagal kembali ke Revision yang dipilih.",
     "FailedToUpdateDeployment": "Gagal memperbarui penerapan.",
-    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
+    "FolderAccessDisabledWhileAddingRevision": "Akses folder tidak tersedia saat Revision sedang ditambahkan.",
     "FromStatus": "Dari Status",
     "GoToDetailPage": "Lihat detail penyebaran",
     "HealthStatus": "Status Kesehatan",

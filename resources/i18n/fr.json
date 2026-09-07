@@ -1142,7 +1142,7 @@
     "FailedToDeleteDeployment": "Échec de la suppression du déploiement.",
     "FailedToRollback": "Échec du retour à la Revision sélectionnée.",
     "FailedToUpdateDeployment": "Échec de la mise à jour du déploiement.",
-    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
+    "FolderAccessDisabledWhileAddingRevision": "L'accès aux dossiers n'est pas disponible pendant l'ajout de la Revision.",
     "FromStatus": "Statut source",
     "GoToDetailPage": "Voir les détails du déploiement",
     "HealthStatus": "État de santé",

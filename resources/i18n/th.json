@@ -1142,6 +1142,7 @@
     "FailedToDeleteDeployment": "ไม่สามารถลบการปรับใช้ได้",
     "FailedToRollback": "ไม่สามารถย้อนกลับไปยัง Revision ที่เลือกได้",
     "FailedToUpdateDeployment": "ไม่สามารถอัปเดตการปรับใช้ได้",
+    "FolderAccessDisabledWhileAddingRevision": "ไม่สามารถเข้าถึงโฟลเดอร์ขณะกำลังเพิ่ม Revision",
     "FromStatus": "จากสถานะ",
     "GoToDetailPage": "ดูรายละเอียดการปรับใช้",
     "HealthStatus": "สถานะสุขภาพ",

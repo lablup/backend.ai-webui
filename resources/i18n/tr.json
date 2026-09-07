@@ -1142,7 +1142,7 @@
     "FailedToDeleteDeployment": "Dağıtım silinemedi.",
     "FailedToRollback": "Seçilen Revision'a geri alınamadı.",
     "FailedToUpdateDeployment": "Dağıtım güncellenemedi.",
-    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
+    "FolderAccessDisabledWhileAddingRevision": "Revision eklenirken klasör erişimi kullanılamaz.",
     "FromStatus": "Başlangıç Durumu",
     "GoToDetailPage": "Dağıtım ayrıntılarını görüntüle",
     "HealthStatus": "Sağlık Durumu",

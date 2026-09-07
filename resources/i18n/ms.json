@@ -1142,7 +1142,7 @@
     "FailedToDeleteDeployment": "Gagal memadam penggunaan.",
     "FailedToRollback": "Gagal kembali ke Revision yang dipilih.",
     "FailedToUpdateDeployment": "Gagal mengemas kini penggunaan.",
-    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
+    "FolderAccessDisabledWhileAddingRevision": "Akses folder tidak tersedia semasa Revision sedang ditambah.",
     "FromStatus": "Dari Status",
     "GoToDetailPage": "Lihat butiran penggelaran",
     "HealthStatus": "Status Kesihatan",

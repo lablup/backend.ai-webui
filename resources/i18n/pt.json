@@ -1142,7 +1142,7 @@
     "FailedToDeleteDeployment": "Falha ao eliminar a implementação.",
     "FailedToRollback": "Falha ao reverter para a Revision selecionada.",
     "FailedToUpdateDeployment": "Falha ao atualizar a implementação.",
-    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
+    "FolderAccessDisabledWhileAddingRevision": "O acesso às pastas não está disponível enquanto a Revision está a ser adicionada.",
     "FromStatus": "Status anterior",
     "GoToDetailPage": "Ver detalhes da implantação",
     "HealthStatus": "Estado de saúde",

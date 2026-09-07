@@ -1142,7 +1142,7 @@
     "FailedToDeleteDeployment": "Error al eliminar el despliegue.",
     "FailedToRollback": "Error al revertir a la Revision seleccionada.",
     "FailedToUpdateDeployment": "Error al actualizar el despliegue.",
-    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
+    "FolderAccessDisabledWhileAddingRevision": "El acceso a las carpetas no está disponible mientras se agrega la Revision.",
     "FromStatus": "Estado de origen",
     "GoToDetailPage": "Ver detalles del despliegue",
     "HealthStatus": "Estado de salud",

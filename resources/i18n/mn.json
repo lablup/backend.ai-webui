@@ -1142,7 +1142,7 @@
     "FailedToDeleteDeployment": "Байршуулалт устгахад алдаа гарлаа.",
     "FailedToRollback": "Сонгосон Revision руу буцаахад алдаа гарлаа.",
     "FailedToUpdateDeployment": "Байршуулалт шинэчлэхэд алдаа гарлаа.",
-    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
+    "FolderAccessDisabledWhileAddingRevision": "Revision нэмэгдэж байх үед фолдер руу хандах боломжгүй.",
     "FromStatus": "Өмнөх статус",
     "GoToDetailPage": "Түгээлтийн дэлгэрэнгүйг үзэх",
     "HealthStatus": "Эрүүл мэндийн төлөв",
