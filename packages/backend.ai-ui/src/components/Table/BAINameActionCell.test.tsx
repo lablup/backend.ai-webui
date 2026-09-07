@@ -103,3 +103,34 @@ describe('BAINameActionCell — disabled carries its reason (FR-3722)', () => {
     expect(item.closest('[aria-disabled="true"],[disabled]')).not.toBeNull();
   });
 });
+
+describe('BAINameActionCell — the overflow row keeps its action colour (FR-3721)', () => {
+  const menuIcon = () => screen.getByTestId('act-icon');
+
+  it('a danger action stays destructive once it overflows into the menu', () => {
+    renderAction({
+      showInMenu: 'always',
+      type: 'danger',
+      icon: <span data-testid="act-icon" />,
+    });
+
+    expect(
+      screen.getByText('Act').closest('[data-variant="destructive"]'),
+    ).not.toBeNull();
+    // Astryx tints the whole destructive row, so the icon must not be
+    // re-coloured on top of it.
+    expect(menuIcon().parentElement?.style.color).toBe('');
+  });
+
+  it('a default action carries the info tint on its menu icon', () => {
+    renderAction({
+      showInMenu: 'always',
+      icon: <span data-testid="act-icon" />,
+    });
+
+    expect(
+      screen.getByText('Act').closest('[data-variant="destructive"]'),
+    ).toBeNull();
+    expect(menuIcon().parentElement?.style.color).not.toBe('');
+  });
+});

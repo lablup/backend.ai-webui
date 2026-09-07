@@ -39,6 +39,11 @@ export const docs = {
           'Set `minVisibleActions` when an action must never hide, and `showInMenu: "always"` for secondary actions that should only ever live in the more menu.',
       },
       {
+        guidance: true,
+        description:
+          'Mark destructive row actions with `type: "danger"` — the red carries into the more menu, where the row renders as an Astryx destructive item.',
+      },
+      {
         guidance: false,
         description:
           'Add a parallel actions column beside this cell — the overflow measurement assumes the actions share the cell with the title.',

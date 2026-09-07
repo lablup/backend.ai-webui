@@ -9,6 +9,7 @@ import './BAINameActionCell.css';
 import { Button } from '@astryxdesign/core/Button';
 import {
   DropdownMenu,
+  type DropdownMenuItemData,
   type DropdownMenuOption,
 } from '@astryxdesign/core/DropdownMenu';
 import { Popover } from '@astryxdesign/core/Popover';
@@ -333,41 +334,28 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
 
   // More menu: overflowed auto actions + menu-only actions
   const hasMoreMenu = hasOverflow || menuOnlyActions.length > 0;
-  // PILOT-DECISION (to-astryx W2-D): `DropdownMenuItemData` has no `danger`
-  // flag AND its `label` is typed `string`, not `ReactNode` — its rows are
-  // uniform (P5). A destructive overflow row therefore relies on its icon and
-  // label alone, exactly as it already does inside the `modal.confirm` it
-  // escalates to. The visible (non-overflowed) button keeps its danger tint
-  // through `bai-nac-action-button-danger`.
-  //
-  // Re-examined for QA-FINDINGS Q-15 ("더보기 버튼을 눌렀을 때 버튼 색상이 모두
-  // default 색상으로 처리됨", measured #141414/#FFFFFF where antd set
-  // `danger: action.type === 'danger'` and drew #FF4D4F/#BE3D3F). The colour IS
-  // reachable — but only through `DropdownMenu`'s COMPOUND mode, whose
-  // `DropdownMenuItem` takes `label: ReactNode` plus `style`. That means
-  // rewriting this menu's whole render path (data `items` -> children),
-  // carrying the divider, disabled and keyboard behaviour across with it, for a
-  // change the reporter themselves marked optional. Left as-is and reported
-  // rather than taken on inside a QA row.
-  const toMenuItem = (action: BAINameActionCellAction) => ({
+  // An overflowed action keeps the colour its inline button has (FR-3721):
+  // `variant: 'destructive'` tints a danger row's label and icon, and the
+  // default row's icon carries `token.colorInfo` inline — the menu renders in
+  // a Layer outside the container that publishes `--bai-nac-*`.
+  const toMenuItem = (
+    action: BAINameActionCellAction,
+  ): DropdownMenuItemData => ({
     // FR-3423: a disabled action must still explain itself once it overflows
-    // into this menu — otherwise a narrow viewport turns "disabled with a
-    // reason" into "disabled for no visible reason".
-    //
-    // PILOT-DECISION (to-astryx): the antd original wrapped the label in a
-    // `Tooltip` (a disabled antd menu item swallows hover, so the tooltip had
-    // to sit on the label). Astryx's DATA mode types
-    // `DropdownMenuItemData.label` as `string`, and `DropdownMenuItem`'s
-    // `description` slot is reachable only through the compound render path —
-    // which `items` disables outright (`DropdownMenu.js`: `children` is
-    // ignored whenever `items` is passed). Rewriting this menu to the
-    // compound path would have to carry the divider / disabled / keyboard
-    // behaviour across with it. The reason is folded into the label text
-    // instead: still visible, still read out, no tooltip needed.
+    // into this menu. The reason is folded into the label text rather than a
+    // tooltip, which a disabled menu row swallows.
     label: disabledReason(action.disabled)
       ? `${action.title} — ${disabledReason(action.disabled)}`
       : action.title,
-    icon: action.icon,
+    variant: action.type === 'danger' ? 'destructive' : 'default',
+    icon:
+      action.icon && action.type !== 'danger' ? (
+        <span style={{ display: 'inline-flex', color: token.colorInfo }}>
+          {action.icon}
+        </span>
+      ) : (
+        action.icon
+      ),
     isDisabled: !!action.disabled,
     onClick: () => {
       if (action.onClick || action.action) {
