@@ -5,18 +5,19 @@
 import {
   BAIAppearanceConfig,
   getCustomTheme,
+  subscribeCustomTheme,
 } from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
 import { useLocalStorageGlobalState } from './useLocalStorageGlobalState';
 import { useSessionStorageState } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
 /**
  * The family shown before the user picks one. The v2 document must carry a
- * `default` entry in `theme.families`; a document without one degrades to the
- * built-in seeds. The same literal is read by the FOUC bootstrap in
- * `index.html`; keep them in sync.
+ * `default` entry in `theme.families`; a document without one renders Astryx's
+ * neutral theme (no Backend.AI colors). The same literal is read by the FOUC
+ * bootstrap in `index.html`; keep them in sync.
  */
 export const DEFAULT_THEME_FAMILY = 'default';
 
@@ -39,42 +40,32 @@ export const THEME_FAMILY_STORAGE_KEY = 'backendaiwebui.settings.themeFamily';
  */
 export const useRawCustomThemeConfig = (): BAIAppearanceConfig | undefined => {
   'use memo';
-  const [customThemeConfig, setCustomThemeConfig] = useState<
-    BAIAppearanceConfig | undefined
-  >(getCustomTheme());
+  // Read the store through useSyncExternalStore rather than a useState
+  // snapshot: theme.json can settle between the first render and the passive
+  // effect that would subscribe, and this provider never remounts.
+  const customThemeConfig = useSyncExternalStore(
+    subscribeCustomTheme,
+    getCustomTheme,
+  );
   const [userCustomThemeConfig] = useBAISettingUserState('custom_theme_config');
   const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
     defaultValue: false,
   });
 
-  const addEventListener = useEffectEvent(() => {
-    if (isThemePreviewMode) {
-      const themePreviewModeHandler = (e: StorageEvent) => {
-        if (e.key === 'backendaiwebui.settings.user.custom_theme_config') {
-          window.location.reload();
-        }
-      };
-      window.addEventListener('storage', themePreviewModeHandler);
-      return () => {
-        window.removeEventListener('storage', themePreviewModeHandler);
-      };
-    }
-
-    if (!customThemeConfig) {
-      const handler = () => {
-        setCustomThemeConfig(getCustomTheme());
-      };
-      document.addEventListener('custom-theme-loaded', handler);
-
-      return () => {
-        document.removeEventListener('custom-theme-loaded', handler);
-      };
-    }
-  });
-
   useEffect(() => {
-    addEventListener();
-  }, []);
+    if (!isThemePreviewMode) {
+      return;
+    }
+    const themePreviewModeHandler = (e: StorageEvent) => {
+      if (e.key === 'backendaiwebui.settings.user.custom_theme_config') {
+        window.location.reload();
+      }
+    };
+    window.addEventListener('storage', themePreviewModeHandler);
+    return () => {
+      window.removeEventListener('storage', themePreviewModeHandler);
+    };
+  }, [isThemePreviewMode]);
 
   if (isThemePreviewMode) {
     return userCustomThemeConfig;
