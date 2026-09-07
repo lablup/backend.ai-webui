@@ -762,6 +762,7 @@
     "DeselectAll": "取消全選",
     "File": "檔案",
     "Increase": "增加",
+    "Loading": "載入中...",
     "NSelected": "{{count}}選擇",
     "Optional": "選填",
     "Project": "專案",

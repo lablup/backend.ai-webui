@@ -762,6 +762,7 @@
     "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
     "File": "ไฟล์",
     "Increase": "เพิ่ม",
+    "Loading": "กำลังโหลด...",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",

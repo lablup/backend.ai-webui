@@ -762,6 +762,7 @@
     "DeselectAll": "Αποεπιλογή όλων",
     "File": "Αρχείο",
     "Increase": "Αύξηση",
+    "Loading": "Φόρτωση...",
     "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
