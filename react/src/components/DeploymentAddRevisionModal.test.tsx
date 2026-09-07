@@ -10,6 +10,7 @@ import DeploymentAddRevisionModal, {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -155,7 +156,20 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         },
         'select-model-folder',
       ),
-    BAIAvailablePresetSelect: () => null,
+    // The preset picker is the probe for the single-select contract: it
+    // surfaces the model-card scope it was given and its disabled hint.
+    BAIAvailablePresetSelect: (props: any) =>
+      React.createElement(
+        'button',
+        {
+          'data-testid': 'mock-preset-select',
+          'data-model-card-id': props.modelCardId ?? '',
+          'data-description': props.description ?? '',
+          disabled: props.isDisabled ?? false,
+          type: 'button',
+        },
+        'select-preset',
+      ),
     BAIRuntimeVariantSelect: () => null,
   };
 });
@@ -315,5 +329,32 @@ describe('toImageFullName', () => {
   it('resolves to undefined when the preset carries no image', () => {
     expect(toImageFullName(null)).toBeUndefined();
     expect(toImageFullName(undefined)).toBeUndefined();
+  });
+});
+
+describe('DeploymentAddRevisionModal preset select (FR-3346)', () => {
+  it('serves both model sources from one select, scoped by the chosen source', async () => {
+    const user = userEvent.setup();
+    renderModal(DEPLOYMENT_METADATA);
+
+    // Folder source (default): project-wide options, no card scope, enabled.
+    const folderModePreset = await screen.findByTestId('mock-preset-select');
+    expect(folderModePreset).toHaveAttribute('data-model-card-id', '');
+    expect(folderModePreset).toHaveAttribute('data-description', '');
+    expect(folderModePreset).toBeEnabled();
+
+    await user.click(
+      screen.getByRole('radio', { name: 'deployment.ModelCard' }),
+    );
+
+    // Card source without a card yet: still ONE select, now disabled + hinted.
+    await waitFor(() => {
+      expect(screen.getAllByTestId('mock-preset-select')).toHaveLength(1);
+      expect(screen.getByTestId('mock-preset-select')).toBeDisabled();
+    });
+    expect(screen.getByTestId('mock-preset-select')).toHaveAttribute(
+      'data-description',
+      'deployment.SelectModelCardFirst',
+    );
   });
 });
