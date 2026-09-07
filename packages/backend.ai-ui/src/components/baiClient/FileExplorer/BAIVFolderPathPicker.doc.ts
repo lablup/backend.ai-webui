@@ -66,7 +66,7 @@ export const docs = {
     },
     {
       name: 'onChange',
-      type: '(selectedSubPath?: string) => void',
+      type: '(selectedSubPath: string) => void',
       description:
         'Fired with the newly chosen sub path when the picker is confirmed. Cancelling the modal keeps the current value and emits nothing.',
     },
@@ -78,10 +78,14 @@ export const docs = {
     },
     {
       name: 'size',
-      type: "'sm' | 'md' | 'lg'",
-      description:
-        'Trigger height, forwarded to the underlying ComplexSelector. Use `sm` to line the picker up with small sibling controls in a dense row.',
-      default: "'md'",
+      type: 'ComplexSelectorSize',
+      description: 'Control height, in the Astryx size vocabulary.',
+    },
+    {
+      name: 'width',
+      type: 'SizeValue',
+      description: 'Field width, forwarded to ComplexSelector.',
+      default: "'100%'",
     },
     {
       name: 'style',
@@ -120,7 +124,6 @@ export const docs = {
       code: `<BAIVFolderPathPicker
   vfolderUuid={vfolderUuid}
   onChange={setSelectedSubPath}
-  style={{ width: '100%' }}
 />`,
     },
   ],
