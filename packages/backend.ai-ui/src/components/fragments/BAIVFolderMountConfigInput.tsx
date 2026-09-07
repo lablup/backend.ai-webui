@@ -361,8 +361,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     )}
                     value={aliasInput ?? ''}
                     onChange={(next) =>
-                      setValue(
-                        mountConfigs.map((m) =>
+                      setValue((prev) =>
+                        prev.map((m) =>
                           m.vfolderId === entry.vfolderId
                             ? { ...m, mountDestination: next }
                             : m,
@@ -386,18 +386,15 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     disabled={disabled}
                     vfolderUuid={entry.vfolderId}
                     value={entry.subpath}
-                    // The emitted `subpath` contract is `''` = vfolder root, so
-                    // a cleared pick collapses back to root rather than absent.
                     onChange={(next) =>
-                      setValue(
-                        mountConfigs.map((m) =>
+                      setValue((prev) =>
+                        prev.map((m) =>
                           m.vfolderId === entry.vfolderId
-                            ? { ...m, subpath: next ?? '' }
+                            ? { ...m, subpath: next }
                             : m,
                         ),
                       )
                     }
-                    style={{ width: '100%' }}
                   />
                 </Form.Item>
                 <Tooltip
@@ -421,10 +418,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     // row height.
                     style={{ flexShrink: 0, height: token.controlHeight }}
                     onClick={() =>
-                      setValue(
-                        mountConfigs.filter(
-                          (m) => m.vfolderId !== entry.vfolderId,
-                        ),
+                      setValue((prev) =>
+                        prev.filter((m) => m.vfolderId !== entry.vfolderId),
                       )
                     }
                   />

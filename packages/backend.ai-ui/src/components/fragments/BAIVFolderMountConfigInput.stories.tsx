@@ -1,46 +1,33 @@
 import { Form } from '../../form-engine';
-import { toGlobalId } from '../../helper';
+import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
-  createMockVFolderFileClient,
   mockVFolderFile as entry,
   type MockVFolderFileTrees,
 } from '../../tests/mockVFolderFileTree';
 import BAIButton from '../BAIButton';
 import BAIText from '../BAIText';
-import { BAIDirectoryPickerQuery } from '../baiClient/FileExplorer/BAIDirectoryPickerModal';
-import { BAIClientContext } from '../provider/BAIClientProvider/context';
 import BAIVFolderMountConfigInput, {
   BAIVFolderMountConfigInputProps,
   VFolderMountConfigValue,
   isVFolderMountConfigValid,
 } from './BAIVFolderMountConfigInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Suspense, useState } from 'react';
-import { RelayEnvironmentProvider } from 'react-relay';
-import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
+import { useState } from 'react';
+
+const DEMO_WIDTH = 760;
 
 const sampleVFolders = [
   { name: 'my-project-data', row_id: '11111111-1111-1111-1111-111111111111' },
   { name: 'shared-datasets', row_id: '22222222-2222-2222-2222-222222222222' },
   { name: 'model-checkpoints', row_id: '33333333-3333-3333-3333-333333333333' },
   { name: 'training-logs', row_id: '44444444-4444-4444-4444-444444444444' },
-].map((folder) => ({
-  // The component runs BAIVFolderSelect in `row_id` mode, so `row_id` is the
-  // value used everywhere; the global `id` only needs to satisfy the query
-  // shape and decode back to the same UUID.
-  node: {
-    id: toGlobalId('VirtualFolderNode', folder.row_id),
-    name: folder.name,
-    row_id: folder.row_id,
-  },
-}));
+];
 
 // Directory trees keyed by vfolder UUID, then by the path notation
 // `useSearchVFolderFiles` uses ('.' = root, 'a/b' below it), so every row's
 // subpath picker browses a real tree.
 const createInitialTrees = (): MockVFolderFileTrees => ({
-  [sampleVFolders[0].node.row_id]: {
+  [sampleVFolders[0].row_id]: {
     '.': [
       entry('dataset', 'DIRECTORY', '2026-07-21T14:02:00'),
       entry('scripts', 'DIRECTORY', '2026-07-18T09:45:00'),
@@ -54,81 +41,19 @@ const createInitialTrees = (): MockVFolderFileTrees => ({
     'dataset/validation': [],
     scripts: [],
   },
-  [sampleVFolders[1].node.row_id]: {
+  [sampleVFolders[1].row_id]: {
     '.': [
       entry('imagenet', 'DIRECTORY', '2026-07-10T08:00:00'),
       entry('LICENSE', 'FILE', '2026-07-02T12:00:00'),
     ],
     imagenet: [],
   },
-  [sampleVFolders[2].node.row_id]: {
+  [sampleVFolders[2].row_id]: {
     '.': [entry('epoch-001', 'DIRECTORY', '2026-07-27T03:12:00')],
     'epoch-001': [],
   },
-  [sampleVFolders[3].node.row_id]: { '.': [] },
+  [sampleVFolders[3].row_id]: { '.': [] },
 });
-
-/**
- * Everything the component needs without a backend:
- * - Relay for BAIVFolderSelect's dual queries (ValueQuery + PaginatedQuery,
- *   re-fetched on selection) and for the subpath picker's `vfolder_node`
- *   query, whose operation must also be queued as pending because the picker
- *   preloads it;
- * - a mock BAIClientContext client backed by an in-memory directory tree, for
- *   the directory modal's REST calls.
- */
-const MockProviders = ({ children }: { children?: React.ReactNode }) => {
-  const [queryClient] = useState(
-    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
-  );
-  const [clientPromise] = useState(() =>
-    Promise.resolve(createMockVFolderFileClient(createInitialTrees())),
-  );
-  const [environment] = useState(() => {
-    const env = createMockEnvironment();
-    const pickerGlobalIds = sampleVFolders.map(({ node }) => node.id);
-    for (let i = 0; i < 40; i++) {
-      env.mock.queueOperationResolver((operation) => {
-        const { vfolderGlobalId } = operation.request.variables;
-        const requestedRowId =
-          typeof vfolderGlobalId === 'string'
-            ? atob(vfolderGlobalId).split(':')[1]
-            : undefined;
-        const requested =
-          sampleVFolders.find(({ node }) => node.row_id === requestedRowId) ??
-          sampleVFolders[0];
-        return MockPayloadGenerator.generate(operation, {
-          Query: () => ({
-            vfolder_nodes: {
-              count: sampleVFolders.length,
-              edges: sampleVFolders,
-            },
-            vfolder_node: {
-              name: requested.node.name,
-              permissions: ['read_content', 'write_content', 'delete_content'],
-            },
-          }),
-        });
-      });
-      pickerGlobalIds.forEach((vfolderGlobalId) =>
-        env.mock.queuePendingOperation(BAIDirectoryPickerQuery, {
-          vfolderGlobalId,
-        }),
-      );
-    }
-    return env;
-  });
-
-  return (
-    <RelayEnvironmentProvider environment={environment}>
-      <QueryClientProvider client={queryClient}>
-        <BAIClientContext.Provider value={clientPromise}>
-          <Suspense fallback="Loading...">{children}</Suspense>
-        </BAIClientContext.Provider>
-      </QueryClientProvider>
-    </RelayEnvironmentProvider>
-  );
-};
 
 /**
  * Controlled wrapper that renders the component and prints the current
@@ -144,7 +69,7 @@ const ControlledDemo = ({
 }) => {
   const [value, setValue] = useState<VFolderMountConfigValue[]>(initialValue);
   return (
-    <div style={{ width: 760 }}>
+    <div style={{ width: DEMO_WIDTH }}>
       <BAIVFolderMountConfigInput
         {...props}
         value={value}
@@ -201,9 +126,13 @@ The stories below use a mocked Relay environment so multiple sample folders can 
   },
   decorators: [
     (Story) => (
-      <MockProviders>
+      <MockVFolderFileProviders
+        vfolders={sampleVFolders}
+        trees={createInitialTrees}
+        suspenseFallback="Loading..."
+      >
         <Story />
-      </MockProviders>
+      </MockVFolderFileProviders>
     ),
   ],
   argTypes: {
@@ -253,11 +182,6 @@ The stories below use a mocked Relay environment so multiple sample folders can 
 export default meta;
 type Story = StoryObj<typeof BAIVFolderMountConfigInput>;
 
-/**
- * Empty initial state. Select folders from the dropdown to add rows, then edit
- * each row's mount path and browse its subpath. The live form value is shown
- * below.
- */
 export const Interactive: Story = {
   parameters: {
     docs: {
@@ -270,10 +194,6 @@ export const Interactive: Story = {
   render: (args) => <ControlledDemo {...args} />,
 };
 
-/**
- * Prefilled showing all three alias modes: a relative alias, an absolute path,
- * and an empty alias that falls back to the default mount path.
- */
 export const Prefilled: Story = {
   parameters: {
     docs: {
@@ -288,20 +208,20 @@ export const Prefilled: Story = {
       {...args}
       initialValue={[
         {
-          vfolderId: sampleVFolders[0].node.row_id,
-          name: sampleVFolders[0].node.name,
+          vfolderId: sampleVFolders[0].row_id,
+          name: sampleVFolders[0].name,
           mountDestination: 'data',
           subpath: 'dataset/train',
         },
         {
-          vfolderId: sampleVFolders[1].node.row_id,
-          name: sampleVFolders[1].node.name,
+          vfolderId: sampleVFolders[1].row_id,
+          name: sampleVFolders[1].name,
           mountDestination: '/mnt/shared',
           subpath: '',
         },
         {
-          vfolderId: sampleVFolders[2].node.row_id,
-          name: sampleVFolders[2].node.name,
+          vfolderId: sampleVFolders[2].row_id,
+          name: sampleVFolders[2].name,
           mountDestination: '',
           subpath: '',
         },
@@ -328,14 +248,14 @@ export const OverlappingPaths: Story = {
       {...args}
       initialValue={[
         {
-          vfolderId: sampleVFolders[0].node.row_id,
-          name: sampleVFolders[0].node.name,
+          vfolderId: sampleVFolders[0].row_id,
+          name: sampleVFolders[0].name,
           mountDestination: 'shared',
           subpath: '',
         },
         {
-          vfolderId: sampleVFolders[1].node.row_id,
-          name: sampleVFolders[1].node.name,
+          vfolderId: sampleVFolders[1].row_id,
+          name: sampleVFolders[1].name,
           mountDestination: 'shared',
           subpath: '',
         },
@@ -363,14 +283,14 @@ export const WithAutoMountedFolders: Story = {
       autoMountedFolderNames={['.local', '.config']}
       initialValue={[
         {
-          vfolderId: sampleVFolders[0].node.row_id,
-          name: sampleVFolders[0].node.name,
+          vfolderId: sampleVFolders[0].row_id,
+          name: sampleVFolders[0].name,
           mountDestination: '.config',
           subpath: '',
         },
         {
-          vfolderId: sampleVFolders[2].node.row_id,
-          name: sampleVFolders[2].node.name,
+          vfolderId: sampleVFolders[2].row_id,
+          name: sampleVFolders[2].name,
           mountDestination: 'checkpoints',
           subpath: '',
         },
@@ -401,18 +321,18 @@ export const WithFormValidation: Story = {
         <Form
           form={form}
           layout="vertical"
-          style={{ width: 680 }}
+          style={{ width: DEMO_WIDTH }}
           initialValues={{
             mounts: [
               {
-                vfolderId: sampleVFolders[0].node.row_id,
-                name: sampleVFolders[0].node.name,
+                vfolderId: sampleVFolders[0].row_id,
+                name: sampleVFolders[0].name,
                 mountDestination: 'shared',
                 subpath: '',
               },
               {
-                vfolderId: sampleVFolders[1].node.row_id,
-                name: sampleVFolders[1].node.name,
+                vfolderId: sampleVFolders[1].row_id,
+                name: sampleVFolders[1].name,
                 mountDestination: 'shared',
                 subpath: '',
               },
@@ -463,9 +383,6 @@ export const WithFormValidation: Story = {
   },
 };
 
-/**
- * Disabled state — selection and inputs are read-only.
- */
 export const Disabled: Story = {
   parameters: {
     docs: {
@@ -481,8 +398,8 @@ export const Disabled: Story = {
       disabled
       initialValue={[
         {
-          vfolderId: sampleVFolders[1].node.row_id,
-          name: sampleVFolders[1].node.name,
+          vfolderId: sampleVFolders[1].row_id,
+          name: sampleVFolders[1].name,
           mountDestination: 'shared',
           subpath: '',
         },

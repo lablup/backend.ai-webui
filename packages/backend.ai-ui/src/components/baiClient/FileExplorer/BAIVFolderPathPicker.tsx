@@ -14,6 +14,7 @@ import {
   ComplexSelector,
   type ComplexSelectorSize,
 } from '@astryxdesign/core/ComplexSelector';
+import type { SizeValue } from '@astryxdesign/core/utils';
 import {
   useEffectEvent,
   useLayoutEffect,
@@ -36,10 +37,12 @@ export interface BAIVFolderPathPickerProps {
    */
   value?: string;
   defaultValue?: string;
-  onChange?: (selectedSubPath?: string) => void;
+  onChange?: (selectedSubPath: string) => void;
   disabled?: boolean;
-  /** Trigger height, matching the sibling form controls of a dense row. */
+  /** Control height, in the Astryx size vocabulary. */
   size?: ComplexSelectorSize;
+  /** Field width, forwarded to ComplexSelector. */
+  width?: SizeValue;
   style?: React.CSSProperties;
   /**
    * Accessible name of the trigger; visually hidden (the surrounding
@@ -85,7 +88,7 @@ const PopoverToModalRedirect: React.FC<{
 const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
   'use memo';
 
-  const { vfolderUuid, disabled, size, style, label } = props;
+  const { vfolderUuid, disabled, size, width = '100%', style, label } = props;
   const { t } = useBAIi18n();
   const [selectedSubPath, setSelectedSubPath] = useControllableValue<
     string | undefined
@@ -140,7 +143,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
         }
         isDisabled={disabled}
         size={size}
-        width={style?.width}
+        width={width}
         style={style}
       >
         {(_value, _onChange, close, { isOpen }) => (
