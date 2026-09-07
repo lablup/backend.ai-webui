@@ -37,7 +37,8 @@ export interface BAIVFolderPathPickerProps {
    */
   value?: string;
   defaultValue?: string;
-  onChange?: (selectedSubPath: string) => void;
+  // Optional so a future clear affordance can emit `undefined` (nothing picked).
+  onChange?: (selectedSubPath?: string) => void;
   disabled?: boolean;
   /** Control height, in the Astryx size vocabulary. */
   size?: ComplexSelectorSize;
