@@ -4306,6 +4306,7 @@
         "environment.Version",
         "general.Control",
         "general.Image",
+        "session.launcher.StartNewSession",
         "table.SettingTable"
       ]
     },
