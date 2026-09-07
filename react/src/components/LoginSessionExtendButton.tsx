@@ -4,19 +4,31 @@
  */
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import {
+  isLoginSessionExpiredState,
+  learnLoginSessionExpiresAtState,
+  loginSessionExpiresAtState,
+  parseLoginSessionExpiresAt,
+  publishLoginSessionExpiresAt,
+  readLoginSessionExpiresAt,
+  useSyncLoginSessionExpiresAt,
+} from '../hooks/useLoginSessionExpiration';
 import { useBAIBreakpoint } from '../theme-shim';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useUpdatableState, BAIFlex, BAIIntervalView } from 'backend.ai-ui';
+import {
+  useUpdatableState,
+  BAIFlex,
+  BAIIntervalView,
+  INITIAL_FETCH_KEY,
+} from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
-import { atom, useAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Clock, Repeat2Icon } from 'lucide-react';
-import React, { useTransition } from 'react';
+import React, { useEffect, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface LoginSessionExtendButtonProps {}
-
-export const isLoginSessionExpiredState = atom(false);
 
 const LoginSessionExtendButton: React.FC<
   LoginSessionExtendButtonProps
@@ -24,7 +36,7 @@ const LoginSessionExtendButton: React.FC<
   const { t } = useTranslation();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const [isPending, startTransition] = useTransition();
-  const [fetchKey, updateFetchKey] = useUpdatableState('first');
+  const [fetchKey, updateFetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
 
   // RESPONSIVE-POLICY R3: antd `Grid.useBreakpoint()` → the theme-shim's
   // `useBAIBreakpoint()` (MAPPING §3.9 — `useMediaQuery` is not equivalent).
@@ -33,12 +45,25 @@ const LoginSessionExtendButton: React.FC<
   const [isLoginSessionExpired, setIsLoginSessionExpired] = useAtom(
     isLoginSessionExpiredState,
   );
+  const sharedExpiresAt = useAtomValue(loginSessionExpiresAtState);
+  const learnExpiresAt = useSetAtom(learnLoginSessionExpiresAtState);
+  useSyncLoginSessionExpiresAt();
 
   const { data } = useSuspenseTanQuery<{
     expires: string;
   }>({
     queryKey: ['TimeContainerExpires', fetchKey],
-    queryFn: () => {
+    queryFn: async () => {
+      // All tabs share one webserver session and `/server/extend-login-session`
+      // is the only way to read its expiry (it always extends, and
+      // `/server/login-check` reports none), so a tab that opens while a
+      // sibling holds a live expiry reuses it rather than extending again.
+      if (fetchKey === INITIAL_FETCH_KEY) {
+        const sharedExpires = readLoginSessionExpiresAt();
+        if (sharedExpires !== null && sharedExpires > Date.now()) {
+          return { expires: new Date(sharedExpires).toISOString() };
+        }
+      }
       return baiRequestWithPromise({
         method: 'POST',
         url: `/server/extend-login-session`,
@@ -46,6 +71,18 @@ const LoginSessionExtendButton: React.FC<
     },
     staleTime: 1000,
   });
+
+  useEffect(() => {
+    if (!data?.expires) return;
+    learnExpiresAt(parseLoginSessionExpiresAt(data.expires));
+    publishLoginSessionExpiresAt(data.expires);
+  }, [data?.expires, learnExpiresAt]);
+
+  const queryExpiresAt = parseLoginSessionExpiresAt(data?.expires);
+  const expiresAt =
+    sharedExpiresAt !== null && queryExpiresAt !== null
+      ? Math.max(sharedExpiresAt, queryExpiresAt)
+      : (sharedExpiresAt ?? queryExpiresAt);
 
   if (isLoginSessionExpired) {
     const error = new Error('Login session expired');
@@ -56,12 +93,16 @@ const LoginSessionExtendButton: React.FC<
   return (
     <BAIFlex direction="row" gap="xs">
       <BAIIntervalView
+        triggerKey={String(expiresAt)}
         callback={() => {
-          const diff = dayjs(data?.expires).diff(dayjs(), 'seconds');
+          const diff =
+            expiresAt === null ? 0 : dayjs(expiresAt).diff(dayjs(), 'seconds');
           const duration = dayjs.duration(Math.max(0, diff), 'seconds');
           const days = Math.floor(duration.asDays());
-          const isExpired = duration.asMilliseconds() <= 0;
-          setIsLoginSessionExpired(isExpired);
+          // An unknown expiry never expires the tab: only the server may.
+          setIsLoginSessionExpired(
+            expiresAt !== null && duration.asMilliseconds() <= 0,
+          );
           return gridBreakpoint.lg
             ? `${days ? days + 'd ' : ''}${duration.format('HH:mm:ss')}`
             : days
