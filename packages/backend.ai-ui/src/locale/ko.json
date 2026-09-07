@@ -302,7 +302,7 @@
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
-    "ProjectResourcePolicy": "프로젝트 리소스 정책",
+    "ProjectResourcePolicy": "프로젝트 자원 정책",
     "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
   },
   "comp:BAIProjectResourcePolicyV2Table": {
@@ -332,7 +332,7 @@
     "PleaseEnterBothRegistryAndProject": "레지스트리와 프로젝트 모두 입력해 주세요.",
     "Project": "프로젝트",
     "ProjectCreated": "프로젝트가 생성되었습니다.",
-    "ProjectResourcePolicy": "리소스 정책",
+    "ProjectResourcePolicy": "자원 정책",
     "ProjectUpdated": "프로젝트가 업데이트 되었습니다.",
     "Registry": "레지스트리",
     "UpdateProject": "프로젝트 수정"
@@ -700,7 +700,7 @@
     "ModifiedAt": "수정일",
     "NeedPasswordChange": "비밀번호 변경 필요",
     "Project": "프로젝트",
-    "ResourcePolicy": "리소스 정책",
+    "ResourcePolicy": "자원 정책",
     "Role": "역할",
     "Status": "상태",
     "StatusInfo": "상태 정보",
