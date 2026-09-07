@@ -269,11 +269,15 @@ const UtilizationCell: React.FC<{
       if (['cpu_util', 'mem', 'disk', 'net_rx', 'net_tx'].includes(statKey))
         return;
       if (_.includes(statKey, '_util')) {
-        // core utilization
+        // core utilization — `current` is the SUM of per-device utilizations
+        // (0..N*100), so the ratio must divide by capacity (N*100), not 100.
+        const utilCapacity =
+          _.toFinite(parsedValue.node[statKey].capacity) || 100;
         liveStat[statKey as keyof typeof liveStat] = {
-          capacity: _.toFinite(parsedValue.node[statKey].capacity) || 100,
+          capacity: utilCapacity,
           current: _.toFinite(parsedValue.node[statKey].current),
-          ratio: _.toFinite(parsedValue.node[statKey].current) / 100 || 0,
+          ratio:
+            _.toFinite(parsedValue.node[statKey].current) / utilCapacity || 0,
         };
       } else if (statKey.includes('_mem')) {
         // memory utilization
@@ -463,7 +467,8 @@ const UtilizationCell: React.FC<{
               >
                 <BAIText>{statKey === 'net_rx' ? 'Net Rx' : 'Net Tx'}</BAIText>
                 <BAIText>
-                  {`${convertedValue?.numberFixed ?? 0} ${convertedValue?.unit.toUpperCase() ?? ''}bps`}
+                  {/* stats.rate over psutil byte counters — bytes/sec, not bits/sec */}
+                  {`${convertedValue?.numberFixed ?? 0} ${convertedValue?.unit.toUpperCase() ?? ''}B/s`}
                 </BAIText>
               </BAIFlex>
             );

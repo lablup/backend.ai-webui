@@ -177,12 +177,12 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
           used={
             projectUsageBytes === 0
               ? ''
-              : `${convertToDecimalUnit(_.toString(projectUsageBytes), 'g')?.displayValue}`
+              : `${convertToDecimalUnit(_.toString(projectUsageBytes), 'auto')?.displayValue}`
           }
           total={
             projectHardLimitBytes === 0
               ? ''
-              : `${convertToDecimalUnit(_.toString(projectHardLimitBytes), 'g')?.displayValue}`
+              : `${convertToDecimalUnit(_.toString(projectHardLimitBytes), 'auto')?.displayValue}`
           }
         />
       </GridSpan>

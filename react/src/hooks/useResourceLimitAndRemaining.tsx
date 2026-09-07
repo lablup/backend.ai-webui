@@ -96,6 +96,8 @@ export type ResourceAllocation = {
   group_limits: ResourceLimits;
   group_using: ResourceUsing;
   group_remaining: ResourceRemaining;
+  // Absent on managers that predate the field.
+  domain_limits?: ResourceLimits;
 };
 
 interface Props {
@@ -287,6 +289,7 @@ export const useResourceLimitAndRemaining = ({
                 : baiClient._config.maxCPUCoresPerContainer,
               limitParser(checkPresetInfo?.keypair_limits.cpu),
               limitParser(checkPresetInfo?.group_limits.cpu),
+              limitParser(checkPresetInfo?.domain_limits?.cpu),
               includeResourceGroupLimits
                 ? limitParser(currentResourceGroupSlotLimits.cpu)
                 : undefined,
@@ -323,6 +326,11 @@ export const useResourceLimitAndRemaining = ({
                 limitParser(checkPresetInfo?.group_limits.mem) &&
                   convertToBinaryUnit(
                     limitParser(checkPresetInfo?.group_limits.mem) + '',
+                    'g',
+                  )?.number,
+                limitParser(checkPresetInfo?.domain_limits?.mem) &&
+                  convertToBinaryUnit(
+                    limitParser(checkPresetInfo?.domain_limits?.mem) + '',
                     'g',
                   )?.number,
                 includeResourceGroupLimits
@@ -362,6 +370,9 @@ export const useResourceLimitAndRemaining = ({
               checkPresetInfo?.keypair_limits[key as ResourceSlotName],
             ),
             limitParser(checkPresetInfo?.group_limits[key as ResourceSlotName]),
+            limitParser(
+              checkPresetInfo?.domain_limits?.[key as ResourceSlotName],
+            ),
             includeResourceGroupLimits
               ? limitParser(
                   currentResourceGroupSlotLimits[key as ResourceSlotName],

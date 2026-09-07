@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<410ff105ff2f34c553e147969fb2a6b1>>
+ * @generated SignedSource<<ce4206aa2057ac387c8aa7a1a4af488b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,11 +10,11 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type StorageStatusPanelCardQuery$variables = {
-  name: string;
+  projectId: string;
 };
 export type StorageStatusPanelCardQuery$data = {
-  readonly project_resource_policy: {
-    readonly max_vfolder_count: number | null | undefined;
+  readonly group: {
+    readonly resource_policy: string | null | undefined;
   } | null | undefined;
   readonly user_resource_policy: {
     readonly max_vfolder_count: number | null | undefined;
@@ -30,7 +30,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "name"
+    "name": "projectId"
   }
 ],
 v1 = {
@@ -40,26 +40,38 @@ v1 = {
   "name": "max_vfolder_count",
   "storageKey": null
 },
-v2 = [
-  (v1/*: any*/)
-],
-v3 = [
-  {
-    "kind": "Variable",
-    "name": "name",
-    "variableName": "name"
-  }
-],
-v4 = [
-  (v1/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "id",
-    "storageKey": null
-  }
-];
+v2 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "id",
+      "variableName": "projectId"
+    },
+    {
+      "kind": "Literal",
+      "name": "type",
+      "value": [
+        "GENERAL",
+        "MODEL_STORE"
+      ]
+    }
+  ],
+  "concreteType": "Group",
+  "kind": "LinkedField",
+  "name": "group",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "resource_policy",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -74,19 +86,12 @@ return {
         "kind": "LinkedField",
         "name": "user_resource_policy",
         "plural": false,
-        "selections": (v2/*: any*/),
+        "selections": [
+          (v1/*: any*/)
+        ],
         "storageKey": null
       },
-      {
-        "alias": null,
-        "args": (v3/*: any*/),
-        "concreteType": "ProjectResourcePolicy",
-        "kind": "LinkedField",
-        "name": "project_resource_policy",
-        "plural": false,
-        "selections": (v2/*: any*/),
-        "storageKey": null
-      }
+      (v2/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -104,32 +109,32 @@ return {
         "kind": "LinkedField",
         "name": "user_resource_policy",
         "plural": false,
-        "selections": (v4/*: any*/),
+        "selections": [
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       },
-      {
-        "alias": null,
-        "args": (v3/*: any*/),
-        "concreteType": "ProjectResourcePolicy",
-        "kind": "LinkedField",
-        "name": "project_resource_policy",
-        "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": null
-      }
+      (v2/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "6a4458681167a38a930cf05173cf0d90",
+    "cacheID": "44c9f83b1286f073c54d1214d4764209",
     "id": null,
     "metadata": {},
     "name": "StorageStatusPanelCardQuery",
     "operationKind": "query",
-    "text": "query StorageStatusPanelCardQuery(\n  $name: String!\n) {\n  user_resource_policy {\n    max_vfolder_count\n    id\n  }\n  project_resource_policy(name: $name) {\n    max_vfolder_count\n    id\n  }\n}\n"
+    "text": "query StorageStatusPanelCardQuery(\n  $projectId: UUID!\n) {\n  user_resource_policy {\n    max_vfolder_count\n    id\n  }\n  group(id: $projectId, type: [\"GENERAL\", \"MODEL_STORE\"]) {\n    resource_policy\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "33191e01e0635b3635f28c7383463c39";
+(node as any).hash = "711f6156aa407141b35d3f7a3ddc8e5f";
 
 export default node;
