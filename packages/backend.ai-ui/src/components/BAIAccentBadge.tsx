@@ -14,6 +14,8 @@ import React from 'react';
 export interface BAIAccentBadgeProps extends Omit<BadgeProps, 'variant'> {}
 
 const BAIAccentBadge: React.FC<BAIAccentBadgeProps> = ({
+  label,
+  icon,
   className,
   ...badgeProps
 }) => {
@@ -24,6 +26,8 @@ const BAIAccentBadge: React.FC<BAIAccentBadgeProps> = ({
       className={['bai-accent-badge', className ?? '']
         .filter(Boolean)
         .join(' ')}
+      label={label}
+      icon={icon}
       {...badgeProps}
     />
   );
