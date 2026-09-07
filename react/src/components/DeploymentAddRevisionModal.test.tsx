@@ -9,14 +9,16 @@ import DeploymentAddRevisionModal, {
 } from './DeploymentAddRevisionModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Suspense } from 'react';
 import {
   graphql,
   RelayEnvironmentProvider,
   useLazyLoadQuery,
 } from 'react-relay';
+import type { OperationDescriptor } from 'relay-runtime';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
+import type { MockResolvers } from 'relay-test-utils/lib/RelayMockPayloadGenerator';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
 /**
@@ -155,7 +157,18 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         },
         'select-model-folder',
       ),
-    BAIAvailablePresetSelect: () => null,
+    // Wrapped in a named `Form.Item`, so antd hands it `onChange`; the probe
+    // uses that to put a preset id into the Preset form.
+    BAIAvailablePresetSelect: (props: any) =>
+      React.createElement(
+        'button',
+        {
+          'data-testid': 'mock-preset-select',
+          type: 'button',
+          onClick: () => props.onChange?.('test-preset-id'),
+        },
+        'select-preset',
+      ),
     BAIRuntimeVariantSelect: () => null,
   };
 });
@@ -188,17 +201,33 @@ const TestRenderer: React.FC = () => {
   );
 };
 
-const renderModal = (metadata: DeploymentMetadataMock) => {
+const renderModal = (
+  metadata: DeploymentMetadataMock,
+  extraResolvers: MockResolvers = {},
+) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const queryClient = new QueryClient();
-  environment.mock.queueOperationResolver((operation) =>
-    MockPayloadGenerator.generate(operation, {
+  // Every operation the modal issues, in order — the probe for "did the
+  // pre-26.4.4 image lookup fire?".
+  const executedOperations: Array<string> = [];
+  const resolveOperation = (operation: OperationDescriptor) => {
+    executedOperations.push(operation.request.node.operation.name);
+    return MockPayloadGenerator.generate(operation, {
       ModelDeploymentMetadata: () => metadata,
       // Keep the "Load current revision" path quiet: no current revision.
       ModelDeployment: () => ({ currentRevision: null }),
       DeploymentRevisionPresetConnection: () => ({ count: 1 }),
-    }),
-  );
+      ...extraResolvers,
+    });
+  };
+  // A resolver is dropped from the queue once it resolves an operation, and
+  // `filter` drops every copy of the same reference — so queue distinct
+  // closures to cover the follow-up queries the mode switch triggers.
+  for (let i = 0; i < 20; i++) {
+    environment.mock.queueOperationResolver((operation) =>
+      resolveOperation(operation),
+    );
+  }
   render(
     <QueryClientProvider client={queryClient}>
       <RelayEnvironmentProvider environment={environment}>
@@ -210,7 +239,7 @@ const renderModal = (metadata: DeploymentMetadataMock) => {
       </RelayEnvironmentProvider>
     </QueryClientProvider>,
   );
-  return { environment };
+  return { environment, executedOperations };
 };
 
 const DEPLOYMENT_METADATA: DeploymentMetadataMock = {
@@ -316,5 +345,67 @@ describe('toImageFullName', () => {
   it('resolves to undefined when the preset carries no image', () => {
     expect(toImageFullName(null)).toBeUndefined();
     expect(toImageFullName(undefined)).toBeUndefined();
+  });
+});
+
+// The Preset → Custom prefill reads the preset's `image` node on 26.4.4+ and
+// only falls back to the secondary `imageV2` lookup when the manager is older
+// and leaves `image` null. These pin the branch itself, not just the string
+// formatting: whether `DeploymentAddRevisionModalImageNameQuery` is issued.
+describe('preset → custom image prefill', () => {
+  const IMAGE_NAME_QUERY = 'DeploymentAddRevisionModalImageNameQuery';
+
+  const switchToCustomWithPreset = async (extraResolvers: MockResolvers) => {
+    const { executedOperations } = renderModal(
+      DEPLOYMENT_METADATA,
+      extraResolvers,
+    );
+
+    // Select a preset so the mode switch has something to carry over...
+    fireEvent.click(await screen.findByTestId('mock-preset-select'));
+    // ...then toggle Preset → Custom, which runs the prefill.
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'deployment.CustomMode' }),
+    );
+
+    await waitFor(() => {
+      expect(executedOperations).toContain(
+        'DeploymentAddRevisionModalSelectedPresetQuery',
+      );
+    });
+    return executedOperations;
+  };
+
+  it('reads the preset image node without a secondary lookup (26.4.4+)', async () => {
+    const executedOperations = await switchToCustomWithPreset({
+      DeploymentRevisionPreset: () => ({
+        execution: { imageId: 'test-image-id' },
+        image: {
+          identity: {
+            canonicalName: 'cr.backend.ai/stable/python:3.9-ubuntu20.04',
+            architecture: 'x86_64',
+          },
+        },
+      }),
+    });
+
+    // The whole point of the refactor: no second round trip.
+    await waitFor(() => {
+      expect(executedOperations).not.toContain(IMAGE_NAME_QUERY);
+    });
+  });
+
+  it('falls back to the imageV2 lookup when the manager leaves image null (pre-26.4.4)', async () => {
+    const executedOperations = await switchToCustomWithPreset({
+      DeploymentRevisionPreset: () => ({
+        execution: { imageId: 'test-image-id' },
+        // @since(26.4.4) field, absent on older managers.
+        image: null,
+      }),
+    });
+
+    await waitFor(() => {
+      expect(executedOperations).toContain(IMAGE_NAME_QUERY);
+    });
   });
 });
