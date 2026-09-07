@@ -982,7 +982,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           prefill = await buildPrefillFromPreset(preset);
         }
       }
-      if (presetValues.modelFolderId) {
+      if (presetValues.presetModelSource === 'card') {
+        // Card source keeps its backing folder in `selectedCardVfolderId` as a
+        // raw UUID; the Custom form's `modelFolderId` holds a global id.
+        if (selectedCardVfolderId) {
+          prefill.modelFolderId = toGlobalId(
+            'VirtualFolderNode',
+            selectedCardVfolderId,
+          );
+        }
+      } else if (presetValues.modelFolderId) {
         prefill.modelFolderId = presetValues.modelFolderId;
       }
       setPresetTransferPrefill(
