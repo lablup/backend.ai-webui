@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<16c489e5b11d027acbb51266d2272c70>>
+ * @generated SignedSource<<85acc6198648fc05a01890b02abf090c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,11 +50,11 @@ return {
     "name": "AgentSettingModalQuery",
     "selections": [
       {
-        "alias": null,
+        "alias": "resourceGroups",
         "args": (v0/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
-        "name": "resourceGroups",
+        "name": "adminResourceGroups",
         "plural": false,
         "selections": [
           {
@@ -140,10 +140,10 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "resourceGroups(first:10)"
+        "storageKey": "adminResourceGroups(first:10)"
       },
       {
-        "alias": null,
+        "alias": "resourceGroups",
         "args": (v0/*: any*/),
         "filters": [
           "filter"
@@ -151,17 +151,17 @@ return {
         "handle": "connection",
         "key": "BAIAdminResourceGroupSelect_resourceGroups",
         "kind": "LinkedHandle",
-        "name": "resourceGroups"
+        "name": "adminResourceGroups"
       }
     ]
   },
   "params": {
-    "cacheID": "cde03dadbfc6ce076a4fad8dcc7fb9ff",
+    "cacheID": "c402f205f655f900f2fdfed6924d9f5f",
     "id": null,
     "metadata": {},
     "name": "AgentSettingModalQuery",
     "operationKind": "query",
-    "text": "query AgentSettingModalQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  resourceGroups(first: 10) @since(version: \"26.1.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AgentSettingModalQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  resourceGroups: adminResourceGroups(first: 10) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

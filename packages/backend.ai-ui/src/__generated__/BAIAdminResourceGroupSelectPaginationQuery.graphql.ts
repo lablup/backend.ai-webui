@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<16819de3ceab898d01fff5e4a99f2913>>
+ * @generated SignedSource<<f61dc7b60b11c952e23ba36b8b623a93>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -112,11 +112,11 @@ return {
     "name": "BAIAdminResourceGroupSelectPaginationQuery",
     "selections": [
       {
-        "alias": null,
+        "alias": "resourceGroups",
         "args": (v1/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
-        "name": "resourceGroups",
+        "name": "adminResourceGroups",
         "plural": false,
         "selections": [
           {
@@ -205,7 +205,7 @@ return {
         "storageKey": null
       },
       {
-        "alias": null,
+        "alias": "resourceGroups",
         "args": (v1/*: any*/),
         "filters": [
           "filter"
@@ -213,21 +213,21 @@ return {
         "handle": "connection",
         "key": "BAIAdminResourceGroupSelect_resourceGroups",
         "kind": "LinkedHandle",
-        "name": "resourceGroups"
+        "name": "adminResourceGroups"
       }
     ]
   },
   "params": {
-    "cacheID": "1a90a27c601f1d11dcd17163dbcfabbe",
+    "cacheID": "b5cedd03adfaf9887155fd93e5fcbf4e",
     "id": null,
     "metadata": {},
     "name": "BAIAdminResourceGroupSelectPaginationQuery",
     "operationKind": "query",
-    "text": "query BAIAdminResourceGroupSelectPaginationQuery(\n  $after: String\n  $filter: ResourceGroupFilter\n  $first: Int = 10\n) {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv on Query {\n  resourceGroups(first: $first, after: $after, filter: $filter) @since(version: \"26.1.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query BAIAdminResourceGroupSelectPaginationQuery(\n  $after: String\n  $filter: ResourceGroupFilter\n  $first: Int = 10\n) {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv on Query {\n  resourceGroups: adminResourceGroups(first: $first, after: $after, filter: $filter) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "97c2e022b1e40671b4d0311dbd4912ec";
+(node as any).hash = "b1be0cd7d12414c29b4121b745f0815d";
 
 export default node;

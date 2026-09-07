@@ -85,9 +85,13 @@ const BAIAdminResourceGroupSelect: React.FC<
           filter: { type: "ResourceGroupFilter" }
         )
         @refetchable(queryName: "BAIAdminResourceGroupSelectPaginationQuery") {
-          resourceGroups(first: $first, after: $after, filter: $filter)
+          resourceGroups: adminResourceGroups(
+            first: $first
+            after: $after
+            filter: $filter
+          )
             @connection(key: "BAIAdminResourceGroupSelect_resourceGroups")
-            @since(version: "26.1.0") {
+            @since(version: "26.2.0") {
             count
             edges {
               node {
