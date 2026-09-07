@@ -18,6 +18,10 @@ import { resolveAppName } from './portless-app-name.mjs';
 
 const env = { ...process.env };
 
+// How long the polling prompt waits before defaulting to No, so an
+// unattended pty can never hold dev startup open forever.
+const PROMPT_TIMEOUT_MS = 90_000;
+
 // fseventsd can refuse every new FSEventStream registration (client-table
 // exhaustion by leaked dev processes — see scripts/fsevents-health.mjs). Every
 // watcher this script spawns then starts permanently silent: HMR dead, stale
@@ -54,9 +58,23 @@ if (process.platform === 'darwin') {
         output: process.stdout,
       });
       // rl.question() without a signal NEVER settles — not on stdin EOF, not on
-      // rl.close() — so Ctrl+D would strand this await and dev would never start.
+      // rl.close() — so every way out of this prompt has to abort it explicitly.
       const ac = new AbortController();
       rl.once('close', () => ac.abort());
+      // readline puts the TTY in raw mode, so Ctrl+C is delivered here instead
+      // of killing the process: cancel startup rather than spawning the dev tree
+      // on a decision the developer never made.
+      rl.on('SIGINT', () => {
+        rl.close();
+        console.warn(
+          '\n[dev] cancelled at the FSEvents prompt — dev server not started.\n',
+        );
+        process.exit(130);
+      });
+      // A TTY is not proof someone is watching it (tmux pane, pty-allocating
+      // wrapper). This is a liveness backstop, not a decision deadline: it takes
+      // the default — No, i.e. behaviour unchanged — and says that it did.
+      const deadline = AbortSignal.timeout(PROMPT_TIMEOUT_MS);
       let answer = '';
       try {
         answer = await rl.question(
@@ -65,21 +83,33 @@ if (process.platform === 'darwin') {
                 '[dev] still relies on FSEvents. Extend polling to it for THIS run? [y/N] '
             : '[dev] Fall back to stat-polling for THIS run (works, but steady CPU cost\n' +
                 '[dev] and the machine stays broken for every other tool)? [y/N] ',
-          { signal: ac.signal },
+          { signal: AbortSignal.any([ac.signal, deadline]) },
         );
       } catch {
-        // Ctrl+D / stdin closed mid-question — treat as "No".
+        // Ctrl+D, closed stdin, or the deadline above — all mean "No".
       } finally {
         rl.close();
+      }
+      if (deadline.aborted) {
+        console.warn(
+          `[dev] no answer in ${PROMPT_TIMEOUT_MS / 1000}s — taking the default (No).\n`,
+        );
       }
       if (/^y(es)?$/i.test(answer.trim())) {
         env.VITE_WATCH_USE_POLLING = '1'; // Vite chokidar (react/vite.config.ts)
         env.CHOKIDAR_USEPOLLING = '1'; // nodemon's chokidar (relay:watch schema files)
-        if (!env.TSC_WATCHFILE?.trim()) {
+        // An explicit TSC_WATCHFILE pin (the escape hatch documented below) wins
+        // over the fallback, so the message must not claim tsc got covered.
+        const tscPinned = !!env.TSC_WATCHFILE?.trim();
+        if (!tscPinned) {
           env.TSC_WATCHFILE = 'DynamicPriorityPolling'; // tsc watch children
         }
         console.warn(
-          '[dev] polling fallback enabled for this run (Vite HMR + tsc file watching).\n' +
+          (tscPinned
+            ? '[dev] polling fallback enabled for this run (Vite HMR). tsc keeps its pinned\n' +
+              `[dev] TSC_WATCHFILE=${env.TSC_WATCHFILE} — unset it to let the fallback cover\n` +
+              '[dev] tsc file watching too.\n'
+            : '[dev] polling fallback enabled for this run (Vite HMR + tsc file watching).\n') +
             '[dev] relay-compiler --watch cannot be covered — it needs Watchman, which has\n' +
             '[dev] no polling mode. Run `watchman shutdown-server` if relay stays blind.\n',
         );
