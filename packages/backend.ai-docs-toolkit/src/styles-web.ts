@@ -810,20 +810,18 @@ body.bai-palette-open .bai-palette {
 }
 
 /* The version popup anchors to the whole .doc-sidebar-version row (the
-   positioned ancestor); the inset matches the row's inline padding so the
-   popup's right edge lines up with the pill's.
+   positioned ancestor); both clearances come from --bai-rail-inset so the
+   popup's edges line up with the pill's.
 
-   The offset compensates for the row's bottom padding so the popup keeps
-   the same ~6px visual gap below the pill as the lang popup's
-   top: calc(100% + 6px). It therefore depends on that padding: FR-3420
-   changed it from 10px to --bai-rail-gap + 1px (15px), so this went from
-   calc(100% - 4px) to calc(100% - 9px). Re-derive it if the row's
-   padding-bottom changes again — 6px - padding-bottom. */
+   The offset holds the same ~6px gap below the pill as the lang popup's
+   top: calc(100% + 6px), by cancelling the row's padding-bottom
+   (--bai-rail-gap + 1px): 6px - (gap + 1px) = 5px - gap. Derived from the
+   token so a gap change moves both together. */
 .bai-select__list--version {
-  top: calc(100% - 9px);
+  top: calc(100% + 5px - var(--bai-rail-gap));
   right: var(--bai-rail-inset);
   min-width: 132px;
-  max-width: calc(100% - 48px);
+  max-width: calc(100% - var(--bai-rail-inset) * 2);
 }
 
 .bai-select__option {

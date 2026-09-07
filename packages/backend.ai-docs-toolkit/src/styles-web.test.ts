@@ -251,10 +251,22 @@ test("generateWebsiteStyles — both full-bleed bars use that inset, uncapped", 
   )?.find((blk) => blk.includes(".bai-topbar,"));
   assert.ok(mobile, "expected a <=880px block pulling the bars onto the article gutter");
   assert.match(mobile, /padding-inline:\s*16px;/);
+  // The 16px is not a free constant — it is the article's own gutter at this
+  // breakpoint. Assert the *responsive* .doc-main rule, not the base one:
+  // ruleBody() returns the first match, so a base-rule assertion here would
+  // stay green while the <=880px gutter moved and the bars fell off the grid.
+  const mobileMain = css
+    .match(/@media \(max-width: 880px\) \{[\s\S]*?\n\}/g)
+    ?.find((blk) => /\n\s*\.doc-main\s*\{/.test(blk));
+  assert.ok(mobileMain, "expected a <=880px block setting the article gutter");
+  const mobileMainBody = mobileMain.match(
+    /\n\s*\.doc-main\s*\{([^{}]*)\}/,
+  )?.[1];
+  assert.ok(mobileMainBody, "expected a .doc-main rule inside the <=880px block");
   assert.match(
-    ruleBody(css, ".doc-main"),
-    /max-width:\s*var\(--bai-content-max\);/,
-    "sanity: .doc-main is still the article column this 16px is matched to",
+    mobileMainBody,
+    /padding:\s*24px 16px 60px;/,
+    "the bars' 16px must stay equal to the article's own <=880px gutter",
   );
 });
 
@@ -283,13 +295,26 @@ test("generateWebsiteStyles — the rail's three vertical gaps come from one tok
     "the row's inline padding is what puts the separator on the rail grid",
   );
 
-  // The popup's offset compensates for that padding-bottom to keep its 6px
-  // gap below the pill. It is a derived constant, so it must move with it.
+  // The popup's offset cancels that padding-bottom to keep its 6px gap below
+  // the pill. It must be *derived* from the gap token, not restated as the
+  // literal it currently evaluates to, or a gap change drifts it again.
   const popup = ruleBody(css, ".bai-select__list--version");
   assert.match(
     popup,
-    /top:\s*calc\(100% - 9px\);/,
-    "the version popup offset must track the row's padding-bottom (6px - 15px)",
+    /top:\s*calc\(100% \+ 5px - var\(--bai-rail-gap\)\);/,
+    "the version popup offset must derive from --bai-rail-gap (6px - (gap + 1px))",
+  );
+  // Both of the popup's clearances come from the same inset token; a literal
+  // width bound would let the left and right gaps disagree.
+  assert.match(
+    popup,
+    /right:\s*var\(--bai-rail-inset\);/,
+    "the popup's right clearance is the rail inset",
+  );
+  assert.match(
+    popup,
+    /max-width:\s*calc\(100% - var\(--bai-rail-inset\) \* 2\);/,
+    "the popup's width bound must reserve the same inset on both sides",
   );
 
   const scroll = ruleBody(css, ".doc-sidebar__scroll");
