@@ -195,7 +195,9 @@ export function useEntityLabelCache(): EntityLabelCache {
     _.forEach(pending, (id) =>
       requestedRef.current.add(labelKey(propertyKey, id)),
     );
-    Promise.resolve(resolve(pending))
+    // Called inside the executor so a resolver that throws SYNCHRONOUSLY
+    // rejects here too, instead of escaping into the effect that ran us.
+    new Promise<Array<FilterEntity>>((settle) => settle(resolve(pending)))
       .then((entities) => recordMany(propertyKey, entities))
       .catch(() => {
         // Leave the raw-id fallback in place.

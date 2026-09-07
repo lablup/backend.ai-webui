@@ -17,6 +17,7 @@ import BAIGraphQLPropertyFilter, {
   graphQLFilterToPowerSearchFilters,
   powerSearchFiltersToGraphQLFilter,
   tokenValueToConditionValue,
+  type FilterEntity,
   type FilterEntitySource,
   type FilterProperty,
   type GraphQLFilter,
@@ -692,6 +693,33 @@ describe('entity label resolution', () => {
       );
       await waitFor(() => expect(resolve).toHaveBeenCalledTimes(1));
       // One macrotask: long enough for Node to report an unhandled rejection.
+      await new Promise((done) => setTimeout(done, 0));
+      expect(screen.getByText(TRUNCATED_UUID)).toBeInTheDocument();
+      expect(resolve).toHaveBeenCalledTimes(1);
+      expect(unhandled).toEqual([]);
+    } finally {
+      process.off('unhandledRejection', trackUnhandled);
+    }
+  });
+
+  it('keeps the raw id when the resolver throws synchronously', async () => {
+    const unhandled: Array<unknown> = [];
+    const trackUnhandled = (reason: unknown) => unhandled.push(reason);
+    process.on('unhandledRejection', trackUnhandled);
+    try {
+      const resolve = vi.fn((): Promise<Array<FilterEntity>> => {
+        throw new Error('resolve threw');
+      });
+      render(
+        <BAIGraphQLPropertyFilter
+          filterProperties={[
+            entityProperty({ search: async () => [], resolve }),
+          ]}
+          value={filter}
+          onChange={() => {}}
+        />,
+      );
+      await waitFor(() => expect(resolve).toHaveBeenCalledTimes(1));
       await new Promise((done) => setTimeout(done, 0));
       expect(screen.getByText(TRUNCATED_UUID)).toBeInTheDocument();
       expect(resolve).toHaveBeenCalledTimes(1);
