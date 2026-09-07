@@ -11,7 +11,11 @@ export interface BAIInteractiveLoginButtonProps extends Omit<ButtonProps, 'label
     /** Receives the webserver session id so the host can exchange it for its own credentials. */
     onSessionVerified: (sessionId: string) => void | Promise<void>;
     onFailure?: (reason: BAIInteractiveLoginFailureReason) => void;
-    /** Render the failure reason in an inline alert. @default true */
+    /**
+     * Render the failure inline: an error alert for a real failure, a neutral
+     * hint under the button for the ordinary `no_session` outcome.
+     * @default true
+     */
     showFailureAlert?: boolean;
     label?: string;
 }
