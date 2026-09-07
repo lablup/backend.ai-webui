@@ -2999,7 +2999,7 @@
       "LaunchMultipleSessionsTotal": "Ressources totales",
       "LaunchSessionWithAccessKey": "Session de lancement au nom de la clé d'accès",
       "ManualImageName": "Nom de l'image (manuel)",
-      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
+      "ManualImageNameTooltip": "Saisissez la référence de l'image dans le même format que celui utilisé par le registre, par exemple cr.backend.ai/stable/python:3.10-ubuntu20.04. Vous pouvez ajouter un suffixe d'architecture tel que @aarch64 pour imposer une architecture précise ; sinon, l'architecture par défaut du serveur est utilisée.",
       "Memory": "Mémoire",
       "MinMemory": "La capacité de mémoire minimale pour l'environnement d'exécution actuellement sélectionné est de {{taille}}iB.",
       "MiniumAllocation": "Exigences minimales",

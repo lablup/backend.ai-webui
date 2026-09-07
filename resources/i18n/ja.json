@@ -2998,7 +2998,7 @@
       "LaunchMultipleSessionsTotal": "合計リソース",
       "LaunchSessionWithAccessKey": "アクセスキーに代わってセッションを起動します",
       "ManualImageName": "画像名（手動）",
-      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
+      "ManualImageNameTooltip": "レジストリが使用する形式と同じ形式でイメージ参照を入力してください。例: cr.backend.ai/stable/python:3.10-ubuntu20.04。@aarch64 のようなアーキテクチャサフィックスを付けて特定のアーキテクチャを指定できます。省略した場合はサーバーの既定のアーキテクチャが使用されます。",
       "Memory": "メモリ",
       "MinMemory": "現在選択した実行環境の最小メモリ容量は{{size}}iBです。",
       "MiniumAllocation": "最低条件",

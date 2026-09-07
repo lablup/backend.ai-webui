@@ -3000,7 +3000,7 @@
       "LaunchMultipleSessionsTotal": "總資源",
       "LaunchSessionWithAccessKey": "代表訪問密鑰啟動會話",
       "ManualImageName": "圖像名稱（手動）",
-      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
+      "ManualImageNameTooltip": "請依照映像檔倉儲庫使用的格式輸入映像檔參考，例如 cr.backend.ai/stable/python:3.10-ubuntu20.04。可以附加 @aarch64 之類的架構後綴來指定特定架構；未指定時將使用伺服器的預設架構。",
       "Memory": "記憶",
       "MinMemory": "当前所选运行环境的最小内存容量为 {{size}}iB。",
       "MiniumAllocation": "最低要求",

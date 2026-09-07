@@ -2998,7 +2998,7 @@
       "LaunchMultipleSessionsTotal": "Tổng tài nguyên",
       "LaunchSessionWithAccessKey": "Khởi chạy phiên thay mặt cho khóa truy cập",
       "ManualImageName": "Tên hình ảnh (Thủ công)",
-      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
+      "ManualImageNameTooltip": "Nhập tham chiếu image theo đúng định dạng mà registry sử dụng, ví dụ cr.backend.ai/stable/python:3.10-ubuntu20.04. Bạn có thể thêm hậu tố kiến trúc như @aarch64 để chỉ định một kiến trúc cụ thể; nếu không, kiến trúc mặc định của máy chủ sẽ được dùng.",
       "Memory": "Bộ nhớ",
       "MinMemory": "Dung lượng bộ nhớ tối thiểu cho môi trường thời gian chạy hiện được chọn là {{size}}iB.",
       "MiniumAllocation": "Yêu cầu tối thiểu",

@@ -2996,7 +2996,7 @@
       "LaunchMultipleSessionsTotal": "Toplam kaynaklar",
       "LaunchSessionWithAccessKey": "Erişim anahtarı adına oturumu başlat",
       "ManualImageName": "Resim Adı (Manuel)",
-      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
+      "ManualImageNameTooltip": "İmaj referansını kayıt defterinin kullandığı biçimde girin, örneğin cr.backend.ai/stable/python:3.10-ubuntu20.04. Belirli bir mimariyi sabitlemek için @aarch64 gibi bir mimari son eki ekleyebilirsiniz; aksi halde sunucunun varsayılan mimarisi kullanılır.",
       "Memory": "Hafıza",
       "MinMemory": "Seçili çalışma zamanı ortamı için minimum bellek kapasitesi {{size}}iB'dir.",
       "MiniumAllocation": "Minimum gereksinimler",
