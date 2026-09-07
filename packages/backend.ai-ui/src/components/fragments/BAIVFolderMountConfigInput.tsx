@@ -54,14 +54,9 @@ export interface LegacyVFolder {
 
 /**
  * A single vfolder mount configuration emitted by BAIVFolderMountConfigInput.
- *
- * - `subpath` is the mount **source**: which subfolder inside the vfolder to
- *   mount. Empty means the vfolder root.
- * - `mountDestination` is the **raw alias** the user typed, stored verbatim so
- *   the input box never transforms text mid-edit: `''` mounts at the default
- *   `${aliasBasePath}${name}`, a relative segment like `data` resolves to
- *   `${aliasBasePath}data`, and an absolute path like `/data` is used as-is.
- *   Resolve it to the full container path with {@link inputToMountDestination}.
+ * `mountDestination` holds the **raw alias** the user typed, verbatim, so the
+ * input box never transforms text mid-edit; resolve it to the full container
+ * path with {@link inputToMountDestination}.
  */
 export interface VFolderMountConfigValue {
   vfolderId: string;
@@ -112,10 +107,7 @@ export const DEFAULT_ALIAS_BASE_PATH = '/home/work/';
 
 /**
  * Convert a user-entered alias input into the resolved mount destination,
- * following the same rule as VFolderTable's `inputToAliasPath`:
- * - empty input        -> `${basePath}${name}`
- * - input starting `/` -> used as-is (absolute path)
- * - otherwise          -> `${basePath}${input}` (relative to the base path)
+ * following the same rule as VFolderTable's `inputToAliasPath`.
  */
 export const inputToMountDestination = (
   name: string,
@@ -336,32 +328,13 @@ export const useVFolderMountConfigFormRule = (
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * Users pick vfolders from the REST `GET /folders` list, gated by the
- * `mountableHosts` / `autoMountedFolderNames` the host supplies — gates the
- * `vfolder_nodes` connection cannot express, which is why the legacy endpoint
- * is still the source. It suspends on that list; the consumer owns the
- * Suspense boundary.
- * Each selected folder appears as a row below the select where its mount
- * destination (alias) is typed and its subpath is browsed with
- * {@link BAIVFolderPathPicker}. The alias input follows VFolderTable's rule
- * (relative inputs are prefixed with `aliasBasePath`, absolute inputs are used
- * as-is); the emitted `mountDestination` stores that raw alias verbatim, which
- * the consumer resolves to the full path with {@link inputToMountDestination}.
- * The component is controlled and emits a single `VFolderMountConfigValue[]`.
+ * The folder list comes from REST `GET /folders` rather than the
+ * `vfolder_nodes` connection because the `mountableHosts` /
+ * `autoMountedFolderNames` gates the host supplies cannot be expressed there.
+ * The component suspends on that fetch, so the consumer owns the Suspense
+ * boundary.
  *
- * The inline per-row errors are advisory UX only. To gate a form on validity,
- * wrap the component in one named `Form.Item` whose `rules` carry
- * {@link useVFolderMountConfigFormRule}, so `form.validateFields()` rejects on
- * invalid input with the already-translated message:
- *
- * ```tsx
- * <Form.Item
- *   name="vfolderMounts"
- *   rules={[useVFolderMountConfigFormRule({ autoMountedFolderNames })]}
- * >
- *   <BAIVFolderMountConfigInput autoMountedFolderNames={autoMountedFolderNames} />
- * </Form.Item>
- * ```
+ * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */
 const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   currentProjectId,
@@ -388,7 +361,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   // selection and no separate name lookup is needed.
   const selectedFolders: BAILabeledValue[] = mountConfigs.map((entry) => ({
     value: entry.vfolderId,
-    label: entry.name ?? entry.vfolderId,
+    label: entry.name || entry.vfolderId,
   }));
   const selectedIdSet = new Set(_.map(mountConfigs, (e) => e.vfolderId));
 
@@ -409,19 +382,21 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
 
   const mountableHostSet = new Set(mountableHosts);
   const autoMountedNameSet = new Set(autoMountedFolderNames ?? []);
-  // Offering an auto-mounted folder is noise: the session mounts it anyway, so
-  // picking it could only produce a duplicate mount path.
-  const mountableFolders = _.filter(
-    allFolderList ?? [],
-    (folder) =>
-      mountableHostSet.has(folder.host) &&
-      (folder.ownership_type === 'user' ||
-        !folder.group ||
-        folder.group === currentProjectId) &&
-      !autoMountedNameSet.has(folder.name),
+  // The uuid is derived once per folder here and read back below, rather than
+  // re-converting in each of the id comparisons.
+  const mountableFolders = _.map(
+    _.filter(
+      allFolderList ?? [],
+      (folder) =>
+        mountableHostSet.has(folder.host) &&
+        (folder.ownership_type === 'user' ||
+          !folder.group ||
+          folder.group === currentProjectId),
+    ),
+    (folder) => ({ folder, uuid: convertToUUID(folder.id) }),
   );
   const mountableIdSet = new Set(
-    _.map(mountableFolders, (folder) => convertToUUID(folder.id)),
+    _.map(mountableFolders, (entry) => entry.uuid),
   );
 
   // A value restored from a template or a URL can name a folder this owner and
@@ -442,8 +417,13 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     pruneUnmountableEntries();
   }, [mountableFolders]);
 
-  const displayingFolders = _.filter(mountableFolders, (folder) => {
-    if (selectedIdSet.has(convertToUUID(folder.id))) return true;
+  // Offering an auto-mounted folder is noise: the session mounts it anyway, so
+  // picking it could only produce a duplicate mount path. It narrows the
+  // options only — a stored entry that became auto-mounted is still mountable,
+  // so the prune above must not see this gate.
+  const displayingFolders = _.filter(mountableFolders, ({ folder, uuid }) => {
+    if (selectedIdSet.has(uuid)) return true;
+    if (autoMountedNameSet.has(folder.name)) return false;
     if (filter && !filter(folder)) return false;
     return !searchStr || _.includes(folder.name, searchStr);
   });
@@ -488,8 +468,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
         isDisabled={disabled}
         placeholder={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
         total={displayingFolders.length}
-        options={_.map(displayingFolders, (folder) => ({
-          value: convertToUUID(folder.id),
+        options={_.map(displayingFolders, ({ folder, uuid }) => ({
+          value: uuid,
           label: folder.name,
           description: folder.host,
         }))}

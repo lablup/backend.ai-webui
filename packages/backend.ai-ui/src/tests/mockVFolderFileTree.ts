@@ -55,8 +55,7 @@ export const mockLegacyVFolder = (
 });
 
 export const MOCK_LEGACY_PROJECT_ID = '99999999-9999-9999-9999-999999999999';
-export const MOCK_LEGACY_OTHER_PROJECT_ID =
-  '88888888-8888-8888-8888-888888888888';
+const MOCK_LEGACY_OTHER_PROJECT_ID = '88888888-8888-8888-8888-888888888888';
 
 /** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */
 export const MOCK_MOUNTABLE_HOSTS: Array<string> = ['local:volume1'];
