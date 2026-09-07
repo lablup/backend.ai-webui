@@ -13,6 +13,8 @@
  styling hooks: `calculateVisibleActions` measures the title icon through
  `querySelector('.bai-name-action-cell-title-icon')`, and ~20 e2e specs locate
  the action group through `.bai-name-action-cell-actions`. They stay.
+ `bai-nac-menu-icon` is one too: `BAINameActionCell.test.tsx` reads the
+ more-menu icon's tint through it.
 
  The styling hooks that used to be emotion hashes are namespaced `bai-nac-*`
  instead of reusing the `bai-name-action-cell-*` family, whose only survivor
@@ -92,6 +94,16 @@
   overflow: visible;
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Wraps a more-menu row's icon so its box matches Astryx's own icon slot
+   (`Item`'s startContent is a flex row, which would otherwise stretch the
+   glyph). The colour itself stays inline on the element — the menu renders in
+   a Layer outside the container that publishes `--bai-nac-*`. */
+.bai-nac-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .bai-nac-action-button-default {

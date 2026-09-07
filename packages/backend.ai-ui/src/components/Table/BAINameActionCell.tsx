@@ -334,10 +334,9 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
 
   // More menu: overflowed auto actions + menu-only actions
   const hasMoreMenu = hasOverflow || menuOnlyActions.length > 0;
-  // An overflowed action keeps the colour its inline button has (FR-3721):
-  // `variant: 'destructive'` tints a danger row's label and icon, and the
-  // default row's icon carries `token.colorInfo` inline — the menu renders in
-  // a Layer outside the container that publishes `--bai-nac-*`.
+  // An overflowed action keeps the colour its inline button has (FR-3721).
+  // The default row's tint is inline because the menu renders in a Layer
+  // outside the container that publishes `--bai-nac-*`.
   const toMenuItem = (
     action: BAINameActionCellAction,
   ): DropdownMenuItemData => ({
@@ -348,14 +347,18 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       ? `${action.title} — ${disabledReason(action.disabled)}`
       : action.title,
     variant: action.type === 'danger' ? 'destructive' : 'default',
-    icon:
-      action.icon && action.type !== 'danger' ? (
-        <span style={{ display: 'inline-flex', color: token.colorInfo }}>
-          {action.icon}
-        </span>
-      ) : (
-        action.icon
-      ),
+    // Both rows use the same wrapper so the icon box is identical; only the
+    // default one needs a colour, a danger row inherits `--color-error`.
+    icon: action.icon ? (
+      <span
+        className="bai-nac-menu-icon"
+        style={
+          action.type === 'danger' ? undefined : { color: token.colorInfo }
+        }
+      >
+        {action.icon}
+      </span>
+    ) : undefined,
     isDisabled: !!action.disabled,
     onClick: () => {
       if (action.onClick || action.action) {

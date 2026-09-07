@@ -105,7 +105,12 @@ describe('BAINameActionCell — disabled carries its reason (FR-3722)', () => {
 });
 
 describe('BAINameActionCell — the overflow row keeps its action colour (FR-3721)', () => {
-  const menuIcon = () => screen.getByTestId('act-icon');
+  const menuRow = () => screen.getByText('Act').closest('[role="menuitem"]');
+  // `.bai-nac-menu-icon` is this component's own wrapper, so the tint is read
+  // off our markup; `data-variant` is Astryx's documented theming attribute.
+  const menuIconTint = () =>
+    screen.getByTestId('act-icon').closest<HTMLElement>('.bai-nac-menu-icon')
+      ?.style.color;
 
   it('a danger action stays destructive once it overflows into the menu', () => {
     renderAction({
@@ -114,12 +119,10 @@ describe('BAINameActionCell — the overflow row keeps its action colour (FR-372
       icon: <span data-testid="act-icon" />,
     });
 
-    expect(
-      screen.getByText('Act').closest('[data-variant="destructive"]'),
-    ).not.toBeNull();
+    expect(menuRow()).toHaveAttribute('data-variant', 'destructive');
     // Astryx tints the whole destructive row, so the icon must not be
     // re-coloured on top of it.
-    expect(menuIcon().parentElement?.style.color).toBe('');
+    expect(menuIconTint()).toBe('');
   });
 
   it('a default action carries the info tint on its menu icon', () => {
@@ -128,9 +131,7 @@ describe('BAINameActionCell — the overflow row keeps its action colour (FR-372
       icon: <span data-testid="act-icon" />,
     });
 
-    expect(
-      screen.getByText('Act').closest('[data-variant="destructive"]'),
-    ).toBeNull();
-    expect(menuIcon().parentElement?.style.color).not.toBe('');
+    expect(menuRow()).not.toHaveAttribute('data-variant', 'destructive');
+    expect(menuIconTint()).not.toBe('');
   });
 });
