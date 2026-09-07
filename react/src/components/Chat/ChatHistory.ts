@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App, type MessageApi } from '../../app-shim';
 import { useWebUINavigate } from '../../hooks';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import {
@@ -11,9 +12,11 @@ import {
   type ChatMessage,
 } from './ChatModel';
 import { useBAILogger, type BAILogger } from 'backend.ai-ui';
+import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
 import { customAlphabet } from 'nanoid/non-secure';
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Utils for chat history cache
 const createIdGenerator = () => {
@@ -35,14 +38,20 @@ export function generateChatId(): string {
 }
 
 export type CachePersistStatus =
-  'ok' | 'attachments-dropped' | 'entries-evicted' | 'failed';
+  'ok' | 'attachments-dropped' | 'entries-unpersisted' | 'failed';
 
 export interface CachePersistResult {
   status: CachePersistStatus;
-  evictedKeys: string[];
+  /** Kept in memory for this session, but left out of the stored copy. */
+  unpersistedKeys: string[];
 }
 
 const INLINED_ATTACHMENT_URL_PREFIX = 'data:';
+
+// localStorage is ~5 MB per origin for the whole WebUI (the spec suggests that
+// figure and every current browser applies it), shared with 27 other
+// `setItem` call sites. Chat history takes a slice instead of the budget.
+const MAX_PERSISTED_CHARS = 2_000_000;
 
 function isInlinedFilePart(value: unknown): value is { url: string } {
   return (
@@ -71,16 +80,24 @@ export function createLocalStorageCache<T>(
   // Sticky: once the quota has forced attachments out, retrying the full
   // payload on every later write would only fail again.
   let dropsAttachments = false;
+  // Entries that no longer fit the stored copy. They stay in the Map — the
+  // history sidebar must not lose conversations mid-session — and are only
+  // absent from the next reload.
+  const unpersistedKeys = new Set<string>();
+
+  const persistableEntries = () =>
+    Array.from(cache.entries()).filter(([key]) => !unpersistedKeys.has(key));
 
   const write = (entries: Array<[string, T]>, stripAttachments: boolean) => {
+    const serialized = JSON.stringify(
+      entries,
+      stripAttachments ? withoutInlinedAttachments : undefined,
+    );
+    if (serialized.length > MAX_PERSISTED_CHARS) {
+      return false;
+    }
     try {
-      localStorage.setItem(
-        cacheName,
-        JSON.stringify(
-          entries,
-          stripAttachments ? withoutInlinedAttachments : undefined,
-        ),
-      );
+      localStorage.setItem(cacheName, serialized);
       return true;
     } catch {
       // QuotaExceededError (or a browser refusing storage entirely): the
@@ -90,12 +107,12 @@ export function createLocalStorageCache<T>(
   };
 
   // Degrades the persisted copy instead of throwing: full payload -> without
-  // inlined attachments -> evicting the least recently updated histories.
+  // inlined attachments -> leaving the least recently updated histories out.
   const persist = (): CachePersistResult => {
-    const entries = Array.from(cache.entries());
+    const entries = persistableEntries();
 
     if (!dropsAttachments && write(entries, false)) {
-      return { status: 'ok', evictedKeys: [] };
+      return { status: 'ok', unpersistedKeys: [] };
     }
 
     if (write(entries, true)) {
@@ -103,27 +120,29 @@ export function createLocalStorageCache<T>(
         ? 'ok'
         : 'attachments-dropped';
       dropsAttachments = true;
-      return { status, evictedKeys: [] };
+      return { status, unpersistedKeys: [] };
     }
     dropsAttachments = true;
 
-    const evictionOrder = entries.slice();
+    const dropOrder = entries.slice();
     if (compareRecency) {
-      evictionOrder.sort(([, a], [, b]) => compareRecency(a, b));
+      dropOrder.sort(([, a], [, b]) => compareRecency(a, b));
     }
-    const evictedKeys: string[] = [];
-    // Never evict the last entry — that is the conversation the user is in.
-    while (evictionOrder.length > 1) {
-      const [key] = evictionOrder.shift() as [string, T];
-      cache.delete(key);
-      evictedKeys.push(key);
-      if (write(Array.from(cache.entries()), true)) {
-        return { status: 'entries-evicted', evictedKeys };
+    const dropped: string[] = [];
+    // Never drop the last entry — that is the conversation the user is in.
+    while (dropOrder.length > 1) {
+      const [key] = dropOrder.shift() as [string, T];
+      unpersistedKeys.add(key);
+      dropped.push(key);
+      if (write(persistableEntries(), true)) {
+        return { status: 'entries-unpersisted', unpersistedKeys: dropped };
       }
     }
 
-    localStorage.removeItem(cacheName);
-    return { status: 'failed', evictedKeys };
+    // Nothing fits: keep the previously stored copy rather than wiping a still
+    // valid one, and take back the exclusions that bought nothing.
+    dropped.forEach((key) => unpersistedKeys.delete(key));
+    return { status: 'failed', unpersistedKeys: [] };
   };
 
   return {
@@ -141,11 +160,14 @@ export function createLocalStorageCache<T>(
     },
     delete(key: string) {
       cache.delete(key);
+      unpersistedKeys.delete(key);
 
       return persist();
     },
     clear: () => {
       cache.clear();
+      unpersistedKeys.clear();
+      dropsAttachments = false;
       localStorage.removeItem(cacheName);
     },
     getAll() {
@@ -170,29 +192,57 @@ const chatHistoryCache = createLocalStorageCache<ChatHistoryData>(
   (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
 );
 
-function reportPersistResult(logger: BAILogger, result: CachePersistResult) {
+const PERSIST_NOTICE_I18N_KEYS: Partial<Record<CachePersistStatus, string>> = {
+  'attachments-dropped': 'chatui.HistoryAttachmentsNotStored',
+  'entries-unpersisted': 'chatui.HistoryOlderChatsNotStored',
+  failed: 'chatui.HistoryNotStored',
+};
+
+interface PersistReportContext {
+  logger: BAILogger;
+  message: MessageApi;
+  t: TFunction;
+  // `logger` is silent in a production build, so the toast is the only signal
+  // the user gets — but persist() runs on every saved message, hence one toast
+  // per status transition.
+  lastReportedStatus: { current: CachePersistStatus };
+}
+
+function reportPersistResult(
+  result: CachePersistResult,
+  { logger, message, t, lastReportedStatus }: PersistReportContext,
+) {
   switch (result.status) {
     case 'attachments-dropped':
       logger.warn(
         'Chat history exceeded the browser storage quota; attachments were dropped from the stored history.',
       );
       break;
-    case 'entries-evicted':
+    case 'entries-unpersisted':
       logger.warn(
-        'Chat history exceeded the browser storage quota; evicted the oldest chats:',
-        result.evictedKeys,
+        'Chat history exceeded the browser storage quota; these chats are no longer stored:',
+        result.unpersistedKeys,
       );
       break;
     case 'failed':
       logger.error(
-        'Chat history could not be stored; it will not survive a reload.',
+        'Chat history could not be stored; the latest changes will not survive a reload.',
       );
       break;
   }
+
+  const noticeKey = PERSIST_NOTICE_I18N_KEYS[result.status];
+  if (noticeKey && lastReportedStatus.current !== result.status) {
+    message.warning(t(noticeKey));
+  }
+  lastReportedStatus.current = result.status;
 }
 
 export function useHistory(id: string, provider: ChatProviderData) {
   const { logger } = useBAILogger();
+  const { message } = App.useApp();
+  const { t } = useTranslation();
+  const lastReportedStatus = useRef<CachePersistStatus>('ok');
   const [history, setHistory] = useState<ChatHistoryData[]>([]);
   const [chat, setChat] = useState<ChatHistoryData | undefined>(undefined);
   const webuiNavigate = useWebUINavigate();
@@ -200,12 +250,17 @@ export function useHistory(id: string, provider: ChatProviderData) {
 
   const removeHistory = useCallback(
     (id: string) => {
-      reportPersistResult(logger, chatHistoryCache.delete(id));
+      reportPersistResult(chatHistoryCache.delete(id), {
+        logger,
+        message,
+        t,
+        lastReportedStatus,
+      });
       setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
 
       return chatHistoryCache.size();
     },
-    [logger],
+    [logger, message, t],
   );
 
   const updateHistory = useCallback(
@@ -214,11 +269,16 @@ export function useHistory(id: string, provider: ChatProviderData) {
         updatedAt: new Date().toISOString(),
       });
 
-      reportPersistResult(logger, chatHistoryCache.set(data.id, mergedData));
+      reportPersistResult(chatHistoryCache.set(data.id, mergedData), {
+        logger,
+        message,
+        t,
+        lastReportedStatus,
+      });
       setChat({ ...mergedData });
       setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
     },
-    [logger],
+    [logger, message, t],
   );
 
   const addChatData = useCallback(

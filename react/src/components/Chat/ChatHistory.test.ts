@@ -15,13 +15,13 @@ const quotaError = () => {
   return error;
 };
 
-const entry = (updatedAt: string): Entry => ({
+const entry = (updatedAt: string, payloadChars = 8): Entry => ({
   updatedAt,
   parts: [
     { type: 'text', text: 'hello' },
     {
       type: 'file',
-      url: 'data:image/png;base64,AAAABBBB',
+      url: `data:image/png;base64,${'A'.repeat(payloadChars)}`,
       mediaType: 'image/png',
       filename: 'shot.png',
     },
@@ -59,10 +59,10 @@ describe('createLocalStorageCache persistence', () => {
 
     expect(cache.set('a', entry('2026-01-01T00:00:00.000Z'))).toEqual({
       status: 'ok',
-      evictedKeys: [],
+      unpersistedKeys: [],
     });
     expect(lastWrittenValue(setItem)).toContain(
-      'data:image/png;base64,AAAABBBB',
+      'data:image/png;base64,AAAAAAAA',
     );
   });
 
@@ -76,7 +76,10 @@ describe('createLocalStorageCache persistence', () => {
 
     const result = cache.set('a', entry('2026-01-01T00:00:00.000Z'));
 
-    expect(result).toEqual({ status: 'attachments-dropped', evictedKeys: [] });
+    expect(result).toEqual({
+      status: 'attachments-dropped',
+      unpersistedKeys: [],
+    });
     const persisted = JSON.parse(lastWrittenValue(setItem));
     expect(persisted[0][1].parts[1]).toEqual({
       type: 'file',
@@ -85,10 +88,19 @@ describe('createLocalStorageCache persistence', () => {
       filename: 'shot.png',
     });
     // The live copy keeps the payload so the open conversation still renders.
-    expect(cache.get('a')?.parts[1].url).toBe('data:image/png;base64,AAAABBBB');
+    expect(cache.get('a')?.parts[1].url).toBe('data:image/png;base64,AAAAAAAA');
   });
 
-  it('evicts the least recently updated entries when stripping is not enough', () => {
+  it('drops inlined attachments once they exceed the size budget, before the browser throws', () => {
+    const cache = createLocalStorageCache<Entry>('test.cache', oldestFirst);
+
+    const result = cache.set('a', entry('2026-01-01T00:00:00.000Z', 2_100_000));
+
+    expect(result.status).toBe('attachments-dropped');
+    expect(lastWrittenValue(setItem)).not.toContain('data:');
+  });
+
+  it('leaves the least recently updated entries out of the stored copy, but keeps them in memory', () => {
     const cache = createLocalStorageCache<Entry>('test.cache', oldestFirst);
     cache.set('old', entry('2026-01-01T00:00:00.000Z'));
     cache.set('mid', entry('2026-01-02T00:00:00.000Z'));
@@ -103,13 +115,17 @@ describe('createLocalStorageCache persistence', () => {
     const result = cache.set('new', entry('2026-01-03T00:00:00.000Z'));
 
     expect(result).toEqual({
-      status: 'entries-evicted',
-      evictedKeys: ['old', 'mid'],
+      status: 'entries-unpersisted',
+      unpersistedKeys: ['old', 'mid'],
     });
-    expect(cache.getAll().map(({ id }) => id)).toEqual(['new']);
+    expect(
+      JSON.parse(lastWrittenValue(setItem)).map(([key]: [string]) => key),
+    ).toEqual(['new']);
+    // The history sidebar must not lose conversations mid-session.
+    expect(cache.getAll().map(({ id }) => id)).toEqual(['old', 'mid', 'new']);
   });
 
-  it('never throws out of set(), and clears the key when nothing fits', () => {
+  it('never throws out of set(), and keeps the stored copy when nothing fits', () => {
     setItem.mockImplementation(() => {
       throw quotaError();
     });
@@ -120,9 +136,11 @@ describe('createLocalStorageCache persistence', () => {
     ).not.toThrow();
     expect(cache.set('b', entry('2026-01-02T00:00:00.000Z'))).toEqual({
       status: 'failed',
-      evictedKeys: ['a'],
+      unpersistedKeys: [],
     });
-    expect(removeItem).toHaveBeenCalledWith('test.cache');
+    // A previously persisted, still-valid copy is never wiped.
+    expect(removeItem).not.toHaveBeenCalled();
+    expect(cache.getAll().map(({ id }) => id)).toEqual(['a', 'b']);
   });
 
   it('does not throw out of delete()', () => {
@@ -135,5 +153,24 @@ describe('createLocalStorageCache persistence', () => {
 
     expect(() => cache.delete('a')).not.toThrow();
     expect(cache.size()).toBe(0);
+  });
+
+  it('stores attachments again after clear()', () => {
+    setItem.mockImplementation((_key: string, value: string) => {
+      if (value.includes('data:')) {
+        throw quotaError();
+      }
+    });
+    const cache = createLocalStorageCache<Entry>('test.cache', oldestFirst);
+    cache.set('a', entry('2026-01-01T00:00:00.000Z'));
+
+    cache.clear();
+    setItem.mockImplementation(() => {});
+
+    expect(cache.set('b', entry('2026-01-02T00:00:00.000Z'))).toEqual({
+      status: 'ok',
+      unpersistedKeys: [],
+    });
+    expect(lastWrittenValue(setItem)).toContain('data:image/png;base64,');
   });
 });

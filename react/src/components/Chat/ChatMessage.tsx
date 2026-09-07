@@ -83,10 +83,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         const filename =
           part.filename || part.url?.split('/').pop() || `file-${index}`;
 
-        // A restored history entry can have lost its inlined payload to the
-        // storage quota (see `persist()` in ChatHistory.ts): there is no url
-        // left to render, only the attachment's name.
         const hasPayload = !_.isEmpty(part.url);
+        // An empty (not missing) url is exactly what `persist()` in
+        // ChatHistory.ts writes when the storage quota forced the inlined
+        // payload out of the stored history.
+        const isDroppedForStorage = part.url === '';
 
         return hasPayload &&
           part.mediaType?.toLowerCase().startsWith('image/') ? (
@@ -119,7 +120,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             key={`${message?.id}-${index}`}
             label={filename}
             description={
-              hasPayload ? filename : t('chatui.AttachmentNotStored')
+              isDroppedForStorage ? t('chatui.AttachmentNotStored') : filename
             }
             icon={<PaperclipIcon size="1em" />}
             href={hasPayload ? part?.url : undefined}
