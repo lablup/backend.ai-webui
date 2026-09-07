@@ -43,12 +43,21 @@ vi.mock('react-i18next', async () => {
   };
 });
 
+// Mutable so a test can put the client on a manager that DOES support
+// `session-scheduling-history` (FR-1949), which replaces the legacy icon.
+const { clientCapabilities } = vi.hoisted(() => ({
+  clientCapabilities: { schedulingHistory: false },
+}));
+
 vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      supports: () => false,
+      supports: (feature: string) =>
+        feature === 'session-scheduling-history'
+          ? clientCapabilities.schedulingHistory
+          : false,
       _config: {},
     }),
     useWebUINavigate: () => vi.fn(),
@@ -127,11 +136,15 @@ vi.mock(
   stubComponent('mock-session-scheduling-history-modal'),
 );
 
-const renderSessionDetail = (project: ProjectContextOrNull) => {
+const renderSessionDetail = (
+  project: ProjectContextOrNull,
+  statusData: string | null = null,
+) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   environment.mock.queueOperationResolver((operation: any) =>
     MockPayloadGenerator.generate(operation, {
       ComputeSessionNode: () => ({
+        status_data: statusData,
         id: btoa('ComputeSessionNode:session-0000'),
         row_id: 'session-row-id',
         name: 'test-session',
@@ -189,5 +202,56 @@ describe('SessionDetailContent project prop contract (ADR-0001, FR-3413)', () =>
 
     expect(await screen.findByText('session-row-id')).toBeInTheDocument();
     expect(screen.queryByText('session.NotInProject')).not.toBeInTheDocument();
+  });
+});
+
+/**
+ * FR-1137: the legacy status-details icon exists only when `status_data`
+ * carries something `SessionStatusDetailModal` can render, and only on a
+ * manager without `session-scheduling-history`.
+ */
+describe('SessionDetailContent legacy status-details icon (FR-1137)', () => {
+  beforeEach(() => {
+    clientCapabilities.schedulingHistory = false;
+  });
+
+  const findIcon = () => screen.queryByLabelText('button.ClickForMoreDetails');
+
+  it('hides the icon for a payload that parses but renders nothing', async () => {
+    renderSessionDetail(null, '{"error":{"collection":[]}}');
+
+    expect(await screen.findByText('session-row-id')).toBeInTheDocument();
+    expect(findIcon()).not.toBeInTheDocument();
+  });
+
+  it('hides the icon for the empty sentinel', async () => {
+    renderSessionDetail(null, '{}');
+
+    expect(await screen.findByText('session-row-id')).toBeInTheDocument();
+    expect(findIcon()).not.toBeInTheDocument();
+  });
+
+  it('shows the icon for a renderable payload', async () => {
+    renderSessionDetail(
+      null,
+      '{"error":{"collection":[{"name":"AgentError","repr":"boom","src":"agent"}]}}',
+    );
+
+    expect(await screen.findByText('session-row-id')).toBeInTheDocument();
+    expect(findIcon()).toBeInTheDocument();
+  });
+
+  it('keeps the icon replaced on a manager with scheduling history', async () => {
+    clientCapabilities.schedulingHistory = true;
+    renderSessionDetail(
+      null,
+      '{"error":{"collection":[{"name":"AgentError","repr":"boom","src":"agent"}]}}',
+    );
+
+    expect(await screen.findByText('session-row-id')).toBeInTheDocument();
+    expect(findIcon()).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText('session.SessionSchedulingHistory'),
+    ).toBeInTheDocument();
   });
 });

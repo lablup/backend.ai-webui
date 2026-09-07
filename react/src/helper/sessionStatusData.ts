@@ -62,6 +62,27 @@ export const parseSessionStatusData = (
   return parsed as SessionStatusData;
 };
 
+/**
+ * The modal renders a scheduler section only through `last_try`, `retries`,
+ * `msg` and the two predicate lists, so a payload carrying none of them (e.g.
+ * `{"scheduler":{"foo":"bar"}}`) would emit a bogus date and empty rows.
+ */
+export const hasRenderableScheduler = (
+  scheduler: SessionStatusData['scheduler'],
+): boolean => {
+  if (_.isEmpty(scheduler)) {
+    return false;
+  }
+  return (
+    !_.isEmpty(scheduler.last_try) ||
+    // `retries: 0` is real information, so nil rather than falsy.
+    !_.isNil(scheduler.retries) ||
+    !_.isEmpty(scheduler.msg) ||
+    !_.isEmpty(scheduler.failed_predicates) ||
+    !_.isEmpty(scheduler.passed_predicates)
+  );
+};
+
 const hasRenderableError = (error: SessionStatusData['error']): boolean => {
   if (_.isEmpty(error)) {
     return false;
@@ -88,7 +109,7 @@ export const hasRenderableSessionStatusData = (
   return (
     !_.isNil(statusData.kernel?.exit_code) ||
     !_.isEmpty(statusData.session?.status) ||
-    !_.isEmpty(statusData.scheduler) ||
+    hasRenderableScheduler(statusData.scheduler) ||
     hasRenderableError(statusData.error)
   );
 };

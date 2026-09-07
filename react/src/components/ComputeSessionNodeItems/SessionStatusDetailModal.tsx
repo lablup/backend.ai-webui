@@ -4,6 +4,7 @@
  */
 import { SessionStatusDetailModalFragment$key } from '../../__generated__/SessionStatusDetailModalFragment.graphql';
 import {
+  hasRenderableScheduler,
   hasRenderableSessionStatusData,
   parseSessionStatusData,
 } from '../../helper/sessionStatusData';
@@ -110,22 +111,22 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
               {statusData.session?.status}
             </MetadataListItem>
           ) : null}
-          {statusData?.scheduler ? (
+          {hasRenderableScheduler(statusData?.scheduler) ? (
             <>
               <MetadataListItem label={t('session.LastTry')}>
-                {dayjs(statusData.scheduler?.last_try).format('lll')}
+                {dayjs(statusData?.scheduler?.last_try).format('lll')}
               </MetadataListItem>
               <MetadataListItem label={t('session.TotalRetries')}>
-                {statusData.scheduler?.retries}
+                {statusData?.scheduler?.retries}
               </MetadataListItem>
-              {statusData.scheduler?.msg && (
+              {statusData?.scheduler?.msg && (
                 <MetadataListItem label={t('session.Message')}>
-                  {statusData.scheduler?.msg}
+                  {statusData?.scheduler?.msg}
                 </MetadataListItem>
               )}
               <MetadataListItem label={t('session.PredicateChecks')}>
                 <BAIFlex direction="column" gap="md" align="stretch">
-                  {_.map(statusData.scheduler?.failed_predicates, (p) => {
+                  {_.map(statusData?.scheduler?.failed_predicates, (p) => {
                     return (
                       <BAIFlex gap="xs" align="start" key={p.name}>
                         <CircleX
@@ -145,7 +146,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                       </BAIFlex>
                     );
                   })}
-                  {_.map(statusData.scheduler?.passed_predicates, (p) => {
+                  {_.map(statusData?.scheduler?.passed_predicates, (p) => {
                     return (
                       <BAIFlex gap="xs" align="start" key={p.name}>
                         <CircleCheck

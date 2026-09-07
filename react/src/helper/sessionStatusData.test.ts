@@ -68,6 +68,18 @@ describe('hasRenderableSessionStatusData', () => {
     ).toBe(true);
   });
 
+  it('is false for a scheduler section the modal cannot render', () => {
+    expect(hasRenderableSessionStatusData('{"scheduler":{"foo":"bar"}}')).toBe(
+      false,
+    );
+  });
+
+  it('is true for a scheduler with zero retries', () => {
+    expect(hasRenderableSessionStatusData('{"scheduler":{"retries":0}}')).toBe(
+      true,
+    );
+  });
+
   it('is true for scheduler predicates', () => {
     expect(
       hasRenderableSessionStatusData(
