@@ -73,6 +73,16 @@ ruleTester.run(
       \`;
       const [x, setX] = useState<Foo$key | null>(null);
       `,
+      // A block string closes at its first UNESCAPED `"""`; the `\\"""` escape
+      // must not end it early and let the rest be scanned as syntax.
+      `
+      const q = graphql\`
+        query Q {
+          node(label: """a \\\\""" ...Foo still inside the string""") { id }
+        }
+      \`;
+      const [x, setX] = useState<Foo$key | null>(null);
+      `,
       // A spread named only inside a string argument is not a spread either.
       `
       const q = graphql\`

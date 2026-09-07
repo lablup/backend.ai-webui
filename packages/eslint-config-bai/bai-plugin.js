@@ -28,8 +28,12 @@ const stripCommentsAndStrings = (text) => {
       continue;
     }
     if (text.startsWith('"""', i)) {
-      const end = text.indexOf('"""', i + 3);
-      i = end === -1 ? text.length : end + 3;
+      // `\"""` is the one escape a block string has; it is not the delimiter.
+      let j = i + 3;
+      while (j < text.length && !text.startsWith('"""', j)) {
+        j += text[j] === "\\" && text.startsWith('"""', j + 1) ? 4 : 1;
+      }
+      i = j >= text.length ? text.length : j + 3;
       out += " ";
       continue;
     }
