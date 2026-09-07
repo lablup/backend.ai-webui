@@ -21,9 +21,7 @@
  * `stoken-login.spec.ts`: a customer-specific auth plugin is required
  * to mint real sTokens.
  *
- * The missing-token branch is covered below at route level; the
- * sToken-authenticated path stays out of scope because sToken validation
- * lives entirely manager-side in an out-of-tree AUTHORIZE hook plugin.
+ * The missing-token branch is covered below at route level.
  */
 import { webuiEndpoint } from '../utils/test-util';
 import { expect, test, type Page } from '@playwright/test';
