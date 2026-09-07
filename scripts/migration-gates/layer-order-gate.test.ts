@@ -131,6 +131,48 @@ describe("runLayerOrderGate", () => {
     expect(failures[0]).toContain('after the first <link rel="stylesheet">');
   });
 
+  it("flags mirrors that agree on a wrong order", () => {
+    const swapped =
+      "reset, theme, base, astryx-theme, astryx-base, components, utilities";
+    const { failures } = gate({
+      [INDEX_HTML]: html(`  <style>@layer ${swapped};</style>`),
+      [APP_CSS]: css(`@layer ${swapped};`),
+      [BUI_CSS]: css(`@layer ${swapped};`),
+      [STORYBOOK_CSS]: css(`@layer ${swapped};`),
+    });
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toContain("not the required precedence");
+  });
+
+  it("flags mirrors that agree on an order missing a required name", () => {
+    const short = "reset, theme, base, astryx-base, components";
+    const { failures } = gate({
+      [INDEX_HTML]: html(`  <style>@layer ${short};</style>`),
+      [APP_CSS]: css(`@layer ${short};`),
+      [BUI_CSS]: css(`@layer ${short};`),
+      [STORYBOOK_CSS]: css(`@layer ${short};`),
+    });
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toContain("omits astryx-theme, utilities");
+  });
+
+  it("flags an earlier inline <style> that registers layer names first", () => {
+    const { failures } = gate({
+      [INDEX_HTML]: html(
+        `  <style>@layer astryx-theme { .a { color: red } }</style>\n  <style>@layer ${ORDER};</style>`,
+      ),
+    });
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toContain("first inline <style>");
+  });
+
+  it("does not accept a statement that only appears in an HTML comment", () => {
+    const { failures } = gate({
+      [INDEX_HTML]: html(`  <!-- @layer ${ORDER}; -->`),
+    });
+    expect(failures[0]).toContain("no `@layer a, b, …;` order statement");
+  });
+
   it("flags a CSS mirror where a rule precedes the statement", () => {
     const { failures } = gate({
       [APP_CSS]: `@layer components { .a { color: red } }\n@layer ${ORDER};`,
