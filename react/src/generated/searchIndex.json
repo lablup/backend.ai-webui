@@ -3627,7 +3627,6 @@
         "modelStore.Preset",
         "resourcePreset.ResourcePresets",
         "resourcePreset.SHMEMShouldBeSmallerThanMemory",
-        "session.ActiveSessions",
         "session.Agent",
         "session.AgentId",
         "session.AllocatedLessThanRequested",
