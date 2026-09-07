@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Virheellinen polkumuoto.",
     "AliasOverlapping": "Liitospolku on päällekkäinen toisen kansion kanssa.",
+    "AliasOverlappingWithAutoMount": "Liitospolku on päällekkäinen automaattisesti liitetyn kansion kanssa.",
     "AliasPlaceholder": "Liitospolku",
     "AutoMountedFolders": "Automaattisesti liitetyt kansiot",
     "Name": "Nimi",

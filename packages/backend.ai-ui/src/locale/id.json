@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format jalur tidak valid.",
     "AliasOverlapping": "Jalur mount bertumpang tindih dengan folder lain.",
+    "AliasOverlappingWithAutoMount": "Jalur mount bertumpang tindih dengan folder mount otomatis.",
     "AliasPlaceholder": "Jalur mount",
     "AutoMountedFolders": "Folder mount otomatis",
     "Name": "Nama",

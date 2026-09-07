@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "路徑格式無效。",
     "AliasOverlapping": "掛載路徑與另一個資料夾重疊。",
+    "AliasOverlappingWithAutoMount": "掛載路徑與自動掛載資料夾重疊。",
     "AliasPlaceholder": "掛載路徑",
     "AutoMountedFolders": "自動掛載資料夾",
     "Name": "名稱",

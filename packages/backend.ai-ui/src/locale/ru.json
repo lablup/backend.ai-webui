@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Неверный формат пути.",
     "AliasOverlapping": "Путь монтирования перекрывается с другой папкой.",
+    "AliasOverlappingWithAutoMount": "Путь монтирования перекрывается с папкой автомонтирования.",
     "AliasPlaceholder": "Путь монтирования",
     "AutoMountedFolders": "Папки с автомонтированием",
     "Name": "Имя",

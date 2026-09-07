@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format de chemin invalide.",
     "AliasOverlapping": "Le chemin de montage chevauche un autre dossier.",
+    "AliasOverlappingWithAutoMount": "Le chemin de montage chevauche un dossier monté automatiquement.",
     "AliasPlaceholder": "Chemin de montage",
     "AutoMountedFolders": "Dossiers montés automatiquement",
     "Name": "Nom",

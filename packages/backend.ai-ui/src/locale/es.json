@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Formato de ruta inválido.",
     "AliasOverlapping": "La ruta de montaje se superpone con otra carpeta.",
+    "AliasOverlappingWithAutoMount": "La ruta de montaje se superpone con una carpeta de montaje automático.",
     "AliasPlaceholder": "Ruta de montaje",
     "AutoMountedFolders": "Carpetas de montaje automático",
     "Name": "Nombre",

@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Invalid path format.",
     "AliasOverlapping": "Mount path overlaps with another folder.",
+    "AliasOverlappingWithAutoMount": "Mount path overlaps with an auto-mounted folder.",
     "AliasPlaceholder": "Mount path",
     "AutoMountedFolders": "Automount Folders",
     "Name": "Name",

@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "パスの形式が無効です。",
     "AliasOverlapping": "マウントパスが別のフォルダと重複しています。",
+    "AliasOverlappingWithAutoMount": "マウントパスが自動マウントフォルダと重複しています。",
     "AliasPlaceholder": "マウントパス",
     "AutoMountedFolders": "自動マウントフォルダ",
     "Name": "名前",

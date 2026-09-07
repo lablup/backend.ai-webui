@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format laluan tidak sah.",
     "AliasOverlapping": "Laluan mount bertindih dengan folder lain.",
+    "AliasOverlappingWithAutoMount": "Laluan mount bertindih dengan folder mount automatik.",
     "AliasPlaceholder": "Laluan mount",
     "AutoMountedFolders": "Folder mount automatik",
     "Name": "Nama",

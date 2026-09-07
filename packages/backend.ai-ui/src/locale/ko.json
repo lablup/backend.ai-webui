@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "경로 형식이 올바르지 않습니다.",
     "AliasOverlapping": "다른 폴더와 마운트 경로가 중복됩니다.",
+    "AliasOverlappingWithAutoMount": "마운트 경로가 자동 마운트 폴더와 겹칩니다.",
     "AliasPlaceholder": "마운트 경로",
     "AutoMountedFolders": "자동 마운트 폴더",
     "Name": "이름",

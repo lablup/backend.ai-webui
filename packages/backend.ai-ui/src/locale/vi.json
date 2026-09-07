@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Định dạng đường dẫn không hợp lệ.",
     "AliasOverlapping": "Đường dẫn mount trùng lặp với thư mục khác.",
+    "AliasOverlappingWithAutoMount": "Đường dẫn mount trùng lặp với thư mục tự động mount.",
     "AliasPlaceholder": "Đường dẫn mount",
     "AutoMountedFolders": "Thư mục tự động mount",
     "Name": "Tên",

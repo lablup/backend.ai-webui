@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Ungültiges Pfadformat.",
     "AliasOverlapping": "Der Einhängepfad überschneidet sich mit einem anderen Ordner.",
+    "AliasOverlappingWithAutoMount": "Der Einhängepfad überschneidet sich mit einem automatisch eingehängten Ordner.",
     "AliasPlaceholder": "Einhängepfad",
     "AutoMountedFolders": "Automatisch eingehängte Ordner",
     "Name": "Name",

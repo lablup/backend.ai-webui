@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Geçersiz yol biçimi.",
     "AliasOverlapping": "Bağlama yolu başka bir klasörle çakışıyor.",
+    "AliasOverlappingWithAutoMount": "Bağlama yolu otomatik bağlanan bir klasörle çakışıyor.",
     "AliasPlaceholder": "Bağlama yolu",
     "AutoMountedFolders": "Otomatik bağlanan klasörler",
     "Name": "Ad",

@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Μη έγκυρη μορφή διαδρομής.",
     "AliasOverlapping": "Η διαδρομή προσάρτησης επικαλύπτεται με άλλο φάκελο.",
+    "AliasOverlappingWithAutoMount": "Η διαδρομή προσάρτησης επικαλύπτεται με φάκελο αυτόματης προσάρτησης.",
     "AliasPlaceholder": "Διαδρομή προσάρτησης",
     "AutoMountedFolders": "Φάκελοι αυτόματης προσάρτησης",
     "Name": "Όνομα",

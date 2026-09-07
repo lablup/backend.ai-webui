@@ -102,9 +102,14 @@ export type {
 } from './BAIVFolderSelect';
 export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
 export {
+  DEFAULT_ALIAS_BASE_PATH,
   inputToMountDestination,
+  mountDestinationToInput,
   getVFolderMountConfigStatuses,
   isVFolderMountConfigValid,
+  resolveVFolderMounts,
+  toMountCreationConfig,
+  useVFolderMountConfigFormRule,
 } from './BAIVFolderMountConfigInput';
 export type {
   BAIVFolderMountConfigInputProps,
@@ -112,6 +117,8 @@ export type {
   VFolderMountConfigSelectApi,
   VFolderMountConfigStatusOptions,
   VFolderMountConfigEntryStatus,
+  ResolvedVFolderMount,
+  VFolderMountCreationConfig,
 } from './BAIVFolderMountConfigInput';
 export { default as BAIProjectVfolderSelect } from './BAIProjectVfolderSelect';
 export type {

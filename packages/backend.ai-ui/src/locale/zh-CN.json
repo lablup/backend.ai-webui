@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "路径格式无效。",
     "AliasOverlapping": "挂载路径与另一个文件夹重叠。",
+    "AliasOverlappingWithAutoMount": "挂载路径与自动挂载文件夹重叠。",
     "AliasPlaceholder": "挂载路径",
     "AutoMountedFolders": "自动挂载文件夹",
     "Name": "名称",

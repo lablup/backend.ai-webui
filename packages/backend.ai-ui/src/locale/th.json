@@ -596,6 +596,7 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "รูปแบบพาธไม่ถูกต้อง",
     "AliasOverlapping": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์อื่น",
+    "AliasOverlappingWithAutoMount": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์ที่ mount อัตโนมัติ",
     "AliasPlaceholder": "พาธ mount",
     "AutoMountedFolders": "โฟลเดอร์ที่ mount อัตโนมัติ",
     "Name": "ชื่อ",
