@@ -1956,12 +1956,15 @@ export const getAllocatablePresetNames = (
     return _.every(preset.resource_slots, (_value, key) => {
       // shmem comes out of the session's own mem, so the agent doesn't slot it.
       if (key === 'shmem') return true;
-      const remaining = agentRemainingSlots[key];
-      // A slot the agent doesn't offer at all can never be allocated on it.
-      if (_.isUndefined(remaining)) return false;
+      const requested = preset.resource_slots[key];
+      // `check-presets` zero-fills every preset with every cluster-known slot
+      // type, while an agent only reports the slots it physically has. So a
+      // missing slot means 0 remaining, not "disqualify the preset": compare
+      // numerically and let a zero request pass.
+      const remaining = agentRemainingSlots[key] ?? 0;
       return key === 'mem'
-        ? compareNumberWithUnits(preset.resource_slots[key], remaining) <= 0
-        : (_.toNumber(preset.resource_slots[key]) || 0) <= remaining;
+        ? compareNumberWithUnits(requested, remaining) <= 0
+        : (_.toNumber(requested) || 0) <= remaining;
     });
   }).map((preset) => preset.name);
 

@@ -254,6 +254,40 @@ describe('getAllocatablePresetNames', () => {
       expect(result).toEqual(['cpu1_mem2g']);
     });
 
+    it('keeps a preset whose accelerator request is zero on an agent without that slot', () => {
+      // `check-presets` zero-fills every preset with all cluster-known slot
+      // types, so on a heterogeneous cluster a CPU preset still carries
+      // `cuda.shares: "0"` while a CPU-only agent reports no `cuda.shares`.
+      const result = getAllocatablePresetNames(
+        [
+          {
+            name: 'cpu1_mem2g',
+            resource_slots: {
+              cpu: '1',
+              mem: String(2 * GiB),
+              'cuda.shares': '0',
+            },
+            shared_memory: String(GiB),
+            allocatable: true,
+          },
+          {
+            name: 'cpu1_mem2g_cuda1',
+            resource_slots: {
+              cpu: '1',
+              mem: String(2 * GiB),
+              'cuda.shares': '1',
+            },
+            shared_memory: String(GiB),
+            allocatable: true,
+          },
+        ],
+        noResourceLimits,
+        undefined,
+        { cpu: 4, mem: 8 * GiB },
+      );
+      expect(result).toEqual(['cpu1_mem2g']);
+    });
+
     it('ignores shmem, which is carved out of the session memory', () => {
       const result = getAllocatablePresetNames(
         [

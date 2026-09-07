@@ -159,31 +159,35 @@ const AgentSelect: React.FC<Props> = ({
     },
   );
 
+  // One pass over the server's items: the options keep its order, the map is
+  // only a lookup derived from the same list.
+  const loadedAgents = _.compact(
+    _.map(agent_summary_list?.items, (agent) => {
+      if (!agent?.id) return null;
+      const availableSlotsInfo: {
+        [key in string]: string;
+      } = JSON.parse(agent?.available_slots ?? '{}');
+      const occupiedSlotsInfo: {
+        [key in string]: string;
+      } = JSON.parse(agent?.occupied_slots ?? '{}');
+      const remainingSlotsInfo: {
+        [key in string]: number;
+      } = _.mapValues(availableSlotsInfo, (value, key) => {
+        if (key.endsWith('.shares')) {
+          return parseFloat(value) - parseFloat(occupiedSlotsInfo[key] ?? 0);
+        } else {
+          return parseInt(value) - parseInt(occupiedSlotsInfo[key] ?? 0);
+        }
+      });
+      return { id: agent.id, remainingSlotsInfo };
+    }),
+  );
+
   const remainingSlotsByAgentId: AgentRemainingSlotsMap = _.fromPairs(
-    _.compact(
-      _.map(agent_summary_list?.items, (agent) => {
-        if (!agent?.id) return null;
-        const availableSlotsInfo: {
-          [key in string]: string;
-        } = JSON.parse(agent?.available_slots ?? '{}');
-        const occupiedSlotsInfo: {
-          [key in string]: string;
-        } = JSON.parse(agent?.occupied_slots ?? '{}');
-        const remainingSlotsInfo: {
-          [key in string]: number;
-        } = _.mapValues(availableSlotsInfo, (value, key) => {
-          if (key.endsWith('.shares')) {
-            return parseFloat(value) - parseFloat(occupiedSlotsInfo[key] ?? 0);
-          } else {
-            return parseInt(value) - parseInt(occupiedSlotsInfo[key] ?? 0);
-          }
-        });
-        return [agent.id, remainingSlotsInfo] as [
-          string,
-          Record<string, number>,
-        ];
-      }),
-    ),
+    _.map(loadedAgents, ({ id, remainingSlotsInfo }) => [
+      id,
+      remainingSlotsInfo,
+    ]),
   );
 
   const reportRemainingSlots = useEffectEvent(() => {
@@ -194,12 +198,12 @@ const AgentSelect: React.FC<Props> = ({
   }, [remainingSlotsByAgentId]);
 
   const agentOptions: Array<BAIComplexSelectOption> = _.map(
-    _.toPairs(remainingSlotsByAgentId),
-    ([agentId, remainingSlotsInfo]) => ({
+    loadedAgents,
+    ({ id, remainingSlotsInfo }) => ({
       // P26-3: the label is the string that fills the trigger, the
       // accessible name and the live region; the figures go in `extra`.
-      label: agentId,
-      value: agentId,
+      label: id,
+      value: id,
       extra: (
         <BAIFlex direction="row" gap={'xxs'}>
           {_.map(remainingSlotsInfo, (slot, key) => {
