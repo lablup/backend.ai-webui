@@ -275,9 +275,8 @@ deactivated. Purging is available **only** for users in the **Inactive** tab —
 active users must be deactivated first. Unlike deactivation, purging is
 irreversible and also removes the user's associated data.
 
-In the Users page, switch to the **Inactive** tab (the status selector reads
-**Inactive (include keypair)** to indicate that purging also affects the user's
-keypairs). You can purge users in two ways:
+In the Users page, switch to the **Inactive** tab using the **Active** /
+**Inactive** status selector above the list. You can purge users in two ways:
 
 - **Per-user purge**: Click the trash-bin (permanently delete) icon in a single inactive user's **Email** column row.
 - **Bulk purge**: Select one or more inactive users with the row checkboxes, then
@@ -291,12 +290,21 @@ this operation cannot be undone, you must type the confirmation phrase shown in
 the modal before the delete button becomes enabled. The modal also offers two
 options:
 
-- **Delete shared virtual folders as well?**: When checked, virtual folders
-  shared by the purged users are also deleted. When unchecked, those folders are
-  left in place.
+- **Delete shared virtual folders as well?**: Controls what happens to the
+  purged users' virtual folders that are shared with other users. When checked,
+  those folders are transferred to you — the admin performing the purge — and
+  survive the purge; a transferred folder is renamed with a random suffix if its
+  name collides with one of your own folders. When unchecked, they are deleted
+  together with the users' other virtual folders.
 - **Delete created deployments as well?**: When checked, deployments created by
   the purged users are deleted as well. When unchecked, ownership of those
-  deployments is delegated instead of deleting them.
+  deployments is delegated to you instead of deleting them.
+
+:::warning
+The first option's label reads as if checking it deletes the shared folders, but
+the effect is the opposite: **checking it keeps them**, under your ownership,
+while leaving it unchecked deletes them along with the users' other data.
+:::
 
 ![](../images/purge_users_modal.png)
 <!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
