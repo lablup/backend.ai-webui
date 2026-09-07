@@ -463,6 +463,7 @@
     "Yes": "네"
   },
   "chatui": {
+    "AttachmentNotStored": "브라우저 저장 공간 제한으로 첨부 파일이 저장되지 않았습니다",
     "Attachments": "첨부파일",
     "CannotFindModel": "LLM 모델 정보를 찾을 수 없습니다. OpenAI 호환 기본 경로와 토큰을 확인후 '모델 정보 새로고침' 버튼을 눌러주세요.",
     "ChatTitle": "채팅 제목",

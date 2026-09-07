@@ -450,6 +450,7 @@
     "Yes": "Yes"
   },
   "chatui": {
+    "AttachmentNotStored": "Attachment not stored due to the browser storage limit",
     "Attachments": "Attachments",
     "CannotFindModel": "LLM models not found. Verify the base path and token compatibility with OpenAI, then press 'Refresh Model Information'",
     "ChatTitle": "Chat title",

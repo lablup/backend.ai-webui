@@ -10,7 +10,7 @@ import {
   type ChatProviderData,
   type ChatMessage,
 } from './ChatModel';
-import { useBAILogger } from 'backend.ai-ui';
+import { useBAILogger, type BAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { customAlphabet } from 'nanoid/non-secure';
 import { useEffect, useCallback, useState } from 'react';
@@ -34,20 +34,104 @@ export function generateChatId(): string {
   });
 }
 
-export function createLocalStorageCache<T>(cacheName: string) {
+export type CachePersistStatus =
+  'ok' | 'attachments-dropped' | 'entries-evicted' | 'failed';
+
+export interface CachePersistResult {
+  status: CachePersistStatus;
+  evictedKeys: string[];
+}
+
+const INLINED_ATTACHMENT_URL_PREFIX = 'data:';
+
+function isInlinedFilePart(value: unknown): value is { url: string } {
+  return (
+    _.isPlainObject(value) &&
+    _.get(value, 'type') === 'file' &&
+    _.isString(_.get(value, 'url')) &&
+    _.startsWith(_.get(value, 'url'), INLINED_ATTACHMENT_URL_PREFIX)
+  );
+}
+
+// JSON replacer keeping an attachment's identity (type/mediaType/filename) but
+// dropping the inlined base64 payload, which is what blows the quota.
+function withoutInlinedAttachments(_key: string, value: unknown) {
+  return isInlinedFilePart(value) ? { ...value, url: '' } : value;
+}
+
+export function createLocalStorageCache<T>(
+  cacheName: string,
+  // Ascending by recency (oldest first) — the eviction order once the quota is
+  // hit. Without it entries are evicted in Map insertion order.
+  compareRecency?: (a: T, b: T) => number,
+) {
   const cache = new Map<string, T>(
     JSON.parse(localStorage.getItem(cacheName) ?? '[]'),
   );
+  // Sticky: once the quota has forced attachments out, retrying the full
+  // payload on every later write would only fail again.
+  let dropsAttachments = false;
+
+  const write = (entries: Array<[string, T]>, stripAttachments: boolean) => {
+    try {
+      localStorage.setItem(
+        cacheName,
+        JSON.stringify(
+          entries,
+          stripAttachments ? withoutInlinedAttachments : undefined,
+        ),
+      );
+      return true;
+    } catch {
+      // QuotaExceededError (or a browser refusing storage entirely): the
+      // in-memory Map stays authoritative for the open conversation.
+      return false;
+    }
+  };
+
+  // Degrades the persisted copy instead of throwing: full payload -> without
+  // inlined attachments -> evicting the least recently updated histories.
+  const persist = (): CachePersistResult => {
+    const entries = Array.from(cache.entries());
+
+    if (!dropsAttachments && write(entries, false)) {
+      return { status: 'ok', evictedKeys: [] };
+    }
+
+    if (write(entries, true)) {
+      const status: CachePersistStatus = dropsAttachments
+        ? 'ok'
+        : 'attachments-dropped';
+      dropsAttachments = true;
+      return { status, evictedKeys: [] };
+    }
+    dropsAttachments = true;
+
+    const evictionOrder = entries.slice();
+    if (compareRecency) {
+      evictionOrder.sort(([, a], [, b]) => compareRecency(a, b));
+    }
+    const evictedKeys: string[] = [];
+    // Never evict the last entry — that is the conversation the user is in.
+    while (evictionOrder.length > 1) {
+      const [key] = evictionOrder.shift() as [string, T];
+      cache.delete(key);
+      evictedKeys.push(key);
+      if (write(Array.from(cache.entries()), true)) {
+        return { status: 'entries-evicted', evictedKeys };
+      }
+    }
+
+    localStorage.removeItem(cacheName);
+    return { status: 'failed', evictedKeys };
+  };
 
   return {
     cache,
     set(key: string, value: T) {
       cache.set(key, value);
 
-      localStorage.setItem(
-        cacheName,
-        JSON.stringify(Array.from(cache.entries())),
-      );
+      return persist();
     },
     get(key: string) {
       return cache.get(key);
@@ -58,10 +142,7 @@ export function createLocalStorageCache<T>(cacheName: string) {
     delete(key: string) {
       cache.delete(key);
 
-      localStorage.setItem(
-        cacheName,
-        JSON.stringify(Array.from(cache.entries())),
-      );
+      return persist();
     },
     clear: () => {
       cache.clear();
@@ -86,7 +167,29 @@ export interface ChatHistoryData {
 
 const chatHistoryCache = createLocalStorageCache<ChatHistoryData>(
   'backendaiwebui.cache.chat_history',
+  (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
 );
+
+function reportPersistResult(logger: BAILogger, result: CachePersistResult) {
+  switch (result.status) {
+    case 'attachments-dropped':
+      logger.warn(
+        'Chat history exceeded the browser storage quota; attachments were dropped from the stored history.',
+      );
+      break;
+    case 'entries-evicted':
+      logger.warn(
+        'Chat history exceeded the browser storage quota; evicted the oldest chats:',
+        result.evictedKeys,
+      );
+      break;
+    case 'failed':
+      logger.error(
+        'Chat history could not be stored; it will not survive a reload.',
+      );
+      break;
+  }
+}
 
 export function useHistory(id: string, provider: ChatProviderData) {
   const { logger } = useBAILogger();
@@ -95,22 +198,28 @@ export function useHistory(id: string, provider: ChatProviderData) {
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
 
-  const removeHistory = useCallback((id: string) => {
-    chatHistoryCache.delete(id);
-    setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
+  const removeHistory = useCallback(
+    (id: string) => {
+      reportPersistResult(logger, chatHistoryCache.delete(id));
+      setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
 
-    return chatHistoryCache.size();
-  }, []);
+      return chatHistoryCache.size();
+    },
+    [logger],
+  );
 
-  const updateHistory = useCallback((data: ChatHistoryData) => {
-    const mergedData: ChatHistoryData = _.merge({}, data, {
-      updatedAt: new Date().toISOString(),
-    });
+  const updateHistory = useCallback(
+    (data: ChatHistoryData) => {
+      const mergedData: ChatHistoryData = _.merge({}, data, {
+        updatedAt: new Date().toISOString(),
+      });
 
-    chatHistoryCache.set(data.id, mergedData);
-    setChat({ ...mergedData });
-    setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
-  }, []);
+      reportPersistResult(logger, chatHistoryCache.set(data.id, mergedData));
+      setChat({ ...mergedData });
+      setHistory([...chatHistoryCache.getAll().sort(sortHistoryByUpdatedAt)]);
+    },
+    [logger],
+  );
 
   const addChatData = useCallback(
     ({ provider, id }: ChatData) => {

@@ -83,7 +83,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         const filename =
           part.filename || part.url?.split('/').pop() || `file-${index}`;
 
-        return part.mediaType?.toLowerCase().startsWith('image/') ? (
+        // A restored history entry can have lost its inlined payload to the
+        // storage quota (see `persist()` in ChatHistory.ts): there is no url
+        // left to render, only the attachment's name.
+        const hasPayload = !_.isEmpty(part.url);
+
+        return hasPayload &&
+          part.mediaType?.toLowerCase().startsWith('image/') ? (
           <BAIFlex
             key={`${message?.id}-${index}`}
             style={{
@@ -112,9 +118,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           <Token
             key={`${message?.id}-${index}`}
             label={filename}
-            description={filename}
+            description={
+              hasPayload ? filename : t('chatui.AttachmentNotStored')
+            }
             icon={<PaperclipIcon size="1em" />}
-            href={part?.url}
+            href={hasPayload ? part?.url : undefined}
           />
         );
       })}
