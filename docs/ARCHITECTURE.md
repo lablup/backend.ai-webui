@@ -8,8 +8,9 @@
 | ADR | 무엇을 정하는가 |
 |---|---|
 | [0001 — Explicit project prop contract for leaf components](adr/0001-explicit-project-prop-contract.md) | leaf component는 현재 project를 ambient hook에서 읽지 않고 필수 prop `project`로 받는다. page만 ambient 값을 읽어 넘기고, `null`을 받은 component는 tier마다 정한 동작을 한다. `/admin/*` 화면은 project-agnostic route로 묶이고 ESLint가 그 안에서 `useCurrentProjectValue` import를 막는다. |
+| [0002 — Pin set link grammar and a single codec](adr/0002-pin-set-link-grammar-and-single-codec.md) | review overlay의 pin 여러 개는 `#bai=v3` part를 `&`로 이어 붙인 링크 하나로 나른다. 읽는 쪽은 overlay의 codec 하나뿐이고 `pnpm run review-pins` CLI로 노출되며, Claude 쪽 review skill과 Teams transport는 그 CLI를 부른다. |
 
-다음 번호는 **0002**다.
+다음 번호는 **0003**다.
 
 ## 새 ADR을 적는 방법
 
