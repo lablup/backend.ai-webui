@@ -1151,7 +1151,7 @@ const SessionLauncherPage = () => {
                       return null;
                     }}
                   >
-                    <ImageEnvironmentSelectFormItems />
+                    <ImageEnvironmentSelectFormItems showRefreshButton />
                   </ErrorBoundary>
                   <Form.Item label={t('session.launcher.EnvironmentVariable')}>
                     <EnvVarFormList
