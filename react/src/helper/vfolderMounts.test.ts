@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { normalizeLegacyMountFields } from './vfolderMounts';
+import {
+  normalizeLegacyMountFields,
+  ownerEmailFromOwner,
+} from './vfolderMounts';
 
 const HEX_ID = '2f9d4a1b6c7e4f0aa1b2c3d4e5f60718';
 const UUID_ID = '2f9d4a1b-6c7e-4f0a-a1b2-c3d4e5f60718';
@@ -73,5 +76,38 @@ describe('normalizeLegacyMountFields', () => {
     expect(normalizeLegacyMountFields({ mount_ids: [] })).toEqual({
       vfolderMounts: [],
     });
+  });
+});
+
+describe('ownerEmailFromOwner', () => {
+  it('returns undefined when the owner block is disabled', () => {
+    expect(
+      ownerEmailFromOwner({
+        enabled: false,
+        email: 'owner@lablup.com',
+        domainName: 'default',
+      }),
+    ).toBeUndefined();
+  });
+
+  it('returns undefined while an enabled owner block is still half-filled', () => {
+    expect(
+      ownerEmailFromOwner({
+        enabled: true,
+        email: 'owner@lablup.com',
+        accessKey: undefined,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('returns the email of a complete, enabled owner block', () => {
+    expect(
+      ownerEmailFromOwner({
+        enabled: true,
+        email: 'owner@lablup.com',
+        accessKey: 'AKIA',
+        domainName: 'default',
+      }),
+    ).toBe('owner@lablup.com');
   });
 });

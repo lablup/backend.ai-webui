@@ -20,6 +20,9 @@ export const useAutoMountedFolderNames = (
         $scopeId: ScopeField
         $filter: String
       ) {
+        # first bounds correctness, not just the page size: a name missing from
+        # this list is a folder the launcher offers for mounting even though
+        # the session already mounts it.
         vfolder_nodes(
           scope_id: $scopeId
           filter: $filter
@@ -29,7 +32,6 @@ export const useAutoMountedFolderNames = (
           edges {
             node {
               name
-              status
             }
           }
         }
@@ -43,5 +45,3 @@ export const useAutoMountedFolderNames = (
 
   return _.compact(_.map(vfolder_nodes?.edges, (edge) => edge?.node?.name));
 };
-
-export default useAutoMountedFolderNames;
