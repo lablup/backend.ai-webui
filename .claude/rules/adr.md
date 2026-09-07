@@ -29,22 +29,13 @@ and commit bodies. An ADR puts it in one file a reader can open from the code.
    restriction, a required prop pattern) review will enforce from now on. A bug
    fix, a single component, or work that follows an existing ADR needs none.
 3. **Write and proceed.** Record the decision in the same branch and keep
-   implementing. The PR is where a human reviews it. The ADR, the
+   implementing. The PR is where a human reviews it. The ADR, its
    `docs/ARCHITECTURE.md` row, and the code land in one PR.
 4. **Flag a reversal early.** A decision that reverses an ADR in force is a
    bigger call: say so in the PR description or the Jira issue before landing.
 5. **Name it where the code follows it.** A PR that lands or follows an ADR
    says `ADR NNNN` in its Summary. A source comment that exists because of an
-   ADR points at the file, as the ESLint message for ADR 0001 does.
+   ADR is the one-line pointer `comment-density.md` allows, aimed at the ADR
+   file, as the ESLint message for ADR 0001 is.
 
-## How to write one
-
-Load the `adr-writing` skill. It holds the file conventions (filename, English
-title, no status field, how a decision is retired), the section skeleton, the
-writing rules, and the landing checks. Do not restate them here.
-
-## Related
-
-- `docs/ARCHITECTURE.md` — the index of ADRs in force and the next free number.
-- `docs/adr/0001-explicit-project-prop-contract.md` — the first ADR, and the
-  shape a guardrail-style decision takes.
+Write one with the `adr-writing` skill.

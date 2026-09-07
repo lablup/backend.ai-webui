@@ -11,8 +11,8 @@ full rules. The points below are the ones most often missed.
 
 ## File and title
 
-- Filename `NNNN-title.md`; take the next number from `docs/ARCHITECTURE.md`
-  and never reuse one.
+- Filename `NNNN-title.md`; the next number is the highest in `docs/adr/` plus
+  one, and a number is never reused.
 - Title `# NNNN — <English noun phrase>`. No colon subtitle, no parenthesis, no
   Jira key in the title.
 - No status field. A retired ADR gets a `> superseded by NNNN` top line or is
@@ -27,7 +27,8 @@ full rules. The points below are the ones most often missed.
   (`- **Required prop**: ...`).
 - At least one mermaid diagram, every edge labelled. Check the rendered branch
   on GitHub before landing; no CI catches a mermaid syntax error.
-- Jira issues go in `## 출처`.
+- Jira issues and the decision date go in `## 출처` (`## Sources` in an
+  English-body document).
 
 ## Index
 

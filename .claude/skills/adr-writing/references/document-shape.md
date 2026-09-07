@@ -1,17 +1,9 @@
 # Document shape — reference
 
-Rule ids D3–D4 and the ADR section skeleton, used by the `adr-writing` skill.
-Both bind documents under `docs/adr/` only.
-
-The rules that bind the whole document — titles (T1–T6), language (L1–L5),
-sentences (S1–S10), and body shape (D1–D2 — the Summary a body opens with,
-and the diagram a flow gets) — live in [writing-rules.md](writing-rules.md).
-Read those first; this file adds what only a document has.
-
-The lifecycle is not a writing rule. It lives in the `adr-writing` skill's
-**ADR file conventions** section: a retired ADR either keeps its file and
-gains a `> superseded by NNNN` top line, or is deleted outright. Deleting is
-allowed, and numbers are never reused, so a gap in the sequence is expected.
+Rule ids D3–D4, the ADR section skeleton, the heading language, the
+one-diagram floor, and the mermaid syntax traps, used by the `adr-writing`
+skill. The rules for titles, terms, sentences, and D1–D2 are in
+[writing-rules.md](writing-rules.md).
 
 ## Shape (D3–D4)
 
@@ -22,10 +14,8 @@ allowed, and numbers are never reused, so a gap in the sequence is expected.
 
 ## Mermaid in a document
 
-D2 says draw what moves. A document under `docs/adr/` also carries a floor:
-an ADR describes a system, so it carries at least one diagram. The floor is a
-document rule and reaches no other surface — a PR body draws when it has
-something that moves and otherwise draws nothing.
+D2 says draw what moves. An ADR also carries a floor: it describes a system,
+so it carries at least one diagram.
 
 Label every edge with what actually crosses it, such as `project prop`,
 `useFragment(queryRef)`, or `mutation variables`. Mark which boxes read
@@ -52,10 +42,19 @@ A reader moving between two ADRs should recognise the same boxes.
 - `## 대안과 기각 사유` — one bullet per alternative: what it is, its
   advantage, that it is rejected, and why.
 - `## Consequences` — gains and limits, as complete-sentence bullets.
-- `## 출처` — the Jira issues and the sources the decision rests on, then a
-  `관련:` line linking the neighbouring ADRs.
+- `## 출처` — the Jira issues and the sources the decision rests on, the date
+  the decision was made, then a `관련:` line linking the neighbouring ADRs.
 - `## 용어` — the glossary table, when the document introduced a term a
   first-time reader would not know.
+
+Section headings follow the body language. The four headings that differ:
+
+| Korean body | English body |
+|---|---|
+| `## 설계도` | `## Diagram` |
+| `## 대안과 기각 사유` | `## Rejected alternatives` |
+| `## 출처` | `## Sources` |
+| `## 용어` | `## Glossary` |
 
 ## Mermaid syntax traps
 
@@ -65,8 +64,6 @@ A reader moving between two ADRs should recognise the same boxes.
 | `{}` or `\|` inside a flowchart node label | the characters carry shape meaning | rewrite the label, or use a sequence diagram where message text is plain |
 | a floating `NOTE[...]` node to caption a group | reads as a component that does not exist | use a `subgraph` whose title is the caption |
 
-GitHub renders every diagram when the document is read, so the first two rows
-show a syntax error on the page — read the branch's rendered view before
-landing, because no CI check catches them. The third breaks nowhere: a
-floating caption node is valid mermaid, and only a reader can see that it
-names a component which does not exist.
+The first two rows show as a syntax error on GitHub's rendered page. The
+third breaks nowhere: a floating caption node is valid mermaid, and only a
+reader can see that it names a component which does not exist.

@@ -59,7 +59,7 @@ the quote markers gone and the link moved to a separate `hrefs[]`, so that
 reconstruction is Teams-shaped, not pin-shaped, and it feeds the CLI rather
 than duplicating it.
 
-## Considered options
+## Rejected alternatives
 
 - **`v4` set envelope** — every anchor in one compressed blob. Shorter URLs
   (deflate shares the repeated route and landmark) and a natural place for

@@ -5,13 +5,9 @@ every document under `docs/adr/` and the `docs/ARCHITECTURE.md` index. Cite
 the id when reporting a finding ("T1 violation") and when reporting a fix
 ("rewrote the title, T1").
 
-Body shape runs under ids D1–D4. D1 (Summary first) and D2 (draw what moves)
-are catalogued below under Angle 4. D3 (the ADR section skeleton) and D4 (the
-increment overview) live in [document-shape.md](document-shape.md), together
-with the one-diagram floor a document carries and the mermaid syntax traps.
-
-PR and issue titles are not governed here. They follow the
-`prefix(FR-NNNN): title` form that `AGENTS.md` fixes.
+D3–D4, the section skeleton, and the mermaid traps are in
+[document-shape.md](document-shape.md). PR and issue titles follow the
+`prefix(FR-NNNN): title` form that `AGENTS.md` fixes, not these rules.
 
 ## Angle 1 — Title (T1–T6)
 
@@ -119,27 +115,17 @@ a table of contents; a list of sentences is a wall.
 | `- **prop은 필수로 둔다.** 모든 call site가 …` | the opening is a sentence, not a label | `- **Required prop**: 모든 call site가 …` |
 | `- **결정의 축**: 세 tier로 나눈다.` | the label is a Korean coinage, so nothing is grasped at a glance | `- **Null handling tiers**: \`null\`을 받은 component는 modal, button, alert 세 tier 중 하나로 동작한다.` |
 
-The label is English even in a Korean body. This rule fixes that, not T4 —
-T4 binds titles, and a Korean `## 용어` heading stays Korean. Inventing the
-label in Korean is the most common way a coined term enters a document.
-
-The label is a noun phrase, so S4 does not bind it. S4 binds the detail after
-the colon, which is a complete sentence like any other.
+The label is English even in a Korean body; inventing it in Korean is the
+most common way a coined term enters a document.
 
 Name the subject the item settles — its owner, its order, its limit, its
 entry point, its cost. An action wearing a noun's clothes fails the rule too:
 write `- **Prop owner**:`, never `- **Where the prop is decided**:`.
 
 S8 and S10 bind the lists that **explain** — decisions, consequences,
-rejected alternatives. Two kinds of list fall outside S8's noun form.
-
-- An **inventory whose items are the content** stays bare: option lists,
-  field and enum tables, glossary rows, file paths, and source citations.
-  S10 does not bind it either, because there is no label to pair a detail
-  with.
-- A **rule, checklist, or step list keeps the instruction as its label** —
-  `- **Draw what moves** (D2)`, `- **Read before implementing**`. A reader
-  scans such a list for what to do, and a noun phrase would bury it.
+rejected alternatives. An inventory whose items are the content (option
+lists, field tables, glossary rows, file paths, citations) stays bare, and
+neither rule binds it.
 
 S9 in practice. A subjectless Korean sentence reads as a proverb, and a
 proverb cannot be checked against the code. Ask of every sentence: **who does
@@ -163,9 +149,7 @@ means. Prefer the verb with an actor over the noun without one.
 | D2 | Draw what moves rather than explaining it | a data flow, a render sequence, a component layout, a state machine, or a before/after goes in a mermaid diagram, with every edge labelled by what crosses it |
 
 D2 test: if a paragraph describes something that moves or connects, draw it
-instead. Never explain a flow in prose alone. The converse is not a rule — a
-convention change, a dependency bump, or a rename needs no second diagram
-beyond the one-diagram floor in [document-shape.md](document-shape.md).
+instead. Never explain a flow in prose alone.
 
 ## Reread as a first-time reader
 

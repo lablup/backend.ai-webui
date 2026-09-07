@@ -95,8 +95,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 ### Architecture Decision Records (detail: `.claude/rules/adr.md`, auto-loaded)
 
 - Architecture-level decisions live in `docs/adr/`, indexed by `docs/ARCHITECTURE.md`. A decision on `main` is in force: read the ADRs covering an area before changing it, and never implement against one.
-- A change that makes a new decision — a runtime dependency, where a kind of state lives, a contract between layers, routing every page follows, a guardrail review will enforce — records an ADR in the same PR and proceeds; the PR is where a human reviews it. A reversal of an ADR in force is flagged to a human before landing.
-- Write ADRs with the `adr-writing` skill. A PR that lands or follows one says `ADR NNNN` in its summary.
+- A change that makes a new decision other code must follow records an ADR in the same PR and proceeds; the PR is where a human reviews it. A reversal of an ADR in force is flagged to a human before landing.
 
 ### On-Demand Skills (loaded only when needed)
 
