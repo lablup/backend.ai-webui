@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Form control for choosing vfolders and configuring how each one is mounted. It renders a multi-select BAIVFolderSelect in `row_id` mode inside its own Suspense boundary — so the folder list query is loaded internally and no queryRef is needed — and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the folder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. Resolve it with the exported `inputToMountDestination`. The inline per-row errors are advisory only; gate a form on validity by calling the exported `isVFolderMountConfigValid` (or `getVFolderMountConfigStatuses` for the per-entry detail) from a `Form.Item` `rules` validator.',
+      "Form control for choosing vfolders and configuring how each one is mounted. It renders a multi-select folder picker inside its own Suspense boundary — so the folder list is loaded internally and no queryRef is needed — and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. `folderSource` chooses the picker: the default `{ type: 'graphql' }` is BAIVFolderSelect in `row_id` mode, while `{ type: 'legacy' }` is BAILegacyVFolderSelect over the REST folder list, the only source that can apply the session launcher's mount gates and report its auto-mounted dotfiles. The value is a `VFolderMountConfigValue[]` where `vfolderId` is whichever key the chosen picker emits — a folder UUID, or the REST 32-hex id under the legacy source, normalized to a dashed UUID before it reaches the row's path picker — and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. Resolve it with the exported `inputToMountDestination`. The inline per-row errors are advisory only; gate a form on validity by calling the exported `isVFolderMountConfigValid` (or `getVFolderMountConfigStatuses` for the per-entry detail) from a `Form.Item` `rules` validator.",
     bestPractices: [
       {
         guidance: true,
@@ -37,6 +37,16 @@ export const docs = {
         guidance: true,
         description:
           'Scope the picker with `currentProjectId` and `filter` so users cannot select folders the session will not be able to mount.',
+      },
+      {
+        guidance: true,
+        description:
+          "Use `folderSource: { type: 'legacy' }` for a session mount field, and feed its `onAutoMountedFoldersChange` back into `autoMountedFolderNames` — the GraphQL source cannot see the mount-in-session host gate or the auto-mounted dotfiles.",
+      },
+      {
+        guidance: false,
+        description:
+          'Assume `vfolderId` is a UUID: under the legacy source it is the REST 32-hex id, so run it through `convertToUUID` before sending it to a mutation input.',
       },
       {
         guidance: false,
@@ -84,7 +94,14 @@ export const docs = {
       name: 'filter',
       type: 'string',
       description:
-        'Server-side filter expression forwarded to the folder select.',
+        'Server-side filter expression forwarded to the GraphQL folder select. Ignored under the legacy source, which takes a predicate in `folderSource.filter` instead.',
+    },
+    {
+      name: 'folderSource',
+      type: "{ type: 'graphql' } | { type: 'legacy'; ownerEmail?: string; keypairResourcePolicyName?: string; filter?: (folder: LegacyVFolder) => boolean; onInvalidSelection?: (invalidKeys: string[], validFolders: LegacyVFolder[]) => void; onAutoMountedFoldersChange?: (names: string[]) => void }",
+      description:
+        'Which folder list backs the picker. The legacy variant swaps in BAILegacyVFolderSelect over the REST `GET /folders` list, adds the mount-in-session host gate and the project accessibility filter, and reports invalid selections and auto-mounted dotfile names back to the caller.',
+      default: "{ type: 'graphql' }",
     },
     {
       name: 'disabled',
@@ -126,6 +143,21 @@ export const docs = {
     autoMountedFolderNames={autoMountedFolderNames}
   />
 </Form.Item>`,
+    },
+    {
+      label: 'Session mount field over the legacy folder list',
+      code: `<BAIVFolderMountConfigInput
+  currentProjectId={currentProject.id}
+  autoMountedFolderNames={autoMountedFolderNames}
+  folderSource={{
+    type: 'legacy',
+    ownerEmail,
+    filter: (folder) => !folder.name.startsWith('.'),
+    onAutoMountedFoldersChange: setAutoMountedFolderNames,
+  }}
+  value={mounts}
+  onChange={setMounts}
+/>`,
     },
     {
       label: 'Controlled, outside a form',

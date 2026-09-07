@@ -1,6 +1,7 @@
 import { Form } from '../../form-engine';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
+  mockLegacyVFolder,
   mockVFolderFile as entry,
   type MockVFolderFileTrees,
 } from '../../tests/mockVFolderFileTree';
@@ -92,6 +93,55 @@ const ControlledDemo = ({
     </div>
   );
 };
+
+// ── Legacy (REST) folder source ─────────────────────────────────────────────
+// The legacy select keys folders by the REST `id` — 32 hex characters, no
+// dashes — which the component converts to a dashed UUID for the row's path
+// picker, so the mock trees below are keyed by the converted form.
+const LEGACY_PROJECT_ID = '99999999-9999-9999-9999-999999999999';
+const LEGACY_ALLOWED_VFOLDER_HOSTS = {
+  'local:volume1': ['mount-in-session', 'upload-file', 'download-file'],
+  'archive:cold': ['upload-file', 'download-file'],
+};
+const legacyFolders = [
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0001',
+    name: 'my-project-data',
+  }),
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0002',
+    name: 'shared-datasets',
+    ownership_type: 'group',
+    type: 'group',
+    group: LEGACY_PROJECT_ID,
+    group_name: 'default',
+  }),
+  // Auto-mounted dotfile: hidden from the options by `filter`, reported by
+  // `onAutoMountedFoldersChange`.
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0003',
+    name: '.config',
+  }),
+  // Host without `mount-in-session` — gated out of the list entirely.
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0004',
+    name: 'cold-archive',
+    host: 'archive:cold',
+  }),
+];
+const createLegacyTrees = (): MockVFolderFileTrees => ({
+  'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0001': {
+    '.': [
+      entry('dataset', 'DIRECTORY', '2026-07-21T14:02:00'),
+      entry('README.md', 'FILE', '2026-07-01T11:20:00'),
+    ],
+    dataset: [],
+  },
+  'aaaaaaaa-bbbb-cccc-dddd-eeeeffff0002': {
+    '.': [entry('imagenet', 'DIRECTORY', '2026-07-10T08:00:00')],
+    imagenet: [],
+  },
+});
 
 const meta: Meta<typeof BAIVFolderMountConfigInput> = {
   title: 'Fragments/BAIVFolderMountConfigInput',
@@ -380,6 +430,64 @@ export const WithFormValidation: Story = {
       );
     };
     return <FormValidationDemo />;
+  },
+};
+
+/**
+ * The `legacy` folder source: the picker lists folders from the REST
+ * `GET /folders` endpoint under the session launcher's mount gates, hides the
+ * auto-mounted dotfiles with `filter`, and reports their names back so the
+ * alias overlap check can see them.
+ */
+export const LegacyFolderSource: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`folderSource={{ type: 'legacy', ... }}` swaps BAIVFolderSelect for BAILegacyVFolderSelect. Of the four mock folders, `cold-archive` is dropped (its host has no `mount-in-session` permission) and `.config` is hidden by `filter` while being reported through `onAutoMountedFoldersChange` — which the story feeds straight into `autoMountedFolderNames`. The prefilled row aliases to `.config`, so it collides with the auto-mounted `/home/work/.config` and shows the overlap error. Note `vfolderId` in the emitted value is the 32-hex REST id, while each row's subpath picker browses the same folder by its dashed UUID.",
+      },
+    },
+  },
+  decorators: [
+    (Story) => (
+      <MockVFolderFileProviders
+        vfolders={[]}
+        trees={createLegacyTrees}
+        folders={legacyFolders}
+        allowedVFolderHosts={LEGACY_ALLOWED_VFOLDER_HOSTS}
+        suspenseFallback="Loading..."
+      >
+        <Story />
+      </MockVFolderFileProviders>
+    ),
+  ],
+  render: (args) => {
+    const LegacySourceDemo = () => {
+      const [autoMountedFolderNames, setAutoMountedFolderNames] = useState<
+        string[]
+      >([]);
+      return (
+        <ControlledDemo
+          {...args}
+          currentProjectId={LEGACY_PROJECT_ID}
+          autoMountedFolderNames={autoMountedFolderNames}
+          folderSource={{
+            type: 'legacy',
+            filter: (folder) => !folder.name.startsWith('.'),
+            onAutoMountedFoldersChange: setAutoMountedFolderNames,
+          }}
+          initialValue={[
+            {
+              vfolderId: legacyFolders[0].id,
+              name: legacyFolders[0].name,
+              mountDestination: '.config',
+              subpath: 'dataset',
+            },
+          ]}
+        />
+      );
+    };
+    return <LegacySourceDemo />;
   },
 };
 

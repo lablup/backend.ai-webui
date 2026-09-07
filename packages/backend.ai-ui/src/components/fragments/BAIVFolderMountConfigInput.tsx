@@ -1,4 +1,5 @@
 import { Form } from '../../form-engine';
+import { convertToUUID } from '../../helper';
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
@@ -6,6 +7,9 @@ import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
+import BAILegacyVFolderSelect, {
+  type LegacyVFolder,
+} from '../baiClient/BAILegacyVFolderSelect';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
 import BAIVFolderSelect from './BAIVFolderSelect';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -19,8 +23,10 @@ import React, { Suspense } from 'react';
 /**
  * A single vfolder mount configuration emitted by BAIVFolderMountConfigInput.
  *
- * - `vfolderId` is the vfolder's **UUID** (`row_id`), so consumers can forward
- *   it to mount mutation inputs without further conversion.
+ * - `vfolderId` is the key the active `folderSource` emits: the vfolder
+ *   **UUID** (`row_id`) by default, or the REST **32-hex id** under the
+ *   `legacy` source. Normalize with `convertToUUID` before sending it to a
+ *   mutation input typed as a UUID.
  * - `subpath` is the mount **source**: which subfolder inside the vfolder to
  *   mount. Empty means the vfolder root.
  * - `mountDestination` is the **raw alias** the user typed, stored verbatim so
@@ -36,12 +42,43 @@ export interface VFolderMountConfigValue {
   subpath?: string;
 }
 
+/**
+ * Which folder list backs the picker.
+ *
+ * `graphql` (the default) is {@link BAIVFolderSelect} over `vfolder_nodes`;
+ * `legacy` is {@link BAILegacyVFolderSelect} over the REST `GET /folders`
+ * list, which is the only source that can express the session launcher's
+ * mount gates (mount-in-session hosts, project accessibility, auto-mounted
+ * dotfiles). The two emit different key shapes into `vfolderId` — a dashed
+ * UUID and a 32-hex id respectively — and this component normalizes both
+ * before handing one to the row's path picker.
+ */
+export type VFolderMountConfigFolderSource =
+  | { type: 'graphql' }
+  | {
+      type: 'legacy';
+      /** Lists the folders of this user instead of the caller's own. */
+      ownerEmail?: string;
+      /** Overrides the keypair policy the host gate is read from. */
+      keypairResourcePolicyName?: string;
+      /** Display-only filter; an already-selected folder stays visible. */
+      filter?: (folder: LegacyVFolder) => boolean;
+      onInvalidSelection?: (
+        invalidKeys: string[],
+        validFolders: LegacyVFolder[],
+      ) => void;
+      onAutoMountedFoldersChange?: (names: string[]) => void;
+    };
+
 export interface BAIVFolderMountConfigInputProps {
   value?: VFolderMountConfigValue[];
   defaultValue?: VFolderMountConfigValue[];
   onChange?: (value: VFolderMountConfigValue[]) => void;
   currentProjectId?: string;
+  /** Filter expression for the GraphQL select; ignored by the legacy source. */
   filter?: string;
+  /** Picks the folder list backing the select. Defaults to `{ type: 'graphql' }`. */
+  folderSource?: VFolderMountConfigFolderSource;
   disabled?: boolean;
   /** Base path prepended to a relative alias input (mirrors VFolderTable). */
   aliasBasePath?: string;
@@ -162,9 +199,12 @@ export const isVFolderMountConfigValid = (
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
  * Users pick vfolders with {@link BAIVFolderSelect} (in `row_id` mode, so the
- * value is the vfolder UUID); each selected folder appears as a row below the
- * select where its mount destination (alias) is typed and its subpath is
- * browsed with {@link BAIVFolderPathPicker}. The alias input follows
+ * value is the vfolder UUID), or with {@link BAILegacyVFolderSelect} over the
+ * REST folder list when `folderSource` says `legacy` — that source is what
+ * reproduces the session launcher's mount gates. Each selected folder appears
+ * as a row below the select where its mount destination (alias) is typed and
+ * its subpath is browsed with {@link BAIVFolderPathPicker}. The alias input
+ * follows
  * VFolderTable's rule (relative inputs are prefixed with `aliasBasePath`,
  * absolute inputs are used as-is); the emitted
  * `mountDestination` stores that raw alias verbatim, which the consumer
@@ -195,6 +235,7 @@ export const isVFolderMountConfigValid = (
 const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   currentProjectId,
   filter,
+  folderSource = { type: 'graphql' },
   disabled,
   aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
   autoMountedFolderNames,
@@ -208,8 +249,10 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     { defaultValue: [] },
   );
   const mountConfigs = value ?? [];
-  // `vfolderId` is the vfolder UUID; BAIVFolderSelect runs in `row_id` mode so
-  // its value, options, and resolved name map are all keyed by the same UUID.
+  // `vfolderId` carries whichever key the active select emits: the vfolder
+  // UUID from BAIVFolderSelect (`row_id` mode) or the 32-hex REST id from
+  // BAILegacyVFolderSelect. Both selects key their options and resolved name
+  // maps by the same value.
   const selectedIds = mountConfigs.map((entry) => entry.vfolderId);
 
   // Resolve each entry's mount destination + validity once via the same
@@ -219,59 +262,76 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     autoMountedFolderNames,
   });
 
+  // Both selects report their key -> name map the same way; backfill names
+  // that resolve after selection. `mountDestination` is the raw alias and
+  // never depends on the name, so only `name` changes here. The guard skips a
+  // redundant emit when every name is already set — the callback fires on
+  // every load of the select's list.
+  const handleResolvedNamesChange = (nameMap: Record<string, string>) => {
+    let changed = false;
+    const next = mountConfigs.map((entry) => {
+      const resolved = nameMap[entry.vfolderId];
+      if (!entry.name && resolved) {
+        changed = true;
+        return { ...entry, name: resolved };
+      }
+      return entry;
+    });
+    if (changed) setValue(next);
+  };
+
+  // Names come exclusively from `handleResolvedNamesChange`, which reports
+  // newly selected keys as well as pre-existing ones.
+  const handleSelectionChange = (ids: string | string[] | undefined) => {
+    const nextIds = _.castArray(ids ?? []);
+    setValue(
+      nextIds.map((id) => {
+        const existing = mountConfigs.find((entry) => entry.vfolderId === id);
+        if (existing) return existing;
+        return {
+          vfolderId: id,
+          // Raw alias starts empty -> resolves to the default mount path
+          // (`${aliasBasePath}${name}`) at display time.
+          mountDestination: '',
+          subpath: '',
+        };
+      }),
+    );
+  };
+
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       <Suspense fallback={<Skeleton height={28} width="100%" />}>
-        <BAIVFolderSelect
-          multiple
-          label={t('comp:BAIVFolderSelect.SelectFolder')}
-          isLabelHidden
-          isDisabled={disabled}
-          currentProjectId={currentProjectId}
-          filter={filter}
-          valuePropName="row_id"
-          value={selectedIds}
-          onResolvedNamesChange={(nameMap) => {
-            // nameMap is keyed by row_id (== vfolderId). Backfill names that
-            // resolve asynchronously after selection. `mountDestination` is the
-            // raw alias and never depends on the name, so only `name` changes
-            // here. The guard skips a redundant emit when every name is already
-            // set — this callback fires on every node-load of the select.
-            // P3C-3: this is now the ONLY source of entry names.
-            let changed = false;
-            const next = mountConfigs.map((entry) => {
-              const resolved = nameMap[entry.vfolderId];
-              if (!entry.name && resolved) {
-                changed = true;
-                return { ...entry, name: resolved };
-              }
-              return entry;
-            });
-            if (changed) setValue(next);
-          }}
-          onChange={(ids) => {
-            // In `row_id` mode the select emits vfolder UUIDs directly.
-            // P3C-3: the dropped `option` argument is not rebuilt — names come
-            // exclusively from `onResolvedNamesChange` above, which reports
-            // newly selected keys as well as pre-existing ones.
-            const nextIds = _.castArray(ids ?? []);
-            setValue(
-              nextIds.map((id) => {
-                const existing = mountConfigs.find(
-                  (entry) => entry.vfolderId === id,
-                );
-                if (existing) return existing;
-                return {
-                  vfolderId: id,
-                  // Raw alias starts empty -> resolves to the default mount
-                  // path (`${aliasBasePath}${name}`) at display time.
-                  mountDestination: '',
-                  subpath: '',
-                };
-              }),
-            );
-          }}
-        />
+        {folderSource.type === 'legacy' ? (
+          <BAILegacyVFolderSelect
+            multiple
+            label={t('comp:BAILegacyVFolderSelect.SelectFolder')}
+            isLabelHidden
+            isDisabled={disabled}
+            currentProjectId={currentProjectId}
+            ownerEmail={folderSource.ownerEmail}
+            keypairResourcePolicyName={folderSource.keypairResourcePolicyName}
+            filter={folderSource.filter}
+            onInvalidSelection={folderSource.onInvalidSelection}
+            onAutoMountedFoldersChange={folderSource.onAutoMountedFoldersChange}
+            value={selectedIds}
+            onResolvedNamesChange={handleResolvedNamesChange}
+            onChange={handleSelectionChange}
+          />
+        ) : (
+          <BAIVFolderSelect
+            multiple
+            label={t('comp:BAIVFolderSelect.SelectFolder')}
+            isLabelHidden
+            isDisabled={disabled}
+            currentProjectId={currentProjectId}
+            filter={filter}
+            valuePropName="row_id"
+            value={selectedIds}
+            onResolvedNamesChange={handleResolvedNamesChange}
+            onChange={handleSelectionChange}
+          />
+        )}
       </Suspense>
       {mountConfigs.length > 0 && (
         <BAIFlex direction="column" align="stretch" gap="xxs">
@@ -384,7 +444,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     label={t('comp:BAIVFolderMountConfigInput.Subpath')}
                     size="sm"
                     disabled={disabled}
-                    vfolderUuid={entry.vfolderId}
+                    vfolderUuid={convertToUUID(entry.vfolderId)}
                     value={entry.subpath}
                     onChange={(next) =>
                       setValue((prev) =>
