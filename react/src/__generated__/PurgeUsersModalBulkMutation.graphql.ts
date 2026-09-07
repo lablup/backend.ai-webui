@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8962408a37d986dd69d50ea759226ff0>>
+ * @generated SignedSource<<b6061f7760e181d7904231cdeb8835f0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,7 +19,6 @@ export type BulkPurgeUsersV2Options = {
 };
 export type PurgeUsersModalBulkMutation$variables = {
   input: BulkPurgeUsersV2Input;
-  supportsPerIdResults: boolean;
 };
 export type PurgeUsersModalBulkMutation$data = {
   readonly adminBulkPurgeUsersV2: {
@@ -27,8 +26,8 @@ export type PurgeUsersModalBulkMutation$data = {
       readonly message: string;
       readonly userId: string;
     }>;
-    readonly purgedCount?: number;
-    readonly successes?: ReadonlyArray<string>;
+    readonly purgedCount: number;
+    readonly successes: ReadonlyArray<string>;
   } | null | undefined;
 };
 export type PurgeUsersModalBulkMutation = {
@@ -42,11 +41,6 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "input"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "supportsPerIdResults"
   }
 ],
 v1 = [
@@ -65,32 +59,18 @@ v1 = [
     "plural": false,
     "selections": [
       {
-        "condition": "supportsPerIdResults",
-        "kind": "Condition",
-        "passingValue": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "successes",
-            "storageKey": null
-          }
-        ]
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "successes",
+        "storageKey": null
       },
       {
-        "condition": "supportsPerIdResults",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "purgedCount",
-            "storageKey": null
-          }
-        ]
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "purgedCount",
+        "storageKey": null
       },
       {
         "alias": null,
@@ -139,16 +119,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "e5eb45bbe3f6c4686b53a380be03c258",
+    "cacheID": "df535a5315c891cc628480620e7ada84",
     "id": null,
     "metadata": {},
     "name": "PurgeUsersModalBulkMutation",
     "operationKind": "mutation",
-    "text": "mutation PurgeUsersModalBulkMutation(\n  $input: BulkPurgeUsersV2Input!\n  $supportsPerIdResults: Boolean!\n) {\n  adminBulkPurgeUsersV2(input: $input) {\n    successes @include(if: $supportsPerIdResults)\n    purgedCount @skip(if: $supportsPerIdResults)\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation PurgeUsersModalBulkMutation(\n  $input: BulkPurgeUsersV2Input!\n) {\n  adminBulkPurgeUsersV2(input: $input) {\n    successes @since(version: \"26.9.0\")\n    purgedCount @deprecatedSince(version: \"26.9.0\")\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "df0d07a474d9829d2d6febb13f3900b2";
+(node as any).hash = "85173f349ac7f0b8e14ff0ee2bd5dfb9";
 
 export default node;

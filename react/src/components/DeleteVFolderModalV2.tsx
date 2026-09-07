@@ -60,17 +60,16 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
     useMutation<DeleteVFolderModalV2Mutation>(graphql`
       mutation DeleteVFolderModalV2Mutation(
         $input: BulkDeleteVFoldersV2Input!
-        $supportsPerIdResults: Boolean!
       ) {
         bulkDeleteVfoldersV2(input: $input) {
-          items @include(if: $supportsPerIdResults) {
+          items @since(version: "26.9.0") {
             id
           }
-          failed @include(if: $supportsPerIdResults) {
+          failed @since(version: "26.9.0") {
             vfolderId
             message
           }
-          deletedCount @skip(if: $supportsPerIdResults)
+          deletedCount @deprecatedSince(version: "26.9.0")
         }
       }
     `);
@@ -101,7 +100,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         }
         const ids = _.map(folders, (vfolder) => toLocalId(vfolder.id));
         commitBulkDeleteMutation({
-          variables: { input: { ids }, supportsPerIdResults },
+          variables: { input: { ids } },
           onCompleted: (data, errors) => {
             if (errors && errors.length > 0) {
               const firstError = errors[0];
@@ -114,30 +113,23 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
             const failed = data?.bulkDeleteVfoldersV2?.failed ?? [];
             // The mutation answers per id, so a partial failure arrives as a
             // success with `failed` populated rather than as a top-level error.
-            if (failed.length > 0) {
+            if (failed.length > 0 || deletedCount === 0) {
               const nameByLocalId = _.fromPairs(
                 _.map(folders, (v) => [toLocalId(v.id), v.metadata?.name]),
               );
+              const folderNames =
+                failed.length > 0
+                  ? _.map(failed, (f) =>
+                      nameByLocalId[f.vfolderId]
+                        ? `${nameByLocalId[f.vfolderId]} (${f.message})`
+                        : f.message,
+                    ).join(', ')
+                  : _.map(folders, (v) => v?.metadata?.name).join(', ');
               message.error(
-                t('data.folders.FailedToDeleteFolders', {
-                  folderNames: _.map(failed, (f) =>
-                    nameByLocalId[f.vfolderId]
-                      ? `${nameByLocalId[f.vfolderId]} (${f.message})`
-                      : f.message,
-                  ).join(', '),
-                }),
+                t('data.folders.FailedToDeleteFolders', { folderNames }),
               );
             }
             if (deletedCount === 0) {
-              if (failed.length === 0) {
-                message.error(
-                  t('data.folders.FailedToDeleteFolders', {
-                    folderNames: _.map(folders, (v) => v?.metadata?.name).join(
-                      ', ',
-                    ),
-                  }),
-                );
-              }
               return;
             }
             if (folders.length === 1) {

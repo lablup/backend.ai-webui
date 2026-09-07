@@ -74,13 +74,10 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
 
   const [commitBulkPurge, isInFlightBulkPurge] =
     useMutation<PurgeUsersModalBulkMutation>(graphql`
-      mutation PurgeUsersModalBulkMutation(
-        $input: BulkPurgeUsersV2Input!
-        $supportsPerIdResults: Boolean!
-      ) {
+      mutation PurgeUsersModalBulkMutation($input: BulkPurgeUsersV2Input!) {
         adminBulkPurgeUsersV2(input: $input) {
-          successes @include(if: $supportsPerIdResults)
-          purgedCount @skip(if: $supportsPerIdResults)
+          successes @since(version: "26.9.0")
+          purgedCount @deprecatedSince(version: "26.9.0")
           failed {
             userId
             message
@@ -98,7 +95,6 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
       const userIds = userList.map((user) => toLocalId(user.id));
       commitBulkPurge({
         variables: {
-          supportsPerIdResults,
           input: {
             userIds,
             options: {

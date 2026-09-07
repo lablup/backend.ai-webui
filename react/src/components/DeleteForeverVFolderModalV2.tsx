@@ -58,15 +58,14 @@ const DeleteForeverVFolderModalV2: React.FC<
     useMutation<DeleteForeverVFolderModalV2Mutation>(graphql`
       mutation DeleteForeverVFolderModalV2Mutation(
         $input: BulkPurgeVFoldersV2Input!
-        $supportsPerIdResults: Boolean!
       ) {
         bulkPurgeVfoldersV2(input: $input) {
-          successes @include(if: $supportsPerIdResults)
-          failed @include(if: $supportsPerIdResults) {
+          successes @since(version: "26.9.0")
+          failed @since(version: "26.9.0") {
             vfolderId
             message
           }
-          purgedCount @skip(if: $supportsPerIdResults)
+          purgedCount @deprecatedSince(version: "26.9.0")
         }
       }
     `);
@@ -116,7 +115,7 @@ const DeleteForeverVFolderModalV2: React.FC<
         }
         const ids = _.map(purgeable, (vfolder) => toLocalId(vfolder.id));
         commitBulkPurgeMutation({
-          variables: { input: { ids }, supportsPerIdResults },
+          variables: { input: { ids } },
           onCompleted: (data, errors) => {
             if (errors && errors.length > 0) {
               const firstError = errors[0];
@@ -129,31 +128,23 @@ const DeleteForeverVFolderModalV2: React.FC<
             const failed = data?.bulkPurgeVfoldersV2?.failed ?? [];
             // The mutation answers per id, so a partial failure arrives as a
             // success with `failed` populated rather than as a top-level error.
-            if (failed.length > 0) {
+            if (failed.length > 0 || purgedCount === 0) {
               const nameByLocalId = _.fromPairs(
                 _.map(purgeable, (v) => [toLocalId(v.id), v.metadata?.name]),
               );
+              const folderNames =
+                failed.length > 0
+                  ? _.map(failed, (f) =>
+                      nameByLocalId[f.vfolderId]
+                        ? `${nameByLocalId[f.vfolderId]} (${f.message})`
+                        : f.message,
+                    ).join(', ')
+                  : _.map(purgeable, (v) => v?.metadata?.name).join(', ');
               message.error(
-                t('data.folders.FailedToDeleteFolders', {
-                  folderNames: _.map(failed, (f) =>
-                    nameByLocalId[f.vfolderId]
-                      ? `${nameByLocalId[f.vfolderId]} (${f.message})`
-                      : f.message,
-                  ).join(', '),
-                }),
+                t('data.folders.FailedToDeleteFolders', { folderNames }),
               );
             }
             if (purgedCount === 0) {
-              if (failed.length === 0) {
-                message.error(
-                  t('data.folders.FailedToDeleteFolders', {
-                    folderNames: _.map(
-                      purgeable,
-                      (v) => v?.metadata?.name,
-                    ).join(', '),
-                  }),
-                );
-              }
               return;
             }
             if (purgeable.length === 1) {

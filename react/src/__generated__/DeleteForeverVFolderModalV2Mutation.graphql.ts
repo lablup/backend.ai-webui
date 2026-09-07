@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8adaab42c58a58409ab93d8944e89086>>
+ * @generated SignedSource<<649b3890a2a295d5ee34cbf023a26560>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,16 +19,15 @@ export type PurgeVFolderOptionsInput = {
 };
 export type DeleteForeverVFolderModalV2Mutation$variables = {
   input: BulkPurgeVFoldersV2Input;
-  supportsPerIdResults: boolean;
 };
 export type DeleteForeverVFolderModalV2Mutation$data = {
   readonly bulkPurgeVfoldersV2: {
-    readonly failed?: ReadonlyArray<{
+    readonly failed: ReadonlyArray<{
       readonly message: string;
       readonly vfolderId: string;
     }>;
-    readonly purgedCount?: number;
-    readonly successes?: ReadonlyArray<string>;
+    readonly purgedCount: number;
+    readonly successes: ReadonlyArray<string>;
   } | null | undefined;
 };
 export type DeleteForeverVFolderModalV2Mutation = {
@@ -42,11 +41,6 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "input"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "supportsPerIdResults"
   }
 ],
 v1 = [
@@ -65,57 +59,43 @@ v1 = [
     "plural": false,
     "selections": [
       {
-        "condition": "supportsPerIdResults",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "successes",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "BulkPurgeVFolderV2Error",
+        "kind": "LinkedField",
+        "name": "failed",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "successes",
+            "name": "vfolderId",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
-            "concreteType": "BulkPurgeVFolderV2Error",
-            "kind": "LinkedField",
-            "name": "failed",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "vfolderId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "message",
-                "storageKey": null
-              }
-            ],
+            "kind": "ScalarField",
+            "name": "message",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
       },
       {
-        "condition": "supportsPerIdResults",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "purgedCount",
-            "storageKey": null
-          }
-        ]
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "purgedCount",
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -139,16 +119,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "f4dfba95b9ba3ce7290b05184e91e17b",
+    "cacheID": "e21f2911631da1ba93803af4b4b8c890",
     "id": null,
     "metadata": {},
     "name": "DeleteForeverVFolderModalV2Mutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteForeverVFolderModalV2Mutation(\n  $input: BulkPurgeVFoldersV2Input!\n  $supportsPerIdResults: Boolean!\n) {\n  bulkPurgeVfoldersV2(input: $input) {\n    successes @include(if: $supportsPerIdResults)\n    failed @include(if: $supportsPerIdResults) {\n      vfolderId\n      message\n    }\n    purgedCount @skip(if: $supportsPerIdResults)\n  }\n}\n"
+    "text": "mutation DeleteForeverVFolderModalV2Mutation(\n  $input: BulkPurgeVFoldersV2Input!\n) {\n  bulkPurgeVfoldersV2(input: $input) {\n    successes @since(version: \"26.9.0\")\n    failed @since(version: \"26.9.0\") {\n      vfolderId\n      message\n    }\n    purgedCount @deprecatedSince(version: \"26.9.0\")\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ff0dca42b38126ab4869668cb6e2f61a";
+(node as any).hash = "9307df1ae20e7e43889308ea2dfc80f3";
 
 export default node;
