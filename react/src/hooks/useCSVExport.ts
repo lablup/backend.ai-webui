@@ -67,9 +67,8 @@ export const MY_SESSION_EXPORT_FIELDS = [
 ];
 
 /**
- * Every `/export` route is `superadmin_required` except `POST
- * /v2/export/sessions/my/csv`, which is `auth_required` and scopes the rows to
- * the caller — so a non-superadmin can export their own sessions and nothing else.
+ * The `/export` routes this hook calls are `superadmin_required` except `POST
+ * /v2/export/sessions/my/csv`, which is `auth_required` and caller-scoped.
  */
 export const resolveCSVExportRoute = ({
   nodeKey,
