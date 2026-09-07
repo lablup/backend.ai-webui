@@ -4,7 +4,6 @@ import { BAIClientProvider } from '../components/provider/BAIClientProvider';
 import { toGlobalId, toLocalId } from '../helper';
 import {
   createMockVFolderFileClient,
-  MOCK_ALLOWED_VFOLDER_HOSTS,
   type MockVFolderFileTrees,
 } from './mockVFolderFileTree';
 import { mockAnonymousClientFactory } from './storybook-mock-utils';
@@ -27,12 +26,6 @@ export interface MockVFolderFileProvidersProps {
   trees?: MockVFolderFileTrees | (() => MockVFolderFileTrees);
   /** Rows the mocked REST `GET /folders` request answers with. */
   folders?: Array<LegacyVFolder>;
-  /**
-   * `allowed_vfolder_hosts`, answered identically for the domain, the group
-   * and the keypair resource policy. A host without `mount-in-session` is how
-   * a story shows BAILegacyVFolderSelect's gate dropping a folder.
-   */
-  allowedVFolderHosts?: Record<string, Array<string>>;
   /** Fallback for a Suspense boundary around `children`; omit to render bare. */
   suspenseFallback?: React.ReactNode;
   children?: React.ReactNode;
@@ -41,15 +34,13 @@ export interface MockVFolderFileProvidersProps {
 /**
  * Everything a vfolder file-browsing story needs without a backend: a mock
  * Relay environment answering `vfolder_nodes` / `vfolder_node` from
- * `vfolders` and the allowed-hosts query from `allowedVFolderHosts`, and a
- * mock `BAIClient` whose file APIs read and write `trees` and whose signed
- * `GET /folders` request answers `folders`.
+ * `vfolders`, and a mock `BAIClient` whose file APIs read and write `trees`
+ * and whose signed `GET /folders` request answers `folders`.
  */
 const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
   vfolders = [],
   trees = {},
   folders,
-  allowedVFolderHosts = MOCK_ALLOWED_VFOLDER_HOSTS,
   suspenseFallback,
   children,
 }) => {
@@ -92,12 +83,9 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
         if (typeof vfolderGlobalId === 'string') {
           queuePickerOperation(vfolderGlobalId);
         }
-        // The thunk also runs for the allowed-hosts operation, which carries
-        // no vfolder variable and may come from a story with no `vfolders`.
         const requested =
           vfolders.find((folder) => folder.row_id === requestedRowId) ??
           vfolders[0];
-        const allowedHosts = JSON.stringify(allowedVFolderHosts);
         return MockPayloadGenerator.generate(operation, {
           Query: () => ({
             vfolder_nodes: { count: edges.length, edges },
@@ -107,9 +95,6 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
                   permissions: requested.permissions ?? DEFAULT_PERMISSIONS,
                 }
               : undefined,
-            domain: { allowed_vfolder_hosts: allowedHosts },
-            group: { allowed_vfolder_hosts: allowedHosts },
-            keypair_resource_policy: { allowed_vfolder_hosts: allowedHosts },
           }),
         });
       });
