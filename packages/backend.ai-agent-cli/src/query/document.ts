@@ -3,6 +3,7 @@ import { CLI_NAME } from '../meta.js';
 import type { RepoContext } from '../repo-context.js';
 import type {
   DocumentNode,
+  GraphQLInputType,
   GraphQLSchema,
   OperationTypeNode,
   SelectionNode,
@@ -11,6 +12,7 @@ import type {
 import {
   buildASTSchema,
   getNamedType,
+  isInputObjectType,
   parse,
   TypeInfo,
   validate,
@@ -290,9 +292,39 @@ function namedTypeIn(node: TypeNode): string {
 }
 
 /**
+ * `InputType.field` for every key a `--var` value actually sets, walked
+ * against the variable's declared type. An input-object field carries its own
+ * `Added in` marker while its type usually does not, so a variable is only as
+ * checkable as the keys inside it. Keys the type does not declare are skipped —
+ * SDL validation owns that error, not the gate.
+ */
+function addInputValueIds(
+  type: GraphQLInputType | undefined,
+  value: unknown,
+  ids: Set<string>,
+): void {
+  if (!type || value === null || value === undefined) return;
+  const named = getNamedType(type);
+  if (Array.isArray(value)) {
+    for (const item of value) addInputValueIds(named, item, ids);
+    return;
+  }
+  if (!isInputObjectType(named) || typeof value !== 'object') return;
+  const fields = named.getFields();
+  for (const [key, nested] of Object.entries(value as Record<string, unknown>)) {
+    const field = fields[key];
+    if (!field) continue;
+    ids.add(`${named.name}.${key}`);
+    addInputValueIds(field.type, nested, ids);
+  }
+}
+
+/**
  * The schema ids a document touches, in `checkVersionAlignment`'s vocabulary:
- * `Type.field` per selection, `Enum.VALUE` per enum literal, and `Type` for a
- * variable's named type. Deduplicated, in document order.
+ * `Type.field` per selection, `Enum.VALUE` per enum literal, `Type` for a
+ * variable's named type, and `InputType.field` for every input-object field —
+ * written inline in an argument, or supplied through `variables`.
+ * Deduplicated, in document order.
  *
  * A field id carries its type's marker when it has none of its own, so the
  * parent type is not emitted alongside — except for a meta field (`__typename`),
@@ -302,6 +334,7 @@ function namedTypeIn(node: TypeNode): string {
 export function selectedSchemaIds(
   schema: GraphQLSchema,
   document: DocumentNode,
+  variables: Record<string, unknown> = {},
 ): string[] {
   const ids = new Set<string>();
   const typeInfo = new TypeInfo(schema);
@@ -317,13 +350,26 @@ export function selectedSchemaIds(
             : `${parent.name}.${node.name.value}`,
         );
       },
+      ObjectField(node) {
+        const parent = typeInfo.getParentInputType();
+        if (parent) ids.add(`${getNamedType(parent).name}.${node.name.value}`);
+      },
       EnumValue(node) {
         const input = typeInfo.getInputType();
         if (input) ids.add(`${getNamedType(input).name}.${node.value}`);
       },
       VariableDefinition(node) {
         const name = namedTypeIn(node.type);
-        if (!BUILT_IN_SCALARS.has(name)) ids.add(name);
+        if (BUILT_IN_SCALARS.has(name)) return;
+        ids.add(name);
+        const declared = schema.getType(name);
+        if (declared) {
+          addInputValueIds(
+            declared as GraphQLInputType,
+            variables[node.variable.name.value],
+            ids,
+          );
+        }
       },
     }),
   );

@@ -257,7 +257,11 @@ export const queryCommand = defineCommand<QueryData>({
     const { alignment } = await applyVersionAlignmentGate({
       cwd: context.cwd,
       schemaCtx: { schema: loadSchema(repo) },
-      selectedFields: selectedSchemaIds(executableSchema(repo), document),
+      selectedFields: selectedSchemaIds(
+        executableSchema(repo),
+        document,
+        variables,
+      ),
       strict: context.flags.strict === true,
       notify: context.notify,
       endpointFlag: endpoint,

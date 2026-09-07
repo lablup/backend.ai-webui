@@ -947,8 +947,8 @@ describe('text output', () => {
 
 describe('selectedSchemaIds', () => {
   const schema = executableSchema(resolveRepoContext(cwd));
-  const ids = (source: string) =>
-    selectedSchemaIds(schema, parseDocument(source).document);
+  const ids = (source: string, variables?: Record<string, unknown>) =>
+    selectedSchemaIds(schema, parseDocument(source).document, variables);
 
   it('names every selected field by the type that declares it', () => {
     expect(
@@ -986,6 +986,56 @@ describe('selectedSchemaIds', () => {
     expect(
       ids('query Sessions($first: Int) { compute_session_nodes(first: $first) { count } }'),
     ).not.toContain('Int');
+  });
+
+  // `RuntimeVariantFilter` dates from 26.4.2 and carries no marker of its own,
+  // but its `AND` field is `Added in 26.7.0`: naming only the type would let a
+  // 26.4.x manager look aligned.
+  it('names an input-object field written inline in an argument', () => {
+    expect(
+      ids(
+        'query { runtimeVariants(filter: { AND: [{ name: { equals: "vllm" } }] }) { count } }',
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        'RuntimeVariantFilter.AND',
+        'RuntimeVariantFilter.name',
+        'StringFilter.equals',
+      ]),
+    );
+  });
+
+  it('names an input-object field supplied through a variable value', () => {
+    const found = ids(
+      'query Variants($filter: RuntimeVariantFilter) { runtimeVariants(filter: $filter) { count } }',
+      { filter: { AND: [{ name: { equals: 'vllm' } }] } },
+    );
+    expect(found).toEqual(
+      expect.arrayContaining([
+        'RuntimeVariantFilter',
+        'RuntimeVariantFilter.AND',
+        'RuntimeVariantFilter.name',
+        'StringFilter.equals',
+      ]),
+    );
+    expect(found).toHaveLength(new Set(found).size);
+  });
+
+  it('skips a variable key the input type does not declare', () => {
+    expect(
+      ids(
+        'query Variants($filter: RuntimeVariantFilter) { runtimeVariants(filter: $filter) { count } }',
+        { filter: { nope: 1 } },
+      ),
+    ).not.toContain('RuntimeVariantFilter.nope');
+  });
+
+  it('reads no variable value when none was supplied', () => {
+    expect(
+      ids(
+        'query Variants($filter: RuntimeVariantFilter) { runtimeVariants(filter: $filter) { count } }',
+      ),
+    ).toEqual(expect.arrayContaining(['RuntimeVariantFilter']));
   });
 });
 
@@ -1027,6 +1077,29 @@ describe('version alignment', () => {
     const envelope = jsonErr();
     expect(envelope.code).toBe('version_mismatch');
     expect(envelope.hint).toBe(`bai-agent schema sync --tag ${OLD}`);
+  });
+
+  // A 26.4.2 manager has `Query.runtimeVariants` and `RuntimeVariantFilter`,
+  // but not the filter's `AND` (26.7.0). The mismatch only exists inside the
+  // variable's value.
+  it('refuses a variable value carrying a field the manager lacks', async () => {
+    stubManager('26.4.2', { data: { runtimeVariants: { count: 0 } } });
+
+    await expect(
+      run([
+        'query',
+        'query Variants($filter: RuntimeVariantFilter) { runtimeVariants(filter: $filter) { count } }',
+        '--var',
+        'filter={"AND":[{"name":{"equals":"vllm"}}]}',
+        '--strict',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.error);
+
+    expect(sentDocuments().some((body) => body.includes('runtimeVariants'))).toBe(
+      false,
+    );
+    expect(jsonErr().code).toBe('version_mismatch');
   });
 
   it('says nothing when the manager version cannot be read', async () => {
