@@ -892,6 +892,9 @@ export class Client {
       this._features['model-card-v2'] = true;
       this._features['my-roles'] = true;
       this._features['prometheus-auto-scaling-rule'] = true;
+      // `POST /v2/export/sessions/my/csv` (backend #10609) is auth_required and
+      // scopes rows to the caller; every other /export route is superadmin-only.
+      this._features['my-sessions-export-csv'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
