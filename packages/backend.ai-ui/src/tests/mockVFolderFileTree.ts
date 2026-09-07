@@ -54,6 +54,53 @@ export const mockLegacyVFolder = (
   ...folder,
 });
 
+export const MOCK_LEGACY_PROJECT_ID = '99999999-9999-9999-9999-999999999999';
+export const MOCK_LEGACY_OTHER_PROJECT_ID =
+  '88888888-8888-8888-8888-888888888888';
+
+/** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */
+export const MOCK_ALLOWED_VFOLDER_HOSTS: Record<string, Array<string>> = {
+  'local:volume1': ['mount-in-session', 'upload-file', 'download-file'],
+  'archive:cold': ['upload-file', 'download-file'],
+};
+
+/**
+ * The shared REST folder fixture: two mountable folders, one auto-mounted
+ * dotfile, one on a host without `mount-in-session`, and one owned by another
+ * project — so a story exercises every gate BAILegacyVFolderSelect applies.
+ */
+export const mockLegacyVFolders: Array<LegacyVFolder> = [
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0001',
+    name: 'my-project-data',
+  }),
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0002',
+    name: 'shared-datasets',
+    ownership_type: 'group',
+    type: 'group',
+    group: MOCK_LEGACY_PROJECT_ID,
+    group_name: 'default',
+  }),
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0003',
+    name: '.config',
+  }),
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0004',
+    name: 'cold-archive',
+    host: 'archive:cold',
+  }),
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0005',
+    name: 'other-team-data',
+    ownership_type: 'group',
+    type: 'group',
+    group: MOCK_LEGACY_OTHER_PROJECT_ID,
+    group_name: 'other-team',
+  }),
+];
+
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const splitJoinedPath = (joined: string) => {
@@ -72,19 +119,13 @@ const childKey = (parent: string, name: string) =>
 /**
  * A BAIClient whose `vfolder` file APIs (`list_files` / `mkdir` /
  * `rename_file` / `delete_files`) read and write the given in-memory trees,
- * so file-explorer stories browse and mutate directories without a backend.
- * The trees are mutated in place — hand a fresh copy per Storybook instance.
+ * and whose signed `GET /folders` request answers `folders`, so file-explorer
+ * and folder-picker stories run without a backend. The trees are mutated in
+ * place — hand a fresh copy per Storybook instance.
  */
-export interface MockVFolderFileClientOptions {
-  /** Rows the mocked `GET /folders` request answers with. */
-  folders?: Array<LegacyVFolder>;
-  domainName?: string;
-  accessKey?: string;
-}
-
 export const createMockVFolderFileClient = (
   trees: MockVFolderFileTrees,
-  options?: MockVFolderFileClientOptions,
+  folders?: Array<LegacyVFolder>,
 ): BAIClient => {
   const mockVFolder = {
     list_files: async (path: string, id: string) => {
@@ -158,7 +199,7 @@ export const createMockVFolderFileClient = (
   const _wrapWithPromise = async (request: { method: string; url: string }) => {
     await delay(250);
     if (request.url.startsWith('/folders')) {
-      return options?.folders ?? [];
+      return folders ?? [];
     }
     throw new Error(`Unmocked request: ${request.method} ${request.url}`);
   };
@@ -168,11 +209,9 @@ export const createMockVFolderFileClient = (
     supports: () => false,
     newSignedRequest,
     _wrapWithPromise,
-    accessKey: options?.accessKey ?? 'AKIAMOCKACCESSKEY',
     _config: {
       isDirectorySizeVisible: false,
-      domainName: options?.domainName ?? 'default',
-      accessKey: options?.accessKey ?? 'AKIAMOCKACCESSKEY',
+      domainName: 'default',
     },
   } as unknown as BAIClient;
 };

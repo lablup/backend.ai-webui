@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<06ad97dfa128a943fa470de01ebbd604>>
+ * @generated SignedSource<<ac2edda6d0a20189c0df198b3ed547bb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,13 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type BAILegacyVFolderSelectAllowedHostsQuery$variables = {
-  domain_name: string;
-  group_id: string;
-  keypair_resource_policy_name: string;
-  skipGroup: boolean;
+export type useMergedAllowedVFolderHostsQuery$variables = {
+  domainName: string;
+  keypairResourcePolicyName?: string | null | undefined;
+  projectId: string;
+  skipProject: boolean;
 };
-export type BAILegacyVFolderSelectAllowedHostsQuery$data = {
+export type useMergedAllowedVFolderHostsQuery$data = {
   readonly domain: {
     readonly allowed_vfolder_hosts: string | null | undefined;
   } | null | undefined;
@@ -26,31 +26,31 @@ export type BAILegacyVFolderSelectAllowedHostsQuery$data = {
     readonly allowed_vfolder_hosts: string | null | undefined;
   } | null | undefined;
 };
-export type BAILegacyVFolderSelectAllowedHostsQuery = {
-  response: BAILegacyVFolderSelectAllowedHostsQuery$data;
-  variables: BAILegacyVFolderSelectAllowedHostsQuery$variables;
+export type useMergedAllowedVFolderHostsQuery = {
+  response: useMergedAllowedVFolderHostsQuery$data;
+  variables: useMergedAllowedVFolderHostsQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "domain_name"
+  "name": "domainName"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "group_id"
+  "name": "keypairResourcePolicyName"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "keypair_resource_policy_name"
+  "name": "projectId"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "skipGroup"
+  "name": "skipProject"
 },
 v4 = [
   {
@@ -68,7 +68,7 @@ v5 = [
       {
         "kind": "Variable",
         "name": "name",
-        "variableName": "domain_name"
+        "variableName": "domainName"
       }
     ],
     "concreteType": "Domain",
@@ -79,7 +79,7 @@ v5 = [
     "storageKey": null
   },
   {
-    "condition": "skipGroup",
+    "condition": "skipProject",
     "kind": "Condition",
     "passingValue": false,
     "selections": [
@@ -89,12 +89,12 @@ v5 = [
           {
             "kind": "Variable",
             "name": "domain_name",
-            "variableName": "domain_name"
+            "variableName": "domainName"
           },
           {
             "kind": "Variable",
             "name": "id",
-            "variableName": "group_id"
+            "variableName": "projectId"
           }
         ],
         "concreteType": "Group",
@@ -112,7 +112,7 @@ v5 = [
       {
         "kind": "Variable",
         "name": "name",
-        "variableName": "keypair_resource_policy_name"
+        "variableName": "keypairResourcePolicyName"
       }
     ],
     "concreteType": "KeyPairResourcePolicy",
@@ -133,7 +133,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAILegacyVFolderSelectAllowedHostsQuery",
+    "name": "useMergedAllowedVFolderHostsQuery",
     "selections": (v5/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -142,25 +142,25 @@ return {
   "operation": {
     "argumentDefinitions": [
       (v0/*: any*/),
-      (v1/*: any*/),
+      (v2/*: any*/),
       (v3/*: any*/),
-      (v2/*: any*/)
+      (v1/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAILegacyVFolderSelectAllowedHostsQuery",
+    "name": "useMergedAllowedVFolderHostsQuery",
     "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "3f052763902c453971af87a143be51f7",
+    "cacheID": "2f1d83601c589f78fa0e245b17b880cd",
     "id": null,
     "metadata": {},
-    "name": "BAILegacyVFolderSelectAllowedHostsQuery",
+    "name": "useMergedAllowedVFolderHostsQuery",
     "operationKind": "query",
-    "text": "query BAILegacyVFolderSelectAllowedHostsQuery(\n  $domain_name: String!\n  $group_id: UUID!\n  $skipGroup: Boolean!\n  $keypair_resource_policy_name: String!\n) {\n  domain(name: $domain_name) {\n    allowed_vfolder_hosts\n  }\n  group(id: $group_id, domain_name: $domain_name) @skip(if: $skipGroup) {\n    allowed_vfolder_hosts\n  }\n  keypair_resource_policy(name: $keypair_resource_policy_name) {\n    allowed_vfolder_hosts\n  }\n}\n"
+    "text": "query useMergedAllowedVFolderHostsQuery(\n  $domainName: String!\n  $projectId: UUID!\n  $skipProject: Boolean!\n  $keypairResourcePolicyName: String\n) {\n  domain(name: $domainName) {\n    allowed_vfolder_hosts\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $skipProject) {\n    allowed_vfolder_hosts\n  }\n  keypair_resource_policy(name: $keypairResourcePolicyName) {\n    allowed_vfolder_hosts\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f3d0589f5a7c8e9ea5700327bdf79ec6";
+(node as any).hash = "bb209fda7f20cc5baed6b951416389a9";
 
 export default node;

@@ -247,9 +247,6 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "選擇金鑰對"
   },
-  "comp:BAILegacyVFolderSelect": {
-    "SelectFolder": "選擇資料夾"
-  },
   "comp:BAILoginHistoryTable": {
     "Domain": "網域",
     "FailReason": "失敗原因",

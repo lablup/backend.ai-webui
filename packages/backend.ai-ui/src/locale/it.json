@@ -247,9 +247,6 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Seleziona coppia di chiavi"
   },
-  "comp:BAILegacyVFolderSelect": {
-    "SelectFolder": "Seleziona cartella"
-  },
   "comp:BAILoginHistoryTable": {
     "Domain": "Dominio",
     "FailReason": "Motivo dell'errore",

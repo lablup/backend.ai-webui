@@ -247,9 +247,6 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Pilih Keypair"
   },
-  "comp:BAILegacyVFolderSelect": {
-    "SelectFolder": "Pilih Folder"
-  },
   "comp:BAILoginHistoryTable": {
     "Domain": "Domain",
     "FailReason": "Alasan Kegagalan",
