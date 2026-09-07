@@ -63,6 +63,25 @@ ruleTester.run(
       const merged = { ...Foo };
       const [x, setX] = useState<Foo$key | null>(null);
       `,
+      // A spread named only inside a `#` comment is not a spread.
+      `
+      const q = graphql\`
+        query Q {
+          # ...Foo is deliberately not selected here
+          node { id }
+        }
+      \`;
+      const [x, setX] = useState<Foo$key | null>(null);
+      `,
+      // A spread named only inside a string argument is not a spread either.
+      `
+      const q = graphql\`
+        query Q {
+          node(label: "...Foo") { id }
+        }
+      \`;
+      const [x, setX] = useState<Foo$key | null>(null);
+      `,
     ],
     invalid: [
       {
@@ -110,6 +129,32 @@ ruleTester.run(
           }
         \`;
         const [x, setX] = useState<Foo$key | null>(null);
+        `,
+        errors: [{ messageId: "deriveLocally" }],
+      },
+      // A `fragment Foo on ...` that only appears in a comment or a string
+      // does not make this the fragment-owning file.
+      {
+        code: `
+        const q = graphql\`
+          query Q {
+            # fragment Foo on Node lives in another file
+            node(label: "fragment Foo on Node") { ...Foo }
+          }
+        \`;
+        const [x, setX] = useState<Foo$key | null>(null);
+        `,
+        errors: [{ messageId: "deriveLocally" }],
+      },
+      // `React.useState` is the same declaration, spelled through the import.
+      {
+        code: `
+        const q = graphql\`
+          query Q {
+            node { ...Foo }
+          }
+        \`;
+        const [x, setX] = React.useState<Foo$key | null>(null);
         `,
         errors: [{ messageId: "deriveLocally" }],
       },

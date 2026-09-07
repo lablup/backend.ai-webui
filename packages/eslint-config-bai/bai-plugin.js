@@ -13,12 +13,49 @@ const baseFragmentName = (keyTypeName) =>
   keyTypeName.slice(0, -KEY_SUFFIX.length);
 
 /**
+ * Blank out GraphQL `#` comments and string / block-string tokens so the
+ * scan below reads syntax only: a `# ...Foo` note must not register a spread,
+ * and `fragment Foo on Node` inside a description must not exempt a violation.
+ */
+const stripCommentsAndStrings = (text) => {
+  let out = "";
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === "#") {
+      while (i < text.length && text[i] !== "\n") {
+        i += 1;
+      }
+      continue;
+    }
+    if (text.startsWith('"""', i)) {
+      const end = text.indexOf('"""', i + 3);
+      i = end === -1 ? text.length : end + 3;
+      out += " ";
+      continue;
+    }
+    if (text[i] === '"') {
+      i += 1;
+      while (i < text.length && text[i] !== '"' && text[i] !== "\n") {
+        i += text[i] === "\\" ? 2 : 1;
+      }
+      i += 1;
+      out += " ";
+      continue;
+    }
+    out += text[i];
+    i += 1;
+  }
+  return out;
+};
+
+/**
  * Collect fragment definitions and named spreads from a graphql`` literal's
  * text. Relay literals carry no `${}` interpolation, so a textual scan of the
  * quasis is the whole document — and scanning the literal rather than the
  * source is what keeps JS spread operators and doc strings out of the result.
  */
-const scanGraphqlText = (text, defined, spread) => {
+const scanGraphqlText = (rawText, defined, spread) => {
+  const text = stripCommentsAndStrings(rawText);
   const defRe = /\bfragment\s+([A-Za-z_]\w*)\s+on\s/g;
   let m;
   while ((m = defRe.exec(text)) !== null) {
@@ -64,6 +101,19 @@ const collectKeyTypeRefs = (typeNode, out) => {
   }
 };
 
+/** Both call forms in use here: bare `useState` and `React.useState`. */
+const isUseStateCallee = (callee) => {
+  if (callee.type === "Identifier") {
+    return callee.name === "useState";
+  }
+  return (
+    callee.type === "MemberExpression" &&
+    !callee.computed &&
+    callee.property?.type === "Identifier" &&
+    callee.property.name === "useState"
+  );
+};
+
 /**
  * Disallow typing a local value (a `useState` cell or a plain variable) with a
  * fragment's generated `$key` at a site that already spreads that fragment:
@@ -106,12 +156,9 @@ const noFragmentKeyAtSpreadSite = {
         scanGraphqlText(text, definedFragments, spreadFragments);
       },
 
-      // useState<...$key>() / useState<...$key | null>()
+      // useState<...$key>() / React.useState<...$key | null>()
       CallExpression(node) {
-        if (
-          node.callee.type !== "Identifier" ||
-          node.callee.name !== "useState"
-        ) {
+        if (!isUseStateCallee(node.callee)) {
           return;
         }
         const typeArgs = getTypeArguments(node);
