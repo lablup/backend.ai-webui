@@ -12,7 +12,7 @@ import {
   BAIMetadataList,
   BAIModal,
   type BAIModalProps,
-  PRIMARY_TAG_VARIANT,
+  BAIAccentBadge,
   badgeVariantForTagColor,
   BAIText,
 } from 'backend.ai-ui';
@@ -77,10 +77,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
               title styling is accepted as-is (defaults-first). */}
           <Text>{t('credential.KeypairDetail')}</Text>
           {user?.main_access_key === keypair?.access_key && (
-            <Badge
-              variant={PRIMARY_TAG_VARIANT}
-              label={t('credential.MainAccessKey')}
-            />
+            <BAIAccentBadge label={t('credential.MainAccessKey')} />
           )}
         </HStack>
       }
@@ -109,7 +106,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
           <MetadataListItem label={t('credential.Permission')}>
             {keypair?.is_admin ? (
               <HStack gap={1}>
-                <Badge variant={PRIMARY_TAG_VARIANT} label="admin" />
+                <BAIAccentBadge label="admin" />
                 <Badge
                   variant={badgeVariantForTagColor('green')}
                   label="user"

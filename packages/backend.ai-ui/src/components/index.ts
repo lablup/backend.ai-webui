@@ -14,6 +14,8 @@ export { default as BAITabList } from './BAITabList';
 export type { BAITabListProps } from './BAITabList';
 export { default as BAITabCountBadge } from './BAITabCountBadge';
 export type { BAITabCountBadgeProps } from './BAITabCountBadge';
+export { default as BAIAccentBadge } from './BAIAccentBadge';
+export type { BAIAccentBadgeProps } from './BAIAccentBadge';
 export { default as BAICompactGroup } from './BAICompactGroup';
 export type { BAICompactGroupProps } from './BAICompactGroup';
 export { default as BAIMetadataList } from './BAIMetadataList';

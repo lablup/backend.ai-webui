@@ -26,9 +26,10 @@
  * 3. `*-inverse` presets → base hue. The filled/inverse emphasis axis does not
  *    exist on Astryx Badge and is DROPPED (defaults-first; MIGRATION-SPEC §0
  *    simplicity policy — do not rebuild it).
- * 4. Theme token refs (`token.colorPrimary` at 3 sites: main-access-key tags)
- *    → `PRIMARY_TAG_VARIANT` (brand hue as a named variant). Arbitrary theme
- *    routing is NOT supported; if the brand hue changes, update that one const.
+ * 4. Theme token refs (`token.colorPrimary` at 3 sites: main-access-key and
+ *    `admin` tags) → NOT a variant: they use `BAIAccentBadge`, which paints
+ *    `--color-accent` (FR-3715). No variant follows the ambient accent, and
+ *    arbitrary theme routing is not supported by this module.
  * 5. Arbitrary hex / CSS color names / runtime metadata strings (e.g. image
  *    metadata `label.color`, AgentList `lightblue`) → normalized against the
  *    preset table; anything still unknown DROPS to `neutral`/`default`.
@@ -77,14 +78,6 @@ export type AstryxTokenColor =
   | 'purple'
   | 'pink'
   | 'gray';
-
-/**
- * Brand-accent replacement for `<Tag color={token.colorPrimary}>` sites
- * (AdminUserCredentialList, KeypairInfoModal ×2). The Backend.AI brand accent
- * is a green; Badge's closed enum cannot take the exact token, so the brand
- * hue is fixed here as a single named decision (policy class 4).
- */
-export const PRIMARY_TAG_VARIANT: AstryxBadgeVariant = 'green';
 
 /**
  * antd Tag `color` value → Astryx Badge variant.

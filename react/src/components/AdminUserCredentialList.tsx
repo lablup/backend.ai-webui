@@ -29,7 +29,7 @@ import {
   BAISelectionLabel,
   useBAILogger,
   BAIText,
-  PRIMARY_TAG_VARIANT,
+  BAIAccentBadge,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -556,7 +556,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             render: (isAdmin) =>
               isAdmin ? (
                 <BAIFlex gap="xs">
-                  <Badge variant={PRIMARY_TAG_VARIANT} label="admin" />
+                  <BAIAccentBadge label="admin" />
                   <Badge variant="green" label="user" />
                 </BAIFlex>
               ) : (

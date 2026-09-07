@@ -1,0 +1,15 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ `.bai-accent-badge` — a badge painted in the ACTIVE MENU GROUP's primary
+ (FR-3715), the same mechanism `BAITabCountBadge.css` documents: no
+ `Badge.variant` follows the ambient accent (this theme pins `info` to a fixed
+ blue), while `--color-accent` is already resolved per scope by
+ `AutoAdminPrimaryColorProvider`. UNLAYERED on purpose — an unlayered rule
+ beats Astryx's `@layer astryx-base` specificity boost without `!important`.
+*/
+.bai-accent-badge {
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+}

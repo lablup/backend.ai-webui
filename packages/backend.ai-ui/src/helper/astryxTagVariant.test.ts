@@ -1,5 +1,4 @@
 import {
-  PRIMARY_TAG_VARIANT,
   STATUS_BADGE_VARIANT,
   badgeVariantForStatus,
   badgeVariantForTagColor,
@@ -128,10 +127,6 @@ describe('tokenColorForStatus', () => {
 });
 
 describe('module invariants', () => {
-  it('exposes a brand variant for token.colorPrimary call sites', () => {
-    expect(PRIMARY_TAG_VARIANT).toBe('green');
-  });
-
   it('every domain map value is a valid Badge variant', () => {
     const valid = new Set([
       'neutral',
