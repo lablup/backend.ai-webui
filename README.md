@@ -522,6 +522,27 @@ root (via `dotenv`), so you can put `WSPROXY_CORS_ORIGINS=...` there instead of
 exporting it. Requests from disallowed origins receive no CORS headers and a
 `PUT /conf` from a disallowed origin is rejected with `403`.
 
+#### Restricting the proxying port pool
+
+By default each app the local proxy opens is bound to an **ephemeral port
+assigned by the OS**. Set `WSPROXY_PORT_POOL` to confine those ports to a known
+range instead — useful when a firewall or a container port mapping only lets a
+fixed set of ports through. It accepts a comma-separated list of single ports
+and inclusive `from-to` ranges:
+
+```console
+$ export WSPROXY_PORT_POOL="10000-10100"
+$ export WSPROXY_PORT_POOL="10000-10010,20022,23389"
+```
+
+Ports are handed out in the listed order, skipping the ones already taken by a
+running app. Invalid entries are logged and ignored; when the whole pool is in
+use, a new app request fails with `500` instead of silently falling back to an
+OS-assigned port outside the pool. Leaving the variable unset keeps the default
+behaviour. Like `WSPROXY_CORS_ORIGINS`, this is an environment variable of the
+proxy **process** and can be put in the repository-root `.env` instead of being
+exported.
+
 ## Build web server with specific configuration
 
 You can prepare site-specific configuration as `toml` format. Also, you can build site-specific web bundle refering in `configs` directory.

@@ -67,6 +67,44 @@ function parseConfiguredOrigins() {
 
 const configuredOrigins = parseConfiguredOrigins();
 
+// Parse the pool of TCP ports app gateways may bind to, from the
+// WSPROXY_PORT_POOL environment variable. Accepts a comma-separated list of
+// single ports and inclusive `from-to` ranges ("10000-10100,20022").
+// Deployments behind a firewall need the proxied apps to land on a known set
+// of ports; an empty pool keeps the default of letting the OS assign an
+// ephemeral one. Invalid entries are logged and skipped rather than failing
+// the whole proxy at startup.
+function parseConfiguredPortPool(env) {
+  if (!env) return [];
+  const ports = [];
+  const seen = new Set();
+  const add = (port) => {
+    if (!seen.has(port)) {
+      seen.add(port);
+      ports.push(port);
+    }
+  };
+  for (const raw of String(env).split(',')) {
+    const entry = raw.trim();
+    if (!entry) continue;
+    const range = entry.match(/^(\d+)\s*-\s*(\d+)$/);
+    if (range) {
+      const from = parseInt(range[1], 10);
+      const to = parseInt(range[2], 10);
+      if (!isValidPort(from) || !isValidPort(to) || from > to) {
+        logger.warn(`Ignoring invalid WSPROXY_PORT_POOL range: ${entry}`);
+        continue;
+      }
+      for (let port = from; port <= to; port++) add(port);
+    } else if (/^\d+$/.test(entry) && isValidPort(entry)) {
+      add(parseInt(entry, 10));
+    } else {
+      logger.warn(`Ignoring invalid WSPROXY_PORT_POOL entry: ${entry}`);
+    }
+  }
+  return ports;
+}
+
 // A loopback page (the WebUI dev server, the proxy itself, or any localhost
 // origin) is considered trusted: the proxy only binds to 127.0.0.1, so a
 // loopback origin is already inside the trust boundary. `*.localhost`
@@ -130,7 +168,10 @@ class Manager extends EventEmitter {
     this.app = express();
     this.aiclient = undefined;
     this.proxies = {};
-    this.ports = [];
+    this.portPool = parseConfiguredPortPool(process.env.WSPROXY_PORT_POOL);
+    if (this.portPool.length > 0) {
+      logger.info(`Proxying port pool: ${this.portPool.length} port(s)`);
+    }
     this.baseURL = undefined;
     // Per-instance secret returned by PUT /conf and required by every
     // /proxy/* route. Regenerated on each proxy start, never logged. 32 random
@@ -139,11 +180,18 @@ class Manager extends EventEmitter {
     this.init();
   }
 
-  refreshPorts() {
-    logger.info('PortRefresh');
-    for (let i = 0; i < 100; i++) {
-      this.ports.push(crypto.randomInt(10000, 30000));
+  // First port of the configured pool that no live gateway holds, skipping
+  // anything in `exclude` (ports the current request already tried and lost).
+  // Returns undefined when no pool is configured or the pool is exhausted.
+  _nextPooledPort(exclude = new Set()) {
+    if (this.portPool.length === 0) return undefined;
+    const inUse = new Set();
+    for (const key of Object.keys(this.proxies)) {
+      const gateway = this.proxies[key];
+      if (!isGatewayAlive(gateway)) continue;
+      if (typeof gateway.getPort === 'function') inUse.add(gateway.getPort());
     }
+    return this.portPool.find((port) => !inUse.has(port) && !exclude.has(port));
   }
 
   // Drop `this.proxies[p]` if it's no longer alive, so the caller always
@@ -312,6 +360,20 @@ class Manager extends EventEmitter {
           gateway = this.proxies[p];
           port = gateway.getPort();
         } else {
+          // With a pool configured the proxy must stay inside it, so an
+          // exhausted pool is an error rather than a fallback to an
+          // OS-assigned port the deployment's firewall would not expect.
+          const pooled = this.portPool.length > 0;
+          const triedPorts = new Set();
+          if (pooled && port === undefined) {
+            port = this._nextPooledPort();
+            if (port === undefined) {
+              logger.warn('No free port left in the configured port pool');
+              res.send({ code: 500 });
+              return;
+            }
+          }
+
           if (this._config.mode == 'SESSION') {
             const SGateway = require('./gateway/consoleproxy');
             gateway = new SGateway(this._config);
@@ -331,12 +393,24 @@ class Manager extends EventEmitter {
               break;
             } catch (err) {
               if ('PortInUse' === err.message) {
-                // try next number or fallback to random port for the last resort
-                port = i < maxtry - 1 ? port + 1 : undefined;
-                if (port) {
-                  logger.warn('trying next port: ' + port);
+                if (pooled) {
+                  triedPorts.add(port);
+                  port = this._nextPooledPort(triedPorts);
+                  if (port === undefined) {
+                    logger.warn(
+                      'No free port left in the configured port pool',
+                    );
+                    break;
+                  }
+                  logger.warn('trying next pooled port: ' + port);
                 } else {
-                  logger.warn('trying random port');
+                  // try next number or fallback to random port for the last resort
+                  port = i < maxtry - 1 ? port + 1 : undefined;
+                  if (port) {
+                    logger.warn('trying next port: ' + port);
+                  } else {
+                    logger.warn('trying random port');
+                  }
                 }
               } else {
                 logger.warn(err.message);
@@ -606,5 +680,6 @@ class Manager extends EventEmitter {
 // gateways directly to avoid constructing real gateways (a build artifact
 // unavailable in a source-only checkout).
 Manager.isGatewayAlive = isGatewayAlive;
+Manager.parseConfiguredPortPool = parseConfiguredPortPool;
 
 module.exports = Manager;
