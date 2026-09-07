@@ -2996,6 +2996,7 @@
       "LaunchMultipleSessionsTotal": "Toplam kaynaklar",
       "LaunchSessionWithAccessKey": "Erişim anahtarı adına oturumu başlat",
       "ManualImageName": "Resim Adı (Manuel)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "Hafıza",
       "MinMemory": "Seçili çalışma zamanı ortamı için minimum bellek kapasitesi {{size}}iB'dir.",
       "MiniumAllocation": "Minimum gereksinimler",

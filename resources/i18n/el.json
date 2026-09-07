@@ -2996,6 +2996,7 @@
       "LaunchMultipleSessionsTotal": "Συνολικοί πόροι",
       "LaunchSessionWithAccessKey": "Εκκίνηση περιόδου λειτουργίας εκ μέρους του κλειδιού πρόσβασης",
       "ManualImageName": "Όνομα εικόνας (Εγχειρίδιο)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "Μνήμη",
       "MinMemory": "Η ελάχιστη χωρητικότητα μνήμης για το τρέχον επιλεγμένο περιβάλλον εκτέλεσης είναι {{size}}iB.",
       "MiniumAllocation": "Ελάχιστες απαιτήσεις",

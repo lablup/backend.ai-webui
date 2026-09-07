@@ -2998,6 +2998,7 @@
       "LaunchMultipleSessionsTotal": "Gesamtressourcen",
       "LaunchSessionWithAccessKey": "Sitzung im Namen des Zugriffsschlüssels starten",
       "ManualImageName": "Bildname (Manuell)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "Erinnerung",
       "MinMemory": "Die minimale Speicherkapazität für die aktuell ausgewählte Laufzeitumgebung beträgt {{size}}iB.",
       "MiniumAllocation": "Mindestanforderungen",

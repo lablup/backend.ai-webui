@@ -3000,6 +3000,7 @@
       "LaunchMultipleSessionsTotal": "Total sumber daya",
       "LaunchSessionWithAccessKey": "Luncurkan sesi atas nama kunci akses",
       "ManualImageName": "Nama Image (Manual)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "Memori",
       "MinMemory": "Kapasitas memori minimum untuk lingkungan runtime yang saat ini dipilih adalah {{size}}iB.",
       "MiniumAllocation": "Persyaratan minimum",

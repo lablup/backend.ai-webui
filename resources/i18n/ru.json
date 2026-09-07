@@ -2996,6 +2996,7 @@
       "LaunchMultipleSessionsTotal": "Суммарные ресурсы",
       "LaunchSessionWithAccessKey": "Запускаем сессию от имени ключа доступа",
       "ManualImageName": "Имя изображения (вручную)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "объем памяти",
       "MinMemory": "Минимальный объем памяти для выбранной в данный момент среды выполнения составляет {{size}}iB.",
       "MiniumAllocation": "Минимальные требования",

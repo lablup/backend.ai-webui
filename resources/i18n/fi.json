@@ -2996,6 +2996,7 @@
       "LaunchMultipleSessionsTotal": "Resurssit yhteensä",
       "LaunchSessionWithAccessKey": "Käynnistetään istunto pääsyavaimen puolesta",
       "ManualImageName": "Kuvan nimi (manuaalinen)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "Muisti",
       "MinMemory": "Tällä hetkellä valitun ajoympäristön vähimmäismuistikapasiteetti on {{size}}iB.",
       "MiniumAllocation": "Vähimmäisvaatimukset",

@@ -2998,6 +2998,7 @@
       "LaunchMultipleSessionsTotal": "合計リソース",
       "LaunchSessionWithAccessKey": "アクセスキーに代わってセッションを起動します",
       "ManualImageName": "画像名（手動）",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "メモリ",
       "MinMemory": "現在選択した実行環境の最小メモリ容量は{{size}}iBです。",
       "MiniumAllocation": "最低条件",

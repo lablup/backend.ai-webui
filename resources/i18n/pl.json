@@ -2999,6 +2999,7 @@
       "LaunchMultipleSessionsTotal": "Łączne zasoby",
       "LaunchSessionWithAccessKey": "Uruchom sesję w imieniu klucza dostępu",
       "ManualImageName": "Nazwa obrazu (ręcznie)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "Pamięć",
       "MinMemory": "Minimalna pojemność pamięci dla aktualnie wybranego środowiska uruchomieniowego wynosi {{size}}iB.",
       "MiniumAllocation": "Minimalne wymagania",

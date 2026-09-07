@@ -2998,6 +2998,7 @@
       "LaunchMultipleSessionsTotal": "Нийт нөөц",
       "LaunchSessionWithAccessKey": "Хандалтын (access) түлхүүрээр session эхлүүлэх",
       "ManualImageName": "Image нэр (гар арга)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "Санах ой",
       "MinMemory": "Одоогоор сонгогдсон ажиллах орчны орчны хамгийн бага санах ойн багтаамж нь {{size}}iB байна.",
       "MiniumAllocation": "Хамгийн бага шаардлага",

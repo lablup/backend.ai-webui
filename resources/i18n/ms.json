@@ -2996,6 +2996,7 @@
       "LaunchMultipleSessionsTotal": "Jumlah sumber",
       "LaunchSessionWithAccessKey": "Lancarkan sesi atas nama kunci akses",
       "ManualImageName": "Nama Imej (Manual)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "Ingatan",
       "MinMemory": "Kapasiti memori minimum untuk persekitaran masa jalan yang dipilih pada masa ini ialah {{saiz}}iB.",
       "MiniumAllocation": "Keperluan minimum",

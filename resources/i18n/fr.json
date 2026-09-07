@@ -2999,6 +2999,7 @@
       "LaunchMultipleSessionsTotal": "Ressources totales",
       "LaunchSessionWithAccessKey": "Session de lancement au nom de la clé d'accès",
       "ManualImageName": "Nom de l'image (manuel)",
+      "ManualImageNameTooltip": "__NOT_TRANSLATED__",
       "Memory": "Mémoire",
       "MinMemory": "La capacité de mémoire minimale pour l'environnement d'exécution actuellement sélectionné est de {{taille}}iB.",
       "MiniumAllocation": "Exigences minimales",
