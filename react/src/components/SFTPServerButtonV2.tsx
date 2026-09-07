@@ -244,7 +244,13 @@ const SFTPServerButtonWithProject: React.FC<
                     getErrorMessage,
                     onGoToUploadSessions: () => {
                       webuiNavigate({
-                        pathname: '/session',
+                        // Explicit project (FR-3412): bare `/session` is a
+                        // ProjectScopedRedirect, which resolves the AMBIENT
+                        // project, not the passed one.
+                        pathname: buildProjectPath('session', {
+                          scope: 'project',
+                          projectName: project.name,
+                        }),
                         search: '?type=system',
                       });
                     },
