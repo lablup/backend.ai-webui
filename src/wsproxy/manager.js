@@ -417,6 +417,10 @@ class Manager extends EventEmitter {
                 }
               } else {
                 logger.warn(err.message);
+                // Another port cannot fix a non-PortInUse failure, and the
+                // pooled budget is pool-sized, so retrying would repeat the
+                // identical call once per pool entry. Legacy path unchanged.
+                if (pooled) break;
               }
             }
           }
