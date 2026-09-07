@@ -859,6 +859,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       }
     `);
 
+  // FR-2526: a filebrowser session started mid-submit would change the files
+  // the new replicas are about to serve, so folder access is gated on this.
+  const isSubmitInFlight = isAddInFlight || isResolvingImage;
+
   // Build a Custom-form prefill object from a preset node read off the
   // singular `deploymentRevisionPreset(id:)` query (resolved via
   // `fetchPresetData`). The image full name is fetched async because
@@ -1927,7 +1931,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             <Button
               variant="primary"
               label={t('deployment.AddRevision')}
-              isLoading={isAddInFlight || isResolvingImage}
+              isLoading={isSubmitInFlight}
               onClick={handleOk}
               isDisabled={
                 (effectiveMode === 'preset' && hasNoPresets) ||
@@ -1938,7 +1942,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         </BAIFlex>
       }
       onCancel={() => onRequestClose()}
-      confirmLoading={isAddInFlight || isResolvingImage}
+      confirmLoading={isSubmitInFlight}
       destroyOnHidden
       {...restModalProps}
     >
@@ -2154,11 +2158,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           // (existing key reused).
                           return (
                             <ButtonGroup label={t('deployment.ModelFolder')}>
+                              {/* FR-2526: the tooltip says why rather than
+                                  letting the button go silently dead. */}
                               <IconButton
                                 icon={<FolderOpenIcon />}
                                 label={t('modelService.OpenFolder')}
-                                tooltip={t('modelService.OpenFolder')}
-                                isDisabled={!modelFolderId}
+                                tooltip={
+                                  isSubmitInFlight
+                                    ? t(
+                                        'deployment.FolderAccessDisabledWhileAddingRevision',
+                                      )
+                                    : t('modelService.OpenFolder')
+                                }
+                                isDisabled={!modelFolderId || isSubmitInFlight}
                                 onClick={() => {
                                   if (modelFolderId) {
                                     openFolderExplorer(
@@ -2337,11 +2349,18 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   const modelFolderId = getFieldValue('modelFolderId');
                   return (
                     <ButtonGroup label={t('deployment.ModelFolder')}>
+                      {/* FR-2526 — same gate as the Preset body above. */}
                       <IconButton
                         icon={<FolderOpenIcon />}
                         label={t('modelService.OpenFolder')}
-                        tooltip={t('modelService.OpenFolder')}
-                        isDisabled={!modelFolderId}
+                        tooltip={
+                          isSubmitInFlight
+                            ? t(
+                                'deployment.FolderAccessDisabledWhileAddingRevision',
+                              )
+                            : t('modelService.OpenFolder')
+                        }
+                        isDisabled={!modelFolderId || isSubmitInFlight}
                         onClick={() => {
                           if (modelFolderId) {
                             openFolderExplorer(toLocalId(modelFolderId));
@@ -2594,9 +2613,19 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                     <VFolderTableFormItem
                       label={t('modelService.AdditionalMounts')}
                       tooltip={t('modelService.AdditionalMountsTooltip')}
+                      // FR-2526: the folder-name cells are the other route
+                      // into the file browser, so they are gated too.
+                      extra={
+                        isSubmitInFlight
+                          ? t(
+                              'deployment.FolderAccessDisabledWhileAddingRevision',
+                            )
+                          : undefined
+                      }
                       rowKey="id"
                       tableProps={{
                         scroll: { x: 'max-content', y: 300 },
+                        isFolderLinkDisabled: isSubmitInFlight,
                       }}
                       rowFilter={(vfolder) =>
                         vfolder.usage_mode !== 'model' &&

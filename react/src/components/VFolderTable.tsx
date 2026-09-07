@@ -91,6 +91,12 @@ export interface VFolderTableProps extends Omit<
     invalidKeys: VFolderKey[],
     validVFolders: VFolder[],
   ) => void;
+  /**
+   * Renders the folder-name cells as disabled links instead of navigating to
+   * the folder explorer. Set it while a form submit is in flight so the file
+   * browser cannot change the folders that submit is about to mount (FR-2526).
+   */
+  isFolderLinkDisabled?: boolean;
 }
 
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
@@ -108,6 +114,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   showAutoMountedFoldersSection,
   ownerEmail,
   onValidateSelectedRowKeys,
+  isFolderLinkDisabled = false,
   ...tableProps
 }) => {
   'use memo';
@@ -413,7 +420,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             }
           >
             <BAILink
-              type="hover"
+              type={isFolderLinkDisabled ? 'disabled' : 'hover'}
               to={generateFolderPath(record.id)}
               style={{
                 overflow: 'hidden',

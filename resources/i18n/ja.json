@@ -1142,6 +1142,7 @@
     "FailedToDeleteDeployment": "デプロイの削除に失敗しました。",
     "FailedToRollback": "選択した Revision へのロールバックに失敗しました。",
     "FailedToUpdateDeployment": "デプロイの更新に失敗しました。",
+    "FolderAccessDisabledWhileAddingRevision": "Revision の追加中はフォルダーにアクセスできません。",
     "FromStatus": "元のステータス",
     "GoToDetailPage": "デプロイの詳細を表示",
     "HealthStatus": "ヘルス状態",
