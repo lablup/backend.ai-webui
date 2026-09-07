@@ -6,6 +6,7 @@
  reason inside the flag that disables it — the two cannot drift apart, and a
  silent disable is only reachable by writing `true` on purpose.
 */
+import { theme } from '../../theme-shim';
 import BAINameActionCell from './BAINameActionCell';
 import type { BAINameActionCellAction } from './BAINameActionCell';
 import '@testing-library/jest-dom';
@@ -108,9 +109,24 @@ describe('BAINameActionCell — the overflow row keeps its action colour (FR-372
   const menuRow = () => screen.getByText('Act').closest('[role="menuitem"]');
   // `.bai-nac-menu-icon` is this component's own wrapper, so the tint is read
   // off our markup; `data-variant` is Astryx's documented theming attribute.
-  const menuIconTint = () =>
-    screen.getByTestId('act-icon').closest<HTMLElement>('.bai-nac-menu-icon')
-      ?.style.color;
+  // Returning the element (not `?.style.color`) keeps a missing wrapper a
+  // failure instead of an `undefined` that satisfies a negated assertion.
+  const menuIcon = () =>
+    screen.getByTestId('act-icon').closest<HTMLElement>('.bai-nac-menu-icon');
+
+  // The expected tint, read the same way the component reads it and put
+  // through the same `style.color` normalisation the assertion compares.
+  const expectedMenuIconTint = () => {
+    let value = '';
+    const Probe = () => {
+      value = theme.useToken().token.colorInfo;
+      return null;
+    };
+    render(<Probe />);
+    const probe = document.createElement('span');
+    probe.style.color = value;
+    return probe.style.color;
+  };
 
   it('a danger action stays destructive once it overflows into the menu', () => {
     renderAction({
@@ -122,16 +138,23 @@ describe('BAINameActionCell — the overflow row keeps its action colour (FR-372
     expect(menuRow()).toHaveAttribute('data-variant', 'destructive');
     // Astryx tints the whole destructive row, so the icon must not be
     // re-coloured on top of it.
-    expect(menuIconTint()).toBe('');
+    expect(menuIcon()).not.toBeNull();
+    expect(menuIcon()?.style.color).toBe('');
   });
 
   it('a default action carries the info tint on its menu icon', () => {
+    const expectedTint = expectedMenuIconTint();
+    expect(expectedTint).not.toBe('');
+
     renderAction({
       showInMenu: 'always',
       icon: <span data-testid="act-icon" />,
     });
 
     expect(menuRow()).not.toHaveAttribute('data-variant', 'destructive');
-    expect(menuIconTint()).not.toBe('');
+    expect(menuIcon()).not.toBeNull();
+    // A present wrapper carrying exactly the info token — dropping either the
+    // wrapper or the colour fails here.
+    expect(menuIcon()?.style.color).toBe(expectedTint);
   });
 });
