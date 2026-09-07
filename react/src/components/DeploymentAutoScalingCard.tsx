@@ -28,6 +28,7 @@ import {
   BAIQuestionIconWithTooltip,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  INITIAL_FETCH_KEY,
   isDeploymentInStoppedCategory,
   toLocalId,
   useFetchKey,
@@ -202,7 +203,11 @@ const DeploymentAutoScalingCardContent: React.FC<
     `,
     deferredQueryVariables,
     {
-      fetchPolicy: 'store-and-network',
+      // Only the first load may serve cached rows; every later fetch key comes
+      // from an explicit or auto refresh and must hit the network, so the
+      // pending state stays true until the response lands.
+      fetchPolicy:
+        fetchKey === INITIAL_FETCH_KEY ? 'store-and-network' : 'network-only',
       fetchKey,
     },
   );
