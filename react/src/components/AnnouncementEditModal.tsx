@@ -93,6 +93,11 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   const [messageDraft, setMessageDraft] = useState<string>();
   const message = messageDraft ?? announcement?.message ?? '';
 
+  // Monaco is lazily imported, so the body has a second loading phase after the
+  // query resolves. The whole body stays a Skeleton until both are done.
+  const [isEditorReady, setIsEditorReady] = useState(false);
+  const isBodyReady = !isLoading && isEditorReady;
+
   // Publishing always enables the announcement, and the backend rejects an empty
   // message ("Empty message not allowed to enable announcement"), so a non-empty
   // message is required to publish. (Previously gated on `enabled && ...`.)
@@ -189,7 +194,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             <Button
               variant="destructive"
               label={t('button.Delete')}
-              isDisabled={isLoading || !announcement?.enabled}
+              isDisabled={!isBodyReady || !announcement?.enabled}
               isLoading={deleteMutation.isPending}
               onClick={confirmDelete}
             />
@@ -203,7 +208,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             <Button
               variant="primary"
               label={t('button.Publish')}
-              isDisabled={isLoading || isMessageMissing}
+              isDisabled={!isBodyReady || isMessageMissing}
               isLoading={updateMutation.isPending}
               onClick={handleSubmit}
             />
@@ -212,10 +217,17 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
       }
       {...modalProps}
     >
-      {isLoading ? (
-        <BAISkeleton rows={4} />
-      ) : (
-        <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
+      {!isBodyReady && <BAISkeleton rows={4} />}
+      {!isLoading && (
+        // Kept mounted but hidden while Monaco boots, so the editor loads
+        // behind the Skeleton instead of flashing an empty frame.
+        <BAIFlex
+          direction="row"
+          align="stretch"
+          gap="sm"
+          wrap="wrap"
+          style={{ display: isBodyReady ? undefined : 'none' }}
+        >
           <BAIFlex
             direction="column"
             align="stretch"
@@ -227,6 +239,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
               height={EDITOR_HEIGHT}
               value={message}
               onChange={setMessageDraft}
+              onReady={() => setIsEditorReady(true)}
             />
             {isMessageMissing && (
               // PILOT-DECISION: antd `Typography.Text type="danger"` has no
@@ -277,7 +290,9 @@ const MarkdownEditorField: React.FC<{
   value?: string;
   onChange?: (value: string) => void;
   height: string;
-}> = ({ value, onChange, height }) => {
+  /** Fired once the lazily-loaded Monaco instance has mounted. */
+  onReady?: () => void;
+}> = ({ value, onChange, height, onReady }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -459,7 +474,11 @@ const MarkdownEditorField: React.FC<{
         onMount={(editor, monaco) => {
           editorRef.current = editor;
           monacoRef.current = monaco;
+          onReady?.();
         }}
+        // The parent mounts this field hidden, so Monaco measures a 0-sized
+        // container; `automaticLayout` makes it re-measure once revealed.
+        options={{ automaticLayout: true }}
         style={{
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
