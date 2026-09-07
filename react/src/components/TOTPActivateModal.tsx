@@ -5,6 +5,7 @@
 import { TOTPActivateModalFragment$key } from '../__generated__/TOTPActivateModalFragment.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
+import { getTotpActivationErrorMessageKey } from '../helper/backendErrorType';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
@@ -91,8 +92,8 @@ const TOTPActivateModal: React.FC<Props> = ({
             message.success(t('totp.TotpSetupCompleted'));
             onRequestClose(true);
           },
-          onError: () => {
-            message.error(t('totp.InvalidTotpCode'));
+          onError: (error) => {
+            message.error(t(getTotpActivationErrorMessageKey(error)));
           },
         });
       })
