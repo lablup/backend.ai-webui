@@ -277,6 +277,7 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   const fasttrackEndpoint = baiClient?._config?.fasttrackEndpoint ?? null;
   const blockList = baiClient?._config?.blockList ?? null;
   const inactiveList = baiClient?._config?.inactiveList ?? null;
+  const hiddenList = baiClient?._config?.hiddenList ?? null;
   const { token } = theme.useToken();
 
   const [experimentalAIAgents] = useBAISettingUserState(
@@ -627,6 +628,9 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     (menu) => {
       // Remove menu items that are in blockList
       _.remove(menu, (item) => _.includes(blockList, item?.key));
+      // Remove menu items that are in hiddenList. Unlike blockList this only
+      // hides the entry — the route stays reachable by direct URL.
+      _.remove(menu, (item) => _.includes(hiddenList, item?.key));
       // Disable menu items that are in inactiveList
       _.forEach(menu, (item) => {
         if (_.includes(inactiveList, item?.key)) {
@@ -783,15 +787,17 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
   })();
 
   // First project-admin page in sider order that survives blocklist /
-  // inactive-list filtering. Computed from the un-role-filtered fullAdminMenu
-  // (super/domain admins' `adminMenu` excludes project-admin items, but they
-  // can access all of them) — the redirect target for `/project/:name/admin`.
+  // hidelist / inactive-list filtering. Computed from the un-role-filtered
+  // fullAdminMenu (super/domain admins' `adminMenu` excludes project-admin
+  // items, but they can access all of them) — the redirect target for
+  // `/project/:name/admin`.
   // `undefined` when the config hides every project-admin page.
   const firstAvailableProjectAdminMenuKey = _.find(
     fullAdminMenu,
     (item) =>
       PROJECT_ADMIN_PAGE_KEY_SET.has(item.key as string) &&
       !_.includes(blockList, item.key) &&
+      !_.includes(hiddenList, item.key) &&
       !_.includes(inactiveList, item.key),
   )?.key;
 
@@ -852,7 +858,8 @@ export const useWebUIMenuItems = (props?: UseWebUIMenuItemsProps) => {
     return null;
   })();
 
-  // Check if current page is in blocklist.
+  // Check if current page is in blocklist. `hiddenList` is deliberately not
+  // consulted: a hidden page is removed from the sider but stays reachable.
   // `currentMenuKeyFromRoute` is the scope-aware legacy menu key (from the
   // matched route handle), so it equals the feature key for general pages and
   // the hyphenated admin key for admin pages — exactly what

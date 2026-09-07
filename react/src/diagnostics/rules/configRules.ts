@@ -149,6 +149,38 @@ export function checkBlocklistValidity(
   return null;
 }
 
+/**
+ * Check if the hidelist contains menu keys that don't exist.
+ * Same failure mode as the blocklist: an unknown key silently does nothing.
+ */
+export function checkHidelistValidity(
+  hiddenList: readonly string[],
+  validMenuKeys: readonly string[],
+): DiagnosticResult | null {
+  if (!hiddenList || hiddenList.length === 0) return null;
+
+  const invalidEntries = hiddenList.filter(
+    (key) => !validMenuKeys.includes(key),
+  );
+
+  if (invalidEntries.length > 0) {
+    return {
+      id: 'config-invalid-hidelist',
+      severity: 'warning',
+      category: 'config',
+      titleKey: 'diagnostics.InvalidHidelistEntries',
+      descriptionKey: 'diagnostics.InvalidHidelistEntriesDesc',
+      remediationKey: 'diagnostics.InvalidHidelistEntriesFix',
+      interpolationValues: {
+        entries: invalidEntries.join(', '),
+        count: String(invalidEntries.length),
+      },
+    };
+  }
+
+  return null;
+}
+
 // ---------------------------------------------------------------------------
 // Connection mode  (config.toml: "Default is API. Currently supports API and SESSION")
 // ---------------------------------------------------------------------------
@@ -251,8 +283,7 @@ export function checkUrlFields(rawConfig: Record<string, unknown>): {
 
   for (const { section, field } of URL_FIELDS) {
     const sectionObj = rawConfig[section] as
-      | Record<string, unknown>
-      | undefined;
+      Record<string, unknown> | undefined;
     const value = sectionObj?.[field];
     if (!value || typeof value !== 'string' || value.trim() === '') continue;
     // Placeholders are reported separately by checkPlaceholderValues

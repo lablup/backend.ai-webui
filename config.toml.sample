@@ -56,6 +56,7 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 [menu]
 #blocklist = "" # Hide menus on the list which are separated by comma. please note that 'start' menu cannot be added to blocklist
 #inactivelist = "summary,import,statistics" # Disable menus on the list which are separated by comma.
+#hidelist = "" # Hide menus on the list from the sidebar, but keep their pages reachable by direct URL. Separated by comma. 'blocklist' takes precedence.
 
 [resources]
 openPortToPublic = false            # Show option to open app proxy port to anyone.

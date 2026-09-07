@@ -46,6 +46,7 @@ const StartPage: React.FC = () => {
   const currentProject = useCurrentProjectValue();
   const blockList = baiClient?._config?.blockList ?? [];
   const inactiveList = baiClient?._config?.inactiveList ?? [];
+  const hiddenList = baiClient?._config?.hiddenList ?? [];
   const enableModelFolders = baiClient?._config?.enableModelFolders ?? false;
 
   const webuiNavigate = useWebUINavigate();
@@ -261,7 +262,10 @@ const StartPage: React.FC = () => {
     },
   ]).filter(
     (item) =>
-      !_.includes([...blockList, ...inactiveList], item.requiredMenuKey),
+      !_.includes(
+        [...blockList, ...inactiveList, ...hiddenList],
+        item.requiredMenuKey,
+      ),
   );
 
   const [localStorageBoardItems, setLocalStorageBoardItems] =

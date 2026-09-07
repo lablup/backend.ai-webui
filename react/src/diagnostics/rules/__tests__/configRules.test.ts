@@ -6,6 +6,7 @@ import {
   checkBlocklistValidity,
   checkConnectionMode,
   checkGeneralNumericFields,
+  checkHidelistValidity,
   checkImageReferences,
   checkPlaceholderValues,
   checkPluginConfiguration,
@@ -217,6 +218,36 @@ describe('checkBlocklistValidity', () => {
     expect(
       checkBlocklistValidity(undefined as unknown as string[], validMenuKeys),
     ).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// checkHidelistValidity
+// ---------------------------------------------------------------------------
+
+describe('checkHidelistValidity', () => {
+  it('should return null when hidelist is empty or undefined-like', () => {
+    expect(checkHidelistValidity([], validMenuKeys)).toBeNull();
+    expect(
+      checkHidelistValidity(undefined as unknown as string[], validMenuKeys),
+    ).toBeNull();
+  });
+
+  it('should return null when all entries are valid', () => {
+    expect(
+      checkHidelistValidity(['session', 'serving'], validMenuKeys),
+    ).toBeNull();
+  });
+
+  it('should return warning when hidelist has invalid entries', () => {
+    const result = checkHidelistValidity(
+      ['session', 'nonexistent-menu'],
+      validMenuKeys,
+    );
+    expect(result?.severity).toBe('warning');
+    expect(result?.id).toBe('config-invalid-hidelist');
+    expect(result?.interpolationValues?.entries).toBe('nonexistent-menu');
+    expect(result?.interpolationValues?.count).toBe('1');
   });
 });
 

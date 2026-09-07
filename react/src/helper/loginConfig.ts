@@ -112,6 +112,7 @@ export interface LoginConfigState {
   allow_image_list: string[];
   blockList: string[];
   inactiveList: string[];
+  hiddenList: string[];
   fasttrackEndpoint: string;
   pluginPages: string;
   domain_name: string;
@@ -181,6 +182,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     allow_image_list: [],
     blockList: [],
     inactiveList: [],
+    hiddenList: [],
     fasttrackEndpoint: '',
     pluginPages: '',
     domain_name: '',
@@ -596,6 +598,14 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
       : [],
   }) as string[];
 
+  state.hiddenList = getConfigValueByExists(m, {
+    valueType: 'array',
+    defaultValue: [] as string[],
+    value: m?.hidelist
+      ? m.hidelist.split(',').map((el: string) => el.trim())
+      : [],
+  }) as string[];
+
   // -- pipeline section --
   state.fasttrackEndpoint = getConfigValueByExists(pi, {
     valueType: 'string',
@@ -677,6 +687,7 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.pluginPages = cfg.pluginPages;
   client._config.blockList = cfg.blockList;
   client._config.inactiveList = cfg.inactiveList;
+  client._config.hiddenList = cfg.hiddenList;
   client._config.allowSignout = cfg.allow_signout;
   client._config.enableReservoir = cfg.enableReservoir;
   client.ready = true;

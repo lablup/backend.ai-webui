@@ -12,7 +12,10 @@
  * - Atom initial values
  */
 import '../../__test__/matchMedia.mock.js';
-import { getDefaultLoginConfig } from '../helper/loginConfig';
+import {
+  getDefaultLoginConfig,
+  refreshConfigFromToml,
+} from '../helper/loginConfig';
 import {
   fetchAndParseConfig,
   rawConfigState,
@@ -374,6 +377,7 @@ describe('getDefaultLoginConfig fallback values', () => {
     expect(defaults.allow_image_list).toEqual([]);
     expect(defaults.blockList).toEqual([]);
     expect(defaults.inactiveList).toEqual([]);
+    expect(defaults.hiddenList).toEqual([]);
   });
 
   it('returns independent objects on each call (no shared state)', () => {
@@ -381,5 +385,31 @@ describe('getDefaultLoginConfig fallback values', () => {
     const b = getDefaultLoginConfig();
     a.api_endpoint = 'https://modified.example.com';
     expect(b.api_endpoint).toBe('');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// refreshConfigFromToml - [menu] section
+// ---------------------------------------------------------------------------
+
+describe('refreshConfigFromToml [menu]', () => {
+  it('parses blocklist, inactivelist and hidelist into separate lists', () => {
+    const state = refreshConfigFromToml({
+      menu: {
+        blocklist: 'agent-summary, statistics',
+        inactivelist: 'import',
+        hidelist: 'serving , chat',
+      },
+    });
+    expect(state.blockList).toEqual(['agent-summary', 'statistics']);
+    expect(state.inactiveList).toEqual(['import']);
+    expect(state.hiddenList).toEqual(['serving', 'chat']);
+  });
+
+  it('defaults hiddenList to an empty array when hidelist is absent', () => {
+    expect(
+      refreshConfigFromToml({ menu: { blocklist: 'chat' } }).hiddenList,
+    ).toEqual([]);
+    expect(refreshConfigFromToml({}).hiddenList).toEqual([]);
   });
 });

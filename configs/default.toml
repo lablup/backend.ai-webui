@@ -20,6 +20,7 @@ disableCertCheck = false
 
 [menu]
 #blocklist = ""
+#hidelist = ""
 
 [resources]
 openPortToPublic = true

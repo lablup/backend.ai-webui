@@ -774,6 +774,7 @@ type BackendAIConfig = {
   pluginPages: string;
   blockList: MenuKeys[];
   inactiveList: MenuKeys[];
+  hiddenList: MenuKeys[];
   allowSignout: boolean;
   allowNonAuthTCP: boolean;
   enableExtendLoginSession: boolean;

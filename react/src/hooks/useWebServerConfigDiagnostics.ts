@@ -7,6 +7,7 @@ import {
   checkBlocklistValidity,
   checkConnectionMode,
   checkGeneralNumericFields,
+  checkHidelistValidity,
   checkImageReferences,
   checkPlaceholderValues,
   checkPluginConfiguration,
@@ -60,6 +61,7 @@ export function useWebServerConfigDiagnostics(
 
   const apiEndpoint: string = baiClient?._config?.endpoint ?? '';
   const blockList: string[] = baiClient?._config?.blockList ?? [];
+  const hiddenList: string[] = baiClient?._config?.hiddenList ?? [];
 
   // --- Placeholder detection (e.g. "[Proxy URL]" left in config.toml) ---
   if (rawConfig) {
@@ -120,6 +122,21 @@ export function useWebServerConfigDiagnostics(
       titleKey: 'diagnostics.BlocklistValid',
       descriptionKey: 'diagnostics.BlocklistValidDesc',
       interpolationValues: { count: String(blockList.length) },
+    });
+  }
+
+  // --- Hidelist validity ---
+  const hidelistCheck = checkHidelistValidity(hiddenList, VALID_MENU_KEYS);
+  if (hidelistCheck) {
+    results.push(hidelistCheck);
+  } else if (hiddenList.length > 0) {
+    results.push({
+      id: 'config-hidelist-valid',
+      severity: 'passed',
+      category: 'config',
+      titleKey: 'diagnostics.HidelistValid',
+      descriptionKey: 'diagnostics.HidelistValidDesc',
+      interpolationValues: { count: String(hiddenList.length) },
     });
   }
 
