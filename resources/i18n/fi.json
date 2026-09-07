@@ -2996,6 +2996,7 @@
       "LaunchMultipleSessionsTotal": "Resurssit yhteensä",
       "LaunchSessionWithAccessKey": "Käynnistetään istunto pääsyavaimen puolesta",
       "ManualImageName": "Kuvan nimi (manuaalinen)",
+      "ManualImageNameTooltip": "Syötä kuvan viite samassa muodossa, jota rekisteri käyttää, esimerkiksi cr.backend.ai/stable/python:3.10-ubuntu20.04. Voit lisätä arkkitehtuuripäätteen, kuten @aarch64, kiinnittääksesi tietyn arkkitehtuurin; muutoin käytetään palvelimen oletusarkkitehtuuria.",
       "Memory": "Muisti",
       "MinMemory": "Tällä hetkellä valitun ajoympäristön vähimmäismuistikapasiteetti on {{size}}iB.",
       "MiniumAllocation": "Vähimmäisvaatimukset",

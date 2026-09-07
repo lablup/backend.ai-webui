@@ -2998,6 +2998,7 @@
       "LaunchMultipleSessionsTotal": "总资源",
       "LaunchSessionWithAccessKey": "代表访问密钥启动会话",
       "ManualImageName": "图像名称（手动）",
+      "ManualImageNameTooltip": "请按镜像仓库使用的格式输入镜像引用，例如 cr.backend.ai/stable/python:3.10-ubuntu20.04。可以追加 @aarch64 这样的架构后缀来指定特定架构；未指定时将使用服务器的默认架构。",
       "Memory": "记忆",
       "MinMemory": "当前所选运行环境的最小内存容量为 {{size}}iB。",
       "MiniumAllocation": "最低要求",

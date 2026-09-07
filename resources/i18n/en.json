@@ -2983,6 +2983,7 @@
       "LaunchMultipleSessionsTotal": "Total resources",
       "LaunchSessionWithAccessKey": "Launch session on behalf of the access key",
       "ManualImageName": "Image Name (Manual)",
+      "ManualImageNameTooltip": "Enter the image reference in the same form the registry uses, for example cr.backend.ai/stable/python:3.10-ubuntu20.04. You can append an architecture suffix such as @aarch64 to pin a specific architecture; otherwise the server's default architecture is used.",
       "Memory": "Memory",
       "MinMemory": "The minimum memory capacity for the currently selected runtime environment is {{size}}iB.",
       "MiniumAllocation": "Minimum requirements",

@@ -2996,6 +2996,7 @@
       "LaunchMultipleSessionsTotal": "Jumlah sumber",
       "LaunchSessionWithAccessKey": "Lancarkan sesi atas nama kunci akses",
       "ManualImageName": "Nama Imej (Manual)",
+      "ManualImageNameTooltip": "Masukkan rujukan imej dalam format yang sama seperti yang digunakan oleh registri, contohnya cr.backend.ai/stable/python:3.10-ubuntu20.04. Anda boleh menambah akhiran seni bina seperti @aarch64 untuk menetapkan seni bina tertentu; jika tidak, seni bina lalai pelayan akan digunakan.",
       "Memory": "Ingatan",
       "MinMemory": "Kapasiti memori minimum untuk persekitaran masa jalan yang dipilih pada masa ini ialah {{saiz}}iB.",
       "MiniumAllocation": "Keperluan minimum",
