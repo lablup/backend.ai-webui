@@ -7,7 +7,6 @@ import {
   ReplicaOrderBy,
 } from '../__generated__/DeploymentReplicasCardListQuery.graphql';
 import { DeploymentReplicasCard_deployment$key } from '../__generated__/DeploymentReplicasCard_deployment.graphql';
-import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { RouteSchedulingHistoryModalQuery } from '../__generated__/RouteSchedulingHistoryModalQuery.graphql';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -62,6 +61,18 @@ import {
 } from 'react-relay';
 
 type ReplicaStatusCategory = 'running' | 'terminated';
+
+type RevisionNode = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<
+        NonNullable<
+          DeploymentReplicasCardListQuery['response']['deployment']
+        >['replicas']
+      >['edges'][number]
+    >['node']
+  >['revision']
+>;
 
 const TERMINATED_STATUSES = ['TERMINATED', 'FAILED_TO_START'] as const;
 
@@ -251,7 +262,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
     null,
   );
   const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
-    useState<DeploymentRevisionDetail_revision$key | null>(null);
+    useState<RevisionNode | null>(null);
 
   const { deployment: listData } =
     useLazyLoadQuery<DeploymentReplicasCardListQuery>(
@@ -496,13 +507,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         }
         return (
           <>
-            <Link
-              onClick={() =>
-                setDrawerRevisionFrgmt(
-                  revision as DeploymentRevisionDetail_revision$key,
-                )
-              }
-            >
+            <Link onClick={() => setDrawerRevisionFrgmt(revision)}>
               {revision.revisionNumber != null
                 ? `#${revision.revisionNumber}`
                 : '-'}

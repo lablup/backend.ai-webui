@@ -7,7 +7,6 @@ import {
   UserResourcePolicyListQuery,
   UserResourcePolicyListQuery$data,
 } from '../__generated__/UserResourcePolicyListQuery.graphql';
-import { UserResourcePolicySettingModalFragment$key } from '../__generated__/UserResourcePolicySettingModalFragment.graphql';
 import { App } from '../app-shim';
 import {
   bytesToGB,
@@ -53,7 +52,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
     useUpdatableState('initial-fetch');
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingUserResourcePolicy, setEditingUserResourcePolicy] =
-    useState<UserResourcePolicySettingModalFragment$key | null>();
+    useState<UserResourcePolicies | null>();
   const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
     null,
   );

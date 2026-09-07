@@ -6,6 +6,7 @@ on:
     paths:
       - scripts/**
       - src/**
+      - packages/eslint-config-bai/**
       - vitest.config.ts
       - .github/workflows/vitest-root.yml
 

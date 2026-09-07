@@ -17,14 +17,19 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    include: ["{src,scripts}/**/*.{test,spec}.ts"],
+    include: [
+      "{src,scripts}/**/*.{test,spec}.ts",
+      // eslint-config-bai is plain ESM with no build step or vitest config of
+      // its own, so its rule tests run in this Node-environment suite.
+      "packages/eslint-config-bai/**/*.{test,spec}.js",
+    ],
     exclude: [
       "**/node_modules/**",
       "**/build/**",
       "**/dist/**",
-      // react/ and packages/ workspaces have their own vitest configs.
+      // react/ and the built packages have their own vitest configs.
       "react/**",
-      "packages/**",
+      "packages/!(eslint-config-bai)/**",
     ],
 
     // V8 coverage instrumentation slows down tests significantly on CI's

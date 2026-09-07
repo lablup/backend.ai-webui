@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
   UserSettingModalBulkCreateMutation,
   UserRoleV2,
@@ -65,6 +64,12 @@ import { CircleAlert } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useFragment } from 'react-relay';
+
+type CreatedKeypair = NonNullable<
+  NonNullable<
+    UserSettingModalCreateMutation['response']['adminCreateUserV2']
+  >['keypair']
+>;
 
 type UserRole = {
   [key: string]: string[];
@@ -258,7 +263,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   const deferredOpen = useDeferredValue(baiModalProps.open);
 
   const [createdKeypairs, setCreatedKeypairs] =
-    useState<GeneratedKeypairListModalFragment$key | null>();
+    useState<ReadonlyArray<CreatedKeypair> | null>();
 
   // Users the server refused to create. Reported inside the generated-keypair
   // result modal when some users were created, or in a standalone modal over

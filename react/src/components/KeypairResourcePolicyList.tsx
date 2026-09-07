@@ -2,13 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { KeypairResourcePolicyListMutation } from '../__generated__/KeypairResourcePolicyListMutation.graphql';
 import {
   KeypairResourcePolicyListQuery,
   KeypairResourcePolicyListQuery$data,
 } from '../__generated__/KeypairResourcePolicyListQuery.graphql';
-import { KeypairResourcePolicySettingModalFragment$key } from '../__generated__/KeypairResourcePolicySettingModalFragment.graphql';
 import { App } from '../app-shim';
 import { localeCompare, numberSorterWithInfinityValue } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
@@ -62,9 +60,9 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
-    useState<KeypairResourcePolicySettingModalFragment$key | null>();
+    useState<KeypairResourcePolicies | null>();
   const [currentResourcePolicy, setCurrentResourcePolicy] =
-    useState<KeypairResourcePolicyInfoModalFragment$key | null>(null);
+    useState<KeypairResourcePolicies | null>(null);
   const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
     null,
   );
