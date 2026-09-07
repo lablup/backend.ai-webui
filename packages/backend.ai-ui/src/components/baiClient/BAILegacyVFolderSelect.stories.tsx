@@ -1,8 +1,10 @@
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_LEGACY_PROJECT_ID,
+  MOCK_MOUNTABLE_HOSTS,
   mockLegacyVFolders,
 } from '../../tests/mockVFolderFileTree';
+import type { BAILabeledValue } from '../BAIComplexSelect';
 import BAIFlex from '../BAIFlex';
 import BAIText from '../BAIText';
 import BAILegacyVFolderSelect from './BAILegacyVFolderSelect';
@@ -23,13 +25,14 @@ const meta: Meta<typeof BAILegacyVFolderSelect> = {
         component: `
 **BAILegacyVFolderSelect** picks folders from the REST \`GET /folders\` list instead of the \`vfolder_nodes\` connection, because the session launcher's mount gates cannot be expressed as a GraphQL filter:
 
-- **Host gate** — a folder is offered only when its host carries \`mount-in-session\` in the merged \`allowed_vfolder_hosts\` of the domain, the current project and the caller's keypair resource policy.
+- **Host gate** — a folder is offered only when its host is in \`mountableHosts\`, the hosts granting \`mount-in-session\`. Merging the domain / project / keypair policies into that list is the host app's business, so it arrives as a prop.
 - **Project accessibility** — a user-owned folder, a folder with no group, or one owned by \`currentProjectId\`.
+- **Auto-mounted folders** — names in \`autoMountedFolderNames\` are dropped from the options; the session mounts them regardless.
 - **Display filter** — \`filter\` hides rows without shrinking the selection; an already-selected folder stays visible.
 
 The value is the dashed vfolder UUID (a stored 32-hex REST id is accepted and normalized). Reach for [BAIVFolderSelect](/?path=/docs/fragments-baivfolderselect--docs) for every other folder field.
 
-The shared mock list below has five folders; two of them are dropped by the gates, and \`.config\` is reported as auto-mounted instead of being listed.
+The shared mock list below has five folders; two of them are dropped by the gates, and \`.config\` is passed as auto-mounted.
         `,
       },
     },
@@ -40,13 +43,17 @@ export default meta;
 type Story = StoryObj<typeof BAILegacyVFolderSelect>;
 
 const ControlledDemo = ({
-  hideDotfiles = false,
+  mountableHosts = MOCK_MOUNTABLE_HOSTS,
+  autoMountedFolderNames,
+  hideGroupFolders = false,
+  initialValue = [],
 }: {
-  hideDotfiles?: boolean;
+  mountableHosts?: Array<string>;
+  autoMountedFolderNames?: Array<string>;
+  hideGroupFolders?: boolean;
+  initialValue?: Array<BAILabeledValue>;
 }) => {
-  const [value, setValue] = useState<Array<string>>([]);
-  const [autoMounted, setAutoMounted] = useState<Array<string>>([]);
-  const [names, setNames] = useState<Record<string, string>>({});
+  const [value, setValue] = useState<Array<BAILabeledValue>>(initialValue);
 
   return (
     <BAIFlex
@@ -59,22 +66,18 @@ const ControlledDemo = ({
         multiple
         label="Folders to mount"
         currentProjectId={MOCK_LEGACY_PROJECT_ID}
+        mountableHosts={mountableHosts}
+        autoMountedFolderNames={autoMountedFolderNames}
         filter={
-          hideDotfiles ? (folder) => !folder.name.startsWith('.') : undefined
+          hideGroupFolders
+            ? (folder) => folder.ownership_type === 'user'
+            : undefined
         }
-        onAutoMountedFoldersChange={setAutoMounted}
-        onResolvedNamesChange={setNames}
         value={value}
-        onChange={(next) => setValue(_.castArray(next ?? []))}
+        onChange={(next) => setValue(next ? _.castArray(next) : [])}
       />
       <BAIText type="secondary">
-        Selected keys: {value.length ? value.join(', ') : '(none)'}
-      </BAIText>
-      <BAIText type="secondary">
-        Auto-mounted: {autoMounted.length ? autoMounted.join(', ') : '(none)'}
-      </BAIText>
-      <BAIText type="secondary">
-        Resolved names: {Object.values(names).join(', ') || '(none)'}
+        Selected value: {value.length ? JSON.stringify(value) : '(none)'}
       </BAIText>
     </BAIFlex>
   );
@@ -85,7 +88,7 @@ export const Default: Story = {
     docs: {
       description: {
         story:
-          'The gates at work. `cold-archive` sits on `archive:cold`, whose permissions omit `mount-in-session`, and `other-team-data` belongs to another project — neither appears. `.config` is listed as an option here because no `filter` is set, and is also reported through `onAutoMountedFoldersChange`.',
+          'The gates at work. `cold-archive` sits on `archive:cold`, which is not in `mountableHosts`, and `other-team-data` belongs to another project — neither appears. `.config` is listed here because no `autoMountedFolderNames` is passed.',
       },
     },
   },
@@ -104,7 +107,7 @@ export const HidingAutoMountedFolders: Story = {
     docs: {
       description: {
         story:
-          'The same list with `filter={(folder) => !folder.name.startsWith(".")}`. `.config` drops out of the options but is still reported as auto-mounted, which is exactly what a mount field wants: the user cannot pick it, and the caller can still warn about an alias colliding with it.',
+          'The same list with `autoMountedFolderNames={[".config"]}`. `.config` drops out of the options, which is exactly what a mount field wants: the session mounts it anyway, so offering it would only invite a duplicate mount path.',
       },
     },
   },
@@ -113,7 +116,26 @@ export const HidingAutoMountedFolders: Story = {
       folders={mockLegacyVFolders}
       suspenseFallback="Loading..."
     >
-      <ControlledDemo hideDotfiles />
+      <ControlledDemo autoMountedFolderNames={['.config']} />
+    </MockVFolderFileProviders>
+  ),
+};
+
+export const DisplayFilter: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A display-only `filter` keeping user-owned folders, so the project folder `shared-datasets` is hidden. Select it first (in the **Default** story it is offered) and it would stay visible — `filter` never shrinks an existing selection.',
+      },
+    },
+  },
+  render: () => (
+    <MockVFolderFileProviders
+      folders={mockLegacyVFolders}
+      suspenseFallback="Loading..."
+    >
+      <ControlledDemo hideGroupFolders />
     </MockVFolderFileProviders>
   ),
 };
@@ -123,17 +145,16 @@ export const NoMountableHost: Story = {
     docs: {
       description: {
         story:
-          'No host grants `mount-in-session`, so every folder is gated out and the popup shows the empty state — the case a launcher has to surface rather than letting the user pick a folder the session cannot mount.',
+          '`mountableHosts={[]}` — no host grants `mount-in-session`, so every folder is gated out and the popup shows the empty state. This is the case a launcher has to surface rather than letting the user pick a folder the session cannot mount.',
       },
     },
   },
   render: () => (
     <MockVFolderFileProviders
       folders={mockLegacyVFolders}
-      allowedVFolderHosts={{ 'local:volume1': ['upload-file'] }}
       suspenseFallback="Loading..."
     >
-      <ControlledDemo />
+      <ControlledDemo mountableHosts={[]} />
     </MockVFolderFileProviders>
   ),
 };

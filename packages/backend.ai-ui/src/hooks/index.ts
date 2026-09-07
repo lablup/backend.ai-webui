@@ -199,8 +199,3 @@ export {
   StorageHostFetchError,
 } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
-export { useMergedAllowedVFolderHosts } from './useMergedAllowedVFolderHosts';
-export type {
-  UseMergedAllowedVFolderHostsArgs,
-  MergedAllowedVFolderHosts,
-} from './useMergedAllowedVFolderHosts';

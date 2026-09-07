@@ -59,10 +59,7 @@ export const MOCK_LEGACY_OTHER_PROJECT_ID =
   '88888888-8888-8888-8888-888888888888';
 
 /** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */
-export const MOCK_ALLOWED_VFOLDER_HOSTS: Record<string, Array<string>> = {
-  'local:volume1': ['mount-in-session', 'upload-file', 'download-file'],
-  'archive:cold': ['upload-file', 'download-file'],
-};
+export const MOCK_MOUNTABLE_HOSTS: Array<string> = ['local:volume1'];
 
 /**
  * The shared REST folder fixture: two mountable folders, one auto-mounted
