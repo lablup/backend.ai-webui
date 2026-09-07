@@ -1,0 +1,13 @@
+refactor(FR-3866): take the mount gates from the parent instead of querying them in BUI
+
+The select still fetches its own REST folder list, but the gate inputs are
+host data now: `mountableHosts` and `autoMountedFolderNames` arrive as props
+and pass through the mount config input, so BUI's allowed-hosts Relay hook
+and its `parseAllowedHosts` move are gone.
+
+The select's value is `labelInValue`-shaped, so the folder name travels with
+the selection and the name-backfill callbacks disappear. The mount config
+input shares the folder query with the select and prunes entries this owner
+and project cannot mount, warning once when it does.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>

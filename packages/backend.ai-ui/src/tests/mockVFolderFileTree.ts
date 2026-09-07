@@ -1,4 +1,4 @@
-import type { LegacyVFolder } from '../components/baiClient/BAILegacyVFolderSelect';
+import type { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
 import type {
   BAIClient,
   VFolderFile,
@@ -64,7 +64,7 @@ export const MOCK_MOUNTABLE_HOSTS: Array<string> = ['local:volume1'];
 /**
  * The shared REST folder fixture: two mountable folders, one auto-mounted
  * dotfile, one on a host without `mount-in-session`, and one owned by another
- * project — so a story exercises every gate BAILegacyVFolderSelect applies.
+ * project — so a story exercises every gate the mount config input applies.
  */
 export const mockLegacyVFolders: Array<LegacyVFolder> = [
   mockLegacyVFolder({

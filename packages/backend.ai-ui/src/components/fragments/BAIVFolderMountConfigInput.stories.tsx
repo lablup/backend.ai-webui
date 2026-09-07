@@ -121,11 +121,14 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Composes [BAILegacyVFolderSelect](/?path=/docs/input-bailegacyvfolderselect--docs)
-  to pick folders from the REST \`GET /folders\` list under the session launcher's
-  mount gates — the only source that also reports the auto-mounted dotfiles.
-  \`ownerEmail\` / \`mountableHosts\` / \`autoMountedFolderNames\` / \`filter\` are
-  forwarded straight to it.
+- Picks folders from the REST \`GET /folders\` list rather than the \`vfolder_nodes\`
+  connection, because the session launcher's mount gates cannot be expressed as a
+  GraphQL filter: the host must be in \`mountableHosts\` (those granting
+  \`mount-in-session\`), the folder must be reachable from \`currentProjectId\`, and
+  names in \`autoMountedFolderNames\` are dropped — the session mounts them anyway.
+  \`filter\` hides rows on top of that without shrinking the selection.
+- It **suspends** on that list, so the consumer owns the Suspense boundary. An entry
+  the gated list does not offer is dropped from the value with a warning toast.
 - Each selected folder appears as a row with a **mount path (alias)** input and an
   optional **subpath** picker (which subfolder of the vfolder to mount as the source; \`/\` = root),
   which opens a directory browser instead of accepting typed text.
@@ -138,10 +141,10 @@ for configuring vfolder mounts.
   form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
   \`useVFolderMountConfigFormRule\` (see the **WithFormValidation** story).
 
-The stories below mock the REST folder list, so of the six fixture folders
-\`cold-archive\` is dropped (its host is not in \`mountableHosts\`), \`other-team-data\`
-belongs to another project, and \`.config\` is dropped wherever the story passes it
-in \`autoMountedFolderNames\`.
+The stories below mock the REST folder list behind the providers' \`suspenseFallback\`,
+so of the six fixture folders \`cold-archive\` is dropped (its host is not in
+\`mountableHosts\`), \`other-team-data\` belongs to another project, and \`.config\` is
+dropped wherever the story passes it in \`autoMountedFolderNames\`.
 `,
       },
     },
@@ -416,6 +419,18 @@ export const WithFormValidation: Story = {
     };
     return <FormValidationDemo />;
   },
+};
+
+export const NoMountableHost: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`mountableHosts={[]}` — no host grants `mount-in-session`, so every folder is gated out and the popup shows the empty state. This is the case a launcher has to surface rather than letting the user pick a folder the session cannot mount.',
+      },
+    },
+  },
+  render: (args) => <ControlledDemo {...args} mountableHosts={[]} />,
 };
 
 export const Disabled: Story = {

@@ -1,32 +1,56 @@
 import { App } from '../../app-shim';
 import { Form, type RuleObject } from '../../form-engine';
 import { convertToUUID } from '../../helper';
-import { useControllableValue } from '../../hooks';
+import { useSuspenseTanQuery } from '../../helper/reactQueryAlias';
+import {
+  useBAISignedRequestWithPromise,
+  useControllableValue,
+} from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
-import type {
-  BAIComplexSelectValue,
-  BAILabeledValue,
+import BAIComplexSelect, {
+  type BAIComplexSelectValue,
+  type BAILabeledValue,
 } from '../BAIComplexSelect';
 import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
-import BAILegacyVFolderSelect, {
-  type LegacyVFolder,
-} from '../baiClient/BAILegacyVFolderSelect';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
-import {
-  isMountableLegacyVFolder,
-  useLegacyVFolderList,
-} from '../baiClient/useLegacyVFolderList';
 import { Badge } from '@astryxdesign/core/Badge';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { XIcon } from 'lucide-react';
-import React, { Suspense, useEffect, useEffectEvent } from 'react';
+import React, { useEffect, useEffectEvent, useState } from 'react';
+
+/**
+ * A folder as the REST `GET /folders` endpoint returns it. Distinct from the
+ * GraphQL `vfolder_nodes` shape: `id` is the 32-hex local id (no dashes) and
+ * `group` is the owning project's UUID or `null` for a user folder.
+ */
+export interface LegacyVFolder {
+  name: string;
+  id: string;
+  quota_scope_id: string;
+  host: string;
+  status: string;
+  usage_mode: string;
+  created_at: string;
+  is_owner: boolean;
+  permission: string;
+  user: string | null;
+  group: string | null;
+  creator: string;
+  user_email: string | null;
+  group_name: string | null;
+  ownership_type: string;
+  type: string;
+  cloneable: boolean;
+  max_files: number;
+  max_size: null | number;
+  cur_size: number;
+}
 
 /**
  * A single vfolder mount configuration emitted by BAIVFolderMountConfigInput.
@@ -58,9 +82,15 @@ export interface BAIVFolderMountConfigInputProps {
   currentProjectId?: string;
   /** Lists the folders of this user instead of the caller's own. */
   ownerEmail?: string;
-  /** Hosts granting `mount-in-session`, forwarded to the folder select. */
+  /**
+   * Hosts granting `mount-in-session`. Which policies merge into that list
+   * is the host app's business, so it is supplied rather than queried here.
+   */
   mountableHosts: string[];
-  /** Display-only folder filter, applied after the select's mount gates. */
+  /**
+   * Display-only folder filter, applied after the mount gates. An already
+   * selected folder stays visible even when it filters out.
+   */
   filter?: (folder: LegacyVFolder) => boolean;
   disabled?: boolean;
   /** Base path prepended to a relative alias input (mirrors VFolderTable). */
@@ -68,8 +98,8 @@ export interface BAIVFolderMountConfigInputProps {
   /**
    * Names of folders that are auto-mounted. Their default mount paths
    * (`${aliasBasePath}${name}`) join the overlap set so a colliding user alias
-   * is flagged, they are shown as a read-only tag list at the bottom, and the
-   * select drops them from its options.
+   * is flagged, they are shown as a read-only tag list at the bottom, and
+   * they are dropped from the folder options.
    */
   autoMountedFolderNames?: string[];
 }
@@ -306,10 +336,11 @@ export const useVFolderMountConfigFormRule = (
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * Users pick vfolders with {@link BAILegacyVFolderSelect}, the REST-backed
- * folder list, gated by the `mountableHosts` / `autoMountedFolderNames` the
- * host supplies. It is swapped for the GraphQL folder list here once the v2
- * folder API can express those gates.
+ * Users pick vfolders from the REST `GET /folders` list, gated by the
+ * `mountableHosts` / `autoMountedFolderNames` the host supplies — gates the
+ * `vfolder_nodes` connection cannot express, which is why the legacy endpoint
+ * is still the source. It suspends on that list; the consumer owns the
+ * Suspense boundary.
  * Each selected folder appears as a row below the select where its mount
  * destination (alias) is typed and its subpath is browsed with
  * {@link BAIVFolderPathPicker}. The alias input follows VFolderTable's rule
@@ -346,11 +377,12 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   const { t } = useBAIi18n();
   const { message } = App.useApp();
   const { token } = theme.useToken();
-  const allFolderList = useLegacyVFolderList(ownerEmail);
+  const baiRequestWithPromise = useBAISignedRequestWithPromise();
   const [value, setValue] = useControllableValue<VFolderMountConfigValue[]>(
     props,
     { defaultValue: [] },
   );
+  const [searchStr, setSearchStr] = useState('');
   const mountConfigs = value ?? [];
   // The select is `labelInValue`-shaped, so the folder name travels with the
   // selection and no separate name lookup is needed.
@@ -358,29 +390,47 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     value: entry.vfolderId,
     label: entry.name ?? entry.vfolderId,
   }));
+  const selectedIdSet = new Set(_.map(mountConfigs, (e) => e.vfolderId));
 
-  // Resolve each entry's mount destination + validity once via the same
-  // exported helper a consumer uses to gate the form, then read per row below.
-  const statusByVFolderId = getVFolderMountConfigStatuses(mountConfigs, {
-    aliasBasePath,
-    autoMountedFolderNames,
+  const { data: allFolderList } = useSuspenseTanQuery<Array<LegacyVFolder>>({
+    // The request carries no project scope — that gate is applied client-side.
+    queryKey: ['BAIVFolderMountConfigInputFolders', ownerEmail ?? ''],
+    queryFn: () => {
+      const search = new URLSearchParams();
+      if (ownerEmail) search.set('owner_user_email', ownerEmail);
+      const query = search.toString();
+      return baiRequestWithPromise({
+        method: 'GET',
+        url: `/folders${query ? `?${query}` : ''}`,
+      }) as Promise<Array<LegacyVFolder>>;
+    },
+    staleTime: 30 * 1000,
   });
 
-  const mountableIds = new Set(
-    _.map(
-      _.filter(allFolderList, (folder) =>
-        isMountableLegacyVFolder(folder, { mountableHosts, currentProjectId }),
-      ),
-      (folder) => convertToUUID(folder.id),
-    ),
+  const mountableHostSet = new Set(mountableHosts);
+  const autoMountedNameSet = new Set(autoMountedFolderNames ?? []);
+  // Offering an auto-mounted folder is noise: the session mounts it anyway, so
+  // picking it could only produce a duplicate mount path.
+  const mountableFolders = _.filter(
+    allFolderList ?? [],
+    (folder) =>
+      mountableHostSet.has(folder.host) &&
+      (folder.ownership_type === 'user' ||
+        !folder.group ||
+        folder.group === currentProjectId) &&
+      !autoMountedNameSet.has(folder.name),
+  );
+  const mountableIdSet = new Set(
+    _.map(mountableFolders, (folder) => convertToUUID(folder.id)),
   );
 
   // A value restored from a template or a URL can name a folder this owner and
   // project cannot mount. Drop it rather than letting the launch fail server
   // side, and say so — a selection shrinking on its own is otherwise silent.
+  // The early return is also what keeps the emitted value from looping back in.
   const pruneUnmountableEntries = useEffectEvent(() => {
     const kept = _.filter(mountConfigs, (entry) =>
-      mountableIds.has(entry.vfolderId),
+      mountableIdSet.has(entry.vfolderId),
     );
     if (kept.length === mountConfigs.length) return;
     setValue(kept);
@@ -390,7 +440,20 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   });
   useEffect(() => {
     pruneUnmountableEntries();
-  }, [allFolderList, mountableHosts, currentProjectId]);
+  }, [mountableFolders]);
+
+  const displayingFolders = _.filter(mountableFolders, (folder) => {
+    if (selectedIdSet.has(convertToUUID(folder.id))) return true;
+    if (filter && !filter(folder)) return false;
+    return !searchStr || _.includes(folder.name, searchStr);
+  });
+
+  // Resolve each entry's mount destination + validity once via the same
+  // exported helper a consumer uses to gate the form, then read per row below.
+  const statusByVFolderId = getVFolderMountConfigStatuses(mountConfigs, {
+    aliasBasePath,
+    autoMountedFolderNames,
+  });
 
   // The select's value carries the folder name, so a new entry is named on the
   // spot and no backfill pass is needed.
@@ -418,21 +481,23 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
-      <Suspense fallback={<Skeleton height={28} width="100%" />}>
-        <BAILegacyVFolderSelect
-          multiple
-          label={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
-          isLabelHidden
-          isDisabled={disabled}
-          currentProjectId={currentProjectId}
-          ownerEmail={ownerEmail}
-          mountableHosts={mountableHosts}
-          autoMountedFolderNames={autoMountedFolderNames}
-          filter={filter}
-          value={selectedFolders}
-          onChange={handleSelectionChange}
-        />
-      </Suspense>
+      <BAIComplexSelect
+        multiple
+        label={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
+        isLabelHidden
+        isDisabled={disabled}
+        placeholder={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
+        total={displayingFolders.length}
+        options={_.map(displayingFolders, (folder) => ({
+          value: convertToUUID(folder.id),
+          label: folder.name,
+          description: folder.host,
+        }))}
+        value={selectedFolders}
+        onChange={handleSelectionChange}
+        searchValue={searchStr}
+        onSearch={setSearchStr}
+      />
       {mountConfigs.length > 0 && (
         <BAIFlex direction="column" align="stretch" gap="xxs">
           <BAIFlex gap="xxs" align="center">
