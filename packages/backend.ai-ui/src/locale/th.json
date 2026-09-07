@@ -268,6 +268,9 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "เลือกคู่คีย์"
   },
+  "comp:BAILegacyVFolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
+  },
   "comp:BAILoginHistoryTable": {
     "ClientIp": "IP ของไคลเอ็นต์",
     "Domain": "โดเมน",
