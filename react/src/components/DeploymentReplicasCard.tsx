@@ -41,6 +41,7 @@ import {
   toLocalId,
   type GraphQLFilter,
   useConnectedBAIClient,
+  useFetchKey,
   BAILink,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -230,13 +231,13 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         : 0,
   }));
 
-  const [fetchKey, setFetchKey] = useState(0);
+  const [fetchKey, updateFetchKey] = useFetchKey();
   // First load (no manual refresh and no page-driven replica refetch yet) can
   // serve cached data immediately and refresh in the background; explicit
   // refresh / add-revision goes network-only for fresh data. Mirrors
   // DeploymentRevisionHistoryTab.
   const isInitialFetch =
-    fetchKey === 0 &&
+    fetchKey === INITIAL_FETCH_KEY &&
     (replicaFetchKey === undefined || replicaFetchKey === INITIAL_FETCH_KEY);
   const baiClient = useConnectedBAIClient();
   const supportsRouteSchedulingHistory = baiClient.supports(
@@ -574,7 +575,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
           loading={isPending}
           value=""
           onChange={() => {
-            startTransition(() => setFetchKey((k) => k + 1));
+            startTransition(() => updateFetchKey());
           }}
         />
       </BAIFlex>

@@ -26,7 +26,10 @@ export type FetchKeyAutoUpdateSettingId =
   | 'deployment-list'
   | 'admin-deployment-list'
   | 'project-admin-deployments'
+  // Deployment detail sections
   | 'deployment-replicas'
+  | 'deployment-auto-scaling'
+  | 'deployment-access-tokens'
   // VFolder lists
   | 'vfolder-list'
   | 'admin-vfolder-list'

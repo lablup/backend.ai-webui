@@ -17,12 +17,12 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoScalingRuleEditorModal from './AutoScalingRuleEditorModal';
 import AutoScalingRuleListNodes from './AutoScalingRuleListNodes';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import {
   BAISkeleton,
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAIQuestionIconWithTooltip,
@@ -55,7 +55,7 @@ interface DeploymentAutoScalingCardProps {
  * filter / sort / pagination, the create-edit flow, and deletion. The table
  * itself is rendered by the presentational `AutoScalingRuleListNodes`.
  *
- * Both the refresh button (`BAIFetchKeyButton`) and the primary "Add rules"
+ * Both the refresh button (`AutoUpdateFetchKeyButton`) and the primary "Add rules"
  * button live in the toolbar next to the property filter so the table controls
  * stay grouped together (per Jongeun's feedback).
  */
@@ -294,7 +294,8 @@ const DeploymentAutoScalingCardContent: React.FC<
             }}
           />
           <BAIFlex align="center" gap="xs">
-            <BAIFetchKeyButton
+            <AutoUpdateFetchKeyButton
+              settingId="deployment-auto-scaling"
               loading={isPendingRefetch}
               value=""
               onChange={() => {

@@ -8,6 +8,7 @@ import { DeploymentAccessTokensCardListQuery } from '../__generated__/Deployment
 import { DeploymentAccessTokensCard_deployment$key } from '../__generated__/DeploymentAccessTokensCard_deployment.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
+import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormSelector } from './astryxFormControls';
 import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
@@ -18,7 +19,6 @@ import {
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
-  BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
   BAINameActionCell,
@@ -165,7 +165,8 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
         }
         extra={
           <BAIFlex gap="xs" align="center">
-            <BAIFetchKeyButton
+            <AutoUpdateFetchKeyButton
+              settingId="deployment-access-tokens"
               loading={isPendingRefetch}
               value=""
               onChange={handleRefetch}
