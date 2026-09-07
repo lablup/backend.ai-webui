@@ -8,6 +8,7 @@ import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -72,19 +73,23 @@ vi.mock('../hooks/useCurrentProject', async (importOriginal) => {
   };
 });
 
-// Mode is user-persisted; tests pin it per scenario.
+// Mode is user-persisted; tests pin the initial value per scenario and the
+// stand-in keeps it in real state so the mode toggle actually switches forms.
 let mockMode: 'preset' | 'custom' = 'preset';
 vi.mock('../hooks/useBAISetting', async (importOriginal) => {
+  const React = await import('react');
   const originalModule =
     await importOriginal<typeof import('../hooks/useBAISetting')>();
+  function useBAISettingUserState(key: string) {
+    const state = React.useState<'preset' | 'custom'>(mockMode);
+    if (key === 'deploymentRevisionCreationMode') {
+      return state;
+    }
+    throw new Error(`Unexpected setting key in test: ${key}`);
+  }
   return {
     ...originalModule,
-    useBAISettingUserState: (key: string) => {
-      if (key === 'deploymentRevisionCreationMode') {
-        return [mockMode, vi.fn()];
-      }
-      throw new Error(`Unexpected setting key in test: ${key}`);
-    },
+    useBAISettingUserState,
   };
 });
 
@@ -135,8 +140,34 @@ vi.mock('./EnvVarFormList', () => ({ default: () => null }));
 vi.mock('./VFolderTableFormItem', () => ({ default: () => null }));
 vi.mock('./DeploymentPresetDetailModal', () => ({ default: () => null }));
 
+// The model-card picker is Relay-backed; the stand-in reports a card whose
+// backing vfolder id is what the mode transfer must carry.
+const MOCK_CARD_VFOLDER_ID = 'card-backing-vfolder-uuid';
+vi.mock('./ModelCardSelect', async () => {
+  const React = await import('react');
+  return {
+    default: (props: any) =>
+      React.createElement(
+        'button',
+        {
+          'data-testid': 'mock-model-card-select',
+          type: 'button',
+          onClick: () => {
+            props.onChange?.('mock-card-id');
+            props.onSelectCard?.({
+              id: 'mock-card-id',
+              vfolderId: 'card-backing-vfolder-uuid',
+            });
+          },
+        },
+        'select-model-card',
+      ),
+  };
+});
+
 // The model-folder picker is the probe for the folder-picker side of the
-// contract: it surfaces the `currentProjectId` it was scoped to.
+// contract: it surfaces the `currentProjectId` it was scoped to, and the
+// value it holds (the mode-transfer assertions read that).
 vi.mock('backend.ai-ui', async (importOriginal) => {
   const React = await import('react');
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
@@ -148,6 +179,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         {
           'data-testid': 'mock-vfolder-select',
           'data-current-project-id': props.currentProjectId ?? '',
+          'data-value': props.value ?? '',
           disabled: props.isDisabled ?? props.disabled,
           type: 'button',
         },
@@ -289,5 +321,33 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
     expect(
       screen.queryByTestId('mock-resource-allocation-form'),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('DeploymentAddRevisionModal model source mode transfer (FR-3316)', () => {
+  afterEach(() => {
+    mockMode = 'preset';
+  });
+
+  it("carries the model card's backing folder into Custom mode as a global id", async () => {
+    const user = userEvent.setup();
+    renderModal(DEPLOYMENT_METADATA);
+
+    await user.click(
+      await screen.findByRole('radio', { name: 'deployment.ModelCard' }),
+    );
+    await user.click(await screen.findByTestId('mock-model-card-select'));
+    await user.click(
+      screen.getByRole('radio', { name: 'deployment.CustomMode' }),
+    );
+
+    // The card stores a raw vfolder UUID; the Custom form's folder field is
+    // global-id valued, so the carry has to re-encode it.
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-vfolder-select')).toHaveAttribute(
+        'data-value',
+        btoa(`VirtualFolderNode:${MOCK_CARD_VFOLDER_ID}`),
+      );
+    });
   });
 });
