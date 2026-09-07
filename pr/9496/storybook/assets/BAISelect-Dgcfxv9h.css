@@ -1,0 +1,20 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAISelect> (imported by the component itself, P17).
+
+ Only the `ghost` variant survives here: Astryx `Selector` has `variant`, not a
+ colour slot (P5), and `ghost` exists for exactly one placement — a select on
+ the app header's brand-accent band.
+
+ That band is a REVERSED surface: its content polarity is the OPPOSITE of the
+ app's, so these read `light-dark(on-dark, on-light)` — white on the orange in
+ light mode, near-black in dark (FR-3502). `light-dark()` is safe on a NORMAL
+ property (it computes at the declaring element); it would NOT be on a custom
+ property, which is substituted at use time.
+
+ The chevron and any slot glyphs take `--color-icon-secondary` from Astryx's own
+ StyleX rules, which a class selector cannot outrank — so the token is
+ re-declared rather than the `color` re-stated.
+*/.bai-select-ghost{background-color:transparent;border-color:light-dark(var(--color-on-dark),var(--color-on-light));color:light-dark(var(--color-on-dark),var(--color-on-light));--color-icon-secondary: light-dark( var(--color-on-dark), var(--color-on-light) )}.bai-select-ghost button,.bai-select-ghost [role=combobox]{background-color:transparent;border-color:light-dark(var(--color-on-dark),var(--color-on-light));color:light-dark(var(--color-on-dark),var(--color-on-light))}.bai-select-ghost:has([aria-invalid=true]),.bai-select-ghost [aria-invalid=true]{border-color:var(--color-error)}.bai-select-rich-trigger>.bai-select-rich-value{display:flex;flex:1 1 0;min-width:0;overflow:hidden}.bai-select-rich-trigger>.bai-select-rich-value>*{flex:1 1 auto;min-width:0}.bai-select-rich-trigger>button[aria-haspopup=listbox]{position:absolute;top:0;right:0;bottom:0;left:0}.bai-select-rich-trigger>button:not([aria-haspopup=listbox]){position:relative}.bai-select-rich-trigger>button[aria-haspopup=listbox]>span{position:absolute;inset-block-start:0;inset-inline-start:0;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;pointer-events:none}

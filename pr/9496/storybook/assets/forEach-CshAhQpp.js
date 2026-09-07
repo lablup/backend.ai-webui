@@ -1,0 +1,1 @@
+import{a as f}from"./_arrayEach-DpGxo2Of.js";import{b as m}from"./_baseEach-DfmKQ66O.js";import{c as s}from"./_castFunction-a6W-o7Lo.js";import{i as t}from"./iframe-Dme-5ij0.js";function u(r,a){var o=t(r)?f:m;return o(r,s(a))}export{u as f};
