@@ -155,6 +155,52 @@ describe('createLocalStorageCache persistence', () => {
     expect(cache.size()).toBe(0);
   });
 
+  it('lets a resumed conversation back into the stored copy', () => {
+    const cache = createLocalStorageCache<Entry>('test.cache', oldestFirst);
+    cache.set('old', entry('2026-01-01T00:00:00.000Z'));
+
+    // Only a single entry fits from now on.
+    setItem.mockImplementation((_key: string, value: string) => {
+      if (JSON.parse(value).length > 1) {
+        throw quotaError();
+      }
+    });
+    expect(cache.set('new', entry('2026-01-02T00:00:00.000Z')).status).toBe(
+      'entries-unpersisted',
+    );
+
+    // Resuming 'old' makes it the newest, so it is stored and 'new' is evicted.
+    const result = cache.set('old', entry('2026-01-03T00:00:00.000Z'));
+
+    expect(result).toEqual({
+      status: 'entries-unpersisted',
+      unpersistedKeys: ['new'],
+    });
+    expect(
+      JSON.parse(lastWrittenValue(setItem)).map(([key]: [string]) => key),
+    ).toEqual(['old']);
+  });
+
+  it('stores attachments again once the last chat is deleted', () => {
+    setItem.mockImplementation((_key: string, value: string) => {
+      if (value.includes('data:')) {
+        throw quotaError();
+      }
+    });
+    const cache = createLocalStorageCache<Entry>('test.cache', oldestFirst);
+    cache.set('a', entry('2026-01-01T00:00:00.000Z'));
+
+    // The UI removes chats one by one through delete(), never clear().
+    cache.delete('a');
+    setItem.mockImplementation(() => {});
+
+    expect(cache.set('b', entry('2026-01-02T00:00:00.000Z'))).toEqual({
+      status: 'ok',
+      unpersistedKeys: [],
+    });
+    expect(lastWrittenValue(setItem)).toContain('data:image/png;base64,');
+  });
+
   it('stores attachments again after clear()', () => {
     setItem.mockImplementation((_key: string, value: string) => {
       if (value.includes('data:')) {

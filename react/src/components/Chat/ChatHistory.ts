@@ -85,6 +85,11 @@ export function createLocalStorageCache<T>(
   // absent from the next reload.
   const unpersistedKeys = new Set<string>();
 
+  const resetDegradation = () => {
+    unpersistedKeys.clear();
+    dropsAttachments = false;
+  };
+
   const persistableEntries = () =>
     Array.from(cache.entries()).filter(([key]) => !unpersistedKeys.has(key));
 
@@ -149,6 +154,9 @@ export function createLocalStorageCache<T>(
     cache,
     set(key: string, value: T) {
       cache.set(key, value);
+      // A resumed conversation must be able to re-enter the stored copy;
+      // eviction is by recency, so persist() drops an older one instead.
+      unpersistedKeys.delete(key);
 
       return persist();
     },
@@ -161,13 +169,17 @@ export function createLocalStorageCache<T>(
     delete(key: string) {
       cache.delete(key);
       unpersistedKeys.delete(key);
+      // Removing the last chat leaves nothing to degrade for, and `clear()` is
+      // not what the UI calls.
+      if (cache.size === 0) {
+        resetDegradation();
+      }
 
       return persist();
     },
     clear: () => {
       cache.clear();
-      unpersistedKeys.clear();
-      dropsAttachments = false;
+      resetDegradation();
       localStorage.removeItem(cacheName);
     },
     getAll() {
