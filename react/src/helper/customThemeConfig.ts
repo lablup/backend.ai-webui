@@ -128,7 +128,10 @@ export const pickValidAppearanceConfig = (
   source: string,
 ): BAIAppearanceConfig | undefined => {
   if (!_.isPlainObject(input)) {
-    warn(`${source} is not a JSON object; using the built-in defaults.`);
+    warn(
+      `${source} is not a JSON object; rendering Astryx's neutral theme ` +
+        '(no Backend.AI colors).',
+    );
     return undefined;
   }
   const doc = input as Record<string, unknown>;
@@ -141,7 +144,8 @@ export const pickValidAppearanceConfig = (
     } else {
       warn(
         `${source} has no "schemaVersion": ${APPEARANCE_SCHEMA_VERSION} ` +
-          `(got ${JSON.stringify(doc.schemaVersion)}); using the built-in defaults.`,
+          `(got ${JSON.stringify(doc.schemaVersion)}); rendering Astryx's ` +
+          'neutral theme (no Backend.AI colors).',
       );
     }
     return undefined;
@@ -153,7 +157,8 @@ export const pickValidAppearanceConfig = (
   ) {
     warn(
       `${source} declares theme.families without a "default" entry; ` +
-        'the default family falls back to the built-in seeds.',
+        "the default family renders Astryx's neutral theme " +
+        '(no Backend.AI colors).',
     );
   }
   return doc as BAIAppearanceConfig;
@@ -171,6 +176,16 @@ const store: AppearanceStore = {};
 /** The applied document. */
 export const getCustomTheme = (): BAIAppearanceConfig | undefined =>
   store.appliedDoc;
+
+/**
+ * `useSyncExternalStore` subscription for the applied document. React re-reads
+ * the snapshot right after subscribing, so a document that settles between a
+ * component's first render and its subscription is not missed.
+ */
+export const subscribeCustomTheme = (onChange: () => void) => {
+  document.addEventListener('custom-theme-loaded', onChange);
+  return () => document.removeEventListener('custom-theme-loaded', onChange);
+};
 
 /** The pristine shipped document (Branding editor seed/reset source). */
 export const getStaticAppearanceConfig = (): BAIAppearanceConfig | undefined =>
