@@ -6,6 +6,7 @@ import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
+import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
 import BAIVFolderSelect from './BAIVFolderSelect';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
@@ -162,9 +163,10 @@ export const isVFolderMountConfigValid = (
  *
  * Users pick vfolders with {@link BAIVFolderSelect} (in `row_id` mode, so the
  * value is the vfolder UUID); each selected folder appears as a row below the
- * select where its mount destination (alias) and an optional subpath can be
- * edited. The alias input follows VFolderTable's rule (relative inputs are
- * prefixed with `aliasBasePath`, absolute inputs are used as-is); the emitted
+ * select where its mount destination (alias) is typed and its subpath is
+ * browsed with {@link BAIVFolderPathPicker}. The alias input follows
+ * VFolderTable's rule (relative inputs are prefixed with `aliasBasePath`,
+ * absolute inputs are used as-is); the emitted
  * `mountDestination` stores that raw alias verbatim, which the consumer
  * resolves to the full path with {@link inputToMountDestination}. The component
  * is controlled and emits a single `VFolderMountConfigValue[]` value.
@@ -378,26 +380,24 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                   }
                   style={{ flex: 1, marginBottom: 0 }}
                 >
-                  <TextInput
-                    label={t(
-                      'comp:BAIVFolderMountConfigInput.SubpathPlaceholder',
-                    )}
-                    isLabelHidden
+                  <BAIVFolderPathPicker
+                    label={t('comp:BAIVFolderMountConfigInput.Subpath')}
                     size="sm"
-                    isDisabled={disabled}
-                    placeholder={t(
-                      'comp:BAIVFolderMountConfigInput.SubpathPlaceholder',
-                    )}
-                    value={entry.subpath ?? ''}
+                    disabled={disabled}
+                    vfolderUuid={entry.vfolderId}
+                    value={entry.subpath}
+                    // The emitted `subpath` contract is `''` = vfolder root, so
+                    // a cleared pick collapses back to root rather than absent.
                     onChange={(next) =>
                       setValue(
                         mountConfigs.map((m) =>
                           m.vfolderId === entry.vfolderId
-                            ? { ...m, subpath: next }
+                            ? { ...m, subpath: next ?? '' }
                             : m,
                         ),
                       )
                     }
+                    style={{ width: '100%' }}
                   />
                 </Form.Item>
                 <Tooltip
