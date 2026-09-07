@@ -22,12 +22,11 @@ import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
 import EditableSessionName from './ComputeSessionNodeItems/EditableSessionName';
 import SessionAccessKey from './ComputeSessionNodeItems/SessionAccessKey';
 import SessionActionButtons from './ComputeSessionNodeItems/SessionActionButtons';
-import SessionIdleChecks, {
-  IdleChecks,
-} from './ComputeSessionNodeItems/SessionIdleChecks';
+import SessionIdleChecks from './ComputeSessionNodeItems/SessionIdleChecks';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
+import type { IdleChecks } from './ComputeSessionNodeItems/idleChecks';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { UNSAFELazySessionImageTag } from './ImageTags';

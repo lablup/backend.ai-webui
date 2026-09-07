@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1730d4f6383847bae535416b993c3a61>>
+ * @generated SignedSource<<7d74a133a634400752fe27658e85f563>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,6 @@ import { FragmentRefs } from "relay-runtime";
 export type SessionIdleChecksNodeFragment$data = {
   readonly id: string;
   readonly idle_checks: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"SessionReclamationStatusCellFragment">;
   readonly " $fragmentType": "SessionIdleChecksNodeFragment";
 };
 export type SessionIdleChecksNodeFragment$key = {
@@ -40,17 +39,12 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "idle_checks",
       "storageKey": null
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "SessionReclamationStatusCellFragment"
     }
   ],
   "type": "ComputeSessionNode",
   "abstractKey": null
 };
 
-(node as any).hash = "cd0692b3021358f17c5abea99afd29d2";
+(node as any).hash = "9fa9e2bd6d1e326e583494375f4a30f5";
 
 export default node;

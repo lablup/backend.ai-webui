@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<99bdccbe04e97785e1504afef94cd266>>
+ * @generated SignedSource<<905e7762ac97eea2e8c0f8137b054a6c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -266,12 +266,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "34f258c08b6db62df953842ebe3f5c1d",
+    "cacheID": "193737d494cb9b22251f442044b39d16",
     "id": null,
     "metadata": {},
     "name": "AstryxSessionProbeCasesQuery",
     "operationKind": "query",
-    "text": "query AstryxSessionProbeCasesQuery(\n  $id1: GlobalIDField!\n  $id2: GlobalIDField!\n  $id3: GlobalIDField!\n) {\n  running: compute_session_node(id: $id1) {\n    ...SessionStatusTagFragment\n    ...SessionReservationFragment\n    ...SessionIdleChecksNodeFragment\n    id\n  }\n  pending: compute_session_node(id: $id2) {\n    ...SessionStatusTagFragment\n    id\n  }\n  error: compute_session_node(id: $id3) {\n    ...SessionStatusTagFragment\n    ...SessionStatusDetailModalFragment\n    id\n  }\n}\n\nfragment SessionIdleChecksNodeFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusCellFragment\n}\n\nfragment SessionReclamationStatusCellFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusPopoverFragment\n}\n\nfragment SessionReclamationStatusPopoverFragment on ComputeSessionNode {\n  id\n  idle_checks\n}\n\nfragment SessionReservationFragment on ComputeSessionNode {\n  id\n  created_at\n  starts_at\n  terminated_at\n}\n\nfragment SessionStatusDetailModalFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  starts_at\n  ...SessionStatusTagFragment\n}\n\nfragment SessionStatusTagFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  status_data\n  queue_position @since(version: \"25.13.0\")\n}\n"
+    "text": "query AstryxSessionProbeCasesQuery(\n  $id1: GlobalIDField!\n  $id2: GlobalIDField!\n  $id3: GlobalIDField!\n) {\n  running: compute_session_node(id: $id1) {\n    ...SessionStatusTagFragment\n    ...SessionReservationFragment\n    ...SessionIdleChecksNodeFragment\n    id\n  }\n  pending: compute_session_node(id: $id2) {\n    ...SessionStatusTagFragment\n    id\n  }\n  error: compute_session_node(id: $id3) {\n    ...SessionStatusTagFragment\n    ...SessionStatusDetailModalFragment\n    id\n  }\n}\n\nfragment SessionIdleChecksNodeFragment on ComputeSessionNode {\n  id\n  idle_checks\n}\n\nfragment SessionReservationFragment on ComputeSessionNode {\n  id\n  created_at\n  starts_at\n  terminated_at\n}\n\nfragment SessionStatusDetailModalFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  starts_at\n  ...SessionStatusTagFragment\n}\n\nfragment SessionStatusTagFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  status_data\n  queue_position @since(version: \"25.13.0\")\n}\n"
   }
 };
 })();

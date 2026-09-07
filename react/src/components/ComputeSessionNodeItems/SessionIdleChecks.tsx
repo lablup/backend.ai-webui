@@ -3,10 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SessionIdleChecksNodeFragment$key } from '../../__generated__/SessionIdleChecksNodeFragment.graphql';
-import { SessionReclamationStatusCellFragment$key } from '../../__generated__/SessionReclamationStatusCellFragment.graphql';
 import { formatDurationAsDays } from '../../helper';
-import SessionReclamationStatusCell from './SessionReclamationStatusCell';
-import { getOverallReclamation } from './SessionReclamationStatusPopover';
+import { SessionReclamationStatus } from './SessionReclamationStatusCell';
+import {
+  getIdleChecksTagColor,
+  type IdleCheckItem,
+  type IdleChecks,
+} from './idleChecks';
 import { Text } from '@astryxdesign/core/Text';
 import * as stylex from '@stylexjs/stylex';
 import {
@@ -22,29 +25,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-type BaseExtra = null;
-type UtilizationExtra = {
-  resources: {
-    cpu_util: number[];
-    mem: number[];
-    cuda_util: number[];
-    cuda_mem: number[];
-    ipu_util: number[];
-    ipu_mem: number[];
-  };
-  thresholds_check_operator: 'and' | 'or';
-};
-export type IdleCheckItem = {
-  extra: BaseExtra | UtilizationExtra;
-  remaining: number | null;
-  remaining_time_type: 'expire_after' | 'grace_period';
-};
-export type IdleChecks = {
-  network_timeout?: IdleCheckItem;
-  session_lifetime?: IdleCheckItem;
-  utilization?: IdleCheckItem;
-};
-
 interface SessionIdleChecksProps {
   sessionNodeFrgmt: SessionIdleChecksNodeFragment$key | null;
   direction?: 'row' | 'column';
@@ -59,38 +39,10 @@ const styles = stylex.create({
   },
 });
 
-export function getIdleChecksTagColor(
-  result: IdleCheckItem,
-  criteria: 'remaining' | 'utilization',
-) {
-  // Determine color based on remaining time.
-  if (criteria === 'remaining') {
-    if (!result.remaining || result.remaining < 3600) {
-      return 'red';
-    } else if (result.remaining < 3600 * 4) {
-      return 'orange';
-    } else {
-      return 'green';
-    }
-  }
-
-  // Determine color based on utilization, matching the overall badge color
-  // shown by SessionReclamationStatusCell.
-  if (result.extra && (!result.remaining || result.remaining < 3600 * 4)) {
-    return getOverallReclamation(
-      result.extra.resources,
-      result.extra.thresholds_check_operator,
-    )?.color;
-  }
-
-  return undefined;
-}
-
 const SessionIdleCheckItem: React.FC<{
   checkKey: keyof IdleChecks;
   value: IdleCheckItem;
-  sessionFrgmt: SessionReclamationStatusCellFragment$key | null | undefined;
-}> = ({ checkKey, value, sessionFrgmt }) => {
+}> = ({ checkKey, value }) => {
   'use memo';
   const { t } = useTranslation();
 
@@ -128,7 +80,7 @@ const SessionIdleCheckItem: React.FC<{
     <BAIFlex style={{ flex: 1 }} direction="column" align="stretch">
       <BAIFlex gap={'xxs'}>
         {checkKey === 'utilization' ? (
-          <SessionReclamationStatusCell sessionFrgmt={sessionFrgmt} />
+          <SessionReclamationStatus utilizationCheck={value} />
         ) : (
           <Text>{getIdleCheckTitle(checkKey)}</Text>
         )}
@@ -186,7 +138,6 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
       fragment SessionIdleChecksNodeFragment on ComputeSessionNode {
         id
         idle_checks
-        ...SessionReclamationStatusCellFragment
       }
     `,
     sessionNodeFrgmt,
@@ -204,14 +155,7 @@ const SessionIdleChecks: React.FC<SessionIdleChecksProps> = ({
       {_.map(idleChecks, (value: IdleCheckItem, key: keyof IdleChecks) => {
         if (!value.remaining) return null;
 
-        return (
-          <SessionIdleCheckItem
-            key={key}
-            checkKey={key}
-            value={value}
-            sessionFrgmt={sessionNode}
-          />
-        );
+        return <SessionIdleCheckItem key={key} checkKey={key} value={value} />;
       })}
     </BAIFlex>
   );
