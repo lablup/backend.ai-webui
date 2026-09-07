@@ -76,6 +76,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
       fragment FileBrowserButtonFragment on VirtualFolderNode {
         id
         host
+        name
       }
     `,
     vfolderFrgmt,
@@ -106,7 +107,12 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
     allocationPreset: 'minimum-required',
     cluster_mode: 'single-node',
     cluster_size: 1,
-    vfolderMounts: [{ vfolderId: toLocalId(vfolder.id || '') }],
+    vfolderMounts: [
+      {
+        vfolderId: toLocalId(vfolder.id || ''),
+        name: vfolder.name ?? undefined,
+      },
+    ],
     reuseIfExists: true,
   });
 

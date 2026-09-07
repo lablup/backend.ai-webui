@@ -11,6 +11,7 @@ import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
+import { useAutoMountedFolderNames } from '../hooks/useAutoMountedFolderNames';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import {
   SessionLauncherFormValue,
@@ -89,6 +90,9 @@ const SessionLauncherPreview: React.FC<{
   const supportExtendedImageInfo =
     baiClient?.supports('extended-image-info') ?? false;
   const currentProject = useCurrentProjectValue();
+  const autoMountedFolderNames = useAutoMountedFolderNames(
+    currentProject.id ?? '',
+  );
   const [, { getBaseVersion, getBaseImage, tagAlias }] =
     useBackendAIImageMetaData();
 
@@ -524,16 +528,13 @@ const SessionLauncherPreview: React.FC<{
               title={t('session.launcher.NoFolderMounted')}
             />
           )}
-          {form.getFieldValue('autoMountedFolderNames')?.length > 0 ? (
+          {autoMountedFolderNames.length > 0 ? (
             <BAIMetadataList columns="single">
               <MetadataListItem label={t('data.AutomountFolders')}>
                 <BAIFlex gap="xs" wrap="wrap">
-                  {_.map(
-                    form.getFieldValue('autoMountedFolderNames'),
-                    (name) => {
-                      return <Badge key={name} label={name} />;
-                    },
-                  )}
+                  {_.map(autoMountedFolderNames, (name) => (
+                    <Badge key={name} label={name} />
+                  ))}
                 </BAIFlex>
               </MetadataListItem>
             </BAIMetadataList>

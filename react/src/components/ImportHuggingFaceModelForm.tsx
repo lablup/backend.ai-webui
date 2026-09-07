@@ -205,7 +205,9 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           shmem: '0g',
           accelerator: 0,
         },
-        vfolderMounts: [{ vfolderId: toLocalId(values.vfolderId) }],
+        vfolderMounts: [
+          { vfolderId: toLocalId(values.vfolderId), name: folderName },
+        ],
         // Pass the token as an environment variable instead of interpolating
         // it into the shell command.
         ...(token ? { envvars: [{ variable: 'HF_TOKEN', value: token }] } : {}),
