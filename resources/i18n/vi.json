@@ -2789,6 +2789,8 @@
     "NoLogs": "Không có nhật ký.",
     "NoSession": "Không có phiên.",
     "NoSessionToDisplay": "Không có phiên nào để hiển thị",
+    "NoStatusDetail": "__NOT_TRANSLATED__",
+    "NoStatusDetailDescription": "__NOT_TRANSLATED__",
     "NotInProject": "Phiên này thuộc về một dự án khác.",
     "OnlyOneFolderAttached": "Chỉ có một thư mục được đính kèm.",
     "OpenToPublic": "Mở ứng dụng công khai",

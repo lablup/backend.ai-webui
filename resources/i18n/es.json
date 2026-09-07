@@ -2787,6 +2787,8 @@
     "NoLogs": "No hay registros.",
     "NoSession": "No hay sesión.",
     "NoSessionToDisplay": "No hay sesiones que mostrar",
+    "NoStatusDetail": "__NOT_TRANSLATED__",
+    "NoStatusDetailDescription": "__NOT_TRANSLATED__",
     "NotInProject": "Esta sesión pertenece a un proyecto diferente.",
     "OnlyOneFolderAttached": "Sólo se adjunta una carpeta.",
     "OpenToPublic": "Aplicación abierta al público",

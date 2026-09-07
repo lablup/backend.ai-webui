@@ -2787,6 +2787,8 @@
     "NoLogs": "Логов нет.",
     "NoSession": "Нет сеанса.",
     "NoSessionToDisplay": "Нет сеансов для отображения",
+    "NoStatusDetail": "__NOT_TRANSLATED__",
+    "NoStatusDetailDescription": "__NOT_TRANSLATED__",
     "NotInProject": "Эта сессия принадлежит другому проекту.",
     "OnlyOneFolderAttached": "Прилагается только одна папка.",
     "OpenToPublic": "Открыть приложение для всех",

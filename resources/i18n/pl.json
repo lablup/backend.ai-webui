@@ -2789,6 +2789,8 @@
     "NoLogs": "Brak dzienników.",
     "NoSession": "Brak sesji.",
     "NoSessionToDisplay": "Brak sesji do wyświetlenia",
+    "NoStatusDetail": "__NOT_TRANSLATED__",
+    "NoStatusDetailDescription": "__NOT_TRANSLATED__",
     "NotInProject": "Ta sesja należy do innego projektu.",
     "OnlyOneFolderAttached": "Dołączony jest tylko jeden folder.",
     "OpenToPublic": "Otwórz aplikację publicznie",

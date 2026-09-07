@@ -2789,6 +2789,8 @@
     "NoLogs": "没有日志。",
     "NoSession": "没有会话。",
     "NoSessionToDisplay": "没有会话显示",
+    "NoStatusDetail": "__NOT_TRANSLATED__",
+    "NoStatusDetailDescription": "__NOT_TRANSLATED__",
     "NotInProject": "本次会议属于另一个项目。",
     "OnlyOneFolderAttached": "只附带一个文件夹。",
     "OpenToPublic": "向公众开放应用",

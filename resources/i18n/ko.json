@@ -2789,6 +2789,8 @@
     "NoLogs": "로그가 없습니다.",
     "NoSession": "세션이 없습니다.",
     "NoSessionToDisplay": "세션 정보가 없습니다.",
+    "NoStatusDetail": "표시할 상태 상세 정보가 없습니다",
+    "NoStatusDetailDescription": "이 세션 상태에 대해 시스템이 보고한 추가 정보가 없습니다.",
     "NotInProject": "이 세션은 다른 프로젝트에 속해 있습니다.",
     "OnlyOneFolderAttached": "하나의 폴더만 연결되어 있습니다.",
     "OpenToPublic": "앱을 외부에 공개",

@@ -6,6 +6,7 @@ import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__genera
 import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import { convertToBinaryUnit } from '../helper';
+import { hasRenderableSessionStatusData } from '../helper/sessionStatusData';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useCurrentUserInfo,
@@ -423,8 +424,7 @@ const SessionDetailContent: React.FC<{
                     `colorLink` here and to `colorInfo` under the admin theme —
                     see `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
                 {!supportsSessionSchedulingHistory &&
-                session?.status_data &&
-                session?.status_data !== '{}' ? (
+                hasRenderableSessionStatusData(session?.status_data) ? (
                   <IconButton
                     className="bai-action-accent"
                     variant="ghost"

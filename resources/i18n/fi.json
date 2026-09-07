@@ -2787,6 +2787,8 @@
     "NoLogs": "Ei lokitietoja.",
     "NoSession": "Ei istuntoa.",
     "NoSessionToDisplay": "Ei näytettäviä istuntoja",
+    "NoStatusDetail": "__NOT_TRANSLATED__",
+    "NoStatusDetailDescription": "__NOT_TRANSLATED__",
     "NotInProject": "Tämä istunto kuuluu eri hankkeeseen.",
     "OnlyOneFolderAttached": "Vain yksi kansio on liitetty.",
     "OpenToPublic": "Sovelluksen avaaminen yleisölle",

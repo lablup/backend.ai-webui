@@ -2774,6 +2774,8 @@
     "NoLogs": "No logs.",
     "NoSession": "No session.",
     "NoSessionToDisplay": "No sessions to display",
+    "NoStatusDetail": "No status details available",
+    "NoStatusDetailDescription": "The system did not report any additional details for this session status.",
     "NotInProject": "This session belongs to a different project",
     "OnlyOneFolderAttached": "Only one folder is attached.",
     "OpenToPublic": "Open app to public",

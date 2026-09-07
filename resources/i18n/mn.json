@@ -2788,6 +2788,8 @@
     "NoLogs": "Бүртгэл байхгүй.",
     "NoSession": "Session байхгүй.",
     "NoSessionToDisplay": "Харуулах сесс алга",
+    "NoStatusDetail": "__NOT_TRANSLATED__",
+    "NoStatusDetailDescription": "__NOT_TRANSLATED__",
     "NotInProject": "Энэ хуралдаан нь өөр төсөлд хамаарна.",
     "OnlyOneFolderAttached": "Зөвхөн нэг хавтас хавсаргасан байна.",
     "OpenToPublic": "Аппыг нийтэд нээлттэй болгох",

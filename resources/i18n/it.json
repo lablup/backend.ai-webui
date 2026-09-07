@@ -2787,6 +2787,8 @@
     "NoLogs": "Nessun registro.",
     "NoSession": "Nessuna sessione.",
     "NoSessionToDisplay": "Nessuna sessione da visualizzare",
+    "NoStatusDetail": "__NOT_TRANSLATED__",
+    "NoStatusDetailDescription": "__NOT_TRANSLATED__",
     "NotInProject": "Questa sessione appartiene a un progetto diverso.",
     "OnlyOneFolderAttached": "È allegata una sola cartella.",
     "OpenToPublic": "Apri l'app al pubblico",
