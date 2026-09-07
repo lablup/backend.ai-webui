@@ -127,8 +127,9 @@ export type StartSessionResults = {
 };
 
 /**
- * Split the picked mounts into the `creation_config` fields the manager takes:
- * the vfolder ids and their resolved container paths.
+ * Split the picked mounts into the three `creation_config` fields the manager
+ * takes: the vfolder ids, their resolved container paths, and — only where the
+ * user picked one — the in-vfolder subpath to mount instead of the root.
  */
 const buildMountConfig = (
   vfolderMounts: Array<VFolderMountConfigValue> | undefined,
@@ -140,13 +141,21 @@ const buildMountConfig = (
       mount.mountDestination,
       DEFAULT_ALIAS_BASE_PATH,
     ),
+    subpath: mount.subpath?.trim(),
   }));
+  const mountOptions = _.fromPairs(
+    _.map(
+      _.filter(entries, (entry) => !!entry.subpath),
+      (entry) => [entry.id, { subpath: entry.subpath }],
+    ),
+  );
 
   return {
     mount_ids: _.map(entries, (entry) => entry.id),
     mount_id_map: _.fromPairs(
       _.map(entries, (entry) => [entry.id, entry.mountDestination]),
     ),
+    ...(_.isEmpty(mountOptions) ? {} : { mount_options: mountOptions }),
   };
 };
 
