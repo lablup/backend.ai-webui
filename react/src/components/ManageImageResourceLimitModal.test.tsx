@@ -89,7 +89,7 @@ const ModalHost = () => {
   );
 };
 
-const renderModal = () => {
+const renderModal = (imageNode: Record<string, unknown> = IMAGE_NODE) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const seenOperations: Array<{
     name: string;
@@ -104,7 +104,7 @@ const renderModal = () => {
     });
     environment.mock.queueOperationResolver((next) => resolve(next));
     return MockPayloadGenerator.generate(operation, {
-      ImageNode: () => IMAGE_NODE,
+      ImageNode: () => imageNode,
     });
   };
   environment.mock.queueOperationResolver(resolve);
@@ -144,6 +144,49 @@ describe('ManageImageResourceLimitModal reset action (FR-854)', () => {
         'cr.backend.ai/testing/ngc-pytorch:23.09-py3',
       );
       expect(clear?.variables.architecture).toBe('x86_64');
+    });
+  });
+
+  it.each([
+    ['registry', { ...IMAGE_NODE, registry: null }],
+    ['tag', { ...IMAGE_NODE, tag: null }],
+    ['name and namespace', { ...IMAGE_NODE, name: null, namespace: null }],
+  ])(
+    'disables the reset action when %s is missing from the canonical key',
+    async (_label, imageNode) => {
+      renderModal(imageNode);
+
+      expect(
+        await screen.findByRole('button', {
+          name: 'environment.ResetImageResourceLimit',
+        }),
+      ).toBeDisabled();
+    },
+  );
+
+  it('falls back to namespace when the deprecated name is absent', async () => {
+    const user = userEvent.setup();
+    const { seenOperations } = renderModal({
+      ...IMAGE_NODE,
+      name: null,
+      namespace: 'testing/ngc-tensorflow',
+    });
+
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'environment.ResetImageResourceLimit',
+      }),
+    );
+    await user.click(screen.getByRole('button', { name: 'button.Reset' }));
+
+    await waitFor(() => {
+      const clear = seenOperations.find(
+        (operation) =>
+          operation.name === 'ManageImageResourceLimitModalClearMutation',
+      );
+      expect(clear?.variables.imageCanonical).toBe(
+        'cr.backend.ai/testing/ngc-tensorflow:23.09-py3',
+      );
     });
   });
 

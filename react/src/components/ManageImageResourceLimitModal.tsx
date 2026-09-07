@@ -194,6 +194,9 @@ const ManageImageResourceLimitModal: React.FC<
       onOk={handleOnClick}
       onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightModifyImageInput}
+      // Mirror of the reset trigger's own guard: the two mutations write the
+      // same resource_limits, so neither may start while the other is in flight.
+      okButtonProps={{ disabled: isInFlightClearResourceLimit }}
       centered
       title={t('environment.ModifyMinimumImageResourceLimit')}
       okText={t('button.Save')}
