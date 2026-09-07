@@ -150,6 +150,15 @@ describe('ImageEnvironmentSelectFormItems refresh control', () => {
       'ImageEnvironmentSelectFormItemsQuery',
     );
 
+    // The refetch runs inside a transition, so the already-rendered selects
+    // stay on screen instead of suspending the launcher step.
+    expect(screen.queryByText('loading')).not.toBeInTheDocument();
+    expect(
+      screen
+        .getAllByRole('button')
+        .some((button) => button.textContent === 'pytorch'),
+    ).toBe(true);
+
     await resolveImageQuery(environment, ['pytorch', 'tensorflow']);
 
     // The trigger keeps the selection the refresh must not disturb, so the
