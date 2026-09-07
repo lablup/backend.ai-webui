@@ -8,6 +8,7 @@ import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -45,12 +46,16 @@ vi.mock('react-i18next', async () => {
   };
 });
 
+// The subpath field only renders on managers advertising the feature.
+let mockSupportsMountSubpath = false;
+
 vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      supports: () => false,
+      supports: (feature: string) =>
+        feature === 'model-mount-subpath' ? mockSupportsMountSubpath : false,
       _config: { allowCustomResourceAllocation: true },
     }),
     useWebUINavigate: () => vi.fn(),
@@ -148,11 +153,24 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         {
           'data-testid': 'mock-vfolder-select',
           'data-current-project-id': props.currentProjectId ?? '',
+          'data-value': props.value ?? '',
           disabled: props.isDisabled ?? props.disabled,
           type: 'button',
+          // Clicking stands in for picking a different folder, so the form's
+          // own onChange cleanup runs exactly as it does in the app.
+          onClick: () =>
+            props.onChange?.(
+              btoa('VirtualFolderNode:22222222-2222-2222-2222-222222222222'),
+            ),
         },
         'select-model-folder',
       ),
+    BAIVFolderPathPicker: (props: any) =>
+      React.createElement('input', {
+        'data-testid': 'mock-subpath-picker',
+        value: props.value ?? '',
+        readOnly: true,
+      }),
     BAIAvailablePresetSelect: () => null,
     BAIRuntimeVariantSelect: () => null,
   };
@@ -186,7 +204,12 @@ const TestRenderer: React.FC = () => {
   );
 };
 
-const renderModal = (metadata: DeploymentMetadataMock) => {
+type MockResolvers = Parameters<typeof MockPayloadGenerator.generate>[1];
+
+const renderModal = (
+  metadata: DeploymentMetadataMock,
+  mockResolvers: MockResolvers = {},
+) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const queryClient = new QueryClient();
   environment.mock.queueOperationResolver((operation) =>
@@ -195,6 +218,7 @@ const renderModal = (metadata: DeploymentMetadataMock) => {
       // Keep the "Load current revision" path quiet: no current revision.
       ModelDeployment: () => ({ currentRevision: null }),
       DeploymentRevisionPresetConnection: () => ({ count: 1 }),
+      ...mockResolvers,
     }),
   );
   render(
@@ -288,6 +312,120 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
     // ...and the resource form (non-null project required) is not rendered.
     expect(
       screen.queryByTestId('mock-resource-allocation-form'),
+    ).not.toBeInTheDocument();
+  });
+});
+
+/**
+ * Per-field revert-to-loaded-revision affordance (FR-3468). It is a
+ * dirty-field-only control: hidden while the Custom form still matches the
+ * revision it was loaded from, and it reverts only the field it sits next to.
+ */
+describe('DeploymentAddRevisionModal per-field revert (FR-3468)', () => {
+  const LOADED_MOUNT_DESTINATION = '/models/loaded';
+  const LOADED_SUBPATH = 'loaded/subdir';
+  const REVERT_LABEL = 'deployment.RevertToLoadedRevisionValue';
+
+  afterEach(() => {
+    mockMode = 'preset';
+    mockSupportsMountSubpath = false;
+  });
+
+  const loadCurrentRevision = async (
+    user: ReturnType<typeof userEvent.setup>,
+  ) => {
+    mockMode = 'custom';
+    renderModal(DEPLOYMENT_METADATA, {
+      // Let the generator build a full current revision, but pin the one
+      // field this spec reads back.
+      ModelDeployment: () => ({}),
+      ModelMountConfig: () => ({
+        mountDestination: LOADED_MOUNT_DESTINATION,
+      }),
+    });
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'deployment.LoadCurrentRevision',
+      }),
+    );
+    return screen.findByDisplayValue(LOADED_MOUNT_DESTINATION);
+  };
+
+  it('shows no revert affordance while every field still matches the loaded revision', async () => {
+    const user = userEvent.setup();
+    await loadCurrentRevision(user);
+
+    expect(
+      screen.queryByRole('button', { name: REVERT_LABEL }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('reverts an edited field back to the loaded revision value', async () => {
+    const user = userEvent.setup();
+    const input = await loadCurrentRevision(user);
+
+    await user.type(input, '-edited');
+    expect(input).toHaveValue(`${LOADED_MOUNT_DESTINATION}-edited`);
+
+    await user.click(await screen.findByRole('button', { name: REVERT_LABEL }));
+
+    await waitFor(() => {
+      expect(input).toHaveValue(LOADED_MOUNT_DESTINATION);
+    });
+    // Back in sync with the revision → the affordance withdraws again.
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('button', { name: REVERT_LABEL }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  // A subpath belongs to the folder it was picked from, so the two revert
+  // together: while the folder diverges the subpath offers no revert of its
+  // own, and reverting the folder restores the loaded pair.
+  it('reverts the model folder and its subpath as a pair', async () => {
+    const user = userEvent.setup();
+    mockSupportsMountSubpath = true;
+    mockMode = 'custom';
+    renderModal(DEPLOYMENT_METADATA, {
+      ModelDeployment: () => ({}),
+      ModelMountConfig: () => ({
+        mountDestination: LOADED_MOUNT_DESTINATION,
+        subpath: LOADED_SUBPATH,
+      }),
+    });
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'deployment.LoadCurrentRevision',
+      }),
+    );
+    await screen.findByDisplayValue(LOADED_MOUNT_DESTINATION);
+
+    const folderSelect = screen.getByTestId('mock-vfolder-select');
+    const subpathPicker = screen.getByTestId('mock-subpath-picker');
+    const loadedFolderId = folderSelect.getAttribute('data-value');
+    expect(subpathPicker).toHaveValue(LOADED_SUBPATH);
+
+    // Picking another folder clears the subpath that belonged to the old one.
+    await user.click(folderSelect);
+    await waitFor(() => {
+      expect(subpathPicker).toHaveValue('');
+    });
+
+    // Only the folder offers a revert; the subpath's own would restore the
+    // loaded path into the newly picked folder.
+    const revertButtons = await screen.findAllByRole('button', {
+      name: REVERT_LABEL,
+    });
+    expect(revertButtons).toHaveLength(1);
+
+    await user.click(revertButtons[0]);
+    await waitFor(() => {
+      expect(subpathPicker).toHaveValue(LOADED_SUBPATH);
+    });
+    expect(folderSelect).toHaveAttribute('data-value', loadedFolderId);
+    expect(
+      screen.queryByRole('button', { name: REVERT_LABEL }),
     ).not.toBeInTheDocument();
   });
 });

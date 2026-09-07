@@ -1209,6 +1209,7 @@
     "ResourcePreset": "Предустановка ресурсов",
     "Resources": "Ресурсы",
     "Result": "Результат",
+    "RevertToLoadedRevisionValue": "Вернуть значение загруженной Revision",
     "Revision": "Ревизия",
     "RevisionAdded": "Ревизия была добавлена.",
     "RevisionDetail": "Детали Revision",
