@@ -80,7 +80,8 @@ const CopyValueIconButton: React.FC<{ value?: string; label: string }> = ({
 
 const SessionLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: SessionLauncherStepKey) => void;
-}> = ({ onClickEditStep }) => {
+  currentProjectId: string;
+}> = ({ onClickEditStep, currentProjectId }) => {
   const app = App.useApp();
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
@@ -90,9 +91,7 @@ const SessionLauncherPreview: React.FC<{
   const supportExtendedImageInfo =
     baiClient?.supports('extended-image-info') ?? false;
   const currentProject = useCurrentProjectValue();
-  const autoMountedFolderNames = useAutoMountedFolderNames(
-    currentProject.id ?? '',
-  );
+  const autoMountedFolderNames = useAutoMountedFolderNames(currentProjectId);
   const [, { getBaseVersion, getBaseImage, tagAlias }] =
     useBackendAIImageMetaData();
 

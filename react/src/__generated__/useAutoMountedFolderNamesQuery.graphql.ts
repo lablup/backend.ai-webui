@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3423d6c56df3f7a5784c47b00d53863f>>
+ * @generated SignedSource<<088ff7d470cfb14fbc8ddd0bf1213058>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,6 @@ export type useAutoMountedFolderNamesQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly name: string | null | undefined;
-        readonly status: string | null | undefined;
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
@@ -67,13 +66,6 @@ v3 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "status",
-  "storageKey": null
 };
 return {
   "fragment": {
@@ -109,8 +101,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v3/*: any*/),
-                  (v4/*: any*/)
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -158,7 +149,6 @@ return {
                 "plural": false,
                 "selections": [
                   (v3/*: any*/),
-                  (v4/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -178,16 +168,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5b6c371b0512a8cbbbe25de6b34ba475",
+    "cacheID": "2662e23e43d509c64460df88d1dc0dae",
     "id": null,
     "metadata": {},
     "name": "useAutoMountedFolderNamesQuery",
     "operationKind": "query",
-    "text": "query useAutoMountedFolderNamesQuery(\n  $scopeId: ScopeField\n  $filter: String\n) {\n  vfolder_nodes(scope_id: $scopeId, filter: $filter, first: 100, permission: \"read_attribute\") {\n    edges {\n      node {\n        name\n        status\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query useAutoMountedFolderNamesQuery(\n  $scopeId: ScopeField\n  $filter: String\n) {\n  vfolder_nodes(scope_id: $scopeId, filter: $filter, first: 100, permission: \"read_attribute\") {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0e657d4d12da28be7b05e3877ccf2a6d";
+(node as any).hash = "9a101de6ab98c97e774c55237aa9e3c6";
 
 export default node;

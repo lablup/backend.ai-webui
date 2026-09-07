@@ -1357,6 +1357,7 @@ const SessionLauncherPage = () => {
                 {/* Step Start*/}
                 {currentStepKey === 'review' && (
                   <SessionLauncherPreview
+                    currentProjectId={currentProjectContext.id}
                     onClickEditStep={(stepKey) => {
                       const nextStep = _.findIndex(steps, { key: stepKey });
                       setCurrentStep(nextStep);
