@@ -53,6 +53,25 @@ describe('BAINotificationStack', () => {
     ).toBeNull();
   });
 
+  // FR-3829: exit bookkeeping runs over the visible slice, so a notice closed
+  // while hidden behind `maxVisible` never animates into the corner.
+  it('should not surface a hidden notice that is closed', () => {
+    const five = items(5);
+    const { rerender } = render(
+      <BAINotificationStack notifications={five} maxVisible={3} />,
+    );
+    expect(renderedKeys()).toEqual(['n2', 'n3', 'n4']);
+
+    // Close `n0`, which was never on screen.
+    rerender(
+      <BAINotificationStack
+        notifications={five.filter((n) => n.key !== 'n0')}
+        maxVisible={3}
+      />,
+    );
+    expect(renderedKeys()).toEqual(['n2', 'n3', 'n4']);
+  });
+
   it('should keep the dismiss control mounted for an oversized notice', async () => {
     const onClose = vi.fn();
     render(

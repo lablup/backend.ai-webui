@@ -338,20 +338,29 @@ const BAINotificationStack: React.FC<BAINotificationStackProps> = ({
   // animation. Without this the stack would pop rather than slide out — antd's
   // notification had a motion contract and losing it reads as a bug.
   const [exiting, setExiting] = useState<Array<BAINotificationStackItem>>([]);
-  const previousRef = useRef<Array<BAINotificationStackItem>>([]);
+  const previousVisibleRef = useRef<Array<BAINotificationStackItem>>([]);
   const stackRef = useRef<HTMLDivElement>(null);
 
+  const visible = maxVisible ? notifications.slice(-maxVisible) : notifications;
+  const newestKey = notifications.at(-1)?.key;
+
   // Once the stack hits its `max-height` cap (FR-3829) it scrolls, and the
-  // newest notice is the one at the scrolled end — keep it in view.
+  // newest notice is the one at the scrolled end — keep it in view. Keyed on
+  // the newest notice rather than the array: a background task rebuilds that
+  // every 100ms and would yank a user reading an older notice back down.
   useEffect(() => {
     const el = stackRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [notifications]);
+  }, [newestKey]);
 
   useEffect(() => {
     const currentKeys = new Set(notifications.map((n) => n.key));
-    const removed = previousRef.current.filter((n) => !currentKeys.has(n.key));
-    previousRef.current = notifications;
+    // Only a notice that was on screen gets an exit animation; one closed
+    // while hidden behind `maxVisible` would otherwise flash into the corner.
+    const removed = previousVisibleRef.current.filter(
+      (n) => !currentKeys.has(n.key),
+    );
+    previousVisibleRef.current = visible;
     if (removed.length === 0) return;
     setExiting((prev) => [...prev, ...removed]);
     const timer = window.setTimeout(() => {
@@ -359,9 +368,8 @@ const BAINotificationStack: React.FC<BAINotificationStackProps> = ({
       setExiting((prev) => prev.filter((n) => !removedKeys.has(n.key)));
     }, EXIT_ANIMATION_MS);
     return () => window.clearTimeout(timer);
-  }, [notifications]);
+  }, [notifications, visible]);
 
-  const visible = maxVisible ? notifications.slice(-maxVisible) : notifications;
   const visibleKeys = new Set(visible.map((n) => n.key));
   const stillExiting = exiting.filter((n) => !visibleKeys.has(n.key));
 
