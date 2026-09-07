@@ -234,6 +234,22 @@
     "Type": "Tipo",
     "Version": "Versão"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Verificando sua sessão do Backend.AI…",
+    "SignInWithBackendAI": "Entrar com o Backend.AI",
+    "failure": {
+      "CorsOrMixed": "O navegador bloqueou a requisição ao servidor web do Backend.AI. Normalmente é uma restrição de CORS ou de conteúdo misto.",
+      "HttpError": "O servidor web do Backend.AI retornou um erro ({{status}}).",
+      "InvalidResponse": "O servidor web do Backend.AI retornou uma resposta inesperada.",
+      "NoEndpoint": "Nenhum endereço do servidor web do Backend.AI está configurado para {{appName}}.",
+      "NoSessionId": "Você está conectado ao Backend.AI, mas o servidor web não retornou um ID de sessão.",
+      "NoSessionOverHttp": "Nenhuma sessão do Backend.AI foi encontrada. O {{appName}} é servido por HTTP, então o navegador provavelmente está rejeitando o cookie de sessão seguro do servidor web. Tente abrir o {{appName}} por HTTPS.",
+      "NoSessionOverHttps": "Nenhuma sessão do Backend.AI foi encontrada. O navegador não envia o cookie de sessão do servidor web do Backend.AI para o {{appName}} porque são sites diferentes.",
+      "RelayFailed": "Você está conectado ao Backend.AI, mas o {{appName}} não conseguiu concluir a entrada.",
+      "Timeout": "O servidor web do Backend.AI não respondeu a tempo.",
+      "Title": "Não foi possível entrar com o Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Tamanho do Cluster",
     "Concurrency": "Sessões simultâneas",

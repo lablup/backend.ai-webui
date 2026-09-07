@@ -228,6 +228,22 @@
     "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
     "Version": "Versio"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Tarkistetaan Backend.AI-istuntoasi…",
+    "SignInWithBackendAI": "Kirjaudu sisään Backend.AI-tunnuksella",
+    "failure": {
+      "CorsOrMixed": "Selain esti pyynnön Backend.AI-verkkopalvelimelle. Syynä on yleensä CORS- tai sekasisältörajoitus.",
+      "HttpError": "Backend.AI-verkkopalvelin palautti virheen ({{status}}).",
+      "InvalidResponse": "Backend.AI-verkkopalvelin palautti odottamattoman vastauksen.",
+      "NoEndpoint": "Sovellukselle {{appName}} ei ole määritetty Backend.AI-verkkopalvelimen osoitetta.",
+      "NoSessionId": "Olet kirjautunut Backend.AI:hin, mutta verkkopalvelin ei palauttanut istuntotunnusta.",
+      "NoSessionOverHttp": "Backend.AI-istuntoa ei löytynyt. {{appName}} tarjoillaan HTTP:n kautta, joten selain todennäköisesti hylkää verkkopalvelimen suojatun istuntoevästeen. Avaa {{appName}} HTTPS:n kautta.",
+      "NoSessionOverHttps": "Backend.AI-istuntoa ei löytynyt. Selain ei lähetä Backend.AI-verkkopalvelimen istuntoevästettä sovellukselle {{appName}}, koska ne ovat eri sivustoja.",
+      "RelayFailed": "Olet kirjautunut Backend.AI:hin, mutta {{appName}} ei voinut viimeistellä kirjautumista.",
+      "Timeout": "Backend.AI-verkkopalvelin ei vastannut ajoissa.",
+      "Title": "Backend.AI-kirjautuminen ei onnistunut"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Klusterin koko",
     "Concurrency": "Samanaikaiset istunnot",

@@ -228,6 +228,22 @@
     "SuccessFullyPulled": "{{count} хувилбарыг амжилттай хийхийг хүсч байна.",
     "Version": "Таамаглал"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Backend.AI сессийг шалгаж байна…",
+    "SignInWithBackendAI": "Backend.AI-аар нэвтрэх",
+    "failure": {
+      "CorsOrMixed": "Хөтөч Backend.AI вэб сервер рүү илгээсэн хүсэлтийг хаалаа. Ихэвчлэн CORS эсвэл холимог агуулгын хязгаарлалтаас болдог.",
+      "HttpError": "Backend.AI вэб сервер алдаа буцаалаа ({{status}}).",
+      "InvalidResponse": "Backend.AI вэб сервер хүлээгдээгүй хариу буцаалаа.",
+      "NoEndpoint": "{{appName}}-д Backend.AI вэб серверийн хаяг тохируулаагүй байна.",
+      "NoSessionId": "Та Backend.AI-д нэвтэрсэн боловч вэб сервер сессийн ID буцаасангүй.",
+      "NoSessionOverHttp": "Backend.AI сесс олдсонгүй. {{appName}} нь HTTP-ээр дамжуулагдаж байгаа тул хөтөч вэб серверийн аюулгүй сессийн күүкиг татгалзаж байгаа байх магадлалтай. {{appName}}-г HTTPS-ээр нээж үзнэ үү.",
+      "NoSessionOverHttps": "Backend.AI сесс олдсонгүй. {{appName}} болон Backend.AI вэб сервер өөр өөр сайт тул хөтөч сессийн күүкиг илгээхгүй байна.",
+      "RelayFailed": "Та Backend.AI-д нэвтэрсэн боловч {{appName}} нэвтрэлтийг дуусгаж чадсангүй.",
+      "Timeout": "Backend.AI вэб сервер хугацаанд нь хариу өгсөнгүй.",
+      "Title": "Backend.AI-аар нэвтэрч чадсангүй"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Кластерийн хэмжээ",
     "Concurrency": "Зэрэгцээ сессүүд",

@@ -228,6 +228,22 @@
     "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
     "Version": "รุ่น"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "กำลังตรวจสอบเซสชัน Backend.AI ของคุณ…",
+    "SignInWithBackendAI": "เข้าสู่ระบบด้วย Backend.AI",
+    "failure": {
+      "CorsOrMixed": "เบราว์เซอร์บล็อกคำขอไปยังเว็บเซิร์ฟเวอร์ Backend.AI โดยทั่วไปเกิดจากข้อจำกัด CORS หรือเนื้อหาแบบผสม",
+      "HttpError": "เว็บเซิร์ฟเวอร์ Backend.AI ส่งคืนข้อผิดพลาด ({{status}})",
+      "InvalidResponse": "เว็บเซิร์ฟเวอร์ Backend.AI ส่งคืนการตอบสนองที่ไม่คาดคิด",
+      "NoEndpoint": "ยังไม่ได้กำหนดที่อยู่เว็บเซิร์ฟเวอร์ Backend.AI สำหรับ {{appName}}",
+      "NoSessionId": "คุณเข้าสู่ระบบ Backend.AI แล้ว แต่เว็บเซิร์ฟเวอร์ไม่ได้ส่งคืนรหัสเซสชัน",
+      "NoSessionOverHttp": "ไม่พบเซสชัน Backend.AI เนื่องจาก {{appName}} ให้บริการผ่าน HTTP เบราว์เซอร์จึงน่าจะปฏิเสธคุกกี้เซสชันแบบปลอดภัยของเว็บเซิร์ฟเวอร์ ลองเปิด {{appName}} ผ่าน HTTPS",
+      "NoSessionOverHttps": "ไม่พบเซสชัน Backend.AI เบราว์เซอร์ไม่ส่งคุกกี้เซสชันของเว็บเซิร์ฟเวอร์ Backend.AI ไปยัง {{appName}} เนื่องจากเป็นคนละไซต์กัน",
+      "RelayFailed": "คุณเข้าสู่ระบบ Backend.AI แล้ว แต่ {{appName}} ไม่สามารถดำเนินการเข้าสู่ระบบให้เสร็จสิ้นได้",
+      "Timeout": "เว็บเซิร์ฟเวอร์ Backend.AI ไม่ตอบสนองภายในเวลาที่กำหนด",
+      "Title": "ไม่สามารถเข้าสู่ระบบด้วย Backend.AI ได้"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "ขนาดคลัสเตอร์",
     "Concurrency": "เซสชันที่ทำงานพร้อมกัน",

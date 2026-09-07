@@ -228,6 +228,22 @@
     "SuccessFullyPulled": "Ζήτησε με επιτυχία την έλξη {{count}}}.",
     "Version": "Εκδοχή"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Έλεγχος της συνεδρίας Backend.AI…",
+    "SignInWithBackendAI": "Σύνδεση με Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Το πρόγραμμα περιήγησης απέκλεισε το αίτημα προς τον διακομιστή ιστού Backend.AI. Συνήθως οφείλεται σε περιορισμό CORS ή μεικτού περιεχομένου.",
+      "HttpError": "Ο διακομιστής ιστού Backend.AI επέστρεψε σφάλμα ({{status}}).",
+      "InvalidResponse": "Ο διακομιστής ιστού Backend.AI επέστρεψε μη αναμενόμενη απόκριση.",
+      "NoEndpoint": "Δεν έχει ρυθμιστεί διεύθυνση διακομιστή ιστού Backend.AI για το {{appName}}.",
+      "NoSessionId": "Έχετε συνδεθεί στο Backend.AI, αλλά ο διακομιστής ιστού δεν επέστρεψε αναγνωριστικό συνεδρίας.",
+      "NoSessionOverHttp": "Δεν βρέθηκε συνεδρία Backend.AI. Το {{appName}} παρέχεται μέσω HTTP, οπότε το πρόγραμμα περιήγησης πιθανότατα απορρίπτει το ασφαλές cookie συνεδρίας του διακομιστή. Δοκιμάστε να ανοίξετε το {{appName}} μέσω HTTPS.",
+      "NoSessionOverHttps": "Δεν βρέθηκε συνεδρία Backend.AI. Το πρόγραμμα περιήγησης δεν στέλνει το cookie συνεδρίας του διακομιστή ιστού Backend.AI στο {{appName}}, επειδή πρόκειται για διαφορετικούς ιστότοπους.",
+      "RelayFailed": "Έχετε συνδεθεί στο Backend.AI, αλλά το {{appName}} δεν μπόρεσε να ολοκληρώσει τη σύνδεση.",
+      "Timeout": "Ο διακομιστής ιστού Backend.AI δεν απάντησε εγκαίρως.",
+      "Title": "Δεν ήταν δυνατή η σύνδεση με Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Μέγεθος συμπλέγματος",
     "Concurrency": "Ταυτόχρονες συνεδρίες",
