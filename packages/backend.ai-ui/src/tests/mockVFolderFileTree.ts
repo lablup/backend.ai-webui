@@ -1,3 +1,4 @@
+import type { LegacyVFolder } from '../components/baiClient/BAILegacyVFolderSelect';
 import type {
   BAIClient,
   VFolderFile,
@@ -25,6 +26,34 @@ export const mockVFolderFile = (
   modified,
 });
 
+/**
+ * A REST `GET /folders` row with every field filled in, so a story only has
+ * to name the handful that its gate or filter actually reads.
+ */
+export const mockLegacyVFolder = (
+  folder: Pick<LegacyVFolder, 'id' | 'name'> & Partial<LegacyVFolder>,
+): LegacyVFolder => ({
+  quota_scope_id: 'project:00000000-0000-0000-0000-000000000000',
+  host: 'local:volume1',
+  status: 'ready',
+  usage_mode: 'general',
+  created_at: '2026-07-01T11:20:00+00:00',
+  is_owner: true,
+  permission: 'wd',
+  user: null,
+  group: null,
+  creator: 'user@lablup.com',
+  user_email: 'user@lablup.com',
+  group_name: null,
+  ownership_type: 'user',
+  type: 'user',
+  cloneable: false,
+  max_files: 1000,
+  max_size: null,
+  cur_size: 0,
+  ...folder,
+});
+
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const splitJoinedPath = (joined: string) => {
@@ -46,8 +75,16 @@ const childKey = (parent: string, name: string) =>
  * so file-explorer stories browse and mutate directories without a backend.
  * The trees are mutated in place — hand a fresh copy per Storybook instance.
  */
+export interface MockVFolderFileClientOptions {
+  /** Rows the mocked `GET /folders` request answers with. */
+  folders?: Array<LegacyVFolder>;
+  domainName?: string;
+  accessKey?: string;
+}
+
 export const createMockVFolderFileClient = (
   trees: MockVFolderFileTrees,
+  options?: MockVFolderFileClientOptions,
 ): BAIClient => {
   const mockVFolder = {
     list_files: async (path: string, id: string) => {
@@ -115,9 +152,27 @@ export const createMockVFolderFileClient = (
     },
   };
 
+  // `useBAISignedRequestWithPromise` builds a request object and hands it to
+  // `_wrapWithPromise`, so the pair below is the whole REST seam.
+  const newSignedRequest = (method: string, url: string) => ({ method, url });
+  const _wrapWithPromise = async (request: { method: string; url: string }) => {
+    await delay(250);
+    if (request.url.startsWith('/folders')) {
+      return options?.folders ?? [];
+    }
+    throw new Error(`Unmocked request: ${request.method} ${request.url}`);
+  };
+
   return {
     vfolder: mockVFolder,
     supports: () => false,
-    _config: { isDirectorySizeVisible: false },
+    newSignedRequest,
+    _wrapWithPromise,
+    accessKey: options?.accessKey ?? 'AKIAMOCKACCESSKEY',
+    _config: {
+      isDirectorySizeVisible: false,
+      domainName: options?.domainName ?? 'default',
+      accessKey: options?.accessKey ?? 'AKIAMOCKACCESSKEY',
+    },
   } as unknown as BAIClient;
 };
