@@ -1,4 +1,4 @@
-import BAIDrawerAstryx from './BAIDrawerAstryx';
+import BAIDrawer from './BAIDrawer';
 import BAIFlex from './BAIFlex';
 import BAIResourceUnitGrid, {
   type BAIUnitGridGroup,
@@ -170,11 +170,13 @@ export const DashedPlateVariant: Story = {
 };
 
 // The popover is `position: fixed`; a drawer panel carries a transform, which
-// makes it the containing block for fixed descendants. Hover a plate here —
-// before FR-3652 the popover landed outside the panel and was clipped away.
+// makes it the containing block for fixed descendants (FR-3652).
+// Storybook does not load lab's stylesheet, so `side="end"` has no rule here
+// and the panel sits at the START edge — where the origin is 0 and this bug
+// cannot show. To see it, add `dialog { inset-inline-start: auto }` first.
 export const InsideDrawer: Story = {
   render: () => (
-    <BAIDrawerAstryx
+    <BAIDrawer
       open
       title="Agent detail"
       size={800}
@@ -189,7 +191,7 @@ export const InsideDrawer: Story = {
           <Text size="sm">{`popover: ${g.label}`}</Text>
         )}
       />
-    </BAIDrawerAstryx>
+    </BAIDrawer>
   ),
 };
 
