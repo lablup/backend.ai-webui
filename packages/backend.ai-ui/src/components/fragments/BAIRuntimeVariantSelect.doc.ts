@@ -61,7 +61,7 @@ export const docs = {
       name: 'onChange',
       type: '(value: string | undefined, option?: BAILabeledValue) => void',
       description:
-        'Fired with the newly selected variant UUID. The optional second argument carries the picked `{ label, value }` pair, which a property-filter `renderInput` uses to label its token with the variant name while the UUID serializes.',
+        'Fired with the newly selected variant UUID; the optional second argument carries the picked `{ label, value }` pair.',
     },
     {
       name: 'onResolvedVariantsChange',

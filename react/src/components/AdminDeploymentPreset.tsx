@@ -24,6 +24,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAIRuntimeVariantSelect,
   type BAITableSettings,
+  stagePickedOption,
   toLocalId,
   useBAILogger,
   filterOutNullAndUndefined,
@@ -153,17 +154,12 @@ const AdminDeploymentPreset = ({
                 fixedOperator: 'equals',
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIRuntimeVariantSelect
-                    // The filter row already prints the property label.
                     label={t('adminDeploymentPreset.Runtime')}
                     isLabelHidden
                     value={value}
                     isDisabled={isDisabled}
                     width={200}
-                    onChange={(next, option) =>
-                      // The UUID serializes; the option label keeps the token
-                      // readable.
-                      onAddCondition(next, option?.label)
-                    }
+                    onChange={stagePickedOption(onAddCondition)}
                   />
                 ),
               },

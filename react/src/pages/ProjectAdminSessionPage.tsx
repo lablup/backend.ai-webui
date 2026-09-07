@@ -36,6 +36,7 @@ import {
   availableSessionV2SorterValues,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  stagePickedOption,
   useFetchKey,
 } from 'backend.ai-ui';
 import { PowerOffIcon } from 'lucide-react';
@@ -212,22 +213,12 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIUserSelect
                     valuePropName="id"
-                    // The filter row already prints the property label.
                     label={t('session.Owner')}
                     isLabelHidden
                     value={value}
                     isDisabled={isDisabled}
                     width={200}
-                    onChange={(next, option) =>
-                      // The UUID serializes; the option label (email) keeps
-                      // the token readable.
-                      onAddCondition(
-                        next as string | undefined,
-                        Array.isArray(option)
-                          ? option[0]?.label
-                          : option?.label,
-                      )
-                    }
+                    onChange={stagePickedOption(onAddCondition)}
                   />
                 ),
               },

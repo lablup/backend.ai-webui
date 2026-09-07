@@ -43,6 +43,7 @@ import BAIComplexSelect, {
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
   type BAILabeledValue,
+  splitLabeledValue,
 } from '../BAIComplexSelect';
 import * as _ from 'lodash-es';
 import {
@@ -262,12 +263,8 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
       options={options}
       value={labeledValue}
       onChange={(next) => {
-        const labeled = _.compact(_.castArray(next ?? []));
-        const keys = _.map(labeled, (v) => v.value);
-        setControllableValue(
-          multiple ? keys : keys[0],
-          multiple ? labeled : labeled[0],
-        );
+        const picked = splitLabeledValue(next, multiple);
+        setControllableValue(picked.value, picked.option);
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}

@@ -40,6 +40,7 @@ import {
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
+  stagePickedOption,
   toLocalId,
   useBAILogger,
   useFetchKey,
@@ -594,7 +595,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     validate: (value: string) => isValidUUID(value.toLowerCase()),
   };
 
-  const filterProperties: Array<BAIGraphQLFilterProperty> = [
+  const filterProperties = [
     {
       key: 'revisionNumber',
       propertyLabel: t('deployment.RevisionNumber'),
@@ -620,19 +621,12 @@ const DeploymentRevisionHistoryTab: React.FC<
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
         <BAIAdminImageSelect
-          // The filter row already prints the property label.
           label={t('deployment.Image')}
           isLabelHidden
           value={value}
           isDisabled={isDisabled}
           width={200}
-          onChange={(next, option) =>
-            // The UUID serializes; the option label keeps the token readable.
-            onAddCondition(
-              next as string | undefined,
-              _.castArray(option ?? [])[0]?.label,
-            )
-          }
+          onChange={stagePickedOption(onAddCondition)}
         />
       ),
     },
@@ -652,16 +646,11 @@ const DeploymentRevisionHistoryTab: React.FC<
           value={value}
           isDisabled={isDisabled}
           width={200}
-          onChange={(next, option) =>
-            onAddCondition(
-              next as string | undefined,
-              _.castArray(option ?? [])[0]?.label,
-            )
-          }
+          onChange={stagePickedOption(onAddCondition)}
         />
       ),
     },
-  ];
+  ] satisfies Array<BAIGraphQLFilterProperty>;
 
   const filterValue: GraphQLFilter | undefined = queryParams.rvFilter
     ? (parseRevisionFilter(queryParams.rvFilter) ?? undefined)

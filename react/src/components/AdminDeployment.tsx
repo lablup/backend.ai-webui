@@ -35,6 +35,7 @@ import {
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
+  stagePickedOption,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -221,19 +222,12 @@ const AdminDeployment = ({
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
         <BAIAdminProjectSelect
-          // The filter row already prints the property label.
           label={t('deployment.Project')}
           isLabelHidden
           value={value}
           isDisabled={isDisabled}
           width={200}
-          onChange={(next, option) =>
-            // The UUID serializes; the option label keeps the token readable.
-            onAddCondition(
-              next as string | undefined,
-              _.castArray(option ?? [])[0]?.label,
-            )
-          }
+          onChange={stagePickedOption(onAddCondition)}
         />
       ),
     },

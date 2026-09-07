@@ -45,6 +45,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
+  stagePickedOption,
   toLocalId,
   useBAILogger,
   BAIAlert,
@@ -342,20 +343,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 },
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIAdminProjectSelect
-                    // The filter row already prints the property label.
                     label={t('adminModelCard.Project')}
                     isLabelHidden
                     value={value}
                     isDisabled={isDisabled}
                     width={200}
-                    onChange={(next, option) =>
-                      // The UUID serializes; the option label keeps the token
-                      // readable.
-                      onAddCondition(
-                        next as string | undefined,
-                        _.castArray(option ?? [])[0]?.label,
-                      )
-                    }
+                    onChange={stagePickedOption(onAddCondition)}
                   />
                 ),
               },

@@ -65,6 +65,24 @@ export const optionLabelToString = (
 ): string =>
   _.isString(label) || _.isNumber(label) ? _.toString(label) : fallback;
 
+type PickedOption =
+  | { label?: ReactNode }
+  | ReadonlyArray<{ label?: ReactNode }>
+  | null
+  | undefined;
+
+/** Adapts a select's `onChange(value, option)` to `onAddCondition(value, label)`. Single pick only. */
+export const stagePickedOption =
+  (onAddCondition: (value: string | undefined, label?: string) => void) =>
+  (
+    next: string | ReadonlyArray<string> | null | undefined,
+    option?: PickedOption,
+  ) => {
+    const picked = _.castArray(option ?? [])[0];
+    const label = picked ? optionLabelToString(picked.label, '') : '';
+    onAddCondition(_.castArray(next ?? [])[0], label || undefined);
+  };
+
 /** BUI option list -> PowerSearch enum items (both fields are required there). */
 export function toEnumItems(
   options: ReadonlyArray<FilterPropertyOption> | undefined,

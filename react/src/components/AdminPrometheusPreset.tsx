@@ -22,6 +22,7 @@ import {
   BAISelect,
   BAIUnmountAfterClose,
   type BAITableSettings,
+  stagePickedOption,
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -158,17 +159,12 @@ const AdminPrometheusPreset = ({
                   }
                 >
                   <PrometheusCategorySelect
-                    // The filter row already prints the property label.
                     label={t('prometheusQueryPreset.Category')}
                     isLabelHidden
                     value={value}
                     disabled={isDisabled}
                     style={{ width: 200 }}
-                    onChange={(next, option) =>
-                      // The UUID serializes; the option label keeps the token
-                      // readable.
-                      onAddCondition(next ?? undefined, option?.label)
-                    }
+                    onChange={stagePickedOption(onAddCondition)}
                   />
                 </Suspense>
               ),
