@@ -45,6 +45,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
   sessionFrgmt,
   ...modalProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const userRole = useCurrentUserRole();
   const baiClient = useSuspendedBackendaiClient();
