@@ -183,7 +183,7 @@ const BAILegacyVFolderSelect: React.FC<BAILegacyVFolderSelectProps> = ({
 
   return (
     <BAIComplexSelect
-      placeholder={t('comp:BAIVFolderSelect.SelectFolder')}
+      placeholder={t('comp:BAILegacyVFolderSelect.SelectFolder')}
       {...selectProps}
       multiple={multiple}
       total={displayingFolders.length}
