@@ -267,4 +267,68 @@ describe('wsproxy Manager security (FR-3227)', () => {
       expect(manager.proxies.hasOwnProperty('sess-3|jupyter')).toBe(false);
     });
   });
+
+  /**
+   * WSPROXY_PORT_POOL (FR-145): deployments behind a firewall need the app
+   * gateways to land on a known set of ports instead of an OS-assigned
+   * ephemeral one. An unset/empty pool must keep the previous behaviour.
+   */
+  describe('WSPROXY_PORT_POOL parsing', () => {
+    const parse = (env?: string) => Manager.parseConfiguredPortPool(env);
+
+    it('yields an empty pool when unset or blank', () => {
+      expect(parse(undefined)).toEqual([]);
+      expect(parse('')).toEqual([]);
+      expect(parse(' , ')).toEqual([]);
+    });
+
+    it('parses a comma-separated list of single ports', () => {
+      expect(parse('20022, 30080 ,443')).toEqual([20022, 30080, 443]);
+    });
+
+    it('expands an inclusive from-to range and de-duplicates', () => {
+      expect(parse('10000-10003')).toEqual([10000, 10001, 10002, 10003]);
+      expect(parse('10000-10002,10001,10003')).toEqual([
+        10000, 10001, 10002, 10003,
+      ]);
+    });
+
+    it('skips invalid entries and keeps the valid ones', () => {
+      expect(parse('10000,abc,0,70000,10001')).toEqual([10000, 10001]);
+      // Reversed and out-of-range bounds make the whole range invalid.
+      expect(parse('10005-10000,20000-20001')).toEqual([20000, 20001]);
+      expect(parse('0-3,20000')).toEqual([20000]);
+      // isValidPort() alone would accept "10000abc" via parseInt().
+      expect(parse('10000abc,10001')).toEqual([10001]);
+    });
+  });
+
+  describe('_nextPooledPort', () => {
+    it('returns undefined when no pool is configured', () => {
+      expect(manager.portPool).toEqual([]);
+      expect(manager._nextPooledPort()).toBeUndefined();
+    });
+
+    it('skips ports held by a live gateway and ports already tried', () => {
+      manager.portPool = [10000, 10001, 10002];
+      manager.proxies['sess|jupyter'] = {
+        isAlive: () => true,
+        getPort: () => 10000,
+      };
+
+      expect(manager._nextPooledPort()).toBe(10001);
+      expect(manager._nextPooledPort(new Set([10001]))).toBe(10002);
+      expect(manager._nextPooledPort(new Set([10001, 10002]))).toBeUndefined();
+    });
+
+    it('reclaims the port of a gateway whose listener has died', () => {
+      manager.portPool = [10000];
+      manager.proxies['sess|jupyter'] = {
+        isAlive: () => false,
+        getPort: () => 10000,
+      };
+
+      expect(manager._nextPooledPort()).toBe(10000);
+    });
+  });
 });
