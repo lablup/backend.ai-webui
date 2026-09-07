@@ -31,7 +31,12 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Use renderInput with an existing select (BAIUserSelect, for example) when the raw value is opaque, and pass the human-readable label to onAddCondition so the token shows the label while the UUID still serializes.',
+          'Give an opaque-valued property an entitySource ({ search, bootstrap?, resolve?, cancel? }) so the user picks by label while the UUID still serializes; resolve is what makes a shared link or a reload show the label instead of the raw id.',
+      },
+      {
+        guidance: true,
+        description:
+          'Reach for renderInput only when entitySource cannot express the picker — it takes precedence over entitySource, and its onAddCondition label lives only for the current mount.',
       },
       {
         guidance: true,
@@ -60,7 +65,7 @@ export const docs = {
       name: 'filterProperties',
       type: 'Array<FilterProperty>',
       description:
-        'The filterable fields. Each entry declares key (the DSL property name), propertyLabel, type, and optionally defaultOperator, options, strictSelection, rule, and renderInput.',
+        'The filterable fields. Each entry declares key (the DSL property name), propertyLabel, type, and optionally defaultOperator, options, strictSelection, rule, entitySource, and renderInput.',
       required: true,
     },
     {

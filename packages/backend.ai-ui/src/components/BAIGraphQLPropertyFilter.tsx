@@ -650,7 +650,9 @@ export function tokenValueToConditionValue(
     case 'empty':
       return '';
     case 'custom': {
-      if (!property?.entitySource) return _.toString(value.value ?? '');
+      // `renderInput` wins over `entitySource`, as in `conditionToTokenValue`.
+      if (property?.renderInput || !property?.entitySource)
+        return _.toString(value.value ?? '');
       // Without an operator, fall back to the encoding's own shape: only the
       // multi arity emits JSON.
       const isList = operator

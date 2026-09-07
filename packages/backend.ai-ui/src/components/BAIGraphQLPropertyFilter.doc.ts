@@ -31,7 +31,12 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Give an opaque-valued property a `renderInput` and call `onAddCondition(value, label)` with a readable label, so the token shows the label while the raw value still serializes into the filter.',
+          'Give an opaque-valued property an `entitySource` (`{ search, bootstrap?, resolve?, cancel? }`) so the user picks by label while the id still serializes; `resolve` is what makes a shared link or a reload show the label instead of the raw id.',
+      },
+      {
+        guidance: true,
+        description:
+          'Reach for `renderInput` only when `entitySource` cannot express the picker — it takes precedence over `entitySource`, and its `onAddCondition(value, label)` label lives only for the current mount.',
       },
       {
         guidance: true,
@@ -60,7 +65,7 @@ export const docs = {
       name: 'filterProperties',
       type: 'Array<FilterProperty>',
       description:
-        'The filterable columns. Each entry declares `key` (dot paths allowed for nested filters), `propertyLabel`, `type`, and optionally `operators`, `defaultOperator` or `fixedOperator`, `options`, `strictSelection`, `valueMode`, `implicitOperator`, `rule` and `renderInput`.',
+        'The filterable columns. Each entry declares `key` (dot paths allowed for nested filters), `propertyLabel`, `type`, and optionally `operators`, `defaultOperator` or `fixedOperator`, `options`, `strictSelection`, `valueMode`, `implicitOperator`, `rule`, `entitySource` and `renderInput`.',
       required: true,
     },
     {

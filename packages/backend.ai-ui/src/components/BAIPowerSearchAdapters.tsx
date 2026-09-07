@@ -362,6 +362,7 @@ type EditorProps = {
 export function useEntityEditors({
   labels,
 }: EntityEditorsOptions): EntityEditors {
+  'use memo';
   const latestRef = useRef<
     Record<
       string,

@@ -6,6 +6,7 @@ import type {
 import BAIPropertyFilter from './BAIPropertyFilter';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { action } from 'storybook/actions';
 
 const meta: Meta<typeof BAIPropertyFilter> = {
   title: 'Filter/BAIPropertyFilter',
@@ -327,7 +328,7 @@ export const WithRenderInput: Story = {
         ),
       },
     ],
-    onChange: () => console.log('Filter changed'),
+    onChange: action('Filter changed'),
   },
 };
 
@@ -401,6 +402,6 @@ export const WithEntitySource: Story = {
       },
     ],
     value: 'owner == "owner-uuid-0003"',
-    onChange: () => console.log('Filter changed'),
+    onChange: action('Filter changed'),
   },
 };
