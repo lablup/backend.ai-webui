@@ -2972,6 +2972,7 @@
       "FolderAliasInvalid": "Yalnızca alfasayısal karakterlere, alt çizgi (_), eğik çizgi (/), nokta (.) ve tire (-) karakterlerine izin verilir.",
       "FolderAliasOverlapping": "Takma adlar zaten var olan diğer adlarla çakışır",
       "FolderAliasOverlappingToAutoMount": "Aynı ada sahip bir otomatik montaj klasörü mevcut.",
+      "FolderSubpathInvalid": "Alt yol, klasör içindeki göreli bir yol olmalıdır.",
       "FolderToMount": "Bağlanacak klasör",
       "FolderToMountList": "Bağlanacak klasör",
       "GPUSlot": "yuva",

@@ -2972,6 +2972,7 @@
       "FolderAliasInvalid": "Vain aakkosnumeeriset merkit, alaviiva (_), kauttaviiva (/), piste (.) ja viiva (-) ovat sallittuja.",
       "FolderAliasOverlapping": "Peitenimet menevät päällekkäin muiden jo olemassa olevien nimien kanssa.",
       "FolderAliasOverlappingToAutoMount": "Samanniminen automaattinen kiinnityskansio on olemassa.",
+      "FolderSubpathInvalid": "Alipolun on oltava kansion sisäinen suhteellinen polku.",
       "FolderToMount": "Liitettävä kansio",
       "FolderToMountList": "Liitettävä kansio",
       "GPUSlot": "Slot",

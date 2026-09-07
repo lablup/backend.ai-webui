@@ -10,6 +10,7 @@ import {
   UNIFIED_SLOT_TAG_PREFIX,
   isUnifiedAcceleratorSlot,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
+import { DEFAULT_ALIAS_BASE_PATH } from '../helper/vfolderMounts';
 import {
   SessionLauncherFormValue,
   SessionResources,
@@ -20,7 +21,13 @@ import {
   useCurrentResourceGroupState,
 } from './useCurrentProject';
 import { useResolveImageReference } from './useDefaultImagesWithFallback';
-import { generateRandomString, toGlobalId } from 'backend.ai-ui';
+import {
+  type VFolderMountConfigValue,
+  convertToUUID,
+  generateRandomString,
+  inputToMountDestination,
+  toGlobalId,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
@@ -119,6 +126,30 @@ export type StartSessionResults = {
   rejected?: PromiseRejectedResult[];
 };
 
+/**
+ * Split the picked mounts into the `creation_config` fields the manager takes:
+ * the vfolder ids and their resolved container paths.
+ */
+const buildMountConfig = (
+  vfolderMounts: Array<VFolderMountConfigValue> | undefined,
+) => {
+  const entries = _.map(vfolderMounts ?? [], (mount) => ({
+    id: convertToUUID(mount.vfolderId),
+    mountDestination: inputToMountDestination(
+      mount.name || mount.vfolderId,
+      mount.mountDestination,
+      DEFAULT_ALIAS_BASE_PATH,
+    ),
+  }));
+
+  return {
+    mount_ids: _.map(entries, (entry) => entry.id),
+    mount_id_map: _.fromPairs(
+      _.map(entries, (entry) => [entry.id, entry.mountDestination]),
+    ),
+  };
+};
+
 export const useStartSession = () => {
   'use memo';
 
@@ -129,7 +160,6 @@ export const useStartSession = () => {
   const relayEnv = useRelayEnvironment();
   const resolveImageReference = useResolveImageReference();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsMountById = baiClient.supports('mount-by-id');
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
 
   const [currentGlobalResourceGroup] = useCurrentResourceGroupState();
@@ -309,9 +339,7 @@ export const useStartSession = () => {
           }),
 
           // Storage configuration
-          [supportsMountById ? 'mount_ids' : 'mounts']: values.mount_ids,
-          [supportsMountById ? 'mount_id_map' : 'mount_map']:
-            values.mount_id_map,
+          ...buildMountConfig(values.vfolderMounts),
 
           // Environment variables
           environ: {

@@ -184,7 +184,7 @@ const SFTPServerButtonWithProject: React.FC<
         }),
     cluster_mode: 'single-node',
     cluster_size: 1,
-    mount_ids: [toLocalId(vfolderNode?.id || '').replaceAll('-', '')],
+    vfolderMounts: [{ vfolderId: toLocalId(vfolderNode?.id || '') }],
     resourceGroup: sftpScalingGroupsByProject?.[0],
     reuseIfExists: true,
   });

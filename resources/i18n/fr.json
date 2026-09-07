@@ -2975,6 +2975,7 @@
       "FolderAliasInvalid": "Seuls les caractères alphanumériques, le trait de soulignement (_), la barre oblique (/), le point (.) et le tiret (-) sont autorisés.",
       "FolderAliasOverlapping": "Les alias font double emploi avec d'autres noms déjà existants",
       "FolderAliasOverlappingToAutoMount": "Il existe un dossier de montage automatique portant le même nom.",
+      "FolderSubpathInvalid": "Le sous-chemin doit être un chemin relatif à l'intérieur du dossier.",
       "FolderToMount": "Dossier à monter",
       "FolderToMountList": "Dossier à monter",
       "GPUSlot": "Slot",

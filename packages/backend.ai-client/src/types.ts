@@ -36,6 +36,9 @@ export interface SessionResources {
     mount_map?: {
       [key: string]: string;
     };
+    mount_id_map?: {
+      [key: string]: string;
+    };
     environ?: {
       [key: string]: string;
     };
