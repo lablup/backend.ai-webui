@@ -918,6 +918,7 @@
       "Control": "Контроль",
       "CreateModelFolderOnlyInExclusiveProject": "Папки моделей проектов могут быть созданы только в эксклюзивных проектах Model Store.",
       "CreatedAt": "Создан в",
+      "Creator": "Создатель",
       "Delete": "Удалить",
       "DeleteAFolder": "Удалить папку",
       "DeleteFailureDescription": "Не удалось удалить {{failed}} из {{total}} папок. Проверьте причину для каждой папки ниже.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Введите имя папки, чтобы оставить",
       "TypeNewFolderName": "Введите новое имя папки",
       "TypeToConfirmDeleteForever": "Введите слово ниже для безвозвратного удаления",
-      "View": "Вид",
-      "Creator": "Создатель"
+      "View": "Вид"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Не удалось принять приглашение",
@@ -2751,6 +2751,7 @@
     "DependedByOthers": "Зависимые сеансы",
     "DependsOn": "Зависит от",
     "DescCommitSession": "Вы собираетесь зафиксировать контейнер, соответствующий приведенной ниже сессии:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Скачивание файла CSV ...",
     "DownloadingSessionLogs": "Загрузка журналов сеансов.",
     "ElapsedTime": "Прошедшее время",
@@ -2822,6 +2823,7 @@
     "PreparingSession": "Подготовка сеанса",
     "Priority": "Приоритет",
     "PrioritySuccessfullyUpdated": "Приоритет сеанса успешно обновлён.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Читать далее",
     "ReadMore": "Читать далее...",
     "RecentlyCreatedSessions": "Недавно создал сессии",
@@ -2996,6 +2998,7 @@
       "FolderAliasInvalid": "Разрешены только буквенно-цифровые символы, подчеркивание (_), косая черта (/), точка (.) и тире (-).",
       "FolderAliasOverlapping": "Псевдонимы дублируют уже существующие имена",
       "FolderAliasOverlappingToAutoMount": "Существует папка автомонтирования с таким же именем.",
+      "FolderSubpathInvalid": "Подпуть должен быть относительным путём внутри папки.",
       "FolderToMount": "Папка для монтажа",
       "FolderToMountList": "Папка для монтажа",
       "GPUSlot": "Слот",
@@ -3170,9 +3173,7 @@
       "SessionNameTooLong64": "Введите не более 64 символов.",
       "SessionNameTooShort": "Пожалуйста, введите не менее 4 символов.",
       "SluggedStrings": "Строки с засечками (>3 символов)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max поддержка",

@@ -167,7 +167,7 @@ const FileBrowserButtonWithProject: React.FC<
     allocationPreset: 'minimum-required',
     cluster_mode: 'single-node',
     cluster_size: 1,
-    mount_ids: [toLocalId(vfolderNode.id || '').replaceAll('-', '')],
+    vfolderMounts: [{ vfolderId: toLocalId(vfolderNode.id || '') }],
     reuseIfExists: true,
   });
 

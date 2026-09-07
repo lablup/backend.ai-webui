@@ -918,6 +918,7 @@
       "Control": "Controlar",
       "CreateModelFolderOnlyInExclusiveProject": "Las carpetas de proyectos modelo solo se pueden crear en proyectos exclusivos de Model Store.",
       "CreatedAt": "Creado a",
+      "Creator": "Creador",
       "Delete": "Borrar",
       "DeleteAFolder": "Eliminar una carpeta",
       "DeleteFailureDescription": "No se pudieron eliminar {{failed}} de {{total}} carpetas. Consulte el motivo de cada carpeta a continuación.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Escriba el nombre de la carpeta que desea abandonar",
       "TypeNewFolderName": "Escriba el nombre de la nueva carpeta",
       "TypeToConfirmDeleteForever": "Escribe la palabra a continuación para eliminar permanentemente",
-      "View": "Ver",
-      "Creator": "Creador"
+      "View": "Ver"
     },
     "invitation": {
       "FailedToAcceptInvitation": "No se pudo aceptar la invitación",
@@ -2751,6 +2751,7 @@
     "DependedByOthers": "Dependido por",
     "DependsOn": "Depende de",
     "DescCommitSession": "Está a punto de comprometer el contenedor correspondiente a la sesión siguiente:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Descargando archivo CSV...",
     "DownloadingSessionLogs": "Descarga de registros de sesión.",
     "ElapsedTime": "Tiempo transcurrido",
@@ -2822,6 +2823,7 @@
     "PreparingSession": "Preparando sesión",
     "Priority": "Prioridad",
     "PrioritySuccessfullyUpdated": "La prioridad de la sesión se ha actualizado correctamente.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Leer menos",
     "ReadMore": "Leer más...",
     "RecentlyCreatedSessions": "Sesiones creadas recientemente",
@@ -2996,6 +2998,7 @@
       "FolderAliasInvalid": "Sólo se permiten caracteres alfanuméricos, guión bajo (_), barra (/), punto (.) y guión (-).",
       "FolderAliasOverlapping": "Los alias se solapan con otros nombres ya existentes",
       "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre.",
+      "FolderSubpathInvalid": "La subruta debe ser una ruta relativa dentro de la carpeta.",
       "FolderToMount": "Carpeta para montar",
       "FolderToMountList": "Carpeta para montar",
       "GPUSlot": "Ranura",
@@ -3170,9 +3173,7 @@
       "SessionNameTooLong64": "Introduzca 64 caracteres o menos.",
       "SessionNameTooShort": "Introduzca al menos 4 caracteres.",
       "SluggedStrings": "Cadenas babosas (>3 caracteres)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Soporte de Atom Max",

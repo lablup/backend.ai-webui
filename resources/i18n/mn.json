@@ -918,6 +918,7 @@
       "Control": "Хяналт",
       "CreateModelFolderOnlyInExclusiveProject": "Загвар төслийн фолдеруудыг зөвхөн загвар дэлгүүрийн онцгой төсөлд бий болгож болно.",
       "CreatedAt": "Бүтэмж дээр бүтсэн",
+      "Creator": "Үүсгэгч",
       "Delete": "Устгах",
       "DeleteAFolder": "Фолдер устгах",
       "DeleteFailureDescription": "{{total}} фолдероос {{failed}}-ыг устгаж чадаагүй. Доор фолдер бүрийн шалтгааныг шалгана уу.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Орхихын тулд хавтасныхаа нэрийг оруулна уу",
       "TypeNewFolderName": "Шинэ хавтасны нэрийг оруулна уу",
       "TypeToConfirmDeleteForever": "Бүрмөсөн устгахын тулд доорх үгийг бичнэ үү",
-      "View": "Харах",
-      "Creator": "Үүсгэгч"
+      "View": "Харах"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Урилга хүлээж авч чадсангүй",
@@ -2752,6 +2752,7 @@
     "DependedByOthers": "Хамааралтай",
     "DependsOn": "Хамаарал",
     "DescCommitSession": "Та доорх сессэд тохирох контейнерийг хийх гэж байна:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "CSV файлыг татаж авч байна ...",
     "DownloadingSessionLogs": "Сеансын бүртгэлийг татаж байна.",
     "ElapsedTime": "Зарцуулсан цаг хугацаа",
@@ -2823,6 +2824,7 @@
     "PreparingSession": "Session бэлтгэж байна",
     "Priority": "Эрэмбэ",
     "PrioritySuccessfullyUpdated": "Сессийн эрэмбэ амжилттай шинэчлэгдлээ.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Бага унш",
     "ReadMore": "Цааш унших...",
     "RecentlyCreatedSessions": "Саяхан бүтээсэн хуралдаанууд",
@@ -2998,6 +3000,7 @@
       "FolderAliasInvalid": "Зөвхөн үсэг, тоон тэмдэгт, доогуур зураас (_), ташуу зураас (/), цэг (.), зураас (-) зэргийг зөвшөөрнө.",
       "FolderAliasOverlapping": "Фолдерын хоч нэр давхцалт",
       "FolderAliasOverlappingToAutoMount": "Ижил нэртэй автоматаар холбох хавтас байна.",
+      "FolderSubpathInvalid": "Дэд зам нь фолдер доторх харьцангуй зам байх ёстой.",
       "FolderToMount": "Холбох фолдер",
       "FolderToMountList": "Холбох фолдер",
       "GPUSlot": "Слот",
@@ -3172,9 +3175,7 @@
       "SessionNameTooLong64": "64 ба түүнээс бага тэмдэгт оруулна уу.",
       "SessionNameTooShort": "Дор хаяж 4 тэмдэгт оруулна уу.",
       "SluggedStrings": "Залгисан мөрүүд (>3 тэмдэгт)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Атомын хамгийн их дэмжлэг",

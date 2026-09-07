@@ -918,6 +918,7 @@
       "Control": "Kontrol",
       "CreateModelFolderOnlyInExclusiveProject": "Folder Proyek Model hanya dapat dibuat di proyek Model Store -Eksklusif.",
       "CreatedAt": "Dibuat di",
+      "Creator": "Pembuat",
       "Delete": "Hapus",
       "DeleteAFolder": "Hapus folder",
       "DeleteFailureDescription": "{{failed}} dari {{total}} folder tidak dapat dihapus. Periksa alasan untuk setiap folder di bawah ini.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Ketik nama folder untuk ditinggalkan",
       "TypeNewFolderName": "Ketik nama folder baru",
       "TypeToConfirmDeleteForever": "Ketik kata di bawah ini untuk menghapus secara permanen",
-      "View": "Lihat",
-      "Creator": "Pembuat"
+      "View": "Lihat"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Gagal menerima undangan",
@@ -2754,6 +2754,7 @@
     "DependedByOthers": "Bergantung padanya",
     "DependsOn": "Bergantung pada",
     "DescCommitSession": "Anda akan melakukan komit kontainer yang berhubungan dengan sesi di bawah ini:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Mengunduh file CSV...",
     "DownloadingSessionLogs": "Mengunduh log sesi.",
     "ElapsedTime": "Waktu yang Telah Berlalu",
@@ -2825,6 +2826,7 @@
     "PreparingSession": "Mempersiapkan sesi...",
     "Priority": "Prioritas",
     "PrioritySuccessfullyUpdated": "Prioritas sesi berhasil diperbarui.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Baca lebih sedikit",
     "ReadMore": "Baca Selengkapnya...",
     "RecentlyCreatedSessions": "Sesi yang baru dibuat",
@@ -3000,6 +3002,7 @@
       "FolderAliasInvalid": "Hanya karakter alfanumerik, garis bawah (_), garis miring (/), titik (.), dan tanda hubung (-) yang diperbolehkan.",
       "FolderAliasOverlapping": "Nama lain (alias) folder sama dengan nama lain yang sudah dipakai",
       "FolderAliasOverlappingToAutoMount": "Folder pemasangan otomatis dengan nama yang sama tersedia.",
+      "FolderSubpathInvalid": "Sub-jalur harus berupa jalur relatif di dalam folder.",
       "FolderToMount": "Folder untuk dipasang",
       "FolderToMountList": "Folder untuk dipasang",
       "GPUSlot": "Slot",
@@ -3174,9 +3177,7 @@
       "SessionNameTooLong64": "Silakan masukkan 64 karakter atau kurang.",
       "SessionNameTooShort": "Masukkan setidaknya 4 karakter.",
       "SluggedStrings": "String yang disumbat (>3 karakter)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Dukungan Atom Max",

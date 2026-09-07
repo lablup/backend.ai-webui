@@ -7,6 +7,7 @@ import { App } from '../app-shim';
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
+import { DEFAULT_ALIAS_BASE_PATH } from '../helper/vfolderMounts';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -41,6 +42,8 @@ import {
   BAIMetadataList,
   BAITable,
   BAIText,
+  type VFolderMountConfigValue,
+  inputToMountDestination,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -89,6 +92,23 @@ const SessionLauncherPreview: React.FC<{
   const currentProject = useCurrentProjectValue();
   const [, { getBaseVersion, getBaseImage, tagAlias }] =
     useBackendAIImageMetaData();
+
+  const mountRows = _.map(
+    form.getFieldValue('vfolderMounts') ?? [],
+    (mount: VFolderMountConfigValue) => {
+      const name = mount.name || mount.vfolderId;
+      return {
+        key: mount.vfolderId,
+        name,
+        alias: inputToMountDestination(
+          name,
+          mount.mountDestination,
+          DEFAULT_ALIAS_BASE_PATH,
+        ),
+        isDefaultAlias: _.isEmpty(mount.mountDestination?.trim()),
+      };
+    },
+  );
 
   return (
     <>
@@ -474,7 +494,7 @@ const SessionLauncherPreview: React.FC<{
         showDivider
         size="small"
         status={
-          form.getFieldError('mount_id_map').length > 0 ? 'error' : undefined
+          form.getFieldError('vfolderMounts').length > 0 ? 'error' : undefined
         }
         extraButtonTitle={t('button.Edit')}
         onClickExtraButton={() => {
@@ -482,9 +502,9 @@ const SessionLauncherPreview: React.FC<{
         }}
       >
         <BAIFlex direction="column" align="stretch" gap={'xs'}>
-          {form.getFieldValue('mount_ids')?.length > 0 ? (
+          {mountRows.length > 0 ? (
             <BAITable
-              rowKey="name"
+              rowKey="key"
               size="small"
               pagination={false}
               columns={[
@@ -495,24 +515,18 @@ const SessionLauncherPreview: React.FC<{
                 {
                   dataIndex: 'alias',
                   title: t('session.launcher.FolderAlias'),
-                  render: (value, record) => {
-                    return _.isEmpty(value) ? (
-                      <Text color="placeholder">
-                        {`/home/work/${record.name}`}
-                      </Text>
+                  render: (
+                    value: string,
+                    record: (typeof mountRows)[number],
+                  ) =>
+                    record.isDefaultAlias ? (
+                      <Text color="placeholder">{value}</Text>
                     ) : (
                       value
-                    );
-                  },
+                    ),
                 },
               ]}
-              dataSource={_.map(form.getFieldValue('mount_ids'), (v) => {
-                const name = form.getFieldValue('vfoldersNameMap')?.[v] || v;
-                return {
-                  name,
-                  alias: form.getFieldValue('mount_id_map')?.[v],
-                };
-              })}
+              dataSource={mountRows}
             />
           ) : (
             <Banner

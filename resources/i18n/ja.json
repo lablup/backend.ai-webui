@@ -918,6 +918,7 @@
       "Control": "コントロール",
       "CreateModelFolderOnlyInExclusiveProject": "モデルプロジェクトフォルダーは、モデルストアと独占プロジェクトでのみ作成できます。",
       "CreatedAt": "で作成されました",
+      "Creator": "作成者",
       "Delete": "削除",
       "DeleteAFolder": "フォルダを削除する",
       "DeleteFailureDescription": "{{total}}件中{{failed}}件のフォルダを削除できませんでした。以下で各フォルダの理由を確認してください。",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "残すフォルダ名を入力します",
       "TypeNewFolderName": "新しいフォルダ名を入力します",
       "TypeToConfirmDeleteForever": "完全に削除するには、以下の単語を入力してください",
-      "View": "見る",
-      "Creator": "作成者"
+      "View": "見る"
     },
     "invitation": {
       "FailedToAcceptInvitation": "招待状を受け入れなかった",
@@ -2753,6 +2753,7 @@
     "DependedByOthers": "被依存",
     "DependsOn": "依存先",
     "DescCommitSession": "次のセッションに対応するコンテナをコミットします：",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "CSVファイルをダウンロードしています...",
     "DownloadingSessionLogs": "セッションログをダウンロードします。",
     "ElapsedTime": "経過時間",
@@ -2824,6 +2825,7 @@
     "PreparingSession": "セッションの準備...",
     "Priority": "優先度",
     "PrioritySuccessfullyUpdated": "セッションの優先度が正常に更新されました。",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "内容折りたたみ",
     "ReadMore": "もっと詳しく...",
     "RecentlyCreatedSessions": "最近作成されたセッション",
@@ -2998,6 +3000,7 @@
       "FolderAliasInvalid": "使用できる文字は、英数字、アンダースコア (_)、スラッシュ (/)、ドット (.)、ダッシュ (-) のみです。",
       "FolderAliasOverlapping": "代替名前が既に存在する他の名前と重なります。",
       "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。",
+      "FolderSubpathInvalid": "サブパスはフォルダ内の相対パスである必要があります。",
       "FolderToMount": "マウントするフォルダー",
       "FolderToMountList": "マウントするフォルダー",
       "GPUSlot": "スロット",
@@ -3172,9 +3175,7 @@
       "SessionNameTooLong64": "64文字以下で入力してください。",
       "SessionNameTooShort": "4文字以上入力してください。",
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Maxサポート",

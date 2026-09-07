@@ -918,6 +918,7 @@
       "Control": "Kontrol",
       "CreateModelFolderOnlyInExclusiveProject": "Model proje klasörleri yalnızca model mağaza özel projelerinde oluşturulabilir.",
       "CreatedAt": "Yaratılmış",
+      "Creator": "Oluşturan",
       "Delete": "Sil",
       "DeleteAFolder": "Klasörü sil",
       "DeleteFailureDescription": "{{total}} klasörden {{failed}} tanesi silinemedi. Aşağıda her klasörün nedenini kontrol edin.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Ayrılmak için klasör adını yazın",
       "TypeNewFolderName": "Yeni klasör adını yazın",
       "TypeToConfirmDeleteForever": "Kalıcı olarak silmek için aşağıdaki kelimeyi yazın",
-      "View": "Görünüm",
-      "Creator": "Oluşturan"
+      "View": "Görünüm"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Davetiyeyi kabul edemedi",
@@ -2751,6 +2751,7 @@
     "DependedByOthers": "Buna bağlı olan",
     "DependsOn": "Bağlı olduğu",
     "DescCommitSession": "Aşağıdaki oturuma karşılık gelen konteyneri işlemek üzeresiniz:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "CSV dosyası indiriliyor...",
     "DownloadingSessionLogs": "Oturum günlükleri indiriliyor.",
     "ElapsedTime": "Geçen Zaman",
@@ -2822,6 +2823,7 @@
     "PreparingSession": "Oturum hazırlanıyor",
     "Priority": "Öncelik",
     "PrioritySuccessfullyUpdated": "Oturum önceliği başarıyla güncellendi.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Daha az oku",
     "ReadMore": "Daha Fazlasını Oku...",
     "RecentlyCreatedSessions": "Son zamanlarda oluşturulan oturumlar",
@@ -2996,6 +2998,7 @@
       "FolderAliasInvalid": "Yalnızca alfasayısal karakterlere, alt çizgi (_), eğik çizgi (/), nokta (.) ve tire (-) karakterlerine izin verilir.",
       "FolderAliasOverlapping": "Takma adlar zaten var olan diğer adlarla çakışır",
       "FolderAliasOverlappingToAutoMount": "Aynı ada sahip bir otomatik montaj klasörü mevcut.",
+      "FolderSubpathInvalid": "Alt yol, klasör içindeki göreli bir yol olmalıdır.",
       "FolderToMount": "Bağlanacak klasör",
       "FolderToMountList": "Bağlanacak klasör",
       "GPUSlot": "yuva",
@@ -3170,9 +3173,7 @@
       "SessionNameTooLong64": "Lütfen 64 veya daha az karakter girin.",
       "SessionNameTooShort": "Lütfen en az 4 karakter giriniz.",
       "SluggedStrings": "Kesikli dizeler (>3 karakter)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max Desteği",

@@ -918,6 +918,7 @@
       "Control": "Valvonta",
       "CreateModelFolderOnlyInExclusiveProject": "Malliprojektin kansiot voidaan luoda vain Model Store - Exclusive -projekteihin.",
       "CreatedAt": "Luotu jhk",
+      "Creator": "Luoja",
       "Delete": "Poista",
       "DeleteAFolder": "Poista kansio",
       "DeleteFailureDescription": "{{failed}}/{{total}} kansiota ei voitu poistaa. Tarkista alla kunkin kansion syy.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Kirjoita poistuvan kansion nimi",
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
       "TypeToConfirmDeleteForever": "Kirjoita alla oleva sana pysyvää poistoa varten",
-      "View": "Näytä",
-      "Creator": "Luoja"
+      "View": "Näytä"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Kutsu epäonnistui",
@@ -2751,6 +2751,7 @@
     "DependedByOthers": "Riippuvainen tästä",
     "DependsOn": "Riippuu",
     "DescCommitSession": "Olet aikeissa sitouttaa alla olevaa istuntoa vastaavan kontin:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "CSV-tiedoston lataaminen...",
     "DownloadingSessionLogs": "Istuntolokien lataaminen.",
     "ElapsedTime": "Kulunut aika",
@@ -2822,6 +2823,7 @@
     "PreparingSession": "Istunnon valmistelu...",
     "Priority": "Prioriteetti",
     "PrioritySuccessfullyUpdated": "Istunnon prioriteetti on päivitetty onnistuneesti.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Lue vähemmän",
     "ReadMore": "Lue lisää...",
     "RecentlyCreatedSessions": "Äskettäin loivat istunnot",
@@ -2996,6 +2998,7 @@
       "FolderAliasInvalid": "Vain aakkosnumeeriset merkit, alaviiva (_), kauttaviiva (/), piste (.) ja viiva (-) ovat sallittuja.",
       "FolderAliasOverlapping": "Peitenimet menevät päällekkäin muiden jo olemassa olevien nimien kanssa.",
       "FolderAliasOverlappingToAutoMount": "Samanniminen automaattinen kiinnityskansio on olemassa.",
+      "FolderSubpathInvalid": "Alipolun on oltava kansion sisäinen suhteellinen polku.",
       "FolderToMount": "Liitettävä kansio",
       "FolderToMountList": "Liitettävä kansio",
       "GPUSlot": "Slot",
@@ -3170,9 +3173,7 @@
       "SessionNameTooLong64": "Anna enintään 64 merkkiä.",
       "SessionNameTooShort": "Kirjoita vähintään 4 merkkiä.",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max -tuki",
