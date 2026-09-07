@@ -1976,7 +1976,7 @@ The toolbar provides:
 
 The settings are divided into the following groups:
 
-- **Theme**: Color pickers for the primary, header background, link, info, error, success, and text colors. Each color can be set independently for light and dark mode and reset individually.
+- **Theme**: Color pickers for the primary, header background, link, info, error, and success colors. Each color can be set independently for light and dark mode and reset individually.
 - **Logo CI**: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.
 - **Detail Logo CI**: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.
 - **Font**: Select the font family used throughout the interface.
