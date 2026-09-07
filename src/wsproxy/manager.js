@@ -384,7 +384,10 @@ class Manager extends EventEmitter {
           this.proxies[p] = gateway;
 
           let assigned = false;
-          let maxtry = 5;
+          // Pooled: every entry must be reachable, or a pool larger than the
+          // legacy budget reports exhaustion while later ports are still free.
+          // The loop still exits early once _nextPooledPort() runs out.
+          const maxtry = pooled ? this.portPool.length + 1 : 5;
           for (let i = 0; i < maxtry; i++) {
             try {
               await gateway.start_proxy(sessionId, app, ip, port, envs, args);
