@@ -5,13 +5,14 @@
  * `@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;`
  * fixes layer precedence by FIRST APPEARANCE — a later statement can append
  * names but never reorder ones already seen. So the statement has to be parsed
- * before any layered rule, and the three places that declare it must agree.
+ * before any layered rule, and the four places that declare it must agree.
  *
- * The repo-root `index.html` copy is the one that actually decides it: it is
- * static markup, so it precedes every stylesheet the bundle contributes (a
- * <link> Vite injects before </head> in a build, a runtime <style> in dev).
- * The two CSS copies remain because BUI and the app are also consumed outside
- * this document (Storybook, `backend.ai-ui/styles.css`).
+ * The repo-root `index.html` copy is the one that actually decides it for the
+ * app: it is static markup, so it precedes every stylesheet the bundle
+ * contributes (a <link> Vite injects before </head> in a build, a runtime
+ * <style> in dev). The three CSS copies cover the consumers that never load
+ * that document — Storybook boots from `.storybook/astryx.css`, and
+ * `backend.ai-ui/styles.css` is consumed standalone.
  *
  * Drift and misplacement both fail SILENTLY — the page renders, with Astryx's
  * defaults quietly outranking the brand theme, which is exactly the dev/build
@@ -32,9 +33,10 @@ export const REPO_ROOT = resolve(
 export const INDEX_HTML = "index.html";
 export const APP_CSS = "react/src/index.css";
 export const BUI_CSS = "packages/backend.ai-ui/src/styles/backend.ai-ui.css";
+export const STORYBOOK_CSS = "packages/backend.ai-ui/.storybook/astryx.css";
 
 /** Every file that must declare the identical order. */
-export const MIRRORS = [INDEX_HTML, APP_CSS, BUI_CSS];
+export const MIRRORS = [INDEX_HTML, APP_CSS, BUI_CSS, STORYBOOK_CSS];
 
 const LAYER_STATEMENT_RE =
   /@layer\s+([a-zA-Z][\w-]*(?:\s*,\s*[a-zA-Z][\w-]*)+)\s*;/;
@@ -123,7 +125,7 @@ export function runLayerOrderGate({ repoRoot = REPO_ROOT } = {}) {
   }
 
   // 3. In each CSS mirror it must still be the FIRST rule of the file.
-  for (const rel of [APP_CSS, BUI_CSS]) {
+  for (const rel of MIRRORS.filter((rel) => rel.endsWith(".css"))) {
     const body = stripCssComments(texts.get(rel)).trimStart();
     if (parseLayerOrder(body).index !== 0) {
       failures.push(

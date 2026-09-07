@@ -19,8 +19,9 @@
        evaluates a layered sheet before it — which is what made the brand
        theme lose to Astryx's defaults on the dev server but win in the build.
        Every bundle style lands after this element, in both.
-       KEEP IN SYNC with react/src/index.css and
-       packages/backend.ai-ui/src/styles/backend.ai-ui.css;
+       KEEP IN SYNC with react/src/index.css,
+       packages/backend.ai-ui/src/styles/backend.ai-ui.css and
+       packages/backend.ai-ui/.storybook/astryx.css;
        scripts/migration-gates/layer-order-gate.mjs fails on drift. -->
   <style nonce="{{nonce}}">
     @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;

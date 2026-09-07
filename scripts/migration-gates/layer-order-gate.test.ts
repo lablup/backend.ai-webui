@@ -2,7 +2,7 @@
  * Detection proof for the cascade-layer order gate (layer-order-gate.mjs).
  *
  * Each fixture reproduces one way the FR-3532 divergence comes back: the
- * statement missing, the three copies disagreeing, or one of them parsed after
+ * statement missing, the four copies disagreeing, or one of them parsed after
  * a stylesheet that already registered a layer name. All three render fine and
  * report nothing — the only visible symptom is Astryx's defaults outranking the
  * brand theme, which is why the gate exists.
@@ -11,8 +11,14 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 
-const { APP_CSS, BUI_CSS, INDEX_HTML, parseLayerOrder, runLayerOrderGate } =
-  await import("./layer-order-gate.mjs");
+const {
+  APP_CSS,
+  BUI_CSS,
+  INDEX_HTML,
+  STORYBOOK_CSS,
+  parseLayerOrder,
+  runLayerOrderGate,
+} = await import("./layer-order-gate.mjs");
 
 const ORDER =
   "reset, theme, base, astryx-base, astryx-theme, components, utilities";
@@ -38,13 +44,14 @@ const css = (statement: string) =>
     ".x { color: red; }",
   ].join("\n");
 
-/** A repo tree with the three mirrors, each overridable. */
+/** A repo tree with the four mirrors, each overridable. */
 const makeFixture = (files: Record<string, string> = {}) => {
   const root = mkdtempSync(join(tmpdir(), "layer-order-gate-"));
   const defaults = {
     [INDEX_HTML]: html(`  <style>@layer ${ORDER};</style>`),
     [APP_CSS]: css(`@layer ${ORDER};`),
     [BUI_CSS]: css(`@layer ${ORDER};`),
+    [STORYBOOK_CSS]: css(`@layer ${ORDER};`),
   };
   for (const [rel, content] of Object.entries({ ...defaults, ...files })) {
     const abs = join(root, rel);
@@ -87,7 +94,7 @@ describe("runLayerOrderGate", () => {
     for (const root of roots) rmSync(root, { recursive: true, force: true });
   });
 
-  it("passes when all three mirrors agree and are placed first", () => {
+  it("passes when all four mirrors agree and are placed first", () => {
     expect(gate().failures).toEqual([]);
   });
 
@@ -97,6 +104,14 @@ describe("runLayerOrderGate", () => {
     });
     expect(failures).toHaveLength(1);
     expect(failures[0]).toContain(BUI_CSS);
+  });
+
+  it("flags the Storybook mirror when its order diverges", () => {
+    const { failures } = gate({
+      [STORYBOOK_CSS]: css("@layer reset, theme, base, astryx-theme;"),
+    });
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toContain(STORYBOOK_CSS);
   });
 
   it("flags a missing statement", () => {
