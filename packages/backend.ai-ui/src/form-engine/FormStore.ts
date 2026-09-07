@@ -1055,18 +1055,14 @@ export class FormStore {
    */
   private getFieldDOMNode = (name: NamePath): HTMLElement | undefined => {
     if (typeof document === 'undefined') return undefined;
-    const handle = getNamePath(name).join('_');
-    for (const el of document.querySelectorAll<HTMLElement>(
-      '[data-bai-field-id]',
-    )) {
-      if (el.dataset.baiFieldId === handle) return el;
-    }
-    for (const el of document.querySelectorAll<HTMLElement>(
-      '[data-bai-field-item]',
-    )) {
-      if (el.dataset.baiFieldItem === handle) return el;
-    }
-    return undefined;
+    // Quoted attribute value: only the quote and the backslash need escaping
+    // (`CSS.escape` is missing in jsdom).
+    const handle = `"${getNamePath(name).join('_').replace(/["\\]/g, '\\$&')}"`;
+    return (
+      document.querySelector<HTMLElement>(`[data-bai-field-id=${handle}]`) ??
+      document.querySelector<HTMLElement>(`[data-bai-field-item=${handle}]`) ??
+      undefined
+    );
   };
 }
 
