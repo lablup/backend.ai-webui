@@ -55,7 +55,6 @@
     "Runtime": "运行时",
     "RuntimeRequired": "运行时为必填项。",
     "RuntimeTooltip": "此预设所针对的推理运行时（如 vLLM、SGLang）。选择后将显示其可配置的运行时参数，这些参数值将与预设一起保存，并应用于从该预设创建的部署。",
-    "RuntimeVariantId": "运行时 ID",
     "SectionAdvanced": "高级",
     "SectionBasicInfo": "基本信息",
     "SectionCluster": "集群",
@@ -202,7 +201,7 @@
     "CreatePreset": "创建参数",
     "Name": "名称",
     "PresetDeleted": "Runtime 参数已删除。",
-    "RuntimeVariantId": "运行时变体 ID",
+    "Runtime": "__NOT_TRANSLATED__",
     "RuntimeVariantPreset": "Runtime 参数",
     "TabTitle": "Runtime 参数"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "端点 URL",
       "Name": "名称",
       "OpenToPublic": "公开",
-      "ProjectId": "项目 ID",
       "ResourceGroup": "资源组",
       "Status": "状态",
       "Tags": "标签"
@@ -2796,7 +2794,7 @@
     "OpenToPublic": "向公众开放应用",
     "OpenToPublicDesc": "启用此选项允许网络中的所有用户访问应用程序。<br /><br />\n对于访问管理，请在“允许IP”字段中输入特定的IP地址。<br /><br />\n将此字段留为空，将允许从所有IP地址访问。<br /><br />\n考虑安全管理时，请考虑设置IP限制。",
     "Others": "其他",
-    "OwnerUUID": "所有者UUID",
+    "Owner": "__NOT_TRANSLATED__",
     "PanelSettings": "面板设置",
     "PendingPosition": "队列位置",
     "Phase": "阶段",

@@ -31,6 +31,7 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAISessionNodesV2,
+  BAIUserSelect,
   INITIAL_FETCH_KEY,
   availableSessionV2SorterValues,
   filterOutEmpty,
@@ -206,8 +207,29 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
               },
               {
                 key: 'userUuid',
-                propertyLabel: t('session.OwnerUUID'),
+                propertyLabel: t('session.Owner'),
                 type: 'uuid',
+                renderInput: ({ onAddCondition, value, isDisabled }) => (
+                  <BAIUserSelect
+                    valuePropName="id"
+                    // The filter row already prints the property label.
+                    label={t('session.Owner')}
+                    isLabelHidden
+                    value={value}
+                    isDisabled={isDisabled}
+                    width={200}
+                    onChange={(next, option) =>
+                      // The UUID serializes; the option label (email) keeps
+                      // the token readable.
+                      onAddCondition(
+                        next as string | undefined,
+                        Array.isArray(option)
+                          ? option[0]?.label
+                          : option?.label,
+                      )
+                    }
+                  />
+                ),
               },
             ]}
             value={queryParams.filter ?? undefined}

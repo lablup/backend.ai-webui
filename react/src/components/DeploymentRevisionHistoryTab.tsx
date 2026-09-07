@@ -22,15 +22,18 @@ import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import { BAIPopconfirm } from 'backend.ai-ui';
 import {
+  BAIAdminImageSelect,
   type BAIColumnType,
   BAIFetchKeyButton,
   BAIFlex,
+  type BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
   BAITable,
   BAITag,
   BAIUnmountAfterClose,
+  BAIVFolderSelect,
   BAIId,
   INITIAL_FETCH_KEY,
   type GraphQLFilter,
@@ -591,7 +594,7 @@ const DeploymentRevisionHistoryTab: React.FC<
     validate: (value: string) => isValidUUID(value.toLowerCase()),
   };
 
-  const filterProperties = [
+  const filterProperties: Array<BAIGraphQLFilterProperty> = [
     {
       key: 'revisionNumber',
       propertyLabel: t('deployment.RevisionNumber'),
@@ -615,6 +618,23 @@ const DeploymentRevisionHistoryTab: React.FC<
       type: 'uuid' as const,
       fixedOperator: 'equals' as const,
       rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <BAIAdminImageSelect
+          // The filter row already prints the property label.
+          label={t('deployment.Image')}
+          isLabelHidden
+          value={value}
+          isDisabled={isDisabled}
+          width={200}
+          onChange={(next, option) =>
+            // The UUID serializes; the option label keeps the token readable.
+            onAddCondition(
+              next as string | undefined,
+              _.castArray(option ?? [])[0]?.label,
+            )
+          }
+        />
+      ),
     },
     {
       key: 'modelVfolderId',
@@ -622,6 +642,24 @@ const DeploymentRevisionHistoryTab: React.FC<
       type: 'uuid' as const,
       fixedOperator: 'equals' as const,
       rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <BAIVFolderSelect
+          // `modelVfolderId` is a `UUIDFilter`, so the folder's `row_id` — not
+          // its Relay global id — is what serializes.
+          valuePropName="row_id"
+          label={t('deployment.ModelFolder')}
+          isLabelHidden
+          value={value}
+          isDisabled={isDisabled}
+          width={200}
+          onChange={(next, option) =>
+            onAddCondition(
+              next as string | undefined,
+              _.castArray(option ?? [])[0]?.label,
+            )
+          }
+        />
+      ),
     },
   ];
 

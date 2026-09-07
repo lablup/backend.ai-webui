@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "Le runtime est obligatoire.",
     "RuntimeTooltip": "Le runtime d'inférence (ex. vLLM, SGLang) ciblé par ce préréglage. En sélectionner un révèle ses paramètres de runtime configurables, dont les valeurs sont enregistrées avec le préréglage et appliquées aux déploiements créés à partir de celui-ci.",
-    "RuntimeVariantId": "ID Runtime",
     "SectionAdvanced": "Avancé",
     "SectionBasicInfo": "Informations de Base",
     "SectionCluster": "Cluster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Créer un paramètre",
     "Name": "Nom",
     "PresetDeleted": "Le paramètre d'exécution a été supprimé.",
-    "RuntimeVariantId": "ID de la variante d'exécution",
+    "Runtime": "__NOT_TRANSLATED__",
     "RuntimeVariantPreset": "Paramètre d'Exécution",
     "TabTitle": "Paramètres d'Exécution"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "URL du point de terminaison",
       "Name": "Nom",
       "OpenToPublic": "Public",
-      "ProjectId": "ID du projet",
       "ResourceGroup": "Groupe de ressources",
       "Status": "Statut",
       "Tags": "Étiquettes"
@@ -2796,7 +2794,7 @@
     "OpenToPublic": "Ouvrir l'application au public",
     "OpenToPublicDesc": "L'activation de cette option permet un accès à l'application pour tous les utilisateurs du réseau.<br /><br /> \nPour la gestion de l'accès, entrez des adresses IP spécifiques dans le champ «IP autorisé».<br /><br /> \nLaisser ce champ vide permettra l'accès à partir de toutes les adresses IP.<br /><br /> \nEnvisagez de définir les restrictions IP lorsque cela est nécessaire pour la gestion de la sécurité.",
     "Others": "Autres",
-    "OwnerUUID": "UUID du propriétaire",
+    "Owner": "__NOT_TRANSLATED__",
     "PanelSettings": "Paramètres du panneau",
     "PendingPosition": "Position de file d'attente",
     "Phase": "Phase",

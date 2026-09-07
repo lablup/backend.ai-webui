@@ -20,6 +20,7 @@ import {
   BAINameActionCell,
   BAIRuntimeVariantPresetTable,
   BAIRuntimeVariantPresetSettingModal,
+  BAIRuntimeVariantSelect,
   type RuntimeVariantPresetNodeInList,
   type BAITableSettings,
   BAIUnmountAfterClose,
@@ -172,10 +173,25 @@ const AdminRuntimeVariantPreset = ({
               },
               {
                 key: 'runtimeVariantId',
-                propertyLabel: t('adminRuntimeVariantPreset.RuntimeVariantId'),
+                propertyLabel: t('adminRuntimeVariantPreset.Runtime'),
                 type: 'uuid',
                 fixedOperator: 'equals',
                 rule: uuidRule,
+                renderInput: ({ onAddCondition, value, isDisabled }) => (
+                  <BAIRuntimeVariantSelect
+                    // The filter row already prints the property label.
+                    label={t('adminRuntimeVariantPreset.Runtime')}
+                    isLabelHidden
+                    value={value}
+                    isDisabled={isDisabled}
+                    width={200}
+                    onChange={(next, option) =>
+                      // The UUID serializes; the option label keeps the token
+                      // readable.
+                      onAddCondition(next, option?.label)
+                    }
+                  />
+                ),
               },
             ]}
             value={filter}

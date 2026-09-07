@@ -65,9 +65,9 @@ export const docs = {
     },
     {
       name: 'onChange',
-      type: '(value: string | Array<string> | undefined) => void',
+      type: '(value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void',
       description:
-        'Fired with the new key, or the array of keys under multiple. It carries no second option argument.',
+        'Fired with the new key, or the array of keys under multiple. The optional second argument carries the picked `{ label, value }` pair(s), which a property-filter `renderInput` uses to label its token with the folder name while the key serializes.',
     },
     {
       name: 'valuePropName',
