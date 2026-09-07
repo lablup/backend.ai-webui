@@ -76,7 +76,17 @@ interface Props {
     label?: React.ReactNode;
     value?: string | number | null;
   }) => React.ReactNode;
+  /**
+   * Reports the remaining slots (available - occupied) of every loaded agent,
+   * so a caller can gate its own UI on the picked agent's capacity.
+   */
+  onRemainingSlotsChange?: (
+    remainingSlotsByAgentId: AgentRemainingSlotsMap,
+  ) => void;
 }
+
+/** Remaining slots per agent id, e.g. `{ 'agent-1': { cpu: 2, mem: 1024 } }`. */
+export type AgentRemainingSlotsMap = Record<string, Record<string, number>>;
 
 const AgentSelect: React.FC<Props> = ({
   fetchKey,
@@ -88,6 +98,7 @@ const AgentSelect: React.FC<Props> = ({
   placeholder,
   disabled,
   labelRender: _labelRender,
+  onRemainingSlotsChange,
   ...selectProps
 }) => {
   'use memo';
@@ -148,46 +159,62 @@ const AgentSelect: React.FC<Props> = ({
     },
   );
 
-  const agentOptions: Array<BAIComplexSelectOption> = _.compact(
-    _.map(agent_summary_list?.items, (agent) => {
-      if (!agent?.id) return null;
-      const availableSlotsInfo: {
-        [key in string]: string;
-      } = JSON.parse(agent?.available_slots ?? '{}');
-      const occupiedSlotsInfo: {
-        [key in string]: string;
-      } = JSON.parse(agent?.occupied_slots ?? '{}');
-      const remainingSlotsInfo: {
-        [key in string]: number;
-      } = _.mapValues(availableSlotsInfo, (value, key) => {
-        if (key.endsWith('.shares')) {
-          return parseFloat(value) - parseFloat(occupiedSlotsInfo[key] ?? 0);
-        } else {
-          return parseInt(value) - parseInt(occupiedSlotsInfo[key] ?? 0);
-        }
-      });
+  const remainingSlotsByAgentId: AgentRemainingSlotsMap = _.fromPairs(
+    _.compact(
+      _.map(agent_summary_list?.items, (agent) => {
+        if (!agent?.id) return null;
+        const availableSlotsInfo: {
+          [key in string]: string;
+        } = JSON.parse(agent?.available_slots ?? '{}');
+        const occupiedSlotsInfo: {
+          [key in string]: string;
+        } = JSON.parse(agent?.occupied_slots ?? '{}');
+        const remainingSlotsInfo: {
+          [key in string]: number;
+        } = _.mapValues(availableSlotsInfo, (value, key) => {
+          if (key.endsWith('.shares')) {
+            return parseFloat(value) - parseFloat(occupiedSlotsInfo[key] ?? 0);
+          } else {
+            return parseInt(value) - parseInt(occupiedSlotsInfo[key] ?? 0);
+          }
+        });
+        return [agent.id, remainingSlotsInfo] as [
+          string,
+          Record<string, number>,
+        ];
+      }),
+    ),
+  );
 
-      return {
-        // P26-3: the label is the string that fills the trigger, the
-        // accessible name and the live region; the figures go in `extra`.
-        label: agent.id,
-        value: agent.id,
-        extra: (
-          <BAIFlex direction="row" gap={'xxs'}>
-            {_.map(remainingSlotsInfo, (slot, key) => {
-              return (
-                <BAIResourceNumberWithIcon
-                  key={key}
-                  // @ts-ignore
-                  type={key}
-                  value={slot.toString()}
-                  hideTooltip
-                />
-              );
-            })}
-          </BAIFlex>
-        ),
-      };
+  const reportRemainingSlots = useEffectEvent(() => {
+    onRemainingSlotsChange?.(remainingSlotsByAgentId);
+  });
+  useEffect(() => {
+    reportRemainingSlots();
+  }, [remainingSlotsByAgentId]);
+
+  const agentOptions: Array<BAIComplexSelectOption> = _.map(
+    _.toPairs(remainingSlotsByAgentId),
+    ([agentId, remainingSlotsInfo]) => ({
+      // P26-3: the label is the string that fills the trigger, the
+      // accessible name and the live region; the figures go in `extra`.
+      label: agentId,
+      value: agentId,
+      extra: (
+        <BAIFlex direction="row" gap={'xxs'}>
+          {_.map(remainingSlotsInfo, (slot, key) => {
+            return (
+              <BAIResourceNumberWithIcon
+                key={key}
+                // @ts-ignore
+                type={key}
+                value={slot.toString()}
+                hideTooltip
+              />
+            );
+          })}
+        </BAIFlex>
+      ),
     }),
   );
 

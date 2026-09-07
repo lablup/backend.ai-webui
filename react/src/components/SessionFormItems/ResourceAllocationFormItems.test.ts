@@ -196,4 +196,116 @@ describe('getAllocatablePresetNames', () => {
     // Only compare with resource limits
     expect(result).toEqual(['cpu1_mem2g']);
   });
+
+  describe('with a selected agent', () => {
+    const noResourceLimits: MergedResourceLimits = {
+      cpu: {},
+      mem: {},
+      accelerators: {},
+    };
+    const GiB = 1024 ** 3;
+    // The manager reports both preset `mem` and agent slots as byte strings.
+    const agentPresets: Array<ResourcePreset> = [
+      {
+        name: 'cpu4_mem8g_cuda2',
+        resource_slots: {
+          cpu: '4',
+          mem: String(8 * GiB),
+          'cuda.shares': '2',
+        },
+        shared_memory: String(GiB),
+        allocatable: true,
+      },
+      {
+        name: 'cpu2_mem4g_cuda1',
+        resource_slots: {
+          cpu: '2',
+          mem: String(4 * GiB),
+          'cuda.shares': '1',
+        },
+        shared_memory: String(GiB),
+        allocatable: true,
+      },
+      {
+        name: 'cpu1_mem2g',
+        resource_slots: { cpu: '1', mem: String(2 * GiB) },
+        shared_memory: String(GiB),
+        allocatable: true,
+      },
+    ];
+
+    it('keeps only the presets that fit the remaining slots of the agent', () => {
+      const result = getAllocatablePresetNames(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        { cpu: 2, mem: 4 * GiB, 'cuda.shares': 1 },
+      );
+      expect(result).toEqual(['cpu2_mem4g_cuda1', 'cpu1_mem2g']);
+    });
+
+    it('excludes a preset asking for a slot the agent does not provide', () => {
+      const result = getAllocatablePresetNames(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        { cpu: 8, mem: 64 * GiB },
+      );
+      expect(result).toEqual(['cpu1_mem2g']);
+    });
+
+    it('ignores shmem, which is carved out of the session memory', () => {
+      const result = getAllocatablePresetNames(
+        [
+          {
+            name: 'cpu1_mem2g_shmem1g',
+            resource_slots: {
+              cpu: '1',
+              mem: String(2 * GiB),
+              shmem: String(GiB),
+            },
+            shared_memory: String(GiB),
+            allocatable: true,
+          },
+        ],
+        noResourceLimits,
+        undefined,
+        { cpu: 1, mem: 2 * GiB },
+      );
+      expect(result).toEqual(['cpu1_mem2g_shmem1g']);
+    });
+
+    it('excludes every preset when the agent has no room left', () => {
+      const result = getAllocatablePresetNames(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        { cpu: 0, mem: 0, 'cuda.shares': 0 },
+      );
+      expect(result).toEqual([]);
+    });
+
+    it('still applies the resource limits on top of the agent slots', () => {
+      const result = getAllocatablePresetNames(
+        agentPresets,
+        { cpu: { max: 2 }, mem: {}, accelerators: {} },
+        undefined,
+        { cpu: 16, mem: 64 * GiB, 'cuda.shares': 16 },
+      );
+      expect(result).toEqual(['cpu2_mem4g_cuda1', 'cpu1_mem2g']);
+    });
+
+    it('returns the unfiltered list when no agent is pinned', () => {
+      const result = getAllocatablePresetNames(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+      );
+      expect(result).toEqual([
+        'cpu4_mem8g_cuda2',
+        'cpu2_mem4g_cuda1',
+        'cpu1_mem2g',
+      ]);
+    });
+  });
 });
