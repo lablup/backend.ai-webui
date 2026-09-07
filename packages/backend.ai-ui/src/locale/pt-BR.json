@@ -274,6 +274,9 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Selecionar par de chaves"
   },
+  "comp:BAILegacyVFolderSelect": {
+    "SelectFolder": "Selecionar pasta"
+  },
   "comp:BAILoginHistoryTable": {
     "ClientIp": "IP do cliente",
     "Domain": "Domínio",
