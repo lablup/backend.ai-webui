@@ -28,7 +28,7 @@ import TotalResourceWithinResourceGroup, {
 import { breadcrumbExtraAtom } from '../components/breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../components/dashboardEditModeAtom';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
   useCurrentProjectValue,
@@ -44,6 +44,7 @@ import {
   BAIUnmountAfterClose,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
+  mergeFilterValues,
   useFetchKey,
   useInterval,
 } from 'backend.ai-ui';
@@ -68,6 +69,7 @@ const DashboardPage: React.FC = () => {
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
+  const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
@@ -143,6 +145,15 @@ const DashboardPage: React.FC = () => {
 
   const isAgentStatsSupported = baiClient.supports('agent-stats');
 
+  // This panel is strictly personal: admins/monitors hold read permission on
+  // every project session, so without the user filter it would count theirs too.
+  const mySessionCountFilter = (type: string) =>
+    mergeFilterValues([
+      'status != "TERMINATED" & status != "CANCELLED"',
+      `type == "${type}"`,
+      `user_id == "${currentUser.uuid}"`,
+    ]);
+
   const queryRef = useLazyLoadQuery<DashboardPageQuery>(
     graphql`
       query DashboardPageQuery(
@@ -151,8 +162,19 @@ const DashboardPage: React.FC = () => {
         $skipTotalResourceWithinResourceGroup: Boolean!
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
+        $interactiveFilter: String
+        $batchFilter: String
+        $inferenceFilter: String
+        $systemFilter: String
       ) {
-        ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
+        ...SessionCountDashboardItemFragment
+          @arguments(
+            scopeId: $scopeId
+            interactiveFilter: $interactiveFilter
+            batchFilter: $batchFilter
+            inferenceFilter: $inferenceFilter
+            systemFilter: $systemFilter
+          )
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
         ...TotalResourceWithinResourceGroupFragment
           @skip(if: $skipTotalResourceWithinResourceGroup)
@@ -171,6 +193,10 @@ const DashboardPage: React.FC = () => {
       skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
+      interactiveFilter: mySessionCountFilter('interactive'),
+      batchFilter: mySessionCountFilter('batch'),
+      inferenceFilter: mySessionCountFilter('inference'),
+      systemFilter: mySessionCountFilter('system'),
     },
     {
       fetchPolicy:
@@ -206,11 +232,7 @@ const DashboardPage: React.FC = () => {
             <SessionCountDashboardItem
               queryRef={queryRef}
               isRefetching={isRefetching}
-              title={
-                _.isEqual(userRole, 'superadmin')
-                  ? t('session.ActiveSessions')
-                  : t('session.MySessions')
-              }
+              title={t('session.MySessions')}
             />
           </Suspense>
         ),
