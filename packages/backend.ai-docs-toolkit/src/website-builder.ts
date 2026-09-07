@@ -2687,7 +2687,7 @@ export function buildNotFoundPage(opts: NotFoundPageOptions): string {
     <p class="nf__code">404</p>
     <h1 class="nf__title">Page not found</h1>
     <p class="nf__body">The page you requested does not exist in ${safeProduct}. If you followed a link with a language code we do not publish, pick a language below instead.</p>
-    <p class="nf__heading">Available languages</p>
+    <h2 class="nf__heading">Available languages</h2>
     <ul class="nf__list">
 ${langItems}
     </ul>
