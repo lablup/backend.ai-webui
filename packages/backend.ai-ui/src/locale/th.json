@@ -153,7 +153,7 @@
     "SelectDeployment": "เลือกการปรับใช้"
   },
   "comp:BAIDeploymentStatusTag": {
-    "Degraded": "ลดลง",
+    "Degraded": "เรพลิกาไม่ครบ",
     "Deploying": "กำลังปรับใช้",
     "Healthy": "ปกติ",
     "NotChecked": "ยังไม่ตรวจสอบ",
@@ -287,9 +287,9 @@
     "PreferredDomainName": "โดเมนที่ต้องการ",
     "Project": "โปรเจกต์",
     "ProjectID": "รหัสโปรเจกต์",
-    "ReplicaSummary": "จำนวนสำเนา",
-    "ReplicaSummaryTooltip": "จำนวนสำเนาที่กำลังทำงานเทียบกับจำนวนสำเนาที่ต้องการ",
-    "Replicas": "จำนวนสำเนา",
+    "ReplicaSummary": "จำนวนเรพลิกา",
+    "ReplicaSummaryTooltip": "จำนวนเรพลิกาที่กำลังทำงานเทียบกับจำนวนเรพลิกาที่ต้องการ",
+    "Replicas": "จำนวนเรพลิกา",
     "ResourceGroup": "กลุ่มทรัพยากร",
     "RevisionNumber": "ฉบับแก้ไข",
     "RevisionNumberTooltip": "หมายเลขฉบับแก้ไขปัจจุบันของการปรับใช้",

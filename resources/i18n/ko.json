@@ -1271,7 +1271,7 @@
       "SkipToReview": "검토로 건너뛰기"
     },
     "status": {
-      "Degraded": "저하됨",
+      "Degraded": "복제본 부족",
       "Deploying": "배포 중",
       "Healthy": "정상",
       "NotChecked": "미확인",

@@ -1271,7 +1271,7 @@
       "SkipToReview": "ข้ามไปยังการตรวจสอบ"
     },
     "status": {
-      "Degraded": "เสื่อมสภาพ",
+      "Degraded": "เรพลิกาไม่ครบ",
       "Deploying": "กำลังปรับใช้",
       "Healthy": "ปกติ",
       "NotChecked": "ยังไม่ตรวจสอบ",

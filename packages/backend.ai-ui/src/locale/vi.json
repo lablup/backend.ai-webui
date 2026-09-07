@@ -153,7 +153,7 @@
     "SelectDeployment": "Chọn triển khai"
   },
   "comp:BAIDeploymentStatusTag": {
-    "Degraded": "Bị suy giảm",
+    "Degraded": "Không đủ bản sao",
     "Deploying": "Đang triển khai",
     "Healthy": "Bình thường",
     "NotChecked": "Chưa kiểm tra",

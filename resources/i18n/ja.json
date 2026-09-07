@@ -1271,7 +1271,7 @@
       "SkipToReview": "レビューへスキップ"
     },
     "status": {
-      "Degraded": "低下",
+      "Degraded": "レプリカ不足",
       "Deploying": "デプロイ中",
       "Healthy": "正常",
       "NotChecked": "未確認",

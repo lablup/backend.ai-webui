@@ -1271,7 +1271,7 @@
       "SkipToReview": "Chuyển đến xem lại"
     },
     "status": {
-      "Degraded": "Suy giảm",
+      "Degraded": "Không đủ bản sao",
       "Deploying": "Đang triển khai",
       "Healthy": "Bình thường",
       "NotChecked": "Chưa kiểm tra",
