@@ -247,6 +247,9 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Anahtar Çifti Seçin"
   },
+  "comp:BAILegacyVFolderSelect": {
+    "SelectFolder": "Klasör Seç"
+  },
   "comp:BAILoginHistoryTable": {
     "Domain": "Alan Adı",
     "FailReason": "Hata Nedeni",

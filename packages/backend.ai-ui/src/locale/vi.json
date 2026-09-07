@@ -247,6 +247,9 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Chọn cặp khóa"
   },
+  "comp:BAILegacyVFolderSelect": {
+    "SelectFolder": "Chọn thư mục"
+  },
   "comp:BAILoginHistoryTable": {
     "Domain": "Miền",
     "FailReason": "Lý do thất bại",
