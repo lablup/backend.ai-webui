@@ -1,5 +1,5 @@
 // spec: e2e/401-404-Page-Handling-Test-Plan.md
-// Tests for 401/404 page handling, blocklist, and inactiveList configurations
+// Tests for 401/404 page handling, blocklist, hidelist, and inactiveList configurations
 import {
   forbiddenPageHeading,
   loginAsAdmin,
@@ -44,6 +44,7 @@ test.describe(
         menu: {
           blocklist: '',
           inactivelist: '',
+          hidelist: '',
         },
       });
     });
@@ -230,6 +231,70 @@ test.describe(
         ).toBeVisible();
       },
     );
+
+    test(
+      'Superadmin does not see pages in hidelist in the menu but can still open them directly',
+      { tag: ['@config', '@hidelist'] },
+      async ({ page, request }) => {
+        // 1. Modify config.toml to set hidelist
+        await modifyConfigToml(page, request, {
+          menu: {
+            blocklist: '',
+            inactivelist: '',
+            hidelist: 'dashboard',
+          },
+        });
+
+        // 2. Login as superadmin user
+        await loginAsAdmin(page, request);
+
+        // 3. Verify the "Dashboard" entry is gone from the sidebar entirely
+        //    (hidelist removes it; inactivelist would only disable it)
+        await expect(getSideNavItem(page, 'Dashboard')).toHaveCount(0);
+
+        // 4. Navigate directly to /dashboard - hidden is not blocked, so the
+        //    route must still resolve (no 404)
+        await page.goto(`${webuiEndpoint}/dashboard`);
+        await expect(notFoundPageHeading(page)).toBeHidden();
+        await expect(
+          page.getByTestId('webui-breadcrumb').getByText('Dashboard'),
+        ).toBeVisible({ timeout: 15_000 });
+      },
+    );
+
+    test(
+      'Root redirect skips a hidden landing page while it stays directly reachable',
+      { tag: ['@config', '@hidelist', '@redirect'] },
+      async ({ page, request }) => {
+        // 1. Hide "start" - the first menu item, and the default landing page
+        await modifyConfigToml(page, request, {
+          menu: {
+            blocklist: '',
+            inactivelist: '',
+            hidelist: 'start',
+          },
+        });
+
+        // 2. Login as superadmin user
+        await loginAsAdmin(page, request);
+
+        // 3. Navigate to root / - the redirect target is the first *available*
+        //    menu item, and a hidden entry is not available
+        await page.goto(`${webuiEndpoint}/`);
+        await page.waitForURL((url) => !url.pathname.endsWith('/'));
+        await expect(page).not.toHaveURL(/\/start(\?|#|$)/);
+
+        // 4. Verify "Start" is absent from the sidebar
+        await expect(getSideNavItem(page, /Start/)).toHaveCount(0);
+
+        // 5. Verify the page is still reachable by direct URL (hidden != blocked)
+        await page.goto(`${webuiEndpoint}/start`);
+        await expect(page.getByText('Start Interactive Session')).toBeVisible({
+          timeout: 15_000,
+        });
+        await expect(notFoundPageHeading(page)).toBeHidden();
+      },
+    );
   },
 );
 
@@ -248,6 +313,7 @@ test.describe(
         menu: {
           blocklist: '',
           inactivelist: '',
+          hidelist: '',
         },
       });
     });
@@ -410,6 +476,7 @@ test.describe(
         menu: {
           blocklist: '',
           inactivelist: '',
+          hidelist: '',
         },
       });
     });
@@ -567,6 +634,7 @@ test.describe(
         menu: {
           blocklist: '',
           inactivelist: '',
+          hidelist: '',
         },
       });
     });
@@ -639,6 +707,7 @@ test.describe(
         menu: {
           blocklist: '',
           inactivelist: '',
+          hidelist: '',
         },
       });
     });
