@@ -247,9 +247,6 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Valitse avainpari"
   },
-  "comp:BAILegacyVFolderSelect": {
-    "SelectFolder": "Valitse kansio"
-  },
   "comp:BAILoginHistoryTable": {
     "Domain": "Toimialue",
     "FailReason": "Epäonnistumisen syy",

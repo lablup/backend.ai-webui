@@ -1,5 +1,5 @@
-import type { LegacyVFolder } from '../components/baiClient/BAILegacyVFolderSelect';
 import { BAIDirectoryPickerQuery } from '../components/baiClient/FileExplorer/BAIDirectoryPickerModal';
+import type { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
 import { BAIClientProvider } from '../components/provider/BAIClientProvider';
 import { toGlobalId, toLocalId } from '../helper';
 import {

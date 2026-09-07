@@ -253,9 +253,6 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Selecionar par de chaves"
   },
-  "comp:BAILegacyVFolderSelect": {
-    "SelectFolder": "Selecionar pasta"
-  },
   "comp:BAILoginHistoryTable": {
     "Domain": "Domínio",
     "FailReason": "Motivo da falha",

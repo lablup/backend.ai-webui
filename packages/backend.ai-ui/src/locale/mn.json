@@ -247,9 +247,6 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Түлхүүрийн хос сонгох"
   },
-  "comp:BAILegacyVFolderSelect": {
-    "SelectFolder": "Хавтас сонгох"
-  },
   "comp:BAILoginHistoryTable": {
     "Domain": "Домэйн",
     "FailReason": "Амжилтгүй болсон шалтгаан",
