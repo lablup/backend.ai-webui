@@ -6,7 +6,6 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import {
-  BAILegacyVFolderSelect,
   BAIVFolderMountConfigInput,
   type LegacyVFolder,
   type VFolderMountConfigValue,
@@ -57,21 +56,13 @@ const SessionLauncherStorageStep: React.FC<{
     <Form.Item name="vfolderMounts" rules={[mountConfigRule]}>
       <BAIVFolderMountConfigInput
         currentProjectId={currentProjectId}
+        ownerEmail={ownerEmail}
+        filter={isSelectableFolder}
         autoMountedFolderNames={autoMountedFolderNames}
-        renderFolderSelect={(api) => (
-          <BAILegacyVFolderSelect
-            {...api}
-            ownerEmail={ownerEmail}
-            filter={isSelectableFolder}
-            onResolvedNamesChange={(nameMap) => {
-              api.onResolvedNamesChange(nameMap);
-              pruneUnmountableSelection(nameMap);
-            }}
-            onAutoMountedFoldersChange={(names) => {
-              form.setFieldValue('autoMountedFolderNames', names);
-            }}
-          />
-        )}
+        onAutoMountedFoldersChange={(names) => {
+          form.setFieldValue('autoMountedFolderNames', names);
+        }}
+        onResolvedNamesChange={pruneUnmountableSelection}
       />
     </Form.Item>
   );
