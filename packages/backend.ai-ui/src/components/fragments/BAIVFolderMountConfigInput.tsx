@@ -390,7 +390,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                       setValue((prev) =>
                         prev.map((m) =>
                           m.vfolderId === entry.vfolderId
-                            ? { ...m, subpath: next }
+                            ? { ...m, subpath: next ?? '' }
                             : m,
                         ),
                       )

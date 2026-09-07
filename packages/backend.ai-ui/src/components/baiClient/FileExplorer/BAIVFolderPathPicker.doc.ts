@@ -66,9 +66,9 @@ export const docs = {
     },
     {
       name: 'onChange',
-      type: '(selectedSubPath: string) => void',
+      type: '(selectedSubPath?: string) => void',
       description:
-        'Fired with the newly chosen sub path when the picker is confirmed. Cancelling the modal keeps the current value and emits nothing.',
+        'Fired with the newly chosen sub path when the picker is confirmed. Cancelling the modal keeps the current value and emits nothing. The parameter is optional so a clear action can emit `undefined` (nothing picked); treat it as "back to unset" or, where the root is the meaningful default, as `\'\'`.',
     },
     {
       name: 'disabled',
