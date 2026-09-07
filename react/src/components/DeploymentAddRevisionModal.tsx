@@ -210,6 +210,21 @@ interface DeploymentAddRevisionModalProps extends BAIModalProps {
 
 type RevisionPrefillData = DeploymentAddRevisionModal_revisionSource$data;
 
+// Full image name (`registry/namespace:tag@architecture`); the architecture
+// suffix is required so `ImageEnvironmentSelectFormItems` exact-matches the
+// original image instead of defaulting to the first architecture in the list.
+export const toImageFullName = (
+  identity?: {
+    readonly canonicalName?: string | null;
+    readonly architecture?: string | null;
+  } | null,
+): string | undefined =>
+  identity?.canonicalName
+    ? identity.architecture
+      ? `${identity.canonicalName}@${identity.architecture}`
+      : identity.canonicalName
+    : undefined;
+
 // Suspense-wrapped side query that resolves the selected runtime variant's DB
 // `defaultModelDefinition` baseline (FR-3205/FR-3342) and pushes the parsed
 // result up via `onLoaded`. Runs only when the variant reads the vfolder
@@ -802,6 +817,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                   value
                 }
               }
+              image @since(version: "26.4.4") {
+                id
+                identity {
+                  canonicalName
+                  architecture
+                }
+              }
               resource {
                 resourceOpts {
                   name
@@ -861,9 +883,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Build a Custom-form prefill object from a preset node read off the
   // singular `deploymentRevisionPreset(id:)` query (resolved via
-  // `fetchPresetData`). The image full name is fetched async because
-  // `ImageEnvironmentSelectFormItems` matches the form's `environments.version`
-  // against image full names (`registry/namespace:tag@architecture`).
+  // `fetchPresetData`). Stays async only for the pre-26.4.4 image fallback.
   const buildPrefillFromPreset = async (
     preset: NonNullable<
       DeploymentAddRevisionModalSelectedPresetQuery$data['deploymentRevisionPreset']
@@ -885,12 +905,10 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ? ('single-node' as const)
         : ('multi-node' as const);
 
-    // Full image name (`registry/namespace:tag@architecture`); the
-    // architecture suffix is required so `ImageEnvironmentSelectFormItems`
-    // exact-matches the original image instead of defaulting to the first
-    // architecture in the sorted list.
-    let imageFullName: string | undefined;
-    if (preset.execution?.imageId) {
+    // `image` is gated by @since(26.4.4) (BA-5952); on older managers it is
+    // null, so fall back to resolving `execution.imageId` with a second query.
+    let imageFullName = toImageFullName(preset.image?.identity);
+    if (!imageFullName && preset.execution?.imageId) {
       try {
         const result =
           await fetchQuery<DeploymentAddRevisionModalImageNameQuery>(
@@ -908,12 +926,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             { id: preset.execution.imageId },
             { fetchPolicy: 'store-or-network' },
           ).toPromise();
-        const identity = result?.imageV2?.identity;
-        imageFullName = identity?.canonicalName
-          ? identity.architecture
-            ? `${identity.canonicalName}@${identity.architecture}`
-            : identity.canonicalName
-          : undefined;
+        imageFullName = toImageFullName(result?.imageV2?.identity);
       } catch {
         imageFullName = undefined;
       }
