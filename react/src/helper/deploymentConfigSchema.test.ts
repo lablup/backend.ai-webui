@@ -60,8 +60,14 @@ architecture: "aarch64"
     expect(valid).toBe(true);
   });
 
-  it('accepts an empty file — every field is optional', () => {
-    expect(validate({})).toBe(true);
+  it('accepts an empty file through the editor’s parse path', () => {
+    // `parse('')` yields null, which is what the editor hands to the validator.
+    expect(validateYaml('').valid).toBe(true);
+    expect(validateYaml('# nothing here yet\n').valid).toBe(true);
+  });
+
+  it('accepts an empty mapping — every field is optional', () => {
+    expect(validateYaml('{}').valid).toBe(true);
   });
 
   it('warns when an environment variable is not a string', () => {

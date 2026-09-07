@@ -2,8 +2,8 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://www.backend.ai/schemas/deployment-config.schema.json",
   "title": "Backend.AI Deployment Config",
-  "description": "Optional `deployment-config.yaml` placed in a model folder to pre-configure the image, resources and environment a deployment starts from. Every field is a default that deployment-time input (Add Revision form / API request) overrides. Any top-level key other than the ones listed here is read as a runtime-variant section (for example `vllm`), which overrides the root-level values for that variant only. The legacy `service-definition.toml` in the same folder carries the same shape.",
-  "type": "object",
+  "description": "Optional `deployment-config.yaml` placed in a model folder to pre-configure the image, resources and environment a deployment starts from. Every field is a default that deployment-time input (Add Revision form / API request) overrides. Any top-level key other than the ones listed here is read as a runtime-variant section (for example `vllm`), which overrides the root-level values for that variant only. The legacy `service-definition.toml` in the same folder carries the same shape. An empty document parses as `null` and is accepted.",
+  "type": ["object", "null"],
   "properties": {
     "environment": {
       "$ref": "#/$defs/Environment"
