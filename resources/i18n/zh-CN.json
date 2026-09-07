@@ -1142,6 +1142,7 @@
     "FailedToDeleteDeployment": "删除部署失败。",
     "FailedToRollback": "回滚到所选 Revision 失败。",
     "FailedToUpdateDeployment": "更新部署失败。",
+    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
     "FromStatus": "来源状态",
     "GoToDetailPage": "查看部署详情",
     "HealthStatus": "健康状态",

@@ -1142,6 +1142,7 @@
     "FailedToDeleteDeployment": "Не удалось удалить развёртывание.",
     "FailedToRollback": "Не удалось выполнить откат до выбранной Revision.",
     "FailedToUpdateDeployment": "Не удалось обновить развёртывание.",
+    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
     "FromStatus": "Исходный статус",
     "GoToDetailPage": "Просмотреть детали развертывания",
     "HealthStatus": "Состояние здоровья",

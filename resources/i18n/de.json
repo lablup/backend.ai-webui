@@ -1142,6 +1142,7 @@
     "FailedToDeleteDeployment": "Bereitstellung konnte nicht gelöscht werden.",
     "FailedToRollback": "Rollback zur ausgewählten Revision ist fehlgeschlagen.",
     "FailedToUpdateDeployment": "Bereitstellung konnte nicht aktualisiert werden.",
+    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
     "FromStatus": "Von Status",
     "GoToDetailPage": "Bereitstellungsdetails anzeigen",
     "HealthStatus": "Gesundheitsstatus",

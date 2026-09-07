@@ -1142,6 +1142,7 @@
     "FailedToDeleteDeployment": "Αποτυχία διαγραφής ανάπτυξης.",
     "FailedToRollback": "Αποτυχία επαναφοράς στην επιλεγμένη Revision.",
     "FailedToUpdateDeployment": "Αποτυχία ενημέρωσης ανάπτυξης.",
+    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
     "FromStatus": "Από κατάσταση",
     "GoToDetailPage": "Προβολή λεπτομερειών ανάπτυξης",
     "HealthStatus": "Κατάσταση υγείας",

@@ -1142,6 +1142,7 @@
     "FailedToDeleteDeployment": "Nie udało się usunąć wdrożenia.",
     "FailedToRollback": "Nie udało się cofnąć do wybranej Revision.",
     "FailedToUpdateDeployment": "Nie udało się zaktualizować wdrożenia.",
+    "FolderAccessDisabledWhileAddingRevision": "__NOT_TRANSLATED__",
     "FromStatus": "Z statusu",
     "GoToDetailPage": "Wyświetl szczegóły wdrożenia",
     "HealthStatus": "Stan zdrowia",

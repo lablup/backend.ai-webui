@@ -1129,6 +1129,7 @@
     "FailedToDeleteDeployment": "Failed to delete deployment.",
     "FailedToRollback": "Failed to rollback to the selected revision.",
     "FailedToUpdateDeployment": "Failed to update deployment.",
+    "FolderAccessDisabledWhileAddingRevision": "Folder access is unavailable while the revision is being added.",
     "FromStatus": "From Status",
     "GoToDetailPage": "View Deployment Details",
     "HealthStatus": "Health Status",
