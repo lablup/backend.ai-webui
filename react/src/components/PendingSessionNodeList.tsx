@@ -17,7 +17,6 @@ import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
-import TextHighlighter from './TextHighlighter';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAlert,
@@ -58,7 +57,6 @@ const PendingSessionNodeList: React.FC = () => {
     'resourceGroup',
     parseAsString.withOptions({ history: 'replace' }),
   );
-  const [resourceGroupSearch, setResourceGroupSearch] = useState<string>();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   // Superadmin scope: every resource group, not the current project's subset.
@@ -76,8 +74,14 @@ const PendingSessionNodeList: React.FC = () => {
   const resourceGroupNames = _.compact(
     _.map(scaling_groups, (scalingGroup) => scalingGroup?.name),
   );
-  const currentResourceGroup =
-    selectedResourceGroup ?? _.first(resourceGroupNames);
+  // A stale, inactive or empty `resourceGroup` param must not reach
+  // `session_pending_queue` — fall back to the first active group.
+  const currentResourceGroup = _.includes(
+    resourceGroupNames,
+    selectedResourceGroup,
+  )
+    ? (selectedResourceGroup ?? undefined)
+    : _.first(resourceGroupNames);
   const deferredCurrentResourceGroup = useDeferredValue(currentResourceGroup);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -160,21 +164,13 @@ const PendingSessionNodeList: React.FC = () => {
           style={{ marginBottom: 0 }}
         >
           <BAISelect
-            showSearch={{
-              searchValue: resourceGroupSearch,
-              onSearch: setResourceGroupSearch,
-            }}
+            showSearch
             style={{ minWidth: 100 }}
             loading={currentResourceGroup !== deferredCurrentResourceGroup}
             options={_.map(resourceGroupNames, (name) => ({
               value: name,
               label: name,
             }))}
-            optionRender={(option) => (
-              <TextHighlighter keyword={resourceGroupSearch}>
-                {option.data.value?.toString()}
-              </TextHighlighter>
-            )}
             popupMatchSelectWidth={false}
             tooltip={t('general.ResourceGroup')}
             value={currentResourceGroup}

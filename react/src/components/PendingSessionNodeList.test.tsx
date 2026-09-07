@@ -158,6 +158,22 @@ describe('PendingSessionNodeList resource-group scope (FR-3409)', () => {
     expect(variables.resource_group_id).toBe('beta');
   });
 
+  it('falls back to the first active group when the URL names an unknown one', async () => {
+    const environment = renderList('?resourceGroup=deleted-rg');
+    resolveResourceGroups(environment, ['alpha', 'beta']);
+
+    const variables = await findPendingQueueVariables(environment);
+    expect(variables.resource_group_id).toBe('alpha');
+  });
+
+  it('never sends an empty scope when the URL carries a blank group', async () => {
+    const environment = renderList('?resourceGroup=');
+    resolveResourceGroups(environment, ['alpha', 'beta']);
+
+    const variables = await findPendingQueueVariables(environment);
+    expect(variables.resource_group_id).toBe('alpha');
+  });
+
   it('keeps offset pagination on the pending queue', async () => {
     const environment = renderList('?resourceGroup=beta&current=3&pageSize=10');
     resolveResourceGroups(environment, ['alpha', 'beta']);
