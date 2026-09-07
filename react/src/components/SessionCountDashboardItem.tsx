@@ -35,41 +35,57 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
 
   const [data, refetch] = useRefetchableFragment(
     graphql`
-        fragment  SessionCountDashboardItemFragment on Query
-        @argumentDefinitions(
-          scopeId: { type: "ScopeField" }
-        ) 
-        @refetchable(queryName: "SessionCountDashboardItemRefetchQuery") {
-          myInteractive: compute_session_nodes(
-            first: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
-            scope_id: $scopeId
-          ) {
-            count
-          }
-          myBatch: compute_session_nodes(
-            first: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
-            scope_id: $scopeId
-          ) {
-            count
-          }
-          myInference: compute_session_nodes(
-            first: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
-            scope_id: $scopeId
-          ) {
-            count
-          }
-          myUpload: compute_session_nodes(
-            first: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
-            scope_id: $scopeId
-          ) {
-            count
-          }
+      fragment SessionCountDashboardItemFragment on Query
+      @argumentDefinitions(
+        scopeId: { type: "ScopeField" }
+        interactiveFilter: {
+          type: "String"
+          defaultValue: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
         }
-      `,
+        batchFilter: {
+          type: "String"
+          defaultValue: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
+        }
+        inferenceFilter: {
+          type: "String"
+          defaultValue: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
+        }
+        systemFilter: {
+          type: "String"
+          defaultValue: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
+        }
+      )
+      @refetchable(queryName: "SessionCountDashboardItemRefetchQuery") {
+        myInteractive: compute_session_nodes(
+          first: 0
+          filter: $interactiveFilter
+          scope_id: $scopeId
+        ) {
+          count
+        }
+        myBatch: compute_session_nodes(
+          first: 0
+          filter: $batchFilter
+          scope_id: $scopeId
+        ) {
+          count
+        }
+        myInference: compute_session_nodes(
+          first: 0
+          filter: $inferenceFilter
+          scope_id: $scopeId
+        ) {
+          count
+        }
+        myUpload: compute_session_nodes(
+          first: 0
+          filter: $systemFilter
+          scope_id: $scopeId
+        ) {
+          count
+        }
+      }
+    `,
     queryRef,
   );
 
