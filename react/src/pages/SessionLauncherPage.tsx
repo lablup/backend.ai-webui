@@ -161,6 +161,9 @@ export interface SessionResources {
     mount_id_map?: {
       [key: string]: string;
     };
+    mount_options?: {
+      [key: string]: { subpath?: string };
+    };
     environ?: {
       [key: string]: string;
     };
