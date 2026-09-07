@@ -31,9 +31,6 @@ import SessionOwnerSetterCard, {
   SessionOwnerSetterFormValues,
 } from '../components/SessionOwnerSetterCard';
 import SessionTemplateModal from '../components/SessionTemplateModal';
-import VFolderTableFormItem, {
-  VFolderTableFormValues,
-} from '../components/VFolderTableFormItem';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -44,6 +41,10 @@ import {
 } from '../components/astryxFormControls';
 import { Form } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
+import {
+  DEFAULT_ALIAS_BASE_PATH,
+  normalizeLegacyMountFields,
+} from '../helper/vfolderMounts';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentUserRole,
@@ -81,11 +82,16 @@ import {
   BAIPopconfirm,
   BAIFlex,
   BAIIntervalView,
+  BAILegacyVFolderSelect,
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
+  BAIVFolderMountConfigInput,
   ResourceTypeIcon,
+  type VFolderMountConfigValue,
   filterOutEmpty,
   generateRandomString,
+  getVFolderMountConfigStatuses,
+  inputToMountDestination,
   useBAILogger,
   useDebounceFn,
   useErrorMessageResolver,
@@ -93,6 +99,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import type { TFunction } from 'i18next';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
 import {
@@ -184,11 +191,21 @@ interface SessionLauncherValue {
   reuseIfExists?: boolean;
 }
 
+export interface SessionLauncherVFolderMountValues {
+  vfolderMounts?: VFolderMountConfigValue[];
+  autoMountedFolderNames?: string[];
+  /**
+   * Deprecated mount-by-name field. Only `SessionLauncherFormIncompatibleValueChecker`
+   * still reads it, to warn about and clear a stale `?formValues=` param.
+   */
+  mounts?: string[];
+}
+
 export type SessionLauncherFormValue = SessionLauncherValue &
   SessionNameFormItemValue &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue &
-  VFolderTableFormValues &
+  SessionLauncherVFolderMountValues &
   PortSelectFormValues &
   SessionOwnerSetterFormValues;
 
@@ -282,6 +299,47 @@ const SessionTypeRadioList: React.FC<{
   );
 };
 
+/**
+ * Gate the launch on the mount configuration, rejecting with the most specific
+ * of the alias / subpath messages.
+ */
+const validateVFolderMounts = (
+  value: VFolderMountConfigValue[] | undefined,
+  autoMountedFolderNames: string[],
+  t: TFunction,
+) => {
+  const statuses = _.values(
+    getVFolderMountConfigStatuses(value, { autoMountedFolderNames }),
+  );
+  if (_.some(statuses, (status) => status.aliasError === 'invalidFormat')) {
+    return Promise.reject(t('session.launcher.FolderAliasInvalid'));
+  }
+  const autoMountDestinations = new Set(
+    _.map(autoMountedFolderNames, (name) =>
+      inputToMountDestination(name, '', DEFAULT_ALIAS_BASE_PATH),
+    ),
+  );
+  if (
+    _.some(
+      statuses,
+      (status) =>
+        status.aliasError === 'overlapping' &&
+        autoMountDestinations.has(status.mountDestination),
+    )
+  ) {
+    return Promise.reject(
+      t('session.launcher.FolderAliasOverlappingToAutoMount'),
+    );
+  }
+  if (_.some(statuses, (status) => status.aliasError === 'overlapping')) {
+    return Promise.reject(t('session.launcher.FolderAliasOverlapping'));
+  }
+  if (_.some(statuses, (status) => status.subpathError)) {
+    return Promise.reject(t('session.launcher.FolderSubpathInvalid'));
+  }
+  return Promise.resolve();
+};
+
 const SessionLauncherPage = () => {
   const app = App.useApp();
   const { logger } = useBAILogger();
@@ -289,7 +347,6 @@ const SessionLauncherPage = () => {
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
-  const supportsMountById = baiClient.supports('mount-by-id');
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentUserRole = useCurrentUserRole();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
@@ -414,7 +471,7 @@ const SessionLauncherPage = () => {
       {},
       defaultFormValues,
       RESOURCE_ALLOCATION_INITIAL_FORM_VALUES,
-      formValuesFromQueryParams,
+      normalizeLegacyMountFields(formValuesFromQueryParams),
     ) as SessionLauncherFormValue;
   }, [defaultFormValues, formValuesFromQueryParams]);
 
@@ -532,7 +589,7 @@ const SessionLauncherPage = () => {
       return;
     }
 
-    if (_.isEmpty(values.mount_ids) || values.mount_ids?.length === 0) {
+    if (_.isEmpty(values.vfolderMounts)) {
       const isConfirmed = await app.modal.confirm({
         title: t('session.launcher.NoFolderMounted'),
         content: (
@@ -1328,7 +1385,18 @@ const SessionLauncherPage = () => {
                   title={t('webui.menu.Data&Storage')}
                   hidden={currentStepKey !== 'storage'}
                 >
-                  <Form.Item noStyle dependencies={['owner']}>
+                  <Form.Item hidden name="autoMountedFolderNames">
+                    <div />
+                  </Form.Item>
+                  {/* Deprecated mount-by-name field, kept registered so
+                      SessionLauncherFormIncompatibleValueChecker can clear it. */}
+                  <Form.Item hidden name="mounts">
+                    <div />
+                  </Form.Item>
+                  <Form.Item
+                    noStyle
+                    dependencies={['owner', 'autoMountedFolderNames']}
+                  >
                     {({ getFieldValue }) => {
                       const ownerInfo = getFieldValue('owner');
                       const isValidOwner =
@@ -1336,22 +1404,51 @@ const SessionLauncherPage = () => {
                         _.every(_.omit(ownerInfo, 'enabled'), (key) => {
                           return key !== undefined;
                         });
+                      const ownerEmail = isValidOwner
+                        ? ownerInfo?.email
+                        : undefined;
+                      const autoMountedFolderNames: string[] =
+                        getFieldValue('autoMountedFolderNames') ?? [];
 
                       return (
-                        <VFolderTableFormItem
-                          rowKey={supportsMountById ? 'id' : 'name'}
-                          rowFilter={(vfolder) => {
-                            return (
-                              vfolder.status === 'ready' &&
-                              !vfolder.name?.startsWith('.')
-                            );
-                          }}
-                          tableProps={{
-                            ownerEmail: isValidOwner
-                              ? ownerInfo?.email
-                              : undefined,
-                          }}
-                        />
+                        <Form.Item
+                          name="vfolderMounts"
+                          rules={[
+                            {
+                              validator(_rule, value) {
+                                return validateVFolderMounts(
+                                  value,
+                                  autoMountedFolderNames,
+                                  t,
+                                );
+                              },
+                            },
+                          ]}
+                        >
+                          <BAIVFolderMountConfigInput
+                            currentProjectId={currentProjectContext.id}
+                            autoMountedFolderNames={autoMountedFolderNames}
+                            renderFolderSelect={(api) => (
+                              <BAILegacyVFolderSelect
+                                {...api}
+                                // A different owner is a different folder
+                                // list; remount so no stale selection shows.
+                                key={ownerEmail}
+                                ownerEmail={ownerEmail}
+                                filter={(folder) =>
+                                  folder.status === 'ready' &&
+                                  !folder.name.startsWith('.')
+                                }
+                                onAutoMountedFoldersChange={(names) => {
+                                  form.setFieldValue(
+                                    'autoMountedFolderNames',
+                                    names,
+                                  );
+                                }}
+                              />
+                            )}
+                          />
+                        </Form.Item>
                       );
                     }}
                   </Form.Item>
@@ -1601,9 +1698,8 @@ const SessionLauncherPage = () => {
                 // reset fields related to optional and nested fields
                 sessionName: '',
                 ports: [],
-                vfoldersNameMap: {},
-                mount_ids: [],
-                mount_id_map: {},
+                vfolderMounts: [],
+                autoMountedFolderNames: [],
                 bootstrap_script: '',
                 num_of_sessions: 1,
                 owner: {
@@ -1624,8 +1720,9 @@ const SessionLauncherPage = () => {
                 },
                 reuseIfExists: false,
                 agent: ['auto'], // Add the missing 'agent' property
-              } as SessionLauncherFormData,
-              formValue,
+              } as SessionLauncherFormData &
+                Pick<SessionLauncherFormValue, 'autoMountedFolderNames'>,
+              normalizeLegacyMountFields(formValue),
             );
 
             if (!_.isEmpty(fieldsValue.sessionName)) {
