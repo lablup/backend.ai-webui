@@ -6,8 +6,17 @@ import type {
   GraphQLSchema,
   OperationTypeNode,
   SelectionNode,
+  TypeNode,
 } from 'graphql';
-import { buildASTSchema, parse, validate } from 'graphql';
+import {
+  buildASTSchema,
+  getNamedType,
+  parse,
+  TypeInfo,
+  validate,
+  visit,
+  visitWithTypeInfo,
+} from 'graphql';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -273,6 +282,52 @@ export function validateAgainstSchema(
         : `${CLI_NAME} schema sync`,
     },
   );
+}
+
+/** `[Foo!]!` -> `Foo`, on the AST rather than a built type. */
+function namedTypeIn(node: TypeNode): string {
+  return node.kind === 'NamedType' ? node.name.value : namedTypeIn(node.type);
+}
+
+/**
+ * The schema ids a document touches, in `checkVersionAlignment`'s vocabulary:
+ * `Type.field` per selection, `Enum.VALUE` per enum literal, and `Type` for a
+ * variable's named type. Deduplicated, in document order.
+ *
+ * A field id carries its type's marker when it has none of its own, so the
+ * parent type is not emitted alongside — except for a meta field (`__typename`),
+ * which the schema does not declare and whose parent type is the only thing the
+ * selection actually names.
+ */
+export function selectedSchemaIds(
+  schema: GraphQLSchema,
+  document: DocumentNode,
+): string[] {
+  const ids = new Set<string>();
+  const typeInfo = new TypeInfo(schema);
+  visit(
+    document,
+    visitWithTypeInfo(typeInfo, {
+      Field(node) {
+        const parent = typeInfo.getParentType();
+        if (!parent) return;
+        ids.add(
+          node.name.value.startsWith('__')
+            ? parent.name
+            : `${parent.name}.${node.name.value}`,
+        );
+      },
+      EnumValue(node) {
+        const input = typeInfo.getInputType();
+        if (input) ids.add(`${getNamedType(input).name}.${node.value}`);
+      },
+      VariableDefinition(node) {
+        const name = namedTypeIn(node.type);
+        if (!BUILT_IN_SCALARS.has(name)) ids.add(name);
+      },
+    }),
+  );
+  return [...ids];
 }
 
 /** `--var k=v`, JSON-decoded when the value parses, otherwise the raw string. */

@@ -11,6 +11,12 @@ import { list, record, renderBlocks, section, text } from '../output.js';
 import { resolveRepoContext } from '../repo-context.js';
 import { loadSchema } from '../search/schema-sdl.js';
 import { loadSession, resolveEndpoint } from '../session.js';
+import type { VersionAlignment } from '../version-align.js';
+import {
+  applyVersionAlignmentGate,
+  renderAlignment,
+  STRICT_FLAG,
+} from '../version-align.js';
 import { listPath } from '../webui-path.js';
 import type { QueryLink } from '../query/links.js';
 import { annotateResult, survivingLinks } from '../query/links.js';
@@ -18,6 +24,7 @@ import {
   executableSchema,
   parseDocument,
   parseVariables,
+  selectedSchemaIds,
   validateAgainstSchema,
 } from '../query/document.js';
 import { DEFAULT_MAX_BYTES, jsonBytes, truncateToBudget } from '../query/truncate.js';
@@ -37,6 +44,8 @@ export interface QueryData {
   truncated: string[];
   links: QueryLink[];
   result: unknown;
+  /** Present only when a stored session let the manager version be read. */
+  alignment?: VersionAlignment;
 }
 
 const flagString = (
@@ -164,7 +173,7 @@ export const queryCommand = defineCommand<QueryData>({
   name: 'query',
   summary:
     'Run a raw GraphQL document against the manager, pre-validated against the checkout SDL.',
-  usage: `${CLI_NAME} query '<document>' | --file <path> | (stdin) [--var k=v]... [--allow-mutation] [--max-bytes <n>] [--endpoint <url>] [--webui <origin>] [--json]`,
+  usage: `${CLI_NAME} query '<document>' | --file <path> | (stdin) [--var k=v]... [--allow-mutation] [--max-bytes <n>] [--endpoint <url>] [--webui <origin>] [--strict] [--json]`,
   flags: [
     {
       flag: '--file <path>',
@@ -197,6 +206,7 @@ export const queryCommand = defineCommand<QueryData>({
       type: 'string',
     },
     ENDPOINT_FLAG,
+    STRICT_FLAG,
   ],
   maxArgs: 1,
   run: async (context) => {
@@ -241,6 +251,17 @@ export const queryCommand = defineCommand<QueryData>({
         hint: `${CLI_NAME} login --endpoint ${endpoint}`,
       });
     }
+
+    // Before the manager runs anything: under `--strict` a document that
+    // names fields this manager does not have is refused, not executed.
+    const { alignment } = await applyVersionAlignmentGate({
+      cwd: context.cwd,
+      schemaCtx: { schema: loadSchema(repo) },
+      selectedFields: selectedSchemaIds(executableSchema(repo), document),
+      strict: context.flags.strict === true,
+      notify: context.notify,
+      endpointFlag: endpoint,
+    });
 
     const primary = operations[0];
     if (mutations.length > 0) {
@@ -288,6 +309,7 @@ export const queryCommand = defineCommand<QueryData>({
       truncated: cut.truncated,
       links,
       result: cut.value,
+      ...(alignment ? { alignment } : {}),
     };
   },
   render: (data, { verbosity }) => {
@@ -327,6 +349,9 @@ export const queryCommand = defineCommand<QueryData>({
           ),
         ),
       );
+    }
+    if (data.alignment && verbosity !== 'dense') {
+      blocks.push(...renderAlignment(data.alignment));
     }
     blocks.push(section('Result'), text(JSON.stringify(data.result, null, 2)));
     return renderBlocks(blocks);
