@@ -313,7 +313,7 @@ const ImportRepoForm: React.FC<ImportFromURLFormProps> = ({
           ),
           enabled: true,
         },
-        vfolderMounts: [{ vfolderId: vfolderLocalId }],
+        vfolderMounts: [{ vfolderId: vfolderLocalId, name: folderName }],
       };
 
       const results = await startSessionWithDefault(launcherValue);
