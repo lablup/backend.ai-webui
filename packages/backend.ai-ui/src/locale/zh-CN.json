@@ -268,9 +268,6 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "选择密钥对"
   },
-  "comp:BAILegacyVFolderSelect": {
-    "SelectFolder": "选择文件夹"
-  },
   "comp:BAILoginHistoryTable": {
     "ClientIp": "客户端 IP",
     "Domain": "域",
