@@ -176,7 +176,7 @@ const ModelCardV2Card: React.FC<{
             >
               <AuthorIcon
                 author={modelCard.metadata.author}
-                size={parseFloat(token('--font-size-sm'))}
+                size={token('--font-size-sm')}
               />
               {modelCard.metadata.author}
             </Text>

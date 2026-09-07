@@ -917,7 +917,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   <div
                     style={{
                       // Bottom gap comes from the component itself.
-                      marginTop: -token('--spacing-4'),
+                      marginTop: `calc(-1 * ${token('--spacing-4')})`,
                     }}
                   >
                     <Suspense fallback={<BAISkeleton />}>
@@ -955,7 +955,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             {readsVfolderConfigFiles && supportsNullableModelDefinition && (
               <div
                 style={{
-                  marginTop: -token('--spacing-4'),
+                  marginTop: `calc(-1 * ${token('--spacing-4')})`,
                   marginBottom: token('--spacing-6'),
                 }}
               >
