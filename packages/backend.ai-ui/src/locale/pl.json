@@ -606,6 +606,7 @@
     "PathAndAlias": "Ścieżka & Alias",
     "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
     "RemoveFolder": "Usuń",
+    "SelectFolder": "Wybierz folder",
     "Subpath": "Podścieżka",
     "SubpathInvalid": "Podścieżka musi być ścieżką względną i nie może zawierać '..'.",
     "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Kliknij pole, aby przeglądać folder i wybrać podfolder; / oznacza katalog główny folderu."

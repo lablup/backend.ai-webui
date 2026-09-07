@@ -606,6 +606,7 @@
     "PathAndAlias": "Chemin & Alias",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
     "RemoveFolder": "Supprimer",
+    "SelectFolder": "Sélectionner un dossier",
     "Subpath": "Sous-chemin",
     "SubpathInvalid": "Le sous-chemin doit être un chemin relatif et ne doit pas contenir '..'.",
     "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Cliquez sur le champ pour parcourir le dossier et en choisir un ; / correspond à la racine du dossier."

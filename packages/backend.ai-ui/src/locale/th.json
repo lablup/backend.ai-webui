@@ -606,6 +606,7 @@
     "PathAndAlias": "พาธ & Alias",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
     "RemoveFolder": "ลบ",
+    "SelectFolder": "เลือกโฟลเดอร์",
     "Subpath": "พาธย่อย",
     "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
     "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root คลิกที่ช่องนี้เพื่อเรียกดูโฟลเดอร์และเลือกโฟลเดอร์ย่อย โดย / คือ root ของโฟลเดอร์"

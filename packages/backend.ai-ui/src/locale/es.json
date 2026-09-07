@@ -606,6 +606,7 @@
     "PathAndAlias": "Ruta & Alias",
     "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
     "RemoveFolder": "Eliminar",
+    "SelectFolder": "Seleccionar carpeta",
     "Subpath": "Subruta",
     "SubpathInvalid": "La subruta debe ser una ruta relativa y no debe contener '..'.",
     "SubpathTooltip": "Monta una subcarpeta dentro de la carpeta como origen en lugar de su raíz. Haga clic en el campo para explorar la carpeta y elegir una; / es la raíz de la carpeta."

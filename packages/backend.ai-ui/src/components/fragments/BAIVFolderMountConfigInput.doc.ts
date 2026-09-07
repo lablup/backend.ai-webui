@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "Form control for choosing vfolders and configuring how each one is mounted. It renders a multi-select folder picker inside its own Suspense boundary — so the folder list is loaded internally and no queryRef is needed — and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. The picker is BAIVFolderSelect in `row_id` mode by default; `renderFolderSelect` swaps in any select that emits vfolder UUIDs — BAILegacyVFolderSelect for a session mount field, which is the only source that can apply the launcher's mount gates and report its auto-mounted dotfiles. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the vfolder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. The module owns the whole mount-value vocabulary so a consumer never restates it: `DEFAULT_ALIAS_BASE_PATH`, `inputToMountDestination` / `mountDestinationToInput` (the two directions of the alias rule), `resolveVFolderMounts` (every entry's name, resolved path, default-alias flag and subpath in one pass), `toMountCreationConfig` (the manager `creation_config` mount fields), `getVFolderMountConfigStatuses` / `isVFolderMountConfigValid` (per-entry validity), and `useVFolderMountConfigFormRule` (a ready `Form.Item` `rules` entry with BUI-translated messages). The inline per-row errors are advisory only; the form rule is what makes `form.validateFields()` reject.",
+      "Form control for choosing vfolders and configuring how each one is mounted. It renders a multi-select folder picker inside its own Suspense boundary — so the folder list is loaded internally and no queryRef is needed — and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. The picker is BAILegacyVFolderSelect, the REST `GET /folders` list: the only source that applies the session launcher's mount gates (`mount-in-session` hosts, project-reachable folders) and reports the auto-mounted dotfiles, so `ownerEmail` / `filter` / `onAutoMountedFoldersChange` / `onResolvedNamesChange` are forwarded straight to it. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the vfolder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. The module owns the whole mount-value vocabulary so a consumer never restates it: `DEFAULT_ALIAS_BASE_PATH`, `inputToMountDestination` / `mountDestinationToInput` (the two directions of the alias rule), `resolveVFolderMounts` (every entry's name, resolved path, default-alias flag and subpath in one pass), `toMountCreationConfig` (the manager `creation_config` mount fields), `getVFolderMountConfigStatuses` / `isVFolderMountConfigValid` (per-entry validity), and `useVFolderMountConfigFormRule` (a ready `Form.Item` `rules` entry with BUI-translated messages). The inline per-row errors are advisory only; the form rule is what makes `form.validateFields()` reject.",
     bestPractices: [
       {
         guidance: true,
@@ -36,12 +36,17 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Scope the picker with `currentProjectId` and `filter` so users cannot select folders the session will not be able to mount.',
+          'Scope the picker with `currentProjectId`, `ownerEmail` and `filter` so users cannot select folders the session will not be able to mount.',
       },
       {
         guidance: true,
         description:
-          'Render BAILegacyVFolderSelect through `renderFolderSelect` for a session mount field, and feed its `onAutoMountedFoldersChange` back into `autoMountedFolderNames` — the default GraphQL select cannot see the mount-in-session host gate or the auto-mounted dotfiles.',
+          'Feed `onAutoMountedFoldersChange` back into `autoMountedFolderNames` — that callback is the only source of the auto-mounted dotfile names the overlap check needs.',
+      },
+      {
+        guidance: true,
+        description:
+          'Use `onResolvedNamesChange` to prune a selection: it fires after the internal name backfill with every mountable folder, so an entry missing from the map is one this owner/project can no longer mount.',
       },
       {
         guidance: false,
@@ -86,16 +91,28 @@ export const docs = {
         'Project scope forwarded to the folder select, limiting which vfolders can be picked.',
     },
     {
-      name: 'filter',
+      name: 'ownerEmail',
       type: 'string',
       description:
-        'Server-side filter expression forwarded to the default folder select. A `renderFolderSelect` slot supplies its own filtering.',
+        "Lists the folders of this user instead of the caller's own, for a launch on someone else's behalf. Forwarded to the folder select.",
     },
     {
-      name: 'renderFolderSelect',
-      type: '(api: VFolderMountConfigSelectApi) => React.ReactNode',
+      name: 'filter',
+      type: '(folder: LegacyVFolder) => boolean',
       description:
-        'Renders the folder picker in place of the default BAIVFolderSelect. The api carries `value` / `onChange` / `onResolvedNamesChange` / `multiple` / `isDisabled` / `currentProjectId` / `label` / `isLabelHidden` — spread it onto any select that emits vfolder UUIDs.',
+        'Display-only folder filter, applied after the select’s mount gates. An already-selected folder stays visible even when it filters out.',
+    },
+    {
+      name: 'onAutoMountedFoldersChange',
+      type: '(names: string[]) => void',
+      description:
+        'Fired with the names of the mountable, ready dotfile folders the session auto-mounts. Feed it back into `autoMountedFolderNames` so the overlap check can see them.',
+    },
+    {
+      name: 'onResolvedNamesChange',
+      type: '(nameMap: Record<string, string>) => void',
+      description:
+        'Fired with `vfolderId -> name` for every mountable folder, after the component has backfilled its own entry names — so a consumer can prune entries that are not in the map.',
     },
     {
       name: 'disabled',
@@ -145,18 +162,16 @@ await baiClient.createIfNotExists(image, sessionName, {
 });`,
     },
     {
-      label: 'Session mount field over the legacy folder list',
+      label: 'Scoping the picker and tracking auto-mounted folders',
       code: `<BAIVFolderMountConfigInput
   currentProjectId={currentProject.id}
+  ownerEmail={ownerEmail}
+  filter={(folder) => folder.status === 'ready' && !folder.name.startsWith('.')}
   autoMountedFolderNames={autoMountedFolderNames}
-  renderFolderSelect={(api) => (
-    <BAILegacyVFolderSelect
-      {...api}
-      ownerEmail={ownerEmail}
-      filter={(folder) => !folder.name.startsWith('.')}
-      onAutoMountedFoldersChange={setAutoMountedFolderNames}
-    />
-  )}
+  onAutoMountedFoldersChange={setAutoMountedFolderNames}
+  onResolvedNamesChange={(nameMap) =>
+    setMounts((prev) => prev.filter((m) => m.vfolderId in nameMap))
+  }
   value={mounts}
   onChange={setMounts}
 />`,

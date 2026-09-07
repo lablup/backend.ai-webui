@@ -606,6 +606,7 @@
     "PathAndAlias": "Jalur & Alias",
     "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
     "RemoveFolder": "Hapus",
+    "SelectFolder": "Pilih Folder",
     "Subpath": "Subjal",
     "SubpathInvalid": "Subjalur harus berupa jalur relatif dan tidak boleh mengandung '..'.",
     "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Klik kolom ini untuk menelusuri folder dan memilih salah satu; / berarti root folder."

@@ -114,7 +114,6 @@ export {
 export type {
   BAIVFolderMountConfigInputProps,
   VFolderMountConfigValue,
-  VFolderMountConfigSelectApi,
   VFolderMountConfigStatusOptions,
   VFolderMountConfigEntryStatus,
   ResolvedVFolderMount,

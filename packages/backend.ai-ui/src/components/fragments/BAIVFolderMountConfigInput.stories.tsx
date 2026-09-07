@@ -3,35 +3,43 @@ import { convertToUUID } from '../../helper';
 import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
 import {
   MOCK_LEGACY_PROJECT_ID,
+  mockLegacyVFolder,
   mockLegacyVFolders,
   mockVFolderFile as entry,
   type MockVFolderFileTrees,
 } from '../../tests/mockVFolderFileTree';
 import BAIButton from '../BAIButton';
 import BAIText from '../BAIText';
-import BAILegacyVFolderSelect from '../baiClient/BAILegacyVFolderSelect';
 import BAIVFolderMountConfigInput, {
   BAIVFolderMountConfigInputProps,
   VFolderMountConfigValue,
-  isVFolderMountConfigValid,
+  useVFolderMountConfigFormRule,
 } from './BAIVFolderMountConfigInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
 const DEMO_WIDTH = 760;
 
-const sampleVFolders = [
-  { name: 'my-project-data', row_id: '11111111-1111-1111-1111-111111111111' },
-  { name: 'shared-datasets', row_id: '22222222-2222-2222-2222-222222222222' },
-  { name: 'model-checkpoints', row_id: '33333333-3333-3333-3333-333333333333' },
-  { name: 'training-logs', row_id: '44444444-4444-4444-4444-444444444444' },
+// The shared REST fixture exercises every gate the select applies; a third
+// mountable folder is added here so the alias modes fit on one screen.
+const legacyFolders = [
+  ...mockLegacyVFolders,
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0006',
+    name: 'model-checkpoints',
+  }),
 ];
+
+// The REST fixture keys folders by the 32-hex `id`; the select emits the
+// dashed UUID, which is what the row's path picker browses by.
+const folderId = (index: number) => convertToUUID(legacyFolders[index].id);
+const folderName = (index: number) => legacyFolders[index].name;
 
 // Directory trees keyed by vfolder UUID, then by the path notation
 // `useSearchVFolderFiles` uses ('.' = root, 'a/b' below it), so every row's
 // subpath picker browses a real tree.
-const createInitialTrees = (): MockVFolderFileTrees => ({
-  [sampleVFolders[0].row_id]: {
+const createTrees = (): MockVFolderFileTrees => ({
+  [folderId(0)]: {
     '.': [
       entry('dataset', 'DIRECTORY', '2026-07-21T14:02:00'),
       entry('scripts', 'DIRECTORY', '2026-07-18T09:45:00'),
@@ -45,25 +53,26 @@ const createInitialTrees = (): MockVFolderFileTrees => ({
     'dataset/validation': [],
     scripts: [],
   },
-  [sampleVFolders[1].row_id]: {
+  [folderId(1)]: {
     '.': [
       entry('imagenet', 'DIRECTORY', '2026-07-10T08:00:00'),
       entry('LICENSE', 'FILE', '2026-07-02T12:00:00'),
     ],
     imagenet: [],
   },
-  [sampleVFolders[2].row_id]: {
+  [folderId(5)]: {
     '.': [entry('epoch-001', 'DIRECTORY', '2026-07-27T03:12:00')],
     'epoch-001': [],
   },
-  [sampleVFolders[3].row_id]: { '.': [] },
 });
 
 /**
- * Controlled wrapper that renders the component and prints the current
- * form value as text, so the emitted `VFolderMountConfigValue[]` is visible
- * while selecting folders and picking aliases / subpaths. `mountDestination`
- * is stored as the raw alias; the resolved full path is shown inline per row.
+ * Controlled wrapper that renders the component the way the session launcher
+ * does — scoped to a project, dotfiles hidden by `filter`, auto-mounted names
+ * fed back from the select — and prints the current form value as text, so the
+ * emitted `VFolderMountConfigValue[]` is visible while selecting folders and
+ * picking aliases / subpaths. `mountDestination` is stored as the raw alias;
+ * the resolved full path is shown inline per row.
  */
 const ControlledDemo = ({
   initialValue = [],
@@ -72,9 +81,16 @@ const ControlledDemo = ({
   initialValue?: VFolderMountConfigValue[];
 }) => {
   const [value, setValue] = useState<VFolderMountConfigValue[]>(initialValue);
+  const [autoMountedFolderNames, setAutoMountedFolderNames] = useState<
+    string[]
+  >([]);
   return (
     <div style={{ width: DEMO_WIDTH }}>
       <BAIVFolderMountConfigInput
+        currentProjectId={MOCK_LEGACY_PROJECT_ID}
+        filter={(folder) => !folder.name.startsWith('.')}
+        autoMountedFolderNames={autoMountedFolderNames}
+        onAutoMountedFoldersChange={setAutoMountedFolderNames}
         {...props}
         value={value}
         onChange={setValue}
@@ -97,25 +113,6 @@ const ControlledDemo = ({
   );
 };
 
-// ── Legacy (REST) folder source ──────────────────────────────────
-// The REST fixture keys folders by the 32-hex `id`; the select emits the
-// dashed UUID, which is what the row's path picker browses by.
-const legacyTreeKey = (index: number) =>
-  convertToUUID(mockLegacyVFolders[index].id);
-const createLegacyTrees = (): MockVFolderFileTrees => ({
-  [legacyTreeKey(0)]: {
-    '.': [
-      entry('dataset', 'DIRECTORY', '2026-07-21T14:02:00'),
-      entry('README.md', 'FILE', '2026-07-01T11:20:00'),
-    ],
-    dataset: [],
-  },
-  [legacyTreeKey(1)]: {
-    '.': [entry('imagenet', 'DIRECTORY', '2026-07-10T08:00:00')],
-    imagenet: [],
-  },
-});
-
 const meta: Meta<typeof BAIVFolderMountConfigInput> = {
   title: 'Fragments/BAIVFolderMountConfigInput',
   component: BAIVFolderMountConfigInput,
@@ -128,8 +125,11 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Composes [BAIVFolderSelect](/?path=/docs/fragments-baivfolderselect--docs) to pick
-  vfolders (\`row_id\` mode, so the value is the vfolder UUID).
+- Composes [BAILegacyVFolderSelect](/?path=/docs/input-bailegacyvfolderselect--docs)
+  to pick folders from the REST \`GET /folders\` list under the session launcher's
+  mount gates — the only source that also reports the auto-mounted dotfiles.
+  \`ownerEmail\` / \`filter\` / \`onAutoMountedFoldersChange\` / \`onResolvedNamesChange\`
+  are forwarded straight to it.
 - Each selected folder appears as a row with a **mount path (alias)** input and an
   optional **subpath** picker (which subfolder of the vfolder to mount as the source; \`/\` = root),
   which opens a directory browser instead of accepting typed text.
@@ -139,10 +139,13 @@ for configuring vfolder mounts.
 - \`autoMountedFolderNames\` are folded into the overlap check (a user alias colliding with an
   auto-mounted folder is flagged) and shown as read-only tags at the bottom.
 - Emits a single \`VFolderMountConfigValue[]\`. The inline per-row errors are advisory UX; to gate a
-  form, wrap the component in one named \`Form.Item\` and call \`isVFolderMountConfigValid\` from a
-  \`rules\` validator (see the **WithFormValidation** story).
+  form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
+  \`useVFolderMountConfigFormRule\` (see the **WithFormValidation** story).
 
-The stories below use a mocked Relay environment so multiple sample folders can be selected.
+The stories below mock the REST folder list and the allowed-host policy, so of the
+six fixture folders \`cold-archive\` is dropped (its host has no \`mount-in-session\`
+permission), \`other-team-data\` belongs to another project, and \`.config\` is hidden
+by \`filter\` while being reported through \`onAutoMountedFoldersChange\`.
 `,
       },
     },
@@ -150,8 +153,8 @@ The stories below use a mocked Relay environment so multiple sample folders can 
   decorators: [
     (Story) => (
       <MockVFolderFileProviders
-        vfolders={sampleVFolders}
-        trees={createInitialTrees}
+        folders={legacyFolders}
+        trees={createTrees}
         suspenseFallback="Loading..."
       >
         <Story />
@@ -172,11 +175,15 @@ The stories below use a mocked Relay environment so multiple sample folders can 
       description: 'Project ID to scope vfolder selection',
       table: { type: { summary: 'string' } },
     },
-    filter: {
+    ownerEmail: {
       control: { type: 'text' },
-      description:
-        'Additional filter string passed to the default BAIVFolderSelect',
+      description: "Lists this user's folders instead of the caller's own",
       table: { type: { summary: 'string' } },
+    },
+    filter: {
+      control: false,
+      description: 'Display-only folder filter, applied after the mount gates',
+      table: { type: { summary: '(folder: LegacyVFolder) => boolean' } },
     },
     disabled: {
       control: { type: 'boolean' },
@@ -211,7 +218,7 @@ export const Interactive: Story = {
     docs: {
       description: {
         story:
-          "Empty initial state. Select folders from the dropdown to add rows, then type each row's mount path and click its subpath field to browse the folder. New rows start at the folder root, shown as `/`. The live form value is shown below — note `mountDestination` holds the raw alias you typed, while `subpath` only ever comes from the picker.",
+          'Empty initial state. The dropdown offers only the mountable folders of the current project. Select one to add a row, then type its mount path and click its subpath field to browse the folder. New rows start at the folder root, shown as `/`. The live form value is shown below — note `mountDestination` holds the raw alias you typed, while `subpath` only ever comes from the picker.',
       },
     },
   },
@@ -232,20 +239,20 @@ export const Prefilled: Story = {
       {...args}
       initialValue={[
         {
-          vfolderId: sampleVFolders[0].row_id,
-          name: sampleVFolders[0].name,
+          vfolderId: folderId(0),
+          name: folderName(0),
           mountDestination: 'data',
           subpath: 'dataset/train',
         },
         {
-          vfolderId: sampleVFolders[1].row_id,
-          name: sampleVFolders[1].name,
+          vfolderId: folderId(1),
+          name: folderName(1),
           mountDestination: '/mnt/shared',
           subpath: '',
         },
         {
-          vfolderId: sampleVFolders[2].row_id,
-          name: sampleVFolders[2].name,
+          vfolderId: folderId(5),
+          name: folderName(5),
           mountDestination: '',
           subpath: '',
         },
@@ -263,7 +270,7 @@ export const OverlappingPaths: Story = {
     docs: {
       description: {
         story:
-          'Two folders use the same alias (`shared`), so both resolve to `/home/work/shared` and are flagged with the overlap error. `isVFolderMountConfigValid` returns `false` for this value.',
+          'Two folders use the same alias (`shared`), so both resolve to `/home/work/shared` and are flagged with the overlap error. The third row types an alias the format check rejects. `isVFolderMountConfigValid` returns `false` for this value.',
       },
     },
   },
@@ -272,15 +279,21 @@ export const OverlappingPaths: Story = {
       {...args}
       initialValue={[
         {
-          vfolderId: sampleVFolders[0].row_id,
-          name: sampleVFolders[0].name,
+          vfolderId: folderId(0),
+          name: folderName(0),
           mountDestination: 'shared',
           subpath: '',
         },
         {
-          vfolderId: sampleVFolders[1].row_id,
-          name: sampleVFolders[1].name,
+          vfolderId: folderId(1),
+          name: folderName(1),
           mountDestination: 'shared',
+          subpath: '',
+        },
+        {
+          vfolderId: folderId(5),
+          name: folderName(5),
+          mountDestination: 'bad path!',
           subpath: '',
         },
       ]}
@@ -297,24 +310,23 @@ export const WithAutoMountedFolders: Story = {
     docs: {
       description: {
         story:
-          'Passing `autoMountedFolderNames={[".local", ".config"]}` renders them as read-only tags below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
+          'The select reports `.config` — a mountable, ready dotfile it hides from the list — through `onAutoMountedFoldersChange`, which the demo feeds straight back into `autoMountedFolderNames`, rendering it as a read-only tag below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
       },
     },
   },
   render: (args) => (
     <ControlledDemo
       {...args}
-      autoMountedFolderNames={['.local', '.config']}
       initialValue={[
         {
-          vfolderId: sampleVFolders[0].row_id,
-          name: sampleVFolders[0].name,
+          vfolderId: folderId(0),
+          name: folderName(0),
           mountDestination: '.config',
-          subpath: '',
+          subpath: 'dataset',
         },
         {
-          vfolderId: sampleVFolders[2].row_id,
-          name: sampleVFolders[2].name,
+          vfolderId: folderId(5),
+          name: folderName(5),
           mountDestination: 'checkpoints',
           subpath: '',
         },
@@ -325,15 +337,15 @@ export const WithAutoMountedFolders: Story = {
 
 /**
  * Demonstrates the recommended form-gate pattern: a single named `Form.Item`
- * wrapping the component, with `isVFolderMountConfigValid` in a `rules`
- * validator so `form.validateFields()` rejects on invalid input.
+ * wrapping the component, with `useVFolderMountConfigFormRule` in `rules` so
+ * `form.validateFields()` rejects on invalid input.
  */
 export const WithFormValidation: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'The component is wrapped in one named `Form.Item`. The `rules` validator calls `isVFolderMountConfigValid`, so submitting with the two colliding `shared` aliases fails validation. Fix the aliases and submit again to pass.',
+          'The component is wrapped in one named `Form.Item` whose `rules` carry `useVFolderMountConfigFormRule`, so submitting with the two colliding `shared` aliases fails validation with the already-translated message. Fix the aliases and submit again to pass.',
       },
     },
   },
@@ -341,6 +353,13 @@ export const WithFormValidation: Story = {
     const FormValidationDemo = () => {
       const [form] = Form.useForm();
       const [result, setResult] = useState<string>('');
+      const [autoMountedFolderNames, setAutoMountedFolderNames] = useState<
+        string[]
+      >([]);
+      const mountConfigRule = useVFolderMountConfigFormRule({
+        aliasBasePath: args.aliasBasePath,
+        autoMountedFolderNames,
+      });
       return (
         <Form
           form={form}
@@ -349,14 +368,14 @@ export const WithFormValidation: Story = {
           initialValues={{
             mounts: [
               {
-                vfolderId: sampleVFolders[0].row_id,
-                name: sampleVFolders[0].name,
+                vfolderId: folderId(0),
+                name: folderName(0),
                 mountDestination: 'shared',
                 subpath: '',
               },
               {
-                vfolderId: sampleVFolders[1].row_id,
-                name: sampleVFolders[1].name,
+                vfolderId: folderId(1),
+                name: folderName(1),
                 mountDestination: 'shared',
                 subpath: '',
               },
@@ -366,23 +385,15 @@ export const WithFormValidation: Story = {
           <Form.Item
             name="mounts"
             label="VFolder mounts"
-            rules={[
-              {
-                validator: (_rule, value) =>
-                  isVFolderMountConfigValid(value, {
-                    aliasBasePath: args.aliasBasePath,
-                    autoMountedFolderNames: args.autoMountedFolderNames,
-                  })
-                    ? Promise.resolve()
-                    : Promise.reject(
-                        new Error(
-                          'Some mounts have an invalid or overlapping path.',
-                        ),
-                      ),
-              },
-            ]}
+            rules={[mountConfigRule]}
           >
-            <BAIVFolderMountConfigInput {...args} />
+            <BAIVFolderMountConfigInput
+              currentProjectId={MOCK_LEGACY_PROJECT_ID}
+              filter={(folder) => !folder.name.startsWith('.')}
+              {...args}
+              autoMountedFolderNames={autoMountedFolderNames}
+              onAutoMountedFoldersChange={setAutoMountedFolderNames}
+            />
           </Form.Item>
           <BAIButton
             type="primary"
@@ -407,64 +418,6 @@ export const WithFormValidation: Story = {
   },
 };
 
-/**
- * A `renderFolderSelect` slot holding BAILegacyVFolderSelect: the picker lists
- * folders from the REST `GET /folders` endpoint under the session launcher's
- * mount gates, hides the auto-mounted dotfiles with `filter`, and reports
- * their names back so the alias overlap check can see them.
- */
-export const LegacyFolderSource: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story:
-          '`renderFolderSelect` swaps BAIVFolderSelect for BAILegacyVFolderSelect. Of the five mock folders, `cold-archive` is dropped (its host has no `mount-in-session` permission), `other-team-data` belongs to another project, and `.config` is hidden by `filter` while being reported through `onAutoMountedFoldersChange` — which the story feeds straight into `autoMountedFolderNames`. The prefilled row aliases to `.config`, so it collides with the auto-mounted `/home/work/.config` and shows the overlap error.',
-      },
-    },
-  },
-  decorators: [
-    (Story) => (
-      <MockVFolderFileProviders
-        trees={createLegacyTrees}
-        folders={mockLegacyVFolders}
-        suspenseFallback="Loading..."
-      >
-        <Story />
-      </MockVFolderFileProviders>
-    ),
-  ],
-  render: (args) => {
-    const LegacySourceDemo = () => {
-      const [autoMountedFolderNames, setAutoMountedFolderNames] = useState<
-        string[]
-      >([]);
-      return (
-        <ControlledDemo
-          {...args}
-          currentProjectId={MOCK_LEGACY_PROJECT_ID}
-          autoMountedFolderNames={autoMountedFolderNames}
-          renderFolderSelect={(api) => (
-            <BAILegacyVFolderSelect
-              {...api}
-              filter={(folder) => !folder.name.startsWith('.')}
-              onAutoMountedFoldersChange={setAutoMountedFolderNames}
-            />
-          )}
-          initialValue={[
-            {
-              vfolderId: legacyTreeKey(0),
-              name: mockLegacyVFolders[0].name,
-              mountDestination: '.config',
-              subpath: 'dataset',
-            },
-          ]}
-        />
-      );
-    };
-    return <LegacySourceDemo />;
-  },
-};
-
 export const Disabled: Story = {
   parameters: {
     docs: {
@@ -480,8 +433,8 @@ export const Disabled: Story = {
       disabled
       initialValue={[
         {
-          vfolderId: sampleVFolders[1].row_id,
-          name: sampleVFolders[1].name,
+          vfolderId: folderId(1),
+          name: folderName(1),
           mountDestination: 'shared',
           subpath: '',
         },

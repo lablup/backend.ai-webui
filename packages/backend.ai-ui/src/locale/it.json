@@ -606,6 +606,7 @@
     "PathAndAlias": "Percorso & Alias",
     "PathAndAliasTooltip": "Il percorso all'interno del container dove verrà montata la cartella. Lasciare vuoto per usare il percorso predefinito.",
     "RemoveFolder": "Rimuovi",
+    "SelectFolder": "Seleziona cartella",
     "Subpath": "Sottopercorso",
     "SubpathInvalid": "Il sottopercorso deve essere un percorso relativo e non deve contenere '..'.",
     "SubpathTooltip": "Monta una sottocartella all'interno della cartella come sorgente invece della sua radice. Fare clic sul campo per esplorare la cartella e sceglierne una; / è la radice della cartella."

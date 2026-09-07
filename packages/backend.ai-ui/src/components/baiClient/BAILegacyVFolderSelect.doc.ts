@@ -32,7 +32,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Feed onAutoMountedFoldersChange into the same list you hand BAIVFolderMountConfigInput as autoMountedFolderNames, so an alias colliding with an auto-mounted folder is flagged.',
+          'Reach for BAIVFolderMountConfigInput instead when the field also configures mount paths — it renders this select internally and forwards ownerEmail / filter / onAutoMountedFoldersChange / onResolvedNamesChange to it.',
       },
       {
         guidance: false,
@@ -106,7 +106,7 @@ export const docs = {
       type: 'string',
       description:
         'Trigger text while nothing is selected. Applied before the prop spread, so a call site can override the translated default.',
-      default: "t('comp:BAIVFolderSelect.SelectFolder')",
+      default: "t('comp:BAILegacyVFolderSelect.SelectFolder')",
     },
   ],
   examples: [
@@ -127,18 +127,13 @@ export const docs = {
 </Suspense>`,
     },
     {
-      label: 'As the mount config input folder picker',
+      label: 'Mount paths too — let BAIVFolderMountConfigInput own the select',
       code: `<BAIVFolderMountConfigInput
   currentProjectId={currentProject.id}
+  ownerEmail={ownerEmail}
+  filter={(folder) => !folder.name.startsWith('.')}
   autoMountedFolderNames={autoMountedFolderNames}
-  renderFolderSelect={(api) => (
-    <BAILegacyVFolderSelect
-      {...api}
-      ownerEmail={ownerEmail}
-      filter={(folder) => !folder.name.startsWith('.')}
-      onAutoMountedFoldersChange={setAutoMountedFolderNames}
-    />
-  )}
+  onAutoMountedFoldersChange={setAutoMountedFolderNames}
   value={mounts}
   onChange={setMounts}
 />`,

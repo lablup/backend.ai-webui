@@ -606,6 +606,7 @@
     "PathAndAlias": "Yol & Takma Ad",
     "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
     "RemoveFolder": "Kaldır",
+    "SelectFolder": "Klasör Seç",
     "Subpath": "Alt yol",
     "SubpathInvalid": "Alt yol göreli bir yol olmalı ve '..' içermemelidir.",
     "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Klasöre göz atıp bir alt klasör seçmek için alana tıklayın; / klasörün kökünü belirtir."

@@ -606,6 +606,7 @@
     "PathAndAlias": "路徑 & 別名",
     "PathAndAliasTooltip": "資料夾在容器內的掛載路徑。留空則使用預設路徑。",
     "RemoveFolder": "移除",
+    "SelectFolder": "選擇資料夾",
     "Subpath": "子路徑",
     "SubpathInvalid": "子路徑必須是相對路徑，且不能包含 '..'。",
     "SubpathTooltip": "將資料夾內的子資料夾作為掛載來源，而非資料夾根目錄。點擊該欄位瀏覽資料夾並選擇；/ 表示資料夾根目錄。"

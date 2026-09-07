@@ -606,6 +606,7 @@
     "PathAndAlias": "Path & Alias",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
     "RemoveFolder": "Remove",
+    "SelectFolder": "Select Folder",
     "Subpath": "Subpath",
     "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
     "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Click the field to browse the folder and pick one; / is the folder root."
