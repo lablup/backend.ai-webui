@@ -13,6 +13,18 @@
        policy. The web server substitutes {{nonce}} per request (empty in dev). -->
   <meta property="csp-nonce" nonce="{{nonce}}">
   <base href="/">
+  <!-- FR-3532: cascade-layer order, declared before ANY stylesheet in the
+       document. Layer precedence is fixed by first appearance, so the app's
+       own copy (react/src/index.css) arrives too late whenever the bundle
+       evaluates a layered sheet before it — which is what made the brand
+       theme lose to Astryx's defaults on the dev server but win in the build.
+       Every bundle style lands after this element, in both.
+       KEEP IN SYNC with react/src/index.css and
+       packages/backend.ai-ui/src/styles/backend.ai-ui.css;
+       scripts/migration-gates/layer-order-gate.mjs fails on drift. -->
+  <style nonce="{{nonce}}">
+    @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+  </style>
   <link rel="icon" href="manifest/favicon.ico">
   <link rel="apple-touch-icon" sizes="256x256" href="manifest/backend-ai.iconset/icon_256x256@2x.png">
   <link rel="icon" type="image/png" sizes="32x32" href="manifest/backend-ai.iconset/icon_32x32@1x.png">

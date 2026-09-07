@@ -34,9 +34,13 @@
  * frequently the first layered sheet in the bundle — so the statement lives
  * here as well as in the app.
  *
- * !! KEEP IN SYNC with `react/src/index.css`, which declares the identical
- * !! list. Two identical statements are idempotent (the second is a no-op);
- * !! two DIFFERENT ones silently give you whichever loads first.
+ * !! KEEP IN SYNC with `react/src/index.css` and the repo-root `index.html`,
+ * !! which declare the identical list — the HTML one settles the app's order
+ * !! before any bundle CSS loads (FR-3532), this one covers the consumers that
+ * !! never see that document (Storybook, `backend.ai-ui/styles.css`). Two
+ * !! identical statements are idempotent (the second is a no-op); two
+ * !! DIFFERENT ones silently give you whichever loads first, and
+ * !! `scripts/migration-gates/layer-order-gate.mjs` fails on drift.
  */
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
