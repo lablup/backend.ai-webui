@@ -63,6 +63,28 @@ vi.mock('../hooks', async (importOriginal) => {
   };
 });
 
+/**
+ * With no image metadata and `supports() === false`, the component groups by
+ * `registry/name`, so the option a reader sees is named after `name` alone.
+ */
+const image = (name: string) => ({
+  id: `${name}-1.0`,
+  name,
+  humanized_name: name,
+  tag: '1.0-py3',
+  registry: 'cr.backend.ai',
+  architecture: 'x86_64',
+  digest: `sha256:${name}`,
+  installed: true,
+  resource_limits: [],
+  labels: [],
+  namespace: name,
+  base_image_name: name,
+  tags: [],
+  version: '1.0',
+  supported_accelerators: [],
+});
+
 const renderFormItems = (
   environment: RelayMockEnvironment,
   showRefreshButton?: boolean,
@@ -79,10 +101,18 @@ const renderFormItems = (
     </RelayEnvironmentProvider>,
   );
 
-const resolveImageQuery = async (environment: RelayMockEnvironment) => {
+const resolveImageQuery = async (
+  environment: RelayMockEnvironment,
+  imageNames?: Array<string>,
+) => {
   await act(async () => {
     environment.mock.resolveMostRecentOperation((operation) =>
-      MockPayloadGenerator.generate(operation),
+      MockPayloadGenerator.generate(
+        operation,
+        imageNames
+          ? { Query: () => ({ images: imageNames.map(image) }) }
+          : undefined,
+      ),
     );
   });
 };
@@ -98,16 +128,18 @@ describe('ImageEnvironmentSelectFormItems refresh control', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('re-executes the image query when clicked', async () => {
+  it('re-executes the image query when clicked and offers the newly returned image', async () => {
     const environment = createMockEnvironment();
     renderFormItems(environment, true);
-    await resolveImageQuery(environment);
+    await resolveImageQuery(environment, ['pytorch']);
 
     const refreshButton = await screen.findByRole('button', {
       name: 'button.Refresh',
     });
     // The initial query is already resolved, so nothing is in flight.
     expect(environment.mock.getAllOperations()).toHaveLength(0);
+    // An image committed after the launcher opened is not in the store yet.
+    expect(screen.queryByText('tensorflow')).not.toBeInTheDocument();
 
     await userEvent.click(refreshButton);
 
@@ -117,5 +149,20 @@ describe('ImageEnvironmentSelectFormItems refresh control', () => {
     expect(environment.mock.getMostRecentOperation().fragment.node.name).toBe(
       'ImageEnvironmentSelectFormItemsQuery',
     );
+
+    await resolveImageQuery(environment, ['pytorch', 'tensorflow']);
+
+    // The trigger keeps the selection the refresh must not disturb, so the
+    // refreshed list is only visible once the dropdown is open.
+    const environmentTrigger = screen
+      .getAllByRole('button')
+      .find((button) => button.textContent === 'pytorch');
+    expect(environmentTrigger).toBeDefined();
+    await userEvent.click(environmentTrigger as HTMLElement);
+
+    expect(
+      await screen.findByRole('option', { name: 'tensorflow' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'pytorch' })).toBeInTheDocument();
   });
 });
