@@ -604,8 +604,7 @@
     "RemoveFolder": "Kaldır",
     "Subpath": "Alt yol",
     "SubpathInvalid": "Alt yol göreli bir yol olmalı ve '..' içermemelidir.",
-    "SubpathPlaceholder": "örn. dataset/train (isteğe bağlı)",
-    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Kökü bağlamak için boş bırakın."
+    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Klasöre göz atıp bir alt klasör seçmek için alana tıklayın; / klasörün kökünü belirtir."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Klasör Seç"

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Form control for choosing vfolders and configuring how each one is mounted. It renders a multi-select BAIVFolderSelect in `row_id` mode inside its own Suspense boundary — so the folder list query is loaded internally and no queryRef is needed — and gives every selected folder a row with an alias input and an optional subpath input. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the folder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. Resolve it with the exported `inputToMountDestination`. The inline per-row errors are advisory only; gate a form on validity by calling the exported `isVFolderMountConfigValid` (or `getVFolderMountConfigStatuses` for the per-entry detail) from a `Form.Item` `rules` validator.',
+      'Form control for choosing vfolders and configuring how each one is mounted. It renders a multi-select BAIVFolderSelect in `row_id` mode inside its own Suspense boundary — so the folder list query is loaded internally and no queryRef is needed — and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the folder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. Resolve it with the exported `inputToMountDestination`. The inline per-row errors are advisory only; gate a form on validity by calling the exported `isVFolderMountConfigValid` (or `getVFolderMountConfigStatuses` for the per-entry detail) from a `Form.Item` `rules` validator.',
     bestPractices: [
       {
         guidance: true,
@@ -46,6 +46,11 @@ export const docs = {
       {
         guidance: false,
         description:
+          'Expect a typed subpath: the row browses the folder through a directory picker, so `subpath` only ever holds a path that exists — the absolute / `..` validation stays for programmatically supplied values.',
+      },
+      {
+        guidance: false,
+        description:
           'Set `name` yourself on a new entry — names are backfilled from the select as folder nodes resolve, and that callback is the only source of them.',
       },
     ],
@@ -55,7 +60,7 @@ export const docs = {
       name: 'value',
       type: 'VFolderMountConfigValue[]',
       description:
-        'Controlled list of mount configurations. Each entry carries `vfolderId` (the folder UUID), the backfilled `name`, the raw `mountDestination` alias, and `subpath`.',
+        'Controlled list of mount configurations. Each entry carries `vfolderId` (the folder UUID), the backfilled `name`, the raw `mountDestination` alias, and the picked `subpath` (an empty string means the folder root).',
     },
     {
       name: 'defaultValue',
@@ -67,7 +72,7 @@ export const docs = {
       name: 'onChange',
       type: '(value: VFolderMountConfigValue[]) => void',
       description:
-        'Fired with the whole next list on selection change, alias or subpath edit, row removal, and when asynchronously resolved folder names are backfilled.',
+        'Fired with the whole next list on selection change, alias edit, subpath pick, row removal, and when asynchronously resolved folder names are backfilled.',
     },
     {
       name: 'currentProjectId',
@@ -85,7 +90,7 @@ export const docs = {
       name: 'disabled',
       type: 'boolean',
       description:
-        'Disables the select, both inputs on every row, and the remove button, while keeping the rows readable.',
+        'Disables the select, the alias input and the subpath picker on every row, and the remove button, while keeping the rows readable.',
     },
     {
       name: 'aliasBasePath',

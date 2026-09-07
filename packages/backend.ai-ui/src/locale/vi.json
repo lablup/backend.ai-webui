@@ -604,8 +604,7 @@
     "RemoveFolder": "Xóa",
     "Subpath": "Đường dẫn con",
     "SubpathInvalid": "Đường dẫn con phải là đường dẫn tương đối và không được chứa '..'.",
-    "SubpathPlaceholder": "vd. dataset/train (tùy chọn)",
-    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Để trống để mount từ thư mục gốc."
+    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Nhấp vào trường này để duyệt thư mục và chọn một thư mục con; / là thư mục gốc."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Chọn thư mục"

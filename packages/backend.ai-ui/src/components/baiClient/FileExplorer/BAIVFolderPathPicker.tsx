@@ -10,7 +10,10 @@ import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import BAIDirectoryPickerModal, {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
-import { ComplexSelector } from '@astryxdesign/core/ComplexSelector';
+import {
+  ComplexSelector,
+  type ComplexSelectorSize,
+} from '@astryxdesign/core/ComplexSelector';
 import {
   useEffectEvent,
   useLayoutEffect,
@@ -35,6 +38,8 @@ export interface BAIVFolderPathPickerProps {
   defaultValue?: string;
   onChange?: (selectedSubPath?: string) => void;
   disabled?: boolean;
+  /** Trigger height, matching the sibling form controls of a dense row. */
+  size?: ComplexSelectorSize;
   style?: React.CSSProperties;
   /**
    * Accessible name of the trigger; visually hidden (the surrounding
@@ -80,7 +85,7 @@ const PopoverToModalRedirect: React.FC<{
 const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
   'use memo';
 
-  const { vfolderUuid, disabled, style, label } = props;
+  const { vfolderUuid, disabled, size, style, label } = props;
   const { t } = useBAIi18n();
   const [selectedSubPath, setSelectedSubPath] = useControllableValue<
     string | undefined
@@ -134,6 +139,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
             : t('comp:VFolderPathPicker.SelectFolderFirst')
         }
         isDisabled={disabled}
+        size={size}
         width={style?.width}
         style={style}
       >

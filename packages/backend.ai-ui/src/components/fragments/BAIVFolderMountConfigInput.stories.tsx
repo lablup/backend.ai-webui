@@ -1,73 +1,140 @@
 import { Form } from '../../form-engine';
-import { RelayResolverProps } from '../../tests/RelayResolver';
+import { toGlobalId } from '../../helper';
+import {
+  createMockVFolderFileClient,
+  mockVFolderFile as entry,
+  type MockVFolderFileTrees,
+} from '../../tests/mockVFolderFileTree';
 import BAIButton from '../BAIButton';
 import BAIText from '../BAIText';
+import { BAIDirectoryPickerQuery } from '../baiClient/FileExplorer/BAIDirectoryPickerModal';
+import { BAIClientContext } from '../provider/BAIClientProvider/context';
 import BAIVFolderMountConfigInput, {
   BAIVFolderMountConfigInputProps,
   VFolderMountConfigValue,
   isVFolderMountConfigValid,
 } from './BAIVFolderMountConfigInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Suspense, useMemo, useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Suspense, useState } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
-/**
- * BAIVFolderMountConfigInput composes BAIVFolderSelect, which fires dual
- * GraphQL queries (ValueQuery + PaginatedQuery) and re-fetches on selection.
- * Queue enough resolvers to satisfy multiple operations during interaction.
- */
-const VFolderRelayResolver = ({
-  children,
-  mockResolvers = {},
-}: RelayResolverProps) => {
-  // Memoize so toggling a Storybook control (disabled, aliasBasePath, …) does
-  // not recreate the environment and reset the Relay store (Suspense re-flash).
-  const environment = useMemo(() => {
-    const env = createMockEnvironment();
-    for (let i = 0; i < 20; i++) {
-      env.mock.queueOperationResolver((operation) =>
-        MockPayloadGenerator.generate(operation, mockResolvers),
-      );
-    }
-    return env;
-  }, [mockResolvers]);
-  return (
-    <RelayEnvironmentProvider environment={environment}>
-      <Suspense fallback="Loading...">{children}</Suspense>
-    </RelayEnvironmentProvider>
-  );
-};
-
 const sampleVFolders = [
-  { name: 'my-project-data', row_id: 'abcd1234-5678-90ef-1234-567890abcdef' },
-  { name: 'shared-datasets', row_id: 'wxyz9876-5432-10ab-cdef-001122334455' },
-  { name: 'model-checkpoints', row_id: 'aaaa1111-2222-3333-4444-555566667777' },
-  { name: 'training-logs', row_id: 'bbbb2222-3333-4444-5555-666677778888' },
+  { name: 'my-project-data', row_id: '11111111-1111-1111-1111-111111111111' },
+  { name: 'shared-datasets', row_id: '22222222-2222-2222-2222-222222222222' },
+  { name: 'model-checkpoints', row_id: '33333333-3333-3333-3333-333333333333' },
+  { name: 'training-logs', row_id: '44444444-4444-4444-4444-444444444444' },
 ].map((folder) => ({
   // The component runs BAIVFolderSelect in `row_id` mode, so `row_id` is the
-  // value used everywhere; `id` only needs to satisfy the query shape.
+  // value used everywhere; the global `id` only needs to satisfy the query
+  // shape and decode back to the same UUID.
   node: {
-    id: `vfolder-node-${folder.row_id}`,
+    id: toGlobalId('VirtualFolderNode', folder.row_id),
     name: folder.name,
     row_id: folder.row_id,
   },
 }));
 
-const sampleQueryResolvers = {
-  Query: () => ({
-    vfolder_nodes: {
-      count: sampleVFolders.length,
-      edges: sampleVFolders,
-    },
-  }),
+// Directory trees keyed by vfolder UUID, then by the path notation
+// `useSearchVFolderFiles` uses ('.' = root, 'a/b' below it), so every row's
+// subpath picker browses a real tree.
+const createInitialTrees = (): MockVFolderFileTrees => ({
+  [sampleVFolders[0].node.row_id]: {
+    '.': [
+      entry('dataset', 'DIRECTORY', '2026-07-21T14:02:00'),
+      entry('scripts', 'DIRECTORY', '2026-07-18T09:45:00'),
+      entry('README.md', 'FILE', '2026-07-01T11:20:00'),
+    ],
+    dataset: [
+      entry('train', 'DIRECTORY', '2026-07-22T10:05:00'),
+      entry('validation', 'DIRECTORY', '2026-07-22T10:05:00'),
+    ],
+    'dataset/train': [],
+    'dataset/validation': [],
+    scripts: [],
+  },
+  [sampleVFolders[1].node.row_id]: {
+    '.': [
+      entry('imagenet', 'DIRECTORY', '2026-07-10T08:00:00'),
+      entry('LICENSE', 'FILE', '2026-07-02T12:00:00'),
+    ],
+    imagenet: [],
+  },
+  [sampleVFolders[2].node.row_id]: {
+    '.': [entry('epoch-001', 'DIRECTORY', '2026-07-27T03:12:00')],
+    'epoch-001': [],
+  },
+  [sampleVFolders[3].node.row_id]: { '.': [] },
+});
+
+/**
+ * Everything the component needs without a backend:
+ * - Relay for BAIVFolderSelect's dual queries (ValueQuery + PaginatedQuery,
+ *   re-fetched on selection) and for the subpath picker's `vfolder_node`
+ *   query, whose operation must also be queued as pending because the picker
+ *   preloads it;
+ * - a mock BAIClientContext client backed by an in-memory directory tree, for
+ *   the directory modal's REST calls.
+ */
+const MockProviders = ({ children }: { children?: React.ReactNode }) => {
+  const [queryClient] = useState(
+    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
+  );
+  const [clientPromise] = useState(() =>
+    Promise.resolve(createMockVFolderFileClient(createInitialTrees())),
+  );
+  const [environment] = useState(() => {
+    const env = createMockEnvironment();
+    const pickerGlobalIds = sampleVFolders.map(({ node }) => node.id);
+    for (let i = 0; i < 40; i++) {
+      env.mock.queueOperationResolver((operation) => {
+        const { vfolderGlobalId } = operation.request.variables;
+        const requestedRowId =
+          typeof vfolderGlobalId === 'string'
+            ? atob(vfolderGlobalId).split(':')[1]
+            : undefined;
+        const requested =
+          sampleVFolders.find(({ node }) => node.row_id === requestedRowId) ??
+          sampleVFolders[0];
+        return MockPayloadGenerator.generate(operation, {
+          Query: () => ({
+            vfolder_nodes: {
+              count: sampleVFolders.length,
+              edges: sampleVFolders,
+            },
+            vfolder_node: {
+              name: requested.node.name,
+              permissions: ['read_content', 'write_content', 'delete_content'],
+            },
+          }),
+        });
+      });
+      pickerGlobalIds.forEach((vfolderGlobalId) =>
+        env.mock.queuePendingOperation(BAIDirectoryPickerQuery, {
+          vfolderGlobalId,
+        }),
+      );
+    }
+    return env;
+  });
+
+  return (
+    <RelayEnvironmentProvider environment={environment}>
+      <QueryClientProvider client={queryClient}>
+        <BAIClientContext.Provider value={clientPromise}>
+          <Suspense fallback="Loading...">{children}</Suspense>
+        </BAIClientContext.Provider>
+      </QueryClientProvider>
+    </RelayEnvironmentProvider>
+  );
 };
 
 /**
  * Controlled wrapper that renders the component and prints the current
  * form value as text, so the emitted `VFolderMountConfigValue[]` is visible
- * while selecting folders and editing alias / subpath. `mountDestination` is
- * stored as the raw alias; the resolved full path is shown inline per row.
+ * while selecting folders and picking aliases / subpaths. `mountDestination`
+ * is stored as the raw alias; the resolved full path is shown inline per row.
  */
 const ControlledDemo = ({
   initialValue = [],
@@ -77,14 +144,12 @@ const ControlledDemo = ({
 }) => {
   const [value, setValue] = useState<VFolderMountConfigValue[]>(initialValue);
   return (
-    <div style={{ width: 680 }}>
+    <div style={{ width: 760 }}>
       <BAIVFolderMountConfigInput
         {...props}
         value={value}
         onChange={setValue}
       />
-      {/* antd Typography.Paragraph has no direct Astryx equivalent; BAIText
-          wrapped in a block element reproduces the same paragraph layout. */}
       <div style={{ marginTop: 24 }}>
         <BAIText strong>Form value (onChange result)</BAIText>
         <pre
@@ -118,7 +183,8 @@ for configuring vfolder mounts.
 - Composes [BAIVFolderSelect](/?path=/docs/fragments-baivfolderselect--docs) to pick
   vfolders (\`row_id\` mode, so the value is the vfolder UUID).
 - Each selected folder appears as a row with a **mount path (alias)** input and an
-  optional **subpath** input (which subfolder of the vfolder to mount as the source; empty = root).
+  optional **subpath** picker (which subfolder of the vfolder to mount as the source; \`/\` = root),
+  which opens a directory browser instead of accepting typed text.
 - \`mountDestination\` stores the **raw alias** the user typed — \`''\` mounts at the default
   \`/home/work/<name>\`, a relative segment like \`data\` resolves to \`/home/work/data\`, and an
   absolute path like \`/data\` is used as-is. Resolve it with the exported \`inputToMountDestination\`.
@@ -135,9 +201,9 @@ The stories below use a mocked Relay environment so multiple sample folders can 
   },
   decorators: [
     (Story) => (
-      <VFolderRelayResolver mockResolvers={sampleQueryResolvers}>
+      <MockProviders>
         <Story />
-      </VFolderRelayResolver>
+      </MockProviders>
     ),
   ],
   argTypes: {
@@ -189,14 +255,15 @@ type Story = StoryObj<typeof BAIVFolderMountConfigInput>;
 
 /**
  * Empty initial state. Select folders from the dropdown to add rows, then edit
- * each row's mount path and subpath. The live form value is shown below.
+ * each row's mount path and browse its subpath. The live form value is shown
+ * below.
  */
 export const Interactive: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          "Empty initial state. Select folders from the dropdown to add rows, then edit each row's mount path and subpath. The live form value is shown below — note `mountDestination` holds the raw alias you typed.",
+          "Empty initial state. Select folders from the dropdown to add rows, then type each row's mount path and click its subpath field to browse the folder. New rows start at the folder root, shown as `/`. The live form value is shown below — note `mountDestination` holds the raw alias you typed, while `subpath` only ever comes from the picker.",
       },
     },
   },
@@ -212,7 +279,7 @@ export const Prefilled: Story = {
     docs: {
       description: {
         story:
-          'Prefilled with three folders demonstrating each alias mode: a relative segment (`data` → `/home/work/data`), an absolute path (`/mnt/shared`, used as-is), and an empty alias (falls back to `/home/work/<name>`). The first also mounts a subpath.',
+          'Prefilled with three folders demonstrating each alias mode: a relative segment (`data` → `/home/work/data`), an absolute path (`/mnt/shared`, used as-is), and an empty alias (falls back to `/home/work/<name>`). The first mounts the `dataset/train` subpath; the other two mount the folder root, which the picker shows as `/`.',
       },
     },
   },
@@ -403,7 +470,8 @@ export const Disabled: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Disabled state — selection and all row inputs are read-only.',
+        story:
+          'Disabled state — the select, the alias input, the subpath picker and the remove button are all inert; the picked subpath stays readable.',
       },
     },
   },

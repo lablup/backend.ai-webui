@@ -604,8 +604,7 @@
     "RemoveFolder": "Buang",
     "Subpath": "Sublaluan",
     "SubpathInvalid": "Sublaluan mestilah laluan relatif dan tidak boleh mengandungi '..'.",
-    "SubpathPlaceholder": "cth. dataset/train (pilihan)",
-    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber dan bukannya root-nya. Biarkan kosong untuk mount root."
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber dan bukannya root-nya. Klik medan ini untuk melayari folder dan memilih satu; / ialah root folder."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"

@@ -604,8 +604,7 @@
     "RemoveFolder": "Rimuovi",
     "Subpath": "Sottopercorso",
     "SubpathInvalid": "Il sottopercorso deve essere un percorso relativo e non deve contenere '..'.",
-    "SubpathPlaceholder": "es. dataset/train (facoltativo)",
-    "SubpathTooltip": "Monta una sottocartella all'interno della cartella come sorgente invece della sua radice. Lasciare vuoto per montare la radice."
+    "SubpathTooltip": "Monta una sottocartella all'interno della cartella come sorgente invece della sua radice. Fare clic sul campo per esplorare la cartella e sceglierne una; / è la radice della cartella."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleziona cartella"

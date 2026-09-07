@@ -604,8 +604,7 @@
     "RemoveFolder": "Usuń",
     "Subpath": "Podścieżka",
     "SubpathInvalid": "Podścieżka musi być ścieżką względną i nie może zawierać '..'.",
-    "SubpathPlaceholder": "np. dataset/train (opcjonalne)",
-    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Pozostaw puste, aby zamontować katalog główny."
+    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Kliknij pole, aby przeglądać folder i wybrać podfolder; / oznacza katalog główny folderu."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Wybierz folder"

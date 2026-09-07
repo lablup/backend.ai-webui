@@ -604,8 +604,7 @@
     "RemoveFolder": "Supprimer",
     "Subpath": "Sous-chemin",
     "SubpathInvalid": "Le sous-chemin doit être un chemin relatif et ne doit pas contenir '..'.",
-    "SubpathPlaceholder": "ex. dataset/train (facultatif)",
-    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Laissez vide pour monter la racine."
+    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Cliquez sur le champ pour parcourir le dossier et en choisir un ; / correspond à la racine du dossier."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Sélectionner un dossier"

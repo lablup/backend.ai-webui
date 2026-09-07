@@ -77,6 +77,13 @@ export const docs = {
         'Disables the trigger and blocks the picker from opening, on top of the block that a missing `vfolderUuid` already imposes.',
     },
     {
+      name: 'size',
+      type: "'sm' | 'md' | 'lg'",
+      description:
+        'Trigger height, forwarded to the underlying ComplexSelector. Use `sm` to line the picker up with small sibling controls in a dense row.',
+      default: "'md'",
+    },
+    {
       name: 'style',
       type: 'React.CSSProperties',
       description:
