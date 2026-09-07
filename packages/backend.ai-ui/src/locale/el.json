@@ -247,6 +247,9 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Επιλέξτε ζεύγος κλειδιών"
   },
+  "comp:BAILegacyVFolderSelect": {
+    "SelectFolder": "Επιλογή φακέλου"
+  },
   "comp:BAILoginHistoryTable": {
     "Domain": "Τομέας",
     "FailReason": "Αιτία αποτυχίας",

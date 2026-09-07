@@ -1,3 +1,4 @@
+import type { LegacyVFolder } from '../components/baiClient/BAILegacyVFolderSelect';
 import { BAIDirectoryPickerQuery } from '../components/baiClient/FileExplorer/BAIDirectoryPickerModal';
 import { BAIClientProvider } from '../components/provider/BAIClientProvider';
 import { toGlobalId, toLocalId } from '../helper';
@@ -13,6 +14,11 @@ import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
 const DEFAULT_PERMISSIONS = ['read_content', 'write_content', 'delete_content'];
 
+/** One mountable host, so BAILegacyVFolderSelect's gate passes by default. */
+const DEFAULT_ALLOWED_VFOLDER_HOSTS: Record<string, Array<string>> = {
+  'local:volume1': ['mount-in-session', 'upload-file', 'download-file'],
+};
+
 export interface MockVFolder {
   name: string;
   row_id: string;
@@ -23,6 +29,14 @@ export interface MockVFolder {
 export interface MockVFolderFileProvidersProps {
   vfolders: Array<MockVFolder>;
   trees: MockVFolderFileTrees | (() => MockVFolderFileTrees);
+  /** Rows the mocked REST `GET /folders` request answers with. */
+  folders?: Array<LegacyVFolder>;
+  /**
+   * `allowed_vfolder_hosts`, answered identically for the domain, the group
+   * and the keypair resource policy. A host without `mount-in-session` is how
+   * a story shows BAILegacyVFolderSelect's gate dropping a folder.
+   */
+  allowedVFolderHosts?: Record<string, Array<string>>;
   /** Fallback for a Suspense boundary around `children`; omit to render bare. */
   suspenseFallback?: React.ReactNode;
   children?: React.ReactNode;
@@ -31,11 +45,15 @@ export interface MockVFolderFileProvidersProps {
 /**
  * Everything a vfolder file-browsing story needs without a backend: a mock
  * Relay environment answering `vfolder_nodes` / `vfolder_node` from
- * `vfolders`, and a mock `BAIClient` whose file APIs read and write `trees`.
+ * `vfolders` and the allowed-host / keypair queries from
+ * `allowedVFolderHosts`, and a mock `BAIClient` whose file APIs read and
+ * write `trees` and whose signed `GET /folders` request answers `folders`.
  */
 const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
   vfolders,
   trees,
+  folders,
+  allowedVFolderHosts = DEFAULT_ALLOWED_VFOLDER_HOSTS,
   suspenseFallback,
   children,
 }) => {
@@ -46,6 +64,9 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
     Promise.resolve(
       createMockVFolderFileClient(
         typeof trees === 'function' ? trees() : trees,
+        {
+          folders,
+        },
       ),
     ),
   );
@@ -80,6 +101,7 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
         const requested =
           vfolders.find((folder) => folder.row_id === requestedRowId) ??
           vfolders[0];
+        const allowedHosts = JSON.stringify(allowedVFolderHosts);
         return MockPayloadGenerator.generate(operation, {
           Query: () => ({
             vfolder_nodes: { count: edges.length, edges },
@@ -87,6 +109,10 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
               name: requested.name,
               permissions: requested.permissions ?? DEFAULT_PERMISSIONS,
             },
+            keypair: { resource_policy: 'default' },
+            domain: { allowed_vfolder_hosts: allowedHosts },
+            group: { allowed_vfolder_hosts: allowedHosts },
+            keypair_resource_policy: { allowed_vfolder_hosts: allowedHosts },
           }),
         });
       });

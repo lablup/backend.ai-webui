@@ -247,6 +247,9 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Выберите пару ключей"
   },
+  "comp:BAILegacyVFolderSelect": {
+    "SelectFolder": "Выбрать папку"
+  },
   "comp:BAILoginHistoryTable": {
     "Domain": "Домен",
     "FailReason": "Причина сбоя",

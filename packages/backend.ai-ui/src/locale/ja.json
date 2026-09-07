@@ -247,6 +247,9 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "キーペアを選択"
   },
+  "comp:BAILegacyVFolderSelect": {
+    "SelectFolder": "フォルダを選択"
+  },
   "comp:BAILoginHistoryTable": {
     "Domain": "ドメイン",
     "FailReason": "失敗の理由",

@@ -247,6 +247,9 @@
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "เลือกคู่คีย์"
   },
+  "comp:BAILegacyVFolderSelect": {
+    "SelectFolder": "เลือกโฟลเดอร์"
+  },
   "comp:BAILoginHistoryTable": {
     "Domain": "โดเมน",
     "FailReason": "สาเหตุที่ล้มเหลว",
