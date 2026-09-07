@@ -3,7 +3,7 @@ import {
   type DeepLinkPin,
   type DeepLinkPinTarget,
 } from './pin.js';
-import type { AnchorV3, CopyPayload } from './types.js';
+import type { AnchorV3, PinCopyPayload } from './types.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const anchor = (over: Partial<AnchorV3> = {}): AnchorV3 => ({
@@ -23,7 +23,7 @@ let toasts: string[];
 let copyResult: boolean | Promise<boolean>;
 let located: (Element | null)[];
 /** What `main.ts` would render for this pin; null stands for "cannot". */
-let comment: CopyPayload | null;
+let comment: PinCopyPayload | null;
 let commentFor: DeepLinkPinTarget | null;
 
 const show = (over: Partial<AnchorV3> = {}) =>
@@ -77,7 +77,11 @@ beforeEach(() => {
   toasts = [];
   located = [];
   copyResult = true;
-  comment = { text: 'the whole comment', html: '<p>the whole comment</p>' };
+  comment = {
+    text: 'the whole comment',
+    html: '<p>the whole comment</p>',
+    toast: 'Copied 1 pin',
+  };
   commentFor = null;
   pin = createDeepLinkPin({
     root: host.attachShadow({ mode: 'open' }),
@@ -199,6 +203,22 @@ describe('createDeepLinkPin', () => {
     expect(marker().classList.contains('pulse')).toBe(true);
   });
 
+  // The compat surface passes `onHide` straight through, so a layer built
+  // without one used to leave ✕ inert.
+  it('puts the card away on ✕ with no owner wired to hear it', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<button data-testid="create">Create</button>',
+    );
+    show();
+    pin.locate();
+
+    (host.shadowRoot?.querySelector('.close') as HTMLButtonElement).click();
+
+    expect(card().classList.contains('hidden')).toBe(true);
+    expect(marker().classList.contains('found')).toBe(true);
+  });
+
   describe('place', () => {
     beforeEach(() => {
       Object.defineProperty(window, 'innerHeight', {
@@ -224,14 +244,16 @@ describe('createDeepLinkPin', () => {
       mountSized({ top: 160, bottom: 760, height: 600 }, 60);
       show();
       expect(pin.locate()).toBe(true);
-      expect(card().style.top).toBe('90px');
+      // 160 - 10 gap - 60 card - 36 the marker took above the element.
+      expect(card().style.top).toBe('54px');
     });
 
     it('clamps into the viewport when the card fits neither way', () => {
       mountSized({ top: -50, bottom: 900, height: 950 }, 60);
       show();
       expect(pin.locate()).toBe(true);
-      expect(card().style.top).toBe('8px');
+      // 8 pad + the 34px marker clamped to the same edge + its 10px gap.
+      expect(card().style.top).toBe('52px');
     });
 
     // `getBoundingClientRect` still reports the box of an element a scroller
@@ -267,12 +289,76 @@ describe('createDeepLinkPin', () => {
       expect(card().style.top).toBe('8px');
     });
 
+    // R5.4. The marker used to sit INSIDE the box at +6/+6, covering the very
+    // content the region points at. `style.left`/`top` are its centre, and the
+    // teardrop's tip is 17px from that on the axis it points along.
+    describe('the marker outside the marked region', () => {
+      it('hangs above the region, tip on its top-left corner', () => {
+        mountSized(
+          { left: 100, right: 500, top: 100, bottom: 300, height: 200 },
+          60,
+        );
+        show();
+        expect(pin.locate()).toBe(true);
+
+        expect(marker().classList.contains('flip')).toBe(false);
+        expect(marker().style.left).toBe('100px');
+        expect(marker().style.top).toBe('81px');
+        // Tip at 81 + 17 = 98, two pixels clear of the region's top at 100.
+        expect(Number.parseInt(marker().style.top, 10) + 17).toBeLessThan(100);
+      });
+
+      it('flips below when the region is too near the top to fit above', () => {
+        mountSized({ top: 20, bottom: 220, height: 200 }, 60);
+        show();
+        expect(pin.locate()).toBe(true);
+
+        expect(marker().classList.contains('flip')).toBe(true);
+        // Tip at 239 - 17 = 222, below the region's bottom at 220.
+        expect(marker().style.top).toBe('239px');
+        expect(Number.parseInt(marker().style.top, 10) - 17).toBeGreaterThan(
+          220,
+        );
+      });
+
+      // Flipped, the marker takes the space under the region — which is where
+      // the card goes by default.
+      it('starts the card past the flipped marker, not under it', () => {
+        mountSized({ top: 20, bottom: 220, height: 200 }, 60);
+        show();
+        expect(pin.locate()).toBe(true);
+
+        expect(card().style.top).toBe('266px');
+      });
+
+      // A region taller than the window has no outside left: flipping would put
+      // the marker in the middle of the content it points at.
+      it('keeps the marker at the leading edge of a region taller than the window', () => {
+        mountSized({ left: 40, right: 440, top: -100, bottom: 900 }, 60);
+        show();
+        expect(pin.locate()).toBe(true);
+
+        expect(marker().classList.contains('flip')).toBe(false);
+        // Clamped to the top edge, not to `vh - 25` down at the fold.
+        expect(marker().style.top).toBe('25px');
+        expect(marker().style.left).toBe('40px');
+      });
+
+      it('slides along the top edge instead of off the left of the window', () => {
+        mountSized({ left: 2, right: 402, top: 100, bottom: 300 }, 60);
+        show();
+        expect(pin.locate()).toBe(true);
+
+        expect(marker().style.left).toBe('25px');
+      });
+    });
+
     // A resize is pure geometry: it must not wait on the mutation debounce.
     it('re-places on resize within a frame', async () => {
       show();
       const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
       await new Promise((resolve) => setTimeout(resolve, 400));
-      expect(marker().style.top).toBe('106px');
+      expect(marker().style.top).toBe('81px');
 
       element.getBoundingClientRect = () =>
         ({
@@ -285,7 +371,7 @@ describe('createDeepLinkPin', () => {
         }) as DOMRect;
       window.dispatchEvent(new Event('resize'));
       await new Promise((resolve) => setTimeout(resolve, 60));
-      expect(marker().style.top).toBe('406px');
+      expect(marker().style.top).toBe('381px');
     });
 
     // The marker and the box belong ON the element and leave with it; the card
@@ -649,8 +735,8 @@ describe('createDeepLinkPin', () => {
       expect(region().style.height).toBe('100px');
       // A region has no corners of its own; react-grab's drag box has none either.
       expect(region().style.borderRadius).toBe('0px');
-      // The marker sits on the region, not on the frame's corner.
-      expect(marker().style.left).toBe('126px');
+      // The marker points at the region's corner, not the frame's.
+      expect(marker().style.left).toBe('120px');
     });
 
     it('takes the region down with the pin', () => {
@@ -736,16 +822,19 @@ describe('createDeepLinkPin', () => {
       );
       expect(named).toEqual([
         'Copy this comment id',
-        'Dismiss this pin',
+        'Hide this card',
         'Scroll back to this element',
-        'Copy the whole comment',
+        'Copy this pin',
       ]);
+      // R6.2: removing a pin lives in the dock, where the rows are far enough
+      // apart that a reach for ⧉ cannot end one.
+      expect(host.shadowRoot?.querySelector('.card .remove')).toBeNull();
     });
 
     it('says which id it copied', () => {
       show();
       idCopy().click();
-      expect(toasts).toEqual(['Copied c_zdv3rhz 📋']);
+      expect(toasts).toEqual(['Copied c_zdv3rhz']);
     });
 
     it('waits for an async clipboard before it claims success', async () => {
@@ -767,9 +856,9 @@ describe('createDeepLinkPin', () => {
       show({
         c: { name: 'CreateButton', src: 'react/src/Create.tsx:12' },
       } as Partial<AnchorV3>);
-      expect(idCopy().textContent).toBe('📋');
+      expect(idCopy().querySelector('svg')).not.toBeNull();
       expect(subText()).toBe(
-        'c_zdv3rhz📋 · CreateButton (react/src/Create.tsx:12)',
+        'c_zdv3rhz · CreateButton (react/src/Create.tsx:12)',
       );
     });
   });
@@ -784,7 +873,7 @@ describe('createDeepLinkPin', () => {
       commentCopy().click();
       expect(copied).toEqual(['the whole comment']);
       expect(copiedHtml).toEqual(['<p>the whole comment</p>']);
-      expect(toasts).toEqual(['Copied the whole comment 📋']);
+      expect(toasts).toEqual(['Copied 1 pin']);
     });
 
     it('hands the owner the pin it is showing, payload included', () => {
@@ -798,12 +887,18 @@ describe('createDeepLinkPin', () => {
       expect(commentFor?.anchor.n).toBe('Misaligned.');
     });
 
-    // The link caps the note it carries, so a copy off a capped link is short.
-    it('says so when the link only carries a shortened note', () => {
+    // The owner renders the block, so the owner owns what the toast claims —
+    // whether the note it wrote is the capped one a link carries.
+    it('says what the owner’s payload says it wrote', () => {
+      comment = {
+        text: 'the whole comment',
+        html: '<p>the whole comment</p>',
+        toast: 'Copied 1 pin — the note is the shortened one the link carries',
+      };
       show({ n: 'A very long note…', nt: 1 });
       commentCopy().click();
       expect(toasts).toEqual([
-        'Copied — the note is the shortened one the link carries 📋',
+        'Copied 1 pin — the note is the shortened one the link carries',
       ]);
     });
 
@@ -885,6 +980,50 @@ describe('createDeepLinkPin', () => {
       expect(css).toContain(
         'pointer-events: auto; -webkit-user-select: text; user-select: text;',
       );
+    });
+  });
+
+  // R5.2. The chrome was a row of emoji at whatever height each font drew
+  // them; every one of them is a lucide svg now, at one size.
+  describe('the card’s chrome', () => {
+    const EMOJI = /\p{Extended_Pictographic}/u;
+
+    it('draws an icon in every button and no emoji anywhere', () => {
+      mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      show({ n: 'Misaligned.' });
+      expect(pin.locate()).toBe(true);
+
+      const buttons = Array.from(card().querySelectorAll('button'));
+      expect(buttons.length).toBeGreaterThan(0);
+      for (const button of buttons) {
+        expect(button.querySelector('svg')).not.toBeNull();
+        // The icon is aria-hidden, so the button still has to name itself.
+        expect(button.getAttribute('aria-label')).toBeTruthy();
+      }
+      expect(card().textContent).not.toMatch(EMOJI);
+      expect(marker().querySelector('svg')).not.toBeNull();
+      expect(marker().textContent).not.toMatch(EMOJI);
+    });
+
+    it('keeps the docked card’s hint free of them too', async () => {
+      const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      show();
+      pin.locate();
+      element.getBoundingClientRect = () =>
+        ({
+          left: 20,
+          right: 420,
+          width: 400,
+          top: -400,
+          bottom: -200,
+          height: 200,
+        }) as DOMRect;
+      window.dispatchEvent(new Event('resize'));
+      await new Promise((resolve) => setTimeout(resolve, 60));
+
+      const hint = host.shadowRoot?.querySelector('.awaynote')?.textContent;
+      expect(hint).toContain('↑');
+      expect(hint).not.toMatch(EMOJI);
     });
   });
 

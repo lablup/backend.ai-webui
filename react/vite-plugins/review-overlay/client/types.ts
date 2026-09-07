@@ -63,6 +63,58 @@ export interface AnchorV3 {
   nt?: 1;
 }
 
+/**
+ * One member of a pin set, as the draft set holds it. `label` and `appHash`
+ * are stamped when the pin joins the set, so a set copied later reproduces
+ * the link and the block the reviewer saw at the time.
+ */
+interface SetPinBase {
+  id: string;
+  /** Includes the note `n`. */
+  anchor: AnchorV3;
+  anchorB64: string;
+  /** `landmarkLabel(...)` output. */
+  label: string;
+  /** The app's own fragment the pin was picked — or opened from a link — with. */
+  appHash: string;
+  /** `getStackContext()` output, split into lines. */
+  stack: string[];
+  /**
+   * The reviewer's whole note. `anchor.n` is the shortened one the link
+   * carries (`NOTE_MAX`), and the block is what keeps the rest.
+   */
+  note?: string;
+  /**
+   * The reviewer hid this pin's card. Draft-only — the wire carries
+   * no such thing — and persisted, so a reload does not bring the card back.
+   */
+  hidden?: true;
+}
+
+/** The id hashes from `pr` + anchor + `at`, so a block may claim it. */
+interface PickedSetPin extends SetPinBase {
+  origin: 'pick';
+  at: string;
+  pr: number;
+}
+
+/** A link's pins carry no `at`/`pr`, so their blocks carry no marker. */
+interface LinkedSetPin extends SetPinBase {
+  origin: 'link';
+  at?: never;
+  pr?: never;
+}
+
+export type SetPin = PickedSetPin | LinkedSetPin;
+
+/** The pin set a tab is building right now, as `sessionStorage` holds it. */
+export interface DraftSet {
+  v: 1;
+  pins: SetPin[];
+  /** The dock's cards switch: every card off at once, markers and boxes drawn. */
+  cardsHidden?: true;
+}
+
 declare global {
   interface Window {
     /** Set by `main.ts` so a second `/__review/*.js` entry is a no-op. */
@@ -81,6 +133,13 @@ declare global {
 export interface CopyPayload {
   text: string;
   html: string;
+  /** Replaces the default success line — a set says how many pins it wrote. */
+  toast?: string;
+}
+
+/** A card's copy: whoever renders the block owns what the toast claims. */
+export interface PinCopyPayload extends CopyPayload {
+  toast: string;
 }
 
 /** `/__review/state` — the write side needs the PR number and the repo root. */

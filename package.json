@@ -38,7 +38,8 @@
     "prepare": "husky",
     "theme-schema:update": "node scripts/gen-theme-schema.cjs",
     "astryx": "pnpm --prefix ./react exec astryx",
-    "bai-agent": "node packages/backend.ai-agent-cli/dist/cli.js"
+    "bai-agent": "node packages/backend.ai-agent-cli/dist/cli.js",
+    "review-pins": "node --import ./react/vite-plugins/review-overlay/register.mjs react/vite-plugins/review-overlay/cli.ts"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",

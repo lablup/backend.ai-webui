@@ -290,6 +290,28 @@ describe('gating the copy on the note', () => {
     ui.openCompose(target, 40, 306);
   });
 
+  // R5.2: the whole chrome is lucide at one size, emoji nowhere.
+  it('labels the copy button with a lucide icon, not an emoji', () => {
+    expect(copyButton().querySelector('svg')).not.toBeNull();
+    expect(copyButton().textContent).toBe('Copy block');
+    expect(compose().textContent).not.toMatch(/\p{Extended_Pictographic}/u);
+  });
+
+  /**
+   * R5.2 put an icon and a label span inside the copy button, so a click on
+   * the words has the span as its target and the delegated handler saw no
+   * button at all — the composer answered only the keyboard.
+   */
+  it('copies from a click on the button’s own label, not just its padding', () => {
+    ui.setComposeReady(true, '');
+
+    copyButton()
+      .querySelector('.lbl')
+      ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    expect(err().textContent).toBe('Still reading the element — try again.');
+  });
+
   it('re-disables the button the moment the note leaves the capture', () => {
     expect(copyButton().disabled).toBe(true);
     ui.setComposeReady(true, '');

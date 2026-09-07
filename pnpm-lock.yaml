@@ -244,8 +244,8 @@ catalogs:
       specifier: ^4.18.1
       version: 4.18.1
     lucide-react:
-      specifier: ^1.29.0
-      version: 1.29.0
+      specifier: ^1.37.0
+      version: 1.37.0
     marked:
       specifier: ^16.4.2
       version: 16.4.2
@@ -667,7 +667,7 @@ importers:
         version: 4.18.1
       lucide-react:
         specifier: 'catalog:'
-        version: 1.29.0(react@19.2.8)
+        version: 1.37.0(react@19.2.8)
       react:
         specifier: 'catalog:'
         version: 19.2.8
@@ -1019,7 +1019,7 @@ importers:
         version: 4.18.1
       lucide-react:
         specifier: 'catalog:'
-        version: 1.29.0(react@19.2.8)
+        version: 1.37.0(react@19.2.8)
       markdown-to-jsx:
         specifier: ^9.10.2
         version: 9.10.2(react@19.2.8)
@@ -8286,8 +8286,8 @@ packages:
   lru-queue@0.1.0:
     resolution: {integrity: sha512-BpdYkt9EvGl8OfWHDQPISVpcl5xZthb+XPsbELj5AQXxIC8IriDZIQYjBJPEm5rS420sjZ0TLEzRcq5KdBhYrQ==}
 
-  lucide-react@1.29.0:
-    resolution: {integrity: sha512-Xs9QFG5+9sNX04MdKVT4++umA+hJ2qsJVlRlRWHQ7qZobXgMiNHSpZ5eZm8JUoGCdNyoEdXoEwa8HVr0DNjOQg==}
+  lucide-react@1.37.0:
+    resolution: {integrity: sha512-LPsB4rD1TD6wZu1djKOf9vUnS1jTNaHbolXebXDgiTdb6jeA1agIJhJsIybCmjKmQClcOaal1o1OaiYahEftyQ==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -11366,7 +11366,7 @@ snapshots:
   '@astryxdesign/theme-neutral@0.5.2(@astryxdesign/core@0.5.2(patch_hash=c9b0d04ba4d03f2fed56352870de082e2a58f9d92b509e247342e59c951918ed)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@astryxdesign/core': 0.5.2(patch_hash=c9b0d04ba4d03f2fed56352870de082e2a58f9d92b509e247342e59c951918ed)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      lucide-react: 1.29.0(react@19.2.8)
+      lucide-react: 1.37.0(react@19.2.8)
       react: 19.2.8
 
   '@babel/code-frame@7.29.7':
@@ -19728,7 +19728,7 @@ snapshots:
     dependencies:
       es5-ext: 0.10.64
 
-  lucide-react@1.29.0(react@19.2.8):
+  lucide-react@1.37.0(react@19.2.8):
     dependencies:
       react: 19.2.8
 
@@ -23594,7 +23594,7 @@ time:
   lint-staged@15.5.2: '2025-05-06T10:11:25.711Z'
   lodash-es@4.18.1: '2026-04-01T21:04:15.518Z'
   lodash@4.18.1: '2026-04-01T21:01:20.458Z'
-  lucide-react@1.29.0: '2026-08-06T11:51:53.703Z'
+  lucide-react@1.37.0: '2026-08-29T07:25:15.000Z'
   markdown-to-jsx@9.10.2: '2026-08-03T17:49:48.169Z'
   marked@12.0.2: '2024-04-19T05:13:06.397Z'
   marked@16.4.2: '2025-11-06T22:29:20.004Z'
