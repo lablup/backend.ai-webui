@@ -7,8 +7,10 @@ import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
+import BAILegacyVFolderSelect, {
+  type LegacyVFolder,
+} from '../baiClient/BAILegacyVFolderSelect';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
-import BAIVFolderSelect from './BAIVFolderSelect';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { TextInput } from '@astryxdesign/core/TextInput';
@@ -35,31 +37,22 @@ export interface VFolderMountConfigValue {
   subpath?: string;
 }
 
-/** What {@link BAIVFolderMountConfigInputProps.renderFolderSelect} is handed. */
-export interface VFolderMountConfigSelectApi {
-  value: string[];
-  onChange: (ids: string | string[] | null | undefined) => void;
-  onResolvedNamesChange: (nameMap: Record<string, string>) => void;
-  multiple: true;
-  isDisabled?: boolean;
-  currentProjectId?: string;
-  label: string;
-  isLabelHidden: true;
-}
-
 export interface BAIVFolderMountConfigInputProps {
   value?: VFolderMountConfigValue[];
   defaultValue?: VFolderMountConfigValue[];
   onChange?: (value: VFolderMountConfigValue[]) => void;
   currentProjectId?: string;
-  /** Filter expression for the default {@link BAIVFolderSelect}. */
-  filter?: string;
+  /** Lists the folders of this user instead of the caller's own. */
+  ownerEmail?: string;
+  /** Display-only folder filter, applied after the select's mount gates. */
+  filter?: (folder: LegacyVFolder) => boolean;
+  /** Names of the mountable, ready dotfile folders the session auto-mounts. */
+  onAutoMountedFoldersChange?: (names: string[]) => void;
   /**
-   * Renders the folder picker in place of the default `BAIVFolderSelect`.
-   * Spread the given api onto any select that emits vfolder UUIDs — e.g.
-   * `BAILegacyVFolderSelect` for a session mount field.
+   * key -> name for every mountable folder, fired after this component has
+   * backfilled the names, so a consumer can prune entries missing from the map.
    */
-  renderFolderSelect?: (api: VFolderMountConfigSelectApi) => React.ReactNode;
+  onResolvedNamesChange?: (nameMap: Record<string, string>) => void;
   disabled?: boolean;
   /** Base path prepended to a relative alias input (mirrors VFolderTable). */
   aliasBasePath?: string;
@@ -305,8 +298,10 @@ export const useVFolderMountConfigFormRule = (
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * Users pick vfolders with {@link BAIVFolderSelect} (in `row_id` mode, so the
- * value is the vfolder UUID), or with whatever `renderFolderSelect` supplies.
+ * Users pick vfolders with {@link BAILegacyVFolderSelect}, the REST-backed
+ * folder list — the only source that applies the session launcher's mount
+ * gates and reports its auto-mounted dotfiles. It is swapped for the GraphQL
+ * folder list here once the v2 folder API can express those gates.
  * Each selected folder appears as a row below the select where its mount
  * destination (alias) is typed and its subpath is browsed with
  * {@link BAIVFolderPathPicker}. The alias input follows VFolderTable's rule
@@ -331,8 +326,10 @@ export const useVFolderMountConfigFormRule = (
  */
 const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   currentProjectId,
+  ownerEmail,
   filter,
-  renderFolderSelect,
+  onAutoMountedFoldersChange,
+  onResolvedNamesChange,
   disabled,
   aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
   autoMountedFolderNames,
@@ -369,6 +366,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
       return entry;
     });
     if (changed) setValue(next);
+    onResolvedNamesChange?.(nameMap);
   };
 
   // Names come exclusively from `handleResolvedNamesChange`, which reports
@@ -390,29 +388,22 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     );
   };
 
-  const selectApi: VFolderMountConfigSelectApi = {
-    value: selectedIds,
-    onChange: handleSelectionChange,
-    onResolvedNamesChange: handleResolvedNamesChange,
-    multiple: true,
-    isDisabled: disabled,
-    currentProjectId,
-    label: t('comp:BAIVFolderSelect.SelectFolder'),
-    isLabelHidden: true,
-  };
-
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       <Suspense fallback={<Skeleton height={28} width="100%" />}>
-        {renderFolderSelect ? (
-          renderFolderSelect(selectApi)
-        ) : (
-          <BAIVFolderSelect
-            {...selectApi}
-            valuePropName="row_id"
-            filter={filter}
-          />
-        )}
+        <BAILegacyVFolderSelect
+          multiple
+          label={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
+          isLabelHidden
+          isDisabled={disabled}
+          currentProjectId={currentProjectId}
+          ownerEmail={ownerEmail}
+          filter={filter}
+          value={selectedIds}
+          onChange={handleSelectionChange}
+          onAutoMountedFoldersChange={onAutoMountedFoldersChange}
+          onResolvedNamesChange={handleResolvedNamesChange}
+        />
       </Suspense>
       {mountConfigs.length > 0 && (
         <BAIFlex direction="column" align="stretch" gap="xxs">
