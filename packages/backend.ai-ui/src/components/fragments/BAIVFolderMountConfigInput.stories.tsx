@@ -89,7 +89,10 @@ const ControlledDemo = ({
         mountableHosts={MOCK_MOUNTABLE_HOSTS}
         {...props}
         value={value}
-        onChange={setValue}
+        onChange={(next) => {
+          setValue(next);
+          props.onChange?.(next);
+        }}
       />
       <div style={{ marginTop: 24 }}>
         <BAIText strong>Form value (onChange result)</BAIText>
@@ -108,6 +111,23 @@ const ControlledDemo = ({
     </div>
   );
 };
+
+// Two folders aliased to the same `shared` segment, so both resolve to
+// `/home/work/shared` and are flagged as overlapping.
+const overlappingSharedAliases: VFolderMountConfigValue[] = [
+  {
+    vfolderId: folderId(0),
+    name: folderName(0),
+    mountDestination: 'shared',
+    subpath: '',
+  },
+  {
+    vfolderId: folderId(1),
+    name: folderName(1),
+    mountDestination: 'shared',
+    subpath: '',
+  },
+];
 
 const meta: Meta<typeof BAIVFolderMountConfigInput> = {
   title: 'Fragments/BAIVFolderMountConfigInput',
@@ -128,14 +148,15 @@ for configuring vfolder mounts.
   names in \`autoMountedFolderNames\` are dropped — the session mounts them anyway.
   \`filter\` hides rows on top of that without shrinking the selection.
 - It **suspends** on that list, so the consumer owns the Suspense boundary. An entry
-  the gated list does not offer is dropped from the value with a warning toast.
+  the mount gates reject is dropped from the value with a warning toast; one that
+  merely became auto-mounted is kept, since it is mounted anyway.
 - Each selected folder appears as a row with a **mount path (alias)** input and an
   optional **subpath** picker (which subfolder of the vfolder to mount as the source; \`/\` = root),
   which opens a directory browser instead of accepting typed text.
 - \`mountDestination\` stores the **raw alias** the user typed — \`''\` mounts at the default
   \`/home/work/<name>\`, a relative segment like \`data\` resolves to \`/home/work/data\`, and an
   absolute path like \`/data\` is used as-is. Resolve it with the exported \`inputToMountDestination\`.
-- \`autoMountedFolderNames\` drop out of the select's options, join the overlap check (a user
+- \`autoMountedFolderNames\` drop out of the offered folder options, join the overlap check (a user
   alias colliding with an auto-mounted folder is flagged) and are shown as read-only tags at the bottom.
 - Emits a single \`VFolderMountConfigValue[]\`. The inline per-row errors are advisory UX; to gate a
   form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
@@ -144,7 +165,7 @@ for configuring vfolder mounts.
 The stories below mock the REST folder list behind the providers' \`suspenseFallback\`,
 so of the six fixture folders \`cold-archive\` is dropped (its host is not in
 \`mountableHosts\`), \`other-team-data\` belongs to another project, and \`.config\` is
-dropped wherever the story passes it in \`autoMountedFolderNames\`.
+dropped in the **WithAutoMountedFolders** story.
 `,
       },
     },
@@ -203,7 +224,7 @@ dropped wherever the story passes it in \`autoMountedFolderNames\`.
     autoMountedFolderNames: {
       control: { type: 'object' },
       description:
-        "Names of auto-mounted folders: dropped from the select's options, folded into the overlap check and shown as read-only tags",
+        'Names of auto-mounted folders: dropped from the offered folder options, folded into the overlap check and shown as read-only tags',
       table: { type: { summary: 'string[]' } },
     },
     mountableHosts: {
@@ -215,7 +236,7 @@ dropped wherever the story passes it in \`autoMountedFolderNames\`.
   },
   args: {
     mountableHosts: MOCK_MOUNTABLE_HOSTS,
-    autoMountedFolderNames: ['.config'],
+    autoMountedFolderNames: [],
   },
 };
 
@@ -287,18 +308,7 @@ export const OverlappingPaths: Story = {
     <ControlledDemo
       {...args}
       initialValue={[
-        {
-          vfolderId: folderId(0),
-          name: folderName(0),
-          mountDestination: 'shared',
-          subpath: '',
-        },
-        {
-          vfolderId: folderId(1),
-          name: folderName(1),
-          mountDestination: 'shared',
-          subpath: '',
-        },
+        ...overlappingSharedAliases,
         {
           vfolderId: folderId(5),
           name: folderName(5),
@@ -315,6 +325,9 @@ export const OverlappingPaths: Story = {
  * alias that collides with one of them is flagged as an overlap.
  */
 export const WithAutoMountedFolders: Story = {
+  args: {
+    autoMountedFolderNames: ['.config'],
+  },
   parameters: {
     docs: {
       description: {
@@ -371,22 +384,7 @@ export const WithFormValidation: Story = {
           form={form}
           layout="vertical"
           style={{ width: DEMO_WIDTH }}
-          initialValues={{
-            mounts: [
-              {
-                vfolderId: folderId(0),
-                name: folderName(0),
-                mountDestination: 'shared',
-                subpath: '',
-              },
-              {
-                vfolderId: folderId(1),
-                name: folderName(1),
-                mountDestination: 'shared',
-                subpath: '',
-              },
-            ],
-          }}
+          initialValues={{ mounts: overlappingSharedAliases }}
         >
           <Form.Item
             name="mounts"
