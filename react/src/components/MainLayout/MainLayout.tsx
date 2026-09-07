@@ -5,7 +5,9 @@
 import { AstryxAdminTheme, AstryxReverseTheme } from '../../astryx-theme';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
+import { useMyAppConfig } from '../../hooks/useAppConfig';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
+import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
 import { useLogoutEventListeners } from '../../hooks/useLogout';
 import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
@@ -24,7 +26,6 @@ import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
 import PluginLoader from '../PluginLoader';
 import ProjectAdminScopeAlert from '../ProjectAdminScopeAlert';
-import ThemeFamilyUserConfigSync from '../ThemeFamilyUserConfigSync';
 import ThemePreviewModeAlert from '../ThemePreviewModeAlert';
 import { DRAWER_WIDTH } from '../WEBUINotificationDrawer';
 import WebUIBreadcrumb from '../WebUIBreadcrumb';
@@ -48,6 +49,7 @@ import * as _ from 'lodash-es';
 import React, {
   Suspense,
   useEffect,
+  useEffectEvent,
   useLayoutEffect,
   useRef,
   useState,
@@ -148,11 +150,6 @@ function MainLayout() {
   return (
     <>
       <CSSTokenVariables />
-      <ErrorBoundaryWithNullFallback>
-        <Suspense fallback={null}>
-          <ThemeFamilyUserConfigSync />
-        </Suspense>
-      </ErrorBoundaryWithNullFallback>
       <Suspense fallback={null}>
         <DismissSplashOnMount />
         <BAIAppShell
@@ -471,11 +468,24 @@ export const CSSTokenVariables = () => {
  * boundary: below the `md` breakpoint the sider renders into AppShell's drawer
  * (its own `Suspense`), so nothing else in this boundary suspends and the
  * splash was torn down before login had even finished.
+ *
+ * Also suspends on the signed-in user's `userConfig.themeFamily` and copies
+ * it into the localStorage mirror BEFORE the splash goes, so the account's
+ * family is what the page reveals (FR-3834). The mirror survives logout; the
+ * next login overrides it here.
  */
 const DismissSplashOnMount = () => {
   'use memo';
   useSuspendedBackendaiClient();
+  const userConfigFamily = useMyAppConfig<string>('themeFamily');
+  const { setActiveThemeFamily } = useCustomThemeConfig();
+  const syncThemeFamilyMirror = useEffectEvent(() => {
+    setActiveThemeFamily(
+      typeof userConfigFamily === 'string' ? userConfigFamily : undefined,
+    );
+  });
   useEffect(() => {
+    syncThemeFamilyMirror();
     (globalThis as any).__dismissSplash?.();
     (globalThis as any).__mainLayoutReady = true;
     document.dispatchEvent(new CustomEvent('main-layout-ready'));
