@@ -237,8 +237,8 @@
       "InvalidResponse": "Der Backend.AI-Webserver hat eine unerwartete Antwort zurückgegeben.",
       "NoEndpoint": "Für {{appName}} ist keine Backend.AI-Webserver-Adresse konfiguriert.",
       "NoSessionId": "Sie sind bei Backend.AI angemeldet, aber der Webserver hat keine Sitzungs-ID zurückgegeben.",
-      "NoSessionOverHttp": "Es wurde keine Backend.AI-Sitzung gefunden. {{appName}} wird über HTTP ausgeliefert, daher lehnt der Browser das sichere Sitzungscookie des Webservers wahrscheinlich ab. Öffnen Sie {{appName}} über HTTPS.",
-      "NoSessionOverHttps": "Es wurde keine Backend.AI-Sitzung gefunden. Der Browser sendet das Sitzungscookie des Backend.AI-Webservers nicht an {{appName}}, da es sich um unterschiedliche Sites handelt.",
+      "NoSessionOverHttp": "Sie sind noch nicht bei Backend.AI angemeldet. Falls Sie bereits angemeldet sind: {{appName}} wird über HTTP ausgeliefert, daher lehnt der Browser das sichere Sitzungscookie des Webservers möglicherweise ab. Öffnen Sie {{appName}} über HTTPS.",
+      "NoSessionOverHttps": "Sie sind noch nicht bei Backend.AI angemeldet. Falls Sie bereits angemeldet sind: {{appName}} und der Backend.AI-Webserver sind möglicherweise unterschiedliche Sites, sodass der Browser das Sitzungscookie zurückhält.",
       "RelayFailed": "Sie sind bei Backend.AI angemeldet, aber {{appName}} konnte die Anmeldung nicht abschließen.",
       "Timeout": "Der Backend.AI-Webserver hat nicht rechtzeitig geantwortet.",
       "Title": "Anmeldung mit Backend.AI nicht möglich"

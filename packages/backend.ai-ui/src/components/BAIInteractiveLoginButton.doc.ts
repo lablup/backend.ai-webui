@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Sign-in entry point for an application that delegates authentication to a Backend.AI webserver. It runs in two phases. On mount it probes `POST <webserverUrl>/server/login-check` with `credentials: \'include\'`; if the browser already holds a webserver session, the probe returns a session id and `onSessionVerified` fires with no click at all. Otherwise the button renders, and clicking it navigates to `<webserverUrl>/interactive-login?name=<appName>&callback=<absolute callback>`, where the user signs in and is sent back to the callback. The component never stores the session id — it hands it to `onSessionVerified` and forgets it; the host is responsible for exchanging that id for its own credentials on its own backend. Every failure path is reported as one of eight reasons (`no_endpoint`, `cors_or_mixed`, `timeout`, `http_error`, `invalid_response`, `no_session`, `no_session_id`, `relay_failed`) through `onFailure`, and rendered inline as a `BAIAlert type="error"` unless `showFailureAlert` is false. DEPLOYMENT CONSTRAINT: the webserver sets its session cookie without a `SameSite` attribute (backend.ai `src/ai/backend/web/server.py:864-867` passes no `samesite=`; `src/ai/backend/common/web/session/redis_storage.py:32` defaults it to `None`; `src/ai/backend/common/web/session/__init__.py:274/285/358` forwards that into `response.set_cookie`), and browsers treat an absent `SameSite` as `Lax`. The zero-click probe therefore only succeeds when the consuming application and the webserver are same-site; a genuinely cross-site deployment always lands on `no_session` and uses the redirect. The `session_id` field the probe reads is annotated upstream as a temporary wsproxy interop patch (`server.py:346`), so treat it as provisional.',
+      'Sign-in entry point for an application that delegates authentication to a Backend.AI webserver. It runs in two phases. On mount it probes `POST <webserverUrl>/server/login-check` with `credentials: \'include\'`; if the browser already holds a webserver session, the probe returns a session id and `onSessionVerified` fires with no click at all. Otherwise the button renders, and clicking it navigates to `<webserverUrl>/interactive-login?name=<appName>&callback=<absolute callback>`, where the user signs in and is sent back to the callback. The component never stores the session id — it hands it to `onSessionVerified` and forgets it; the host is responsible for exchanging that id for its own credentials on its own backend. Every outcome is reported as one of eight reasons (`no_endpoint`, `cors_or_mixed`, `timeout`, `http_error`, `invalid_response`, `no_session`, `no_session_id`, `relay_failed`) through `onFailure`. Unless `showFailureAlert` is false, a real failure is rendered inline as a `BAIAlert type="error"`; `no_session` is not — it is the ordinary "not signed in yet" state of a first-time visitor, so it renders as a neutral hint under the button instead. DEPLOYMENT CONSTRAINT: the webserver sets its session cookie without a `SameSite` attribute (backend.ai `src/ai/backend/web/server.py:864-867` passes no `samesite=`; `src/ai/backend/common/web/session/redis_storage.py:32` defaults it to `None`; `src/ai/backend/common/web/session/__init__.py:274/285/358` forwards that into `response.set_cookie`), and browsers treat an absent `SameSite` as `Lax`. The zero-click probe therefore only succeeds when the consuming application and the webserver are same-site; a genuinely cross-site deployment always lands on `no_session` and uses the redirect. The `session_id` field the probe reads is annotated upstream as a temporary wsproxy interop patch (`server.py:346`), so treat it as provisional.',
     bestPractices: [
       {
         guidance: true,
@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Serve the consuming application over HTTPS. Over plain HTTP the browser rejects the webserver’s `Secure` session cookie and the probe can only ever report `no_session`.',
+          'Serve the consuming application over HTTPS. Over plain HTTP the browser rejects the webserver’s session cookie whenever the webserver marks it `Secure`, which is the default (`cookie_secure`), so the probe can only report `no_session`.',
       },
       {
         guidance: false,
@@ -55,7 +55,7 @@ export const docs = {
       name: 'webserverUrl',
       type: 'string',
       description:
-        'Absolute URL of the Backend.AI webserver. A trailing slash is optional and a path prefix is kept when the probe and provider URLs are built. An empty or non-absolute value is reported as `no_endpoint`.',
+        'Absolute URL of the Backend.AI webserver. A trailing slash is optional and a path prefix is kept when the probe and provider URLs are built. An empty value, or one that is not an absolute `http:` / `https:` URL (`localhost:8090` included), is reported as `no_endpoint`.',
       required: true,
     },
     {
@@ -95,7 +95,7 @@ export const docs = {
       name: 'showFailureAlert',
       type: 'boolean',
       description:
-        'Render the failure reason above the button in a `BAIAlert type="error"`. Set false to present the failure yourself from `onFailure`.',
+        'Render the outcome inline: a real failure as a `BAIAlert type="error"` above the button, the ordinary `no_session` outcome as a neutral hint below it. Set false to present the outcome yourself from `onFailure`.',
       default: 'true',
     },
     {

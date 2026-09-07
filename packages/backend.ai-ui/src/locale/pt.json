@@ -237,8 +237,8 @@
       "InvalidResponse": "O servidor web do Backend.AI devolveu uma resposta inesperada.",
       "NoEndpoint": "Não há nenhum endereço do servidor web do Backend.AI configurado para {{appName}}.",
       "NoSessionId": "Tem sessão iniciada no Backend.AI, mas o servidor web não devolveu um ID de sessão.",
-      "NoSessionOverHttp": "Não foi encontrada nenhuma sessão do Backend.AI. O {{appName}} é servido por HTTP, pelo que o navegador está provavelmente a rejeitar o cookie de sessão seguro do servidor web. Experimente abrir o {{appName}} por HTTPS.",
-      "NoSessionOverHttps": "Não foi encontrada nenhuma sessão do Backend.AI. O navegador não envia o cookie de sessão do servidor web do Backend.AI para o {{appName}} porque são sites diferentes.",
+      "NoSessionOverHttp": "Ainda não iniciou sessão no Backend.AI. Se já iniciou sessão, o {{appName}} é servido por HTTP, pelo que o navegador pode estar a rejeitar o cookie de sessão seguro do servidor web. Experimente abrir o {{appName}} por HTTPS.",
+      "NoSessionOverHttps": "Ainda não iniciou sessão no Backend.AI. Se já iniciou sessão, o {{appName}} e o servidor web do Backend.AI podem ser sites diferentes, pelo que o navegador não envia o cookie de sessão.",
       "RelayFailed": "Tem sessão iniciada no Backend.AI, mas o {{appName}} não conseguiu concluir o início de sessão.",
       "Timeout": "O servidor web do Backend.AI não respondeu a tempo.",
       "Title": "Não foi possível iniciar sessão com o Backend.AI"

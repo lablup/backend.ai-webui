@@ -46,6 +46,9 @@ export const normalizeWebserverUrl = (
   } catch {
     return null;
   }
+  // `host:port` parses as an opaque-path URL whose scheme is the host, and
+  // resolving a relative segment against such a base throws.
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
   if (!url.pathname.endsWith('/')) {
     url.pathname = `${url.pathname}/`;
   }
@@ -187,6 +190,7 @@ const useBAIInteractiveLogin = ({
 
   const probe = useEventNotStable(async () => {
     setIsProbing(true);
+    setFailure(null);
     try {
       const result = await probeLoginCheck({ webserverUrl, timeoutMs });
       setFailure(

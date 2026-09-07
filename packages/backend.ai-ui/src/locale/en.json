@@ -237,8 +237,8 @@
       "InvalidResponse": "The Backend.AI webserver returned an unexpected response.",
       "NoEndpoint": "No Backend.AI webserver address is configured for {{appName}}.",
       "NoSessionId": "You are signed in to Backend.AI, but the webserver did not return a session ID.",
-      "NoSessionOverHttp": "No Backend.AI session was found. {{appName}} is served over HTTP, so the browser is likely rejecting the webserver's secure session cookie. Try opening {{appName}} over HTTPS.",
-      "NoSessionOverHttps": "No Backend.AI session was found. The browser is not sending the Backend.AI webserver session cookie to {{appName}} because the two are different sites.",
+      "NoSessionOverHttp": "You are not signed in to Backend.AI yet. If you have already signed in, {{appName}} is served over HTTP, so the browser may be rejecting the webserver's secure session cookie. Try opening {{appName}} over HTTPS.",
+      "NoSessionOverHttps": "You are not signed in to Backend.AI yet. If you have already signed in, {{appName}} and the Backend.AI webserver may be different sites, so the browser is withholding the session cookie.",
       "RelayFailed": "You are signed in to Backend.AI, but {{appName}} could not complete the sign-in.",
       "Timeout": "The Backend.AI webserver did not respond in time.",
       "Title": "Could not sign in with Backend.AI"

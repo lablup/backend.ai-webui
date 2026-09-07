@@ -34,6 +34,15 @@ describe('normalizeWebserverUrl', () => {
   it('returns null for a value that is not an absolute URL', () => {
     expect(normalizeWebserverUrl('/webserver')).toBeNull();
     expect(normalizeWebserverUrl('not a url')).toBeNull();
+    // Parses as an opaque-path URL whose scheme is the host name.
+    expect(normalizeWebserverUrl('localhost:8090')).toBeNull();
+    expect(normalizeWebserverUrl('webserver.example.com:8090')).toBeNull();
+  });
+
+  it('returns null for a scheme that is not http(s)', () => {
+    expect(normalizeWebserverUrl('javascript:alert(1)')).toBeNull();
+    expect(normalizeWebserverUrl('mailto:admin@example.com')).toBeNull();
+    expect(normalizeWebserverUrl('ftp://webserver.example.com')).toBeNull();
   });
 
   it('appends a trailing slash so relative segments keep the path prefix', () => {
@@ -141,6 +150,14 @@ describe('buildInteractiveLoginUrl', () => {
   it('returns null when there is no usable webserver URL', () => {
     expect(
       buildInteractiveLoginUrl({ webserverUrl: '', appName: 'FastTrack' }),
+    ).toBeNull();
+    // Would otherwise throw while resolving a relative segment against an
+    // opaque-path base, during render.
+    expect(
+      buildInteractiveLoginUrl({
+        webserverUrl: 'localhost:8090',
+        appName: 'FastTrack',
+      }),
     ).toBeNull();
   });
 });
@@ -251,6 +268,15 @@ describe('probeLoginCheck', () => {
       ok: false,
       reason: 'no_endpoint',
     });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('reports no_endpoint for a scheme-less host:port webserver URL', async () => {
+    const fetchMock = stubFetch(async () => okResponse({}));
+
+    await expect(
+      probeLoginCheck({ webserverUrl: 'localhost:8090' }),
+    ).resolves.toEqual({ ok: false, reason: 'no_endpoint' });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

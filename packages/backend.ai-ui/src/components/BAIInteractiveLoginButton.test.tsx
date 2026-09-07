@@ -16,20 +16,27 @@ vi.mock('react-i18next', async () => {
     'comp:BAIInteractiveLoginButton.failure.NoEndpoint': 'No endpoint',
     'comp:BAIInteractiveLoginButton.failure.CorsOrMixed': 'Blocked by browser',
     'comp:BAIInteractiveLoginButton.failure.Timeout': 'Timed out',
-    'comp:BAIInteractiveLoginButton.failure.HttpError': 'Webserver error',
+    'comp:BAIInteractiveLoginButton.failure.HttpError':
+      'Webserver error {{status}}',
     'comp:BAIInteractiveLoginButton.failure.InvalidResponse':
       'Unexpected response',
     'comp:BAIInteractiveLoginButton.failure.NoSessionOverHttp':
-      'No session, served over HTTP',
+      'Not signed in; {{appName}} is served over HTTP',
     'comp:BAIInteractiveLoginButton.failure.NoSessionOverHttps':
-      'No session, different sites',
+      'Not signed in; {{appName}} may be a different site',
     'comp:BAIInteractiveLoginButton.failure.NoSessionId': 'No session ID',
-    'comp:BAIInteractiveLoginButton.failure.RelayFailed': 'Could not complete',
+    'comp:BAIInteractiveLoginButton.failure.RelayFailed':
+      '{{appName}} could not complete',
   };
   return {
     ...actual,
     useTranslation: () => ({
-      t: (key: string) => translations[key] ?? key,
+      // Interpolate, so a locale string that drops a placeholder is caught.
+      t: (key: string, options?: Record<string, unknown>) =>
+        Object.entries(options ?? {}).reduce(
+          (acc, [name, value]) => acc.replaceAll(`{{${name}}}`, String(value)),
+          translations[key] ?? key,
+        ),
     }),
   };
 });
@@ -109,34 +116,51 @@ describe('BAIInteractiveLoginButton', () => {
       await waitFor(() =>
         expect(onFailure).toHaveBeenCalledWith('relay_failed'),
       );
-      expect(await screen.findByText('Could not complete')).toBeInTheDocument();
+      expect(
+        await screen.findByText('FastTrack could not complete'),
+      ).toBeInTheDocument();
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
   });
 
   describe('No session', () => {
-    it('shows the HTTP-specific copy when the app is served over HTTP', async () => {
+    it('presents the ordinary not-signed-in state as a hint, not an error', async () => {
+      stubLocation();
+      stubFetchWith({ authenticated: false, data: null });
+
+      renderSubject();
+
+      expect(
+        await screen.findByRole('button', { name: /Sign in with Backend.AI/ }),
+      ).toBeInTheDocument();
+      expect(screen.queryByText('Could not sign in')).not.toBeInTheDocument();
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    it('shows the HTTP-specific hint when the app is served over HTTP', async () => {
       stubLocation('http:');
       stubFetchWith({ authenticated: false, data: null });
 
       renderSubject();
 
       expect(
-        await screen.findByText('No session, served over HTTP'),
+        await screen.findByText('Not signed in; FastTrack is served over HTTP'),
       ).toBeInTheDocument();
       expect(
-        screen.queryByText('No session, different sites'),
+        screen.queryByText('Not signed in; FastTrack may be a different site'),
       ).not.toBeInTheDocument();
     });
 
-    it('shows the cross-site copy when the app is served over HTTPS', async () => {
+    it('shows the cross-site hint when the app is served over HTTPS', async () => {
       stubLocation('https:');
       stubFetchWith({ authenticated: false, data: null });
 
       renderSubject();
 
       expect(
-        await screen.findByText('No session, different sites'),
+        await screen.findByText(
+          'Not signed in; FastTrack may be a different site',
+        ),
       ).toBeInTheDocument();
     });
 
@@ -181,8 +205,50 @@ describe('BAIInteractiveLoginButton', () => {
 
       renderSubject({ onFailure });
 
-      expect(await screen.findByText('Webserver error')).toBeInTheDocument();
+      expect(
+        await screen.findByText('Webserver error 502'),
+      ).toBeInTheDocument();
       expect(onFailure).toHaveBeenCalledWith('http_error');
+    });
+
+    it('renders the copy for a probe that outruns its deadline', async () => {
+      stubLocation();
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => {
+          throw new DOMException('timed out', 'TimeoutError');
+        }),
+      );
+      const onFailure = vi.fn();
+
+      renderSubject({ onFailure });
+
+      expect(await screen.findByText('Timed out')).toBeInTheDocument();
+      expect(onFailure).toHaveBeenCalledWith('timeout');
+    });
+
+    it('renders the copy for a body that is not a login-check answer', async () => {
+      stubLocation();
+      stubFetchWith({ hello: 'world' });
+      const onFailure = vi.fn();
+
+      renderSubject({ onFailure });
+
+      expect(
+        await screen.findByText('Unexpected response'),
+      ).toBeInTheDocument();
+      expect(onFailure).toHaveBeenCalledWith('invalid_response');
+    });
+
+    it('renders the copy for an authenticated answer with no session id', async () => {
+      stubLocation();
+      stubFetchWith({ authenticated: true, session_id: '' });
+      const onFailure = vi.fn();
+
+      renderSubject({ onFailure });
+
+      expect(await screen.findByText('No session ID')).toBeInTheDocument();
+      expect(onFailure).toHaveBeenCalledWith('no_session_id');
     });
 
     it('renders the copy for a browser-blocked request', async () => {
@@ -216,7 +282,7 @@ describe('BAIInteractiveLoginButton', () => {
   });
 
   describe('showFailureAlert', () => {
-    it('suppresses the inline alert while still reporting the failure', async () => {
+    it('suppresses the no-session hint while still reporting the outcome', async () => {
       stubLocation();
       stubFetchWith({ authenticated: false, data: null });
       const onFailure = vi.fn();
@@ -224,8 +290,25 @@ describe('BAIInteractiveLoginButton', () => {
       renderSubject({ showFailureAlert: false, onFailure });
 
       await waitFor(() => expect(onFailure).toHaveBeenCalledWith('no_session'));
-      expect(screen.queryByText('Could not sign in')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Not signed in; FastTrack may be a different site'),
+      ).not.toBeInTheDocument();
       expect(screen.getByRole('button')).toBeInTheDocument();
+    });
+
+    it('suppresses the inline error alert while still reporting the failure', async () => {
+      stubLocation();
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => ({ ok: false, status: 502, json: async () => ({}) })),
+      );
+      const onFailure = vi.fn();
+
+      renderSubject({ showFailureAlert: false, onFailure });
+
+      await waitFor(() => expect(onFailure).toHaveBeenCalledWith('http_error'));
+      expect(screen.queryByText('Could not sign in')).not.toBeInTheDocument();
+      expect(screen.queryByText('Webserver error 502')).not.toBeInTheDocument();
     });
   });
 });

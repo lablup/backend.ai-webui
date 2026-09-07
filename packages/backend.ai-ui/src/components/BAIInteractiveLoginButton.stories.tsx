@@ -1,14 +1,20 @@
 import type { BAIInteractiveLoginFailureReason } from '../hooks/useBAIInteractiveLogin';
+import BAIFlex from './BAIFlex';
 import BAIInteractiveLoginButton, {
   type BAIInteractiveLoginButtonProps,
 } from './BAIInteractiveLoginButton';
+import BAIText from './BAIText';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useEffect, useState, type ReactNode } from 'react';
 
 type Outcome = 'authenticated' | BAIInteractiveLoginFailureReason;
 
 type StoryProps = BAIInteractiveLoginButtonProps & { outcome: Outcome };
 
 const WEBSERVER_URL = 'https://webserver.example.com';
+
+/** Captured at import time, before any story installs its stub. */
+const originalFetch = globalThis.fetch;
 
 const installFetchMock = (outcome: Outcome) => {
   globalThis.fetch = (async () => {
@@ -51,6 +57,53 @@ const installFetchMock = (outcome: Outcome) => {
   }) as unknown as typeof fetch;
 };
 
+/** Keeps the stub from outliving the story that installed it. */
+const RestoreFetchOnUnmount = ({ children }: { children: ReactNode }) => {
+  useEffect(
+    () => () => {
+      globalThis.fetch = originalFetch;
+    },
+    [],
+  );
+  return <>{children}</>;
+};
+
+const InteractiveLoginStory = ({ outcome, ...props }: StoryProps) => {
+  const [verifiedSessionId, setVerifiedSessionId] = useState<string | null>(
+    null,
+  );
+  const [failureReason, setFailureReason] =
+    useState<BAIInteractiveLoginFailureReason | null>(null);
+
+  return (
+    <BAIFlex direction="column" gap="sm" align="stretch">
+      <BAIInteractiveLoginButton
+        key={outcome}
+        {...props}
+        webserverUrl={outcome === 'no_endpoint' ? '' : WEBSERVER_URL}
+        onSessionVerified={async (sessionId) => {
+          if (outcome === 'relay_failed') {
+            throw new Error('token exchange failed');
+          }
+          // The host's token exchange is a round-trip of its own; the button
+          // stays in its loading state until it settles.
+          await new Promise((resolve) => setTimeout(resolve, 800));
+          setVerifiedSessionId(sessionId);
+        }}
+        onFailure={setFailureReason}
+      />
+      {verifiedSessionId ? (
+        <BAIText type="success">Session verified: {verifiedSessionId}</BAIText>
+      ) : null}
+      {failureReason ? (
+        <BAIText type="secondary" size="sm">
+          onFailure: {failureReason}
+        </BAIText>
+      ) : null}
+    </BAIFlex>
+  );
+};
+
 const meta: Meta<StoryProps> = {
   title: 'Button/BAIInteractiveLoginButton',
   component: BAIInteractiveLoginButton,
@@ -72,7 +125,10 @@ The host exchanges the session id for its own credential inside \`onSessionVerif
 ## Deployment constraint
 The webserver's session cookie carries no \`SameSite\` attribute, which browsers treat as \`Lax\`. The zero-click probe therefore only succeeds when the consuming app and the webserver are same-site; a cross-site deployment always lands on \`no_session\` and uses the redirect.
 
-The stories below mock \`fetch\`; nothing contacts a live webserver. Use the **outcome** control to see every failure reason.
+## Outcomes
+\`no_session\` is the ordinary "not signed in yet" state, so it renders as a neutral hint under the button — never as an error. Only a genuine failure (\`no_endpoint\`, \`cors_or_mixed\`, \`timeout\`, \`http_error\`, \`invalid_response\`, \`no_session_id\`, \`relay_failed\`) gets the error alert.
+
+The stories below mock \`fetch\` for the lifetime of the story and restore it on unmount; nothing contacts a live webserver. Use the **outcome** control to see every failure reason. The line under the component is story-only instrumentation showing what \`onSessionVerified\` / \`onFailure\` received.
         `,
       },
     },
@@ -107,21 +163,14 @@ The stories below mock \`fetch\`; nothing contacts a live webserver. Use the **o
   decorators: [
     (Story, context) => {
       installFetchMock((context.args as StoryProps).outcome);
-      return <Story />;
+      return (
+        <RestoreFetchOnUnmount>
+          <Story />
+        </RestoreFetchOnUnmount>
+      );
     },
   ],
-  render: ({ outcome, ...props }) => (
-    <BAIInteractiveLoginButton
-      key={outcome}
-      {...props}
-      webserverUrl={outcome === 'no_endpoint' ? '' : WEBSERVER_URL}
-      onSessionVerified={
-        outcome === 'relay_failed'
-          ? () => Promise.reject(new Error('token exchange failed'))
-          : props.onSessionVerified
-      }
-    />
-  ),
+  render: (args) => <InteractiveLoginStory {...args} />,
 };
 
 export default meta;
@@ -130,10 +179,26 @@ type Story = StoryObj<StoryProps>;
 export const Default: Story = {
   name: 'No session yet',
   args: { outcome: 'no_session' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The first-time visitor: the probe finds no webserver session, so the button appears with a neutral hint underneath. This is not an error state and is deliberately not rendered as one.',
+      },
+    },
+  },
 };
 
 export const Authenticated: Story = {
   args: { outcome: 'authenticated' },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The probe finds a session, so `onSessionVerified` fires with no click. This story simulates a slow token exchange: the button stays in its loading state until the host settles, then disappears and the verified session id is shown.',
+      },
+    },
+  },
 };
 
 export const FailureReason: Story = {

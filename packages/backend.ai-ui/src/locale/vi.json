@@ -237,8 +237,8 @@
       "InvalidResponse": "Máy chủ web Backend.AI đã trả về phản hồi không mong đợi.",
       "NoEndpoint": "Chưa cấu hình địa chỉ máy chủ web Backend.AI cho {{appName}}.",
       "NoSessionId": "Bạn đã đăng nhập Backend.AI, nhưng máy chủ web không trả về ID phiên.",
-      "NoSessionOverHttp": "Không tìm thấy phiên Backend.AI. {{appName}} được phục vụ qua HTTP nên trình duyệt có thể đang từ chối cookie phiên bảo mật của máy chủ web. Hãy thử mở {{appName}} qua HTTPS.",
-      "NoSessionOverHttps": "Không tìm thấy phiên Backend.AI. Trình duyệt không gửi cookie phiên của máy chủ web Backend.AI đến {{appName}} vì đây là hai trang web khác nhau.",
+      "NoSessionOverHttp": "Bạn chưa đăng nhập Backend.AI. Nếu bạn đã đăng nhập, {{appName}} được phục vụ qua HTTP nên trình duyệt có thể đang từ chối cookie phiên bảo mật của máy chủ web. Hãy thử mở {{appName}} qua HTTPS.",
+      "NoSessionOverHttps": "Bạn chưa đăng nhập Backend.AI. Nếu bạn đã đăng nhập, {{appName}} và máy chủ web Backend.AI có thể là hai trang web khác nhau nên trình duyệt không gửi cookie phiên.",
       "RelayFailed": "Bạn đã đăng nhập Backend.AI, nhưng {{appName}} không thể hoàn tất việc đăng nhập.",
       "Timeout": "Máy chủ web Backend.AI không phản hồi kịp thời.",
       "Title": "Không thể đăng nhập bằng Backend.AI"

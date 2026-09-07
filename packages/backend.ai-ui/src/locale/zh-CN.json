@@ -237,8 +237,8 @@
       "InvalidResponse": "Backend.AI 网页服务器返回了意外的响应。",
       "NoEndpoint": "尚未为 {{appName}} 配置 Backend.AI 网页服务器地址。",
       "NoSessionId": "您已登录 Backend.AI，但网页服务器未返回会话 ID。",
-      "NoSessionOverHttp": "未找到 Backend.AI 会话。{{appName}} 通过 HTTP 提供服务，浏览器可能拒绝了网页服务器的安全会话 Cookie。请尝试通过 HTTPS 打开 {{appName}}。",
-      "NoSessionOverHttps": "未找到 Backend.AI 会话。{{appName}} 与 Backend.AI 网页服务器属于不同站点，因此浏览器不会发送会话 Cookie。",
+      "NoSessionOverHttp": "您尚未登录 Backend.AI。如果已经登录，可能是 {{appName}} 通过 HTTP 提供服务，浏览器拒绝了网页服务器的安全会话 Cookie。请尝试通过 HTTPS 打开 {{appName}}。",
+      "NoSessionOverHttps": "您尚未登录 Backend.AI。如果已经登录，可能是 {{appName}} 与 Backend.AI 网页服务器属于不同站点，浏览器因此不会发送会话 Cookie。",
       "RelayFailed": "您已登录 Backend.AI，但 {{appName}} 无法完成登录。",
       "Timeout": "Backend.AI 网页服务器未在规定时间内响应。",
       "Title": "无法使用 Backend.AI 登录"

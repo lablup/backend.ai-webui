@@ -237,8 +237,8 @@
       "InvalidResponse": "Pelayan web Backend.AI mengembalikan respons yang tidak dijangka.",
       "NoEndpoint": "Tiada alamat pelayan web Backend.AI dikonfigurasikan untuk {{appName}}.",
       "NoSessionId": "Anda telah log masuk ke Backend.AI, tetapi pelayan web tidak mengembalikan ID sesi.",
-      "NoSessionOverHttp": "Tiada sesi Backend.AI ditemui. {{appName}} disajikan melalui HTTP, jadi pelayar berkemungkinan menolak kuki sesi selamat pelayan web. Cuba buka {{appName}} melalui HTTPS.",
-      "NoSessionOverHttps": "Tiada sesi Backend.AI ditemui. Pelayar tidak menghantar kuki sesi pelayan web Backend.AI kepada {{appName}} kerana kedua-duanya tapak yang berbeza.",
+      "NoSessionOverHttp": "Anda belum log masuk ke Backend.AI. Jika anda sudah log masuk, {{appName}} disajikan melalui HTTP jadi pelayar mungkin menolak kuki sesi selamat pelayan web. Cuba buka {{appName}} melalui HTTPS.",
+      "NoSessionOverHttps": "Anda belum log masuk ke Backend.AI. Jika anda sudah log masuk, {{appName}} dan pelayan web Backend.AI mungkin tapak yang berbeza jadi pelayar tidak menghantar kuki sesi.",
       "RelayFailed": "Anda telah log masuk ke Backend.AI, tetapi {{appName}} tidak dapat melengkapkan proses log masuk.",
       "Timeout": "Pelayan web Backend.AI tidak membalas dalam masa yang ditetapkan.",
       "Title": "Tidak dapat log masuk dengan Backend.AI"

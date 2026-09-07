@@ -237,8 +237,8 @@
       "InvalidResponse": "Backend.AI 網頁伺服器傳回了非預期的回應。",
       "NoEndpoint": "尚未為 {{appName}} 設定 Backend.AI 網頁伺服器位址。",
       "NoSessionId": "您已登入 Backend.AI，但網頁伺服器未傳回工作階段 ID。",
-      "NoSessionOverHttp": "找不到 Backend.AI 工作階段。{{appName}} 透過 HTTP 提供服務，瀏覽器可能拒絕了網頁伺服器的安全工作階段 Cookie。請嘗試以 HTTPS 開啟 {{appName}}。",
-      "NoSessionOverHttps": "找不到 Backend.AI 工作階段。{{appName}} 與 Backend.AI 網頁伺服器屬於不同網站，因此瀏覽器不會傳送工作階段 Cookie。",
+      "NoSessionOverHttp": "您尚未登入 Backend.AI。若已經登入，可能是 {{appName}} 透過 HTTP 提供服務，瀏覽器拒絕了網頁伺服器的安全工作階段 Cookie。請嘗試以 HTTPS 開啟 {{appName}}。",
+      "NoSessionOverHttps": "您尚未登入 Backend.AI。若已經登入，可能是 {{appName}} 與 Backend.AI 網頁伺服器屬於不同網站，瀏覽器因此不會傳送工作階段 Cookie。",
       "RelayFailed": "您已登入 Backend.AI，但 {{appName}} 無法完成登入。",
       "Timeout": "Backend.AI 網頁伺服器未在時間內回應。",
       "Title": "無法使用 Backend.AI 登入"

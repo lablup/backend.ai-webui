@@ -237,8 +237,8 @@
       "InvalidResponse": "Backend.AI ウェブサーバーが予期しない応答を返しました。",
       "NoEndpoint": "{{appName}} に Backend.AI ウェブサーバーのアドレスが設定されていません。",
       "NoSessionId": "Backend.AI にログインしていますが、ウェブサーバーがセッション ID を返しませんでした。",
-      "NoSessionOverHttp": "Backend.AI セッションが見つかりません。{{appName}} は HTTP で配信されているため、ブラウザーがウェブサーバーのセキュアなセッションクッキーを拒否している可能性があります。{{appName}} を HTTPS で開いてください。",
-      "NoSessionOverHttps": "Backend.AI セッションが見つかりません。{{appName}} と Backend.AI ウェブサーバーは異なるサイトのため、ブラウザーがセッションクッキーを送信していません。",
+      "NoSessionOverHttp": "まだ Backend.AI にログインしていません。すでにログインしている場合は、{{appName}} が HTTP で配信されているため、ブラウザーがウェブサーバーのセキュアなセッションクッキーを拒否している可能性があります。{{appName}} を HTTPS で開いてみてください。",
+      "NoSessionOverHttps": "まだ Backend.AI にログインしていません。すでにログインしている場合は、{{appName}} と Backend.AI ウェブサーバーが異なるサイトのため、ブラウザーがセッションクッキーを送信していない可能性があります。",
       "RelayFailed": "Backend.AI にログインしていますが、{{appName}} でログインを完了できませんでした。",
       "Timeout": "Backend.AI ウェブサーバーが時間内に応答しませんでした。",
       "Title": "Backend.AI アカウントでログインできませんでした"

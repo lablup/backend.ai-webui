@@ -237,8 +237,8 @@
       "InvalidResponse": "Le serveur web Backend.AI a renvoyé une réponse inattendue.",
       "NoEndpoint": "Aucune adresse de serveur web Backend.AI n'est configurée pour {{appName}}.",
       "NoSessionId": "Vous êtes connecté à Backend.AI, mais le serveur web n'a pas renvoyé d'identifiant de session.",
-      "NoSessionOverHttp": "Aucune session Backend.AI n'a été trouvée. {{appName}} est servi en HTTP, le navigateur rejette donc probablement le cookie de session sécurisé du serveur web. Essayez d'ouvrir {{appName}} en HTTPS.",
-      "NoSessionOverHttps": "Aucune session Backend.AI n'a été trouvée. Le navigateur n'envoie pas le cookie de session du serveur web Backend.AI à {{appName}}, car il s'agit de sites différents.",
+      "NoSessionOverHttp": "Vous n'êtes pas encore connecté à Backend.AI. Si vous l'êtes déjà, {{appName}} est servi en HTTP, le navigateur rejette donc peut-être le cookie de session sécurisé du serveur web. Essayez d'ouvrir {{appName}} en HTTPS.",
+      "NoSessionOverHttps": "Vous n'êtes pas encore connecté à Backend.AI. Si vous l'êtes déjà, {{appName}} et le serveur web Backend.AI sont peut-être des sites différents, et le navigateur n'envoie donc pas le cookie de session.",
       "RelayFailed": "Vous êtes connecté à Backend.AI, mais {{appName}} n'a pas pu finaliser la connexion.",
       "Timeout": "Le serveur web Backend.AI n'a pas répondu à temps.",
       "Title": "Impossible de se connecter avec Backend.AI"

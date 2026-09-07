@@ -10,6 +10,7 @@ import { useBAIi18n } from '../hooks/useBAIi18n';
 import { useEventNotStable } from '../hooks/useEventNotStable';
 import BAIAlert from './BAIAlert';
 import BAIFlex from './BAIFlex';
+import BAIText from './BAIText';
 import { Button, type ButtonProps } from '@astryxdesign/core/Button';
 import { LogIn } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -28,7 +29,11 @@ export interface BAIInteractiveLoginButtonProps extends Omit<
   /** Receives the webserver session id so the host can exchange it for its own credentials. */
   onSessionVerified: (sessionId: string) => void | Promise<void>;
   onFailure?: (reason: BAIInteractiveLoginFailureReason) => void;
-  /** Render the failure reason in an inline alert. @default true */
+  /**
+   * Render the failure inline: an error alert for a real failure, a neutral
+   * hint under the button for the ordinary `no_session` outcome.
+   * @default true
+   */
   showFailureAlert?: boolean;
   label?: string;
 }
@@ -60,6 +65,7 @@ const BAIInteractiveLoginButton = ({
     timeoutMs,
   });
   const [isVerified, setIsVerified] = useState(false);
+  const [isRelaying, setIsRelaying] = useState(false);
   const hasProbedRef = useRef(false);
 
   const handleSessionVerified = useEventNotStable(onSessionVerified);
@@ -72,12 +78,17 @@ const BAIInteractiveLoginButton = ({
       handleFailure(result.reason);
       return;
     }
+    // The host's token exchange is a network round-trip of its own; keep the
+    // button busy so it cannot navigate away mid-exchange.
+    setIsRelaying(true);
     try {
       await handleSessionVerified(result.sessionId);
       setIsVerified(true);
     } catch {
       reportFailure('relay_failed');
       handleFailure('relay_failed');
+    } finally {
+      setIsRelaying(false);
     }
   });
 
@@ -89,11 +100,16 @@ const BAIInteractiveLoginButton = ({
 
   return (
     <BAIFlex direction="column" gap="sm" align="stretch">
-      {showFailureAlert && failure ? (
+      {showFailureAlert && failure && failure.reason !== 'no_session' ? (
         <BAIAlert
           type="error"
           title={t('comp:BAIInteractiveLoginButton.failure.Title')}
-          description={describeFailure(t, failure, appName)}
+          description={describeFailure(
+            t,
+            failure.reason,
+            failure.status,
+            appName,
+          )}
         />
       ) : null}
       {isVerified ? null : (
@@ -101,7 +117,7 @@ const BAIInteractiveLoginButton = ({
           {...buttonProps}
           variant={variant}
           icon={<LogIn size="1em" />}
-          isLoading={isProbing}
+          isLoading={isProbing || isRelaying}
           label={
             isProbing
               ? t('comp:BAIInteractiveLoginButton.CheckingSession')
@@ -111,13 +127,34 @@ const BAIInteractiveLoginButton = ({
           clickAction={redirectToInteractiveLogin}
         />
       )}
+      {showFailureAlert && failure?.reason === 'no_session' ? (
+        <BAIText type="secondary" size="sm">
+          {describeNoSession(t, appName)}
+        </BAIText>
+      ) : null}
     </BAIFlex>
   );
 };
 
+type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
+
+/**
+ * `no_session` is the ordinary "not signed in yet" outcome, not a failure — it
+ * is a neutral hint under the button, never the error alert.
+ */
+const describeNoSession = (t: TranslateFn, appName: string): string => {
+  const prefix = 'comp:BAIInteractiveLoginButton.failure';
+  // The webserver's session cookie carries no SameSite attribute, so a browser
+  // treats it as Lax and withholds it from a cross-site probe.
+  return globalThis.location?.protocol === 'https:'
+    ? t(`${prefix}.NoSessionOverHttps`, { appName })
+    : t(`${prefix}.NoSessionOverHttp`, { appName });
+};
+
 const describeFailure = (
-  t: (key: string, options?: Record<string, unknown>) => string,
-  { reason, status }: BAIInteractiveLoginFailure,
+  t: TranslateFn,
+  reason: Exclude<BAIInteractiveLoginFailureReason, 'no_session'>,
+  status: BAIInteractiveLoginFailure['status'],
   appName: string,
 ): string => {
   const prefix = 'comp:BAIInteractiveLoginButton.failure';
@@ -132,12 +169,6 @@ const describeFailure = (
       return t(`${prefix}.HttpError`, { status });
     case 'invalid_response':
       return t(`${prefix}.InvalidResponse`);
-    case 'no_session':
-      // The webserver's session cookie carries no SameSite attribute, so a
-      // browser treats it as Lax and withholds it from a cross-site probe.
-      return globalThis.location?.protocol === 'https:'
-        ? t(`${prefix}.NoSessionOverHttps`, { appName })
-        : t(`${prefix}.NoSessionOverHttp`, { appName });
     case 'no_session_id':
       return t(`${prefix}.NoSessionId`);
     case 'relay_failed':

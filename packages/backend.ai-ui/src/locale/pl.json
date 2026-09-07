@@ -237,8 +237,8 @@
       "InvalidResponse": "Serwer WWW Backend.AI zwrócił nieoczekiwaną odpowiedź.",
       "NoEndpoint": "Dla aplikacji {{appName}} nie skonfigurowano adresu serwera WWW Backend.AI.",
       "NoSessionId": "Jesteś zalogowany w Backend.AI, ale serwer WWW nie zwrócił identyfikatora sesji.",
-      "NoSessionOverHttp": "Nie znaleziono sesji Backend.AI. Aplikacja {{appName}} jest udostępniana przez HTTP, więc przeglądarka prawdopodobnie odrzuca bezpieczne ciasteczko sesji serwera WWW. Spróbuj otworzyć {{appName}} przez HTTPS.",
-      "NoSessionOverHttps": "Nie znaleziono sesji Backend.AI. Przeglądarka nie wysyła ciasteczka sesji serwera WWW Backend.AI do aplikacji {{appName}}, ponieważ są to różne witryny.",
+      "NoSessionOverHttp": "Nie zalogowano jeszcze w Backend.AI. Jeśli logowanie już nastąpiło, aplikacja {{appName}} jest udostępniana przez HTTP, więc przeglądarka może odrzucać bezpieczne ciasteczko sesji serwera WWW. Spróbuj otworzyć {{appName}} przez HTTPS.",
+      "NoSessionOverHttps": "Nie zalogowano jeszcze w Backend.AI. Jeśli logowanie już nastąpiło, aplikacja {{appName}} i serwer WWW Backend.AI mogą być różnymi witrynami, więc przeglądarka nie wysyła ciasteczka sesji.",
       "RelayFailed": "Jesteś zalogowany w Backend.AI, ale aplikacja {{appName}} nie mogła dokończyć logowania.",
       "Timeout": "Serwer WWW Backend.AI nie odpowiedział na czas.",
       "Title": "Nie udało się zalogować przez Backend.AI"

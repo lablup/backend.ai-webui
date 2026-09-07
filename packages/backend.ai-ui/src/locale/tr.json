@@ -237,8 +237,8 @@
       "InvalidResponse": "Backend.AI web sunucusu beklenmeyen bir yanıt döndürdü.",
       "NoEndpoint": "{{appName}} için yapılandırılmış bir Backend.AI web sunucusu adresi yok.",
       "NoSessionId": "Backend.AI oturumunuz açık, ancak web sunucusu bir oturum kimliği döndürmedi.",
-      "NoSessionOverHttp": "Backend.AI oturumu bulunamadı. {{appName}} HTTP üzerinden sunuluyor, bu nedenle tarayıcı web sunucusunun güvenli oturum çerezini büyük olasılıkla reddediyor. {{appName}} uygulamasını HTTPS üzerinden açmayı deneyin.",
-      "NoSessionOverHttps": "Backend.AI oturumu bulunamadı. {{appName}} ile Backend.AI web sunucusu farklı siteler olduğundan tarayıcı oturum çerezini göndermiyor.",
+      "NoSessionOverHttp": "Backend.AI oturumunuz henüz açık değil. Zaten oturum açtıysanız {{appName}} HTTP üzerinden sunulduğu için tarayıcı web sunucusunun güvenli oturum çerezini reddediyor olabilir. {{appName}} uygulamasını HTTPS üzerinden açmayı deneyin.",
+      "NoSessionOverHttps": "Backend.AI oturumunuz henüz açık değil. Zaten oturum açtıysanız {{appName}} ile Backend.AI web sunucusu farklı siteler olabilir, bu nedenle tarayıcı oturum çerezini göndermiyor.",
       "RelayFailed": "Backend.AI oturumunuz açık, ancak {{appName}} oturum açma işlemini tamamlayamadı.",
       "Timeout": "Backend.AI web sunucusu zamanında yanıt vermedi.",
       "Title": "Backend.AI ile oturum açılamadı"
