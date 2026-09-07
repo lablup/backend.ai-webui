@@ -5,7 +5,6 @@
 import { useWebUINavigate } from '.';
 import { backendaiOptions, backendaiUtils } from '../global-stores';
 import { exitActAs, getActAsTarget } from '../helper/actAs';
-import { THEME_FAMILY_STORAGE_KEY } from './useCustomThemeConfig';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,9 +19,6 @@ function clearLoginStorage() {
       localStorage.removeItem(key);
     }
   }
-  // The theme-family mirror caches the signed-in user's `userConfig` choice
-  // for the FOUC bootstrap; it must not leak into the next user's session.
-  localStorage.removeItem(THEME_FAMILY_STORAGE_KEY);
   sessionStorage.clear();
 }
 
