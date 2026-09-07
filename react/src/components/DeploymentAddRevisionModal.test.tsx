@@ -138,6 +138,8 @@ vi.mock('./EnvVarFormList', () => ({ default: () => null }));
 vi.mock('./VFolderTableFormItem', () => ({ default: () => null }));
 vi.mock('./DeploymentPresetDetailModal', () => ({ default: () => null }));
 
+let presetSelectMounts = 0;
+
 // The model-folder picker is the probe for the folder-picker side of the
 // contract: it surfaces the `currentProjectId` it was scoped to.
 vi.mock('backend.ai-ui', async (importOriginal) => {
@@ -157,19 +159,28 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         'select-model-folder',
       ),
     // The preset picker is the probe for the single-select contract: it
-    // surfaces the model-card scope it was given and its disabled hint.
-    BAIAvailablePresetSelect: (props: any) =>
-      React.createElement(
+    // surfaces the model-card scope it was given, its disabled hint, and a
+    // per-instance mount id (the select owns a search string, so a source
+    // switch must remount it rather than reuse the instance).
+    BAIAvailablePresetSelect: (props: any) => {
+      const mountId = React.useRef<number | null>(null);
+      if (mountId.current === null) {
+        presetSelectMounts += 1;
+        mountId.current = presetSelectMounts;
+      }
+      return React.createElement(
         'button',
         {
           'data-testid': 'mock-preset-select',
           'data-model-card-id': props.modelCardId ?? '',
           'data-description': props.description ?? '',
+          'data-mount-id': String(mountId.current),
           disabled: props.isDisabled ?? false,
           type: 'button',
         },
         'select-preset',
-      ),
+      );
+    },
     BAIRuntimeVariantSelect: () => null,
   };
 });
@@ -342,6 +353,8 @@ describe('DeploymentAddRevisionModal preset select (FR-3346)', () => {
     expect(folderModePreset).toHaveAttribute('data-model-card-id', '');
     expect(folderModePreset).toHaveAttribute('data-description', '');
     expect(folderModePreset).toBeEnabled();
+    const folderModeMountId =
+      folderModePreset.getAttribute('data-mount-id') ?? '';
 
     await user.click(
       screen.getByRole('radio', { name: 'deployment.ModelCard' }),
@@ -355,6 +368,13 @@ describe('DeploymentAddRevisionModal preset select (FR-3346)', () => {
     expect(screen.getByTestId('mock-preset-select')).toHaveAttribute(
       'data-description',
       'deployment.SelectModelCardFirst',
+    );
+    // One element type now serves both sources, so the source switch has to
+    // remount it explicitly — otherwise a folder-mode search string would
+    // survive and filter the card's compatible presets.
+    expect(screen.getByTestId('mock-preset-select')).not.toHaveAttribute(
+      'data-mount-id',
+      folderModeMountId,
     );
   });
 });

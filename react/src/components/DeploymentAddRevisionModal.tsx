@@ -2184,7 +2184,11 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                         {/* `modelCardId` routes the options through the card's
                             resource-compatible subset. The "pick a card first"
                             hint rides in `description` because Astryx forbids
-                            wrapping a disabled control in a Tooltip. */}
+                            wrapping a disabled control in a Tooltip.
+                            `key={source}` remounts on a source switch so the
+                            select's internal search string cannot filter the
+                            other source's presets — the two swapped-in element
+                            types used to give that for free. */}
                         <BAIFormItem
                           name="revisionPresetId"
                           messageVariables={{ label: t('modelStore.Preset') }}
@@ -2192,6 +2196,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           rules={[{ required: true }]}
                         >
                           <BAIAvailablePresetSelect
+                            key={source}
                             modelCardId={
                               source === 'card' ? modelCardId : undefined
                             }
