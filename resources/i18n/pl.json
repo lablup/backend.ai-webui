@@ -3530,6 +3530,8 @@
     "EnterConfirmationCode": "Teraz wprowadź hasło jednorazowe wygenerowane przez moduł uwierzytelniający w celu weryfikacji.",
     "InvalidTotpCode": "Nieprawidłowy OTP",
     "OTP": "Hasło jednorazowe",
+    "RegistrationTokenExpired": "Twój link konfiguracyjny uwierzytelniania dwuskładnikowego wygasł. Zaloguj się ponownie, aby otrzymać nowy.",
+    "RegistrationTokenInvalid": "Ten link konfiguracyjny uwierzytelniania dwuskładnikowego jest nieprawidłowy. Zaloguj się ponownie, aby otrzymać nowy.",
     "RemoveTotpSetupCompleted": "Wyłączone 2FA",
     "RequireOTP": "Napisz OTP.",
     "ScanQRToEnable": "Zeskanuj kod QR za pomocą narzędzia uwierzytelniającego, aby rozpocząć konfigurację uwierzytelniania dwuskładnikowego.",

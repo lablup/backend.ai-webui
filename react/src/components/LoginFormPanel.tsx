@@ -906,6 +906,10 @@ const TOTPActivateInline: React.FC<{
       });
   };
 
+  const isInitPending = !isSuccess && !isError;
+  const isInitFailed =
+    isError || !initializedTotp?.totp_uri || !initializedTotp?.totp_key;
+
   return (
     <BAIModal
       title={t('webui.menu.SetupTotp')}
@@ -914,10 +918,12 @@ const TOTPActivateInline: React.FC<{
       open={open}
       onCancel={onCancel}
       destroyOnHidden
-      onOk={handleOk}
-      loading={!isSuccess}
+      // Nothing to submit once initialization failed, so OK returns to the
+      // login form — the only place a fresh setup link comes from.
+      onOk={!isInitPending && isInitFailed ? onCancel : handleOk}
+      loading={isInitPending}
     >
-      {isError || !initializedTotp?.totp_uri || !initializedTotp?.totp_key ? (
+      {isInitFailed ? (
         <BAIFlex>
           {t(
             getTotpActivationErrorMessageKey(

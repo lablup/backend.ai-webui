@@ -3527,6 +3527,8 @@
     "EnterConfirmationCode": "Şimdi doğrulamak için kimlik doğrulayıcı tarafından oluşturulan OTP'yi girin.",
     "InvalidTotpCode": "Geçersiz OTP",
     "OTP": "Tek kullanımlık şifre",
+    "RegistrationTokenExpired": "İki faktörlü kimlik doğrulama kurulum bağlantınızın süresi doldu. Yeni bir bağlantı almak için tekrar oturum açın.",
+    "RegistrationTokenInvalid": "Bu iki faktörlü kimlik doğrulama kurulum bağlantısı geçerli değil. Yeni bir bağlantı almak için tekrar oturum açın.",
     "RemoveTotpSetupCompleted": "Devre Dışı 2FA",
     "RequireOTP": "OTP'yi yazın.",
     "ScanQRToEnable": "İki faktörlü kimlik doğrulamayı ayarlamaya başlamak için kimlik doğrulayıcınızla QR kodunu tarayın.",

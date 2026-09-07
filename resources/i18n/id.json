@@ -3531,6 +3531,8 @@
     "EnterConfirmationCode": "Sekarang masukkan OTP yang dihasilkan oleh autentikator untuk memverifikasi.",
     "InvalidTotpCode": "OTP tidak valid",
     "OTP": "Kata sandi satu kali",
+    "RegistrationTokenExpired": "Tautan penyiapan autentikasi dua faktor Anda telah kedaluwarsa. Masuk kembali untuk menerima tautan baru.",
+    "RegistrationTokenInvalid": "Tautan penyiapan autentikasi dua faktor ini tidak valid. Masuk kembali untuk menerima tautan baru.",
     "RemoveTotpSetupCompleted": "Menonaktifkan 2FA",
     "RequireOTP": "Tulis OTP.",
     "ScanQRToEnable": "Pindai kode QR dengan autentikator Anda untuk mulai menyiapkan autentikasi dua faktor.",

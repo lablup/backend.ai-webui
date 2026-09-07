@@ -3530,6 +3530,8 @@
     "EnterConfirmationCode": "Entrez maintenant l'OTP généré par l'authentificateur pour vérifier.",
     "InvalidTotpCode": "OTP non valide",
     "OTP": "Mot de passe unique",
+    "RegistrationTokenExpired": "Votre lien de configuration de l'authentification à deux facteurs a expiré. Reconnectez-vous pour en recevoir un nouveau.",
+    "RegistrationTokenInvalid": "Ce lien de configuration de l'authentification à deux facteurs n'est pas valide. Reconnectez-vous pour en recevoir un nouveau.",
     "RemoveTotpSetupCompleted": "2FA désactivé",
     "RequireOTP": "Écrivez OTP.",
     "ScanQRToEnable": "Scannez le code QR avec votre authentificateur pour commencer à configurer l'authentification à deux facteurs.",

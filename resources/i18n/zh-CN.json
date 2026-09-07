@@ -3529,6 +3529,8 @@
     "EnterConfirmationCode": "现在输入验证器生成的 OTP 进行验证。",
     "InvalidTotpCode": "无效的 OTP",
     "OTP": "一次性密码",
+    "RegistrationTokenExpired": "您的双因素身份验证设置链接已过期。请重新登录以获取新链接。",
+    "RegistrationTokenInvalid": "此双因素身份验证设置链接无效。请重新登录以获取新链接。",
     "RemoveTotpSetupCompleted": "禁用 2FA",
     "RequireOTP": "写入一次性密码。",
     "ScanQRToEnable": "使用身份验证器扫描二维码，开始设置双因素身份验证。",

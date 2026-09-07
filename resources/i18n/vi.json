@@ -3529,6 +3529,8 @@
     "EnterConfirmationCode": "Bây giờ hãy nhập OTP do trình xác thực tạo ra để xác minh.",
     "InvalidTotpCode": "OTP không hợp lệ",
     "OTP": "Mật khẩu một lần",
+    "RegistrationTokenExpired": "Liên kết thiết lập xác thực hai yếu tố của bạn đã hết hạn. Hãy đăng nhập lại để nhận liên kết mới.",
+    "RegistrationTokenInvalid": "Liên kết thiết lập xác thực hai yếu tố này không hợp lệ. Hãy đăng nhập lại để nhận liên kết mới.",
     "RemoveTotpSetupCompleted": "2FA bị vô hiệu hóa",
     "RequireOTP": "Viết OTP.",
     "ScanQRToEnable": "Quét mã QR bằng trình xác thực của bạn để bắt đầu thiết lập xác thực hai yếu tố.",
