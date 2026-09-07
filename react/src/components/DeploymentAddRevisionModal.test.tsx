@@ -7,7 +7,8 @@ import type { DeploymentAddRevisionModalTestQuery } from '../__generated__/Deplo
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -142,6 +143,8 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...originalModule,
+    // Clicking the probe writes a value into the enclosing Form.Item, which is
+    // what lets a test drive the preset form to a submittable state.
     BAIVFolderSelect: (props: any) =>
       React.createElement(
         'button',
@@ -150,13 +153,32 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
           'data-current-project-id': props.currentProjectId ?? '',
           disabled: props.isDisabled ?? props.disabled,
           type: 'button',
+          onClick: () => props.onChange?.(MOCK_MODEL_FOLDER_ID),
         },
         'select-model-folder',
       ),
-    BAIAvailablePresetSelect: () => null,
+    BAIAvailablePresetSelect: (props: any) =>
+      React.createElement(
+        'button',
+        {
+          'data-testid': 'mock-preset-select',
+          type: 'button',
+          onClick: () => props.onChange?.('revision-preset-id'),
+        },
+        'select-preset',
+      ),
     BAIRuntimeVariantSelect: () => null,
   };
 });
+
+// `toLocalId` (atob) runs over both on submit, so these must be real
+// global ids rather than opaque strings.
+const MOCK_MODEL_FOLDER_ID = btoa(
+  'VirtualFolderNode:11111111-1111-1111-1111-111111111111',
+);
+const MOCK_DEPLOYMENT_ID = btoa(
+  'ModelDeployment:22222222-2222-2222-2222-222222222222',
+);
 
 type DeploymentMetadataMock = {
   resourceGroupName: string;
@@ -193,7 +215,10 @@ const renderModal = (metadata: DeploymentMetadataMock) => {
     MockPayloadGenerator.generate(operation, {
       ModelDeploymentMetadata: () => metadata,
       // Keep the "Load current revision" path quiet: no current revision.
-      ModelDeployment: () => ({ currentRevision: null }),
+      ModelDeployment: () => ({
+        id: MOCK_DEPLOYMENT_ID,
+        currentRevision: null,
+      }),
       DeploymentRevisionPresetConnection: () => ({ count: 1 }),
     }),
   );
@@ -289,5 +314,76 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
     expect(
       screen.queryByTestId('mock-resource-allocation-form'),
     ).not.toBeInTheDocument();
+  });
+});
+
+/**
+ * FR-2526: the folder-browser entry points must close while `addModelRevision`
+ * is in flight and reopen once it settles. `VFolderTable.test.tsx` covers the
+ * table prop; this covers the modal wiring that drives it, so the gate cannot
+ * regress while the table tests still pass.
+ */
+describe('DeploymentAddRevisionModal folder-access gate (FR-2526)', () => {
+  const OPEN_FOLDER = 'modelService.OpenFolder';
+  const GATE_TOOLTIP = 'deployment.FolderAccessDisabledWhileAddingRevision';
+
+  const submitPresetRevision = async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal(DEPLOYMENT_METADATA);
+
+    // Fill the two required preset fields through their form probes.
+    await user.click(await screen.findByTestId('mock-vfolder-select'));
+    await user.click(screen.getByTestId('mock-preset-select'));
+
+    const openFolderButton = screen.getByRole('button', { name: OPEN_FOLDER });
+    // A folder is selected, so the entry point is open before submit.
+    await waitFor(() => {
+      expect(openFolderButton).not.toHaveAttribute('aria-disabled', 'true');
+    });
+    expect(screen.queryByText(GATE_TOOLTIP)).toBeNull();
+
+    await user.click(
+      screen.getByRole('button', { name: 'deployment.AddRevision' }),
+    );
+
+    // `renderModal` queues a single resolver, spent on the test query, so the
+    // mutation stays pending here — which is exactly the in-flight window.
+    await waitFor(() => {
+      expect(openFolderButton).toHaveAttribute('aria-disabled', 'true');
+    });
+    // Disabled *with* the explanation, not silently dead.
+    expect(screen.getByText(GATE_TOOLTIP)).toBeInTheDocument();
+
+    return { environment, openFolderButton };
+  };
+
+  it('closes the model-folder entry point while the revision is being added, and lifts the gate on success', async () => {
+    const { environment } = await submitPresetRevision();
+
+    await act(async () => {
+      environment.mock.resolveMostRecentOperation((operation) =>
+        MockPayloadGenerator.generate(operation),
+      );
+    });
+
+    // The gate is lifted. The button itself stays disabled only because a
+    // successful add resets the preset form, leaving no folder to open.
+    await waitFor(() => {
+      expect(screen.queryByText(GATE_TOOLTIP)).toBeNull();
+    });
+  });
+
+  it('reopens the model-folder entry point when the mutation fails', async () => {
+    const { environment, openFolderButton } = await submitPresetRevision();
+
+    await act(async () => {
+      environment.mock.rejectMostRecentOperation(new Error('add failed'));
+    });
+
+    // The selection survives an error, so the entry point is fully restored.
+    await waitFor(() => {
+      expect(openFolderButton).not.toHaveAttribute('aria-disabled', 'true');
+    });
+    expect(screen.queryByText(GATE_TOOLTIP)).toBeNull();
   });
 });
