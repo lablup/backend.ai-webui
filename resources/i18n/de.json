@@ -2975,7 +2975,6 @@
       "FolderAliasOverlapping": "Aliasnamen überschneiden sich mit anderen bereits bestehenden Namen",
       "FolderAliasOverlappingToAutoMount": "Es existiert ein Auto-Mount-Ordner mit demselben Namen.",
       "FolderSubpath": "Unterpfad",
-      "FolderSubpathInvalid": "Der Unterpfad muss ein relativer Pfad innerhalb des Ordners sein.",
       "FolderToMount": "Ordner zum Einhängen",
       "FolderToMountList": "Ordner zum Einhängen",
       "GPUSlot": "Slot",

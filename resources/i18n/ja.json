@@ -2975,7 +2975,6 @@
       "FolderAliasOverlapping": "代替名前が既に存在する他の名前と重なります。",
       "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。",
       "FolderSubpath": "サブパス",
-      "FolderSubpathInvalid": "サブパスはフォルダ内の相対パスである必要があります。",
       "FolderToMount": "マウントするフォルダー",
       "FolderToMountList": "マウントするフォルダー",
       "GPUSlot": "スロット",

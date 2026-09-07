@@ -2960,7 +2960,6 @@
       "FolderAliasOverlapping": "Aliases overlap with other names that already exist",
       "FolderAliasOverlappingToAutoMount": "An auto-mount folder with the same name exists.",
       "FolderSubpath": "Subpath",
-      "FolderSubpathInvalid": "The subpath must be a relative path inside the folder.",
       "FolderToMount": "Folder to mount",
       "FolderToMountList": "Folder to mount",
       "GPUSlot": "Slot",

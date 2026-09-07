@@ -12,7 +12,8 @@ import { useTranslation } from 'react-i18next';
 const SessionLauncherFormIncompatibleValueChecker: React.FC<{
   form: FormInstance<SessionLauncherFormValue>;
 }> = ({ form }) => {
-  const mounts = Form.useWatch('mounts', form);
+  // `mounts` has no Form.Item of its own; `preserve` reads the raw store.
+  const mounts = Form.useWatch('mounts', { form, preserve: true });
   const app = App.useApp();
   const { t } = useTranslation();
 

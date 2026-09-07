@@ -2973,7 +2973,6 @@
       "FolderAliasOverlapping": "Τα ψευδώνυμα επικαλύπτονται με άλλα ονόματα που ήδη υπάρχουν",
       "FolderAliasOverlappingToAutoMount": "Υπάρχει ένας φάκελος αυτόματης προσάρτησης με το ίδιο όνομα.",
       "FolderSubpath": "Υποδιαδρομή",
-      "FolderSubpathInvalid": "Η υποδιαδρομή πρέπει να είναι σχετική διαδρομή μέσα στον φάκελο.",
       "FolderToMount": "Φάκελος για προσάρτηση",
       "FolderToMountList": "Φάκελος για προσάρτηση",
       "GPUSlot": "Θυρίδα",

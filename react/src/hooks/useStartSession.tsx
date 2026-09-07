@@ -10,7 +10,6 @@ import {
   UNIFIED_SLOT_TAG_PREFIX,
   isUnifiedAcceleratorSlot,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
-import { DEFAULT_ALIAS_BASE_PATH } from '../helper/vfolderMounts';
 import {
   SessionLauncherFormValue,
   SessionResources,
@@ -22,11 +21,9 @@ import {
 } from './useCurrentProject';
 import { useResolveImageReference } from './useDefaultImagesWithFallback';
 import {
-  type VFolderMountConfigValue,
-  convertToUUID,
   generateRandomString,
-  inputToMountDestination,
   toGlobalId,
+  toMountCreationConfig,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -124,39 +121,6 @@ export type StartSessionWithDefaultValue = Omit<
 export type StartSessionResults = {
   fulfilled?: PromiseFulfilledResult<SessionCreationSuccess>[];
   rejected?: PromiseRejectedResult[];
-};
-
-/**
- * Split the picked mounts into the three `creation_config` fields the manager
- * takes: the vfolder ids, their resolved container paths, and — only where the
- * user picked one — the in-vfolder subpath to mount instead of the root.
- */
-const buildMountConfig = (
-  vfolderMounts: Array<VFolderMountConfigValue> | undefined,
-) => {
-  const entries = _.map(vfolderMounts ?? [], (mount) => ({
-    id: convertToUUID(mount.vfolderId),
-    mountDestination: inputToMountDestination(
-      mount.name || mount.vfolderId,
-      mount.mountDestination,
-      DEFAULT_ALIAS_BASE_PATH,
-    ),
-    subpath: mount.subpath?.trim(),
-  }));
-  const mountOptions = _.fromPairs(
-    _.map(
-      _.filter(entries, (entry) => !!entry.subpath),
-      (entry) => [entry.id, { subpath: entry.subpath }],
-    ),
-  );
-
-  return {
-    mount_ids: _.map(entries, (entry) => entry.id),
-    mount_id_map: _.fromPairs(
-      _.map(entries, (entry) => [entry.id, entry.mountDestination]),
-    ),
-    ...(_.isEmpty(mountOptions) ? {} : { mount_options: mountOptions }),
-  };
 };
 
 export const useStartSession = () => {
@@ -347,8 +311,7 @@ export const useStartSession = () => {
             },
           }),
 
-          // Storage configuration
-          ...buildMountConfig(values.vfolderMounts),
+          ...toMountCreationConfig(values.vfolderMounts),
 
           // Environment variables
           environ: {

@@ -2973,7 +2973,6 @@
       "FolderAliasOverlapping": "Los alias se solapan con otros nombres ya existentes",
       "FolderAliasOverlappingToAutoMount": "Existe una carpeta de montaje automático con el mismo nombre.",
       "FolderSubpath": "Subruta",
-      "FolderSubpathInvalid": "La subruta debe ser una ruta relativa dentro de la carpeta.",
       "FolderToMount": "Carpeta para montar",
       "FolderToMountList": "Carpeta para montar",
       "GPUSlot": "Ranura",

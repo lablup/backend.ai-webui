@@ -2973,7 +2973,6 @@
       "FolderAliasOverlapping": "Псевдонимы дублируют уже существующие имена",
       "FolderAliasOverlappingToAutoMount": "Существует папка автомонтирования с таким же именем.",
       "FolderSubpath": "Подпуть",
-      "FolderSubpathInvalid": "Подпуть должен быть относительным путём внутри папки.",
       "FolderToMount": "Папка для монтажа",
       "FolderToMountList": "Папка для монтажа",
       "GPUSlot": "Слот",

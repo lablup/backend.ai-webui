@@ -2975,7 +2975,6 @@
       "FolderAliasOverlapping": "Os pseudónimos sobrepõem-se a outros nomes que já existem",
       "FolderAliasOverlappingToAutoMount": "Existe uma pasta de montagem automática com o mesmo nome.",
       "FolderSubpath": "Subcaminho",
-      "FolderSubpathInvalid": "O subcaminho deve ser um caminho relativo dentro da pasta.",
       "FolderToMount": "Pasta para montar",
       "FolderToMountList": "Pasta para montar",
       "GPUSlot": "Slot",

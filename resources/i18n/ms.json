@@ -2973,7 +2973,6 @@
       "FolderAliasOverlapping": "Alias bertindih dengan nama lain yang sudah wujud",
       "FolderAliasOverlappingToAutoMount": "Folder auto-lekap dengan nama yang sama wujud.",
       "FolderSubpath": "Sublaluan",
-      "FolderSubpathInvalid": "Sublaluan mestilah laluan relatif di dalam folder.",
       "FolderToMount": "Folder untuk dipasang",
       "FolderToMountList": "Folder untuk dipasang",
       "GPUSlot": "Slot",

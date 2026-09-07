@@ -2975,7 +2975,6 @@
       "FolderAliasOverlapping": "대체 이름이 이미 존재하는 다른 이름과 겹칩니다.",
       "FolderAliasOverlappingToAutoMount": "동일한 이름의 자동 마운트 폴더가 존재합니다.",
       "FolderSubpath": "서브경로",
-      "FolderSubpathInvalid": "서브경로는 폴더 내부의 상대 경로여야 합니다.",
       "FolderToMount": "마운트할 폴더",
       "FolderToMountList": "마운트할 폴더",
       "GPUSlot": "슬롯",

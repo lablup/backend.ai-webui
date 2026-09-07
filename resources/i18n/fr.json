@@ -2976,7 +2976,6 @@
       "FolderAliasOverlapping": "Les alias font double emploi avec d'autres noms déjà existants",
       "FolderAliasOverlappingToAutoMount": "Il existe un dossier de montage automatique portant le même nom.",
       "FolderSubpath": "Sous-chemin",
-      "FolderSubpathInvalid": "Le sous-chemin doit être un chemin relatif à l'intérieur du dossier.",
       "FolderToMount": "Dossier à monter",
       "FolderToMountList": "Dossier à monter",
       "GPUSlot": "Slot",

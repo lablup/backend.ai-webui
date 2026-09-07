@@ -2975,7 +2975,6 @@
       "FolderAliasOverlapping": "别名与已存在的其他名称重叠",
       "FolderAliasOverlappingToAutoMount": "存在同名的自动挂载文件夹。",
       "FolderSubpath": "子路径",
-      "FolderSubpathInvalid": "子路径必须是文件夹内的相对路径。",
       "FolderToMount": "要挂载的文件夹",
       "FolderToMountList": "要挂载的文件夹",
       "GPUSlot": "插槽",

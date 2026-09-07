@@ -2976,7 +2976,6 @@
       "FolderAliasOverlapping": "Aliasy pokrywają się z innymi nazwami, które już istnieją",
       "FolderAliasOverlappingToAutoMount": "Istnieje folder automatycznego montażu o tej samej nazwie.",
       "FolderSubpath": "Podścieżka",
-      "FolderSubpathInvalid": "Podścieżka musi być ścieżką względną wewnątrz folderu.",
       "FolderToMount": "Folder do zamontowania",
       "FolderToMountList": "Folder do zamontowania",
       "GPUSlot": "Otwór",
