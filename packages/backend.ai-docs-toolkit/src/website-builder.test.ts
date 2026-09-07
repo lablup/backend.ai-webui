@@ -22,6 +22,7 @@ import {
   buildIndexPage,
   buildLangRedirectStubPage,
   buildLanguagePickerPage,
+  buildNotFoundPage,
   buildRootRedirectIndexPage,
   buildWebPage,
   type WebPageContext,
@@ -1957,6 +1958,109 @@ describe("buildLangRedirectStubPage — FR-3247 per-language redirect stubs", ()
       /<title>Docs<\/title>\n {2}<meta name="robots" content="noindex" \/>/,
     );
     assert.doesNotMatch(html, /og:|twitter:/);
+  });
+});
+
+describe("buildNotFoundPage — FR-3280 unmatched-path fallback", () => {
+  const baseLanguages = [
+    { lang: "en", label: "English" },
+    { lang: "ko", label: "한국어" },
+    { lang: "ja", label: "日本語" },
+    { lang: "th", label: "ภาษาไทย" },
+  ];
+
+  const versioned = () =>
+    buildNotFoundPage({
+      title: "Backend.AI WebUI User Guide",
+      productName: "Backend.AI WebUI",
+      languages: baseLanguages,
+      basePath: "latest",
+    });
+
+  it("links every supported language under the /latest/ alias", () => {
+    const html = versioned();
+    for (const { lang, label } of baseLanguages) {
+      assert.match(html, new RegExp(`href="/latest/${lang}/"`));
+      assert.ok(html.includes(label), `missing label ${label}`);
+    }
+  });
+
+  it("links the /latest/ alias itself as the documentation home", () => {
+    assert.match(versioned(), /href="\/latest\/"/);
+  });
+
+  it("uses site-root-absolute hrefs only — the page is served under the requested path", () => {
+    const html = versioned();
+    assert.doesNotMatch(html, /href="\.\//);
+    assert.doesNotMatch(html, /href="\.\.\//);
+  });
+
+  it("does not redirect: no inline script and no meta refresh", () => {
+    const html = versioned();
+    assert.doesNotMatch(html, /<script/i);
+    assert.doesNotMatch(html, /http-equiv="refresh"/i);
+  });
+
+  it("is noindex and announces the 404", () => {
+    const html = versioned();
+    assert.match(html, /<meta name="robots" content="noindex" \/>/);
+    assert.match(html, />404</);
+    assert.match(html, /Page not found/);
+  });
+
+  it("drops the alias segment in flat mode (no basePath)", () => {
+    const html = buildNotFoundPage({
+      title: "Docs",
+      productName: "Docs",
+      languages: baseLanguages,
+    });
+    assert.match(html, /href="\/en\/"/);
+    assert.doesNotMatch(html, /href="\/latest\//);
+  });
+
+  it("HTML-escapes the title, product name and language labels", () => {
+    const html = buildNotFoundPage({
+      title: "<script>alert(1)</script>",
+      productName: "A & B",
+      languages: [{ lang: "en", label: "<b>English</b>" }],
+    });
+    assert.doesNotMatch(html, /<script/i);
+    assert.match(html, /&lt;b&gt;English&lt;\/b&gt;/);
+    assert.match(html, /A &amp; B/);
+  });
+
+  it("rejects an empty language list and path-breakout inputs", () => {
+    assert.throws(
+      () =>
+        buildNotFoundPage({
+          title: "Docs",
+          productName: "Docs",
+          languages: [],
+        }),
+      /must contain at least one entry/,
+    );
+    for (const bad of ["..", ".", "../x", "a/b", ".hidden"]) {
+      assert.throws(
+        () =>
+          buildNotFoundPage({
+            title: "Docs",
+            productName: "Docs",
+            languages: baseLanguages,
+            basePath: bad,
+          }),
+        /invalid basePath/,
+        `expected ${JSON.stringify(bad)} to be rejected`,
+      );
+    }
+    assert.throws(
+      () =>
+        buildNotFoundPage({
+          title: "Docs",
+          productName: "Docs",
+          languages: [{ lang: "../x", label: "x" }],
+        }),
+      /invalid lang/,
+    );
   });
 });
 
