@@ -3118,6 +3118,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Không có dữ liệu",
       "NoLiveData": "Không có dữ liệu trực tiếp",
+      "NoLiveMetrics": "__NOT_TRANSLATED__",
+      "NoLiveMetricsForSessionsInView": "__NOT_TRANSLATED__",
       "NoSessionsMatchingFilter": "Không có phiên nào khớp với bộ lọc hiện tại.",
       "OmittedNoResource": "Đang ẩn {{count}} phiên không được cấp phát {{label}}.",
       "RangePercent": "{{from}}–{{to}}%",

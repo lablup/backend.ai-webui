@@ -3116,6 +3116,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Χωρίς δεδομένα",
       "NoLiveData": "Χωρίς δεδομένα σε πραγματικό χρόνο",
+      "NoLiveMetrics": "__NOT_TRANSLATED__",
+      "NoLiveMetricsForSessionsInView": "__NOT_TRANSLATED__",
       "NoSessionsMatchingFilter": "Καμία συνεδρία δεν ταιριάζει με το τρέχον φίλτρο.",
       "OmittedNoResource": "Απόκρυψη {{count}} συνεδριών χωρίς εκχωρημένο {{label}}.",
       "RangePercent": "{{from}}–{{to}}%",

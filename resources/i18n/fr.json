@@ -3119,6 +3119,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Aucune donnée",
       "NoLiveData": "Aucune donnée en direct",
+      "NoLiveMetrics": "__NOT_TRANSLATED__",
+      "NoLiveMetricsForSessionsInView": "__NOT_TRANSLATED__",
       "NoSessionsMatchingFilter": "Aucune session ne correspond au filtre actuel.",
       "OmittedNoResource": "Masquage de {{count}} sessions sans {{label}} alloué.",
       "RangePercent": "{{from}}–{{to}}%",

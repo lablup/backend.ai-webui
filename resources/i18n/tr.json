@@ -3116,6 +3116,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Veri yok",
       "NoLiveData": "Canlı veri yok",
+      "NoLiveMetrics": "__NOT_TRANSLATED__",
+      "NoLiveMetricsForSessionsInView": "__NOT_TRANSLATED__",
       "NoSessionsMatchingFilter": "Geçerli filtreyle eşleşen oturum yok.",
       "OmittedNoResource": "{{label}} ayrılmamış {{count}} oturum gizleniyor.",
       "RangePercent": "{{from}}–{{to}}%",

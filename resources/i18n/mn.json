@@ -3118,6 +3118,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Өгөгдөл байхгүй",
       "NoLiveData": "Шууд өгөгдөл байхгүй",
+      "NoLiveMetrics": "__NOT_TRANSLATED__",
+      "NoLiveMetricsForSessionsInView": "__NOT_TRANSLATED__",
       "NoSessionsMatchingFilter": "Одоогийн шүүлтэд тохирох сесс байхгүй байна.",
       "OmittedNoResource": "{{label}} хуваарилагдаагүй {{count}} сесс нуугдаж байна.",
       "RangePercent": "{{from}}–{{to}}%",

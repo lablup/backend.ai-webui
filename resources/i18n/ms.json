@@ -3116,6 +3116,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Tiada data",
       "NoLiveData": "Tiada data langsung",
+      "NoLiveMetrics": "__NOT_TRANSLATED__",
+      "NoLiveMetricsForSessionsInView": "__NOT_TRANSLATED__",
       "NoSessionsMatchingFilter": "Tiada sesi yang sepadan dengan penapis semasa.",
       "OmittedNoResource": "Menyembunyikan {{count}} sesi tanpa {{label}} yang diperuntukkan.",
       "RangePercent": "{{from}}–{{to}}%",

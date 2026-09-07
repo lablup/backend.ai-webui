@@ -3119,6 +3119,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "데이터 없음",
       "NoLiveData": "실시간 데이터 없음",
+      "NoLiveMetrics": "실시간 메트릭 없음",
+      "NoLiveMetricsForSessionsInView": "현재 목록의 세션 중 실시간 메트릭을 보고하는 세션이 없습니다.",
       "NoSessionsMatchingFilter": "현재 필터에 해당하는 세션이 없습니다.",
       "OmittedNoResource": "{{label}} 할당이 없는 세션 {{count}}개는 표시하지 않습니다.",
       "RangePercent": "{{from}}–{{to}}%",
