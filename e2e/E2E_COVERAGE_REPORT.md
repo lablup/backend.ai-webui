@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-09-04
+> **Last Updated:** 2026-09-08
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 317 / 462 features covered (68%)**
+**Overall (in-scope routes): 319 / 464 features covered (68%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -31,7 +31,7 @@
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
 | Environment              | `/environment`                                   |    27    |   21    | 🔶 78%  |
-| Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
+| Configurations           | `/settings`                                      |    13    |   11    | 🔶 85%  |
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
 | User Credentials         | `/credential`                                    |    22    |   15    | 🔶 68%  |
@@ -52,7 +52,7 @@
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    4     |    4    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
-| **Total**                |                                                  | **482**  | **328** | **68%** |
+| **Total**                |                                                  | **484**  | **330** | **68%** |
 
 ---
 
@@ -613,12 +613,14 @@
 | 401 for unauthorized pages                           | ✅     | `Regular user sees 401 page`                |
 | Root redirect with blocklist                         | ✅     | `redirected to first available page`        |
 | Combined blocklist + inactiveList                    | ✅     | `correct behavior when both configured`     |
+| Hide list menu hiding (route stays reachable)        | ✅     | `pages in hidelist in the menu`             |
+| Root redirect skips hidden landing page              | ✅     | `Root redirect skips a hidden landing page` |
 | Config clear restore behavior                        | ✅     | `Configuration can be cleared to restore`   |
 | showNonInstalledImages setting                       | ✅     | `showNonInstalledImages`                    |
 | Overlay network setting → OverlayNetworkSettingModal | ❌     | -                                           |
 | Scheduler setting → SchedulerSettingModal            | ❌     | -                                           |
 
-**Coverage: 🔶 9/11 features**
+**Coverage: 🔶 11/13 features**
 
 ---
 
