@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form, type FormInstance } from '../form-engine';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { ownerEmailFromOwner } from '../helper/vfolderMounts';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useAutoMountedFolderNames } from '../hooks/useAutoMountedFolderNames';
@@ -16,9 +17,10 @@ import {
 import * as _ from 'lodash-es';
 import React from 'react';
 
-const MOUNT_IN_SESSION_PERMISSION = 'mount-in-session';
-
-const isSelectableFolder = (folder: LegacyVFolder) => folder.status === 'ready';
+// The auto-mount query is capped at 100 names, so exclude dotfiles here too
+// rather than relying on that list being complete.
+const isSelectableFolder = (folder: LegacyVFolder) =>
+  folder.status === 'ready' && !folder.name.startsWith('.');
 
 const SessionLauncherStorageStep: React.FC<{
   form: FormInstance<SessionLauncherFormValue>;

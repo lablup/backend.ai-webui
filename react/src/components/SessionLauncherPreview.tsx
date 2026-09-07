@@ -92,7 +92,8 @@ const SessionLauncherImageRow: React.FC = () => {
 
 const SessionLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: SessionLauncherStepKey) => void;
-}> = ({ onClickEditStep }) => {
+  currentProjectId: string;
+}> = ({ onClickEditStep, currentProjectId }) => {
   const app = App.useApp();
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
@@ -100,9 +101,7 @@ const SessionLauncherPreview: React.FC<{
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentProject = useCurrentProjectValue();
-  const autoMountedFolderNames = useAutoMountedFolderNames(
-    currentProject.id ?? '',
-  );
+  const autoMountedFolderNames = useAutoMountedFolderNames(currentProjectId);
 
   const mountRows = resolveVFolderMounts(form.getFieldValue('vfolderMounts'));
   const hasAnySubpath = _.some(mountRows, (row) => !!row.subpath);
