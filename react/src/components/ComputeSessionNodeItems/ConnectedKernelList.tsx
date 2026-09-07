@@ -7,7 +7,6 @@ import {
   ConnectedKernelListFragment$key,
 } from '../../__generated__/ConnectedKernelListFragment.graphql';
 import { ContainerLogModalFragment$key } from '../../__generated__/ContainerLogModalFragment.graphql';
-// import BAIPropertyFilter from '../BAIPropertyFilter';
 import ContainerLogModal from './ContainerLogModal';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -34,9 +33,6 @@ type Kernel = NonNullable<ConnectedKernelListFragment$data[number]>;
 interface ConnectedKernelListProps {
   kernelsFrgmt: ConnectedKernelListFragment$key;
   sessionFrgmtForLogModal: ContainerLogModalFragment$key;
-  // fetchKey?: string;
-  // get the project id of the session for <= v24.12.0.
-  // projectId?: string | null;
 }
 
 const kernelStatusTagColor = {
@@ -162,29 +158,12 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
   }, [kernelNodes]);
   return (
     <>
-      {/* TODO: implement filter when compute_session_node query supports filter */}
-      {/* <BAIPropertyFilter
-        filterProperties={[
-          {
-            key: 'agent_id',
-            propertyLabel: t('kernel.AgentId'),
-            type: 'string',
-          },
-        ]}
-        value={filterString}
-        onChange={(value) => {
-          startFilterTransition(() => {
-            setFilterString(value);
-          });
-        }}
-      /> */}
       <BAITable
         scroll={{ x: 'max-content' }}
         bordered
-        // loading={isPendingFilter}
         rowKey="id"
         columns={columns}
-        dataSource={sortedKernels} // TODO: implement pagination when compute_session_node query supports pagination
+        dataSource={sortedKernels}
       />
 
       <BAIUnmountAfterClose>

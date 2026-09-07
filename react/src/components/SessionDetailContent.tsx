@@ -19,6 +19,7 @@ import { ProjectContextOrNull } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import CodeHighlighterModal from './CodeHighlighterModal';
 import ConnectedKernelList from './ComputeSessionNodeItems/ConnectedKernelList';
+import ConnectedKernelListV2 from './ComputeSessionNodeItems/ConnectedKernelListV2';
 import EditableSessionName from './ComputeSessionNodeItems/EditableSessionName';
 import SessionAccessKey from './ComputeSessionNodeItems/SessionAccessKey';
 import SessionActionButtons from './ComputeSessionNodeItems/SessionActionButtons';
@@ -671,12 +672,20 @@ const SessionDetailContent: React.FC<{
         </TabList>
         {activeTabKey === 'kernels' && (
           <Suspense fallback={<BAISkeleton />}>
-            <ConnectedKernelList
-              kernelsFrgmt={filterOutNullAndUndefined(
-                session.kernel_nodes?.edges.map((e) => e?.node),
-              )}
-              sessionFrgmtForLogModal={session}
-            />
+            {baiClient.supports('session-kernels-v2') && session.row_id ? (
+              <ConnectedKernelListV2
+                sessionId={session.row_id}
+                sessionFrgmtForLogModal={session}
+                fetchKey={fetchKey}
+              />
+            ) : (
+              <ConnectedKernelList
+                kernelsFrgmt={filterOutNullAndUndefined(
+                  session.kernel_nodes?.edges.map((e) => e?.node),
+                )}
+                sessionFrgmtForLogModal={session}
+              />
+            )}
           </Suspense>
         )}
         {activeTabKey === 'auditLog' && session.row_id && (
