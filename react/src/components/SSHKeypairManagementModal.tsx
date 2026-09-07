@@ -38,7 +38,10 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   ] = useToggle(false);
   const [
     isOpenSSHKeypairManualFormModal,
-    { toggle: toggleSSHKeypairManualFormModal },
+    {
+      toggle: toggleSSHKeypairManualFormModal,
+      setLeft: closeSSHKeypairManualFormModal,
+    },
   ] = useToggle(false);
 
   const baiClient = useSuspendedBackendaiClient();
@@ -106,10 +109,10 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
       />
       <SSHKeypairManualFormModal
         open={isOpenSSHKeypairManualFormModal}
-        onCancel={toggleSSHKeypairManualFormModal}
-        onRequestClose={() => {
-          toggleSSHKeypairManualFormModal();
-        }}
+        // Closing is idempotent: the modal now closes from the mutation's
+        // onSuccess, so a toggle would reopen it after a cancel mid-request.
+        onCancel={closeSSHKeypairManualFormModal}
+        onRequestClose={closeSSHKeypairManualFormModal}
         onRequestRefresh={() => {
           startRefreshModalTransition(() => {
             updateFetchKey();
