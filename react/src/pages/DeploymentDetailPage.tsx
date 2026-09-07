@@ -287,6 +287,23 @@ const DeploymentDetailPage: React.FC = () => {
   const isOwnedByCurrentUser =
     !creatorEmail || creatorEmail === currentUser.email;
 
+  // The reason IS the flag (FR-3679): `undefined` enables, a string disables
+  // and names why, so "disabled with no reason" cannot be expressed.
+  const addRevisionDisabledReason = isDeploymentDestroying
+    ? t('deployment.DeploymentStopped')
+    : isProjectMismatch
+      ? t('deployment.AddRevisionDisabledProjectMismatch')
+      : undefined;
+  // Kept identical to the Access Tokens card's Create guard
+  // (DeploymentAccessTokensCard) — both open CreateAccessTokenModal.
+  const createAccessTokenDisabledReason = isDeploymentDestroying
+    ? t('deployment.DeploymentStopped')
+    : !isOwnedByCurrentUser
+      ? t('deployment.accessToken.OnlyOwnerCanManage')
+      : !hasEndpointUrl
+        ? t('deployment.accessToken.EndpointNotIssuedYet')
+        : undefined;
+
   const handleRefetch = () => {
     startRefetchTransition(() => updateFetchKey());
   };
@@ -407,7 +424,8 @@ const DeploymentDetailPage: React.FC = () => {
               action={async () => {
                 openCreateAccessToken();
               }}
-              disabled={isDeploymentDestroying}
+              disabled={!!createAccessTokenDisabledReason}
+              title={createAccessTokenDisabledReason}
             >
               {t('deployment.AddAccessToken')}
             </BAIButton>
@@ -433,7 +451,7 @@ const DeploymentDetailPage: React.FC = () => {
         revisionFetchKey={revisionFetchKey}
         onAddRevision={openAddRevision}
         revisionCardRef={revisionsSectionRef}
-        isAddRevisionDisabled={isDeploymentDestroying || isProjectMismatch}
+        addRevisionDisabledReason={addRevisionDisabledReason}
       />
       <DeploymentReplicasCard
         deploymentFrgmt={deployment}
