@@ -1,0 +1,24 @@
+{
+  "epicKey": "FR-2871",
+  "epicUrl": "https://lablup.atlassian.net/browse/FR-2871",
+  "slug": "webui-smoke-cli",
+  "specTaskKey": "FR-2872",
+  "specTaskUrl": "https://lablup.atlassian.net/browse/FR-2872",
+  "stories": [],
+  "sourceIssues": [],
+  "createdAt": "2026-05-12T00:00:00Z",
+  "verification": {
+    "verifiedAt": "2026-05-12T11:30:00Z",
+    "againstPRs": [7391, 7392],
+    "results": {
+      "FR-A": "PASS",
+      "FR-B": "PASS",
+      "FR-C": "PARTIAL",
+      "NFR-air-gap": "DEFERRED-Phase2",
+      "NFR-single-account": "PASS",
+      "NFR-role-detection": "PASS",
+      "NFR-report-shape": "PASS"
+    },
+    "notes": "FR-C is PARTIAL because storage-state reuse, doctor command, and rich diagnostic block are intentionally deferred to Phase 2 (FR-2878 / FR-2879). The @smoke-any tag from FR-A was dropped — see spec FR-A NOTE. Live staging smoke run confirmed runner pipeline works end-to-end."
+  }
+}
