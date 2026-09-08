@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3f56789e1280421a0a9fe4243d0540e0>>
+ * @generated SignedSource<<86e4598e9fd0803ea5ef26912a5a9c7a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,10 +11,9 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type useAppConfigUserRawQuery$variables = {
   configNames: ReadonlyArray<string>;
-  scopeId?: string | null | undefined;
 };
 export type useAppConfigUserRawQuery$data = {
-  readonly scopedAppConfigFragmentsByNames: ReadonlyArray<{
+  readonly myAppConfigFragmentsByNames: ReadonlyArray<{
     readonly config: any;
     readonly configName: string;
     readonly id: string;
@@ -31,11 +30,6 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "configNames"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "scopeId"
   }
 ],
 v1 = [
@@ -46,27 +40,11 @@ v1 = [
         "kind": "Variable",
         "name": "configNames",
         "variableName": "configNames"
-      },
-      {
-        "fields": [
-          {
-            "kind": "Variable",
-            "name": "scopeId",
-            "variableName": "scopeId"
-          },
-          {
-            "kind": "Literal",
-            "name": "scopeType",
-            "value": "USER"
-          }
-        ],
-        "kind": "ObjectValue",
-        "name": "scope"
       }
     ],
     "concreteType": "AppConfigFragment",
     "kind": "LinkedField",
-    "name": "scopedAppConfigFragmentsByNames",
+    "name": "myAppConfigFragmentsByNames",
     "plural": true,
     "selections": [
       {
@@ -112,16 +90,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "20e2d2aaacb573642adee91548ab392f",
+    "cacheID": "e476c6218d5fa057aff9b9db4c9fe0cc",
     "id": null,
     "metadata": {},
     "name": "useAppConfigUserRawQuery",
     "operationKind": "query",
-    "text": "query useAppConfigUserRawQuery(\n  $configNames: [String!]!\n  $scopeId: UUID\n) {\n  scopedAppConfigFragmentsByNames(scope: {scopeType: USER, scopeId: $scopeId}, configNames: $configNames) {\n    id\n    configName\n    config\n  }\n}\n"
+    "text": "query useAppConfigUserRawQuery(\n  $configNames: [String!]!\n) {\n  myAppConfigFragmentsByNames(configNames: $configNames) {\n    id\n    configName\n    config\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "aeb233a3623cae47788f0ef5fe145677";
+(node as any).hash = "7f9848765da70b4686294fe8adfa28d7";
 
 export default node;

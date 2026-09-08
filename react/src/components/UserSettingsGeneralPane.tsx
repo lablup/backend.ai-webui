@@ -25,6 +25,7 @@ import ShellScriptEditModal, { ShellScriptType } from './ShellScriptEditModal';
 import { Button } from '@lablup/ui-common/Button';
 import {
   filterOutEmpty,
+  useErrorMessageResolver,
   useSessionStorageState,
   useToggle,
 } from 'backend.ai-ui';
@@ -38,6 +39,7 @@ const UserSettingsGeneralPane = () => {
 
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
 
   const { themeMode, setThemeMode } = useThemeMode();
@@ -186,8 +188,8 @@ const UserSettingsGeneralPane = () => {
               onChange: (value: string | number | undefined) => {
                 if (typeof value === 'string') {
                   setThemeFamily(value);
-                  updateMyUserAppConfig('themeFamily', value).catch(() => {
-                    message.error(t('dialog.ErrorOccurred'));
+                  updateMyUserAppConfig('themeFamily', value).catch((error) => {
+                    message.error(getErrorMessage(error));
                   });
                 }
               },
@@ -195,9 +197,11 @@ const UserSettingsGeneralPane = () => {
               // so resolution keeps following the `default` family.
               onReset: () => {
                 setThemeFamily(undefined);
-                updateMyUserAppConfig('themeFamily', undefined).catch(() => {
-                  message.error(t('dialog.ErrorOccurred'));
-                });
+                updateMyUserAppConfig('themeFamily', undefined).catch(
+                  (error) => {
+                    message.error(getErrorMessage(error));
+                  },
+                );
               },
             }
           : null,
