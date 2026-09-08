@@ -283,7 +283,7 @@ describe('BAIInteractiveLoginButton', () => {
           ok: true,
           status: 200,
           json: async () =>
-            url.startsWith(WEBSERVER_URL)
+            url === `${WEBSERVER_URL}/server/login-check`
               ? { authenticated: true, session_id: 'sess-first' }
               : { authenticated: false, data: null },
         })),
