@@ -1,7 +1,7 @@
 import { BAIDirectoryPickerQuery } from '../components/baiClient/FileExplorer/BAIDirectoryPickerModal';
 import type { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
 import { BAIClientProvider } from '../components/provider/BAIClientProvider';
-import { toGlobalId, toLocalId } from '../helper';
+import { convertToUUID, toGlobalId, toLocalId } from '../helper';
 import {
   createMockVFolderFileClient,
   type MockVFolderFileTrees,
@@ -38,9 +38,14 @@ export interface MockVFolderFileProvidersProps {
  * and whose signed `GET /folders` request answers `folders`.
  */
 const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
-  vfolders = [],
-  trees = {},
   folders,
+  // A REST-fed story still needs the path picker's `vfolder_node` answered,
+  // so the Relay folders default to the REST rows.
+  vfolders = (folders ?? []).map((folder): MockVFolder => ({
+    name: folder.name,
+    row_id: convertToUUID(folder.id),
+  })),
+  trees = {},
   suspenseFallback,
   children,
 }) => {
