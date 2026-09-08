@@ -19,7 +19,6 @@ import BAIText from '../BAIText';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
 import { Badge } from '@astryxdesign/core/Badge';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
@@ -507,22 +506,20 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
         />
         <ButtonGroup label={t('comp:BAIVFolderMountConfigInput.Folders')}>
           {onClickCreateFolder ? (
-            <IconButton
-              icon={<PlusIcon />}
-              label={t('comp:BAIVFolderMountConfigInput.CreateFolder')}
-              tooltip={t('comp:BAIVFolderMountConfigInput.CreateFolder')}
-              isDisabled={disabled}
+            <BAIButton
+              icon={<PlusIcon size="1em" />}
+              title={t('comp:BAIVFolderMountConfigInput.CreateFolder')}
+              disabled={disabled}
               onClick={onClickCreateFolder}
             />
           ) : null}
-          <IconButton
+          <BAIButton
             icon={<RotateCw size="1em" />}
-            label={t('comp:BAIVFolderMountConfigInput.Refresh')}
-            tooltip={t('comp:BAIVFolderMountConfigInput.Refresh')}
-            isLoading={isFetching}
-            isDisabled={disabled}
-            onClick={() => {
-              refetch();
+            title={t('comp:BAIVFolderMountConfigInput.Refresh')}
+            loading={isFetching}
+            disabled={disabled}
+            action={async () => {
+              await refetch();
             }}
           />
         </ButtonGroup>
