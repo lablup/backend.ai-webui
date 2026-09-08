@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "Przeglądarka zablokowała żądanie do serwera WWW Backend.AI. Zwykle jest to ograniczenie CORS lub mieszanej zawartości.",
       "HttpError": "Serwer WWW Backend.AI zwrócił błąd ({{status}}).",
+      "InvalidCallback": "Adres powrotu logowania skonfigurowany dla {{appName}} nie jest prawidłowym adresem internetowym.",
       "InvalidResponse": "Serwer WWW Backend.AI zwrócił nieoczekiwaną odpowiedź.",
       "NoEndpoint": "Dla aplikacji {{appName}} nie skonfigurowano adresu serwera WWW Backend.AI.",
       "NoSessionId": "Jesteś zalogowany w Backend.AI, ale serwer WWW nie zwrócił identyfikatora sesji.",

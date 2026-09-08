@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "Le navigateur a bloqué la requête vers le serveur web Backend.AI. Il s'agit généralement d'une restriction CORS ou de contenu mixte.",
       "HttpError": "Le serveur web Backend.AI a renvoyé une erreur ({{status}}).",
+      "InvalidCallback": "L'adresse de retour de connexion configurée pour {{appName}} n'est pas une adresse web valide.",
       "InvalidResponse": "Le serveur web Backend.AI a renvoyé une réponse inattendue.",
       "NoEndpoint": "Aucune adresse de serveur web Backend.AI n'est configurée pour {{appName}}.",
       "NoSessionId": "Vous êtes connecté à Backend.AI, mais le serveur web n'a pas renvoyé d'identifiant de session.",

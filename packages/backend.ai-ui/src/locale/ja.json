@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "ブラウザーが Backend.AI ウェブサーバーへのリクエストをブロックしました。通常は CORS または混在コンテンツの制限が原因です。",
       "HttpError": "Backend.AI ウェブサーバーがエラーを返しました ({{status}})。",
+      "InvalidCallback": "{{appName}} に設定されたログイン後の戻り先アドレスが有効なウェブアドレスではありません。",
       "InvalidResponse": "Backend.AI ウェブサーバーが予期しない応答を返しました。",
       "NoEndpoint": "{{appName}} に Backend.AI ウェブサーバーのアドレスが設定されていません。",
       "NoSessionId": "Backend.AI にログインしていますが、ウェブサーバーがセッション ID を返しませんでした。",

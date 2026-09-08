@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "Selain esti pyynnön Backend.AI-verkkopalvelimelle. Syynä on yleensä CORS- tai sekasisältörajoitus.",
       "HttpError": "Backend.AI-verkkopalvelin palautti virheen ({{status}}).",
+      "InvalidCallback": "Sovellukselle {{appName}} määritetty kirjautumisen paluuosoite ei ole kelvollinen verkko-osoite.",
       "InvalidResponse": "Backend.AI-verkkopalvelin palautti odottamattoman vastauksen.",
       "NoEndpoint": "Sovellukselle {{appName}} ei ole määritetty Backend.AI-verkkopalvelimen osoitetta.",
       "NoSessionId": "Olet kirjautunut Backend.AI:hin, mutta verkkopalvelin ei palauttanut istuntotunnusta.",

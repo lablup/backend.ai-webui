@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "Der Browser hat die Anfrage an den Backend.AI-Webserver blockiert. Ursache ist meist eine CORS- oder Mixed-Content-Einschränkung.",
       "HttpError": "Der Backend.AI-Webserver hat einen Fehler zurückgegeben ({{status}}).",
+      "InvalidCallback": "Die für {{appName}} konfigurierte Rücksprungadresse für die Anmeldung ist keine gültige Webadresse.",
       "InvalidResponse": "Der Backend.AI-Webserver hat eine unerwartete Antwort zurückgegeben.",
       "NoEndpoint": "Für {{appName}} ist keine Backend.AI-Webserver-Adresse konfiguriert.",
       "NoSessionId": "Sie sind bei Backend.AI angemeldet, aber der Webserver hat keine Sitzungs-ID zurückgegeben.",

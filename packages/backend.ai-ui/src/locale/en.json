@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "The browser blocked the request to the Backend.AI webserver. This is usually a CORS or mixed-content restriction.",
       "HttpError": "The Backend.AI webserver returned an error ({{status}}).",
+      "InvalidCallback": "The sign-in return address configured for {{appName}} is not a valid web address.",
       "InvalidResponse": "The Backend.AI webserver returned an unexpected response.",
       "NoEndpoint": "No Backend.AI webserver address is configured for {{appName}}.",
       "NoSessionId": "You are signed in to Backend.AI, but the webserver did not return a session ID.",

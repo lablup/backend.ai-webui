@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "Tarayıcı, Backend.AI web sunucusuna yapılan isteği engelledi. Bunun nedeni genellikle bir CORS veya karma içerik kısıtlamasıdır.",
       "HttpError": "Backend.AI web sunucusu bir hata döndürdü ({{status}}).",
+      "InvalidCallback": "{{appName}} için yapılandırılan oturum açma dönüş adresi geçerli bir web adresi değil.",
       "InvalidResponse": "Backend.AI web sunucusu beklenmeyen bir yanıt döndürdü.",
       "NoEndpoint": "{{appName}} için yapılandırılmış bir Backend.AI web sunucusu adresi yok.",
       "NoSessionId": "Backend.AI oturumunuz açık, ancak web sunucusu bir oturum kimliği döndürmedi.",

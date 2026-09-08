@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "Pelayar menyekat permintaan ke pelayan web Backend.AI. Ini biasanya disebabkan oleh sekatan CORS atau kandungan campuran.",
       "HttpError": "Pelayan web Backend.AI mengembalikan ralat ({{status}}).",
+      "InvalidCallback": "Alamat kembali log masuk yang dikonfigurasi untuk {{appName}} bukan alamat web yang sah.",
       "InvalidResponse": "Pelayan web Backend.AI mengembalikan respons yang tidak dijangka.",
       "NoEndpoint": "Tiada alamat pelayan web Backend.AI dikonfigurasikan untuk {{appName}}.",
       "NoSessionId": "Anda telah log masuk ke Backend.AI, tetapi pelayan web tidak mengembalikan ID sesi.",

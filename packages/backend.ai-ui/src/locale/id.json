@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "Peramban memblokir permintaan ke server web Backend.AI. Biasanya hal ini disebabkan oleh pembatasan CORS atau konten campuran.",
       "HttpError": "Server web Backend.AI mengembalikan kesalahan ({{status}}).",
+      "InvalidCallback": "Alamat kembali masuk yang dikonfigurasi untuk {{appName}} bukan alamat web yang valid.",
       "InvalidResponse": "Server web Backend.AI mengembalikan respons yang tidak terduga.",
       "NoEndpoint": "Tidak ada alamat server web Backend.AI yang dikonfigurasi untuk {{appName}}.",
       "NoSessionId": "Anda sudah masuk ke Backend.AI, tetapi server web tidak mengembalikan ID sesi.",

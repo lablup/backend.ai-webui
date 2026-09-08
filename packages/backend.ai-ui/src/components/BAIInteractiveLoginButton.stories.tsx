@@ -122,11 +122,11 @@ const meta: Meta<StoryProps> = {
 
 The host exchanges the session id for its own credential inside \`onSessionVerified\`; the component never stores it.
 
-## Deployment constraint
-The webserver's session cookie carries no \`SameSite\` attribute, which browsers treat as \`Lax\`. The zero-click probe therefore only succeeds when the consuming app and the webserver are same-site; a cross-site deployment always lands on \`no_session\` and uses the redirect.
+## Hard requirement: same-site deployment
+The consuming app and the webserver must be same-site. The webserver's session cookie carries no \`SameSite\` attribute, which browsers treat as \`Lax\`, so a cross-site probe never carries it — and the redirect does not recover from that: the provider page returns to the callback with nothing attached, and the probe that follows is refused the cookie again. Cross-site, the component loops on \`no_session\` and can never sign in.
 
 ## Outcomes
-\`no_session\` is the ordinary "not signed in yet" state, so it renders as a neutral hint under the button — never as an error. Only a genuine failure (\`no_endpoint\`, \`cors_or_mixed\`, \`timeout\`, \`http_error\`, \`invalid_response\`, \`no_session_id\`, \`relay_failed\`) gets the error alert.
+\`no_session\` is the ordinary "not signed in yet" state, so it renders as a neutral hint under the button — never as an error. Only a genuine failure (\`no_endpoint\`, \`invalid_callback\`, \`cors_or_mixed\`, \`timeout\`, \`http_error\`, \`invalid_response\`, \`no_session_id\`, \`relay_failed\`) gets the error alert. \`invalid_callback\` is a redirect-time outcome (a \`callbackUrl\` that is not an http(s) URL), so it is not one of the mocked probe outcomes below.
 
 The stories below mock \`fetch\` for the lifetime of the story and restore it on unmount; nothing contacts a live webserver. Use the **outcome** control to see every failure reason. The line under the component is story-only instrumentation showing what \`onSessionVerified\` / \`onFailure\` received.
         `,

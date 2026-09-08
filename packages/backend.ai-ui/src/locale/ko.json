@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "브라우저가 Backend.AI 웹서버 요청을 차단했습니다. 일반적으로 CORS 또는 혼합 콘텐츠 제한 때문입니다.",
       "HttpError": "Backend.AI 웹서버가 오류를 반환했습니다 ({{status}}).",
+      "InvalidCallback": "{{appName}}에 설정된 로그인 복귀 주소가 올바른 웹 주소가 아닙니다.",
       "InvalidResponse": "Backend.AI 웹서버가 예상과 다른 응답을 반환했습니다.",
       "NoEndpoint": "{{appName}}에 Backend.AI 웹서버 주소가 설정되어 있지 않습니다.",
       "NoSessionId": "Backend.AI에 로그인되어 있지만 웹서버가 세션 ID를 반환하지 않았습니다.",

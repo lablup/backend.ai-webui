@@ -234,6 +234,7 @@
     "failure": {
       "CorsOrMixed": "浏览器阻止了对 Backend.AI 网页服务器的请求，通常是 CORS 或混合内容限制导致的。",
       "HttpError": "Backend.AI 网页服务器返回了错误（{{status}}）。",
+      "InvalidCallback": "为 {{appName}} 配置的登录返回地址不是有效的网址。",
       "InvalidResponse": "Backend.AI 网页服务器返回了意外的响应。",
       "NoEndpoint": "尚未为 {{appName}} 配置 Backend.AI 网页服务器地址。",
       "NoSessionId": "您已登录 Backend.AI，但网页服务器未返回会话 ID。",

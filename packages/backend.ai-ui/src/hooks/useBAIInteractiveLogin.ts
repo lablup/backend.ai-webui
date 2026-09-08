@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 export type BAIInteractiveLoginFailureReason =
   | 'no_endpoint'
+  | 'invalid_callback'
   | 'cors_or_mixed'
   | 'timeout'
   | 'http_error'
@@ -57,6 +58,27 @@ export const normalizeWebserverUrl = (
   return url.toString();
 };
 
+/**
+ * The provider page navigates to the callback with a bare
+ * `window.location.href = callback`, so only an absolute http(s) URL is ever
+ * forwarded — a `javascript:` or `data:` value would execute there.
+ */
+export const resolveCallbackUrl = (
+  callbackUrl: string | null | undefined,
+  documentUrl: string | null | undefined = globalThis.location?.href,
+): string | null => {
+  const raw = callbackUrl?.trim() || documentUrl?.trim();
+  if (!raw) return null;
+  let url: URL;
+  try {
+    url = documentUrl ? new URL(raw, documentUrl) : new URL(raw);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+  return url.toString();
+};
+
 export interface BuildInteractiveLoginUrlOptions {
   webserverUrl: string;
   appName: string;
@@ -64,9 +86,8 @@ export interface BuildInteractiveLoginUrlOptions {
 }
 
 /**
- * `<webserver>/interactive-login?name=…&callback=…`. The callback is always
- * absolute — the provider page reads it with `new URL(callback).origin`, which
- * throws on a relative value.
+ * `<webserver>/interactive-login?name=…&callback=…`, or `null` when either
+ * the webserver URL or the callback is unusable (see `resolveCallbackUrl`).
  */
 export const buildInteractiveLoginUrl = ({
   webserverUrl,
@@ -75,11 +96,8 @@ export const buildInteractiveLoginUrl = ({
 }: BuildInteractiveLoginUrlOptions): string | null => {
   const base = normalizeWebserverUrl(webserverUrl);
   if (!base) return null;
-  const here = globalThis.location?.href;
-  const callback = new URL(
-    callbackUrl ?? here ?? base,
-    here ?? base,
-  ).toString();
+  const callback = resolveCallbackUrl(callbackUrl);
+  if (!callback) return null;
   const url = new URL(INTERACTIVE_LOGIN_PATH, base);
   url.searchParams.set('name', appName);
   url.searchParams.set('callback', callback);
@@ -166,7 +184,8 @@ export interface UseBAIInteractiveLoginOptions {
 
 export interface UseBAIInteractiveLoginResult {
   probe: () => Promise<BAIInteractiveLoginProbeResult>;
-  redirectToInteractiveLogin: () => void;
+  /** Navigates away, or returns the reason it could not. */
+  redirectToInteractiveLogin: () => BAIInteractiveLoginFailureReason | null;
   reportFailure: (
     reason: BAIInteractiveLoginFailureReason,
     status?: number,
@@ -215,10 +234,14 @@ const useBAIInteractiveLogin = ({
       callbackUrl,
     });
     if (!url) {
-      setFailure({ reason: 'no_endpoint' });
-      return;
+      const reason = normalizeWebserverUrl(webserverUrl)
+        ? 'invalid_callback'
+        : 'no_endpoint';
+      setFailure({ reason });
+      return reason;
     }
     globalThis.location.href = url;
+    return null;
   });
 
   return {

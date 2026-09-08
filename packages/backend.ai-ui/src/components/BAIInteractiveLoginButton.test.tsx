@@ -1,6 +1,6 @@
 import BAIInteractiveLoginButton from './BAIInteractiveLoginButton';
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 // Partial mock: `locale/index.ts` consumes `initReactI18next` at import time,
@@ -14,6 +14,8 @@ vi.mock('react-i18next', async () => {
     'comp:BAIInteractiveLoginButton.CheckingSession': 'Checking session',
     'comp:BAIInteractiveLoginButton.failure.Title': 'Could not sign in',
     'comp:BAIInteractiveLoginButton.failure.NoEndpoint': 'No endpoint',
+    'comp:BAIInteractiveLoginButton.failure.InvalidCallback':
+      'Bad return address for {{appName}}',
     'comp:BAIInteractiveLoginButton.failure.CorsOrMixed': 'Blocked by browser',
     'comp:BAIInteractiveLoginButton.failure.Timeout': 'Timed out',
     'comp:BAIInteractiveLoginButton.failure.HttpError':
@@ -191,6 +193,87 @@ describe('BAIInteractiveLoginButton', () => {
           `${WEBSERVER_URL}/interactive-login?name=FastTrack&callback=${encodeURIComponent(CALLBACK_URL)}`,
         ),
       );
+    });
+
+    it('refuses to navigate to a callback that is not an http(s) URL', async () => {
+      const location = stubLocation();
+      const documentUrl = location.href;
+      stubFetchWith({ authenticated: false, data: null });
+      const onFailure = vi.fn();
+      const user = userEvent.setup();
+
+      renderSubject({ callbackUrl: 'javascript:alert(1)', onFailure });
+
+      const button = await screen.findByRole('button', {
+        name: /Sign in with Backend.AI/,
+      });
+      await user.click(button);
+
+      expect(
+        await screen.findByText('Bad return address for FastTrack'),
+      ).toBeInTheDocument();
+      expect(onFailure).toHaveBeenCalledWith('invalid_callback');
+      expect(location.href).toBe(documentUrl);
+    });
+  });
+
+  describe('Unmount', () => {
+    it('drops a probe that settles after unmount', async () => {
+      stubLocation();
+      let settleFetch!: (value: unknown) => void;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(
+          () =>
+            new Promise((resolve) => {
+              settleFetch = resolve;
+            }),
+        ),
+      );
+      const onSessionVerified = vi.fn();
+      const onFailure = vi.fn();
+
+      const { unmount } = renderSubject({ onSessionVerified, onFailure });
+      await waitFor(() => expect(fetch).toHaveBeenCalled());
+      unmount();
+
+      settleFetch({
+        ok: true,
+        status: 200,
+        json: async () => ({ authenticated: true, session_id: 'sess-late' }),
+      });
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+
+      expect(onSessionVerified).not.toHaveBeenCalled();
+      expect(onFailure).not.toHaveBeenCalled();
+    });
+
+    it('drops a relay that fails after unmount', async () => {
+      stubLocation();
+      stubFetchWith({ authenticated: true, session_id: 'sess-1' });
+      let failRelay!: (error: Error) => void;
+      const onSessionVerified = vi.fn(
+        () =>
+          new Promise<void>((_resolve, reject) => {
+            failRelay = reject;
+          }),
+      );
+      const onFailure = vi.fn();
+
+      const { unmount } = renderSubject({ onSessionVerified, onFailure });
+      await waitFor(() =>
+        expect(onSessionVerified).toHaveBeenCalledWith('sess-1'),
+      );
+      unmount();
+
+      failRelay(new Error('exchange failed'));
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+
+      expect(onFailure).not.toHaveBeenCalled();
     });
   });
 

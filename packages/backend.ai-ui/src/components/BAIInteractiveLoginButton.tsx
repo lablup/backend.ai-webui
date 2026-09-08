@@ -23,7 +23,7 @@ export interface BAIInteractiveLoginButtonProps extends Omit<
   webserverUrl: string;
   /** Name of the consuming application, shown on the provider page and in the failure copy. */
   appName: string;
-  /** Absolute or relative URL the provider page returns to. Defaults to the current document URL. */
+  /** Absolute or relative http(s) URL the provider page returns to. Defaults to the current document URL. */
   callbackUrl?: string;
   timeoutMs?: number;
   /** Receives the webserver session id so the host can exchange it for its own credentials. */
@@ -66,14 +66,17 @@ const BAIInteractiveLoginButton = ({
   });
   const [isVerified, setIsVerified] = useState(false);
   const [isRelaying, setIsRelaying] = useState(false);
-  const hasProbedRef = useRef(false);
+  // Bumped on unmount so a probe or relay that settles late is dropped.
+  const probeGenerationRef = useRef(0);
 
   const handleSessionVerified = useEventNotStable(onSessionVerified);
   const handleFailure = useEventNotStable(
     (reason: BAIInteractiveLoginFailureReason) => onFailure?.(reason),
   );
-  const runProbe = useEventNotStable(async () => {
+  const runProbe = useEventNotStable(async (generation: number) => {
+    const isCurrent = () => probeGenerationRef.current === generation;
     const result = await probe();
+    if (!isCurrent()) return;
     if (!result.ok) {
       handleFailure(result.reason);
       return;
@@ -83,20 +86,29 @@ const BAIInteractiveLoginButton = ({
     setIsRelaying(true);
     try {
       await handleSessionVerified(result.sessionId);
-      setIsVerified(true);
+      if (isCurrent()) setIsVerified(true);
     } catch {
+      if (!isCurrent()) return;
       reportFailure('relay_failed');
       handleFailure('relay_failed');
     } finally {
-      setIsRelaying(false);
+      if (isCurrent()) setIsRelaying(false);
     }
   });
 
   useEffect(() => {
-    if (hasProbedRef.current) return;
-    hasProbedRef.current = true;
-    void runProbe();
+    const generation = probeGenerationRef.current + 1;
+    probeGenerationRef.current = generation;
+    void runProbe(generation);
+    return () => {
+      probeGenerationRef.current += 1;
+    };
   }, [runProbe]);
+
+  const handleClick = () => {
+    const reason = redirectToInteractiveLogin();
+    if (reason) handleFailure(reason);
+  };
 
   return (
     <BAIFlex direction="column" gap="sm" align="stretch">
@@ -124,7 +136,7 @@ const BAIInteractiveLoginButton = ({
               : (label ??
                 t('comp:BAIInteractiveLoginButton.SignInWithBackendAI'))
           }
-          clickAction={redirectToInteractiveLogin}
+          clickAction={handleClick}
         />
       )}
       {showFailureAlert && failure?.reason === 'no_session' ? (
@@ -161,6 +173,8 @@ const describeFailure = (
   switch (reason) {
     case 'no_endpoint':
       return t(`${prefix}.NoEndpoint`, { appName });
+    case 'invalid_callback':
+      return t(`${prefix}.InvalidCallback`, { appName });
     case 'cors_or_mixed':
       return t(`${prefix}.CorsOrMixed`);
     case 'timeout':

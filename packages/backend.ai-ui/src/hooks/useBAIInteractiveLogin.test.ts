@@ -4,6 +4,7 @@ import useBAIInteractiveLogin, {
   classifyLoginCheckResponse,
   normalizeWebserverUrl,
   probeLoginCheck,
+  resolveCallbackUrl,
 } from './useBAIInteractiveLogin';
 import { act, renderHook, waitFor } from '@testing-library/react';
 
@@ -61,6 +62,46 @@ describe('normalizeWebserverUrl', () => {
     expect(normalizeWebserverUrl('https://webserver.example.com/?a=1#b')).toBe(
       'https://webserver.example.com/',
     );
+  });
+});
+
+describe('resolveCallbackUrl', () => {
+  it('resolves a relative callback against the document URL', () => {
+    expect(
+      resolveCallbackUrl('/auth/callback', `${APP_ORIGIN}/workflows`),
+    ).toBe(`${APP_ORIGIN}/auth/callback`);
+  });
+
+  it('falls back to the document URL when no callback is given', () => {
+    expect(resolveCallbackUrl(undefined, `${APP_ORIGIN}/workflows`)).toBe(
+      `${APP_ORIGIN}/workflows`,
+    );
+    expect(resolveCallbackUrl('  ', `${APP_ORIGIN}/workflows`)).toBe(
+      `${APP_ORIGIN}/workflows`,
+    );
+  });
+
+  it('refuses a callback whose scheme is not http(s)', () => {
+    for (const callback of [
+      'javascript:alert(1)',
+      'data:text/html,hi',
+      'mailto:someone@example.com',
+      'file:///etc/passwd',
+    ]) {
+      expect(resolveCallbackUrl(callback, `${APP_ORIGIN}/workflows`)).toBe(
+        null,
+      );
+    }
+  });
+
+  it('refuses a callback that does not parse', () => {
+    expect(resolveCallbackUrl('https://', `${APP_ORIGIN}/workflows`)).toBe(
+      null,
+    );
+    expect(resolveCallbackUrl('http://[bad', null)).toBeNull();
+    // `undefined` would pick up the default (the document URL); `null` is
+    // the no-document case.
+    expect(resolveCallbackUrl(undefined, null)).toBeNull();
   });
 });
 
@@ -145,6 +186,23 @@ describe('buildInteractiveLoginUrl', () => {
     expect(new URL(url as string).searchParams.get('name')).toBe(
       'Backend.AI FastTrack & Co',
     );
+  });
+
+  it('returns null instead of forwarding a callback that is not an http(s) URL', () => {
+    expect(
+      buildInteractiveLoginUrl({
+        webserverUrl: 'https://webserver.example.com',
+        appName: 'FastTrack',
+        callbackUrl: 'javascript:alert(1)',
+      }),
+    ).toBeNull();
+    expect(
+      buildInteractiveLoginUrl({
+        webserverUrl: 'https://webserver.example.com',
+        appName: 'FastTrack',
+        callbackUrl: 'https://',
+      }),
+    ).toBeNull();
   });
 
   it('returns null when there is no usable webserver URL', () => {
@@ -458,5 +516,27 @@ describe('useBAIInteractiveLogin', () => {
 
     expect(location.href).toBe(`${APP_ORIGIN}/workflows?tab=runs`);
     expect(result.current.failure).toEqual({ reason: 'no_endpoint' });
+  });
+
+  it('records invalid_callback instead of navigating when the callback is unusable', () => {
+    const location = stubLocation();
+    const { result } = renderHook(() =>
+      useBAIInteractiveLogin({
+        webserverUrl: 'https://webserver.example.com',
+        appName: 'FastTrack',
+        callbackUrl: 'javascript:alert(1)',
+      }),
+    );
+
+    expect(result.current.interactiveLoginUrl).toBeNull();
+
+    let reason: ReturnType<typeof result.current.redirectToInteractiveLogin>;
+    act(() => {
+      reason = result.current.redirectToInteractiveLogin();
+    });
+
+    expect(reason!).toBe('invalid_callback');
+    expect(location.href).toBe(`${APP_ORIGIN}/workflows?tab=runs`);
+    expect(result.current.failure).toEqual({ reason: 'invalid_callback' });
   });
 });
