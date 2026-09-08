@@ -234,6 +234,23 @@
     "Type": "Tipo",
     "Version": "Versão"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Verificando sua sessão do Backend.AI…",
+    "SignInWithBackendAI": "Entrar com o Backend.AI",
+    "failure": {
+      "CorsOrMixed": "O navegador bloqueou a requisição ao servidor web do Backend.AI. Normalmente é uma restrição de CORS ou de conteúdo misto.",
+      "HttpError": "O servidor web do Backend.AI retornou um erro ({{status}}).",
+      "InvalidCallback": "O endereço de retorno de login configurado para {{appName}} não é um endereço web válido.",
+      "InvalidResponse": "O servidor web do Backend.AI retornou uma resposta inesperada.",
+      "NoEndpoint": "Nenhum endereço do servidor web do Backend.AI está configurado para {{appName}}.",
+      "NoSessionId": "Você está conectado ao Backend.AI, mas o servidor web não retornou um ID de sessão.",
+      "NoSessionOverHttp": "Você ainda não entrou no Backend.AI. Se você já entrou, o {{appName}} é servido por HTTP, então o navegador pode estar rejeitando o cookie de sessão seguro do servidor web. Tente abrir o {{appName}} por HTTPS.",
+      "NoSessionOverHttps": "Você ainda não entrou no Backend.AI. Se você já entrou, o {{appName}} e o servidor web do Backend.AI podem ser sites diferentes, então o navegador não envia o cookie de sessão.",
+      "RelayFailed": "Você está conectado ao Backend.AI, mas o {{appName}} não conseguiu concluir a entrada.",
+      "Timeout": "O servidor web do Backend.AI não respondeu a tempo.",
+      "Title": "Não foi possível entrar com o Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Tamanho do Cluster",
     "Concurrency": "Sessões simultâneas",
@@ -768,6 +785,7 @@
     "DeselectAll": "Desmarcar tudo",
     "File": "Arquivo",
     "Increase": "Aumentar",
+    "Loading": "Carregando...",
     "NSelected": "{{count}} selecionado",
     "Optional": "Opcional",
     "Project": "Projeto",

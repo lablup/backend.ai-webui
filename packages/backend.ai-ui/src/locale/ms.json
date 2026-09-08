@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Berjaya meminta tarik untuk {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Memeriksa sesi Backend.AI anda…",
+    "SignInWithBackendAI": "Log masuk dengan Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Pelayar menyekat permintaan ke pelayan web Backend.AI. Ini biasanya disebabkan oleh sekatan CORS atau kandungan campuran.",
+      "HttpError": "Pelayan web Backend.AI mengembalikan ralat ({{status}}).",
+      "InvalidCallback": "Alamat kembali log masuk yang dikonfigurasi untuk {{appName}} bukan alamat web yang sah.",
+      "InvalidResponse": "Pelayan web Backend.AI mengembalikan respons yang tidak dijangka.",
+      "NoEndpoint": "Tiada alamat pelayan web Backend.AI dikonfigurasikan untuk {{appName}}.",
+      "NoSessionId": "Anda telah log masuk ke Backend.AI, tetapi pelayan web tidak mengembalikan ID sesi.",
+      "NoSessionOverHttp": "Anda belum log masuk ke Backend.AI. Jika anda sudah log masuk, {{appName}} disajikan melalui HTTP jadi pelayar mungkin menolak kuki sesi selamat pelayan web. Cuba buka {{appName}} melalui HTTPS.",
+      "NoSessionOverHttps": "Anda belum log masuk ke Backend.AI. Jika anda sudah log masuk, {{appName}} dan pelayan web Backend.AI mungkin tapak yang berbeza jadi pelayar tidak menghantar kuki sesi.",
+      "RelayFailed": "Anda telah log masuk ke Backend.AI, tetapi {{appName}} tidak dapat melengkapkan proses log masuk.",
+      "Timeout": "Pelayan web Backend.AI tidak membalas dalam masa yang ditetapkan.",
+      "Title": "Tidak dapat log masuk dengan Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Saiz Kluster",
     "Concurrency": "Sesi Serentak",
@@ -762,6 +779,7 @@
     "DeselectAll": "Nyahpilih semua",
     "File": "Fail",
     "Increase": "Tambah",
+    "Loading": "Memuatkan...",
     "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
     "Project": "Projek",

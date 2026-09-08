@@ -161,6 +161,11 @@ const DeploymentDetailPage: React.FC = () => {
               name
               status
               projectId
+              projectV2 @since(version: "26.4.3") {
+                basicInfo {
+                  name
+                }
+              }
             }
             networkAccess {
               openToPublic
@@ -246,6 +251,8 @@ const DeploymentDetailPage: React.FC = () => {
   // and suppress the "add revision" call-to-action below, which the user
   // cannot act on without switching projects anyway.
   const deploymentProjectId = deployment.metadata.projectId ?? null;
+  const deploymentProjectName =
+    deployment.metadata.projectV2?.basicInfo.name ?? null;
   const isProjectMismatch =
     pageProject !== null &&
     !!deploymentProjectId &&
@@ -338,7 +345,12 @@ const DeploymentDetailPage: React.FC = () => {
         <Banner
           status="warning"
           title={t('deployment.NotInProject')}
-          endContent={<SwitchToProjectButton projectId={deploymentProjectId} />}
+          endContent={
+            <SwitchToProjectButton
+              projectId={deploymentProjectId}
+              projectName={deploymentProjectName}
+            />
+          }
         />
       )}
       {hasNoActiveReplicas &&

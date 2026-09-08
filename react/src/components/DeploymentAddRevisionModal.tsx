@@ -7,7 +7,6 @@ import type {
   DeploymentAddRevisionModalAddMutation$data,
 } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
 import type { DeploymentAddRevisionModalCardDetailQuery } from '../__generated__/DeploymentAddRevisionModalCardDetailQuery.graphql';
-import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
 import type { DeploymentAddRevisionModalManualImageQuery } from '../__generated__/DeploymentAddRevisionModalManualImageQuery.graphql';
 import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
 import type { DeploymentAddRevisionModalPresetDetailQuery } from '../__generated__/DeploymentAddRevisionModalPresetDetailQuery.graphql';
@@ -209,6 +208,21 @@ interface DeploymentAddRevisionModalProps extends BAIModalProps {
 }
 
 type RevisionPrefillData = DeploymentAddRevisionModal_revisionSource$data;
+
+// Full image name (`registry/namespace:tag@architecture`); the architecture
+// suffix is required so `ImageEnvironmentSelectFormItems` exact-matches the
+// original image instead of defaulting to the first architecture in the list.
+export const toImageFullName = (
+  identity?: {
+    readonly canonicalName?: string | null;
+    readonly architecture?: string | null;
+  } | null,
+): string | undefined =>
+  identity?.canonicalName
+    ? identity.architecture
+      ? `${identity.canonicalName}@${identity.architecture}`
+      : identity.canonicalName
+    : undefined;
 
 // Suspense-wrapped side query that resolves the selected runtime variant's DB
 // `defaultModelDefinition` baseline (FR-3205/FR-3342) and pushes the parsed
@@ -796,10 +810,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 clusterSize
               }
               execution {
-                imageId
                 environ {
                   key
                   value
+                }
+              }
+              image @since(version: "26.4.4") {
+                id
+                identity {
+                  canonicalName
+                  architecture
                 }
               }
               resource {
@@ -861,14 +881,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Build a Custom-form prefill object from a preset node read off the
   // singular `deploymentRevisionPreset(id:)` query (resolved via
-  // `fetchPresetData`). The image full name is fetched async because
-  // `ImageEnvironmentSelectFormItems` matches the form's `environments.version`
-  // against image full names (`registry/namespace:tag@architecture`).
-  const buildPrefillFromPreset = async (
+  // `fetchPresetData`).
+  const buildPrefillFromPreset = (
     preset: NonNullable<
       DeploymentAddRevisionModalSelectedPresetQuery$data['deploymentRevisionPreset']
     >,
-  ): Promise<Partial<FormValues>> => {
+  ): Partial<FormValues> => {
     const slots = preset.resourceSlots ?? [];
     const cpuSlot = slots.find((s) => s.slotName === 'cpu');
     const memSlot = slots.find((s) => s.slotName === 'mem');
@@ -885,39 +903,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ? ('single-node' as const)
         : ('multi-node' as const);
 
-    // Full image name (`registry/namespace:tag@architecture`); the
-    // architecture suffix is required so `ImageEnvironmentSelectFormItems`
-    // exact-matches the original image instead of defaulting to the first
-    // architecture in the sorted list.
-    let imageFullName: string | undefined;
-    if (preset.execution?.imageId) {
-      try {
-        const result =
-          await fetchQuery<DeploymentAddRevisionModalImageNameQuery>(
-            relayEnvironment,
-            graphql`
-              query DeploymentAddRevisionModalImageNameQuery($id: ID!) {
-                imageV2(id: $id) {
-                  identity {
-                    canonicalName
-                    architecture
-                  }
-                }
-              }
-            `,
-            { id: preset.execution.imageId },
-            { fetchPolicy: 'store-or-network' },
-          ).toPromise();
-        const identity = result?.imageV2?.identity;
-        imageFullName = identity?.canonicalName
-          ? identity.architecture
-            ? `${identity.canonicalName}@${identity.architecture}`
-            : identity.canonicalName
-          : undefined;
-      } catch {
-        imageFullName = undefined;
-      }
-    }
+    const imageFullName = toImageFullName(preset.image?.identity);
 
     const environEntries = (preset.execution?.environ ?? []).map((e) => ({
       variable: e.key,
@@ -979,7 +965,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       if (selectedPresetId) {
         const preset = await fetchPresetData(selectedPresetId);
         if (preset) {
-          prefill = await buildPrefillFromPreset(preset);
+          prefill = buildPrefillFromPreset(preset);
         }
       }
       if (presetValues.modelFolderId) {
