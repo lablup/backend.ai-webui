@@ -65,46 +65,54 @@ const BAIInteractiveLoginButton = ({
     callbackUrl,
     timeoutMs,
   });
-  const [isVerified, setIsVerified] = useState(false);
-  const [isRelaying, setIsRelaying] = useState(false);
-  // Bumped on unmount so a probe or relay that settles late is dropped.
+  // The probe inputs; a verification belongs to the key it was made under.
+  const probeKey = `${timeoutMs ?? ''}\u0000${webserverUrl}`;
+  const [verifiedProbeKey, setVerifiedProbeKey] = useState<string | null>(null);
+  const [relaysInFlight, setRelaysInFlight] = useState(0);
+  const isVerified = verifiedProbeKey === probeKey;
+  const isRelaying = relaysInFlight > 0;
+  // Bumped on unmount or re-probe so a probe or relay that settles late is
+  // dropped.
   const probeGenerationRef = useRef(0);
 
   const handleSessionVerified = useEventNotStable(onSessionVerified);
   const handleFailure = useEventNotStable(
     (reason: BAIInteractiveLoginFailureReason) => onFailure?.(reason),
   );
-  const runProbe = useEventNotStable(async (generation: number) => {
-    const isCurrent = () => probeGenerationRef.current === generation;
-    const result = await probe();
-    if (!isCurrent()) return;
-    if (!result.ok) {
-      handleFailure(result.reason);
-      return;
-    }
-    // The host's token exchange is a network round-trip of its own; keep the
-    // button busy so it cannot navigate away mid-exchange.
-    setIsRelaying(true);
-    try {
-      await handleSessionVerified(result.sessionId);
-      if (isCurrent()) setIsVerified(true);
-    } catch {
+  const runProbe = useEventNotStable(
+    async (generation: number, key: string) => {
+      const isCurrent = () => probeGenerationRef.current === generation;
+      const result = await probe();
       if (!isCurrent()) return;
-      reportFailure('relay_failed');
-      handleFailure('relay_failed');
-    } finally {
-      if (isCurrent()) setIsRelaying(false);
-    }
-  });
+      if (!result.ok) {
+        handleFailure(result.reason);
+        return;
+      }
+      // The host's token exchange is a network round-trip of its own; keep the
+      // button busy so it cannot navigate away mid-exchange.
+      setRelaysInFlight((count) => count + 1);
+      try {
+        await handleSessionVerified(result.sessionId);
+        if (isCurrent()) setVerifiedProbeKey(key);
+      } catch {
+        if (!isCurrent()) return;
+        reportFailure('relay_failed');
+        handleFailure('relay_failed');
+      } finally {
+        setRelaysInFlight((count) => count - 1);
+      }
+    },
+  );
 
+  // A host that fills `webserverUrl` in after mount gets a fresh probe.
   useEffect(() => {
     const generation = probeGenerationRef.current + 1;
     probeGenerationRef.current = generation;
-    void runProbe(generation);
+    void runProbe(generation, probeKey);
     return () => {
       probeGenerationRef.current += 1;
     };
-  }, [runProbe]);
+  }, [probeKey, runProbe]);
 
   const handleClick = () => {
     const reason = redirectToInteractiveLogin();

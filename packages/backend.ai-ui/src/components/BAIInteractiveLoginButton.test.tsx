@@ -227,6 +227,91 @@ describe('BAIInteractiveLoginButton', () => {
     });
   });
 
+  describe('Endpoint changes', () => {
+    it('probes again when webserverUrl is filled in after mount', async () => {
+      stubLocation();
+      stubFetchWith({ authenticated: true, session_id: 'sess-late-config' });
+      const onSessionVerified = vi.fn();
+      const onFailure = vi.fn();
+
+      const { rerender } = render(
+        <BAIInteractiveLoginButton
+          webserverUrl=""
+          appName="FastTrack"
+          callbackUrl={CALLBACK_URL}
+          onSessionVerified={onSessionVerified}
+          onFailure={onFailure}
+        />,
+      );
+      await waitFor(() =>
+        expect(onFailure).toHaveBeenCalledWith('no_endpoint'),
+      );
+      expect(fetch).not.toHaveBeenCalled();
+
+      rerender(
+        <BAIInteractiveLoginButton
+          webserverUrl={WEBSERVER_URL}
+          appName="FastTrack"
+          callbackUrl={CALLBACK_URL}
+          onSessionVerified={onSessionVerified}
+          onFailure={onFailure}
+        />,
+      );
+
+      await waitFor(() =>
+        expect(onSessionVerified).toHaveBeenCalledWith('sess-late-config'),
+      );
+      expect(fetch).toHaveBeenCalledWith(
+        `${WEBSERVER_URL}/server/login-check`,
+        expect.objectContaining({ method: 'POST' }),
+      );
+    });
+
+    it('drops the previous verification when the endpoint changes', async () => {
+      stubLocation();
+      stubFetchWith({ authenticated: false, data: null });
+      const onSessionVerified = vi.fn();
+      const props = {
+        appName: 'FastTrack',
+        callbackUrl: CALLBACK_URL,
+        onSessionVerified,
+      };
+
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string) => ({
+          ok: true,
+          status: 200,
+          json: async () =>
+            url.startsWith(WEBSERVER_URL)
+              ? { authenticated: true, session_id: 'sess-first' }
+              : { authenticated: false, data: null },
+        })),
+      );
+      const { rerender } = render(
+        <BAIInteractiveLoginButton webserverUrl={WEBSERVER_URL} {...props} />,
+      );
+      await waitFor(() =>
+        expect(onSessionVerified).toHaveBeenCalledWith('sess-first'),
+      );
+      await waitFor(() =>
+        expect(screen.queryByRole('button')).not.toBeInTheDocument(),
+      );
+
+      rerender(
+        <BAIInteractiveLoginButton
+          webserverUrl="https://other.example.com"
+          {...props}
+        />,
+      );
+
+      expect(
+        await screen.findByRole('button', { name: /Sign in with Backend.AI/ }),
+      ).toBeInTheDocument();
+      expect(onSessionVerified).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('Unmount', () => {
     it('drops a probe that settles after unmount', async () => {
       stubLocation();
