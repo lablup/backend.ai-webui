@@ -12,11 +12,11 @@ type Outcome = 'authenticated' | BAIInteractiveLoginFailureReason;
 type StoryProps = BAIInteractiveLoginButtonProps & { outcome: Outcome };
 
 /**
- * Every story talks to `https://<outcome>.webserver.example.com`; one
- * interceptor, installed once for the whole Storybook session, answers those
- * hosts and delegates everything else to the real `fetch`. Several stories
- * can therefore be mounted at once (the autodocs page) without overwriting
- * each other's stub.
+ * Every story talks to `https://<outcome>.webserver.example.com`; one shared
+ * interceptor (installed by `beforeEach` below, only while a story from this
+ * file is mounted) answers those hosts and delegates everything else to the
+ * real `fetch`. Several stories can therefore be mounted at once (the autodocs
+ * page) without overwriting each other's stub.
  */
 const MOCK_WEBSERVER_SUFFIX = '.webserver.example.com';
 

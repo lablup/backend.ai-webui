@@ -65,11 +65,10 @@ const BAIInteractiveLoginButton = ({
     callbackUrl,
     timeoutMs,
   });
-  // The probe inputs; a verification belongs to the key it was made under.
+  // The probe inputs; changing them starts a fresh probe.
   const probeKey = `${timeoutMs ?? ''}\u0000${webserverUrl}`;
-  const [verifiedProbeKey, setVerifiedProbeKey] = useState<string | null>(null);
+  const [isVerified, setIsVerified] = useState(false);
   const [relaysInFlight, setRelaysInFlight] = useState(0);
-  const isVerified = verifiedProbeKey === probeKey;
   const isRelaying = relaysInFlight > 0;
   // Bumped on unmount or re-probe so a probe or relay that settles late is
   // dropped.
@@ -79,36 +78,36 @@ const BAIInteractiveLoginButton = ({
   const handleFailure = useEventNotStable(
     (reason: BAIInteractiveLoginFailureReason) => onFailure?.(reason),
   );
-  const runProbe = useEventNotStable(
-    async (generation: number, key: string) => {
-      const isCurrent = () => probeGenerationRef.current === generation;
-      const result = await probe();
+  const runProbe = useEventNotStable(async (generation: number) => {
+    const isCurrent = () => probeGenerationRef.current === generation;
+    // Whatever an earlier probe verified no longer applies.
+    setIsVerified(false);
+    const result = await probe();
+    if (!isCurrent()) return;
+    if (!result.ok) {
+      handleFailure(result.reason);
+      return;
+    }
+    // The host's token exchange is a network round-trip of its own; keep the
+    // button busy so it cannot navigate away mid-exchange.
+    setRelaysInFlight((count) => count + 1);
+    try {
+      await handleSessionVerified(result.sessionId);
+      if (isCurrent()) setIsVerified(true);
+    } catch {
       if (!isCurrent()) return;
-      if (!result.ok) {
-        handleFailure(result.reason);
-        return;
-      }
-      // The host's token exchange is a network round-trip of its own; keep the
-      // button busy so it cannot navigate away mid-exchange.
-      setRelaysInFlight((count) => count + 1);
-      try {
-        await handleSessionVerified(result.sessionId);
-        if (isCurrent()) setVerifiedProbeKey(key);
-      } catch {
-        if (!isCurrent()) return;
-        reportFailure('relay_failed');
-        handleFailure('relay_failed');
-      } finally {
-        setRelaysInFlight((count) => count - 1);
-      }
-    },
-  );
+      reportFailure('relay_failed');
+      handleFailure('relay_failed');
+    } finally {
+      setRelaysInFlight((count) => count - 1);
+    }
+  });
 
   // A host that fills `webserverUrl` in after mount gets a fresh probe.
   useEffect(() => {
     const generation = probeGenerationRef.current + 1;
     probeGenerationRef.current = generation;
-    void runProbe(generation, probeKey);
+    void runProbe(generation);
     return () => {
       probeGenerationRef.current += 1;
     };

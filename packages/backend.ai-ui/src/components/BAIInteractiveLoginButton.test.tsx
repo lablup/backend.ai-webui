@@ -310,6 +310,54 @@ describe('BAIInteractiveLoginButton', () => {
       ).toBeInTheDocument();
       expect(onSessionVerified).toHaveBeenCalledTimes(1);
     });
+
+    it('does not reuse a verification after returning to an endpoint', async () => {
+      stubLocation();
+      const onSessionVerified = vi.fn();
+      const props = {
+        appName: 'FastTrack',
+        callbackUrl: CALLBACK_URL,
+        onSessionVerified,
+      };
+      let sessionAlive = true;
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string) => ({
+          ok: true,
+          status: 200,
+          json: async () =>
+            url === `${WEBSERVER_URL}/server/login-check` && sessionAlive
+              ? { authenticated: true, session_id: 'sess-first' }
+              : { authenticated: false, data: null },
+        })),
+      );
+      const { rerender } = render(
+        <BAIInteractiveLoginButton webserverUrl={WEBSERVER_URL} {...props} />,
+      );
+      await waitFor(() =>
+        expect(screen.queryByRole('button')).not.toBeInTheDocument(),
+      );
+
+      rerender(
+        <BAIInteractiveLoginButton
+          webserverUrl="https://other.example.com"
+          {...props}
+        />,
+      );
+      await screen.findByRole('button', { name: /Sign in with Backend.AI/ });
+
+      // Back to the first endpoint, whose session has meanwhile expired.
+      sessionAlive = false;
+      rerender(
+        <BAIInteractiveLoginButton webserverUrl={WEBSERVER_URL} {...props} />,
+      );
+
+      await waitFor(() => expect(fetch).toHaveBeenCalledTimes(3));
+      expect(
+        await screen.findByRole('button', { name: /Sign in with Backend.AI/ }),
+      ).toBeInTheDocument();
+      expect(onSessionVerified).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('Unmount', () => {
