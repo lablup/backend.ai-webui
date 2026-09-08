@@ -354,35 +354,6 @@ const ModelCardDetailLoader: React.FC<{
   return <ModelCardDrawer modelCardId={modelCardId} open onClose={onClose} />;
 };
 
-// Card-mode preset selector: the same self-fetching
-// `BAIAvailablePresetSelect` used for the folder source, scoped to the
-// selected model card's resource-compatible presets via `modelCardId`. That
-// routes the list through the top-level `modelCardAvailablePresets` query (the
-// same server-filtered subset `ModelCardDeployModal` deploys against,
-// satisfying the card's minimum resource requirements), so no separate
-// card-scoped select or fragment is needed. Disabled with a hint until a card
-// is picked — the hint rides in the field's `description` slot (Astryx forbids
-// wrapping a disabled control in a Tooltip).
-const ModelCardPresetSelect: React.FC<
-  {
-    modelCardId?: string;
-  } & Omit<React.ComponentProps<typeof BAIAvailablePresetSelect>, 'modelCardId'>
-> = ({ modelCardId, ...selectProps }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const isDisabled = !modelCardId;
-  return (
-    <BAIAvailablePresetSelect
-      modelCardId={modelCardId}
-      isDisabled={isDisabled}
-      description={
-        isDisabled ? t('deployment.SelectModelCardFirst') : undefined
-      }
-      {...selectProps}
-    />
-  );
-};
-
 // Suspense fallback for the self-fetching selects: the same `BAIComplexSelect`
 // they render, so the placeholder keeps their exact height and 100% width
 // (`BAISelect` sits on Astryx `Selector` — taller, and it ignores `flex: 1`).
@@ -2210,24 +2181,34 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           />
                         }
                       >
+                        {/* `modelCardId` routes the options through the card's
+                            resource-compatible subset. The "pick a card first"
+                            hint rides in `description` because Astryx forbids
+                            wrapping a disabled control in a Tooltip.
+                            `key={source}` remounts on a source switch so the
+                            select's internal search string cannot filter the
+                            other source's presets — the two swapped-in element
+                            types used to give that for free. */}
                         <BAIFormItem
                           name="revisionPresetId"
                           messageVariables={{ label: t('modelStore.Preset') }}
                           noStyle
                           rules={[{ required: true }]}
                         >
-                          {source === 'card' ? (
-                            <ModelCardPresetSelect
-                              modelCardId={modelCardId}
-                              label={t('modelStore.Preset')}
-                              isLabelHidden
-                            />
-                          ) : (
-                            <BAIAvailablePresetSelect
-                              label={t('modelStore.Preset')}
-                              isLabelHidden
-                            />
-                          )}
+                          <BAIAvailablePresetSelect
+                            key={source}
+                            modelCardId={
+                              source === 'card' ? modelCardId : undefined
+                            }
+                            isDisabled={source === 'card' && !modelCardId}
+                            description={
+                              source === 'card' && !modelCardId
+                                ? t('deployment.SelectModelCardFirst')
+                                : undefined
+                            }
+                            label={t('modelStore.Preset')}
+                            isLabelHidden
+                          />
                         </BAIFormItem>
                       </Suspense>
                       <BAIFormItem dependencies={['revisionPresetId']} noStyle>
