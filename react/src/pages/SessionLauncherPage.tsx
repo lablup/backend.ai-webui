@@ -1342,7 +1342,7 @@ const SessionLauncherPage = () => {
                 >
                   <SessionLauncherStorageStep
                     form={form}
-                    currentProjectId={currentProjectContext.id}
+                    project={currentProjectContext}
                   />
                 </StepCard>
 
