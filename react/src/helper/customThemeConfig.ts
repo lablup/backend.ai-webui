@@ -304,7 +304,7 @@ const fetchDomainDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
           `publicConfigByDomain[${domainName}].appearance`,
         );
   } catch (error) {
-    warn(
+    logAppearanceError(
       `the domain appearance document could not be fetched (${String(error)}).`,
     );
     return undefined;
