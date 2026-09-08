@@ -360,6 +360,54 @@ describe('BAIInteractiveLoginButton', () => {
     });
   });
 
+  describe('Superseded relay', () => {
+    it('does not keep the new endpoint busy while an old relay hangs', async () => {
+      stubLocation();
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string) => ({
+          ok: true,
+          status: 200,
+          json: async () =>
+            url === `${WEBSERVER_URL}/server/login-check`
+              ? { authenticated: true, session_id: 'sess-hanging' }
+              : { authenticated: false, data: null },
+        })),
+      );
+      // The host's exchange for the first endpoint never settles.
+      const onSessionVerified = vi.fn(() => new Promise<void>(() => {}));
+      const onFailure = vi.fn();
+      const props = {
+        appName: 'FastTrack',
+        callbackUrl: CALLBACK_URL,
+        onSessionVerified,
+        onFailure,
+      };
+
+      const { rerender } = render(
+        <BAIInteractiveLoginButton webserverUrl={WEBSERVER_URL} {...props} />,
+      );
+      await waitFor(() =>
+        expect(onSessionVerified).toHaveBeenCalledWith('sess-hanging'),
+      );
+      expect(screen.getByRole('button')).toHaveAttribute('aria-busy', 'true');
+
+      rerender(
+        <BAIInteractiveLoginButton
+          webserverUrl="https://other.example.com"
+          {...props}
+        />,
+      );
+
+      await waitFor(() => expect(onFailure).toHaveBeenCalledWith('no_session'));
+      const button = screen.getByRole('button', {
+        name: /Sign in with Backend.AI/,
+      });
+      expect(button).not.toHaveAttribute('aria-busy');
+      expect(button).toBeEnabled();
+    });
+  });
+
   describe('Unmount', () => {
     it('drops a probe that settles after unmount', async () => {
       stubLocation();

@@ -68,8 +68,7 @@ const BAIInteractiveLoginButton = ({
   // The probe inputs; changing them starts a fresh probe.
   const probeKey = `${timeoutMs ?? ''}\u0000${webserverUrl}`;
   const [isVerified, setIsVerified] = useState(false);
-  const [relaysInFlight, setRelaysInFlight] = useState(0);
-  const isRelaying = relaysInFlight > 0;
+  const [isRelaying, setIsRelaying] = useState(false);
   // Bumped on unmount or re-probe so a probe or relay that settles late is
   // dropped.
   const probeGenerationRef = useRef(0);
@@ -80,8 +79,10 @@ const BAIInteractiveLoginButton = ({
   );
   const runProbe = useEventNotStable(async (generation: number) => {
     const isCurrent = () => probeGenerationRef.current === generation;
-    // Whatever an earlier probe verified no longer applies.
+    // Whatever an earlier probe verified, or is still relaying, no longer
+    // applies to this one.
     setIsVerified(false);
+    setIsRelaying(false);
     const result = await probe();
     if (!isCurrent()) return;
     if (!result.ok) {
@@ -90,7 +91,7 @@ const BAIInteractiveLoginButton = ({
     }
     // The host's token exchange is a network round-trip of its own; keep the
     // button busy so it cannot navigate away mid-exchange.
-    setRelaysInFlight((count) => count + 1);
+    setIsRelaying(true);
     try {
       await handleSessionVerified(result.sessionId);
       if (isCurrent()) setIsVerified(true);
@@ -99,7 +100,8 @@ const BAIInteractiveLoginButton = ({
       reportFailure('relay_failed');
       handleFailure('relay_failed');
     } finally {
-      setRelaysInFlight((count) => count - 1);
+      // A superseded relay's flag was already cleared by the newer probe.
+      if (isCurrent()) setIsRelaying(false);
     }
   });
 
