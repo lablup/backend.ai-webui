@@ -18,11 +18,18 @@ import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
 import { Badge } from '@astryxdesign/core/Badge';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
-import { XIcon } from 'lucide-react';
-import React, { useEffect, useEffectEvent, useState } from 'react';
+import { PlusIcon, RotateCw, XIcon } from 'lucide-react';
+import React, {
+  useEffect,
+  useEffectEvent,
+  useImperativeHandle,
+  useState,
+} from 'react';
 
 /**
  * A folder as the REST `GET /folders` endpoint returns it. Distinct from the
@@ -70,6 +77,11 @@ export interface VFolderMountConfigValue {
   subpath?: string;
 }
 
+export interface BAIVFolderMountConfigInputRef {
+  /** Re-runs the `GET /folders` query behind the folder select. */
+  refetch: () => Promise<unknown>;
+}
+
 export interface BAIVFolderMountConfigInputProps {
   value?: VFolderMountConfigValue[];
   defaultValue?: VFolderMountConfigValue[];
@@ -97,6 +109,12 @@ export interface BAIVFolderMountConfigInputProps {
    * they are dropped from the folder options.
    */
   autoMountedFolderNames?: string[];
+  /**
+   * Opens the host's folder-creation modal. The create button is rendered only
+   * when this is given, because the modal lives in the host app.
+   */
+  onClickCreateFolder?: () => void;
+  ref?: React.Ref<BAIVFolderMountConfigInputRef>;
 }
 
 // Mirrors the alias validation used by the legacy VFolderTable mount UI.
@@ -344,6 +362,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   disabled,
   aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
   autoMountedFolderNames,
+  onClickCreateFolder,
+  ref,
   ...props
 }) => {
   'use memo';
@@ -365,7 +385,11 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   }));
   const selectedIdSet = new Set(_.map(mountConfigs, (e) => e.vfolderId));
 
-  const { data: allFolderList } = useSuspenseTanQuery<Array<LegacyVFolder>>({
+  const {
+    data: allFolderList,
+    refetch,
+    isFetching,
+  } = useSuspenseTanQuery<Array<LegacyVFolder>>({
     // The request carries no project scope — that gate is applied client-side.
     queryKey: ['BAIVFolderMountConfigInputFolders', ownerEmail ?? ''],
     queryFn: () => {
@@ -379,6 +403,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     },
     staleTime: 30 * 1000,
   });
+
+  useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 
   const mountableHostSet = new Set(mountableHosts);
   const autoMountedNameSet = new Set(autoMountedFolderNames ?? []);
@@ -461,23 +487,46 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
-      <BAIComplexSelect
-        multiple
-        label={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
-        isLabelHidden
-        isDisabled={disabled}
-        placeholder={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
-        total={displayingFolders.length}
-        options={_.map(displayingFolders, ({ folder, uuid }) => ({
-          value: uuid,
-          label: folder.name,
-          description: folder.host,
-        }))}
-        value={selectedFolders}
-        onChange={handleSelectionChange}
-        searchValue={searchStr}
-        onSearch={setSearchStr}
-      />
+      <BAIFlex direction="row" gap="xs" justify="between">
+        <BAIComplexSelect
+          multiple
+          label={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
+          isLabelHidden
+          isDisabled={disabled}
+          placeholder={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
+          total={displayingFolders.length}
+          options={_.map(displayingFolders, ({ folder, uuid }) => ({
+            value: uuid,
+            label: folder.name,
+            description: folder.host,
+          }))}
+          value={selectedFolders}
+          onChange={handleSelectionChange}
+          searchValue={searchStr}
+          onSearch={setSearchStr}
+        />
+        <ButtonGroup label={t('comp:BAIVFolderMountConfigInput.Folders')}>
+          {onClickCreateFolder ? (
+            <IconButton
+              icon={<PlusIcon />}
+              label={t('comp:BAIVFolderMountConfigInput.CreateFolder')}
+              tooltip={t('comp:BAIVFolderMountConfigInput.CreateFolder')}
+              isDisabled={disabled}
+              onClick={onClickCreateFolder}
+            />
+          ) : null}
+          <IconButton
+            icon={<RotateCw size="1em" />}
+            label={t('comp:BAIVFolderMountConfigInput.Refresh')}
+            tooltip={t('comp:BAIVFolderMountConfigInput.Refresh')}
+            isLoading={isFetching}
+            isDisabled={disabled}
+            onClick={() => {
+              refetch();
+            }}
+          />
+        </ButtonGroup>
+      </BAIFlex>
       {mountConfigs.length > 0 && (
         <BAIFlex direction="column" align="stretch" gap="xxs">
           <BAIFlex gap="xxs" align="center">
