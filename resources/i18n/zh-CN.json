@@ -3118,6 +3118,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "无数据",
       "NoLiveData": "无实时数据",
+      "NoLiveMetrics": "无实时指标",
+      "NoLiveMetricsForSessionsInView": "当前列表中没有会话报告实时指标。",
       "NoSessionsMatchingFilter": "没有符合当前筛选条件的会话。",
       "OmittedNoResource": "隐藏了 {{count}} 个未分配 {{label}} 的会话。",
       "RangePercent": "{{from}}–{{to}}%",

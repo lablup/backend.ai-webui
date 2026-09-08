@@ -3116,6 +3116,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Нет данных",
       "NoLiveData": "Нет данных в реальном времени",
+      "NoLiveMetrics": "Нет метрик в реальном времени",
+      "NoLiveMetricsForSessionsInView": "Ни одна сессия в текущем списке не сообщает метрики в реальном времени.",
       "NoSessionsMatchingFilter": "Ни одна сессия не соответствует текущему фильтру.",
       "OmittedNoResource": "Скрыто {{count}} сессий без выделенного {{label}}.",
       "RangePercent": "{{from}}–{{to}}%",

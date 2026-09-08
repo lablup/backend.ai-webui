@@ -3118,6 +3118,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "ไม่มีข้อมูล",
       "NoLiveData": "ไม่มีข้อมูลสด",
+      "NoLiveMetrics": "ไม่มีเมตริกสด",
+      "NoLiveMetricsForSessionsInView": "ไม่มีเซสชันในรายการปัจจุบันที่รายงานเมตริกสด",
       "NoSessionsMatchingFilter": "ไม่มีเซสชันที่ตรงกับตัวกรองปัจจุบัน",
       "OmittedNoResource": "กำลังซ่อน {{count}} เซสชันที่ไม่มีการจัดสรร {{label}}",
       "RangePercent": "{{from}}–{{to}}%",

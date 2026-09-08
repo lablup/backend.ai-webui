@@ -3120,6 +3120,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "無資料",
       "NoLiveData": "無即時資料",
+      "NoLiveMetrics": "無即時指標",
+      "NoLiveMetricsForSessionsInView": "目前清單中沒有會話回報即時指標。",
       "NoSessionsMatchingFilter": "沒有符合目前篩選條件的會話。",
       "OmittedNoResource": "已隱藏 {{count}} 個未分配 {{label}} 的會話。",
       "RangePercent": "{{from}}–{{to}}%",

@@ -3118,6 +3118,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "データなし",
       "NoLiveData": "ライブデータなし",
+      "NoLiveMetrics": "ライブメトリクスなし",
+      "NoLiveMetricsForSessionsInView": "現在の一覧でライブメトリクスを報告しているセッションはありません。",
       "NoSessionsMatchingFilter": "現在のフィルタに一致するセッションがありません。",
       "OmittedNoResource": "{{label}} が割り当てられていない {{count}} 件のセッションを非表示にしています。",
       "RangePercent": "{{from}}–{{to}}%",
