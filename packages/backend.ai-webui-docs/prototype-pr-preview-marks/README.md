@@ -41,6 +41,12 @@ change focused. Everything is switchable in place:
 | click a mark | pins the popover; `Esc` closes |
 | sidebar | per-page change-count badges, NEW / DEL badges |
 | `#bai-change-<n>` | deep link to the n-th change on a page (what the PR comment would link to) |
+| **Viewed** checkbox in the popover, `v` | mark a change as viewed (GitHub's per-file "Viewed", per block). Stored in `localStorage` under a content fingerprint of the change, so a change edited by a later push comes back unviewed; the panel says how many viewed changes have changed since. Panel: **Mark all viewed** / **Reset**; per-page `viewed/total` counts |
+| **Copy ref** in the popover | copies an AI-pasteable reference: `lang/page · change n/N · type kind`, `file: <md path>:<line>`, `section`, deep link, old/new text. **Copy page summary** in the panel copies the whole page's list with `[x]`/`[ ]` viewed state |
+
+Decided on 2026-09-08 (driver): **A highlighter + navigator**, with a dashed
+orange border added to the highlight; B and C stay in the prototype for
+comparison only.
 
 Pages worth comparing: `en/vfolder` (paragraph edits inside admonitions +
 images), `en/deployment` (list items + a removed paragraph), `en/dashboard`

@@ -32,6 +32,8 @@ const BASE_URL = args['base-url'] ?? '/base';
 const PRETEND_NEW = new Set((args['pretend-new'] ?? '').split(',').filter(Boolean));
 const PRETEND_DELETED = new Set((args['pretend-deleted'] ?? '').split(',').filter(Boolean));
 const LABEL = args.label ?? '';
+// markdown sources of the head build, for file:line references (optional)
+const SRC = path.resolve(docsRoot, args.src ?? (fs.existsSync(path.join(docsRoot, 'dist/proto-head-src')) ? 'dist/proto-head-src' : 'src'));
 const SIM_THRESHOLD = 0.4;
 const MAX_DP_CELLS = 6_000_000;
 
@@ -135,7 +137,7 @@ function extractBlocks(html, pageDir) {
   const push = (kind, anchor, text, inner, extra = {}) => {
     const t = norm(text);
     if (!t && kind !== 'image') return;
-    blocks.push({ idx: blocks.length, kind, tag: anchor.tag, anchor: shift(anchor), text: t, inner, key: `${kind}:${t}`, ...extra });
+    blocks.push({ idx: blocks.length, kind, tag: anchor.tag, anchor: shift(anchor), text: t, inner, key: `${kind}:${t}`, hid: attrOf(anchor, 'id') || null, ...extra });
   };
   const pushImage = (imgNode) => {
     const img = imgNode.tag === 'img' ? imgNode : findAll(imgNode, (n) => n.tag === 'img')[0];
@@ -299,14 +301,43 @@ function diffBlocks(baseBlocks, headBlocks) {
 
 // ---------------------------------------------------------------- per page
 
+function sourcePathOf(html, lang, slug) {
+  const m = html.match(/href="[^"]*\/edit\/[^"/]+\/(packages\/backend\.ai-webui-docs\/src\/[^"]+\.md)"/);
+  return m ? m[1] : `packages/backend.ai-webui-docs/src/${lang}/${slug}/${slug}.md`;
+}
+
 function pageTitle(html, slug) {
   const m = html.match(/breadcrumb__item--current"[^>]*>([^<]*)</) || html.match(/<h1[^>]*>([^<]*)</);
   return m ? decode(m[1]).trim() : slug;
 }
 
+// Nearest heading above the change, in the build the block lives in.
+function sectionOf(c) {
+  const blocks = c.head ? c.headBlocks : c.baseBlocks;
+  const upto = c.head ? c.head.idx : c.base.idx;
+  for (let i = upto - 1; i >= 0; i--) if (blocks[i].kind === 'heading') return { text: blocks[i].text, id: blocks[i].hid, level: blocks[i].level };
+  return null;
+}
+
+// Best-effort line number in the markdown source: first line whose
+// markdown-stripped text contains the block's opening words.
+const stripMd = (s) => s.replace(/!\[[^\]]*\]\(([^)]*)\)/g, '$1').replace(/[*_`~]|\[([^\]]*)\]\([^)]*\)|<[^>]+>|^\s*(?:[-*+]|\d+\.|#+|>|\|)\s*/g, '$1').replace(/\s+/g, ' ').trim();
+const alnum = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+function lineOf(mdLines, text, kind) {
+  if (!mdLines || !text) return null;
+  const probe = alnum(kind === 'image' ? path.basename(text) : text).slice(0, 24);
+  if (probe.length < 6) return null;
+  const i = mdLines.findIndex((l) => l.includes(probe));
+  return i >= 0 ? i + 1 : null;
+}
+
 function serializeChange(c, lang, id) {
   const blk = c.head ?? c.base;
   const out = { id, type: c.type, blockKind: blk.kind, tag: blk.tag, anchor: c.head ? c.head.idx : null, insertAfter: c.insertAfter ?? null };
+  // content identity: stable across rebuilds while the change itself is unchanged
+  out.fingerprint = crypto.createHash('sha1').update([c.type, blk.kind, c.base?.text ?? '', c.head?.text ?? '', c.base?.hash ?? '', c.head?.hash ?? ''].join('')).digest('hex').slice(0, 12);
+  out.section = sectionOf(c);
+  out.line = lineOf(c.mdLines, c.head ? c.head.text : c.base.text, blk.kind);
   if (blk.kind === 'image') {
     const src = blk.src;
     out.newImage = c.head ? src : null;
@@ -357,10 +388,14 @@ for (const lang of LANGS) {
 
   for (const slug of [...headPages].sort()) {
     const headFile = path.join(headDir, `${slug}.html`);
-    const headHtml = fs.readFileSync(headFile, 'utf8');
+    // idempotent: strip what a previous run injected before extracting/stamping again
+    const headHtml = fs.readFileSync(headFile, 'utf8').replace(/ data-bai-block="\d+"/g, '').replace(/^.*bai-pr-preview\.(?:css|js).*\n/gm, '');
     const headBlocks = extractBlocks(headHtml, headDir);
     if (!headBlocks) continue; // redirect stubs, index without chapter
     const title = pageTitle(headHtml, slug);
+    const sourcePath = sourcePathOf(headHtml, lang, slug);
+    const mdFile = path.join(SRC, sourcePath.replace(/^packages\/backend\.ai-webui-docs\/src\//, ''));
+    const mdLines = fs.existsSync(mdFile) ? fs.readFileSync(mdFile, 'utf8').split('\n').map((l) => alnum(stripMd(l))) : null;
     const isNew = !basePages.has(slug) || PRETEND_NEW.has(slug);
     const isDeleted = PRETEND_DELETED.has(slug);
     let changes = [];
@@ -370,13 +405,16 @@ for (const lang of LANGS) {
     else {
       const baseHtml = fs.readFileSync(path.join(baseDir, `${slug}.html`), 'utf8');
       const baseBlocks = extractBlocks(baseHtml, baseDir) ?? [];
-      changes = diffBlocks(baseBlocks, headBlocks).map((c, i) => serializeChange(c, lang, i + 1));
+      changes = diffBlocks(baseBlocks, headBlocks).map((c, i) => serializeChange({ ...c, headBlocks, baseBlocks, mdLines }, lang, i + 1));
+      // the same image swapped in several places shares a fingerprint: number the repeats
+      const seen = new Map();
+      for (const ch of changes) { const n = (seen.get(ch.fingerprint) || 0) + 1; seen.set(ch.fingerprint, n); if (n > 1) ch.fingerprint += `-${n}`; }
       if (changes.length) status = 'modified';
     }
-    const sidecar = { slug, lang, title, status, demo: PRETEND_NEW.has(slug) || PRETEND_DELETED.has(slug) || undefined, counts: counts(changes), changes };
+    const sidecar = { slug, lang, title, status, sourcePath, demo: PRETEND_NEW.has(slug) || PRETEND_DELETED.has(slug) || undefined, counts: counts(changes), changes };
     fs.writeFileSync(path.join(headDir, `${slug}.changes.json`), JSON.stringify(sidecar));
     fs.writeFileSync(headFile, injectHead(headHtml, headBlocks, slug));
-    const entry = { slug, title, status, url: `./${slug}.html`, counts: sidecar.counts, demo: sidecar.demo };
+    const entry = { slug, title, status, url: `./${slug}.html`, sourcePath, counts: sidecar.counts, demo: sidecar.demo, fingerprints: changes.map((c) => c.fingerprint) };
     if (status === 'deleted') entry.baseUrl = `${BASE_URL}/${VERSION}/${lang}/${slug}.html`;
     if (status !== 'unchanged') {
       pages.push(entry);

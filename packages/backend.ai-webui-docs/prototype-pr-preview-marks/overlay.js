@@ -46,6 +46,51 @@
     let marks = []; // [{change, el}] in document order
     let current = -1;
 
+    // ---------------------------------------------------------- viewed state (localStorage)
+    // Keyed by content fingerprint, so a change that is edited in a later push
+    // no longer matches and drops back to unviewed; fingerprints that vanished
+    // are counted as "changed since you viewed them" and pruned.
+    const storeKey = (l, s) => `bai-pr-viewed:${manifest && manifest.label ? manifest.label : 'pr'}:${l}/${s}`;
+    const readViewed = (l, s) => { try { return new Set(JSON.parse(localStorage.getItem(storeKey(l, s)) || '[]')); } catch { return new Set(); } };
+    const writeViewed = (l, s, set) => { try { localStorage.setItem(storeKey(l, s), JSON.stringify([...set])); } catch { /* private mode */ } };
+    const viewed = readViewed(lang, slug);
+    const live = new Set((page.changes || []).map((c) => c.fingerprint));
+    const staleViewed = [...viewed].filter((f) => !live.has(f)).length;
+    if (staleViewed) { for (const f of [...viewed]) if (!live.has(f)) viewed.delete(f); writeViewed(lang, slug, viewed); }
+    const isViewed = (change) => viewed.has(change.fingerprint);
+    function setViewed(change, on) {
+      if (on) viewed.add(change.fingerprint); else viewed.delete(change.fingerprint);
+      writeViewed(lang, slug, viewed);
+      const m = marks.find((x) => x.change === change);
+      if (m) m.el.classList.toggle('bai-viewed', on);
+      updatePos();
+      if (!panel.hidden) renderPanel();
+    }
+    const viewedCountOf = (p) => { if (!p.fingerprints) return 0; const s = readViewed(lang, p.slug); return p.fingerprints.filter((f) => s.has(f)).length; };
+
+    // ---------------------------------------------------------- copyable reference
+    const pageUrl = () => { const u = new URL(location.href); u.hash = ''; return u.origin + u.pathname + u.search; };
+    const refText = (change) => {
+      const lines = [`[docs-preview] ${lang}/${slug} · change ${change.id}/${page.changes.length} · ${change.type} ${KIND_LABEL[change.blockKind] || change.blockKind}`];
+      lines.push(`- file: ${page.sourcePath || `packages/backend.ai-webui-docs/src/${lang}/${slug}/${slug}.md`}${change.line ? `:${change.line}` : ''}`);
+      if (change.section) lines.push(`- section: "${change.section.text}"${change.section.id ? ` (#${change.section.id})` : ''}`);
+      lines.push(`- page: ${pageUrl()}#bai-change-${change.id}`);
+      if (change.blockKind === 'image') {
+        lines.push(`- image: ${change.newText || change.oldText} (${change.type === 'modified' ? 'replaced' : change.type})`);
+      } else {
+        if (change.oldText) lines.push(`- old: ${change.oldText}`);
+        if (change.newText) lines.push(`- new: ${change.newText}`);
+      }
+      return lines.join('\n');
+    };
+    const pageSummaryText = () => [`[docs-preview] ${lang}/${slug} — ${page.title} · ${page.changes.length} changes`, `- file: ${page.sourcePath}`, `- page: ${pageUrl()}`, ...page.changes.map((c) => `${isViewed(c) ? '[x]' : '[ ]'} #${c.id} ${c.type} ${KIND_LABEL[c.blockKind] || c.blockKind}${c.line ? ` (line ${c.line})` : ''}${c.section ? ` — ${c.section.text}` : ''}: ${(c.newText || c.oldText).slice(0, 100)}${(c.newText || c.oldText).length > 100 ? '…' : ''}`)].join('\n');
+    async function copy(text, btn) {
+      try { await navigator.clipboard.writeText(text); } catch {
+        const ta = el('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+      }
+      if (btn) { const old = btn.textContent; btn.textContent = 'Copied'; btn.classList.add('bai-copied'); setTimeout(() => { btn.textContent = old; btn.classList.remove('bai-copied'); }, 1200); }
+    }
+
     // ---------------------------------------------------------- marks
     const blockEl = (idx) => (idx == null || idx < 0 ? null : $(`[data-bai-block="${idx}"]`));
     const wrapInline = (change, inner) => {
@@ -117,6 +162,7 @@
             } else node.innerHTML = change.diffHtml;
           }
         }
+        node.classList.toggle('bai-viewed', isViewed(change));
         marks.push({ change, el: node });
       }
       marks.sort((a, b) => (a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
@@ -153,9 +199,12 @@
       } else {
         body = `<div class="bai-popover__sbs" style="grid-template-columns:1fr"><div class="bai-col--old"><div class="bai-col-label">Old</div>${wrapInline(change, change.oldHtml)}</div></div>`;
       }
-      pop.innerHTML = `<div class="bai-popover__head"><span class="bai-popover__type bai-popover__type--${type}">${type}</span><span class="bai-popover__kind">${kind}${change.similarity != null ? ` · ${Math.round(change.similarity * 100)}% similar` : ''}</span><span class="bai-popover__spacer"></span>${modeHtml}</div><div class="bai-popover__body">${body}</div><div class="bai-popover__hint">${change.blockKind === 'image' ? 'Click an image to enlarge · ' : ''}Click the block to pin · Esc to close</div>`;
+      const where = `${page.sourcePath ? page.sourcePath.split('/').slice(-1)[0] : ''}${change.line ? `:${change.line}` : ''}${change.section ? ` · ${esc(change.section.text)}` : ''}`;
+      pop.innerHTML = `<div class="bai-popover__head"><span class="bai-popover__type bai-popover__type--${type}">${type}</span><span class="bai-popover__kind">${kind}${change.similarity != null ? ` · ${Math.round(change.similarity * 100)}% similar` : ''}</span><span class="bai-popover__spacer"></span>${modeHtml}<button class="bai-popover__btn" data-copy title="Copy a reference to this change (file:line, section, link, old/new)">Copy ref</button><label class="bai-popover__viewed" title="Mark as viewed (v)"><input type="checkbox" data-viewed ${isViewed(change) ? 'checked' : ''}/> Viewed</label></div><div class="bai-popover__body">${body}</div><div class="bai-popover__hint"><span class="bai-popover__where">#${change.id} · ${where}</span>${change.blockKind === 'image' ? 'Click an image to enlarge · ' : ''}Click the block to pin · <kbd>v</kbd> viewed · Esc to close</div>`;
       pop.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => { modeOverride = b.dataset.mode; render(change); }));
       pop.querySelectorAll('[data-bai-zoom]').forEach((img) => img.addEventListener('click', () => lightbox(change)));
+      $('[data-copy]', pop).addEventListener('click', (e) => copy(refText(change), e.currentTarget));
+      $('[data-viewed]', pop).addEventListener('change', (e) => setViewed(change, e.target.checked));
     }
 
     function position(target) {
@@ -170,6 +219,8 @@
     function show(target) {
       const change = page.changes.find((c) => String(c.id) === target.dataset.baiChange);
       if (!change) return;
+      current = marks.findIndex((m) => m.change === change);
+      updatePos();
       render(change);
       pop.hidden = false;
       position(target);
@@ -218,18 +269,28 @@
         const tag = p.status === 'new' ? '<span class="bai-nav__tag bai-nav__tag--new">NEW</span>' : p.status === 'deleted' ? '<span class="bai-nav__tag bai-nav__tag--deleted">DELETED</span>' : '';
         const demo = p.demo ? '<span class="bai-nav__tag bai-nav__tag--demo">demo</span>' : '';
         const href = p.status === 'deleted' ? withParams(p.baseUrl) : withParams(`./${p.slug}.html#bai-change-1`);
-        const count = p.status === 'modified' ? `<span class="bai-nav__count">${p.counts.total}</span>` : '';
+        const v = viewedCountOf(p);
+        const count = p.status === 'modified' ? `<span class="bai-nav__count${v === p.counts.total ? ' bai-nav__count--done' : ''}" title="viewed / total">${v}/${p.counts.total}</span>` : '';
         return `<a class="bai-nav__row${i === pageIdx ? ' bai-nav__row--current' : ''}${p.status === 'deleted' ? ' bai-nav__row--deleted' : ''}" href="${href}">${tag}${demo}<span class="bai-nav__title">${esc(p.title)}</span>${count}</a>`;
       }).join('');
       const langs = manifest ? Object.entries(manifest.langs).map(([l, s]) => {
         const target = s.pages.some((p) => p.slug === slug) ? slug : (s.pages[0] && s.pages[0].status !== 'deleted' ? s.pages[0].slug : slug);
         return `<a class="${l === lang ? 'bai-nav__lang--current' : ''}" href="${withParams(`../${l}/${target}.html`)}">${l} · ${s.totals.changes}</a>`;
       }).join('') : '';
-      panel.innerHTML = `<div class="bai-nav__section">Changed pages${manifest && manifest.label ? ` — ${esc(manifest.label)}` : ''}</div>${rows || '<div class="bai-nav__row"><em>No page changed — toolkit-only preview</em></div>'}<div class="bai-nav__section">Languages</div><div class="bai-nav__lang">${langs}</div>`;
+      const actions = marks.length ? `<div class="bai-nav__actions"><button data-act="copy-page">Copy page summary</button><button data-act="all-viewed">Mark all viewed</button><button data-act="reset-viewed">Reset</button></div>` : '';
+      const stale = staleViewed ? `<div class="bai-nav__stale">${staleViewed} change${staleViewed > 1 ? 's' : ''} you had viewed ${staleViewed > 1 ? 'have' : 'has'} changed since — shown as unviewed again</div>` : '';
+      panel.innerHTML = `<div class="bai-nav__section">Changed pages${manifest && manifest.label ? ` — ${esc(manifest.label)}` : ''}</div>${rows || '<div class="bai-nav__row"><em>No page changed — toolkit-only preview</em></div>'}${stale}${actions}<div class="bai-nav__section">Languages</div><div class="bai-nav__lang">${langs}</div>`;
+      panel.querySelectorAll('[data-act]').forEach((b) => b.addEventListener('click', (e) => {
+        const act = b.dataset.act;
+        if (act === 'copy-page') copy(pageSummaryText(), e.currentTarget);
+        else { for (const m of marks) { if (act === 'all-viewed') viewed.add(m.change.fingerprint); else viewed.delete(m.change.fingerprint); m.el.classList.toggle('bai-viewed', act === 'all-viewed'); } writeViewed(lang, slug, viewed); updatePos(); renderPanel(); }
+      }));
     }
 
     function updatePos() {
-      posEl.textContent = marks.length ? `${current < 0 ? '–' : current + 1} / ${marks.length}` : page.status === 'new' ? 'new page' : 'no marks';
+      const v = marks.filter((m) => isViewed(m.change)).length;
+      posEl.textContent = marks.length ? `${current < 0 ? '–' : current + 1} / ${marks.length}${v ? ` · ${v} viewed` : ''}` : page.status === 'new' ? 'new page' : 'no marks';
+      posEl.classList.toggle('bai-nav__pos--done', marks.length > 0 && v === marks.length);
     }
     function jumpTo(i, flash = true) {
       if (!marks.length) return;
@@ -305,6 +366,7 @@
       else if (e.key === 'ArrowRight') cycle(1);
       else if (e.key === '[') step(-1);
       else if (e.key === ']') step(1);
+      else if (e.key === 'v' && current >= 0 && marks[current]) { const c = marks[current].change; setViewed(c, !isViewed(c)); if (!pop.hidden) render(c); }
       else if (e.key === 'Escape') { pinned = null; pop.hidden = true; panel.hidden = true; document.querySelectorAll('.bai-lightbox').forEach((n) => n.remove()); }
     });
 
