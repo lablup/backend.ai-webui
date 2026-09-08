@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "Form control for choosing vfolders and configuring how each one is mounted. It loads the folder list itself, so no queryRef is needed and a Suspense boundary is required above it, and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. The picker reads the REST `GET /folders` list rather than the `vfolder_nodes` connection, because the mount gates it applies cannot be expressed as a GraphQL filter: the host must be one of the `mountableHosts` the caller supplies (those granting `mount-in-session`), the folder must be reachable from `currentProjectId`, and a name in `autoMountedFolderNames` is dropped from the options because the session mounts it regardless. `filter` hides rows on top of that, display-only, and an already-selected folder stays visible. An entry the mount gates reject — an unreachable host or project — is pruned from the value with a warning toast; a folder that merely became auto-mounted is not, since it is still mounted. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the vfolder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. The module owns the whole mount-value vocabulary so a consumer never restates it: `DEFAULT_ALIAS_BASE_PATH`, `inputToMountDestination` / `mountDestinationToInput` (the two directions of the alias rule), `resolveVFolderMounts` (every entry's name, resolved path, default-alias flag and subpath in one pass), `toMountCreationConfig` (the manager `creation_config` mount fields), `getVFolderMountConfigStatuses` / `isVFolderMountConfigValid` (per-entry validity), and `useVFolderMountConfigFormRule` (a ready `Form.Item` `rules` entry with BUI-translated messages). The inline per-row errors are advisory only; the form rule is what makes `form.validateFields()` reject.",
+      "Form control for choosing vfolders and configuring how each one is mounted. It loads the folder list itself, so no queryRef is needed and a Suspense boundary is required above it, and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. Beside the select sits a button group: a refresh button that re-runs the folder query, and — only when `onClickCreateFolder` is given — a create button that hands the click back to the host, whose folder-creation modal it is; `ref.refetch()` exposes the same refresh imperatively so the host can pull in a folder it just created. The picker reads the REST `GET /folders` list rather than the `vfolder_nodes` connection, because the mount gates it applies cannot be expressed as a GraphQL filter: the host must be one of the `mountableHosts` the caller supplies (those granting `mount-in-session`), the folder must be reachable from `currentProjectId`, and a name in `autoMountedFolderNames` is dropped from the options because the session mounts it regardless. `filter` hides rows on top of that, display-only, and an already-selected folder stays visible. An entry the mount gates reject — an unreachable host or project — is pruned from the value with a warning toast; a folder that merely became auto-mounted is not, since it is still mounted. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the vfolder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. The module owns the whole mount-value vocabulary so a consumer never restates it: `DEFAULT_ALIAS_BASE_PATH`, `inputToMountDestination` / `mountDestinationToInput` (the two directions of the alias rule), `resolveVFolderMounts` (every entry's name, resolved path, default-alias flag and subpath in one pass), `toMountCreationConfig` (the manager `creation_config` mount fields), `getVFolderMountConfigStatuses` / `isVFolderMountConfigValid` (per-entry validity), and `useVFolderMountConfigFormRule` (a ready `Form.Item` `rules` entry with BUI-translated messages). The inline per-row errors are advisory only; the form rule is what makes `form.validateFields()` reject.",
     bestPractices: [
       {
         guidance: true,
@@ -42,6 +42,11 @@ export const docs = {
         guidance: true,
         description:
           'Gate the folder list it loads with `currentProjectId`, `ownerEmail`, `mountableHosts` and `filter` so users cannot pick folders the session will not be able to mount.',
+      },
+      {
+        guidance: true,
+        description:
+          'Pass `onClickCreateFolder` together with a `ref` when the host has a folder-creation modal: open the modal on the click, then `await ref.current?.refetch()` before appending the created folder to the value, so the select already knows it.',
       },
       {
         guidance: false,
@@ -126,6 +131,18 @@ export const docs = {
       type: 'string[]',
       description:
         'Names of folders mounted automatically. They are dropped from the offered folder options (but never pruned from an existing value), their default mount paths join the overlap check (so a colliding user alias is flagged with its own `overlappingWithAutoMount` kind and message), and the names are listed as read-only chips below the rows.',
+    },
+    {
+      name: 'onClickCreateFolder',
+      type: '() => void',
+      description:
+        "Opens the host app's folder-creation modal. The create button in the group beside the select is rendered only when this is given, because the modal is a host component; pair it with `ref.refetch()` so the new folder appears in the options once it is created.",
+    },
+    {
+      name: 'ref',
+      type: 'React.Ref<BAIVFolderMountConfigInputRef>',
+      description:
+        'Exposes `refetch(): Promise<unknown>`, which re-runs the `GET /folders` query behind the select. Call it after creating a folder from `onClickCreateFolder`, then append the new entry to the value.',
     },
   ],
   examples: [
