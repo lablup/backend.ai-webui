@@ -75,19 +75,15 @@ export const resolveCSVExportRoute = ({
   scope,
   userRole,
   supportsExportCSV,
-  supportsMySessionsExport,
 }: {
   nodeKey: SupportedNodeKeys;
   scope: CSVExportScope;
   userRole: string | undefined;
   supportsExportCSV: boolean;
-  supportsMySessionsExport: boolean;
 }): CSVExportRoute => {
   if (!supportsExportCSV) return 'none';
   if (userRole === 'superadmin') return 'admin';
-  if (scope === 'my' && nodeKey === 'sessions' && supportsMySessionsExport) {
-    return 'my';
-  }
+  if (scope === 'my' && nodeKey === 'sessions') return 'my';
   return 'none';
 };
 
@@ -122,7 +118,6 @@ export const useCSVExport = (
     scope,
     userRole,
     supportsExportCSV: baiClient.supports('export-csv'),
-    supportsMySessionsExport: baiClient.supports('my-sessions-export-csv'),
   });
 
   const { data: supportedFields } = useSuspenseTanQuery<Array<string>>({

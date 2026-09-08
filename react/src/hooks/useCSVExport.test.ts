@@ -53,7 +53,6 @@ const resolve = (
     scope: 'admin',
     userRole: 'user',
     supportsExportCSV: true,
-    supportsMySessionsExport: true,
     ...overrides,
   });
 
@@ -79,10 +78,8 @@ describe('resolveCSVExportRoute', () => {
     expect(resolve({ scope: 'my', nodeKey: 'audit-logs' })).toBe('none');
   });
 
-  it('falls back to no route on managers without the matching feature', () => {
-    expect(resolve({ scope: 'my', supportsMySessionsExport: false })).toBe(
-      'none',
-    );
+  it('falls back to no route on managers without export-csv', () => {
+    expect(resolve({ scope: 'my', supportsExportCSV: false })).toBe('none');
     expect(resolve({ userRole: 'superadmin', supportsExportCSV: false })).toBe(
       'none',
     );
@@ -91,7 +88,7 @@ describe('resolveCSVExportRoute', () => {
 
 describe('useCSVExport', () => {
   beforeEach(() => {
-    supportedFeatures = new Set(['export-csv', 'my-sessions-export-csv']);
+    supportedFeatures = new Set(['export-csv']);
     currentUserRole = 'user';
     baiRequest.mockReset();
     baiRequest.mockImplementation(({ method }: { method: string }) =>
