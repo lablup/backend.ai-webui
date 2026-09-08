@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useCurrentDomainId, useCurrentDomainValue } from '.';
+import { useCurrentDomain, useCurrentDomainValue } from '.';
 import { useAppConfigDomainRawQuery } from '../__generated__/useAppConfigDomainRawQuery.graphql';
 import { useAppConfigMyQuery } from '../__generated__/useAppConfigMyQuery.graphql';
 import { useAppConfigMyUpsertMutation } from '../__generated__/useAppConfigMyUpsertMutation.graphql';
@@ -237,7 +237,7 @@ export const useUpdatePublicDomainAppConfig = () => {
 export const useUpdateDomainAppConfig = () => {
   'use memo';
   const relayEnv = useRelayEnvironment();
-  const scopeId = useCurrentDomainId();
+  const { id: scopeId } = useCurrentDomain();
   const upsert =
     useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
 
