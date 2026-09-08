@@ -562,6 +562,75 @@ describe('schema show against a mocked manager', () => {
   });
 });
 
+describe('explain against a mocked manager', () => {
+  beforeEach(() => {
+    clearManagerVersionCache();
+    process.env.BAI_AGENT_CONFIG_DIR = mkdtempSync(
+      join(tmpdir(), 'bai-agent-explain-'),
+    );
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    clearManagerVersionCache();
+  });
+
+  const loggedIn = () =>
+    saveSession({
+      endpoint: ENDPOINT,
+      webui: '',
+      sessionId: SESSION_ID,
+      savedAt: new Date().toISOString(),
+    });
+
+  it('checks the field and the enum value the target resolved to', async () => {
+    loggedIn();
+    // Older than every `Added in` marker in the committed SDL.
+    vi.stubGlobal('fetch', fakeManager('20.03.0').impl);
+
+    const { exitCode, stdout, stderr } = await invoke([
+      'explain',
+      'Role.status=ACTIVE',
+      '--json',
+    ]);
+    expect(exitCode).toBe(EXIT.ok);
+    expect(stderr).toContain('warning:');
+    const { data } = JSON.parse(stdout);
+    expect(data.alignment.aligned).toBe(false);
+    expect(
+      data.alignment.newer.map((finding: { id: string }) => finding.id),
+    ).toEqual(['Role.status', 'RoleStatus.ACTIVE']);
+  });
+
+  it('exits 1 with version_mismatch under --strict', async () => {
+    loggedIn();
+    vi.stubGlobal('fetch', fakeManager('20.03.0').impl);
+
+    const { exitCode, stderr } = await invoke([
+      'explain',
+      'ComputeSessionNode.status',
+      '--strict',
+      '--json',
+    ]);
+    expect(exitCode).toBe(EXIT.error);
+    const envelope = JSON.parse(stderr);
+    expect(envelope.code).toBe('version_mismatch');
+    expect(envelope.hint).toBe('bai-agent schema sync --tag 20.03.0');
+  });
+
+  it('stays offline when no session is stored', async () => {
+    const spy = vi.fn(async () => new Response('{}', { status: 200 }));
+    vi.stubGlobal('fetch', spy);
+
+    const { exitCode } = await invoke([
+      'explain',
+      'ComputeSessionNode.status',
+      '--json',
+    ]);
+    expect(exitCode).toBe(EXIT.ok);
+    expect(spy).not.toHaveBeenCalled();
+  });
+});
+
 describe('doctor schema alignment', () => {
   beforeEach(() => {
     clearManagerVersionCache();
