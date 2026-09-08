@@ -65,6 +65,37 @@ describe('rankHits — matching', () => {
   it('does not fuzzy-match a non-ASCII query', () => {
     expect(rankHits('없는단어', koHits, { t: tKo, tEn })).toEqual([]);
   });
+
+  it('does not reach a different word through fuzz ("kernel" is not "internal")', () => {
+    const found = _.map(
+      _.filter(rank('kernel'), (hit) => !!hit.matchedIn),
+      (hit) => hit.matchedIn?.key,
+    );
+    expect(found).not.toContain('error.InternalServerError');
+    expect(_.every(found, (key) => /kernel/i.test(tEn(key as string)))).toBe(
+      true,
+    );
+  });
+
+  it('matches every word of a multi-word query, each on its own edit budget', () => {
+    const bodyRows = _.filter(rank('create session'), (hit) => !!hit.matchedIn);
+    const keys = _.map(bodyRows, (hit) => hit.matchedIn?.key);
+    expect(keys).not.toContain('session.TerminateSession');
+    expect(keys).not.toContain('start.button.StartSession');
+    expect(bodyRows.length).toBeGreaterThan(0);
+    _.forEach(keys, (key) => {
+      const text = tEn(key as string).toLowerCase();
+      expect(text).toMatch(/creat/);
+      expect(text).toMatch(/session/);
+    });
+  });
+
+  it('reads extended-search operators as plain text', () => {
+    expect(_.map(rank("'session!"), 'labelKey')).toContain(
+      'webui.menu.Sessions',
+    );
+    expect(rank('!')).toEqual([]);
+  });
 });
 
 describe('rankHits — ordering', () => {
@@ -104,11 +135,13 @@ describe('rankHits — body matches and caps', () => {
     expect(baseHitId(bodyRow?.id ?? '')).not.toContain(BODY_HIT_ID_MARKER);
   });
 
-  it('never shows more than 3 body rows for one hit', () => {
+  it('shows one body row per hit — its best sentence, never a list of them', () => {
+    expect(MAX_BODY_HITS_PER_HIT).toBe(1);
     const grouped = _.groupBy(
       _.filter(rank('resource'), (hit) => !!hit.matchedIn),
       (hit) => baseHitId(hit.id),
     );
+    expect(_.size(grouped)).toBeGreaterThan(1);
     expect(
       _.every(grouped, (rows) => rows.length <= MAX_BODY_HITS_PER_HIT),
     ).toBe(true);

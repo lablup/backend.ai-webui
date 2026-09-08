@@ -17,11 +17,16 @@ export const FIELD_WEIGHTS = {
 } as const;
 
 export const MAX_RESULTS = 30;
-export const MAX_BODY_HITS_PER_HIT = 3;
+export const MAX_BODY_HITS_PER_HIT = 1;
 const EXACT_BOOST = 2;
 const PREFIX_BOOST = 1.5;
 const RECENT_BOOST = 1.25;
-const FUZZY_THRESHOLD = 0.35;
+// One edit per five characters — enough for a typo, too tight for "kernel" to
+// reach "in·ternal". Applied per word (extended search), so a longer query
+// does not buy a bigger edit budget.
+const FUZZY_THRESHOLD = 0.2;
+// Extended-search operators; a query is words, never an expression.
+const EXTENDED_SEARCH_OPERATORS = /['!^$=|"]/g;
 
 /** Marks a row produced by a body-key match; strip it to reach the real hit. */
 export const BODY_HIT_ID_MARKER = '#found=';
@@ -47,6 +52,14 @@ const KIND_ORDER: Record<SearchHitKind, number> = {
 const isAsciiQuery = (query: string): boolean =>
   // eslint-disable-next-line no-control-regex
   /^[\x00-\x7F]*$/.test(query);
+
+/** Words joined by a space, which extended search reads as AND. */
+const toWordQuery = (query: string): string =>
+  _.compact(
+    _.map(_.split(query, /\s+/), (word) =>
+      word.replace(EXTENDED_SEARCH_OPERATORS, ''),
+    ),
+  ).join(' ');
 
 type FieldName = 'title' | 'keywords' | 'body';
 
@@ -125,6 +138,7 @@ const prepare = (
       keys: ['text'],
       includeScore: true,
       ignoreLocation: true,
+      useExtendedSearch: true,
       threshold: FUZZY_THRESHOLD,
       minMatchCharLength: 1,
       shouldSort: false,
@@ -186,8 +200,10 @@ const scoreFields = (
     );
   }
 
+  const wordQuery = toWordQuery(query);
+  if (!wordQuery) return [];
   return _.map(
-    prepared.fuse.search(query, { limit: prepared.records.length }),
+    prepared.fuse.search(wordQuery, { limit: prepared.records.length }),
     ({ item, score }) => ({
       record: item,
       score:
@@ -207,8 +223,8 @@ export interface RankHitsOptions {
 
 /**
  * Scores hits against a query. Title / tab / setting / keyword matches surface
- * the hit itself; body matches surface up to `bodyLimitPerHit` clones of the
- * page hit, each carrying the key it was found in.
+ * the hit itself; a body match surfaces the page hit once (`bodyLimitPerHit`),
+ * carrying its best-scoring key as the "found in" line.
  */
 export const rankHits = (
   query: string,
