@@ -3,12 +3,13 @@
 # Two independent chores, both cheap and both necessary because GitHub Pages has
 # a hard 1 GB published-site ceiling and this repository is already large:
 #
-#   cleanup  — delete `pr/<n>/` for every PR that is no longer open. At ~18 MB
-#              per preview and ~29% of PRs qualifying for one, the ~98 open PRs
-#              project to ~520 MB; without this the merged ones never leave.
+#   cleanup  — delete `pr/<n>/` for every PR that is no longer open, previews of
+#              every kind included. A Storybook preview is ~18 MB; a docs preview
+#              is ~52 MB per built language, so a handful of concurrent docs PRs
+#              is already a large share of the ceiling and this is the only thing
+#              keeping the merged ones from staying forever.
 #   compact  — squash gh-pages history to a single orphan commit once a week, so
-#              the branch's *history* of those 18 MB trees stops growing the
-#              repository.
+#              the branch's *history* of those trees stops growing the repository.
 #
 # The cleanup reconciles against the live open-PR list on every run, so it needs
 # no `closed` event to be correct — firing on any preview build (plus the daily
