@@ -92,11 +92,17 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - Use Jotai for global state, Relay for GraphQL state.
 - Comment only what the code cannot say — ≤2 lines by default; the reasoning behind a change goes in the commit body and the PR, not the source file (`.claude/rules/comment-density.md`). The long justification blocks already in the tree are migration-era history: trim a file's blocks when you edit it, don't sweep.
 
+### Architecture Decision Records (detail: `.claude/rules/adr.md`, auto-loaded)
+
+- Architecture-level decisions live in `docs/adr/`, indexed by `docs/ARCHITECTURE.md`. A decision on `main` is in force: read the ADRs covering an area before changing it, and never implement against one.
+- A change that makes a new decision other code must follow records an ADR in the same PR and proceeds; the PR is where a human reviews it. A reversal of an ADR in force is flagged to a human before landing.
+
 ### On-Demand Skills (loaded only when needed)
 
 - **Storybook**: `storybook-patterns` skill (fw plugin; CSF 3, meta config, story patterns, checklists)
 - **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
+- **ADR**: `adr-writing` skill (file conventions, section skeleton, writing rules, landing checks; when a change needs one is `.claude/rules/adr.md`)
 - **Backend.AI live data, field meanings, GraphQL**: `bai-agent` skill (preflight/login, the `search` -> `docs show`/`schema show`/`explain` -> `query` loop, and pointing the user at the `webui_url` the query result already carries). It ships with the CLI (`packages/backend.ai-agent-cli/skill/`), not as a repository skill: install it per user with `pnpm run bai-agent init --skill --no-login`. Its workflow contract is the generated `BAI-AGENT` block at the bottom of this file.
 - **Relay mutations**: `relay-mutation-store-updates` skill (when a mutation can skip the refetch — update mutations must return their changed fields so Relay patches the normalized store; refetch only when list membership changes)
 
@@ -115,6 +121,7 @@ When terms disagree, precedence is: (1) the live UI i18n label in `resources/i18
 - `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-patterns` skill for tsx/ts context)
 - `e2e.instructions.md` → `e2e/**/*.ts`
 - `docs.instructions.md` → `packages/backend.ai-webui-docs/**/*.md`
+- `adr.instructions.md` → `docs/adr/**/*.md,docs/ARCHITECTURE.md`
 
 ### Verification Harness
 
