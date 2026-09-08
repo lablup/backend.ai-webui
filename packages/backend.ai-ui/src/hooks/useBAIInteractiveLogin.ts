@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 */
 import { useEventNotStable } from './useEventNotStable';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export type BAIInteractiveLoginFailureReason =
   | 'no_endpoint'
@@ -168,11 +168,20 @@ export const probeLoginCheck = async ({
     return { ok: false, reason: 'http_error', status: response.status };
   }
 
+  let body: unknown;
   try {
-    return classifyLoginCheckResponse(await response.json());
-  } catch {
-    return { ok: false, reason: 'invalid_response' };
+    body = await response.json();
+  } catch (error) {
+    // The timeout signal also governs reading the body.
+    return {
+      ok: false,
+      reason:
+        classifyFetchError(error) === 'timeout'
+          ? 'timeout'
+          : 'invalid_response',
+    };
   }
+  return classifyLoginCheckResponse(body);
 };
 
 export interface UseBAIInteractiveLoginOptions {
@@ -206,19 +215,22 @@ const useBAIInteractiveLogin = ({
   const [failure, setFailure] = useState<BAIInteractiveLoginFailure | null>(
     null,
   );
+  // Only the latest probe commits state; an earlier one that settles later
+  // (StrictMode's replayed mount, a re-probe) is discarded.
+  const probeSequenceRef = useRef(0);
 
   const probe = useEventNotStable(async () => {
+    const sequence = ++probeSequenceRef.current;
     setIsProbing(true);
     setFailure(null);
-    try {
-      const result = await probeLoginCheck({ webserverUrl, timeoutMs });
+    const result = await probeLoginCheck({ webserverUrl, timeoutMs });
+    if (sequence === probeSequenceRef.current) {
       setFailure(
         result.ok ? null : { reason: result.reason, status: result.status },
       );
-      return result;
-    } finally {
       setIsProbing(false);
     }
+    return result;
   });
 
   const reportFailure = useEventNotStable(

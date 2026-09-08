@@ -1,4 +1,5 @@
 import useBAIInteractiveLogin, {
+  type BAIInteractiveLoginProbeResult,
   buildInteractiveLoginUrl,
   classifyFetchError,
   classifyLoginCheckResponse,
@@ -390,6 +391,23 @@ describe('probeLoginCheck', () => {
     ).resolves.toEqual({ ok: false, reason: 'invalid_response' });
   });
 
+  it('reports timeout when the deadline expires while the body is being read', async () => {
+    stubFetch(
+      async () =>
+        ({
+          ok: true,
+          status: 200,
+          json: async () => {
+            throw new DOMException('timed out', 'TimeoutError');
+          },
+        }) as unknown as Response,
+    );
+
+    await expect(
+      probeLoginCheck({ webserverUrl: 'https://webserver.example.com' }),
+    ).resolves.toEqual({ ok: false, reason: 'timeout' });
+  });
+
   it('reports no_session when the webserver answers authenticated: false', async () => {
     stubFetch(async () =>
       okResponse({ authenticated: false, data: null, session_id: '' }),
@@ -474,6 +492,40 @@ describe('useBAIInteractiveLogin', () => {
     });
 
     await waitFor(() => expect(result.current.failure).toBeNull());
+  });
+
+  it('lets only the latest of two overlapping probes commit state', async () => {
+    const settlers: Array<(response: Response) => void> = [];
+    stubFetch(
+      () =>
+        new Promise<Response>((resolve) => {
+          settlers.push(resolve);
+        }),
+    );
+    const { result } = renderSubject();
+
+    let first!: Promise<BAIInteractiveLoginProbeResult>;
+    let second!: Promise<BAIInteractiveLoginProbeResult>;
+    act(() => {
+      first = result.current.probe();
+      second = result.current.probe();
+    });
+    expect(settlers).toHaveLength(2);
+
+    // The newer probe settles first, then the stale one.
+    await act(async () => {
+      settlers[1](okResponse({ authenticated: true, session_id: 'sess-2' }));
+      await second;
+    });
+    expect(result.current.isProbing).toBe(false);
+    expect(result.current.failure).toBeNull();
+
+    await act(async () => {
+      settlers[0]({ ok: false, status: 502 } as unknown as Response);
+      await first;
+    });
+    expect(result.current.failure).toBeNull();
+    expect(result.current.isProbing).toBe(false);
   });
 
   it('accepts a failure reported by the caller, such as relay_failed', async () => {
