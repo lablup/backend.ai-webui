@@ -537,18 +537,16 @@ describe('BAIPropertyFilter render', () => {
 });
 
 /*
- FR-3739 — guards `react/patches/@astryxdesign__core@0.5.0.patch`.
+ FR-3739 — guards the `useFocusTrap` restore behaviour Astryx fixed upstream in
+ 0.5.4 (a local patch carried the same fix from 0.5.0 to 0.5.2).
 
- Astryx's `useFocusTrap` restored focus to whatever held it before the trap
- activated whenever focus "would otherwise be lost". The suggestion popover
- opens with `role: 'none'` + `hasAutoFocus: false`, so the input keeps focus
- the whole time and the trap never holds it — the restore then re-focused the
- input the dismissal had just blurred, and because the input was already
- focused, clicking it again fired no `focus` event and the menu stayed shut.
-
- The patch skips the restore when focus never entered the trap container. The
- first test is the bug; the second is the behaviour the patch must NOT break —
- a popup that does take focus still restores it.
+ The suggestion popover opens with `role: 'none'` + `hasAutoFocus: false`, so
+ the input keeps focus and the trap never holds it. An unconditional restore
+ re-focused the input the dismissal had just blurred, and because the input
+ was already focused, clicking it again fired no `focus` event and the menu
+ stayed shut. The fix skips the restore when focus never entered the trap
+ container. The first test is the bug; the second is the behaviour the fix
+ must NOT break — a popup that does take focus still restores it.
 */
 describe('BAIPropertyFilter dismissal (FR-3739)', () => {
   const filterProperties: Array<FilterProperty> = [
