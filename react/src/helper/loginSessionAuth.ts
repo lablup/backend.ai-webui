@@ -8,9 +8,12 @@
  * Extracted from backend-ai-login.ts _connectViaGQL method.
  * Handles post-authentication GQL connection and client setup.
  */
+import { RelayEnvironment } from '../RelayEnvironment';
+import { loginSessionAuthMyUserQuery } from '../__generated__/loginSessionAuthMyUserQuery.graphql';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 import { toLocalId } from 'backend.ai-ui';
+import { fetchQuery, graphql } from 'react-relay';
 
 /**
  * Create a Backend.AI client with the given credentials.
@@ -49,41 +52,6 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
   }
 }
 
-// One page of the current user's projects. `UserV2.projects` silently caps an
-// unpaginated read at the manager's default page size, so the login walks the
-// cursor to the end (the legacy `group.list` read had no cap).
-const MY_USER_QUERY = `
-  query($first: Int!, $after: String) {
-    myUserV2 {
-      id
-      basicInfo { email fullName }
-      organization { domainName role }
-      domain { entityId basicInfo { name } }
-      projects(filter: { isActive: true }, first: $first, after: $after) {
-        edges { node { id basicInfo { name } } }
-        pageInfo { hasNextPage endCursor }
-      }
-    }
-  }
-`;
-const PROJECT_PAGE_SIZE = 100;
-
-type MyUserV2Response = {
-  myUserV2: {
-    id: string;
-    basicInfo: { email: string; fullName: string | null };
-    organization: { domainName: string | null; role: string | null };
-    domain: {
-      entityId: string;
-      basicInfo: { name: string };
-    } | null;
-    projects: {
-      edges: Array<{ node: { id: string; basicInfo: { name: string } } }>;
-      pageInfo: { hasNextPage: boolean; endCursor: string | null };
-    } | null;
-  } | null;
-};
-
 /**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, projects, and config.
@@ -95,19 +63,58 @@ export async function connectViaGQL(
 ): Promise<string[]> {
   (globalThis as any).backendaiclient = client;
 
+  // `UserV2.projects` caps an unpaginated read at the manager's default page
+  // size, so the login walks the cursor (the legacy `group.list` had no cap).
+  const PROJECT_PAGE_SIZE = 100;
   const projects: Array<{ id: string; name: string }> = [];
-  let me: MyUserV2Response['myUserV2'] = null;
+  let me: NonNullable<loginSessionAuthMyUserQuery['response']['myUserV2']>;
   let after: string | null = null;
   do {
-    const response: MyUserV2Response = await client.query(MY_USER_QUERY, {
-      first: PROJECT_PAGE_SIZE,
-      after,
-    });
-    me = response?.myUserV2 ?? null;
-    if (!me) {
+    const response = await fetchQuery<loginSessionAuthMyUserQuery>(
+      RelayEnvironment,
+      graphql`
+        query loginSessionAuthMyUserQuery($first: Int!, $after: String) {
+          myUserV2 {
+            id
+            basicInfo {
+              email
+              fullName
+            }
+            organization {
+              domainName
+              role
+            }
+            domain {
+              entityId
+              basicInfo {
+                name
+              }
+            }
+            projects(filter: { isActive: true }, first: $first, after: $after) {
+              edges {
+                node {
+                  id
+                  basicInfo {
+                    name
+                  }
+                }
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+            }
+          }
+        }
+      `,
+      { first: PROJECT_PAGE_SIZE, after },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
+    if (!response?.myUserV2) {
       await client.logout();
       throw new Error('User information is missing.');
     }
+    me = response.myUserV2;
     for (const { node } of me.projects?.edges ?? []) {
       projects.push({ id: toLocalId(node.id), name: node.basicInfo.name });
     }

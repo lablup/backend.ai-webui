@@ -2,12 +2,20 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { RelayEnvironment } from '../RelayEnvironment';
 import { getDefaultLoginConfig } from './loginConfig';
 import { connectViaGQL } from './loginSessionAuth';
+import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
 vi.mock('../hooks/useWebUIConfig', () => ({
   fetchAndParseConfig: vi.fn(),
 }));
+vi.mock('../RelayEnvironment', async () => {
+  const { createMockEnvironment } = await import('relay-test-utils');
+  return { RelayEnvironment: createMockEnvironment() };
+});
+
+const environment = RelayEnvironment as unknown as RelayMockEnvironment;
 
 const globalId = (typeName: string, uuid: string) =>
   btoa(`${typeName}:${uuid}`);
@@ -56,15 +64,22 @@ const singlePage = (
   pageInfo: { hasNextPage, endCursor },
 });
 
-const makeClient = (responses: Array<unknown>) => {
-  const query = vi.fn();
-  responses.forEach((r) => query.mockResolvedValueOnce(r));
-  return {
-    query,
-    logout: vi.fn().mockResolvedValue(undefined),
-    _config: { endpoint: 'https://api.example.com', endpointHost: 'api' },
-  };
+// Queues one Relay payload per page and records the variables each was asked for.
+const queueResponses = (responses: Array<unknown>) => {
+  const variables: Array<Record<string, unknown>> = [];
+  responses.forEach((data) =>
+    environment.mock.queueOperationResolver((operation) => {
+      variables.push(operation.request.variables);
+      return { data } as any;
+    }),
+  );
+  return variables;
 };
+
+const makeClient = () => ({
+  logout: vi.fn().mockResolvedValue(undefined),
+  _config: { endpoint: 'https://api.example.com', endpointHost: 'api' },
+});
 
 describe('connectViaGQL', () => {
   const g = globalThis as any;
@@ -83,7 +98,7 @@ describe('connectViaGQL', () => {
   });
 
   test('stores the user, projects, and the domain name + uuid from one myUserV2 read', async () => {
-    const client = makeClient([
+    const variables = queueResponses([
       meWith(
         singlePage([
           [PROJECT_B, 'zeta'],
@@ -92,10 +107,9 @@ describe('connectViaGQL', () => {
       ),
     ]);
 
-    await connectViaGQL(client, cfg, []);
+    await connectViaGQL(makeClient(), cfg, []);
 
-    expect(client.query).toHaveBeenCalledTimes(1);
-    expect(client.query.mock.calls[0][1]).toEqual({ first: 100, after: null });
+    expect(variables).toEqual([{ first: 100, after: null }]);
 
     expect(g.backendaiclient.email).toBe('me@example.com');
     expect(g.backendaiclient.full_name).toBe('Me');
@@ -116,18 +130,17 @@ describe('connectViaGQL', () => {
   });
 
   test('walks the project cursor past the first page', async () => {
-    const client = makeClient([
+    const variables = queueResponses([
       meWith(singlePage([[PROJECT_A, 'alpha']], true, 'cursor-1')),
       meWith(singlePage([[PROJECT_B, 'beta']])),
     ]);
 
-    await connectViaGQL(client, cfg, []);
+    await connectViaGQL(makeClient(), cfg, []);
 
-    expect(client.query).toHaveBeenCalledTimes(2);
-    expect(client.query.mock.calls[1][1]).toEqual({
-      first: 100,
-      after: 'cursor-1',
-    });
+    expect(variables).toEqual([
+      { first: 100, after: null },
+      { first: 100, after: 'cursor-1' },
+    ]);
     expect(g.backendaiclient.groups).toEqual(['alpha', 'beta']);
     expect(g.backendaiclient.groupIds).toEqual({
       alpha: PROJECT_A,
@@ -144,9 +157,9 @@ describe('connectViaGQL', () => {
   ])(
     'maps role %s to is_admin=%s / is_superadmin=%s',
     async (role, isAdmin, isSuperadmin) => {
-      const client = makeClient([meWith(singlePage([]), { role })]);
+      queueResponses([meWith(singlePage([]), { role })]);
 
-      await connectViaGQL(client, cfg, []);
+      await connectViaGQL(makeClient(), cfg, []);
 
       expect(g.backendaiclient.is_admin).toBe(isAdmin);
       expect(g.backendaiclient.is_superadmin).toBe(isSuperadmin);
@@ -154,28 +167,28 @@ describe('connectViaGQL', () => {
   );
 
   test('falls back to the domain node name and an empty uuid when the organization has none', async () => {
-    const client = makeClient([
+    queueResponses([
       meWith(singlePage([]), {
         domainName: null,
         domain: { entityId: DOMAIN_UUID, basicInfo: { name: 'from-node' } },
       }),
     ]);
 
-    await connectViaGQL(client, cfg, []);
+    await connectViaGQL(makeClient(), cfg, []);
     expect(g.backendaiclient._config.domainName).toBe('from-node');
     expect(g.backendaiclient._config.domainId).toBe(DOMAIN_UUID);
 
-    const orphan = makeClient([
+    queueResponses([
       meWith(singlePage([]), { domainName: null, domain: null }),
     ]);
-    await connectViaGQL(orphan, cfg, []);
+    await connectViaGQL(makeClient(), cfg, []);
     expect(g.backendaiclient._config.domainName).toBe('');
     expect(g.backendaiclient._config.domainId).toBe('');
   });
 
   test('keeps the remembered project when it is still one of the user projects', async () => {
     g.backendaiutils._readRecentProjectGroup = vi.fn(() => 'zeta');
-    const client = makeClient([
+    queueResponses([
       meWith(
         singlePage([
           [PROJECT_A, 'alpha'],
@@ -184,14 +197,15 @@ describe('connectViaGQL', () => {
       ),
     ]);
 
-    await connectViaGQL(client, cfg, []);
+    await connectViaGQL(makeClient(), cfg, []);
 
     expect(g.backendaiclient.current_group).toBe('zeta');
     expect(g.backendaiclient.current_group_id()).toBe(PROJECT_B);
   });
 
   test('logs out and throws when the session has no user', async () => {
-    const client = makeClient([{ myUserV2: null }]);
+    queueResponses([{ myUserV2: null }]);
+    const client = makeClient();
 
     await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
       'User information is missing.',
@@ -200,10 +214,10 @@ describe('connectViaGQL', () => {
   });
 
   test('records the endpoint in the history, keeping the five most recent', async () => {
-    const client = makeClient([meWith(singlePage([]))]);
+    queueResponses([meWith(singlePage([]))]);
     const history = ['e1', 'e2', 'e3', 'e4', 'e5'];
 
-    const updated = await connectViaGQL(client, cfg, history);
+    const updated = await connectViaGQL(makeClient(), cfg, history);
 
     expect(updated).toEqual([
       'e2',
