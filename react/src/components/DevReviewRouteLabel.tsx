@@ -8,8 +8,10 @@ import { useMatches, type UIMatch } from 'react-router-dom';
 
 /**
  * The same switch the Vite plugin reads: on by default, off for
- * `0` / `false` / `off`. Paired with `import.meta.env.DEV` at the call site so
- * a production build folds the branch — and this module with it — away.
+ * `0` / `false` / `off`. Paired with `import.meta.env.DEV` at the call site,
+ * whose build-mode arm is a pair of literal comparisons on
+ * `VITE_REVIEW_OVERLAY_BUILD` (FR-3880) — so a release build, which sets
+ * neither, still folds the branch and this module away.
  */
 export const isDevReviewOverlayEnabled = (): boolean =>
   !['0', 'false', 'off'].includes(
@@ -33,7 +35,7 @@ const routeLabelFrom = (
 
 /**
  * Publishes the current route's ENGLISH label on `window.__BAI_REVIEW__` for
- * the dev review overlay (FR-3811), which lives outside React and so cannot
+ * the review overlay (FR-3811), which lives outside React and so cannot
  * read `useMatches()` itself. English regardless of the user's language: the
  * label ends up in a PR comment other people read.
  */
