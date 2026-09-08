@@ -13,11 +13,13 @@ import BAIButton from '../BAIButton';
 import BAIText from '../BAIText';
 import BAIVFolderMountConfigInput, {
   BAIVFolderMountConfigInputProps,
+  BAIVFolderMountConfigInputRef,
   VFolderMountConfigValue,
   useVFolderMountConfigFormRule,
 } from './BAIVFolderMountConfigInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { action } from 'storybook/actions';
 
 const DEMO_WIDTH = 760;
 
@@ -82,9 +84,11 @@ const ControlledDemo = ({
   initialValue?: VFolderMountConfigValue[];
 }) => {
   const [value, setValue] = useState<VFolderMountConfigValue[]>(initialValue);
+  const inputRef = useRef<BAIVFolderMountConfigInputRef>(null);
   return (
     <div style={{ width: DEMO_WIDTH }}>
       <BAIVFolderMountConfigInput
+        ref={inputRef}
         currentProjectId={MOCK_LEGACY_PROJECT_ID}
         mountableHosts={MOCK_MOUNTABLE_HOSTS}
         {...props}
@@ -94,6 +98,11 @@ const ControlledDemo = ({
           props.onChange?.(next);
         }}
       />
+      <div style={{ marginTop: 16 }}>
+        <BAIButton onClick={() => inputRef.current?.refetch()}>
+          Refetch via ref
+        </BAIButton>
+      </div>
       <div style={{ marginTop: 24 }}>
         <BAIText strong>Form value (onChange result)</BAIText>
         <pre
@@ -150,6 +159,9 @@ for configuring vfolder mounts.
 - It **suspends** on that list, so the consumer owns the Suspense boundary. An entry
   the mount gates reject is dropped from the value with a warning toast; one that
   merely became auto-mounted is kept, since it is mounted anyway.
+- Beside the select sits a button group: **⟳** always re-runs the folder query (also
+  exposed imperatively as \`ref.refetch()\`), and **+** is rendered only when
+  \`onClickCreateFolder\` is given — the folder-creation modal belongs to the host app.
 - Each selected folder appears as a row with a **mount path (alias)** input and an
   optional **subpath** picker (which subfolder of the vfolder to mount as the source; \`/\` = root),
   which opens a directory browser instead of accepting typed text.
@@ -232,6 +244,12 @@ dropped in the **WithAutoMountedFolders** story.
       description:
         'Hosts granting `mount-in-session`, supplied by the host app',
       table: { type: { summary: 'string[]' } },
+    },
+    onClickCreateFolder: {
+      control: false,
+      description:
+        "Opens the host app's folder-creation modal; the create button appears only when it is given",
+      table: { type: { summary: '() => void' } },
     },
   },
   args: {
@@ -417,6 +435,27 @@ export const WithFormValidation: Story = {
     };
     return <FormValidationDemo />;
   },
+};
+
+/**
+ * The create button next to the select appears only when the host supplies
+ * `onClickCreateFolder`, because the folder-creation modal is a host component.
+ */
+export const WithCreateFolderButton: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs `GET /folders` on its own.',
+      },
+    },
+  },
+  render: (args) => (
+    <ControlledDemo
+      {...args}
+      onClickCreateFolder={action('createFolderClicked')}
+    />
+  ),
 };
 
 export const NoMountableHost: Story = {
