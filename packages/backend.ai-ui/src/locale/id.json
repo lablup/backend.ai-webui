@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Berhasil meminta tarik untuk versi {{count}}.",
     "Version": "Versi"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Memeriksa sesi Backend.AI Anda…",
+    "SignInWithBackendAI": "Masuk dengan Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Peramban memblokir permintaan ke server web Backend.AI. Biasanya hal ini disebabkan oleh pembatasan CORS atau konten campuran.",
+      "HttpError": "Server web Backend.AI mengembalikan kesalahan ({{status}}).",
+      "InvalidCallback": "Alamat kembali masuk yang dikonfigurasi untuk {{appName}} bukan alamat web yang valid.",
+      "InvalidResponse": "Server web Backend.AI mengembalikan respons yang tidak terduga.",
+      "NoEndpoint": "Tidak ada alamat server web Backend.AI yang dikonfigurasi untuk {{appName}}.",
+      "NoSessionId": "Anda sudah masuk ke Backend.AI, tetapi server web tidak mengembalikan ID sesi.",
+      "NoSessionOverHttp": "Anda belum masuk ke Backend.AI. Jika Anda sudah masuk, {{appName}} disajikan melalui HTTP sehingga peramban mungkin menolak cookie sesi aman dari server web. Coba buka {{appName}} melalui HTTPS.",
+      "NoSessionOverHttps": "Anda belum masuk ke Backend.AI. Jika Anda sudah masuk, {{appName}} dan server web Backend.AI mungkin merupakan situs yang berbeda sehingga peramban tidak mengirim cookie sesi.",
+      "RelayFailed": "Anda sudah masuk ke Backend.AI, tetapi {{appName}} tidak dapat menyelesaikan proses masuk.",
+      "Timeout": "Server web Backend.AI tidak merespons tepat waktu.",
+      "Title": "Tidak dapat masuk dengan Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Ukuran Klaster",
     "Concurrency": "Sesi Serentak",

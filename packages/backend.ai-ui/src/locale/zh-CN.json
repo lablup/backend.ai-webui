@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "成功请求{{count}}版本的拉动。",
     "Version": "版本"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "正在检查您的 Backend.AI 会话…",
+    "SignInWithBackendAI": "使用 Backend.AI 登录",
+    "failure": {
+      "CorsOrMixed": "浏览器阻止了对 Backend.AI 网页服务器的请求，通常是 CORS 或混合内容限制导致的。",
+      "HttpError": "Backend.AI 网页服务器返回了错误（{{status}}）。",
+      "InvalidCallback": "为 {{appName}} 配置的登录返回地址不是有效的网址。",
+      "InvalidResponse": "Backend.AI 网页服务器返回了意外的响应。",
+      "NoEndpoint": "尚未为 {{appName}} 配置 Backend.AI 网页服务器地址。",
+      "NoSessionId": "您已登录 Backend.AI，但网页服务器未返回会话 ID。",
+      "NoSessionOverHttp": "您尚未登录 Backend.AI。如果已经登录，可能是 {{appName}} 通过 HTTP 提供服务，浏览器拒绝了网页服务器的安全会话 Cookie。请尝试通过 HTTPS 打开 {{appName}}。",
+      "NoSessionOverHttps": "您尚未登录 Backend.AI。如果已经登录，可能是 {{appName}} 与 Backend.AI 网页服务器属于不同站点，浏览器因此不会发送会话 Cookie。",
+      "RelayFailed": "您已登录 Backend.AI，但 {{appName}} 无法完成登录。",
+      "Timeout": "Backend.AI 网页服务器未在规定时间内响应。",
+      "Title": "无法使用 Backend.AI 登录"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "簇的大小",
     "Concurrency": "并发会话数",

@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Pomyślnie żądane Pull dla wersji {{count}}.",
     "Version": "Wersja"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Sprawdzanie sesji Backend.AI…",
+    "SignInWithBackendAI": "Zaloguj się przez Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Przeglądarka zablokowała żądanie do serwera WWW Backend.AI. Zwykle jest to ograniczenie CORS lub mieszanej zawartości.",
+      "HttpError": "Serwer WWW Backend.AI zwrócił błąd ({{status}}).",
+      "InvalidCallback": "Adres powrotu logowania skonfigurowany dla {{appName}} nie jest prawidłowym adresem internetowym.",
+      "InvalidResponse": "Serwer WWW Backend.AI zwrócił nieoczekiwaną odpowiedź.",
+      "NoEndpoint": "Dla aplikacji {{appName}} nie skonfigurowano adresu serwera WWW Backend.AI.",
+      "NoSessionId": "Jesteś zalogowany w Backend.AI, ale serwer WWW nie zwrócił identyfikatora sesji.",
+      "NoSessionOverHttp": "Nie zalogowano jeszcze w Backend.AI. Jeśli logowanie już nastąpiło, aplikacja {{appName}} jest udostępniana przez HTTP, więc przeglądarka może odrzucać bezpieczne ciasteczko sesji serwera WWW. Spróbuj otworzyć {{appName}} przez HTTPS.",
+      "NoSessionOverHttps": "Nie zalogowano jeszcze w Backend.AI. Jeśli logowanie już nastąpiło, aplikacja {{appName}} i serwer WWW Backend.AI mogą być różnymi witrynami, więc przeglądarka nie wysyła ciasteczka sesji.",
+      "RelayFailed": "Jesteś zalogowany w Backend.AI, ale aplikacja {{appName}} nie mogła dokończyć logowania.",
+      "Timeout": "Serwer WWW Backend.AI nie odpowiedział na czas.",
+      "Title": "Nie udało się zalogować przez Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Wielkość klastra",
     "Concurrency": "Równoczesne sesje",

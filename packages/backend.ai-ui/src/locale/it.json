@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Pullo correttamente richiesto per le versioni {{count}}.",
     "Version": "Versione"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Verifica della sessione Backend.AI in corso…",
+    "SignInWithBackendAI": "Accedi con Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Il browser ha bloccato la richiesta al server web Backend.AI. Di solito si tratta di una restrizione CORS o di contenuto misto.",
+      "HttpError": "Il server web Backend.AI ha restituito un errore ({{status}}).",
+      "InvalidCallback": "L'indirizzo di ritorno per l'accesso configurato per {{appName}} non è un indirizzo web valido.",
+      "InvalidResponse": "Il server web Backend.AI ha restituito una risposta inattesa.",
+      "NoEndpoint": "Nessun indirizzo del server web Backend.AI è configurato per {{appName}}.",
+      "NoSessionId": "Hai effettuato l'accesso a Backend.AI, ma il server web non ha restituito un ID di sessione.",
+      "NoSessionOverHttp": "Non hai ancora effettuato l'accesso a Backend.AI. Se hai già effettuato l'accesso, {{appName}} viene servito tramite HTTP, quindi il browser potrebbe rifiutare il cookie di sessione sicuro del server web. Prova ad aprire {{appName}} tramite HTTPS.",
+      "NoSessionOverHttps": "Non hai ancora effettuato l'accesso a Backend.AI. Se hai già effettuato l'accesso, {{appName}} e il server web Backend.AI potrebbero essere siti diversi, quindi il browser non invia il cookie di sessione.",
+      "RelayFailed": "Hai effettuato l'accesso a Backend.AI, ma {{appName}} non è riuscito a completare l'accesso.",
+      "Timeout": "Il server web Backend.AI non ha risposto in tempo.",
+      "Title": "Impossibile accedere con Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Dimensione del cluster",
     "Concurrency": "Sessioni simultanee",

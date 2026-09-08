@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "成功請求{{count}}版本的拉動。",
     "Version": "版本"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "正在檢查您的 Backend.AI 工作階段…",
+    "SignInWithBackendAI": "使用 Backend.AI 登入",
+    "failure": {
+      "CorsOrMixed": "瀏覽器封鎖了對 Backend.AI 網頁伺服器的請求，通常是 CORS 或混合內容限制所致。",
+      "HttpError": "Backend.AI 網頁伺服器傳回了錯誤（{{status}}）。",
+      "InvalidCallback": "為 {{appName}} 設定的登入返回位址不是有效的網址。",
+      "InvalidResponse": "Backend.AI 網頁伺服器傳回了非預期的回應。",
+      "NoEndpoint": "尚未為 {{appName}} 設定 Backend.AI 網頁伺服器位址。",
+      "NoSessionId": "您已登入 Backend.AI，但網頁伺服器未傳回工作階段 ID。",
+      "NoSessionOverHttp": "您尚未登入 Backend.AI。若已經登入，可能是 {{appName}} 透過 HTTP 提供服務，瀏覽器拒絕了網頁伺服器的安全工作階段 Cookie。請嘗試以 HTTPS 開啟 {{appName}}。",
+      "NoSessionOverHttps": "您尚未登入 Backend.AI。若已經登入，可能是 {{appName}} 與 Backend.AI 網頁伺服器屬於不同網站，瀏覽器因此不會傳送工作階段 Cookie。",
+      "RelayFailed": "您已登入 Backend.AI，但 {{appName}} 無法完成登入。",
+      "Timeout": "Backend.AI 網頁伺服器未在時間內回應。",
+      "Title": "無法使用 Backend.AI 登入"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "簇的大小",
     "Concurrency": "並發會話數",

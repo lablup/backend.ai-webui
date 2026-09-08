@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "{{count}} sürümleri için başarıyla talep edildi.",
     "Version": "Versiyon"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Backend.AI oturumunuz denetleniyor…",
+    "SignInWithBackendAI": "Backend.AI ile oturum aç",
+    "failure": {
+      "CorsOrMixed": "Tarayıcı, Backend.AI web sunucusuna yapılan isteği engelledi. Bunun nedeni genellikle bir CORS veya karma içerik kısıtlamasıdır.",
+      "HttpError": "Backend.AI web sunucusu bir hata döndürdü ({{status}}).",
+      "InvalidCallback": "{{appName}} için yapılandırılan oturum açma dönüş adresi geçerli bir web adresi değil.",
+      "InvalidResponse": "Backend.AI web sunucusu beklenmeyen bir yanıt döndürdü.",
+      "NoEndpoint": "{{appName}} için yapılandırılmış bir Backend.AI web sunucusu adresi yok.",
+      "NoSessionId": "Backend.AI oturumunuz açık, ancak web sunucusu bir oturum kimliği döndürmedi.",
+      "NoSessionOverHttp": "Backend.AI oturumunuz henüz açık değil. Zaten oturum açtıysanız {{appName}} HTTP üzerinden sunulduğu için tarayıcı web sunucusunun güvenli oturum çerezini reddediyor olabilir. {{appName}} uygulamasını HTTPS üzerinden açmayı deneyin.",
+      "NoSessionOverHttps": "Backend.AI oturumunuz henüz açık değil. Zaten oturum açtıysanız {{appName}} ile Backend.AI web sunucusu farklı siteler olabilir, bu nedenle tarayıcı oturum çerezini göndermiyor.",
+      "RelayFailed": "Backend.AI oturumunuz açık, ancak {{appName}} oturum açma işlemini tamamlayamadı.",
+      "Timeout": "Backend.AI web sunucusu zamanında yanıt vermedi.",
+      "Title": "Backend.AI ile oturum açılamadı"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Küme boyutu",
     "Concurrency": "Eşzamanlı Oturumlar",

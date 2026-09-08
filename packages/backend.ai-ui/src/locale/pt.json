@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Pull solicitado com sucesso para {{count}} versões.",
     "Version": "Versão"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "A verificar a sua sessão do Backend.AI…",
+    "SignInWithBackendAI": "Iniciar sessão com o Backend.AI",
+    "failure": {
+      "CorsOrMixed": "O navegador bloqueou o pedido ao servidor web do Backend.AI. Normalmente trata-se de uma restrição de CORS ou de conteúdo misto.",
+      "HttpError": "O servidor web do Backend.AI devolveu um erro ({{status}}).",
+      "InvalidCallback": "O endereço de retorno de início de sessão configurado para {{appName}} não é um endereço web válido.",
+      "InvalidResponse": "O servidor web do Backend.AI devolveu uma resposta inesperada.",
+      "NoEndpoint": "Não há nenhum endereço do servidor web do Backend.AI configurado para {{appName}}.",
+      "NoSessionId": "Tem sessão iniciada no Backend.AI, mas o servidor web não devolveu um ID de sessão.",
+      "NoSessionOverHttp": "Ainda não iniciou sessão no Backend.AI. Se já iniciou sessão, o {{appName}} é servido por HTTP, pelo que o navegador pode estar a rejeitar o cookie de sessão seguro do servidor web. Experimente abrir o {{appName}} por HTTPS.",
+      "NoSessionOverHttps": "Ainda não iniciou sessão no Backend.AI. Se já iniciou sessão, o {{appName}} e o servidor web do Backend.AI podem ser sites diferentes, pelo que o navegador não envia o cookie de sessão.",
+      "RelayFailed": "Tem sessão iniciada no Backend.AI, mas o {{appName}} não conseguiu concluir o início de sessão.",
+      "Timeout": "O servidor web do Backend.AI não respondeu a tempo.",
+      "Title": "Não foi possível iniciar sessão com o Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Tamanho do Cluster",
     "Concurrency": "Sessões simultâneas",
