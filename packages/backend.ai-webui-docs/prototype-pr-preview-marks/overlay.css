@@ -207,6 +207,9 @@
 .bai-popover__img { cursor: zoom-in; border: 1px solid var(--bai-pop-border); border-radius: 4px; }
 .bai-popover__hint { padding: 4px 12px 8px; font-size: 11px; opacity: 0.6; }
 
+/* ---------- shortcut toast ---------- */
+.bai-toast { position: fixed; left: 50%; bottom: 64px; transform: translateX(-50%); z-index: 9200; background: var(--bai-pop-fg); color: var(--bai-pop-bg); font: 12px/1 system-ui, sans-serif; padding: 6px 12px; border-radius: 999px; pointer-events: none; }
+
 /* ---------- lightbox ---------- */
 .bai-lightbox { position: fixed; inset: 0; z-index: 9500; background: rgba(0, 0, 0, 0.82); display: grid; place-items: center; cursor: zoom-out; }
 .bai-lightbox__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 96vw; }

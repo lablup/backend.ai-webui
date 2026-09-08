@@ -14,7 +14,10 @@
   let variant = (params.get('variant') || 'A').toUpperCase();
   if (!VARIANTS.some((v) => v[0] === variant)) variant = 'A';
   let marksOn = params.get('marks') !== 'off';
-  let modeOverride = null; // 'inline' | 'sbs' chosen by the user in a popover
+  // 'inline' | 'sbs' chosen by the user in a popover; remembered across pages
+  let modeOverride = null;
+  try { modeOverride = localStorage.getItem('bai-pr-preview:mode') || null; } catch { /* private mode */ }
+  const setMode = (m) => { modeOverride = m; try { localStorage.setItem('bai-pr-preview:mode', m); } catch { /* ignore */ } };
 
   const script = document.currentScript || document.querySelector('script[data-page]');
   const slug = (script && script.dataset.page) || location.pathname.split('/').pop().replace(/\.html$/, '');
@@ -173,7 +176,15 @@
     const pop = el('div', 'bai-popover');
     pop.hidden = true;
     document.body.appendChild(pop);
-    let pinned = null, hoverTimer = 0, hideTimer = 0;
+    let pinned = null, hovered = null, hoverTimer = 0, hideTimer = 0;
+    // the change a shortcut acts on: pinned popover, else the hovered block, else the last one jumped to
+    const changeOf = (node) => node && page.changes.find((c) => String(c.id) === node.dataset.baiChange);
+    const activeChange = () => changeOf(pinned) || changeOf(hovered) || (current >= 0 && marks[current] ? marks[current].change : null);
+    let toastTimer = 0;
+    const toast = el('div', 'bai-toast');
+    toast.hidden = true;
+    document.body.appendChild(toast);
+    const showToast = (text) => { toast.textContent = text; toast.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { toast.hidden = true; }, 1200); };
 
     function autoMode(change) {
       if (modeOverride) return modeOverride;
@@ -200,8 +211,8 @@
         body = `<div class="bai-popover__sbs" style="grid-template-columns:1fr"><div class="bai-col--old"><div class="bai-col-label">Old</div>${wrapInline(change, change.oldHtml)}</div></div>`;
       }
       const where = `${page.sourcePath ? page.sourcePath.split('/').slice(-1)[0] : ''}${change.line ? `:${change.line}` : ''}${change.section ? ` · ${esc(change.section.text)}` : ''}`;
-      pop.innerHTML = `<div class="bai-popover__head"><span class="bai-popover__type bai-popover__type--${type}">${type}</span><span class="bai-popover__kind">${kind}${change.similarity != null ? ` · ${Math.round(change.similarity * 100)}% similar` : ''}</span><span class="bai-popover__spacer"></span>${modeHtml}<button class="bai-popover__btn" data-copy title="Copy a reference to this change (file:line, section, link, old/new)">Copy ref</button><label class="bai-popover__viewed" title="Mark as viewed (v)"><input type="checkbox" data-viewed ${isViewed(change) ? 'checked' : ''}/> Viewed</label></div><div class="bai-popover__body">${body}</div><div class="bai-popover__hint"><span class="bai-popover__where">#${change.id} · ${where}</span>${change.blockKind === 'image' ? 'Click an image to enlarge · ' : ''}Click the block to pin · <kbd>v</kbd> viewed · Esc to close</div>`;
-      pop.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => { modeOverride = b.dataset.mode; render(change); }));
+      pop.innerHTML = `<div class="bai-popover__head"><span class="bai-popover__type bai-popover__type--${type}">${type}</span><span class="bai-popover__kind">${kind}${change.similarity != null ? ` · ${Math.round(change.similarity * 100)}% similar` : ''}</span><span class="bai-popover__spacer"></span>${modeHtml}<button class="bai-popover__btn" data-copy title="Copy a reference to this change (file:line, section, link, old/new)">Copy ref</button><label class="bai-popover__viewed" title="Mark as viewed (v)"><input type="checkbox" data-viewed ${isViewed(change) ? 'checked' : ''}/> Viewed</label></div><div class="bai-popover__body">${body}</div><div class="bai-popover__hint"><span class="bai-popover__where">#${change.id} · ${where}</span>${change.blockKind === 'image' ? 'Click an image to enlarge · ' : ''}Click the block to pin · <kbd>c</kbd> copy ref · <kbd>v</kbd> viewed · Esc to close</div>`;
+      pop.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => { setMode(b.dataset.mode); render(change); }));
       pop.querySelectorAll('[data-bai-zoom]').forEach((img) => img.addEventListener('click', () => lightbox(change)));
       $('[data-copy]', pop).addEventListener('click', (e) => copy(refText(change), e.currentTarget));
       $('[data-viewed]', pop).addEventListener('change', (e) => setViewed(change, e.target.checked));
@@ -225,12 +236,12 @@
       pop.hidden = false;
       position(target);
     }
-    function hide() { if (pinned) return; pop.hidden = true; }
+    function hide() { hovered = null; if (pinned) return; pop.hidden = true; }
 
     document.addEventListener('mouseover', (e) => {
       if (variant === 'C') return;
       const t = e.target.closest('[data-bai-change]');
-      if (t) { clearTimeout(hideTimer); clearTimeout(hoverTimer); if (!pinned) hoverTimer = setTimeout(() => show(t), 120); return; }
+      if (t) { hovered = t; clearTimeout(hideTimer); clearTimeout(hoverTimer); if (!pinned) hoverTimer = setTimeout(() => show(t), 120); return; }
       if (e.target.closest('.bai-popover')) { clearTimeout(hideTimer); return; }
     });
     document.addEventListener('mouseout', (e) => {
@@ -361,13 +372,17 @@
       else { marksOn = !marksOn; syncUrl(); apply(); }
     });
     document.addEventListener('keydown', (e) => {
-      if (e.target.closest('input, textarea, select, [contenteditable]')) return;
-      if (e.key === 'ArrowLeft') cycle(-1);
-      else if (e.key === 'ArrowRight') cycle(1);
-      else if (e.key === '[') step(-1);
-      else if (e.key === ']') step(1);
-      else if (e.key === 'v' && current >= 0 && marks[current]) { const c = marks[current].change; setViewed(c, !isViewed(c)); if (!pop.hidden) render(c); }
-      else if (e.key === 'Escape') { pinned = null; pop.hidden = true; panel.hidden = true; document.querySelectorAll('.bai-lightbox').forEach((n) => n.remove()); }
+      if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable]')) return;
+      // physical key codes, so the shortcuts also work while a Korean/Japanese IME is active (e.key would be 'ㅊ', 'ㅍ', …)
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const code = e.code || '';
+      if (code === 'ArrowLeft') cycle(-1);
+      else if (code === 'ArrowRight') cycle(1);
+      else if (code === 'BracketLeft') step(-1);
+      else if (code === 'BracketRight') step(1);
+      else if (code === 'KeyV') { const c = activeChange(); if (!c) return; e.preventDefault(); setViewed(c, !isViewed(c)); if (!pop.hidden) render(c); showToast(isViewed(c) ? `#${c.id} viewed` : `#${c.id} unviewed`); }
+      else if (code === 'KeyC') { const c = activeChange(); if (!c) return; e.preventDefault(); copy(refText(c), pop.hidden ? null : $('[data-copy]', pop)); showToast(`Copied ref #${c.id}`); }
+      else if (code === 'Escape') { pinned = null; pop.hidden = true; panel.hidden = true; document.querySelectorAll('.bai-lightbox').forEach((n) => n.remove()); }
     });
 
     // ---------------------------------------------------------- go
