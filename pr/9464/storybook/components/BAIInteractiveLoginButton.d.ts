@@ -19,5 +19,5 @@ export interface BAIInteractiveLoginButtonProps extends Omit<ButtonProps, 'label
     showFailureAlert?: boolean;
     label?: string;
 }
-declare const BAIInteractiveLoginButton: ({ webserverUrl, appName, callbackUrl, timeoutMs, onSessionVerified, onFailure, showFailureAlert, label, variant, ...buttonProps }: BAIInteractiveLoginButtonProps) => import("react").JSX.Element;
+declare const BAIInteractiveLoginButton: ({ webserverUrl, appName, callbackUrl, timeoutMs, onSessionVerified, onFailure, showFailureAlert, label, variant, icon, ...buttonProps }: BAIInteractiveLoginButtonProps) => import("react").JSX.Element;
 export default BAIInteractiveLoginButton;
