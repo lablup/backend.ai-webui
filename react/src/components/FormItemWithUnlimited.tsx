@@ -62,7 +62,15 @@ const FormItemWithUnlimited: React.FC<FormItemWithUnlimitedProps> = ({
       : undefined;
 
   return (
-    <BAIFlex direction="column" align="start">
+    // The grid cell stretches to its row's tallest item; bottom-aligning the
+    // stack keeps every input on one baseline when labels wrap to two lines.
+    <BAIFlex
+      direction="column"
+      align="stretch"
+      justify="end"
+      gap="xs"
+      style={{ height: '100%' }}
+    >
       <BAIFormItem
         style={{ margin: 0 }}
         name={name}
