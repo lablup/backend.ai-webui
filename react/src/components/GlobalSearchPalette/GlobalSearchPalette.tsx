@@ -45,6 +45,9 @@ const styles = stylex.create({
   rowText: { minWidth: 0, flexGrow: 1 },
   // Never squeezed by a long title; the growing text column pushes it right.
   scopeSlot: { flexShrink: 0 },
+  // Modals and drawers dropped Astryx's `::backdrop` blur (FR-3585); the tint
+  // alone separates the surfaces here too.
+  dialog: { '::backdrop': { backdropFilter: 'none' } },
   // A long secondary line must eat the text column, never the glyph.
   iconSlot: {
     flexShrink: 0,
@@ -142,6 +145,7 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
       }}
       label={t('webui.menu.Search')}
       width={PALETTE_WIDTH}
+      xstyle={styles.dialog}
       searchSource={searchSource}
       input={
         <CommandPaletteInput
