@@ -3,6 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCurrentDomainValue } from '.';
+import { useAppConfigDomainIdQuery } from '../__generated__/useAppConfigDomainIdQuery.graphql';
+import { useAppConfigDomainRawQuery } from '../__generated__/useAppConfigDomainRawQuery.graphql';
 import { useAppConfigMyQuery } from '../__generated__/useAppConfigMyQuery.graphql';
 import { useAppConfigMyUpsertMutation } from '../__generated__/useAppConfigMyUpsertMutation.graphql';
 import { useAppConfigPublicRawQuery } from '../__generated__/useAppConfigPublicRawQuery.graphql';
@@ -42,6 +44,31 @@ const publicRawQuery = graphql`
   query useAppConfigPublicRawQuery($configNames: [String!]!) {
     scopedAppConfigFragmentsByNames(
       scope: { scopeType: PUBLIC }
+      configNames: $configNames
+    ) {
+      id
+      configName
+      config
+    }
+  }
+`;
+
+// DOMAIN scope is addressed by the domain's uuid (`AppConfigScopeRef.scopeId`),
+// which the client only knows by name — resolved through `domainV2.entityId`.
+const domainIdQuery = graphql`
+  query useAppConfigDomainIdQuery($domainName: String!) {
+    domainV2(domainName: $domainName) {
+      entityId
+    }
+  }
+`;
+
+// The domain write base: the raw DOMAIN-scope fragment, not the merged
+// `myAppConfigs` view.
+const domainRawQuery = graphql`
+  query useAppConfigDomainRawQuery($scopeId: UUID!, $configNames: [String!]!) {
+    scopedAppConfigFragmentsByNames(
+      scope: { scopeType: DOMAIN, scopeId: $scopeId }
       configNames: $configNames
     ) {
       id
@@ -208,6 +235,66 @@ export const useUpdatePublicDomainAppConfig = () => {
       },
     });
     throwOnFailed(response.scopedUpsertAppConfigFragments.failed);
+  };
+};
+
+/**
+ * Admin setter for ONE domain's `domainConfig` fragment: resolves the domain
+ * uuid, re-reads the raw DOMAIN-scope document and replaces only `subKey`
+ * (`undefined` removes it). Then refetches the merged `domainConfig` view so
+ * every `useDomainAppConfig` reader updates without a reload. Post-login
+ * admin surfaces only.
+ */
+export const useUpdateDomainAppConfig = () => {
+  'use memo';
+  const relayEnv = useRelayEnvironment();
+  const currentDomainName = useCurrentDomainValue();
+  const upsert =
+    useMutationWithPromise<useAppConfigUpsertMutation>(upsertMutation);
+
+  return async (
+    subKey: string | Array<string>,
+    nextValue: unknown,
+    domainName?: string,
+  ) => {
+    const targetDomainName = domainName ?? currentDomainName;
+    const domain = await fetchQuery<useAppConfigDomainIdQuery>(
+      relayEnv,
+      domainIdQuery,
+      { domainName: targetDomainName },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
+    const scopeId = domain?.domainV2?.entityId;
+    if (!scopeId) {
+      throw new Error(`Domain not found: ${targetDomainName}`);
+    }
+    const raw = await fetchQuery<useAppConfigDomainRawQuery>(
+      relayEnv,
+      domainRawQuery,
+      { scopeId, configNames: ['domainConfig'] },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
+    const rawDoc =
+      (raw?.scopedAppConfigFragmentsByNames?.[0]?.config as
+        AppConfigDocument | undefined) ?? {};
+    const response = await upsert({
+      input: {
+        scope: { scopeType: 'DOMAIN', scopeId },
+        items: [
+          {
+            configName: 'domainConfig',
+            config: applySubKey(rawDoc, _.toPath(subKey), nextValue),
+          },
+        ],
+      },
+    });
+    throwOnFailed(response.scopedUpsertAppConfigFragments.failed);
+    await fetchQuery<useAppConfigMyQuery>(
+      relayEnv,
+      myQuery,
+      { configNames: ['domainConfig'] },
+      { fetchPolicy: 'network-only' },
+    ).toPromise();
   };
 };
 
