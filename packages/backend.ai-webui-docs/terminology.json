@@ -741,6 +741,14 @@
       "conceptId": "resource-group"
     },
     {
+      "avoid": "리소스 정책",
+      "useInstead": "자원 정책",
+      "reason": "Use the Korean translation, not the transliteration, for consistency with \"자원 그룹\"",
+      "lang": "ko",
+      "context": null,
+      "conceptId": "resource-policy"
+    },
+    {
       "avoid": "runtime variant preset",
       "useInstead": "Runtime Parameter",
       "reason": "UI label renamed in FR-3840; `RuntimeVariantPreset` survives only as the GraphQL type name, never as a user-facing term",
