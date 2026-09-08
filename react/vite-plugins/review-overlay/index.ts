@@ -1,4 +1,9 @@
 import { readBootRecord, servedEntry } from './boot-record.js';
+import {
+  BUILD_CHUNK_FILE,
+  isReviewOverlayBuildEnabled,
+  reviewOverlayTags,
+} from './build-inject.js';
 import type { ReviewServerState } from './client/types.js';
 import { execFile } from 'node:child_process';
 import { readFile, stat } from 'node:fs/promises';
@@ -265,6 +270,54 @@ export function devReviewOverlayPlugin(): Plugin {
           ],
         };
       },
+    },
+  };
+}
+
+// ----------------------------------------------------------- static build
+
+/**
+ * FR-3880 — the same overlay, inside a `vite build` artifact, so the pin and
+ * its `#bai=v3` deep link work on the nightly Amplify deployment and not only
+ * on a reviewer's own dev server.
+ *
+ * OPT-IN, and off by default: `VITE_REVIEW_OVERLAY_BUILD` is set for that one
+ * deployment (`amplify.yml`), so release and self-hosted bundles are what they
+ * were. Two things the dev server provides have no static equivalent and are
+ * replaced here:
+ *
+ *   - the client modules, transpiled per request and served from
+ *     `/__review/*.js` — emitted instead as one bundled chunk at a fixed name,
+ *     injected into `index.html`;
+ *   - `/__review/state`. Amplify rewrites every unknown path to `index.html`
+ *     with a 200, so a fetch would resolve to an HTML parse error rather than
+ *     fail; the state rides in the document as a JSON data block, and its
+ *     `host: 'static'` is what tells the client react-grab is never coming.
+ *
+ * What lands in the HTML, and the switch itself, live in `build-inject.ts`.
+ */
+export function reviewOverlayBuildPlugin(): Plugin {
+  if (!isReviewOverlayBuildEnabled()) {
+    return { name: 'bai-review-overlay-build', apply: 'build' };
+  }
+
+  return {
+    name: 'bai-review-overlay-build',
+    apply: 'build',
+    buildStart() {
+      // A fixed `fileName` so the injected tag needs no bundle lookup. The
+      // client imports nothing outside `client/`, so this is one whole chunk.
+      this.emitFile({
+        type: 'chunk',
+        id: resolve(CLIENT_DIR, `${ENTRY_MODULE}.ts`),
+        fileName: BUILD_CHUNK_FILE,
+        // The entry is a side effect, not an API: nothing imports it back.
+        preserveSignature: false,
+      });
+    },
+    transformIndexHtml: {
+      order: 'post',
+      handler: () => reviewOverlayTags(),
     },
   };
 }

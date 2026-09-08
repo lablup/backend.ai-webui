@@ -1,4 +1,7 @@
-import { devReviewOverlayPlugin } from './vite-plugins/review-overlay/index';
+import {
+  devReviewOverlayPlugin,
+  reviewOverlayBuildPlugin,
+} from './vite-plugins/review-overlay/index';
 import stylexVite from '@stylexjs/unplugin/vite';
 import react from '@vitejs/plugin-react';
 import compression from 'compression';
@@ -975,6 +978,10 @@ export default defineConfig(({ command, mode }) => {
       // projectRootStaticPlugin — its 'pre' HTML handler discards earlier
       // transforms (see review-overlay/index.ts).
       devReviewOverlayPlugin(),
+      // FR-3880: the same overlay inside a `vite build` artifact, for the
+      // nightly Amplify deployment. Opt IN with VITE_REVIEW_OVERLAY_BUILD=1;
+      // inert (and so a byte-identical bundle) without it.
+      reviewOverlayBuildPlugin(),
 
       // StyleX compiler for Astryx `xstyle` authoring (to-astryx ticket 01),
       // wired DIRECTLY via `@stylexjs/unplugin` (sole peer: `unplugin` — no
