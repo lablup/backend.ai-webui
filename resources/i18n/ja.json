@@ -3886,8 +3886,8 @@
         "PanelsAndHelp": "パネルとヘルプ"
       },
       "scope": {
-        "Administration": "管理",
-        "ProjectAdministration": "プロジェクト管理"
+        "Administration": "管理者",
+        "ProjectAdministration": "プロジェクト管理者"
       }
     }
   }
