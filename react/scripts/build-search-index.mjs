@@ -324,26 +324,19 @@ const propOf = (obj, name) => {
 };
 
 /** Unwrap `filterOutEmpty([...])`, `_.compact([...])`, `[...].filter(...)`. */
-function asArrayLiteral(node) {
-  let n = node;
-  for (let i = 0; i < 4 && n; i++) {
-    if (ts.isArrayLiteralExpression(n)) return n;
-    if (ts.isCallExpression(n)) {
-      const arg = n.arguments[0];
-      if (arg) {
-        n = arg;
-        continue;
-      }
-      if (ts.isPropertyAccessExpression(n.expression)) {
-        n = n.expression.expression;
-        continue;
-      }
+function asArrayLiteral(node, depth = 0) {
+  if (!node || depth > 4) return null;
+  if (ts.isArrayLiteralExpression(node)) return node;
+  if (ts.isAsExpression(node) || ts.isParenthesizedExpression(node))
+    return asArrayLiteral(node.expression, depth + 1);
+  if (ts.isCallExpression(node)) {
+    // `[...].filter(fn)` keeps the array in the receiver; `_.compact([...])`
+    // in the argument. Try the receiver first so `fn` is never mistaken for it.
+    if (ts.isPropertyAccessExpression(node.expression)) {
+      const viaReceiver = asArrayLiteral(node.expression.expression, depth + 1);
+      if (viaReceiver) return viaReceiver;
     }
-    if (ts.isAsExpression(n) || ts.isParenthesizedExpression(n)) {
-      n = n.expression;
-      continue;
-    }
-    return null;
+    return asArrayLiteral(node.arguments[0], depth + 1);
   }
   return null;
 }
