@@ -176,6 +176,16 @@ describe('BAIInteractiveLoginButton', () => {
       await waitFor(() => expect(onFailure).toHaveBeenCalledWith('no_session'));
     });
 
+    it('renders a caller-supplied icon instead of the default', async () => {
+      stubLocation();
+      stubFetchWith({ authenticated: false, data: null });
+
+      renderSubject({ icon: <span data-testid="custom-icon" /> });
+
+      await screen.findByRole('button', { name: /Sign in with Backend.AI/ });
+      expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
+    });
+
     it('navigates to the interactive-login URL when the button is clicked', async () => {
       const location = stubLocation();
       stubFetchWith({ authenticated: false, data: null });

@@ -5,67 +5,69 @@ import BAIInteractiveLoginButton, {
 } from './BAIInteractiveLoginButton';
 import BAIText from './BAIText';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState } from 'react';
 
 type Outcome = 'authenticated' | BAIInteractiveLoginFailureReason;
 
 type StoryProps = BAIInteractiveLoginButtonProps & { outcome: Outcome };
 
-const WEBSERVER_URL = 'https://webserver.example.com';
+/**
+ * Every story talks to `https://<outcome>.webserver.example.com`; one
+ * interceptor, installed once for the whole Storybook session, answers those
+ * hosts and delegates everything else to the real `fetch`. Several stories
+ * can therefore be mounted at once (the autodocs page) without overwriting
+ * each other's stub.
+ */
+const MOCK_WEBSERVER_SUFFIX = '.webserver.example.com';
 
-/** Captured at import time, before any story installs its stub. */
-const originalFetch = globalThis.fetch;
+const webserverUrlFor = (outcome: Outcome): string =>
+  outcome === 'no_endpoint' ? '' : `https://${outcome}${MOCK_WEBSERVER_SUFFIX}`;
 
-const installFetchMock = (outcome: Outcome) => {
-  globalThis.fetch = (async () => {
-    switch (outcome) {
-      case 'cors_or_mixed':
-        throw new TypeError('Failed to fetch');
-      case 'timeout':
-        throw new DOMException('timed out', 'TimeoutError');
-      case 'http_error':
-        return { ok: false, status: 502, json: async () => ({}) };
-      case 'invalid_response':
-        return {
-          ok: true,
-          status: 200,
-          json: async () => ({ hello: 'world' }),
-        };
-      case 'no_session_id':
-        return {
-          ok: true,
-          status: 200,
-          json: async () => ({ authenticated: true, session_id: '' }),
-        };
-      case 'no_session':
-        return {
-          ok: true,
-          status: 200,
-          json: async () => ({ authenticated: false, data: null }),
-        };
-      default:
-        return {
-          ok: true,
-          status: 200,
-          json: async () => ({
-            authenticated: true,
-            data: { access_key: 'AKIA', role: 'user', status: 'active' },
-            session_id: 'sess-storybook',
-          }),
-        };
-    }
-  }) as unknown as typeof fetch;
+const outcomeFromRequest = (input: RequestInfo | URL): Outcome | null => {
+  const href =
+    typeof input === 'string'
+      ? input
+      : input instanceof URL
+        ? input.href
+        : input.url;
+  let host: string;
+  try {
+    host = new URL(href).hostname;
+  } catch {
+    return null;
+  }
+  return host.endsWith(MOCK_WEBSERVER_SUFFIX)
+    ? (host.slice(0, -MOCK_WEBSERVER_SUFFIX.length) as Outcome)
+    : null;
 };
 
-/** Keeps the stub from outliving the story that installed it. */
-const RestoreFetchOnUnmount = ({ children }: { children: ReactNode }) => {
-  useEffect(
-    () => () => {
-      globalThis.fetch = originalFetch;
-    },
-    [],
-  );
-  return <>{children}</>;
+const respondFor = (outcome: Outcome): Response => {
+  switch (outcome) {
+    case 'cors_or_mixed':
+      throw new TypeError('Failed to fetch');
+    case 'timeout':
+      throw new DOMException('timed out', 'TimeoutError');
+    case 'http_error':
+      return Response.json({}, { status: 502 });
+    case 'invalid_response':
+      return Response.json({ hello: 'world' });
+    case 'no_session_id':
+      return Response.json({ authenticated: true, session_id: '' });
+    case 'no_session':
+      return Response.json({ authenticated: false, data: null });
+    default:
+      return Response.json({
+        authenticated: true,
+        data: { access_key: 'AKIA', role: 'user', status: 'active' },
+        session_id: 'sess-storybook',
+      });
+  }
+};
+
+const realFetch = globalThis.fetch;
+globalThis.fetch = async (input, init) => {
+  const outcome = outcomeFromRequest(input);
+  return outcome ? respondFor(outcome) : realFetch(input, init);
 };
 
 const InteractiveLoginStory = ({ outcome, ...props }: StoryProps) => {
@@ -80,7 +82,7 @@ const InteractiveLoginStory = ({ outcome, ...props }: StoryProps) => {
       <BAIInteractiveLoginButton
         key={outcome}
         {...props}
-        webserverUrl={outcome === 'no_endpoint' ? '' : WEBSERVER_URL}
+        webserverUrl={webserverUrlFor(outcome)}
         onSessionVerified={async (sessionId) => {
           if (outcome === 'relay_failed') {
             throw new Error('token exchange failed');
@@ -128,7 +130,7 @@ The consuming app and the webserver must be same-site. The webserver's session c
 ## Outcomes
 \`no_session\` is the ordinary "not signed in yet" state, so it renders as a neutral hint under the button — never as an error. Only a genuine failure (\`no_endpoint\`, \`invalid_callback\`, \`cors_or_mixed\`, \`timeout\`, \`http_error\`, \`invalid_response\`, \`no_session_id\`, \`relay_failed\`) gets the error alert. \`invalid_callback\` is a redirect-time outcome (a \`callbackUrl\` that is not an http(s) URL), so it is not one of the mocked probe outcomes below.
 
-The stories below mock \`fetch\` for the lifetime of the story and restore it on unmount; nothing contacts a live webserver. Use the **outcome** control to see every failure reason. The line under the component is story-only instrumentation showing what \`onSessionVerified\` / \`onFailure\` received.
+The stories below route \`https://<outcome>.webserver.example.com\` through a session-wide \`fetch\` interceptor that delegates every other host to the real \`fetch\`; nothing contacts a live webserver. Use the **outcome** control to see every failure reason. The line under the component is story-only instrumentation showing what \`onSessionVerified\` / \`onFailure\` received.
         `,
       },
     },
@@ -160,16 +162,6 @@ The stories below mock \`fetch\` for the lifetime of the story and restore it on
     showFailureAlert: true,
     onSessionVerified: () => {},
   },
-  decorators: [
-    (Story, context) => {
-      installFetchMock((context.args as StoryProps).outcome);
-      return (
-        <RestoreFetchOnUnmount>
-          <Story />
-        </RestoreFetchOnUnmount>
-      );
-    },
-  ],
   render: (args) => <InteractiveLoginStory {...args} />,
 };
 

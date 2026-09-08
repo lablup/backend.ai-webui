@@ -134,6 +134,7 @@ export {
   classifyLoginCheckResponse,
   normalizeWebserverUrl,
   probeLoginCheck,
+  resolveCallbackUrl,
 } from './useBAIInteractiveLogin';
 export type {
   BAIInteractiveLoginFailure,

@@ -48,6 +48,7 @@ const BAIInteractiveLoginButton = ({
   showFailureAlert = true,
   label,
   variant = 'primary',
+  icon = <LogIn size="1em" />,
   ...buttonProps
 }: BAIInteractiveLoginButtonProps) => {
   'use memo';
@@ -128,7 +129,7 @@ const BAIInteractiveLoginButton = ({
         <Button
           {...buttonProps}
           variant={variant}
-          icon={<LogIn size="1em" />}
+          icon={icon}
           isLoading={isProbing || isRelaying}
           label={
             isProbing
