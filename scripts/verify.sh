@@ -206,6 +206,14 @@ check_help_anchors() {
   node scripts/check-help-anchors.mjs
 }
 
+check_layer_order() {
+  # The @layer order statement decides whether the brand theme outranks
+  # Astryx's defaults, and both drift and misplacement are invisible at
+  # runtime. Same reason as the ladder gate below: index.html-only PRs run no
+  # vitest job, so the check lives here too.
+  node scripts/migration-gates/layer-order-gate.mjs
+}
+
 check_z_index_ladder() {
   # Drift between the ladder and its hand-mirrors is silent, and vitest.yml's
   # path filter never fires for an index.html-only PR — so it runs here, always.
@@ -231,6 +239,7 @@ run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built
 run_check "Astryx integration (backend.ai-ui)" check_astryx_integration
+run_check "Cascade-layer order" check_layer_order
 run_check "z-index ladder mirrors" check_z_index_ladder
 run_check "Agent mappings" check_agent_mappings
 run_check "Help anchors (user manual)" check_help_anchors
