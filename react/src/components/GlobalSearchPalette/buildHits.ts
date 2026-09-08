@@ -173,7 +173,7 @@ const scopeTextOf = (
     case 'projectAdmin':
       return t('webui.search.scope.ProjectAdministration');
     case 'admin':
-      return t('webui.menu.Administration');
+      return t('webui.search.scope.Administration');
     default:
       return undefined;
   }

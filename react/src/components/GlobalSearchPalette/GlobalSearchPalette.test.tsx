@@ -111,7 +111,7 @@ const adminUsersHit = makeHit({
   id: 'page:/admin/user',
   label: 'Users',
   scope: 'admin',
-  scopeText: 'webui.menu.Administration',
+  scopeText: 'webui.search.scope.Administration',
   target: { path: '/admin/user' },
   group: 'Administration › Operations',
   auxiliaryData: { group: 'Administration › Operations' },
@@ -329,7 +329,7 @@ describe('GlobalSearchPalette', () => {
     expect(textColumn.children).toHaveLength(1);
     // … the scope is the column's trailing sibling.
     expect(textColumn.nextElementSibling).toBe(
-      screen.getByText('webui.menu.Administration'),
+      screen.getByText('webui.search.scope.Administration'),
     );
     // A project-scoped row carries no marker at all.
     const projectColumn = screen.getByText('Sessions')

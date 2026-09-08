@@ -3886,6 +3886,7 @@
         "PanelsAndHelp": "Самбар ба тусламж"
       },
       "scope": {
+        "Administration": "Админ",
         "ProjectAdministration": "Төслийн удирдлага"
       }
     }

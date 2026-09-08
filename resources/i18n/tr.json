@@ -3884,6 +3884,7 @@
         "PanelsAndHelp": "Paneller ve yardım"
       },
       "scope": {
+        "Administration": "yönetim",
         "ProjectAdministration": "Proje yönetimi"
       }
     }

@@ -3888,6 +3888,7 @@
         "PanelsAndHelp": "面板與幫助"
       },
       "scope": {
+        "Administration": "行政",
         "ProjectAdministration": "項目管理"
       }
     }

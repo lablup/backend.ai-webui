@@ -3887,7 +3887,8 @@
         "PanelsAndHelp": "패널 및 도움말"
       },
       "scope": {
-        "ProjectAdministration": "프로젝트 관리"
+        "Administration": "관리자",
+        "ProjectAdministration": "프로젝트 관리자"
       }
     }
   }

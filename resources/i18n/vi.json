@@ -3886,6 +3886,7 @@
         "PanelsAndHelp": "Bảng điều khiển và trợ giúp"
       },
       "scope": {
+        "Administration": "Hành chính",
         "ProjectAdministration": "Quản trị dự án"
       }
     }

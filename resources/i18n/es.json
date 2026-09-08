@@ -3884,6 +3884,7 @@
         "PanelsAndHelp": "Paneles y ayuda"
       },
       "scope": {
+        "Administration": "Administración",
         "ProjectAdministration": "Administración del proyecto"
       }
     }

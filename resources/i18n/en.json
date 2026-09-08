@@ -3869,6 +3869,7 @@
         "PanelsAndHelp": "Panels & help"
       },
       "scope": {
+        "Administration": "Administration",
         "ProjectAdministration": "Project administration"
       }
     }
