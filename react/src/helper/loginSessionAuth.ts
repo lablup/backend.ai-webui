@@ -8,10 +8,13 @@
  * Extracted from backend-ai-login.ts _connectViaGQL method.
  * Handles post-authentication GQL connection and client setup.
  */
+import { RelayEnvironment } from '../RelayEnvironment';
+import { loginSessionAuthMyUserQuery } from '../__generated__/loginSessionAuthMyUserQuery.graphql';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { getActAsTarget } from './actAs';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 import { toLocalId } from 'backend.ai-ui';
+import { fetchQuery, graphql } from 'react-relay';
 
 /**
  * Create a Backend.AI client with the given credentials.
@@ -100,41 +103,6 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
   }
 }
 
-// One page of the current user's projects. `UserV2.projects` silently caps an
-// unpaginated read at the manager's default page size, so the login walks the
-// cursor to the end (the legacy `group.list` read had no cap).
-const MY_USER_QUERY = `
-  query($first: Int!, $after: String) {
-    myUserV2 {
-      id
-      basicInfo { email fullName }
-      organization { domainName role }
-      domain { entityId basicInfo { name } }
-      projects(filter: { isActive: true }, first: $first, after: $after) {
-        edges { node { id basicInfo { name } } }
-        pageInfo { hasNextPage endCursor }
-      }
-    }
-  }
-`;
-const PROJECT_PAGE_SIZE = 100;
-
-type MyUserV2Response = {
-  myUserV2: {
-    id: string;
-    basicInfo: { email: string; fullName: string | null };
-    organization: { domainName: string | null; role: string | null };
-    domain: {
-      entityId: string;
-      basicInfo: { name: string };
-    } | null;
-    projects: {
-      edges: Array<{ node: { id: string; basicInfo: { name: string } } }>;
-      pageInfo: { hasNextPage: boolean; endCursor: string | null };
-    } | null;
-  } | null;
-};
-
 /**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, projects, and config.
@@ -150,28 +118,77 @@ export async function connectViaGQL(
 
   (globalThis as any).backendaiclient = client;
 
+  // `UserV2.projects` caps an unpaginated read at the manager's default page
+  // size, so the login walks the cursor (the legacy `group.list` had no cap).
+  const PROJECT_PAGE_SIZE = 100;
   const projects: Array<{ id: string; name: string }> = [];
-  let me: MyUserV2Response['myUserV2'] = null;
+  let me: NonNullable<loginSessionAuthMyUserQuery['response']['myUserV2']>;
   let after: string | null = null;
   do {
-    let response: MyUserV2Response;
+    let response: loginSessionAuthMyUserQuery['response'] | undefined;
     try {
-      response = await client.query(MY_USER_QUERY, {
-        first: PROJECT_PAGE_SIZE,
-        after,
-      });
+      response = await fetchQuery<loginSessionAuthMyUserQuery>(
+        RelayEnvironment,
+        graphql`
+          query loginSessionAuthMyUserQuery($first: Int!, $after: String) {
+            myUserV2 {
+              id
+              basicInfo {
+                email
+                fullName
+              }
+              organization {
+                domainName
+                role
+              }
+              domain {
+                entityId
+                basicInfo {
+                  name
+                }
+              }
+              projects(
+                filter: { isActive: true }
+                first: $first
+                after: $after
+              ) {
+                edges {
+                  node {
+                    id
+                    basicInfo {
+                      name
+                    }
+                  }
+                }
+                pageInfo {
+                  hasNextPage
+                  endCursor
+                }
+              }
+            }
+          }
+        `,
+        { first: PROJECT_PAGE_SIZE, after },
+        { fetchPolicy: 'network-only' },
+      ).toPromise();
     } catch (err) {
       // A refused session is cleaned up like a missing user; a network blip is not.
-      const status = (err as { statusCode?: unknown } | null)?.statusCode;
-      if (!isActingAs && (status === 401 || status === 403))
+      // RelayEnvironment rewraps a 401 as an `AuthorizationError`.
+      const e = err as { statusCode?: unknown; name?: unknown } | null;
+      if (
+        !isActingAs &&
+        (e?.name === 'AuthorizationError' ||
+          e?.statusCode === 401 ||
+          e?.statusCode === 403)
+      )
         await client.logout().catch(() => {});
       throw err;
     }
-    me = response?.myUserV2 ?? null;
-    if (!me) {
+    if (!response?.myUserV2) {
       if (!isActingAs) await client.logout();
       throw new Error('User information is missing.');
     }
+    me = response.myUserV2;
     for (const { node } of me.projects?.edges ?? []) {
       projects.push({ id: toLocalId(node.id), name: node.basicInfo.name });
     }
