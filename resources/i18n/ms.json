@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Kebenaran menulis diperlukan untuk memuat naik fail."
     },
     "folders": {
-      "AdminDataPageAlert": "Pada halaman Data Admin hanya folder projek boleh dicipta.",
+      "AdminDataPageAlert": "Pada halaman Data Admin, folder dicipta sebagai folder projek.",
       "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang dalam satu atau lebih sesi. Tamatkan sesi terlebih dahulu.",
       "CannotDeletePipelineFolder": "Anda tidak boleh memadam folder saluran paip.",
       "CannotDeployFromAdminMenu": "Penggunaan dicipta daripada halaman Data sesuatu projek; menu pentadbir tidak menyokongnya.",
@@ -982,7 +982,7 @@
       "Ownership": "Pemilikan",
       "Path": "Laluan penyimpanan",
       "Permission": "Kebenaran",
-      "ProjectAdminDataPageAlert": "Pada halaman Data Pentadbir Projek hanya folder projek boleh dicipta.",
+      "ProjectAdminDataPageAlert": "Pada halaman Data Pentadbir Projek, folder dicipta sebagai folder projek.",
       "ProjectFolderAlertDesc": "Folder ini dikongsi dengan semua ahli projek",
       "ProjectFolderCreationHelp": "Folder yang boleh diakses oleh pengguna projek \"{{projectName}}\" akan dibuat.",
       "Rename": "Namakan semula",

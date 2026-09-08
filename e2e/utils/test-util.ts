@@ -630,11 +630,12 @@ export async function createVFolderAndVerify(
     await (await modal.getModelUsageModeRadio()).click();
   }
 
-  // Select type
-  if (type === 'user') {
-    await (await modal.getUserTypeRadio()).click();
-  } else if (type === 'project') {
-    await (await modal.getProjectTypeRadio()).click();
+  // Ownership is page-derived since FR-3441 (no in-form Type radio); this
+  // helper drives the user Data page, which creates user folders only.
+  if (type === 'project') {
+    throw new Error(
+      'createVFolderAndVerify drives the user Data page, which creates user folders only (FR-3441); drive the Project Admin Data page for project folders.',
+    );
   }
 
   // Select permission
