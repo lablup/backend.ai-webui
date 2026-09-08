@@ -1,1 +1,0 @@
-import{Z as i,h as t,_ as f,$ as n}from"./iframe-DFtkfDfV.js";function u(e,s,r){if(!i(r))return!1;var a=typeof s;return(a=="number"?t(r)&&f(s,r.length):a=="string"&&s in r)?n(r[s],e):!1}export{u as i};
