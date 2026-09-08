@@ -10,6 +10,7 @@
  */
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
+import { toLocalId } from 'backend.ai-ui';
 
 /**
  * Create a Backend.AI client with the given credentials.
@@ -48,95 +49,94 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
   }
 }
 
+// One page of the current user's projects. `UserV2.projects` silently caps an
+// unpaginated read at the manager's default page size, so the login walks the
+// cursor to the end (the legacy `group.list` read had no cap).
+const MY_USER_QUERY = `
+  query($first: Int!, $after: String) {
+    myUserV2 {
+      id
+      basicInfo { email fullName }
+      organization { domainName role }
+      domain { entityId basicInfo { name } }
+      projects(filter: { isActive: true }, first: $first, after: $after) {
+        edges { node { id basicInfo { name } } }
+        pageInfo { hasNextPage endCursor }
+      }
+    }
+  }
+`;
+const PROJECT_PAGE_SIZE = 100;
+
+type MyUserV2Response = {
+  myUserV2: {
+    id: string;
+    basicInfo: { email: string; fullName: string | null };
+    organization: { domainName: string | null; role: string | null };
+    domain: {
+      entityId: string;
+      basicInfo: { name: string };
+    } | null;
+    projects: {
+      edges: Array<{ node: { id: string; basicInfo: { name: string } } }>;
+      pageInfo: { hasNextPage: boolean; endCursor: string | null };
+    } | null;
+  } | null;
+};
+
 /**
  * Perform GQL connection after successful authentication.
- * Sets up globalThis.backendaiclient with user info, groups, and config.
+ * Sets up globalThis.backendaiclient with user info, projects, and config.
  */
 export async function connectViaGQL(
   client: any,
   cfg: LoginConfigState,
   endpoints: string[],
 ): Promise<string[]> {
-  const fields = ['user_id', 'resource_policy', 'user'];
-  const q = `query { keypair { ${fields.join(' ')} } }`;
-  const v = {};
-
-  const response = await client.query(q, v);
-
   (globalThis as any).backendaiclient = client;
 
-  if (!response['keypair']) {
-    await client.logout();
-    throw new Error('Keypair information is missing.');
-  }
-
-  const resourcePolicy = response['keypair'].resource_policy;
-  (globalThis as any).backendaiclient.resource_policy = resourcePolicy;
-  const user = response['keypair'].user;
-
-  // Get user details
-  const userFields = [
-    'username',
-    'email',
-    'full_name',
-    'is_active',
-    'role',
-    'domain_name',
-    'groups {name, id}',
-    'need_password_change',
-    'uuid',
-  ];
-  const userQuery = `query { user{ ${userFields.join(' ')} } }`;
-  const userResponse = await (globalThis as any).backendaiclient.query(
-    userQuery,
-    { uuid: user },
-  );
-
-  const email = userResponse['user'].email;
-  const userGroups = userResponse['user'].groups;
-  const role = userResponse['user'].role;
-  const domainName = userResponse['user'].domain_name;
-
-  (globalThis as any).backendaiclient.email = email;
-  (globalThis as any).backendaiclient.user_uuid = userResponse['user'].uuid;
-  (globalThis as any).backendaiclient.full_name =
-    userResponse['user'].full_name;
-  (globalThis as any).backendaiclient.is_admin = false;
-  (globalThis as any).backendaiclient.is_superadmin = false;
-  (globalThis as any).backendaiclient.need_password_change =
-    userResponse['user'].need_password_change;
-
-  if (['superadmin', 'admin'].includes(role)) {
-    (globalThis as any).backendaiclient.is_admin = true;
-  }
-  if (['superadmin'].includes(role)) {
-    (globalThis as any).backendaiclient.is_superadmin = true;
-  }
-
-  // Get group list
-  const groupResponse = await (globalThis as any).backendaiclient.group.list(
-    true,
-    false,
-    ['id', 'name', 'description', 'is_active'],
-  );
-
-  const groups = groupResponse.groups;
-  const userGroupIds = userGroups.map(({ id }: { id: string }) => id);
-
-  if (groups !== null) {
-    (globalThis as any).backendaiclient.groups = groups
-      .filter((item: any) => userGroupIds.includes(item.id))
-      .map((item: any) => item.name)
-      .sort();
-
-    const groupMap: Record<string, string> = {};
-    groups.forEach((element: any) => {
-      groupMap[element.name] = element.id;
+  const projects: Array<{ id: string; name: string }> = [];
+  let me: MyUserV2Response['myUserV2'] = null;
+  let after: string | null = null;
+  do {
+    const response: MyUserV2Response = await client.query(MY_USER_QUERY, {
+      first: PROJECT_PAGE_SIZE,
+      after,
     });
-    (globalThis as any).backendaiclient.groupIds = groupMap;
-  } else {
-    (globalThis as any).backendaiclient.groups = ['default'];
-  }
+    me = response?.myUserV2 ?? null;
+    if (!me) {
+      await client.logout();
+      throw new Error('User information is missing.');
+    }
+    for (const { node } of me.projects?.edges ?? []) {
+      projects.push({ id: toLocalId(node.id), name: node.basicInfo.name });
+    }
+    after = me.projects?.pageInfo.hasNextPage
+      ? (me.projects.pageInfo.endCursor ?? null)
+      : null;
+  } while (after);
+
+  const role = (me.organization.role ?? '').toLowerCase();
+  const domainName =
+    me.organization.domainName ?? me.domain?.basicInfo.name ?? '';
+
+  (globalThis as any).backendaiclient.email = me.basicInfo.email;
+  (globalThis as any).backendaiclient.user_uuid = toLocalId(me.id);
+  (globalThis as any).backendaiclient.full_name = me.basicInfo.fullName;
+  (globalThis as any).backendaiclient.is_admin = [
+    'superadmin',
+    'admin',
+  ].includes(role);
+  (globalThis as any).backendaiclient.is_superadmin = role === 'superadmin';
+
+  (globalThis as any).backendaiclient.groups = projects
+    .map(({ name }) => name)
+    .sort();
+  const groupMap: Record<string, string> = {};
+  projects.forEach(({ id, name }) => {
+    groupMap[name] = id;
+  });
+  (globalThis as any).backendaiclient.groupIds = groupMap;
 
   const currentGroup = (
     globalThis as any
@@ -151,8 +151,11 @@ export async function connectViaGQL(
   };
 
   // Apply config
-  const updatedConfig = { ...cfg, domain_name: domainName };
-  applyConfigToClient(updatedConfig);
+  applyConfigToClient({
+    ...cfg,
+    domain_name: domainName,
+    domain_id: me.domain?.entityId ?? '',
+  });
 
   // Manage endpoint history
   let updatedEndpoints = [...endpoints];
