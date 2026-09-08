@@ -7,7 +7,6 @@ import type {
   DeploymentAddRevisionModalAddMutation$data,
 } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
 import type { DeploymentAddRevisionModalCardDetailQuery } from '../__generated__/DeploymentAddRevisionModalCardDetailQuery.graphql';
-import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
 import type { DeploymentAddRevisionModalManualImageQuery } from '../__generated__/DeploymentAddRevisionModalManualImageQuery.graphql';
 import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
 import type { DeploymentAddRevisionModalPresetDetailQuery } from '../__generated__/DeploymentAddRevisionModalPresetDetailQuery.graphql';
@@ -811,7 +810,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 clusterSize
               }
               execution {
-                imageId
                 environ {
                   key
                   value
@@ -883,12 +881,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Build a Custom-form prefill object from a preset node read off the
   // singular `deploymentRevisionPreset(id:)` query (resolved via
-  // `fetchPresetData`). Stays async only for the pre-26.4.4 image fallback.
-  const buildPrefillFromPreset = async (
+  // `fetchPresetData`).
+  const buildPrefillFromPreset = (
     preset: NonNullable<
       DeploymentAddRevisionModalSelectedPresetQuery$data['deploymentRevisionPreset']
     >,
-  ): Promise<Partial<FormValues>> => {
+  ): Partial<FormValues> => {
     const slots = preset.resourceSlots ?? [];
     const cpuSlot = slots.find((s) => s.slotName === 'cpu');
     const memSlot = slots.find((s) => s.slotName === 'mem');
@@ -905,32 +903,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ? ('single-node' as const)
         : ('multi-node' as const);
 
-    // `image` is gated by @since(26.4.4) (BA-5952); on older managers it is
-    // null, so fall back to resolving `execution.imageId` with a second query.
-    let imageFullName = toImageFullName(preset.image?.identity);
-    if (!imageFullName && preset.execution?.imageId) {
-      try {
-        const result =
-          await fetchQuery<DeploymentAddRevisionModalImageNameQuery>(
-            relayEnvironment,
-            graphql`
-              query DeploymentAddRevisionModalImageNameQuery($id: ID!) {
-                imageV2(id: $id) {
-                  identity {
-                    canonicalName
-                    architecture
-                  }
-                }
-              }
-            `,
-            { id: preset.execution.imageId },
-            { fetchPolicy: 'store-or-network' },
-          ).toPromise();
-        imageFullName = toImageFullName(result?.imageV2?.identity);
-      } catch {
-        imageFullName = undefined;
-      }
-    }
+    const imageFullName = toImageFullName(preset.image?.identity);
 
     const environEntries = (preset.execution?.environ ?? []).map((e) => ({
       variable: e.key,
@@ -992,7 +965,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       if (selectedPresetId) {
         const preset = await fetchPresetData(selectedPresetId);
         if (preset) {
-          prefill = await buildPrefillFromPreset(preset);
+          prefill = buildPrefillFromPreset(preset);
         }
       }
       if (presetValues.modelFolderId) {

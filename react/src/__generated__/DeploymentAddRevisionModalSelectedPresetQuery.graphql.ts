@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<31015edd75c6d675606f44ecf84504c5>>
+ * @generated SignedSource<<3c84e27e5cf75e91390c6c0217ef19ed>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,7 +23,6 @@ export type DeploymentAddRevisionModalSelectedPresetQuery$data = {
         readonly key: string;
         readonly value: string;
       }>;
-      readonly imageId: string | null | undefined;
     };
     readonly id: string;
     readonly image: {
@@ -129,13 +128,6 @@ v3 = [
         "name": "execution",
         "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "imageId",
-            "storageKey": null
-          },
           {
             "alias": null,
             "args": null,
@@ -272,16 +264,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "1b523f8b6328d6a99b6da08afe341484",
+    "cacheID": "757fa163a7b5c6ca53a9db34d9410efa",
     "id": null,
     "metadata": {},
     "name": "DeploymentAddRevisionModalSelectedPresetQuery",
     "operationKind": "query",
-    "text": "query DeploymentAddRevisionModalSelectedPresetQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    id\n    runtimeVariantId\n    cluster {\n      clusterMode\n      clusterSize\n    }\n    execution {\n      imageId\n      environ {\n        key\n        value\n      }\n    }\n    image @since(version: \"26.4.4\") {\n      id\n      identity {\n        canonicalName\n        architecture\n      }\n    }\n    resource {\n      resourceOpts {\n        name\n        value\n      }\n    }\n    resourceSlots {\n      slotName\n      quantity\n    }\n  }\n}\n"
+    "text": "query DeploymentAddRevisionModalSelectedPresetQuery(\n  $id: UUID!\n) {\n  deploymentRevisionPreset(id: $id) {\n    id\n    runtimeVariantId\n    cluster {\n      clusterMode\n      clusterSize\n    }\n    execution {\n      environ {\n        key\n        value\n      }\n    }\n    image @since(version: \"26.4.4\") {\n      id\n      identity {\n        canonicalName\n        architecture\n      }\n    }\n    resource {\n      resourceOpts {\n        name\n        value\n      }\n    }\n    resourceSlots {\n      slotName\n      quantity\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "54c744fe0ec3f54a44f0617718898002";
+(node as any).hash = "2778537cab7aedf1e78af27c9d849fae";
 
 export default node;
