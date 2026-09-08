@@ -1425,6 +1425,7 @@ export async function modifyThemeJson(
                 info: ['#028DF2', '#009BDD'],
                 error: ['#FF4D4F', '#DC4446'],
                 success: ['#00BD9B', '#03A487'],
+                warning: ['#FAAD14', '#FAAD14'],
               },
               headerBg: ['#FF9729', '#E88A28'],
             },

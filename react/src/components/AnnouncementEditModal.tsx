@@ -269,7 +269,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                 padding: token('--spacing-6'),
                 // Match the editor's outer height (its inner height + the
                 // toolbar bar and the editor wrapper's borders).
-                height: `calc(${EDITOR_HEIGHT} + ${24 + 2}px)`,
+                height: `calc(${EDITOR_HEIGHT} + ${token('--size-element-sm')} + 2px)`,
                 boxSizing: 'border-box',
                 overflow: 'auto',
               }}

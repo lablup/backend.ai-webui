@@ -2,27 +2,8 @@ import BAIFlex from './BAIFlex';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 
-// Mock the theme shim BAIFlex actually reads (it stopped importing antd's
-// `theme` in the Astryx migration; the old `vi.mock('antd')` here was inert,
-// which is how the missing `sizeSM`/`sizeMS`/`sizeMD`/`sizeLG` rungs — and the
-// resulting `gap: undefined` on ~470 call sites — slipped through).
-vi.mock('../theme-shim', () => ({
-  theme: {
-    useToken: () => ({
-      token: {
-        sizeXXS: 4,
-        sizeXS: 8,
-        sizeSM: 12,
-        sizeMS: 16,
-        sizeMD: 20,
-        sizeLG: 24,
-        sizeXL: 32,
-        sizeXXL: 48,
-      },
-    }),
-  },
-}));
-
+// Nothing is mocked: `--spacing-*` are core Astryx tokens, and `useTheme()`
+// resolves those from its JS `tokenDefaults` without a `<Theme>` or its CSS.
 describe('BAIFlex', () => {
   test('default render', () => {
     const { baseElement } = render(<BAIFlex />);

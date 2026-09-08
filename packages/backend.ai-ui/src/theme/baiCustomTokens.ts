@@ -88,7 +88,7 @@ export const buildBaiCustomTokens = (
   '--color-info-bg': seeds.info
     ? tint('--color-info', 10, 15)
     : 'var(--color-accent-muted)',
-  '--color-warning-hover': seeds.warning
+  '--color-warning-border-hover': seeds.warning
     ? tint('--color-warning', 65, 45)
     : 'var(--color-warning)',
   '--color-success-border-hover': seeds.success

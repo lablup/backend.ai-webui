@@ -9,6 +9,10 @@
  * Like the app, it holds no brand values of its own: a seed the document
  * leaves out is not pinned, so Astryx's default applies.
  *
+ * `./theme.schema.json` describes only what this file reads, so the copy
+ * stays editor-validated without this package depending on the WebUI's
+ * `resources/theme.schema.json`.
+ *
  * KEEP IN SYNC (pinned token values, not the glue code) with
  * `buildBackendAITheme({ role: 'brand' })`.
  */

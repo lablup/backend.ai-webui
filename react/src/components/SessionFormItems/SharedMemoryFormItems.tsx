@@ -112,7 +112,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   display: 'flex',
                   height: token('--font-size-base'),
                   overflow: 'hidden',
-                  backgroundColor: token('--color-warning-hover'),
+                  backgroundColor: token('--color-warning-border-hover'),
                 }}
               >
                 <div
@@ -135,7 +135,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
               justify="between"
               wrap="wrap"
               style={{
-                minHeight: 24,
+                minHeight: token('--size-element-sm'),
               }}
             >
               <BAIFlex gap={'xxs'}>
@@ -155,7 +155,7 @@ const SharedMemoryFormItems: React.FC<SharedMemoryFormItemsProps> = ({
                   style={{
                     height: token('--font-size-base'),
                     width: token('--font-size-base'),
-                    backgroundColor: token('--color-warning-hover'),
+                    backgroundColor: token('--color-warning-border-hover'),
                   }}
                 ></div>
                 {getFieldValue('enabledAutomaticShmem') &&

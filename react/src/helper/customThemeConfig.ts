@@ -114,51 +114,43 @@ export const pickSeed = (
   return undefined;
 };
 
-// eslint-disable-next-line no-console -- module-scope diagnostics; no logger exists outside React here
-const warn = (message: string) => console.error(`[appearance] ${message}`);
+const logAppearanceError = (message: string) =>
+  // eslint-disable-next-line no-console -- module-scope diagnostics; no logger exists outside React here
+  console.error(`[appearance] ${message}`);
+
+const NEUTRAL_FALLBACK =
+  "rendering Astryx's neutral theme (no Backend.AI colors)";
 
 /**
- * Accept only structurally valid v2 documents, and say why when one is not:
- * the operator's next step is the migration guide, never a silently default
- * theme. `default` must exist in `theme.families` (the family the app boots
- * into and falls back to).
+ * Accept only structurally valid v2 documents, and say why when one is not.
+ * A rejected document renders brand-less, so the rejection is loud. `default`
+ * must exist in `theme.families` (the family the app boots into and falls
+ * back to); its absence is accepted but reported for the same reason.
  */
 export const pickValidAppearanceConfig = (
   input: unknown,
   source: string,
 ): BAIAppearanceConfig | undefined => {
   if (!_.isPlainObject(input)) {
-    warn(
-      `${source} is not a JSON object; rendering Astryx's neutral theme ` +
-        '(no Backend.AI colors).',
-    );
+    logAppearanceError(`${source} is not a JSON object; ${NEUTRAL_FALLBACK}.`);
     return undefined;
   }
   const doc = input as Record<string, unknown>;
   if (doc.schemaVersion !== APPEARANCE_SCHEMA_VERSION) {
-    if (_.isPlainObject(doc.light) || _.isPlainObject(doc.dark)) {
-      warn(
-        `${source} carries a v1 (antd-shaped) theme document; ` +
-          'v2 is required since FR-3605 — see the theme migration guide.',
-      );
-    } else {
-      warn(
-        `${source} has no "schemaVersion": ${APPEARANCE_SCHEMA_VERSION} ` +
-          `(got ${JSON.stringify(doc.schemaVersion)}); rendering Astryx's ` +
-          'neutral theme (no Backend.AI colors).',
-      );
-    }
+    logAppearanceError(
+      `${source} does not match the theme schema (resources/theme.schema.json): ` +
+        `"schemaVersion": ${APPEARANCE_SCHEMA_VERSION} is required ` +
+        `(got ${JSON.stringify(doc.schemaVersion)}); ${NEUTRAL_FALLBACK}.`,
+    );
     return undefined;
   }
   const families = (doc.theme as Record<string, unknown> | undefined)?.families;
   if (
-    _.isPlainObject(families) &&
-    !_.isPlainObject((families as Record<string, unknown>).default)
+    !_.isPlainObject((families as Record<string, unknown> | undefined)?.default)
   ) {
-    warn(
-      `${source} declares theme.families without a "default" entry; ` +
-        "the default family renders Astryx's neutral theme " +
-        '(no Backend.AI colors).',
+    logAppearanceError(
+      `${source} has no theme.families.default entry; ` +
+        `the default family is ${NEUTRAL_FALLBACK}.`,
     );
   }
   return doc as BAIAppearanceConfig;
@@ -240,17 +232,17 @@ const fetchStaticDoc = async (): Promise<BAIAppearanceConfig | undefined> => {
   try {
     response = await fetch('resources/theme.json');
   } catch (error) {
-    warn(`theme.json could not be fetched (${String(error)}).`);
+    logAppearanceError(`theme.json could not be fetched (${String(error)}).`);
     return undefined;
   }
   if (!response.ok) {
-    warn(`theme.json responded HTTP ${response.status}.`);
+    logAppearanceError(`theme.json responded HTTP ${response.status}.`);
     return undefined;
   }
   try {
     return pickValidAppearanceConfig(await response.json(), 'theme.json');
   } catch (error) {
-    warn(`theme.json is not valid JSON (${String(error)}).`);
+    logAppearanceError(`theme.json is not valid JSON (${String(error)}).`);
     return undefined;
   }
 };
@@ -291,7 +283,7 @@ export const loadCustomThemeConfig = () => {
       }
     })
     .catch((error) => {
-      warn(`appearance bootstrap failed (${String(error)}).`);
+      logAppearanceError(`appearance bootstrap failed (${String(error)}).`);
     })
     .finally(() => {
       document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
