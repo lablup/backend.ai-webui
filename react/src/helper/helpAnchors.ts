@@ -11,7 +11,7 @@ import helpAnchorsData from './helpAnchors.json';
  * `https://webui.docs.backend.ai/{version}/{lang}/{docPage}#{anchor}`, so
  * `docPage` is a `*.html` page slug and `anchor` an in-page heading id.
  * The data lives in `helpAnchors.json` so `scripts/check-help-anchors.mjs`
- * can resolve every target against the English manual sources without a
+ * can resolve every target against the published manual sources without a
  * TypeScript toolchain (FR-3773).
  *
  * Keep `path` in sync with the route menu keys in `routes.tsx` and `tab` with

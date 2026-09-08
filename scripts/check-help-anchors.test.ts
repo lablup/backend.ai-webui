@@ -39,6 +39,7 @@ import {
 const DOCS_SRC = fileURLToPath(
   new URL("../packages/backend.ai-webui-docs/src/", import.meta.url),
 );
+const PUBLISHED_DOCS_LANGUAGES = ["en", "ko", "ja", "th"] as const;
 
 /**
  * Every ATX / setext heading line of one markdown file, raw (marker and
@@ -338,21 +339,30 @@ describe("readNavigationPaths", () => {
 });
 
 describe("checkEntries", () => {
-  const index = buildManualIndex();
+  const indexes = new Map(
+    PUBLISHED_DOCS_LANGUAGES.map((lang) => [lang, buildManualIndex({ lang })]),
+  );
 
-  it("resolves every shipped help-anchor entry", () => {
-    const { entries } = JSON.parse(
-      readFileSync(
-        fileURLToPath(
-          new URL("../react/src/helper/helpAnchors.json", import.meta.url),
+  it.each(PUBLISHED_DOCS_LANGUAGES)(
+    "resolves every shipped help-anchor entry in %s",
+    (lang) => {
+      const index = indexes.get(lang);
+      expect(index).toBeDefined();
+      const { entries } = JSON.parse(
+        readFileSync(
+          fileURLToPath(
+            new URL("../react/src/helper/helpAnchors.json", import.meta.url),
+          ),
+          "utf8",
         ),
-        "utf8",
-      ),
-    );
-    expect(checkEntries(entries, index)).toEqual([]);
-  });
+      );
+      expect(checkEntries(entries, index!)).toEqual([]);
+    },
+  );
 
   it("reports an anchor that no longer exists", () => {
+    const index = indexes.get("en");
+    expect(index).toBeDefined();
     const problems = checkEntries(
       [
         {
@@ -362,7 +372,7 @@ describe("checkEntries", () => {
           anchor: "admin_menu-manage-user39s-keypairs",
         },
       ],
-      index,
+      index!,
     );
     expect(problems).toHaveLength(1);
     expect(problems[0].type).toBe("missing-anchor");
@@ -370,17 +380,24 @@ describe("checkEntries", () => {
   });
 
   it("reports a docPage that maps to no manual source", () => {
+    const index = indexes.get("en");
+    expect(index).toBeDefined();
     const problems = checkEntries(
       [{ path: "ghost", docPage: "no_such_page.html" }],
-      index,
+      index!,
     );
     expect(problems).toHaveLength(1);
     expect(problems[0].type).toBe("missing-page");
   });
 
   it("accepts an entry with no anchor once the page exists", () => {
+    const index = indexes.get("en");
+    expect(index).toBeDefined();
     expect(
-      checkEntries([{ path: "rbac", docPage: "rbac_management.html" }], index),
+      checkEntries(
+        [{ path: "rbac", docPage: "rbac_management.html" }],
+        index!,
+      ),
     ).toEqual([]);
   });
 });

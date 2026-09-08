@@ -7,13 +7,8 @@
  * manual, from the hand-curated table in `react/src/helper/helpAnchors.json`.
  * Nothing tied that table to the manual, so a renamed heading silently turned
  * the button into a no-op scroll. This checker resolves each entry against the
- * ENGLISH manual sources in `packages/backend.ai-webui-docs/src/en` and exits 1
- * on a dead page or anchor.
- *
- * Why English only: `docPage` slugs and heading ids are derived from the
- * navigation PATH (identical in every language) and the heading TEXT (which is
- * translated). Only the English site can be checked by slug; the other
- * languages are the translators' concern.
+ * published manual sources in `packages/backend.ai-webui-docs/src/{en,ko,ja,th}`
+ * and exits 1 on a dead page or anchor in any shipped language.
  *
  * Anchor ids are replicated from backend.ai-docs-toolkit, which is TypeScript
  * and ships no build output in this workspace, so it cannot be imported from a
@@ -38,7 +33,7 @@ const HELP_ANCHORS_PATH = path.join(
 );
 const DOCS_ROOT = path.join(REPO_ROOT, "packages/backend.ai-webui-docs/src");
 const BOOK_CONFIG_PATH = path.join(DOCS_ROOT, "book.config.yaml");
-const DOCS_LANG = "en";
+const DOCS_LANGUAGES = ["en", "ko", "ja", "th"];
 
 // ── Ports of the docs-toolkit slug rules ──────────────────────────────
 
@@ -245,7 +240,7 @@ export function readNavigationPaths(yamlText, lang) {
 /** Map of `<slug>.html` → { navPath, anchors } for the English manual. */
 export function buildManualIndex({
   docsRoot = DOCS_ROOT,
-  lang = DOCS_LANG,
+  lang = DOCS_LANGUAGES[0],
   bookConfigPath = BOOK_CONFIG_PATH,
 } = {}) {
   const navPaths = readNavigationPaths(
@@ -314,19 +309,31 @@ export function checkEntries(entries, index) {
 
 function main() {
   const { entries } = JSON.parse(fs.readFileSync(HELP_ANCHORS_PATH, "utf8"));
-  const index = buildManualIndex();
-  const problems = checkEntries(entries, index);
+  const indexes = new Map(
+    DOCS_LANGUAGES.map((lang) => [lang, buildManualIndex({ lang })]),
+  );
+  const problems = DOCS_LANGUAGES.flatMap((lang) =>
+    checkEntries(entries, indexes.get(lang)).map((problem) => ({
+      ...problem,
+      lang,
+      message: `[${lang}] ${problem.message}`,
+    })),
+  );
+  const pageCounts = DOCS_LANGUAGES.map(
+    (lang) => `${lang}: ${indexes.get(lang).size} pages`,
+  ).join(", ");
 
   console.log(
-    `Checked ${entries.length} help-anchor entries against ${index.size} ${DOCS_LANG} manual pages.`,
+    `Checked ${entries.length} help-anchor entries against published manual pages (${pageCounts}).`,
   );
   if (problems.length === 0) return 0;
 
   console.log(`\n${problems.length} dead help target(s):`);
   for (const problem of problems) console.log(`  ${problem.message}`);
   console.log(
-    `\nFix react/src/helper/helpAnchors.json: point the entry at a real heading in ` +
-      `packages/backend.ai-webui-docs/src/${DOCS_LANG}, or drop it if the section is gone.`,
+    "\nFix react/src/helper/helpAnchors.json: point shared entries at a " +
+      "language-stable anchor, and add matching explicit `<a id>` markers under " +
+      "packages/backend.ai-webui-docs/src/{en,ko,ja,th} when a section still lacks one.",
   );
   return 1;
 }

@@ -13,22 +13,22 @@ describe('resolveHelpDocPath', () => {
 
   it('appends the anchor when the entry has one', () => {
     expect(resolveHelpDocPath('scheduler')).toBe(
-      'admin_menu.html#admin_menu-fair-share-scheduler',
+      'admin_menu.html#fair-share-scheduler',
     );
   });
 
   it('prefers a tab-specific section over the page default', () => {
     expect(resolveHelpDocPath('agent', 'storages')).toBe(
-      'admin_menu.html#admin_menu-storages',
+      'admin_menu.html#storages',
     );
     expect(resolveHelpDocPath('credential', 'credentials')).toBe(
-      'admin_menu.html#admin_menu-manage-users-keypairs',
+      'admin_menu.html#manage-users-keypairs',
     );
   });
 
   it('falls back to the page default for an unmapped tab', () => {
     expect(resolveHelpDocPath('credential', 'no-such-tab')).toBe(
-      'project_admin.html#project_admin-users',
+      'project_admin.html#users',
     );
   });
 
