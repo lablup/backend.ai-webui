@@ -5,6 +5,7 @@
 import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
+import { isValidIPOrCidr } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   ServicePort,
@@ -12,7 +13,7 @@ import {
   useSuspendedFilteredAppTemplate,
 } from '../../hooks/useAppTemplate';
 import {
-  findInvalidClientIps,
+  normalizeAllowedClientIps,
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
@@ -460,8 +461,11 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                       // Inert while the field is disabled, so a stale chip
                       // cannot block a launch that sends no IP restriction.
                       if (!openToPublic) return;
-                      const invalidIps = findInvalidClientIps(
-                        value as Array<string> | undefined,
+                      const invalidIps = _.reject(
+                        normalizeAllowedClientIps(
+                          value as Array<string> | undefined,
+                        ),
+                        isValidIPOrCidr,
                       );
                       if (invalidIps.length > 0) {
                         throw new Error(

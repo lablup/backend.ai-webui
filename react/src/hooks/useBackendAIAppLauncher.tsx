@@ -4,7 +4,6 @@
  */
 import { useSuspendedBackendaiClient, useWebUINavigate } from '.';
 import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackendAIAppLauncherFragment.graphql';
-import { isValidIPOrCidr } from '../helper';
 import { requestLocalProxyToken } from '../helper/localProxyToken';
 import { useSetBAINotification } from './useBAINotification';
 import { useProjectPath } from './useRouteScope';
@@ -22,12 +21,6 @@ export const TCP_APPS = ['sshd', 'vscode-desktop', 'xrdp', 'vnc'];
 export const normalizeAllowedClientIps = (
   allowedClientIps?: Array<string> | null,
 ): Array<string> => _.filter(_.map(allowedClientIps ?? [], _.trim), Boolean);
-
-/** Entries that are neither a valid IP address nor a CIDR range. */
-export const findInvalidClientIps = (
-  allowedClientIps?: Array<string> | null,
-): Array<string> =>
-  _.reject(normalizeAllowedClientIps(allowedClientIps), isValidIPOrCidr);
 
 export const useBackendAIAppLauncher = (
   sessionFrgmt?: useBackendAIAppLauncherFragment$key | null,
