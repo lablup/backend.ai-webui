@@ -262,7 +262,7 @@ test.describe(
      * URL that lost its token must reach the error card instead of the
      * launcher, and must not POST an empty token to the webserver.
      */
-    test('User sees the missing-token error card when opening `/applauncher` without an sToken', async ({
+    test('User cannot launch an app from `/applauncher` without an sToken and sees the missing-token error card', async ({
       page,
     }) => {
       await installBoundaryProbeMocks(page);
