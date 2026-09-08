@@ -130,6 +130,7 @@ export {
   default as useBAIInteractiveLogin,
   BAI_INTERACTIVE_LOGIN_DEFAULT_TIMEOUT_MS,
   buildInteractiveLoginUrl,
+  classifyBodyReadError,
   classifyFetchError,
   classifyLoginCheckResponse,
   normalizeWebserverUrl,

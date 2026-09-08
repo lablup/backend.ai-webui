@@ -114,6 +114,22 @@ export const classifyFetchError = (
 };
 
 /**
+ * `response.json()` rejects with `SyntaxError` for a body that is not JSON,
+ * with the timeout signal's abort when the deadline hits mid-body, and with
+ * `TypeError` when the stream fails — the same opaque failure `fetch` itself
+ * reports.
+ */
+export const classifyBodyReadError = (
+  error: unknown,
+): Extract<
+  BAIInteractiveLoginFailureReason,
+  'timeout' | 'cors_or_mixed' | 'invalid_response'
+> => {
+  if (error instanceof SyntaxError) return 'invalid_response';
+  return classifyFetchError(error);
+};
+
+/**
  * The webserver answers `{ authenticated, data, session_id }`; only
  * `authenticated` and `session_id` are read.
  */
@@ -172,14 +188,7 @@ export const probeLoginCheck = async ({
   try {
     body = await response.json();
   } catch (error) {
-    // The timeout signal also governs reading the body.
-    return {
-      ok: false,
-      reason:
-        classifyFetchError(error) === 'timeout'
-          ? 'timeout'
-          : 'invalid_response',
-    };
+    return { ok: false, reason: classifyBodyReadError(error) };
   }
   return classifyLoginCheckResponse(body);
 };

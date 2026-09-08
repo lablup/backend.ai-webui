@@ -64,10 +64,37 @@ const respondFor = (outcome: Outcome): Response => {
   }
 };
 
-const realFetch = globalThis.fetch;
-globalThis.fetch = async (input, init) => {
-  const outcome = outcomeFromRequest(input);
-  return outcome ? respondFor(outcome) : realFetch(input, init);
+/**
+ * The interceptor lives only while a story from this file is mounted:
+ * `beforeEach` installs it (ref-counted, so stories mounted together on the
+ * autodocs page share one) and its cleanup restores the real `fetch` when the
+ * last one unmounts. The real `fetch` is kept on the interceptor itself so a
+ * hot reload finds and reuses it instead of wrapping it again.
+ */
+const REAL_FETCH = Symbol.for('backend.ai-ui/BAIInteractiveLoginButton/fetch');
+type InterceptingFetch = typeof fetch & { [REAL_FETCH]?: typeof fetch };
+
+let mountedStories = 0;
+
+const installFetchInterceptor = (): (() => void) => {
+  mountedStories += 1;
+  if (mountedStories === 1) {
+    const current = globalThis.fetch as InterceptingFetch;
+    const realFetch = current[REAL_FETCH] ?? current;
+    const intercepting: InterceptingFetch = async (input, init) => {
+      const outcome = outcomeFromRequest(input);
+      return outcome ? respondFor(outcome) : realFetch(input, init);
+    };
+    intercepting[REAL_FETCH] = realFetch;
+    globalThis.fetch = intercepting;
+  }
+  return () => {
+    mountedStories -= 1;
+    if (mountedStories === 0) {
+      const current = globalThis.fetch as InterceptingFetch;
+      globalThis.fetch = current[REAL_FETCH] ?? current;
+    }
+  };
 };
 
 const InteractiveLoginStory = ({ outcome, ...props }: StoryProps) => {
@@ -110,6 +137,7 @@ const meta: Meta<StoryProps> = {
   title: 'Button/BAIInteractiveLoginButton',
   component: BAIInteractiveLoginButton,
   tags: ['autodocs'],
+  beforeEach: () => installFetchInterceptor(),
   parameters: {
     layout: 'centered',
     docs: {
@@ -130,7 +158,7 @@ The consuming app and the webserver must be same-site. The webserver's session c
 ## Outcomes
 \`no_session\` is the ordinary "not signed in yet" state, so it renders as a neutral hint under the button — never as an error. Only a genuine failure (\`no_endpoint\`, \`invalid_callback\`, \`cors_or_mixed\`, \`timeout\`, \`http_error\`, \`invalid_response\`, \`no_session_id\`, \`relay_failed\`) gets the error alert. \`invalid_callback\` is a redirect-time outcome (a \`callbackUrl\` that is not an http(s) URL), so it is not one of the mocked probe outcomes below.
 
-The stories below route \`https://<outcome>.webserver.example.com\` through a session-wide \`fetch\` interceptor that delegates every other host to the real \`fetch\`; nothing contacts a live webserver. Use the **outcome** control to see every failure reason. The line under the component is story-only instrumentation showing what \`onSessionVerified\` / \`onFailure\` received.
+The stories below route \`https://<outcome>.webserver.example.com\` through a \`fetch\` interceptor that is installed while a story from this file is mounted and delegates every other host to the real \`fetch\`; nothing contacts a live webserver. Use the **outcome** control to see every failure reason. The line under the component is story-only instrumentation showing what \`onSessionVerified\` / \`onFailure\` received.
         `,
       },
     },

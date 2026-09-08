@@ -1,6 +1,7 @@
 import useBAIInteractiveLogin, {
   type BAIInteractiveLoginProbeResult,
   buildInteractiveLoginUrl,
+  classifyBodyReadError,
   classifyFetchError,
   classifyLoginCheckResponse,
   normalizeWebserverUrl,
@@ -239,6 +240,29 @@ describe('classifyFetchError', () => {
   });
 });
 
+describe('classifyBodyReadError', () => {
+  it('keeps invalid_response for a body that is not JSON', () => {
+    expect(classifyBodyReadError(new SyntaxError('Unexpected token <'))).toBe(
+      'invalid_response',
+    );
+  });
+
+  it('maps an abort while reading the body to timeout', () => {
+    expect(
+      classifyBodyReadError(new DOMException('timed out', 'TimeoutError')),
+    ).toBe('timeout');
+    expect(
+      classifyBodyReadError(new DOMException('aborted', 'AbortError')),
+    ).toBe('timeout');
+  });
+
+  it('maps a stream failure while reading the body to cors_or_mixed', () => {
+    expect(classifyBodyReadError(new TypeError('network error'))).toBe(
+      'cors_or_mixed',
+    );
+  });
+});
+
 describe('classifyLoginCheckResponse', () => {
   it('accepts an authenticated response carrying a session id', () => {
     expect(
@@ -406,6 +430,23 @@ describe('probeLoginCheck', () => {
     await expect(
       probeLoginCheck({ webserverUrl: 'https://webserver.example.com' }),
     ).resolves.toEqual({ ok: false, reason: 'timeout' });
+  });
+
+  it('reports cors_or_mixed when the body stream fails after the headers', async () => {
+    stubFetch(
+      async () =>
+        ({
+          ok: true,
+          status: 200,
+          json: async () => {
+            throw new TypeError('network error');
+          },
+        }) as unknown as Response,
+    );
+
+    await expect(
+      probeLoginCheck({ webserverUrl: 'https://webserver.example.com' }),
+    ).resolves.toEqual({ ok: false, reason: 'cors_or_mixed' });
   });
 
   it('reports no_session when the webserver answers authenticated: false', async () => {
