@@ -4,7 +4,9 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import type { DeploymentAddRevisionModalTestQuery } from '../__generated__/DeploymentAddRevisionModalTestQuery.graphql';
-import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
+import DeploymentAddRevisionModal, {
+  toImageFullName,
+} from './DeploymentAddRevisionModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -289,5 +291,29 @@ describe('DeploymentAddRevisionModal project derivation contract (ADR-0001)', ()
     expect(
       screen.queryByTestId('mock-resource-allocation-form'),
     ).not.toBeInTheDocument();
+  });
+});
+
+// The Preset -> Custom prefill matches this string against the environment
+// select's image full names (`registry/namespace:tag@architecture`).
+describe('toImageFullName', () => {
+  it('appends the architecture so the environment select can exact-match', () => {
+    expect(
+      toImageFullName({
+        canonicalName: 'cr.backend.ai/stable/python:3.9-ubuntu20.04',
+        architecture: 'x86_64',
+      }),
+    ).toBe('cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64');
+  });
+
+  it('falls back to the canonical name when no architecture is known', () => {
+    expect(
+      toImageFullName({ canonicalName: 'cr.backend.ai/stable/python:3.9' }),
+    ).toBe('cr.backend.ai/stable/python:3.9');
+  });
+
+  it('resolves to undefined when the preset carries no image', () => {
+    expect(toImageFullName(null)).toBeUndefined();
+    expect(toImageFullName(undefined)).toBeUndefined();
   });
 });
