@@ -21,7 +21,11 @@ import ThemeColorPicker, {
 import ThemeJsonConfigModal from './BrandingSettingItems/ThemeJsonConfigModal';
 import SettingList, { SettingGroup } from './SettingList';
 import { Button } from '@astryxdesign/core/Button';
-import { BAIFlex, BAIUnmountAfterClose } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIUnmountAfterClose,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import { Settings, Fullscreen, Check } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +37,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
 
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
 
@@ -56,11 +61,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       // feedback; the anonymous read path has no refresh API (FR-1964).
       window.location.reload();
     } catch (error) {
-      message.error(
-        error instanceof Error && error.message
-          ? error.message
-          : t('dialog.ErrorOccurred'),
-      );
+      message.error(getErrorMessage(error));
     }
   };
 
