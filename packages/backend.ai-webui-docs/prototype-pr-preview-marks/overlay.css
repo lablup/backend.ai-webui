@@ -1,0 +1,307 @@
+/* PROTOTYPE (FR-3882) — throwaway. Change marks + navigator for the docs PR preview. */
+:root {
+  --bai-add: #16a34a;
+  --bai-add-bg: rgba(34, 197, 94, 0.18);
+  --bai-mod: #ca8a04;
+  --bai-mod-bg: rgba(250, 204, 21, 0.32);
+  --bai-del: #dc2626;
+  --bai-del-bg: rgba(239, 68, 68, 0.14);
+  --bai-ins-bg: rgba(34, 197, 94, 0.22);
+  --bai-pop-bg: #fff;
+  --bai-pop-fg: #111827;
+  --bai-pop-border: #d1d5db;
+  --bai-bar-bg: #111827;
+  --bai-bar-fg: #f9fafb;
+  --bai-focus: #2563eb;
+}
+[data-theme="dark"] {
+  --bai-mod-bg: rgba(250, 204, 21, 0.22);
+  --bai-add-bg: rgba(34, 197, 94, 0.22);
+  --bai-pop-bg: #1f2937;
+  --bai-pop-fg: #f3f4f6;
+  --bai-pop-border: #4b5563;
+}
+
+/* ---------- shared: word-level diff ---------- */
+.bai-del { background: var(--bai-del-bg); color: var(--bai-del); text-decoration: line-through; text-decoration-thickness: 1.5px; border-radius: 2px; }
+.bai-ins { background: var(--bai-ins-bg); color: var(--bai-add); text-decoration: underline; text-decoration-thickness: 1.5px; border-radius: 2px; }
+[data-theme="dark"] .bai-del { color: #fca5a5; }
+[data-theme="dark"] .bai-ins { color: #86efac; }
+
+/* ---------- variant A: highlighter ---------- */
+.bai-variant-A [data-bai-change][data-bai-type="modified"],
+.bai-variant-A [data-bai-change][data-bai-type="added"] {
+  background: var(--bai-mod-bg);
+  box-shadow: 0 0 0 4px var(--bai-mod-bg);
+  border-radius: 3px;
+  cursor: help;
+}
+.bai-variant-A [data-bai-change][data-bai-type="added"] {
+  background: var(--bai-add-bg);
+  box-shadow: 0 0 0 4px var(--bai-add-bg);
+}
+.bai-variant-A figure[data-bai-change] { display: inline-block; padding: 4px; }
+.bai-variant-A .bai-removed-placeholder {
+  border: 1.5px dashed var(--bai-del);
+  background: var(--bai-del-bg);
+  color: var(--bai-del);
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin: 6px 0;
+  font-size: 0.85em;
+  cursor: help;
+}
+.bai-variant-A .bai-removed-placeholder::before { content: "− removed: "; font-weight: 600; }
+.bai-variant-A .bai-removed-placeholder .bai-removed-text { opacity: 0.8; text-decoration: line-through; }
+
+/* ---------- variant B: gutter bar ---------- */
+.bai-variant-B [data-bai-change] { position: relative; cursor: help; }
+.bai-variant-B [data-bai-change]::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--bai-mod);
+}
+.bai-variant-B [data-bai-change][data-bai-type="added"]::before { background: var(--bai-add); }
+.bai-variant-B tr[data-bai-change]::before { left: -10px; }
+.bai-variant-B figure[data-bai-change] { display: inline-block; }
+.bai-variant-B .bai-removed-placeholder {
+  position: relative;
+  height: 0;
+  margin: 0;
+  overflow: visible;
+  cursor: help;
+}
+.bai-variant-B .bai-removed-placeholder::before {
+  content: "−";
+  position: absolute;
+  left: -18px;
+  top: -9px;
+  width: 12px;
+  height: 12px;
+  line-height: 12px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--bai-del);
+  border-radius: 2px;
+}
+.bai-variant-B .bai-removed-placeholder .bai-removed-text { display: none; }
+/* the hover target for a zero-height placeholder: a thin red rule */
+.bai-variant-B .bai-removed-placeholder::after {
+  content: "";
+  position: absolute;
+  left: -14px;
+  right: 0;
+  top: -2px;
+  height: 3px;
+  background: var(--bai-del);
+  opacity: 0.6;
+}
+
+/* ---------- variant C: track changes inline ---------- */
+.bai-variant-C [data-bai-change][data-bai-type="added"] { text-decoration: underline; text-decoration-color: var(--bai-add); text-decoration-thickness: 2px; }
+.bai-variant-C [data-bai-change][data-bai-type="added"] > * { text-decoration: inherit; }
+.bai-variant-C .bai-removed-placeholder {
+  text-decoration: line-through;
+  text-decoration-color: var(--bai-del);
+  text-decoration-thickness: 2px;
+  color: var(--bai-del);
+  opacity: 0.85;
+}
+.bai-variant-C .bai-removed-placeholder .bai-removed-text { display: inline; }
+.bai-variant-C figure[data-bai-change][data-bai-type="modified"] .bai-inline-image-pair { display: flex; gap: 8px; align-items: flex-start; }
+.bai-variant-C .bai-inline-image-pair > div { flex: 1; font-size: 0.8em; text-align: center; }
+.bai-variant-C .bai-inline-image-pair img { max-width: 100%; height: auto; border: 2px solid var(--bai-del); }
+.bai-variant-C .bai-inline-image-pair > div:last-child img { border-color: var(--bai-add); }
+.bai-marks-off [data-bai-change], .bai-marks-off [data-bai-change]::before { background: none !important; box-shadow: none !important; text-decoration: none !important; }
+.bai-marks-off .bai-removed-placeholder { display: none !important; }
+.bai-marks-off .bai-del, .bai-marks-off .bai-ins { background: none; color: inherit; text-decoration: none; }
+.bai-marks-off .bai-del { display: none; }
+
+/* ---------- focus flash (navigator jump) ---------- */
+.bai-flash { outline: 3px solid var(--bai-focus); outline-offset: 4px; transition: outline-color 1.2s ease; }
+.bai-flash.bai-flash--fade { outline-color: transparent; }
+
+/* ---------- hover popover ---------- */
+.bai-popover {
+  position: fixed;
+  z-index: 9000;
+  max-width: min(720px, 92vw);
+  background: var(--bai-pop-bg);
+  color: var(--bai-pop-fg);
+  border: 1px solid var(--bai-pop-border);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.bai-popover__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--bai-pop-border);
+  font-size: 12px;
+}
+.bai-popover__type { font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+.bai-popover__type--added { color: var(--bai-add); }
+.bai-popover__type--modified { color: var(--bai-mod); }
+.bai-popover__type--removed { color: var(--bai-del); }
+.bai-popover__kind { opacity: 0.7; }
+.bai-popover__spacer { flex: 1; }
+.bai-popover__mode { display: inline-flex; border: 1px solid var(--bai-pop-border); border-radius: 4px; overflow: hidden; }
+.bai-popover__mode button { border: 0; background: transparent; color: inherit; padding: 2px 8px; font: inherit; font-size: 11px; cursor: pointer; }
+.bai-popover__mode button[aria-pressed="true"] { background: var(--bai-focus); color: #fff; }
+.bai-popover__body { padding: 10px 12px; max-height: 60vh; overflow: auto; }
+.bai-popover__body p { margin: 0; }
+.bai-popover__body img { max-width: 100%; height: auto; }
+.bai-popover__body table { border-collapse: collapse; }
+.bai-popover__body td, .bai-popover__body th { border: 1px solid var(--bai-pop-border); padding: 2px 6px; }
+.bai-popover__sbs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.bai-popover__sbs > div { min-width: 0; }
+.bai-popover__sbs .bai-col-label { font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.6; margin-bottom: 4px; }
+.bai-popover__sbs .bai-col--old { border-left: 3px solid var(--bai-del); padding-left: 8px; }
+.bai-popover__sbs .bai-col--new { border-left: 3px solid var(--bai-add); padding-left: 8px; }
+.bai-popover__img { cursor: zoom-in; border: 1px solid var(--bai-pop-border); border-radius: 4px; }
+.bai-popover__hint { padding: 4px 12px 8px; font-size: 11px; opacity: 0.6; }
+
+/* ---------- lightbox ---------- */
+.bai-lightbox { position: fixed; inset: 0; z-index: 9500; background: rgba(0, 0, 0, 0.82); display: grid; place-items: center; cursor: zoom-out; }
+.bai-lightbox__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 96vw; }
+.bai-lightbox__pair img { max-width: 47vw; max-height: 88vh; object-fit: contain; background: #fff; }
+.bai-lightbox__pair div { color: #fff; text-align: center; font: 600 12px system-ui, sans-serif; text-transform: uppercase; }
+.bai-lightbox__pair div:first-child img { outline: 3px solid var(--bai-del); }
+.bai-lightbox__pair div:last-child img { outline: 3px solid var(--bai-add); }
+
+/* ---------- D: change navigator ---------- */
+.bai-nav {
+  position: fixed;
+  right: 20px;
+  bottom: 76px;
+  z-index: 8800;
+  font: 13px/1.4 system-ui, -apple-system, sans-serif;
+  color: var(--bai-pop-fg);
+}
+.bai-nav__badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bai-pop-bg);
+  border: 1px solid var(--bai-pop-border);
+  border-radius: 999px;
+  padding: 6px 8px 6px 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+.bai-nav__badge strong { font-weight: 700; }
+.bai-nav__badge button {
+  border: 1px solid var(--bai-pop-border);
+  background: transparent;
+  color: inherit;
+  border-radius: 999px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+}
+.bai-nav__badge button:hover { background: var(--bai-focus); color: #fff; border-color: var(--bai-focus); }
+.bai-nav__badge button[disabled] { opacity: 0.35; cursor: default; }
+.bai-nav__pos { min-width: 5.5em; text-align: center; opacity: 0.75; font-variant-numeric: tabular-nums; }
+.bai-nav__panel {
+  position: absolute;
+  right: 0;
+  bottom: 44px;
+  width: 320px;
+  max-height: 60vh;
+  overflow: auto;
+  background: var(--bai-pop-bg);
+  border: 1px solid var(--bai-pop-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  padding: 8px 0;
+}
+.bai-nav__panel[hidden] { display: none; }
+.bai-nav__section { padding: 6px 14px 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.6; }
+.bai-nav__row { display: flex; align-items: center; gap: 8px; padding: 5px 14px; text-decoration: none; color: inherit; }
+.bai-nav__row:hover { background: rgba(37, 99, 235, 0.08); }
+.bai-nav__row--current { font-weight: 700; }
+.bai-nav__row--deleted { text-decoration: line-through; opacity: 0.7; }
+.bai-nav__row .bai-nav__title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bai-nav__count { font-size: 11px; padding: 1px 7px; border-radius: 999px; background: var(--bai-mod-bg); color: var(--bai-pop-fg); font-variant-numeric: tabular-nums; }
+.bai-nav__tag { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; color: #fff; }
+.bai-nav__tag--new { background: var(--bai-add); }
+.bai-nav__tag--deleted { background: var(--bai-del); }
+.bai-nav__tag--demo { background: #6b7280; }
+.bai-nav__lang { display: flex; gap: 6px; padding: 4px 14px 8px; flex-wrap: wrap; }
+.bai-nav__lang a { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--bai-pop-border); text-decoration: none; color: inherit; }
+.bai-nav__lang a.bai-nav__lang--current { background: var(--bai-focus); color: #fff; border-color: var(--bai-focus); }
+
+/* sidebar page badges */
+.bai-nav-badge {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--bai-mod-bg);
+  color: inherit;
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+.bai-nav-badge--new { background: var(--bai-add); color: #fff; }
+.bai-nav-badge--deleted { background: var(--bai-del); color: #fff; }
+
+/* new-page banner */
+.bai-page-banner {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--bai-add);
+  background: var(--bai-add-bg);
+  font-size: 13px;
+}
+.bai-page-banner--deleted { border-color: var(--bai-del); background: var(--bai-del-bg); }
+.bai-page-banner .bai-nav__tag { margin-right: 6px; }
+
+/* ---------- prototype variant switcher (not part of the design) ---------- */
+.bai-switcher {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 9100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bai-bar-bg);
+  color: var(--bai-bar-fg);
+  border-radius: 999px;
+  padding: 6px 8px;
+  font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  outline: 2px dashed #f59e0b;
+  outline-offset: 2px;
+}
+.bai-switcher button {
+  border: 0;
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+  border-radius: 999px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font: inherit;
+}
+.bai-switcher button:hover { background: rgba(255, 255, 255, 0.28); }
+.bai-switcher .bai-switcher__label { padding: 0 10px; min-width: 15em; text-align: center; }
+.bai-switcher .bai-switcher__label b { color: #fbbf24; }
+.bai-switcher .bai-switcher__toggle { width: auto; padding: 0 10px; font-size: 11px; }
+.bai-switcher .bai-switcher__toggle[aria-pressed="true"] { background: #f59e0b; color: #111; }
+.bai-switcher .bai-switcher__proto { font-size: 10px; opacity: 0.6; padding-right: 6px; }

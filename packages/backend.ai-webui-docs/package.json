@@ -36,7 +36,9 @@
     "build:terminology": "node scripts/generate-terminology.mjs",
     "check:terminology-md": "node scripts/generate-terminology.mjs --check",
     "check:nav-titles": "node scripts/check-nav-titles.mjs",
-    "test:scripts": "node --test \"scripts/*.test.mjs\""
+    "test:scripts": "node --test \"scripts/*.test.mjs\"",
+    "proto:pr-preview:build": "bash prototype-pr-preview-marks/build-pair.sh 53fce136f7^ 6b1ef56c69 && node prototype-pr-preview-marks/build-changes.mjs --pretend-new agent_summary --pretend-deleted statistics --label \"docs PRs #9310…#9383 (2026-09-01/02)\"",
+    "proto:pr-preview": "node prototype-pr-preview-marks/serve.mjs"
   },
   "devDependencies": {
     "backend.ai-docs-toolkit": "workspace:*",
