@@ -115,6 +115,7 @@ export interface LoginConfigState {
   fasttrackEndpoint: string;
   pluginPages: string;
   domain_name: string;
+  domain_id: string;
 }
 
 export function getDefaultLoginConfig(): LoginConfigState {
@@ -184,6 +185,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     fasttrackEndpoint: '',
     pluginPages: '',
     domain_name: '',
+    domain_id: '',
   };
 }
 
@@ -624,6 +626,7 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config._proxyURL = cfg.proxy_url;
   client._config._proxyToken = '';
   client._config.domainName = cfg.domain_name;
+  client._config.domainId = cfg.domain_id;
   client._config.default_session_environment = cfg.default_session_environment;
   client._config.default_import_environment = cfg.default_import_environment;
   client._config.allow_project_resource_monitor =

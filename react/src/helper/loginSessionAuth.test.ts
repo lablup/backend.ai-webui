@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { SessionAuthFailureError } from './loginBootstrap';
-import type { LoginConfigState } from './loginConfig';
+import { getDefaultLoginConfig } from './loginConfig';
 import {
   LoginProbeCancelledError,
   connectViaGQL,
@@ -13,14 +12,215 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../hooks/useWebUIConfig', () => ({
-  __esModule: true,
   fetchAndParseConfig: vi.fn(),
 }));
 
-vi.mock('./loginConfig', () => ({
-  __esModule: true,
-  applyConfigToClient: vi.fn(),
-}));
+const globalId = (typeName: string, uuid: string) =>
+  btoa(`${typeName}:${uuid}`);
+
+const USER_UUID = '11111111-1111-4111-8111-111111111111';
+const DOMAIN_UUID = '22222222-2222-4222-8222-222222222222';
+const PROJECT_A = '33333333-3333-4333-8333-333333333333';
+const PROJECT_B = '44444444-4444-4444-8444-444444444444';
+
+type Page = {
+  edges: Array<{ node: { id: string; basicInfo: { name: string } } }>;
+  pageInfo: { hasNextPage: boolean; endCursor: string | null };
+};
+
+const meWith = (
+  projects: Page,
+  overrides: Partial<{
+    role: string | null;
+    domainName: string | null;
+    domain: { entityId: string; basicInfo: { name: string } } | null;
+  }> = {},
+) => ({
+  myUserV2: {
+    id: globalId('UserV2', USER_UUID),
+    basicInfo: { email: 'me@example.com', fullName: 'Me' },
+    organization: {
+      domainName: 'domainName' in overrides ? overrides.domainName : 'default',
+      role: 'role' in overrides ? overrides.role : 'ADMIN',
+    },
+    domain:
+      'domain' in overrides
+        ? overrides.domain
+        : { entityId: DOMAIN_UUID, basicInfo: { name: 'default' } },
+    projects,
+  },
+});
+
+const singlePage = (
+  nodes: Array<[string, string]>,
+  hasNextPage = false,
+  endCursor: string | null = null,
+): Page => ({
+  edges: nodes.map(([uuid, name]) => ({
+    node: { id: globalId('ProjectV2', uuid), basicInfo: { name } },
+  })),
+  pageInfo: { hasNextPage, endCursor },
+});
+
+const makeClient = (responses: Array<unknown>) => {
+  const query = vi.fn();
+  responses.forEach((r) => query.mockResolvedValueOnce(r));
+  return {
+    query,
+    logout: vi.fn().mockResolvedValue(undefined),
+    _config: { endpoint: 'https://api.example.com', endpointHost: 'api' },
+  };
+};
+
+describe('connectViaGQL', () => {
+  const g = globalThis as any;
+  const cfg = getDefaultLoginConfig();
+
+  beforeEach(() => {
+    g.backendaioptions = { get: vi.fn(() => null), set: vi.fn() };
+    g.backendaiutils = { _readRecentProjectGroup: vi.fn(() => null) };
+    g.backendaiclient = undefined;
+  });
+
+  afterEach(() => {
+    delete g.backendaioptions;
+    delete g.backendaiutils;
+    delete g.backendaiclient;
+  });
+
+  test('stores the user, projects, and the domain name + uuid from one myUserV2 read', async () => {
+    const client = makeClient([
+      meWith(
+        singlePage([
+          [PROJECT_B, 'zeta'],
+          [PROJECT_A, 'alpha'],
+        ]),
+      ),
+    ]);
+
+    await connectViaGQL(client, cfg, []);
+
+    expect(client.query).toHaveBeenCalledTimes(1);
+    expect(client.query.mock.calls[0][1]).toEqual({ first: 100, after: null });
+
+    expect(g.backendaiclient.email).toBe('me@example.com');
+    expect(g.backendaiclient.full_name).toBe('Me');
+    expect(g.backendaiclient.user_uuid).toBe(USER_UUID);
+    expect(g.backendaiclient.is_admin).toBe(true);
+    expect(g.backendaiclient.is_superadmin).toBe(false);
+
+    expect(g.backendaiclient.groups).toEqual(['alpha', 'zeta']);
+    expect(g.backendaiclient.groupIds).toEqual({
+      alpha: PROJECT_A,
+      zeta: PROJECT_B,
+    });
+    expect(g.backendaiclient.current_group).toBe('alpha');
+    expect(g.backendaiclient.current_group_id()).toBe(PROJECT_A);
+
+    expect(g.backendaiclient._config.domainName).toBe('default');
+    expect(g.backendaiclient._config.domainId).toBe(DOMAIN_UUID);
+  });
+
+  test('walks the project cursor past the first page', async () => {
+    const client = makeClient([
+      meWith(singlePage([[PROJECT_A, 'alpha']], true, 'cursor-1')),
+      meWith(singlePage([[PROJECT_B, 'beta']])),
+    ]);
+
+    await connectViaGQL(client, cfg, []);
+
+    expect(client.query).toHaveBeenCalledTimes(2);
+    expect(client.query.mock.calls[1][1]).toEqual({
+      first: 100,
+      after: 'cursor-1',
+    });
+    expect(g.backendaiclient.groups).toEqual(['alpha', 'beta']);
+    expect(g.backendaiclient.groupIds).toEqual({
+      alpha: PROJECT_A,
+      beta: PROJECT_B,
+    });
+  });
+
+  test.each([
+    ['SUPERADMIN', true, true],
+    ['ADMIN', true, false],
+    ['USER', false, false],
+    ['MONITOR', false, false],
+    [null, false, false],
+  ])(
+    'maps role %s to is_admin=%s / is_superadmin=%s',
+    async (role, isAdmin, isSuperadmin) => {
+      const client = makeClient([meWith(singlePage([]), { role })]);
+
+      await connectViaGQL(client, cfg, []);
+
+      expect(g.backendaiclient.is_admin).toBe(isAdmin);
+      expect(g.backendaiclient.is_superadmin).toBe(isSuperadmin);
+    },
+  );
+
+  test('falls back to the domain node name and an empty uuid when the organization has none', async () => {
+    const client = makeClient([
+      meWith(singlePage([]), {
+        domainName: null,
+        domain: { entityId: DOMAIN_UUID, basicInfo: { name: 'from-node' } },
+      }),
+    ]);
+
+    await connectViaGQL(client, cfg, []);
+    expect(g.backendaiclient._config.domainName).toBe('from-node');
+    expect(g.backendaiclient._config.domainId).toBe(DOMAIN_UUID);
+
+    const orphan = makeClient([
+      meWith(singlePage([]), { domainName: null, domain: null }),
+    ]);
+    await connectViaGQL(orphan, cfg, []);
+    expect(g.backendaiclient._config.domainName).toBe('');
+    expect(g.backendaiclient._config.domainId).toBe('');
+  });
+
+  test('keeps the remembered project when it is still one of the user projects', async () => {
+    g.backendaiutils._readRecentProjectGroup = vi.fn(() => 'zeta');
+    const client = makeClient([
+      meWith(
+        singlePage([
+          [PROJECT_A, 'alpha'],
+          [PROJECT_B, 'zeta'],
+        ]),
+      ),
+    ]);
+
+    await connectViaGQL(client, cfg, []);
+
+    expect(g.backendaiclient.current_group).toBe('zeta');
+    expect(g.backendaiclient.current_group_id()).toBe(PROJECT_B);
+  });
+
+  test('logs out and throws when the session has no user', async () => {
+    const client = makeClient([{ myUserV2: null }]);
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
+      'User information is missing.',
+    );
+    expect(client.logout).toHaveBeenCalledTimes(1);
+  });
+
+  test('records the endpoint in the history, keeping the five most recent', async () => {
+    const client = makeClient([meWith(singlePage([]))]);
+    const history = ['e1', 'e2', 'e3', 'e4', 'e5'];
+
+    const updated = await connectViaGQL(client, cfg, history);
+
+    expect(updated).toEqual([
+      'e2',
+      'e3',
+      'e4',
+      'e5',
+      'https://api.example.com',
+    ]);
+    expect(g.backendaioptions.set).toHaveBeenCalledWith('endpoints', updated);
+  });
+});
 
 // A manager that never answers: the request settles only when its signal is
 // aborted, the way `fetch` behaves against a black-holed endpoint.
@@ -38,15 +238,15 @@ function makeHangingClient() {
   };
 }
 
-beforeEach(() => {
-  vi.useFakeTimers();
-});
-
-afterEach(() => {
-  vi.useRealTimers();
-});
-
 describe('probeManager (dev build)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('resolves when the manager answers', async () => {
     const client = {
       requestTimeout: 30_000,
@@ -81,56 +281,38 @@ describe('probeManager (dev build)', () => {
   });
 });
 
-const cfg = {} as LoginConfigState;
+describe('connectViaGQL — myUserV2 query rejects (FR-3998)', () => {
+  const cfg = getDefaultLoginConfig();
 
-describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
   afterEach(() => {
     delete (globalThis as Record<string, unknown>).backendaiclient;
   });
 
   const refusal = { isError: true, statusCode: 401, message: 'not allowed' };
 
-  // The bootstrap goes through the login Relay environment, which signs
-  // and sends with these two client methods.
-  const failingClient = (
-    failure: unknown,
-    logout: ReturnType<typeof vi.fn>,
-  ) => ({
-    newSignedRequest: vi.fn(() => ({})),
-    _wrapWithPromise: vi.fn().mockRejectedValue(failure),
-    isManagerVersionCompatibleWith: () => true,
-    logout,
-  });
-
-  it('logs out and rethrows a 401 refusal as a session failure', async () => {
+  it('logs out and rethrows a 401 refusal unchanged', async () => {
     const logout = vi.fn().mockResolvedValue(undefined);
-    const client = failingClient(refusal, logout);
+    const client = { query: vi.fn().mockRejectedValue(refusal), logout };
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
-      SessionAuthFailureError,
-    );
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
     expect(logout).toHaveBeenCalledTimes(1);
   });
 
   it('rethrows the refusal when the cleanup logout also rejects', async () => {
-    const client = failingClient(
-      refusal,
-      vi.fn().mockRejectedValue(new Error('401 Unauthorized')),
-    );
+    const client = {
+      query: vi.fn().mockRejectedValue(refusal),
+      logout: vi.fn().mockRejectedValue(new Error('401 Unauthorized')),
+    };
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
-      SessionAuthFailureError,
-    );
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
   });
 
   it('keeps the session when the query fails without a refusal', async () => {
     const timeout = { isError: true, statusCode: 408, message: 'Timeout' };
     const logout = vi.fn().mockResolvedValue(undefined);
-    const client = failingClient(timeout, logout);
+    const client = { query: vi.fn().mockRejectedValue(timeout), logout };
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toMatchObject({
-      statusCode: 408,
-    });
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(timeout);
     expect(logout).not.toHaveBeenCalled();
   });
 });
@@ -145,34 +327,30 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
 
   const refusal = { isError: true, statusCode: 401, message: 'not allowed' };
 
-  const actAsClient = (wrapWithPromise: ReturnType<typeof vi.fn>) => ({
-    actAsUserId: 'target-uuid',
-    newSignedRequest: vi.fn(() => ({})),
-    _wrapWithPromise: wrapWithPromise,
-    isManagerVersionCompatibleWith: () => true,
-    logout: vi.fn().mockResolvedValue(undefined),
-  });
-
   it('never logs out the shared session on a refusal', async () => {
-    const client = actAsClient(vi.fn().mockRejectedValue(refusal));
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = {
+      actAsUserId: 'target-uuid',
+      query: vi.fn().mockRejectedValue(refusal),
+      logout,
+    };
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
-      SessionAuthFailureError,
-    );
-    expect(client.logout).not.toHaveBeenCalled();
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    expect(logout).not.toHaveBeenCalled();
   });
 
   it('never logs out the shared session when the keypair is missing', async () => {
-    const client = actAsClient(
-      vi.fn().mockResolvedValue({
-        data: { keypair: null, user: null, groups: null },
-      }),
-    );
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = {
+      actAsUserId: 'target-uuid',
+      query: vi.fn().mockResolvedValue({ keypair: null }),
+      logout,
+    };
 
     await expect(connectViaGQL(client, cfg, [])).rejects.toThrow(
       'Keypair information is missing.',
     );
-    expect(client.logout).not.toHaveBeenCalled();
+    expect(logout).not.toHaveBeenCalled();
   });
 
   it("adopts the target's access key over the webserver session's", async () => {
@@ -180,35 +358,33 @@ describe('connectViaGQL — act-as tab (FR-4111)', () => {
     g.backendaiutils = { _readRecentProjectGroup: () => '' };
     g.backendaioptions = { set: vi.fn() };
     const client = {
-      ...actAsClient(
-        vi.fn().mockResolvedValue({
-          data: {
-            keypair: {
-              id: 'KeyPair:TARGET_KEY',
-              user_id: 'target@example.test',
-              resource_policy: 'default',
-              user: 'target-uuid',
-              access_key: 'TARGET_KEY',
-            },
-            user: {
-              id: 'User:target-uuid',
-              username: 'target',
-              email: 'target@example.test',
-              full_name: 'Target',
-              is_active: true,
-              uuid: 'target-uuid',
-              role: 'user',
-              domain_name: 'default',
-              groups: [{ name: 'p', id: 'p-id' }],
-              need_password_change: false,
-            },
-            groups: [
-              { id: 'p-id', name: 'p', description: null, is_active: true },
-            ],
+      actAsUserId: 'target-uuid',
+      _config: { _accessKey: 'ADMIN_KEY', endpoint: 'https://example.test' },
+      query: vi
+        .fn()
+        .mockResolvedValueOnce({
+          keypair: {
+            user_id: 'target@example.test',
+            resource_policy: 'default',
+            user: 'target-uuid',
+            access_key: 'TARGET_KEY',
+          },
+        })
+        .mockResolvedValueOnce({
+          user: {
+            email: 'target@example.test',
+            uuid: 'target-uuid',
+            role: 'user',
+            domain_name: 'default',
+            groups: [{ name: 'p', id: 'p-id' }],
           },
         }),
-      ),
-      _config: { _accessKey: 'ADMIN_KEY', endpoint: 'https://example.test' },
+      group: {
+        list: vi
+          .fn()
+          .mockResolvedValue({ groups: [{ name: 'p', id: 'p-id' }] }),
+      },
+      logout: vi.fn(),
     };
 
     await connectViaGQL(client, cfg, ['https://example.test']);
