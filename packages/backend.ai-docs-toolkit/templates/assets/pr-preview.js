@@ -199,17 +199,26 @@
           return `<p>${inner}</p>`;
       }
     };
-    // Alt text / caption can change without the bytes changing, so name it.
+    // Caption, alt text, title and size can all change without the bytes.
     const captionLine = (change) => {
-      const pick =
-        (change.oldCaption || '') !== (change.newCaption || '')
-          ? ['caption', change.oldCaption, change.newCaption]
-          : (change.oldAlt || '') !== (change.newAlt || '')
-            ? ['alt text', change.oldAlt, change.newAlt]
-            : null;
-      if (!pick) return '';
-      const [label, o, n] = pick;
-      return `<div class="bai-popover__caption">${label}: <del class="bai-del">${esc(o || '(none)')}</del> → <ins class="bai-ins">${esc(n || '(none)')}</ins></div>`;
+      const facets = [];
+      const differs = (a, b) => (a || '') !== (b || '');
+      if (differs(change.oldCaption, change.newCaption))
+        facets.push(['caption', change.oldCaption, change.newCaption]);
+      else if (differs(change.oldAlt, change.newAlt))
+        facets.push(['alt text', change.oldAlt, change.newAlt]);
+      if (differs(change.oldTitle, change.newTitle))
+        facets.push(['title', change.oldTitle, change.newTitle]);
+      if (differs(change.oldStyle, change.newStyle))
+        facets.push(['size', change.oldStyle, change.newStyle]);
+      if (!facets.length) return '';
+      const rows = facets
+        .map(
+          ([label, o, n]) =>
+            `<div>${label}: <del class="bai-del">${esc(o || '(none)')}</del> → <ins class="bai-ins">${esc(n || '(none)')}</ins></div>`,
+        )
+        .join('');
+      return `<div class="bai-popover__caption">${rows}</div>`;
     };
     const imagePair = (change) => {
       const col = (label, src) =>
@@ -271,32 +280,51 @@
     }
 
     // A removed <li>/<tr> has to land inside a real list / table, so it either
-    // joins the neighbouring one or brings its own.
-    function placeRemoved(node, change) {
-      const after = blockEl(change.insertAfter);
+    // joins the neighbouring one or brings its own. Returns the outermost node
+    // placed, which is what the next placeholder for this anchor follows.
+    function placeRemoved(node, change, after, adopt) {
       const list = listOf(change);
       const needsHolder = list || change.container === 'table';
       if (!after) {
-        section.prepend(needsHolder ? wrapPlaceholder(node, change) : node);
-        return;
+        const outer = needsHolder ? wrapPlaceholder(node, change) : node;
+        section.prepend(outer);
+        return outer;
       }
       if (!needsHolder) {
         // A plain block cannot sit inside a list or table — go after the whole one.
         const host = after.closest('li, tr') ? after.closest('ul, ol, table') : null;
-        return void (host || after).after(node);
+        (host || after).after(node);
+        return node;
       }
       const tag = after.tagName;
       if ((list && tag === 'LI') || (change.container === 'table' && tag === 'TR')) {
-        return void after.after(node);
+        after.after(node);
+        return after.closest('ul, ol, table') || node;
       }
-      const next = after.nextElementSibling;
-      if (list && next && (next.tagName === 'UL' || next.tagName === 'OL')) {
-        return void next.prepend(node);
+      const next = adopt ? after.nextElementSibling : null;
+      if (list && next && next.tagName === list.toUpperCase()) {
+        next.prepend(node);
+        return next;
       }
       if (change.container === 'table' && next && next.tagName === 'TABLE') {
-        return void (next.tBodies[0] || next).prepend(node);
+        (next.tBodies[0] || next).prepend(node);
+        return next;
       }
-      after.after(wrapPlaceholder(node, change));
+      const holder = wrapPlaceholder(node, change);
+      after.after(holder);
+      return holder;
+    }
+
+    // Can the new placeholder simply follow the previous one, or would that put
+    // it inside a container that cannot hold it?
+    function chainable(prevNode, change) {
+      const parent = prevNode.parentElement;
+      if (!parent) return false;
+      const list = listOf(change);
+      if (list) return parent.tagName === list.toUpperCase();
+      if (change.container === 'table')
+        return ['TBODY', 'THEAD', 'TFOOT', 'TABLE'].includes(parent.tagName);
+      return !prevNode.closest('ul, ol, table');
     }
 
     function apply() {
@@ -313,9 +341,15 @@
           node = placeholderFor(change);
           const key = change.insertAfter == null ? -1 : change.insertAfter;
           const prev = lastAt.get(key);
-          if (prev) prev.after(node);
-          else placeRemoved(node, change);
-          lastAt.set(key, node);
+          let outer;
+          if (prev && chainable(prev.inner, change)) {
+            prev.inner.after(node);
+            outer = prev.outer;
+          } else {
+            const after = prev ? prev.outer : blockEl(change.insertAfter);
+            outer = placeRemoved(node, change, after, !prev);
+          }
+          lastAt.set(key, { inner: node, outer });
         } else {
           node = blockEl(change.anchor);
           if (!node) continue;
@@ -331,14 +365,23 @@
           : 1,
       );
       for (const { change, el: node } of marks) {
-        node.tabIndex = 0;
         node.setAttribute('role', 'button');
         node.setAttribute(
           'aria-label',
           `Change ${change.id} of ${page.changes.length}: ${change.type} ${KIND_LABEL[change.blockKind] || change.blockKind} — press Enter to show the diff`,
         );
       }
+      syncMarkFocus();
       updatePos();
+    }
+
+    // Hidden marks are inert, so they leave the tab order too.
+    function syncMarkFocus() {
+      for (const { el: node } of marks) {
+        node.tabIndex = marksOn ? 0 : -1;
+        if (marksOn) node.removeAttribute('aria-disabled');
+        else node.setAttribute('aria-disabled', 'true');
+      }
     }
 
     // ---------------------------------------------------------- popover
@@ -584,6 +627,7 @@
           if (act === 'marks') {
             marksOn = !marksOn;
             document.body.classList.toggle('bai-marks-off', !marksOn);
+            syncMarkFocus();
             if (!marksOn) {
               pinned = null;
               pop.hidden = true;
@@ -637,10 +681,17 @@
     function step(dir) {
       const next = current + dir;
       if (marks.length && next >= 0 && next < marks.length) return jumpTo(next);
-      // At either end, hop to the neighbouring changed page.
+      // At either end, hop to the neighbouring changed page. An unchanged page
+      // is not in the list, so it enters from whichever end the step came from.
       const pages = summary.pages.filter((p) => p.status !== 'deleted');
+      if (!pages.length) return;
       const here = pages.findIndex((p) => p.slug === slug);
-      const target = pages[(here + dir + pages.length) % pages.length];
+      const target =
+        here < 0
+          ? dir > 0
+            ? pages[0]
+            : pages[pages.length - 1]
+          : pages[(here + dir + pages.length) % pages.length];
       if (!target || target.slug === slug)
         return marks.length ? jumpTo(next) : undefined;
       location.href = `./${target.slug}.html#bai-change-${dir > 0 ? '1' : 'last'}`;

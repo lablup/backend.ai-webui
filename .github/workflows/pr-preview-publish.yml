@@ -5,6 +5,13 @@
 # Storybook artifact and vice versa — so every download is best-effort and the
 # deploy publishes whichever of the two showed up.
 #
+# Both jobs require `workflow_run.conclusion == 'success'`. `workflow_run` fires
+# for failed and cancelled runs too, and on those the missing artifact is a
+# failure rather than a job the PR's diff never asked for. Deploying anyway would
+# let the surviving half's `rm -rf pr/<n>` delete the other half's still-valid
+# preview, and would rewrite the report from half the data. Skipping leaves the
+# previous preview and comment in place, which is what a failed build should do.
+#
 # This is the PRIVILEGED half, and it runs on `workflow_run` rather than
 # `pull_request` on purpose. A `pull_request` workflow triggered from a fork gets
 # a read-only token: it cannot push to gh-pages and cannot comment, which is the
@@ -52,7 +59,9 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.event.workflow_run.event == 'pull_request'
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -222,7 +231,9 @@ jobs:
           exit 1
 
   comment:
-    if: github.event.workflow_run.event == 'pull_request'
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write

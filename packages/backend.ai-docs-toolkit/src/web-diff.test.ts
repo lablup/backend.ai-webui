@@ -399,6 +399,28 @@ test("extractBlocks — the block key carries markup, so a bold-only edit differ
   assert.notEqual(a[0].key, b[0].key);
 });
 
+test("extractBlocks — the block key covers the element tag and the container", () => {
+  const keyOf = (html: string) => extractBlocks(page(html), "/nowhere")![0].key;
+  assert.notEqual(keyOf("<h2>Same wording</h2>"), keyOf("<h3>Same wording</h3>"));
+  assert.notEqual(
+    keyOf("<ul><li>Same item</li></ul>"),
+    keyOf("<ol><li>Same item</li></ol>"),
+  );
+});
+
+test("extractBlocks — the image key covers the authored title and size hint", () => {
+  const shot = (extra: string) =>
+    extractBlocks(
+      page(`<p><figure class="doc-figure"><img src="./a.png" alt="" class="doc-image"${extra} /><figcaption>Figure 1.1</figcaption></figure></p>`),
+      "/nowhere",
+    )![0];
+  const plain = shot("");
+  assert.notEqual(plain.key, shot(' title="Hover me"').key);
+  assert.notEqual(plain.key, shot(' style="width:50%"').key);
+  assert.equal(shot(' title="Hover me"').title, "Hover me");
+  assert.equal(shot(' style="width:50%"').style, "width:50%");
+});
+
 test("extractBlocks — a link-target-only edit also changes the block key", () => {
   const a = extractBlocks(page('<p>See <a href="./one.html">the guide</a>.</p>'), "/nowhere")!;
   const b = extractBlocks(page('<p>See <a href="./two.html">the guide</a>.</p>'), "/nowhere")!;
@@ -416,6 +438,46 @@ test("diffBlocks — a formatting-only edit pairs as modified at similarity 1", 
 });
 
 // ── source references ───────────────────────────────────────────
+
+test("extractBlocks — nested list items and images become their own blocks", () => {
+  const blocks = extractBlocks(
+    page(
+      [
+        "<ul><li>Outer item leads in:",
+        "<ul><li>Nested one</li><li>Nested two</li></ul>",
+        figure("./images/nested.png", ""),
+        "</li></ul>",
+      ].join("\n"),
+    ),
+    "/nowhere",
+  )!;
+  assert.deepEqual(
+    blocks.map((b) => [b.kind, b.container ?? null]),
+    [
+      ["list-item", "ul"],
+      ["list-item", "ul"],
+      ["list-item", "ul"],
+      ["image", null],
+    ],
+  );
+  // The parent keeps only its own words — nested content is not attributed to it.
+  assert.equal(blocks[0].text, "Outer item leads in:");
+  assert.ok(!blocks[0].inner.includes("Nested one"));
+  assert.ok(!blocks[0].inner.includes("nested.png"));
+  assert.equal(blocks[3].src, "./images/nested.png");
+});
+
+test("diffBlocks — an edit to a nested item marks only that item", () => {
+  const build = (second: string) =>
+    extractBlocks(
+      page(`<ul><li>Outer item:<ul><li>Nested one</li><li>${second}</li></ul></li></ul>`),
+      "/nowhere",
+    )!;
+  const changes = diffBlocks(build("Nested two"), build("Nested three"));
+  assert.equal(changes.length, 1);
+  assert.equal(changes[0].type, "modified");
+  assert.equal(changes[0].head?.text, "Nested three");
+});
 
 test("sourcePathOf — reads the repo-relative path off the Edit this page link", () => {
   assert.equal(
@@ -455,6 +517,29 @@ test("fingerprintOf — is stable for the same change and differs when the text 
   assert.match(a, /^[0-9a-f]{12}$/);
   const [h2] = textBlocks(["Newer text here."]);
   assert.notEqual(a, fingerprintOf({ type: "modified", base: b1, head: h2 }));
+});
+
+test("fingerprintOf — a second formatting-only edit re-fingerprints", () => {
+  const blockOf = (html: string) => extractBlocks(page(html), "/nowhere")![0];
+  const base = blockOf("<p>Read the <strong>guide</strong>.</p>");
+  const first = blockOf("<p>Read the <em>guide</em>.</p>");
+  const second = blockOf("<p>Read the <b>guide</b>.</p>");
+  // The three share their text, so a text-only fingerprint would collide and
+  // the overlay would restore "viewed" for an edit nobody has looked at.
+  assert.equal(base.text, first.text);
+  assert.notEqual(
+    fingerprintOf({ type: "modified", base, head: first }),
+    fingerprintOf({ type: "modified", base, head: second }),
+  );
+});
+
+test("fingerprintOf — a caption-only image edit re-fingerprints", () => {
+  const shot = (alt: string) =>
+    extractBlocks(page(figure("./images/a.png", alt)), "/nowhere")![0];
+  assert.notEqual(
+    fingerprintOf({ type: "modified", base: shot("old"), head: shot("new") }),
+    fingerprintOf({ type: "modified", base: shot("old"), head: shot("newer") }),
+  );
 });
 
 // ── end to end ──────────────────────────────────────────────────
@@ -622,7 +707,8 @@ test("generateWebDiff — an image is compared by bytes, and the old file is cop
   try {
     const base = path.join(root, "base");
     const head = path.join(root, "head");
-    const body = [figure("./images/a.png", "one"), figure("./images/a.png", "two")].join("\n");
+    // Identical figures, so the two swaps are the same change twice over.
+    const body = [figure("./images/a.png", ""), figure("./images/a.png", "")].join("\n");
     writePage(base, "en", "admin_menu", page(body, { slug: "admin_menu" }));
     writePage(head, "en", "admin_menu", page(body, { slug: "admin_menu" }));
     writeImage(base, "en", "a.png", "OLD-BYTES");
@@ -649,6 +735,7 @@ test("generateWebDiff — an image is compared by bytes, and the old file is cop
     // Same swap twice on one page: the repeat fingerprint is suffixed.
     const [f1, f2] = sidecar.changes.map((c) => c.fingerprint);
     assert.equal(f2, `${f1}-2`);
+    assert.match(f1, /^[0-9a-f]{12}$/);
     assert.deepEqual(manifest.langs.en.pages[0].fingerprints, [f1, f2]);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

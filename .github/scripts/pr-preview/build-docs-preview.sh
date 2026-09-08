@@ -66,7 +66,39 @@ restore_src() {
 }
 trap restore_src EXIT
 
-BASE_SHA="$(git merge-base "$BASE_REF" HEAD 2>/dev/null || echo "$BASE_REF")"
+# Deepen until a merge base exists. Falling back to the base TIP would silently
+# change the comparison: every base commit since the fork point would be
+# attributed to this PR, so no merge base is a hard failure instead.
+resolve_base_sha() {
+  local sha branch attempt
+  sha="$(git merge-base "$BASE_REF" HEAD 2>/dev/null)" && { printf '%s' "$sha"; return 0; }
+
+  branch="${BASE_REF#origin/}"
+  # A bare SHA has no branch to fetch, so there is nothing to deepen.
+  [ "$branch" != "$BASE_REF" ] || return 1
+
+  for attempt in 1 2 3 4 5; do
+    [ "$(git rev-parse --is-shallow-repository)" = "true" ] || break
+    echo "No merge base with ${BASE_REF} yet — deepening (${attempt}/5)." >&2
+    git fetch --deepen=200 origin "+refs/heads/${branch}:refs/remotes/origin/${branch}" >&2 || break
+    # The PR's own history can be the truncated side, so deepen it as well.
+    git fetch --deepen=200 origin >&2 || true
+    sha="$(git merge-base "$BASE_REF" HEAD 2>/dev/null)" && { printf '%s' "$sha"; return 0; }
+  done
+
+  if [ "$(git rev-parse --is-shallow-repository)" = "true" ]; then
+    echo "Still no merge base — unshallowing." >&2
+    git fetch --unshallow origin "+refs/heads/${branch}:refs/remotes/origin/${branch}" >&2 || true
+    git fetch --unshallow origin >&2 || true
+    sha="$(git merge-base "$BASE_REF" HEAD 2>/dev/null)" && { printf '%s' "$sha"; return 0; }
+  fi
+  return 1
+}
+
+BASE_SHA="$(resolve_base_sha)" || {
+  echo "::error::No merge base between ${BASE_REF} and HEAD — refusing to compare against the base tip." >&2
+  exit 1
+}
 echo "Head: $(git rev-parse --short HEAD) · Base: $(git rev-parse --short "$BASE_SHA") · Languages: ${LANGUAGES}"
 
 docs_toolkit() { pnpm --filter backend.ai-webui-docs exec docs-toolkit "$@"; }

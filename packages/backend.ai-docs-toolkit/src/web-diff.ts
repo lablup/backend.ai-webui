@@ -58,6 +58,8 @@ export interface Block {
   hash?: string;
   alt?: string;
   caption?: string;
+  title?: string;
+  style?: string;
   width?: string;
   height?: string;
   /** Parent element a removed `li` / `tr` has to be re-inserted into. */
@@ -95,6 +97,10 @@ export interface SerializedChange {
   newAlt?: string;
   oldCaption?: string;
   newCaption?: string;
+  oldTitle?: string;
+  newTitle?: string;
+  oldStyle?: string;
+  newStyle?: string;
   width?: string;
   height?: string;
   oldCells?: string[] | null;
@@ -287,21 +293,31 @@ function decode(s: string): string {
     .replace(/&amp;/g, "&");
 }
 
-function textOf(node: HtmlNode): string {
+function textOf(node: HtmlNode, omit?: Set<ElementNode>): string {
   if (node.type === "text") return decode(node.text);
+  if (omit?.has(node)) return "";
   if (node.tag === "a" && hasClass(node, "hash-link")) return "";
   if (hasClass(node, "admonition-icon") || node.tag === "svg") return "";
   if (node.tag === "figcaption") return "";
-  return node.children.map(textOf).join("");
+  return node.children.map((c) => textOf(c, omit)).join("");
 }
 
 const norm = (s: string): string => s.replace(/\s+/g, " ").trim();
 
-function innerHtml(html: string, node: ElementNode): string {
-  return html
-    .slice(node.openEnd, node.closeStart)
-    .replace(/<a class="hash-link"[^>]*>#<\/a>/g, "")
-    .trim();
+function innerHtml(
+  html: string,
+  node: ElementNode,
+  omit: ElementNode[] = [],
+): string {
+  let out = "";
+  let cursor = node.openEnd;
+  for (const o of omit) {
+    if (o.start < cursor) continue;
+    out += html.slice(cursor, o.start);
+    cursor = o.end;
+  }
+  out += html.slice(cursor, node.closeStart);
+  return out.replace(/<a class="hash-link"[^>]*>#<\/a>/g, "").trim();
 }
 
 function findAll(
@@ -326,7 +342,7 @@ function findAll(
 export function captionTextOf(figure: ElementNode): string {
   const cap = findAll(figure, (n) => n.tag === "figcaption")[0];
   if (!cap) return "";
-  const raw = norm(cap.children.map(textOf).join(""));
+  const raw = norm(cap.children.map((c) => textOf(c)).join(""));
   const dashed = raw.match(/(?:&mdash;|—)\s*(.*)$/);
   if (dashed) return dashed[1].trim();
   return /\d+\.\d+$/.test(raw) ? "" : raw;
@@ -369,6 +385,7 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
   ): void => {
     const t = norm(text);
     if (!t) return;
+    const container = extra.container ?? null;
     blocks.push({
       idx: blocks.length,
       kind,
@@ -376,14 +393,15 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
       anchor: shift(anchor),
       text: t,
       inner,
-      // Keyed on markup, so a bold-only or link-target-only edit is a change.
-      key: `${kind}:${norm(inner)}`,
+      // Element, container and markup are all part of identity: h2→h3 and
+      // ul→ol are changes even when the text is untouched.
+      key: `${kind}:${anchor.tag}:${container ?? ""}:${norm(inner)}`,
       hid: attrOf(anchor, "id") ?? null,
       ...extra,
     });
   };
 
-  const pushImage = (imgNode: ElementNode): void => {
+  const pushImage = (imgNode: ElementNode, container?: Block["container"]): void => {
     const img =
       imgNode.tag === "img"
         ? imgNode
@@ -399,6 +417,9 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
     const anchor = imgNode.tag === "figure" ? imgNode : img;
     const alt = attrOf(img, "alt") ?? "";
     const caption = anchor.tag === "figure" ? captionTextOf(anchor) : "";
+    const title = attrOf(img, "title") ?? "";
+    // The `=50%` markdown size hint renders as an inline width.
+    const style = attrOf(img, "style") ?? "";
     blocks.push({
       idx: blocks.length,
       kind: "image",
@@ -406,21 +427,55 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
       anchor: shift(anchor),
       text: src,
       inner: "",
-      // Re-worded alt text or caption is a change even when the bytes match.
-      key: `image:${src}:${hash}:${alt}:${caption}`,
+      // Re-worded alt / caption / title, or a resize, is a change even when
+      // the bytes match.
+      key: `image:${anchor.tag}:${container ?? ""}:${src}:${hash}:${alt}:${caption}:${title}:${style}`,
       hid: attrOf(anchor, "id") ?? null,
       src,
       hash,
       alt,
       caption,
+      title,
+      style,
       width: attrOf(img, "width"),
       height: attrOf(img, "height"),
+      ...(container ? { container } : {}),
     });
+  };
+
+  // Block-level content nested inside a list item, so it becomes its own block
+  // instead of disappearing into the parent item's markup.
+  const isNested = (n: ElementNode): boolean =>
+    n.tag === "ul" ||
+    n.tag === "ol" ||
+    n.tag === "figure" ||
+    n.tag === "img" ||
+    n.tag === "table" ||
+    n.tag === "pre" ||
+    (n.tag === "div" &&
+      (hasClass(n, "code-block-wrapper") || hasClass(n, "admonition")));
+
+  const pushListItem = (li: ElementNode, container: "ul" | "ol"): void => {
+    const nested = findAll(li, isNested);
+    const omit = new Set(nested);
+    push(
+      "list-item",
+      li,
+      textOf(li, omit),
+      innerHtml(secHtml, li, nested),
+      { container },
+    );
+    for (const n of nested) visit(n);
   };
 
   const walk = (node: { children: HtmlNode[] }): void => {
     for (const ch of node.children) {
-      if (ch.type !== "el") continue;
+      if (ch.type === "el") visit(ch);
+    }
+  };
+
+  const visit = (ch: ElementNode): void => {
+    {
       const t = ch.tag;
       if (/^h[1-6]$/.test(t)) {
         push("heading", ch, textOf(ch), innerHtml(secHtml, ch), {
@@ -429,15 +484,11 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
       } else if (t === "p") {
         const figs = findAll(ch, (n) => n.tag === "figure" || n.tag === "img");
         const txt = norm(textOf(ch));
-        if (figs.length && !txt) figs.forEach(pushImage);
+        if (figs.length && !txt) figs.forEach((f) => pushImage(f));
         else if (txt) push("paragraph", ch, txt, innerHtml(secHtml, ch));
       } else if (t === "ul" || t === "ol") {
         for (const li of ch.children) {
-          if (li.type === "el" && li.tag === "li") {
-            push("list-item", li, textOf(li), innerHtml(secHtml, li), {
-              container: t,
-            });
-          }
+          if (li.type === "el" && li.tag === "li") pushListItem(li, t);
         }
       } else if (t === "table") {
         for (const tr of findAll(ch, (n) => n.tag === "tr")) {
@@ -486,7 +537,7 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
         t === "script" ||
         t === "style"
       ) {
-        continue;
+        return;
       } else {
         push("other", ch, textOf(ch), innerHtml(secHtml, ch));
       }
@@ -795,19 +846,20 @@ function sectionOf(
   return null;
 }
 
+/**
+ * Content identity of a change. The block keys already carry markup, image
+ * bytes and image metadata, so a second formatting-only edit re-fingerprints
+ * and the overlay drops it back to unviewed.
+ */
 export function fingerprintOf(change: RawChange): string {
   const blk = (change.head ?? change.base)!;
   return crypto
     .createHash("sha1")
     .update(
-      [
-        change.type,
-        blk.kind,
-        change.base?.text ?? "",
-        change.head?.text ?? "",
-        change.base?.hash ?? "",
-        change.head?.hash ?? "",
-      ].join(""),
+      // A separator that cannot occur inside a key.
+      [change.type, blk.kind, change.base?.key ?? "", change.head?.key ?? ""].join(
+        "\u0000",
+      ),
     )
     .digest("hex")
     .slice(0, 12);
@@ -957,6 +1009,10 @@ function serializeChange(
     out.newAlt = change.head?.alt ?? "";
     out.oldCaption = change.base?.caption ?? "";
     out.newCaption = change.head?.caption ?? "";
+    out.oldTitle = change.base?.title ?? "";
+    out.newTitle = change.head?.title ?? "";
+    out.oldStyle = change.base?.style ?? "";
+    out.newStyle = change.head?.style ?? "";
     out.width = blk.width;
     out.height = blk.height;
     return out;
