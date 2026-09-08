@@ -762,6 +762,7 @@
     "DeselectAll": "선택 취소",
     "File": "파일",
     "Increase": "증가",
+    "Loading": "로딩 중...",
     "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
     "Project": "프로젝트",

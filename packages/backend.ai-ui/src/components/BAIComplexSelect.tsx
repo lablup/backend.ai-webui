@@ -152,7 +152,8 @@ export interface BAIComplexSelectProps {
   /** antd `onSearch` — fires on every keystroke; debounce upstream. */
   onSearch?: (value: string) => void;
   searchPlaceholder?: string;
-  /** antd `loading` — spinner on the trigger. */
+  /** antd `loading` — spinner on the trigger, and a loading row in an
+   * otherwise empty popup instead of "No results". */
   isLoading?: boolean;
   isDisabled?: boolean;
   isRequired?: boolean;
@@ -179,7 +180,7 @@ export interface BAIComplexSelectProps {
   header?: React.ReactNode;
   /** antd `BAISelect.footer` (rendered below the option list). */
   footer?: React.ReactNode;
-  /** antd `notFoundContent`. */
+  /** antd `notFoundContent`. Overrides the loading row too. */
   emptyContent?: React.ReactNode;
   /**
    * Reports popup open/close. `BAIUserSelect` and friends use this to flip
@@ -626,9 +627,19 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
             {options.length === 0
               ? (emptyContent ?? (
                   <div className="bai-complex-select__empty">
-                    <Text color="secondary">
-                      {t('comp:BAIComplexSelect.NoResults')}
-                    </Text>
+                    {isLoading ? (
+                      // An empty list while a fetch is in flight is not "no
+                      // results" — the open-triggered refetch lands here first
+                      // (FR-3724).
+                      <HStack gap={1} vAlign="center" hAlign="center">
+                        <Spinner size="sm" />
+                        <Text color="secondary">{t('general.Loading')}</Text>
+                      </HStack>
+                    ) : (
+                      <Text color="secondary">
+                        {t('comp:BAIComplexSelect.NoResults')}
+                      </Text>
+                    )}
                   </div>
                 ))
               : _.map(options, (option, index) => {
@@ -697,7 +708,9 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
               </HStack>
             ) : null)}
           <VisuallyHidden as="div" aria-live="polite">
-            {t('general.TotalItems', { total: options.length })}
+            {options.length === 0 && isLoading
+              ? t('general.Loading')
+              : t('general.TotalItems', { total: options.length })}
           </VisuallyHidden>
         </div>
       )}

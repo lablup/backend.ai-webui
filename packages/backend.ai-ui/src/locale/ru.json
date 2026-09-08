@@ -762,6 +762,7 @@
     "DeselectAll": "Снять выделение",
     "File": "Файл",
     "Increase": "Увеличить",
+    "Loading": "Загрузка...",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "Project": "Проект",

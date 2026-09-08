@@ -762,6 +762,7 @@
     "DeselectAll": "Deseleccionar todo",
     "File": "Archivo",
     "Increase": "Aumentar",
+    "Loading": "Cargando...",
     "NSelected": "{{count}} seleccionado",
     "Optional": "Opcional",
     "Project": "Proyecto",

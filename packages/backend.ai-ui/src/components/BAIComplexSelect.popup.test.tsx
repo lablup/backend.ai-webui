@@ -288,3 +288,50 @@ describe('BAIComplexSelect popup — reopen', () => {
     expect(highlightedLabels()).toEqual([]);
   });
 });
+
+describe('BAIComplexSelect popup — empty state', () => {
+  it('says "no results" for an empty list that is not loading', async () => {
+    const user = userEvent.setup();
+    render(<BAIComplexSelect label="Targets" options={[]} />);
+
+    await user.click(trigger());
+    expect(listbox()).toHaveTextContent(/no results/i);
+    expect(listbox()).not.toHaveTextContent(/loading/i);
+  });
+
+  it('says "loading" instead while the list is still in flight (FR-3724)', async () => {
+    const user = userEvent.setup();
+    render(<BAIComplexSelect label="Targets" options={[]} isLoading />);
+
+    // The RBAC scope target select opens before its network-only refetch
+    // lands, and "No results" there reads as "there are none".
+    await user.click(trigger());
+    expect(listbox()).toHaveTextContent('Loading...');
+    expect(listbox()).not.toHaveTextContent(/no results/i);
+  });
+
+  it('leaves a populated list alone while loading — no flicker', async () => {
+    const user = userEvent.setup();
+    render(<BAIComplexSelect label="Targets" options={OPTIONS} isLoading />);
+
+    await user.click(trigger());
+    expect(optionRows()).toHaveLength(3);
+    expect(listbox()).not.toHaveTextContent(/loading/i);
+  });
+
+  it('still lets `emptyContent` win over both', async () => {
+    const user = userEvent.setup();
+    render(
+      <BAIComplexSelect
+        label="Targets"
+        options={[]}
+        isLoading
+        emptyContent={<span>pick a scope first</span>}
+      />,
+    );
+
+    await user.click(trigger());
+    expect(listbox()).toHaveTextContent('pick a scope first');
+    expect(listbox()).not.toHaveTextContent(/loading/i);
+  });
+});

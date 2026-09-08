@@ -762,6 +762,7 @@
     "DeselectAll": "Poista kaikki valinnat",
     "File": "Tiedosto",
     "Increase": "Lisää",
+    "Loading": "Ladataan...",
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
     "Project": "Projekti",
