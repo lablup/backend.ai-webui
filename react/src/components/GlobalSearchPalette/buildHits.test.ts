@@ -87,25 +87,33 @@ describe('buildHits', () => {
     expect(_.uniq(_.map(dataPages, 'id'))).toHaveLength(3);
     // Two of the three share a heading, so the group cannot be the difference …
     expect(_.uniq(_.map(dataPages, 'group'))).toHaveLength(2);
-    // … the secondary line the palette renders is. Every row reads differently.
+    // … the trailing scope marker the palette renders is: each admin twin
+    // carries its own, and the project page (where the palette runs) none.
     expect(_.map(dataPages, 'breadcrumbKeys')).toEqual([[], [], []]);
-    expect(_.uniq(_.map(dataPages, 'scopeText')).sort()).toEqual([
+    expect(_.compact(_.map(dataPages, 'scopeText')).sort()).toEqual([
       'Administration',
       'Project administration',
-      'Project: my project',
     ]);
+    expect(_.find(dataPages, { scope: 'project' })?.scopeText).toBeUndefined();
   });
 
-  it('names the active project on a project-scoped row, the label without one', () => {
-    const withProject = _.find(build(), {
-      id: 'page:/project/:projectName/session',
-    });
-    expect(withProject?.scopeText).toBe('Project: my project');
+  it('marks the admin twins only, with or without an active project', () => {
+    const hits = build();
+    expect(_.find(hits, { id: 'page:/admin/session' })?.scopeText).toBe(
+      'Administration',
+    );
+    expect(
+      _.find(hits, { id: 'page:/project/:projectName/admin/session' })
+        ?.scopeText,
+    ).toBe('Project administration');
+    expect(
+      _.find(hits, { id: 'page:/project/:projectName/session' })?.scopeText,
+    ).toBeUndefined();
     const withoutProject = buildHits({ menuSources: fullMenu, t: tEn });
-    const sessions = _.find(withoutProject, {
-      id: 'page:/project/:projectName/session',
-    });
-    expect(sessions?.scopeText).toBe('Project');
+    expect(
+      _.find(withoutProject, { id: 'page:/project/:projectName/session' })
+        ?.scopeText,
+    ).toBeUndefined();
   });
 
   it('fills :projectName into project-scoped targets', () => {

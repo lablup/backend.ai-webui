@@ -42,7 +42,9 @@ export { warmGlobalSearch } from './searchArtifacts';
 const styles = stylex.create({
   // Flex items default to `min-width: auto`, which lets a long "found in" line
   // push past the dialog instead of truncating at `maxLines`.
-  rowText: { minWidth: 0 },
+  rowText: { minWidth: 0, flexGrow: 1 },
+  // Never squeezed by a long title; the growing text column pushes it right.
+  scopeSlot: { flexShrink: 0 },
   // A long secondary line must eat the text column, never the glyph.
   iconSlot: {
     flexShrink: 0,
@@ -122,18 +124,14 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
   const translate = toTranslator(t);
 
   // Body-key matches surface as the page row, so the secondary line says where
-  // the word was found instead of repeating the page's own breadcrumb. Page rows
-  // have no breadcrumb and fall back to their scope, which is what keeps the
-  // twin Data / Sessions pages apart.
+  // the word was found instead of repeating the page's own breadcrumb.
   const secondaryTextOf = (hit: SearchHit) => {
     if (hit.matchedIn) {
       return t('webui.search.FoundIn', {
         text: plainText(translate(hit.matchedIn.key)),
       });
     }
-    return (
-      hit.breadcrumbKeys.map(translate).join(' › ') || (hit.scopeText ?? '')
-    );
+    return hit.breadcrumbKeys.map(translate).join(' › ');
   };
 
   return (
@@ -191,6 +189,13 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
                 </Text>
               )}
             </VStack>
+            {/* Admin twins of a project page share its label; the scope on the
+                right is what tells them apart. */}
+            {!!hit.scopeText && (
+              <Text type="supporting" maxLines={1} xstyle={styles.scopeSlot}>
+                {hit.scopeText}
+              </Text>
+            )}
           </HStack>
         );
       }}

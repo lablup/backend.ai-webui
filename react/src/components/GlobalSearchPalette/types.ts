@@ -41,7 +41,8 @@ export interface SearchHit extends SearchableItem<SearchHitAuxiliaryData> {
   icon?: ReactNode;
   /** Sidebar group label; admin groups are prefixed "Administration › ". */
   group: string;
-  /** Twin pages share a label, so a page row's second line is its scope. */
+  /** Admin twins share a page's label, so an admin page row carries its
+   * scope as a trailing marker; project-scoped rows carry none. */
   scopeText?: string;
   /** Where the hit navigates. Actions run instead, so they carry none. */
   target?: SearchHitTarget;

@@ -4,7 +4,8 @@
  */
 /**
  * Top-layer contract: the header button opens the palette, rows render as
- * title + breadcrumb (or "found in" for a body match), an empty result set
+ * title + breadcrumb (or "found in" for a body match) with an admin twin's
+ * scope as a trailing marker, an empty result set
  * shows the no-results copy, and selecting a row records a recent, navigates
  * to the hit's target, and closes. Opening is urgent, and the palette's own
  * Suspense boundary absorbs the suspend instead of blanking the header.
@@ -106,6 +107,15 @@ const settingHit = makeHit({
   },
   auxiliaryData: { group: 'System' },
 });
+const adminUsersHit = makeHit({
+  id: 'page:/admin/user',
+  label: 'Users',
+  scope: 'admin',
+  scopeText: 'webui.menu.Administration',
+  target: { path: '/admin/user' },
+  group: 'Administration › Operations',
+  auxiliaryData: { group: 'Administration › Operations' },
+});
 const bodyHit = makeHit({
   id: 'page:/summary#found=summary.Announcement',
   label: 'Summary',
@@ -123,7 +133,7 @@ const actionHit = makeHit({
   auxiliaryData: { group: 'Panels & help' },
 });
 
-const hits = [sessionsHit, settingHit, bodyHit, actionHit];
+const hits = [sessionsHit, settingHit, adminUsersHit, bodyHit, actionHit];
 
 vi.mock('react-i18next', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-i18next')>();
@@ -309,6 +319,22 @@ describe('GlobalSearchPalette', () => {
     expect(
       screen.getByText('Found in summary.Announcement'),
     ).toBeInTheDocument();
+  });
+
+  it("renders an admin twin's scope on the right, not as a second line", async () => {
+    await openPalette();
+
+    const textColumn = screen.getByText('Users').parentElement as HTMLElement;
+    // Only the title lives in the text column …
+    expect(textColumn.children).toHaveLength(1);
+    // … the scope is the column's trailing sibling.
+    expect(textColumn.nextElementSibling).toBe(
+      screen.getByText('webui.menu.Administration'),
+    );
+    // A project-scoped row carries no marker at all.
+    const projectColumn = screen.getByText('Sessions')
+      .parentElement as HTMLElement;
+    expect(projectColumn.nextElementSibling).toBeNull();
   });
 
   it('keeps the row icon in a slot of its own, beside the text column', async () => {

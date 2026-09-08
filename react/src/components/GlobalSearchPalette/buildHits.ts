@@ -160,21 +160,16 @@ const makeSettingHit = (
 });
 
 /**
- * Second line of a page row. Twin pages (`/admin/data`, `/project/x/admin/data`,
- * `/project/x/data`) carry the same label and no breadcrumb, so without this
- * they render as byte-identical rows.
+ * Trailing marker of a page row. The admin twins of a project page
+ * (`/admin/data`, `/project/x/admin/data`) carry the same label and no
+ * breadcrumb, so the marker is what tells them apart from `/project/x/data` —
+ * which carries none, since the palette only ever runs in the active project.
  */
 const scopeTextOf = (
   scope: string | null,
-  projectName: string | null | undefined,
   t: HitTranslator,
 ): string | undefined => {
   switch (scope) {
-    case 'project':
-      // Labelled, so a bare project name is not mistaken for page content.
-      return projectName
-        ? `${t('webui.search.scope.Project')}: ${projectName}`
-        : t('webui.search.scope.Project');
     case 'projectAdmin':
       return t('webui.search.scope.ProjectAdministration');
     case 'admin':
@@ -226,7 +221,7 @@ export const buildHits = ({
         label: t(labelKey),
         labelKey,
         breadcrumbKeys: [],
-        scopeText: scopeTextOf(entry.scope, projectName, t),
+        scopeText: scopeTextOf(entry.scope, t),
         target: { path },
         keywords: [menuKey],
         bodyKeys: entry.keys,

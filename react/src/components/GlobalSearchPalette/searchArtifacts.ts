@@ -271,7 +271,6 @@ const PALETTE_CHROME_KEYS: ReadonlyArray<string> = [
   'webui.search.NoResults',
   'webui.search.Placeholder',
   'webui.search.FoundIn',
-  'webui.search.scope.Project',
   'webui.search.scope.ProjectAdministration',
 ];
 
