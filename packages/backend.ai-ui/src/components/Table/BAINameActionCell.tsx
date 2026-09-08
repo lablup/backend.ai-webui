@@ -356,7 +356,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         style={
           action.type === 'danger'
             ? undefined
-            : { color: token('--bai-color-info') }
+            : { color: token('--color-info') }
         }
       >
         {action.icon}
