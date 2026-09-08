@@ -306,8 +306,10 @@ applications:
             # branch (`main`, served at webui-nightly.lablup.ai), so the
             # export needs no branch guard; add one here if that changes.
             #
-            # It must be exported in the SAME command as the build: each
-            # `commands:` entry runs in its own shell.
+            # Inline on the build command, not a separate `export` line:
+            # phase commands share one shell (which is what makes the `cd ..`
+            # above stick), so an export would leak the flag to everything
+            # after it.
             - VITE_REVIEW_OVERLAY_BUILD=1 pnpm run build
       artifacts:
         # `..` resolves out of appRoot (`react/`) to the workspace

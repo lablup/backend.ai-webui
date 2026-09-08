@@ -25,17 +25,21 @@ describe('isReviewOverlayBuildEnabled', () => {
     expect(isReviewOverlayBuildEnabled()).toBe(false);
   });
 
-  it.each(['1', 'true', 'TRUE'])('opts in on %s', (value) => {
+  it.each(['1', 'true'])('opts in on %s', (value) => {
     process.env[FLAG] = value;
     expect(isReviewOverlayBuildEnabled()).toBe(true);
   });
 
-  it.each(['0', 'false', 'on', 'yes', ''])('stays off on %s', (value) => {
-    // Only the two spellings `routes.tsx` folds on, so the overlay and the
-    // route-label handoff can never disagree about whether they shipped.
-    process.env[FLAG] = value;
-    expect(isReviewOverlayBuildEnabled()).toBe(false);
-  });
+  it.each(['0', 'false', 'on', 'yes', '', 'TRUE', 'True'])(
+    'stays off on %s',
+    (value) => {
+      // Exactly the spellings `routes.tsx` folds on, case and all, so the
+      // overlay and the route-label handoff cannot disagree about whether
+      // they shipped. `TRUE` is here because that gate cannot lowercase.
+      process.env[FLAG] = value;
+      expect(isReviewOverlayBuildEnabled()).toBe(false);
+    },
+  );
 });
 
 describe('staticReviewState', () => {
