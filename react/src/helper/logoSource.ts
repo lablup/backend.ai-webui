@@ -31,8 +31,8 @@ export const DEFAULT_DETAIL_LOGO_SRC = {
     dark: 'manifest/backend.ai-text-bgdark.svg',
   },
   about: {
-    light: '/manifest/backend.ai-webui-black.svg',
-    dark: '/manifest/backend.ai-webui-white.svg',
+    light: 'manifest/backend.ai-webui-black.svg',
+    dark: 'manifest/backend.ai-webui-white.svg',
   },
 } as const satisfies Record<DetailLogoArea, Record<ThemeScheme, string>>;
 
