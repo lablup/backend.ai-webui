@@ -9,13 +9,17 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useAutoMountedFolderNames } from '../hooks/useAutoMountedFolderNames';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
+import type { ProjectContext } from '../types/projectContext';
+import FolderCreateModalV2 from './FolderCreateModalV2';
 import {
   BAIVFolderMountConfigInput,
+  convertToUUID,
+  type BAIVFolderMountConfigInputRef,
   type LegacyVFolder,
   useVFolderMountConfigFormRule,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 
 // The auto-mount query is capped at 100 names, so exclude dotfiles here too
 // rather than relying on that list being complete.
@@ -24,11 +28,13 @@ const isSelectableFolder = (folder: LegacyVFolder) =>
 
 const SessionLauncherStorageStep: React.FC<{
   form: FormInstance<SessionLauncherFormValue>;
-  currentProjectId: string;
-}> = ({ form, currentProjectId }) => {
+  project: ProjectContext;
+}> = ({ form, project }) => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const mountConfigInputRef = useRef<BAIVFolderMountConfigInputRef>(null);
 
   // `preserve` reads the raw store: `owner` has no registered Form.Item, and
   // `setFieldValue` still notifies watchers through `setFields`.
@@ -38,7 +44,7 @@ const SessionLauncherStorageStep: React.FC<{
   const { unitedAllowedPermissionByVolume } =
     useMergedAllowedStorageHostPermission(
       currentDomain,
-      currentProjectId,
+      project.id,
       baiClient?._config?.accessKey,
     );
   const mountableHosts = _.keys(
@@ -47,21 +53,51 @@ const SessionLauncherStorageStep: React.FC<{
     ),
   );
 
-  const autoMountedFolderNames = useAutoMountedFolderNames(currentProjectId);
+  const autoMountedFolderNames = useAutoMountedFolderNames(project.id);
   const mountConfigRule = useVFolderMountConfigFormRule({
     autoMountedFolderNames,
   });
 
   return (
-    <Form.Item name="vfolderMounts" rules={[mountConfigRule]}>
-      <BAIVFolderMountConfigInput
-        currentProjectId={currentProjectId}
-        ownerEmail={ownerEmail}
-        mountableHosts={mountableHosts}
-        autoMountedFolderNames={autoMountedFolderNames}
-        filter={isSelectableFolder}
-      />
-    </Form.Item>
+    <>
+      <Form.Item name="vfolderMounts" rules={[mountConfigRule]}>
+        <BAIVFolderMountConfigInput
+          ref={mountConfigInputRef}
+          currentProjectId={project.id}
+          ownerEmail={ownerEmail}
+          mountableHosts={mountableHosts}
+          autoMountedFolderNames={autoMountedFolderNames}
+          filter={isSelectableFolder}
+          onClickCreateFolder={() => setIsCreateModalOpen(true)}
+        />
+      </Form.Item>
+      <Suspense>
+        <FolderCreateModalV2
+          open={isCreateModalOpen}
+          project={project}
+          onRequestClose={async (response) => {
+            setIsCreateModalOpen(false);
+            if (!response) return;
+            // The select can only offer the new folder once its own
+            // `GET /folders` query has seen it.
+            await mountConfigInputRef.current?.refetch();
+            const vfolderId = convertToUUID(response.id);
+            const mounts = form.getFieldValue('vfolderMounts') ?? [];
+            if (_.some(mounts, (mount) => mount.vfolderId === vfolderId))
+              return;
+            form.setFieldValue('vfolderMounts', [
+              ...mounts,
+              {
+                vfolderId,
+                name: response.metadata.name,
+                mountDestination: '',
+                subpath: '',
+              },
+            ]);
+          }}
+        />
+      </Suspense>
+    </>
   );
 };
 
