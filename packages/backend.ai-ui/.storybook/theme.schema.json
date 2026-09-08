@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Storybook brand theme inputs",
+  "description": "What .storybook/astryxBrandTheme.ts reads from ./theme.json: the default family's seeds, its header background and the font family. Anything else in the document is passed through unchecked; the full appearance document contract lives with the WebUI (resources/theme.schema.json), which this package does not depend on.",
+  "type": "object",
+  "definitions": {
+    "seedValue": {
+      "description": "A color seed as a 6-digit hex: a string applies to both schemes, a [light, dark] tuple splits them.",
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      ]
+    },
+    "colorValue": {
+      "description": "A CSS color applied verbatim: a string applies to both schemes, a [light, dark] tuple splits them.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      ]
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "fontFamily": {
+          "type": "string"
+        },
+        "families": {
+          "type": "object",
+          "properties": {
+            "default": {
+              "type": "object",
+              "properties": {
+                "seeds": {
+                  "type": "object",
+                  "properties": {
+                    "accent": { "$ref": "#/definitions/seedValue" },
+                    "link": { "$ref": "#/definitions/seedValue" },
+                    "info": { "$ref": "#/definitions/seedValue" },
+                    "error": { "$ref": "#/definitions/seedValue" },
+                    "success": { "$ref": "#/definitions/seedValue" },
+                    "warning": { "$ref": "#/definitions/seedValue" }
+                  }
+                },
+                "headerBg": { "$ref": "#/definitions/colorValue" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["theme"]
+}

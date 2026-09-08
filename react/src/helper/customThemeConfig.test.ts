@@ -95,7 +95,7 @@ describe('customThemeConfig (v2 appearance bootstrap)', () => {
 
     expect(mod.getCustomTheme()).toBeUndefined();
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('v1 (antd-shaped)'),
+      expect.stringContaining('does not match the theme schema'),
     );
   });
 
@@ -138,27 +138,39 @@ describe('customThemeConfig (v2 appearance bootstrap)', () => {
       expect(mod.pickValidAppearanceConfig('nope', 'test')).toBeUndefined();
       expect(mod.pickValidAppearanceConfig({}, 'test')).toBeUndefined();
       expect(mod.pickValidAppearanceConfig(V1_THEME, 'test')).toBeUndefined();
-      // Every rejection is loud, not just the v1 sniff: 'nope', undefined,
-      // a schemaVersion-less object and the v1 document each log once.
+      // Every rejection is loud: 'nope', undefined, a schemaVersion-less
+      // object and the v1 document each log once, all as a schema mismatch.
       expect(consoleErrorSpy).toHaveBeenCalledTimes(4);
       expect(consoleErrorSpy).toHaveBeenLastCalledWith(
-        expect.stringContaining('v1 (antd-shaped)'),
+        expect.stringContaining('does not match the theme schema'),
       );
     });
 
-    it('warns when theme.families lacks the default entry but still accepts', async () => {
+    it('warns whenever theme.families.default is missing but still accepts', async () => {
       const mod = await importFreshModule();
       const consoleErrorSpy = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {});
-      const doc = {
+      const noDefault = {
         schemaVersion: 2,
         theme: { families: { stained: { seeds: { accent: '#8B5CF6' } } } },
       };
-      expect(mod.pickValidAppearanceConfig(doc, 'test')).toEqual(doc);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('without a "default" entry'),
+      expect(mod.pickValidAppearanceConfig(noDefault, 'test')).toEqual(
+        noDefault,
       );
+      const noFamilies = { schemaVersion: 2, theme: { fontFamily: 'Ubuntu' } };
+      expect(mod.pickValidAppearanceConfig(noFamilies, 'test')).toEqual(
+        noFamilies,
+      );
+      const noTheme = { schemaVersion: 2 };
+      expect(mod.pickValidAppearanceConfig(noTheme, 'test')).toEqual(noTheme);
+      expect(consoleErrorSpy).toHaveBeenCalledTimes(3);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('no theme.families.default entry'),
+      );
+      consoleErrorSpy.mockClear();
+      expect(mod.pickValidAppearanceConfig(V2_THEME, 'test')).toEqual(V2_THEME);
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
   });
 });

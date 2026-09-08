@@ -76,7 +76,7 @@ function MainLayout() {
   // Lifted to Jotai so the search palette's "Toggle sidebar" action drives the
   // same state as the `[` shortcut.
   const [sideCollapsed, setSideCollapsed] = useSiderCollapsedState();
-  // The operator's `sider.theme` polarity override applies to the drawer's
+  // The operator's `theme.siderMode` polarity override applies to the drawer's
   // navigation surface too.
   const shouldReverse = useSiderThemeReversed();
 
@@ -143,8 +143,6 @@ function MainLayout() {
       document.removeEventListener('react-navigate', handleNavigate);
     };
   }, [navigate]);
-
-  const headerHeight = 60;
 
   return (
     <>
@@ -228,7 +226,7 @@ function MainLayout() {
                     fallback={
                       <div
                         style={{
-                          height: headerHeight,
+                          height: 'var(--webui-header-height)',
                           backgroundColor: token('--header-bg'),
                         }}
                       />

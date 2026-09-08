@@ -61,7 +61,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
       justify="between"
       direction="row"
       style={{
-        height: 60,
+        height: 'var(--webui-header-height)',
         backgroundColor: token('--header-bg'),
         paddingRight: token('--spacing-6'),
         paddingLeft: token('--spacing-6'),
