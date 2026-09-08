@@ -5,7 +5,7 @@ export interface BAIInteractiveLoginButtonProps extends Omit<ButtonProps, 'label
     webserverUrl: string;
     /** Name of the consuming application, shown on the provider page and in the failure copy. */
     appName: string;
-    /** Absolute or relative URL the provider page returns to. Defaults to the current document URL. */
+    /** Absolute or relative http(s) URL the provider page returns to. Defaults to the current document URL. */
     callbackUrl?: string;
     timeoutMs?: number;
     /** Receives the webserver session id so the host can exchange it for its own credentials. */
