@@ -4,6 +4,8 @@ navTitle: 통계
 
 # 통계 (Statistics) 페이지
 
+<a id="allocation-history"></a>
+
 ## 할당 기록
 
 통계 페이지의 할당 기록 탭에서는 연산 세션 사용과 관련된 간단한 통계를 그래프로 확인할 수 있습니다.
@@ -26,6 +28,8 @@ navTitle: 통계
 :::
 
 ![](../images/usage_panel.png)
+
+<a id="user-session-history"></a>
 
 ## 사용자 세션 기록
 

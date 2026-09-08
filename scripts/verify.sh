@@ -198,6 +198,14 @@ check_agent_mappings() {
   node packages/backend.ai-agent-cli/dist/cli.js doctor --mappings
 }
 
+check_help_anchors() {
+  # The header's "?" button opens a manual page#anchor from the hand-curated
+  # react/src/helper/helpAnchors.json; a renamed heading turns it into a no-op
+  # scroll with nothing failing. Resolves every target against the English
+  # manual sources (FR-3773).
+  node scripts/check-help-anchors.mjs
+}
+
 check_z_index_ladder() {
   # Drift between the ladder and its hand-mirrors is silent, and vitest.yml's
   # path filter never fires for an index.html-only PR — so it runs here, always.
@@ -225,6 +233,7 @@ run_check "Astryx theme build" check_astryx_theme_built
 run_check "Astryx integration (backend.ai-ui)" check_astryx_integration
 run_check "z-index ladder mirrors" check_z_index_ladder
 run_check "Agent mappings" check_agent_mappings
+run_check "Help anchors (user manual)" check_help_anchors
 run_check "Terminology" check_terminology_drift
 
 # Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row
