@@ -28,7 +28,6 @@ import {
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import {
   BAIIconWithTooltip,
@@ -555,8 +554,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
             layout="horizontal"
             required
           >
-            {/* 32px matches the md input height. */}
-            <Suspense fallback={<Skeleton height={32} />}>
+            <Suspense fallback={<BAISelect loading disabled />}>
               <StorageSelect
                 onChange={(value) => {
                   formRef.current?.setFieldValue('host', value);
