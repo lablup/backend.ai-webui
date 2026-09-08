@@ -116,6 +116,12 @@
 .bai-marks-off [data-bai-change].bai-viewed::after { content: none; }
 .bai-marks-off .bai-removed-placeholder { display: none !important; }
 
+/* Marks are reachable by Tab, so the focus ring must beat `marks off`. */
+.bai-pr-preview [data-bai-change]:focus-visible {
+  outline: 3px solid var(--bai-focus) !important;
+  outline-offset: 4px !important;
+}
+
 /* ---------- focus flash (navigator jump) ---------- */
 .bai-flash {
   outline: 3px solid var(--bai-focus);
@@ -241,6 +247,13 @@
   border-left: 3px solid var(--bai-add);
   padding-left: 8px;
 }
+.bai-popover__caption {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--bai-pop-border);
+  font-size: 12px;
+}
+.bai-popover__mode button[disabled] { opacity: 0.45; cursor: default; }
 .bai-popover__img {
   cursor: zoom-in;
   border: 1px solid var(--bai-pop-border);

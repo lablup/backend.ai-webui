@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 
 import {
+  captionTextOf,
   diffBlocks,
   diffInlineHtml,
   extractBlocks,
@@ -13,6 +14,7 @@ import {
   injectHead,
   lineOf,
   markdownProbeLines,
+  parseHtml,
   similarity,
   sourcePathOf,
   stripInjected,
@@ -20,6 +22,7 @@ import {
   words,
   type Block,
   type ChangesManifest,
+  type ElementNode,
   type PageSidecar,
 } from "./web-diff.js";
 import type { ResolvedDocConfig } from "./config.js";
@@ -55,8 +58,8 @@ ${body}
 
 const heading = (text: string, id: string): string =>
   `<h2 id="${id}">${text}<a class="hash-link" href="#${id}">#</a></h2>`;
-const figure = (src: string, alt = "shot"): string =>
-  `<p><figure class="doc-figure"><img src="${src}" alt="${alt}" class="doc-image" /><figcaption>Figure 1. ${alt}</figcaption></figure></p>`;
+const figure = (src: string, alt = "shot", figNum = "Figure 1.1"): string =>
+  `<p><figure class="doc-figure"><img src="${src}" alt="${alt}" class="doc-image" /><figcaption>${figNum}${alt ? ` &mdash; ${alt}` : ""}</figcaption></figure></p>`;
 
 function tmpdir(name: string): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), `web-diff-${name}-`));
@@ -169,6 +172,67 @@ test("extractBlocks — a missing image file hashes as `missing` rather than thr
   assert.equal(blocks[0].hash, "missing");
 });
 
+test("extractBlocks — the image key covers alt text and caption, not the figure number", () => {
+  const same = (alt: string, figNum: string) =>
+    extractBlocks(page(figure("./images/a.png", alt, figNum)), "/nowhere")![0];
+  // Renumbering happens whenever an earlier image is inserted; it is not a change.
+  assert.equal(same("folder list", "Figure 1.1").key, same("folder list", "Figure 9.4").key);
+  assert.notEqual(same("folder list", "Figure 1.1").key, same("folder tree", "Figure 1.1").key);
+  assert.equal(same("folder list", "Figure 1.1").alt, "folder list");
+  assert.equal(same("folder list", "Figure 1.1").caption, "folder list");
+});
+
+test("captionTextOf — keeps a hand-written caption but drops a bare figure number", () => {
+  const capOf = (html: string) => {
+    const tree = parseHtml(html);
+    return captionTextOf(tree.children[0] as ElementNode);
+  };
+  assert.equal(capOf("<figure><figcaption>Figure 15.1</figcaption></figure>"), "");
+  assert.equal(capOf("<figure><figcaption>A hand-written caption</figcaption></figure>"), "A hand-written caption");
+  assert.equal(capOf("<figure><figcaption>รูปที่ 2.3 &mdash; หน้าจอ</figcaption></figure>"), "หน้าจอ");
+});
+
+test("similarity — a renamed image still pairs, an identical src scores higher", () => {
+  const blocks = (src: string) =>
+    extractBlocks(page(figure(src, "")), "/nowhere")![0];
+  assert.equal(similarity(blocks("./images/old.png"), blocks("./images/new.png")), 0.5);
+  assert.equal(similarity(blocks("./images/a.png"), blocks("./images/a.png")), 1);
+});
+
+test("diffBlocks — a renamed image is one modified change, not removed + added", () => {
+  const base = extractBlocks(page(figure("./images/old.png", "")), "/nowhere")!;
+  const head = extractBlocks(page(figure("./images/new.png", "")), "/nowhere")!;
+  const changes = diffBlocks(base, head);
+  assert.equal(changes.length, 1);
+  assert.equal(changes[0].type, "modified");
+  assert.equal(changes[0].base?.src, "./images/old.png");
+  assert.equal(changes[0].head?.src, "./images/new.png");
+});
+
+test("diffBlocks — two renamed images in one run pair positionally", () => {
+  const src = (a: string, b: string) =>
+    extractBlocks(page([figure(a, ""), figure(b, "")].join("\n")), "/nowhere")!;
+  const changes = diffBlocks(src("./a1.png", "./b1.png"), src("./a2.png", "./b2.png"));
+  assert.deepEqual(
+    changes.map((c) => [c.base?.src, c.head?.src]),
+    [
+      ["./a1.png", "./a2.png"],
+      ["./b1.png", "./b2.png"],
+    ],
+  );
+});
+
+test("extractBlocks — records the container a removed li / tr has to go back into", () => {
+  const blocks = extractBlocks(
+    page("<ol><li>Step one</li></ol><ul><li>Bullet</li></ul><table><tbody><tr><td>Cell</td></tr></tbody></table>"),
+    "/nowhere",
+  )!;
+  assert.deepEqual(
+    blocks.map((b) => b.container ?? null),
+    ["ol", "ul", "table"],
+  );
+});
+
 // ── pairing ─────────────────────────────────────────────────────
 
 const textBlocks = (texts: string[]): Block[] =>
@@ -247,6 +311,39 @@ test("diffInlineHtml — marks only the changed words and leaves tags atomic", (
   assert.equal(out.match(/<\/strong>/g)?.length, 1);
   assert.ok(out.startsWith("Click <strong>"));
   assert.ok(out.endsWith("</strong> to start."));
+});
+
+test("diffInlineHtml — emits only the head side's markup, so the output is balanced", () => {
+  const out = diffInlineHtml("<strong>Same</strong>", "<em>Same</em>");
+  assert.equal(out, "<em>Same</em>");
+  assert.ok(!out.includes("<strong>"));
+});
+
+test("diffInlineHtml — a link-target edit leaves exactly one anchor", () => {
+  const out = diffInlineHtml(
+    'See <a href="./one.html">the guide</a>.',
+    'See <a href="./two.html">the guide</a>.',
+  );
+  assert.equal(out.match(/<a /g)?.length, 1);
+  assert.equal(out.match(/<\/a>/g)?.length, 1);
+  assert.ok(out.includes('href="./two.html"'));
+  assert.ok(!out.includes('href="./one.html"'));
+});
+
+test("diffInlineHtml — a mixed markup + wording edit still marks the words", () => {
+  const out = diffInlineHtml(
+    "Click <strong>Create</strong> to start.",
+    "Click <em>New folder</em> to start.",
+  );
+  assert.match(out, /<del class="bai-del">Create<\/del>/);
+  // The <em> boundary splits the inserted run, but every new word is marked.
+  assert.match(out, /<ins class="bai-ins">New<\/ins>/);
+  assert.match(out, /<ins class="bai-ins">folder<\/ins>/);
+  assert.equal(out.match(/<em>/g)?.length, 1);
+  assert.equal(out.match(/<\/em>/g)?.length, 1);
+  assert.ok(!out.includes("<strong>"));
+  // A bare space is spacing, never a marked insertion.
+  assert.ok(!/<ins class="bai-ins">\s+<\/ins>/.test(out));
 });
 
 test("words — segments by locale, not by whitespace alone", () => {

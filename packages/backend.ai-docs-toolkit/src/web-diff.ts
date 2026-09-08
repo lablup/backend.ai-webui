@@ -56,8 +56,12 @@ export interface Block {
   cells?: string[];
   src?: string;
   hash?: string;
+  alt?: string;
+  caption?: string;
   width?: string;
   height?: string;
+  /** Parent element a removed `li` / `tr` has to be re-inserted into. */
+  container?: "ul" | "ol" | "table" | null;
 }
 
 export interface SectionRef {
@@ -87,10 +91,15 @@ export interface SerializedChange {
   words?: number;
   oldImage?: string | null;
   newImage?: string | null;
+  oldAlt?: string;
+  newAlt?: string;
+  oldCaption?: string;
+  newCaption?: string;
   width?: string;
   height?: string;
   oldCells?: string[] | null;
   newCells?: string[] | null;
+  container?: "ul" | "ol" | "table" | null;
 }
 
 export interface ChangeCounts {
@@ -311,6 +320,19 @@ function findAll(
 // ──────────────────────────────────────────── blocks
 
 /**
+ * Authored part of a `<figcaption>`. The generated `Figure N.M` prefix
+ * renumbers whenever an image is inserted, so it must stay out of the key.
+ */
+export function captionTextOf(figure: ElementNode): string {
+  const cap = findAll(figure, (n) => n.tag === "figcaption")[0];
+  if (!cap) return "";
+  const raw = norm(cap.children.map(textOf).join(""));
+  const dashed = raw.match(/(?:&mdash;|—)\s*(.*)$/);
+  if (dashed) return dashed[1].trim();
+  return /\d+\.\d+$/.test(raw) ? "" : raw;
+}
+
+/**
  * Flatten the page's `<section class="chapter">` into comparable blocks.
  * Returns null for pages without a chapter body (redirect stubs).
  */
@@ -375,6 +397,8 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
     // The anchor is the <figure>, never the wrapping <p> — browsers split
     // `<p><figure>` into two paragraphs and the mark would land off-target.
     const anchor = imgNode.tag === "figure" ? imgNode : img;
+    const alt = attrOf(img, "alt") ?? "";
+    const caption = anchor.tag === "figure" ? captionTextOf(anchor) : "";
     blocks.push({
       idx: blocks.length,
       kind: "image",
@@ -382,10 +406,13 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
       anchor: shift(anchor),
       text: src,
       inner: "",
-      key: `image:${src}:${hash}`,
+      // Re-worded alt text or caption is a change even when the bytes match.
+      key: `image:${src}:${hash}:${alt}:${caption}`,
       hid: attrOf(anchor, "id") ?? null,
       src,
       hash,
+      alt,
+      caption,
       width: attrOf(img, "width"),
       height: attrOf(img, "height"),
     });
@@ -407,7 +434,9 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
       } else if (t === "ul" || t === "ol") {
         for (const li of ch.children) {
           if (li.type === "el" && li.tag === "li") {
-            push("list-item", li, textOf(li), innerHtml(secHtml, li));
+            push("list-item", li, textOf(li), innerHtml(secHtml, li), {
+              container: t,
+            });
           }
         }
       } else if (t === "table") {
@@ -417,6 +446,7 @@ export function extractBlocks(html: string, pageDir: string): Block[] | null {
             .map((c) => norm(textOf(c)));
           push("table-row", tr, cells.join(" | "), innerHtml(secHtml, tr), {
             cells,
+            container: "table",
           });
         }
       } else if (t === "figure" || t === "img") {
@@ -600,8 +630,9 @@ export function diffInlineHtml(
   let delBuf = "";
   let insBuf = "";
   const flush = (): void => {
-    if (delBuf) out += `<del class="bai-del">${delBuf}</del>`;
-    if (insBuf) out += `<ins class="bai-ins">${insBuf}</ins>`;
+    // A whitespace-only run is spacing, not an edit: drop it, or keep it bare.
+    if (delBuf && !/^\s+$/.test(delBuf)) out += `<del class="bai-del">${delBuf}</del>`;
+    if (insBuf) out += /^\s+$/.test(insBuf) ? insBuf : `<ins class="bai-ins">${insBuf}</ins>`;
     delBuf = "";
     insBuf = "";
   };
@@ -613,6 +644,8 @@ export function diffInlineHtml(
     }
     const tok = op.type === "del" ? a[op.i as number] : b[op.j as number];
     if (tok.t === "tag") {
+      // Only the head side's markup is emitted, so the output stays balanced.
+      if (op.type === "del") continue;
       flush();
       out += tok.v;
       continue;
@@ -627,7 +660,8 @@ export function diffInlineHtml(
 /** Pairing score on plain text — markup differences never lower it. */
 export function similarity(d: Block, h: Block, lang = "en"): number {
   if (d.kind !== h.kind) return 0;
-  if (d.kind === "image") return d.src === h.src ? 1 : 0;
+  // A renamed screenshot still pairs, positionally, within its del/ins run.
+  if (d.kind === "image") return d.src === h.src ? 1 : 0.5;
   const a = words(d.text, lang);
   const b = words(h.text, lang);
   if (!a.length || !b.length) return 0;
@@ -912,11 +946,17 @@ function serializeChange(
     newText: change.head ? change.head.text : "",
   };
 
+  if (blk.container) out.container = blk.container;
+
   if (blk.kind === "image") {
     out.newImage = change.head?.src ?? null;
     out.oldImage = change.base?.src
       ? copyBaseImage(ctx.baseDir, ctx.headLangDir, change.base.src)
       : null;
+    out.oldAlt = change.base?.alt ?? "";
+    out.newAlt = change.head?.alt ?? "";
+    out.oldCaption = change.base?.caption ?? "";
+    out.newCaption = change.head?.caption ?? "";
     out.width = blk.width;
     out.height = blk.height;
     return out;

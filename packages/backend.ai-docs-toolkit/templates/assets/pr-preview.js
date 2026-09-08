@@ -199,6 +199,18 @@
           return `<p>${inner}</p>`;
       }
     };
+    // Alt text / caption can change without the bytes changing, so name it.
+    const captionLine = (change) => {
+      const pick =
+        (change.oldCaption || '') !== (change.newCaption || '')
+          ? ['caption', change.oldCaption, change.newCaption]
+          : (change.oldAlt || '') !== (change.newAlt || '')
+            ? ['alt text', change.oldAlt, change.newAlt]
+            : null;
+      if (!pick) return '';
+      const [label, o, n] = pick;
+      return `<div class="bai-popover__caption">${label}: <del class="bai-del">${esc(o || '(none)')}</del> → <ins class="bai-ins">${esc(n || '(none)')}</ins></div>`;
+    };
     const imagePair = (change) => {
       const col = (label, src) =>
         `<div><div class="bai-col-label">${label}</div>${src ? `<img class="bai-popover__img" src="${src}" data-bai-zoom="${change.id}" alt="${label}" />` : '<em>—</em>'}</div>`;
@@ -241,23 +253,69 @@
       return node;
     }
 
+    const listOf = (change) =>
+      change.container === 'ol' ? 'ol' : change.container === 'ul' ? 'ul' : null;
+
+    function wrapPlaceholder(node, change) {
+      const list = listOf(change);
+      if (list) {
+        const holder = document.createElement(list);
+        holder.appendChild(node);
+        return holder;
+      }
+      const table = document.createElement('table');
+      const body = document.createElement('tbody');
+      body.appendChild(node);
+      table.appendChild(body);
+      return table;
+    }
+
+    // A removed <li>/<tr> has to land inside a real list / table, so it either
+    // joins the neighbouring one or brings its own.
+    function placeRemoved(node, change) {
+      const after = blockEl(change.insertAfter);
+      const list = listOf(change);
+      const needsHolder = list || change.container === 'table';
+      if (!after) {
+        section.prepend(needsHolder ? wrapPlaceholder(node, change) : node);
+        return;
+      }
+      if (!needsHolder) {
+        // A plain block cannot sit inside a list or table — go after the whole one.
+        const host = after.closest('li, tr') ? after.closest('ul, ol, table') : null;
+        return void (host || after).after(node);
+      }
+      const tag = after.tagName;
+      if ((list && tag === 'LI') || (change.container === 'table' && tag === 'TR')) {
+        return void after.after(node);
+      }
+      const next = after.nextElementSibling;
+      if (list && next && (next.tagName === 'UL' || next.tagName === 'OL')) {
+        return void next.prepend(node);
+      }
+      if (change.container === 'table' && next && next.tagName === 'TABLE') {
+        return void (next.tBodies[0] || next).prepend(node);
+      }
+      after.after(wrapPlaceholder(node, change));
+    }
+
     function apply() {
       document.body.classList.add('bai-pr-preview');
       document.body.classList.toggle('bai-marks-off', !marksOn);
       marks = [];
       if (page.status !== 'modified' || !section) return;
+      // Consecutive removals share an anchor; each follows the previous one so
+      // they keep their source order instead of stacking up reversed.
+      const lastAt = new Map();
       for (const change of page.changes) {
         let node;
         if (change.type === 'removed') {
           node = placeholderFor(change);
-          const after = blockEl(change.insertAfter);
-          if (after) {
-            // An <li>/<tr> placeholder must stay inside its list / table.
-            if (change.blockKind === 'table-row' && after.tagName !== 'TR') {
-              const table = after.querySelector('table') || after;
-              table.after(node);
-            } else after.after(node);
-          } else section.prepend(node);
+          const key = change.insertAfter == null ? -1 : change.insertAfter;
+          const prev = lastAt.get(key);
+          if (prev) prev.after(node);
+          else placeRemoved(node, change);
+          lastAt.set(key, node);
         } else {
           node = blockEl(change.anchor);
           if (!node) continue;
@@ -272,6 +330,14 @@
           ? -1
           : 1,
       );
+      for (const { change, el: node } of marks) {
+        node.tabIndex = 0;
+        node.setAttribute('role', 'button');
+        node.setAttribute(
+          'aria-label',
+          `Change ${change.id} of ${page.changes.length}: ${change.type} ${KIND_LABEL[change.blockKind] || change.blockKind} — press Enter to show the diff`,
+        );
+      }
       updatePos();
     }
 
@@ -306,6 +372,8 @@
     };
 
     function autoMode(change) {
+      // Inline shows nothing when only markup moved — the two columns do.
+      if (change.formattingOnly) return 'sbs';
       if (modeOverride) return modeOverride;
       const w = change.words || 0;
       if (
@@ -323,10 +391,13 @@
       let modeHtml = '';
       let body = '';
       if (change.blockKind === 'image') {
-        body = imagePair(change);
+        body = imagePair(change) + captionLine(change);
       } else if (type === 'modified') {
         const mode = autoMode(change);
-        modeHtml = `<span class="bai-popover__mode"><button data-mode="inline" aria-pressed="${mode === 'inline'}">Inline</button><button data-mode="sbs" aria-pressed="${mode === 'sbs'}">Side by side</button></span>`;
+        const noInline = change.formattingOnly
+          ? ' disabled title="A formatting-only change has no inline marks"'
+          : '';
+        modeHtml = `<span class="bai-popover__mode"><button data-mode="inline" aria-pressed="${mode === 'inline'}"${noInline}>Inline</button><button data-mode="sbs" aria-pressed="${mode === 'sbs'}">Side by side</button></span>`;
         body =
           mode === 'inline'
             ? wrapInline(change, change.diffHtml)
@@ -548,6 +619,8 @@
       current = (i + marks.length) % marks.length;
       const target = marks[current].el;
       target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      // Keyboard users land on the change itself, not back at the badge.
+      target.focus({ preventScroll: true });
       if (flash) {
         document
           .querySelectorAll('.bai-flash')
@@ -621,7 +694,21 @@
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       // Physical key codes, so the shortcuts survive an active IME.
       const code = e.code || '';
-      if (code === 'BracketLeft') step(-1);
+      if (code === 'Enter' || code === 'Space') {
+        const t =
+          e.target instanceof Element
+            ? e.target.closest('[data-bai-change]')
+            : null;
+        if (!t || !marksOn) return;
+        e.preventDefault();
+        if (pinned === t) {
+          pinned = null;
+          pop.hidden = true;
+        } else {
+          pinned = t;
+          show(t);
+        }
+      } else if (code === 'BracketLeft') step(-1);
       else if (code === 'BracketRight') step(1);
       else if (code === 'KeyV') {
         const c = activeChange();
@@ -647,10 +734,9 @@
     apply();
     const m = location.hash.match(/^#bai-change-(\d+|last)$/);
     if (m && marks.length) {
-      const i =
-        m[1] === 'last'
-          ? marks.length - 1
-          : Math.max(0, Math.min(marks.length - 1, Number(m[1]) - 1));
+      // Resolve by change id, the number Copy ref and the popover both show.
+      const byId = marks.findIndex((x) => String(x.change.id) === m[1]);
+      const i = m[1] === 'last' ? marks.length - 1 : byId >= 0 ? byId : 0;
       setTimeout(() => jumpTo(i), 50);
     }
   }
