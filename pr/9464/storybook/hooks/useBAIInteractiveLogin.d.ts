@@ -35,6 +35,13 @@ export interface BuildInteractiveLoginUrlOptions {
 export declare const buildInteractiveLoginUrl: ({ webserverUrl, appName, callbackUrl, }: BuildInteractiveLoginUrlOptions) => string | null;
 export declare const classifyFetchError: (error: unknown) => Extract<BAIInteractiveLoginFailureReason, "timeout" | "cors_or_mixed">;
 /**
+ * `response.json()` rejects with `SyntaxError` for a body that is not JSON,
+ * with the timeout signal's abort when the deadline hits mid-body, and with
+ * `TypeError` when the stream fails — the same opaque failure `fetch` itself
+ * reports.
+ */
+export declare const classifyBodyReadError: (error: unknown) => Extract<BAIInteractiveLoginFailureReason, "timeout" | "cors_or_mixed" | "invalid_response">;
+/**
  * The webserver answers `{ authenticated, data, session_id }`; only
  * `authenticated` and `session_id` are read.
  */

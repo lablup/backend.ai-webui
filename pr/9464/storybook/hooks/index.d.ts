@@ -42,7 +42,7 @@ export { useInterval, useIntervalValue } from './useIntervalValue';
 export { default as useBAILogger, ContextualLogger, LogLevel, } from './useBAILogger';
 export type { LoggerPlugin, LogContext, BAILogger } from './useBAILogger';
 export { useEventNotStable } from './useEventNotStable';
-export { default as useBAIInteractiveLogin, BAI_INTERACTIVE_LOGIN_DEFAULT_TIMEOUT_MS, buildInteractiveLoginUrl, classifyFetchError, classifyLoginCheckResponse, normalizeWebserverUrl, probeLoginCheck, resolveCallbackUrl, } from './useBAIInteractiveLogin';
+export { default as useBAIInteractiveLogin, BAI_INTERACTIVE_LOGIN_DEFAULT_TIMEOUT_MS, buildInteractiveLoginUrl, classifyBodyReadError, classifyFetchError, classifyLoginCheckResponse, normalizeWebserverUrl, probeLoginCheck, resolveCallbackUrl, } from './useBAIInteractiveLogin';
 export type { BAIInteractiveLoginFailure, BAIInteractiveLoginFailureReason, BAIInteractiveLoginProbeResult, BuildInteractiveLoginUrlOptions, ProbeLoginCheckOptions, UseBAIInteractiveLoginOptions, UseBAIInteractiveLoginResult, } from './useBAIInteractiveLogin';
 export { default as useControllableValue } from './useControllableValue';
 export type { UseControllableValueOptions, ControllableProps, StandardControllableProps, } from './useControllableValue';
