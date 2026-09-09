@@ -44,6 +44,14 @@ const MAX_DEPTH = Infinity;
 const NOISE_THRESHOLD = 10;
 
 /**
+ * Indexed keys allowed to be absent from `resources/i18n/en.json`. A key not
+ * listed here that resolves to nothing fails the build — a typo would
+ * otherwise ship as a raw key in the palette. Empty today; add an entry only
+ * for a key whose absence is deliberate, with the reason.
+ */
+const KNOWN_MISSING_KEYS = new Set([]);
+
+/**
  * An entry OWNS a key when it declares it within this many import hops of the
  * route component. Ownership — not the raw entry count — decides where a
  * shared key survives: chrome (`time.*`, `button.Cancel`) is owned by many
@@ -207,6 +215,9 @@ const isExternal = (f) => {
 const fileCache = new Map();
 const sfCache = new Map();
 let transformMs = 0;
+/** Files whose import edges were dropped: esbuild / the import scan failed. */
+let transformFailures = 0;
+let scanFailures = 0;
 
 function sourceFileOf(file, src) {
   if (sfCache.has(file)) return sfCache.get(file);
@@ -237,7 +248,8 @@ async function analyzeFile(file) {
       target: 'esnext',
     }));
   } catch {
-    /* keep raw source; this file's import list is approximate */
+    // Raw source is still scanned, but its import list is now approximate.
+    transformFailures++;
   }
   transformMs += Date.now() - t0;
 
@@ -248,7 +260,8 @@ async function analyzeFile(file) {
       if (r && !isExternal(r)) deps.add(r);
     }
   } catch {
-    /* ignore unscannable output */
+    // No edges from this file: everything it renders is missing downstream.
+    scanFailures++;
   }
 
   const keys = new Set();
@@ -1160,13 +1173,24 @@ async function main(argv) {
   const index = toIndex(built);
   const text = serialize(index);
 
-  const missing = missingFromEnJson(index);
-  if (missing.length)
+  if (transformFailures || scanFailures)
     console.warn(
-      `warning: ${missing.length} indexed key(s) absent from resources/i18n/en.json: ` +
-        missing.slice(0, 10).join(', ') +
-        (missing.length > 10 ? ', …' : ''),
+      `warning: import graph incomplete — esbuild failed on ${transformFailures} ` +
+        `file(s) and the import scan on ${scanFailures}; their edges were dropped, ` +
+        'so pages rendering through them index thinner than they are',
     );
+
+  const missing = missingFromEnJson(index).filter(
+    (k) => !KNOWN_MISSING_KEYS.has(k),
+  );
+  if (missing.length) {
+    console.error(
+      `error: ${missing.length} indexed key(s) absent from resources/i18n/en.json ` +
+        '— fix the key, or list a deliberate exception in KNOWN_MISSING_KEYS:\n  ' +
+        missing.join('\n  '),
+    );
+    return 1;
+  }
 
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   fs.writeFileSync(outFile, text);
