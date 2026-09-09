@@ -51,25 +51,19 @@ check_warmup_paths() {
 }
 
 check_relay_drift() {
-  # Relay generated artifacts are committed (see relay.dev production setup).
-  # Any change under __generated__ after compiling means sources or schema
-  # were updated without a matching `pnpm relay` run.
-  #
-  # Use `git status --porcelain` instead of `git diff --exit-code` so that
-  # *new* generated files (e.g. when a developer adds a fragment) are caught
-  # as drift too — `git diff` only sees tracked files.
+  # Relay generated artifacts are committed (see relay.dev production setup);
+  # compiling and finding __generated__ dirty means a missing `pnpm relay` run.
   pnpm run relay || return 1
-  local dirty
-  dirty=$(git status --porcelain -- \
-    'react/src/__generated__' \
-    'packages/backend.ai-ui/src/__generated__')
-  if [ -n "$dirty" ]; then
-    echo "$dirty"
-    echo "Relay generated artifacts are out of sync."
-    echo "Run \`pnpm relay\` and commit the changes under __generated__."
-    return 1
-  fi
-  return 0
+  bash scripts/check-generated-drift.sh Relay "pnpm relay" \
+    react/src/__generated__ \
+    packages/backend.ai-ui/src/__generated__
+}
+
+check_search_index_drift() {
+  # The committed index is what ships — see docs/adr/0003-committed-search-index-artifact.md.
+  pnpm --prefix ./react run search-index || return 1
+  bash scripts/check-generated-drift.sh "Search index" "pnpm run search-index" \
+    react/src/generated/searchIndex.json
 }
 
 check_terminology_drift() {
@@ -222,6 +216,7 @@ check_z_index_ladder() {
 }
 
 run_check "Relay" check_relay_drift
+run_check "Search index" check_search_index_drift
 # lint:ci = the cached eslint variant CI runs (content-hash cache; modified
 # files are always re-linted). Uncached equivalent: `pnpm -r lint`.
 # backend.ai-client's and backend.ai-agent-cli's lint:ci are deliberately

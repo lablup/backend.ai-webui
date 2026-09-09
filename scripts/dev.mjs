@@ -60,6 +60,19 @@ if (!process.env.PORTLESS_PORT?.trim()) {
 }
 spawnSync('portless', proxyArgs, { stdio: 'inherit' });
 
+// Refresh the global search palette's index once (~0.7 s). It is committed, so
+// a stale one only means stale search results — never block the dev server.
+const searchIndex = spawnSync(
+  'node',
+  ['scripts/build-search-index.mjs'],
+  { stdio: 'inherit', cwd: new URL('../react/', import.meta.url) },
+);
+if (searchIndex.status !== 0) {
+  console.warn(
+    '[dev] search index build failed — the palette will use the committed index.',
+  );
+}
+
 // Optional fixed port via `PORT=9081 pnpm run dev`. If unset, Portless picks a free port.
 const portFlag = process.env.PORT ? `--app-port ${process.env.PORT} ` : '';
 delete env.PORT; // Avoid leaking to portless / CRA before Portless reassigns it.
