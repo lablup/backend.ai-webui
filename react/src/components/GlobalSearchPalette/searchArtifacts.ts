@@ -123,6 +123,7 @@ const signatureOf = ({
     ctx.config.fasttrackEndpoint,
     _.sortBy([...ctx.visibleMenuKeys]),
     _.sortBy([...ctx.disabledMenuKeys]),
+    _.sortBy([...ctx.blockedMenuKeys]),
     _.map(_.sortBy(_.keys(TAB_GATES)), (key) => !!TAB_GATES[key]?.(ctx)),
     _.map(PALETTE_ACTIONS, (action) => action.gate?.(ctx) ?? null),
   ]);
@@ -144,23 +145,6 @@ const sameMenuSources = (
   });
 
 /**
- * `useWebUIMenuItems` hands back fresh icon elements on most renders, and an
- * icon is neither ranked nor part of a hit's id — so it must not invalidate the
- * hit list. Refresh the cached hits in place instead.
- */
-const syncIcons = (
-  hits: ReadonlyArray<SearchHit>,
-  menuSources: ReadonlyArray<MenuHitSource>,
-): void => {
-  const sourceByKey = _.keyBy(menuSources, 'key');
-  _.forEach(hits, (hit) => {
-    if (hit.kind === 'action' || !hit.menuKey) return;
-    const icon = sourceByKey[hit.menuKey]?.icon;
-    if (icon !== undefined && icon !== hit.icon) hit.icon = icon;
-  });
-};
-
-/**
  * The visible hit list plus its id lookup. Rebuilt only when the menu, the
  * scope, the gates or the language actually changed — the palette re-renders
  * several times per open, and every rebuild would otherwise also throw away the
@@ -179,7 +163,6 @@ export const getSearchArtifacts = (
     artifactsCache.tEn === ctx.tEn &&
     sameMenuSources(artifactsCache.menuSources, menuSources)
   ) {
-    syncIcons(artifactsCache.hits, menuSources);
     return artifactsCache;
   }
 

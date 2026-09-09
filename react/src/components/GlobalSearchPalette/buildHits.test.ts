@@ -175,14 +175,12 @@ describe('toMenuSources', () => {
       {
         key: 'start',
         labelText: 'Start',
-        icon: undefined,
         groupLabel: '',
         disabled: undefined,
       },
       {
         key: 'session',
         labelText: 'Sessions',
-        icon: undefined,
         groupLabel: 'Workload',
         disabled: true,
       },

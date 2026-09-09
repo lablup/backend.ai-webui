@@ -21,7 +21,6 @@ import type { ReactNode } from 'react';
 export interface MenuHitSource {
   key: string;
   labelText: string;
-  icon?: ReactNode;
   /** Sidebar group label; admin groups already prefixed "Administration › ". */
   groupLabel: string;
   disabled?: boolean;
@@ -60,7 +59,6 @@ export const toMenuSources = (
     sources.push({
       key: node.key,
       labelText: node.labelText ?? '',
-      icon: node.icon,
       groupLabel,
       disabled: node.disabled,
     });
@@ -78,6 +76,22 @@ export const toMenuSources = (
   });
 
   return sources;
+};
+
+/**
+ * The menu's icon per key, read fresh each render: `useWebUIMenuItems` hands
+ * back new elements on most renders, so icons are never stored on a hit.
+ */
+export const toMenuIcons = (
+  nodes: ReadonlyArray<GroupedMenuNode> | undefined,
+): Record<string, ReactNode> => {
+  const icons: Record<string, ReactNode> = {};
+  const visit = (node: GroupedMenuNode) => {
+    if (node?.key && node.icon !== undefined) icons[node.key] = node.icon;
+    _.forEach(node?.children, visit);
+  };
+  _.forEach(nodes, visit);
+  return icons;
 };
 
 /** `buildPath`'s own encoding, applied to the index's scope param. */
@@ -108,7 +122,7 @@ const tabLabelKeyOf = (
 const makeTabHit = (
   entry: SearchIndexEntry,
   tab: SearchIndexTab,
-  base: Pick<SearchHit, 'menuKey' | 'scope' | 'group' | 'icon'>,
+  base: Pick<SearchHit, 'menuKey' | 'scope' | 'group'>,
   path: string,
   t: HitTranslator,
 ): SearchHit | null => {
@@ -133,7 +147,7 @@ const makeTabHit = (
 const makeSettingHit = (
   entry: SearchIndexEntry,
   setting: SearchIndexSetting,
-  base: Pick<SearchHit, 'menuKey' | 'scope' | 'group' | 'icon'>,
+  base: Pick<SearchHit, 'menuKey' | 'scope' | 'group'>,
   path: string,
   t: HitTranslator,
 ): SearchHit => ({
@@ -182,7 +196,7 @@ const scopeTextOf = (
 /**
  * Turns the generated index plus the live menu into hits. A page contributes
  * hits only when its menu key survived `useWebUIMenuItems()`'s gating (or is
- * whitelisted), because the menu is where the icon and the group label live.
+ * whitelisted), because the menu is where the group label lives.
  */
 export const buildHits = ({
   index = getSearchIndex(),
@@ -210,7 +224,6 @@ export const buildHits = ({
         menuKey,
         scope: entry.scope,
         group: source?.groupLabel || fallbackGroup,
-        icon: source?.icon,
       };
       const labelKey = entry.labelKey as string;
 

@@ -35,6 +35,7 @@ export const TAB_GATES: Readonly<Record<string, TabGate>> = {
 /** Whether the menu still offers the page, i.e. neither blocked nor inactive. */
 const isMenuKeyOffered = (menuKey: string, ctx: SearchContext): boolean =>
   !ctx.disabledMenuKeys.has(menuKey) &&
+  !ctx.blockedMenuKeys.has(menuKey) &&
   (ctx.visibleMenuKeys.has(menuKey) || ALWAYS_VISIBLE_MENU_KEYS.has(menuKey));
 
 /**

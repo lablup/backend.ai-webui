@@ -38,6 +38,8 @@ export interface SearchHit extends SearchableItem<SearchHitAuxiliaryData> {
   labelKey: string;
   /** Ancestor label keys, outermost first (page › tab › group). */
   breadcrumbKeys: Array<string>;
+  /** Actions carry their glyph; page rows resolve theirs from the live menu
+   * by `menuKey` at render time (`GlobalSearchSource.getIcon`). */
   icon?: ReactNode;
   /** Sidebar group label; admin groups are prefixed "Administration › ". */
   group: string;
@@ -86,6 +88,9 @@ export interface SearchContext {
   visibleMenuKeys: ReadonlySet<string>;
   /** Subset disabled by `_config.inactiveList` — hidden from search. */
   disabledMenuKeys: ReadonlySet<string>;
+  /** `_config.blockList`: removed from the menu outright, so a whitelisted
+   * page has to be checked against it separately. */
+  blockedMenuKeys: ReadonlySet<string>;
   t: HitTranslator;
   tEn: HitTranslator;
 }

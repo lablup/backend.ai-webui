@@ -190,6 +190,7 @@ vi.mock('./useGlobalSearchSource', () => ({
         ),
       bootstrap: () => bootstrapGate.result(hits),
       getHit: (id: string) => hits.find((hit) => hit.id === id),
+      getIcon: (hit: SearchHit) => hit.icon,
     };
   },
 }));

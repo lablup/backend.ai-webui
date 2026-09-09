@@ -6,7 +6,7 @@ import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import { useActiveProjectName } from '../../hooks/useRouteScope';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
-import { toMenuSources } from './buildHits';
+import { toMenuIcons, toMenuSources } from './buildHits';
 import type { GroupedMenuNode } from './buildHits';
 import { baseHitId, rankHits, warmRanker } from './rank';
 import {
@@ -20,6 +20,7 @@ import type { SearchSource } from '@astryxdesign/core/Typeahead';
 import { useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export { toTranslator } from './searchArtifacts';
@@ -34,6 +35,8 @@ export const toSearchConfigFlags = (baiClient: {
 export interface GlobalSearchSource extends SearchSource<SearchHit> {
   /** Astryx signals selection by id only; ids may carry `recent:` / `#found=`. */
   getHit: (id: string) => SearchHit | undefined;
+  /** The row glyph: an action's own, or the live menu's for the hit's page. */
+  getIcon: (hit: SearchHit) => ReactNode | undefined;
 }
 
 /**
@@ -49,8 +52,13 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
   const baiClient = useSuspendedBackendaiClient();
   const currentUserRole = useCurrentUserRole();
   const projectName = useActiveProjectName();
-  const { generalMenu, adminMenu, groupedGeneralMenu, groupedAdminMenu } =
-    useWebUIMenuItems();
+  const {
+    generalMenu,
+    adminMenu,
+    groupedGeneralMenu,
+    groupedAdminMenu,
+    blockList,
+  } = useWebUIMenuItems();
   const [recentSearchHits] = useRecentSearchHits();
   const { logger } = useBAILogger();
 
@@ -65,6 +73,11 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
     }),
   ];
 
+  const iconByMenuKey = {
+    ...toMenuIcons(groupedGeneralMenu as Array<GroupedMenuNode>),
+    ...toMenuIcons(groupedAdminMenu as Array<GroupedMenuNode>),
+  };
+
   const ctx: SearchContext = {
     isSuperAdmin: currentUserRole === 'superadmin',
     supports: (feature: string) => !!baiClient?.supports?.(feature),
@@ -78,6 +91,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
         (item) => item.key as string,
       ),
     ),
+    blockedMenuKeys: new Set(blockList ?? []),
     t: translate,
     tEn: translateEn,
   };
@@ -144,5 +158,7 @@ export const useGlobalSearchSource = (): GlobalSearchSource => {
       }),
     bootstrap: () => bootstrapRows,
     getHit: (id: string) => hitById[baseHitId(id)],
+    getIcon: (hit: SearchHit) =>
+      hit.icon ?? (hit.menuKey ? iconByMenuKey[hit.menuKey] : undefined),
   };
 };

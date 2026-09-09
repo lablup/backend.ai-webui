@@ -43,6 +43,7 @@ const context = (): SearchContext => ({
   config: { fasttrackEndpoint: 'https://fasttrack.example' },
   visibleMenuKeys: new Set(indexedMenuKeys),
   disabledMenuKeys: new Set<string>(),
+  blockedMenuKeys: new Set<string>(),
   t,
   tEn: t,
 });

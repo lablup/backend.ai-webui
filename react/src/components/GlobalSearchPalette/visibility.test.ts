@@ -35,6 +35,7 @@ const makeCtx = (overrides: Partial<SearchContext> = {}): SearchContext => ({
   config: { fasttrackEndpoint: null },
   visibleMenuKeys: new Set(allMenuKeys),
   disabledMenuKeys: new Set(),
+  blockedMenuKeys: new Set(),
   t: tEn,
   tEn,
   ...overrides,
@@ -82,6 +83,20 @@ describe('isHitVisible', () => {
         makeCtx({ visibleMenuKeys: new Set() }),
       ),
     ).toBe(true);
+  });
+
+  it('hides a whitelisted page — and its setting items — when blockList names it', () => {
+    const ctx = makeCtx({
+      visibleMenuKeys: new Set(_.without(allMenuKeys, 'usersettings')),
+      blockedMenuKeys: new Set(['usersettings']),
+    });
+    expect(isHitVisible(hitById('page:/usersettings'), ctx)).toBe(false);
+    expect(
+      isHitVisible(
+        hitById('setting:/usersettings#userSettings.AutoLogout'),
+        ctx,
+      ),
+    ).toBe(false);
   });
 
   it('hides inactiveList pages instead of disabling them', () => {

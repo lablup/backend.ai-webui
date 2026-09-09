@@ -180,7 +180,7 @@ const GlobalSearchPalette: React.FC<GlobalSearchPaletteProps> = ({
             <HStack align="center" justify="center" xstyle={styles.iconSlot}>
               {/* Pages the sidebar never lists (user settings) carry no menu
                   icon; the fallback keeps every row's text on one baseline. */}
-              {hit.icon ?? <Settings size="1em" />}
+              {searchSource.getIcon(hit) ?? <Settings size="1em" />}
             </HStack>
             <VStack gap={0} xstyle={styles.rowText}>
               <Text type="body" maxLines={1}>

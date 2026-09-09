@@ -7,7 +7,6 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Kbd } from '@astryxdesign/core/Kbd';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { useHotkeys } from '@astryxdesign/core/hooks';
-import { MediaTheme } from '@astryxdesign/core/theme';
 import { Search } from 'lucide-react';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +26,8 @@ type GlobalSearchPaletteButtonProps = Pick<
  * once, by `WebUIHeader`. Like `BAINotificationButton`, the band's on-dark
  * context sits on the BUTTON via `data-astryx-media`, never on a wrapper: the
  * tooltip panel and the palette's `<dialog>` render as inline siblings and
- * would inherit a `MediaTheme` wrapper's forced scheme.
+ * would inherit a `MediaTheme` wrapper's forced scheme. The tooltip's `Kbd` is
+ * coloured by the theme's tooltip block, not by a wrapper (FR-3726).
  */
 const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
   ...props
@@ -52,8 +52,12 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
     const warm = () => {
       void importPalette().then((palette) => palette.warmGlobalSearch(i18n));
     };
-    if (typeof requestIdleCallback === 'function') requestIdleCallback(warm);
-    else setTimeout(warm, 200);
+    if (typeof requestIdleCallback === 'function') {
+      const handle = requestIdleCallback(warm);
+      return () => cancelIdleCallback(handle);
+    }
+    const handle = window.setTimeout(warm, 200);
+    return () => window.clearTimeout(handle);
     // `changeLanguage` mutates this same `i18n` instance, so the locale must
     // be its own dependency for a language switch to re-warm the index.
   }, [i18n, i18n.resolvedLanguage]);
@@ -64,9 +68,9 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
     <>
       <Tooltip
         content={
-          <MediaTheme mode="dark">
+          <>
             {t('webui.menu.Search')} <Kbd keys="mod+k" />
-          </MediaTheme>
+          </>
         }
         placement="start"
       >

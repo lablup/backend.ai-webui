@@ -30,6 +30,7 @@ const makeSearchContext = (
   config: { fasttrackEndpoint: null },
   visibleMenuKeys: new Set(['session', 'data', 'deployments', 'pipeline']),
   disabledMenuKeys: new Set(),
+  blockedMenuKeys: new Set(),
   t: (key) => key,
   tEn: (key) => key,
   ...overrides,
