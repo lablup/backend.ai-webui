@@ -24,7 +24,6 @@ export { default as BAIPropertyFilter, mergeFilterValues, parseFilterValue, } fr
 export type { BAIPropertyFilterProps, FilterProperty, } from './BAIPropertyFilter';
 export { default as BAIGraphQLPropertyFilter } from './BAIGraphQLPropertyFilter';
 export type { StringFilter, IntFilter, BooleanFilter, EnumFilter, BaseFilter, GraphQLFilter, FilterPropertyType, FilterOperator, FilterProperty as BAIGraphQLFilterProperty, BAIGraphQLPropertyFilterProps, } from './BAIGraphQLPropertyFilter';
-export { stagePickedOption } from './BAIPowerSearchAdapters';
 export { default as BAIRowWrapWithDividers } from './BAIRowWrapWithDividers';
 export { default as BAIStatistic } from './BAIStatistic';
 export type { BAIStatisticProps } from './BAIStatistic';
