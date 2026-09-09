@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>사용자 설정 - Backend.AI WebUI User Guide - 한국어</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="사용자 설정 페이지에서는 Backend.AI WebUI 환경을 사용자 정의할 수 있습니다. 우측 상단의 사람 아이콘을 클릭한 후 설정 메뉴를 선택하여 접근할 수 있습니다." />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/ko/user_settings.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="사용자 설정" />
+  <meta property="og:description" content="사용자 설정 페이지에서는 Backend.AI WebUI 환경을 사용자 정의할 수 있습니다. 우측 상단의 사람 아이콘을 클릭한 후 설정 메뉴를 선택하여 접근할 수 있습니다." />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/ko/user_settings.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="ko" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="사용자 설정" />
+  <meta name="twitter:description" content="사용자 설정 페이지에서는 Backend.AI WebUI 환경을 사용자 정의할 수 있습니다. 우측 상단의 사람 아이콘을 클릭한 후 설정 메뉴를 선택하여 접근할 수 있습니다." />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"사용자 설정","inLanguage":"ko","description":"사용자 설정 페이지에서는 Backend.AI WebUI 환경을 사용자 정의할 수 있습니다. 우측 상단의 사람 아이콘을 클릭한 후 설정 메뉴를 선택하여 접근할 수 있습니다.","dateModified":"2026-09-08T04:37:06.000Z","url":"https://webui.docs.backend.ai/next/ko/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/user_settings.html" />
+  <link rel="alternate" hreflang="en" href="../en/user_settings.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/user_settings.html" />
+  <link rel="alternate" hreflang="th" href="../th/user_settings.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/user_settings.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="user_settings"></script>
+</head>
+<body data-copy-label="복사" data-copied-label="복사됨!" data-copy-failed-label="복사 실패">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (6c05b86)">v26.9.0-alpha.0 (6c05b86)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">문서 검색...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="문서 검색..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/user_settings.html" lang="ko" selected>한국어</option><option value="../en/user_settings.html" lang="en">English</option><option value="../ja/user_settings.html" lang="ja">日本語</option><option value="../th/user_settings.html" lang="th">ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">WebUI 다음 버전(Next)의 미발행 문서입니다.</span>
+    <span class="docs-banner__desc">최신 문서는 <a class="docs-banner__link" href="../../26.8/ko/index.html">최신 버전(26.8)</a>에서 확인하세요.</span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">버전</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="ko"
+      data-slug="user_settings"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">이전 버전</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">소개</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">시작하기</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="시작하기">
+    <li><a href="./quickstart.html">1. 빠른 시작</a></li>
+<li><a href="./disclaimer.html">2. 면책 조항</a></li>
+<li><a href="./overview.html">3. 개요</a></li>
+<li><a href="./installation.html">4. 설치</a></li>
+<li><a href="./login.html">5. 로그인</a></li>
+<li><a href="./header.html">6. 상단 바</a></li>
+<li><a href="./start.html">7. 시작 페이지</a></li>
+<li><a href="./dashboard.html">8. 대시보드</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">워크로드</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="워크로드">
+    <li><a href="./session_page.html">9. 세션 페이지</a></li>
+<li><a href="./sessions_all.html">10. 연산 세션</a></li>
+<li><a href="./cluster_session.html">11. 클러스터 세션</a></li>
+<li><a href="./deployment.html">12. 배포</a></li>
+<li><a href="./chat.html">13. 채팅</a></li>
+<li><a href="./my_environments.html">14. 내 환경</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">스토리지 및 데이터</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="스토리지-및-데이터">
+    <li><a href="./vfolder.html">15. 스토리지 폴더</a></li>
+<li><a href="./mount_vfolder.html">16. 스토리지 폴더 마운트</a></li>
+<li><a href="./share_vfolder.html">17. 스토리지 폴더 공유</a></li>
+<li><a href="./sftp_to_container.html">18. 연산 세션에 대한 SFTP 연결</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">관리</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="관리">
+    <li><a href="./user_settings.html" class="active" aria-current="page">19. 사용자 설정</a></li>
+<li><a href="./project_admin.html">20. 프로젝트 관리자 기능</a></li>
+<li><a href="./rbac_management.html">21. RBAC 관리</a></li>
+<li><a href="./agent_summary.html">22. 에이전트 요약</a></li>
+<li><a href="./statistics.html">23. 통계</a></li>
+<li><a href="./admin_menu.html">24. 관리자 기능</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">참고 자료</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="참고-자료">
+    <li><a href="./trouble_shooting.html">25. FAQ 및 문제 해결</a></li>
+<li><a href="./appendix.html">26. 부록</a></li>
+<li><a href="./license_agreement.html">27. 사용권 계약 조건</a></li>
+<li><a href="./references.html">28. 참고 자료</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="이 페이지는 버전 {version}에 존재하지 않습니다. 해당 버전의 인덱스 페이지로 이동했습니다.">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="닫기" title="닫기">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">홈</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">관리</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">사용자 설정</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-user_settings">
+<p><a id="user-settings"></a></p>
+<h1 data-bai-block="0" id="user_settings-사용자-설정-페이지">사용자 설정 페이지<a class="hash-link" href="#user_settings-사용자-설정-페이지" aria-label="Direct link to 사용자 설정 페이지">#</a></h1>
+<p data-bai-block="1">사용자 설정 페이지에서는 Backend.AI WebUI 환경을 사용자 정의할 수 있습니다.
+우측 상단의 사람 아이콘을 클릭한 후 설정 메뉴를 선택하여 접근할 수 있습니다.
+여기에서 화면 모드, 언어, 데스크탑 알림, SSH 키페어 관리, 쉘 스크립트,
+실험적 기능 등의 환경 설정을 구성할 수 있습니다. 또한 클라이언트 측 로그와
+현재 계정에 로그인되어 있는 로그인 세션, 로그인 기록도 확인할 수 있습니다.</p>
+<p><figure data-bai-block="2" class="doc-figure"><img src="./images/preferences.png" alt="" class="doc-image" loading="lazy" decoding="async" width="177" height="314" /><figcaption>그림 19.1</figcaption></figure>
+</p>
+<p data-bai-block="3">이 페이지는 <strong>일반</strong>, <strong>로그</strong>, <strong>로그인 세션</strong>, <strong>로그인 기록</strong> 네 개의 탭으로
+구성되어 있습니다.</p>
+<p><a id="general-tab"></a></p>
+<h2 data-bai-block="4" id="user_settings-일반-탭">일반 탭<a class="hash-link" href="#user_settings-일반-탭" aria-label="Direct link to 일반 탭">#</a></h2>
+<p><figure data-bai-block="5" class="doc-figure"><img src="./images/user_settings_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 19.2</figcaption></figure>
+</p>
+<p data-bai-block="6">일반 탭에는 <strong>설정</strong>, <strong>쉘 스크립트 환경</strong>, <strong>실험적 기능</strong> 그룹으로 구성된
+모든 환경 설정 항목이 포함되어 있습니다. 좌측 목록에서 특정 그룹으로 바로
+이동할 수 있으며, <strong>전체</strong>를 선택하면 모든 설정 항목을 한 번에 볼 수 있습니다.</p>
+<h3 data-bai-block="7" id="user_settings-설정-검색-및-필터링">설정 검색 및 필터링<a class="hash-link" href="#user_settings-설정-검색-및-필터링" aria-label="Direct link to 설정 검색 및 필터링">#</a></h3>
+<p data-bai-block="8">설정 영역 상단의 <strong>검색 바</strong>를 사용하여 설정 이름으로 빠르게 검색할 수 있습니다.
+키워드를 입력하면 일치하는 설정만 표시됩니다.</p>
+<p data-bai-block="9"><strong>수정 사항만 표시</strong> 체크박스를 선택하면 기본값에서 변경된 설정만 필터링하여
+표시할 수 있습니다. 이 기능은 변경한 모든 사용자 정의 항목을 한눈에 확인할 때
+유용합니다.</p>
+<h3 data-bai-block="10" id="user_settings-설정-초기화">설정 초기화<a class="hash-link" href="#user_settings-설정-초기화" aria-label="Direct link to 설정 초기화">#</a></h3>
+<p data-bai-block="11">모든 설정을 기본값으로 복원하려면 설정 영역 상단의 <strong>초기화</strong> 버튼을
+클릭합니다. 초기화 적용 전에 이 동작을 취소할 수 없다는 경고와 함께 확인 대화
+상자가 나타납니다.</p>
+<p data-bai-block="12">각 개별 설정에도 자체 초기화 버튼이 있으며 (값이 기본값과 다를 때 표시됨),
+다른 설정에 영향을 주지 않고 단일 설정만 초기화할 수 있습니다.</p>
+<h3 data-bai-block="13" id="user_settings-화면-모드">화면 모드<a class="hash-link" href="#user_settings-화면-모드" aria-label="Direct link to 화면 모드">#</a></h3>
+<p data-bai-block="14">WebUI의 화면 모드를 설정합니다. 다음 중에서 선택할 수 있습니다:</p>
+<ul>
+<li data-bai-block="15"><strong>시스템 설정</strong>: 운영체제의 라이트/다크 모드 설정을 자동으로 따릅니다.</li>
+<li data-bai-block="16"><strong>라이트 모드</strong>: 항상 라이트 테마를 사용합니다.</li>
+<li data-bai-block="17"><strong>다크 모드</strong>: 항상 다크 테마를 사용합니다.</li>
+</ul>
+<h3 data-bai-block="18" id="user_settings-테마">테마<a class="hash-link" href="#user_settings-테마" aria-label="Direct link to 테마">#</a></h3>
+<p data-bai-block="19">테마는 라이트 모드와 다크 모드 모두에서 WebUI 전체에 적용되는 색상 계열입니다.
+테마 선택 기능을 사용할 수 있는 경우, <strong>테마</strong> 설정에서 제품에 기본 제공되는
+다음 테마 중 하나를 선택할 수 있습니다:</p>
+<ul>
+<li data-bai-block="20"><strong>Default</strong>: 해당 설치 환경에 설정된 색상으로 구성된 기본 화면입니다.</li>
+<li data-bai-block="21"><strong>Stained</strong></li>
+<li data-bai-block="22"><strong>Glass</strong></li>
+<li data-bai-block="23"><strong>Reverie</strong></li>
+<li data-bai-block="24"><strong>Bliss</strong></li>
+</ul>
+<p data-bai-block="25">선택한 테마는 즉시 적용되며, 선택 내용은 계정에 저장됩니다. 설정의 초기화
+버튼을 클릭하면 <strong>Default</strong> 테마로 되돌아갑니다.</p>
+<p><figure data-bai-block="26" class="doc-figure"><img src="./images/user_settings_theme.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 19.3</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="27" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="28"><strong>테마</strong> 설정은 관리자가 테마 사용자 정의 기능을 활성화하고 설치 환경에 둘 이상의
+테마가 제공되는 경우에만 표시됩니다. 따라서 제공되는 테마 목록은 위 목록과 다를
+수 있습니다.</p>
+</div></div>
+
+
+<h3 data-bai-block="29" id="user_settings-주요-색상">주요 색상<a class="hash-link" href="#user_settings-주요-색상" aria-label="Direct link to 주요 색상">#</a></h3>
+<p data-bai-block="30"><strong>주요 색상</strong>은 선택한 테마의 대표 강조 색상을 재정의합니다. <strong>라이트 모드</strong>와
+<strong>다크 모드</strong>에 각각 하나씩 두 개의 색상 선택기가 제공되므로, 화면 모드별로 다른
+강조 색상을 사용할 수 있습니다.</p>
+<ol>
+<li data-bai-block="31">변경하려는 모드의 색상 견본을 클릭합니다</li>
+<li data-bai-block="32">색상 선택기에서 색상을 고르거나 16진수 값을 입력합니다</li>
+<li data-bai-block="33">새 강조 색상이 WebUI에 즉시 적용됩니다</li>
+</ol>
+<p data-bai-block="34">색상 선택기를 비우면 해당 모드에서 선택한 테마가 제공하는 색상을 그대로
+사용합니다. 설정의 초기화 버튼을 클릭하면 두 모드의 설정이 모두 지워지고 테마
+고유의 색상으로 복원됩니다.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="35" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="36"><strong>테마</strong> 설정과 마찬가지로 <strong>주요 색상</strong>도 관리자가 테마 사용자 정의 기능을
+활성화한 경우에만 표시됩니다.</p>
+</div></div>
+
+
+<h3 data-bai-block="37" id="user_settings-데스크탑-알림-활성화">데스크탑 알림 활성화<a class="hash-link" href="#user_settings-데스크탑-알림-활성화" aria-label="Direct link to 데스크탑 알림 활성화">#</a></h3>
+<p data-bai-block="38">데스크탑 알림 기능의 사용 여부를 설정합니다. 활성화하면 Backend.AI는 앱 내부
+알림 외에 운영체제의 알림 시스템도 함께 사용합니다. 이 옵션을 비활성화해도
+WebUI 내부의 알림 기능에는 영향을 주지 않습니다. 운영체제에 따라 시스템 설정에서
+알림 권한을 활성화해야 할 수 있습니다.</p>
+<h3 data-bai-block="39" id="user_settings-간결한-사이드바를-기본값으로-설정">간결한 사이드바를 기본값으로 설정<a class="hash-link" href="#user_settings-간결한-사이드바를-기본값으로-설정" aria-label="Direct link to 간결한 사이드바를 기본값으로 설정">#</a></h3>
+<p data-bai-block="40">이 옵션이 켜져 있으면 좌측 사이드바가 콤팩트 형태 (너비가 줄어든 형태)로
+표시됩니다. 옵션 변경은 브라우저를 갱신할 때 적용됩니다. 페이지 갱신 없이
+사이드바 형태를 즉시 변경하고 싶다면, 헤더 상단부의 가장 좌측 아이콘을
+클릭하십시오.</p>
+<h3 data-bai-block="41" id="user_settings-언어">언어<a class="hash-link" href="#user_settings-언어" aria-label="Direct link to 언어">#</a></h3>
+<p data-bai-block="42">UI에 출력되는 언어를 설정합니다. 언어 선택기는 검색 가능한 드롭다운으로,
+English, 한국어, brasileiro, 简体中文, 繁體中文, Français, Suomalainen, Deutsch,
+Ελληνική, Bahasa Indonesia, Italiano, 日本語, Монгол, Polski, Português,
+русский, Español, ภาษาไทย, Türkçe, Tiếng Việt 등 20개 언어를 지원합니다.
+드롭다운에 입력하여 원하는 언어를 빠르게 찾을 수 있습니다.</p>
+<p data-bai-block="43">브라우저의 기본 언어와 일치하는 항목에는 &quot;(Default)&quot; 라벨이 표시됩니다. 영어와
+한국어 이외의 언어는 기계 번역을 통해 제공됩니다. 페이지 갱신 전에는 언어가
+바뀌지 않는 UI 항목이 있을 수 있습니다.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="44" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="45">일부 번역 항목은 <code>__NOT_TRANSLATED__</code>로 표시될 수 있으며, 이는 해당 언어에 대한
+번역이 아직 완료되지 않았음을 나타냅니다. Backend.AI WebUI는 오픈 소스이므로,
+번역 개선에 기여하고자 하는 분은 누구나 참여할 수 있습니다:
+<a href="https://github.com/lablup/backend.ai-webui">https://github.com/lablup/backend.ai-webui</a>.</p>
+</div></div>
+
+
+<h3 data-bai-block="46" id="user_settings-로그아웃-후-로그인-정보-유지">로그아웃 후 로그인 정보 유지<a class="hash-link" href="#user_settings-로그아웃-후-로그인-정보-유지" aria-label="Direct link to 로그아웃 후 로그인 정보 유지">#</a></h3>
+<div class="admonition admonition-note">
+<div data-bai-block="47" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="48">이 설정은 Electron (데스크탑) 앱에서만 사용할 수 있습니다.</p>
+</div></div>
+
+
+<p data-bai-block="49">활성화하면 WebUI 앱이 다음 앱 사용 시까지 현재 로그인 세션 정보를 저장합니다.
+이 옵션이 꺼져 있으면 매 로그아웃 시마다 로그인 정보가 자동으로 삭제됩니다.</p>
+<h3 data-bai-block="50" id="user_settings-자동-업데이트-체크">자동 업데이트 체크<a class="hash-link" href="#user_settings-자동-업데이트-체크" aria-label="Direct link to 자동 업데이트 체크">#</a></h3>
+<p data-bai-block="51">WebUI의 새 버전이 검색될 경우 알림 창을 띄웁니다. 이 기능은 인터넷 접속이 가능한
+환경에서만 동작합니다. 기능이 자동으로 비활성화된 경우, 토글을 다시 클릭하면
+업데이트 확인이 재개됩니다.</p>
+<h3 data-bai-block="52" id="user_settings-자동-로그아웃">자동 로그아웃<a class="hash-link" href="#user_settings-자동-로그아웃" aria-label="Direct link to 자동 로그아웃">#</a></h3>
+<p data-bai-block="53">세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI WebUI 페이지가
+닫힐 경우, 자동으로 로그아웃됩니다. (Jupyter Notebook, Web Terminal 등의 앱을
+접속하는 경우에는 로그아웃이 되지 않습니다.)</p>
+<h3 data-bai-block="54" id="user_settings-내-키페어-정보">내 키페어 정보<a class="hash-link" href="#user_settings-내-키페어-정보" aria-label="Direct link to 내 키페어 정보">#</a></h3>
+<p data-bai-block="55">모든 사용자는 하나 이상의 키페어를 가지고 있습니다. <code>설정</code> 버튼을 클릭하면
+액세스 키와 비밀 키를 확인할 수 있습니다. 기본 액세스 키페어는 하나만 존재합니다.</p>
+<p><figure data-bai-block="56" class="doc-figure"><img src="./images/my_keypair_management.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2200" height="660" /><figcaption>그림 19.4</figcaption></figure>
+</p>
+<p data-bai-block="57">대화 상자 상단의 <strong>기본 액세스 키</strong> 배너에는 현재 기본 액세스 키가 표시됩니다.
+옆의 복사 아이콘을 클릭하면 키를 클립보드에 복사할 수 있습니다.</p>
+<h4 data-bai-block="58" id="user_settings-키페어-살펴보기">키페어 살펴보기<a class="hash-link" href="#user_settings-키페어-살펴보기" aria-label="Direct link to 키페어 살펴보기">#</a></h4>
+<p data-bai-block="59">대화 상자에는 키페어가 테이블 형태로 나열됩니다. 테이블 위의 컨트롤을 사용하여
+표시 항목을 좁힐 수 있습니다:</p>
+<ul>
+<li data-bai-block="60"><strong>활성</strong> / <strong>비활성</strong> 토글: 활성 키페어와 비활성화된 키페어 보기를 전환합니다.</li>
+<li data-bai-block="61"><strong>필터</strong>: <strong>액세스 키</strong> 또는 <strong>자원 정책</strong>으로 목록을 필터링합니다.</li>
+<li data-bai-block="62"><strong>열 정렬</strong>: 열 머리글을 클릭하여 <strong>액세스 키</strong>, <strong>자원 정책</strong>, <strong>생성 날짜</strong>
+또는 <strong>최종 사용일</strong> 기준으로 테이블을 정렬합니다.</li>
+<li data-bai-block="63"><strong>페이지네이션</strong>: 한 페이지에 표시할 수 있는 것보다 키페어가 많을 때 페이지를
+이동합니다.</li>
+</ul>
+<p data-bai-block="64">테이블에는 다음 열이 포함됩니다:</p>
+<ul>
+<li data-bai-block="65"><strong>액세스 키</strong>: 키페어의 액세스 키입니다. 기본 액세스 키에는 키 아이콘이
+표시됩니다. 복사 아이콘을 클릭하면 액세스 키를 복사할 수 있습니다.</li>
+<li data-bai-block="66"><strong>제어</strong>: 각 키페어에 사용할 수 있는 작업입니다 (아래 참고).</li>
+<li data-bai-block="67"><strong>자원 정책</strong>: 키페어에 적용된 자원 정책입니다.</li>
+<li data-bai-block="68"><strong>생성 날짜</strong>: 키페어가 생성된 시점입니다.</li>
+<li data-bai-block="69"><strong>최종 사용일</strong>: 키페어가 마지막으로 사용된 시점입니다.</li>
+<li data-bai-block="70"><strong>수정일</strong>: 키페어가 마지막으로 수정된 시점입니다. 이 열은 기본적으로
+숨겨져 있으며, 테이블 열 설정에서 표시할 수 있습니다.</li>
+</ul>
+<h4 data-bai-block="71" id="user_settings-새-키페어-발급">새 키페어 발급<a class="hash-link" href="#user_settings-새-키페어-발급" aria-label="Direct link to 새 키페어 발급">#</a></h4>
+<p data-bai-block="72"><strong>새 키페어 발급</strong> 버튼을 클릭하면 새 키페어를 생성할 수 있습니다. 키페어가
+발급되면 <strong>키페어 자격증명 정보</strong> 대화 상자가 나타나며, 새 자격증명을 단 한
+번만 표시합니다.</p>
+<p><figure data-bai-block="73" class="doc-figure"><img src="./images/keypair_credential_info.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="820" /><figcaption>그림 19.5</figcaption></figure>
+</p>
+<p data-bai-block="74">대화 상자에는 다음 값이 각각 복사 버튼과 함께 표시됩니다:</p>
+<ul>
+<li data-bai-block="75"><strong>액세스 키</strong></li>
+<li data-bai-block="76"><strong>비밀 키</strong></li>
+<li data-bai-block="77"><strong>SSH 공개키</strong></li>
+</ul>
+<p data-bai-block="78"><strong>CSV 다운로드</strong>를 클릭하면 자격증명을 파일로 저장할 수 있습니다.</p>
+<div class="admonition admonition-warning">
+<div data-bai-block="79" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
+<div class="admonition-content">
+
+<p data-bai-block="80"><em>&quot;이 정보는 창을 닫은 후에는 다시 확인할 수 없습니다. 안전한 곳에 저장해
+주세요.&quot;</em> 비밀 키는 단 한 번만 표시됩니다. 대화 상자를 닫기 전에 복사하거나 CSV를
+다운로드하십시오. 이후에는 비밀 키를 다시 확인할 방법이 없습니다.</p>
+</div></div>
+
+
+<h4 data-bai-block="81" id="user_settings-활성-키페어-관리">활성 키페어 관리<a class="hash-link" href="#user_settings-활성-키페어-관리" aria-label="Direct link to 활성 키페어 관리">#</a></h4>
+<p data-bai-block="82">각 활성 키페어의 <strong>제어</strong> 열에서는 다음 작업을 사용할 수 있습니다:</p>
+<ul>
+<li data-bai-block="83"><p><strong>기본으로 설정</strong>: 이 키페어를 기본 액세스 키로 지정합니다. 변경이 적용되기
+전에 확인 창이 나타납니다. 현재 사용 중인 기본 액세스 키에는 이 작업이 표시되지
+않습니다.</p>
+<p><figure data-bai-block="84" class="doc-figure"><img src="./images/keypair_set_as_main_confirm.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2320" height="868" /><figcaption>그림 19.6</figcaption></figure>
+</p>
+</li>
+<li data-bai-block="85"><p><strong>비활성화</strong>: 키페어를 비활성화하여 더 이상 사용할 수 없게 합니다. 키페어가
+비활성화되기 전에 확인 창이 나타납니다. 기본 액세스 키는 비활성화할 수 없으므로
+먼저 다른 키로 전환해야 합니다 (<em>&quot;기본 액세스 키는 비활성화할 수 없습니다.
+다른 키로 먼저 전환해 주세요.&quot;</em>).</p>
+</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="86" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>재로그인 필요</div>
+<div class="admonition-content">
+
+<p data-bai-block="87">기본 액세스 키가 변경되면(예: 새 키페어를 발급하여 기본 키로 설정한 경우),
+WebUI에 <strong>재로그인 필요</strong> 알림과 함께 <em>&quot;기본 액세스 키가 변경되었습니다. 변경
+사항을 적용하려면 다시 로그인해 주세요.&quot;</em> 메시지가 표시됩니다. 변경된 기본 액세스
+키를 세션에 적용하려면 로그아웃 후 다시 로그인하십시오.</p>
+</div></div>
+
+
+<h4 data-bai-block="88" id="user_settings-비활성-키페어-관리">비활성 키페어 관리<a class="hash-link" href="#user_settings-비활성-키페어-관리" aria-label="Direct link to 비활성 키페어 관리">#</a></h4>
+<p data-bai-block="89"><strong>비활성</strong> 보기로 전환하면 비활성화된 키페어를 관리할 수 있습니다. 각 비활성
+키페어에서는 다음 작업을 사용할 수 있습니다:</p>
+<ul>
+<li data-bai-block="90"><strong>복구</strong>: 키페어를 다시 활성화하여 사용할 수 있도록 합니다. 키페어가 복구되기
+전에 확인 창이 나타납니다.</li>
+<li data-bai-block="91"><strong>키페어 삭제</strong>: 키페어를 영구적으로 삭제합니다.</li>
+</ul>
+<div class="admonition admonition-danger">
+<div data-bai-block="92" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>위험</div>
+<div class="admonition-content">
+
+<p data-bai-block="93">키페어 삭제는 <strong>되돌릴 수 없습니다</strong>. 한 번 삭제된 키페어는 복구할 수 없습니다.
+실수로 삭제하는 것을 방지하기 위해, 삭제가 허용되기 전에 확인 입력란에
+<strong>영구 삭제</strong>를 입력해야 합니다.</p>
+</div></div>
+
+
+<p><figure data-bai-block="94" class="doc-figure"><img src="./images/keypair_delete_confirm.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1096" height="632" /><figcaption>그림 19.7</figcaption></figure>
+</p>
+<p><a id="user-ssh-keypair-management"></a></p>
+<h3 data-bai-block="95" id="user_settings-ssh-키페어-관리">SSH 키페어 관리<a class="hash-link" href="#user_settings-ssh-키페어-관리" aria-label="Direct link to SSH 키페어 관리">#</a></h3>
+<p data-bai-block="96">연산 세션에 직접 SSH/SFTP로 접속할 때 필요한 SSH 키페어를 조회하고 생성하는
+기능입니다. SSH 키페어 관리 섹션의 우측 버튼을 클릭하면 다음과 같은 다이얼로그가
+나타납니다. 우측의 복사 버튼을 클릭하면 현재 존재하는 SSH 공개 키를 복사할 수
+있습니다. 다이얼로그 하단의 <code>생성하기</code> 버튼을 클릭하면 SSH 키페어를 갱신할 수
+있습니다. SSH 공개/비밀 키는 랜덤으로 생성되어 사용자 정보로 저장됩니다. 비밀
+키는 생성 직후 따로 저장해 두지 않으면 다시 확인할 수 없음에 주의하십시오.</p>
+<p><figure data-bai-block="97" class="doc-figure"><img src="./images/ssh_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1056" height="1042" /><figcaption>그림 19.8</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="98" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="99">Backend.AI는 OpenSSH에 기반한 SSH keypair를 사용합니다. Windows에서는 PPK 기반
+키로 변환해야 할 수 있습니다.</p>
+</div></div>
+
+
+<p data-bai-block="100">Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해 사용자 자신의 SSH
+키페어를 직접 등록하는 기능을 지원합니다. 자신의 SSH 키페어를 추가하려면
+<code>직접 입력하기</code> 버튼을 클릭하십시오. 그러면 <strong>공개 키</strong>와 <strong>비밀 키</strong> 두 개의
+텍스트 영역이 표시됩니다.</p>
+<p><figure data-bai-block="101" class="doc-figure"><img src="./images/add_ssh_keypair_manually_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1054" height="1042" /><figcaption>그림 19.9</figcaption></figure>
+</p>
+<p data-bai-block="102">키를 입력한 후 <code>저장</code> 버튼을 클릭하십시오. 이제 자신의 키를 사용하여 Backend.AI
+세션에 접속할 수 있습니다.</p>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/ssh_keypair_dialog_after.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1058" height="1042" /><figcaption>그림 19.10</figcaption></figure>
+</p>
+<h3 data-bai-block="104" id="user_settings-병렬-파일-업로드-제한">병렬 파일 업로드 제한<a class="hash-link" href="#user_settings-병렬-파일-업로드-제한" aria-label="Direct link to 병렬 파일 업로드 제한">#</a></h3>
+<p data-bai-block="105">파일 익스플로러를 통해 동시에 업로드할 수 있는 파일의 개수를 제한합니다. 2에서
+5 사이의 값을 선택할 수 있습니다. 기본값은 2입니다.</p>
+<h3 data-bai-block="106" id="user_settings-부트스트랩-스크립트-수정">부트스트랩 스크립트 수정<a class="hash-link" href="#user_settings-부트스트랩-스크립트-수정" aria-label="Direct link to 부트스트랩 스크립트 수정">#</a></h3>
+<p data-bai-block="107">연산 세션 시작 후 한 번만 스크립트를 실행하고자 할 경우, 여기에 그 내용을
+작성해 주십시오.</p>
+<p><figure data-bai-block="108" class="doc-figure"><img src="./images/edit_bootstrap_script.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1440" height="900" /><figcaption>그림 19.11</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="109" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="110">부트스트랩 스크립트의 실행이 완료될 때까지 연산 세션은 <code>PREPARING</code> 상태를
+유지합니다. 세션이 <code>RUNNING</code> 상태가 되어야 사용할 수 있으므로, 스크립트에 오래
+걸리는 작업이 포함되어 있다면 부트스트랩 스크립트에서 제거하고 터미널 앱에서
+직접 실행하는 것이 좋습니다.</p>
+</div></div>
+
+
+<h3 data-bai-block="111" id="user_settings-사용자-환경-스크립트-수정">사용자 환경 스크립트 수정<a class="hash-link" href="#user_settings-사용자-환경-스크립트-수정" aria-label="Direct link to 사용자 환경 스크립트 수정">#</a></h3>
+<p data-bai-block="112">연산 세션의 기본 설정 스크립트를 대체하는 사용자 환경 스크립트를 작성할 수
+있습니다. <code>.bashrc</code>, <code>.tmux.conf.local</code>, <code>.vimrc</code> 등의 파일을 사용자 정의할 수
+있습니다. 스크립트는 사용자별로 저장되며, 특정 자동화 작업이 필요할 때 활용할 수
+있습니다. 예를 들어, <code>.bashrc</code> 스크립트를 수정하여 명령어 별칭을 등록하거나
+특정 파일이 항상 지정된 위치에 다운로드되도록 설정할 수 있습니다.</p>
+<p data-bai-block="113">상단의 드롭다운 메뉴를 활용해서 작성할 스크립트의 종류 (<code>.bashrc</code>, <code>.zshrc</code>,
+<code>.tmux.conf.local</code>, <code>.vimrc</code>, <code>.Renviron</code>) 를 선택한 후 내용을 작성하십시오.
+<code>저장 후 닫기</code> 버튼을 클릭하면 스크립트를 저장하고 다이얼로그를 닫으며, 옆의
+화살표를 열어 <code>저장 후 유지</code>를 선택하면 다이얼로그를 열어 둔 채로 저장할 수
+있습니다. 다이얼로그 좌측의 버튼으로는 스크립트를 삭제하거나 저장하지 않은
+변경사항을 초기화할 수 있습니다.</p>
+<p><figure data-bai-block="114" class="doc-figure"><img src="./images/edit_user_config_script.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1440" height="900" /><figcaption>그림 19.12</figcaption></figure>
+</p>
+<p><a id="experimental-features"></a></p>
+<h3 data-bai-block="115" id="user_settings-실험적-기능">실험적 기능<a class="hash-link" href="#user_settings-실험적-기능" aria-label="Direct link to 실험적 기능">#</a></h3>
+<p data-bai-block="116">새로운 실험적 기능을 먼저 경험해보세요. 이러한 기능들은 향후 업데이트에서
+변경되거나 제거될 수 있습니다. 각 기능은 <strong>활성화</strong> 체크박스로 켤 수 있습니다.</p>
+<p><figure data-bai-block="117" class="doc-figure"><img src="./images/experimental_features.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 19.13</figcaption></figure>
+</p>
+<ul>
+<li data-bai-block="118"><strong>AI 에이전트</strong>: AI 에이전트 기능을 활성화합니다. 이 기능은 WebUI 내에서
+에이전트 기반 AI 기능을 제공합니다. 활성화하면 세션에서 AI 에이전트 기능을
+사용할 수 있습니다.</li>
+<li data-bai-block="119"><strong>사용자 정의 대시보드 패널</strong>: 대시보드 페이지에 나만의 사용자 정의 패널을 추가할 수
+있게 해줍니다. 각 패널은 선택한 데이터 소스를 지정한 조건으로 좁혀 보여
+줍니다. 이 기능이 활성화된 동안에만 패널이 표시되며, 나중에
+비활성화하면 패널이 삭제되지 않고 숨겨지고, 다시 활성화하면 원래대로
+복원됩니다. 추가 및 관리 방법은 <a href="./dashboard.html#custom-panels">사용자 정의 패널</a> 섹션을
+참고하세요.</li>
+<li data-bai-block="120"><strong>Hugging Face에서 가져오기</strong>: 시작 페이지의 <strong>URL 로 시작</strong> 대화 상자에
+<strong>Hugging Face 모델 가져오기</strong> 탭을 추가하여, Hugging Face의 모델을 모델
+폴더로 바로 가져올 수 있습니다. 이 탭은 설치 환경에서 모델 배포 기능을 함께
+사용할 수 있는 경우에만 표시됩니다.</li>
+<li data-bai-block="121"><strong>세션 리소스 그리드 뷰</strong>: 세션 페이지와 관리자용 세션 페이지의 세션 목록
+위에 <strong>보기 모드</strong> 전환(<strong>테이블</strong> 또는 <strong>그리드</strong>)을 추가합니다.
+<strong>그리드</strong>를 선택하면 테이블 대신 세션마다 셀이 하나씩 표시되며, 셀의 색은
+해당 세션의 실시간 자원 사용률을 나타냅니다. 이 전환 버튼은 해당 기능을
+활성화한 경우에만 표시됩니다. 그리드 자체의 조작 방법은
+<a href="./sessions_all.html#session-list-view-and-refresh">세션 목록 보기</a> 섹션을 참고하세요.</li>
+</ul>
+<p><a id="logs-tab"></a></p>
+<h2 data-bai-block="122" id="user_settings-로그-탭">로그 탭<a class="hash-link" href="#user_settings-로그-탭" aria-label="Direct link to 로그 탭">#</a></h2>
+<p data-bai-block="123">클라이언트 측에서 기록된 각종 로그의 상세 정보를 출력합니다. 요청 오류가
+발생했을 때 자세한 내용을 확인하고 싶을 때 이 페이지를 방문할 수 있습니다. 로그를
+검색하거나 에러 메시지를 필터링하고, 로그를 새로고침하거나 우측 상단의
+<strong>로그 삭제</strong> 버튼을 클릭해서 모든 로그를 지울 수 있습니다.</p>
+<p><figure data-bai-block="124" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 19.14</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="125" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="126">로그인된 페이지가 하나만 존재할 경우, <strong>새로고침</strong> 버튼을 클릭하면 제대로
+작동하지 않는 것처럼 보일 수 있습니다. 로그 페이지는 서버에 대한 요청과 서버의
+응답을 모아둔 것이며, 현재 페이지가 로그 페이지인 경우 명시적으로 페이지를 새로
+고침하는 것 외에는 서버에 요청을 보내지 않습니다. 로그가 제대로 쌓이는지
+확인하려면 다른 페이지를 열고 <strong>새로고침</strong> 버튼을 클릭하십시오.</p>
+</div></div>
+
+
+<p data-bai-block="127">특정 열을 숨기거나 보이게 하려면, 테이블 우측 하단의 기어 아이콘을 클릭하십시오.
+그러면 아래와 같은 다이얼로그가 나타나며, 보고 싶은 열을 선택할 수 있습니다.</p>
+<p><figure data-bai-block="128" class="doc-figure"><img src="./images/logs_table_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="484" /><figcaption>그림 19.15</figcaption></figure>
+</p>
+<p><a id="login-sessions-tab"></a></p>
+<h2 data-bai-block="129" id="user_settings-로그인-세션-탭">로그인 세션 탭<a class="hash-link" href="#user_settings-로그인-세션-탭" aria-label="Direct link to 로그인 세션 탭">#</a></h2>
+<p data-bai-block="130">로그인 세션 탭에는 현재 내 계정에 연결된 로그인 세션이 표시됩니다. Backend.AI에
+로그인되어 있는 각 위치마다 하나의 항목이 표시되므로, 내 계정이 어디에서
+사용되고 있는지 확인하고 더 이상 필요하지 않은 세션을 로그아웃시킬 수 있습니다.</p>
+<p><figure data-bai-block="131" class="doc-figure"><img src="./images/login_sessions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 19.16</figcaption></figure>
+</p>
+<p data-bai-block="132">테이블에는 다음 열이 포함됩니다:</p>
+<ul>
+<li data-bai-block="133"><strong>사용자</strong>: 해당 로그인 세션을 소유한 계정의 이메일 주소입니다.</li>
+<li data-bai-block="134"><strong>액세스 키</strong>: 로그인 세션이 인증에 사용하는 액세스 키입니다. 복사 아이콘을
+클릭하면 액세스 키를 복사할 수 있습니다.</li>
+<li data-bai-block="135"><strong>생성 시각</strong>: 로그인 세션이 생성된 시점입니다. 열 머리글을 클릭하면 이 열을
+기준으로 정렬할 수 있습니다.</li>
+</ul>
+<h3 data-bai-block="136" id="user_settings-로그인-세션-필터링">로그인 세션 필터링<a class="hash-link" href="#user_settings-로그인-세션-필터링" aria-label="Direct link to 로그인 세션 필터링">#</a></h3>
+<p data-bai-block="137">테이블 위의 필터를 사용하여 목록을 좁힐 수 있습니다:</p>
+<ul>
+<li data-bai-block="138"><strong>액세스 키</strong>: 입력한 문자열이 액세스 키에 포함된 로그인 세션만 표시합니다.</li>
+<li data-bai-block="139"><strong>생성 시각</strong>: 선택한 날짜와 시간 이후 (또는 이전) 에 생성된 로그인 세션만
+표시합니다.</li>
+</ul>
+<p data-bai-block="140">테이블 아래의 페이지네이션 컨트롤을 사용하여 페이지를 이동하거나 한 페이지에
+표시할 행 수를 변경할 수 있습니다.</p>
+<h3 data-bai-block="141" id="user_settings-로그인-세션-해지">로그인 세션 해지<a class="hash-link" href="#user_settings-로그인-세션-해지" aria-label="Direct link to 로그인 세션 해지">#</a></h3>
+<p data-bai-block="142">각 행에는 <strong>사용자</strong> 열의 이메일 주소 옆에 <strong>세션 해지</strong> 작업이 제공됩니다.</p>
+<ol>
+<li data-bai-block="143">종료하려는 행의 <strong>세션 해지</strong>를 클릭합니다</li>
+<li data-bai-block="144">해당 로그인 세션의 액세스 키가 표시된 확인 창의 내용을 확인합니다</li>
+<li data-bai-block="145"><strong>해지</strong>를 클릭합니다</li>
+</ol>
+<p data-bai-block="146">목록이 새로 고쳐지고 <em>&quot;로그인 세션을 해지했습니다.&quot;</em> 메시지가 표시됩니다. 로그인
+세션을 해지할 수 없는 경우에는 <em>&quot;로그인 세션 해지에 실패했습니다.&quot;</em> 메시지가
+표시됩니다.</p>
+<div class="admonition admonition-warning">
+<div data-bai-block="147" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
+<div class="admonition-content">
+
+<p data-bai-block="148">로그인 세션을 해지하면 해당 세션은 즉시 로그아웃됩니다. 현재 사용 중인 로그인
+세션을 해지한 경우에는 다시 로그인해야 합니다.</p>
+</div></div>
+
+
+<p><a id="login-history-tab"></a></p>
+<h2 data-bai-block="149" id="user_settings-로그인-기록-탭">로그인 기록 탭<a class="hash-link" href="#user_settings-로그인-기록-탭" aria-label="Direct link to 로그인 기록 탭">#</a></h2>
+<p data-bai-block="150">로그인 기록 탭에는 내 계정에 대해 기록된 로그인 시도가 표시됩니다. 로그인 성공,
+로그인 실패는 물론 로그아웃이나 만료와 같은 로그인 세션 관련 이벤트도 함께
+표시됩니다. 이 탭은 조회 전용이며 행에 대한 별도의 작업은 없습니다.</p>
+<p><figure data-bai-block="151" class="doc-figure"><img src="./images/login_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 19.17</figcaption></figure>
+</p>
+<p data-bai-block="152">테이블에는 다음 열이 포함됩니다:</p>
+<ul>
+<li data-bai-block="153"><strong>결과</strong>: 로그인 시도의 결과로, 색상으로 구분된 태그로 표시됩니다. 이 열을
+기준으로 정렬할 수 있습니다.</li>
+<li data-bai-block="154"><strong>도메인</strong>: 로그인을 시도한 도메인입니다. 이 열을 기준으로 정렬할 수 있습니다.</li>
+<li data-bai-block="155"><strong>로그인 시각</strong>: 로그인 시도가 기록된 시점입니다. 이 열을 기준으로 정렬할 수
+있습니다.</li>
+<li data-bai-block="156"><strong>실패 사유</strong>: 실패한 시도에 대해 추가로 보고된 상세 내용입니다. 해당 내용이
+없으면 <code>-</code> 로 표시됩니다.</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="157" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="158">결과 값은 서버가 보고한 그대로 (예: <code>SUCCESS</code>, <code>FAILED_INVALID_CREDENTIALS</code>)
+표시되며 번역되지 않습니다.</p>
+</div></div>
+
+
+<h3 data-bai-block="159" id="user_settings-결과-값">결과 값<a class="hash-link" href="#user_settings-결과-값" aria-label="Direct link to 결과 값">#</a></h3>
+<table>
+<thead>
+<tr data-bai-block="160">
+<th>결과</th>
+<th>색상</th>
+<th>의미</th>
+</tr>
+</thead>
+<tbody><tr data-bai-block="161">
+<td>SUCCESS</td>
+<td>초록색</td>
+<td>로그인에 성공했습니다</td>
+</tr>
+<tr data-bai-block="162">
+<td>FAILED_INVALID_CREDENTIALS</td>
+<td>빨간색</td>
+<td>이메일 주소 또는 비밀번호가 올바르지 않습니다</td>
+</tr>
+<tr data-bai-block="163">
+<td>FAILED_USER_INACTIVE</td>
+<td>빨간색</td>
+<td>계정이 활성 상태가 아닙니다</td>
+</tr>
+<tr data-bai-block="164">
+<td>FAILED_BLOCKED</td>
+<td>빨간색</td>
+<td>로그인이 차단되었습니다</td>
+</tr>
+<tr data-bai-block="165">
+<td>FAILED_PASSWORD_EXPIRED</td>
+<td>빨간색</td>
+<td>계정 비밀번호가 만료되었습니다</td>
+</tr>
+<tr data-bai-block="166">
+<td>FAILED_REJECTED_BY_HOOK</td>
+<td>빨간색</td>
+<td>서버 측 훅에 의해 로그인이 거부되었습니다</td>
+</tr>
+<tr data-bai-block="167">
+<td>FAILED_SESSION_ALREADY_EXISTS</td>
+<td>빨간색</td>
+<td>해당 계정의 로그인 세션이 이미 존재합니다</td>
+</tr>
+<tr data-bai-block="168">
+<td>LOGOUT</td>
+<td>회색</td>
+<td>로그아웃하여 로그인 세션이 종료되었습니다</td>
+</tr>
+<tr data-bai-block="169">
+<td>REVOKED_BY_ADMIN</td>
+<td>노란색</td>
+<td>관리자가 로그인 세션을 해지했습니다</td>
+</tr>
+<tr data-bai-block="170">
+<td>REVOKED_BY_USER</td>
+<td>회색</td>
+<td>사용자가 직접 로그인 세션을 해지했습니다</td>
+</tr>
+<tr data-bai-block="171">
+<td>EVICTED</td>
+<td>노란색</td>
+<td>서버가 로그인 세션을 정리했습니다</td>
+</tr>
+<tr data-bai-block="172">
+<td>EXPIRED</td>
+<td>회색</td>
+<td>로그인 세션이 만료되었습니다</td>
+</tr>
+</tbody></table>
+<h3 data-bai-block="173" id="user_settings-로그인-기록-필터링">로그인 기록 필터링<a class="hash-link" href="#user_settings-로그인-기록-필터링" aria-label="Direct link to 로그인 기록 필터링">#</a></h3>
+<p data-bai-block="174">테이블 위의 필터를 사용하여 목록을 좁힐 수 있습니다:</p>
+<ul>
+<li data-bai-block="175"><strong>결과</strong>: 위 결과 값 목록에서 선택한 결과의 항목만 표시합니다.</li>
+<li data-bai-block="176"><strong>도메인</strong>: 입력한 문자열이 도메인에 포함된 항목만 표시합니다.</li>
+<li data-bai-block="177"><strong>로그인 시각</strong>: 선택한 날짜와 시간 이후 (또는 이전) 에 기록된 항목만
+표시합니다.</li>
+</ul>
+<p data-bai-block="178">테이블 아래의 페이지네이션 컨트롤을 사용하여 페이지를 이동하거나 한 페이지에
+표시할 행 수를 변경할 수 있습니다.</p>
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
+  <span class="last-updated">마지막 업데이트 2026년 9월 8일</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./sftp_to_container.html">
+        <div class="pagination-nav__sublabel">이전</div>
+        <div class="pagination-nav__label">&laquo; 연산 세션에 대한 SFTP 연결</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./project_admin.html">
+        <div class="pagination-nav__sublabel">다음</div>
+        <div class="pagination-nav__label">프로젝트 관리자 기능 &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">이 페이지의 목차</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-%EC%9D%BC%EB%B0%98-%ED%83%AD" data-toc-target="user_settings-일반-탭">일반 탭</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EC%84%A4%EC%A0%95-%EA%B2%80%EC%83%89-%EB%B0%8F-%ED%95%84%ED%84%B0%EB%A7%81" data-toc-target="user_settings-설정-검색-및-필터링">설정 검색 및 필터링</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EC%84%A4%EC%A0%95-%EC%B4%88%EA%B8%B0%ED%99%94" data-toc-target="user_settings-설정-초기화">설정 초기화</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%ED%99%94%EB%A9%B4-%EB%AA%A8%EB%93%9C" data-toc-target="user_settings-화면-모드">화면 모드</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%ED%85%8C%EB%A7%88" data-toc-target="user_settings-테마">테마</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EC%A3%BC%EC%9A%94-%EC%83%89%EC%83%81" data-toc-target="user_settings-주요-색상">주요 색상</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EB%8D%B0%EC%8A%A4%ED%81%AC%ED%83%91-%EC%95%8C%EB%A6%BC-%ED%99%9C%EC%84%B1%ED%99%94" data-toc-target="user_settings-데스크탑-알림-활성화">데스크탑 알림 활성화</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EA%B0%84%EA%B2%B0%ED%95%9C-%EC%82%AC%EC%9D%B4%EB%93%9C%EB%B0%94%EB%A5%BC-%EA%B8%B0%EB%B3%B8%EA%B0%92%EC%9C%BC%EB%A1%9C-%EC%84%A4%EC%A0%95" data-toc-target="user_settings-간결한-사이드바를-기본값으로-설정">간결한 사이드바를 기본값으로 설정</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EC%96%B8%EC%96%B4" data-toc-target="user_settings-언어">언어</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EB%A1%9C%EA%B7%B8%EC%95%84%EC%9B%83-%ED%9B%84-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%A0%95%EB%B3%B4-%EC%9C%A0%EC%A7%80" data-toc-target="user_settings-로그아웃-후-로그인-정보-유지">로그아웃 후 로그인 정보 유지</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EC%9E%90%EB%8F%99-%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8-%EC%B2%B4%ED%81%AC" data-toc-target="user_settings-자동-업데이트-체크">자동 업데이트 체크</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EC%9E%90%EB%8F%99-%EB%A1%9C%EA%B7%B8%EC%95%84%EC%9B%83" data-toc-target="user_settings-자동-로그아웃">자동 로그아웃</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EB%82%B4-%ED%82%A4%ED%8E%98%EC%96%B4-%EC%A0%95%EB%B3%B4" data-toc-target="user_settings-내-키페어-정보">내 키페어 정보</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-ssh-%ED%82%A4%ED%8E%98%EC%96%B4-%EA%B4%80%EB%A6%AC" data-toc-target="user_settings-ssh-키페어-관리">SSH 키페어 관리</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EB%B3%91%EB%A0%AC-%ED%8C%8C%EC%9D%BC-%EC%97%85%EB%A1%9C%EB%93%9C-%EC%A0%9C%ED%95%9C" data-toc-target="user_settings-병렬-파일-업로드-제한">병렬 파일 업로드 제한</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EB%B6%80%ED%8A%B8%EC%8A%A4%ED%8A%B8%EB%9E%A9-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%88%98%EC%A0%95" data-toc-target="user_settings-부트스트랩-스크립트-수정">부트스트랩 스크립트 수정</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EC%82%AC%EC%9A%A9%EC%9E%90-%ED%99%98%EA%B2%BD-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EC%88%98%EC%A0%95" data-toc-target="user_settings-사용자-환경-스크립트-수정">사용자 환경 스크립트 수정</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EC%8B%A4%ED%97%98%EC%A0%81-%EA%B8%B0%EB%8A%A5" data-toc-target="user_settings-실험적-기능">실험적 기능</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-%EB%A1%9C%EA%B7%B8-%ED%83%AD" data-toc-target="user_settings-로그-탭">로그 탭</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%84%B8%EC%85%98-%ED%83%AD" data-toc-target="user_settings-로그인-세션-탭">로그인 세션 탭</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%84%B8%EC%85%98-%ED%95%84%ED%84%B0%EB%A7%81" data-toc-target="user_settings-로그인-세션-필터링">로그인 세션 필터링</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%84%B8%EC%85%98-%ED%95%B4%EC%A7%80" data-toc-target="user_settings-로그인-세션-해지">로그인 세션 해지</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B8%B0%EB%A1%9D-%ED%83%AD" data-toc-target="user_settings-로그인-기록-탭">로그인 기록 탭</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EA%B2%B0%EA%B3%BC-%EA%B0%92" data-toc-target="user_settings-결과-값">결과 값</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B8%B0%EB%A1%9D-%ED%95%84%ED%84%B0%EB%A7%81" data-toc-target="user_settings-로그인-기록-필터링">로그인 기록 필터링</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">도움 받기</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>이 페이지 편집</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="문서 검색..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="문서 검색..." data-no-results="검색 결과가 없습니다" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>
