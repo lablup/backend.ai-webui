@@ -10,9 +10,13 @@ const PREEMPTION_STATUSES: ReadonlyArray<SessionV2Status> = [
   'RESCHEDULING',
 ];
 
+/** Gated behind the client's `session-reserved-status` feature flag. */
+const RESERVED_STATUSES: ReadonlyArray<SessionV2Status> = ['RESERVED'];
+
 /** Sessions still occupying (or about to occupy) agent resources. */
 const RUNNING_STATUSES: ReadonlyArray<SessionV2Status> = [
   'PENDING',
+  'RESERVED',
   'SCHEDULED',
   'PREPARING',
   'PREPARED',
@@ -37,15 +41,17 @@ export type SessionStatusCategory =
 /**
  * The running / finished status buckets, narrowed to what the connected
  * manager's `SessionV2Status` enum actually accepts. Callers read
- * `supports('session-preemption-statuses')` and pass it in.
+ * `supports('session-preemption-statuses')` / `supports('session-reserved-status')`
+ * and pass them in.
  */
 export const getSessionV2StatusBuckets = (
   supportsPreemptionStatuses: boolean,
+  supportsReservedStatus: boolean,
 ): Record<SessionStatusCategory, ReadonlyArray<SessionV2Status>> => ({
-  running: supportsPreemptionStatuses
-    ? RUNNING_STATUSES
-    : RUNNING_STATUSES.filter(
-        (status) => !PREEMPTION_STATUSES.includes(status),
-      ),
+  running: RUNNING_STATUSES.filter(
+    (status) =>
+      (supportsPreemptionStatuses || !PREEMPTION_STATUSES.includes(status)) &&
+      (supportsReservedStatus || !RESERVED_STATUSES.includes(status)),
+  ),
   finished: FINISHED_STATUSES,
 });

@@ -986,6 +986,13 @@ export class Client {
       // query on an older manager, so status filters must omit them.
       this._features['session-preemption-statuses'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.8.1')) {
+      // `RESERVED` joins `SessionV2Status` / `KernelV2Status` with the
+      // preemption scheduler's reservation stage (BA-7308 train; core fixes
+      // lablup/backend.ai#13235 / #13260). Enum coercion rejects the whole
+      // query on an older manager, so status filters must omit it.
+      this._features['session-reserved-status'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
       // .modelDefinition` moves from `ModelDefinition` to a new
