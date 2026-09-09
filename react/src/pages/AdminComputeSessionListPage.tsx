@@ -552,6 +552,7 @@ const AdminComputeSessionListPage = () => {
             tableSettings={{
               columnOverrides: columnOverrides,
               defaultColumnOverrides: {
+                sessionId: { hidden: false },
                 environment: { hidden: false },
                 resourceGroup: { hidden: false },
                 type: { hidden: false },
