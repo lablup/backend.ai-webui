@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ログイン - Backend.AI WebUI User Guide - 日本語</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="WebUIを起動すると、ログインダイアログが表示されます。まだサインアップしていない場合は、ダイアログの下部にあるサインアップリンクをクリックしてください。" />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/ja/login.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="ログイン" />
+  <meta property="og:description" content="WebUIを起動すると、ログインダイアログが表示されます。まだサインアップしていない場合は、ダイアログの下部にあるサインアップリンクをクリックしてください。" />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/ja/login.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="ja" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ログイン" />
+  <meta name="twitter:description" content="WebUIを起動すると、ログインダイアログが表示されます。まだサインアップしていない場合は、ダイアログの下部にあるサインアップリンクをクリックしてください。" />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ログイン","inLanguage":"ja","description":"WebUIを起動すると、ログインダイアログが表示されます。まだサインアップしていない場合は、ダイアログの下部にあるサインアップリンクをクリックしてください。","dateModified":"2026-09-03T00:23:41.000Z","url":"https://webui.docs.backend.ai/next/ja/login.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/login.html" />
+  <link rel="alternate" hreflang="en" href="../en/login.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/login.html" />
+  <link rel="alternate" hreflang="th" href="../th/login.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/login.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="login"></script>
+</head>
+<body data-copy-label="コピー" data-copied-label="コピーしました!" data-copy-failed-label="コピーに失敗しました">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (167defb)">v26.9.0-alpha.0 (167defb)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">ドキュメント検索...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="ドキュメント検索..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/login.html" lang="ko">한국어</option><option value="../en/login.html" lang="en">English</option><option value="../ja/login.html" lang="ja" selected>日本語</option><option value="../th/login.html" lang="th">ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">WebUI 次期バージョン (Next) の未公開ドキュメントです。</span>
+    <span class="docs-banner__desc">最新のドキュメントは<a class="docs-banner__link" href="../../26.8/ja/index.html">最新バージョン(26.8)</a>をご覧ください。</span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">バージョン</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="ja"
+      data-slug="login"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">以前のバージョン</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">はじめに</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">はじめに</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="はじめに">
+    <li><a href="./quickstart.html">1. クイックスタート</a></li>
+<li><a href="./disclaimer.html">2. 免責事項</a></li>
+<li><a href="./overview.html">3. 概要</a></li>
+<li><a href="./installation.html">4. インストール</a></li>
+<li><a href="./login.html" class="active" aria-current="page">5. ログイン</a></li>
+<li><a href="./header.html">6. トップバー</a></li>
+<li><a href="./start.html">7. スタート</a></li>
+<li><a href="./dashboard.html">8. ダッシュボード</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">ワークロード</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="ワークロード">
+    <li><a href="./session_page.html">9. セッションページ</a></li>
+<li><a href="./sessions_all.html">10. コンピュートセッション</a></li>
+<li><a href="./cluster_session.html">11. クラスターセッション</a></li>
+<li><a href="./deployment.html">12. デプロイ</a></li>
+<li><a href="./chat.html">13. チャット</a></li>
+<li><a href="./my_environments.html">14. マイ環境</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">ストレージとデータ</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="ストレージとデータ">
+    <li><a href="./vfolder.html">15. ストレージフォルダ</a></li>
+<li><a href="./mount_vfolder.html">16. ストレージフォルダのマウント</a></li>
+<li><a href="./share_vfolder.html">17. ストレージフォルダの共有</a></li>
+<li><a href="./sftp_to_container.html">18. コンピュートセッションへのSFTP接続</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">管理</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="管理">
+    <li><a href="./user_settings.html">19. ユーザー設定</a></li>
+<li><a href="./project_admin.html">20. プロジェクト管理者機能</a></li>
+<li><a href="./rbac_management.html">21. RBAC管理</a></li>
+<li><a href="./agent_summary.html">22. エージェントサマリー</a></li>
+<li><a href="./statistics.html">23. 統計</a></li>
+<li><a href="./admin_menu.html">24. 管理者機能</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">リファレンス</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="リファレンス">
+    <li><a href="./trouble_shooting.html">25. FAQ＆トラブルシューティング</a></li>
+<li><a href="./appendix.html">26. 付録</a></li>
+<li><a href="./license_agreement.html">27. ライセンス契約</a></li>
+<li><a href="./references.html">28. 参考資料</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="このページはバージョン {version} には存在しません。代わりにバージョンのインデックスを表示しています。">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="閉じる" title="閉じる">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">ホーム</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">はじめに</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">ログイン</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-login">
+<h1 data-bai-block="0" id="login-サインアップとログイン">サインアップとログイン<a class="hash-link" href="#login-サインアップとログイン" aria-label="Direct link to サインアップとログイン">#</a></h1>
+<p><a id="sign-up"></a></p>
+<h2 data-bai-block="1" id="login-サインアップ">サインアップ<a class="hash-link" href="#login-サインアップ" aria-label="Direct link to サインアップ">#</a></h2>
+<p data-bai-block="2">WebUIを起動すると、ログインダイアログが表示されます。まだサインアップしていない場合は、ダイアログの下部にある<code>サインアップ</code>リンクをクリックしてください。</p>
+<p><figure data-bai-block="3" class="doc-figure"><img src="./images/login_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 5.1</figcaption></figure>
+</p>
+<p data-bai-block="4">必要な情報を入力し、利用規約/プライバシーポリシーを読み同意した上で、<code>サインアップ</code>ボタンをクリックしてください。システム設定によっては、サインアップに招待トークンを入力する必要がある場合があります。メールアドレスが本人のものであることを確認するための確認メールが送信されることがあります。確認メールが送信された場合は、メールを読んでリンクをクリックし、検証を通過してからアカウントでログインする必要があります。</p>
+<p><figure data-bai-block="5" class="doc-figure"><img src="./images/signup_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1336" /><figcaption>図 5.2</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="6" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="7">サーバーの構成およびプラグインの設定によっては、匿名ユーザーによるサインアップが許可されていない場合があります。その場合は、システムの管理者に連絡してください。</p>
+</div></div>
+
+
+<div class="admonition admonition-note">
+<div data-bai-block="8" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="9">悪意のあるユーザーがパスワードを推測するのを防ぐために、パスワードは8文字以上で、少なくとも1つのアルファベット、数字、特殊文字を含む必要があります。</p>
+</div></div>
+
+
+<p><a id="log-in"></a></p>
+<h2 data-bai-block="10" id="login-ログイン">ログイン<a class="hash-link" href="#login-ログイン" aria-label="Direct link to ログイン">#</a></h2>
+<p data-bai-block="11">メールアドレス（またはユーザー名）とパスワードを入力し、<code>ログイン</code>ボタンをクリックします。</p>
+<p><figure data-bai-block="12" class="doc-figure"><img src="./images/login_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 5.3</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="13" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="14">ログイン画面では、ログインダイアログの背後にアニメーションする「ダイアゴナルウィーブ」背景パターンが表示されます。オペレーティングシステムでモーションを減らす設定が有効になっている場合、このアニメーションは自動的に無効になります。アプリケーションのバージョンおよびビルド情報は画面左下に、著作権情報は画面右下に表示されます。ログインダイアログが開くと、最初のフィールドに自動的にフォーカスが当たります。<code>セッション</code>モードではメールアドレス/ユーザー名フィールド、<code>API</code>モードでは<strong>API Key</strong>フィールドです。</p>
+</div></div>
+
+
+<p><a id="connection-mode"></a></p>
+<h3 data-bai-block="15" id="login-接続モード">接続モード<a class="hash-link" href="#login-接続モード" aria-label="Direct link to 接続モード">#</a></h3>
+<p data-bai-block="16">管理者が有効にしている場合、ログインダイアログの上部に<code>セッション</code>モードと<code>API</code>モードを選択できるモードセレクターが表示されます。</p>
+<ul>
+<li data-bai-block="17"><strong>セッション</strong>: 標準的なログインモードです。メールアドレス/ユーザー名とパスワードを入力して認証します。ほとんどのユーザーにとってデフォルトのモードです。</li>
+<li data-bai-block="18"><strong>API</strong>: APIキーペアを使用してログインします。メールアドレスとパスワードの代わりに<strong>API Key</strong>と<strong>Secret Key</strong>を入力します。プログラムからのアクセスに便利です。</li>
+</ul>
+<p><a id="api-endpoint"></a></p>
+<h3 data-bai-block="19" id="login-apiエンドポイント">APIエンドポイント<a class="hash-link" href="#login-apiエンドポイント" aria-label="Direct link to APIエンドポイント">#</a></h3>
+<p data-bai-block="20"><code>詳細設定</code>リンクをクリックすると、エンドポイント設定セクションが展開されます。APIエンドポイントフィールドに、リクエストをManagerに中継するBackend.AI WebserverのURLを入力します。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="21" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="22">Webサーバーのインストールおよびセットアップ環境によっては、エンドポイントが固定されており、設定ができない場合があります。</p>
+</div></div>
+
+
+<div class="admonition admonition-note">
+<div data-bai-block="23" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="24">Backend.AIは、ユーザーのパスワードを一方向ハッシュを通じて安全に保持します。BSDのデフォルトパスワードハッシュであるBCryptが使用されるため、サーバーの管理者でもユーザーのパスワードを知ることはできません。</p>
+</div></div>
+
+
+<p><a id="sso-login"></a></p>
+<h3 data-bai-block="25" id="login-ssoログイン-saml-openid">SSOログイン (SAML / OpenID)<a class="hash-link" href="#login-ssoログイン-saml-openid" aria-label="Direct link to SSOログイン (SAML / OpenID)">#</a></h3>
+<p data-bai-block="26">管理者がSSO（シングルサインオン）を設定している場合、標準の<code>ログイン</code>ボタンの下に追加のログインボタンが表示されることがあります。</p>
+<ul>
+<li data-bai-block="27"><strong>SAMLログイン</strong>: 組織のSAML IDプロバイダーを使用して認証します。</li>
+<li data-bai-block="28"><strong>[Realm名]ログイン</strong>: OpenID Connectプロバイダーを使用して認証します。ボタンのラベルには管理者が設定したrealm名が表示されます。</li>
+</ul>
+<p data-bai-block="29">該当するSSOボタンをクリックすると、組織のIDプロバイダーにリダイレクトされ、認証が行われます。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="30" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="31">SSOログインオプションは、システム管理者が有効にした場合のみ表示されます。</p>
+</div></div>
+
+
+<p><a id="otp-login"></a></p>
+<h3 data-bai-block="32" id="login-otpログイン-二要素認証">OTPログイン (二要素認証)<a class="hash-link" href="#login-otpログイン-二要素認証" aria-label="Direct link to OTPログイン (二要素認証)">#</a></h3>
+<p data-bai-block="33">アカウントで二要素認証(2FA)が有効になっている場合、メールアドレスとパスワードを入力した後にOTP（ワンタイムパスワード）フィールドが追加で表示されます。</p>
+<p><figure data-bai-block="34" class="doc-figure"><img src="./images/ask_otp_when_login.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2560" height="1300" /><figcaption>図 5.4</figcaption></figure>
+</p>
+<p data-bai-block="35">認証アプリケーション（Google Authenticator、1Password、Bitwardenなど）を開き、OTPフィールドに6桁のコードを入力するとログインが完了します。</p>
+<p><a id="totp-setup-on-login"></a></p>
+<h3 data-bai-block="36" id="login-初回ログイン時のtotp設定">初回ログイン時のTOTP設定<a class="hash-link" href="#login-初回ログイン時のtotp設定" aria-label="Direct link to 初回ログイン時のTOTP設定">#</a></h3>
+<p data-bai-block="37">管理者が二要素認証を必須に設定しており、まだTOTPを設定していない場合、初回ログイン成功後に自動的に設定ダイアログが表示されます。認証アプリケーションでQRコードをスキャンするか、提供されたキーを手動で入力し、6桁の認証コードを入力すると設定が完了します。</p>
+<p data-bai-block="38">TOTP設定後は、毎回のログイン時にOTPコードの入力が必要になります。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="39" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="40">アカウント設定での2FAの有効化・無効化の詳細については、トップバー機能の<a href="./header.html#2fa-setup">2FA設定</a>セクションを参照してください。</p>
+</div></div>
+
+
+<p><a id="concurrent-session-detection"></a></p>
+<h3 data-bai-block="41" id="login-同時セッションの検出">同時セッションの検出<a class="hash-link" href="#login-同時セッションの検出" aria-label="Direct link to 同時セッションの検出">#</a></h3>
+<p data-bai-block="42">別のブラウザやデバイスで既にログインしている状態でログインを試みると、既存のセッションがアクティブであることを通知する確認ダイアログが表示されます。既存のセッションを終了して新しいログインを続行するか、キャンセルして既存のセッションを維持するかを選択できます。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="43" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="44">この機能は、アカウントへの意図しない同時アクセスを防止します。このダイアログが予期せず表示された場合は、他の誰かが資格情報を使用している可能性があります。その場合はログインを続行して他のセッションを終了し、パスワードの変更を検討してください。</p>
+</div></div>
+
+
+<p data-bai-block="45">ログイン後、スタートページで現在のリソース使用状況などの情報を確認できます。</p>
+<p data-bai-block="46">右上のユーザーアイコンをクリックすると、ユーザーメニューが表示されます。<code>ログアウト</code>メニューを選択するとログアウトできます。</p>
+<p><figure data-bai-block="47" class="doc-figure"><img src="./images/signout_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="360" height="628" /><figcaption>図 5.5</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="48" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="49">システムにログインセッションタイマーが有効になっている場合、タイマーが満了すると自動的にログアウトされます。詳細については、トップバー機能の<a href="./header.html#login-session-timer">ログインセッションタイマー</a>セクションを参照してください。</p>
+</div></div>
+
+
+<p><a id="when-you-forgot-your-password"></a></p>
+<h2 data-bai-block="50" id="login-パスワードを忘れた場合">パスワードを忘れた場合<a class="hash-link" href="#login-パスワードを忘れた場合" aria-label="Direct link to パスワードを忘れた場合">#</a></h2>
+<p data-bai-block="51">パスワードを忘れた場合、ログインパネルの<code>パスワードをお忘れですか？</code>テキストの横にある<code>パスワードを変更する</code>リンクをクリックします。メールアドレスを入力するダイアログが表示され、パスワード変更リンクが記載されたメールを受け取ることができます。メールの指示に従ってパスワードをリセットしてください。</p>
+<p><figure data-bai-block="52" class="doc-figure"><img src="./images/forgot_password_panel.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="552" /><figcaption>図 5.6</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="53" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="54">サーバーの設定によっては、パスワード変更機能が利用できない場合があります。その場合は、管理者に連絡してください。</p>
+</div></div>
+
+
+<div class="admonition admonition-warning">
+<div data-bai-block="55" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div class="admonition-content">
+
+<p data-bai-block="56">ログイン失敗が10回以上連続して発生した場合、セキュリティ上の理由からエンドポイントへのアクセスが20分間一時的に制限されます。20分後もアクセス制限が続く場合は、システム管理者に連絡してください。</p>
+</div></div>
+
+
+
+<p><a id="sidebar-menus"></a></p>
+<h2 data-bai-block="57" id="login-サイドバーメニュー">サイドバーメニュー<a class="hash-link" href="#login-サイドバーメニュー" aria-label="Direct link to サイドバーメニュー">#</a></h2>
+<p><a id="menus-available-to-your-role"></a></p>
+<h3 data-bai-block="58" id="login-ロールに応じて表示されるメニュー">ロールに応じて表示されるメニュー<a class="hash-link" href="#login-ロールに応じて表示されるメニュー" aria-label="Direct link to ロールに応じて表示されるメニュー">#</a></h3>
+<p data-bai-block="59">サイドバーには、開く権限のあるページのみが表示されます。すべてのユーザーに一般メニューグループが表示され、スーパー管理者とドメイン管理者にはさらに<strong>管理</strong>グループが表示されます。</p>
+<p data-bai-block="60">プロジェクト管理者向けの項目は、アカウント全体ではなく<strong>現在選択されているプロジェクト</strong>を基準に判定されます。作業中のプロジェクトはページアドレスの一部であるため、ヘッダーのプロジェクトセレクターでプロジェクトを切り替えるとロールが再評価されます。つまり、同じアカウントでもあるプロジェクトではプロジェクト管理者、別のプロジェクトでは一般ユーザーということがあり、それに応じてプロジェクト管理者向けの項目がサイドバーに表示されたり消えたりします。特定のプロジェクトを指すブックマークや共有リンクを開いた場合も同様で、ページが読み込まれた時点でそのプロジェクトにおけるロールがサイドバーに反映されます。</p>
+<p data-bai-block="61">プロジェクト管理者に提供される項目とその内容については、プロジェクト管理者機能の章の<a href="./project_admin.html#the-project-admin-sidebar">プロジェクト管理者用サイドバー</a>セクションを参照してください。</p>
+<h3 data-bai-block="62" id="login-サイドバーのサイズ変更">サイドバーのサイズ変更<a class="hash-link" href="#login-サイドバーのサイズ変更" aria-label="Direct link to サイドバーのサイズ変更">#</a></h3>
+<p data-bai-block="63">サイドバーの右側にあるボタンを使って、サイドバーのサイズを変更できます。ボタンをクリックすると、サイドバーの幅が大幅に縮小され、コンテンツをより広く表示できます。もう一度クリックすると、サイドバーは元の幅に戻ります。
+ショートカットキー ( <code>[</code> ) を使用して、サイドバーの狭い幅と元の幅を切り替えることもできます。</p>
+<p><figure data-bai-block="64" class="doc-figure"><img src="./images/menu_collapse.png" alt="" class="doc-image" loading="lazy" decoding="async" width="536" height="1800" /><figcaption>図 5.7</figcaption></figure>
+</p>
+<p><a id="pages-you-cannot-open"></a></p>
+<h3 data-bai-block="65" id="login-開けないページ">開けないページ<a class="hash-link" href="#login-開けないページ" aria-label="Direct link to 開けないページ">#</a></h3>
+<p data-bai-block="66">権限のないアドレスを開いた場合（別のロールを持っていたときに保存したブックマークや、管理者から共有されたリンクなど）、WebUIはページの内容の代わりに<strong>不正アクセス</strong>ページを表示します。このページには開こうとしたアドレスが表示され、そのページにアクセスする権限がないことの説明と、利用可能な最初のページへ移動するボタンが表示されます。同時にサイドバーは一般メニューに戻るため、ログアウトせずにナビゲーションを続けられます。</p>
+<p><figure data-bai-block="67" class="doc-figure"><img src="./images/unauthorized_access_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 5.8</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="68" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="69">このページが表示されても、アカウントに問題があるわけではありません。アドレスで指定されたプロジェクトにおいて、ユーザーが持っていないロールがそのページに必要であることを意味します。アクセスできるはずだと思われる場合は、管理者にそのプロジェクトでのロールを確認するよう依頼してください。</p>
+</div></div>
+
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/login/login.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
+  <span class="last-updated">最終更新日 2026年9月3日</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./installation.html">
+        <div class="pagination-nav__sublabel">前へ</div>
+        <div class="pagination-nav__label">&laquo; インストール</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./header.html">
+        <div class="pagination-nav__sublabel">次へ</div>
+        <div class="pagination-nav__label">トップバー &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">このページの目次</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#login-%E3%82%B5%E3%82%A4%E3%83%B3%E3%82%A2%E3%83%83%E3%83%97" data-toc-target="login-サインアップ">サインアップ</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#login-%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3" data-toc-target="login-ログイン">ログイン</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#login-%E6%8E%A5%E7%B6%9A%E3%83%A2%E3%83%BC%E3%83%89" data-toc-target="login-接続モード">接続モード</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#login-api%E3%82%A8%E3%83%B3%E3%83%89%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88" data-toc-target="login-apiエンドポイント">APIエンドポイント</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#login-sso%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3-saml-openid" data-toc-target="login-ssoログイン-saml-openid">SSOログイン (SAML / OpenID)</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#login-otp%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3-%E4%BA%8C%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC" data-toc-target="login-otpログイン-二要素認証">OTPログイン (二要素認証)</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#login-%E5%88%9D%E5%9B%9E%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3%E6%99%82%E3%81%AEtotp%E8%A8%AD%E5%AE%9A" data-toc-target="login-初回ログイン時のtotp設定">初回ログイン時のTOTP設定</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#login-%E5%90%8C%E6%99%82%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E6%A4%9C%E5%87%BA" data-toc-target="login-同時セッションの検出">同時セッションの検出</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#login-%E3%83%91%E3%82%B9%E3%83%AF%E3%83%BC%E3%83%89%E3%82%92%E5%BF%98%E3%82%8C%E3%81%9F%E5%A0%B4%E5%90%88" data-toc-target="login-パスワードを忘れた場合">パスワードを忘れた場合</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#login-%E3%82%B5%E3%82%A4%E3%83%89%E3%83%90%E3%83%BC%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC" data-toc-target="login-サイドバーメニュー">サイドバーメニュー</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#login-%E3%83%AD%E3%83%BC%E3%83%AB%E3%81%AB%E5%BF%9C%E3%81%98%E3%81%A6%E8%A1%A8%E7%A4%BA%E3%81%95%E3%82%8C%E3%82%8B%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC" data-toc-target="login-ロールに応じて表示されるメニュー">ロールに応じて表示されるメニュー</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#login-%E3%82%B5%E3%82%A4%E3%83%89%E3%83%90%E3%83%BC%E3%81%AE%E3%82%B5%E3%82%A4%E3%82%BA%E5%A4%89%E6%9B%B4" data-toc-target="login-サイドバーのサイズ変更">サイドバーのサイズ変更</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#login-%E9%96%8B%E3%81%91%E3%81%AA%E3%81%84%E3%83%9A%E3%83%BC%E3%82%B8" data-toc-target="login-開けないページ">開けないページ</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">ヘルプ</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/login/login.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>このページを編集</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="ドキュメント検索..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="ドキュメント検索..." data-no-results="結果が見つかりません" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>

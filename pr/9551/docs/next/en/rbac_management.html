@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RBAC Management - Backend.AI WebUI User Guide - English</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users." />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/en/rbac_management.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="RBAC Management" />
+  <meta property="og:description" content="RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users." />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/en/rbac_management.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="en" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RBAC Management" />
+  <meta name="twitter:description" content="RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users." />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"RBAC Management","inLanguage":"en","description":"RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users.","dateModified":"2026-09-03T00:23:41.000Z","url":"https://webui.docs.backend.ai/next/en/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/rbac_management.html" />
+  <link rel="alternate" hreflang="en" href="../en/rbac_management.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/rbac_management.html" />
+  <link rel="alternate" hreflang="th" href="../th/rbac_management.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/rbac_management.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="rbac_management"></script>
+</head>
+<body data-copy-label="Copy" data-copied-label="Copied!" data-copy-failed-label="Copy failed">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (167defb)">v26.9.0-alpha.0 (167defb)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">Search docs...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="Search docs..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/rbac_management.html" lang="ko">한국어</option><option value="../en/rbac_management.html" lang="en" selected>English</option><option value="../ja/rbac_management.html" lang="ja">日本語</option><option value="../th/rbac_management.html" lang="th">ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">This is unreleased documentation for WebUI Next version.</span>
+    <span class="docs-banner__desc">For up-to-date documentation, see the <a class="docs-banner__link" href="../../26.8/en/index.html">latest version (26.8)</a>.</span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">Version</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="en"
+      data-slug="rbac_management"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">Previous versions</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">Introduction</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">Getting Started</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="getting-started">
+    <li><a href="./quickstart.html">1. Quickstart</a></li>
+<li><a href="./disclaimer.html">2. Disclaimer</a></li>
+<li><a href="./overview.html">3. Overview</a></li>
+<li><a href="./installation.html">4. Installation</a></li>
+<li><a href="./login.html">5. Login</a></li>
+<li><a href="./header.html">6. Top Bar</a></li>
+<li><a href="./start.html">7. Start</a></li>
+<li><a href="./dashboard.html">8. Dashboard</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">Workloads</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="workloads">
+    <li><a href="./session_page.html">9. Session Page</a></li>
+<li><a href="./sessions_all.html">10. Compute Sessions</a></li>
+<li><a href="./cluster_session.html">11. Cluster Session</a></li>
+<li><a href="./deployment.html">12. Deployments</a></li>
+<li><a href="./chat.html">13. Chat</a></li>
+<li><a href="./my_environments.html">14. My Environments</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">Storage &amp; Data</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="storage-data">
+    <li><a href="./vfolder.html">15. Storage Folders</a></li>
+<li><a href="./mount_vfolder.html">16. Mount Storage Folders</a></li>
+<li><a href="./share_vfolder.html">17. Share Storage Folders</a></li>
+<li><a href="./sftp_to_container.html">18. SFTP to Container</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">Administration</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="administration">
+    <li><a href="./user_settings.html">19. User Settings</a></li>
+<li><a href="./project_admin.html">20. Project Admin Features</a></li>
+<li><a href="./rbac_management.html" class="active" aria-current="page">21. RBAC Management</a></li>
+<li><a href="./agent_summary.html">22. Agent Summary</a></li>
+<li><a href="./statistics.html">23. Statistics</a></li>
+<li><a href="./admin_menu.html">24. Admin Features</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">Reference</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="reference">
+    <li><a href="./trouble_shooting.html">25. Troubleshooting</a></li>
+<li><a href="./appendix.html">26. Appendix</a></li>
+<li><a href="./license_agreement.html">27. License Agreement</a></li>
+<li><a href="./references.html">28. References</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="This page is not available in version {version}. You are viewing the version index instead.">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="Dismiss" title="Dismiss">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">Home</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">Administration</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">RBAC Management</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-rbac_management">
+<p><a id="rbac-management"></a></p>
+<h1 data-bai-block="0" id="rbac_management-rbac-management">RBAC Management<a class="hash-link" href="#rbac_management-rbac-management" aria-label="Direct link to RBAC Management">#</a></h1>
+<p data-bai-block="1">RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. With RBAC, you can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.</p>
+<p data-bai-block="2">To access the RBAC Management page, click <strong>RBAC Management</strong> in the <strong>Admin Settings</strong> section of the sidebar menu.</p>
+<p><figure data-bai-block="3" class="doc-figure"><img src="./images/rbac_role_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 21.1</figcaption></figure>
+</p>
+<p><a id="role-list"></a></p>
+<h2 data-bai-block="4" id="rbac_management-role-list">Role list<a class="hash-link" href="#rbac_management-role-list" aria-label="Direct link to Role list">#</a></h2>
+<p data-bai-block="5">The Role List page displays all roles in a table format. You can filter, search, and sort roles using the controls at the top of the page.</p>
+<ul>
+<li data-bai-block="6"><strong>Status filter</strong>: A segmented control to toggle between <strong>Active</strong> and <strong>Inactive</strong> roles. Active is selected by default.</li>
+<li data-bai-block="7"><strong>Property filter</strong>: A property filter to narrow the list. The filter input adapts to the selected property. The following properties are available:<ul>
+<li data-bai-block="8"><strong>Name</strong>: Free-text search by role name.</li>
+<li data-bai-block="9"><strong>Source</strong>: A typed selector that exposes the available values (<strong>System</strong> / <strong>Custom</strong>) rather than a free-form text box.</li>
+<li data-bai-block="10"><strong>Assigned User</strong>: A user picker that filters the list to the roles assigned to the chosen user. The user&#39;s email is shown on the resulting condition tag.</li>
+<li data-bai-block="11"><strong>Scope Type</strong>: A typed selector of RBAC scope types (for example, Domain, Project, or User).</li>
+<li data-bai-block="12"><strong>Scope ID</strong>: Free-text search by the raw scope UUID.</li>
+</ul>
+</li>
+<li data-bai-block="13"><strong>Create Role</strong>: A button to create a new custom role.</li>
+</ul>
+<p data-bai-block="14">The table displays the following columns:</p>
+<ul>
+<li data-bai-block="15"><strong>Role Name</strong>: The name of the role. Click the name to open the role detail drawer.</li>
+<li data-bai-block="16"><strong>Description</strong>: A brief description of the role&#39;s purpose.</li>
+<li data-bai-block="17"><strong>Scope Type</strong>: The scope type of the role&#39;s first assigned scope, with a <code>+N</code> indicator when the role has multiple scopes.</li>
+<li data-bai-block="18"><strong>Scope ID</strong>: The raw scope ID of the role&#39;s first assigned scope, with a <code>+N</code> indicator when the role has multiple scopes.</li>
+<li data-bai-block="19"><strong>Source</strong>: Indicates whether the role is <strong>System</strong> (pre-defined) or <strong>Custom</strong> (user-created).</li>
+<li data-bai-block="20"><strong>Auto Assign</strong>: Indicates whether the role is automatically assigned to a user when they are added to a scope the role is registered in. Displays <strong>Active</strong> when auto-assignment is enabled, or <strong>Inactive</strong> when disabled.</li>
+<li data-bai-block="21"><strong>Created At</strong>: The date and time when the role was created.</li>
+<li data-bai-block="22"><strong>Updated At</strong>: The date and time when the role was last modified.</li>
+</ul>
+<h3 data-bai-block="23" id="rbac_management-system-vs-custom-roles">System vs custom roles<a class="hash-link" href="#rbac_management-system-vs-custom-roles" aria-label="Direct link to System vs custom roles">#</a></h3>
+<p data-bai-block="24">Roles are categorized into two source types:</p>
+<ul>
+<li data-bai-block="25"><strong>System</strong>: Automatically generated roles. You cannot edit their name or description, but you can manage their user assignments and permissions.</li>
+<li data-bai-block="26"><strong>Custom</strong>: Roles created by superadmins. These are fully editable, including name, description, assignments, scopes, and permissions.</li>
+</ul>
+<h2 data-bai-block="27" id="rbac_management-create-a-role">Create a role<a class="hash-link" href="#rbac_management-create-a-role" aria-label="Direct link to Create a role">#</a></h2>
+<p data-bai-block="28">Creating a role requires you to define its <strong>scopes</strong> upfront. A scope binds the role to a specific resource entity (such as a domain, project, or user) so that every permission you later add to the role is confined to the scopes defined here.</p>
+<p data-bai-block="29">To create a new custom role:</p>
+<ol>
+<li data-bai-block="30">Click the <strong>Create Role</strong> button at the top right of the Role List page</li>
+<li data-bai-block="31">In the creation modal, fill in the following fields:<ul>
+<li data-bai-block="32"><strong>Role Name</strong> (required): Enter a unique name for the role</li>
+<li data-bai-block="33"><strong>Description</strong> (optional): Enter a description of the role&#39;s purpose</li>
+<li data-bai-block="34"><strong>Auto Assign</strong> (optional): When enabled, the role is automatically granted to users when they are added to a scope the role is registered in. Disabled by default.</li>
+<li data-bai-block="35"><strong>Scope Type / Target</strong> (required, at least one): For each scope row, select a <strong>Scope Type</strong> and then choose the specific <strong>Target</strong> within that scope type. Click <strong>Add</strong> to add more scope rows, or the delete icon to remove a row. You must add at least one scope.</li>
+</ul>
+</li>
+<li data-bai-block="36">Click <strong>OK</strong> to create the role</li>
+</ol>
+<p><figure data-bai-block="37" class="doc-figure"><img src="./images/rbac_create_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 21.2</figcaption></figure>
+</p>
+<div class="admonition admonition-info">
+<div data-bai-block="38" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>INFO</div>
+<div class="admonition-content">
+
+<p data-bai-block="39">The <strong>Scope Type</strong> and <strong>Target</strong> you define when creating a role do not grant any permissions on their own. Instead, they pre-define the <strong>Scope Type / Target</strong> options that become available when you later add <a href="#manage-permissions">permissions</a> to this role. In other words, role creation only narrows down the range of scope types and targets this role&#39;s permissions can use — each permission can then be configured only within the scope types and targets defined here.</p>
+</div></div>
+
+
+<div class="admonition admonition-warning">
+<div data-bai-block="40" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div class="admonition-content">
+
+<p data-bai-block="41">Scopes are defined at role creation time and cannot be edited afterwards through the role detail drawer. Plan the scopes carefully before creating the role.</p>
+</div></div>
+
+
+<h2 data-bai-block="42" id="rbac_management-view-role-details">View role details<a class="hash-link" href="#rbac_management-view-role-details" aria-label="Direct link to View role details">#</a></h2>
+<p data-bai-block="43">To view detailed information about a role, click the role name in the table. A detail drawer opens on the right side of the page.</p>
+<p data-bai-block="44">The drawer header displays the role name and provides an <strong>Edit</strong> button for custom roles. The detail section shows the following metadata:</p>
+<ul>
+<li data-bai-block="45"><strong>Source</strong>: System or Custom</li>
+<li data-bai-block="46"><strong>Status</strong>: Active or Inactive</li>
+<li data-bai-block="47"><strong>Auto Assign</strong>: Whether auto-assignment is Active or Inactive. When Active, the role is automatically granted to users added to one of its registered scopes.</li>
+<li data-bai-block="48"><strong>Created At</strong>: The creation timestamp</li>
+<li data-bai-block="49"><strong>Updated At</strong>: The last modification timestamp</li>
+<li data-bai-block="50"><strong>Description</strong>: The role&#39;s description</li>
+</ul>
+<p data-bai-block="51">Below the metadata, two tabs are available: <strong>Permissions</strong> and <strong>Role Assignments</strong>. The <strong>Permissions</strong> tab is selected by default.</p>
+<p><figure data-bai-block="52" class="doc-figure"><img src="./images/rbac_role_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 21.3</figcaption></figure>
+</p>
+<h3 data-bai-block="53" id="rbac_management-edit-a-role">Edit a role<a class="hash-link" href="#rbac_management-edit-a-role" aria-label="Direct link to Edit a role">#</a></h3>
+<p data-bai-block="54">To edit a custom role&#39;s name, description, or auto-assignment setting:</p>
+<ol>
+<li data-bai-block="55">Open the role detail drawer by clicking a role name in the table</li>
+<li data-bai-block="56">Click the <strong>Edit</strong> button (pencil icon) in the drawer header</li>
+<li data-bai-block="57">Modify the following fields in the edit modal:<ul>
+<li data-bai-block="58"><strong>Role Name</strong>: The name of the role</li>
+<li data-bai-block="59"><strong>Description</strong>: A description of the role&#39;s purpose</li>
+<li data-bai-block="60"><strong>Auto Assign</strong>: When enabled, the role is automatically granted to users added to a scope the role is registered in.</li>
+</ul>
+</li>
+<li data-bai-block="61">Click <strong>OK</strong> to save the changes</li>
+</ol>
+<p><figure data-bai-block="62" class="doc-figure"><img src="./images/rbac_edit_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 21.4</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="63" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div class="admonition-content">
+
+<p data-bai-block="64">The Edit button is only available for Custom roles. System roles cannot have their name or description modified. Scopes cannot be modified after role creation in either case.</p>
+</div></div>
+
+
+<p><a id="view-role-scopes"></a></p>
+<p><a id="manage-permissions"></a></p>
+<h2 data-bai-block="65" id="rbac_management-manage-permissions">Manage permissions<a class="hash-link" href="#rbac_management-manage-permissions" aria-label="Direct link to Manage permissions">#</a></h2>
+<p data-bai-block="66">The <strong>Permissions</strong> tab in the role detail drawer is a merged, detailed view that combines the role&#39;s scopes and its fine-grained permissions. It renders <strong>one card per scope type</strong> the role uses, and each card shows that scope type&#39;s scopes together with the permissions granted on them.</p>
+<p><figure data-bai-block="67" class="doc-figure"><img src="./images/rbac_permissions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 21.5</figcaption></figure>
+</p>
+<div class="admonition admonition-info">
+<div data-bai-block="68" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>INFO</div>
+<div class="admonition-content">
+
+<p data-bai-block="69">The scopes a role can reference are defined when the role is created and are <strong>read-only</strong> afterward — you cannot change them from the role detail drawer. In the Permissions tab, scopes appear as the rows inside each scope-type card. To change a role&#39;s scopes, create a new role with the desired scopes.</p>
+</div></div>
+
+
+<h3 data-bai-block="70" id="rbac_management-scope-type-cards">Scope-type cards<a class="hash-link" href="#rbac_management-scope-type-cards" aria-label="Direct link to Scope-type cards">#</a></h3>
+<p data-bai-block="71">The Permissions tab shows one card for each scope type the role uses (for example, Domain, Project, or User). Scope types the role does not use are hidden, and the card title is the localized scope-type name. Each card contains:</p>
+<ul>
+<li data-bai-block="72"><strong>Scope ID filter</strong>: A property filter that narrows the card&#39;s rows by the raw scope UUID. Searching by the resolved scope name is not supported.</li>
+<li data-bai-block="73"><strong>Refresh</strong> button: Reloads the card&#39;s rows and recomputes the permission tags.</li>
+<li data-bai-block="74"><strong>Scope table</strong>: Lists the role&#39;s scopes of this type, with these columns:<ul>
+<li data-bai-block="75"><strong>Name</strong>: The resolved scope name (for example, the domain, project, or user&#39;s display name), with an inline <strong>Edit</strong> action that opens the permission edit modal for that scope.</li>
+<li data-bai-block="76"><strong>ID</strong>: The scope UUID.</li>
+<li data-bai-block="77"><strong>Permissions</strong>: One tag per permission type, colored by grant state (see below). When the scope type has no configurable entities, this column shows <code>-</code>.</li>
+</ul>
+</li>
+<li data-bai-block="78"><strong>Pagination</strong>: Pages through the card&#39;s scopes when there are many.</li>
+</ul>
+<p data-bai-block="79">If a role has no scopes at all, the tab shows the message <strong>No scopes are configured for this role</strong> instead of any cards.</p>
+<p><a id="grant-state-tags"></a></p>
+<h3 data-bai-block="80" id="rbac_management-grant-state-tags">Grant-state tags<a class="hash-link" href="#rbac_management-grant-state-tags" aria-label="Direct link to Grant-state tags">#</a></h3>
+<p data-bai-block="81">In the <strong>Permissions</strong> column, each permission-type tag is colored by how many of that type&#39;s operations are granted for the scope:</p>
+<ul>
+<li data-bai-block="82"><strong>Fully allowed</strong> (green): Every operation of that permission type is granted.</li>
+<li data-bai-block="83"><strong>Partially allowed</strong> (yellow): Some, but not all, operations are granted.</li>
+<li data-bai-block="84"><strong>Not allowed</strong> (no color): None of the operations are granted.</li>
+</ul>
+<p data-bai-block="85">Hover over a tag to see its state label.</p>
+<p><figure data-bai-block="86" class="doc-figure"><img src="./images/rbac_permissions_card_grant_tags.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1502" height="470" /><figcaption>Figure 21.6</figcaption></figure>
+</p>
+<h3 data-bai-block="87" id="rbac_management-understanding-permissions">Understanding permissions<a class="hash-link" href="#rbac_management-understanding-permissions" aria-label="Direct link to Understanding permissions">#</a></h3>
+<p data-bai-block="88">Each permission consists of four components:</p>
+<ul>
+<li data-bai-block="89"><strong>Scope Type</strong>: The effective scope to which the permission applies (e.g., Domain, Project, User)</li>
+<li data-bai-block="90"><strong>Target</strong>: A specific entity within the effective scope (e.g., a specific domain name, a specific project)</li>
+<li data-bai-block="91"><strong>Permission Type</strong>: The target on which operations are performed within the permission&#39;s effective scope.</li>
+<li data-bai-block="92"><strong>Permission</strong>: The operations allowed for the permission type. Only operations valid for the selected permission type are shown. Operations are grouped into two categories:<ul>
+<li data-bai-block="93"><strong>Direct</strong>: Create, Read, Update, Soft Delete, Hard Delete</li>
+<li data-bai-block="94"><strong>Delegate to Others</strong>: Delegate All, Delegate Read, Delegate Update, Delegate Soft Delete, Delegate Hard Delete</li>
+</ul>
+</li>
+</ul>
+<div class="admonition admonition-info">
+<div data-bai-block="95" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>INFO</div>
+<div class="admonition-content">
+
+<p data-bai-block="96">The combined <strong>Scope Type / Target</strong> of each permission is inherited from the role&#39;s scope entries. You can only grant permissions on scopes that were defined when the role was created. To broaden a role&#39;s reach, create a new role with additional scopes.</p>
+</div></div>
+
+
+<h3 data-bai-block="97" id="rbac_management-permission-examples">Permission examples<a class="hash-link" href="#rbac_management-permission-examples" aria-label="Direct link to Permission examples">#</a></h3>
+<p data-bai-block="98">Here are some common permission configurations to help you understand how the four components work together. The <strong>Scope Type / Target</strong> column shows the role-level scope that the permission reuses.</p>
+<table>
+<thead>
+<tr data-bai-block="99">
+<th>Scenario</th>
+<th>Scope Type / Target</th>
+<th>Permission Type</th>
+<th>Permission</th>
+</tr>
+</thead>
+<tbody><tr data-bai-block="100">
+<td>Allow a user to create storage folders in a specific project</td>
+<td>Project / my-project</td>
+<td>Folder</td>
+<td>Create</td>
+</tr>
+<tr data-bai-block="101">
+<td>Allow a user to view all sessions in a specific domain</td>
+<td>Domain / default</td>
+<td>Session</td>
+<td>Read</td>
+</tr>
+<tr data-bai-block="102">
+<td>Allow a user to manage model services in a specific domain</td>
+<td>Domain / default</td>
+<td>Model Service</td>
+<td>Create, Read, Update</td>
+</tr>
+<tr data-bai-block="103">
+<td>Allow a user to delete container images in a specific domain</td>
+<td>Domain / default</td>
+<td>Image</td>
+<td>Soft Delete</td>
+</tr>
+</tbody></table>
+<p><a id="add-a-permission"></a></p>
+<p><a id="remove-a-permission"></a></p>
+<p><a id="edit-permissions-for-a-scope"></a></p>
+<h3 data-bai-block="104" id="rbac_management-edit-permissions-for-a-scope-single-scope">Edit permissions for a scope (single scope)<a class="hash-link" href="#rbac_management-edit-permissions-for-a-scope-single-scope" aria-label="Direct link to Edit permissions for a scope (single scope)">#</a></h3>
+<p data-bai-block="105">Permissions are edited per scope through a grid-based modal, where each row is a permission type and each cell is an operation checkbox.</p>
+<ol>
+<li data-bai-block="106">In the <strong>Permissions</strong> tab, open the scope-type card and click the <strong>Edit</strong> action on the scope row you want to change.</li>
+<li data-bai-block="107">The <strong>Edit {Scope Type} Permissions</strong> modal opens with the scope name shown as a subtitle. It shows a grid where:<ul>
+<li data-bai-block="108">Rows are the <strong>Permission Types</strong> valid for the scope type.</li>
+<li data-bai-block="109">Columns are grouped into <strong>Direct</strong> (Create, Read, Update, Soft Delete, Hard Delete) and <strong>Delegate to Others</strong> (All, Read, Update, Soft Delete, Hard Delete).</li>
+<li data-bai-block="110">Cells the permission matrix does not support render as <code>-</code> with a <strong>This permission cannot be assigned.</strong> tooltip.</li>
+</ul>
+</li>
+<li data-bai-block="111">Each checkbox is <strong>pre-checked</strong> to the scope&#39;s currently granted operations. Tick or untick cells to change what is allowed.</li>
+<li data-bai-block="112">Click <strong>Save</strong>. The changes are reconciled against the scope&#39;s current grants — newly ticked cells are granted and cleared cells are removed.</li>
+</ol>
+<p><figure data-bai-block="113" class="doc-figure"><img src="./images/rbac_permission_edit_modal_single.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1520" height="596" /><figcaption>Figure 21.7</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="114" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div class="admonition-content">
+
+<p data-bai-block="115">Editing permissions is <strong>reversible</strong> — you can re-open the modal and change the grid again at any time — so saving uses a normal <strong>Save</strong> button rather than a typed-name confirmation.</p>
+</div></div>
+
+
+<p><a id="edit-permissions-for-multiple-scopes"></a></p>
+<h3 data-bai-block="116" id="rbac_management-edit-permissions-for-multiple-scopes-bulk">Edit permissions for multiple scopes (bulk)<a class="hash-link" href="#rbac_management-edit-permissions-for-multiple-scopes-bulk" aria-label="Direct link to Edit permissions for multiple scopes (bulk)">#</a></h3>
+<p data-bai-block="117">You can apply the same permission change to several scopes of the same type at once.</p>
+<ol>
+<li data-bai-block="118">In a scope-type card, use the row checkboxes to select <strong>two or more</strong> scopes. A selection-count label appears; use the pencil (<strong>Edit Permissions</strong>) control next to it to open the bulk modal.</li>
+<li data-bai-block="119">The <strong>Bulk Edit {Scope Type} Permissions</strong> modal opens. Every cell starts in a <strong>Keep as is</strong> state: untouched cells keep each selected scope&#39;s existing value, and only the cells you switch into edit mode are applied to <strong>all</strong> selected scopes.</li>
+<li data-bai-block="120">Click a cell to switch it into edit mode (it starts checked). Tick or untick it to set the value you want to apply to every selected scope.</li>
+<li data-bai-block="121">Click <strong>Save</strong> to apply the changes to all selected scopes.</li>
+</ol>
+<p><figure data-bai-block="122" class="doc-figure"><img src="./images/rbac_permission_edit_modal_bulk.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="856" /><figcaption>Figure 21.8</figcaption></figure>
+</p>
+<p><a id="no-op-and-partial-failure-behavior"></a></p>
+<h3 data-bai-block="123" id="rbac_management-no-op-and-partial-failure-behavior">No-op and partial-failure behavior<a class="hash-link" href="#rbac_management-no-op-and-partial-failure-behavior" aria-label="Direct link to No-op and partial-failure behavior">#</a></h3>
+<p data-bai-block="124">When you save permission changes:</p>
+<ul>
+<li data-bai-block="125">If nothing changed, the modal closes without sending a request and shows the message <strong>No changes made.</strong></li>
+<li data-bai-block="126">On success, the message <strong>Permissions saved successfully.</strong> is shown and the card&#39;s tags are recomputed.</li>
+<li data-bai-block="127">On a <strong>partial failure</strong>, the modal stays open with the failed cells flagged. A bulk-error modal lists each failed request — the target scope, the permission, and the error message — along with success and failure counts. You can adjust the grid and save again to retry only the cells that failed.</li>
+</ul>
+<!-- ![](/images/rbac_permission_partial_failure_modal.png) -->
+<!-- TODO: Capture the bulk-error modal shown after a partial-failure permission save -->
+
+<p><a id="manage-user-assignments"></a></p>
+<h2 data-bai-block="128" id="rbac_management-manage-user-assignments">Manage user assignments<a class="hash-link" href="#rbac_management-manage-user-assignments" aria-label="Direct link to Manage user assignments">#</a></h2>
+<p data-bai-block="129">The <strong>Role Assignments</strong> tab in the role detail drawer shows which users are assigned to the role.</p>
+<p><figure data-bai-block="130" class="doc-figure"><img src="./images/rbac_assignments_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 21.9</figcaption></figure>
+</p>
+<p><a id="add-users-to-a-role"></a></p>
+<h3 data-bai-block="131" id="rbac_management-add-users-to-a-role">Add users to a role<a class="hash-link" href="#rbac_management-add-users-to-a-role" aria-label="Direct link to Add users to a role">#</a></h3>
+<ol>
+<li data-bai-block="132">Open the role detail drawer and select the <strong>Role Assignments</strong> tab</li>
+<li data-bai-block="133">Click the <strong>Add User</strong> button</li>
+<li data-bai-block="134">In the modal, search for users by email or name</li>
+<li data-bai-block="135">Select one or more users using the checkboxes</li>
+<li data-bai-block="136">Click <strong>Add</strong> to assign the selected users to the role</li>
+</ol>
+<p><figure data-bai-block="137" class="doc-figure"><img src="./images/rbac_add_user_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 21.10</figcaption></figure>
+</p>
+<p data-bai-block="138">Adding users is a bulk operation — you can select several users in a single pass and assign them all at once. If some assignments fail, the modal stays open and a bulk-error modal lists each failed user with an error message and success and failure counts. The users that were assigned successfully are cleared from the selection, so only the failed users remain selected and you can click <strong>Add</strong> again to retry just those.</p>
+<!-- ![](/images/rbac_assign_user_partial_failure.png) -->
+<!-- TODO: Capture the Add User modal with the bulk-error modal listing failed assignments -->
+
+<p><a id="system-roles-and-assignment-restrictions"></a></p>
+<h3 data-bai-block="139" id="rbac_management-system-roles-and-assignment-restrictions">System roles and assignment restrictions<a class="hash-link" href="#rbac_management-system-roles-and-assignment-restrictions" aria-label="Direct link to System roles and assignment restrictions">#</a></h3>
+<p data-bai-block="140">The system-generated project-admin role (the <code>role_project_&lt;project_id&gt;_admin</code> role, whose <strong>Source</strong> is <strong>System</strong>) cannot have users assigned or revoked directly from the Role Assignments tab. The tab shows a warning alert, <strong>Roles automatically created by the system cannot have users directly assigned or unassigned.</strong>, and the assignment table is read-only (the <strong>Add User</strong> and revoke controls are hidden).</p>
+<p><figure data-bai-block="141" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>Figure 21.11</figcaption></figure>
+</p>
+<p data-bai-block="142">To manage who administers a project, use <strong>Set Project Admin</strong> on the Project page instead. See <a href="./project_admin.html#set-project-admin">Set Project Admin</a> in the Project Admin Features chapter and <a href="#grant-project-admin">Grant Project Admin authority</a> below.</p>
+<p><a id="revoke-users-from-a-role"></a></p>
+<h3 data-bai-block="143" id="rbac_management-revoke-users-from-a-role">Revoke users from a role<a class="hash-link" href="#rbac_management-revoke-users-from-a-role" aria-label="Direct link to Revoke users from a role">#</a></h3>
+<p data-bai-block="144">You can revoke a single user or several users at once.</p>
+<p data-bai-block="145">To revoke a single user:</p>
+<ol>
+<li data-bai-block="146">In the <strong>Role Assignments</strong> tab, hover over the user row and click the revoke (trash) icon next to the user.</li>
+<li data-bai-block="147">A <strong>Revoke User</strong> confirmation modal opens. Review the listed user(s) and click <strong>Revoke User</strong> to confirm, or <strong>Cancel</strong> to dismiss.</li>
+</ol>
+<p><figure data-bai-block="148" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="496" /><figcaption>Figure 21.12</figcaption></figure>
+</p>
+<p data-bai-block="149">To revoke multiple users at once:</p>
+<ol>
+<li data-bai-block="150">In the <strong>Role Assignments</strong> tab, use the checkboxes to select the users you want to remove. A selection-count label appears next to the revoke control showing how many rows are selected; use the clear-selection control on that label to deselect all rows.</li>
+<li data-bai-block="151">Click the bulk <strong>Revoke User</strong> button (trash icon) that appears once one or more rows are selected.</li>
+<li data-bai-block="152">In the <strong>Revoke User</strong> confirmation modal, review the listed users and click <strong>Revoke User</strong> to confirm, or <strong>Cancel</strong> to dismiss.</li>
+</ol>
+<p><figure data-bai-block="153" class="doc-figure"><img src="./images/rbac_bulk_revoke_selection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 21.13</figcaption></figure>
+</p>
+<p data-bai-block="154">Revoking a user removes only that user&#39;s assignment to this role; the role itself and its other assignments remain unchanged.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="155" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div class="admonition-content">
+
+<p data-bai-block="156">Revoking a role assignment can be reversed by re-adding the user to the role from the <strong>Role Assignments</strong> tab.</p>
+</div></div>
+
+
+<p><a id="grant-project-admin"></a></p>
+<h2 data-bai-block="157" id="rbac_management-grant-project-admin-authority">Grant Project Admin authority<a class="hash-link" href="#rbac_management-grant-project-admin-authority" aria-label="Direct link to Grant Project Admin authority">#</a></h2>
+<p data-bai-block="158">Creating a project also creates a dedicated role named <code>role_project_&lt;project_id&gt;_admin</code>, where <code>&lt;project_id&gt;</code> is the first 8 characters of that project&#39;s UUID. A user assigned to this role gains <a href="./project_admin.html#project-admin-features">Project Admin</a> authority over that specific project — they can manage the project&#39;s users, sessions, deployments, and storage folders without holding system-wide superadmin privileges.</p>
+<p><figure data-bai-block="159" class="doc-figure"><img src="./images/rbac_project_admin_role_in_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 21.14</figcaption></figure>
+</p>
+<p data-bai-block="160">Grant and revoke project admin through the <strong>Set Project Admin</strong> one-click flow on the <strong>Project</strong> admin page, described in <a href="./project_admin.html#set-project-admin">Set Project Admin</a> in the Project Admin Features chapter. The <code>role_project_&lt;project_id&gt;_admin</code> role is a system role, so its Role Assignments tab here is <strong>read-only</strong> and provided for inspection — you can still open the role to review who currently holds project admin. The <strong>Set Project Admin</strong> modal also links back to this role&#39;s detail drawer through its RBAC shortcut.</p>
+<p><figure data-bai-block="161" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1800" /><figcaption>Figure 21.15</figcaption></figure>
+</p>
+<p data-bai-block="162">Once granted, the user gains Project Admin authority immediately. The next time they open the header&#39;s project dropdown they will see the project-admin badge next to the corresponding project, and the project-admin sidebar entries described in the <a href="./project_admin.html#project-admin-features">Project Admin Features</a> chapter.</p>
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/rbac_management/rbac_management.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
+  <span class="last-updated">Last updated on Sep 3, 2026</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./project_admin.html">
+        <div class="pagination-nav__sublabel">Previous</div>
+        <div class="pagination-nav__label">&laquo; Project Admin Features</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./agent_summary.html">
+        <div class="pagination-nav__sublabel">Next</div>
+        <div class="pagination-nav__label">Agent Summary &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">On this page</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-role-list" data-toc-target="rbac_management-role-list">Role list</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-system-vs-custom-roles" data-toc-target="rbac_management-system-vs-custom-roles">System vs custom roles</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-create-a-role" data-toc-target="rbac_management-create-a-role">Create a role</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-view-role-details" data-toc-target="rbac_management-view-role-details">View role details</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-edit-a-role" data-toc-target="rbac_management-edit-a-role">Edit a role</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-manage-permissions" data-toc-target="rbac_management-manage-permissions">Manage permissions</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-scope-type-cards" data-toc-target="rbac_management-scope-type-cards">Scope-type cards</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-grant-state-tags" data-toc-target="rbac_management-grant-state-tags">Grant-state tags</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-understanding-permissions" data-toc-target="rbac_management-understanding-permissions">Understanding permissions</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-permission-examples" data-toc-target="rbac_management-permission-examples">Permission examples</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-edit-permissions-for-a-scope-single-scope" data-toc-target="rbac_management-edit-permissions-for-a-scope-single-scope">Edit permissions for a scope (single scope)</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-edit-permissions-for-multiple-scopes-bulk" data-toc-target="rbac_management-edit-permissions-for-multiple-scopes-bulk">Edit permissions for multiple scopes (bulk)</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-no-op-and-partial-failure-behavior" data-toc-target="rbac_management-no-op-and-partial-failure-behavior">No-op and partial-failure behavior</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-manage-user-assignments" data-toc-target="rbac_management-manage-user-assignments">Manage user assignments</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-add-users-to-a-role" data-toc-target="rbac_management-add-users-to-a-role">Add users to a role</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-system-roles-and-assignment-restrictions" data-toc-target="rbac_management-system-roles-and-assignment-restrictions">System roles and assignment restrictions</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-revoke-users-from-a-role" data-toc-target="rbac_management-revoke-users-from-a-role">Revoke users from a role</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-grant-project-admin-authority" data-toc-target="rbac_management-grant-project-admin-authority">Grant Project Admin authority</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">Get help</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/rbac_management/rbac_management.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>Edit this page</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="Search docs..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="Search docs..." data-no-results="No results found" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>
