@@ -130,7 +130,7 @@ describe('BAILink', () => {
       );
       const link = screen.getByTestId('link');
       expect(link).toHaveClass('bai-link-ellipsis');
-      const text = link.querySelector('.astryx-text');
+      const text = link.querySelector('.bai-text');
       expect(text).not.toBeNull();
       expect(link).toContainElement(text as HTMLElement);
       expect(screen.getByText('Some long name')).toBeInTheDocument();
@@ -160,15 +160,14 @@ describe('BAILink', () => {
       // The custom tooltip is gated on the truncating box's own overflow, so
       // that box has to be the one inside the link — not an ancestor of it.
       expect(link).toHaveClass('bai-link-ellipsis');
-      expect(link.querySelector('.astryx-text')).not.toBeNull();
+      expect(link.querySelector('.bai-text')).not.toBeNull();
     });
 
     /*
-     * FR-3692. Astryx `Text` resolves `color ?? 'primary'` and paints it on its
-     * OWN element, so the truncating box FR-3686 moved inside the link would
-     * repaint the link body text unless it is told to inherit. jsdom computes
-     * no StyleX CSS, so this asserts the reflected `data-color` Astryx emits
-     * from the same resolved value.
+     * FR-3692. `BAIText` paints the text colour on its own element, so the
+     * truncating box FR-3686 moved inside the link would repaint the link body
+     * text unless it is told to inherit. jsdom computes no CSS, so this
+     * asserts the class BAIText.css keys `color: inherit` off.
      */
     it.each([
       ['onClick (Astryx Link)', undefined],
@@ -179,17 +178,16 @@ describe('BAILink', () => {
           Some long name
         </BAILink>,
       );
-      const texts = screen.getByTestId('link').querySelectorAll('.astryx-text');
-      // The innermost one owns the text, so it is the one that must inherit.
-      expect(texts[texts.length - 1]).toHaveAttribute('data-color', 'inherit');
+      const text = screen.getByTestId('link').querySelector('.bai-text');
+      expect(text).toHaveClass('bai-text-inherit');
     });
 
     /*
      * FR-3692. Astryx `Link` inserts a `Text color="accent"` of its own between
      * the root and its children, so one inheriting box is not enough — EVERY
-     * `Text` in the chain has to defer, or the root's colour stops at the first
-     * one that names its own. This is the `EditableFileName` case: a caller
-     * tints the link root and expects the text to follow.
+     * text box in the chain has to defer, or the root's colour stops at the
+     * first one that names its own. This is the `EditableFileName` case: a
+     * caller tints the link root and expects the text to follow.
      */
     it.each([
       ['ellipsized', true],
@@ -206,13 +204,15 @@ describe('BAILink', () => {
             Renaming…
           </BAILink>,
         );
-        const texts = screen
-          .getByTestId('link')
-          .querySelectorAll('.astryx-text');
+        const link = screen.getByTestId('link');
+        const texts = link.querySelectorAll('.astryx-text');
         expect(texts.length).toBeGreaterThan(0);
         texts.forEach((text) =>
           expect(text).toHaveAttribute('data-color', 'inherit'),
         );
+        link
+          .querySelectorAll('.bai-text')
+          .forEach((text) => expect(text).toHaveClass('bai-text-inherit'));
       },
     );
 

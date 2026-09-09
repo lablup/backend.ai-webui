@@ -69,6 +69,30 @@ Portless then proxies `https://<name>.localhost:1355` to `http://localhost:9081`
 
 Each worktree picks up its own branch's FR number, so two worktrees on different issues (`fr-2701` and `fr-2890`) coexist on `fr-2701.localhost:1355` and `fr-2890.localhost:1355` without conflict. Two worktrees on the **same** branch will collide; `dev.mjs` passes `--force` so the second one overrides the first registration. Run only one of them at a time.
 
+## Sharing a dev server with the team (dev-gw)
+
+`*.localhost:1355` only resolves on the box that runs the dev server. To let anyone on the dev VPN open it as a plain link, the **box** joins the team gateway once:
+
+```bash
+dev-gw join <box>   # installed by fw:setup-remote-env
+```
+
+That registers the box with the gateway and writes `~/.config/fw/dev-gw.json`. From then on, every `pnpm run dev` prints the shareable URL alongside the local one:
+
+```
+-- Team share URL: http://fr-2701.jongeun.10-82-0-159.sslip.io (dev VPN, via dev-gw)
+```
+
+The pattern is `http://<app>.<box>.<gateway-domain>`, where `<app>` is the same Portless app name as in the local URL. The gateway rewrites the `Host` header to `<app>.localhost:<PORTLESS_PORT>` before forwarding, so **Portless, Vite, and `dev.mjs` need no configuration for it** — the URL is the only difference.
+
+Notes:
+
+- **HTTP only, dev VPN only.** The gateway deliberately serves plain HTTP (no CA to install on the viewer's machine, and the Backend.AI client signs requests in pure JS, so no secure-context dependency). It is reachable only from the VPN and dev-net ranges.
+- **The share URL is unauthenticated.** Anyone on the dev VPN or in dev-net can open it, and the dev bundle they receive contains every `VITE_*` value from your `.env.development.local` — including `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD` if you set them (see the `SECURITY:` note in `.env.development.local.sample`). Don't run a shared dev server with credentials you would not hand to the whole team.
+- **Changing `PORTLESS_PORT` requires re-running `dev-gw join`.** The gateway forwards to the port recorded at join time; when they differ, `dev.mjs` says so and prints no URL.
+- `dev.mjs` also exposes the URL to the React bundle as `VITE_DEV_SHARE_URL`. Set `DEV_GW_CONFIG` to read the config from a different path.
+- When the app name is auto-derived by `portless run` (no `FR-XXXX` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints.
+
 ## Theme color for visual differentiation
 
 Create `.env.development.local` (copy from `.env.development.local.sample`) and set:
@@ -78,6 +102,46 @@ VITE_THEME_HEADER_COLOR=#7C3AED
 ```
 
 Vite auto-loads `VITE_*` vars from this file and exposes them on `import.meta.env` for the React app, tinting the header so you can tell multiple instances apart at a glance. You can also export `VITE_THEME_HEADER_COLOR` in the shell — same effect, no file edit needed.
+
+## Review overlay (`VITE_DEV_REVIEW_OVERLAY`)
+
+**On by default** on a dev server, and in a production build only where `VITE_REVIEW_OVERLAY_BUILD` opts in (see below) — otherwise the plugin is `apply: 'serve'` and the host-side route-label component folds away, so `vite build` drops both. To turn it off for a session, set it in `.env.development.local` or the shell before `pnpm run dev`:
+
+```bash
+VITE_DEV_REVIEW_OVERLAY=0
+```
+
+The dev server injects the review overlay (`react/vite-plugins/review-overlay/`). ⌘⌃C picks an element — react-grab's own selection UI, so a drag selects a region — and copies a `#bai=v3` markdown block to paste into the PR comment, the PR's Teams thread, or a Claude prompt. One copy carries two clipboard flavours: the markdown for a plain textarea, and the rendered HTML for a rich editor such as Teams.
+
+Opening that block's link back on a dev server is the read side, and it is a **deep link only**: the fragment `#bai=v3.<id>.<anchor>` carries the whole anchor, so the page applies the block's path and query, finds the element (retrying for ~10 s while the SPA renders) and pins it with the block's landmark label (`<route> › <landmark> › <tag "text">`) plus the pin id, the component and the reviewer's note, which rides in the anchor. Nothing is looked up anywhere — the dev server reads no channel, serves no pin list and polls nothing; GitHub's unresolved threads are where a pin's state lives. A link with no anchor is plain text, an old `#bai-review=` link gets one toast, and an element that cannot be found gets one toast.
+
+`/__review/state` (GET only, no parameters) answers `{pr, repo, branch, source, root}`. `pr` / `repo` / `branch` / `source` are the write side's, so a copied block can carry the PR number. `root` is `git rev-parse --show-toplevel` on the box, and it is what the client strips off react-grab's source paths: a workspace package lives above the Vite root and is served through `/@fs/<absolute path>`, so without it a stack frame would carry the driver's home directory into a public PR comment. When the endpoint does not answer, the client drops the source location instead of printing it.
+
+## Review overlay in a build (`VITE_REVIEW_OVERLAY_BUILD`)
+
+**Opt-in, off by default.** `VITE_REVIEW_OVERLAY_BUILD=1` (or `true`) makes `vite build` ship the overlay too, so reviewers can pin an element and hand out a `#bai=v3` link from a deployed bundle rather than only from their own dev server (FR-3880). The nightly deployment sets it in `amplify.yml`; release and self-hosted builds set nothing and are unchanged.
+
+```bash
+VITE_REVIEW_OVERLAY_BUILD=1 pnpm run build
+```
+
+The build emits the overlay client as one chunk at `/review-overlay.js` and injects it into `index.html`. Two dev-server facilities have no static equivalent, so a built overlay differs from a dev one in exactly two ways:
+
+- **No `/__review/state`.** The build embeds the answer in the document instead, as `<script type="application/json" id="bai-review-state">`, with one extra field the endpoint never sends: `"host": "static"`. Blocks copied from such a build carry `pr=0` — a deployment is not a PR. (A fetch would not even have failed: Amplify rewrites every unknown path to `index.html` with a 200, so it would resolve to an HTML parse error on every boot.)
+- **No react-grab.** The app imports it behind `process.env.NODE_ENV === 'development'`, so a bundle has no fiber walk: pins carry no ⚛️ source stack, and the overlay's own hover/click picker takes over — bound to the same ⌘⌃C, and bound immediately rather than after the 20 s it otherwise spends waiting for react-grab to register. The anchor itself (selector, testid landmark, fractional rect, tag, text, note) is pure DOM and is unaffected, so pinning and deep-linking work exactly as they do in dev.
+
+## CLI login (`/cli-login`)
+
+`bai-agent login` (`packages/backend.ai-agent-cli`, the Backend.AI WebUI Agent CLI) hands the CLI the session this dev server is already logged in with, via the `/cli-login` page. The route is always mounted; it is not linked from any menu.
+
+From anywhere inside this checkout:
+
+```bash
+pnpm --filter backend.ai-agent-cli build
+node packages/backend.ai-agent-cli/dist/cli.js login --endpoint <manager url>
+```
+
+The CLI derives the WebUI origin from this checkout's branch the same way `scripts/dev.mjs` does (`fr-XXXX.localhost:1355`, honouring `PORTLESS_PORT`); pass `--webui <origin>` to override it. The browser POSTs the session to a loopback listener the CLI opened, so both must run on the same machine — over a tunnel or a shared dev-gw URL, use `bai-agent login --paste` instead. `packages/backend.ai-agent-cli/README.md` has the full flow.
 
 ## Storybook
 
@@ -98,11 +162,11 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 
 ## Commands reference
 
-| Command | Description |
-|---|---|
-| `pnpm run dev` | TypeScript watch + Relay watch + CRA dev server, all under Portless |
-| `PORT=9081 pnpm run dev` | Same, but pin CRA to port 9081 |
-| `pnpm run wsproxy` | WebSocket proxy on fixed port 5050 (not wrapped by Portless) |
-| `pnpm --filter backend.ai-ui run storybook` | Storybook under Portless |
-| `pnpm exec portless list` | Show active Portless routes |
-| `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary) |
+| Command                                                      | Description                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `pnpm run dev`                                               | TypeScript watch + Relay watch + CRA dev server, all under Portless |
+| `PORT=9081 pnpm run dev`                                     | Same, but pin CRA to port 9081                                      |
+| `pnpm run wsproxy`                                           | WebSocket proxy on fixed port 5050 (not wrapped by Portless)        |
+| `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                            |
+| `pnpm exec portless list`                                    | Show active Portless routes                                         |
+| `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                               |

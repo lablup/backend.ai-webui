@@ -70,6 +70,10 @@ export default defineConfig({
         'src/**/__generated__/**',
         'src/index.ts',
         'src/locale/**',
+        // Astryx CLI contributions: data files the CLI reads from source, not
+        // library code, so they would only dilute the coverage figure.
+        'src/**/*.doc.ts',
+        'src/astryx-docs/**',
       ],
     },
   },

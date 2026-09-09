@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "실행 오류",
     "ErrorOccurred": "문제가 발생했습니다."
   },
+  "comp:BAIColorPicker": {
+    "Clear": "지우기",
+    "HexValue": "16진수 값",
+    "NoColor": "색상 없음",
+    "SelectColor": "색상 선택"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "옵션 검색 지우기",
     "NoResults": "결과 없음",
-    "Search": "검색"
+    "SearchOptions": "옵션 검색"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
@@ -162,7 +169,7 @@
     "SelectDomain": "도메인 선택"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "수량"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "자동 새로고침",
@@ -178,6 +185,8 @@
     "operator": {
       "After": "이후",
       "Before": "이전",
+      "Contains": "포함",
+      "EndsWith": "끝남",
       "Equals": "같음",
       "GreaterThan": "초과",
       "GreaterThanOrEqual": "이상",
@@ -192,8 +201,12 @@
       "In": "포함됨",
       "LessThan": "미만",
       "LessThanOrEqual": "이하",
+      "NotContains": "포함하지 않음",
+      "NotEndsWith": "끝나지 않음",
       "NotEquals": "같지 않음",
-      "NotIn": "포함되지 않음"
+      "NotIn": "포함되지 않음",
+      "NotStartsWith": "시작하지 않음",
+      "StartsWith": "시작"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -214,6 +227,39 @@
     "Size": "크기",
     "SuccessFullyPulled": "{{count}}개 버전에 대한 가져오기 요청을 보냈습니다.",
     "Version": "버전"
+  },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Backend.AI 세션을 확인하는 중입니다…",
+    "SignInWithBackendAI": "Backend.AI 계정으로 로그인",
+    "failure": {
+      "CorsOrMixed": "브라우저가 Backend.AI 웹서버 요청을 차단했습니다. 일반적으로 CORS 또는 혼합 콘텐츠 제한 때문입니다.",
+      "HttpError": "Backend.AI 웹서버가 오류를 반환했습니다 ({{status}}).",
+      "InvalidCallback": "{{appName}}에 설정된 로그인 복귀 주소가 올바른 웹 주소가 아닙니다.",
+      "InvalidResponse": "Backend.AI 웹서버가 예상과 다른 응답을 반환했습니다.",
+      "NoEndpoint": "{{appName}}에 Backend.AI 웹서버 주소가 설정되어 있지 않습니다.",
+      "NoSessionId": "Backend.AI에 로그인되어 있지만 웹서버가 세션 ID를 반환하지 않았습니다.",
+      "NoSessionOverHttp": "아직 Backend.AI에 로그인하지 않았습니다. 이미 로그인했다면 {{appName}}이(가) HTTP로 제공되고 있어 브라우저가 웹서버의 보안 세션 쿠키를 거부하고 있을 수 있습니다. HTTPS로 접속해 보세요.",
+      "NoSessionOverHttps": "아직 Backend.AI에 로그인하지 않았습니다. 이미 로그인했다면 {{appName}}과(와) Backend.AI 웹서버가 서로 다른 사이트여서 브라우저가 세션 쿠키를 전송하지 않는 것일 수 있습니다.",
+      "RelayFailed": "Backend.AI에 로그인되어 있지만 {{appName}}에서 로그인을 완료하지 못했습니다.",
+      "Timeout": "Backend.AI 웹서버가 제한 시간 내에 응답하지 않았습니다.",
+      "Title": "Backend.AI 계정으로 로그인하지 못했습니다"
+    }
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "클러스터 크기",
+    "Concurrency": "동시실행 세션 수",
+    "CreatedAt": "생성 날짜",
+    "DefaultForUnspecified": "기본값",
+    "DefaultForUnspecifiedTooltipDesc1": "특정 CPU 또는 메모리가 요청되지 않은 경우 기본 정책을 설정합니다.",
+    "DefaultForUnspecifiedTooltipDesc2": "'UNLIMITED'을 사용하면 에이전트 노드의 용량까지 사용을 허용하는 반면, 'LIMITED'는 명시적으로 설정되지 않는 한 리소스를 거부합니다. \n대부분의 경우 'UNLIMITED'을 권장합니다.",
+    "IdleTimeout": "유휴 대기 시간",
+    "MaxConcurrentSFTPSessions": "최대 동시 SFTP 세션",
+    "MaxPendingSessionCount": "최대 대기 세션",
+    "MaxPendingSessionResourceSlots": "최대 대기 세션 리소스 슬롯",
+    "MaxSessionLifetime": "최대 세션 수명 시간",
+    "Name": "이름",
+    "StorageNodes": "저장소 노드",
+    "TotalResourceSlots": "자원 정책"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "키페어를 선택해주세요"
@@ -273,8 +319,15 @@
   },
   "comp:BAIProjectBulkEditModal": {
     "FollowingProjectsWillBeUpdated": "다음 프로젝트(들)이 업데이트됩니다.",
-    "ProjectResourcePolicy": "프로젝트 리소스 정책",
+    "ProjectResourcePolicy": "프로젝트 자원 정책",
     "UpdateMultipleProjects": "프로젝트 일괄 업데이트"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "생성 날짜",
+    "MaxNetworkCount": "최대 네트워크 수",
+    "MaxQuotaScopeSize": "최대 폴더 크기",
+    "MaxVFolderCount": "최대 폴더 수",
+    "Name": "이름"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "프로젝트를 선택해주세요"
@@ -296,7 +349,7 @@
     "PleaseEnterBothRegistryAndProject": "레지스트리와 프로젝트 모두 입력해 주세요.",
     "Project": "프로젝트",
     "ProjectCreated": "프로젝트가 생성되었습니다.",
-    "ProjectResourcePolicy": "리소스 정책",
+    "ProjectResourcePolicy": "자원 정책",
     "ProjectUpdated": "프로젝트가 업데이트 되었습니다.",
     "Registry": "레지스트리",
     "UpdateProject": "프로젝트 수정"
@@ -322,8 +375,20 @@
     "SelectFolder": "폴더를 선택해주세요"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "적용",
     "PlaceHolder": "검색",
-    "ResetFilter": "필터 초기화"
+    "ResetFilter": "필터 초기화",
+    "SearchLabel": "필터 검색",
+    "operator": {
+      "Contains": "포함",
+      "Equals": "같음",
+      "GreaterThan": "초과",
+      "GreaterThanOrEqual": "이상",
+      "In": "포함됨",
+      "LessThan": "미만",
+      "LessThanOrEqual": "이하",
+      "NotEquals": "같지 않음"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "가져오기 취소",
@@ -374,7 +439,7 @@
     "AddChoice": "선택지 추가",
     "Category": "카테고리",
     "CategoryPlaceholder": "예: model_loading",
-    "CategoryTooltip": "관련 매개변수를 함께 그룹화하는 데 사용되는 UI 카테고리입니다.",
+    "CategoryTooltip": "관련 파라미터를 함께 그룹화하는 데 사용되는 UI 카테고리입니다.",
     "ChoiceLabel": "라벨",
     "ChoiceLabelPlaceholder": "예: FP16",
     "ChoiceLabelRequired": "선택지 라벨은 필수입니다.",
@@ -383,15 +448,15 @@
     "ChoiceValueRequired": "선택지 값은 필수입니다.",
     "Choices": "선택지",
     "ChoicesRequired": "최소 하나 이상의 선택지가 필요합니다.",
-    "CreatePreset": "프리셋 생성",
+    "CreatePreset": "파라미터 생성",
     "DefaultValue": "기본값",
     "DefaultValuePlaceholder": "예: 1",
     "Description": "설명",
-    "DescriptionPlaceholder": "이 매개변수가 제어하는 항목과 인퍼런스 동작에 미치는 영향을 설명하세요.",
+    "DescriptionPlaceholder": "이 파라미터가 제어하는 항목과 인퍼런스 동작에 미치는 영향을 설명하세요.",
     "DisplayName": "표시 이름",
     "DisplayNamePlaceholder": "예: Tensor Parallel Size",
-    "DisplayNameTooltip": "배포 양식에서 매개변수 이름 대신 표시되는 사람이 읽기 쉬운 라벨입니다.",
-    "EditPreset": "프리셋 편집",
+    "DisplayNameTooltip": "배포 양식에서 파라미터 이름 대신 표시되는 사람이 읽기 쉬운 라벨입니다.",
+    "EditPreset": "파라미터 편집",
     "Key": "키",
     "KeyPlaceholder": "예: TENSOR_PARALLEL_SIZE",
     "KeyRequired": "키는 필수입니다.",
@@ -401,16 +466,17 @@
     "NumberMax": "최댓값",
     "NumberMaxMustExceedMin": "최댓값은 최솟값보다 커야 합니다.",
     "NumberMin": "최솟값",
-    "PresetCreated": "런타임 프리셋이 생성되었습니다.",
-    "PresetTarget": "프리셋 대상",
+    "PresetCreated": "런타임 파라미터가 생성되었습니다.",
+    "PresetTarget": "파라미터 대상",
     "PresetTargetArgs": "커맨드라인 인자",
     "PresetTargetEnv": "환경 변수",
-    "PresetTargetRequired": "프리셋 대상은 필수입니다.",
-    "PresetUpdated": "런타임 프리셋이 업데이트되었습니다.",
+    "PresetTargetRequired": "파라미터 대상은 필수입니다.",
+    "PresetUpdated": "런타임 파라미터가 업데이트되었습니다.",
     "Rank": "순위",
-    "RankTooltip": "같은 런타임의 프리셋 간 표시 순서입니다. 값이 낮을수록 먼저 표시됩니다.",
+    "RankTooltip": "같은 런타임의 파라미터 간 표시 순서입니다. 값이 낮을수록 먼저 표시됩니다.",
     "Required": "필수",
-    "RequiredTooltip": "배포 리비전을 생성할 때 이 프리셋 매개변수를 반드시 입력해야 하는지 여부입니다.",
+    "RequiredTooltip": "배포 리비전을 생성할 때 이 파라미터를 반드시 입력해야 하는지 여부입니다.",
+    "Requirement": "필수 여부",
     "RuntimeVariant": "런타임",
     "RuntimeVariantRequired": "런타임은 필수입니다.",
     "SliderMax": "최댓값",
@@ -421,15 +487,17 @@
     "SliderStep": "단위(Step)",
     "SliderStepMustBePositive": "단위(Step)는 0보다 커야 합니다.",
     "SliderStepTooltip": "슬라이더의 증가 단위입니다. 기본값은 1입니다.",
+    "StoredValueTypeMismatch": "이 파라미터는 {{valueType}} 값 유형으로 저장되어 있어 {{uiType}} UI 유형으로는 표시할 수 없습니다. UI 유형 또는 값 유형을 변경해 주세요.",
     "TextPlaceholderExample": "예: 값을 입력하세요",
     "TextPlaceholderLabel": "입력 플레이스홀더",
     "UIType": "UI 유형",
     "UITypeCheckbox": "체크박스",
+    "UITypeIncompatibleWithValueType": "선택한 UI 유형은 이 값 유형을 표시할 수 없습니다.",
     "UITypeNumberInput": "숫자 입력",
     "UITypeSelect": "셀렉트",
     "UITypeSlider": "슬라이더",
     "UITypeTextInput": "텍스트 입력",
-    "UITypeTooltip": "배포 양식에서 이 매개변수를 표시하는 데 사용되는 컨트롤입니다.",
+    "UITypeTooltip": "배포 양식에서 이 파라미터를 표시하는 데 사용되는 컨트롤입니다.",
     "ValueType": "값 유형",
     "ValueTypeBool": "bool 자료형(Boolean)",
     "ValueTypeFlag": "플래그",
@@ -448,14 +516,20 @@
     "ModifiedAt": "수정일",
     "Name": "이름",
     "Optional": "선택 사항",
-    "PresetTarget": "프리셋 대상",
+    "PresetTarget": "파라미터 대상",
     "PresetTargetArgs": "커맨드라인 인자",
     "PresetTargetEnv": "환경 변수",
     "Rank": "순위",
-    "RankTooltip": "같은 런타임의 프리셋 간 표시 순서입니다. 값이 낮을수록 먼저 표시됩니다.",
+    "RankTooltip": "같은 런타임의 파라미터 간 표시 순서입니다. 값이 낮을수록 먼저 표시됩니다.",
     "Required": "필수",
-    "RuntimeVariant": "런타임",
     "RuntimeVariantId": "런타임 ID",
+    "RuntimeVariantWithID": "런타임 (ID)",
+    "UIType": "UI 유형",
+    "UITypeCheckbox": "체크박스",
+    "UITypeNumberInput": "숫자 입력",
+    "UITypeSelect": "셀렉트",
+    "UITypeSlider": "슬라이더",
+    "UITypeTextInput": "텍스트 입력",
     "ValueType": "값 유형",
     "ValueTypeBool": "bool 자료형(Boolean)",
     "ValueTypeFlag": "플래그",
@@ -557,7 +631,6 @@
     "ArchiveDownloadStarted": "{{count}}개 항목의 다운로드가 시작되었습니다.",
     "ChangeFileExtension": "파일 확장자 변경",
     "ChangeFileExtensionDesc": "파일 확장자를 변경하면 파일이 사용 불가능해지거나 올바르게 열리지 않을 수 있습니다. 계속하시겠습니까?",
-    "Controls": "제어",
     "CreateANewFile": "새 파일 생성",
     "CreateANewFolder": "새 폴더 생성",
     "CreateFile": "파일 생성",
@@ -565,6 +638,7 @@
     "CreatedAt": "생성일",
     "DeleteSelectedItemDesc": "삭제된 파일 및 폴더는 복구할 수 없습니다. 계속하시겠습니까?",
     "DeleteSelectedItemsDialog": "삭제 확인",
+    "Download": "다운로드",
     "DownloadSelected": "다운로드",
     "DownloadStarted": "파일 \"{{fileName}}\" 다운로드가 시작되었습니다.",
     "DragAndDropDesc": "파일을 이곳에 드래그하여 업로드하세요.",
@@ -581,13 +655,12 @@
     "MaxFileNameLength": "파일 이름은 255자 이내여야 합니다.",
     "MaxFolderNameLength": "폴더 이름은 255자 이내여야 합니다.",
     "ModifiedAt": "수정일",
-    "MoreOptions": "더 많은 옵션",
     "Name": "이름",
     "NoUploadPermissionForHost": "호스트에 대한 업로드 권한이 없습니다.",
-    "Path": "Path",
+    "Path": "경로",
     "PleaseEnterAFileName": "파일 이름을 입력해 주세요.",
     "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
-    "RenameFile": "Rename",
+    "RenameFile": "이름 변경",
     "RenameSuccess": "이름이 변경되었습니다.",
     "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 삭제되었습니다.",
     "Size": "크기",
@@ -644,7 +717,7 @@
     "ModifiedAt": "수정일",
     "NeedPasswordChange": "비밀번호 변경 필요",
     "Project": "프로젝트",
-    "ResourcePolicy": "리소스 정책",
+    "ResourcePolicy": "자원 정책",
     "Role": "역할",
     "Status": "상태",
     "StatusInfo": "상태 정보",
@@ -702,23 +775,26 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "감소",
     "DeselectAll": "선택 취소",
     "File": "파일",
-    "Increase": "Increase",
+    "Increase": "증가",
+    "Loading": "로딩 중...",
     "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
     "Project": "프로젝트",
-    "Select": "Select",
+    "Search": "검색",
+    "Select": "선택",
+    "SelectPlaceholder": "{{label}}을(를) 선택해주세요",
     "TotalItems": "총 {{total}} 항목",
-    "Unit": "Unit",
+    "Unit": "단위",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "동작",
+      "Back": "뒤로",
       "Cancel": "취소",
       "Close": "닫기",
       "Collapse": "접기",
-      "Confirm": "Confirm",
+      "Confirm": "확인",
       "Copied": "복사됨",
       "Copy": "복사",
       "CopyAll": "모두 복사",

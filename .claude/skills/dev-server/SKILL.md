@@ -8,8 +8,9 @@ description: >
   conversation history, set VITE_THEME_HEADER_COLOR to the matching hex so the dev
   server's header reflects this Claude session's color. When `/rename <name>`
   is visible, slugify the name and pass it as PORTLESS_APP_NAME so the dev
-  URL reflects the session name (falls back to FR-XXXX from the branch, then
-  to the current PR number). When the current branch's PR description names
+  URL reflects the session name; dev.mjs prepends the branch's FR number and
+  the PR number itself, and derives a word from the PR title when there is no
+  /rename, so pass the word only. When the current branch's PR description names
   a backend test server (bare IP, `host:port`, or full URL), set
   VITE_DEFAULT_API_ENDPOINT so the login screen pre-fills that endpoint; when a
   live session is connected to a different backend a dev-only banner flags the
@@ -77,22 +78,47 @@ Do not invent additional names or alternate hex values. If the user's `/color` a
 
 ## 2b. Decide the Portless app name (webui only)
 
-`scripts/dev.mjs` reads `PORTLESS_APP_NAME` from the env and uses it as the Portless subdomain (`https://<name>.localhost:1355`). Pick a name with this priority:
+`PORTLESS_APP_NAME` supplies **only the descriptive word**. `scripts/dev.mjs` composes the
+full subdomain itself, putting the identifiers first and the word last:
 
-1. **Most recent successful `/rename <name>` in conversation history** — slugify the arg (see rules below) and use that. This makes the dev URL match the human-readable session name (e.g. `iphoto-disk-cleanup` → `https://iphoto-disk-cleanup.localhost:1355`).
-2. **FR-XXXX in the current git branch** — `dev.mjs` already detects this when `PORTLESS_APP_NAME` is unset, so just **omit the env var** and let it derive `fr-XXXX` (e.g. `fr-2794`). Don't recompute and pass it back in.
-3. **Open PR number for the current branch** — only if (1) and (2) both miss and the current branch has an open PR. Use `gh pr view --json number -q '.number'` and pass `PORTLESS_APP_NAME=pr-<NNNN>`.
-4. **None of the above** — omit the env var; `dev.mjs` falls back to Portless's auto-derived name.
+```
+https://fr-3665-pr9049-statusline.localhost:1355
+        \_____/ \____/ \________/
+        branch  looked  PORTLESS_APP_NAME
+        issue   up by   (this is the only part you supply)
+                dev.mjs
+```
 
-**Slug rules** (apply to `/rename` arg before passing as `PORTLESS_APP_NAME`):
+So there is exactly one question for you to answer: **is there a `/rename` to use?**
+
+1. **Most recent successful `/rename <name>`** — slugify the arg (rules below) and pass it.
+   The dev URL then carries the human-readable session name alongside the identifiers.
+2. **No `/rename`** — **omit the env var.** `dev.mjs` falls back to a few words from the PR
+   title, then to the identifiers alone (`fr-3665-pr9049`), then to Portless's auto-derived
+   name. Every fallback is already handled.
+
+**Never pass the FR number or the PR number yourself.** `dev.mjs` derives the issue key from
+the branch and looks the PR up with one cached `gh` call, and it strips either identifier from
+your string if you pass it anyway — so `PORTLESS_APP_NAME=fr-3665` just yields `fr-3665-pr9049`,
+losing the descriptive part for nothing.
+
+**Slug rules** (apply to the `/rename` arg before passing as `PORTLESS_APP_NAME`):
 - Lowercase.
 - Replace any character that isn't `[a-z0-9-]` with `-` (spaces, underscores, dots, slashes, non-ASCII all become `-`).
 - Collapse repeated `-` into a single `-`.
 - Trim leading/trailing `-`.
-- Cap at ~40 chars (Portless cert generation can choke on very long subdomains).
+- Keep it short — a word or three. `dev.mjs` caps the whole hostname at 50 chars and truncates
+  the descriptive tail first, so a long name loses its own end, not the identifiers.
 - If the result is empty after sanitization, treat as unset.
 
-`dev.mjs` re-applies the same sanitization defensively, so it's safe to pass a slightly imperfect string — but compute the clean form yourself so you can announce the right hostname to the user without re-reading Portless output.
+`dev.mjs` re-applies the same sanitization defensively, so it's safe to pass a slightly imperfect
+string. It is **not** safe to predict the hostname from your string alone any more — the issue and
+PR parts are added after you. Read the URL Portless prints, or the statusline's Portless link,
+before announcing it.
+
+`PORTLESS_APP_NAME_EXACT=1` turns the composition off and uses your string verbatim. It exists for
+callers that own the whole hostname (a release preview, say); a dev server for a branch should not
+use it.
 
 **Detecting `/rename` in history**: scan the current conversation for `<command-name>/rename</command-name>` blocks. Take the **most recent** one whose `<local-command-stdout>` does not look like an error (e.g. doesn't start with `Error` / `Invalid`). Use `<command-args>` as the raw input to the slug rules.
 
@@ -162,7 +188,7 @@ If the resolved value matches the existing default backend the WebUI would other
 **Resolve them conservatively — never guess:**
 
 1. **User explicitly supplied credentials** in the prompt or conversation (e.g. "log in as `admin@lablup.com` / `wJalrXUt`", "use the domain-admin test account") → set both vars from what they said.
-2. **A shared team test server's credentials are already known** to this session — e.g. the `dev-server-registry` skill's `--backend-user` / `--backend-password` for the resolved endpoint, or credentials the user pasted earlier for that box → reuse them.
+2. **A shared team test server's credentials are already known** to this session — credentials the user pasted earlier for that box → reuse them.
 3. **Otherwise omit both.** Do **not** scrape passwords out of the PR body, invent credentials, or reuse `e2e/envs/.env.playwright` values unless the user pointed you at them. Set the email alone (without a password) only if that is all the user gave.
 
 **Security caveats (state them when you use these):**
@@ -206,13 +232,18 @@ Running without it costs no real type safety: `scripts/verify.sh`, the Husky pre
   pnpm dev
   ```
 
-If step **2b** picked a Portless app name from `/rename` or a PR number, also prefix `PORTLESS_APP_NAME='<slug>'`. If 2b selected the FR-XXXX branch fallback (option 2) or "none" (option 4), **omit** `PORTLESS_APP_NAME` — `dev.mjs` handles those itself.
+If step **2b** found a `/rename` to use, also prefix `PORTLESS_APP_NAME='<slug>'` — the descriptive word only. Otherwise **omit** it; `dev.mjs` derives the word from the PR title and adds the identifiers either way.
 
 If step **2c** resolved a default API endpoint, also prefix `VITE_DEFAULT_API_ENDPOINT='<url>'`. If 2c resolved nothing, **omit** the variable entirely — do not pass an empty string.
 
 If step **2d** resolved login credentials, also prefix `VITE_DEFAULT_EMAIL='<email>'` and `VITE_DEFAULT_PASSWORD='<password>'`. If 2d resolved nothing, **omit** both. Never pass an empty string, and never fabricate a value to "fill the slot."
 
 Per step **2e**, prefix `VITE_DEV_TYPECHECK=on` **only** when the user explicitly asked for type checking; otherwise omit the variable entirely. Either way, say which mode you started in your reply.
+
+On the webui, run step **5**'s `eval "$(… advertise.sh boot-env)"` first and prefix the
+`BAI_REVIEW_BOOT_RECORD` it exports — the dev server needs it in its environment before it
+starts. Omit it when `boot-env` printed nothing (it prints its refusals on stderr, so an
+empty stdout is the whole signal).
 
 **Shell-escape every interpolated value.** The endpoint, email, and especially the password come from user/conversation text and may contain an apostrophe or shell metacharacters — interpolating them raw inside `'...'` breaks the command and can turn the rest of the value into executable shell. Before building the command line, quote each value shell-safely (e.g. Bash `printf '%q'`), or set them via the user's git-ignored `.env.development.local` instead of the command line. Do not hand-concatenate an untrusted password into a single-quoted string.
 
@@ -226,7 +257,74 @@ For non-webui projects, substitute the discovered command and package manager. U
 
 Use the Bash tool with `run_in_background: true` since dev servers are long-running. State in one short sentence what you're doing — e.g. `"Starting dev server with header color #2563EB (blue)."` — and which color name (if any) the env was derived from. Don't paste the env table.
 
-## 5. Announce both URLs to the user
+## 5. Advertise the server on every PR it serves (webui)
+
+On a box that has joined the dev gateway (`~/.config/fw/dev-gw.json`), every open PR this
+server serves gets one comment carrying a URL a reviewer can open, and the boot is recorded
+on disk for later tooling. `.claude/skills/dev-server/scripts/advertise.sh` does all of it —
+this skill only calls it, and repeats what it prints.
+
+**Before boot** (step 4), resolve the app name and the record path:
+
+```bash
+eval "$(bash .claude/skills/dev-server/scripts/advertise.sh boot-env)"
+```
+
+That exports `BAI_DEV_APP` and `BAI_REVIEW_BOOT_RECORD=~/.local/state/fw/dev-servers/<app>.json`.
+Add `BAI_REVIEW_BOOT_RECORD` to the `pnpm dev` env prefix — **the dev server must have it in
+its environment, but the file is only written after boot**, since the record describes a name
+Portless has actually claimed. `boot-env` resolves that name through `scripts/portless-app-name.mjs`
+— the same module, fed the same PR lookup and the same cache `dev.mjs` uses — so the prediction
+is the name `dev.mjs` will request (`portless <app> --force` claims exactly it). When `boot-env`
+prints nothing on stdout — Portless will auto-derive a name — skip this whole section.
+
+**After boot**, once Portless has printed its URL and `portless-doctor` has run:
+
+```bash
+bash .claude/skills/dev-server/scripts/advertise.sh advertise --app "$BAI_DEV_APP" --pid <dev.mjs pid>
+```
+
+Idempotent: run it again and it edits the same comments. Pass `--teams-thread <url>` (for the
+running PR) or `--teams-thread <pr>=<url>` when Jira has no thread recorded for a PR. Every
+line the script prints goes to stderr, so its exit status is not what tells you it worked —
+read the lines.
+
+**On teardown**, after killing the dev server by pid:
+
+```bash
+bash .claude/skills/dev-server/scripts/advertise.sh stop --app "$BAI_DEV_APP"
+```
+
+### What the script guarantees
+
+- **A `.localhost` URL never reaches GitHub.** The advertised URL is `share_base` from the
+  gateway config with the claimed app name substituted — plain `http`, no port. A box that
+  has not joined, a gateway joined with a different Portless port, or a URL that does not
+  answer a Portless **2xx** (`X-Portless: 1` alone is not enough — Portless sends it on the
+  404 it gives an app name it does not serve) yields one printed line and no comment. Repeat
+  that line to the user; never route around it.
+- **One comment per box per PR**, found by the hidden marker `<!-- bai-dev-server box=<box> -->`
+  and edited, never duplicated. Another box's `--force` takeover of the same app name carries
+  a different marker, so it cannot touch this box's comment.
+- **The comment carries the URL and, for a stack, `serves stack #a → #b → #c (running: #c)` —
+  nothing else.** The repo is public: no endpoint, e-mail or password ever goes in it (the dev
+  bundle already pre-fills login).
+- **The served set** is the current branch plus every layer below it from `gh stack view --json`,
+  open PRs only; an unstacked branch serves one PR. A PR that leaves that set between runs —
+  it merged, it closed, the branch moved — has its comment edited to the stopped form on the
+  spot, because the boot record about to be overwritten is the only thing that still knows
+  where that comment is.
+- **Teardown never writes a PR's first comment.** `stop` edits only the comments the boot
+  record has ids for. A PR whose comment could not be written at boot (`commentId: null`) is
+  left alone rather than told a server it never heard about has stopped.
+- **The Teams thread** for each served PR comes from that PR's `Resolves … (FR-XXXX)` key and one
+  Jira GET (`customfield_10176`) at boot — never at request time. Missing is recorded as `null`.
+  The credential reaches `curl` on stdin via `--config -`, never in argv, because `/proc` is
+  readable by every other process on the box.
+
+Logic that needs no network is unit-tested: `bash .claude/skills/dev-server/scripts/test-advertise.sh`.
+
+## 6. Announce both URLs to the user
 
 Once the server is up, tell the user **both** the Portless (HTTPS) URL and the underlying React (HTTP) URL on separate lines so they can pick whichever they prefer. Do this only after both are actually known — don't fabricate ports.
 
@@ -256,19 +354,6 @@ If after ~15s the React URL still hasn't appeared (very rare with Vite), announc
 
 Many projects don't use Portless. Read the dev server's stdout for whatever URL(s) it prints (Vite typically prints `Local:` and `Network:`; Next.js prints `started server on http://localhost:3000`; etc.) and forward all of them to the user verbatim. If the project does use Portless, follow the webui rules above.
 
-## 6. Register in the dev-server registry (post-boot)
-
-After a successful boot — i.e. right after step 5, once the **actual** Portless URL is known — register this dev server in the team dev-server registry **if the fw plugin's `dev-server-registry` skill is available** (it ships in the `fw` plugin from lablup/claude-mp; its `scripts/registry.sh` does the write). Teammates then discover the server on the team board instead of asking around.
-
-- Run the skill's **`register`** op from this project's worktree (`--cwd` = the checkout the server serves), passing what you learned during boot:
-  - `--subdomain` — the hostname Portless **actually printed** in step 5 (the part before `.localhost`), not the name you requested in step 2b.
-  - `--backend-endpoint` — the `VITE_DEFAULT_API_ENDPOINT` you resolved in step 2c (omit if you resolved none).
-  - `--backend-user` / `--backend-password` — **only** when the endpoint is a shared team test server (the registry skill's credential policy governs; when unsure, omit and let reviewers ask).
-  - PR number, branch, and Jira key are auto-derived by the script from the worktree — don't recompute them.
-- **Skip silently** (one short sentence, not an error) when the fw plugin / `dev-server-registry` skill isn't installed, or the box isn't initialized (`~/.config/fw/registry-box.json` missing). Do **not** run `init` unprompted — it needs a teammate-reachable host only the user knows.
-- Registration is idempotent per (repo, PR): re-booting the same PR just refreshes the entry. Register on state changes only — never on a timer.
-- **On stop/teardown** — the user says to stop the server, the review session ends, or you kill the background task — run the skill's **`unregister`** op from the same worktree so the board (and the PR's registry comment) doesn't advertise a dead server.
-
 ## 7. Edge cases
 
 - **User overrides via env (webui)**: Vite's `loadEnv()` reads `VITE_THEME_HEADER_COLOR`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEFAULT_EMAIL`, `VITE_DEFAULT_PASSWORD` from `.env.development.local` and from the shell automatically. If the user already has any of them set, do not override — the user-set value wins. For `PORTLESS_APP_NAME`, the same rule applies: if it's already exported in the inherited env, treat the user-set value as authoritative.
@@ -279,5 +364,11 @@ After a successful boot — i.e. right after step 5, once the **actual** Portles
 
 ## 8. Out of scope
 
-- Don't write any color file (`.claude/.fw-color`, `.env.development.local`, etc.). The only sanctioned side effects are the env var prefix and the registry entry from step 6.
-- Don't install deps, run lint, or do any other "while we're here" steps. Just start the server (and register it, per step 6).
+- Don't write any color file (`.claude/.fw-color`, `.env.development.local`, etc.).
+- **The sanctioned side effects are exactly three**: the env var prefix, and — on a
+  gateway-joined box — the dev-server comment on each served PR plus the boot record under
+  `~/.local/state/fw/dev-servers/`, both written only by `advertise.sh` (step 5). Nothing
+  else touches GitHub, Jira or disk: no labels, no PR body edits, no reviewers, no registry
+  entries, and never a comment on a PR this server does not serve.
+- Don't install deps, run lint, or do any other "while we're here" steps. Just start the
+  server and advertise it.

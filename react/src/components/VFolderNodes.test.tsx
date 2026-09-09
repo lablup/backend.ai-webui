@@ -225,6 +225,7 @@ class ImmediateWidthResizeObserver {
 const renderTable = (
   noDeployTooltip?: string,
   project: ProjectContextOrNull = null,
+  vfolderOverrides: Record<string, unknown> = {},
 ) => {
   globalThis.ResizeObserver =
     ImmediateWidthResizeObserver as unknown as typeof ResizeObserver;
@@ -251,6 +252,7 @@ const renderTable = (
         usage_mode: 'model',
         ownership_type: 'user',
         permissions: ['delete_vfolder'],
+        ...vfolderOverrides,
       }),
     }),
   );
@@ -355,5 +357,45 @@ describe('VFolderNodes deploy row action disable-with-tooltip contract (FR-3423)
     await waitFor(() =>
       expect(mockDeployModalOpen).toHaveBeenCalledWith(true, 'folder-0000'),
     );
+  }, 10000);
+});
+
+/**
+ * FR-3722: the trash-bin row actions derive `disabled` from their reason, so a
+ * regression here would show up as a silently disabled button. `delete-pending`
+ * is the only restorable/purgeable state; the rest of the deleted category has
+ * already passed that point.
+ */
+describe('VFolderNodes trash-bin row actions name why they are blocked (FR-3722)', () => {
+  beforeEach(() => {
+    mockObservedWidth = 600;
+  });
+
+  it('leaves Restore and Delete enabled for a folder waiting in the trash bin', async () => {
+    renderTable(undefined, null, { status: 'delete-pending' });
+
+    expect(
+      await screen.findByRole('button', { name: 'data.folders.Restore' }),
+    ).toBeEnabled();
+    expect(
+      await screen.findByRole('button', { name: 'data.folders.Delete' }),
+    ).toBeEnabled();
+  }, 10000);
+
+  it('names the reason on both once deletion has already started', async () => {
+    renderTable(undefined, null, { status: 'delete-ongoing' });
+
+    expect(
+      await screen.findByRole('button', { name: 'data.folders.Restore' }),
+    ).toHaveAttribute('aria-disabled', 'true');
+    expect(
+      await screen.findByRole('button', { name: 'data.folders.Delete' }),
+    ).toHaveAttribute('aria-disabled', 'true');
+
+    // One tooltip per blocked action — neither goes silent, which is the
+    // whole defect.
+    expect(
+      await screen.findAllByText('data.folders.DeletionAlreadyStarted'),
+    ).toHaveLength(2);
   }, 10000);
 });

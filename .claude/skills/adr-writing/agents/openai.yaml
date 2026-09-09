@@ -1,0 +1,4 @@
+interface:
+  display_name: 'ADR Writing'
+  short_description: 'Write ADRs under docs/adr/ so a first-time reader understands them alone.'
+  default_prompt: 'Use this skill when a change needs an architecture decision record, or when authoring or revising one under docs/adr/. It fixes when an ADR is required, the file conventions (name, English title, no status field, how a decision is retired), the section skeleton, the writing rules for titles, terms, and sentences, mermaid usage, and the checks before landing. It governs how the document reads, not what it decides.'

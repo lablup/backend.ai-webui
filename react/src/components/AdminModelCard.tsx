@@ -404,6 +404,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         </BAIFlex>
       </BAIFlex>
       <BAITable<ModelCardNode>
+        scroll={{ x: 'max-content' }}
         rowKey="id"
         dataSource={modelCards as ModelCardNode[]}
         columns={columns}

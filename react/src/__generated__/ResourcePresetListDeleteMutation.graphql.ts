@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<59d02e52b286441c8b3bb678706c63bb>>
+ * @generated SignedSource<<a9cc4086cacc677934ce60376ff76090>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type ResourcePresetListDeleteMutation$variables = {
-  name: string;
+  id: string;
 };
 export type ResourcePresetListDeleteMutation$data = {
   readonly delete_resource_preset: {
@@ -28,7 +28,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "name"
+    "name": "id"
   }
 ],
 v1 = [
@@ -37,8 +37,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "name",
-        "variableName": "name"
+        "name": "id",
+        "variableName": "id"
       }
     ],
     "concreteType": "DeleteResourcePreset",
@@ -82,16 +82,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "66d1ae4fe23653f392529fb39e2e61f2",
+    "cacheID": "58389c5f66119f423bdc0ab87f80b78b",
     "id": null,
     "metadata": {},
     "name": "ResourcePresetListDeleteMutation",
     "operationKind": "mutation",
-    "text": "mutation ResourcePresetListDeleteMutation(\n  $name: String!\n) {\n  delete_resource_preset(name: $name) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ResourcePresetListDeleteMutation(\n  $id: UUID!\n) {\n  delete_resource_preset(id: $id) {\n    ok\n    msg\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "99b502a95d31e84e4de261e06fb89915";
+(node as any).hash = "5de901cb26d98b82df1074c65c78c3a1";
 
 export default node;

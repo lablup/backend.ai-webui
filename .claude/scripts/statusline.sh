@@ -338,7 +338,7 @@ def portless_links(claim_root):
     except Exception:
         pass
     # No default port: a link to the wrong port renders green and live while being
-    # dead, which is worse than the gray placeholder.
+    # dead, which is worse than showing no Portless segment at all.
     port = ""
     try:
         with open(os.path.join(state, "proxy.port")) as f:
@@ -411,8 +411,11 @@ def portless_links(claim_root):
 
 
 def render_portless(matches):
+    # Nothing to click, nothing to show. A dim non-link "Portless" sits among segments
+    # that ARE links and reads as a broken one — the question it prompts is "why can't
+    # I click this", not "ah, no dev server here".
     if not matches:
-        return "\033[90mPortless\033[0m"
+        return ""
     return "  ".join(link(u, "\033[32m%s\033[0m" % lbl) for lbl, u in matches)
 
 

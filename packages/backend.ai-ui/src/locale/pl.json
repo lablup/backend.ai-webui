@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "Wykonanie nie powiodło się",
     "ErrorOccurred": "Wystąpił błąd"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Wyczyść",
+    "HexValue": "Wartość szesnastkowa",
+    "NoColor": "Brak koloru",
+    "SelectColor": "Wybierz kolor"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Wyczyść Szukaj wśród opcji",
     "NoResults": "Brak wyników",
-    "Search": "Wyszukiwanie"
+    "SearchOptions": "Szukaj wśród opcji"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Wybierz rejestr kontenerów"
@@ -162,7 +169,7 @@
     "SelectDomain": "Wybierz domenę"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Ilość"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automatyczne odświeżanie",
@@ -178,6 +185,8 @@
     "operator": {
       "After": "po",
       "Before": "przed",
+      "Contains": "zawiera",
+      "EndsWith": "kończy się na",
       "Equals": "równe",
       "GreaterThan": "większe niż",
       "GreaterThanOrEqual": "większe lub równe",
@@ -192,15 +201,19 @@
       "In": "w",
       "LessThan": "mniejsze niż",
       "LessThanOrEqual": "mniejsze lub równe",
+      "NotContains": "nie zawiera",
+      "NotEndsWith": "nie kończy się na",
       "NotEquals": "nierówne",
-      "NotIn": "nie w"
+      "NotIn": "nie w",
+      "NotStartsWith": "nie zaczyna się od",
+      "StartsWith": "zaczyna się od"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
+    "EnterToken": "Wprowadź swój token Hugging Face",
+    "HuggingFaceSettings": "Ustawienia Hugging Face",
     "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "TokenUpdatedSuccessfully": "Token został zaktualizowany."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Wybierz Obraz"
@@ -214,6 +227,39 @@
     "Size": "Rozmiar",
     "SuccessFullyPulled": "Pomyślnie żądane Pull dla wersji {{count}}.",
     "Version": "Wersja"
+  },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Sprawdzanie sesji Backend.AI…",
+    "SignInWithBackendAI": "Zaloguj się przez Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Przeglądarka zablokowała żądanie do serwera WWW Backend.AI. Zwykle jest to ograniczenie CORS lub mieszanej zawartości.",
+      "HttpError": "Serwer WWW Backend.AI zwrócił błąd ({{status}}).",
+      "InvalidCallback": "Adres powrotu logowania skonfigurowany dla {{appName}} nie jest prawidłowym adresem internetowym.",
+      "InvalidResponse": "Serwer WWW Backend.AI zwrócił nieoczekiwaną odpowiedź.",
+      "NoEndpoint": "Dla aplikacji {{appName}} nie skonfigurowano adresu serwera WWW Backend.AI.",
+      "NoSessionId": "Jesteś zalogowany w Backend.AI, ale serwer WWW nie zwrócił identyfikatora sesji.",
+      "NoSessionOverHttp": "Nie zalogowano jeszcze w Backend.AI. Jeśli logowanie już nastąpiło, aplikacja {{appName}} jest udostępniana przez HTTP, więc przeglądarka może odrzucać bezpieczne ciasteczko sesji serwera WWW. Spróbuj otworzyć {{appName}} przez HTTPS.",
+      "NoSessionOverHttps": "Nie zalogowano jeszcze w Backend.AI. Jeśli logowanie już nastąpiło, aplikacja {{appName}} i serwer WWW Backend.AI mogą być różnymi witrynami, więc przeglądarka nie wysyła ciasteczka sesji.",
+      "RelayFailed": "Jesteś zalogowany w Backend.AI, ale aplikacja {{appName}} nie mogła dokończyć logowania.",
+      "Timeout": "Serwer WWW Backend.AI nie odpowiedział na czas.",
+      "Title": "Nie udało się zalogować przez Backend.AI"
+    }
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Wielkość klastra",
+    "Concurrency": "Równoczesne sesje",
+    "CreatedAt": "Utworzono o godz",
+    "DefaultForUnspecified": "Domyślnie dla nieokreślonego",
+    "DefaultForUnspecifiedTooltipDesc1": "Ustawia domyślne zasady, gdy nie wymaga się konkretnego procesora ani pamięci.",
+    "DefaultForUnspecifiedTooltipDesc2": "„Unlimited” pozwala na wykorzystanie pojemności węzła agenta, podczas gdy „ograniczony” zaprzecza zasobom, chyba że wyraźnie ustalono. \nW większości przypadków zaleca się „nieograniczone”.",
+    "IdleTimeout": "Limit czasu bezczynności",
+    "MaxConcurrentSFTPSessions": "Max równoległe sesje SFTP",
+    "MaxPendingSessionCount": "Max oczekujący na liczbę sesji",
+    "MaxPendingSessionResourceSlots": "Max oczekujący szczeliny zasobów sesji",
+    "MaxSessionLifetime": "Maksymalny czas trwania sesji",
+    "Name": "Nazwa",
+    "StorageNodes": "Węzły magazynowania",
+    "TotalResourceSlots": "Polityka zasobów"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Wybierz parę kluczy"
@@ -231,11 +277,11 @@
     "User": "Użytkownik"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Wyjdź z pełnego ekranu",
+    "Fullscreen": "Pełny ekran",
+    "Maximize": "Maksymalizuj",
+    "Minimize": "Minimalizuj",
+    "Restore": "Przywróć"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Czy na pewno chcesz usunąć wdrożenie \"{{deploymentName}}\"? Tej operacji nie można cofnąć.",
@@ -275,6 +321,13 @@
     "FollowingProjectsWillBeUpdated": "Poniższe projekty zostaną zaktualizowane.",
     "ProjectResourcePolicy": "Polityka zasobów projektu",
     "UpdateMultipleProjects": "Aktualizuj wiele projektów"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Utworzono o godz",
+    "MaxNetworkCount": "Maksymalna liczba sieci",
+    "MaxQuotaScopeSize": "Maksymalny rozmiar folderu",
+    "MaxVFolderCount": "Maksymalna liczba folderów",
+    "Name": "Nazwa"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Wybierz projekt"
@@ -322,8 +375,20 @@
     "SelectFolder": "Wybierz folder"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Zastosuj",
     "PlaceHolder": "Wyszukiwanie",
-    "ResetFilter": "Zresetuj filtry"
+    "ResetFilter": "Zresetuj filtry",
+    "SearchLabel": "Szukaj filtrów",
+    "operator": {
+      "Contains": "zawiera",
+      "Equals": "równe",
+      "GreaterThan": "większe niż",
+      "GreaterThanOrEqual": "większe lub równe",
+      "In": "w",
+      "LessThan": "mniejsze niż",
+      "LessThanOrEqual": "mniejsze lub równe",
+      "NotEquals": "nierówne"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Anuluj Pull",
@@ -383,7 +448,7 @@
     "ChoiceValueRequired": "Wartość opcji jest wymagana.",
     "Choices": "Opcje",
     "ChoicesRequired": "Wymagana jest co najmniej jedna opcja.",
-    "CreatePreset": "Utwórz ustawienie wstępne",
+    "CreatePreset": "Utwórz parametr",
     "DefaultValue": "Wartość domyślna",
     "DefaultValuePlaceholder": "np. 1",
     "Description": "Opis",
@@ -391,7 +456,7 @@
     "DisplayName": "Nazwa wyświetlana",
     "DisplayNamePlaceholder": "np. Tensor Parallel Size",
     "DisplayNameTooltip": "Czytelna etykieta wyświetlana zamiast nazwy parametru w formularzu wdrożenia.",
-    "EditPreset": "Edytuj ustawienie wstępne",
+    "EditPreset": "Edytuj parametr",
     "Key": "Klucz",
     "KeyPlaceholder": "np. TENSOR_PARALLEL_SIZE",
     "KeyRequired": "Klucz jest wymagany.",
@@ -401,16 +466,17 @@
     "NumberMax": "Maksimum",
     "NumberMaxMustExceedMin": "Wartość maksymalna musi być większa niż minimalna.",
     "NumberMin": "Minimum",
-    "PresetCreated": "Ustawienie wstępne wariantu środowiska uruchomieniowego zostało utworzone.",
-    "PresetTarget": "Cel ustawienia wstępnego",
+    "PresetCreated": "Parametr runtime został utworzony.",
+    "PresetTarget": "Cel parametru",
     "PresetTargetArgs": "Argument wiersza poleceń",
     "PresetTargetEnv": "Zmienna środowiskowa",
-    "PresetTargetRequired": "Cel ustawienia wstępnego jest wymagany.",
-    "PresetUpdated": "Ustawienie wstępne wariantu środowiska uruchomieniowego zostało zaktualizowane.",
+    "PresetTargetRequired": "Cel parametru jest wymagany.",
+    "PresetUpdated": "Parametr runtime został zaktualizowany.",
     "Rank": "Ranga",
-    "RankTooltip": "Kolejność wyświetlania wśród ustawień wstępnych tego samego wariantu środowiska uruchomieniowego. Niższe wartości pojawiają się pierwsze.",
+    "RankTooltip": "Kolejność wyświetlania wśród parametrów tego samego runtime. Niższe wartości pojawiają się pierwsze.",
     "Required": "Wymagany",
-    "RequiredTooltip": "Określa, czy ten parametr ustawienia wstępnego musi zostać podany podczas tworzenia rewizji wdrożenia.",
+    "RequiredTooltip": "Określa, czy ten parametr musi zostać podany podczas tworzenia rewizji wdrożenia.",
+    "Requirement": "Wymagalność",
     "RuntimeVariant": "Wariant środowiska uruchomieniowego",
     "RuntimeVariantRequired": "Wariant środowiska uruchomieniowego jest wymagany.",
     "SliderMax": "Maksimum",
@@ -421,10 +487,12 @@
     "SliderStep": "Krok",
     "SliderStepMustBePositive": "Krok musi być większy niż 0.",
     "SliderStepTooltip": "Krok przyrostu dla suwaka. Domyślnie 1.",
+    "StoredValueTypeMismatch": "Ten parametr jest zapisany z typem wartości {{valueType}}, którego typ interfejsu {{uiType}} nie może wyświetlić. Zmień typ interfejsu lub typ wartości.",
     "TextPlaceholderExample": "np. Wprowadź wartość",
     "TextPlaceholderLabel": "Tekst zastępczy pola",
     "UIType": "Typ interfejsu",
     "UITypeCheckbox": "Pole wyboru",
+    "UITypeIncompatibleWithValueType": "Wybrany typ interfejsu nie może wyświetlić tego typu wartości.",
     "UITypeNumberInput": "Pole liczbowe",
     "UITypeSelect": "Lista wyboru",
     "UITypeSlider": "Suwak",
@@ -448,14 +516,20 @@
     "ModifiedAt": "Data modyfikacji",
     "Name": "Nazwa",
     "Optional": "Opcjonalny",
-    "PresetTarget": "Cel ustawienia wstępnego",
+    "PresetTarget": "Cel parametru",
     "PresetTargetArgs": "Argument wiersza poleceń",
     "PresetTargetEnv": "Zmienna środowiskowa",
     "Rank": "Ranga",
-    "RankTooltip": "Kolejność wyświetlania wśród ustawień wstępnych tego samego wariantu środowiska uruchomieniowego. Niższe wartości pojawiają się pierwsze.",
+    "RankTooltip": "Kolejność wyświetlania wśród parametrów tego samego runtime. Niższe wartości pojawiają się pierwsze.",
     "Required": "Wymagany",
-    "RuntimeVariant": "Wariant środowiska uruchomieniowego",
     "RuntimeVariantId": "ID wariantu środowiska uruchomieniowego",
+    "RuntimeVariantWithID": "Wariant środowiska uruchomieniowego (ID)",
+    "UIType": "Typ interfejsu",
+    "UITypeCheckbox": "Pole wyboru",
+    "UITypeNumberInput": "Pole liczbowe",
+    "UITypeSelect": "Lista wyboru",
+    "UITypeSlider": "Suwak",
+    "UITypeTextInput": "Pole tekstowe",
     "ValueType": "Typ wartości",
     "ValueTypeBool": "Wartość logiczna",
     "ValueTypeFlag": "Flaga",
@@ -557,37 +631,36 @@
     "ArchiveDownloadStarted": "Rozpoczęto pobieranie {{count}} elementów.",
     "ChangeFileExtension": "Zmień rozszerzenie pliku",
     "ChangeFileExtensionDesc": "Zmiana rozszerzenia pliku może spowodować, że plik staje się bezużyteczny lub nieprawidłowo otwierać. \nChcesz kontynuować?",
-    "Controls": "Sterownica",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Utwórz nowy plik",
     "CreateANewFolder": "Utwórz nowy folder",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Utwórz plik",
+    "CreateFolder": "Utwórz folder",
     "CreatedAt": "Utworzony w",
     "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
     "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
+    "Download": "Pobierz",
     "DownloadSelected": "Pobierz",
     "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
     "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać.",
     "DuplicatedFiles": "Nadpisz potwierdzenie",
     "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
     "EditFile": "Edytuj plik",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Plik został utworzony.",
+    "FileName": "Nazwa pliku",
+    "FileNamePlaceholder": "np. model-definition.yaml",
     "FileTooLargeToEdit": "Edycja w przeglądarce jest ograniczona, ponieważ rozmiar pliku przekracza {{size}}MB.",
     "FolderCreatedSuccessfully": "Folder utworzony pomyślnie.",
     "FolderName": "Nazwa folderu",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Nazwa pliku może mieć maksymalnie 255 znaków.",
     "MaxFolderNameLength": "Nazwa folderu musi mieć 255 znaków lub mniej.",
     "ModifiedAt": "Zmodyfikowany przy",
-    "MoreOptions": "Więcej opcji",
     "Name": "Nazwa",
     "NoUploadPermissionForHost": "Nie masz uprawnień do przesyłania plików na ten host.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Ścieżka",
+    "PleaseEnterAFileName": "Wprowadź nazwę pliku.",
     "PleaseEnterAFolderName": "Wprowadź nazwę folderu.",
-    "RenameFile": "Rename",
+    "RenameFile": "Zmień nazwę",
     "RenameSuccess": "Nazwa została pomyślnie zmieniona.",
     "SelectedItemsDeletedSuccessfully": "Wybrane pliki i foldery zostały pomyślnie usunięte.",
     "Size": "Rozmiar",
@@ -702,23 +775,26 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Zmniejsz",
     "DeselectAll": "Odznacz wszystko",
     "File": "Plik",
-    "Increase": "Increase",
+    "Increase": "Zwiększ",
+    "Loading": "Ładowanie...",
     "NSelected": "{{count}}",
     "Optional": "Opcjonalne",
     "Project": "Projekt",
-    "Select": "Select",
+    "Search": "Szukaj",
+    "Select": "Wybierz",
+    "SelectPlaceholder": "Wybierz {{label}}",
     "TotalItems": "Total {{total}}",
-    "Unit": "Unit",
+    "Unit": "Jednostka",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Akcja",
+      "Back": "Wstecz",
       "Cancel": "Anulować",
       "Close": "Zamknąć",
       "Collapse": "Zawalić się",
-      "Confirm": "Confirm",
+      "Confirm": "Potwierdź",
       "Copied": "Skopiowano",
       "Copy": "Kopiuj",
       "CopyAll": "Kopiuj wszystko",

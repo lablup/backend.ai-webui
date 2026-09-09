@@ -673,6 +673,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       </BAIFlex>
       <Form form={internalForm} component={false}>
         <BAITable
+          scroll={{ x: 'max-content' }}
           // size="small"
           rowKey={getRowKey}
           rowSelection={{

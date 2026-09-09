@@ -139,8 +139,9 @@ Sequential numbers are zero-padded based on the total number of users. For examp
 
 :::warning
 If some of the generated usernames or email addresses already exist, the operation
-will partially succeed. A warning message will display how many users were
-successfully created and how many failed.
+will partially succeed. A message reports how many users were created and how many
+failed, and a failure list shows each user that could not be created along with the
+reason.
 :::
 
 <a id="bulk-create-users-from-csv"></a>
@@ -199,6 +200,10 @@ live: the errors clear and the button enables, with no need to re-upload the fil
 #### Creating the users
 
 Once you have reviewed the preview and confirmed that all rows are valid, click **Create N user(s)** to submit. If some rows fail on the server side (for example, because an email or username already exists), the dialog remains open and lists the per-row errors so you can identify and resolve the conflicts.
+
+When only some of the rows succeed, a message reports `N user(s) created. M user(s) failed.`, and a failure list opens on top of the dialog showing every user that could not be created — the email, the username, and the error returned for each. If some accounts were created, the generated keypair list appears first and the failure list follows once you close it. The accounts that were created are kept, so you only need to correct the rows that were reported.
+
+![](../images/bulk_create_user_partial_failure.png)
 
 :::warning
 If some rows fail, only the successful rows result in new accounts. Failed rows are reported individually. Correct the source CSV and re-upload to create the remaining accounts.
@@ -280,7 +285,6 @@ keypairs). You can purge users in two ways:
   appears next to the selection count).
 
 ![](../images/user_purge_inactive_tab.png)
-<!-- TODO: Capture screenshot of user_purge_inactive_tab.png — Inactive Users tab showing the per-row purge (trash) icon and the bulk Permanently Delete Users button -->
 
 Either action opens the **Permanently Delete Users** confirmation modal. Because
 this operation cannot be undone, you must type the confirmation phrase shown in
@@ -290,9 +294,9 @@ options:
 - **Delete shared virtual folders as well?**: When checked, virtual folders
   shared by the purged users are also deleted. When unchecked, those folders are
   left in place.
-- **Delete created model services as well?**: When checked, model services
-  created by the purged users are deleted as well. When unchecked, ownership of
-  those services is delegated instead of deleting them.
+- **Delete created deployments as well?**: When checked, deployments created by
+  the purged users are deleted as well. When unchecked, ownership of those
+  deployments is delegated instead of deleting them.
 
 ![](../images/purge_users_modal.png)
 <!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
@@ -319,11 +323,10 @@ Also, when you create a new user, a keypair is automatically created, so you do
 not need to create and assign a keypair manually in most cases.
 
 Keypairs can be listed on the Credentials tab of in the Users page. Active
-keypairs are shown immediately, and to see the inactive keypairs, click the
-Inactive panel at the bottom.
+keypairs are shown immediately, and to see the inactive keypairs, click
+**Inactive** above the table.
 
 ![](../images/credential_list_tab.png)
-<!-- TODO: Re-capture credential_list_tab.png with the sidebar menu expanded (currently collapsed). -->
 
 Like in Users tab, you can use the inline buttons in the keypair's row to view or
 edit keypair details. Click the info icon button to see specific details of the keypair.
@@ -766,7 +769,6 @@ Let's begin by examining the resource policies for keypairs. The infinity symbol
 indicates that no resource restrictions have been applied to those resources.
 
 ![](../images/resource_policy_page.png)
-<!-- TODO: Re-capture resource_policy_page.png — needs update. -->
 
 The user account being used in this guide is currently assigned to the default
 resource policy. This can be verified in the Credentials tab on the Users page.
@@ -785,7 +787,12 @@ applied rather than what it limits:
 - **Resource Policy**: The resource slots the policy grants.
 - **Concurrent Sessions**, **Cluster Size**, **Idle Timeout**, **Max Session Lifetime**, **Storage Nodes**,
   **Max Pending Session Count**, **Max Concurrent SFTP Sessions**: The individual limits described below.
+- **Max Pending Session Resource Slots**: The resource slots the policy allows for sessions waiting in the
+  `PENDING` status, shown per resource type (`∞` when unlimited). This column is read-only in the WebUI —
+  the resource policy dialog does not expose the field.
 - **Created At**: The timestamp when the policy was created.
+
+You can use the table's property filter, sorting, and pagination controls to find the policies you need.
 
 To change a resource policy, click the **Edit** (pencil) action in the Name column of the policy. In the
 **Edit Keypair Resource Policy** dialog, every option is editable except for the policy name, which serves
@@ -842,8 +849,8 @@ policy has been updated.
 
 ![](../images/keypair_resource_policy_update_check.png)
 
-You can create a new resource policy by clicking the **Create Policy** button. Each setting
-value is the same as described above.
+You can create a new resource policy by clicking the **Create** button at the top right of the table.
+Each setting value is the same as described above.
 
 To create a resource policy and associate it with a keypair, go to the
 Credentials tab of the Users page, click the **Edit** (pencil) action located in the
@@ -856,11 +863,10 @@ are currently bound to each policy, so you can confirm the user's existing
 assignments before choosing a policy.
 
 You can also delete each of resource keypairs by clicking trash can icon
-in the Name column. When you click the icon, the confirmation popup appears.
-Click the `Delete` button to erase.
+in the Name column. When you click the icon, a confirmation dialog appears. Type the
+policy name in the confirmation field, then click the `Delete` button to erase.
 
 ![](../images/resource_policy_delete_dialog.png)
-<!-- TODO: Re-capture resource_policy_delete_dialog.png — needs update. -->
 
 :::note
 If there's any users (including inactive users) following a resource policy to be deleted,
@@ -872,7 +878,6 @@ If you want to hide or show specific columns, click the `Setting (Gear)` at the 
 table. This will bring up a dialog where you can select the columns you want to display.
 
 ![](../images/keypair_resource_policy_table_setting.png)
-<!-- TODO: Re-capture keypair_resource_policy_table_setting.png — needs update. -->
 
 <a id="user-resource-policy"></a>
 
@@ -886,16 +891,14 @@ Count Per Model Session and Max Customized Image Count.
 
 ![](../images/user_resource_policy_list.png)
 
-The table shows the following columns: **Name** (with the inline **Edit** and **Delete** actions),
-**Max Folder Count**, **Max Concurrent Logins**, **Max Session Count Per Model Session**,
-**Max Quota Scope Size**, **Max Customized Image Count**, and **Created At**. Use the column-settings
-control to hide the columns you do not need; your choice is kept per browser.
+The table shows the following columns: **ID**, **Name** (with the inline **Edit** and
+**Delete** actions), **Max Folder Count**, **Max Quota Scope Size**,
+**Max Customized Image Count**, and **Created At**. Use the column-settings control
+to hide the columns you do not need; your choice is kept per browser.
 
-Filtering, sorting, and paging are all evaluated on the server, so the tab stays responsive on clusters
-with many policies. Add a condition with the property filter above the table to narrow the list by
-**Name**, **Created At**, **Max Folder Count**, **Max Concurrent Logins**,
-**Max Session Count Per Model Session**, or **Max Customized Image Count**; click a column header to
-change the sort order; and use the pager below the table to move through the results.
+Sorting and paging are evaluated on the server, so the tab stays responsive on
+clusters with many policies. Click a column header to change the sort order, and
+use the pager below the table to move through the results.
 
 To create a new user resource policy, click the **Create** button.
 
@@ -943,9 +946,12 @@ When clicking the `Project` tab of the `Resource Policies` page, you can see the
 resource policy.
 
 ![](../images/project_resource_policy_list.png)
-<!-- TODO: Re-capture project_resource_policy_list.png — needs update. -->
 
-To create a new project resource policy, click the **Create Policy** button at the top right of the table.
+In the project resource policy table, you can review the policy list and use the inline **Edit** and
+**Delete** actions for each item. You can also use the table's property filter, sorting, and pagination
+controls to find policies quickly.
+
+To create a new project resource policy, click the **Create** button at the top right of the table.
 
 ![](../images/create_project_resource_policy.png)
 
@@ -973,16 +979,6 @@ so use it with caution.
 
 You can select and display only the columns you want by clicking the `Setting (Gear)` button at the
 bottom right of the table.
-
-To save the current resource policy list as a CSV file, use the **Export CSV** action in the **bottom-right slot of the table**. This applies to the Keypair, User, and Project resource policy tabs alike.
-
-![](../images/resource_policy_list_csv.png)
-
-![](../images/keypair_export.png)
-
-:::tip
-Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters without garbling.
-:::
 
 <a id="unified-view-for-pending-sessions"></a>
 
@@ -1022,6 +1018,8 @@ When the experimental **Session resource grid view** feature is enabled in User 
 control next to the refresh button that switches between **Table** and **Grid**. The grid displays one
 cell per session, colored by that session's live resource utilization. For a description of the grid's
 own controls, refer to the [Session List View](#session-list-view-and-refresh) section.
+
+<a id="fair-share-scheduler"></a>
 
 ## Fair share scheduler
 
@@ -1227,7 +1225,9 @@ Images tab of the Environments page. In the tab, meta information of all images
 currently in the Backend.AI server is displayed. You can check information such
 as registry, architecture, namespace, image name, digest, and minimum
 resources required for each image. For images downloaded to one or more agent
-nodes, there will be an `installed` tag in the Status column.
+nodes, there will be an `installed` tag in the Status column. Private images
+additionally show a `Private` tag in the Status column, and a private image
+cannot be selected in the session launcher even when it is installed.
 
 :::note
 The feature to install images by selecting specific agents is currently
@@ -1396,19 +1396,18 @@ would not be shown.
 The resource preset dialog includes:
 
 - **Preset Name**: A unique name for the preset (only alphanumeric characters, periods, hyphens, and underscores allowed).
-- **Resource Group**: (Conditional) Associate the preset with a specific resource group.
+- **Resource Group**: Associate the preset with a specific resource group. This field is optional — leave it empty (or clear it) to keep the preset global, so it applies regardless of the resource group.
 - **Resource Preset**: Dynamic fields for each available resource type (CPU, Memory, GPU, etc.). Memory fields support dynamic unit input (`MiB`, `GiB`, `TiB`, `PiB`).
 - **Shared Memory**: The amount of shared memory allocated for the preset. This value must be less than the **Memory** value.
 
 ![](../images/modify_resource_preset_dialog.png)
 
 You can also create a resource preset by clicking the **Create Preset** button in the
-right top of the Resource Presets tab. You cannot create the same resource
-preset name that already exists, since it is the key value for distinguishing
-each resource preset.
+right top of the Resource Presets tab. Resource preset names must still be
+unique. If you enter a name that already exists, the server rejects the request
+when you click **Create** and an error message is displayed.
 
 ![](../images/create_resource_preset_dialog.png)
-<!-- TODO: Re-capture create_resource_preset_dialog.png — needs update. -->
 
 <a id="manage-agent-nodes"></a>
 
@@ -1574,7 +1573,6 @@ Backend.AI provides per-user/per-project quota setting on storage that supports 
 By using this feature, admin can easily manage and monitor the exact amount of storage usage for each user and project based folder.
 
 ![](../images/storage_list.png)
-<!-- TODO: Re-capture storage_list.png — needs update (name-click opens the Storage Host Detail Drawer). -->
 
 To manage a storage host, click the storage host name in the Storages list. This opens the **Storage Host
 Detail Drawer**, where capacity (quota) and folder permissions are configured.
@@ -1589,7 +1587,6 @@ top displays basic information about the host, while the bottom provides tabs fo
 configuring folder permissions and capacity (quota).
 
 ![](../images/storage_host_detail_drawer.png)
-<!-- TODO: Capture screenshot of storage_host_detail_drawer.png — Storage Host detail drawer showing the tab strip (Project Folder Permissions / User Folder Permissions / Capacity) -->
 
 The drawer contains the following tabs:
 
@@ -1930,6 +1927,8 @@ RBAC (Role-Based Access Control) Management allows superadmins to define roles w
 For detailed information about managing roles, permissions, and user assignments, refer to the dedicated [RBAC Management](#rbac-management) page.
 
 
+<a id="diagnostics"></a>
+
 ## Diagnostics
 
 Superadmins can open the **Diagnostics** page from the admin sidebar to run a set of automated health checks on the WebUI deployment. The page evaluates the browser-to-server configuration and reports any misconfiguration, so that connectivity or security problems can be identified before they affect users.
@@ -1941,6 +1940,10 @@ The toolbar at the top of the page provides the following controls:
 - **Show only failed items**: A toggle that hides every passing check so that only the sections containing warnings or errors remain visible.
 - `Re-run Diagnostics`: Re-evaluates every check and refreshes the results.
 - `Export CSV`: Available from the actions dropdown menu, this exports all diagnostic results to a CSV file named `diagnostics-YYYY-MM-DD.csv`.
+
+:::tip
+Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters without garbling.
+:::
 
 The diagnostics are organized into the following collapsible sections, each showing the result of its individual checks with a pass, warning, or critical severity:
 
@@ -1957,6 +1960,8 @@ placeholder reading `No failed items. All diagnostics passed.`, so a clean resul
 :::tip
 When troubleshooting a connection problem, enable **Show only failed items** and click `Re-run Diagnostics` first — it surfaces just the checks that need attention.
 :::
+
+<a id="branding"></a>
 
 ## Branding
 

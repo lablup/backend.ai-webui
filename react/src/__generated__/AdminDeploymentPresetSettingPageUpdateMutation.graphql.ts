@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0ec51dbe3d1af336c949c9baf3eca743>>
+ * @generated SignedSource<<c717a5eb31f722e09dd3476053bb9f03>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -118,7 +118,19 @@ export type AdminDeploymentPresetSettingPageUpdateMutation$data = {
   readonly adminUpdateDeploymentRevisionPreset: {
     readonly preset: {
       readonly id: string;
+      readonly image: {
+        readonly id: string;
+        readonly identity: {
+          readonly architecture: string;
+          readonly canonicalName: string;
+        };
+      } | null | undefined;
       readonly name: string;
+      readonly runtimeVariant: {
+        readonly id: string;
+        readonly name: string;
+      } | null | undefined;
+      readonly updatedAt: string | null | undefined;
       readonly " $fragmentSpreads": FragmentRefs<"AdminDeploymentPresetSettingPageContent_preset">;
     };
   } | null | undefined;
@@ -161,10 +173,68 @@ v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "description",
+  "name": "updatedAt",
   "storageKey": null
 },
 v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "RuntimeVariant",
+  "kind": "LinkedField",
+  "name": "runtimeVariant",
+  "plural": false,
+  "selections": [
+    (v2/*: any*/),
+    (v3/*: any*/)
+  ],
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "architecture",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ImageV2",
+  "kind": "LinkedField",
+  "name": "image",
+  "plural": false,
+  "selections": [
+    (v2/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ImageV2IdentityInfo",
+      "kind": "LinkedField",
+      "name": "identity",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "canonicalName",
+          "storageKey": null
+        },
+        (v6/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "description",
+  "storageKey": null
+},
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -196,6 +266,9 @@ return {
             "selections": [
               (v2/*: any*/),
               (v3/*: any*/),
+              (v4/*: any*/),
+              (v5/*: any*/),
+              (v7/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -236,24 +309,14 @@ return {
               (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
+              (v5/*: any*/),
+              (v7/*: any*/),
+              (v8/*: any*/),
               {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
                 "name": "runtimeVariantId",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "RuntimeVariant",
-                "kind": "LinkedField",
-                "name": "runtimeVariant",
-                "plural": false,
-                "selections": [
-                  (v3/*: any*/),
-                  (v2/*: any*/)
-                ],
                 "storageKey": null
               },
               {
@@ -325,7 +388,7 @@ return {
                         "name": "key",
                         "storageKey": null
                       },
-                      (v5/*: any*/)
+                      (v9/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -349,7 +412,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v3/*: any*/),
-                      (v5/*: any*/)
+                      (v9/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -435,7 +498,7 @@ return {
                     "name": "presetId",
                     "storageKey": null
                   },
-                  (v5/*: any*/)
+                  (v9/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -630,7 +693,7 @@ return {
                             "name": "lastModified",
                             "storageKey": null
                           },
-                          (v4/*: any*/),
+                          (v8/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -645,13 +708,7 @@ return {
                             "name": "category",
                             "storageKey": null
                           },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "architecture",
-                            "storageKey": null
-                          },
+                          (v6/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -698,16 +755,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5723c96f9ce3a0c28cf8e39aaf1ed22b",
+    "cacheID": "7e80f2540f5ea6ef48db1d821cafa664",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetSettingPageUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
+    "text": "mutation AdminDeploymentPresetSettingPageUpdateMutation(\n  $input: UpdateDeploymentRevisionPresetInput!\n) {\n  adminUpdateDeploymentRevisionPreset(input: $input) {\n    preset {\n      id\n      name\n      updatedAt\n      runtimeVariant {\n        id\n        name\n      }\n      image @since(version: \"26.4.4\") {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n      }\n      ...AdminDeploymentPresetSettingPageContent_preset\n    }\n  }\n}\n\nfragment AdminDeploymentPresetSettingPageContent_preset on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    name\n    id\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        preStartActions {\n          action\n          args\n        }\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n      metadata {\n        author\n        title\n        version\n        created\n        lastModified\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n        minResource\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "20bc80666527893d8c57ca54d8a8be10";
+(node as any).hash = "2a3776b549b9c5cb358c6be8e504c805";
 
 export default node;

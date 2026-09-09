@@ -17,13 +17,16 @@
  * using the SAME measured parity tables — re-exported by BUI's own
  * `theme-shim` (ticket 10), so they cannot drift between the app and this
  * file — and the SAME seeds as `resources/theme.json` (mirrored locally as
- * `./theme.json`, already consumed by `themeConfig.ts` for the antd side).
+ * `./theme.json`, which `themeConfig.ts` also feeds to the theme-shim).
  *
  * KEEP IN SYNC (seed values only, not the glue code) with
  * `react/src/astryx-theme/backendAiTheme.ts` `BAI_DEFAULT_SEEDS` /
  * `buildBackendAiTheme({ role: 'brand' })`.
  */
-import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from '../src/theme-shim';
+import {
+  ANTD_ALIGN_TOKENS,
+  ANTD_DARK_ALGORITHM_OUTPUT,
+} from '../src/theme-shim';
 import webuiThemeJson from './theme.json';
 import { defineTheme } from '@astryxdesign/core/theme';
 import { neutralTheme } from '@astryxdesign/theme-neutral';
@@ -38,9 +41,7 @@ const toTuple = (light: string, dark: string): [string, string] => [
 ];
 
 /** Astryx muted status surfaces = the status color at ~20%/25% alpha. */
-const toMutedTuple = (
-  tuple: [string, string],
-): [string, string] | undefined =>
+const toMutedTuple = (tuple: [string, string]): [string, string] | undefined =>
   /^#[0-9a-fA-F]{6}$/.test(tuple[0]) && /^#[0-9a-fA-F]{6}$/.test(tuple[1])
     ? [`${tuple[0]}33`, `${tuple[1]}3F`]
     : undefined;
@@ -61,9 +62,9 @@ const warningMuted = toMutedTuple(warning);
 
 /**
  * Backend.AI brand Astryx theme — Storybook's build of `backendAiBrandTheme`
- * (ticket 02). Mounted unconditionally in `decorators.tsx` so every story
- * (legacy and Astryx-native alike) renders against the real brand palette in
- * both light and dark, independent of the "Theme Style" (antd-only) toolbar.
+ * (ticket 02), and the `webui` half of the "Theme" toolbar (themeConfig.ts).
+ * The `astryx` half mounts `neutralTheme` instead, so a story can be checked
+ * against a brand-less baseline.
  */
 export const astryxBrandTheme = defineTheme({
   name: 'storybook-bai-brand',
@@ -89,19 +90,19 @@ export const astryxBrandTheme = defineTheme({
     // from the accent and stories render on a warm pink-beige canvas the app
     // never shows (FR-3500 review, 2026-08-12).
     '--color-text-primary': ['#141414', '#FFFFFF'] as [string, string],
-    '--color-text-secondary': ['rgba(0,0,0,0.65)', 'rgba(255,255,255,0.65)'] as [
-      string,
-      string,
-    ],
+    '--color-text-secondary': [
+      'rgba(0,0,0,0.65)',
+      'rgba(255,255,255,0.65)',
+    ] as [string, string],
     '--color-text-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
       string,
       string,
     ],
     '--color-icon-primary': ['#141414', '#FFFFFF'] as [string, string],
-    '--color-icon-secondary': ['rgba(0,0,0,0.45)', 'rgba(255,255,255,0.45)'] as [
-      string,
-      string,
-    ],
+    '--color-icon-secondary': [
+      'rgba(0,0,0,0.45)',
+      'rgba(255,255,255,0.45)',
+    ] as [string, string],
     '--color-icon-disabled': ['rgba(0,0,0,0.25)', 'rgba(255,255,255,0.25)'] as [
       string,
       string,

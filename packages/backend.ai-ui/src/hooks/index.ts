@@ -126,6 +126,26 @@ export {
 } from './useBAILogger';
 export type { LoggerPlugin, LogContext, BAILogger } from './useBAILogger';
 export { useEventNotStable } from './useEventNotStable';
+export {
+  default as useBAIInteractiveLogin,
+  BAI_INTERACTIVE_LOGIN_DEFAULT_TIMEOUT_MS,
+  buildInteractiveLoginUrl,
+  classifyBodyReadError,
+  classifyFetchError,
+  classifyLoginCheckResponse,
+  normalizeWebserverUrl,
+  probeLoginCheck,
+  resolveCallbackUrl,
+} from './useBAIInteractiveLogin';
+export type {
+  BAIInteractiveLoginFailure,
+  BAIInteractiveLoginFailureReason,
+  BAIInteractiveLoginProbeResult,
+  BuildInteractiveLoginUrlOptions,
+  ProbeLoginCheckOptions,
+  UseBAIInteractiveLoginOptions,
+  UseBAIInteractiveLoginResult,
+} from './useBAIInteractiveLogin';
 
 // ── ahooks replacements ────────────────────────────────────────────────────
 // BUI-native ports of the `ahooks` hooks this repo used, so the dependency

@@ -8,8 +8,14 @@
    beat every Astryx layer and visibly break its components. */
 /* KEEP IN SYNC with `packages/backend.ai-ui/src/styles/backend.ai-ui.css`,
    which repeats this list because BUI's own sheet is often the first layered
-   CSS in the bundle (ticket 30). Identical statements are idempotent; a
-   divergent one silently hands the order to whichever loads first. */
+   CSS in the bundle (ticket 30), with `packages/backend.ai-ui/.storybook/
+   astryx.css`, which is Storybook's entry point (it never loads this file),
+   and with the repo-root `index.html`, whose static copy is the one that
+   actually decides the document's order — this file's arrives whenever the
+   bundle happens to evaluate it (FR-3532).
+   Identical statements are idempotent; a divergent one silently hands the
+   order to whichever loads first. `scripts/migration-gates/layer-order-gate.mjs`
+   fails on drift. */
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
 @import '@astryxdesign/core/reset.css';
@@ -88,15 +94,29 @@
   ) !important;
 }
 
-/* fix: match the icon size between Lucide and Ant.d icons */
+/* A lucide glyph is text-sized and sits on the text baseline. `display` is
+   load-bearing: Astryx's reset blockifies every `svg` (reset.css "Media"), and
+   a block box ignores `vertical-align` — without this the icon is inert-aligned
+   and a bare-icon line box measures 14px against a text line's 22px.
+   Inert where the icon is a flex/grid item, which is nearly every call site. */
 .lucide {
+  display: inline-block !important;
   width: 1em !important;
   height: 1em !important;
   vertical-align: -0.125em !important;
 }
 
-:lang(ko) *,
-:lang(ja) *,
-:lang(zh) * {
+/* `keep-all` is a Korean-specific prescription: it stops a break landing
+   between Hangul syllables, leaving the space as the only break point.
+   Japanese and Chinese have no inter-word spaces, so the same rule left them
+   with NO break opportunity at all and the text overflowed its container
+   instead of wrapping (FR-3695). */
+:lang(ko) * {
   word-break: keep-all;
+}
+
+/* `strict` keeps CJ-class characters (ー, small kana) off the start of a line;
+   UAX #14 leaves them breakable under the `auto`/`normal` default. */
+:lang(ja) * {
+  line-break: strict;
 }

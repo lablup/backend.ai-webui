@@ -162,6 +162,7 @@ const BAISchedulingHistoryNodes = ({
     // expandable-row proving ground (`expandable` arrives from
     // `BAISchedulingHistoryTable` and renders the `BAISubStepNodes` timeline).
     <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(histories)}
       columns={allColumns}

@@ -17,7 +17,7 @@ const meta: Meta<typeof BAITagList> = {
     docs: {
       description: {
         component:
-          'Shows up to `maxInline` items inline and collapses the rest into a `+N` overflow indicator, whose popup lists only the hidden items. Use `variant="chip"` (default) for a click popover in modals, or `variant="text"` for a lightweight hover-tooltip overflow in table cells.',
+          'Shows up to `maxInline` items inline and collapses the rest into a `+N` overflow indicator, whose popup lists only the hidden items. The overflow opens on hover in both variants; `variant="chip"` (default) shows a `+N` link for modals, `variant="text"` a compact `+N` badge for table cells. Pass `trigger="click"` for a popover that latches open.',
       },
     },
   },

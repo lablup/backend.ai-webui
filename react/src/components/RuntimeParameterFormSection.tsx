@@ -12,13 +12,13 @@ import {
 } from '../hooks/useRuntimeParameterSchema';
 import { theme } from '../theme-shim';
 import InputNumberWithSlider from './InputNumberWithSlider';
-import './collapsible-section.css';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
+import './collapsible-section.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -26,7 +26,12 @@ import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
 import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
-import { BAIFlex, toLocalId } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  isValueTypeCompatibleWithUIType,
+  READ_UI_TYPE_TO_FORM_UI_TYPE,
+  toLocalId,
+} from 'backend.ai-ui';
 import { Undo2 } from 'lucide-react';
 import React, { useEffect, useEffectEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -392,7 +397,26 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
 
   const uiType = param.uiType;
 
-  switch (uiType) {
+  // A control that cannot represent the stored value type degrades to the text
+  // input. `toNativeValue` hydrates STR as a string and BOOL/FLAG as a boolean,
+  // so a number control renders an empty box over a parameter that has a value,
+  // and a checkbox reads that same string as truthy and renders CHECKED — which
+  // does not look broken, it looks like a deliberate setting. Showing the raw
+  // value beats showing a confident lie.
+  //
+  // No warning here on purpose: whoever fills this form cannot fix a
+  // mis-authored preset. The admin modal reports the mismatch (FR-3689).
+  // An unrecognised control maps to `undefined`, which constrains nothing.
+  const effectiveUIType =
+    uiType &&
+    !isValueTypeCompatibleWithUIType(
+      READ_UI_TYPE_TO_FORM_UI_TYPE[uiType],
+      param.valueType,
+    )
+      ? 'text_input'
+      : uiType;
+
+  switch (effectiveUIType) {
     case 'slider': {
       const min = param.slider?.min ?? 0;
       const max = param.slider?.max ?? 100;
@@ -436,11 +460,17 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
       // Surface out-of-range values as a validation error instead of
       // clamping/blocking input via the number input's `min`/`max` props — the
       // user can see and correct what they typed rather than have the
-      // control silently refuse it. The message itself comes from the form
-      // engine's global `validateMessages` template (`form.validateMessages`
-      // in the BUI locale catalogs, wired up in `DefaultProviders.tsx`),
-      // already localized to the user's selected language.
-      const rangeRule = { type: 'number' as const, min, max };
+      // control silently refuse it. The message comes from the form engine's
+      // global `validateMessages` template, already localized.
+      // Only attach it when there is a bound to enforce. The numeric check is
+      // redundant with the degrade above and kept deliberately: it keeps
+      // "never reject a value the user never touched" true here, rather than
+      // resting on a matrix in another package.
+      const isNumericValueType = isInt || param.valueType === 'FLOAT';
+      const rangeRules =
+        isNumericValueType && (min !== undefined || max !== undefined)
+          ? [{ type: 'number' as const, min, max }]
+          : [];
       return (
         <Form.Item
           name={[RUNTIME_PARAMS_NAMESPACE, param.key]}
@@ -448,14 +478,15 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
           tooltip={tooltip}
           style={formItemStyle}
           required={isRequired}
-          rules={[...(requiredRules ?? []), rangeRule]}
+          rules={[...(requiredRules ?? []), ...rangeRules]}
           getValueFromEvent={touchOnChange}
         >
           {/* MAPPING 3.17: `InputNumber` -> `NumberInput`; `style.width:
               '100%'` becomes the adapter's `width` (its default). `min`/`max`
               are deliberately NOT passed to the adapter — it clamps, and the
-              point of `rangeRule` is validation feedback instead of
-              clamping. */}
+              point of `rangeRules` is validation feedback instead of
+              clamping. The adapter still repairs a typed decimal on blur when
+              `isIntegerOnly`, which does not depend on the bounds. */}
           <AstryxFormNumberInput
             label={label}
             step={isInt ? 1 : 0.1}

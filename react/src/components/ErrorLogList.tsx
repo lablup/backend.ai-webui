@@ -254,6 +254,13 @@ const ErrorLogList: React.FC<{
         </BAIFlex>
       </BAIFlex>
       <BAITable
+        scroll={{
+          x: 'max-content',
+          y:
+            _.filter(filteredLogData, (log) => log.isError).length === 0
+              ? undefined
+              : 'calc(100vh - 400px)',
+        }}
         pagination={{
           showSizeChanger: false,
         }}
@@ -261,9 +268,6 @@ const ErrorLogList: React.FC<{
         // a refetch is in flight but has no spinner slot, so the antd
         // `{ indicator }` object collapses to a boolean.
         loading={isPendingSearchTransition}
-        // PILOT-DECISION (ticket 25 §5): `scroll.y` — a fixed body height with
-        // a sticky header — is DROPPED. This log list now scrolls with the
-        // page instead of inside its own viewport-height box.
         dataSource={
           checkedShowOnlyError
             ? _.filter(filteredLogData, (log) => {

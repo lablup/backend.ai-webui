@@ -27,6 +27,7 @@
     "build:web:ko": "pnpm run build:toolkit && docs-toolkit build:web --lang ko",
     "build:web:optimized": "pnpm run build:toolkit && docs-toolkit build:web --lang all --optimize-images",
     "build:web:en:optimized": "pnpm run build:toolkit && docs-toolkit build:web --lang en --optimize-images",
+    "diff:web": "pnpm run build:toolkit && docs-toolkit diff:web",
     "serve:web": "pnpm run build:toolkit && portless run --name docs-web --force -- sh -c 'docs-toolkit serve:web --lang en --port $PORT'",
     "serve:web:ko": "pnpm run build:toolkit && portless run --name docs-web --force -- sh -c 'docs-toolkit serve:web --lang ko --port $PORT'",
     "serve:web:ja": "pnpm run build:toolkit && portless run --name docs-web --force -- sh -c 'docs-toolkit serve:web --lang ja --port $PORT'",

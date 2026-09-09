@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AstryxAdminTheme, AstryxReverseTheme } from '../../astryx-theme';
-import { useWebUINavigate } from '../../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import useKeyboardShortcut from '../../hooks/useKeyboardShortcut';
@@ -39,6 +39,7 @@ import {
   BAIFlex,
   BAIOverlayScrollbar,
   BAIResourceSlotsProvider,
+  BAISkeleton,
 } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import * as _ from 'lodash-es';
@@ -117,6 +118,16 @@ function MainLayout() {
   // These were previously in the Lit shell (backend-ai-webui.ts).
   useLogoutEventListeners();
 
+  // Gates the title-bar-strip rules (BAISider.css, WebUIHeader.css,
+  // AnnouncementBanner.css) to the desktop app, where main.js keeps the macOS
+  // window controls always visible above the top band (FR-3828).
+  useLayoutEffect(() => {
+    if (globalThis.isElectron && /Mac/i.test(navigator.platform)) {
+      document.body.classList.add('electron-macos');
+      return () => document.body.classList.remove('electron-macos');
+    }
+  }, []);
+
   useLayoutEffect(() => {
     const handleNavigate = (e: Event) => {
       const { detail } = e as CustomEvent<string>;
@@ -140,8 +151,10 @@ function MainLayout() {
         <DismissSplashOnMount />
         <BAIAppShell
           data-testid={pageTestId}
-          // `wash` paints `--color-background-body` behind nav and content —
-          // the same token the `body`/splash backdrop already uses.
+          // `wash` paints `--color-background-body` behind nav and content.
+          // The `body`/splash backdrop is the same VALUE but declared as a
+          // literal (index.html) — the token is unusable before the brand
+          // theme registers; see the note in index.html's critical <style>.
           variant="wash"
           contentPadding={0}
           pathname={location.pathname}
@@ -270,7 +283,10 @@ function MainLayout() {
                     <ForceTOTPChecker />
                   </ErrorBoundaryWithNullFallback>
                 </Suspense>
-                <Suspense>
+                {/* Owns the breadcrumb AND the Outlet, so it is on screen for
+                    the whole lazy-route fetch. With no fallback that window
+                    rendered nothing — the shell with an empty body. */}
+                <Suspense fallback={<BAISkeleton rows={4} />}>
                   <ErrorBoundaryWithNullFallback>
                     <RouteAccessBreadcrumbGate>
                       {isHiddenBreadcrumb ? (
@@ -420,6 +436,12 @@ const usePageTestId = () => {
 export const CSSTokenVariables = () => {
   const { token } = theme.useToken();
   const { colorPrimary, colorBgBase, colorBgContainer, colorBorder } = token;
+  // The token may be a number or a CSS length string; only a number gets px.
+  const rawHeaderHeight = token.Layout?.headerHeight ?? 60;
+  const headerHeight =
+    typeof rawHeaderHeight === 'number'
+      ? `${rawHeaderHeight}px`
+      : rawHeaderHeight;
 
   useLayoutEffect(() => {
     const root = document.documentElement;
@@ -428,22 +450,27 @@ export const CSSTokenVariables = () => {
       '--token-colorBgBase': colorBgBase,
       '--token-colorBgContainer': colorBgContainer,
       '--token-colorBorder': colorBorder,
+      '--webui-header-height': headerHeight,
     };
     _.forEach(bridged, (value, name) => root.style.setProperty(name, value));
     return () => {
       _.forEach(bridged, (_value, name) => root.style.removeProperty(name));
     };
-  }, [colorPrimary, colorBgBase, colorBgContainer, colorBorder]);
+  }, [colorPrimary, colorBgBase, colorBgContainer, colorBorder, headerHeight]);
 
   return null;
 };
 
 /**
  * Dismisses the HTML splash overlay when mounted.
- * Placed inside the outer Suspense boundary so it only fires after
- * the layout (sider, header) has actually rendered.
+ * Suspends on the client itself rather than relying on a sibling to hold the
+ * boundary: below the `md` breakpoint the sider renders into AppShell's drawer
+ * (its own `Suspense`), so nothing else in this boundary suspends and the
+ * splash was torn down before login had even finished.
  */
 const DismissSplashOnMount = () => {
+  'use memo';
+  useSuspendedBackendaiClient();
   useEffect(() => {
     (globalThis as any).__dismissSplash?.();
     (globalThis as any).__mainLayoutReady = true;

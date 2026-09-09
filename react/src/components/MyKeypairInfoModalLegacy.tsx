@@ -81,6 +81,7 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
       ]}
     >
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={'access_key'}
         dataSource={keypairs}
         columns={[

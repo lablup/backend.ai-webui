@@ -156,6 +156,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
               name
               tags
               resourceGroupName
+              updatedAt
             }
             networkAccess {
               openToPublic

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<389b8843cd851c62f37ecb543d1a975d>>
+ * @generated SignedSource<<63d4b3828e21727d151f786f52f000f7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,6 +27,17 @@ export type ResourceGroupFairShareSettingModalMutation$variables = {
 export type ResourceGroupFairShareSettingModalMutation$data = {
   readonly adminUpdateResourceGroupFairShareSpec: {
     readonly resourceGroup: {
+      readonly fairShareSpec: {
+        readonly decayUnitDays: number;
+        readonly defaultWeight: any;
+        readonly halfLifeDays: number;
+        readonly lookbackDays: number;
+        readonly resourceWeights: ReadonlyArray<{
+          readonly resourceType: string;
+          readonly usesDefault: boolean;
+          readonly weight: any;
+        }>;
+      } | null | undefined;
       readonly id: string;
       readonly name: string;
     };
@@ -81,6 +92,77 @@ v1 = [
             "kind": "ScalarField",
             "name": "name",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "FairShareScalingGroupSpec",
+            "kind": "LinkedField",
+            "name": "fairShareSpec",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "halfLifeDays",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "lookbackDays",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "decayUnitDays",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "defaultWeight",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "ResourceWeightEntry",
+                "kind": "LinkedField",
+                "name": "resourceWeights",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "resourceType",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "weight",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "usesDefault",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -107,16 +189,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "5e7a8541b7ec3c3f6feb16f376eac5d0",
+    "cacheID": "06b3668d30bd3e0cdb1a26e934580abe",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupFairShareSettingModalMutation",
     "operationKind": "mutation",
-    "text": "mutation ResourceGroupFairShareSettingModalMutation(\n  $input: UpdateResourceGroupFairShareSpecInput!\n) {\n  adminUpdateResourceGroupFairShareSpec(input: $input) {\n    resourceGroup {\n      id\n      name\n    }\n  }\n}\n"
+    "text": "mutation ResourceGroupFairShareSettingModalMutation(\n  $input: UpdateResourceGroupFairShareSpecInput!\n) {\n  adminUpdateResourceGroupFairShareSpec(input: $input) {\n    resourceGroup {\n      id\n      name\n      fairShareSpec {\n        halfLifeDays\n        lookbackDays\n        decayUnitDays\n        defaultWeight\n        resourceWeights {\n          resourceType\n          weight\n          usesDefault\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f848c0110a2067fb8c25467884d65eee";
+(node as any).hash = "bced39f3d091890c9d9b289b2dd5b9f7";
 
 export default node;

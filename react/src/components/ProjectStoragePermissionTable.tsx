@@ -358,6 +358,7 @@ const ProjectStoragePermissionTable: React.FC<
         </BAIFlex>
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         size="small"
         {...tableProps}
         locale={{

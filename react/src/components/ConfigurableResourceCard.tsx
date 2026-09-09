@@ -171,12 +171,12 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   };
 
   return (
+    // The panel supplies its own inset, so the card must contribute none.
+    // `styles.body` is accepted and ignored by BAICard; `padding` is the knob.
     <BAICard
+      padding={0}
       {..._.omit(props, ['style'])}
       style={{ ...props.style }}
-      styles={{
-        body: { padding: 0 },
-      }}
     >
       <Suspense
         fallback={

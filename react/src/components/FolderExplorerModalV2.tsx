@@ -49,6 +49,7 @@ import {
   BAIModal,
   type BAIModalProps,
   BAIUnmountAfterClose,
+  toGlobalId,
   useFetchKey,
   useInterval,
   VFolderFile,
@@ -186,36 +187,52 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // dashed form via the shared `formatToUUID` helper.
   const vfolderUuid =
     vfolderID.length === 32 ? formatToUUID(vfolderID) : vfolderID;
-  const { vfolderNode } = useLazyLoadQuery<FolderExplorerModalV2Query>(
-    graphql`
-      query FolderExplorerModalV2Query($vfolderId: UUID!) {
-        vfolderNode: vfolderV2(vfolderId: $vfolderId) {
-          unmanagedPath
-          host
-          id
-          metadata {
-            name
+  const { vfolderNode, legacyVFolderNode } =
+    useLazyLoadQuery<FolderExplorerModalV2Query>(
+      graphql`
+        query FolderExplorerModalV2Query(
+          $vfolderId: UUID!
+          $vfolderGlobalId: String!
+        ) {
+          # TODO(needs-backend): stopgap for FR-3800 — vfolderV2 exposes only
+          # the mount permission (accessControl.permission), not the caller's
+          # effective permission set, so write/delete gating reads the legacy
+          # per-user RBAC list here. Replace with the V2 field once the
+          # backend adds it (FR-2619 follow-up).
+          legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {
+            id
+            permissions
           }
-          ownership {
-            projectId
-            project {
-              basicInfo {
-                name
+          vfolderNode: vfolderV2(vfolderId: $vfolderId) {
+            unmanagedPath
+            host
+            id
+            metadata {
+              name
+            }
+            ownership {
+              projectId
+              project {
+                basicInfo {
+                  name
+                }
               }
             }
+            ...FolderExplorerHeaderV2Fragment
+            ...VFolderNodeDescriptionV2Fragment
           }
-          ...FolderExplorerHeaderV2Fragment
-          ...VFolderNodeDescriptionV2Fragment
         }
-      }
-    `,
-    { vfolderId: vfolderUuid },
-    {
-      // Only fetch when both deferredOpen and modalProps.open are true to prevent unnecessary requests during React transitions
-      fetchPolicy:
-        deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
-    },
-  );
+      `,
+      {
+        vfolderId: vfolderUuid,
+        vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderID),
+      },
+      {
+        // Only fetch when both deferredOpen and modalProps.open are true to prevent unnecessary requests during React transitions
+        fetchPolicy:
+          deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
+      },
+    );
 
   // Permission calculation follows the folder's own ownership project when
   // the folder is project-owned (what the user can do must not depend on the
@@ -300,25 +317,25 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   );
   // `upload-file` on the storage host gates the actual upload pipeline:
   // upload buttons (file/folder), drag-drop, and the in-app text editor save
-  // (which overwrites the file via the upload API). mkdir / create-file /
-  // rename are kept enabled — there is no corresponding host-level
-  // capability for them today, and FR-2619 will revisit the effective
-  // permission set.
-  const hasUploadContentPermission = _.includes(
+  // (which overwrites the file via the upload API).
+  const hasUploadHostPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
     'upload-file',
   );
-  // TODO(needs-backend): write/delete capability should be derived from the
-  // caller's *effective* permission set on this entity (e.g.,
-  // `delete_content`, `write_content`), not from the folder's mount
-  // permission. The V2 schema currently exposes only the mount permission via
-  // `accessControl.permission` (`READ_ONLY` / `READ_WRITE` / `RW_DELETE`),
-  // which is what the folder is mounted *as* into a session — not what the
-  // caller is allowed to do on the folder itself. Until the backend exposes a
-  // proper effective permission set, allow all callers and let the server
-  // enforce authorization. See FR-2619 follow-up.
-  const hasDeleteContentPermission = true;
-  const hasWriteContentPermission = true;
+  // Share-permission gating (FR-3800) reads the legacy per-user RBAC list —
+  // see the TODO(needs-backend) on the query above.
+  const hasDeleteContentPermission = _.includes(
+    legacyVFolderNode?.permissions,
+    'delete_content',
+  );
+  const hasWriteContentPermission = _.includes(
+    legacyVFolderNode?.permissions,
+    'write_content',
+  );
+  // Upload/editor write through the upload API: both the host capability and
+  // the folder-level write permission are required.
+  const hasUploadContentPermission =
+    hasUploadHostPermission && hasWriteContentPermission;
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 

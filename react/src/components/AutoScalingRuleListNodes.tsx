@@ -149,6 +149,7 @@ const AutoScalingRuleListNodes: React.FC<AutoScalingRuleListNodesProps> = ({
 
   return (
     <BAITable<AutoScalingRuleNode>
+      scroll={{ x: 'max-content' }}
       rowKey="id"
       columns={[
         {

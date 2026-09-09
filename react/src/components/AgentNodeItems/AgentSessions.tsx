@@ -8,7 +8,8 @@ import type {
   SessionV2Status,
 } from '../../__generated__/AgentSessionsQuery.graphql';
 import { convertToOrderBy } from '../../helper';
-import { useWebUINavigate } from '../../hooks';
+import { getSessionV2StatusBuckets } from '../../helper/sessionStatusBuckets';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
@@ -31,26 +32,6 @@ import {
   usePreloadedQuery,
   UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
-
-// Same status buckets as ProjectAdminSessionPage — sessions still occupying
-// (or about to occupy) agent resources vs. finished ones kept for history.
-export const RUNNING_STATUSES: ReadonlyArray<SessionV2Status> = [
-  'PENDING',
-  'SCHEDULED',
-  'PREPARING',
-  'PREPARED',
-  'CREATING',
-  'RUNNING',
-  'DEPRIORITIZING',
-  'PREEMPTED',
-  'RESCHEDULING',
-  'TERMINATING',
-];
-
-const FINISHED_STATUSES: ReadonlyArray<SessionV2Status> = [
-  'TERMINATED',
-  'CANCELLED',
-];
 
 // TODO(FR-3251): `AgentDetailDrawer` still runs on the legacy `AgentNode`
 // query because AgentV2 has no `live_stat` / `gpu_alloc_map` equivalents
@@ -110,6 +91,10 @@ const AgentSessions = ({ queryRef, onReload }: AgentSessionsProps) => {
   const buildProjectPath = useProjectPath();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const baiClient = useSuspendedBackendaiClient();
+  const statusBuckets = getSessionV2StatusBuckets(
+    baiClient.supports('session-preemption-statuses'),
+  );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AgentSessions',
@@ -158,9 +143,7 @@ const AgentSessions = ({ queryRef, onReload }: AgentSessionsProps) => {
                 ...queryRef.variables,
                 sessionFilter: {
                   status: {
-                    in: (next === 'running'
-                      ? RUNNING_STATUSES
-                      : FINISHED_STATUSES) as readonly SessionV2Status[],
+                    in: statusBuckets[next] as readonly SessionV2Status[],
                   },
                 },
                 offset: 0,

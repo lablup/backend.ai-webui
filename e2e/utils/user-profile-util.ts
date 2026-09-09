@@ -6,6 +6,37 @@ import { navigateTo } from './test-util';
 import { expect, type Page, type Locator } from '@playwright/test';
 
 /**
+ * The Credential page's "Users" tab button.
+ *
+ * `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+ * `<button>`s (BAITabList / Astryx `TabList`); `role="tab"` is never emitted
+ * unless `TabList` is given `role="tablist"`, which this app never does.
+ */
+export function usersTabButton(page: Page): Locator {
+  return page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name: 'Users' });
+}
+
+/**
+ * The "My Account Information" profile dialog. Replaces the dead `.ant-modal`
+ * selector — the modal is an Astryx dialog with an accessible name.
+ */
+export function profileModal(page: Page): Locator {
+  return page.getByRole('dialog', { name: 'My Account Information' });
+}
+
+/**
+ * The overflow ("More") dropdown trigger beside the Credential page's
+ * "Create User" button. `AdminUserManagement.tsx`'s `DropdownMenu` trigger
+ * carries `t('button.More')` as its accessible name; the old "ellipsis" name
+ * came from the antd icon glyph and no longer exists.
+ */
+export function createUserMoreButton(page: Page): Locator {
+  return page.getByRole('button', { name: 'More' });
+}
+
+/**
  * Clicks a BAINameActionCell action by its title.
  * Handles both directly visible icon buttons and overflow dropdown menu items.
  *
@@ -54,7 +85,9 @@ export async function clickRowAction(
 export async function openProfileModal(page: Page) {
   await page.getByTestId('user-dropdown-button').click();
   await page.getByText('My Account').click();
-  await page.locator('.ant-modal').waitFor({ state: 'visible' });
+  await expect(
+    page.getByRole('dialog', { name: 'My Account Information' }),
+  ).toBeVisible();
 }
 
 /**
@@ -140,7 +173,11 @@ export async function createDisposableUser(
   password: string,
 ): Promise<void> {
   await navigateTo(adminPage, 'credential');
-  await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible();
+  // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+  // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
+  // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+  // which this app never does (see registry.spec.ts's identical pattern).
+  await expect(usersTabButton(adminPage)).toBeVisible();
 
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   const userSettingModal = UserSettingModal.forCreate(adminPage);

@@ -18,8 +18,14 @@
  StyleX rules, which a class selector cannot outrank — so the token is
  re-declared rather than the `color` re-stated.
 */
+/* `border-color` belongs HERE, on the root: Astryx `Selector` draws the field's
+   rule on `.astryx-selector` itself, and its inner trigger is `border-width: 0`.
+   The structural descendant rule below used to carry it, which meant the band
+   select silently kept Astryx's `--color-border-emphasized` (#D9D9D9 on the
+   orange) instead of the reversed white. */
 .bai-select-ghost {
   background-color: transparent;
+  border-color: light-dark(var(--color-on-dark), var(--color-on-light));
   color: light-dark(var(--color-on-dark), var(--color-on-light));
   --color-icon-secondary: light-dark(
     var(--color-on-dark),
@@ -27,9 +33,9 @@
   );
 }
 
-/* The trigger is Astryx's own button-like element; target it structurally
-   (any direct child that is a button/`role=combobox`) rather than by a
-   design-system class name, so an Astryx bump cannot silently break it.
+/* The inner trigger, targeted structurally rather than by a design-system class
+   name. It carries no border of its own today (see above), so this is the
+   fill/text half only.
    The hover wash is NOT painted here: `Selector`'s own ghost gradient reads
    `--color-overlay-hover`, which `WebUIHeader` sets to the band pair, so the
    trigger hovers identically to the ghost IconButtons beside it (FR-3501). */
@@ -42,7 +48,9 @@
 
 /* The ghost border is a hard override, which would otherwise swallow the
    error treatment; restore it at higher specificity so a ghost select (e.g.
-   the header ProjectSelect) can still surface an error state. */
+   the header ProjectSelect) can still surface an error state. `aria-invalid`
+   lands on the inner trigger while the border is on the root, hence `:has()`. */
+.bai-select-ghost:has([aria-invalid='true']),
 .bai-select-ghost [aria-invalid='true'] {
   border-color: var(--color-error);
 }

@@ -3,7 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 // csv-util.test.ts
-import { downloadCSV, JSONToCSVBody, parseCSV, UTF8_BOM } from './csv-util';
+import {
+  csvLiteral,
+  downloadCSV,
+  escapeCsvValue,
+  JSONToCSVBody,
+  parseCSV,
+  UTF8_BOM,
+} from './csv-util';
 
 describe('JSONToCSVBody', () => {
   it('should convert JSON data to CSV format without formatting rules', () => {
@@ -73,6 +80,81 @@ describe('JSONToCSVBody', () => {
     const expected = '"name","age"\n"John ""Doe""",30\n"Jane, the Great",25';
 
     expect(result).toBe(expected);
+  });
+
+  it('should neutralize a cell that a spreadsheet would run as a formula', () => {
+    const data = [{ email: 'user@example.com', name: '=1+2' }];
+
+    const result = JSONToCSVBody(data);
+
+    expect(result).toBe(`"email","name"\n"user@example.com","'=1+2"`);
+  });
+
+  it('keeps a literal column intact while still neutralizing the others', () => {
+    const data = [
+      {
+        email: '=HYPERLINK("http://evil.example","click")',
+        'secret key': '-Ab3_secret',
+      },
+    ];
+
+    const result = JSONToCSVBody(data, { 'secret key': csvLiteral });
+
+    expect(result).toBe(
+      `"email","secret key"\n"'=HYPERLINK(""http://evil.example"",""click"")","-Ab3_secret"`,
+    );
+  });
+});
+
+describe('csvLiteral', () => {
+  it.each([
+    ['-Ab3_xyz', '"-Ab3_xyz"'],
+    ['=1+2', '"=1+2"'],
+    ['+1+2', '"+1+2"'],
+    ['@SUM(A1)', '"@SUM(A1)"'],
+  ])('skips the formula neutralization for %j', (input, expected) => {
+    expect(escapeCsvValue(csvLiteral(input))).toBe(expected);
+  });
+
+  it('still applies RFC 4180 quoting', () => {
+    expect(escapeCsvValue(csvLiteral('a"b,c'))).toBe('"a""b,c"');
+  });
+
+  it('renders null and undefined as an empty quoted cell', () => {
+    expect(escapeCsvValue(csvLiteral(null))).toBe('""');
+    expect(escapeCsvValue(csvLiteral(undefined))).toBe('""');
+  });
+});
+
+describe('escapeCsvValue', () => {
+  it.each([
+    ['=1+2', `"'=1+2"`],
+    ['@SUM(A1)', `"'@SUM(A1)"`],
+    ['+1+2', `"'+1+2"`],
+    ['-1+2', `"'-1+2"`],
+    ['\t=1+2', `"'\t=1+2"`],
+    ['\r=1+2', `"'\r=1+2"`],
+    [
+      '=HYPERLINK("http://evil.example","click")',
+      `"'=HYPERLINK(""http://evil.example"",""click"")"`,
+    ],
+  ])('neutralizes the formula trigger in %j', (input, expected) => {
+    expect(escapeCsvValue(input)).toBe(expected);
+  });
+
+  it.each([
+    ['-', '"-"'],
+    ['-30', '"-30"'],
+    ['+30', '"+30"'],
+    ['-1.5', '"-1.5"'],
+    ['plain text', '"plain text"'],
+    ['a=b', '"a=b"'],
+  ])('leaves the non-formula value %j intact', (input, expected) => {
+    expect(escapeCsvValue(input)).toBe(expected);
+  });
+
+  it('leaves actual number values unquoted and intact', () => {
+    expect(escapeCsvValue(-30)).toBe('-30');
   });
 });
 

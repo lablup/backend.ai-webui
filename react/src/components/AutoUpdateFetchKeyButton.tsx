@@ -3,7 +3,7 @@ import {
   useBAISettingUserState,
 } from '../hooks/useBAISetting';
 import { BAIFetchKeyButton } from 'backend.ai-ui';
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, useState } from 'react';
 
 /**
  * Closed set of stable ids used to persist each consumer's auto-refresh
@@ -104,18 +104,25 @@ const AutoUpdateFetchKeyButton: React.FC<AutoUpdateFetchKeyButtonProps> = ({
   const settingName = `fetchKeyAutoUpdateDelay.${settingId}` as const;
   const [autoUpdateDelay, setAutoUpdateDelay] =
     useBAISettingUserState(settingName);
-  // Only fall back to `defaultAutoUpdateDelay` before the user has ever
-  // touched the dropdown for this consumer. Once they have (including
-  // explicitly choosing "Off"), the persisted value is `null` too, but it
-  // must not be re-overridden by the default on every subsequent render.
-  const resolvedAutoUpdateDelay = hasStoredUserSetting(settingName)
-    ? (autoUpdateDelay ?? null)
-    : defaultAutoUpdateDelay;
+  // Fall back to `defaultAutoUpdateDelay` only until the user picks something
+  // for this consumer. `hasStoredUserSetting` alone cannot carry that: it reads
+  // localStorage outside React, and picking "Off" straight from the default is
+  // a null -> null atom write jotai bails out of, so nothing re-renders and the
+  // default keeps winning (FR-3846). This flag makes that first pick observable.
+  const [hasPickedThisSession, setHasPickedThisSession] = useState(false);
+  const resolvedAutoUpdateDelay =
+    hasPickedThisSession || hasStoredUserSetting(settingName)
+      ? (autoUpdateDelay ?? null)
+      : defaultAutoUpdateDelay;
+  const handleChangeAutoUpdateDelay = (delayMs: number | null) => {
+    setHasPickedThisSession(true);
+    setAutoUpdateDelay(delayMs);
+  };
   return (
     <BAIFetchKeyButton
       {...props}
       autoUpdateDelay={resolvedAutoUpdateDelay}
-      onChangeAutoUpdateDelay={setAutoUpdateDelay}
+      onChangeAutoUpdateDelay={handleChangeAutoUpdateDelay}
     />
   );
 };

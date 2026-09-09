@@ -555,31 +555,6 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
             {
               ...columns[0],
               render: renderEmailWithActions,
-              // This override is what puts the row's action buttons in the
-              // E-Mail cell, so it owns the width they need — not
-              // `BAIUserNodes`, whose plain email column is reused by tables
-              // that render no actions.
-              //
-              // Reported as "default email column width 가 좁아서 컨트롤 버튼이
-              // 모두 보이지 않음" (QA-FINDINGS Q-16). The column carries no
-              // width, so `BAITable` falls through to `proportional(1)`,
-              // whose documented minimum is 120px; with 21 columns that is
-              // 2452px against a 1600px viewport, so the flex share never
-              // activates and EVERY column pins to that 120px floor. 120 minus
-              // the cell's 16px padding leaves 104, minus
-              // `BAINameActionCell`'s 44px title reserve leaves 60 — and three
-              // 24px buttons with 2px gaps need 76, so all but one collapse
-              // into the overflow menu.
-              //
-              // Legacy sized this column to its content: the antd table ran
-              // `scroll={{ x: 'max-content' }}`, which puts rc-table in `auto`
-              // layout (`git show origin/main:packages/backend.ai-ui/src/
-              // components/BAIAdminUserV2Table.tsx`), and `BAITable`
-              // accepts-and-ignores `scroll` by PILOT-DECISION. 320 = 200px of
-              // email text + 8 gap + four 24px buttons with 2px gaps (102) +
-              // 16 padding. The table already scrolls, so this takes nothing
-              // from the other columns.
-              minWidth: 320,
             },
             ...columns.slice(1),
           ];

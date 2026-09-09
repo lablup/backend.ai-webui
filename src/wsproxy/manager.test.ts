@@ -1,4 +1,5 @@
 import Manager from './manager.js';
+import { createRequire } from 'node:module';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 /**
@@ -266,5 +267,96 @@ describe('wsproxy Manager security (FR-3227)', () => {
       expect(() => manager._evictStaleGateway('sess-3|jupyter')).not.toThrow();
       expect(manager.proxies.hasOwnProperty('sess-3|jupyter')).toBe(false);
     });
+  });
+});
+
+/**
+ * Regression tests for EXT_HTTP_PROXY propagation (FR-3836).
+ *
+ * SESSION mode reaches the gateway through the `cf` object, which carries
+ * `ext_proxy_url`. API mode hands the gateway `aiclient._config` — a
+ * `ClientConfig` with no such field — so the proxy URL has to travel as its
+ * own constructor argument or it is silently dropped.
+ *
+ * Both gateway modules require `backend.ai-client`, a build artifact the
+ * source-only checkout does not have (see the top-of-file comment), so each
+ * test seeds `require.cache` with a stub for the module one hop down and
+ * asserts on the arguments that arrive there.
+ */
+describe('EXT_HTTP_PROXY propagation (FR-3836)', () => {
+  const req = createRequire(import.meta.url);
+  const extProxyURL = 'http://10.20.30.40:3128';
+  const stubbed: Array<string> = [];
+
+  const stubModule = (id: string, exports: unknown) => {
+    const filename = req.resolve(id);
+    stubbed.push(filename);
+    req.cache[filename] = {
+      id: filename,
+      filename,
+      loaded: true,
+      exports,
+    } as any;
+  };
+
+  afterEach(() => {
+    while (stubbed.length) delete req.cache[stubbed.pop() as string];
+  });
+
+  it('hands the API-mode TCP gateway the manager EXT_HTTP_PROXY value', async () => {
+    const constructorArgs: Array<Array<unknown>> = [];
+    stubModule(
+      './gateway/tcpwsproxy',
+      class StubGateway {
+        constructor(...args: Array<unknown>) {
+          constructorArgs.push(args);
+        }
+        async start_proxy() {}
+        getPort() {
+          return 12345;
+        }
+        isAlive() {
+          return true;
+        }
+      },
+    );
+
+    const manager: any = new Manager('127.0.0.1', '127.0.0.1', 0);
+    const port = await manager.start();
+    // Stand in for a completed API-mode `PUT /conf`, which constructs the
+    // Backend.AI client (a build artifact) before this branch is reached.
+    const clientConfig = { endpoint: 'http://localhost:8081' };
+    manager.extHttpProxyURL = extProxyURL;
+    manager._config = { mode: 'API' };
+    manager.aiclient = { _config: clientConfig };
+
+    const res = await fetch(
+      `http://127.0.0.1:${port}/proxy/${encodeURIComponent(manager.secretToken)}/sess-api/add?app=jupyter`,
+    );
+    await new Promise<void>((resolve) =>
+      manager.listener.close(() => resolve()),
+    );
+
+    expect(res.status).toBe(200);
+    expect(constructorArgs).toEqual([[clientConfig, extProxyURL]]);
+  });
+
+  it('forwards the proxy URL from the TCP gateway to the app-proxy server', async () => {
+    const constructorArgs: Array<Array<unknown>> = [];
+    stubModule(
+      './lib/backend.ai-ws-appproxy.js',
+      class StubServer {
+        constructor(...args: Array<unknown>) {
+          constructorArgs.push(args);
+        }
+        async start() {}
+      },
+    );
+
+    const Gateway = req('./gateway/tcpwsproxy');
+    const env = { endpoint: 'http://localhost:8081' };
+    await new Gateway(env, extProxyURL).start_proxy('sess-api', 'jupyter');
+
+    expect(constructorArgs).toEqual([[env, extProxyURL]]);
   });
 });

@@ -238,7 +238,7 @@ To switch languages in the app:
    - `English` (Default)
    - `한국어`
    - `日本語`
-   - `ภาษาไทย` (may show as `__NOT_TRANSLATED__` in the dropdown — select it anyway, the UI will switch correctly)
+   - `ภาษาไทย`
 6. Wait for UI labels to refresh
 
 ## Screenshot Capture Guidelines

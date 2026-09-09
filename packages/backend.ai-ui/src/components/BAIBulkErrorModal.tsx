@@ -95,6 +95,7 @@ const BAIBulkErrorModal = <RecordType extends AnyObject = AnyObject>({
           />
         )}
         <BAITable<RecordType>
+          scroll={{ x: 'max-content' }}
           columns={columns}
           dataSource={dataSource}
           // Client-side pagination: 10 rows per page, hidden entirely while

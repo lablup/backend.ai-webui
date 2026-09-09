@@ -3,6 +3,8 @@ import Big from 'big.js';
 import * as _ from 'lodash-es';
 
 export * from './astryxTagVariant';
+export * from './runtimeVariantPresetUI';
+export * from './vfolderHostPermission';
 
 /*
  to-astryx TICKET 30-D — `transformSorterToOrderString` was removed here.

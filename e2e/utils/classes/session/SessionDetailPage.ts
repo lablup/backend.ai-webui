@@ -32,12 +32,12 @@ export class SessionDetailPage extends BasePage {
 
   async verifyPageLoaded(): Promise<void> {
     // Wait for the session type tab list as a reliable page-ready indicator.
-    // The tablist (All / Interactive / Batch / Inference / Upload Sessions) is
+    // The tab nav (All / Interactive / Batch / Inference / Upload Sessions) is
     // always rendered, even when no sessions exist or the data API returns an
-    // error. Unlike `.ant-table` or the hidden radio inputs, this element is
-    // always visible after navigation to the session page.
-    const tablist = this.page.getByRole('tablist');
-    await this.waitForVisible(tablist, 10000);
+    // error. `BAITabList` / Astryx `TabList` renders a `nav[aria-label="Tabs"]`
+    // of plain `<button>`s — `role="tablist"` is never emitted.
+    const tabNav = this.page.getByRole('navigation', { name: 'Tabs' });
+    await this.waitForVisible(tabNav, 10000);
   }
 
   /**

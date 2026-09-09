@@ -258,6 +258,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
 
   return (
     <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey="id"
       dataSource={filteredPresets}
       columns={allColumns}

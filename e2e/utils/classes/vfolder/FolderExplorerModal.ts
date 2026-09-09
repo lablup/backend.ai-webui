@@ -49,8 +49,11 @@ export class FolderExplorerModal {
   }
 
   async getUploadButton(): Promise<Locator> {
+    // Astryx DropdownMenu trigger: accessible name is the visible label only
+    // (no antd icon-name prefix).
     const uploadButton = this.modal.getByRole('button', {
-      name: 'upload Upload',
+      name: 'Upload',
+      exact: true,
     });
     await expect(uploadButton).toBeVisible({ timeout: 10000 });
     // Give the modal toolbar a moment to settle so click() doesn't fail with

@@ -8,6 +8,7 @@ import type {
   SessionV2OrderBy,
   SessionV2Status,
 } from '../__generated__/AgentSessionsQuery.graphql';
+import { getSessionV2StatusBuckets } from '../helper/sessionStatusBuckets';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { theme, useBAIBreakpoint } from '../theme-shim';
 import AgentActionButtons from './AgentNodeItems/AgentActionButtons';
@@ -15,7 +16,6 @@ import AgentComputePlugins from './AgentNodeItems/AgentComputePlugins';
 import AgentResources from './AgentNodeItems/AgentResources';
 import AgentSessions, {
   AgentSessionsQuery,
-  RUNNING_STATUSES,
 } from './AgentNodeItems/AgentSessions';
 import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
 import BAIErrorBoundary from './BAIErrorBoundary';
@@ -53,6 +53,9 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
   const { md } = useBAIBreakpoint();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const statusBuckets = getSessionV2StatusBuckets(
+    baiClient.supports('session-preemption-statuses'),
+  );
 
   const [activeTabKey, setActiveTabKey] = useState<TabKey>('resources');
 
@@ -179,7 +182,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
                 agentFilter: { id: { equals: agent.row_id } },
                 sessionFilter: {
                   status: {
-                    in: RUNNING_STATUSES as readonly SessionV2Status[],
+                    in: statusBuckets.running as readonly SessionV2Status[],
                   },
                 },
                 orderBy: [

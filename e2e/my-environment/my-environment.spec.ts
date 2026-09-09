@@ -1,5 +1,9 @@
 // spec: My Environment page tests
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import {
+  getSortableColumnHeader,
+  loginAsAdmin,
+  navigateTo,
+} from '../utils/test-util';
 import test, { expect } from '@playwright/test';
 
 test.describe(
@@ -13,14 +17,23 @@ test.describe(
       await loginAsAdmin(page, request);
       await navigateTo(page, 'my-environment');
 
-      // Verify Images tab is selected by default
-      await expect(
-        page.getByRole('tab', { name: 'Images', selected: true }),
-      ).toBeVisible();
+      // Verify Images tab is selected by default. `BAITabList` / Astryx
+      // `TabList` renders a `nav[aria-label="Tabs"]` of plain `<button>`s —
+      // `role="tab"` is never emitted — and marks the active one with
+      // `aria-current="true"`.
+      const imagesTab = page
+        .getByRole('navigation', { name: 'Tabs' })
+        .getByRole('button', { name: 'Images' });
+      await expect(imagesTab).toBeVisible();
+      await expect(imagesTab).toHaveAttribute('aria-current', 'true');
 
-      // Verify table columns
+      // Verify table columns. "Full image path" and "Base image name" are
+      // sortable — their columnheaders' accessible names are overridden by
+      // the sort button's aria-label (the raw field key, e.g. "Sort by
+      // fullImagePath"/"Sort by base_image_name") rather than the display
+      // label, so match the visible text instead (see getSortableColumnHeader).
       await expect(
-        page.getByRole('columnheader', { name: 'Full image path' }),
+        getSortableColumnHeader(page, 'Full image path'),
       ).toBeVisible();
       await expect(
         page.getByRole('columnheader', { name: 'Control' }),
@@ -32,7 +45,7 @@ test.describe(
         page.getByRole('columnheader', { name: 'Architecture' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('columnheader', { name: 'Base image name' }),
+        getSortableColumnHeader(page, 'Base image name'),
       ).toBeVisible();
       await expect(
         page.getByRole('columnheader', { name: 'Version' }),
@@ -40,7 +53,7 @@ test.describe(
 
       // Scope to the images table to avoid matching other tables or measure rows
       const imagesTable = page.locator('table').filter({
-        has: page.getByRole('columnheader', { name: 'Full image path' }),
+        has: getSortableColumnHeader(page, 'Full image path'),
       });
       const dataRows = imagesTable.locator(
         'tbody tr:not(.ant-table-measure-row)',
@@ -54,9 +67,11 @@ test.describe(
       await loginAsAdmin(page, request);
       await navigateTo(page, 'my-environment');
 
-      // Scope to the images table
+      // Scope to the images table. "Full image path" is sortable, so match its
+      // visible text rather than its accessible name (see
+      // getSortableColumnHeader).
       const imagesTable = page.locator('table').filter({
-        has: page.getByRole('columnheader', { name: 'Full image path' }),
+        has: getSortableColumnHeader(page, 'Full image path'),
       });
       const dataRows = imagesTable.locator(
         'tbody tr:not(.ant-table-measure-row)',

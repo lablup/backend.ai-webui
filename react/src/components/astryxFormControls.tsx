@@ -536,10 +536,14 @@ export const AstryxFormNumberInput: React.FC<AstryxFormNumberInputProps> = ({
   const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     const rawText = event.target.value;
     const typed = rawText.trim() === '' ? NaN : Number(rawText);
+    // `isIntegerOnly` counts as a repairable constraint on its own: Astryx's
+    // parser rejects a typed decimal exactly the way it rejects an
+    // out-of-range value, so without it a decimal vanishes on blur in an
+    // unbounded integer field.
     if (
       Number.isFinite(typed) &&
       typed !== safeValue &&
-      (typeof min === 'number' || typeof max === 'number')
+      (typeof min === 'number' || typeof max === 'number' || isIntegerOnly)
     ) {
       let clamped = typed;
       if (typeof min === 'number' && clamped < min) clamped = min;

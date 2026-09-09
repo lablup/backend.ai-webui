@@ -105,7 +105,7 @@ When a card's content is data-driven and uses Suspense, place the Suspense bound
 
 ```tsx
 <BAICard title={t('section.Title')}>
-  <Suspense fallback={<BAISkeleton active />}>
+  <Suspense fallback={<BAISkeleton />}>
     <DataDrivenContent />
   </Suspense>
 </BAICard>

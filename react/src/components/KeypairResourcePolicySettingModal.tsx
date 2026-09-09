@@ -290,7 +290,9 @@ const KeypairResourcePolicySettingModal: React.FC<
 
   return (
     <BAIModal
-      width={800}
+      // The widest cell holds a number input plus a unit selector; 800px left
+      // it colliding with the next column at the 3-column track width.
+      width={960}
       title={
         keypairResourcePolicy === null
           ? t('resourcePolicy.CreateKeypairResourcePolicy')
@@ -395,7 +397,7 @@ const KeypairResourcePolicySettingModal: React.FC<
               a responsive span, so the layout still settles into ~3 columns
               on the modal's fixed width without a breakpoint concept. */}
           <Card padding={4}>
-            <HStack wrap="wrap" gap={6}>
+            <HStack wrap="wrap" gap={8}>
               {_.map(_.keys(resourceSlots), (resourceSlotKey) => (
                 <div
                   key={resourceSlotKey}
@@ -463,8 +465,8 @@ const KeypairResourcePolicySettingModal: React.FC<
         </BAIFormItem>
         <BAIFormItem label={t('resourcePolicy.Sessions')}>
           <Card padding={4}>
-            <HStack wrap="wrap" gap={6}>
-              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
+            <HStack wrap="wrap" gap={8}>
+              <div style={{ flex: '1 1 240px', minWidth: 240 }}>
                 <FormItemWithUnlimited
                   label={t('resourcePolicy.ClusterSize')}
                   name="max_containers_per_session"
@@ -478,7 +480,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   />
                 </FormItemWithUnlimited>
               </div>
-              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
+              <div style={{ flex: '1 1 240px', minWidth: 240 }}>
                 <FormItemWithUnlimited
                   name={'max_session_lifetime'}
                   unlimitedValue={0}
@@ -488,12 +490,12 @@ const KeypairResourcePolicySettingModal: React.FC<
                   <AstryxFormNumberInput
                     label={t('resourcePolicy.MaxSessionLifetime')}
                     min={0}
-                    max={100}
+                    max={SIGNED_32BIT_MAX_INT}
                   />
                 </FormItemWithUnlimited>
               </div>
               {baiClient.supports('max-pending-session-count') ? (
-                <div style={{ flex: '1 1 220px', minWidth: 220 }}>
+                <div style={{ flex: '1 1 240px', minWidth: 240 }}>
                   <FormItemWithUnlimited
                     name={'max_pending_session_count'}
                     unlimitedValue={null}
@@ -508,7 +510,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   </FormItemWithUnlimited>
                 </div>
               ) : null}
-              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
+              <div style={{ flex: '1 1 240px', minWidth: 240 }}>
                 <FormItemWithUnlimited
                   name={'max_concurrent_sessions'}
                   label={t('resourcePolicy.Concurrency')}
@@ -522,7 +524,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   />
                 </FormItemWithUnlimited>
               </div>
-              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
+              <div style={{ flex: '1 1 240px', minWidth: 240 }}>
                 <FormItemWithUnlimited
                   name={'idle_timeout'}
                   unlimitedValue={0}
@@ -536,7 +538,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   />
                 </FormItemWithUnlimited>
               </div>
-              <div style={{ flex: '1 1 220px', minWidth: 220 }}>
+              <div style={{ flex: '1 1 240px', minWidth: 240 }}>
                 <FormItemWithUnlimited
                   name={'max_concurrent_sftp_sessions'}
                   unlimitedValue={0}

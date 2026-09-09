@@ -13,9 +13,8 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
 import DragAndDrop from './DragAndDrop';
-import EditableFileName from './EditableFileName';
 import ExplorerActionControls from './ExplorerActionControls';
-import FileItemControls from './FileItemControls';
+import FileNameCell from './FileNameCell';
 import { useDragOverlay, useSearchVFolderFiles } from './hooks';
 import type { RcFile } from './hooks';
 import { BreadcrumbItem, Breadcrumbs } from '@astryxdesign/core/Breadcrumbs';
@@ -235,43 +234,20 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
       title: t('comp:FileExplorer.Name'),
       dataIndex: 'name',
       sorter: (a, b) => localeCompare(a.name, b.name),
-      render: (name, record) =>
-        isDirectoryPicker && record.type !== 'DIRECTORY' ? (
+      render: (name, record) => {
+        if (isDirectoryPicker && record.type !== 'DIRECTORY') {
           // In the directory picker, files are shown for context but are not
           // interactive — only directories can be entered and chosen.
-          <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-            <File style={{ color: token.colorTextDisabled }} size="1em" />
-            <Text color="disabled" maxLines={1} style={{ maxWidth: 200 }}>
-              {name}
-            </Text>
-          </BAIFlex>
-        ) : (
-          <EditableFileName
-            fileInfo={record}
-            existingFiles={files?.items || []}
-            disabled={!enableWrite}
-            onEndEdit={() => {
-              refetch();
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              // The directory name itself is an Astryx `Link` <button> (no
-              // href), so excluding every <button> swallowed the navigating
-              // click; the rename trigger stops propagation on its own, and
-              // only its inline <form> has to be excluded here (FR-3602).
-              if ((e.target as HTMLElement).closest('form')) return;
-              if (record.type === 'DIRECTORY') {
-                navigateDown(name);
-                setSelectedItems([]);
-              }
-            }}
-          />
-        ),
-    },
-    {
-      title: t('comp:FileExplorer.Controls'),
-      width: 80,
-      render: (_controls, record) => {
+          return (
+            <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
+              <File style={{ color: token.colorTextDisabled }} size="1em" />
+              <Text color="disabled" maxLines={1} style={{ maxWidth: 200 }}>
+                {name}
+              </Text>
+            </BAIFlex>
+          );
+        }
+
         // true if the file is being deleted or its parent directory is being deleted
         const isPendingDelete =
           _.includes(deletingFilePaths, `${currentPath}/${record.name}`) ||
@@ -282,14 +258,27 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             ),
           );
 
-        if (isDirectoryPicker && record.type !== 'DIRECTORY') {
-          return null;
-        }
-
         return (
-          <Suspense fallback={<Skeleton height={24} width={80} />}>
-            <FileItemControls
+          <Suspense fallback={<Skeleton height={24} />}>
+            <FileNameCell
               selectedItem={record}
+              existingFiles={files?.items || []}
+              enableRename={enableWrite}
+              onEndRename={() => {
+                refetch();
+              }}
+              onClickName={(e) => {
+                e.stopPropagation();
+                // The directory name itself is an Astryx `Link` <button> (no
+                // href), so excluding every <button> swallowed the navigating
+                // click; the rename trigger stops propagation on its own, and
+                // only its inline <form> has to be excluded here (FR-3602).
+                if ((e.target as HTMLElement).closest('form')) return;
+                if (record.type === 'DIRECTORY') {
+                  navigateDown(name);
+                  setSelectedItems([]);
+                }
+              }}
               onClickDelete={() => {
                 setSelectedSingleItem(record);
               }}
@@ -297,7 +286,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
               enableDownload={!isDirectoryPicker && enableDownload}
               enableDelete={enableDelete}
               enableEdit={!isDirectoryPicker && enableEdit}
-              deleteButtonProps={{ loading: isPendingDelete }}
+              isPendingDelete={isPendingDelete}
             />
           </Suspense>
         );

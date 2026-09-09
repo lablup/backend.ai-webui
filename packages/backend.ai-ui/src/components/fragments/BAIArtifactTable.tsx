@@ -310,6 +310,7 @@ const BAIArtifactTable = ({
 
   return (
     <BAITable<Artifact>
+      scroll={{ x: 'max-content' }}
       rowKey={(record) => record.id}
       columns={filterOutEmpty(columns)}
       dataSource={filterOutNullAndUndefined(artifact)}

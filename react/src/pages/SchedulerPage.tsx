@@ -93,7 +93,6 @@ const FairShareErrorFallback: React.FC<{
       resourceGroup: parseAsString,
       domain: parseAsString,
       project: parseAsString,
-      user: parseAsString,
     },
     { history: 'push' },
   );
@@ -123,7 +122,6 @@ const FairShareErrorFallback: React.FC<{
               resourceGroup: null,
               domain: null,
               project: null,
-              user: null,
             });
             onReset();
           }}

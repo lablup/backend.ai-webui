@@ -386,6 +386,7 @@ const ResourceGroupList: React.FC = () => {
       </BAIFlex>
 
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={'name'}
         resizable
         size="small"

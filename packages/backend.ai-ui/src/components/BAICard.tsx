@@ -77,9 +77,10 @@
       card's borders and re-adds the inset as padding.
 
  MEASURED after: rail 265→1575 on a 264→1576 card (border to border), first tab
- label at x=288 = the body's content inset, header band 58px vs antd's 56px
- `headerHeight`. Applies to all 19 `tabList` call sites with no edit at any of
- them. The two tab LOOKS themselves live in `BAITabList`.
+ label at x=288 = the body's content inset. Applies to all 19 `tabList` call
+ sites with no edit at any of them. The two tab LOOKS themselves live in
+ `BAITabList`. The header BAND is 50px — `.bai-card__tabs--top` in `BAICard.css`
+ deliberately sits 8px tighter than antd's 56px `headerHeight`.
 
  PILOT-DECISION — **`title` becomes a real heading element (`<h5>`).** antd
  rendered the card title as a `<div>`; Astryx's `Heading` emits a heading
@@ -285,7 +286,7 @@ const BAICard: React.FC<BAICardProps> = ({
           <HStack
             className="bai-card__head"
             justify={title ? 'between' : 'end'}
-            align="center"
+            align="start"
             wrap="wrap"
             gap={2}
           >

@@ -9,6 +9,8 @@ description: >
   diagnosis, surfaces a prioritized queue via AskUserQuestion, and orchestrates
   the four docs worker subagents (planner / writer / screenshot-capturer /
   reviewer) through approval gates.
+  Reading the manual to answer a question is the `bai-agent` skill's job; this skill
+  is for writing and maintaining it.
 ---
 
 # docs-lead — Documentation Team Lead

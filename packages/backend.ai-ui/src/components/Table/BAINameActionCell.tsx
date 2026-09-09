@@ -9,6 +9,7 @@ import './BAINameActionCell.css';
 import { Button } from '@astryxdesign/core/Button';
 import {
   DropdownMenu,
+  type DropdownMenuItemData,
   type DropdownMenuOption,
 } from '@astryxdesign/core/DropdownMenu';
 import { Popover } from '@astryxdesign/core/Popover';
@@ -36,10 +37,16 @@ export interface BAINameActionCellAction {
    * - 'danger': colorError text on colorErrorBg background
    */
   type?: 'default' | 'danger';
-  /** Whether the action is disabled */
-  disabled?: boolean;
-  /** Tooltip text when disabled */
-  disabledReason?: string;
+  /**
+   * Whether the action is disabled. Pass `{ reason }` to disable it AND say
+   * why — the reason becomes the button tooltip. A bare `true` disables it
+   * without one, which is then a deliberate choice rather than a call site
+   * that let two fields drift apart (FR-3722).
+   */
+  disabled?: boolean | { reason: string };
+  /** Loading spinner for progress this cell does not own (e.g. a background
+   * delete tracked by the parent). Use `action` when the click itself awaits. */
+  loading?: boolean;
   /** Custom style override for the action button */
   style?: React.CSSProperties;
   /**
@@ -62,6 +69,16 @@ export interface BAINameActionCellAction {
    */
   popConfirm?: BAIPopconfirmConfig;
 }
+
+/**
+ * Reads the reason out of the `disabled` union. Exported so a caller threading
+ * a `disabled` value through its own props can render the reason itself — e.g.
+ * on a `BAIButton`, whose `disabled` is a plain boolean beside a `title`
+ * tooltip.
+ */
+export const disabledReason = (
+  disabled: BAINameActionCellAction['disabled'],
+) => (typeof disabled === 'object' ? disabled.reason : undefined);
 
 /**
  * The antd `PopconfirmProps` subset every call site actually passes, restated
@@ -317,43 +334,32 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
 
   // More menu: overflowed auto actions + menu-only actions
   const hasMoreMenu = hasOverflow || menuOnlyActions.length > 0;
-  // PILOT-DECISION (to-astryx W2-D): `DropdownMenuItemData` has no `danger`
-  // flag AND its `label` is typed `string`, not `ReactNode` — its rows are
-  // uniform (P5). A destructive overflow row therefore relies on its icon and
-  // label alone, exactly as it already does inside the `modal.confirm` it
-  // escalates to. The visible (non-overflowed) button keeps its danger tint
-  // through `bai-nac-action-button-danger`.
-  //
-  // Re-examined for QA-FINDINGS Q-15 ("더보기 버튼을 눌렀을 때 버튼 색상이 모두
-  // default 색상으로 처리됨", measured #141414/#FFFFFF where antd set
-  // `danger: action.type === 'danger'` and drew #FF4D4F/#BE3D3F). The colour IS
-  // reachable — but only through `DropdownMenu`'s COMPOUND mode, whose
-  // `DropdownMenuItem` takes `label: ReactNode` plus `style`. That means
-  // rewriting this menu's whole render path (data `items` -> children),
-  // carrying the divider, disabled and keyboard behaviour across with it, for a
-  // change the reporter themselves marked optional. Left as-is and reported
-  // rather than taken on inside a QA row.
-  const toMenuItem = (action: BAINameActionCellAction) => ({
+  // An overflowed action keeps the colour its inline button has (FR-3721).
+  // The default row's tint is inline because the menu renders in a Layer
+  // outside the container that publishes `--bai-nac-*`.
+  const toMenuItem = (
+    action: BAINameActionCellAction,
+  ): DropdownMenuItemData => ({
     // FR-3423: a disabled action must still explain itself once it overflows
-    // into this menu — otherwise a narrow viewport turns "disabled with a
-    // reason" into "disabled for no visible reason".
-    //
-    // PILOT-DECISION (to-astryx): the antd original wrapped the label in a
-    // `Tooltip` (a disabled antd menu item swallows hover, so the tooltip had
-    // to sit on the label). Astryx's DATA mode types
-    // `DropdownMenuItemData.label` as `string`, and `DropdownMenuItem`'s
-    // `description` slot is reachable only through the compound render path —
-    // which `items` disables outright (`DropdownMenu.js`: `children` is
-    // ignored whenever `items` is passed). Rewriting this menu to the
-    // compound path would have to carry the divider / disabled / keyboard
-    // behaviour across with it. The reason is folded into the label text
-    // instead: still visible, still read out, no tooltip needed.
-    label:
-      action.disabled && action.disabledReason
-        ? `${action.title} — ${action.disabledReason}`
-        : action.title,
-    icon: action.icon,
-    isDisabled: action.disabled,
+    // into this menu. The reason is folded into the label text rather than a
+    // tooltip, which a disabled menu row swallows.
+    label: disabledReason(action.disabled)
+      ? `${action.title} — ${disabledReason(action.disabled)}`
+      : action.title,
+    variant: action.type === 'danger' ? 'destructive' : 'default',
+    // Both rows use the same wrapper so the icon box is identical; only the
+    // default one needs a colour, a danger row inherits `--color-error`.
+    icon: action.icon ? (
+      <span
+        className="bai-nac-menu-icon"
+        style={
+          action.type === 'danger' ? undefined : { color: token.colorInfo }
+        }
+      >
+        {action.icon}
+      </span>
+    ) : undefined,
+    isDisabled: !!action.disabled,
     onClick: () => {
       if (action.onClick || action.action) {
         action.onClick?.();
@@ -429,6 +435,12 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         </BAIText>
       );
     }
+    // Only plain text gets the default truncation treatment. A node title
+    // brings its own — wrapping it would nest a second `BAIText` around it, or
+    // swallow an interactive one (the file explorer's inline-rename field).
+    if (typeof title !== 'string' && typeof title !== 'number') {
+      return title;
+    }
     return (
       <BAIText
         ellipsis={{ tooltip: true }}
@@ -491,13 +503,14 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
           }
         >
           {visibleActions.map((action) => {
-            const buttonClassName = action.disabled
+            const disabled = !!action.disabled;
+            const buttonClassName = disabled
               ? 'bai-nac-action-button-disabled'
               : action.type === 'danger'
                 ? 'bai-nac-action-button-danger'
                 : 'bai-nac-action-button-default';
 
-            if (action.popConfirm && !action.disabled) {
+            if (action.popConfirm && !disabled) {
               return (
                 <ConfirmPopoverButton
                   key={action.key}
@@ -517,8 +530,9 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
                 size="small"
                 icon={action.icon}
                 aria-label={action.title}
-                title={action.disabled ? action.disabledReason : action.title}
-                disabled={action.disabled}
+                title={disabledReason(action.disabled) || action.title}
+                disabled={disabled}
+                loading={action.loading}
                 className={buttonClassName}
                 style={action.style}
                 onClick={action.onClick}

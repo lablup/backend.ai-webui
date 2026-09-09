@@ -63,10 +63,9 @@ const BAILink: React.FC<BAILinkProps> = ({
   // `BAIText` goes INSIDE the link rather than around it. That keeps both
   // documented forms working: `ellipsis` shows the text itself, and
   // `ellipsis={{ tooltip: 'custom' }}` measures the box it is anchored to.
-  // `inheritColor` because Astryx `Text` always paints a colour on its own
-  // element (`color ?? 'primary'`), and the link's colour only ever reached the
-  // text by inheritance — so without it this wrapper repaints the link body
-  // text (FR-3692).
+  // `inheritColor` because `BAIText` paints the text colour on its own
+  // element, and the link's colour only ever reached the text by inheritance
+  // — so without it this wrapper repaints the link body text (FR-3692).
   const content = ellipsis ? (
     <BAIText
       inheritColor

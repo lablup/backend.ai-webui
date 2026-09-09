@@ -10,7 +10,6 @@ area:ux:
 area:lib:
   - changed-files:
     - any-glob-to-any-file:
-      - src/lib/**/*
       - src/wsproxy/**/*
 
 area:i18n:

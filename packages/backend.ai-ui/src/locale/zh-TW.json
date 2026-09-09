@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "執行錯誤",
     "ErrorOccurred": "發生錯誤"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "清除",
+    "HexValue": "十六進位值",
+    "NoColor": "無顏色",
+    "SelectColor": "選擇顏色"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "清除 搜尋選項",
     "NoResults": "無結果",
-    "Search": "搜索"
+    "SearchOptions": "搜尋選項"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "選擇容器映像倉庫"
@@ -162,7 +169,7 @@
     "SelectDomain": "選擇網域"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "數量"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動重新整理",
@@ -178,6 +185,8 @@
     "operator": {
       "After": "之後",
       "Before": "之前",
+      "Contains": "包含",
+      "EndsWith": "以...結尾",
       "Equals": "等於",
       "GreaterThan": "大於",
       "GreaterThanOrEqual": "大於或等於",
@@ -192,15 +201,19 @@
       "In": "在...中",
       "LessThan": "小於",
       "LessThanOrEqual": "小於或等於",
+      "NotContains": "不包含",
+      "NotEndsWith": "不以...結尾",
       "NotEquals": "不等於",
-      "NotIn": "不在...中"
+      "NotIn": "不在...中",
+      "NotStartsWith": "不以...開頭",
+      "StartsWith": "以...開頭"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "輸入您的 Hugging Face 權杖",
+    "HuggingFaceSettings": "Hugging Face 設定",
+    "Token": "權杖",
+    "TokenUpdatedSuccessfully": "權杖更新成功。"
   },
   "comp:BAIImageSelect": {
     "SelectImage": "選擇映像"
@@ -214,6 +227,39 @@
     "Size": "尺寸",
     "SuccessFullyPulled": "成功請求{{count}}版本的拉動。",
     "Version": "版本"
+  },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "正在檢查您的 Backend.AI 工作階段…",
+    "SignInWithBackendAI": "使用 Backend.AI 登入",
+    "failure": {
+      "CorsOrMixed": "瀏覽器封鎖了對 Backend.AI 網頁伺服器的請求，通常是 CORS 或混合內容限制所致。",
+      "HttpError": "Backend.AI 網頁伺服器傳回了錯誤（{{status}}）。",
+      "InvalidCallback": "為 {{appName}} 設定的登入返回位址不是有效的網址。",
+      "InvalidResponse": "Backend.AI 網頁伺服器傳回了非預期的回應。",
+      "NoEndpoint": "尚未為 {{appName}} 設定 Backend.AI 網頁伺服器位址。",
+      "NoSessionId": "您已登入 Backend.AI，但網頁伺服器未傳回工作階段 ID。",
+      "NoSessionOverHttp": "您尚未登入 Backend.AI。若已經登入，可能是 {{appName}} 透過 HTTP 提供服務，瀏覽器拒絕了網頁伺服器的安全工作階段 Cookie。請嘗試以 HTTPS 開啟 {{appName}}。",
+      "NoSessionOverHttps": "您尚未登入 Backend.AI。若已經登入，可能是 {{appName}} 與 Backend.AI 網頁伺服器屬於不同網站，瀏覽器因此不會傳送工作階段 Cookie。",
+      "RelayFailed": "您已登入 Backend.AI，但 {{appName}} 無法完成登入。",
+      "Timeout": "Backend.AI 網頁伺服器未在時間內回應。",
+      "Title": "無法使用 Backend.AI 登入"
+    }
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "簇的大小",
+    "Concurrency": "並發會話數",
+    "CreatedAt": "創建於",
+    "DefaultForUnspecified": "未指定的默認值",
+    "DefaultForUnspecifiedTooltipDesc1": "當不請求特定的CPU或內存時，設置默認策略。",
+    "DefaultForUnspecifiedTooltipDesc2": "“無限”允許使用代理節點的容量，而“有限”拒絕資源，除非明確設置。在大多數情況下，建議“無限”。",
+    "IdleTimeout": "空閒超時",
+    "MaxConcurrentSFTPSessions": "最大並發SFTP會話",
+    "MaxPendingSessionCount": "最大待定會話計數",
+    "MaxPendingSessionResourceSlots": "最大待處理會話資源插槽",
+    "MaxSessionLifetime": "最大会话寿命",
+    "Name": "名稱",
+    "StorageNodes": "存儲節點",
+    "TotalResourceSlots": "資源政策"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "選擇金鑰對"
@@ -276,6 +322,13 @@
     "ProjectResourcePolicy": "專案資源政策",
     "UpdateMultipleProjects": "更新多個專案"
   },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "創建於",
+    "MaxNetworkCount": "最大網路數",
+    "MaxQuotaScopeSize": "文件夹最大尺寸",
+    "MaxVFolderCount": "最大資料夾數",
+    "Name": "名稱"
+  },
   "comp:BAIProjectSelect": {
     "SelectProject": "選擇專案"
   },
@@ -322,8 +375,20 @@
     "SelectFolder": "選擇資料夾"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "套用",
     "PlaceHolder": "搜索",
-    "ResetFilter": "重置過濾器"
+    "ResetFilter": "重置過濾器",
+    "SearchLabel": "搜尋篩選條件",
+    "operator": {
+      "Contains": "包含",
+      "Equals": "等於",
+      "GreaterThan": "大於",
+      "GreaterThanOrEqual": "大於或等於",
+      "In": "在...中",
+      "LessThan": "小於",
+      "LessThanOrEqual": "小於或等於",
+      "NotEquals": "不等於"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "取消拉力",
@@ -383,7 +448,7 @@
     "ChoiceValueRequired": "選項值為必填項。",
     "Choices": "選項",
     "ChoicesRequired": "至少需要一個選項。",
-    "CreatePreset": "建立預設",
+    "CreatePreset": "建立參數",
     "DefaultValue": "預設值",
     "DefaultValuePlaceholder": "例如：1",
     "Description": "描述",
@@ -391,7 +456,7 @@
     "DisplayName": "顯示名稱",
     "DisplayNamePlaceholder": "例如：Tensor Parallel Size",
     "DisplayNameTooltip": "在部署表單中取代參數名稱顯示的易讀標籤。",
-    "EditPreset": "編輯預設",
+    "EditPreset": "編輯參數",
     "Key": "鍵",
     "KeyPlaceholder": "例如：TENSOR_PARALLEL_SIZE",
     "KeyRequired": "鍵為必填項。",
@@ -401,16 +466,17 @@
     "NumberMax": "最大值",
     "NumberMaxMustExceedMin": "最大值必須大於最小值。",
     "NumberMin": "最小值",
-    "PresetCreated": "執行環境預設已建立。",
-    "PresetTarget": "預設目標",
+    "PresetCreated": "Runtime 參數已建立。",
+    "PresetTarget": "參數目標",
     "PresetTargetArgs": "命令列引數",
     "PresetTargetEnv": "環境變數",
-    "PresetTargetRequired": "預設目標為必填項。",
-    "PresetUpdated": "執行環境預設已更新。",
+    "PresetTargetRequired": "參數目標為必填項。",
+    "PresetUpdated": "Runtime 參數已更新。",
     "Rank": "排名",
-    "RankTooltip": "同一執行環境變體的預設間的顯示順序，值越小排越前。",
+    "RankTooltip": "同一 runtime 的參數間的顯示順序，值越小排越前。",
     "Required": "必填",
-    "RequiredTooltip": "建立部署修訂版本時是否必須提供此預設參數。",
+    "RequiredTooltip": "建立部署修訂版本時是否必須提供此參數。",
+    "Requirement": "是否必填",
     "RuntimeVariant": "執行環境變體",
     "RuntimeVariantRequired": "執行環境變體為必填項。",
     "SliderMax": "最大值",
@@ -421,10 +487,12 @@
     "SliderStep": "步長",
     "SliderStepMustBePositive": "步長必須大於 0。",
     "SliderStepTooltip": "滑桿的遞增步長，預設值為 1。",
+    "StoredValueTypeMismatch": "此參數儲存的值類型為 {{valueType}}，UI 類型 {{uiType}} 無法呈現它。請變更 UI 類型或值類型。",
     "TextPlaceholderExample": "例如：請輸入值",
     "TextPlaceholderLabel": "輸入佔位文字",
     "UIType": "UI 類型",
     "UITypeCheckbox": "核取方塊",
+    "UITypeIncompatibleWithValueType": "所選 UI 類型無法呈現此值類型。",
     "UITypeNumberInput": "數字輸入框",
     "UITypeSelect": "下拉選擇",
     "UITypeSlider": "滑桿",
@@ -448,14 +516,20 @@
     "ModifiedAt": "修改日期",
     "Name": "名稱",
     "Optional": "選填",
-    "PresetTarget": "預設目標",
+    "PresetTarget": "參數目標",
     "PresetTargetArgs": "命令列引數",
     "PresetTargetEnv": "環境變數",
     "Rank": "排名",
-    "RankTooltip": "同一執行環境變體的預設間的顯示順序，值越小排越前。",
+    "RankTooltip": "同一 runtime 的參數間的顯示順序，值越小排越前。",
     "Required": "必填",
-    "RuntimeVariant": "執行環境變體",
     "RuntimeVariantId": "執行環境變體 ID",
+    "RuntimeVariantWithID": "執行環境變體 (ID)",
+    "UIType": "UI 類型",
+    "UITypeCheckbox": "核取方塊",
+    "UITypeNumberInput": "數字輸入框",
+    "UITypeSelect": "下拉選擇",
+    "UITypeSlider": "滑桿",
+    "UITypeTextInput": "文字輸入框",
     "ValueType": "值類型",
     "ValueTypeBool": "布林值",
     "ValueTypeFlag": "旗標",
@@ -557,37 +631,36 @@
     "ArchiveDownloadStarted": "{{count}} 個項目的下載已開始。",
     "ChangeFileExtension": "更改文件擴展名",
     "ChangeFileExtensionDesc": "更改文件擴展名可能會導致文件變得無法使用或不正確打開。你想繼續嗎？",
-    "Controls": "控件",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "建立新檔案",
     "CreateANewFolder": "創建一個新文件夾",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "建立檔案",
+    "CreateFolder": "建立資料夾",
     "CreatedAt": "創建在",
     "DeleteSelectedItemDesc": "刪除的文件和文件夾無法恢復。你想繼續嗎？",
     "DeleteSelectedItemsDialog": "刪除確認",
+    "Download": "下載",
     "DownloadSelected": "下載",
     "DownloadStarted": "文件“ {{fileName}}”下載已開始。",
     "DragAndDropDesc": "將文件拖到此區域上傳。",
     "DuplicatedFiles": "覆蓋確認",
     "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",
     "EditFile": "編輯檔案",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "檔案建立成功。",
+    "FileName": "檔案名稱",
+    "FileNamePlaceholder": "例如 model-definition.yaml",
     "FileTooLargeToEdit": "由於檔案大小超過{{size}}MB,瀏覽器內編輯受到限制。",
     "FolderCreatedSuccessfully": "文件夾成功創建了。",
     "FolderName": "文件夾名稱",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "檔案名稱不能超過 255 個字元。",
     "MaxFolderNameLength": "文件夾名稱必須為255個字符或更小。",
     "ModifiedAt": "修改為",
-    "MoreOptions": "更多選項",
     "Name": "姓名",
     "NoUploadPermissionForHost": "您沒有此儲存主機的上傳權限。",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "路徑",
+    "PleaseEnterAFileName": "請輸入檔案名稱。",
     "PleaseEnterAFolderName": "請輸入文件夾名稱。",
-    "RenameFile": "Rename",
+    "RenameFile": "重新命名",
     "RenameSuccess": "該名稱已成功更改。",
     "SelectedItemsDeletedSuccessfully": "選定的文件和文件夾已成功刪除。",
     "Size": "尺寸",
@@ -702,23 +775,26 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "減少",
     "DeselectAll": "取消全選",
     "File": "檔案",
-    "Increase": "Increase",
+    "Increase": "增加",
+    "Loading": "載入中...",
     "NSelected": "{{count}}選擇",
     "Optional": "選填",
     "Project": "專案",
-    "Select": "Select",
+    "Search": "搜尋",
+    "Select": "選擇",
+    "SelectPlaceholder": "請選擇{{label}}",
     "TotalItems": "總計{{total}}項目",
-    "Unit": "Unit",
+    "Unit": "單位",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "動作",
+      "Back": "返回",
       "Cancel": "取消",
       "Close": "關閉",
       "Collapse": "坍塌",
-      "Confirm": "Confirm",
+      "Confirm": "確認",
       "Copied": "已複製",
       "Copy": "複製",
       "CopyAll": "複製全部",

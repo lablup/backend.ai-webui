@@ -42,6 +42,7 @@ import { generateWebsiteStyles } from "./styles-web.js";
 import { getDocVersion } from "./version.js";
 import {
   loadBookConfig,
+  resolveBookTitle,
   type NavGroup,
   type NormalizedBookConfig,
 } from "./book-config.js";
@@ -682,10 +683,11 @@ export async function generateWebsite(
           );
           continue;
         }
+        const { title: langTitle } = resolveBookTitle(versionBookConfig, lang);
         await buildLanguage({
           lang,
           version,
-          title: versionBookConfig.title,
+          title: langTitle,
           config: versionConfig,
           bookConfig: versionBookConfig,
           outRoot: versionDir,
@@ -716,10 +718,13 @@ export async function generateWebsite(
   } else {
     // Flat (legacy / single-version) mode — preserves FR-2159 behavior.
     for (const lang of languages) {
+      // Per-language title; a plain string `title` resolves identically for
+      // every language, so single-title projects are unaffected.
+      const { title: langTitle } = resolveBookTitle(bookConfig, lang);
       await buildLanguage({
         lang,
         version,
-        title,
+        title: langTitle,
         config,
         bookConfig,
         outRoot: distBase,

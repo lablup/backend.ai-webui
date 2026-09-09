@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "Suoritus epäonnistui",
     "ErrorOccurred": "Tapahtui virhe"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Tyhjennä",
+    "HexValue": "Heksa-arvo",
+    "NoColor": "Ei väriä",
+    "SelectColor": "Valitse väri"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Tyhjennä Hae vaihtoehdoista",
     "NoResults": "Ei tuloksia",
-    "Search": "Etsi"
+    "SearchOptions": "Hae vaihtoehdoista"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Valitse konttirekisteri"
@@ -162,7 +169,7 @@
     "SelectDomain": "Valitse toimialue"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Määrä"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Automaattinen päivitys",
@@ -178,6 +185,8 @@
     "operator": {
       "After": "jälkeen",
       "Before": "ennen",
+      "Contains": "sisältää",
+      "EndsWith": "päättyy",
       "Equals": "yhtä suuri",
       "GreaterThan": "suurempi kuin",
       "GreaterThanOrEqual": "suurempi tai yhtä suuri",
@@ -192,15 +201,19 @@
       "In": "sisällä",
       "LessThan": "pienempi kuin",
       "LessThanOrEqual": "pienempi tai yhtä suuri",
+      "NotContains": "ei sisällä",
+      "NotEndsWith": "ei pääty",
       "NotEquals": "ei yhtä suuri",
-      "NotIn": "ei sisällä"
+      "NotIn": "ei sisällä",
+      "NotStartsWith": "ei ala",
+      "StartsWith": "alkaa"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
-    "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "EnterToken": "Syötä Hugging Face -tunnuksesi",
+    "HuggingFaceSettings": "Hugging Face -asetukset",
+    "Token": "Tunnus",
+    "TokenUpdatedSuccessfully": "Tunnus päivitettiin onnistuneesti."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Valitse kuva"
@@ -214,6 +227,39 @@
     "Size": "Koko",
     "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
     "Version": "Versio"
+  },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Tarkistetaan Backend.AI-istuntoasi…",
+    "SignInWithBackendAI": "Kirjaudu sisään Backend.AI-tunnuksella",
+    "failure": {
+      "CorsOrMixed": "Selain esti pyynnön Backend.AI-verkkopalvelimelle. Syynä on yleensä CORS- tai sekasisältörajoitus.",
+      "HttpError": "Backend.AI-verkkopalvelin palautti virheen ({{status}}).",
+      "InvalidCallback": "Sovellukselle {{appName}} määritetty kirjautumisen paluuosoite ei ole kelvollinen verkko-osoite.",
+      "InvalidResponse": "Backend.AI-verkkopalvelin palautti odottamattoman vastauksen.",
+      "NoEndpoint": "Sovellukselle {{appName}} ei ole määritetty Backend.AI-verkkopalvelimen osoitetta.",
+      "NoSessionId": "Olet kirjautunut Backend.AI:hin, mutta verkkopalvelin ei palauttanut istuntotunnusta.",
+      "NoSessionOverHttp": "Et ole vielä kirjautunut Backend.AI:hin. Jos olet jo kirjautunut, {{appName}} tarjoillaan HTTP:n kautta, joten selain saattaa hylätä verkkopalvelimen suojatun istuntoevästeen. Avaa {{appName}} HTTPS:n kautta.",
+      "NoSessionOverHttps": "Et ole vielä kirjautunut Backend.AI:hin. Jos olet jo kirjautunut, {{appName}} ja Backend.AI-verkkopalvelin voivat olla eri sivustoja, jolloin selain ei lähetä istuntoevästettä.",
+      "RelayFailed": "Olet kirjautunut Backend.AI:hin, mutta {{appName}} ei voinut viimeistellä kirjautumista.",
+      "Timeout": "Backend.AI-verkkopalvelin ei vastannut ajoissa.",
+      "Title": "Backend.AI-kirjautuminen ei onnistunut"
+    }
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Klusterin koko",
+    "Concurrency": "Samanaikaiset istunnot",
+    "CreatedAt": "Luotu klo",
+    "DefaultForUnspecified": "Määrittelemättömän oletus",
+    "DefaultForUnspecifiedTooltipDesc1": "Asettaa oletuskäytäntö, kun tiettyä suorittimen tai muistia ei pyydetä.",
+    "DefaultForUnspecifiedTooltipDesc2": "'Rajoittamaton' sallii käytön Agent -solmun kapasiteettiin saakka, kun taas 'rajoitettu' kieltää resursseja, ellei nimenomaisesti ole asetettu. \nUseimmissa tapauksissa suositellaan 'rajoittamatonta'.",
+    "IdleTimeout": "Käyttämättömyyden aikakatkaisu",
+    "MaxConcurrentSFTPSessions": "Max samanaikaiset SFTP -istunnot",
+    "MaxPendingSessionCount": "Maxin vireillä oleva istuntomäärä",
+    "MaxPendingSessionResourceSlots": "Max odottavat istunnon resurssipaikat",
+    "MaxSessionLifetime": "Istunnon enimmäiskestoikä",
+    "Name": "Nimi",
+    "StorageNodes": "Varastointisolmut",
+    "TotalResourceSlots": "Resurssipolitiikka"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Valitse avainpari"
@@ -231,11 +277,11 @@
     "User": "Käyttäjä"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Poistu koko näytöstä",
+    "Fullscreen": "Koko näyttö",
+    "Maximize": "Suurenna",
+    "Minimize": "Pienennä",
+    "Restore": "Palauta"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Haluatko varmasti poistaa käyttöönoton \"{{deploymentName}}\"? Tätä toimintoa ei voi kumota.",
@@ -275,6 +321,13 @@
     "FollowingProjectsWillBeUpdated": "Seuraavat projektit päivitetään.",
     "ProjectResourcePolicy": "Projektin resurssipolitiikka",
     "UpdateMultipleProjects": "Päivitä useita projekteja"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Luotu klo",
+    "MaxNetworkCount": "Verkkojen enimmäismäärä",
+    "MaxQuotaScopeSize": "Kansioiden enimmäiskoko",
+    "MaxVFolderCount": "Kansioiden enimmäismäärä",
+    "Name": "Nimi"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Valitse projekti"
@@ -322,8 +375,20 @@
     "SelectFolder": "Valitse kansio"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Käytä",
     "PlaceHolder": "Etsi",
-    "ResetFilter": "Nollaa suodattimet"
+    "ResetFilter": "Nollaa suodattimet",
+    "SearchLabel": "Hae suodattimia",
+    "operator": {
+      "Contains": "sisältää",
+      "Equals": "yhtä suuri",
+      "GreaterThan": "suurempi kuin",
+      "GreaterThanOrEqual": "suurempi tai yhtä suuri",
+      "In": "sisällä",
+      "LessThan": "pienempi kuin",
+      "LessThanOrEqual": "pienempi tai yhtä suuri",
+      "NotEquals": "ei yhtä suuri"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Peruuta veto",
@@ -383,7 +448,7 @@
     "ChoiceValueRequired": "Vaihtoehdon arvo on pakollinen.",
     "Choices": "Vaihtoehdot",
     "ChoicesRequired": "Vähintään yksi vaihtoehto on pakollinen.",
-    "CreatePreset": "Luo esiasetus",
+    "CreatePreset": "Luo parametri",
     "DefaultValue": "Oletusarvo",
     "DefaultValuePlaceholder": "esim. 1",
     "Description": "Kuvaus",
@@ -391,7 +456,7 @@
     "DisplayName": "Näyttönimi",
     "DisplayNamePlaceholder": "esim. Tensor Parallel Size",
     "DisplayNameTooltip": "Ihmisluettava nimike, joka näytetään parametrin nimen sijaan käyttöönottolomakkeessa.",
-    "EditPreset": "Muokkaa esiasetusta",
+    "EditPreset": "Muokkaa parametria",
     "Key": "Avain",
     "KeyPlaceholder": "esim. TENSOR_PARALLEL_SIZE",
     "KeyRequired": "Avain on pakollinen.",
@@ -401,16 +466,17 @@
     "NumberMax": "Enimmäisarvo",
     "NumberMaxMustExceedMin": "Enimmäisarvon on oltava suurempi kuin vähimmäisarvo.",
     "NumberMin": "Vähimmäisarvo",
-    "PresetCreated": "Suoritusaikamuunnoksen esiasetus on luotu.",
-    "PresetTarget": "Esiasetuksen kohde",
+    "PresetCreated": "Suoritusajan parametri on luotu.",
+    "PresetTarget": "Parametrin kohde",
     "PresetTargetArgs": "Komentorivin argumentti",
     "PresetTargetEnv": "Ympäristömuuttuja",
-    "PresetTargetRequired": "Esiasetuksen kohde on pakollinen.",
-    "PresetUpdated": "Suoritusaikamuunnoksen esiasetus on päivitetty.",
+    "PresetTargetRequired": "Parametrin kohde on pakollinen.",
+    "PresetUpdated": "Suoritusajan parametri on päivitetty.",
     "Rank": "Järjestys",
-    "RankTooltip": "Esiasetusten näyttöjärjestys saman suoritusaikamuunnoksen sisällä. Pienemmät arvot näytetään ensin.",
+    "RankTooltip": "Parametrien näyttöjärjestys saman suoritusajan sisällä. Pienemmät arvot näytetään ensin.",
     "Required": "Pakollinen",
-    "RequiredTooltip": "Onko tämä esiasetuksen parametri annettava käyttöönottorevision luomisen yhteydessä.",
+    "RequiredTooltip": "Onko tämä parametri annettava käyttöönottorevision luomisen yhteydessä.",
+    "Requirement": "Pakollisuus",
     "RuntimeVariant": "Suoritusaikamuunnos",
     "RuntimeVariantRequired": "Suoritusaikamuunnos on pakollinen.",
     "SliderMax": "Enimmäisarvo",
@@ -421,10 +487,12 @@
     "SliderStep": "Askel",
     "SliderStepMustBePositive": "Askelen on oltava suurempi kuin 0.",
     "SliderStepTooltip": "Liukusäätimen askelväli. Oletusarvo on 1.",
+    "StoredValueTypeMismatch": "Tämä parametri on tallennettu arvotyypillä {{valueType}}, jota käyttöliittymätyyppi {{uiType}} ei voi näyttää. Vaihda käyttöliittymätyyppi tai arvotyyppi.",
     "TextPlaceholderExample": "esim. Anna arvo",
     "TextPlaceholderLabel": "Syötteen paikkamerkki",
     "UIType": "Käyttöliittymätyyppi",
     "UITypeCheckbox": "Valintaruutu",
+    "UITypeIncompatibleWithValueType": "Valittu käyttöliittymätyyppi ei voi näyttää tätä arvotyyppiä.",
     "UITypeNumberInput": "Numerosyöte",
     "UITypeSelect": "Valinta",
     "UITypeSlider": "Liukusäädin",
@@ -448,14 +516,20 @@
     "ModifiedAt": "Muokattu",
     "Name": "Nimi",
     "Optional": "Valinnainen",
-    "PresetTarget": "Esiasetuksen kohde",
+    "PresetTarget": "Parametrin kohde",
     "PresetTargetArgs": "Komentorivin argumentti",
     "PresetTargetEnv": "Ympäristömuuttuja",
     "Rank": "Järjestys",
-    "RankTooltip": "Esiasetusten näyttöjärjestys saman suoritusaikamuunnoksen sisällä. Pienemmät arvot näytetään ensin.",
+    "RankTooltip": "Parametrien näyttöjärjestys saman suoritusajan sisällä. Pienemmät arvot näytetään ensin.",
     "Required": "Pakollinen",
-    "RuntimeVariant": "Suoritusaikamuunnos",
     "RuntimeVariantId": "Suoritusaikamuunnoksen tunnus",
+    "RuntimeVariantWithID": "Suoritusaikamuunnos (ID)",
+    "UIType": "Käyttöliittymätyyppi",
+    "UITypeCheckbox": "Valintaruutu",
+    "UITypeNumberInput": "Numerosyöte",
+    "UITypeSelect": "Valinta",
+    "UITypeSlider": "Liukusäädin",
+    "UITypeTextInput": "Tekstisyöte",
     "ValueType": "Arvotyyppi",
     "ValueTypeBool": "Totuusarvo",
     "ValueTypeFlag": "Lippu",
@@ -557,37 +631,36 @@
     "ArchiveDownloadStarted": "Lataus aloitettu: {{count}} kohdetta.",
     "ChangeFileExtension": "Vaihda tiedoston laajennus",
     "ChangeFileExtensionDesc": "Tiedoston laajennuksen muuttaminen voi aiheuttaa tiedoston käyttökelvottoman tai avoimen väärin. \nHaluatko edetä?",
-    "Controls": "Hallintalaitteet",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Luo uusi tiedosto",
     "CreateANewFolder": "Luo uusi kansio",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Luo tiedosto",
+    "CreateFolder": "Luo kansio",
     "CreatedAt": "Luotu jhk",
     "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
     "DeleteSelectedItemsDialog": "Poista vahvistus",
+    "Download": "Lataa",
     "DownloadSelected": "Lataa",
     "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
     "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi.",
     "DuplicatedFiles": "Korvata vahvistus",
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
     "EditFile": "Muokkaa tiedostoa",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "Tiedosto luotiin onnistuneesti.",
+    "FileName": "Tiedoston nimi",
+    "FileNamePlaceholder": "esim. model-definition.yaml",
     "FileTooLargeToEdit": "Selaimessa muokkaaminen on rajoitettu, koska tiedostokoko ylittää {{size}}MB.",
     "FolderCreatedSuccessfully": "Kansio luotu onnistuneesti.",
     "FolderName": "Kansionimi",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Tiedoston nimi saa olla enintään 255 merkkiä.",
     "MaxFolderNameLength": "Kansion nimen on oltava enintään 255 merkkiä.",
     "ModifiedAt": "Muutettu",
-    "MoreOptions": "Lisää vaihtoehtoja",
     "Name": "Nimi",
     "NoUploadPermissionForHost": "Sinulla ei ole latausoikeutta tälle tallennuspalvelimelle.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Polku",
+    "PleaseEnterAFileName": "Anna tiedoston nimi.",
     "PleaseEnterAFolderName": "Anna kansionimi.",
-    "RenameFile": "Rename",
+    "RenameFile": "Nimeä uudelleen",
     "RenameSuccess": "Nimi on muutettu onnistuneesti.",
     "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
     "Size": "Koko",
@@ -702,23 +775,26 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Vähennä",
     "DeselectAll": "Poista kaikki valinnat",
     "File": "Tiedosto",
-    "Increase": "Increase",
+    "Increase": "Lisää",
+    "Loading": "Ladataan...",
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
     "Project": "Projekti",
-    "Select": "Select",
+    "Search": "Hae",
+    "Select": "Valitse",
+    "SelectPlaceholder": "Valitse {{label}}",
     "TotalItems": "Yhteensä {{total}} kohteet",
-    "Unit": "Unit",
+    "Unit": "Yksikkö",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Toiminto",
+      "Back": "Takaisin",
       "Cancel": "Peruuttaa",
       "Close": "Lähellä",
       "Collapse": "Romahdus",
-      "Confirm": "Confirm",
+      "Confirm": "Vahvista",
       "Copied": "Kopioitu",
       "Copy": "Kopioi",
       "CopyAll": "Kopioida kaikki",

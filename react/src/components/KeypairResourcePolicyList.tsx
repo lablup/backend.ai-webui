@@ -364,6 +364,7 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
         </BAIFlex>
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         columns={columns as BAIColumnType<AnyObject>[]}
         dataSource={
           keypair_resource_policies as readonly AnyObject[] | undefined

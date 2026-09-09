@@ -44,12 +44,13 @@ test.describe(
       await folderCreationModal.modalToBeVisible();
 
       // The in-modal Target Project selector is required on the admin page.
+      // It is a plain Astryx `Selector` (role="combobox" trigger,
+      // role="listbox"/"option" popup) — no `.ant-select-dropdown` wrapper
+      // exists any more.
       const projectSelect = page.getByTestId('folder-create-project-select');
       await expect(projectSelect).toBeVisible();
       await projectSelect.click();
-      await page.waitForSelector('.ant-select-dropdown', { state: 'visible' });
       await page
-        .locator('.ant-select-dropdown')
         .getByRole('option', { name: TARGET_PROJECT, exact: true })
         .click();
 

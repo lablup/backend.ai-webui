@@ -158,6 +158,11 @@ const PrometheusQueryPresetEditorModal: React.FC<
               filterLabels
               groupLabels
             }
+            updatedAt
+            category @since(version: "26.4.3") {
+              id
+              name
+            }
           }
         }
       }

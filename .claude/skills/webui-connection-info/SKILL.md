@@ -5,6 +5,8 @@ description: >
   Trigger on: "which server", "connection info", "login credentials", "dev server URL",
   "API endpoint", "where to connect", "how to login", "test server",
   or when needing to interact with the running WebUI (screenshots, live checks, E2E).
+  This skill only says where to connect: for the data behind the UI — field meanings,
+  GraphQL queries, live rows — use the `bai-agent` skill.
 ---
 
 # WebUI Connection Info
@@ -21,7 +23,11 @@ The WebUI dev server runs under [Portless](https://github.com/vercel-labs/portle
 
 To find the actual URL for a running instance, check these sources in order:
 
-1. **The team dev-server registry** (fw plugin `dev-server-registry` skill, when installed) — the richest source: its `query <PR>` op scans the merged shards (`registry/boxes/*.json` in lablup/frontend-board) and returns, per server, the dev URL with the *real* port, the branch/PR/Jira key it serves, the backend endpoint + login it was booted with, and which box runs it. The team board (each member's own local app at `http://localhost:7777`, `?pr=<N>` deep links) renders the same data. Registry entries carry per-session metadata that `portless list` lacks — prefer them when both exist, and cross-check that the entry's branch/PR matches what you're testing (an entry may be stale until its box re-registers).
+1. **The boot records** — `~/.local/state/fw/dev-servers/*.json`, one per Portless app,
+   written by the `dev-server` skill. Each carries `url` (the gateway URL a teammate can
+   open), `localUrl`, `branch`, `pid`, `startedAt`/`stoppedAt` and the PRs it serves. A
+   record with `stoppedAt` set is a server that is gone. This is the only source that says
+   *which branch and PRs* a server is for, so start here.
 2. `portless list` — live routes on this box.
 3. The `pnpm run dev` terminal output — Portless prints the full URL on startup.
 
@@ -29,10 +35,7 @@ If no dev server is running, tell the user to start it with `pnpm run dev` (requ
 
 ## API Endpoint & Credentials
 
-Two sources, in order:
-
-1. **The dev-server registry entry** (source 1 above), when this box or a teammate's box registered the server: its `backend.endpoint` and `backend.login` are exactly what the running dev server was booted against — no guessing.
-2. Read `e2e/envs/.env.playwright` to get the current server endpoint and login credentials.
+Read `e2e/envs/.env.playwright` to get the current server endpoint and login credentials.
 
 Key variables:
 - `E2E_WEBSERVER_ENDPOINT` — Backend.AI API server URL

@@ -29,6 +29,7 @@
  antd-identical API, which is why the reconciliations above still read against
  antd's semantics. These adapters are only the control layer.
 */
+import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { Switch } from '@astryxdesign/core/Switch';
 import { TextArea } from '@astryxdesign/core/TextArea';
@@ -166,6 +167,50 @@ export const AstryxFormSwitch: React.FC<AstryxFormSwitchProps> = ({
       onChange={(next) => onChange?.(next)}
       label={label}
       isLabelHidden
+      isDisabled={disabled}
+      size={size}
+    />
+  );
+};
+
+/**
+ * Mirrors the host adapter of the same name
+ * (`react/src/components/astryxFormControls.tsx`), minus its `onValueChange`
+ * escape hatch — no BUI call site needs one yet.
+ */
+export interface AstryxFormCheckboxProps {
+  /** Injected by `Form.Item` (default `valuePropName`, i.e. `value`). */
+  value?: boolean;
+  /** Injected by `Form.Item valuePropName="checked"`. */
+  checked?: boolean;
+  onChange?: (value: boolean) => void;
+  label: string;
+  /** Opt out of the inline label when the `Form.Item` already renders one. */
+  isLabelHidden?: boolean;
+  disabled?: boolean;
+  size?: 'sm' | 'md';
+  [key: `data-${string}`]: string | undefined;
+}
+
+export const AstryxFormCheckbox: React.FC<AstryxFormCheckboxProps> = ({
+  value,
+  checked,
+  onChange,
+  label,
+  isLabelHidden,
+  disabled,
+  size,
+  ...rest
+}) => {
+  'use memo';
+  return (
+    <CheckboxInput
+      {...(rest as object)}
+      // Contract 3 in boolean form, as in `AstryxFormSwitch`.
+      value={value ?? checked ?? false}
+      onChange={(next) => onChange?.(next)}
+      label={label}
+      isLabelHidden={isLabelHidden}
       isDisabled={disabled}
       size={size}
     />

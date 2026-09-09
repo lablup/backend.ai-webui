@@ -59,6 +59,9 @@ docs-toolkit build:web --lang en --optimize-images
 # Serve the static website (live-reload)
 docs-toolkit serve:web --lang en
 
+# Mark a head build against a base build (PR preview)
+docs-toolkit diff:web --base dist/base --head dist/web --lang en,ko
+
 # Generate Claude AI agent files
 docs-toolkit agents
 docs-toolkit agents --force   # overwrite existing
@@ -120,6 +123,7 @@ agents:
 | `docs-toolkit preview:html` | HTML preview server with live-reload (no PDF) |
 | `docs-toolkit build:web` | Generate a static multi-page website |
 | `docs-toolkit serve:web` | Static website dev server with live-reload |
+| `docs-toolkit diff:web` | Diff two website builds and mark the changed blocks |
 | `docs-toolkit init` | Scaffold a new documentation project |
 | `docs-toolkit agents` | Generate Claude AI agent files from templates |
 | `docs-toolkit help` | Show the CLI help message |
@@ -144,6 +148,10 @@ docs-toolkit build:web --lang <all|en|ko|...> \
 # Static website dev server
 docs-toolkit serve:web --lang <lang> --port <port>
 
+# PR preview marks
+docs-toolkit diff:web --base <dir> --head <dir> \
+  --lang <all|en,ko> --label <text> --src <dir> --json
+
 # Agent generation
 docs-toolkit agents --force   # overwrite existing files
 ```
@@ -155,6 +163,7 @@ Notes:
 - `build:web --strict` (default) fails the build on broken links; `--no-strict` downgrades them to warnings.
 - `build:web --optimize-images` generates `.webp` variants for PNGs over 50 KB and wraps them in `<picture>`; `--optimize-images-avif` adds `.avif` variants. Both require the optional `sharp` peer dependency.
 - Default ports: `preview` → `3456`, `preview:html` → `3457`, `serve:web` → `3458`.
+- `diff:web` compares two `dist/web` roots at markdown-block level and writes into the head build: a `<slug>.changes.json` sidecar per page, a `changes-manifest.json` per channel, `base-images/` copies of the replaced images, and the `pr-preview` overlay that marks the changed blocks in the browser. `--json` prints the manifest to stdout (the summary then goes to stderr).
 
 ## Agent Template System
 

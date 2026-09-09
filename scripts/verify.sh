@@ -176,6 +176,44 @@ check_astryx_theme_built() {
     -o src/astryx-theme/built/backendai-default-built.css
 }
 
+check_astryx_integration() {
+  # `backend.ai-ui` is registered as an Astryx CLI integration
+  # (react/astryx.config.ts → packages/backend.ai-ui/astryx.integration.ts), so
+  # `astryx component` / `search` / `docs` answer with the BAI* wrappers too.
+  # Discovery is deliberately fault-tolerant: a doc file that fails the
+  # authoring schema is skipped with a warning on stderr instead of crashing
+  # the CLI, which means a broken `{Name}.doc.ts` silently drops that component
+  # out of the catalog. This command re-validates every contribution and exits
+  # non-zero on an error-severity issue (warnings are allowed).
+  pnpm --prefix ./react exec astryx validate-integration backend.ai-ui
+}
+
+check_agent_mappings() {
+  # `mappings/<Type>.yaml` curates what a schema field means to a user, and
+  # every reference it makes (type, field, enum value, terminology concept,
+  # manual heading) can be orphaned by a change somewhere else in the repo.
+  # `doctor --mappings` re-resolves all of them and exits 1 on a dangling one.
+  # The build is the CLI's own tsup run; it writes only dist/.
+  pnpm --filter backend.ai-agent-cli run build > /dev/null || return 1
+  node packages/backend.ai-agent-cli/dist/cli.js doctor --mappings
+}
+
+check_help_anchors() {
+  # The header's "?" button opens a manual page#anchor from the hand-curated
+  # react/src/helper/helpAnchors.json; a renamed heading turns it into a no-op
+  # scroll with nothing failing. Resolves every target against the English
+  # manual sources (FR-3773).
+  node scripts/check-help-anchors.mjs
+}
+
+check_layer_order() {
+  # The @layer order statement decides whether the brand theme outranks
+  # Astryx's defaults, and both drift and misplacement are invisible at
+  # runtime. Same reason as the ladder gate below: index.html-only PRs run no
+  # vitest job, so the check lives here too.
+  node scripts/migration-gates/layer-order-gate.mjs
+}
+
 check_z_index_ladder() {
   # Drift between the ladder and its hand-mirrors is silent, and vitest.yml's
   # path filter never fires for an index.html-only PR — so it runs here, always.
@@ -184,13 +222,27 @@ check_z_index_ladder() {
 }
 
 run_check "Relay" check_relay_drift
-run_check "Lint" pnpm -r --stream lint
+# lint:ci = the cached eslint variant CI runs (content-hash cache; modified
+# files are always re-linted). Uncached equivalent: `pnpm -r lint`.
+# backend.ai-client's and backend.ai-agent-cli's lint:ci are deliberately
+# uncached: their type-aware no-floating-promises rule can flag a caller whose
+# own content is unchanged. The coverage gate fails when a package defines
+# `lint` without `lint:ci`, because `pnpm -r` silently skips such packages.
+run_check "Lint script coverage" node scripts/lint-ci-coverage-gate.mjs
+run_check "Lint" pnpm -r --stream lint:ci
 run_check "Format" pnpm run format
-run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit
+run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit --incremental
+# The react lane reaches backend.ai-{ui,client} through tsconfig `paths`,
+# but nothing pulls in the agent CLI, so it gets its own lane.
+run_check "TypeScript (agent-cli)" pnpm --filter backend.ai-agent-cli exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built
+run_check "Astryx integration (backend.ai-ui)" check_astryx_integration
+run_check "Cascade-layer order" check_layer_order
 run_check "z-index ladder mirrors" check_z_index_ladder
+run_check "Agent mappings" check_agent_mappings
+run_check "Help anchors (user manual)" check_help_anchors
 run_check "Terminology" check_terminology_drift
 
 # Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row

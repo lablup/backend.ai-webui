@@ -5,10 +5,12 @@ import {
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
 import {
+  getSortableColumnHeader,
   loginAsAdmin,
   loginAsCreatedAccount,
   navigateTo,
 } from '../utils/test-util';
+import { usersTabButton } from '../utils/user-profile-util';
 import test, { expect, type APIRequestContext } from '@playwright/test';
 
 // Helper to open the My Keypair Management modal
@@ -160,9 +162,9 @@ test.describe(
         // remote test backend that boot takes ~5s after goto() returns —
         // right at the 5s default expect timeout — so give it explicit
         // headroom like the sanity check below already does.
-        await expect(adminPage.getByRole('tab', { name: 'Users' })).toBeVisible(
-          { timeout: 15000 },
-        );
+        await expect(usersTabButton(adminPage)).toBeVisible({
+          timeout: 15000,
+        });
         await adminPage.getByRole('button', { name: 'Create User' }).click();
         const userSettingModal = new UserSettingModal(adminPage);
         await userSettingModal.createUser(
@@ -232,30 +234,34 @@ test.describe(
       const modal = page.getByRole('dialog', { name: 'My Keypair Management' });
       await expect(modal).toBeVisible();
 
-      // Verify alert banner shows the main access key
-      await expect(modal.getByRole('alert')).toContainText('Main Access Key:');
+      // Verify banner shows the main access key. The banner (Astryx `Banner`)
+      // renders with role="status", not role="alert" — confirmed against the
+      // live DOM. Scope by its content since the modal also contains several
+      // other role="status" elements (loading spinners on buttons).
+      const mainAccessKeyBanner = modal
+        .getByRole('status')
+        .filter({ hasText: 'Main Access Key:' });
+      await expect(mainAccessKeyBanner).toContainText('Main Access Key:');
 
       // Verify the Active radio button is selected by default
       await expect(
         modal.getByRole('radio', { name: 'Active', exact: true }),
       ).toBeChecked();
 
-      // Verify table columns are visible
-      await expect(
-        modal.getByRole('columnheader', { name: 'Access Key' }),
-      ).toBeVisible();
+      // Verify table columns are visible. "Access Key", "Resource Policy",
+      // "Created At", and "Last Used" are sortable — their columnheaders'
+      // accessible names are overridden by the sort button's aria-label (the
+      // raw field key, e.g. "Sort by accessKey") rather than the display
+      // label, so match the visible text instead (see getSortableColumnHeader).
+      await expect(getSortableColumnHeader(modal, 'Access Key')).toBeVisible();
       await expect(
         modal.getByRole('columnheader', { name: 'Controls' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('columnheader', { name: 'Resource Policy' }),
+        getSortableColumnHeader(modal, 'Resource Policy'),
       ).toBeVisible();
-      await expect(
-        modal.getByRole('columnheader', { name: 'Created At' }),
-      ).toBeVisible();
-      await expect(
-        modal.getByRole('columnheader', { name: 'Last Used' }),
-      ).toBeVisible();
+      await expect(getSortableColumnHeader(modal, 'Created At')).toBeVisible();
+      await expect(getSortableColumnHeader(modal, 'Last Used')).toBeVisible();
 
       // Verify at least one keypair row exists
       const rows = getKeypairTableRows(page);

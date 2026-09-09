@@ -150,6 +150,7 @@ const BAIUserResourcePolicyV2Table = ({
 
   return (
     <BAITable
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey="id"
       dataSource={filterOutNullAndUndefined(userResourcePolicies)}

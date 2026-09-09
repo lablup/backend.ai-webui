@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9c53bdde3871926b4e69c7a0e7c5c35a>>
+ * @generated SignedSource<<f64276fa0e08c36e603a889943fefdaf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -48,6 +48,7 @@ export type AdminModelCardSettingModalUpdateMutation$data = {
       };
       readonly name: string;
       readonly readme: string | null | undefined;
+      readonly updatedAt: string | null | undefined;
     };
   } | null | undefined;
 };
@@ -195,6 +196,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "readme",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "updatedAt",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -221,16 +229,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "655ebd8751bf373358d941d415488629",
+    "cacheID": "2c67dd7a1e68ec97e0178dff31395b29",
     "id": null,
     "metadata": {},
     "name": "AdminModelCardSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation AdminModelCardSettingModalUpdateMutation(\n  $input: UpdateModelCardV2Input!\n) {\n  adminUpdateModelCardV2(input: $input) {\n    modelCard {\n      id\n      name\n      accessLevel\n      metadata {\n        author\n        title\n        modelVersion\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n      }\n      readme\n    }\n  }\n}\n"
+    "text": "mutation AdminModelCardSettingModalUpdateMutation(\n  $input: UpdateModelCardV2Input!\n) {\n  adminUpdateModelCardV2(input: $input) {\n    modelCard {\n      id\n      name\n      accessLevel\n      metadata {\n        author\n        title\n        modelVersion\n        description\n        task\n        category\n        architecture\n        framework\n        label\n        license\n      }\n      readme\n      updatedAt\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5b091c1acbd27243d0a69fd1bafb516e";
+(node as any).hash = "a006479f7e997c05b292895d15386c86";
 
 export default node;

@@ -481,6 +481,7 @@ const ContainerRegistryList: React.FC<{
         </BAIFlex>
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         rowKey={(record) => record.id}
         pagination={{
           pageSize: tablePaginationOption.pageSize,
@@ -529,13 +530,13 @@ const ContainerRegistryList: React.FC<{
               key: 'registry-added',
               content: t('registry.RegistrySuccessfullyAdded'),
             });
+            updateFetchKey();
           } else if (type === 'modify') {
             message.success({
               key: 'registry-modified',
               content: t('registry.RegistrySuccessfullyModified'),
             });
           }
-          updateFetchKey();
           setEditingRegistry(null);
           setIsNewModalOpen(false);
         }}

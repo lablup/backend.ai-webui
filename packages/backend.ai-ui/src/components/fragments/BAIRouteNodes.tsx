@@ -262,6 +262,7 @@ const BAIRouteNodes = ({
 
   return (
     <BAITable
+      scroll={{ x: 'max-content' }}
       rowKey={'id'}
       dataSource={filterOutNullAndUndefined(routes)}
       columns={allColumns}

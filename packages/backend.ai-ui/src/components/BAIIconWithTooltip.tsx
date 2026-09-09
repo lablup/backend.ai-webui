@@ -15,8 +15,10 @@ import { Text } from '@astryxdesign/core/Text';
 import { Tooltip, type TooltipProps } from '@astryxdesign/core/Tooltip';
 import type { CSSProperties, ReactNode } from 'react';
 
-export interface BAIIconWithTooltipProps
-  extends Omit<TooltipProps, 'children' | 'anchorRef'> {
+export interface BAIIconWithTooltipProps extends Omit<
+  TooltipProps,
+  'children' | 'anchorRef'
+> {
   /** The glyph the tooltip is attached to. */
   icon: ReactNode;
   /**
@@ -29,6 +31,15 @@ export interface BAIIconWithTooltipProps
   style?: CSSProperties;
   className?: string;
 }
+
+// Shared by both trigger variants. pointer-events inherits, so a disabled
+// ancestor row (Astryx Item sets `none`) would otherwise swallow the hover
+// that opens the hint (FR-3837).
+const triggerStyle: CSSProperties = {
+  cursor: 'help',
+  display: 'inline-flex',
+  pointerEvents: 'auto',
+};
 
 const BAIIconWithTooltip = ({
   icon,
@@ -63,8 +74,7 @@ const BAIIconWithTooltip = ({
             padding: 0,
             font: 'inherit',
             color: 'inherit',
-            cursor: 'help',
-            display: 'inline-flex',
+            ...triggerStyle,
             ...style,
           }}
         >
@@ -74,7 +84,7 @@ const BAIIconWithTooltip = ({
         <span
           aria-label={label}
           className={className}
-          style={{ cursor: 'help', display: 'inline-flex', ...style }}
+          style={{ ...triggerStyle, ...style }}
         >
           {iconNode}
         </span>

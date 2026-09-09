@@ -849,6 +849,7 @@ const RoleScopePermissionEditModal: React.FC<
             <EmptyState title={t('rbac.NoPermissionsToDisplay')} />
           ) : (
             <BAITable
+              scroll={{ x: 'max-content' }}
               rowKey="entityType"
               columns={columns}
               dataSource={entities}

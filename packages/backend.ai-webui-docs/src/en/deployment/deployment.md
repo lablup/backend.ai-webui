@@ -22,12 +22,10 @@ The Deployments page displays a list of all deployments in the current project. 
 
 At the top of the page, you can filter deployments by lifecycle stage:
 
-- **Active**: Shows deployments that are currently running or being created. This is the default view.
-- **Destroyed**: Shows deployments that have been terminated.
+- **Running**: Shows deployments that are currently running or being created. This is the default view.
+- **Terminated**: Shows deployments that have been terminated.
 
-You can also use the property filter bar to search deployments by **Deployment Name**, **Service Endpoint URL**, or **Owner** (available to admins and superadmins).
-
-Click the `New Deployment` button to open the **Create Deployment** modal.
+Click the `Create Deployment` button to open the **Create Deployment** modal.
 
 <a id="create-deployment"></a>
 
@@ -42,7 +40,7 @@ Each deployment can hold many revisions. Only one revision is *current* (serving
 
 ### Create deployment modal
 
-Click the `New Deployment` button on the Deployments page to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
+On the Deployments page, click the `Create Deployment` button to open the **Create Deployment** modal. The modal collects only deployment-level metadata; no revision is created at this point.
 
 ![](../images/model_serving_create_modal.png)
 
@@ -80,8 +78,12 @@ When the deployment already has a current revision, a **Load current revision** 
 
 Quickly add a revision using a pre-defined deployment preset.
 
-- **Preset**: A deployment preset compatible with the deployment's resource group. Click the ⓘ button next to the selector to view the preset details.
-- **Model Folder**: The storage folder to mount on each replica.
+- **Model Source**: Where this revision's model comes from — **Model Folder** or **Model Card**. The selector below changes to match your choice, and switching the source clears the model and preset selections you already made.
+- **Model Folder** *(Model Folder source)*: The storage folder to mount on each replica.
+- **Model Card** *(Model Card source)*: The model card to deploy. Its backing model folder is mounted on each replica, and only presets compatible with that card are offered. Click the ⓘ button next to the selector to open the **Model Card Detail** drawer for the selected card.
+- **Preset**: A deployment preset compatible with the deployment's resource group. Click the ⓘ button next to the selector to view the preset details. With the **Model Card** source, the selector stays disabled with the hint *"Please select a model card first."* until you pick a card.
+
+If the model card you selected has no model folder to mount, the revision is not created and an error message appears: *"The selected model source has no model folder to mount. Choose a different model card or model folder."* Pick a different model card, or switch the source back to **Model Folder**.
 
 If no presets are available for the deployment's resource group, an informational message is shown. Switch to Advanced Mode to configure the revision manually.
 
@@ -107,9 +109,11 @@ The subsections below describe revision-level fields in detail. They apply both 
 
 Every revision mounts one model storage folder into each replica. The fields directly below the folder selector control where that folder appears inside the container.
 
+![](../images/add_revision_model_folder_mount.png)
+
 - **Model Folder**: The model storage folder to mount on each replica.
 - **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
-- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Leave it empty to mount the folder root.
+- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Leave it unset to mount the folder root.
 
 <a id="service-configuration"></a>
 
@@ -150,6 +154,8 @@ The **Enable Health Check** and **Pre-Start Actions** fields follow the Service 
 - **Pre-Start Actions**: Actions to execute before the model service starts. Click **Add Pre-Start Action** to add a row, then fill in **Action** (the action name, for example `wait_for_file`) and **Args (JSON)** (its arguments as a JSON object, for example `{}`). Both fields are required on every row, and the arguments must be valid JSON. For the list of supported actions, refer to [Description for Service Action Supported in Backend.AI Model Serving](#prestart-actions).
 
 The path to the model definition file itself lives in the **Advanced Settings** panel at the bottom of the form. For instructions on creating that file, refer to the [Creating a Model Definition File](#model-definition-guide) section.
+
+<a id="runtime-parameters"></a>
 
 #### Runtime parameters (vLLM / SGLang)
 
@@ -210,7 +216,7 @@ The **Environments** section is present for all runtime variants.
 
 - **Environment / Version**: The container image used for the inference server. Selecting a runtime variant filters this list to images that are compatible with that runtime.
 - **Image Name (Manual)**: A free-text image reference, shown only when your administrator has enabled manual image names on the server. Typing here clears the **Environment / Version** selection, and vice versa — the two are alternative ways of choosing the same image.
-- **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely. As you type a variable name, common environment variable names are suggested.
+- **Environment Variables**: Key/value pairs passed to the inference server container. For `vLLM` and `SGLang`, a set of runtime-specific variables (listed above) are pre-populated. You can add, edit, or remove entries freely. As you type a variable name, the field suggests common environment variable names — `HF_TOKEN`, `WANDB_API_KEY`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` — alongside the ones the selected runtime variant defines. A name already used by another row is left out of the list. Once a known name is set, the value field shows a matching hint, for example *"Your Hugging Face access token"* for `HF_TOKEN`.
 
 ##### Entering an image name manually
 
@@ -520,9 +526,20 @@ The Service Info card's header exposes an **Edit** button alongside a **More** m
 
 #### Scheduling history
 
-Click the **Scheduling History** link button next to the status tag to open the **Deployment Scheduling History** modal. The modal lists the scheduling events recorded for this deployment, newest first, with a property filter bar (ID, Phase, Result, From Status, To Status, Error Code, Message, Created At, Updated At) and a refresh button.
+Click the **Scheduling History** link button next to the status tag to open the **Deployment Scheduling History** modal. It lists the scheduling events recorded for this deployment, newest first, with a property filter bar (ID, Phase, Result, From Status, To Status, Error Code, Message, Created At, Updated At) and a refresh button.
 
 ![](../images/deployment_scheduling_history.png)
+
+<a id="scheduling-history-substeps"></a>
+
+An event that recorded sub-steps has an expand arrow on the left of its row. Click it to reveal a compact inline table of that phase's sub-steps, one row per step, with the following columns:
+
+- **Step**: The name of the sub-step.
+- **Result**: The outcome of the sub-step, shown as a color-coded marker.
+- **Duration**: How long the sub-step took, for example `120 ms` or `1.35 s`.
+- **Time**: When the sub-step started, to the millisecond.
+- **Error Code**: The error code recorded for the sub-step, or `-` when there is none.
+- **Message**: Detail or error text for the sub-step, collapsed to a single line.
 
 The **Replica Scheduling History** modal, opened from the Replicas tab, uses the same table. See [Replicas](#replicas-tab-history).
 
@@ -593,9 +610,9 @@ Each row has an **Apply** button and a **More** menu.
 
 - A green **Current** tag marks the revision that is currently active.
 - A yellow **Applying** tag (with a loading spinner) marks a revision that is being applied.
-- The **Apply** button is disabled for the currently active revision and any revision that is being applied.
+- The **Apply** button is disabled for the currently active revision and any revision that is being applied. It is also unavailable while the deployment is stopped, and while an apply or rollback is already in progress.
 
-Clicking the revision number in any row opens the revision detail drawer, which shows the full configuration of that revision. The drawer also has an **Apply** button and a **New revision based on this** button; the **Apply** button is disabled for the current and applying revisions.
+Clicking the revision number in any row opens the revision detail drawer, which shows the full configuration of that revision. The drawer also has an **Apply** button and a **New revision based on this** button; the **Apply** button is disabled under the same conditions as in the table.
 
 :::note
 The **Runtime Parameters** field also appears in the revision detail drawer for `vLLM` and `SGLang` revisions, showing the same preset parameter values as the Current Revision tab.
@@ -697,7 +714,7 @@ Access tokens are managed in the **Access Tokens** card at the bottom of the Dep
 
 ![](../images/token_generation_dialog.png)
 
-   The `Create Access Token` button is disabled until the manager has issued a network endpoint for the deployment. While it is disabled, its tooltip reads *"The network endpoint has not been issued yet."* It is also disabled for a deployment you do not own and for a deployment that is being deleted.
+   The `Create Access Token` button is disabled until the manager has issued a network endpoint for the deployment; while it is disabled, its tooltip reads *"The network endpoint has not been issued yet."* It is also disabled for a deployment you do not own (*"Only the deployment owner can manage access tokens."*) and for a deployment that is stopping or no longer active (*"The deployment is stopping or no longer active."*). Those last two conditions disable deleting a token as well.
 
 After the token is issued, a **Token** dialog shows the token value once, together with a copy button and the expiration date you chose. Copy the token from this dialog, or from the table afterwards.
 

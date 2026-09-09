@@ -1,0 +1,55 @@
+# Staleness gate for the `bai-agent explain` mappings.
+#
+# `packages/backend.ai-agent-cli/mappings/<Type>.yaml` curates what a schema
+# type, field or value means to a WebUI user. Every entry points at something
+# outside itself — a type and field in `data/schema.graphql`, an enum value, a
+# concept id in `terminology.json`, a heading in the English manual — and any
+# of those can move without the mapping noticing. `doctor --mappings` re-checks
+# all of them and exits 1 on a dangling reference.
+#
+# The path filter is the set of inputs that can orphan a reference, plus the
+# mappings themselves. This is the same check `scripts/verify.sh` runs as
+# "Agent mappings"; the workflow is what gates a PR that never runs verify.sh.
+#
+# Advisory, like typecheck.yml: do not add it to a ruleset without first moving
+# the path filter inside the workflow, or a filtered-out PR would sit pending
+# on a check-run that was never created.
+name: Agent mappings
+
+on:
+  pull_request:
+    paths:
+      - "resources/i18n/**"
+      - "packages/backend.ai-webui-docs/**"
+      - "data/schema.graphql"
+      - "packages/backend.ai-agent-cli/**"
+      - ".github/workflows/agent-mappings.yml"
+  push:
+    branches: [main]
+    paths:
+      - "resources/i18n/**"
+      - "packages/backend.ai-webui-docs/**"
+      - "data/schema.graphql"
+      - "packages/backend.ai-agent-cli/**"
+      - ".github/workflows/agent-mappings.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Keyed by PR number, not branch name: branch names are unique only within a
+  # repository, so two fork PRs both using e.g. `patch-1` would share a group.
+  group: agent-mappings-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mappings:
+    name: mappings
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+      - name: Build bai-agent
+        run: pnpm --filter backend.ai-agent-cli run build
+      - name: Validate and resolve mappings
+        run: node packages/backend.ai-agent-cli/dist/cli.js doctor --mappings

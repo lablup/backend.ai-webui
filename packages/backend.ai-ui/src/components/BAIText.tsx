@@ -2,81 +2,82 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIText` on Astryx (to-astryx phase 3, ticket A — BUI display primitives).
+ `BAIText` — the antd `Typography.Text` structure on Astryx tokens (FR-3726).
 
- FRONTIER COMPONENT. 276 call sites in 62 files pass antd `Typography.Text`
- props (`type`, `strong`, `ellipsis={{rows,tooltip}}`, `copyable`, `code`,
- `mark`, `delete`, `monospace`, …). Per the frontier rule the
- PUBLIC prop surface stays antd-SHAPED so none of those files change; only the
- internals move to Astryx. The antd *import* is gone though — the prop types
- are declared locally here (`BAITextEllipsisConfig`, `BAITextCopyConfig`)
- rather than re-exported from `antd/es/typography/*`, so this module and every
- file downstream of it drop out of the antd import graph (P15).
+ FRONTIER COMPONENT. The prop surface is the frozen antd-shaped vocabulary
+ (`type`, `strong`, `italic`, `underline`, `delete`, `mark`, `code`, `keyboard`,
+ `ellipsis`, `copyable`, `monospace`, …) and the DOM is the one the antd-era
+ component rendered, so call sites and their layout assumptions stay put:
 
- Mapping (MAPPING §3.4):
+   plain          <span.bai-text>children</span>
+   ellipsis/copy  <span.bai-text.bai-text-row>
+                    <span.bai-text-content>children</span>   the clamp box
+                    [Tooltip]  [Expand]  [Copy]
+                  </span>
 
-   type="secondary"                -> Text color="secondary"
-   type="danger|warning|success"   -> Text color="danger|warning|success",
-                                      THEME-DEFINED custom colors — see
-                                      `STATUS_TEXT_COLORS` in
-                                      react/src/astryx-theme/backendAiTheme.ts
-                                      and ../astryx-theme-augmentations.d.ts.
-                                      (MAPPING calls this "a design decision,
-                                      12 times"; it is made ONCE, in the theme.)
-   strong                          -> weight="semibold"
-   delete                          -> hasStrikethrough
-   ellipsis / ellipsis={{rows}}    -> maxLines (+ hasTruncateTooltip)
-   code                            -> <Code>
-   keyboard                        -> RETIRED (FR-3509). Shortcut badges are
-                                      Astryx `Kbd` at the call site.
-   copyable                        -> self-built (Astryx has no `copyable`);
-                                      IconButton + navigator.clipboard.
-
- PILOT-DECISIONs recorded in `.specs/FR-3482-astryx-migration/issues/p3-a-bui-primitives.md`.
+ The component owns its span rather than rendering Astryx `Text`: `Text`
+ paints its own type scale and colour, turns `display: block` under
+ `maxLines`, and brings its own truncation tooltip — none of which the
+ antd-era layout expects. Styles live in BAIText.css (tokens only).
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIText.css';
-import { Code } from '@astryxdesign/core/Code';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { Kbd } from '@astryxdesign/core/Kbd';
 import { Link } from '@astryxdesign/core/Link';
-import { Text, useTruncation, type TextProps } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import classNames from 'classnames';
 import { CheckIcon, CopyIcon } from 'lucide-react';
-import React, { useRef, useState } from 'react';
-import type { CSSProperties, ReactNode } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 
-/** antd `Typography.Text` semantic types, kept verbatim for the call sites. */
 export type BAITextType = 'secondary' | 'success' | 'warning' | 'danger';
 
+export type BAITextSize =
+  | '4xs'
+  | '3xs'
+  | '2xs'
+  | 'xsm'
+  | 'sm'
+  | 'base'
+  | 'lg'
+  | 'xl'
+  | '2xl'
+  | '3xl'
+  | '4xl';
+
 /**
- * antd `EllipsisConfig`, restated locally (the antd type import is what kept
- * this module — and 592 files downstream — inside the antd import graph).
- * `suffix`/`symbol` are omitted: no call site passes them, and Astryx's
- * truncation renders neither.
+ * antd `TooltipProps`, of which only `title` has a destination; the other
+ * keys are accepted and ignored, and a missing `title` means the children.
  */
+export interface BAITextTooltipConfig {
+  title?: ReactNode;
+  [antdTooltipProp: string]: unknown;
+}
+
+/** antd `EllipsisConfig`. */
 export interface BAITextEllipsisConfig {
   rows?: number;
   expandable?: boolean;
-  /**
-   * `true` -> tooltip shows the full text (Astryx's native behaviour).
-   * A string/node -> that content instead.
-   * An object with `title` -> antd's `TooltipProps` shape; only `title` is read.
-   */
-  tooltip?: ReactNode | { title?: ReactNode };
+  /** `true` shows the children; a node shows that node; `{ title }` its title. */
+  tooltip?: ReactNode | BAITextTooltipConfig;
   onExpand?: (
     e: React.MouseEvent<HTMLElement>,
     info: { expanded: boolean },
   ) => void;
 }
 
-/** antd `Typography` `copyable` config, restated locally. */
+/** antd `CopyConfig`. Tuples are `[resting, copied]`. */
 export interface BAITextCopyConfig {
-  /** Copy THIS instead of the rendered children. */
-  text?: string;
-  /** antd took `[copy, copied]`; only the resting label is used. */
-  tooltips?: [ReactNode, ReactNode] | ReactNode[] | boolean;
-  icon?: ReactNode;
-  onCopy?: () => void;
+  text?: string | (() => string | Promise<string>);
+  icon?: ReactNode | [ReactNode, ReactNode];
+  tooltips?: boolean | ReactNode | [ReactNode, ReactNode];
+  onCopy?: (event?: React.MouseEvent<HTMLElement>) => void;
 }
 
 export interface BAITextProps extends Omit<
@@ -91,244 +92,317 @@ export interface BAITextProps extends Omit<
   delete?: boolean;
   mark?: boolean;
   code?: boolean;
+  /** Renders the children's text as an Astryx `Kbd` shortcut (`+`-separated). */
+  keyboard?: boolean;
   disabled?: boolean;
   monospace?: boolean;
-  /** Astryx `Text` size step, forwarded as-is (antd had no counterpart). */
-  size?: TextProps['size'];
-  /** CSS-based ellipsis (multi-line via `rows`), with an optional tooltip. */
+  /** Font size step (Astryx scale); antd had no counterpart. */
+  size?: BAITextSize;
+  /** CSS ellipsis — single line, or `rows` lines — with an optional tooltip. */
   ellipsis?: boolean | BAITextEllipsisConfig;
   copyable?: boolean | BAITextCopyConfig;
   /**
-   * Take the surrounding colour instead of Astryx `Text`'s `primary` default —
-   * for a `BAIText` nested in an element that owns the colour, e.g. a link
-   * (FR-3692). antd's `Typography.Text` had no colour of its own, so this is
-   * the antd behaviour rather than a new one. Ignored when `type`/`disabled`
-   * name a colour explicitly.
+   * Take the surrounding colour instead of the text default, for a BAIText
+   * nested in an element that owns the colour, e.g. a link (FR-3692). Ignored
+   * when `type` / `disabled` name a colour.
    */
   inheritColor?: boolean;
 }
 
-const TYPE_TO_COLOR: Record<BAITextType, NonNullable<TextProps['color']>> = {
-  secondary: 'secondary',
-  danger: 'danger',
-  warning: 'warning',
-  success: 'success',
+const COPIED_RESET_MS = 1500;
+
+const toTuple = <T,>(value: T | [T, T] | undefined): [T?, T?] =>
+  Array.isArray(value) ? [value[0], value[1]] : [value, undefined];
+
+/** The text antd would put on the clipboard for these children. */
+const nodeToText = (node: ReactNode): string => {
+  if (node === null || node === undefined || typeof node === 'boolean') {
+    return '';
+  }
+  if (typeof node === 'string' || typeof node === 'number') {
+    return String(node);
+  }
+  if (Array.isArray(node)) {
+    return node.map(nodeToText).join('');
+  }
+  if (React.isValidElement<{ children?: ReactNode }>(node)) {
+    return nodeToText(node.props.children);
+  }
+  return '';
 };
 
-/** Read the ellipsis tooltip slot into a renderable node (or `undefined`). */
 const resolveTooltipContent = (
   ellipsis: boolean | BAITextEllipsisConfig | undefined,
   children: ReactNode,
 ): ReactNode | undefined => {
   if (!ellipsis || typeof ellipsis !== 'object') return undefined;
   const { tooltip } = ellipsis;
-  if (tooltip === undefined || tooltip === false) return undefined;
+  if (tooltip === undefined || tooltip === null || tooltip === false) {
+    return undefined;
+  }
   if (tooltip === true) return children;
+  // antd `TooltipProps` form: `title` defaults to the children.
   if (
     typeof tooltip === 'object' &&
-    tooltip !== null &&
     !React.isValidElement(tooltip) &&
-    'title' in tooltip
+    !Array.isArray(tooltip)
   ) {
-    return (tooltip as { title?: ReactNode }).title;
+    return (tooltip as BAITextTooltipConfig).title ?? children;
   }
   return tooltip as ReactNode;
 };
 
-/** The copy target antd would have used. */
-const resolveCopyText = (
-  copyable: boolean | BAITextCopyConfig,
+/**
+ * Overflow of the clamp box, re-measured on resize and on new children — a
+ * fixed-width cell whose value changes does not resize, so a ResizeObserver
+ * alone would leave the tooltip stale.
+ */
+const useOverflow = (
+  ref: React.RefObject<HTMLElement | null>,
+  enabled: boolean,
+  rows: number,
   children: ReactNode,
-): string => {
-  if (typeof copyable === 'object' && typeof copyable.text === 'string') {
-    return copyable.text;
-  }
-  return typeof children === 'string' || typeof children === 'number'
-    ? String(children)
-    : '';
+) => {
+  'use memo';
+  const [isOverflowing, setIsOverflowing] = useState(false);
+
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!enabled || !element) return;
+    const check = () => {
+      if (rows === 1) {
+        setIsOverflowing(element.scrollWidth > element.clientWidth);
+        return;
+      }
+      // `-webkit-line-clamp` can report the clamped height as scrollHeight, so
+      // measure the content itself as well.
+      let contentHeight = element.scrollHeight;
+      try {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        contentHeight = Math.max(
+          contentHeight,
+          range.getBoundingClientRect().height,
+        );
+        range.detach();
+      } catch {
+        // No Range layout (jsdom): the clamped scrollHeight is all there is.
+        contentHeight = element.scrollHeight;
+      }
+      setIsOverflowing(contentHeight > element.clientHeight + 1);
+    };
+    check();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(check);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, enabled, rows, children]);
+
+  return isOverflowing;
 };
 
 const CopyControl: React.FC<{
-  copyable: boolean | BAITextCopyConfig;
+  copyable: true | BAITextCopyConfig;
   children: ReactNode;
-  label: string;
-}> = ({ copyable, children, label }) => {
+}> = ({ copyable, children }) => {
+  'use memo';
+  const { t } = useBAIi18n();
   const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    [],
+  );
+
   const config = typeof copyable === 'object' ? copyable : undefined;
-  return (
-    // QA-FINDINGS Q-37 — antd rendered `Typography`'s copy control through the
-    // `operationUnit` mixin (`color: token.colorLink`), i.e. the SAME accent
-    // the rest of this cluster lost. `variant="ghost"` has no colour slot, so
-    // the tint comes back as a class; `--color-text-accent` resolves to
-    // `colorLink` on brand routes and `colorInfo` on admin ones, which is
-    // exactly what antd painted here. See `styles/actionAccent.css`.
+  const [restingIcon, copiedIcon] = toTuple(config?.icon);
+  const [restingTip, copiedTip] =
+    config?.tooltips === false
+      ? [undefined, undefined]
+      : config?.tooltips === true || config?.tooltips === undefined
+        ? [t('general.button.Copy'), t('general.button.Copied')]
+        : toTuple(config.tooltips);
+  const tip = copied ? copiedTip : restingTip;
+  const tipText =
+    typeof tip === 'string' || typeof tip === 'number'
+      ? String(tip)
+      : undefined;
+  const label = tipText ?? t('general.button.Copy');
+
+  const button = (
     <IconButton
+      // `.bai-action-accent` — the tint antd's `operationUnit` painted here
+      // (QA-FINDINGS Q-37); see `styles/actionAccent.css`.
       className="bai-text-copy bai-action-accent"
       variant="ghost"
       size="sm"
       label={label}
-      tooltip={label}
+      tooltip={tipText}
       icon={
-        copied ? (
-          <CheckIcon aria-hidden size="1em" />
-        ) : (
-          (config?.icon ?? <CopyIcon aria-hidden size="1em" />)
-        )
+        copied
+          ? (copiedIcon ?? <CheckIcon aria-hidden size="1em" />)
+          : (restingIcon ?? <CopyIcon aria-hidden size="1em" />)
       }
       isDisabled={copied}
       onClick={(e) => {
+        e.preventDefault();
         e.stopPropagation();
-        void navigator.clipboard?.writeText(
-          resolveCopyText(copyable, children),
-        );
-        config?.onCopy?.();
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
+        void (async () => {
+          const text =
+            typeof config?.text === 'function'
+              ? await config.text()
+              : typeof config?.text === 'string'
+                ? config.text
+                : nodeToText(children);
+          await navigator.clipboard?.writeText(text);
+          config?.onCopy?.(e);
+          setCopied(true);
+          timerRef.current = setTimeout(
+            () => setCopied(false),
+            COPIED_RESET_MS,
+          );
+        })().catch(() => {
+          // A denied clipboard or a rejected `text()`: nothing was copied,
+          // so the control stays in its resting state.
+        });
       }}
     />
+  );
+
+  // A non-string tooltip cannot ride IconButton's `tooltip: string` slot.
+  return tip !== undefined && tipText === undefined ? (
+    <Tooltip content={tip}>{button}</Tooltip>
+  ) : (
+    button
   );
 };
 
 const BAIText: React.FC<BAITextProps> = ({
-  style,
   className,
-  monospace,
-  ellipsis,
-  copyable,
-  inheritColor,
-  children,
+  style,
+  type,
   strong,
   italic,
   underline,
   delete: deleteProp,
   mark,
   code,
+  keyboard,
   disabled,
-  type,
+  monospace,
+  size,
+  ellipsis,
+  copyable,
+  inheritColor,
+  children,
   ...restProps
 }) => {
+  'use memo';
   const { t } = useBAIi18n();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const ellipsisConfig = typeof ellipsis === 'object' ? ellipsis : undefined;
-  const rows = ellipsisConfig?.rows ?? 1;
+  const rows = ellipsisConfig?.rows || 1;
   const expandable = ellipsisConfig?.expandable ?? false;
-  const maxLines = ellipsis && !isExpanded ? rows : 0;
-
-  // A custom tooltip target (a different string, or a `{title}` object) is not
-  // expressible through `hasTruncateTooltip`, which always shows the element's
-  // own text. Those sites get an explicit Tooltip anchored to the same node,
-  // gated on the same overflow signal Astryx uses internally. `expandable`
-  // needs the same signal (the Expand link only appears when clamped), so both
-  // opt into a second `useTruncation` — the hook shares ONE ResizeObserver
-  // across every mounted instance, so the extra observation is not a per-cell
-  // cost.
   const tooltipContent = resolveTooltipContent(ellipsis, children);
-  const hasCustomTooltip =
-    tooltipContent !== undefined && tooltipContent !== children;
-  const needsMeasure = !!ellipsis && (expandable || hasCustomTooltip);
-  const truncation = useTruncation({ maxLines: needsMeasure ? maxLines : 0 });
-  const anchorRef = useRef<HTMLElement | null>(null);
 
-  const decorationStyle: CSSProperties = {
-    ...(monospace && { fontFamily: 'var(--font-family-code, monospace)' }),
-    ...(italic && { fontStyle: 'italic' }),
-    ...(underline && deleteProp
-      ? { textDecoration: 'underline line-through' }
-      : underline
-        ? { textDecoration: 'underline' }
-        : {}),
-  };
-
-  const textNode = (
-    <Text
-      {...restProps}
-      ref={(node: HTMLElement | null) => {
-        anchorRef.current = node;
-        if (needsMeasure) truncation.ref(node);
-      }}
-      className={className}
-      color={
-        disabled
-          ? 'disabled'
-          : type
-            ? TYPE_TO_COLOR[type]
-            : mark || inheritColor
-              ? 'inherit'
-              : undefined
-      }
-      weight={strong ? 'semibold' : undefined}
-      hasStrikethrough={!!deleteProp && !underline}
-      maxLines={maxLines}
-      hasTruncateTooltip={!hasCustomTooltip && tooltipContent !== undefined}
-      style={{ ...decorationStyle, ...style }}
-    >
-      {children}
-    </Text>
+  const contentRef = useRef<HTMLElement | null>(null);
+  const isOverflowing = useOverflow(
+    contentRef,
+    !!ellipsis && !isExpanded,
+    rows,
+    children,
   );
 
-  // `code` / `mark` are box treatments antd painted around the text. `Code` is
-  // Astryx-native; `mark` has no counterpart and is rendered by a co-located
-  // class in BAIText.css (tokens only, justified there).
-  const boxed = code ? (
-    <Code className="bai-text-code">{textNode}</Code>
-  ) : mark ? (
-    <mark className="bai-text-mark">{textNode}</mark>
-  ) : (
-    textNode
+  const rootClassName = classNames(
+    'bai-text',
+    disabled
+      ? 'bai-text-disabled'
+      : type
+        ? `bai-text-${type}`
+        : inheritColor
+          ? 'bai-text-inherit'
+          : undefined,
+    {
+      'bai-text-strong': strong,
+      'bai-text-italic': italic,
+      'bai-text-underline': underline,
+      'bai-text-delete': deleteProp,
+      'bai-text-monospace': monospace,
+    },
+    size && `bai-text-size-${size}`,
+    className,
   );
 
-  const withTooltip = hasCustomTooltip ? (
-    <>
-      {boxed}
-      {truncation.isTruncated && !isExpanded ? (
-        <Tooltip anchorRef={anchorRef} content={tooltipContent} />
-      ) : null}
-    </>
-  ) : (
-    boxed
-  );
+  // antd wrapped the children in the matching element; the box treatment
+  // rides on it, and under `ellipsis` it is also the clamp box. `keyboard`
+  // is Astryx `Kbd`, which takes the children's text as its `keys` spec.
+  const ContentTag = code ? 'code' : mark ? 'mark' : 'span';
+  const boxClassName = code
+    ? 'bai-text-code'
+    : mark
+      ? 'bai-text-mark'
+      : undefined;
+  const content = keyboard ? <Kbd keys={nodeToText(children)} /> : children;
 
-  if (!copyable && !expandable) {
-    return withTooltip;
+  if (!ellipsis && !copyable) {
+    return (
+      <span {...restProps} className={rootClassName} style={style}>
+        {boxClassName ? (
+          <ContentTag className={boxClassName}>{content}</ContentTag>
+        ) : (
+          content
+        )}
+      </span>
+    );
   }
 
-  // The copy control and the expand link are siblings of the text, so the
-  // ellipsis still measures against the text box alone.
+  const handleExpand = (e: React.MouseEvent<HTMLElement>) => {
+    const next = !isExpanded;
+    setIsExpanded(next);
+    ellipsisConfig?.onExpand?.(e, { expanded: next });
+  };
+
   return (
-    <span className="bai-text-row">
-      {withTooltip}
-      {expandable && truncation.isTruncated ? (
-        <Link
-          onClick={(e) => {
-            const next = !isExpanded;
-            setIsExpanded(next);
-            ellipsisConfig?.onExpand?.(
-              e as unknown as React.MouseEvent<HTMLElement>,
-              { expanded: next },
-            );
-          }}
-        >
+    <span
+      {...restProps}
+      className={classNames(rootClassName, 'bai-text-row')}
+      style={style}
+    >
+      <ContentTag
+        ref={contentRef}
+        className={classNames('bai-text-content', boxClassName, {
+          'bai-text-content-expanded': !!ellipsis && isExpanded,
+          'bai-text-content-clip': !!ellipsis && !isExpanded && rows === 1,
+          'bai-text-content-clamp': !!ellipsis && !isExpanded && rows > 1,
+        })}
+        style={
+          ellipsis && !isExpanded && rows > 1
+            ? { WebkitLineClamp: rows }
+            : undefined
+        }
+      >
+        {content}
+      </ContentTag>
+      {tooltipContent !== undefined && isOverflowing && !isExpanded ? (
+        <Tooltip
+          anchorRef={contentRef}
+          // The bubble is a DOM sibling, so it inherits a table cell's
+          // `white-space: nowrap`; the wrapper lets the full text wrap.
+          content={<span className="bai-text-tooltip">{tooltipContent}</span>}
+        />
+      ) : null}
+      {expandable && (isOverflowing || isExpanded) ? (
+        <Link className="bai-text-expand" onClick={handleExpand}>
           {isExpanded
             ? t('general.button.Collapse')
             : t('general.button.Expand')}
         </Link>
       ) : null}
       {copyable ? (
-        // QA-FINDINGS Q-38 — the key was `button.Copy`, which does not exist in
-        // BUI's OWN locale bundle: every BUI key is namespaced under `general.`
-        // (`general.button.Copy`), as the two `Link` labels immediately above
-        // already are. `useBAIi18n` binds to BUI's private i18next instance
-        // rather than resolving through React context, so there is no host
-        // bundle to fall through to; with no `parseMissingKeyHandler` set
-        // (`src/locale/index.ts`), i18next's default is to return the KEY —
-        // which then shipped as the copy button's aria-label and its visible
-        // tooltip. Measured on the session detail drawer in both
-        // modes: `aria-label="button.Copy"`, and reported independently as
-        // "엑세스 토큰 생성 이후에 뜨는 모달에서도 카피 버튼의 i18n이 깨짐".
-        <CopyControl copyable={copyable} label={t('general.button.Copy')}>
-          {children}
-        </CopyControl>
+        <CopyControl copyable={copyable}>{children}</CopyControl>
       ) : null}
     </span>
   );

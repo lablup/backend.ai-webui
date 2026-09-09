@@ -77,7 +77,7 @@ test.describe(
         await uploadButton.click();
         const [fileChooser] = await Promise.all([
           page.waitForEvent('filechooser'),
-          page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+          page.getByRole('menuitem', { name: 'Upload Files' }).click(),
         ]);
         await fileChooser.setFiles([testFilePath]);
         await modal.verifyFileVisible(path.basename(testFilePath));
@@ -131,7 +131,7 @@ test.describe(
 
       const [fileChooser] = await Promise.all([
         page.waitForEvent('filechooser'),
-        page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+        page.getByRole('menuitem', { name: 'Upload Files' }).click(),
       ]);
 
       await fileChooser.setFiles([testFilePath]);
@@ -170,7 +170,7 @@ test.describe(
       // 4. Upload the same file again
       const [fileChooser] = await Promise.all([
         page.waitForEvent('filechooser'),
-        page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+        page.getByRole('menuitem', { name: 'Upload Files' }).click(),
       ]);
 
       await fileChooser.setFiles([testFilePath]);

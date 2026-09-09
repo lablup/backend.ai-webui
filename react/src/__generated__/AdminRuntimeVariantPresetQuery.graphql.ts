@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<53427374f0e1f552b2d3a376a4855bda>>
+ * @generated SignedSource<<f04bbcd018094f2cabfa7a5438e44b6e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -349,20 +349,6 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "createdAt",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "updatedAt",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
                     "concreteType": "UIOption",
                     "kind": "LinkedField",
                     "name": "uiOption",
@@ -464,6 +450,20 @@ return {
                       }
                     ],
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "createdAt",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "updatedAt",
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -477,12 +477,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "62f3b682505c86fdc9c284a05434fcb7",
+    "cacheID": "18a47fe3ec2aa5bfabbe3c9d772e5ddb",
     "id": null,
     "metadata": {},
     "name": "AdminRuntimeVariantPresetQuery",
     "operationKind": "query",
-    "text": "query AdminRuntimeVariantPresetQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  runtimeVariantPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        category\n        ...BAIRuntimeVariantPresetTableFragment\n        ...BAIRuntimeVariantPresetSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetSettingModalFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  name\n  description\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  category\n  displayName\n  uiOption {\n    uiType\n    slider {\n      min\n      max\n      step\n    }\n    number {\n      min\n      max\n    }\n    choices {\n      items {\n        value\n        label\n      }\n    }\n    text {\n      placeholder\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetTableFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.8.0\") {\n    name\n    id\n  }\n  name\n  description\n  category\n  displayName\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n}\n"
+    "text": "query AdminRuntimeVariantPresetQuery(\n  $filter: RuntimeVariantPresetFilter\n  $orderBy: [RuntimeVariantPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  runtimeVariantPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        category\n        ...BAIRuntimeVariantPresetTableFragment\n        ...BAIRuntimeVariantPresetSettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetSettingModalFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  name\n  description\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  category\n  displayName\n  uiOption {\n    uiType\n    slider {\n      min\n      max\n      step\n    }\n    number {\n      min\n      max\n    }\n    choices {\n      items {\n        value\n        label\n      }\n    }\n    text {\n      placeholder\n    }\n  }\n}\n\nfragment BAIRuntimeVariantPresetTableFragment on RuntimeVariantPreset {\n  id\n  runtimeVariantId\n  runtimeVariant @since(version: \"26.8.0\") {\n    name\n    id\n  }\n  name\n  description\n  category\n  displayName\n  rank\n  targetSpec {\n    presetTarget\n    valueType\n    defaultValue\n    key\n  }\n  required @since(version: \"26.4.4\")\n  uiOption {\n    uiType\n  }\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();

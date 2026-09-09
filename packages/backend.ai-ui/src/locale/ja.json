@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "実行エラー",
     "ErrorOccurred": "問題が発生しました。"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "クリア",
+    "HexValue": "16進数の値",
+    "NoColor": "色なし",
+    "SelectColor": "色を選択"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "オプションを検索 をクリア",
     "NoResults": "結果がありません",
-    "Search": "検索"
+    "SearchOptions": "オプションを検索"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "コンテナレジストリを選択"
@@ -162,7 +169,7 @@
     "SelectDomain": "ドメインを選択"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "数量"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "自動更新",
@@ -178,6 +185,8 @@
     "operator": {
       "After": "後",
       "Before": "前",
+      "Contains": "含む",
+      "EndsWith": "で終わる",
       "Equals": "等しい",
       "GreaterThan": "より大きい",
       "GreaterThanOrEqual": "以上",
@@ -192,8 +201,12 @@
       "In": "含まれる",
       "LessThan": "より小さい",
       "LessThanOrEqual": "以下",
+      "NotContains": "含まない",
+      "NotEndsWith": "で終わらない",
       "NotEquals": "等しくない",
-      "NotIn": "含まれない"
+      "NotIn": "含まれない",
+      "NotStartsWith": "で始まらない",
+      "StartsWith": "で始まる"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
@@ -214,6 +227,39 @@
     "Size": "サイズ",
     "SuccessFullyPulled": "{{count}}バージョンのプルを正常に要求しました。",
     "Version": "バージョン"
+  },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Backend.AI セッションを確認しています…",
+    "SignInWithBackendAI": "Backend.AI アカウントでログイン",
+    "failure": {
+      "CorsOrMixed": "ブラウザーが Backend.AI ウェブサーバーへのリクエストをブロックしました。通常は CORS または混在コンテンツの制限が原因です。",
+      "HttpError": "Backend.AI ウェブサーバーがエラーを返しました ({{status}})。",
+      "InvalidCallback": "{{appName}} に設定されたログイン後の戻り先アドレスが有効なウェブアドレスではありません。",
+      "InvalidResponse": "Backend.AI ウェブサーバーが予期しない応答を返しました。",
+      "NoEndpoint": "{{appName}} に Backend.AI ウェブサーバーのアドレスが設定されていません。",
+      "NoSessionId": "Backend.AI にログインしていますが、ウェブサーバーがセッション ID を返しませんでした。",
+      "NoSessionOverHttp": "まだ Backend.AI にログインしていません。すでにログインしている場合は、{{appName}} が HTTP で配信されているため、ブラウザーがウェブサーバーのセキュアなセッションクッキーを拒否している可能性があります。{{appName}} を HTTPS で開いてみてください。",
+      "NoSessionOverHttps": "まだ Backend.AI にログインしていません。すでにログインしている場合は、{{appName}} と Backend.AI ウェブサーバーが異なるサイトのため、ブラウザーがセッションクッキーを送信していない可能性があります。",
+      "RelayFailed": "Backend.AI にログインしていますが、{{appName}} でログインを完了できませんでした。",
+      "Timeout": "Backend.AI ウェブサーバーが時間内に応答しませんでした。",
+      "Title": "Backend.AI アカウントでログインできませんでした"
+    }
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "クラスターサイズ",
+    "Concurrency": "同時実行セッション数",
+    "CreatedAt": "作成日",
+    "DefaultForUnspecified": "不特定のデフォルト",
+    "DefaultForUnspecifiedTooltipDesc1": "特定のCPUまたはメモリが要求されていない場合、デフォルトのポリシーを設定します。",
+    "DefaultForUnspecifiedTooltipDesc2": "「Unlimited」により、エージェントノードの容量までの使用が可能になり、「Limited」は明示的に設定しない限りリソースを拒否します。\nほとんどの場合、「無制限」が推奨されます。",
+    "IdleTimeout": "アイドルタイムアウト",
+    "MaxConcurrentSFTPSessions": "Max Concurrent SFTPセッション",
+    "MaxPendingSessionCount": "最大保留中のセッションカウント",
+    "MaxPendingSessionResourceSlots": "最大保留中のセッションリソーススロット",
+    "MaxSessionLifetime": "最大セッション寿命時間",
+    "Name": "名前",
+    "StorageNodes": "ストレージノード",
+    "TotalResourceSlots": "リソースポリシー"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "キーペアを選択"
@@ -276,6 +322,13 @@
     "ProjectResourcePolicy": "プロジェクトのリソースポリシー",
     "UpdateMultipleProjects": "プロジェクトを一括更新"
   },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "作成日",
+    "MaxNetworkCount": "最大ネットワーク数",
+    "MaxQuotaScopeSize": "最大フォルダサイズ",
+    "MaxVFolderCount": "最大フォルダ数",
+    "Name": "名前"
+  },
   "comp:BAIProjectSelect": {
     "SelectProject": "プロジェクトを選択"
   },
@@ -322,8 +375,20 @@
     "SelectFolder": "フォルダを選択"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "適用",
     "PlaceHolder": "検索",
-    "ResetFilter": "フィルターをリセットする"
+    "ResetFilter": "フィルターをリセットする",
+    "SearchLabel": "フィルターを検索",
+    "operator": {
+      "Contains": "含む",
+      "Equals": "等しい",
+      "GreaterThan": "より大きい",
+      "GreaterThanOrEqual": "以上",
+      "In": "含まれる",
+      "LessThan": "より小さい",
+      "LessThanOrEqual": "以下",
+      "NotEquals": "等しくない"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "キャンセルプル",
@@ -383,7 +448,7 @@
     "ChoiceValueRequired": "選択肢の値は必須です。",
     "Choices": "選択肢",
     "ChoicesRequired": "少なくとも1つの選択肢が必要です。",
-    "CreatePreset": "プリセットを作成",
+    "CreatePreset": "パラメータを作成",
     "DefaultValue": "デフォルト値",
     "DefaultValuePlaceholder": "例: 1",
     "Description": "説明",
@@ -391,7 +456,7 @@
     "DisplayName": "表示名",
     "DisplayNamePlaceholder": "例: Tensor Parallel Size",
     "DisplayNameTooltip": "デプロイメントフォームでパラメータ名の代わりに表示される、読みやすいラベルです。",
-    "EditPreset": "プリセットを編集",
+    "EditPreset": "パラメータを編集",
     "Key": "キー",
     "KeyPlaceholder": "例: TENSOR_PARALLEL_SIZE",
     "KeyRequired": "キーは必須です。",
@@ -401,16 +466,17 @@
     "NumberMax": "最大値",
     "NumberMaxMustExceedMin": "最大値は最小値より大きくする必要があります。",
     "NumberMin": "最小値",
-    "PresetCreated": "ランタイムバリアントプリセットが作成されました。",
-    "PresetTarget": "プリセット対象",
+    "PresetCreated": "ランタイムパラメータが作成されました。",
+    "PresetTarget": "パラメータ対象",
     "PresetTargetArgs": "コマンドライン引数",
     "PresetTargetEnv": "環境変数",
-    "PresetTargetRequired": "プリセット対象は必須です。",
-    "PresetUpdated": "ランタイムバリアントプリセットが更新されました。",
+    "PresetTargetRequired": "パラメータ対象は必須です。",
+    "PresetUpdated": "ランタイムパラメータが更新されました。",
     "Rank": "ランク",
-    "RankTooltip": "同じランタイムバリアントのプリセット間の表示順序です。値が小さいほど先に表示されます。",
+    "RankTooltip": "同じランタイムのパラメータ間の表示順序です。値が小さいほど先に表示されます。",
     "Required": "必須",
-    "RequiredTooltip": "デプロイメントリビジョンを作成する際に、このプリセットパラメータの指定が必須かどうかを示します。",
+    "RequiredTooltip": "デプロイメントリビジョンを作成する際に、このパラメータの指定が必須かどうかを示します。",
+    "Requirement": "必須の有無",
     "RuntimeVariant": "ランタイムバリアント",
     "RuntimeVariantRequired": "ランタイムバリアントは必須です。",
     "SliderMax": "最大値",
@@ -421,10 +487,12 @@
     "SliderStep": "ステップ",
     "SliderStepMustBePositive": "ステップは0より大きくする必要があります。",
     "SliderStepTooltip": "スライダーの増分ステップです。デフォルトは1です。",
+    "StoredValueTypeMismatch": "このパラメータは値の型 {{valueType}} で保存されているため、UI タイプ {{uiType}} では表示できません。UI タイプまたは値の型を変更してください。",
     "TextPlaceholderExample": "例: 値を入力してください",
     "TextPlaceholderLabel": "入力プレースホルダー",
     "UIType": "UIタイプ",
     "UITypeCheckbox": "チェックボックス",
+    "UITypeIncompatibleWithValueType": "選択した UI タイプではこの値の型を表示できません。",
     "UITypeNumberInput": "数値入力",
     "UITypeSelect": "セレクト",
     "UITypeSlider": "スライダー",
@@ -448,14 +516,20 @@
     "ModifiedAt": "更新日",
     "Name": "名前",
     "Optional": "任意",
-    "PresetTarget": "プリセット対象",
+    "PresetTarget": "パラメータ対象",
     "PresetTargetArgs": "コマンドライン引数",
     "PresetTargetEnv": "環境変数",
     "Rank": "ランク",
-    "RankTooltip": "同じランタイムバリアントのプリセット間の表示順序です。値が小さいほど先に表示されます。",
+    "RankTooltip": "同じランタイムのパラメータ間の表示順序です。値が小さいほど先に表示されます。",
     "Required": "必須",
-    "RuntimeVariant": "ランタイムバリアント",
     "RuntimeVariantId": "ランタイムバリアント ID",
+    "RuntimeVariantWithID": "ランタイムバリアント (ID)",
+    "UIType": "UIタイプ",
+    "UITypeCheckbox": "チェックボックス",
+    "UITypeNumberInput": "数値入力",
+    "UITypeSelect": "セレクト",
+    "UITypeSlider": "スライダー",
+    "UITypeTextInput": "テキスト入力",
     "ValueType": "値の型",
     "ValueTypeBool": "ブール値",
     "ValueTypeFlag": "フラグ",
@@ -557,7 +631,6 @@
     "ArchiveDownloadStarted": "{{count}}件のダウンロードが開始されました。",
     "ChangeFileExtension": "ファイル拡張子を変更します",
     "ChangeFileExtensionDesc": "ファイル拡張子を変更すると、ファイルが使用できなくなったり、誤って開いたりすることがあります。\n先に進みたいですか？",
-    "Controls": "コントロール",
     "CreateANewFile": "新しいファイルを作成します",
     "CreateANewFolder": "新しいフォルダーを作成します",
     "CreateFile": "ファイル作成",
@@ -565,6 +638,7 @@
     "CreatedAt": "で作成されました",
     "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
     "DeleteSelectedItemsDialog": "確認を削除します",
+    "Download": "ダウンロード",
     "DownloadSelected": "ダウンロード",
     "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
     "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
@@ -581,13 +655,12 @@
     "MaxFileNameLength": "ファイル名は255文字以下でなければなりません。",
     "MaxFolderNameLength": "フォルダー名は255文字以下でなければなりません。",
     "ModifiedAt": "で変更されました",
-    "MoreOptions": "その他のオプション",
     "Name": "名前",
     "NoUploadPermissionForHost": "このホストへのアップロード権限がありません。",
-    "Path": "Path",
+    "Path": "パス",
     "PleaseEnterAFileName": "ファイル名を入力してください。",
     "PleaseEnterAFolderName": "フォルダー名を入力してください。",
-    "RenameFile": "Rename",
+    "RenameFile": "名前を変更",
     "RenameSuccess": "名前は正常に変更されました。",
     "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
     "Size": "サイズ",
@@ -702,23 +775,26 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "減らす",
     "DeselectAll": "すべて選択解除",
     "File": "ファイル",
-    "Increase": "Increase",
+    "Increase": "増やす",
+    "Loading": "読み込み中...",
     "NSelected": "{{count}}選択",
     "Optional": "任意",
     "Project": "プロジェクト",
-    "Select": "Select",
+    "Search": "検索",
+    "Select": "選択",
+    "SelectPlaceholder": "{{label}}を選択してください",
     "TotalItems": "Total {{total}}アイテム",
-    "Unit": "Unit",
+    "Unit": "単位",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "アクション",
+      "Back": "戻る",
       "Cancel": "キャンセル",
       "Close": "近い",
       "Collapse": "崩壊",
-      "Confirm": "Confirm",
+      "Confirm": "確認",
       "Copied": "コピーしました",
       "Copy": "コピー",
       "CopyAll": "すべてをコピーします",

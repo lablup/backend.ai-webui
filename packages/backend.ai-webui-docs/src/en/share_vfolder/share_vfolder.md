@@ -46,12 +46,14 @@ both view and modify the folder. Click the `Add` button to send the invitation.
 
 ![](../images/send_vfolder_invitation.png)
 
-Switch back to User B's account. An invitation badge appears next to the Data page entry in the sidebar and next to the folder status summary at the top of the folder list. The badge shows the count of pending invitations.
+Switch back to User B's account and go to the Data page. When invitations are
+waiting for a response, a **Pending invitations** link appears at the top right
+of the folder list, showing the number of pending invitations.
 
 ![](../images/vfolder_invitation_badge.png)
 
-Clicking the badge opens an invitation list modal, where pending folder invitations
-can be accepted or declined.
+Clicking the link opens the **Invited Folders** modal, where pending folder
+invitations can be accepted or declined.
 
 ![](../images/invitation_accept.png)
 
@@ -66,7 +68,10 @@ can also see the `Read only` mark displayed in the Mount Permission column.
 
 Let's navigate inside the `tests` folder by clicking its name in the list. You
 can check the `hello.txt` and `myfolder` that you checked in the User A's
-account again.
+account again. Since User A shared the folder as `Read only`, the write
+actions are disabled in the folder explorer: **Upload**, **Create Folder**,
+**Delete**, and the **Rename** button next to each item cannot be used. User B
+can only browse the folder and download its contents.
 
 ![](../images/folder_explorer_in_B.png)
 

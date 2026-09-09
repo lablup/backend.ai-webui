@@ -277,6 +277,7 @@ const StorageProxyList = () => {
         />
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         resizable
         size="small"
         rowKey={'id'}

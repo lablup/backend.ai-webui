@@ -3,11 +3,29 @@
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
 import {
   deleteForeverAndVerifyFromTrash,
+  getSortableColumnHeader,
   loginAsAdmin,
   moveToTrashAndVerify,
   webuiEndpoint,
 } from '../utils/test-util';
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+
+// Astryx `Pagination` renders its prev/next controls only when the result
+// set actually spans more than one page, so these scenarios need enough
+// seeded model cards to overflow the default page size. Read the total off
+// the "X - Y of Z items" caption and declare the prerequisite rather than
+// failing on a sparsely-populated cluster.
+async function skipUnlessPaginated(page: Page): Promise<void> {
+  const caption = await page
+    .getByText(/\d+ - \d+ of \d+ items/)
+    .first()
+    .textContent();
+  const [, shown, total] = /(\d+) of (\d+) items/.exec(caption ?? '') ?? [];
+  test.skip(
+    !total || Number(total) <= Number(shown),
+    `Model cards fit on a single page (${caption ?? 'no caption'}); pagination controls are not rendered.`,
+  );
+}
 
 test.describe(
   'Admin Model Card Management - Page Load and Table Display',
@@ -39,31 +57,21 @@ test.describe(
       // Verify the refresh button is visible
       await expect(adminModelCardPage.getRefreshButton()).toBeVisible();
 
-      // Verify the table is rendered with the correct column headers
-      await expect(
-        page.getByRole('columnheader', { name: 'Name' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Title' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Category' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Task' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Access Level' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Domain' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Project' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('columnheader', { name: 'Created At' }),
-      ).toBeVisible();
+      // Verify the table is rendered with the correct column headers.
+      // A columnheader's accessible name is "<label> Resize column <raw
+      // column key>" (e.g. "Domain Resize column domainName") or, for
+      // sortable columns, "Sort by <raw key>" instead of the label — both
+      // forms can substring-match an unrelated label (e.g. 'Name' matches
+      // "domainName"). Match the header's visible TEXT instead (see
+      // getSortableColumnHeader).
+      await expect(getSortableColumnHeader(page, 'Name')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Title')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Category')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Task')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Access Level')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Domain')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Project')).toBeVisible();
+      await expect(getSortableColumnHeader(page, 'Created At')).toBeVisible();
     });
 
     // 1.2 Superadmin can see model card rows with correct data in the table
@@ -146,15 +154,23 @@ test.describe(
       );
       await adminModelCardPage.waitForTableLoad();
 
+      await skipUnlessPaginated(page);
+
       // Verify pagination control is visible with total count
       await expect(adminModelCardPage.getPaginationInfo()).toBeVisible();
 
-      // Verify next/previous page buttons
-      await expect(page.getByRole('button', { name: 'left' })).toBeVisible();
-      await expect(page.getByRole('button', { name: 'right' })).toBeVisible();
+      // Verify next/previous page buttons. Astryx `Pagination` names these
+      // "Go to previous page" / "Go to next page" (not the antd icon names
+      // "left"/"right").
+      await expect(
+        page.getByRole('button', { name: 'Go to previous page' }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: 'Go to next page' }),
+      ).toBeVisible();
 
       // If there are multiple pages, navigate to page 2
-      const nextButton = page.getByRole('button', { name: 'right' });
+      const nextButton = page.getByRole('button', { name: 'Go to next page' });
       const isNextEnabled = await nextButton.isEnabled();
       if (isNextEnabled) {
         await nextButton.click();
@@ -175,22 +191,17 @@ test.describe(
       );
       await adminModelCardPage.waitForTableLoad();
 
-      // Change page size from 10 to 20
+      // Same prerequisite as the pagination-navigation test above.
+      await skipUnlessPaginated(page);
+
+      // Change page size from 10 to 20. The selector is Astryx `Select`
+      // (role="combobox" trigger, role="listbox"/"option" popup), not
+      // antd's `.ant-select-dropdown`.
       const pageSizeSelector = page.getByRole('combobox', {
         name: 'Page Size',
       });
       await pageSizeSelector.click();
-      await expect(
-        page
-          .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-          .first(),
-      ).toBeVisible();
-      await page
-        .locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-        .first()
-        .locator('.ant-select-item-option')
-        .filter({ hasText: '20 / page' })
-        .click();
+      await page.getByRole('option', { name: '20', exact: true }).click();
 
       // Verify pagination reflects 20 items per page via URL parameter
       await expect(page).toHaveURL(/pageSize=20/);

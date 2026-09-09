@@ -299,7 +299,18 @@ applications:
                   process.exit(1);
                 }
               '
-            - pnpm run build
+            # FR-3880: ship the review overlay (the pin / `#bai=v3` deep
+            # link) in this bundle. It is `apply: 'serve'` by default, so
+            # only the deployment that sets this flag gets it — release and
+            # self-hosted builds are unchanged. This app has exactly one
+            # branch (`main`, served at webui-nightly.lablup.ai), so the
+            # export needs no branch guard; add one here if that changes.
+            #
+            # Inline on the build command, not a separate `export` line:
+            # phase commands share one shell (which is what makes the `cd ..`
+            # above stick), so an export would leak the flag to everything
+            # after it.
+            - VITE_REVIEW_OVERLAY_BUILD=1 pnpm run build
       artifacts:
         # `..` resolves out of appRoot (`react/`) to the workspace
         # root, then into `build/web/`. Amplify accepts paths that

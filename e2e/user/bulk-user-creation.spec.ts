@@ -3,6 +3,10 @@ import { BulkCreateUserModal } from '../utils/classes/user/BulkCreateUserModal';
 import { PurgeUsersModal } from '../utils/classes/user/PurgeUsersModal';
 import { KeyPairModal } from '../utils/classes/user/UserSettingModal';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import {
+  createUserMoreButton,
+  usersTabButton,
+} from '../utils/user-profile-util';
 import test, { expect, type Page } from '@playwright/test';
 
 // Generate unique identifiers for this test run to avoid conflicts
@@ -93,16 +97,21 @@ test.describe(
         // 2. Navigate to credential page
         await navigateTo(page, 'credential');
 
-        // 3. Verify the "Users" tab is visible and selected
-        await expect(page.getByRole('tab', { name: 'Users' })).toBeVisible();
+        // 3. Verify the "Users" tab is visible and selected.
+        // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+        // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab`
+        // elements — `role="tab"` is never emitted unless `TabList` is given
+        // `role="tablist"`, which this app never does (see
+        // registry.spec.ts's identical pattern).
+        await expect(usersTabButton(page)).toBeVisible();
 
         // 4. Verify the "Create User" button is visible
         await expect(
           page.getByRole('button', { name: 'Create User' }),
         ).toBeVisible();
 
-        // 5. Click the "ellipsis" dropdown button adjacent to "Create User"
-        await page.getByRole('button', { name: 'ellipsis' }).click();
+        // 5. Click the "More" dropdown button adjacent to "Create User".
+        await createUserMoreButton(page).click();
 
         // 6. Verify the dropdown menu appears containing the item "Bulk Create Users"
         // exact: true avoids a strict-mode collision with the sibling
@@ -174,8 +183,8 @@ test.describe(
             page.getByRole('radio', { name: 'Active', exact: true }),
           ).toBeChecked();
 
-          // 4. Click the "ellipsis" dropdown button next to "Create User"
-          await page.getByRole('button', { name: 'ellipsis' }).click();
+          // 4. Click the "More" dropdown button next to "Create User"
+          await createUserMoreButton(page).click();
 
           // 5. Click "Bulk Create Users"
           await page
@@ -290,8 +299,8 @@ test.describe(
         // 2. Navigate to credential page
         await navigateTo(page, 'credential');
 
-        // 3. Click the "ellipsis" dropdown button and select "Bulk Create Users"
-        await page.getByRole('button', { name: 'ellipsis' }).click();
+        // 3. Click the "More" dropdown button and select "Bulk Create Users"
+        await createUserMoreButton(page).click();
         await page
           .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
           .click();
@@ -347,8 +356,8 @@ test.describe(
           // 2. Navigate to credential page
           await navigateTo(page, 'credential');
 
-          // 3. Click the "ellipsis" dropdown button and select "Bulk Create Users"
-          await page.getByRole('button', { name: 'ellipsis' }).click();
+          // 3. Click the "More" dropdown button and select "Bulk Create Users"
+          await createUserMoreButton(page).click();
           await page
             .getByRole('menuitem', { name: 'Bulk Create Users', exact: true })
             .click();

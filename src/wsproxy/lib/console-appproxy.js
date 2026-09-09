@@ -1,10 +1,9 @@
 const net = require('net');
 const logger = require('./logger')(__filename);
 const WebSocket = require('ws');
-const ai = require('../../lib/backend.ai-client-node');
 const bind = require('./bindStream');
 const htmldeco = require('./htmldeco');
-const HttpsProxyAgent = require('https-proxy-agent');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 /*
 const i18next = require('i18next');
 const i18next_backend = require('i18next-sync-fs-backend');

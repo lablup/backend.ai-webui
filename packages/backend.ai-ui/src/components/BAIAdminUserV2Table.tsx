@@ -163,7 +163,6 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         title: t('comp:UserNodes.DomainName'),
         dataIndex: 'domainName',
         exportKey: 'domain_name',
-        minWidth: 100,
         sorter: isEnableSorter('domainName'),
         render: (__, record) => record.organization?.domainName || '-',
       },
@@ -340,6 +339,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
 
   return (
     <BAITable<UserV2InList>
+      scroll={{ x: 'max-content' }}
       resizable
       rowKey="id"
       size="small"

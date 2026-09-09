@@ -140,7 +140,7 @@ test.describe(
 
       const [fileChooser] = await Promise.all([
         page.waitForEvent('filechooser'),
-        page.getByRole('button', { name: 'file-add Upload Files' }).click(),
+        page.getByRole('menuitem', { name: 'Upload Files' }).click(),
       ]);
 
       await fileChooser.setFiles([testFilePath]);

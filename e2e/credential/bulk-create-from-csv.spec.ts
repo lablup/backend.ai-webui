@@ -4,6 +4,13 @@ import test, { expect, Page } from '@playwright/test';
 import path from 'path';
 
 const SAMPLES_DIR = path.resolve(__dirname, '../../test-fixtures/csv-samples');
+/** `credential.UploadCSVFile` — the dropzone `FileInput`'s field label. */
+const UPLOAD_FIELD_LABEL = 'Click or drag a CSV file to this area to upload';
+
+/** Astryx `ToastViewport`'s `role="region"` — the visible toasts live here. */
+function toastViewport(page: Page) {
+  return page.getByRole('region', { name: 'Notifications' });
+}
 
 async function openBulkCreateCSVModal(page: Page) {
   await navigateTo(page, 'credential?tab=users');
@@ -11,13 +18,11 @@ async function openBulkCreateCSVModal(page: Page) {
   await expect(page.getByRole('button', { name: 'Create User' })).toBeVisible({
     timeout: 15000,
   });
-  // Click the ellipsis dropdown button — scoped to the Space.Compact that contains
-  // "Create User", to avoid matching the antd Tabs nav "more" button.
-  const createUserBtn = page.getByRole('button', { name: 'Create User' });
-  await createUserBtn
-    .locator('xpath=ancestor::*[contains(@class,"ant-space-compact")]')
-    .getByRole('button', { name: 'ellipsis' })
-    .click();
+  // Click the "More" dropdown trigger — scoped to the Astryx `ButtonGroup`
+  // (role="group", aria-label="Create User") that wraps it alongside the
+  // "Create User" button, to avoid matching unrelated "More" buttons.
+  const createUserGroup = page.getByRole('group', { name: 'Create User' });
+  await createUserGroup.getByRole('button', { name: 'More' }).click();
   await page
     .getByRole('menuitem', { name: 'Bulk Create Users from CSV' })
     .click();
@@ -30,7 +35,14 @@ async function uploadCSV(page: Page, filename: string) {
   const dialog = page.getByRole('dialog', {
     name: 'Bulk Create Users from CSV',
   });
-  const fileInput = dialog.locator('input[name="file"]');
+  // The empty-state picker is Astryx `FileInput` (`mode="dropzone"`), whose
+  // `<label>` points at its native `<input type="file">` (FieldLabel renders
+  // `htmlFor={inputID}`). The label also names FileInput's visually-hidden
+  // trigger button, so narrow to the input — that also excludes the sibling
+  // hidden `<input type="file">` backing the "Replace File" button.
+  const fileInput = dialog
+    .getByLabel(UPLOAD_FIELD_LABEL)
+    .and(dialog.locator('input[type="file"]'));
   await fileInput.setInputFiles(path.join(SAMPLES_DIR, filename));
 }
 
@@ -236,7 +248,7 @@ test.describe(
 
       // Toggle "Only show errors"
       await dialog.getByRole('switch').click();
-      const rows = dialog.locator('table tbody tr:not(.ant-table-measure-row)');
+      const rows = dialog.locator('table tbody tr');
       await expect.poll(() => rows.count(), { timeout: 5000 }).toBe(errorCount);
       await closeModal(page);
     });
@@ -246,8 +258,14 @@ test.describe(
     }) => {
       await openBulkCreateCSVModal(page);
       await uploadCSV(page, '12-error-missing-required-columns.csv');
-      // Toast error — Ant Design message renders in .ant-message
-      await expect(page.locator('.ant-message-notice')).toBeVisible({
+      // `message.error` renders an Astryx `Toast` with `role="alert"`. Scope to
+      // the toast viewport: a bare role('alert') also matches ToastViewport's
+      // visually-hidden `announce()` live region, which mirrors the same text.
+      await expect(
+        toastViewport(page)
+          .getByRole('alert')
+          .filter({ hasText: 'The CSV file is missing required columns' }),
+      ).toBeVisible({
         timeout: 5000,
       });
       // Preview stats should NOT appear (no file loaded into state)
@@ -265,7 +283,13 @@ test.describe(
     }) => {
       await openBulkCreateCSVModal(page);
       await uploadCSV(page, '15-error-empty-file.csv');
-      await expect(page.locator('.ant-message-notice')).toBeVisible({
+      // `message.warning` maps onto Astryx Toast's `info` variant
+      // (PILOT-DECISION in message.tsx), which carries `role="status"`.
+      await expect(
+        toastViewport(page)
+          .getByRole('status')
+          .filter({ hasText: 'The CSV file contains no user rows.' }),
+      ).toBeVisible({
         timeout: 5000,
       });
       const dialog = page.getByRole('dialog', {
@@ -334,8 +358,10 @@ test.describe(
       await expect(
         page.getByRole('button', { name: /Create \d+ user/ }),
       ).toBeDisabled();
-      // No blocking toast for this load.
-      await expect(page.locator('.ant-message-notice')).not.toBeVisible();
+      // No blocking toast for this load — the viewport holds no toast of
+      // either severity (`role="alert"` for error, `role="status"` otherwise).
+      await expect(toastViewport(page).getByRole('alert')).toHaveCount(0);
+      await expect(toastViewport(page).getByRole('status')).toHaveCount(0);
       await closeModal(page);
     });
 

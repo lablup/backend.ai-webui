@@ -222,11 +222,14 @@ export const Default: Story = {
   },
 };
 
-const clientPagedData = Array.from({ length: 42 }, (_unused, index) => ({
-  ...sampleData[index % sampleData.length],
-  key: `p${index + 1}`,
-  name: `Person ${index + 1}`,
-}));
+const makePeople = (count: number, keyPrefix: string) =>
+  Array.from({ length: count }, (_unused, index) => ({
+    ...sampleData[index % sampleData.length],
+    key: `${keyPrefix}${index + 1}`,
+    name: `Person ${index + 1}`,
+  }));
+
+const clientPagedData = makePeople(42, 'p');
 
 export const ClientSidePagination: Story = {
   name: 'Client-side Pagination',
@@ -244,6 +247,39 @@ export const ClientSidePagination: Story = {
     pagination: {
       pageSize: 10,
     },
+  },
+};
+
+const serverPagedData = makePeople(177, 's');
+
+export const InvalidPage: Story = {
+  name: 'Invalid Page Number',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A server-sliced page past the last one: the caller holds page 20 of a 177-row result set and the server returned nothing. Instead of "No data to display", the body offers a way back; "Go to first page" resets the caller\'s page through `pagination.onChange`, which is what refetches (FR-3703).',
+      },
+    },
+  },
+  render: () => {
+    const [page, setPage] = useState(20);
+    const pageSize = 10;
+    return (
+      <BAITable
+        columns={sampleColumns}
+        dataSource={serverPagedData.slice(
+          (page - 1) * pageSize,
+          page * pageSize,
+        )}
+        pagination={{
+          current: page,
+          pageSize,
+          total: serverPagedData.length,
+          onChange: setPage,
+        }}
+      />
+    );
   },
 };
 

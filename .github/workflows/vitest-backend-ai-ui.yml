@@ -8,6 +8,10 @@ on:
       - packages/backend.ai-ui/package.json
       - packages/backend.ai-ui/vitest.config.ts
       - .github/workflows/vitest-backend-ai-ui.yml
+      # Config-only edits must run the i18n schema cache-tripwire test, and a
+      # schema-only PR must revalidate the locale files (PR #9016 review).
+      - packages/backend.ai-ui/eslint.config.js
+      - packages/backend.ai-ui/i18n.schema.json
 
 permissions:
   contents: read
@@ -31,7 +35,7 @@ jobs:
       - uses: ./.github/actions/setup-node-pnpm
       # Lint stays in-job here: this suite is off the PR critical path (the
       # react suite is ~2x longer), so a second runner isn't worth a slot.
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         name: ESLint results cache
         with:
           path: packages/backend.ai-ui/.eslintcache
@@ -40,7 +44,7 @@ jobs:
             ${{ runner.os }}-eslint-bui-${{ hashFiles('**/pnpm-lock.yaml', 'packages/backend.ai-ui/eslint.config.js', 'packages/eslint-config-bai/**') }}-
       - name: Run ESLint on backend.ai-ui
         run: pnpm run lint:ci
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         name: Vitest fs-module cache
         with:
           path: node_modules/.experimental-vitest-cache

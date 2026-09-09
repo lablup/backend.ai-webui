@@ -93,7 +93,7 @@ to the user admin surface.
 ## 5. Frontend wiring (when the API lands)
 
 1. Add `getPreferences()/setPreferences(patch)` to the `UserConfig` class in
-   `src/lib/backend.ai-client-node.ts` (Option A).
+   `packages/backend.ai-client/src/resources/user-config.ts` (Option A).
 2. Add `react/src/hooks/useUserPreference.ts` returning `[value, setValue]` with the
    same signature as today's `useLocalStorageGlobalState`, backed by the API +
    localStorage cache, gated by a capability check

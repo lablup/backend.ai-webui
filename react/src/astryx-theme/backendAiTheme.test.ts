@@ -232,4 +232,37 @@ describe('backendAiTheme', () => {
       expect(options.accent).toEqual({ light: '#123456', dark: '#123456' });
     });
   });
+
+  describe('banner status fills (FR-3700)', () => {
+    const fill = (
+      theme: ReturnType<typeof buildBackendAiTheme>,
+      target: string,
+      token: string,
+    ) =>
+      (theme as any)?.components?.[target]?.['status:error']?.[token] as
+        string | undefined;
+
+    it('are opaque, and follow an operator rebrand rather than a literal', () => {
+      const dflt = buildBackendAiTheme({});
+      const rebranded = buildBackendAiTheme({
+        error: { light: '#7B1FA2', dark: '#7B1FA2' },
+      });
+
+      const defaultBand = fill(dflt, 'banner', '--color-error-muted');
+      const rebrandBand = fill(rebranded, 'banner', '--color-error-muted');
+      const rebrandContent = fill(
+        rebranded,
+        'banner-content',
+        '--color-background-card',
+      );
+
+      // A floating notice must not show the page through it: no #RRGGBBAA.
+      expect(defaultBand).toBeTruthy();
+      expect(String(defaultBand)).not.toMatch(/#[0-9a-fA-F]{8}/);
+      // Seed-derived, not hardcoded — a theme.json rebrand reaches the fill.
+      expect(rebrandBand).not.toEqual(defaultBand);
+      // Header band and content area stay the same colour.
+      expect(rebrandContent).toEqual(rebrandBand);
+    });
+  });
 });

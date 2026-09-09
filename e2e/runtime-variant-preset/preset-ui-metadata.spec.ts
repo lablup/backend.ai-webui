@@ -1,5 +1,5 @@
 // Covers FR-3476: Category / Display Name / UI Option (slider, number,
-// select, checkbox, text) on the Runtime Variant Preset admin create/update
+// select, checkbox, text) on the Runtime Parameter admin create/update
 // modal. These fields are gated behind the `runtime-variant-preset-ui-metadata`
 // client capability (manager >= 26.9.0) — tests that depend on them skip
 // gracefully against an older manager instead of failing.
@@ -29,7 +29,7 @@ async function supportsUIMetadata(page: Page): Promise<boolean> {
 }
 
 /**
- * Opens the Create Preset modal, selects the first available runtime
+ * Opens the Create Parameter modal, selects the first available runtime
  * variant, and fills the always-required fields.
  *
  * The dev server this suite runs against occasionally drops its Vite HMR
@@ -49,9 +49,9 @@ async function openCreateModalWithRequiredFields(
       await page.goto(PRESET_TAB_URL);
       await page.waitForLoadState('domcontentloaded');
       await expect(
-        page.getByRole('button', { name: /Create Preset/i }),
+        page.getByRole('button', { name: /Create Parameter/i }),
       ).toBeVisible({ timeout: 60000 });
-      await page.getByRole('button', { name: /Create Preset/i }).click();
+      await page.getByRole('button', { name: /Create Parameter/i }).click();
       const modal = page.getByRole('dialog');
       await expect(modal).toBeVisible();
 
@@ -61,14 +61,9 @@ async function openCreateModalWithRequiredFields(
       });
       await expect(runtimeVariantSelect).toBeVisible({ timeout: 30000 });
       await runtimeVariantSelect.click();
-      await page.waitForSelector(
-        '.ant-select-dropdown .ant-select-item-option',
-        { state: 'visible', timeout: 15000 },
-      );
-      await page
-        .locator('.ant-select-dropdown .ant-select-item-option')
-        .first()
-        .click();
+      const variantOption = page.getByRole('option').first();
+      await expect(variantOption).toBeVisible({ timeout: 15000 });
+      await variantOption.click();
 
       await modal
         .getByRole('textbox', { name: 'Name', exact: true })
@@ -87,6 +82,15 @@ async function openCreateModalWithRequiredFields(
     }
   }
   throw lastError;
+}
+
+async function selectValueType(
+  page: Page,
+  modal: ReturnType<Page['getByRole']>,
+  label: string,
+): Promise<void> {
+  await modal.getByRole('combobox', { name: /^Value Type/ }).click();
+  await page.getByRole('option', { name: label, exact: true }).click();
 }
 
 async function deletePreset(page: Page, presetName: string): Promise<void> {
@@ -119,7 +123,7 @@ async function deletePreset(page: Page, presetName: string): Promise<void> {
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe(
-  'Runtime Variant Preset - UI Metadata - Create',
+  'Runtime Parameter - UI Metadata - Create',
   { tag: ['@runtime-variant-preset', '@admin', '@crud'] },
   () => {
     let presetName: string;
@@ -162,10 +166,7 @@ test.describe(
         .fill('E2E Display Name');
 
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Select', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Select', exact: true }).click();
 
       await modal.getByRole('button', { name: /Add Choice/i }).click();
       await modal.getByRole('button', { name: /Add Choice/i }).click();
@@ -197,7 +198,7 @@ test.describe(
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(
-        page.getByText('Runtime variant preset has been created.'),
+        page.getByText('Runtime parameter has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -220,11 +221,12 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      // Slider is offered only for a numeric value type, and create mode
+      // defaults to String — declare the type before picking the control.
+      await selectValueType(page, modal, 'Integer');
+
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Slider', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('spinbutton', { name: 'Minimum' }).fill('0');
       await modal.getByRole('spinbutton', { name: 'Maximum' }).fill('8');
@@ -233,7 +235,7 @@ test.describe(
       await modal.getByRole('button', { name: 'Create' }).click();
 
       await expect(
-        page.getByText('Runtime variant preset has been created.'),
+        page.getByText('Runtime parameter has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -280,11 +282,12 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      // Slider is offered only for a numeric value type, and create mode
+      // defaults to String — declare the type before picking the control.
+      await selectValueType(page, modal, 'Integer');
+
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Slider', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('button', { name: 'Create' }).click();
 
@@ -315,11 +318,12 @@ test.describe(
         `E2E_KEY_${Date.now()}`,
       );
 
+      // Slider is offered only for a numeric value type, and create mode
+      // defaults to String — declare the type before picking the control.
+      await selectValueType(page, modal, 'Integer');
+
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Slider', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Slider', exact: true }).click();
 
       await modal.getByRole('spinbutton', { name: 'Minimum' }).fill('0');
       await modal.getByRole('spinbutton', { name: 'Maximum' }).fill('8');
@@ -342,7 +346,7 @@ test.describe(
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe(
-  'Runtime Variant Preset - UI Metadata - Edit',
+  'Runtime Parameter - UI Metadata - Edit',
   { tag: ['@runtime-variant-preset', '@admin', '@crud'] },
   () => {
     let presetName: string;
@@ -384,10 +388,7 @@ test.describe(
         .getByRole('textbox', { name: /^Display Name/ })
         .fill('E2E Display Name');
       await modal.getByRole('combobox', { name: /^UI Type/ }).click();
-      await page
-        .locator('.ant-select-dropdown')
-        .getByText('Select', { exact: true })
-        .click();
+      await page.getByRole('option', { name: 'Select', exact: true }).click();
       // Two choice rows, not one — a bug that only mishandles the second
       // (or later) `Form.List` row wouldn't be caught by asserting `.first()`
       // alone below.
@@ -401,7 +402,7 @@ test.describe(
       await createLabelRows.nth(1).fill('BF16');
       await modal.getByRole('button', { name: 'Create' }).click();
       await expect(
-        page.getByText('Runtime variant preset has been created.'),
+        page.getByText('Runtime parameter has been created.'),
       ).toBeVisible({ timeout: 60000 });
       await expect(modal).toBeHidden({ timeout: 30000 });
 
@@ -412,7 +413,7 @@ test.describe(
 
       const editModal = page.getByRole('dialog');
       await expect(editModal).toBeVisible();
-      await expect(editModal).toContainText('Edit Preset');
+      await expect(editModal).toContainText('Edit Parameter');
 
       await expect(
         editModal.getByRole('combobox', { name: /^Category/ }),

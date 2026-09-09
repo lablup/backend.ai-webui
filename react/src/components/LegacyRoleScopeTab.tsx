@@ -216,6 +216,7 @@ const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
         />
       </BAIFlex>
       <BAITable<ScopeNode>
+        scroll={{ x: 'max-content' }}
         rowKey={(record) => `${record.scopeType}|${record.scopeId}`}
         dataSource={scopeNodes as ScopeNode[]}
         columns={columns}

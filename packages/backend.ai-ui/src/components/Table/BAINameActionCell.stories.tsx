@@ -220,8 +220,7 @@ export const WithDisabledAction: Story = {
         key: 'restore',
         title: 'Restore',
         icon: <Copy size="1em" />,
-        disabled: true,
-        disabledReason: 'Cannot restore pipeline folders',
+        disabled: { reason: 'Cannot restore pipeline folders' },
       },
     ],
   },
@@ -276,8 +275,9 @@ export const DisabledActionInOverflowMenu: Story = {
                 key: 'start-service',
                 title: 'Deploy as service',
                 icon: <Copy size="1em" />,
-                disabled: true,
-                disabledReason: "Create deployments from a project's Data page",
+                disabled: {
+                  reason: "Create deployments from a project's Data page",
+                },
               },
             ]}
           />

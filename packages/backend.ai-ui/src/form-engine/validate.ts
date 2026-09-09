@@ -405,6 +405,9 @@ async function validateRule(
   messageVariables?: Record<string, string>,
 ): Promise<any[]> {
   let rawErrors: any[] = [];
+  // Kept in sync with the declarative branch so `${type}` interpolates the
+  // normalised type, not `undefined`, when the rule's type was inferred.
+  let effectiveRule: NormalizedRule = rule;
 
   if (rule.validator) {
     const cbArg = await runCustomValidator(rule, value);
@@ -414,7 +417,7 @@ async function validateRule(
     const method = pickMethod(rule);
     // `getType` normalises the rule's own `type` before the validators read
     // it — `undefined` becomes `'string'`, a bare RegExp becomes `'pattern'`.
-    const effectiveRule: NormalizedRule = {
+    effectiveRule = {
       ...rule,
       type: method === 'required' ? rule.type : method,
     };
@@ -451,7 +454,7 @@ async function validateRule(
   });
 
   const kv: Record<string, any> = {
-    ...rule,
+    ...effectiveRule,
     name,
     ...messageVariables,
   };

@@ -553,6 +553,9 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
     // search was type-to-filter. Treating `undefined` as "no search" turned
     // that off on every call site that omitted the prop.
     hasSearch: showSearch !== false,
+    // `general.Search` is also BAIComplexSelect's panel-search key, so the two
+    // select engines' panels cannot drift apart (FR-3603).
+    searchPlaceholder: t('general.Search'),
     status:
       status === 'error' || status === 'warning' ? { type: status } : undefined,
     size:

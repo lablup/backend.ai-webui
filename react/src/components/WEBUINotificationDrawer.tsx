@@ -9,6 +9,7 @@ import BAIMultiStepNotificationItem from './BAIMultiStepNotificationItem';
 import BAINodeNotificationItem from './BAINodeNotificationItem';
 import './WEBUINotificationDrawer.css';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
 import {
   SegmentedControl,
   SegmentedControlItem,
@@ -16,7 +17,7 @@ import {
 import { VStack } from '@astryxdesign/core/Stack';
 import { StatusDot } from '@astryxdesign/core/StatusDot';
 import { BAIDrawer, BAIFlex } from 'backend.ai-ui';
-import { EllipsisVertical } from 'lucide-react';
+import { BellOff, EllipsisVertical } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -106,14 +107,9 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
       }
     >
       <VStack gap={2} align="stretch">
-        {/* PILOT-DECISION: antd `List` (`dataSource` + `renderItem` + `header`)
-            becomes a plain `VStack` map. Astryx `List`/`ListItem` is a
-            `<ul>`-shaped component for label/description rows; the three
-            notification items are rich cards with their own action rows, and
-            "don't place interactive elements inside an interactive list item"
-            is an explicit Astryx rule. Nothing antd's List contributed here
-            (it had no pagination, no dividers, no item meta) is lost, and it
-            keeps this file decoupled from how the item components render. */}
+        {/* Notifications are rich cards with their own action rows, so they map
+            into a plain `VStack`, not Astryx `List` — "don't place interactive
+            elements inside an interactive list item" is an Astryx rule. */}
         <BAIFlex justify="end">
           <SegmentedControl
             value={selectedCategory}
@@ -140,35 +136,43 @@ const WEBUINotificationDrawer: React.FC<Props> = ({
             />
           </SegmentedControl>
         </BAIFlex>
-        <VStack gap={2} align="stretch">
-          {visibleNotifications.map((item) =>
-            item.node ? (
-              <BAINodeNotificationItem
-                key={item.key}
-                notification={item}
-                nodeFrgmt={item.node || null}
-                showDate
-              />
-            ) : item.multiStep ? (
-              <BAIMultiStepNotificationItem
-                key={item.key}
-                notification={item}
-                onRetry={item.onRetry ?? undefined}
-                onCancel={item.onCancel ?? undefined}
-                showDate
-              />
-            ) : (
-              <BAIGeneralNotificationItem
-                key={item.key}
-                notification={item}
-                onClickAction={() => {
-                  item.to && webuiNavigate(item.to);
-                }}
-                showDate
-              />
-            ),
-          )}
-        </VStack>
+        {visibleNotifications.length === 0 ? (
+          <EmptyState
+            title={t('notification.NoNotification')}
+            icon={<BellOff size="1.5em" />}
+            isCompact
+          />
+        ) : (
+          <VStack gap={2} align="stretch">
+            {visibleNotifications.map((item) =>
+              item.node ? (
+                <BAINodeNotificationItem
+                  key={item.key}
+                  notification={item}
+                  nodeFrgmt={item.node || null}
+                  showDate
+                />
+              ) : item.multiStep ? (
+                <BAIMultiStepNotificationItem
+                  key={item.key}
+                  notification={item}
+                  onRetry={item.onRetry ?? undefined}
+                  onCancel={item.onCancel ?? undefined}
+                  showDate
+                />
+              ) : (
+                <BAIGeneralNotificationItem
+                  key={item.key}
+                  notification={item}
+                  onClickAction={() => {
+                    item.to && webuiNavigate(item.to);
+                  }}
+                  showDate
+                />
+              ),
+            )}
+          </VStack>
+        )}
       </VStack>
     </BAIDrawer>
   );

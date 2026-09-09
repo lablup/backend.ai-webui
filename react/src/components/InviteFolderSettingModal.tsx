@@ -263,6 +263,7 @@ const InviteFolderSettingModal: React.FC<InviteFolderSettingModalProps> = ({
           </HStack>
 
           <BAITable<Invitee>
+            scroll={{ x: 'max-content' }}
             bordered
             pagination={false}
             loading={isFetching}

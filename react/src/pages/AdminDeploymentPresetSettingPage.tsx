@@ -392,6 +392,18 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
             preset {
               id
               name
+              updatedAt
+              runtimeVariant {
+                id
+                name
+              }
+              image @since(version: "26.4.4") {
+                id
+                identity {
+                  canonicalName
+                  architecture
+                }
+              }
               # Refresh the full preset node in the Relay store so re-opening the
               # edit page (store-and-network) hydrates from fresh data — in
               # particular runtimeVariant preset values, which the form section

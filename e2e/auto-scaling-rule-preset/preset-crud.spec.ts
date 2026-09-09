@@ -7,6 +7,35 @@ import { test, expect, Page } from '@playwright/test';
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
+// `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
+// `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
+// `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
+// which this app never does. The active tab carries `aria-current="true"`.
+function prometheusPresetTab(page: Page) {
+  return page
+    .getByRole('navigation', { name: 'Tabs' })
+    .getByRole('button', { name: 'Prometheus Preset' });
+}
+
+// A BAITable column header's accessible NAME is overridden by its sort
+// button's aria-label ("Sort by name") for the sortable "Name" column;
+// match the header's visible TEXT instead (see resource-policy.spec.ts /
+// registry.spec.ts for the identical pattern). Anchored exactly, since
+// "Name" would otherwise also substring-match the "Metric Name" header.
+function presetColumnHeader(page: Page, label: string) {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return page
+    .getByRole('columnheader')
+    .filter({ hasText: new RegExp(`^${escaped}$`) });
+}
+
+// Astryx's ToastViewport renders every toast twice: once in the visible
+// stack (`role="region"`, named "Notifications") and once in a singleton
+// screen-reader announcer — an unscoped getByText() strict-mode-violates.
+function toastRegion(page: Page) {
+  return page.getByRole('region', { name: 'Notifications' });
+}
+
 async function createPreset(
   page: Page,
   name: string,
@@ -34,7 +63,9 @@ async function createPreset(
     .fill(queryTemplate);
   await modal.getByRole('button', { name: 'Create' }).click({ force: true });
   await expect(
-    page.getByText('Prometheus query preset has been successfully created.'),
+    toastRegion(page).getByText(
+      'Prometheus query preset has been successfully created.',
+    ),
   ).toBeVisible({ timeout: 120000 });
   await expect(modal).toBeHidden({ timeout: 30000 });
 }
@@ -79,9 +110,9 @@ test.describe(
       await page.waitForLoadState('domcontentloaded');
 
       // Verify the active tab is "Prometheus Preset"
-      await expect(
-        page.getByRole('tab', { name: 'Prometheus Preset', selected: true }),
-      ).toBeVisible({ timeout: 15000 });
+      const presetTab = prometheusPresetTab(page);
+      await expect(presetTab).toBeVisible({ timeout: 15000 });
+      await expect(presetTab).toHaveAttribute('aria-current', 'true');
 
       // Verify the filter bar (BAIGraphQLPropertyFilter) is visible
       await expect(
@@ -93,13 +124,13 @@ test.describe(
         page.getByRole('button', { name: /Create Preset/i }),
       ).toBeVisible();
 
-      // Verify the refresh (reload) button is visible
-      await expect(page.getByRole('button', { name: 'reload' })).toBeVisible();
+      // Verify the refresh button is visible
+      await expect(
+        page.getByRole('button', { name: 'Refresh', exact: true }),
+      ).toBeVisible();
 
       // Verify table column headers: Name, Metric Name, Query Template, Time Window
-      await expect(
-        page.getByRole('columnheader', { name: 'Name', exact: true }),
-      ).toBeVisible();
+      await expect(presetColumnHeader(page, 'Name')).toBeVisible();
       await expect(
         page.getByRole('columnheader', { name: 'Metric Name' }),
       ).toBeVisible();
@@ -119,7 +150,9 @@ test.describe(
       ).toBeHidden();
 
       // Verify the table settings (gear) button is visible
-      await expect(page.getByRole('button', { name: 'setting' })).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: 'Table Settings' }),
+      ).toBeVisible();
     });
 
     // 1.2 Superadmin can see pagination controls on the preset list
@@ -133,9 +166,7 @@ test.describe(
       await expect(page.getByRole('table')).toBeVisible();
 
       // Verify pagination controls are visible
-      await expect(
-        page.getByRole('listitem').filter({ hasText: /items/ }),
-      ).toBeVisible();
+      await expect(page.getByText(/of\s+\d+\s+items/)).toBeVisible();
     });
   },
 );
@@ -186,10 +217,12 @@ test.describe(
         modal.getByRole('textbox', { name: 'Name', exact: true }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'Description (optional)' }),
+        modal.getByRole('textbox', { name: 'Description' }),
       ).toBeVisible();
+      // The Category field's Selector trigger is a plain <button> (no
+      // role="combobox" attribute), unlike the Filter/Group Labels inputs.
       await expect(
-        modal.getByRole('combobox', { name: 'Category (optional)' }),
+        modal.getByRole('button', { name: 'Category (optional)', exact: true }),
       ).toBeVisible();
       // Note: 'Rank' field is not exposed in the Create Preset form UI
       await expect(
@@ -199,13 +232,13 @@ test.describe(
         modal.getByRole('textbox', { name: 'Query Template' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('textbox', { name: 'Time Window (optional)' }),
+        modal.getByRole('textbox', { name: 'Time Window' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('combobox', { name: 'Filter Labels (optional)' }),
+        modal.getByRole('combobox', { name: 'Filter Labels' }),
       ).toBeVisible();
       await expect(
-        modal.getByRole('combobox', { name: 'Group Labels (optional)' }),
+        modal.getByRole('combobox', { name: 'Group Labels' }),
       ).toBeVisible();
 
       // Verify "Create" button is visible
@@ -256,7 +289,7 @@ test.describe(
 
       // Verify success notification
       await expect(
-        page.getByText(
+        toastRegion(page).getByText(
           'Prometheus query preset has been successfully created.',
         ),
       ).toBeVisible({ timeout: 60000 });
@@ -300,7 +333,7 @@ test.describe(
 
       // Fill Description
       await modal
-        .getByRole('textbox', { name: 'Description (optional)' })
+        .getByRole('textbox', { name: 'Description' })
         .fill('E2E full-field test description');
 
       // Fill Metric Name
@@ -314,32 +347,26 @@ test.describe(
         .fill('rate(http_requests_total[5m])');
 
       // Fill Time Window
-      await modal
-        .getByRole('textbox', { name: 'Time Window (optional)' })
-        .fill('5m');
+      await modal.getByRole('textbox', { name: 'Time Window' }).fill('5m');
 
-      // Add Filter Labels tag — Ant Design Select mode="tags" requires click-to-open + keyboard input
-      await modal
-        .getByRole('combobox', { name: 'Filter Labels (optional)' })
-        .click();
+      // Add Filter Labels tag — click-to-open + keyboard input. No trailing
+      // Escape: the Astryx tag input's own suggestion listbox already closes
+      // itself on Enter, and Escape here bubbles up and closes the dialog.
+      await modal.getByRole('combobox', { name: 'Filter Labels' }).click();
       await page.keyboard.type('namespace');
       await page.keyboard.press('Enter');
-      await page.keyboard.press('Escape');
 
       // Add Group Labels tag
-      await modal
-        .getByRole('combobox', { name: 'Group Labels (optional)' })
-        .click();
+      await modal.getByRole('combobox', { name: 'Group Labels' }).click();
       await page.keyboard.type('pod');
       await page.keyboard.press('Enter');
-      await page.keyboard.press('Escape');
 
       // Click "Create"
       await modal.getByRole('button', { name: 'Create' }).click();
 
       // Verify success notification
       await expect(
-        page.getByText(
+        toastRegion(page).getByText(
           'Prometheus query preset has been successfully created.',
         ),
       ).toBeVisible({ timeout: 60000 });
@@ -460,9 +487,7 @@ test.describe(
 
       // Navigate and note the initial count
       await page.goto(`${webuiEndpoint}/admin-serving?tab=prometheus-preset`);
-      const paginationInfo = page
-        .getByRole('listitem')
-        .filter({ hasText: /items/ });
+      const paginationInfo = page.getByText(/of\s+\d+\s+items/);
       await expect(paginationInfo).toBeVisible({ timeout: 60000 });
       // Open modal and fill fields
       await expect(
@@ -661,7 +686,7 @@ test.describe(
 
       // Verify success notification
       await expect(
-        page.getByText(
+        toastRegion(page).getByText(
           'Prometheus query preset has been successfully updated.',
         ),
       ).toBeVisible({ timeout: 60000 });
@@ -707,16 +732,14 @@ test.describe(
       await modal.getByRole('textbox', { name: 'Query Template' }).fill('up');
 
       // Fill Time Window
-      await modal
-        .getByRole('textbox', { name: 'Time Window (optional)' })
-        .fill('10m');
+      await modal.getByRole('textbox', { name: 'Time Window' }).fill('10m');
 
       // Click "Save"
       await modal.getByRole('button', { name: 'Save' }).click();
 
       // Verify success notification
       await expect(
-        page.getByText(
+        toastRegion(page).getByText(
           'Prometheus query preset has been successfully updated.',
         ),
       ).toBeVisible({ timeout: 60000 });
@@ -759,28 +782,24 @@ test.describe(
         .fill('e2e_metric');
       await modal.getByRole('textbox', { name: 'Query Template' }).fill('up');
 
-      // Add Filter Labels — Ant Design Select mode="tags" requires click-to-open + keyboard input
-      await modal
-        .getByRole('combobox', { name: 'Filter Labels (optional)' })
-        .click();
+      // Add Filter Labels — click-to-open + keyboard input. No trailing
+      // Escape: the Astryx tag input's own suggestion listbox already closes
+      // itself on Enter, and Escape here bubbles up and closes the dialog.
+      await modal.getByRole('combobox', { name: 'Filter Labels' }).click();
       await page.keyboard.type('namespace');
       await page.keyboard.press('Enter');
-      await page.keyboard.press('Escape');
 
       // Add Group Labels
-      await modal
-        .getByRole('combobox', { name: 'Group Labels (optional)' })
-        .click();
+      await modal.getByRole('combobox', { name: 'Group Labels' }).click();
       await page.keyboard.type('pod');
       await page.keyboard.press('Enter');
-      await page.keyboard.press('Escape');
 
       // Click "Save"
       await modal.getByRole('button', { name: 'Save' }).click();
 
       // Verify success notification
       await expect(
-        page.getByText(
+        toastRegion(page).getByText(
           'Prometheus query preset has been successfully updated.',
         ),
       ).toBeVisible({ timeout: 60000 });

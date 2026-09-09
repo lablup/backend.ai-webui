@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 19;
+export const THEME_NAME_REV = 22;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -116,9 +116,11 @@ export const THEME_NAME_REV = 19;
  * legacy `MainLayout` painted its `Layout` `transparent`, so what the user
  * actually saw was `<body>`, which `resources/webui.css` set to `#F7F7F6`
  * (light) and `#191919` (`body.dark-theme`). Those are the values pinned
- * here — they are what the legacy build rendered, and they also keep the boot
- * curtain (`index.html`, which reads `--color-background-body`) identical to
- * legacy.
+ * here — they are what the legacy build rendered. The boot curtain
+ * (`index.html`) declares the same pair as a LITERAL rather than reading this
+ * token: core's `astryx.css` sets it on bare `:root` before the brand theme's
+ * scoped override registers, so pre-boot it would resolve to Astryx's stock
+ * value. Keep the two in sync by hand (FR-3732).
  *
  * Cross-check that this is the right mapping: `resources/theme.json` sets
  * `Layout.lightSiderBg: #FFF` / `siderBg: #141414`, and the sider is painted
@@ -516,11 +518,27 @@ const STATUS_TEXT_COLORS = {
 // theme points at `--color-background-blue` — dark-only alpha (`#9eb7ff3D` =
 // 24%), so page content read through the notification cards. `#393f50` is that
 // fill composited over the dark page: same colour, opaque (FR-3554).
+const BANNER_INFO_SURFACE = 'light-dark(#c4ddfb, #393f50)';
+
 const BANNER_OPAQUE_INFO_SURFACE = {
   banner: {
-    'status:info': {
-      '--color-accent-muted': 'light-dark(#c4ddfb, #393f50)',
-    },
+    'status:info': { '--color-accent-muted': BANNER_INFO_SURFACE },
+  },
+};
+
+// Banner renders its content area as a SIBLING of the coloured header, on
+// `--color-background-card`, so a detail body reads as a detached white block
+// (FR-3700). Set the TOKEN, never `backgroundColor`: StyleX's priority4 layer
+// outranks `@layer astryx-theme` and a plain declaration silently no-ops.
+// The content area is a SIBLING of the coloured header, not a child, so it
+// takes the same fill by literal rather than by inheriting the token. It also
+// draws its own left/right/bottom border in `--color-border`, which with a
+// tinted fill reads as a box around the expanded half only — hence the
+// transparent border.
+const BANNER_CONTENT_STATUS_SURFACE = {
+  'banner-content': {
+    base: { '--color-border': 'transparent' },
+    'status:info': { '--color-background-card': BANNER_INFO_SURFACE },
   },
 };
 
@@ -791,6 +809,11 @@ const ANTD_HOVER_PARITY = {
       // truncating trigger's `nowrap` reaches the bubble and its 300px content
       // cap can no longer wrap — the text paints outside the surface. FR-3573.
       whiteSpace: 'normal',
+      // A `Kbd` inside the bubble paints with these; the dark palette's
+      // `--color-neutral` (#262626) equals the composited bubble. FR-3726.
+      '--color-neutral': 'rgba(255,255,255,0.16)',
+      '--color-border-emphasized': 'rgba(255,255,255,0.35)',
+      '--color-text-secondary': 'rgba(255,255,255,0.85)',
     },
   },
   // antd's `.ant-tabs-tab:hover` recolours the LABEL and paints no background.
@@ -905,6 +928,40 @@ const toMutedTuple = (tuple: [string, string]): [string, string] | undefined =>
     ? [`${tuple[0]}33`, `${tuple[1]}3F`]
     : undefined;
 
+/**
+ * The opaque twin of `toMutedTuple`. A floating notification must not show the
+ * page through it, so the banner takes the SAME fill composited over the card
+ * surface — derived from the resolved seed, so an operator `theme.json`
+ * rebrand still reaches it (FR-3700).
+ */
+const CARD_SURFACE: [string, string] = ['#FFFFFF', '#141414'];
+
+const compositeOver = (hex: string, alpha: number, bg: string): string => {
+  const channel = (v: string, i: number) =>
+    parseInt(v.slice(1 + i * 2, 3 + i * 2), 16);
+  return (
+    '#' +
+    [0, 1, 2]
+      .map((i) =>
+        Math.round(alpha * channel(hex, i) + (1 - alpha) * channel(bg, i))
+          .toString(16)
+          .padStart(2, '0')
+          .toUpperCase(),
+      )
+      .join('')
+  );
+};
+
+const toOpaqueMutedTuple = (
+  tuple: [string, string],
+): [string, string] | undefined =>
+  /^#[0-9a-fA-F]{6}$/.test(tuple[0]) && /^#[0-9a-fA-F]{6}$/.test(tuple[1])
+    ? [
+        compositeOver(tuple[0], 0x33 / 255, CARD_SURFACE[0]),
+        compositeOver(tuple[1], 0x3f / 255, CARD_SURFACE[1]),
+      ]
+    : undefined;
+
 /** djb2 — tiny, stable, DOM-attribute-safe (base36). */
 const hashSeeds = (input: string): string => {
   let h = 5381;
@@ -968,6 +1025,7 @@ export const computeThemeName = (
       ANTD_DROPDOWN_DENSITY,
       COMPLEX_SELECTOR_HEIGHT_PARITY,
       FIELD_PAGE_OVERLAYS,
+      BANNER_CONTENT_STATUS_SURFACE,
     ]),
   );
   // `h` prefix: every name segment must start with a letter — `astryx theme
@@ -1007,6 +1065,27 @@ export function buildBackendAiTheme(
   const errorMuted = toMutedTuple(error);
   const successMuted = toMutedTuple(success);
   const warningMuted = toMutedTuple(warning);
+  // Seed-derived opaque fills for the floating banner surfaces (FR-3700).
+  const bannerFill = (
+    token: string,
+    tuple: [string, string] | undefined,
+  ): Record<string, string> =>
+    tuple ? { [token]: `light-dark(${tuple[0]}, ${tuple[1]})` } : {};
+  const errorFill = toOpaqueMutedTuple(error);
+  const successFill = toOpaqueMutedTuple(success);
+  const warningFill = toOpaqueMutedTuple(warning);
+  const bannerStatusSurfaces = {
+    banner: {
+      'status:error': bannerFill('--color-error-muted', errorFill),
+      'status:success': bannerFill('--color-success-muted', successFill),
+      'status:warning': bannerFill('--color-warning-muted', warningFill),
+    },
+    'banner-content': {
+      'status:error': bannerFill('--color-background-card', errorFill),
+      'status:success': bannerFill('--color-background-card', successFill),
+      'status:warning': bannerFill('--color-background-card', warningFill),
+    },
+  };
 
   const theme = defineTheme({
     name,
@@ -1083,7 +1162,14 @@ export function buildBackendAiTheme(
     components: {
       ...SIDE_NAV_DENSITY,
       ...STATUS_TEXT_COLORS,
-      ...BANNER_OPAQUE_INFO_SURFACE,
+      banner: {
+        ...BANNER_OPAQUE_INFO_SURFACE.banner,
+        ...bannerStatusSurfaces.banner,
+      },
+      'banner-content': {
+        ...BANNER_CONTENT_STATUS_SURFACE['banner-content'],
+        ...bannerStatusSurfaces['banner-content'],
+      },
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
       ...COMPLEX_SELECTOR_HEIGHT_PARITY,

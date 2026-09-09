@@ -329,6 +329,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
       mutation UserSettingModalUpdateMutation(
         $userId: UUID!
         $input: UpdateUserV2Input!
+        $isNotSupportTotp: Boolean!
       ) {
         adminUpdateUserV2(userId: $userId, input: $input) {
           user {
@@ -347,8 +348,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               mainAccessKey
             }
             security {
-              totpActivated
-              totpActivatedAt
+              totpActivated @skipOnClient(if: $isNotSupportTotp)
+              totpActivatedAt @skipOnClient(if: $isNotSupportTotp)
               sudoSessionEnabled
               allowedClientIp
             }
@@ -361,6 +362,16 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               containerUid
               containerMainGid
               containerGids
+            }
+            projects {
+              edges {
+                node {
+                  id
+                  basicInfo {
+                    name
+                  }
+                }
+              }
             }
             timestamps {
               createdAt
@@ -375,7 +386,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
   // keypair (secret key shown once), so single create runs fully on v2.
   const [commitCreateUser, isInFlightCommitCreateUser] =
     useMutation<UserSettingModalCreateMutation>(graphql`
-      mutation UserSettingModalCreateMutation($input: CreateUserV2Input!) {
+      mutation UserSettingModalCreateMutation(
+        $input: CreateUserV2Input!
+        $isNotSupportTotp: Boolean!
+      ) {
         adminCreateUserV2(input: $input) {
           user {
             id
@@ -393,8 +407,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               mainAccessKey
             }
             security {
-              totpActivated
-              totpActivatedAt
+              totpActivated @skipOnClient(if: $isNotSupportTotp)
+              totpActivatedAt @skipOnClient(if: $isNotSupportTotp)
               sudoSessionEnabled
               allowedClientIp
             }
@@ -569,6 +583,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   _.toNumber(v),
                 ),
               },
+              isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (_res, errors) => {
               if (errors?.[0]) {
@@ -577,7 +592,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 return;
               }
               message.success(t('environment.SuccessfullyModified'));
-              onRequestClose(false);
+              onRequestClose(true);
             },
             onError: (err) => {
               message.error(t('dialog.ErrorOccurred'));
@@ -608,6 +623,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   ? _.map(formValues.container_gids, (v) => _.toNumber(v))
                   : null,
               },
+              isNotSupportTotp: !isTOTPSupported,
             },
             onCompleted: (res, errors) => {
               // adminCreateUserV2 reports failures via GraphQL errors
@@ -632,7 +648,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 // Show the created keypair modal (secret key returned once).
                 setCreatedKeypairs([res.adminCreateUserV2.keypair]);
               } else {
-                onRequestClose(false);
+                onRequestClose(true);
               }
             },
             onError: (err) => {

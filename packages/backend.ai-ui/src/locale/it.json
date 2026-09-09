@@ -95,9 +95,16 @@
     "ActionExecutionFailed": "Esecuzione non riuscita",
     "ErrorOccurred": "Si è verificato un errore"
   },
+  "comp:BAIColorPicker": {
+    "Clear": "Cancella",
+    "HexValue": "Valore esadecimale",
+    "NoColor": "Nessun colore",
+    "SelectColor": "Seleziona colore"
+  },
   "comp:BAIComplexSelect": {
+    "ClearSearch": "Cancella Cerca tra le opzioni",
     "NoResults": "Nessun risultato",
-    "Search": "Ricerca"
+    "SearchOptions": "Cerca tra le opzioni"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Seleziona registro container"
@@ -162,7 +169,7 @@
     "SelectDomain": "Seleziona dominio"
   },
   "comp:BAIDynamicUnitInputNumberWithSlider": {
-    "Amount": "Amount"
+    "Amount": "Quantità"
   },
   "comp:BAIFetchKeyButton": {
     "AutoRefresh": "Aggiornamento automatico",
@@ -178,6 +185,8 @@
     "operator": {
       "After": "dopo",
       "Before": "prima",
+      "Contains": "Contiene",
+      "EndsWith": "termina con",
       "Equals": "uguale a",
       "GreaterThan": "maggiore di",
       "GreaterThanOrEqual": "maggiore o uguale",
@@ -192,15 +201,19 @@
       "In": "in",
       "LessThan": "minore di",
       "LessThanOrEqual": "minore o uguale",
+      "NotContains": "non contiene",
+      "NotEndsWith": "non termina con",
       "NotEquals": "diverso da",
-      "NotIn": "non in"
+      "NotIn": "non in",
+      "NotStartsWith": "non inizia con",
+      "StartsWith": "inizia con"
     }
   },
   "comp:BAIHuggingFaceRegistrySettingModal": {
-    "EnterToken": "Enter your HuggingFace token",
-    "HuggingFaceSettings": "Hugging Face Settings",
+    "EnterToken": "Inserisci il tuo token Hugging Face",
+    "HuggingFaceSettings": "Impostazioni Hugging Face",
     "Token": "Token",
-    "TokenUpdatedSuccessfully": "Token updated successfully."
+    "TokenUpdatedSuccessfully": "Token aggiornato correttamente."
   },
   "comp:BAIImageSelect": {
     "SelectImage": "Seleziona Immagine"
@@ -214,6 +227,39 @@
     "Size": "Misurare",
     "SuccessFullyPulled": "Pullo correttamente richiesto per le versioni {{count}}.",
     "Version": "Versione"
+  },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Verifica della sessione Backend.AI in corso…",
+    "SignInWithBackendAI": "Accedi con Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Il browser ha bloccato la richiesta al server web Backend.AI. Di solito si tratta di una restrizione CORS o di contenuto misto.",
+      "HttpError": "Il server web Backend.AI ha restituito un errore ({{status}}).",
+      "InvalidCallback": "L'indirizzo di ritorno per l'accesso configurato per {{appName}} non è un indirizzo web valido.",
+      "InvalidResponse": "Il server web Backend.AI ha restituito una risposta inattesa.",
+      "NoEndpoint": "Nessun indirizzo del server web Backend.AI è configurato per {{appName}}.",
+      "NoSessionId": "Hai effettuato l'accesso a Backend.AI, ma il server web non ha restituito un ID di sessione.",
+      "NoSessionOverHttp": "Non hai ancora effettuato l'accesso a Backend.AI. Se hai già effettuato l'accesso, {{appName}} viene servito tramite HTTP, quindi il browser potrebbe rifiutare il cookie di sessione sicuro del server web. Prova ad aprire {{appName}} tramite HTTPS.",
+      "NoSessionOverHttps": "Non hai ancora effettuato l'accesso a Backend.AI. Se hai già effettuato l'accesso, {{appName}} e il server web Backend.AI potrebbero essere siti diversi, quindi il browser non invia il cookie di sessione.",
+      "RelayFailed": "Hai effettuato l'accesso a Backend.AI, ma {{appName}} non è riuscito a completare l'accesso.",
+      "Timeout": "Il server web Backend.AI non ha risposto in tempo.",
+      "Title": "Impossibile accedere con Backend.AI"
+    }
+  },
+  "comp:BAIKeypairResourcePolicyV2Table": {
+    "ClusterSize": "Dimensione del cluster",
+    "Concurrency": "Sessioni simultanee",
+    "CreatedAt": "Creato a",
+    "DefaultForUnspecified": "Predefinito per non specificato",
+    "DefaultForUnspecifiedTooltipDesc1": "Imposta il criterio predefinito quando non è richiesta alcuna CPU o memoria specifica.",
+    "DefaultForUnspecifiedTooltipDesc2": "\"Unlimited\" consente l'utilizzo fino alla capacità del nodo dell'agente, mentre \"limitato\" nega le risorse se non esplicitamente fissate. \nNella maggior parte dei casi, si consiglia \"illimitato\".",
+    "IdleTimeout": "Timeout di inattività",
+    "MaxConcurrentSFTPSessions": "Sessioni SFTP con contenitori massimi",
+    "MaxPendingSessionCount": "Conteggio delle sessioni massimo in sospeso",
+    "MaxPendingSessionResourceSlots": "Slot di risorse sessioni massime in sospeso",
+    "MaxSessionLifetime": "Durata massima della sessione",
+    "Name": "Nome",
+    "StorageNodes": "Nodi di archiviazione",
+    "TotalResourceSlots": "Politica delle risorse"
   },
   "comp:BAIKeypairSelect": {
     "SelectKeypair": "Seleziona coppia di chiavi"
@@ -231,11 +277,11 @@
     "User": "Utente"
   },
   "comp:BAIModal": {
-    "ExitFullscreen": "Exit fullscreen",
-    "Fullscreen": "Fullscreen",
-    "Maximize": "Maximize",
-    "Minimize": "Minimize",
-    "Restore": "Restore"
+    "ExitFullscreen": "Esci da schermo intero",
+    "Fullscreen": "Schermo intero",
+    "Maximize": "Ingrandisci",
+    "Minimize": "Riduci a icona",
+    "Restore": "Ripristina"
   },
   "comp:BAIModelDeploymentNodes": {
     "AreYouSureToDeleteDeployment": "Sei sicuro di voler eliminare il deployment \"{{deploymentName}}\"? Questa azione non può essere annullata.",
@@ -275,6 +321,13 @@
     "FollowingProjectsWillBeUpdated": "Il/I seguente/i progetto/i verrà/verranno aggiornato/i.",
     "ProjectResourcePolicy": "Politica delle risorse del progetto",
     "UpdateMultipleProjects": "Aggiorna più progetti"
+  },
+  "comp:BAIProjectResourcePolicyV2Table": {
+    "CreatedAt": "Creato a",
+    "MaxNetworkCount": "Conteggio massimo della rete",
+    "MaxQuotaScopeSize": "Dimensione massima della cartella",
+    "MaxVFolderCount": "Conteggio massimo cartelle",
+    "Name": "Nome"
   },
   "comp:BAIProjectSelect": {
     "SelectProject": "Seleziona progetto"
@@ -322,8 +375,20 @@
     "SelectFolder": "Seleziona cartella"
   },
   "comp:BAIPropertyFilter": {
+    "Apply": "Applica",
     "PlaceHolder": "Ricerca",
-    "ResetFilter": "Reimposta i filtri"
+    "ResetFilter": "Reimposta i filtri",
+    "SearchLabel": "Cerca filtri",
+    "operator": {
+      "Contains": "Contiene",
+      "Equals": "uguale a",
+      "GreaterThan": "maggiore di",
+      "GreaterThanOrEqual": "maggiore o uguale",
+      "In": "in",
+      "LessThan": "minore di",
+      "LessThanOrEqual": "minore o uguale",
+      "NotEquals": "diverso da"
+    }
   },
   "comp:BAIPullingArtifactRevisionAlert": {
     "CancelPull": "Annulla il pull",
@@ -383,7 +448,7 @@
     "ChoiceValueRequired": "Il valore dell'opzione è obbligatorio.",
     "Choices": "Opzioni",
     "ChoicesRequired": "È richiesta almeno un'opzione.",
-    "CreatePreset": "Crea Preimpostazione",
+    "CreatePreset": "Crea Parametro",
     "DefaultValue": "Valore Predefinito",
     "DefaultValuePlaceholder": "es. 1",
     "Description": "Descrizione",
@@ -391,7 +456,7 @@
     "DisplayName": "Nome Visualizzato",
     "DisplayNamePlaceholder": "es. Tensor Parallel Size",
     "DisplayNameTooltip": "Etichetta leggibile mostrata al posto del nome del parametro nel modulo di distribuzione.",
-    "EditPreset": "Modifica Preimpostazione",
+    "EditPreset": "Modifica Parametro",
     "Key": "Chiave",
     "KeyPlaceholder": "es. TENSOR_PARALLEL_SIZE",
     "KeyRequired": "La chiave è obbligatoria.",
@@ -401,16 +466,17 @@
     "NumberMax": "Massimo",
     "NumberMaxMustExceedMin": "Il valore massimo deve essere maggiore del valore minimo.",
     "NumberMin": "Minimo",
-    "PresetCreated": "La preimpostazione della variante di runtime è stata creata.",
-    "PresetTarget": "Destinazione Preimpostazione",
+    "PresetCreated": "Il parametro di runtime è stato creato.",
+    "PresetTarget": "Destinazione Parametro",
     "PresetTargetArgs": "Argomento da Riga di Comando",
     "PresetTargetEnv": "Variabile d'Ambiente",
-    "PresetTargetRequired": "La destinazione della preimpostazione è obbligatoria.",
-    "PresetUpdated": "La preimpostazione della variante di runtime è stata aggiornata.",
+    "PresetTargetRequired": "La destinazione del parametro è obbligatoria.",
+    "PresetUpdated": "Il parametro di runtime è stato aggiornato.",
     "Rank": "Grado",
-    "RankTooltip": "Ordine di visualizzazione tra le preimpostazioni della stessa variante di runtime. I valori inferiori vengono visualizzati prima.",
+    "RankTooltip": "Ordine di visualizzazione tra i parametri dello stesso runtime. I valori inferiori vengono visualizzati prima.",
     "Required": "Obbligatorio",
-    "RequiredTooltip": "Indica se questo parametro della preimpostazione deve essere fornito durante la creazione di una revisione di distribuzione.",
+    "RequiredTooltip": "Indica se questo parametro deve essere fornito durante la creazione di una revisione di distribuzione.",
+    "Requirement": "Obbligatorietà",
     "RuntimeVariant": "Variante di Runtime",
     "RuntimeVariantRequired": "La variante di runtime è obbligatoria.",
     "SliderMax": "Massimo",
@@ -421,10 +487,12 @@
     "SliderStep": "Incremento",
     "SliderStepMustBePositive": "L'incremento deve essere maggiore di 0.",
     "SliderStepTooltip": "Incremento del cursore. Il valore predefinito è 1.",
+    "StoredValueTypeMismatch": "Questo parametro è salvato con il tipo di valore {{valueType}}, che il tipo di interfaccia {{uiType}} non può rappresentare. Modifica il tipo di interfaccia o il tipo di valore.",
     "TextPlaceholderExample": "es. Inserisci un valore",
     "TextPlaceholderLabel": "Segnaposto di Input",
     "UIType": "Tipo di UI",
     "UITypeCheckbox": "Casella di Controllo",
+    "UITypeIncompatibleWithValueType": "Il tipo di interfaccia selezionato non può rappresentare questo tipo di valore.",
     "UITypeNumberInput": "Input Numerico",
     "UITypeSelect": "Selezione",
     "UITypeSlider": "Cursore",
@@ -448,14 +516,20 @@
     "ModifiedAt": "Ultima modifica",
     "Name": "Nome",
     "Optional": "Opzionale",
-    "PresetTarget": "Destinazione Preimpostazione",
+    "PresetTarget": "Destinazione Parametro",
     "PresetTargetArgs": "Argomento da Riga di Comando",
     "PresetTargetEnv": "Variabile d'Ambiente",
     "Rank": "Grado",
-    "RankTooltip": "Ordine di visualizzazione tra le preimpostazioni della stessa variante di runtime. I valori inferiori vengono visualizzati prima.",
+    "RankTooltip": "Ordine di visualizzazione tra i parametri dello stesso runtime. I valori inferiori vengono visualizzati prima.",
     "Required": "Obbligatorio",
-    "RuntimeVariant": "Variante di Runtime",
     "RuntimeVariantId": "ID Variante di Runtime",
+    "RuntimeVariantWithID": "Variante di Runtime (ID)",
+    "UIType": "Tipo di UI",
+    "UITypeCheckbox": "Casella di Controllo",
+    "UITypeNumberInput": "Input Numerico",
+    "UITypeSelect": "Selezione",
+    "UITypeSlider": "Cursore",
+    "UITypeTextInput": "Input di Testo",
     "ValueType": "Tipo di Valore",
     "ValueTypeBool": "Booleano",
     "ValueTypeFlag": "Flag",
@@ -557,37 +631,36 @@
     "ArchiveDownloadStarted": "Download di {{count}} elemento(i) avviato.",
     "ChangeFileExtension": "Modificare l'estensione del file",
     "ChangeFileExtensionDesc": "La modifica dell'estensione del file può far sì che il file diventi inutilizzabile o si aprirà in modo errato. \nVuoi procedere?",
-    "Controls": "Controlli",
-    "CreateANewFile": "Create a new file",
+    "CreateANewFile": "Crea un nuovo file",
     "CreateANewFolder": "Crea una nuova cartella",
-    "CreateFile": "Create File",
-    "CreateFolder": "Create Folder",
+    "CreateFile": "Crea file",
+    "CreateFolder": "Crea cartella",
     "CreatedAt": "Creato a",
     "DeleteSelectedItemDesc": "I file e le cartelle cancellati non possono essere ripristinati. \nVuoi procedere?",
     "DeleteSelectedItemsDialog": "Elimina la conferma",
+    "Download": "Scarica",
     "DownloadSelected": "Scarica",
     "DownloadStarted": "File \"{{fileName}}\" è stato avviato il download.",
     "DragAndDropDesc": "Trascina i file in quest'area da caricare.",
     "DuplicatedFiles": "Sovrascrivere la conferma",
     "DuplicatedFilesDesc": "Il file o la cartella con lo stesso nome esiste già. \nVuoi sovrascrivere?",
     "EditFile": "Modifica file",
-    "FileCreatedSuccessfully": "File created successfully.",
-    "FileName": "File Name",
-    "FileNamePlaceholder": "e.g. model-definition.yaml",
+    "FileCreatedSuccessfully": "File creato correttamente.",
+    "FileName": "Nome del file",
+    "FileNamePlaceholder": "es. model-definition.yaml",
     "FileTooLargeToEdit": "La modifica nel browser è limitata perché la dimensione del file supera {{size}}MB.",
     "FolderCreatedSuccessfully": "Cartella creata correttamente.",
     "FolderName": "Nome della cartella",
     "InvalidFileNameCharacters": "File name must not contain path separators (/ or \\\\).",
-    "MaxFileNameLength": "File name must be 255 characters or less.",
+    "MaxFileNameLength": "Il nome del file deve contenere al massimo 255 caratteri.",
     "MaxFolderNameLength": "Il nome della cartella deve essere di 255 caratteri o meno.",
     "ModifiedAt": "Modificato a",
-    "MoreOptions": "Più opzioni",
     "Name": "Nome",
     "NoUploadPermissionForHost": "Non si dispone del permesso di caricamento per questo host.",
-    "Path": "Path",
-    "PleaseEnterAFileName": "Please enter the file name.",
+    "Path": "Percorso",
+    "PleaseEnterAFileName": "Immettere il nome del file.",
     "PleaseEnterAFolderName": "Immettere il nome della cartella.",
-    "RenameFile": "Rename",
+    "RenameFile": "Rinomina",
     "RenameSuccess": "Il nome è stato cambiato con successo.",
     "SelectedItemsDeletedSuccessfully": "I file e le cartelle selezionati sono stati eliminati correttamente.",
     "Size": "Misurare",
@@ -702,23 +775,26 @@
     }
   },
   "general": {
-    "Decrease": "Decrease",
+    "Decrease": "Diminuisci",
     "DeselectAll": "Deseleziona tutto",
     "File": "File",
-    "Increase": "Increase",
+    "Increase": "Aumenta",
+    "Loading": "Caricamento...",
     "NSelected": "{{count}} selezionato",
     "Optional": "Opzionale",
     "Project": "Progetto",
-    "Select": "Select",
+    "Search": "Cerca",
+    "Select": "Seleziona",
+    "SelectPlaceholder": "Seleziona {{label}}",
     "TotalItems": "Totali {{total}} elementi",
-    "Unit": "Unit",
+    "Unit": "Unità",
     "button": {
-      "Action": "Action",
-      "Back": "Back",
+      "Action": "Azione",
+      "Back": "Indietro",
       "Cancel": "Cancellare",
       "Close": "Vicino",
       "Collapse": "Crollo",
-      "Confirm": "Confirm",
+      "Confirm": "Conferma",
       "Copied": "Copiato",
       "Copy": "Copia",
       "CopyAll": "Copia tutto",

@@ -382,19 +382,19 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
               label={t('route.RouteSchedulingHistory')}
               tooltip={t('route.RouteSchedulingHistory')}
               clickAction={async () => {
-                  const id = safeDecodeUuid(record.id) ?? record.id;
-                  // Render-as-you-fetch: start the request in the open event.
-                  loadRouteHistoryQuery(
-                    {
-                      scope: { routeId: id },
-                      orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
-                      limit: 10,
-                      offset: 0,
-                    },
-                    {
-                      fetchPolicy: 'store-and-network',
-                    },
-                  );
+                const id = safeDecodeUuid(record.id) ?? record.id;
+                // Render-as-you-fetch: start the request in the open event.
+                loadRouteHistoryQuery(
+                  {
+                    scope: { routeId: id },
+                    orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                    limit: 10,
+                    offset: 0,
+                  },
+                  {
+                    fetchPolicy: 'store-and-network',
+                  },
+                );
                 setIsRouteHistoryOpen(true);
               }}
             />
@@ -579,6 +579,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         />
       </BAIFlex>
       <BAITable<ReplicaNode>
+        scroll={{ x: 'max-content' }}
         rowKey={(record) => record.id}
         dataSource={replicas}
         columns={columns}

@@ -96,6 +96,7 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
         />
       </BAIFlex>
       <BAITable
+        scroll={{ x: 'max-content' }}
         size="small"
         dataSource={auditLogs}
         rowKey="id"

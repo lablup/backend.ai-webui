@@ -179,6 +179,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         }}
       /> */}
       <BAITable
+        scroll={{ x: 'max-content' }}
         bordered
         // loading={isPendingFilter}
         rowKey="id"

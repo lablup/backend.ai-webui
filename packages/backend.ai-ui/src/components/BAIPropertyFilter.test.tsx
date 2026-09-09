@@ -11,6 +11,7 @@
  filter string for every page that mounts this component (the ticket-28
  consumer census) and asserts byte-for-byte stability.
 */
+import BAIPopconfirm from './BAIPopconfirm';
 import BAIPropertyFilter, {
   buildFieldSpecs,
   defaultContentSearchFieldKey,
@@ -20,7 +21,8 @@ import BAIPropertyFilter, {
   serializeFilters,
   type FilterProperty,
 } from './BAIPropertyFilter';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 describe('parseFilterValue', () => {
   it('should correctly parse filter with binary operators', () => {
@@ -531,5 +533,97 @@ describe('BAIPropertyFilter render', () => {
       />,
     );
     expect(screen.getByTestId('property-filter')).toBeInTheDocument();
+  });
+});
+
+/*
+ FR-3739 — guards the `useFocusTrap` restore behaviour Astryx fixed upstream in
+ 0.5.4 (a local patch carried the same fix from 0.5.0 to 0.5.2).
+
+ The suggestion popover opens with `role: 'none'` + `hasAutoFocus: false`, so
+ the input keeps focus and the trap never holds it. An unconditional restore
+ re-focused the input the dismissal had just blurred, and because the input
+ was already focused, clicking it again fired no `focus` event and the menu
+ stayed shut. The fix skips the restore when focus never entered the trap
+ container. The first test is the bug; the second is the behaviour the fix
+ must NOT break — a popup that does take focus still restores it.
+*/
+describe('BAIPropertyFilter dismissal (FR-3739)', () => {
+  const filterProperties: Array<FilterProperty> = [
+    { key: 'name', propertyLabel: 'Name', type: 'string' },
+    { key: 'status', propertyLabel: 'Status', type: 'string' },
+  ];
+
+  const renderFilter = () => {
+    render(
+      <BAIPropertyFilter
+        filterProperties={filterProperties}
+        value=""
+        onChange={() => {}}
+      />,
+    );
+    return screen.getByRole('combobox');
+  };
+
+  it('releases input focus when the suggestions are dismissed', async () => {
+    const input = renderFilter();
+
+    input.focus();
+    await waitFor(() => expect(input).toHaveAttribute('aria-expanded', 'true'));
+
+    // What an outside click does: the browser blurs the input, and the layer
+    // closes. Unpatched, the focus-trap teardown put focus straight back.
+    input.blur();
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-expanded', 'false'),
+    );
+    expect(document.activeElement).not.toBe(input);
+  });
+
+  it('reopens the suggestions when the released input is focused again', async () => {
+    const input = renderFilter();
+
+    input.focus();
+    await waitFor(() => expect(input).toHaveAttribute('aria-expanded', 'true'));
+    input.blur();
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-expanded', 'false'),
+    );
+
+    input.focus();
+    await waitFor(() => expect(input).toHaveAttribute('aria-expanded', 'true'));
+  });
+
+  it('still restores focus to the trigger of a popup that takes focus', async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button" data-testid="outside">
+          outside
+        </button>
+        <BAIPopconfirm
+          title="Delete this?"
+          onConfirm={() => {}}
+          okText="Delete"
+          cancelText="Cancel"
+        >
+          <button type="button" data-testid="trigger">
+            trigger
+          </button>
+        </BAIPopconfirm>
+      </>,
+    );
+
+    const trigger = screen.getByTestId('trigger');
+    await user.click(trigger);
+    const cancel = await screen.findByRole('button', { name: 'Cancel' });
+
+    // Focus genuinely enters this popup, so the trap owns it and must hand it
+    // back to the trigger when the popup closes.
+    cancel.focus();
+    expect(document.activeElement).toBe(cancel);
+    await user.click(cancel);
+
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
 });
