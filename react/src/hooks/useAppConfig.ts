@@ -134,14 +134,14 @@ const throwOnFailed = (
  * only. Suspends; post-login surfaces inside `RelayEnvironmentProvider`
  * only.
  */
-export const useMyAppConfig = <T = AppConfigDocument,>(
+export const useMyAppConfig = <T = AppConfigDocument>(
   subKey?: string | Array<string>,
 ): T | undefined => {
   'use memo';
   const data = useLazyLoadQuery<useAppConfigMyQuery>(myQuery, {
     configNames: ['userConfig'],
   });
-  const doc = data.myAppConfigs.find((c) => c.configName === 'userConfig')
+  const doc = data?.myAppConfigs?.find((c) => c.configName === 'userConfig')
     ?.config as AppConfigDocument | undefined;
   return (subKey === undefined ? doc : _.get(doc, subKey)) as T | undefined;
 };
@@ -151,7 +151,7 @@ export const useMyAppConfig = <T = AppConfigDocument,>(
  * of the domain (admin-writable only). Read only. Suspends; post-login
  * surfaces inside `RelayEnvironmentProvider` only.
  */
-export const useDomainAppConfig = <T = AppConfigDocument,>(
+export const useDomainAppConfig = <T = AppConfigDocument>(
   subKey?: string | Array<string>,
 ): T | undefined => {
   'use memo';

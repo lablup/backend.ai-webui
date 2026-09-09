@@ -36,7 +36,7 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
   'use memo';
 
   const { t } = useTranslation();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
 
   const [openThemeConfigModal, setOpenThemeConfigModal] = useState(false);
@@ -52,17 +52,26 @@ const BrandingSettingList: React.FC<BrandingSettingListProps> = () => {
       message.error(t('userSettings.FailedToLoadDefaultThemeConfig'));
       return;
     }
-    try {
-      await updatePublicDomainAppConfig(DOMAIN_APPEARANCE_CONFIG_KEY, {
-        ...defaultTheme,
-        schemaVersion: APPEARANCE_SCHEMA_VERSION,
-      });
-      // The reloaded page renders the applied document — that IS the
-      // feedback; the anonymous read path has no refresh API (FR-1964).
-      window.location.reload();
-    } catch (error) {
-      message.error(getErrorMessage(error));
-    }
+    // A domain-wide write: confirm first; the ok button waits on the save.
+    modal.confirm({
+      title: t('userSettings.ApplyThemeToDomain'),
+      content: t('userSettings.ApplyThemeToDomainDesc'),
+      okText: t('button.Apply'),
+      cancelText: t('button.Cancel'),
+      onOk: async () => {
+        try {
+          await updatePublicDomainAppConfig(DOMAIN_APPEARANCE_CONFIG_KEY, {
+            ...defaultTheme,
+            schemaVersion: APPEARANCE_SCHEMA_VERSION,
+          });
+          // The reloaded page renders the applied document — that IS the
+          // feedback; the anonymous read path has no refresh API (FR-1964).
+          window.location.reload();
+        } catch (error) {
+          message.error(getErrorMessage(error));
+        }
+      },
+    });
   };
 
   const resetColorThemeConfig = (seedPath: AppearanceSeedPath) => {
