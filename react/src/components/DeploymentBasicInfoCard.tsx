@@ -303,8 +303,6 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
               >
                 {t('button.Edit')}
               </BAIButton>
-              {/* PILOT-DECISION: antd menu-item `danger: true` (red tint on
-                  the Delete entry) has no DropdownMenu equivalent — dropped. */}
               <DropdownMenu
                 button={{
                   label: t('button.More'),
@@ -312,10 +310,16 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
                   isIconOnly: true,
                 }}
                 hasChevron={false}
+                // The trigger sits at the card's right edge: with the default
+                // start alignment the panel gets only the strip between the
+                // button and the viewport and clips its label (FR-3894).
+                placement="below"
+                alignment="end"
                 items={[
                   {
                     label: t('deployment.DeleteDeployment'),
                     icon: <Trash2 size="1em" />,
+                    variant: 'destructive',
                     isDisabled:
                       isDeploymentInStoppedCategory(deploymentStatus) ||
                       isInFlightDeleteMutation,
