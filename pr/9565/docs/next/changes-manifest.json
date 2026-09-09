@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-09T15:52:56.600Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "session_page",
+          "title": "Session Page",
+          "status": "modified",
+          "url": "next/en/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "68d974243319"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "session_page",
+          "title": "セッションページ",
+          "status": "modified",
+          "url": "next/ja/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "d1c6f1fbf3e1"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "session_page",
+          "title": "세션 페이지",
+          "status": "modified",
+          "url": "next/ko/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "0651b147eb96"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "session_page",
+          "title": "หน้าเซสชัน",
+          "status": "modified",
+          "url": "next/th/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "a7001f36ab91"
+          ]
+        }
+      ]
+    }
+  }
+}
