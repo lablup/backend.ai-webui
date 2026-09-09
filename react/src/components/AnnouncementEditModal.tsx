@@ -14,12 +14,13 @@ import {
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
 import { Button } from '@lablup/ui-common/Button';
-import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Markdown } from '@lablup/ui-common/Markdown';
 import { Text } from '@lablup/ui-common/Text';
 import { TextInput } from '@lablup/ui-common/TextInput';
+import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { OnMount } from '@monaco-editor/react';
 import {
@@ -34,6 +35,7 @@ import {
   ALargeSmall,
   Bold,
   Code,
+  Ellipsis,
   Image,
   Italic,
   Link,
@@ -112,23 +114,25 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
 
   const [titleDraft, setTitleDraft] = useState<string>();
   const [bodyDraft, setBodyDraft] = useState<string>();
-  const [enabledDraft, setEnabledDraft] = useState<boolean>();
   const title = titleDraft ?? announcement?.title ?? '';
   const body = bodyDraft ?? announcement?.body ?? '';
-  const enabled = enabledDraft ?? announcement?.enabled ?? true;
   const isTitleMissing = !title.trim();
+  // The required-title error waits until the title was edited, so an empty
+  // modal does not open in an error state.
+  const isTitleTouched = titleDraft !== undefined;
 
-  const [isPublishing, setIsPublishing] = useState(false);
+  // Publish and Save as Draft write the same document; only `enabled` differs.
+  const [saving, setSaving] = useState<'publish' | 'draft'>();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleSubmit = async () => {
+  const save = async (enabled: boolean) => {
     if (isTitleMissing) return;
-    setIsPublishing(true);
+    setSaving(enabled ? 'publish' : 'draft');
     try {
       const next: DomainAnnouncement = {
         enabled,
         title: title.trim(),
-        body,
+        body: body.trim() || undefined,
         updatedAt: new Date().toISOString(),
       };
       await updateDomainAppConfig(DOMAIN_ANNOUNCEMENT_CONFIG_KEY, next);
@@ -138,7 +142,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
       appMessage.error(getErrorMessage(error));
       logger.error(error);
     } finally {
-      setIsPublishing(false);
+      setSaving(undefined);
     }
   };
 
@@ -174,7 +178,20 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
     <BAIModal
       width="90%"
       style={{ maxWidth: 1900 }}
-      title={t('summary.EditAnnouncement')}
+      title={
+        announcement?.enabled === false ? (
+          <BAIFlex gap="xs" align="center">
+            {t('summary.EditAnnouncement')}
+            <Token
+              label={t('summary.AnnouncementDraft')}
+              size="sm"
+              color="gray"
+            />
+          </BAIFlex>
+        ) : (
+          t('summary.EditAnnouncement')
+        )
+      }
       onCancel={() => onRequestClose()}
       footer={
         <BAIFlex
@@ -183,33 +200,46 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
           gap="sm"
           style={{ width: '100%' }}
         >
-          <BAIFlex gap="md" align="center">
-            <Button
-              variant="destructive"
-              label={t('button.Delete')}
-              isDisabled={announcement === undefined}
-              isLoading={isDeleting}
-              onClick={confirmDelete}
-            />
-            <CheckboxInput
-              label={t('summary.AnnouncementEnabled')}
-              value={enabled}
-              onChange={setEnabledDraft}
-            />
-          </BAIFlex>
+          <Button
+            variant="destructive"
+            label={t('button.Delete')}
+            isDisabled={announcement === undefined}
+            isLoading={isDeleting}
+            onClick={confirmDelete}
+          />
           <BAIFlex gap="xs" align="center">
             <Button
               variant="secondary"
               label={t('button.Cancel')}
               onClick={() => onRequestClose()}
             />
-            <Button
-              variant="primary"
-              label={t('button.Publish')}
-              isDisabled={isTitleMissing}
-              isLoading={isPublishing}
-              onClick={handleSubmit}
-            />
+            {/* Split button as the session launcher's Launch: the dropdown
+                owns its own trigger. */}
+            <ButtonGroup label={t('button.Publish')}>
+              <Button
+                variant="primary"
+                label={t('button.Publish')}
+                isDisabled={isTitleMissing || saving === 'draft'}
+                isLoading={saving === 'publish'}
+                onClick={() => save(true)}
+              />
+              <DropdownMenu
+                hasChevron={false}
+                button={{
+                  variant: 'primary',
+                  icon: <Ellipsis size="1em" />,
+                  isIconOnly: true,
+                  isDisabled: isTitleMissing || saving !== undefined,
+                  label: t('button.SaveAsDraft'),
+                }}
+                items={[
+                  {
+                    label: t('button.SaveAsDraft'),
+                    onClick: () => save(false),
+                  },
+                ]}
+              />
+            </ButtonGroup>
           </BAIFlex>
         </BAIFlex>
       }
@@ -222,8 +252,9 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
           width="100%"
           value={title}
           onChange={setTitleDraft}
+          statusVariant="detached"
           status={
-            isTitleMissing
+            isTitleTouched && isTitleMissing
               ? {
                   type: 'error',
                   message: t('summary.AnnouncementTitleRequired'),
