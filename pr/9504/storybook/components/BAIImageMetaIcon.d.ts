@@ -9,9 +9,9 @@ export interface BAIImageMetaIconProps {
  * v2/package counterpart of the React app's `ImageMetaIcon`. Resolves the
  * framework icon URL for an image by joining the `imagePath` provided via
  * `BAIMetaDataProvider` with the icon filename declared in the image metadata
- * (`imageInfo[].icon`, falling back to `default.png`). Renders nothing when
- * the host app has not provided an `imagePath` — the package never bundles or
- * resolves app asset paths on its own.
+ * (`imageInfo[].icon`). Images with no declared icon get a themed inline glyph
+ * instead. Renders nothing when the host app has not provided an `imagePath` —
+ * the package never bundles or resolves app asset paths on its own.
  */
 declare const BAIImageMetaIcon: React.FC<BAIImageMetaIconProps>;
 export default BAIImageMetaIcon;

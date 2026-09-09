@@ -86,19 +86,14 @@ export declare class FormStore {
     private triggerOnFieldsChange;
     validateFields: (arg1?: any, arg2?: any) => Promise<Store>;
     submit: () => void;
-    /**
-     * Resolved through the control's generated `id`, which `FormItem` stamps
-     * onto every child. Composing a ref onto arbitrary children would be the
-     * only other way and buys nothing: `getFieldInstance` has zero call sites.
-     */
     getFieldInstance: (name: NamePath) => HTMLElement | undefined;
-    /**
-     * Thin by design (answers/08 §6.2): `scrollToField` has ONE call site, and
-     * this repo's main scroll-to-error consumer deliberately bypasses it and
-     * walks the DOM itself because registration order and DOM order disagree.
-     */
     scrollToField: (name: NamePath, options?: ScrollOptions) => void;
     focusField: (name: NamePath) => void;
+    /**
+     * The control carrying `data-bai-field-id` (Astryx inputs drop the `id`
+     * `FormItem` gives them but keep `data-*`), else the item wrapper carrying
+     * `data-bai-field-item` (a child that forwards nothing to the DOM).
+     */
     private getFieldDOMNode;
 }
 /**
