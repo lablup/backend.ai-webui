@@ -30,8 +30,11 @@ sorted JSON array of per-route key lists, a single new route or a renamed i18n
 key rewrites hundreds of lines, so conflicts here are routine and large.
 
 `scripts/verify.sh` (`Search index` step) rebuilds the index and fails if
-`git status` shows it dirty — mirroring the Relay gate. So a hand-merged index
-fails verification anyway; regenerating is both the correct fix and the faster one.
+`git status` shows it dirty — mirroring the Relay gate — and
+`.github/workflows/typecheck.yml` runs the same gate in CI. So a hand-merged
+index fails verification anyway; regenerating is both the correct fix and the
+faster one. Why the artifact is committed at all:
+`docs/adr/0003-committed-search-index-artifact.md`.
 
 ## Rules
 
@@ -53,7 +56,9 @@ fails verification anyway; regenerating is both the correct fix and the faster o
 
 - `react/scripts/build-search-index.mjs` — the extractor; its CONFIG block is the
   hand-maintained part.
+- `docs/adr/0003-committed-search-index-artifact.md` — why the artifact is committed.
 - `scripts/verify.sh` — the `Search index` step (rebuild + `git status` diff).
+- `.github/workflows/typecheck.yml` — the same gate in CI.
 - `react/src/components/GlobalSearchPalette/searchIndex.test.ts` — asserts route
   coverage, tab/setting inventory, the depth-aware key placement, and that the
   committed artifact is byte-identical to a fresh build.

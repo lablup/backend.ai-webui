@@ -6,8 +6,8 @@
  * it searches this index, derived from source. The index stores i18n KEYS, not
  * strings, so every locale is covered without re-indexing.
  *
- * Staleness is gated by `scripts/verify.sh`, which rebuilds and diffs the
- * committed artifact the same way it does for Relay — this script only writes.
+ * Staleness is gated by scripts/verify.sh and .github/workflows/typecheck.yml
+ * (ADR 0003) — this script only writes.
  *
  *   node scripts/build-search-index.mjs            # write the index
  *   node scripts/build-search-index.mjs --verbose  # build + report

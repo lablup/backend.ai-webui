@@ -133,6 +133,13 @@ describe('generated search index', () => {
       expect({ key, on: entriesWithKey(key) }).toEqual({ key, on: [] });
   });
 
+  it('is shipped as committed: the production build does not regenerate it', () => {
+    const pkg = JSON.parse(
+      fs.readFileSync(path.join(REACT_DIR, 'package.json'), 'utf8'),
+    ) as { scripts: Record<string, string> };
+    expect(pkg.scripts['build:only']).not.toContain('search-index');
+  });
+
   it('rebuilds byte-identically', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'search-index-'));
     try {

@@ -9,6 +9,7 @@
 |---|---|
 | [0001 — Explicit project prop contract for leaf components](adr/0001-explicit-project-prop-contract.md) | leaf component는 현재 project를 ambient hook에서 읽지 않고 필수 prop `project`로 받는다. page만 ambient 값을 읽어 넘기고, `null`을 받은 component는 tier마다 정한 동작을 한다. `/admin/*` 화면은 project-agnostic route로 묶이고 ESLint가 그 안에서 `useCurrentProjectValue` import를 막는다. |
 | [0002 — Pin set link grammar and a single codec](adr/0002-pin-set-link-grammar-and-single-codec.md) | review overlay의 pin 여러 개는 `#bai=v3` part를 `&`로 이어 붙인 링크 하나로 나른다. 읽는 쪽은 overlay의 codec 하나뿐이고 `pnpm run review-pins` CLI로 노출되며, Claude 쪽 review skill과 Teams transport는 그 CLI를 부른다. |
+| [0003 — Committed search index artifact](adr/0003-committed-search-index-artifact.md) | 전역 검색 palette의 인덱스 `react/src/generated/searchIndex.json`은 source에서 생성해 git에 커밋하고, production build는 그 커밋본을 그대로 번들한다. drift는 `scripts/verify.sh`와 `.github/workflows/typecheck.yml`이 다시 만든 뒤 `git status`로 잡고, conflict는 손으로 합치지 않고 다시 만든다. |
 
 ## 새 ADR을 적는 방법
 
