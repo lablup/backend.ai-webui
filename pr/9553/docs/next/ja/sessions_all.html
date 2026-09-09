@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="コンピュートセッション" />
   <meta name="twitter:description" content="本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"コンピュートセッション","inLanguage":"ja","description":"本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。","dateModified":"2026-09-03T00:23:41.000Z","url":"https://webui.docs.backend.ai/next/ja/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"コンピュートセッション","inLanguage":"ja","description":"本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。","dateModified":"2026-09-09T03:12:33.000Z","url":"https://webui.docs.backend.ai/next/ja/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (f68a126)">v26.9.0-alpha.0 (f68a126)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (56ecd4b)">v26.9.0-alpha.0 (56ecd4b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -408,7 +408,7 @@ Backend.AIは既定で、この値をセッションのCPUコア数と同じに�
 <p data-bai-block="61">検索ボックス横の「+」ボタンをクリックすると、新しいフォルダを作成できます。
 新しいフォルダを作成すると、マウントするフォルダとして自動的に選択されます。
 詳細については、<a href="./vfolder.html#create-storage-folder">ストレージフォルダの作成</a>セクションを参照してください。</p>
-<p><figure data-bai-block="62" class="doc-figure"><img src="./images/folder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="650" height="530" /><figcaption>図 10.14</figcaption></figure>
+<p><figure data-bai-block="62" class="doc-figure"><img src="./images/folder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="780" /><figcaption>図 10.14</figcaption></figure>
 </p>
 <p><a id="network"></a></p>
 <h3 data-bai-block="63" id="sessions_all-ネットワーク">ネットワーク<a class="hash-link" href="#sessions_all-ネットワーク" aria-label="Direct link to ネットワーク">#</a></h3>
@@ -533,7 +533,8 @@ Backend.AIは既定で、この値をセッションのCPUコア数と同じに�
 <li data-bai-block="104"><strong>Memory unit</strong>（Resource モードでメモリ系リソースを選択した場合のみ）: セル1つが表す
 メモリ容量を 1、2、4、8 GiB から選択します。</li>
 <li data-bai-block="105"><strong>Metric</strong>（Kernel モードのみ）: カーネルセルの色付けに使用するリアルタイム統計項目を
-選択します。</li>
+選択します。リストに表示されているセッションのいずれもライブメトリクスを報告していない
+場合は、この選択欄は無効になり、<strong>ライブメトリクスなし</strong> と表示されます。</li>
 <li data-bai-block="106"><strong>Layout</strong>: <strong>Serpentine</strong> は1行ごとに向きを交互にして、折り返したセッションのセルが
 つながって見えるように配置します。<strong>Word-wrap</strong> はすべての行を左端から開始します。</li>
 </ul>
@@ -1033,7 +1034,7 @@ Enterキーを押して選択します。</p>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月3日</span>
+  <span class="last-updated">最終更新日 2026年9月9日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./session_page.html">

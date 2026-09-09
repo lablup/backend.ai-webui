@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="스토리지 폴더" />
   <meta name="twitter:description" content="Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되므로, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"스토리지 폴더","inLanguage":"ko","description":"Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되므로, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다.","dateModified":"2026-09-09T03:07:22.000Z","url":"https://webui.docs.backend.ai/next/ko/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"스토리지 폴더","inLanguage":"ko","description":"Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되므로, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다.","dateModified":"2026-09-09T15:52:07.000Z","url":"https://webui.docs.backend.ai/next/ko/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (f68a126)">v26.9.0-alpha.0 (f68a126)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (56ecd4b)">v26.9.0-alpha.0 (56ecd4b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -228,38 +228,30 @@
 <a id="create_storage_folder"></a></p>
 <h2 data-bai-block="8" id="vfolder-스토리지-폴더-생성">스토리지 폴더 생성<a class="hash-link" href="#vfolder-스토리지-폴더-생성" aria-label="Direct link to 스토리지 폴더 생성">#</a></h2>
 <p data-bai-block="9">새 폴더를 만들려면 데이터 페이지에서 <code>폴더 생성</code>을 클릭합니다. 생성 대화 상자의 필드를 다음과 같이 채웁니다.</p>
-<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="780" /><figcaption>그림 15.3</figcaption></figure>
+<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="1052" /><figcaption>그림 15.3</figcaption></figure>
 </p>
 <p data-bai-block="11">생성 대화 상자의 각 필드 의미는 다음과 같습니다.</p>
 <ul>
-<li data-bai-block="12"><p><strong>폴더 이름</strong>: 폴더명을 입력합니다 (최대 64자).</p>
-</li>
-<li data-bai-block="13"><p><strong>사용 방식</strong>: 폴더의 용도를 설정합니다.</p>
+<li data-bai-block="12"><p><strong>사용 방식</strong>: 폴더의 용도를 설정합니다.</p>
 <ul>
-<li data-bai-block="14">일반: 다양한 데이터를 범용 목적으로 저장하는 폴더입니다.</li>
-<li data-bai-block="15">모델: 배포 및 관리에 특화된 폴더입니다. 이 모드를 선택하면 폴더 복사 가능 여부를 설정할 수 있습니다.</li>
-<li data-bai-block="16">자동 마운트: 연산 세션을 만들 때 자동으로 마운트되는 폴더입니다. 이름은 반드시 점(&#39;.&#39;)으로 시작해야 합니다.</li>
+<li data-bai-block="13">일반: 다양한 데이터를 범용 목적으로 저장하는 폴더입니다.</li>
+<li data-bai-block="14">모델: 배포 및 관리에 특화된 폴더입니다. 이 모드를 선택하면 폴더 복사 가능 여부를 설정할 수 있습니다.</li>
+<li data-bai-block="15">자동 마운트: 연산 세션을 만들 때 자동으로 마운트되는 폴더입니다. 이름은 반드시 점(&#39;.&#39;)으로 시작해야 합니다.</li>
 </ul>
+</li>
+<li data-bai-block="16"><p><strong>폴더 이름</strong>: 폴더명을 입력합니다 (최대 64자).</p>
 </li>
 <li data-bai-block="17"><p><strong>위치</strong>: 폴더를 생성할 스토리지 호스트를 선택합니다. 여러 호스트가 있을 경우 각각의 사용 가능 용량을 확인한 후 적절한 호스트를 선택하세요.</p>
 </li>
-<li data-bai-block="18"><p><strong>마운트 권한</strong>: 폴더가 연산 세션에 마운트될 때 적용되는 마운트 권한입니다. <strong>읽기 및 쓰기</strong>는 세션 내에서 폴더에 쓰기를 허용하고, <strong>읽기 전용</strong>은 쓰기를 막습니다.</p>
+<li data-bai-block="18"><p><strong>종류</strong>: 생성할 폴더 유형을 결정합니다. 사용자 또는 프로젝트로 설정합니다. 사용자 폴더는 사용자가 단독으로 생성해 사용하는 폴더이며, 프로젝트 폴더는 관리자가 생성하고 프로젝트의 사용자가 공유하는 폴더입니다.</p>
 </li>
-<li data-bai-block="19"><p><strong>복사 가능 여부</strong>: 사용 방식이 &quot;모델&quot;로 설정된 경우에만 표시됩니다. 생성하는 가상 폴더(vfolder)가 복사 가능한지 여부를 선택합니다.</p>
+<li data-bai-block="19"><p><strong>프로젝트</strong>: 종류를 프로젝트로 선택한 경우에만 표시됩니다. 폴더는 상단 바에서 현재 선택된 프로젝트에 속하게 되며, 별도의 프로젝트 선택기는 없습니다. 어떤 프로젝트가 폴더를 소유하게 되는지는 확인 메시지로 안내됩니다. 사용자 폴더를 생성할 때는 이 필드가 적용되지 않습니다.</p>
+</li>
+<li data-bai-block="20"><p><strong>권한</strong>: 폴더가 연산 세션에 마운트될 때 적용되는 마운트 권한입니다. <strong>읽기 및 쓰기</strong>는 세션 내에서 폴더에 쓰기를 허용하고, <strong>읽기 전용</strong>은 쓰기를 막습니다. 이 설정은 사용자 폴더와 프로젝트 폴더 모두에 적용되며, 프로젝트 폴더의 경우 모든 프로젝트 멤버의 접근 권한을 결정합니다.</p>
+</li>
+<li data-bai-block="21"><p><strong>복사 가능 여부</strong>: 사용 방식이 &quot;모델&quot;로 설정된 경우에만 표시됩니다. 생성하는 가상 폴더(vfolder)가 복사 가능한지 여부를 선택합니다.</p>
 </li>
 </ul>
-<div class="admonition admonition-note">
-<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
-<div class="admonition-content">
-
-<p data-bai-block="21">데이터 페이지에서 생성한 폴더는 항상 <code>사용자</code> 폴더이며, 생성 대화 상자에는 폴더 종류를
-선택하는 항목이 없습니다. <code>프로젝트</code> 폴더는 관리자가 관리자용 데이터 페이지에서
-생성합니다. 자세한 내용은
-<a href="./admin_menu.html#share-project-storage-folders-with-project-members">프로젝트 멤버와 프로젝트 스토리지 폴더 공유</a>
-섹션을 참고하세요.</p>
-</div></div>
-
-
 <p data-bai-block="22">여기서 생성한 폴더는 연산 세션 생성 시 <a href="./sessions_all.html#session-mounts">마운트</a>할 수 있습니다. 폴더는 사용자의 기본 작업 디렉토리인 <code>/home/work/</code> 아래에 마운트되며, 마운트된 디렉토리에 저장된 파일은 연산 세션이 종료되어도 삭제되지 않습니다.
 (폴더를 삭제하면 파일도 함께 삭제됩니다.)</p>
 <p><a id="explore-folder"></a></p>
@@ -360,7 +352,7 @@
 진행하기 전에 이 목록을 꼭 확인하세요. 권한이 없는 폴더를 뺀 나머지만 휴지통 탭으로
 옮겨지고, 알림 아래의 확인 메시지도 실제로 이동하는 폴더 개수만 표시합니다.</p>
 <h3 data-bai-block="73" id="vfolder-폴더-복원-및-영구-삭제">폴더 복원 및 영구 삭제<a class="hash-link" href="#vfolder-폴더-복원-및-영구-삭제" aria-label="Direct link to 폴더 복원 및 영구 삭제">#</a></h3>
-<p data-bai-block="74">이 상태에서 <strong>이름</strong> 열에 있는 해당 폴더 행의 복원 버튼을 클릭하면 폴더가 복원됩니다. 폴더를 영구적으로 삭제하려면 같은 행의 <code>휴지통</code> 버튼을 클릭합니다. 영구 삭제가 실제로 시작된 이후에는 폴더를 복원하거나 다시 삭제할 수 없으며, 해당 행의 두 버튼은 *&quot;이 폴더는 이미 삭제가 시작되었습니다.&quot;*라는 사유와 함께 비활성화됩니다.</p>
+<p data-bai-block="74">이 상태에서 <strong>이름</strong> 열에 있는 해당 폴더 행의 복원 버튼을 클릭하면 폴더가 복원됩니다. 폴더를 영구적으로 삭제하려면 같은 행의 <code>휴지통</code> 버튼을 클릭합니다. 영구 삭제가 실제로 시작된 이후에는 폴더를 복원하거나 다시 삭제할 수 없으며, 해당 행의 두 버튼은 *&quot;이 폴더는 이미 삭제가 시작되었습니다.&quot;*라는 사유와 함께 비활성화됩니다. 삭제 권한이 없는 폴더의 영구 삭제 버튼도 *&quot;삭제 권한이 없습니다&quot;*라는 사유와 함께 비활성화됩니다.</p>
 <p><figure data-bai-block="75" class="doc-figure"><img src="./images/vfolder_trash_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 15.14</figcaption></figure>
 </p>
 <p data-bai-block="76">폴더 이름을 입력하라는 확인 모달이 나타납니다. 폴더 이름을 정확하게 입력하면 <strong>영구 삭제</strong> 버튼이 활성화되며, 이를 클릭하면 폴더가 완전히 삭제됩니다.</p>

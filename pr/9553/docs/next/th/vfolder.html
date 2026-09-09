@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="โฟลเดอร์จัดเก็บ" />
   <meta name="twitter:description" content="Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-09-09T03:07:22.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-09-09T15:52:07.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (f68a126)">v26.9.0-alpha.0 (f68a126)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (56ecd4b)">v26.9.0-alpha.0 (56ecd4b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -227,36 +227,30 @@
 <a id="create_storage_folder"></a></p>
 <h2 data-bai-block="8" id="vfolder-สรางโฟลเดอรจดเกบ">สร้างโฟลเดอร์จัดเก็บ<a class="hash-link" href="#vfolder-สรางโฟลเดอรจดเกบ" aria-label="Direct link to สร้างโฟลเดอร์จัดเก็บ">#</a></h2>
 <p data-bai-block="9">หากต้องการสร้างโฟลเดอร์ใหม่ ให้คลิก &#39;สร้างโฟลเดอร์&#39; ในหน้าข้อมูล จากนั้นกรอกข้อมูลในกล่องโต้ตอบการสร้างดังนี้:</p>
-<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="780" /><figcaption>รูปที่ 15.3</figcaption></figure>
+<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="1052" /><figcaption>รูปที่ 15.3</figcaption></figure>
 </p>
 <p data-bai-block="11">ความหมายของแต่ละช่องในกล่องโต้ตอบการสร้างมีดังต่อไปนี้</p>
 <ul>
-<li data-bai-block="12"><p><strong>ชื่อโฟลเดอร์</strong>: ชื่อของโฟลเดอร์ (สูงสุด 64 ตัวอักษร)</p>
-</li>
-<li data-bai-block="13"><p><strong>โหมดการใช้งาน</strong>: กำหนดวัตถุประสงค์ของโฟลเดอร์</p>
+<li data-bai-block="12"><p><strong>โหมดการใช้งาน</strong>: กำหนดวัตถุประสงค์ของโฟลเดอร์</p>
 <ul>
-<li data-bai-block="14">ทั่วไป: กำหนดให้เป็นโฟลเดอร์สำหรับจัดเก็บข้อมูลทั่วไปได้หลากหลายประเภท</li>
-<li data-bai-block="15">โมเดล: กำหนดให้เป็นโฟลเดอร์เฉพาะสำหรับการให้บริการโมเดลและการจัดการโมเดล หากเลือกโหมดนี้ คุณจะสามารถตั้งค่าว่าโฟลเดอร์นั้นสามารถคัดลอกได้หรือไม่</li>
-<li data-bai-block="16">ติดตั้งอัตโนมัติ: โฟลเดอร์ที่จะถูกเมาท์โดยอัตโนมัติเมื่อสร้างเซสชัน หากเลือกโหมดนี้ ชื่อโฟลเดอร์ต้องขึ้นต้นด้วยจุด (&#39;.&#39;)</li>
+<li data-bai-block="13">ทั่วไป: กำหนดให้เป็นโฟลเดอร์สำหรับจัดเก็บข้อมูลทั่วไปได้หลากหลายประเภท</li>
+<li data-bai-block="14">โมเดล: กำหนดให้เป็นโฟลเดอร์เฉพาะสำหรับการให้บริการโมเดลและการจัดการโมเดล หากเลือกโหมดนี้ คุณจะสามารถตั้งค่าว่าโฟลเดอร์นั้นสามารถคัดลอกได้หรือไม่</li>
+<li data-bai-block="15">ติดตั้งอัตโนมัติ: โฟลเดอร์ที่จะถูกเมาท์โดยอัตโนมัติเมื่อสร้างเซสชัน หากเลือกโหมดนี้ ชื่อโฟลเดอร์ต้องขึ้นต้นด้วยจุด (&#39;.&#39;)</li>
 </ul>
+</li>
+<li data-bai-block="16"><p><strong>ชื่อโฟลเดอร์</strong>: ชื่อของโฟลเดอร์ (สูงสุด 64 ตัวอักษร)</p>
 </li>
 <li data-bai-block="17"><p><strong>ตำแหน่ง</strong>: เลือกโฮสต์จัดเก็บ (storage host) ที่จะใช้สร้างโฟลเดอร์ หากมีหลายโฮสต์ ให้เลือกหนึ่งในนั้น ตัวบ่งชี้จะแสดงว่ามีพื้นที่ว่างเพียงพอหรือไม่</p>
 </li>
-<li data-bai-block="18"><p><strong>การอนุญาตเมานต์</strong>: สิทธิ์การเมาท์ที่ใช้เมื่อเมาท์โฟลเดอร์เข้าไปในเซสชันการคำนวณ <strong>อ่านและเขียน</strong> อนุญาตให้เขียนลงในโฟลเดอร์ภายในเซสชัน <strong>อ่านเท่านั้น</strong> ป้องกันไม่ให้เขียน</p>
+<li data-bai-block="18"><p><strong>ประเภท</strong>: กำหนดประเภทของโฟลเดอร์ที่จะสร้าง สามารถตั้งค่าเป็นผู้ใช้ (User) หรือโปรเจกต์ (Project) โฟลเดอร์ผู้ใช้คือโฟลเดอร์ที่ผู้ใช้สร้างและใช้งานได้เพียงคนเดียว ส่วนโฟลเดอร์โปรเจกต์คือโฟลเดอร์ที่สร้างโดยผู้ดูแลระบบและแชร์กับผู้ใช้ในโปรเจกต์</p>
 </li>
-<li data-bai-block="19"><p><strong>ความสามารถในการคัดลอก</strong>: จะแสดงเฉพาะเมื่อคุณเลือกโหมดการใช้งานเป็น &quot;โมเดล&quot; ใช้สำหรับเลือกว่าโฟลเดอร์เสมือน (vfolder) ที่กำลังสร้างควรสามารถคัดลอกได้หรือไม่</p>
+<li data-bai-block="19"><p><strong>โปรเจกต์</strong>: จะแสดงเฉพาะเมื่อคุณเลือกประเภทเป็นโปรเจกต์ โฟลเดอร์นี้สังกัดโปรเจกต์ที่เลือกอยู่ในแถบด้านบนในปัจจุบัน — ไม่มีตัวเลือกโปรเจกต์แยกต่างหาก และข้อความยืนยันจะระบุว่าโปรเจกต์ใดจะเป็นเจ้าของโฟลเดอร์ การตั้งค่านี้จะไม่มีผลเมื่อสร้างโฟลเดอร์ผู้ใช้</p>
+</li>
+<li data-bai-block="20"><p><strong>สิทธิ์</strong>: สิทธิ์การเมาท์ที่ใช้เมื่อเมาท์โฟลเดอร์เข้าไปในเซสชันการคำนวณ <strong>อ่านและเขียน</strong> อนุญาตให้เขียนลงในโฟลเดอร์ภายในเซสชัน <strong>อ่านอย่างเดียว</strong> ป้องกันไม่ให้เขียน การตั้งค่านี้ใช้กับทั้งโฟลเดอร์ผู้ใช้และโฟลเดอร์โปรเจกต์ สำหรับโฟลเดอร์โปรเจกต์ การตั้งค่านี้ควบคุมการเข้าถึงสำหรับสมาชิกโปรเจกต์ทั้งหมด</p>
+</li>
+<li data-bai-block="21"><p><strong>ความสามารถในการคัดลอก</strong>: จะแสดงเฉพาะเมื่อคุณเลือกโหมดการใช้งานเป็น &quot;โมเดล&quot; ใช้สำหรับเลือกว่าโฟลเดอร์เสมือน (vfolder) ที่กำลังสร้างควรสามารถคัดลอกได้หรือไม่</p>
 </li>
 </ul>
-<div class="admonition admonition-note">
-<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
-<div class="admonition-content">
-
-<p data-bai-block="21">โฟลเดอร์ที่สร้างจากหน้าข้อมูลจะเป็นโฟลเดอร์ <code>ผู้ใช้</code> เสมอ กล่องโต้ตอบการสร้างไม่มีตัวเลือกประเภทโฟลเดอร์
-โฟลเดอร์ <code>โปรเจกต์</code> จะถูกสร้างโดยผู้ดูแลระบบจากหน้าข้อมูลสำหรับผู้ดูแลระบบ ดูรายละเอียดได้ที่
-<a href="./admin_menu.html#share-project-storage-folders-with-project-members">การแชร์โฟลเดอร์จัดเก็บโปรเจกต์กับสมาชิกในโปรเจกต์</a></p>
-</div></div>
-
-
 <p data-bai-block="22">โฟลเดอร์ที่สร้างขึ้นที่นี่สามารถ<a href="./sessions_all.html#session-mounts">เมาท์</a>ได้เมื่อสร้างเซสชันการคำนวณ โฟลเดอร์จะถูกเมาท์ไว้ภายใต้ไดเรกทอรีการทำงานเริ่มต้นของผู้ใช้ คือ <code>/home/work/</code> และไฟล์ที่เก็บไว้ในไดเรกทอรีที่เมาท์แล้วจะไม่ถูกลบเมื่อเซสชันการคำนวณสิ้นสุดลง
 (หากคุณลบโฟลเดอร์ ไฟล์ก็จะถูกลบไปด้วยเช่นกัน)</p>
 <p><a id="explore-folder"></a></p>
@@ -359,7 +353,7 @@ storage host นั้น คุณจะสามารถอัปโหลด
 สิทธิ์ออกเท่านั้นที่จะย้ายไปยังแท็บถังขยะ และข้อความยืนยันใต้การแจ้งเตือนจะแสดงจำนวน
 เฉพาะโฟลเดอร์ที่ย้ายจริงเท่านั้น</p>
 <h3 data-bai-block="73" id="vfolder-กคนหรอลบอยางถาวร">กู้คืนหรือลบอย่างถาวร<a class="hash-link" href="#vfolder-กคนหรอลบอยางถาวร" aria-label="Direct link to กู้คืนหรือลบอย่างถาวร">#</a></h3>
-<p data-bai-block="74">ในสถานะนี้ คุณสามารถกู้คืนโฟลเดอร์โดยคลิกที่ปุ่มกู้คืนในแถวของโฟลเดอร์นั้นในคอลัมน์ <strong>ชื่อ</strong> หากคุณต้องการลบโฟลเดอร์อย่างถาวร กรุณาคลิกที่ปุ่ม &#39;ถังขยะ&#39; ในแถวเดียวกัน เมื่อการลบถาวรเริ่มดำเนินการแล้ว จะไม่สามารถกู้คืนหรือลบโฟลเดอร์นั้นซ้ำได้อีก ปุ่มทั้งสองในแถวดังกล่าวจะถูกปิดใช้งานพร้อมเหตุผล <em>&quot;การลบโฟลเดอร์นี้ได้เริ่มขึ้นแล้ว&quot;</em></p>
+<p data-bai-block="74">ในสถานะนี้ คุณสามารถกู้คืนโฟลเดอร์โดยคลิกที่ปุ่มกู้คืนในแถวของโฟลเดอร์นั้นในคอลัมน์ <strong>ชื่อ</strong> หากคุณต้องการลบโฟลเดอร์อย่างถาวร กรุณาคลิกที่ปุ่ม &#39;ถังขยะ&#39; ในแถวเดียวกัน เมื่อการลบถาวรเริ่มดำเนินการแล้ว จะไม่สามารถกู้คืนหรือลบโฟลเดอร์นั้นซ้ำได้อีก ปุ่มทั้งสองในแถวดังกล่าวจะถูกปิดใช้งานพร้อมเหตุผล <em>&quot;การลบโฟลเดอร์นี้ได้เริ่มขึ้นแล้ว&quot;</em> สำหรับโฟลเดอร์ที่คุณไม่มีสิทธิ์ลบ ปุ่มลบถาวรจะถูกปิดใช้งานพร้อมเหตุผล <em>&quot;ไม่มีการลบการอนุญาต&quot;</em> เช่นกัน</p>
 <p><figure data-bai-block="75" class="doc-figure"><img src="./images/vfolder_trash_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>รูปที่ 15.14</figcaption></figure>
 </p>
 <p data-bai-block="76">โมดัลยืนยันจะปรากฏขึ้นพร้อมช่องป้อนชื่อโฟลเดอร์ เมื่อพิมพ์ชื่อโฟลเดอร์ถูกต้อง ปุ่ม <strong>ลบถาวร</strong> จะเปิดใช้งาน และคุณสามารถคลิกเพื่อลบโฟลเดอร์อย่างถาวรได้</p>

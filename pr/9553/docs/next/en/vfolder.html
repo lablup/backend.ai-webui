@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Storage Folders" />
   <meta name="twitter:description" content="Backend.AI supports dedicated storage to preserve user's files." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-09-09T03:07:22.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-09-09T15:52:07.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (f68a126)">v26.9.0-alpha.0 (f68a126)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (56ecd4b)">v26.9.0-alpha.0 (56ecd4b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -237,37 +237,30 @@ list is reachable from the folder status summary.</p>
 <h2 data-bai-block="8" id="vfolder-create-storage-folder">Create storage folder<a class="hash-link" href="#vfolder-create-storage-folder" aria-label="Direct link to Create storage folder">#</a></h2>
 <p data-bai-block="9">To create a new folder, click <code>Create Folder</code> on the Data page. Fill in the fields in
 the creation dialog as follows:</p>
-<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="780" /><figcaption>Figure 15.3</figcaption></figure>
+<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="1052" /><figcaption>Figure 15.3</figcaption></figure>
 </p>
 <p data-bai-block="11">The meaning of each field in the creation dialog is as follows.</p>
 <ul>
-<li data-bai-block="12"><p><strong>Folder name</strong>: The name of the folder (up to 64 characters).</p>
-</li>
-<li data-bai-block="13"><p><strong>Usage Mode</strong>: Set the purpose of the folder.</p>
+<li data-bai-block="12"><p><strong>Usage Mode</strong>: Set the purpose of the folder.</p>
 <ul>
-<li data-bai-block="14">General: Defines a folder for storing various data in a general-purpose manner.</li>
-<li data-bai-block="15">Models: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder&#39;s copy availability.</li>
-<li data-bai-block="16">Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot (&#39;.&#39;).</li>
+<li data-bai-block="13">General: Defines a folder for storing various data in a general-purpose manner.</li>
+<li data-bai-block="14">Models: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder&#39;s copy availability.</li>
+<li data-bai-block="15">Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot (&#39;.&#39;).</li>
 </ul>
+</li>
+<li data-bai-block="16"><p><strong>Folder name</strong>: The name of the folder (up to 64 characters).</p>
 </li>
 <li data-bai-block="17"><p><strong>Location</strong>: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.</p>
 </li>
-<li data-bai-block="18"><p><strong>Mount Permission</strong>: The mount permission applied when the folder is mounted into a compute session. <strong>Read &amp; Write</strong> allows writing to the folder inside sessions; <strong>Read only</strong> prevents it.</p>
+<li data-bai-block="18"><p><strong>Type</strong>: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.</p>
 </li>
-<li data-bai-block="19"><p><strong>Cloneable</strong>: Shown only when you select usage mode to &quot;Models&quot;. Select whether the vfolder you are creating should be cloneable.</p>
+<li data-bai-block="19"><p><strong>Project</strong>: Shown only when you select Project type. The folder belongs to the project currently selected in the top bar — there is no separate project selector, and a confirmation message indicates which project will own the folder. This field has no effect when creating a User folder.</p>
+</li>
+<li data-bai-block="20"><p><strong>Permission</strong>: The mount permission applied when the folder is mounted into a compute session. <strong>Read &amp; Write</strong> allows writing to the folder inside sessions; <strong>Read only</strong> prevents it. This applies to both User and Project folders; for a Project folder it governs access for all project members.</p>
+</li>
+<li data-bai-block="21"><p><strong>Cloneable</strong>: Shown only when you select usage mode to &quot;Model&quot;. Select whether the vfolder you are creating should be cloneable.</p>
 </li>
 </ul>
-<div class="admonition admonition-note">
-<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
-<div class="admonition-content">
-
-<p data-bai-block="21">Folders created from the Data page are always <code>User</code> folders; the creation
-dialog has no folder type selection. <code>Project</code> folders are created by
-administrators from the admin Data pages — see
-<a href="./admin_menu.html#share-project-storage-folders-with-project-members">Share project storage folders with project members</a>.</p>
-</div></div>
-
-
 <p data-bai-block="22">The folders created here can be <a href="./sessions_all.html#session-mounts">mounted</a> when creating a compute session. Folders are mounted
 under the user&#39;s default working directory, <code>/home/work/</code>, and the file stored in the mounted
 directory will not be deleted when the compute session is terminated.
@@ -382,7 +375,7 @@ remaining folders move to the Trash tab, and the confirmation message below the
 alert counts just the folders that are actually moved.</p>
 <h3 data-bai-block="73" id="vfolder-restore-or-permanently-delete">Restore or permanently delete<a class="hash-link" href="#vfolder-restore-or-permanently-delete" aria-label="Direct link to Restore or permanently delete">#</a></h3>
 <p data-bai-block="74">In this status, you can restore the folder by clicking the restore button on the folder&#39;s row in the <strong>Name</strong> column. If you want to permanently delete the folder,
-please click the <code>trash bin</code> button on the same row. Once permanent deletion has actually started, the folder can no longer be restored or deleted again: both buttons on its row become unavailable and report <em>&quot;Deletion has already started for this folder.&quot;</em></p>
+please click the <code>trash bin</code> button on the same row. Once permanent deletion has actually started, the folder can no longer be restored or deleted again: both buttons on its row become unavailable and report <em>&quot;Deletion has already started for this folder.&quot;</em> The permanent-delete button is also unavailable for folders you do not have delete permission on, in which case it reports <em>&quot;No delete permission&quot;</em>.</p>
 <p><figure data-bai-block="75" class="doc-figure"><img src="./images/vfolder_trash_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 15.14</figcaption></figure>
 </p>
 <p data-bai-block="76">A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the <strong>Delete forever</strong> button becomes active. Click it to permanently delete the folder.</p>

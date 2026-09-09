@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ストレージフォルダ" />
   <meta name="twitter:description" content="Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-09-09T03:07:22.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-09-09T15:52:07.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (f68a126)">v26.9.0-alpha.0 (f68a126)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (56ecd4b)">v26.9.0-alpha.0 (56ecd4b)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -228,36 +228,30 @@
 <a id="create_storage_folder"></a></p>
 <h2 data-bai-block="8" id="vfolder-ストレージフォルダを作成">ストレージフォルダを作成<a class="hash-link" href="#vfolder-ストレージフォルダを作成" aria-label="Direct link to ストレージフォルダを作成">#</a></h2>
 <p data-bai-block="9">新しいフォルダを作成するには、データページで「フォルダ作成」をクリックします。作成ダイアログのフィールドは以下のように入力します。</p>
-<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="780" /><figcaption>図 15.3</figcaption></figure>
+<p><figure data-bai-block="10" class="doc-figure"><img src="./images/vfolder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="1052" /><figcaption>図 15.3</figcaption></figure>
 </p>
 <p data-bai-block="11">作成ダイアログの各フィールドの意味は以下のとおりです。</p>
 <ul>
-<li data-bai-block="12"><p><strong>フォルダ名</strong>: フォルダの名前（最大64文字）。</p>
-</li>
-<li data-bai-block="13"><p><strong>使用モード</strong>: フォルダの用途を設定します。</p>
+<li data-bai-block="12"><p><strong>使用モード</strong>: フォルダの用途を設定します。</p>
 <ul>
-<li data-bai-block="14">一般: 多目的にさまざまなデータを保存するためのフォルダを定義します。</li>
-<li data-bai-block="15">モデル: モデルサービングおよび管理に特化したフォルダを定義します。このモードを選択すると、フォルダのコピー可否を切り替えることもできます。</li>
-<li data-bai-block="16">オートマウント: セッション作成時に自動的にマウントされるフォルダです。選択した場合、フォルダ名はドット（&#39;.&#39;）で始まる必要があります。</li>
+<li data-bai-block="13">一般: 多目的にさまざまなデータを保存するためのフォルダを定義します。</li>
+<li data-bai-block="14">モデル: モデルサービングおよび管理に特化したフォルダを定義します。このモードを選択すると、フォルダのコピー可否を切り替えることもできます。</li>
+<li data-bai-block="15">オートマウント: セッション作成時に自動的にマウントされるフォルダです。選択した場合、フォルダ名はドット（&#39;.&#39;）で始まる必要があります。</li>
 </ul>
+</li>
+<li data-bai-block="16"><p><strong>フォルダ名</strong>: フォルダの名前（最大64文字）。</p>
 </li>
 <li data-bai-block="17"><p><strong>ロケーション</strong>: フォルダを作成するストレージホストを選択します。複数のホストがある場合は、いずれか1つを選択してください。利用可能な容量が十分かどうかをインジケータで確認できます。</p>
 </li>
-<li data-bai-block="18"><p><strong>マウント許可</strong>: フォルダがコンピュートセッションにマウントされるときに適用されるマウント権限。<strong>読み書き可能</strong>はセッション内のフォルダへの書き込みを許可し、<strong>読み取り専用</strong>はそれを防止します。</p>
+<li data-bai-block="18"><p><strong>種類</strong>: 作成するフォルダーの種類を決定します。ユーザーまたはプロジェクトとして設定できます。ユーザーフォルダーは、ユーザーが自身で作成して使用できるフォルダーであり、プロジェクトフォルダーは管理者によって作成され、プロジェクト内のユーザーと共有されるフォルダーです。</p>
 </li>
-<li data-bai-block="19"><p><strong>コピー可能</strong>: 使用モードで「モデル」を選択した場合のみ表示されます。作成するバーチャルフォルダ（vfolder）をコピー可能にするかどうかを選択します。</p>
+<li data-bai-block="19"><p><strong>プロジェクト</strong>：プロジェクトタイプを選択したときにのみ表示されます。フォルダが現在トップバーで選択されているプロジェクトに属します。別のプロジェクトセレクターはなく、確認メッセージでどのプロジェクトがフォルダを所有するかが示されます。このフィールドはユーザーフォルダの作成時には効果がありません。</p>
+</li>
+<li data-bai-block="20"><p><strong>権限</strong>: フォルダがコンピュートセッションにマウントされるときに適用されるマウント権限。<strong>読み取り・書き込み</strong>はセッション内のフォルダへの書き込みを許可し、<strong>読み取り専用</strong>はそれを防止します。これはユーザーフォルダとプロジェクトフォルダの両方に適用されます。プロジェクトフォルダの場合、すべてのプロジェクトメンバーのアクセスを管理します。</p>
+</li>
+<li data-bai-block="21"><p><strong>コピー可能</strong>: 使用モードで「モデル」を選択した場合のみ表示されます。作成するバーチャルフォルダ（vfolder）をコピー可能にするかどうかを選択します。</p>
 </li>
 </ul>
-<div class="admonition admonition-note">
-<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
-<div class="admonition-content">
-
-<p data-bai-block="21">データページで作成したフォルダは常に<code>ユーザー</code>フォルダであり、作成ダイアログにフォルダの
-種類を選択する項目はありません。<code>プロジェクト</code>フォルダは管理者が管理者用データページで
-作成します。詳細は<a href="./admin_menu.html#share-project-storage-folders-with-project-members">プロジェクトメンバーとプロジェクトストレージフォルダを共有する</a>を参照してください。</p>
-</div></div>
-
-
 <p data-bai-block="22">ここで作成したフォルダは、コンピュートセッション作成時に<a href="./sessions_all.html#session-mounts">マウント</a>できます。フォルダはユーザーのデフォルト作業ディレクトリ <code>/home/work/</code> にマウントされ、マウントされたディレクトリに保存されたファイルはコンピュートセッションが終了しても削除されません。
 （フォルダを削除した場合は、ファイルも削除されます。）</p>
 <p><a id="explore-folder"></a></p>
@@ -360,7 +354,7 @@
 ないフォルダを除いた残りのフォルダだけがゴミ箱タブに移動し、アラートの下の確認
 メッセージにも実際に移動するフォルダの数のみが表示されます。</p>
 <h3 data-bai-block="73" id="vfolder-フォルダの復元と完全削除">フォルダの復元と完全削除<a class="hash-link" href="#vfolder-フォルダの復元と完全削除" aria-label="Direct link to フォルダの復元と完全削除">#</a></h3>
-<p data-bai-block="74">この状態では、<strong>名前</strong>列にある該当フォルダの行の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ行の「ゴミ箱」ボタンをクリックしてください。完全削除が実際に開始された後は、フォルダを復元することも再度削除することもできず、その行の両方のボタンは <em>「このフォルダの削除は既に開始されています。」</em> という理由とともに無効になります。</p>
+<p data-bai-block="74">この状態では、<strong>名前</strong>列にある該当フォルダの行の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ行の「ゴミ箱」ボタンをクリックしてください。完全削除が実際に開始された後は、フォルダを復元することも再度削除することもできず、その行の両方のボタンは <em>「このフォルダの削除は既に開始されています。」</em> という理由とともに無効になります。削除権限のないフォルダでは、完全削除ボタンも <em>「削除許可なし」</em> という理由とともに無効になります。</p>
 <p><figure data-bai-block="75" class="doc-figure"><img src="./images/vfolder_trash_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 15.14</figcaption></figure>
 </p>
 <p data-bai-block="76">フォルダ名の入力を求める確認モーダルが表示されます。フォルダ名を正確に入力すると <strong>永久に削除</strong> ボタンが有効になり、クリックしてフォルダを完全に削除できます。</p>
