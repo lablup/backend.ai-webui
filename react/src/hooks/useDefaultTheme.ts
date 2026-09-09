@@ -18,8 +18,9 @@ import { useTranslation } from 'react-i18next';
  * The *editable* appearance document (the operator's `theme.json`
  * equivalent) backing the admin Branding page. Kept as a per-user draft in
  * localStorage (`custom_theme_config`) and applied through the theme preview
- * mode. Seeded from the shipped `theme.json`, not from the applied document,
- * so the user's active family never leaks into the edited default.
+ * mode. Seeded from the saved domain document, else the shipped
+ * `theme.json` — never from the applied (preview) document, so the user's
+ * active family never leaks into the edited default.
  */
 export const useDefaultTheme = () => {
   'use memo';
