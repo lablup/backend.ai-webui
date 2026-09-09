@@ -163,6 +163,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         id
         metadata {
           status
+          projectId
         }
         ...DeploymentAddRevisionModal_deployment
       }
@@ -647,6 +648,11 @@ const DeploymentRevisionHistoryTab: React.FC<
           valuePropName="row_id"
           label={t('deployment.ModelFolder')}
           isLabelHidden
+          // Same scope as the revision creation picker: the deployment's own
+          // project, model folders only.
+          currentProjectId={deployment?.metadata?.projectId ?? undefined}
+          excludeDeleted
+          filter='usage_mode == "model"'
           value={value}
           isDisabled={isDisabled}
           width={200}

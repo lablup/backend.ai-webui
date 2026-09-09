@@ -344,6 +344,9 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   <BAIAdminProjectSelect
                     label={t('adminModelCard.Project')}
                     isLabelHidden
+                    // A model card belongs to a MODEL_STORE project (see the
+                    // `groups(type: ["MODEL_STORE"])` query above).
+                    filter={{ type: { equals: 'MODEL_STORE' } }}
                     value={value}
                     isDisabled={isDisabled}
                     width={200}
