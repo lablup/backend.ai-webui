@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-09T03:07:57.918Z",
+  "generatedAt": "2026-09-09T15:52:43.421Z",
   "languages": [
     "en",
     "ja",
@@ -13,11 +13,11 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 6,
-        "added": 1,
-        "modified": 4,
-        "removed": 1,
-        "images": 4,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -29,19 +29,15 @@
           "url": "next/en/admin_menu.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
           "counts": {
-            "added": 1,
-            "modified": 4,
-            "removed": 1,
-            "images": 4,
-            "total": 6
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
           },
           "fingerprints": [
-            "725341c5704a",
-            "bc151d1366e6",
-            "94b93a6bb5e0",
-            "fb64c6b74ec7",
-            "7dae847804ca",
-            "03f79ab06917"
+            "09eb44e5d367",
+            "c06039c93d24"
           ]
         }
       ]
@@ -49,11 +45,11 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 5,
+        "changes": 2,
         "added": 0,
-        "modified": 5,
+        "modified": 2,
         "removed": 0,
-        "images": 4,
+        "images": 2,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -66,17 +62,14 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
           "counts": {
             "added": 0,
-            "modified": 5,
+            "modified": 2,
             "removed": 0,
-            "images": 4,
-            "total": 5
+            "images": 2,
+            "total": 2
           },
           "fingerprints": [
-            "0d1901dca760",
-            "de22ad10face",
-            "7295a4a3d578",
-            "675306deb4ff",
-            "85381e2367c7"
+            "41b53b44f5c5",
+            "11f6a25cb7ce"
           ]
         }
       ]
@@ -84,11 +77,11 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 6,
-        "added": 1,
-        "modified": 4,
-        "removed": 1,
-        "images": 4,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -100,19 +93,15 @@
           "url": "next/ko/admin_menu.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
           "counts": {
-            "added": 1,
-            "modified": 4,
-            "removed": 1,
-            "images": 4,
-            "total": 6
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
           },
           "fingerprints": [
-            "b402d92686af",
-            "6551d4a7d1b2",
-            "c654b05bfd43",
-            "1d3fad67acd5",
-            "16d1f2707b23",
-            "5b1656857a58"
+            "e1d03d16d883",
+            "5a8377746826"
           ]
         }
       ]
@@ -120,11 +109,11 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 6,
-        "added": 1,
-        "modified": 4,
-        "removed": 1,
-        "images": 4,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -136,19 +125,15 @@
           "url": "next/th/admin_menu.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
           "counts": {
-            "added": 1,
-            "modified": 4,
-            "removed": 1,
-            "images": 4,
-            "total": 6
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
           },
           "fingerprints": [
-            "eae16eb3d7fd",
-            "599fdc848d58",
-            "774582c10f86",
-            "5d7c8c49b7d4",
-            "d1351cf55774",
-            "2b030899b617"
+            "24662d9e2054",
+            "d0cba4915c81"
           ]
         }
       ]

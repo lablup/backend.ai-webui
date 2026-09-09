@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ฟีเจอร์ผู้ดูแลระบบ" />
   <meta name="twitter:description" content="การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-09-09T03:06:17.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-09-08T04:37:06.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (f140672)">v26.9.0-alpha.0 (f140672)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (2c1fdf0)">v26.9.0-alpha.0 (2c1fdf0)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -582,20 +582,15 @@ Backend.AI ได้ใน 15 นาที ตัวอย่างเช่น 
 </div></div>
 
 
-<p data-bai-block="154">ขั้นแรก เข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบและสร้างโฟลเดอร์โปรเจกต์ ย้ายไปยังหน้า
-<strong>ข้อมูล</strong> ของผู้ดูแลระบบ (<code>/admin/data</code>) แล้วคลิก <code>สร้างโฟลเดอร์</code>
-เพื่อเปิดกล่องโต้ตอบการสร้างโฟลเดอร์ กล่องโต้ตอบนี้ไม่มีการเลือกประเภทโฟลเดอร์
-โดยมีแบนเนอร์ที่ด้านบนระบุว่า <code>ในหน้าข้อมูลผู้ดูแลระบบ โฟลเดอร์จะถูกสร้างเป็นโฟลเดอร์โครงการ</code>
-คุณจึงเลือกโปรเจกต์ที่เป็นเจ้าของโฟลเดอร์ในฟิลด์ <strong>โครงการปลายทาง</strong> ที่ด้านบนของฟอร์ม
-ฟิลด์ที่เหลือ (<strong>ชื่อโฟลเดอร์</strong>, <strong>โหมดการใช้งาน</strong>, <strong>ตำแหน่ง</strong> และ
-<strong>การอนุญาตเมานต์</strong>) ทำงานเหมือนกับในหน้าข้อมูลของผู้ใช้
-ยกเว้น <strong>โหมดการใช้งาน</strong> ที่มีเฉพาะ <code>ทั่วไป</code> และ <code>โมเดล</code>
-เนื่องจากโฟลเดอร์โปรเจกต์ไม่สามารถเป็นโฟลเดอร์ติดตั้งอัตโนมัติได้
-สำหรับคำอธิบายฟิลด์ทั้งหมด โปรดดูที่ส่วน
-<a href="./vfolder.html#create-storage-folder">สร้างโฟลเดอร์จัดเก็บ</a> ในตัวอย่างนี้
-ให้ตั้งค่า <strong>การอนุญาตเมานต์</strong> เป็น <code>อ่านเท่านั้น</code></p>
-<p><figure data-bai-block="155" class="doc-figure"><img src="./images/group_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="1034" /><figcaption>รูปที่ 24.24</figcaption></figure>
+<p data-bai-block="154">ขั้นแรก เข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบและสร้างโฟลเดอร์โปรเจกต์ หลังจากย้ายไปยัง
+หน้าข้อมูล ให้คลิก &#39;สร้างโฟลเดอร์&#39; เพื่อเปิดกล่องโต้ตอบการสร้างโฟลเดอร์
+ป้อนชื่อโฟลเดอร์และตั้งค่าประเภทเป็น Project เมื่อตั้งค่าประเภทเป็น Project
+โฟลเดอร์จะถูกกำหนดให้โปรเจกต์ที่เลือกในตัวเลือกโปรเจกต์ในส่วนหัวโดยอัตโนมัติ
+สิทธิ์จะถูกตั้งค่าเป็นอ่านเท่านั้น</p>
+<p><figure data-bai-block="155" class="doc-figure"><img src="./images/group_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="674" height="612" /><figcaption>รูปที่ 24.24</figcaption></figure>
 </p>
+<!-- TODO: Re-capture group_folder_creation.png — shows the old UI. -->
+
 <p data-bai-block="156">หลังจากยืนยันว่าโฟลเดอร์ถูกสร้างขึ้นแล้ว ให้เข้าสู่ระบบด้วยบัญชีของ User B และ
 ตรวจสอบว่าโฟลเดอร์โปรเจกต์ที่เพิ่งสร้างในหน้าข้อมูลแสดงขึ้นโดย
 ไม่ต้องมีขั้นตอนการเชิญ คุณจะเห็นว่า R (อ่านเท่านั้น) ยังแสดงในแผงสิทธิ์</p>
@@ -954,7 +949,7 @@ Backend.AI ได้ใน 15 นาที ตัวอย่างเช่น 
 ตรวจสอบให้แน่ใจว่าทรัพยากรที่จัดสรรน้อยกว่าความจุฮาร์ดแวร์ทั้งหมด
 ในกรณีนี้ ตั้งค่า CPU, RAM และ fGPU เป็น 2, 4 และ 1 ตามลำดับ
 คลิก <strong>บันทึก</strong> เพื่อนำนโยบายทรัพยากรที่เปลี่ยนแปลงไปใช้</p>
-<p><figure data-bai-block="360" class="doc-figure"><img src="./images/update_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1964" /><figcaption>รูปที่ 24.40</figcaption></figure>
+<p><figure data-bai-block="360" class="doc-figure"><img src="./images/update_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="2012" /><figcaption>รูปที่ 24.40</figcaption></figure>
 </p>
 <p data-bai-block="361">สำหรับรายละเอียดของแต่ละตัวเลือกในกล่องโต้ตอบนโยบายทรัพยากร โปรดดูคำอธิบายด้านล่าง</p>
 <ul>
@@ -1051,7 +1046,7 @@ Count Per Model Session และ Max Customized Image Count</p>
 <p data-bai-block="392">การเรียงลำดับและการแบ่งหน้าทั้งหมดประมวลผลบนเซิร์ฟเวอร์ แท็บนี้จึงยังตอบสนองได้ดีในคลัสเตอร์ที่มีนโยบายจำนวนมาก
 คลิกหัวคอลัมน์เพื่อเปลี่ยนลำดับการเรียง และใช้ตัวแบ่งหน้าด้านล่างตารางเพื่อเลื่อนดูผลลัพธ์</p>
 <p data-bai-block="393">หากต้องการสร้างนโยบายทรัพยากรผู้ใช้ใหม่ ให้คลิกปุ่ม <strong>สร้าง</strong></p>
-<p><figure data-bai-block="394" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1400" /><figcaption>รูปที่ 24.45</figcaption></figure>
+<p><figure data-bai-block="394" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1636" /><figcaption>รูปที่ 24.45</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="395">Name: ชื่อของนโยบายทรัพยากรผู้ใช้</li>
@@ -1095,7 +1090,7 @@ service ที่สร้างโดยผู้ใช้ การเพิ�
 <p data-bai-block="409">ในตารางนโยบายทรัพยากรโปรเจกต์ คุณสามารถตรวจสอบรายการนโยบายและใช้การกระทำแบบอินไลน์ <strong>แก้ไข</strong> และ <strong>ลบ</strong>
 สำหรับแต่ละรายการได้ นอกจากนี้ยังใช้ตัวกรองคุณสมบัติ การเรียงลำดับ และตัวแบ่งหน้าของตารางเพื่อค้นหานโยบายได้อย่างรวดเร็ว</p>
 <p data-bai-block="410">หากต้องการสร้างนโยบายทรัพยากรโปรเจกต์ใหม่ ให้คลิกปุ่ม <strong>สร้าง</strong> ที่มุมบนขวาของตาราง</p>
-<p><figure data-bai-block="411" class="doc-figure"><img src="./images/create_project_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1308" /><figcaption>รูปที่ 24.47</figcaption></figure>
+<p><figure data-bai-block="411" class="doc-figure"><img src="./images/create_project_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="646" /><figcaption>รูปที่ 24.47</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="412"><strong>ชื่อ</strong>: ชื่อของนโยบายทรัพยากรโปรเจกต์</li>
@@ -1362,7 +1357,7 @@ modal ประวัติการใช้งานจะเปิดขึ�
 สร้างเซสชันการคำนวณด้วยทรัพยากรที่น้อยกว่าปริมาณ
 ทรัพยากรที่ระบุในแต่ละอิมเมจ คำขอจะถูกปรับเป็น
 ข้อกำหนดทรัพยากรขั้นต่ำสำหรับอิมเมจโดยอัตโนมัติและสร้างขึ้น ไม่ได้ถูกยกเลิก</p>
-<p><figure data-bai-block="546" class="doc-figure"><img src="./images/update_image_resource_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="844" /><figcaption>รูปที่ 24.62</figcaption></figure>
+<p><figure data-bai-block="546" class="doc-figure"><img src="./images/update_image_resource_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="844" /><figcaption>รูปที่ 24.62</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="547" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
@@ -1970,7 +1965,7 @@ docker registry ที่เชื่อมต่อกับ Backend.AI กา�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 9 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 8 ก.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">

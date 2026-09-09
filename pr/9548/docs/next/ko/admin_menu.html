@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="관리자 기능" />
   <meta name="twitter:description" content="관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다.","dateModified":"2026-09-09T03:06:17.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다.","dateModified":"2026-09-08T04:37:06.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (f140672)">v26.9.0-alpha.0 (f140672)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (2c1fdf0)">v26.9.0-alpha.0 (2c1fdf0)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -547,9 +547,11 @@ CSV의 모든 셀에 같은 값을 반복해서 입력할 필요가 없습니다
 </div></div>
 
 
-<p data-bai-block="154">먼저 관리자 계정으로 로그인하여 프로젝트 폴더를 생성합니다. 관리자용 <strong>데이터</strong> 페이지(<code>/admin/data</code>)로 이동한 후 <code>폴더 생성</code>을 클릭하여 폴더 생성 대화 상자를 엽니다. 이 대화 상자에는 폴더 종류를 선택하는 항목이 없으며, 상단에 <code>관리자용 데이터 페이지에서는 프로젝트 폴더로 생성됩니다.</code>라는 배너가 표시됩니다. 대신 양식 상단의 <strong>대상 프로젝트</strong> 필드에서 폴더가 속할 프로젝트를 선택합니다. 나머지 필드(<strong>폴더 이름</strong>, <strong>사용 방식</strong>, <strong>위치</strong>, <strong>마운트 권한</strong>)는 사용자 데이터 페이지와 동일하게 동작하지만, 프로젝트 폴더는 자동 마운트 폴더가 될 수 없으므로 <strong>사용 방식</strong>에는 <code>일반</code>과 <code>모델</code>만 표시됩니다. 각 필드에 대한 자세한 설명은 <a href="./vfolder.html#create-storage-folder">스토리지 폴더 생성</a> 섹션을 참고하세요. 이 예시에서는 <strong>마운트 권한</strong>을 <code>읽기 전용</code>으로 설정합니다.</p>
-<p><figure data-bai-block="155" class="doc-figure"><img src="./images/group_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="1034" /><figcaption>그림 24.24</figcaption></figure>
+<p data-bai-block="154">먼저 관리자 계정으로 로그인하여 프로젝트 폴더를 생성합니다. 데이터 페이지로 이동한 후 <code>폴더 생성</code>을 클릭하여 폴더 생성 대화 상자를 엽니다. 폴더 이름을 입력하고 종류를 프로젝트로 설정합니다. 종류를 프로젝트로 설정하면 헤더의 프로젝트 선택기에서 선택한 프로젝트에 자동으로 할당됩니다. 권한은 읽기 전용으로 설정합니다.</p>
+<p><figure data-bai-block="155" class="doc-figure"><img src="./images/group_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="674" height="612" /><figcaption>그림 24.24</figcaption></figure>
 </p>
+<!-- TODO: Re-capture group_folder_creation.png — shows the old UI. -->
+
 <p data-bai-block="156">폴더가 생성되었는지 확인한 후 사용자 B의 계정으로 로그인하여 데이터 페이지에 방금 생성한 프로젝트 폴더가 별도의 초대 절차 없이 표시되는지 확인합니다. 마운트 권한 패널에도 읽기 전용 (R)이 표시되는 것을 확인할 수 있습니다.</p>
 <p><figure data-bai-block="157" class="doc-figure"><img src="./images/group_folder_listed_in_B.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2320" height="361" /><figcaption>그림 24.25</figcaption></figure>
 </p>
@@ -902,7 +904,7 @@ CSV의 모든 셀에 같은 값을 반복해서 입력할 필요가 없습니다
 <p data-bai-block="359">테이블의 속성 필터, 정렬, 페이지 이동 컨트롤을 사용해 필요한 정책을 찾을 수 있습니다.</p>
 <p data-bai-block="360">자원 정책을 변경하려면 해당 정책의 이름 열에 있는 <strong>수정</strong>(연필) 액션을 클릭합니다.
 <strong>키페어 자원 정책 수정</strong> 대화 상자에서 목록의 자원 정책을 구분하는 기본 키 역할을 하는 자원 정책 이름을 제외한 모든 옵션을 편집할 수 있습니다. CPU, RAM, fGPU 하단의 무제한 체크박스를 해제하고 자원 제한을 원하는 값으로 설정합니다. 할당된 자원이 전체 하드웨어 용량보다 적은지 확인하세요. 이 경우 CPU, RAM, fGPU를 각각 2, 4, 1로 설정합니다. <strong>저장</strong>을 클릭하여 변경된 자원 정책을 적용합니다.</p>
-<p><figure data-bai-block="361" class="doc-figure"><img src="./images/update_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1876" /><figcaption>그림 24.40</figcaption></figure>
+<p><figure data-bai-block="361" class="doc-figure"><img src="./images/update_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1924" /><figcaption>그림 24.40</figcaption></figure>
 </p>
 <p data-bai-block="362">자원 정책 대화 상자의 각 옵션에 대한 세부 정보는 아래 설명을 참조하세요.</p>
 <ul>
@@ -962,7 +964,7 @@ CSV의 모든 셀에 같은 값을 반복해서 입력할 필요가 없습니다
 <p data-bai-block="393">정렬과 페이지 이동은 모두 서버에서 처리되므로 정책이 많은 클러스터에서도 탭이 빠르게 동작합니다.
 컬럼 헤더를 클릭해 정렬 순서를 바꾸고, 테이블 아래의 페이지 이동 컨트롤로 결과를 넘겨볼 수 있습니다.</p>
 <p data-bai-block="394">새 사용자 자원 정책을 생성하려면 <strong>생성</strong> 버튼을 클릭합니다.</p>
-<p><figure data-bai-block="395" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1400" /><figcaption>그림 24.45</figcaption></figure>
+<p><figure data-bai-block="395" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1636" /><figcaption>그림 24.45</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="396">이름: 사용자 자원 정책의 이름입니다.</li>
@@ -991,7 +993,7 @@ CSV의 모든 셀에 같은 값을 반복해서 입력할 필요가 없습니다
 <p data-bai-block="410">프로젝트 자원 정책 테이블에서 정책 목록을 확인하고 각 항목의 인라인 <strong>수정</strong> 및 <strong>삭제</strong> 액션을 사용할 수 있습니다.
 테이블의 속성 필터, 정렬, 페이지 이동 컨트롤을 사용해 필요한 정책을 빠르게 찾을 수 있습니다.</p>
 <p data-bai-block="411">새 프로젝트 자원 정책을 생성하려면 테이블 오른쪽 상단의 <strong>생성</strong> 버튼을 클릭합니다.</p>
-<p><figure data-bai-block="412" class="doc-figure"><img src="./images/create_project_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1264" /><figcaption>그림 24.47</figcaption></figure>
+<p><figure data-bai-block="412" class="doc-figure"><img src="./images/create_project_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="646" /><figcaption>그림 24.47</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="413"><strong>이름</strong>: 프로젝트 자원 정책의 이름입니다.</li>
@@ -1262,7 +1264,7 @@ CSV의 모든 셀에 같은 값을 반복해서 입력할 필요가 없습니다
 <p><figure data-bai-block="545" class="doc-figure"><img src="./images/image_install_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="828" /><figcaption>그림 24.61</figcaption></figure>
 </p>
 <p data-bai-block="546"><code>제어</code> 패널의 <strong>수정</strong>(연필) 액션을 클릭하면 <strong>최소 이미지 리소스 제한 수정</strong> 대화 상자가 열려 각 이미지의 최소 자원 요구 사항을 변경할 수 있습니다. 각 이미지에는 최소 작동을 위한 하드웨어 및 자원 요구 사항이 있습니다. (예를 들어 GPU 전용 이미지의 경우 최소 할당 GPU가 있어야 합니다.) 최소 자원 양의 기본값은 이미지의 메타데이터에 포함되어 제공됩니다. 각 이미지에 지정된 자원 양보다 적은 자원으로 연산 세션을 생성하려고 하면 요청이 취소되지 않고 이미지의 최소 자원 요구 사항으로 자동 조정된 후 생성됩니다.</p>
-<p><figure data-bai-block="547" class="doc-figure"><img src="./images/update_image_resource_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="844" /><figcaption>그림 24.62</figcaption></figure>
+<p><figure data-bai-block="547" class="doc-figure"><img src="./images/update_image_resource_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="844" /><figcaption>그림 24.62</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="548" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
@@ -1856,7 +1858,7 @@ WebUI의 어느 화면에서든 편집기를 열 수 있습니다.</li>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 9일</span>
+  <span class="last-updated">마지막 업데이트 2026년 9월 8일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">
