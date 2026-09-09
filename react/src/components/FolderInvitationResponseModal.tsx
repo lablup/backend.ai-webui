@@ -39,10 +39,8 @@ import { useTranslation } from 'react-i18next';
 
 const styles = stylex.create({
   item: {
-    // Top-align the icon/actions with the folder name instead of the whole
-    // multi-row block, and re-suppress the last item's divider with a longhand
-    // — Astryx's own :last-child uses the shorthand, which its always-on
-    // longhands out-rank in StyleX priority (FR-3893).
+    // Astryx ListItem's :last-child divider suppression is a shorthand that
+    // loses to its own longhands in StyleX — re-suppress it here (FR-3893).
     alignItems: 'flex-start',
     borderBlockEndWidth: {
       default: borderVars['--border-width'],
