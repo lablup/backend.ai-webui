@@ -124,9 +124,9 @@ To create a new folder from this page:
 ![](../images/project_admin_create_folder_modal.png)
 
 :::info
-Only **project-owned** folders can be created from the Project Admin Data page. The creation modal displays the following message to make this explicit:
+Folders created from the Project Admin Data page are always **project folders** — the creation modal has no folder-type selection. The modal displays the following message to make this explicit:
 
-> Only project-owned folders can be created on the Project Admin Data page.
+> Folders are created as project folders on the Project Admin Data page.
 :::
 
 For details about folder usage modes, permissions, and quota, see the [Storage Folders](#vfolders) chapter.
