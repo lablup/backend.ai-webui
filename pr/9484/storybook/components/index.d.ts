@@ -154,3 +154,5 @@ export * from './fragments';
 export * from './provider';
 export * from './baiClient';
 export * from './unsafe';
+export { default as BAIInteractiveLoginButton } from './BAIInteractiveLoginButton';
+export type { BAIInteractiveLoginButtonProps } from './BAIInteractiveLoginButton';

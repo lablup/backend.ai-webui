@@ -47,8 +47,9 @@ export interface BAINotificationStackProps {
     /** Fired by the close button and by the auto-close timer. */
     onClose?: (key: React.Key) => void;
     /**
-     * Cap on simultaneously visible notices; the newest win.
-     * antd had `maxCount` on the whole API. Unlimited by default, as today.
+     * Cap on simultaneously visible notices; the newest win. Unlimited when
+     * unset — the WebUI host passes one (FR-3829). The rest stay in the
+     * notification list the host owns, and render as room frees up.
      */
     maxVisible?: number;
     'data-testid'?: string;
