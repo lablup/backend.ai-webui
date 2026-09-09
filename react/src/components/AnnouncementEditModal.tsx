@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
+import { Form, FormInstance } from '../form-engine';
 import {
   DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
   DomainAnnouncement,
@@ -13,13 +14,14 @@ import {
 } from '../hooks/useAppConfig';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@lablup/ui-common/Button';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Markdown } from '@lablup/ui-common/Markdown';
 import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
 import { Token } from '@lablup/ui-common/Token';
 import { useTheme } from '@lablup/ui-common/theme';
 import type { OnMount } from '@monaco-editor/react';
@@ -60,6 +62,8 @@ const EDITOR_HEIGHT = 'calc(100vh - 360px)';
 interface AnnouncementEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
 }
+
+type AnnouncementFormValues = { title: string };
 
 /**
  * Edits the domain's system announcement in the domain app config
@@ -112,26 +116,27 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   );
   const updateDomainAppConfig = useUpdateDomainAppConfig();
 
-  const [titleDraft, setTitleDraft] = useState<string>();
+  const formRef = useRef<FormInstance<AnnouncementFormValues>>(null);
   const [bodyDraft, setBodyDraft] = useState<string>();
-  const title = titleDraft ?? announcement?.title ?? '';
   const body = bodyDraft ?? announcement?.body ?? '';
-  const isTitleMissing = !title.trim();
-  // The required-title error waits until the title was edited, so an empty
-  // modal does not open in an error state.
-  const isTitleTouched = titleDraft !== undefined;
 
   // Publish and Save as Draft write the same document; only `enabled` differs.
   const [saving, setSaving] = useState<'publish' | 'draft'>();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const save = async (enabled: boolean) => {
-    if (isTitleMissing) return;
+    let values: AnnouncementFormValues | undefined;
+    try {
+      values = await formRef.current?.validateFields();
+    } catch {
+      return; // the form item shows the field error
+    }
+    if (!values) return;
     setSaving(enabled ? 'publish' : 'draft');
     try {
       const next: DomainAnnouncement = {
         enabled,
-        title: title.trim(),
+        title: values.title.trim(),
         body: body.trim() || undefined,
         updatedAt: new Date().toISOString(),
       };
@@ -219,7 +224,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
               <Button
                 variant="primary"
                 label={t('button.Publish')}
-                isDisabled={isTitleMissing || saving === 'draft'}
+                isDisabled={saving === 'draft'}
                 isLoading={saving === 'publish'}
                 onClick={() => save(true)}
               />
@@ -229,7 +234,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
                   variant: 'primary',
                   icon: <Ellipsis size="1em" />,
                   isIconOnly: true,
-                  isDisabled: isTitleMissing || saving !== undefined,
+                  isDisabled: saving !== undefined,
                   label: t('button.SaveAsDraft'),
                 }}
                 items={[
@@ -246,22 +251,20 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="sm">
-        <TextInput
-          label={t('summary.AnnouncementTitle')}
-          isRequired
-          width="100%"
-          value={title}
-          onChange={setTitleDraft}
-          statusVariant="detached"
-          status={
-            isTitleTouched && isTitleMissing
-              ? {
-                  type: 'error',
-                  message: t('summary.AnnouncementTitleRequired'),
-                }
-              : undefined
-          }
-        />
+        <Form
+          ref={formRef}
+          layout="vertical"
+          validateTrigger={['onChange', 'onBlur']}
+          initialValues={{ title: announcement?.title ?? '' }}
+        >
+          <BAIFormItem
+            name="title"
+            label={t('summary.AnnouncementTitle')}
+            rules={[{ required: true, whitespace: true }]}
+          >
+            <AstryxFormTextInput label={t('summary.AnnouncementTitle')} />
+          </BAIFormItem>
+        </Form>
         <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
           <BAIFlex
             direction="column"
