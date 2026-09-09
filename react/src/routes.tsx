@@ -1443,6 +1443,7 @@ const AutoDiagnosticsEffect = () => {
 };
 
 const AutoDiagnosticsRunner = () => {
+  'use memo';
   useAutoDiagnostics();
   return null;
 };
