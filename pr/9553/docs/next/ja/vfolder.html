@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ストレージフォルダ" />
   <meta name="twitter:description" content="Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-09-09T15:52:07.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-09-09T16:49:52.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (56ecd4b)">v26.9.0-alpha.0 (56ecd4b)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (7b229bf)">v26.9.0-alpha.0 (7b229bf)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -354,7 +354,7 @@
 ないフォルダを除いた残りのフォルダだけがゴミ箱タブに移動し、アラートの下の確認
 メッセージにも実際に移動するフォルダの数のみが表示されます。</p>
 <h3 data-bai-block="73" id="vfolder-フォルダの復元と完全削除">フォルダの復元と完全削除<a class="hash-link" href="#vfolder-フォルダの復元と完全削除" aria-label="Direct link to フォルダの復元と完全削除">#</a></h3>
-<p data-bai-block="74">この状態では、<strong>名前</strong>列にある該当フォルダの行の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ行の「ゴミ箱」ボタンをクリックしてください。完全削除が実際に開始された後は、フォルダを復元することも再度削除することもできず、その行の両方のボタンは <em>「このフォルダの削除は既に開始されています。」</em> という理由とともに無効になります。削除権限のないフォルダでは、完全削除ボタンも <em>「削除許可なし」</em> という理由とともに無効になります。</p>
+<p data-bai-block="74">この状態では、<strong>名前</strong>列にある該当フォルダの行の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ行の「ゴミ箱」ボタンをクリックしてください。完全削除が実際に開始された後は、フォルダを復元することも再度削除することもできず、その行の両方のボタンは <em>「このフォルダの削除は既に開始されています。」</em> という理由とともに無効になります。フォルダに対する削除権限がない場合も、その行の「ゴミ箱」ボタンは使用できません。たとえば削除が許可されていない共有フォルダやプロジェクトフォルダがこれに当たり、この場合ボタンには <em>「削除許可なし」</em> という理由が表示されます。</p>
 <p><figure data-bai-block="75" class="doc-figure"><img src="./images/vfolder_trash_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 15.14</figcaption></figure>
 </p>
 <p data-bai-block="76">フォルダ名の入力を求める確認モーダルが表示されます。フォルダ名を正確に入力すると <strong>永久に削除</strong> ボタンが有効になり、クリックしてフォルダを完全に削除できます。</p>
