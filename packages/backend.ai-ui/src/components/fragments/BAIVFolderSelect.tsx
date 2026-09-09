@@ -48,7 +48,6 @@ import BAIComplexSelect, {
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
   type BAILabeledValue,
-  splitLabeledValue,
 } from '../BAIComplexSelect';
 import { mergeFilterValues } from '../BAIPropertyFilter';
 import * as _ from 'lodash-es';
@@ -361,8 +360,12 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       options={options}
       value={labeledValue}
       onChange={(next) => {
-        const picked = splitLabeledValue(next, multiple);
-        setControllableValue(picked.value, picked.option);
+        const labeled = _.compact(_.castArray(next ?? []));
+        const keys = _.map(labeled, (v) => v.value);
+        setControllableValue(
+          multiple ? keys : keys[0],
+          multiple ? labeled : labeled[0],
+        );
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}

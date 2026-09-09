@@ -116,18 +116,6 @@ export interface BAILabeledValue {
 export type BAIComplexSelectValue =
   BAILabeledValue | Array<BAILabeledValue> | null;
 
-/** Splits a picked value into the key(s) and labeled option(s) a wrapper stores. */
-export const splitLabeledValue = (
-  next: BAIComplexSelectValue | undefined,
-  multiple: boolean,
-) => {
-  const labeled = _.compact(_.castArray(next ?? []));
-  const keys = _.map(labeled, (item) => item.value);
-  return multiple
-    ? { value: keys, option: labeled }
-    : { value: keys[0], option: labeled[0] };
-};
-
 /**
  * How the trigger renders the selection in `multiple` mode. Mirrors Astryx
  * `MultiSelector`'s prop of the same name, minus `'count'` — "N selected"
