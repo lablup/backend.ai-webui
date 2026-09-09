@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<274ce1ae94acebf79725f5574381cfb3>>
+ * @generated SignedSource<<da468024d567e8bb33d11b396ae24e87>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,7 +50,7 @@ return {
     "name": "RoleFormModalResourceGroupQuery",
     "selections": [
       {
-        "alias": "resourceGroups",
+        "alias": null,
         "args": (v0/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
@@ -143,25 +143,25 @@ return {
         "storageKey": "adminResourceGroups(first:10)"
       },
       {
-        "alias": "resourceGroups",
+        "alias": null,
         "args": (v0/*: any*/),
         "filters": [
           "filter"
         ],
         "handle": "connection",
-        "key": "BAIAdminResourceGroupSelect_resourceGroups",
+        "key": "BAIAdminResourceGroupSelect_adminResourceGroups",
         "kind": "LinkedHandle",
         "name": "adminResourceGroups"
       }
     ]
   },
   "params": {
-    "cacheID": "fedd97e9616a70fc6cd3b9f22cf59d02",
+    "cacheID": "92caa24d9f102ece23d6e349aca8cd2e",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalResourceGroupQuery",
     "operationKind": "query",
-    "text": "query RoleFormModalResourceGroupQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  resourceGroups: adminResourceGroups(first: 10) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query RoleFormModalResourceGroupQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  adminResourceGroups(first: 10) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<85acc6198648fc05a01890b02abf090c>>
+ * @generated SignedSource<<3214eb7707210b78d3d5e2abcc62b135>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,7 +50,7 @@ return {
     "name": "AgentSettingModalQuery",
     "selections": [
       {
-        "alias": "resourceGroups",
+        "alias": null,
         "args": (v0/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
@@ -143,25 +143,25 @@ return {
         "storageKey": "adminResourceGroups(first:10)"
       },
       {
-        "alias": "resourceGroups",
+        "alias": null,
         "args": (v0/*: any*/),
         "filters": [
           "filter"
         ],
         "handle": "connection",
-        "key": "BAIAdminResourceGroupSelect_resourceGroups",
+        "key": "BAIAdminResourceGroupSelect_adminResourceGroups",
         "kind": "LinkedHandle",
         "name": "adminResourceGroups"
       }
     ]
   },
   "params": {
-    "cacheID": "c402f205f655f900f2fdfed6924d9f5f",
+    "cacheID": "46beb32231d26fa312aba8940c79553d",
     "id": null,
     "metadata": {},
     "name": "AgentSettingModalQuery",
     "operationKind": "query",
-    "text": "query AgentSettingModalQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  resourceGroups: adminResourceGroups(first: 10) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AgentSettingModalQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  adminResourceGroups(first: 10) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

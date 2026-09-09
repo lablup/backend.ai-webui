@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<34d025fc8aed10976a41f308a78be12e>>
+ * @generated SignedSource<<3a337741405974f2956c83b0521d7bcc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type BAIAdminResourceGroupSelect_resourceGroupsFragment$data = {
-  readonly resourceGroups: {
+  readonly adminResourceGroups: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -31,7 +31,7 @@ import BAIAdminResourceGroupSelectPaginationQuery_graphql from './BAIAdminResour
 
 const node: ReaderFragment = (function(){
 var v0 = [
-  "resourceGroups"
+  "adminResourceGroups"
 ];
 return {
   "argumentDefinitions": [
@@ -77,7 +77,7 @@ return {
   "name": "BAIAdminResourceGroupSelect_resourceGroupsFragment",
   "selections": [
     {
-      "alias": "resourceGroups",
+      "alias": "adminResourceGroups",
       "args": [
         {
           "kind": "Variable",
@@ -87,7 +87,7 @@ return {
       ],
       "concreteType": "ResourceGroupConnection",
       "kind": "LinkedField",
-      "name": "__BAIAdminResourceGroupSelect_resourceGroups_connection",
+      "name": "__BAIAdminResourceGroupSelect_adminResourceGroups_connection",
       "plural": false,
       "selections": [
         {
@@ -181,6 +181,6 @@ return {
 };
 })();
 
-(node as any).hash = "b1be0cd7d12414c29b4121b745f0815d";
+(node as any).hash = "06343f7c21be5c30322e3d95f1f1ea3e";
 
 export default node;
