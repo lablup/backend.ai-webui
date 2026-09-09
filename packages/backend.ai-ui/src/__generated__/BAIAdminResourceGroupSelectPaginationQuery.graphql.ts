@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<16819de3ceab898d01fff5e4a99f2913>>
+ * @generated SignedSource<<ef152d2696065fbbf098dc4a464b53c0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -116,7 +116,7 @@ return {
         "args": (v1/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
-        "name": "resourceGroups",
+        "name": "adminResourceGroups",
         "plural": false,
         "selections": [
           {
@@ -211,23 +211,23 @@ return {
           "filter"
         ],
         "handle": "connection",
-        "key": "BAIAdminResourceGroupSelect_resourceGroups",
+        "key": "BAIAdminResourceGroupSelect_adminResourceGroups",
         "kind": "LinkedHandle",
-        "name": "resourceGroups"
+        "name": "adminResourceGroups"
       }
     ]
   },
   "params": {
-    "cacheID": "1a90a27c601f1d11dcd17163dbcfabbe",
+    "cacheID": "3a8a567467e18a8f1de11de8fae76d69",
     "id": null,
     "metadata": {},
     "name": "BAIAdminResourceGroupSelectPaginationQuery",
     "operationKind": "query",
-    "text": "query BAIAdminResourceGroupSelectPaginationQuery(\n  $after: String\n  $filter: ResourceGroupFilter\n  $first: Int = 10\n) {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv on Query {\n  resourceGroups(first: $first, after: $after, filter: $filter) @since(version: \"26.1.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query BAIAdminResourceGroupSelectPaginationQuery(\n  $after: String\n  $filter: ResourceGroupFilter\n  $first: Int = 10\n) {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment_G9cLv on Query {\n  adminResourceGroups(first: $first, after: $after, filter: $filter) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "97c2e022b1e40671b4d0311dbd4912ec";
+(node as any).hash = "06343f7c21be5c30322e3d95f1f1ea3e";
 
 export default node;
