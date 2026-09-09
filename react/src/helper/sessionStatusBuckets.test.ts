@@ -6,23 +6,16 @@ import { getSessionV2StatusBuckets } from './sessionStatusBuckets';
 import { describe, expect, it } from 'vitest';
 
 describe('getSessionV2StatusBuckets', () => {
-  it('includes PREEMPTED / RESCHEDULING on a manager that defines them', () => {
-    const { running } = getSessionV2StatusBuckets(true, false);
+  it('includes RESERVED / PREEMPTED / RESCHEDULING on a manager that defines them', () => {
+    const { running } = getSessionV2StatusBuckets(true);
 
+    expect(running).toContain('RESERVED');
     expect(running).toContain('PREEMPTED');
     expect(running).toContain('RESCHEDULING');
-    expect(running).not.toContain('RESERVED');
   });
 
-  it('includes RESERVED only when the reserved-status flag is set', () => {
-    expect(getSessionV2StatusBuckets(true, true).running).toContain('RESERVED');
-    expect(getSessionV2StatusBuckets(false, true).running).toContain(
-      'RESERVED',
-    );
-  });
-
-  it('drops all preemption statuses when the client lacks both flags', () => {
-    expect(getSessionV2StatusBuckets(false, false).running).toEqual([
+  it('drops all preemption statuses when the client lacks the flag', () => {
+    expect(getSessionV2StatusBuckets(false).running).toEqual([
       'PENDING',
       'SCHEDULED',
       'PREPARING',
@@ -35,12 +28,12 @@ describe('getSessionV2StatusBuckets', () => {
   });
 
   it('keeps the finished bucket identical either way', () => {
-    expect(getSessionV2StatusBuckets(false, false).finished).toEqual([
+    expect(getSessionV2StatusBuckets(false).finished).toEqual([
       'TERMINATED',
       'CANCELLED',
     ]);
-    expect(getSessionV2StatusBuckets(true, true).finished).toEqual(
-      getSessionV2StatusBuckets(false, false).finished,
+    expect(getSessionV2StatusBuckets(true).finished).toEqual(
+      getSessionV2StatusBuckets(false).finished,
     );
   });
 });

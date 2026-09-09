@@ -96,7 +96,6 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const statusBuckets = getSessionV2StatusBuckets(
     baiClient.supports('session-preemption-statuses'),
-    baiClient.supports('session-reserved-status'),
   );
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(

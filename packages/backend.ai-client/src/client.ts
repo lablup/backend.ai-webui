@@ -981,17 +981,12 @@ export class Client {
       // managers keep using the deprecated `startCommand` token list and never
       // receive `shell`.
       this._features['model-service-command-string'] = true;
-      // `PREEMPTED` / `RESCHEDULING` join the `SessionV2Status` enum (BA-6749,
-      // lablup/backend.ai#13126, FR-3673). Enum coercion rejects the whole
-      // query on an older manager, so status filters must omit them.
+      // `PREEMPTED` / `RESCHEDULING` (BA-6749, lablup/backend.ai#13126,
+      // FR-3673) and `RESERVED` (lablup/backend.ai#13235 / #13260) all join
+      // the v2 session/kernel status enums in the 26.8.0 release. Enum
+      // coercion rejects the whole query on an older manager, so status
+      // filters must omit them.
       this._features['session-preemption-statuses'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('26.8.1')) {
-      // `RESERVED` joins `SessionV2Status` / `KernelV2Status` with the
-      // preemption scheduler's reservation stage (BA-7308 train; core fixes
-      // lablup/backend.ai#13235 / #13260). Enum coercion rejects the whole
-      // query on an older manager, so status filters must omit it.
-      this._features['session-reserved-status'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset

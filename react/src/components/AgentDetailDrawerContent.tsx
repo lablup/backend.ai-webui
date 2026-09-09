@@ -55,7 +55,6 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const statusBuckets = getSessionV2StatusBuckets(
     baiClient.supports('session-preemption-statuses'),
-    baiClient.supports('session-reserved-status'),
   );
 
   const [activeTabKey, setActiveTabKey] = useState<TabKey>('resources');
