@@ -215,7 +215,7 @@ export const baiR23DefaultBrandHv7b7uvTheme = {
     "--astryx-theme-neutral-color-destructive-overlay-hover": "neutral",
     "--astryx-theme-neutral-color-destructive-overlay-pressed": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r22-default-brand-hg6tffs"],
+  __localTokenLineage: ["neutral","bai-r23-default-brand-hv7b7uv"],
   components: {
     "heading": {
       "level:1": {
