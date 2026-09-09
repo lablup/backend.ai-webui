@@ -269,9 +269,11 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
                   projectFolderAdminHint ??
                   t('data.folders.NoDeletePermission'),
               }
-            : vfolder?.status !== 'delete-pending'
-              ? { reason: t('data.folders.DeletionAlreadyStarted') }
-              : false,
+            : !hasDeletePermission
+              ? { reason: t('data.folders.NoDeletePermission') }
+              : vfolder?.status !== 'delete-pending'
+                ? { reason: t('data.folders.DeletionAlreadyStarted') }
+                : false,
           onClick: onDeleteForever,
         }
       : null,
