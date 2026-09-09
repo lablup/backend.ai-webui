@@ -45,7 +45,6 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
-  stagePickedOption,
   toLocalId,
   useBAILogger,
   BAIAlert,
@@ -348,7 +347,14 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                     value={value}
                     isDisabled={isDisabled}
                     width={200}
-                    onChange={stagePickedOption(onAddCondition)}
+                    onChange={(next, option) =>
+                      onAddCondition(
+                        next as string | undefined,
+                        Array.isArray(option)
+                          ? option[0]?.label
+                          : option?.label,
+                      )
+                    }
                   />
                 ),
               },

@@ -26,7 +26,6 @@ import {
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   isValidUUID,
-  stagePickedOption,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -185,7 +184,9 @@ const AdminRuntimeVariantPreset = ({
                     value={value}
                     isDisabled={isDisabled}
                     width={200}
-                    onChange={stagePickedOption(onAddCondition)}
+                    onChange={(next, option) =>
+                      onAddCondition(next, option?.label)
+                    }
                   />
                 ),
               },

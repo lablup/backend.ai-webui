@@ -22,7 +22,6 @@ import {
   BAISelect,
   BAIUnmountAfterClose,
   type BAITableSettings,
-  stagePickedOption,
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -164,7 +163,9 @@ const AdminPrometheusPreset = ({
                     value={value}
                     disabled={isDisabled}
                     style={{ width: 200 }}
-                    onChange={stagePickedOption(onAddCondition)}
+                    onChange={(next, option) =>
+                      onAddCondition(next ?? undefined, option?.label)
+                    }
                   />
                 </Suspense>
               ),

@@ -42,7 +42,6 @@ export type {
   FilterProperty as BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilterProps,
 } from './BAIGraphQLPropertyFilter';
-export { stagePickedOption } from './BAIPowerSearchAdapters';
 export { default as BAIRowWrapWithDividers } from './BAIRowWrapWithDividers';
 export { default as BAIStatistic } from './BAIStatistic';
 export type { BAIStatisticProps } from './BAIStatistic';

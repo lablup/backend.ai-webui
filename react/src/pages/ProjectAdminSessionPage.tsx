@@ -36,7 +36,6 @@ import {
   availableSessionV2SorterValues,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  stagePickedOption,
   useFetchKey,
 } from 'backend.ai-ui';
 import { PowerOffIcon } from 'lucide-react';
@@ -218,7 +217,14 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                     value={value}
                     isDisabled={isDisabled}
                     width={200}
-                    onChange={stagePickedOption(onAddCondition)}
+                    onChange={(next, option) =>
+                      onAddCondition(
+                        next as string | undefined,
+                        Array.isArray(option)
+                          ? option[0]?.label
+                          : option?.label,
+                      )
+                    }
                   />
                 ),
               },

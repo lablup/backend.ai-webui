@@ -24,7 +24,6 @@ import {
   BAIGraphQLPropertyFilter,
   BAIRuntimeVariantSelect,
   type BAITableSettings,
-  stagePickedOption,
   toLocalId,
   useBAILogger,
   filterOutNullAndUndefined,
@@ -159,7 +158,9 @@ const AdminDeploymentPreset = ({
                     value={value}
                     isDisabled={isDisabled}
                     width={200}
-                    onChange={stagePickedOption(onAddCondition)}
+                    onChange={(next, option) =>
+                      onAddCondition(next, option?.label)
+                    }
                   />
                 ),
               },
