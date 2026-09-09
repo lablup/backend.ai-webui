@@ -3574,6 +3574,8 @@
   },
   "userSettings": {
     "AIAgents": "AI агентууд",
+    "ApplyThemeToDomain": "Сэдвийг домэйнд хэрэглэх",
+    "ApplyThemeToDomainDesc": "Энэ сэдэв энэ домэйны бүх хэрэглэгчид хэрэглэгдэнэ.",
     "AutoLogout": "Автоматаар гарах",
     "AutomaticUpdateCheck": "Шинэчлэлтийг автоматаар шалгах",
     "BetaFeatures": "Бета хувилбарууд",

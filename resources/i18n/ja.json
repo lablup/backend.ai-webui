@@ -3574,6 +3574,8 @@
   },
   "userSettings": {
     "AIAgents": "AIエージェント",
+    "ApplyThemeToDomain": "ドメインにテーマを適用",
+    "ApplyThemeToDomainDesc": "このテーマはこのドメインのすべてのユーザーに適用されます。",
     "AutoLogout": "自動ログアウト",
     "AutomaticUpdateCheck": "自動更新チェック",
     "BetaFeatures": "ベータ機能",

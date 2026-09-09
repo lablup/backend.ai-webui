@@ -3572,6 +3572,8 @@
   },
   "userSettings": {
     "AIAgents": "Tekoälyagentit",
+    "ApplyThemeToDomain": "Käytä teemaa toimialueella",
+    "ApplyThemeToDomainDesc": "Tätä teemaa käytetään kaikille tämän toimialueen käyttäjille.",
     "AutoLogout": "Automaattinen uloskirjautuminen",
     "AutomaticUpdateCheck": "Automaattinen päivityksen tarkistus",
     "BetaFeatures": "Beta-ominaisuudet",

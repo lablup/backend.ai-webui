@@ -3574,6 +3574,8 @@
   },
   "userSettings": {
     "AIAgents": "Tác nhân AI",
+    "ApplyThemeToDomain": "Áp dụng chủ đề cho miền",
+    "ApplyThemeToDomainDesc": "Chủ đề này sẽ được áp dụng cho tất cả người dùng trong miền này.",
     "AutoLogout": "Đăng xuất tự động",
     "AutomaticUpdateCheck": "Kiểm tra cập nhật tự động",
     "BetaFeatures": "Tính năng Beta",

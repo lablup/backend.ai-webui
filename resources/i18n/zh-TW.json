@@ -3576,6 +3576,8 @@
   },
   "userSettings": {
     "AIAgents": "AI 代理",
+    "ApplyThemeToDomain": "將主題套用至域",
+    "ApplyThemeToDomainDesc": "此主題將套用至該域的所有使用者。",
     "AutoLogout": "自動退出",
     "AutomaticUpdateCheck": "自動更新檢查",
     "BetaFeatures": "測試版功能",

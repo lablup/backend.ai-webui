@@ -3572,6 +3572,8 @@
   },
   "userSettings": {
     "AIAgents": "Πράκτορες AI",
+    "ApplyThemeToDomain": "Εφαρμογή θέματος στον τομέα",
+    "ApplyThemeToDomainDesc": "Αυτό το θέμα θα εφαρμοστεί σε όλους τους χρήστες αυτού του τομέα.",
     "AutoLogout": "Αυτόματη αποσύνδεση",
     "AutomaticUpdateCheck": "Έλεγχος αυτόματης ενημέρωσης",
     "BetaFeatures": "Χαρακτηριστικά beta",

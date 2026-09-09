@@ -3575,6 +3575,8 @@
   },
   "userSettings": {
     "AIAgents": "AI 에이전트",
+    "ApplyThemeToDomain": "도메인에 테마 적용",
+    "ApplyThemeToDomainDesc": "이 테마가 이 도메인의 모든 사용자에게 적용됩니다.",
     "AutoLogout": "자동 로그아웃",
     "AutomaticUpdateCheck": "자동 업데이트 체크",
     "BetaFeatures": "베타 기능",

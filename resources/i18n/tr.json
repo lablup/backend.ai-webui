@@ -3572,6 +3572,8 @@
   },
   "userSettings": {
     "AIAgents": "AI Ajanları",
+    "ApplyThemeToDomain": "Temayı alana uygula",
+    "ApplyThemeToDomainDesc": "Bu tema, bu alandaki tüm kullanıcılara uygulanacaktır.",
     "AutoLogout": "Otomatik Çıkış",
     "AutomaticUpdateCheck": "Otomatik Güncelleme Kontrolü",
     "BetaFeatures": "Beta Özellikleri",

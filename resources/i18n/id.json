@@ -3576,6 +3576,8 @@
   },
   "userSettings": {
     "AIAgents": "Agen AI",
+    "ApplyThemeToDomain": "Terapkan tema ke domain",
+    "ApplyThemeToDomainDesc": "Tema ini akan diterapkan ke semua pengguna di domain ini.",
     "AutoLogout": "Keluar Otomatis",
     "AutomaticUpdateCheck": "Pemeriksaan Pembaruan Otomatis",
     "BetaFeatures": "Fitur Beta",

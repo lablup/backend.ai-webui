@@ -3572,6 +3572,8 @@
   },
   "userSettings": {
     "AIAgents": "Ejen AI",
+    "ApplyThemeToDomain": "Gunakan tema pada domain",
+    "ApplyThemeToDomainDesc": "Tema ini akan digunakan untuk semua pengguna dalam domain ini.",
     "AutoLogout": "Log Keluar Auto",
     "AutomaticUpdateCheck": "Pemeriksaan Kemas kini Automatik",
     "BetaFeatures": "Ciri Beta",

@@ -3574,6 +3574,8 @@
   },
   "userSettings": {
     "AIAgents": "KI-Agenten",
+    "ApplyThemeToDomain": "Thema auf Domain anwenden",
+    "ApplyThemeToDomainDesc": "Dieses Thema wird auf alle Benutzer dieser Domain angewendet.",
     "AutoLogout": "Automatische Abmeldung",
     "AutomaticUpdateCheck": "Automatische Update-Prüfung",
     "BetaFeatures": "Beta-Funktionen",

@@ -3574,6 +3574,8 @@
   },
   "userSettings": {
     "AIAgents": "Agentes de IA",
+    "ApplyThemeToDomain": "Aplicar tema ao domínio",
+    "ApplyThemeToDomainDesc": "Este tema será aplicado a todos os utilizadores deste domínio.",
     "AutoLogout": "Logout Automático",
     "AutomaticUpdateCheck": "Verificação de atualização automática",
     "BetaFeatures": "Recursos beta",
