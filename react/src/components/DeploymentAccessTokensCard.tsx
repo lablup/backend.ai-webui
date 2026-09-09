@@ -139,7 +139,7 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
   // expressed. Ordered most- to least-specific.
   const mutationDisabled: BAINameActionCellAction['disabled'] =
     isDeploymentDestroying
-      ? { reason: t('deployment.accessToken.DeploymentStopped') }
+      ? { reason: t('deployment.DeploymentStopped') }
       : !isOwnedByCurrentUser
         ? { reason: t('deployment.accessToken.OnlyOwnerCanManage') }
         : false;
