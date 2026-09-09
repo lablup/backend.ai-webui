@@ -4,16 +4,14 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
+import SSHKeyBlock from './SSHKeyBlock';
 import SSHKeypairGenerationModal from './SSHKeypairGenerationModal';
 import SSHKeypairManualFormModal from './SSHKeypairManualFormModal';
 import { Button } from '@astryxdesign/core/Button';
-import { Text } from '@astryxdesign/core/Text';
+import { HStack } from '@astryxdesign/core/Stack';
 import {
-  BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIText,
   useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -29,7 +27,6 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const [isPendingRefreshModal, startRefreshModalTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [
@@ -38,7 +35,10 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
   ] = useToggle(false);
   const [
     isOpenSSHKeypairManualFormModal,
-    { toggle: toggleSSHKeypairManualFormModal },
+    {
+      toggle: toggleSSHKeypairManualFormModal,
+      setLeft: closeSSHKeypairManualFormModal,
+    },
   ] = useToggle(false);
 
   const baiClient = useSuspendedBackendaiClient();
@@ -56,43 +56,35 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
       <BAIModal
         title={t('userSettings.SSHKeypairGeneration')}
         onCancel={() => onRequestClose()}
-        footer={[
-          <Button
-            key="back"
-            variant="secondary"
-            label={t('button.Close')}
-            onClick={() => onRequestClose()}
-          />,
-          <Button
-            key="generate"
-            variant="primary"
-            label={t('button.Generate')}
-            onClick={toggleSSHKeypairGenerationModal}
-          />,
-          <Button
-            key="enterManually"
-            variant="primary"
-            label={t('button.EnterManually')}
-            onClick={toggleSSHKeypairManualFormModal}
-          />,
-        ]}
+        // The same row BAIModal builds for its own OK/Cancel footer, so these
+        // actions sit where every other modal's do (right-aligned, spaced)
+        // instead of flush-left with no gap, which is what a bare array gets.
+        footer={
+          <HStack justify="end" gap={2} align="center">
+            <Button
+              variant="secondary"
+              label={t('button.Close')}
+              onClick={() => onRequestClose()}
+            />
+            <Button
+              variant="primary"
+              label={t('button.Generate')}
+              onClick={toggleSSHKeypairGenerationModal}
+            />
+            <Button
+              variant="primary"
+              label={t('button.EnterManually')}
+              onClick={toggleSSHKeypairManualFormModal}
+            />
+          </HStack>
+        }
         {...modalProps}
       >
-        <Text weight="semibold">{t('userSettings.CurrentSSHPublicKey')}</Text>
-        {data?.ssh_public_key ? (
-          <BAIFlex direction="row" align="start" justify="between">
-            <pre style={{ width: 430, height: 270 }}>
-              {data?.ssh_public_key}
-            </pre>
-            <BAIFlex style={{ marginTop: token.margin }}>
-              <BAIText copyable={{ text: data.ssh_public_key }} />
-            </BAIFlex>
-          </BAIFlex>
-        ) : (
-          <pre style={{ height: 270 }}>
-            {t('userSettings.NoExistingSSHKeypair')}
-          </pre>
-        )}
+        <SSHKeyBlock
+          label={t('userSettings.CurrentSSHPublicKey')}
+          value={data?.ssh_public_key}
+          placeholder={t('userSettings.NoExistingSSHKeypair')}
+        />
       </BAIModal>
       <SSHKeypairGenerationModal
         open={isOpenSSHKeypairGenerationModal}
@@ -106,10 +98,10 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
       />
       <SSHKeypairManualFormModal
         open={isOpenSSHKeypairManualFormModal}
-        onCancel={toggleSSHKeypairManualFormModal}
-        onRequestClose={() => {
-          toggleSSHKeypairManualFormModal();
-        }}
+        // Closing is idempotent: the modal now closes from the mutation's
+        // onSuccess, so a toggle would reopen it after a cancel mid-request.
+        onCancel={closeSSHKeypairManualFormModal}
+        onRequestClose={closeSSHKeypairManualFormModal}
         onRequestRefresh={() => {
           startRefreshModalTransition(() => {
             updateFetchKey();

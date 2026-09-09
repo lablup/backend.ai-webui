@@ -3582,7 +3582,7 @@
     "BootstrapScriptUpdated": "Script d'amorçage mis à jour.",
     "ClearSSHKeypairInput": "La paire de clés SSH écrite sera supprimée. Es-tu sur de vouloir continuer?",
     "ConfigFilename": "Nom du fichier de configuration",
-    "CurrentSSHPublicKey": "Clé publique actuelle :",
+    "CurrentSSHPublicKey": "Clé publique actuelle",
     "CustomDashboardPanels": "Panneaux de tableau de bord personnalisés",
     "DarkMode": "Mode sombre",
     "DarkTheme": "Mode sombre",

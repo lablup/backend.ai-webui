@@ -3579,7 +3579,7 @@
     "BootstrapScriptUpdated": "Το σενάριο Bootstrap ενημερώθηκε.",
     "ClearSSHKeypairInput": "Το γραπτό πληκτρολόγιο SSH θα αφαιρεθεί. Εισαι σιγουρος οτι θελεις να συνεχισεις?",
     "ConfigFilename": "Διαμόρφωση ονόματος αρχείου",
-    "CurrentSSHPublicKey": "Τρέχον δημόσιο κλειδί:",
+    "CurrentSSHPublicKey": "Τρέχον δημόσιο κλειδί",
     "CustomDashboardPanels": "Προσαρμοσμένα πάνελ πίνακα ελέγχου",
     "DarkMode": "Σκοτεινή λειτουργία",
     "DarkTheme": "Σκοτεινή λειτουργία",

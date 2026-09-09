@@ -3581,7 +3581,7 @@
     "BootstrapScriptUpdated": "Bootstrap-Skript aktualisiert.",
     "ClearSSHKeypairInput": "Geschriebenes SSH-Schlüsselpaar wird entfernt. Sind Sie sicher, dass Sie fortfahren möchten?",
     "ConfigFilename": "Name der Konfigurationsdatei",
-    "CurrentSSHPublicKey": "Aktueller öffentlicher Schlüssel:",
+    "CurrentSSHPublicKey": "Aktueller öffentlicher Schlüssel",
     "CustomDashboardPanels": "Benutzerdefinierte Dashboard-Panels",
     "DarkMode": "Dunkler Modus",
     "DarkTheme": "Dunkelmodus",

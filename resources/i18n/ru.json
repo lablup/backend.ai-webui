@@ -3579,7 +3579,7 @@
     "BootstrapScriptUpdated": "Обновлен скрипт начальной загрузки.",
     "ClearSSHKeypairInput": "Записанная пара ключей SSH будет удалена. Вы уверены что хотите продолжить?",
     "ConfigFilename": "Имя файла конфигурации",
-    "CurrentSSHPublicKey": "Текущий открытый ключ:",
+    "CurrentSSHPublicKey": "Текущий открытый ключ",
     "CustomDashboardPanels": "Пользовательские панели информационной панели",
     "DarkMode": "Темный режим",
     "DarkTheme": "Тёмный режим",

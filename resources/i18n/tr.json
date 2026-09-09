@@ -3579,7 +3579,7 @@
     "BootstrapScriptUpdated": "Önyükleme komut dosyası güncellendi.",
     "ClearSSHKeypairInput": "Yazılı SSH Anahtar Çifti kaldırılacaktır. Devam etmek istediğine emin misin?",
     "ConfigFilename": "Yapılandırma dosyası adı",
-    "CurrentSSHPublicKey": "Geçerli ortak anahtar:",
+    "CurrentSSHPublicKey": "Geçerli ortak anahtar",
     "CustomDashboardPanels": "Özel kontrol paneli panelleri",
     "DarkMode": "Karanlık Mod",
     "DarkTheme": "Karanlık Mod",

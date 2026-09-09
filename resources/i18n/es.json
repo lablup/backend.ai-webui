@@ -3579,7 +3579,7 @@
     "BootstrapScriptUpdated": "Script Bootstrap actualizado.",
     "ClearSSHKeypairInput": "Se eliminará el par de claves SSH escrito. ¿Está seguro de que desea continuar?",
     "ConfigFilename": "Nombre del archivo de configuración",
-    "CurrentSSHPublicKey": "Clave pública actual:",
+    "CurrentSSHPublicKey": "Clave pública actual",
     "CustomDashboardPanels": "Paneles personalizados del panel de control",
     "DarkMode": "Modo oscuro",
     "DarkTheme": "Modo oscuro",

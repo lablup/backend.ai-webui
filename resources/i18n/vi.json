@@ -3581,7 +3581,7 @@
     "BootstrapScriptUpdated": "Đã cập nhật tập lệnh Bootstrap.",
     "ClearSSHKeypairInput": "Cặp khóa SSH đã viết sẽ bị xóa. Bạn có chắc chắn muốn tiếp tục không?",
     "ConfigFilename": "Định cấu hình tên tệp",
-    "CurrentSSHPublicKey": "Khóa công khai hiện tại:",
+    "CurrentSSHPublicKey": "Khóa công khai hiện tại",
     "CustomDashboardPanels": "Bảng điều khiển tùy chỉnh",
     "DarkMode": "Chế độ tối",
     "DarkTheme": "Chế độ tối",

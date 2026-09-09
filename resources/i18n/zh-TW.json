@@ -3583,7 +3583,7 @@
     "BootstrapScriptUpdated": "引導腳本已更新。",
     "ClearSSHKeypairInput": "書面 SSH 密鑰對將被刪除。你確定你要繼續嗎？",
     "ConfigFilename": "配置文件名",
-    "CurrentSSHPublicKey": "當前公鑰：",
+    "CurrentSSHPublicKey": "當前公鑰",
     "CustomDashboardPanels": "自訂儀表板面板",
     "DarkMode": "深色模式",
     "DarkTheme": "深色模式",

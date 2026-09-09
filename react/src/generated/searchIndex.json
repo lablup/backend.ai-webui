@@ -5179,6 +5179,7 @@
         "userSettings.PrivateKey",
         "userSettings.PublicKey",
         "userSettings.SSHKeypairEnterManually",
+        "userSettings.SSHKeypairEnterManuallyFinished",
         "userSettings.SSHKeypairGeneration",
         "userSettings.SSHKeypairGenerationWarning",
         "userSettings.UserConfigScript",

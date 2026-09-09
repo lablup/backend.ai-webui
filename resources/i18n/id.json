@@ -3583,7 +3583,7 @@
     "BootstrapScriptUpdated": "Skrip Bootstrap diperbarui.",
     "ClearSSHKeypairInput": "Pasangan Kunci SSH tertulis akan dihapus. Apakah anda yakin ingin melanjutkan?",
     "ConfigFilename": "Nama file konfigurasi",
-    "CurrentSSHPublicKey": "Kunci publik saat ini: ",
+    "CurrentSSHPublicKey": "Kunci publik saat ini",
     "CustomDashboardPanels": "Panel dasbor kustom",
     "DarkMode": "Mode Gelap",
     "DarkTheme": "Mode Gelap",
