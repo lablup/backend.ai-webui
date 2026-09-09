@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="User Settings" />
   <meta name="twitter:description" content="The User Settings page allows you to customize your Backend.AI WebUI experience." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"User Settings","inLanguage":"en","description":"The User Settings page allows you to customize your Backend.AI WebUI experience.","dateModified":"2026-09-09T15:51:55.000Z","url":"https://webui.docs.backend.ai/next/en/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"User Settings","inLanguage":"en","description":"The User Settings page allows you to customize your Backend.AI WebUI experience.","dateModified":"2026-09-09T16:49:43.000Z","url":"https://webui.docs.backend.ai/next/en/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/user_settings.html" />
   <link rel="alternate" hreflang="en" href="../en/user_settings.html" />
   <link rel="alternate" hreflang="ja" href="../ja/user_settings.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (35556d8)">v26.9.0-alpha.0 (35556d8)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (4713ab3)">v26.9.0-alpha.0 (4713ab3)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -459,13 +459,14 @@ into the confirmation field before the delete is allowed.</p>
 <p data-bai-block="96">When using the WebUI app, you can create SSH/SFTP connections directly to a
 compute session. Once you sign up for Backend.AI, a public keypair is
 provided. If you click the button on the right of the SSH Keypair Management
-section, the following dialog appears. Click the copy button on the right to
-copy the existing SSH public key. You can update the SSH keypair by clicking
-the <code>Generate</code> button at the bottom of the dialog. SSH public/private keys are
-randomly generated and stored as user information. Please note that the secret
-key cannot be checked again unless it is saved manually immediately after
+section, the following dialog appears. The existing SSH public key is shown
+under the <strong>Current public key</strong> label; click the copy button next to the
+label to copy it. You can update the SSH keypair by clicking the <code>Generate</code>
+button at the bottom of the dialog. SSH public/private keys are randomly
+generated and stored as user information. Please note that the secret key
+cannot be checked again unless it is saved manually immediately after
 creation.</p>
-<p><figure data-bai-block="97" class="doc-figure"><img src="./images/ssh_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="676" /><figcaption>Figure 19.8</figcaption></figure>
+<p><figure data-bai-block="97" class="doc-figure"><img src="./images/ssh_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1072" height="708" /><figcaption>Figure 19.8</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="98" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -480,14 +481,15 @@ this into a PPK key.</p>
 such as accessing a private repository. To add your own SSH keypair, click the
 <code>Enter Manually</code> button. You will then see two text areas labeled <strong>Public Key</strong>
 and <strong>Private Key</strong>.</p>
-<p><figure data-bai-block="101" class="doc-figure"><img src="./images/add_ssh_keypair_manually_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="988" /><figcaption>Figure 19.9</figcaption></figure>
+<p><figure data-bai-block="101" class="doc-figure"><img src="./images/add_ssh_keypair_manually_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1054" height="1042" /><figcaption>Figure 19.9</figcaption></figure>
 </p>
-<p data-bai-block="102">Enter the keys and click the <code>Save</code> button. The message <em>&quot;SSH Keypair has been
-successfully registered.&quot;</em> confirms the save, and you can now access your
-Backend.AI session using your own key. If the keypair is rejected, the dialog
-stays open and shows the error message returned by the server, so you can
-correct the keys and save again.</p>
-<p><figure data-bai-block="103" class="doc-figure"><img src="./images/ssh_keypair_dialog_after.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="676" /><figcaption>Figure 19.10</figcaption></figure>
+<p data-bai-block="102">Enter the keys and click the <code>Save</code> button. When the keypair is accepted, a
+confirmation message appears and the dialog closes. If the server rejects the
+keypair -- for example when a key is malformed or the public and private keys
+do not match -- the dialog stays open and shows the error message returned by
+the server, so you can correct the keys and save again. Once the keypair is
+registered, you can access your Backend.AI session using your own key.</p>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/ssh_keypair_dialog_after.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1072" height="708" /><figcaption>Figure 19.10</figcaption></figure>
 </p>
 <h3 data-bai-block="104" id="user_settings-max-concurrent-file-upload-limit">Max concurrent file upload limit<a class="hash-link" href="#user_settings-max-concurrent-file-upload-limit" aria-label="Direct link to Max concurrent file upload limit">#</a></h3>
 <p data-bai-block="105">Limits the number of files that can be uploaded simultaneously through the
@@ -540,16 +542,11 @@ condition you define. The panels appear only while this feature is enabled;
 turning it off later hides them without deleting them, and turning it back
 on restores them exactly as they were. See
 <a href="./dashboard.html#dashboard-custom-panels">Custom Panels</a> for how to add and manage them.</li>
-<li data-bai-block="120"><strong>Command palette</strong>: Adds a <strong>Search</strong> button to the header and registers the
-<code>Ctrl+K</code> (<code>⌘K</code> on macOS) shortcut. Both open a palette that searches the
-pages, tabs, and setting items available to you and moves straight to the one
-you pick. The palette also lists quick actions -- starting a session,
-creating a storage folder or a deployment, switching to the light, dark, or
-system theme, toggling the sidebar, opening notifications or user settings,
-opening the manual for the current page, and changing the UI language -- and
-shows the entries you selected most recently under <strong>Recent</strong>. Results that
-are available only to administrators are marked <strong>Administration</strong> or
-<strong>Project administration</strong>.</li>
+<li data-bai-block="120"><strong>Command palette</strong>: Adds a <strong>Search</strong> button to the top bar and enables the
+<code>Ctrl-K</code> (<code>Cmd-K</code> on Mac) shortcut, which opens a palette for searching
+pages, tabs, and setting items, and for running quick actions such as
+switching the display mode or opening notifications. See
+<a href="#search">Search</a> for details.</li>
 <li data-bai-block="121"><strong>Import from Hugging Face</strong>: Adds an <strong>Import Hugging Face Model</strong> tab to the
 <strong>Start From URL</strong> dialog on the Start page, so you can import a model from
 Hugging Face directly into a model folder. The tab appears only when model

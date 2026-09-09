@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-09T15:53:17.806Z",
+  "generatedAt": "2026-09-09T16:51:04.056Z",
   "languages": [
     "en",
     "ja",
@@ -13,11 +13,11 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 6,
-        "added": 1,
-        "modified": 5,
-        "removed": 0,
-        "images": 4,
+        "changes": 7,
+        "added": 2,
+        "modified": 4,
+        "removed": 1,
+        "images": 3,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -29,19 +29,20 @@
           "url": "next/en/user_settings.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/user_settings/user_settings.md",
           "counts": {
-            "added": 1,
-            "modified": 5,
-            "removed": 0,
-            "images": 4,
-            "total": 6
+            "added": 2,
+            "modified": 4,
+            "removed": 1,
+            "images": 3,
+            "total": 7
           },
           "fingerprints": [
-            "cb3572840a0d",
-            "1e289ad40f33",
-            "1115e086bb4a",
-            "bb93116d8044",
+            "74750302d09e",
+            "723bb89116a7",
+            "8705d0db84a4",
+            "a6c98fc6ad0b",
+            "43fdf3b3c6e1",
             "64ffd8bede44",
-            "02502be51613"
+            "24690d61b996"
           ]
         }
       ]
@@ -53,7 +54,7 @@
         "added": 1,
         "modified": 6,
         "removed": 0,
-        "images": 4,
+        "images": 3,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -68,17 +69,17 @@
             "added": 1,
             "modified": 6,
             "removed": 0,
-            "images": 4,
+            "images": 3,
             "total": 7
           },
           "fingerprints": [
-            "9b0f48bf2f2d",
-            "306730540ab2",
-            "f3a9f19301d8",
-            "69e15585ec6f",
+            "5004c95b7bc8",
+            "7c00c64db26f",
+            "aa709b917313",
+            "3f3052513b03",
             "e1a33583c53d",
-            "2caf168516cd",
-            "f500b49ed5b2"
+            "0ccdb685a5e5",
+            "66bc87a02f99"
           ]
         }
       ]
@@ -90,7 +91,7 @@
         "added": 1,
         "modified": 5,
         "removed": 0,
-        "images": 4,
+        "images": 3,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -105,16 +106,16 @@
             "added": 1,
             "modified": 5,
             "removed": 0,
-            "images": 4,
+            "images": 3,
             "total": 6
           },
           "fingerprints": [
-            "b5a5d523c08e",
-            "b2b5b492596e",
-            "10f34fa7a221",
-            "4cc8b5a2a834",
+            "f1797e3afedd",
+            "a7d0533125bf",
+            "7b8e3eec21a6",
+            "3ee7afb7506c",
             "dc8b02b486c1",
-            "36d5479c57a9"
+            "63849f1c186a"
           ]
         }
       ]
@@ -122,11 +123,11 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 7,
-        "added": 1,
-        "modified": 6,
-        "removed": 0,
-        "images": 4,
+        "changes": 8,
+        "added": 2,
+        "modified": 5,
+        "removed": 1,
+        "images": 3,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -138,19 +139,20 @@
           "url": "next/th/user_settings.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/user_settings/user_settings.md",
           "counts": {
-            "added": 1,
-            "modified": 6,
-            "removed": 0,
-            "images": 4,
-            "total": 7
+            "added": 2,
+            "modified": 5,
+            "removed": 1,
+            "images": 3,
+            "total": 8
           },
           "fingerprints": [
-            "9a92074d4e5e",
-            "3eda562ac50a",
-            "0571f52821b6",
-            "8d6eb06e61a9",
+            "c80535433143",
+            "08acaafe038a",
+            "782dad14311c",
+            "1184a4c8dc05",
+            "b7fe2892e0a2",
             "a367c70e6279",
-            "a23383964c90",
+            "2551053b9d5f",
             "a768e7661b4d"
           ]
         }

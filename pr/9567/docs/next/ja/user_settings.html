@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ユーザー設定" />
   <meta name="twitter:description" content="ユーザー設定ページでは、Backend.AI WebUIの環境をカスタマイズできます。 右上の人アイコンをクリックし、環境設定メニューを選択してアクセスできます。 ここでは、テーマモード、言語、デスクトップ通知、SSHキーペア管理、シェル スクリプト、実験的機能などの設定を行うことができます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ユーザー設定","inLanguage":"ja","description":"ユーザー設定ページでは、Backend.AI WebUIの環境をカスタマイズできます。 右上の人アイコンをクリックし、環境設定メニューを選択してアクセスできます。 ここでは、テーマモード、言語、デスクトップ通知、SSHキーペア管理、シェル スクリプト、実験的機能などの設定を行うことができます。","dateModified":"2026-09-09T15:51:55.000Z","url":"https://webui.docs.backend.ai/next/ja/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ユーザー設定","inLanguage":"ja","description":"ユーザー設定ページでは、Backend.AI WebUIの環境をカスタマイズできます。 右上の人アイコンをクリックし、環境設定メニューを選択してアクセスできます。 ここでは、テーマモード、言語、デスクトップ通知、SSHキーペア管理、シェル スクリプト、実験的機能などの設定を行うことができます。","dateModified":"2026-09-09T16:49:43.000Z","url":"https://webui.docs.backend.ai/next/ja/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/user_settings.html" />
   <link rel="alternate" hreflang="en" href="../en/user_settings.html" />
   <link rel="alternate" hreflang="ja" href="../ja/user_settings.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (35556d8)">v26.9.0-alpha.0 (35556d8)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (4713ab3)">v26.9.0-alpha.0 (4713ab3)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -454,11 +454,12 @@ English、한국어、brasileiro、简体中文、繁體中文、Français、Suo
 <p data-bai-block="96">WebUIアプリを使用する際、コンピュートセッションに直接SSH/SFTP接続を作成でき
 ます。Backend.AIにサインアップすると、公開キーペアが提供されます。SSHキーペア
 管理セクションの右側にあるボタンをクリックすると、次のダイアログが表示されます。
-右側のコピーボタンをクリックして、既存のSSH公開鍵をコピーできます。ダイアログ
-の下部にある<code>生む</code>ボタンをクリックすると、SSHキーペアを更新できます。SSH
-公開/秘密鍵はランダムに生成され、ユーザー情報として保存されます。秘密鍵は作成
-後すぐに手動で保存しない限り、再確認できないことに注意してください。</p>
-<p><figure data-bai-block="97" class="doc-figure"><img src="./images/ssh_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="676" /><figcaption>図 19.8</figcaption></figure>
+既存のSSH公開鍵は<strong>現在の公開鍵</strong>の項目に表示され、その横のコピーボタンを
+クリックするとコピーできます。ダイアログの下部にある<code>生む</code>ボタンをクリック
+すると、SSHキーペアを更新できます。SSH公開/秘密鍵はランダムに生成され、
+ユーザー情報として保存されます。秘密鍵は作成後すぐに手動で保存しない限り、
+再確認できないことに注意してください。</p>
+<p><figure data-bai-block="97" class="doc-figure"><img src="./images/ssh_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1072" height="708" /><figcaption>図 19.8</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="98" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
@@ -473,14 +474,15 @@ PPKキーに変換する必要がある場合があります。</p>
 独自のSSHキーペアの追加をサポートしています。独自のSSHキーペアを追加するには、
 <code>直接入力する</code>ボタンをクリックしてください。
 <strong>公開鍵</strong>と<strong>秘密鍵</strong>の2つのテキストエリアが表示されます。</p>
-<p><figure data-bai-block="101" class="doc-figure"><img src="./images/add_ssh_keypair_manually_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="988" /><figcaption>図 19.9</figcaption></figure>
+<p><figure data-bai-block="101" class="doc-figure"><img src="./images/add_ssh_keypair_manually_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1054" height="1042" /><figcaption>図 19.9</figcaption></figure>
 </p>
-<p data-bai-block="102">キーを入力して<code>保存</code>ボタンをクリックしてください。*「SSHキーフェア登録が正常に
-完了しました。」*というメッセージで保存が確認され、独自のキーを使用して
-Backend.AIセッションにアクセスできます。キーペアが拒否された場合は、
-ダイアログは開いたままサーバーから返されたエラーメッセージが表示されるため、
-キーを修正して再度保存できます。</p>
-<p><figure data-bai-block="103" class="doc-figure"><img src="./images/ssh_keypair_dialog_after.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="676" /><figcaption>図 19.10</figcaption></figure>
+<p data-bai-block="102">キーを入力して<code>保存</code>ボタンをクリックしてください。キーペアが正常に登録されると、
+完了メッセージが表示されてダイアログが閉じます。鍵の形式が正しくない場合や公開鍵
+と秘密鍵が一致しない場合など、サーバーがキーペアを拒否したときは、ダイアログは
+閉じずにサーバーが返したエラーメッセージが表示されるため、キーを修正して再度保存
+できます。登録が完了すると、独自のキーを使用してBackend.AIセッションにアクセス
+できます。</p>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/ssh_keypair_dialog_after.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1072" height="708" /><figcaption>図 19.10</figcaption></figure>
 </p>
 <h3 data-bai-block="104" id="user_settings-最大同時ファイルアップロード制限">最大同時ファイルアップロード制限<a class="hash-link" href="#user_settings-最大同時ファイルアップロード制限" aria-label="Direct link to 最大同時ファイルアップロード制限">#</a></h3>
 <p data-bai-block="105">ファイルエクスプローラーを通じて同時にアップロードできるファイルの数を制限
@@ -531,21 +533,16 @@ Backend.AIセッションにアクセスできます。キーペアが拒否さ�
 表示され、後で無効にすると、削除されずに非表示になり、再度有効にすると
 元の状態に復元されます。追加・管理方法については
 <a href="./dashboard.html#custom-panels">カスタムパネル</a>セクションを参照してください。</li>
-<li data-bai-block="120"><strong>コマンドパレット</strong>: ヘッダーに<strong>検索</strong>ボタンを追加し、<code>Ctrl+K</code>（macOSでは
-<code>⌘K</code>）ショートカットを登録します。どちらの操作でも、利用できるページ、タブ、
-設定項目を検索し、選択した項目へ直接移動できるパレットが開きます。パレット
-からは、<strong>新規セッション開始</strong>、<strong>フォルダー作成</strong>、<strong>デプロイを作成</strong>、
-ライト/ダーク/システムテーマの切り替え、サイドバーの開閉、お知らせや
-ユーザー設定を開く、このページのマニュアルを開く、UI言語の変更といった
-クイックアクションも実行でき、最近選択した項目は<strong>最近の項目</strong>に表示されます。
-管理者のみが利用できる検索結果には、<strong>管理者</strong>または<strong>プロジェクト管理者</strong>の
-ラベルが付きます。</li>
+<li data-bai-block="120"><strong>コマンドパレット</strong>: トップバーに<strong>検索</strong>ボタンを追加し、<code>Ctrl-K</code>（Macでは
+<code>Cmd-K</code>）ショートカットを有効にします。このパレットではページ、タブ、設定項目
+を検索できるほか、画面モードの切り替えや通知を開くなどのクイックアクションも
+実行できます。詳細については<a href="#search">検索</a>セクションを参照してください。</li>
 <li data-bai-block="121"><strong>Hugging Face からインポート</strong>: スタートページの<strong>URLから開始</strong>ダイアログに
 <strong>Hugging Face モデルをインポート</strong>タブを追加し、Hugging Faceのモデルを
 モデルフォルダへ直接インポートできるようにします。このタブは、環境でモデル
 デプロイ機能も利用できる場合にのみ表示されます。</li>
-<li data-bai-block="122"><strong>セッションリソースグリッド表示</strong>: セッションページとAdmin Sessionページの
-セッションリストの上に、<strong>表示モード</strong>の切り替え（<strong>テーブル</strong> /
+<li data-bai-block="122"><strong>セッションリソースグリッド表示</strong>: セッションページとAdmin Sessionページ
+のセッションリストの上に、<strong>表示モード</strong>の切り替え（<strong>テーブル</strong> /
 <strong>グリッド</strong>）を追加します。<strong>グリッド</strong>を選択すると、テーブルの
 代わりにセッションごとにセルが1つずつ表示され、セルの色はそのセッションの
 リアルタイムのリソース使用率を表します。この切り替えは、本機能を有効に
