@@ -207,7 +207,6 @@ patchedDependencies:
   '@astryxdesign/core@0.5.2': c9b0d04ba4d03f2fed56352870de082e2a58f9d92b509e247342e59c951918ed
   '@astryxdesign/lab@0.3.0-canary.12db2a1': 0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08
   '@cloudscape-design/board-components@3.0.176': 06f6366f1016801dd543a4b968e088fbcbf34ee1a4473bc09a07e35206597a98
-  ansi_up@6.0.6: 99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459
   relay-runtime@20.1.1: cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6
 
 importers:
@@ -841,9 +840,6 @@ importers:
       ajv:
         specifier: ^8.20.0
         version: 8.20.0
-      ansi_up:
-        specifier: ^6.0.6
-        version: 6.0.6(patch_hash=99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459)
       backend.ai-client:
         specifier: workspace:*
         version: link:../packages/backend.ai-client
@@ -5290,9 +5286,6 @@ packages:
   ansi-styles@6.2.3:
     resolution: {integrity: sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==}
     engines: {node: '>=12'}
-
-  ansi_up@6.0.6:
-    resolution: {integrity: sha512-yIa1x3Ecf8jWP4UWEunNjqNX6gzE4vg2gGz+xqRGY+TBSucnYp6RRdPV4brmtg6bQ1ljD48mZ5iGSEj7QEpRKA==}
 
   any-promise@1.3.0:
     resolution: {integrity: sha512-7UvmKalWRt1wgjL1RrGxoSJW/0QZFIegpeGvZG9kjp8vrRu55XTHbwnqq2GpXm9uLbcuhxm3IqX9OB4MZR1b2A==}
@@ -15997,8 +15990,6 @@ snapshots:
 
   ansi-styles@6.2.3: {}
 
-  ansi_up@6.0.6(patch_hash=99856fc7fa4571c6ef4716cfd2dbf1151a025690c737775e248e8b7fe08a4459): {}
-
   any-promise@1.3.0: {}
 
   anymatch@3.1.3:
@@ -23428,7 +23419,6 @@ time:
   '@yao-pkg/pkg@6.14.1': '2026-02-20T13:22:14.235Z'
   ai@5.0.228: '2026-08-05T19:16:10.716Z'
   ajv@8.20.0: '2026-04-24T15:22:16.529Z'
-  ansi_up@6.0.6: '2025-05-16T20:58:13.495Z'
   babel-plugin-react-compiler@1.0.0: '2025-10-07T19:19:01.781Z'
   babel-plugin-relay@20.1.1: '2025-08-06T23:52:22.843Z'
   babel-preset-react-app@10.1.0: '2025-02-15T01:18:26.068Z'
