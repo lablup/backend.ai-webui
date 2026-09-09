@@ -51,25 +51,19 @@ check_warmup_paths() {
 }
 
 check_relay_drift() {
-  # Relay generated artifacts are committed (see relay.dev production setup).
-  # Any change under __generated__ after compiling means sources or schema
-  # were updated without a matching `pnpm relay` run.
-  #
-  # Use `git status --porcelain` instead of `git diff --exit-code` so that
-  # *new* generated files (e.g. when a developer adds a fragment) are caught
-  # as drift too — `git diff` only sees tracked files.
+  # Relay generated artifacts are committed (see relay.dev production setup);
+  # compiling and finding __generated__ dirty means a missing `pnpm relay` run.
   pnpm run relay || return 1
-  local dirty
-  dirty=$(git status --porcelain -- \
-    'react/src/__generated__' \
-    'packages/backend.ai-ui/src/__generated__')
-  if [ -n "$dirty" ]; then
-    echo "$dirty"
-    echo "Relay generated artifacts are out of sync."
-    echo "Run \`pnpm relay\` and commit the changes under __generated__."
-    return 1
-  fi
-  return 0
+  bash scripts/check-generated-drift.sh Relay "pnpm relay" \
+    react/src/__generated__ \
+    packages/backend.ai-ui/src/__generated__
+}
+
+check_search_index_drift() {
+  # The committed index is what ships — see docs/adr/0003-committed-search-index-artifact.md.
+  pnpm --prefix ./react run search-index || return 1
+  bash scripts/check-generated-drift.sh "Search index" "pnpm run search-index" \
+    react/src/generated/searchIndex.json
 }
 
 check_terminology_drift() {
@@ -198,6 +192,22 @@ check_agent_mappings() {
   node packages/backend.ai-agent-cli/dist/cli.js doctor --mappings
 }
 
+check_help_anchors() {
+  # The header's "?" button opens a manual page#anchor from the hand-curated
+  # react/src/helper/helpAnchors.json; a renamed heading turns it into a no-op
+  # scroll with nothing failing. Resolves every target against the English
+  # manual sources (FR-3773).
+  node scripts/check-help-anchors.mjs
+}
+
+check_layer_order() {
+  # The @layer order statement decides whether the brand theme outranks
+  # Astryx's defaults, and both drift and misplacement are invisible at
+  # runtime. Same reason as the ladder gate below: index.html-only PRs run no
+  # vitest job, so the check lives here too.
+  node scripts/migration-gates/layer-order-gate.mjs
+}
+
 check_z_index_ladder() {
   # Drift between the ladder and its hand-mirrors is silent, and vitest.yml's
   # path filter never fires for an index.html-only PR — so it runs here, always.
@@ -206,6 +216,7 @@ check_z_index_ladder() {
 }
 
 run_check "Relay" check_relay_drift
+run_check "Search index" check_search_index_drift
 # lint:ci = the cached eslint variant CI runs (content-hash cache; modified
 # files are always re-linted). Uncached equivalent: `pnpm -r lint`.
 # backend.ai-client's and backend.ai-agent-cli's lint:ci are deliberately
@@ -223,8 +234,10 @@ run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built
 run_check "Astryx integration (backend.ai-ui)" check_astryx_integration
+run_check "Cascade-layer order" check_layer_order
 run_check "z-index ladder mirrors" check_z_index_ladder
 run_check "Agent mappings" check_agent_mappings
+run_check "Help anchors (user manual)" check_help_anchors
 run_check "Terminology" check_terminology_drift
 
 # Non-English avoid-row precision self-test (FR-3051). This gates the avoid-row

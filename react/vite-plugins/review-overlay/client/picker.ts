@@ -32,6 +32,12 @@ export interface PickerCallbacks {
   showHint: (message: string) => void;
   /** Repository root from `/__review/state`; null until it answers. */
   sourceRoot: () => string | null | undefined;
+  /**
+   * `false` when react-grab cannot arrive — a static build, where the app's
+   * dev-only import of it never runs (FR-3880). The fallback chord then binds
+   * straight away instead of after 20 s of polling for it.
+   */
+  expectReactGrab?: boolean;
 }
 
 const PLUGIN_NAME = 'bai-review-pick';
@@ -257,6 +263,10 @@ export function createPicker(callbacks: PickerCallbacks) {
    */
   function watchForReactGrab() {
     if (ensureGrabPlugin()) return;
+    if (callbacks.expectReactGrab === false) {
+      armHotkey();
+      return;
+    }
     let tries = 0;
     const timer = setInterval(() => {
       if (ensureGrabPlugin()) {

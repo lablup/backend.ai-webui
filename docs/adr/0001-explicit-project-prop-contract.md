@@ -1,9 +1,30 @@
-# ADR-0001: Explicit project prop contract for leaf components
+# 0001 — Explicit project prop contract for leaf components
 
-- Status: Accepted
-- Date: 2026-07-29
-- Issues: FR-3407 (epic), FR-3408 (first application), FR-3415 (final
-  application — the `/admin/*` surface is complete)
+## Summary
+
+- Leaf components (creation modals, session-launch buttons, mismatch alerts)
+  take the current project as a **required** `project` prop and never read
+  the ambient value through `useCurrentProjectValue` themselves.
+- Pages are the only readers of the ambient project. They narrow it with
+  `toProjectContext` and pass it down; a page above project scope passes
+  `null`, and each component tier defines what `null` renders.
+- The project-agnostic `/admin/*` surface is gated by
+  `useIsProjectAgnosticPage()`: the header selector is not mounted there, and
+  an ESLint rule forbids importing the ambient hook in those pages.
+
+## Diagram
+
+```mermaid
+flowchart LR
+  atom[(current-project atom)]
+  page[Project-scoped page]
+  agnostic[Project-agnostic page<br/>/admin/*]
+  leaf[Leaf component<br/>modal, button, alert tier]
+  atom -- "useCurrentProjectValue()" --> page
+  page -- "project prop, narrowed by toProjectContext" --> leaf
+  agnostic -- "project prop: null" --> leaf
+  atom -. "import forbidden by ESLint" .-x agnostic
+```
 
 ## Context
 
@@ -286,7 +307,7 @@ narrowing helper for the loosely-typed ambient value).
     domain-wide, and resource presets have no project dimension at all (see
     below). The page still owns the URL state and resolves the id; `ImageList`
     receives `project` plus an `onChangeProject` callback and never decides
-    the project itself, so ADR-0001's contract is intact.
+    the project itself, so ADR 0001's contract is intact.
 
     The consumers below it were converted:
     - `ImageList` — required `project: ProjectContextOrNull` plus
@@ -417,3 +438,10 @@ reintroduces the invisible-global failure mode this ADR exists to remove.
    that tier-specific behavior is rendered. Test external behavior only
    (props in, rendered output + mutation variables out) — never which hooks
    are called.
+
+## Sources
+
+- FR-3407 (epic); FR-3408, FR-3410, FR-3411, FR-3412, FR-3413, FR-3414, and
+  FR-3415 (the applications, in order — the `/admin/*` surface is complete
+  with the last).
+- Decided 2026-07-29.

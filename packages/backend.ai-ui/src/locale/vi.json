@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Yêu cầu kéo thành công cho các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Đang kiểm tra phiên Backend.AI của bạn…",
+    "SignInWithBackendAI": "Đăng nhập bằng Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Trình duyệt đã chặn yêu cầu đến máy chủ web Backend.AI. Nguyên nhân thường là hạn chế CORS hoặc nội dung hỗn hợp.",
+      "HttpError": "Máy chủ web Backend.AI đã trả về lỗi ({{status}}).",
+      "InvalidCallback": "Địa chỉ quay lại sau đăng nhập được cấu hình cho {{appName}} không phải là địa chỉ web hợp lệ.",
+      "InvalidResponse": "Máy chủ web Backend.AI đã trả về phản hồi không mong đợi.",
+      "NoEndpoint": "Chưa cấu hình địa chỉ máy chủ web Backend.AI cho {{appName}}.",
+      "NoSessionId": "Bạn đã đăng nhập Backend.AI, nhưng máy chủ web không trả về ID phiên.",
+      "NoSessionOverHttp": "Bạn chưa đăng nhập Backend.AI. Nếu bạn đã đăng nhập, {{appName}} được phục vụ qua HTTP nên trình duyệt có thể đang từ chối cookie phiên bảo mật của máy chủ web. Hãy thử mở {{appName}} qua HTTPS.",
+      "NoSessionOverHttps": "Bạn chưa đăng nhập Backend.AI. Nếu bạn đã đăng nhập, {{appName}} và máy chủ web Backend.AI có thể là hai trang web khác nhau nên trình duyệt không gửi cookie phiên.",
+      "RelayFailed": "Bạn đã đăng nhập Backend.AI, nhưng {{appName}} không thể hoàn tất việc đăng nhập.",
+      "Timeout": "Máy chủ web Backend.AI không phản hồi kịp thời.",
+      "Title": "Không thể đăng nhập bằng Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Kích thước cụm",
     "Concurrency": "Phiên đồng thời",
@@ -762,6 +779,7 @@
     "DeselectAll": "Bỏ chọn tất cả",
     "File": "Tệp",
     "Increase": "Tăng",
+    "Loading": "Đang tải...",
     "NSelected": "{{count}} Đã chọn",
     "Optional": "Không bắt buộc",
     "Project": "Dự án",

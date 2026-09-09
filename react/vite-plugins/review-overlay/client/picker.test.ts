@@ -287,6 +287,31 @@ describe('the fallback hotkey', () => {
     picker.stop();
   });
 
+  it('arms immediately when react-grab is not coming at all', () => {
+    // FR-3880: in a static build the app never imports react-grab, so the
+    // 20 s poll would only be 20 s of no entry point into pick mode.
+    vi.useFakeTimers();
+    window.__REACT_GRAB__ = undefined;
+    const picker = make({ ...callbacks, expectReactGrab: false });
+    picker.watchForReactGrab();
+    vi.useRealTimers();
+    expect(picker.isHotkeyArmed()).toBe(true);
+
+    window.dispatchEvent(chord());
+    expect(picker.isActive()).toBe(true);
+    el('a').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(picks).toEqual([el('a')]);
+    picker.stop();
+  });
+
+  it('still prefers react-grab when it is already there', () => {
+    // `expectReactGrab: false` says "do not wait", not "do not use it".
+    const picker = make({ ...callbacks, expectReactGrab: false });
+    picker.watchForReactGrab();
+    expect(picker.isHotkeyArmed()).toBe(false);
+    expect(picker.hasReactGrab()).toBe(true);
+  });
+
   it('stays out of the way inside a text field', () => {
     grab.activate = () => undefined;
     const picker = make(callbacks);

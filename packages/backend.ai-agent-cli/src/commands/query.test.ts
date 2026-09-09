@@ -1,6 +1,13 @@
 import { EXIT } from '../errors.js';
+import { clearManagerVersionCache } from '../manager.js';
 import { ALLOWED_MUTATION_NAMES } from '../mutation-allowlist.js';
-import { parseVariables } from '../query/document.js';
+import {
+  executableSchema,
+  parseDocument,
+  parseVariables,
+  selectedSchemaIds,
+} from '../query/document.js';
+import { resolveRepoContext } from '../repo-context.js';
 import { runCli } from '../run.js';
 import { saveSession } from '../session.js';
 import { mkdtempSync } from 'node:fs';
@@ -26,12 +33,36 @@ const io = {
 
 const run = (argv: string[]) => runCli({ argv, cwd, io });
 
+/**
+ * The manager: GraphQL answers `body`, and the version probe the alignment
+ * gate makes 404s, so the gate stays silent unless a test opts into
+ * `stubManager`.
+ */
 const stubFetch = (body: unknown) => {
-  fetchMock = vi.fn(
-    async () => new Response(JSON.stringify(body), { status: 200 }),
+  fetchMock = vi.fn(async (input: Parameters<typeof fetch>[0]) =>
+    isGql(input)
+      ? new Response(JSON.stringify(body), { status: 200 })
+      : new Response('{}', { status: 404 }),
   );
   vi.stubGlobal('fetch', fetchMock);
 };
+
+/** The same, with a manager version the gate can read. */
+const stubManager = (version: string, body: unknown) => {
+  fetchMock = vi.fn(async (input: Parameters<typeof fetch>[0]) =>
+    isGql(input)
+      ? new Response(JSON.stringify(body), { status: 200 })
+      : new Response(JSON.stringify({ manager: version }), { status: 200 }),
+  );
+  vi.stubGlobal('fetch', fetchMock);
+};
+
+const isGql = (input: Parameters<typeof fetch>[0]) =>
+  String(input).endsWith('/admin/gql');
+
+/** GraphQL calls only; the gate's version probes are not the subject. */
+const gqlCalls = () =>
+  fetchMock.mock.calls.filter(([input]) => isGql(input));
 
 const jsonOut = () => JSON.parse(out.join('')) as { data: Record<string, any> };
 const jsonErr = () =>
@@ -72,10 +103,12 @@ beforeEach(() => {
     savedAt: '2026-08-29T00:00:00.000Z',
   });
   stubFetch({ data: {} });
+  clearManagerVersionCache();
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  clearManagerVersionCache();
 });
 
 describe('SDL pre-validation', () => {
@@ -213,7 +246,7 @@ describe('the mutation allow-list', () => {
     await expect(
       run(['query', CREATE_VFOLDER, '--allow-mutation', '--json']),
     ).resolves.toBe(EXIT.ok);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(gqlCalls()).toHaveLength(1);
     expect(jsonOut().data.result.createVfolderV2.vfolder.id).toBe('vf-9');
   });
 });
@@ -242,9 +275,9 @@ describe('variables', () => {
       ]),
     ).resolves.toBe(EXIT.ok);
 
-    const body = JSON.parse(
-      String(fetchMock.mock.calls[0][1].body),
-    ) as { variables: Record<string, unknown> };
+    const body = JSON.parse(String(gqlCalls()[0][1].body)) as {
+      variables: Record<string, unknown>;
+    };
     expect(body.variables).toEqual({ first: 2 });
     expect(jsonOut().data.variables).toEqual({ first: 2 });
   });
@@ -909,5 +942,173 @@ describe('text output', () => {
     expect(printed).toContain('operation:');
     expect(printed).toContain(`/session?sessionDetail=${rowUuid(0)}`);
     expect(printed).toContain('session-0');
+  });
+});
+
+describe('selectedSchemaIds', () => {
+  const schema = executableSchema(resolveRepoContext(cwd));
+  const ids = (source: string, variables?: Record<string, unknown>) =>
+    selectedSchemaIds(schema, parseDocument(source).document, variables);
+
+  it('names every selected field by the type that declares it', () => {
+    expect(
+      ids(
+        'query { compute_session_nodes(first: 1) { edges { node { status } } } }',
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        'Query.compute_session_nodes',
+        'ComputeSessionNode.status',
+      ]),
+    );
+  });
+
+  it('names an enum literal by its enum, and a variable by its type', () => {
+    expect(ids('query { images(filter_by_statuses: [ALIVE]) { name } }')).toContain(
+      'ImageStatus.ALIVE',
+    );
+    expect(
+      ids(
+        'query Images($f: [ImageStatus]) { images(filter_by_statuses: $f) { name } }',
+      ),
+    ).toContain('ImageStatus');
+  });
+
+  it('falls back to the parent type for a meta field, and repeats no id', () => {
+    const found = ids(
+      'query { compute_session_nodes(first: 1) { edges { node { __typename status } } } }',
+    );
+    expect(found).toContain('ComputeSessionNode');
+    expect(found).toHaveLength(new Set(found).size);
+  });
+
+  it('leaves a built-in scalar variable out', () => {
+    expect(
+      ids('query Sessions($first: Int) { compute_session_nodes(first: $first) { count } }'),
+    ).not.toContain('Int');
+  });
+
+  // `RuntimeVariantFilter` dates from 26.4.2 and carries no marker of its own,
+  // but its `AND` field is `Added in 26.7.0`: naming only the type would let a
+  // 26.4.x manager look aligned.
+  it('names an input-object field written inline in an argument', () => {
+    expect(
+      ids(
+        'query { runtimeVariants(filter: { AND: [{ name: { equals: "vllm" } }] }) { count } }',
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        'RuntimeVariantFilter.AND',
+        'RuntimeVariantFilter.name',
+        'StringFilter.equals',
+      ]),
+    );
+  });
+
+  it('names an input-object field supplied through a variable value', () => {
+    const found = ids(
+      'query Variants($filter: RuntimeVariantFilter) { runtimeVariants(filter: $filter) { count } }',
+      { filter: { AND: [{ name: { equals: 'vllm' } }] } },
+    );
+    expect(found).toEqual(
+      expect.arrayContaining([
+        'RuntimeVariantFilter',
+        'RuntimeVariantFilter.AND',
+        'RuntimeVariantFilter.name',
+        'StringFilter.equals',
+      ]),
+    );
+    expect(found).toHaveLength(new Set(found).size);
+  });
+
+  it('skips a variable key the input type does not declare', () => {
+    expect(
+      ids(
+        'query Variants($filter: RuntimeVariantFilter) { runtimeVariants(filter: $filter) { count } }',
+        { filter: { nope: 1 } },
+      ),
+    ).not.toContain('RuntimeVariantFilter.nope');
+  });
+
+  it('reads no variable value when none was supplied', () => {
+    expect(
+      ids(
+        'query Variants($filter: RuntimeVariantFilter) { runtimeVariants(filter: $filter) { count } }',
+      ),
+    ).toEqual(expect.arrayContaining(['RuntimeVariantFilter']));
+  });
+});
+
+describe('version alignment', () => {
+  // Older than every `Added in` marker in the committed SDL.
+  const OLD = '20.03.0';
+  const DOC =
+    'query { compute_session_nodes(first: 1) { edges { node { status } } } }';
+
+  /** Every document the run actually sent to the manager. */
+  const sentDocuments = () =>
+    gqlCalls().map(([, init]) => String(init?.body ?? ''));
+
+  it('warns on stderr and carries the verdict in --json', async () => {
+    stubManager(OLD, { data: { compute_session_nodes: { edges: [] } } });
+
+    await expect(run(['query', DOC, '--json'])).resolves.toBe(EXIT.ok);
+
+    expect(err.join('')).toContain(
+      `warning: schema is not aligned with manager ${OLD}`,
+    );
+    const { alignment } = jsonOut().data;
+    expect(alignment.aligned).toBe(false);
+    expect(alignment.newer.map((finding: { id: string }) => finding.id)).toContain(
+      'ComputeSessionNode.status',
+    );
+  });
+
+  it('refuses under --strict without sending the document', async () => {
+    stubManager(OLD, { data: { compute_session_nodes: { edges: [] } } });
+
+    await expect(run(['query', DOC, '--strict', '--json'])).resolves.toBe(
+      EXIT.error,
+    );
+
+    expect(
+      sentDocuments().some((body) => body.includes('compute_session_nodes')),
+    ).toBe(false);
+    const envelope = jsonErr();
+    expect(envelope.code).toBe('version_mismatch');
+    expect(envelope.hint).toBe(`bai-agent schema sync --tag ${OLD}`);
+  });
+
+  // A 26.4.2 manager has `Query.runtimeVariants` and `RuntimeVariantFilter`,
+  // but not the filter's `AND` (26.7.0). The mismatch only exists inside the
+  // variable's value.
+  it('refuses a variable value carrying a field the manager lacks', async () => {
+    stubManager('26.4.2', { data: { runtimeVariants: { count: 0 } } });
+
+    await expect(
+      run([
+        'query',
+        'query Variants($filter: RuntimeVariantFilter) { runtimeVariants(filter: $filter) { count } }',
+        '--var',
+        'filter={"AND":[{"name":{"equals":"vllm"}}]}',
+        '--strict',
+        '--json',
+      ]),
+    ).resolves.toBe(EXIT.error);
+
+    expect(sentDocuments().some((body) => body.includes('runtimeVariants'))).toBe(
+      false,
+    );
+    expect(jsonErr().code).toBe('version_mismatch');
+  });
+
+  it('says nothing when the manager version cannot be read', async () => {
+    stubFetch({ data: { compute_session_nodes: { edges: [] } } });
+
+    await expect(run(['query', DOC, '--strict', '--json'])).resolves.toBe(
+      EXIT.ok,
+    );
+    expect(err.join('')).not.toContain('warning:');
+    expect(jsonOut().data.alignment).toBeUndefined();
   });
 });

@@ -8,8 +8,14 @@
    beat every Astryx layer and visibly break its components. */
 /* KEEP IN SYNC with `packages/backend.ai-ui/src/styles/backend.ai-ui.css`,
    which repeats this list because BUI's own sheet is often the first layered
-   CSS in the bundle (ticket 30). Identical statements are idempotent; a
-   divergent one silently hands the order to whichever loads first. */
+   CSS in the bundle (ticket 30), with `packages/backend.ai-ui/.storybook/
+   astryx.css`, which is Storybook's entry point (it never loads this file),
+   and with the repo-root `index.html`, whose static copy is the one that
+   actually decides the document's order — this file's arrives whenever the
+   bundle happens to evaluate it (FR-3532).
+   Identical statements are idempotent; a divergent one silently hands the
+   order to whichever loads first. `scripts/migration-gates/layer-order-gate.mjs`
+   fails on drift. */
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
 @import '@astryxdesign/core/reset.css';

@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Успешно запрошенные тяги для {{count}} версий.",
     "Version": "Версия"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Проверка сессии Backend.AI…",
+    "SignInWithBackendAI": "Войти через Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Браузер заблокировал запрос к веб-серверу Backend.AI. Обычно это ограничение CORS или смешанного содержимого.",
+      "HttpError": "Веб-сервер Backend.AI вернул ошибку ({{status}}).",
+      "InvalidCallback": "Адрес возврата после входа, настроенный для {{appName}}, не является допустимым веб-адресом.",
+      "InvalidResponse": "Веб-сервер Backend.AI вернул неожиданный ответ.",
+      "NoEndpoint": "Для {{appName}} не настроен адрес веб-сервера Backend.AI.",
+      "NoSessionId": "Вы вошли в Backend.AI, но веб-сервер не вернул идентификатор сессии.",
+      "NoSessionOverHttp": "Вы ещё не вошли в Backend.AI. Если вход уже выполнен, {{appName}} доступен по HTTP, поэтому браузер может отклонять защищённый файл cookie сессии веб-сервера. Попробуйте открыть {{appName}} по HTTPS.",
+      "NoSessionOverHttps": "Вы ещё не вошли в Backend.AI. Если вход уже выполнен, {{appName}} и веб-сервер Backend.AI могут быть разными сайтами, поэтому браузер не отправляет файл cookie сессии.",
+      "RelayFailed": "Вы вошли в Backend.AI, но {{appName}} не смог завершить вход.",
+      "Timeout": "Веб-сервер Backend.AI не ответил вовремя.",
+      "Title": "Не удалось войти через Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Размер кластера",
     "Concurrency": "Одновременные сессии",
@@ -762,6 +779,7 @@
     "DeselectAll": "Снять выделение",
     "File": "Файл",
     "Increase": "Увеличить",
+    "Loading": "Загрузка...",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "Project": "Проект",

@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Erfolgreich angeforderte Pull für {{count}} -Versionen.",
     "Version": "Version"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Backend.AI-Sitzung wird geprüft…",
+    "SignInWithBackendAI": "Mit Backend.AI anmelden",
+    "failure": {
+      "CorsOrMixed": "Der Browser hat die Anfrage an den Backend.AI-Webserver blockiert. Ursache ist meist eine CORS- oder Mixed-Content-Einschränkung.",
+      "HttpError": "Der Backend.AI-Webserver hat einen Fehler zurückgegeben ({{status}}).",
+      "InvalidCallback": "Die für {{appName}} konfigurierte Rücksprungadresse für die Anmeldung ist keine gültige Webadresse.",
+      "InvalidResponse": "Der Backend.AI-Webserver hat eine unerwartete Antwort zurückgegeben.",
+      "NoEndpoint": "Für {{appName}} ist keine Backend.AI-Webserver-Adresse konfiguriert.",
+      "NoSessionId": "Sie sind bei Backend.AI angemeldet, aber der Webserver hat keine Sitzungs-ID zurückgegeben.",
+      "NoSessionOverHttp": "Sie sind noch nicht bei Backend.AI angemeldet. Falls Sie bereits angemeldet sind: {{appName}} wird über HTTP ausgeliefert, daher lehnt der Browser das sichere Sitzungscookie des Webservers möglicherweise ab. Öffnen Sie {{appName}} über HTTPS.",
+      "NoSessionOverHttps": "Sie sind noch nicht bei Backend.AI angemeldet. Falls Sie bereits angemeldet sind: {{appName}} und der Backend.AI-Webserver sind möglicherweise unterschiedliche Sites, sodass der Browser das Sitzungscookie zurückhält.",
+      "RelayFailed": "Sie sind bei Backend.AI angemeldet, aber {{appName}} konnte die Anmeldung nicht abschließen.",
+      "Timeout": "Der Backend.AI-Webserver hat nicht rechtzeitig geantwortet.",
+      "Title": "Anmeldung mit Backend.AI nicht möglich"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Clustergröße",
     "Concurrency": "Gleichzeitige Sitzungen",
@@ -762,6 +779,7 @@
     "DeselectAll": "Alle abwählen",
     "File": "Datei",
     "Increase": "Erhöhen",
+    "Loading": "Wird geladen...",
     "NSelected": "{{count}} ausgewählt",
     "Optional": "Optional",
     "Project": "Projekt",

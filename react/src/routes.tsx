@@ -1665,12 +1665,19 @@ export const routes: RouteObject[] = [
             <ErrorBoundaryWithNullFallback>
               <RoutingEventHandler />
             </ErrorBoundaryWithNullFallback>
-            {/* Dev-only handoff to the review overlay (FR-3811), on unless
-                VITE_DEV_REVIEW_OVERLAY opts out, as in the Vite plugin.
-                `import.meta.env.DEV` is the literal `false` in a production
-                build, so the whole branch — and the imported module — is dead
-                code there. */}
-            {import.meta.env.DEV && isDevReviewOverlayEnabled() ? (
+            {/* Handoff to the review overlay (FR-3811). Dev servers: on
+                unless VITE_DEV_REVIEW_OVERLAY opts out, as in the Vite
+                plugin. Built bundles: only where VITE_REVIEW_OVERLAY_BUILD
+                opts IN (FR-3880 — the nightly deployment). Every operand is
+                a literal after Vite's env substitution, so a release build,
+                which sets neither, folds the whole branch — and the imported
+                module — away. */}
+            {(
+              import.meta.env.DEV
+                ? isDevReviewOverlayEnabled()
+                : import.meta.env.VITE_REVIEW_OVERLAY_BUILD === '1' ||
+                  import.meta.env.VITE_REVIEW_OVERLAY_BUILD === 'true'
+            ) ? (
               <ErrorBoundaryWithNullFallback>
                 <DevReviewRouteLabel />
               </ErrorBoundaryWithNullFallback>

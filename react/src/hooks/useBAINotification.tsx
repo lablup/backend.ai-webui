@@ -128,6 +128,9 @@ export const notificationListState = atom<NotificationState[]>([]);
 
 export const CLOSING_DURATION = 4; //second
 
+/** How many notices float at once (FR-3829). The rest wait in the drawer. */
+export const MAX_VISIBLE_NOTIFICATIONS = 3;
+
 /**
  * Custom hook that returns the BAI notification state.
  * @returns A tuple containing the notifications and a function to set the BAI notification.
@@ -237,6 +240,9 @@ export const BAINotificationStackHost: React.FC = () => {
       // stack ordered it (the jotai list is newest-first).
       notifications={items.reverse()}
       onClose={closeNotification}
+      // FR-3829: keep the floating stack short. The rest stay in the
+      // notification drawer and render as the visible ones close.
+      maxVisible={MAX_VISIBLE_NOTIFICATIONS}
     />
   );
 };

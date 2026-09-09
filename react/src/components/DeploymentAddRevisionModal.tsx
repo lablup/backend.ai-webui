@@ -7,7 +7,6 @@ import type {
   DeploymentAddRevisionModalAddMutation$data,
 } from '../__generated__/DeploymentAddRevisionModalAddMutation.graphql';
 import type { DeploymentAddRevisionModalCardDetailQuery } from '../__generated__/DeploymentAddRevisionModalCardDetailQuery.graphql';
-import { DeploymentAddRevisionModalImageNameQuery } from '../__generated__/DeploymentAddRevisionModalImageNameQuery.graphql';
 import type { DeploymentAddRevisionModalManualImageQuery } from '../__generated__/DeploymentAddRevisionModalManualImageQuery.graphql';
 import type { DeploymentAddRevisionModalPresetCountQuery } from '../__generated__/DeploymentAddRevisionModalPresetCountQuery.graphql';
 import type { DeploymentAddRevisionModalPresetDetailQuery } from '../__generated__/DeploymentAddRevisionModalPresetDetailQuery.graphql';
@@ -210,6 +209,21 @@ interface DeploymentAddRevisionModalProps extends BAIModalProps {
 
 type RevisionPrefillData = DeploymentAddRevisionModal_revisionSource$data;
 
+// Full image name (`registry/namespace:tag@architecture`); the architecture
+// suffix is required so `ImageEnvironmentSelectFormItems` exact-matches the
+// original image instead of defaulting to the first architecture in the list.
+export const toImageFullName = (
+  identity?: {
+    readonly canonicalName?: string | null;
+    readonly architecture?: string | null;
+  } | null,
+): string | undefined =>
+  identity?.canonicalName
+    ? identity.architecture
+      ? `${identity.canonicalName}@${identity.architecture}`
+      : identity.canonicalName
+    : undefined;
+
 // Suspense-wrapped side query that resolves the selected runtime variant's DB
 // `defaultModelDefinition` baseline (FR-3205/FR-3342) and pushes the parsed
 // result up via `onLoaded`. Runs only when the variant reads the vfolder
@@ -338,35 +352,6 @@ const ModelCardDetailLoader: React.FC<{
     { id: modelCardId },
   );
   return <ModelCardDrawer modelCardId={modelCardId} open onClose={onClose} />;
-};
-
-// Card-mode preset selector: the same self-fetching
-// `BAIAvailablePresetSelect` used for the folder source, scoped to the
-// selected model card's resource-compatible presets via `modelCardId`. That
-// routes the list through the top-level `modelCardAvailablePresets` query (the
-// same server-filtered subset `ModelCardDeployModal` deploys against,
-// satisfying the card's minimum resource requirements), so no separate
-// card-scoped select or fragment is needed. Disabled with a hint until a card
-// is picked — the hint rides in the field's `description` slot (Astryx forbids
-// wrapping a disabled control in a Tooltip).
-const ModelCardPresetSelect: React.FC<
-  {
-    modelCardId?: string;
-  } & Omit<React.ComponentProps<typeof BAIAvailablePresetSelect>, 'modelCardId'>
-> = ({ modelCardId, ...selectProps }) => {
-  'use memo';
-  const { t } = useTranslation();
-  const isDisabled = !modelCardId;
-  return (
-    <BAIAvailablePresetSelect
-      modelCardId={modelCardId}
-      isDisabled={isDisabled}
-      description={
-        isDisabled ? t('deployment.SelectModelCardFirst') : undefined
-      }
-      {...selectProps}
-    />
-  );
 };
 
 // Suspense fallback for the self-fetching selects: the same `BAIComplexSelect`
@@ -796,10 +781,16 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                 clusterSize
               }
               execution {
-                imageId
                 environ {
                   key
                   value
+                }
+              }
+              image @since(version: "26.4.4") {
+                id
+                identity {
+                  canonicalName
+                  architecture
                 }
               }
               resource {
@@ -861,14 +852,12 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
 
   // Build a Custom-form prefill object from a preset node read off the
   // singular `deploymentRevisionPreset(id:)` query (resolved via
-  // `fetchPresetData`). The image full name is fetched async because
-  // `ImageEnvironmentSelectFormItems` matches the form's `environments.version`
-  // against image full names (`registry/namespace:tag@architecture`).
-  const buildPrefillFromPreset = async (
+  // `fetchPresetData`).
+  const buildPrefillFromPreset = (
     preset: NonNullable<
       DeploymentAddRevisionModalSelectedPresetQuery$data['deploymentRevisionPreset']
     >,
-  ): Promise<Partial<FormValues>> => {
+  ): Partial<FormValues> => {
     const slots = preset.resourceSlots ?? [];
     const cpuSlot = slots.find((s) => s.slotName === 'cpu');
     const memSlot = slots.find((s) => s.slotName === 'mem');
@@ -885,39 +874,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
         ? ('single-node' as const)
         : ('multi-node' as const);
 
-    // Full image name (`registry/namespace:tag@architecture`); the
-    // architecture suffix is required so `ImageEnvironmentSelectFormItems`
-    // exact-matches the original image instead of defaulting to the first
-    // architecture in the sorted list.
-    let imageFullName: string | undefined;
-    if (preset.execution?.imageId) {
-      try {
-        const result =
-          await fetchQuery<DeploymentAddRevisionModalImageNameQuery>(
-            relayEnvironment,
-            graphql`
-              query DeploymentAddRevisionModalImageNameQuery($id: ID!) {
-                imageV2(id: $id) {
-                  identity {
-                    canonicalName
-                    architecture
-                  }
-                }
-              }
-            `,
-            { id: preset.execution.imageId },
-            { fetchPolicy: 'store-or-network' },
-          ).toPromise();
-        const identity = result?.imageV2?.identity;
-        imageFullName = identity?.canonicalName
-          ? identity.architecture
-            ? `${identity.canonicalName}@${identity.architecture}`
-            : identity.canonicalName
-          : undefined;
-      } catch {
-        imageFullName = undefined;
-      }
-    }
+    const imageFullName = toImageFullName(preset.image?.identity);
 
     const environEntries = (preset.execution?.environ ?? []).map((e) => ({
       variable: e.key,
@@ -979,7 +936,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       if (selectedPresetId) {
         const preset = await fetchPresetData(selectedPresetId);
         if (preset) {
-          prefill = await buildPrefillFromPreset(preset);
+          prefill = buildPrefillFromPreset(preset);
         }
       }
       if (presetValues.modelFolderId) {
@@ -2224,24 +2181,34 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
                           />
                         }
                       >
+                        {/* `modelCardId` routes the options through the card's
+                            resource-compatible subset. The "pick a card first"
+                            hint rides in `description` because Astryx forbids
+                            wrapping a disabled control in a Tooltip.
+                            `key={source}` remounts on a source switch so the
+                            select's internal search string cannot filter the
+                            other source's presets — the two swapped-in element
+                            types used to give that for free. */}
                         <BAIFormItem
                           name="revisionPresetId"
                           messageVariables={{ label: t('modelStore.Preset') }}
                           noStyle
                           rules={[{ required: true }]}
                         >
-                          {source === 'card' ? (
-                            <ModelCardPresetSelect
-                              modelCardId={modelCardId}
-                              label={t('modelStore.Preset')}
-                              isLabelHidden
-                            />
-                          ) : (
-                            <BAIAvailablePresetSelect
-                              label={t('modelStore.Preset')}
-                              isLabelHidden
-                            />
-                          )}
+                          <BAIAvailablePresetSelect
+                            key={source}
+                            modelCardId={
+                              source === 'card' ? modelCardId : undefined
+                            }
+                            isDisabled={source === 'card' && !modelCardId}
+                            description={
+                              source === 'card' && !modelCardId
+                                ? t('deployment.SelectModelCardFirst')
+                                : undefined
+                            }
+                            label={t('modelStore.Preset')}
+                            isLabelHidden
+                          />
                         </BAIFormItem>
                       </Suspense>
                       <BAIFormItem dependencies={['revisionPresetId']} noStyle>

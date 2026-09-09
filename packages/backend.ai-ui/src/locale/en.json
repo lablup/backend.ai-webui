@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Successfully requested pull for {{count}} versions.",
     "Version": "Version"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Checking your Backend.AI session…",
+    "SignInWithBackendAI": "Sign in with Backend.AI",
+    "failure": {
+      "CorsOrMixed": "The browser blocked the request to the Backend.AI webserver. This is usually a CORS or mixed-content restriction.",
+      "HttpError": "The Backend.AI webserver returned an error ({{status}}).",
+      "InvalidCallback": "The sign-in return address configured for {{appName}} is not a valid web address.",
+      "InvalidResponse": "The Backend.AI webserver returned an unexpected response.",
+      "NoEndpoint": "No Backend.AI webserver address is configured for {{appName}}.",
+      "NoSessionId": "You are signed in to Backend.AI, but the webserver did not return a session ID.",
+      "NoSessionOverHttp": "You are not signed in to Backend.AI yet. If you have already signed in, {{appName}} is served over HTTP, so the browser may be rejecting the webserver's secure session cookie. Try opening {{appName}} over HTTPS.",
+      "NoSessionOverHttps": "You are not signed in to Backend.AI yet. If you have already signed in, {{appName}} and the Backend.AI webserver may be different sites, so the browser is withholding the session cookie.",
+      "RelayFailed": "You are signed in to Backend.AI, but {{appName}} could not complete the sign-in.",
+      "Timeout": "The Backend.AI webserver did not respond in time.",
+      "Title": "Could not sign in with Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Cluster Size",
     "Concurrency": "Concurrent Sessions",
@@ -762,6 +779,7 @@
     "DeselectAll": "Deselect all",
     "File": "File",
     "Increase": "Increase",
+    "Loading": "Loading...",
     "NSelected": "{{count}} selected",
     "Optional": "Optional",
     "Project": "Project",

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "The floating notice stack anchored to the bottom-right corner — the component that replaced antd's imperative `notification` API, which Astryx has no counterpart for. Each entry renders an Astryx `Banner` at high elevation with a status icon, an optional background-task progress bar (determinate or indeterminate), action, retry and cancel buttons in the banner's end slot, and a collapsible disclosure for `children`. A per-notice `duration` closes it automatically, and that countdown banks its remaining budget while the notice is hovered or holds focus so a notice never closes out from under the reader. Newest renders nearest the corner, removals play an exit transition that respects `prefers-reduced-motion`, and the whole component is presentational: no routing, no i18n, no Relay, no jotai. Application code raises notices through `useBAINotification`, not by rendering this directly.",
+      "The floating notice stack anchored to the bottom-right corner — the component that replaced antd's imperative `notification` API, which Astryx has no counterpart for. Each entry renders an Astryx `Banner` at high elevation with a status icon, an optional background-task progress bar (determinate or indeterminate), action, retry and cancel buttons in the banner's end slot, and a collapsible disclosure for `children`. A per-notice `duration` closes it automatically, and that countdown banks its remaining budget while the notice is hovered or holds focus so a notice never closes out from under the reader. An oversized description or disclosure scrolls inside the notice rather than pushing the banner header — and its dismiss button — off screen, and the stack itself is capped so it cannot grow over an app header above it. Newest renders nearest the corner, removals play an exit transition that respects `prefers-reduced-motion`, and the whole component is presentational: no routing, no i18n, no Relay, no jotai. Application code raises notices through `useBAINotification`, not by rendering this directly.",
     bestPractices: [
       {
         guidance: true,
@@ -32,6 +32,11 @@ export const docs = {
         guidance: true,
         description:
           'Give a background-task notice both `percent` and `progressLabel` so the progress bar is announced with the name of the task it tracks.',
+      },
+      {
+        guidance: true,
+        description:
+          'Pass `maxVisible` from the host so the floating stack stays short; an app header sitting above the stack stays reachable, and the notices beyond the cap render as the visible ones close.',
       },
       {
         guidance: true,
@@ -68,7 +73,7 @@ export const docs = {
       name: 'maxVisible',
       type: 'number',
       description:
-        'Cap on simultaneously visible notices, keeping the newest. Unlimited when unset.',
+        'Cap on simultaneously visible notices, keeping the newest. Unlimited when unset; notices beyond the cap are not dropped, they render once a visible one closes.',
     },
     {
       name: 'data-testid',

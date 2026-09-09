@@ -2,10 +2,11 @@
 # Squash gh-pages down to a single orphan commit.
 #
 # Every preview deploy and every cleanup adds a commit whose tree carries ~18 MB
-# of Storybook output per live PR. The history of those trees is worthless — only
-# the current tree is ever served — but it is what makes the branch grow without
-# bound in a repository that is already ~800 MB. Rewriting to one orphan commit
-# lets git drop every unreferenced blob on the next gc.
+# of Storybook output and ~52 MB of built manual per language, per live PR. The
+# history of those trees is worthless — only the current tree is ever served —
+# but it is what makes the branch grow without bound in a repository that is
+# already ~800 MB. Rewriting to one orphan commit lets git drop every
+# unreferenced blob on the next gc.
 #
 # Force-pushing a branch is normally off-limits here. gh-pages is the exception:
 # it holds no reviewed history, nobody branches from it, and the tree is
@@ -16,8 +17,9 @@ set -euo pipefail
 BRANCH="${BRANCH:-gh-pages}"
 WORK="${WORK:-${RUNNER_TEMP:-/tmp}/gh-pages-compact}"
 # Below this, the rewrite costs more (a full force-push of the tree) than the
-# history it reclaims.
-MIN_COMMITS="${MIN_COMMITS:-10}"
+# history it reclaims. Lowered from 10 once docs previews joined: each commit
+# now carries far more tree, so the crossover comes sooner.
+MIN_COMMITS="${MIN_COMMITS:-5}"
 # REPO_URL is overridable so the logic can be exercised against a local bare
 # repository; CI leaves it unset and gets the token URL.
 if [ -z "${REPO_URL:-}" ]; then

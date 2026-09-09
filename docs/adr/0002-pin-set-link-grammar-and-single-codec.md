@@ -1,8 +1,35 @@
-# ADR-0002: A pin set is `&`-repeated `#bai=v3` parts, read by one codec
+# 0002 — Pin set link grammar and a single codec
 
-- Status: Accepted
-- Date: 2026-09-04
-- Issues: FR-3313 (epic), the pin-set tickets under it
+## Summary
+
+- A pin set is `&`-repeated `#bai=v3` parts in one link:
+  `#bai=v3.<id1>.<anchor1>&bai=v3.<id2>.<anchor2>…`. A single pin is the N=1
+  case and is byte-identical to the existing link, so there is no version
+  bump.
+- The format has one reader: the review overlay's own codec, exposed as the
+  `pnpm run review-pins` CLI. The Claude-side review skill runs that CLI
+  instead of keeping a reimplementation.
+- The Teams transport in claude-mp only reconstructs the pasted text and hands
+  it to the CLI; it does not parse pins itself.
+
+## Diagram
+
+```mermaid
+flowchart LR
+  overlay[Review overlay<br/>codec.ts, deeplink.ts, block.ts, id.ts]
+  link["Pin-set link and blocks<br/>#bai=v3 parts joined by &"]
+  surfaces[PR comment, Teams thread, Claude prompt]
+  teams[claude-mp Teams reader]
+  cli[review-pins CLI]
+  skill[Claude-side review skill]
+  overlay -- "copy set" --> link
+  link -- "paste" --> surfaces
+  surfaces -- "HTML flattened to text + hrefs" --> teams
+  teams -- "reconstructed text" --> cli
+  surfaces -- "pasted text" --> cli
+  cli -- "decoded pins" --> skill
+  overlay -. "same codec" .- cli
+```
 
 ## Context
 
@@ -32,7 +59,7 @@ the quote markers gone and the link moved to a separate `hrefs[]`, so that
 reconstruction is Teams-shaped, not pin-shaped, and it feeds the CLI rather
 than duplicating it.
 
-## Considered options
+## Rejected alternatives
 
 - **`v4` set envelope** — every anchor in one compressed blob. Shorter URLs
   (deflate shares the repeated route and landmark) and a natural place for
@@ -56,3 +83,8 @@ than duplicating it.
   the last block, because repeating the set link in every block made the
   comment O(N²) — 371 KB at 30 pins, past GitHub's 65,536-character comment
   limit from 13 pins on.
+
+## Sources
+
+- FR-3313 (epic) and the pin-set tickets under it; FR-3855 landed the CLI.
+- Decided 2026-09-04.

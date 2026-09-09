@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Solicitud solicitada con éxito para las versiones {{count}}.",
     "Version": "Versión"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Comprobando su sesión de Backend.AI…",
+    "SignInWithBackendAI": "Iniciar sesión con Backend.AI",
+    "failure": {
+      "CorsOrMixed": "El navegador bloqueó la solicitud al servidor web de Backend.AI. Normalmente se debe a una restricción de CORS o de contenido mixto.",
+      "HttpError": "El servidor web de Backend.AI devolvió un error ({{status}}).",
+      "InvalidCallback": "La dirección de retorno de inicio de sesión configurada para {{appName}} no es una dirección web válida.",
+      "InvalidResponse": "El servidor web de Backend.AI devolvió una respuesta inesperada.",
+      "NoEndpoint": "No hay ninguna dirección del servidor web de Backend.AI configurada para {{appName}}.",
+      "NoSessionId": "Ha iniciado sesión en Backend.AI, pero el servidor web no devolvió un identificador de sesión.",
+      "NoSessionOverHttp": "Todavía no ha iniciado sesión en Backend.AI. Si ya la ha iniciado, {{appName}} se sirve por HTTP, por lo que el navegador puede estar rechazando la cookie de sesión segura del servidor web. Pruebe a abrir {{appName}} por HTTPS.",
+      "NoSessionOverHttps": "Todavía no ha iniciado sesión en Backend.AI. Si ya la ha iniciado, es posible que {{appName}} y el servidor web de Backend.AI sean sitios distintos, por lo que el navegador no envía la cookie de sesión.",
+      "RelayFailed": "Ha iniciado sesión en Backend.AI, pero {{appName}} no pudo completar el inicio de sesión.",
+      "Timeout": "El servidor web de Backend.AI no respondió a tiempo.",
+      "Title": "No se pudo iniciar sesión con Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Tamaño del grupo",
     "Concurrency": "Sesiones simultáneas",
@@ -762,6 +779,7 @@
     "DeselectAll": "Deseleccionar todo",
     "File": "Archivo",
     "Increase": "Aumentar",
+    "Loading": "Cargando...",
     "NSelected": "{{count}} seleccionado",
     "Optional": "Opcional",
     "Project": "Proyecto",

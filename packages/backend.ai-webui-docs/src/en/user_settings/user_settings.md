@@ -359,6 +359,8 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   this feature is enabled; for the grid's own controls, see
   [Session List View](#session-list-view-and-refresh).
 
+<a id="logs-tab"></a>
+
 ## Logs tab
 
 Displays detailed information of various logs recorded on the client side. You
