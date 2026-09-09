@@ -10,11 +10,6 @@ import {
   useSiderCollapsedState,
 } from '../../hooks/useShellPanels';
 import { useThemeMode } from '../../hooks/useThemeMode';
-// Swizzled: seeds its first render with `searchSource.bootstrapSync()`, so the
-// dialog's first painted frame already carries the whole bootstrap list.
-import { CommandPalette } from './astryx/CommandPalette/CommandPalette';
-// Reads the swizzled copy's context, so it has to come from beside it.
-import { CommandPaletteInput } from './astryx/CommandPalette/CommandPaletteInput';
 import { plainText } from './rank';
 import type { PaletteActionContext, SearchHit } from './types';
 import {
@@ -23,6 +18,10 @@ import {
   useGlobalSearchSource,
 } from './useGlobalSearchSource';
 import { useRecentSearchHits } from './useRecentSearchHits';
+import {
+  CommandPalette,
+  CommandPaletteInput,
+} from '@astryxdesign/core/CommandPalette';
 import { Kbd } from '@astryxdesign/core/Kbd';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
@@ -72,9 +71,9 @@ export interface GlobalSearchPaletteProps {
 // viewport (standing decision 8 — the header trigger stays visible below `sm`).
 const PALETTE_WIDTH = 'min(640px, 92vw)';
 
-// Unreachable while `bootstrapSync()` seeds the first commit; kept for the
-// async path (a bootstrap that genuinely returns nothing), where text would read
-// as "no results" and rows shaped like the real ones read as loading instead.
+// Astryx commits `bootstrap()` in a transition after the dialog has painted, so
+// this is the first frame of every open: rows shaped like the real ones read as
+// loading, where the default text would read as "no results".
 const BOOTSTRAP_PLACEHOLDER = (
   <VStack gap={2} width="100%">
     {[0, 1, 2].map((index) => (
