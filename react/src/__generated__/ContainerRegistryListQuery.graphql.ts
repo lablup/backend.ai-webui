@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<932c8525c83cc9568f3aafc94900516f>>
+ * @generated SignedSource<<2d37ba9a0a1dbfeeb0fd30b73bff9234>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,7 +22,16 @@ export type ContainerRegistryListQuery$data = {
     readonly count: number | null | undefined;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly allowed_groups: {
+          readonly edges: ReadonlyArray<{
+            readonly node: {
+              readonly id: string;
+              readonly name: string | null | undefined;
+            } | null | undefined;
+          } | null | undefined>;
+        } | null | undefined;
         readonly id: string;
+        readonly is_global: boolean | null | undefined;
         readonly name: string | null | undefined;
         readonly password: string | null | undefined;
         readonly project: string | null | undefined;
@@ -168,10 +177,17 @@ v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "count",
+  "name": "is_global",
   "storageKey": null
 },
 v17 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v18 = {
   "alias": null,
   "args": [
     {
@@ -247,18 +263,54 @@ return {
                   (v12/*: any*/),
                   (v13/*: any*/),
                   (v14/*: any*/),
-                  (v15/*: any*/)
+                  (v15/*: any*/),
+                  (v16/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "GroupConnection",
+                    "kind": "LinkedField",
+                    "name": "allowed_groups",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "GroupEdge",
+                        "kind": "LinkedField",
+                        "name": "edges",
+                        "plural": true,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "GroupNode",
+                            "kind": "LinkedField",
+                            "name": "node",
+                            "plural": false,
+                            "selections": [
+                              (v6/*: any*/),
+                              (v9/*: any*/)
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           },
-          (v16/*: any*/)
+          (v17/*: any*/)
         ],
         "storageKey": null
       },
-      (v17/*: any*/)
+      (v18/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -315,13 +367,7 @@ return {
                     "name": "extra",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "is_global",
-                    "storageKey": null
-                  },
+                  (v16/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -365,24 +411,24 @@ return {
             ],
             "storageKey": null
           },
-          (v16/*: any*/)
+          (v17/*: any*/)
         ],
         "storageKey": null
       },
-      (v17/*: any*/)
+      (v18/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "2c290294552cc0caa3dd687d9720335e",
+    "cacheID": "ad591a73bcc0a558fd6fd978f617aa4a",
     "id": null,
     "metadata": {},
     "name": "ContainerRegistryListQuery",
     "operationKind": "query",
-    "text": "query ContainerRegistryListQuery(\n  $domain: String!\n  $filter: String\n  $order: String\n  $first: Int\n  $offset: Int\n) {\n  container_registry_nodes(filter: $filter, order: $order, first: $first, offset: $offset) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        ...ContainerRegistryEditorModalFragment\n        id\n        row_id\n        registry_name\n        name\n        url\n        type\n        project\n        username\n        password\n        ssl_verify\n      }\n    }\n    count\n  }\n  domain(name: $domain) {\n    name\n    allowed_docker_registries\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra @since(version: \"24.09.3\")\n  is_global @since(version: \"24.09.0\")\n  allowed_groups @since(version: \"25.3.0\") {\n    edges {\n      node {\n        id\n        row_id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query ContainerRegistryListQuery(\n  $domain: String!\n  $filter: String\n  $order: String\n  $first: Int\n  $offset: Int\n) {\n  container_registry_nodes(filter: $filter, order: $order, first: $first, offset: $offset) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        ...ContainerRegistryEditorModalFragment\n        id\n        row_id\n        registry_name\n        name\n        url\n        type\n        project\n        username\n        password\n        ssl_verify\n        is_global @since(version: \"24.09.0\")\n        allowed_groups @since(version: \"25.3.0\") {\n          edges {\n            node {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n    count\n  }\n  domain(name: $domain) {\n    name\n    allowed_docker_registries\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra @since(version: \"24.09.3\")\n  is_global @since(version: \"24.09.0\")\n  allowed_groups @since(version: \"25.3.0\") {\n    edges {\n      node {\n        id\n        row_id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "83d2445a2d783eb91f99f02f22559918";
+(node as any).hash = "1ed0301691acd30d1c460506b33c806e";
 
 export default node;
