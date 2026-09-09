@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ef152d2696065fbbf098dc4a464b53c0>>
+ * @generated SignedSource<<caaa03735b1192799bc1ac70d904bae0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type ResourceGroupFilter = {
   OR?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
   description?: StringFilter | null | undefined;
   isActive?: boolean | null | undefined;
+  isDefault?: boolean | null | undefined;
   isPublic?: boolean | null | undefined;
   name?: StringFilter | null | undefined;
 };

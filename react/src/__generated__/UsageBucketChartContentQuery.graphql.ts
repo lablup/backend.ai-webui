@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c797379542c10163658f0d1fd239394b>>
+ * @generated SignedSource<<22818a99b7ea3d62beff4881b2183184>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "%future added value";
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 export type DomainV2Filter = {
@@ -18,6 +18,7 @@ export type DomainV2Filter = {
   OR?: ReadonlyArray<DomainV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   description?: StringFilter | null | undefined;
+  id?: UUIDFilter | null | undefined;
   isActive?: boolean | null | undefined;
   modifiedAt?: DateTimeFilter | null | undefined;
   name?: StringFilter | null | undefined;
@@ -45,6 +46,12 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type DateTimeFilter = {
   after?: string | null | undefined;
@@ -74,12 +81,6 @@ export type ProjectV2Filter = {
   name?: StringFilter | null | undefined;
   type?: ProjectTypeV2EnumFilter | null | undefined;
   user?: ProjectUserNestedFilter | null | undefined;
-};
-export type UUIDFilter = {
-  equals?: string | null | undefined;
-  in?: ReadonlyArray<string> | null | undefined;
-  notEquals?: string | null | undefined;
-  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type ProjectTypeV2EnumFilter = {
   equals?: ProjectTypeV2 | null | undefined;
