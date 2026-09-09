@@ -10,12 +10,6 @@ const sampleStorageHostOptions = [
   { label: 'nfs:data', value: 'nfs:data' },
 ];
 
-/** `renderInput`'s staged string -> the labeled object `BAIComplexSelect` takes. */
-const toLabeledValue = <T extends { value: string }>(
-  options: ReadonlyArray<T>,
-  value: string | null,
-): T | null => options.find((option) => option.value === value) ?? null;
-
 const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
   title: 'Filter/BAIGraphQLPropertyFilter',
   component: BAIGraphQLPropertyFilter,
@@ -912,7 +906,11 @@ export const WithRenderInput: Story = {
             hasSearch={false}
             options={sampleStorageHostOptions}
             isDisabled={isDisabled}
-            value={toLabeledValue(sampleStorageHostOptions, value)}
+            value={
+              sampleStorageHostOptions.find(
+                (option) => option.value === value,
+              ) ?? null
+            }
             onChange={(next) => {
               const labeled = next as BAILabeledValue | null;
               onAddCondition(labeled?.value);
@@ -998,7 +996,10 @@ export const WithCustomType: Story = {
             width={220}
             options={sampleOwnerOptions}
             isDisabled={isDisabled}
-            value={toLabeledValue(sampleOwnerOptions, value)}
+            value={
+              sampleOwnerOptions.find((option) => option.value === value) ??
+              null
+            }
             onChange={(next) => {
               const labeled = next as BAILabeledValue | null;
               onAddCondition(labeled?.value, labeled?.label);

@@ -283,12 +283,6 @@ const sampleOwnerOptions = [
   { label: 'carol@example.com', value: 'owner-uuid-0003' },
 ];
 
-/** `renderInput`'s staged string -> the labeled object `BAIComplexSelect` takes. */
-const toLabeledValue = <T extends { value: string }>(
-  options: ReadonlyArray<T>,
-  value: string | null,
-): T | null => options.find((option) => option.value === value) ?? null;
-
 export const WithRenderInput: Story = {
   name: 'Custom Input via renderInput',
   parameters: {
@@ -320,7 +314,10 @@ export const WithRenderInput: Story = {
             width={220}
             options={sampleOwnerOptions}
             isDisabled={isDisabled}
-            value={toLabeledValue(sampleOwnerOptions, value)}
+            value={
+              sampleOwnerOptions.find((option) => option.value === value) ??
+              null
+            }
             onChange={(next) => {
               const labeled = next as BAILabeledValue | null;
               onAddCondition(labeled?.value, labeled?.label);
