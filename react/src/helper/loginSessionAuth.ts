@@ -15,6 +15,44 @@ import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 import { toLocalId } from 'backend.ai-ui';
 import { fetchQuery, graphql } from 'react-relay';
 
+// `UserV2.projects` caps an unpaginated read at the manager's default page
+// size, so the login walks the pages by offset (the legacy `group.list` had
+// no cap); `count` bounds the walk.
+const PROJECT_PAGE_SIZE = 100;
+
+const myUserQuery = graphql`
+  query loginSessionAuthMyUserQuery($limit: Int!, $offset: Int!) {
+    myUserV2 {
+      id
+      basicInfo {
+        email
+        fullName
+      }
+      organization {
+        domainName
+        role
+      }
+      domain {
+        entityId
+        basicInfo {
+          name
+        }
+      }
+      projects(filter: { isActive: true }, limit: $limit, offset: $offset) {
+        count
+        edges {
+          node {
+            id
+            basicInfo {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 /**
  * Create a Backend.AI client with the given credentials.
  */
@@ -63,51 +101,14 @@ export async function connectViaGQL(
 ): Promise<string[]> {
   (globalThis as any).backendaiclient = client;
 
-  // `UserV2.projects` caps an unpaginated read at the manager's default page
-  // size, so the login walks the cursor (the legacy `group.list` had no cap).
-  const PROJECT_PAGE_SIZE = 100;
   const projects: Array<{ id: string; name: string }> = [];
   let me: NonNullable<loginSessionAuthMyUserQuery['response']['myUserV2']>;
-  let after: string | null = null;
+  let offset = 0;
   do {
     const response = await fetchQuery<loginSessionAuthMyUserQuery>(
       RelayEnvironment,
-      graphql`
-        query loginSessionAuthMyUserQuery($first: Int!, $after: String) {
-          myUserV2 {
-            id
-            basicInfo {
-              email
-              fullName
-            }
-            organization {
-              domainName
-              role
-            }
-            domain {
-              entityId
-              basicInfo {
-                name
-              }
-            }
-            projects(filter: { isActive: true }, first: $first, after: $after) {
-              edges {
-                node {
-                  id
-                  basicInfo {
-                    name
-                  }
-                }
-              }
-              pageInfo {
-                hasNextPage
-                endCursor
-              }
-            }
-          }
-        }
-      `,
-      { first: PROJECT_PAGE_SIZE, after },
+      myUserQuery,
+      { limit: PROJECT_PAGE_SIZE, offset },
       { fetchPolicy: 'network-only' },
     ).toPromise();
     if (!response?.myUserV2) {
@@ -118,10 +119,8 @@ export async function connectViaGQL(
     for (const { node } of me.projects?.edges ?? []) {
       projects.push({ id: toLocalId(node.id), name: node.basicInfo.name });
     }
-    after = me.projects?.pageInfo.hasNextPage
-      ? (me.projects.pageInfo.endCursor ?? null)
-      : null;
-  } while (after);
+    offset += PROJECT_PAGE_SIZE;
+  } while (offset < (me.projects?.count ?? 0));
 
   const role = (me.organization.role ?? '').toLowerCase();
   const domainName =

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<97ace1f847f16980fe221d6ca38f9a38>>
+ * @generated SignedSource<<bdaa45f29b857a237d48fa514fe178ef>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,8 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type loginSessionAuthMyUserQuery$variables = {
-  after?: string | null | undefined;
-  first: number;
+  limit: number;
+  offset: number;
 };
 export type loginSessionAuthMyUserQuery$data = {
   readonly myUserV2: {
@@ -32,6 +32,7 @@ export type loginSessionAuthMyUserQuery$data = {
       readonly role: UserRoleV2 | null | undefined;
     };
     readonly projects: {
+      readonly count: number;
       readonly edges: ReadonlyArray<{
         readonly node: {
           readonly basicInfo: {
@@ -40,10 +41,6 @@ export type loginSessionAuthMyUserQuery$data = {
           readonly id: string;
         };
       }>;
-      readonly pageInfo: {
-        readonly endCursor: string | null | undefined;
-        readonly hasNextPage: boolean;
-      };
     } | null | undefined;
   } | null | undefined;
 };
@@ -53,24 +50,26 @@ export type loginSessionAuthMyUserQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "after"
-},
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "offset"
+  }
+],
 v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "first"
-},
-v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
+v2 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2BasicInfo",
@@ -95,7 +94,7 @@ v3 = {
   ],
   "storageKey": null
 },
-v4 = {
+v3 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2OrganizationInfo",
@@ -120,14 +119,14 @@ v4 = {
   ],
   "storageKey": null
 },
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v6 = [
+v5 = [
   {
     "alias": null,
     "args": null,
@@ -136,24 +135,19 @@ v6 = [
     "storageKey": null
   }
 ],
-v7 = {
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "DomainBasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
   "plural": false,
-  "selections": (v6/*: any*/),
+  "selections": (v5/*: any*/),
   "storageKey": null
 },
-v8 = {
+v7 = {
   "alias": null,
   "args": [
-    {
-      "kind": "Variable",
-      "name": "after",
-      "variableName": "after"
-    },
     {
       "kind": "Literal",
       "name": "filter",
@@ -163,8 +157,13 @@ v8 = {
     },
     {
       "kind": "Variable",
-      "name": "first",
-      "variableName": "first"
+      "name": "limit",
+      "variableName": "limit"
+    },
+    {
+      "kind": "Variable",
+      "name": "offset",
+      "variableName": "offset"
     }
   ],
   "concreteType": "ProjectV2Connection",
@@ -172,6 +171,13 @@ v8 = {
   "name": "projects",
   "plural": false,
   "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "count",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -188,7 +194,7 @@ v8 = {
           "name": "node",
           "plural": false,
           "selections": [
-            (v2/*: any*/),
+            (v1/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -196,35 +202,10 @@ v8 = {
               "kind": "LinkedField",
               "name": "basicInfo",
               "plural": false,
-              "selections": (v6/*: any*/),
+              "selections": (v5/*: any*/),
               "storageKey": null
             }
           ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "PageInfo",
-      "kind": "LinkedField",
-      "name": "pageInfo",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "hasNextPage",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "endCursor",
           "storageKey": null
         }
       ],
@@ -235,10 +216,7 @@ v8 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "loginSessionAuthMyUserQuery",
@@ -251,9 +229,9 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
+          (v1/*: any*/),
           (v2/*: any*/),
           (v3/*: any*/),
-          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -262,12 +240,12 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v5/*: any*/),
-              (v7/*: any*/)
+              (v4/*: any*/),
+              (v6/*: any*/)
             ],
             "storageKey": null
           },
-          (v8/*: any*/)
+          (v7/*: any*/)
         ],
         "storageKey": null
       }
@@ -277,10 +255,7 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "loginSessionAuthMyUserQuery",
     "selections": [
@@ -292,9 +267,9 @@ return {
         "name": "myUserV2",
         "plural": false,
         "selections": [
+          (v1/*: any*/),
           (v2/*: any*/),
           (v3/*: any*/),
-          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -303,29 +278,29 @@ return {
             "name": "domain",
             "plural": false,
             "selections": [
-              (v5/*: any*/),
-              (v7/*: any*/),
-              (v2/*: any*/)
+              (v4/*: any*/),
+              (v6/*: any*/),
+              (v1/*: any*/)
             ],
             "storageKey": null
           },
-          (v8/*: any*/)
+          (v7/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "0b2f02d46d670906ecdd8d39ccc133b2",
+    "cacheID": "990919f8c616b56de2ca782cf493a464",
     "id": null,
     "metadata": {},
     "name": "loginSessionAuthMyUserQuery",
     "operationKind": "query",
-    "text": "query loginSessionAuthMyUserQuery(\n  $first: Int!\n  $after: String\n) {\n  myUserV2 {\n    id\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    projects(filter: {isActive: true}, first: $first, after: $after) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n      pageInfo {\n        hasNextPage\n        endCursor\n      }\n    }\n  }\n}\n"
+    "text": "query loginSessionAuthMyUserQuery(\n  $limit: Int!\n  $offset: Int!\n) {\n  myUserV2 {\n    id\n    basicInfo {\n      email\n      fullName\n    }\n    organization {\n      domainName\n      role\n    }\n    domain {\n      entityId\n      basicInfo {\n        name\n      }\n      id\n    }\n    projects(filter: {isActive: true}, limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3641768b2c49f995d0bd87d0f44ef8a8";
+(node as any).hash = "ecda331eff5b74e6402f2006ef4f0732";
 
 export default node;

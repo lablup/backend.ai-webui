@@ -27,7 +27,7 @@ const PROJECT_B = '44444444-4444-4444-8444-444444444444';
 
 type Page = {
   edges: Array<{ node: { id: string; basicInfo: { name: string } } }>;
-  pageInfo: { hasNextPage: boolean; endCursor: string | null };
+  count: number;
 };
 
 const meWith = (
@@ -55,13 +55,12 @@ const meWith = (
 
 const singlePage = (
   nodes: Array<[string, string]>,
-  hasNextPage = false,
-  endCursor: string | null = null,
+  count: number = nodes.length,
 ): Page => ({
   edges: nodes.map(([uuid, name]) => ({
     node: { id: globalId('ProjectV2', uuid), basicInfo: { name } },
   })),
-  pageInfo: { hasNextPage, endCursor },
+  count,
 });
 
 // Queues one Relay payload per page and records the variables each was asked for.
@@ -109,7 +108,7 @@ describe('connectViaGQL', () => {
 
     await connectViaGQL(makeClient(), cfg, []);
 
-    expect(variables).toEqual([{ first: 100, after: null }]);
+    expect(variables).toEqual([{ limit: 100, offset: 0 }]);
 
     expect(g.backendaiclient.email).toBe('me@example.com');
     expect(g.backendaiclient.full_name).toBe('Me');
@@ -129,17 +128,17 @@ describe('connectViaGQL', () => {
     expect(g.backendaiclient._config.domainId).toBe(DOMAIN_UUID);
   });
 
-  test('walks the project cursor past the first page', async () => {
+  test('walks the project pages by offset until count is reached', async () => {
     const variables = queueResponses([
-      meWith(singlePage([[PROJECT_A, 'alpha']], true, 'cursor-1')),
-      meWith(singlePage([[PROJECT_B, 'beta']])),
+      meWith(singlePage([[PROJECT_A, 'alpha']], 101)),
+      meWith(singlePage([[PROJECT_B, 'beta']], 101)),
     ]);
 
     await connectViaGQL(makeClient(), cfg, []);
 
     expect(variables).toEqual([
-      { first: 100, after: null },
-      { first: 100, after: 'cursor-1' },
+      { limit: 100, offset: 0 },
+      { limit: 100, offset: 100 },
     ]);
     expect(g.backendaiclient.groups).toEqual(['alpha', 'beta']);
     expect(g.backendaiclient.groupIds).toEqual({
