@@ -37,7 +37,10 @@ const isEnableSorter = (key: string) => {
 };
 
 const toAuditLogStatus = (status: string): AuditLogStatus | null => {
-  return _.includes(['SUCCESS', 'ERROR', 'UNKNOWN', 'RUNNING'], status)
+  return _.includes(
+    ['SUCCESS', 'ERROR', 'UNKNOWN', 'RUNNING', 'DENIED'],
+    status,
+  )
     ? (status as AuditLogStatus)
     : null;
 };
