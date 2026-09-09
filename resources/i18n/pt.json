@@ -3577,7 +3577,7 @@
     "BootstrapScriptUpdated": "Script de bootstrap atualizado.",
     "ClearSSHKeypairInput": "O par de chaves SSH gravado será removido. Você tem certeza que quer continuar?",
     "ConfigFilename": "Nome do arquivo de configuração",
-    "CurrentSSHPublicKey": "Chave pública atual:",
+    "CurrentSSHPublicKey": "Chave pública atual",
     "CustomDashboardPanels": "Painéis personalizados do painel de controlo",
     "DarkMode": "Modo escuro",
     "DarkTheme": "Modo escuro",

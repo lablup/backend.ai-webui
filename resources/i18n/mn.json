@@ -3577,7 +3577,7 @@
     "BootstrapScriptUpdated": "Ачаалагч скрипт шинэчлэгдсэн.",
     "ClearSSHKeypairInput": "Бичсэн SSH товчлуурыг устгах болно. Үргэлжлүүлэхийг хүсч байна уу?",
     "ConfigFilename": "Файлын нэрийг тохируулах",
-    "CurrentSSHPublicKey": "Одоогийн нийтийн түлхүүр:",
+    "CurrentSSHPublicKey": "Одоогийн нийтийн түлхүүр",
     "CustomDashboardPanels": "Захиалгат хяналтын самбарын панель",
     "DarkMode": "Харанхуй горим",
     "DarkTheme": "Харанхуй горим",

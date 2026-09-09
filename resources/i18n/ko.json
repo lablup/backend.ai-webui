@@ -3578,7 +3578,7 @@
     "BootstrapScriptUpdated": "부트스트랩 스크립트가 갱신되었습니다.",
     "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
     "ConfigFilename": "구성 파일 이름 선택",
-    "CurrentSSHPublicKey": "현재 공개 키: ",
+    "CurrentSSHPublicKey": "현재 공개 키",
     "CustomDashboardPanels": "사용자 정의 대시보드 패널",
     "DarkMode": "다크 모드",
     "DarkTheme": "다크 모드",

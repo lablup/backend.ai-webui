@@ -3562,7 +3562,7 @@
     "BootstrapScriptUpdated": "Bootstrap script updated.",
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
     "ConfigFilename": "Config file name",
-    "CurrentSSHPublicKey": "Current public key: ",
+    "CurrentSSHPublicKey": "Current public key",
     "CustomDashboardPanels": "Custom dashboard panels",
     "DarkMode": "Dark mode",
     "DarkTheme": "Dark Mode",

@@ -3575,7 +3575,7 @@
     "BootstrapScriptUpdated": "Bootstrap-skripti päivitetty.",
     "ClearSSHKeypairInput": "Kirjoitettu SSH-avainpari poistetaan. Haluatko varmasti jatkaa?",
     "ConfigFilename": "Konfigurointitiedoston nimi",
-    "CurrentSSHPublicKey": "Nykyinen julkinen avain:",
+    "CurrentSSHPublicKey": "Nykyinen julkinen avain",
     "CustomDashboardPanels": "Mukautetut koontinäytön paneelit",
     "DarkMode": "Tumma tila",
     "DarkTheme": "Tumma tila",

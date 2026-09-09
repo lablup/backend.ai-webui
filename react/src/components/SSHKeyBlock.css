@@ -6,7 +6,6 @@
  */
 .ssh-key-block::-webkit-scrollbar {
   width: 6px;
-  height: 6px;
   max-width: 6px;
   background-color: transparent;
 }

@@ -3575,7 +3575,7 @@
     "BootstrapScriptUpdated": "Skrip bootstrap dikemas kini.",
     "ClearSSHKeypairInput": "Pad Kekunci SSH yang ditulis akan dikeluarkan. Adakah anda pasti mahu meneruskan?",
     "ConfigFilename": "Konfigurasi nama fail",
-    "CurrentSSHPublicKey": "Kunci awam semasa:",
+    "CurrentSSHPublicKey": "Kunci awam semasa",
     "CustomDashboardPanels": "Panel papan pemuka tersuai",
     "DarkMode": "Mod Gelap",
     "DarkTheme": "Mod Gelap",

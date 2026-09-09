@@ -21,7 +21,7 @@ interface SSHKeyBlockProps {
   extra?: React.ReactNode;
 }
 
-/** A labelled, copyable SSH key in a box that owns its own overflow. */
+/** A labelled, copyable SSH key; long lines wrap so the box only scrolls vertically. */
 const SSHKeyBlock: React.FC<SSHKeyBlockProps> = ({
   label,
   value,
@@ -34,7 +34,7 @@ const SSHKeyBlock: React.FC<SSHKeyBlockProps> = ({
 
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
-      <BAIFlex direction="row" align="center" gap="xs">
+      <BAIFlex direction="row" align="center">
         <Text weight="semibold">{label}</Text>
         {value ? <BAIText copyable={{ text: value }} /> : null}
       </BAIFlex>
@@ -42,7 +42,8 @@ const SSHKeyBlock: React.FC<SSHKeyBlockProps> = ({
         className="ssh-key-block"
         style={{
           maxHeight,
-          overflow: 'auto',
+          overflowY: 'auto',
+          overflowX: 'hidden',
           padding: `${token.paddingXS}px ${token.paddingSM}px`,
           backgroundColor: token.colorFillQuaternary,
           border: `1px solid ${token.colorBorderSecondary}`,
@@ -50,7 +51,15 @@ const SSHKeyBlock: React.FC<SSHKeyBlockProps> = ({
         }}
       >
         {value ? (
-          <pre style={{ margin: 0 }}>{value}</pre>
+          <pre
+            style={{
+              margin: 0,
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-all',
+            }}
+          >
+            {value}
+          </pre>
         ) : (
           <BAIText type="secondary">{placeholder}</BAIText>
         )}
