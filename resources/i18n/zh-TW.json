@@ -201,7 +201,7 @@
     "CreatePreset": "建立參數",
     "Name": "名稱",
     "PresetDeleted": "Runtime 參數已刪除。",
-    "Runtime": "__NOT_TRANSLATED__",
+    "Runtime": "執行環境",
     "RuntimeVariantPreset": "Runtime 參數",
     "TabTitle": "Runtime 參數"
   },
@@ -2796,7 +2796,7 @@
     "OpenToPublic": "向公眾開放應用",
     "OpenToPublicDesc": "啟用此選項允許網絡中的所有用戶訪問應用程序。<br /><br />\n對於訪問管理，請在“允許IP”字段中輸入特定的IP地址。<br /><br />\n將此字段留為空，將允許從所有IP地址訪問。<br /><br />\n考慮安全管理時，請考慮設置IP限制。",
     "Others": "其他",
-    "Owner": "__NOT_TRANSLATED__",
+    "Owner": "擁有者",
     "PanelSettings": "面板設置",
     "PendingPosition": "隊列位置",
     "Phase": "階段",

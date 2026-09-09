@@ -201,7 +201,7 @@
     "CreatePreset": "Utwórz parametr",
     "Name": "Nazwa",
     "PresetDeleted": "Parametr runtime został usunięty.",
-    "Runtime": "__NOT_TRANSLATED__",
+    "Runtime": "Środowisko uruchomieniowe",
     "RuntimeVariantPreset": "Parametr Runtime",
     "TabTitle": "Parametry Runtime"
   },
@@ -2794,7 +2794,7 @@
     "OpenToPublic": "Otwórz aplikację publicznie",
     "OpenToPublicDesc": "Włączenie tej opcji umożliwia dostęp do aplikacji dla wszystkich użytkowników w sieci.<br /><br /> \nW celu zarządzania dostępem wprowadź określone adresy IP w polu „dozwolone IP”.<br /><br /> \nOpuszczenie tego pola pustego pozwoli na dostęp ze wszystkich adresów IP.<br /><br /> \nW razie potrzeby rozważ ustawienie ograniczeń IP do zarządzania bezpieczeństwem.",
     "Others": "Inne",
-    "Owner": "__NOT_TRANSLATED__",
+    "Owner": "Właściciel",
     "PanelSettings": "Ustawienia panelowe",
     "PendingPosition": "Pozycja kolejki",
     "Phase": "Faza",

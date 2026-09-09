@@ -201,7 +201,7 @@
     "CreatePreset": "Parameter erstellen",
     "Name": "Name",
     "PresetDeleted": "Der Laufzeitparameter wurde gelöscht.",
-    "Runtime": "__NOT_TRANSLATED__",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Laufzeitparameter",
     "TabTitle": "Laufzeitparameter"
   },
@@ -2794,7 +2794,7 @@
     "OpenToPublic": "App für die Öffentlichkeit öffnen",
     "OpenToPublicDesc": "Durch die Aktivierung dieser Option ermöglicht der Anwendungszugriff für alle Benutzer im Netzwerk.<br /><br /> \nGeben Sie für die Zugriffsverwaltung bestimmte IP -Adressen in das Feld \"Zulässige IP\" ein.<br /><br /> \nWenn Sie dieses Feld leer verlassen, können Sie den Zugriff aus allen IP -Adressen ermöglichen.<br /><br /> \nErwägen Sie, IP -Beschränkungen bei Bedarf für das Sicherheitsmanagement festzulegen.",
     "Others": "Andere",
-    "Owner": "__NOT_TRANSLATED__",
+    "Owner": "Eigentümer",
     "PanelSettings": "Paneleinstellungen",
     "PendingPosition": "Warteschlangenposition",
     "Phase": "Phase",

@@ -201,7 +201,7 @@
     "CreatePreset": "Parametre Oluştur",
     "Name": "Ad",
     "PresetDeleted": "Runtime parametresi silindi.",
-    "Runtime": "__NOT_TRANSLATED__",
+    "Runtime": "Çalışma Zamanı",
     "RuntimeVariantPreset": "Runtime Parametresi",
     "TabTitle": "Runtime Parametreleri"
   },
@@ -2792,7 +2792,7 @@
     "OpenToPublic": "Uygulamayı herkese açık olarak aç",
     "OpenToPublicDesc": "Bu seçeneğin etkinleştirilmesi, ağ içindeki tüm kullanıcılar için uygulama erişimine izin verir.<br /><br /> \nErişim yönetimi için 'izin verilen IP' alanına belirli IP adreslerini girin.<br /><br /> \nBu alanı boş bırakmak tüm IP adreslerinden erişime izin verecektir.<br /><br /> \nGüvenlik yönetimi için gerektiğinde IP kısıtlamaları ayarlamayı düşünün.",
     "Others": "Diğerleri",
-    "Owner": "__NOT_TRANSLATED__",
+    "Owner": "Sahip",
     "PanelSettings": "Panel Ayarları",
     "PendingPosition": "Kuyruk konumu",
     "Phase": "Aşama",

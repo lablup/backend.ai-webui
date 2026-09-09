@@ -201,7 +201,7 @@
     "CreatePreset": "创建参数",
     "Name": "名称",
     "PresetDeleted": "Runtime 参数已删除。",
-    "Runtime": "__NOT_TRANSLATED__",
+    "Runtime": "运行时",
     "RuntimeVariantPreset": "Runtime 参数",
     "TabTitle": "Runtime 参数"
   },
@@ -2794,7 +2794,7 @@
     "OpenToPublic": "向公众开放应用",
     "OpenToPublicDesc": "启用此选项允许网络中的所有用户访问应用程序。<br /><br />\n对于访问管理，请在“允许IP”字段中输入特定的IP地址。<br /><br />\n将此字段留为空，将允许从所有IP地址访问。<br /><br />\n考虑安全管理时，请考虑设置IP限制。",
     "Others": "其他",
-    "Owner": "__NOT_TRANSLATED__",
+    "Owner": "所有者",
     "PanelSettings": "面板设置",
     "PendingPosition": "队列位置",
     "Phase": "阶段",

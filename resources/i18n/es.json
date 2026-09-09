@@ -201,7 +201,7 @@
     "CreatePreset": "Crear Parámetro",
     "Name": "Nombre",
     "PresetDeleted": "El parámetro de runtime ha sido eliminado.",
-    "Runtime": "__NOT_TRANSLATED__",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Parámetro de Tiempo de Ejecución",
     "TabTitle": "Parámetros de Tiempo de Ejecución"
   },
@@ -2792,7 +2792,7 @@
     "OpenToPublic": "Aplicación abierta al público",
     "OpenToPublicDesc": "Habilitar esta opción permite el acceso a la aplicación para todos los usuarios dentro de la red.<br /><br /> \nPara la gestión de acceso, ingrese direcciones IP específicas en el campo 'IP permitido'.<br /><br /> \nDejar este campo vacío permitirá el acceso desde todas las direcciones IP.<br /><br /> \nConsidere establecer restricciones IP cuando sea necesario para la gestión de seguridad.",
     "Others": "Otros",
-    "Owner": "__NOT_TRANSLATED__",
+    "Owner": "Propietario",
     "PanelSettings": "Configuración del panel",
     "PendingPosition": "Posición de cola",
     "Phase": "Fase",

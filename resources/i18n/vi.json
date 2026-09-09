@@ -201,7 +201,7 @@
     "CreatePreset": "Tạo tham số",
     "Name": "Tên",
     "PresetDeleted": "Tham số runtime đã được xóa.",
-    "Runtime": "__NOT_TRANSLATED__",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Tham Số Runtime",
     "TabTitle": "Tham Số Runtime"
   },
@@ -2794,7 +2794,7 @@
     "OpenToPublic": "Mở ứng dụng công khai",
     "OpenToPublicDesc": "Kích hoạt tùy chọn này cho phép truy cập ứng dụng cho tất cả người dùng trong mạng.<br /><br /> \nĐể quản lý truy cập, hãy nhập các địa chỉ IP cụ thể trong trường 'IP được phép'.<br /><br /> \nĐể lại trường này trống sẽ cho phép truy cập từ tất cả các địa chỉ IP.<br /><br /> \nXem xét thiết lập các hạn chế IP khi cần thiết để quản lý bảo mật.",
     "Others": "Khác",
-    "Owner": "__NOT_TRANSLATED__",
+    "Owner": "Chủ sở hữu",
     "PanelSettings": "Cài đặt bảng điều khiển",
     "PendingPosition": "Vị trí hàng đợi",
     "Phase": "Giai đoạn",
