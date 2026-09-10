@@ -149,7 +149,12 @@ test.describe(
         // page of model store cards on the target cluster. Seeding more model
         // cards is an infra task — until then the test skips with an auditable
         // reason.
-        const nextButton = page.getByRole('button', { name: 'right' });
+        //
+        // Astryx `Pagination` names the arrow "Go to next page" (not the antd
+        // icon name "right").
+        const nextButton = page.getByRole('button', {
+          name: 'Go to next page',
+        });
         const isNextEnabled = await nextButton.isEnabled();
         test.skip(
           !isNextEnabled,
@@ -161,10 +166,13 @@ test.describe(
         // Use the URL as the source of truth for the active page
         await expect(page).toHaveURL(/current=2/);
 
-        // Verify page 2 pagination item is active
+        // Verify page 2 is active: Astryx marks the current page button with
+        // `aria-current="page"`.
         await expect(
-          page.getByRole('listitem', { name: '2' }).first(),
-        ).toBeVisible();
+          page
+            .getByRole('navigation', { name: 'Pagination' })
+            .locator('[aria-current="page"]'),
+        ).toHaveText('2');
 
         const page2URL = page.url();
 

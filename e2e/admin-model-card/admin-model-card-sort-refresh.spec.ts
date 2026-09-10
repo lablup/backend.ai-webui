@@ -146,10 +146,9 @@ test.describe(
       );
       await adminModelCardPage.waitForTableLoad();
 
-      // Click the "Created At" column header to sort
-      const createdAtHeader = page.getByRole('columnheader', {
-        name: 'Created At',
-      });
+      // Click the "Created At" column header to sort. The sorter overrides the
+      // header's accessible name ("Sort by createdAt"), so match by text.
+      const createdAtHeader = getSortableColumnHeader(page, 'Created At');
       await createdAtHeader.click();
 
       // Verify the URL reflects the sort

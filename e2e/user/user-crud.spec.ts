@@ -373,9 +373,12 @@ test.describe.serial(
       // so we cannot verify the email directly in the modal for a single-user deletion.
       await purgeModal.confirmDeletion();
 
-      // 12. Verify success message appears
+      // 12. Verify success message appears. The toast text is rendered twice
+      // (notification stack + screen-reader announcer), so scope to the stack.
       await expect(
-        page.getByText(/Permanently deleted \d+ out of \d+ users/),
+        page
+          .getByRole('region', { name: 'Notifications' })
+          .getByText(/Permanently deleted \d+ out of \d+ users/),
       ).toBeVisible({ timeout: 10000 });
 
       // 13. Verify user completely disappears from inactive users list
