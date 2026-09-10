@@ -363,13 +363,13 @@ const AdminComputeSessionListPage = () => {
                   propertyLabel: t('data.Project'),
                   type: 'string',
                   defaultOperator: '==',
-                  renderInput: ({ onAddCondition }) => (
+                  renderInput: ({ onAddCondition, value, isDisabled }) => (
                     <BAIAdminProjectSelect
                       // The filter row already prints the property label.
                       label={t('data.Project')}
                       isLabelHidden
-                      value={null}
-                      width={200}
+                      value={value}
+                      isDisabled={isDisabled}
                       onChange={(value, option) => {
                         // P3C-1: the second argument survives on this wrapper so
                         // the condition tag stays human-readable (project name)
