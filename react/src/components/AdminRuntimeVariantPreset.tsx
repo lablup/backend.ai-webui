@@ -183,7 +183,6 @@ const AdminRuntimeVariantPreset = ({
                     isLabelHidden
                     value={value}
                     isDisabled={isDisabled}
-                    width={200}
                     onChange={(next, option) =>
                       onAddCondition(next, option?.label)
                     }

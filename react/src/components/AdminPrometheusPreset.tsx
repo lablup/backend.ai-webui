@@ -153,7 +153,7 @@ const AdminPrometheusPreset = ({
                       loading
                       label={t('prometheusQueryPreset.Category')}
                       isLabelHidden
-                      style={{ width: 200 }}
+                      style={{ width: '100%' }}
                     />
                   }
                 >
@@ -162,7 +162,7 @@ const AdminPrometheusPreset = ({
                     isLabelHidden
                     value={value}
                     disabled={isDisabled}
-                    style={{ width: 200 }}
+                    style={{ width: '100%' }}
                     onChange={(next, option) =>
                       onAddCondition(next ?? undefined, option?.label)
                     }

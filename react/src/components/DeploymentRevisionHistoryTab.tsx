@@ -625,7 +625,6 @@ const DeploymentRevisionHistoryTab: React.FC<
           isLabelHidden
           value={value}
           isDisabled={isDisabled}
-          width={200}
           onChange={(next, option) =>
             onAddCondition(
               next as string | undefined,
@@ -655,7 +654,6 @@ const DeploymentRevisionHistoryTab: React.FC<
           filter='usage_mode == "model"'
           value={value}
           isDisabled={isDisabled}
-          width={200}
           onChange={(next, option) =>
             onAddCondition(
               next as string | undefined,

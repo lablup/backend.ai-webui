@@ -349,7 +349,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                     filter={{ type: { equals: 'MODEL_STORE' } }}
                     value={value}
                     isDisabled={isDisabled}
-                    width={200}
                     onChange={(next, option) =>
                       onAddCondition(
                         next as string | undefined,

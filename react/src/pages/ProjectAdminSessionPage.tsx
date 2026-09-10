@@ -216,7 +216,6 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                     isLabelHidden
                     value={value}
                     isDisabled={isDisabled}
-                    width={200}
                     onChange={(next, option) =>
                       onAddCondition(
                         next as string | undefined,
