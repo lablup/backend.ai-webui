@@ -97,6 +97,27 @@ minimumReleaseAgeExclude:
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
   - "@astryxdesign/lab@0.3.0-canary.12db2a1"
+  # pnpm 12.4.0 is this repo's own `packageManager` pin: published 2026-09-08,
+  # inside the 7-day window at adoption time. Without these, a contributor
+  # still on pnpm 12.3.4 cannot provision the pin at all — 12.3.4 fetches the
+  # package manager as `@pnpm/exe` + its platform packages, and every one of
+  # them fails ERR_PNPM_NO_MATURE_MATCHING_VERSION. Remove after 2026-09-15.
+  - "pnpm@12.4.0"
+  - "@pnpm/exe@12.4.0"
+  - "@pnpm/exe.android-arm64@12.4.0"
+  - "@pnpm/exe.android-x64@12.4.0"
+  - "@pnpm/exe.darwin-arm64@12.4.0"
+  - "@pnpm/exe.darwin-x64@12.4.0"
+  - "@pnpm/exe.freebsd-x64@12.4.0"
+  - "@pnpm/exe.linux-arm64@12.4.0"
+  - "@pnpm/exe.linux-arm64-musl@12.4.0"
+  - "@pnpm/exe.linux-ppc64@12.4.0"
+  - "@pnpm/exe.linux-riscv64@12.4.0"
+  - "@pnpm/exe.linux-s390x@12.4.0"
+  - "@pnpm/exe.linux-x64@12.4.0"
+  - "@pnpm/exe.linux-x64-musl@12.4.0"
+  - "@pnpm/exe.win32-arm64@12.4.0"
+  - "@pnpm/exe.win32-x64@12.4.0"
 minimumReleaseAgeIgnoreMissingTime: false
 resolutionMode: time-based
 

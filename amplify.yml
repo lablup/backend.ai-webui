@@ -113,7 +113,7 @@ applications:
             - nvm install
             - nvm use
             # Pin pnpm to the version declared by `package.json#packageManager`
-            # (currently `pnpm@12.3.4`). With that field present, `corepack
+            # (currently `pnpm@12.4.0`). With that field present, `corepack
             # enable` is sufficient — corepack auto-resolves the pinned
             # version on the first pnpm invocation. Do NOT add a
             # `corepack prepare pnpm@<major> --activate` line here: a stale
