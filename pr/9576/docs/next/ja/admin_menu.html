@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>管理者機能 - Backend.AI WebUI User Guide - 日本語</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。" />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/ja/admin_menu.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="管理者機能" />
+  <meta property="og:description" content="管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。" />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/ja/admin_menu.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="ja" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="管理者機能" />
+  <meta name="twitter:description" content="管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。" />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-09-08T04:37:06.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
+  <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
+  <link rel="alternate" hreflang="th" href="../th/admin_menu.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/admin_menu.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="admin_menu"></script>
+</head>
+<body data-copy-label="コピー" data-copied-label="コピーしました!" data-copy-failed-label="コピーに失敗しました">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (04d17e4)">v26.9.0-alpha.0 (04d17e4)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">ドキュメント検索...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="ドキュメント検索..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/admin_menu.html" lang="ko">한국어</option><option value="../en/admin_menu.html" lang="en">English</option><option value="../ja/admin_menu.html" lang="ja" selected>日本語</option><option value="../th/admin_menu.html" lang="th">ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">WebUI 次期バージョン (Next) の未公開ドキュメントです。</span>
+    <span class="docs-banner__desc">最新のドキュメントは<a class="docs-banner__link" href="../../26.8/ja/index.html">最新バージョン(26.8)</a>をご覧ください。</span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">バージョン</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="ja"
+      data-slug="admin_menu"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">以前のバージョン</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">はじめに</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">はじめに</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="はじめに">
+    <li><a href="./quickstart.html">1. クイックスタート</a></li>
+<li><a href="./disclaimer.html">2. 免責事項</a></li>
+<li><a href="./overview.html">3. 概要</a></li>
+<li><a href="./installation.html">4. インストール</a></li>
+<li><a href="./login.html">5. ログイン</a></li>
+<li><a href="./header.html">6. トップバー</a></li>
+<li><a href="./start.html">7. スタート</a></li>
+<li><a href="./dashboard.html">8. ダッシュボード</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">ワークロード</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="ワークロード">
+    <li><a href="./session_page.html">9. セッションページ</a></li>
+<li><a href="./sessions_all.html">10. コンピュートセッション</a></li>
+<li><a href="./cluster_session.html">11. クラスターセッション</a></li>
+<li><a href="./deployment.html">12. デプロイ</a></li>
+<li><a href="./chat.html">13. チャット</a></li>
+<li><a href="./my_environments.html">14. マイ環境</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">ストレージとデータ</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="ストレージとデータ">
+    <li><a href="./vfolder.html">15. ストレージフォルダ</a></li>
+<li><a href="./mount_vfolder.html">16. ストレージフォルダのマウント</a></li>
+<li><a href="./share_vfolder.html">17. ストレージフォルダの共有</a></li>
+<li><a href="./sftp_to_container.html">18. コンピュートセッションへのSFTP接続</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">管理</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="管理">
+    <li><a href="./user_settings.html">19. ユーザー設定</a></li>
+<li><a href="./project_admin.html">20. プロジェクト管理者機能</a></li>
+<li><a href="./rbac_management.html">21. RBAC管理</a></li>
+<li><a href="./agent_summary.html">22. エージェントサマリー</a></li>
+<li><a href="./statistics.html">23. 統計</a></li>
+<li><a href="./admin_menu.html" class="active" aria-current="page">24. 管理者機能</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">リファレンス</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="リファレンス">
+    <li><a href="./trouble_shooting.html">25. FAQ＆トラブルシューティング</a></li>
+<li><a href="./appendix.html">26. 付録</a></li>
+<li><a href="./license_agreement.html">27. ライセンス契約</a></li>
+<li><a href="./references.html">28. 参考資料</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="このページはバージョン {version} には存在しません。代わりにバージョンのインデックスを表示しています。">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="閉じる" title="閉じる">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">ホーム</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">管理</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">管理者機能</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-admin_menu">
+<p><a id="admin-menus"></a></p>
+<h1 data-bai-block="0" id="admin_menu-管理者機能">管理者機能<a class="hash-link" href="#admin_menu-管理者機能" aria-label="Direct link to 管理者機能">#</a></h1>
+<p data-bai-block="1">管理者アカウントでログインすると、サイドバー上部に<strong>管理者設定</strong>メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、<strong>ユーザー管理</strong>メニューに一覧表示されます。スーパー管理者は、すべてのユーザーの情報を確認し、ユーザーを作成または無効化できます。</p>
+<p><figure data-bai-block="2" class="doc-figure"><img src="./images/admin_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.1</figcaption></figure>
+</p>
+<p><a id="create-and-update-users"></a></p>
+<h2 data-bai-block="3" id="admin_menu-ユーザー一覧の参照と管理">ユーザー一覧の参照と管理<a class="hash-link" href="#admin_menu-ユーザー一覧の参照と管理" aria-label="Direct link to ユーザー一覧の参照と管理">#</a></h2>
+<p data-bai-block="4">「+ ユーザーを作成」ボタンをクリックしてユーザーを作成できます。パスワードは8文字以上で、アルファベット、特殊文字、数字をそれぞれ1つ以上含む必要があります。メールアドレス、ユーザー名、フルネームの最大長は64文字です。</p>
+<p data-bai-block="5">同じメールアドレスまたはユーザー名のユーザーが既に存在する場合、ユーザーアカウントを作成することはできません。他のメールアドレスとユーザー名を試してください。</p>
+<p><figure data-bai-block="6" class="doc-figure"><img src="./images/create_user_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1440" height="900" /><figcaption>図 24.2</figcaption></figure>
+</p>
+<p data-bai-block="7">ユーザーが作成されたことを確認します。</p>
+<p><figure data-bai-block="8" class="doc-figure"><img src="./images/check_if_user_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2326" height="596" /><figcaption>図 24.3</figcaption></figure>
+</p>
+<!-- TODO: Re-capture check_if_user_created.png framed to the card (currently has no padding). -->
+
+<p data-bai-block="9">該当ユーザーの<strong>メール</strong>列の行にある情報アイコンをクリックすると、より詳細なユーザー情報を確認できます。ユーザーが所属するドメインやプロジェクトの情報も確認できます。</p>
+<p><figure data-bai-block="10" class="doc-figure"><img src="./images/user_detail_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1030" /><figcaption>図 24.4</figcaption></figure>
+</p>
+<p data-bai-block="11">該当ユーザーの<strong>メール</strong>列の行にある<strong>編集</strong>（鉛筆）アイコンをクリックすると、既存のユーザーの設定を変更できます。ユーザー名、パスワード、有効化状態などを変更できます。ユーザーID（メールアドレス）は変更できません。変更を適用するには<strong>保存</strong>をクリックします。</p>
+<p><figure data-bai-block="12" class="doc-figure"><img src="./images/user_update_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="3520" /><figcaption>図 24.5</figcaption></figure>
+</p>
+<p data-bai-block="13">ユーザー作成/編集ダイアログには、以下のフィールドが含まれています。</p>
+<ul>
+<li data-bai-block="14"><p><strong>Eメール</strong>: ユーザーのメールアドレスで、ログインIDとして使用されます。作成後は変更できません。</p>
+</li>
+<li data-bai-block="15"><p><strong>ユーザー名</strong>: ユーザーの一意の識別子です（最大64文字）。</p>
+</li>
+<li data-bai-block="16"><p><strong>フルネーム</strong>: ユーザーの表示名です（最大64文字）。</p>
+</li>
+<li data-bai-block="17"><p><strong>パスワード</strong>: 8文字以上で、アルファベット、特殊文字、数字をそれぞれ1つ以上含む必要があります。</p>
+</li>
+<li data-bai-block="18"><p><strong>パスワードの変更が必要</strong>: 管理者がユーザーを一括作成する際にランダムパスワードを選択した場合、このフィールドをONに設定してパスワード変更が必要であることを示せます。ユーザーにはパスワードの更新を促すトップバーが表示されますが、これは説明的なフラグであり、実際の使用には影響しません。</p>
+</li>
+<li data-bai-block="19"><p><strong>説明</strong>: ユーザーに関するオプションの説明です（最大500文字）。</p>
+</li>
+<li data-bai-block="20"><p><strong>ユーザーステータス</strong>: ユーザーの状態を示します。非アクティブユーザーはログインできません。確認前は、メール認証や管理者の承認など、アカウントを有効化するための追加手順が必要な状態を示します。非アクティブユーザーは別途非アクティブタブに表示されます。</p>
+<p><figure data-bai-block="21" class="doc-figure"><img src="./images/active_user_selection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="500" height="213" /><figcaption>図 24.6</figcaption></figure>
+</p>
+</li>
+<li data-bai-block="22"><p><strong>役割</strong>: ユーザーの役割（user、admin、superadmin）。現在のユーザーの権限によって選択可能なオプションが異なります。</p>
+</li>
+<li data-bai-block="23"><p><strong>sudoセッションを有効にする</strong>: ユーザーがコンピュートセッションでsudoを使用できるようにします。ユーザーがroot権限を必要とするパッケージのインストールやコマンドの実行時に便利です。ただし、セキュリティ上の問題を引き起こす可能性があるため、すべてのユーザーに対してこのオプションを有効にすることは推奨されません。</p>
+</li>
+<li data-bai-block="24"><p><strong>2要素認証が有効</strong>: ユーザーが二要素認証を使用しているかどうかを示すフラグです。二要素認証を使用している場合、ユーザーはログイン時に追加でOTPコードの入力が必要です。管理者は他のユーザーの二要素認証のみを無効化できます。</p>
+</li>
+<li data-bai-block="25"><p><strong>リソースポリシー</strong>: ユーザーが所属するユーザーリソースポリシーを選択できます。ユーザーリソースポリシーの詳細については、<a href="#user-resource-policy">ユーザーリソースポリシー</a>セクションを参照してください。</p>
+</li>
+<li data-bai-block="26"><p><strong>ドメイン</strong>: ユーザーが所属するドメインです。ユーザーの作成時と編集時の両方で設定できます。</p>
+</li>
+<li data-bai-block="27"><p><strong>プロジェクト</strong>: ユーザーが所属するプロジェクトを1つ以上選択します。選択したドメインによって利用可能なプロジェクトが異なります。</p>
+</li>
+<li data-bai-block="28"><p><strong>許可されたクライアントIP</strong>: このユーザーアカウントでシステムにアクセスできるIPアドレスを制限します。IPアドレスまたはCIDR表記で入力します（例：<code>10.20.30.40</code>、<code>10.20.30.0/24</code>）。空の場合、すべてのIPからのアクセスが許可されます。</p>
+</li>
+<li data-bai-block="29"><p><strong>コンテナUID</strong>: コンテナ内のプロセスに割り当てられる数値ユーザーIDです。ファイル権限の目的でコンテナが特定のUIDと一致する必要がある場合に便利です。</p>
+</li>
+<li data-bai-block="30"><p><strong>コンテナGID</strong>: コンテナ内のプロセスに割り当てられるデフォルトの数値グループIDです。</p>
+</li>
+<li data-bai-block="31"><p><strong>補助GID</strong>: コンテナプロセスに割り当てられる追加の数値グループIDです。複数のGIDをカンマで区切って入力します。</p>
+</li>
+<li data-bai-block="32"><p><strong>メインアクセスキー</strong>: （編集時のみ）ユーザーのキーペアの中からAPI認証に使用するメインアクセスキーを選択します。</p>
+</li>
+</ul>
+<p data-bai-block="33">ユーザー一覧では、複数の値を持つ列（<strong>許可されたクライアントIP</strong> と <strong>補助GID</strong>）は最初の値だけをそのまま表示し、
+残りは <code>+N</code> タグにまとめられます。タグにマウスを重ねると、列幅を広げなくてもすべての値を確認できます。</p>
+<p><a id="bulk-create-users"></a></p>
+<h3 data-bai-block="34" id="admin_menu-ユーザー一括作成">ユーザー一括作成<a class="hash-link" href="#admin_menu-ユーザー一括作成" aria-label="Direct link to ユーザー一括作成">#</a></h3>
+<p data-bai-block="35">複数のユーザーアカウントを一度に作成する必要がある場合、ユーザー一括作成機能を使用
+できます。ユーザー管理ページの<strong>ユーザーを作成</strong>ボタンの横に
+省略記号（<code>...</code>）ドロップダウンボタンが表示されます。このドロップダウンボタンを
+クリックし、<strong>ユーザー一括作成</strong>を選択すると、一括作成ダイアログが開きます。</p>
+<p><figure data-bai-block="36" class="doc-figure"><img src="./images/bulk_create_user_csv_dropdown.png" alt="" class="doc-image" loading="lazy" decoding="async" width="243" height="140" /><figcaption>図 24.7</figcaption></figure>
+</p>
+<p data-bai-block="37">一括作成ダイアログには以下のフィールドがあります。ダイアログ上部の案内バナーに、
+プレフィックスの後にゼロ埋めの連番が付加され、メールアドレスとユーザー名が自動生成
+されるという説明が表示されます。</p>
+<ul>
+<li data-bai-block="38"><strong>メールアドレスの@より前の部分</strong>: 自動生成されるメールアドレスのプレフィックス部分
+です。文字、数字、ドット、ハイフン、アンダースコアのみ使用可能です（最大30文字）。</li>
+<li data-bai-block="39"><strong>メールドメイン（@以降）</strong>: 自動生成されるメールアドレスのドメイン部分です。
+このフィールドには <code>@</code> プレフィックスが自動的に表示されます（最大30文字）。</li>
+<li data-bai-block="40"><strong>ユーザー数</strong>: 作成するユーザーアカウントの数です（1～100）。このフィールドの下に、
+生成されるメールアドレスのリアルタイムプレビューが表示されます。4人以下の場合は
+すべてのメールが表示され、5人以上の場合は最初の2つ、省略記号、最後のメールが表示
+されます（例：<code>student01@example.com, student02@example.com ... student10@example.com</code>）。</li>
+<li data-bai-block="41"><strong>パスワード</strong>: 作成されるすべてのユーザーの共有初期パスワードです。単一ユーザー
+作成と同じパスワードルールが適用されます（8文字以上、英字・特殊文字・数字を
+各1つ以上含む）。</li>
+<li data-bai-block="42"><strong>パスワードの変更が必要です</strong>: 一括作成時はデフォルトでONに設定されます。
+有効にすると、各ユーザーは初回ログイン時にパスワードの変更を求められます。</li>
+<li data-bai-block="43"><strong>ステータス</strong>、<strong>ロール</strong>、<strong>sudoセッション有効化</strong>、<strong>リソースポリシー</strong>、<strong>ドメイン</strong>、<strong>プロジェクト</strong>、<strong>許可されたクライアントIP</strong>などの残りのフィールドは、単一ユーザー作成と同じです。<a href="#create-and-update-users">ユーザー一覧の参照と管理</a>セクションを参照してください。</li>
+</ul>
+<p><figure data-bai-block="44" class="doc-figure"><img src="./images/bulk_create_user_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="1454" /><figcaption>図 24.8</figcaption></figure>
+</p>
+<p data-bai-block="45">ユーザー名とメールアドレスは、入力したプレフィックスとサフィックスに基づいて自動生成
+されます。例えば、メールプレフィックスを <code>student</code>、メールサフィックスを
+<code>example.com</code>、ユーザー数を 10 に設定すると、以下のアカウントが作成されます：</p>
+<table>
+<thead>
+<tr data-bai-block="46">
+<th>ユーザー名</th>
+<th>メールアドレス</th>
+</tr>
+</thead>
+<tbody><tr data-bai-block="47">
+<td><code>student01</code></td>
+<td><code>student01@example.com</code></td>
+</tr>
+<tr data-bai-block="48">
+<td><code>student02</code></td>
+<td><code>student02@example.com</code></td>
+</tr>
+<tr data-bai-block="49">
+<td>...</td>
+<td>...</td>
+</tr>
+<tr data-bai-block="50">
+<td><code>student10</code></td>
+<td><code>student10@example.com</code></td>
+</tr>
+</tbody></table>
+<div class="admonition admonition-note">
+<div data-bai-block="51" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="52">連番はユーザーの総数に基づいてゼロ埋めされます。例えば、3人の場合は
+<code>student1</code> から <code>student3</code>、10人の場合は <code>student01</code> から <code>student10</code>、100人の場合は
+<code>student001</code> から <code>student100</code> となります。</p>
+</div></div>
+
+
+<div class="admonition admonition-warning">
+<div data-bai-block="53" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div class="admonition-content">
+
+<p data-bai-block="54">生成されたユーザー名やメールアドレスの一部が既に存在する場合、操作は部分的に成功する
+ことがあります。作成されたユーザー数と失敗したユーザー数がメッセージに表示され、作成
+できなかったユーザーとその理由が失敗一覧に表示されます。</p>
+</div></div>
+
+
+<p><a id="bulk-create-users-from-csv"></a></p>
+<h3 data-bai-block="55" id="admin_menu-csvからユーザーを一括作成する">CSVからユーザーを一括作成する<a class="hash-link" href="#admin_menu-csvからユーザーを一括作成する" aria-label="Direct link to CSVからユーザーを一括作成する">#</a></h3>
+<p data-bai-block="56">ユーザーを直接一括作成する代わりに、CSVファイルをアップロードしてユーザーを作成することもできます。<strong>ユーザーを作成</strong> ボタン横の省略記号（<code>...</code>）ドロップダウンをクリックし、<strong>CSVからユーザーを一括作成</strong> を選択すると、CSVアップロードダイアログが開きます。</p>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/bulk_create_user_csv_dropdown.png" alt="" class="doc-image" loading="lazy" decoding="async" width="243" height="140" /><figcaption>図 24.9</figcaption></figure>
+</p>
+<h4 data-bai-block="58" id="admin_menu-csv-ファイルの準備">CSV ファイルの準備<a class="hash-link" href="#admin_menu-csv-ファイルの準備" aria-label="Direct link to CSV ファイルの準備">#</a></h4>
+<p data-bai-block="59">CSV ファイルは UTF-8 エンコーディングを使用する必要があります。先頭行はヘッダー行でなければなりません。ヘッダー名は大文字・小文字を区別せずに照合されます。ダイアログ内の <strong>CSV テンプレートをダウンロード</strong> をクリックすると、すぐに使えるテンプレートをダウンロードできます。</p>
+<p data-bai-block="60"><strong>必須の列：</strong></p>
+<ul>
+<li data-bai-block="61"><strong>email</strong>: ユーザーのメールアドレスで、ログインIDとして使用されます。</li>
+<li data-bai-block="62"><strong>username</strong>: ユーザーの一意のユーザー名です。</li>
+</ul>
+<p data-bai-block="63">この2つの列のいずれかが欠けているファイルはアップロードが拒否され、どの列が不足しているかがダイアログに表示されます。</p>
+<p data-bai-block="64"><strong>任意の列：</strong></p>
+<ul>
+<li data-bai-block="65"><strong>password</strong>: 初期パスワードです。単一ユーザー作成と同じパスワードルールが適用されます（8文字以上、英字・特殊文字・数字を各1つ以上含む）。すべてのアカウントにパスワードは必要ですが、必ずしもファイルから取得する必要はありません。下記の注意を参照してください。</li>
+<li data-bai-block="66"><strong>full_name</strong>: ユーザーの表示名です。</li>
+<li data-bai-block="67"><strong>role</strong>: ユーザーのロール（<code>user</code>、<code>admin</code>、または <code>superadmin</code>）。省略した場合は <code>user</code> になります。</li>
+<li data-bai-block="68"><strong>status</strong>: ユーザーの初期ステータス（<code>active</code> または <code>inactive</code>）。省略した場合は <code>active</code> になります。</li>
+<li data-bai-block="69"><strong>domain_name</strong>: ユーザーを割り当てるドメインです。省略した場合は現在のドメインになります。</li>
+<li data-bai-block="70"><strong>description</strong>: ユーザーに関するオプションの説明です。</li>
+<li data-bai-block="71"><strong>need_password_change</strong>: ユーザーが初回ログイン時にパスワードを変更する必要があるかどうか（<code>true</code> または <code>false</code>）。省略した場合は <code>true</code> になります。</li>
+<li data-bai-block="72"><strong>resource_policy</strong>: 割り当てるリソースポリシーの名前です。</li>
+<li data-bai-block="73"><strong>project</strong>: ユーザーを追加するプロジェクトの名前です。</li>
+</ul>
+<h4 data-bai-block="74" id="admin_menu-アップロードと確認">アップロードと確認<a class="hash-link" href="#admin_menu-アップロードと確認" aria-label="Direct link to アップロードと確認">#</a></h4>
+<p data-bai-block="75">ダイアログの左側には <strong>デフォルト</strong> パネルがあります。ここで設定した値は、その項目が空になっているすべての行に
+補われるため、CSVのセルごとに同じ値を繰り返し入力する必要はありません。パネルでは <strong>ドメイン</strong>、
+<strong>プロジェクト</strong>、<strong>ユーザーリソースポリシー</strong>、<strong>パスワード</strong>、<strong>パスワードの変更が必要</strong>、<strong>説明</strong> を指定でき、
+指定しない項目には <code>デフォルトなし</code> と表示されます。</p>
+<p data-bai-block="76">CSV ファイルを選択すると、ダイアログにすべての行を一覧表示するプレビューテーブルが表示されます。</p>
+<ul>
+<li data-bai-block="77">有効なデータの行は通常どおり表示されます。</li>
+<li data-bai-block="78">書式または検証エラーのある行は、インラインのエラーメッセージとともに強調表示されます。ソースファイルを修正してから再試行できます。</li>
+<li data-bai-block="79">プレビューの上部に有効な行数と無効な行数の合計が表示されます。</li>
+</ul>
+<p><figure data-bai-block="80" class="doc-figure"><img src="./images/bulk_create_user_csv_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1572" height="892" /><figcaption>図 24.10</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="81" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="82"><code>password</code> 列のない CSV（たとえばユーザー一覧からエクスポートしたファイル）も問題なく読み込めます。該当する行には
+<code>パスワードは必須です。</code> という行ごとのエラーが表示され、そのエラーが残っている間は作成ボタンが無効のままです。
+<strong>デフォルト</strong> パネルにパスワードを入力するとプレビューが即座に更新され、エラーが消えてボタンが有効になります。
+ファイルを再アップロードする必要はありません。</p>
+</div></div>
+
+
+<h4 data-bai-block="83" id="admin_menu-ユーザーの作成">ユーザーの作成<a class="hash-link" href="#admin_menu-ユーザーの作成" aria-label="Direct link to ユーザーの作成">#</a></h4>
+<p data-bai-block="84">プレビューを確認してすべての行が有効であることを確認したら、<strong>N人のユーザーを作成</strong> をクリックして送信します。サーバー側でいくつかの行が失敗した場合（例えば、メールアドレスやユーザー名がすでに存在する場合）、ダイアログは開いたままになり、行ごとのエラーが表示されるので、競合を特定して解決できます。</p>
+<p data-bai-block="85">一部の行だけが成功した場合は、<code>N名のユーザーを作成しました。M名のユーザーの作成に失敗しました。</code> というメッセージが表示され、ダイアログの上に失敗一覧が開きます。この一覧には、作成できなかったユーザーのメールアドレス、ユーザー名、返されたエラーが表示されます。一部のアカウントが作成された場合は、生成されたキーペアの一覧が先に表示され、それを閉じると失敗一覧が続けて表示されます。作成済みのアカウントはそのまま残るため、報告された行だけを修正すれば十分です。</p>
+<p><figure data-bai-block="86" class="doc-figure"><img src="./images/bulk_create_user_partial_failure.png" alt="" class="doc-image" loading="lazy" decoding="async" width="720" height="271" /><figcaption>図 24.11</figcaption></figure>
+</p>
+<div class="admonition admonition-warning">
+<div data-bai-block="87" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div class="admonition-content">
+
+<p data-bai-block="88">一部の行が失敗した場合、成功した行のみ新しいアカウントが作成されます。失敗した行は個別に報告されます。ソース CSV を修正して再アップロードし、残りのアカウントを作成してください。</p>
+</div></div>
+
+
+<p><a id="bulk-edit-users"></a></p>
+<h3 data-bai-block="89" id="admin_menu-ユーザーの一括編集">ユーザーの一括編集<a class="hash-link" href="#admin_menu-ユーザーの一括編集" aria-label="Direct link to ユーザーの一括編集">#</a></h3>
+<p data-bai-block="90">複数のアカウントに同じ変更を適用したいとき — 別のドメインやプロジェクトへ移す、リソースポリシーを切り替える、
+コンテナのUID／GIDを設定するなど — アカウントを1つずつ開かずに一度にまとめて編集できます。</p>
+<ol>
+<li data-bai-block="91">ユーザー一覧の行チェックボックスで対象のユーザーを選択します。</li>
+<li data-bai-block="92">ツールバーに選択件数が表示されます。その横の編集（鉛筆）ボタンをクリックします。</li>
+<li data-bai-block="93"><strong>ユーザーを一括編集</strong> ダイアログが開きます。</li>
+</ol>
+<p><figure data-bai-block="94" class="doc-figure"><img src="./images/bulk_edit_users_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1904" /><figcaption>図 24.12</figcaption></figure>
+</p>
+<p data-bai-block="95">ダイアログ上部のアラートには、変更が適用されるすべてのユーザーのメールアドレスが並ぶため、実行前に選択内容を
+確認できます。あわせて、UID または GID を設定すると既存のフォルダマウントの使用が制限される場合があるという
+警告も表示されます。</p>
+<p data-bai-block="96">ダイアログには次のフィールドがあります。触れなかったフィールドは、選択したどのユーザーでも変更されません。</p>
+<ul>
+<li data-bai-block="97"><strong>ドメイン</strong>: 選択したユーザーを別のドメインへ移します。変更すると <strong>プロジェクト</strong> の選択はクリアされます。</li>
+<li data-bai-block="98"><strong>プロジェクト</strong>: 選択したユーザーを1つ以上のプロジェクトに割り当てます。先にドメインを選択する必要があります。</li>
+<li data-bai-block="99"><strong>ユーザーステータス</strong>: アカウントをアクティブ、非アクティブ、非アクティブ（キーペアを含む）、確認前のいずれかに設定します。</li>
+<li data-bai-block="100"><strong>リソースポリシー</strong>: 選択したすべてのアカウントにユーザーリソースポリシーを適用します。</li>
+<li data-bai-block="101"><strong>コンテナUID</strong>、<strong>コンテナGID</strong>、<strong>補助GID</strong>: コンテナ内のプロセスに割り当てられる数値IDを設定します。</li>
+</ul>
+<p data-bai-block="102">処理が終わると、選択したユーザーのうち何人が更新されたかがメッセージで通知されます。変更できなかったアカウントは
+個別のエラーとして報告されます。</p>
+<p><a id="inactivate-user-account"></a></p>
+<h2 data-bai-block="103" id="admin_menu-ユーザーアカウントの無効化">ユーザーアカウントの無効化<a class="hash-link" href="#admin_menu-ユーザーアカウントの無効化" aria-label="Direct link to ユーザーアカウントの無効化">#</a></h2>
+<p data-bai-block="104">ユーザーごとの使用統計を追跡し、メトリクスを保持し、誤ってアカウントを失うことを
+防ぐため、ユーザーのログインを停止する推奨方法は、アカウントを削除するのではなく
+<strong>無効化</strong>することです。無効化はユーザーのレコードをそのまま保持したまま、サインインのみを
+ブロックします。ユーザーを無効化するには、対象ユーザーの<strong>メール</strong>列の行にある無効化
+アイコンをクリックします。確認ポップオーバーが表示されるので、<strong>非アクティブ化</strong>ボタンを
+クリックすることでユーザーを無効化できます。</p>
+<p><figure data-bai-block="105" class="doc-figure"><img src="./images/user_deactivate_confirmation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1176" height="508" /><figcaption>図 24.13</figcaption></figure>
+</p>
+<!-- TODO: Re-capture user_deactivate_confirmation.png in this locale's UI language, reflecting the new flow: the deactivate icon in the user's Email column row and the confirmation popover. -->
+
+<p data-bai-block="106">ユーザーを再度有効化するには、ユーザー管理ページの<strong>非アクティブ</strong>タブに移動し、対象ユーザーの
+<strong>メール</strong>列の行にある再有効化（復元）アイコンをクリックします。確認ポップオーバーが
+表示されるので、<strong>アクティブ化</strong>ボタンをクリックすることでユーザーを再有効化できます。</p>
+<p><figure data-bai-block="107" class="doc-figure"><img src="./images/user_inactivate_confirmation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1124" height="508" /><figcaption>図 24.14</figcaption></figure>
+</p>
+<!-- TODO: Re-capture user_inactivate_confirmation.png in this locale's UI language, reflecting the new flow: the reactivate (restore) icon in the Email column row on the Inactive tab and the activate popover. -->
+
+<div class="admonition admonition-note">
+<div data-bai-block="108" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="109">ユーザーアカウントは複数のキーペアを持つことができ、どのキーペアを再度有効化すべきかを
+判断することが難しいため、ユーザーの無効化または再有効化を行っても、ユーザーの
+認証情報は変更されない点にご注意ください。</p>
+</div></div>
+
+
+<p data-bai-block="110">日常的なアカウント管理は無効化に依存しますが、スーパー管理者は以下で説明する
+完全削除（Purge）機能を使用して、すでに無効化されたアカウントを完全に削除できます。</p>
+<p><a id="purge-inactive-users"></a></p>
+<h3 data-bai-block="111" id="admin_menu-非アクティブユーザーの完全削除">非アクティブユーザーの完全削除<a class="hash-link" href="#admin_menu-非アクティブユーザーの完全削除" aria-label="Direct link to 非アクティブユーザーの完全削除">#</a></h3>
+<p data-bai-block="112">スーパー管理者は、すでに無効化されたユーザーアカウントを完全に削除（purge）できます。
+完全削除は<strong>非アクティブ</strong>タブにあるユーザーに対してのみ可能で、アクティブなユーザーは
+先に無効化する必要があります。無効化とは異なり、完全削除は元に戻すことができず、
+ユーザーの関連データも併せて削除されます。</p>
+<p data-bai-block="113">ユーザー管理ページで<strong>非アクティブ</strong>タブに切り替えます（ステータスセレクターには、完全削除が
+ユーザーのキーペアにも影響することを示すために<strong>非アクティブ</strong>（キーペアを含む）と
+表示されます）。次の2つの方法でユーザーを完全削除できます。</p>
+<ul>
+<li data-bai-block="114"><strong>個別の完全削除</strong>: 非アクティブなユーザー1人の<strong>メール</strong>列の行で、ゴミ箱
+（完全削除）アイコンをクリックします。</li>
+<li data-bai-block="115"><strong>一括完全削除</strong>: 行のチェックボックスで1人以上の非アクティブなユーザーを選択し、
+選択件数の横に表示される<strong>ユーザーを完全に削除</strong>ボタン（ゴミ箱ボタン）を
+クリックします。</li>
+</ul>
+<p><figure data-bai-block="116" class="doc-figure"><img src="./images/user_purge_inactive_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="468" /><figcaption>図 24.15</figcaption></figure>
+</p>
+<p data-bai-block="117">いずれの操作でも<strong>ユーザーを完全に削除</strong>確認モーダルが開きます。この操作は元に戻せない
+ため、削除ボタンが有効になる前に、モーダルに表示された確認フレーズを入力する必要が
+あります。さらにモーダルには次の2つのオプションがあります。</p>
+<ul>
+<li data-bai-block="118"><strong>共有された仮想フォルダも削除しますか？</strong>: チェックすると、完全削除されるユーザーが
+共有していた仮想フォルダも併せて削除されます。チェックしない場合、それらのフォルダは
+そのまま残ります。</li>
+<li data-bai-block="119"><strong>作成されたデプロイメントも削除しますか？</strong>: チェックすると、完全削除されるユーザーが
+作成したデプロイメントも併せて削除されます。チェックしない場合、それらのデプロイメントは
+削除されず、所有権が委任されます。</li>
+</ul>
+<p><figure data-bai-block="120" class="doc-figure"><img src="./images/purge_users_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="644" /><figcaption>図 24.16</figcaption></figure>
+</p>
+<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
+
+<div class="admonition admonition-danger">
+<div data-bai-block="121" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>危険</div>
+<div class="admonition-content">
+
+<p data-bai-block="122">ユーザーの完全削除は<strong>元に戻せません</strong>。ユーザーの仮想フォルダ、カーネル履歴、および
+関連するキーペアも併せて削除されます。確定する前に、正しいユーザーを選択しているか
+必ず確認してください。</p>
+</div></div>
+
+
+
+<p><a id="manage-users-keypairs"></a></p>
+<h2 data-bai-block="123" id="admin_menu-ユーザーのキーペア管理">ユーザーのキーペア管理<a class="hash-link" href="#admin_menu-ユーザーのキーペア管理" aria-label="Direct link to ユーザーのキーペア管理">#</a></h2>
+<p data-bai-block="124">各ユーザーアカウントは通常、1つ以上のキーペアを持ちます。キーペアは、ユーザーがログインした後、
+Backend.AIサーバーに対するAPI認証に使用されます。ログインにはユーザーのメールアドレスと
+パスワードによる認証が必要ですが、ユーザーがサーバーに送信するすべてのリクエストは、
+キーペアに基づいて認証されます。</p>
+<p data-bai-block="125">ユーザーは複数のキーペアを持つことができますが、キーペア管理の負担を軽減するため、現在は
+ユーザーのキーペアのうち1つだけを使用してリクエストを送信しています。また、新しい
+ユーザーを作成する際にキーペアは自動的に作成されるため、ほとんどの場合、手動でキーペアを
+作成して割り当てる必要はありません。</p>
+<p data-bai-block="126">キーペアは、ユーザー管理ページの「資格情報」タブで一覧表示できます。アクティブなキーペアは
+すぐに表示され、非アクティブなキーペアを確認するには、表の上にある「<strong>非アクティブ</strong>」を
+クリックしてください。</p>
+<p><figure data-bai-block="127" class="doc-figure"><img src="./images/credential_list_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.17</figcaption></figure>
+</p>
+<p data-bai-block="128">ユーザー管理タブと同様に、キーペアの行にあるインラインボタンを使用してキーペアの詳細を表示したり
+編集したりできます。情報アイコンボタンをクリックすると、キーペアの詳細情報を
+確認できます。必要に応じて、コピーボタンをクリックしてシークレットキーをコピーできます。</p>
+<p><figure data-bai-block="129" class="doc-figure"><img src="./images/keypair_detail_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="948" /><figcaption>図 24.18</figcaption></figure>
+</p>
+<p data-bai-block="130">キーペアの行にある<strong>編集</strong>（鉛筆）ボタンをクリックすると、キーペアのリソースポリシーおよびレート制限を
+変更できます。ダイアログのタイトルは <strong>キーペアリソースポリシーの更新</strong> で、<strong>保存</strong> をクリックすると変更が
+適用されます。<strong>レート制限</strong> の値が小さいと、ログインなどのAPI操作がブロックされる
+可能性がある点にご注意ください。</p>
+<p><figure data-bai-block="131" class="doc-figure"><img src="./images/keypair_update_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1000" height="504" /><figcaption>図 24.19</figcaption></figure>
+</p>
+<p data-bai-block="132">キーペアの行にある「非アクティブ化」ボタンまたは「活性化」ボタンをクリックすると、
+キーペアを無効化または再有効化することもできます。ユーザー管理タブとは異なり、非アクティブタブでは
+キーペアを完全に削除できます。ただし、キーペアがユーザーのメインアクセスキーとして現在
+使用されている場合は、完全に削除することはできません。</p>
+<p><figure data-bai-block="133" class="doc-figure"><img src="./images/keypair_delete_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="380" /><figcaption>図 24.20</figcaption></figure>
+</p>
+<p><figure data-bai-block="134" class="doc-figure"><img src="./images/keypair_delete_confirmation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="532" /><figcaption>図 24.21</figcaption></figure>
+</p>
+<!-- TODO: Re-capture keypair_delete_confirmation.png — shows the old UI. -->
+
+<p><a id="bulk-activate-deactivate-credentials"></a></p>
+<h3 data-bai-block="135" id="admin_menu-複数の資格情報を一括で有効化無効化する">複数の資格情報を一括で有効化・無効化する<a class="hash-link" href="#admin_menu-複数の資格情報を一括で有効化無効化する" aria-label="Direct link to 複数の資格情報を一括で有効化・無効化する">#</a></h3>
+<p data-bai-block="136">行を1つずつ処理する代わりに、複数のキーペアの状態を一度に変更できます。</p>
+<ol>
+<li data-bai-block="137">行チェックボックスでキーペアを選択します。</li>
+<li data-bai-block="138">ツールバーに選択件数が表示され、その横に状態変更ボタンが現れます。アクティブタブでは <strong>非アクティブ化</strong>、
+非アクティブタブでは <strong>活性化</strong> です。</li>
+<li data-bai-block="139">ボタンをクリックします。確認ダイアログに対象の資格情報の件数と、変更が所有者に与える影響が表示されます。</li>
+<li data-bai-block="140">確認すると変更が適用されます。</li>
+</ol>
+<p><figure data-bai-block="141" class="doc-figure"><img src="./images/credential_bulk_deactivate.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1204" /><figcaption>図 24.22</figcaption></figure>
+</p>
+<p data-bai-block="142">一部だけ成功した場合は、変更できた資格情報の件数と失敗した件数が結果メッセージに表示されます。タブの切り替え、
+フィルターの変更、並べ替え、ページ移動を行うと選択は解除されます。</p>
+<p><a id="create-credential"></a></p>
+<h3 data-bai-block="143" id="admin_menu-資格情報の作成">資格情報の作成<a class="hash-link" href="#admin_menu-資格情報の作成" aria-label="Direct link to 資格情報の作成">#</a></h3>
+<p data-bai-block="144">誤ってキーペアを削除してしまった場合は、右上の<strong>資格情報を作成</strong>ボタンをクリックして、
+ユーザーのキーペアを新たに作成できます。</p>
+<p><figure data-bai-block="145" class="doc-figure"><img src="./images/add_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1000" height="676" /><figcaption>図 24.23</figcaption></figure>
+</p>
+<p data-bai-block="146">ダイアログには次のフィールドがあります。</p>
+<ul>
+<li data-bai-block="147"><p><strong>ユーザー</strong>: 既存のユーザーアカウントを検索できる選択リストです。入力を始めると候補が絞り込まれるので、
+新しいキーペアの所有者となるアカウントを選びます。リストから選ぶ方式のため、実在しないアドレスを送信することは
+できません。</p>
+</li>
+<li data-bai-block="148"><p><strong>リソースポリシー</strong>: 新しいキーペアに適用するキーペアリソースポリシーです。</p>
+</li>
+<li data-bai-block="149"><p><strong>レート制限（15分あたり）</strong>: 15分以内にBackend.AIサーバーに送信できるリクエストの
+最大数です。例えば1000に設定した場合、キーペアが15分以内に1000を超えるAPI
+リクエストを送信すると、サーバーがエラーを返してリクエストを受け付けません。デフォルト値の
+使用を推奨し、ユーザーの利用パターンに応じてAPIリクエストの頻度が高まった場合にのみ
+値を増やすことを推奨します。</p>
+<p> 受け付けられる最大値は 50000 です。それより大きい値を入力すると
+ <code>レート制限はゼロより大きく、50000未満である必要があります。</code> という検証メッセージが表示されて送信がブロックされる
+ ため、入力した値が黙って切り下げられることはありません。100以下の値も入力できますが、レート制限が小さいと
+ ログインなどの操作がブロックされる可能性があるため警告が表示されます。</p>
+</li>
+</ul>
+<p><a id="share-project-storage-folders-with-project-members"></a></p>
+<h2 data-bai-block="150" id="admin_menu-プロジェクトメンバーとプロジェクトストレージフォルダを共有する">プロジェクトメンバーとプロジェクトストレージフォルダを共有する<a class="hash-link" href="#admin_menu-プロジェクトメンバーとプロジェクトストレージフォルダを共有する" aria-label="Direct link to プロジェクトメンバーとプロジェクトストレージフォルダを共有する">#</a></h2>
+<p data-bai-block="151">Backend.AIはユーザー独自のストレージフォルダに加えて、プロジェクト用のストレージフォルダを
+提供します。プロジェクトストレージフォルダは、特定のユーザーではなく特定のプロジェクトに
+属するフォルダであり、そのプロジェクトのすべてのユーザーがアクセスできます。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="152" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="153">プロジェクトフォルダは管理者のみが作成できます。一般ユーザーは、管理者が作成した
+プロジェクトフォルダの内容にアクセスすることのみ可能です。システム設定によっては、
+プロジェクトフォルダが許可されない場合があります。</p>
+</div></div>
+
+
+<p data-bai-block="154">まず、管理者アカウントでログインし、プロジェクトフォルダを作成します。データページに
+移動してから、「フォルダー作成」をクリックしてフォルダ作成ダイアログを開きます。
+フォルダ名を入力し、タイプをProjectに設定します。タイプがProjectに設定されると、ヘッダーの
+プロジェクトセレクタで選択されているプロジェクトに自動的に割り当てられます。
+権限は読み取り専用に設定されます。</p>
+<p><figure data-bai-block="155" class="doc-figure"><img src="./images/group_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="674" height="612" /><figcaption>図 24.24</figcaption></figure>
+</p>
+<!-- TODO: Re-capture group_folder_creation.png — shows the old UI. -->
+
+<p data-bai-block="156">フォルダが作成されたことを確認した後、ユーザーBのアカウントでログインし、データページに
+招待手続きなしで作成したばかりのプロジェクトフォルダが表示されることを
+確認します。アクセス権限パネルに R（読み取り専用）が表示されていることも確認できます。</p>
+<p><figure data-bai-block="157" class="doc-figure"><img src="./images/group_folder_listed_in_B.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2320" height="361" /><figcaption>図 24.25</figcaption></figure>
+</p>
+<!-- TODO: Re-capture group_folder_listed_in_B.png — shows the old UI. -->
+
+<p><a id="admin-features"></a></p>
+<h2 data-bai-block="158" id="admin_menu-モデルデプロイ">モデルデプロイ<a class="hash-link" href="#admin_menu-モデルデプロイ" aria-label="Direct link to モデルデプロイ">#</a></h2>
+<p><a id="admin-deployments-page"></a>
+<a id="admin-serving-page"></a></p>
+<h3 data-bai-block="159" id="admin_menu-管理者デプロイページ">管理者デプロイページ<a class="hash-link" href="#admin_menu-管理者デプロイページ" aria-label="Direct link to 管理者デプロイページ">#</a></h3>
+<p data-bai-block="160">管理者およびスーパー管理者は、クラスター内のすべてのデプロイメントを横断的に表示できる管理者デプロイページ（<code>/admin/deployments</code>）にアクセスできます。<strong>プロジェクト</strong> 列はデプロイメント一覧で利用できますが、既定では非表示になっています。列設定から表示を有効にできます。</p>
+<p><figure data-bai-block="161" class="doc-figure"><img src="./images/admin_serving_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.26</figcaption></figure>
+</p>
+<p data-bai-block="162">管理者デプロイページには最大 4 つのタブがあります:</p>
+<ul>
+<li data-bai-block="163"><strong>デプロイ</strong>: すべてのプロジェクトのデプロイメント一覧を表示し、ユーザー向けデプロイページと同じライフサイクルおよびプロパティフィルターを提供します。</li>
+<li data-bai-block="164"><strong>モデルストア管理</strong>: 下記の<a href="#admin-model-store-management">管理者モデルストア管理</a>セクションを参照してください。</li>
+<li data-bai-block="165"><strong>Prometheusプリセット</strong>: 管理者が再利用可能な Prometheus クエリプリセットを管理できるタブです。詳細は下記の<a href="#prometheus-query-presets">Prometheusクエリプリセット</a>セクションを参照してください。</li>
+<li data-bai-block="166"><strong>デプロイメントプリセット</strong>: 管理者がエンドユーザーのデプロイ時に適用できる、再利用可能なデプロイメントプリセットを管理できるタブです。詳細は下記の<a href="#deployment-presets">デプロイメントプリセット</a>セクションを参照してください。</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="167" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="168">各管理者向けデプロイメントは、管理者デプロイページ配下のアドレス <code>/admin/deployments/&lt;デプロイメントID&gt;</code> を持ちます。管理者デプロイページからデプロイメントを開くと URL がこのパスに切り替わるため、デプロイメント詳細ページを直接リンクしたりブックマークしたりできます。</p>
+</div></div>
+
+
+<p><a id="deployment-detail-page"></a></p>
+<h4 data-bai-block="169" id="admin_menu-デプロイメント詳細ページ">デプロイメント詳細ページ<a class="hash-link" href="#admin_menu-デプロイメント詳細ページ" aria-label="Direct link to デプロイメント詳細ページ">#</a></h4>
+<p data-bai-block="170">デプロイメント詳細ページの <strong>リビジョン（Revisions）</strong> カードには、次の 3 つのタブがあります。</p>
+<ul>
+<li data-bai-block="171"><strong>現在のリビジョン（Current Revision）</strong>: 現在稼働中のリビジョンの構成を表示します。イメージ、リソース、クラスター設定などに加え、vLLM／SGLang のリビジョンでは <strong>ランタイムパラメータ（Runtime Parameters）</strong> 行が表示され、このリビジョンに設定されたランタイムパラメータを確認できます。</li>
+<li data-bai-block="172"><strong>リビジョン履歴（Revision History）</strong>: 過去のリビジョンを一覧表示します。任意のリビジョンをクリックすると詳細ビューが開き、そのリビジョンの構成全体を確認できます。vLLM／SGLang のリビジョンでは、こちらにも <strong>ランタイムパラメータ（Runtime Parameters）</strong> 行が表示されます。</li>
+<li data-bai-block="173"><strong>監査ログ（Audit Log）</strong>: このデプロイメントに対して実行されたアクションの記録を表示します。</li>
+</ul>
+<p data-bai-block="174"><strong>監査ログ</strong>タブはデプロイメントに関するすべてのアクション履歴を追跡します。各エントリには次の情報が含まれます。</p>
+<ul>
+<li data-bai-block="175"><strong>時間（Time）</strong>: アクションが実行されたタイムスタンプです。</li>
+<li data-bai-block="176"><strong>操作（Operation）</strong>: 実行されたアクションの種類です。</li>
+<li data-bai-block="177"><strong>ステータス（Status）</strong>: 操作の結果ステータスです。</li>
+<li data-bai-block="178"><strong>説明（Description）</strong>: 操作に関する追加の詳細情報です。</li>
+<li data-bai-block="179"><strong>所要時間（Duration）</strong>: 操作が完了するまでにかかった時間です。</li>
+<li data-bai-block="180"><strong>実行者（Triggered By）</strong>: アクションを開始したユーザーです。</li>
+</ul>
+<p data-bai-block="181"><strong>ステータス</strong>（Status）、<strong>操作</strong>（Operation）、<strong>実行者</strong>（Triggered By）、および<strong>時間</strong>（Time）の日付範囲フィルターで表示を絞り込めます。</p>
+<p><a id="admin-model-store-management"></a></p>
+<h3 data-bai-block="182" id="admin_menu-管理者モデルストア管理">管理者モデルストア管理<a class="hash-link" href="#admin_menu-管理者モデルストア管理" aria-label="Direct link to 管理者モデルストア管理">#</a></h3>
+<p data-bai-block="183">スーパー管理者は、管理者デプロイページのモデルストア管理（Model Store Management）タブを通じてモデルカードを管理できます。</p>
+<p><figure data-bai-block="184" class="doc-figure"><img src="./images/admin_model_card_list_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.27</figcaption></figure>
+</p>
+<p data-bai-block="185">一覧には次の列が表示されます：</p>
+<ul>
+<li data-bai-block="186"><strong>名前（Name）</strong>: モデルカードの一意の識別子です。</li>
+<li data-bai-block="187"><strong>タイトル（Title）</strong>: 人間が読みやすい表示名です。</li>
+<li data-bai-block="188"><strong>カテゴリ（Category）</strong>: モデルカテゴリです（例：LLM）。</li>
+<li data-bai-block="189"><strong>タスク（Task）</strong>: 推論タスクタイプです（例：text-generation）。</li>
+<li data-bai-block="190"><strong>アクセスレベル（Access Level）</strong>: モデルカードが公開アクセス可能な場合は緑色の <code>Public</code> タグが、それ以外の場合はデフォルトの <code>Private</code> タグが表示されます。</li>
+<li data-bai-block="191"><strong>ドメイン（Domain）</strong>: モデルカードを所有するドメインです。</li>
+<li data-bai-block="192"><strong>プロジェクト（Project）</strong>: モデルカードを所有するプロジェクトです。</li>
+<li data-bai-block="193"><strong>作成日時（Created At）</strong>: モデルカードが作成された時間です。</li>
+</ul>
+<p data-bai-block="194">上部のプロパティフィルターバーで、次のプロパティを使って一覧を絞り込めます。</p>
+<ul>
+<li data-bai-block="195"><strong>名前（Name）</strong>: モデルカードの名前で検索します（テキスト一致）。</li>
+<li data-bai-block="196"><strong>ドメイン（Domain）</strong>: 所有ドメインで検索します（テキスト一致）。</li>
+<li data-bai-block="197"><strong>プロジェクト（Project）</strong>: 所有プロジェクトの UUID で検索します。値はフィルター適用前に検証されるため、形式が正しくない識別子は空の一覧ではなくメッセージで通知されます。</li>
+<li data-bai-block="198"><strong>ストレージホスト（Storage Host）</strong>: 紐づくフォルダのストレージホストで検索します。値を直接入力するのではなく、このクラスターに登録されたホストの一覧から選択し、等しい（equals）／等しくない（not equals）の両方の演算子を使用できます。</li>
+</ul>
+<p data-bai-block="199">各行の名前セルには、編集および削除のアクションアイコンが直接表示されます。</p>
+<p data-bai-block="200">複数のモデルカードを一度に削除するには、チェックボックスで削除する行を選択し、選択件数の横にある赤色のゴミ箱ボタンをクリックします。カードが削除される前に確認ダイアログが表示されます。</p>
+<h4 data-bai-block="201" id="admin_menu-モデルカードの作成">モデルカードの作成<a class="hash-link" href="#admin_menu-モデルカードの作成" aria-label="Direct link to モデルカードの作成">#</a></h4>
+<p data-bai-block="202"><code>モデルカードを作成</code> ボタンをクリックして作成モーダルを開きます。以下のフィールドを入力します：</p>
+<ul>
+<li data-bai-block="203"><p><strong>名前（Name）</strong>（必須）: モデルカードの一意の識別子です。</p>
+</li>
+<li data-bai-block="204"><p><strong>タイトル（Title）</strong>: 人間が読みやすい表示名です。</p>
+</li>
+<li data-bai-block="205"><p><strong>説明（Description）</strong>: モデルの詳細な説明です。</p>
+</li>
+<li data-bai-block="206"><p><strong>著者（Author）</strong>: モデルの作成者または組織です。</p>
+</li>
+<li data-bai-block="207"><p><strong>モデルバージョン（Model Version）</strong>: モデルのバージョンです。</p>
+</li>
+<li data-bai-block="208"><p><strong>タスク（Task）</strong>: 推論タスクタイプです（例：text-generation）。</p>
+</li>
+<li data-bai-block="209"><p><strong>カテゴリ（Category）</strong>: モデルカテゴリです（例：LLM）。</p>
+</li>
+<li data-bai-block="210"><p><strong>フレームワーク（Framework）</strong>: 使用される ML フレームワークです（例：PyTorch、TensorFlow）。</p>
+</li>
+<li data-bai-block="211"><p><strong>ラベル（Label）</strong>: 分類およびフィルタリング用のタグです。複数のタグはカンマ（<code>,</code>）で区切って入力します。</p>
+</li>
+<li data-bai-block="212"><p><strong>ライセンス（License）</strong>: モデルが配布されるライセンスです。</p>
+</li>
+<li data-bai-block="213"><p><strong>アーキテクチャ（Architecture）</strong>: モデルアーキテクチャです（例：Transformer）。</p>
+</li>
+<li data-bai-block="214"><p><strong>README</strong>: モデルのマークダウン README です。</p>
+</li>
+<li data-bai-block="215"><p><strong>ドメイン（Domain）</strong>: モデルカードを関連付けるドメインです。既定では現在のユーザーが所属するドメインが自動的に選択されます。</p>
+</li>
+<li data-bai-block="216"><p><strong>プロジェクト ID（Project ID）</strong>（必須）: モデルカードを所有するプロジェクトです。</p>
+</li>
+<li data-bai-block="217"><p><strong>VFolder</strong>（必須）: モデルファイルを含むストレージフォルダーです。</p>
+</li>
+<li data-bai-block="218"><p><strong>アクセスレベル（Access Level）</strong>: ユーザー向けモデルストアでモデルカードを誰が閲覧できるかを制御します。</p>
+<ul>
+<li data-bai-block="219"><code>Internal</code>: モデルカードを所有するドメインとプロジェクトの管理者にのみ表示されます。一般ユーザーは、自分のモデルストアで Internal のモデルカードを閲覧できません。</li>
+<li data-bai-block="220"><code>Public</code>: 該当プロジェクトにアクセス権を持つすべてのユーザーに表示されます。</li>
+</ul>
+</li>
+</ul>
+<p><figure data-bai-block="221" class="doc-figure"><img src="./images/model_card_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1344" /><figcaption>図 24.28</figcaption></figure>
+</p>
+<h4 data-bai-block="222" id="admin_menu-モデルカードの編集">モデルカードの編集<a class="hash-link" href="#admin_menu-モデルカードの編集" aria-label="Direct link to モデルカードの編集">#</a></h4>
+<p data-bai-block="223">モデルカード名の横にある編集アイコンをクリックして、既存のモデルカードを変更します。以前に入力したフィールドが入力された状態で編集モーダルが開きます。作成時と同様に、<strong>ラベル（Label）</strong> フィールドではカンマ（<code>,</code>）でタグを区切り、<strong>ドメイン（Domain）</strong> フィールドには現在のユーザーのドメインが既定で入力されます。</p>
+<h4 data-bai-block="224" id="admin_menu-モデルカードの削除">モデルカードの削除<a class="hash-link" href="#admin_menu-モデルカードの削除" aria-label="Direct link to モデルカードの削除">#</a></h4>
+<p data-bai-block="225">モデルカード名の横にある削除アイコンをクリックして個別のモデルカードを削除するか、行のチェックボックスで複数のモデルカードを選択したうえで、選択件数の横にある赤色のゴミ箱ボタンをクリックして一括削除を実行できます。</p>
+<p><figure data-bai-block="226" class="doc-figure"><img src="./images/model_card_delete_with_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="640" /><figcaption>図 24.29</figcaption></figure>
+</p>
+<p data-bai-block="227">削除確認ダイアログには <strong>関連するモデルフォルダも削除する</strong> オプションが含まれています：</p>
+<ul>
+<li data-bai-block="228">このオプションをチェックすると、モデルカードが削除されると同時に、そのモデルカードに紐づくストレージフォルダ（vfolder）がゴミ箱に移動されます。ゴミ箱通知が併せて表示されるため、スーパー管理者は紐づくフォルダがゴミ箱に送られたことを確認でき、必要に応じて <strong>データ &gt; ゴミ箱</strong> からフォルダを復元できます。関連するフォルダを削除すると、そのフォルダを参照している他のすべてのモデルカードも一緒に削除される点にご注意ください。</li>
+<li data-bai-block="229">このオプションのチェックを外した場合は、モデルカードのレコードのみが削除され、紐づくストレージフォルダはそのまま残るため、別のモデルカードに再利用できます。</li>
+</ul>
+<p data-bai-block="230"><strong>一括削除</strong> でも同じ挙動になります（ラベルは <strong>関連するモデルフォルダをすべて削除する</strong> に変わります）。オプションをチェックすると、選択した各モデルカードに紐づくストレージフォルダがゴミ箱に移動され、移動されたフォルダごとにゴミ箱通知が表示されます。</p>
+<p><a id="prometheus-query-presets"></a></p>
+<h2 data-bai-block="231" id="admin_menu-prometheus-クエリプリセット">Prometheus クエリプリセット<a class="hash-link" href="#admin_menu-prometheus-クエリプリセット" aria-label="Direct link to Prometheus クエリプリセット">#</a></h2>
+<p data-bai-block="232">Backend.AI では、管理者が再利用可能な <strong>Prometheus クエリプリセット</strong> を定義でき、オートスケーリングルールなどの監視機能から名前で参照できます。1 つのプリセットには、メトリクス名、PromQL クエリテンプレート、任意の時間ウィンドウ、任意のフィルタ／グループラベルがまとめられているため、運用者が同じクエリをルールごとに入力し直す必要はありません。</p>
+<p data-bai-block="233">プリセットは、管理者デプロイページの <strong>Prometheusプリセット</strong> タブ（<code>/admin/deployments?tab=prometheus-preset</code>）から管理します。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="234" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>スーパー管理者専用: オートスケーリングルールエディターのライブプレビュー</div>
+<div class="admonition-content">
+
+<p data-bai-block="235">スーパー管理者がデプロイのオートスケーリングルールエディターを開き、<strong>メトリクスソース</strong> を <code>Prometheus</code> に設定してプリセットを選択すると、プリセットセレクターの下に <strong>現在の値(Current value)</strong> のライブプレビューが表示されます。このプレビューはスーパー管理者アカウントにのみ表示され、一般ユーザーやドメイン管理者には表示されません。</p>
+</div></div>
+
+
+<p><figure data-bai-block="236" class="doc-figure"><img src="./images/admin_prometheus_preset_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1618" /><figcaption>図 24.30</figcaption></figure>
+</p>
+<p><a id="prometheus-preset-list-and-filter"></a></p>
+<h3 data-bai-block="237" id="admin_menu-一覧とフィルタ">一覧とフィルタ<a class="hash-link" href="#admin_menu-一覧とフィルタ" aria-label="Direct link to 一覧とフィルタ">#</a></h3>
+<p data-bai-block="238">プリセットテーブルには、クラスタ全体に登録されたすべての Prometheus クエリプリセットが表示されます。各行には次の情報が含まれます。</p>
+<ul>
+<li data-bai-block="239"><strong>名前</strong>: プリセットを識別するための一意で人間が読みやすい名前です。このセルでは、インラインの <strong>編集</strong> および <strong>削除</strong> アクションも利用できます。</li>
+<li data-bai-block="240"><strong>ID</strong>: プリセットの内部識別子です。</li>
+<li data-bai-block="241"><strong>メトリクス名</strong>: このプリセットが報告するメトリクスで、オートスケーリングルールなどのコンシューマーが表示ラベルとして使用します。</li>
+<li data-bai-block="242"><strong>クエリテンプレート</strong>: 実行される PromQL 式です。セルは <strong>コピー可能</strong> で、値にホバーしてコピーアイコンをクリックすると、テンプレート全体をクリップボードにコピーできます。Prometheus UI にテンプレートを貼り付けて結果を確認したい場合に便利です。</li>
+<li data-bai-block="243"><strong>時間ウィンドウ</strong>: クエリがレンジベクタを参照する場合に使用される既定のルックバック期間（例: <code>5m</code>）です。</li>
+<li data-bai-block="244"><strong>カテゴリ</strong>: プリセットが属する任意のカテゴリ（解決されたカテゴリ名とカテゴリ ID が併せて表示されます）。</li>
+<li data-bai-block="245"><strong>オプション</strong>: コンシューマーがプリセットに対して追加で適用できる <strong>フィルタラベル</strong> と <strong>グループラベル</strong> です。</li>
+<li data-bai-block="246"><strong>作成日時</strong> / <strong>更新日時</strong>: サーバーが自動的に管理するタイムスタンプです。</li>
+</ul>
+<p data-bai-block="247">テーブル上部のプロパティフィルタで一覧を検索・絞り込みでき、任意の列見出しをクリックすることで並び順を変更できます。</p>
+<p><a id="prometheus-preset-column-settings"></a></p>
+<h3 data-bai-block="248" id="admin_menu-列設定の保持">列設定の保持<a class="hash-link" href="#admin_menu-列設定の保持" aria-label="Direct link to 列設定の保持">#</a></h3>
+<p data-bai-block="249">テーブルには、不要な列を非表示にしたり表示する列の順序を変更したりできる列設定コントロールが含まれています。選択した設定は <strong>ブラウザごとにセッションをまたいで保持</strong> されるため、次にこのタブを訪れた際にも希望のレイアウトで開きます。列設定をリセットすると、Backend.AI の既定レイアウトに戻ります。</p>
+<p><a id="prometheus-preset-create"></a></p>
+<h3 data-bai-block="250" id="admin_menu-プリセットを作成する">プリセットを作成する<a class="hash-link" href="#admin_menu-プリセットを作成する" aria-label="Direct link to プリセットを作成する">#</a></h3>
+<p data-bai-block="251">テーブル右上の <strong>プリセットを追加</strong> をクリックして <strong>プリセットを作成</strong> モーダルを開きます。</p>
+<p><figure data-bai-block="252" class="doc-figure"><img src="./images/admin_prometheus_preset_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2020" /><figcaption>図 24.31</figcaption></figure>
+</p>
+<p data-bai-block="253">モーダルには次のフィールドがあります。</p>
+<ul>
+<li data-bai-block="254"><strong>名前</strong>: プリセットの一意の名前です。すべての Prometheus クエリプリセット間で一意である必要があります。</li>
+<li data-bai-block="255"><strong>説明</strong>: セレクタなどでプリセットと一緒に表示される自由記述の説明です。</li>
+<li data-bai-block="256"><strong>カテゴリ</strong>: 関連するプリセットをグループ化するための任意のカテゴリです。自由入力ではなく、サーバーに定義されたカテゴリから選ぶドロップダウンで、空のままにすると <strong>カテゴリなし</strong> になります。カテゴリ一覧の読み込み中はこのフィールドに読み込み表示が出ますが、他の項目はそのまま入力できます。</li>
+<li data-bai-block="257"><strong>メトリクス名</strong>: コンシューマー（例: オートスケーリングルール）に表示されるメトリクスラベルです。</li>
+<li data-bai-block="258"><strong>クエリテンプレート</strong>: 実行する PromQL 式です。入力中、フィールドの下にある <strong>ライブプレビュー</strong> 領域が作成中のテンプレートが Prometheus インスタンスに対して返す値をその場で表示します。これにより、保存前にテンプレートが期待どおり動作することを確認できます。プレビューはデバウンス処理され、編集に応じて自動的に更新されます。</li>
+<li data-bai-block="259"><strong>時間ウィンドウ</strong>: レンジベクタに使用する既定のウィンドウ（例: <code>5m</code>）です。クエリがレンジベクタを使用しない場合は空のままにします。</li>
+<li data-bai-block="260"><strong>フィルタラベル</strong>: コンシューマーがプリセットに対して追加で適用できる任意のラベルセレクタのリストです。</li>
+<li data-bai-block="261"><strong>グループラベル</strong>: クエリ結果をグループ化するための任意のラベルのリストです。</li>
+</ul>
+<p data-bai-block="262"><strong>作成</strong> をクリックしてプリセットを保存します。成功すると、プリセットが一覧に表示され、確認トーストが表示されます。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="263" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="264">このダイアログは開くたびに必ず空の状態から始まります。以前に入力した値や、直前に編集していたプリセットの値が、
+次の <strong>プリセットを作成</strong> や <strong>プリセットを編集</strong> のダイアログに引き継がれることはありません。</p>
+</div></div>
+
+
+<p><a id="prometheus-preset-edit"></a></p>
+<h3 data-bai-block="265" id="admin_menu-プリセットを編集する">プリセットを編集する<a class="hash-link" href="#admin_menu-プリセットを編集する" aria-label="Direct link to プリセットを編集する">#</a></h3>
+<p data-bai-block="266">プリセット行の <strong>名前</strong> セルにある <strong>編集</strong> アクションをクリックすると、<strong>プリセットを編集</strong> モーダルが開きます。モーダルにはプリセットの現在の値があらかじめ入力されており、クエリテンプレートのライブプレビュー領域を含めて作成ダイアログと同じフィールドが提供されます。</p>
+<p><figure data-bai-block="267" class="doc-figure"><img src="./images/admin_prometheus_preset_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2020" /><figcaption>図 24.32</figcaption></figure>
+</p>
+<p data-bai-block="268"><strong>セーブ</strong> をクリックして変更を適用します。プリセットを参照しているコンシューマー（例: オートスケーリングルール）は、次にメトリクスを評価する際に新しいクエリテンプレートを自動的に取り込みます。</p>
+<p><a id="prometheus-preset-delete"></a></p>
+<h3 data-bai-block="269" id="admin_menu-プリセットを削除する">プリセットを削除する<a class="hash-link" href="#admin_menu-プリセットを削除する" aria-label="Direct link to プリセットを削除する">#</a></h3>
+<p data-bai-block="270">プリセット行の <strong>名前</strong> セルにある <strong>削除</strong> アクションをクリックすると、削除確認モーダルが開きます。</p>
+<div class="admonition admonition-danger">
+<div data-bai-block="271" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>危険</div>
+<div class="admonition-content">
+
+<p data-bai-block="272">Prometheus クエリプリセットの削除は <strong>完全な削除であり、元に戻すことはできません</strong>。削除されたプリセットを参照しているオートスケーリングルールなどはクエリテンプレートを失い、別のプリセットを参照するように再構成されるまで正常に動作しなくなる可能性があります。</p>
+</div></div>
+
+
+<p data-bai-block="273">削除は元に戻せないため、ダイアログでは <strong>削除</strong> ボタンが有効になる前に確認入力欄に <strong>プリセット名を入力する</strong> 必要があります。ダイアログのタイトルに表示されているプリセット名を正確に入力し、<strong>削除</strong> をクリックして確定してください。</p>
+<p><a id="deployment-presets"></a></p>
+<h2 data-bai-block="274" id="admin_menu-デプロイメントプリセット">デプロイメントプリセット<a class="hash-link" href="#admin_menu-デプロイメントプリセット" aria-label="Direct link to デプロイメントプリセット">#</a></h2>
+<p data-bai-block="275"><strong>デプロイメントプリセット（Deployment Preset）</strong> は、イメージ、ランタイム、リソーススロット、クラスターモード、環境変数、起動コマンド、レプリカ数、公開可否など、モデルデプロイに必要な既定値を一つのテンプレートとして管理者が定義する仕組みです。エンドユーザーはストレージフォルダからモデルをデプロイする際にこのプリセットを適用でき、管理者は <em>vLLM-GPU-Large</em> や <em>SGLang-CPU-Small</em> のように組織が検証済みのデプロイ構成を提供できます。ユーザーは高度なオプションをすべて手動で入力することなく、モデルを素早くデプロイできます。</p>
+<p><figure data-bai-block="276" class="doc-figure"><img src="./images/deployment_preset_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="468" /><figcaption>図 24.33</figcaption></figure>
+</p>
+<h3 data-bai-block="277" id="admin_menu-デプロイメントプリセットとは">デプロイメントプリセットとは<a class="hash-link" href="#admin_menu-デプロイメントプリセットとは" aria-label="Direct link to デプロイメントプリセットとは">#</a></h3>
+<p data-bai-block="278">デプロイメントプリセットはモデルデプロイの既定値を保存することで、次のような利点をもたらします。</p>
+<ul>
+<li data-bai-block="279"><strong>管理者</strong>：組織のハードウェアやポリシーに合った検証済みのデプロイ構成カタログをユーザーに提供できます。</li>
+<li data-bai-block="280"><strong>エンドユーザー</strong>：データページの <em>プリセットで新規デプロイメント作成</em> フローでプリセットを選択すれば、高度なフィールドを手動で入力する必要がありません。</li>
+<li data-bai-block="281"><strong>運用担当者</strong>：組織全体でリソース割り当て、ランタイム、公開可否の既定値を一貫して適用できます。</li>
+</ul>
+<p data-bai-block="282">プリセットからデプロイを作成すると、プリセットの値がデプロイランチャーに自動的に反映されます。ユーザーはデプロイを確定する前にそれらの値を自由に確認・調整できます。</p>
+<p data-bai-block="283">各プリセットには次の項目が保存されます。</p>
+<ul>
+<li data-bai-block="284"><strong>基本情報</strong>：名前、説明、ランタイム、ランタイムパラメータ（Custom 以外のランタイム時に表示）、イメージ。</li>
+<li data-bai-block="285"><strong>リソース</strong>：リソーススロット（CPU、メモリ、GPU）、共有メモリ（SHM）、リソースオプション。</li>
+<li data-bai-block="286"><strong>クラスター</strong>：クラスターモード（Single Node または Multi Node）とクラスターサイズ。</li>
+<li data-bai-block="287"><strong>モデル＆実行</strong>：起動コマンド、ブートストラップスクリプト、環境変数。</li>
+<li data-bai-block="288"><strong>デプロイ</strong>：レプリカ数、リビジョン履歴の保持数、<strong>一般公開</strong>（公開可否）の既定値。</li>
+<li data-bai-block="289"><strong>モデル定義</strong>（任意）：モデル名、モデルパス、サービス構成（ポート、起動コマンド、事前起動アクション）、ヘルスチェック設定、メタデータ。</li>
+</ul>
+<p><a id="managing-deployment-presets"></a></p>
+<h3 data-bai-block="290" id="admin_menu-デプロイメントプリセットの管理">デプロイメントプリセットの管理<a class="hash-link" href="#admin_menu-デプロイメントプリセットの管理" aria-label="Direct link to デプロイメントプリセットの管理">#</a></h3>
+<p data-bai-block="291">デプロイメントプリセットを作成・編集・削除できるのは管理者だけです。管理者は、管理者向けデプロイページの <strong>デプロイメントプリセット</strong> タブからプリセットを管理します。</p>
+<p><figure data-bai-block="292" class="doc-figure"><img src="./images/admin_deployment_preset_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3124" height="600" /><figcaption>図 24.34</figcaption></figure>
+</p>
+<p data-bai-block="293">リストには各プリセットの主要な項目が表示されます。管理者はこの画面で次の操作を行えます。</p>
+<ul>
+<li data-bai-block="294">名前またはランタイムでプリセットをフィルターします。</li>
+<li data-bai-block="295">プリセットの詳細画面を開いて構成全体を確認します。</li>
+<li data-bai-block="296">プリセットを作成、編集、削除します。</li>
+</ul>
+<p data-bai-block="297">既定では次の列が表示されます：<strong>名前</strong>、<strong>ランタイム</strong>、<strong>イメージ</strong>（<code>&lt;canonicalName&gt;@&lt;architecture&gt;</code> 形式で表示され、コピー可能）、<strong>レプリカ数</strong>、<strong>作成日時</strong>、<strong>変更日時</strong>（プリセットが最後に更新された日時を表示）。</p>
+<p data-bai-block="298">テーブルヘッダー右側の列表示設定（歯車）ボタン（⚙）を使用して、次の列を表示または非表示にできます：<strong>説明</strong>、<strong>起動コマンド</strong>（長い値はツールチップ付きで省略表示され、コピー可能）、<strong>クラスター</strong>、<strong>戦略（Strategy）</strong>、<strong>一般公開</strong>（Public／Private タグで表示）、<strong>リビジョン履歴の保持数</strong>。</p>
+<h4 data-bai-block="299" id="admin_menu-デプロイメントプリセットを作成する">デプロイメントプリセットを作成する<a class="hash-link" href="#admin_menu-デプロイメントプリセットを作成する" aria-label="Direct link to デプロイメントプリセットを作成する">#</a></h4>
+<p data-bai-block="300">プリセット一覧の右上にある <strong>プリセットを作成</strong> ボタンをクリックすると、<em>プリセットを作成</em> ダイアログが開きます。ダイアログは複数のカードで構成されており、各カードに入力していきます。</p>
+<ul>
+<li data-bai-block="301"><strong>基本情報</strong>：<ul>
+<li data-bai-block="302"><strong>名前</strong>（必須）：一意のプリセット名（例：<code>vLLM-GPU-Large</code>）。</li>
+<li data-bai-block="303"><strong>説明</strong>：プリセットの用途を簡潔に説明します。</li>
+<li data-bai-block="304"><strong>ランタイム</strong>（必須）：ランタイムバリアント（例：vLLM、SGLang、Custom）。</li>
+<li data-bai-block="305"><strong>ランタイムパラメータ</strong>：Custom 以外のランタイムを選択した場合にのみ表示されます。サービングフレームワークのパラメータをタブで整理して設定できます（例：<strong>Model Loading</strong>、<strong>Resource Memory</strong>、<strong>Serving Performance</strong> など）。必須パラメータにはラベルの横に赤いアスタリスク（★）が表示され、すべての必須パラメータが入力されるまで保存ボタンは無効のままになります。</li>
+<li data-bai-block="306"><strong>イメージ</strong>（必須）：デプロイに使用するコンテナイメージ。イメージは <code>&lt;canonicalName&gt;@&lt;architecture&gt;</code> 形式で一覧表示されます（例：<code>cr.backend.ai/stable/pytorch:2.1-cuda12.1@aarch64</code>）。この形式は、複数アーキテクチャが混在するクラスターで CPU アーキテクチャごとにイメージを区別するのに役立ちます。</li>
+</ul>
+</li>
+<li data-bai-block="307"><strong>リソース</strong>：リソーススロット（CPU、メモリ、GPU）、共有メモリ、リソースオプション（キー／値ペア）。</li>
+<li data-bai-block="308"><strong>クラスター</strong>：クラスターモード（Single Node または Multi Node）とクラスターサイズ。</li>
+<li data-bai-block="309"><strong>モデル＆実行</strong>：起動コマンド、ブートストラップスクリプト、環境変数。<strong>起動コマンド</strong> フィールドにはシェル構文のヒントが表示されます。コマンドは <code>/bin/bash -c &lt;コマンド&gt;</code> として実行されるため、<code>cmd1; cmd2</code> のように複数のコマンドをシェル構文でつなげることができます。</li>
+<li data-bai-block="310"><strong>モデル定義</strong>（任意）：トグルを有効にすると、構造化されたモデル定義を設定できます。有効にすると次の項目を設定できます。<ul>
+<li data-bai-block="311"><strong>モデル名</strong> および <strong>モデルパス</strong>：モデルの識別子とコンテナ内の場所。</li>
+<li data-bai-block="312"><strong>サービス構成</strong>（任意）：ポート、シェル、起動コマンド、事前起動アクション。</li>
+<li data-bai-block="313"><strong>ヘルスチェック</strong>（任意）：<strong>ヘルスチェックを有効化</strong> トグルがあります（既定はオフ）。オフの場合、ヘルスチェックの各フィールドは非表示になります。オンにすると、パス、間隔、最大リトライ回数、最大待機時間、想定ステータスコード、起動猶予期間の各フィールドが表示されます。</li>
+<li data-bai-block="314"><strong>メタデータ</strong>（任意）：作成者、タイトル、バージョン、タスク、カテゴリなど。</li>
+</ul>
+</li>
+<li data-bai-block="315"><strong>デプロイ</strong>：<ul>
+<li data-bai-block="316"><strong>レプリカ数</strong>（必須）：このプリセットから生成されるデプロイの既定レプリカ数。</li>
+<li data-bai-block="317"><strong>リビジョン履歴の保持数</strong>：このプリセットから生成された各デプロイで保持される過去リビジョンの数。</li>
+<li data-bai-block="318"><strong>一般公開</strong>：このプリセットから生成されたデプロイのエンドポイントを、アクセストークンなしで到達可能にするかの既定値（チェックボックス）。</li>
+</ul>
+</li>
+</ul>
+<p><figure data-bai-block="319" class="doc-figure"><img src="./images/deployment_preset_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="982" /><figcaption>図 24.35</figcaption></figure>
+</p>
+<p data-bai-block="320">入力が完了したら、<strong>プリセットを作成</strong> ボタンをクリックして保存します。成功通知が表示されます。</p>
+<div class="admonition admonition-tip">
+<div data-bai-block="321" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
+<div class="admonition-content">
+
+<p data-bai-block="322">必須フィールドが未入力または不正な場合、<strong>プリセットを作成</strong> ボタンは無効のままになります。必須フィールドには入力中にインラインの検証メッセージが表示されます。</p>
+</div></div>
+
+
+<h4 data-bai-block="323" id="admin_menu-デプロイメントプリセットを編集する">デプロイメントプリセットを編集する<a class="hash-link" href="#admin_menu-デプロイメントプリセットを編集する" aria-label="Direct link to デプロイメントプリセットを編集する">#</a></h4>
+<ol>
+<li data-bai-block="324">プリセット一覧の行アクションメニュー（またはプリセット詳細画面）から <strong>プリセットを編集</strong> を選択します。</li>
+<li data-bai-block="325"><em>プリセットを編集</em> ダイアログが現在の値で事前に入力された状態で開きます。使用可能なセクションは <em>プリセットを作成</em> ダイアログと同じで、vLLM および SGLang ランタイム向けの <strong>ランタイムパラメータ</strong> セクションも含まれます。</li>
+<li data-bai-block="326">必要な値を変更し、<strong>プリセットを編集</strong> ボタンをクリックして保存します。</li>
+</ol>
+<p><figure data-bai-block="327" class="doc-figure"><img src="./images/deployment_preset_edit_wizard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3400" height="2600" /><figcaption>図 24.36</figcaption></figure>
+</p>
+<p data-bai-block="328">プリセットを編集すると、<strong>今後</strong> 作成されるデプロイの既定値のみが変更されます。すでにこのプリセットから作成された既存のデプロイには影響しません。</p>
+<h4 data-bai-block="329" id="admin_menu-デプロイメントプリセットを削除する">デプロイメントプリセットを削除する<a class="hash-link" href="#admin_menu-デプロイメントプリセットを削除する" aria-label="Direct link to デプロイメントプリセットを削除する">#</a></h4>
+<ol>
+<li data-bai-block="330">プリセット一覧（またはプリセット詳細画面）のアクションメニューから <strong>プリセットを削除</strong> を選択します。</li>
+<li data-bai-block="331">プリセット名を入力して確認するタイプ確認ダイアログが表示されます。入力した値がプリセット名と完全に一致するまで <strong>確認</strong> ボタンは無効のままです。</li>
+<li data-bai-block="332">プリセット名を入力し、<strong>確認</strong> をクリックします。</li>
+</ol>
+<div class="admonition admonition-danger">
+<div data-bai-block="333" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>危険</div>
+<div class="admonition-content">
+
+<p data-bai-block="334">デプロイメントプリセットの削除は <strong>元に戻せません</strong>。プリセット自体は削除されますが、すでにそのプリセットから作成されたデプロイは影響を受けずに動作し続けます。今後はこのプリセットを参照できません。</p>
+</div></div>
+
+
+<p><a id="using-a-preset-when-deploying-a-model"></a></p>
+<h3 data-bai-block="335" id="admin_menu-モデルをデプロイする際にプリセットを使う">モデルをデプロイする際にプリセットを使う<a class="hash-link" href="#admin_menu-モデルをデプロイする際にプリセットを使う" aria-label="Direct link to モデルをデプロイする際にプリセットを使う">#</a></h3>
+<p data-bai-block="336">エンドユーザーは、データページでストレージフォルダからモデルをデプロイする際に開く <strong>プリセットで新規デプロイメント作成</strong> モーダルを通じて、デプロイメントプリセットを適用します。</p>
+<ol>
+<li data-bai-block="337">データページで、デプロイしたいモデルフォルダを見つけます。</li>
+<li data-bai-block="338">フォルダの行にある <strong>デプロイ</strong> ボタンをクリックします。</li>
+<li data-bai-block="339"><strong>プリセットで新規デプロイメント作成</strong> モーダルが開きます。適用するデプロイメントプリセットと、対象のリソースグループを選択します。</li>
+<li data-bai-block="340">デプロイ前にプリセットの構成を確認したい場合は、プリセットセレクターの横にある <strong>ⓘ</strong>（情報）ボタンをクリックして <strong>デプロイメントプリセット詳細</strong> ビューを開きます。</li>
+<li data-bai-block="341"><strong>確認</strong> をクリックすると、選択したプリセットの値を使用してデプロイメントが作成されます。</li>
+</ol>
+<p><figure data-bai-block="342" class="doc-figure"><img src="./images/vfolder_deploy_preset_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2400" height="1800" /><figcaption>図 24.37</figcaption></figure>
+</p>
+<div class="admonition admonition-tip">
+<div data-bai-block="343" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
+<div class="admonition-content">
+
+<p data-bai-block="344">より高度な構成が必要な場合は、デプロイページに移動して手動で新しいデプロイメントを作成します。リビジョン追加モーダルでは <strong>プリセットモード（Preset Mode）</strong> と <strong>高度モード（Advanced Mode）</strong> を選択できます。<strong>高度モード</strong> を選択すると、すべてのフィールドがプリセットの値で事前入力されたデプロイランチャーが開き、確定前に各値を確認・調整できます。</p>
+</div></div>
+
+
+<p><a id="manage-resource-policy"></a></p>
+<h2 data-bai-block="345" id="admin_menu-リソースポリシー管理">リソースポリシー管理<a class="hash-link" href="#admin_menu-リソースポリシー管理" aria-label="Direct link to リソースポリシー管理">#</a></h2>
+<p><a id="keypair-resource-policy"></a></p>
+<h4 data-bai-block="346" id="admin_menu-キーペアリソースポリシー">キーペアリソースポリシー<a class="hash-link" href="#admin_menu-キーペアリソースポリシー" aria-label="Direct link to キーペアリソースポリシー">#</a></h4>
+<p data-bai-block="347">Backend.AIでは、管理者は各キーペア、ユーザー、プロジェクトに対して利用可能な総リソースに
+制限を設定できます。リソースポリシーを使用すると、許可される最大リソースやその他
+コンピュートセッション関連の設定を定義できます。さらに、ユーザーや研究要件など、
+さまざまなニーズに応じて複数のリソースポリシーを作成し、個別に適用することも可能です。</p>
+<p data-bai-block="348">リソースポリシーページでは、管理者は登録されているすべてのリソースポリシーのリストを
+表示できます。管理者は、キーペア、ユーザー、プロジェクトに対して設定されたリソース
+ポリシーをこのページで直接確認できます。まずキーペアのリソースポリシーを見ていきます。
+無限大の記号
+（∞）は、該当するリソースに対して制限が適用されていないことを示します。</p>
+<p><figure data-bai-block="349" class="doc-figure"><img src="./images/resource_policy_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.38</figcaption></figure>
+</p>
+<p data-bai-block="350">本ガイドで使用しているユーザーアカウントは、現在defaultリソースポリシーに割り当てられて
+います。これはユーザー管理ページの資格情報タブで確認できます。また、リソースポリシー
+パネルですべてのリソースポリシーがdefaultに設定されていることも確認できます。</p>
+<p><figure data-bai-block="351" class="doc-figure"><img src="./images/credentials.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1032" /><figcaption>図 24.39</figcaption></figure>
+</p>
+<p data-bai-block="352">キーペアリソースポリシーのテーブルには次の列が表示されます。そのうち2つは、制限値ではなくポリシーの適用方法を
+示します。</p>
+<ul>
+<li data-bai-block="353"><strong>名前</strong>: ポリシー名です。このセルではインラインの <strong>情報</strong>、<strong>編集</strong>、<strong>削除</strong> アクションも利用できます。</li>
+<li data-bai-block="354"><strong>不特定のデフォルト</strong>: セッションが CPU やメモリを明示的に要求しなかった場合のポリシーの動作です。
+<code>UNLIMITED</code> はエージェントノードの容量まで使用を許可し、<code>LIMITED</code> は明示的に指定しない限りリソースを割り当てません。
+多くの場合 <code>UNLIMITED</code> を推奨します。列見出しの疑問符アイコンにマウスを重ねると、UI でも同じ説明を確認できます。</li>
+<li data-bai-block="355"><strong>リソースポリシー</strong>: ポリシーが許可するリソーススロットです。</li>
+<li data-bai-block="356"><strong>同時実行セッション数</strong>、<strong>クラスターサイズ</strong>、<strong>アイドルタイムアウト</strong>、<strong>セッション寿命</strong>、<strong>ストレージノード</strong>、
+<strong>最大ペンディングセッション数</strong>、<strong>最大同時SFTPセッション数</strong>: 以下で説明する個別の制限値です。</li>
+<li data-bai-block="357"><strong>最大保留中のセッションリソーススロット</strong>: <code>PENDING</code> 状態で待機しているセッションにポリシーが許可する
+リソーススロットで、リソース種類ごとに表示されます（無制限の場合は <code>∞</code>）。この列は WebUI では表示専用で、
+リソースポリシーのダイアログには該当項目がありません。</li>
+<li data-bai-block="358"><strong>作成日</strong>: ポリシーが作成された日時です。</li>
+</ul>
+<p data-bai-block="359">テーブルのプロパティフィルター、並べ替え、ページャを使って必要なポリシーを探せます。</p>
+<p data-bai-block="360">リソースポリシーを変更するには、対象ポリシーの名前列にある
+<strong>編集</strong>（鉛筆）アクションをクリックします。<strong>キーペアリソースポリシーの更新</strong> ダイアログでは、リソース
+ポリシーを一覧で識別するための主キーとして機能する「ポリシー名」を除き、すべての
+オプションが編集可能です。CPU、RAM、fGPUの下部にある無制限チェックボックスをオフにし、
+リソース制限を希望する値に設定します。割り当てるリソースが総ハードウェア容量を
+超えないようにしてください。ここでは、CPU、RAM、fGPUをそれぞれ2、4、1に設定します。
+<strong>保存</strong>をクリックして、変更したリソースポリシーを適用します。</p>
+<p><figure data-bai-block="361" class="doc-figure"><img src="./images/update_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1924" /><figcaption>図 24.40</figcaption></figure>
+</p>
+<p data-bai-block="362">リソースポリシーダイアログの各オプションの詳細については、以下の説明を参照してください。</p>
+<ul>
+<li data-bai-block="363"><p>リソースポリシー</p>
+<ul>
+<li data-bai-block="364">CPU: 最大CPUコア数を指定します。（最大値: 512）</li>
+<li data-bai-block="365">メモリ: 最大メモリ量をGB単位で指定します。メモリはGPUメモリの最大値の2倍に設定
+することを推奨します。（最大値: 1024）</li>
+<li data-bai-block="366">CUDA対応GPU: 物理GPUの最大数を指定します。サーバーでフラクショナルGPUが有効化
+されている場合、この設定は効果がありません。（最大値: 64）</li>
+<li data-bai-block="367">CUDA対応GPU（フラクショナル）: フラクショナルGPU（fGPU）は、GPUを効率的に使用する
+ために、1つのGPUを複数のパーティションに分割するものです。必要なfGPUの最小量は
+イメージごとに異なる点に注意してください。サーバーでフラクショナルGPUが有効化
+されていない場合、この設定は効果がありません。（最大値: 256）</li>
+</ul>
+</li>
+<li data-bai-block="368"><p>セッション</p>
+<ul>
+<li data-bai-block="369">クラスターサイズ: セッション作成時に構成できるマルチコンテナまたはマルチノードの
+最大数を設定します。</li>
+<li data-bai-block="370">セッション寿命（秒）: <code>PENDING</code>および<code>RUNNING</code>ステータスを含む、アクティブ状態
+での予約からのコンピュートセッションの最大寿命を制限します。この時間を過ぎると、
+セッションが完全に利用されている場合でも強制終了されます。セッションが無期限に
+実行されるのを防ぐのに役立ちます。</li>
+<li data-bai-block="371">最大ペンディングセッション数: 同時に<code>PENDING</code>ステータスになることができる
+コンピュートセッションの最大数です。</li>
+<li data-bai-block="372">同時実行セッション数: キーペアごとの同時実行コンピュートセッションの最大数です。
+例えば、この値を3に設定すると、このリソースポリシーに紐づけられたユーザーは、
+同時に3つを超えるコンピュートセッションを作成できません。（最大値: 100）</li>
+<li data-bai-block="373">アイドルタイムアウト（秒）: ユーザーがセッションを放置できる期間を設定します。
+アイドルタイムアウトの間、コンピュートセッションに一切のアクティビティがない場合、
+セッションは自動的にガベージコレクションされ破棄されます。「アイドル」の基準は
+さまざまで、管理者によって設定されます。（最大値: 15552000（約180日））</li>
+<li data-bai-block="374">最大同時SFTPセッション数: 同時に実行できるSFTPセッションの最大数です。</li>
+</ul>
+</li>
+<li data-bai-block="375"><p>フォルダ</p>
+<ul>
+<li data-bai-block="376">許可ホスト: Backend.AIは複数のNFSマウントポイントをサポートします。このフィールドは
+それらへのアクセスを制限します。&quot;data-1&quot;という名前のNFSがBackend.AIにマウント
+されていても、リソースポリシーで許可されていなければユーザーはアクセスできません。</li>
+<li data-bai-block="377">（非推奨）最大数: 作成または招待できるストレージフォルダの最大数です。
+（最大値: 100）</li>
+</ul>
+</li>
+</ul>
+<p data-bai-block="378">キーペアリソースポリシーリストで、defaultポリシーの「リソース」の値が更新されたことを
+確認します。</p>
+<p><figure data-bai-block="379" class="doc-figure"><img src="./images/keypair_resource_policy_update_check.png" alt="" class="doc-image" loading="lazy" decoding="async" width="992" height="124" /><figcaption>図 24.41</figcaption></figure>
+</p>
+<p data-bai-block="380">テーブルの右上にある <strong>作成</strong> ボタンをクリックして新しいリソースポリシーを作成できます。各設定値は上記の
+説明と同じです。</p>
+<p data-bai-block="381">リソースポリシーを作成してキーペアに関連付けるには、ユーザー管理ページの資格情報タブに
+移動し、対象キーペアの名前列にある <strong>編集</strong>（鉛筆）アクションをクリックして、「ポリシーを選択」
+フィールドをクリックして選択します。</p>
+<p data-bai-block="382">特定のユーザーのキーペアリソースポリシーを選択する際、選択テーブルには各ポリシーに
+現在どのユーザーのキーペアが紐付けられているかを示す<strong>割り当てられたキーペア</strong>カラムが
+含まれており、ポリシーを選択する前にユーザーの既存の割り当て状況を確認できます。</p>
+<p data-bai-block="383">名前列のゴミ箱アイコンをクリックして、各リソースキーペアを削除することも
+できます。アイコンをクリックすると、確認ダイアログが表示されます。確認用の入力欄にポリシー名を
+入力してから「削除」ボタンをクリックすると削除されます。</p>
+<p><figure data-bai-block="384" class="doc-figure"><img src="./images/resource_policy_delete_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="532" /><figcaption>図 24.42</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="385" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="386">削除予定のリソースポリシーに従うユーザー（非アクティブなユーザーを含む）が存在する場合、
+削除が行えない場合があります。リソースポリシーを削除する前に、そのリソースポリシーに
+紐づくユーザーが残っていないことを確認してください。</p>
+</div></div>
+
+
+<p data-bai-block="387">特定のカラムを表示または非表示にしたい場合は、テーブルの右下にある「設定（歯車）」を
+クリックします。表示したいカラムを選択するダイアログが表示されます。</p>
+<p><figure data-bai-block="388" class="doc-figure"><img src="./images/keypair_resource_policy_table_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="840" height="1108" /><figcaption>図 24.43</figcaption></figure>
+</p>
+<p><a id="user-resource-policy"></a></p>
+<h4 data-bai-block="389" id="admin_menu-ユーザーリソースポリシー">ユーザーリソースポリシー<a class="hash-link" href="#admin_menu-ユーザーリソースポリシー" aria-label="Direct link to ユーザーリソースポリシー">#</a></h4>
+<p data-bai-block="390">Backend.AIはユーザーリソースポリシーの管理をサポートしています。
+各ユーザーは複数のキーペアを持つことができますが、ユーザーリソースポリシーは1つしか
+持つことができません。ユーザーリソースポリシーページでは、「最大フォルダ数」や
+「最大フォルダサイズ」などフォルダ関連のさまざまな設定、および「モデルセッションあたりの
+最大セッション数」や「最大カスタマイズイメージ数」などの個別のリソース制限を設定できます。</p>
+<p><figure data-bai-block="391" class="doc-figure"><img src="./images/user_resource_policy_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.44</figcaption></figure>
+</p>
+<p data-bai-block="392">テーブルには <strong>ID</strong>、<strong>名前</strong>（インラインの <strong>編集</strong> と <strong>削除</strong> アクション付き）、<strong>最大フォルダ数</strong>、
+<strong>最大クォータ スコープ サイズ</strong>、<strong>カスタマイズされた画像の最大数</strong>、<strong>作成日</strong> の各列が表示されます。
+列設定コントロールで不要な列を非表示にでき、選択した設定はブラウザごとに保持されます。</p>
+<p data-bai-block="393">並べ替えとページ送りはすべてサーバー側で処理されるため、ポリシー数の多いクラスターでもタブは
+軽快に動作します。列見出しをクリックして並び順を変更し、テーブル下部のページャで結果を移動できます。</p>
+<p data-bai-block="394">新しいユーザーリソースポリシーを作成するには、<strong>作成</strong> ボタンをクリックします。</p>
+<p><figure data-bai-block="395" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1680" /><figcaption>図 24.45</figcaption></figure>
+</p>
+<ul>
+<li data-bai-block="396">名前: ユーザーリソースポリシーの名前です。</li>
+<li data-bai-block="397">最大フォルダ数: ユーザーが作成できるフォルダの最大数です。ユーザーのフォルダ数が
+この値を超えると、ユーザーは新しいフォルダを作成できません。Unlimitedに設定すると
+「∞」と表示されます。</li>
+<li data-bai-block="398">最大フォルダサイズ: ユーザーのストレージ容量の上限です。ユーザーのストレージ容量が
+この値を超えると、ユーザーは新しいストレージフォルダを作成できません。Unlimitedに設定
+すると「∞」と表示されます。一覧ではこの制限が <strong>最大クォータ スコープ サイズ</strong> 列に、
+設定値に応じた単位で表示されます。</li>
+<li data-bai-block="399">最大同時ログイン数: ユーザーが同時にログインできるセッションの最大数です。Unlimitedに設定
+すると「∞」と表示されます。</li>
+<li data-bai-block="400">モデルセッションあたりの最大セッション数: ユーザーが作成したモデルサービスごとに
+利用可能なセッションの最大数です。この値を増やすとセッションスケジューラに高い負荷が
+かかり、システムダウンタイムを引き起こす可能性があるため、この設定を調整する際は
+ご注意ください。</li>
+<li data-bai-block="401">最大カスタマイズイメージ数: ユーザーが作成できるカスタマイズイメージの最大数です。
+ユーザーのカスタマイズイメージ数がこの値を超えると、ユーザーは新しいカスタマイズ
+イメージを作成できません。カスタマイズイメージの詳細については、<a href="./my_environments.html#my-environments">マイ環境</a>
+セクションを参照してください。</li>
+</ul>
+<p data-bai-block="402">既存のポリシーを変更するには、名前列の <strong>編集</strong>（鉛筆）アクションをクリックします。ダイアログのタイトルは
+<strong>ユーザーリソースポリシーの更新</strong> で、送信ボタンは <strong>保存</strong> です。削除するには、<strong>削除</strong>（ゴミ箱）
+アクションをクリックします。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="403" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="404">リソースポリシーを変更すると、そのポリシーを使用するすべてのユーザーに影響する可能性が
+あるため、注意して使用してください。</p>
+</div></div>
+
+
+<p data-bai-block="405">キーペアリソースポリシーと同様に、テーブルの右下にある「設定（歯車）」ボタンをクリック
+することで、ユーザーが希望するカラムのみを選択して表示できます。</p>
+<p><a id="project-resource-policy"></a></p>
+<h4 data-bai-block="406" id="admin_menu-プロジェクトリソースポリシー">プロジェクトリソースポリシー<a class="hash-link" href="#admin_menu-プロジェクトリソースポリシー" aria-label="Direct link to プロジェクトリソースポリシー">#</a></h4>
+<p data-bai-block="407">Backend.AIはプロジェクトリソースポリシーの管理をサポートしています。プロジェクトリソースポリシーは、プロジェクトのストレージ容量（クォータ）やフォルダ関連の制限を管理します。</p>
+<p data-bai-block="408">「リソースポリシー」ページの「プロジェクト」タブをクリックすると、プロジェクトリソースポリシーのリストが表示されます。</p>
+<p><figure data-bai-block="409" class="doc-figure"><img src="./images/project_resource_policy_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.46</figcaption></figure>
+</p>
+<p data-bai-block="410">プロジェクトリソースポリシーのテーブルでは、ポリシー一覧を確認しながら、各項目のインライン <strong>編集</strong> と
+<strong>削除</strong> アクションを利用できます。さらに、テーブルのプロパティフィルター、並べ替え、ページャで必要な
+ポリシーをすばやく探せます。</p>
+<p data-bai-block="411">新しいプロジェクトリソースポリシーを作成するには、テーブルの右上にある <strong>作成</strong> ボタンをクリックします。</p>
+<p><figure data-bai-block="412" class="doc-figure"><img src="./images/create_project_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1356" /><figcaption>図 24.47</figcaption></figure>
+</p>
+<ul>
+<li data-bai-block="413"><strong>名前</strong>: プロジェクトリソースポリシーの名前。</li>
+<li data-bai-block="414"><strong>最大フォルダ数</strong>: 管理者が作成できるプロジェクトフォルダの最大数。プロジェクトフォルダ数がこの値を超えると、管理者は新しいプロジェクトフォルダを作成できません。Unlimitedに設定すると「∞」と表示されます。</li>
+<li data-bai-block="415"><strong>最大フォルダサイズ</strong>: プロジェクトのストレージ容量の上限。プロジェクトのストレージ容量がこの値を超えると、管理者は新しいプロジェクトフォルダを作成できません。Unlimitedに設定すると「∞」と表示されます。</li>
+<li data-bai-block="416"><strong>最大ネットワーク数</strong>: プロジェクトに作成できるネットワークの最大数。Unlimitedに設定すると「∞」と表示されます。</li>
+</ul>
+<p data-bai-block="417">各フィールドの意味はユーザーリソースポリシーと類似しています。違いは、プロジェクトリソースポリシーがプロジェクトフォルダに適用され、ユーザーリソースポリシーがユーザーフォルダに適用される点です。</p>
+<p data-bai-block="418">変更するには、名前列の <strong>編集</strong>（鉛筆）アクションをクリックします。ダイアログのタイトルは <strong>プロジェクトリソースポリシーの更新</strong> で、送信ボタンは <strong>保存</strong> です。リソースポリシー名は編集できません。削除は <strong>削除</strong>（ゴミ箱）アクションをクリックして行えます。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="419" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="420">リソースポリシーの変更はそのポリシーを使用するすべてのユーザーに影響を与える可能性があるため、慎重に使用してください。</p>
+</div></div>
+
+
+<p data-bai-block="421">テーブルの右下にある「設定」ボタンをクリックして、表示するカラムのみを選択できます。</p>
+<p><a id="unified-view-for-pending-sessions"></a></p>
+<h2 data-bai-block="422" id="admin_menu-ペンディングセッションの統合ビュー">ペンディングセッションの統合ビュー<a class="hash-link" href="#admin_menu-ペンディングセッションの統合ビュー" aria-label="Direct link to ペンディングセッションの統合ビュー">#</a></h2>
+<p data-bai-block="423">Admin Sessionページには2つのタブがあります。<strong>セッション</strong> タブはクラスター内のすべてのコンピュートセッションを
+表示し、<strong>ペンディングセッション</strong> タブでは選択したリソースグループ内のすべてのペンディングセッションを
+一覧で確認できます。ステータスの横に表示されるインデックス番号は、十分なリソースが
+確保された際にセッションが作成されるキューの位置を示しています。</p>
+<p><figure data-bai-block="424" class="doc-figure"><img src="./images/scheduler_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>図 24.48</figcaption></figure>
+</p>
+<p data-bai-block="425">セッションページと同様に、セッション名をクリックすると、セッションの詳細情報を
+表示するドロワーが開きます。</p>
+<p data-bai-block="426">ペンディングセッションの一覧には各セッションの <strong>優先度</strong> も表示され、この値がキューの順序を決定します。優先度を
+変更するには、セッション行の <strong>設定</strong>（歯車）アクションをクリックするか、チェックボックスでペンディングセッションを
+1つ以上選択して一覧の上にある <strong>設定</strong> ボタンをクリックします。いずれの場合も <strong>セッション設定</strong> ダイアログが開くので、
+<strong>優先度</strong> を0から100の間の値に設定して <strong>保存</strong> をクリックします。変更が完了すると、セッションの優先度が正常に
+更新されたというメッセージが表示されます。優先度はセッションが <code>PENDING</code> 状態の間のみ変更できます。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="427" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="428"><strong>優先度</strong> 列と優先度の編集アクションは、Backend.AI Managerのバージョンが26.4.0以降の場合にのみ表示されます。</p>
+</div></div>
+
+
+<p data-bai-block="429"><strong>セッション</strong> タブのプロパティフィルターでは、次の条件を利用できます。</p>
+<ul>
+<li data-bai-block="430"><strong>プロジェクト</strong>: このクラスターのプロジェクトを検索できるドロップダウンから選択します。一覧から選ぶ方式のため
+識別子を調べる必要はなく、作成されたフィルタータグにはプロジェクト名が表示されます。</li>
+<li data-bai-block="431"><strong>セッション名</strong>、<strong>リソースグループ</strong>、<strong>エージェント</strong>、<strong>所有者のメールアドレス</strong>: テキスト一致で一覧を絞り込みます。</li>
+</ul>
+<p data-bai-block="432">ユーザー設定で実験的機能の <strong>Session resource grid view</strong> を有効にすると（<a href="./user_settings.html#experimental-features">実験的特徴</a>
+セクションを参照）、<strong>セッション</strong> タブの更新ボタンの横に、<strong>Table</strong> と <strong>Grid</strong> を切り替える <strong>View mode</strong>
+コントロールが表示されます。グリッドはセッションごとに1つのセルを表示し、各セルはそのセッションのリアルタイムな
+リソース使用率に応じて色分けされます。グリッド自体のコントロールについては、
+<a href="./sessions_all.html#session-list-view-and-refresh">セッションリストの表示</a> セクションを参照してください。</p>
+<p><a id="fair-share-scheduler"></a></p>
+<h2 data-bai-block="433" id="admin_menu-フェアシェアスケジューラ">フェアシェアスケジューラ<a class="hash-link" href="#admin_menu-フェアシェアスケジューラ" aria-label="Direct link to フェアシェアスケジューラ">#</a></h2>
+<p data-bai-block="434">フェアシェアスケジューラページは<strong>管理者設定</strong>メニューから利用可能です。この機能により、
+管理者はリソースグループ、ドメイン、プロジェクト、ユーザーの階層構造に基づいて
+フェアシェアスケジューリングの重みを管理できます。</p>
+<p data-bai-block="435">フェアシェアスケジューリングは、過去の使用パターンに基づいてコンピューティングリソースを
+配分し、ユーザー間でリソースが公平に分配されるようにします。過去にリソースの使用が
+少なかったユーザーはスケジューリング優先度が高くなり、多く使用したユーザーは優先度が
+低くなります。管理者は階層構造の各レベルで重みを調整することで、この動作を
+細かく制御できます。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="436" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="437">フェアシェアスケジューラは、リソースグループのスケジューラタイプが<code>FAIR_SHARE</code>に
+設定されている場合にのみ使用できます。リソースグループのスケジューラタイプの設定に
+ついては、リソースグループの管理セクションを参照してください。</p>
+</div></div>
+
+
+<p data-bai-block="438">この機能にアクセスするには、サイドバーの<strong>管理者設定</strong>にある<strong>Scheduler</strong>メニュー項目を
+クリックします。ページにはフェアシェア設定タブと4段階のドリルダウンインターフェースが
+表示されます。</p>
+<p><figure data-bai-block="439" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>図 24.49</figcaption></figure>
+</p>
+<p data-bai-block="440">ページは以下の4つの階層的なステップで構成されています：</p>
+<ol>
+<li data-bai-block="441"><strong>リソースグループ</strong>: 各リソースグループのフェアシェアの主要パラメータを設定します</li>
+<li data-bai-block="442"><strong>ドメイン</strong>: リソースグループ内のドメインごとに重みを設定します</li>
+<li data-bai-block="443"><strong>プロジェクト</strong>: ドメイン内のプロジェクトごとに重みを設定します</li>
+<li data-bai-block="444"><strong>ユーザー</strong>: プロジェクト内の個々のユーザーに重みを設定します</li>
+</ol>
+<p data-bai-block="445">ページ上部のステップインジケーターバーは、階層構造での現在の位置を表示します。
+完了したステップには選択した項目の名前が表示されます。完了したステップをクリックすると
+そのレベルに戻ることができます。</p>
+<p><figure data-bai-block="446" class="doc-figure"><img src="./images/fair_share_step_indicator.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="54" /><figcaption>図 24.50</figcaption></figure>
+</p>
+<p data-bai-block="447">選択したリソースグループのスケジューラタイプが<code>FAIR_SHARE</code>に設定されていない場合、
+そのリソースグループでフェアシェアスケジューラが有効になっていないことを示す警告
+アラートが表示されます。</p>
+<p><figure data-bai-block="448" class="doc-figure"><img src="./images/fair_share_scheduler_warning.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="62" /><figcaption>図 24.51</figcaption></figure>
+</p>
+<p><a id="fair-share-resource-group-warnings"></a></p>
+<p data-bai-block="449">さらに、いま表示している対象がドリルダウンしたリソースグループを実際には利用できない場合にも警告が表示されます。
+この判定は、ドリルダウンの途中で選択したドメインやプロジェクトを基準に行われるため、警告は以前の選択ではなく現在の
+階層上の位置を反映します。</p>
+<ul>
+<li data-bai-block="450"><strong>ドメイン</strong> ステップでは、選択したリソースグループが許可されていないドメインの横に警告アイコンが表示されます。
+アイコンにマウスを重ねると、そのリソースグループが配下のプロジェクトでは許可されている可能性がある旨が表示されます。</li>
+<li data-bai-block="451"><strong>プロジェクト</strong> ステップでも、選択したリソースグループが許可されていないプロジェクトに同じアイコンが表示されます。</li>
+<li data-bai-block="452"><strong>ユーザー</strong> ステップでは、選択したプロジェクトに属するユーザーが選択したリソースグループを利用できない旨の警告が
+表示されます。</li>
+</ul>
+<p data-bai-block="453">同じアラートは重み設定モーダル内にも表示されるため、テーブル上だけでなく重みを編集する時点でも不整合を確認できます。</p>
+<p data-bai-block="454">各ステップで以下の共通機能が利用可能です：</p>
+<ul>
+<li data-bai-block="455"><strong>ページネーション</strong>: ページサイズを設定して結果をナビゲートできます。</li>
+</ul>
+<h3 data-bai-block="456" id="admin_menu-リソースグループ">リソースグループ<a class="hash-link" href="#admin_menu-リソースグループ" aria-label="Direct link to リソースグループ">#</a></h3>
+<p data-bai-block="457">リソースグループステップでは、すべてのリソースグループとそのフェアシェア設定がテーブルで
+表示されます。</p>
+<p><figure data-bai-block="458" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>図 24.52</figcaption></figure>
+</p>
+<p data-bai-block="459">テーブルには以下のカラムが含まれます：</p>
+<ul>
+<li data-bai-block="460"><strong>名前</strong>: リソースグループ名です。名前をクリックすると、そのリソースグループのドメインレベル設定にドリルダウンします。</li>
+<li data-bai-block="461"><strong>制御</strong>: リソースグループのフェアシェア設定モーダルを開く設定（歯車）ボタンです。</li>
+<li data-bai-block="462"><strong>割り当て</strong>: リソースグループに割り当てられた各リソースタイプの使用量/容量を表示します（例：CPU、Memory、CUDA GPU）。</li>
+<li data-bai-block="463"><strong>リソース重み</strong>: リソースタイプごとの重みです。デフォルトの重みを使用している場合は「デフォルト」と表示されます。</li>
+<li data-bai-block="464"><strong>既定の重み</strong>: 重みが指定されていないドメイン、プロジェクト、ユーザーに適用されるデフォルト値です。</li>
+<li data-bai-block="465"><strong>減衰単位</strong>: 使用量を集計する期間（日単位）です。</li>
+<li data-bai-block="466"><strong>半減期</strong>: 使用量の反映率が半分になる期間（日単位）です。</li>
+<li data-bai-block="467"><strong>参照期間</strong>: Fair Share計算に反映される利用履歴の範囲（日単位）です。</li>
+</ul>
+<h3 data-bai-block="468" id="admin_menu-リソースグループのフェアシェア設定">リソースグループのフェアシェア設定<a class="hash-link" href="#admin_menu-リソースグループのフェアシェア設定" aria-label="Direct link to リソースグループのフェアシェア設定">#</a></h3>
+<p data-bai-block="469">リソースグループの制御カラムにある設定（歯車）ボタンをクリックすると、フェアシェア設定
+モーダルが開きます。</p>
+<p><figure data-bai-block="470" class="doc-figure"><img src="./images/fair_share_resource_group_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="728" /><figcaption>図 24.53</figcaption></figure>
+</p>
+<div class="admonition admonition-warning">
+<div data-bai-block="471" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div class="admonition-content">
+
+<p data-bai-block="472">変更はFair Shareの計算にすぐには反映されません。計算サイクルのため、反映までに
+約5分かかる場合があります。</p>
+</div></div>
+
+
+<p data-bai-block="473">モーダルには以下のフィールドが含まれます：</p>
+<ul>
+<li data-bai-block="474"><strong>リソースグループ</strong>: リソースグループ名を表示する読み取り専用フィールドです。</li>
+<li data-bai-block="475"><strong>半減期</strong>: 使用量の反映率が半分になる期間で、日数で指定します（最小1）。例えば7日に設定すると、7日前の使用量は50%、14日前の使用量は25%として計算されます。減衰単位の倍数に設定することを推奨します。</li>
+<li data-bai-block="476"><strong>参照期間</strong>: Fair Share計算に反映される利用履歴の範囲で、日数で指定します（最小1）。これより前の利用は計算から除外されます。半減期の倍数に設定することを推奨します。</li>
+<li data-bai-block="477"><strong>既定の重み</strong>: 重みが指定されていないドメイン、プロジェクト、ユーザーに適用されるデフォルト値です（最小1、ステップ0.1）。</li>
+<li data-bai-block="478"><strong>リソース重み</strong>: リソースタイプごとの重み（例：CPU、Memory、GPU）で、それぞれ最小値1、ステップ0.1です。このセクションはリソースグループにリソース重みが存在する場合にのみ表示されます。</li>
+</ul>
+<h3 data-bai-block="479" id="admin_menu-ドメイン">ドメイン<a class="hash-link" href="#admin_menu-ドメイン" aria-label="Direct link to ドメイン">#</a></h3>
+<p data-bai-block="480">リソースグループを選択すると、ドメインステップでそのリソースグループ内のドメインの
+フェアシェア重みと使用量がテーブルで表示されます。</p>
+<p><figure data-bai-block="481" class="doc-figure"><img src="./images/fair_share_domain_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="512" /><figcaption>図 24.54</figcaption></figure>
+</p>
+<p data-bai-block="482">テーブルには以下のカラムが含まれます：</p>
+<ul>
+<li data-bai-block="483"><strong>名前</strong>: ドメイン名です。名前をクリックすると、そのドメインのプロジェクトレベル設定にドリルダウンします。</li>
+<li data-bai-block="484"><strong>制御</strong>: 重み設定モーダルを開く設定（歯車）ボタンです。</li>
+<li data-bai-block="485"><strong>重み</strong>: 現在の重み値です。デフォルトの重みを使用している場合は「デフォルト」と表示されます。</li>
+<li data-bai-block="486"><strong>フェアシェア係数</strong>: フェアシェアスケジューラによって算出されたスケジューリング優先度です。値が大きいほど優先度が高くなります。</li>
+<li data-bai-block="487"><strong>リソース割り当て</strong>: リソースタイプごとの1日あたりの平均減衰リソース使用量です（CPU、Memory、GPU / Day）。</li>
+<li data-bai-block="488"><strong>更新日時</strong>: 最終更新のタイムスタンプです。</li>
+<li data-bai-block="489"><strong>作成日時</strong>: 作成のタイムスタンプです。</li>
+</ul>
+<p data-bai-block="490">テーブル左側のチェックボックスを使用して複数の行を選択できます。行が選択されると、
+2つの追加ボタンが表示されます：</p>
+<ul>
+<li data-bai-block="491"><strong>利用グラフ</strong>（チャートアイコン）：選択した項目の利用履歴モーダルを開きます。</li>
+<li data-bai-block="492"><strong>一括編集</strong>（歯車アイコン）：選択したすべての項目の重みを一括で編集するモーダルを開きます。</li>
+</ul>
+<h3 data-bai-block="493" id="admin_menu-プロジェクト">プロジェクト<a class="hash-link" href="#admin_menu-プロジェクト" aria-label="Direct link to プロジェクト">#</a></h3>
+<p data-bai-block="494">ドメインを選択すると、プロジェクトステップでドメインステップと同じカラム構造の
+プロジェクトテーブルが表示されます。プロジェクト名をクリックするとユーザーステップに
+ドリルダウンします。</p>
+<p><figure data-bai-block="495" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="578" /><figcaption>図 24.55</figcaption></figure>
+</p>
+<p data-bai-block="496">行を選択した場合、同じ一括操作（利用グラフおよび一括編集）が利用可能です。</p>
+<h3 data-bai-block="497" id="admin_menu-ユーザー">ユーザー<a class="hash-link" href="#admin_menu-ユーザー" aria-label="Direct link to ユーザー">#</a></h3>
+<p data-bai-block="498">プロジェクトを選択すると、ユーザーステップで個々のユーザーのフェアシェア重みと
+使用量がテーブルで表示されます。</p>
+<p><figure data-bai-block="499" class="doc-figure"><img src="./images/fair_share_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="776" /><figcaption>図 24.56</figcaption></figure>
+</p>
+<p data-bai-block="500">テーブルには以下のカラムが含まれます：</p>
+<ul>
+<li data-bai-block="501"><strong>メール</strong>: ユーザーのメールアドレスです。</li>
+<li data-bai-block="502"><strong>名前</strong>: ユーザーの名前です。</li>
+<li data-bai-block="503"><strong>制御</strong>: 重み設定モーダルを開く設定（歯車）ボタンです。</li>
+<li data-bai-block="504"><strong>重み</strong>: 現在の重み値です。デフォルトの重みを使用している場合は「デフォルト」と表示されます。</li>
+<li data-bai-block="505"><strong>フェアシェア係数</strong>: フェアシェアスケジューラによって算出されたスケジューリング優先度です。</li>
+<li data-bai-block="506"><strong>リソース割り当て</strong>: リソースタイプごとの1日あたりの平均減衰リソース使用量です。</li>
+<li data-bai-block="507"><strong>更新日時</strong>: 最終更新のタイムスタンプです。</li>
+<li data-bai-block="508"><strong>作成日時</strong>: 作成のタイムスタンプです。</li>
+</ul>
+<p data-bai-block="509">行を選択した場合、同じ一括操作（利用グラフおよび一括編集）が利用可能です。</p>
+<h3 data-bai-block="510" id="admin_menu-フェアシェア重みの編集">フェアシェア重みの編集<a class="hash-link" href="#admin_menu-フェアシェア重みの編集" aria-label="Direct link to フェアシェア重みの編集">#</a></h3>
+<p data-bai-block="511">ドメイン、プロジェクト、またはユーザーのフェアシェア重みを編集するには、対象の行の
+制御カラムにある設定（歯車）ボタンをクリックします。重み設定モーダルが開きます。</p>
+<p><figure data-bai-block="512" class="doc-figure"><img src="./images/fair_share_weight_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="548" /><figcaption>図 24.57</figcaption></figure>
+</p>
+<div class="admonition admonition-warning">
+<div data-bai-block="513" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div class="admonition-content">
+
+<p data-bai-block="514">変更はFair Shareの計算にすぐには反映されません。計算サイクルのため、反映までに
+約5分かかる場合があります。</p>
+</div></div>
+
+
+<p data-bai-block="515">単一編集モードでは、モーダルにエンティティ名（読み取り専用）と重み入力フィールドが
+表示されます。</p>
+<ul>
+<li data-bai-block="516"><strong>重み</strong>: Fair Shareスケジューリングの優先度を決定する基本倍率です。値が大きいほど優先度が高くなります。デフォルトは「1.0」です。重み「2.0」は「1.0」の2倍の優先度です。最小値は1、ステップは0.1です。</li>
+</ul>
+<p data-bai-block="517">複数の項目の重みを一括で編集するには、テーブルのチェックボックスで対象の行を選択し、
+一括編集（歯車アイコン）ボタンをクリックします。一括編集モードでは、モーダルに選択した
+すべてのエンティティのタグリストと、すべてに適用される単一の重み入力フィールドが
+表示されます。</p>
+<p><figure data-bai-block="518" class="doc-figure"><img src="./images/fair_share_weight_bulk_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="548" /><figcaption>図 24.58</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="519" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="520">選択したリソースグループのスケジューラタイプが<code>FAIR_SHARE</code>に設定されていない場合、
+モーダルに警告アラートが表示されます。</p>
+</div></div>
+
+
+<h3 data-bai-block="521" id="admin_menu-利用履歴の表示">利用履歴の表示<a class="hash-link" href="#admin_menu-利用履歴の表示" aria-label="Direct link to 利用履歴の表示">#</a></h3>
+<p data-bai-block="522">ドメイン、プロジェクト、またはユーザーの利用履歴を表示するには、テーブルの
+チェックボックスで対象の行を選択し、利用グラフ（チャートアイコン）ボタンをクリック
+します。利用履歴モーダルが開きます。</p>
+<p><figure data-bai-block="523" class="doc-figure"><img src="./images/fair_share_usage_bucket_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="1260" /><figcaption>図 24.59</figcaption></figure>
+</p>
+<p data-bai-block="524">モーダルには以下が表示されます：</p>
+<ul>
+<li data-bai-block="525"><strong>日付範囲ピッカー</strong>: 利用履歴の日付範囲を選択します。過去7日間、過去30日間、過去90日間のプリセットが利用可能です。</li>
+<li data-bai-block="526"><strong>リフレッシュボタン</strong>: 利用データを手動で更新します。</li>
+<li data-bai-block="527"><strong>コンテキスト情報</strong>: 現在のステップに応じて、リソースグループ、ドメイン、プロジェクトの情報が表示されます。</li>
+<li data-bai-block="528"><strong>選択されたエンティティ</strong>: 選択した項目の名前がタグとして表示されます。</li>
+<li data-bai-block="529"><strong>利用チャート</strong>: 選択した期間の1日あたりの平均リソース使用量を示すチャートです。</li>
+</ul>
+<p><a id="manage-images"></a></p>
+<h2 data-bai-block="530" id="admin_menu-イメージ管理">イメージ管理<a class="hash-link" href="#admin_menu-イメージ管理" aria-label="Direct link to イメージ管理">#</a></h2>
+<p data-bai-block="531">管理者は環境設定ページのイメージタブで、コンピュートセッションの作成に使用されるイメージを管理できます。このタブでは、現在Backend.AIサーバーにあるすべてのイメージのメタ情報が表示されます。レジストリ、アーキテクチャ、ネームスペース、イメージ名、ダイジェスト、各イメージに必要な最小リソースなどの情報を確認できます。1つ以上のエージェントノードにダウンロードされたイメージの場合、状態カラムに<code>installed</code>タグが表示されます。非公開イメージの場合は、状態カラムに<code>非公開</code>タグも表示されます。非公開イメージはインストール済みであってもセッションランチャーで選択できません。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="532" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="533">特定のエージェントを選択してイメージをインストールする機能は現在開発中です。</p>
+</div></div>
+
+
+<p><figure data-bai-block="534" class="doc-figure"><img src="./images/image_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.60</figcaption></figure>
+</p>
+<p data-bai-block="535">イメージリストには、より詳細なイメージ情報のための追加カラムが表示されます：</p>
+<ul>
+<li data-bai-block="536"><strong>アーキテクチャ</strong>: イメージのCPUアーキテクチャです（例：x86_64、aarch64）。</li>
+<li data-bai-block="537"><strong>名前空間</strong>: レジストリ内のイメージのネームスペースです。</li>
+<li data-bai-block="538"><strong>ベースイメージ名</strong>: イメージの基本名で、識別しやすいようにエイリアスタグが表示されます。</li>
+<li data-bai-block="539"><strong>バージョン</strong>: イメージのバージョンタグです。</li>
+<li data-bai-block="540"><strong>タグ</strong>: イメージに関連する詳細なタグで、エイリアス付きのダブルタグとして表示されます。</li>
+</ul>
+<p data-bai-block="541">未インストールのイメージを複数選択し、<strong>イメージをインストール</strong> ボタンをクリックすると、一括でインストールできます。
+イメージのインストールは、イメージを取得する短時間のセッションをキューに登録することで実行されるため、ダイアログでは
+そのセッションを実行する場所を指定します。</p>
+<ul>
+<li data-bai-block="542"><strong>インストールセッションのプロジェクト</strong>: インストールセッションを実行するプロジェクトです。セッションはこの
+プロジェクトでユーザー自身のセッションとして作成されるため、所属しているプロジェクトのみが一覧に表示されます。</li>
+<li data-bai-block="543"><strong>対象リソースグループ</strong>: イメージを取得するリソースグループです。選択したプロジェクトからアクセスできる
+リソースグループのみが一覧に表示されます。</li>
+</ul>
+<p data-bai-block="544">どちらの項目も必須で、プロジェクトとリソースグループを選択するまでダイアログの <strong>インストール</strong> ボタンは無効のままです。
+選択したイメージのうち、すでにインストール済みのイメージはリクエストから除外されます。</p>
+<p><figure data-bai-block="545" class="doc-figure"><img src="./images/image_install_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="916" /><figcaption>図 24.61</figcaption></figure>
+</p>
+<p data-bai-block="546">コントロールパネルの <strong>編集</strong>（鉛筆）アクションをクリックすると <strong>最小画像リソース制限を変更します</strong> ダイアログが開き、各イメージの最小リソース要件を
+変更できます。各イメージには最小動作のためのハードウェアおよびリソース要件があります
+（例えば、GPU専用イメージの場合は、GPUが最低限割り当てられる必要があります）。
+最小リソース量のデフォルト値は、イメージのメタデータに埋め込まれた形で提供されます。
+各イメージで指定されたリソース量より少ないリソースでコンピュートセッションを作成しようと
+した場合、リクエストはキャンセルされず、イメージの最小リソース要件に自動的に調整されて
+作成されます。</p>
+<p><figure data-bai-block="547" class="doc-figure"><img src="./images/update_image_resource_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="844" /><figcaption>図 24.62</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="548" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="549">イメージメタデータに含まれる最小リソース要件は、テストされ決定された値です。変更したい最小リソース量について明確な理由がない限り、デフォルト値を使用することをお勧めします。</p>
+</div></div>
+
+
+<p data-bai-block="550">さらに、「コントロール」列にある「Apps」アイコンをクリックすると、各イメージの
+サポートアプリを追加または変更できます。アイコンをクリックすると、アプリ名とその
+ポート番号が表示されます。</p>
+<p><figure data-bai-block="551" class="doc-figure"><img src="./images/manage_app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="1100" /><figcaption>図 24.63</figcaption></figure>
+</p>
+<p data-bai-block="552">このインターフェースでは、下部の「追加」ボタンをクリックして、サポートされるカスタム
+アプリケーションを追加できます。アプリケーションを削除するには、各行の右側にある
+「ゴミ箱」ボタンをクリックします。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="553" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+
+
+<p><figure data-bai-block="554" class="doc-figure"><img src="./images/confirmation_dialog_for_manage_app_change_in_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="738" /><figcaption>図 24.64</figcaption></figure>
+</p>
+</div></div>
+
+
+<p><a id="manage-docker-registry"></a></p>
+<h2 data-bai-block="555" id="admin_menu-dockerレジストリ管理">Dockerレジストリ管理<a class="hash-link" href="#admin_menu-dockerレジストリ管理" aria-label="Direct link to Dockerレジストリ管理">#</a></h2>
+<p data-bai-block="556">環境設定ページのレジストリタブをクリックすると、現在接続されているDocker
+レジストリの情報を確認できます。デフォルトで<code>cr.backend.ai</code>が登録されており、これは
+Harborが提供するレジストリです。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="557" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="558">オフライン環境ではデフォルトのレジストリにアクセスできないため、右側のゴミ箱アイコンを
+クリックして削除してください。</p>
+</div></div>
+
+
+<p data-bai-block="559">「コントロール」列の更新アイコンをクリックすると、接続されたレジストリからBackend.AI用の
+イメージメタデータを更新できます。レジストリに保存されたイメージのうち、Backend.AI用の
+ラベルを持たないイメージ情報は更新されません。</p>
+<p><figure data-bai-block="560" class="doc-figure"><img src="./images/image_registries_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.65</figcaption></figure>
+</p>
+<p data-bai-block="561"><strong>レジストリを追加する</strong> ボタンをクリックして、独自のプライベートDockerレジストリを追加できます。レジストリ作成ダイアログには以下のフィールドが含まれています：</p>
+<ul>
+<li data-bai-block="562"><strong>レジストリ名</strong>: レジストリの一意の名前です（最大50文字）。レジストリに保存されたイメージ名のプレフィックスと一致する必要があります。</li>
+<li data-bai-block="563"><strong>レジストリURL</strong>: レジストリのURLです。<code>http://</code>または<code>https://</code>などのスキームを明示的に含める必要があります。</li>
+<li data-bai-block="564"><strong>ユーザー名</strong>: オプション。レジストリに別途認証設定がある場合に入力します。</li>
+<li data-bai-block="565"><strong>パスワード</strong>: オプション。既存のレジストリを編集する場合、<code>Change Password</code> チェックボックスを選択して変更できます。</li>
+<li data-bai-block="566"><strong>レジストリタイプ</strong>: レジストリの種類を選択します。サポートされる種類：<code>docker</code>、<code>harbor</code>、<code>harbor2</code>、<code>github</code>、<code>gitlab</code>、<code>ecr</code>、<code>ecr-public</code>。</li>
+<li data-bai-block="567"><strong>プロジェクト名</strong>: レジストリのプロジェクトまたはネームスペースです（必須）。GitLabレジストリの場合、ネームスペースとプロジェクト名を含む完全なパスを使用します。</li>
+<li data-bai-block="568"><strong>追加情報</strong>: 各レジストリタイプに必要な追加設定用のJSON文字列です。</li>
+<li data-bai-block="569"><strong>SSL検証（SSL Verification）</strong>: Backend.AI がレジストリに接続する際に SSL 証明書を検証するかどうかを切り替えます。<strong>デフォルトでは有効</strong> で、公開インターネット経由でアクセス可能なレジストリでは有効のままにすることを推奨します。自己署名（self-signed）証明書で配信されるレジストリで、かつネットワーク経路を既に検証済みの信頼できる内部環境でのみ無効化してください。検証を無効にすると中間者（MITM）攻撃に対して脆弱になるため注意が必要です。</li>
+<li data-bai-block="570"><strong>グローバルレジストリとして設定（Set as Global Registry）</strong>: 有効にすると、すべてのプロジェクトから当該レジストリへのアクセスを許可するトグルです。</li>
+<li data-bai-block="571"><strong>許可されたプロジェクト（Allowed Projects）</strong>: <strong>グローバルレジストリとして設定</strong>トグルをオフにした場合、このフィールドで当該レジストリを使用できる特定のプロジェクトを選択します。</li>
+</ul>
+<p><figure data-bai-block="572" class="doc-figure"><img src="./images/container_registry_editor_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="544" height="1244" /><figcaption>図 24.66</figcaption></figure>
+</p>
+<!-- TODO: Re-capture container_registry_editor_modal.png to show the Set as Global Registry toggle and the Allowed Projects field -->
+
+
+<p><a id="gitlab-container-registry-configuration"></a></p>
+<h3 data-bai-block="573" id="admin_menu-gitlab-container-registry設定">GitLab Container Registry設定<a class="hash-link" href="#admin_menu-gitlab-container-registry設定" aria-label="Direct link to GitLab Container Registry設定">#</a></h3>
+<p data-bai-block="574">GitLabコンテナレジストリを追加する場合、追加情報フィールドに<code>api_endpoint</code>を指定する必要があります。これはGitLabがコンテナレジストリとGitLab APIで別々のエンドポイントを使用するためです。</p>
+<p data-bai-block="575"><strong>GitLab.com（パブリックインスタンス）の場合：</strong></p>
+<ul>
+<li data-bai-block="576">Registry URL: <code>https://registry.gitlab.com</code></li>
+<li data-bai-block="577">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.com&quot;}</code></li>
+</ul>
+<p data-bai-block="578"><strong>セルフホスト（オンプレミス）GitLabの場合：</strong></p>
+<ul>
+<li data-bai-block="579">Registry URL: ご使用のGitLabレジストリURL（例：<code>https://registry.example.com</code>）</li>
+<li data-bai-block="580">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.example.com&quot;}</code></li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="581" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="582"><code>api_endpoint</code>はGitLabインスタンスのURLを指す必要があり、レジストリURLではありません。</p>
+</div></div>
+
+
+<p data-bai-block="583">追加の設定に関する注意：</p>
+<ul>
+<li data-bai-block="584"><p><strong>プロジェクトパスの形式</strong>: プロジェクトを指定する際は、ネームスペースとプロジェクト名を含む完全なパスを使用してください（例：<code>namespace/project-name</code>）。レジストリが正しく機能するには両方のコンポーネントが必要です。</p>
+</li>
+<li data-bai-block="585"><p><strong>アクセストークンの権限</strong>: レジストリに使用するアクセストークンには<code>read_registry</code>と<code>read_api</code>の両方のスコープが必要です。<code>read_api</code>スコープはBackend.AIが再スキャン操作中にGitLab APIでイメージメタデータをクエリするために必要です。</p>
+</li>
+</ul>
+<p data-bai-block="586"><strong>レジストリの修正</strong> ダイアログで既存のレジストリの設定を変更することもできますが、レジストリ名は変更できません。</p>
+<p data-bai-block="587">レジストリを作成してイメージメタデータを更新した後も、ユーザーはすぐにイメージを使用できるわけではありません。レジストリリストの有効スイッチを切り替えてレジストリを有効にし、ユーザーがレジストリからイメージにアクセスできるようにする必要があります。</p>
+<p><a id="manage-resource-preset"></a></p>
+<h2 data-bai-block="588" id="admin_menu-リソースプリセットの管理">リソースプリセットの管理<a class="hash-link" href="#admin_menu-リソースプリセットの管理" aria-label="Direct link to リソースプリセットの管理">#</a></h2>
+<p data-bai-block="589">以下の事前定義されたリソースプリセットは、コンピュートセッション作成時のリソース割り当てパネルに表示されます。スーパー管理者はこれらのリソースプリセットを管理できます。</p>
+<p><figure data-bai-block="590" class="doc-figure"><img src="./images/resource_presets_in_resource_monitor.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="950" /><figcaption>図 24.67</figcaption></figure>
+</p>
+<p data-bai-block="591">環境設定ページのリソースプリセットタブに移動します。現在定義されているリソースプリセットのリストを確認できます。</p>
+<p><figure data-bai-block="592" class="doc-figure"><img src="./images/resource_preset_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.68</figcaption></figure>
+</p>
+<p data-bai-block="593">名前列にある <strong>編集</strong>（鉛筆）アクションをクリックして、リソースプリセットが提供するCPU、RAM、fGPUなどのリソースを設定できます。<strong>リソースプリセットの作成</strong> / <strong>リソースプリセットの変更</strong> モーダルには、現在利用可能なリソースのフィールドが表示されます。サーバーの設定によっては、特定のリソースが表示されない場合があります。希望の値でリソースを設定した後、<strong>保存</strong> をクリックして、コンピュートセッション作成時に対応するプリセットが表示されるか確認してください。利用可能なリソースがプリセットで定義されたリソース量より少ない場合、対応するプリセットは表示されません。</p>
+<p data-bai-block="594">リソースプリセットダイアログには以下の項目が含まれます：</p>
+<ul>
+<li data-bai-block="595"><strong>プリセット名</strong>: プリセットの一意の名前です（英数字、ピリオド、ハイフン、アンダースコアのみ使用可能）。</li>
+<li data-bai-block="596"><strong>リソースグループ</strong>: プリセットを特定のリソースグループに関連付けます。このフィールドは任意です。空のままにするか値をクリアすると、リソースグループに関係なく適用されるグローバルプリセットになります。</li>
+<li data-bai-block="597"><strong>リソースプリセット</strong>: 利用可能な各リソースタイプ（CPU、メモリ、GPUなど）を入力する動的フィールドのまとまりです。メモリフィールドは動的な単位入力（MiB、GiB、TiB、PiB）をサポートしています。</li>
+<li data-bai-block="598"><strong>共有メモリ</strong>: プリセットに割り当てられた共有メモリの量です。この値は<strong>メモリ</strong>の値より少なくなければなりません。</li>
+</ul>
+<p><figure data-bai-block="599" class="doc-figure"><img src="./images/modify_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>図 24.69</figcaption></figure>
+</p>
+<p data-bai-block="600">「リソースプリセット」タブの右上にある <strong>プリセットの作成</strong> ボタンをクリックしてリソースプリセットを作成することもできます。リソースプリセット名は引き続き一意である必要があります。既に存在する名前を入力すると、<strong>作成</strong> をクリックした際にサーバーがリクエストを拒否し、エラーメッセージが表示されます。</p>
+<p><figure data-bai-block="601" class="doc-figure"><img src="./images/create_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>図 24.70</figcaption></figure>
+</p>
+<p><a id="manage-agent-nodes"></a></p>
+<h2 data-bai-block="602" id="admin_menu-エージェントノードの管理">エージェントノードの管理<a class="hash-link" href="#admin_menu-エージェントノードの管理" aria-label="Direct link to エージェントノードの管理">#</a></h2>
+<p data-bai-block="603">スーパー管理者は、リソース管理ページにアクセスして、現在Backend.AIに接続されているエージェントノードのリストを表示できます。エージェントノードのIP、接続時間、現在実際に使用中のリソースなどを確認できます。エージェントの詳細ドロワーからは、スケジュール可能ステータスの変更やエージェントサービス自体の制御も行えます。</p>
+<p><a id="query-agent-nodes"></a></p>
+<h4 data-bai-block="604" id="admin_menu-エージェントノードの照会">エージェントノードの照会<a class="hash-link" href="#admin_menu-エージェントノードの照会" aria-label="Direct link to エージェントノードの照会">#</a></h4>
+<p><figure data-bai-block="605" class="doc-figure"><img src="./images/agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.71</figcaption></figure>
+</p>
+<p data-bai-block="606"><strong>接続済み</strong> / <strong>終了しました</strong> のセレクターで、現在接続されているエージェントと、一度接続されてから終了または
+切断されたエージェントを切り替えて表示できます。終了しましたの一覧はノード管理の参考資料として使用でき、リストが
+空の場合は切断や終了が発生していないことを意味します。</p>
+<p><figure data-bai-block="607" class="doc-figure"><img src="./images/terminated_agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.72</figcaption></figure>
+</p>
+<p data-bai-block="608">プロパティフィルターでは <strong>ID</strong>、<strong>エンドポイント</strong>、<strong>スケジュール可能</strong> の条件で一覧を絞り込めます。</p>
+<p data-bai-block="609">エージェントのIDをクリックすると、そのノードの正確なリソース使用状況を表示する <strong>エージェント情報</strong> ドロワーが
+開きます。このドロワーには2つのタブがあります。<strong>リソース</strong> タブはリソーススロットごとの使用状況を表示し、
+<strong>セッション</strong> タブはそのエージェントに割り当てられているコンピュートセッションを一覧表示するため、エージェントを
+停止または再起動する前にノードで何が実行されているかを確認できます。<strong>セッション</strong> タブでは、
+<strong>実行中</strong> / <strong>終了セッション</strong> のセレクターで、まだノードのリソースを占有しているセッションと、すでに終了した
+セッションを切り替えて表示でき、セッション名をクリックすると管理者用セッションページでそのセッションの詳細が開きます。</p>
+<p><figure data-bai-block="610" class="doc-figure"><img src="./images/detailed_agent_node_usage_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>図 24.73</figcaption></figure>
+</p>
+<p><a id="control-agent-service"></a></p>
+<h4 data-bai-block="611" id="admin_menu-エージェントの起動停止再起動">エージェントの起動・停止・再起動<a class="hash-link" href="#admin_menu-エージェントの起動停止再起動" aria-label="Direct link to エージェントの起動・停止・再起動">#</a></h4>
+<p data-bai-block="612">エージェント情報ドロワーには、エージェントサービス自体を制御するボタン群があります。</p>
+<ul>
+<li data-bai-block="613"><strong>エージェントを起動</strong>: エージェントサービスを起動し直します。エージェントが <code>ALIVE</code> でないときのみ利用できます。</li>
+<li data-bai-block="614"><strong>エージェントを停止</strong>: エージェントサービスを停止します。エージェントが <code>ALIVE</code> のときのみ利用できます。</li>
+<li data-bai-block="615"><strong>エージェントを再起動</strong>: エージェントサービスを再起動します。</li>
+</ul>
+<p><figure data-bai-block="616" class="doc-figure"><img src="./images/agent_watcher_actions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="334" /><figcaption>図 24.74</figcaption></figure>
+</p>
+<p data-bai-block="617">いずれの操作でも、対象のエージェントを明示し、このエージェントで実行中のセッションに影響する場合がある旨を警告する
+確認ダイアログが開きます。確認すると要求が送信され、起動・停止・再起動が要求された旨のメッセージが表示された後、
+エージェントの状態が読み直されます。</p>
+<div class="admonition admonition-warning">
+<div data-bai-block="618" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div class="admonition-content">
+
+<p data-bai-block="619">これらの操作は個々のセッションではなく、ノード上のエージェントサービスに対して行われます。エージェントを停止または
+再起動すると、そのエージェントで実行中のすべてのコンピュートセッションが影響を受けます。ノードを空にしたか、
+その影響を許容できるかを確認してから実行してください。</p>
+</div></div>
+
+
+<blockquote>
+<p data-bai-block="620">要求はエージェントの watcher デーモンへ中継されます。watcher に接続できない場合や、その操作に対応しない方法で
+ノードが管理されている場合は、成功メッセージの代わりにエージェントが返した失敗内容が WebUI に表示されます。</p>
+</blockquote>
+<p><a id="set-schedulable-status-of-agent-nodes"></a></p>
+<h4 data-bai-block="621" id="admin_menu-エージェントノードのスケジュール可能ステータスの設定">エージェントノードのスケジュール可能ステータスの設定<a class="hash-link" href="#admin_menu-エージェントノードのスケジュール可能ステータスの設定" aria-label="Direct link to エージェントノードのスケジュール可能ステータスの設定">#</a></h4>
+<p data-bai-block="622">エージェントサービスを停止せずに新しいコンピュートセッションがスケジュールされることを防止したい場合があります。その場合、エージェント情報ドロワーの <strong>設定</strong> ボタンからエージェントのSchedulableステータスを無効にできます。これにより、エージェント上の既存のセッションを保持しながら、新しいセッションの作成をブロックできます。</p>
+<p><figure data-bai-block="623" class="doc-figure"><img src="./images/agent_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="400" height="340" /><figcaption>図 24.75</figcaption></figure>
+</p>
+<p><a id="manage-resource-group"></a></p>
+<h2 data-bai-block="624" id="admin_menu-リソースグループの管理">リソースグループの管理<a class="hash-link" href="#admin_menu-リソースグループの管理" aria-label="Direct link to リソースグループの管理">#</a></h2>
+<p data-bai-block="625">エージェントはリソースグループと呼ばれる単位にグループ化できます。例えば、V100 GPUを搭載したエージェント3台とP100 GPUを搭載したエージェント2台がある場合、2種類のGPUをユーザーに別々に公開するには、V100エージェント3台を1つのリソースグループに、残りのP100エージェント2台を別のリソースグループにグループ化できます。</p>
+<p data-bai-block="626">特定のエージェントを特定のリソースグループに追加する操作は、現在WebUIでは処理されていません。インストール場所からエージェントのconfigファイルを編集し、エージェントデーモンを再起動して行えます。リソースグループの管理は、リソース管理ページのリソースグループタブで可能です。</p>
+<p><figure data-bai-block="627" class="doc-figure"><img src="./images/resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.76</figcaption></figure>
+</p>
+<p><a id="scheduling-methods"></a></p>
+<p data-bai-block="628">名前列の <strong>編集</strong>（鉛筆）アクションをクリックすると <strong>リソースグループの変更</strong> ダイアログが開き、リソースグループを編集できます。<strong>スケジューラー</strong> フィールドで、コンピュートセッション作成のスケジューリング方法を選択できます。現在、<code>FIFO</code>、<code>LIFO</code>、<code>DRF</code>、<code>FAIR_SHARE</code>の4種類があります。<code>FIFO</code>と<code>LIFO</code>はジョブキューで最初または最後にキューイングされたコンピュートセッションを作成するスケジューリング方法です。<code>DRF</code>はDominant Resource Fairnessの略で、各ユーザーにできるだけ公平にリソースを提供することを目指します。<code>FAIR_SHARE</code>は過去の使用パターンに基づいてコンピュートリソースを割り当てます。詳細については、<a href="#fair-share-scheduler">フェアシェアスケジューラ</a>セクションを参照してください。<strong>アクティブ</strong> をオフにすることでリソースグループを無効化できます。<strong>保存</strong> をクリックすると変更が適用されます。</p>
+<p><figure data-bai-block="629" class="doc-figure"><img src="./images/modify_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>図 24.77</figcaption></figure>
+</p>
+<p data-bai-block="630">リソースグループ編集ダイアログには以下の追加フィールドが含まれています：</p>
+<ul>
+<li data-bai-block="631"><strong>許可されたセッションタイプ</strong>: ユーザーがセッションタイプを選択できるため、リソースグループで特定のタイプを許可できます。少なくとも1つのセッションタイプを許可する必要があります。許可されるセッションタイプは Interactive、Batch、Inference、System です。</li>
+<li data-bai-block="632"><strong>App Proxy サーバアドレス</strong>: リソースグループのエージェントが使用するApp Proxyアドレスを設定します。このフィールドにURLを設定すると、App ProxyがJupyterなどのアプリのトラフィックをManagerをバイパスしてエージェント経由でコンピュートセッションに直接中継します。</li>
+<li data-bai-block="633"><strong>App Proxy APIトークン</strong>: App Proxyサーバーとの認証用APIトークンです。</li>
+<li data-bai-block="634"><strong>SFTPストレージプロキシ</strong>: このリソースグループのユーザーがSFTPでフォルダーにファイルを転送するときに使用する
+ストレージプロキシです。このフィールドはスーパー管理者に提供され、現在このリソースグループを担当している
+プロキシがあらかじめ入力されます。保存すると、このリソースグループの所属だけが同期されます。つまり新たに選んだ
+プロキシには追加され、外したプロキシからは削除されますが、それらのプロキシ上の他のリソースグループはそのまま
+維持されます。プロキシを1つも選ばない場合、そのリソースグループは特定のプロキシに限定されません。</li>
+<li data-bai-block="635"><strong>アクティブ</strong>: リソースグループの有効/無効を切り替えます。</li>
+<li data-bai-block="636"><strong>公開</strong>: 有効にすると、リソースグループがすべてのユーザーに表示されます。</li>
+<li data-bai-block="637"><strong>保留中のタイムアウト</strong>: コンピュートセッションが保留中のタイムアウトより長く <code>PENDING</code> 状態を維持すると取り消されます。この値をゼロ（0）に設定すると、この機能は適用されません。</li>
+<li data-bai-block="638"><strong>保留中セッションをスキップする再試行回数</strong>: スケジューラがPENDINGセッションをスキップする前に試行する回数です。</li>
+</ul>
+<p data-bai-block="639"><strong>リソースグループの作成</strong> ボタンをクリックして新しいリソースグループを作成できます。他の作成オプションと同様に、既に存在する名前ではリソースグループを作成できません。名前はキー値です。</p>
+<p><figure data-bai-block="640" class="doc-figure"><img src="./images/create_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>図 24.78</figcaption></figure>
+</p>
+<p><a id="bulk-edit-resource-groups"></a></p>
+<h3 data-bai-block="641" id="admin_menu-複数のリソースグループをまとめて編集する">複数のリソースグループをまとめて編集する<a class="hash-link" href="#admin_menu-複数のリソースグループをまとめて編集する" aria-label="Direct link to 複数のリソースグループをまとめて編集する">#</a></h3>
+<p data-bai-block="642">複数のリソースグループに同じように適用される設定は、一度にまとめて変更できます。</p>
+<ol>
+<li data-bai-block="643">行チェックボックスでリソースグループを選択します。（チェックボックスはスーパー管理者に提供されます。）</li>
+<li data-bai-block="644">ツールバーに選択件数が表示されます。その横の <strong>一括編集</strong>（歯車）ボタンをクリックします。</li>
+<li data-bai-block="645"><strong>リソースグループを更新</strong> ダイアログが開きます。</li>
+</ol>
+<p><figure data-bai-block="646" class="doc-figure"><img src="./images/bulk_edit_resource_groups_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="796" /><figcaption>図 24.79</figcaption></figure>
+</p>
+<p data-bai-block="647">ダイアログ上部のアラートには、変更対象となるすべてのリソースグループが並びます。その下には
+<strong>SFTPストレージプロキシ</strong> フィールドがあり、選択したリソースグループのいずれかが既に利用しているプロキシが
+すべてあらかじめ入力されます。</p>
+<ul>
+<li data-bai-block="648">プロキシを選択すると、選択した <strong>すべての</strong> リソースグループがそのプロキシに登録されます。</li>
+<li data-bai-block="649">プロキシを外すと、選択したリソースグループがそのプロキシから削除されます。SFTPアクセスが失われる変更のため、
+対象のプロキシを明示したうえで適用前に確認が求められます。</li>
+</ul>
+<p data-bai-block="650">いずれの場合も、選択しなかったリソースグループのプロキシ設定はそのまま維持されます。</p>
+<p><a id="storages"></a></p>
+<h2 data-bai-block="651" id="admin_menu-ストレージ">ストレージ<a class="hash-link" href="#admin_menu-ストレージ" aria-label="Direct link to ストレージ">#</a></h2>
+<p data-bai-block="652">ストレージタブでは、どのようなマウントボリューム（通常はNFS）が存在するかを確認できます。
+Backend.AIは、クォータ管理をサポートするストレージに対してユーザーごと/
+プロジェクトごとのクォータ設定を提供しています。この機能を使用すると、管理者は
+ユーザーおよびプロジェクト単位のフォルダのストレージ使用量を簡単に管理およびモニター
+できます。</p>
+<p><figure data-bai-block="653" class="doc-figure"><img src="./images/storage_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.80</figcaption></figure>
+</p>
+<p data-bai-block="654">ストレージホストを管理するには、ストレージ一覧でストレージホスト名をクリックします。
+すると、容量（クォータ）とフォルダ権限を構成する<strong>ストレージホスト詳細Drawer</strong>が
+開きます。</p>
+<p><a id="storage-host-detail-drawer"></a></p>
+<h4 data-bai-block="655" id="admin_menu-ストレージホスト詳細drawer">ストレージホスト詳細Drawer<a class="hash-link" href="#admin_menu-ストレージホスト詳細drawer" aria-label="Direct link to ストレージホスト詳細Drawer">#</a></h4>
+<p data-bai-block="656">ストレージホスト詳細Drawerは、ストレージホストを確認し管理するための単一の場所です。
+ストレージ一覧でホスト名をクリックすると開きます。上部にはホストの基本情報が表示され、
+下部にはフォルダ権限と容量（クォータ）を構成するためのタブが用意されています。</p>
+<p><figure data-bai-block="657" class="doc-figure"><img src="./images/storage_host_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="1855" /><figcaption>図 24.81</figcaption></figure>
+</p>
+<p data-bai-block="658">Drawerには次のタブがあります。</p>
+<ul>
+<li data-bai-block="659"><strong>プロジェクトフォルダーの権限 (Project Folder Permissions)</strong>: どのドメインとプロジェクトが
+ホストのプロジェクトフォルダにアクセスできるかを確認し管理します。以下の
+<a href="#project-folder-permission">プロジェクトフォルダの権限</a>セクションを参照してください。</li>
+<li data-bai-block="660"><strong>ユーザーフォルダーの権限 (User Folder Permissions)</strong>: ホストのユーザーフォルダに適用される
+権限を確認し管理します。ユーザーフォルダの権限は、ユーザーのメインアクセスキーに紐付く
+キーペアリソースポリシーによって決定されます。</li>
+<li data-bai-block="661"><strong>Capacity</strong>: ユーザーごと・プロジェクトごとのストレージクォータを構成し、ホストの使用量と
+機能を確認します。クォータ設定をサポートしていないストレージホストでは、このタブは利用できません。</li>
+</ul>
+<p><a id="project-folder-permission"></a></p>
+<h4 data-bai-block="662" id="admin_menu-プロジェクトフォルダの権限">プロジェクトフォルダの権限<a class="hash-link" href="#admin_menu-プロジェクトフォルダの権限" aria-label="Direct link to プロジェクトフォルダの権限">#</a></h4>
+<p data-bai-block="663"><a href="#storage-host-detail-drawer">ストレージホスト詳細Drawer</a>の <strong>プロジェクトフォルダの権限</strong> タブで、管理者は選択したストレージホスト上に作成されたプロジェクトフォルダの権限を確認・管理できます。</p>
+<p><figure data-bai-block="664" class="doc-figure"><img src="./images/project_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1702" height="1300" /><figcaption>図 24.82</figcaption></figure>
+</p>
+<!-- TODO: Capture screenshot of project_folder_permission_tab.png — Project Folder Permissions tab with the domain selector and the tri-state effective-permission indicators -->
+
+<p data-bai-block="665">プロジェクトフォルダの権限は、選択したドメインに対する権限と、そのドメインに属するプロジェクトに対する権限で構成されます。</p>
+<p data-bai-block="666">Backend.AIの構造では、プロジェクトは特定のドメインの配下に属します。そのため、プロジェクトに設定されるストレージ権限は、デフォルトでドメインの権限を継承します。</p>
+<p data-bai-block="667">Domains、Projects、またはユーザーフォルダーの権限テーブルで、行のチェックボックスを使って複数の行を選択すると、権限セットを並べて比較できます。行を選択した状態で <strong>権限の編集</strong> をクリックすると一括編集モーダルが開き、選択した権限セットを選択したすべての対象に一度に適用します。このモーダルはデフォルトですべての権限が選択された状態で開き、保存すると選択した対象の権限が、選択したセットで正確に上書きされます。</p>
+<p><a id="user-folder-permission"></a></p>
+<h4 data-bai-block="668" id="admin_menu-ユーザーフォルダーの権限">ユーザーフォルダーの権限<a class="hash-link" href="#admin_menu-ユーザーフォルダーの権限" aria-label="Direct link to ユーザーフォルダーの権限">#</a></h4>
+<p data-bai-block="669">ユーザーフォルダ権限は、キーペアリソースポリシーに設定される権限です。特定のユーザーに絞り込むには、テーブル上部のフィルターバーに <strong>ユーザー</strong> 条件を追加します。値の入力欄は自由入力ではなくユーザーアカウントを検索できるドロップダウンなので、アドレスを入力する代わりにアカウントを選択します。すると、そのユーザーのキーペアに割り当てられたキーペアリソースポリシーのみが表示され、作成されたフィルタータグにはユーザーのメールアドレスが表示されます。<strong>割り当てられたキーペア</strong>カラムでそのユーザーのメインアクセスキーを確認でき、この列はユーザーを選択している間のみ表示されます。別のユーザーを選び直すと、条件は追加されずに置き換えられます。</p>
+<p><figure data-bai-block="670" class="doc-figure"><img src="./images/user_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="739" /><figcaption>図 24.83</figcaption></figure>
+</p>
+<!-- TODO: Capture screenshot of user_folder_permission_tab.png — User Folder Permissions tab with the user selector and the Assigned Keypair column. -->
+
+<p><a id="quota-settings"></a></p>
+<h4 data-bai-block="671" id="admin_menu-クォータ設定">クォータ設定<a class="hash-link" href="#admin_menu-クォータ設定" aria-label="Direct link to クォータ設定">#</a></h4>
+<p data-bai-block="672">クォータ設定はクォータ設定を提供するストレージ（例：XFS、CephFS、NetApp、Purestorage
+など）でのみ利用可能である点にご注意ください。ストレージの種類に関係なくCapacityタブで
+ストレージの使用量を確認できますが、内部的にクォータ設定をサポートしていない
+ストレージにはクォータを設定できません。</p>
+<p><a id="set-user-quota"></a></p>
+<h4 data-bai-block="673" id="admin_menu-ユーザークォータの設定">ユーザークォータの設定<a class="hash-link" href="#admin_menu-ユーザークォータの設定" aria-label="Direct link to ユーザークォータの設定">#</a></h4>
+<p data-bai-block="674">Backend.AIには、ユーザーが作成するvfolderと管理者が作成するvfolder（プロジェクト）の
+2種類があります。このセクションでは、ユーザーごとの現在のクォータ設定を確認する方法と、
+その設定方法を示します。まず、CapacityタブでQuota Settingsパネルのアクティブなサブタブが
+<code>For User</code>であることを確認してください。次に、クォータを確認および編集したいユーザーを選択します。すでに
+クォータを設定している場合は、ユーザーIDに対応するクォータIDと、すでに設定されている
+構成をテーブルで確認できます。</p>
+<p><figure data-bai-block="675" class="doc-figure"><img src="./images/per_user_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1788" height="496" /><figcaption>図 24.84</figcaption></figure>
+</p>
+<!-- TODO: Re-capture per_user_quota.png — needs update. -->
+
+<p data-bai-block="676">可用量範囲ID列の<strong>編集</strong>ボタンをクリックすると、クォータ設定を構成できるモーダルが表示されます。</p>
+<p><figure data-bai-block="677" class="doc-figure"><img src="./images/quota_settings_panel.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="308" /><figcaption>図 24.85</figcaption></figure>
+</p>
+<!-- TODO: Re-capture quota_settings_panel.png — needs update. -->
+
+<p><a id="set-project-quota"></a></p>
+<h4 data-bai-block="678" id="admin_menu-プロジェクトクォータの設定">プロジェクトクォータの設定<a class="hash-link" href="#admin_menu-プロジェクトクォータの設定" aria-label="Direct link to プロジェクトクォータの設定">#</a></h4>
+<p data-bai-block="679">プロジェクトフォルダにクォータを設定する方法は、ユーザークォータの設定と似ています。
+プロジェクトクォータとユーザークォータの設定の違いは、プロジェクトクォータの設定では、
+プロジェクトが依存するドメインを選択するという追加の手順が必要なことです。その他は
+同じです。下の画像のように、まずドメインを選択してから、プロジェクトを選択する必要が
+あります。</p>
+<p><figure data-bai-block="680" class="doc-figure"><img src="./images/per_project_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1788" height="534" /><figcaption>図 24.86</figcaption></figure>
+</p>
+<!-- TODO: Re-capture per_project_quota.png — needs update. -->
+
+<p><a id="unset-quota"></a></p>
+<h4 data-bai-block="681" id="admin_menu-クォータの解除">クォータの解除<a class="hash-link" href="#admin_menu-クォータの解除" aria-label="Direct link to クォータの解除">#</a></h4>
+<p data-bai-block="682">クォータを解除する機能も提供しています。クォータ設定を削除すると、クォータは自動的に
+ユーザーまたはプロジェクトのデフォルトクォータに従う点にご注意ください。デフォルトは
+WebUIでは設定できません。デフォルトクォータ設定を変更したい場合は、管理者専用の
+ページにアクセスする必要があります。可用量範囲ID列の<code>Unset</code>ボタンをクリックすると、
+現在のクォータ設定を本当に削除するかどうかを確認する小さなスナックバーメッセージが
+表示されます。スナックバーメッセージで<strong>確認</strong>ボタンをクリックすると、クォータ設定が削除され、
+クォータタイプ（ユーザー/プロジェクト）に応じて対応するクォータに自動的にリセットされます。</p>
+<p><figure data-bai-block="683" class="doc-figure"><img src="./images/unset_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1750" height="434" /><figcaption>図 24.87</figcaption></figure>
+</p>
+<!-- TODO: Re-capture unset_quota.png — needs update. -->
+
+<div class="admonition admonition-note">
+<div data-bai-block="684" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="685">ユーザー/プロジェクトごとの設定がない場合は、ユーザー/プロジェクトリソースポリシーの
+対応する値がデフォルト値として設定されます。例えば、クォータのハードリミット値が
+設定されていない場合、リソースポリシーの<code>max_vfolder_size</code>値がデフォルト値として
+使用されます。</p>
+</div></div>
+
+
+<p><a id="system-settings"></a></p>
+<h2 data-bai-block="686" id="admin_menu-システム設定">システム設定<a class="hash-link" href="#admin_menu-システム設定" aria-label="Direct link to システム設定">#</a></h2>
+<p data-bai-block="687">構成ページでBackend.AIサーバーの主要な設定を確認できます。現在、設定を変更および
+一覧表示できる複数のコントロールが提供されています。</p>
+<p data-bai-block="688"><code>Digest</code>、<code>Tag</code>、<code>None</code>のオプションから1つを選択することで、イメージの自動インストールと
+更新ルールを変更できます。<code>Digest</code>はイメージのチェックサムの一種で、イメージの整合性を
+検証し、重複するレイヤーを再利用することで、イメージのダウンロード効率を向上させます。
+<code>Tag</code>はイメージの整合性を保証しないため、開発用のオプションのみとなります。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="689" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="690">各ルールの意味を完全に理解していない場合は、ルールの選択を変更しないでください。</p>
+</div></div>
+
+
+<p><figure data-bai-block="691" class="doc-figure"><img src="./images/system_setting_about_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1718" height="700" /><figcaption>図 24.88</figcaption></figure>
+</p>
+<p data-bai-block="692">構成ページでは、プラグインとエンタープライズ機能のステータスも表示されます：</p>
+<p data-bai-block="693"><strong>プラグイン：</strong></p>
+<ul>
+<li data-bai-block="694"><strong>オープンソース CUDA GPU サポート</strong>: CUDA GPUサポートのステータス。</li>
+<li data-bai-block="695"><strong>ROCm GPU サポート</strong>: ROCm GPUサポートのステータス。</li>
+</ul>
+<p data-bai-block="696"><strong>エンタープライズ機能：</strong></p>
+<ul>
+<li data-bai-block="697"><strong>フラクショナルGPU</strong>: セッション間でGPUを共有するためのフラクショナルGPU (fGPU) 仮想化。</li>
+</ul>
+<p data-bai-block="698">Backend.AIは、複数のベンダーにわたる幅広いAIアクセラレータをサポートしています：</p>
+<ul>
+<li data-bai-block="699"><strong>NVIDIA</strong><ul>
+<li data-bai-block="700">Spark (GB10)</li>
+<li data-bai-block="701">Blackwell (B300、B200、RTX PRO 6000など)</li>
+<li data-bai-block="702">Hopper (H200、H100 NVLなど)</li>
+<li data-bai-block="703">Grace Superchip (GB300、GB200、GH200など)</li>
+<li data-bai-block="704">Turing (Titan RTX、RTX 8000、T4)</li>
+<li data-bai-block="705">Ampere (A100、A40、A10など)</li>
+<li data-bai-block="706">Ada Lovelace (L40S、L4)</li>
+<li data-bai-block="707">Jetson (TX、Xavier、Orin、Thorなど)</li>
+</ul>
+</li>
+<li data-bai-block="708"><strong>Intel</strong><ul>
+<li data-bai-block="709">Gaudi 3</li>
+<li data-bai-block="710">Gaudi 2</li>
+<li data-bai-block="711">Gaudi 1</li>
+<li data-bai-block="712">Arc</li>
+</ul>
+</li>
+<li data-bai-block="713"><strong>AMD</strong><ul>
+<li data-bai-block="714">Instinct MIシリーズ (MI300Xを含む)</li>
+<li data-bai-block="715">MI300A</li>
+<li data-bai-block="716">MI250</li>
+</ul>
+</li>
+<li data-bai-block="717"><strong>Rebellions</strong><ul>
+<li data-bai-block="718">ATOM Max</li>
+<li data-bai-block="719">ATOM+</li>
+<li data-bai-block="720">REBEL</li>
+</ul>
+</li>
+<li data-bai-block="721"><strong>FuriosaAI</strong><ul>
+<li data-bai-block="722">RNGD</li>
+</ul>
+</li>
+<li data-bai-block="723"><strong>Tenstorrent</strong><ul>
+<li data-bai-block="724">Wormhole n150s</li>
+<li data-bai-block="725">Wormhole n300s</li>
+</ul>
+</li>
+<li data-bai-block="726"><strong>Google</strong><ul>
+<li data-bai-block="727">TPU v7 (Ironwood)</li>
+<li data-bai-block="728">Coral TPU v5p</li>
+<li data-bai-block="729">Coral TPU v5e</li>
+<li data-bai-block="730">TPU v4</li>
+</ul>
+</li>
+<li data-bai-block="731"><strong>Graphcore</strong><ul>
+<li data-bai-block="732">C600 IPU</li>
+<li data-bai-block="733">Bow IPU</li>
+</ul>
+</li>
+<li data-bai-block="734"><strong>HyperAccel</strong><ul>
+<li data-bai-block="735">LPU</li>
+</ul>
+</li>
+<li data-bai-block="736"><strong>Groq</strong><ul>
+<li data-bai-block="737">LPU</li>
+</ul>
+</li>
+<li data-bai-block="738"><strong>Cerebras</strong><ul>
+<li data-bai-block="739">WSE-3</li>
+</ul>
+</li>
+</ul>
+<p><figure data-bai-block="740" class="doc-figure"><img src="./images/system_setting_about_scaling_plugins.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2600" height="1440" /><figcaption>図 24.89</figcaption></figure>
+</p>
+<p data-bai-block="741">ユーザーがマルチノードクラスターセッションを起動すると、
+Backend.AIはプライベートなノード間通信をサポートするためにオーバーレイネットワークを
+動的に作成します。管理者は、MTU（Maximum Transmission Unit）の値がネットワーク速度の
+向上に確実に寄与する場合、オーバーレイネットワークのMTU値を設定できます。</p>
+<p><figure data-bai-block="742" class="doc-figure"><img src="./images/overlay_network_setting_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="654" height="504" /><figcaption>図 24.90</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="743" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="744">Backend.AIクラスターセッションの詳細については、
+<a href="./cluster_session.html#backendai-cluster-compute-session">Backend.AIクラスターコンピュートセッション</a>
+セクションを参照してください。</p>
+</div></div>
+
+
+<p data-bai-block="745">スケジューラーの設定ボタンをクリックすると、ジョブスケジューラごとの構成を編集できます。
+スケジューラ設定の値は、各<a href="#scheduling-methods">リソースグループ</a>にスケジューラ設定が
+ない場合に使用されるデフォルト値です。リソースグループ固有の設定がある場合、この値は
+無視されます。</p>
+<p data-bai-block="746">現在サポートされているスケジューリング方式は、<code>FIFO</code>、<code>LIFO</code>、<code>DRF</code>です。各スケジューリング
+方式は、上記の<a href="#scheduling-methods">スケジューリング方式</a>と同じです。スケジューラ
+オプションにはセッション作成再試行が含まれます。セッション作成再試行とは、セッション
+作成に失敗した場合の再試行回数を指します。試行回数内にセッションを作成できない場合、
+リクエストは無視され、Backend.AIは次のリクエストを処理します。現在、変更が可能なのは
+スケジューラがFIFOの場合のみです。</p>
+<p><figure data-bai-block="747" class="doc-figure"><img src="./images/system_setting_dialog_scheduler_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="716" height="768" /><figcaption>図 24.91</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="748" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="749">今後も、より広範な設定コントロールを追加していきます。</p>
+</div></div>
+
+
+<div class="admonition admonition-note">
+<div data-bai-block="750" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="751">システム設定はデフォルト設定です。リソースグループに特定の値がある場合、システム設定で
+構成された値はそれによって上書きされます。</p>
+</div></div>
+
+
+<p><a id="server-management"></a></p>
+<h2 data-bai-block="752" id="admin_menu-サーバー管理">サーバー管理<a class="hash-link" href="#admin_menu-サーバー管理" aria-label="Direct link to サーバー管理">#</a></h2>
+<p data-bai-block="753">補修(メンテナンス)ページに移動すると、目的別にまとめられたサーバー管理項目が表示されます。ページ上部の検索バーで
+目的の項目を素早く絞り込めます。</p>
+<p><figure data-bai-block="754" class="doc-figure"><img src="./images/maintenance_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.92</figcaption></figure>
+</p>
+<p data-bai-block="755"><strong>修正</strong></p>
+<ul>
+<li data-bai-block="756"><strong>使用状況データベースを現在の状態と照合する</strong>: ネットワーク接続が不安定な場合やDockerデーモンのコンテナ管理に
+問題がある場合、Backend.AIが占有しているリソースとコンテナが実際に使用しているリソースが
+一致しないことがあります。その場合、<strong>使用量を再計算する</strong> をクリックすることで、
+リソースの占有状況を手動で修正できます。</li>
+</ul>
+<p data-bai-block="757"><strong>画像/環境</strong></p>
+<ul>
+<li data-bai-block="758"><strong>リポジトリから画像リストを再スキャンします</strong>: <strong>画像を再スキャンする</strong> をクリックすると、登録されているすべての
+Dockerレジストリからイメージのメタ情報を更新します。Backend.AIに接続されたDockerレジストリに新しいイメージが
+プッシュされた場合に使用できます。スキャンには時間がかかる場合があり、進行状況は通知領域に表示されます。</li>
+</ul>
+<p data-bai-block="759"><strong>お知らせ</strong></p>
+<ul>
+<li data-bai-block="760"><strong>システムのお知らせ</strong>: <strong>発表を編集</strong> をクリックすると、すべてのユーザーにすべてのページの上部で表示されるお知らせ
+バナーを作成または変更できます。下記の<a href="#system-announcement">システムのお知らせ</a>セクションを参照してください。</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="761" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="762">未使用のイメージの削除や定期メンテナンススケジュールの登録など、管理に必要な
+その他の設定も継続的に追加していきます。</p>
+</div></div>
+
+
+<p><a id="system-announcement"></a></p>
+<h3 data-bai-block="763" id="admin_menu-システムのお知らせ">システムのお知らせ<a class="hash-link" href="#admin_menu-システムのお知らせ" aria-label="Direct link to システムのお知らせ">#</a></h3>
+<p data-bai-block="764">スーパー管理者は、予定されているメンテナンスの案内などの短いメッセージを、すべてのユーザーにすべてのページの上部の
+バナーとして表示できます。お知らせはマークダウンで記述し、これまでに公開したものがあるかどうかにかかわらず、すべて
+WebUI から管理できます。</p>
+<p data-bai-block="765">エディターは次の2つの方法で開けます。</p>
+<ul>
+<li data-bai-block="766">補修ページの <strong>システムのお知らせ</strong> 行にある <strong>発表を編集</strong> をクリックします。お知らせがまだない場合でも利用できる
+ため、最初のお知らせを公開するときはこの方法を使います。</li>
+<li data-bai-block="767">すでに公開済みのお知らせがある場合は、お知らせバナーから直接開きます。バナーはすべてのページの上部に表示されるため、
+スーパー管理者は WebUI のどの画面からでもエディターを開けます。</li>
+</ul>
+<p><figure data-bai-block="768" class="doc-figure"><img src="./images/announcement_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2592" height="1696" /><figcaption>図 24.93</figcaption></figure>
+</p>
+<p data-bai-block="769"><strong>発表を編集</strong> ダイアログは2つの領域に分かれています。</p>
+<ul>
+<li data-bai-block="770"><strong>メッセージ</strong>: 書式ツールバー付きのマークダウンエディターです。ツールバーでは見出し（H1〜H3）、太字、斜体、
+取り消し線、引用、コード、リンク、画像、箇条書きリスト、番号付きリストを利用できます。各ボタンは現在の選択範囲に
+適用され、選択範囲がない場合はそのまま上書き入力できるプレースホルダーを挿入します。</li>
+<li data-bai-block="771"><strong>プレビュー</strong>: ユーザーに見えるとおりにメッセージをリアルタイムで表示します。</li>
+</ul>
+<p data-bai-block="772">フッターには3つの操作があります。</p>
+<ul>
+<li data-bai-block="773"><strong>公開</strong>: メッセージを保存し、すべてのユーザーにバナーを表示します。メッセージが空のままではお知らせを有効に
+できないため、ボタンは無効のままです。</li>
+<li data-bai-block="774"><strong>キャンセル</strong>: 保存せずにダイアログを閉じます。</li>
+<li data-bai-block="775"><strong>削除</strong>: 公開中のお知らせを削除し、すべてのユーザーからバナーを消します。先に確認ダイアログが表示されます。
+公開中のお知らせがない場合、この操作は利用できません。</li>
+</ul>
+<p><a id="detailed-information"></a></p>
+<h2 data-bai-block="776" id="admin_menu-詳細情報">詳細情報<a class="hash-link" href="#admin_menu-詳細情報" aria-label="Direct link to 詳細情報">#</a></h2>
+<p data-bai-block="777">情報ページでは、各機能のいくつかの詳細情報およびステータスを確認できます。
+Managerのバージョンおよび API のバージョンを確認するには、Coreパネルをチェックします。
+Backend.AIの各コンポーネントに互換性があるかどうかを確認するには、Componentパネルを
+チェックします。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="778" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="779">このページは現在の情報を表示する専用のページです。</p>
+</div></div>
+
+
+<p><figure data-bai-block="780" class="doc-figure"><img src="./images/information_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.94</figcaption></figure>
+</p>
+<p><a id="manage-projects"></a></p>
+<h2 data-bai-block="781" id="admin_menu-プロジェクト管理">プロジェクト管理<a class="hash-link" href="#admin_menu-プロジェクト管理" aria-label="Direct link to プロジェクト管理">#</a></h2>
+<p data-bai-block="782">スーパー管理者はプロジェクトページでクラスター内のすべてのプロジェクトを確認し、作成、編集、無効化、有効化、
+完全削除を行えます。各行には、プロジェクト管理者権限を付与するためのショートカットもあります。</p>
+<p><a id="set-project-admin"></a></p>
+<h3 data-bai-block="783" id="admin_menu-プロジェクト管理者を設定する">プロジェクト管理者を設定する<a class="hash-link" href="#admin_menu-プロジェクト管理者を設定する" aria-label="Direct link to プロジェクト管理者を設定する">#</a></h3>
+<p data-bai-block="784">RBAC管理ページでプロジェクトのロールを探さなくても、プロジェクト一覧から直接そのプロジェクトの管理者を管理できます。</p>
+<ol>
+<li data-bai-block="785">プロジェクト一覧で対象のプロジェクトを見つけます。</li>
+<li data-bai-block="786">行の <strong>プロジェクト管理者を設定</strong>（盾）アクションをクリックします。モデルストアのプロジェクトではこのアクションは
+利用できません。</li>
+<li data-bai-block="787"><strong>プロジェクト管理者を設定</strong> ダイアログが開きます。</li>
+</ol>
+<p><figure data-bai-block="788" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="968" /><figcaption>図 24.95</figcaption></figure>
+</p>
+<p data-bai-block="789">ダイアログは次の要素で構成されます。</p>
+<ul>
+<li data-bai-block="790">プロジェクト管理者権限を付与すると、そのプロジェクトがユーザーの許可されたプロジェクトリストに自動的に追加され、
+以降そのユーザーがそのプロジェクトにアクセスできるようになる旨の情報アラート。</li>
+<li data-bai-block="791">1人以上のアカウントを選べる <strong>ユーザーを検索して選択</strong> フィールドと、選択したユーザーにプロジェクト管理者権限を
+付与する <strong>追加</strong> ボタン。</li>
+<li data-bai-block="792">現在この権限を持つユーザーの一覧テーブル。各ユーザーのメールアドレスとIDが表示され、行末に
+<strong>管理者権限を無効化</strong> アクションがあります。</li>
+</ul>
+<p data-bai-block="793">変更のたびにダイアログが閉じることはないため、複数のユーザーに対してまとめて付与・解除できます。一部だけ成功した
+場合は、失敗したユーザーごとにエラーが報告されます。</p>
+<div class="admonition admonition-warning">
+<div data-bai-block="794" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div class="admonition-content">
+
+<p data-bai-block="795">プロジェクト管理者権限を解除しても、そのプロジェクトはユーザーの許可されたプロジェクトリストから
+<strong>自動的には削除されません</strong>。プロジェクトへのアクセスも取り消すには、リストから手動で削除してください。
+<a href="#create-and-update-users">ユーザー一覧の参照と管理</a>セクションを参照してください。</p>
+</div></div>
+
+
+<p data-bai-block="796">このショートカットの背後にあるロールと権限のモデル、およびRBAC管理ページでの同等の手順については、
+<a href="./rbac_management.html#grant-project-admin">プロジェクト管理者権限の付与</a>セクションを参照してください。</p>
+<h2 data-bai-block="797" id="admin_menu-rbac管理">RBAC管理<a class="hash-link" href="#admin_menu-rbac管理" aria-label="Direct link to RBAC管理">#</a></h2>
+<p data-bai-block="798">RBAC（ロールベースアクセス制御）管理では、スーパー管理者がきめ細かい権限を持つロールを定義し、ユーザーに割り当てることができます。Backend.AIシステム全体で特定のユーザーがさまざまなリソースに対して実行できる操作を制御できます。</p>
+<p data-bai-block="799">ロール、権限、ユーザー割り当ての管理の詳細については、<a href="./rbac_management.html#rbac-management">RBAC管理</a>ページを参照してください。</p>
+<p><a id="diagnostics"></a></p>
+<h2 data-bai-block="800" id="admin_menu-診断">診断<a class="hash-link" href="#admin_menu-診断" aria-label="Direct link to 診断">#</a></h2>
+<p data-bai-block="801">スーパー管理者は、管理者サイドバーから <strong>診断</strong> ページを開いて、WebUI デプロイメントに対する自動状態チェックを実行できます。このページはブラウザーとサーバー間の構成を評価し、誤った設定を報告することで、接続またはセキュリティの問題がユーザーに影響を与える前に把握できるようにします。</p>
+<p><figure data-bai-block="802" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>図 24.96</figcaption></figure>
+</p>
+<p data-bai-block="803">ページ上部のツールバーには、次のコントロールがあります。</p>
+<ul>
+<li data-bai-block="804"><strong>失敗した項目のみ表示</strong>: 成功したチェックをすべて非表示にし、警告またはエラーがあるセクションのみを表示するトグルです。</li>
+<li data-bai-block="805"><code>診断を再実行</code>: すべてのチェックを再評価し、結果を更新します。</li>
+<li data-bai-block="806"><code>CSVエクスポート</code>: アクションドロップダウンメニューから利用でき、すべての診断結果を <code>diagnostics-YYYY-MM-DD.csv</code> ファイルにエクスポートします。</li>
+</ul>
+<div class="admonition admonition-tip">
+<div data-bai-block="807" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
+<div class="admonition-content">
+
+<p data-bai-block="808">エクスポートされた CSV ファイルのファイル先頭には UTF-8 BOM（バイト順マーク）が含まれています。これにより、UTF-8 以外のシステム（例：CP949 を使用する韓国語 Windows）の Microsoft Excel でも文字コードが正しく認識され、マルチバイト文字が文字化けせずに表示されます。</p>
+</div></div>
+
+
+<p data-bai-block="809">診断は次の折りたたみ可能なセクションで構成され、各セクションは個々のチェック結果を合格、警告、重大の重要度で表示します。</p>
+<ul>
+<li data-bai-block="810"><strong>コンテンツセキュリティポリシー</strong>: アプリケーションが必要なリソースにアクセスできるよう、コンテンツセキュリティポリシーヘッダー（<code>connect-src</code>、<code>frame-src</code>、<code>script-src</code>、<code>style-src</code> など）を確認します。</li>
+<li data-bai-block="811"><strong>ストレージプロキシ</strong>: ストレージボリュームの一覧と、ストレージプロキシの到達可能性および使用状況の指標をチェックします。</li>
+<li data-bai-block="812"><strong>エンドポイント接続</strong>: API エンドポイントに到達可能か、接続を確立できるかを検証します。</li>
+<li data-bai-block="813"><strong>Webサーバー設定</strong>: URL の形式、SSL/プロトコルの整合性、接続モードなど、<code>config.toml</code> の設定を検証します。</li>
+</ul>
+<p data-bai-block="814"><strong>失敗した項目のみ表示</strong> をオンにした状態ですべてのチェックに合格すると、画面が空白になることはありません。
+<code>失敗した項目はありません。すべての診断に合格しました。</code> というプレースホルダーが表示され、結果が正常であることが
+はっきりわかります。</p>
+<p><figure data-bai-block="815" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.97</figcaption></figure>
+</p>
+<div class="admonition admonition-tip">
+<div data-bai-block="816" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
+<div class="admonition-content">
+
+<p data-bai-block="817">接続の問題をトラブルシューティングする際は、まず <strong>失敗した項目のみ表示</strong> をオンにして <code>診断を再実行</code> を実行してください。対応が必要なチェックだけを素早く確認できます。</p>
+</div></div>
+
+
+<p><a id="branding"></a></p>
+<h2 data-bai-block="818" id="admin_menu-ブランディング">ブランディング<a class="hash-link" href="#admin_menu-ブランディング" aria-label="Direct link to ブランディング">#</a></h2>
+<p data-bai-block="819"><strong>ブランディング</strong> ページでは、スーパー管理者が組織のコーポレートアイデンティティに合わせて、WebUI の視覚的要素（色、ロゴ、フォント）をカスタマイズできます。管理者サイドバーからアクセスできます。</p>
+<p><figure data-bai-block="820" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>図 24.98</figcaption></figure>
+</p>
+<div class="admonition admonition-warning">
+<div data-bai-block="821" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div class="admonition-content">
+
+<p data-bai-block="822">変更したテーマは、このページから即座に適用することはできません。カスタマイズしたテーマを適用するには、設定を JSON ファイルとしてエクスポートし、サポートチームに提供してください。</p>
+</div></div>
+
+
+<p data-bai-block="823">ツールバーには次の機能があります。</p>
+<ul>
+<li data-bai-block="824"><code>プレビュー</code>: 現在のテーマ変更をプレビューする新しいウィンドウを開きます。</li>
+<li data-bai-block="825"><code>JSON設定</code>: テーマ構成を JSON として直接編集し、エクスポートできるモーダルを開きます。</li>
+<li data-bai-block="826">すべてのブランディング設定を既定値に戻すリセットコントロール。</li>
+<li data-bai-block="827">設定を絞り込む検索バー。</li>
+</ul>
+<p data-bai-block="828">設定は次のグループに分かれています。</p>
+<ul>
+<li data-bai-block="829"><strong>テーマ</strong>: 主要色、ヘッダー背景色、リンク色、情報色、エラー色、成功色、テキスト色のカラーピッカーです。各色はライトモードとダークモードで個別に設定し、リセットできます。</li>
+<li data-bai-block="830"><strong>CIロゴ</strong>: ライトモードとダークモードのメインサイドバーロゴ、折りたたみ時のサイドバーロゴをアップロードし、表示サイズを設定します。</li>
+<li data-bai-block="831"><strong>詳細ロゴ CI</strong>: ログインページと About モーダルに表示されるロゴを、ライト/ダークモードごとにアップロードし、サイズを設定します。</li>
+<li data-bai-block="832"><strong>フォント</strong>: インターフェイス全体で使用されるフォントファミリーを選択します。</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="833" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="834">画像をアップロードしたり色を変更したりした後は、<code>プレビュー</code> で結果を確認してください。変更は稼働中のサービスに自動的には適用されないため、JSON 設定をエクスポートしてサポートチームに問い合わせて展開する必要があります。</p>
+</div></div>
+
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
+  <span class="last-updated">最終更新日 2026年9月8日</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">
+        <div class="pagination-nav__sublabel">前へ</div>
+        <div class="pagination-nav__label">&laquo; 統計</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./trouble_shooting.html">
+        <div class="pagination-nav__sublabel">次へ</div>
+        <div class="pagination-nav__label">FAQ＆トラブルシューティング &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">このページの目次</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E4%B8%80%E8%A6%A7%E3%81%AE%E5%8F%82%E7%85%A7%E3%81%A8%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-ユーザー一覧の参照と管理">ユーザー一覧の参照と管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E4%B8%80%E6%8B%AC%E4%BD%9C%E6%88%90" data-toc-target="admin_menu-ユーザー一括作成">ユーザー一括作成</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-csv%E3%81%8B%E3%82%89%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%92%E4%B8%80%E6%8B%AC%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B" data-toc-target="admin_menu-csvからユーザーを一括作成する">CSVからユーザーを一括作成する</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%81%AE%E4%B8%80%E6%8B%AC%E7%B7%A8%E9%9B%86" data-toc-target="admin_menu-ユーザーの一括編集">ユーザーの一括編集</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%A2%E3%82%AB%E3%82%A6%E3%83%B3%E3%83%88%E3%81%AE%E7%84%A1%E5%8A%B9%E5%8C%96" data-toc-target="admin_menu-ユーザーアカウントの無効化">ユーザーアカウントの無効化</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E9%9D%9E%E3%82%A2%E3%82%AF%E3%83%86%E3%82%A3%E3%83%96%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%81%AE%E5%AE%8C%E5%85%A8%E5%89%8A%E9%99%A4" data-toc-target="admin_menu-非アクティブユーザーの完全削除">非アクティブユーザーの完全削除</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%81%AE%E3%82%AD%E3%83%BC%E3%83%9A%E3%82%A2%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-ユーザーのキーペア管理">ユーザーのキーペア管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E8%A4%87%E6%95%B0%E3%81%AE%E8%B3%87%E6%A0%BC%E6%83%85%E5%A0%B1%E3%82%92%E4%B8%80%E6%8B%AC%E3%81%A7%E6%9C%89%E5%8A%B9%E5%8C%96%E7%84%A1%E5%8A%B9%E5%8C%96%E3%81%99%E3%82%8B" data-toc-target="admin_menu-複数の資格情報を一括で有効化無効化する">複数の資格情報を一括で有効化・無効化する</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E8%B3%87%E6%A0%BC%E6%83%85%E5%A0%B1%E3%81%AE%E4%BD%9C%E6%88%90" data-toc-target="admin_menu-資格情報の作成">資格情報の作成</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%83%A1%E3%83%B3%E3%83%90%E3%83%BC%E3%81%A8%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%82%92%E5%85%B1%E6%9C%89%E3%81%99%E3%82%8B" data-toc-target="admin_menu-プロジェクトメンバーとプロジェクトストレージフォルダを共有する">プロジェクトメンバーとプロジェクトストレージフォルダを共有する</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%A2%E3%83%87%E3%83%AB%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4" data-toc-target="admin_menu-モデルデプロイ">モデルデプロイ</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E7%AE%A1%E7%90%86%E8%80%85%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%83%9A%E3%83%BC%E3%82%B8" data-toc-target="admin_menu-管理者デプロイページ">管理者デプロイページ</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E7%AE%A1%E7%90%86%E8%80%85%E3%83%A2%E3%83%87%E3%83%AB%E3%82%B9%E3%83%88%E3%82%A2%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-管理者モデルストア管理">管理者モデルストア管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-prometheus-%E3%82%AF%E3%82%A8%E3%83%AA%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88" data-toc-target="admin_menu-prometheus-クエリプリセット">Prometheus クエリプリセット</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E4%B8%80%E8%A6%A7%E3%81%A8%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF" data-toc-target="admin_menu-一覧とフィルタ">一覧とフィルタ</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E5%88%97%E8%A8%AD%E5%AE%9A%E3%81%AE%E4%BF%9D%E6%8C%81" data-toc-target="admin_menu-列設定の保持">列設定の保持</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E3%82%92%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B" data-toc-target="admin_menu-プリセットを作成する">プリセットを作成する</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E3%82%92%E7%B7%A8%E9%9B%86%E3%81%99%E3%82%8B" data-toc-target="admin_menu-プリセットを編集する">プリセットを編集する</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E3%82%92%E5%89%8A%E9%99%A4%E3%81%99%E3%82%8B" data-toc-target="admin_menu-プリセットを削除する">プリセットを削除する</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%83%A1%E3%83%B3%E3%83%88%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88" data-toc-target="admin_menu-デプロイメントプリセット">デプロイメントプリセット</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%83%A1%E3%83%B3%E3%83%88%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E3%81%A8%E3%81%AF" data-toc-target="admin_menu-デプロイメントプリセットとは">デプロイメントプリセットとは</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%83%A1%E3%83%B3%E3%83%88%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E3%81%AE%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-デプロイメントプリセットの管理">デプロイメントプリセットの管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%81%99%E3%82%8B%E9%9A%9B%E3%81%AB%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E3%82%92%E4%BD%BF%E3%81%86" data-toc-target="admin_menu-モデルをデプロイする際にプリセットを使う">モデルをデプロイする際にプリセットを使う</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%83%9D%E3%83%AA%E3%82%B7%E3%83%BC%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-リソースポリシー管理">リソースポリシー管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%9A%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E7%B5%B1%E5%90%88%E3%83%93%E3%83%A5%E3%83%BC" data-toc-target="admin_menu-ペンディングセッションの統合ビュー">ペンディングセッションの統合ビュー</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%95%E3%82%A7%E3%82%A2%E3%82%B7%E3%82%A7%E3%82%A2%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%A9" data-toc-target="admin_menu-フェアシェアスケジューラ">フェアシェアスケジューラ</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97" data-toc-target="admin_menu-リソースグループ">リソースグループ</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%81%AE%E3%83%95%E3%82%A7%E3%82%A2%E3%82%B7%E3%82%A7%E3%82%A2%E8%A8%AD%E5%AE%9A" data-toc-target="admin_menu-リソースグループのフェアシェア設定">リソースグループのフェアシェア設定</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%89%E3%83%A1%E3%82%A4%E3%83%B3" data-toc-target="admin_menu-ドメイン">ドメイン</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88" data-toc-target="admin_menu-プロジェクト">プロジェクト</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC" data-toc-target="admin_menu-ユーザー">ユーザー</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%95%E3%82%A7%E3%82%A2%E3%82%B7%E3%82%A7%E3%82%A2%E9%87%8D%E3%81%BF%E3%81%AE%E7%B7%A8%E9%9B%86" data-toc-target="admin_menu-フェアシェア重みの編集">フェアシェア重みの編集</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E5%88%A9%E7%94%A8%E5%B1%A5%E6%AD%B4%E3%81%AE%E8%A1%A8%E7%A4%BA" data-toc-target="admin_menu-利用履歴の表示">利用履歴の表示</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%82%A4%E3%83%A1%E3%83%BC%E3%82%B8%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-イメージ管理">イメージ管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-docker%E3%83%AC%E3%82%B8%E3%82%B9%E3%83%88%E3%83%AA%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-dockerレジストリ管理">Dockerレジストリ管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-gitlab-container-registry%E8%A8%AD%E5%AE%9A" data-toc-target="admin_menu-gitlab-container-registry設定">GitLab Container Registry設定</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E3%81%AE%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-リソースプリセットの管理">リソースプリセットの管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%82%A8%E3%83%BC%E3%82%B8%E3%82%A7%E3%83%B3%E3%83%88%E3%83%8E%E3%83%BC%E3%83%89%E3%81%AE%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-エージェントノードの管理">エージェントノードの管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%81%AE%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-リソースグループの管理">リソースグループの管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E8%A4%87%E6%95%B0%E3%81%AE%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%82%92%E3%81%BE%E3%81%A8%E3%82%81%E3%81%A6%E7%B7%A8%E9%9B%86%E3%81%99%E3%82%8B" data-toc-target="admin_menu-複数のリソースグループをまとめて編集する">複数のリソースグループをまとめて編集する</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%82%B9%E3%83%88%E3%83%AC%E3%83%BC%E3%82%B8" data-toc-target="admin_menu-ストレージ">ストレージ</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E8%A8%AD%E5%AE%9A" data-toc-target="admin_menu-システム設定">システム設定</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-サーバー管理">サーバー管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%AE%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B" data-toc-target="admin_menu-システムのお知らせ">システムのお知らせ</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E8%A9%B3%E7%B4%B0%E6%83%85%E5%A0%B1" data-toc-target="admin_menu-詳細情報">詳細情報</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-プロジェクト管理">プロジェクト管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#admin_menu-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E7%AE%A1%E7%90%86%E8%80%85%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B" data-toc-target="admin_menu-プロジェクト管理者を設定する">プロジェクト管理者を設定する</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-rbac%E7%AE%A1%E7%90%86" data-toc-target="admin_menu-rbac管理">RBAC管理</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E8%A8%BA%E6%96%AD" data-toc-target="admin_menu-診断">診断</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#admin_menu-%E3%83%96%E3%83%A9%E3%83%B3%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0" data-toc-target="admin_menu-ブランディング">ブランディング</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">ヘルプ</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>このページを編集</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="ドキュメント検索..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="ドキュメント検索..." data-no-results="結果が見つかりません" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>

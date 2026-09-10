@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>채팅 - Backend.AI WebUI User Guide - 한국어</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다." />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/ko/chat.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="채팅" />
+  <meta property="og:description" content="채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다." />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/ko/chat.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="ko" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="채팅" />
+  <meta name="twitter:description" content="채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다." />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"채팅","inLanguage":"ko","description":"채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다.","dateModified":"2026-09-08T02:16:57.000Z","url":"https://webui.docs.backend.ai/next/ko/chat.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/chat.html" />
+  <link rel="alternate" hreflang="en" href="../en/chat.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/chat.html" />
+  <link rel="alternate" hreflang="th" href="../th/chat.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/chat.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="chat"></script>
+</head>
+<body data-copy-label="복사" data-copied-label="복사됨!" data-copy-failed-label="복사 실패">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (04d17e4)">v26.9.0-alpha.0 (04d17e4)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">문서 검색...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="문서 검색..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/chat.html" lang="ko" selected>한국어</option><option value="../en/chat.html" lang="en">English</option><option value="../ja/chat.html" lang="ja">日本語</option><option value="../th/chat.html" lang="th">ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">WebUI 다음 버전(Next)의 미발행 문서입니다.</span>
+    <span class="docs-banner__desc">최신 문서는 <a class="docs-banner__link" href="../../26.8/ko/index.html">최신 버전(26.8)</a>에서 확인하세요.</span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">버전</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="ko"
+      data-slug="chat"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">이전 버전</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">소개</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">시작하기</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="시작하기">
+    <li><a href="./quickstart.html">1. 빠른 시작</a></li>
+<li><a href="./disclaimer.html">2. 면책 조항</a></li>
+<li><a href="./overview.html">3. 개요</a></li>
+<li><a href="./installation.html">4. 설치</a></li>
+<li><a href="./login.html">5. 로그인</a></li>
+<li><a href="./header.html">6. 상단 바</a></li>
+<li><a href="./start.html">7. 시작 페이지</a></li>
+<li><a href="./dashboard.html">8. 대시보드</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">워크로드</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="워크로드">
+    <li><a href="./session_page.html">9. 세션 페이지</a></li>
+<li><a href="./sessions_all.html">10. 연산 세션</a></li>
+<li><a href="./cluster_session.html">11. 클러스터 세션</a></li>
+<li><a href="./deployment.html">12. 배포</a></li>
+<li><a href="./chat.html" class="active" aria-current="page">13. 채팅</a></li>
+<li><a href="./my_environments.html">14. 내 환경</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">스토리지 및 데이터</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="스토리지-및-데이터">
+    <li><a href="./vfolder.html">15. 스토리지 폴더</a></li>
+<li><a href="./mount_vfolder.html">16. 스토리지 폴더 마운트</a></li>
+<li><a href="./share_vfolder.html">17. 스토리지 폴더 공유</a></li>
+<li><a href="./sftp_to_container.html">18. 연산 세션에 대한 SFTP 연결</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">관리</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="관리">
+    <li><a href="./user_settings.html">19. 사용자 설정</a></li>
+<li><a href="./project_admin.html">20. 프로젝트 관리자 기능</a></li>
+<li><a href="./rbac_management.html">21. RBAC 관리</a></li>
+<li><a href="./agent_summary.html">22. 에이전트 요약</a></li>
+<li><a href="./statistics.html">23. 통계</a></li>
+<li><a href="./admin_menu.html">24. 관리자 기능</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">참고 자료</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="참고-자료">
+    <li><a href="./trouble_shooting.html">25. FAQ 및 문제 해결</a></li>
+<li><a href="./appendix.html">26. 부록</a></li>
+<li><a href="./license_agreement.html">27. 사용권 계약 조건</a></li>
+<li><a href="./references.html">28. 참고 자료</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="이 페이지는 버전 {version}에 존재하지 않습니다. 해당 버전의 인덱스 페이지로 이동했습니다.">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="닫기" title="닫기">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">홈</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">워크로드</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">채팅</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-chat">
+<p><a id="chat-page"></a></p>
+<h1 data-bai-block="0" id="chat-채팅-페이지">채팅 페이지<a class="hash-link" href="#chat-채팅-페이지" aria-label="Direct link to 채팅 페이지">#</a></h1>
+<p data-bai-block="1">채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다.
+이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다.</p>
+<p><figure data-bai-block="2" class="doc-figure"><img src="./images/chat_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1440" height="900" /><figcaption>그림 13.1</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="3" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="4">채팅 페이지에 처음 방문하면 페이지 상단에 안내 배너가 표시됩니다:
+&quot;배포한 모델과 대화하기 — 배포에 정의된 LLM 모델과 OpenAI 호환 API로 대화할 수 있습니다.&quot;
+닫기 버튼을 클릭하여 배너를 닫을 수 있으며, 한번 닫은 후에는 다시 표시되지 않습니다.</p>
+</div></div>
+
+
+<p><a id="selecting-models"></a></p>
+<h2 data-bai-block="5" id="chat-모델-선택하기">모델 선택하기<a class="hash-link" href="#chat-모델-선택하기" aria-label="Direct link to 모델 선택하기">#</a></h2>
+<p data-bai-block="6">채팅 페이지의 각 채팅 카드 왼쪽 상단에서 배포(Deployment)와 모델을 선택할 수 있습니다.
+<strong>배포</strong> 선택란을 클릭하면 사용 가능한 배포 목록이 전체 배포 개수와 함께 표시됩니다.
+배포를 선택하면 모델 드롭다운 헤더가 &quot;{배포 이름}의 모델&quot;로 업데이트되어 해당 배포와 연결된 모델 목록이 표시됩니다.</p>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/chat_deployment_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="390" height="570" /><figcaption>그림 13.2</figcaption></figure>
+</p>
+<p data-bai-block="8"><strong>배포</strong> 선택란 옆의 정보 아이콘 버튼(<strong>배포 자세히 보기</strong>)을 클릭하면 선택한 배포의 상세 페이지가 열립니다. 배포가 선택되어 있지 않은 동안에는 이 버튼이 비활성화됩니다.
+선택한 배포가 현재 활성화된 프로젝트가 아닌 다른 프로젝트에 속해 있는 경우에는 상세 페이지를 열기 전에 **다른 프로젝트로 전환할까요?**라는 확인 대화상자가 먼저 표시됩니다.</p>
+<p><a id="deployments-listed-in-chat"></a></p>
+<h3 data-bai-block="9" id="chat-목록에-표시되는-배포">목록에 표시되는 배포<a class="hash-link" href="#chat-목록에-표시되는-배포" aria-label="Direct link to 목록에 표시되는 배포">#</a></h3>
+<p data-bai-block="10"><strong>배포</strong> 드롭다운에는 프로젝트의 모든 배포가 표시되지 않고, 지금 바로 응답할 수 있는 배포만 표시됩니다. 배포는 복제본 중 하나 이상이 실제로 트래픽을 처리하고 있을 때, 즉 복제본의 <strong>라이프사이클 상태</strong>가 <em>실행 중</em>이고 <strong>트래픽 상태</strong>가 <em>활성</em>일 때 목록에 표시됩니다. 두 상태는 서로 독립적인 축이므로 두 조건이 모두 충족되어야 합니다. <em>실행 중</em>인 복제본이라도 트래픽 대상에서 제외되어 있을 수 있고, <em>활성</em>으로 표시된 복제본이라도 더 이상 실행 중이 아닐 수 있기 때문입니다. 복제본의 상태 축에 대한 자세한 내용은 <a href="./deployment.html#model-serving">배포</a> 장을 참고하세요.</p>
+<p data-bai-block="11">목록 여부를 배포 단위가 아니라 복제본 단위로 판단하기 때문에, 새 리비전이 적용되는 중에도 배포는 계속 선택할 수 있습니다. 새 리비전을 적용하면 해당 추론 세션이 자원을 기다리는 등의 이유로 한동안 대기 상태에 머무를 수 있지만, 그동안 이전 리비전의 복제본이 계속 트래픽을 처리합니다. 따라서 해당 배포는 드롭다운에 그대로 남아 있으며, 아직 살아 있는 복제본과 계속 대화할 수 있습니다.</p>
+<p data-bai-block="12">아무것도 처리하지 않는 배포는 목록에 표시되지 않습니다. 예를 들어 중지된 배포나 목표 복제본 수가 0인 배포가 이에 해당합니다. 채팅 카드에 이미 선택되어 있는 배포는 목록에서 사라지더라도 선택된 상태와 이름이 그대로 유지되므로, 해당 카드가 어떤 배포를 가리키고 있는지 항상 확인할 수 있고 아래에 설명된 경고도 읽을 수 있습니다.</p>
+<p><a id="model-connection-settings"></a></p>
+<h3 data-bai-block="13" id="chat-모델-연결-설정">모델 연결 설정<a class="hash-link" href="#chat-모델-연결-설정" aria-label="Direct link to 모델 연결 설정">#</a></h3>
+<p data-bai-block="14">채팅 카드에 모델 목록이 아직 없는 경우, 메시지 영역 위에 설정 패널이 표시됩니다. 이는 배포에서 모델 목록을 가져오는 중일 때와 가져오기에 실패한 후 모두 해당됩니다.</p>
+<p><figure data-bai-block="15" class="doc-figure"><img src="./images/custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>그림 13.3</figcaption></figure>
+</p>
+<p data-bai-block="16">배포, 모델, 동기화 컨트롤이 있는 채팅 카드 헤더는 모델 목록을 기다리지 않고 곧바로 표시되므로, 가져오기가 진행 중인 동안에도 이 패널을 사용할 수 있습니다. 가져오는 동안에는 <strong>모델 정보 새로고침</strong> 버튼에 로딩 표시가 나타나고, <strong>기본 경로</strong>와 <strong>토큰</strong> 입력란 및 카드 하단의 메시지 입력란이 비활성화됩니다. 가져오기가 끝나면 모두 다시 사용할 수 있습니다. 응답하지 않는 배포는 일정 시간이 지나면 시간 초과되어 가져오기 실패로 처리되므로, 무한정 기다리지 않고 설정을 수정한 뒤 다시 시도할 수 있습니다.</p>
+<p><figure data-bai-block="17" class="doc-figure"><img src="./images/chat_model_loading.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>그림 13.4</figcaption></figure>
+</p>
+<p data-bai-block="18">이 패널에는 다음 경고가 표시될 수 있습니다.</p>
+<ul>
+<li data-bai-block="19"><strong>LLM 모델을 찾을 수 없음</strong> (경고): 배포의 엔드포인트에서 모델 목록을 가져오지 못했습니다. 패널에서 기본 경로나 토큰을 확인한 후 <strong>모델 정보 새로고침</strong> 버튼을 클릭하여 다시 시도하세요. 이 경고는 패널의 일부이므로 최초 가져오기가 진행되는 동안에도 함께 표시됩니다. <strong>모델 정보 새로고침</strong> 버튼의 로딩이 끝난 뒤에 조치하세요.</li>
+<li data-bai-block="20"><strong>목표 복제본 수가 0</strong> (경고): 선택한 배포의 목표 복제본 수가 0으로 설정되어 있어 응답할 수 없습니다. 배포 설정에서 목표 복제본 수를 1 이상으로 설정하세요.</li>
+</ul>
+<p data-bai-block="21">다음 알림이 채팅 카드에 표시될 수도 있습니다.</p>
+<ul>
+<li data-bai-block="22"><strong>엔드포인트 URL이 유효하지 않음</strong> (오류): 선택한 배포의 엔드포인트 URL을 확인할 수 없습니다. 배포가 올바르게 구성되어 있는지 확인하세요.</li>
+<li data-bai-block="23"><strong>스트리밍 오류</strong> (오류): 모델과의 통신 중 오류가 발생했습니다. 메시지에서 원인을 확인하고, 알림을 닫은 후 다시 시도하세요.</li>
+</ul>
+<p data-bai-block="24">사용자 정의 모델 설정에 필요한 입력 사항은 다음 설명을 참조하세요.</p>
+<ul>
+<li data-bai-block="25"><strong>기본 경로</strong> (선택 사항): 요청을 보낼 때 배포 엔드포인트 URL에 추가되는 경로입니다.
+버전 정보를 반드시 포함해야 합니다.
+예를 들어, OpenAI API를 사용하는 경우 <code>v1</code>을 입력합니다.</li>
+<li data-bai-block="26"><strong>토큰</strong> (선택 사항): 모델 서비스에 접근하기 위한 인증 키입니다. 배포를 선택한 경우 이 항목은 해당 배포의 액세스 토큰 목록을 보여주는 <strong>토큰 선택</strong> 드롭다운이 됩니다. 배포를 선택하지 않은 경우에는 토큰을 직접 붙여 넣을 수 있는 입력란으로 표시됩니다. 토큰은 Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있으며 형식과 생성 과정이 서비스에 따라 다르므로, 해당 서비스의 가이드를 참조하세요.<ul>
+<li data-bai-block="27">각 항목에는 토큰의 마지막 여섯 글자와 만료 날짜가 함께 표시됩니다. 모든 토큰은 앞부분이 동일하고 입력란 너비에 맞춰 잘려 표시되기 때문에, 이 뒷부분이 서로 구분하기 어려운 항목들을 구별하는 기준이 됩니다. 만료되지 않는 토큰에는 날짜 대신 <strong>만료 없음</strong>이 표시됩니다.</li>
+<li data-bai-block="28">항목 위에 마우스를 올리면 전체 발급 시각과 만료 시각을 확인할 수 있습니다.</li>
+<li data-bai-block="29">이미 만료된 토큰은 목록에 표시되지 않습니다. 값이 비어 있는 경우 가장 최근에 생성된 유효한 토큰이 자동으로 선택됩니다.</li>
+<li data-bai-block="30">입력란 옆의 톱니바퀴 아이콘(<strong>액세스 토큰 설정</strong>)을 클릭하면 배포 상세 페이지의 액세스 토큰 섹션이 열리며, 여기에서 새 토큰을 발급할 수 있습니다. 돌아오면 목록을 다시 읽어오므로 방금 만든 토큰을 바로 선택할 수 있습니다. 자세한 방법은 <a href="./deployment.html#generating-tokens">토큰 생성</a> 섹션을 참조하세요.</li>
+</ul>
+</li>
+</ul>
+<p><figure data-bai-block="31" class="doc-figure"><img src="./images/chat_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="680" height="302" /><figcaption>그림 13.5</figcaption></figure>
+</p>
+<p><a id="add-or-remove-comparison-chat-cards"></a></p>
+<h2 data-bai-block="32" id="chat-비교-채팅-카드-추가-및-삭제">비교 채팅 카드 추가 및 삭제<a class="hash-link" href="#chat-비교-채팅-카드-추가-및-삭제" aria-label="Direct link to 비교 채팅 카드 추가 및 삭제">#</a></h2>
+<p data-bai-block="33">우측 상단의 <code>비교</code> 아이콘 버튼을 클릭하여 새로운 비교 채팅 카드를 추가할 수 있습니다.</p>
+<p><figure data-bai-block="34" class="doc-figure"><img src="./images/add_cards.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>그림 13.6</figcaption></figure>
+</p>
+<p data-bai-block="35">각 채팅 세션을 삭제하려면 카드 우측 상단에 있는 <code>더보기</code> 버튼을 클릭하세요. 버튼을 클릭하면 드롭다운 메뉴가 표시되며, <code>채팅 삭제</code> 버튼을 통해 해당 채팅 세션을 삭제할 수 있습니다. 입력한 내용이 존재하는 경우에는 모두 삭제되므로 주의해 주세요.</p>
+<p><figure data-bai-block="36" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" loading="lazy" decoding="async" width="538" height="272" /><figcaption>그림 13.7</figcaption></figure>
+</p>
+<p><a id="clear-chat-history"></a></p>
+<h2 data-bai-block="37" id="chat-채팅-기록-삭제">채팅 기록 삭제<a class="hash-link" href="#chat-채팅-기록-삭제" aria-label="Direct link to 채팅 기록 삭제">#</a></h2>
+<p data-bai-block="38"><code>더보기</code> 버튼을 클릭하면 <code>채팅 지우기</code> 옵션이 나타납니다. 이 옵션을 선택하면 카드에 있는 모든 채팅 기록이 삭제됩니다. 단, 카드의 세션은 종료되지 않습니다.</p>
+<p><figure data-bai-block="39" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" loading="lazy" decoding="async" width="538" height="272" /><figcaption>그림 13.8</figcaption></figure>
+</p>
+<p><a id="synchronize-input"></a></p>
+<h2 data-bai-block="40" id="chat-입력-연동">입력 연동<a class="hash-link" href="#chat-입력-연동" aria-label="Direct link to 입력 연동">#</a></h2>
+<p data-bai-block="41">채팅 카드의 우측 상단에 있는 <code>채팅 입력 동기화</code> 버튼을 사용하면 &#39;채팅 입력 동기화&#39;가 활성화된 모든 채팅 카드의 입력을 동기화할 수 있습니다. &#39;채팅 입력 동기화&#39;가 활성화된 상태에서 <code>Enter</code>를 누르거나 어떤 카드의 <code>전송</code> 버튼을 클릭하면 현재 입력 중인 카드의 입력이 일괄 적용됩니다. 이 기능은 하나의 입력값을 통해 다양한 모델의 응답 결과를 비교하고 싶을 때 유용하게 사용할 수 있습니다.</p>
+<p><figure data-bai-block="42" class="doc-figure"><img src="./images/synchronized_input.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1550" height="958" /><figcaption>그림 13.9</figcaption></figure>
+</p>
+<p><a id="parameter-adjustment"></a></p>
+<h2 data-bai-block="43" id="chat-파라미터-조정">파라미터 조정<a class="hash-link" href="#chat-파라미터-조정" aria-label="Direct link to 파라미터 조정">#</a></h2>
+<p data-bai-block="44">우측 상단의 파라미터 버튼을 클릭하여 각 모델에 대한 파라미터를 조정할 수 있습니다. 사용자는 Max Tokens, Temperature, Top P, Top K와 같은 다양한 값을 설정할 수 있습니다. 동기화 기능을 사용하여 같은 모델에 대해 다른 파라미터를 적용한 후 결과를 비교할 수 있습니다.</p>
+<p><figure data-bai-block="45" class="doc-figure"><img src="./images/parameter_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="264" height="447" /><figcaption>그림 13.10</figcaption></figure>
+</p>
+<p><a id="chat-history"></a></p>
+<h2 data-bai-block="46" id="chat-채팅-기록">채팅 기록<a class="hash-link" href="#chat-채팅-기록" aria-label="Direct link to 채팅 기록">#</a></h2>
+<p data-bai-block="47">우측 상단의 <code>+</code> 버튼을 클릭하여 새로운 채팅을 시작할 수 있습니다.</p>
+<p><figure data-bai-block="48" class="doc-figure"><img src="./images/new_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>그림 13.11</figcaption></figure>
+</p>
+<p data-bai-block="49">모든 채팅 기록은 로컬 스토리지에 저장됩니다. 우측 상단의 <code>히스토리</code> 버튼을 클릭하여 이전 채팅 기록에 접근할 수 있습니다.</p>
+<p><figure data-bai-block="50" class="doc-figure"><img src="./images/history_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1800" /><figcaption>그림 13.12</figcaption></figure>
+</p>
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/chat/chat.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
+  <span class="last-updated">마지막 업데이트 2026년 9월 8일</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./deployment.html">
+        <div class="pagination-nav__sublabel">이전</div>
+        <div class="pagination-nav__label">&laquo; 배포</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./my_environments.html">
+        <div class="pagination-nav__sublabel">다음</div>
+        <div class="pagination-nav__label">내 환경 &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">이 페이지의 목차</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-%EB%AA%A8%EB%8D%B8-%EC%84%A0%ED%83%9D%ED%95%98%EA%B8%B0" data-toc-target="chat-모델-선택하기">모델 선택하기</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#chat-%EB%AA%A9%EB%A1%9D%EC%97%90-%ED%91%9C%EC%8B%9C%EB%90%98%EB%8A%94-%EB%B0%B0%ED%8F%AC" data-toc-target="chat-목록에-표시되는-배포">목록에 표시되는 배포</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#chat-%EB%AA%A8%EB%8D%B8-%EC%97%B0%EA%B2%B0-%EC%84%A4%EC%A0%95" data-toc-target="chat-모델-연결-설정">모델 연결 설정</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-%EB%B9%84%EA%B5%90-%EC%B1%84%ED%8C%85-%EC%B9%B4%EB%93%9C-%EC%B6%94%EA%B0%80-%EB%B0%8F-%EC%82%AD%EC%A0%9C" data-toc-target="chat-비교-채팅-카드-추가-및-삭제">비교 채팅 카드 추가 및 삭제</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-%EC%B1%84%ED%8C%85-%EA%B8%B0%EB%A1%9D-%EC%82%AD%EC%A0%9C" data-toc-target="chat-채팅-기록-삭제">채팅 기록 삭제</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-%EC%9E%85%EB%A0%A5-%EC%97%B0%EB%8F%99" data-toc-target="chat-입력-연동">입력 연동</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0-%EC%A1%B0%EC%A0%95" data-toc-target="chat-파라미터-조정">파라미터 조정</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-%EC%B1%84%ED%8C%85-%EA%B8%B0%EB%A1%9D" data-toc-target="chat-채팅-기록">채팅 기록</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">도움 받기</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/chat/chat.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>이 페이지 편집</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="문서 검색..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="문서 검색..." data-no-results="검색 결과가 없습니다" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>

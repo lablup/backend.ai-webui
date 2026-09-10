@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>배포 - Backend.AI WebUI User Guide - 한국어</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다." />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/ko/deployment.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="배포" />
+  <meta property="og:description" content="Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다." />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/ko/deployment.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="ko" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="배포" />
+  <meta name="twitter:description" content="Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다." />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"배포","inLanguage":"ko","description":"Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다.","dateModified":"2026-09-10T05:44:50.000Z","url":"https://webui.docs.backend.ai/next/ko/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
+  <link rel="alternate" hreflang="en" href="../en/deployment.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
+  <link rel="alternate" hreflang="th" href="../th/deployment.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/deployment.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="deployment"></script>
+</head>
+<body data-copy-label="복사" data-copied-label="복사됨!" data-copy-failed-label="복사 실패">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (04d17e4)">v26.9.0-alpha.0 (04d17e4)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">문서 검색...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="문서 검색..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/deployment.html" lang="ko" selected>한국어</option><option value="../en/deployment.html" lang="en">English</option><option value="../ja/deployment.html" lang="ja">日本語</option><option value="../th/deployment.html" lang="th">ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">WebUI 다음 버전(Next)의 미발행 문서입니다.</span>
+    <span class="docs-banner__desc">최신 문서는 <a class="docs-banner__link" href="../../26.8/ko/index.html">최신 버전(26.8)</a>에서 확인하세요.</span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">버전</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="ko"
+      data-slug="deployment"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">이전 버전</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">소개</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">시작하기</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="시작하기">
+    <li><a href="./quickstart.html">1. 빠른 시작</a></li>
+<li><a href="./disclaimer.html">2. 면책 조항</a></li>
+<li><a href="./overview.html">3. 개요</a></li>
+<li><a href="./installation.html">4. 설치</a></li>
+<li><a href="./login.html">5. 로그인</a></li>
+<li><a href="./header.html">6. 상단 바</a></li>
+<li><a href="./start.html">7. 시작 페이지</a></li>
+<li><a href="./dashboard.html">8. 대시보드</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">워크로드</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="워크로드">
+    <li><a href="./session_page.html">9. 세션 페이지</a></li>
+<li><a href="./sessions_all.html">10. 연산 세션</a></li>
+<li><a href="./cluster_session.html">11. 클러스터 세션</a></li>
+<li><a href="./deployment.html" class="active" aria-current="page">12. 배포</a></li>
+<li><a href="./chat.html">13. 채팅</a></li>
+<li><a href="./my_environments.html">14. 내 환경</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">스토리지 및 데이터</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="스토리지-및-데이터">
+    <li><a href="./vfolder.html">15. 스토리지 폴더</a></li>
+<li><a href="./mount_vfolder.html">16. 스토리지 폴더 마운트</a></li>
+<li><a href="./share_vfolder.html">17. 스토리지 폴더 공유</a></li>
+<li><a href="./sftp_to_container.html">18. 연산 세션에 대한 SFTP 연결</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">관리</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="관리">
+    <li><a href="./user_settings.html">19. 사용자 설정</a></li>
+<li><a href="./project_admin.html">20. 프로젝트 관리자 기능</a></li>
+<li><a href="./rbac_management.html">21. RBAC 관리</a></li>
+<li><a href="./agent_summary.html">22. 에이전트 요약</a></li>
+<li><a href="./statistics.html">23. 통계</a></li>
+<li><a href="./admin_menu.html">24. 관리자 기능</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">참고 자료</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="참고-자료">
+    <li><a href="./trouble_shooting.html">25. FAQ 및 문제 해결</a></li>
+<li><a href="./appendix.html">26. 부록</a></li>
+<li><a href="./license_agreement.html">27. 사용권 계약 조건</a></li>
+<li><a href="./references.html">28. 참고 자료</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="이 페이지는 버전 {version}에 존재하지 않습니다. 해당 버전의 인덱스 페이지로 이동했습니다.">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="닫기" title="닫기">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">홈</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">워크로드</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">배포</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-deployment">
+<p><a id="model-serving"></a></p>
+<h1 data-bai-block="0" id="deployment-배포">배포<a class="hash-link" href="#deployment-배포" aria-label="Direct link to 배포">#</a></h1>
+<h2 data-bai-block="1" id="deployment-배포-개요">배포 개요<a class="hash-link" href="#deployment-배포-개요" aria-label="Direct link to 배포 개요">#</a></h2>
+<p data-bai-block="2">Backend.AI는 <strong>배포(Deployments)</strong> 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다. 배포는 모델을 안정적인 엔드포인트 URL 뒤에 노출하여, 엔드 유저 애플리케이션(모바일 앱, 웹 서비스 백엔드, 사내 도구 등)이 해당 엔드포인트를 호출해 추론을 수행할 수 있도록 합니다.</p>
+<p><figure data-bai-block="3" class="doc-figure"><img src="./images/model-serving-diagram.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3113" height="1500" /><figcaption>그림 12.1</figcaption></figure>
+</p>
+<p data-bai-block="4">배포는 일반 연산 세션을 확장하여 자동화된 유지·보수, 복제본 스케일링, 그리고 복제본이 변경되더라도 바뀌지 않는 영구적인 엔드포인트 주소를 제공합니다. 원하는 스케일링 파라미터만 지정하면 Backend.AI가 내부의 추론 세션을 자동으로 생성, 모니터링, 종료해 주므로 세션을 직접 관리할 필요가 없습니다.</p>
+<h2 data-bai-block="5" id="deployment-배포-페이지">배포 페이지<a class="hash-link" href="#deployment-배포-페이지" aria-label="Direct link to 배포 페이지">#</a></h2>
+<p data-bai-block="6">배포 페이지는 현재 프로젝트의 모든 배포 목록을 표시합니다. 사이드바 메뉴에서 <strong>배포</strong>를 클릭하여 접근할 수 있습니다.</p>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/serving_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 12.2</figcaption></figure>
+</p>
+<p data-bai-block="8">페이지 상단에서 라이프사이클 단계별로 배포를 필터링할 수 있습니다:</p>
+<ul>
+<li data-bai-block="9"><strong>실행 중</strong>: 현재 실행 중이거나 생성 중인 배포를 표시합니다. 기본 보기입니다.</li>
+<li data-bai-block="10"><strong>종료됨</strong>: 종료된 배포를 표시합니다.</li>
+</ul>
+<p data-bai-block="11"><code>배포 생성</code> 버튼을 클릭하여 <strong>배포 생성</strong> 모달을 엽니다.</p>
+<p><a id="create-deployment"></a></p>
+<h2 data-bai-block="12" id="deployment-배포-생성">배포 생성<a class="hash-link" href="#deployment-배포-생성" aria-label="Direct link to 배포 생성">#</a></h2>
+<p data-bai-block="13">배포를 생성하는 흐름은 두 단계로 나뉩니다.</p>
+<ol>
+<li data-bai-block="14"><strong>배포 생성</strong> — 배포의 식별 정보(이름, 공개 범위, 배포 메타데이터, 자원 그룹)만 정의하는 가벼운 컨테이너를 생성합니다.</li>
+<li data-bai-block="15"><strong>리비전 추가</strong> — 실제로 실행되는 구성(시작 명령, 환경 변수, 런타임 변형, 이미지, 자원, 모델 스토리지)을 담은 스냅샷을 추가합니다.</li>
+</ol>
+<p data-bai-block="16">하나의 배포는 여러 개의 리비전을 보관할 수 있습니다. 어느 시점이든 <em>현재</em> 리비전(트래픽을 처리하는 리비전)은 하나뿐이며, 배포 상세 페이지의 리비전 탭에서 다른 리비전으로 전환할 수 있습니다.</p>
+<h3 data-bai-block="17" id="deployment-배포-생성-모달">배포 생성 모달<a class="hash-link" href="#deployment-배포-생성-모달" aria-label="Direct link to 배포 생성 모달">#</a></h3>
+<p data-bai-block="18">배포 페이지에서 <code>배포 생성</code> 버튼을 클릭하여 <strong>배포 생성</strong> 모달을 엽니다. 이 모달에서는 배포 단위의 메타데이터만 입력하며, 이 단계에서 리비전이 함께 생성되지는 않습니다.</p>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/model_serving_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 12.3</figcaption></figure>
+</p>
+<p data-bai-block="20">모달에는 다음과 같은 필드가 있습니다.</p>
+<ul>
+<li data-bai-block="21"><strong>배포 이름</strong>: 대시보드, API, 엔드포인트 URL에서 배포를 식별하는 데 사용되는 고유 이름입니다.</li>
+<li data-bai-block="22"><strong>자원 그룹</strong>: 배포가 실행될 자원 그룹입니다. 프로젝트에서 사용 가능한 자원 그룹이 하나뿐이면 자동으로 선택되며, 별도로 선택하지 않고도 진행할 수 있습니다.</li>
+<li data-bai-block="23"><strong>목표 복제본 수</strong>: 이 배포에서 유지할 복제본 수입니다. 시스템은 활성 풀을 이 목표값에 맞춰 조정합니다.</li>
+<li data-bai-block="24"><strong>태그</strong>: 배포를 정리하고 필터링하기 위한 선택적 라벨입니다. Enter 또는 쉼표로 추가합니다.</li>
+<li data-bai-block="25"><strong>외부에 공개</strong>: 활성화하면 액세스 토큰 없이 엔드포인트에 접근할 수 있습니다. 비활성화하면 모든 요청에 토큰이 필요합니다. 자세한 내용은 <a href="#generating-tokens">토큰 생성</a> 섹션을 참고하세요.</li>
+</ul>
+<div class="admonition admonition-warning">
+<div data-bai-block="26" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>자원 그룹과 공개 여부는 생성 시점에 확정됩니다</div>
+<div class="admonition-content">
+
+<p data-bai-block="27">모달이 열리는 순간부터 <strong>자원 그룹</strong> 필드 아래에는 <em>&quot;생성 시 선택한 자원 그룹은 변경할 수 없습니다.&quot;</em> 라는 경고 문구가, <strong>외부에 공개</strong> 필드 아래에는 <em>&quot;생성 시 선택한 공개 여부는 변경할 수 없습니다.&quot;</em> 라는 경고 문구가 표시됩니다.</p>
+<p data-bai-block="28">자원 그룹은 리비전이 아니라 배포에 속하는 값이므로, 배포를 수정하거나 새 리비전을 추가하는 방법으로도 다른 자원 그룹으로 옮길 수 없습니다. <strong>외부에 공개</strong> 역시 같은 방식으로 확정되며, <strong>배포 수정</strong> 모달에서 이 체크박스는 읽기 전용이고 그 아래에 동일한 문구가 표시됩니다. 배포를 생성하기 전에 두 값을 모두 올바르게 선택하고, 다른 값이 필요하다면 배포를 새로 생성하세요.</p>
+</div></div>
+
+
+<p data-bai-block="29"><code>생성</code>을 클릭하면 배포가 생성되며, 배포 상세 페이지로 이동합니다. 첫 번째 리비전을 추가하기 전까지는 <strong>배포된 리비전이 없습니다</strong> 경고가 표시됩니다.</p>
+<p data-bai-block="30">생성 후 배포 수준 설정(이름, 목표 복제본 수, 태그)을 변경하려면 <strong>기본 정보</strong> 카드의 <strong>수정</strong> 버튼을 클릭한 다음, <strong>배포 수정</strong> 모달에서 값을 변경하고 저장합니다. 자원 그룹과 <strong>외부에 공개</strong> 설정은 위에서 설명한 대로 생성 시점에 고정되므로 여기서는 변경할 수 없습니다.</p>
+<p><a id="add-revision"></a></p>
+<h3 data-bai-block="31" id="deployment-리비전-추가">리비전 추가<a class="hash-link" href="#deployment-리비전-추가" aria-label="Direct link to 리비전 추가">#</a></h3>
+<p data-bai-block="32">리비전에는 추론 서버를 실행하는 데 필요한 모든 설정(이미지, 시작 명령, 자원, 모델 마운트, 환경 변수)이 포함됩니다. 배포 상세 페이지에서 <code>리비전 추가</code> 버튼을 클릭하여 모달을 엽니다.</p>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="956" /><figcaption>그림 12.4</figcaption></figure>
+</p>
+<p data-bai-block="34">리비전 추가 모달 제목 영역의 <strong>프리셋 모드</strong> / <strong>고급 모드</strong> 전환기로 리비전 구성 방식을 선택합니다.</p>
+<p data-bai-block="35">배포에 현재 리비전이 있으면 두 모드 위에 <strong>현재 리비전 불러오기</strong> 안내 배너가 표시됩니다. <strong>현재 리비전 불러오기</strong>를 클릭하면 현재 적용 중인 리비전의 설정을 시작점으로 폼에 미리 채웁니다(필요한 경우 자동으로 고급 모드로 전환됩니다). 아직 현재 리비전이 없는 배포에서는 배너가 표시되지 않으며, 설정을 한 번 불러오면 배너는 사라집니다.</p>
+<h4 data-bai-block="36" id="deployment-프리셋-모드">프리셋 모드<a class="hash-link" href="#deployment-프리셋-모드" aria-label="Direct link to 프리셋 모드">#</a></h4>
+<p data-bai-block="37">미리 정의된 배포 프리셋으로 리비전을 빠르게 추가합니다.</p>
+<ul>
+<li data-bai-block="38"><strong>모델 소스</strong>: 이 리비전의 모델을 어디에서 가져올지 선택합니다. <strong>모델 폴더</strong> 또는 <strong>모델 카드</strong> 중 하나를 선택하며, 선택에 따라 아래 선택기가 바뀝니다. 소스를 변경하면 이미 선택한 모델과 프리셋 선택이 초기화됩니다.</li>
+<li data-bai-block="39"><strong>모델 폴더</strong> <em>(모델 폴더 소스)</em>: 각 복제본에 마운트될 스토리지 폴더입니다.</li>
+<li data-bai-block="40"><strong>모델 카드</strong> <em>(모델 카드 소스)</em>: 배포할 모델 카드입니다. 해당 카드의 모델 폴더가 각 복제본에 마운트되며, 그 카드와 호환되는 프리셋만 표시됩니다. 선택기 옆의 ⓘ 버튼을 클릭하면 선택한 카드의 <strong>모델 카드 상세</strong> 드로어가 열립니다.</li>
+<li data-bai-block="41"><strong>프리셋</strong>: 배포의 자원 그룹과 호환되는 배포 프리셋입니다. 옆의 ⓘ 버튼을 클릭하면 프리셋의 전체 구성을 확인할 수 있습니다. <strong>모델 카드</strong> 소스에서는 카드를 선택하기 전까지 <em>&quot;모델 카드를 먼저 선택해 주세요.&quot;</em> 안내와 함께 선택기가 비활성화된 상태로 유지됩니다.</li>
+</ul>
+<p data-bai-block="42">선택한 모델 카드에 마운트할 모델 폴더가 없으면 리비전이 생성되지 않고 <em>&quot;선택한 모델 소스에 마운트할 모델 폴더가 없습니다. 다른 모델 카드나 모델 폴더를 선택하세요.&quot;</em> 오류 메시지가 표시됩니다. 다른 모델 카드를 선택하거나 소스를 다시 <strong>모델 폴더</strong>로 전환하세요.</p>
+<p data-bai-block="43">자원 그룹에 호환되는 프리셋이 없으면 안내 메시지가 표시됩니다. 이 경우 고급 모드로 전환하여 직접 구성하세요.</p>
+<h4 data-bai-block="44" id="deployment-고급-모드">고급 모드<a class="hash-link" href="#deployment-고급-모드" aria-label="Direct link to 고급 모드">#</a></h4>
+<p data-bai-block="45">모든 설정을 직접 구성합니다.</p>
+<p data-bai-block="46">폼은 다음 섹션으로 구성됩니다.</p>
+<ul>
+<li data-bai-block="47"><strong>모델 및 런타임</strong>: 모델 폴더와 마운트 경로, 런타임 변형을 선택합니다. <code>vLLM</code> / <code>SGLang</code> 변형에서는 런타임 파라미터 패널이, <code>Custom</code> 변형에서는 서비스 구성 섹션이 나타납니다. 런타임별 상세 필드는 아래 섹션을 참고하세요.</li>
+<li data-bai-block="48"><strong>헬스 체크</strong> 및 <strong>시작 전 작업</strong>: 헬스 체크와 추론 서버 시작 전에 실행할 작업을 구성합니다. 두 항목 모두 모든 런타임 변형에서 사용할 수 있습니다.</li>
+<li data-bai-block="49"><strong>실행 환경</strong>: 컨테이너 이미지(실행 환경 / 버전)와 환경 변수를 설정합니다.</li>
+<li data-bai-block="50"><strong>클러스터 및 리소스</strong>: CPU, 메모리, 가속기, 클러스터 모드 및 크기 등 자원을 할당합니다.</li>
+<li data-bai-block="51"><strong>고급 설정</strong> <em>(접을 수 있음)</em>: 모델 정의 파일 경로를 지정하고, 모델 폴더 외에 추가로 마운트할 스토리지 폴더를 설정합니다.</li>
+</ul>
+<p data-bai-block="52">모달 하단의 <strong>추가 후 바로 적용</strong> 체크박스를 선택하면 리비전이 생성된 직후 바로 활성화됩니다. 선택하지 않으면 비활성 상태로 저장되며, 이후 리비전 탭에서 직접 적용할 수 있습니다.</p>
+<h3 data-bai-block="53" id="deployment-리비전-추가-필드-참고">리비전 추가: 필드 참고<a class="hash-link" href="#deployment-리비전-추가-필드-참고" aria-label="Direct link to 리비전 추가: 필드 참고">#</a></h3>
+<p data-bai-block="54">아래 하위 섹션에서는 리비전 단위 필드를 자세히 설명합니다. <strong>고급 모드</strong>에서 리비전을 수동으로 추가할 때와 각 필드가 무엇을 제어하는지 이해하고자 할 때 모두 적용됩니다.</p>
+<h4 data-bai-block="55" id="deployment-모델-폴더-마운트">모델 폴더 마운트<a class="hash-link" href="#deployment-모델-폴더-마운트" aria-label="Direct link to 모델 폴더 마운트">#</a></h4>
+<p data-bai-block="56">리비전마다 하나의 모델 스토리지 폴더가 각 복제본에 마운트됩니다. 폴더 선택기 바로 아래의 필드에서 해당 폴더가 컨테이너 내부의 어느 위치에 나타날지 지정합니다.</p>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="390" /><figcaption>그림 12.5</figcaption></figure>
+</p>
+<ul>
+<li data-bai-block="58"><strong>모델 폴더</strong>: 각 복제본에 마운트할 모델 스토리지 폴더입니다.</li>
+<li data-bai-block="59"><strong>모델 폴더 마운트할 경로</strong>: 컨테이너 내부에 모델 스토리지 폴더가 마운트되는 경로입니다 (기본값: <code>/models</code>).</li>
+<li data-bai-block="60"><strong>서브경로</strong>: 폴더 루트 대신 마운트할 모델 폴더 내부의 하위 폴더입니다. 필드를 클릭하면 디렉터리 선택 창이 열리며, 선택한 모델 폴더의 디렉터리 트리에서 하위 폴더를 고릅니다. 경로를 직접 입력할 수는 없습니다. <strong>모델 폴더</strong>를 선택하기 전까지는 이 필드를 사용할 수 없으며, 모델 폴더를 변경하면 선택했던 경로가 초기화됩니다. 선택한 경로는 앞에 <code>/</code>가 붙어 표시됩니다. 비워 두면 폴더 루트가 마운트됩니다.</li>
+</ul>
+<p><a id="service-configuration"></a></p>
+<h4 data-bai-block="61" id="deployment-서비스-구성-custom-런타임만-해당">서비스 구성 (Custom 런타임만 해당)<a class="hash-link" href="#deployment-서비스-구성-custom-런타임만-해당" aria-label="Direct link to 서비스 구성 (Custom 런타임만 해당)">#</a></h4>
+<p data-bai-block="62">모델 폴더에서 설정을 읽는 런타임 변형(예: <strong>Custom</strong>)을 선택하면 <strong>런타임</strong> 선택기 아래에 <strong>서비스 구성</strong> 섹션이 나타납니다. 이 섹션은 기본적으로 펼쳐져 있으며, 추론 서버 프로세스의 시작 방식을 정의합니다.</p>
+<ul>
+<li data-bai-block="63"><strong>실행 방식</strong>: 명령어를 실행하는 방법입니다.<ul>
+<li data-bai-block="64"><strong>Shell</strong>: 셸(<code>bash -c &quot;...&quot;</code>)을 통해 명령어를 실행하므로 셸 연산자를 사용할 수 있습니다. 대부분의 경우 권장됩니다.</li>
+<li data-bai-block="65"><strong>Exec</strong>: 셸을 거치지 않고 명령어를 인수 형태로 직접 실행합니다. 셸 없이 명령어를 실행해야 하는 경우(예: 셸 바이너리가 없는 이미지)에만 사용하세요.</li>
+</ul>
+</li>
+<li data-bai-block="66"><strong>셸</strong>: 명령어 실행에 사용할 셸 바이너리입니다(예: <code>/bin/bash</code>). <strong>Shell</strong> 방식에서만 표시되며 필수 입력 항목입니다. 해당 바이너리가 컨테이너 이미지에 없으면 서비스가 시작되지 않습니다.</li>
+<li data-bai-block="67"><strong>명령어</strong>: 추론 서버를 실행하는 명령어입니다. 예를 들어 <code>python -m http.server 8000</code>. <strong>Shell</strong> 방식에서는 여러 줄 입력 상자이며, <strong>Exec</strong> 방식에서는 <strong>명령어 (argv)</strong> 라는 이름의 한 줄 입력 필드로 바뀝니다.</li>
+<li data-bai-block="68"><strong>포트</strong>: 추론 서버가 수신하는 컨테이너 포트입니다(2~65535).</li>
+</ul>
+<div class="admonition admonition-tip">
+<div data-bai-block="69" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>셸 연산자는 Shell 방식에서만 동작합니다</div>
+<div class="admonition-content">
+
+<p data-bai-block="70"><strong>Shell</strong> 방식에서는 명령어가 셸로 전달되므로 <code>;</code>, <code>|</code>, <code>&amp;&amp;</code>, <code>$VAR</code>, 리다이렉션 같은 연산자가 터미널에서와 동일하게 해석됩니다.</p>
+<div data-bai-block="71" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#B392F0">chmod</span><span style="color:#9ECBFF"> +x</span><span style="color:#9ECBFF"> /setup.sh</span><span style="color:#E1E4E8">; </span><span style="color:#B392F0">vllm</span><span style="color:#9ECBFF"> serve</span><span style="color:#9ECBFF"> /models</span></span></code></pre></div>
+<p data-bai-block="72"><strong>Exec</strong> 방식에서는 같은 문자열이 인수 단위로 분리되어 직접 실행되므로, 이러한 연산자는 일반 텍스트로 전달됩니다. 인수는 공백으로 구분하고, 공백이 포함된 인수는 따옴표로 묶으세요(예: <code>--name &quot;my model&quot;</code>). 셸 문법이 필요하다면 명령어를 <code>/bin/bash -c &quot;...&quot;</code>로 감싸는 대신 <strong>실행 방식</strong>을 <strong>Shell</strong> 로 되돌리세요.</p>
+</div></div>
+
+
+<p><a id="health-check-and-pre-start-actions"></a></p>
+<h4 data-bai-block="73" id="deployment-헬스-체크-및-시작-전-작업">헬스 체크 및 시작 전 작업<a class="hash-link" href="#deployment-헬스-체크-및-시작-전-작업" aria-label="Direct link to 헬스 체크 및 시작 전 작업">#</a></h4>
+<p data-bai-block="74"><strong>헬스 체크 활성화</strong> 와 <strong>시작 전 작업</strong> 필드는 서비스 구성 섹션 아래에 이어지며, 모든 런타임 변형에서 표시됩니다.</p>
+<ul>
+<li data-bai-block="75"><strong>헬스 체크 활성화</strong>: 활성화하면 시스템이 추론 서버에 주기적으로 HTTP 요청을 보내 정상적으로 응답하는지 확인합니다. 비활성화된 경우(새 리비전의 기본값) 헬스 체크가 구성되지 않으며, 비정상 복제본이 자동으로 감지되지 않습니다. 운영 환경 배포에서는 활성화하는 것을 권장합니다. <strong>헬스 체크 활성화</strong> 를 선택하면 다음 필드가 추가로 표시됩니다.<ul>
+<li data-bai-block="76"><strong>경로</strong>: 서비스 헬스 체크 시 호출되는 HTTP 엔드포인트 경로입니다 (기본값: <code>/health</code>).</li>
+<li data-bai-block="77"><strong>간격</strong>: 연속된 헬스 체크 사이의 시간(초)입니다.</li>
+<li data-bai-block="78"><strong>최대 재시도 횟수</strong>: 복제본이 <code>UNHEALTHY</code>로 표시되기 전까지 허용되는 최대 연속 실패 횟수입니다.</li>
+<li data-bai-block="79"><strong>최대 대기 시간</strong>: 개별 헬스 체크 요청의 타임아웃 시간(초)입니다.</li>
+<li data-bai-block="80"><strong>상태 코드</strong>: 서비스가 정상임을 나타내는 HTTP 응답 상태 코드입니다.</li>
+<li data-bai-block="81"><strong>초기 헬스 체크 유예 시간</strong>: 컨테이너 시작 후 헬스 체크 실패를 허용하는 유예 시간(초)입니다. 첫 성공 응답 시점에 복제본이 활성화됩니다. 로딩에 오래 걸리는 대형 모델에서는 값을 늘리세요.</li>
+</ul>
+</li>
+<li data-bai-block="82"><strong>시작 전 작업</strong>: 모델 서비스가 시작되기 전에 실행할 작업입니다. <strong>사전 실행 동작 추가</strong> 를 클릭해 행을 추가한 뒤 <strong>동작</strong>(작업 이름, 예: <code>wait_for_file</code>)과 <strong>인수 (JSON)</strong>(JSON 객체 형식의 인수, 예: <code>{}</code>)를 입력합니다. 두 필드 모두 각 행에서 필수이며, 인수는 올바른 JSON이어야 합니다. 지원되는 작업 목록은 <a href="#prestart-actions">Backend.AI 모델 서빙에서 지원하는 서비스 동작 설명</a> 을 참고하세요.</li>
+</ul>
+<p data-bai-block="83">모델 정의 파일 경로 자체는 폼 하단의 <strong>고급 설정</strong> 패널에 있습니다. 모델 정의 파일 작성 방법은 <a href="#model-definition-guide">모델 정의 파일 생성</a> 섹션을 참고하세요.</p>
+<p><a id="runtime-parameters"></a></p>
+<h4 data-bai-block="84" id="deployment-런타임-파라미터-vllm-sglang">런타임 파라미터 (vLLM / SGLang)<a class="hash-link" href="#deployment-런타임-파라미터-vllm-sglang" aria-label="Direct link to 런타임 파라미터 (vLLM / SGLang)">#</a></h4>
+<p data-bai-block="85"><code>vLLM</code> 또는 <code>SGLang</code> 런타임 변형을 선택하면, 서비스 구성 섹션 대신 <strong>런타임 파라미터</strong> 섹션이 나타납니다. 이 섹션에서는 구성 파일을 수동으로 편집하지 않고도 서빙 프레임워크를 구성할 수 있습니다.</p>
+<p data-bai-block="86">파라미터는 탭으로 구분된 카테고리별로 구성됩니다. 사용 가능한 탭 목록은 런타임 변형에 따라 다릅니다.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="87" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="88">변경하지 않은 파라미터는 런타임의 기본값이 사용됩니다.</p>
+</div></div>
+
+
+<p data-bai-block="89"><strong>vLLM 런타임 파라미터</strong></p>
+<p><figure data-bai-block="90" class="doc-figure"><img src="./images/service_launcher_runtime_params_vllm.png" alt="" class="doc-image" loading="lazy" decoding="async" width="648" height="611" /><figcaption>그림 12.6</figcaption></figure>
+</p>
+<p data-bai-block="91">vLLM은 다음 파라미터 탭을 제공합니다: <strong>Model Loading</strong>, <strong>Resource Memory</strong>, <strong>Serving Performance</strong>, <strong>Multimodal</strong>, <strong>Tool Reasoning</strong> 등.</p>
+<p data-bai-block="92"><strong>Model Loading</strong> 탭의 주요 필드:</p>
+<ul>
+<li data-bai-block="93"><strong>Model</strong>: 사용할 모델의 이름 또는 경로입니다.</li>
+<li data-bai-block="94"><strong>DType</strong>: 모델 가중치 및 연산의 데이터 타입입니다 (예: <code>Auto</code>, <code>float16</code>, <code>bfloat16</code>).</li>
+<li data-bai-block="95"><strong>Quantization</strong>: 모델 양자화 방식입니다 (예: <code>awq</code>, <code>gptq</code>, <code>fp8</code>).</li>
+<li data-bai-block="96"><strong>Max Model Length</strong>: 모델이 처리할 수 있는 최대 컨텍스트 길이(토큰 수)입니다.</li>
+<li data-bai-block="97"><strong>Served Model Name</strong>: API 엔드포인트에서 노출할 모델 이름입니다.</li>
+<li data-bai-block="98"><strong>Trust Remote Code</strong>: 모델 저장소의 커스텀 모델 코드 실행을 허용합니다.</li>
+</ul>
+<p data-bai-block="99"><strong>SGLang 런타임 파라미터</strong></p>
+<p><figure data-bai-block="100" class="doc-figure"><img src="./images/service_launcher_runtime_params_sglang.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1296" height="1222" /><figcaption>그림 12.7</figcaption></figure>
+</p>
+<p data-bai-block="101">SGLang은 다음 파라미터 탭을 제공합니다: <strong>Model Loading</strong>, <strong>Resource Memory</strong>, <strong>Serving Performance</strong>, <strong>Tool Reasoning</strong> 등.</p>
+<p data-bai-block="102"><strong>Model Loading</strong> 탭의 주요 필드:</p>
+<ul>
+<li data-bai-block="103"><strong>Model</strong>: 사용할 모델의 이름 또는 경로입니다.</li>
+<li data-bai-block="104"><strong>DType</strong>: 모델 가중치 및 연산의 데이터 타입입니다 (예: <code>Auto</code>, <code>float16</code>, <code>bfloat16</code>).</li>
+<li data-bai-block="105"><strong>Quantization</strong>: 모델 양자화 방식입니다 (예: <code>awq</code>, <code>gptq</code>, <code>fp8</code>).</li>
+<li data-bai-block="106"><strong>Context Length</strong>: 모델이 처리할 수 있는 최대 컨텍스트 길이입니다.</li>
+<li data-bai-block="107"><strong>Served Model Name</strong>: API 엔드포인트에서 노출할 모델 이름입니다.</li>
+<li data-bai-block="108"><strong>Trust Remote Code</strong>: 모델 저장소의 커스텀 모델 코드 실행을 허용합니다.</li>
+</ul>
+<p data-bai-block="109"><strong>헬스 체크 활성화</strong></p>
+<p data-bai-block="110"><strong>헬스 체크 활성화</strong> 와 <strong>시작 전 작업</strong> 필드는 런타임 파라미터 섹션 아래에 위치하며, <a href="#health-check-and-pre-start-actions">헬스 체크 및 시작 전 작업</a> 에서 설명한 것과 동일하게 동작합니다. <code>Custom</code> 변형과 마찬가지로 <code>vLLM</code> 및 <code>SGLang</code> 에서도 표시됩니다.</p>
+<p data-bai-block="111">런타임 파라미터 외에도 <code>vLLM</code> 및 <code>SGLang</code> 런타임 변형은 <strong>환경</strong> 섹션에 다음 환경 변수를 미리 채웁니다.</p>
+<ul>
+<li data-bai-block="112"><strong>vLLM</strong>: <code>BACKEND_MODEL_NAME</code>, <code>VLLM_QUANTIZATION</code>, <code>VLLM_TP_SIZE</code>(텐서 병렬화), <code>VLLM_PP_SIZE</code>(파이프라인 병렬화), <code>VLLM_EXTRA_ARGS</code>(추가 CLI 인자)</li>
+<li data-bai-block="113"><strong>SGLang</strong>: <code>BACKEND_MODEL_NAME</code>, <code>SGLANG_QUANTIZATION</code>, <code>SGLANG_TP_SIZE</code>(텐서 병렬화), <code>SGLANG_PP_SIZE</code>(파이프라인 병렬화), <code>SGLANG_EXTRA_ARGS</code>(추가 CLI 인자)</li>
+</ul>
+<h4 data-bai-block="114" id="deployment-환경">환경<a class="hash-link" href="#deployment-환경" aria-label="Direct link to 환경">#</a></h4>
+<p data-bai-block="115"><strong>환경</strong> 섹션은 모든 런타임 변형에서 사용할 수 있습니다.</p>
+<ul>
+<li data-bai-block="116"><strong>실행 환경 / 버전</strong>: 추론 서버에 사용할 컨테이너 이미지입니다. 런타임 변형을 선택하면 해당 런타임과 호환되는 이미지로 목록이 필터링됩니다.</li>
+<li data-bai-block="117"><strong>환경 이름 (수동)</strong>: 이미지 참조를 직접 입력하는 필드로, 서버에서 이미지 이름 직접 입력을 허용한 경우에만 표시됩니다. 이 필드에 값을 입력하면 <strong>실행 환경 / 버전</strong> 선택이 해제되고, 반대로 목록에서 이미지를 선택하면 이 필드가 비워집니다. 두 방식은 같은 이미지를 지정하는 두 가지 방법입니다.</li>
+<li data-bai-block="118"><strong>환경 변수</strong>: 추론 서버 컨테이너에 전달되는 키/값 쌍입니다. <code>vLLM</code> 및 <code>SGLang</code> 의 경우 위에 나열한 런타임 전용 변수가 미리 채워집니다. 항목을 자유롭게 추가, 편집, 삭제할 수 있습니다. 변수 이름을 입력하면 <code>HF_TOKEN</code>, <code>WANDB_API_KEY</code>, <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_DEFAULT_REGION</code>, <code>HTTP_PROXY</code>, <code>HTTPS_PROXY</code>, <code>NO_PROXY</code> 등 자주 사용하는 환경 변수 이름이 선택한 런타임 변형의 변수와 함께 추천 목록으로 표시됩니다. 다른 행에서 이미 사용 중인 이름은 목록에서 제외됩니다. 알려진 이름을 입력하면 값 입력란에 해당 변수에 맞는 안내 문구가 표시됩니다. 예를 들어 <code>HF_TOKEN</code> 에는 <em>&quot;Hugging Face 액세스 토큰&quot;</em> 이 표시됩니다.</li>
+</ul>
+<h5 data-bai-block="119" id="deployment-이미지-이름을-직접-입력하는-경우">이미지 이름을 직접 입력하는 경우<a class="hash-link" href="#deployment-이미지-이름을-직접-입력하는-경우" aria-label="Direct link to 이미지 이름을 직접 입력하는 경우">#</a></h5>
+<p data-bai-block="120">목록에서 선택하는 대신 <strong>환경 이름 (수동)</strong> 필드에 이미지 이름을 입력하면, 폼을 제출하는 시점에 입력한 참조를 서버에 등록된 이미지와 대조하여 일치하는 이미지로 리비전을 생성합니다.</p>
+<ul>
+<li data-bai-block="121">레지스트리에서 사용하는 것과 동일한 형식으로 입력합니다. 예: <code>cr.backend.ai/stable/python:3.10-ubuntu20.04</code></li>
+<li data-bai-block="122"><code>@</code> 뒤에 아키텍처를 덧붙여 특정 아키텍처를 지정할 수 있습니다. 예: <code>cr.backend.ai/stable/python:3.10-ubuntu20.04@aarch64</code> 아키텍처를 생략하면 매니저의 기본 아키텍처가 사용됩니다.</li>
+</ul>
+<p data-bai-block="123">입력한 값과 일치하는 이미지가 없으면 리비전은 생성되지 <strong>않으며</strong>, 해당 필드에 <em>&quot;입력한 이미지를 찾을 수 없습니다. 등록된 이미지 참조를 입력하거나 목록에서 선택하세요.&quot;</em> 라는 오류가 표시되고 화면이 그 필드로 이동합니다. 참조를 수정하거나, 필드를 비우고 <strong>실행 환경 / 버전</strong> 목록에서 이미지를 선택하세요.</p>
+<blockquote>
+<p data-bai-block="124">이미지 조회는 제출 시점에 이루어지므로, 오류는 입력하는 도중이 아니라 저장 버튼을 클릭한 뒤에 표시됩니다.</p>
+</blockquote>
+<h4 data-bai-block="125" id="deployment-클러스터-및-리소스">클러스터 및 리소스<a class="hash-link" href="#deployment-클러스터-및-리소스" aria-label="Direct link to 클러스터 및 리소스">#</a></h4>
+<p data-bai-block="126"><strong>클러스터 및 리소스</strong> 섹션에서 각 복제본에 할당할 컴퓨팅 리소스를 지정합니다.</p>
+<ul>
+<li data-bai-block="127"><strong>리소스 프리셋</strong>: CPU, 메모리, 가속기 할당이 미리 구성된 프리셋입니다. 사용 가능한 프리셋은 배포의 자원 그룹에 따라 필터링됩니다. 프리셋을 선택하지 않고 수동으로 리소스(CPU, 메모리, GPU)를 구성할 수도 있습니다.</li>
+</ul>
+<h4 data-bai-block="128" id="deployment-고급-설정">고급 설정<a class="hash-link" href="#deployment-고급-설정" aria-label="Direct link to 고급 설정">#</a></h4>
+<p data-bai-block="129"><strong>고급 설정</strong> 펼침 패널을 열면 모델 정의 파일 경로를 지정하고, 모델 스토리지 폴더 외에 추가 스토리지 폴더를 마운트할 수 있습니다.</p>
+<ul>
+<li data-bai-block="130"><strong>모델 정의 파일 경로</strong>: 모델 스토리지 폴더 내 모델 정의 파일의 경로입니다 (기본값: <code>model-definition.yaml</code>). <code>Custom</code> 처럼 모델 폴더에서 설정을 읽는 런타임 변형에서만 표시됩니다.</li>
+<li data-bai-block="131"><strong>추가 마운트</strong>: 추론 서버 컨테이너에 마운트할 스토리지 폴더 목록입니다. 준비 상태(<code>ready</code>)의 비모델 폴더만 선택할 수 있으며, 모델 타입 폴더와 현재 선택한 모델 폴더는 목록에서 제외됩니다. 이름이 <code>.</code>으로 시작하는 자동 마운트 폴더는 선택할 수 없고, 테이블 하단에 자동으로 마운트될 폴더 목록으로 별도 표시됩니다.</li>
+</ul>
+<p><a id="custom-runtime-config-files"></a></p>
+<h3 data-bai-block="132" id="deployment-custom-런타임-구성-파일">Custom 런타임 구성 파일<a class="hash-link" href="#deployment-custom-런타임-구성-파일" aria-label="Direct link to Custom 런타임 구성 파일">#</a></h3>
+<p><a id="model-definition-guide"></a></p>
+<h4 data-bai-block="133" id="deployment-모델-정의-파일-생성하기">모델 정의 파일 생성하기<a class="hash-link" href="#deployment-모델-정의-파일-생성하기" aria-label="Direct link to 모델 정의 파일 생성하기">#</a></h4>
+<p data-bai-block="134">모델 정의 파일은 Backend.AI 시스템이 추론용 세션을 자동으로 시작, 초기화하고 필요에 따라 스케일링할 때 필요한 설정 정보를 담고 있는 파일입니다. 이 파일을 추론 서비스 엔진을 담고 있는 컨테이너 이미지와는 독립적으로 모델 타입 폴더에 저장합니다. 이를 통해 모델을 실행하는 엔진이 다양한 모델을 필요에 따라 바꿔가며 서비스할 수 있도록 하며, 모델이 변경될 때마다 컨테이너 이미지를 새로 빌드 및 배포하지 않아도 되도록 해줍니다. 네트워크 스토리지에서 직접 모델 정의와 모델 데이터를 불러오므로, 오토스케일링 시 배포 과정을 더 단순화 및 효율화할 수 있습니다.</p>
+<p data-bai-block="135">모델 정의 파일은 다음과 같은 형식을 따릅니다.</p>
+<div data-bai-block="136" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">yaml</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-yaml shiki-host"><code><span class="line"><span style="color:#85E89D">models</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"simple-http-server"</span></span>
+<span class="line"><span style="color:#85E89D">    model_path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"/models"</span></span>
+<span class="line"><span style="color:#85E89D">    service</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      start_command</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">python</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">-m</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">http.server</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">--directory</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">/home/work</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">"8000"</span></span>
+<span class="line"><span style="color:#85E89D">      port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">8000</span></span>
+<span class="line"><span style="color:#85E89D">      health_check</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/</span></span>
+<span class="line"><span style="color:#85E89D">        interval</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10.0</span></span>
+<span class="line"><span style="color:#85E89D">        max_retries</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#85E89D">        max_wait_time</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">15.0</span></span>
+<span class="line"><span style="color:#85E89D">        expected_status_code</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">200</span></span>
+<span class="line"><span style="color:#85E89D">        initial_delay</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">60.0</span></span></code></pre></div>
+<p data-bai-block="137"><strong>모델 정의 파일에 대한 키-값 설명</strong></p>
+<div class="admonition admonition-note">
+<div data-bai-block="138" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="139">&quot;(필수)&quot; 표시가 없는 필드는 선택사항입니다.</p>
+</div></div>
+
+
+<ul>
+<li data-bai-block="140"><p><code>name</code> (필수): 모델의 이름을 정의합니다.</p>
+</li>
+<li data-bai-block="141"><p><code>model_path</code> (필수): 모델이 정의된 경로를 지정합니다.</p>
+</li>
+<li data-bai-block="142"><p><code>service</code>: 서비스될 파일들에 대한 정보를 구성하는 항목입니다
+(명령 스크립트 및 코드 포함).</p>
+<ul>
+<li data-bai-block="143"><p><code>pre_start_actions</code>: <code>start_command</code> 이전에 실행되는 작업입니다. 이러한 작업들은
+구성 파일 생성, 디렉토리 설정, 초기화 스크립트 실행 등을 통해 환경을 준비합니다.
+작업은 정의된 순서대로 순차적으로 실행됩니다.</p>
+<ul>
+<li data-bai-block="144"><code>action</code>: 수행할 작업 유형입니다. 사용 가능한 작업 유형과 해당 파라미터는
+<a href="#prestart-actions">사전 시작 작업</a>을 참조하세요.</li>
+<li data-bai-block="145"><code>args</code>: 작업별 파라미터입니다. 각 작업 유형마다 다른 필수 인수가 있습니다.</li>
+</ul>
+</li>
+<li data-bai-block="146"><p><code>start_command</code> (필수): 배포에서 실행될 명령을 지정합니다.
+문자열 또는 문자열 목록으로 지정할 수 있습니다.</p>
+</li>
+<li data-bai-block="147"><p><code>port</code> (필수): 모델 서비스를 위한 컨테이너 포트입니다 (예: <code>8000</code>, <code>8080</code>).</p>
+</li>
+<li data-bai-block="148"><p><code>health_check</code>: 모델 서비스의 주기적인 상태 모니터링을 위한 구성입니다.
+이 설정이 구성되면, 시스템은 자동으로 서비스가 올바르게 응답하는지 확인하고
+비정상 인스턴스를 트래픽 라우팅에서 제거합니다.</p>
+<ul>
+<li data-bai-block="149"><code>path</code> (필수): 상태 확인 요청을 위한 HTTP 엔드포인트 경로입니다 (예: <code>/health</code>, <code>/v1/health</code>).</li>
+<li data-bai-block="150"><code>interval</code> (기본값: <code>10.0</code>): 연속적인 상태 확인 간의 시간(초 단위)입니다.</li>
+<li data-bai-block="151"><code>max_retries</code> (기본값: <code>10</code>): 서비스를 <code>UNHEALTHY</code>로 표시하기 전에
+허용되는 연속 실패 횟수입니다. 이 임계값을 초과하기 전까지 서비스는 계속 트래픽을 받습니다.</li>
+<li data-bai-block="152"><code>max_wait_time</code> (기본값: <code>15.0</code>): 각 상태 확인 HTTP 요청의 타임아웃 시간(초 단위)입니다.
+이 시간 내에 응답이 없으면 확인은 실패로 간주됩니다.</li>
+<li data-bai-block="153"><code>expected_status_code</code> (기본값: <code>200</code>): 정상 응답을 나타내는 HTTP 상태 코드입니다.
+일반적인 값: <code>200</code> (OK), <code>204</code> (No Content).</li>
+<li data-bai-block="154"><code>initial_delay</code> (기본값: <code>60.0</code>): 컨테이너 생성 후 상태 확인을 시작하기 전에
+대기하는 시간(초 단위)입니다. 이는 모델 로딩, GPU 초기화 및 서비스 워밍업에 시간을 제공합니다.
+대형 모델의 경우 더 높은 값을 설정하세요 (예: 70B+ LLM의 경우 <code>300.0</code>).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p data-bai-block="155"><strong>상태 확인 동작 이해하기</strong></p>
+<p data-bai-block="156">상태 확인 시스템은 개별 모델 서비스 컨테이너를 모니터링하고, 상태에 따라 트래픽 라우팅을 자동으로 관리합니다.</p>
+<p data-bai-block="157"><strong>① AppProxy: 트래픽 라우팅 제어</strong></p>
+<p><figure data-bai-block="158" class="doc-figure"><img src="./images/health_check_app_proxy.svg" alt="" class="doc-image" loading="lazy" decoding="async" /><figcaption>그림 12.8</figcaption></figure>
+</p>
+<p data-bai-block="159"><strong>② Manager: 상태 관리 및 eviction</strong></p>
+<p><figure data-bai-block="160" class="doc-figure"><img src="./images/health_check_state_machine.svg" alt="" class="doc-image" loading="lazy" decoding="async" /><figcaption>그림 12.9</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="161" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="162">내부 상태 정보(트래픽 라우팅에 사용됨)는 사용자 인터페이스에 표시되는
+상태와 즉시 동기화되지 않을 수 있습니다.</p>
+</div></div>
+
+
+<p data-bai-block="163"><strong>UNHEALTHY가 되기까지의 시간</strong>:</p>
+<ul>
+<li data-bai-block="164"><p>초기 시작 시: <code>initial_delay + interval × (max_retries + 1)</code></p>
+<p>기본값 예시: 60 + 10 × 11 = <strong>170초</strong> (약 3분)</p>
+</li>
+<li data-bai-block="165"><p>운영 중(정상 상태 이후): <code>interval × (max_retries + 1)</code></p>
+<p>기본값 예시: 10 × 11 = <strong>110초</strong> (약 2분)</p>
+</li>
+</ul>
+<p><a id="prestart-actions"></a></p>
+<p data-bai-block="166"><strong>Backend.AI 배포에서 지원되는 서비스 작업 설명</strong></p>
+<ul>
+<li data-bai-block="167"><p><code>write_file</code>: 지정된 파일 이름으로 파일을 생성하고 내용을 추가하는 작업입니다.
+기본 액세스 권한은 <code>644</code>입니다.</p>
+<ul>
+<li data-bai-block="168"><code>arg/filename</code>: 파일 이름 지정</li>
+<li data-bai-block="169"><code>body</code>: 파일에 추가할 내용 지정</li>
+<li data-bai-block="170"><code>mode</code>: 파일의 액세스 권한 지정</li>
+<li data-bai-block="171"><code>append</code>: 파일 내용의 덮어쓰기 또는 추가를 <code>True</code> 또는 <code>False</code>로 설정</li>
+</ul>
+</li>
+<li data-bai-block="172"><p><code>write_tempfile</code>: 임시 파일 이름(<code>.py</code>)으로 파일을 생성하고 내용을 추가하는 작업입니다.
+모드 값이 지정되지 않은 경우 기본 액세스 권한은 <code>644</code>입니다.</p>
+<ul>
+<li data-bai-block="173"><code>body</code>: 파일에 추가할 내용 지정</li>
+<li data-bai-block="174"><code>mode</code>: 파일의 액세스 권한 지정</li>
+</ul>
+</li>
+<li data-bai-block="175"><p><code>run_command</code>: 명령을 실행한 결과가 오류를 포함하여 다음 형식으로 반환됩니다
+(<code>out</code>: 명령 실행 출력, <code>err</code>: 명령 실행 중 오류 발생 시 오류 메시지)</p>
+<ul>
+<li data-bai-block="176"><code>args/command</code>: 실행할 명령을 배열로 지정 (예: <code>python3 -m http.server 8080</code> 명령은 [&quot;python3&quot;, &quot;-m&quot;, &quot;http.server&quot;, &quot;8080&quot;]이 됩니다)</li>
+</ul>
+</li>
+<li data-bai-block="177"><p><code>mkdir</code>: 입력 경로로 디렉토리를 생성하는 작업입니다</p>
+<ul>
+<li data-bai-block="178"><code>args/path</code>: 디렉토리를 생성할 경로 지정</li>
+</ul>
+</li>
+<li data-bai-block="179"><p><code>log</code>: 입력 메시지로 로그를 출력하는 작업입니다</p>
+<ul>
+<li data-bai-block="180"><code>args/message</code>: 로그에 표시할 메시지 지정</li>
+<li data-bai-block="181"><code>debug</code>: 디버그 모드인 경우 <code>True</code>, 그렇지 않으면 <code>False</code>로 설정</li>
+</ul>
+</li>
+</ul>
+<h4 data-bai-block="182" id="deployment-모델-정의-파일을-모델-타입-폴더에-업로드">모델 정의 파일을 모델 타입 폴더에 업로드<a class="hash-link" href="#deployment-모델-정의-파일을-모델-타입-폴더에-업로드" aria-label="Direct link to 모델 정의 파일을 모델 타입 폴더에 업로드">#</a></h4>
+<p data-bai-block="183">모델 정의 파일(<code>model-definition.yml</code>)을 모델 타입 폴더에 업로드하려면
+가상 폴더를 생성해야 합니다. 가상 폴더를 생성할 때 기본 <code>general</code> 타입 대신
+<code>model</code> 타입을 선택하세요. 폴더 생성 방법에 대한 지침은 데이터 페이지의
+<a href="./vfolder.html#create-storage-folder">스토리지 폴더 생성</a> 섹션을 참조하세요.</p>
+<p><figure data-bai-block="184" class="doc-figure"><img src="./images/model_type_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="892" /><figcaption>그림 12.10</figcaption></figure>
+</p>
+<p data-bai-block="185">폴더를 생성한 후, 데이터 페이지에서 <code>MODELS</code> 탭을 선택하고
+최근에 생성한 모델 타입 폴더 아이콘을 클릭하여 폴더 탐색기를 열고
+모델 정의 파일을 업로드합니다.
+폴더 탐색기 사용 방법에 대한 자세한 내용은
+<a href="./vfolder.html#explore-folder">폴더 탐색</a> 섹션을 참조하세요.</p>
+<p><figure data-bai-block="186" class="doc-figure"><img src="./images/model_type_folder_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="650" /><figcaption>그림 12.11</figcaption></figure>
+</p>
+<p><figure data-bai-block="187" class="doc-figure"><img src="./images/model_definition_file_upload.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1624" height="630" /><figcaption>그림 12.12</figcaption></figure>
+</p>
+<p><a id="service-definition-file"></a></p>
+<h4 data-bai-block="188" id="deployment-배포-사전-구성-deployment-configyaml">배포 사전 구성 (<code>deployment-config.yaml</code>)<a class="hash-link" href="#deployment-배포-사전-구성-deployment-configyaml" aria-label="Direct link to 배포 사전 구성 (deployment-config.yaml)">#</a></h4>
+<p data-bai-block="189">모델 폴더에 <code>deployment-config.yaml</code> 파일을 배치하여 모델에서 배포를 생성할 때 사용하는 리소스, 환경 및 런타임 설정을 미리 구성할 수 있습니다. 파일이 존재하면 해당 값들이 <strong>기본값</strong>으로 사용되며, 배포 시점에 설정하는 모든 항목(리비전 추가 양식 또는 API 요청)이 이를 재정의합니다.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="190" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="191">같은 폴더에 있는 <code>service-definition.toml</code>(TOML 형식) 파일도 폴백으로 읽히지만 <strong>더 이상 권장되지 않습니다</strong> — 모델 폴더에는 <code>deployment-config.yaml</code>을 사용하세요.</p>
+</div></div>
+
+
+<p data-bai-block="192"><code>deployment-config.yaml</code>은 <strong>선택 사항</strong>이며 배포를 막지 않습니다. 파일의 존재 여부와 관계없이 모델을 배포할 수 있으며, 누락되거나 형식이 잘못된 파일은 단순히 건너뜁니다. 모델 및 추론 서버를 설명하는 선택 사항인 <code>model-definition.yaml</code>과 함께 사용하면 관리자는 모델과 함께 합리적인 기본값을 제공할 수 있습니다.</p>
+<p data-bai-block="193">값은 우선순위가 가장 낮은 것부터 가장 높은 것 순으로 <strong>3단계 재정의 계층</strong>을 통해 결정됩니다.</p>
+<ol>
+<li data-bai-block="194"><strong>루트 수준 기본값</strong> — 모든 런타임 변형에 적용됩니다.</li>
+<li data-bai-block="195"><strong>런타임 변형 섹션</strong>(예: <code>vllm</code>, <code>sglang</code>, <code>tgi</code>) — 해당 변형에 한해 개별 필드만 재정의합니다.</li>
+<li data-bai-block="196"><strong>배포 시점 입력</strong>(리비전 추가 양식 / API 요청) — 모든 항목을 재정의합니다.</li>
+</ol>
+<div data-bai-block="197" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">yaml</span><span class="code-block-title-text">deployment-config.yaml</span></div><pre class="language-yaml shiki-host"><code><span class="line"><span style="color:#85E89D">environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"example.com/model-server:latest"</span></span>
+<span class="line"><span style="color:#85E89D">  architecture</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"x86_64"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">resource_slots</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  cpu</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">4</span></span>
+<span class="line"><span style="color:#85E89D">  mem</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"16gb"</span></span>
+<span class="line"><span style="color:#9ECBFF">  "cuda.shares"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"0.5"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">environ</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  MODEL_NAME</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"example-model-name"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">resource_opts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  shmem</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"8g"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">vllm</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"vllm-optimized:0.4.0"</span></span>
+<span class="line"><span style="color:#85E89D">  resource_slots</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">8</span></span>
+<span class="line"><span style="color:#9ECBFF">    "cuda.device"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span></span></code></pre></div>
+<p data-bai-block="198"><strong>필드 참조</strong></p>
+<ul>
+<li data-bai-block="199"><code>environment</code>: 추론 서버의 컨테이너 이미지 및 아키텍처입니다.<ul>
+<li data-bai-block="200"><code>image</code>: 컨테이너 이미지의 전체 경로입니다(예: <code>example.com/model-server:latest</code>).</li>
+<li data-bai-block="201"><code>architecture</code>: 이미지의 CPU 아키텍처입니다(예: <code>x86_64</code>, <code>aarch64</code>).</li>
+</ul>
+</li>
+<li data-bai-block="202"><code>resource_slots</code>: 각 복제본에 할당되는 연산 리소스입니다.<ul>
+<li data-bai-block="203"><code>cpu</code>: CPU 코어 수입니다(예: <code>4</code>, <code>8</code>).</li>
+<li data-bai-block="204"><code>mem</code>: 단위 접미사가 붙은 메모리 양입니다(예: <code>&quot;16gb&quot;</code>).</li>
+<li data-bai-block="205"><code>&quot;cuda.shares&quot;</code> / <code>&quot;cuda.device&quot;</code>: 분할 또는 전체 GPU 할당입니다. 점을 포함하는 키는 따옴표로 감쌉니다.</li>
+</ul>
+</li>
+<li data-bai-block="206"><code>environ</code>: 추론 서버 컨테이너로 전달되는 환경 변수입니다. 루트 값과 변형 값이 병합됩니다.</li>
+<li data-bai-block="207"><code>resource_opts</code>: <code>shmem</code>(공유 메모리 크기)과 같은 추가 리소스 옵션입니다.</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="208" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="209">vLLM 배포의 경우 루트 기본값이 <code>vllm</code> 섹션과 병합되며(변형 필드가 우선), 배포 시점 입력이 둘 다를 재정의합니다. 변형 섹션에 나열된 필드만 재정의되고, 나머지는 모두 루트 수준으로 폴백됩니다.</p>
+</div></div>
+
+
+<p><a id="quick-deploy"></a></p>
+<h2 data-bai-block="210" id="deployment-빠른-배포">빠른 배포<a class="hash-link" href="#deployment-빠른-배포" aria-label="Direct link to 빠른 배포">#</a></h2>
+<p data-bai-block="211">프리셋 기반 빠른 배포를 사용하면 별도의 설정 파일 없이 배포를 생성할 수 있습니다. 다음 두 가지 진입점에서 빠른 배포를 시작할 수 있습니다.</p>
+<ul>
+<li data-bai-block="212"><a href="#model-store">모델 스토어</a>에서 사전 구성된 모델 카드를 탐색하고 <code>배포</code> 버튼을 클릭하면 프리셋 기반으로 바로 배포할 수 있습니다.</li>
+<li data-bai-block="213">데이터 페이지의 <strong>모델</strong> 탭에서 모델 폴더의 <code>서비스로 배포</code> 버튼을 클릭하면 <strong>프리셋으로 새 배포 생성</strong> 모달이 열립니다. 프리셋과 자원 그룹을 선택하면 별도의 설정 없이 바로 배포됩니다.</li>
+</ul>
+<p data-bai-block="214">전체 모델 배포 흐름은 <a href="#model-store">모델 스토어</a> 섹션을 참고하세요.</p>
+<p><a id="deployment-detail-page"></a></p>
+<h2 data-bai-block="215" id="deployment-배포-상세-페이지">배포 상세 페이지<a class="hash-link" href="#deployment-배포-상세-페이지" aria-label="Direct link to 배포 상세 페이지">#</a></h2>
+<p data-bai-block="216">배포 목록에서 배포 이름을 클릭하면 배포에 대한 상세 정보를 볼 수 있습니다.</p>
+<h3 data-bai-block="217" id="deployment-배포-알림">배포 알림<a class="hash-link" href="#deployment-배포-알림" aria-label="Direct link to 배포 알림">#</a></h3>
+<p data-bai-block="218">배포 상세 페이지는 배포의 현재 상태에 따라 페이지 상단에 상황별 알림 배너를 표시합니다.</p>
+<ul>
+<li data-bai-block="219"><p><strong>배포가 준비되었습니다</strong>: 배포 상태가 <code>HEALTHY</code>일 때 표시됩니다. 페이지를 떠나지 않고 모델을 테스트할 수 있도록 LLM 채팅 테스트 인터페이스로 이동하는 <strong>채팅으로 테스트하기</strong> 버튼이 포함됩니다.</p>
+</li>
+<li data-bai-block="220"><p><strong>비공개 배포입니다. 엔드포인트에 접근하려면 액세스 토큰이 필요합니다.</strong>: <strong>외부에 공개</strong> 옵션이 비활성화되어 있고, 엔드포인트 URL이 발급되었으며, 아직 액세스 토큰이 하나도 없을 때 표시됩니다. 배너에서 바로 액세스 토큰 생성 대화 상자를 여는 <strong>액세스 토큰 추가</strong> 버튼이 포함되며, 첫 토큰을 생성하면 배너는 사라집니다. 자세한 내용은 <a href="#generating-tokens">토큰 생성</a>을 참고하세요.</p>
+</li>
+<li data-bai-block="221"><p><strong>배포된 리비전이 없습니다. 리비전을 추가하여 서비스를 활성화하세요.</strong>: 배포에 현재 리비전이 없을 때 표시됩니다. <code>리비전 추가</code>를 클릭하여 첫 번째 리비전을 만들고 서비스를 활성화합니다.</p>
+</li>
+<li data-bai-block="222"><p><strong>서비스를 준비하고 있습니다</strong>: 배포가 생성 중이거나 상태가 전환 중일 때 표시됩니다. 서비스가 아직 요청을 처리할 준비가 되지 않았음을 나타냅니다.</p>
+</li>
+<li data-bai-block="223"><p><strong>이 모델 서비스는 다른 프로젝트에 속해 있습니다</strong>: 배포가 현재 선택된 프로젝트와 다른 프로젝트에 속할 때 표시됩니다. 이 알림이 표시되는 동안 <code>수정</code> 버튼은 비활성화됩니다. 알림의 <strong>프로젝트 전환</strong> 버튼을 클릭하여 올바른 프로젝트로 전환하고 배포를 관리할 수 있습니다.</p>
+</li>
+</ul>
+<h3 data-bai-block="224" id="deployment-기본-정보">기본 정보<a class="hash-link" href="#deployment-기본-정보" aria-label="Direct link to 기본 정보">#</a></h3>
+<p data-bai-block="225"><strong>기본 정보</strong> 카드에는 배포의 메타데이터가 표시됩니다.</p>
+<ul>
+<li data-bai-block="226"><strong>라이프사이클</strong>: 배포 상태 태그입니다. 상태 태그 옆에 <strong>스케줄링 기록</strong> 링크 버튼이 표시되며, 클릭하면 이 배포에 대한 스케줄링 이벤트 기록을 모달로 확인할 수 있습니다.</li>
+<li data-bai-block="227"><strong>배포 ID</strong>: 배포의 고유 식별자입니다.</li>
+<li data-bai-block="228"><strong>프로젝트</strong> / <strong>도메인</strong>: 배포가 속한 프로젝트와 도메인입니다.</li>
+<li data-bai-block="229"><strong>자원 그룹</strong>: 배포가 실행되는 자원 그룹입니다. 배포 생성 시 한 번 설정되며 리비전과 무관하게 고정됩니다.</li>
+<li data-bai-block="230"><strong>엔드포인트 URL</strong>: 배포에 액세스하기 위한 URL입니다.</li>
+<li data-bai-block="231"><strong>공개 범위</strong>: <strong>공개</strong> / <strong>비공개</strong> 태그로 표시됩니다. <strong>공개</strong>는 액세스 토큰 없이 엔드포인트에 접근할 수 있음을 의미하며, <strong>비공개</strong>는 호출자가 유효한 액세스 토큰을 함께 보내야 함을 의미합니다.</li>
+<li data-bai-block="232"><strong>목표 복제본 수</strong>: 배포가 유지하려는 복제본 수입니다.</li>
+<li data-bai-block="233"><strong>태그</strong>: 배포에 부여된 태그 목록입니다.</li>
+</ul>
+<p><figure data-bai-block="234" class="doc-figure"><img src="./images/endpoint_detail_visibility.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="790" /><figcaption>그림 12.13</figcaption></figure>
+</p>
+<h4 data-bai-block="235" id="deployment-더보기-메뉴-수정-및-삭제">더보기 메뉴 (수정 및 삭제)<a class="hash-link" href="#deployment-더보기-메뉴-수정-및-삭제" aria-label="Direct link to 더보기 메뉴 (수정 및 삭제)">#</a></h4>
+<p data-bai-block="236"><strong>기본 정보</strong> 카드 헤더에는 새로 고침 버튼, <strong>수정</strong> 버튼, <strong>더보기</strong> 메뉴가 있습니다. <strong>수정</strong> 버튼을 클릭하면 <a href="#create-deployment">배포 생성 모달</a>에서 설명한 <strong>배포 수정</strong> 모달이 열립니다. 더보기 메뉴에는 현재 <strong>배포 삭제</strong> 동작이 포함됩니다.</p>
+<p><figure data-bai-block="237" class="doc-figure"><img src="./images/endpoint_detail_more_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="320" height="174" /><figcaption>그림 12.14</figcaption></figure>
+</p>
+<p><a id="scheduling-history"></a></p>
+<h4 data-bai-block="238" id="deployment-스케줄링-기록">스케줄링 기록<a class="hash-link" href="#deployment-스케줄링-기록" aria-label="Direct link to 스케줄링 기록">#</a></h4>
+<p data-bai-block="239">상태 태그 옆의 <strong>스케줄링 기록</strong> 링크 버튼을 클릭하면 <strong>배포 스케줄링 기록</strong> 모달이 열립니다. 해당 배포에 기록된 스케줄링 이벤트가 최신순으로 표시되고 속성 필터 바(ID, 단계, 결과, 이전 상태, 이후 상태, 오류 코드, 메시지, 생성일, 업데이트일)와 새로 고침 버튼도 있습니다.</p>
+<p><figure data-bai-block="240" class="doc-figure"><img src="./images/deployment_scheduling_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 12.15</figcaption></figure>
+</p>
+<p><a id="scheduling-history-substeps"></a></p>
+<p data-bai-block="241">세부단계가 기록된 이벤트에는 행 왼쪽에 확장 화살표가 표시됩니다. 이를 클릭하면 해당 단계의 세부단계가 한 행에 하나씩 표시되는 간결한 인라인 표가 열리며, 다음 컬럼으로 구성됩니다.</p>
+<ul>
+<li data-bai-block="242"><strong>세부단계</strong>: 세부단계의 이름입니다.</li>
+<li data-bai-block="243"><strong>결과</strong>: 세부단계의 결과로, 색상으로 구분된 마커로 표시됩니다.</li>
+<li data-bai-block="244"><strong>소요 시간</strong>: 세부단계에 걸린 시간입니다(예: <code>120 ms</code>, <code>1.35 s</code>).</li>
+<li data-bai-block="245"><strong>시간</strong>: 세부단계가 시작된 시각으로, 밀리초까지 표시됩니다.</li>
+<li data-bai-block="246"><strong>오류 코드</strong>: 세부단계에 기록된 오류 코드이며, 없으면 <code>-</code> 로 표시됩니다.</li>
+<li data-bai-block="247"><strong>메시지</strong>: 세부단계의 상세 내용이나 오류 문구로, 한 줄로 축약되어 표시됩니다.</li>
+</ul>
+<p data-bai-block="248">복제본 탭에서 여는 <strong>복제본 스케줄링 기록</strong> 모달도 동일한 표를 사용합니다. <a href="#replicas-tab-history">복제본</a>을 참고하세요.</p>
+<p><a id="revisions-tab"></a></p>
+<h3 data-bai-block="249" id="deployment-리비전-탭">리비전 탭<a class="hash-link" href="#deployment-리비전-탭" aria-label="Direct link to 리비전 탭">#</a></h3>
+<p data-bai-block="250">배포 상세 페이지의 <strong>리비전</strong> 카드에는 <strong>현재 리비전</strong>, <strong>리비전 히스토리</strong>, <strong>감사 로그</strong> 세 개의 탭이 있습니다. 카드 상단의 <code>리비전 추가</code> 버튼은 모든 탭에서 사용할 수 있으며, 리비전 추가 모달을 엽니다(<a href="#add-revision">리비전 추가</a> 참고). 이 버튼은 중지 중이거나 더 이상 활성 상태가 아닌 배포, 그리고 현재 선택된 프로젝트와 다른 프로젝트에 속한 배포에서는 비활성화되며, 비활성화된 동안에는 툴팁에 <em>&quot;배포가 중지 중이거나 더 이상 활성 상태가 아닙니다.&quot;</em> 또는 <em>&quot;리비전을 추가하려면 이 배포의 프로젝트로 전환하세요.&quot;</em> 라고 이유가 표시됩니다.</p>
+<h4 data-bai-block="251" id="deployment-현재-리비전-탭">현재 리비전 탭<a class="hash-link" href="#deployment-현재-리비전-탭" aria-label="Direct link to 현재 리비전 탭">#</a></h4>
+<p data-bai-block="252"><strong>현재 리비전</strong> 탭은 현재 활성 상태로 트래픽을 처리 중인 리비전의 전체 설정을 표시합니다.</p>
+<p><figure data-bai-block="253" class="doc-figure"><img src="./images/current_revision_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1414" /><figcaption>그림 12.16</figcaption></figure>
+</p>
+<p data-bai-block="254">다음 필드가 표시됩니다:</p>
+<ul>
+<li data-bai-block="255"><strong>리비전 번호</strong>: 자동 할당된 순서 번호입니다(예: <em>#3</em>).</li>
+<li data-bai-block="256"><strong>리비전 ID</strong>: 이 리비전의 UUID입니다.</li>
+<li data-bai-block="257"><strong>생성일</strong></li>
+<li data-bai-block="258"><strong>자원 할당</strong>: 각 복제본의 자원 할당(CPU, 메모리, 가속기)입니다.</li>
+<li data-bai-block="259"><strong>모델 폴더</strong>: 각 복제본에 마운트된 모델 폴더로, 링크와 함께 <strong>모델 폴더 마운트할 경로</strong>가 표시됩니다. 하위 폴더를 마운트한 리비전에서는 <code>서브경로: &lt;값&gt;</code> 줄도 함께 표시됩니다.</li>
+<li data-bai-block="260"><strong>모델 정의 파일 경로</strong>: 모델 폴더 내 모델 정의 파일 경로입니다.</li>
+<li data-bai-block="261"><strong>추가 마운트</strong>: 각 복제본에 마운트된 추가 스토리지 폴더입니다.</li>
+<li data-bai-block="262"><strong>런타임</strong>: 서빙 런타임입니다(예: <code>vLLM</code>, <code>SGLang</code>, <code>Custom</code>).</li>
+<li data-bai-block="263"><strong>런타임 파라미터</strong>: 이 리비전에 구성된 런타임 변형 프리셋 파라미터 값입니다(예: DType: float32, Quantization: awq). 프리셋 파라미터 값이 구성된 <code>vLLM</code> 또는 <code>SGLang</code> 리비전에서만 표시됩니다. <code>Custom</code> 런타임이나 프리셋 값이 없는 리비전에서는 대시(-)로 표시됩니다.</li>
+<li data-bai-block="264"><strong>런타임 구성</strong>: <code>vLLM</code> 또는 <code>SGLang</code> 런타임에서 추가 설정이 존재하는 경우 JSON 형태로 표시됩니다.</li>
+<li data-bai-block="265"><strong>이미지</strong>: 복제본 실행에 사용되는 컨테이너 이미지입니다.</li>
+<li data-bai-block="266"><strong>클러스터 모드</strong>: 각 복제본 컴퓨트 세션의 클러스터링 구성입니다(모드 / 크기).</li>
+<li data-bai-block="267"><strong>환경 변수</strong>: 컨테이너에 주입되는 키-값 쌍으로, 셸 스크립트 블록으로 표시됩니다.</li>
+</ul>
+<p data-bai-block="268">모델 정의 파일에 모델이 정의된 경우 다음 필드도 표시됩니다:</p>
+<ul>
+<li data-bai-block="269"><strong>모델 이름</strong>, <strong>모델 경로</strong>, <strong>시작 명령어</strong>, <strong>포트</strong>, <strong>셸</strong>, <strong>시작 전 작업</strong>, <strong>헬스 체크 URL</strong>, <strong>초기 헬스 체크 유예 시간</strong>, <strong>최대 재시도 횟수</strong>, <strong>간격 (s)</strong>, <strong>최대 대기 시간 (s)</strong>, <strong>예상 상태 코드</strong></li>
+</ul>
+<p data-bai-block="270"><strong>적용 진행 중 상태</strong></p>
+<p data-bai-block="271">다른 리비전이 적용 중인 동안 <strong>현재 리비전</strong> 탭에는 <em>&quot;N 리비전을 적용 중입니다.&quot;</em> 알림이 표시됩니다. 알림의 <strong>리비전 보기</strong> 버튼을 클릭하면 현재 적용 중인 리비전의 상세 드로어가 열립니다. 탭은 적용이 완료될 때까지 5초마다 자동으로 새로 고침됩니다.</p>
+<p data-bai-block="272"><strong>빈 상태</strong></p>
+<p data-bai-block="273">아직 배포된 리비전이 없는 경우 탭에는 <em>&quot;배포된 리비전이 없습니다. 리비전을 추가하여 서비스를 활성화하세요.&quot;</em> 가 표시됩니다.</p>
+<h4 data-bai-block="274" id="deployment-리비전-히스토리-탭">리비전 히스토리 탭<a class="hash-link" href="#deployment-리비전-히스토리-탭" aria-label="Direct link to 리비전 히스토리 탭">#</a></h4>
+<p data-bai-block="275"><strong>리비전 히스토리</strong> 탭은 배포에 추가된 모든 리비전을 최신순으로 표시합니다.</p>
+<p><figure data-bai-block="276" class="doc-figure"><img src="./images/revision_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="502" /><figcaption>그림 12.17</figcaption></figure>
+</p>
+<p data-bai-block="277">테이블에는 다음 컬럼이 포함됩니다:</p>
+<ul>
+<li data-bai-block="278"><strong>리비전 (ID)</strong>: 리비전 번호와 UUID입니다. 리비전 번호는 증가하는 정수이며, 숫자가 낮을수록 이전 리비전입니다. 리비전 번호를 클릭하면 리비전 상세 드로어가 열립니다.</li>
+<li data-bai-block="279"><strong>생성일</strong></li>
+<li data-bai-block="280"><strong>런타임</strong>: 이 리비전에 사용된 서빙 런타임입니다(예: <code>vLLM</code>, <code>SGLang</code>, <code>Custom</code>).</li>
+<li data-bai-block="281"><strong>클러스터 모드</strong>: &quot;모드 / 크기&quot; 형식의 클러스터링 구성입니다. 컬럼 헤더에 마우스를 올리면 설명을 확인할 수 있습니다.</li>
+</ul>
+<p data-bai-block="282">기본적으로 숨겨져 있지만 컬럼 설정에서 활성화할 수 있는 컬럼:</p>
+<ul>
+<li data-bai-block="283"><strong>모델 버전</strong>, <strong>이미지</strong>, <strong>모델 폴더</strong></li>
+</ul>
+<p data-bai-block="284"><strong>리비전 적용 및 기타 동작</strong></p>
+<p data-bai-block="285">각 행에는 <strong>적용</strong> 버튼과 더보기 메뉴가 있습니다.</p>
+<ul>
+<li data-bai-block="286"><p><strong>적용</strong>: 클릭하면 확인 대화상자가 열립니다. 확인하면 선택한 리비전이 현재 리비전이 되고, 배포는 새 설정으로 트래픽을 처리하기 시작합니다. 이전 리비전은 히스토리에 보존됩니다.</p>
+</li>
+<li data-bai-block="287"><p><strong>이 리비전 기반으로 리비전 생성</strong>: 더보기 메뉴에서 선택할 수 있습니다. 해당 리비전의 설정을 미리 채운 상태로 리비전 추가 모달을 열어 빠르게 수정·재배포할 수 있습니다.</p>
+</li>
+<li data-bai-block="288"><p>초록색 <strong>현재</strong> 태그는 현재 활성 리비전을 표시합니다.</p>
+</li>
+<li data-bai-block="289"><p>노란색 <strong>적용 중</strong> 태그(로딩 스피너 포함)는 적용 중인 리비전을 표시합니다.</p>
+</li>
+<li data-bai-block="290"><p><strong>적용</strong> 버튼은 현재 활성 리비전과 적용 중인 리비전에 대해 비활성화됩니다. 배포가 중지된 상태이거나 적용 또는 롤백이 이미 진행 중인 경우에도 사용할 수 없습니다.</p>
+</li>
+</ul>
+<p data-bai-block="291">행의 리비전 번호를 클릭하면 해당 리비전의 전체 설정을 보여주는 리비전 상세 드로어가 열립니다. 드로어에도 <strong>적용</strong> 버튼과 <strong>이 리비전 기반으로 리비전 생성</strong> 버튼이 있으며, 표와 동일한 조건에서 <strong>적용</strong> 버튼이 비활성화됩니다.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="292" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="293"><strong>런타임 파라미터</strong> 필드는 <code>vLLM</code> 및 <code>SGLang</code> 리비전의 리비전 상세 드로어에도 표시되며, 현재 리비전 탭과 동일한 프리셋 파라미터 값을 보여줍니다.</p>
+</div></div>
+
+
+<h4 data-bai-block="294" id="deployment-감사-로그-탭">감사 로그 탭<a class="hash-link" href="#deployment-감사-로그-탭" aria-label="Direct link to 감사 로그 탭">#</a></h4>
+<p data-bai-block="295"><strong>감사 로그</strong> 탭은 이 배포에 대해 수행된 모든 작업의 시간 순 기록을 표시합니다. 누가 언제 배포를 변경했는지 추적하는 데 활용합니다.</p>
+<p><figure data-bai-block="296" class="doc-figure"><img src="./images/audit_log_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="578" /><figcaption>그림 12.18</figcaption></figure>
+</p>
+<h3 data-bai-block="297" id="deployment-복제본">복제본<a class="hash-link" href="#deployment-복제본" aria-label="Direct link to 복제본">#</a></h3>
+<p data-bai-block="298">복제본 탭은 배포를 구성하는 라우팅 노드를 보여줍니다. 탭 상단의 <strong>실행 중 / 종료됨</strong> 라디오 컨트롤로 항목을 필터링합니다.</p>
+<p><figure data-bai-block="299" class="doc-figure"><img src="./images/replica_status_filter.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="502" /><figcaption>그림 12.19</figcaption></figure>
+</p>
+<ul>
+<li data-bai-block="300"><strong>실행 중</strong>: 현재 프로비저닝 중이거나 실행 중인, 또는 활성 상태의 복제본을 표시합니다.</li>
+<li data-bai-block="301"><strong>종료됨</strong>: 라이프사이클이 종료된 복제본을 표시합니다.</li>
+</ul>
+<p data-bai-block="302">각 복제본 행에는 서로 <strong>독립적인</strong> 세 가지 상태 필드가 표시됩니다. 세 필드는 서로 다른 축을 나타내므로 함께 읽어야 합니다. 예를 들어 복제본의 라이프사이클은 <em>실행 중</em>이면서 헬스 상태는 아직 <em>대기 중</em>일 수 있습니다.</p>
+<ul>
+<li data-bai-block="303"><strong>라이프사이클 상태</strong>: 복제본이 라이프사이클의 어느 단계에 있는지를 나타냅니다(예: <em>프로비저닝 중</em>, <em>준비 중</em>, <em>실행 중</em>, <em>종료 중</em>, <em>종료됨</em>). <strong>준비 중</strong> 단계에서 복제본은 초기 헬스 체크 유예 시간 안에 있습니다. 즉 시작되는 중이며 첫 번째 헬스 체크 성공을 기다립니다. 이 구간에서는 헬스 체크 실패가 허용되며, 첫 성공 시 <em>실행 중</em>으로 전환되고 구간이 끝날 때까지 한 번도 성공하지 못하면 종료됩니다. 컬럼 헤더에는 <strong>라이프사이클</strong>로 표시됩니다.</li>
+<li data-bai-block="304"><strong>헬스 상태</strong>: 복제본 프로세스의 현재 헬스 상태입니다(<em>정상</em>, <em>비정상</em>, <em>저하됨</em>, <em>대기 중</em>).<ul>
+<li data-bai-block="305"><strong>대기 중</strong>은 아직 첫 헬스 체크가 완료되지 않았음을 의미합니다. 복제본은 대개 <strong>준비 중</strong> 유예 시간 안에 있습니다. 그 자체로 오류는 아니며, 복제본의 현재 단계는 <strong>라이프사이클 상태</strong>를 보고 확인합니다.</li>
+</ul>
+</li>
+<li data-bai-block="306"><strong>트래픽 상태</strong>: 복제본이 현재 요청을 처리 중인지 여부입니다. 복제본은 헬스 상태와 무관하게 트래픽에서 제외될 수 있으므로(예: 수동으로 비활성화한 경우) 트래픽을 헬스 상태에 합치지 않고 별도의 상태로 표시합니다.</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="307" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="308">세 가지 상태는 서로 독립적인 축입니다. <strong>준비 중</strong> 라이프사이클 단계에서 복제본은 초기 헬스 체크 유예 시간 안에 있으며, 첫 체크가 완료되기 전까지 <strong>헬스 상태</strong>는 대개 <em>대기 중</em>으로 표시됩니다. 이는 그 자체로 문제를 나타내지 않습니다.</p>
+</div></div>
+
+
+<p data-bai-block="309"><strong>세션</strong> 컬럼에서 세션 이름을 클릭하면 세션 상세 드로어가 열리고, <strong>리비전(ID)</strong> 컬럼에서 리비전 번호를 클릭하면 리비전 상세 드로어가 열립니다.</p>
+<p><a id="replicas-tab-history"></a></p>
+<p data-bai-block="310"><strong>라이프사이클</strong> 컬럼의 상태 태그 옆에는 기록 아이콘 버튼이 있습니다. 클릭하면 해당 복제본의 <strong>복제본 스케줄링 기록</strong> 모달이 열리며, 복제본의 스케줄링 이벤트 기록을 날짜 범위, 상태 등으로 필터링하여 확인할 수 있습니다.</p>
+<p><figure data-bai-block="311" class="doc-figure"><img src="./images/replica_scheduling_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 12.20</figcaption></figure>
+</p>
+<p data-bai-block="312">복제본에서 오류가 발생한 경우 행의 오류 표시를 클릭하면 JSON 뷰어 모달이 열리며, 원시 오류 데이터를 표시합니다. 개별 복제본의 문제를 진단할 때 유용합니다.</p>
+<p><figure data-bai-block="313" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="985" height="427" /><figcaption>그림 12.21</figcaption></figure>
+</p>
+<h3 data-bai-block="314" id="deployment-오토스케일링-규칙">오토스케일링 규칙<a class="hash-link" href="#deployment-오토스케일링-규칙" aria-label="Direct link to 오토스케일링 규칙">#</a></h3>
+<p data-bai-block="315">오토스케일링 규칙(Auto Scaling Rules)은 실시간 메트릭을 기반으로 모델 서비스의 복제본 수를 자동으로 증감시킵니다. 이를 통해 낮은 사용량일 때는 리소스를 절약하고, 높은 사용량일 때는 요청 지연이나 실패를 방지할 수 있습니다.</p>
+<p><figure data-bai-block="316" class="doc-figure"><img src="./images/auto_scaling_rules.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="576" /><figcaption>그림 12.22</figcaption></figure>
+</p>
+<p data-bai-block="317">규칙 목록에서는 다음을 제공합니다:</p>
+<ul>
+<li data-bai-block="318">생성 시간(Created At)과 최근 실행 시점(Last Triggered) 날짜-시간 범위로 규칙을 필터링할 수 있는 속성 필터 바.</li>
+<li data-bai-block="319">서버 측 페이지네이션.</li>
+<li data-bai-block="320">메트릭 소스(Metric Source), 조건(Condition), 쿨다운 초(Cooldown Sec.), 단계 크기(Step Size), 최소 / 최대 복제본 수(Min / Max Replicas), 생성 시간(Created At), 최근 실행 시점(Last Triggered) 컬럼. <strong>단계 크기</strong> 컬럼은 설정한 조건에서 도출된 방향에 따라 <code>+</code>, <code>−</code>, <code>±</code> 부호가 자동으로 표시됩니다.</li>
+<li data-bai-block="321">각 행의 조건 요약 옆에 표시되는 행별 편집 및 삭제 아이콘.</li>
+</ul>
+<p data-bai-block="322"><code>규칙 추가</code> 버튼을 클릭하면 <strong>오토스케일링 규칙 추가</strong> 편집기가 열립니다. 이 버튼은 중지 중이거나 더 이상 활성 상태가 아닌 배포, 그리고 본인이 소유하지 않은 배포에서는 비활성화되며, 비활성화된 동안에는 툴팁에 <em>&quot;배포가 중지 중이거나 더 이상 활성 상태가 아닙니다.&quot;</em> 또는 <em>&quot;배포 소유자만 이 배포를 관리할 수 있습니다.&quot;</em> 라고 이유가 표시됩니다.</p>
+<p data-bai-block="323">기존 규칙을 수정하려면 해당 행의 편집 아이콘을 클릭하세요. 규칙 값이 미리 채워진 상태로 <strong>오토스케일링 규칙 수정</strong> 편집기가 열립니다. 편집기에는 다음 필드가 순서대로 포함됩니다:</p>
+<ul>
+<li data-bai-block="324"><p><strong>메트릭 소스(Metric Source)</strong>: <code>Kernel</code> 또는 <code>Prometheus</code> 중 하나를 선택합니다.</p>
+</li>
+<li data-bai-block="325"><p><strong>메트릭 이름(Metric Name)</strong>: <code>Kernel</code>의 경우 메트릭 이름을 입력합니다. <code>cpu_util</code>, <code>mem</code>, <code>net_rx</code>, <code>net_tx</code>와 같은 일반적인 메트릭이 자동 완성 제안으로 제공되며, 사용자 정의 이름을 자유롭게 입력할 수도 있습니다.</p>
+</li>
+<li data-bai-block="326"><p><strong>메트릭 이름 프리셋(Metric Name (Prometheus Preset))</strong>: 메트릭 소스가 <code>Prometheus</code>일 때만 표시됩니다. 드롭다운에서 프리셋을 선택하면 프리셋의 메트릭 이름, 쿼리 템플릿, 그리고 (정의된 경우) 쿨다운 초(Cooldown Sec.)가 자동으로 채워집니다.</p>
+</li>
+<li data-bai-block="327"><p><strong>조건(Condition)</strong>: 스케일링 방향을 선택하는 세그먼트 컨트롤입니다. 세 가지 옵션이 있습니다.</p>
+<ul>
+<li data-bai-block="328"><strong>스케일 인</strong>: 메트릭이 임계값 아래로 떨어지면 복제본을 줄입니다. <code>Metric &lt; [임계값]</code> 조건을 설정합니다.</li>
+<li data-bai-block="329"><strong>스케일 아웃</strong>: 메트릭이 임계값 위로 올라가면 복제본을 늘립니다. <code>Metric &gt; [임계값]</code> 조건을 설정합니다.</li>
+<li data-bai-block="330"><strong>스케일 인 &amp; 아웃</strong>: 메트릭이 설정한 범위를 벗어나는 방향에 따라 자동으로 축소 또는 확장합니다. <code>Metric &lt; Min Threshold</code> 또는 <code>Metric &gt; Max Threshold</code> 조건을 설정합니다.</li>
+</ul>
+</li>
+</ul>
+<p><figure data-bai-block="331" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>그림 12.23</figcaption></figure>
+</p>
+<ul>
+<li data-bai-block="332"><p><strong>단계 크기(Step Size)</strong>: 스케일링 이벤트마다 추가하거나 제거할 복제본 수를 지정하는 양의 정수입니다. 선택한 조건(스케일 인 / 스케일 아웃 / 스케일 인 &amp; 아웃)에 따라 <code>-</code>, <code>+</code>, <code>±</code> 부호가 자동으로 표시됩니다.</p>
+<ul>
+<li data-bai-block="333">최솟값 임계값만 설정: <code>[metric] &lt; [minThreshold]</code> 조건이 되면 스케일 <strong>인</strong>(Scale In)됩니다.</li>
+<li data-bai-block="334">최댓값 임계값만 설정: <code>[metric] &gt; [maxThreshold]</code> 조건이 되면 스케일 <strong>아웃</strong>(Scale Out)됩니다.</li>
+<li data-bai-block="335">둘 다 설정: <code>[metric] &lt; [minThreshold]</code>이면 스케일 <strong>인</strong>되고, <code>[metric] &gt; [maxThreshold]</code>이면 스케일 <strong>아웃</strong>됩니다.</li>
+</ul>
+</li>
+<li data-bai-block="336"><p><strong>쿨다운 초(Cooldown Sec.)</strong>: 스케일링 이벤트 이후 다음 평가까지 대기하는 시간(초 단위)입니다.</p>
+</li>
+<li data-bai-block="337"><p><strong>최소 복제본 수(Min Replicas) 및 최대 복제본 수(Max Replicas)</strong>: 오토스케일링이 복제본 수에 대해 강제하는 하한과 상한입니다. 오토스케일링은 복제본 수를 최소 복제본 수 아래로 줄이거나 최대 복제본 수 위로 늘리지 않습니다.</p>
+</li>
+</ul>
+<p><figure data-bai-block="338" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="812" /><figcaption>그림 12.24</figcaption></figure>
+</p>
+<p><a id="generating-tokens"></a></p>
+<h3 data-bai-block="339" id="deployment-토큰-생성">토큰 생성<a class="hash-link" href="#deployment-토큰-생성" aria-label="Direct link to 토큰 생성">#</a></h3>
+<p data-bai-block="340">배포 상태가 <code>HEALTHY</code>가 되면 배포 목록에서 해당 배포 이름을 클릭하여 배포 상세 페이지를 엽니다. <strong>기본 정보</strong> 카드에서 <strong>엔드포인트 URL</strong>을 확인할 수 있습니다. <strong>외부에 공개</strong>가 활성화된 경우 최종 사용자는 토큰 없이 배포에 접근할 수 있습니다. 비활성화된 경우 아래 설명에 따라 토큰을 생성하세요.</p>
+<p data-bai-block="341">액세스 토큰은 배포 상세 페이지 하단의 <strong>액세스 토큰</strong> 카드에서 관리합니다. 카드 제목 옆의 ⓘ 아이콘에 마우스를 올리면 <em>&quot;이 배포의 엔드포인트에 API 요청을 인증하기 위한 액세스 토큰을 관리합니다.&quot;</em> 라는 설명이 표시됩니다.</p>
+<p><figure data-bai-block="342" class="doc-figure"><img src="./images/generate_token.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="410" /><figcaption>그림 12.25</figcaption></figure>
+</p>
+<h4 data-bai-block="343" id="deployment-액세스-토큰-생성">액세스 토큰 생성<a class="hash-link" href="#deployment-액세스-토큰-생성" aria-label="Direct link to 액세스 토큰 생성">#</a></h4>
+<ol>
+<li data-bai-block="344">카드 헤더의 <code>액세스 토큰 생성</code> 버튼을 클릭합니다. 페이지 상단의 <strong>비공개 배포</strong> 배너에 있는 <strong>액세스 토큰 추가</strong> 버튼을 클릭해도 동일한 대화 상자가 열립니다.</li>
+<li data-bai-block="345">토큰의 <strong>만료일</strong>을 선택합니다.<ul>
+<li data-bai-block="346"><code>7일</code>, <code>30일</code>, <code>90일</code>: 지금부터 해당 일수 뒤에 만료됩니다. 기본값은 <code>7일</code>입니다.</li>
+<li data-bai-block="347"><strong>만료일 직접 설정</strong>: 날짜·시간 선택기가 나타나 만료 시점을 직접 지정할 수 있습니다. 지정한 시점은 현재보다 미래여야 합니다.</li>
+<li data-bai-block="348"><strong>만료 없음</strong>: 만료일을 먼 미래 날짜(<code>2099년 12월 31일</code>)로 설정하여 사실상 만료되지 않는 토큰을 생성합니다. 이후 토큰 대화 상자, 액세스 토큰 목록, 채팅 토큰 선택기에는 &quot;만료 없음&quot;이라는 문구 대신 이 날짜가 표시됩니다.</li>
+</ul>
+</li>
+<li data-bai-block="349"><code>액세스 토큰 생성</code>을 클릭하여 토큰을 발급합니다.</li>
+</ol>
+<p><figure data-bai-block="350" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>그림 12.26</figcaption></figure>
+</p>
+<blockquote>
+<p data-bai-block="351">매니저가 아직 네트워크 엔드포인트를 발급하지 않았다면 <code>액세스 토큰 생성</code> 버튼은 비활성화되며, 툴팁에 <em>&quot;아직 네트워크 엔드포인트가 발급되지 않았습니다.&quot;</em> 라고 표시됩니다. 본인이 소유하지 않은 배포에서는 <em>&quot;배포 소유자만 액세스 토큰을 관리할 수 있습니다.&quot;</em>, 중지 중이거나 더 이상 활성 상태가 아닌 배포에서는 <em>&quot;배포가 중지 중이거나 더 이상 활성 상태가 아닙니다.&quot;</em> 라고 표시되며 버튼이 비활성화됩니다. 이 두 조건에서는 토큰 삭제도 비활성화됩니다.</p>
+</blockquote>
+<p data-bai-block="352">토큰이 발급되면 <strong>토큰</strong> 대화 상자가 열려 토큰 값과 복사 버튼, 그리고 선택한 만료일을 한 번 보여줍니다. 이 대화 상자에서 토큰을 복사하거나, 이후 목록에서 복사할 수 있습니다.</p>
+<h4 data-bai-block="353" id="deployment-액세스-토큰-목록">액세스 토큰 목록<a class="hash-link" href="#deployment-액세스-토큰-목록" aria-label="Direct link to 액세스 토큰 목록">#</a></h4>
+<p data-bai-block="354">카드에는 이 배포에 발급된 모든 액세스 토큰이 최신순으로 표시됩니다.</p>
+<ul>
+<li data-bai-block="355"><strong>토큰</strong>: 토큰 값입니다. 축약되어 표시되며 복사 버튼도 함께 있습니다. 같은 셀의 삭제 아이콘으로 토큰을 삭제할 수 있습니다.</li>
+<li data-bai-block="356"><strong>생성일</strong>: 토큰이 발급된 시점입니다.</li>
+<li data-bai-block="357"><strong>만료일</strong>: 토큰이 만료되는 시점입니다. <strong>만료 없음</strong>으로 생성한 토큰은 <code>2099년 12월 31일</code>로 표시됩니다.</li>
+</ul>
+<p><figure data-bai-block="358" class="doc-figure"><img src="./images/generated_token_copy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="384" /><figcaption>그림 12.27</figcaption></figure>
+</p>
+<p data-bai-block="359">토큰은 <code>Authorization</code> 요청 헤더로 전달합니다.</p>
+<table>
+<thead>
+<tr data-bai-block="360">
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr data-bai-block="361">
+<td>Content-Type</td>
+<td>application/json</td>
+</tr>
+<tr data-bai-block="362">
+<td>Authorization</td>
+<td>BackendAI <code>&lt;token&gt;</code></td>
+</tr>
+</tbody></table>
+<h4 data-bai-block="363" id="deployment-액세스-토큰-삭제">액세스 토큰 삭제<a class="hash-link" href="#deployment-액세스-토큰-삭제" aria-label="Direct link to 액세스 토큰 삭제">#</a></h4>
+<p data-bai-block="364">토큰 행의 삭제 아이콘을 클릭합니다. <strong>액세스 토큰 삭제</strong> 대화 상자가 열리면 확인을 위해 <code>삭제</code>를 입력해야 하며, 입력한 값이 일치할 때까지 확인 버튼은 비활성화됩니다.</p>
+<div class="admonition admonition-danger">
+<div data-bai-block="365" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>위험</div>
+<div class="admonition-content">
+
+<p data-bai-block="366">액세스 토큰 삭제는 <strong>되돌릴 수 없으며</strong> 즉시 적용됩니다. 해당 토큰을 계속 사용하는 클라이언트는 인증에 실패하게 됩니다.</p>
+</div></div>
+
+
+<h3 data-bai-block="367" id="deployment-배포-종료">배포 종료<a class="hash-link" href="#deployment-배포-종료" aria-label="Direct link to 배포 종료">#</a></h3>
+<p data-bai-block="368">배포가 더 이상 필요하지 않으면 종료하는 것이 좋습니다. 배포를 종료하려면 <strong>기본 정보</strong> 카드의 <strong>더보기</strong> 메뉴를 열고 <strong>배포 삭제</strong>를 선택합니다. 유형 확인 모달이 나타나면 배포 이름을 입력하여 <strong>영구 삭제</strong> 버튼을 활성화합니다. 종료된 배포는 <strong>삭제됨</strong> 필터 뷰에 표시됩니다.</p>
+<p><figure data-bai-block="369" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>그림 12.28</figcaption></figure>
+</p>
+<h2 data-bai-block="370" id="deployment-배포에-접근하기">배포에 접근하기<a class="hash-link" href="#deployment-배포에-접근하기" aria-label="Direct link to 배포에 접근하기">#</a></h2>
+<p data-bai-block="371">배포에 접근할 수 있도록 배포 URL을 최종 사용자와 공유합니다. <strong>외부에 공개</strong>가 활성화된 경우 배포 상세 페이지의 <strong>서비스 엔드포인트</strong> URL을 그대로 공유할 수 있습니다. 비공개 배포의 경우 URL과 액세스 토큰을 함께 공유합니다.</p>
+<h3 data-bai-block="372" id="deployment-api-요청-보내기">API 요청 보내기<a class="hash-link" href="#deployment-api-요청-보내기" aria-label="Direct link to API 요청 보내기">#</a></h3>
+<p data-bai-block="373">다음은 <code>curl</code> 명령을 사용하여 배포가 정상 응답하는지 확인하는 간단한 예시입니다:</p>
+<div data-bai-block="374" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> API_TOKEN</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;token>"</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> MODEL_SERVICE_ENDPOINT</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;model-service-endpoint>"</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -H</span><span style="color:#9ECBFF"> "Content-Type: application/json"</span><span style="color:#79B8FF"> -X</span><span style="color:#9ECBFF"> GET</span><span style="color:#79B8FF">    -H</span><span style="color:#9ECBFF"> "Authorization: BackendAI </span><span style="color:#E1E4E8">$API_TOKEN</span><span style="color:#9ECBFF">"</span><span style="color:#9ECBFF">    "</span><span style="color:#E1E4E8">$MODEL_SERVICE_ENDPOINT</span><span style="color:#9ECBFF">"</span></span></code></pre></div>
+<div class="admonition admonition-warning">
+<div data-bai-block="375" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
+<div class="admonition-content">
+
+<p data-bai-block="376">기본적으로, 엔드 유저는 엔드포인트에 액세스할 수 있는
+네트워크에 있어야 합니다. 서비스가 폐쇄된 네트워크에서 생성된 경우,
+해당 폐쇄된 네트워크 내에서 액세스할 수 있는 엔드
+유저만 서비스에 액세스할 수 있습니다.</p>
+</div></div>
+
+
+<h3 data-bai-block="377" id="deployment-llm-채팅-테스트">LLM 채팅 테스트<a class="hash-link" href="#deployment-llm-채팅-테스트" aria-label="Direct link to LLM 채팅 테스트">#</a></h3>
+<p data-bai-block="378">대형 언어 모델(LLM) 서비스를 생성한 경우, 실시간으로 LLM을 테스트할 수 있습니다.
+배포가 준비되면 배포 상세 페이지 상단의 <strong>배포가 준비되었습니다</strong> 배너에 <code>채팅으로 테스트하기</code> 버튼이 나타납니다. 이 버튼을 클릭하여 테스트를 시작합니다.</p>
+<p><figure data-bai-block="379" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="336" /><figcaption>그림 12.29</figcaption></figure>
+</p>
+<p data-bai-block="380">생성한 모델이 자동으로 선택된 채팅 페이지로 리디렉션되며, 여기서 바로 LLM 모델을 테스트할 수 있습니다.
+채팅 기능에 대한 자세한 내용은 <a href="./chat.html#chat-page">채팅 페이지</a>를 참조하세요.</p>
+<p><figure data-bai-block="381" class="doc-figure"><img src="./images/LLM_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>그림 12.30</figcaption></figure>
+</p>
+<h4 data-bai-block="382" id="deployment-채팅-페이지에서-토큰-선택하기">채팅 페이지에서 토큰 선택하기<a class="hash-link" href="#deployment-채팅-페이지에서-토큰-선택하기" aria-label="Direct link to 채팅 페이지에서 토큰 선택하기">#</a></h4>
+<p data-bai-block="383">채팅 페이지가 Backend.AI 배포에 연결되어 있으면, 토큰 입력란은 일반 텍스트 입력창이 아니라 해당 배포의 액세스 토큰 목록을 보여주는 선택기로 표시됩니다.</p>
+<ul>
+<li data-bai-block="384">각 항목에는 토큰의 <strong>마지막 6자리</strong>가 코드 형태로 표시되고, 그 옆에 만료일(예: <code>~ 2026년 8월 26일</code>, <strong>만료 없음</strong>으로 생성한 토큰은 <code>~ 2099년 12월 31일</code>)이 함께 표시됩니다. 모든 토큰은 동일한 JWT 헤더로 시작하므로, 실제로 서로를 구분해 주는 부분은 끝부분입니다. 항목에 마우스를 올리면 생성 시각 → 만료 시각 전체를 확인할 수 있습니다.</li>
+<li data-bai-block="385"><strong>만료된 토큰은 표시되지 않습니다.</strong> 아직 유효한 토큰만 목록에 나타납니다.</li>
+<li data-bai-block="386">입력란이 비어 있으면 <strong>가장 최근에 생성된 유효한 토큰</strong>이 자동으로 선택됩니다. 사용자가 직접 선택을 해제한 경우에는 다시 채워지지 않습니다.</li>
+<li data-bai-block="387">입력란 옆의 톱니바퀴 아이콘(<strong>액세스 토큰 설정</strong>)을 클릭하면 해당 배포의 액세스 토큰 영역으로 이동하여 새 토큰을 발급할 수 있습니다. 돌아오면 목록이 다시 로드되므로 방금 생성한 토큰을 바로 선택할 수 있습니다.</li>
+</ul>
+<p data-bai-block="388">배포에 유효한 토큰이 하나도 없으면 선택기는 비어 있습니다. <a href="#generating-tokens">토큰 생성</a>을 참고하여 먼저 토큰을 발급하세요.</p>
+<p><figure data-bai-block="389" class="doc-figure"><img src="./images/chat_deployment_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2184" height="454" /><figcaption>그림 12.31</figcaption></figure>
+</p>
+<p data-bai-block="390">API 연결에 문제가 발생하면, 채팅 페이지에 모델 설정을 수동으로 구성할 수 있는 옵션이 표시됩니다.
+모델을 사용하려면 다음 정보가 필요합니다:</p>
+<ul>
+<li data-bai-block="391"><strong>기본 경로</strong> (선택사항): 모델이 위치한 서버의 기본 URL입니다.
+버전 정보를 포함해야 합니다.
+예를 들어, OpenAI API를 사용할 때는 <a href="https://api.openai.com/v1%EC%9D%84">https://api.openai.com/v1을</a> 입력해야 합니다.</li>
+<li data-bai-block="392"><strong>토큰</strong> (선택사항): 모델 서비스에 액세스하기 위한 인증 키입니다. 토큰은
+Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있습니다. 형식과 생성 프로세스는
+서비스에 따라 다를 수 있습니다. 자세한 내용은 항상 특정 서비스의 가이드를 참조하세요.
+예를 들어, Backend.AI에서 생성된 서비스를 사용할 때는
+토큰 생성 방법에 대한 지침은 <a href="#generating-tokens">토큰 생성</a> 섹션을 참조하세요.</li>
+</ul>
+<p><figure data-bai-block="393" class="doc-figure"><img src="./images/LLM_chat_custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>그림 12.32</figcaption></figure>
+</p>
+<p><a id="model-store"></a></p>
+<h2 data-bai-block="394" id="deployment-모델-스토어">모델 스토어<a class="hash-link" href="#deployment-모델-스토어" aria-label="Direct link to 모델 스토어">#</a></h2>
+<p data-bai-block="395">모델 스토어(Model Store)는 사전 구성된 모델을 탐색, 검색 및 배포할 수 있는 카드 기반 갤러리를 제공합니다. 사이드바 메뉴에서 모델 스토어에 접근할 수 있습니다.</p>
+<p><figure data-bai-block="396" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 12.33</figcaption></figure>
+</p>
+<h3 data-bai-block="397" id="deployment-모델-탐색-및-검색">모델 탐색 및 검색<a class="hash-link" href="#deployment-모델-탐색-및-검색" aria-label="Direct link to 모델 탐색 및 검색">#</a></h3>
+<p data-bai-block="398">페이지 상단은 필터 및 정렬 레이아웃을 사용합니다:</p>
+<ul>
+<li data-bai-block="399"><p><strong>속성 필터 바</strong>: 조건을 하나 이상 추가하여 카드 목록을 좁힐 수 있습니다. 사용할 수 있는 속성은 두 가지입니다.</p>
+<ul>
+<li data-bai-block="400"><strong>모델 이름</strong>: 이름으로 모델 카드를 검색합니다.</li>
+<li data-bai-block="401"><strong>스토리지 호스트</strong>: 모델 폴더가 위치한 스토리지 호스트로 카드를 필터링합니다. 호스트 이름을 직접 입력하는 대신 서버에 등록된 스토리지 호스트 목록에서 선택하며, 선택하는 즉시 필터 조건으로 추가됩니다. 해당 호스트만 보려면 <code>equals</code>, 해당 호스트를 제외하려면 <code>not equals</code> 연산자를 사용합니다.</li>
+</ul>
+</li>
+<li data-bai-block="402"><p><strong>정렬(Sort)</strong>: 결과 정렬 방식을 선택합니다. 사용 가능한 옵션은 <code>이름 (A→Z)</code>, <code>이름 (Z→A)</code>, <code>오래된 순</code>, <code>최신 순</code>입니다.</p>
+</li>
+<li data-bai-block="403"><p><strong>새로 고침(Refresh)</strong>: 새로 고침 버튼을 클릭하여 카드 목록을 다시 로드합니다.</p>
+<p> 호스트를 직접 입력하지 않고 목록에서 선택하므로, 호스트 이름을 잘못 입력해 결과가 비어 버리는 일이 없습니다. 조건은 <code>AND</code>로 결합되므로 이름 조건과 스토리지 호스트 조건을 함께 사용할 수 있습니다.</p>
+</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="404" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="405">모델 목록은 자동으로 현재 도메인의 MODEL_STORE 프로젝트로 범위가 지정됩니다. 별도의 도메인 필터는 없으며, 이 페이지에 표시되는 모든 카드는 이미 해당 도메인에 속합니다.</p>
+</div></div>
+
+
+<p data-bai-block="406">각 카드에는 모델 브랜드 아이콘, 제목(제목이 설정되지 않은 경우 이름), 태스크(Task) 태그, 상대 생성 시간, 그리고 아이콘과 함께 작가(Author)가 표시됩니다. 현재 프로젝트에 <strong>호환 가능한 프리셋이 없는</strong> 카드는 50% 투명도로 표시됩니다. 이러한 카드를 열어 상세 정보를 볼 수는 있지만, <code>배포(Deploy)</code> 버튼은 비활성화되고 Drawer에 <strong>호환 가능한 프리셋이 없습니다. 이 모델은 배포할 수 없습니다.</strong> 라는 오류 알림이 표시됩니다.</p>
+<p data-bai-block="407">서버에 <code>MODEL_STORE</code> 프로젝트가 설정되어 있지 않으면, 페이지에는 관리자에게 문의하라는 안내와 함께 <em>모델 스토어 프로젝트를 찾을 수 없습니다</em> 메시지가 표시됩니다. 필터와 일치하는 모델 카드가 없으면 <em>모델을 찾을 수 없습니다</em>라고 표시됩니다.</p>
+<p data-bai-block="408">목록은 하단에서 페이지네이션됩니다. 페이지 크기는 <code>10</code>, <code>20</code>, <code>50</code>개 항목 중에서 변경할 수 있습니다.</p>
+<h3 data-bai-block="409" id="deployment-모델-카드-상세-정보">모델 카드 상세 정보<a class="hash-link" href="#deployment-모델-카드-상세-정보" aria-label="Direct link to 모델 카드 상세 정보">#</a></h3>
+<p data-bai-block="410">카드를 클릭하면 페이지 오른쪽에 모델 카드 Drawer가 열립니다. Drawer 상단에는 모델 제목과 설명이 표시되고, 그 다음 태스크, 카테고리, 라벨, 라이선스 태그가 이어지며, 다음 항목을 포함한 상세 목록이 표시됩니다:</p>
+<ul>
+<li data-bai-block="411"><strong>작가(Author)</strong></li>
+<li data-bai-block="412"><strong>아키텍처(Architecture)</strong></li>
+<li data-bai-block="413"><strong>프레임워크(Framework)</strong> (각 프레임워크는 아이콘과 함께 표시)</li>
+<li data-bai-block="414"><strong>버전(Version)</strong></li>
+<li data-bai-block="415"><strong>생성 시간(Created)</strong> 및 <strong>마지막 수정(Last Modified)</strong> 타임스탬프</li>
+<li data-bai-block="416"><strong>모델 폴더(Model Folder)</strong>: 모델 스토리지 폴더의 폴더 탐색기를 여는 클릭 가능한 링크</li>
+<li data-bai-block="417"><strong>최소 리소스(Min Resource)</strong>: 최소 리소스 요구 사항(CPU, 메모리, GPU)</li>
+</ul>
+<p data-bai-block="418">모델 카드에 README가 포함된 경우, Drawer 하단에 <code>README.md</code> 카드로 렌더링됩니다.</p>
+<p><figure data-bai-block="419" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>그림 12.34</figcaption></figure>
+</p>
+<h3 data-bai-block="420" id="deployment-모델-배포">모델 배포<a class="hash-link" href="#deployment-모델-배포" aria-label="Direct link to 모델 배포">#</a></h3>
+<p data-bai-block="421">Drawer 헤더의 <code>배포(Deploy)</code> 버튼을 클릭하여 모델을 서비스로 배포합니다. 배포 흐름은 다음 두 가지 방식 중 하나로 동작합니다:</p>
+<ul>
+<li data-bai-block="422"><p><strong>자동 배포</strong>: 모델에 사용 가능한 프리셋이 정확히 하나 있고 현재 프로젝트에 접근 가능한 자원 그룹이 정확히 하나 있으면, 모달을 표시하지 않고 배포가 조용히 생성됩니다. 엔드포인트가 쿼리 가능해진 후 해당 배포 상세 페이지로 이동합니다.</p>
+</li>
+<li data-bai-block="423"><p><strong>모델 배포 모달(Deploy Model)</strong>: 그렇지 않은 경우, 모델 배포 모달이 다음 필수 필드와 함께 열립니다.</p>
+<ul>
+<li data-bai-block="424"><strong>프리셋(Preset)</strong>: 사용 가능한 자원 프리셋의 그룹화된 드롭다운입니다. 프리셋이 여러 런타임 변형에 걸쳐 있는 경우 옵션은 런타임 변형 이름별로 그룹화되고, 그렇지 않은 경우 평면 목록으로 표시됩니다.</li>
+<li data-bai-block="425"><strong>자원 그룹(Resource Group)</strong>: 서비스가 실행될 자원 그룹입니다.</li>
+</ul>
+<p> 모달의 <code>배포(Deploy)</code> 버튼을 클릭하여 배포를 시작합니다. 모델이 배포되었음을 확인하는 성공 토스트가 표시되고, 배포 상세 페이지로 이동합니다.</p>
+</li>
+</ul>
+<p><figure data-bai-block="426" class="doc-figure"><img src="./images/model_card_deploy_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="314" /><figcaption>그림 12.35</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="427" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="428">선택한 모델에 현재 프로젝트와 호환되는 프리셋이 없으면 Drawer의 <code>배포(Deploy)</code> 버튼이
+비활성화되며, 호환되는 프리셋이 제공될 때까지 배포가 차단됩니다.</p>
+</div></div>
+
+
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
+  <span class="last-updated">마지막 업데이트 2026년 9월 10일</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">
+        <div class="pagination-nav__sublabel">이전</div>
+        <div class="pagination-nav__label">&laquo; 클러스터 세션</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./chat.html">
+        <div class="pagination-nav__sublabel">다음</div>
+        <div class="pagination-nav__label">채팅 &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">이 페이지의 목차</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%EB%B0%B0%ED%8F%AC-%EA%B0%9C%EC%9A%94" data-toc-target="deployment-배포-개요">배포 개요</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%EB%B0%B0%ED%8F%AC-%ED%8E%98%EC%9D%B4%EC%A7%80" data-toc-target="deployment-배포-페이지">배포 페이지</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%EB%B0%B0%ED%8F%AC-%EC%83%9D%EC%84%B1" data-toc-target="deployment-배포-생성">배포 생성</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%B0%B0%ED%8F%AC-%EC%83%9D%EC%84%B1-%EB%AA%A8%EB%8B%AC" data-toc-target="deployment-배포-생성-모달">배포 생성 모달</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%A6%AC%EB%B9%84%EC%A0%84-%EC%B6%94%EA%B0%80" data-toc-target="deployment-리비전-추가">리비전 추가</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%A6%AC%EB%B9%84%EC%A0%84-%EC%B6%94%EA%B0%80-%ED%95%84%EB%93%9C-%EC%B0%B8%EA%B3%A0" data-toc-target="deployment-리비전-추가-필드-참고">리비전 추가: 필드 참고</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-custom-%EB%9F%B0%ED%83%80%EC%9E%84-%EA%B5%AC%EC%84%B1-%ED%8C%8C%EC%9D%BC" data-toc-target="deployment-custom-런타임-구성-파일">Custom 런타임 구성 파일</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%EB%B9%A0%EB%A5%B8-%EB%B0%B0%ED%8F%AC" data-toc-target="deployment-빠른-배포">빠른 배포</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%EB%B0%B0%ED%8F%AC-%EC%83%81%EC%84%B8-%ED%8E%98%EC%9D%B4%EC%A7%80" data-toc-target="deployment-배포-상세-페이지">배포 상세 페이지</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%B0%B0%ED%8F%AC-%EC%95%8C%EB%A6%BC" data-toc-target="deployment-배포-알림">배포 알림</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EA%B8%B0%EB%B3%B8-%EC%A0%95%EB%B3%B4" data-toc-target="deployment-기본-정보">기본 정보</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%A6%AC%EB%B9%84%EC%A0%84-%ED%83%AD" data-toc-target="deployment-리비전-탭">리비전 탭</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%B3%B5%EC%A0%9C%EB%B3%B8" data-toc-target="deployment-복제본">복제본</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EC%98%A4%ED%86%A0%EC%8A%A4%EC%BC%80%EC%9D%BC%EB%A7%81-%EA%B7%9C%EC%B9%99" data-toc-target="deployment-오토스케일링-규칙">오토스케일링 규칙</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%ED%86%A0%ED%81%B0-%EC%83%9D%EC%84%B1" data-toc-target="deployment-토큰-생성">토큰 생성</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%B0%B0%ED%8F%AC-%EC%A2%85%EB%A3%8C" data-toc-target="deployment-배포-종료">배포 종료</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%EB%B0%B0%ED%8F%AC%EC%97%90-%EC%A0%91%EA%B7%BC%ED%95%98%EA%B8%B0" data-toc-target="deployment-배포에-접근하기">배포에 접근하기</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-api-%EC%9A%94%EC%B2%AD-%EB%B3%B4%EB%82%B4%EA%B8%B0" data-toc-target="deployment-api-요청-보내기">API 요청 보내기</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-llm-%EC%B1%84%ED%8C%85-%ED%85%8C%EC%8A%A4%ED%8A%B8" data-toc-target="deployment-llm-채팅-테스트">LLM 채팅 테스트</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%EB%AA%A8%EB%8D%B8-%EC%8A%A4%ED%86%A0%EC%96%B4" data-toc-target="deployment-모델-스토어">모델 스토어</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%AA%A8%EB%8D%B8-%ED%83%90%EC%83%89-%EB%B0%8F-%EA%B2%80%EC%83%89" data-toc-target="deployment-모델-탐색-및-검색">모델 탐색 및 검색</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%AA%A8%EB%8D%B8-%EC%B9%B4%EB%93%9C-%EC%83%81%EC%84%B8-%EC%A0%95%EB%B3%B4" data-toc-target="deployment-모델-카드-상세-정보">모델 카드 상세 정보</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%EB%AA%A8%EB%8D%B8-%EB%B0%B0%ED%8F%AC" data-toc-target="deployment-모델-배포">모델 배포</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">도움 받기</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>이 페이지 편집</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="문서 검색..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="문서 검색..." data-no-results="검색 결과가 없습니다" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>
