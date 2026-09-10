@@ -69,13 +69,14 @@ describe('AnnouncementEditModal (FR-3723)', () => {
   it('shows only the skeleton until both the announcement and the editor are ready', async () => {
     renderModal();
 
-    // Phase 1 — the announcement request is still in flight.
-    expect(
-      screen.queryByText('summary.AnnouncementPreview'),
-    ).not.toBeInTheDocument();
+    // Phase 1 — the announcement request is still in flight. The body is
+    // already mounted, so Monaco's chunk loads in parallel with the query, but
+    // none of it may be visible yet.
+    expect(previewLabel()).not.toBeVisible();
+    expect(publishButton()).toBeDisabled();
 
-    // Phase 2 — data resolved, but Monaco has not mounted yet: the body is
-    // mounted (so the editor can load) but must stay hidden.
+    // Phase 2 — data resolved, but Monaco has not mounted yet: the body stays
+    // hidden behind the Skeleton.
     await act(async () => {
       resolveAnnouncement({ enabled: true, message: 'hello' });
       await announcementPromise;

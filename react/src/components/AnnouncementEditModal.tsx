@@ -218,16 +218,17 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
       {...modalProps}
     >
       {!isBodyReady && <BAISkeleton rows={4} />}
-      {!isLoading && (
-        // Kept mounted but hidden while Monaco boots, so the editor loads
-        // behind the Skeleton instead of flashing an empty frame.
-        <BAIFlex
-          direction="row"
-          align="stretch"
-          gap="sm"
-          wrap="wrap"
-          style={{ display: isBodyReady ? undefined : 'none' }}
-        >
+      {/* Mounted from the first render but hidden until `isBodyReady`, so
+          Monaco's lazy chunk loads behind the Skeleton — and in parallel with
+          the announcement query — instead of flashing an empty frame. The
+          editor is controlled, so the message arriving later just updates it. */}
+      <BAIFlex
+        direction="row"
+        align="stretch"
+        gap="sm"
+        wrap="wrap"
+        style={{ display: isBodyReady ? undefined : 'none' }}
+      >
           <BAIFlex
             direction="column"
             align="stretch"
@@ -277,9 +278,8 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
                 {message}
               </Markdown>
             </div>
-          </BAIFlex>
         </BAIFlex>
-      )}
+      </BAIFlex>
     </BAIModal>
   );
 };
