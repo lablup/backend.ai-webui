@@ -55,7 +55,6 @@
     "Runtime": "Çalışma Zamanı",
     "RuntimeRequired": "Çalışma zamanı zorunludur.",
     "RuntimeTooltip": "Bu ön ayarın hedeflediği çıkarım çalışma zamanı (örn. vLLM, SGLang). Bir tane seçildiğinde yapılandırılabilir çalışma zamanı parametreleri görünür hale gelir; bu parametrelerin değerleri ön ayarla birlikte kaydedilir ve buradan oluşturulan dağıtımlara uygulanır.",
-    "RuntimeVariantId": "Çalışma Zamanı ID",
     "SectionAdvanced": "Gelişmiş",
     "SectionBasicInfo": "Temel Bilgiler",
     "SectionCluster": "Küme",
@@ -202,7 +201,7 @@
     "CreatePreset": "Parametre Oluştur",
     "Name": "Ad",
     "PresetDeleted": "Runtime parametresi silindi.",
-    "RuntimeVariantId": "Çalışma Zamanı Varyantı ID",
+    "Runtime": "Çalışma Zamanı",
     "RuntimeVariantPreset": "Runtime Parametresi",
     "TabTitle": "Runtime Parametreleri"
   },
@@ -881,8 +880,6 @@
       "NoSharedFolders": "Paylaşılan klasör yok",
       "NoSharedUsers": "Kimse davet edilmedi",
       "NotEnoughResourceForFileBrowserSession": "Dosya tarayıcısı için oturum oluşturmak için yeterli kaynak (işlemci: 1 Çekirdek, mem: 0,5 GB) yok. lütfen mevcut kaynakları kontrol edin.",
-      "NumberOfSFTPSessionsExceededBody": "Oluşturmanıza izin verilen tüm mevcut yükleme oturumlarını çalıştırıyorsunuz. Lütfen yeni bir oturum başlatmadan önce kullanılmayan yükleme oturumlarını sonlandırın.",
-      "NumberOfSFTPSessionsExceededTitle": "Çalışan yükleme oturumu sayısı sınırına ulaşıldı",
       "People": "İnsanlar",
       "Permission": "izin",
       "Permissions": "izinler",
@@ -893,7 +890,8 @@
       "RenameAFolder": "Dosyayı yeniden adlandır",
       "RetryingOperation": "Oturum kurmak için yeniden deneme ...",
       "RunSSH/SFTPserver": "SFTP sunucusunu çalıştırın",
-      "SFTPSessionNotAvailable": "SFTP Oturumu şu anda mevcut değil",
+      "SFTPSessionCreationFailed": "SFTP oturumu oluşturulamadı",
+      "SFTPSessionFailureHint": "Hâlâ çalışan çok sayıda yükleme oturumu varsa, kullanılmayan oturumları kapatmak SFTP ana bilgisayarındaki kaynakları serbest bırakabilir.",
       "ShareFolder": "Klasörü Paylaş",
       "Size": "Boyut",
       "StartingSSH/SFTPSession": "SFTP oturumu başlatılıyor...",
@@ -907,7 +905,7 @@
       "WritePermissionRequiredInUploadFiles": "Dosya(lar)ı yüklerken yazma izni gereklidir."
     },
     "folders": {
-      "AdminDataPageAlert": "Yönetici Veri sayfasında yalnızca proje klasörleri oluşturulabilir.",
+      "AdminDataPageAlert": "Yönetici Veri sayfasında klasörler proje klasörü olarak oluşturulur.",
       "CannotDeleteFolder": "Bir veya daha fazla oturuma bağlı klasör silinemez. Lütfen önce oturumu sonlandırın.",
       "CannotDeletePipelineFolder": "Boru hattı klasörlerini silemezsiniz.",
       "CannotDeployFromAdminMenu": "Dağıtımlar bir projenin Veri sayfasından oluşturulur; yönetici menüsü bunu desteklemez.",
@@ -982,7 +980,7 @@
       "Ownership": "Mülkiyet",
       "Path": "Depolama yolu",
       "Permission": "izin",
-      "ProjectAdminDataPageAlert": "Proje Yönetici Veri sayfasında yalnızca proje klasörleri oluşturulabilir.",
+      "ProjectAdminDataPageAlert": "Proje Yönetici Veri sayfasında klasörler proje klasörü olarak oluşturulur.",
       "ProjectFolderAlertDesc": "Bu klasör projenin tüm üyeleriyle paylaşılıyor",
       "ProjectFolderCreationHelp": "\"{{projectName}}\" proje kullanıcıları tarafından erişilebilen bir klasör oluşturulacaktır.",
       "Rename": "Adını değiştirmek",
@@ -1083,6 +1081,7 @@
     "AddAccessToken": "Erişim Tokenı Ekle",
     "AddNewRevisionFromThis": "Bunu temel alan yeni Revision",
     "AddRevision": "Revision Ekle",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Ek Bağlama Noktaları",
     "AnotherDeploymentInProgress": "Başka bir dağıtım güncellemesi zaten devam ediyor. Tekrar denemeden önce tamamlanmasını bekleyin.",
     "Apply": "Dağıt",
@@ -1126,6 +1125,7 @@
     "DeploymentNameTooltip": "Bu dağıtım için benzersiz bir ad. Pano, API ve uç nokta URL'si genelinde tanımlamak için kullanılır.",
     "DeploymentReady": "Dağıtım hazır",
     "DeploymentSchedulingHistory": "Dağıtım Zamanlama Geçmişi",
+    "DeploymentStopped": "Dağıtım durduruluyor veya artık etkin değil.",
     "DeploymentUpdated": "Dağıtım güncellendi.",
     "Deployments": "Dağıtımlar",
     "DesiredReplicas": "İstenen Replika Sayısı",
@@ -1180,6 +1180,7 @@
     "NotAccessibleOrDeleted": "Bu dağıtım silinmiş veya erişim izniniz yok.",
     "NotInProject": "Bu dağıtım başka bir projeye aittir.",
     "NumberOfReplicas": "Replika Sayısı",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Dağıtım oluşturma modalını aç",
     "OpenToPublic": "Herkese Açık",
     "OpenToPublicCannotBeChanged": "Oluşturma sırasında seçilen herkese açık erişim ayarı değiştirilemez.",
@@ -1246,7 +1247,6 @@
       "Delete": "Erişim Jetonunu Sil",
       "DeleteConfirm": "Bu erişim jetonunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
       "Deleted": "Erişim jetonu silindi.",
-      "DeploymentStopped": "Dağıtım durduruluyor veya artık etkin değil.",
       "EndpointNotIssuedYet": "Ağ uç noktası henüz oluşturulmadı.",
       "Expiration": "Son Kullanma Tarihi",
       "NoExpiration": "Son Kullanma Tarihi Yok",
@@ -1260,7 +1260,6 @@
       "EndpointUrl": "Uç Nokta URL'si",
       "Name": "Ad",
       "OpenToPublic": "Herkese Açık",
-      "ProjectId": "Proje kimliği",
       "ResourceGroup": "Kaynak Grubu",
       "Status": "Durum",
       "Tags": "Etiketler"
@@ -2757,6 +2756,7 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (bellek)",
     "Gaudi2Enabled": "Gaudi 2 NPU Etkinleştirilmiş",
+    "GoToUploadSessionList": "Yükleme oturumlarına git",
     "GracePeriod": "Ödemesiz Dönem",
     "GracePeriodDesc": "Kullanım boşta denetleyicisi bu ilk ödemesiz süreden sonra etkinleştirilecektir. Bu süre zarfında, kullanım düşük olsa bile oturumlar sonlandırılmaz.",
     "GracePeriodTooltip": "Kaynakların geri alınmasına ilişkin ilk karar verilene kadar kalan süre.\nBu süre boyunca son kullanım sürekli olarak toplanır ve hesaplanır; bu süre dolmadan kaynaklar geri alınmaz.\nBu süre dolduktan sonra ilk geri alma kararı toplanan kullanıma göre verilir ve sonrasında son kullanımın ortalamasına göre değerlendirilmeye devam edilir.",
@@ -2792,7 +2792,7 @@
     "OpenToPublic": "Uygulamayı herkese açık olarak aç",
     "OpenToPublicDesc": "Bu seçeneğin etkinleştirilmesi, ağ içindeki tüm kullanıcılar için uygulama erişimine izin verir.<br /><br /> \nErişim yönetimi için 'izin verilen IP' alanına belirli IP adreslerini girin.<br /><br /> \nBu alanı boş bırakmak tüm IP adreslerinden erişime izin verecektir.<br /><br /> \nGüvenlik yönetimi için gerektiğinde IP kısıtlamaları ayarlamayı düşünün.",
     "Others": "Diğerleri",
-    "OwnerUUID": "Sahip UUID",
+    "Owner": "Sahip",
     "PanelSettings": "Panel Ayarları",
     "PendingPosition": "Kuyruk konumu",
     "Phase": "Aşama",
@@ -3116,6 +3116,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Veri yok",
       "NoLiveData": "Canlı veri yok",
+      "NoLiveMetrics": "Canlı metrik yok",
+      "NoLiveMetricsForSessionsInView": "Geçerli listedeki hiçbir oturum canlı metrik bildirmiyor.",
       "NoSessionsMatchingFilter": "Geçerli filtreyle eşleşen oturum yok.",
       "OmittedNoResource": "{{label}} ayrılmamış {{count}} oturum gizleniyor.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3574,8 +3576,9 @@
     "BootstrapScriptEmpty": "Senaryo boş. \nLütfen betiği girin.",
     "BootstrapScriptUpdated": "Önyükleme komut dosyası güncellendi.",
     "ClearSSHKeypairInput": "Yazılı SSH Anahtar Çifti kaldırılacaktır. Devam etmek istediğine emin misin?",
+    "CommandPalette": "Komut paleti",
     "ConfigFilename": "Yapılandırma dosyası adı",
-    "CurrentSSHPublicKey": "Geçerli ortak anahtar:",
+    "CurrentSSHPublicKey": "Geçerli ortak anahtar",
     "CustomDashboardPanels": "Özel kontrol paneli panelleri",
     "DarkMode": "Karanlık Mod",
     "DarkTheme": "Karanlık Mod",
@@ -3823,6 +3826,7 @@
       "ResourcePolicies": "Kaynak Politikaları",
       "Resources": "Kaynaklar",
       "Scheduler": "Zamanlayıcı",
+      "Search": "Arama",
       "Serving": "Servis",
       "Sessions": "Oturumlar",
       "Settings": "Ayarlar",
@@ -3846,6 +3850,7 @@
       "WelcomeMessage": "Hoş geldiniz, {{ userName }}.",
       "YouMushChangeYourPassword": "Güvenlik nedeniyle şifrenizi periyodik olarak değiştirmeniz önerilir. Şifrenizi en son değiştirdiğinizden bu yana belirli bir süre geçtiğinden, hizmeti kullanmaya devam etmek için şifrenizi değiştirmeniz gerekir.",
       "groupName": {
+        "General": "Genel",
         "Metrics": "Metrikler",
         "Mlops": "MLOps",
         "Playground": "Oyun Alanı",
@@ -3857,6 +3862,31 @@
           "Operations": "Operasyonlar",
           "System": "Sistem"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "{{text}} içinde bulundu",
+      "NoResults": "Sonuç yok",
+      "Placeholder": "Sayfalarda, sekmelerde ve ayarlarda ara",
+      "Recent": "Son kullanılanlar",
+      "action": {
+        "ChangeLanguage": "Arayüz dilini değiştir",
+        "OpenManual": "Bu sayfanın el kitabını aç",
+        "OpenNotifications": "Bildirimleri aç",
+        "OpenUserSettings": "Kullanıcı ayarlarını aç",
+        "SwitchToDarkMode": "Karanlık Moda geç",
+        "SwitchToLightMode": "Açık Moda geç",
+        "ToggleSidebar": "Kenar çubuğunu aç/kapat",
+        "UseSystemTheme": "Sistem Ayarını Kullan"
+      },
+      "group": {
+        "Appearance": "Görünüm",
+        "Create": "Oluştur",
+        "PanelsAndHelp": "Paneller ve yardım"
+      },
+      "scope": {
+        "Administration": "yönetim",
+        "ProjectAdministration": "Proje yönetimi"
       }
     }
   }

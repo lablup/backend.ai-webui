@@ -273,10 +273,11 @@ const RBACManagementPage: React.FC = () => {
                   propertyLabel: t('rbac.AssignedUser'),
                   type: 'uuid',
                   fixedOperator: 'equals',
-                  renderInput: ({ onAddCondition }) => (
+                  renderInput: ({ onAddCondition, value, isDisabled }) => (
                     <BAIUserSelect
                       valuePropName="id"
-                      value={null}
+                      value={value}
+                      isDisabled={isDisabled}
                       label={t('rbac.AssignedUser')}
                       isLabelHidden
                       onChange={(value, option) =>
@@ -290,7 +291,6 @@ const RBACManagementPage: React.FC = () => {
                             : option?.label,
                         )
                       }
-                      width={200}
                     />
                   ),
                 },

@@ -1761,6 +1761,23 @@ describe("buildRootRedirectIndexPage — FR-2753 root redirect index", () => {
         );
       }
     });
+
+    it("treats a dotted basePath as a literal path segment", () => {
+      const html = buildRootRedirectIndexPage({
+        title: "Docs",
+        productName: "Docs",
+        languages: baseLanguages,
+        fallback: "en",
+        latestVersion: "26.4",
+        basePath: "v26.4",
+      });
+      assert.equal(
+        runRedirectScript({ html, pathname: "/v26.4/" }),
+        "../26.4/en/index.html",
+      );
+      // The `.` is escaped, so it must not behave as a wildcard.
+      assert.equal(runRedirectScript({ html, pathname: "/v26x4/" }), null);
+    });
   });
 
   describe("OG/Twitter meta (FR-3265)", () => {

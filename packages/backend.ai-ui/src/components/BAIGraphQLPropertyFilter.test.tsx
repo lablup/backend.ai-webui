@@ -33,10 +33,21 @@ describe('buildNestedFilter', () => {
     });
   });
 
+  it('builds a filter nested more than two levels deep', () => {
+    expect(buildNestedFilter('a.b.c', { eq: 'test' })).toEqual({
+      a: { b: { c: { eq: 'test' } } },
+    });
+  });
+
   it.each(['__proto__', 'constructor', 'prototype'])(
     'rejects prototype-polluting key "%s" (returns empty filter)',
     (key) => {
       expect(buildNestedFilter(`${key}.polluted`, { eq: 'x' })).toEqual({});
+      // A reserved key in any position, not only the first one.
+      expect(buildNestedFilter(`project.${key}`, { eq: 'x' })).toEqual({});
+      expect(buildNestedFilter(`project.${key}.polluted`, { eq: 'x' })).toEqual(
+        {},
+      );
       // Object.prototype must remain untouched.
       expect(({} as Record<string, unknown>).polluted).toBeUndefined();
     },

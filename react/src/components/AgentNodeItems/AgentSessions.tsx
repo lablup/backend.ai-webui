@@ -13,11 +13,11 @@ import {
   type SessionGridViewParams,
 } from '../../helper/sessionResourceGridData';
 import { getSessionV2StatusBuckets } from '../../helper/sessionStatusBuckets';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useProjectPath } from '../../hooks/useRouteScope';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../BAIRadioGroup';
+import SessionDetailDrawer from '../SessionDetailDrawer';
 import SessionResourceGrid from '../SessionResourceGrid';
 import {
   SegmentedControl,
@@ -29,6 +29,7 @@ import {
   BAILink,
   BAIResourceUnitGridSkeleton,
   BAISessionNodesV2,
+  BAIUnmountAfterClose,
   availableSessionV2SorterValues,
   filterOutNullAndUndefined,
   mergeFilterValues,
@@ -105,8 +106,7 @@ interface AgentSessionsProps {
 const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
   'use memo';
   const { t } = useTranslation();
-  const webUINavigate = useWebUINavigate();
-  const buildProjectPath = useProjectPath();
+  const [sessionDetailId, setSessionDetailId] = useState<string | null>(null);
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -274,15 +274,7 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
             // overwrite for) a session list page already in grid view.
             viewParams={gridViewParams}
             onChangeViewParams={setGridViewParams}
-            onClickSession={(sessionId) => {
-              webUINavigate(
-                `${buildProjectPath('session', { scope: 'admin' })}?${new URLSearchParams(
-                  {
-                    sessionDetail: sessionId,
-                  },
-                ).toString()}`,
-              );
-            }}
+            onClickSession={setSessionDetailId}
           />
         </Suspense>
       ) : (
@@ -314,15 +306,7 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
                 render: (_value, session) => (
                   <BAILink
                     type="hover"
-                    onClick={() => {
-                      webUINavigate(
-                        `${buildProjectPath('session', { scope: 'admin' })}?${new URLSearchParams(
-                          {
-                            sessionDetail: toLocalId(session.id),
-                          },
-                        ).toString()}`,
-                      );
-                    }}
+                    onClick={() => setSessionDetailId(toLocalId(session.id))}
                   >
                     {session.metadata?.name ?? '-'}
                   </BAILink>
@@ -358,6 +342,16 @@ const AgentSessions = ({ agentId, queryRef, onReload }: AgentSessionsProps) => {
           }}
         />
       )}
+      {/* Super-admin surface (ADR-0001): no project context, and the drawer
+          stacks over the agent panel so its tab / filter state survives. */}
+      <BAIUnmountAfterClose>
+        <SessionDetailDrawer
+          open={!!sessionDetailId}
+          sessionId={sessionDetailId ?? undefined}
+          project={null}
+          onClose={() => setSessionDetailId(null)}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };

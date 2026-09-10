@@ -59,9 +59,9 @@ export const docs = {
     },
     {
       name: 'onChange',
-      type: '(value: string | Array<string> | undefined) => void',
+      type: '(value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void',
       description:
-        'Fired with the chosen image UUID, or the array of UUIDs in `multiple` mode. It passes no second option argument.',
+        'Fired with the chosen image UUID, or the array of UUIDs in `multiple` mode; the optional second argument carries the picked `{ label, value }` pair(s).',
     },
     {
       name: 'filter',

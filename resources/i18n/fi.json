@@ -55,7 +55,6 @@
     "Runtime": "Suoritusaika",
     "RuntimeRequired": "Suoritusaika on pakollinen.",
     "RuntimeTooltip": "Päättelysuoritusaika (esim. vLLM, SGLang), johon tämä esiasetus kohdistuu. Valitsemalla suoritusajan paljastuvat sen määritettävissä olevat suoritusaikaparametrit, joiden arvot tallennetaan esiasetuksen mukana ja sovelletaan siitä luotuihin käyttöönottoihin.",
-    "RuntimeVariantId": "Suoritusajan tunnus",
     "SectionAdvanced": "Lisäasetukset",
     "SectionBasicInfo": "Perustiedot",
     "SectionCluster": "Klusteri",
@@ -202,7 +201,7 @@
     "CreatePreset": "Luo parametri",
     "Name": "Nimi",
     "PresetDeleted": "Suoritusajan parametri on poistettu.",
-    "RuntimeVariantId": "Suoritusaikamuunnoksen tunnus",
+    "Runtime": "Suoritusaika",
     "RuntimeVariantPreset": "Suoritusajan parametri",
     "TabTitle": "Suoritusajan Parametrit"
   },
@@ -881,8 +880,6 @@
       "NoSharedFolders": "Ei jaettuja kansioita",
       "NoSharedUsers": "Ketään ei ole kutsuttu.",
       "NotEnoughResourceForFileBrowserSession": "Resurssit eivät riitä (cpu: 1 Core, mem: 0.5GB) filebrowser-istunnon luomiseen. tarkista käytettävissä olevat resurssit.",
-      "NumberOfSFTPSessionsExceededBody": "Käytössäsi ovat kaikki käytettävissä olevat latausistunnot, joita voit luoda. Lopeta käyttämättömät latausistunnot ennen uuden istunnon aloittamista.",
-      "NumberOfSFTPSessionsExceededTitle": "Käynnissä olevan latausistunnon lukumäärän raja saavutettu",
       "People": "Ihmiset",
       "Permission": "Lupa",
       "Permissions": "Luvat",
@@ -893,7 +890,8 @@
       "RenameAFolder": "Nimeä kansio uudelleen",
       "RetryingOperation": "Uudelleenjärjestelmä istunnon perustamiseksi ...",
       "RunSSH/SFTPserver": "Käynnistä SFTP-palvelin",
-      "SFTPSessionNotAvailable": "SFTP-istunto ei ole nyt käytettävissä",
+      "SFTPSessionCreationFailed": "SFTP-istunnon luominen epäonnistui",
+      "SFTPSessionFailureHint": "Jos monia lataamisistuntoja on yhä käynnissä, käyttämättömien sulkeminen voi vapauttaa resursseja SFTP-palvelimella.",
       "ShareFolder": "Jaa kansio",
       "Size": "Koko",
       "StartingSSH/SFTPSession": "SFTP-istunnon käynnistäminen...",
@@ -907,7 +905,7 @@
       "WritePermissionRequiredInUploadFiles": "Tiedoston (tiedostojen) lataaminen edellyttää kirjoitusoikeutta."
     },
     "folders": {
-      "AdminDataPageAlert": "Järjestelmänvalvojan tiedot -sivulla voi luoda vain projektin kansioita.",
+      "AdminDataPageAlert": "Järjestelmänvalvojan tiedot -sivulla kansiot luodaan projektikansioina.",
       "CannotDeleteFolder": "Yhdessä tai useammassa istunnossa asennettua kansiota ei voi poistaa. Lopeta istunto ensin.",
       "CannotDeletePipelineFolder": "Et voi poistaa putkilinjan kansioita.",
       "CannotDeployFromAdminMenu": "Käyttöönotot luodaan projektin Tiedot-sivulta; hallintavalikko ei tue tätä.",
@@ -982,7 +980,7 @@
       "Ownership": "Omistus",
       "Path": "Säilytyspolku",
       "Permission": "Lupa",
-      "ProjectAdminDataPageAlert": "Projektin järjestelmänvalvojan tiedot -sivulla voi luoda vain projektin kansioita.",
+      "ProjectAdminDataPageAlert": "Projektin järjestelmänvalvojan tiedot -sivulla kansiot luodaan projektikansioina.",
       "ProjectFolderAlertDesc": "Tämä kansio on jaettu kaikkien projektin jäsenten kanssa",
       "ProjectFolderCreationHelp": "Projektin käyttäjät luodaan kansioon, johon pääsee \"{{projectName}}\".",
       "Rename": "Nimeä uudelleen",
@@ -1083,6 +1081,7 @@
     "AddAccessToken": "Lisää käyttöoikeustunnus",
     "AddNewRevisionFromThis": "Uusi Revision tämän pohjalta",
     "AddRevision": "Lisää Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Lisäliitokset",
     "AnotherDeploymentInProgress": "Toinen käyttöönoton päivitys on jo käynnissä. Odota sen valmistumista ennen kuin yrität uudelleen.",
     "Apply": "Ota käyttöön",
@@ -1126,6 +1125,7 @@
     "DeploymentNameTooltip": "Yksilöllinen nimi tälle käyttöönotolle. Käytetään tunnistamiseen kojelaudassa, API:ssa ja päätepisteen URL-osoitteessa.",
     "DeploymentReady": "Käyttöönotto on valmis",
     "DeploymentSchedulingHistory": "Käyttöönoton ajoitushistoria",
+    "DeploymentStopped": "Käyttöönotto on pysähtymässä tai ei ole enää aktiivinen.",
     "DeploymentUpdated": "Käyttöönotto on päivitetty.",
     "Deployments": "Käyttöönotot",
     "DesiredReplicas": "Halutut replikat",
@@ -1180,6 +1180,7 @@
     "NotAccessibleOrDeleted": "Tämä käyttöönotto on poistettu tai sinulla ei ole oikeutta käyttää sitä.",
     "NotInProject": "Tämä käyttöönotto kuuluu toiseen projektiin.",
     "NumberOfReplicas": "Replikoiden määrä",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Avaa käyttöönoton luontimodaali",
     "OpenToPublic": "Julkinen",
     "OpenToPublicCannotBeChanged": "Luonnin yhteydessä valittua julkisen käytön asetusta ei voi muuttaa.",
@@ -1246,7 +1247,6 @@
       "Delete": "Poista pääsytunnus",
       "DeleteConfirm": "Haluatko varmasti poistaa tämän pääsytunnuksen? Tätä toimintoa ei voi peruuttaa.",
       "Deleted": "Pääsytunnus on poistettu.",
-      "DeploymentStopped": "Käyttöönotto on pysähtymässä tai ei ole enää aktiivinen.",
       "EndpointNotIssuedYet": "Verkkopäätepistettä ei ole vielä myönnetty.",
       "Expiration": "Vanhentuminen",
       "NoExpiration": "Ei vanhentumista",
@@ -1260,7 +1260,6 @@
       "EndpointUrl": "Päätepisteen URL",
       "Name": "Nimi",
       "OpenToPublic": "Julkinen",
-      "ProjectId": "Projektin tunnus",
       "ResourceGroup": "Resurssiryhmä",
       "Status": "Tila",
       "Tags": "Tunnisteet"
@@ -2757,6 +2756,7 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (muisti)",
     "Gaudi2Enabled": "Gaudi 2 NPU Käytössä",
+    "GoToUploadSessionList": "Siirry lataamisistuntoihin",
     "GracePeriod": "Karenssiaika",
     "GracePeriodDesc": "Käyttötarkkailu aktivoituu tämän alkuvapauden jälkeen. Tänä aikana istuntoja ei lopeteta, vaikka käyttöaste olisi alhainen.",
     "GracePeriodTooltip": "Jäljellä oleva aika ensimmäiseen resurssien takaisinottopäätökseen.\nTänä aikana viimeaikaista käyttöä kerätään ja lasketaan jatkuvasti, eikä resursseja oteta takaisin ennen ajan umpeutumista.\nAjan umpeuduttua ensimmäinen takaisinottopäätös tehdään kerätyn käytön perusteella, ja sen jälkeen arviointia jatketaan viimeaikaisen käytön keskiarvon perusteella.",
@@ -2792,7 +2792,7 @@
     "OpenToPublic": "Sovelluksen avaaminen yleisölle",
     "OpenToPublicDesc": "Tämän vaihtoehdon käyttöönotto mahdollistaa kaikille verkon käyttäjille sovellusten pääsyn.<br /><br /> \nSyötä pääsyn hallinta tietyt IP -osoitteet 'sallittu IP' -kenttään.<br /><br /> \nTämän kentän jättäminen tyhjiksi sallii pääsyn kaikista IP -osoitteista.<br /><br /> \nHarkitse IP -rajoitusten asettamista tarvittaessa turvallisuuden hallintaan.",
     "Others": "Muut",
-    "OwnerUUID": "Omistajan UUID",
+    "Owner": "Omistaja",
     "PanelSettings": "Paneelin asetukset",
     "PendingPosition": "Jonopaikka",
     "Phase": "Vaihe",
@@ -3116,6 +3116,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Ei tietoja",
       "NoLiveData": "Ei reaaliaikaista dataa",
+      "NoLiveMetrics": "Ei reaaliaikaisia metriikoita",
+      "NoLiveMetricsForSessionsInView": "Yksikään nykyisen listan istunto ei raportoi reaaliaikaisia metriikoita.",
       "NoSessionsMatchingFilter": "Yksikään istunto ei vastaa nykyistä suodatinta.",
       "OmittedNoResource": "Piilotetaan {{count}} istuntoa, joille ei ole varattu {{label}}.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3574,8 +3576,9 @@
     "BootstrapScriptEmpty": "Käsikirjoitus on tyhjä. \nAnna käsikirjoitus.",
     "BootstrapScriptUpdated": "Bootstrap-skripti päivitetty.",
     "ClearSSHKeypairInput": "Kirjoitettu SSH-avainpari poistetaan. Haluatko varmasti jatkaa?",
+    "CommandPalette": "Komentopaletti",
     "ConfigFilename": "Konfigurointitiedoston nimi",
-    "CurrentSSHPublicKey": "Nykyinen julkinen avain:",
+    "CurrentSSHPublicKey": "Nykyinen julkinen avain",
     "CustomDashboardPanels": "Mukautetut koontinäytön paneelit",
     "DarkMode": "Tumma tila",
     "DarkTheme": "Tumma tila",
@@ -3824,6 +3827,7 @@
       "ResourcePolicies": "Resurssipolitiikat",
       "Resources": "Resurssit",
       "Scheduler": "Aikataulu",
+      "Search": "Haku",
       "Serving": "Palvelevat",
       "Sessions": "Istunnot",
       "Settings": "Asetukset",
@@ -3847,6 +3851,7 @@
       "WelcomeMessage": "Tervetuloa, {{ userName }}.",
       "YouMushChangeYourPassword": "On suositeltavaa vaihtaa salasana säännöllisesti turvallisuussyistä. Koska salasanasi viimeisimmästä vaihtamisesta on kulunut tietty aika, sinun on vaihdettava se, jotta voit jatkaa palvelun käyttöä.",
       "groupName": {
+        "General": "Yleistä",
         "Metrics": "Mittarit",
         "Mlops": "MLOps",
         "Playground": "Leikkipaikka",
@@ -3858,6 +3863,31 @@
           "Operations": "Toiminnot",
           "System": "Järjestelmä"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Löytyi kohteesta {{text}}",
+      "NoResults": "Ei tuloksia",
+      "Placeholder": "Hae sivuja, välilehtiä ja asetuksia",
+      "Recent": "Viimeisimmät",
+      "action": {
+        "ChangeLanguage": "Vaihda käyttöliittymän kieli",
+        "OpenManual": "Avaa tämän sivun käyttöohje",
+        "OpenNotifications": "Avaa ilmoitukset",
+        "OpenUserSettings": "Avaa käyttäjäasetukset",
+        "SwitchToDarkMode": "Vaihda tummaan tilaan",
+        "SwitchToLightMode": "Vaihda vaaleaan tilaan",
+        "ToggleSidebar": "Näytä tai piilota sivupalkki",
+        "UseSystemTheme": "Käytä järjestelmäasetuksia"
+      },
+      "group": {
+        "Appearance": "Ulkoasu",
+        "Create": "Luo",
+        "PanelsAndHelp": "Paneelit ja ohje"
+      },
+      "scope": {
+        "Administration": "Hallinto",
+        "ProjectAdministration": "Projektin hallinta"
       }
     }
   }

@@ -317,7 +317,7 @@ class Manager extends EventEmitter {
             gateway = new SGateway(this._config);
           } else {
             const Gateway = require('./gateway/tcpwsproxy');
-            gateway = new Gateway(this.aiclient._config);
+            gateway = new Gateway(this.aiclient._config, this.extHttpProxyURL);
           }
           this.proxies[p] = gateway;
 

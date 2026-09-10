@@ -1,0 +1,18 @@
+# Marks the Electron app as its own pnpm workspace root.
+#
+# `make dep_electron` stages this directory at `build/electron-app/` and runs
+# `pnpm i --ignore-workspace --config.node-linker=hoisted` there, so that
+# @electron/packager can pack real dependency files into `app.asar` (see the
+# sibling `.npmrc`).
+#
+# `--ignore-workspace` alone is not enough on pnpm >= 12: the staged directory
+# still sits under the repo's workspace root, and the hoisted node linker
+# resolves its hoist target by walking up to the outermost pnpm project. That
+# left `build/electron-app/node_modules/` empty and wrote `mime-db`,
+# `mime-types` and `smol-toml` into the REPO ROOT `node_modules/` instead —
+# silently shipping an Electron bundle with no dependencies. A
+# `pnpm-workspace.yaml` here stops the upward walk (pnpm 11 hoisted locally
+# with no marker file, hence its absence until now).
+#
+# `packages: []` on purpose: this app has no sub-projects, only dependencies.
+packages: []

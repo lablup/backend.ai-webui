@@ -1,5 +1,16 @@
-# Publish what "PR Preview" built: deploy the Storybook preview to gh-pages and
-# post/update the PR Analysis Report comment.
+# Publish what "PR Preview" built: deploy the Storybook and docs previews to
+# gh-pages and post/update the PR Analysis Report comment.
+#
+# Either preview can be absent — a PR touching only the manual produces no
+# Storybook artifact and vice versa — so every download is best-effort and the
+# deploy publishes whichever of the two showed up.
+#
+# Both jobs require `workflow_run.conclusion == 'success'`. `workflow_run` fires
+# for failed and cancelled runs too, and on those the missing artifact is a
+# failure rather than a job the PR's diff never asked for. Deploying anyway would
+# let the surviving half's `rm -rf pr/<n>` delete the other half's still-valid
+# preview, and would rewrite the report from half the data. Skipping leaves the
+# previous preview and comment in place, which is what a failed build should do.
 #
 # This is the PRIVILEGED half, and it runs on `workflow_run` rather than
 # `pull_request` on purpose. A `pull_request` workflow triggered from a fork gets
@@ -21,10 +32,11 @@
 # from `workflow_run.head_sha`, which GitHub sets, and derive the preview URL
 # from that. The only artifact fields used are measurements the report renders.
 #
-# Residual risk, inherent to any Pages-hosted preview: the Storybook bundle is
-# PR-controlled content, so a fork PR can publish arbitrary static files under
-# ITS OWN `/pr/<n>/` path on the org's github.io origin. Previews are for
-# reviewers, not a trusted origin — do not host anything privileged there.
+# Residual risk, inherent to any Pages-hosted preview: the Storybook bundle and
+# the docs site are PR-controlled content, so a fork PR can publish arbitrary
+# static files under ITS OWN `/pr/<n>/` path on the org's github.io origin.
+# Previews are for reviewers, not a trusted origin — do not host anything
+# privileged there.
 #
 # NOTE: `workflow_run` workflows only fire from the version on the default
 # branch, so this does nothing until it is merged to `main`.
@@ -47,7 +59,9 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.event.workflow_run.event == 'pull_request'
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -108,22 +122,49 @@ jobs:
         # best-effort. The check below turns it into a clean skip.
         continue-on-error: true
 
-      - name: Verify the artifact is usable
+      - name: Download docs artifact
+        if: steps.parse.outputs.deploy == 'true'
+        uses: actions/download-artifact@v8
+        with:
+          name: pr-preview-docs-${{ steps.parse.outputs.short_hash }}
+          path: docs-dist
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Verify the artifacts are usable
         id: verify
         if: steps.parse.outputs.deploy == 'true'
         run: |
-          if [ -d storybook-dist ] && [ -n "$(ls -A storybook-dist 2>/dev/null)" ]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-          else
+          set -euo pipefail
+          # A PR gets whichever previews its own diff called for, so one of the
+          # two being absent is the normal case, not a failure.
+          KINDS=()
+          for kind in storybook docs; do
+            if [ -d "${kind}-dist" ] && [ -n "$(ls -A "${kind}-dist" 2>/dev/null)" ]; then
+              echo "${kind}=true" >> "$GITHUB_OUTPUT"
+              KINDS+=("$kind")
+            else
+              echo "${kind}=false" >> "$GITHUB_OUTPUT"
+            fi
+          done
+
+          if [ ${#KINDS[@]} -eq 0 ]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Storybook artifact missing or empty — skipping the deploy for this run."
+            echo "::warning::Neither preview artifact is present — skipping the deploy for this run."
+            exit 0
           fi
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+          echo "kinds=$(printf '%s, ' "${KINDS[@]}" | sed 's/, $//')" >> "$GITHUB_OUTPUT"
 
       - name: Deploy to gh-pages
         if: steps.parse.outputs.deploy == 'true' && steps.verify.outputs.ready == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ steps.parse.outputs.pr_number }}
+          HAS_STORYBOOK: ${{ steps.verify.outputs.storybook }}
+          HAS_DOCS: ${{ steps.verify.outputs.docs }}
+          KINDS: ${{ steps.verify.outputs.kinds }}
         run: |
           # A manual push with retry-on-conflict rather than a Pages action, so a
           # concurrent cleanup or another PR's deploy just retries instead of
@@ -155,15 +196,24 @@ jobs:
               touch "$PAGES_DIR/.nojekyll"
             fi
 
+            # The PR's whole diff decides which previews it gets, so the set is
+            # stable across pushes and replacing the directory drops nothing
+            # that this run should have kept.
             rm -rf "${PAGES_DIR}/pr/${PR_NUMBER}"
-            mkdir -p "${PAGES_DIR}/pr/${PR_NUMBER}/storybook"
-            cp -r storybook-dist/. "${PAGES_DIR}/pr/${PR_NUMBER}/storybook/"
+            if [ "$HAS_STORYBOOK" = "true" ]; then
+              mkdir -p "${PAGES_DIR}/pr/${PR_NUMBER}/storybook"
+              cp -r storybook-dist/. "${PAGES_DIR}/pr/${PR_NUMBER}/storybook/"
+            fi
+            if [ "$HAS_DOCS" = "true" ]; then
+              mkdir -p "${PAGES_DIR}/pr/${PR_NUMBER}/docs"
+              cp -r docs-dist/. "${PAGES_DIR}/pr/${PR_NUMBER}/docs/"
+            fi
             touch "${PAGES_DIR}/.nojekyll"
             node .github/scripts/pr-preview/write-index.mjs --root "$PAGES_DIR"
 
             cd "$PAGES_DIR"
             git add -A
-            git commit -m "Deploy PR #${PR_NUMBER} Storybook preview" \
+            git commit -m "Deploy PR #${PR_NUMBER} preview (${KINDS})" \
               || { echo "Nothing to commit."; echo "::endgroup::"; exit 0; }
 
             if git push origin gh-pages; then
@@ -181,7 +231,9 @@ jobs:
           exit 1
 
   comment:
-    if: github.event.workflow_run.event == 'pull_request'
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -204,6 +256,15 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
+      - name: Download docs analysis artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: pr-preview-docs-analysis
+          path: pr-docs-analysis
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
       - name: Post or update the PR Analysis Report
         uses: actions/github-script@v9
         with:
@@ -211,8 +272,12 @@ jobs:
             const fs = require('node:fs');
             const { execFileSync } = require('node:child_process');
 
-            if (!fs.existsSync('pr-analysis/analysis.json')) {
-              core.info('No analysis artifact — nothing to report.');
+            // Either half is enough to be worth a report: a docs-only PR
+            // produces no analysis.json, a Storybook-only PR no manifest.
+            const hasAnalysis = fs.existsSync('pr-analysis/analysis.json');
+            const hasDocs = fs.existsSync('pr-docs-analysis/docs-manifest.json');
+            if (!hasAnalysis && !hasDocs) {
+              core.info('No analysis artifacts — nothing to report.');
               return;
             }
 
@@ -243,19 +308,28 @@ jobs:
               prNumber: String(prNumber),
               shortHash: headSha.slice(0, 7),
               storybookUrl: `https://${owner}.github.io/${repo}/pr/${prNumber}/storybook/`,
+              docsUrl: `https://${owner}.github.io/${repo}/pr/${prNumber}/docs/next/`,
               runUrl: `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.payload.workflow_run.id}`,
             }));
 
             const args = [
               '.github/scripts/pr-preview/generate-pr-comment.mjs',
-              '--analysis', 'pr-analysis/analysis.json',
               '--meta', 'pr-meta.json',
             ];
+            if (hasAnalysis) {
+              args.push('--analysis', 'pr-analysis/analysis.json');
+            }
             if (fs.existsSync('pr-analysis/bundle-head.json')) {
               args.push('--bundle-head', 'pr-analysis/bundle-head.json');
             }
             if (fs.existsSync('pr-analysis/bundle-base.json')) {
               args.push('--bundle-base', 'pr-analysis/bundle-base.json');
+            }
+            if (hasDocs) {
+              args.push('--docs', 'pr-docs-analysis/docs-manifest.json');
+            }
+            if (fs.existsSync('pr-docs-analysis/docs-meta.json')) {
+              args.push('--docs-meta', 'pr-docs-analysis/docs-meta.json');
             }
 
             const body = execFileSync('node', args, { encoding: 'utf8' });

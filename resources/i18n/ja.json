@@ -55,7 +55,6 @@
     "Runtime": "ランタイム",
     "RuntimeRequired": "ランタイムは必須です。",
     "RuntimeTooltip": "このプリセットが対象とする推論ランタイム（例：vLLM、SGLang）です。選択すると、設定可能なランタイムパラメータが表示され、その値はプリセットとともに保存され、このプリセットから作成されたデプロイメントに適用されます。",
-    "RuntimeVariantId": "ランタイムID",
     "SectionAdvanced": "詳細設定",
     "SectionBasicInfo": "基本情報",
     "SectionCluster": "クラスター",
@@ -202,7 +201,7 @@
     "CreatePreset": "パラメータを作成",
     "Name": "名前",
     "PresetDeleted": "ランタイムパラメータが削除されました。",
-    "RuntimeVariantId": "ランタイムバリアント ID",
+    "Runtime": "ランタイム",
     "RuntimeVariantPreset": "ランタイムパラメータ",
     "TabTitle": "ランタイムパラメータ"
   },
@@ -881,8 +880,6 @@
       "NoSharedFolders": "共有フォルダーはありません",
       "NoSharedUsers": "誰も招待されていません",
       "NotEnoughResourceForFileBrowserSession": "ファイルブラウザのセッションを作成するのに十分なリソース（CPU：1コア、メモリ：0.5GB）がありません。利用可能なリソースを確認してください。",
-      "NumberOfSFTPSessionsExceededBody": "設定されたアップロードセッション数を超えてセッションを作成しようとしています。続行する前に未使用のアップロードセッションを停止してください。",
-      "NumberOfSFTPSessionsExceededTitle": "生成可能なアップロードセッション数の制限に達しました。",
       "People": "人",
       "Permission": "許可",
       "Permissions": "権限",
@@ -893,7 +890,8 @@
       "RenameAFolder": "フォルダー名の変更",
       "RetryingOperation": "セッションを確立するために再試行...",
       "RunSSH/SFTPserver": "SFTPサーバーの使用",
-      "SFTPSessionNotAvailable": "現在、SFTPセッションの使用ができません。",
+      "SFTPSessionCreationFailed": "SFTPセッションの作成に失敗しました",
+      "SFTPSessionFailureHint": "多くのアップロードセッションがまだ実行中の場合、使用していないセッションを閉じることでSFTPホストのリソースを解放できます。",
       "ShareFolder": "共有フォルダ",
       "Size": "サイズ",
       "StartingSSH/SFTPSession": "SFTPサーバー起動",
@@ -907,7 +905,7 @@
       "WritePermissionRequiredInUploadFiles": "ファイルのアップロードには書き込み権限が必要です。"
     },
     "folders": {
-      "AdminDataPageAlert": "管理者用データページではプロジェクトフォルダーのみ作成できます。",
+      "AdminDataPageAlert": "管理者用データページではプロジェクトフォルダーとして作成されます。",
       "CannotDeleteFolder": "1つ以上のセッションでマウントされたフォルダを削除できません。最初にセッションを終了してください。",
       "CannotDeletePipelineFolder": "パイプラインフォルダーを削除することはできません。",
       "CannotDeployFromAdminMenu": "デプロイはプロジェクトのデータページから作成します。管理者メニューでは対応していません。",
@@ -982,7 +980,7 @@
       "Ownership": "所有",
       "Path": "ストレージパス",
       "Permission": "許可",
-      "ProjectAdminDataPageAlert": "プロジェクト管理者用データページではプロジェクトフォルダーのみ作成できます。",
+      "ProjectAdminDataPageAlert": "プロジェクト管理者用データページではプロジェクトフォルダーとして作成されます。",
       "ProjectFolderAlertDesc": "このフォルダはプロジェクトのすべてのメンバーと共有されます",
       "ProjectFolderCreationHelp": "「{{projectName}}」プロジェクトユーザーが作成できるフォルダーが作成されます。",
       "Rename": "名前を変更",
@@ -1083,6 +1081,7 @@
     "AddAccessToken": "アクセストークンを追加",
     "AddNewRevisionFromThis": "この Revision を基に Revision を作成",
     "AddRevision": "Revision を追加",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "追加マウント",
     "AnotherDeploymentInProgress": "別のデプロイ更新が既に進行中です。再試行する前に完了するまでお待ちください。",
     "Apply": "デプロイ",
@@ -1126,6 +1125,7 @@
     "DeploymentNameTooltip": "このデプロイメントの一意の名前。ダッシュボード、API、エンドポイントURLで識別するために使用されます。",
     "DeploymentReady": "デプロイの準備が完了しました",
     "DeploymentSchedulingHistory": "デプロイメントのスケジュール履歴",
+    "DeploymentStopped": "デプロイは停止中か、すでに稼働していません。",
     "DeploymentUpdated": "デプロイが更新されました。",
     "Deployments": "デプロイ",
     "DesiredReplicas": "希望レプリカ数",
@@ -1180,6 +1180,7 @@
     "NotAccessibleOrDeleted": "このデプロイは削除されたか、アクセスする権限がありません。",
     "NotInProject": "このデプロイは別のプロジェクトに属しています。",
     "NumberOfReplicas": "レプリカ数",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "デプロイ作成モーダルを開く",
     "OpenToPublic": "公開",
     "OpenToPublicCannotBeChanged": "作成時に選択した公開設定は変更できません。",
@@ -1246,7 +1247,6 @@
       "Delete": "アクセストークンを削除",
       "DeleteConfirm": "このアクセストークンを削除してもよろしいですか？この操作は取り消せません。",
       "Deleted": "アクセストークンが削除されました。",
-      "DeploymentStopped": "デプロイは停止中か、すでに稼働していません。",
       "EndpointNotIssuedYet": "ネットワークエンドポイントはまだ発行されていません。",
       "Expiration": "有効期限",
       "NoExpiration": "有効期限なし",
@@ -1260,7 +1260,6 @@
       "EndpointUrl": "エンドポイントURL",
       "Name": "名前",
       "OpenToPublic": "公開",
-      "ProjectId": "プロジェクトID",
       "ResourceGroup": "リソースグループ",
       "Status": "状態",
       "Tags": "タグ"
@@ -2759,6 +2758,7 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU(メモリ)",
     "Gaudi2Enabled": "Gaudi 2 NPU 有効",
+    "GoToUploadSessionList": "アップロードセッションへ移動",
     "GracePeriod": "猶予期間",
     "GracePeriodDesc": "この時間の間、リソース使用量ベースのチェッカーを動作させないようにします。 この時間が経過するまでは、使用量が少なくても演算セッションは削除されません。",
     "GracePeriodTooltip": "リソース回収の最初の判断までの残り時間です。\nこの間も直近の使用量は継続的に収集・計算され、この時間が経過するまではリソースは回収されません。\nこの時間が経過すると、最初に収集された使用量に基づいてリソース回収の判断が行われ、その後も直近の使用量の平均値に基づいて継続的に判断されます。",
@@ -2794,7 +2794,7 @@
     "OpenToPublic": "アプリを公開する",
     "OpenToPublicDesc": "このオプションを有効にすることで、ネットワーク内のすべてのユーザーにアプリケーションにアクセスできます。<br /><br />\nアクセス管理の場合、「許可されたIP」フィールドに特定のIPアドレスを入力します。<br /><br />\nこのフィールドを空にすると、すべてのIPアドレスからのアクセスが可能になります。<br /><br />\nセキュリティ管理に必要な場合は、IP制限を設定することを検討してください。",
     "Others": "その他",
-    "OwnerUUID": "オーナーUUID",
+    "Owner": "オーナー",
     "PanelSettings": "パネル設定",
     "PendingPosition": "キュー位置",
     "Phase": "フェーズ",
@@ -3118,6 +3118,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "データなし",
       "NoLiveData": "ライブデータなし",
+      "NoLiveMetrics": "ライブメトリクスなし",
+      "NoLiveMetricsForSessionsInView": "現在の一覧でライブメトリクスを報告しているセッションはありません。",
       "NoSessionsMatchingFilter": "現在のフィルタに一致するセッションがありません。",
       "OmittedNoResource": "{{label}} が割り当てられていない {{count}} 件のセッションを非表示にしています。",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3576,8 +3578,9 @@
     "BootstrapScriptEmpty": "スクリプトが空です。\nスクリプトを入力してください。",
     "BootstrapScriptUpdated": "ブートストラップスクリプトが更新されました。",
     "ClearSSHKeypairInput": "書き込まれたSSHキーペアは削除されます。続行してもよろしいですか？",
+    "CommandPalette": "コマンドパレット",
     "ConfigFilename": "構成ファイル名",
-    "CurrentSSHPublicKey": "現在の公開鍵：",
+    "CurrentSSHPublicKey": "現在の公開鍵",
     "CustomDashboardPanels": "カスタムダッシュボードパネル",
     "DarkMode": "ダークモード",
     "DarkTheme": "ダークモード",
@@ -3825,6 +3828,7 @@
       "ResourcePolicies": "リソースポリシー",
       "Resources": "リソース管理",
       "Scheduler": "スケジューラ",
+      "Search": "検索",
       "Serving": "モデルサービス",
       "Sessions": "セッション",
       "Settings": "設定",
@@ -3848,6 +3852,7 @@
       "WelcomeMessage": "ようこそ、{{ userName }}.",
       "YouMushChangeYourPassword": "セキュリティのため、定期的にパスワードを変更することをお勧めします。パスワードを変更してから一定時間が経過したため、サービスを継続して利用するには、パスワードを変更する必要があります。",
       "groupName": {
+        "General": "一般",
         "Metrics": "指標",
         "Mlops": "MLOps",
         "Playground": "遊び場",
@@ -3859,6 +3864,31 @@
           "Operations": "運用",
           "System": "システム"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "{{text}}内で見つかりました",
+      "NoResults": "検索結果がありません",
+      "Placeholder": "ページ、タブ、設定を検索",
+      "Recent": "最近の項目",
+      "action": {
+        "ChangeLanguage": "UI言語を変更",
+        "OpenManual": "このページのマニュアルを開く",
+        "OpenNotifications": "お知らせを開く",
+        "OpenUserSettings": "ユーザー設定を開く",
+        "SwitchToDarkMode": "ダークモードに切り替え",
+        "SwitchToLightMode": "ライトモードに切り替え",
+        "ToggleSidebar": "サイドバーの開閉",
+        "UseSystemTheme": "システム設定を使用する"
+      },
+      "group": {
+        "Appearance": "表示",
+        "Create": "作成",
+        "PanelsAndHelp": "パネルとヘルプ"
+      },
+      "scope": {
+        "Administration": "管理者",
+        "ProjectAdministration": "プロジェクト管理者"
       }
     }
   }

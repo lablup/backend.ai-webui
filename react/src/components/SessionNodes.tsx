@@ -25,6 +25,7 @@ import {
   filterOutNullAndUndefined,
   BAIColumnType,
   BAIFlex,
+  BAIId,
   BAITable,
   BAITableProps,
   BAISessionAgentIds,
@@ -220,6 +221,15 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         sorter: isEnableSorter('name'),
         required: true,
         fixed: 'left',
+      },
+      {
+        // The filter supports searching by session `id`, so the ID is
+        // available as a column too. Hidden by default; surfaced via column
+        // settings / `defaultColumnOverrides`. Mirrors BAISessionNodesV2.
+        key: 'sessionId',
+        title: t('session.SessionId'),
+        defaultHidden: true,
+        render: (__, session) => <BAIId globalId={session.id} />,
       },
       {
         key: 'status',

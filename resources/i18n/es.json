@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "El runtime es obligatorio.",
     "RuntimeTooltip": "El runtime de inferencia (p. ej., vLLM, SGLang) al que se dirige este preset. Al seleccionar uno se muestran sus parámetros de runtime configurables, cuyos valores se guardan con el preset y se aplican a los despliegues creados a partir de él.",
-    "RuntimeVariantId": "ID de Runtime",
     "SectionAdvanced": "Avanzado",
     "SectionBasicInfo": "Información Básica",
     "SectionCluster": "Clúster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Crear Parámetro",
     "Name": "Nombre",
     "PresetDeleted": "El parámetro de runtime ha sido eliminado.",
-    "RuntimeVariantId": "ID de Runtime",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Parámetro de Tiempo de Ejecución",
     "TabTitle": "Parámetros de Tiempo de Ejecución"
   },
@@ -881,8 +880,6 @@
       "NoSharedFolders": "Sin carpetas compartidas",
       "NoSharedUsers": "No se ha invitado a nadie.",
       "NotEnoughResourceForFileBrowserSession": "No hay recursos suficientes (cpu: 1 Core, mem: 0.5GB) para crear la sesión para filebrowser. por favor compruebe los recursos disponibles.",
-      "NumberOfSFTPSessionsExceededBody": "Está ejecutando todas las sesiones de carga disponibles que puede crear. Elimine las sesiones de carga no utilizadas antes de iniciar una nueva sesión.",
-      "NumberOfSFTPSessionsExceededTitle": "Se ha alcanzado el límite del recuento de sesiones de carga en ejecución",
       "People": "Personas",
       "Permission": "Permiso",
       "Permissions": "Permisos",
@@ -893,7 +890,8 @@
       "RenameAFolder": "Renombrar carpeta",
       "RetryingOperation": "Vuelva a intentar establecer sesión ...",
       "RunSSH/SFTPserver": "Ejecutar servidor SFTP",
-      "SFTPSessionNotAvailable": "SFTP Session no está disponible ahora",
+      "SFTPSessionCreationFailed": "Error al crear la sesión SFTP",
+      "SFTPSessionFailureHint": "Si aún hay muchas sesiones de carga en ejecución, cerrar las que no se usan puede liberar recursos en el host SFTP.",
       "ShareFolder": "Compartir carpeta",
       "Size": "Talla",
       "StartingSSH/SFTPSession": "Iniciando sesión SFTP...",
@@ -907,7 +905,7 @@
       "WritePermissionRequiredInUploadFiles": "Se requiere permiso de escritura para cargar archivos."
     },
     "folders": {
-      "AdminDataPageAlert": "En la página de Datos de Administrador solo se pueden crear carpetas de proyecto.",
+      "AdminDataPageAlert": "En la página de Datos de Administrador las carpetas se crean como carpetas de proyecto.",
       "CannotDeleteFolder": "No se puede eliminar la carpeta montada en una o más sesiones. Por favor, termine la sesión primero.",
       "CannotDeletePipelineFolder": "No puede eliminar las carpetas de tuberías.",
       "CannotDeployFromAdminMenu": "Los despliegues se crean desde la página Datos de un proyecto; el menú de administración no lo admite.",
@@ -982,7 +980,7 @@
       "Ownership": "Propiedad",
       "Path": "Ruta de almacenamiento",
       "Permission": "Permiso",
-      "ProjectAdminDataPageAlert": "En la página de Datos de Administrador del Proyecto solo se pueden crear carpetas de proyecto.",
+      "ProjectAdminDataPageAlert": "En la página de Datos de Administrador del Proyecto las carpetas se crean como carpetas de proyecto.",
       "ProjectFolderAlertDesc": "Esta carpeta se comparte con todos los miembros del proyecto.",
       "ProjectFolderCreationHelp": "Se creará una carpeta accesible por los usuarios del proyecto \"{{projectName}}\".",
       "Rename": "Cambie el nombre de",
@@ -1083,6 +1081,7 @@
     "AddAccessToken": "Agregar Token de Acceso",
     "AddNewRevisionFromThis": "Nueva Revision basada en esta",
     "AddRevision": "Agregar Revisión",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Montajes adicionales",
     "AnotherDeploymentInProgress": "Ya hay otra actualización de despliegue en curso. Por favor, espere a que se complete antes de intentarlo de nuevo.",
     "Apply": "Desplegar",
@@ -1126,6 +1125,7 @@
     "DeploymentNameTooltip": "Un nombre único para esta implementación. Se usa para identificarla en el panel, la API y la URL del endpoint.",
     "DeploymentReady": "El despliegue está listo",
     "DeploymentSchedulingHistory": "Historial de programación de implementación",
+    "DeploymentStopped": "El despliegue se está deteniendo o ya no está activo.",
     "DeploymentUpdated": "El despliegue ha sido actualizado.",
     "Deployments": "Despliegues",
     "DesiredReplicas": "Réplicas deseadas",
@@ -1180,6 +1180,7 @@
     "NotAccessibleOrDeleted": "Este despliegue se ha eliminado o no tiene permiso para acceder a él.",
     "NotInProject": "Este despliegue pertenece a otro proyecto.",
     "NumberOfReplicas": "Número de réplicas",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Abrir modal de creación de despliegue",
     "OpenToPublic": "Público",
     "OpenToPublicCannotBeChanged": "La configuración de acceso público seleccionada en la creación no se puede cambiar.",
@@ -1246,7 +1247,6 @@
       "Delete": "Eliminar token de acceso",
       "DeleteConfirm": "¿Está seguro de que desea eliminar este token de acceso? Esta acción no se puede deshacer.",
       "Deleted": "El token de acceso ha sido eliminado.",
-      "DeploymentStopped": "El despliegue se está deteniendo o ya no está activo.",
       "EndpointNotIssuedYet": "El endpoint de red aún no ha sido emitido.",
       "Expiration": "Expiración",
       "NoExpiration": "Sin expiración",
@@ -1260,7 +1260,6 @@
       "EndpointUrl": "URL del endpoint",
       "Name": "Nombre",
       "OpenToPublic": "Público",
-      "ProjectId": "ID del proyecto",
       "ResourceGroup": "Grupo de recursos",
       "Status": "Estado",
       "Tags": "Etiquetas"
@@ -2757,6 +2756,7 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (memoria)",
     "Gaudi2Enabled": "Gaudi 2 NPU Activado",
+    "GoToUploadSessionList": "Ir a sesiones de carga",
     "GracePeriod": "Período de gracia",
     "GracePeriodDesc": "El comprobador de inactividad por utilización se activará después de este tiempo de gracia inicial. Durante este tiempo, las sesiones no se terminan aunque la utilización sea baja.",
     "GracePeriodTooltip": "Tiempo restante hasta que se tome la primera decisión de recuperación de recursos.\nDurante este periodo, el uso reciente se recopila y calcula continuamente, y los recursos no se recuperan antes de que transcurra.\nUna vez transcurrido, la primera decisión de recuperación se toma según el uso recopilado y, a partir de entonces, se sigue evaluando según el promedio del uso reciente.",
@@ -2792,7 +2792,7 @@
     "OpenToPublic": "Aplicación abierta al público",
     "OpenToPublicDesc": "Habilitar esta opción permite el acceso a la aplicación para todos los usuarios dentro de la red.<br /><br /> \nPara la gestión de acceso, ingrese direcciones IP específicas en el campo 'IP permitido'.<br /><br /> \nDejar este campo vacío permitirá el acceso desde todas las direcciones IP.<br /><br /> \nConsidere establecer restricciones IP cuando sea necesario para la gestión de seguridad.",
     "Others": "Otros",
-    "OwnerUUID": "UUID del propietario",
+    "Owner": "Propietario",
     "PanelSettings": "Configuración del panel",
     "PendingPosition": "Posición de cola",
     "Phase": "Fase",
@@ -3116,6 +3116,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Sin datos",
       "NoLiveData": "Sin datos en vivo",
+      "NoLiveMetrics": "Sin métricas en vivo",
+      "NoLiveMetricsForSessionsInView": "Ninguna sesión de la lista actual informa métricas en vivo.",
       "NoSessionsMatchingFilter": "Ninguna sesión coincide con el filtro actual.",
       "OmittedNoResource": "Ocultando {{count}} sesiones sin {{label}} asignado.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3574,8 +3576,9 @@
     "BootstrapScriptEmpty": "El guión está vacío. \nPor favor ingrese el guión.",
     "BootstrapScriptUpdated": "Script Bootstrap actualizado.",
     "ClearSSHKeypairInput": "Se eliminará el par de claves SSH escrito. ¿Está seguro de que desea continuar?",
+    "CommandPalette": "Paleta de comandos",
     "ConfigFilename": "Nombre del archivo de configuración",
-    "CurrentSSHPublicKey": "Clave pública actual:",
+    "CurrentSSHPublicKey": "Clave pública actual",
     "CustomDashboardPanels": "Paneles personalizados del panel de control",
     "DarkMode": "Modo oscuro",
     "DarkTheme": "Modo oscuro",
@@ -3823,6 +3826,7 @@
       "ResourcePolicies": "Políticas de recursos",
       "Resources": "Recursos",
       "Scheduler": "Planificador",
+      "Search": "Buscar",
       "Serving": "Sirviendo a",
       "Sessions": "Sesiones",
       "Settings": "Ajustes",
@@ -3846,6 +3850,7 @@
       "WelcomeMessage": "Bienvenido, {{ userName }}.",
       "YouMushChangeYourPassword": "Se recomienda cambiar periódicamente la contraseña por razones de seguridad. Dado que ha transcurrido cierto tiempo desde la última vez que cambió su contraseña, deberá cambiarla para poder seguir utilizando el servicio.",
       "groupName": {
+        "General": "General",
         "Metrics": "Métricas",
         "Mlops": "MLOps",
         "Playground": "Parque infantil",
@@ -3857,6 +3862,31 @@
           "Operations": "Operaciones",
           "System": "Sistema"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Encontrado en {{text}}",
+      "NoResults": "Sin resultados",
+      "Placeholder": "Buscar páginas, pestañas y ajustes",
+      "Recent": "Recientes",
+      "action": {
+        "ChangeLanguage": "Cambiar el idioma de la interfaz",
+        "OpenManual": "Abrir el manual de esta página",
+        "OpenNotifications": "Abrir notificaciones",
+        "OpenUserSettings": "Abrir ajustes de usuario",
+        "SwitchToDarkMode": "Cambiar al modo oscuro",
+        "SwitchToLightMode": "Cambiar al modo claro",
+        "ToggleSidebar": "Mostrar u ocultar la barra lateral",
+        "UseSystemTheme": "Usar configuración del sistema"
+      },
+      "group": {
+        "Appearance": "Apariencia",
+        "Create": "Crear",
+        "PanelsAndHelp": "Paneles y ayuda"
+      },
+      "scope": {
+        "Administration": "Administración",
+        "ProjectAdministration": "Administración del proyecto"
       }
     }
   }

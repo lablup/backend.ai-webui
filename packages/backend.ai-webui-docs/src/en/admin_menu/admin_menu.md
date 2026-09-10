@@ -1019,6 +1019,8 @@ control next to the refresh button that switches between **Table** and **Grid**.
 cell per session, colored by that session's live resource utilization. For a description of the grid's
 own controls, refer to the [Session List View](#session-list-view-and-refresh) section.
 
+<a id="fair-share-scheduler"></a>
+
 ## Fair share scheduler
 
 The Fair Share Scheduler page is available in the
@@ -1925,6 +1927,8 @@ RBAC (Role-Based Access Control) Management allows superadmins to define roles w
 For detailed information about managing roles, permissions, and user assignments, refer to the dedicated [RBAC Management](#rbac-management) page.
 
 
+<a id="diagnostics"></a>
+
 ## Diagnostics
 
 Superadmins can open the **Diagnostics** page from the admin sidebar to run a set of automated health checks on the WebUI deployment. The page evaluates the browser-to-server configuration and reports any misconfiguration, so that connectivity or security problems can be identified before they affect users.
@@ -1956,6 +1960,8 @@ placeholder reading `No failed items. All diagnostics passed.`, so a clean resul
 :::tip
 When troubleshooting a connection problem, enable **Show only failed items** and click `Re-run Diagnostics` first — it surfaces just the checks that need attention.
 :::
+
+<a id="branding"></a>
 
 ## Branding
 

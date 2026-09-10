@@ -55,7 +55,6 @@
     "Runtime": "Środowisko uruchomieniowe",
     "RuntimeRequired": "Środowisko uruchomieniowe jest wymagane.",
     "RuntimeTooltip": "Środowisko uruchomieniowe wnioskowania (np. vLLM, SGLang), do którego odnosi się to ustawienie wstępne. Wybranie go ujawnia konfigurowalne parametry środowiska uruchomieniowego, których wartości są zapisywane razem z ustawieniem wstępnym i stosowane do wdrożeń z niego tworzonych.",
-    "RuntimeVariantId": "ID środowiska uruchomieniowego",
     "SectionAdvanced": "Zaawansowane",
     "SectionBasicInfo": "Podstawowe informacje",
     "SectionCluster": "Klaster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Utwórz parametr",
     "Name": "Nazwa",
     "PresetDeleted": "Parametr runtime został usunięty.",
-    "RuntimeVariantId": "ID wariantu środowiska uruchomieniowego",
+    "Runtime": "Środowisko uruchomieniowe",
     "RuntimeVariantPreset": "Parametr Runtime",
     "TabTitle": "Parametry Runtime"
   },
@@ -881,8 +880,6 @@
       "NoSharedFolders": "Brak folderów udostępnionych",
       "NoSharedUsers": "Nikt nie został zaproszony",
       "NotEnoughResourceForFileBrowserSession": "Brak wystarczających zasobów (cpu: 1 rdzeń, mem: 0,5 GB), aby utworzyć sesję dla przeglądarki plików. sprawdź dostępne zasoby.",
-      "NumberOfSFTPSessionsExceededBody": "Uruchomiono wszystkie dostępne sesje przesyłania, które można utworzyć. Przed rozpoczęciem nowej sesji zakończ nieużywane sesje przesyłania.",
-      "NumberOfSFTPSessionsExceededTitle": "Osiągnięto limit liczby uruchomionych sesji przesyłania",
       "People": "Ludzie",
       "Permission": "Pozwolenie",
       "Permissions": "Uprawnienia",
@@ -893,7 +890,8 @@
       "RenameAFolder": "Zmień nazwę folderu",
       "RetryingOperation": "Ponowne ustanowienie sesji ...",
       "RunSSH/SFTPserver": "Uruchom serwer SFTP",
-      "SFTPSessionNotAvailable": "Sesja SFTP nie jest obecnie dostępna",
+      "SFTPSessionCreationFailed": "Nie udało się utworzyć sesji SFTP",
+      "SFTPSessionFailureHint": "Jeśli nadal działa wiele sesji przesyłania, zamknięcie nieużywanych może zwolnić zasoby na hoście SFTP.",
       "ShareFolder": "Udostępnij folder",
       "Size": "Rozmiar",
       "StartingSSH/SFTPSession": "Rozpoczęcie sesji SFTP...",
@@ -907,7 +905,7 @@
       "WritePermissionRequiredInUploadFiles": "Do przesyłania plików wymagane jest uprawnienie do zapisu."
     },
     "folders": {
-      "AdminDataPageAlert": "Na stronie Dane administratora można tworzyć tylko foldery projektu.",
+      "AdminDataPageAlert": "Na stronie Dane administratora foldery są tworzone jako foldery projektu.",
       "CannotDeleteFolder": "Nie można usunąć folderu zamontowanego w co najmniej jednej sesji. Najpierw zakończ sesję.",
       "CannotDeletePipelineFolder": "Nie możesz usunąć folderów rurociągów.",
       "CannotDeployFromAdminMenu": "Wdrożenia są tworzone ze strony Dane danego projektu; menu administratora tego nie obsługuje.",
@@ -982,7 +980,7 @@
       "Ownership": "Własność",
       "Path": "Ścieżka przechowywania",
       "Permission": "Pozwolenie",
-      "ProjectAdminDataPageAlert": "Na stronie Dane administratora projektu można tworzyć tylko foldery projektu.",
+      "ProjectAdminDataPageAlert": "Na stronie Dane administratora projektu foldery są tworzone jako foldery projektu.",
       "ProjectFolderAlertDesc": "Ten folder jest udostępniany wszystkim członkom projektu",
       "ProjectFolderCreationHelp": "Folder dostępny przez użytkowników projektu „{{projectName}}”.",
       "Rename": "Przemianować",
@@ -1083,6 +1081,7 @@
     "AddAccessToken": "Dodaj Token Dostępu",
     "AddNewRevisionFromThis": "Nowa Revision na podstawie tej",
     "AddRevision": "Dodaj Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Dodatkowe Montowania",
     "AnotherDeploymentInProgress": "Inna aktualizacja wdrożenia jest już w toku. Poczekaj na jej zakończenie przed ponowną próbą.",
     "Apply": "Wdróż",
@@ -1126,6 +1125,7 @@
     "DeploymentNameTooltip": "Unikalna nazwa tego wdrożenia. Używana do identyfikacji w panelu, API i adresie URL punktu końcowego.",
     "DeploymentReady": "Wdrożenie jest gotowe",
     "DeploymentSchedulingHistory": "Historia planowania wdrożenia",
+    "DeploymentStopped": "Wdrożenie jest zatrzymywane lub nie jest już aktywne.",
     "DeploymentUpdated": "Wdrożenie zostało zaktualizowane.",
     "Deployments": "Wdrożenia",
     "DesiredReplicas": "Żądana liczba replik",
@@ -1180,6 +1180,7 @@
     "NotAccessibleOrDeleted": "To wdrożenie zostało usunięte lub nie masz uprawnień, aby uzyskać do niego dostęp.",
     "NotInProject": "To wdrożenie należy do innego projektu.",
     "NumberOfReplicas": "Liczba replik",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Otwórz modal tworzenia wdrożenia",
     "OpenToPublic": "Publiczne",
     "OpenToPublicCannotBeChanged": "Ustawienia dostępu publicznego wybrane podczas tworzenia nie mogą zostać zmienione.",
@@ -1246,7 +1247,6 @@
       "Delete": "Usuń token dostępu",
       "DeleteConfirm": "Czy na pewno chcesz usunąć ten token dostępu? Tej operacji nie można cofnąć.",
       "Deleted": "Token dostępu został usunięty.",
-      "DeploymentStopped": "Wdrożenie jest zatrzymywane lub nie jest już aktywne.",
       "EndpointNotIssuedYet": "Punkt końcowy sieci nie został jeszcze wydany.",
       "Expiration": "Wygaśnięcie",
       "NoExpiration": "Bez wygaśnięcia",
@@ -1260,7 +1260,6 @@
       "EndpointUrl": "URL punktu końcowego",
       "Name": "Nazwa",
       "OpenToPublic": "Publiczne",
-      "ProjectId": "ID projektu",
       "ResourceGroup": "Grupa zasobów",
       "Status": "Status",
       "Tags": "Tagi"
@@ -2759,6 +2758,7 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (pamięć)",
     "Gaudi2Enabled": "Gaudi 2 NPU Włączony",
+    "GoToUploadSessionList": "Przejdź do sesji przesyłania",
     "GracePeriod": "Okres karencji",
     "GracePeriodDesc": "Narzędzie do sprawdzania bezczynności zostanie aktywowane po tym początkowym czasie karencji. W tym czasie sesje nie są kończone, nawet jeśli wykorzystanie jest niskie.",
     "GracePeriodTooltip": "Czas pozostały do podjęcia pierwszej decyzji o odzyskaniu zasobów.\nW tym czasie bieżące wykorzystanie jest stale zbierane i obliczane, a zasoby nie są odzyskiwane przed jego upływem.\nPo upływie tego czasu pierwsza decyzja o odzyskaniu jest podejmowana na podstawie zebranego wykorzystania, a następnie ocena jest kontynuowana na podstawie średniej z bieżącego wykorzystania.",
@@ -2794,7 +2794,7 @@
     "OpenToPublic": "Otwórz aplikację publicznie",
     "OpenToPublicDesc": "Włączenie tej opcji umożliwia dostęp do aplikacji dla wszystkich użytkowników w sieci.<br /><br /> \nW celu zarządzania dostępem wprowadź określone adresy IP w polu „dozwolone IP”.<br /><br /> \nOpuszczenie tego pola pustego pozwoli na dostęp ze wszystkich adresów IP.<br /><br /> \nW razie potrzeby rozważ ustawienie ograniczeń IP do zarządzania bezpieczeństwem.",
     "Others": "Inne",
-    "OwnerUUID": "UUID właściciela",
+    "Owner": "Właściciel",
     "PanelSettings": "Ustawienia panelowe",
     "PendingPosition": "Pozycja kolejki",
     "Phase": "Faza",
@@ -3119,6 +3119,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Brak danych",
       "NoLiveData": "Brak danych na żywo",
+      "NoLiveMetrics": "Brak metryk na żywo",
+      "NoLiveMetricsForSessionsInView": "Żadna sesja na bieżącej liście nie raportuje metryk na żywo.",
       "NoSessionsMatchingFilter": "Żadna sesja nie pasuje do bieżącego filtra.",
       "OmittedNoResource": "Ukrywanie {{count}} sesji bez przydzielonego {{label}}.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3577,8 +3579,9 @@
     "BootstrapScriptEmpty": "Skrypt jest pusty. \nProszę wprowadzić skrypt.",
     "BootstrapScriptUpdated": "Zaktualizowano skrypt Bootstrap.",
     "ClearSSHKeypairInput": "Zapisana para kluczy SSH zostanie usunięta. Jesteś pewien, że chcesz kontynuować?",
+    "CommandPalette": "Paleta poleceń",
     "ConfigFilename": "Nazwa pliku konfiguracyjnego",
-    "CurrentSSHPublicKey": "Aktualny klucz publiczny:",
+    "CurrentSSHPublicKey": "Aktualny klucz publiczny",
     "CustomDashboardPanels": "Niestandardowe panele pulpitu",
     "DarkMode": "Tryb ciemny",
     "DarkTheme": "Tryb ciemny",
@@ -3826,6 +3829,7 @@
       "ResourcePolicies": "Polityki zasobów",
       "Resources": "Zasoby",
       "Scheduler": "Harmonogram",
+      "Search": "Wyszukiwanie",
       "Serving": "Obsługa",
       "Sessions": "Sesje",
       "Settings": "Ustawienia",
@@ -3849,6 +3853,7 @@
       "WelcomeMessage": "Witamy, {{nazwa użytkownika }}.",
       "YouMushChangeYourPassword": "Ze względów bezpieczeństwa zaleca się okresową zmianę hasła. Po upływie określonego czasu od ostatniej zmiany hasła należy je zmienić, aby móc nadal korzystać z usługi.",
       "groupName": {
+        "General": "Ogólne",
         "Metrics": "Metryki",
         "Mlops": "MLOps",
         "Playground": "Plac zabaw",
@@ -3860,6 +3865,31 @@
           "Operations": "Operacje",
           "System": "System"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Znaleziono w {{text}}",
+      "NoResults": "Brak wyników",
+      "Placeholder": "Szukaj stron, kart i ustawień",
+      "Recent": "Ostatnie",
+      "action": {
+        "ChangeLanguage": "Zmień język interfejsu",
+        "OpenManual": "Otwórz podręcznik tej strony",
+        "OpenNotifications": "Otwórz powiadomienia",
+        "OpenUserSettings": "Otwórz ustawienia użytkownika",
+        "SwitchToDarkMode": "Przełącz na tryb ciemny",
+        "SwitchToLightMode": "Przełącz na tryb jasny",
+        "ToggleSidebar": "Pokaż lub ukryj pasek boczny",
+        "UseSystemTheme": "Użyj ustawień systemowych"
+      },
+      "group": {
+        "Appearance": "Wygląd",
+        "Create": "Utwórz",
+        "PanelsAndHelp": "Panele i wsparcie"
+      },
+      "scope": {
+        "Administration": "Administracja",
+        "ProjectAdministration": "Administracja projektu"
       }
     }
   }

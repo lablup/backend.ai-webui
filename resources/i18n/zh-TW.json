@@ -55,7 +55,6 @@
     "Runtime": "執行環境",
     "RuntimeRequired": "執行環境為必填項。",
     "RuntimeTooltip": "此預設所針對的推理執行環境（如 vLLM、SGLang）。選擇後將顯示其可配置的執行時期參數，這些參數值將與預設一起儲存，並套用至從該預設建立的部署。",
-    "RuntimeVariantId": "執行環境 ID",
     "SectionAdvanced": "進階",
     "SectionBasicInfo": "基本資訊",
     "SectionCluster": "叢集",
@@ -202,7 +201,7 @@
     "CreatePreset": "建立參數",
     "Name": "名稱",
     "PresetDeleted": "Runtime 參數已刪除。",
-    "RuntimeVariantId": "執行環境變體 ID",
+    "Runtime": "執行環境",
     "RuntimeVariantPreset": "Runtime 參數",
     "TabTitle": "Runtime 參數"
   },
@@ -881,8 +880,6 @@
       "NoSharedFolders": "沒有共享資料夾",
       "NoSharedUsers": "沒有人被邀請",
       "NotEnoughResourceForFileBrowserSession": "沒有足夠的資源（cpu: 1 Core, mem: 0.5GB）來為文件瀏覽器創建會話。請檢查可用資源。",
-      "NumberOfSFTPSessionsExceededBody": "您正在运行允许创建的所有可用上传会话。请在启动新会话前终止未使用的上传会话。",
-      "NumberOfSFTPSessionsExceededTitle": "运行中的上传会话次数已达上限",
       "People": "人們",
       "Permission": "允許",
       "Permissions": "權限",
@@ -893,7 +890,8 @@
       "RenameAFolder": "重新命名資料夾",
       "RetryingOperation": "重試建立會話...",
       "RunSSH/SFTPserver": "运行 SFTP 服务器",
-      "SFTPSessionNotAvailable": "SFTP 会话现在不可用",
+      "SFTPSessionCreationFailed": "建立 SFTP 工作階段失敗",
+      "SFTPSessionFailureHint": "若有許多上傳工作階段仍在執行中，關閉未使用的工作階段可釋放 SFTP 主機上的資源。",
       "ShareFolder": "共享文件夾",
       "Size": "尺寸",
       "StartingSSH/SFTPSession": "开始 SFTP 会话...",
@@ -907,7 +905,7 @@
       "WritePermissionRequiredInUploadFiles": "上傳文件需要寫權限。"
     },
     "folders": {
-      "AdminDataPageAlert": "管理員資料頁面僅可建立專案資料夾。",
+      "AdminDataPageAlert": "在管理員資料頁面，資料夾將建立為專案資料夾。",
       "CannotDeleteFolder": "無法刪除安裝在一個或多個會話中的文件夾。請先終止會話。",
       "CannotDeletePipelineFolder": "您無法刪除管道文件夾。",
       "CannotDeployFromAdminMenu": "部署需要在專案的數據頁面中建立；管理員選單不支援此操作。",
@@ -982,7 +980,7 @@
       "Ownership": "所有權",
       "Path": "存儲路徑",
       "Permission": "允許",
-      "ProjectAdminDataPageAlert": "專案管理員資料頁面僅可建立專案資料夾。",
+      "ProjectAdminDataPageAlert": "在專案管理員資料頁面，資料夾將建立為專案資料夾。",
       "ProjectFolderAlertDesc": "該文件夾與項目的所有成員共享",
       "ProjectFolderCreationHelp": "將創建一個可以通過“{{projectName}}”項目用戶訪問的文件夾。",
       "Rename": "改名",
@@ -1084,6 +1082,7 @@
     "AddAccessToken": "新增存取令牌",
     "AddNewRevisionFromThis": "基於此新增 Revision",
     "AddRevision": "新增 Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "附加掛載",
     "AnotherDeploymentInProgress": "另一個部署更新已在進行中。請等待完成後再重試。",
     "Apply": "部署",
@@ -1127,6 +1126,7 @@
     "DeploymentNameTooltip": "此部署的唯一名稱，用於在儀表板、API 和端點 URL 中進行識別。",
     "DeploymentReady": "部署已就緒",
     "DeploymentSchedulingHistory": "部署排程記錄",
+    "DeploymentStopped": "該部署正在停止或已不再運行。",
     "DeploymentUpdated": "部署已更新。",
     "Deployments": "部署",
     "DesiredReplicas": "期望副本數",
@@ -1181,6 +1181,7 @@
     "NotAccessibleOrDeleted": "此部署已被刪除，或您沒有存取權限。",
     "NotInProject": "此部署屬於其他專案。",
     "NumberOfReplicas": "副本數量",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "開啟建立部署視窗",
     "OpenToPublic": "公開",
     "OpenToPublicCannotBeChanged": "建立時選擇的公開存取設定無法變更。",
@@ -1247,7 +1248,6 @@
       "Delete": "刪除存取令牌",
       "DeleteConfirm": "確定要刪除此存取令牌嗎？此操作無法復原。",
       "Deleted": "存取令牌已刪除。",
-      "DeploymentStopped": "該部署正在停止或已不再運行。",
       "EndpointNotIssuedYet": "網路端點尚未發行。",
       "Expiration": "到期時間",
       "NoExpiration": "永不到期",
@@ -1261,7 +1261,6 @@
       "EndpointUrl": "端點 URL",
       "Name": "名稱",
       "OpenToPublic": "公開",
-      "ProjectId": "專案 ID",
       "ResourceGroup": "資源群組",
       "Status": "狀態",
       "Tags": "標籤"
@@ -2761,6 +2760,7 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU（内存）",
     "Gaudi2Enabled": "Gaudi 2 NPU 啟用",
+    "GoToUploadSessionList": "前往上傳工作階段",
     "GracePeriod": "宽限期",
     "GracePeriodDesc": "利用率空闲检查程序将在初始宽限时间后激活。在这段时间内，即使使用率较低，也不会终止会话。",
     "GracePeriodTooltip": "距離首次判定是否回收資源的剩餘時間。\n在此期間，最近的使用量會持續收集與計算，在該時間結束之前不會回收資源。\n該時間結束後，將根據最初收集的使用量判定是否回收資源，此後也會根據最近使用量的平均值持續判定。",
@@ -2796,7 +2796,7 @@
     "OpenToPublic": "向公眾開放應用",
     "OpenToPublicDesc": "啟用此選項允許網絡中的所有用戶訪問應用程序。<br /><br />\n對於訪問管理，請在“允許IP”字段中輸入特定的IP地址。<br /><br />\n將此字段留為空，將允許從所有IP地址訪問。<br /><br />\n考慮安全管理時，請考慮設置IP限制。",
     "Others": "其他",
-    "OwnerUUID": "擁有者UUID",
+    "Owner": "擁有者",
     "PanelSettings": "面板設置",
     "PendingPosition": "隊列位置",
     "Phase": "階段",
@@ -3120,6 +3120,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "無資料",
       "NoLiveData": "無即時資料",
+      "NoLiveMetrics": "無即時指標",
+      "NoLiveMetricsForSessionsInView": "目前清單中沒有會話回報即時指標。",
       "NoSessionsMatchingFilter": "沒有符合目前篩選條件的會話。",
       "OmittedNoResource": "已隱藏 {{count}} 個未分配 {{label}} 的會話。",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3578,8 +3580,9 @@
     "BootstrapScriptEmpty": "腳本是空的。\n請輸入腳本。",
     "BootstrapScriptUpdated": "引導腳本已更新。",
     "ClearSSHKeypairInput": "書面 SSH 密鑰對將被刪除。你確定你要繼續嗎？",
+    "CommandPalette": "命令選擇區",
     "ConfigFilename": "配置文件名",
-    "CurrentSSHPublicKey": "當前公鑰：",
+    "CurrentSSHPublicKey": "當前公鑰",
     "CustomDashboardPanels": "自訂儀表板面板",
     "DarkMode": "深色模式",
     "DarkTheme": "深色模式",
@@ -3827,6 +3830,7 @@
       "ResourcePolicies": "資源政策",
       "Resources": "資源",
       "Scheduler": "調度程序",
+      "Search": "搜尋",
       "Serving": "服务",
       "Sessions": "會話",
       "Settings": "設置",
@@ -3850,6 +3854,7 @@
       "WelcomeMessage": "歡迎，{{ userName }}",
       "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。",
       "groupName": {
+        "General": "一般",
         "Metrics": "衡量标准",
         "Mlops": "MLOps",
         "Playground": "游乐场",
@@ -3861,6 +3866,31 @@
           "Operations": "營運",
           "System": "系統"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "在 {{text}} 中找到",
+      "NoResults": "無結果",
+      "Placeholder": "搜尋頁面、分頁與設置",
+      "Recent": "最近使用",
+      "action": {
+        "ChangeLanguage": "變更介面語言",
+        "OpenManual": "開啟本頁手冊",
+        "OpenNotifications": "開啟通知",
+        "OpenUserSettings": "開啟使用者設置",
+        "SwitchToDarkMode": "切換至深色模式",
+        "SwitchToLightMode": "切換至淺色模式",
+        "ToggleSidebar": "收合/展開側邊欄",
+        "UseSystemTheme": "使用系統設定"
+      },
+      "group": {
+        "Appearance": "外觀",
+        "Create": "建立",
+        "PanelsAndHelp": "面板與幫助"
+      },
+      "scope": {
+        "Administration": "行政",
+        "ProjectAdministration": "項目管理"
       }
     }
   }

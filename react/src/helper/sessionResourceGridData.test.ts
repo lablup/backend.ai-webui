@@ -393,6 +393,16 @@ describe('control inventories', () => {
       'net_rx',
     ]);
   });
+
+  // The kernel-mode metric selector disables itself on this empty list.
+  it('yields no metrics when no kernel reports live_stat', () => {
+    expect(
+      availableLiveStatMetrics([
+        { kernels: [{ liveStat: {} }] },
+        { kernels: [] },
+      ]),
+    ).toEqual([]);
+  });
 });
 
 describe('isNotYetAllocatedSession', () => {

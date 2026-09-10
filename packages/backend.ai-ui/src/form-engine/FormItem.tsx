@@ -300,6 +300,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
     baseChildren: React.ReactNode,
     fieldId?: string,
     isRequired?: boolean,
+    fieldHandle?: string,
   ) => {
     const status: FormItemStatusContextValue = {
       status: getStatus(
@@ -371,6 +372,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           style={style}
           hidden={hidden}
           fieldId={fieldId}
+          fieldHandle={fieldHandle}
           htmlFor={htmlFor}
           errors={mergedErrors}
           warnings={mergedWarnings}
@@ -437,6 +439,11 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           if (!childProps.id) {
             childProps.id = fieldId;
           }
+          // Astryx controls replace `id` with their own `useId()` but pass
+          // `data-*` through; this is what `FormStore.getFieldDOMNode` finds.
+          if (mergedName.length) {
+            childProps['data-bai-field-id'] = mergedName.join('_');
+          }
           if (formDisabled && childProps.disabled === undefined) {
             childProps.disabled = true;
           }
@@ -476,7 +483,12 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           childNode = children as React.ReactNode;
         }
 
-        return renderLayout(childNode, fieldId, isRequired);
+        return renderLayout(
+          childNode,
+          fieldId,
+          isRequired,
+          mergedName.length ? mergedName.join('_') : undefined,
+        );
       }}
     </Field>
   );

@@ -150,5 +150,12 @@ export interface ReviewServerState {
   source: 'boot-record' | 'gh' | 'none';
   /** Absolute repository root, so the client can relativize source paths. */
   root?: string | null;
+  /**
+   * `serve` (the default) — a dev server answered, and react-grab loads with
+   * the app. `static` — the state was embedded in a built document (FR-3880),
+   * so there is no endpoint behind it and react-grab is never coming: the
+   * picker binds its own chord at once and no ⚛️ stack is waited for.
+   */
+  host?: 'serve' | 'static';
   error?: string | null;
 }

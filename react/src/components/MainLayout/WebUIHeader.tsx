@@ -7,6 +7,7 @@ import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { theme, useBAIBreakpoint } from '../../theme-shim';
 import BAINotificationButton from '../BAINotificationButton';
+import GlobalSearchPaletteButton from '../GlobalSearchPalette/GlobalSearchPaletteButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
 import UserDropdownMenu from '../UserDropdownMenu';
 import WEBUIHelpButton from '../WEBUIHelpButton';
@@ -121,6 +122,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
               {gridBreakpoint.md && <span style={{ width: token.marginXS }} />}
             </Suspense>
           )}
+        {/* Same self-scoping reason as `BAINotificationButton` below: both own
+            floating surfaces, so neither may sit inside a `MediaTheme`. */}
+        <GlobalSearchPaletteButton data-testid="button-global-search" />
         {/* `BAINotificationButton` scopes its own on-dark context to its
             button, because it also owns a `Tooltip` whose panel is an inline
             sibling — see that file. */}

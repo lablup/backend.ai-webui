@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "Il runtime è obbligatorio.",
     "RuntimeTooltip": "Il runtime di inferenza (es. vLLM, SGLang) a cui è destinato questo preset. Selezionandone uno vengono mostrati i parametri di runtime configurabili, i cui valori vengono salvati con il preset e applicati alle distribuzioni create a partire da esso.",
-    "RuntimeVariantId": "ID Runtime",
     "SectionAdvanced": "Avanzato",
     "SectionBasicInfo": "Informazioni di Base",
     "SectionCluster": "Cluster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Crea Parametro",
     "Name": "Nome",
     "PresetDeleted": "Il parametro di runtime è stato eliminato.",
-    "RuntimeVariantId": "ID Variante di Runtime",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Parametro di Runtime",
     "TabTitle": "Parametri di Runtime"
   },
@@ -881,8 +880,6 @@
       "NoSharedFolders": "Nessuna cartella condivisa",
       "NoSharedUsers": "Nessuno è stato invitato",
       "NotEnoughResourceForFileBrowserSession": "Risorse insufficienti (cpu: 1 Core, mem: 0,5 GB) per creare la sessione per filebrowser. si prega di controllare le risorse disponibili.",
-      "NumberOfSFTPSessionsExceededBody": "Si stanno eseguendo tutte le sessioni di caricamento disponibili che si possono creare. Chiudere le sessioni di caricamento inutilizzate prima di avviare una nuova sessione.",
-      "NumberOfSFTPSessionsExceededTitle": "Raggiunto il limite del conteggio della sessione di caricamento in corso",
       "People": "Persone",
       "Permission": "Autorizzazione",
       "Permissions": "Permessi",
@@ -893,7 +890,8 @@
       "RenameAFolder": "Rinomina cartella",
       "RetryingOperation": "Riprovare per stabilire la sessione ...",
       "RunSSH/SFTPserver": "Eseguire il server SFTP",
-      "SFTPSessionNotAvailable": "SFTP Session non è disponibile ora",
+      "SFTPSessionCreationFailed": "Impossibile creare la sessione SFTP",
+      "SFTPSessionFailureHint": "Se sono ancora in esecuzione molte sessioni di caricamento, chiudere quelle inutilizzate può liberare risorse sull'host SFTP.",
       "ShareFolder": "Condividi cartella",
       "Size": "Dimensione",
       "StartingSSH/SFTPSession": "Avvio della sessione SFTP...",
@@ -907,7 +905,7 @@
       "WritePermissionRequiredInUploadFiles": "Per caricare i file è richiesta l'autorizzazione di scrittura."
     },
     "folders": {
-      "AdminDataPageAlert": "Nella pagina Dati Amministratore si possono creare solo cartelle di progetto.",
+      "AdminDataPageAlert": "Nella pagina Dati Amministratore le cartelle vengono create come cartelle di progetto.",
       "CannotDeleteFolder": "Impossibile eliminare la cartella montata in una o più sessioni. Si prega di terminare prima la sessione.",
       "CannotDeletePipelineFolder": "Non puoi eliminare le cartelle della pipeline.",
       "CannotDeployFromAdminMenu": "Le distribuzioni vengono create dalla pagina Dati di un progetto; il menu di amministrazione non lo supporta.",
@@ -982,7 +980,7 @@
       "Ownership": "Proprietà",
       "Path": "Percorso di archiviazione",
       "Permission": "Autorizzazione",
-      "ProjectAdminDataPageAlert": "Nella pagina Dati Amministratore del Progetto si possono creare solo cartelle di progetto.",
+      "ProjectAdminDataPageAlert": "Nella pagina Dati Amministratore del Progetto le cartelle vengono create come cartelle di progetto.",
       "ProjectFolderAlertDesc": "Questa cartella è condivisa con tutti i membri del progetto",
       "ProjectFolderCreationHelp": "Verrà creata una cartella accessibile da \"{{projectName}}\". Gli utenti del progetto.",
       "Rename": "Rinominare",
@@ -1083,6 +1081,7 @@
     "AddAccessToken": "Aggiungi Token di Accesso",
     "AddNewRevisionFromThis": "Nuova Revision basata su questa",
     "AddRevision": "Aggiungi Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Montaggio aggiuntivo",
     "AnotherDeploymentInProgress": "Un altro aggiornamento del deployment è già in corso. Attendere il completamento prima di riprovare.",
     "Apply": "Distribuisci",
@@ -1126,6 +1125,7 @@
     "DeploymentNameTooltip": "Un nome univoco per questa distribuzione. Usato per identificarla nel pannello di controllo, nell'API e nell'URL dell'endpoint.",
     "DeploymentReady": "La distribuzione è pronta",
     "DeploymentSchedulingHistory": "Cronologia di pianificazione della distribuzione",
+    "DeploymentStopped": "La distribuzione si sta arrestando o non è più attiva.",
     "DeploymentUpdated": "La distribuzione è stata aggiornata.",
     "Deployments": "Distribuzioni",
     "DesiredReplicas": "Repliche desiderate",
@@ -1180,6 +1180,7 @@
     "NotAccessibleOrDeleted": "Questa distribuzione è stata eliminata o non disponi dei permessi per accedervi.",
     "NotInProject": "Questa distribuzione appartiene a un altro progetto.",
     "NumberOfReplicas": "Numero di repliche",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Apri modale di creazione distribuzione",
     "OpenToPublic": "Pubblico",
     "OpenToPublicCannotBeChanged": "L'impostazione di accesso pubblico selezionata alla creazione non può essere modificata.",
@@ -1246,7 +1247,6 @@
       "Delete": "Elimina token di accesso",
       "DeleteConfirm": "Sei sicuro di voler eliminare questo token di accesso? Questa azione non può essere annullata.",
       "Deleted": "Il token di accesso è stato eliminato.",
-      "DeploymentStopped": "La distribuzione si sta arrestando o non è più attiva.",
       "EndpointNotIssuedYet": "L'endpoint di rete non è ancora stato emesso.",
       "Expiration": "Scadenza",
       "NoExpiration": "Nessuna scadenza",
@@ -1260,7 +1260,6 @@
       "EndpointUrl": "URL endpoint",
       "Name": "Nome",
       "OpenToPublic": "Pubblico",
-      "ProjectId": "ID progetto",
       "ResourceGroup": "Gruppo di risorse",
       "Status": "Stato",
       "Tags": "Tag"
@@ -2757,6 +2756,7 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (memoria)",
     "Gaudi2Enabled": "Gaudi 2 NPU Abilitato",
+    "GoToUploadSessionList": "Vai alle sessioni di caricamento",
     "GracePeriod": "Periodo di grazia",
     "GracePeriodDesc": "Il controllo dell'utilizzo inattivo verrà attivato dopo questo tempo di tolleranza iniziale. Durante questo periodo, le sessioni non vengono terminate anche se l'utilizzo è basso.",
     "GracePeriodTooltip": "Tempo rimanente fino alla prima decisione di recupero delle risorse.\nDurante questo periodo l'utilizzo recente viene raccolto e calcolato continuamente e le risorse non vengono recuperate prima della sua scadenza.\nTrascorso questo periodo, la prima decisione di recupero viene presa in base all'utilizzo raccolto e successivamente la valutazione continua in base alla media dell'utilizzo recente.",
@@ -2792,7 +2792,7 @@
     "OpenToPublic": "Apri l'app al pubblico",
     "OpenToPublicDesc": "Abilitazione di questa opzione consente l'accesso all'applicazione per tutti gli utenti all'interno della rete.<br /><br /> \nPer la gestione dell'accesso, immettere indirizzi IP specifici nel campo \"IP consentito\".<br /><br /> \nLasciare questo campo vuoto consentirà l'accesso da tutti gli indirizzi IP.<br /><br /> \nPrendi in considerazione l'impostazione delle restrizioni IP quando necessario per la gestione della sicurezza.",
     "Others": "Altri",
-    "OwnerUUID": "UUID del proprietario",
+    "Owner": "Proprietario",
     "PanelSettings": "Impostazioni del pannello",
     "PendingPosition": "Posizione in coda",
     "Phase": "Fase",
@@ -3116,6 +3116,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Nessun dato",
       "NoLiveData": "Nessun dato in tempo reale",
+      "NoLiveMetrics": "Nessuna metrica in tempo reale",
+      "NoLiveMetricsForSessionsInView": "Nessuna sessione nell'elenco corrente riporta metriche in tempo reale.",
       "NoSessionsMatchingFilter": "Nessuna sessione corrisponde al filtro attuale.",
       "OmittedNoResource": "Nascoste {{count}} sessioni senza {{label}} allocato.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3574,8 +3576,9 @@
     "BootstrapScriptEmpty": "La sceneggiatura è vuota. \nInserisci la sceneggiatura.",
     "BootstrapScriptUpdated": "Script di bootstrap aggiornato.",
     "ClearSSHKeypairInput": "La coppia di chiavi SSH scritta verrà rimossa. Sei sicuro di voler continuare?",
+    "CommandPalette": "Palette dei comandi",
     "ConfigFilename": "Nome del file di configurazione",
-    "CurrentSSHPublicKey": "Chiave pubblica attuale:",
+    "CurrentSSHPublicKey": "Chiave pubblica attuale",
     "CustomDashboardPanels": "Pannelli dashboard personalizzati",
     "DarkMode": "Modalità scura",
     "DarkTheme": "Modalità scura",
@@ -3823,6 +3826,7 @@
       "ResourcePolicies": "Politiche delle risorse",
       "Resources": "risorse",
       "Scheduler": "Scheduler",
+      "Search": "Ricerca",
       "Serving": "Servire",
       "Sessions": "sessioni",
       "Settings": "Impostazioni",
@@ -3846,6 +3850,7 @@
       "WelcomeMessage": "Benvenuto, {{ userName }}.",
       "YouMushChangeYourPassword": "Per motivi di sicurezza, si consiglia di modificare periodicamente la password. Poiché è trascorso un certo periodo di tempo dall'ultima modifica della password, è necessario cambiarla per poter continuare a utilizzare il servizio.",
       "groupName": {
+        "General": "Generale",
         "Metrics": "Metriche",
         "Mlops": "MLOps",
         "Playground": "Parco giochi",
@@ -3857,6 +3862,31 @@
           "Operations": "Operazioni",
           "System": "Sistema"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Trovato in {{text}}",
+      "NoResults": "Nessun risultato",
+      "Placeholder": "Cerca pagine, schede e impostazioni",
+      "Recent": "Recenti",
+      "action": {
+        "ChangeLanguage": "Cambia la lingua dell'interfaccia",
+        "OpenManual": "Apri il manuale di questa pagina",
+        "OpenNotifications": "Apri le notifiche",
+        "OpenUserSettings": "Apri le impostazioni utente",
+        "SwitchToDarkMode": "Passa alla modalità scura",
+        "SwitchToLightMode": "Passa alla modalità chiara",
+        "ToggleSidebar": "Mostra o nascondi la barra laterale",
+        "UseSystemTheme": "Utilizza le impostazioni di sistema"
+      },
+      "group": {
+        "Appearance": "Aspetto",
+        "Create": "Crea",
+        "PanelsAndHelp": "Pannelli e aiuto"
+      },
+      "scope": {
+        "Administration": "Amministrazione",
+        "ProjectAdministration": "Amministrazione progetto"
       }
     }
   }

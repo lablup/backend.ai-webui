@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "O runtime é obrigatório.",
     "RuntimeTooltip": "O runtime de inferência (ex. vLLM, SGLang) ao qual este preset se destina. Ao selecioná-lo, os parâmetros de runtime configuráveis são exibidos, cujos valores são salvos com o preset e aplicados às implantações criadas a partir dele.",
-    "RuntimeVariantId": "ID de Runtime",
     "SectionAdvanced": "Avançado",
     "SectionBasicInfo": "Informações Básicas",
     "SectionCluster": "Cluster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Criar Parâmetro",
     "Name": "Nome",
     "PresetDeleted": "O parâmetro de runtime foi excluído.",
-    "RuntimeVariantId": "ID da Variante de Runtime",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Parâmetro de Runtime",
     "TabTitle": "Parâmetros de Runtime"
   },
@@ -881,8 +880,6 @@
       "NoSharedFolders": "Nenhuma pasta compartilhada",
       "NoSharedUsers": "Ninguém foi convidado",
       "NotEnoughResourceForFileBrowserSession": "Sem recursos suficientes (cpu: 1 Core, mem: 0,5 GB) para criar a sessão para o navegador de arquivos. verifique os recursos disponíveis.",
-      "NumberOfSFTPSessionsExceededBody": "Está a executar todas as sessões de carregamento disponíveis que tem permissão para criar. Termine as sessões de carregamento não utilizadas antes de iniciar uma nova sessão.",
-      "NumberOfSFTPSessionsExceededTitle": "Atingiu o limite da contagem de sessões de carregamento em execução",
       "People": "Pessoas",
       "Permission": "Permissão",
       "Permissions": "Permissões",
@@ -893,7 +890,8 @@
       "RenameAFolder": "Renomear pasta",
       "RetryingOperation": "Representando para estabelecer sessão ...",
       "RunSSH/SFTPserver": "Executar o servidor SFTP",
-      "SFTPSessionNotAvailable": "A sessão SFTP não está disponível neste momento",
+      "SFTPSessionCreationFailed": "Falha ao criar sessão SFTP",
+      "SFTPSessionFailureHint": "Se ainda há muitas sessões de upload em execução, fechar as não utilizadas pode liberar recursos no host SFTP.",
       "ShareFolder": "Compartilhar pasta",
       "Size": "Tamanho",
       "StartingSSH/SFTPSession": "Iniciando a sessão SFTP...",
@@ -907,7 +905,7 @@
       "WritePermissionRequiredInUploadFiles": "A permissão de gravação é necessária ao enviar arquivo (s)."
     },
     "folders": {
-      "AdminDataPageAlert": "Na página Dados do Administrador só é possível criar pastas de projeto.",
+      "AdminDataPageAlert": "Na página Dados do Administrador, as pastas são criadas como pastas de projeto.",
       "CannotDeleteFolder": "Não é possível excluir a pasta montada em uma ou mais sessões. Por favor, termine a sessão primeiro.",
       "CannotDeletePipelineFolder": "Você não pode excluir pastas de pipeline.",
       "CannotDeployFromAdminMenu": "As implantações são criadas na página Dados de um projeto; o menu de administração não oferece suporte a isso.",
@@ -982,7 +980,7 @@
       "Ownership": "Propriedade",
       "Path": "Caminho de armazenamento",
       "Permission": "Permissão",
-      "ProjectAdminDataPageAlert": "Na página Dados do Administrador do Projeto só é possível criar pastas de projeto.",
+      "ProjectAdminDataPageAlert": "Na página Dados do Administrador do Projeto, as pastas são criadas como pastas de projeto.",
       "ProjectFolderAlertDesc": "Esta pasta é compartilhada com todos os membros do projeto",
       "ProjectFolderCreationHelp": "Uma pasta acessível por \"{{projectName}}\" \"os usuários do projeto serão criados.",
       "Rename": "Renomear",
@@ -1083,6 +1081,7 @@
     "AddAccessToken": "Adicionar Token de Acesso",
     "AddNewRevisionFromThis": "Nova Revision baseada nesta",
     "AddRevision": "Adicionar Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Montagens adicionais",
     "AnotherDeploymentInProgress": "Outra atualização de implantação já está em andamento. Aguarde a conclusão antes de tentar novamente.",
     "Apply": "Implantar",
@@ -1126,6 +1125,7 @@
     "DeploymentNameTooltip": "Um nome único para esta implantação. Usado para identificá-la no painel, na API e na URL do endpoint.",
     "DeploymentReady": "A implantação está pronta",
     "DeploymentSchedulingHistory": "Histórico de Agendamento de Implantação",
+    "DeploymentStopped": "A implantação está sendo parada ou não está mais ativa.",
     "DeploymentUpdated": "A implantação foi atualizada.",
     "Deployments": "Implantações",
     "DesiredReplicas": "Réplicas desejadas",
@@ -1180,6 +1180,7 @@
     "NotAccessibleOrDeleted": "Esta implantação foi excluída ou você não tem permissão para acessá-la.",
     "NotInProject": "Esta implantação pertence a outro projeto.",
     "NumberOfReplicas": "Número de réplicas",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Abrir modal de criação de implantação",
     "OpenToPublic": "Público",
     "OpenToPublicCannotBeChanged": "A configuração de acesso público selecionada na criação não pode ser alterada.",
@@ -1246,7 +1247,6 @@
       "Delete": "Excluir token de acesso",
       "DeleteConfirm": "Tem certeza de que deseja excluir este token de acesso? Esta ação não pode ser desfeita.",
       "Deleted": "O token de acesso foi excluído.",
-      "DeploymentStopped": "A implantação está sendo parada ou não está mais ativa.",
       "EndpointNotIssuedYet": "O endpoint de rede ainda não foi emitido.",
       "Expiration": "Expiração",
       "NoExpiration": "Sem expiração",
@@ -1260,7 +1260,6 @@
       "EndpointUrl": "URL do endpoint",
       "Name": "Nome",
       "OpenToPublic": "Público",
-      "ProjectId": "ID do projeto",
       "ResourceGroup": "Grupo de Recursos",
       "Status": "Status",
       "Tags": "Tags"
@@ -2757,6 +2756,7 @@
     "GPU": "GPU",
     "GPU(MEM)": "GPU (memória)",
     "Gaudi2Enabled": "Gaudi 2 NPU Habilitado",
+    "GoToUploadSessionList": "Ir para sessões de upload",
     "GracePeriod": "Período de carência",
     "GracePeriodDesc": "O verificador de inatividade da utilização será ativado após este tempo de tolerância inicial. Durante este tempo, as sessões não são terminadas mesmo que a utilização seja baixa.",
     "GracePeriodTooltip": "Tempo restante até que a primeira decisão de recuperação de recursos seja tomada.\nDurante esse período, o uso recente é coletado e calculado continuamente, e os recursos não são recuperados antes que ele termine.\nApós esse período, a primeira decisão de recuperação é tomada com base no uso coletado e, depois disso, continua sendo avaliada com base na média do uso recente.",
@@ -2792,7 +2792,7 @@
     "OpenToPublic": "Abra o aplicativo para o público",
     "OpenToPublicDesc": "A ativação desta opção permite o acesso do aplicativo para todos os usuários da rede.<br /><br /> \nPara gerenciamento de acesso, insira endereços IP específicos no campo 'IP permitido'.<br /><br /> \nDeixar este campo vazio permitirá o acesso de todos os endereços IP.<br /><br /> \nConsidere definir restrições de IP quando necessário para o gerenciamento de segurança.",
     "Others": "Outras",
-    "OwnerUUID": "UUID do proprietário",
+    "Owner": "Proprietário",
     "PanelSettings": "Configurações do painel",
     "PendingPosition": "Posição na fila",
     "Phase": "Fase",
@@ -3116,6 +3116,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Sem dados",
       "NoLiveData": "Sem dados ao vivo",
+      "NoLiveMetrics": "Sem métricas ao vivo",
+      "NoLiveMetricsForSessionsInView": "Nenhuma sessão na lista atual reporta métricas ao vivo.",
       "NoSessionsMatchingFilter": "Nenhuma sessão corresponde ao filtro atual.",
       "OmittedNoResource": "Ocultando {{count}} sessões sem {{label}} alocado.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3574,8 +3576,9 @@
     "BootstrapScriptEmpty": "O script está vazio. \nPor favor insira o roteiro.",
     "BootstrapScriptUpdated": "Script de bootstrap atualizado.",
     "ClearSSHKeypairInput": "O par de chaves SSH gravado será removido. Você tem certeza que quer continuar?",
+    "CommandPalette": "Paleta de comandos",
     "ConfigFilename": "Nome do arquivo de configuração",
-    "CurrentSSHPublicKey": "Chave pública atual:",
+    "CurrentSSHPublicKey": "Chave pública atual",
     "CustomDashboardPanels": "Painéis personalizados do painel",
     "DarkMode": "Modo escuro",
     "DarkTheme": "Modo escuro",
@@ -3823,6 +3826,7 @@
       "ResourcePolicies": "Políticas de Recursos",
       "Resources": "Recursos",
       "Scheduler": "Agendador",
+      "Search": "Pesquisar",
       "Serving": "Servir",
       "Sessions": "Sessões",
       "Settings": "Definições",
@@ -3846,6 +3850,7 @@
       "WelcomeMessage": "Bem vindo, {{userName }}.",
       "YouMushChangeYourPassword": "Recomenda-se que altere periodicamente a sua palavra-passe por razões de segurança. Uma vez que passou um certo tempo desde a última vez que alterou a sua palavra-passe, deve alterá-la para poder continuar a utilizar o serviço.",
       "groupName": {
+        "General": "Geral",
         "Metrics": "Métricas",
         "Mlops": "MLOps",
         "Playground": "Parque infantil",
@@ -3857,6 +3862,31 @@
           "Operations": "Operações",
           "System": "Sistema"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Encontrado em {{text}}",
+      "NoResults": "Sem resultados",
+      "Placeholder": "Pesquisar páginas, abas e definições",
+      "Recent": "Recentes",
+      "action": {
+        "ChangeLanguage": "Alterar a língua da interface",
+        "OpenManual": "Abrir o manual desta página",
+        "OpenNotifications": "Abrir notificações",
+        "OpenUserSettings": "Abrir definições do usuário",
+        "SwitchToDarkMode": "Mudar para o modo escuro",
+        "SwitchToLightMode": "Mudar para o modo claro",
+        "ToggleSidebar": "Mostrar ou ocultar a barra lateral",
+        "UseSystemTheme": "Usar configuração do sistema"
+      },
+      "group": {
+        "Appearance": "Aparência",
+        "Create": "Criar",
+        "PanelsAndHelp": "Painéis e ajuda"
+      },
+      "scope": {
+        "Administration": "Administração",
+        "ProjectAdministration": "Administração do projeto"
       }
     }
   }

@@ -266,11 +266,12 @@ into the confirmation field before the delete is allowed.
 When using the WebUI app, you can create SSH/SFTP connections directly to a
 compute session. Once you sign up for Backend.AI, a public keypair is
 provided. If you click the button on the right of the SSH Keypair Management
-section, the following dialog appears. Click the copy button on the right to
-copy the existing SSH public key. You can update the SSH keypair by clicking
-the `Generate` button at the bottom of the dialog. SSH public/private keys are
-randomly generated and stored as user information. Please note that the secret
-key cannot be checked again unless it is saved manually immediately after
+section, the following dialog appears. The existing SSH public key is shown
+under the **Current public key** label; click the copy button next to the
+label to copy it. You can update the SSH keypair by clicking the `Generate`
+button at the bottom of the dialog. SSH public/private keys are randomly
+generated and stored as user information. Please note that the secret key
+cannot be checked again unless it is saved manually immediately after
 creation.
 
 ![](../images/ssh_keypair_dialog.png)
@@ -287,8 +288,13 @@ and **Private Key**.
 
 ![](../images/add_ssh_keypair_manually_dialog.png)
 
-Enter the keys and click the `Save` button. You can now access your Backend.AI
-session using your own key.
+Enter the keys and click the `Save` button. When the keypair is registered
+successfully, the message *"SSH Keypair has been successfully registered."* is
+displayed, the dialog closes, and you can access your Backend.AI session using
+your own key. If the server rejects the keypair -- for example when a key is
+malformed or the public and private keys do not match -- the dialog stays open
+and shows the error message returned by the server, so you can correct the
+keys and save again.
 
 ![](../images/ssh_keypair_dialog_after.png)
 
@@ -348,6 +354,13 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   turning it off later hides them without deleting them, and turning it back
   on restores them exactly as they were. See
   [Custom Panels](#custom-panels) for how to add and manage them.
+- **Command palette**: Adds a **Search** button to the header and the `Ctrl+K`
+  (`⌘K` on macOS) shortcut, both of which open a palette for searching pages,
+  page tabs, and setting items. The palette also offers quick actions such as
+  switching between dark and light mode, changing the UI language, opening
+  notifications, toggling the sidebar, and opening the manual for the current
+  page. The button and the shortcut are available only while this feature is
+  enabled. See [Search](#search) for details.
 - **Import from Hugging Face**: Adds an **Import Hugging Face Model** tab to the
   **Start From URL** dialog on the Start page, so you can import a model from
   Hugging Face directly into a model folder. The tab appears only when model
@@ -358,6 +371,8 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   by the session's live resource utilization. The toggle appears only while
   this feature is enabled; for the grid's own controls, see
   [Session List View](#session-list-view-and-refresh).
+
+<a id="logs-tab"></a>
 
 ## Logs tab
 

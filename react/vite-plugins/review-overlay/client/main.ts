@@ -42,6 +42,7 @@ import { createDraftStore, MAX_SET_PINS } from './draft.js';
 import { pinId } from './id.js';
 import { createPicker, isEditable, isMac } from './picker.js';
 import { createPinLayer, type DeepLinkPinTarget } from './pin.js';
+import { fetchServerState, readEmbeddedState } from './state.js';
 import type {
   AnchorComponent,
   AnchorV3,
@@ -60,7 +61,15 @@ if (!window.__baiReviewOverlay) {
 }
 
 function boot() {
-  let serverState: ReviewServerState | null = null;
+  /** The built document carries its own state; a dev server is asked. */
+  let serverState: ReviewServerState | null = readEmbeddedState();
+  /**
+   * react-grab is loaded by the app in dev only (`react/src/index.tsx`), so
+   * in a static build nothing will ever register it. Waiting for it there
+   * would cost the reviewer 20 s before the fallback chord binds, and every
+   * pin 4 s of ⚛️-stack retries for a stack that cannot arrive.
+   */
+  const expectReactGrab = serverState?.host !== 'static';
   /**
    * The pick's fiber walk, done once. The note is not part of it: it changes
    * while the reviewer types, and only the anchor has to be re-encoded.
@@ -174,6 +183,7 @@ function boot() {
     isOwnEvent: (evt) => ui.isOwnEvent(evt),
     showHint: (message) => ui.showToast(message),
     sourceRoot: () => serverState?.root,
+    expectReactGrab,
   });
 
   /**
@@ -181,17 +191,15 @@ function boot() {
    * relativized against, so the fetch is a gate, not a race: a pick that
    * outruns it would otherwise copy the driver's absolute worktree path.
    * A failed fetch leaves the root unknown, and `source-path.ts` then drops
-   * the location rather than leaking it.
+   * the location rather than leaking it. An embedded state is already in
+   * hand, so a static build waits for nothing.
    */
-  const stateReady = fetch('/__review/state')
-    .then((response) => response.json())
-    .then((state: ReviewServerState) => {
-      serverState = state;
-    })
-    .catch(() => {
-      // The PR number stays 0; the block is still usable.
-      return undefined;
-    });
+  const stateReady = serverState
+    ? Promise.resolve()
+    : fetchServerState().then((state) => {
+        // A failed fetch leaves the PR number 0; the block is still usable.
+        serverState = state;
+      });
 
   async function prepare(element: Element, anchor: AnchorV3) {
     await stateReady;
@@ -260,8 +268,11 @@ function boot() {
 
   // ------------------------------------------------- deep link (FR-3813)
 
-  /** A pin that locates before react-grab registers, retried into a stack. */
-  const STACK_TRIES = 8;
+  /**
+   * A pin that locates before react-grab registers, retried into a stack —
+   * so zero retries where react-grab is not coming at all.
+   */
+  const STACK_TRIES = expectReactGrab ? 8 : 0;
   const STACK_RETRY_MS = 500;
   /**
    * The ⚛️ stack a copied comment quotes, per pin. The anchor does not carry
