@@ -411,13 +411,12 @@ Depending on the system settings, project folders may not be allowed.
 :::
 
 First, log in with an admin account and create a project folder. After moving to
-the Data page, click `Create Folder` to open the folder creation dialog.
-Enter the folder name, set the Type to Project. When the type is set to Project,
-it will be automatically assigned to the project selected in the project selector in the header.
-Permission is set to Read-Only.
+the admin Data page, click `Create Folder` to open the folder creation dialog.
+The dialog has no folder type selection — a banner states that folders created on this page are project
+folders — so choose the project that will own the folder in the **Target Project** field at the top of
+the dialog. Then enter the folder name and set **Mount Permission** to `Read only`.
 
 ![](../images/group_folder_creation.png)
-<!-- TODO: Re-capture group_folder_creation.png — shows the old UI. -->
 
 After confirming that the folder has been created, log in with the User B's
 account and check that the project folder just created on the Data & Storage page
@@ -1012,6 +1011,12 @@ On the **Sessions** tab, the property filter offers the following conditions:
   project is picked from the list, you do not have to look up its identifier; the resulting filter tag
   shows the project's name.
 - **Session Name**, **Resource Group**, **Agent**, **Owner Email**: Narrow the list by text match.
+- **Session ID**: Narrow the list to a single session by its ID. The value must match the session's UUID
+  exactly, so use it when you have an ID from a log entry or a support request and need the session it
+  belongs to.
+
+The session list on this page also shows the **Session ID** column by default; hide it from the table's
+column settings if you do not need it.
 
 When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
 [Experimental features](#experimental-features) section), the **Sessions** tab shows a **View mode**
@@ -1438,7 +1443,8 @@ node. The drawer has two tabs: **Resources**, which breaks the usage down per re
 **Sessions**, which lists the compute sessions assigned to this agent so you can see what is running on
 the node before stopping or restarting it. On the **Sessions** tab, use the **Running** / **Finished**
 selector to switch between sessions that still occupy the node's resources and sessions that have
-already finished, and click a session name to open its detail view on the Admin Session page.
+already finished, and click a session name to open that session's detail view without leaving the Agent
+page.
 
 ![](../images/detailed_agent_node_usage_information.png)
 
