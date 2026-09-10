@@ -350,6 +350,13 @@ const AdminComputeSessionListPage = () => {
             <BAIPropertyFilter
               filterProperties={filterOutEmpty([
                 {
+                  // Matches the session's row UUID (queryfilter `id`), not the
+                  // base64 GraphQL global ID the node exposes as `id`.
+                  key: 'id',
+                  propertyLabel: t('session.SessionId'),
+                  type: 'uuid',
+                },
+                {
                   // `project_id` is the compute_session queryfilter field
                   // mapped to the session's group (project) UUID.
                   key: 'project_id',
@@ -545,6 +552,7 @@ const AdminComputeSessionListPage = () => {
             tableSettings={{
               columnOverrides: columnOverrides,
               defaultColumnOverrides: {
+                sessionId: { hidden: false },
                 environment: { hidden: false },
                 resourceGroup: { hidden: false },
                 type: { hidden: false },
