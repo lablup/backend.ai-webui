@@ -719,7 +719,7 @@
     "UserIDRequired": "사용자 계정(email)은 필수 입력입니다.",
     "UserName": "사용자 이름",
     "UserNotFound": "다음 사용자 계정을 찾을 수 없어 자격증명을 생성하지 못했습니다. : ",
-    "UserResourcePolicy": "사용자 리소스 정책",
+    "UserResourcePolicy": "사용자 자원 정책",
     "UserStatus": "사용자 상태",
     "Users": "사용자",
     "UsersPermanentlyDeleted": "총 {{total}}명 중 {{count}}명의 사용자를 영구적으로 삭제했습니다.",
@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "파일을 업로드하기 위해서는 쓰기(write) 권한이 필요합니다."
     },
     "folders": {
-      "AdminDataPageAlert": "관리자용 데이터 페이지에서는 프로젝트 폴더만 생성할 수 있습니다.",
+      "AdminDataPageAlert": "관리자용 데이터 페이지에서는 프로젝트 폴더로 생성됩니다.",
       "CannotDeleteFolder": "폴더가 하나 이상의 세션에 마운트 되어있어 삭제할 수 없습니다. 세션 종료 후 삭제가 가능합니다.",
       "CannotDeletePipelineFolder": "파이프라인 폴더는 삭제할 수 없습니다.",
       "CannotDeployFromAdminMenu": "배포는 프로젝트의 데이터 페이지에서 생성할 수 있습니다. 관리자 메뉴에서는 지원하지 않습니다.",
@@ -982,7 +982,7 @@
       "Ownership": "소유",
       "Path": "경로",
       "Permission": "권한",
-      "ProjectAdminDataPageAlert": "프로젝트 관리자용 데이터 페이지에서는 프로젝트 폴더만 생성할 수 있습니다.",
+      "ProjectAdminDataPageAlert": "프로젝트 관리자용 데이터 페이지에서는 프로젝트 폴더로 생성됩니다.",
       "ProjectFolderAlertDesc": "이 폴더는 프로젝트 구성원 모두에게 공유되는 폴더입니다. ",
       "ProjectFolderCreationHelp": "\"{{projectName}}\" 프로젝트 사용자가 접근할 수 있는 폴더가 생성됩니다.",
       "Rename": "이름 변경",
@@ -1083,6 +1083,7 @@
     "AddAccessToken": "액세스 토큰 추가",
     "AddNewRevisionFromThis": "이 리비전 기반으로 리비전 생성",
     "AddRevision": "리비전 추가",
+    "AddRevisionDisabledProjectMismatch": "리비전을 추가하려면 이 배포의 프로젝트로 전환하세요.",
     "AdditionalMounts": "추가 마운트",
     "AnotherDeploymentInProgress": "다른 배포 업데이트가 이미 진행 중입니다. 다시 시도하기 전에 완료될 때까지 기다려 주세요.",
     "Apply": "적용",
@@ -1126,6 +1127,7 @@
     "DeploymentNameTooltip": "이 배포를 식별하는 고유한 이름입니다. 대시보드, API, 엔드포인트 URL에서 사용됩니다.",
     "DeploymentReady": "배포가 준비되었습니다.",
     "DeploymentSchedulingHistory": "배포 스케줄링 기록",
+    "DeploymentStopped": "배포가 중지 중이거나 더 이상 활성 상태가 아닙니다.",
     "DeploymentUpdated": "배포가 업데이트되었습니다.",
     "Deployments": "배포",
     "DesiredReplicas": "목표 복제본 수",
@@ -1180,6 +1182,7 @@
     "NotAccessibleOrDeleted": "삭제된 배포이거나 접근 권한이 없습니다.",
     "NotInProject": "이 배포는 다른 프로젝트에 속해 있습니다.",
     "NumberOfReplicas": "복제본 수",
+    "OnlyOwnerCanManage": "배포 소유자만 이 배포를 관리할 수 있습니다.",
     "OpenCreateDeploymentModal": "배포 생성 모달 열기",
     "OpenToPublic": "외부에 공개",
     "OpenToPublicCannotBeChanged": "생성 시 선택한 공개 여부는 변경할 수 없습니다.",
@@ -1246,7 +1249,6 @@
       "Delete": "액세스 토큰 삭제",
       "DeleteConfirm": "이 액세스 토큰을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
       "Deleted": "액세스 토큰이 삭제되었습니다.",
-      "DeploymentStopped": "배포가 중지 중이거나 더 이상 활성 상태가 아닙니다.",
       "EndpointNotIssuedYet": "아직 네트워크 엔드포인트가 발급되지 않았습니다.",
       "Expiration": "만료일",
       "NoExpiration": "만료 없음",
@@ -2603,7 +2605,7 @@
     "ResourcePolicy": "자원 정책",
     "ResourcePolicyCreated": "자원 정책이 생성되었습니다.",
     "ResourcePolicyDeleted": "자원 정책이 삭제되었습니다.",
-    "ResourcePolicyNameAlreadyExists": "리소스 정책 이름이 이미 존재합니다. \n추가하려면 이름을 변경하세요.",
+    "ResourcePolicyNameAlreadyExists": "자원 정책 이름이 이미 존재합니다. \n추가하려면 이름을 변경하세요.",
     "ResourcePolicyUpdated": "자원 정책이 수정되었습니다.",
     "Resources": "자원",
     "Sessions": "세션",
@@ -3119,6 +3121,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "데이터 없음",
       "NoLiveData": "실시간 데이터 없음",
+      "NoLiveMetrics": "실시간 메트릭 없음",
+      "NoLiveMetricsForSessionsInView": "현재 목록의 세션 중 실시간 메트릭을 보고하는 세션이 없습니다.",
       "NoSessionsMatchingFilter": "현재 필터에 해당하는 세션이 없습니다.",
       "OmittedNoResource": "{{label}} 할당이 없는 세션 {{count}}개는 표시하지 않습니다.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3577,8 +3581,9 @@
     "BootstrapScriptEmpty": "스크립트가 비어있습니다. 스크립트를 입력해 주세요.",
     "BootstrapScriptUpdated": "부트스트랩 스크립트가 갱신되었습니다.",
     "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
+    "CommandPalette": "커맨드 팔레트",
     "ConfigFilename": "구성 파일 이름 선택",
-    "CurrentSSHPublicKey": "현재 공개 키: ",
+    "CurrentSSHPublicKey": "현재 공개 키",
     "CustomDashboardPanels": "사용자 정의 대시보드 패널",
     "DarkMode": "다크 모드",
     "DarkTheme": "다크 모드",
@@ -3826,6 +3831,7 @@
       "ResourcePolicies": "자원 정책",
       "Resources": "자원",
       "Scheduler": "스케줄러",
+      "Search": "검색",
       "Serving": "모델 서빙",
       "Sessions": "세션",
       "Settings": "설정",
@@ -3849,6 +3855,7 @@
       "WelcomeMessage": "환영합니다. {{ userName }}님",
       "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다.",
       "groupName": {
+        "General": "일반",
         "Metrics": "메트릭",
         "Mlops": "MLOps",
         "Playground": "플레이그라운드",
@@ -3860,6 +3867,31 @@
           "Operations": "운영",
           "System": "시스템"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "{{text}}에서 찾음",
+      "NoResults": "검색 결과 없음",
+      "Placeholder": "페이지, 탭, 설정 검색",
+      "Recent": "최근 항목",
+      "action": {
+        "ChangeLanguage": "UI 언어 변경",
+        "OpenManual": "현재 페이지 매뉴얼 열기",
+        "OpenNotifications": "알림 열기",
+        "OpenUserSettings": "사용자 설정 열기",
+        "SwitchToDarkMode": "다크 모드로 전환",
+        "SwitchToLightMode": "라이트 모드로 전환",
+        "ToggleSidebar": "사이드바 접기/펼치기",
+        "UseSystemTheme": "시스템 설정 사용"
+      },
+      "group": {
+        "Appearance": "화면",
+        "Create": "만들기",
+        "PanelsAndHelp": "패널 및 도움말"
+      },
+      "scope": {
+        "Administration": "관리자",
+        "ProjectAdministration": "프로젝트 관리자"
       }
     }
   }

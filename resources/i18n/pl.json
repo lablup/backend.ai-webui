@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Do przesyłania plików wymagane jest uprawnienie do zapisu."
     },
     "folders": {
-      "AdminDataPageAlert": "Na stronie Dane administratora można tworzyć tylko foldery projektu.",
+      "AdminDataPageAlert": "Na stronie Dane administratora foldery są tworzone jako foldery projektu.",
       "CannotDeleteFolder": "Nie można usunąć folderu zamontowanego w co najmniej jednej sesji. Najpierw zakończ sesję.",
       "CannotDeletePipelineFolder": "Nie możesz usunąć folderów rurociągów.",
       "CannotDeployFromAdminMenu": "Wdrożenia są tworzone ze strony Dane danego projektu; menu administratora tego nie obsługuje.",
@@ -982,7 +982,7 @@
       "Ownership": "Własność",
       "Path": "Ścieżka przechowywania",
       "Permission": "Pozwolenie",
-      "ProjectAdminDataPageAlert": "Na stronie Dane administratora projektu można tworzyć tylko foldery projektu.",
+      "ProjectAdminDataPageAlert": "Na stronie Dane administratora projektu foldery są tworzone jako foldery projektu.",
       "ProjectFolderAlertDesc": "Ten folder jest udostępniany wszystkim członkom projektu",
       "ProjectFolderCreationHelp": "Folder dostępny przez użytkowników projektu „{{projectName}}”.",
       "Rename": "Przemianować",
@@ -1083,6 +1083,7 @@
     "AddAccessToken": "Dodaj Token Dostępu",
     "AddNewRevisionFromThis": "Nowa Revision na podstawie tej",
     "AddRevision": "Dodaj Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Dodatkowe Montowania",
     "AnotherDeploymentInProgress": "Inna aktualizacja wdrożenia jest już w toku. Poczekaj na jej zakończenie przed ponowną próbą.",
     "Apply": "Wdróż",
@@ -1126,6 +1127,7 @@
     "DeploymentNameTooltip": "Unikalna nazwa tego wdrożenia. Używana do identyfikacji w panelu, API i adresie URL punktu końcowego.",
     "DeploymentReady": "Wdrożenie jest gotowe",
     "DeploymentSchedulingHistory": "Historia planowania wdrożenia",
+    "DeploymentStopped": "Wdrożenie jest zatrzymywane lub nie jest już aktywne.",
     "DeploymentUpdated": "Wdrożenie zostało zaktualizowane.",
     "Deployments": "Wdrożenia",
     "DesiredReplicas": "Żądana liczba replik",
@@ -1180,6 +1182,7 @@
     "NotAccessibleOrDeleted": "To wdrożenie zostało usunięte lub nie masz uprawnień, aby uzyskać do niego dostęp.",
     "NotInProject": "To wdrożenie należy do innego projektu.",
     "NumberOfReplicas": "Liczba replik",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Otwórz modal tworzenia wdrożenia",
     "OpenToPublic": "Publiczne",
     "OpenToPublicCannotBeChanged": "Ustawienia dostępu publicznego wybrane podczas tworzenia nie mogą zostać zmienione.",
@@ -1246,7 +1249,6 @@
       "Delete": "Usuń token dostępu",
       "DeleteConfirm": "Czy na pewno chcesz usunąć ten token dostępu? Tej operacji nie można cofnąć.",
       "Deleted": "Token dostępu został usunięty.",
-      "DeploymentStopped": "Wdrożenie jest zatrzymywane lub nie jest już aktywne.",
       "EndpointNotIssuedYet": "Punkt końcowy sieci nie został jeszcze wydany.",
       "Expiration": "Wygaśnięcie",
       "NoExpiration": "Bez wygaśnięcia",
@@ -3119,6 +3121,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Brak danych",
       "NoLiveData": "Brak danych na żywo",
+      "NoLiveMetrics": "Brak metryk na żywo",
+      "NoLiveMetricsForSessionsInView": "Żadna sesja na bieżącej liście nie raportuje metryk na żywo.",
       "NoSessionsMatchingFilter": "Żadna sesja nie pasuje do bieżącego filtra.",
       "OmittedNoResource": "Ukrywanie {{count}} sesji bez przydzielonego {{label}}.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3577,8 +3581,9 @@
     "BootstrapScriptEmpty": "Skrypt jest pusty. \nProszę wprowadzić skrypt.",
     "BootstrapScriptUpdated": "Zaktualizowano skrypt Bootstrap.",
     "ClearSSHKeypairInput": "Zapisana para kluczy SSH zostanie usunięta. Jesteś pewien, że chcesz kontynuować?",
+    "CommandPalette": "Paleta poleceń",
     "ConfigFilename": "Nazwa pliku konfiguracyjnego",
-    "CurrentSSHPublicKey": "Aktualny klucz publiczny:",
+    "CurrentSSHPublicKey": "Aktualny klucz publiczny",
     "CustomDashboardPanels": "Niestandardowe panele pulpitu",
     "DarkMode": "Tryb ciemny",
     "DarkTheme": "Tryb ciemny",
@@ -3826,6 +3831,7 @@
       "ResourcePolicies": "Polityki zasobów",
       "Resources": "Zasoby",
       "Scheduler": "Harmonogram",
+      "Search": "Wyszukiwanie",
       "Serving": "Obsługa",
       "Sessions": "Sesje",
       "Settings": "Ustawienia",
@@ -3849,6 +3855,7 @@
       "WelcomeMessage": "Witamy, {{nazwa użytkownika }}.",
       "YouMushChangeYourPassword": "Ze względów bezpieczeństwa zaleca się okresową zmianę hasła. Po upływie określonego czasu od ostatniej zmiany hasła należy je zmienić, aby móc nadal korzystać z usługi.",
       "groupName": {
+        "General": "Ogólne",
         "Metrics": "Metryki",
         "Mlops": "MLOps",
         "Playground": "Plac zabaw",
@@ -3860,6 +3867,31 @@
           "Operations": "Operacje",
           "System": "System"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Znaleziono w {{text}}",
+      "NoResults": "Brak wyników",
+      "Placeholder": "Szukaj stron, kart i ustawień",
+      "Recent": "Ostatnie",
+      "action": {
+        "ChangeLanguage": "Zmień język interfejsu",
+        "OpenManual": "Otwórz podręcznik tej strony",
+        "OpenNotifications": "Otwórz powiadomienia",
+        "OpenUserSettings": "Otwórz ustawienia użytkownika",
+        "SwitchToDarkMode": "Przełącz na tryb ciemny",
+        "SwitchToLightMode": "Przełącz na tryb jasny",
+        "ToggleSidebar": "Pokaż lub ukryj pasek boczny",
+        "UseSystemTheme": "Użyj ustawień systemowych"
+      },
+      "group": {
+        "Appearance": "Wygląd",
+        "Create": "Utwórz",
+        "PanelsAndHelp": "Panele i wsparcie"
+      },
+      "scope": {
+        "Administration": "Administracja",
+        "ProjectAdministration": "Administracja projektu"
       }
     }
   }

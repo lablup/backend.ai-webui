@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const ai = require('backend.ai-client');
 const bind = require('./bindStream');
 const htmldeco = require('./htmldeco');
-const HttpsProxyAgent = require('https-proxy-agent');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 /*
 const i18next = require('i18next');
 const i18next_backend = require('i18next-sync-fs-backend');
@@ -24,11 +24,12 @@ i18next
   */
 
 module.exports = proxy = class Proxy extends ai.backend.Client {
-  constructor(env) {
+  constructor(env, extProxyURL) {
     super(env);
-    // TODO(FR-3836): in API mode `env` is a ClientConfig, which carries no ext_proxy_url,
-    // so the external-proxy branch in _start never fires (SESSION mode gets it via cf).
     this._env = env;
+    // API mode passes the URL explicitly (its `env` is a ClientConfig with no
+    // ext_proxy_url); SESSION mode carries it on the `cf` object it passes as `env`.
+    this._extProxyURL = extProxyURL ?? env.ext_proxy_url;
     this._running = false;
     this._resolve = undefined;
     this._connectionCount = 0;
@@ -151,11 +152,9 @@ module.exports = proxy = class Proxy extends ai.backend.Client {
       logger.info('destination: ' + url);
       const optionalHeaders = hdrs();
       let ws;
-      if (this._env.ext_proxy_url) {
-        logger.info(
-          '- try using external http proxy: ' + this._env.ext_proxy_url,
-        );
-        const agent = new HttpsProxyAgent(this._env.ext_proxy_url);
+      if (this._extProxyURL) {
+        logger.info('- try using external http proxy: ' + this._extProxyURL);
+        const agent = new HttpsProxyAgent(this._extProxyURL);
         ws = new WebSocket(url, {
           agent: agent,
           headers: optionalHeaders,

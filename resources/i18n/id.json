@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Izin menulis diperlukan dalam mengunggah file."
     },
     "folders": {
-      "AdminDataPageAlert": "Di halaman Data Admin hanya folder proyek yang dapat dibuat.",
+      "AdminDataPageAlert": "Di halaman Data Admin, folder dibuat sebagai folder proyek.",
       "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang di satu atau beberapa sesi. Mohon hentikan sesi terlebih dahulu.",
       "CannotDeletePipelineFolder": "Anda tidak dapat menghapus folder pipa.",
       "CannotDeployFromAdminMenu": "Penerapan dibuat dari halaman Data pada sebuah proyek; menu admin tidak mendukungnya.",
@@ -982,7 +982,7 @@
       "Ownership": "Kepemilikan",
       "Path": "Jalur penyimpanan",
       "Permission": "Izin",
-      "ProjectAdminDataPageAlert": "Di halaman Data Admin Proyek hanya folder proyek yang dapat dibuat.",
+      "ProjectAdminDataPageAlert": "Di halaman Data Admin Proyek, folder dibuat sebagai folder proyek.",
       "ProjectFolderAlertDesc": "Folder ini dibagikan dengan semua anggota proyek",
       "ProjectFolderCreationHelp": "Folder yang dapat diakses oleh \"{{projectName}}\" pengguna proyek akan dibuat.",
       "Rename": "Ganti nama",
@@ -1083,6 +1083,7 @@
     "AddAccessToken": "Tambah Token Akses",
     "AddNewRevisionFromThis": "Revision baru berdasarkan ini",
     "AddRevision": "Tambah Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Pemasangan Tambahan",
     "AnotherDeploymentInProgress": "Pembaruan deployment lain sedang berlangsung. Harap tunggu hingga selesai sebelum mencoba lagi.",
     "Apply": "Terapkan",
@@ -1126,6 +1127,7 @@
     "DeploymentNameTooltip": "Nama unik untuk deployment ini. Digunakan untuk mengidentifikasinya di seluruh dashboard, API, dan URL endpoint.",
     "DeploymentReady": "Penerapan siap digunakan",
     "DeploymentSchedulingHistory": "Riwayat Penjadwalan Deployment",
+    "DeploymentStopped": "Penerapan sedang dihentikan atau tidak lagi aktif.",
     "DeploymentUpdated": "Penerapan telah diperbarui.",
     "Deployments": "Penerapan",
     "DesiredReplicas": "Replika yang Diinginkan",
@@ -1180,6 +1182,7 @@
     "NotAccessibleOrDeleted": "Penerapan ini telah dihapus atau Anda tidak memiliki izin untuk mengaksesnya.",
     "NotInProject": "Penerapan ini termasuk dalam proyek lain.",
     "NumberOfReplicas": "Jumlah Replika",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Buka modal buat penerapan",
     "OpenToPublic": "Terbuka untuk Publik",
     "OpenToPublicCannotBeChanged": "Pengaturan akses publik yang dipilih saat pembuatan tidak dapat diubah.",
@@ -1246,7 +1249,6 @@
       "Delete": "Hapus Token Akses",
       "DeleteConfirm": "Apakah Anda yakin ingin menghapus token akses ini? Tindakan ini tidak dapat dibatalkan.",
       "Deleted": "Token akses telah dihapus.",
-      "DeploymentStopped": "Penerapan sedang dihentikan atau tidak lagi aktif.",
       "EndpointNotIssuedYet": "Endpoint jaringan belum diterbitkan.",
       "Expiration": "Kedaluwarsa",
       "NoExpiration": "Tanpa Kedaluwarsa",
@@ -3120,6 +3122,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Tidak ada data",
       "NoLiveData": "Tidak ada data langsung",
+      "NoLiveMetrics": "Tidak ada metrik langsung",
+      "NoLiveMetricsForSessionsInView": "Tidak ada sesi dalam daftar saat ini yang melaporkan metrik langsung.",
       "NoSessionsMatchingFilter": "Tidak ada sesi yang cocok dengan filter saat ini.",
       "OmittedNoResource": "Menyembunyikan {{count}} sesi tanpa {{label}} yang dialokasikan.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3578,8 +3582,9 @@
     "BootstrapScriptEmpty": "Skripnya kosong. \nSilakan masukkan skripnya.",
     "BootstrapScriptUpdated": "Skrip Bootstrap diperbarui.",
     "ClearSSHKeypairInput": "Pasangan Kunci SSH tertulis akan dihapus. Apakah anda yakin ingin melanjutkan?",
+    "CommandPalette": "Palet perintah",
     "ConfigFilename": "Nama file konfigurasi",
-    "CurrentSSHPublicKey": "Kunci publik saat ini: ",
+    "CurrentSSHPublicKey": "Kunci publik saat ini",
     "CustomDashboardPanels": "Panel dasbor kustom",
     "DarkMode": "Mode Gelap",
     "DarkTheme": "Mode Gelap",
@@ -3827,6 +3832,7 @@
       "ResourcePolicies": "Kebijakan Sumber Daya",
       "Resources": "Sumber Daya",
       "Scheduler": "Penjadwal",
+      "Search": "Pencarian",
       "Serving": "Penyajian",
       "Sessions": "Sesi",
       "Settings": "Pengaturan",
@@ -3850,6 +3856,7 @@
       "WelcomeMessage": "Selamat datang, {{ userName }}.",
       "YouMushChangeYourPassword": "Disarankan untuk mengubah kata sandi Anda secara berkala untuk alasan keamanan. Karena sejumlah waktu telah berlalu sejak terakhir kali Anda mengubah kata sandi, Anda harus mengubahnya agar dapat terus menggunakan layanan ini.",
       "groupName": {
+        "General": "Umum",
         "Metrics": "Metrik",
         "Mlops": "MLOps",
         "Playground": "Taman bermain",
@@ -3861,6 +3868,31 @@
           "Operations": "Operasi",
           "System": "Sistem"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Ditemukan di {{text}}",
+      "NoResults": "Tidak ada hasil",
+      "Placeholder": "Cari halaman, tab, dan pengaturan",
+      "Recent": "Terbaru",
+      "action": {
+        "ChangeLanguage": "Ubah bahasa antarmuka",
+        "OpenManual": "Buka manual untuk halaman ini",
+        "OpenNotifications": "Buka pemberitahuan",
+        "OpenUserSettings": "Buka pengaturan pengguna",
+        "SwitchToDarkMode": "Beralih ke Mode Gelap",
+        "SwitchToLightMode": "Beralih ke Mode Terang",
+        "ToggleSidebar": "Tampilkan atau sembunyikan sidebar",
+        "UseSystemTheme": "Gunakan Pengaturan Sistem"
+      },
+      "group": {
+        "Appearance": "Tampilan",
+        "Create": "Buat",
+        "PanelsAndHelp": "Panel & bantuan"
+      },
+      "scope": {
+        "Administration": "Administrasi",
+        "ProjectAdministration": "Administrasi proyek"
       }
     }
   }

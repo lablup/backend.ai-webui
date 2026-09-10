@@ -372,7 +372,8 @@ The controls above the grid decide what a single cell stands for:
 - **Memory unit** (Resource mode, memory resources only): How much memory a
   single cell stands for — 1, 2, 4, or 8 GiB.
 - **Metric** (Kernel mode only): The live statistic used to color the kernel
-  cells.
+  cells. When none of the listed sessions reports live metrics, the selector is
+  disabled and shows **No live metrics**.
 - **Layout**: **Serpentine** runs every other row in the opposite direction, so
   the cells of a session that wraps stay connected; **Word-wrap** starts every
   row at the left edge instead.

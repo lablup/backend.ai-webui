@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Une autorisation d'écriture est requise pour le téléchargement de fichiers."
     },
     "folders": {
-      "AdminDataPageAlert": "La page Données de l'administrateur ne permet de créer que des dossiers de projet.",
+      "AdminDataPageAlert": "Sur la page Données de l'administrateur, les dossiers sont créés en tant que dossiers de projet.",
       "CannotDeleteFolder": "Impossible de supprimer le dossier monté dans une ou plusieurs sessions. Veuillez d'abord terminer la session.",
       "CannotDeletePipelineFolder": "Vous ne pouvez pas supprimer les dossiers du pipeline.",
       "CannotDeployFromAdminMenu": "Les déploiements sont créés depuis la page Données d'un projet ; le menu d'administration ne le permet pas.",
@@ -982,7 +982,7 @@
       "Ownership": "La possession",
       "Path": "Chemin de stockage",
       "Permission": "Autorisation",
-      "ProjectAdminDataPageAlert": "La page Données de l’administrateur du projet ne permet de créer que des dossiers de projet.",
+      "ProjectAdminDataPageAlert": "Sur la page Données de l’administrateur du projet, les dossiers sont créés en tant que dossiers de projet.",
       "ProjectFolderAlertDesc": "Ce dossier est partagé avec tous les membres du projet",
       "ProjectFolderCreationHelp": "Un dossier accessible par \"{{projectName}}\" Les utilisateurs du projet seront créés.",
       "Rename": "Renommer",
@@ -1083,6 +1083,7 @@
     "AddAccessToken": "Ajouter un Token d'Accès",
     "AddNewRevisionFromThis": "Nouvelle Revision basée sur celle-ci",
     "AddRevision": "Ajouter une Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Montages supplémentaires",
     "AnotherDeploymentInProgress": "Une autre mise à jour de déploiement est déjà en cours. Veuillez attendre qu'elle se termine avant de réessayer.",
     "Apply": "Déployer",
@@ -1126,6 +1127,7 @@
     "DeploymentNameTooltip": "Un nom unique pour ce déploiement. Utilisé pour l'identifier dans le tableau de bord, l'API et l'URL du point de terminaison.",
     "DeploymentReady": "Le déploiement est prêt",
     "DeploymentSchedulingHistory": "Historique de planification du déploiement",
+    "DeploymentStopped": "Le déploiement est en cours d'arrêt ou n'est plus actif.",
     "DeploymentUpdated": "Le déploiement a été mis à jour.",
     "Deployments": "Déploiements",
     "DesiredReplicas": "Répliques souhaitées",
@@ -1180,6 +1182,7 @@
     "NotAccessibleOrDeleted": "Ce déploiement a été supprimé ou vous n'avez pas l'autorisation d'y accéder.",
     "NotInProject": "Ce déploiement appartient à un autre projet.",
     "NumberOfReplicas": "Nombre de répliques",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Ouvrir le modal de création de déploiement",
     "OpenToPublic": "Public",
     "OpenToPublicCannotBeChanged": "Le paramètre d'accès public sélectionné lors de la création ne peut pas être modifié.",
@@ -1246,7 +1249,6 @@
       "Delete": "Supprimer le jeton d'accès",
       "DeleteConfirm": "Êtes-vous sûr de vouloir supprimer ce jeton d'accès ? Cette action est irréversible.",
       "Deleted": "Le jeton d'accès a été supprimé.",
-      "DeploymentStopped": "Le déploiement est en cours d'arrêt ou n'est plus actif.",
       "EndpointNotIssuedYet": "Le point d'accès réseau n'a pas encore été émis.",
       "Expiration": "Expiration",
       "NoExpiration": "Sans expiration",
@@ -3119,6 +3121,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Aucune donnée",
       "NoLiveData": "Aucune donnée en direct",
+      "NoLiveMetrics": "Aucune métrique en direct",
+      "NoLiveMetricsForSessionsInView": "Aucune session de la liste actuelle ne rapporte de métriques en direct.",
       "NoSessionsMatchingFilter": "Aucune session ne correspond au filtre actuel.",
       "OmittedNoResource": "Masquage de {{count}} sessions sans {{label}} alloué.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3577,8 +3581,9 @@
     "BootstrapScriptEmpty": "Le script est vide. \nVeuillez entrer le script.",
     "BootstrapScriptUpdated": "Script d'amorçage mis à jour.",
     "ClearSSHKeypairInput": "La paire de clés SSH écrite sera supprimée. Es-tu sur de vouloir continuer?",
+    "CommandPalette": "Palette de commandes",
     "ConfigFilename": "Nom du fichier de configuration",
-    "CurrentSSHPublicKey": "Clé publique actuelle :",
+    "CurrentSSHPublicKey": "Clé publique actuelle",
     "CustomDashboardPanels": "Panneaux de tableau de bord personnalisés",
     "DarkMode": "Mode sombre",
     "DarkTheme": "Mode sombre",
@@ -3826,6 +3831,7 @@
       "ResourcePolicies": "Politiques des ressources",
       "Resources": "Ressources",
       "Scheduler": "Planificateur",
+      "Search": "Recherche",
       "Serving": "Servir",
       "Sessions": "Sessions",
       "Settings": "Paramètres",
@@ -3849,6 +3855,7 @@
       "WelcomeMessage": "Bienvenue, {{ userName }}.",
       "YouMushChangeYourPassword": "Il est recommandé de modifier périodiquement votre mot de passe pour des raisons de sécurité. Étant donné qu'un certain temps s'est écoulé depuis la dernière modification de votre mot de passe, vous devez le modifier pour pouvoir continuer à utiliser le service.",
       "groupName": {
+        "General": "Général",
         "Metrics": "Métriques",
         "Mlops": "MLOps",
         "Playground": "Terrain de jeux",
@@ -3860,6 +3867,31 @@
           "Operations": "Opérations",
           "System": "Système"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Trouvé dans {{text}}",
+      "NoResults": "Aucun résultat",
+      "Placeholder": "Rechercher des pages, des onglets et des paramètres",
+      "Recent": "Récents",
+      "action": {
+        "ChangeLanguage": "Changer la langue de l'interface",
+        "OpenManual": "Ouvrir le manuel de cette page",
+        "OpenNotifications": "Ouvrir les notifications",
+        "OpenUserSettings": "Ouvrir les paramètres utilisateur",
+        "SwitchToDarkMode": "Passer en mode sombre",
+        "SwitchToLightMode": "Passer en mode clair",
+        "ToggleSidebar": "Afficher ou masquer la barre latérale",
+        "UseSystemTheme": "Utiliser les paramètres du système"
+      },
+      "group": {
+        "Appearance": "Apparence",
+        "Create": "Créer",
+        "PanelsAndHelp": "Panneaux et aide"
+      },
+      "scope": {
+        "Administration": "Administration",
+        "ProjectAdministration": "Administration du projet"
       }
     }
   }

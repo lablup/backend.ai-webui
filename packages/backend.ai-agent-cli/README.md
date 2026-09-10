@@ -406,9 +406,9 @@ exists, and a verdict.
 ### Version alignment
 
 The SDL is a snapshot; the manager you are talking to is not necessarily at the
-same version. `whoami`, `schema show` — and `query` / `explain` once they land —
-compare the manager against the `Added in` / `Deprecated since` markers and warn
-once, on **stderr**:
+same version. `whoami`, `schema show`, `query` and `explain` compare the manager
+against the `Added in` / `Deprecated since` markers and warn once, on
+**stderr**:
 
 ```
 warning: schema is not aligned with manager 26.8.0rc1: 97 not in the manager yet
@@ -418,6 +418,14 @@ warning: schema is not aligned with manager 26.8.0rc1: 97 not in the manager yet
 
 `--strict` refuses instead: exit **1**, code `version_mismatch`, same hint. The
 verdict is also part of the data, so `--json` carries it.
+
+Each command narrows the comparison to what it touched: `schema show` and
+`explain` to the entry they resolved (plus the enum value an `=VALUE` names),
+`query` to every `Type.field`, `Enum.VALUE`, variable type and input-object
+field its document names — including the fields inside a `--var` value, since a
+filter input usually carries no marker of its own while its fields do. `query`
+runs the gate **before** the request, so `--strict` refuses a document the
+manager cannot answer instead of sending it.
 
 The manager version is read from `GET <endpoint>/func/`, which answers
 `{ version, manager }` — the same call the WebUI client makes

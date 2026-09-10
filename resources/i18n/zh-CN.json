@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "上传文件需要写权限。"
     },
     "folders": {
-      "AdminDataPageAlert": "管理员数据页面仅可创建项目文件夹。",
+      "AdminDataPageAlert": "在管理员数据页面，文件夹将创建为项目文件夹。",
       "CannotDeleteFolder": "无法删除安装在一个或多个会话中的文件夹。请先终止会话。",
       "CannotDeletePipelineFolder": "您无法删除管道文件夹。",
       "CannotDeployFromAdminMenu": "部署需要在项目的数据页面中创建；管理员菜单不支持此操作。",
@@ -982,7 +982,7 @@
       "Ownership": "所有权",
       "Path": "存储路径",
       "Permission": "允许",
-      "ProjectAdminDataPageAlert": "项目管理员数据页面仅可创建项目文件夹。",
+      "ProjectAdminDataPageAlert": "在项目管理员数据页面，文件夹将创建为项目文件夹。",
       "ProjectFolderAlertDesc": "该文件夹与项目的所有成员共享",
       "ProjectFolderCreationHelp": "将创建一个可以通过“{{projectName}}”项目用户访问的文件夹。",
       "Rename": "改名",
@@ -1083,6 +1083,7 @@
     "AddAccessToken": "添加访问令牌",
     "AddNewRevisionFromThis": "基于此新建 Revision",
     "AddRevision": "添加 Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "附加挂载",
     "AnotherDeploymentInProgress": "另一个部署更新已在进行中。请等待其完成后再重试。",
     "Apply": "部署",
@@ -1126,6 +1127,7 @@
     "DeploymentNameTooltip": "此部署的唯一名称，用于在仪表板、API 和端点 URL 中进行标识。",
     "DeploymentReady": "部署已就绪",
     "DeploymentSchedulingHistory": "部署调度历史",
+    "DeploymentStopped": "该部署正在停止或已不再运行。",
     "DeploymentUpdated": "部署已更新。",
     "Deployments": "部署",
     "DesiredReplicas": "期望副本数",
@@ -1180,6 +1182,7 @@
     "NotAccessibleOrDeleted": "此部署已被删除，或者您没有访问权限。",
     "NotInProject": "此部署属于其他项目。",
     "NumberOfReplicas": "副本数量",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "打开创建部署弹窗",
     "OpenToPublic": "公开",
     "OpenToPublicCannotBeChanged": "创建时选择的公开访问设置无法更改。",
@@ -1246,7 +1249,6 @@
       "Delete": "删除访问令牌",
       "DeleteConfirm": "确定要删除此访问令牌吗？此操作无法撤销。",
       "Deleted": "访问令牌已删除。",
-      "DeploymentStopped": "该部署正在停止或已不再运行。",
       "EndpointNotIssuedYet": "网络端点尚未发布。",
       "Expiration": "到期时间",
       "NoExpiration": "永不到期",
@@ -3118,6 +3120,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "无数据",
       "NoLiveData": "无实时数据",
+      "NoLiveMetrics": "无实时指标",
+      "NoLiveMetricsForSessionsInView": "当前列表中没有会话报告实时指标。",
       "NoSessionsMatchingFilter": "没有符合当前筛选条件的会话。",
       "OmittedNoResource": "隐藏了 {{count}} 个未分配 {{label}} 的会话。",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3576,8 +3580,9 @@
     "BootstrapScriptEmpty": "脚本是空的。\n请输入脚本。",
     "BootstrapScriptUpdated": "引导脚本已更新。",
     "ClearSSHKeypairInput": "书面 SSH 密钥对将被删除。你确定你要继续吗？",
+    "CommandPalette": "命令面板",
     "ConfigFilename": "配置文件名",
-    "CurrentSSHPublicKey": "当前公钥：",
+    "CurrentSSHPublicKey": "当前公钥",
     "CustomDashboardPanels": "自定义仪表板面板",
     "DarkMode": "深色模式",
     "DarkTheme": "深色模式",
@@ -3825,6 +3830,7 @@
       "ResourcePolicies": "资源政策",
       "Resources": "资源",
       "Scheduler": "调度程序",
+      "Search": "搜索",
       "Serving": "服务",
       "Sessions": "会话",
       "Settings": "设置",
@@ -3848,6 +3854,7 @@
       "WelcomeMessage": "欢迎，{{ userName }}.",
       "YouMushChangeYourPassword": "出于安全考虑，建议您定期更改密码。由于距离上次更改密码已过去一定时间，您必须更改密码才能继续使用服务。",
       "groupName": {
+        "General": "常规",
         "Metrics": "衡量标准",
         "Mlops": "MLOps",
         "Playground": "游乐场",
@@ -3859,6 +3866,31 @@
           "Operations": "运营",
           "System": "系统"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "在 {{text}} 中找到",
+      "NoResults": "无结果",
+      "Placeholder": "搜索页面、标签页和设置",
+      "Recent": "最近使用",
+      "action": {
+        "ChangeLanguage": "更改界面语言",
+        "OpenManual": "打开本页手册",
+        "OpenNotifications": "打开通知",
+        "OpenUserSettings": "打开用户设置",
+        "SwitchToDarkMode": "切换到深色模式",
+        "SwitchToLightMode": "切换到浅色模式",
+        "ToggleSidebar": "折叠/展开侧边栏",
+        "UseSystemTheme": "使用系统设置"
+      },
+      "group": {
+        "Appearance": "外观",
+        "Create": "创建",
+        "PanelsAndHelp": "面板与帮助"
+      },
+      "scope": {
+        "Administration": "行政",
+        "ProjectAdministration": "项目管理"
       }
     }
   }

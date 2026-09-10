@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 22;
+export const THEME_NAME_REV = 23;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -629,6 +629,19 @@ const FIELD_PAGE_OVERLAYS = {
 };
 
 /**
+ * Same surface rule again for the global search palette, whose `<dialog>` is a
+ * non-portalled descendant of the band and so inherited its reversed literals —
+ * an invisible hover row in BOTH modes. Stock Astryx keeps hover/highlight on
+ * the neutral overlay and reserves the accent for picker-mode selection, so
+ * only the scope is restored here, not the colour. FR-3558.
+ */
+const COMMAND_PALETTE_ROW_OVERLAYS = {
+  'command-palette-item': {
+    base: { ...MENU_PANEL_PAGE_OVERLAYS },
+  },
+};
+
+/**
  * DROPDOWN MENU DENSITY — pinned to the measured legacy antd `Dropdown`
  * (`menu={{items}}`) metrics.
  *
@@ -1026,6 +1039,7 @@ export const computeThemeName = (
       COMPLEX_SELECTOR_HEIGHT_PARITY,
       FIELD_PAGE_OVERLAYS,
       BANNER_CONTENT_STATUS_SURFACE,
+      COMMAND_PALETTE_ROW_OVERLAYS,
     ]),
   );
   // `h` prefix: every name segment must start with a letter — `astryx theme
@@ -1174,6 +1188,7 @@ export function buildBackendAiTheme(
       ...ANTD_DROPDOWN_DENSITY,
       ...COMPLEX_SELECTOR_HEIGHT_PARITY,
       ...FIELD_PAGE_OVERLAYS,
+      ...COMMAND_PALETTE_ROW_OVERLAYS,
       ...ANTD_HOVER_PARITY,
     },
   });

@@ -85,9 +85,9 @@ const BAIAdminResourceGroupSelect: React.FC<
           filter: { type: "ResourceGroupFilter" }
         )
         @refetchable(queryName: "BAIAdminResourceGroupSelectPaginationQuery") {
-          resourceGroups(first: $first, after: $after, filter: $filter)
-            @connection(key: "BAIAdminResourceGroupSelect_resourceGroups")
-            @since(version: "26.1.0") {
+          adminResourceGroups(first: $first, after: $after, filter: $filter)
+            @connection(key: "BAIAdminResourceGroupSelect_adminResourceGroups")
+            @since(version: "26.2.0") {
             count
             edges {
               node {
@@ -104,7 +104,7 @@ const BAIAdminResourceGroupSelect: React.FC<
   const selectedKeys = _.compact(_.castArray(controllableValue ?? []));
 
   const options = _.compact(
-    _.map(data.resourceGroups?.edges, (item) =>
+    _.map(data.adminResourceGroups?.edges, (item) =>
       item?.node?.name
         ? { value: item.node.name, label: item.node.name }
         : null,
@@ -130,7 +130,7 @@ const BAIAdminResourceGroupSelect: React.FC<
       multiple={multiple}
       isLoading={isLoading}
       isLoadingNext={isLoadingNext}
-      total={data.resourceGroups?.count ?? undefined}
+      total={data.adminResourceGroups?.count ?? undefined}
       options={options}
       value={labeledValue}
       onChange={(next) => {

@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "ファイルのアップロードには書き込み権限が必要です。"
     },
     "folders": {
-      "AdminDataPageAlert": "管理者用データページではプロジェクトフォルダーのみ作成できます。",
+      "AdminDataPageAlert": "管理者用データページではプロジェクトフォルダーとして作成されます。",
       "CannotDeleteFolder": "1つ以上のセッションでマウントされたフォルダを削除できません。最初にセッションを終了してください。",
       "CannotDeletePipelineFolder": "パイプラインフォルダーを削除することはできません。",
       "CannotDeployFromAdminMenu": "デプロイはプロジェクトのデータページから作成します。管理者メニューでは対応していません。",
@@ -982,7 +982,7 @@
       "Ownership": "所有",
       "Path": "ストレージパス",
       "Permission": "許可",
-      "ProjectAdminDataPageAlert": "プロジェクト管理者用データページではプロジェクトフォルダーのみ作成できます。",
+      "ProjectAdminDataPageAlert": "プロジェクト管理者用データページではプロジェクトフォルダーとして作成されます。",
       "ProjectFolderAlertDesc": "このフォルダはプロジェクトのすべてのメンバーと共有されます",
       "ProjectFolderCreationHelp": "「{{projectName}}」プロジェクトユーザーが作成できるフォルダーが作成されます。",
       "Rename": "名前を変更",
@@ -1083,6 +1083,7 @@
     "AddAccessToken": "アクセストークンを追加",
     "AddNewRevisionFromThis": "この Revision を基に Revision を作成",
     "AddRevision": "Revision を追加",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "追加マウント",
     "AnotherDeploymentInProgress": "別のデプロイ更新が既に進行中です。再試行する前に完了するまでお待ちください。",
     "Apply": "デプロイ",
@@ -1126,6 +1127,7 @@
     "DeploymentNameTooltip": "このデプロイメントの一意の名前。ダッシュボード、API、エンドポイントURLで識別するために使用されます。",
     "DeploymentReady": "デプロイの準備が完了しました",
     "DeploymentSchedulingHistory": "デプロイメントのスケジュール履歴",
+    "DeploymentStopped": "デプロイは停止中か、すでに稼働していません。",
     "DeploymentUpdated": "デプロイが更新されました。",
     "Deployments": "デプロイ",
     "DesiredReplicas": "希望レプリカ数",
@@ -1180,6 +1182,7 @@
     "NotAccessibleOrDeleted": "このデプロイは削除されたか、アクセスする権限がありません。",
     "NotInProject": "このデプロイは別のプロジェクトに属しています。",
     "NumberOfReplicas": "レプリカ数",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "デプロイ作成モーダルを開く",
     "OpenToPublic": "公開",
     "OpenToPublicCannotBeChanged": "作成時に選択した公開設定は変更できません。",
@@ -1246,7 +1249,6 @@
       "Delete": "アクセストークンを削除",
       "DeleteConfirm": "このアクセストークンを削除してもよろしいですか？この操作は取り消せません。",
       "Deleted": "アクセストークンが削除されました。",
-      "DeploymentStopped": "デプロイは停止中か、すでに稼働していません。",
       "EndpointNotIssuedYet": "ネットワークエンドポイントはまだ発行されていません。",
       "Expiration": "有効期限",
       "NoExpiration": "有効期限なし",
@@ -3118,6 +3120,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "データなし",
       "NoLiveData": "ライブデータなし",
+      "NoLiveMetrics": "ライブメトリクスなし",
+      "NoLiveMetricsForSessionsInView": "現在の一覧でライブメトリクスを報告しているセッションはありません。",
       "NoSessionsMatchingFilter": "現在のフィルタに一致するセッションがありません。",
       "OmittedNoResource": "{{label}} が割り当てられていない {{count}} 件のセッションを非表示にしています。",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3576,8 +3580,9 @@
     "BootstrapScriptEmpty": "スクリプトが空です。\nスクリプトを入力してください。",
     "BootstrapScriptUpdated": "ブートストラップスクリプトが更新されました。",
     "ClearSSHKeypairInput": "書き込まれたSSHキーペアは削除されます。続行してもよろしいですか？",
+    "CommandPalette": "コマンドパレット",
     "ConfigFilename": "構成ファイル名",
-    "CurrentSSHPublicKey": "現在の公開鍵：",
+    "CurrentSSHPublicKey": "現在の公開鍵",
     "CustomDashboardPanels": "カスタムダッシュボードパネル",
     "DarkMode": "ダークモード",
     "DarkTheme": "ダークモード",
@@ -3825,6 +3830,7 @@
       "ResourcePolicies": "リソースポリシー",
       "Resources": "リソース管理",
       "Scheduler": "スケジューラ",
+      "Search": "検索",
       "Serving": "モデルサービス",
       "Sessions": "セッション",
       "Settings": "設定",
@@ -3848,6 +3854,7 @@
       "WelcomeMessage": "ようこそ、{{ userName }}.",
       "YouMushChangeYourPassword": "セキュリティのため、定期的にパスワードを変更することをお勧めします。パスワードを変更してから一定時間が経過したため、サービスを継続して利用するには、パスワードを変更する必要があります。",
       "groupName": {
+        "General": "一般",
         "Metrics": "指標",
         "Mlops": "MLOps",
         "Playground": "遊び場",
@@ -3859,6 +3866,31 @@
           "Operations": "運用",
           "System": "システム"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "{{text}}内で見つかりました",
+      "NoResults": "検索結果がありません",
+      "Placeholder": "ページ、タブ、設定を検索",
+      "Recent": "最近の項目",
+      "action": {
+        "ChangeLanguage": "UI言語を変更",
+        "OpenManual": "このページのマニュアルを開く",
+        "OpenNotifications": "お知らせを開く",
+        "OpenUserSettings": "ユーザー設定を開く",
+        "SwitchToDarkMode": "ダークモードに切り替え",
+        "SwitchToLightMode": "ライトモードに切り替え",
+        "ToggleSidebar": "サイドバーの開閉",
+        "UseSystemTheme": "システム設定を使用する"
+      },
+      "group": {
+        "Appearance": "表示",
+        "Create": "作成",
+        "PanelsAndHelp": "パネルとヘルプ"
+      },
+      "scope": {
+        "Administration": "管理者",
+        "ProjectAdministration": "プロジェクト管理者"
       }
     }
   }

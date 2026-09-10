@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Файл (ууд) -ийг байршуулахад бичих зөвшөөрөл шаардлагатай."
     },
     "folders": {
-      "AdminDataPageAlert": "Админы өгөгдлийн хуудсан дээр зөвхөн төслийн хавтас үүсгэх боломжтой.",
+      "AdminDataPageAlert": "Админы өгөгдлийн хуудсан дээр хавтас нь төслийн хавтас болж үүснэ.",
       "CannotDeleteFolder": "Нэг буюу хэд хэдэн хэсэгт суулгасан фолдерыг устгах боломжгүй. Эхлээд хуралдааныг зогсооно уу.",
       "CannotDeletePipelineFolder": "Та дамжуулах хоолойн хавтасыг устгах боломжгүй.",
       "CannotDeployFromAdminMenu": "Байршуулалтыг төслийн Мэдээ хуудаснаас үүсгэдэг; админ цэс үүнийг дэмждэггүй.",
@@ -982,7 +982,7 @@
       "Ownership": "Эзэмшил",
       "Path": "Агуулахын зам",
       "Permission": "Зөвшөөрөл",
-      "ProjectAdminDataPageAlert": "Төслийн админы өгөгдлийн хуудсан дээр зөвхөн төслийн хавтас үүсгэх боломжтой.",
+      "ProjectAdminDataPageAlert": "Төслийн админы өгөгдлийн хуудсан дээр хавтас нь төслийн хавтас болж үүснэ.",
       "ProjectFolderAlertDesc": "Энэ фолдерыг төслийн бүх гишүүдээр хуваалцаж байна",
       "ProjectFolderCreationHelp": "\"{{projectName}} нь\" Төслийн хэрэглэгчид үүсгэгдэх болно.",
       "Rename": "Нэрийг нь өөрчлөх",
@@ -1083,6 +1083,7 @@
     "AddAccessToken": "Хандалтын токен нэмэх",
     "AddNewRevisionFromThis": "Энэ дээр суурилсан шинэ Revision",
     "AddRevision": "Revision нэмэх",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Нэмэлт холболтууд",
     "AnotherDeploymentInProgress": "Өөр байршуулалтын шинэчлэлт аль хэдийн явагдаж байна. Дахин оролдохоос өмнө дуусахыг хүлээнэ үү.",
     "Apply": "Байршуулах",
@@ -1126,6 +1127,7 @@
     "DeploymentNameTooltip": "Энэ байршуулалтын өвөрмөц нэр. Хяналтын самбар, API болон төгсгөлийн цэгийн URL-д таних зорилгоор ашиглагдана.",
     "DeploymentReady": "Байршуулалт бэлэн боллоо",
     "DeploymentSchedulingHistory": "Байршуулалтын хуваарилалтын түүх",
+    "DeploymentStopped": "Байршуулалт зогсож байгаа эсвэл идэвхгүй болсон байна.",
     "DeploymentUpdated": "Байршуулалт шинэчлэгдлээ.",
     "Deployments": "Байршуулалтууд",
     "DesiredReplicas": "Хүссэн репликийн тоо",
@@ -1180,6 +1182,7 @@
     "NotAccessibleOrDeleted": "Энэ байршуулалтыг устгасан эсвэл хандах эрх танд байхгүй байна.",
     "NotInProject": "Энэ байршуулалт өөр төсөлд хамаарна.",
     "NumberOfReplicas": "Репликийн тоо",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Байршуулалт үүсгэх цонхыг нээх",
     "OpenToPublic": "Нийтэд нээлттэй",
     "OpenToPublicCannotBeChanged": "Үүсгэх үед сонгосон нийтэд нээлттэй тохиргоог өөрчлөх боломжгүй.",
@@ -1246,7 +1249,6 @@
       "Delete": "Хандалтын токен устгах",
       "DeleteConfirm": "Энэ хандалтын токеныг устгахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй.",
       "Deleted": "Хандалтын токен устгагдлаа.",
-      "DeploymentStopped": "Байршуулалт зогсож байгаа эсвэл идэвхгүй болсон байна.",
       "EndpointNotIssuedYet": "Сүлжээний эндпойнт хараахан гаргагдаагүй байна.",
       "Expiration": "Дуусах хугацаа",
       "NoExpiration": "Хугацаагүй",
@@ -3118,6 +3120,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Өгөгдөл байхгүй",
       "NoLiveData": "Шууд өгөгдөл байхгүй",
+      "NoLiveMetrics": "Шууд метрик байхгүй",
+      "NoLiveMetricsForSessionsInView": "Одоогийн жагсаалтад шууд метрик тайлагнаж буй сесс байхгүй байна.",
       "NoSessionsMatchingFilter": "Одоогийн шүүлтэд тохирох сесс байхгүй байна.",
       "OmittedNoResource": "{{label}} хуваарилагдаагүй {{count}} сесс нуугдаж байна.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3576,8 +3580,9 @@
     "BootstrapScriptEmpty": "Скрипт хоосон байна. \nСкриптийг оруулна уу.",
     "BootstrapScriptUpdated": "Ачаалагч скрипт шинэчлэгдсэн.",
     "ClearSSHKeypairInput": "Бичсэн SSH товчлуурыг устгах болно. Үргэлжлүүлэхийг хүсч байна уу?",
+    "CommandPalette": "Тушаалын палитр",
     "ConfigFilename": "Файлын нэрийг тохируулах",
-    "CurrentSSHPublicKey": "Одоогийн нийтийн түлхүүр:",
+    "CurrentSSHPublicKey": "Одоогийн нийтийн түлхүүр",
     "CustomDashboardPanels": "Захиалгат хяналтын самбарын панель",
     "DarkMode": "Харанхуй горим",
     "DarkTheme": "Харанхуй горим",
@@ -3825,6 +3830,7 @@
       "ResourcePolicies": "Нөөцийн бодлогууд",
       "Resources": "Нөөц",
       "Scheduler": "Хуваарийн өгөх",
+      "Search": "Хайх",
       "Serving": "Үйлчилж байна",
       "Sessions": "Session-үүд",
       "Settings": "Тохиргоо",
@@ -3848,6 +3854,7 @@
       "WelcomeMessage": "Тавтай морилно уу, {{ userName }}.",
       "YouMushChangeYourPassword": "Аюулгүй байдлын үүднээс нууц үгээ үе үе өөрчлөхийг зөвлөж байна. \nТа нууц үгээ хамгийн сүүлд сольсноос хойш тодорхой хугацаа өнгөрсөн тул үйлчилгээгээ үргэлжлүүлэн ашиглахын тулд үүнийг өөрчлөх шаардлагатай.",
       "groupName": {
+        "General": "Ерөнхий",
         "Metrics": "Газрын чанартай",
         "Mlops": "MLOps",
         "Playground": "Тоглоомын талбай",
@@ -3859,6 +3866,31 @@
           "Operations": "Үйл ажиллагаа",
           "System": "Систем"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "{{text}} дотроос олдсон",
+      "NoResults": "Үр дүн олдсонгүй",
+      "Placeholder": "Хуудас, таб, тохиргоо хайх",
+      "Recent": "Сүүлийн үеийн",
+      "action": {
+        "ChangeLanguage": "Интерфейсийн хэлийг өөрчлөх",
+        "OpenManual": "Энэ хуудасны гарын авлагыг нээх",
+        "OpenNotifications": "Мэдэгдлийг нээх",
+        "OpenUserSettings": "Хэрэглэгчийн тохиргоог нээх",
+        "SwitchToDarkMode": "Харанхуй горим руу шилжих",
+        "SwitchToLightMode": "Цайвар горим руу шилжих",
+        "ToggleSidebar": "Хажуугийн самбарыг нээх/хаах",
+        "UseSystemTheme": "Системийн тохиргоог ашиглах"
+      },
+      "group": {
+        "Appearance": "Харагдац",
+        "Create": "Үүсгэх",
+        "PanelsAndHelp": "Самбар ба тусламж"
+      },
+      "scope": {
+        "Administration": "Админ",
+        "ProjectAdministration": "Төслийн удирдлага"
       }
     }
   }

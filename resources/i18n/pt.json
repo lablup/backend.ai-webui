@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "A permissão de gravação é necessária ao enviar arquivo (s)."
     },
     "folders": {
-      "AdminDataPageAlert": "Na página Dados do Administrador só é possível criar pastas de projeto.",
+      "AdminDataPageAlert": "Na página Dados do Administrador, as pastas são criadas como pastas de projeto.",
       "CannotDeleteFolder": "Não é possível excluir a pasta montada em uma ou mais sessões. Por favor, termine a sessão primeiro.",
       "CannotDeletePipelineFolder": "Você não pode excluir pastas de pipeline.",
       "CannotDeployFromAdminMenu": "As implementações são criadas na página Dados de um projeto; o menu de administração não tem suporte para isso.",
@@ -982,7 +982,7 @@
       "Ownership": "Propriedade",
       "Path": "Caminho de armazenamento",
       "Permission": "Permissão",
-      "ProjectAdminDataPageAlert": "Na página Dados do Administrador do Projeto só é possível criar pastas de projeto.",
+      "ProjectAdminDataPageAlert": "Na página Dados do Administrador do Projeto, as pastas são criadas como pastas de projeto.",
       "ProjectFolderAlertDesc": "Esta pasta é compartilhada com todos os membros do projeto",
       "ProjectFolderCreationHelp": "Uma pasta acessível por \"{{projectName}}\" \"os usuários do projeto serão criados.",
       "Rename": "Renomear",
@@ -1083,6 +1083,7 @@
     "AddAccessToken": "Adicionar Token de Acesso",
     "AddNewRevisionFromThis": "Nova Revision baseada nesta",
     "AddRevision": "Adicionar Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Montagens adicionais",
     "AnotherDeploymentInProgress": "Outra atualização de implementação já está em curso. Por favor, aguarde a sua conclusão antes de tentar novamente.",
     "Apply": "Implementar",
@@ -1126,6 +1127,7 @@
     "DeploymentNameTooltip": "Um nome único para esta implementação. Utilizado para identificá-la no painel, na API e no URL do ponto de extremidade.",
     "DeploymentReady": "A implementação está pronta",
     "DeploymentSchedulingHistory": "Histórico de Agendamento de Implementação",
+    "DeploymentStopped": "A implementação está a ser parada ou já não está ativa.",
     "DeploymentUpdated": "A implementação foi atualizada.",
     "Deployments": "Implementações",
     "DesiredReplicas": "Réplicas desejadas",
@@ -1180,6 +1182,7 @@
     "NotAccessibleOrDeleted": "Esta implantação foi eliminada ou não tem permissão para aceder à mesma.",
     "NotInProject": "Esta implantação pertence a outro projeto.",
     "NumberOfReplicas": "Número de réplicas",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Abrir modal de criação de implementação",
     "OpenToPublic": "Público",
     "OpenToPublicCannotBeChanged": "A definição de acesso público selecionada na criação não pode ser alterada.",
@@ -1246,7 +1249,6 @@
       "Delete": "Eliminar token de acesso",
       "DeleteConfirm": "Tem a certeza de que pretende eliminar este token de acesso? Esta ação não pode ser revertida.",
       "Deleted": "O token de acesso foi eliminado.",
-      "DeploymentStopped": "A implementação está a ser parada ou já não está ativa.",
       "EndpointNotIssuedYet": "O endpoint de rede ainda não foi emitido.",
       "Expiration": "Expiração",
       "NoExpiration": "Sem expiração",
@@ -3118,6 +3120,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Sem dados",
       "NoLiveData": "Sem dados em direto",
+      "NoLiveMetrics": "Sem métricas em direto",
+      "NoLiveMetricsForSessionsInView": "Nenhuma sessão na lista atual reporta métricas em direto.",
       "NoSessionsMatchingFilter": "Nenhuma sessão corresponde ao filtro atual.",
       "OmittedNoResource": "A ocultar {{count}} sessões sem {{label}} atribuído.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3576,8 +3580,9 @@
     "BootstrapScriptEmpty": "O script está vazio. \nPor favor insira o roteiro.",
     "BootstrapScriptUpdated": "Script de bootstrap atualizado.",
     "ClearSSHKeypairInput": "O par de chaves SSH gravado será removido. Você tem certeza que quer continuar?",
+    "CommandPalette": "Paleta de comandos",
     "ConfigFilename": "Nome do arquivo de configuração",
-    "CurrentSSHPublicKey": "Chave pública atual:",
+    "CurrentSSHPublicKey": "Chave pública atual",
     "CustomDashboardPanels": "Painéis personalizados do painel de controlo",
     "DarkMode": "Modo escuro",
     "DarkTheme": "Modo escuro",
@@ -3825,6 +3830,7 @@
       "ResourcePolicies": "Políticas de Recursos",
       "Resources": "Recursos",
       "Scheduler": "Agendador",
+      "Search": "Pesquisar",
       "Serving": "Servir",
       "Sessions": "Sessões",
       "Settings": "Definições",
@@ -3848,6 +3854,7 @@
       "WelcomeMessage": "Bem vindo, {{userName }}.",
       "YouMushChangeYourPassword": "Recomenda-se que altere periodicamente a sua palavra-passe por razões de segurança. Uma vez que passou um certo tempo desde a última vez que alterou a sua palavra-passe, deve alterá-la para poder continuar a utilizar o serviço.",
       "groupName": {
+        "General": "Geral",
         "Metrics": "Métricas",
         "Mlops": "MLOps",
         "Playground": "Parque infantil",
@@ -3859,6 +3866,31 @@
           "Operations": "Operações",
           "System": "Sistema"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Encontrado em {{text}}",
+      "NoResults": "Sem resultados",
+      "Placeholder": "Pesquisar páginas, separadores e definições",
+      "Recent": "Recentes",
+      "action": {
+        "ChangeLanguage": "Alterar a língua da interface",
+        "OpenManual": "Abrir o manual desta página",
+        "OpenNotifications": "Abrir notificações",
+        "OpenUserSettings": "Abrir definições do utilizador",
+        "SwitchToDarkMode": "Mudar para o modo escuro",
+        "SwitchToLightMode": "Mudar para o modo claro",
+        "ToggleSidebar": "Mostrar ou ocultar a barra lateral",
+        "UseSystemTheme": "Usar configuração do sistema"
+      },
+      "group": {
+        "Appearance": "Aparência",
+        "Create": "Criar",
+        "PanelsAndHelp": "Painéis e ajuda"
+      },
+      "scope": {
+        "Administration": "Administração",
+        "ProjectAdministration": "Administração do projeto"
       }
     }
   }

@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Pull demandé avec succès pour les versions {{count}}.",
     "Version": "Version"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Vérification de votre session Backend.AI…",
+    "SignInWithBackendAI": "Se connecter avec Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Le navigateur a bloqué la requête vers le serveur web Backend.AI. Il s'agit généralement d'une restriction CORS ou de contenu mixte.",
+      "HttpError": "Le serveur web Backend.AI a renvoyé une erreur ({{status}}).",
+      "InvalidCallback": "L'adresse de retour de connexion configurée pour {{appName}} n'est pas une adresse web valide.",
+      "InvalidResponse": "Le serveur web Backend.AI a renvoyé une réponse inattendue.",
+      "NoEndpoint": "Aucune adresse de serveur web Backend.AI n'est configurée pour {{appName}}.",
+      "NoSessionId": "Vous êtes connecté à Backend.AI, mais le serveur web n'a pas renvoyé d'identifiant de session.",
+      "NoSessionOverHttp": "Vous n'êtes pas encore connecté à Backend.AI. Si vous l'êtes déjà, {{appName}} est servi en HTTP, le navigateur rejette donc peut-être le cookie de session sécurisé du serveur web. Essayez d'ouvrir {{appName}} en HTTPS.",
+      "NoSessionOverHttps": "Vous n'êtes pas encore connecté à Backend.AI. Si vous l'êtes déjà, {{appName}} et le serveur web Backend.AI sont peut-être des sites différents, et le navigateur n'envoie donc pas le cookie de session.",
+      "RelayFailed": "Vous êtes connecté à Backend.AI, mais {{appName}} n'a pas pu finaliser la connexion.",
+      "Timeout": "Le serveur web Backend.AI n'a pas répondu à temps.",
+      "Title": "Impossible de se connecter avec Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Taille de cluster",
     "Concurrency": "Sessions simultanées",
@@ -762,6 +779,7 @@
     "DeselectAll": "Tout désélectionner",
     "File": "Fichier",
     "Increase": "Augmenter",
+    "Loading": "Chargement...",
     "NSelected": "{{count}} sélectionné",
     "Optional": "Facultatif",
     "Project": "Projet",

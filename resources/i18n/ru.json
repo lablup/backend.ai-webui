@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "Для загрузки файла (ов) требуется разрешение на запись."
     },
     "folders": {
-      "AdminDataPageAlert": "На странице «Данные администратора» можно создавать только папки проекта.",
+      "AdminDataPageAlert": "На странице «Данные администратора» папки создаются как папки проекта.",
       "CannotDeleteFolder": "Невозможно удалить папку, установленную в одном или нескольких сеансах. Пожалуйста, сначала завершите сеанс.",
       "CannotDeletePipelineFolder": "Вы не можете удалить папки трубопровода.",
       "CannotDeployFromAdminMenu": "Развёртывания создаются на странице Данные проекта; меню администратора это не поддерживает.",
@@ -982,7 +982,7 @@
       "Ownership": "Владение",
       "Path": "Путь хранения",
       "Permission": "Разрешение",
-      "ProjectAdminDataPageAlert": "На странице «Данные администратора проекта» можно создавать только папки проекта.",
+      "ProjectAdminDataPageAlert": "На странице «Данные администратора проекта» папки создаются как папки проекта.",
       "ProjectFolderAlertDesc": "Эта папка передается всем членам проекта",
       "ProjectFolderCreationHelp": "Папка, доступная по \"{{projectName}}\" Пользователи проекта будут созданы.",
       "Rename": "Переименовать",
@@ -1083,6 +1083,7 @@
     "AddAccessToken": "Добавить токен доступа",
     "AddNewRevisionFromThis": "Новая Revision на основе этой",
     "AddRevision": "Добавить Revision",
+    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
     "AdditionalMounts": "Дополнительные монтирования",
     "AnotherDeploymentInProgress": "Другое обновление развёртывания уже выполняется. Пожалуйста, дождитесь его завершения перед повторной попыткой.",
     "Apply": "Развернуть",
@@ -1126,6 +1127,7 @@
     "DeploymentNameTooltip": "Уникальное имя этого развёртывания. Используется для идентификации в панели управления, API и URL конечной точки.",
     "DeploymentReady": "Развёртывание готово",
     "DeploymentSchedulingHistory": "История планирования развёртывания",
+    "DeploymentStopped": "Развёртывание останавливается или больше не активно.",
     "DeploymentUpdated": "Развёртывание обновлено.",
     "Deployments": "Развёртывания",
     "DesiredReplicas": "Желаемое количество реплик",
@@ -1180,6 +1182,7 @@
     "NotAccessibleOrDeleted": "Это развертывание было удалено или у вас нет прав доступа к нему.",
     "NotInProject": "Это развертывание принадлежит другому проекту.",
     "NumberOfReplicas": "Количество реплик",
+    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
     "OpenCreateDeploymentModal": "Открыть модальное окно создания развёртывания",
     "OpenToPublic": "Публичное",
     "OpenToPublicCannotBeChanged": "Параметр публичного доступа, выбранный при создании, нельзя изменить.",
@@ -1246,7 +1249,6 @@
       "Delete": "Удалить токен доступа",
       "DeleteConfirm": "Вы уверены, что хотите удалить этот токен доступа? Это действие нельзя отменить.",
       "Deleted": "Токен доступа удалён.",
-      "DeploymentStopped": "Развёртывание останавливается или больше не активно.",
       "EndpointNotIssuedYet": "Сетевая конечная точка ещё не выдана.",
       "Expiration": "Срок действия",
       "NoExpiration": "Без срока действия",
@@ -3116,6 +3118,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "Нет данных",
       "NoLiveData": "Нет данных в реальном времени",
+      "NoLiveMetrics": "Нет метрик в реальном времени",
+      "NoLiveMetricsForSessionsInView": "Ни одна сессия в текущем списке не сообщает метрики в реальном времени.",
       "NoSessionsMatchingFilter": "Ни одна сессия не соответствует текущему фильтру.",
       "OmittedNoResource": "Скрыто {{count}} сессий без выделенного {{label}}.",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3574,8 +3578,9 @@
     "BootstrapScriptEmpty": "Скрипт пуст. \nПожалуйста, введите сценарий.",
     "BootstrapScriptUpdated": "Обновлен скрипт начальной загрузки.",
     "ClearSSHKeypairInput": "Записанная пара ключей SSH будет удалена. Вы уверены что хотите продолжить?",
+    "CommandPalette": "Палитра команд",
     "ConfigFilename": "Имя файла конфигурации",
-    "CurrentSSHPublicKey": "Текущий открытый ключ:",
+    "CurrentSSHPublicKey": "Текущий открытый ключ",
     "CustomDashboardPanels": "Пользовательские панели информационной панели",
     "DarkMode": "Темный режим",
     "DarkTheme": "Тёмный режим",
@@ -3823,6 +3828,7 @@
       "ResourcePolicies": "Ресурсные политики",
       "Resources": "Ресурсы",
       "Scheduler": "Планировщик",
+      "Search": "Поиск",
       "Serving": "Обслуживание",
       "Sessions": "Сессии",
       "Settings": "Настройки",
@@ -3846,6 +3852,7 @@
       "WelcomeMessage": "Добро пожаловать, {{ userName }}.",
       "YouMushChangeYourPassword": "В целях безопасности рекомендуется периодически менять пароль. Поскольку с момента последней смены пароля прошло определенное время, для продолжения использования сервиса необходимо его сменить.",
       "groupName": {
+        "General": "Общие",
         "Metrics": "Метрики",
         "Mlops": "MLOps",
         "Playground": "Игровая площадка",
@@ -3857,6 +3864,31 @@
           "Operations": "Операции",
           "System": "Система"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "Найдено в {{text}}",
+      "NoResults": "Ничего не найдено",
+      "Placeholder": "Поиск по страницам, вкладкам и настройкам",
+      "Recent": "Недавние",
+      "action": {
+        "ChangeLanguage": "Изменить язык интерфейса",
+        "OpenManual": "Открыть руководство для этой страницы",
+        "OpenNotifications": "Открыть уведомления",
+        "OpenUserSettings": "Открыть настройки пользователя",
+        "SwitchToDarkMode": "Переключиться на тёмный режим",
+        "SwitchToLightMode": "Переключиться на светлый режим",
+        "ToggleSidebar": "Показать или скрыть боковую панель",
+        "UseSystemTheme": "Использовать настройки системы"
+      },
+      "group": {
+        "Appearance": "Оформление",
+        "Create": "Создать",
+        "PanelsAndHelp": "Панели и справка"
+      },
+      "scope": {
+        "Administration": "Администрация",
+        "ProjectAdministration": "Администрирование проекта"
       }
     }
   }

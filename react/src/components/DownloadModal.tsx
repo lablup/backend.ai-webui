@@ -14,6 +14,7 @@ import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Selector } from '@astryxdesign/core/Selector';
+import { Stack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
@@ -241,16 +242,28 @@ const DownloadModal: React.FC<DownloadModalProps> = ({
   const showDesktopApp = baiClient?._config?.allowAppDownloadPanel;
   const showCLI = baiClient?._config?.allowCLIDownloadPanel;
 
+  // `BAITabs` renders the strip and the active panel as bare siblings, so the
+  // gap under the underline has to come from the panel itself; adding it in
+  // `BAITabs` would break the card-type call sites whose panel is continuous
+  // with the active tab.
   const tabItems = filterOutEmpty([
     showDesktopApp && {
       key: 'desktop',
       label: t('summary.DesktopApp'),
-      children: <DesktopAppDownloadTab />,
+      children: (
+        <Stack paddingBlockStart={4}>
+          <DesktopAppDownloadTab />
+        </Stack>
+      ),
     },
     showCLI && {
       key: 'cli',
       label: t('summary.CLI'),
-      children: <CLIDownloadTab />,
+      children: (
+        <Stack paddingBlockStart={4}>
+          <CLIDownloadTab />
+        </Stack>
+      ),
     },
   ]);
 

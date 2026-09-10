@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { notificationDrawerOpenState } from '../hooks/useShellPanels';
 import { useBAIBreakpoint } from '../theme-shim';
 import './BAIContentWithDrawerArea.css';
-import { isOpenDrawerState } from './BAINotificationButton';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
@@ -29,7 +29,7 @@ const BAIContentWithDrawerArea: React.FC<Props> = ({
   drawerWidth = 256,
   ...contextProps
 }) => {
-  const isOpenDrawer = useAtomValue(isOpenDrawerState);
+  const isOpenDrawer = useAtomValue(notificationDrawerOpenState);
   // Responsive policy (ticket 14): JS behaviour branch — the drawer style is
   // a layout MODE, not a track layout, so it stays on the JS-side hook.
   const { xl } = useBAIBreakpoint();

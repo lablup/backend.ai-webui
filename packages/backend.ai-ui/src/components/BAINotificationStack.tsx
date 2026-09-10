@@ -117,8 +117,9 @@ export interface BAINotificationStackProps {
   /** Fired by the close button and by the auto-close timer. */
   onClose?: (key: React.Key) => void;
   /**
-   * Cap on simultaneously visible notices; the newest win.
-   * antd had `maxCount` on the whole API. Unlimited by default, as today.
+   * Cap on simultaneously visible notices; the newest win. Unlimited when
+   * unset — the WebUI host passes one (FR-3829). The rest stay in the
+   * notification list the host owns, and render as room frees up.
    */
   maxVisible?: number;
   'data-testid'?: string;
@@ -274,15 +275,21 @@ const BAINotificationStackItemView: React.FC<{
         description={
           hasOwnContent ? undefined : item.description || hasProgress ? (
             <VStack gap={2} align="stretch">
-              {typeof item.description === 'string' ? (
-                <Text type="supporting">
-                  <span data-testid="notification-description">
-                    {item.description}
-                  </span>
-                </Text>
-              ) : (
-                item.description
-              )}
+              {/* FR-3829: the text scrolls, the header stays; a progress bar
+                  outside it stays pinned under the scrolled text. */}
+              {item.description ? (
+                <div className="bai-notification-stack-item__body">
+                  {typeof item.description === 'string' ? (
+                    <Text type="supporting">
+                      <span data-testid="notification-description">
+                        {item.description}
+                      </span>
+                    </Text>
+                  ) : (
+                    item.description
+                  )}
+                </div>
+              ) : null}
               {hasProgress ? (
                 <ProgressBar
                   value={item.percent ?? 0}
@@ -305,11 +312,15 @@ const BAINotificationStackItemView: React.FC<{
         {/* A bare string would inherit Banner's own base size (measured 16px)
             and tower over the description above it, so it gets the same
             treatment `description` does. */}
-        {typeof item.children === 'string' ? (
-          <Text type="supporting">{item.children}</Text>
-        ) : (
-          item.children
-        )}
+        {item.children ? (
+          <div className="bai-notification-stack-item__body">
+            {typeof item.children === 'string' ? (
+              <Text type="supporting">{item.children}</Text>
+            ) : (
+              item.children
+            )}
+          </div>
+        ) : null}
       </Banner>
     </div>
   );
@@ -327,12 +338,29 @@ const BAINotificationStack: React.FC<BAINotificationStackProps> = ({
   // animation. Without this the stack would pop rather than slide out — antd's
   // notification had a motion contract and losing it reads as a bug.
   const [exiting, setExiting] = useState<Array<BAINotificationStackItem>>([]);
-  const previousRef = useRef<Array<BAINotificationStackItem>>([]);
+  const previousVisibleRef = useRef<Array<BAINotificationStackItem>>([]);
+  const stackRef = useRef<HTMLDivElement>(null);
+
+  const visible = maxVisible ? notifications.slice(-maxVisible) : notifications;
+  const newestKey = notifications.at(-1)?.key;
+
+  // Once the stack hits its `max-height` cap (FR-3829) it scrolls, and the
+  // newest notice is the one at the scrolled end — keep it in view. Keyed on
+  // the newest notice rather than the array: a background task rebuilds that
+  // every 100ms and would yank a user reading an older notice back down.
+  useEffect(() => {
+    const el = stackRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [newestKey]);
 
   useEffect(() => {
     const currentKeys = new Set(notifications.map((n) => n.key));
-    const removed = previousRef.current.filter((n) => !currentKeys.has(n.key));
-    previousRef.current = notifications;
+    // Only a notice that was on screen gets an exit animation; one closed
+    // while hidden behind `maxVisible` would otherwise flash into the corner.
+    const removed = previousVisibleRef.current.filter(
+      (n) => !currentKeys.has(n.key),
+    );
+    previousVisibleRef.current = visible;
     if (removed.length === 0) return;
     setExiting((prev) => [...prev, ...removed]);
     const timer = window.setTimeout(() => {
@@ -340,9 +368,8 @@ const BAINotificationStack: React.FC<BAINotificationStackProps> = ({
       setExiting((prev) => prev.filter((n) => !removedKeys.has(n.key)));
     }, EXIT_ANIMATION_MS);
     return () => window.clearTimeout(timer);
-  }, [notifications]);
+  }, [notifications, visible]);
 
-  const visible = maxVisible ? notifications.slice(-maxVisible) : notifications;
   const visibleKeys = new Set(visible.map((n) => n.key));
   const stillExiting = exiting.filter((n) => !visibleKeys.has(n.key));
 
@@ -350,6 +377,7 @@ const BAINotificationStack: React.FC<BAINotificationStackProps> = ({
 
   return (
     <div
+      ref={stackRef}
       className="bai-notification-stack"
       // e2e anchor: the stack, each notice, and each notice's status are
       // addressable without reaching into Astryx's own class names (P7).

@@ -907,7 +907,7 @@
       "WritePermissionRequiredInUploadFiles": "ต้องมีสิทธิ์เขียนในการอัปโหลดไฟล์"
     },
     "folders": {
-      "AdminDataPageAlert": "ในหน้าข้อมูลผู้ดูแลระบบ สามารถสร้างได้เฉพาะโฟลเดอร์โครงการเท่านั้น",
+      "AdminDataPageAlert": "ในหน้าข้อมูลผู้ดูแลระบบ โฟลเดอร์จะถูกสร้างเป็นโฟลเดอร์โครงการ",
       "CannotDeleteFolder": "ไม่สามารถลบโฟลเดอร์ที่ถูกเมาท์ในหนึ่งหรือหลายเซสชัน กรุณายุติเซสชันก่อน",
       "CannotDeletePipelineFolder": "คุณไม่สามารถลบโฟลเดอร์ไปป์ไลน์ได้",
       "CannotDeployFromAdminMenu": "การปรับใช้จะถูกสร้างจากหน้าข้อมูลของโครงการ เมนูผู้ดูแลระบบไม่รองรับการดำเนินการนี้",
@@ -982,7 +982,7 @@
       "Ownership": "ความเป็นเจ้าของ",
       "Path": "เส้นทางการจัดเก็บ",
       "Permission": "สิทธิ์",
-      "ProjectAdminDataPageAlert": "ในหน้าข้อมูลผู้ดูแลโครงการ สามารถสร้างได้เฉพาะโฟลเดอร์โครงการเท่านั้น",
+      "ProjectAdminDataPageAlert": "ในหน้าข้อมูลผู้ดูแลโครงการ โฟลเดอร์จะถูกสร้างเป็นโฟลเดอร์โครงการ",
       "ProjectFolderAlertDesc": "โฟลเดอร์นี้แบ่งปันกับสมาชิกทุกคนในโครงการ",
       "ProjectFolderCreationHelp": "โฟลเดอร์สามารถเข้าถึงได้โดย \"{{projectName}}\" ผู้ใช้โครงการจะถูกสร้างขึ้น",
       "Rename": "เปลี่ยนชื่อ",
@@ -1126,6 +1126,7 @@
     "DeploymentNameTooltip": "ชื่อที่ไม่ซ้ำกันสำหรับการปรับใช้นี้ ใช้สำหรับระบุตัวตนในแดชบอร์ด API และ URL ปลายทาง",
     "DeploymentReady": "การปรับใช้พร้อมแล้ว",
     "DeploymentSchedulingHistory": "ประวัติการจัดตารางการปรับใช้",
+    "DeploymentStopped": "การปรับใช้กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป",
     "DeploymentUpdated": "อัปเดตการปรับใช้เรียบร้อยแล้ว",
     "Deployments": "การปรับใช้",
     "DesiredReplicas": "จำนวนเรพลิกาที่ต้องการ",
@@ -1246,7 +1247,6 @@
       "Delete": "ลบโทเค็นการเข้าถึง",
       "DeleteConfirm": "คุณแน่ใจหรือไม่ว่าต้องการลบโทเค็นการเข้าถึงนี้? การดำเนินการนี้ไม่สามารถเลิกทำได้",
       "Deleted": "ลบโทเค็นการเข้าถึงเรียบร้อยแล้ว",
-      "DeploymentStopped": "การปรับใช้กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป",
       "EndpointNotIssuedYet": "ยังไม่ได้ออก endpoint ของเครือข่าย",
       "Expiration": "วันหมดอายุ",
       "NoExpiration": "ไม่มีวันหมดอายุ",
@@ -3118,6 +3118,8 @@
       "NGiB": "{{value}} GiB",
       "NoData": "ไม่มีข้อมูล",
       "NoLiveData": "ไม่มีข้อมูลสด",
+      "NoLiveMetrics": "ไม่มีเมตริกสด",
+      "NoLiveMetricsForSessionsInView": "ไม่มีเซสชันในรายการปัจจุบันที่รายงานเมตริกสด",
       "NoSessionsMatchingFilter": "ไม่มีเซสชันที่ตรงกับตัวกรองปัจจุบัน",
       "OmittedNoResource": "กำลังซ่อน {{count}} เซสชันที่ไม่มีการจัดสรร {{label}}",
       "RangePercent": "{{from}}–{{to}}%",
@@ -3576,8 +3578,9 @@
     "BootstrapScriptEmpty": "สคริปต์ว่างเปล่า \nกรุณาป้อนสคริปต์",
     "BootstrapScriptUpdated": "อัปเดตสคริปต์บูตสแตรปแล้ว",
     "ClearSSHKeypairInput": "คู่คีย์ SSH ที่เขียนไว้จะถูกลบ คุณแน่ใจหรือไม่ที่จะดำเนินการต่อ?",
+    "CommandPalette": "แผงคำสั่ง",
     "ConfigFilename": "ชื่อไฟล์การกำหนดค่า",
-    "CurrentSSHPublicKey": "คีย์สาธารณะปัจจุบัน: ",
+    "CurrentSSHPublicKey": "คีย์สาธารณะปัจจุบัน",
     "CustomDashboardPanels": "แผงแดชบอร์ดที่กำหนดเอง",
     "DarkMode": "โหมดมืด",
     "DarkTheme": "โหมดมืด",
@@ -3825,6 +3828,7 @@
       "ResourcePolicies": "นโยบายทรัพยากร",
       "Resources": "ทรัพยากร",
       "Scheduler": "ผู้กำหนดตารางเวลา",
+      "Search": "ค้นหา",
       "Serving": "การให้บริการ",
       "Sessions": "เซสชัน",
       "Settings": "การตั้งค่า",
@@ -3848,6 +3852,7 @@
       "WelcomeMessage": "ยินดีต้อนรับ, {{ userName }}",
       "YouMushChangeYourPassword": "แนะนำให้เปลี่ยนรหัสผ่านเป็นระยะเพื่อความปลอดภัย เนื่องจากเวลาผ่านไปพอสมควรแล้วตั้งแต่คุณเปลี่ยนรหัสผ่านครั้งล่าสุด คุณต้องเปลี่ยนรหัสผ่านเพื่อใช้บริการต่อไป",
       "groupName": {
+        "General": "ทั่วไป",
         "Metrics": "ตัวชี้วัด",
         "Mlops": "MLOps",
         "Playground": "สนามเด็กเล่น",
@@ -3859,6 +3864,31 @@
           "Operations": "การดำเนินงาน",
           "System": "ระบบ"
         }
+      }
+    },
+    "search": {
+      "FoundIn": "พบใน {{text}}",
+      "NoResults": "ไม่พบผลลัพธ์",
+      "Placeholder": "ค้นหาหน้า แท็บ และการตั้งค่า",
+      "Recent": "ล่าสุด",
+      "action": {
+        "ChangeLanguage": "เปลี่ยนภาษาของอินเทอร์เฟซ",
+        "OpenManual": "เปิดคู่มือของหน้านี้",
+        "OpenNotifications": "เปิดการแจ้งเตือน",
+        "OpenUserSettings": "เปิดการตั้งค่าผู้ใช้",
+        "SwitchToDarkMode": "สลับเป็นโหมดมืด",
+        "SwitchToLightMode": "สลับเป็นโหมดสว่าง",
+        "ToggleSidebar": "แสดงหรือซ่อนแถบด้านข้าง",
+        "UseSystemTheme": "ใช้การตั้งค่าระบบ"
+      },
+      "group": {
+        "Appearance": "การแสดงผล",
+        "Create": "สร้าง",
+        "PanelsAndHelp": "แผงและความช่วยเหลือ"
+      },
+      "scope": {
+        "Administration": "การจัดการระบบ",
+        "ProjectAdministration": "การจัดการโครงการ"
       }
     }
   }

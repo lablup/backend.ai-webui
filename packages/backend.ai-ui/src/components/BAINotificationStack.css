@@ -5,10 +5,18 @@
    notices carry progress bars, retry/cancel actions and a link, and they
    stack. Class names are load-bearing e2e selectors — do not rename. */
 .bai-notification-stack {
+  /* Ceiling for one notice's scrollable regions (FR-3829). */
+  --bai-notification-body-max-height: 30vh;
+
   position: fixed;
-  /* `--spacing-6` = 24px, antd's own notification inset. */
-  inset-block-end: var(--spacing-6);
-  inset-inline-end: var(--spacing-6);
+  /* `--spacing-6` = 24px, antd's own notification inset — carried as PADDING,
+     not `inset`, because `overflow` below clips to the padding box and both the
+     enter/exit slide and the notices' `elevation="high"` shadow need that room
+     inside it. `content-box` keeps `width`/`max-height` the visible figures. */
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  padding: var(--spacing-6);
+  box-sizing: content-box;
   display: flex;
   flex-direction: column;
   /* Newest at the bottom, nearest the corner — the direction antd stacks
@@ -16,6 +24,15 @@
   gap: var(--spacing-3);
   width: 384px; /* antd's notification width; not on the spacing scale. */
   max-width: calc(100vw - var(--spacing-6) * 2);
+  /* FR-3829: the stack stops below the app header instead of growing over it,
+     so the header's own buttons stay reachable however many notices are open.
+     The host bridges its real header height as `--webui-header-height`
+     (`MainLayout` -> `CSSTokenVariables`). */
+  max-height: calc(
+    100dvh - var(--webui-header-height, 60px) - var(--spacing-6) * 2
+  );
+  overflow: hidden auto;
+  overscroll-behavior: contain;
   /* Top of the ladder (`../styles/zIndexLadder.ts`), so a notice clears every
      layer on it — the modal band and, since FR-3585, the scrimmed drawers. Not
      the CSS top layer: tours use the popover API and paint over notices.
@@ -62,6 +79,16 @@
 .bai-notification-stack-item[data-exiting='true'] {
   animation-name: bai-notification-exit;
   overflow: hidden;
+}
+
+/* FR-3829: an oversized error scrolls inside the notice instead of pushing the
+   `Banner` header — and the dismiss button in it — off the top of the screen.
+   Deliberately NOT on `.bai-notification-stack-item`: `bai-notification-exit`
+   animates that element's own `max-height`. */
+.bai-notification-stack-item__body {
+  max-height: var(--bai-notification-body-max-height);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /* An entrance that only fades is still an entrance, and a user who asked for
