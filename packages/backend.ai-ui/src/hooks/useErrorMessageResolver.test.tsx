@@ -164,14 +164,20 @@ describe('useErrorMessageResolver', () => {
       getErrorMessage({ msg: 'no codes here' }, { verbosity: 'detail' }),
     ).toBe('no codes here');
     expect(
-      getErrorMessage({ msg: 'only status', statusCode: 404 }, {
-        verbosity: 'detail',
-      }),
+      getErrorMessage(
+        { msg: 'only status', statusCode: 404 },
+        {
+          verbosity: 'detail',
+        },
+      ),
     ).toBe('only status (HTTP 404)');
     expect(
-      getErrorMessage({ msg: 'only code', error_code: 'E_BAR' }, {
-        verbosity: 'detail',
-      }),
+      getErrorMessage(
+        { msg: 'only code', error_code: 'E_BAR' },
+        {
+          verbosity: 'detail',
+        },
+      ),
     ).toBe('only code (E_BAR)');
   });
 });
