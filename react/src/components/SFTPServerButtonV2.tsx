@@ -18,6 +18,7 @@ import {
 } from '../hooks/useStartSession';
 import { useVHostInfo } from '../hooks/useVHostInfo';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
+import { openSFTPFailureModal } from './sftpFailureModal';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { IconButton } from '@astryxdesign/core/IconButton';
@@ -236,9 +237,23 @@ const SFTPServerButtonWithProject: React.FC<
                 }
                 if (results?.rejected && results.rejected.length > 0) {
                   const error = results.rejected[0].reason;
-                  modal.error({
-                    title: error?.title,
-                    content: getErrorMessage(error),
+                  openSFTPFailureModal({
+                    modal,
+                    t,
+                    error,
+                    getErrorMessage,
+                    onGoToUploadSessions: () => {
+                      webuiNavigate({
+                        // Explicit project (FR-3412): bare `/session` is a
+                        // ProjectScopedRedirect, which resolves the AMBIENT
+                        // project, not the passed one.
+                        pathname: buildProjectPath('session', {
+                          scope: 'project',
+                          projectName: project.name,
+                        }),
+                        search: '?type=system',
+                      });
+                    },
                   });
                 }
               })
