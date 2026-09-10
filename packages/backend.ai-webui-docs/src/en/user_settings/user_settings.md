@@ -288,12 +288,13 @@ and **Private Key**.
 
 ![](../images/add_ssh_keypair_manually_dialog.png)
 
-Enter the keys and click the `Save` button. When the keypair is accepted, a
-confirmation message appears and the dialog closes. If the server rejects the
-keypair -- for example when a key is malformed or the public and private keys
-do not match -- the dialog stays open and shows the error message returned by
-the server, so you can correct the keys and save again. Once the keypair is
-registered, you can access your Backend.AI session using your own key.
+Enter the keys and click the `Save` button. When the keypair is registered
+successfully, the message *"SSH Keypair has been successfully registered."* is
+displayed, the dialog closes, and you can access your Backend.AI session using
+your own key. If the server rejects the keypair -- for example when a key is
+malformed or the public and private keys do not match -- the dialog stays open
+and shows the error message returned by the server, so you can correct the
+keys and save again.
 
 ![](../images/ssh_keypair_dialog_after.png)
 
@@ -353,11 +354,13 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   turning it off later hides them without deleting them, and turning it back
   on restores them exactly as they were. See
   [Custom Panels](#custom-panels) for how to add and manage them.
-- **Command palette**: Adds a **Search** button to the top bar and enables the
-  `Ctrl-K` (`Cmd-K` on Mac) shortcut, which opens a palette for searching
-  pages, tabs, and setting items, and for running quick actions such as
-  switching the display mode or opening notifications. See
-  [Search](#search) for details.
+- **Command palette**: Adds a **Search** button to the header and the `Ctrl+K`
+  (`⌘K` on macOS) shortcut, both of which open a palette for searching pages,
+  page tabs, and setting items. The palette also offers quick actions such as
+  switching between dark and light mode, changing the UI language, opening
+  notifications, toggling the sidebar, and opening the manual for the current
+  page. The button and the shortcut are available only while this feature is
+  enabled. See [Search](#search) for details.
 - **Import from Hugging Face**: Adds an **Import Hugging Face Model** tab to the
   **Start From URL** dialog on the Start page, so you can import a model from
   Hugging Face directly into a model folder. The tab appears only when model
