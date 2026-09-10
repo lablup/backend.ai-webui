@@ -148,11 +148,10 @@ credentials. In that case, proceed with the login to terminate the other session
 and consider changing your password.
 :::
 
-After logging in, you can check the information of the current resource usage on
-the Start page.
 
 By clicking the user icon in the upper-right corner, you will see the user menu.
-You can log out by selecting the `Log Out` menu item.
+You can log out by selecting the `Log Out` menu item. [FR-3898 preview test] The screenshot
+below was swapped so a reviewer can comment on an image change.
 
 ![](../images/signout_button.png)
 

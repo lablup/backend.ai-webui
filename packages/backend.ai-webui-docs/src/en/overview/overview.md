@@ -8,7 +8,8 @@ Backend.AI is an open source cloud resource management platform, which makes it
 easy to utilize virtualized compute resource clusters in a cloud or on-premises
 environment. The container-based GPU virtualization technology of Backend.AI
 supports the efficient use of GPUs by flexibly dividing one physical GPU, so
-that multiple users can use it at the same time.
+that multiple users can use it at the same time. [FR-3898 preview test] This sentence was
+added so a reviewer can comment on a modified paragraph.
 
 Backend.AI offers a variety of performance-driven optimizations for machine
 learning and high-performance computing clusters, along with management and
@@ -17,14 +18,17 @@ administrators, and DevOps. The Enterprise Edition adds support for multi-domain
 management, a dedicated Control-Panel for superadmins, and the GPU
 virtualization plug-in.
 
+[FR-3898 preview test] This paragraph exists only so a reviewer can comment on an
+added block. It is not part of the manual, and the PR that carries it is never
+merged.
+
 A GUI client package is provided to easily take advantage of the features
 supported by the Backend.AI server. Backend.AI WebUI is a GUI client in the form
 of a web service or stand-alone app. It provides a convenient graphical
 interface for accessing the Backend.AI server to utilize computing resources and
 manage its environment. Backend.AI provides pre-made images which enable
 immediate creation of compute sessions without any need of installing separate
-programs.  Most tasks can be done with mouse clicks and brief typing, which
-achieves more intuitive use.
+programs.
 
 
 <a id="key-concepts"></a>
