@@ -11,7 +11,7 @@
  *   R2  new manager feature gate                -> needs a two-manager pass
  *   R3  i18n keys added but not translated      -> ships raw keys / English
  *   R4  destructive-flow file touched           -> re-verify the typed confirm
- *   R5  user-visible feat with no manual change -> docs gap
+ *   R5  feat on a page/component, no manual change -> docs gap
  *
  * Usage:
  *   node scripts/release-risk-report.mjs --from v26.8.1 [--to HEAD] [--out FILE] [--json]
@@ -158,6 +158,16 @@ const BUI_NON_RUNTIME =
 // assets directly, so a style-only commit is still a UI change.
 const UI_EXT = /\.(tsx?|css|scss|svg|png)$/;
 
+// Dev-only surfaces ship in the bundle but are not product UI
+// (DevReviewRouteLabel, DevApiEndpointMismatchAlert).
+const isDevTooling = (f) => /^Dev[A-Z]/.test(f.split('/').pop());
+
+// What the user manual documents: host-app pages and components. Wiring
+// (routes.tsx), hooks and the backend.ai-ui library are not manual material
+// on their own.
+const isManualFacing = (f) =>
+  /^react\/src\/(pages|components)\//.test(f) && !isDevTooling(f);
+
 export function classify(files) {
   const ui = files.filter(
     (f) =>
@@ -171,6 +181,7 @@ export function classify(files) {
   );
   return {
     ui,
+    manualFacing: ui.filter(isManualFacing),
     // Executable tests only: e2e/ also holds docs and plans (e.g. the
     // coverage report), and touching those is not test coverage.
     e2e: files.filter(
@@ -184,6 +195,19 @@ export function classify(files) {
     ),
     destructive: ui.filter((f) => DESTRUCTIVE_NAME.test(f.split('/').pop())),
   };
+}
+
+/**
+ * Why a `feat` with UI files is not an R5 manual gap, or null when it is one.
+ * The reason is a JSON-only debugging aid ("why was #N not flagged?"); the
+ * digest neither counts nor mentions skipped feats.
+ */
+export function manualGapSkipReason(classified) {
+  if (classified.manualFacing.length) return null;
+  if (classified.ui.some(isDevTooling)) return 'dev-tooling';
+  if (!classified.ui.some((f) => f.startsWith('react/src/')))
+    return 'library-only';
+  return 'no-page-surface';
 }
 
 /**
@@ -861,7 +885,7 @@ function renderMarkdown(report) {
 
   section(
     'R5 — User-visible feature with no manual change',
-    'A `feat:` that changed the UI but not the user manual. Confirm the manual does not need it.',
+    'A `feat:` that changed a page or component but not the user manual. Confirm the manual does not need it.',
     risks.noDocs,
     (c) => `- [ ] ${link(c)} ${c.subject.replace(/\s*\(#\d+\)$/, '')}`,
   );
@@ -941,13 +965,20 @@ function main() {
       (c) => c.classified.ui.length > 0 && c.classified.e2e.length === 0,
     ),
     destructive: commits.filter((c) => c.classified.destructive.length > 0),
-    noDocs: commits.filter(
-      (c) =>
-        c.type === 'feat' &&
-        c.classified.ui.length > 0 &&
-        c.classified.docs.length === 0,
-    ),
+    noDocs: [],
+    noDocsSkipped: [],
   };
+  for (const c of commits) {
+    if (
+      c.type !== 'feat' ||
+      c.classified.ui.length === 0 ||
+      c.classified.docs.length > 0
+    )
+      continue;
+    const reason = manualGapSkipReason(c.classified);
+    if (reason) risks.noDocsSkipped.push({ ...c, reason });
+    else risks.noDocs.push(c);
+  }
 
   const versionMap = readFeatureVersionMap(args.to);
   const used = usedFeatureFlags(args.to);
@@ -988,6 +1019,7 @@ function main() {
                 subject: c.subject,
                 ui: c.classified.ui,
                 destructive: c.classified.destructive,
+                ...(c.reason ? { reason: c.reason } : {}),
               })),
             ]),
           ),

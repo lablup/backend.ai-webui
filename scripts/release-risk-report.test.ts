@@ -9,6 +9,7 @@ import {
   extractSupportsUsages,
   flatten,
   hasDestructiveContract,
+  manualGapSkipReason,
   parseArgs,
   parseFeatureVersionMap,
 } from './release-risk-report.mjs';
@@ -210,6 +211,64 @@ describe('release risk report', () => {
       expect(c.e2e).toHaveLength(1);
       expect(c.docs).toHaveLength(1);
       expect(c.i18n).toHaveLength(1);
+    });
+
+    it('narrows manualFacing to pages and components, minus Dev* files', () => {
+      const c = classify([
+        'react/src/pages/DataPage.tsx',
+        'react/src/components/FolderCreateModal.tsx',
+        'react/src/components/DevReviewRouteLabel.tsx',
+        'react/src/routes.tsx',
+        'react/src/hooks/useFoo.ts',
+        'packages/backend.ai-ui/src/components/BAICard.tsx',
+      ]);
+      expect(c.ui).toHaveLength(6);
+      expect(c.manualFacing).toEqual([
+        'react/src/pages/DataPage.tsx',
+        'react/src/components/FolderCreateModal.tsx',
+      ]);
+    });
+  });
+
+  describe('manualGapSkipReason', () => {
+    it('keeps a feat that touches a page or component', () => {
+      expect(
+        manualGapSkipReason(classify(['react/src/pages/DataPage.tsx'])),
+      ).toBeNull();
+    });
+
+    it('skips the review overlay: Dev* component plus route wiring', () => {
+      // #9536 / #9368 / #9337 in the v26.9.0-rc.4 range.
+      expect(
+        manualGapSkipReason(
+          classify([
+            'react/src/ambient.d.ts',
+            'react/src/components/DevReviewRouteLabel.tsx',
+            'react/src/routes.tsx',
+          ]),
+        ),
+      ).toBe('dev-tooling');
+    });
+
+    it('skips a backend.ai-ui-only feat', () => {
+      // #9464 in the v26.9.0-rc.4 range.
+      expect(
+        manualGapSkipReason(
+          classify([
+            'packages/backend.ai-ui/src/components/BAIInteractiveLoginButton.tsx',
+            'packages/backend.ai-ui/src/hooks/useBAIInteractiveLogin.ts',
+            'packages/backend.ai-ui/src/locale/en.json',
+          ]),
+        ),
+      ).toBe('library-only');
+    });
+
+    it('skips a host-side feat with no page surface', () => {
+      expect(
+        manualGapSkipReason(
+          classify(['react/src/hooks/useFoo.ts', 'react/src/routes.tsx']),
+        ),
+      ).toBe('no-page-surface');
     });
   });
 
