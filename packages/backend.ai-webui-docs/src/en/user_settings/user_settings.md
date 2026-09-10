@@ -287,8 +287,12 @@ and **Private Key**.
 
 ![](../images/add_ssh_keypair_manually_dialog.png)
 
-Enter the keys and click the `Save` button. You can now access your Backend.AI
-session using your own key.
+Enter the keys and click the `Save` button. When the keypair is registered
+successfully, the message *"SSH Keypair has been successfully registered."* is
+displayed, the dialog closes, and you can access your Backend.AI session using
+your own key. If the server rejects the keys -- for example, when a key is
+malformed -- the error message returned by the server is displayed and the
+dialog stays open so that you can correct the input.
 
 ![](../images/ssh_keypair_dialog_after.png)
 
@@ -348,6 +352,13 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   turning it off later hides them without deleting them, and turning it back
   on restores them exactly as they were. See
   [Custom Panels](#custom-panels) for how to add and manage them.
+- **Command palette**: Adds a **Search** button to the header and the `Ctrl+K`
+  (`⌘K` on macOS) shortcut, both of which open a palette for searching pages,
+  page tabs, and setting items. The palette also offers quick actions such as
+  switching between dark and light mode, changing the UI language, opening
+  notifications, toggling the sidebar, and opening the manual for the current
+  page. The button and the shortcut are available only while this feature is
+  enabled.
 - **Import from Hugging Face**: Adds an **Import Hugging Face Model** tab to the
   **Start From URL** dialog on the Start page, so you can import a model from
   Hugging Face directly into a model folder. The tab appears only when model
