@@ -56,6 +56,10 @@ const renderModal = () => {
 };
 
 const previewLabel = () => screen.getByText('summary.AnnouncementPreview');
+// The two-pane row: label -> column -> row. It carries the visibility gate, and
+// that gate must not delete BAIFlex's own `display: flex` (which would stack the
+// editor and the preview instead of placing them side by side).
+const bodyRow = () => previewLabel().parentElement!.parentElement!;
 const publishButton = () =>
   screen.getByRole('button', { name: 'button.Publish' });
 
@@ -89,5 +93,9 @@ describe('AnnouncementEditModal (FR-3723)', () => {
     act(() => mountEditor());
     expect(previewLabel()).toBeVisible();
     expect(publishButton()).not.toBeDisabled();
+    // The revealed row must still be a flex container: BAIFlex merges as
+    // `{ display: 'flex', ...style }`, so gating with `undefined` would drop it
+    // and drop the preview below the editor, out of the modal body.
+    expect(bodyRow()).toHaveStyle({ display: 'flex' });
   });
 });

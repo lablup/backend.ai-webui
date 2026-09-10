@@ -227,7 +227,10 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
         align="stretch"
         gap="sm"
         wrap="wrap"
-        style={{ display: isBodyReady ? undefined : 'none' }}
+        // `flex`, not `undefined`: BAIFlex merges as `{ display: 'flex',
+        // ...style }`, so an `undefined` here deletes its own display and the
+        // two panes stack instead of sitting side by side.
+        style={{ display: isBodyReady ? 'flex' : 'none' }}
       >
           <BAIFlex
             direction="column"
