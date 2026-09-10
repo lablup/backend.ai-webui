@@ -355,7 +355,7 @@ describe('parse — a pin set in one link', () => {
     const pins = await threePins();
     const url = `http://x${pinSetUrl(pins)}`;
     const quoted = `&gt; [Open on dev server](${url
-      .replace('#', '%23')
+      .replace(/#/g, '%23')
       .replace(/&/g, '%26')
       .replace(/=v3/g, '%3Dv3')})`;
     const parsed = await parsePins(quoted);
