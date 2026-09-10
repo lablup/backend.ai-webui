@@ -89,17 +89,20 @@ test.describe(
       await page.goto(currentURL);
       await adminModelCardPage.waitForTableLoad();
 
-      // Verify the filter chip is visible (filter persisted from URL). PowerSearch's
-      // chip-remove button is named "Remove <Field>: <operator>" (no value suffix
-      // on this page); the value itself renders as adjoining chip text.
-      await expect(
-        page.getByRole('button', { name: 'Remove Name: contains' }),
-      ).toBeVisible();
-
-      // Verify the filtered results are shown
-      await expect(adminModelCardPage.getPaginationInfo()).toContainText(
-        'items',
+      // Verify the filter chip carries the value that came back from the URL.
+      // PowerSearch names the remove button "Remove <Field>: <operator>" only —
+      // the value is a sibling span, so assert the enclosing token pill.
+      const filterChipRemove = page.getByRole('button', {
+        name: 'Remove Name: contains',
+      });
+      await expect(filterChipRemove).toBeVisible();
+      await expect(filterChipRemove.locator('xpath=..')).toContainText(
+        testCardName,
       );
+
+      // Verify the filter is actually applied: only the target row is listed
+      await expect(adminModelCardPage.getRowByName(testCardName)).toBeVisible();
+      await expect(adminModelCardPage.getDataRows()).toHaveCount(1);
     });
 
     // 10.2 Sort order is persisted in the URL query parameters
