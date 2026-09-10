@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-10T05:46:52.998Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 8,
+        "added": 3,
+        "modified": 2,
+        "removed": 3,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "vfolder",
+          "title": "Storage Folders",
+          "status": "modified",
+          "url": "next/en/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
+          "counts": {
+            "added": 3,
+            "modified": 2,
+            "removed": 3,
+            "images": 1,
+            "total": 8
+          },
+          "fingerprints": [
+            "286b67fee636",
+            "5990c155a370",
+            "d342f81bac63",
+            "f29c048db03b",
+            "9ff97e03a17c",
+            "e0184312a3a2",
+            "1229675f88f9",
+            "443d4f1bc71a"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 9,
+        "added": 3,
+        "modified": 3,
+        "removed": 3,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "vfolder",
+          "title": "ストレージフォルダ",
+          "status": "modified",
+          "url": "next/ja/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
+          "counts": {
+            "added": 3,
+            "modified": 3,
+            "removed": 3,
+            "images": 1,
+            "total": 9
+          },
+          "fingerprints": [
+            "28a95d3f60f9",
+            "28d9e4649500",
+            "73704356ffa6",
+            "069a78de8a2c",
+            "7cde998364f8",
+            "fafe41c8783e",
+            "52fe54c10885",
+            "f01269a566cb",
+            "592a59d7a4e4"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 8,
+        "added": 3,
+        "modified": 2,
+        "removed": 3,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "vfolder",
+          "title": "스토리지 폴더",
+          "status": "modified",
+          "url": "next/ko/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
+          "counts": {
+            "added": 3,
+            "modified": 2,
+            "removed": 3,
+            "images": 1,
+            "total": 8
+          },
+          "fingerprints": [
+            "2e6d4dac5478",
+            "be39b75663f3",
+            "00a8b5148e91",
+            "a68328f02bee",
+            "5093d18b3984",
+            "8135309459d0",
+            "1cb9bc9daf22",
+            "965e32ee1937"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 10,
+        "added": 3,
+        "modified": 4,
+        "removed": 3,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "vfolder",
+          "title": "โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
+          "counts": {
+            "added": 3,
+            "modified": 4,
+            "removed": 3,
+            "images": 1,
+            "total": 10
+          },
+          "fingerprints": [
+            "d2b7ab1727c5",
+            "dca0f391f849",
+            "ca222bbd8977",
+            "918b97af063a",
+            "ea070a894b9f",
+            "c1f7a1c4b1c2",
+            "e85230aac36a",
+            "a2ca5cc1be0f",
+            "d07801ca98f9",
+            "650498908e70"
+          ]
+        }
+      ]
+    }
+  }
+}
