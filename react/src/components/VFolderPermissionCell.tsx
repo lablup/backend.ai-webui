@@ -4,7 +4,6 @@
  */
 import { VFolderPermissionCellFragment$key } from '../__generated__/VFolderPermissionCellFragment.graphql';
 import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
 import { BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
@@ -62,7 +61,7 @@ const VFolderPermissionCell: React.FC<VFolderPermissionCellProps> = ({
 
   return (
     <HStack gap={2} {...props}>
-      <Text>{permissionInfo?.label}</Text>
+      <BAIText>{permissionInfo?.label}</BAIText>
       <HStack>
         {_.map(permissionInfo?.icon, (tag) => (
           <BAIText key={tag} code>
