@@ -34,9 +34,12 @@ export class AdminModelCardPage {
   }
 
   getDataRows(): Locator {
-    return this.page.locator(
-      'tbody tr:not(.ant-table-measure-row):not(.ant-table-placeholder)',
-    );
+    // Astryx `Table`'s empty state is a real `<tr>` ("No data to display"),
+    // not a dead antd `.ant-table-placeholder` row — filter by the row
+    // checkbox that only real data rows carry.
+    return this.page
+      .locator('tbody tr')
+      .filter({ has: this.page.getByRole('checkbox') });
   }
 
   private escapeRegExp(value: string): string {
@@ -73,23 +76,25 @@ export class AdminModelCardPage {
     return this.page.getByRole('combobox', { name: 'Search' });
   }
 
-  getFilterSearchButton(): Locator {
-    return this.page.getByRole('button', { name: 'search' });
+  getFilterSearchResultOption(value: string): Locator {
+    return this.page.getByRole('option', {
+      name: new RegExp(`^"${this.escapeRegExp(value)}"$`),
+    });
   }
 
   async applyNameFilter(value: string): Promise<void> {
+    // PowerSearch has no submit button — typing opens a quoted free-text
+    // suggestion, and clicking it commits the condition.
     await this.getFilterSearchInput().fill(value);
-    await this.getFilterSearchButton().click();
+    await this.getFilterSearchResultOption(value).click();
     await this.page.waitForURL(new RegExp(`filter=`));
   }
 
   async clearFilter(): Promise<void> {
-    // The filter chip's close affordance is a button labeled "Close" (not an
-    // icon-only `img` role) as of the row-action UI refresh in FR-3331.
-    const closeButton = this.page
-      .getByRole('button', { name: 'Close' })
-      .first();
-    await closeButton.click();
+    // PowerSearch's chip-remove button is named "Remove <Field>: <operator>",
+    // so "Clear all" is the stable target regardless of which field/operator
+    // was applied.
+    await this.page.getByRole('button', { name: 'Clear all' }).click();
   }
 
   // ── Row actions ──────────────────────────────────────────────────────────

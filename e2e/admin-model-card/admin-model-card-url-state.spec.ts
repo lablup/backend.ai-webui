@@ -3,6 +3,7 @@
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
 import {
   deleteForeverAndVerifyFromTrash,
+  getSortableColumnHeader,
   loginAsAdmin,
   moveToTrashAndVerify,
   webuiEndpoint,
@@ -88,16 +89,11 @@ test.describe(
       await page.goto(currentURL);
       await adminModelCardPage.waitForTableLoad();
 
-      // Verify the filter chip is visible (filter persisted from URL)
-      const filterChipPattern = new RegExp(
-        `Name.*${testCardName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
-      );
+      // Verify the filter chip is visible (filter persisted from URL). PowerSearch's
+      // chip-remove button is named "Remove <Field>: <operator>" (no value suffix
+      // on this page); the value itself renders as adjoining chip text.
       await expect(
-        page
-          .getByRole('status')
-          .filter({ hasText: filterChipPattern })
-          .or(page.locator('.ant-tag').filter({ hasText: filterChipPattern }))
-          .first(),
+        page.getByRole('button', { name: 'Remove Name: contains' }),
       ).toBeVisible();
 
       // Verify the filtered results are shown
@@ -117,7 +113,7 @@ test.describe(
       await adminModelCardPage.waitForTableLoad();
 
       // Click the "Name" column to sort ascending
-      await page.getByRole('columnheader', { name: 'Name' }).click();
+      await getSortableColumnHeader(page, 'Name').click();
       await expect(page).toHaveURL(/order=name/);
 
       const sortedURL = page.url();

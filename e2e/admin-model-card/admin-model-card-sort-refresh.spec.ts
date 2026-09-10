@@ -3,6 +3,7 @@
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
 import {
   deleteForeverAndVerifyFromTrash,
+  getSortableColumnHeader,
   loginAsAdmin,
   moveToTrashAndVerify,
   webuiEndpoint,
@@ -98,7 +99,7 @@ test.describe(
       await adminModelCardPage.waitForTableLoad();
 
       // Click the "Name" column header to sort ascending
-      await page.getByRole('columnheader', { name: 'Name' }).click();
+      await getSortableColumnHeader(page, 'Name').click();
 
       // Verify the URL contains an ascending sort order
       await expect(page).toHaveURL(/order=name/);
@@ -109,7 +110,7 @@ test.describe(
       });
 
       // Verify the sort indicator shows ascending
-      const nameHeader = page.getByRole('columnheader', { name: 'Name' });
+      const nameHeader = getSortableColumnHeader(page, 'Name');
       await expect(nameHeader).toBeVisible();
     });
 
@@ -124,7 +125,7 @@ test.describe(
       await adminModelCardPage.waitForTableLoad();
 
       // Click Name header once (ascending), then again (descending)
-      const nameHeader = page.getByRole('columnheader', { name: 'Name' });
+      const nameHeader = getSortableColumnHeader(page, 'Name');
       await nameHeader.click();
       await nameHeader.click();
 
@@ -175,11 +176,11 @@ test.describe(
       await adminModelCardPage.waitForTableLoad();
 
       // Sort by Name ascending
-      await page.getByRole('columnheader', { name: 'Name' }).click();
+      await getSortableColumnHeader(page, 'Name').click();
       await expect(page).toHaveURL(/order=name/);
 
       // Switch to sort by Created At
-      await page.getByRole('columnheader', { name: 'Created At' }).click();
+      await getSortableColumnHeader(page, 'Created At').click();
       await expect(page).toHaveURL(/order=createdAt/);
       await expect(page).not.toHaveURL(/order=name/);
 

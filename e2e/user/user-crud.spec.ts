@@ -66,8 +66,13 @@ test.describe.serial(
           .locator('.bai-name-action-cell-actions button')
           .nth(2)
           .click();
-        const popconfirm = page.locator('.ant-popconfirm');
-        await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+        // BAINameActionCell's popConfirm renders as an Astryx Popover with
+        // role="dialog", labeled by the action's title ("Deactivate"), not
+        // the confirm copy inside it ("Deactivate user").
+        const popconfirm = page.getByRole('dialog', { name: 'Deactivate' });
+        await popconfirm
+          .getByRole('button', { name: 'Deactivate', exact: true })
+          .click();
         // Wait for user to disappear from the Active list
         await expect(userRow).toBeHidden({ timeout: 10000 });
       }
@@ -234,12 +239,16 @@ test.describe.serial(
         .nth(2)
         .click();
 
-      // 6. Verify popconfirm dialog appears
-      const popconfirm = page.locator('.ant-popconfirm');
-      await expect(popconfirm.getByText('Deactivate User')).toBeVisible();
+      // 6. Verify popconfirm dialog appears. BAINameActionCell's popConfirm
+      // renders as an Astryx Popover with role="dialog", labeled by the
+      // action's title ("Deactivate") — not the antd `.ant-popconfirm` class.
+      const popconfirm = page.getByRole('dialog', { name: 'Deactivate' });
+      await expect(popconfirm).toBeVisible();
 
       // 7. Confirm deactivation
-      await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+      await popconfirm
+        .getByRole('button', { name: 'Deactivate', exact: true })
+        .click();
 
       // 8. Verify user disappears from Active users list
       await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden(
@@ -279,12 +288,14 @@ test.describe.serial(
         .nth(2)
         .click();
 
-      // 6. Verify popconfirm dialog appears
-      const popconfirm = page.locator('.ant-popconfirm');
-      await expect(popconfirm.getByText('Activate User')).toBeVisible();
+      // 6. Verify popconfirm dialog appears (Astryx Popover, role="dialog").
+      const popconfirm = page.getByRole('dialog', { name: 'Activate' });
+      await expect(popconfirm).toBeVisible();
 
       // 7. Confirm activation
-      await popconfirm.getByRole('button', { name: 'Activate' }).click();
+      await popconfirm
+        .getByRole('button', { name: 'Activate', exact: true })
+        .click();
 
       // 8. Verify user disappears from Inactive users list
       await expect(page.getByRole('row').filter({ hasText: EMAIL })).toBeHidden(
@@ -326,8 +337,10 @@ test.describe.serial(
         .locator('.bai-name-action-cell-actions button')
         .nth(2)
         .click();
-      const popconfirm = page.locator('.ant-popconfirm');
-      await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+      const popconfirm = page.getByRole('dialog', { name: 'Deactivate' });
+      await popconfirm
+        .getByRole('button', { name: 'Deactivate', exact: true })
+        .click();
       // Wait for user to disappear from Active list before switching filters
       await expect(userRow).toBeHidden({ timeout: 10000 });
 
