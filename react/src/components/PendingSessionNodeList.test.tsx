@@ -17,7 +17,8 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 /**
  * Contract tests for the pending-sessions tab's resource-group scope
  * (FR-3409). The tab is superadmin-only, so its options come from the root
- * `scaling_groups` field and never from the current project.
+ * `adminResourceGroups` field (through `BAIResourceGroupSelect`) and never
+ * from the current project.
  */
 
 vi.mock('react-i18next', async () => {
@@ -82,7 +83,7 @@ vi.mock('./AutoUpdateFetchKeyButton', async () => {
   };
 });
 
-const RESOURCE_GROUPS_QUERY = 'PendingSessionNodeListResourceGroupsQuery';
+const RESOURCE_GROUPS_QUERY = 'BAIResourceGroupSelectQuery';
 const PENDING_QUEUE_QUERY = 'PendingSessionNodeListQuery';
 
 const renderList = (search: string) => {
@@ -108,7 +109,11 @@ const resolveResourceGroups = (
   const operation = environment.mock.getMostRecentOperation();
   expect(operation.request.node.operation.name).toBe(RESOURCE_GROUPS_QUERY);
   environment.mock.resolve(operation, {
-    data: { scaling_groups: names.map((name) => ({ name })) },
+    data: {
+      adminResourceGroups: {
+        edges: names.map((name) => ({ node: { id: name, name } })),
+      },
+    },
   });
 };
 
@@ -127,7 +132,9 @@ describe('PendingSessionNodeList resource-group scope (FR-3409)', () => {
 
     const operation = environment.mock.getMostRecentOperation();
     expect(operation.request.node.operation.name).toBe(RESOURCE_GROUPS_QUERY);
-    expect(operation.request.variables).toEqual({});
+    expect(operation.request.variables).toEqual({
+      filter: { isActive: true },
+    });
 
     resolveResourceGroups(environment, ['alpha', 'beta']);
     await findPendingQueueVariables(environment);

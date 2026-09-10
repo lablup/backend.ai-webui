@@ -7,7 +7,6 @@ import {
   PendingSessionNodeListQuery$data,
   PendingSessionNodeListQuery$variables,
 } from '../__generated__/PendingSessionNodeListQuery.graphql';
-import { PendingSessionNodeListResourceGroupsQuery } from '../__generated__/PendingSessionNodeListResourceGroupsQuery.graphql';
 import { Form } from '../form-engine';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -22,11 +21,12 @@ import {
   BAIAlert,
   BAIButton,
   BAIFlex,
-  BAISelect,
+  BAIResourceGroupSelect,
   BAISelectionLabel,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   useFetchKey,
+  useResourceGroupNames,
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -59,21 +59,9 @@ const PendingSessionNodeList: React.FC = () => {
   );
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  // Superadmin scope: every resource group, not the current project's subset.
-  const { scaling_groups } =
-    useLazyLoadQuery<PendingSessionNodeListResourceGroupsQuery>(
-      graphql`
-        query PendingSessionNodeListResourceGroupsQuery {
-          scaling_groups(is_active: true) {
-            name
-          }
-        }
-      `,
-      {},
-    );
-  const resourceGroupNames = _.compact(
-    _.map(scaling_groups, (scalingGroup) => scalingGroup?.name),
-  );
+  // Superadmin scope: every active resource group, not the current project's
+  // subset. Same query as the select below, so Relay issues it once.
+  const resourceGroupNames = useResourceGroupNames({ isActive: true });
   // A stale, inactive or empty `resourceGroup` param must not reach
   // `session_pending_queue` — fall back to the first active group.
   const currentResourceGroup = _.includes(
@@ -163,14 +151,10 @@ const PendingSessionNodeList: React.FC = () => {
           label={t('session.ResourceGroup')}
           style={{ marginBottom: 0 }}
         >
-          <BAISelect
-            showSearch
+          <BAIResourceGroupSelect
+            filter={{ isActive: true }}
             style={{ minWidth: 100 }}
             loading={currentResourceGroup !== deferredCurrentResourceGroup}
-            options={_.map(resourceGroupNames, (name) => ({
-              value: name,
-              label: name,
-            }))}
             popupMatchSelectWidth={false}
             tooltip={t('general.ResourceGroup')}
             value={currentResourceGroup}
