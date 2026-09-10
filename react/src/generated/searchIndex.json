@@ -2260,6 +2260,7 @@
         "session.SFTPExtraNotification",
         "session.SFTPSessionManagementDesc",
         "session.SeeAppDialog",
+        "session.SessionId",
         "session.SessionName",
         "session.SessionSettings",
         "session.SessionTerminated",
