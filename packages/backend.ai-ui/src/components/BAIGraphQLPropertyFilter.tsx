@@ -283,12 +283,9 @@ function generateId(): string {
  */
 export function buildNestedFilter(path: string, value: any): GraphQLFilter {
   const keys = path.split('.');
-  // Guard against prototype pollution and malformed paths. Property paths come
-  // from a developer-defined filter schema and never use these reserved keys or
-  // empty segments, but a path segment of `__proto__` / `constructor` /
-  // `prototype` would otherwise let the assignments below walk into the object
-  // prototype chain, and an empty segment (e.g. `a..b`, `.a`, `a.`) would
-  // create a malformed `''` key.
+  // Property paths come from a developer-defined filter schema, so a reserved
+  // key or an empty segment (`a..b`, `.a`, `a.`) is malformed input, not a
+  // filter — drop the whole path rather than emit it.
   if (
     keys.some(
       (key) =>
@@ -300,18 +297,14 @@ export function buildNestedFilter(path: string, value: any): GraphQLFilter {
   ) {
     return {};
   }
-  if (keys.length === 1) {
-    return { [path]: value };
+  // Built inside-out from computed object literals: a computed literal key
+  // always defines an own property, so unlike a `current[key] = {}` walk it
+  // can never reach the prototype chain.
+  let nested: any = value;
+  for (let i = keys.length - 1; i > 0; i--) {
+    nested = { [keys[i]]: nested };
   }
-
-  let result: any = {};
-  let current = result;
-  for (let i = 0; i < keys.length - 1; i++) {
-    current[keys[i]] = {};
-    current = current[keys[i]];
-  }
-  current[keys[keys.length - 1]] = value;
-  return result;
+  return { [keys[0]]: nested };
 }
 
 function convertConditionsToGraphQLFilter(
