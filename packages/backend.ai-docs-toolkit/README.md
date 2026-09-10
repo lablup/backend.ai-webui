@@ -163,7 +163,7 @@ Notes:
 - `build:web --strict` (default) fails the build on broken links; `--no-strict` downgrades them to warnings.
 - `build:web --optimize-images` generates `.webp` variants for PNGs over 50 KB and wraps them in `<picture>`; `--optimize-images-avif` adds `.avif` variants. Both require the optional `sharp` peer dependency.
 - Default ports: `preview` → `3456`, `preview:html` → `3457`, `serve:web` → `3458`.
-- `diff:web` compares two `dist/web` roots at markdown-block level and writes into the head build: a `<slug>.changes.json` sidecar per page, a `changes-manifest.json` per channel, `base-images/` copies of the replaced images, and the `pr-preview` overlay that marks the changed blocks in the browser. `--json` prints the manifest to stdout (the summary then goes to stderr).
+- `diff:web` compares two `dist/web` roots at markdown-block level and writes into the head build: a `<slug>.changes.json` sidecar per page, a `changes-manifest.json` per channel, `base-images/` copies of the replaced images, and the `pr-preview` overlay that marks the changed blocks in the browser. The overlay's popover takes a comment per change (kept in the browser's `localStorage`, scoped to the deployment); the change navigator copies every comment of the preview — reference block plus quoted note, in reading order — as one PR comment. `--json` prints the manifest to stdout (the summary then goes to stderr).
 
 ## Agent Template System
 
