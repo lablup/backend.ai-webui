@@ -1,6 +1,8 @@
 import BAIAppShell from './BAIAppShell';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 /**
  * The shared `matchMedia` mock answers `matches: false` to everything, which
@@ -126,5 +128,20 @@ describe('BAIAppShell', () => {
     );
 
     expect(screen.getByTestId('drawer')).toBeInTheDocument();
+  });
+
+  // jsdom applies no stylesheet, so the drawer's scrim is checked at the source:
+  // MobileNav's `::backdrop` blur must be stood down like every other overlay's
+  // (FR-3900). Via a variable — a literal `new URL('./x.css', import.meta.url)`
+  // is rewritten by Vite into an asset URL that `fileURLToPath` rejects.
+  it('dims the page behind the drawer without blurring it', () => {
+    const relative = './BAIAppShell.css';
+    const css = readFileSync(
+      fileURLToPath(new URL(relative, import.meta.url)),
+      'utf8',
+    );
+    expect(css).toMatch(
+      /\.bai-app-shell-drawer::backdrop\s*\{[^}]*backdrop-filter:\s*none;/,
+    );
   });
 });
