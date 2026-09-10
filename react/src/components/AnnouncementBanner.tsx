@@ -125,7 +125,12 @@ const AnnouncementBanner: React.FC = () => {
               // Must use the same renderer settings as the editor preview
               // (FR-3402); the banner sits above the page h1, so markdown `#`
               // starts at h3.
-              <Markdown density="compact" headingLevelStart={3} autolink="gfm">
+              <Markdown
+                className="webui-announcement-body"
+                density="compact"
+                headingLevelStart={3}
+                autolink="gfm"
+              >
                 {body}
               </Markdown>
             ) : undefined
