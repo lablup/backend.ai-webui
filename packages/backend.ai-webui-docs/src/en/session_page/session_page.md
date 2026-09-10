@@ -68,5 +68,6 @@ for details.
 
 :::note
 You can export the session list as a CSV file using the download button in the session list toolbar.
-The CSV export from the personal Sessions page includes only your own sessions.
+Exporting is available to every user, not only to administrators — each user can export their own session history.
+The CSV export from the personal Sessions page always includes only your own sessions.
 :::
