@@ -5,6 +5,7 @@
 import { VFolderPermissionCellV2Fragment$key } from '../__generated__/VFolderPermissionCellV2Fragment.graphql';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -54,19 +55,14 @@ const VFolderPermissionCellV2: React.FC<VFolderPermissionCellV2Props> = ({
     };
   }, [vfolderData, t]);
 
-  // Ticket 16 — FRONTIER conversion (same pattern as the V1 cell): the
-  // external props are unchanged, only the internals move. antd
-  // `Typography.Text code` becomes Astryx `Text type="code"`, and
-  // `BAIFlex gap="xs"` becomes `HStack gap={2}` (BUI `xs` = 8px = step 2 by
-  // VALUE, per P9).
   return (
     <HStack gap={2} {...props}>
       <Text>{permissionInfo?.label}</Text>
       <HStack>
         {_.map(permissionInfo?.icon, (tag) => (
-          <Text key={tag} type="code">
+          <BAIText key={tag} code>
             {_.toUpper(tag)}
-          </Text>
+          </BAIText>
         ))}
       </HStack>
     </HStack>
