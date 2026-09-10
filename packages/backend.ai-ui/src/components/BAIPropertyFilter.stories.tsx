@@ -311,7 +311,6 @@ export const WithRenderInput: Story = {
             label="Owner"
             isLabelHidden
             placeholder="Select owner"
-            width={220}
             options={sampleOwnerOptions}
             isDisabled={isDisabled}
             value={

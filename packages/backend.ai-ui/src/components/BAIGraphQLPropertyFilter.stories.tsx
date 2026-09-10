@@ -902,7 +902,6 @@ export const WithRenderInput: Story = {
             label="Storage Host"
             isLabelHidden
             placeholder="Select storage host"
-            width={180}
             hasSearch={false}
             options={sampleStorageHostOptions}
             isDisabled={isDisabled}
@@ -993,7 +992,6 @@ export const WithCustomType: Story = {
             label="Owner"
             isLabelHidden
             placeholder="Select owner"
-            width={220}
             options={sampleOwnerOptions}
             isDisabled={isDisabled}
             value={

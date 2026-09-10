@@ -370,7 +370,6 @@ const AdminComputeSessionListPage = () => {
                       isLabelHidden
                       value={value}
                       isDisabled={isDisabled}
-                      width={200}
                       onChange={(value, option) => {
                         // P3C-1: the second argument survives on this wrapper so
                         // the condition tag stays human-readable (project name)

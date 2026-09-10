@@ -291,7 +291,6 @@ const RBACManagementPage: React.FC = () => {
                             : option?.label,
                         )
                       }
-                      width={200}
                     />
                   ),
                 },

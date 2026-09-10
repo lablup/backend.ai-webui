@@ -174,7 +174,6 @@ const UserFolderPermissionPanelV2: React.FC<
                           _.castArray(option ?? [])[0]?.label,
                         )
                       }
-                      width={200}
                     />
                   ),
                 },
