@@ -11,8 +11,8 @@ import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
-import { useAutoMountedFolderNames } from '../hooks/useAutoMountedFolderNames';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useSuspendedAutoMountedFolderNames } from '../hooks/useSuspendedAutoMountedFolderNames';
 import {
   SessionLauncherFormValue,
   ResourceNumbersOfSession,
@@ -91,7 +91,8 @@ const SessionLauncherPreview: React.FC<{
   const supportExtendedImageInfo =
     baiClient?.supports('extended-image-info') ?? false;
   const currentProject = useCurrentProjectValue();
-  const autoMountedFolderNames = useAutoMountedFolderNames(currentProjectId);
+  const autoMountedFolderNames =
+    useSuspendedAutoMountedFolderNames(currentProjectId);
   const [, { getBaseVersion, getBaseImage, tagAlias }] =
     useBackendAIImageMetaData();
 

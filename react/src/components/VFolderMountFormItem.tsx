@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../form-engine';
-import { useAutoMountedFolderNames } from '../hooks/useAutoMountedFolderNames';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useSuspendedAutoMountedFolderNames } from '../hooks/useSuspendedAutoMountedFolderNames';
 import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -324,7 +324,7 @@ const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
   'use memo';
   const { t } = useTranslation();
 
-  const autoMountNames = useAutoMountedFolderNames(currentProjectId);
+  const autoMountNames = useSuspendedAutoMountedFolderNames(currentProjectId);
 
   if (autoMountNames.length === 0) return null;
 
