@@ -164,9 +164,9 @@ export function useRenderInputEditors({
         <div
           onPointerDown={(event) => event.stopPropagation()}
           onMouseDown={(event) => event.stopPropagation()}
-          // The popover row sizes its value slot from this box's content, so
-          // cap it: a long picked label must not squeeze the field selector.
-          style={{ maxWidth: '8rem' }}
+          // The popover row sizes its value slot from this box's content, so a
+          // long label must not set the slot: claim a fixed share, then fill it.
+          style={{ width: '8rem', minWidth: '100%', maxWidth: '100%' }}
         >
           {render?.({
             value,
