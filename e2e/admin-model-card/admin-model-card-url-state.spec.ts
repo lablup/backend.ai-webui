@@ -3,6 +3,7 @@
 import { AdminModelCardPage } from '../utils/classes/AdminModelCardPage';
 import {
   deleteForeverAndVerifyFromTrash,
+  getSortableColumnHeader,
   loginAsAdmin,
   moveToTrashAndVerify,
   webuiEndpoint,
@@ -88,22 +89,20 @@ test.describe(
       await page.goto(currentURL);
       await adminModelCardPage.waitForTableLoad();
 
-      // Verify the filter chip is visible (filter persisted from URL)
-      const filterChipPattern = new RegExp(
-        `Name.*${testCardName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`,
+      // Verify the filter chip carries the value that came back from the URL.
+      // PowerSearch names the remove button "Remove <Field>: <operator>" only —
+      // the value is a sibling span, so assert the enclosing token pill.
+      const filterChipRemove = page.getByRole('button', {
+        name: 'Remove Name: contains',
+      });
+      await expect(filterChipRemove).toBeVisible();
+      await expect(filterChipRemove.locator('xpath=..')).toContainText(
+        testCardName,
       );
-      await expect(
-        page
-          .getByRole('status')
-          .filter({ hasText: filterChipPattern })
-          .or(page.locator('.ant-tag').filter({ hasText: filterChipPattern }))
-          .first(),
-      ).toBeVisible();
 
-      // Verify the filtered results are shown
-      await expect(adminModelCardPage.getPaginationInfo()).toContainText(
-        'items',
-      );
+      // Verify the filter is actually applied: only the target row is listed
+      await expect(adminModelCardPage.getRowByName(testCardName)).toBeVisible();
+      await expect(adminModelCardPage.getDataRows()).toHaveCount(1);
     });
 
     // 10.2 Sort order is persisted in the URL query parameters
@@ -117,7 +116,7 @@ test.describe(
       await adminModelCardPage.waitForTableLoad();
 
       // Click the "Name" column to sort ascending
-      await page.getByRole('columnheader', { name: 'Name' }).click();
+      await getSortableColumnHeader(page, 'Name').click();
       await expect(page).toHaveURL(/order=name/);
 
       const sortedURL = page.url();
@@ -150,7 +149,12 @@ test.describe(
         // page of model store cards on the target cluster. Seeding more model
         // cards is an infra task — until then the test skips with an auditable
         // reason.
-        const nextButton = page.getByRole('button', { name: 'right' });
+        //
+        // Astryx `Pagination` names the arrow "Go to next page" (not the antd
+        // icon name "right").
+        const nextButton = page.getByRole('button', {
+          name: 'Go to next page',
+        });
         const isNextEnabled = await nextButton.isEnabled();
         test.skip(
           !isNextEnabled,
@@ -162,10 +166,13 @@ test.describe(
         // Use the URL as the source of truth for the active page
         await expect(page).toHaveURL(/current=2/);
 
-        // Verify page 2 pagination item is active
+        // Verify page 2 is active: Astryx marks the current page button with
+        // `aria-current="page"`.
         await expect(
-          page.getByRole('listitem', { name: '2' }).first(),
-        ).toBeVisible();
+          page
+            .getByRole('navigation', { name: 'Pagination' })
+            .locator('[aria-current="page"]'),
+        ).toHaveText('2');
 
         const page2URL = page.url();
 

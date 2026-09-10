@@ -117,9 +117,13 @@ test.describe(
       await resultRow(page, 'Registries').click();
 
       await expect(page).toHaveURL(/\/admin\/environment\?.*tab=registry/);
-      await expect(page.getByRole('tab', { selected: true })).toContainText(
-        'Registries',
-      );
+      // Astryx `TabList` renders plain buttons in a `nav[aria-label="Tabs"]`,
+      // not ARIA `tab`s — the active one carries `aria-current="true"`.
+      await expect(
+        page
+          .getByRole('navigation', { name: 'Tabs' })
+          .getByRole('button', { name: 'Registries' }),
+      ).toHaveAttribute('aria-current', 'true');
     });
 
     test('user can select a setting hit and arrive on the highlighted item', async ({

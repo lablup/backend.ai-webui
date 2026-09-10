@@ -111,7 +111,12 @@ export class PurgeUsersModal {
    * Get the Delete button
    */
   getDeleteButton(): Locator {
-    return this.modal.getByRole('button', { name: 'Delete' });
+    // The confirm input's clear button is also named "... Permanently Delete",
+    // so match the OK button's label exactly.
+    return this.modal.getByRole('button', {
+      name: 'Permanently Delete',
+      exact: true,
+    });
   }
 
   /**
