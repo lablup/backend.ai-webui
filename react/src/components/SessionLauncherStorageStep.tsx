@@ -6,8 +6,8 @@ import { Form, type FormInstance } from '../form-engine';
 import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { ownerEmailFromOwner } from '../helper/vfolderMounts';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
-import { useAutoMountedFolderNames } from '../hooks/useAutoMountedFolderNames';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import { useSuspendedAutoMountedFolderNames } from '../hooks/useSuspendedAutoMountedFolderNames';
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import type { ProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -53,7 +53,7 @@ const SessionLauncherStorageStep: React.FC<{
     ),
   );
 
-  const autoMountedFolderNames = useAutoMountedFolderNames(project.id);
+  const autoMountedFolderNames = useSuspendedAutoMountedFolderNames(project.id);
   const mountConfigRule = useVFolderMountConfigFormRule({
     autoMountedFolderNames,
   });
