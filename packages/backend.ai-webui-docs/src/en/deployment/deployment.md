@@ -113,7 +113,7 @@ Every revision mounts one model storage folder into each replica. The fields dir
 
 - **Model Folder**: The model storage folder to mount on each replica.
 - **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
-- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Click the field to open a directory picker and choose the subfolder from the selected model folder's directory tree; the path cannot be typed in. The field is unavailable until a **Model Folder** is selected, and the picked path is cleared when you change the model folder. The selected path is shown with a leading `/`. Leave it unset to mount the folder root.
+- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Click the field to open a directory picker and choose the subfolder from the selected model folder's directory tree. Leave it unset to mount the folder root.
 
 <a id="service-configuration"></a>
 
@@ -547,7 +547,7 @@ The **Replica Scheduling History** modal, opened from the Replicas tab, uses the
 
 ### Revisions tab
 
-The **Revisions** card on the deployment detail page has three tabs: **Current Revision**, **Revision History**, and **Audit Log**. The `Add Revision` button at the top of the card is available from all tabs and opens the Add Revision modal (see [Add Revision](#add-revision)). The button is disabled for a deployment that is stopping or no longer active, and for a deployment that belongs to a different project than the currently selected one; while it is disabled, its tooltip names the reason — *"The deployment is stopping or no longer active."* or *"Switch to this deployment's project to add a revision."*
+The **Revisions** card on the deployment detail page has three tabs: **Current Revision**, **Revision History**, and **Audit Log**. The `Add Revision` button at the top of the card is available from all tabs and opens the Add Revision modal (see [Add Revision](#add-revision)).
 
 #### Current revision tab
 
@@ -669,7 +669,7 @@ The rule list provides:
 - The following columns: **Metric Source**, **Condition**, **Cooldown Sec.**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set.
 - Per-row edit and delete icons shown next to the condition summary in each row.
 
-Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. The button is disabled for a deployment that is stopping or no longer active, and for a deployment you do not own; while it is disabled, its tooltip names the reason — *"The deployment is stopping or no longer active."* or *"Only the deployment owner can manage this deployment."*
+Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor.
 
 To modify an existing rule, click the edit icon on its row; the **Edit Auto Scaling Rule** editor opens with the rule's values pre-filled. The editor contains the following fields in order:
 
@@ -875,4 +875,3 @@ Click the **Deploy** button in the drawer header to deploy the model as a servic
 If the selected model has no compatible presets for the current project, the drawer's
 **Deploy** button is disabled and deployment is blocked until a compatible preset is available.
 :::
-
