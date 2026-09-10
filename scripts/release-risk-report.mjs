@@ -897,8 +897,7 @@ function renderMarkdown(report) {
     !undeclared.length &&
     !i18n.length &&
     !risks.destructive.length &&
-    !risks.noDocs.length &&
-    !risks.noDocsSkipped.length
+    !risks.noDocs.length
   ) {
     L.push('No risk signals in this range.');
     L.push('');
