@@ -300,7 +300,12 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
               {/* Must stay byte-identical to AnnouncementBanner's expanded
                   markdown props — a preview that renders differently from the
                   published banner is the whole of FR-3402. */}
-              <Markdown density="compact" headingLevelStart={3} autolink="gfm">
+              <Markdown
+                className="webui-announcement-body"
+                density="compact"
+                headingLevelStart={3}
+                autolink="gfm"
+              >
                 {body}
               </Markdown>
             </div>

@@ -19,6 +19,16 @@
   min-height: var(--webui-header-height);
   padding-inline: var(--webui-header-padding-inline);
   align-content: center;
+  /* Banner centres its icon and actions only while there is no description;
+     keep them centred once the expanded body makes the band taller too. */
+  align-items: center;
+}
+
+/* The info band's tint swallows Blockquote's grey rule and secondary text, so
+   colour a quote like the band's own icon to keep it distinguishable. */
+.webui-announcement-body .astryx-blockquote {
+  border-inline-start-color: var(--color-info);
+  color: var(--color-text-primary);
 }
 
 /* Electron/macOS: the banner is the window's topmost band, so it grows by the
