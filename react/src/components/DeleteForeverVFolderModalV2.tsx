@@ -42,9 +42,8 @@ const DeleteForeverVFolderModalV2: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  // `failed` has existed since 26.4.4, but `successes` did not — selecting it
-  // on an older manager rejects the whole document, so both move behind the
-  // flag and the deprecated count is selected instead.
+  // `successes` is 26.9.0+ and `failed` 26.4.4+; `@since` strips each from
+  // the document below its version, and the flag picks which count to read.
   const supportsPerIdResults = useSuspendedBackendaiClient().supports(
     'bulk-mutation-per-id-results',
   );
@@ -75,7 +74,7 @@ const DeleteForeverVFolderModalV2: React.FC<
       ) {
         bulkPurgeVfoldersV2(input: $input) {
           successes @since(version: "26.9.0")
-          failed @since(version: "26.9.0") {
+          failed @since(version: "26.4.4") {
             vfolderId
             message
           }
