@@ -49,7 +49,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6.1.0
         name: Install pnpm
         with:
           run_install: false
@@ -103,7 +103,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6.1.0
         name: Install pnpm
         with:
           run_install: false
@@ -172,7 +172,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6.1.0
         name: Install pnpm
         with:
           run_install: false
@@ -243,8 +243,17 @@ jobs:
         # package's own resolved playwright drives the container tag; a second
         # playwright elsewhere in the graph must not mis-tag it (FR-3225: a
         # wrong tag silently re-downloads Chromium).
+        #
+        # pnpm 12 writes `pnpm-lock.yaml` as a MULTI-DOCUMENT YAML file: the
+        # first document is the `packageManagerDependencies` block that pins
+        # the pnpm binary itself, the second is the dependency graph. yq
+        # evaluates the expression once per document and separates the results
+        # with `---`, so a bare `// ""` fallback yields "\n---\n<version>" and
+        # corrupts $GITHUB_OUTPUT. `select(... != null)` emits nothing for the
+        # documents that lack the key, leaving exactly one line — and still
+        # leaves `$v` empty (tripping the guard below) if it is truly missing.
         run: |
-          v=$(yq '.importers."packages/backend.ai-webui-docs".devDependencies.playwright.version // ""' pnpm-lock.yaml | cut -d'(' -f1)
+          v=$(yq 'select(.importers."packages/backend.ai-webui-docs".devDependencies.playwright.version != null) | .importers."packages/backend.ai-webui-docs".devDependencies.playwright.version' pnpm-lock.yaml | cut -d'(' -f1)
           [ -n "$v" ] || { echo "::error::could not resolve playwright version from pnpm-lock.yaml"; exit 1; }
           echo "version=$v" >> "$GITHUB_OUTPUT"
 
@@ -284,7 +293,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6.1.0
         name: Install pnpm
         with:
           run_install: false
