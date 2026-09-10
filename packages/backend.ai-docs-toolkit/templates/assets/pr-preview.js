@@ -189,6 +189,162 @@
       }
     }
 
+    // ---------------------------------------------------------- comments
+    // Review notes typed on a change. Kept per page under the same scope as
+    // `viewed`; the navigator copies them all as one PR comment (ref + quote).
+    const COMMENT_PREFIX = `bai-pr-comment:${scope}:`;
+    const commentKey = (l, s) => `${COMMENT_PREFIX}${l}/${s}`;
+    const commentKeys = () => {
+      const keys = [];
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith(COMMENT_PREFIX)) keys.push(k);
+        }
+      } catch {
+        /* private mode */
+      }
+      return keys;
+    };
+    const readComments = (l, s) => {
+      try {
+        const v = JSON.parse(localStorage.getItem(commentKey(l, s)) || "{}");
+        return v && typeof v === "object" && !Array.isArray(v) ? v : {};
+      } catch {
+        return {};
+      }
+    };
+    const writeComments = (l, s, obj) => {
+      try {
+        if (Object.keys(obj).length)
+          localStorage.setItem(commentKey(l, s), JSON.stringify(obj));
+        else localStorage.removeItem(commentKey(l, s));
+      } catch {
+        /* private mode */
+      }
+    };
+    let comments = readComments(lang, slug);
+    const commentOf = (change) =>
+      (comments[change.fingerprint] && comments[change.fingerprint].text) || "";
+    function setComment(change, text) {
+      if (text.trim()) {
+        comments[change.fingerprint] = {
+          id: change.id,
+          text,
+          ref: refText(change),
+          at: Date.now(),
+        };
+      } else {
+        delete comments[change.fingerprint];
+      }
+      writeComments(lang, slug, comments);
+      const m = marks.find((x) => x.change === change);
+      if (m) m.el.classList.toggle("bai-commented", !!text.trim());
+      updateCommentBadge();
+      if (!panel.hidden) renderPanel();
+    }
+    const commentCountOf = (l, s) =>
+      Object.keys(l === lang && s === slug ? comments : readComments(l, s))
+        .length;
+    // Every comment in this preview in reading order — manifest languages,
+    // their pages as listed, then change id. A block the manifest no longer
+    // has (or a page it no longer lists) is stale: still copied, with a note.
+    function allComments() {
+      const langs = manifest.langs || {};
+      const langOrder = Object.keys(langs);
+      const pagesSeen = new Map();
+      for (const k of commentKeys()) {
+        const rel = k.slice(COMMENT_PREFIX.length);
+        const cut = rel.indexOf("/");
+        if (cut > 0)
+          pagesSeen.set(rel, [rel.slice(0, cut), rel.slice(cut + 1)]);
+      }
+      pagesSeen.set(`${lang}/${slug}`, [lang, slug]);
+      const out = [];
+      for (const [l, s] of pagesSeen.values()) {
+        const pages = langs[l] ? langs[l].pages : [];
+        const pi = pages.findIndex((p) => p.slug === s);
+        const info = pi >= 0 ? pages[pi] : null;
+        const entries =
+          l === lang && s === slug ? comments : readComments(l, s);
+        for (const [fp, e] of Object.entries(entries)) {
+          if (!e || typeof e.text !== "string" || !e.text.trim()) continue;
+          out.push({
+            lang: l,
+            slug: s,
+            id: Number(e.id) || 0,
+            ref: e.ref || `[docs-preview] ${l}/${s}`,
+            text: e.text,
+            stale:
+              !info ||
+              (Array.isArray(info.fingerprints) &&
+                !info.fingerprints.includes(fp)),
+            li:
+              langOrder.indexOf(l) < 0
+                ? langOrder.length
+                : langOrder.indexOf(l),
+            pi: pi < 0 ? pages.length : pi,
+          });
+        }
+      }
+      return out.sort(
+        (a, b) =>
+          a.li - b.li ||
+          a.lang.localeCompare(b.lang) ||
+          a.pi - b.pi ||
+          a.slug.localeCompare(b.slug) ||
+          a.id - b.id,
+      );
+    }
+    const quote = (text) =>
+      text
+        .replace(/\s+$/, "")
+        .split("\n")
+        .map((line) => `> ${line}`)
+        .join("\n");
+    const STALE_NOTE =
+      "- note: the block changed after this comment was written";
+    const commentsText = () =>
+      allComments()
+        .map(
+          (c) =>
+            `${c.ref}${c.stale ? `\n${STALE_NOTE}` : ""}\n${quote(c.text)}`,
+        )
+        .join("\n\n");
+    const refWithComment = (change) => {
+      const text = commentOf(change);
+      return text.trim()
+        ? `${refText(change)}\n${quote(text)}`
+        : refText(change);
+    };
+    function clearComments() {
+      if (!allComments().length) return;
+      if (!window.confirm("Remove every comment saved for this preview?"))
+        return;
+      try {
+        commentKeys().forEach((k) => localStorage.removeItem(k));
+      } catch {
+        /* private mode */
+      }
+      comments = {};
+      for (const m of marks) m.el.classList.remove("bai-commented");
+      const ta = $("[data-comment]", pop);
+      if (ta) ta.value = "";
+      updateCommentBadge();
+      renderPanel();
+    }
+    // Another tab of the same preview may have edited the notes.
+    window.addEventListener("storage", (e) => {
+      if (!e.key || !e.key.startsWith(COMMENT_PREFIX)) return;
+      if (e.key === commentKey(lang, slug)) {
+        comments = readComments(lang, slug);
+        for (const m of marks)
+          m.el.classList.toggle("bai-commented", !!commentOf(m.change));
+      }
+      updateCommentBadge();
+      if (!panel.hidden) renderPanel();
+    });
+
     // ---------------------------------------------------------- marks
     const blockEl = (idx) =>
       idx == null || idx < 0 ? null : $(`[data-bai-block="${idx}"]`);
@@ -373,6 +529,7 @@
           node.dataset.baiType = change.type;
         }
         node.classList.toggle("bai-viewed", isViewed(change));
+        node.classList.toggle("bai-commented", !!commentOf(change));
         marks.push({ change, el: node });
       }
       marks.sort((a, b) =>
@@ -478,10 +635,12 @@
         `<span class="bai-popover__type bai-popover__type--${type}">${type}</span>` +
         `<span class="bai-popover__kind">${kind}${note}</span>` +
         `<span class="bai-popover__spacer"></span>${modeHtml}` +
-        `<button class="bai-popover__btn" data-copy title="Copy a reference to this change (file:line, section, link, old/new)">Copy ref</button>` +
+        `<button class="bai-popover__btn" data-copy title="Copy a reference to this change (file:line, section, link, old/new) with your comment">Copy ref</button>` +
         `<label class="bai-popover__viewed" title="Mark as viewed (v)"><input type="checkbox" data-viewed ${isViewed(change) ? "checked" : ""}/> Viewed</label>` +
-        `</div><div class="bai-popover__body">${body}</div>` +
-        `<div class="bai-popover__hint"><span class="bai-popover__where">#${change.id} · ${where}</span>${change.blockKind === "image" ? "Click an image to enlarge · " : ""}Click the block to pin · <kbd>n</kbd> / <kbd>p</kbd> next / previous change · <kbd>c</kbd> copy ref · <kbd>v</kbd> viewed · Esc to close</div>`;
+        `</div>` +
+        `<div class="bai-popover__comment"><textarea data-comment rows="1" placeholder="Comment on this change — collected for one PR comment (m)" aria-label="Review comment for this change">${esc(commentOf(change))}</textarea></div>` +
+        `<div class="bai-popover__body">${body}</div>` +
+        `<div class="bai-popover__hint"><span class="bai-popover__where">#${change.id} · ${where}</span>${change.blockKind === "image" ? "Click an image to enlarge · " : ""}Click the block to pin · <kbd>n</kbd> / <kbd>p</kbd> next / previous change · <kbd>c</kbd> copy ref · <kbd>m</kbd> comment · <kbd>v</kbd> viewed · Esc to close</div>`;
       pop.querySelectorAll("[data-mode]").forEach((b) =>
         b.addEventListener("click", () => {
           setMode(b.dataset.mode);
@@ -494,11 +653,36 @@
           img.addEventListener("click", () => lightbox(change)),
         );
       $("[data-copy]", pop).addEventListener("click", (e) =>
-        copy(refText(change), e.currentTarget),
+        copy(refWithComment(change), e.currentTarget),
       );
       $("[data-viewed]", pop).addEventListener("change", (e) =>
         setViewed(change, e.target.checked),
       );
+      const ta = $("[data-comment]", pop);
+      ta.addEventListener("focus", () => {
+        // Typing has to outlive the hover: pin the popover on its block.
+        const m = marks.find((x) => x.change === change);
+        if (m) pinned = m.el;
+      });
+      ta.addEventListener("input", () => {
+        setComment(change, ta.value);
+        fitComment();
+      });
+      ta.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          e.stopPropagation();
+          ta.blur();
+        }
+      });
+      fitComment();
+    }
+
+    // Grow the note box with its text; the popover body scrolls, not the box.
+    function fitComment() {
+      const ta = $("[data-comment]", pop);
+      if (!ta) return;
+      ta.style.height = "auto";
+      ta.style.height = `${Math.min(ta.scrollHeight, 160)}px`;
     }
 
     function position(target) {
@@ -520,6 +704,7 @@
       updatePos();
       render(change);
       pop.hidden = false;
+      fitComment();
       position(target);
     }
     function hide() {
@@ -592,13 +777,22 @@
       `<div class="bai-nav__panel" hidden></div>` +
       `<div class="bai-nav__badge"><strong>${summary.totals.pages} pages · ${summary.totals.changes} changes</strong>` +
       `<span class="bai-nav__pos"></span>` +
+      `<button data-nav="comments" class="bai-nav__comments" title="Copy every comment in this preview as one PR comment" hidden></button>` +
       `<button data-nav="prev" title="Previous change (p) — wraps to the previous changed page">‹</button>` +
       `<button data-nav="next" title="Next change (n) — wraps to the next changed page">›</button>` +
       `<button data-nav="panel" title="Changed pages">☰</button></div>`;
     document.body.appendChild(nav);
     const panel = $(".bai-nav__panel", nav);
     const posEl = $(".bai-nav__pos", nav);
+    const commentsBtn = $('[data-nav="comments"]', nav);
     const pageIdx = summary.pages.findIndex((p) => p.slug === slug);
+
+    function updateCommentBadge() {
+      const n = allComments().length;
+      commentsBtn.hidden = n === 0;
+      commentsBtn.textContent = `✎ Copy ${n} comment${n === 1 ? "" : "s"}`;
+    }
+    updateCommentBadge();
 
     function renderPanel() {
       const rows = summary.pages
@@ -614,7 +808,11 @@
             p.status === "modified"
               ? `<span class="bai-nav__count${v === p.counts.total ? " bai-nav__count--done" : ""}" title="viewed / total">${v}/${p.counts.total}</span>`
               : "";
-          const inner = `${tag}<span class="bai-nav__title">${esc(p.title)}</span>${count}`;
+          const k = commentCountOf(lang, p.slug);
+          const notes = k
+            ? `<span class="bai-nav__count bai-nav__count--note" title="comments">✎ ${k}</span>`
+            : "";
+          const inner = `${tag}<span class="bai-nav__title">${esc(p.title)}</span>${count}${notes}`;
           // A deleted page has no copy in this build, so it is not a link.
           if (p.status === "deleted")
             return `<div class="bai-nav__row bai-nav__row--deleted">${inner}</div>`;
@@ -629,15 +827,24 @@
           return `<a class="${l === lang ? "bai-nav__lang--current" : ""}" href="../${l}/${target}.html">${l} · ${s.totals.changes}</a>`;
         })
         .join("");
+      const all = allComments();
+      const staleComments = all.filter((c) => c.stale).length;
       const actions =
         `<div class="bai-nav__actions">` +
         (marks.length
           ? `<button data-act="copy-page">Copy page summary</button><button data-act="all-viewed">Mark all viewed</button><button data-act="reset-viewed">Reset</button>`
           : "") +
+        (all.length
+          ? `<button data-act="copy-comments">Copy ${all.length} comment${all.length === 1 ? "" : "s"}</button><button data-act="clear-comments">Clear comments</button>`
+          : "") +
         `<button data-act="marks">${marksOn ? "Hide marks" : "Show marks"}</button></div>`;
-      const stale = staleViewed
-        ? `<div class="bai-nav__stale">${staleViewed} change${staleViewed > 1 ? "s" : ""} you had viewed ${staleViewed > 1 ? "have" : "has"} changed since — shown as unviewed again</div>`
-        : "";
+      const stale =
+        (staleViewed
+          ? `<div class="bai-nav__stale">${staleViewed} change${staleViewed > 1 ? "s" : ""} you had viewed ${staleViewed > 1 ? "have" : "has"} changed since — shown as unviewed again</div>`
+          : "") +
+        (staleComments
+          ? `<div class="bai-nav__stale">${staleComments} comment${staleComments > 1 ? "s" : ""} refer${staleComments > 1 ? "" : "s"} to a block that changed since — copied with a note</div>`
+          : "");
       panel.innerHTML =
         `<div class="bai-nav__section">Changed pages${manifest.label ? ` — ${esc(manifest.label)}` : ""}</div>` +
         `${rows || '<div class="bai-nav__row"><em>No page changed</em></div>'}${stale}${actions}` +
@@ -647,6 +854,9 @@
           const act = b.dataset.act;
           if (act === "copy-page")
             return copy(pageSummaryText(), e.currentTarget);
+          if (act === "copy-comments")
+            return copy(commentsText(), e.currentTarget);
+          if (act === "clear-comments") return clearComments();
           if (act === "marks") {
             marksOn = !marksOn;
             document.body.classList.toggle("bai-marks-off", !marksOn);
@@ -740,6 +950,7 @@
       if (!b) return;
       if (b.dataset.nav === "prev") step(-1);
       else if (b.dataset.nav === "next") step(1);
+      else if (b.dataset.nav === "comments") copy(commentsText(), b);
       else {
         renderPanel();
         panel.hidden = !panel.hidden;
@@ -815,8 +1026,20 @@
         const c = activeChange();
         if (!c) return;
         e.preventDefault();
-        copy(refText(c), pop.hidden ? null : $("[data-copy]", pop));
+        copy(refWithComment(c), pop.hidden ? null : $("[data-copy]", pop));
         showToast(`Copied ref #${c.id}`);
+      } else if (code === "KeyM") {
+        const c = activeChange();
+        const m = c && marks.find((x) => x.change === c);
+        if (!m || !marksOn) return;
+        e.preventDefault();
+        pinned = m.el;
+        show(m.el);
+        const ta = $("[data-comment]", pop);
+        if (ta) {
+          ta.focus();
+          ta.setSelectionRange(ta.value.length, ta.value.length);
+        }
       } else if (code === "Escape") {
         pinned = null;
         pop.hidden = true;
