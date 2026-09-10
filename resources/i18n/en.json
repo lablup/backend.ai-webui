@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime is required.",
     "RuntimeTooltip": "The inference runtime (e.g., vLLM, SGLang) this preset targets. Selecting one reveals its configurable runtime parameters, whose values are saved with the preset and applied to deployments created from it.",
-    "RuntimeVariantId": "Runtime ID",
     "SectionAdvanced": "Advanced",
     "SectionBasicInfo": "Basic Info",
     "SectionCluster": "Cluster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Create Parameter",
     "Name": "Name",
     "PresetDeleted": "Runtime parameter has been deleted.",
-    "RuntimeVariantId": "Runtime Variant ID",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Runtime Parameter",
     "TabTitle": "Runtime Parameters"
   },
@@ -1249,7 +1248,6 @@
       "EndpointUrl": "Endpoint URL",
       "Name": "Name",
       "OpenToPublic": "Public",
-      "ProjectId": "Project ID",
       "ResourceGroup": "Resource Group",
       "Status": "Status",
       "Tags": "Tags"
@@ -2781,7 +2779,7 @@
     "OpenToPublic": "Open app to public",
     "OpenToPublicDesc": "Enabling this option allows application access for all users within the network.<br /><br /> For access management, enter specific IP addresses in the 'Allowed IP' field. <br /><br /> Leaving this field empty will permit access from all IP addresses.<br /> <br /> Consider setting IP restrictions when necessary for security management.",
     "Others": "Others",
-    "OwnerUUID": "Owner UUID",
+    "Owner": "Owner",
     "PanelSettings": "Panel Settings",
     "PendingPosition": "Queue Position",
     "Phase": "Phase",

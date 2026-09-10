@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "El runtime es obligatorio.",
     "RuntimeTooltip": "El runtime de inferencia (p. ej., vLLM, SGLang) al que se dirige este preset. Al seleccionar uno se muestran sus parámetros de runtime configurables, cuyos valores se guardan con el preset y se aplican a los despliegues creados a partir de él.",
-    "RuntimeVariantId": "ID de Runtime",
     "SectionAdvanced": "Avanzado",
     "SectionBasicInfo": "Información Básica",
     "SectionCluster": "Clúster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Crear Parámetro",
     "Name": "Nombre",
     "PresetDeleted": "El parámetro de runtime ha sido eliminado.",
-    "RuntimeVariantId": "ID de Runtime",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Parámetro de Tiempo de Ejecución",
     "TabTitle": "Parámetros de Tiempo de Ejecución"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "URL del endpoint",
       "Name": "Nombre",
       "OpenToPublic": "Público",
-      "ProjectId": "ID del proyecto",
       "ResourceGroup": "Grupo de recursos",
       "Status": "Estado",
       "Tags": "Etiquetas"
@@ -2794,7 +2792,7 @@
     "OpenToPublic": "Aplicación abierta al público",
     "OpenToPublicDesc": "Habilitar esta opción permite el acceso a la aplicación para todos los usuarios dentro de la red.<br /><br /> \nPara la gestión de acceso, ingrese direcciones IP específicas en el campo 'IP permitido'.<br /><br /> \nDejar este campo vacío permitirá el acceso desde todas las direcciones IP.<br /><br /> \nConsidere establecer restricciones IP cuando sea necesario para la gestión de seguridad.",
     "Others": "Otros",
-    "OwnerUUID": "UUID del propietario",
+    "Owner": "Propietario",
     "PanelSettings": "Configuración del panel",
     "PendingPosition": "Posición de cola",
     "Phase": "Fase",

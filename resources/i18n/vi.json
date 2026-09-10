@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime là bắt buộc.",
     "RuntimeTooltip": "Runtime suy luận (vd. vLLM, SGLang) mà cài đặt sẵn này hướng tới. Chọn một runtime sẽ hiển thị các tham số runtime có thể cấu hình, các giá trị này được lưu cùng cài đặt sẵn và áp dụng cho các triển khai được tạo từ nó.",
-    "RuntimeVariantId": "ID runtime",
     "SectionAdvanced": "Nâng cao",
     "SectionBasicInfo": "Thông tin cơ bản",
     "SectionCluster": "Cụm",
@@ -202,7 +201,7 @@
     "CreatePreset": "Tạo tham số",
     "Name": "Tên",
     "PresetDeleted": "Tham số runtime đã được xóa.",
-    "RuntimeVariantId": "ID biến thể thời gian chạy",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Tham Số Runtime",
     "TabTitle": "Tham Số Runtime"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "URL điểm cuối",
       "Name": "Tên",
       "OpenToPublic": "Công khai",
-      "ProjectId": "ID dự án",
       "ResourceGroup": "Nhóm tài nguyên",
       "Status": "Trạng thái",
       "Tags": "Thẻ"
@@ -2796,7 +2794,7 @@
     "OpenToPublic": "Mở ứng dụng công khai",
     "OpenToPublicDesc": "Kích hoạt tùy chọn này cho phép truy cập ứng dụng cho tất cả người dùng trong mạng.<br /><br /> \nĐể quản lý truy cập, hãy nhập các địa chỉ IP cụ thể trong trường 'IP được phép'.<br /><br /> \nĐể lại trường này trống sẽ cho phép truy cập từ tất cả các địa chỉ IP.<br /><br /> \nXem xét thiết lập các hạn chế IP khi cần thiết để quản lý bảo mật.",
     "Others": "Khác",
-    "OwnerUUID": "UUID chủ sở hữu",
+    "Owner": "Chủ sở hữu",
     "PanelSettings": "Cài đặt bảng điều khiển",
     "PendingPosition": "Vị trí hàng đợi",
     "Phase": "Giai đoạn",

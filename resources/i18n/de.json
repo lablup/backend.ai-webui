@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime ist erforderlich.",
     "RuntimeTooltip": "Die Inferenz-Runtime (z. B. vLLM, SGLang), auf die diese Voreinstellung abzielt. Durch die Auswahl einer Runtime werden ihre konfigurierbaren Laufzeitparameter angezeigt, deren Werte mit der Voreinstellung gespeichert und auf Bereitstellungen angewendet werden, die daraus erstellt wurden.",
-    "RuntimeVariantId": "Runtime-ID",
     "SectionAdvanced": "Erweitert",
     "SectionBasicInfo": "Grundlegende Informationen",
     "SectionCluster": "Cluster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Parameter erstellen",
     "Name": "Name",
     "PresetDeleted": "Der Laufzeitparameter wurde gelöscht.",
-    "RuntimeVariantId": "Laufzeitvarianten-ID",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Laufzeitparameter",
     "TabTitle": "Laufzeitparameter"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "Endpunkt-URL",
       "Name": "Name",
       "OpenToPublic": "Öffentlich",
-      "ProjectId": "Projekt-ID",
       "ResourceGroup": "Ressourcengruppe",
       "Status": "Status",
       "Tags": "Tags"
@@ -2796,7 +2794,7 @@
     "OpenToPublic": "App für die Öffentlichkeit öffnen",
     "OpenToPublicDesc": "Durch die Aktivierung dieser Option ermöglicht der Anwendungszugriff für alle Benutzer im Netzwerk.<br /><br /> \nGeben Sie für die Zugriffsverwaltung bestimmte IP -Adressen in das Feld \"Zulässige IP\" ein.<br /><br /> \nWenn Sie dieses Feld leer verlassen, können Sie den Zugriff aus allen IP -Adressen ermöglichen.<br /><br /> \nErwägen Sie, IP -Beschränkungen bei Bedarf für das Sicherheitsmanagement festzulegen.",
     "Others": "Andere",
-    "OwnerUUID": "Eigentümer-UUID",
+    "Owner": "Eigentümer",
     "PanelSettings": "Paneleinstellungen",
     "PendingPosition": "Warteschlangenposition",
     "Phase": "Phase",

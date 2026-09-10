@@ -20,6 +20,7 @@ import DeploymentSettingModal from './DeploymentSettingModal';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAIAdminProjectSelect,
   BAIDeleteConfirmModal,
   BAIDeploymentTagChips,
   BAIFlex,
@@ -214,10 +215,24 @@ const AdminDeployment = ({
     },
     supportsExtendedFilter && {
       key: 'projectId',
-      propertyLabel: t('deployment.filter.ProjectId'),
+      propertyLabel: t('deployment.Project'),
       type: 'uuid' as const,
       fixedOperator: 'equals' as const,
       rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <BAIAdminProjectSelect
+          label={t('deployment.Project')}
+          isLabelHidden
+          value={value}
+          isDisabled={isDisabled}
+          onChange={(next, option) =>
+            onAddCondition(
+              next as string | undefined,
+              Array.isArray(option) ? option[0]?.label : option?.label,
+            )
+          }
+        />
+      ),
     },
     supportsExtendedFilter && {
       key: 'createdAt',

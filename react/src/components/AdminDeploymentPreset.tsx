@@ -22,6 +22,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIRuntimeVariantSelect,
   type BAITableSettings,
   toLocalId,
   useBAILogger,
@@ -147,9 +148,20 @@ const AdminDeploymentPreset = ({
               },
               {
                 key: 'runtimeVariantId',
-                propertyLabel: t('adminDeploymentPreset.RuntimeVariantId'),
+                propertyLabel: t('adminDeploymentPreset.Runtime'),
                 type: 'uuid',
                 fixedOperator: 'equals',
+                renderInput: ({ onAddCondition, value, isDisabled }) => (
+                  <BAIRuntimeVariantSelect
+                    label={t('adminDeploymentPreset.Runtime')}
+                    isLabelHidden
+                    value={value}
+                    isDisabled={isDisabled}
+                    onChange={(next, option) =>
+                      onAddCondition(next, option?.label)
+                    }
+                  />
+                ),
               },
             ]}
             value={filter as DeploymentRevisionPresetFilter | undefined}

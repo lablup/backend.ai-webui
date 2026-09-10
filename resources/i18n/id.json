@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime wajib diisi.",
     "RuntimeTooltip": "Runtime inferensi (mis. vLLM, SGLang) yang menjadi target preset ini. Memilih salah satunya akan menampilkan parameter runtime yang dapat dikonfigurasi, yang nilainya disimpan bersama preset dan diterapkan pada deployment yang dibuat darinya.",
-    "RuntimeVariantId": "ID Runtime",
     "SectionAdvanced": "Lanjutan",
     "SectionBasicInfo": "Info Dasar",
     "SectionCluster": "Kluster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Buat Parameter",
     "Name": "Nama",
     "PresetDeleted": "Parameter runtime telah dihapus.",
-    "RuntimeVariantId": "ID Varian Runtime",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Parameter Runtime",
     "TabTitle": "Parameter Runtime"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "URL Titik Akhir",
       "Name": "Nama",
       "OpenToPublic": "Publik",
-      "ProjectId": "ID proyek",
       "ResourceGroup": "Grup Sumber Daya",
       "Status": "Status",
       "Tags": "Tag"
@@ -2797,7 +2795,7 @@
     "OpenToPublic": "Buka aplikasi untuk publik",
     "OpenToPublicDesc": "Mengaktifkan opsi ini memungkinkan akses aplikasi untuk semua pengguna dalam jaringan.<br /><br /> \nUntuk manajemen akses, masukkan alamat IP tertentu di bidang 'IP yang diizinkan'.<br /><br /> \nMembiarkan bidang ini kosong akan memungkinkan akses dari semua alamat IP.<br /><br /> \nPertimbangkan untuk menetapkan pembatasan IP bila diperlukan untuk manajemen keamanan.",
     "Others": "Lainnya",
-    "OwnerUUID": "UUID Pemilik",
+    "Owner": "Pemilik",
     "PanelSettings": "Pengaturan Panel",
     "PendingPosition": "Posisi antrian",
     "Phase": "Tahap",

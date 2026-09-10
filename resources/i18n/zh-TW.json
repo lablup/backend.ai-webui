@@ -55,7 +55,6 @@
     "Runtime": "執行環境",
     "RuntimeRequired": "執行環境為必填項。",
     "RuntimeTooltip": "此預設所針對的推理執行環境（如 vLLM、SGLang）。選擇後將顯示其可配置的執行時期參數，這些參數值將與預設一起儲存，並套用至從該預設建立的部署。",
-    "RuntimeVariantId": "執行環境 ID",
     "SectionAdvanced": "進階",
     "SectionBasicInfo": "基本資訊",
     "SectionCluster": "叢集",
@@ -202,7 +201,7 @@
     "CreatePreset": "建立參數",
     "Name": "名稱",
     "PresetDeleted": "Runtime 參數已刪除。",
-    "RuntimeVariantId": "執行環境變體 ID",
+    "Runtime": "執行環境",
     "RuntimeVariantPreset": "Runtime 參數",
     "TabTitle": "Runtime 參數"
   },
@@ -1263,7 +1262,6 @@
       "EndpointUrl": "端點 URL",
       "Name": "名稱",
       "OpenToPublic": "公開",
-      "ProjectId": "專案 ID",
       "ResourceGroup": "資源群組",
       "Status": "狀態",
       "Tags": "標籤"
@@ -2798,7 +2796,7 @@
     "OpenToPublic": "向公眾開放應用",
     "OpenToPublicDesc": "啟用此選項允許網絡中的所有用戶訪問應用程序。<br /><br />\n對於訪問管理，請在“允許IP”字段中輸入特定的IP地址。<br /><br />\n將此字段留為空，將允許從所有IP地址訪問。<br /><br />\n考慮安全管理時，請考慮設置IP限制。",
     "Others": "其他",
-    "OwnerUUID": "擁有者UUID",
+    "Owner": "擁有者",
     "PanelSettings": "面板設置",
     "PendingPosition": "隊列位置",
     "Phase": "階段",

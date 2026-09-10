@@ -9,6 +9,7 @@ import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import AutoUpdateFetchKeyButton, {
   LONG_AUTO_UPDATE_DELAY_OPTIONS,
 } from './AutoUpdateFetchKeyButton';
+import PrometheusCategorySelect from './PrometheusCategorySelect';
 import PrometheusQueryPresetEditorModal from './PrometheusQueryPresetEditorModal';
 import PrometheusQueryPresetTable, {
   PrometheusQueryPresetNodeInList,
@@ -18,13 +19,14 @@ import {
   BAIDeleteConfirmModal,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAISelect,
   BAIUnmountAfterClose,
   type BAITableSettings,
   toLocalId,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
-import { useDeferredValue, useState } from 'react';
+import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -140,8 +142,33 @@ const AdminPrometheusPreset = ({
             },
             {
               key: 'categoryId',
-              propertyLabel: t('prometheusQueryPreset.CategoryId'),
+              propertyLabel: t('prometheusQueryPreset.Category'),
               type: 'uuid',
+              renderInput: ({ onAddCondition, value, isDisabled }) => (
+                // The category select owns its query and suspends on first
+                // load, so the boundary lives here rather than on the page.
+                <Suspense
+                  fallback={
+                    <BAISelect
+                      loading
+                      label={t('prometheusQueryPreset.Category')}
+                      isLabelHidden
+                      style={{ width: '100%' }}
+                    />
+                  }
+                >
+                  <PrometheusCategorySelect
+                    label={t('prometheusQueryPreset.Category')}
+                    isLabelHidden
+                    value={value}
+                    disabled={isDisabled}
+                    style={{ width: '100%' }}
+                    onChange={(next, option) =>
+                      onAddCondition(next ?? undefined, option?.label)
+                    }
+                  />
+                </Suspense>
+              ),
             },
           ]}
         />

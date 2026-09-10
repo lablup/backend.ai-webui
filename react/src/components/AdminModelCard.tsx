@@ -26,6 +26,7 @@ import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIAdminProjectSelect,
   BAIButton,
   BAIColumnType,
   BAIDeleteConfirmModal,
@@ -339,6 +340,25 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   message: t('project.ProjectIDFilterRuleMessage'),
                   validate: (value) => isValidUUID(value),
                 },
+                renderInput: ({ onAddCondition, value, isDisabled }) => (
+                  <BAIAdminProjectSelect
+                    label={t('adminModelCard.Project')}
+                    isLabelHidden
+                    // A model card belongs to a MODEL_STORE project (see the
+                    // `groups(type: ["MODEL_STORE"])` query above).
+                    filter={{ type: { equals: 'MODEL_STORE' } }}
+                    value={value}
+                    isDisabled={isDisabled}
+                    onChange={(next, option) =>
+                      onAddCondition(
+                        next as string | undefined,
+                        Array.isArray(option)
+                          ? option[0]?.label
+                          : option?.label,
+                      )
+                    }
+                  />
+                ),
               },
               {
                 key: 'storageHost',

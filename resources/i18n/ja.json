@@ -55,7 +55,6 @@
     "Runtime": "ランタイム",
     "RuntimeRequired": "ランタイムは必須です。",
     "RuntimeTooltip": "このプリセットが対象とする推論ランタイム（例：vLLM、SGLang）です。選択すると、設定可能なランタイムパラメータが表示され、その値はプリセットとともに保存され、このプリセットから作成されたデプロイメントに適用されます。",
-    "RuntimeVariantId": "ランタイムID",
     "SectionAdvanced": "詳細設定",
     "SectionBasicInfo": "基本情報",
     "SectionCluster": "クラスター",
@@ -202,7 +201,7 @@
     "CreatePreset": "パラメータを作成",
     "Name": "名前",
     "PresetDeleted": "ランタイムパラメータが削除されました。",
-    "RuntimeVariantId": "ランタイムバリアント ID",
+    "Runtime": "ランタイム",
     "RuntimeVariantPreset": "ランタイムパラメータ",
     "TabTitle": "ランタイムパラメータ"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "エンドポイントURL",
       "Name": "名前",
       "OpenToPublic": "公開",
-      "ProjectId": "プロジェクトID",
       "ResourceGroup": "リソースグループ",
       "Status": "状態",
       "Tags": "タグ"
@@ -2796,7 +2794,7 @@
     "OpenToPublic": "アプリを公開する",
     "OpenToPublicDesc": "このオプションを有効にすることで、ネットワーク内のすべてのユーザーにアプリケーションにアクセスできます。<br /><br />\nアクセス管理の場合、「許可されたIP」フィールドに特定のIPアドレスを入力します。<br /><br />\nこのフィールドを空にすると、すべてのIPアドレスからのアクセスが可能になります。<br /><br />\nセキュリティ管理に必要な場合は、IP制限を設定することを検討してください。",
     "Others": "その他",
-    "OwnerUUID": "オーナーUUID",
+    "Owner": "オーナー",
     "PanelSettings": "パネル設定",
     "PendingPosition": "キュー位置",
     "Phase": "フェーズ",

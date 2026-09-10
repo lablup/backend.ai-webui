@@ -55,7 +55,6 @@
     "Runtime": "Çalışma Zamanı",
     "RuntimeRequired": "Çalışma zamanı zorunludur.",
     "RuntimeTooltip": "Bu ön ayarın hedeflediği çıkarım çalışma zamanı (örn. vLLM, SGLang). Bir tane seçildiğinde yapılandırılabilir çalışma zamanı parametreleri görünür hale gelir; bu parametrelerin değerleri ön ayarla birlikte kaydedilir ve buradan oluşturulan dağıtımlara uygulanır.",
-    "RuntimeVariantId": "Çalışma Zamanı ID",
     "SectionAdvanced": "Gelişmiş",
     "SectionBasicInfo": "Temel Bilgiler",
     "SectionCluster": "Küme",
@@ -202,7 +201,7 @@
     "CreatePreset": "Parametre Oluştur",
     "Name": "Ad",
     "PresetDeleted": "Runtime parametresi silindi.",
-    "RuntimeVariantId": "Çalışma Zamanı Varyantı ID",
+    "Runtime": "Çalışma Zamanı",
     "RuntimeVariantPreset": "Runtime Parametresi",
     "TabTitle": "Runtime Parametreleri"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "Uç Nokta URL'si",
       "Name": "Ad",
       "OpenToPublic": "Herkese Açık",
-      "ProjectId": "Proje kimliği",
       "ResourceGroup": "Kaynak Grubu",
       "Status": "Durum",
       "Tags": "Etiketler"
@@ -2794,7 +2792,7 @@
     "OpenToPublic": "Uygulamayı herkese açık olarak aç",
     "OpenToPublicDesc": "Bu seçeneğin etkinleştirilmesi, ağ içindeki tüm kullanıcılar için uygulama erişimine izin verir.<br /><br /> \nErişim yönetimi için 'izin verilen IP' alanına belirli IP adreslerini girin.<br /><br /> \nBu alanı boş bırakmak tüm IP adreslerinden erişime izin verecektir.<br /><br /> \nGüvenlik yönetimi için gerektiğinde IP kısıtlamaları ayarlamayı düşünün.",
     "Others": "Diğerleri",
-    "OwnerUUID": "Sahip UUID",
+    "Owner": "Sahip",
     "PanelSettings": "Panel Ayarları",
     "PendingPosition": "Kuyruk konumu",
     "Phase": "Aşama",

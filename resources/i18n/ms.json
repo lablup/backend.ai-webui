@@ -55,7 +55,6 @@
     "Runtime": "Runtime",
     "RuntimeRequired": "Runtime diperlukan.",
     "RuntimeTooltip": "Runtime inferens (cth. vLLM, SGLang) yang disasarkan oleh praset ini. Memilihnya mendedahkan parameter runtime yang boleh dikonfigurasi, yang nilainya disimpan bersama praset dan digunakan pada deployment yang dicipta daripadanya.",
-    "RuntimeVariantId": "ID Runtime",
     "SectionAdvanced": "Lanjutan",
     "SectionBasicInfo": "Maklumat Asas",
     "SectionCluster": "Kluster",
@@ -202,7 +201,7 @@
     "CreatePreset": "Cipta Parameter",
     "Name": "Nama",
     "PresetDeleted": "Parameter runtime telah dipadam.",
-    "RuntimeVariantId": "ID Varian Masa Jalan",
+    "Runtime": "Runtime",
     "RuntimeVariantPreset": "Parameter Runtime",
     "TabTitle": "Parameter Runtime"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "URL Titik Akhir",
       "Name": "Nama",
       "OpenToPublic": "Awam",
-      "ProjectId": "ID projek",
       "ResourceGroup": "Kumpulan Sumber",
       "Status": "Status",
       "Tags": "Tag"
@@ -2794,7 +2792,7 @@
     "OpenToPublic": "Buka aplikasi untuk umum",
     "OpenToPublicDesc": "Membolehkan pilihan ini membolehkan akses aplikasi untuk semua pengguna dalam rangkaian.<br /><br /> \nUntuk pengurusan akses, masukkan alamat IP tertentu dalam medan 'IP yang dibenarkan'.<br /><br /> \nMeninggalkan medan ini kosong akan membenarkan akses dari semua alamat IP.<br /><br /> \nPertimbangkan menetapkan sekatan IP apabila perlu untuk pengurusan keselamatan.",
     "Others": "Yang lain",
-    "OwnerUUID": "UUID Pemilik",
+    "Owner": "Pemilik",
     "PanelSettings": "Tetapan panel",
     "PendingPosition": "Kedudukan giliran",
     "Phase": "Fasa",

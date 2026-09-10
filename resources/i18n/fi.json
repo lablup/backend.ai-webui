@@ -55,7 +55,6 @@
     "Runtime": "Suoritusaika",
     "RuntimeRequired": "Suoritusaika on pakollinen.",
     "RuntimeTooltip": "Päättelysuoritusaika (esim. vLLM, SGLang), johon tämä esiasetus kohdistuu. Valitsemalla suoritusajan paljastuvat sen määritettävissä olevat suoritusaikaparametrit, joiden arvot tallennetaan esiasetuksen mukana ja sovelletaan siitä luotuihin käyttöönottoihin.",
-    "RuntimeVariantId": "Suoritusajan tunnus",
     "SectionAdvanced": "Lisäasetukset",
     "SectionBasicInfo": "Perustiedot",
     "SectionCluster": "Klusteri",
@@ -202,7 +201,7 @@
     "CreatePreset": "Luo parametri",
     "Name": "Nimi",
     "PresetDeleted": "Suoritusajan parametri on poistettu.",
-    "RuntimeVariantId": "Suoritusaikamuunnoksen tunnus",
+    "Runtime": "Suoritusaika",
     "RuntimeVariantPreset": "Suoritusajan parametri",
     "TabTitle": "Suoritusajan Parametrit"
   },
@@ -1262,7 +1261,6 @@
       "EndpointUrl": "Päätepisteen URL",
       "Name": "Nimi",
       "OpenToPublic": "Julkinen",
-      "ProjectId": "Projektin tunnus",
       "ResourceGroup": "Resurssiryhmä",
       "Status": "Tila",
       "Tags": "Tunnisteet"
@@ -2794,7 +2792,7 @@
     "OpenToPublic": "Sovelluksen avaaminen yleisölle",
     "OpenToPublicDesc": "Tämän vaihtoehdon käyttöönotto mahdollistaa kaikille verkon käyttäjille sovellusten pääsyn.<br /><br /> \nSyötä pääsyn hallinta tietyt IP -osoitteet 'sallittu IP' -kenttään.<br /><br /> \nTämän kentän jättäminen tyhjiksi sallii pääsyn kaikista IP -osoitteista.<br /><br /> \nHarkitse IP -rajoitusten asettamista tarvittaessa turvallisuuden hallintaan.",
     "Others": "Muut",
-    "OwnerUUID": "Omistajan UUID",
+    "Owner": "Omistaja",
     "PanelSettings": "Paneelin asetukset",
     "PendingPosition": "Jonopaikka",
     "Phase": "Vaihe",
