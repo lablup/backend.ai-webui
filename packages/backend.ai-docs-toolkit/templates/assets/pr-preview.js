@@ -669,7 +669,9 @@
         fitComment();
       });
       ta.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
+        const done = e.key === "Enter" && (e.metaKey || e.ctrlKey);
+        if (e.key === "Escape" || done) {
+          e.preventDefault();
           e.stopPropagation();
           ta.blur();
         }
