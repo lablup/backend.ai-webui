@@ -412,9 +412,9 @@ Depending on the system settings, project folders may not be allowed.
 
 First, log in with an admin account and create a project folder. After moving to
 the admin Data page, click `Create Folder` to open the folder creation dialog.
-The dialog has no folder type selection — a banner states that folders created on this page are project
-folders — so choose the project that will own the folder in the **Target Project** field at the top of
-the dialog. Then enter the folder name and set **Mount Permission** to `Read only`.
+The dialog shows a notice that folders created on this page become project folders.
+In the **Target Project** field at the top of the dialog, choose the project that will own the
+folder, then enter the folder name and set **Mount Permission**.
 
 ![](../images/group_folder_creation.png)
 
@@ -1443,8 +1443,7 @@ node. The drawer has two tabs: **Resources**, which breaks the usage down per re
 **Sessions**, which lists the compute sessions assigned to this agent so you can see what is running on
 the node before stopping or restarting it. On the **Sessions** tab, use the **Running** / **Finished**
 selector to switch between sessions that still occupy the node's resources and sessions that have
-already finished, and click a session name to open that session's detail view without leaving the Agent
-page.
+already finished, and click a session name to open that session's details.
 
 ![](../images/detailed_agent_node_usage_information.png)
 
