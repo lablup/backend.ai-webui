@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>대시보드 - Backend.AI WebUI User Guide - 한국어</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="대시보드 페이지는 모든 프로젝트와 자원 그룹의 자원 사용량, 한도, 실행 중인 세션 정보를 한눈에 확인할 수 있는 종합 현황 화면입니다. 사용 중인 자원의 분포를 직관적으로 파악하고, 시스템 활동 상태를 실시간으로 모니터링합니다." />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/ko/dashboard.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="대시보드" />
+  <meta property="og:description" content="대시보드 페이지는 모든 프로젝트와 자원 그룹의 자원 사용량, 한도, 실행 중인 세션 정보를 한눈에 확인할 수 있는 종합 현황 화면입니다. 사용 중인 자원의 분포를 직관적으로 파악하고, 시스템 활동 상태를 실시간으로 모니터링합니다." />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/ko/dashboard.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="ko" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="대시보드" />
+  <meta name="twitter:description" content="대시보드 페이지는 모든 프로젝트와 자원 그룹의 자원 사용량, 한도, 실행 중인 세션 정보를 한눈에 확인할 수 있는 종합 현황 화면입니다. 사용 중인 자원의 분포를 직관적으로 파악하고, 시스템 활동 상태를 실시간으로 모니터링합니다." />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"대시보드","inLanguage":"ko","description":"대시보드 페이지는 모든 프로젝트와 자원 그룹의 자원 사용량, 한도, 실행 중인 세션 정보를 한눈에 확인할 수 있는 종합 현황 화면입니다. 사용 중인 자원의 분포를 직관적으로 파악하고, 시스템 활동 상태를 실시간으로 모니터링합니다.","dateModified":"2026-09-08T02:16:57.000Z","url":"https://webui.docs.backend.ai/next/ko/dashboard.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/dashboard.html" />
+  <link rel="alternate" hreflang="en" href="../en/dashboard.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/dashboard.html" />
+  <link rel="alternate" hreflang="th" href="../th/dashboard.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/dashboard.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="dashboard"></script>
+</head>
+<body data-copy-label="복사" data-copied-label="복사됨!" data-copy-failed-label="복사 실패">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (b6123ea)">v26.9.0-alpha.0 (b6123ea)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">문서 검색...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="문서 검색..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/dashboard.html" lang="ko" selected>한국어</option><option value="../en/dashboard.html" lang="en">English</option><option value="../ja/dashboard.html" lang="ja">日本語</option><option value="../th/dashboard.html" lang="th">ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">WebUI 다음 버전(Next)의 미발행 문서입니다.</span>
+    <span class="docs-banner__desc">최신 문서는 <a class="docs-banner__link" href="../../26.8/ko/index.html">최신 버전(26.8)</a>에서 확인하세요.</span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">버전</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="ko"
+      data-slug="dashboard"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">이전 버전</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">소개</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">시작하기</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="시작하기">
+    <li><a href="./quickstart.html">1. 빠른 시작</a></li>
+<li><a href="./disclaimer.html">2. 면책 조항</a></li>
+<li><a href="./overview.html">3. 개요</a></li>
+<li><a href="./installation.html">4. 설치</a></li>
+<li><a href="./login.html">5. 로그인</a></li>
+<li><a href="./header.html">6. 상단 바</a></li>
+<li><a href="./start.html">7. 시작 페이지</a></li>
+<li><a href="./dashboard.html" class="active" aria-current="page">8. 대시보드</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">워크로드</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="워크로드">
+    <li><a href="./session_page.html">9. 세션 페이지</a></li>
+<li><a href="./sessions_all.html">10. 연산 세션</a></li>
+<li><a href="./cluster_session.html">11. 클러스터 세션</a></li>
+<li><a href="./deployment.html">12. 배포</a></li>
+<li><a href="./chat.html">13. 채팅</a></li>
+<li><a href="./my_environments.html">14. 내 환경</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">스토리지 및 데이터</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="스토리지-및-데이터">
+    <li><a href="./vfolder.html">15. 스토리지 폴더</a></li>
+<li><a href="./mount_vfolder.html">16. 스토리지 폴더 마운트</a></li>
+<li><a href="./share_vfolder.html">17. 스토리지 폴더 공유</a></li>
+<li><a href="./sftp_to_container.html">18. 연산 세션에 대한 SFTP 연결</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">관리</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="관리">
+    <li><a href="./user_settings.html">19. 사용자 설정</a></li>
+<li><a href="./project_admin.html">20. 프로젝트 관리자 기능</a></li>
+<li><a href="./rbac_management.html">21. RBAC 관리</a></li>
+<li><a href="./agent_summary.html">22. 에이전트 요약</a></li>
+<li><a href="./statistics.html">23. 통계</a></li>
+<li><a href="./admin_menu.html">24. 관리자 기능</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">참고 자료</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="참고-자료">
+    <li><a href="./trouble_shooting.html">25. FAQ 및 문제 해결</a></li>
+<li><a href="./appendix.html">26. 부록</a></li>
+<li><a href="./license_agreement.html">27. 사용권 계약 조건</a></li>
+<li><a href="./references.html">28. 참고 자료</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="이 페이지는 버전 {version}에 존재하지 않습니다. 해당 버전의 인덱스 페이지로 이동했습니다.">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="닫기" title="닫기">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">홈</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">시작하기</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">대시보드</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-dashboard">
+<p><a id="dashboard"></a></p>
+<h1 data-bai-block="0" id="dashboard-대시보드">대시보드<a class="hash-link" href="#dashboard-대시보드" aria-label="Direct link to 대시보드">#</a></h1>
+<p data-bai-block="1"><strong>대시보드</strong> 페이지는 모든 프로젝트와 자원 그룹의 자원 사용량, 한도, 실행 중인 세션 정보를 한눈에 확인할 수 있는 종합 현황 화면입니다. 사용 중인 자원의 분포를 직관적으로 파악하고, 시스템 활동 상태를 실시간으로 모니터링합니다.</p>
+<p><figure data-bai-block="2" class="doc-figure"><img src="./images/dashboard.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 8.1</figcaption></figure>
+</p>
+<p data-bai-block="3">이 페이지는 다음과 같은 주요 패널로 구성되어 있습니다.</p>
+<ul>
+<li data-bai-block="4"><p><strong>나의 세션:</strong>
+  현재 계정에서 실행 중인 세션을 유형별로 보여 줍니다. <em>Interactive</em>, <em>Batch</em>, <em>Inference</em>, <em>Upload</em> 등 세션 종류별 실행 개수를 확인할 수 있습니다.</p>
+</li>
+<li data-bai-block="5"><p><strong>나의 총자원 사용량:</strong>
+  모든 프로젝트에서 현재 사용 중인 자원량을 표시합니다. 각 자원의 수치 아래에는 사용량 막대가 함께 표시되며, 막대에 마우스 커서를 올리면 총자원 제한 대비 사용량을 확인할 수 있습니다. 도메인, 프로젝트, 키페어 등 여러 제한이 동시에 적용될 경우 <strong>가장 엄격한 제한</strong>이 적용됩니다.</p>
+</li>
+<li data-bai-block="6"><p><strong>자원 그룹 내 나의 자원:</strong>
+  현재 프로젝트의 선택된 자원 그룹에서 사용 중인 자원과 남은 자원을 표시합니다. 상단의 드롭다운 메뉴를 통해 자원 그룹을 변경할 수 있습니다.</p>
+</li>
+<li data-bai-block="7"><p><strong>폴더 상태:</strong>
+  접근할 수 있는 스토리지 폴더의 개수를 <strong>내 폴더</strong>, <strong>프로젝트 폴더</strong>, <strong>초대된 폴더</strong>로 나누어 표시합니다. 대기 중인 초대가 있는 경우 <strong>초대된 폴더</strong> 개수를 클릭하면 데이터 페이지에서 초대 내역을 확인할 수 있습니다.</p>
+</li>
+<li data-bai-block="8"><p><strong>스토리지 볼륨별 가용량:</strong>
+  각 스토리지 볼륨에서 사용할 수 있는 가용량을 표시합니다. 가용량 설정을 지원하는 스토리지 호스트가 없는 경우에는 대신 안내 문구가 표시됩니다.</p>
+</li>
+<li data-bai-block="9"><p><strong>자원 그룹 내 총자원:</strong>
+  선택된 자원 그룹 전체의 사용량과 가용량을 요약하여 표시합니다. 그룹 내 모든 에이전트의 데이터를 합산해 계산된 값입니다.</p>
+</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="10" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="11"><strong>자원 그룹 내 총자원</strong> 패널은 시스템 구성에 따라 표시되지 않을 수 있습니다.</p>
+</div></div>
+
+
+<ul>
+<li data-bai-block="12"><strong>최근 생성 세션:</strong>
+  현재 프로젝트에서 가장 최근에 생성된 실행 중인 세션 목록을 보여 줍니다. 세션 이름, 상태, CPU/메모리 사용량, 환경, 자원 그룹, 세션 유형, 생성 일시 등을 확인할 수 있습니다. 기본적으로 최근 5개의 실행 중인 세션이 표시됩니다.</li>
+</ul>
+<p><a id="superadmin-dashboard"></a></p>
+<p data-bai-block="13">슈퍼 관리자로 로그인한 경우, 대시보드 페이지에 일반 사용자 패널과 함께
+<strong>에이전트 통계</strong> 및 <strong>활성 에이전트</strong> 패널이 추가로 표시됩니다.
+이 패널은 클러스터 전체의 에이전트 상태와 자원 사용 현황을 보여 줍니다.
+또한 슈퍼 관리자에게는 <strong>나의 세션</strong> 패널이 <strong>활성 세션</strong>이라는 이름으로 표시되며,
+집계 대상은 동일하게 현재 프로젝트의 세션입니다.</p>
+<h2 data-bai-block="14" id="dashboard-대시보드-레이아웃-사용자화">대시보드 레이아웃 사용자화<a class="hash-link" href="#dashboard-대시보드-레이아웃-사용자화" aria-label="Direct link to 대시보드 레이아웃 사용자화">#</a></h2>
+<p data-bai-block="15">보드는 별도의 모드로 전환하지 않아도 언제든지 재배치할 수 있습니다.</p>
+<ul>
+<li data-bai-block="16"><strong>패널 이동</strong>: 패널의 헤더를 드래그하여 보드 내에서 위치를 변경할 수 있습니다.</li>
+<li data-bai-block="17"><strong>패널 크기 조정</strong>: 패널의 우측 하단 모서리를 드래그하여 크기를 조정할 수 있습니다. 각 패널은 콘텐츠의 가독성을 보장하기 위한 최소 크기가 설정되어 있습니다.</li>
+</ul>
+<p><figure data-bai-block="18" class="doc-figure"><img src="./images/dashboard_edit_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 8.2</figcaption></figure>
+</p>
+<p data-bai-block="19">사용자화된 레이아웃은 자동으로 저장되어 브라우저 세션 간에 유지됩니다. 레이아웃은 사용자별로 저장되므로, 각 사용자가 자신만의 배치를 설정할 수 있습니다. 배치를 기본 상태로 되돌리려면 편집 사이드바 하단의 <strong>기본 배치로 초기화</strong> 버튼을 클릭한 뒤 확인합니다. 배치를 초기화해도 사용자 정의 패널은 삭제되지 않습니다.</p>
+<div class="admonition admonition-tip">
+<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>팁</div>
+<div class="admonition-content">
+
+<p data-bai-block="21">WebUI 업데이트로 새로운 대시보드 패널이 추가되면, 저장된 사용자화 레이아웃이 있더라도
+새 패널이 대시보드에 자동으로 표시됩니다.</p>
+</div></div>
+
+
+<p><a id="custom-panels"></a></p>
+<h3 data-bai-block="22" id="dashboard-사용자-정의-패널">사용자 정의 패널<a class="hash-link" href="#dashboard-사용자-정의-패널" aria-label="Direct link to 사용자 정의 패널">#</a></h3>
+<div class="admonition admonition-note">
+<div data-bai-block="23" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>실험적 기능</div>
+<div class="admonition-content">
+
+<p data-bai-block="24"><strong>사용자 설정</strong> 페이지의 <a href="./user_settings.html#experimental-features">실험적 기능</a> 섹션에서
+<strong>사용자 정의 대시보드 패널</strong>을 활성화해야 사용자 정의 패널 기능 전체를 사용할 수
+있습니다. 나중에 이 기능을 비활성화하면 기존 사용자 정의 패널이 삭제되지 않고
+숨겨지며, 다시 활성화하면 저장된 보드 위치 그대로 다시 나타납니다.</p>
+</div></div>
+
+<p data-bai-block="25">페이지 우측 상단의 <strong>편집</strong> 버튼을 클릭하면 보드 오른쪽에 사용자 정의 패널 사이드바가 열리고, <strong>닫기</strong>를 클릭하면 다시 숨겨집니다. 사이드바에는 사용자 정의 패널 목록이 표시됩니다. 사용자 정의 패널은 선택한 데이터 소스를 지정한 조건으로 좁혀 보여 줍니다. 패널에는 제목과 데이터만 표시되므로, 조건을 설명하는 제목을 지정하는 것이 좋습니다.</p>
+<p data-bai-block="26">패널을 추가하려면 사이드바의 <strong>추가</strong> 버튼을 클릭합니다. 패널 대화 상자는 다음 항목으로 구성됩니다. <strong>패널 형식</strong>과 <strong>데이터 소스</strong>는 필수 항목이며, 둘 다 선택해야 대화 상자를 제출할 수 있습니다.</p>
+<ul>
+<li data-bai-block="27"><strong>데이터 소스</strong>: 패널에 표시할 데이터 소스입니다. <strong>세션</strong>, <strong>배포</strong>, <strong>데이터 &amp; 폴더</strong> 중에서 선택합니다.</li>
+<li data-bai-block="28"><strong>패널 형식</strong>: 데이터 소스를 표시하는 방식입니다. <strong>테이블</strong> 또는 <strong>카운트</strong> 중에서 선택하며, <strong>세션</strong> 데이터 소스인 경우 <strong>그리드</strong>도 선택할 수 있습니다.</li>
+<li data-bai-block="29"><strong>제목</strong>: 패널 제목(선택 사항)입니다. 입력하지 않으면 데이터 소스 이름이 사용됩니다.</li>
+<li data-bai-block="30"><strong>조건</strong>: 패널에 표시할 항목을 좁히는 속성 필터입니다.</li>
+</ul>
+<p data-bai-block="31">입력 항목 아래의 실시간 미리 보기에는 현재 조건과 일치하는 행이 표시됩니다. 미리 보기에서 열을 정렬하면 해당 정렬 순서가 패널에 적용됩니다. <strong>추가</strong> 버튼을 클릭하면 패널이 보드에 추가됩니다.</p>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/dashboard_panel_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1352" /><figcaption>그림 8.3</figcaption></figure>
+</p>
+<p data-bai-block="33"><strong>배포</strong> 패널은 배포 페이지와 동일한 테이블(이름, 상태, 복제본 요약, 모델, 생성일)을 사용해 현재 프로젝트의 모델 배포를 나열합니다. 배포 이름을 클릭하면 해당 배포의 상세 페이지가 열립니다. 조건 필터는 이름, 태그, 엔드포인트 URL, 공개 여부를 제공합니다.</p>
+<p data-bai-block="34"><strong>그리드</strong>를 선택하면 세션 리소스 그리드가 표시됩니다. 조건에 일치하는 각 세션에 할당된 자원을 사용률에 따라 색이 다른 유닛 셀로 보여 줍니다. 세션을 클릭하면 테이블에서 행을 클릭했을 때와 마찬가지로 세부 정보 드로어가 열립니다. 그리드는 조건에 일치하는 세션 중 최대 100개까지만 표시하며, 그보다 많은 경우 안내 문구가 표시됩니다.</p>
+<p data-bai-block="35">그리드의 표시 설정(리소스/커널 모드, 표시할 자원 또는 메트릭, 메모리 단위, 배치 방식)은 패널 추가/수정 대화 상자의 실시간 미리 보기에서 지정하며 패널과 함께 저장됩니다. 패널 자체에는 이 설정을 바꿀 수 있는 컨트롤이 없으므로, 다른 보기가 필요하면 패널을 하나 더 추가하세요.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="36" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="37"><strong>그리드</strong>는 실험적 기능입니다. <strong>패널 형식</strong> 선택 목록에는 <a href="./user_settings.html#experimental-features">실험적 기능</a>에서 <strong>세션 리소스 그리드 뷰</strong>가 켜져 있을 때만 표시됩니다. 이후 이 설정을 끄더라도 이미 만든 그리드 패널은 저장된 설정을 유지한 채, 설정을 다시 켤 때까지 세션 테이블로 표시됩니다.</p>
+</div></div>
+
+
+<p data-bai-block="38">패널의 데이터 소스, 패널 형식, 조건, 제목을 나중에 변경하려면 사이드바에서 해당 패널 옆의 연필(<strong>수정</strong>) 아이콘 또는 보드에 표시된 패널 헤더의 아이콘을 클릭한 뒤 변경 내용을 저장합니다. 패널을 제거하려면 휴지통(<strong>삭제</strong>) 아이콘을 클릭하고 확인 팝업에서 승인합니다.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="39" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="40"><strong>세션</strong> 및 <strong>배포</strong> 패널은 현재 프로젝트의 데이터를 보여 주며 모든 프로젝트 구성원이 사용할 수 있습니다. <strong>데이터 &amp; 폴더</strong> 패널은 슈퍼 관리자만 사용할 수 있습니다. 현재 권한으로 조회할 수 없는 데이터 소스의 패널은 사이드바 목록에는 남아 있지만 보드에는 표시되지 않습니다.</p>
+</div></div>
+
+
+<p><a id="automatic-refresh"></a></p>
+<h2 data-bai-block="41" id="dashboard-자동-새로고침">자동 새로고침<a class="hash-link" href="#dashboard-자동-새로고침" aria-label="Direct link to 자동 새로고침">#</a></h2>
+<p data-bai-block="42">대시보드 데이터는 15초마다 자동으로 새로고침되므로, 페이지를 다시 로드하지 않아도 패널이 항상 최근 활동을 반영합니다. 사용자 정의 패널도 기본 패널과 동일한 주기로 새로고침됩니다.</p>
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
+  <span class="last-updated">마지막 업데이트 2026년 9월 8일</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./start.html">
+        <div class="pagination-nav__sublabel">이전</div>
+        <div class="pagination-nav__label">&laquo; 시작 페이지</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./session_page.html">
+        <div class="pagination-nav__sublabel">다음</div>
+        <div class="pagination-nav__label">세션 페이지 &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">이 페이지의 목차</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C-%EB%A0%88%EC%9D%B4%EC%95%84%EC%9B%83-%EC%82%AC%EC%9A%A9%EC%9E%90%ED%99%94" data-toc-target="dashboard-대시보드-레이아웃-사용자화">대시보드 레이아웃 사용자화</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#dashboard-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%A0%95%EC%9D%98-%ED%8C%A8%EB%84%90" data-toc-target="dashboard-사용자-정의-패널">사용자 정의 패널</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#dashboard-%EC%9E%90%EB%8F%99-%EC%83%88%EB%A1%9C%EA%B3%A0%EC%B9%A8" data-toc-target="dashboard-자동-새로고침">자동 새로고침</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">도움 받기</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>이 페이지 편집</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="문서 검색..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="문서 검색..." data-no-results="검색 결과가 없습니다" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>
