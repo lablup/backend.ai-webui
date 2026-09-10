@@ -5026,22 +5026,22 @@
       "labelKey": "webui.menu.Settings&Logs",
       "tabs": [
         {
-          "param": "tab",
+          "param": "settings",
           "key": "general",
           "labelKey": "userSettings.General"
         },
         {
-          "param": "tab",
+          "param": "settings",
           "key": "login-history",
           "labelKey": "userSettings.LoginHistory"
         },
         {
-          "param": "tab",
+          "param": "settings",
           "key": "login-sessions",
           "labelKey": "userSettings.LoginSessions"
         },
         {
-          "param": "tab",
+          "param": "settings",
           "key": "logs",
           "labelKey": "userSettings.Logs"
         }
@@ -5357,6 +5357,7 @@
         "userSettings.SSHKeypairGenerationWarning",
         "userSettings.UserConfigScript",
         "webui.menu.GoBack",
+        "webui.menu.Help",
         "webui.menu.Settings"
       ]
     }
