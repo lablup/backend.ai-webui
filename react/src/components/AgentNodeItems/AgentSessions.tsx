@@ -9,22 +9,23 @@ import type {
 } from '../../__generated__/AgentSessionsQuery.graphql';
 import { convertToOrderBy } from '../../helper';
 import { getSessionV2StatusBuckets } from '../../helper/sessionStatusBuckets';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../../hooks';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
-import { useProjectPath } from '../../hooks/useRouteScope';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../BAIRadioGroup';
+import SessionDetailDrawer from '../SessionDetailDrawer';
 import {
   BAIFlex,
   BAILink,
   BAISessionNodesV2,
+  BAIUnmountAfterClose,
   availableSessionV2SorterValues,
   filterOutNullAndUndefined,
   toLocalId,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useDeferredValue } from 'react';
+import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -87,8 +88,7 @@ interface AgentSessionsProps {
 const AgentSessions = ({ queryRef, onReload }: AgentSessionsProps) => {
   'use memo';
   const { t } = useTranslation();
-  const webUINavigate = useWebUINavigate();
-  const buildProjectPath = useProjectPath();
+  const [sessionDetailId, setSessionDetailId] = useState<string | null>(null);
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
@@ -195,15 +195,7 @@ const AgentSessions = ({ queryRef, onReload }: AgentSessionsProps) => {
               render: (_value, session) => (
                 <BAILink
                   type="hover"
-                  onClick={() => {
-                    webUINavigate(
-                      `${buildProjectPath('session', { scope: 'admin' })}?${new URLSearchParams(
-                        {
-                          sessionDetail: toLocalId(session.id),
-                        },
-                      ).toString()}`,
-                    );
-                  }}
+                  onClick={() => setSessionDetailId(toLocalId(session.id))}
                 >
                   {session.metadata?.name ?? '-'}
                 </BAILink>
@@ -237,6 +229,16 @@ const AgentSessions = ({ queryRef, onReload }: AgentSessionsProps) => {
           onColumnOverridesChange: setColumnOverrides,
         }}
       />
+      {/* Super-admin surface (ADR-0001): no project context, and the drawer
+          stacks over the agent panel so its tab / filter state survives. */}
+      <BAIUnmountAfterClose>
+        <SessionDetailDrawer
+          open={!!sessionDetailId}
+          sessionId={sessionDetailId ?? undefined}
+          project={null}
+          onClose={() => setSessionDetailId(null)}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };
