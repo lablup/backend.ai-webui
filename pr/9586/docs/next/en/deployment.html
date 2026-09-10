@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Deployments" />
   <meta name="twitter:description" content="Backend.AI lets you deploy AI models as inference services through the Deployments feature." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Deployments","inLanguage":"en","description":"Backend.AI lets you deploy AI models as inference services through the Deployments feature.","dateModified":"2026-09-08T01:13:29.000Z","url":"https://webui.docs.backend.ai/next/en/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Deployments","inLanguage":"en","description":"Backend.AI lets you deploy AI models as inference services through the Deployments feature.","dateModified":"2026-09-10T06:37:15.000Z","url":"https://webui.docs.backend.ai/next/en/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (34851ca)">v26.9.0-alpha.0 (34851ca)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (da28ec8)">v26.9.0-alpha.0 (da28ec8)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -293,7 +293,7 @@
 <ul>
 <li data-bai-block="58"><strong>Model Folder</strong>: The model storage folder to mount on each replica.</li>
 <li data-bai-block="59"><strong>Mount Destination For Model Folder</strong>: The path inside the container where the model storage folder is mounted (default: <code>/models</code>).</li>
-<li data-bai-block="60"><strong>Subpath</strong>: A subfolder inside the model folder to mount instead of the folder root. Leave it unset to mount the folder root.</li>
+<li data-bai-block="60"><strong>Subpath</strong>: A subfolder inside the model folder to mount instead of the folder root. Click the field to open a directory picker and choose the subfolder from the selected model folder&#39;s directory tree. Leave it unset to mount the folder root.</li>
 </ul>
 <p><a id="service-configuration"></a></p>
 <h4 data-bai-block="61" id="deployment-service-configuration-custom-runtime-only">Service configuration (custom runtime only)<a class="hash-link" href="#deployment-service-configuration-custom-runtime-only" aria-label="Direct link to Service configuration (custom runtime only)">#</a></h4>
@@ -834,227 +834,227 @@ please refer to the <a href="./vfolder.html#explore-folder">Explore Folder</a> s
 <li data-bai-block="328">The following columns: <strong>Metric Source</strong>, <strong>Condition</strong>, <strong>Cooldown Sec.</strong>, <strong>Step Size</strong>, <strong>Min / Max Replicas</strong>, <strong>Created At</strong>, and <strong>Last Triggered</strong>. The <strong>Step Size</strong> column automatically shows <code>+</code>, <code>−</code>, or <code>±</code> based on the direction derived from the thresholds you have set.</li>
 <li data-bai-block="329">Per-row edit and delete icons shown next to the condition summary in each row.</li>
 </ul>
-<p data-bai-block="330">Click the <code>Add Rules</code> button to open the <strong>Add Auto Scaling Rule</strong> editor. To modify an existing rule, click the edit icon on its row; the <strong>Edit Auto Scaling Rule</strong> editor opens with the rule&#39;s values pre-filled. The editor contains the following fields in order:</p>
+<p data-bai-block="330">Click the <code>Add Rules</code> button to open the <strong>Add Auto Scaling Rule</strong> editor.</p>
+<p data-bai-block="331">To modify an existing rule, click the edit icon on its row; the <strong>Edit Auto Scaling Rule</strong> editor opens with the rule&#39;s values pre-filled. The editor contains the following fields in order:</p>
 <ul>
-<li data-bai-block="331"><p><strong>Metric Source</strong>: Select <code>Kernel</code> or <code>Prometheus</code>.</p>
+<li data-bai-block="332"><p><strong>Metric Source</strong>: Select <code>Kernel</code> or <code>Prometheus</code>.</p>
 </li>
-<li data-bai-block="332"><p><strong>Metric Name</strong>: For <code>Kernel</code>, enter a metric name. Common metrics such as <code>cpu_util</code>, <code>mem</code>, <code>net_rx</code>, and <code>net_tx</code> are offered as autocomplete suggestions, and you can also type a custom name freely.</p>
+<li data-bai-block="333"><p><strong>Metric Name</strong>: For <code>Kernel</code>, enter a metric name. Common metrics such as <code>cpu_util</code>, <code>mem</code>, <code>net_rx</code>, and <code>net_tx</code> are offered as autocomplete suggestions, and you can also type a custom name freely.</p>
 </li>
-<li data-bai-block="333"><p><strong>Metric Name (Prometheus Preset)</strong>: Shown only when <strong>Metric Source</strong> is <code>Prometheus</code>. Select a preset from the dropdown; the preset&#39;s metric name, query template, and (when defined) <strong>Cooldown Sec.</strong> are filled in automatically.</p>
+<li data-bai-block="334"><p><strong>Metric Name (Prometheus Preset)</strong>: Shown only when <strong>Metric Source</strong> is <code>Prometheus</code>. Select a preset from the dropdown; the preset&#39;s metric name, query template, and (when defined) <strong>Cooldown Sec.</strong> are filled in automatically.</p>
 </li>
-<li data-bai-block="334"><p><strong>Condition</strong>: A segmented control for choosing the scaling direction. It provides three options.</p>
+<li data-bai-block="335"><p><strong>Condition</strong>: A segmented control for choosing the scaling direction. It provides three options.</p>
 <ul>
-<li data-bai-block="335"><strong>Scale In</strong>: Decreases replicas when the metric falls below a threshold. Sets <code>Metric &lt; [threshold]</code>.</li>
-<li data-bai-block="336"><strong>Scale Out</strong>: Increases replicas when the metric rises above a threshold. Sets <code>Metric &gt; [threshold]</code>.</li>
-<li data-bai-block="337"><strong>Scale In &amp; Out</strong>: Automatically scales in or out depending on which side of the configured range the metric crosses. Sets <code>Metric &lt; Min Threshold</code> or <code>Metric &gt; Max Threshold</code>.</li>
+<li data-bai-block="336"><strong>Scale In</strong>: Decreases replicas when the metric falls below a threshold. Sets <code>Metric &lt; [threshold]</code>.</li>
+<li data-bai-block="337"><strong>Scale Out</strong>: Increases replicas when the metric rises above a threshold. Sets <code>Metric &gt; [threshold]</code>.</li>
+<li data-bai-block="338"><strong>Scale In &amp; Out</strong>: Automatically scales in or out depending on which side of the configured range the metric crosses. Sets <code>Metric &lt; Min Threshold</code> or <code>Metric &gt; Max Threshold</code>.</li>
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="338" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>Figure 12.23</figcaption></figure>
+<p><figure data-bai-block="339" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>Figure 12.23</figcaption></figure>
 </p>
 <ul>
-<li data-bai-block="339"><p><strong>Step Size</strong>: A positive integer specifying how many replicas to add or remove per scaling event. The <code>-</code>, <code>+</code>, or <code>±</code> sign is shown automatically based on the selected condition (Scale In / Scale Out / Scale In &amp; Out).</p>
+<li data-bai-block="340"><p><strong>Step Size</strong>: A positive integer specifying how many replicas to add or remove per scaling event. The <code>-</code>, <code>+</code>, or <code>±</code> sign is shown automatically based on the selected condition (Scale In / Scale Out / Scale In &amp; Out).</p>
 <ul>
-<li data-bai-block="340">Only a minimum threshold is set: <code>[metric] &lt; [minThreshold]</code> triggers <strong>Scale In</strong> (replicas decrease when the metric falls below the threshold).</li>
-<li data-bai-block="341">Only a maximum threshold is set: <code>[metric] &gt; [maxThreshold]</code> triggers <strong>Scale Out</strong> (replicas increase when the metric rises above the threshold).</li>
-<li data-bai-block="342">Both thresholds are set: if <code>[metric] &lt; [minThreshold]</code>, replicas <strong>scale in</strong>; if <code>[metric] &gt; [maxThreshold]</code>, replicas <strong>scale out</strong>.</li>
+<li data-bai-block="341">Only a minimum threshold is set: <code>[metric] &lt; [minThreshold]</code> triggers <strong>Scale In</strong> (replicas decrease when the metric falls below the threshold).</li>
+<li data-bai-block="342">Only a maximum threshold is set: <code>[metric] &gt; [maxThreshold]</code> triggers <strong>Scale Out</strong> (replicas increase when the metric rises above the threshold).</li>
+<li data-bai-block="343">Both thresholds are set: if <code>[metric] &lt; [minThreshold]</code>, replicas <strong>scale in</strong>; if <code>[metric] &gt; [maxThreshold]</code>, replicas <strong>scale out</strong>.</li>
 </ul>
 </li>
-<li data-bai-block="343"><p><strong>Cooldown Sec.</strong>: The time, in seconds, to wait after a scaling event before the next evaluation.</p>
+<li data-bai-block="344"><p><strong>Cooldown Sec.</strong>: The time, in seconds, to wait after a scaling event before the next evaluation.</p>
 </li>
-<li data-bai-block="344"><p><strong>Min Replicas</strong> and <strong>Max Replicas</strong>: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below <strong>Min Replicas</strong> or increase it above <strong>Max Replicas</strong>.</p>
+<li data-bai-block="345"><p><strong>Min Replicas</strong> and <strong>Max Replicas</strong>: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below <strong>Min Replicas</strong> or increase it above <strong>Max Replicas</strong>.</p>
 </li>
 </ul>
-<p><figure data-bai-block="345" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="812" /><figcaption>Figure 12.24</figcaption></figure>
+<p><figure data-bai-block="346" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="812" /><figcaption>Figure 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
-<h3 data-bai-block="346" id="deployment-generating-tokens">Generating tokens<a class="hash-link" href="#deployment-generating-tokens" aria-label="Direct link to Generating tokens">#</a></h3>
-<p data-bai-block="347">Once the deployment is <code>HEALTHY</code>, you can click on its name in the Deployments list to open the Deployment Detail Page. The <strong>Service Endpoint</strong> URL is shown in the Service Info card. If <strong>Open to Public</strong> is enabled, end users can access the deployment without a token. If it is disabled, create and share a token as described below.</p>
-<p data-bai-block="348">Access tokens are managed in the <strong>Access Tokens</strong> card at the bottom of the Deployment Detail Page. Hover the ⓘ icon next to the card title for a summary: <em>&quot;Manage access tokens for authenticating API requests to this deployment&#39;s endpoint.&quot;</em></p>
-<p><figure data-bai-block="349" class="doc-figure"><img src="./images/generate_token.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="410" /><figcaption>Figure 12.25</figcaption></figure>
+<h3 data-bai-block="347" id="deployment-generating-tokens">Generating tokens<a class="hash-link" href="#deployment-generating-tokens" aria-label="Direct link to Generating tokens">#</a></h3>
+<p data-bai-block="348">Once the deployment is <code>HEALTHY</code>, you can click on its name in the Deployments list to open the Deployment Detail Page. The <strong>Service Endpoint</strong> URL is shown in the Service Info card. If <strong>Open to Public</strong> is enabled, end users can access the deployment without a token. If it is disabled, create and share a token as described below.</p>
+<p data-bai-block="349">Access tokens are managed in the <strong>Access Tokens</strong> card at the bottom of the Deployment Detail Page. Hover the ⓘ icon next to the card title for a summary: <em>&quot;Manage access tokens for authenticating API requests to this deployment&#39;s endpoint.&quot;</em></p>
+<p><figure data-bai-block="350" class="doc-figure"><img src="./images/generate_token.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="410" /><figcaption>Figure 12.25</figcaption></figure>
 </p>
-<h4 data-bai-block="350" id="deployment-creating-an-access-token">Creating an access token<a class="hash-link" href="#deployment-creating-an-access-token" aria-label="Direct link to Creating an access token">#</a></h4>
+<h4 data-bai-block="351" id="deployment-creating-an-access-token">Creating an access token<a class="hash-link" href="#deployment-creating-an-access-token" aria-label="Direct link to Creating an access token">#</a></h4>
 <ol>
-<li data-bai-block="351">Click the <code>Create Access Token</code> button in the card header. You can also click <strong>Add Access Token</strong> in the <strong>Private deployment</strong> banner at the top of the page — it opens the same dialog.</li>
-<li data-bai-block="352">Choose an <strong>Expiration</strong> for the token:<ul>
-<li data-bai-block="353"><code>7 Days</code>, <code>30 Days</code>, or <code>90 Days</code>: The token expires that many days from now. <code>7 Days</code> is the default.</li>
-<li data-bai-block="354"><strong>Custom Expiration</strong>: Reveals a date-and-time picker so you can set the exact expiry. The chosen moment must be in the future.</li>
-<li data-bai-block="355"><strong>No Expiration</strong>: Sets the expiration to a far-future date (<code>December 31, 2099</code>), so the token effectively never expires. This date — not a literal <em>No Expiration</em> label — is what appears afterward in the token dialog, the access token list, and the Chat token selector.</li>
+<li data-bai-block="352">Click the <code>Create Access Token</code> button in the card header. You can also click <strong>Add Access Token</strong> in the <strong>Private deployment</strong> banner at the top of the page — it opens the same dialog.</li>
+<li data-bai-block="353">Choose an <strong>Expiration</strong> for the token:<ul>
+<li data-bai-block="354"><code>7 Days</code>, <code>30 Days</code>, or <code>90 Days</code>: The token expires that many days from now. <code>7 Days</code> is the default.</li>
+<li data-bai-block="355"><strong>Custom Expiration</strong>: Reveals a date-and-time picker so you can set the exact expiry. The chosen moment must be in the future.</li>
+<li data-bai-block="356"><strong>No Expiration</strong>: Sets the expiration to a far-future date (<code>December 31, 2099</code>), so the token effectively never expires. This date — not a literal <em>No Expiration</em> label — is what appears afterward in the token dialog, the access token list, and the Chat token selector.</li>
 </ul>
 </li>
-<li data-bai-block="356">Click <code>Create Access Token</code> to issue it.</li>
+<li data-bai-block="357">Click <code>Create Access Token</code> to issue it.</li>
 </ol>
-<p><figure data-bai-block="357" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>Figure 12.26</figcaption></figure>
+<p><figure data-bai-block="358" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>Figure 12.26</figcaption></figure>
 </p>
 <blockquote>
-<p data-bai-block="358">The <code>Create Access Token</code> button is disabled until the manager has issued a network endpoint for the deployment; while it is disabled, its tooltip reads <em>&quot;The network endpoint has not been issued yet.&quot;</em> It is also disabled for a deployment you do not own (<em>&quot;Only the deployment owner can manage access tokens.&quot;</em>) and for a deployment that is stopping or no longer active (<em>&quot;The deployment is stopping or no longer active.&quot;</em>). Those last two conditions disable deleting a token as well.</p>
+<p data-bai-block="359">The <code>Create Access Token</code> button is disabled until the manager has issued a network endpoint for the deployment; while it is disabled, its tooltip reads <em>&quot;The network endpoint has not been issued yet.&quot;</em> It is also disabled for a deployment you do not own (<em>&quot;Only the deployment owner can manage access tokens.&quot;</em>) and for a deployment that is stopping or no longer active (<em>&quot;The deployment is stopping or no longer active.&quot;</em>). Those last two conditions disable deleting a token as well.</p>
 </blockquote>
-<p data-bai-block="359">After the token is issued, a <strong>Token</strong> dialog shows the token value once, together with a copy button and the expiration date you chose. Copy the token from this dialog, or from the table afterwards.</p>
-<h4 data-bai-block="360" id="deployment-access-token-list">Access token list<a class="hash-link" href="#deployment-access-token-list" aria-label="Direct link to Access token list">#</a></h4>
-<p data-bai-block="361">The card lists every access token issued for this deployment, newest first:</p>
+<p data-bai-block="360">After the token is issued, a <strong>Token</strong> dialog shows the token value once, together with a copy button and the expiration date you chose. Copy the token from this dialog, or from the table afterwards.</p>
+<h4 data-bai-block="361" id="deployment-access-token-list">Access token list<a class="hash-link" href="#deployment-access-token-list" aria-label="Direct link to Access token list">#</a></h4>
+<p data-bai-block="362">The card lists every access token issued for this deployment, newest first:</p>
 <ul>
-<li data-bai-block="362"><strong>Token</strong>: The token value, shown truncated with a copy button. A delete icon in the same cell removes the token.</li>
-<li data-bai-block="363"><strong>Created At</strong>: When the token was issued.</li>
-<li data-bai-block="364"><strong>Expiration</strong>: When the token expires. Tokens created with <strong>No Expiration</strong> show <code>December 31, 2099</code>.</li>
+<li data-bai-block="363"><strong>Token</strong>: The token value, shown truncated with a copy button. A delete icon in the same cell removes the token.</li>
+<li data-bai-block="364"><strong>Created At</strong>: When the token was issued.</li>
+<li data-bai-block="365"><strong>Expiration</strong>: When the token expires. Tokens created with <strong>No Expiration</strong> show <code>December 31, 2099</code>.</li>
 </ul>
-<p><figure data-bai-block="365" class="doc-figure"><img src="./images/generated_token_copy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="384" /><figcaption>Figure 12.27</figcaption></figure>
+<p><figure data-bai-block="366" class="doc-figure"><img src="./images/generated_token_copy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="384" /><figcaption>Figure 12.27</figcaption></figure>
 </p>
-<p data-bai-block="366">Send the token in the <code>Authorization</code> request header:</p>
+<p data-bai-block="367">Send the token in the <code>Authorization</code> request header:</p>
 <table>
 <thead>
-<tr data-bai-block="367">
+<tr data-bai-block="368">
 <th>Key</th>
 <th>Value</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="368">
+<tbody><tr data-bai-block="369">
 <td>Content-Type</td>
 <td>application/json</td>
 </tr>
-<tr data-bai-block="369">
+<tr data-bai-block="370">
 <td>Authorization</td>
 <td>BackendAI <code>&lt;token&gt;</code></td>
 </tr>
 </tbody></table>
-<h4 data-bai-block="370" id="deployment-deleting-an-access-token">Deleting an access token<a class="hash-link" href="#deployment-deleting-an-access-token" aria-label="Direct link to Deleting an access token">#</a></h4>
-<p data-bai-block="371">Click the delete icon in a token&#39;s row. The <strong>Delete Access Token</strong> dialog asks you to type <code>delete</code> to confirm; the OK button stays disabled until the typed text matches.</p>
+<h4 data-bai-block="371" id="deployment-deleting-an-access-token">Deleting an access token<a class="hash-link" href="#deployment-deleting-an-access-token" aria-label="Direct link to Deleting an access token">#</a></h4>
+<p data-bai-block="372">Click the delete icon in a token&#39;s row. The <strong>Delete Access Token</strong> dialog asks you to type <code>delete</code> to confirm; the OK button stays disabled until the typed text matches.</p>
 <div class="admonition admonition-danger">
-<div data-bai-block="372" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>DANGER</div>
+<div data-bai-block="373" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>DANGER</div>
 <div class="admonition-content">
 
-<p data-bai-block="373">Deleting an access token is <strong>irreversible</strong> and takes effect immediately. Any client still sending that token will start receiving authentication failures.</p>
+<p data-bai-block="374">Deleting an access token is <strong>irreversible</strong> and takes effect immediately. Any client still sending that token will start receiving authentication failures.</p>
 </div></div>
 
 
-<h3 data-bai-block="374" id="deployment-terminating-a-deployment">Terminating a deployment<a class="hash-link" href="#deployment-terminating-a-deployment" aria-label="Direct link to Terminating a deployment">#</a></h3>
-<p data-bai-block="375">When a deployment is no longer needed, it is recommended to terminate it to free up scheduler resources. To terminate the deployment, open the <strong>More</strong> menu on the Service Info card and select <strong>Delete Deployment</strong>. A typed-confirmation modal appears — type the deployment name to enable the <strong>Permanently Delete</strong> button. The terminated deployment then appears in the <strong>Destroyed</strong> filter view.</p>
-<p><figure data-bai-block="376" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>Figure 12.28</figcaption></figure>
+<h3 data-bai-block="375" id="deployment-terminating-a-deployment">Terminating a deployment<a class="hash-link" href="#deployment-terminating-a-deployment" aria-label="Direct link to Terminating a deployment">#</a></h3>
+<p data-bai-block="376">When a deployment is no longer needed, it is recommended to terminate it to free up scheduler resources. To terminate the deployment, open the <strong>More</strong> menu on the Service Info card and select <strong>Delete Deployment</strong>. A typed-confirmation modal appears — type the deployment name to enable the <strong>Permanently Delete</strong> button. The terminated deployment then appears in the <strong>Destroyed</strong> filter view.</p>
+<p><figure data-bai-block="377" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>Figure 12.28</figcaption></figure>
 </p>
-<h2 data-bai-block="377" id="deployment-accessing-your-deployment">Accessing your deployment<a class="hash-link" href="#deployment-accessing-your-deployment" aria-label="Direct link to Accessing your deployment">#</a></h2>
-<h3 data-bai-block="378" id="deployment-making-api-requests">Making API requests<a class="hash-link" href="#deployment-making-api-requests" aria-label="Direct link to Making API requests">#</a></h3>
-<p data-bai-block="379">To allow end users to call your deployment, share the deployment URL with them. If the <strong>Open to Public</strong> option is enabled, you can share the <strong>Service Endpoint</strong> URL from the Deployment Detail Page directly. If the deployment is private, share the URL along with an access token.</p>
-<p data-bai-block="380">Here is a simple command using <code>curl</code> to verify that the deployment is responding:</p>
-<div data-bai-block="381" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> API_TOKEN</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;token>"</span></span>
+<h2 data-bai-block="378" id="deployment-accessing-your-deployment">Accessing your deployment<a class="hash-link" href="#deployment-accessing-your-deployment" aria-label="Direct link to Accessing your deployment">#</a></h2>
+<h3 data-bai-block="379" id="deployment-making-api-requests">Making API requests<a class="hash-link" href="#deployment-making-api-requests" aria-label="Direct link to Making API requests">#</a></h3>
+<p data-bai-block="380">To allow end users to call your deployment, share the deployment URL with them. If the <strong>Open to Public</strong> option is enabled, you can share the <strong>Service Endpoint</strong> URL from the Deployment Detail Page directly. If the deployment is private, share the URL along with an access token.</p>
+<p data-bai-block="381">Here is a simple command using <code>curl</code> to verify that the deployment is responding:</p>
+<div data-bai-block="382" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> API_TOKEN</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;token>"</span></span>
 <span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> MODEL_SERVICE_ENDPOINT</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;model-service-endpoint>"</span></span>
 <span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -H</span><span style="color:#9ECBFF"> "Content-Type: application/json"</span><span style="color:#79B8FF"> -X</span><span style="color:#9ECBFF"> GET</span><span style="color:#79B8FF">    -H</span><span style="color:#9ECBFF"> "Authorization: BackendAI </span><span style="color:#E1E4E8">$API_TOKEN</span><span style="color:#9ECBFF">"</span><span style="color:#9ECBFF">    "</span><span style="color:#E1E4E8">$MODEL_SERVICE_ENDPOINT</span><span style="color:#9ECBFF">"</span></span></code></pre></div>
 <div class="admonition admonition-warning">
-<div data-bai-block="382" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="383" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="383">By default, end users must be on a network that can reach the deployment URL. If the deployment was created in a closed network, only end users with access to that network can reach the service.</p>
+<p data-bai-block="384">By default, end users must be on a network that can reach the deployment URL. If the deployment was created in a closed network, only end users with access to that network can reach the service.</p>
 </div></div>
 
 
-<h3 data-bai-block="384" id="deployment-llm-chat-test">LLM chat test<a class="hash-link" href="#deployment-llm-chat-test" aria-label="Direct link to LLM chat test">#</a></h3>
-<p data-bai-block="385">If you have created a Large Language Model (LLM) service, you can test the LLM in real-time.
+<h3 data-bai-block="385" id="deployment-llm-chat-test">LLM chat test<a class="hash-link" href="#deployment-llm-chat-test" aria-label="Direct link to LLM chat test">#</a></h3>
+<p data-bai-block="386">If you have created a Large Language Model (LLM) service, you can test the LLM in real-time.
 When the deployment is ready, a <code>Test in Chat</code> button appears in the <strong>Deployment is ready</strong> banner at the top of the Deployment Detail Page. Click it to start the test.</p>
-<p><figure data-bai-block="386" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="336" /><figcaption>Figure 12.29</figcaption></figure>
+<p><figure data-bai-block="387" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="336" /><figcaption>Figure 12.29</figcaption></figure>
 </p>
-<p data-bai-block="387">You will be redirected to the Chat page, where the model you created is automatically selected.
+<p data-bai-block="388">You will be redirected to the Chat page, where the model you created is automatically selected.
 Using the chat interface provided on the Chat page, you can test the LLM model.
 For more information about the chat feature, please refer to the <a href="./chat.html#chat-page">Chat page</a>.</p>
-<p><figure data-bai-block="388" class="doc-figure"><img src="./images/LLM_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>Figure 12.30</figcaption></figure>
+<p><figure data-bai-block="389" class="doc-figure"><img src="./images/LLM_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>Figure 12.30</figcaption></figure>
 </p>
-<h4 data-bai-block="389" id="deployment-choosing-a-token-on-the-chat-page">Choosing a token on the Chat page<a class="hash-link" href="#deployment-choosing-a-token-on-the-chat-page" aria-label="Direct link to Choosing a token on the Chat page">#</a></h4>
-<p data-bai-block="390">When the Chat page is talking to a Backend.AI deployment, the token field is a selector listing that deployment&#39;s access tokens rather than a plain text box:</p>
+<h4 data-bai-block="390" id="deployment-choosing-a-token-on-the-chat-page">Choosing a token on the Chat page<a class="hash-link" href="#deployment-choosing-a-token-on-the-chat-page" aria-label="Direct link to Choosing a token on the Chat page">#</a></h4>
+<p data-bai-block="391">When the Chat page is talking to a Backend.AI deployment, the token field is a selector listing that deployment&#39;s access tokens rather than a plain text box:</p>
 <ul>
-<li data-bai-block="391">Every option shows the <strong>last six characters</strong> of the token as a code chip, plus its expiry date (for example <code>~ Aug 26, 2026</code>, or <code>~ Dec 31, 2099</code> for tokens created with <strong>No Expiration</strong>). All tokens begin with the same JWT header, so the tail is the part that actually tells them apart. Hover an option to see the full issued → expiry timestamps.</li>
-<li data-bai-block="392"><strong>Expired tokens are hidden.</strong> Only tokens that are still valid appear in the list.</li>
-<li data-bai-block="393">When the field is empty, the <strong>most recently created valid token</strong> is selected for you. If you clear the selection deliberately, it is not re-applied.</li>
-<li data-bai-block="394">The gear icon next to the field (<strong>Access Token Settings</strong>) opens the deployment&#39;s Access Tokens section, so you can issue a new token without losing your place. The list reloads when you come back, so a token you just created is immediately selectable.</li>
+<li data-bai-block="392">Every option shows the <strong>last six characters</strong> of the token as a code chip, plus its expiry date (for example <code>~ Aug 26, 2026</code>, or <code>~ Dec 31, 2099</code> for tokens created with <strong>No Expiration</strong>). All tokens begin with the same JWT header, so the tail is the part that actually tells them apart. Hover an option to see the full issued → expiry timestamps.</li>
+<li data-bai-block="393"><strong>Expired tokens are hidden.</strong> Only tokens that are still valid appear in the list.</li>
+<li data-bai-block="394">When the field is empty, the <strong>most recently created valid token</strong> is selected for you. If you clear the selection deliberately, it is not re-applied.</li>
+<li data-bai-block="395">The gear icon next to the field (<strong>Access Token Settings</strong>) opens the deployment&#39;s Access Tokens section, so you can issue a new token without losing your place. The list reloads when you come back, so a token you just created is immediately selectable.</li>
 </ul>
-<p data-bai-block="395">If the deployment has no valid token, the selector is empty; create one first as described in <a href="#generating-tokens">Access Tokens</a>.</p>
-<p><figure data-bai-block="396" class="doc-figure"><img src="./images/chat_deployment_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2184" height="454" /><figcaption>Figure 12.31</figcaption></figure>
+<p data-bai-block="396">If the deployment has no valid token, the selector is empty; create one first as described in <a href="#generating-tokens">Access Tokens</a>.</p>
+<p><figure data-bai-block="397" class="doc-figure"><img src="./images/chat_deployment_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2184" height="454" /><figcaption>Figure 12.31</figcaption></figure>
 </p>
-<p data-bai-block="397">If you encounter issues connecting to the API, the Chat page will display options that allow you to manually configure the model settings.
+<p data-bai-block="398">If you encounter issues connecting to the API, the Chat page will display options that allow you to manually configure the model settings.
 To use the model, you will need the following information:</p>
 <ul>
-<li data-bai-block="398"><strong>baseURL</strong> (optional): Base URL of the server where the model is located.
+<li data-bai-block="399"><strong>baseURL</strong> (optional): Base URL of the server where the model is located.
 Make sure to include the version information.
 For instance, when utilizing the OpenAI API, you should enter <a href="https://api.openai.com/v1">https://api.openai.com/v1</a>.</li>
-<li data-bai-block="399"><strong>Token</strong> (optional): An authentication key to access the model service. Tokens can be
+<li data-bai-block="400"><strong>Token</strong> (optional): An authentication key to access the model service. Tokens can be
 generated from various services, not just Backend.AI. The format and generation process
 may vary depending on the service. Always refer to the specific service&#39;s guide for details.
 For instance, when using the service generated by Backend.AI, please refer to the
 <a href="#generating-tokens">Generating Tokens</a> section for instructions on how to generate tokens.</li>
 </ul>
-<p><figure data-bai-block="400" class="doc-figure"><img src="./images/LLM_chat_custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>Figure 12.32</figcaption></figure>
+<p><figure data-bai-block="401" class="doc-figure"><img src="./images/LLM_chat_custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>Figure 12.32</figcaption></figure>
 </p>
 <p><a id="model-store"></a></p>
-<h2 data-bai-block="401" id="deployment-model-store">Model Store<a class="hash-link" href="#deployment-model-store" aria-label="Direct link to Model Store">#</a></h2>
-<p data-bai-block="402">The Model Store provides a card-based gallery of pre-configured models that you can browse, search, and deploy. You can access the Model Store from the sidebar menu.</p>
-<p><figure data-bai-block="403" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 12.33</figcaption></figure>
+<h2 data-bai-block="402" id="deployment-model-store">Model Store<a class="hash-link" href="#deployment-model-store" aria-label="Direct link to Model Store">#</a></h2>
+<p data-bai-block="403">The Model Store provides a card-based gallery of pre-configured models that you can browse, search, and deploy. You can access the Model Store from the sidebar menu.</p>
+<p><figure data-bai-block="404" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 12.33</figcaption></figure>
 </p>
-<h3 data-bai-block="404" id="deployment-browsing-and-searching-models">Browsing and searching models<a class="hash-link" href="#deployment-browsing-and-searching-models" aria-label="Direct link to Browsing and searching models">#</a></h3>
-<p data-bai-block="405">The page uses a filter and sort layout at the top:</p>
+<h3 data-bai-block="405" id="deployment-browsing-and-searching-models">Browsing and searching models<a class="hash-link" href="#deployment-browsing-and-searching-models" aria-label="Direct link to Browsing and searching models">#</a></h3>
+<p data-bai-block="406">The page uses a filter and sort layout at the top:</p>
 <ul>
-<li data-bai-block="406"><p><strong>Property filter bar</strong>: Add one or more conditions to narrow the card list. Two properties are available:</p>
+<li data-bai-block="407"><p><strong>Property filter bar</strong>: Add one or more conditions to narrow the card list. Two properties are available:</p>
 <ul>
-<li data-bai-block="407"><strong>Model Name</strong>: Match model cards by name.</li>
-<li data-bai-block="408"><strong>Storage Host</strong>: Match cards by the storage host that holds the model folder. Instead of typing a host name, pick one from the dropdown of storage hosts registered on the server; the value is committed as a filter condition as soon as you select it. Use the <code>equals</code> operator to keep only that host, or <code>not equals</code> to exclude it.</li>
+<li data-bai-block="408"><strong>Model Name</strong>: Match model cards by name.</li>
+<li data-bai-block="409"><strong>Storage Host</strong>: Match cards by the storage host that holds the model folder. Instead of typing a host name, pick one from the dropdown of storage hosts registered on the server; the value is committed as a filter condition as soon as you select it. Use the <code>equals</code> operator to keep only that host, or <code>not equals</code> to exclude it.</li>
 </ul>
 </li>
-<li data-bai-block="409"><p><strong>Sort</strong>: Choose how results are ordered. The available options are <code>Name (A→Z)</code>, <code>Name (Z→A)</code>, <code>Oldest first</code>, and <code>Newest first</code>.</p>
+<li data-bai-block="410"><p><strong>Sort</strong>: Choose how results are ordered. The available options are <code>Name (A→Z)</code>, <code>Name (Z→A)</code>, <code>Oldest first</code>, and <code>Newest first</code>.</p>
 </li>
-<li data-bai-block="410"><p><strong>Refresh</strong>: Click the refresh button to reload the card list.</p>
+<li data-bai-block="411"><p><strong>Refresh</strong>: Click the refresh button to reload the card list.</p>
 <p> Because you pick the host from a list rather than typing it, a mistyped host name cannot silently produce an empty result set. Conditions stack with <code>AND</code>, so you can combine a name condition with a storage-host condition.</p>
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="411" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="412" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="412">The model list is automatically scoped to the current domain&#39;s MODEL_STORE project. There is no separate domain filter — all cards visible on this page already belong to your domain.</p>
+<p data-bai-block="413">The model list is automatically scoped to the current domain&#39;s MODEL_STORE project. There is no separate domain filter — all cards visible on this page already belong to your domain.</p>
 </div></div>
 
 
-<p data-bai-block="413">Each card displays the model brand icon, title (or name when no title is set), task tag, relative creation time, and the author with an icon. Cards that have <strong>no compatible presets</strong> for the current project are shown at 50% opacity. You can still open such a card to view its details, but its <strong>Deploy</strong> button is disabled and an error alert is shown in the drawer: <strong>No compatible presets available. This model cannot be deployed.</strong></p>
-<p data-bai-block="414">If the <code>MODEL_STORE</code> project is not set up on the server, the page shows a <em>Model Store project not found</em> message with instructions to contact an administrator. If no model cards match your filters, the page displays <em>No models found</em>.</p>
-<p data-bai-block="415">The list is paginated at the bottom. You can change the page size between <code>10</code>, <code>20</code>, and <code>50</code> entries.</p>
-<h3 data-bai-block="416" id="deployment-model-card-details">Model card details<a class="hash-link" href="#deployment-model-card-details" aria-label="Direct link to Model card details">#</a></h3>
-<p data-bai-block="417">Click a card to open the model card drawer on the right side of the page. The drawer shows the model title and description at the top, followed by the task, category, labels, and license tags, and then a details list with the following items:</p>
+<p data-bai-block="414">Each card displays the model brand icon, title (or name when no title is set), task tag, relative creation time, and the author with an icon. Cards that have <strong>no compatible presets</strong> for the current project are shown at 50% opacity. You can still open such a card to view its details, but its <strong>Deploy</strong> button is disabled and an error alert is shown in the drawer: <strong>No compatible presets available. This model cannot be deployed.</strong></p>
+<p data-bai-block="415">If the <code>MODEL_STORE</code> project is not set up on the server, the page shows a <em>Model Store project not found</em> message with instructions to contact an administrator. If no model cards match your filters, the page displays <em>No models found</em>.</p>
+<p data-bai-block="416">The list is paginated at the bottom. You can change the page size between <code>10</code>, <code>20</code>, and <code>50</code> entries.</p>
+<h3 data-bai-block="417" id="deployment-model-card-details">Model card details<a class="hash-link" href="#deployment-model-card-details" aria-label="Direct link to Model card details">#</a></h3>
+<p data-bai-block="418">Click a card to open the model card drawer on the right side of the page. The drawer shows the model title and description at the top, followed by the task, category, labels, and license tags, and then a details list with the following items:</p>
 <ul>
-<li data-bai-block="418"><strong>Author</strong></li>
-<li data-bai-block="419"><strong>Architecture</strong></li>
-<li data-bai-block="420"><strong>Framework</strong> (each framework is shown with an icon)</li>
-<li data-bai-block="421"><strong>Version</strong></li>
-<li data-bai-block="422"><strong>Created</strong> and <strong>Last Modified</strong> timestamps</li>
-<li data-bai-block="423"><strong>Model Folder</strong>: A clickable link that opens the folder explorer for the model storage folder</li>
-<li data-bai-block="424"><strong>Min Resource</strong>: The minimum resource requirements (CPU, memory, GPU)</li>
+<li data-bai-block="419"><strong>Author</strong></li>
+<li data-bai-block="420"><strong>Architecture</strong></li>
+<li data-bai-block="421"><strong>Framework</strong> (each framework is shown with an icon)</li>
+<li data-bai-block="422"><strong>Version</strong></li>
+<li data-bai-block="423"><strong>Created</strong> and <strong>Last Modified</strong> timestamps</li>
+<li data-bai-block="424"><strong>Model Folder</strong>: A clickable link that opens the folder explorer for the model storage folder</li>
+<li data-bai-block="425"><strong>Min Resource</strong>: The minimum resource requirements (CPU, memory, GPU)</li>
 </ul>
-<p data-bai-block="425">If the model card includes a README, it is rendered as a <code>README.md</code> card at the bottom of the drawer.</p>
-<p><figure data-bai-block="426" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>Figure 12.34</figcaption></figure>
+<p data-bai-block="426">If the model card includes a README, it is rendered as a <code>README.md</code> card at the bottom of the drawer.</p>
+<p><figure data-bai-block="427" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>Figure 12.34</figcaption></figure>
 </p>
-<h3 data-bai-block="427" id="deployment-deploying-a-model">Deploying a model<a class="hash-link" href="#deployment-deploying-a-model" aria-label="Direct link to Deploying a model">#</a></h3>
-<p data-bai-block="428">Click the <strong>Deploy</strong> button in the drawer header to deploy the model as a service. The deploy flow behaves in one of two ways:</p>
+<h3 data-bai-block="428" id="deployment-deploying-a-model">Deploying a model<a class="hash-link" href="#deployment-deploying-a-model" aria-label="Direct link to Deploying a model">#</a></h3>
+<p data-bai-block="429">Click the <strong>Deploy</strong> button in the drawer header to deploy the model as a service. The deploy flow behaves in one of two ways:</p>
 <ul>
-<li data-bai-block="429"><p><strong>Auto-deploy</strong>: If the model has exactly one available preset and the current project has exactly one accessible resource group, the deployment is created silently without showing a modal. You are then navigated to the Deployment Detail Page.</p>
+<li data-bai-block="430"><p><strong>Auto-deploy</strong>: If the model has exactly one available preset and the current project has exactly one accessible resource group, the deployment is created silently without showing a modal. You are then navigated to the Deployment Detail Page.</p>
 </li>
-<li data-bai-block="430"><p><strong>Deploy Model modal</strong>: Otherwise, a <strong>Deploy Model</strong> modal opens with the following required fields:</p>
+<li data-bai-block="431"><p><strong>Deploy Model modal</strong>: Otherwise, a <strong>Deploy Model</strong> modal opens with the following required fields:</p>
 <ul>
-<li data-bai-block="431"><strong>Preset</strong>: A grouped dropdown of available resource presets. When presets span multiple runtime variants, options are grouped by runtime variant name; otherwise the options are shown as a flat list.</li>
-<li data-bai-block="432"><strong>Resource Group</strong>: The resource group where the service will run.</li>
+<li data-bai-block="432"><strong>Preset</strong>: A grouped dropdown of available resource presets. When presets span multiple runtime variants, options are grouped by runtime variant name; otherwise the options are shown as a flat list.</li>
+<li data-bai-block="433"><strong>Resource Group</strong>: The resource group where the service will run.</li>
 </ul>
 <p> Click the <strong>Deploy</strong> button in the modal to start the deployment. A success toast confirms that the model has been deployed, and you are navigated to the Deployment Detail Page.</p>
 </li>
 </ul>
-<p><figure data-bai-block="433" class="doc-figure"><img src="./images/model_card_deploy_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="314" /><figcaption>Figure 12.35</figcaption></figure>
+<p><figure data-bai-block="434" class="doc-figure"><img src="./images/model_card_deploy_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="314" /><figcaption>Figure 12.35</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="434" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="435" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="435">If the selected model has no compatible presets for the current project, the drawer&#39;s
+<p data-bai-block="436">If the selected model has no compatible presets for the current project, the drawer&#39;s
 <strong>Deploy</strong> button is disabled and deployment is blocked until a compatible preset is available.</p>
 </div></div>
-
 
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 8, 2026</span>
+  <span class="last-updated">Last updated on Sep 10, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">

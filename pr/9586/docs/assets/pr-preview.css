@@ -397,6 +397,10 @@
   border-color: var(--bai-focus);
   color: var(--bai-focus);
 }
+.bai-nav__badge button.bai-nav__comments:hover {
+  background: var(--bai-focus);
+  color: #fff;
+}
 .bai-nav__badge button.bai-nav__comments[hidden] { display: none; }
 .bai-nav__badge button.bai-nav__comments.bai-copied {
   background: var(--bai-add);

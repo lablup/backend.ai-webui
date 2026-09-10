@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="상단 바" />
   <meta name="twitter:description" content="상단 바에는 WebUI 사용을 지원하는 다양한 기능이 포함되어 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"상단 바","inLanguage":"ko","description":"상단 바에는 WebUI 사용을 지원하는 다양한 기능이 포함되어 있습니다.","dateModified":"2026-09-08T01:13:29.000Z","url":"https://webui.docs.backend.ai/next/ko/header.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"상단 바","inLanguage":"ko","description":"상단 바에는 WebUI 사용을 지원하는 다양한 기능이 포함되어 있습니다.","dateModified":"2026-09-10T06:14:11.000Z","url":"https://webui.docs.backend.ai/next/ko/header.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/header.html" />
   <link rel="alternate" hreflang="en" href="../en/header.html" />
   <link rel="alternate" hreflang="ja" href="../ja/header.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (34851ca)">v26.9.0-alpha.0 (34851ca)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (da28ec8)">v26.9.0-alpha.0 (da28ec8)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -254,112 +254,134 @@
 </div></div>
 
 
+<p><a id="search"></a></p>
+<h2 data-bai-block="18" id="header-검색">검색<a class="hash-link" href="#header-검색" aria-label="Direct link to 검색">#</a></h2>
+<p data-bai-block="19">돋보기 모양 버튼을 클릭하면 검색 팔레트가 열리며, 키보드만으로 원하는 페이지, 페이지 탭, 설정 항목으로 바로 이동할 수 있습니다.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="21">검색 팔레트는 실험적 기능이며 기본적으로 비활성화되어 있습니다. 사용자 설정 페이지의 <strong>실험적 기능</strong>에서 <strong>커맨드 팔레트</strong> 항목을 활성화한 경우에만 상단 바에 <strong>검색</strong> 버튼이 표시되고 단축키가 동작합니다.</p>
+</div></div>
+
+
+<p data-bai-block="22">버튼을 클릭하거나 <code>Ctrl-K</code>(macOS에서는 <code>Cmd-K</code>)를 누르면 팔레트가 열립니다. 입력 필드에 커서가 있는 상태에서도 단축키를 사용할 수 있습니다.</p>
+<p><figure data-bai-block="23" class="doc-figure"><img src="./images/global_search_palette.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="960" /><figcaption>그림 6.3</figcaption></figure>
+</p>
+<p data-bai-block="24"><code>페이지, 탭, 설정 검색</code>이라는 안내 문구가 표시된 검색 입력창에 검색어를 입력하면 페이지, 페이지 탭, 설정 항목을 한 번에 찾을 수 있습니다. 항목의 이름이 아니라 설명이 검색어와 일치한 경우에는 검색어가 발견된 위치를 알려주는 <code>...에서 찾음</code> 문구가 함께 표시되며, 관리자 메뉴에 속한 결과에는 <code>관리자</code> 또는 <code>프로젝트 관리자</code> 태그가 표시됩니다. 입력한 검색어와 일치하는 항목이 없으면 <code>검색 결과 없음</code>이 표시됩니다.</p>
+<p data-bai-block="25">팔레트에서는 다음 세 가지 그룹의 빠른 작업도 제공합니다.</p>
+<ul>
+<li data-bai-block="26"><code>만들기</code>: 새 세션 시작, 스토리지 폴더 생성, 배포 생성</li>
+<li data-bai-block="27"><code>화면</code>: 다크 모드 또는 라이트 모드로 전환, 시스템 설정 사용, UI 언어 변경</li>
+<li data-bai-block="28"><code>패널 및 도움말</code>: 사용자 설정 열기, 알림 열기, 사이드바 접기/펼치기, 현재 페이지 매뉴얼 열기</li>
+</ul>
+<p data-bai-block="29">검색어를 입력하기 전에는 최근에 연 결과가 <code>최근 항목</code> 아래에 먼저 표시됩니다.</p>
 <p><a id="notification"></a></p>
-<h2 data-bai-block="18" id="header-이벤트-알림">이벤트 알림<a class="hash-link" href="#header-이벤트-알림" aria-label="Direct link to 이벤트 알림">#</a></h2>
-<p data-bai-block="19">종 모양 버튼은 이벤트 알림 버튼입니다. WebUI 사용 중 기록이 필요한 이벤트가 이곳에 표시됩니다. 연산 세션 생성과 같은 백그라운드 작업이 진행 중일 때, 여기에서 작업 상태를 확인할 수 있습니다. 단축키(<code>]</code>)를 눌러 알림 영역을 열거나 닫을 수 있습니다.</p>
-<p><figure data-bai-block="20" class="doc-figure"><img src="./images/notification_collapse.png" alt="" class="doc-image" loading="lazy" decoding="async" width="280" height="900" /><figcaption>그림 6.3</figcaption></figure>
+<h2 data-bai-block="30" id="header-이벤트-알림">이벤트 알림<a class="hash-link" href="#header-이벤트-알림" aria-label="Direct link to 이벤트 알림">#</a></h2>
+<p data-bai-block="31">종 모양 버튼은 이벤트 알림 버튼입니다. WebUI 사용 중 기록이 필요한 이벤트가 이곳에 표시됩니다. 연산 세션 생성과 같은 백그라운드 작업이 진행 중일 때, 여기에서 작업 상태를 확인할 수 있습니다. 단축키(<code>]</code>)를 눌러 알림 영역을 열거나 닫을 수 있습니다.</p>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/notification_collapse.png" alt="" class="doc-image" loading="lazy" decoding="async" width="280" height="900" /><figcaption>그림 6.4</figcaption></figure>
 </p>
 <p><a id="theme-mode"></a></p>
-<h2 data-bai-block="21" id="header-화면-모드">화면 모드<a class="hash-link" href="#header-화면-모드" aria-label="Direct link to 화면 모드">#</a></h2>
-<p data-bai-block="22">라이트모드/다크모드 버튼을 통하여 WebUI의 화면 모드를 변경할 수 있습니다.</p>
-<p><figure data-bai-block="23" class="doc-figure"><img src="./images/theme_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="6910" height="4072" /><figcaption>그림 6.4</figcaption></figure>
+<h2 data-bai-block="33" id="header-화면-모드">화면 모드<a class="hash-link" href="#header-화면-모드" aria-label="Direct link to 화면 모드">#</a></h2>
+<p data-bai-block="34">라이트모드/다크모드 버튼을 통하여 WebUI의 화면 모드를 변경할 수 있습니다.</p>
+<p><figure data-bai-block="35" class="doc-figure"><img src="./images/theme_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="6910" height="4072" /><figcaption>그림 6.5</figcaption></figure>
 </p>
 <p><a id="help"></a></p>
-<h2 data-bai-block="24" id="header-도움말">도움말<a class="hash-link" href="#header-도움말" aria-label="Direct link to 도움말">#</a></h2>
-<p data-bai-block="25">상단 바 우측의 물음표 버튼을 클릭하면 본 가이드 문서의 웹 버전에 접속할 수 있습니다. 연결되는
+<h2 data-bai-block="36" id="header-도움말">도움말<a class="hash-link" href="#header-도움말" aria-label="Direct link to 도움말">#</a></h2>
+<p data-bai-block="37">상단 바 우측의 물음표 버튼을 클릭하면 본 가이드 문서의 웹 버전에 접속할 수 있습니다. 연결되는
 주소는 현재 사용 중인 WebUI에 맞추어 구성됩니다.</p>
 <p><a id="responsive-layout"></a></p>
-<h2 data-bai-block="26" id="header-반응형-레이아웃">반응형 레이아웃<a class="hash-link" href="#header-반응형-레이아웃" aria-label="Direct link to 반응형 레이아웃">#</a></h2>
-<p data-bai-block="27">화면이 좁은 경우, 상단 바는 사용성을 높이기 위해 레이아웃을 조정합니다. 화면 너비가 좁으면 사이드바 토글 대신 메뉴 아이콘 버튼이 상단 바에 나타납니다. 사용자의 표시 이름이 숨겨지고 사용자 메뉴에는 아바타 아이콘만 표시될 수 있습니다. 매우 작은 화면에서는 프로젝트 레이블 텍스트도 숨겨집니다.</p>
+<h2 data-bai-block="38" id="header-반응형-레이아웃">반응형 레이아웃<a class="hash-link" href="#header-반응형-레이아웃" aria-label="Direct link to 반응형 레이아웃">#</a></h2>
+<p data-bai-block="39">화면이 좁은 경우, 상단 바는 사용성을 높이기 위해 레이아웃을 조정합니다. 화면 너비가 좁으면 사이드바 토글 대신 메뉴 아이콘 버튼이 상단 바에 나타납니다. 사용자의 표시 이름이 숨겨지고 사용자 메뉴에는 아바타 아이콘만 표시될 수 있습니다. 매우 작은 화면에서는 프로젝트 레이블 텍스트도 숨겨집니다.</p>
 <p><a id="user-menu"></a></p>
-<h2 data-bai-block="28" id="header-사용자-메뉴">사용자 메뉴<a class="hash-link" href="#header-사용자-메뉴" aria-label="Direct link to 사용자 메뉴">#</a></h2>
-<p data-bai-block="29">상단 바 우측의 사용자 아이콘 버튼을 클릭하여 사용자 메뉴를 확인할 수 있습니다.</p>
-<p><figure data-bai-block="30" class="doc-figure"><img src="./images/user_drop_down.png" alt="" class="doc-image" loading="lazy" decoding="async" width="360" height="628" /><figcaption>그림 6.5</figcaption></figure>
+<h2 data-bai-block="40" id="header-사용자-메뉴">사용자 메뉴<a class="hash-link" href="#header-사용자-메뉴" aria-label="Direct link to 사용자 메뉴">#</a></h2>
+<p data-bai-block="41">상단 바 우측의 사용자 아이콘 버튼을 클릭하여 사용자 메뉴를 확인할 수 있습니다.</p>
+<p><figure data-bai-block="42" class="doc-figure"><img src="./images/user_drop_down.png" alt="" class="doc-image" loading="lazy" decoding="async" width="360" height="628" /><figcaption>그림 6.6</figcaption></figure>
 </p>
-<p data-bai-block="31">드롭다운 상단에는 다음과 같은 사용자 정보가 표시됩니다. 이 항목들은 클릭할 수 없는 참고 정보입니다.</p>
+<p data-bai-block="43">드롭다운 상단에는 다음과 같은 사용자 정보가 표시됩니다. 이 항목들은 클릭할 수 없는 참고 정보입니다.</p>
 <ul>
-<li data-bai-block="32"><strong>이름</strong>: 현재 사용자의 전체 이름.</li>
-<li data-bai-block="33"><strong>이메일</strong>: 현재 사용자의 이메일 주소.</li>
-<li data-bai-block="34"><strong>역할</strong>: 현재 사용자의 역할 (예: 사용자, 슈퍼 관리자).</li>
+<li data-bai-block="44"><strong>이름</strong>: 현재 사용자의 전체 이름.</li>
+<li data-bai-block="45"><strong>이메일</strong>: 현재 사용자의 이메일 주소.</li>
+<li data-bai-block="46"><strong>역할</strong>: 현재 사용자의 역할 (예: 사용자, 슈퍼 관리자).</li>
 </ul>
-<p data-bai-block="35">사용자 정보 아래에는 다음과 같은 실행 항목이 있습니다.</p>
+<p data-bai-block="47">사용자 정보 아래에는 다음과 같은 실행 항목이 있습니다.</p>
 <ul>
-<li data-bai-block="36"><code>Backend.AI에 대하여</code>: Backend.AI WebUI의 버전, 라이선스 종류 등과 같은 정보를 표시합니다.</li>
-<li data-bai-block="37"><code>사용자 정보 변경</code>: 현재 로그인된 사용자 정보를 확인하거나 변경합니다.</li>
-<li data-bai-block="38"><code>설정</code>: 사용자 설정 페이지로 이동합니다.</li>
-<li data-bai-block="39"><code>로그 / 에러기록</code>: 사용자 설정 페이지의 로그 탭으로 이동합니다. 클라이언트 측에 기록된 로그 및 오류 내역을 확인할 수 있습니다.</li>
-<li data-bai-block="40"><code>다운로드</code>: 다운로드 다이얼로그를 엽니다. 독립형 WebUI 데스크톱 앱과 Backend.AI 명령줄 인터페이스(CLI)를 받을 수 있습니다. 이 항목은 관리자가 둘 중 하나 이상을 활성화한 경우에만 표시됩니다.</li>
-<li data-bai-block="41"><code>로그아웃</code>: WebUI에서 로그아웃합니다.</li>
+<li data-bai-block="48"><code>Backend.AI에 대하여</code>: Backend.AI WebUI의 버전, 라이선스 종류 등과 같은 정보를 표시합니다.</li>
+<li data-bai-block="49"><code>사용자 정보 변경</code>: 현재 로그인된 사용자 정보를 확인하거나 변경합니다.</li>
+<li data-bai-block="50"><code>설정</code>: 사용자 설정 페이지로 이동합니다.</li>
+<li data-bai-block="51"><code>로그 / 에러기록</code>: 사용자 설정 페이지의 로그 탭으로 이동합니다. 클라이언트 측에 기록된 로그 및 오류 내역을 확인할 수 있습니다.</li>
+<li data-bai-block="52"><code>다운로드</code>: 다운로드 다이얼로그를 엽니다. 독립형 WebUI 데스크톱 앱과 Backend.AI 명령줄 인터페이스(CLI)를 받을 수 있습니다. 이 항목은 관리자가 둘 중 하나 이상을 활성화한 경우에만 표시됩니다.</li>
+<li data-bai-block="53"><code>로그아웃</code>: WebUI에서 로그아웃합니다.</li>
 </ul>
 <p><a id="my-account"></a></p>
-<h3 data-bai-block="42" id="header-사용자-정보-변경">사용자 정보 변경<a class="hash-link" href="#header-사용자-정보-변경" aria-label="Direct link to 사용자 정보 변경">#</a></h3>
-<p data-bai-block="43"><code>사용자 정보 변경</code>을 클릭하면 사용자 정보 변경 다이얼로그가 나타납니다.</p>
-<p><figure data-bai-block="44" class="doc-figure"><img src="./images/my_account_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="514" /><figcaption>그림 6.6</figcaption></figure>
+<h3 data-bai-block="54" id="header-사용자-정보-변경">사용자 정보 변경<a class="hash-link" href="#header-사용자-정보-변경" aria-label="Direct link to 사용자 정보 변경">#</a></h3>
+<p data-bai-block="55"><code>사용자 정보 변경</code>을 클릭하면 사용자 정보 변경 다이얼로그가 나타납니다.</p>
+<p><figure data-bai-block="56" class="doc-figure"><img src="./images/my_account_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="514" /><figcaption>그림 6.7</figcaption></figure>
 </p>
-<p data-bai-block="45">각 항목은 다음과 같은 의미를 가집니다. 원하는 값을 입력하고 업데이트 버튼을 클릭하면
+<p data-bai-block="57">각 항목은 다음과 같은 의미를 가집니다. 원하는 값을 입력하고 업데이트 버튼을 클릭하면
 사용자 정보가 변경됩니다.</p>
 <ul>
-<li data-bai-block="46"><strong>사용자 이름</strong>: 사용자의 이름 (최대 64자).</li>
-<li data-bai-block="47"><strong>새 비밀번호</strong>: 새로운 비밀번호 (영문자, 숫자, 기호가 1개 이상 포함된 8글자 이상).
+<li data-bai-block="58"><strong>사용자 이름</strong>: 사용자의 이름 (최대 64자).</li>
+<li data-bai-block="59"><strong>새 비밀번호</strong>: 새로운 비밀번호 (영문자, 숫자, 기호가 1개 이상 포함된 8글자 이상).
 눈 아이콘을 클릭하면 입력 내용을 확인할 수 있습니다.</li>
-<li data-bai-block="48"><strong>새 비밀번호 (재입력)</strong>: 확인을 위해 새 비밀번호를 다시 입력합니다.</li>
-<li data-bai-block="49"><strong>허용된 클라이언트 IP</strong>: 특정 IP 주소 또는 CIDR 범위로 로그인 접근을 제한합니다.
+<li data-bai-block="60"><strong>새 비밀번호 (재입력)</strong>: 확인을 위해 새 비밀번호를 다시 입력합니다.</li>
+<li data-bai-block="61"><strong>허용된 클라이언트 IP</strong>: 특정 IP 주소 또는 CIDR 범위로 로그인 접근을 제한합니다.
 하나 이상의 IP 주소 또는 CIDR 표기법(예: <code>10.20.30.40</code>, <code>10.20.30.0/24</code>)을
 입력할 수 있습니다. 필드 아래에는 현재 접속 IP 주소가 복사 버튼과 함께
 표시됩니다. 설정된 목록에 현재 IP가 포함되어 있지 않으면 경고가 표시됩니다.</li>
-<li data-bai-block="50"><strong>이중 인증 사용</strong>: 이중 인증(2FA)을 활성화하거나 비활성화합니다. 활성화된 경우
+<li data-bai-block="62"><strong>이중 인증 사용</strong>: 이중 인증(2FA)을 활성화하거나 비활성화합니다. 활성화된 경우
 로그인 시 OTP 코드를 입력해야 합니다.</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="51" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div data-bai-block="63" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
 <div class="admonition-content">
 
-<p data-bai-block="52">플러그인 설정에 따라 <code>이중 인증 사용</code> 항목이 표시되지 않을 수 있습니다.
+<p data-bai-block="64">플러그인 설정에 따라 <code>이중 인증 사용</code> 항목이 표시되지 않을 수 있습니다.
 이 경우 시스템 관리자에게 문의하시기 바랍니다.</p>
 </div></div>
 
 
 <p><a id="2fa-setup"></a></p>
-<h3 data-bai-block="53" id="header-이중-인증-설정">이중 인증 설정<a class="hash-link" href="#header-이중-인증-설정" aria-label="Direct link to 이중 인증 설정">#</a></h3>
-<p data-bai-block="54"><code>2FA Enabled</code> 스위치를 활성화하면 다음과 같은 다이얼로그가 나타납니다.</p>
-<p><figure data-bai-block="55" class="doc-figure"><img src="./images/2fa_setup.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1172" /><figcaption>그림 6.7</figcaption></figure>
+<h3 data-bai-block="65" id="header-이중-인증-설정">이중 인증 설정<a class="hash-link" href="#header-이중-인증-설정" aria-label="Direct link to 이중 인증 설정">#</a></h3>
+<p data-bai-block="66"><code>2FA Enabled</code> 스위치를 활성화하면 다음과 같은 다이얼로그가 나타납니다.</p>
+<p><figure data-bai-block="67" class="doc-figure"><img src="./images/2fa_setup.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1172" /><figcaption>그림 6.8</figcaption></figure>
 </p>
-<p data-bai-block="56">사용자가 사용하는 이중 인증 애플리케이션을 켜고 QR 코드를 스캔하거나 인증 코드를 직접 입력합니다. 이중 인증 지원 애플리케이션은 Google Authenticator, 2STP, 1Password, Bitwarden 등이 있습니다.</p>
-<p data-bai-block="57">이중 인증 애플리케이션에 추가된 항목의 6자리 코드를 위 다이얼로그에 입력합니다. <code>확인</code> 버튼을 누르면 이중 인증 활성화가 완료됩니다.</p>
-<p data-bai-block="58">이후 해당 사용자의 로그인 과정에서 OTP 코드를 묻는 추가 필드가 나타납니다.</p>
-<p><figure data-bai-block="59" class="doc-figure"><img src="./images/ask_otp_when_login.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2560" height="1300" /><figcaption>그림 6.8</figcaption></figure>
+<p data-bai-block="68">사용자가 사용하는 이중 인증 애플리케이션을 켜고 QR 코드를 스캔하거나 인증 코드를 직접 입력합니다. 이중 인증 지원 애플리케이션은 Google Authenticator, 2STP, 1Password, Bitwarden 등이 있습니다.</p>
+<p data-bai-block="69">이중 인증 애플리케이션에 추가된 항목의 6자리 코드를 위 다이얼로그에 입력합니다. <code>확인</code> 버튼을 누르면 이중 인증 활성화가 완료됩니다.</p>
+<p data-bai-block="70">이후 해당 사용자의 로그인 과정에서 OTP 코드를 묻는 추가 필드가 나타납니다.</p>
+<p><figure data-bai-block="71" class="doc-figure"><img src="./images/ask_otp_when_login.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2560" height="1300" /><figcaption>그림 6.9</figcaption></figure>
 </p>
-<p data-bai-block="60">이중 인증 애플리케이션을 열고 One-time password 필드에 6자리 코드를 입력해야 로그인이 가능합니다.</p>
-<p><figure data-bai-block="61" class="doc-figure"><img src="./images/remove_2fa.png" alt="" class="doc-image" loading="lazy" decoding="async" width="816" height="276" /><figcaption>그림 6.9</figcaption></figure>
+<p data-bai-block="72">이중 인증 애플리케이션을 열고 One-time password 필드에 6자리 코드를 입력해야 로그인이 가능합니다.</p>
+<p><figure data-bai-block="73" class="doc-figure"><img src="./images/remove_2fa.png" alt="" class="doc-image" loading="lazy" decoding="async" width="816" height="276" /><figcaption>그림 6.10</figcaption></figure>
 </p>
-<p data-bai-block="62">이중 인증을 비활성화하려면 <code>2FA Enabled</code> 스위치를 끄고 다음 다이얼로그에서 확인 버튼을 클릭합니다.</p>
+<p data-bai-block="74">이중 인증을 비활성화하려면 <code>2FA Enabled</code> 스위치를 끄고 다음 다이얼로그에서 확인 버튼을 클릭합니다.</p>
 <p><a id="downloads"></a></p>
-<h3 data-bai-block="63" id="header-다운로드">다운로드<a class="hash-link" href="#header-다운로드" aria-label="Direct link to 다운로드">#</a></h3>
-<p data-bai-block="64"><code>다운로드</code>를 선택하면 관리자가 활성화한 항목별로 탭이 구성된 다이얼로그가 나타납니다.
+<h3 data-bai-block="75" id="header-다운로드">다운로드<a class="hash-link" href="#header-다운로드" aria-label="Direct link to 다운로드">#</a></h3>
+<p data-bai-block="76"><code>다운로드</code>를 선택하면 관리자가 활성화한 항목별로 탭이 구성된 다이얼로그가 나타납니다.
 탭은 <code>데스크톱 앱</code>과 <code>CLI</code>입니다.</p>
-<p><figure data-bai-block="65" class="doc-figure"><img src="./images/downloads_desktop_app_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="412" /><figcaption>그림 6.10</figcaption></figure>
+<p><figure data-bai-block="77" class="doc-figure"><img src="./images/downloads_desktop_app_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="412" /><figcaption>그림 6.11</figcaption></figure>
 </p>
-<p data-bai-block="66"><code>데스크톱 앱</code> 탭에서는 <strong>OS</strong> 항목에서 사용 중인 운영체제를 선택한 뒤, 사용 중인 CPU
+<p data-bai-block="78"><code>데스크톱 앱</code> 탭에서는 <strong>OS</strong> 항목에서 사용 중인 운영체제를 선택한 뒤, 사용 중인 CPU
 아키텍처에 해당하는 버튼을 클릭하면 다운로드가 시작됩니다. 독립형 앱을 사용하면 브라우저
 없이도 동일한 WebUI를 사용할 수 있습니다.</p>
-<p><figure data-bai-block="67" class="doc-figure"><img src="./images/downloads_cli_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1984" /><figcaption>그림 6.11</figcaption></figure>
+<p><figure data-bai-block="79" class="doc-figure"><img src="./images/downloads_cli_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1984" /><figcaption>그림 6.12</figcaption></figure>
 </p>
-<p data-bai-block="68"><code>CLI</code> 탭에서는 명령줄 클라이언트를 사용하는 두 가지 방법을 제공합니다.</p>
+<p data-bai-block="80"><code>CLI</code> 탭에서는 명령줄 클라이언트를 사용하는 두 가지 방법을 제공합니다.</p>
 <ul>
-<li data-bai-block="69"><strong>독립 실행 파일 다운로드</strong>: 사용 중인 운영체제를 선택한 뒤, 사용 중인 CPU 아키텍처에
+<li data-bai-block="81"><strong>독립 실행 파일 다운로드</strong>: 사용 중인 운영체제를 선택한 뒤, 사용 중인 CPU 아키텍처에
 해당하는 버튼을 클릭합니다. Linux와 macOS 빌드를 제공합니다. 다운로드한 뒤에는 버튼
 아래에 표시된 명령을 실행하여 실행 권한을 부여하고, 필요하면 <code>PATH</code>에 <code>backend.ai</code>로
 설치할 수 있습니다. macOS의 경우 빌드가 아직 서명되지 않았기 때문에, 대신 quarantine
 속성을 먼저 제거하는 방법이 안내됩니다.</li>
-<li data-bai-block="70"><strong>pip로 설치</strong>: 파이썬 가상 환경을 만들고, 접속 중인 서버와 버전이 일치하는 클라이언트를
+<li data-bai-block="82"><strong>pip로 설치</strong>: 파이썬 가상 환경을 만들고, 접속 중인 서버와 버전이 일치하는 클라이언트를
 설치하며, 클라이언트에 필요한 환경 변수를 설정하는 스니펫이 제공됩니다. 스니펫 우측 상단의
 복사 버튼을 클릭하면 전체 내용을 복사할 수 있습니다.</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="71" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div data-bai-block="83" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
 <div class="admonition-content">
 
-<p data-bai-block="72">스니펫에는 현재 세션의 엔드포인트가 자동으로 채워지지만, 자격 증명은 표시되지 않습니다.
+<p data-bai-block="84">스니펫에는 현재 세션의 엔드포인트가 자동으로 채워지지만, 자격 증명은 표시되지 않습니다.
 실행하기 전에 <code>&lt;your-access-key&gt;</code>와 <code>&lt;your-secret-key&gt;</code>를 본인의 키페어로 바꾸시기
 바랍니다. 또한 스니펫은 클라이언트가 요구하는 Python 3.13을 사용하도록 고정합니다.</p>
 </div></div>
@@ -370,7 +392,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/header/header.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 8일</span>
+  <span class="last-updated">마지막 업데이트 2026년 9월 10일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./login.html">
@@ -392,6 +414,7 @@
   <ul class="doc-toc__list">
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%84%A0%ED%83%9D%EA%B8%B0" data-toc-target="header-프로젝트-선택기">프로젝트 선택기</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%84%B8%EC%85%98-%ED%83%80%EC%9D%B4%EB%A8%B8" data-toc-target="header-로그인-세션-타이머">로그인 세션 타이머</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%EA%B2%80%EC%83%89" data-toc-target="header-검색">검색</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EC%95%8C%EB%A6%BC" data-toc-target="header-이벤트-알림">이벤트 알림</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%ED%99%94%EB%A9%B4-%EB%AA%A8%EB%93%9C" data-toc-target="header-화면-모드">화면 모드</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%EB%8F%84%EC%9B%80%EB%A7%90" data-toc-target="header-도움말">도움말</a></li>
