@@ -205,12 +205,11 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
             selectedKeys.length
               ? mergeFilterValues(
                   _.map(selectedKeys, (value) => {
-                    // When valuePropName is 'id', the outer key is the
-                    // global id — convert to the local UUID the filter
-                    // expects. When 'row_id', use the value directly.
+                    // The queryfilter only knows `id` (the local UUID); a
+                    // `row_id` key already is that UUID, a global id is not.
                     const filterValue =
                       valuePropName === 'id' ? toLocalId(value) : value;
-                    return `${valuePropName} == "${filterValue}"`;
+                    return `id == "${filterValue}"`;
                   }),
                   '|',
                 )
