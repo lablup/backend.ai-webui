@@ -21,9 +21,10 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
 
 /**
  * Contract tests for the ownership/role-based rename gate (ADR-0001,
- * FR-3413). Rename is allowed for the folder owner, super admins, or when
- * the page-passed `project` matches the folder's own ownership project —
- * never derived from the ambient current project. External behavior only:
+ * FR-3413). Rename is allowed for the folder owner, super admins, or a
+ * project admin of the page-passed `project` when it matches the folder's
+ * own ownership project (FR-3522) — never derived from the ambient current
+ * project. External behavior only:
  * the presence/absence of the rename (edit) trigger in the rendered output.
  */
 
@@ -66,8 +67,9 @@ vi.mock('../hooks/backendai', async (importOriginal) => {
   };
 });
 
-// Super-admin status is pinned per test scenario.
+// Super-admin status and project-admin scopes are pinned per test scenario.
 let mockIsSuperAdmin = false;
+let mockProjectAdminIds: string[] = [];
 vi.mock('../hooks/useCurrentUserProjectRoles', async (importOriginal) => {
   const originalModule =
     await importOriginal<
@@ -78,7 +80,7 @@ vi.mock('../hooks/useCurrentUserProjectRoles', async (importOriginal) => {
     useCurrentUserProjectRoles: () => ({
       isSuperAdmin: mockIsSuperAdmin,
       domainAdminDomains: [],
-      projectAdminIds: [],
+      projectAdminIds: mockProjectAdminIds,
     }),
   };
 });
@@ -182,6 +184,7 @@ const findEditTrigger = async () => {
 describe('EditableVFolderNameV2 rename gate (ADR-0001, FR-3413)', () => {
   beforeEach(() => {
     mockIsSuperAdmin = false;
+    mockProjectAdminIds = [];
   });
 
   it('lets the folder owner rename regardless of project context (project null)', async () => {
@@ -203,13 +206,35 @@ describe('EditableVFolderNameV2 rename gate (ADR-0001, FR-3413)', () => {
     expect(await findEditTrigger()).toBeInTheDocument();
   });
 
-  it('lets a member rename when the passed project matches the folder ownership project', async () => {
+  it('lets a project admin rename when the passed project matches the folder ownership project', async () => {
+    mockProjectAdminIds = ['folder-project-id'];
     renderName({
       project: { id: 'folder-project-id', name: 'folder-project' },
       ownerUserId: 'someone-else-uuid',
       ownershipProjectId: 'folder-project-id',
     });
     expect(await findEditTrigger()).toBeInTheDocument();
+  });
+
+  // FR-3522: a plain member of the owning project only gets READ on it, so
+  // the pencil used to hand them a guaranteed 403.
+  it('does NOT allow rename for a plain member of the folder ownership project', async () => {
+    renderName({
+      project: { id: 'folder-project-id', name: 'folder-project' },
+      ownerUserId: 'someone-else-uuid',
+      ownershipProjectId: 'folder-project-id',
+    });
+    expect(await findEditTrigger()).not.toBeInTheDocument();
+  });
+
+  it('does NOT allow rename when the admin scope is over a different project', async () => {
+    mockProjectAdminIds = ['some-other-project-id'];
+    renderName({
+      project: { id: 'folder-project-id', name: 'folder-project' },
+      ownerUserId: 'someone-else-uuid',
+      ownershipProjectId: 'folder-project-id',
+    });
+    expect(await findEditTrigger()).not.toBeInTheDocument();
   });
 
   it('does NOT allow rename with project null for a non-owner non-superadmin, even though the ambient decoy matches', async () => {

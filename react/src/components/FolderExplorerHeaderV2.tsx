@@ -28,7 +28,7 @@ interface FolderExplorerHeaderV2Props {
    * Explicit project prop contract (ADR-0001, FR-3412/FR-3413): pass-through
    * for the FileBrowser/SFTP session-launch buttons (`null` renders them
    * disabled with `noProjectTooltip` as the reason) and for the rename
-   * gating of `EditableVFolderNameV2` (`null` drops the project-membership
+   * gating of `EditableVFolderNameV2` (`null` drops the project-admin
    * branch — owner/super-admin keep their power).
    */
   project: ProjectContextOrNull;
