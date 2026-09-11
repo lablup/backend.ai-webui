@@ -76,6 +76,7 @@ export default UserSettingsModalOpener;
 
 /** Entry point for in-app triggers. Pushes, so Back closes the modal. */
 export const useUserSettingsModal = () => {
+  'use memo';
   const [, setRawCategory] = useQueryState(
     USER_SETTINGS_PARAM,
     parseAsString.withOptions({ history: 'push' }),

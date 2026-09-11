@@ -196,8 +196,10 @@ const SettingList: React.FC<SettingPageProps> = ({
 
   // `?setting=` arrival only fires for an item that is actually on screen: the
   // nav view below `md` and a selected group both hide items the filter kept.
-  const renderedSettingItems =
-    isNarrow && narrowView === 'nav'
+  // `hideGroupNav` has neither — every group is stacked at every width.
+  const renderedSettingItems = hideGroupNav
+    ? _.flatMap(filteredSettingGroups, 'settingItems')
+    : isNarrow && narrowView === 'nav'
       ? []
       : activeTabKey === ALL_NAV_KEY
         ? _.flatMap(filteredSettingGroups, 'settingItems')
