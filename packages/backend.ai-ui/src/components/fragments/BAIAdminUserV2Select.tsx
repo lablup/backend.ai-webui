@@ -270,6 +270,7 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
       isLoading={
         isLoading ||
         controllableValue !== deferredControllableValue ||
+        controllableOpen !== deferredOpen ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
