@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Inline text with the antd Typography.Text prop surface and structure, rendered on Astryx tokens: one span that inherits the surrounding font size, plus the semantic colors, the strong/italic/underline/delete decorations, the code, keyboard and mark boxes, CSS truncation (single or multi-line) with an optional tooltip and an expand link, and a copy-to-clipboard control. With ellipsis or copyable the span becomes an inline-flex row holding the clamp box and the controls, so the text still measures its own overflow. Its strings (the copy label, the expand and collapse links) are translated through useBAIi18n. Remaining props are standard HTML attributes and land on the root span.',
+      'Inline text with the antd Typography.Text prop surface and structure, rendered on Astryx tokens: one span that inherits the surrounding font size, plus the semantic colors, the strong/italic/underline/delete decorations, the code, keyboard and mark boxes, CSS truncation (single or multi-line) with an optional tooltip and an expand link that ends the text itself (beside the box for keyboard, whose Kbd cannot be sliced), and a copy-to-clipboard control. With ellipsis or copyable the span becomes an inline-flex row holding the clamp box and the controls, so the text still measures its own overflow. Its strings (the copy label, the expand and collapse links) are translated through useBAIi18n. Remaining props are standard HTML attributes and land on the root span.',
     bestPractices: [
       {
         guidance: true,
@@ -124,7 +124,7 @@ export const docs = {
       name: 'ellipsis',
       type: 'boolean | BAITextEllipsisConfig',
       description:
-        'Clamps the text. true clamps to one line; the object form takes rows for a multi-line clamp, tooltip to reveal the full value on hover, expandable to append an expand and collapse link, and onExpand to observe it.',
+        'Clamps the text. true clamps to one line; the object form takes rows for a multi-line clamp, tooltip to reveal the full value on hover, expandable to end the text with an expand and collapse link (a multi-line clamp is measured so the link fits on the last visible line; with keyboard the link sits beside the box instead), and onExpand to observe it.',
     },
     {
       name: 'copyable',
