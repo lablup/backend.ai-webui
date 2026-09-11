@@ -76,7 +76,17 @@ interface Props {
     label?: React.ReactNode;
     value?: string | number | null;
   }) => React.ReactNode;
+  /**
+   * Reports the remaining slots (available - occupied) of every loaded agent,
+   * so a caller can gate its own UI on the picked agent's capacity.
+   */
+  onRemainingSlotsChange?: (
+    remainingSlotsByAgentId: AgentRemainingSlotsMap,
+  ) => void;
 }
+
+/** Remaining slots per agent id, e.g. `{ 'agent-1': { cpu: 2, mem: 1024 } }`. */
+export type AgentRemainingSlotsMap = Record<string, Record<string, number>>;
 
 const AgentSelect: React.FC<Props> = ({
   fetchKey,
@@ -88,6 +98,7 @@ const AgentSelect: React.FC<Props> = ({
   placeholder,
   disabled,
   labelRender: _labelRender,
+  onRemainingSlotsChange,
   ...selectProps
 }) => {
   'use memo';
@@ -148,7 +159,9 @@ const AgentSelect: React.FC<Props> = ({
     },
   );
 
-  const agentOptions: Array<BAIComplexSelectOption> = _.compact(
+  // One pass over the server's items: the options keep its order, the map is
+  // only a lookup derived from the same list.
+  const loadedAgents = _.compact(
     _.map(agent_summary_list?.items, (agent) => {
       if (!agent?.id) return null;
       const availableSlotsInfo: {
@@ -166,28 +179,46 @@ const AgentSelect: React.FC<Props> = ({
           return parseInt(value) - parseInt(occupiedSlotsInfo[key] ?? 0);
         }
       });
+      return { id: agent.id, remainingSlotsInfo };
+    }),
+  );
 
-      return {
-        // P26-3: the label is the string that fills the trigger, the
-        // accessible name and the live region; the figures go in `extra`.
-        label: agent.id,
-        value: agent.id,
-        extra: (
-          <BAIFlex direction="row" gap={'xxs'}>
-            {_.map(remainingSlotsInfo, (slot, key) => {
-              return (
-                <BAIResourceNumberWithIcon
-                  key={key}
-                  // @ts-ignore
-                  type={key}
-                  value={slot.toString()}
-                  hideTooltip
-                />
-              );
-            })}
-          </BAIFlex>
-        ),
-      };
+  const remainingSlotsByAgentId: AgentRemainingSlotsMap = _.fromPairs(
+    _.map(loadedAgents, ({ id, remainingSlotsInfo }) => [
+      id,
+      remainingSlotsInfo,
+    ]),
+  );
+
+  const reportRemainingSlots = useEffectEvent(() => {
+    onRemainingSlotsChange?.(remainingSlotsByAgentId);
+  });
+  useEffect(() => {
+    reportRemainingSlots();
+  }, [remainingSlotsByAgentId]);
+
+  const agentOptions: Array<BAIComplexSelectOption> = _.map(
+    loadedAgents,
+    ({ id, remainingSlotsInfo }) => ({
+      // P26-3: the label is the string that fills the trigger, the
+      // accessible name and the live region; the figures go in `extra`.
+      label: id,
+      value: id,
+      extra: (
+        <BAIFlex direction="row" gap={'xxs'}>
+          {_.map(remainingSlotsInfo, (slot, key) => {
+            return (
+              <BAIResourceNumberWithIcon
+                key={key}
+                // @ts-ignore
+                type={key}
+                value={slot.toString()}
+                hideTooltip
+              />
+            );
+          })}
+        </BAIFlex>
+      ),
     }),
   );
 
