@@ -113,7 +113,7 @@ export const docs = {
       name: 'open',
       type: 'boolean',
       description:
-        'Controlled popup state. It also drives the option query fetch policy, which is network-only while open and store-only while closed.',
+        'Controlled popup state. It also drives the option query fetch policy, which is network-only while open and store-or-network while closed, so the first mount fetches and suspends and later closes are served from the store.',
     },
     {
       name: 'defaultOpen',
