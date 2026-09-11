@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ฟีเจอร์ผู้ดูแลระบบ" />
   <meta name="twitter:description" content="การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-09-09T03:11:29.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ฟีเจอร์ผู้ดูแลระบบ","inLanguage":"th","description":"การเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบจะเพิ่มเมนู การตั้งค่าผู้ดูแลระบบ ที่ด้านบนของแถบด้านข้าง เมื่อเลือกเมนูนี้…","dateModified":"2026-09-10T12:26:42.000Z","url":"https://webui.docs.backend.ai/next/th/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a1c61c7)">v26.9.0-alpha.0 (a1c61c7)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e34216f)">v26.9.0-alpha.0 (e34216f)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -583,14 +583,12 @@ Backend.AI ได้ใน 15 นาที ตัวอย่างเช่น 
 
 
 <p data-bai-block="154">ขั้นแรก เข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบและสร้างโฟลเดอร์โปรเจกต์ หลังจากย้ายไปยัง
-หน้าข้อมูล ให้คลิก &#39;สร้างโฟลเดอร์&#39; เพื่อเปิดกล่องโต้ตอบการสร้างโฟลเดอร์
-ป้อนชื่อโฟลเดอร์และตั้งค่าประเภทเป็น Project เมื่อตั้งค่าประเภทเป็น Project
-โฟลเดอร์จะถูกกำหนดให้โปรเจกต์ที่เลือกในตัวเลือกโปรเจกต์ในส่วนหัวโดยอัตโนมัติ
-สิทธิ์จะถูกตั้งค่าเป็นอ่านเท่านั้น</p>
-<p><figure data-bai-block="155" class="doc-figure"><img src="./images/group_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="674" height="612" /><figcaption>รูปที่ 24.24</figcaption></figure>
+หน้าข้อมูลสำหรับผู้ดูแลระบบ ให้คลิก &#39;สร้างโฟลเดอร์&#39; เพื่อเปิดกล่องโต้ตอบการสร้างโฟลเดอร์
+เนื่องจากหน้าข้อมูลสำหรับผู้ดูแลระบบสามารถสร้างได้เฉพาะโฟลเดอร์โปรเจกต์ กล่องโต้ตอบนี้จึงไม่แสดงตัวเลือกประเภทโฟลเดอร์
+ให้เลือกโปรเจกต์ที่จะเป็นเจ้าของโฟลเดอร์ในช่อง <strong>โครงการปลายทาง</strong>
+ที่ด้านบนของกล่องโต้ตอบ จากนั้นป้อนชื่อโฟลเดอร์และตั้งค่า <strong>การอนุญาตเมานต์</strong></p>
+<p><figure data-bai-block="155" class="doc-figure"><img src="./images/group_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="1036" /><figcaption>รูปที่ 24.24</figcaption></figure>
 </p>
-<!-- TODO: Re-capture group_folder_creation.png — shows the old UI. -->
-
 <p data-bai-block="156">หลังจากยืนยันว่าโฟลเดอร์ถูกสร้างขึ้นแล้ว ให้เข้าสู่ระบบด้วยบัญชีของ User B และ
 ตรวจสอบว่าโฟลเดอร์โปรเจกต์ที่เพิ่งสร้างในหน้าข้อมูลแสดงขึ้นโดย
 ไม่ต้องมีขั้นตอนการเชิญ คุณจะเห็นว่า R (อ่านเท่านั้น) ยังแสดงในแผงสิทธิ์</p>
@@ -949,7 +947,7 @@ Backend.AI ได้ใน 15 นาที ตัวอย่างเช่น 
 ตรวจสอบให้แน่ใจว่าทรัพยากรที่จัดสรรน้อยกว่าความจุฮาร์ดแวร์ทั้งหมด
 ในกรณีนี้ ตั้งค่า CPU, RAM และ fGPU เป็น 2, 4 และ 1 ตามลำดับ
 คลิก <strong>บันทึก</strong> เพื่อนำนโยบายทรัพยากรที่เปลี่ยนแปลงไปใช้</p>
-<p><figure data-bai-block="360" class="doc-figure"><img src="./images/update_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="1950" /><figcaption>รูปที่ 24.40</figcaption></figure>
+<p><figure data-bai-block="360" class="doc-figure"><img src="./images/update_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1920" height="2012" /><figcaption>รูปที่ 24.40</figcaption></figure>
 </p>
 <p data-bai-block="361">สำหรับรายละเอียดของแต่ละตัวเลือกในกล่องโต้ตอบนโยบายทรัพยากร โปรดดูคำอธิบายด้านล่าง</p>
 <ul>
@@ -1046,7 +1044,7 @@ Count Per Model Session และ Max Customized Image Count</p>
 <p data-bai-block="392">การเรียงลำดับและการแบ่งหน้าทั้งหมดประมวลผลบนเซิร์ฟเวอร์ แท็บนี้จึงยังตอบสนองได้ดีในคลัสเตอร์ที่มีนโยบายจำนวนมาก
 คลิกหัวคอลัมน์เพื่อเปลี่ยนลำดับการเรียง และใช้ตัวแบ่งหน้าด้านล่างตารางเพื่อเลื่อนดูผลลัพธ์</p>
 <p data-bai-block="393">หากต้องการสร้างนโยบายทรัพยากรผู้ใช้ใหม่ ให้คลิกปุ่ม <strong>สร้าง</strong></p>
-<p><figure data-bai-block="394" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1636" /><figcaption>รูปที่ 24.45</figcaption></figure>
+<p><figure data-bai-block="394" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1432" /><figcaption>รูปที่ 24.45</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="395">Name: ชื่อของนโยบายทรัพยากรผู้ใช้</li>
@@ -1128,228 +1126,223 @@ service ที่สร้างโดยผู้ใช้ การเพิ�
 </div></div>
 
 
-<p data-bai-block="428">ในแท็บ <strong>เซสชัน</strong> ตัวกรองคุณสมบัติมีเงื่อนไขต่อไปนี้:</p>
-<ul>
-<li data-bai-block="429"><strong>โปรเจกต์</strong>: เลือกโปรเจกต์จากดรอปดาวน์ที่ค้นหาได้ซึ่งแสดงโปรเจกต์ในคลัสเตอร์นี้ เนื่องจากเลือกโปรเจกต์จากรายการ
-คุณจึงไม่ต้องค้นหาตัวระบุของโปรเจกต์ และแท็กตัวกรองที่ได้จะแสดงชื่อโปรเจกต์</li>
-<li data-bai-block="430"><strong>ชื่อเซสชัน</strong>, <strong>กลุ่มทรัพยากร</strong>, <strong>เอเจนต์</strong>, <strong>อีเมลของเจ้าของ</strong>: จำกัดรายการด้วยการจับคู่ข้อความ</li>
-</ul>
-<p data-bai-block="431">เมื่อเปิดใช้งานฟีเจอร์ทดลอง <strong>Session resource grid view</strong> ในการตั้งค่าผู้ใช้ (ดูที่หัวข้อ <a href="./user_settings.html#experimental-features">คุณสมบัติการทดลอง</a>) แท็บ <strong>เซสชัน</strong> จะแสดงตัวควบคุม <strong>View mode</strong> ถัดจากปุ่มรีเฟรช สำหรับสลับระหว่าง <strong>Table</strong> และ <strong>Grid</strong> มุมมองกริดจะแสดงหนึ่งเซลล์ต่อหนึ่งเซสชัน โดยแต่ละเซลล์มีสีตามการใช้ทรัพยากรแบบเรียลไทม์ของเซสชันนั้น สำหรับรายละเอียดของตัวควบคุมภายในมุมมองกริด ให้ดูที่หัวข้อ <a href="./sessions_all.html#session-list-view-and-refresh">การแสดงผลรายการเซสชัน</a></p>
+<p data-bai-block="428">ในแท็บ <strong>เซสชัน</strong> คุณสามารถใช้ตัวกรองคุณสมบัติเพื่อจำกัดรายการให้แคบลงได้ และหากจำเป็นก็สามารถค้นหาเซสชันเฉพาะด้วย <strong>รหัสเซสชัน</strong> ได้</p>
+<p data-bai-block="429">เมื่อเปิดใช้งานฟีเจอร์ทดลอง <strong>Session resource grid view</strong> ในการตั้งค่าผู้ใช้ (ดูที่หัวข้อ <a href="./user_settings.html#experimental-features">คุณสมบัติการทดลอง</a>) แท็บ <strong>เซสชัน</strong> จะแสดงตัวควบคุม <strong>View mode</strong> ถัดจากปุ่มรีเฟรช สำหรับสลับระหว่าง <strong>Table</strong> และ <strong>Grid</strong> มุมมองกริดจะแสดงหนึ่งเซลล์ต่อหนึ่งเซสชัน โดยแต่ละเซลล์มีสีตามการใช้ทรัพยากรแบบเรียลไทม์ของเซสชันนั้น สำหรับรายละเอียดของตัวควบคุมภายในมุมมองกริด ให้ดูที่หัวข้อ <a href="./sessions_all.html#session-list-view-and-refresh">การแสดงผลรายการเซสชัน</a></p>
 <p><a id="fair-share-scheduler"></a></p>
-<h2 data-bai-block="432" id="admin_menu-ตวจดตาราง-fair-share">ตัวจัดตาราง Fair Share<a class="hash-link" href="#admin_menu-ตวจดตาราง-fair-share" aria-label="Direct link to ตัวจัดตาราง Fair Share">#</a></h2>
-<p data-bai-block="433">หน้า Fair Share Scheduler จะพร้อมใช้งาน
+<h2 data-bai-block="430" id="admin_menu-ตวจดตาราง-fair-share">ตัวจัดตาราง Fair Share<a class="hash-link" href="#admin_menu-ตวจดตาราง-fair-share" aria-label="Direct link to ตัวจัดตาราง Fair Share">#</a></h2>
+<p data-bai-block="431">หน้า Fair Share Scheduler จะพร้อมใช้งาน
 ในเมนู <strong>การตั้งค่าผู้ดูแลระบบ</strong> ฟีเจอร์นี้ช่วยให้ผู้ดูแลระบบสามารถจัดการน้ำหนักการจัดตาราง
 Fair Share ตามโครงสร้างลำดับชั้นของกลุ่มทรัพยากร โดเมน โปรเจกต์ และผู้ใช้</p>
-<p data-bai-block="434">การจัดตาราง Fair Share จะจัดสรรทรัพยากรการคำนวณโดยอิงจากรูปแบบการใช้งานในอดีต
+<p data-bai-block="432">การจัดตาราง Fair Share จะจัดสรรทรัพยากรการคำนวณโดยอิงจากรูปแบบการใช้งานในอดีต
 เพื่อให้มั่นใจว่าทรัพยากรจะถูกกระจายอย่างเป็นธรรมในหมู่ผู้ใช้ ผู้ใช้ที่ใช้
 ทรัพยากรน้อยในอดีตจะได้รับลำดับความสำคัญในการจัดตารางสูงกว่า ในขณะที่ผู้ใช้
 ที่ใช้มากกว่าจะได้รับลำดับความสำคัญต่ำกว่า ผู้ดูแลระบบสามารถปรับแต่งพฤติกรรมนี้
 ได้โดยการปรับน้ำหนักในแต่ละระดับของลำดับชั้น</p>
 <div class="admonition admonition-note">
-<div data-bai-block="435" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="433" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="436">Fair Share Scheduler จะพร้อมใช้งานเฉพาะเมื่อประเภทตัวจัดตารางของกลุ่มทรัพยากร
+<p data-bai-block="434">Fair Share Scheduler จะพร้อมใช้งานเฉพาะเมื่อประเภทตัวจัดตารางของกลุ่มทรัพยากร
 ถูกตั้งค่าเป็น <code>FAIR_SHARE</code> เท่านั้น สำหรับการกำหนดค่าประเภทตัวจัดตารางของ
 กลุ่มทรัพยากร โปรดดูที่ส่วนจัดการกลุ่มทรัพยากร</p>
 </div></div>
 
 
-<p data-bai-block="437">หากต้องการเข้าถึงฟีเจอร์นี้ ให้คลิกเมนู <strong>Scheduler</strong> ภายใต้ <strong>การตั้งค่าผู้ดูแลระบบ</strong> ในแถบด้านข้าง
+<p data-bai-block="435">หากต้องการเข้าถึงฟีเจอร์นี้ ให้คลิกเมนู <strong>Scheduler</strong> ภายใต้ <strong>การตั้งค่าผู้ดูแลระบบ</strong> ในแถบด้านข้าง
 หน้าจะแสดงแท็บการตั้งค่า Fair Share พร้อมอินเทอร์เฟซ drill-down 4 ขั้นตอน</p>
-<p><figure data-bai-block="438" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>รูปที่ 24.49</figcaption></figure>
+<p><figure data-bai-block="436" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>รูปที่ 24.49</figcaption></figure>
 </p>
-<p data-bai-block="439">หน้าถูกจัดระเบียบเป็น 4 ขั้นตอนตามลำดับชั้น:</p>
+<p data-bai-block="437">หน้าถูกจัดระเบียบเป็น 4 ขั้นตอนตามลำดับชั้น:</p>
 <ol>
-<li data-bai-block="440"><strong>กลุ่มทรัพยากร</strong>: กำหนดค่าพารามิเตอร์หลักของ Fair Share สำหรับแต่ละกลุ่มทรัพยากร</li>
-<li data-bai-block="441"><strong>โดเมน</strong>: ตั้งค่าน้ำหนักสำหรับโดเมนภายในกลุ่มทรัพยากร</li>
-<li data-bai-block="442"><strong>โปรเจกต์</strong>: ตั้งค่าน้ำหนักสำหรับโปรเจกต์ภายในโดเมน</li>
-<li data-bai-block="443"><strong>ผู้ใช้</strong>: ตั้งค่าน้ำหนักสำหรับผู้ใช้แต่ละคนภายในโปรเจกต์</li>
+<li data-bai-block="438"><strong>กลุ่มทรัพยากร</strong>: กำหนดค่าพารามิเตอร์หลักของ Fair Share สำหรับแต่ละกลุ่มทรัพยากร</li>
+<li data-bai-block="439"><strong>โดเมน</strong>: ตั้งค่าน้ำหนักสำหรับโดเมนภายในกลุ่มทรัพยากร</li>
+<li data-bai-block="440"><strong>โปรเจกต์</strong>: ตั้งค่าน้ำหนักสำหรับโปรเจกต์ภายในโดเมน</li>
+<li data-bai-block="441"><strong>ผู้ใช้</strong>: ตั้งค่าน้ำหนักสำหรับผู้ใช้แต่ละคนภายในโปรเจกต์</li>
 </ol>
-<p data-bai-block="444">แถบตัวบ่งชี้ขั้นตอนที่ด้านบนของหน้าจะแสดงตำแหน่งปัจจุบันในลำดับชั้น
+<p data-bai-block="442">แถบตัวบ่งชี้ขั้นตอนที่ด้านบนของหน้าจะแสดงตำแหน่งปัจจุบันในลำดับชั้น
 ขั้นตอนที่เสร็จสิ้นจะแสดงชื่อของรายการที่เลือก คุณสามารถคลิกที่ขั้นตอนที่
 เสร็จสิ้นเพื่อย้อนกลับไปยังระดับนั้นได้</p>
-<p><figure data-bai-block="445" class="doc-figure"><img src="./images/fair_share_step_indicator.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="54" /><figcaption>รูปที่ 24.50</figcaption></figure>
+<p><figure data-bai-block="443" class="doc-figure"><img src="./images/fair_share_step_indicator.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="54" /><figcaption>รูปที่ 24.50</figcaption></figure>
 </p>
-<p data-bai-block="446">หากกลุ่มทรัพยากรที่เลือกไม่ได้ตั้งค่าประเภทตัวจัดตารางเป็น <code>FAIR_SHARE</code>
+<p data-bai-block="444">หากกลุ่มทรัพยากรที่เลือกไม่ได้ตั้งค่าประเภทตัวจัดตารางเป็น <code>FAIR_SHARE</code>
 จะมีการแจ้งเตือนเป็นคำเตือนว่า Fair Share Scheduler ไม่ได้เปิดใช้งานสำหรับ
 กลุ่มทรัพยากรนั้น</p>
-<p><figure data-bai-block="447" class="doc-figure"><img src="./images/fair_share_scheduler_warning.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="62" /><figcaption>รูปที่ 24.51</figcaption></figure>
+<p><figure data-bai-block="445" class="doc-figure"><img src="./images/fair_share_scheduler_warning.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="62" /><figcaption>รูปที่ 24.51</figcaption></figure>
 </p>
 <p><a id="fair-share-resource-group-warnings"></a></p>
-<p data-bai-block="448">หน้านี้ยังเตือนเมื่อรายการที่คุณกำลังดูอยู่ไม่สามารถใช้กลุ่มทรัพยากรที่คุณเจาะลงมาได้จริง เนื่องจากการตรวจสอบทำโดยอ้างอิงโดเมนหรือโปรเจกต์ที่คุณเลือกระหว่างเจาะลงมา คำเตือนจึงสะท้อนตำแหน่งปัจจุบันของคุณในลำดับชั้น ไม่ใช่การเลือกก่อนหน้า:</p>
+<p data-bai-block="446">หน้านี้ยังเตือนเมื่อรายการที่คุณกำลังดูอยู่ไม่สามารถใช้กลุ่มทรัพยากรที่คุณเจาะลงมาได้จริง เนื่องจากการตรวจสอบทำโดยอ้างอิงโดเมนหรือโปรเจกต์ที่คุณเลือกระหว่างเจาะลงมา คำเตือนจึงสะท้อนตำแหน่งปัจจุบันของคุณในลำดับชั้น ไม่ใช่การเลือกก่อนหน้า:</p>
 <ul>
-<li data-bai-block="449">ในขั้นตอน <strong>โดเมน</strong> ไอคอนคำเตือนจะปรากฏถัดจากโดเมนที่ไม่ได้รับอนุญาตให้ใช้กลุ่มทรัพยากรที่เลือก วางเมาส์เหนือไอคอนเพื่อดูคำอธิบายว่ากลุ่มทรัพยากรนั้นอาจยังได้รับอนุญาตในโปรเจกต์ย่อยของโดเมน</li>
-<li data-bai-block="450">ในขั้นตอน <strong>โปรเจกต์</strong> ไอคอนเดียวกันจะปรากฏบนโปรเจกต์ที่ไม่ได้รับอนุญาตให้ใช้กลุ่มทรัพยากรที่เลือก</li>
-<li data-bai-block="451">ในขั้นตอน <strong>ผู้ใช้</strong> จะมีคำเตือนว่าผู้ใช้ภายใต้โปรเจกต์ที่เลือกไม่สามารถใช้กลุ่มทรัพยากรที่เลือกได้</li>
+<li data-bai-block="447">ในขั้นตอน <strong>โดเมน</strong> ไอคอนคำเตือนจะปรากฏถัดจากโดเมนที่ไม่ได้รับอนุญาตให้ใช้กลุ่มทรัพยากรที่เลือก วางเมาส์เหนือไอคอนเพื่อดูคำอธิบายว่ากลุ่มทรัพยากรนั้นอาจยังได้รับอนุญาตในโปรเจกต์ย่อยของโดเมน</li>
+<li data-bai-block="448">ในขั้นตอน <strong>โปรเจกต์</strong> ไอคอนเดียวกันจะปรากฏบนโปรเจกต์ที่ไม่ได้รับอนุญาตให้ใช้กลุ่มทรัพยากรที่เลือก</li>
+<li data-bai-block="449">ในขั้นตอน <strong>ผู้ใช้</strong> จะมีคำเตือนว่าผู้ใช้ภายใต้โปรเจกต์ที่เลือกไม่สามารถใช้กลุ่มทรัพยากรที่เลือกได้</li>
 </ul>
-<p data-bai-block="452">การแจ้งเตือนเดียวกันจะแสดงซ้ำภายในโมดัลการตั้งค่าน้ำหนักด้วย จึงเห็นความไม่สอดคล้องได้ในขณะที่แก้ไขน้ำหนัก ไม่ใช่เฉพาะในตารางเท่านั้น</p>
-<p data-bai-block="453">ในแต่ละขั้นตอน ฟีเจอร์ทั่วไปต่อไปนี้พร้อมใช้งาน:</p>
+<p data-bai-block="450">การแจ้งเตือนเดียวกันจะแสดงซ้ำภายในโมดัลการตั้งค่าน้ำหนักด้วย จึงเห็นความไม่สอดคล้องได้ในขณะที่แก้ไขน้ำหนัก ไม่ใช่เฉพาะในตารางเท่านั้น</p>
+<p data-bai-block="451">ในแต่ละขั้นตอน ฟีเจอร์ทั่วไปต่อไปนี้พร้อมใช้งาน:</p>
 <ul>
-<li data-bai-block="454"><strong>การแบ่งหน้า</strong>: นำทางผ่านผลลัพธ์พร้อมขนาดหน้าที่กำหนดค่าได้</li>
+<li data-bai-block="452"><strong>การแบ่งหน้า</strong>: นำทางผ่านผลลัพธ์พร้อมขนาดหน้าที่กำหนดค่าได้</li>
 </ul>
-<h3 data-bai-block="455" id="admin_menu-กลมทรพยากร">กลุ่มทรัพยากร<a class="hash-link" href="#admin_menu-กลมทรพยากร" aria-label="Direct link to กลุ่มทรัพยากร">#</a></h3>
-<p data-bai-block="456">ขั้นตอนกลุ่มทรัพยากรจะแสดงตารางของกลุ่มทรัพยากรทั้งหมดพร้อมการกำหนดค่า
+<h3 data-bai-block="453" id="admin_menu-กลมทรพยากร">กลุ่มทรัพยากร<a class="hash-link" href="#admin_menu-กลมทรพยากร" aria-label="Direct link to กลุ่มทรัพยากร">#</a></h3>
+<p data-bai-block="454">ขั้นตอนกลุ่มทรัพยากรจะแสดงตารางของกลุ่มทรัพยากรทั้งหมดพร้อมการกำหนดค่า
 Fair Share</p>
-<p><figure data-bai-block="457" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>รูปที่ 24.52</figcaption></figure>
+<p><figure data-bai-block="455" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>รูปที่ 24.52</figcaption></figure>
 </p>
-<p data-bai-block="458">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
+<p data-bai-block="456">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
 <ul>
-<li data-bai-block="459"><strong>ชื่อ</strong>: ชื่อกลุ่มทรัพยากร คลิกชื่อเพื่อ drill down ไปยังการตั้งค่าระดับโดเมนของกลุ่มทรัพยากรนั้น</li>
-<li data-bai-block="460"><strong>ตัวควบคุม</strong>: ปุ่มตั้งค่า (เฟือง) ที่เปิด modal การตั้งค่า Fair Share ของกลุ่มทรัพยากร</li>
-<li data-bai-block="461"><strong>การจัดสรร</strong>: การใช้ทรัพยากรแสดงการใช้งาน/ความจุสำหรับแต่ละประเภททรัพยากรที่จัดสรรให้กลุ่มทรัพยากร (เช่น CPU, Memory, CUDA GPU)</li>
-<li data-bai-block="462"><strong>น้ำหนักทรัพยากร</strong>: น้ำหนักตามประเภททรัพยากร แสดง &quot;ค่าเริ่มต้น&quot; หากใช้น้ำหนักเริ่มต้น</li>
-<li data-bai-block="463"><strong>น้ำหนักเริ่มต้น</strong>: ค่าน้ำหนักสำรองสำหรับโดเมน โปรเจกต์ และผู้ใช้ที่ไม่ได้กำหนดน้ำหนัก</li>
-<li data-bai-block="464"><strong>หน่วยการลดทอน</strong>: ช่วงเวลา (เป็นวัน) สำหรับรวบรวมการใช้งาน</li>
-<li data-bai-block="465"><strong>ครึ่งชีวิต</strong>: ช่วงเวลา (เป็นวัน) ที่อัตราการสะท้อนการใช้งานลดลงครึ่งหนึ่ง</li>
-<li data-bai-block="466"><strong>ช่วงเวลาย้อนหลัง</strong>: ช่วง (เป็นวัน) ของประวัติการใช้งานที่สะท้อนในการคำนวณ</li>
+<li data-bai-block="457"><strong>ชื่อ</strong>: ชื่อกลุ่มทรัพยากร คลิกชื่อเพื่อ drill down ไปยังการตั้งค่าระดับโดเมนของกลุ่มทรัพยากรนั้น</li>
+<li data-bai-block="458"><strong>ตัวควบคุม</strong>: ปุ่มตั้งค่า (เฟือง) ที่เปิด modal การตั้งค่า Fair Share ของกลุ่มทรัพยากร</li>
+<li data-bai-block="459"><strong>การจัดสรร</strong>: การใช้ทรัพยากรแสดงการใช้งาน/ความจุสำหรับแต่ละประเภททรัพยากรที่จัดสรรให้กลุ่มทรัพยากร (เช่น CPU, Memory, CUDA GPU)</li>
+<li data-bai-block="460"><strong>น้ำหนักทรัพยากร</strong>: น้ำหนักตามประเภททรัพยากร แสดง &quot;ค่าเริ่มต้น&quot; หากใช้น้ำหนักเริ่มต้น</li>
+<li data-bai-block="461"><strong>น้ำหนักเริ่มต้น</strong>: ค่าน้ำหนักสำรองสำหรับโดเมน โปรเจกต์ และผู้ใช้ที่ไม่ได้กำหนดน้ำหนัก</li>
+<li data-bai-block="462"><strong>หน่วยการลดทอน</strong>: ช่วงเวลา (เป็นวัน) สำหรับรวบรวมการใช้งาน</li>
+<li data-bai-block="463"><strong>ครึ่งชีวิต</strong>: ช่วงเวลา (เป็นวัน) ที่อัตราการสะท้อนการใช้งานลดลงครึ่งหนึ่ง</li>
+<li data-bai-block="464"><strong>ช่วงเวลาย้อนหลัง</strong>: ช่วง (เป็นวัน) ของประวัติการใช้งานที่สะท้อนในการคำนวณ</li>
 </ul>
-<h3 data-bai-block="467" id="admin_menu-การตงคา-fair-share-ของกลมทรพยากร">การตั้งค่า Fair Share ของกลุ่มทรัพยากร<a class="hash-link" href="#admin_menu-การตงคา-fair-share-ของกลมทรพยากร" aria-label="Direct link to การตั้งค่า Fair Share ของกลุ่มทรัพยากร">#</a></h3>
-<p data-bai-block="468">คลิกปุ่มตั้งค่า (เฟือง) ในคอลัมน์ตัวควบคุมของกลุ่มทรัพยากรเพื่อเปิด modal
+<h3 data-bai-block="465" id="admin_menu-การตงคา-fair-share-ของกลมทรพยากร">การตั้งค่า Fair Share ของกลุ่มทรัพยากร<a class="hash-link" href="#admin_menu-การตงคา-fair-share-ของกลมทรพยากร" aria-label="Direct link to การตั้งค่า Fair Share ของกลุ่มทรัพยากร">#</a></h3>
+<p data-bai-block="466">คลิกปุ่มตั้งค่า (เฟือง) ในคอลัมน์ตัวควบคุมของกลุ่มทรัพยากรเพื่อเปิด modal
 การตั้งค่า Fair Share</p>
-<p><figure data-bai-block="469" class="doc-figure"><img src="./images/fair_share_resource_group_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="704" /><figcaption>รูปที่ 24.53</figcaption></figure>
+<p><figure data-bai-block="467" class="doc-figure"><img src="./images/fair_share_resource_group_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="704" /><figcaption>รูปที่ 24.53</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="470" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div data-bai-block="468" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
 <div class="admonition-content">
 
-<p data-bai-block="471">การเปลี่ยนแปลงจะยังไม่สะท้อนทันทีในการคำนวณ Fair Share และอาจใช้เวลา
+<p data-bai-block="469">การเปลี่ยนแปลงจะยังไม่สะท้อนทันทีในการคำนวณ Fair Share และอาจใช้เวลา
 ประมาณ 5 นาทีเนื่องจากรอบการคำนวณ</p>
 </div></div>
 
 
-<p data-bai-block="472">modal ประกอบด้วยฟิลด์ต่อไปนี้:</p>
+<p data-bai-block="470">modal ประกอบด้วยฟิลด์ต่อไปนี้:</p>
 <ul>
-<li data-bai-block="473"><strong>กลุ่มทรัพยากร</strong>: ฟิลด์อ่านอย่างเดียวที่แสดงชื่อกลุ่มทรัพยากร</li>
-<li data-bai-block="474"><strong>ครึ่งชีวิต</strong>: ช่วงเวลาที่อัตราการสะท้อนการใช้งานลดลงครึ่งหนึ่ง ระบุเป็นวัน (ขั้นต่ำ 1) ตัวอย่างเช่น หากตั้งเป็น 7 วัน การใช้งานเมื่อ 7 วันก่อนจะคำนวณที่ 50% และการใช้งานเมื่อ 14 วันก่อนที่ 25% แนะนำให้ตั้งค่าเป็นพหุคูณของหน่วยการลดทอน</li>
-<li data-bai-block="475"><strong>ช่วงเวลาย้อนหลัง</strong>: ช่วงของประวัติการใช้งานที่สะท้อนในการคำนวณ Fair Share ระบุเป็นวัน (ขั้นต่ำ 1) การใช้งานก่อนช่วงเวลานี้จะถูกยกเว้นจากการคำนวณ แนะนำให้ตั้งค่าเป็นพหุคูณของครึ่งชีวิต</li>
-<li data-bai-block="476"><strong>น้ำหนักเริ่มต้น</strong>: ค่าเริ่มต้นที่ใช้กับโดเมน โปรเจกต์ และผู้ใช้ที่ไม่ได้กำหนดน้ำหนัก (ขั้นต่ำ 1, ขั้น 0.1)</li>
-<li data-bai-block="477"><strong>น้ำหนักทรัพยากร</strong>: น้ำหนักตามประเภททรัพยากร (เช่น CPU, Memory, GPU) แต่ละรายการมีค่าขั้นต่ำ 1 และขั้น 0.1 ส่วนนี้จะแสดงเฉพาะเมื่อกลุ่มทรัพยากรมีน้ำหนักทรัพยากรเท่านั้น</li>
+<li data-bai-block="471"><strong>กลุ่มทรัพยากร</strong>: ฟิลด์อ่านอย่างเดียวที่แสดงชื่อกลุ่มทรัพยากร</li>
+<li data-bai-block="472"><strong>ครึ่งชีวิต</strong>: ช่วงเวลาที่อัตราการสะท้อนการใช้งานลดลงครึ่งหนึ่ง ระบุเป็นวัน (ขั้นต่ำ 1) ตัวอย่างเช่น หากตั้งเป็น 7 วัน การใช้งานเมื่อ 7 วันก่อนจะคำนวณที่ 50% และการใช้งานเมื่อ 14 วันก่อนที่ 25% แนะนำให้ตั้งค่าเป็นพหุคูณของหน่วยการลดทอน</li>
+<li data-bai-block="473"><strong>ช่วงเวลาย้อนหลัง</strong>: ช่วงของประวัติการใช้งานที่สะท้อนในการคำนวณ Fair Share ระบุเป็นวัน (ขั้นต่ำ 1) การใช้งานก่อนช่วงเวลานี้จะถูกยกเว้นจากการคำนวณ แนะนำให้ตั้งค่าเป็นพหุคูณของครึ่งชีวิต</li>
+<li data-bai-block="474"><strong>น้ำหนักเริ่มต้น</strong>: ค่าเริ่มต้นที่ใช้กับโดเมน โปรเจกต์ และผู้ใช้ที่ไม่ได้กำหนดน้ำหนัก (ขั้นต่ำ 1, ขั้น 0.1)</li>
+<li data-bai-block="475"><strong>น้ำหนักทรัพยากร</strong>: น้ำหนักตามประเภททรัพยากร (เช่น CPU, Memory, GPU) แต่ละรายการมีค่าขั้นต่ำ 1 และขั้น 0.1 ส่วนนี้จะแสดงเฉพาะเมื่อกลุ่มทรัพยากรมีน้ำหนักทรัพยากรเท่านั้น</li>
 </ul>
-<h3 data-bai-block="478" id="admin_menu-โดเมน">โดเมน<a class="hash-link" href="#admin_menu-โดเมน" aria-label="Direct link to โดเมน">#</a></h3>
-<p data-bai-block="479">หลังจากเลือกกลุ่มทรัพยากร ขั้นตอนโดเมนจะแสดงตารางของโดเมนพร้อมน้ำหนัก
+<h3 data-bai-block="476" id="admin_menu-โดเมน">โดเมน<a class="hash-link" href="#admin_menu-โดเมน" aria-label="Direct link to โดเมน">#</a></h3>
+<p data-bai-block="477">หลังจากเลือกกลุ่มทรัพยากร ขั้นตอนโดเมนจะแสดงตารางของโดเมนพร้อมน้ำหนัก
 Fair Share และการใช้งานภายในกลุ่มทรัพยากรนั้น</p>
-<p><figure data-bai-block="480" class="doc-figure"><img src="./images/fair_share_domain_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="468" /><figcaption>รูปที่ 24.54</figcaption></figure>
+<p><figure data-bai-block="478" class="doc-figure"><img src="./images/fair_share_domain_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="468" /><figcaption>รูปที่ 24.54</figcaption></figure>
 </p>
-<p data-bai-block="481">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
+<p data-bai-block="479">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
 <ul>
-<li data-bai-block="482"><strong>ชื่อ</strong>: ชื่อโดเมน คลิกชื่อเพื่อ drill down ไปยังการตั้งค่าระดับโปรเจกต์ของโดเมนนั้น</li>
-<li data-bai-block="483"><strong>ตัวควบคุม</strong>: ปุ่มตั้งค่า (เฟือง) ที่เปิด modal การตั้งค่าน้ำหนักของโดเมนนี้</li>
-<li data-bai-block="484"><strong>น้ำหนัก</strong>: ค่าน้ำหนักปัจจุบัน แสดง &quot;ค่าเริ่มต้น&quot; หากใช้น้ำหนักเริ่มต้น</li>
-<li data-bai-block="485"><strong>ตัวคูณการแบ่งสัดส่วนอย่างเป็นธรรม</strong>: ลำดับความสำคัญในการจัดตารางที่คำนวณโดยตัวจัดตาราง ค่าที่สูงกว่าหมายถึงลำดับความสำคัญที่สูงกว่า</li>
-<li data-bai-block="486"><strong>การจัดสรรทรัพยากร</strong>: การใช้ทรัพยากรเฉลี่ยต่อวันที่ถูกลดทอนตามประเภททรัพยากร (CPU, Memory, GPU / Day)</li>
-<li data-bai-block="487"><strong>แก้ไขเมื่อ</strong>: timestamp การแก้ไขครั้งล่าสุด</li>
-<li data-bai-block="488"><strong>สร้างเมื่อ</strong>: timestamp การสร้าง</li>
+<li data-bai-block="480"><strong>ชื่อ</strong>: ชื่อโดเมน คลิกชื่อเพื่อ drill down ไปยังการตั้งค่าระดับโปรเจกต์ของโดเมนนั้น</li>
+<li data-bai-block="481"><strong>ตัวควบคุม</strong>: ปุ่มตั้งค่า (เฟือง) ที่เปิด modal การตั้งค่าน้ำหนักของโดเมนนี้</li>
+<li data-bai-block="482"><strong>น้ำหนัก</strong>: ค่าน้ำหนักปัจจุบัน แสดง &quot;ค่าเริ่มต้น&quot; หากใช้น้ำหนักเริ่มต้น</li>
+<li data-bai-block="483"><strong>ตัวคูณการแบ่งสัดส่วนอย่างเป็นธรรม</strong>: ลำดับความสำคัญในการจัดตารางที่คำนวณโดยตัวจัดตาราง ค่าที่สูงกว่าหมายถึงลำดับความสำคัญที่สูงกว่า</li>
+<li data-bai-block="484"><strong>การจัดสรรทรัพยากร</strong>: การใช้ทรัพยากรเฉลี่ยต่อวันที่ถูกลดทอนตามประเภททรัพยากร (CPU, Memory, GPU / Day)</li>
+<li data-bai-block="485"><strong>แก้ไขเมื่อ</strong>: timestamp การแก้ไขครั้งล่าสุด</li>
+<li data-bai-block="486"><strong>สร้างเมื่อ</strong>: timestamp การสร้าง</li>
 </ul>
-<p data-bai-block="489">คุณสามารถเลือกหลายแถวโดยใช้ช่องทำเครื่องหมายทางด้านซ้ายของตาราง เมื่อเลือก
+<p data-bai-block="487">คุณสามารถเลือกหลายแถวโดยใช้ช่องทำเครื่องหมายทางด้านซ้ายของตาราง เมื่อเลือก
 แถวแล้ว จะมีปุ่มเพิ่มเติม 2 ปุ่มปรากฏขึ้น:</p>
 <ul>
-<li data-bai-block="490"><strong>กราฟการใช้งาน</strong> (ไอคอนแผนภูมิ): เปิด modal ประวัติการใช้งานสำหรับรายการที่เลือก</li>
-<li data-bai-block="491"><strong>แก้ไขเป็นกลุ่ม</strong> (ไอคอนเฟือง): เปิด modal การตั้งค่าน้ำหนักเพื่อแก้ไขน้ำหนักของรายการที่เลือกทั้งหมดพร้อมกัน</li>
+<li data-bai-block="488"><strong>กราฟการใช้งาน</strong> (ไอคอนแผนภูมิ): เปิด modal ประวัติการใช้งานสำหรับรายการที่เลือก</li>
+<li data-bai-block="489"><strong>แก้ไขเป็นกลุ่ม</strong> (ไอคอนเฟือง): เปิด modal การตั้งค่าน้ำหนักเพื่อแก้ไขน้ำหนักของรายการที่เลือกทั้งหมดพร้อมกัน</li>
 </ul>
-<h3 data-bai-block="492" id="admin_menu-โปรเจกต">โปรเจกต์<a class="hash-link" href="#admin_menu-โปรเจกต" aria-label="Direct link to โปรเจกต์">#</a></h3>
-<p data-bai-block="493">หลังจากเลือกโดเมน ขั้นตอนโปรเจกต์จะแสดงตารางของโปรเจกต์ที่มีโครงสร้าง
+<h3 data-bai-block="490" id="admin_menu-โปรเจกต">โปรเจกต์<a class="hash-link" href="#admin_menu-โปรเจกต" aria-label="Direct link to โปรเจกต์">#</a></h3>
+<p data-bai-block="491">หลังจากเลือกโดเมน ขั้นตอนโปรเจกต์จะแสดงตารางของโปรเจกต์ที่มีโครงสร้าง
 คอลัมน์เดียวกันกับขั้นตอนโดเมน คลิกชื่อโปรเจกต์เพื่อ drill down ไปยัง
 ขั้นตอนผู้ใช้</p>
-<p><figure data-bai-block="494" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="534" /><figcaption>รูปที่ 24.55</figcaption></figure>
+<p><figure data-bai-block="492" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="534" /><figcaption>รูปที่ 24.55</figcaption></figure>
 </p>
-<p data-bai-block="495">การดำเนินการเป็นกลุ่มเดียวกัน (กราฟการใช้งานและแก้ไขเป็นกลุ่ม) จะพร้อมใช้งานเมื่อเลือกแถว</p>
-<h3 data-bai-block="496" id="admin_menu-ผใช">ผู้ใช้<a class="hash-link" href="#admin_menu-ผใช" aria-label="Direct link to ผู้ใช้">#</a></h3>
-<p data-bai-block="497">หลังจากเลือกโปรเจกต์ ขั้นตอนผู้ใช้จะแสดงตารางของผู้ใช้แต่ละคนพร้อมน้ำหนัก
+<p data-bai-block="493">การดำเนินการเป็นกลุ่มเดียวกัน (กราฟการใช้งานและแก้ไขเป็นกลุ่ม) จะพร้อมใช้งานเมื่อเลือกแถว</p>
+<h3 data-bai-block="494" id="admin_menu-ผใช">ผู้ใช้<a class="hash-link" href="#admin_menu-ผใช" aria-label="Direct link to ผู้ใช้">#</a></h3>
+<p data-bai-block="495">หลังจากเลือกโปรเจกต์ ขั้นตอนผู้ใช้จะแสดงตารางของผู้ใช้แต่ละคนพร้อมน้ำหนัก
 Fair Share และการใช้งาน</p>
-<p><figure data-bai-block="498" class="doc-figure"><img src="./images/fair_share_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="732" /><figcaption>รูปที่ 24.56</figcaption></figure>
+<p><figure data-bai-block="496" class="doc-figure"><img src="./images/fair_share_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="732" /><figcaption>รูปที่ 24.56</figcaption></figure>
 </p>
-<p data-bai-block="499">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
+<p data-bai-block="497">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
 <ul>
-<li data-bai-block="500"><strong>อีเมล</strong>: ที่อยู่อีเมลของผู้ใช้</li>
-<li data-bai-block="501"><strong>ชื่อ</strong>: ชื่อของผู้ใช้</li>
-<li data-bai-block="502"><strong>ตัวควบคุม</strong>: ปุ่มตั้งค่า (เฟือง) ที่เปิด modal การตั้งค่าน้ำหนักของผู้ใช้นี้</li>
-<li data-bai-block="503"><strong>น้ำหนัก</strong>: ค่าน้ำหนักปัจจุบัน แสดง &quot;ค่าเริ่มต้น&quot; หากใช้น้ำหนักเริ่มต้น</li>
-<li data-bai-block="504"><strong>ตัวคูณการแบ่งสัดส่วนอย่างเป็นธรรม</strong>: ลำดับความสำคัญในการจัดตารางที่คำนวณโดยตัวจัดตาราง</li>
-<li data-bai-block="505"><strong>การจัดสรรทรัพยากร</strong>: การใช้ทรัพยากรเฉลี่ยต่อวันที่ถูกลดทอนตามประเภททรัพยากร</li>
-<li data-bai-block="506"><strong>แก้ไขเมื่อ</strong>: timestamp การแก้ไขครั้งล่าสุด</li>
-<li data-bai-block="507"><strong>สร้างเมื่อ</strong>: timestamp การสร้าง</li>
+<li data-bai-block="498"><strong>อีเมล</strong>: ที่อยู่อีเมลของผู้ใช้</li>
+<li data-bai-block="499"><strong>ชื่อ</strong>: ชื่อของผู้ใช้</li>
+<li data-bai-block="500"><strong>ตัวควบคุม</strong>: ปุ่มตั้งค่า (เฟือง) ที่เปิด modal การตั้งค่าน้ำหนักของผู้ใช้นี้</li>
+<li data-bai-block="501"><strong>น้ำหนัก</strong>: ค่าน้ำหนักปัจจุบัน แสดง &quot;ค่าเริ่มต้น&quot; หากใช้น้ำหนักเริ่มต้น</li>
+<li data-bai-block="502"><strong>ตัวคูณการแบ่งสัดส่วนอย่างเป็นธรรม</strong>: ลำดับความสำคัญในการจัดตารางที่คำนวณโดยตัวจัดตาราง</li>
+<li data-bai-block="503"><strong>การจัดสรรทรัพยากร</strong>: การใช้ทรัพยากรเฉลี่ยต่อวันที่ถูกลดทอนตามประเภททรัพยากร</li>
+<li data-bai-block="504"><strong>แก้ไขเมื่อ</strong>: timestamp การแก้ไขครั้งล่าสุด</li>
+<li data-bai-block="505"><strong>สร้างเมื่อ</strong>: timestamp การสร้าง</li>
 </ul>
-<p data-bai-block="508">การดำเนินการเป็นกลุ่มเดียวกัน (กราฟการใช้งานและแก้ไขเป็นกลุ่ม) จะพร้อมใช้งานเมื่อเลือกแถว</p>
-<h3 data-bai-block="509" id="admin_menu-การแกไขนำหนก-fair-share">การแก้ไขน้ำหนัก Fair Share<a class="hash-link" href="#admin_menu-การแกไขนำหนก-fair-share" aria-label="Direct link to การแก้ไขน้ำหนัก Fair Share">#</a></h3>
-<p data-bai-block="510">หากต้องการแก้ไขน้ำหนัก Fair Share สำหรับโดเมน โปรเจกต์ หรือผู้ใช้ ให้คลิกปุ่ม
+<p data-bai-block="506">การดำเนินการเป็นกลุ่มเดียวกัน (กราฟการใช้งานและแก้ไขเป็นกลุ่ม) จะพร้อมใช้งานเมื่อเลือกแถว</p>
+<h3 data-bai-block="507" id="admin_menu-การแกไขนำหนก-fair-share">การแก้ไขน้ำหนัก Fair Share<a class="hash-link" href="#admin_menu-การแกไขนำหนก-fair-share" aria-label="Direct link to การแก้ไขน้ำหนัก Fair Share">#</a></h3>
+<p data-bai-block="508">หากต้องการแก้ไขน้ำหนัก Fair Share สำหรับโดเมน โปรเจกต์ หรือผู้ใช้ ให้คลิกปุ่ม
 ตั้งค่า (เฟือง) ในคอลัมน์ตัวควบคุมของแถวที่ต้องการ modal การตั้งค่าน้ำหนักจะเปิดขึ้น</p>
-<p><figure data-bai-block="511" class="doc-figure"><img src="./images/fair_share_weight_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="502" /><figcaption>รูปที่ 24.57</figcaption></figure>
+<p><figure data-bai-block="509" class="doc-figure"><img src="./images/fair_share_weight_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="502" /><figcaption>รูปที่ 24.57</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="512" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div data-bai-block="510" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
 <div class="admonition-content">
 
-<p data-bai-block="513">การเปลี่ยนแปลงจะยังไม่สะท้อนทันทีในการคำนวณ Fair Share และอาจใช้เวลา
+<p data-bai-block="511">การเปลี่ยนแปลงจะยังไม่สะท้อนทันทีในการคำนวณ Fair Share และอาจใช้เวลา
 ประมาณ 5 นาทีเนื่องจากรอบการคำนวณ</p>
 </div></div>
 
 
-<p data-bai-block="514">ในโหมดแก้ไขเดี่ยว modal จะแสดงชื่อรายการ (อ่านอย่างเดียว) และฟิลด์ป้อนน้ำหนัก</p>
+<p data-bai-block="512">ในโหมดแก้ไขเดี่ยว modal จะแสดงชื่อรายการ (อ่านอย่างเดียว) และฟิลด์ป้อนน้ำหนัก</p>
 <ul>
-<li data-bai-block="515"><strong>น้ำหนัก</strong>: ตัวคูณฐานที่กำหนดลำดับความสำคัญสำหรับการจัดตารางแบบ Fair Share ยิ่งค่าสูง จะมีลำดับความสำคัญสูงขึ้น ค่าเริ่มต้นคือ &quot;1.0&quot; น้ำหนัก &quot;2.0&quot; จะมีลำดับความสำคัญเป็นสองเท่าของ &quot;1.0&quot; ค่าขั้นต่ำคือ 1 และขั้นคือ 0.1</li>
+<li data-bai-block="513"><strong>น้ำหนัก</strong>: ตัวคูณฐานที่กำหนดลำดับความสำคัญสำหรับการจัดตารางแบบ Fair Share ยิ่งค่าสูง จะมีลำดับความสำคัญสูงขึ้น ค่าเริ่มต้นคือ &quot;1.0&quot; น้ำหนัก &quot;2.0&quot; จะมีลำดับความสำคัญเป็นสองเท่าของ &quot;1.0&quot; ค่าขั้นต่ำคือ 1 และขั้นคือ 0.1</li>
 </ul>
-<p data-bai-block="516">หากต้องการแก้ไขน้ำหนักของหลายรายการพร้อมกัน ให้เลือกแถวที่ต้องการโดยใช้ช่อง
+<p data-bai-block="514">หากต้องการแก้ไขน้ำหนักของหลายรายการพร้อมกัน ให้เลือกแถวที่ต้องการโดยใช้ช่อง
 ทำเครื่องหมายในตาราง จากนั้นคลิกปุ่มแก้ไขเป็นกลุ่ม (ไอคอนเฟือง) ในโหมด
 แก้ไขเป็นกลุ่ม modal จะแสดงรายการแท็กของรายการที่เลือกทั้งหมดและฟิลด์ป้อน
 น้ำหนักเดียวที่จะใช้กับทุกรายการ</p>
-<p><figure data-bai-block="517" class="doc-figure"><img src="./images/fair_share_weight_bulk_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="502" /><figcaption>รูปที่ 24.58</figcaption></figure>
+<p><figure data-bai-block="515" class="doc-figure"><img src="./images/fair_share_weight_bulk_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="502" /><figcaption>รูปที่ 24.58</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="518" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="516" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="519">หากกลุ่มทรัพยากรที่เลือกไม่ได้ตั้งค่าประเภทตัวจัดตารางเป็น <code>FAIR_SHARE</code>
+<p data-bai-block="517">หากกลุ่มทรัพยากรที่เลือกไม่ได้ตั้งค่าประเภทตัวจัดตารางเป็น <code>FAIR_SHARE</code>
 จะมีการแจ้งเตือนเป็นคำเตือนแสดงใน modal</p>
 </div></div>
 
 
-<h3 data-bai-block="520" id="admin_menu-การดประวตการใชงาน">การดูประวัติการใช้งาน<a class="hash-link" href="#admin_menu-การดประวตการใชงาน" aria-label="Direct link to การดูประวัติการใช้งาน">#</a></h3>
-<p data-bai-block="521">หากต้องการดูประวัติการใช้งานของโดเมน โปรเจกต์ หรือผู้ใช้ ให้เลือกแถวที่ต้องการ
+<h3 data-bai-block="518" id="admin_menu-การดประวตการใชงาน">การดูประวัติการใช้งาน<a class="hash-link" href="#admin_menu-การดประวตการใชงาน" aria-label="Direct link to การดูประวัติการใช้งาน">#</a></h3>
+<p data-bai-block="519">หากต้องการดูประวัติการใช้งานของโดเมน โปรเจกต์ หรือผู้ใช้ ให้เลือกแถวที่ต้องการ
 โดยใช้ช่องทำเครื่องหมายในตาราง จากนั้นคลิกปุ่มกราฟการใช้งาน (ไอคอนแผนภูมิ)
 modal ประวัติการใช้งานจะเปิดขึ้น</p>
-<p><figure data-bai-block="522" class="doc-figure"><img src="./images/fair_share_usage_bucket_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="1260" /><figcaption>รูปที่ 24.59</figcaption></figure>
+<p><figure data-bai-block="520" class="doc-figure"><img src="./images/fair_share_usage_bucket_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="1260" /><figcaption>รูปที่ 24.59</figcaption></figure>
 </p>
-<p data-bai-block="523">modal จะแสดงข้อมูลต่อไปนี้:</p>
+<p data-bai-block="521">modal จะแสดงข้อมูลต่อไปนี้:</p>
 <ul>
-<li data-bai-block="524"><strong>ตัวเลือกช่วงวันที่</strong>: เลือกช่วงวันที่สำหรับประวัติการใช้งาน มีพรีเซ็ตสำหรับ 7 วันที่ผ่านมา, 30 วันที่ผ่านมา และ 90 วันที่ผ่านมา</li>
-<li data-bai-block="525"><strong>ปุ่มรีเฟรช</strong>: รีเฟรชข้อมูลการใช้งานด้วยตนเอง</li>
-<li data-bai-block="526"><strong>ข้อมูลบริบท</strong>: แสดงกลุ่มทรัพยากร โดเมน และโปรเจกต์ (ขึ้นอยู่กับขั้นตอนปัจจุบัน)</li>
-<li data-bai-block="527"><strong>รายการที่เลือก</strong>: แสดงเป็นแท็กที่แสดงชื่อของรายการที่เลือก</li>
-<li data-bai-block="528"><strong>แผนภูมิการใช้งาน</strong>: แผนภูมิแสดงการใช้ทรัพยากรเฉลี่ยต่อวันในช่วงเวลาที่เลือก</li>
+<li data-bai-block="522"><strong>ตัวเลือกช่วงวันที่</strong>: เลือกช่วงวันที่สำหรับประวัติการใช้งาน มีพรีเซ็ตสำหรับ 7 วันที่ผ่านมา, 30 วันที่ผ่านมา และ 90 วันที่ผ่านมา</li>
+<li data-bai-block="523"><strong>ปุ่มรีเฟรช</strong>: รีเฟรชข้อมูลการใช้งานด้วยตนเอง</li>
+<li data-bai-block="524"><strong>ข้อมูลบริบท</strong>: แสดงกลุ่มทรัพยากร โดเมน และโปรเจกต์ (ขึ้นอยู่กับขั้นตอนปัจจุบัน)</li>
+<li data-bai-block="525"><strong>รายการที่เลือก</strong>: แสดงเป็นแท็กที่แสดงชื่อของรายการที่เลือก</li>
+<li data-bai-block="526"><strong>แผนภูมิการใช้งาน</strong>: แผนภูมิแสดงการใช้ทรัพยากรเฉลี่ยต่อวันในช่วงเวลาที่เลือก</li>
 </ul>
 <p><a id="manage-images"></a></p>
-<h2 data-bai-block="529" id="admin_menu-การจดการอมเมจ">การจัดการอิมเมจ<a class="hash-link" href="#admin_menu-การจดการอมเมจ" aria-label="Direct link to การจัดการอิมเมจ">#</a></h2>
-<p data-bai-block="530">ผู้ดูแลระบบสามารถจัดการอิมเมจที่ใช้ในการสร้างเซสชันการคำนวณได้ในแท็บอิมเมจของหน้าสภาพแวดล้อม ในแท็บนี้จะแสดงข้อมูลเมตาของอิมเมจทั้งหมดที่อยู่ในเซิร์ฟเวอร์ Backend.AI ในปัจจุบัน คุณสามารถตรวจสอบข้อมูลต่างๆ เช่น registry, สถาปัตยกรรม, namespace, ชื่ออิมเมจ, digest และทรัพยากรขั้นต่ำที่จำเป็นสำหรับแต่ละอิมเมจ สำหรับอิมเมจที่ดาวน์โหลดไปยังโหนดเอเจนต์หนึ่งรายการขึ้นไป จะมีแท็ก <code>installed</code> ในคอลัมน์สถานะ สำหรับอิมเมจส่วนตัวจะมีแท็ก <code>ส่วนตัว</code> แสดงในคอลัมน์สถานะเพิ่มเติมด้วย และอิมเมจส่วนตัวจะไม่สามารถเลือกได้ในตัวเปิดเซสชันแม้ว่าจะติดตั้งไว้แล้วก็ตาม</p>
+<h2 data-bai-block="527" id="admin_menu-การจดการอมเมจ">การจัดการอิมเมจ<a class="hash-link" href="#admin_menu-การจดการอมเมจ" aria-label="Direct link to การจัดการอิมเมจ">#</a></h2>
+<p data-bai-block="528">ผู้ดูแลระบบสามารถจัดการอิมเมจที่ใช้ในการสร้างเซสชันการคำนวณได้ในแท็บอิมเมจของหน้าสภาพแวดล้อม ในแท็บนี้จะแสดงข้อมูลเมตาของอิมเมจทั้งหมดที่อยู่ในเซิร์ฟเวอร์ Backend.AI ในปัจจุบัน คุณสามารถตรวจสอบข้อมูลต่างๆ เช่น registry, สถาปัตยกรรม, namespace, ชื่ออิมเมจ, digest และทรัพยากรขั้นต่ำที่จำเป็นสำหรับแต่ละอิมเมจ สำหรับอิมเมจที่ดาวน์โหลดไปยังโหนดเอเจนต์หนึ่งรายการขึ้นไป จะมีแท็ก <code>installed</code> ในคอลัมน์สถานะ สำหรับอิมเมจส่วนตัวจะมีแท็ก <code>ส่วนตัว</code> แสดงในคอลัมน์สถานะเพิ่มเติมด้วย และอิมเมจส่วนตัวจะไม่สามารถเลือกได้ในตัวเปิดเซสชันแม้ว่าจะติดตั้งไว้แล้วก็ตาม</p>
 <div class="admonition admonition-note">
-<div data-bai-block="531" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="529" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="532">ฟีเจอร์การติดตั้งอิมเมจโดยเลือกเอเจนต์เฉพาะกำลังอยู่ระหว่างการพัฒนา</p>
+<p data-bai-block="530">ฟีเจอร์การติดตั้งอิมเมจโดยเลือกเอเจนต์เฉพาะกำลังอยู่ระหว่างการพัฒนา</p>
 </div></div>
 
 
-<p><figure data-bai-block="533" class="doc-figure"><img src="./images/image_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.60</figcaption></figure>
+<p><figure data-bai-block="531" class="doc-figure"><img src="./images/image_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.60</figcaption></figure>
 </p>
-<p data-bai-block="534">รายการอิมเมจจะแสดงคอลัมน์เพิ่มเติมสำหรับข้อมูลอิมเมจที่ละเอียดยิ่งขึ้น:</p>
+<p data-bai-block="532">รายการอิมเมจจะแสดงคอลัมน์เพิ่มเติมสำหรับข้อมูลอิมเมจที่ละเอียดยิ่งขึ้น:</p>
 <ul>
-<li data-bai-block="535"><strong>สถาปัตยกรรม</strong>: สถาปัตยกรรม CPU ของอิมเมจ (เช่น x86_64, aarch64)</li>
-<li data-bai-block="536"><strong>เนมสเปซ</strong>: เนมสเปซของอิมเมจภายในรีจิสทรี</li>
-<li data-bai-block="537"><strong>ชื่อภาพฐาน</strong>: ชื่อพื้นฐานของอิมเมจ พร้อมแท็กนามแฝงเพื่อให้ระบุตัวตนได้ง่ายขึ้น</li>
-<li data-bai-block="538"><strong>เวอร์ชัน</strong>: แท็กเวอร์ชันของอิมเมจ</li>
-<li data-bai-block="539"><strong>แท็ก</strong>: แท็กรายละเอียดที่เกี่ยวข้องกับอิมเมจ แสดงเป็นแท็กคู่พร้อมนามแฝง</li>
+<li data-bai-block="533"><strong>สถาปัตยกรรม</strong>: สถาปัตยกรรม CPU ของอิมเมจ (เช่น x86_64, aarch64)</li>
+<li data-bai-block="534"><strong>เนมสเปซ</strong>: เนมสเปซของอิมเมจภายในรีจิสทรี</li>
+<li data-bai-block="535"><strong>ชื่อภาพฐาน</strong>: ชื่อพื้นฐานของอิมเมจ พร้อมแท็กนามแฝงเพื่อให้ระบุตัวตนได้ง่ายขึ้น</li>
+<li data-bai-block="536"><strong>เวอร์ชัน</strong>: แท็กเวอร์ชันของอิมเมจ</li>
+<li data-bai-block="537"><strong>แท็ก</strong>: แท็กรายละเอียดที่เกี่ยวข้องกับอิมเมจ แสดงเป็นแท็กคู่พร้อมนามแฝง</li>
 </ul>
-<p data-bai-block="540">คุณสามารถเลือกอิมเมจที่ยังไม่ได้ติดตั้งหลายรายการ แล้วคลิกปุ่ม <strong>ติดตั้งอิมเมจ</strong> เพื่อติดตั้งพร้อมกันได้ การติดตั้งอิมเมจจะเพิ่มเซสชันระยะสั้นเข้าคิวเพื่อดึงอิมเมจ ดังนั้นไดอะล็อกจึงให้คุณระบุว่าเซสชันดังกล่าวจะทำงานที่ใด</p>
+<p data-bai-block="538">คุณสามารถเลือกอิมเมจที่ยังไม่ได้ติดตั้งหลายรายการ แล้วคลิกปุ่ม <strong>ติดตั้งอิมเมจ</strong> เพื่อติดตั้งพร้อมกันได้ การติดตั้งอิมเมจจะเพิ่มเซสชันระยะสั้นเข้าคิวเพื่อดึงอิมเมจ ดังนั้นไดอะล็อกจึงให้คุณระบุว่าเซสชันดังกล่าวจะทำงานที่ใด</p>
 <ul>
-<li data-bai-block="541"><strong>โปรเจกต์ของเซสชันการติดตั้ง</strong>: โปรเจกต์ที่เซสชันการติดตั้งจะทำงาน เซสชันจะถูกสร้างในโปรเจกต์นี้ในฐานะเซสชันของคุณเอง
+<li data-bai-block="539"><strong>โปรเจกต์ของเซสชันการติดตั้ง</strong>: โปรเจกต์ที่เซสชันการติดตั้งจะทำงาน เซสชันจะถูกสร้างในโปรเจกต์นี้ในฐานะเซสชันของคุณเอง
 จึงแสดงเฉพาะโปรเจกต์ที่คุณเป็นสมาชิกอยู่เท่านั้น</li>
-<li data-bai-block="542"><strong>กลุ่มทรัพยากรเป้าหมาย</strong>: กลุ่มทรัพยากรที่จะดึงอิมเมจไปไว้ โดยจะแสดงเฉพาะกลุ่มทรัพยากรที่เข้าถึงได้จากโปรเจกต์
+<li data-bai-block="540"><strong>กลุ่มทรัพยากรเป้าหมาย</strong>: กลุ่มทรัพยากรที่จะดึงอิมเมจไปไว้ โดยจะแสดงเฉพาะกลุ่มทรัพยากรที่เข้าถึงได้จากโปรเจกต์
 ที่เลือกเท่านั้น</li>
 </ul>
-<p data-bai-block="543">ทั้งสองช่องเป็นช่องที่ต้องระบุ และปุ่ม <strong>ติดตั้ง</strong> ในไดอะล็อกจะยังคงถูกปิดใช้งานจนกว่าคุณจะเลือกโปรเจกต์และกลุ่มทรัพยากร อิมเมจที่เลือกไว้ซึ่งติดตั้งอยู่แล้วจะถูกยกเว้นจากคำขอ</p>
-<p><figure data-bai-block="544" class="doc-figure"><img src="./images/image_install_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="828" /><figcaption>รูปที่ 24.61</figcaption></figure>
+<p data-bai-block="541">ทั้งสองช่องเป็นช่องที่ต้องระบุ และปุ่ม <strong>ติดตั้ง</strong> ในไดอะล็อกจะยังคงถูกปิดใช้งานจนกว่าคุณจะเลือกโปรเจกต์และกลุ่มทรัพยากร อิมเมจที่เลือกไว้ซึ่งติดตั้งอยู่แล้วจะถูกยกเว้นจากคำขอ</p>
+<p><figure data-bai-block="542" class="doc-figure"><img src="./images/image_install_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="828" /><figcaption>รูปที่ 24.61</figcaption></figure>
 </p>
-<p data-bai-block="545">คุณสามารถเปลี่ยนข้อกำหนดทรัพยากรขั้นต่ำสำหรับแต่ละอิมเมจได้โดยคลิกการกระทำ
+<p data-bai-block="543">คุณสามารถเปลี่ยนข้อกำหนดทรัพยากรขั้นต่ำสำหรับแต่ละอิมเมจได้โดยคลิกการกระทำ
 <strong>แก้ไข</strong> (ดินสอ) ในคอลัมน์ &#39;การควบคุม&#39; ซึ่งจะเปิดไดอะล็อก <strong>แก้ไขขีด จำกัด ทรัพยากรภาพขั้นต่ำ</strong> แต่ละอิมเมจมีข้อกำหนดฮาร์ดแวร์และทรัพยากร
 สำหรับการดำเนินการขั้นต่ำ (เช่น สำหรับอิมเมจที่ใช้เฉพาะ GPU
 จะต้องมีการจัดสรร GPU ขั้นต่ำ) ค่าเริ่มต้นสำหรับปริมาณทรัพยากรขั้นต่ำ
@@ -1357,607 +1350,607 @@ modal ประวัติการใช้งานจะเปิดขึ�
 สร้างเซสชันการคำนวณด้วยทรัพยากรที่น้อยกว่าปริมาณ
 ทรัพยากรที่ระบุในแต่ละอิมเมจ คำขอจะถูกปรับเป็น
 ข้อกำหนดทรัพยากรขั้นต่ำสำหรับอิมเมจโดยอัตโนมัติและสร้างขึ้น ไม่ได้ถูกยกเลิก</p>
-<p><figure data-bai-block="546" class="doc-figure"><img src="./images/update_image_resource_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="844" /><figcaption>รูปที่ 24.62</figcaption></figure>
+<p><figure data-bai-block="544" class="doc-figure"><img src="./images/update_image_resource_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="844" /><figcaption>รูปที่ 24.62</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="547" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="545" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="548">ข้อกำหนดทรัพยากรขั้นต่ำที่รวมอยู่ในข้อมูลเมตาของอิมเมจเป็นค่าที่ได้รับการทดสอบและกำหนดไว้แล้ว ดังนั้นหากคุณไม่มีเหตุผลที่ชัดเจนในการเปลี่ยน ขอแนะนำให้ใช้ค่าเริ่มต้น</p>
+<p data-bai-block="546">ข้อกำหนดทรัพยากรขั้นต่ำที่รวมอยู่ในข้อมูลเมตาของอิมเมจเป็นค่าที่ได้รับการทดสอบและกำหนดไว้แล้ว ดังนั้นหากคุณไม่มีเหตุผลที่ชัดเจนในการเปลี่ยน ขอแนะนำให้ใช้ค่าเริ่มต้น</p>
 </div></div>
 
 
-<p data-bai-block="549">นอกจากนี้ คุณยังสามารถเพิ่มหรือแก้ไขแอปที่รองรับสำหรับแต่ละอิมเมจได้โดยคลิกไอคอน &#39;Apps&#39; ที่อยู่ในคอลัมน์ &#39;การควบคุม&#39;
+<p data-bai-block="547">นอกจากนี้ คุณยังสามารถเพิ่มหรือแก้ไขแอปที่รองรับสำหรับแต่ละอิมเมจได้โดยคลิกไอคอน &#39;Apps&#39; ที่อยู่ในคอลัมน์ &#39;การควบคุม&#39;
 เมื่อคุณคลิกไอคอน ชื่อของแอปและหมายเลขพอร์ตที่สอดคล้องกันจะถูกแสดงขึ้น</p>
-<p><figure data-bai-block="550" class="doc-figure"><img src="./images/manage_app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="1100" /><figcaption>รูปที่ 24.63</figcaption></figure>
+<p><figure data-bai-block="548" class="doc-figure"><img src="./images/manage_app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="1100" /><figcaption>รูปที่ 24.63</figcaption></figure>
 </p>
-<p data-bai-block="551">ในอินเทอร์เฟซนี้ คุณสามารถเพิ่มแอปพลิเคชันที่กำหนดเองที่รองรับได้โดยคลิกปุ่ม &#39;+ Add&#39; ด้านล่าง หากต้องการลบแอปพลิเคชัน ให้คลิกปุ่ม &#39;ถังขยะ&#39; ทางด้านขวาของแต่ละแถว</p>
+<p data-bai-block="549">ในอินเทอร์เฟซนี้ คุณสามารถเพิ่มแอปพลิเคชันที่กำหนดเองที่รองรับได้โดยคลิกปุ่ม &#39;+ Add&#39; ด้านล่าง หากต้องการลบแอปพลิเคชัน ให้คลิกปุ่ม &#39;ถังขยะ&#39; ทางด้านขวาของแต่ละแถว</p>
 <div class="admonition admonition-note">
-<div data-bai-block="552" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="550" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
 
 
-<p><figure data-bai-block="553" class="doc-figure"><img src="./images/confirmation_dialog_for_manage_app_change_in_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="692" /><figcaption>รูปที่ 24.64</figcaption></figure>
+<p><figure data-bai-block="551" class="doc-figure"><img src="./images/confirmation_dialog_for_manage_app_change_in_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="692" /><figcaption>รูปที่ 24.64</figcaption></figure>
 </p>
 </div></div>
 
 
 <p><a id="manage-docker-registry"></a></p>
-<h2 data-bai-block="554" id="admin_menu-การจดการ-docker-registry">การจัดการ Docker Registry<a class="hash-link" href="#admin_menu-การจดการ-docker-registry" aria-label="Direct link to การจัดการ Docker Registry">#</a></h2>
-<p data-bai-block="555">คุณสามารถคลิกแท็บทะเบียนในหน้าสภาพแวดล้อม เพื่อดูข้อมูลของ Docker registry ที่เชื่อมต่ออยู่ในปัจจุบัน <code>cr.backend.ai</code> ถูกลงทะเบียนเป็นค่าเริ่มต้น ซึ่งเป็น registry ที่ให้บริการโดย Harbor</p>
+<h2 data-bai-block="552" id="admin_menu-การจดการ-docker-registry">การจัดการ Docker Registry<a class="hash-link" href="#admin_menu-การจดการ-docker-registry" aria-label="Direct link to การจัดการ Docker Registry">#</a></h2>
+<p data-bai-block="553">คุณสามารถคลิกแท็บทะเบียนในหน้าสภาพแวดล้อม เพื่อดูข้อมูลของ Docker registry ที่เชื่อมต่ออยู่ในปัจจุบัน <code>cr.backend.ai</code> ถูกลงทะเบียนเป็นค่าเริ่มต้น ซึ่งเป็น registry ที่ให้บริการโดย Harbor</p>
 <div class="admonition admonition-note">
-<div data-bai-block="556" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="554" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="557">ในสภาพแวดล้อมแบบออฟไลน์ ไม่สามารถเข้าถึง registry เริ่มต้นได้ ให้คลิกไอคอนถังขยะทางขวาเพื่อลบออก</p>
+<p data-bai-block="555">ในสภาพแวดล้อมแบบออฟไลน์ ไม่สามารถเข้าถึง registry เริ่มต้นได้ ให้คลิกไอคอนถังขยะทางขวาเพื่อลบออก</p>
 </div></div>
 
 
-<p data-bai-block="558">คลิกไอคอนรีเฟรชในคอลัมน์ &#39;การควบคุม&#39; เพื่ออัปเดตข้อมูลเมตาอิมเมจสำหรับ Backend.AI จาก registry ที่เชื่อมต่อ ข้อมูลอิมเมจที่ไม่มีเลเบลสำหรับ Backend.AI จะไม่ถูกอัปเดต</p>
-<p><figure data-bai-block="559" class="doc-figure"><img src="./images/image_registries_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.65</figcaption></figure>
+<p data-bai-block="556">คลิกไอคอนรีเฟรชในคอลัมน์ &#39;การควบคุม&#39; เพื่ออัปเดตข้อมูลเมตาอิมเมจสำหรับ Backend.AI จาก registry ที่เชื่อมต่อ ข้อมูลอิมเมจที่ไม่มีเลเบลสำหรับ Backend.AI จะไม่ถูกอัปเดต</p>
+<p><figure data-bai-block="557" class="doc-figure"><img src="./images/image_registries_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.65</figcaption></figure>
 </p>
-<p data-bai-block="560">คลิกปุ่ม <strong>เพิ่มทะเบียน</strong> เพื่อเพิ่ม Docker registry ส่วนตัวของคุณ กล่องโต้ตอบสร้าง registry มีฟิลด์ต่อไปนี้:</p>
+<p data-bai-block="558">คลิกปุ่ม <strong>เพิ่มทะเบียน</strong> เพื่อเพิ่ม Docker registry ส่วนตัวของคุณ กล่องโต้ตอบสร้าง registry มีฟิลด์ต่อไปนี้:</p>
 <ul>
-<li data-bai-block="561"><strong>ชื่อรีจิสทรี</strong>: ชื่อเฉพาะของ registry (สูงสุด 50 ตัวอักษร) ต้องตรงกับคำนำหน้าที่ใช้ในชื่ออิมเมจที่จัดเก็บใน registry</li>
-<li data-bai-block="562"><strong>URL ทะเบียน</strong>: URL ของ registry ต้องมี scheme เช่น <code>http://</code> หรือ <code>https://</code> อย่างชัดเจน</li>
-<li data-bai-block="563"><strong>ชื่อผู้ใช้</strong>: ตัวเลือก กรอกหากมีการตั้งค่าการยืนยันตัวตนแยกต่างหากใน registry</li>
-<li data-bai-block="564"><strong>รหัสผ่าน</strong>: ตัวเลือก เมื่อแก้ไข registry ที่มีอยู่ ให้เลือกช่องทำเครื่องหมาย <code>Change Password</code> เพื่อเปลี่ยน</li>
-<li data-bai-block="565"><strong>ประเภททะเบียน</strong>: เลือกประเภทของ registry ประเภทที่รองรับ: <code>docker</code>, <code>harbor</code>, <code>harbor2</code>, <code>github</code>, <code>gitlab</code>, <code>ecr</code>, <code>ecr-public</code></li>
-<li data-bai-block="566"><strong>ชื่อโครงการ</strong>: โปรเจกต์หรือ namespace ใน registry (จำเป็น) สำหรับ GitLab registry ให้ใช้เส้นทางเต็มรวม namespace และชื่อโปรเจกต์</li>
-<li data-bai-block="567"><strong>ข้อมูลเพิ่มเติม</strong>: สตริง JSON สำหรับการกำหนดค่าเพิ่มเติมที่จำเป็นสำหรับแต่ละประเภท registry</li>
-<li data-bai-block="568"><strong>การตรวจสอบ SSL (SSL Verification)</strong>: เปิดหรือปิดการตรวจสอบใบรับรอง SSL ของ registry เมื่อ Backend.AI เชื่อมต่อ <strong>เปิดใช้งานเป็นค่าเริ่มต้น</strong> และแนะนำให้คงสถานะนี้ไว้สำหรับ registry ทุกแห่งที่เข้าถึงได้ผ่านอินเทอร์เน็ตสาธารณะ ปิดการใช้งานเฉพาะกรณีที่ registry ใช้ใบรับรองแบบลงนามด้วยตนเอง (self-signed) ภายในสภาพแวดล้อมภายในที่เชื่อถือได้และคุณได้ตรวจสอบเส้นทางเครือข่ายแล้วเท่านั้น การปิดการตรวจสอบจะทำให้การเชื่อมต่อเสี่ยงต่อการโจมตีแบบคนกลาง (man-in-the-middle)</li>
-<li data-bai-block="569"><strong>ตั้งเป็นรีจิสทรีระดับระบบ (Set as Global Registry)</strong>: ปุ่มสลับที่เมื่อเปิดใช้งานจะอนุญาตให้เข้าถึง registry จากทุกโครงการ</li>
-<li data-bai-block="570"><strong>โปรเจกต์ที่ได้รับอนุญาต (Allowed Projects)</strong>: เมื่อปิดปุ่มสลับ <strong>ตั้งเป็นรีจิสทรีระดับระบบ</strong> ให้ใช้ฟิลด์นี้เพื่อเลือกโครงการเฉพาะที่ได้รับอนุญาตให้ใช้ registry</li>
+<li data-bai-block="559"><strong>ชื่อรีจิสทรี</strong>: ชื่อเฉพาะของ registry (สูงสุด 50 ตัวอักษร) ต้องตรงกับคำนำหน้าที่ใช้ในชื่ออิมเมจที่จัดเก็บใน registry</li>
+<li data-bai-block="560"><strong>URL ทะเบียน</strong>: URL ของ registry ต้องมี scheme เช่น <code>http://</code> หรือ <code>https://</code> อย่างชัดเจน</li>
+<li data-bai-block="561"><strong>ชื่อผู้ใช้</strong>: ตัวเลือก กรอกหากมีการตั้งค่าการยืนยันตัวตนแยกต่างหากใน registry</li>
+<li data-bai-block="562"><strong>รหัสผ่าน</strong>: ตัวเลือก เมื่อแก้ไข registry ที่มีอยู่ ให้เลือกช่องทำเครื่องหมาย <code>Change Password</code> เพื่อเปลี่ยน</li>
+<li data-bai-block="563"><strong>ประเภททะเบียน</strong>: เลือกประเภทของ registry ประเภทที่รองรับ: <code>docker</code>, <code>harbor</code>, <code>harbor2</code>, <code>github</code>, <code>gitlab</code>, <code>ecr</code>, <code>ecr-public</code></li>
+<li data-bai-block="564"><strong>ชื่อโครงการ</strong>: โปรเจกต์หรือ namespace ใน registry (จำเป็น) สำหรับ GitLab registry ให้ใช้เส้นทางเต็มรวม namespace และชื่อโปรเจกต์</li>
+<li data-bai-block="565"><strong>ข้อมูลเพิ่มเติม</strong>: สตริง JSON สำหรับการกำหนดค่าเพิ่มเติมที่จำเป็นสำหรับแต่ละประเภท registry</li>
+<li data-bai-block="566"><strong>การตรวจสอบ SSL (SSL Verification)</strong>: เปิดหรือปิดการตรวจสอบใบรับรอง SSL ของ registry เมื่อ Backend.AI เชื่อมต่อ <strong>เปิดใช้งานเป็นค่าเริ่มต้น</strong> และแนะนำให้คงสถานะนี้ไว้สำหรับ registry ทุกแห่งที่เข้าถึงได้ผ่านอินเทอร์เน็ตสาธารณะ ปิดการใช้งานเฉพาะกรณีที่ registry ใช้ใบรับรองแบบลงนามด้วยตนเอง (self-signed) ภายในสภาพแวดล้อมภายในที่เชื่อถือได้และคุณได้ตรวจสอบเส้นทางเครือข่ายแล้วเท่านั้น การปิดการตรวจสอบจะทำให้การเชื่อมต่อเสี่ยงต่อการโจมตีแบบคนกลาง (man-in-the-middle)</li>
+<li data-bai-block="567"><strong>ตั้งเป็นรีจิสทรีระดับระบบ (Set as Global Registry)</strong>: ปุ่มสลับที่เมื่อเปิดใช้งานจะอนุญาตให้เข้าถึง registry จากทุกโครงการ</li>
+<li data-bai-block="568"><strong>โปรเจกต์ที่ได้รับอนุญาต (Allowed Projects)</strong>: เมื่อปิดปุ่มสลับ <strong>ตั้งเป็นรีจิสทรีระดับระบบ</strong> ให้ใช้ฟิลด์นี้เพื่อเลือกโครงการเฉพาะที่ได้รับอนุญาตให้ใช้ registry</li>
 </ul>
-<p><figure data-bai-block="571" class="doc-figure"><img src="./images/container_registry_editor_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="544" height="1244" /><figcaption>รูปที่ 24.66</figcaption></figure>
+<p><figure data-bai-block="569" class="doc-figure"><img src="./images/container_registry_editor_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="544" height="1244" /><figcaption>รูปที่ 24.66</figcaption></figure>
 </p>
 <!-- TODO: Re-capture container_registry_editor_modal.png to show the Set as Global Registry toggle and the Allowed Projects field -->
 
 
 <p><a id="gitlab-container-registry-configuration"></a></p>
-<h3 data-bai-block="572" id="admin_menu-การกำหนดคา-gitlab-container-registry">การกำหนดค่า GitLab Container Registry<a class="hash-link" href="#admin_menu-การกำหนดคา-gitlab-container-registry" aria-label="Direct link to การกำหนดค่า GitLab Container Registry">#</a></h3>
-<p data-bai-block="573">เมื่อเพิ่ม GitLab container registry คุณต้องระบุ <code>api_endpoint</code> ในฟิลด์ Extra Information เนื่องจาก GitLab ใช้ endpoint แยกสำหรับ container registry และ GitLab API</p>
-<p data-bai-block="574">สำหรับ <strong>GitLab.com (public instance)</strong>:</p>
+<h3 data-bai-block="570" id="admin_menu-การกำหนดคา-gitlab-container-registry">การกำหนดค่า GitLab Container Registry<a class="hash-link" href="#admin_menu-การกำหนดคา-gitlab-container-registry" aria-label="Direct link to การกำหนดค่า GitLab Container Registry">#</a></h3>
+<p data-bai-block="571">เมื่อเพิ่ม GitLab container registry คุณต้องระบุ <code>api_endpoint</code> ในฟิลด์ Extra Information เนื่องจาก GitLab ใช้ endpoint แยกสำหรับ container registry และ GitLab API</p>
+<p data-bai-block="572">สำหรับ <strong>GitLab.com (public instance)</strong>:</p>
 <ul>
-<li data-bai-block="575">Registry URL: <code>https://registry.gitlab.com</code></li>
-<li data-bai-block="576">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.com&quot;}</code></li>
+<li data-bai-block="573">Registry URL: <code>https://registry.gitlab.com</code></li>
+<li data-bai-block="574">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.com&quot;}</code></li>
 </ul>
-<p data-bai-block="577">สำหรับ <strong>self-hosted (on-premise) GitLab</strong>:</p>
+<p data-bai-block="575">สำหรับ <strong>self-hosted (on-premise) GitLab</strong>:</p>
 <ul>
-<li data-bai-block="578">Registry URL: URL ของ GitLab registry ของคุณ (เช่น <code>https://registry.example.com</code>)</li>
-<li data-bai-block="579">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.example.com&quot;}</code></li>
+<li data-bai-block="576">Registry URL: URL ของ GitLab registry ของคุณ (เช่น <code>https://registry.example.com</code>)</li>
+<li data-bai-block="577">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.example.com&quot;}</code></li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="580" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="578" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="581"><code>api_endpoint</code> ควรชี้ไปที่ URL ของ GitLab instance ของคุณ ไม่ใช่ URL ของ registry</p>
+<p data-bai-block="579"><code>api_endpoint</code> ควรชี้ไปที่ URL ของ GitLab instance ของคุณ ไม่ใช่ URL ของ registry</p>
 </div></div>
 
 
-<p data-bai-block="582">หมายเหตุการกำหนดค่าเพิ่มเติม:</p>
+<p data-bai-block="580">หมายเหตุการกำหนดค่าเพิ่มเติม:</p>
 <ul>
-<li data-bai-block="583"><p><strong>รูปแบบเส้นทางโปรเจกต์</strong>: เมื่อระบุโปรเจกต์ ให้ใช้เส้นทางเต็มรวม namespace และชื่อโปรเจกต์ (เช่น <code>namespace/project-name</code>) ทั้งสองส่วนจำเป็นสำหรับให้ registry ทำงานได้อย่างถูกต้อง</p>
+<li data-bai-block="581"><p><strong>รูปแบบเส้นทางโปรเจกต์</strong>: เมื่อระบุโปรเจกต์ ให้ใช้เส้นทางเต็มรวม namespace และชื่อโปรเจกต์ (เช่น <code>namespace/project-name</code>) ทั้งสองส่วนจำเป็นสำหรับให้ registry ทำงานได้อย่างถูกต้อง</p>
 </li>
-<li data-bai-block="584"><p><strong>สิทธิ์ของ access token</strong>: access token ที่ใช้สำหรับ registry ต้องมีทั้ง scope <code>read_registry</code> และ <code>read_api</code> scope <code>read_api</code> จำเป็นสำหรับ Backend.AI เพื่อสอบถาม GitLab API สำหรับข้อมูลเมตาอิมเมจระหว่างการ rescan</p>
+<li data-bai-block="582"><p><strong>สิทธิ์ของ access token</strong>: access token ที่ใช้สำหรับ registry ต้องมีทั้ง scope <code>read_registry</code> และ <code>read_api</code> scope <code>read_api</code> จำเป็นสำหรับ Backend.AI เพื่อสอบถาม GitLab API สำหรับข้อมูลเมตาอิมเมจระหว่างการ rescan</p>
 </li>
 </ul>
-<p data-bai-block="585">คุณยังสามารถเปลี่ยนการตั้งค่าของ registry ที่มีอยู่ได้จากไดอะล็อก <strong>แก้ไขทะเบียน</strong> ยกเว้นชื่อรีจิสทรี</p>
-<p data-bai-block="586">หลังจากสร้าง registry และอัปเดตข้อมูลเมตาอิมเมจแล้ว ผู้ใช้ยังไม่สามารถใช้อิมเมจได้ทันที คุณต้องเปิดใช้งาน registry โดยสลับสวิตช์ Enabled ในรายการ registry เพื่ออนุญาตให้ผู้ใช้เข้าถึงอิมเมจจาก registry</p>
+<p data-bai-block="583">คุณยังสามารถเปลี่ยนการตั้งค่าของ registry ที่มีอยู่ได้จากไดอะล็อก <strong>แก้ไขทะเบียน</strong> ยกเว้นชื่อรีจิสทรี</p>
+<p data-bai-block="584">หลังจากสร้าง registry และอัปเดตข้อมูลเมตาอิมเมจแล้ว ผู้ใช้ยังไม่สามารถใช้อิมเมจได้ทันที คุณต้องเปิดใช้งาน registry โดยสลับสวิตช์ Enabled ในรายการ registry เพื่ออนุญาตให้ผู้ใช้เข้าถึงอิมเมจจาก registry</p>
 <p><a id="manage-resource-preset"></a></p>
-<h2 data-bai-block="587" id="admin_menu-การจดการ-resource-preset">การจัดการ Resource Preset<a class="hash-link" href="#admin_menu-การจดการ-resource-preset" aria-label="Direct link to การจัดการ Resource Preset">#</a></h2>
-<p data-bai-block="588">Resource preset ที่กำหนดไว้ล่วงหน้าจะแสดงในแผง Resource allocation เมื่อสร้างเซสชันการคำนวณ Superadmin สามารถจัดการ resource preset เหล่านี้ได้</p>
-<p><figure data-bai-block="589" class="doc-figure"><img src="./images/resource_presets_in_resource_monitor.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="950" /><figcaption>รูปที่ 24.67</figcaption></figure>
+<h2 data-bai-block="585" id="admin_menu-การจดการ-resource-preset">การจัดการ Resource Preset<a class="hash-link" href="#admin_menu-การจดการ-resource-preset" aria-label="Direct link to การจัดการ Resource Preset">#</a></h2>
+<p data-bai-block="586">Resource preset ที่กำหนดไว้ล่วงหน้าจะแสดงในแผง Resource allocation เมื่อสร้างเซสชันการคำนวณ Superadmin สามารถจัดการ resource preset เหล่านี้ได้</p>
+<p><figure data-bai-block="587" class="doc-figure"><img src="./images/resource_presets_in_resource_monitor.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="950" /><figcaption>รูปที่ 24.67</figcaption></figure>
 </p>
-<p data-bai-block="590">ไปที่แท็บค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรในหน้าสภาพแวดล้อม คุณสามารถตรวจสอบรายการ resource preset ที่กำหนดไว้ในปัจจุบัน</p>
-<p><figure data-bai-block="591" class="doc-figure"><img src="./images/resource_preset_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.68</figcaption></figure>
+<p data-bai-block="588">ไปที่แท็บค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรในหน้าสภาพแวดล้อม คุณสามารถตรวจสอบรายการ resource preset ที่กำหนดไว้ในปัจจุบัน</p>
+<p><figure data-bai-block="589" class="doc-figure"><img src="./images/resource_preset_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.68</figcaption></figure>
 </p>
-<p data-bai-block="592">คุณสามารถตั้งค่าทรัพยากรเช่น CPU, RAM, fGPU เป็นต้น ที่จะให้บริการโดย resource preset ได้โดยคลิกการกระทำ <strong>แก้ไข</strong> (ดินสอ) ในคอลัมน์ชื่อ โมดัล <strong>สร้างค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร</strong> / <strong>แก้ไขค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร</strong> จะแสดงฟิลด์ของทรัพยากรที่มีอยู่ในปัจจุบัน ขึ้นอยู่กับการตั้งค่าเซิร์ฟเวอร์ ทรัพยากรบางอย่างอาจไม่แสดง หลังจากตั้งค่าทรัพยากรตามต้องการ ให้คลิก <strong>บันทึก</strong> และตรวจสอบว่า preset ที่สอดคล้องกันจะแสดงเมื่อสร้างเซสชันการคำนวณ หากทรัพยากรที่มีน้อยกว่าปริมาณทรัพยากรที่กำหนดใน preset ที่สอดคล้องกัน preset จะไม่แสดง</p>
-<p data-bai-block="593">ไดอะล็อกค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรประกอบด้วย:</p>
+<p data-bai-block="590">คุณสามารถตั้งค่าทรัพยากรเช่น CPU, RAM, fGPU เป็นต้น ที่จะให้บริการโดย resource preset ได้โดยคลิกการกระทำ <strong>แก้ไข</strong> (ดินสอ) ในคอลัมน์ชื่อ โมดัล <strong>สร้างค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร</strong> / <strong>แก้ไขค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร</strong> จะแสดงฟิลด์ของทรัพยากรที่มีอยู่ในปัจจุบัน ขึ้นอยู่กับการตั้งค่าเซิร์ฟเวอร์ ทรัพยากรบางอย่างอาจไม่แสดง หลังจากตั้งค่าทรัพยากรตามต้องการ ให้คลิก <strong>บันทึก</strong> และตรวจสอบว่า preset ที่สอดคล้องกันจะแสดงเมื่อสร้างเซสชันการคำนวณ หากทรัพยากรที่มีน้อยกว่าปริมาณทรัพยากรที่กำหนดใน preset ที่สอดคล้องกัน preset จะไม่แสดง</p>
+<p data-bai-block="591">ไดอะล็อกค่าที่กำหนดไว้ล่วงหน้าของทรัพยากรประกอบด้วย:</p>
 <ul>
-<li data-bai-block="594"><strong>ชื่อค่าที่กำหนดไว้ล่วงหน้า</strong>: ชื่อเฉพาะสำหรับค่าที่กำหนดไว้ล่วงหน้า (อนุญาตเฉพาะตัวอักษรและตัวเลข, จุด, ขีดกลาง และขีดล่าง)</li>
-<li data-bai-block="595"><strong>กลุ่มทรัพยากร</strong>: เชื่อมโยง preset กับกลุ่มทรัพยากรเฉพาะ ฟิลด์นี้ไม่บังคับ หากปล่อยว่างไว้หรือล้างค่า preset จะเป็น preset ส่วนกลางที่ใช้ได้โดยไม่ขึ้นกับกลุ่มทรัพยากร</li>
-<li data-bai-block="596"><strong>ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร</strong>: ฟิลด์แบบไดนามิกสำหรับทรัพยากรแต่ละประเภทที่มี (CPU, หน่วยความจำ, GPU เป็นต้น) ฟิลด์หน่วยความจำรองรับการป้อนหน่วยแบบไดนามิก (MiB, GiB, TiB, PiB)</li>
-<li data-bai-block="597"><strong>หน่วยความจำที่ใช้ร่วมกัน</strong>: ปริมาณหน่วยความจำที่ใช้ร่วมกันที่จัดสรรให้กับค่าที่กำหนดไว้ล่วงหน้า ค่านี้ต้องน้อยกว่าค่า<strong>หน่วยความจำ</strong></li>
+<li data-bai-block="592"><strong>ชื่อค่าที่กำหนดไว้ล่วงหน้า</strong>: ชื่อเฉพาะสำหรับค่าที่กำหนดไว้ล่วงหน้า (อนุญาตเฉพาะตัวอักษรและตัวเลข, จุด, ขีดกลาง และขีดล่าง)</li>
+<li data-bai-block="593"><strong>กลุ่มทรัพยากร</strong>: เชื่อมโยง preset กับกลุ่มทรัพยากรเฉพาะ ฟิลด์นี้ไม่บังคับ หากปล่อยว่างไว้หรือล้างค่า preset จะเป็น preset ส่วนกลางที่ใช้ได้โดยไม่ขึ้นกับกลุ่มทรัพยากร</li>
+<li data-bai-block="594"><strong>ค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร</strong>: ฟิลด์แบบไดนามิกสำหรับทรัพยากรแต่ละประเภทที่มี (CPU, หน่วยความจำ, GPU เป็นต้น) ฟิลด์หน่วยความจำรองรับการป้อนหน่วยแบบไดนามิก (MiB, GiB, TiB, PiB)</li>
+<li data-bai-block="595"><strong>หน่วยความจำที่ใช้ร่วมกัน</strong>: ปริมาณหน่วยความจำที่ใช้ร่วมกันที่จัดสรรให้กับค่าที่กำหนดไว้ล่วงหน้า ค่านี้ต้องน้อยกว่าค่า<strong>หน่วยความจำ</strong></li>
 </ul>
-<p><figure data-bai-block="598" class="doc-figure"><img src="./images/modify_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>รูปที่ 24.69</figcaption></figure>
+<p><figure data-bai-block="596" class="doc-figure"><img src="./images/modify_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>รูปที่ 24.69</figcaption></figure>
 </p>
-<p data-bai-block="599">คุณยังสามารถสร้าง resource preset ได้โดยคลิกปุ่ม <strong>สร้างค่าที่กำหนดไว้ล่วงหน้า</strong> ที่มุมบนขวาของแท็บค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร ชื่อของ resource preset ยังคงต้องไม่ซ้ำกัน หากคุณป้อนชื่อที่มีอยู่แล้ว เซิร์ฟเวอร์จะปฏิเสธคำขอเมื่อคุณคลิก <strong>สร้าง</strong> และจะแสดงข้อความแสดงข้อผิดพลาด</p>
-<p><figure data-bai-block="600" class="doc-figure"><img src="./images/create_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>รูปที่ 24.70</figcaption></figure>
+<p data-bai-block="597">คุณยังสามารถสร้าง resource preset ได้โดยคลิกปุ่ม <strong>สร้างค่าที่กำหนดไว้ล่วงหน้า</strong> ที่มุมบนขวาของแท็บค่าที่กำหนดไว้ล่วงหน้าของทรัพยากร ชื่อของ resource preset ยังคงต้องไม่ซ้ำกัน หากคุณป้อนชื่อที่มีอยู่แล้ว เซิร์ฟเวอร์จะปฏิเสธคำขอเมื่อคุณคลิก <strong>สร้าง</strong> และจะแสดงข้อความแสดงข้อผิดพลาด</p>
+<p><figure data-bai-block="598" class="doc-figure"><img src="./images/create_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>รูปที่ 24.70</figcaption></figure>
 </p>
 <p><a id="manage-agent-nodes"></a></p>
-<h2 data-bai-block="601" id="admin_menu-การจดการโหนดเอเจนต">การจัดการโหนดเอเจนต์<a class="hash-link" href="#admin_menu-การจดการโหนดเอเจนต" aria-label="Direct link to การจัดการโหนดเอเจนต์">#</a></h2>
-<p data-bai-block="602">Superadmin สามารถดูรายการโหนดเอเจนต์ที่เชื่อมต่อกับ Backend.AI อยู่ในปัจจุบันได้โดยไปที่หน้าทรัพยากร คุณสามารถตรวจสอบ IP ของโหนดเอเจนต์ เวลาที่เชื่อมต่อ ทรัพยากรที่ใช้งานจริงอยู่ในปัจจุบัน เป็นต้น จากแผงรายละเอียดของเอเจนต์ คุณยังสามารถเปลี่ยนสถานะ schedulable และควบคุมบริการเอเจนต์เองได้</p>
+<h2 data-bai-block="599" id="admin_menu-การจดการโหนดเอเจนต">การจัดการโหนดเอเจนต์<a class="hash-link" href="#admin_menu-การจดการโหนดเอเจนต" aria-label="Direct link to การจัดการโหนดเอเจนต์">#</a></h2>
+<p data-bai-block="600">Superadmin สามารถดูรายการโหนดเอเจนต์ที่เชื่อมต่อกับ Backend.AI อยู่ในปัจจุบันได้โดยไปที่หน้าทรัพยากร คุณสามารถตรวจสอบ IP ของโหนดเอเจนต์ เวลาที่เชื่อมต่อ ทรัพยากรที่ใช้งานจริงอยู่ในปัจจุบัน เป็นต้น จากแผงรายละเอียดของเอเจนต์ คุณยังสามารถเปลี่ยนสถานะ schedulable และควบคุมบริการเอเจนต์เองได้</p>
 <p><a id="query-agent-nodes"></a></p>
-<h4 data-bai-block="603" id="admin_menu-สอบถามโหนดเอเจนต">สอบถามโหนดเอเจนต์<a class="hash-link" href="#admin_menu-สอบถามโหนดเอเจนต" aria-label="Direct link to สอบถามโหนดเอเจนต์">#</a></h4>
-<p><figure data-bai-block="604" class="doc-figure"><img src="./images/agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.71</figcaption></figure>
+<h4 data-bai-block="601" id="admin_menu-สอบถามโหนดเอเจนต">สอบถามโหนดเอเจนต์<a class="hash-link" href="#admin_menu-สอบถามโหนดเอเจนต" aria-label="Direct link to สอบถามโหนดเอเจนต์">#</a></h4>
+<p><figure data-bai-block="602" class="doc-figure"><img src="./images/agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.71</figcaption></figure>
 </p>
-<p data-bai-block="605">ใช้ตัวเลือก <strong>เชื่อมต่อแล้ว</strong> / <strong>ยุติแล้ว</strong> เพื่อสลับระหว่างเอเจนต์ที่เชื่อมต่ออยู่ในปัจจุบัน กับเอเจนต์ที่เคยเชื่อมต่อแล้วถูกยกเลิกหรือตัดการเชื่อมต่อ รายการยุติแล้วสามารถใช้เป็นข้อมูลอ้างอิงสำหรับการจัดการโหนด หากรายการว่างเปล่า หมายความว่าไม่มีการตัดการเชื่อมต่อหรือการยกเลิกเกิดขึ้น</p>
-<p><figure data-bai-block="606" class="doc-figure"><img src="./images/terminated_agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.72</figcaption></figure>
+<p data-bai-block="603">ใช้ตัวเลือก <strong>เชื่อมต่อแล้ว</strong> / <strong>ยุติแล้ว</strong> เพื่อสลับระหว่างเอเจนต์ที่เชื่อมต่ออยู่ในปัจจุบัน กับเอเจนต์ที่เคยเชื่อมต่อแล้วถูกยกเลิกหรือตัดการเชื่อมต่อ รายการยุติแล้วสามารถใช้เป็นข้อมูลอ้างอิงสำหรับการจัดการโหนด หากรายการว่างเปล่า หมายความว่าไม่มีการตัดการเชื่อมต่อหรือการยกเลิกเกิดขึ้น</p>
+<p><figure data-bai-block="604" class="doc-figure"><img src="./images/terminated_agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.72</figcaption></figure>
 </p>
-<p data-bai-block="607">คุณสามารถจำกัดรายการด้วยตัวกรองคุณสมบัติ ซึ่งรองรับ <strong>ID</strong>, <strong>จุดเชื่อมต่อ</strong> และ <strong>จัดตารางได้</strong></p>
-<p data-bai-block="608">คลิก ID ของเอเจนต์เพื่อเปิดแผง <strong>ข้อมูลเอเจนต์</strong> ซึ่งแสดงการใช้ทรัพยากรที่แน่นอนของโหนดนั้น แผงนี้มีสองแท็บ ได้แก่ แท็บ <strong>ทรัพยากร</strong> ที่แสดงการใช้งานแยกตามสล็อตทรัพยากร และแท็บ <strong>เซสชัน</strong> ที่แสดงรายการเซสชันการคำนวณซึ่งถูกกำหนดให้กับเอเจนต์นี้ ทำให้คุณเห็นว่ามีอะไรกำลังทำงานอยู่บนโหนดก่อนที่จะหยุดหรือรีสตาร์ทเอเจนต์ ในแท็บ <strong>เซสชัน</strong> ให้ใช้ตัวเลือก <strong>กำลังทำงาน</strong> / <strong>เสร็จสิ้น</strong> เพื่อสลับระหว่างเซสชันที่ยังใช้ทรัพยากรของโหนดอยู่กับเซสชันที่เสร็จสิ้นแล้ว และคลิกชื่อเซสชันเพื่อเปิดรายละเอียดของเซสชันนั้นในหน้าเซสชันสำหรับผู้ดูแลระบบ</p>
-<p><figure data-bai-block="609" class="doc-figure"><img src="./images/detailed_agent_node_usage_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 24.73</figcaption></figure>
+<p data-bai-block="605">คุณสามารถจำกัดรายการด้วยตัวกรองคุณสมบัติ ซึ่งรองรับ <strong>ID</strong>, <strong>จุดเชื่อมต่อ</strong> และ <strong>จัดตารางได้</strong></p>
+<p data-bai-block="606">คลิก ID ของเอเจนต์เพื่อเปิดแผง <strong>ข้อมูลเอเจนต์</strong> ซึ่งแสดงการใช้ทรัพยากรที่แน่นอนของโหนดนั้น แผงนี้มีสองแท็บ ได้แก่ แท็บ <strong>ทรัพยากร</strong> ที่แสดงการใช้งานแยกตามสล็อตทรัพยากร และแท็บ <strong>เซสชัน</strong> ที่แสดงรายการเซสชันการคำนวณซึ่งถูกกำหนดให้กับเอเจนต์นี้ ทำให้คุณเห็นว่ามีอะไรกำลังทำงานอยู่บนโหนดก่อนที่จะหยุดหรือรีสตาร์ทเอเจนต์ ในแท็บ <strong>เซสชัน</strong> ให้ใช้ตัวเลือก <strong>กำลังทำงาน</strong> / <strong>เสร็จสิ้น</strong> เพื่อสลับระหว่างเซสชันที่ยังใช้ทรัพยากรของโหนดอยู่กับเซสชันที่เสร็จสิ้นแล้ว และคลิกชื่อเซสชันเพื่อแสดงรายละเอียดของเซสชันนั้น</p>
+<p><figure data-bai-block="607" class="doc-figure"><img src="./images/detailed_agent_node_usage_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 24.73</figcaption></figure>
 </p>
 <p><a id="control-agent-service"></a></p>
-<h4 data-bai-block="610" id="admin_menu-เรม-หยด-หรอรสตารทเอเจนต">เริ่ม หยุด หรือรีสตาร์ทเอเจนต์<a class="hash-link" href="#admin_menu-เรม-หยด-หรอรสตารทเอเจนต" aria-label="Direct link to เริ่ม หยุด หรือรีสตาร์ทเอเจนต์">#</a></h4>
-<p data-bai-block="611">แผงข้อมูลเอเจนต์มีกลุ่มปุ่มสำหรับควบคุมบริการเอเจนต์เอง:</p>
+<h4 data-bai-block="608" id="admin_menu-เรม-หยด-หรอรสตารทเอเจนต">เริ่ม หยุด หรือรีสตาร์ทเอเจนต์<a class="hash-link" href="#admin_menu-เรม-หยด-หรอรสตารทเอเจนต" aria-label="Direct link to เริ่ม หยุด หรือรีสตาร์ทเอเจนต์">#</a></h4>
+<p data-bai-block="609">แผงข้อมูลเอเจนต์มีกลุ่มปุ่มสำหรับควบคุมบริการเอเจนต์เอง:</p>
 <ul>
-<li data-bai-block="612"><strong>เริ่มตัวแทน</strong>: เริ่มบริการเอเจนต์ขึ้นมาใหม่ ใช้ได้เฉพาะเมื่อเอเจนต์ไม่ได้อยู่ในสถานะ <code>ALIVE</code></li>
-<li data-bai-block="613"><strong>หยุดตัวแทน</strong>: ปิดบริการเอเจนต์ ใช้ได้เฉพาะเมื่อเอเจนต์อยู่ในสถานะ <code>ALIVE</code></li>
-<li data-bai-block="614"><strong>รีสตาร์ทตัวแทน</strong>: รีสตาร์ทบริการเอเจนต์</li>
+<li data-bai-block="610"><strong>เริ่มตัวแทน</strong>: เริ่มบริการเอเจนต์ขึ้นมาใหม่ ใช้ได้เฉพาะเมื่อเอเจนต์ไม่ได้อยู่ในสถานะ <code>ALIVE</code></li>
+<li data-bai-block="611"><strong>หยุดตัวแทน</strong>: ปิดบริการเอเจนต์ ใช้ได้เฉพาะเมื่อเอเจนต์อยู่ในสถานะ <code>ALIVE</code></li>
+<li data-bai-block="612"><strong>รีสตาร์ทตัวแทน</strong>: รีสตาร์ทบริการเอเจนต์</li>
 </ul>
-<p><figure data-bai-block="615" class="doc-figure"><img src="./images/agent_watcher_actions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="334" /><figcaption>รูปที่ 24.74</figcaption></figure>
+<p><figure data-bai-block="613" class="doc-figure"><img src="./images/agent_watcher_actions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="334" /><figcaption>รูปที่ 24.74</figcaption></figure>
 </p>
-<p data-bai-block="616">การกระทำแต่ละอย่างจะเปิดไดอะล็อกยืนยันที่ระบุชื่อเอเจนต์ที่ได้รับผลกระทบ และเตือนว่าเซสชันที่กำลังทำงานบนเอเจนต์นี้อาจได้รับผลกระทบ ยืนยันเพื่อส่งคำขอ ระบบจะแสดงข้อความว่าได้ส่งคำขอเริ่ม หยุด หรือรีสตาร์ทแล้ว จากนั้นจะอ่านสถานะของเอเจนต์ใหม่อีกครั้ง</p>
+<p data-bai-block="614">การกระทำแต่ละอย่างจะเปิดไดอะล็อกยืนยันที่ระบุชื่อเอเจนต์ที่ได้รับผลกระทบ และเตือนว่าเซสชันที่กำลังทำงานบนเอเจนต์นี้อาจได้รับผลกระทบ ยืนยันเพื่อส่งคำขอ ระบบจะแสดงข้อความว่าได้ส่งคำขอเริ่ม หยุด หรือรีสตาร์ทแล้ว จากนั้นจะอ่านสถานะของเอเจนต์ใหม่อีกครั้ง</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="617" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div data-bai-block="615" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
 <div class="admonition-content">
 
-<p data-bai-block="618">การกระทำเหล่านี้มีผลกับบริการเอเจนต์บนโหนด ไม่ใช่กับเซสชันใดเซสชันหนึ่ง การหยุดหรือรีสตาร์ทเอเจนต์จะส่งผลต่อเซสชันการคำนวณทุกเซสชันที่กำลังทำงานอยู่บนเอเจนต์นั้น โปรดตรวจสอบว่าโหนดถูกถ่ายงานออกแล้ว หรือคุณยอมรับผลกระทบนั้นได้ ก่อนยืนยัน</p>
+<p data-bai-block="616">การกระทำเหล่านี้มีผลกับบริการเอเจนต์บนโหนด ไม่ใช่กับเซสชันใดเซสชันหนึ่ง การหยุดหรือรีสตาร์ทเอเจนต์จะส่งผลต่อเซสชันการคำนวณทุกเซสชันที่กำลังทำงานอยู่บนเอเจนต์นั้น โปรดตรวจสอบว่าโหนดถูกถ่ายงานออกแล้ว หรือคุณยอมรับผลกระทบนั้นได้ ก่อนยืนยัน</p>
 </div></div>
 
 
 <blockquote>
-<p data-bai-block="619">คำขอจะถูกส่งต่อไปยัง watcher daemon ของเอเจนต์ หาก watcher ไม่สามารถเข้าถึงได้ หรือโหนดถูกจัดการในลักษณะที่ไม่รองรับการดำเนินการนั้น WebUI จะแสดงข้อผิดพลาดที่เอเจนต์ส่งกลับมาแทนข้อความสำเร็จ</p>
+<p data-bai-block="617">คำขอจะถูกส่งต่อไปยัง watcher daemon ของเอเจนต์ หาก watcher ไม่สามารถเข้าถึงได้ หรือโหนดถูกจัดการในลักษณะที่ไม่รองรับการดำเนินการนั้น WebUI จะแสดงข้อผิดพลาดที่เอเจนต์ส่งกลับมาแทนข้อความสำเร็จ</p>
 </blockquote>
 <p><a id="set-schedulable-status-of-agent-nodes"></a></p>
-<h4 data-bai-block="620" id="admin_menu-ตงคาสถานะ-schedulable-ของโหนดเอเจนต">ตั้งค่าสถานะ Schedulable ของโหนดเอเจนต์<a class="hash-link" href="#admin_menu-ตงคาสถานะ-schedulable-ของโหนดเอเจนต" aria-label="Direct link to ตั้งค่าสถานะ Schedulable ของโหนดเอเจนต์">#</a></h4>
-<p data-bai-block="621">คุณอาจต้องการป้องกันไม่ให้เซสชันการคำนวณใหม่ถูกจัดตารางไปยังบริการ Agent โดยไม่ต้องหยุดบริการ ในกรณีนี้ คุณสามารถปิดใช้งานสถานะ Schedulable ของ Agent ได้จากปุ่ม <strong>การตั้งค่า</strong> ในแผงข้อมูลเอเจนต์ จากนั้นคุณสามารถบล็อกการสร้างเซสชันใหม่ในขณะที่รักษาเซสชันที่มีอยู่บน Agent</p>
-<p><figure data-bai-block="622" class="doc-figure"><img src="./images/agent_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="400" height="338" /><figcaption>รูปที่ 24.75</figcaption></figure>
+<h4 data-bai-block="618" id="admin_menu-ตงคาสถานะ-schedulable-ของโหนดเอเจนต">ตั้งค่าสถานะ Schedulable ของโหนดเอเจนต์<a class="hash-link" href="#admin_menu-ตงคาสถานะ-schedulable-ของโหนดเอเจนต" aria-label="Direct link to ตั้งค่าสถานะ Schedulable ของโหนดเอเจนต์">#</a></h4>
+<p data-bai-block="619">คุณอาจต้องการป้องกันไม่ให้เซสชันการคำนวณใหม่ถูกจัดตารางไปยังบริการ Agent โดยไม่ต้องหยุดบริการ ในกรณีนี้ คุณสามารถปิดใช้งานสถานะ Schedulable ของ Agent ได้จากปุ่ม <strong>การตั้งค่า</strong> ในแผงข้อมูลเอเจนต์ จากนั้นคุณสามารถบล็อกการสร้างเซสชันใหม่ในขณะที่รักษาเซสชันที่มีอยู่บน Agent</p>
+<p><figure data-bai-block="620" class="doc-figure"><img src="./images/agent_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="400" height="338" /><figcaption>รูปที่ 24.75</figcaption></figure>
 </p>
 <p><a id="manage-resource-group"></a></p>
-<h2 data-bai-block="623" id="admin_menu-การจดการกลมทรพยากร">การจัดการกลุ่มทรัพยากร<a class="hash-link" href="#admin_menu-การจดการกลมทรพยากร" aria-label="Direct link to การจัดการกลุ่มทรัพยากร">#</a></h2>
-<p data-bai-block="624">เอเจนต์สามารถจัดกลุ่มเป็นหน่วยที่เรียกว่ากลุ่มทรัพยากร ตัวอย่างเช่น สมมติว่ามีเอเจนต์ 3 ตัวที่มี GPU V100 และเอเจนต์ 2 ตัวที่มี GPU P100 หากคุณต้องการแยก GPU สองประเภทให้ผู้ใช้เห็นแยกกัน คุณสามารถจัดกลุ่มเอเจนต์ V100 สามตัวเป็นกลุ่มทรัพยากรหนึ่ง และเอเจนต์ P100 สองตัวที่เหลือเป็นอีกกลุ่มทรัพยากรหนึ่ง</p>
-<p data-bai-block="625">การเพิ่มเอเจนต์เฉพาะเข้ากลุ่มทรัพยากรเฉพาะยังไม่ได้จัดการใน WebUI ในปัจจุบัน สามารถทำได้โดยแก้ไขไฟล์ config ของเอเจนต์จากตำแหน่งที่ติดตั้งและรีสตาร์ท agent daemon การจัดการกลุ่มทรัพยากรสามารถทำได้ในแท็บกลุ่มทรัพยากรของหน้าทรัพยากร</p>
-<p><figure data-bai-block="626" class="doc-figure"><img src="./images/resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.76</figcaption></figure>
+<h2 data-bai-block="621" id="admin_menu-การจดการกลมทรพยากร">การจัดการกลุ่มทรัพยากร<a class="hash-link" href="#admin_menu-การจดการกลมทรพยากร" aria-label="Direct link to การจัดการกลุ่มทรัพยากร">#</a></h2>
+<p data-bai-block="622">เอเจนต์สามารถจัดกลุ่มเป็นหน่วยที่เรียกว่ากลุ่มทรัพยากร ตัวอย่างเช่น สมมติว่ามีเอเจนต์ 3 ตัวที่มี GPU V100 และเอเจนต์ 2 ตัวที่มี GPU P100 หากคุณต้องการแยก GPU สองประเภทให้ผู้ใช้เห็นแยกกัน คุณสามารถจัดกลุ่มเอเจนต์ V100 สามตัวเป็นกลุ่มทรัพยากรหนึ่ง และเอเจนต์ P100 สองตัวที่เหลือเป็นอีกกลุ่มทรัพยากรหนึ่ง</p>
+<p data-bai-block="623">การเพิ่มเอเจนต์เฉพาะเข้ากลุ่มทรัพยากรเฉพาะยังไม่ได้จัดการใน WebUI ในปัจจุบัน สามารถทำได้โดยแก้ไขไฟล์ config ของเอเจนต์จากตำแหน่งที่ติดตั้งและรีสตาร์ท agent daemon การจัดการกลุ่มทรัพยากรสามารถทำได้ในแท็บกลุ่มทรัพยากรของหน้าทรัพยากร</p>
+<p><figure data-bai-block="624" class="doc-figure"><img src="./images/resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.76</figcaption></figure>
 </p>
 <p><a id="scheduling-methods"></a></p>
-<p data-bai-block="627">คุณสามารถแก้ไขกลุ่มทรัพยากรได้โดยคลิกการกระทำ <strong>แก้ไข</strong> (ดินสอ) ในคอลัมน์ชื่อ ซึ่งจะเปิดไดอะล็อก <strong>แก้ไขกลุ่มทรัพยากร</strong> ในฟิลด์ <strong>ตัวจัดกำหนดการ</strong> คุณสามารถเลือกวิธีการจัดตารางสำหรับการสร้างเซสชันการคำนวณ ปัจจุบันมีสี่ประเภท: <code>FIFO</code>, <code>LIFO</code>, <code>DRF</code> และ <code>FAIR_SHARE</code> <code>FIFO</code> และ <code>LIFO</code> เป็นวิธีการจัดตารางที่สร้างเซสชันที่เข้าคิวเป็นลำดับแรกหรือลำดับสุดท้ายในคิวงาน <code>DRF</code> ย่อมาจาก Dominant Resource Fairness มีเป้าหมายเพื่อจัดสรรทรัพยากรอย่างเท่าเทียมที่สุดสำหรับแต่ละผู้ใช้ <code>FAIR_SHARE</code> จัดสรรทรัพยากรตามรูปแบบการใช้งานในอดีต สำหรับรายละเอียดเพิ่มเติม โปรดดูที่ส่วน <a href="#fair-share-scheduler">Fair Share Scheduler</a> คุณสามารถปิดใช้งานกลุ่มทรัพยากรได้โดยปิด <strong>ใช้งาน</strong> คลิก <strong>บันทึก</strong> เพื่อใช้การเปลี่ยนแปลง</p>
-<p><figure data-bai-block="628" class="doc-figure"><img src="./images/modify_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>รูปที่ 24.77</figcaption></figure>
+<p data-bai-block="625">คุณสามารถแก้ไขกลุ่มทรัพยากรได้โดยคลิกการกระทำ <strong>แก้ไข</strong> (ดินสอ) ในคอลัมน์ชื่อ ซึ่งจะเปิดไดอะล็อก <strong>แก้ไขกลุ่มทรัพยากร</strong> ในฟิลด์ <strong>ตัวจัดกำหนดการ</strong> คุณสามารถเลือกวิธีการจัดตารางสำหรับการสร้างเซสชันการคำนวณ ปัจจุบันมีสี่ประเภท: <code>FIFO</code>, <code>LIFO</code>, <code>DRF</code> และ <code>FAIR_SHARE</code> <code>FIFO</code> และ <code>LIFO</code> เป็นวิธีการจัดตารางที่สร้างเซสชันที่เข้าคิวเป็นลำดับแรกหรือลำดับสุดท้ายในคิวงาน <code>DRF</code> ย่อมาจาก Dominant Resource Fairness มีเป้าหมายเพื่อจัดสรรทรัพยากรอย่างเท่าเทียมที่สุดสำหรับแต่ละผู้ใช้ <code>FAIR_SHARE</code> จัดสรรทรัพยากรตามรูปแบบการใช้งานในอดีต สำหรับรายละเอียดเพิ่มเติม โปรดดูที่ส่วน <a href="#fair-share-scheduler">Fair Share Scheduler</a> คุณสามารถปิดใช้งานกลุ่มทรัพยากรได้โดยปิด <strong>ใช้งาน</strong> คลิก <strong>บันทึก</strong> เพื่อใช้การเปลี่ยนแปลง</p>
+<p><figure data-bai-block="626" class="doc-figure"><img src="./images/modify_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>รูปที่ 24.77</figcaption></figure>
 </p>
-<p data-bai-block="629">กลุ่มทรัพยากรมีตัวเลือกเพิ่มเติมดังนี้:</p>
+<p data-bai-block="627">กลุ่มทรัพยากรมีตัวเลือกเพิ่มเติมดังนี้:</p>
 <ul>
-<li data-bai-block="630"><strong>ประเภทเซสชันที่อนุญาต</strong>: ผู้ใช้สามารถเลือกประเภทของเซสชันได้ กลุ่มทรัพยากรสามารถอนุญาตประเภทเซสชันบางประเภท ประเภทเซสชันที่อนุญาต ได้แก่ Interactive, Batch, Inference และ System</li>
-<li data-bai-block="631"><strong>ที่อยู่เซิร์ฟเวอร์ App Proxy</strong>: ตั้งค่าที่อยู่ App Proxy สำหรับเอเจนต์ของกลุ่มทรัพยากร</li>
-<li data-bai-block="632"><strong>โทเค็น API ของ App Proxy</strong>: โทเค็น API สำหรับการยืนยันตัวตนกับ App Proxy</li>
-<li data-bai-block="633"><strong>พร็อกซีที่เก็บข้อมูล SFTP</strong>: พร็อกซีที่เก็บข้อมูลที่ใช้เมื่อผู้ใช้ในกลุ่มทรัพยากรนี้ถ่ายโอนไฟล์ไปยังโฟลเดอร์ของตนผ่าน SFTP ฟิลด์นี้มีให้สำหรับ superadmin และถูกเติมไว้ล่วงหน้าด้วยพร็อกซีที่ให้บริการกลุ่มทรัพยากรนี้อยู่ในปัจจุบัน การบันทึกจะซิงค์เฉพาะการเป็นสมาชิกของกลุ่มนี้เท่านั้น กล่าวคือกลุ่มจะถูกเพิ่มเข้าไปในพร็อกซีที่คุณเลือกใหม่และถูกนำออกจากพร็อกซีที่คุณยกเลิกการเลือก ส่วนกลุ่มทรัพยากรอื่น ๆ บนพร็อกซีเหล่านั้นจะไม่ถูกแตะต้อง หากไม่ได้เลือกพร็อกซีใดเลย กลุ่มทรัพยากรนั้นจะไม่ถูกจำกัดให้ใช้พร็อกซีใดพร็อกซีหนึ่ง</li>
-<li data-bai-block="634"><strong>ใช้งาน</strong>: เปิด/ปิดสถานะการใช้งานของกลุ่มทรัพยากร</li>
-<li data-bai-block="635"><strong>สาธารณะ</strong>: เปิดเผยกลุ่มทรัพยากรให้ผู้ใช้ทุกคนเห็น</li>
-<li data-bai-block="636"><strong>การหมดเวลาที่รออยู่</strong>: เซสชันการคำนวณจะถูกยกเลิกหากอยู่ในสถานะ <code>PENDING</code> นานกว่าการหมดเวลาที่รออยู่ ตั้งค่าเป็นศูนย์ (0) หากไม่ต้องการใช้ฟีเจอร์นี้</li>
-<li data-bai-block="637"><strong>จำนวนครั้งที่พยายามข้ามเซสชันที่รออยู่</strong>: จำนวนครั้งที่ scheduler พยายามก่อนข้ามเซสชัน PENDING</li>
+<li data-bai-block="628"><strong>ประเภทเซสชันที่อนุญาต</strong>: ผู้ใช้สามารถเลือกประเภทของเซสชันได้ กลุ่มทรัพยากรสามารถอนุญาตประเภทเซสชันบางประเภท ประเภทเซสชันที่อนุญาต ได้แก่ Interactive, Batch, Inference และ System</li>
+<li data-bai-block="629"><strong>ที่อยู่เซิร์ฟเวอร์ App Proxy</strong>: ตั้งค่าที่อยู่ App Proxy สำหรับเอเจนต์ของกลุ่มทรัพยากร</li>
+<li data-bai-block="630"><strong>โทเค็น API ของ App Proxy</strong>: โทเค็น API สำหรับการยืนยันตัวตนกับ App Proxy</li>
+<li data-bai-block="631"><strong>พร็อกซีที่เก็บข้อมูล SFTP</strong>: พร็อกซีที่เก็บข้อมูลที่ใช้เมื่อผู้ใช้ในกลุ่มทรัพยากรนี้ถ่ายโอนไฟล์ไปยังโฟลเดอร์ของตนผ่าน SFTP ฟิลด์นี้มีให้สำหรับ superadmin และถูกเติมไว้ล่วงหน้าด้วยพร็อกซีที่ให้บริการกลุ่มทรัพยากรนี้อยู่ในปัจจุบัน การบันทึกจะซิงค์เฉพาะการเป็นสมาชิกของกลุ่มนี้เท่านั้น กล่าวคือกลุ่มจะถูกเพิ่มเข้าไปในพร็อกซีที่คุณเลือกใหม่และถูกนำออกจากพร็อกซีที่คุณยกเลิกการเลือก ส่วนกลุ่มทรัพยากรอื่น ๆ บนพร็อกซีเหล่านั้นจะไม่ถูกแตะต้อง หากไม่ได้เลือกพร็อกซีใดเลย กลุ่มทรัพยากรนั้นจะไม่ถูกจำกัดให้ใช้พร็อกซีใดพร็อกซีหนึ่ง</li>
+<li data-bai-block="632"><strong>ใช้งาน</strong>: เปิด/ปิดสถานะการใช้งานของกลุ่มทรัพยากร</li>
+<li data-bai-block="633"><strong>สาธารณะ</strong>: เปิดเผยกลุ่มทรัพยากรให้ผู้ใช้ทุกคนเห็น</li>
+<li data-bai-block="634"><strong>การหมดเวลาที่รออยู่</strong>: เซสชันการคำนวณจะถูกยกเลิกหากอยู่ในสถานะ <code>PENDING</code> นานกว่าการหมดเวลาที่รออยู่ ตั้งค่าเป็นศูนย์ (0) หากไม่ต้องการใช้ฟีเจอร์นี้</li>
+<li data-bai-block="635"><strong>จำนวนครั้งที่พยายามข้ามเซสชันที่รออยู่</strong>: จำนวนครั้งที่ scheduler พยายามก่อนข้ามเซสชัน PENDING</li>
 </ul>
-<p data-bai-block="638">คุณสามารถสร้างกลุ่มทรัพยากรใหม่ได้โดยคลิกปุ่ม <strong>สร้างกลุ่มทรัพยากร</strong> เช่นเดียวกับตัวเลือกการสร้างอื่นๆ คุณไม่สามารถสร้างกลุ่มทรัพยากรที่มีชื่อเดียวกันกับที่มีอยู่แล้วได้ เนื่องจากชื่อเป็นค่าคีย์</p>
-<p><figure data-bai-block="639" class="doc-figure"><img src="./images/create_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>รูปที่ 24.78</figcaption></figure>
+<p data-bai-block="636">คุณสามารถสร้างกลุ่มทรัพยากรใหม่ได้โดยคลิกปุ่ม <strong>สร้างกลุ่มทรัพยากร</strong> เช่นเดียวกับตัวเลือกการสร้างอื่นๆ คุณไม่สามารถสร้างกลุ่มทรัพยากรที่มีชื่อเดียวกันกับที่มีอยู่แล้วได้ เนื่องจากชื่อเป็นค่าคีย์</p>
+<p><figure data-bai-block="637" class="doc-figure"><img src="./images/create_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>รูปที่ 24.78</figcaption></figure>
 </p>
 <p><a id="bulk-edit-resource-groups"></a></p>
-<h3 data-bai-block="640" id="admin_menu-แกไขกลมทรพยากรหลายกลมพรอมกน">แก้ไขกลุ่มทรัพยากรหลายกลุ่มพร้อมกัน<a class="hash-link" href="#admin_menu-แกไขกลมทรพยากรหลายกลมพรอมกน" aria-label="Direct link to แก้ไขกลุ่มทรัพยากรหลายกลุ่มพร้อมกัน">#</a></h3>
-<p data-bai-block="641">การตั้งค่าที่ใช้เหมือนกันกับกลุ่มทรัพยากรหลายกลุ่มสามารถเปลี่ยนได้ในครั้งเดียว:</p>
+<h3 data-bai-block="638" id="admin_menu-แกไขกลมทรพยากรหลายกลมพรอมกน">แก้ไขกลุ่มทรัพยากรหลายกลุ่มพร้อมกัน<a class="hash-link" href="#admin_menu-แกไขกลมทรพยากรหลายกลมพรอมกน" aria-label="Direct link to แก้ไขกลุ่มทรัพยากรหลายกลุ่มพร้อมกัน">#</a></h3>
+<p data-bai-block="639">การตั้งค่าที่ใช้เหมือนกันกับกลุ่มทรัพยากรหลายกลุ่มสามารถเปลี่ยนได้ในครั้งเดียว:</p>
 <ol>
-<li data-bai-block="642">เลือกกลุ่มทรัพยากรด้วยช่องทำเครื่องหมายของแถว (ช่องทำเครื่องหมายมีให้สำหรับ superadmin)</li>
-<li data-bai-block="643">จำนวนที่เลือกจะปรากฏบนแถบเครื่องมือ คลิกปุ่ม <strong>แก้ไขเป็นชุด</strong> (เฟือง) ที่อยู่ถัดไป</li>
-<li data-bai-block="644">ไดอะล็อก <strong>อัปเดตกลุ่มทรัพยากร</strong> จะเปิดขึ้น</li>
+<li data-bai-block="640">เลือกกลุ่มทรัพยากรด้วยช่องทำเครื่องหมายของแถว (ช่องทำเครื่องหมายมีให้สำหรับ superadmin)</li>
+<li data-bai-block="641">จำนวนที่เลือกจะปรากฏบนแถบเครื่องมือ คลิกปุ่ม <strong>แก้ไขเป็นชุด</strong> (เฟือง) ที่อยู่ถัดไป</li>
+<li data-bai-block="642">ไดอะล็อก <strong>อัปเดตกลุ่มทรัพยากร</strong> จะเปิดขึ้น</li>
 </ol>
-<p><figure data-bai-block="645" class="doc-figure"><img src="./images/bulk_edit_resource_groups_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="792" /><figcaption>รูปที่ 24.79</figcaption></figure>
+<p><figure data-bai-block="643" class="doc-figure"><img src="./images/bulk_edit_resource_groups_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="792" /><figcaption>รูปที่ 24.79</figcaption></figure>
 </p>
-<p data-bai-block="646">การแจ้งเตือนที่ด้านบนของไดอะล็อกจะแสดงรายชื่อกลุ่มทรัพยากรทุกกลุ่มที่จะถูกเปลี่ยนแปลง ด้านล่างเป็นฟิลด์ <strong>พร็อกซีที่เก็บข้อมูล SFTP</strong> ซึ่งถูกเติมไว้ล่วงหน้าด้วยพร็อกซีทั้งหมดที่ให้บริการกลุ่มใดกลุ่มหนึ่งที่เลือกไว้อยู่แล้ว</p>
+<p data-bai-block="644">การแจ้งเตือนที่ด้านบนของไดอะล็อกจะแสดงรายชื่อกลุ่มทรัพยากรทุกกลุ่มที่จะถูกเปลี่ยนแปลง ด้านล่างเป็นฟิลด์ <strong>พร็อกซีที่เก็บข้อมูล SFTP</strong> ซึ่งถูกเติมไว้ล่วงหน้าด้วยพร็อกซีทั้งหมดที่ให้บริการกลุ่มใดกลุ่มหนึ่งที่เลือกไว้อยู่แล้ว</p>
 <ul>
-<li data-bai-block="647">การเลือกพร็อกซีจะทำให้กลุ่มทรัพยากร <strong>ทุกกลุ่ม</strong> ที่เลือกไว้ถูกเพิ่มเข้าไปในพร็อกซีนั้น</li>
-<li data-bai-block="648">การยกเลิกการเลือกพร็อกซีจะนำกลุ่มทรัพยากรที่เลือกออกจากพร็อกซีนั้น เนื่องจากเป็นการตัดการเข้าถึง SFTP ไดอะล็อกจะขอให้คุณยืนยันก่อนนำการเปลี่ยนแปลงไปใช้ พร้อมระบุชื่อพร็อกซีที่เกี่ยวข้อง</li>
+<li data-bai-block="645">การเลือกพร็อกซีจะทำให้กลุ่มทรัพยากร <strong>ทุกกลุ่ม</strong> ที่เลือกไว้ถูกเพิ่มเข้าไปในพร็อกซีนั้น</li>
+<li data-bai-block="646">การยกเลิกการเลือกพร็อกซีจะนำกลุ่มทรัพยากรที่เลือกออกจากพร็อกซีนั้น เนื่องจากเป็นการตัดการเข้าถึง SFTP ไดอะล็อกจะขอให้คุณยืนยันก่อนนำการเปลี่ยนแปลงไปใช้ พร้อมระบุชื่อพร็อกซีที่เกี่ยวข้อง</li>
 </ul>
-<p data-bai-block="649">ในทั้งสองกรณี กลุ่มทรัพยากรที่คุณไม่ได้เลือกจะยังคงการกำหนดพร็อกซีเดิมไว้</p>
+<p data-bai-block="647">ในทั้งสองกรณี กลุ่มทรัพยากรที่คุณไม่ได้เลือกจะยังคงการกำหนดพร็อกซีเดิมไว้</p>
 <p><a id="storages"></a></p>
-<h2 data-bai-block="650" id="admin_menu-การจดเกบขอมล">การจัดเก็บข้อมูล<a class="hash-link" href="#admin_menu-การจดเกบขอมล" aria-label="Direct link to การจัดเก็บข้อมูล">#</a></h2>
-<p data-bai-block="651">ในแท็บ STORAGES คุณสามารถเห็นประเภทของ mount volume (โดยปกติคือ NFS) ที่มีอยู่
+<h2 data-bai-block="648" id="admin_menu-การจดเกบขอมล">การจัดเก็บข้อมูล<a class="hash-link" href="#admin_menu-การจดเกบขอมล" aria-label="Direct link to การจัดเก็บข้อมูล">#</a></h2>
+<p data-bai-block="649">ในแท็บ STORAGES คุณสามารถเห็นประเภทของ mount volume (โดยปกติคือ NFS) ที่มีอยู่
 Backend.AI ให้บริการการตั้งค่าโควตาต่อผู้ใช้/ต่อโปรเจกต์บนพื้นที่จัดเก็บที่รองรับการจัดการโควตา
 โดยใช้ฟีเจอร์นี้ ผู้ดูแลระบบสามารถจัดการและตรวจสอบปริมาณการใช้พื้นที่จัดเก็บที่แน่นอนสำหรับแต่ละผู้ใช้และโฟลเดอร์ที่อิงกับโปรเจกต์ได้อย่างง่ายดาย</p>
-<p><figure data-bai-block="652" class="doc-figure"><img src="./images/storage_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.80</figcaption></figure>
+<p><figure data-bai-block="650" class="doc-figure"><img src="./images/storage_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.80</figcaption></figure>
 </p>
-<p data-bai-block="653">ในการจัดการ storage host ให้คลิกชื่อ storage host
+<p data-bai-block="651">ในการจัดการ storage host ให้คลิกชื่อ storage host
 ในรายการ Storages การกระทำนี้จะเปิด <strong>Storage Host Detail Drawer</strong>
 ซึ่งเป็นที่กำหนดค่าความจุ (โควตา) และสิทธิ์ของโฟลเดอร์</p>
 <p><a id="storage-host-detail-drawer"></a></p>
-<h4 data-bai-block="654" id="admin_menu-storage-host-detail-drawer">Storage Host Detail Drawer<a class="hash-link" href="#admin_menu-storage-host-detail-drawer" aria-label="Direct link to Storage Host Detail Drawer">#</a></h4>
-<p data-bai-block="655">Storage Host Detail Drawer เป็นที่เดียวสำหรับตรวจสอบและจัดการ storage host
+<h4 data-bai-block="652" id="admin_menu-storage-host-detail-drawer">Storage Host Detail Drawer<a class="hash-link" href="#admin_menu-storage-host-detail-drawer" aria-label="Direct link to Storage Host Detail Drawer">#</a></h4>
+<p data-bai-block="653">Storage Host Detail Drawer เป็นที่เดียวสำหรับตรวจสอบและจัดการ storage host
 คุณสามารถเปิดได้โดยคลิกชื่อโฮสต์ในรายการ Storages ส่วนบนจะแสดงข้อมูลพื้นฐาน
 เกี่ยวกับโฮสต์ ในขณะที่ส่วนล่างจะมีแท็บสำหรับกำหนดค่าสิทธิ์ของโฟลเดอร์และ
 ความจุ (โควตา)</p>
-<p><figure data-bai-block="656" class="doc-figure"><img src="./images/storage_host_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="1855" /><figcaption>รูปที่ 24.81</figcaption></figure>
+<p><figure data-bai-block="654" class="doc-figure"><img src="./images/storage_host_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="1855" /><figcaption>รูปที่ 24.81</figcaption></figure>
 </p>
-<p data-bai-block="657">Drawer มีแท็บต่อไปนี้:</p>
+<p data-bai-block="655">Drawer มีแท็บต่อไปนี้:</p>
 <ul>
-<li data-bai-block="658"><strong>สิทธิ์โฟลเดอร์โครงการ (Project Folder Permissions)</strong>: ดูและจัดการว่าโดเมนและโครงการใด
+<li data-bai-block="656"><strong>สิทธิ์โฟลเดอร์โครงการ (Project Folder Permissions)</strong>: ดูและจัดการว่าโดเมนและโครงการใด
 สามารถเข้าถึงโฟลเดอร์โครงการของโฮสต์ได้ ดูส่วน
 <a href="#project-folder-permission">สิทธิ์โฟลเดอร์โครงการ</a> ด้านล่าง</li>
-<li data-bai-block="659"><strong>สิทธิ์โฟลเดอร์ผู้ใช้ (User Folder Permissions)</strong>: ดูและจัดการสิทธิ์ที่ใช้กับ
+<li data-bai-block="657"><strong>สิทธิ์โฟลเดอร์ผู้ใช้ (User Folder Permissions)</strong>: ดูและจัดการสิทธิ์ที่ใช้กับ
 โฟลเดอร์ผู้ใช้บนโฮสต์ สิทธิ์ของโฟลเดอร์ผู้ใช้ถูกกำหนดโดยนโยบายทรัพยากรคีย์แพร์
 ที่เชื่อมโยงกับคีย์การเข้าถึงหลักของผู้ใช้</li>
-<li data-bai-block="660"><strong>ความจุ (Capacity)</strong>: กำหนดค่าโควตาพื้นที่จัดเก็บต่อผู้ใช้และต่อโครงการ และดูการใช้งานกับ
+<li data-bai-block="658"><strong>ความจุ (Capacity)</strong>: กำหนดค่าโควตาพื้นที่จัดเก็บต่อผู้ใช้และต่อโครงการ และดูการใช้งานกับ
 ความสามารถของโฮสต์
 แท็บนี้ไม่สามารถใช้ได้สำหรับ storage host ที่ไม่รองรับการกำหนดค่าโควตา</li>
 </ul>
 <p><a id="project-folder-permission"></a></p>
-<h4 data-bai-block="661" id="admin_menu-สทธโฟลเดอรโครงการ">สิทธิ์โฟลเดอร์โครงการ<a class="hash-link" href="#admin_menu-สทธโฟลเดอรโครงการ" aria-label="Direct link to สิทธิ์โฟลเดอร์โครงการ">#</a></h4>
-<p data-bai-block="662">แท็บ <strong>สิทธิ์โฟลเดอร์โครงการ</strong> ของ <a href="#storage-host-detail-drawer">Storage Host Detail Drawer</a> ช่วยให้ผู้ดูแลระบบดูและจัดการสิทธิ์ของโฟลเดอร์โปรเจกต์ที่สร้างบน storage host ที่เลือก</p>
-<p><figure data-bai-block="663" class="doc-figure"><img src="./images/project_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1702" height="1300" /><figcaption>รูปที่ 24.82</figcaption></figure>
+<h4 data-bai-block="659" id="admin_menu-สทธโฟลเดอรโครงการ">สิทธิ์โฟลเดอร์โครงการ<a class="hash-link" href="#admin_menu-สทธโฟลเดอรโครงการ" aria-label="Direct link to สิทธิ์โฟลเดอร์โครงการ">#</a></h4>
+<p data-bai-block="660">แท็บ <strong>สิทธิ์โฟลเดอร์โครงการ</strong> ของ <a href="#storage-host-detail-drawer">Storage Host Detail Drawer</a> ช่วยให้ผู้ดูแลระบบดูและจัดการสิทธิ์ของโฟลเดอร์โปรเจกต์ที่สร้างบน storage host ที่เลือก</p>
+<p><figure data-bai-block="661" class="doc-figure"><img src="./images/project_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1702" height="1300" /><figcaption>รูปที่ 24.82</figcaption></figure>
 </p>
 <!-- TODO: Capture screenshot of project_folder_permission_tab.png — Project Folder Permissions tab with the domain selector and the tri-state effective-permission indicators -->
 
-<p data-bai-block="664">สิทธิ์ของโฟลเดอร์โปรเจกต์ประกอบด้วยสิทธิ์สำหรับโดเมนที่เลือกและสิทธิ์สำหรับโปรเจกต์ที่อยู่ภายใต้โดเมนนั้น</p>
-<p data-bai-block="665">ในโครงสร้างของ Backend.AI โปรเจกต์จะอยู่ภายใต้โดเมนที่เฉพาะเจาะจง ดังนั้นสิทธิ์ของพื้นที่จัดเก็บที่กำหนดให้กับโปรเจกต์จะสืบทอดสิทธิ์ของโดเมนโดยค่าเริ่มต้น</p>
-<p data-bai-block="666">คุณสามารถเลือกหลายแถว (โดยใช้ช่องทำเครื่องหมายของแถว) ในตารางโดเมน, โปรเจกต์ หรือสิทธิ์โฟลเดอร์ผู้ใช้ เพื่อเปรียบเทียบชุดสิทธิ์เคียงข้างกันได้ เมื่อเลือกแถวแล้ว ให้คลิก <strong>แก้ไขสิทธิ์</strong> เพื่อเปิดโมดัลแก้ไขแบบกลุ่ม ซึ่งจะนำชุดสิทธิ์ที่เลือกไปใช้กับเป้าหมายที่เลือกทั้งหมดพร้อมกัน โมดัลจะเปิดขึ้นโดยมีสิทธิ์ทั้งหมดถูกเลือกไว้เป็นค่าเริ่มต้น และเมื่อบันทึก จะเขียนทับสิทธิ์ของเป้าหมายที่เลือกด้วยชุดที่คุณเลือกไว้อย่างถูกต้อง</p>
+<p data-bai-block="662">สิทธิ์ของโฟลเดอร์โปรเจกต์ประกอบด้วยสิทธิ์สำหรับโดเมนที่เลือกและสิทธิ์สำหรับโปรเจกต์ที่อยู่ภายใต้โดเมนนั้น</p>
+<p data-bai-block="663">ในโครงสร้างของ Backend.AI โปรเจกต์จะอยู่ภายใต้โดเมนที่เฉพาะเจาะจง ดังนั้นสิทธิ์ของพื้นที่จัดเก็บที่กำหนดให้กับโปรเจกต์จะสืบทอดสิทธิ์ของโดเมนโดยค่าเริ่มต้น</p>
+<p data-bai-block="664">คุณสามารถเลือกหลายแถว (โดยใช้ช่องทำเครื่องหมายของแถว) ในตารางโดเมน, โปรเจกต์ หรือสิทธิ์โฟลเดอร์ผู้ใช้ เพื่อเปรียบเทียบชุดสิทธิ์เคียงข้างกันได้ เมื่อเลือกแถวแล้ว ให้คลิก <strong>แก้ไขสิทธิ์</strong> เพื่อเปิดโมดัลแก้ไขแบบกลุ่ม ซึ่งจะนำชุดสิทธิ์ที่เลือกไปใช้กับเป้าหมายที่เลือกทั้งหมดพร้อมกัน โมดัลจะเปิดขึ้นโดยมีสิทธิ์ทั้งหมดถูกเลือกไว้เป็นค่าเริ่มต้น และเมื่อบันทึก จะเขียนทับสิทธิ์ของเป้าหมายที่เลือกด้วยชุดที่คุณเลือกไว้อย่างถูกต้อง</p>
 <p><a id="user-folder-permission"></a></p>
-<h4 data-bai-block="667" id="admin_menu-สทธโฟลเดอรผใช">สิทธิ์โฟลเดอร์ผู้ใช้<a class="hash-link" href="#admin_menu-สทธโฟลเดอรผใช" aria-label="Direct link to สิทธิ์โฟลเดอร์ผู้ใช้">#</a></h4>
-<p data-bai-block="668">สิทธิ์โฟลเดอร์ผู้ใช้คือสิทธิ์ที่กำหนดไว้ในนโยบายทรัพยากรคีย์แพร์ หากต้องการจำกัดรายการให้เหลือผู้ใช้คนเดียว ให้เพิ่มเงื่อนไข <strong>ผู้ใช้</strong> ในแถบตัวกรองเหนือตาราง ช่องค่าเป็นดรอปดาวน์ที่ค้นหาบัญชีผู้ใช้ได้ ไม่ใช่ช่องพิมพ์อิสระ คุณจึงเลือกบัญชีแทนการพิมพ์ที่อยู่ จากนั้นระบบจะแสดงเฉพาะนโยบายทรัพยากรคีย์แพร์ที่กำหนดให้กับคีย์แพร์ของผู้ใช้นั้น และแท็กตัวกรองที่ได้จะแสดงอีเมลของผู้ใช้ คุณสามารถดูคีย์การเข้าถึงหลักของผู้ใช้ได้จากคอลัมน์ <strong>คีย์แพร์ ที่กำหนด</strong> ซึ่งจะแสดงเฉพาะเมื่อเลือกผู้ใช้แล้วเท่านั้น การเลือกผู้ใช้คนอื่นจะแทนที่เงื่อนไขเดิมแทนที่จะเพิ่มเงื่อนไขใหม่</p>
-<p><figure data-bai-block="669" class="doc-figure"><img src="./images/user_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="739" /><figcaption>รูปที่ 24.83</figcaption></figure>
+<h4 data-bai-block="665" id="admin_menu-สทธโฟลเดอรผใช">สิทธิ์โฟลเดอร์ผู้ใช้<a class="hash-link" href="#admin_menu-สทธโฟลเดอรผใช" aria-label="Direct link to สิทธิ์โฟลเดอร์ผู้ใช้">#</a></h4>
+<p data-bai-block="666">สิทธิ์โฟลเดอร์ผู้ใช้คือสิทธิ์ที่กำหนดไว้ในนโยบายทรัพยากรคีย์แพร์ หากต้องการจำกัดรายการให้เหลือผู้ใช้คนเดียว ให้เพิ่มเงื่อนไข <strong>ผู้ใช้</strong> ในแถบตัวกรองเหนือตาราง ช่องค่าเป็นดรอปดาวน์ที่ค้นหาบัญชีผู้ใช้ได้ ไม่ใช่ช่องพิมพ์อิสระ คุณจึงเลือกบัญชีแทนการพิมพ์ที่อยู่ จากนั้นระบบจะแสดงเฉพาะนโยบายทรัพยากรคีย์แพร์ที่กำหนดให้กับคีย์แพร์ของผู้ใช้นั้น และแท็กตัวกรองที่ได้จะแสดงอีเมลของผู้ใช้ คุณสามารถดูคีย์การเข้าถึงหลักของผู้ใช้ได้จากคอลัมน์ <strong>คีย์แพร์ ที่กำหนด</strong> ซึ่งจะแสดงเฉพาะเมื่อเลือกผู้ใช้แล้วเท่านั้น การเลือกผู้ใช้คนอื่นจะแทนที่เงื่อนไขเดิมแทนที่จะเพิ่มเงื่อนไขใหม่</p>
+<p><figure data-bai-block="667" class="doc-figure"><img src="./images/user_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="739" /><figcaption>รูปที่ 24.83</figcaption></figure>
 </p>
 <!-- TODO: Capture screenshot of user_folder_permission_tab.png — User Folder Permissions tab with the user selector and the Assigned Keypair column. -->
 
 <p><a id="quota-settings"></a></p>
-<h4 data-bai-block="670" id="admin_menu-การตงคาโควตา">การตั้งค่าโควตา<a class="hash-link" href="#admin_menu-การตงคาโควตา" aria-label="Direct link to การตั้งค่าโควตา">#</a></h4>
-<p data-bai-block="671">โปรดทราบว่าการตั้งค่าโควตามีให้ใช้งานเฉพาะในพื้นที่จัดเก็บที่รองรับการตั้งค่าโควตาเท่านั้น
+<h4 data-bai-block="668" id="admin_menu-การตงคาโควตา">การตั้งค่าโควตา<a class="hash-link" href="#admin_menu-การตงคาโควตา" aria-label="Direct link to การตั้งค่าโควตา">#</a></h4>
+<p data-bai-block="669">โปรดทราบว่าการตั้งค่าโควตามีให้ใช้งานเฉพาะในพื้นที่จัดเก็บที่รองรับการตั้งค่าโควตาเท่านั้น
 (เช่น XFS, CephFS, NetApp, Purestorage เป็นต้น) แม้ว่าคุณจะสามารถดูการใช้พื้นที่จัดเก็บ
 ในแท็บความจุได้โดยไม่คำนึงถึงประเภทของพื้นที่จัดเก็บ แต่คุณไม่สามารถกำหนดค่าโควตา
 สำหรับพื้นที่จัดเก็บที่ไม่รองรับการกำหนดค่าโควตาภายในได้</p>
 <p><a id="set-user-quota"></a></p>
-<h4 data-bai-block="672" id="admin_menu-ตงคาโควตาผใช">ตั้งค่าโควตาผู้ใช้<a class="hash-link" href="#admin_menu-ตงคาโควตาผใช" aria-label="Direct link to ตั้งค่าโควตาผู้ใช้">#</a></h4>
-<p data-bai-block="673">ใน Backend.AI มีโฟลเดอร์เสมือนสองประเภทที่สร้างโดยผู้ใช้และผู้ดูแลระบบ (โปรเจกต์) ในส่วนนี้
+<h4 data-bai-block="670" id="admin_menu-ตงคาโควตาผใช">ตั้งค่าโควตาผู้ใช้<a class="hash-link" href="#admin_menu-ตงคาโควตาผใช" aria-label="Direct link to ตั้งค่าโควตาผู้ใช้">#</a></h4>
+<p data-bai-block="671">ใน Backend.AI มีโฟลเดอร์เสมือนสองประเภทที่สร้างโดยผู้ใช้และผู้ดูแลระบบ (โปรเจกต์) ในส่วนนี้
 เราต้องการแสดงวิธีตรวจสอบการตั้งค่าโควตาปัจจุบันต่อผู้ใช้และวิธีการกำหนดค่า
 ก่อนอื่น ในแท็บความจุ ให้ตรวจสอบให้แน่ใจว่าแท็บย่อยที่ใช้งานของแผงการตั้งค่าโควตาคือ <code>For User</code> จากนั้น ให้เลือกผู้ใช้ที่คุณต้องการ
 ตรวจสอบและแก้ไขโควตา คุณจะเห็น quota id ที่สอดคล้องกับ id ของผู้ใช้และการกำหนดค่าที่ตั้งไว้แล้ว
 ในตาราง หากคุณได้ตั้งค่าโควตาไว้แล้ว</p>
-<p><figure data-bai-block="674" class="doc-figure"><img src="./images/per_user_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1792" height="538" /><figcaption>รูปที่ 24.84</figcaption></figure>
+<p><figure data-bai-block="672" class="doc-figure"><img src="./images/per_user_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1792" height="538" /><figcaption>รูปที่ 24.84</figcaption></figure>
 </p>
 <!-- TODO: Re-capture per_user_quota.png — needs update. -->
 
-<p data-bai-block="675">คลิกปุ่ม <code>แก้ไข</code> ในคอลัมน์รหัสขอบเขตโควตา เพื่อเปิดโมดอลสำหรับกำหนดค่าโควตา</p>
-<p><figure data-bai-block="676" class="doc-figure"><img src="./images/quota_settings_panel.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="308" /><figcaption>รูปที่ 24.85</figcaption></figure>
+<p data-bai-block="673">คลิกปุ่ม <code>แก้ไข</code> ในคอลัมน์รหัสขอบเขตโควตา เพื่อเปิดโมดอลสำหรับกำหนดค่าโควตา</p>
+<p><figure data-bai-block="674" class="doc-figure"><img src="./images/quota_settings_panel.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="308" /><figcaption>รูปที่ 24.85</figcaption></figure>
 </p>
 <!-- TODO: Re-capture quota_settings_panel.png — needs update. -->
 
 <p><a id="set-project-quota"></a></p>
-<h4 data-bai-block="677" id="admin_menu-ตงคาโควตาโปรเจกต">ตั้งค่าโควตาโปรเจกต์<a class="hash-link" href="#admin_menu-ตงคาโควตาโปรเจกต" aria-label="Direct link to ตั้งค่าโควตาโปรเจกต์">#</a></h4>
-<p data-bai-block="678">การตั้งค่าโควตาบนโฟลเดอร์โปรเจกต์นั้นคล้ายกับการตั้งค่าโควตาผู้ใช้ ความแตกต่างระหว่างการตั้งค่า
+<h4 data-bai-block="675" id="admin_menu-ตงคาโควตาโปรเจกต">ตั้งค่าโควตาโปรเจกต์<a class="hash-link" href="#admin_menu-ตงคาโควตาโปรเจกต" aria-label="Direct link to ตั้งค่าโควตาโปรเจกต์">#</a></h4>
+<p data-bai-block="676">การตั้งค่าโควตาบนโฟลเดอร์โปรเจกต์นั้นคล้ายกับการตั้งค่าโควตาผู้ใช้ ความแตกต่างระหว่างการตั้งค่า
 โควตาโปรเจกต์และโควตาผู้ใช้คือการยืนยันการตั้งค่าโควตาโปรเจกต์ต้องมีขั้นตอนเพิ่มเติมอีกหนึ่งขั้นตอน
 ซึ่งก็คือการเลือกโดเมนที่โปรเจกต์ขึ้นอยู่กับ ส่วนที่เหลือเหมือนกัน
 ดังภาพด้านล่าง คุณต้องเลือกโดเมนก่อน จากนั้นจึงเลือกโปรเจกต์</p>
-<p><figure data-bai-block="679" class="doc-figure"><img src="./images/per_project_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1796" height="548" /><figcaption>รูปที่ 24.86</figcaption></figure>
+<p><figure data-bai-block="677" class="doc-figure"><img src="./images/per_project_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1796" height="548" /><figcaption>รูปที่ 24.86</figcaption></figure>
 </p>
 <!-- TODO: Re-capture per_project_quota.png — needs update. -->
 
 <p><a id="unset-quota"></a></p>
-<h4 data-bai-block="680" id="admin_menu-ยกเลกโควตา">ยกเลิกโควตา<a class="hash-link" href="#admin_menu-ยกเลกโควตา" aria-label="Direct link to ยกเลิกโควตา">#</a></h4>
-<p data-bai-block="681">เรายังมีฟีเจอร์ในการยกเลิกการตั้งค่าโควตาด้วย โปรดทราบว่าหลังจากลบการตั้งค่าโควตาแล้ว โควตาจะตามโควตาเริ่มต้นของผู้ใช้หรือโปรเจกต์โดยอัตโนมัติ
+<h4 data-bai-block="678" id="admin_menu-ยกเลกโควตา">ยกเลิกโควตา<a class="hash-link" href="#admin_menu-ยกเลกโควตา" aria-label="Direct link to ยกเลิกโควตา">#</a></h4>
+<p data-bai-block="679">เรายังมีฟีเจอร์ในการยกเลิกการตั้งค่าโควตาด้วย โปรดทราบว่าหลังจากลบการตั้งค่าโควตาแล้ว โควตาจะตามโควตาเริ่มต้นของผู้ใช้หรือโปรเจกต์โดยอัตโนมัติ
 ซึ่งไม่สามารถตั้งค่าได้ใน WebUI หากคุณต้องการเปลี่ยนการตั้งค่าโควตาเริ่มต้น คุณอาจต้องเข้าถึงหน้าเฉพาะผู้ดูแลระบบ
 โดยคลิกปุ่ม <code>Unset</code> ในคอลัมน์รหัสขอบเขตโควตา ข้อความ snackbar ขนาดเล็กจะปรากฏขึ้นและยืนยันว่าคุณต้องการลบการตั้งค่าโควตาปัจจุบันจริงหรือไม่
 หากคุณคลิกปุ่ม <code>OK</code> ในข้อความ snackbar ระบบจะลบการตั้งค่าโควตาและตั้งค่าใหม่ให้ตามโควตาที่สอดคล้อง
 ซึ่งขึ้นอยู่กับประเภทของโควตา (ผู้ใช้/โปรเจกต์) โดยอัตโนมัติ</p>
-<p><figure data-bai-block="682" class="doc-figure"><img src="./images/unset_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1746" height="434" /><figcaption>รูปที่ 24.87</figcaption></figure>
+<p><figure data-bai-block="680" class="doc-figure"><img src="./images/unset_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1746" height="434" /><figcaption>รูปที่ 24.87</figcaption></figure>
 </p>
 <!-- TODO: Re-capture unset_quota.png — needs update. -->
 
 <div class="admonition admonition-note">
-<div data-bai-block="683" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="681" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="684">หากไม่มีการกำหนดค่าต่อผู้ใช้/โปรเจกต์ ค่าที่สอดคล้องกันในนโยบายทรัพยากรของผู้ใช้/โปรเจกต์จะถูกตั้งเป็น
+<p data-bai-block="682">หากไม่มีการกำหนดค่าต่อผู้ใช้/โปรเจกต์ ค่าที่สอดคล้องกันในนโยบายทรัพยากรของผู้ใช้/โปรเจกต์จะถูกตั้งเป็น
 ค่าเริ่มต้น ตัวอย่างเช่น หากไม่ได้ตั้งค่าขีดจำกัดสูงสุดสำหรับโควตา ค่า <code>max_vfolder_size</code> ในนโยบายทรัพยากร
 จะถูกใช้เป็นค่าเริ่มต้น</p>
 </div></div>
 
 
 <p><a id="system-settings"></a></p>
-<h2 data-bai-block="685" id="admin_menu-การตงคาระบบ">การตั้งค่าระบบ<a class="hash-link" href="#admin_menu-การตงคาระบบ" aria-label="Direct link to การตั้งค่าระบบ">#</a></h2>
-<p data-bai-block="686">ในหน้าการกำหนดค่า คุณสามารถดูการตั้งค่าหลักของเซิร์ฟเวอร์ Backend.AI ได้
+<h2 data-bai-block="683" id="admin_menu-การตงคาระบบ">การตั้งค่าระบบ<a class="hash-link" href="#admin_menu-การตงคาระบบ" aria-label="Direct link to การตั้งค่าระบบ">#</a></h2>
+<p data-bai-block="684">ในหน้าการกำหนดค่า คุณสามารถดูการตั้งค่าหลักของเซิร์ฟเวอร์ Backend.AI ได้
 ในปัจจุบันมีการควบคุมหลายอย่างที่สามารถเปลี่ยนแปลงและแสดงการตั้งค่าได้</p>
-<p data-bai-block="687">คุณสามารถเปลี่ยนกฎการติดตั้งและอัปเดตอิมเมจอัตโนมัติได้โดยเลือกตัวเลือกหนึ่ง
+<p data-bai-block="685">คุณสามารถเปลี่ยนกฎการติดตั้งและอัปเดตอิมเมจอัตโนมัติได้โดยเลือกตัวเลือกหนึ่ง
 จาก <code>Digest</code>, <code>Tag</code>, <code>None</code> โดย <code>Digest</code> เป็นเหมือน checksum สำหรับอิมเมจซึ่ง
 ตรวจสอบความสมบูรณ์ของอิมเมจและยังเพิ่มประสิทธิภาพในการดาวน์โหลดอิมเมจ
 โดยใช้เลเยอร์ที่ซ้ำกันซ้ำ <code>Tag</code> เป็นตัวเลือกสำหรับการพัฒนาเท่านั้นเนื่องจากไม่
 รับประกันความสมบูรณ์ของอิมเมจ</p>
 <div class="admonition admonition-note">
-<div data-bai-block="688" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="686" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="689">อย่าเปลี่ยนการเลือกกฎเว้นแต่คุณจะเข้าใจความหมายของแต่ละกฎอย่างสมบูรณ์</p>
+<p data-bai-block="687">อย่าเปลี่ยนการเลือกกฎเว้นแต่คุณจะเข้าใจความหมายของแต่ละกฎอย่างสมบูรณ์</p>
 </div></div>
 
 
-<p><figure data-bai-block="690" class="doc-figure"><img src="./images/system_setting_about_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1718" height="700" /><figcaption>รูปที่ 24.88</figcaption></figure>
+<p><figure data-bai-block="688" class="doc-figure"><img src="./images/system_setting_about_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1718" height="700" /><figcaption>รูปที่ 24.88</figcaption></figure>
 </p>
-<p data-bai-block="691">หน้าการกำหนดค่ายังแสดงสถานะของปลั๊กอินและฟีเจอร์ระดับองค์กร:</p>
-<p data-bai-block="692"><strong>ปลั๊กอิน:</strong></p>
+<p data-bai-block="689">หน้าการกำหนดค่ายังแสดงสถานะของปลั๊กอินและฟีเจอร์ระดับองค์กร:</p>
+<p data-bai-block="690"><strong>ปลั๊กอิน:</strong></p>
 <ul>
-<li data-bai-block="693"><strong>การรองรับ Open-source CUDA GPU</strong>: สถานะการรองรับ CUDA GPU</li>
-<li data-bai-block="694"><strong>การรองรับ ROCm GPU</strong>: สถานะการรองรับ ROCm GPU</li>
+<li data-bai-block="691"><strong>การรองรับ Open-source CUDA GPU</strong>: สถานะการรองรับ CUDA GPU</li>
+<li data-bai-block="692"><strong>การรองรับ ROCm GPU</strong>: สถานะการรองรับ ROCm GPU</li>
 </ul>
-<p data-bai-block="695"><strong>ฟีเจอร์ระดับองค์กร:</strong></p>
+<p data-bai-block="693"><strong>ฟีเจอร์ระดับองค์กร:</strong></p>
 <ul>
-<li data-bai-block="696"><strong>Fractional GPU</strong>: การจำลอง Fractional GPU (fGPU) สำหรับแชร์ GPU ระหว่างเซสชัน</li>
+<li data-bai-block="694"><strong>Fractional GPU</strong>: การจำลอง Fractional GPU (fGPU) สำหรับแชร์ GPU ระหว่างเซสชัน</li>
 </ul>
-<p data-bai-block="697">Backend.AI รองรับตัวเร่งความเร็ว AI ที่หลากหลายจากผู้ผลิตหลายราย:</p>
+<p data-bai-block="695">Backend.AI รองรับตัวเร่งความเร็ว AI ที่หลากหลายจากผู้ผลิตหลายราย:</p>
 <ul>
-<li data-bai-block="698"><strong>NVIDIA</strong><ul>
-<li data-bai-block="699">Spark (GB10)</li>
-<li data-bai-block="700">Blackwell (B300, B200, RTX PRO 6000 เป็นต้น)</li>
-<li data-bai-block="701">Hopper (H200, H100 NVL เป็นต้น)</li>
-<li data-bai-block="702">Grace Superchip (GB300, GB200, GH200 เป็นต้น)</li>
-<li data-bai-block="703">Turing (Titan RTX, RTX 8000, T4)</li>
-<li data-bai-block="704">Ampere (A100, A40, A10 เป็นต้น)</li>
-<li data-bai-block="705">Ada Lovelace (L40S, L4)</li>
-<li data-bai-block="706">Jetson (TX, Xavier, Orin, Thor เป็นต้น)</li>
+<li data-bai-block="696"><strong>NVIDIA</strong><ul>
+<li data-bai-block="697">Spark (GB10)</li>
+<li data-bai-block="698">Blackwell (B300, B200, RTX PRO 6000 เป็นต้น)</li>
+<li data-bai-block="699">Hopper (H200, H100 NVL เป็นต้น)</li>
+<li data-bai-block="700">Grace Superchip (GB300, GB200, GH200 เป็นต้น)</li>
+<li data-bai-block="701">Turing (Titan RTX, RTX 8000, T4)</li>
+<li data-bai-block="702">Ampere (A100, A40, A10 เป็นต้น)</li>
+<li data-bai-block="703">Ada Lovelace (L40S, L4)</li>
+<li data-bai-block="704">Jetson (TX, Xavier, Orin, Thor เป็นต้น)</li>
 </ul>
 </li>
-<li data-bai-block="707"><strong>Intel</strong><ul>
-<li data-bai-block="708">Gaudi 3</li>
-<li data-bai-block="709">Gaudi 2</li>
-<li data-bai-block="710">Gaudi 1</li>
-<li data-bai-block="711">Arc</li>
+<li data-bai-block="705"><strong>Intel</strong><ul>
+<li data-bai-block="706">Gaudi 3</li>
+<li data-bai-block="707">Gaudi 2</li>
+<li data-bai-block="708">Gaudi 1</li>
+<li data-bai-block="709">Arc</li>
 </ul>
 </li>
-<li data-bai-block="712"><strong>AMD</strong><ul>
-<li data-bai-block="713">Instinct MI Series (รวมถึง MI300X)</li>
-<li data-bai-block="714">MI300A</li>
-<li data-bai-block="715">MI250</li>
+<li data-bai-block="710"><strong>AMD</strong><ul>
+<li data-bai-block="711">Instinct MI Series (รวมถึง MI300X)</li>
+<li data-bai-block="712">MI300A</li>
+<li data-bai-block="713">MI250</li>
 </ul>
 </li>
-<li data-bai-block="716"><strong>Rebellions</strong><ul>
-<li data-bai-block="717">ATOM Max</li>
-<li data-bai-block="718">ATOM+</li>
-<li data-bai-block="719">REBEL</li>
+<li data-bai-block="714"><strong>Rebellions</strong><ul>
+<li data-bai-block="715">ATOM Max</li>
+<li data-bai-block="716">ATOM+</li>
+<li data-bai-block="717">REBEL</li>
 </ul>
 </li>
-<li data-bai-block="720"><strong>FuriosaAI</strong><ul>
-<li data-bai-block="721">RNGD</li>
+<li data-bai-block="718"><strong>FuriosaAI</strong><ul>
+<li data-bai-block="719">RNGD</li>
 </ul>
 </li>
-<li data-bai-block="722"><strong>Tenstorrent</strong><ul>
-<li data-bai-block="723">Wormhole n150s</li>
-<li data-bai-block="724">Wormhole n300s</li>
+<li data-bai-block="720"><strong>Tenstorrent</strong><ul>
+<li data-bai-block="721">Wormhole n150s</li>
+<li data-bai-block="722">Wormhole n300s</li>
 </ul>
 </li>
-<li data-bai-block="725"><strong>Google</strong><ul>
-<li data-bai-block="726">TPU v7 (Ironwood)</li>
-<li data-bai-block="727">Coral TPU v5p</li>
-<li data-bai-block="728">Coral TPU v5e</li>
-<li data-bai-block="729">TPU v4</li>
+<li data-bai-block="723"><strong>Google</strong><ul>
+<li data-bai-block="724">TPU v7 (Ironwood)</li>
+<li data-bai-block="725">Coral TPU v5p</li>
+<li data-bai-block="726">Coral TPU v5e</li>
+<li data-bai-block="727">TPU v4</li>
 </ul>
 </li>
-<li data-bai-block="730"><strong>Graphcore</strong><ul>
-<li data-bai-block="731">C600 IPU</li>
-<li data-bai-block="732">Bow IPU</li>
+<li data-bai-block="728"><strong>Graphcore</strong><ul>
+<li data-bai-block="729">C600 IPU</li>
+<li data-bai-block="730">Bow IPU</li>
 </ul>
 </li>
-<li data-bai-block="733"><strong>HyperAccel</strong><ul>
+<li data-bai-block="731"><strong>HyperAccel</strong><ul>
+<li data-bai-block="732">LPU</li>
+</ul>
+</li>
+<li data-bai-block="733"><strong>Groq</strong><ul>
 <li data-bai-block="734">LPU</li>
 </ul>
 </li>
-<li data-bai-block="735"><strong>Groq</strong><ul>
-<li data-bai-block="736">LPU</li>
-</ul>
-</li>
-<li data-bai-block="737"><strong>Cerebras</strong><ul>
-<li data-bai-block="738">WSE-3</li>
+<li data-bai-block="735"><strong>Cerebras</strong><ul>
+<li data-bai-block="736">WSE-3</li>
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="739" class="doc-figure"><img src="./images/system_setting_about_scaling_plugins.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2600" height="1440" /><figcaption>รูปที่ 24.89</figcaption></figure>
+<p><figure data-bai-block="737" class="doc-figure"><img src="./images/system_setting_about_scaling_plugins.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2600" height="1440" /><figcaption>รูปที่ 24.89</figcaption></figure>
 </p>
-<p data-bai-block="740">เมื่อผู้ใช้เริ่มเซสชัน multi-node cluster Backend.AI จะสร้างเครือข่าย overlay แบบไดนามิกเพื่อสนับสนุน
+<p data-bai-block="738">เมื่อผู้ใช้เริ่มเซสชัน multi-node cluster Backend.AI จะสร้างเครือข่าย overlay แบบไดนามิกเพื่อสนับสนุน
 การสื่อสารระหว่างโหนดแบบส่วนตัว ผู้ดูแลระบบสามารถตั้งค่า Maximum
 Transmission Unit (MTU) สำหรับเครือข่าย overlay ได้ หากแน่ใจว่าค่าดังกล่าว
 จะเพิ่มความเร็วของเครือข่าย</p>
-<p><figure data-bai-block="741" class="doc-figure"><img src="./images/overlay_network_setting_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="594" height="504" /><figcaption>รูปที่ 24.90</figcaption></figure>
+<p><figure data-bai-block="739" class="doc-figure"><img src="./images/overlay_network_setting_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="594" height="504" /><figcaption>รูปที่ 24.90</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="742" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="740" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="743">สำหรับข้อมูลเพิ่มเติมเกี่ยวกับเซสชัน Backend.AI Cluster โปรดดูที่
+<p data-bai-block="741">สำหรับข้อมูลเพิ่มเติมเกี่ยวกับเซสชัน Backend.AI Cluster โปรดดูที่
 ส่วน <a href="./cluster_session.html#backendai-cluster-compute-session">เซสชันการคำนวณคลัสเตอร์ Backend.AI</a></p>
 </div></div>
 
 
-<p data-bai-block="744">คุณสามารถแก้ไขการกำหนดค่าต่อ job scheduler ได้โดยคลิกปุ่ม config ของ Scheduler
+<p data-bai-block="742">คุณสามารถแก้ไขการกำหนดค่าต่อ job scheduler ได้โดยคลิกปุ่ม config ของ Scheduler
 ค่าในการตั้งค่า scheduler เป็นค่าเริ่มต้นที่จะใช้เมื่อไม่มีการตั้งค่า scheduler
 ในแต่ละ <a href="#scheduling-methods">กลุ่มทรัพยากร</a> หากมีการตั้งค่าเฉพาะของกลุ่ม
 ทรัพยากร ค่านี้จะถูกละเว้น</p>
-<p data-bai-block="745">วิธีการจัดตารางที่รองรับในปัจจุบันรวมถึง <code>FIFO</code>, <code>LIFO</code> และ <code>DRF</code>
+<p data-bai-block="743">วิธีการจัดตารางที่รองรับในปัจจุบันรวมถึง <code>FIFO</code>, <code>LIFO</code> และ <code>DRF</code>
 วิธีการจัดตารางแต่ละวิธีเหมือนกันกับ <a href="#scheduling-methods">วิธีการจัดตาราง</a> ด้านบน
 ตัวเลือก Scheduler รวมถึงการพยายามสร้างเซสชันซ้ำ การพยายามสร้างเซสชันซ้ำหมายถึงจำนวน
 ครั้งที่พยายามสร้างเซสชันหากล้มเหลว หากเซสชันไม่สามารถสร้างได้ภายในจำนวนครั้ง
 ที่ลอง คำขอจะถูกละเว้นและ Backend.AI จะดำเนินการคำขอถัดไป ปัจจุบันการเปลี่ยนแปลง
 สามารถทำได้เฉพาะเมื่อ scheduler เป็น FIFO เท่านั้น</p>
-<p><figure data-bai-block="746" class="doc-figure"><img src="./images/system_setting_dialog_scheduler_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="552" height="768" /><figcaption>รูปที่ 24.91</figcaption></figure>
+<p><figure data-bai-block="744" class="doc-figure"><img src="./images/system_setting_dialog_scheduler_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="552" height="768" /><figcaption>รูปที่ 24.91</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="747" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="745" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="748">เราจะยังคงเพิ่มการควบคุมการตั้งค่าที่หลากหลายยิ่งขึ้นต่อไป</p>
+<p data-bai-block="746">เราจะยังคงเพิ่มการควบคุมการตั้งค่าที่หลากหลายยิ่งขึ้นต่อไป</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="749" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="747" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="750">การตั้งค่าระบบเป็นการตั้งค่าเริ่มต้น หากกลุ่มทรัพยากรมีค่าที่แน่นอน
+<p data-bai-block="748">การตั้งค่าระบบเป็นการตั้งค่าเริ่มต้น หากกลุ่มทรัพยากรมีค่าที่แน่นอน
 จะแทนที่ค่าที่กำหนดค่าในการตั้งค่าระบบ</p>
 </div></div>
 
 
 <p><a id="server-management"></a></p>
-<h2 data-bai-block="751" id="admin_menu-การจดการเซรฟเวอร">การจัดการเซิร์ฟเวอร์<a class="hash-link" href="#admin_menu-การจดการเซรฟเวอร" aria-label="Direct link to การจัดการเซิร์ฟเวอร์">#</a></h2>
-<p data-bai-block="752">ไปที่หน้าการบำรุงรักษาและคุณจะเห็นรายการจัดการเซิร์ฟเวอร์ที่จัดกลุ่มตามวัตถุประสงค์ แถบค้นหาที่ด้านบนของหน้าช่วยกรองรายการเมื่อคุณกำลังมองหารายการใดรายการหนึ่ง</p>
-<p><figure data-bai-block="753" class="doc-figure"><img src="./images/maintenance_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.92</figcaption></figure>
+<h2 data-bai-block="749" id="admin_menu-การจดการเซรฟเวอร">การจัดการเซิร์ฟเวอร์<a class="hash-link" href="#admin_menu-การจดการเซรฟเวอร" aria-label="Direct link to การจัดการเซิร์ฟเวอร์">#</a></h2>
+<p data-bai-block="750">ไปที่หน้าการบำรุงรักษาและคุณจะเห็นรายการจัดการเซิร์ฟเวอร์ที่จัดกลุ่มตามวัตถุประสงค์ แถบค้นหาที่ด้านบนของหน้าช่วยกรองรายการเมื่อคุณกำลังมองหารายการใดรายการหนึ่ง</p>
+<p><figure data-bai-block="751" class="doc-figure"><img src="./images/maintenance_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.92</figcaption></figure>
 </p>
-<p data-bai-block="754"><strong>แก้ไข</strong></p>
+<p data-bai-block="752"><strong>แก้ไข</strong></p>
 <ul>
-<li data-bai-block="755"><strong>ปรับฐานข้อมูลการใช้งานให้ตรงกับสถานะปัจจุบัน</strong>: บางครั้ง เนื่องจากการเชื่อมต่อเครือข่ายที่ไม่เสถียรหรือ
+<li data-bai-block="753"><strong>ปรับฐานข้อมูลการใช้งานให้ตรงกับสถานะปัจจุบัน</strong>: บางครั้ง เนื่องจากการเชื่อมต่อเครือข่ายที่ไม่เสถียรหรือ
 ปัญหาในการจัดการคอนเทนเนอร์ของ Docker daemon อาจมีกรณีที่
 ทรัพยากรที่ Backend.AI ครอบครองไม่ตรงกับทรัพยากรที่คอนเทนเนอร์ใช้จริง
 ในกรณีนี้ ให้คลิก <strong>คำนวณการใช้งานใหม่</strong> เพื่อแก้ไข
 การครอบครองทรัพยากรด้วยตนเอง</li>
 </ul>
-<p data-bai-block="756"><strong>อิมเมจ / สภาพแวดล้อม</strong></p>
+<p data-bai-block="754"><strong>อิมเมจ / สภาพแวดล้อม</strong></p>
 <ul>
-<li data-bai-block="757"><strong>สแกนรายการอิมเมจใหม่จากพื้นที่เก็บข้อมูล</strong>: คลิก <strong>สแกนอิมเมจใหม่</strong> เพื่ออัปเดตข้อมูลเมตาของอิมเมจจาก
+<li data-bai-block="755"><strong>สแกนรายการอิมเมจใหม่จากพื้นที่เก็บข้อมูล</strong>: คลิก <strong>สแกนอิมเมจใหม่</strong> เพื่ออัปเดตข้อมูลเมตาของอิมเมจจาก
 Docker registry ที่ลงทะเบียนทั้งหมด สามารถใช้ได้เมื่อมีการ push อิมเมจใหม่ไปยัง
 docker registry ที่เชื่อมต่อกับ Backend.AI การสแกนอาจใช้เวลานาน ความคืบหน้าจะรายงานในพื้นที่การแจ้งเตือน</li>
 </ul>
-<p data-bai-block="758"><strong>ประกาศ</strong></p>
+<p data-bai-block="756"><strong>ประกาศ</strong></p>
 <ul>
-<li data-bai-block="759"><strong>ประกาศระบบ</strong>: คลิก <strong>แก้ไขประกาศ</strong> เพื่อสร้างหรือเปลี่ยนแบนเนอร์ประกาศที่แสดงต่อผู้ใช้ทุกคนที่ด้านบนของทุกหน้า
+<li data-bai-block="757"><strong>ประกาศระบบ</strong>: คลิก <strong>แก้ไขประกาศ</strong> เพื่อสร้างหรือเปลี่ยนแบนเนอร์ประกาศที่แสดงต่อผู้ใช้ทุกคนที่ด้านบนของทุกหน้า
 ดูส่วน<a href="#system-announcement">ประกาศระบบ</a>ด้านล่าง</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="760" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="758" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="761">เราจะยังคงเพิ่มการตั้งค่าอื่นๆ ที่จำเป็นสำหรับการจัดการ เช่น
+<p data-bai-block="759">เราจะยังคงเพิ่มการตั้งค่าอื่นๆ ที่จำเป็นสำหรับการจัดการ เช่น
 การลบอิมเมจที่ไม่ได้ใช้งานหรือการลงทะเบียนกำหนดการบำรุงรักษาตามระยะ</p>
 </div></div>
 
 
 <p><a id="system-announcement"></a></p>
-<h3 data-bai-block="762" id="admin_menu-ประกาศระบบ">ประกาศระบบ<a class="hash-link" href="#admin_menu-ประกาศระบบ" aria-label="Direct link to ประกาศระบบ">#</a></h3>
-<p data-bai-block="763">Superadmin สามารถเผยแพร่ข้อความสั้น ๆ ที่ผู้ใช้ทุกคนจะเห็นเป็นแบนเนอร์ที่ด้านบนของทุกหน้า เช่น การแจ้งช่วงเวลาบำรุงรักษาที่วางแผนไว้ ประกาศเขียนด้วย Markdown และจัดการได้ทั้งหมดจาก WebUI ไม่ว่าจะเคยเผยแพร่ประกาศมาก่อนหรือไม่ก็ตาม</p>
-<p data-bai-block="764">เปิดตัวแก้ไขได้สองวิธี:</p>
+<h3 data-bai-block="760" id="admin_menu-ประกาศระบบ">ประกาศระบบ<a class="hash-link" href="#admin_menu-ประกาศระบบ" aria-label="Direct link to ประกาศระบบ">#</a></h3>
+<p data-bai-block="761">Superadmin สามารถเผยแพร่ข้อความสั้น ๆ ที่ผู้ใช้ทุกคนจะเห็นเป็นแบนเนอร์ที่ด้านบนของทุกหน้า เช่น การแจ้งช่วงเวลาบำรุงรักษาที่วางแผนไว้ ประกาศเขียนด้วย Markdown และจัดการได้ทั้งหมดจาก WebUI ไม่ว่าจะเคยเผยแพร่ประกาศมาก่อนหรือไม่ก็ตาม</p>
+<p data-bai-block="762">เปิดตัวแก้ไขได้สองวิธี:</p>
 <ul>
-<li data-bai-block="765">จากหน้าการบำรุงรักษา คลิก <strong>แก้ไขประกาศ</strong> ในแถว <strong>ประกาศระบบ</strong> วิธีนี้ใช้ได้แม้ยังไม่มีประกาศใด ๆ จึงเป็นวิธีสำหรับเผยแพร่ประกาศแรก</li>
-<li data-bai-block="766">จากแบนเนอร์ประกาศโดยตรง เมื่อมีประกาศที่เผยแพร่อยู่แล้ว เนื่องจากแบนเนอร์แสดงที่ด้านบนของทุกหน้า superadmin จึงเปิดตัวแก้ไขได้จากทุกที่ใน WebUI</li>
+<li data-bai-block="763">จากหน้าการบำรุงรักษา คลิก <strong>แก้ไขประกาศ</strong> ในแถว <strong>ประกาศระบบ</strong> วิธีนี้ใช้ได้แม้ยังไม่มีประกาศใด ๆ จึงเป็นวิธีสำหรับเผยแพร่ประกาศแรก</li>
+<li data-bai-block="764">จากแบนเนอร์ประกาศโดยตรง เมื่อมีประกาศที่เผยแพร่อยู่แล้ว เนื่องจากแบนเนอร์แสดงที่ด้านบนของทุกหน้า superadmin จึงเปิดตัวแก้ไขได้จากทุกที่ใน WebUI</li>
 </ul>
-<p><figure data-bai-block="767" class="doc-figure"><img src="./images/announcement_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2592" height="1696" /><figcaption>รูปที่ 24.93</figcaption></figure>
+<p><figure data-bai-block="765" class="doc-figure"><img src="./images/announcement_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2592" height="1696" /><figcaption>รูปที่ 24.93</figcaption></figure>
 </p>
-<p data-bai-block="768">ไดอะล็อก <strong>แก้ไขประกาศ</strong> แบ่งเป็นสองส่วน:</p>
+<p data-bai-block="766">ไดอะล็อก <strong>แก้ไขประกาศ</strong> แบ่งเป็นสองส่วน:</p>
 <ul>
-<li data-bai-block="769"><strong>ข้อความ</strong>: ตัวแก้ไข Markdown พร้อมแถบเครื่องมือจัดรูปแบบ แถบเครื่องมือมีหัวข้อ (H1–H3), ตัวหนา, ตัวเอียง, ขีดฆ่า, อ้างอิง, โค้ด, ลิงก์, รูปภาพ, รายการหัวข้อย่อย และรายการลำดับเลข ปุ่มแต่ละปุ่มจะใช้กับส่วนที่เลือกอยู่ หรือแทรกข้อความตัวอย่างที่คุณพิมพ์ทับได้</li>
-<li data-bai-block="770"><strong>ตัวอย่าง</strong>: แสดงข้อความแบบเรียลไทม์ตรงตามที่ผู้ใช้จะเห็น</li>
+<li data-bai-block="767"><strong>ข้อความ</strong>: ตัวแก้ไข Markdown พร้อมแถบเครื่องมือจัดรูปแบบ แถบเครื่องมือมีหัวข้อ (H1–H3), ตัวหนา, ตัวเอียง, ขีดฆ่า, อ้างอิง, โค้ด, ลิงก์, รูปภาพ, รายการหัวข้อย่อย และรายการลำดับเลข ปุ่มแต่ละปุ่มจะใช้กับส่วนที่เลือกอยู่ หรือแทรกข้อความตัวอย่างที่คุณพิมพ์ทับได้</li>
+<li data-bai-block="768"><strong>ตัวอย่าง</strong>: แสดงข้อความแบบเรียลไทม์ตรงตามที่ผู้ใช้จะเห็น</li>
 </ul>
-<p data-bai-block="771">ส่วนท้ายมีการกระทำสามอย่าง:</p>
+<p data-bai-block="769">ส่วนท้ายมีการกระทำสามอย่าง:</p>
 <ul>
-<li data-bai-block="772"><strong>เผยแพร่</strong>: บันทึกข้อความและแสดงแบนเนอร์ให้ผู้ใช้ทุกคนเห็น ปุ่มจะถูกปิดใช้งานขณะที่ข้อความว่างเปล่า เนื่องจากไม่สามารถเปิดใช้งานประกาศที่ว่างเปล่าได้</li>
-<li data-bai-block="773"><strong>ยกเลิก</strong>: ปิดไดอะล็อกโดยไม่บันทึก</li>
-<li data-bai-block="774"><strong>ลบ</strong>: นำประกาศที่เผยแพร่ออก ทำให้แบนเนอร์หายไปสำหรับทุกคน จะมีไดอะล็อกยืนยันปรากฏขึ้นก่อน หากยังไม่มีประกาศที่เผยแพร่อยู่ การกระทำนี้จะใช้ไม่ได้</li>
+<li data-bai-block="770"><strong>เผยแพร่</strong>: บันทึกข้อความและแสดงแบนเนอร์ให้ผู้ใช้ทุกคนเห็น ปุ่มจะถูกปิดใช้งานขณะที่ข้อความว่างเปล่า เนื่องจากไม่สามารถเปิดใช้งานประกาศที่ว่างเปล่าได้</li>
+<li data-bai-block="771"><strong>ยกเลิก</strong>: ปิดไดอะล็อกโดยไม่บันทึก</li>
+<li data-bai-block="772"><strong>ลบ</strong>: นำประกาศที่เผยแพร่ออก ทำให้แบนเนอร์หายไปสำหรับทุกคน จะมีไดอะล็อกยืนยันปรากฏขึ้นก่อน หากยังไม่มีประกาศที่เผยแพร่อยู่ การกระทำนี้จะใช้ไม่ได้</li>
 </ul>
 <p><a id="detailed-information"></a></p>
-<h2 data-bai-block="775" id="admin_menu-ขอมลโดยละเอยด">ข้อมูลโดยละเอียด<a class="hash-link" href="#admin_menu-ขอมลโดยละเอยด" aria-label="Direct link to ข้อมูลโดยละเอียด">#</a></h2>
-<p data-bai-block="776">ในหน้าข้อมูล คุณสามารถดูข้อมูลรายละเอียดและสถานะของแต่ละฟีเจอร์ได้
+<h2 data-bai-block="773" id="admin_menu-ขอมลโดยละเอยด">ข้อมูลโดยละเอียด<a class="hash-link" href="#admin_menu-ขอมลโดยละเอยด" aria-label="Direct link to ข้อมูลโดยละเอียด">#</a></h2>
+<p data-bai-block="774">ในหน้าข้อมูล คุณสามารถดูข้อมูลรายละเอียดและสถานะของแต่ละฟีเจอร์ได้
 หากต้องการดูเวอร์ชันของ Manager และเวอร์ชัน API ให้ตรวจสอบที่แผง Core หากต้องการดูว่า
 ส่วนประกอบของ Backend.AI แต่ละรายการเข้ากันได้หรือไม่ ให้ตรวจสอบที่แผง Component</p>
 <div class="admonition admonition-note">
-<div data-bai-block="777" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="775" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="778">หน้านี้มีไว้สำหรับแสดงข้อมูลปัจจุบันเท่านั้น</p>
+<p data-bai-block="776">หน้านี้มีไว้สำหรับแสดงข้อมูลปัจจุบันเท่านั้น</p>
 </div></div>
 
 
-<p><figure data-bai-block="779" class="doc-figure"><img src="./images/information_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.94</figcaption></figure>
+<p><figure data-bai-block="777" class="doc-figure"><img src="./images/information_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.94</figcaption></figure>
 </p>
 <p><a id="manage-projects"></a></p>
-<h2 data-bai-block="780" id="admin_menu-การจดการโปรเจกต">การจัดการโปรเจกต์<a class="hash-link" href="#admin_menu-การจดการโปรเจกต" aria-label="Direct link to การจัดการโปรเจกต์">#</a></h2>
-<p data-bai-block="781">Superadmin สามารถดูโปรเจกต์ทั้งหมดในคลัสเตอร์ได้จากหน้าโปรเจกต์ และสร้าง แก้ไข ปิดการใช้งาน เปิดใช้งาน และลบโปรเจกต์เหล่านั้นอย่างถาวรได้ แต่ละแถวยังมีทางลัดสำหรับการให้สิทธิ์ผู้ดูแลโปรเจกต์ด้วย</p>
+<h2 data-bai-block="778" id="admin_menu-การจดการโปรเจกต">การจัดการโปรเจกต์<a class="hash-link" href="#admin_menu-การจดการโปรเจกต" aria-label="Direct link to การจัดการโปรเจกต์">#</a></h2>
+<p data-bai-block="779">Superadmin สามารถดูโปรเจกต์ทั้งหมดในคลัสเตอร์ได้จากหน้าโปรเจกต์ และสร้าง แก้ไข ปิดการใช้งาน เปิดใช้งาน และลบโปรเจกต์เหล่านั้นอย่างถาวรได้ แต่ละแถวยังมีทางลัดสำหรับการให้สิทธิ์ผู้ดูแลโปรเจกต์ด้วย</p>
 <p><a id="set-project-admin"></a></p>
-<h3 data-bai-block="782" id="admin_menu-ตงคาผดแลโปรเจกต">ตั้งค่าผู้ดูแลโปรเจกต์<a class="hash-link" href="#admin_menu-ตงคาผดแลโปรเจกต" aria-label="Direct link to ตั้งค่าผู้ดูแลโปรเจกต์">#</a></h3>
-<p data-bai-block="783">แทนที่จะต้องค้นหาบทบาทของโปรเจกต์ในหน้าการจัดการ RBAC คุณสามารถจัดการผู้ดูแลของโปรเจกต์ได้โดยตรงจากรายการโปรเจกต์</p>
+<h3 data-bai-block="780" id="admin_menu-ตงคาผดแลโปรเจกต">ตั้งค่าผู้ดูแลโปรเจกต์<a class="hash-link" href="#admin_menu-ตงคาผดแลโปรเจกต" aria-label="Direct link to ตั้งค่าผู้ดูแลโปรเจกต์">#</a></h3>
+<p data-bai-block="781">แทนที่จะต้องค้นหาบทบาทของโปรเจกต์ในหน้าการจัดการ RBAC คุณสามารถจัดการผู้ดูแลของโปรเจกต์ได้โดยตรงจากรายการโปรเจกต์</p>
 <ol>
-<li data-bai-block="784">ค้นหาโปรเจกต์ในรายการโปรเจกต์</li>
-<li data-bai-block="785">คลิกการกระทำ <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> (โล่) ในแถวนั้น การกระทำนี้ใช้ไม่ได้กับโปรเจกต์ประเภทคลังโมเดล</li>
-<li data-bai-block="786">ไดอะล็อก <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> จะเปิดขึ้น</li>
+<li data-bai-block="782">ค้นหาโปรเจกต์ในรายการโปรเจกต์</li>
+<li data-bai-block="783">คลิกการกระทำ <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> (โล่) ในแถวนั้น การกระทำนี้ใช้ไม่ได้กับโปรเจกต์ประเภทคลังโมเดล</li>
+<li data-bai-block="784">ไดอะล็อก <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> จะเปิดขึ้น</li>
 </ol>
-<p><figure data-bai-block="787" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="880" /><figcaption>รูปที่ 24.95</figcaption></figure>
+<p><figure data-bai-block="785" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="880" /><figcaption>รูปที่ 24.95</figcaption></figure>
 </p>
-<p data-bai-block="788">ไดอะล็อกประกอบด้วย:</p>
+<p data-bai-block="786">ไดอะล็อกประกอบด้วย:</p>
 <ul>
-<li data-bai-block="789">การแจ้งเตือนข้อมูลที่อธิบายว่าการให้สิทธิ์ผู้ดูแลโปรเจกต์จะเพิ่มโปรเจกต์นั้นเข้าไปในรายการโปรเจกต์ที่ได้รับอนุญาตของผู้ใช้โดยอัตโนมัติ ผู้ใช้จึงเข้าถึงโปรเจกต์นั้นได้หลังจากนั้น</li>
-<li data-bai-block="790">ฟิลด์ <strong>ค้นหาและเลือกผู้ใช้</strong> สำหรับเลือกบัญชีหนึ่งบัญชีขึ้นไป ตามด้วยปุ่ม <strong>เพิ่ม</strong> ที่ให้สิทธิ์ผู้ดูแลโปรเจกต์แก่บัญชีเหล่านั้น</li>
-<li data-bai-block="791">ตารางแสดงผู้ใช้ที่ถือสิทธิ์นี้อยู่ในปัจจุบัน โดยแสดงอีเมลและ ID ของผู้ใช้แต่ละคน พร้อมการกระทำ <strong>เพิกถอนสิทธิ์ผู้ดูแลระบบ</strong> ที่ท้ายแถว</li>
+<li data-bai-block="787">การแจ้งเตือนข้อมูลที่อธิบายว่าการให้สิทธิ์ผู้ดูแลโปรเจกต์จะเพิ่มโปรเจกต์นั้นเข้าไปในรายการโปรเจกต์ที่ได้รับอนุญาตของผู้ใช้โดยอัตโนมัติ ผู้ใช้จึงเข้าถึงโปรเจกต์นั้นได้หลังจากนั้น</li>
+<li data-bai-block="788">ฟิลด์ <strong>ค้นหาและเลือกผู้ใช้</strong> สำหรับเลือกบัญชีหนึ่งบัญชีขึ้นไป ตามด้วยปุ่ม <strong>เพิ่ม</strong> ที่ให้สิทธิ์ผู้ดูแลโปรเจกต์แก่บัญชีเหล่านั้น</li>
+<li data-bai-block="789">ตารางแสดงผู้ใช้ที่ถือสิทธิ์นี้อยู่ในปัจจุบัน โดยแสดงอีเมลและ ID ของผู้ใช้แต่ละคน พร้อมการกระทำ <strong>เพิกถอนสิทธิ์ผู้ดูแลระบบ</strong> ที่ท้ายแถว</li>
 </ul>
-<p data-bai-block="792">ไดอะล็อกจะยังคงเปิดอยู่หลังการเปลี่ยนแปลงแต่ละครั้ง คุณจึงให้และเพิกถอนสิทธิ์แก่หลายคนได้ในคราวเดียว หากสำเร็จเพียงบางส่วน ระบบจะรายงานข้อผิดพลาดแยกตามผู้ใช้</p>
+<p data-bai-block="790">ไดอะล็อกจะยังคงเปิดอยู่หลังการเปลี่ยนแปลงแต่ละครั้ง คุณจึงให้และเพิกถอนสิทธิ์แก่หลายคนได้ในคราวเดียว หากสำเร็จเพียงบางส่วน ระบบจะรายงานข้อผิดพลาดแยกตามผู้ใช้</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="793" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div data-bai-block="791" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
 <div class="admonition-content">
 
-<p data-bai-block="794">การเพิกถอนสิทธิ์ผู้ดูแลโปรเจกต์ <strong>จะไม่</strong> ลบโปรเจกต์นั้นออกจากรายการโปรเจกต์ที่ได้รับอนุญาตของผู้ใช้ หากต้องการเพิกถอนการเข้าถึงโปรเจกต์ด้วย โปรดลบออกจากรายการนั้นด้วยตนเอง ดูส่วน<a href="#create-and-update-users">เรียกดูและจัดการผู้ใช้</a></p>
+<p data-bai-block="792">การเพิกถอนสิทธิ์ผู้ดูแลโปรเจกต์ <strong>จะไม่</strong> ลบโปรเจกต์นั้นออกจากรายการโปรเจกต์ที่ได้รับอนุญาตของผู้ใช้ หากต้องการเพิกถอนการเข้าถึงโปรเจกต์ด้วย โปรดลบออกจากรายการนั้นด้วยตนเอง ดูส่วน<a href="#create-and-update-users">เรียกดูและจัดการผู้ใช้</a></p>
 </div></div>
 
 
-<p data-bai-block="795">สำหรับแบบจำลองบทบาทและสิทธิ์ทั้งหมดที่อยู่เบื้องหลังทางลัดนี้ และขั้นตอนที่เทียบเท่าในหน้าการจัดการ RBAC โปรดดูส่วน<a href="./rbac_management.html#grant-project-admin">การให้สิทธิ์ผู้ดูแลโปรเจกต์</a></p>
-<h2 data-bai-block="796" id="admin_menu-การจดการ-rbac">การจัดการ RBAC<a class="hash-link" href="#admin_menu-การจดการ-rbac" aria-label="Direct link to การจัดการ RBAC">#</a></h2>
-<p data-bai-block="797">การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ คุณสามารถควบคุมการดำเนินการที่ผู้ใช้เฉพาะสามารถทำได้กับทรัพยากรต่าง ๆ ในระบบ Backend.AI</p>
-<p data-bai-block="798">สำหรับข้อมูลรายละเอียดเกี่ยวกับการจัดการบทบาท สิทธิ์ และการมอบหมายผู้ใช้ โปรดดูที่หน้า<a href="./rbac_management.html#rbac-management">การจัดการ RBAC</a></p>
+<p data-bai-block="793">สำหรับแบบจำลองบทบาทและสิทธิ์ทั้งหมดที่อยู่เบื้องหลังทางลัดนี้ และขั้นตอนที่เทียบเท่าในหน้าการจัดการ RBAC โปรดดูส่วน<a href="./rbac_management.html#grant-project-admin">การให้สิทธิ์ผู้ดูแลโปรเจกต์</a></p>
+<h2 data-bai-block="794" id="admin_menu-การจดการ-rbac">การจัดการ RBAC<a class="hash-link" href="#admin_menu-การจดการ-rbac" aria-label="Direct link to การจัดการ RBAC">#</a></h2>
+<p data-bai-block="795">การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ คุณสามารถควบคุมการดำเนินการที่ผู้ใช้เฉพาะสามารถทำได้กับทรัพยากรต่าง ๆ ในระบบ Backend.AI</p>
+<p data-bai-block="796">สำหรับข้อมูลรายละเอียดเกี่ยวกับการจัดการบทบาท สิทธิ์ และการมอบหมายผู้ใช้ โปรดดูที่หน้า<a href="./rbac_management.html#rbac-management">การจัดการ RBAC</a></p>
 <p><a id="diagnostics"></a></p>
-<h2 data-bai-block="799" id="admin_menu-การวนจฉย">การวินิจฉัย<a class="hash-link" href="#admin_menu-การวนจฉย" aria-label="Direct link to การวินิจฉัย">#</a></h2>
-<p data-bai-block="800">ผู้ดูแลระบบสูงสุด (superadmin) สามารถเปิดหน้า <strong>การวินิจฉัย</strong> จากแถบด้านข้างของผู้ดูแลระบบเพื่อเรียกใช้การตรวจสอบสถานะอัตโนมัติของการ deploy WebUI หน้านี้จะประเมินการกำหนดค่าระหว่างเบราว์เซอร์กับเซิร์ฟเวอร์ และรายงานการตั้งค่าที่ไม่ถูกต้อง เพื่อให้สามารถระบุปัญหาการเชื่อมต่อหรือความปลอดภัยได้ก่อนที่จะส่งผลกระทบต่อผู้ใช้</p>
-<p><figure data-bai-block="801" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>รูปที่ 24.96</figcaption></figure>
+<h2 data-bai-block="797" id="admin_menu-การวนจฉย">การวินิจฉัย<a class="hash-link" href="#admin_menu-การวนจฉย" aria-label="Direct link to การวินิจฉัย">#</a></h2>
+<p data-bai-block="798">ผู้ดูแลระบบสูงสุด (superadmin) สามารถเปิดหน้า <strong>การวินิจฉัย</strong> จากแถบด้านข้างของผู้ดูแลระบบเพื่อเรียกใช้การตรวจสอบสถานะอัตโนมัติของการ deploy WebUI หน้านี้จะประเมินการกำหนดค่าระหว่างเบราว์เซอร์กับเซิร์ฟเวอร์ และรายงานการตั้งค่าที่ไม่ถูกต้อง เพื่อให้สามารถระบุปัญหาการเชื่อมต่อหรือความปลอดภัยได้ก่อนที่จะส่งผลกระทบต่อผู้ใช้</p>
+<p><figure data-bai-block="799" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>รูปที่ 24.96</figcaption></figure>
 </p>
-<p data-bai-block="802">แถบเครื่องมือที่ด้านบนของหน้ามีตัวควบคุมต่อไปนี้</p>
+<p data-bai-block="800">แถบเครื่องมือที่ด้านบนของหน้ามีตัวควบคุมต่อไปนี้</p>
 <ul>
-<li data-bai-block="803"><strong>แสดงเฉพาะรายการที่ล้มเหลว</strong>: ปุ่มสลับที่ซ่อนการตรวจสอบที่ผ่านทั้งหมด และแสดงเฉพาะส่วนที่มีคำเตือนหรือข้อผิดพลาด</li>
-<li data-bai-block="804"><code>เรียกใช้การวินิจฉัยอีกครั้ง</code>: ประเมินการตรวจสอบทั้งหมดอีกครั้งและรีเฟรชผลลัพธ์</li>
-<li data-bai-block="805"><code>ส่งออก CSV</code>: ใช้งานได้จากเมนูดรอปดาวน์การดำเนินการ โดยจะส่งออกผลการวินิจฉัยทั้งหมดเป็นไฟล์ชื่อ <code>diagnostics-YYYY-MM-DD.csv</code></li>
+<li data-bai-block="801"><strong>แสดงเฉพาะรายการที่ล้มเหลว</strong>: ปุ่มสลับที่ซ่อนการตรวจสอบที่ผ่านทั้งหมด และแสดงเฉพาะส่วนที่มีคำเตือนหรือข้อผิดพลาด</li>
+<li data-bai-block="802"><code>เรียกใช้การวินิจฉัยอีกครั้ง</code>: ประเมินการตรวจสอบทั้งหมดอีกครั้งและรีเฟรชผลลัพธ์</li>
+<li data-bai-block="803"><code>ส่งออก CSV</code>: ใช้งานได้จากเมนูดรอปดาวน์การดำเนินการ โดยจะส่งออกผลการวินิจฉัยทั้งหมดเป็นไฟล์ชื่อ <code>diagnostics-YYYY-MM-DD.csv</code></li>
 </ul>
 <div class="admonition admonition-tip">
-<div data-bai-block="806" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>เคล็ดลับ</div>
+<div data-bai-block="804" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>เคล็ดลับ</div>
 <div class="admonition-content">
 
-<p data-bai-block="807">ไฟล์ CSV ที่ส่งออกจาก Backend.AI ทุกไฟล์จะมี UTF-8 BOM (Byte Order Mark) ที่ต้นไฟล์ เพื่อให้ Microsoft Excel บนระบบที่ไม่ใช่ UTF-8 (เช่น Windows ภาษาเกาหลีที่ใช้ CP949) รู้จักการเข้ารหัสได้อย่างถูกต้องและแสดงอักขระหลายไบต์ เช่น ภาษาเกาหลี ญี่ปุ่น หรือจีนโดยไม่เกิดการแสดงผลที่ผิดพลาด</p>
+<p data-bai-block="805">ไฟล์ CSV ที่ส่งออกจาก Backend.AI ทุกไฟล์จะมี UTF-8 BOM (Byte Order Mark) ที่ต้นไฟล์ เพื่อให้ Microsoft Excel บนระบบที่ไม่ใช่ UTF-8 (เช่น Windows ภาษาเกาหลีที่ใช้ CP949) รู้จักการเข้ารหัสได้อย่างถูกต้องและแสดงอักขระหลายไบต์ เช่น ภาษาเกาหลี ญี่ปุ่น หรือจีนโดยไม่เกิดการแสดงผลที่ผิดพลาด</p>
 </div></div>
 
 
-<p data-bai-block="808">การวินิจฉัยจัดเป็นส่วนที่ยุบได้ดังต่อไปนี้ โดยแต่ละส่วนจะแสดงผลการตรวจสอบแต่ละรายการด้วยระดับความรุนแรงแบบผ่าน คำเตือน หรือวิกฤต</p>
+<p data-bai-block="806">การวินิจฉัยจัดเป็นส่วนที่ยุบได้ดังต่อไปนี้ โดยแต่ละส่วนจะแสดงผลการตรวจสอบแต่ละรายการด้วยระดับความรุนแรงแบบผ่าน คำเตือน หรือวิกฤต</p>
 <ul>
-<li data-bai-block="809"><strong>นโยบายความปลอดภัยของเนื้อหา</strong>: ตรวจสอบส่วนหัวของนโยบายความปลอดภัยของเนื้อหา (เช่น <code>connect-src</code>, <code>frame-src</code>, <code>script-src</code>, <code>style-src</code>) เพื่อให้แอปพลิเคชันเข้าถึงทรัพยากรที่ต้องการได้</li>
-<li data-bai-block="810"><strong>พร็อกซีที่เก็บข้อมูล</strong>: ตรวจสอบรายการสตอเรจวอลุ่มพร้อมกับความสามารถในการเข้าถึงและตัววัดการใช้งานของพร็อกซีที่เก็บข้อมูล</li>
-<li data-bai-block="811"><strong>การเชื่อมต่อจุดปลายทาง</strong>: ตรวจสอบว่าจุดปลายทาง API เข้าถึงได้และสามารถสร้างการเชื่อมต่อได้</li>
-<li data-bai-block="812"><strong>การกำหนดค่าเว็บเซิร์ฟเวอร์</strong>: ตรวจสอบการตั้งค่า <code>config.toml</code> รวมถึงรูปแบบ URL ความสอดคล้องของ SSL/โปรโตคอล และโหมดการเชื่อมต่อ</li>
+<li data-bai-block="807"><strong>นโยบายความปลอดภัยของเนื้อหา</strong>: ตรวจสอบส่วนหัวของนโยบายความปลอดภัยของเนื้อหา (เช่น <code>connect-src</code>, <code>frame-src</code>, <code>script-src</code>, <code>style-src</code>) เพื่อให้แอปพลิเคชันเข้าถึงทรัพยากรที่ต้องการได้</li>
+<li data-bai-block="808"><strong>พร็อกซีที่เก็บข้อมูล</strong>: ตรวจสอบรายการสตอเรจวอลุ่มพร้อมกับความสามารถในการเข้าถึงและตัววัดการใช้งานของพร็อกซีที่เก็บข้อมูล</li>
+<li data-bai-block="809"><strong>การเชื่อมต่อจุดปลายทาง</strong>: ตรวจสอบว่าจุดปลายทาง API เข้าถึงได้และสามารถสร้างการเชื่อมต่อได้</li>
+<li data-bai-block="810"><strong>การกำหนดค่าเว็บเซิร์ฟเวอร์</strong>: ตรวจสอบการตั้งค่า <code>config.toml</code> รวมถึงรูปแบบ URL ความสอดคล้องของ SSL/โปรโตคอล และโหมดการเชื่อมต่อ</li>
 </ul>
-<p data-bai-block="813">เมื่อเปิด <strong>แสดงเฉพาะรายการที่ล้มเหลว</strong> และการตรวจสอบทุกรายการผ่าน หน้าจะไม่ว่างเปล่า แต่จะแสดงข้อความ <code>ไม่มีรายการที่ล้มเหลว การวินิจฉัยทั้งหมดผ่านแล้ว</code> เพื่อให้เห็นชัดเจนว่าผลลัพธ์เป็นปกติ</p>
-<p><figure data-bai-block="814" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.97</figcaption></figure>
+<p data-bai-block="811">เมื่อเปิด <strong>แสดงเฉพาะรายการที่ล้มเหลว</strong> และการตรวจสอบทุกรายการผ่าน หน้าจะไม่ว่างเปล่า แต่จะแสดงข้อความ <code>ไม่มีรายการที่ล้มเหลว การวินิจฉัยทั้งหมดผ่านแล้ว</code> เพื่อให้เห็นชัดเจนว่าผลลัพธ์เป็นปกติ</p>
+<p><figure data-bai-block="812" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 24.97</figcaption></figure>
 </p>
 <div class="admonition admonition-tip">
-<div data-bai-block="815" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>เคล็ดลับ</div>
+<div data-bai-block="813" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>เคล็ดลับ</div>
 <div class="admonition-content">
 
-<p data-bai-block="816">เมื่อแก้ไขปัญหาการเชื่อมต่อ ให้เปิด <strong>แสดงเฉพาะรายการที่ล้มเหลว</strong> ก่อน แล้วคลิก <code>เรียกใช้การวินิจฉัยอีกครั้ง</code> เพื่อแสดงเฉพาะการตรวจสอบที่ต้องให้ความสนใจ</p>
+<p data-bai-block="814">เมื่อแก้ไขปัญหาการเชื่อมต่อ ให้เปิด <strong>แสดงเฉพาะรายการที่ล้มเหลว</strong> ก่อน แล้วคลิก <code>เรียกใช้การวินิจฉัยอีกครั้ง</code> เพื่อแสดงเฉพาะการตรวจสอบที่ต้องให้ความสนใจ</p>
 </div></div>
 
 
 <p><a id="branding"></a></p>
-<h2 data-bai-block="817" id="admin_menu-การสรางแบรนด">การสร้างแบรนด์<a class="hash-link" href="#admin_menu-การสรางแบรนด" aria-label="Direct link to การสร้างแบรนด์">#</a></h2>
-<p data-bai-block="818">หน้า <strong>การสร้างแบรนด์</strong> ช่วยให้ผู้ดูแลระบบสูงสุดปรับแต่งเอกลักษณ์ทางภาพของ WebUI ได้แก่ สี โลโก้ และแบบอักษร ให้ตรงกับเอกลักษณ์ขององค์กร โดยสามารถเข้าถึงได้จากแถบด้านข้างของผู้ดูแลระบบ</p>
-<p><figure data-bai-block="819" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>รูปที่ 24.98</figcaption></figure>
+<h2 data-bai-block="815" id="admin_menu-การสรางแบรนด">การสร้างแบรนด์<a class="hash-link" href="#admin_menu-การสรางแบรนด" aria-label="Direct link to การสร้างแบรนด์">#</a></h2>
+<p data-bai-block="816">หน้า <strong>การสร้างแบรนด์</strong> ช่วยให้ผู้ดูแลระบบสูงสุดปรับแต่งเอกลักษณ์ทางภาพของ WebUI ได้แก่ สี โลโก้ และแบบอักษร ให้ตรงกับเอกลักษณ์ขององค์กร โดยสามารถเข้าถึงได้จากแถบด้านข้างของผู้ดูแลระบบ</p>
+<p><figure data-bai-block="817" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>รูปที่ 24.98</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="820" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div data-bai-block="818" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
 <div class="admonition-content">
 
-<p data-bai-block="821">ธีมที่แก้ไขแล้วไม่สามารถนำไปใช้ได้ทันทีจากหน้านี้ หากต้องการใช้ธีมที่ปรับแต่ง ให้ส่งออกการกำหนดค่าเป็นไฟล์ JSON แล้วส่งให้ทีมสนับสนุน</p>
+<p data-bai-block="819">ธีมที่แก้ไขแล้วไม่สามารถนำไปใช้ได้ทันทีจากหน้านี้ หากต้องการใช้ธีมที่ปรับแต่ง ให้ส่งออกการกำหนดค่าเป็นไฟล์ JSON แล้วส่งให้ทีมสนับสนุน</p>
 </div></div>
 
 
-<p data-bai-block="822">แถบเครื่องมือมีดังนี้</p>
+<p data-bai-block="820">แถบเครื่องมือมีดังนี้</p>
 <ul>
-<li data-bai-block="823"><code>ดูตัวอย่าง</code>: เปิดหน้าต่างใหม่เพื่อดูตัวอย่างการเปลี่ยนแปลงธีมปัจจุบัน</li>
-<li data-bai-block="824"><code>การตั้งค่า JSON</code>: เปิดหน้าต่างโมดอลที่สามารถแก้ไขการกำหนดค่าธีมเป็น JSON ได้โดยตรงและส่งออก</li>
-<li data-bai-block="825">ตัวควบคุมรีเซ็ตที่คืนค่าการตั้งค่าการสร้างแบรนด์ทั้งหมดเป็นค่าเริ่มต้น</li>
-<li data-bai-block="826">แถบค้นหาสำหรับกรองการตั้งค่า</li>
+<li data-bai-block="821"><code>ดูตัวอย่าง</code>: เปิดหน้าต่างใหม่เพื่อดูตัวอย่างการเปลี่ยนแปลงธีมปัจจุบัน</li>
+<li data-bai-block="822"><code>การตั้งค่า JSON</code>: เปิดหน้าต่างโมดอลที่สามารถแก้ไขการกำหนดค่าธีมเป็น JSON ได้โดยตรงและส่งออก</li>
+<li data-bai-block="823">ตัวควบคุมรีเซ็ตที่คืนค่าการตั้งค่าการสร้างแบรนด์ทั้งหมดเป็นค่าเริ่มต้น</li>
+<li data-bai-block="824">แถบค้นหาสำหรับกรองการตั้งค่า</li>
 </ul>
-<p data-bai-block="827">การตั้งค่าแบ่งเป็นกลุ่มดังนี้</p>
+<p data-bai-block="825">การตั้งค่าแบ่งเป็นกลุ่มดังนี้</p>
 <ul>
-<li data-bai-block="828"><strong>ธีม</strong>: ตัวเลือกสีสำหรับสีหลัก สีพื้นหลังส่วนหัว สีลิงก์ สีข้อมูล สีข้อผิดพลาด สีสำเร็จ และสีข้อความ แต่ละสีสามารถตั้งค่าแยกกันสำหรับโหมดสว่างและมืด และรีเซ็ตได้ทีละรายการ</li>
-<li data-bai-block="829"><strong>โลโก้ CI</strong>: อัปโหลดโลโก้แถบด้านข้างหลักสำหรับโหมดสว่างและมืด พร้อมกับโลโก้แถบด้านข้างแบบยุบ และกำหนดขนาดการแสดงผล</li>
-<li data-bai-block="830"><strong>โลโก้ CI แบบละเอียด</strong>: อัปโหลดโลโก้ที่แสดงบนหน้าเข้าสู่ระบบและในโมดอล About สำหรับทั้งโหมดสว่างและมืด พร้อมกำหนดขนาด</li>
-<li data-bai-block="831"><strong>แบบอักษร</strong>: เลือกแบบอักษร (font family) ที่ใช้ทั่วทั้งอินเทอร์เฟซ</li>
+<li data-bai-block="826"><strong>ธีม</strong>: ตัวเลือกสีสำหรับสีหลัก สีพื้นหลังส่วนหัว สีลิงก์ สีข้อมูล สีข้อผิดพลาด สีสำเร็จ และสีข้อความ แต่ละสีสามารถตั้งค่าแยกกันสำหรับโหมดสว่างและมืด และรีเซ็ตได้ทีละรายการ</li>
+<li data-bai-block="827"><strong>โลโก้ CI</strong>: อัปโหลดโลโก้แถบด้านข้างหลักสำหรับโหมดสว่างและมืด พร้อมกับโลโก้แถบด้านข้างแบบยุบ และกำหนดขนาดการแสดงผล</li>
+<li data-bai-block="828"><strong>โลโก้ CI แบบละเอียด</strong>: อัปโหลดโลโก้ที่แสดงบนหน้าเข้าสู่ระบบและในโมดอล About สำหรับทั้งโหมดสว่างและมืด พร้อมกำหนดขนาด</li>
+<li data-bai-block="829"><strong>แบบอักษร</strong>: เลือกแบบอักษร (font family) ที่ใช้ทั่วทั้งอินเทอร์เฟซ</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="832" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="830" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="833">หลังจากอัปโหลดรูปภาพหรือเปลี่ยนสี ให้ใช้ <code>ดูตัวอย่าง</code> เพื่อดูผลลัพธ์ เนื่องจากการเปลี่ยนแปลงจะไม่ถูกนำไปใช้กับบริการที่ใช้งานจริงโดยอัตโนมัติ ให้ส่งออกการกำหนดค่า JSON และติดต่อทีมสนับสนุนเพื่อนำไปใช้</p>
+<p data-bai-block="831">หลังจากอัปโหลดรูปภาพหรือเปลี่ยนสี ให้ใช้ <code>ดูตัวอย่าง</code> เพื่อดูผลลัพธ์ เนื่องจากการเปลี่ยนแปลงจะไม่ถูกนำไปใช้กับบริการที่ใช้งานจริงโดยอัตโนมัติ ให้ส่งออกการกำหนดค่า JSON และติดต่อทีมสนับสนุนเพื่อนำไปใช้</p>
 </div></div>
 
 
@@ -1965,7 +1958,7 @@ docker registry ที่เชื่อมต่อกับ Backend.AI กา�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 9 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 10 ก.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">

@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a1c61c7)">v26.9.0-alpha.0 (a1c61c7)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e34216f)">v26.9.0-alpha.0 (e34216f)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -457,11 +457,12 @@ English、한국어、brasileiro、简体中文、繁體中文、Français、Suo
 <p data-bai-block="96">WebUIアプリを使用する際、コンピュートセッションに直接SSH/SFTP接続を作成でき
 ます。Backend.AIにサインアップすると、公開キーペアが提供されます。SSHキーペア
 管理セクションの右側にあるボタンをクリックすると、次のダイアログが表示されます。
-右側のコピーボタンをクリックして、既存のSSH公開鍵をコピーできます。ダイアログ
-の下部にある<code>生む</code>ボタンをクリックすると、SSHキーペアを更新できます。SSH
-公開/秘密鍵はランダムに生成され、ユーザー情報として保存されます。秘密鍵は作成
-後すぐに手動で保存しない限り、再確認できないことに注意してください。</p>
-<p><figure data-bai-block="97" class="doc-figure"><img src="./images/ssh_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1056" height="1042" /><figcaption>図 19.8</figcaption></figure>
+既存のSSH公開鍵は<strong>現在の公開鍵</strong>の項目に表示され、その横のコピーボタンを
+クリックするとコピーできます。ダイアログの下部にある<code>生む</code>ボタンをクリック
+すると、SSHキーペアを更新できます。SSH公開/秘密鍵はランダムに生成され、
+ユーザー情報として保存されます。秘密鍵は作成後すぐに手動で保存しない限り、
+再確認できないことに注意してください。</p>
+<p><figure data-bai-block="97" class="doc-figure"><img src="./images/ssh_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1056" height="692" /><figcaption>図 19.8</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="98" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
@@ -478,9 +479,13 @@ PPKキーに変換する必要がある場合があります。</p>
 <strong>公開鍵</strong>と<strong>秘密鍵</strong>の2つのテキストエリアが表示されます。</p>
 <p><figure data-bai-block="101" class="doc-figure"><img src="./images/add_ssh_keypair_manually_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1054" height="1042" /><figcaption>図 19.9</figcaption></figure>
 </p>
-<p data-bai-block="102">キーを入力して<code>保存</code>ボタンをクリックしてください。これで、独自のキーを使用して
-Backend.AIセッションにアクセスできます。</p>
-<p><figure data-bai-block="103" class="doc-figure"><img src="./images/ssh_keypair_dialog_after.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1058" height="1042" /><figcaption>図 19.10</figcaption></figure>
+<p data-bai-block="102">キーを入力して<code>保存</code>ボタンをクリックしてください。キーペアが正常に登録されると、
+*「SSHキーフェア登録が正常に完了しました。」*というメッセージが表示されて
+ダイアログが閉じ、独自のキーを使用してBackend.AIセッションにアクセスできます。
+サーバーがキーペアを拒否した場合（例: キーの形式が正しくない場合や公開鍵と秘密鍵
+が一致しない場合）は、ダイアログは閉じずにサーバーが返したエラーメッセージが
+表示されるため、キーを修正して再度保存できます。</p>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/ssh_keypair_dialog_after.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1056" height="692" /><figcaption>図 19.10</figcaption></figure>
 </p>
 <h3 data-bai-block="104" id="user_settings-最大同時ファイルアップロード制限">最大同時ファイルアップロード制限<a class="hash-link" href="#user_settings-最大同時ファイルアップロード制限" aria-label="Direct link to 最大同時ファイルアップロード制限">#</a></h3>
 <p data-bai-block="105">ファイルエクスプローラーを通じて同時にアップロードできるファイルの数を制限
@@ -531,32 +536,38 @@ Backend.AIセッションにアクセスできます。</p>
 表示され、後で無効にすると、削除されずに非表示になり、再度有効にすると
 元の状態に復元されます。追加・管理方法については
 <a href="./dashboard.html#custom-panels">カスタムパネル</a>セクションを参照してください。</li>
-<li data-bai-block="120"><strong>Hugging Face からインポート</strong>: スタートページの<strong>URLから開始</strong>ダイアログに
+<li data-bai-block="120"><strong>コマンドパレット</strong>: ヘッダーに<strong>検索</strong>ボタンを追加し、<code>Ctrl+K</code>
+（macOSでは<code>⌘K</code>）ショートカットを有効にします。どちらも、ページ、ページタブ、
+設定項目を検索できるパレットを開きます。パレットでは、ダークモードとライト
+モードの切り替え、UI言語の変更、通知を開く、サイドバーの表示切り替え、現在の
+ページのマニュアルを開くといったクイックアクションも利用できます。この
+ボタンとショートカットは、本機能を有効にしている間のみ利用できます。詳細に
+ついては<a href="./header.html#search">検索</a>セクションを参照してください。</li>
+<li data-bai-block="121"><strong>Hugging Face からインポート</strong>: スタートページの<strong>URLから開始</strong>ダイアログに
 <strong>Hugging Face モデルをインポート</strong>タブを追加し、Hugging Faceのモデルを
 モデルフォルダへ直接インポートできるようにします。このタブは、環境でモデル
 デプロイ機能も利用できる場合にのみ表示されます。</li>
-<li data-bai-block="121"><strong>セッションリソースグリッドビュー</strong>（日本語UIでは未翻訳のため
-<code>__NOT_TRANSLATED__</code> と表示されます）: セッションページとAdmin Sessionページ
-のセッションリストの上に、表示モード（<strong>View mode</strong>）の切り替え
-（<strong>Table</strong> / <strong>Grid</strong>）を追加します。<strong>Grid</strong> を選択すると、テーブルの
+<li data-bai-block="122"><strong>セッションリソースグリッド表示</strong>: セッションページとAdmin Sessionページ
+のセッションリストの上に、<strong>表示モード</strong>の切り替え（<strong>テーブル</strong> /
+<strong>グリッド</strong>）を追加します。<strong>グリッド</strong>を選択すると、テーブルの
 代わりにセッションごとにセルが1つずつ表示され、セルの色はそのセッションの
 リアルタイムのリソース使用率を表します。この切り替えは、本機能を有効に
 している間のみ表示されます。グリッド自体の操作については
 <a href="./sessions_all.html#session-list-view-and-refresh">セッションリストの表示</a>を参照してください。</li>
 </ul>
 <p><a id="logs-tab"></a></p>
-<h2 data-bai-block="122" id="user_settings-ログ">ログ<a class="hash-link" href="#user_settings-ログ" aria-label="Direct link to ログ">#</a></h2>
-<p data-bai-block="123">クライアント側で記録されたさまざまなログの詳細情報を表示します。このページを
+<h2 data-bai-block="123" id="user_settings-ログ">ログ<a class="hash-link" href="#user_settings-ログ" aria-label="Direct link to ログ">#</a></h2>
+<p data-bai-block="124">クライアント側で記録されたさまざまなログの詳細情報を表示します。このページを
 訪れることで、発生したエラーについて詳しく知ることができます。エラーログの
 検索、フィルタリング、ログの更新、右上の<strong>ログをクリアする</strong>ボタンをクリックして
 のログクリアが可能です。</p>
-<p><figure data-bai-block="124" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 19.14</figcaption></figure>
+<p><figure data-bai-block="125" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 19.14</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="125" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="126" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="126">1つのページにしかログインしていない場合、<strong>更新</strong>ボタンをクリックしても正しく
+<p data-bai-block="127">1つのページにしかログインしていない場合、<strong>更新</strong>ボタンをクリックしても正しく
 機能していないように見えるかもしれません。ログページはサーバーへのリクエストと
 サーバーからのレスポンスの集まりです。現在のページがログページである場合、
 ページを明示的にリフレッシュする以外にサーバーへのリクエストは送信されません。
@@ -565,162 +576,162 @@ Backend.AIセッションにアクセスできます。</p>
 </div></div>
 
 
-<p data-bai-block="127">特定の列を非表示にしたり表示したりしたい場合は、テーブルの右下にある歯車
+<p data-bai-block="128">特定の列を非表示にしたり表示したりしたい場合は、テーブルの右下にある歯車
 アイコンをクリックしてください。表示したい列を選択するダイアログが表示
 されます。</p>
-<p><figure data-bai-block="128" class="doc-figure"><img src="./images/logs_table_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="486" /><figcaption>図 19.15</figcaption></figure>
+<p><figure data-bai-block="129" class="doc-figure"><img src="./images/logs_table_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="486" /><figcaption>図 19.15</figcaption></figure>
 </p>
 <p><a id="login-sessions-tab"></a></p>
-<h2 data-bai-block="129" id="user_settings-ログインセッション">ログインセッション<a class="hash-link" href="#user_settings-ログインセッション" aria-label="Direct link to ログインセッション">#</a></h2>
-<p data-bai-block="130">ログインセッションカテゴリには、現在アカウントに関連付けられているログイン
+<h2 data-bai-block="130" id="user_settings-ログインセッション">ログインセッション<a class="hash-link" href="#user_settings-ログインセッション" aria-label="Direct link to ログインセッション">#</a></h2>
+<p data-bai-block="131">ログインセッションカテゴリには、現在アカウントに関連付けられているログイン
 セッションが一覧表示されます。Backend.AIにサインインしている場所ごとに1件の
 項目が表示されるため、アカウントがどこで使用されているかを確認したり、不要に
 なったセッションをサインアウトさせたりできます。</p>
-<p><figure data-bai-block="131" class="doc-figure"><img src="./images/login_sessions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 19.16</figcaption></figure>
+<p><figure data-bai-block="132" class="doc-figure"><img src="./images/login_sessions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 19.16</figcaption></figure>
 </p>
-<p data-bai-block="132">テーブルには次の列が含まれます:</p>
+<p data-bai-block="133">テーブルには次の列が含まれます:</p>
 <ul>
-<li data-bai-block="133"><strong>ユーザー</strong>: そのログインセッションを所有するアカウントのメールアドレスです。</li>
-<li data-bai-block="134"><strong>アクセスキー</strong>: ログインセッションが認証に使用するアクセスキーです。コピー
+<li data-bai-block="134"><strong>ユーザー</strong>: そのログインセッションを所有するアカウントのメールアドレスです。</li>
+<li data-bai-block="135"><strong>アクセスキー</strong>: ログインセッションが認証に使用するアクセスキーです。コピー
 アイコンをクリックするとコピーできます。</li>
-<li data-bai-block="135"><strong>作成日</strong>: ログインセッションが作成された日時です。列ヘッダーをクリックすると
+<li data-bai-block="136"><strong>作成日</strong>: ログインセッションが作成された日時です。列ヘッダーをクリックすると
 この列で並べ替えできます。</li>
 </ul>
-<h3 data-bai-block="136" id="user_settings-ログインセッションのフィルタリング">ログインセッションのフィルタリング<a class="hash-link" href="#user_settings-ログインセッションのフィルタリング" aria-label="Direct link to ログインセッションのフィルタリング">#</a></h3>
-<p data-bai-block="137">テーブル上部のフィルターを使用して、一覧を絞り込むことができます:</p>
+<h3 data-bai-block="137" id="user_settings-ログインセッションのフィルタリング">ログインセッションのフィルタリング<a class="hash-link" href="#user_settings-ログインセッションのフィルタリング" aria-label="Direct link to ログインセッションのフィルタリング">#</a></h3>
+<p data-bai-block="138">テーブル上部のフィルターを使用して、一覧を絞り込むことができます:</p>
 <ul>
-<li data-bai-block="138"><strong>アクセスキー</strong>: 入力した文字列をアクセスキーに含むログインセッションのみを
+<li data-bai-block="139"><strong>アクセスキー</strong>: 入力した文字列をアクセスキーに含むログインセッションのみを
 表示します。</li>
-<li data-bai-block="139"><strong>作成日</strong>: 選択した日時より後（または前）に作成されたログインセッションのみを
+<li data-bai-block="140"><strong>作成日</strong>: 選択した日時より後（または前）に作成されたログインセッションのみを
 表示します。</li>
 </ul>
-<p data-bai-block="140">テーブル下部のページネーションコントロールを使用して、ページ間を移動したり、
+<p data-bai-block="141">テーブル下部のページネーションコントロールを使用して、ページ間を移動したり、
 1ページに表示する行数を変更したりできます。</p>
-<h3 data-bai-block="141" id="user_settings-ログインセッションの無効化">ログインセッションの無効化<a class="hash-link" href="#user_settings-ログインセッションの無効化" aria-label="Direct link to ログインセッションの無効化">#</a></h3>
-<p data-bai-block="142">各行には、<strong>ユーザー</strong>列のメールアドレスの横に<strong>セッションを無効化</strong>の操作が
+<h3 data-bai-block="142" id="user_settings-ログインセッションの無効化">ログインセッションの無効化<a class="hash-link" href="#user_settings-ログインセッションの無効化" aria-label="Direct link to ログインセッションの無効化">#</a></h3>
+<p data-bai-block="143">各行には、<strong>ユーザー</strong>列のメールアドレスの横に<strong>セッションを無効化</strong>の操作が
 用意されています。</p>
 <ol>
-<li data-bai-block="143">終了したい行の<strong>セッションを無効化</strong>をクリックします</li>
-<li data-bai-block="144">そのログインセッションのアクセスキーが表示された確認プロンプトを確認します</li>
-<li data-bai-block="145"><strong>無効化</strong>をクリックします</li>
+<li data-bai-block="144">終了したい行の<strong>セッションを無効化</strong>をクリックします</li>
+<li data-bai-block="145">そのログインセッションのアクセスキーが表示された確認プロンプトを確認します</li>
+<li data-bai-block="146"><strong>無効化</strong>をクリックします</li>
 </ol>
-<p data-bai-block="146">一覧が再読み込みされ、*「ログインセッションを無効化しました。」<em>というメッセージが
+<p data-bai-block="147">一覧が再読み込みされ、*「ログインセッションを無効化しました。」<em>というメッセージが
 表示されます。ログインセッションを無効化できない場合は、</em>「ログインセッションの
 無効化に失敗しました。」*と表示されます。</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="147" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div data-bai-block="148" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
 <div class="admonition-content">
 
-<p data-bai-block="148">ログインセッションを無効化すると、そのセッションはただちにサインアウトされます。
+<p data-bai-block="149">ログインセッションを無効化すると、そのセッションはただちにサインアウトされます。
 現在使用しているログインセッションを無効化した場合は、再度ログインする必要が
 あります。</p>
 </div></div>
 
 
 <p><a id="login-history-tab"></a></p>
-<h2 data-bai-block="149" id="user_settings-ログイン履歴">ログイン履歴<a class="hash-link" href="#user_settings-ログイン履歴" aria-label="Direct link to ログイン履歴">#</a></h2>
-<p data-bai-block="150">ログイン履歴カテゴリには、アカウントについて記録されたログイン試行が表示されます。
+<h2 data-bai-block="150" id="user_settings-ログイン履歴">ログイン履歴<a class="hash-link" href="#user_settings-ログイン履歴" aria-label="Direct link to ログイン履歴">#</a></h2>
+<p data-bai-block="151">ログイン履歴カテゴリには、アカウントについて記録されたログイン試行が表示されます。
 サインインの成功や失敗に加えて、ログアウトや期限切れなどのログインセッションに
 関するイベントも表示されます。このカテゴリは閲覧専用で、行に対する操作はありません。</p>
-<p><figure data-bai-block="151" class="doc-figure"><img src="./images/login_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 19.17</figcaption></figure>
+<p><figure data-bai-block="152" class="doc-figure"><img src="./images/login_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 19.17</figcaption></figure>
 </p>
-<p data-bai-block="152">テーブルには次の列が含まれます:</p>
+<p data-bai-block="153">テーブルには次の列が含まれます:</p>
 <ul>
-<li data-bai-block="153"><strong>結果</strong>: ログイン試行の結果で、色分けされたタグとして表示されます。この列で
+<li data-bai-block="154"><strong>結果</strong>: ログイン試行の結果で、色分けされたタグとして表示されます。この列で
 並べ替えできます。</li>
-<li data-bai-block="154"><strong>ドメイン</strong>: ログインを試みたドメインです。この列で並べ替えできます。</li>
-<li data-bai-block="155"><strong>ログイン日時</strong>: ログイン試行が記録された日時です。この列で並べ替えできます。</li>
-<li data-bai-block="156"><strong>失敗の理由</strong>: 失敗した試行について追加で報告された詳細です。該当する内容が
+<li data-bai-block="155"><strong>ドメイン</strong>: ログインを試みたドメインです。この列で並べ替えできます。</li>
+<li data-bai-block="156"><strong>ログイン日時</strong>: ログイン試行が記録された日時です。この列で並べ替えできます。</li>
+<li data-bai-block="157"><strong>失敗の理由</strong>: 失敗した試行について追加で報告された詳細です。該当する内容が
 ない場合は<code>-</code>と表示されます。</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="157" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="158" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="158">結果の値はサーバーが報告したまま（例: <code>SUCCESS</code>、
+<p data-bai-block="159">結果の値はサーバーが報告したまま（例: <code>SUCCESS</code>、
 <code>FAILED_INVALID_CREDENTIALS</code>）表示され、翻訳されません。</p>
 </div></div>
 
 
-<h3 data-bai-block="159" id="user_settings-結果の値">結果の値<a class="hash-link" href="#user_settings-結果の値" aria-label="Direct link to 結果の値">#</a></h3>
+<h3 data-bai-block="160" id="user_settings-結果の値">結果の値<a class="hash-link" href="#user_settings-結果の値" aria-label="Direct link to 結果の値">#</a></h3>
 <table>
 <thead>
-<tr data-bai-block="160">
+<tr data-bai-block="161">
 <th>結果</th>
 <th>色</th>
 <th>意味</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="161">
+<tbody><tr data-bai-block="162">
 <td>SUCCESS</td>
 <td>緑</td>
 <td>サインインに成功しました</td>
 </tr>
-<tr data-bai-block="162">
+<tr data-bai-block="163">
 <td>FAILED_INVALID_CREDENTIALS</td>
 <td>赤</td>
 <td>メールアドレスまたはパスワードが誤っています</td>
 </tr>
-<tr data-bai-block="163">
+<tr data-bai-block="164">
 <td>FAILED_USER_INACTIVE</td>
 <td>赤</td>
 <td>アカウントが有効ではありません</td>
 </tr>
-<tr data-bai-block="164">
+<tr data-bai-block="165">
 <td>FAILED_BLOCKED</td>
 <td>赤</td>
 <td>サインインがブロックされました</td>
 </tr>
-<tr data-bai-block="165">
+<tr data-bai-block="166">
 <td>FAILED_PASSWORD_EXPIRED</td>
 <td>赤</td>
 <td>アカウントのパスワードが期限切れです</td>
 </tr>
-<tr data-bai-block="166">
+<tr data-bai-block="167">
 <td>FAILED_REJECTED_BY_HOOK</td>
 <td>赤</td>
 <td>サーバー側のフックによってサインインが拒否されました</td>
 </tr>
-<tr data-bai-block="167">
+<tr data-bai-block="168">
 <td>FAILED_SESSION_ALREADY_EXISTS</td>
 <td>赤</td>
 <td>そのアカウントのログインセッションがすでに存在します</td>
 </tr>
-<tr data-bai-block="168">
+<tr data-bai-block="169">
 <td>LOGOUT</td>
 <td>グレー</td>
 <td>サインアウトによりログインセッションが終了しました</td>
 </tr>
-<tr data-bai-block="169">
+<tr data-bai-block="170">
 <td>REVOKED_BY_ADMIN</td>
 <td>黄</td>
 <td>管理者がログインセッションを無効化しました</td>
 </tr>
-<tr data-bai-block="170">
+<tr data-bai-block="171">
 <td>REVOKED_BY_USER</td>
 <td>グレー</td>
 <td>ユーザー自身がログインセッションを無効化しました</td>
 </tr>
-<tr data-bai-block="171">
+<tr data-bai-block="172">
 <td>EVICTED</td>
 <td>黄</td>
 <td>サーバーがログインセッションを解除しました</td>
 </tr>
-<tr data-bai-block="172">
+<tr data-bai-block="173">
 <td>EXPIRED</td>
 <td>グレー</td>
 <td>ログインセッションが期限切れになりました</td>
 </tr>
 </tbody></table>
-<h3 data-bai-block="173" id="user_settings-ログイン履歴のフィルタリング">ログイン履歴のフィルタリング<a class="hash-link" href="#user_settings-ログイン履歴のフィルタリング" aria-label="Direct link to ログイン履歴のフィルタリング">#</a></h3>
-<p data-bai-block="174">テーブル上部のフィルターを使用して、一覧を絞り込むことができます:</p>
+<h3 data-bai-block="174" id="user_settings-ログイン履歴のフィルタリング">ログイン履歴のフィルタリング<a class="hash-link" href="#user_settings-ログイン履歴のフィルタリング" aria-label="Direct link to ログイン履歴のフィルタリング">#</a></h3>
+<p data-bai-block="175">テーブル上部のフィルターを使用して、一覧を絞り込むことができます:</p>
 <ul>
-<li data-bai-block="175"><strong>結果</strong>: 上記の結果の値から選択した結果の項目のみを表示します。</li>
-<li data-bai-block="176"><strong>ドメイン</strong>: 入力した文字列をドメインに含む項目のみを表示します。</li>
-<li data-bai-block="177"><strong>ログイン日時</strong>: 選択した日時より後（または前）に記録された項目のみを
+<li data-bai-block="176"><strong>結果</strong>: 上記の結果の値から選択した結果の項目のみを表示します。</li>
+<li data-bai-block="177"><strong>ドメイン</strong>: 入力した文字列をドメインに含む項目のみを表示します。</li>
+<li data-bai-block="178"><strong>ログイン日時</strong>: 選択した日時より後（または前）に記録された項目のみを
 表示します。</li>
 </ul>
-<p data-bai-block="178">テーブル下部のページネーションコントロールを使用して、ページ間を移動したり、
+<p data-bai-block="179">テーブル下部のページネーションコントロールを使用して、ページ間を移動したり、
 1ページに表示する行数を変更したりできます。</p>
 
 </section>

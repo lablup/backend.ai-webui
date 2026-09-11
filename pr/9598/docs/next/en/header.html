@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a1c61c7)">v26.9.0-alpha.0 (a1c61c7)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e34216f)">v26.9.0-alpha.0 (e34216f)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -264,133 +264,167 @@ extension and it has been enabled in the system configuration.</p>
 </div></div>
 
 
+<p><a id="search"></a></p>
+<h2 data-bai-block="18" id="header-search">Search<a class="hash-link" href="#header-search" aria-label="Direct link to Search">#</a></h2>
+<p data-bai-block="19">The magnifier button opens the search palette, which lets you jump to any page,
+page tab, or setting item without leaving the keyboard.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div class="admonition-content">
+
+<p data-bai-block="21">The search palette is an experimental feature and is turned off by default. The
+<strong>Search</strong> button appears in the top bar, and its shortcut works, only while the
+<strong>Command palette</strong> item under <strong>Experimental features</strong> on the User Settings
+page is enabled.</p>
+</div></div>
+
+
+<p data-bai-block="22">Click the button, or press <code>Ctrl-K</code> (<code>Cmd-K</code> on macOS), to open the palette. The
+shortcut works even while the cursor is in an input field.</p>
+<p><figure data-bai-block="23" class="doc-figure"><img src="./images/global_search_palette.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="960" /><figcaption>Figure 6.3</figcaption></figure>
+</p>
+<p data-bai-block="24">Type in the search field, whose placeholder reads <code>Search pages, tabs, and settings</code>, to look up pages, page tabs, and setting items at once. A result that
+matched the description of an item rather than its name shows a <code>Found in ...</code>
+line naming where the word was found, and a result that belongs to the
+administration menus carries an <code>Administration</code> or <code>Project administration</code>
+tag. When nothing matches what you typed, <code>No results</code> is shown.</p>
+<p data-bai-block="25">The palette also offers quick actions in three groups.</p>
+<ul>
+<li data-bai-block="26"><code>Create</code>: Start a new session, create a storage folder, or create a deployment.</li>
+<li data-bai-block="27"><code>Appearance</code>: Switch to dark or light mode, use the system theme, or change the
+UI language.</li>
+<li data-bai-block="28"><code>Panels &amp; help</code>: Open user settings, open notifications, toggle the sidebar, or
+open the manual for the current page.</li>
+</ul>
+<p data-bai-block="29">Before you type anything, the results you opened most recently are listed at the
+top under <code>Recent</code>.</p>
 <p><a id="notification"></a></p>
-<h2 data-bai-block="18" id="header-notification">Notification<a class="hash-link" href="#header-notification" aria-label="Direct link to Notification">#</a></h2>
-<p data-bai-block="19">The bell shape button is the event notification button.
+<h2 data-bai-block="30" id="header-notification">Notification<a class="hash-link" href="#header-notification" aria-label="Direct link to Notification">#</a></h2>
+<p data-bai-block="31">The bell shape button is the event notification button.
 Events that need to be recorded during WebUI operation are displayed here.
 When background tasks are running, such as creating a compute session,
 you can check the jobs here.
 Press the shortcut key (<code>]</code>) to open and close the notification area.</p>
-<p><figure data-bai-block="20" class="doc-figure"><img src="./images/notification_collapse.png" alt="" class="doc-image" loading="lazy" decoding="async" width="280" height="900" /><figcaption>Figure 6.3</figcaption></figure>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/notification_collapse.png" alt="" class="doc-image" loading="lazy" decoding="async" width="280" height="900" /><figcaption>Figure 6.4</figcaption></figure>
 </p>
 <p><a id="theme-mode"></a></p>
-<h2 data-bai-block="21" id="header-display-mode">Display mode<a class="hash-link" href="#header-display-mode" aria-label="Direct link to Display mode">#</a></h2>
-<p data-bai-block="22">You can change the display mode of the WebUI via the light/dark mode button.</p>
-<p><figure data-bai-block="23" class="doc-figure"><img src="./images/theme_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="6910" height="4072" /><figcaption>Figure 6.4</figcaption></figure>
+<h2 data-bai-block="33" id="header-display-mode">Display mode<a class="hash-link" href="#header-display-mode" aria-label="Direct link to Display mode">#</a></h2>
+<p data-bai-block="34">You can change the display mode of the WebUI via the light/dark mode button.</p>
+<p><figure data-bai-block="35" class="doc-figure"><img src="./images/theme_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="6910" height="4072" /><figcaption>Figure 6.5</figcaption></figure>
 </p>
 <p><a id="help"></a></p>
-<h2 data-bai-block="24" id="header-help">Help<a class="hash-link" href="#header-help" aria-label="Direct link to Help">#</a></h2>
-<p data-bai-block="25">Click the question mark button to access the web version of this guide document.
+<h2 data-bai-block="36" id="header-help">Help<a class="hash-link" href="#header-help" aria-label="Direct link to Help">#</a></h2>
+<p data-bai-block="37">Click the question mark button to access the web version of this guide document.
 The link is built to match the WebUI you are using.</p>
 <p><a id="responsive-layout"></a></p>
-<h2 data-bai-block="26" id="header-responsive-layout">Responsive layout<a class="hash-link" href="#header-responsive-layout" aria-label="Direct link to Responsive layout">#</a></h2>
-<p data-bai-block="27">On smaller screens, the top bar adjusts its layout for better usability. When
+<h2 data-bai-block="38" id="header-responsive-layout">Responsive layout<a class="hash-link" href="#header-responsive-layout" aria-label="Direct link to Responsive layout">#</a></h2>
+<p data-bai-block="39">On smaller screens, the top bar adjusts its layout for better usability. When
 the screen width is narrow, the sidebar toggle is replaced with a menu icon
 button in the top bar. The user&#39;s display name may also be hidden, showing only
 the avatar icon for the user menu. The project label text is hidden on very
 small screens.</p>
 <p><a id="user-menu"></a></p>
-<h2 data-bai-block="28" id="header-user-menu">User menu<a class="hash-link" href="#header-user-menu" aria-label="Direct link to User menu">#</a></h2>
-<p data-bai-block="29">Click the user icon on the right side of the top bar to see the user menu.</p>
-<p><figure data-bai-block="30" class="doc-figure"><img src="./images/user_drop_down.png" alt="" class="doc-image" loading="lazy" decoding="async" width="354" height="628" /><figcaption>Figure 6.5</figcaption></figure>
+<h2 data-bai-block="40" id="header-user-menu">User menu<a class="hash-link" href="#header-user-menu" aria-label="Direct link to User menu">#</a></h2>
+<p data-bai-block="41">Click the user icon on the right side of the top bar to see the user menu.</p>
+<p><figure data-bai-block="42" class="doc-figure"><img src="./images/user_drop_down.png" alt="" class="doc-image" loading="lazy" decoding="async" width="354" height="628" /><figcaption>Figure 6.6</figcaption></figure>
 </p>
-<p data-bai-block="31">At the top of the dropdown, the following user information is displayed for
+<p data-bai-block="43">At the top of the dropdown, the following user information is displayed for
 reference. These items are not clickable.</p>
 <ul>
-<li data-bai-block="32"><strong>Full name</strong>: The current user&#39;s full name.</li>
-<li data-bai-block="33"><strong>Email</strong>: The current user&#39;s email address.</li>
-<li data-bai-block="34"><strong>Role</strong>: The current user&#39;s role (e.g., user, superadmin).</li>
+<li data-bai-block="44"><strong>Full name</strong>: The current user&#39;s full name.</li>
+<li data-bai-block="45"><strong>Email</strong>: The current user&#39;s email address.</li>
+<li data-bai-block="46"><strong>Role</strong>: The current user&#39;s role (e.g., user, superadmin).</li>
 </ul>
-<p data-bai-block="35">Below the user information, the following action items are available.</p>
+<p data-bai-block="47">Below the user information, the following action items are available.</p>
 <ul>
-<li data-bai-block="36"><code>About Backend.AI</code>: Displays information such as the version of Backend.AI WebUI,
+<li data-bai-block="48"><code>About Backend.AI</code>: Displays information such as the version of Backend.AI WebUI,
 license type, etc.</li>
-<li data-bai-block="37"><code>My Account</code>: Check and update information of the current logged-in user.</li>
-<li data-bai-block="38"><code>Preferences</code>: Open the User Settings dialog over the current page. It has a
+<li data-bai-block="49"><code>My Account</code>: Check and update information of the current logged-in user.</li>
+<li data-bai-block="50"><code>Preferences</code>: Open the User Settings dialog over the current page. It has a
 <strong>Logs</strong> category where you can check the log and error history recorded on
 the client side.</li>
-<li data-bai-block="39"><code>Downloads</code>: Open the Downloads dialog, where you can get the stand-alone
+<li data-bai-block="51"><code>Downloads</code>: Open the Downloads dialog, where you can get the stand-alone
 WebUI desktop app and the Backend.AI command-line interface (CLI). This option
 is only visible when the administrator has enabled at least one of the two.</li>
-<li data-bai-block="40"><code>Log Out</code>: Log out of the WebUI.</li>
+<li data-bai-block="52"><code>Log Out</code>: Log out of the WebUI.</li>
 </ul>
 <p><a id="my-account"></a></p>
-<h3 data-bai-block="41" id="header-my-account">My account<a class="hash-link" href="#header-my-account" aria-label="Direct link to My account">#</a></h3>
-<p data-bai-block="42">If you click <code>My Account</code>, the My Account Information dialog appears.</p>
-<p><figure data-bai-block="43" class="doc-figure"><img src="./images/my_account_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="514" /><figcaption>Figure 6.6</figcaption></figure>
+<h3 data-bai-block="53" id="header-my-account">My account<a class="hash-link" href="#header-my-account" aria-label="Direct link to My account">#</a></h3>
+<p data-bai-block="54">If you click <code>My Account</code>, the My Account Information dialog appears.</p>
+<p><figure data-bai-block="55" class="doc-figure"><img src="./images/my_account_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="514" /><figcaption>Figure 6.7</figcaption></figure>
 </p>
-<p data-bai-block="44">Each item has the following meaning. Enter the desired value and click the
+<p data-bai-block="56">Each item has the following meaning. Enter the desired value and click the
 <code>Update</code> button to update your information.</p>
 <ul>
-<li data-bai-block="45"><strong>Full Name</strong>: User&#39;s name (up to 64 characters).</li>
-<li data-bai-block="46"><strong>New password</strong>: New password (8 characters or more containing at least 1
+<li data-bai-block="57"><strong>Full Name</strong>: User&#39;s name (up to 64 characters).</li>
+<li data-bai-block="58"><strong>New password</strong>: New password (8 characters or more containing at least 1
 alphabet, number, and symbol). Click the eye icon to reveal the input.</li>
-<li data-bai-block="47"><strong>New password (again)</strong>: Re-enter the new password for confirmation.</li>
-<li data-bai-block="48"><strong>Allowed client IPs</strong>: Restrict login access to specific IP addresses or CIDR
+<li data-bai-block="59"><strong>New password (again)</strong>: Re-enter the new password for confirmation.</li>
+<li data-bai-block="60"><strong>Allowed client IPs</strong>: Restrict login access to specific IP addresses or CIDR
 ranges. Enter one or more IP addresses or CIDR notations (e.g.,
 <code>10.20.30.40</code>, <code>10.20.30.0/24</code>). Below the field, your current client IP
 address is displayed with a copy button for convenience. If the configured
 list does not include your current IP, a warning is shown.</li>
-<li data-bai-block="49"><strong>2FA Enabled</strong>: Enable or disable two-factor authentication. When enabled,
+<li data-bai-block="61"><strong>2FA Enabled</strong>: Enable or disable two-factor authentication. When enabled,
 you must enter an OTP code at login.</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="50" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="62" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="51">Depending on the plugin settings, the <code>2FA Enabled</code> field might not be visible.
+<p data-bai-block="63">Depending on the plugin settings, the <code>2FA Enabled</code> field might not be visible.
 In that case, please contact the administrator of your system.</p>
 </div></div>
 
 
 <p><a id="2fa-setup"></a></p>
-<h3 data-bai-block="52" id="header-2fa-setup">2FA setup<a class="hash-link" href="#header-2fa-setup" aria-label="Direct link to 2FA setup">#</a></h3>
-<p data-bai-block="53">If you activate the <code>2FA Enabled</code> switch, the following dialog appears.</p>
-<p><figure data-bai-block="54" class="doc-figure"><img src="./images/2fa_setup.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1124" /><figcaption>Figure 6.7</figcaption></figure>
+<h3 data-bai-block="64" id="header-2fa-setup">2FA setup<a class="hash-link" href="#header-2fa-setup" aria-label="Direct link to 2FA setup">#</a></h3>
+<p data-bai-block="65">If you activate the <code>2FA Enabled</code> switch, the following dialog appears.</p>
+<p><figure data-bai-block="66" class="doc-figure"><img src="./images/2fa_setup.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1124" /><figcaption>Figure 6.8</figcaption></figure>
 </p>
-<p data-bai-block="55">Turn on the 2FA application you use and scan the QR code or manually enter the verification
+<p data-bai-block="67">Turn on the 2FA application you use and scan the QR code or manually enter the verification
 code. There are many 2FA-enabled applications, such as Google Authenticator, 2STP, 1Password,
 and Bitwarden.</p>
-<p data-bai-block="56">Then enter the 6-digit code from the item added to your 2FA application into the dialog above.
+<p data-bai-block="68">Then enter the 6-digit code from the item added to your 2FA application into the dialog above.
 2FA is activated when you press the <code>OK</code> button.</p>
-<p data-bai-block="57">When you log in later, if you enter an email and password, an additional field appears asking
+<p data-bai-block="69">When you log in later, if you enter an email and password, an additional field appears asking
 for the OTP code.</p>
-<p><figure data-bai-block="58" class="doc-figure"><img src="./images/ask_otp_when_login.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2560" height="1300" /><figcaption>Figure 6.8</figcaption></figure>
+<p><figure data-bai-block="70" class="doc-figure"><img src="./images/ask_otp_when_login.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2560" height="1300" /><figcaption>Figure 6.9</figcaption></figure>
 </p>
-<p data-bai-block="59">To log in, you must open the 2FA application and enter a 6-digit code in the One-time password field.</p>
-<p><figure data-bai-block="60" class="doc-figure"><img src="./images/remove_2fa.png" alt="" class="doc-image" loading="lazy" decoding="async" width="816" height="320" /><figcaption>Figure 6.9</figcaption></figure>
+<p data-bai-block="71">To log in, you must open the 2FA application and enter a 6-digit code in the One-time password field.</p>
+<p><figure data-bai-block="72" class="doc-figure"><img src="./images/remove_2fa.png" alt="" class="doc-image" loading="lazy" decoding="async" width="816" height="320" /><figcaption>Figure 6.10</figcaption></figure>
 </p>
-<p data-bai-block="61">If you want to disable 2FA, turn off the <code>2FA Enabled</code> switch and click the confirm button in the
+<p data-bai-block="73">If you want to disable 2FA, turn off the <code>2FA Enabled</code> switch and click the confirm button in the
 following dialog.</p>
 <p><a id="downloads"></a></p>
-<h3 data-bai-block="62" id="header-downloads">Downloads<a class="hash-link" href="#header-downloads" aria-label="Direct link to Downloads">#</a></h3>
-<p data-bai-block="63">Selecting <code>Downloads</code> opens a dialog with one tab for each download the
+<h3 data-bai-block="74" id="header-downloads">Downloads<a class="hash-link" href="#header-downloads" aria-label="Direct link to Downloads">#</a></h3>
+<p data-bai-block="75">Selecting <code>Downloads</code> opens a dialog with one tab for each download the
 administrator has enabled: <code>Desktop App</code> and <code>CLI</code>.</p>
-<p><figure data-bai-block="64" class="doc-figure"><img src="./images/downloads_desktop_app_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="412" /><figcaption>Figure 6.10</figcaption></figure>
+<p><figure data-bai-block="76" class="doc-figure"><img src="./images/downloads_desktop_app_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="412" /><figcaption>Figure 6.11</figcaption></figure>
 </p>
-<p data-bai-block="65">On the <code>Desktop App</code> tab, select your operating system in the <strong>OS</strong> field, then
+<p data-bai-block="77">On the <code>Desktop App</code> tab, select your operating system in the <strong>OS</strong> field, then
 click the button for your CPU architecture to start the download. The
 stand-alone app gives you the same WebUI outside a browser.</p>
-<p><figure data-bai-block="66" class="doc-figure"><img src="./images/downloads_cli_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1940" /><figcaption>Figure 6.11</figcaption></figure>
+<p><figure data-bai-block="78" class="doc-figure"><img src="./images/downloads_cli_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1940" /><figcaption>Figure 6.12</figcaption></figure>
 </p>
-<p data-bai-block="67">The <code>CLI</code> tab offers two ways to start using the command-line client:</p>
+<p data-bai-block="79">The <code>CLI</code> tab offers two ways to start using the command-line client:</p>
 <ul>
-<li data-bai-block="68"><strong>Download standalone executable</strong>: Select your operating system, then click
+<li data-bai-block="80"><strong>Download standalone executable</strong>: Select your operating system, then click
 the button for your CPU architecture. Linux and macOS builds are offered.
 After downloading, run the commands shown below the buttons to make the file
 executable and, optionally, install it as <code>backend.ai</code> on your <code>PATH</code>. On
 macOS, the dialog instead shows how to clear the quarantine flag first,
 because the build is not signed yet.</li>
-<li data-bai-block="69"><strong>Install via pip</strong>: A ready-to-run snippet that creates a Python virtual
+<li data-bai-block="81"><strong>Install via pip</strong>: A ready-to-run snippet that creates a Python virtual
 environment, installs the client version matching the server you are connected
 to, and sets the environment variables the client needs. Use the copy button at
 the top right of the snippet to copy the whole block.</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="70" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="82" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="71">The snippet fills in the endpoint of your current session, but never your
+<p data-bai-block="83">The snippet fills in the endpoint of your current session, but never your
 credentials. Replace <code>&lt;your-access-key&gt;</code> and <code>&lt;your-secret-key&gt;</code> with your own
 keypair before running it. The snippet also pins Python 3.13, which the client
 requires.</p>
@@ -423,6 +457,7 @@ requires.</p>
   <ul class="doc-toc__list">
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-project-selector" data-toc-target="header-project-selector">Project selector</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-login-session-timer" data-toc-target="header-login-session-timer">Login session timer</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-search" data-toc-target="header-search">Search</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-notification" data-toc-target="header-notification">Notification</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-display-mode" data-toc-target="header-display-mode">Display mode</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-help" data-toc-target="header-help">Help</a></li>

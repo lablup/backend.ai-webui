@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a1c61c7)">v26.9.0-alpha.0 (a1c61c7)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e34216f)">v26.9.0-alpha.0 (e34216f)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -462,13 +462,14 @@ into the confirmation field before the delete is allowed.</p>
 <p data-bai-block="96">When using the WebUI app, you can create SSH/SFTP connections directly to a
 compute session. Once you sign up for Backend.AI, a public keypair is
 provided. If you click the button on the right of the SSH Keypair Management
-section, the following dialog appears. Click the copy button on the right to
-copy the existing SSH public key. You can update the SSH keypair by clicking
-the <code>Generate</code> button at the bottom of the dialog. SSH public/private keys are
-randomly generated and stored as user information. Please note that the secret
-key cannot be checked again unless it is saved manually immediately after
+section, the following dialog appears. The existing SSH public key is shown
+under the <strong>Current public key</strong> label; click the copy button next to the
+label to copy it. You can update the SSH keypair by clicking the <code>Generate</code>
+button at the bottom of the dialog. SSH public/private keys are randomly
+generated and stored as user information. Please note that the secret key
+cannot be checked again unless it is saved manually immediately after
 creation.</p>
-<p><figure data-bai-block="97" class="doc-figure"><img src="./images/ssh_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1056" height="1042" /><figcaption>Figure 19.8</figcaption></figure>
+<p><figure data-bai-block="97" class="doc-figure"><img src="./images/ssh_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1056" height="692" /><figcaption>Figure 19.8</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="98" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -485,9 +486,14 @@ such as accessing a private repository. To add your own SSH keypair, click the
 and <strong>Private Key</strong>.</p>
 <p><figure data-bai-block="101" class="doc-figure"><img src="./images/add_ssh_keypair_manually_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1054" height="1042" /><figcaption>Figure 19.9</figcaption></figure>
 </p>
-<p data-bai-block="102">Enter the keys and click the <code>Save</code> button. You can now access your Backend.AI
-session using your own key.</p>
-<p><figure data-bai-block="103" class="doc-figure"><img src="./images/ssh_keypair_dialog_after.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1058" height="1042" /><figcaption>Figure 19.10</figcaption></figure>
+<p data-bai-block="102">Enter the keys and click the <code>Save</code> button. When the keypair is registered
+successfully, the message <em>&quot;SSH Keypair has been successfully registered.&quot;</em> is
+displayed, the dialog closes, and you can access your Backend.AI session using
+your own key. If the server rejects the keypair -- for example when a key is
+malformed or the public and private keys do not match -- the dialog stays open
+and shows the error message returned by the server, so you can correct the
+keys and save again.</p>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/ssh_keypair_dialog_after.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1056" height="692" /><figcaption>Figure 19.10</figcaption></figure>
 </p>
 <h3 data-bai-block="104" id="user_settings-max-concurrent-file-upload-limit">Max concurrent file upload limit<a class="hash-link" href="#user_settings-max-concurrent-file-upload-limit" aria-label="Direct link to Max concurrent file upload limit">#</a></h3>
 <p data-bai-block="105">Limits the number of files that can be uploaded simultaneously through the
@@ -540,11 +546,18 @@ condition you define. The panels appear only while this feature is enabled;
 turning it off later hides them without deleting them, and turning it back
 on restores them exactly as they were. See
 <a href="./dashboard.html#dashboard-custom-panels">Custom Panels</a> for how to add and manage them.</li>
-<li data-bai-block="120"><strong>Import from Hugging Face</strong>: Adds an <strong>Import Hugging Face Model</strong> tab to the
+<li data-bai-block="120"><strong>Command palette</strong>: Adds a <strong>Search</strong> button to the header and the <code>Ctrl+K</code>
+(<code>⌘K</code> on macOS) shortcut, both of which open a palette for searching pages,
+page tabs, and setting items. The palette also offers quick actions such as
+switching between dark and light mode, changing the UI language, opening
+notifications, toggling the sidebar, and opening the manual for the current
+page. The button and the shortcut are available only while this feature is
+enabled. See <a href="./header.html#search">Search</a> for details.</li>
+<li data-bai-block="121"><strong>Import from Hugging Face</strong>: Adds an <strong>Import Hugging Face Model</strong> tab to the
 <strong>Start From URL</strong> dialog on the Start page, so you can import a model from
 Hugging Face directly into a model folder. The tab appears only when model
 deployment is also available in your installation.</li>
-<li data-bai-block="121"><strong>Session resource grid view</strong>: Adds a <strong>View mode</strong> toggle -- <strong>Table</strong> or
+<li data-bai-block="122"><strong>Session resource grid view</strong>: Adds a <strong>View mode</strong> toggle -- <strong>Table</strong> or
 <strong>Grid</strong> -- above the session list on the Sessions page and on the Admin
 Session page. <strong>Grid</strong> replaces the table with one cell per session, colored
 by the session&#39;s live resource utilization. The toggle appears only while
@@ -552,18 +565,18 @@ this feature is enabled; for the grid&#39;s own controls, see
 <a href="./sessions_all.html#session-list-view-and-refresh">Session List View</a>.</li>
 </ul>
 <p><a id="logs-tab"></a></p>
-<h2 data-bai-block="122" id="user_settings-logs">Logs<a class="hash-link" href="#user_settings-logs" aria-label="Direct link to Logs">#</a></h2>
-<p data-bai-block="123">Displays detailed information of various logs recorded on the client side. You
+<h2 data-bai-block="123" id="user_settings-logs">Logs<a class="hash-link" href="#user_settings-logs" aria-label="Direct link to Logs">#</a></h2>
+<p data-bai-block="124">Displays detailed information of various logs recorded on the client side. You
 can visit this page to find out more about errors that occurred.
 You can search and filter error logs, refresh the list, and clear all logs by
 clicking the <strong>Clear Logs</strong> button at the top right.</p>
-<p><figure data-bai-block="124" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.14</figcaption></figure>
+<p><figure data-bai-block="125" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.14</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="125" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="126" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="126">If you only have one page logged in, clicking the <strong>Refresh</strong> button may not
+<p data-bai-block="127">If you only have one page logged in, clicking the <strong>Refresh</strong> button may not
 seem to work properly. The Logs page is a collection of requests to the server
 and responses from the server. If the current page is the Logs page, it will
 not send any requests to the server except when explicitly refreshing the page.
@@ -572,165 +585,165 @@ the <strong>Refresh</strong> button.</p>
 </div></div>
 
 
-<p data-bai-block="127">If you want to hide or show certain columns, click the gear icon at the bottom
+<p data-bai-block="128">If you want to hide or show certain columns, click the gear icon at the bottom
 right of the table. A dialog will appear where you can select the columns you
 want to see.</p>
-<p><figure data-bai-block="128" class="doc-figure"><img src="./images/logs_table_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="484" /><figcaption>Figure 19.15</figcaption></figure>
+<p><figure data-bai-block="129" class="doc-figure"><img src="./images/logs_table_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="484" /><figcaption>Figure 19.15</figcaption></figure>
 </p>
 <p><a id="login-sessions-tab"></a></p>
-<h2 data-bai-block="129" id="user_settings-login-sessions">Login Sessions<a class="hash-link" href="#user_settings-login-sessions" aria-label="Direct link to Login Sessions">#</a></h2>
-<p data-bai-block="130">The Login Sessions category lists the login sessions currently associated with your
+<h2 data-bai-block="130" id="user_settings-login-sessions">Login Sessions<a class="hash-link" href="#user_settings-login-sessions" aria-label="Direct link to Login Sessions">#</a></h2>
+<p data-bai-block="131">The Login Sessions category lists the login sessions currently associated with your
 account — one entry for every place where you are signed in to Backend.AI. Use
 it to review where your account is in use and to sign out a session you no
 longer need.</p>
-<p><figure data-bai-block="131" class="doc-figure"><img src="./images/login_sessions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.16</figcaption></figure>
+<p><figure data-bai-block="132" class="doc-figure"><img src="./images/login_sessions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.16</figcaption></figure>
 </p>
-<p data-bai-block="132">The table includes the following columns:</p>
+<p data-bai-block="133">The table includes the following columns:</p>
 <ul>
-<li data-bai-block="133"><strong>User</strong>: The email address of the account that owns the login session.</li>
-<li data-bai-block="134"><strong>Access Key</strong>: The access key the login session authenticates with. Click the
+<li data-bai-block="134"><strong>User</strong>: The email address of the account that owns the login session.</li>
+<li data-bai-block="135"><strong>Access Key</strong>: The access key the login session authenticates with. Click the
 copy icon to copy it.</li>
-<li data-bai-block="135"><strong>Created At</strong>: When the login session was created. Click the column header to
+<li data-bai-block="136"><strong>Created At</strong>: When the login session was created. Click the column header to
 sort by this column.</li>
 </ul>
-<h3 data-bai-block="136" id="user_settings-filtering-login-sessions">Filtering login sessions<a class="hash-link" href="#user_settings-filtering-login-sessions" aria-label="Direct link to Filtering login sessions">#</a></h3>
-<p data-bai-block="137">Use the filter above the table to narrow down the list:</p>
+<h3 data-bai-block="137" id="user_settings-filtering-login-sessions">Filtering login sessions<a class="hash-link" href="#user_settings-filtering-login-sessions" aria-label="Direct link to Filtering login sessions">#</a></h3>
+<p data-bai-block="138">Use the filter above the table to narrow down the list:</p>
 <ul>
-<li data-bai-block="138"><strong>Access Key</strong>: Shows only the login sessions whose access key contains the
+<li data-bai-block="139"><strong>Access Key</strong>: Shows only the login sessions whose access key contains the
 text you enter.</li>
-<li data-bai-block="139"><strong>Created At</strong>: Shows only the login sessions created after (or before) the
+<li data-bai-block="140"><strong>Created At</strong>: Shows only the login sessions created after (or before) the
 date and time you select.</li>
 </ul>
-<p data-bai-block="140">Use the pagination controls below the table to move between pages and to change
+<p data-bai-block="141">Use the pagination controls below the table to move between pages and to change
 how many rows are shown per page.</p>
-<h3 data-bai-block="141" id="user_settings-revoking-a-login-session">Revoking a login session<a class="hash-link" href="#user_settings-revoking-a-login-session" aria-label="Direct link to Revoking a login session">#</a></h3>
-<p data-bai-block="142">Each row provides a <strong>Revoke Session</strong> action next to the email address in the
+<h3 data-bai-block="142" id="user_settings-revoking-a-login-session">Revoking a login session<a class="hash-link" href="#user_settings-revoking-a-login-session" aria-label="Direct link to Revoking a login session">#</a></h3>
+<p data-bai-block="143">Each row provides a <strong>Revoke Session</strong> action next to the email address in the
 <strong>User</strong> column.</p>
 <ol>
-<li data-bai-block="143">Click <strong>Revoke Session</strong> on the row you want to end</li>
-<li data-bai-block="144">Check the confirmation prompt, which shows the access key of that login
+<li data-bai-block="144">Click <strong>Revoke Session</strong> on the row you want to end</li>
+<li data-bai-block="145">Check the confirmation prompt, which shows the access key of that login
 session</li>
-<li data-bai-block="145">Click <strong>Revoke</strong></li>
+<li data-bai-block="146">Click <strong>Revoke</strong></li>
 </ol>
-<p data-bai-block="146">The list reloads and the message <em>&quot;Login session revoked.&quot;</em> is displayed. If the
+<p data-bai-block="147">The list reloads and the message <em>&quot;Login session revoked.&quot;</em> is displayed. If the
 login session cannot be revoked, <em>&quot;Failed to revoke login session.&quot;</em> is shown
 instead.</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="147" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="148" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="148">Revoking a login session signs it out immediately. If you revoke the login
+<p data-bai-block="149">Revoking a login session signs it out immediately. If you revoke the login
 session you are currently using, you have to log in again.</p>
 </div></div>
 
 
 <p><a id="login-history-tab"></a></p>
-<h2 data-bai-block="149" id="user_settings-login-history">Login History<a class="hash-link" href="#user_settings-login-history" aria-label="Direct link to Login History">#</a></h2>
-<p data-bai-block="150">The Login History category shows the login attempts recorded for your account —
+<h2 data-bai-block="150" id="user_settings-login-history">Login History<a class="hash-link" href="#user_settings-login-history" aria-label="Direct link to Login History">#</a></h2>
+<p data-bai-block="151">The Login History category shows the login attempts recorded for your account —
 successful sign-ins, failed attempts, and login session events such as logout or
 expiry. This category is read-only; there are no actions on the rows.</p>
-<p><figure data-bai-block="151" class="doc-figure"><img src="./images/login_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.17</figcaption></figure>
+<p><figure data-bai-block="152" class="doc-figure"><img src="./images/login_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.17</figcaption></figure>
 </p>
-<p data-bai-block="152">The table includes the following columns:</p>
+<p data-bai-block="153">The table includes the following columns:</p>
 <ul>
-<li data-bai-block="153"><strong>Result</strong>: The outcome of the login attempt, shown as a color-coded tag. You
+<li data-bai-block="154"><strong>Result</strong>: The outcome of the login attempt, shown as a color-coded tag. You
 can sort by this column.</li>
-<li data-bai-block="154"><strong>Domain</strong>: The domain the login attempt was made against. You can sort by
+<li data-bai-block="155"><strong>Domain</strong>: The domain the login attempt was made against. You can sort by
 this column.</li>
-<li data-bai-block="155"><strong>Login Time</strong>: When the login attempt was recorded. You can sort by this
+<li data-bai-block="156"><strong>Login Time</strong>: When the login attempt was recorded. You can sort by this
 column.</li>
-<li data-bai-block="156"><strong>Failure Reason</strong>: Additional detail reported for a failed attempt. Shows <code>-</code>
+<li data-bai-block="157"><strong>Failure Reason</strong>: Additional detail reported for a failed attempt. Shows <code>-</code>
 when there is none.</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="157" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="158" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="158">Result values are shown exactly as the server reports them (for example,
+<p data-bai-block="159">Result values are shown exactly as the server reports them (for example,
 <code>SUCCESS</code> or <code>FAILED_INVALID_CREDENTIALS</code>) and are not translated.</p>
 </div></div>
 
 
-<h3 data-bai-block="159" id="user_settings-result-values">Result values<a class="hash-link" href="#user_settings-result-values" aria-label="Direct link to Result values">#</a></h3>
+<h3 data-bai-block="160" id="user_settings-result-values">Result values<a class="hash-link" href="#user_settings-result-values" aria-label="Direct link to Result values">#</a></h3>
 <table>
 <thead>
-<tr data-bai-block="160">
+<tr data-bai-block="161">
 <th>Result</th>
 <th>Color</th>
 <th>Meaning</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="161">
+<tbody><tr data-bai-block="162">
 <td>SUCCESS</td>
 <td>Green</td>
 <td>The sign-in succeeded</td>
 </tr>
-<tr data-bai-block="162">
+<tr data-bai-block="163">
 <td>FAILED_INVALID_CREDENTIALS</td>
 <td>Red</td>
 <td>The email address or password was wrong</td>
 </tr>
-<tr data-bai-block="163">
+<tr data-bai-block="164">
 <td>FAILED_USER_INACTIVE</td>
 <td>Red</td>
 <td>The account is not active</td>
 </tr>
-<tr data-bai-block="164">
+<tr data-bai-block="165">
 <td>FAILED_BLOCKED</td>
 <td>Red</td>
 <td>The sign-in was blocked</td>
 </tr>
-<tr data-bai-block="165">
+<tr data-bai-block="166">
 <td>FAILED_PASSWORD_EXPIRED</td>
 <td>Red</td>
 <td>The account password has expired</td>
 </tr>
-<tr data-bai-block="166">
+<tr data-bai-block="167">
 <td>FAILED_REJECTED_BY_HOOK</td>
 <td>Red</td>
 <td>The sign-in was rejected by a server-side hook</td>
 </tr>
-<tr data-bai-block="167">
+<tr data-bai-block="168">
 <td>FAILED_SESSION_ALREADY_EXISTS</td>
 <td>Red</td>
 <td>A login session already exists for the account</td>
 </tr>
-<tr data-bai-block="168">
+<tr data-bai-block="169">
 <td>LOGOUT</td>
 <td>Gray</td>
 <td>The login session was ended by signing out</td>
 </tr>
-<tr data-bai-block="169">
+<tr data-bai-block="170">
 <td>REVOKED_BY_ADMIN</td>
 <td>Yellow</td>
 <td>An administrator revoked the login session</td>
 </tr>
-<tr data-bai-block="170">
+<tr data-bai-block="171">
 <td>REVOKED_BY_USER</td>
 <td>Gray</td>
 <td>You revoked the login session yourself</td>
 </tr>
-<tr data-bai-block="171">
+<tr data-bai-block="172">
 <td>EVICTED</td>
 <td>Yellow</td>
 <td>The server evicted the login session</td>
 </tr>
-<tr data-bai-block="172">
+<tr data-bai-block="173">
 <td>EXPIRED</td>
 <td>Gray</td>
 <td>The login session expired</td>
 </tr>
 </tbody></table>
-<h3 data-bai-block="173" id="user_settings-filtering-login-history">Filtering login history<a class="hash-link" href="#user_settings-filtering-login-history" aria-label="Direct link to Filtering login history">#</a></h3>
-<p data-bai-block="174">Use the filter above the table to narrow down the list:</p>
+<h3 data-bai-block="174" id="user_settings-filtering-login-history">Filtering login history<a class="hash-link" href="#user_settings-filtering-login-history" aria-label="Direct link to Filtering login history">#</a></h3>
+<p data-bai-block="175">Use the filter above the table to narrow down the list:</p>
 <ul>
-<li data-bai-block="175"><strong>Result</strong>: Shows only the entries with the result you select from the list of
+<li data-bai-block="176"><strong>Result</strong>: Shows only the entries with the result you select from the list of
 values above.</li>
-<li data-bai-block="176"><strong>Domain</strong>: Shows only the entries whose domain contains the text you enter.</li>
-<li data-bai-block="177"><strong>Login Time</strong>: Shows only the entries recorded after (or before) the date and
+<li data-bai-block="177"><strong>Domain</strong>: Shows only the entries whose domain contains the text you enter.</li>
+<li data-bai-block="178"><strong>Login Time</strong>: Shows only the entries recorded after (or before) the date and
 time you select.</li>
 </ul>
-<p data-bai-block="178">Use the pagination controls below the table to move between pages and to change
+<p data-bai-block="179">Use the pagination controls below the table to move between pages and to change
 how many rows are shown per page.</p>
 
 </section>

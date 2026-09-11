@@ -106,6 +106,25 @@
   pointer-events: none;
 }
 
+/* commented: the same badge in the accent colour; both states share it */
+.bai-pr-preview [data-bai-change].bai-commented::after {
+  content: "✎ comment";
+  position: absolute;
+  top: -12px;
+  right: -6px;
+  font: 600 10px/1 system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: var(--bai-focus);
+  padding: 2px 6px;
+  border-radius: 999px;
+  pointer-events: none;
+}
+.bai-pr-preview [data-bai-change].bai-viewed.bai-commented::after {
+  content: "✓ viewed · ✎ comment";
+  background: var(--bai-focus);
+}
+
 /* ---------- marks hidden ---------- */
 .bai-marks-off [data-bai-change] {
   background: none !important;
@@ -113,7 +132,8 @@
   outline: none !important;
   cursor: auto;
 }
-.bai-marks-off [data-bai-change].bai-viewed::after { content: none; }
+.bai-marks-off [data-bai-change].bai-viewed::after,
+.bai-marks-off [data-bai-change].bai-commented::after { content: none; }
 .bai-marks-off .bai-removed-placeholder { display: none !important; }
 
 /* Marks are reachable by Tab, so the focus ring must beat `marks off`. */
@@ -209,6 +229,31 @@
   user-select: none;
 }
 .bai-popover__viewed input { margin: 0; accent-color: var(--bai-add); }
+.bai-popover__comment { padding: 8px 12px 0; }
+.bai-popover__comment textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 28px;
+  max-height: 160px;
+  resize: none;
+  overflow-y: auto;
+  border: 1px solid var(--bai-pop-border);
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 4px 8px;
+}
+.bai-popover__comment textarea::placeholder { opacity: 0.55; }
+.bai-popover__comment textarea:not(:placeholder-shown) { border-color: var(--bai-focus); }
+.bai-popover__comment textarea:focus {
+  outline: none;
+  border-color: var(--bai-focus);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
 .bai-popover__where {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   margin-right: 10px;
@@ -344,6 +389,24 @@
   color: #fff;
   border-color: var(--bai-focus);
 }
+.bai-nav__badge button.bai-nav__comments {
+  width: auto;
+  padding: 0 10px;
+  font-size: 12px;
+  white-space: nowrap;
+  border-color: var(--bai-focus);
+  color: var(--bai-focus);
+}
+.bai-nav__badge button.bai-nav__comments:hover {
+  background: var(--bai-focus);
+  color: #fff;
+}
+.bai-nav__badge button.bai-nav__comments[hidden] { display: none; }
+.bai-nav__badge button.bai-nav__comments.bai-copied {
+  background: var(--bai-add);
+  border-color: var(--bai-add);
+  color: #fff;
+}
 .bai-nav__pos {
   min-width: 5.5em;
   text-align: center;
@@ -398,6 +461,7 @@ a.bai-nav__row:hover { background: var(--bai-row-hover); }
   font-variant-numeric: tabular-nums;
 }
 .bai-nav__count--done { background: var(--bai-add); color: #fff; }
+.bai-nav__count--note { background: var(--bai-focus); color: #fff; }
 .bai-nav__actions {
   display: flex;
   gap: 6px;

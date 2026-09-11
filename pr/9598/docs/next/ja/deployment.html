@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="デプロイ" />
   <meta name="twitter:description" content="Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"デプロイ","inLanguage":"ja","description":"Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。","dateModified":"2026-09-09T03:11:29.000Z","url":"https://webui.docs.backend.ai/next/ja/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"デプロイ","inLanguage":"ja","description":"Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。","dateModified":"2026-09-10T06:37:15.000Z","url":"https://webui.docs.backend.ai/next/ja/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a1c61c7)">v26.9.0-alpha.0 (a1c61c7)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e34216f)">v26.9.0-alpha.0 (e34216f)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -293,7 +293,7 @@
 <ul>
 <li data-bai-block="58"><strong>モデルフォルダー</strong>: 各レプリカにマウントするモデルストレージフォルダーです。</li>
 <li data-bai-block="59"><strong>モデルフォルダーのマウント先</strong>: コンテナ内でモデルストレージフォルダーがマウントされるパスです（デフォルト: <code>/models</code>）。</li>
-<li data-bai-block="60"><strong>サブパス</strong>: フォルダーのルートの代わりにマウントする、モデルフォルダー内のサブフォルダーです。未設定のままにするとフォルダーのルートがマウントされます。</li>
+<li data-bai-block="60"><strong>サブパス</strong>: フォルダーのルートの代わりにマウントする、モデルフォルダー内のサブフォルダーです。フィールドをクリックするとディレクトリピッカーが開き、選択したモデルフォルダーのディレクトリツリーからサブフォルダーを選びます。未設定のままにするとフォルダーのルートがマウントされます。</li>
 </ul>
 <p><a id="service-configuration"></a></p>
 <h4 data-bai-block="61" id="deployment-サービス構成custom-ランタイムのみ">サービス構成（Custom ランタイムのみ）<a class="hash-link" href="#deployment-サービス構成custom-ランタイムのみ" aria-label="Direct link to サービス構成（Custom ランタイムのみ）">#</a></h4>
@@ -822,230 +822,230 @@
 <li data-bai-block="328">メトリックソース（Metric Source）、コンディション（Condition）、クールダウン秒（Cooldown Sec.）、ステップサイズ（Step Size）、min / max レプリカ（Min / Max Replicas）、作成された時間（Created At）、最後にトリガーされました（Last Triggered）の列。ステップサイズ列は、設定されたしきい値から導出される方向に基づいて <code>+</code>、<code>−</code>、<code>±</code> を自動的に表示します。</li>
 <li data-bai-block="329">各行のコンディションサマリーの横に表示される行ごとの編集および削除アイコン。</li>
 </ul>
-<p data-bai-block="330"><code>ルールを追加します</code> ボタンをクリックすると、<strong>自動スケーリングルールを追加します</strong> エディターが開きます。既存のルールを変更するには、その行の編集アイコンをクリックします。ルールの値が事前に入力された状態で <strong>自動スケーリングルールを編集します</strong> エディターが開きます。エディターには次のフィールドが順番に含まれます：</p>
+<p data-bai-block="330"><code>ルールを追加します</code> ボタンをクリックすると、<strong>自動スケーリングルールを追加します</strong> エディターが開きます。</p>
+<p data-bai-block="331">既存のルールを変更するには、その行の編集アイコンをクリックします。ルールの値が事前に入力された状態で <strong>自動スケーリングルールを編集します</strong> エディターが開きます。エディターには次のフィールドが順番に含まれます：</p>
 <ul>
-<li data-bai-block="331"><p><strong>メトリックソース（Metric Source）</strong>: <code>Kernel</code> または <code>Prometheus</code> を選択します。</p>
+<li data-bai-block="332"><p><strong>メトリックソース（Metric Source）</strong>: <code>Kernel</code> または <code>Prometheus</code> を選択します。</p>
 </li>
-<li data-bai-block="332"><p><strong>メトリック名（Metric Name）</strong>: <code>Kernel</code> の場合、メトリック名を入力します。<code>cpu_util</code>、<code>mem</code>、<code>net_rx</code>、<code>net_tx</code> などの一般的なメトリックがオートコンプリートの候補として提案され、カスタム名を自由に入力することもできます。</p>
+<li data-bai-block="333"><p><strong>メトリック名（Metric Name）</strong>: <code>Kernel</code> の場合、メトリック名を入力します。<code>cpu_util</code>、<code>mem</code>、<code>net_rx</code>、<code>net_tx</code> などの一般的なメトリックがオートコンプリートの候補として提案され、カスタム名を自由に入力することもできます。</p>
 </li>
-<li data-bai-block="333"><p><strong>メトリック名プリセット（Metric Name (Prometheus Preset)）</strong>: メトリックソースが <code>Prometheus</code> の場合のみ表示されます。ドロップダウンからプリセットを選択すると、プリセットのメトリック名、クエリテンプレート、および（定義されている場合）クールダウン秒（Cooldown Sec.）が自動的に入力されます。</p>
+<li data-bai-block="334"><p><strong>メトリック名プリセット（Metric Name (Prometheus Preset)）</strong>: メトリックソースが <code>Prometheus</code> の場合のみ表示されます。ドロップダウンからプリセットを選択すると、プリセットのメトリック名、クエリテンプレート、および（定義されている場合）クールダウン秒（Cooldown Sec.）が自動的に入力されます。</p>
 </li>
-<li data-bai-block="334"><p><strong>コンディション（Condition）</strong>: スケーリング方向を選択するセグメントコントロールです。3 つのオプションがあります。</p>
+<li data-bai-block="335"><p><strong>コンディション（Condition）</strong>: スケーリング方向を選択するセグメントコントロールです。3 つのオプションがあります。</p>
 <ul>
-<li data-bai-block="335"><strong>スケールイン</strong>: メトリックがしきい値を下回るとレプリカを減らします。<code>Metric &lt; [しきい値]</code> の条件を設定します。</li>
-<li data-bai-block="336"><strong>スケールアウト</strong>: メトリックがしきい値を上回るとレプリカを増やします。<code>Metric &gt; [しきい値]</code> の条件を設定します。</li>
-<li data-bai-block="337"><strong>スケールイン＆アウト</strong>: メトリックが設定した範囲のどちら側を超えたかに応じて、自動的に縮小または拡張します。<code>Metric &lt; Min Threshold</code> または <code>Metric &gt; Max Threshold</code> の条件を設定します。</li>
+<li data-bai-block="336"><strong>スケールイン</strong>: メトリックがしきい値を下回るとレプリカを減らします。<code>Metric &lt; [しきい値]</code> の条件を設定します。</li>
+<li data-bai-block="337"><strong>スケールアウト</strong>: メトリックがしきい値を上回るとレプリカを増やします。<code>Metric &gt; [しきい値]</code> の条件を設定します。</li>
+<li data-bai-block="338"><strong>スケールイン＆アウト</strong>: メトリックが設定した範囲のどちら側を超えたかに応じて、自動的に縮小または拡張します。<code>Metric &lt; Min Threshold</code> または <code>Metric &gt; Max Threshold</code> の条件を設定します。</li>
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="338" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>図 12.23</figcaption></figure>
+<p><figure data-bai-block="339" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>図 12.23</figcaption></figure>
 </p>
 <ul>
-<li data-bai-block="339"><p><strong>ステップサイズ（Step Size）</strong>: スケーリングイベントごとに追加または削除するレプリカ数を指定する正の整数です。選択したコンディション（スケールイン / スケールアウト / スケールイン＆アウト）に応じて <code>-</code>、<code>+</code>、<code>±</code> の符号が自動的に表示されます。</p>
+<li data-bai-block="340"><p><strong>ステップサイズ（Step Size）</strong>: スケーリングイベントごとに追加または削除するレプリカ数を指定する正の整数です。選択したコンディション（スケールイン / スケールアウト / スケールイン＆アウト）に応じて <code>-</code>、<code>+</code>、<code>±</code> の符号が自動的に表示されます。</p>
 <ul>
-<li data-bai-block="340">最小しきい値のみ設定: <code>[metric] &lt; [minThreshold]</code> 条件になるとスケール<strong>イン</strong>（Scale In）されます（メトリックがしきい値を下回るとレプリカが減少します）。</li>
-<li data-bai-block="341">最大しきい値のみ設定: <code>[metric] &gt; [maxThreshold]</code> 条件になるとスケール<strong>アウト</strong>（Scale Out）されます（メトリックがしきい値を上回るとレプリカが増加します）。</li>
-<li data-bai-block="342">両方設定: <code>[metric] &lt; [minThreshold]</code> の場合はスケール <strong>イン</strong>、<code>[metric] &gt; [maxThreshold]</code> の場合はスケール <strong>アウト</strong> されます。</li>
+<li data-bai-block="341">最小しきい値のみ設定: <code>[metric] &lt; [minThreshold]</code> 条件になるとスケール<strong>イン</strong>（Scale In）されます（メトリックがしきい値を下回るとレプリカが減少します）。</li>
+<li data-bai-block="342">最大しきい値のみ設定: <code>[metric] &gt; [maxThreshold]</code> 条件になるとスケール<strong>アウト</strong>（Scale Out）されます（メトリックがしきい値を上回るとレプリカが増加します）。</li>
+<li data-bai-block="343">両方設定: <code>[metric] &lt; [minThreshold]</code> の場合はスケール <strong>イン</strong>、<code>[metric] &gt; [maxThreshold]</code> の場合はスケール <strong>アウト</strong> されます。</li>
 </ul>
 </li>
-<li data-bai-block="343"><p><strong>クールダウン秒（Cooldown Sec.）</strong>: スケーリングイベント後、次の評価まで待機する時間（秒単位）です。</p>
+<li data-bai-block="344"><p><strong>クールダウン秒（Cooldown Sec.）</strong>: スケーリングイベント後、次の評価まで待機する時間（秒単位）です。</p>
 </li>
-<li data-bai-block="344"><p><strong>最小レプリカ（Min Replicas）および最大レプリカ（Max Replicas）</strong>: 自動スケーリングがレプリカ数に対して強制する下限と上限です。自動スケーリングは、レプリカ数を最小レプリカより下げたり、最大レプリカより上げたりすることはありません。</p>
+<li data-bai-block="345"><p><strong>最小レプリカ（Min Replicas）および最大レプリカ（Max Replicas）</strong>: 自動スケーリングがレプリカ数に対して強制する下限と上限です。自動スケーリングは、レプリカ数を最小レプリカより下げたり、最大レプリカより上げたりすることはありません。</p>
 </li>
 </ul>
-<p><figure data-bai-block="345" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="814" /><figcaption>図 12.24</figcaption></figure>
+<p><figure data-bai-block="346" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="814" /><figcaption>図 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
-<h3 data-bai-block="346" id="deployment-トークンの生成">トークンの生成<a class="hash-link" href="#deployment-トークンの生成" aria-label="Direct link to トークンの生成">#</a></h3>
-<p data-bai-block="347">デプロイのステータスが <code>HEALTHY</code> になったら、デプロイ一覧で対応するデプロイ名をクリックしてデプロイ詳細ページを開きます。サービス情報カードで <strong>サービスエンドポイント</strong> URL を確認できます。<strong>公開</strong> が有効の場合、エンドユーザーはトークンなしでデプロイにアクセスできます。無効の場合は、以下の説明に従ってトークンを作成してください。</p>
-<p data-bai-block="348">アクセストークンは、デプロイ詳細ページ下部の <strong>アクセストークン</strong> カードで管理します。カードタイトル横の ⓘ アイコンにカーソルを合わせると、<em>「このデプロイメントのエンドポイントへの API リクエストを認証するためのアクセストークンを管理します。」</em> という説明が表示されます。</p>
-<p><figure data-bai-block="349" class="doc-figure"><img src="./images/generate_token.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="410" /><figcaption>図 12.25</figcaption></figure>
+<h3 data-bai-block="347" id="deployment-トークンの生成">トークンの生成<a class="hash-link" href="#deployment-トークンの生成" aria-label="Direct link to トークンの生成">#</a></h3>
+<p data-bai-block="348">デプロイのステータスが <code>HEALTHY</code> になったら、デプロイ一覧で対応するデプロイ名をクリックしてデプロイ詳細ページを開きます。サービス情報カードで <strong>サービスエンドポイント</strong> URL を確認できます。<strong>公開</strong> が有効の場合、エンドユーザーはトークンなしでデプロイにアクセスできます。無効の場合は、以下の説明に従ってトークンを作成してください。</p>
+<p data-bai-block="349">アクセストークンは、デプロイ詳細ページ下部の <strong>アクセストークン</strong> カードで管理します。カードタイトル横の ⓘ アイコンにカーソルを合わせると、<em>「このデプロイメントのエンドポイントへの API リクエストを認証するためのアクセストークンを管理します。」</em> という説明が表示されます。</p>
+<p><figure data-bai-block="350" class="doc-figure"><img src="./images/generate_token.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="410" /><figcaption>図 12.25</figcaption></figure>
 </p>
-<h4 data-bai-block="350" id="deployment-アクセストークンの作成">アクセストークンの作成<a class="hash-link" href="#deployment-アクセストークンの作成" aria-label="Direct link to アクセストークンの作成">#</a></h4>
+<h4 data-bai-block="351" id="deployment-アクセストークンの作成">アクセストークンの作成<a class="hash-link" href="#deployment-アクセストークンの作成" aria-label="Direct link to アクセストークンの作成">#</a></h4>
 <ol>
-<li data-bai-block="351">カードヘッダーの <code>アクセストークンを作成</code> ボタンをクリックします。ページ上部の <strong>非公開デプロイメント</strong> バナーにある <strong>アクセストークンを追加</strong> ボタンからも同じダイアログを開けます。</li>
-<li data-bai-block="352">トークンの <strong>有効期限</strong> を選択します。<ul>
-<li data-bai-block="353"><code>7日</code>、<code>30日</code>、<code>90日</code>: 現時点からその日数後に失効します。既定値は <code>7日</code> です。</li>
-<li data-bai-block="354"><strong>カスタム有効期限</strong>: 日時ピッカーが表示され、失効時点を直接指定できます。指定する時点は現在より未来である必要があります。</li>
-<li data-bai-block="355"><strong>有効期限なし</strong>: 有効期限を遠い未来の日付（<code>2099年12月31日</code>）に設定し、実質的に失効しないトークンを作成します。以降、トークンダイアログ、アクセストークン一覧、チャットのトークン選択欄には「有効期限なし」という文言ではなく、この日付が表示されます。</li>
+<li data-bai-block="352">カードヘッダーの <code>アクセストークンを作成</code> ボタンをクリックします。ページ上部の <strong>非公開デプロイメント</strong> バナーにある <strong>アクセストークンを追加</strong> ボタンからも同じダイアログを開けます。</li>
+<li data-bai-block="353">トークンの <strong>有効期限</strong> を選択します。<ul>
+<li data-bai-block="354"><code>7日</code>、<code>30日</code>、<code>90日</code>: 現時点からその日数後に失効します。既定値は <code>7日</code> です。</li>
+<li data-bai-block="355"><strong>カスタム有効期限</strong>: 日時ピッカーが表示され、失効時点を直接指定できます。指定する時点は現在より未来である必要があります。</li>
+<li data-bai-block="356"><strong>有効期限なし</strong>: 有効期限を遠い未来の日付（<code>2099年12月31日</code>）に設定し、実質的に失効しないトークンを作成します。以降、トークンダイアログ、アクセストークン一覧、チャットのトークン選択欄には「有効期限なし」という文言ではなく、この日付が表示されます。</li>
 </ul>
 </li>
-<li data-bai-block="356"><code>アクセストークンを作成</code> をクリックして発行します。</li>
+<li data-bai-block="357"><code>アクセストークンを作成</code> をクリックして発行します。</li>
 </ol>
-<p><figure data-bai-block="357" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>図 12.26</figcaption></figure>
+<p><figure data-bai-block="358" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>図 12.26</figcaption></figure>
 </p>
 <blockquote>
-<p data-bai-block="358">マネージャーがまだネットワークエンドポイントを発行していない間、<code>アクセストークンを作成</code> ボタンは無効になり、ツールチップに <em>「ネットワークエンドポイントはまだ発行されていません。」</em> と表示されます。自分が所有していないデプロイメントでは <em>「アクセストークンを管理できるのはデプロイのオーナーのみです。」</em>、停止中またはすでに稼働していないデプロイメントでは <em>「デプロイは停止中か、すでに稼働していません。」</em> と表示され、ボタンは無効になります。この 2 つの条件では、トークンの削除も無効になります。</p>
+<p data-bai-block="359">マネージャーがまだネットワークエンドポイントを発行していない間、<code>アクセストークンを作成</code> ボタンは無効になり、ツールチップに <em>「ネットワークエンドポイントはまだ発行されていません。」</em> と表示されます。自分が所有していないデプロイメントでは <em>「アクセストークンを管理できるのはデプロイのオーナーのみです。」</em>、停止中またはすでに稼働していないデプロイメントでは <em>「デプロイは停止中か、すでに稼働していません。」</em> と表示され、ボタンは無効になります。この 2 つの条件では、トークンの削除も無効になります。</p>
 </blockquote>
-<p data-bai-block="359">トークンが発行されると <strong>トークン</strong> ダイアログが開き、トークンの値とコピーボタン、選択した有効期限が一度だけ表示されます。このダイアログから、または後で一覧からトークンをコピーできます。</p>
-<h4 data-bai-block="360" id="deployment-アクセストークン一覧">アクセストークン一覧<a class="hash-link" href="#deployment-アクセストークン一覧" aria-label="Direct link to アクセストークン一覧">#</a></h4>
-<p data-bai-block="361">カードには、このデプロイメントに発行されたすべてのアクセストークンが新しい順に表示されます。</p>
+<p data-bai-block="360">トークンが発行されると <strong>トークン</strong> ダイアログが開き、トークンの値とコピーボタン、選択した有効期限が一度だけ表示されます。このダイアログから、または後で一覧からトークンをコピーできます。</p>
+<h4 data-bai-block="361" id="deployment-アクセストークン一覧">アクセストークン一覧<a class="hash-link" href="#deployment-アクセストークン一覧" aria-label="Direct link to アクセストークン一覧">#</a></h4>
+<p data-bai-block="362">カードには、このデプロイメントに発行されたすべてのアクセストークンが新しい順に表示されます。</p>
 <ul>
-<li data-bai-block="362"><strong>トークン</strong>: トークンの値です。省略表示され、コピーボタンが付いています。同じセルの削除アイコンからトークンを削除できます。</li>
-<li data-bai-block="363"><strong>作成日時</strong>: トークンが発行された日時です。</li>
-<li data-bai-block="364"><strong>有効期限</strong>: トークンが失効する日時です。<strong>有効期限なし</strong> で作成したトークンは <code>2099年12月31日</code> と表示されます。</li>
+<li data-bai-block="363"><strong>トークン</strong>: トークンの値です。省略表示され、コピーボタンが付いています。同じセルの削除アイコンからトークンを削除できます。</li>
+<li data-bai-block="364"><strong>作成日時</strong>: トークンが発行された日時です。</li>
+<li data-bai-block="365"><strong>有効期限</strong>: トークンが失効する日時です。<strong>有効期限なし</strong> で作成したトークンは <code>2099年12月31日</code> と表示されます。</li>
 </ul>
-<p><figure data-bai-block="365" class="doc-figure"><img src="./images/generated_token_copy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="384" /><figcaption>図 12.27</figcaption></figure>
+<p><figure data-bai-block="366" class="doc-figure"><img src="./images/generated_token_copy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="384" /><figcaption>図 12.27</figcaption></figure>
 </p>
-<p data-bai-block="366">トークンは <code>Authorization</code> リクエストヘッダーで送信します。</p>
+<p data-bai-block="367">トークンは <code>Authorization</code> リクエストヘッダーで送信します。</p>
 <table>
 <thead>
-<tr data-bai-block="367">
+<tr data-bai-block="368">
 <th>Key</th>
 <th>Value</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="368">
+<tbody><tr data-bai-block="369">
 <td>Content-Type</td>
 <td>application/json</td>
 </tr>
-<tr data-bai-block="369">
+<tr data-bai-block="370">
 <td>Authorization</td>
 <td>BackendAI <code>&lt;token&gt;</code></td>
 </tr>
 </tbody></table>
-<h4 data-bai-block="370" id="deployment-アクセストークンの削除">アクセストークンの削除<a class="hash-link" href="#deployment-アクセストークンの削除" aria-label="Direct link to アクセストークンの削除">#</a></h4>
-<p data-bai-block="371">トークン行の削除アイコンをクリックします。<strong>アクセストークンを削除</strong> ダイアログで確認のために <code>削除</code> と入力する必要があり、入力した値が一致するまで OK ボタンは無効のままです。</p>
+<h4 data-bai-block="371" id="deployment-アクセストークンの削除">アクセストークンの削除<a class="hash-link" href="#deployment-アクセストークンの削除" aria-label="Direct link to アクセストークンの削除">#</a></h4>
+<p data-bai-block="372">トークン行の削除アイコンをクリックします。<strong>アクセストークンを削除</strong> ダイアログで確認のために <code>削除</code> と入力する必要があり、入力した値が一致するまで OK ボタンは無効のままです。</p>
 <div class="admonition admonition-danger">
-<div data-bai-block="372" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>危険</div>
+<div data-bai-block="373" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>危険</div>
 <div class="admonition-content">
 
-<p data-bai-block="373">アクセストークンの削除は <strong>元に戻せず</strong>、即座に反映されます。そのトークンを使い続けているクライアントは認証に失敗するようになります。</p>
+<p data-bai-block="374">アクセストークンの削除は <strong>元に戻せず</strong>、即座に反映されます。そのトークンを使い続けているクライアントは認証に失敗するようになります。</p>
 </div></div>
 
 
-<h3 data-bai-block="374" id="deployment-デプロイの終了">デプロイの終了<a class="hash-link" href="#deployment-デプロイの終了" aria-label="Direct link to デプロイの終了">#</a></h3>
-<p data-bai-block="375">デプロイが不要になった場合は、終了することを推奨します。デプロイを終了するには、サービス情報カードの <strong>その他</strong> メニューを開き、<strong>デプロイを削除</strong> を選択します。入力確認モーダルが表示されるため、デプロイ名を入力すると <strong>完全に削除</strong> ボタンが有効になります。終了したデプロイは <strong>破壊された</strong> フィルタービューに表示されます。</p>
-<p><figure data-bai-block="376" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>図 12.28</figcaption></figure>
+<h3 data-bai-block="375" id="deployment-デプロイの終了">デプロイの終了<a class="hash-link" href="#deployment-デプロイの終了" aria-label="Direct link to デプロイの終了">#</a></h3>
+<p data-bai-block="376">デプロイが不要になった場合は、終了することを推奨します。デプロイを終了するには、サービス情報カードの <strong>その他</strong> メニューを開き、<strong>デプロイを削除</strong> を選択します。入力確認モーダルが表示されるため、デプロイ名を入力すると <strong>完全に削除</strong> ボタンが有効になります。終了したデプロイは <strong>破壊された</strong> フィルタービューに表示されます。</p>
+<p><figure data-bai-block="377" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>図 12.28</figcaption></figure>
 </p>
-<h2 data-bai-block="377" id="deployment-デプロイへのアクセス">デプロイへのアクセス<a class="hash-link" href="#deployment-デプロイへのアクセス" aria-label="Direct link to デプロイへのアクセス">#</a></h2>
-<p data-bai-block="378">デプロイへのアクセスを可能にするため、デプロイ URL をエンドユーザーと共有します。<strong>公開</strong> が有効の場合、デプロイ詳細ページの <strong>サービスエンドポイント</strong> URL をそのまま共有できます。非公開デプロイの場合は、URL とアクセストークンを併せて共有します。</p>
-<h3 data-bai-block="379" id="deployment-apiリクエストの送信">APIリクエストの送信<a class="hash-link" href="#deployment-apiリクエストの送信" aria-label="Direct link to APIリクエストの送信">#</a></h3>
-<p data-bai-block="380">以下は、デプロイへのリクエスト送信が正しく機能しているかどうかを確認する <code>curl</code> コマンドの簡単な例です：</p>
-<div data-bai-block="381" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> API_TOKEN</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;token>"</span></span>
+<h2 data-bai-block="378" id="deployment-デプロイへのアクセス">デプロイへのアクセス<a class="hash-link" href="#deployment-デプロイへのアクセス" aria-label="Direct link to デプロイへのアクセス">#</a></h2>
+<p data-bai-block="379">デプロイへのアクセスを可能にするため、デプロイ URL をエンドユーザーと共有します。<strong>公開</strong> が有効の場合、デプロイ詳細ページの <strong>サービスエンドポイント</strong> URL をそのまま共有できます。非公開デプロイの場合は、URL とアクセストークンを併せて共有します。</p>
+<h3 data-bai-block="380" id="deployment-apiリクエストの送信">APIリクエストの送信<a class="hash-link" href="#deployment-apiリクエストの送信" aria-label="Direct link to APIリクエストの送信">#</a></h3>
+<p data-bai-block="381">以下は、デプロイへのリクエスト送信が正しく機能しているかどうかを確認する <code>curl</code> コマンドの簡単な例です：</p>
+<div data-bai-block="382" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> API_TOKEN</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;token>"</span></span>
 <span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> MODEL_SERVICE_ENDPOINT</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;model-service-endpoint>"</span></span>
 <span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -H</span><span style="color:#9ECBFF"> "Content-Type: application/json"</span><span style="color:#79B8FF"> -X</span><span style="color:#9ECBFF"> GET</span><span style="color:#79B8FF">    -H</span><span style="color:#9ECBFF"> "Authorization: BackendAI </span><span style="color:#E1E4E8">$API_TOKEN</span><span style="color:#9ECBFF">"</span><span style="color:#9ECBFF">    "</span><span style="color:#E1E4E8">$MODEL_SERVICE_ENDPOINT</span><span style="color:#9ECBFF">"</span></span></code></pre></div>
 <div class="admonition admonition-warning">
-<div data-bai-block="382" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div data-bai-block="383" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
 <div class="admonition-content">
 
-<p data-bai-block="383">デフォルトでは、エンドユーザーはエンドポイントにアクセスできるネットワーク上にいる必要があります。
+<p data-bai-block="384">デフォルトでは、エンドユーザーはエンドポイントにアクセスできるネットワーク上にいる必要があります。
 サービスがクローズドネットワークで作成された場合、そのクローズドネットワーク内にアクセスできる
 エンドユーザーのみがサービスにアクセスできます。</p>
 </div></div>
 
 
-<h3 data-bai-block="384" id="deployment-llmチャットテスト">LLMチャットテスト<a class="hash-link" href="#deployment-llmチャットテスト" aria-label="Direct link to LLMチャットテスト">#</a></h3>
-<p data-bai-block="385">大規模言語モデル（LLM）サービスを作成した場合、リアルタイムでLLMをテストできます。
+<h3 data-bai-block="385" id="deployment-llmチャットテスト">LLMチャットテスト<a class="hash-link" href="#deployment-llmチャットテスト" aria-label="Direct link to LLMチャットテスト">#</a></h3>
+<p data-bai-block="386">大規模言語モデル（LLM）サービスを作成した場合、リアルタイムでLLMをテストできます。
 デプロイの準備が完了すると、デプロイ詳細ページ上部の <strong>デプロイの準備が完了しました</strong> バナーに <code>チャットでテスト</code> ボタンが表示されます。このボタンをクリックしてテストを開始します。</p>
-<p><figure data-bai-block="386" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="292" /><figcaption>図 12.29</figcaption></figure>
+<p><figure data-bai-block="387" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="292" /><figcaption>図 12.29</figcaption></figure>
 </p>
-<p data-bai-block="387">作成したモデルが自動的に選択されたChatページにリダイレクトされます。
+<p data-bai-block="388">作成したモデルが自動的に選択されたChatページにリダイレクトされます。
 Chatページで提供されるチャットインターフェースを使用して、LLMモデルをテストできます。
 チャット機能の詳細については、<a href="./chat.html#chat-page">Chatページ</a>を参照してください。</p>
-<p><figure data-bai-block="388" class="doc-figure"><img src="./images/LLM_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>図 12.30</figcaption></figure>
+<p><figure data-bai-block="389" class="doc-figure"><img src="./images/LLM_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>図 12.30</figcaption></figure>
 </p>
-<h4 data-bai-block="389" id="deployment-chat-ページでのトークン選択">Chat ページでのトークン選択<a class="hash-link" href="#deployment-chat-ページでのトークン選択" aria-label="Direct link to Chat ページでのトークン選択">#</a></h4>
-<p data-bai-block="390">Chat ページが Backend.AI のデプロイメントに接続している場合、トークン欄は単なるテキスト入力ではなく、そのデプロイメントのアクセストークン一覧を表示するセレクタになります。</p>
+<h4 data-bai-block="390" id="deployment-chat-ページでのトークン選択">Chat ページでのトークン選択<a class="hash-link" href="#deployment-chat-ページでのトークン選択" aria-label="Direct link to Chat ページでのトークン選択">#</a></h4>
+<p data-bai-block="391">Chat ページが Backend.AI のデプロイメントに接続している場合、トークン欄は単なるテキスト入力ではなく、そのデプロイメントのアクセストークン一覧を表示するセレクタになります。</p>
 <ul>
-<li data-bai-block="391">各選択肢にはトークンの <strong>末尾 6 文字</strong> がコードチップとして表示され、その横に有効期限（例: <code>~ 2026年8月26日</code>、<strong>有効期限なし</strong> で作成したトークンは <code>~ 2099年12月31日</code>）が表示されます。すべてのトークンは同じ JWT ヘッダーで始まるため、実際に区別できるのは末尾の部分です。選択肢にカーソルを合わせると、発行日時 → 有効期限の全体を確認できます。</li>
-<li data-bai-block="392"><strong>期限切れのトークンは表示されません。</strong> 有効なトークンのみが一覧に表示されます。</li>
-<li data-bai-block="393">欄が空の場合は、<strong>最後に作成された有効なトークン</strong> が自動的に選択されます。利用者が意図的に選択を解除した場合は、再び自動選択されることはありません。</li>
-<li data-bai-block="394">欄の横の歯車アイコン（<strong>アクセストークンの設定</strong>）をクリックすると、そのデプロイメントのアクセストークン領域が開き、作業を中断せずに新しいトークンを発行できます。戻ると一覧が再読み込みされるため、作成したばかりのトークンをすぐに選択できます。</li>
+<li data-bai-block="392">各選択肢にはトークンの <strong>末尾 6 文字</strong> がコードチップとして表示され、その横に有効期限（例: <code>~ 2026年8月26日</code>、<strong>有効期限なし</strong> で作成したトークンは <code>~ 2099年12月31日</code>）が表示されます。すべてのトークンは同じ JWT ヘッダーで始まるため、実際に区別できるのは末尾の部分です。選択肢にカーソルを合わせると、発行日時 → 有効期限の全体を確認できます。</li>
+<li data-bai-block="393"><strong>期限切れのトークンは表示されません。</strong> 有効なトークンのみが一覧に表示されます。</li>
+<li data-bai-block="394">欄が空の場合は、<strong>最後に作成された有効なトークン</strong> が自動的に選択されます。利用者が意図的に選択を解除した場合は、再び自動選択されることはありません。</li>
+<li data-bai-block="395">欄の横の歯車アイコン（<strong>アクセストークンの設定</strong>）をクリックすると、そのデプロイメントのアクセストークン領域が開き、作業を中断せずに新しいトークンを発行できます。戻ると一覧が再読み込みされるため、作成したばかりのトークンをすぐに選択できます。</li>
 </ul>
-<p data-bai-block="395">デプロイメントに有効なトークンが 1 つもない場合、セレクタは空になります。<a href="#generating-tokens">トークンの生成</a> を参照して先にトークンを作成してください。</p>
-<p><figure data-bai-block="396" class="doc-figure"><img src="./images/chat_deployment_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2184" height="454" /><figcaption>図 12.31</figcaption></figure>
+<p data-bai-block="396">デプロイメントに有効なトークンが 1 つもない場合、セレクタは空になります。<a href="#generating-tokens">トークンの生成</a> を参照して先にトークンを作成してください。</p>
+<p><figure data-bai-block="397" class="doc-figure"><img src="./images/chat_deployment_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2184" height="454" /><figcaption>図 12.31</figcaption></figure>
 </p>
-<p data-bai-block="397">API接続に問題が発生した場合、Chatページにモデル設定を手動で構成できるオプションが表示されます。
+<p data-bai-block="398">API接続に問題が発生した場合、Chatページにモデル設定を手動で構成できるオプションが表示されます。
 モデルを使用するには、以下の情報が必要です：</p>
 <ul>
-<li data-bai-block="398"><strong>ベースパス</strong>（オプション）: モデルが配置されているサーバーのベースURLです。
+<li data-bai-block="399"><strong>ベースパス</strong>（オプション）: モデルが配置されているサーバーのベースURLです。
 バージョン情報を含めてください。
 例えば、OpenAI APIを使用する場合は、<a href="https://api.openai.com/v1">https://api.openai.com/v1</a> を入力してください。</li>
-<li data-bai-block="399"><strong>トークン</strong>（オプション）: モデルサービスにアクセスするための認証キーです。トークンは
+<li data-bai-block="400"><strong>トークン</strong>（オプション）: モデルサービスにアクセスするための認証キーです。トークンは
 Backend.AIだけでなく、さまざまなサービスから生成できます。形式と生成プロセスは
 サービスによって異なる場合があります。詳細については、常に特定のサービスのガイドを参照してください。
 例えば、Backend.AIで生成されたサービスを使用する場合は、
 トークンの生成方法については<a href="#generating-tokens">トークンの生成</a>セクションを参照してください。</li>
 </ul>
-<p><figure data-bai-block="400" class="doc-figure"><img src="./images/LLM_chat_custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>図 12.32</figcaption></figure>
+<p><figure data-bai-block="401" class="doc-figure"><img src="./images/LLM_chat_custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>図 12.32</figcaption></figure>
 </p>
 <p><a id="model-store"></a></p>
-<h2 data-bai-block="401" id="deployment-モデルストア">モデルストア<a class="hash-link" href="#deployment-モデルストア" aria-label="Direct link to モデルストア">#</a></h2>
-<p data-bai-block="402">モデルストア（Model Store）は、事前構成されたモデルを閲覧、検索、デプロイできるカードベースのギャラリーを提供します。サイドバーメニューからモデルストアにアクセスできます。</p>
-<p><figure data-bai-block="403" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 12.33</figcaption></figure>
+<h2 data-bai-block="402" id="deployment-モデルストア">モデルストア<a class="hash-link" href="#deployment-モデルストア" aria-label="Direct link to モデルストア">#</a></h2>
+<p data-bai-block="403">モデルストア（Model Store）は、事前構成されたモデルを閲覧、検索、デプロイできるカードベースのギャラリーを提供します。サイドバーメニューからモデルストアにアクセスできます。</p>
+<p><figure data-bai-block="404" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 12.33</figcaption></figure>
 </p>
-<h3 data-bai-block="404" id="deployment-モデルの閲覧と検索">モデルの閲覧と検索<a class="hash-link" href="#deployment-モデルの閲覧と検索" aria-label="Direct link to モデルの閲覧と検索">#</a></h3>
-<p data-bai-block="405">ページ上部にはフィルターと並べ替えのレイアウトが使用されています：</p>
+<h3 data-bai-block="405" id="deployment-モデルの閲覧と検索">モデルの閲覧と検索<a class="hash-link" href="#deployment-モデルの閲覧と検索" aria-label="Direct link to モデルの閲覧と検索">#</a></h3>
+<p data-bai-block="406">ページ上部にはフィルターと並べ替えのレイアウトが使用されています：</p>
 <ul>
-<li data-bai-block="406"><p><strong>プロパティフィルターバー</strong>: 条件を 1 つ以上追加してカード一覧を絞り込みます。使用できるプロパティは 2 つです。</p>
+<li data-bai-block="407"><p><strong>プロパティフィルターバー</strong>: 条件を 1 つ以上追加してカード一覧を絞り込みます。使用できるプロパティは 2 つです。</p>
 <ul>
-<li data-bai-block="407"><strong>モデル名</strong>: 名前でモデルカードを検索します。</li>
-<li data-bai-block="408"><strong>ストレージホスト</strong>: モデルフォルダーが置かれているストレージホストでカードを絞り込みます。ホスト名を入力する代わりに、サーバに登録されたストレージホストのドロップダウンから選択します。選択した時点でフィルター条件として確定します。そのホストだけを表示するには <code>equals</code>、そのホストを除外するには <code>not equals</code> 演算子を使用します。</li>
+<li data-bai-block="408"><strong>モデル名</strong>: 名前でモデルカードを検索します。</li>
+<li data-bai-block="409"><strong>ストレージホスト</strong>: モデルフォルダーが置かれているストレージホストでカードを絞り込みます。ホスト名を入力する代わりに、サーバに登録されたストレージホストのドロップダウンから選択します。選択した時点でフィルター条件として確定します。そのホストだけを表示するには <code>equals</code>、そのホストを除外するには <code>not equals</code> 演算子を使用します。</li>
 </ul>
 </li>
-<li data-bai-block="409"><p><strong>並べ替え（Sort）</strong>: 結果の並び順を選択します。使用可能なオプションは、<code>名前 (A→Z)</code>、<code>名前 (Z→A)</code>、<code>古い順</code>、<code>新しい順</code> です。</p>
+<li data-bai-block="410"><p><strong>並べ替え（Sort）</strong>: 結果の並び順を選択します。使用可能なオプションは、<code>名前 (A→Z)</code>、<code>名前 (Z→A)</code>、<code>古い順</code>、<code>新しい順</code> です。</p>
 </li>
-<li data-bai-block="410"><p><strong>更新（Refresh）</strong>: 更新ボタンをクリックしてカード一覧を再読み込みします。</p>
+<li data-bai-block="411"><p><strong>更新（Refresh）</strong>: 更新ボタンをクリックしてカード一覧を再読み込みします。</p>
 <p> ホスト名を入力せずに一覧から選択するため、ホスト名の打ち間違いによって結果が空になることがありません。条件は <code>AND</code> で結合されるので、名前の条件とストレージホストの条件を組み合わせられます。</p>
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="411" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="412" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="412">モデル一覧は現在のドメインの MODEL_STORE プロジェクトに自動的にスコープされます。個別のドメインフィルターはありません。このページに表示されるすべてのカードは、すでにあなたのドメインに属しています。</p>
+<p data-bai-block="413">モデル一覧は現在のドメインの MODEL_STORE プロジェクトに自動的にスコープされます。個別のドメインフィルターはありません。このページに表示されるすべてのカードは、すでにあなたのドメインに属しています。</p>
 </div></div>
 
 
-<p data-bai-block="413">各カードには、モデルブランドのアイコン、タイトル（タイトルが設定されていない場合は名前）、タスクタグ、相対作成時刻、およびアイコン付きの著者（Author）が表示されます。現在のプロジェクトに<strong>互換性のあるプリセットがない</strong>カードは不透明度 50 % で表示されます。そのようなカードを開いて詳細を表示することは可能ですが、<code>デプロイ（Deploy）</code> ボタンは無効化され、ドロワーに <strong>互換性のあるプリセットがありません。このモデルはデプロイできません。</strong> というエラーアラートが表示されます。</p>
-<p data-bai-block="414">サーバーで <code>MODEL_STORE</code> プロジェクトが設定されていない場合、ページには管理者に問い合わせるようにとの案内とともに <em>モデルストアプロジェクトが見つかりません</em> というメッセージが表示されます。フィルターに一致するモデルカードがない場合は <em>モデルが見つかりません</em> と表示されます。</p>
-<p data-bai-block="415">一覧はページ下部でページネーションされます。ページサイズは <code>10</code>、<code>20</code>、<code>50</code> 件の中から変更できます。</p>
-<h3 data-bai-block="416" id="deployment-モデルカードの詳細">モデルカードの詳細<a class="hash-link" href="#deployment-モデルカードの詳細" aria-label="Direct link to モデルカードの詳細">#</a></h3>
-<p data-bai-block="417">カードをクリックすると、ページの右側にモデルカードのドロワーが開きます。ドロワーの上部にはモデルのタイトルと説明が表示され、次にタスク、カテゴリ、ラベル、ライセンスのタグが続き、その後に次の項目を含む詳細一覧が表示されます：</p>
+<p data-bai-block="414">各カードには、モデルブランドのアイコン、タイトル（タイトルが設定されていない場合は名前）、タスクタグ、相対作成時刻、およびアイコン付きの著者（Author）が表示されます。現在のプロジェクトに<strong>互換性のあるプリセットがない</strong>カードは不透明度 50 % で表示されます。そのようなカードを開いて詳細を表示することは可能ですが、<code>デプロイ（Deploy）</code> ボタンは無効化され、ドロワーに <strong>互換性のあるプリセットがありません。このモデルはデプロイできません。</strong> というエラーアラートが表示されます。</p>
+<p data-bai-block="415">サーバーで <code>MODEL_STORE</code> プロジェクトが設定されていない場合、ページには管理者に問い合わせるようにとの案内とともに <em>モデルストアプロジェクトが見つかりません</em> というメッセージが表示されます。フィルターに一致するモデルカードがない場合は <em>モデルが見つかりません</em> と表示されます。</p>
+<p data-bai-block="416">一覧はページ下部でページネーションされます。ページサイズは <code>10</code>、<code>20</code>、<code>50</code> 件の中から変更できます。</p>
+<h3 data-bai-block="417" id="deployment-モデルカードの詳細">モデルカードの詳細<a class="hash-link" href="#deployment-モデルカードの詳細" aria-label="Direct link to モデルカードの詳細">#</a></h3>
+<p data-bai-block="418">カードをクリックすると、ページの右側にモデルカードのドロワーが開きます。ドロワーの上部にはモデルのタイトルと説明が表示され、次にタスク、カテゴリ、ラベル、ライセンスのタグが続き、その後に次の項目を含む詳細一覧が表示されます：</p>
 <ul>
-<li data-bai-block="418"><strong>著者（Author）</strong></li>
-<li data-bai-block="419"><strong>アーキテクチャ（Architecture）</strong></li>
-<li data-bai-block="420"><strong>フレームワーク（Framework）</strong>（各フレームワークはアイコン付きで表示）</li>
-<li data-bai-block="421"><strong>バージョン（Version）</strong></li>
-<li data-bai-block="422"><strong>作成日時（Created）</strong> および <strong>最終更新日時（Last Modified）</strong> のタイムスタンプ</li>
-<li data-bai-block="423"><strong>モデルフォルダ（Model Folder）</strong>: モデルストレージフォルダのフォルダエクスプローラを開くクリック可能なリンク</li>
-<li data-bai-block="424"><strong>最小リソース（Min Resource）</strong>: 最小リソース要件（CPU、メモリ、GPU）</li>
+<li data-bai-block="419"><strong>著者（Author）</strong></li>
+<li data-bai-block="420"><strong>アーキテクチャ（Architecture）</strong></li>
+<li data-bai-block="421"><strong>フレームワーク（Framework）</strong>（各フレームワークはアイコン付きで表示）</li>
+<li data-bai-block="422"><strong>バージョン（Version）</strong></li>
+<li data-bai-block="423"><strong>作成日時（Created）</strong> および <strong>最終更新日時（Last Modified）</strong> のタイムスタンプ</li>
+<li data-bai-block="424"><strong>モデルフォルダ（Model Folder）</strong>: モデルストレージフォルダのフォルダエクスプローラを開くクリック可能なリンク</li>
+<li data-bai-block="425"><strong>最小リソース（Min Resource）</strong>: 最小リソース要件（CPU、メモリ、GPU）</li>
 </ul>
-<p data-bai-block="425">モデルカードに README が含まれている場合は、ドロワーの下部に <code>README.md</code> カードとしてレンダリングされます。</p>
-<p><figure data-bai-block="426" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>図 12.34</figcaption></figure>
+<p data-bai-block="426">モデルカードに README が含まれている場合は、ドロワーの下部に <code>README.md</code> カードとしてレンダリングされます。</p>
+<p><figure data-bai-block="427" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>図 12.34</figcaption></figure>
 </p>
-<h3 data-bai-block="427" id="deployment-モデルのデプロイ">モデルのデプロイ<a class="hash-link" href="#deployment-モデルのデプロイ" aria-label="Direct link to モデルのデプロイ">#</a></h3>
-<p data-bai-block="428">ドロワーヘッダーの <code>デプロイ（Deploy）</code> ボタンをクリックすると、モデルがサービスとしてデプロイされます。デプロイフローは次の 2 通りのいずれかで動作します：</p>
+<h3 data-bai-block="428" id="deployment-モデルのデプロイ">モデルのデプロイ<a class="hash-link" href="#deployment-モデルのデプロイ" aria-label="Direct link to モデルのデプロイ">#</a></h3>
+<p data-bai-block="429">ドロワーヘッダーの <code>デプロイ（Deploy）</code> ボタンをクリックすると、モデルがサービスとしてデプロイされます。デプロイフローは次の 2 通りのいずれかで動作します：</p>
 <ul>
-<li data-bai-block="429"><p><strong>自動デプロイ</strong>: モデルに使用可能なプリセットがちょうど 1 つあり、現在のプロジェクトにアクセス可能なリソースグループがちょうど 1 つある場合、モーダルを表示せずにデプロイが静かに作成されます。エンドポイントがクエリ可能になった後、そのデプロイ詳細ページに遷移します。</p>
+<li data-bai-block="430"><p><strong>自動デプロイ</strong>: モデルに使用可能なプリセットがちょうど 1 つあり、現在のプロジェクトにアクセス可能なリソースグループがちょうど 1 つある場合、モーダルを表示せずにデプロイが静かに作成されます。エンドポイントがクエリ可能になった後、そのデプロイ詳細ページに遷移します。</p>
 </li>
-<li data-bai-block="430"><p><strong>モデルのデプロイモーダル（Deploy Model）</strong>: それ以外の場合、モデルのデプロイモーダルが次の必須フィールドとともに開きます。</p>
+<li data-bai-block="431"><p><strong>モデルのデプロイモーダル（Deploy Model）</strong>: それ以外の場合、モデルのデプロイモーダルが次の必須フィールドとともに開きます。</p>
 <ul>
-<li data-bai-block="431"><strong>プリセット（Preset）</strong>: 使用可能なリソースプリセットのグループ化されたドロップダウンです。プリセットが複数のランタイムバリアントにまたがる場合、オプションはランタイムバリアント名ごとにグループ化されます。それ以外の場合は、フラットなリストとして表示されます。</li>
-<li data-bai-block="432"><strong>リソースグループ（Resource Group）</strong>: サービスが実行されるリソースグループです。</li>
+<li data-bai-block="432"><strong>プリセット（Preset）</strong>: 使用可能なリソースプリセットのグループ化されたドロップダウンです。プリセットが複数のランタイムバリアントにまたがる場合、オプションはランタイムバリアント名ごとにグループ化されます。それ以外の場合は、フラットなリストとして表示されます。</li>
+<li data-bai-block="433"><strong>リソースグループ（Resource Group）</strong>: サービスが実行されるリソースグループです。</li>
 </ul>
 <p> モーダルの <code>デプロイ（Deploy）</code> ボタンをクリックしてデプロイを開始します。モデルがデプロイされたことを確認する成功トーストが表示され、デプロイ詳細ページに遷移します。</p>
 </li>
 </ul>
-<p><figure data-bai-block="433" class="doc-figure"><img src="./images/model_card_deploy_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="314" /><figcaption>図 12.35</figcaption></figure>
+<p><figure data-bai-block="434" class="doc-figure"><img src="./images/model_card_deploy_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="314" /><figcaption>図 12.35</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="434" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="435" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="435">選択したモデルに現在のプロジェクトと互換性のあるプリセットがない場合、ドロワーの
+<p data-bai-block="436">選択したモデルに現在のプロジェクトと互換性のあるプリセットがない場合、ドロワーの
 <code>デプロイ（Deploy）</code> ボタンは無効化され、互換性のあるプリセットが利用可能になるまで
 デプロイはブロックされます。</p>
 </div></div>
-
 
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月9日</span>
+  <span class="last-updated">最終更新日 2026年9月10日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">

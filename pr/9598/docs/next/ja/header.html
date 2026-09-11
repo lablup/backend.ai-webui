@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a1c61c7)">v26.9.0-alpha.0 (a1c61c7)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e34216f)">v26.9.0-alpha.0 (e34216f)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -255,113 +255,135 @@
 </div></div>
 
 
+<p><a id="search"></a></p>
+<h2 data-bai-block="18" id="header-検索">検索<a class="hash-link" href="#header-検索" aria-label="Direct link to 検索">#</a></h2>
+<p data-bai-block="19">虫眼鏡ボタンをクリックすると検索パレットが開き、キーボードだけで任意のページ、ページタブ、設定項目に移動できます。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="20" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="21">検索パレットは実験的機能で、既定では無効になっています。ユーザー設定ページの<strong>実験的特徴</strong>にある<strong>コマンドパレット</strong>項目を有効にした場合にのみ、上部バーに<strong>検索</strong>ボタンが表示され、ショートカットが動作します。</p>
+</div></div>
+
+
+<p data-bai-block="22">ボタンをクリックするか、<code>Ctrl-K</code>(macOSでは<code>Cmd-K</code>)を押すとパレットが開きます。入力フィールドにカーソルがある状態でもショートカットを使用できます。</p>
+<p><figure data-bai-block="23" class="doc-figure"><img src="./images/global_search_palette.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="960" /><figcaption>図 6.3</figcaption></figure>
+</p>
+<p data-bai-block="24"><code>ページ、タブ、設定を検索</code>というプレースホルダーが表示された検索欄に入力すると、ページ、ページタブ、設定項目をまとめて検索できます。項目の名前ではなく説明が一致した場合は、どこで見つかったかを示す<code>...内で見つかりました</code>という行が表示され、管理者メニューに属する結果には<code>管理者</code>または<code>プロジェクト管理者</code>のタグが付きます。入力した内容に一致する項目がない場合は<code>検索結果がありません</code>と表示されます。</p>
+<p data-bai-block="25">パレットでは、次の3つのグループのクイックアクションも利用できます。</p>
+<ul>
+<li data-bai-block="26"><code>作成</code>: 新規セッション開始、フォルダー作成、デプロイを作成</li>
+<li data-bai-block="27"><code>表示</code>: ダークモードまたはライトモードに切り替え、システム設定を使用する、UI言語を変更</li>
+<li data-bai-block="28"><code>パネルとヘルプ</code>: ユーザー設定を開く、お知らせを開く、サイドバーの開閉、このページのマニュアルを開く</li>
+</ul>
+<p data-bai-block="29">何も入力していない状態では、最近開いた結果が<code>最近の項目</code>の下に表示されます。</p>
 <p><a id="notification"></a></p>
-<h2 data-bai-block="18" id="header-通知">通知<a class="hash-link" href="#header-通知" aria-label="Direct link to 通知">#</a></h2>
-<p data-bai-block="19">ベル型のボタンは、イベント通知ボタンです。WebUIの操作中に記録する必要があるイベントがここに表示されます。コンピュートセッションの作成など、バックグラウンドタスクが実行されている場合、ここでジョブを確認できます。
+<h2 data-bai-block="30" id="header-通知">通知<a class="hash-link" href="#header-通知" aria-label="Direct link to 通知">#</a></h2>
+<p data-bai-block="31">ベル型のボタンは、イベント通知ボタンです。WebUIの操作中に記録する必要があるイベントがここに表示されます。コンピュートセッションの作成など、バックグラウンドタスクが実行されている場合、ここでジョブを確認できます。
 ショートカットキー(<code>]</code>)を押して通知エリアを開閉できます。</p>
-<p><figure data-bai-block="20" class="doc-figure"><img src="./images/notification_collapse.png" alt="" class="doc-image" loading="lazy" decoding="async" width="280" height="900" /><figcaption>図 6.3</figcaption></figure>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/notification_collapse.png" alt="" class="doc-image" loading="lazy" decoding="async" width="280" height="900" /><figcaption>図 6.4</figcaption></figure>
 </p>
 <p><a id="theme-mode"></a></p>
-<h2 data-bai-block="21" id="header-画面モード">画面モード<a class="hash-link" href="#header-画面モード" aria-label="Direct link to 画面モード">#</a></h2>
-<p data-bai-block="22">ライトモード/ダークモードボタンを使って、WebUIの画面モードを変更できます。</p>
-<p><figure data-bai-block="23" class="doc-figure"><img src="./images/theme_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="6910" height="4072" /><figcaption>図 6.4</figcaption></figure>
+<h2 data-bai-block="33" id="header-画面モード">画面モード<a class="hash-link" href="#header-画面モード" aria-label="Direct link to 画面モード">#</a></h2>
+<p data-bai-block="34">ライトモード/ダークモードボタンを使って、WebUIの画面モードを変更できます。</p>
+<p><figure data-bai-block="35" class="doc-figure"><img src="./images/theme_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="6910" height="4072" /><figcaption>図 6.5</figcaption></figure>
 </p>
 <p><a id="help"></a></p>
-<h2 data-bai-block="24" id="header-ヘルプ">ヘルプ<a class="hash-link" href="#header-ヘルプ" aria-label="Direct link to ヘルプ">#</a></h2>
-<p data-bai-block="25">疑問符ボタンをクリックすると、本ガイドドキュメントのウェブ版にアクセスできます。リンク先は、
+<h2 data-bai-block="36" id="header-ヘルプ">ヘルプ<a class="hash-link" href="#header-ヘルプ" aria-label="Direct link to ヘルプ">#</a></h2>
+<p data-bai-block="37">疑問符ボタンをクリックすると、本ガイドドキュメントのウェブ版にアクセスできます。リンク先は、
 現在使用しているWebUIに合わせて構成されます。</p>
 <p><a id="responsive-layout"></a></p>
-<h2 data-bai-block="26" id="header-レスポンシブレイアウト">レスポンシブレイアウト<a class="hash-link" href="#header-レスポンシブレイアウト" aria-label="Direct link to レスポンシブレイアウト">#</a></h2>
-<p data-bai-block="27">画面幅が狭い場合、トップバーは使いやすさを向上させるためにレイアウトを調整します。画面幅が狭くなると、サイドバートグルの代わりにメニューアイコンボタンがトップバーに表示されます。ユーザーの表示名が非表示になり、ユーザーメニューにはアバターアイコンのみが表示される場合があります。非常に小さい画面では、プロジェクトのラベルテキストも非表示になります。</p>
+<h2 data-bai-block="38" id="header-レスポンシブレイアウト">レスポンシブレイアウト<a class="hash-link" href="#header-レスポンシブレイアウト" aria-label="Direct link to レスポンシブレイアウト">#</a></h2>
+<p data-bai-block="39">画面幅が狭い場合、トップバーは使いやすさを向上させるためにレイアウトを調整します。画面幅が狭くなると、サイドバートグルの代わりにメニューアイコンボタンがトップバーに表示されます。ユーザーの表示名が非表示になり、ユーザーメニューにはアバターアイコンのみが表示される場合があります。非常に小さい画面では、プロジェクトのラベルテキストも非表示になります。</p>
 <p><a id="user-menu"></a></p>
-<h2 data-bai-block="28" id="header-ユーザーメニュー">ユーザーメニュー<a class="hash-link" href="#header-ユーザーメニュー" aria-label="Direct link to ユーザーメニュー">#</a></h2>
-<p data-bai-block="29">トップバーの右側にあるユーザーアイコンをクリックすると、ユーザーメニューが表示されます。</p>
-<p><figure data-bai-block="30" class="doc-figure"><img src="./images/user_drop_down.png" alt="" class="doc-image" loading="lazy" decoding="async" width="362" height="628" /><figcaption>図 6.5</figcaption></figure>
+<h2 data-bai-block="40" id="header-ユーザーメニュー">ユーザーメニュー<a class="hash-link" href="#header-ユーザーメニュー" aria-label="Direct link to ユーザーメニュー">#</a></h2>
+<p data-bai-block="41">トップバーの右側にあるユーザーアイコンをクリックすると、ユーザーメニューが表示されます。</p>
+<p><figure data-bai-block="42" class="doc-figure"><img src="./images/user_drop_down.png" alt="" class="doc-image" loading="lazy" decoding="async" width="362" height="628" /><figcaption>図 6.6</figcaption></figure>
 </p>
-<p data-bai-block="31">ドロップダウンの上部には、以下のユーザー情報が表示されます。これらの項目はクリックできない参考情報です。</p>
+<p data-bai-block="43">ドロップダウンの上部には、以下のユーザー情報が表示されます。これらの項目はクリックできない参考情報です。</p>
 <ul>
-<li data-bai-block="32"><strong>フルネーム</strong>: 現在のユーザーのフルネーム。</li>
-<li data-bai-block="33"><strong>メール</strong>: 現在のユーザーのメールアドレス。</li>
-<li data-bai-block="34"><strong>ロール</strong>: 現在のユーザーのロール（例: ユーザー、スーパー管理者）。</li>
+<li data-bai-block="44"><strong>フルネーム</strong>: 現在のユーザーのフルネーム。</li>
+<li data-bai-block="45"><strong>メール</strong>: 現在のユーザーのメールアドレス。</li>
+<li data-bai-block="46"><strong>ロール</strong>: 現在のユーザーのロール（例: ユーザー、スーパー管理者）。</li>
 </ul>
-<p data-bai-block="35">ユーザー情報の下には、以下のアクション項目があります。</p>
+<p data-bai-block="47">ユーザー情報の下には、以下のアクション項目があります。</p>
 <ul>
-<li data-bai-block="36"><code>Backend.AIについて</code>: Backend.AI WebUIのバージョン、ライセンスの種類などの情報を表示します。</li>
-<li data-bai-block="37"><code>ユーザー情報の変更</code>: 現在ログインしているユーザーの情報を確認・更新します。</li>
-<li data-bai-block="38"><code>環境設定</code>: 現在のページの上にユーザー設定ダイアログを開きます。<strong>ログ</strong> カテゴリでクライアント側に記録されたログとエラーの履歴を確認できます。</li>
-<li data-bai-block="39"><code>ダウンロード</code>: ダウンロードダイアログを開きます。スタンドアロンのWebUIデスクトップアプリと、Backend.AIコマンドラインインターフェース（CLI）を入手できます。この項目は、管理者がいずれか一方以上を有効にした場合のみ表示されます。</li>
-<li data-bai-block="40"><code>ログアウト</code>: WebUIからログアウトします。</li>
+<li data-bai-block="48"><code>Backend.AIについて</code>: Backend.AI WebUIのバージョン、ライセンスの種類などの情報を表示します。</li>
+<li data-bai-block="49"><code>ユーザー情報の変更</code>: 現在ログインしているユーザーの情報を確認・更新します。</li>
+<li data-bai-block="50"><code>環境設定</code>: 現在のページの上にユーザー設定ダイアログを開きます。<strong>ログ</strong> カテゴリでクライアント側に記録されたログとエラーの履歴を確認できます。</li>
+<li data-bai-block="51"><code>ダウンロード</code>: ダウンロードダイアログを開きます。スタンドアロンのWebUIデスクトップアプリと、Backend.AIコマンドラインインターフェース（CLI）を入手できます。この項目は、管理者がいずれか一方以上を有効にした場合のみ表示されます。</li>
+<li data-bai-block="52"><code>ログアウト</code>: WebUIからログアウトします。</li>
 </ul>
 <p><a id="my-account"></a></p>
-<h3 data-bai-block="41" id="header-ユーザー情報の変更">ユーザー情報の変更<a class="hash-link" href="#header-ユーザー情報の変更" aria-label="Direct link to ユーザー情報の変更">#</a></h3>
-<p data-bai-block="42"><code>ユーザー情報の変更</code>をクリックすると、ユーザー情報の変更ダイアログが表示されます。</p>
-<p><figure data-bai-block="43" class="doc-figure"><img src="./images/my_account_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="514" /><figcaption>図 6.6</figcaption></figure>
+<h3 data-bai-block="53" id="header-ユーザー情報の変更">ユーザー情報の変更<a class="hash-link" href="#header-ユーザー情報の変更" aria-label="Direct link to ユーザー情報の変更">#</a></h3>
+<p data-bai-block="54"><code>ユーザー情報の変更</code>をクリックすると、ユーザー情報の変更ダイアログが表示されます。</p>
+<p><figure data-bai-block="55" class="doc-figure"><img src="./images/my_account_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="514" /><figcaption>図 6.7</figcaption></figure>
 </p>
-<p data-bai-block="44">各項目には以下の意味があります。希望する値を入力し、更新ボタンをクリックして
+<p data-bai-block="56">各項目には以下の意味があります。希望する値を入力し、更新ボタンをクリックして
 ユーザー情報を更新します。</p>
 <ul>
-<li data-bai-block="45"><strong>フルネーム</strong>: ユーザーの名前（最大64文字）。</li>
-<li data-bai-block="46"><strong>新しいパスワード</strong>: 新しいパスワード（英字、数字、記号をそれぞれ1つ以上含む
+<li data-bai-block="57"><strong>フルネーム</strong>: ユーザーの名前（最大64文字）。</li>
+<li data-bai-block="58"><strong>新しいパスワード</strong>: 新しいパスワード（英字、数字、記号をそれぞれ1つ以上含む
 8文字以上）。目のアイコンをクリックすると入力内容を確認できます。</li>
-<li data-bai-block="47"><strong>新しいパスワードを再入力）</strong>: 確認のため、新しいパスワードを再度入力します。</li>
-<li data-bai-block="48"><strong>許可されたクライアントIP</strong>: 特定のIPアドレスまたはCIDR範囲でログインアクセスを
+<li data-bai-block="59"><strong>新しいパスワードを再入力）</strong>: 確認のため、新しいパスワードを再度入力します。</li>
+<li data-bai-block="60"><strong>許可されたクライアントIP</strong>: 特定のIPアドレスまたはCIDR範囲でログインアクセスを
 制限します。1つ以上のIPアドレスまたはCIDR表記（例：<code>10.20.30.40</code>、
 <code>10.20.30.0/24</code>）を入力できます。フィールドの下には、現在のクライアントIP
 アドレスがコピーボタンとともに表示されます。設定されたリストに現在のIPが
 含まれていない場合、警告が表示されます。</li>
-<li data-bai-block="49"><strong>二要素認証の使用</strong>: 二要素認証（2FA）を有効または無効にします。有効にすると、
+<li data-bai-block="61"><strong>二要素認証の使用</strong>: 二要素認証（2FA）を有効または無効にします。有効にすると、
 ログイン時にOTPコードの入力が必要になります。</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="50" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="62" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="51">プラグインの設定によっては、<code>二要素認証の使用</code>項目が表示されない場合があります。
+<p data-bai-block="63">プラグインの設定によっては、<code>二要素認証の使用</code>項目が表示されない場合があります。
 その場合は、システム管理者に連絡してください。</p>
 </div></div>
 
 
 <p><a id="2fa-setup"></a></p>
-<h3 data-bai-block="52" id="header-2fa設定">2FA設定<a class="hash-link" href="#header-2fa設定" aria-label="Direct link to 2FA設定">#</a></h3>
-<p data-bai-block="53"><code>2FA Enabled</code>スイッチを有効にすると、次のダイアログが表示されます。</p>
-<p><figure data-bai-block="54" class="doc-figure"><img src="./images/2fa_setup.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1220" /><figcaption>図 6.7</figcaption></figure>
+<h3 data-bai-block="64" id="header-2fa設定">2FA設定<a class="hash-link" href="#header-2fa設定" aria-label="Direct link to 2FA設定">#</a></h3>
+<p data-bai-block="65"><code>2FA Enabled</code>スイッチを有効にすると、次のダイアログが表示されます。</p>
+<p><figure data-bai-block="66" class="doc-figure"><img src="./images/2fa_setup.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1220" /><figcaption>図 6.8</figcaption></figure>
 </p>
-<p data-bai-block="55">使用している2FAアプリケーションを起動し、QRコードをスキャンするか、手動で検証コードを入力します。2FA対応のアプリケーションには、Google Authenticator、2STP、1Password、Bitwardenなどがあります。</p>
-<p data-bai-block="56">2FAアプリケーションに追加された項目から6桁のコードを上記のダイアログに入力します。<code>確認</code>ボタンを押すと、2FAが有効になります。</p>
-<p data-bai-block="57">後でログインする際に、メールアドレスとパスワードを入力すると、OTPコードを求める追加フィールドが表示されます。</p>
-<p><figure data-bai-block="58" class="doc-figure"><img src="./images/ask_otp_when_login.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2560" height="1300" /><figcaption>図 6.8</figcaption></figure>
+<p data-bai-block="67">使用している2FAアプリケーションを起動し、QRコードをスキャンするか、手動で検証コードを入力します。2FA対応のアプリケーションには、Google Authenticator、2STP、1Password、Bitwardenなどがあります。</p>
+<p data-bai-block="68">2FAアプリケーションに追加された項目から6桁のコードを上記のダイアログに入力します。<code>確認</code>ボタンを押すと、2FAが有効になります。</p>
+<p data-bai-block="69">後でログインする際に、メールアドレスとパスワードを入力すると、OTPコードを求める追加フィールドが表示されます。</p>
+<p><figure data-bai-block="70" class="doc-figure"><img src="./images/ask_otp_when_login.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2560" height="1300" /><figcaption>図 6.9</figcaption></figure>
 </p>
-<p data-bai-block="59">ログインするには、2FAアプリケーションを開き、ワンタイムパスワードフィールドに6桁のコードを入力する必要があります。</p>
-<p><figure data-bai-block="60" class="doc-figure"><img src="./images/remove_2fa.png" alt="" class="doc-image" loading="lazy" decoding="async" width="816" height="276" /><figcaption>図 6.9</figcaption></figure>
+<p data-bai-block="71">ログインするには、2FAアプリケーションを開き、ワンタイムパスワードフィールドに6桁のコードを入力する必要があります。</p>
+<p><figure data-bai-block="72" class="doc-figure"><img src="./images/remove_2fa.png" alt="" class="doc-image" loading="lazy" decoding="async" width="816" height="276" /><figcaption>図 6.10</figcaption></figure>
 </p>
-<p data-bai-block="61">2FAを無効にするには、<code>2FA Enabled</code>スイッチをオフにし、表示されるダイアログで確認ボタンをクリックします。</p>
+<p data-bai-block="73">2FAを無効にするには、<code>2FA Enabled</code>スイッチをオフにし、表示されるダイアログで確認ボタンをクリックします。</p>
 <p><a id="downloads"></a></p>
-<h3 data-bai-block="62" id="header-ダウンロード">ダウンロード<a class="hash-link" href="#header-ダウンロード" aria-label="Direct link to ダウンロード">#</a></h3>
-<p data-bai-block="63"><code>ダウンロード</code>を選択すると、管理者が有効にした項目ごとにタブが用意されたダイアログが表示されます。
+<h3 data-bai-block="74" id="header-ダウンロード">ダウンロード<a class="hash-link" href="#header-ダウンロード" aria-label="Direct link to ダウンロード">#</a></h3>
+<p data-bai-block="75"><code>ダウンロード</code>を選択すると、管理者が有効にした項目ごとにタブが用意されたダイアログが表示されます。
 タブは<code>デスクトップアプリ</code>と<code>CLI</code>です。</p>
-<p><figure data-bai-block="64" class="doc-figure"><img src="./images/downloads_desktop_app_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="412" /><figcaption>図 6.10</figcaption></figure>
+<p><figure data-bai-block="76" class="doc-figure"><img src="./images/downloads_desktop_app_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="412" /><figcaption>図 6.11</figcaption></figure>
 </p>
-<p data-bai-block="65"><code>デスクトップアプリ</code>タブでは、<strong>OS</strong>の項目で使用しているオペレーティングシステムを選択し、
+<p data-bai-block="77"><code>デスクトップアプリ</code>タブでは、<strong>OS</strong>の項目で使用しているオペレーティングシステムを選択し、
 使用しているCPUアーキテクチャのボタンをクリックするとダウンロードが始まります。スタンドアロン
 アプリを使うと、ブラウザなしで同じWebUIを利用できます。</p>
-<p><figure data-bai-block="66" class="doc-figure"><img src="./images/downloads_cli_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1984" /><figcaption>図 6.11</figcaption></figure>
+<p><figure data-bai-block="78" class="doc-figure"><img src="./images/downloads_cli_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1984" /><figcaption>図 6.12</figcaption></figure>
 </p>
-<p data-bai-block="67"><code>CLI</code>タブでは、コマンドラインクライアントを使い始める方法が2つ用意されています。</p>
+<p data-bai-block="79"><code>CLI</code>タブでは、コマンドラインクライアントを使い始める方法が2つ用意されています。</p>
 <ul>
-<li data-bai-block="68"><strong>スタンドアロン実行ファイルをダウンロード</strong>: 使用しているオペレーティングシステムを選択し、
+<li data-bai-block="80"><strong>スタンドアロン実行ファイルをダウンロード</strong>: 使用しているオペレーティングシステムを選択し、
 使用しているCPUアーキテクチャのボタンをクリックします。LinuxとmacOSのビルドが提供されます。
 ダウンロード後は、ボタンの下に表示されたコマンドを実行して実行権限を付与し、必要に応じて
 <code>PATH</code>上に<code>backend.ai</code>としてインストールできます。macOSの場合はビルドがまだ署名されていないため、
 代わりにquarantine属性を先に解除する方法が案内されます。</li>
-<li data-bai-block="69"><strong>pipでインストール</strong>: Python仮想環境を作成し、接続中のサーバーとバージョンが一致する
+<li data-bai-block="81"><strong>pipでインストール</strong>: Python仮想環境を作成し、接続中のサーバーとバージョンが一致する
 クライアントをインストールし、クライアントに必要な環境変数を設定するスニペットが表示されます。
 スニペット右上のコピーボタンをクリックすると、全体をコピーできます。</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="70" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="82" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="71">スニペットには現在のセッションのエンドポイントが自動で入力されますが、認証情報は表示されません。
+<p data-bai-block="83">スニペットには現在のセッションのエンドポイントが自動で入力されますが、認証情報は表示されません。
 実行する前に<code>&lt;your-access-key&gt;</code>と<code>&lt;your-secret-key&gt;</code>をご自身のキーペアに置き換えてください。
 また、スニペットはクライアントが必要とするPython 3.13を使用するよう固定しています。</p>
 </div></div>
@@ -393,6 +415,7 @@
   <ul class="doc-toc__list">
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%82%BB%E3%83%AC%E3%82%AF%E3%82%BF%E3%83%BC" data-toc-target="header-プロジェクトセレクター">プロジェクトセレクター</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E3%82%BF%E3%82%A4%E3%83%9E%E3%83%BC" data-toc-target="header-ログインセッションタイマー">ログインセッションタイマー</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%E6%A4%9C%E7%B4%A2" data-toc-target="header-検索">検索</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%E9%80%9A%E7%9F%A5" data-toc-target="header-通知">通知</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%E7%94%BB%E9%9D%A2%E3%83%A2%E3%83%BC%E3%83%89" data-toc-target="header-画面モード">画面モード</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#header-%E3%83%98%E3%83%AB%E3%83%97" data-toc-target="header-ヘルプ">ヘルプ</a></li>
