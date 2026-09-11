@@ -5,10 +5,6 @@
  The user-settings surface, as a dialog over whatever page is underneath
  (`UserSettingsModalOpener` owns the `?settings=` param that drives it).
 
- Composition follows Astryx's `settings-dialog` template: `BAIDialog` with
- `padding={0}` holding one `Layout` whose `start` slot is the category rail and
- whose `content` scrolls. `BAIModal` is not usable here because it already owns
- a `Layout`, and Astryx forbids nesting one inside another.
 */
 import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
 import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
@@ -24,18 +20,12 @@ import LoginSession, { LoginSessionQuery } from './LoginSession';
 import UserSettingsGeneralPane from './UserSettingsGeneralPane';
 import WEBUIHelpButton from './WEBUIHelpButton';
 import { Button } from '@astryxdesign/core/Button';
-import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Icon } from '@astryxdesign/core/Icon';
-import {
-  Layout,
-  LayoutContent,
-  LayoutHeader,
-  LayoutPanel,
-} from '@astryxdesign/core/Layout';
 import { List, ListItem } from '@astryxdesign/core/List';
-import { VStack } from '@astryxdesign/core/Stack';
-import { BAIDialog, BAISkeleton } from 'backend.ai-ui';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
+import { BAIModal, BAISkeleton } from 'backend.ai-ui';
 import {
   ArrowLeft,
   ChevronRight,
@@ -54,9 +44,13 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { useQueryLoader } from 'react-relay';
 
-// Astryx's dialog surface is `height: fit-content`, so `maxHeight` alone leaves
-// nothing owning a scrollport — the rail and the pane need a resolved height.
-const DIALOG_HEIGHT: CSSProperties = { height: '85vh' };
+// Astryx's dialog surface is `height: fit-content`, so the rail and the pane
+// need a resolved height before either can own a scrollport. `dvh` so mobile
+// browser chrome does not push the bottom edge off-screen.
+const DIALOG_INSET_BLOCK = 'var(--spacing-12)';
+const DIALOG_HEIGHT_VALUE = `calc(100dvh - ${DIALOG_INSET_BLOCK} * 2)`;
+const DIALOG_HEIGHT: CSSProperties = { height: DIALOG_HEIGHT_VALUE };
+const BODY_FILL: CSSProperties = { height: '100%', minHeight: 0 };
 
 // 1100 matches `MyKeypairManagementModal`, the widest dialog opened from here,
 // so a child never overhangs its parent. Minus the rail it still leaves the
@@ -205,83 +199,81 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
   const showNavOnly = isNarrow && narrowView === 'nav';
 
   return (
-    <BAIDialog
-      isOpen
-      onOpenChange={(next) => {
-        if (!next) onRequestClose();
-      }}
+    <BAIModal
+      open
+      onCancel={onRequestClose}
+      // The rail names the open category, so the bar names the surface; below
+      // `md` the rail is gone and the bar carries the category.
+      title={
+        <HStack gap={2} vAlign="center">
+          {isNarrow && !showNavOnly ? (
+            <Button
+              label={t('webui.menu.GoBack')}
+              variant="ghost"
+              size="sm"
+              isIconOnly
+              icon={<Icon icon={ArrowLeft} size="sm" />}
+              onClick={() => setNarrowView('nav')}
+            />
+          ) : null}
+          <Text weight="semibold">
+            {isNarrow && !showNavOnly
+              ? t(CATEGORY_LABEL_KEYS[category])
+              : t('webui.menu.Settings&Logs')}
+          </Text>
+          {/* The page's own help button is behind the mask while this is open. */}
+          <WEBUIHelpButton />
+        </HStack>
+      }
+      footer={null}
       variant={isNarrow ? 'fullscreen' : 'standard'}
       width={DIALOG_WIDTH}
-      maxHeight="85vh"
-      padding={0}
-      purpose="form"
+      // Astryx caps a standard dialog at 75dvh; raise it so `style.height` wins.
+      maxHeight={DIALOG_HEIGHT_VALUE}
+      // `purpose="form"` in Astryx terms: Escape closes, the backdrop does not.
+      maskClosable={false}
       style={isNarrow ? undefined : DIALOG_HEIGHT}
-      // The dialog's accessible name would otherwise be derived from whichever
-      // heading renders first inside it, which changes per category.
+      styles={{ body: BODY_FILL }}
+      // The accessible name would otherwise come from the title, which changes
+      // per category below `md`.
       aria-label={t('webui.menu.Settings&Logs')}
       data-testid="user-settings-modal"
     >
-      <Layout
-        height="fill"
-        header={
-          <LayoutHeader hasDivider>
-            <DialogHeader
-              // The rail names the open category, so the bar names the surface;
-              // below `md` the rail is gone and the bar carries the category.
-              title={
-                isNarrow && !showNavOnly
-                  ? t(CATEGORY_LABEL_KEYS[category])
-                  : t('webui.menu.Settings&Logs')
-              }
-              hasDivider={false}
-              onOpenChange={(next) => {
-                if (!next) onRequestClose();
-              }}
-              startContent={
-                isNarrow && !showNavOnly ? (
-                  <Button
-                    label={t('webui.menu.GoBack')}
-                    variant="ghost"
-                    size="sm"
-                    isIconOnly
-                    icon={<Icon icon={ArrowLeft} size="sm" />}
-                    onClick={() => setNarrowView('nav')}
-                  />
-                ) : undefined
-              }
-              endContent={<WEBUIHelpButton />}
-            />
-          </LayoutHeader>
-        }
-        start={
-          isNarrow ? undefined : (
-            <LayoutPanel
+      {/* `BAIModal` already owns the dialog's one `Layout`, so the rail is a
+          stack beside the pane rather than a second `LayoutPanel`. */}
+      <HStack height="100%" align="stretch">
+        {isNarrow ? null : (
+          <>
+            <VStack
+              as="nav"
               width={NAV_PANEL_WIDTH}
-              hasDivider
-              padding={3}
-              role="navigation"
-              label={t('webui.menu.Settings')}
+              isScrollable
+              paddingInlineEnd={3}
             >
               {categoryNav}
-            </LayoutPanel>
-          )
-        }
-        content={
-          <LayoutContent isScrollable padding={4}>
-            {showNavOnly ? (
-              categoryNav
-            ) : (
-              // Keyed so a failed category does not latch the whole surface:
-              // the page this replaced mounted one boundary per tab, which
-              // switching tabs unmounted.
-              <BAIErrorBoundary key={category}>
-                <Suspense fallback={<BAISkeleton />}>{pane}</Suspense>
-              </BAIErrorBoundary>
-            )}
-          </LayoutContent>
-        }
-      />
-    </BAIDialog>
+            </VStack>
+            <Divider orientation="vertical" />
+          </>
+        )}
+        <VStack
+          width="100%"
+          isScrollable
+          paddingInlineStart={isNarrow ? 0 : 4}
+          paddingBlockEnd={2}
+        >
+          {showNavOnly ? (
+            categoryNav
+          ) : (
+            // Keyed so a failed category does not latch the whole surface: the
+            // page this replaced mounted one boundary per tab, which switching
+            // tabs unmounted.
+            <BAIErrorBoundary key={category}>
+              <Suspense fallback={<BAISkeleton />}>{pane}</Suspense>
+            </BAIErrorBoundary>
+          )}
+        </VStack>
+      </HStack>
+    </BAIModal>
   );
 };
 
