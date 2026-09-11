@@ -27,7 +27,12 @@ import { Button } from '@astryxdesign/core/Button';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Icon } from '@astryxdesign/core/Icon';
-import { Layout, LayoutContent, LayoutPanel } from '@astryxdesign/core/Layout';
+import {
+  Layout,
+  LayoutContent,
+  LayoutHeader,
+  LayoutPanel,
+} from '@astryxdesign/core/Layout';
 import { List, ListItem } from '@astryxdesign/core/List';
 import { VStack } from '@astryxdesign/core/Stack';
 import { BAIDialog, BAISkeleton } from 'backend.ai-ui';
@@ -52,29 +57,6 @@ import { useQueryLoader } from 'react-relay';
 // Astryx's dialog surface is `height: fit-content`, so `maxHeight` alone leaves
 // nothing owning a scrollport — the rail and the pane need a resolved height.
 const DIALOG_HEIGHT: CSSProperties = { height: '85vh' };
-
-// The header rides along the scrolling pane; Astryx has no sticky prop for it.
-// The pane's own inset lives on these two blocks rather than on `LayoutContent`,
-// so the stuck bar covers the full width and nothing scrolls through the gap a
-// `padding`ed scrollport would leave above it.
-const HEADER_STICKY: CSSProperties = {
-  position: 'sticky',
-  top: 0,
-  paddingInline: 'var(--spacing-4)',
-  paddingBlock: 'var(--spacing-4) var(--spacing-2)',
-  backgroundColor: 'var(--color-background-surface)',
-  zIndex: 1,
-};
-
-const PANE_INSET: CSSProperties = {
-  paddingInline: 'var(--spacing-4)',
-  paddingBlockEnd: 'var(--spacing-4)',
-  // Its own stacking context, so a pane's internal layering — BAITable's pinned
-  // column and sticky header cells reach z-index 3 — cannot outrank the header
-  // bar above it.
-  position: 'relative',
-  zIndex: 0,
-};
 
 // 1100 matches `MyKeypairManagementModal`, the widest dialog opened from here,
 // so a child never overhangs its parent. Minus the rail it still leaves the
@@ -241,6 +223,36 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
     >
       <Layout
         height="fill"
+        header={
+          <LayoutHeader hasDivider>
+            <DialogHeader
+              // The rail names the open category, so the bar names the surface;
+              // below `md` the rail is gone and the bar carries the category.
+              title={
+                isNarrow && !showNavOnly
+                  ? t(CATEGORY_LABEL_KEYS[category])
+                  : t('webui.menu.Settings&Logs')
+              }
+              hasDivider={false}
+              onOpenChange={(next) => {
+                if (!next) onRequestClose();
+              }}
+              startContent={
+                isNarrow && !showNavOnly ? (
+                  <Button
+                    label={t('webui.menu.GoBack')}
+                    variant="ghost"
+                    size="sm"
+                    isIconOnly
+                    icon={<Icon icon={ArrowLeft} size="sm" />}
+                    onClick={() => setNarrowView('nav')}
+                  />
+                ) : undefined
+              }
+              endContent={<WEBUIHelpButton />}
+            />
+          </LayoutHeader>
+        }
         start={
           isNarrow ? undefined : (
             <LayoutPanel
@@ -255,47 +267,17 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
           )
         }
         content={
-          <LayoutContent isScrollable padding={0}>
-            <VStack gap={4}>
-              <VStack style={HEADER_STICKY}>
-                <DialogHeader
-                  title={
-                    showNavOnly
-                      ? t('webui.menu.Settings&Logs')
-                      : t(CATEGORY_LABEL_KEYS[category])
-                  }
-                  hasDivider={false}
-                  onOpenChange={(next) => {
-                    if (!next) onRequestClose();
-                  }}
-                  startContent={
-                    isNarrow && !showNavOnly ? (
-                      <Button
-                        label={t('webui.menu.GoBack')}
-                        variant="ghost"
-                        size="sm"
-                        isIconOnly
-                        icon={<Icon icon={ArrowLeft} size="sm" />}
-                        onClick={() => setNarrowView('nav')}
-                      />
-                    ) : undefined
-                  }
-                  endContent={<WEBUIHelpButton />}
-                />
-              </VStack>
-              <VStack style={PANE_INSET}>
-                {showNavOnly ? (
-                  categoryNav
-                ) : (
-                  // Keyed so a failed category does not latch the whole
-                  // surface: the page this replaced mounted one boundary per
-                  // tab, which switching tabs unmounted.
-                  <BAIErrorBoundary key={category}>
-                    <Suspense fallback={<BAISkeleton />}>{pane}</Suspense>
-                  </BAIErrorBoundary>
-                )}
-              </VStack>
-            </VStack>
+          <LayoutContent isScrollable padding={4}>
+            {showNavOnly ? (
+              categoryNav
+            ) : (
+              // Keyed so a failed category does not latch the whole surface:
+              // the page this replaced mounted one boundary per tab, which
+              // switching tabs unmounted.
+              <BAIErrorBoundary key={category}>
+                <Suspense fallback={<BAISkeleton />}>{pane}</Suspense>
+              </BAIErrorBoundary>
+            )}
           </LayoutContent>
         }
       />

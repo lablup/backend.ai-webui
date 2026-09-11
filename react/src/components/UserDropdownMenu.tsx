@@ -32,7 +32,6 @@ import {
   ShieldCheck,
   CircleAlert,
   Lock,
-  FileText,
   LogOut,
   Settings,
   Download,
@@ -157,13 +156,6 @@ const UserDropdownMenu: React.FC<{
       icon: <Settings size="1em" />,
       onClick: () => {
         openUserSettings('general');
-      },
-    },
-    {
-      label: t('webui.menu.LogsErrors'),
-      icon: <FileText size="1em" />,
-      onClick: () => {
-        openUserSettings('logs');
       },
     },
     (baiClient._config.allowAppDownloadPanel ||
