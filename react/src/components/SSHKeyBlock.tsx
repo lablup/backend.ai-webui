@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import './SSHKeyBlock.css';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 import React from 'react';
 
@@ -30,7 +30,7 @@ const SSHKeyBlock: React.FC<SSHKeyBlockProps> = ({
   extra,
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
@@ -44,10 +44,10 @@ const SSHKeyBlock: React.FC<SSHKeyBlockProps> = ({
           maxHeight,
           overflowY: 'auto',
           overflowX: 'hidden',
-          padding: `${token.paddingXS}px ${token.paddingSM}px`,
-          backgroundColor: token.colorFillQuaternary,
-          border: `1px solid ${token.colorBorderSecondary}`,
-          borderRadius: token.borderRadiusSM,
+          padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
+          backgroundColor: token('--color-fill-quaternary'),
+          border: `1px solid ${token('--color-border')}`,
+          borderRadius: token('--radius-inner'),
         }}
       >
         {value ? (
