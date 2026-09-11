@@ -18,21 +18,17 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
-let announcementPromise: Promise<{ enabled: boolean; message: string }>;
-let resolveAnnouncement: (value: { enabled: boolean; message: string }) => void;
-
-vi.mock('../hooks', async (importOriginal) => {
-  const originalModule = await importOriginal<typeof import('../hooks')>();
-  return {
-    ...originalModule,
-    useSuspendedBackendaiClient: () => ({
-      service: { get_announcement: () => announcementPromise },
-    }),
-  };
-});
+// The announcement lives in the domain app config now (FR-3877) and the content
+// suspends on that Relay read. Stubbing the hooks puts the test past that phase:
+// what it guards is the SECOND one, where the data is in hand and Monaco's lazy
+// chunk is still loading.
+vi.mock('../hooks/useAppConfig', () => ({
+  useDomainAppConfig: () => ({ enabled: true, title: 'hello', body: 'world' }),
+  useUpdateDomainAppConfig: () => async () => undefined,
+}));
 
 // Stand-in for the lazily-imported Monaco editor: `onMount` fires only when the
-// test calls `mountEditor()`, reproducing the second loading phase.
+// test calls `mountEditor()`, reproducing that loading phase.
 let mountEditor: () => void = () => {};
 vi.mock('./BAICodeEditor', async () => {
   const React = await import('react');
@@ -43,6 +39,14 @@ vi.mock('./BAICodeEditor', async () => {
     },
   };
 });
+
+const previewLabel = () => screen.getByText('summary.AnnouncementPreview');
+// The two-pane row: label -> column -> row. It carries the visibility gate, and
+// that gate must not delete BAIFlex's own `display: flex` (which would stack the
+// editor and the preview instead of placing them side by side).
+const bodyRow = () => previewLabel().parentElement!.parentElement!;
+const publishButton = () =>
+  screen.getByRole('button', { name: 'button.Publish' });
 
 const renderModal = () => {
   const queryClient = new QueryClient({
@@ -55,41 +59,17 @@ const renderModal = () => {
   );
 };
 
-const previewLabel = () => screen.getByText('summary.AnnouncementPreview');
-// The two-pane row: label -> column -> row. It carries the visibility gate, and
-// that gate must not delete BAIFlex's own `display: flex` (which would stack the
-// editor and the preview instead of placing them side by side).
-const bodyRow = () => previewLabel().parentElement!.parentElement!;
-const publishButton = () =>
-  screen.getByRole('button', { name: 'button.Publish' });
-
 describe('AnnouncementEditModal (FR-3723)', () => {
-  beforeEach(() => {
-    announcementPromise = new Promise((res) => {
-      resolveAnnouncement = res;
-    });
-  });
-
-  it('shows only the skeleton until both the announcement and the editor are ready', async () => {
+  it('shows only the skeleton until the editor is ready', async () => {
     renderModal();
 
-    // Phase 1 — the announcement request is still in flight. The body is
-    // already mounted, so Monaco's chunk loads in parallel with the query, but
-    // none of it may be visible yet.
-    expect(previewLabel()).not.toBeVisible();
-    expect(publishButton()).toBeDisabled();
-
-    // Phase 2 — data resolved, but Monaco has not mounted yet: the body stays
-    // hidden behind the Skeleton.
-    await act(async () => {
-      resolveAnnouncement({ enabled: true, message: 'hello' });
-      await announcementPromise;
-    });
+    // The body is mounted from the first render, so Monaco's chunk loads behind
+    // the Skeleton instead of flashing an empty frame — but none of it may be
+    // visible, and nothing may be published, until the editor reports ready.
     await screen.findByTestId('code-editor');
     expect(previewLabel()).not.toBeVisible();
     expect(publishButton()).toBeDisabled();
 
-    // Phase 3 — the editor reported ready.
     act(() => mountEditor());
     expect(previewLabel()).toBeVisible();
     expect(publishButton()).not.toBeDisabled();
