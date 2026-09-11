@@ -1,21 +1,13 @@
 /**
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
- */
-import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
-import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
+
+ The General category of the user-settings modal. Lifted out of the former
+ `UserSettingsPage` unchanged — same setting groups, same `data-testid`s, same
+ child modals — so the move from page to modal stays a UI change only.
+*/
 import { App } from '../app-shim';
-import BAIErrorBoundary from '../components/BAIErrorBoundary';
-import ErrorLogList from '../components/ErrorLogList';
-import LoginHistory, { LoginHistoryQuery } from '../components/LoginHistory';
-import LoginSession, { LoginSessionQuery } from '../components/LoginSession';
-import MyKeypairInfoModalLegacy from '../components/MyKeypairInfoModalLegacy';
-import MyKeypairManagementModal from '../components/MyKeypairManagementModal';
-import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
-import SettingList, { SettingGroup } from '../components/SettingList';
-import ShellScriptEditModal from '../components/ShellScriptEditModal';
-import ThemeAccentColorPicker from '../components/ThemeAccentColorPicker';
-import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -25,73 +17,29 @@ import {
   useCustomThemeConfig,
 } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
+import MyKeypairInfoModalLegacy from './MyKeypairInfoModalLegacy';
+import MyKeypairManagementModal from './MyKeypairManagementModal';
+import SSHKeypairManagementModal from './SSHKeypairManagementModal';
+import SettingList, { SettingGroup } from './SettingList';
+import ShellScriptEditModal, { ShellScriptType } from './ShellScriptEditModal';
+import ThemeAccentColorPicker from './ThemeAccentColorPicker';
 import { Button } from '@astryxdesign/core/Button';
 import {
-  BAISkeleton,
-  BAICard,
   filterOutEmpty,
   useSessionStorageState,
   useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Settings } from 'lucide-react';
-import { parseAsStringLiteral } from 'nuqs';
-import { Suspense, useEffect, useEffectEvent, useState } from 'react';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { useQueryLoader } from 'react-relay';
 
-export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
-
-const tabParser = parseAsStringLiteral([
-  'general',
-  'logs',
-  'login-sessions',
-  'login-history',
-]).withDefault('general');
-
-const UserPreferencesPage = () => {
+const UserSettingsGeneralPane = () => {
   'use memo';
 
   const { t } = useTranslation();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
-  const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
-
-  const [loginSessionQueryRef, loadLoginSessionQuery] =
-    useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
-  const [loginHistoryQueryRef, loadLoginHistoryQuery] =
-    useQueryLoader<LoginHistoryQueryType>(LoginHistoryQuery);
-  // Lazily fetch a tab's data only once it becomes active (covers both a tab
-  // click and a direct `?tab=...` URL restore), so neither query runs while the
-  // General/Logs tabs are shown.
-  const ensureActiveTabQueryLoaded = useEffectEvent(() => {
-    if (currentTab === 'login-sessions' && !loginSessionQueryRef) {
-      loadLoginSessionQuery(
-        {
-          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-          limit: 10,
-          offset: 0,
-        },
-        { fetchPolicy: 'store-and-network' },
-      );
-    }
-    if (currentTab === 'login-history' && !loginHistoryQueryRef) {
-      loadLoginHistoryQuery(
-        {
-          orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-          limit: 10,
-          offset: 0,
-        },
-        { fetchPolicy: 'store-and-network' },
-      );
-    }
-  });
-  useEffect(
-    function loadActiveTabQueryOnActivation() {
-      ensureActiveTabQueryLoaded();
-    },
-    [currentTab],
-  );
 
   const { themeMode, setThemeMode } = useThemeMode();
   const {
@@ -517,70 +465,13 @@ const UserPreferencesPage = () => {
 
   return (
     <>
-      <BAICard
-        activeTabKey={currentTab}
-        onTabChange={onTabChange}
-        tabList={[
-          {
-            key: 'general',
-            label: t('userSettings.General'),
-          },
-          {
-            key: 'logs',
-            label: t('userSettings.Logs'),
-          },
-          {
-            key: 'login-sessions',
-            label: t('userSettings.LoginSessions'),
-          },
-          {
-            key: 'login-history',
-            label: t('userSettings.LoginHistory'),
-          },
-        ]}
-      >
-        <Suspense fallback={<BAISkeleton />}>
-          {currentTab === 'general' && (
-            <BAIErrorBoundary>
-              <SettingList
-                settingGroups={settingGroups}
-                showChangedOptionFilter
-                showResetButton
-                showSearchBar
-              />
-            </BAIErrorBoundary>
-          )}
-          {currentTab === 'logs' && (
-            <BAIErrorBoundary>
-              <ErrorLogList />
-            </BAIErrorBoundary>
-          )}
-          {currentTab === 'login-sessions' && (
-            <BAIErrorBoundary>
-              {loginSessionQueryRef ? (
-                <LoginSession
-                  queryRef={loginSessionQueryRef}
-                  onReload={loadLoginSessionQuery}
-                />
-              ) : (
-                <BAISkeleton />
-              )}
-            </BAIErrorBoundary>
-          )}
-          {currentTab === 'login-history' && (
-            <BAIErrorBoundary>
-              {loginHistoryQueryRef ? (
-                <LoginHistory
-                  queryRef={loginHistoryQueryRef}
-                  onReload={loadLoginHistoryQuery}
-                />
-              ) : (
-                <BAISkeleton />
-              )}
-            </BAIErrorBoundary>
-          )}
-        </Suspense>
-      </BAICard>
+      <SettingList
+        settingGroups={settingGroups}
+        showChangedOptionFilter
+        showResetButton
+        showSearchBar
+        hideGroupNav
+      />
       {baiClient?.supports('my-keypairs') ? (
         <MyKeypairManagementModal
           open={isOpenSSHKeypairInfoModal}
@@ -612,4 +503,4 @@ const UserPreferencesPage = () => {
   );
 };
 
-export default UserPreferencesPage;
+export default UserSettingsGeneralPane;

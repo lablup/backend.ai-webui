@@ -81,10 +81,10 @@ describe('generated search index', () => {
 
   it('finds at least the inventoried tabs and setting items', () => {
     const tabPages = index.entries.filter((e) =>
-      e.tabs.some((t) => t.param === 'tab'),
+      e.tabs.some((t) => t.labelKey),
     );
     const tabKeys = index.entries.reduce(
-      (a, e) => a + e.tabs.filter((t) => t.param === 'tab').length,
+      (a, e) => a + e.tabs.filter((t) => t.labelKey).length,
       0,
     );
     const allTabs = index.entries.flatMap((e) => e.tabs);
