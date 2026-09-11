@@ -1,5 +1,5 @@
 import { BAIRuntimeVariantSelectPaginatedQuery } from '../../__generated__/BAIRuntimeVariantSelectPaginatedQuery.graphql';
-import { BAIComplexSelectProps } from '../BAIComplexSelect';
+import { BAIComplexSelectProps, BAILabeledValue } from '../BAIComplexSelect';
 export type RuntimeVariantNode = NonNullable<NonNullable<BAIRuntimeVariantSelectPaginatedQuery['response']['runtimeVariants']>['edges'][number]>['node'];
 export interface BAIRuntimeVariantSelectRef {
     refetch: () => void;
@@ -7,7 +7,9 @@ export interface BAIRuntimeVariantSelectRef {
 export interface BAIRuntimeVariantSelectProps extends Omit<BAIComplexSelectProps, 'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'> {
     /** Plain key, as the antd `BAIRuntimeVariantSelect` exposes. */
     value?: string | null;
-    onChange?: (value: string | undefined) => void;
+    /** The second argument is the picked option, so a `renderInput` filter can
+     * label its token with the variant name while the UUID serializes. */
+    onChange?: (value: string | undefined, option?: BAILabeledValue) => void;
     /**
      * Notifies the parent of resolved variant metadata as the paginated list
      * and selected-value point lookup fan in, keyed by runtime variant UUID (the
