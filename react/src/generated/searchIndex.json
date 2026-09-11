@@ -421,6 +421,7 @@
         }
       ],
       "keys": [
+        "button.Apply",
         "button.OK",
         "button.Reset",
         "dialog.ask.DoYouWantToResetChanges",
@@ -439,6 +440,8 @@
         "theme.button.ExportToJson",
         "theme.button.ImportFromJson",
         "theme.button.JsonConfig",
+        "userSettings.ApplyThemeToDomain",
+        "userSettings.ApplyThemeToDomainDesc",
         "userSettings.DarkMode",
         "userSettings.FailedToLoadDefaultThemeConfig",
         "userSettings.LightMode",
@@ -452,7 +455,6 @@
         "userSettings.logo.UploadFileSizeExceed",
         "userSettings.logo.size.Height",
         "userSettings.logo.size.Width",
-        "userSettings.theme.CustomThemeSettingAlert",
         "userSettings.theme.NoChangesMade",
         "userSettings.theme.Preview",
         "webui.menu.GoBack",
