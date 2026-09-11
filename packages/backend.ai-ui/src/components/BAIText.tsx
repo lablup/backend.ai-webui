@@ -158,7 +158,16 @@ const resolveTooltipContent = (
 
 const ELLIPSIS = '…';
 
-/** The first `length` characters of `nodes` as `nodeToText` counts them. */
+/** `index` moved back one unit when it would split a surrogate pair. */
+const toCodePointBoundary = (text: string, index: number) => {
+  const code = text.charCodeAt(index - 1);
+  return code >= 0xd800 && code <= 0xdbff ? index - 1 : index;
+};
+
+/**
+ * The first `length` UTF-16 units of `nodes` as `nodeToText` counts them,
+ * never cutting inside a surrogate pair.
+ */
 const sliceNodes = (nodes: ReactNode[], length: number): ReactNode[] => {
   const out: ReactNode[] = [];
   let remaining = length;
@@ -166,7 +175,11 @@ const sliceNodes = (nodes: ReactNode[], length: number): ReactNode[] => {
     if (remaining <= 0) break;
     if (typeof node === 'string' || typeof node === 'number') {
       const text = String(node);
-      out.push(text.length <= remaining ? node : text.slice(0, remaining));
+      out.push(
+        text.length <= remaining
+          ? node
+          : text.slice(0, toCodePointBoundary(text, remaining)),
+      );
       remaining -= text.length;
     } else if (React.isValidElement<{ children?: ReactNode }>(node)) {
       const textLength = nodeToText(node).length;
@@ -244,7 +257,9 @@ const measureClamp = (
     if (!link) return { overflow: true, cut: null };
     const fits = (length: number) => {
       probe.replaceChildren(
-        document.createTextNode(text.slice(0, length) + ELLIPSIS),
+        document.createTextNode(
+          text.slice(0, toCodePointBoundary(text, length)) + ELLIPSIS,
+        ),
         link.cloneNode(true),
       );
       return probe.getBoundingClientRect().height <= limit;
@@ -256,7 +271,7 @@ const measureClamp = (
       if (fits(mid)) low = mid;
       else high = mid - 1;
     }
-    return { overflow: true, cut: low };
+    return { overflow: true, cut: toCodePointBoundary(text, low) };
   } finally {
     probe.remove();
   }
@@ -487,7 +502,10 @@ const BAIText: React.FC<BAITextProps> = ({
 
   // A multi-line expandable clamp is measured in JS so `…` and the link end
   // the last visible line; a single line clips in CSS with the link after it.
-  const isMeasured = !!ellipsis && expandable && rows > 1 && !isExpanded;
+  // `Kbd` takes its text as the `keys` prop, which cannot be sliced, so it
+  // keeps the CSS clamp with the link beside the box.
+  const isMeasured =
+    !!ellipsis && expandable && rows > 1 && !isExpanded && !keyboard;
   const expandLabel = isExpanded
     ? t('general.button.Collapse')
     : t('general.button.Expand');
@@ -551,9 +569,9 @@ const BAIText: React.FC<BAITextProps> = ({
         {expandLabel}
       </Link>
     ) : null;
-  // Inline after the text (antd), except on a CSS-clipped single line where
-  // the box would clip it.
-  const isLinkInline = isExpanded || rows > 1;
+  // Inline after the text (antd), except beside a CSS-clipped box, which
+  // would clip it.
+  const isLinkInline = isExpanded || isMeasured;
   const visibleContent =
     isMeasured && clamp.cut !== null
       ? [...sliceNodes(React.Children.toArray(content), clamp.cut), ELLIPSIS]

@@ -171,8 +171,9 @@
   word-break: break-word;
 }
 
-/* The expand link inline at the end of the text (antd `operationUnit`). */
-.bai-text-content > .bai-text-expand {
+/* The expand link inline at the end of the text (antd `operationUnit`).
+   Descendant, not child: the measuring probe's clone must match too. */
+.bai-text-content .bai-text-expand {
   margin-inline-start: var(--spacing-1);
   white-space: nowrap;
 }

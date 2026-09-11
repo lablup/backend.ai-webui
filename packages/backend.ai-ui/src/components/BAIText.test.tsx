@@ -388,6 +388,47 @@ describe('BAIText ellipsis', () => {
     }
   });
 
+  it('never cuts a multi-line clamp inside a surrogate pair', () => {
+    const rect = vi
+      .spyOn(Element.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: Element) {
+        const height = Math.ceil((this.textContent?.length ?? 0) / 10) * 20;
+        return { height } as DOMRect;
+      });
+    try {
+      render(
+        <BAIText ellipsis={{ rows: 2, expandable: true }}>
+          {`${'a'.repeat(12)}😀${'b'.repeat(20)}`}
+        </BAIText>,
+      );
+      const box = expandLink('Expand').parentElement as HTMLElement;
+      // 13 units would split the emoji, so the cut steps back to 12.
+      expect(box.textContent).toBe(`${'a'.repeat(12)}…Expand`);
+      expect(box.textContent).not.toContain('\uFFFD');
+    } finally {
+      rect.mockRestore();
+    }
+  });
+
+  it('keeps a keyboard clamp on CSS with the link beside the box', () => {
+    setOverflow(true);
+    render(
+      <BAIText
+        data-testid="t"
+        keyboard
+        ellipsis={{ rows: 2, expandable: true }}
+      >
+        shift+F5
+      </BAIText>,
+    );
+    const root = screen.getByTestId('t');
+    const box = root.querySelector('.bai-text-content') as HTMLElement;
+    const link = expandLink('Expand');
+    expect(box.querySelector('.astryx-kbd')).not.toBeNull();
+    expect(box).not.toContainElement(link);
+    expect(link.parentElement).toBe(root);
+  });
+
   it('follows BUI i18next for the expand link', async () => {
     setOverflow(true);
     await act(async () => {
