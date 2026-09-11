@@ -22,6 +22,55 @@ import { useTranslation } from 'react-i18next';
 
 const passwordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/;
 
+/**
+ * The policy-agreement checkbox: a hidden-label `CheckboxInput` (so only the
+ * box toggles) next to the sentence, whose two policy names are links that
+ * open their own modal. `Form.Item` injects `checked`/`onChange`.
+ */
+const AstryxFormCheckboxWithPolicyLinks: React.FC<{
+  label: string;
+  checked?: boolean;
+  onChange?: (value: boolean) => void;
+  onOpenTOS: () => void;
+  onOpenPrivacyPolicy: () => void;
+}> = ({ label, checked, onChange, onOpenTOS, onOpenPrivacyPolicy }) => {
+  'use memo';
+  const { t } = useTranslation();
+  return (
+    <HStack gap={2} align="start">
+      <AstryxFormCheckbox
+        label={label}
+        isLabelHidden
+        checked={checked}
+        onChange={onChange}
+      />
+      <Text>
+        {t('signUp.PolicyAgreement_1')}
+        <Link
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onOpenTOS();
+          }}
+        >
+          {t('signUp.TermsOfService')}
+        </Link>
+        {t('signUp.PolicyAgreement_2')}
+        <Link
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            onOpenPrivacyPolicy();
+          }}
+        >
+          {t('signUp.PrivacyPolicy')}
+        </Link>
+        {t('signUp.PolicyAgreement_3')}
+      </Text>
+    </HStack>
+  );
+};
+
 interface SignupFormValues {
   email: string;
   user_name: string;
@@ -240,29 +289,6 @@ const SignupModal: React.FC<SignupModalProps> = ({
           <BAIFormItem
             name="agreement"
             valuePropName="checked"
-            extra={
-              <HStack gap={2} align="center">
-                <Link
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowTOS(true);
-                  }}
-                >
-                  {t('signUp.TermsOfService')}
-                </Link>
-                <Text type="supporting">·</Text>
-                <Link
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowPrivacyPolicy(true);
-                  }}
-                >
-                  {t('signUp.PrivacyPolicy')}
-                </Link>
-              </HStack>
-            }
             rules={[
               {
                 validator: (_, value) =>
@@ -274,17 +300,15 @@ const SignupModal: React.FC<SignupModalProps> = ({
               },
             ]}
           >
-            {/* PILOT-DECISION: antd let a `Checkbox` take arbitrary JSX
-                children, which is how the policy sentence carried two inline
-                links. Astryx `CheckboxInput` has a REQUIRED STRING `label`
-                (§1 contract 1) and no slot for trailing content, so the
-                sentence becomes the label (plain text — the accessible name
-                is now complete, which it was not before) and the two policy
-                links move to the field's `extra` row, where they are real
-                links instead of anchors nested inside a `<label>` that
-                swallowed their clicks. */}
-            <AstryxFormCheckbox
+            {/* The sentence is rendered BESIDE the box, not as its label:
+                only the box itself toggles, and the two policy names can be
+                real links (a link inside a `<label>` has its click swallowed
+                by the label's own toggle). The label still carries the full
+                sentence for screen readers. */}
+            <AstryxFormCheckboxWithPolicyLinks
               label={`${t('signUp.PolicyAgreement_1')}${t('signUp.TermsOfService')}${t('signUp.PolicyAgreement_2')}${t('signUp.PrivacyPolicy')}${t('signUp.PolicyAgreement_3')}`}
+              onOpenTOS={() => setShowTOS(true)}
+              onOpenPrivacyPolicy={() => setShowPrivacyPolicy(true)}
             />
           </BAIFormItem>
         </Form>

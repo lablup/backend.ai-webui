@@ -147,7 +147,7 @@ test.describe(
       await page.goto(webuiEndpoint);
       // Regression guard: the route-level STokenGuard passes through when
       // no sToken is present, so the ordinary LoginView panel still mounts.
-      await expect(page.getByLabel('Email or Username')).toBeVisible();
+      await expect(page.getByLabel('Email')).toBeVisible();
       await expect(page.getByLabel('Password')).toBeVisible();
     });
 

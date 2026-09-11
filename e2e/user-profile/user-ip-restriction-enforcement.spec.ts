@@ -180,7 +180,7 @@ test.describe.serial(
       // We check for the login form or an error indicator
       await expect(
         userPage
-          .getByLabel('Email or Username')
+          .getByLabel('Email')
           .or(userPage.getByText(/Unauthorized/i))
           .or(userPage.getByText(/allowed/i))
           .or(userPage.getByText(/restricted/i))
