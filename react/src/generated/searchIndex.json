@@ -430,14 +430,6 @@
           "descriptionKeys": [
             "userSettings.theme.SuccessColorDesc"
           ]
-        },
-        {
-          "key": "userSettings.theme.TextColor",
-          "groupKey": "userSettings.Theme",
-          "groupId": "group-theme-customization",
-          "descriptionKeys": [
-            "userSettings.theme.TextColorDesc"
-          ]
         }
       ],
       "keys": [
@@ -466,6 +458,7 @@
         "userSettings.logo.CreateURLWithImage",
         "userSettings.logo.DetailLogoCustomizationDesc",
         "userSettings.logo.FailedToReadFile",
+        "userSettings.logo.FallbackFollowsItem",
         "userSettings.logo.ImagePath",
         "userSettings.logo.LogoCustomizationDesc",
         "userSettings.logo.UploadFileSizeExceed",
@@ -5296,16 +5289,6 @@
           ]
         },
         {
-          "key": "userSettings.ThemeAccentColor",
-          "tab": "general",
-          "groupKey": "userSettings.Preferences",
-          "groupId": "group-preferences",
-          "testId": "items-theme-accent",
-          "descriptionKeys": [
-            "userSettings.DescThemeAccentColor"
-          ]
-        },
-        {
           "key": "userSettings.ThemeFamily",
           "tab": "general",
           "groupKey": "userSettings.Preferences",
@@ -5441,7 +5424,6 @@
         "userSettings.BootstrapScriptUpdated",
         "userSettings.ClearSSHKeypairInput",
         "userSettings.CurrentSSHPublicKey",
-        "userSettings.DarkMode",
         "userSettings.DarkTheme",
         "userSettings.Default",
         "userSettings.DescAutomaticUpdateCheck",
@@ -5453,7 +5435,6 @@
         "userSettings.DescUseCompactSidebar",
         "userSettings.ExperimentalFeaturesDesc",
         "userSettings.FollowSystem",
-        "userSettings.LightMode",
         "userSettings.LightTheme",
         "userSettings.NoExistingSSHKeypair",
         "userSettings.PrivateKey",

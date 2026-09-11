@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r27-default-brand-h1rt3nku theme — built by `pnpm exec astryx theme build`
+ * bai-r27-default-brand-hmpqbij theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR27DefaultBrandH1rt3nkuTheme } from './bai-r27-default-brand-h1rt3nku';
- *   import './bai-r27-default-brand-h1rt3nku.css';
+ *   import { baiR27DefaultBrandHmpqbijTheme } from './bai-r27-default-brand-hmpqbij';
+ *   import './bai-r27-default-brand-hmpqbij.css';
  */
-export const baiR27DefaultBrandH1rt3nkuTheme = {
-  name: 'bai-r27-default-brand-h1rt3nku',
+export const baiR27DefaultBrandHmpqbijTheme = {
+  name: 'bai-r27-default-brand-hmpqbij',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -189,27 +189,27 @@ export const baiR27DefaultBrandH1rt3nkuTheme = {
     "--shadow-inset-error": "inset 0px 0px 0px 2px #de47454D",
     "--color-background-inverted": "light-dark(#211A16, #FFFBF8)",
     "--color-track": "light-dark(#B8A89F, #51443C)",
-    "--bai-color-info": "light-dark(#028DF2, #009BDD)",
-    "--bai-color-link": "light-dark(#FF7A00, #DC6B03)",
-    "--bai-header-bg": "light-dark(#FF9729, #E88A28)",
-    "--bai-color-error-bg": "light-dark(#fff2f0, #261617)",
-    "--bai-color-info-bg": "light-dark(#e6f9ff, #111f27)",
-    "--bai-color-warning-hover": "light-dark(#ffd666, #7c5914)",
-    "--bai-color-success-border-hover": "light-dark(#45d6b2, #0c5548)",
-    "--bai-color-primary-bg": "light-dark(#fff6e6, #502e0f)",
-    "--bai-color-error-border": "light-dark(#ffccc7, #502223)",
-    "--bai-primary-5": "light-dark(#ff9729, #cc7c27)",
-    "--bai-color-text-tertiary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
-    "--bai-color-text-quaternary": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
-    "--bai-color-text-description": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
-    "--bai-color-fill": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
-    "--bai-color-fill-secondary": "light-dark(rgba(0,0,0,0.06), #262626)",
-    "--bai-color-fill-tertiary": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
-    "--bai-color-fill-quaternary": "light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.04))",
-    "--bai-color-bg-container-disabled": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
-    "--bai-preset-purple-5": "light-dark(#9254de, #51258f)",
-    "--bai-preset-green-5": "light-dark(#73d13d, #3c8618)",
-    "--bai-preset-red-5": "light-dark(#ff4d4f, #a61d24)",
+    "--color-info": "light-dark(#028DF2, #009BDD)",
+    "--color-link": "light-dark(#FF7A00, #DC6B03)",
+    "--header-bg": "light-dark(#FF9729, #E88A28)",
+    "--color-error-bg": "light-dark(color-mix(in srgb, var(--color-error) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-error) 15%, var(--color-background-surface)))",
+    "--color-info-bg": "light-dark(color-mix(in srgb, var(--color-info) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-info) 15%, var(--color-background-surface)))",
+    "--color-warning-border-hover": "light-dark(color-mix(in srgb, var(--color-warning) 65%, var(--color-background-surface)), color-mix(in srgb, var(--color-warning) 45%, var(--color-background-surface)))",
+    "--color-success-border-hover": "light-dark(color-mix(in srgb, var(--color-success) 65%, var(--color-background-surface)), color-mix(in srgb, var(--color-success) 45%, var(--color-background-surface)))",
+    "--color-primary-bg": "light-dark(color-mix(in srgb, var(--color-accent) 10%, var(--color-background-surface)), color-mix(in srgb, var(--color-accent) 30%, var(--color-background-surface)))",
+    "--color-error-border": "light-dark(color-mix(in srgb, var(--color-error) 45%, var(--color-background-surface)), color-mix(in srgb, var(--color-error) 30%, var(--color-background-surface)))",
+    "--primary-5": "light-dark(color-mix(in srgb, var(--color-accent) 85%, var(--color-background-surface)), color-mix(in srgb, var(--color-accent) 65%, var(--color-background-surface)))",
+    "--color-text-tertiary": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+    "--color-text-quaternary": "light-dark(rgba(0,0,0,0.25), rgba(255,255,255,0.25))",
+    "--color-text-description": "light-dark(rgba(0,0,0,0.45), rgba(255,255,255,0.45))",
+    "--color-fill": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
+    "--color-fill-secondary": "light-dark(rgba(0,0,0,0.06), #262626)",
+    "--color-fill-tertiary": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "--color-fill-quaternary": "light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.04))",
+    "--color-bg-container-disabled": "light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.08))",
+    "--preset-purple-5": "light-dark(#9254de, #51258f)",
+    "--preset-green-5": "light-dark(#73d13d, #3c8618)",
+    "--preset-red-5": "light-dark(#ff4d4f, #a61d24)",
     "--size-element-sm": "24px"
   },
   localTokens: {
@@ -236,7 +236,7 @@ export const baiR27DefaultBrandH1rt3nkuTheme = {
     "--astryx-theme-neutral-color-destructive-overlay-hover": "neutral",
     "--astryx-theme-neutral-color-destructive-overlay-pressed": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r27-default-brand-h1rt3nku"],
+  __localTokenLineage: ["neutral","bai-r27-default-brand-hmpqbij"],
   components: {
     "heading": {
       "level:1": {
