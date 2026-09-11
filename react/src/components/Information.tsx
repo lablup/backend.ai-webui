@@ -147,9 +147,6 @@ const Information: React.FC<InformationProps> = () => {
           <MetadataListItem
             label={t('information.RedisVersion')}
             icon={
-              // PILOT-DECISION: `newLineToBrElement` produced a `<br/>`-joined
-              // ReactNode; the tooltip icon's `title` is plain `string`
-              // (P2), so the line-break formatting is dropped here.
               <DescriptionLabel subtitle={t('information.DescRedisVersion')} />
             }
           >
