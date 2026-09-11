@@ -16,6 +16,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
+// Preemption reasons the scheduler writes into `status_info`; shown to users
+// as a friendly line instead of the raw internal string.
+const STATUS_INFO_DESCRIPTION_KEY: Record<string, string> = {
+  PREEMPTED_BY_SCHEDULER: 'session.StatusReasonPreemptedByScheduler',
+  RESCHEDULED: 'session.StatusReasonRescheduled',
+  'preemption-reservation': 'session.StatusReasonPreemptionReservation',
+  'preempted-by-reservation': 'session.StatusReasonPreemptedByReservation',
+};
+
 interface SessionStatusTagProps {
   sessionFrgmt?: SessionStatusTagFragment$key | null;
   showInfo?: boolean;
@@ -25,6 +34,9 @@ interface SessionStatusTagProps {
 
 const isTransitional = (session: SessionStatusTagFragment$data) => {
   return [
+    'RESERVED',
+    'PREEMPTED',
+    'RESCHEDULING',
     'SCHEDULED',
     'RESTARTING',
     'TERMINATING',
@@ -63,6 +75,10 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
     `,
     sessionFrgmt,
   );
+
+  const statusInfoDescriptionKey = session?.status_info
+    ? STATUS_INFO_DESCRIPTION_KEY[session.status_info]
+    : undefined;
 
   const displayQuePosition =
     showQueuePosition && _.isNumber(session?.queue_position)
@@ -106,17 +122,26 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   ) : null;
 
   if (baiClient.supports('session-scheduling-history')) {
+    const schedulingHistoryBadge = (
+      <Badge
+        variant={badgeVariantForStatus('session', session.status)}
+        icon={
+          isTransitional(session) ? (
+            <LoaderCircle className="bai-icon-spin" size="1em" />
+          ) : undefined
+        }
+        label={session.status || ' '}
+      />
+    );
     return (
       <BAIFlex gap="xs">
-        <Badge
-          variant={badgeVariantForStatus('session', session.status)}
-          icon={
-            isTransitional(session) ? (
-              <LoaderCircle className="bai-icon-spin" size="1em" />
-            ) : undefined
-          }
-          label={session.status || ' '}
-        />
+        {showTooltip && statusInfoDescriptionKey ? (
+          <Tooltip content={t(statusInfoDescriptionKey)}>
+            {schedulingHistoryBadge}
+          </Tooltip>
+        ) : (
+          schedulingHistoryBadge
+        )}
         {queuePositionBadge}
       </BAIFlex>
     );
@@ -126,7 +151,15 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
     return (
       <BAIFlex wrap="nowrap" gap="xs">
         {showTooltip && session.status_info ? (
-          <Tooltip content={session.status_info}>{statusBadge}</Tooltip>
+          <Tooltip
+            content={
+              statusInfoDescriptionKey
+                ? t(statusInfoDescriptionKey)
+                : session.status_info
+            }
+          >
+            {statusBadge}
+          </Tooltip>
         ) : (
           statusBadge
         )}
@@ -147,13 +180,25 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
           }
           label={session.status || ' '}
         />
-        <Badge
-          variant={badgeVariantForStatus(
-            'sessionStatusInfo',
-            session.status_info,
-          )}
-          label={session.status_info}
-        />
+        {statusInfoDescriptionKey ? (
+          <Tooltip content={t(statusInfoDescriptionKey)}>
+            <Badge
+              variant={badgeVariantForStatus(
+                'sessionStatusInfo',
+                session.status_info,
+              )}
+              label={session.status_info}
+            />
+          </Tooltip>
+        ) : (
+          <Badge
+            variant={badgeVariantForStatus(
+              'sessionStatusInfo',
+              session.status_info,
+            )}
+            label={session.status_info}
+          />
+        )}
       </BAIFlex>
       {queuePositionBadge}
     </BAIFlex>
