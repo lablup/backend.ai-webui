@@ -12,11 +12,15 @@ export interface BAIImageMetaRowProps extends Omit<React.HTMLAttributes<HTMLElem
      * reference as monospace text instead of the decomposed row.
      */
     variant?: BAIImageMetaRowVariant;
-    /** Aliased base image name; defaults to the one derived from `fullName`. */
+    /**
+     * Aliased base image name. Empty or absent falls back to the one derived
+     * from `fullName`, so a server that does not send the field renders the
+     * derived name rather than a hole.
+     */
     name?: string | null;
-    /** Base version; defaults to the one derived from `fullName`. */
+    /** Base version; empty or absent derives from `fullName`. */
     version?: string | null;
-    /** Architecture; defaults to the one derived from `fullName`. */
+    /** Architecture; empty or absent derives from `fullName`. */
     architecture?: string | null;
     /** Tag chips for the `full` variant. */
     tags?: Array<BAIImageTagFact>;
