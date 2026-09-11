@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>การปรับใช้ - Backend.AI WebUI User Guide - ภาษาไทย</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…" />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/th/deployment.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="การปรับใช้" />
+  <meta property="og:description" content="Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…" />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/th/deployment.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="th" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="การปรับใช้" />
+  <meta name="twitter:description" content="Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…" />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การปรับใช้","inLanguage":"th","description":"Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…","dateModified":"2026-09-09T03:11:29.000Z","url":"https://webui.docs.backend.ai/next/th/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
+  <link rel="alternate" hreflang="en" href="../en/deployment.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
+  <link rel="alternate" hreflang="th" href="../th/deployment.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/deployment.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="deployment"></script>
+</head>
+<body data-copy-label="คัดลอก" data-copied-label="คัดลอกแล้ว!" data-copy-failed-label="คัดลอกไม่สำเร็จ">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a1c61c7)">v26.9.0-alpha.0 (a1c61c7)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">ค้นหาเอกสาร...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="ค้นหาเอกสาร..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/deployment.html" lang="ko">한국어</option><option value="../en/deployment.html" lang="en">English</option><option value="../ja/deployment.html" lang="ja">日本語</option><option value="../th/deployment.html" lang="th" selected>ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">นี่คือเอกสารที่ยังไม่เผยแพร่สำหรับ WebUI เวอร์ชัน Next</span>
+    <span class="docs-banner__desc">ดูเอกสารฉบับล่าสุดได้ที่ <a class="docs-banner__link" href="../../26.8/th/index.html">เวอร์ชันล่าสุด (26.8)</a></span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">เวอร์ชัน</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="th"
+      data-slug="deployment"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">เวอร์ชันก่อนหน้า</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">บทนำ</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">เริ่มต้นใช้งาน</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="เรมตนใชงาน">
+    <li><a href="./quickstart.html">1. เริ่มต้นอย่างรวดเร็ว</a></li>
+<li><a href="./disclaimer.html">2. ข้อจำกัดความรับผิดชอบ</a></li>
+<li><a href="./overview.html">3. ภาพรวม</a></li>
+<li><a href="./installation.html">4. การติดตั้ง</a></li>
+<li><a href="./login.html">5. การเข้าสู่ระบบ</a></li>
+<li><a href="./header.html">6. แถบด้านบน</a></li>
+<li><a href="./start.html">7. เริ่มต้น</a></li>
+<li><a href="./dashboard.html">8. แดชบอร์ด</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">เวิร์กโหลด</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="เวรกโหลด">
+    <li><a href="./session_page.html">9. หน้าเซสชัน</a></li>
+<li><a href="./sessions_all.html">10. เซสชันการคำนวณ</a></li>
+<li><a href="./cluster_session.html">11. เซสชันคลัสเตอร์</a></li>
+<li><a href="./deployment.html" class="active" aria-current="page">12. การปรับใช้</a></li>
+<li><a href="./chat.html">13. แชท</a></li>
+<li><a href="./my_environments.html">14. สภาพแวดล้อมของฉัน</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">พื้นที่จัดเก็บและข้อมูล</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="พนทจดเกบและขอมล">
+    <li><a href="./vfolder.html">15. โฟลเดอร์จัดเก็บ</a></li>
+<li><a href="./mount_vfolder.html">16. การเมาท์โฟลเดอร์จัดเก็บ</a></li>
+<li><a href="./share_vfolder.html">17. การแชร์โฟลเดอร์จัดเก็บ</a></li>
+<li><a href="./sftp_to_container.html">18. การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">การดูแลระบบ</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="การดแลระบบ">
+    <li><a href="./user_settings.html">19. ตั้งค่าผู้ใช้</a></li>
+<li><a href="./project_admin.html">20. ฟีเจอร์ผู้ดูแลโปรเจกต์</a></li>
+<li><a href="./rbac_management.html">21. การจัดการ RBAC</a></li>
+<li><a href="./agent_summary.html">22. สรุปเอเจนต์</a></li>
+<li><a href="./statistics.html">23. สถิติ</a></li>
+<li><a href="./admin_menu.html">24. ฟีเจอร์ผู้ดูแลระบบ</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">เอกสารอ้างอิง</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="เอกสารอางอง">
+    <li><a href="./trouble_shooting.html">25. FAQ และการแก้ไขปัญหา</a></li>
+<li><a href="./appendix.html">26. ภาคผนวก</a></li>
+<li><a href="./license_agreement.html">27. ข้อตกลงการอนุญาตใช้งาน</a></li>
+<li><a href="./references.html">28. อ้างอิง</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="หน้านี้ไม่มีในเวอร์ชัน {version} กำลังแสดงหน้าดัชนีของเวอร์ชันแทน">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="ปิด" title="ปิด">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">หน้าแรก</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">เวิร์กโหลด</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">การปรับใช้</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-deployment">
+<p><a id="model-serving"></a></p>
+<h1 data-bai-block="0" id="deployment-การปรบใช">การปรับใช้<a class="hash-link" href="#deployment-การปรบใช" aria-label="Direct link to การปรับใช้">#</a></h1>
+<h2 data-bai-block="1" id="deployment-ภาพรวมการปรบใช">ภาพรวมการปรับใช้<a class="hash-link" href="#deployment-ภาพรวมการปรบใช" aria-label="Direct link to ภาพรวมการปรับใช้">#</a></h2>
+<p data-bai-block="2">Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ <strong>การปรับใช้ (Deployments)</strong> การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ endpoint ที่เสถียร ซึ่งแอปพลิเคชันของผู้ใช้ปลายทาง (เช่น แอปมือถือ, backend ของเว็บเซอร์วิส, เครื่องมือภายในองค์กร) สามารถเรียกใช้งานเพื่อทำ inference ได้</p>
+<p><figure data-bai-block="3" class="doc-figure"><img src="./images/model-serving-diagram.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3113" height="1500" /><figcaption>รูปที่ 12.1</figcaption></figure>
+</p>
+<p data-bai-block="4">การปรับใช้ขยายความสามารถของเซสชันการคำนวณทั่วไปด้วยการบำรุงรักษาแบบอัตโนมัติ การปรับขนาดของ replica และที่อยู่ endpoint ถาวรซึ่งไม่เปลี่ยนแปลงไม่ว่ามีการเพิ่มหรือลด replica อย่างไรก็ตาม คุณเพียงระบุพารามิเตอร์การปรับขนาดที่ต้องการเท่านั้น Backend.AI จะสร้าง ตรวจสอบ และยุติเซสชัน inference เบื้องหลังให้โดยอัตโนมัติ คุณจึงไม่ต้องจัดการเซสชันเหล่านั้นด้วยตนเอง</p>
+<h2 data-bai-block="5" id="deployment-หนาการปรบใช">หน้าการปรับใช้<a class="hash-link" href="#deployment-หนาการปรบใช" aria-label="Direct link to หน้าการปรับใช้">#</a></h2>
+<p data-bai-block="6">หน้าการปรับใช้แสดงรายการการปรับใช้ทั้งหมดในโปรเจกต์ปัจจุบัน คุณสามารถเข้าถึงได้โดยคลิก <strong>การปรับใช้</strong> ในเมนูด้านข้าง</p>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/serving_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 12.2</figcaption></figure>
+</p>
+<p data-bai-block="8">ที่ด้านบนของหน้า คุณสามารถกรองการปรับใช้ตามขั้นตอนวงจรชีวิต:</p>
+<ul>
+<li data-bai-block="9"><strong>กำลังทำงาน</strong>: แสดงการปรับใช้ที่กำลังทำงานหรือกำลังสร้าง นี่คือมุมมองเริ่มต้น</li>
+<li data-bai-block="10"><strong>สิ้นสุดแล้ว</strong>: แสดงการปรับใช้ที่ถูกยุติแล้ว</li>
+</ul>
+<p data-bai-block="11">คลิกปุ่ม <code>สร้างการปรับใช้</code> เพื่อเปิดหน้าต่าง <strong>สร้างการปรับใช้</strong></p>
+<p><a id="create-deployment"></a></p>
+<h2 data-bai-block="12" id="deployment-การสรางการปรบใช">การสร้างการปรับใช้<a class="hash-link" href="#deployment-การสรางการปรบใช" aria-label="Direct link to การสร้างการปรับใช้">#</a></h2>
+<p data-bai-block="13">การสร้างการปรับใช้แบ่งเป็นสองขั้นตอน</p>
+<ol>
+<li data-bai-block="14"><strong>สร้างการปรับใช้ (deployment)</strong> — คอนเทนเนอร์น้ำหนักเบาที่กำหนดเฉพาะข้อมูลระบุตัวตนของการปรับใช้ (ชื่อ การมองเห็น เมตาดาตาของการปรับใช้ และ resource group)</li>
+<li data-bai-block="15"><strong>เพิ่ม Revision</strong> — snapshot ของการกำหนดค่าที่ระบุสิ่งที่จะรันจริง (start command, environment variables, runtime variant, image, ทรัพยากร และ model storage)</li>
+</ol>
+<p data-bai-block="16">แต่ละการปรับใช้สามารถมี Revision ได้หลายรายการ แต่ในแต่ละช่วงเวลาจะมี Revision <em>ปัจจุบัน</em> (Revision ที่ให้บริการ traffic) เพียงรายการเดียว และคุณสามารถสลับระหว่าง Revision ได้จากแท็บ Revisions ในหน้าข้อมูลรายละเอียดการปรับใช้</p>
+<h3 data-bai-block="17" id="deployment-หนาตางสรางการปรบใช">หน้าต่างสร้างการปรับใช้<a class="hash-link" href="#deployment-หนาตางสรางการปรบใช" aria-label="Direct link to หน้าต่างสร้างการปรับใช้">#</a></h3>
+<p data-bai-block="18">ในหน้าการปรับใช้ ให้คลิกปุ่ม <code>สร้างการปรับใช้</code> เพื่อเปิดหน้าต่าง <strong>สร้างการปรับใช้</strong> หน้าต่างนี้รับเฉพาะเมตาดาตาระดับการปรับใช้เท่านั้น และจะยังไม่มีการสร้าง Revision ในขั้นตอนนี้</p>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/model_serving_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 12.3</figcaption></figure>
+</p>
+<p data-bai-block="20">หน้าต่างประกอบด้วยฟิลด์ต่อไปนี้</p>
+<ul>
+<li data-bai-block="21"><strong>ชื่อการปรับใช้ (Deployment Name)</strong>: ชื่อที่ไม่ซ้ำกันที่ใช้ระบุการปรับใช้ทั้งใน dashboard, API และ URL ของ endpoint</li>
+<li data-bai-block="22"><strong>กลุ่มทรัพยากร (Resource Group)</strong>: กลุ่มทรัพยากรที่การปรับใช้จะทำงาน หากโปรเจกต์ของคุณมี resource group เพียงกลุ่มเดียว ระบบจะเลือกให้โดยอัตโนมัติและสามารถดำเนินการต่อได้โดยไม่ต้องเลือกเอง</li>
+<li data-bai-block="23"><strong>จำนวนเรพลิกาที่ต้องการ (Desired Replicas)</strong>: จำนวนเรพลิกาที่ต้องคงไว้ให้ทำงานสำหรับการปรับใช้นี้ ระบบจะปรับขนาดพูลที่ใช้งานอยู่ไปยังเป้าหมายนี้</li>
+<li data-bai-block="24"><strong>แท็ก (Tags)</strong>: ป้ายกำกับที่ไม่บังคับสำหรับจัดระเบียบและกรองการปรับใช้ กด Enter หรือจุลภาคเพื่อเพิ่ม</li>
+<li data-bai-block="25"><strong>เปิดสาธารณะ (Open to Public)</strong>: เมื่อเปิดใช้งาน endpoint จะสามารถเข้าถึงได้โดยไม่ต้องใช้ access token เมื่อปิดใช้งาน ทุกคำขอจะต้องแนบ token ดูรายละเอียดที่ <a href="#generating-tokens">การสร้างโทเค็น</a></li>
+</ul>
+<div class="admonition admonition-warning">
+<div data-bai-block="26" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>กลุ่มทรัพยากรและการเข้าถึงสาธารณะถูกกำหนดตายตัวตั้งแต่ตอนสร้าง</div>
+<div class="admonition-content">
+
+<p data-bai-block="27">ตั้งแต่เปิดหน้าต่างขึ้นมา จะมีคำเตือนแสดงอยู่ใต้ฟิลด์ <strong>กลุ่มทรัพยากร</strong> ว่า <em>&quot;ไม่สามารถเปลี่ยนกลุ่มทรัพยากรที่เลือกไว้ตอนสร้างได้&quot;</em> และใต้ฟิลด์ <strong>เปิดสาธารณะ</strong> ว่า <em>&quot;ไม่สามารถเปลี่ยนการตั้งค่าการเข้าถึงสาธารณะที่เลือกไว้ตอนสร้างได้&quot;</em></p>
+<p data-bai-block="28">กลุ่มทรัพยากรเป็นสมบัติของการปรับใช้ ไม่ใช่ของ Revision คุณจึงไม่สามารถย้ายการปรับใช้ไปยังกลุ่มทรัพยากรอื่นในภายหลังได้ ไม่ว่าจะด้วยการแก้ไขการปรับใช้หรือการเพิ่ม Revision ใหม่ <strong>เปิดสาธารณะ</strong> ก็ถูกกำหนดตายตัวในลักษณะเดียวกัน โดยในหน้าต่าง <strong>แก้ไขการปรับใช้</strong> ช่องทำเครื่องหมายนี้จะเป็นแบบอ่านอย่างเดียว และมีคำเตือนเดียวกันแสดงอยู่ด้านล่าง กรุณาเลือกค่าทั้งสองให้ถูกต้องก่อนสร้าง หากต้องการค่าอื่น ให้สร้างการปรับใช้ใหม่</p>
+</div></div>
+
+
+<p data-bai-block="29">คลิก <code>สร้าง</code> เพื่อสร้างการปรับใช้ จากนั้นคุณจะถูกพาไปยังหน้าข้อมูลรายละเอียดการปรับใช้ และจะเห็นคำเตือน <strong>ไม่มีการปรับใช้รุ่นแก้ไข</strong> จนกว่าคุณจะเพิ่ม Revision แรก</p>
+<p data-bai-block="30">หากต้องการเปลี่ยนการตั้งค่าระดับการปรับใช้ (ชื่อ, จำนวนเรพลิกาที่ต้องการ, หรือแท็ก) หลังจากสร้างแล้ว ให้คลิกปุ่ม <strong>แก้ไข</strong> บนการ์ดข้อมูลบริการ จากนั้นแก้ไขค่าต่าง ๆ ในหน้าต่าง <strong>แก้ไขการปรับใช้</strong> แล้วบันทึกการเปลี่ยนแปลง กลุ่มทรัพยากรและการตั้งค่า <strong>เปิดสาธารณะ</strong> ไม่สามารถเปลี่ยนแปลงได้ที่นี่ เนื่องจากถูกกำหนดตายตัวตั้งแต่ตอนสร้างตามที่อธิบายไว้ข้างต้น</p>
+<p><a id="add-revision"></a></p>
+<h3 data-bai-block="31" id="deployment-การเพม-revision">การเพิ่ม Revision<a class="hash-link" href="#deployment-การเพม-revision" aria-label="Direct link to การเพิ่ม Revision">#</a></h3>
+<p data-bai-block="32">Revision รวบรวมการตั้งค่าที่จำเป็นทั้งหมดสำหรับการรัน inference server ได้แก่ image, start command, ทรัพยากร, การ mount โมเดล และ environment variables จากหน้าข้อมูลรายละเอียดการปรับใช้ ให้คลิก <code>เพิ่ม Revision</code> เพื่อเปิดหน้าต่าง</p>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="956" /><figcaption>รูปที่ 12.4</figcaption></figure>
+</p>
+<p data-bai-block="34">ใช้ตัวสลับ <strong>โหมดพรีเซต</strong> / <strong>โหมดขั้นสูง</strong> ในส่วนหัวของหน้าต่างเพื่อเลือกวิธีกำหนดค่า Revision</p>
+<p data-bai-block="35">เมื่อการปรับใช้มี Revision ปัจจุบันอยู่แล้ว จะมีแบนเนอร์ <strong>โหลด Revision ปัจจุบัน</strong> แสดงอยู่เหนือฟอร์มในทั้งสองโหมด คลิก <strong>โหลด Revision ปัจจุบัน</strong> เพื่อกรอกข้อมูลในฟอร์มล่วงหน้าด้วยการกำหนดค่าของ Revision ปัจจุบันเป็นจุดเริ่มต้น (หน้าต่างจะสลับไปยังโหมดขั้นสูงโดยอัตโนมัติหากจำเป็น) แบนเนอร์นี้จะไม่แสดงเมื่อการปรับใช้ยังไม่มี Revision ปัจจุบัน และจะหายไปเมื่อคุณโหลดการกำหนดค่าแล้ว</p>
+<h4 data-bai-block="36" id="deployment-โหมดพรเซต">โหมดพรีเซต<a class="hash-link" href="#deployment-โหมดพรเซต" aria-label="Direct link to โหมดพรีเซต">#</a></h4>
+<p data-bai-block="37">เพิ่ม Revision อย่างรวดเร็วโดยใช้ deployment preset ที่กำหนดไว้ล่วงหน้า</p>
+<ul>
+<li data-bai-block="38"><strong>แหล่งที่มาของโมเดล</strong>: เลือกว่าโมเดลของ Revision นี้มาจากที่ใด ระหว่าง <strong>โฟลเดอร์โมเดล</strong> หรือ <strong>การ์ดโมเดล</strong> ตัวเลือกด้านล่างจะเปลี่ยนไปตามที่คุณเลือก และการสลับแหล่งที่มาจะล้างการเลือกโมเดลและ preset ที่เลือกไว้ก่อนหน้า</li>
+<li data-bai-block="39"><strong>โฟลเดอร์โมเดล</strong> <em>(แหล่งที่มาแบบโฟลเดอร์โมเดล)</em>: โฟลเดอร์จัดเก็บที่จะเมาต์ในแต่ละ replica</li>
+<li data-bai-block="40"><strong>การ์ดโมเดล</strong> <em>(แหล่งที่มาแบบการ์ดโมเดล)</em>: การ์ดโมเดลที่จะปรับใช้ โฟลเดอร์โมเดลที่รองรับการ์ดนั้นจะถูกเมาต์ในแต่ละ replica และจะแสดงเฉพาะ preset ที่เข้ากันได้กับการ์ดนั้นเท่านั้น คลิกปุ่ม ⓘ ข้างตัวเลือกเพื่อเปิดลิ้นชัก <strong>รายละเอียดการ์ดโมเดล</strong> ของการ์ดที่เลือก</li>
+<li data-bai-block="41"><strong>พรีเซ็ต</strong>: deployment preset ที่เข้ากันได้กับ resource group ของการปรับใช้ คลิกปุ่ม ⓘ ข้างตัวเลือกเพื่อดูรายละเอียดของ preset เมื่อใช้แหล่งที่มาแบบ <strong>การ์ดโมเดล</strong> ตัวเลือกนี้จะถูกปิดใช้งานพร้อมคำแนะนำ <em>&quot;โปรดเลือกการ์ดโมเดลก่อน&quot;</em> จนกว่าคุณจะเลือกการ์ด</li>
+</ul>
+<p data-bai-block="42">หากการ์ดโมเดลที่เลือกไม่มีโฟลเดอร์โมเดลสำหรับเมานต์ ระบบจะไม่สร้าง Revision และจะแสดงข้อความแสดงข้อผิดพลาด <em>&quot;แหล่งที่มาของโมเดลที่เลือกไม่มีโฟลเดอร์โมเดลสำหรับเมานต์ โปรดเลือกโมเดลการ์ดหรือโฟลเดอร์โมเดลอื่น&quot;</em> ให้เลือกการ์ดโมเดลอื่น หรือสลับแหล่งที่มากลับไปเป็น <strong>โฟลเดอร์โมเดล</strong></p>
+<p data-bai-block="43">หากไม่มี preset ที่ใช้ได้กับ resource group ของการปรับใช้ ระบบจะแสดงข้อความแนะนำแทน ให้สลับไปยังโหมดขั้นสูงเพื่อกำหนดค่า Revision ด้วยตนเอง</p>
+<h4 data-bai-block="44" id="deployment-โหมดขนสง">โหมดขั้นสูง<a class="hash-link" href="#deployment-โหมดขนสง" aria-label="Direct link to โหมดขั้นสูง">#</a></h4>
+<p data-bai-block="45">กำหนดค่าทุกการตั้งค่าของ Revision โดยตรง</p>
+<p data-bai-block="46">ฟอร์มประกอบด้วยส่วนต่อไปนี้</p>
+<ul>
+<li data-bai-block="47"><strong>โมเดลและ Runtime</strong>: เลือกโฟลเดอร์โมเดล ปลายทางการเมาต์ และ runtime variant สำหรับ variant <code>vLLM</code> / <code>SGLang</code> จะแสดงแผง Runtime Parameters ส่วน variant <code>Custom</code> จะแสดงส่วนการกำหนดค่าบริการ ดูรายละเอียดฟิลด์เฉพาะ runtime ได้ที่ส่วนด้านล่าง</li>
+<li data-bai-block="48"><strong>การตรวจสอบสุขภาพ</strong> และ <strong>การกระทำก่อนเริ่ม</strong>: กำหนดค่าการตรวจสอบสุขภาพและการกระทำที่จะรันก่อนเริ่ม inference server ทั้งสองส่วนใช้ได้กับทุก runtime variant</li>
+<li data-bai-block="49"><strong>สภาพแวดล้อม</strong>: เลือก container image (สภาพแวดล้อม / เวอร์ชัน) และเพิ่ม environment variables</li>
+<li data-bai-block="50"><strong>คลัสเตอร์และทรัพยากร</strong>: จัดสรรทรัพยากร CPU, memory และ accelerator</li>
+<li data-bai-block="51"><strong>การตั้งค่าขั้นสูง</strong> <em>(ย่อ/ขยายได้)</em>: กำหนดเส้นทางไฟล์กำหนดโมเดล และเมาต์โฟลเดอร์จัดเก็บเพิ่มเติมนอกเหนือจากโฟลเดอร์โมเดล</li>
+</ul>
+<p data-bai-block="52">ที่ด้านล่างของหน้าต่าง ให้เลือก <strong>เปิดใช้งานอัตโนมัติหลังจากเพิ่ม</strong> เพื่อเปิดใช้งาน Revision ทันทีหลังจากสร้าง หากไม่ได้เลือก Revision จะถูกบันทึกในสถานะไม่ได้ใช้งาน และคุณสามารถนำมาใช้ภายหลังได้จากแท็บ Revisions</p>
+<h3 data-bai-block="53" id="deployment-ฟลดอางอง-revision-add-revision">ฟิลด์อ้างอิง Revision: Add Revision<a class="hash-link" href="#deployment-ฟลดอางอง-revision-add-revision" aria-label="Direct link to ฟิลด์อ้างอิง Revision: Add Revision">#</a></h3>
+<p data-bai-block="54">ส่วนย่อยด้านล่างนี้อธิบายฟิลด์ระดับ Revision อย่างละเอียด ซึ่งใช้ได้ทั้งเมื่อเพิ่ม Revision ด้วยตนเองใน <strong>โหมดขั้นสูง</strong> และเมื่อต้องการทำความเข้าใจว่าแต่ละฟิลด์ควบคุมอะไร</p>
+<h4 data-bai-block="55" id="deployment-การเมาตโฟลเดอรโมเดล">การเมาต์โฟลเดอร์โมเดล<a class="hash-link" href="#deployment-การเมาตโฟลเดอรโมเดล" aria-label="Direct link to การเมาต์โฟลเดอร์โมเดล">#</a></h4>
+<p data-bai-block="56">ทุก Revision จะเมาต์โฟลเดอร์จัดเก็บโมเดลหนึ่งโฟลเดอร์ลงในแต่ละเรพลิกา ฟิลด์ที่อยู่ใต้ตัวเลือกโฟลเดอร์จะกำหนดว่าโฟลเดอร์นั้นจะปรากฏที่ตำแหน่งใดภายในคอนเทนเนอร์</p>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="390" /><figcaption>รูปที่ 12.5</figcaption></figure>
+</p>
+<ul>
+<li data-bai-block="58"><strong>โฟลเดอร์โมเดล</strong>: โฟลเดอร์จัดเก็บโมเดลที่จะเมาต์ในแต่ละเรพลิกา</li>
+<li data-bai-block="59"><strong>ปลายทางการเมาท์สำหรับโฟลเดอร์โมเดล</strong>: เส้นทางภายในคอนเทนเนอร์ที่โฟลเดอร์จัดเก็บโมเดลถูกเมาต์ (ค่าเริ่มต้น: <code>/models</code>)</li>
+<li data-bai-block="60"><strong>พาธย่อย</strong>: โฟลเดอร์ย่อยภายในโฟลเดอร์โมเดลที่จะเมาต์แทนรากของโฟลเดอร์ เว้นว่างไว้เพื่อเมาต์รากของโฟลเดอร์</li>
+</ul>
+<p><a id="service-configuration"></a></p>
+<h4 data-bai-block="61" id="deployment-การกำหนดคาบรการ-เฉพาะ-custom-runtime">การกำหนดค่าบริการ (เฉพาะ Custom Runtime)<a class="hash-link" href="#deployment-การกำหนดคาบรการ-เฉพาะ-custom-runtime" aria-label="Direct link to การกำหนดค่าบริการ (เฉพาะ Custom Runtime)">#</a></h4>
+<p data-bai-block="62">runtime variant ที่อ่านการตั้งค่าจากโฟลเดอร์โมเดล เช่น variant <strong>Custom</strong> จะแสดงส่วน <strong>การกำหนดค่าบริการ</strong> ใต้ตัวเลือก <strong>Runtime</strong> ส่วนนี้จะขยายไว้เป็นค่าเริ่มต้น และใช้กำหนดวิธีเริ่มต้นกระบวนการของ inference server</p>
+<ul>
+<li data-bai-block="63"><strong>การรันคำสั่ง</strong>: วิธีการรันคำสั่ง<ul>
+<li data-bai-block="64"><strong>Shell</strong>: รันคำสั่งผ่าน shell (<code>bash -c &quot;...&quot;</code>) จึงสามารถใช้ shell operator ได้ แนะนำสำหรับกรณีทั่วไป</li>
+<li data-bai-block="65"><strong>Exec</strong>: รันคำสั่งโดยตรงในรูปแบบอาร์กิวเมนต์ โดยไม่ผ่าน shell ใช้ตัวเลือกนี้เฉพาะเมื่อจำเป็นต้องรันคำสั่งโดยไม่มี shell เช่น อิมเมจที่ไม่มีไบนารีของ shell</li>
+</ul>
+</li>
+<li data-bai-block="66"><strong>Shell</strong>: ไบนารีของ shell ที่ใช้รันคำสั่ง (เช่น <code>/bin/bash</code>) จะแสดงและจำเป็นต้องกรอกเฉพาะในโหมด <strong>Shell</strong> ไบนารีนี้ต้องมีอยู่ในคอนเทนเนอร์อิมเมจ มิฉะนั้นบริการจะเริ่มต้นไม่สำเร็จ</li>
+<li data-bai-block="67"><strong>คำสั่ง</strong>: คำสั่งสำหรับเปิดใช้งาน inference server เช่น <code>python -m http.server 8000</code> ในโหมด <strong>Shell</strong> ฟิลด์นี้เป็นกล่องข้อความหลายบรรทัด ส่วนในโหมด <strong>Exec</strong> จะเปลี่ยนชื่อเป็น <strong>คำสั่ง (argv)</strong> และเป็นช่องกรอกบรรทัดเดียว</li>
+<li data-bai-block="68"><strong>พอร์ต</strong>: พอร์ตคอนเทนเนอร์ที่ inference server รับฟัง (2–65535)</li>
+</ul>
+<div class="admonition admonition-tip">
+<div data-bai-block="69" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>Shell operator ทำงานเฉพาะในโหมด Shell</div>
+<div class="admonition-content">
+
+<p data-bai-block="70">ในโหมด <strong>Shell</strong> คำสั่งจะถูกส่งต่อให้ shell ดังนั้น operator เช่น <code>;</code>, <code>|</code>, <code>&amp;&amp;</code>, <code>$VAR</code> และการเปลี่ยนทิศทาง (redirection) จะถูกตีความเหมือนที่ใช้ในเทอร์มินัล:</p>
+<div data-bai-block="71" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#B392F0">chmod</span><span style="color:#9ECBFF"> +x</span><span style="color:#9ECBFF"> /setup.sh</span><span style="color:#E1E4E8">; </span><span style="color:#B392F0">vllm</span><span style="color:#9ECBFF"> serve</span><span style="color:#9ECBFF"> /models</span></span></code></pre></div>
+<p data-bai-block="72">ในโหมด <strong>Exec</strong> ข้อความเดียวกันจะถูกแยกเป็นอาร์กิวเมนต์และรันโดยตรง operator เหล่านั้นจึงถูกส่งผ่านเป็นข้อความธรรมดา ให้คั่นอาร์กิวเมนต์ด้วยช่องว่าง และใส่เครื่องหมายคำพูดสำหรับอาร์กิวเมนต์ที่มีช่องว่าง เช่น <code>--name &quot;my model&quot;</code> หากคุณต้องใช้ไวยากรณ์ของ shell ให้เปลี่ยน <strong>การรันคำสั่ง</strong> กลับเป็น <strong>Shell</strong> แทนการครอบคำสั่งด้วย <code>/bin/bash -c &quot;...&quot;</code> เอง</p>
+</div></div>
+
+
+<p><a id="health-check-and-pre-start-actions"></a></p>
+<h4 data-bai-block="73" id="deployment-การตรวจสอบสขภาพและการกระทำกอนเรม">การตรวจสอบสุขภาพและการกระทำก่อนเริ่ม<a class="hash-link" href="#deployment-การตรวจสอบสขภาพและการกระทำกอนเรม" aria-label="Direct link to การตรวจสอบสุขภาพและการกระทำก่อนเริ่ม">#</a></h4>
+<p data-bai-block="74">ฟิลด์ <strong>เปิดใช้การตรวจสอบสุขภาพ</strong> และ <strong>การกระทำก่อนเริ่ม</strong> อยู่ถัดจากส่วนการกำหนดค่าบริการ และแสดงสำหรับทุก runtime variant</p>
+<ul>
+<li data-bai-block="75"><strong>เปิดใช้การตรวจสอบสุขภาพ</strong>: เมื่อเปิดใช้งาน ระบบจะส่งคำขอ HTTP ไปยัง inference server เป็นระยะเพื่อตรวจสอบว่าตอบสนองอย่างถูกต้อง เมื่อปิดใช้งาน (ค่าเริ่มต้นสำหรับ Revision ใหม่) ระบบจะไม่มีการตรวจสอบสุขภาพและ replica ที่ไม่แข็งแรงจะไม่ถูกตรวจพบโดยอัตโนมัติ ควรเปิดใช้งานสำหรับ deployment ที่ใช้งานจริง เมื่อเลือก <strong>เปิดใช้การตรวจสอบสุขภาพ</strong> จะมีฟิลด์เพิ่มเติมดังนี้:<ul>
+<li data-bai-block="76"><strong>เส้นทาง</strong>: เส้นทาง HTTP endpoint ที่เรียกใช้ระหว่างการตรวจสอบสุขภาพของบริการ (ค่าเริ่มต้น: <code>/health</code>)</li>
+<li data-bai-block="77"><strong>ช่วงเวลา</strong>: ช่วงเวลาระหว่างการตรวจสอบแต่ละครั้ง (วินาที)</li>
+<li data-bai-block="78"><strong>จำนวนลองใหม่สูงสุด</strong>: จำนวนความล้มเหลวต่อเนื่องสูงสุดก่อนที่เรพลิกาจะถูกทำเครื่องหมายเป็น <code>UNHEALTHY</code></li>
+<li data-bai-block="79"><strong>เวลารอสูงสุด</strong>: หมดเวลาสำหรับคำขอตรวจสอบสุขภาพแต่ละครั้ง (วินาที)</li>
+<li data-bai-block="80"><strong>รหัสสถานะ</strong>: รหัสสถานะ HTTP ที่ระบุว่าบริการทำงานปกติ</li>
+<li data-bai-block="81"><strong>ระยะผ่อนผันการเริ่มต้น</strong>: ระยะเวลาผ่อนผันหลังคอนเทนเนอร์เริ่มทำงาน (วินาที) ซึ่งยอมให้การตรวจสอบสุขภาพล้มเหลวได้ เรพลิกาจะทำงานเมื่อตรวจสอบสำเร็จครั้งแรก ควรเพิ่มค่านี้สำหรับโมเดลขนาดใหญ่ที่ใช้เวลาโหลดนาน</li>
+</ul>
+</li>
+<li data-bai-block="82"><strong>การกระทำก่อนเริ่ม</strong>: การกระทำที่จะรันก่อนเริ่มบริการโมเดล คลิก <strong>เพิ่มการกระทำก่อนเริ่ม</strong> เพื่อเพิ่มแถว จากนั้นกรอก <strong>การกระทำ</strong> (ชื่อของการกระทำ เช่น <code>wait_for_file</code>) และ <strong>อาร์กิวเมนต์ (JSON)</strong> (อาร์กิวเมนต์ในรูปแบบอ็อบเจกต์ JSON เช่น <code>{}</code>) ทั้งสองฟิลด์จำเป็นต้องกรอกในทุกแถว และอาร์กิวเมนต์ต้องเป็น JSON ที่ถูกต้อง ดูรายการการกระทำที่รองรับได้ที่ <a href="#prestart-actions">คำอธิบายการกระทำของบริการที่รองรับใน Backend.AI Model Serving</a></li>
+</ul>
+<p data-bai-block="83">เส้นทางของไฟล์กำหนดโมเดลอยู่ในแผง <strong>การตั้งค่าขั้นสูง</strong> ที่ด้านล่างของฟอร์ม สำหรับคำแนะนำในการสร้างไฟล์ดังกล่าว ดูที่ <a href="#model-definition-guide">การสร้างไฟล์กำหนดโมเดล</a></p>
+<p><a id="runtime-parameters"></a></p>
+<h4 data-bai-block="84" id="deployment-พารามเตอร-runtime-vllm-sglang">พารามิเตอร์ Runtime (vLLM / SGLang)<a class="hash-link" href="#deployment-พารามเตอร-runtime-vllm-sglang" aria-label="Direct link to พารามิเตอร์ Runtime (vLLM / SGLang)">#</a></h4>
+<p data-bai-block="85">เมื่อคุณเลือก runtime variant <code>vLLM</code> หรือ <code>SGLang</code> ส่วน <strong>พารามิเตอร์ Runtime</strong> จะปรากฏขึ้นแทนส่วนการกำหนดค่าบริการ ส่วนนี้ช่วยให้คุณกำหนดค่า serving framework โดยไม่ต้องแก้ไขไฟล์การกำหนดค่าด้วยตนเอง</p>
+<p data-bai-block="86">พารามิเตอร์ถูกจัดเป็นหมวดหมู่ที่แยกตามแท็บ รายการแท็บที่มีจะแตกต่างกันตาม runtime variant</p>
+<div class="admonition admonition-note">
+<div data-bai-block="87" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="88">พารามิเตอร์ที่ไม่เปลี่ยนแปลงจะใช้ค่าเริ่มต้นของ runtime</p>
+</div></div>
+
+
+<div class="admonition admonition-note">
+<div data-bai-block="89" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>พารามิเตอร์ที่จำเป็น</div>
+<div class="admonition-content">
+
+<p data-bai-block="90">ผู้ดูแลระบบสามารถกำหนดให้พารามิเตอร์แต่ละตัวเป็นแบบจำเป็น พารามิเตอร์ที่จำเป็นจะแสดงด้วยเครื่องหมายดอกจัน (★) สีแดงถัดจากป้ายกำกับ การส่งฟอร์มโดยมีพารามิเตอร์ที่จำเป็นว่างเปล่าจะถูกปิดกั้น — ฟิลด์จะแสดงข้อผิดพลาดการตรวจสอบแม้ว่าพารามิเตอร์นั้นจะอยู่ในแท็บที่ยังไม่ได้เยี่ยมชม</p>
+</div></div>
+
+
+<p data-bai-block="91"><strong>เปิดใช้การตรวจสอบสุขภาพ</strong></p>
+<p data-bai-block="92">ฟิลด์ <strong>เปิดใช้การตรวจสอบสุขภาพ</strong> และ <strong>การกระทำก่อนเริ่ม</strong> อยู่ใต้ส่วนพารามิเตอร์ Runtime และทำงานเหมือนกับที่อธิบายไว้ใน <a href="#health-check-and-pre-start-actions">การตรวจสอบสุขภาพและการกระทำก่อนเริ่ม</a> โดยแสดงสำหรับ <code>vLLM</code> และ <code>SGLang</code> เช่นเดียวกับ variant <code>Custom</code></p>
+<p data-bai-block="93"><strong>พารามิเตอร์ Runtime ของ vLLM</strong></p>
+<p><figure data-bai-block="94" class="doc-figure"><img src="./images/service_launcher_runtime_params_vllm.png" alt="" class="doc-image" loading="lazy" decoding="async" width="648" height="611" /><figcaption>รูปที่ 12.6</figcaption></figure>
+</p>
+<p data-bai-block="95">vLLM มีแท็บพารามิเตอร์ดังต่อไปนี้: <strong>Model Loading</strong>, <strong>Resource Memory</strong>, <strong>Serving Performance</strong>, <strong>Multimodal</strong>, <strong>Tool Reasoning</strong> และอื่น ๆ</p>
+<p data-bai-block="96">ฟิลด์หลักในแท็บ <strong>Model Loading</strong>:</p>
+<ul>
+<li data-bai-block="97"><strong>Model</strong>: ชื่อหรือเส้นทางของโมเดลที่จะใช้</li>
+<li data-bai-block="98"><strong>DType</strong>: ประเภทข้อมูลสำหรับน้ำหนักโมเดลและการคำนวณ (เช่น <code>Auto</code>, <code>float16</code>, <code>bfloat16</code>)</li>
+<li data-bai-block="99"><strong>Quantization</strong>: วิธีการ quantization ของโมเดล (เช่น <code>awq</code>, <code>gptq</code>, <code>fp8</code>)</li>
+<li data-bai-block="100"><strong>Max Model Length</strong>: ความยาวบริบทสูงสุด (จำนวน token) ที่โมเดลสามารถประมวลผลได้</li>
+<li data-bai-block="101"><strong>Served Model Name</strong>: ชื่อโมเดลที่เปิดเผยบน API endpoint</li>
+<li data-bai-block="102"><strong>Trust Remote Code</strong>: อนุญาตให้รันโค้ดโมเดลที่กำหนดเองจากคลังโมเดล</li>
+</ul>
+<p data-bai-block="103"><strong>พารามิเตอร์ Runtime ของ SGLang</strong></p>
+<p><figure data-bai-block="104" class="doc-figure"><img src="./images/service_launcher_runtime_params_sglang.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1296" height="1222" /><figcaption>รูปที่ 12.7</figcaption></figure>
+</p>
+<p data-bai-block="105">SGLang มีแท็บพารามิเตอร์ดังต่อไปนี้: <strong>Model Loading</strong>, <strong>Resource Memory</strong>, <strong>Serving Performance</strong>, <strong>Tool Reasoning</strong> และอื่น ๆ</p>
+<p data-bai-block="106">ฟิลด์หลักในแท็บ <strong>Model Loading</strong>:</p>
+<ul>
+<li data-bai-block="107"><strong>Model</strong>: ชื่อหรือเส้นทางของโมเดลที่จะใช้</li>
+<li data-bai-block="108"><strong>DType</strong>: ประเภทข้อมูลสำหรับน้ำหนักโมเดลและการคำนวณ (เช่น <code>Auto</code>, <code>float16</code>, <code>bfloat16</code>)</li>
+<li data-bai-block="109"><strong>Quantization</strong>: วิธีการ quantization ของโมเดล (เช่น <code>awq</code>, <code>gptq</code>, <code>fp8</code>)</li>
+<li data-bai-block="110"><strong>Context Length</strong>: ความยาวบริบทสูงสุดที่โมเดลสามารถประมวลผลได้</li>
+<li data-bai-block="111"><strong>Served Model Name</strong>: ชื่อโมเดลที่เปิดเผยบน API endpoint</li>
+<li data-bai-block="112"><strong>Trust Remote Code</strong>: อนุญาตให้รันโค้ดโมเดลที่กำหนดเองจากคลังโมเดล</li>
+</ul>
+<p data-bai-block="113">runtime variant <code>vLLM</code> และ <code>SGLang</code> จะกรอกตัวแปรสภาพแวดล้อมต่อไปนี้ล่วงหน้าในส่วน <strong>สภาพแวดล้อม</strong>:</p>
+<ul>
+<li data-bai-block="114"><strong>vLLM</strong>: <code>BACKEND_MODEL_NAME</code>, <code>VLLM_QUANTIZATION</code>, <code>VLLM_TP_SIZE</code> (tensor parallelism), <code>VLLM_PP_SIZE</code> (pipeline parallelism), <code>VLLM_EXTRA_ARGS</code> (อาร์กิวเมนต์ CLI เพิ่มเติม)</li>
+<li data-bai-block="115"><strong>SGLang</strong>: <code>BACKEND_MODEL_NAME</code>, <code>SGLANG_QUANTIZATION</code>, <code>SGLANG_TP_SIZE</code> (tensor parallelism), <code>SGLANG_PP_SIZE</code> (pipeline parallelism), <code>SGLANG_EXTRA_ARGS</code> (อาร์กิวเมนต์ CLI เพิ่มเติม)</li>
+</ul>
+<h4 data-bai-block="116" id="deployment-สภาพแวดลอม">สภาพแวดล้อม<a class="hash-link" href="#deployment-สภาพแวดลอม" aria-label="Direct link to สภาพแวดล้อม">#</a></h4>
+<p data-bai-block="117">ส่วน <strong>สภาพแวดล้อม</strong> มีอยู่สำหรับ runtime variant ทั้งหมด</p>
+<ul>
+<li data-bai-block="118"><strong>สภาพแวดล้อม / เวอร์ชัน</strong>: container image ที่ใช้สำหรับ inference server เมื่อเลือก runtime variant รายการจะถูกกรองให้เหลือเฉพาะ image ที่เข้ากันได้กับ runtime นั้น</li>
+<li data-bai-block="119"><strong>ชื่ออิมเมจ (กำหนดเอง)</strong>: ช่องสำหรับพิมพ์ข้อมูลอ้างอิงอิมเมจโดยตรง จะแสดงเฉพาะเมื่อผู้ดูแลระบบเปิดใช้งานการป้อนชื่ออิมเมจด้วยตนเองบนเซิร์ฟเวอร์ การพิมพ์ในช่องนี้จะล้างการเลือกใน <strong>สภาพแวดล้อม / เวอร์ชัน</strong> และในทางกลับกันเช่นกัน ทั้งสองเป็นวิธีเลือกอิมเมจเดียวกันในรูปแบบที่ต่างกัน</li>
+<li data-bai-block="120"><strong>ตัวแปรสภาพแวดล้อม</strong>: คู่ key/value ที่จะถูกส่งให้คอนเทนเนอร์ของ inference server สำหรับ <code>vLLM</code> และ <code>SGLang</code> ตัวแปรเฉพาะ runtime ที่ระบุไว้ข้างต้นจะถูกกรอกไว้ล่วงหน้า คุณสามารถเพิ่ม แก้ไข หรือลบรายการได้อย่างอิสระ เมื่อพิมพ์ชื่อตัวแปร ระบบจะแนะนำชื่อตัวแปรสภาพแวดล้อมที่ใช้บ่อย ได้แก่ <code>HF_TOKEN</code>, <code>WANDB_API_KEY</code>, <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_DEFAULT_REGION</code>, <code>HTTP_PROXY</code>, <code>HTTPS_PROXY</code> และ <code>NO_PROXY</code> ควบคู่ไปกับตัวแปรที่ runtime variant ที่เลือกกำหนดไว้ ชื่อที่ถูกใช้ไปแล้วในแถวอื่นจะไม่แสดงในรายการ และเมื่อกำหนดชื่อที่ระบบรู้จักแล้ว ช่องค่าจะแสดงคำใบ้ที่ตรงกัน เช่น <em>&quot;โทเค็นการเข้าถึง Hugging Face ของคุณ&quot;</em> สำหรับ <code>HF_TOKEN</code></li>
+</ul>
+<h5 data-bai-block="121" id="deployment-การปอนชออมเมจดวยตนเอง">การป้อนชื่ออิมเมจด้วยตนเอง<a class="hash-link" href="#deployment-การปอนชออมเมจดวยตนเอง" aria-label="Direct link to การป้อนชื่ออิมเมจด้วยตนเอง">#</a></h5>
+<p data-bai-block="122">เมื่อคุณพิมพ์ใน <strong>ชื่ออิมเมจ (กำหนดเอง)</strong> แทนการเลือกจากรายการ ระบบจะนำข้อมูลอ้างอิงที่คุณป้อนไปเทียบกับอิมเมจที่ลงทะเบียนไว้บนเซิร์ฟเวอร์ในตอนที่ส่งฟอร์ม แล้วสร้าง Revision จากอิมเมจที่ตรงกัน</p>
+<ul>
+<li data-bai-block="123">ป้อนข้อมูลอ้างอิงในรูปแบบเดียวกับที่ registry ใช้ เช่น <code>cr.backend.ai/stable/python:3.10-ubuntu20.04</code></li>
+<li data-bai-block="124">คุณสามารถต่อท้ายด้วย <code>@</code> และชื่อสถาปัตยกรรมเพื่อระบุสถาปัตยกรรมที่ต้องการ เช่น <code>cr.backend.ai/stable/python:3.10-ubuntu20.04@aarch64</code> หากไม่ระบุ ระบบจะใช้สถาปัตยกรรมเริ่มต้นของ manager</li>
+</ul>
+<p data-bai-block="125">หากไม่มีอิมเมจที่ลงทะเบียนไว้ตรงกับที่คุณพิมพ์ ระบบจะ<strong>ไม่</strong>สร้าง Revision และจะแสดงข้อความผิดพลาดที่ฟิลด์นั้นว่า <em>&quot;ไม่พบอิมเมจที่ป้อนด้วยตนเอง กรุณาป้อนข้อมูลอ้างอิงอิมเมจที่ลงทะเบียนไว้ หรือเลือกจากรายการ&quot;</em> พร้อมเลื่อนหน้าจอไปยังฟิลด์ดังกล่าว ให้แก้ไขข้อมูลอ้างอิง หรือล้างฟิลด์แล้วเลือกอิมเมจจาก <strong>สภาพแวดล้อม / เวอร์ชัน</strong> แทน</p>
+<blockquote>
+<p data-bai-block="126">เนื่องจากการค้นหาอิมเมจเกิดขึ้นตอนส่งฟอร์ม ข้อความผิดพลาดจึงปรากฏหลังจากคลิกปุ่มยืนยัน ไม่ใช่ระหว่างที่คุณพิมพ์</p>
+</blockquote>
+<h4 data-bai-block="127" id="deployment-คลสเตอรและทรพยากร">คลัสเตอร์และทรัพยากร<a class="hash-link" href="#deployment-คลสเตอรและทรพยากร" aria-label="Direct link to คลัสเตอร์และทรัพยากร">#</a></h4>
+<p data-bai-block="128">ส่วน <strong>คลัสเตอร์และทรัพยากร</strong> ช่วยให้คุณระบุทรัพยากรการประมวลผลที่จะจัดสรรให้แต่ละเรพลิกา</p>
+<ul>
+<li data-bai-block="129"><strong>Resource Preset</strong>: ชุดการจัดสรร CPU, หน่วยความจำ และ accelerator ที่กำหนดไว้ล่วงหน้า รายการ preset ที่มีจะถูกกรองตาม resource group ของการปรับใช้ คุณยังสามารถกำหนดค่าทรัพยากร (CPU, หน่วยความจำ, GPU) ด้วยตนเองโดยไม่ต้องเลือก preset</li>
+</ul>
+<h4 data-bai-block="130" id="deployment-การตงคาขนสง">การตั้งค่าขั้นสูง<a class="hash-link" href="#deployment-การตงคาขนสง" aria-label="Direct link to การตั้งค่าขั้นสูง">#</a></h4>
+<p data-bai-block="131">ขยายแผง <strong>การตั้งค่าขั้นสูง</strong> เพื่อระบุไฟล์กำหนดโมเดล และเมาต์โฟลเดอร์จัดเก็บเพิ่มเติมควบคู่กับโฟลเดอร์จัดเก็บโมเดล</p>
+<ul>
+<li data-bai-block="132"><strong>เส้นทางไฟล์นิยามโมเดล</strong>: เส้นทางไปยังไฟล์กำหนดโมเดลภายในโฟลเดอร์จัดเก็บโมเดล (ค่าเริ่มต้น: <code>model-definition.yaml</code>) แสดงเฉพาะ runtime variant ที่อ่านการตั้งค่าจากโฟลเดอร์โมเดล เช่น <code>Custom</code></li>
+<li data-bai-block="133"><strong>เมาต์เพิ่มเติม</strong>: รายการโฟลเดอร์จัดเก็บที่จะเมาต์ลงในคอนเทนเนอร์ inference server สามารถเลือกได้เฉพาะโฟลเดอร์ทั่วไป (ไม่ใช่โมเดล) ที่อยู่ในสถานะพร้อมใช้งาน (<code>ready</code>) โฟลเดอร์ที่ซ่อนอยู่ (ชื่อขึ้นต้นด้วย <code>.</code>) และโฟลเดอร์จัดเก็บโมเดลหลักจะถูกยกเว้น</li>
+</ul>
+<p><a id="custom-runtime-config-files"></a></p>
+<h3 data-bai-block="134" id="deployment-ไฟลการกำหนดคาสำหรบ-custom-runtime">ไฟล์การกำหนดค่าสำหรับ Custom Runtime<a class="hash-link" href="#deployment-ไฟลการกำหนดคาสำหรบ-custom-runtime" aria-label="Direct link to ไฟล์การกำหนดค่าสำหรับ Custom Runtime">#</a></h3>
+<p><a id="model-definition-guide"></a></p>
+<h4 data-bai-block="135" id="deployment-การสรางไฟลกำหนดโมเดล">การสร้างไฟล์กำหนดโมเดล<a class="hash-link" href="#deployment-การสรางไฟลกำหนดโมเดล" aria-label="Direct link to การสร้างไฟล์กำหนดโมเดล">#</a></h4>
+<div class="admonition admonition-note">
+<div data-bai-block="136" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="137">คุณสามารถกำหนดชื่อไฟล์กำหนดโมเดลได้ หากคุณไม่ได้
+ป้อนฟิลด์อื่นใดในเส้นทางไฟล์กำหนดโมเดล ระบบจะถือว่าเป็น <code>model-definition.yml</code>
+หรือ <code>model-definition.yaml</code></p>
+</div></div>
+
+
+<p data-bai-block="138">ไฟล์กำหนดโมเดลประกอบด้วยข้อมูลการกำหนดค่าที่ระบบ Backend.AI ต้องการเพื่อเริ่มต้น เตรียมการ และปรับขนาดเซสชัน inference โดยอัตโนมัติ ไฟล์นี้ถูกจัดเก็บในโฟลเดอร์ประเภทโมเดลแยกต่างหากจากอิมเมจคอนเทนเนอร์ที่มีเอนจิน inference ซึ่งช่วยให้เอนจินสามารถให้บริการโมเดลที่แตกต่างกันตามความต้องการเฉพาะ และไม่จำเป็นต้องสร้างและ deploy อิมเมจคอนเทนเนอร์ใหม่ทุกครั้งที่โมเดลเปลี่ยน โดยการโหลดการกำหนดโมเดลและข้อมูลโมเดลจากที่จัดเก็บบนเครือข่าย กระบวนการ deploy สามารถทำได้ง่ายและเหมาะสมยิ่งขึ้นระหว่างการปรับขนาดอัตโนมัติ</p>
+<p data-bai-block="139">ไฟล์กำหนดโมเดลมีรูปแบบดังนี้:</p>
+<div data-bai-block="140" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">yaml</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-yaml shiki-host"><code><span class="line"><span style="color:#85E89D">models</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"simple-http-server"</span></span>
+<span class="line"><span style="color:#85E89D">    model_path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"/models"</span></span>
+<span class="line"><span style="color:#85E89D">    service</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      start_command</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">python</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">-m</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">http.server</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">--directory</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">/home/work</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">"8000"</span></span>
+<span class="line"><span style="color:#85E89D">      port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">8000</span></span>
+<span class="line"><span style="color:#85E89D">      health_check</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/</span></span>
+<span class="line"><span style="color:#85E89D">        interval</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10.0</span></span>
+<span class="line"><span style="color:#85E89D">        max_retries</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#85E89D">        max_wait_time</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">15.0</span></span>
+<span class="line"><span style="color:#85E89D">        expected_status_code</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">200</span></span>
+<span class="line"><span style="color:#85E89D">        initial_delay</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">60.0</span></span></code></pre></div>
+<p data-bai-block="141"><strong>คำอธิบายคู่คีย์-ค่า สำหรับไฟล์กำหนดโมเดล</strong></p>
+<div class="admonition admonition-note">
+<div data-bai-block="142" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="143">ฟิลด์ที่ไม่มีเครื่องหมาย &quot;(จำเป็น)&quot; เป็นตัวเลือก</p>
+</div></div>
+
+
+<ul>
+<li data-bai-block="144"><p><code>name</code> (จำเป็น): กำหนดชื่อของโมเดล</p>
+</li>
+<li data-bai-block="145"><p><code>model_path</code> (จำเป็น): ระบุเส้นทางที่โมเดลถูกกำหนด</p>
+</li>
+<li data-bai-block="146"><p><code>service</code>: รายการสำหรับจัดระเบียบข้อมูลเกี่ยวกับไฟล์ที่จะให้บริการ
+(รวมถึงสคริปต์คำสั่งและโค้ด)</p>
+<ul>
+<li data-bai-block="147"><p><code>pre_start_actions</code>: การดำเนินการที่จะดำเนินการก่อน <code>start_command</code> การดำเนินการเหล่านี้
+เตรียมสภาพแวดล้อมโดยการสร้างไฟล์การกำหนดค่า การตั้งค่าไดเรกทอรี หรือ
+การรันสคริปต์เริ่มต้น การดำเนินการจะถูกดำเนินการตามลำดับที่กำหนด</p>
+<ul>
+<li data-bai-block="148"><code>action</code>: ประเภทของการดำเนินการที่จะดำเนินการ ดูข้อมูลประเภทการดำเนินการที่มีและพารามิเตอร์ได้ที่
+<a href="#prestart-actions">การดำเนินการก่อนเริ่ม</a></li>
+<li data-bai-block="149"><code>args</code>: พารามิเตอร์เฉพาะการดำเนินการ แต่ละประเภทการดำเนินการมีอาร์กิวเมนต์ที่จำเป็นต่างกัน</li>
+</ul>
+</li>
+<li data-bai-block="150"><p><code>start_command</code> (จำเป็น): ระบุคำสั่งที่จะดำเนินการในการให้บริการโมเดล
+สามารถเป็นสตริงหรือรายการสตริง</p>
+</li>
+<li data-bai-block="151"><p><code>port</code> (จำเป็น): พอร์ตคอนเทนเนอร์สำหรับบริการโมเดล (เช่น <code>8000</code>, <code>8080</code>)</p>
+</li>
+<li data-bai-block="152"><p><code>health_check</code>: การกำหนดค่าสำหรับการตรวจสอบสุขภาพของบริการโมเดลเป็นระยะ
+เมื่อได้รับการกำหนดค่าแล้ว ระบบจะตรวจสอบโดยอัตโนมัติว่าบริการตอบสนองอย่างถูกต้อง
+และลบอินสแตนซ์ที่ไม่สมบูรณ์ออกจากการเส้นทางการรับส่งข้อมูล</p>
+<ul>
+<li data-bai-block="153"><code>path</code> (จำเป็น): เส้นทาง HTTP endpoint สำหรับคำขอตรวจสอบสุขภาพ (เช่น <code>/health</code>, <code>/v1/health</code>)</li>
+<li data-bai-block="154"><code>interval</code> (ค่าเริ่มต้น: <code>10.0</code>): เวลาเป็นวินาทีระหว่างการตรวจสอบสุขภาพต่อเนื่อง</li>
+<li data-bai-block="155"><code>max_retries</code> (ค่าเริ่มต้น: <code>10</code>): จำนวนความล้มเหลวต่อเนื่องที่อนุญาตก่อนที่จะทำเครื่องหมาย
+บริการเป็น <code>UNHEALTHY</code> บริการจะยังคงรับการรับส่งข้อมูลจนกว่าจะเกินเกณฑ์นี้</li>
+<li data-bai-block="156"><code>max_wait_time</code> (ค่าเริ่มต้น: <code>15.0</code>): เวลาหมดเวลาเป็นวินาทีสำหรับแต่ละคำขอ HTTP ตรวจสอบสุขภาพ
+หากไม่ได้รับการตอบกลับภายในเวลานี้ การตรวจสอบจะถือว่าล้มเหลว</li>
+<li data-bai-block="157"><code>expected_status_code</code> (ค่าเริ่มต้น: <code>200</code>): รหัสสถานะ HTTP ที่บ่งชี้ว่าการตอบกลับมีสุขภาพดี
+ค่าทั่วไป: <code>200</code> (OK), <code>204</code> (No Content)</li>
+<li data-bai-block="158"><code>initial_delay</code> (ค่าเริ่มต้น: <code>60.0</code>): เวลาเป็นวินาทีที่รอหลังจากสร้างคอนเทนเนอร์
+ก่อนที่จะเริ่มการตรวจสอบสุขภาพ สิ่งนี้ให้เวลาสำหรับการโหลดโมเดล การเตรียม GPU
+และการอุ่นเครื่องบริการ ตั้งค่าที่สูงขึ้นสำหรับโมเดลขนาดใหญ่ (เช่น <code>300.0</code> สำหรับ LLMs 70B+)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p data-bai-block="159"><strong>ความเข้าใจพฤติกรรมการตรวจสอบสุขภาพ</strong></p>
+<p data-bai-block="160">ระบบการตรวจสอบสุขภาพจะตรวจสอบคอนเทนเนอร์บริการโมเดลแต่ละตัวและจัดการการเส้นทางการรับส่งข้อมูลโดยอัตโนมัติตามสถานะสุขภาพ</p>
+<p data-bai-block="161"><strong>① AppProxy: การควบคุมการกำหนดเส้นทาง Traffic</strong></p>
+<p><figure data-bai-block="162" class="doc-figure"><img src="./images/health_check_app_proxy.svg" alt="" class="doc-image" loading="lazy" decoding="async" /><figcaption>รูปที่ 12.8</figcaption></figure>
+</p>
+<p data-bai-block="163"><strong>② Manager: การจัดการสถานะสุขภาพและ Eviction</strong></p>
+<p><figure data-bai-block="164" class="doc-figure"><img src="./images/health_check_state_machine.svg" alt="" class="doc-image" loading="lazy" decoding="async" /><figcaption>รูปที่ 12.9</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="165" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="166">สถานะสุขภาพภายใน (ใช้สำหรับการเส้นทางการรับส่งข้อมูล) อาจไม่ถูก
+ซิงโครไนซ์ทันทีกับสถานะที่แสดงในส่วนติดต่อผู้ใช้</p>
+</div></div>
+
+
+<p data-bai-block="167"><strong>เวลาจนถึง UNHEALTHY</strong>:</p>
+<ul>
+<li data-bai-block="168"><p>การเริ่มต้นครั้งแรก: <code>initial_delay + interval × (max_retries + 1)</code></p>
+<p>ตัวอย่างกับค่าเริ่มต้น: 60 + 10 × 11 = <strong>170 วินาที</strong> (ประมาณ 3 นาที)</p>
+</li>
+<li data-bai-block="169"><p>ระหว่างการทำงาน (หลังจากสุขภาพดีแล้ว): <code>interval × (max_retries + 1)</code></p>
+<p>ตัวอย่างกับค่าเริ่มต้น: 10 × 11 = <strong>110 วินาที</strong> (ประมาณ 2 นาที)</p>
+</li>
+</ul>
+<p><a id="prestart-actions"></a></p>
+<p data-bai-block="170"><strong>คำอธิบายการดำเนินการบริการที่รองรับใน Backend.AI การให้บริการโมเดล</strong></p>
+<ul>
+<li data-bai-block="171"><p><code>write_file</code>: การดำเนินการเพื่อสร้างไฟล์ด้วยชื่อไฟล์ที่กำหนดและเพิ่มเนื้อหา
+สิทธิ์การเข้าถึงเริ่มต้นคือ <code>644</code></p>
+<ul>
+<li data-bai-block="172"><code>arg/filename</code>: ระบุชื่อไฟล์</li>
+<li data-bai-block="173"><code>body</code>: ระบุเนื้อหาที่จะเพิ่มลงในไฟล์</li>
+<li data-bai-block="174"><code>mode</code>: ระบุสิทธิ์การเข้าถึงไฟล์</li>
+<li data-bai-block="175"><code>append</code>: ตั้งค่าว่าจะเขียนทับหรือผนวกเนื้อหาลงในไฟล์เป็น <code>True</code> หรือ <code>False</code></li>
+</ul>
+</li>
+<li data-bai-block="176"><p><code>write_tempfile</code>: การดำเนินการเพื่อสร้างไฟล์ด้วยชื่อไฟล์ชั่วคราว (<code>.py</code>) และผนวกเนื้อหา
+หากไม่ได้ระบุค่าสำหรับ mode สิทธิ์การเข้าถึงเริ่มต้นจะเป็น <code>644</code></p>
+<ul>
+<li data-bai-block="177"><code>body</code>: ระบุเนื้อหาที่จะเพิ่มลงในไฟล์</li>
+<li data-bai-block="178"><code>mode</code>: ระบุสิทธิ์การเข้าถึงไฟล์</li>
+</ul>
+</li>
+<li data-bai-block="179"><p><code>run_command</code>: ผลลัพธ์จากการดำเนินการคำสั่ง รวมถึงข้อผิดพลาดใดๆ จะถูกส่งกลับในรูปแบบต่อไปนี้
+(<code>out</code>: ผลลัพธ์จากการดำเนินการคำสั่ง, <code>err</code>: ข้อความแสดงข้อผิดพลาดหากเกิดข้อผิดพลาดระหว่างการดำเนินการ)</p>
+<ul>
+<li data-bai-block="180"><code>args/command</code>: ระบุคำสั่งที่จะดำเนินการเป็นอาร์เรย์ (เช่น คำสั่ง <code>python3 -m http.server 8080</code> กลายเป็น [&quot;python3&quot;, &quot;-m&quot;, &quot;http.server&quot;, &quot;8080&quot;])</li>
+</ul>
+</li>
+<li data-bai-block="181"><p><code>mkdir</code>: การดำเนินการเพื่อสร้างไดเรกทอรีตามเส้นทางที่ระบุ</p>
+<ul>
+<li data-bai-block="182"><code>args/path</code>: ระบุเส้นทางเพื่อสร้างไดเรกทอรี</li>
+</ul>
+</li>
+<li data-bai-block="183"><p><code>log</code>: การดำเนินการเพื่อพิมพ์ล็อกตามข้อความที่ระบุ</p>
+<ul>
+<li data-bai-block="184"><code>args/message</code>: ระบุข้อความที่จะแสดงในล็อก</li>
+<li data-bai-block="185"><code>debug</code>: ตั้งค่าเป็น <code>True</code> หากอยู่ในโหมดดีบัก มิฉะนั้นตั้งค่าเป็น <code>False</code></li>
+</ul>
+</li>
+</ul>
+<h4 data-bai-block="186" id="deployment-การอปโหลดไฟลกำหนดโมเดลไปยงโฟลเดอรประเภทโมเดล">การอัปโหลดไฟล์กำหนดโมเดลไปยังโฟลเดอร์ประเภทโมเดล<a class="hash-link" href="#deployment-การอปโหลดไฟลกำหนดโมเดลไปยงโฟลเดอรประเภทโมเดล" aria-label="Direct link to การอัปโหลดไฟล์กำหนดโมเดลไปยังโฟลเดอร์ประเภทโมเดล">#</a></h4>
+<p data-bai-block="187">เพื่ออัปโหลดไฟล์กำหนดโมเดล (<code>model-definition.yml</code>) ไปยังโฟลเดอร์ประเภทโมเดล คุณต้องสร้างโฟลเดอร์เสมือน เมื่อสร้างโฟลเดอร์เสมือน ให้เลือกประเภท <code>model</code> แทนประเภท <code>general</code> เริ่มต้น โปรดดูส่วน <a href="./vfolder.html#create-storage-folder">การสร้างโฟลเดอร์จัดเก็บ</a> ในหน้า Data สำหรับคำแนะนำเกี่ยวกับวิธีสร้างโฟลเดอร์</p>
+<p><figure data-bai-block="188" class="doc-figure"><img src="./images/model_type_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="892" /><figcaption>รูปที่ 12.10</figcaption></figure>
+</p>
+<p data-bai-block="189">หลังจากสร้างโฟลเดอร์แล้ว ให้เลือกแท็บ &#39;MODELS&#39; ในหน้า Data คลิกไอคอนโฟลเดอร์ประเภทโมเดลที่สร้างขึ้นล่าสุดเพื่อเปิดตัวสำรวจโฟลเดอร์ และอัปโหลดไฟล์กำหนดโมเดล สำหรับข้อมูลเพิ่มเติมเกี่ยวกับวิธีใช้ตัวสำรวจโฟลเดอร์ โปรดดูส่วน <a href="./vfolder.html#explore-folder">สำรวจโฟลเดอร์</a></p>
+<p><figure data-bai-block="190" class="doc-figure"><img src="./images/model_type_folder_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="650" /><figcaption>รูปที่ 12.11</figcaption></figure>
+</p>
+<p><figure data-bai-block="191" class="doc-figure"><img src="./images/model_definition_file_upload.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1624" height="630" /><figcaption>รูปที่ 12.12</figcaption></figure>
+</p>
+<p><a id="service-definition-file"></a></p>
+<h4 data-bai-block="192" id="deployment-การกำหนดคาลวงหนาสำหรบ-deployment-deployment-configyaml">การกำหนดค่าล่วงหน้าสำหรับ Deployment (<code>deployment-config.yaml</code>)<a class="hash-link" href="#deployment-การกำหนดคาลวงหนาสำหรบ-deployment-deployment-configyaml" aria-label="Direct link to การกำหนดค่าล่วงหน้าสำหรับ Deployment (deployment-config.yaml)">#</a></h4>
+<p data-bai-block="193">คุณสามารถวางไฟล์ <code>deployment-config.yaml</code> ในโฟลเดอร์โมเดลเพื่อกำหนดค่าล่วงหน้าสำหรับทรัพยากร สภาพแวดล้อม และการตั้งค่า runtime ที่ใช้เมื่อสร้าง deployment จากโมเดลนั้น เมื่อไฟล์มีอยู่ ค่าต่างๆ จะถูกใช้เป็น <strong>ค่าเริ่มต้น</strong> สิ่งใดก็ตามที่คุณตั้งค่าเมื่อสร้าง deployment (ในฟอร์ม Add Revision หรือคำขอ API) จะแทนที่ค่าเหล่านั้น</p>
+<div class="admonition admonition-note">
+<div data-bai-block="194" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="195">ไฟล์ <code>service-definition.toml</code> (รูปแบบ TOML) ในโฟลเดอร์เดียวกันยังคงถูกอ่านเป็นทางเลือกสำรอง แต่เป็น <strong>deprecated</strong> — ให้ใช้ <code>deployment-config.yaml</code> สำหรับโฟลเดอร์โมเดลของคุณ</p>
+</div></div>
+
+
+<p data-bai-block="196"><code>deployment-config.yaml</code> เป็น <strong>ตัวเลือก</strong> และไม่ขัดขวาง deployment คุณสามารถ deploy โมเดลได้ไม่ว่าไฟล์จะมีอยู่หรือไม่ — ไฟล์ที่หายไปหรือมีรูปแบบผิดจะถูกข้ามไป เมื่อใช้ร่วมกับ <code>model-definition.yaml</code> ที่เป็นตัวเลือก (ซึ่งอธิบายโมเดลและเซิร์ฟเวอร์ inference) จะช่วยให้ผู้ดูแลระบบสามารถส่งค่าเริ่มต้นที่สมเหตุสมผลไปพร้อมกับโมเดลได้</p>
+<p data-bai-block="197">ค่าต่างๆ ถูกแก้ไขผ่าน <strong>ลำดับชั้นการแทนที่สามระดับ</strong> จากความสำคัญต่ำสุดถึงสูงสุด</p>
+<ol>
+<li data-bai-block="198"><strong>ค่าเริ่มต้นระดับราก</strong> — ใช้กับทุก runtime variant</li>
+<li data-bai-block="199"><strong>ส่วนของ runtime-variant</strong> (ตัวอย่างเช่น <code>vllm</code>, <code>sglang</code>, <code>tgi</code>) — แทนที่เฉพาะช่องสำหรับ variant นั้นเท่านั้น</li>
+<li data-bai-block="200"><strong>การป้อนข้อมูลเมื่อ deployment</strong> (ฟอร์ม Add Revision / คำขอ API) — แทนที่ทุกสิ่ง</li>
+</ol>
+<div data-bai-block="201" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">yaml</span><span class="code-block-title-text">deployment-config.yaml</span></div><pre class="language-yaml shiki-host"><code><span class="line"><span style="color:#85E89D">environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"example.com/model-server:latest"</span></span>
+<span class="line"><span style="color:#85E89D">  architecture</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"x86_64"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">resource_slots</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  cpu</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">4</span></span>
+<span class="line"><span style="color:#85E89D">  mem</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"16gb"</span></span>
+<span class="line"><span style="color:#9ECBFF">  "cuda.shares"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"0.5"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">environ</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  MODEL_NAME</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"example-model-name"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">resource_opts</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  shmem</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"8g"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">vllm</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  environment</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    image</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"vllm-optimized:0.4.0"</span></span>
+<span class="line"><span style="color:#85E89D">  resource_slots</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    cpu</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">8</span></span>
+<span class="line"><span style="color:#9ECBFF">    "cuda.device"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span></span></code></pre></div>
+<p data-bai-block="202"><strong>ข้อมูลอ้างอิงช่อง</strong></p>
+<ul>
+<li data-bai-block="203"><code>environment</code>: อิมเมจคอนเทนเนอร์และสถาปัตยกรรมสำหรับบริการ inference<ul>
+<li data-bai-block="204"><code>image</code>: เส้นทางแบบเต็มของอิมเมจคอนเทนเนอร์ (เช่น <code>example.com/model-server:latest</code>)</li>
+<li data-bai-block="205"><code>architecture</code>: สถาปัตยกรรม CPU ของอิมเมจ (เช่น <code>x86_64</code>, <code>aarch64</code>)</li>
+</ul>
+</li>
+<li data-bai-block="206"><code>resource_slots</code>: ทรัพยากรการคำนวณที่จัดสรรให้กับแต่ละ replica<ul>
+<li data-bai-block="207"><code>cpu</code>: จำนวนแกน CPU (เช่น <code>4</code>, <code>8</code>)</li>
+<li data-bai-block="208"><code>mem</code>: จำนวนหน่วยความจำพร้อมคำนำหน้าหน่วย (เช่น <code>&quot;16gb&quot;</code>)</li>
+<li data-bai-block="209"><code>&quot;cuda.shares&quot;</code> / <code>&quot;cuda.device&quot;</code>: การจัดสรร GPU แบบเศษส่วนหรือทั้งหมด ใส่เครื่องหมายคำพูดสำหรับคีย์ที่มีจุด</li>
+</ul>
+</li>
+<li data-bai-block="210"><code>environ</code>: ตัวแปรสภาพแวดล้อมที่ส่งไปยังคอนเทนเนอร์บริการ inference ค่า root และ variant จะถูกรวมเข้าด้วยกัน</li>
+<li data-bai-block="211"><code>resource_opts</code>: ตัวเลือกทรัพยากรเพิ่มเติมเช่น <code>shmem</code> (ขนาดหน่วยความจำที่แชร์)</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="212" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="213">สำหรับการ deploy vLLM ค่าเริ่มต้นระดับรากจะถูกรวมเข้ากับส่วน <code>vllm</code> (ช่องของ variant ชนะ) และการป้อนข้อมูลเมื่อ deployment ของคุณจะแทนที่ทั้งสองอย่าง เฉพาะช่องที่ระบุในส่วน variant เท่านั้นที่ถูกแทนที่ สิ่งอื่นๆ ทั้งหมดจะกลับไปยังระดับรากเสมอ</p>
+</div></div>
+
+
+<p><a id="quick-deploy"></a></p>
+<h2 data-bai-block="214" id="deployment-การปรบใชอยางรวดเรว">การปรับใช้อย่างรวดเร็ว<a class="hash-link" href="#deployment-การปรบใชอยางรวดเรว" aria-label="Direct link to การปรับใช้อย่างรวดเร็ว">#</a></h2>
+<p data-bai-block="215">การปรับใช้อย่างรวดเร็วแบบอิงพรีเซตช่วยให้คุณสร้างการปรับใช้ได้โดยไม่ต้องใช้ไฟล์กำหนดค่าแยกต่างหาก คุณสามารถเริ่มการปรับใช้อย่างรวดเร็วได้จากสองจุดเริ่มต้น:</p>
+<ul>
+<li data-bai-block="216">เรียกดูการ์ดโมเดลที่กำหนดค่าไว้ล่วงหน้าใน <a href="#model-store">คลังโมเดล</a> และคลิกปุ่ม <code>Deploy</code> เพื่อ deploy ทันทีโดยใช้พรีเซต</li>
+<li data-bai-block="217">ในแท็บ <strong>โมเดล</strong> ของหน้า Data ให้คลิกปุ่ม <code>ปรับใช้เป็นบริการ</code> ของโฟลเดอร์โมเดลเพื่อเปิดหน้าต่าง <strong>สร้าง Deployment ใหม่ด้วย Preset</strong> จากนั้นเลือกพรีเซตและกลุ่มทรัพยากรเพื่อ deploy โดยไม่ต้องตั้งค่าเพิ่มเติม</li>
+</ul>
+<p data-bai-block="218">สำหรับขั้นตอนการ deploy โมเดลทั้งหมด ดูที่ส่วน <a href="#model-store">คลังโมเดล</a></p>
+<p><a id="deployment-detail-page"></a></p>
+<h2 data-bai-block="219" id="deployment-หนาขอมลรายละเอยดการปรบใช">หน้าข้อมูลรายละเอียดการปรับใช้<a class="hash-link" href="#deployment-หนาขอมลรายละเอยดการปรบใช" aria-label="Direct link to หน้าข้อมูลรายละเอียดการปรับใช้">#</a></h2>
+<p data-bai-block="220">คลิกชื่อการปรับใช้ในรายการการปรับใช้เพื่อดูข้อมูลรายละเอียดเกี่ยวกับการปรับใช้</p>
+<h3 data-bai-block="221" id="deployment-การแจงเตอนของการปรบใช">การแจ้งเตือนของการปรับใช้<a class="hash-link" href="#deployment-การแจงเตอนของการปรบใช" aria-label="Direct link to การแจ้งเตือนของการปรับใช้">#</a></h3>
+<p data-bai-block="222">หน้าข้อมูลรายละเอียดการปรับใช้แสดงแบนเนอร์แจ้งเตือนตามบริบทที่ด้านบนของหน้า ขึ้นอยู่กับสถานะปัจจุบันของการปรับใช้</p>
+<ul>
+<li data-bai-block="223"><p><strong>การปรับใช้พร้อมแล้ว</strong>: แสดงเมื่อการปรับใช้มีสถานะ <code>HEALTHY</code> แบนเนอร์นี้มีปุ่ม <strong>ทดสอบในแชท</strong> เป็นทางลัดไปยังอินเทอร์เฟซ LLM Chat Test เพื่อให้คุณทดสอบโมเดลได้โดยไม่ต้องออกจากหน้า</p>
+</li>
+<li data-bai-block="224"><p><strong>การปรับใช้แบบส่วนตัว — ใช้โทเค็นการเข้าถึงเพื่อเข้าถึงปลายทาง</strong>: แสดงเมื่อ <strong>เปิดสาธารณะ</strong> ถูกปิดใช้งาน, มีการออก URL ของ endpoint แล้ว และการปรับใช้ยังไม่มีโทเค็นการเข้าถึงเลย แบนเนอร์นี้มีปุ่ม <strong>เพิ่มโทเค็นการเข้าถึง</strong> ที่เปิดหน้าต่างสร้างโทเค็นการเข้าถึงได้ทันที และแบนเนอร์จะหายไปเมื่อคุณสร้างโทเค็นแรกแล้ว ดูรายละเอียดที่ <a href="#generating-tokens">การสร้างโทเค็น</a></p>
+</li>
+<li data-bai-block="225"><p><strong>ไม่มีการปรับใช้รุ่นแก้ไข — เพิ่มรุ่นแก้ไขเพื่อเปิดใช้งานบริการนี้</strong>: แสดงเมื่อการปรับใช้ยังไม่มี Revision ปัจจุบัน คลิก <code>เพิ่ม Revision</code> เพื่อสร้าง Revision แรกและเปิดใช้งานบริการ</p>
+</li>
+<li data-bai-block="226"><p><strong>กำลังเตรียมบริการของคุณ</strong>: แสดงเมื่อการปรับใช้กำลังถูกสร้างหรืออยู่ระหว่างการเปลี่ยนสถานะ บ่งบอกว่าบริการยังไม่พร้อมรับคำขอ</p>
+</li>
+<li data-bai-block="227"><p><strong>บริการโมเดลนี้อยู่ในโปรเจกต์อื่น</strong>: แสดงเมื่อการปรับใช้เป็นของโปรเจกต์อื่นที่ไม่ใช่โปรเจกต์ที่เลือกในปัจจุบัน ปุ่ม Edit จะถูกปิดใช้งานขณะที่การแจ้งเตือนนี้แสดงอยู่ คลิกปุ่ม <strong>สลับโปรเจกต์</strong> ในการแจ้งเตือนเพื่อสลับไปยังโปรเจกต์ที่ถูกต้อง</p>
+</li>
+</ul>
+<h3 data-bai-block="228" id="deployment-ขอมลบรการ">ข้อมูลบริการ<a class="hash-link" href="#deployment-ขอมลบรการ" aria-label="Direct link to ข้อมูลบริการ">#</a></h3>
+<p data-bai-block="229">การ์ดข้อมูลบริการแสดงรายละเอียดต่อไปนี้:</p>
+<ul>
+<li data-bai-block="230"><strong>ชื่อการปรับใช้</strong> และ <strong>สถานะ</strong>: ถัดจากแท็กสถานะจะมีปุ่มลิงก์ <strong>ประวัติการจัดตาราง</strong> เมื่อคลิกจะแสดงประวัติเหตุการณ์การจัดตารางของการปรับใช้นี้ในรูปแบบโมดอล</li>
+<li data-bai-block="231"><strong>ID การปรับใช้</strong> และ <strong>เจ้าของเซสชัน</strong></li>
+<li data-bai-block="232"><strong>การมองเห็น (Visibility)</strong>: แสดงเป็นแท็ก สาธารณะ / ส่วนตัว โดย <strong>สาธารณะ</strong> หมายความว่าสามารถเข้าถึง endpoint ได้โดยไม่ต้องใช้ access token และ <strong>ส่วนตัว</strong> หมายความว่าผู้เรียกต้องส่ง access token ที่ถูกต้องมาด้วย</li>
+<li data-bai-block="233"><strong>จำนวนเรพลิกา</strong></li>
+<li data-bai-block="234"><strong>Service Endpoint</strong>: URL สำหรับเข้าถึงการปรับใช้ สำหรับการปรับใช้ LLM จะมีปุ่ม <code>ทดสอบในแชท</code> ให้ใช้งาน</li>
+<li data-bai-block="235"><strong>Resource Group</strong>: resource group ที่การปรับใช้ทำงานอยู่ ปัจจุบัน resource group เป็นส่วนหนึ่งของเมตาดาตาในระดับการปรับใช้ (ตั้งครั้งเดียวเมื่อสร้างการปรับใช้) ไม่ใช่ระดับ Revision อีกต่อไป</li>
+<li data-bai-block="236"><strong>ทรัพยากร</strong>: CPU, หน่วยความจำ, accelerator และ <strong>หน่วยความจำที่ใช้ร่วมกัน (SHM)</strong> ที่จัดสรร ค่าหน่วยความจำที่ใช้ร่วมกันมาจาก Revision ปัจจุบัน และแสดงขนาดของ <code>/dev/shm</code> ที่ inference server สามารถใช้ได้ ซึ่งสำคัญสำหรับ workload การอนุมานแบบ multi-GPU และ multi-process</li>
+<li data-bai-block="237"><strong>Model Storage</strong>: โฟลเดอร์จัดเก็บโมเดลที่เมาต์และปลายทางเมาต์</li>
+<li data-bai-block="238"><strong>เมาต์เพิ่มเติม</strong>: โฟลเดอร์จัดเก็บเพิ่มเติมที่เมาต์</li>
+<li data-bai-block="239"><strong>ตัวแปรสภาพแวดล้อม</strong>: แสดงเป็นบล็อกโค้ด</li>
+<li data-bai-block="240"><strong>อิมเมจ</strong>: อิมเมจคอนเทนเนอร์ที่ใช้สำหรับบริการ</li>
+</ul>
+<p><figure data-bai-block="241" class="doc-figure"><img src="./images/endpoint_detail_visibility.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="790" /><figcaption>รูปที่ 12.13</figcaption></figure>
+</p>
+<h4 data-bai-block="242" id="deployment-เมนเพมเตม-แกไขและลบ">เมนูเพิ่มเติม (แก้ไขและลบ)<a class="hash-link" href="#deployment-เมนเพมเตม-แกไขและลบ" aria-label="Direct link to เมนูเพิ่มเติม (แก้ไขและลบ)">#</a></h4>
+<p data-bai-block="243">ส่วนหัวของการ์ดข้อมูลบริการมีปุ่ม <strong>แก้ไข</strong> ควบคู่ไปกับเมนู <strong>เพิ่มเติม</strong> ปุ่ม <strong>แก้ไข</strong> จะเปิดหน้าต่าง <strong>แก้ไขการปรับใช้</strong> ตามที่อธิบายไว้ใน <a href="#create-deployment">หน้าต่างสร้างการปรับใช้</a> ปัจจุบันเมนูเพิ่มเติมมีการกระทำ <strong>ลบการปรับใช้</strong></p>
+<p><figure data-bai-block="244" class="doc-figure"><img src="./images/endpoint_detail_more_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="332" height="174" /><figcaption>รูปที่ 12.14</figcaption></figure>
+</p>
+<p><a id="scheduling-history"></a></p>
+<h4 data-bai-block="245" id="deployment-ประวตการจดตาราง">ประวัติการจัดตาราง<a class="hash-link" href="#deployment-ประวตการจดตาราง" aria-label="Direct link to ประวัติการจัดตาราง">#</a></h4>
+<p data-bai-block="246">คลิกปุ่มลิงก์ <strong>ประวัติการจัดตาราง</strong> ที่อยู่ถัดจากแท็กสถานะ เพื่อเปิดโมดอล <strong>ประวัติการจัดตารางของการปรับใช้</strong> โมดอลนี้จะแสดงเหตุการณ์การจัดตารางที่บันทึกไว้สำหรับการปรับใช้นี้โดยเรียงจากใหม่ไปเก่า พร้อมแถบตัวกรองคุณสมบัติ (ID, เฟส, ผลลัพธ์, สถานะเดิม, สถานะใหม่, รหัสข้อผิดพลาด, ข้อความ, สร้างเมื่อ, อัปเดตเมื่อ) และปุ่มรีเฟรช</p>
+<p><figure data-bai-block="247" class="doc-figure"><img src="./images/deployment_scheduling_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 12.15</figcaption></figure>
+</p>
+<p><a id="scheduling-history-substeps"></a></p>
+<p data-bai-block="248">เหตุการณ์ที่มีการบันทึกขั้นตอนย่อยจะมีลูกศรขยายอยู่ทางซ้ายของแถว คลิกเพื่อแสดงตารางแบบอินไลน์ที่กระชับซึ่งแสดงขั้นตอนย่อยของเฟสนั้นแถวละหนึ่งขั้นตอน โดยมีคอลัมน์ดังนี้</p>
+<ul>
+<li data-bai-block="249"><strong>ขั้นตอน</strong>: ชื่อของขั้นตอนย่อย</li>
+<li data-bai-block="250"><strong>ผลลัพธ์</strong>: ผลลัพธ์ของขั้นตอนย่อย แสดงเป็นเครื่องหมายที่แยกด้วยสี</li>
+<li data-bai-block="251"><strong>ระยะเวลา</strong>: ระยะเวลาที่ขั้นตอนย่อยใช้ เช่น <code>120 ms</code> หรือ <code>1.35 s</code></li>
+<li data-bai-block="252"><strong>เวลา</strong>: เวลาที่ขั้นตอนย่อยเริ่มต้น แสดงละเอียดถึงระดับมิลลิวินาที</li>
+<li data-bai-block="253"><strong>รหัสข้อผิดพลาด</strong>: รหัสข้อผิดพลาดที่บันทึกไว้สำหรับขั้นตอนย่อย หรือ <code>-</code> เมื่อไม่มี</li>
+<li data-bai-block="254"><strong>ข้อความ</strong>: รายละเอียดหรือข้อความแสดงข้อผิดพลาดของขั้นตอนย่อย ย่อให้เหลือบรรทัดเดียว</li>
+</ul>
+<p data-bai-block="255">โมดอล <strong>ประวัติการจัดตารางเวลาของ Replica</strong> ที่เปิดจากแท็บเรพลิกาก็ใช้ตารางชุดเดียวกัน ดูที่ <a href="#replicas-tab-history">เรพลิกา</a></p>
+<p><a id="revisions-tab"></a></p>
+<h3 data-bai-block="256" id="deployment-แทบ-revisions">แท็บ Revisions<a class="hash-link" href="#deployment-แทบ-revisions" aria-label="Direct link to แท็บ Revisions">#</a></h3>
+<p data-bai-block="257">การ์ด <strong>Revisions</strong> บนหน้ารายละเอียดการปรับใช้มีสามแท็บ ได้แก่ <strong>Revision ปัจจุบัน</strong>, <strong>ประวัติ Revision</strong> และ <strong>บันทึกการตรวจสอบ</strong> ปุ่ม <code>เพิ่ม Revision</code> ที่ด้านบนของการ์ดใช้งานได้จากทุกแท็บ และเปิดหน้าต่างเพิ่ม Revision (ดู <a href="#add-revision">การเพิ่ม Revision</a>)</p>
+<h4 data-bai-block="258" id="deployment-แทบ-revision-ปจจบน">แท็บ Revision ปัจจุบัน<a class="hash-link" href="#deployment-แทบ-revision-ปจจบน" aria-label="Direct link to แท็บ Revision ปัจจุบัน">#</a></h4>
+<p data-bai-block="259">แท็บ <strong>Revision ปัจจุบัน</strong> แสดงการกำหนดค่าทั้งหมดของ Revision ที่ใช้งานอยู่และกำลังให้บริการทราฟฟิก</p>
+<p><figure data-bai-block="260" class="doc-figure"><img src="./images/current_revision_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1414" /><figcaption>รูปที่ 12.16</figcaption></figure>
+</p>
+<p data-bai-block="261">ฟิลด์ที่แสดงมีดังต่อไปนี้:</p>
+<ul>
+<li data-bai-block="262"><strong>หมายเลข Revision</strong>: หมายเลขลำดับที่กำหนดโดยอัตโนมัติ (เช่น <em>#3</em>)</li>
+<li data-bai-block="263"><strong>ID Revision</strong>: UUID ของ Revision นี้</li>
+<li data-bai-block="264"><strong>สร้างเมื่อ</strong></li>
+<li data-bai-block="265"><strong>การจัดสรรทรัพยากร</strong>: การจัดสรรทรัพยากร (CPU, หน่วยความจำ, และตัวเร่งความเร็ว) สำหรับแต่ละเรพลิกา</li>
+<li data-bai-block="266"><strong>โฟลเดอร์โมเดล</strong>: โฟลเดอร์โมเดลที่ติดตั้งในแต่ละเรพลิกา แสดงเป็นลิงก์พร้อม <strong>ปลายทางการเมาท์สำหรับโฟลเดอร์โมเดล</strong> หาก Revision เมาต์โฟลเดอร์ย่อย จะแสดงบรรทัด <code>พาธย่อย: &lt;ค่า&gt;</code> เพิ่มด้วย</li>
+<li data-bai-block="267"><strong>เส้นทางไฟล์นิยามโมเดล</strong>: เส้นทางของไฟล์นิยามโมเดลภายในโฟลเดอร์โมเดล</li>
+<li data-bai-block="268"><strong>การเมาท์เพิ่มเติม</strong>: โฟลเดอร์จัดเก็บเพิ่มเติมที่ติดตั้งในแต่ละเรพลิกา</li>
+<li data-bai-block="269"><strong>Runtime</strong>: รันไทม์การให้บริการ (เช่น <code>vLLM</code>, <code>SGLang</code>, หรือ <code>Custom</code>)</li>
+<li data-bai-block="270"><strong>พารามิเตอร์ Runtime (Runtime Parameters)</strong>: ค่าพารามิเตอร์ preset ที่กำหนดค่าสำหรับ Revision นี้ (เช่น DType: float32, Quantization: awq) แสดงเฉพาะสำหรับ Revision <code>vLLM</code> หรือ <code>SGLang</code> ที่มีการกำหนดค่าพารามิเตอร์ preset ไว้ แสดงเครื่องหมายขีดสำหรับ runtime <code>Custom</code> หรือ Revision ที่ไม่มีค่า preset</li>
+<li data-bai-block="271"><strong>การกำหนดค่า Runtime</strong>: สำหรับ runtime <code>vLLM</code> หรือ <code>SGLang</code> หากมีการตั้งค่าเพิ่มเติม จะแสดงในรูปแบบ JSON</li>
+<li data-bai-block="272"><strong>อิมเมจ</strong>: คอนเทนเนอร์อิมเมจที่ใช้รันเรพลิกา</li>
+<li data-bai-block="273"><strong>โหมดคลัสเตอร์</strong>: รูปแบบการจัดกลุ่มของเซสชันการประมวลผลของแต่ละเรพลิกา (โหมด / ขนาด)</li>
+<li data-bai-block="274"><strong>ตัวแปรสภาพแวดล้อม</strong>: คู่คีย์-ค่าที่ถูกฉีดเข้าไปในคอนเทนเนอร์ แสดงเป็นบล็อก shell script</li>
+</ul>
+<p data-bai-block="275">เมื่อไฟล์นิยามโมเดลมีการกำหนดโมเดล จะแสดงฟิลด์เพิ่มเติมดังนี้:</p>
+<ul>
+<li data-bai-block="276"><strong>ชื่อโมเดล</strong>, <strong>เส้นทางโมเดล</strong>, <strong>คำสั่งเริ่มต้น</strong>, <strong>พอร์ต</strong>, <strong>Shell</strong>, <strong>การกระทำก่อนเริ่ม</strong>, <strong>URL ตรวจสอบสุขภาพ</strong>, <strong>ระยะผ่อนผันการเริ่มต้น</strong>, <strong>จำนวนครั้งที่ลองใหม่สูงสุด</strong>, <strong>ช่วงเวลา (s)</strong>, <strong>เวลารอสูงสุด (s)</strong>, <strong>รหัสสถานะที่คาดหวัง</strong></li>
+</ul>
+<p data-bai-block="277"><strong>สถานะกำลังปรับใช้</strong></p>
+<p data-bai-block="278">ขณะที่ Revision อื่นกำลังถูกปรับใช้ แท็บ <strong>Revision ปัจจุบัน</strong> จะแสดงการแจ้งเตือน: <em>&quot;กำลังปรับใช้ Revision N&quot;</em> ปุ่ม <strong>ดู Revision</strong> ในการแจ้งเตือนจะเปิด drawer รายละเอียดของ Revision ที่กำลังถูกปรับใช้ แท็บจะรีเฟรชอัตโนมัติทุก 5 วินาทีจนกว่าการปรับใช้จะเสร็จสิ้น</p>
+<p data-bai-block="279"><strong>สถานะว่างเปล่า</strong></p>
+<p data-bai-block="280">หากยังไม่มี Revision ที่ถูกปรับใช้ แท็บจะแสดง: <em>&quot;ไม่มีการปรับใช้รุ่นแก้ไข — เพิ่มรุ่นแก้ไขเพื่อเปิดใช้งานบริการนี้&quot;</em></p>
+<h4 data-bai-block="281" id="deployment-แทบประวต-revision">แท็บประวัติ Revision<a class="hash-link" href="#deployment-แทบประวต-revision" aria-label="Direct link to แท็บประวัติ Revision">#</a></h4>
+<p data-bai-block="282">แท็บ <strong>ประวัติ Revision</strong> แสดงรายการ Revision ทั้งหมดที่เพิ่มในการปรับใช้ เรียงจากใหม่ไปเก่าตามค่าเริ่มต้น</p>
+<p><figure data-bai-block="283" class="doc-figure"><img src="./images/revision_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="502" /><figcaption>รูปที่ 12.17</figcaption></figure>
+</p>
+<p data-bai-block="284">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
+<ul>
+<li data-bai-block="285"><strong>Revision (ID)</strong>: หมายเลข Revision และ UUID ของมัน หมายเลข Revision เป็นจำนวนเต็มที่เพิ่มขึ้น ตัวเลขที่น้อยกว่าคือ Revision ที่เก่ากว่า คลิกหมายเลข Revision เพื่อเปิด drawer รายละเอียด Revision</li>
+<li data-bai-block="286"><strong>สร้างเมื่อ</strong></li>
+<li data-bai-block="287"><strong>Runtime</strong>: รันไทม์การให้บริการที่ใช้สำหรับ Revision นี้ (เช่น <code>vLLM</code>, <code>SGLang</code>, หรือ <code>Custom</code>)</li>
+<li data-bai-block="288"><strong>โหมดคลัสเตอร์</strong>: รูปแบบการจัดกลุ่มในรูปแบบ &quot;โหมด / ขนาด&quot; วางเมาส์เหนือส่วนหัวคอลัมน์เพื่อดูคำอธิบาย</li>
+</ul>
+<p data-bai-block="289">คอลัมน์ที่ซ่อนตามค่าเริ่มต้น แต่สามารถเปิดใช้งานได้จากการตั้งค่าคอลัมน์:</p>
+<ul>
+<li data-bai-block="290"><strong>ชื่อโมเดล</strong>, <strong>อิมเมจ</strong>, <strong>โฟลเดอร์โมเดล</strong></li>
+</ul>
+<p data-bai-block="291"><strong>การปรับใช้ Revision และการกระทำอื่น ๆ</strong></p>
+<p data-bai-block="292">แต่ละแถวมีปุ่ม <strong>ปรับใช้</strong> และเมนูเพิ่มเติม</p>
+<ul>
+<li data-bai-block="293"><p><strong>ปรับใช้</strong>: คลิกเพื่อเปิดกล่องโต้ตอบยืนยัน เมื่อยืนยัน Revision ที่เลือกจะกลายเป็น Revision ปัจจุบันและการปรับใช้จะเริ่มให้บริการทราฟฟิกด้วยการกำหนดค่าใหม่ Revision ก่อนหน้าจะถูกเก็บไว้ในประวัติ</p>
+</li>
+<li data-bai-block="294"><p><strong>สร้าง Revision ใหม่จากนี้</strong>: เลือกได้จากเมนูเพิ่มเติม จะเปิดหน้าต่างเพิ่ม Revision โดยกรอกการกำหนดค่าของ Revision นั้นไว้ล่วงหน้า เพื่อให้คุณแก้ไขและปรับใช้ใหม่ได้อย่างรวดเร็ว</p>
+</li>
+<li data-bai-block="295"><p>แท็กสีเขียว <strong>ปัจจุบัน</strong> ทำเครื่องหมาย Revision ที่ใช้งานอยู่ในปัจจุบัน</p>
+</li>
+<li data-bai-block="296"><p>แท็กสีเหลือง <strong>กำลังปรับใช้</strong> (พร้อมตัวหมุนโหลด) ทำเครื่องหมาย Revision ที่กำลังถูกปรับใช้</p>
+</li>
+<li data-bai-block="297"><p>ปุ่ม <strong>ปรับใช้</strong> ถูกปิดใช้งานสำหรับ Revision ที่ใช้งานอยู่และ Revision ที่กำลังถูกปรับใช้ และยังใช้งานไม่ได้ขณะที่การปรับใช้หยุดอยู่ หรือขณะที่การปรับใช้หรือการย้อนกลับกำลังดำเนินการอยู่แล้ว</p>
+</li>
+</ul>
+<p data-bai-block="298">การคลิกหมายเลข Revision ในแถวใด ๆ จะเปิด drawer รายละเอียด Revision ที่แสดงการกำหนดค่าทั้งหมดของ Revision นั้น Drawer ยังมีปุ่ม <strong>ปรับใช้</strong> และปุ่ม <strong>สร้าง Revision ใหม่จากนี้</strong> ด้วย โดยปุ่ม <strong>ปรับใช้</strong> จะถูกปิดใช้งานภายใต้เงื่อนไขเดียวกับในตาราง</p>
+<div class="admonition admonition-note">
+<div data-bai-block="299" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="300">ฟิลด์ <strong>พารามิเตอร์ Runtime</strong> ยังปรากฏใน drawer รายละเอียด Revision สำหรับ Revision <code>vLLM</code> และ <code>SGLang</code> ด้วย โดยแสดงค่าพารามิเตอร์ preset เดียวกันกับแท็บ Revision ปัจจุบัน</p>
+</div></div>
+
+
+<h4 data-bai-block="301" id="deployment-แทบบนทกการตรวจสอบ">แท็บบันทึกการตรวจสอบ<a class="hash-link" href="#deployment-แทบบนทกการตรวจสอบ" aria-label="Direct link to แท็บบันทึกการตรวจสอบ">#</a></h4>
+<p data-bai-block="302">แท็บ <strong>บันทึกการตรวจสอบ (Audit Log)</strong> แสดงบันทึกตามลำดับเวลาของการดำเนินการทั้งหมดที่เกิดขึ้นกับการปรับใช้นี้ ใช้เพื่อติดตามว่าใครเปลี่ยนแปลงการปรับใช้และเมื่อใด</p>
+<p><figure data-bai-block="303" class="doc-figure"><img src="./images/audit_log_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="578" /><figcaption>รูปที่ 12.18</figcaption></figure>
+</p>
+<h3 data-bai-block="304" id="deployment-เรพลกา">เรพลิกา<a class="hash-link" href="#deployment-เรพลกา" aria-label="Direct link to เรพลิกา">#</a></h3>
+<p data-bai-block="305">แท็บเรพลิกาแสดง routing node ที่ประกอบกันเป็นการปรับใช้ รายการเรพลิกาจะถูกกรองด้วยตัวควบคุมแบบ radio <strong>กำลังทำงาน / สิ้นสุดแล้ว</strong> ที่ด้านบนของแท็บ</p>
+<p><figure data-bai-block="306" class="doc-figure"><img src="./images/replica_status_filter.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="502" /><figcaption>รูปที่ 12.19</figcaption></figure>
+</p>
+<ul>
+<li data-bai-block="307"><strong>กำลังทำงาน</strong>: แสดงเรพลิกาที่กำลังเตรียม กำลังทำงาน หรืออยู่ในสถานะใช้งานอื่น ๆ</li>
+<li data-bai-block="308"><strong>สิ้นสุดแล้ว</strong>: แสดงเรพลิกาที่สิ้นสุด lifecycle แล้ว</li>
+</ul>
+<p data-bai-block="309">แต่ละแถวของเรพลิกามีฟิลด์สถานะที่<strong>เป็นอิสระต่อกัน</strong>สามฟิลด์ ฟิลด์เหล่านี้แสดงมิติที่แตกต่างกันและควรอ่านร่วมกัน ตัวอย่างเช่น เรพลิกาอาจอยู่ในสถานะ Lifecycle <em>กำลังทำงาน</em> ในขณะที่สถานะสุขภาพยัง <em>ยังไม่ตรวจสอบ</em> อยู่</p>
+<ul>
+<li data-bai-block="310"><strong>สถานะ Lifecycle</strong>: ตำแหน่งของเรพลิกาใน lifecycle (เช่น <em>กำลังจัดเตรียม</em>, <em>กำลังอุ่นเครื่อง</em>, <em>กำลังทำงาน</em>, <em>กำลังสิ้นสุด</em>, <em>สิ้นสุดแล้ว</em>) ในระหว่าง <strong>กำลังอุ่นเครื่อง</strong> เรพลิกาจะอยู่ภายในระยะผ่อนผันการเริ่มต้น นั่นคือกำลังเริ่มต้นและรอการตรวจสอบสุขภาพครั้งแรกที่สำเร็จ ในช่วงนี้การตรวจสอบสุขภาพที่ล้มเหลวจะได้รับการยอมรับ เรพลิกาจะเปลี่ยนเป็น <em>กำลังทำงาน</em> เมื่อสำเร็จครั้งแรก และจะถูกสิ้นสุดหากไม่สำเร็จเลยจนกว่าช่วงเวลาจะสิ้นสุด หัวคอลัมน์จะแสดงเป็น <strong>วงจรชีวิต</strong></li>
+<li data-bai-block="311"><strong>สถานะสุขภาพ</strong>: สถานะสุขภาพปัจจุบันของกระบวนการเรพลิกา (<em>ปกติ</em>, <em>ผิดปกติ</em>, <em>เสื่อมสภาพ</em>, <em>ยังไม่ตรวจสอบ</em>)<ul>
+<li data-bai-block="312"><strong>ยังไม่ตรวจสอบ</strong> หมายความว่าการตรวจสอบสุขภาพครั้งแรกยังไม่เสร็จสมบูรณ์ โดยปกติเรพลิกายังอยู่ในช่วงผ่อนผัน <strong>กำลังอุ่นเครื่อง</strong> โดยตัวมันเองไม่ใช่ข้อผิดพลาด ให้ดู <strong>สถานะ Lifecycle</strong> เพื่อดูว่าเรพลิกาอยู่ในขั้นตอนใด</li>
+</ul>
+</li>
+<li data-bai-block="313"><strong>สถานะ Traffic</strong>: เรพลิกากำลังให้บริการคำขออยู่หรือไม่ เรพลิกาสามารถถูกนำออกจาก traffic โดยไม่ขึ้นกับสถานะสุขภาพ (เช่น เมื่อถูกปิดใช้งานด้วยตนเอง) จึงแสดง traffic เป็นสถานะแยกต่างหากแทนที่จะรวมเข้ากับสถานะสุขภาพ</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="314" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="315">สถานะทั้งสามเป็นมิติที่เป็นอิสระต่อกัน ในระหว่างขั้นตอน Lifecycle <strong>กำลังอุ่นเครื่อง</strong> เรพลิกาจะอยู่ภายในระยะผ่อนผันการเริ่มต้น และ <strong>สถานะสุขภาพ</strong> มักจะแสดงเป็น <em>ยังไม่ตรวจสอบ</em> จนกว่าการตรวจสอบครั้งแรกจะเสร็จสมบูรณ์ ซึ่งไม่ได้บ่งชี้ถึงปัญหาด้วยตัวมันเอง</p>
+</div></div>
+
+
+<p data-bai-block="316">คลิกชื่อเซสชันในคอลัมน์ <strong>เซสชัน</strong> เพื่อเปิด drawer รายละเอียดเซสชัน คลิกหมายเลข Revision ในคอลัมน์ <strong>Revision (ID)</strong> เพื่อเปิด drawer รายละเอียด Revision</p>
+<p><a id="replicas-tab-history"></a></p>
+<p data-bai-block="317">ถัดจากแท็กสถานะในคอลัมน์ <strong>วงจรชีวิต</strong> จะมีปุ่มไอคอนประวัติ เมื่อคลิกจะเปิดโมดอล <strong>ประวัติการจัดตารางเวลาของ Replica</strong> ของเรพลิกานั้น ซึ่งคุณสามารถกรองประวัติเหตุการณ์การจัดตารางของเรพลิกาได้ตามช่วงวันที่ สถานะ และอื่น ๆ</p>
+<p><figure data-bai-block="318" class="doc-figure"><img src="./images/replica_scheduling_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 12.20</figcaption></figure>
+</p>
+<p data-bai-block="319">หากเรพลิกาพบข้อผิดพลาด คลิกที่ตัวบ่งชี้ข้อผิดพลาดในแถวเพื่อเปิดหน้าต่าง JSON viewer ที่แสดงข้อมูลข้อผิดพลาดดิบ ซึ่งมีประโยชน์ในการวินิจฉัยปัญหาของเรพลิกาแต่ละตัว</p>
+<p><figure data-bai-block="320" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="985" height="427" /><figcaption>รูปที่ 12.21</figcaption></figure>
+</p>
+<h3 data-bai-block="321" id="deployment-กฎการปรบขนาดอตโนมต">กฎการปรับขนาดอัตโนมัติ<a class="hash-link" href="#deployment-กฎการปรบขนาดอตโนมต" aria-label="Direct link to กฎการปรับขนาดอัตโนมัติ">#</a></h3>
+<p data-bai-block="322">กฎการปรับขนาดอัตโนมัติ (Auto Scaling Rules) จะเพิ่มหรือลดจำนวนเรพลิกาของบริการโมเดลโดยอัตโนมัติตามเมตริกสด ช่วยประหยัดทรัพยากรในช่วงการใช้งานต่ำ และป้องกันความล่าช้าหรือความล้มเหลวของคำขอในช่วงการใช้งานสูง</p>
+<p><figure data-bai-block="323" class="doc-figure"><img src="./images/auto_scaling_rules.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="576" /><figcaption>รูปที่ 12.22</figcaption></figure>
+</p>
+<p data-bai-block="324">รายการกฎให้บริการดังนี้:</p>
+<ul>
+<li data-bai-block="325">แถบตัวกรองคุณสมบัติสำหรับกรองกฎตามช่วงวันเวลาของ สร้างเวลา (Created At) และ ทริกเกอร์ครั้งสุดท้าย (Last Triggered)</li>
+<li data-bai-block="326">การแบ่งหน้าที่ฝั่งเซิร์ฟเวอร์</li>
+<li data-bai-block="327">คอลัมน์ต่อไปนี้: แหล่งวัด (Metric Source), เงื่อนไข (Condition), ระยะ Cooldown (Cooldown Sec.), ขนาดขั้นตอน (Step Size), เรพลิกาขั้นต่ำ / สูงสุด (Min / Max Replicas), สร้างเวลา (Created At), ทริกเกอร์ครั้งสุดท้าย (Last Triggered) คอลัมน์ขนาดขั้นตอนจะแสดง <code>+</code>, <code>−</code>, หรือ <code>±</code> โดยอัตโนมัติตามทิศทางที่ได้จากเกณฑ์ที่คุณตั้งไว้</li>
+<li data-bai-block="328">ไอคอนแก้ไขและลบต่อแถว แสดงถัดจากสรุปเงื่อนไขในแต่ละแถว</li>
+</ul>
+<p data-bai-block="329">คลิกปุ่ม <code>เพิ่มกฎ</code> เพื่อเปิดตัวแก้ไข <strong>เพิ่มกฎการปรับขนาดอัตโนมัติ</strong> หากต้องการแก้ไขกฎที่มีอยู่ ให้คลิกไอคอนแก้ไขในแถวนั้น ตัวแก้ไข <strong>แก้ไขกฎการปรับขนาดอัตโนมัติ</strong> จะเปิดขึ้นโดยมีค่าของกฎที่กรอกไว้ล่วงหน้า ตัวแก้ไขประกอบด้วยฟิลด์ต่อไปนี้ตามลำดับ:</p>
+<ul>
+<li data-bai-block="330"><p><strong>แหล่งวัด (Metric Source)</strong>: เลือก <code>Kernel</code> หรือ <code>Prometheus</code></p>
+</li>
+<li data-bai-block="331"><p><strong>ชื่อเมตริก (Metric Name)</strong>: สำหรับ <code>Kernel</code> ให้ใส่ชื่อเมตริก เมตริกทั่วไป เช่น <code>cpu_util</code>, <code>mem</code>, <code>net_rx</code> และ <code>net_tx</code> เป็นคำแนะนำให้เติมอัตโนมัติ และคุณยังสามารถพิมพ์ชื่อที่กำหนดเองได้อย่างอิสระ</p>
+</li>
+<li data-bai-block="332"><p><strong>ชื่อเมตริกแบบ Preset (Metric Name (Prometheus Preset))</strong>: แสดงเฉพาะเมื่อแหล่งวัดเป็น <code>Prometheus</code> เลือก preset จากดรอปดาวน์ ชื่อเมตริก เทมเพลตคิวรี และ (เมื่อกำหนดไว้) ระยะ Cooldown (Cooldown Sec.) ของ preset จะถูกกรอกโดยอัตโนมัติ</p>
+</li>
+<li data-bai-block="333"><p><strong>เงื่อนไข (Condition)</strong>: ตัวควบคุมแบบแบ่งส่วนสำหรับเลือกทิศทางการปรับขนาด มีสามตัวเลือก</p>
+<ul>
+<li data-bai-block="334"><strong>ย่อขนาด</strong>: ลดจำนวนเรพลิกาเมื่อเมตริกต่ำกว่าเกณฑ์ กำหนดเงื่อนไข <code>Metric &lt; [เกณฑ์]</code></li>
+<li data-bai-block="335"><strong>ขยายแนวนอน</strong>: เพิ่มจำนวนเรพลิกาเมื่อเมตริกสูงกว่าเกณฑ์ กำหนดเงื่อนไข <code>Metric &gt; [เกณฑ์]</code></li>
+<li data-bai-block="336"><strong>ขยายและย่อขนาด</strong>: ปรับขยายหรือลดขนาดโดยอัตโนมัติตามด้านที่เมตริกข้ามออกจากช่วงที่กำหนด กำหนดเงื่อนไข <code>Metric &lt; Min Threshold</code> หรือ <code>Metric &gt; Max Threshold</code></li>
+</ul>
+</li>
+</ul>
+<p><figure data-bai-block="337" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>รูปที่ 12.23</figcaption></figure>
+</p>
+<ul>
+<li data-bai-block="338"><p><strong>ขนาดขั้นตอน (Step Size)</strong>: จำนวนเต็มบวกที่ระบุจำนวนเรพลิกาที่จะเพิ่มหรือลบต่อเหตุการณ์การปรับขนาด เครื่องหมาย <code>-</code>, <code>+</code>, หรือ <code>±</code> จะแสดงโดยอัตโนมัติตามเงื่อนไขที่เลือก (ย่อขนาด / ขยายแนวนอน / ขยายและย่อขนาด)</p>
+<ul>
+<li data-bai-block="339">ตั้งเฉพาะเกณฑ์ต่ำสุด: <code>[metric] &lt; [minThreshold]</code> จะทริกเกอร์ <strong>ย่อขนาด</strong> (เรพลิกาลดลงเมื่อเมตริกต่ำกว่าเกณฑ์)</li>
+<li data-bai-block="340">ตั้งเฉพาะเกณฑ์สูงสุด: <code>[metric] &gt; [maxThreshold]</code> จะทริกเกอร์ <strong>ขยายแนวนอน</strong> (เรพลิกาเพิ่มขึ้นเมื่อเมตริกสูงกว่าเกณฑ์)</li>
+<li data-bai-block="341">ตั้งทั้งสองเกณฑ์: หาก <code>[metric] &lt; [minThreshold]</code> เรพลิกาจะ <strong>ย่อขนาด</strong>; หาก <code>[metric] &gt; [maxThreshold]</code> เรพลิกาจะ <strong>ขยายแนวนอน</strong></li>
+</ul>
+</li>
+<li data-bai-block="342"><p><strong>ระยะ Cooldown (Cooldown Sec.)</strong>: เวลาเป็นวินาทีที่รอหลังจากเหตุการณ์การปรับขนาดก่อนการประเมินครั้งถัดไป</p>
+</li>
+<li data-bai-block="343"><p><strong>เรพลิกาขั้นต่ำ (Min Replicas) และเรพลิกาสูงสุด (Max Replicas)</strong>: ขอบเขตล่างและบนที่การปรับขนาดอัตโนมัติบังคับใช้กับจำนวนเรพลิกา การปรับขนาดอัตโนมัติจะไม่ลดจำนวนเรพลิกาต่ำกว่าเรพลิกาขั้นต่ำ หรือเพิ่มให้มากกว่าเรพลิกาสูงสุด</p>
+</li>
+</ul>
+<p><figure data-bai-block="344" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="812" /><figcaption>รูปที่ 12.24</figcaption></figure>
+</p>
+<p><a id="generating-tokens"></a></p>
+<h3 data-bai-block="345" id="deployment-การสรางโทเคน">การสร้างโทเค็น<a class="hash-link" href="#deployment-การสรางโทเคน" aria-label="Direct link to การสร้างโทเค็น">#</a></h3>
+<p data-bai-block="346">เมื่อสถานะการปรับใช้เป็น <code>HEALTHY</code> ให้คลิกชื่อการปรับใช้ในรายการการปรับใช้เพื่อเปิดหน้าข้อมูลรายละเอียดการปรับใช้ คุณสามารถตรวจสอบ URL <strong>Service Endpoint</strong> ได้ในการ์ดข้อมูลบริการ หาก <strong>เปิดสาธารณะ</strong> เปิดใช้งาน ผู้ใช้ปลายทางสามารถเข้าถึงการปรับใช้ได้โดยไม่ต้องใช้โทเค็น หากปิดใช้งาน ให้สร้างโทเค็นตามคำอธิบายด้านล่าง</p>
+<p data-bai-block="347">โทเค็นการเข้าถึงจัดการได้จากการ์ด <strong>โทเค็นการเข้าถึง</strong> ที่ด้านล่างของหน้าข้อมูลรายละเอียดการปรับใช้ วางเมาส์เหนือไอคอน ⓘ ถัดจากชื่อการ์ดเพื่อดูคำอธิบาย: <em>&quot;จัดการโทเค็นการเข้าถึงสำหรับการยืนยันตัวตนคำขอ API ไปยังเอนด์พอยต์ของการปรับใช้นี้&quot;</em></p>
+<p><figure data-bai-block="348" class="doc-figure"><img src="./images/generate_token.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="410" /><figcaption>รูปที่ 12.25</figcaption></figure>
+</p>
+<h4 data-bai-block="349" id="deployment-การสรางโทเคนการเขาถง">การสร้างโทเค็นการเข้าถึง<a class="hash-link" href="#deployment-การสรางโทเคนการเขาถง" aria-label="Direct link to การสร้างโทเค็นการเข้าถึง">#</a></h4>
+<ol>
+<li data-bai-block="350">คลิกปุ่ม <code>สร้างโทเค็นการเข้าถึง</code> ในส่วนหัวของการ์ด หรือคลิก <strong>เพิ่มโทเค็นการเข้าถึง</strong> ในแบนเนอร์ <strong>การปรับใช้แบบส่วนตัว</strong> ที่ด้านบนของหน้า ซึ่งจะเปิดหน้าต่างเดียวกัน</li>
+<li data-bai-block="351">เลือก <strong>วันหมดอายุ</strong> ของโทเค็น<ul>
+<li data-bai-block="352"><code>7 วัน</code>, <code>30 วัน</code> หรือ <code>90 วัน</code>: โทเค็นจะหมดอายุตามจำนวนวันดังกล่าวนับจากตอนนี้ ค่าเริ่มต้นคือ <code>7 วัน</code></li>
+<li data-bai-block="353"><strong>วันหมดอายุที่กำหนดเอง</strong>: จะแสดงตัวเลือกวันและเวลาเพื่อกำหนดเวลาหมดอายุเอง เวลาที่เลือกต้องอยู่ในอนาคต</li>
+<li data-bai-block="354"><strong>ไม่มีวันหมดอายุ</strong>: ตั้งวันหมดอายุเป็นวันที่ในอนาคตไกล ๆ (<code>31 ธันวาคม 2099</code>) ทำให้โทเค็นแทบไม่หมดอายุในทางปฏิบัติ หลังจากนี้ หน้าต่างโทเค็น รายการโทเค็น และตัวเลือกโทเค็นในหน้าแชท จะแสดงวันที่นี้แทนคำว่า &quot;ไม่มีวันหมดอายุ&quot;</li>
+</ul>
+</li>
+<li data-bai-block="355">คลิก <code>สร้างโทเค็นการเข้าถึง</code> เพื่อออกโทเค็น</li>
+</ol>
+<p><figure data-bai-block="356" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>รูปที่ 12.26</figcaption></figure>
+</p>
+<blockquote>
+<p data-bai-block="357">ปุ่ม <code>สร้างโทเค็นการเข้าถึง</code> จะถูกปิดใช้งานจนกว่า manager จะออก endpoint ของเครือข่ายให้การปรับใช้นี้ ระหว่างที่ปิดใช้งาน คำแนะนำของปุ่มจะระบุว่า <em>&quot;ยังไม่ได้ออก endpoint ของเครือข่าย&quot;</em> ปุ่มนี้ยังถูกปิดใช้งานสำหรับการปรับใช้ที่คุณไม่ได้เป็นเจ้าของ (<em>&quot;เฉพาะเจ้าของการปรับใช้เท่านั้นที่สามารถจัดการโทเค็นการเข้าถึงได้&quot;</em>) และการปรับใช้ที่กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป (<em>&quot;การปรับใช้กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป&quot;</em>) สองเงื่อนไขหลังนี้ทำให้การลบโทเค็นถูกปิดใช้งานด้วยเช่นกัน</p>
+</blockquote>
+<p data-bai-block="358">เมื่อออกโทเค็นแล้ว หน้าต่าง <strong>โทเค็น</strong> จะแสดงค่าโทเค็นเพียงครั้งเดียว พร้อมปุ่มคัดลอกและวันหมดอายุที่คุณเลือก คัดลอกโทเค็นจากหน้าต่างนี้ หรือคัดลอกจากตารางในภายหลังก็ได้</p>
+<h4 data-bai-block="359" id="deployment-รายการโทเคนการเขาถง">รายการโทเค็นการเข้าถึง<a class="hash-link" href="#deployment-รายการโทเคนการเขาถง" aria-label="Direct link to รายการโทเค็นการเข้าถึง">#</a></h4>
+<p data-bai-block="360">การ์ดนี้แสดงโทเค็นการเข้าถึงทุกรายการที่ออกให้การปรับใช้นี้ โดยเรียงจากใหม่ไปเก่า</p>
+<ul>
+<li data-bai-block="361"><strong>โทเค็น</strong>: ค่าของโทเค็น แสดงแบบย่อพร้อมปุ่มคัดลอก ไอคอนลบในเซลล์เดียวกันใช้ลบโทเค็นได้</li>
+<li data-bai-block="362"><strong>สร้างเมื่อ</strong>: เวลาที่ออกโทเค็น</li>
+<li data-bai-block="363"><strong>วันหมดอายุ</strong>: เวลาที่โทเค็นจะหมดอายุ โทเค็นที่สร้างด้วย <strong>ไม่มีวันหมดอายุ</strong> จะแสดงเป็น <code>31 ธันวาคม 2099</code></li>
+</ul>
+<p><figure data-bai-block="364" class="doc-figure"><img src="./images/generated_token_copy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="384" /><figcaption>รูปที่ 12.27</figcaption></figure>
+</p>
+<p data-bai-block="365">ส่งโทเค็นไปในส่วนหัวคำขอ <code>Authorization</code></p>
+<table>
+<thead>
+<tr data-bai-block="366">
+<th>Key</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr data-bai-block="367">
+<td>Content-Type</td>
+<td>application/json</td>
+</tr>
+<tr data-bai-block="368">
+<td>Authorization</td>
+<td>BackendAI <code>&lt;token&gt;</code></td>
+</tr>
+</tbody></table>
+<h4 data-bai-block="369" id="deployment-การลบโทเคนการเขาถง">การลบโทเค็นการเข้าถึง<a class="hash-link" href="#deployment-การลบโทเคนการเขาถง" aria-label="Direct link to การลบโทเค็นการเข้าถึง">#</a></h4>
+<p data-bai-block="370">คลิกไอคอนลบในแถวของโทเค็น หน้าต่าง <strong>ลบโทเค็นการเข้าถึง</strong> จะขอให้คุณพิมพ์ <code>ลบ</code> เพื่อยืนยัน และปุ่มตกลงจะยังถูกปิดใช้งานจนกว่าข้อความที่พิมพ์จะตรงกัน</p>
+<div class="admonition admonition-danger">
+<div data-bai-block="371" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>อันตราย</div>
+<div class="admonition-content">
+
+<p data-bai-block="372">การลบโทเค็นการเข้าถึง <strong>ไม่สามารถย้อนกลับได้</strong> และมีผลทันที ไคลเอนต์ที่ยังส่งโทเค็นนั้นอยู่จะเริ่มได้รับข้อผิดพลาดในการยืนยันตัวตน</p>
+</div></div>
+
+
+<h3 data-bai-block="373" id="deployment-การยตการปรบใช">การยุติการปรับใช้<a class="hash-link" href="#deployment-การยตการปรบใช" aria-label="Direct link to การยุติการปรับใช้">#</a></h3>
+<p data-bai-block="374">หากไม่จำเป็นต้องใช้การปรับใช้แล้ว แนะนำให้ยุติการปรับใช้นั้น หากต้องการยุติการปรับใช้ ให้เปิดเมนู <strong>เพิ่มเติม</strong> บนการ์ดข้อมูลบริการ และเลือก <strong>ลบการปรับใช้</strong> หน้าต่างยืนยันแบบพิมพ์จะปรากฏขึ้น — พิมพ์ชื่อการปรับใช้เพื่อเปิดใช้งานปุ่ม <strong>ลบถาวร</strong> การปรับใช้ที่ยุติแล้วจะปรากฏในมุมมองตัวกรอง <strong>ถูกทำลาย</strong></p>
+<p><figure data-bai-block="375" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>รูปที่ 12.28</figcaption></figure>
+</p>
+<h2 data-bai-block="376" id="deployment-การเขาถงการปรบใชของคณ">การเข้าถึงการปรับใช้ของคุณ<a class="hash-link" href="#deployment-การเขาถงการปรบใชของคณ" aria-label="Direct link to การเข้าถึงการปรับใช้ของคุณ">#</a></h2>
+<h3 data-bai-block="377" id="deployment-การสงคำขอ-api">การส่งคำขอ API<a class="hash-link" href="#deployment-การสงคำขอ-api" aria-label="Direct link to การส่งคำขอ API">#</a></h3>
+<p data-bai-block="378">หากต้องการให้ผู้ใช้ปลายทางเรียกใช้การปรับใช้ของคุณ ให้แบ่งปัน URL การปรับใช้กับพวกเขา หาก <strong>เปิดสาธารณะ</strong> เปิดใช้งาน คุณสามารถแบ่งปัน URL <strong>Service Endpoint</strong> จากหน้าข้อมูลรายละเอียดการปรับใช้ได้โดยตรง สำหรับการปรับใช้แบบส่วนตัว ให้แบ่งปัน URL พร้อมกับ access token ด้วย</p>
+<p data-bai-block="379">นี่คือคำสั่ง <code>curl</code> ง่ายๆ เพื่อตรวจสอบว่าการส่งคำขอไปยัง URL การปรับใช้ทำงานอย่างถูกต้องหรือไม่:</p>
+<div data-bai-block="380" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> API_TOKEN</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;token>"</span></span>
+<span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> MODEL_SERVICE_ENDPOINT</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;model-service-endpoint>"</span></span>
+<span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -H</span><span style="color:#9ECBFF"> "Content-Type: application/json"</span><span style="color:#79B8FF"> -X</span><span style="color:#9ECBFF"> GET</span><span style="color:#79B8FF">    -H</span><span style="color:#9ECBFF"> "Authorization: BackendAI </span><span style="color:#E1E4E8">$API_TOKEN</span><span style="color:#9ECBFF">"</span><span style="color:#9ECBFF">    "</span><span style="color:#E1E4E8">$MODEL_SERVICE_ENDPOINT</span><span style="color:#9ECBFF">"</span></span></code></pre></div>
+<div class="admonition admonition-warning">
+<div data-bai-block="381" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div class="admonition-content">
+
+<p data-bai-block="382">โดยค่าเริ่มต้น ผู้ใช้ปลายทางต้องอยู่ในเครือข่ายที่สามารถเข้าถึง
+endpoint ได้ หากบริการถูกสร้างในเครือข่ายปิด เฉพาะผู้ใช้ปลายทาง
+ที่มีการเข้าถึงภายในเครือข่ายปิดนั้นเท่านั้นที่สามารถเข้าถึงบริการได้</p>
+</div></div>
+
+
+<h3 data-bai-block="383" id="deployment-การทดสอบ-llm-chat">การทดสอบ LLM Chat<a class="hash-link" href="#deployment-การทดสอบ-llm-chat" aria-label="Direct link to การทดสอบ LLM Chat">#</a></h3>
+<p data-bai-block="384">หากคุณสร้างบริการ Large Language Model (LLM) คุณสามารถทดสอบ LLM แบบเรียลไทม์
+เมื่อการปรับใช้พร้อมแล้ว ปุ่ม <code>ทดสอบในแชท</code> จะปรากฏในแบนเนอร์ <strong>การปรับใช้พร้อมแล้ว</strong> ที่ด้านบนของหน้าข้อมูลรายละเอียดการปรับใช้ คลิกปุ่มดังกล่าวเพื่อเริ่มการทดสอบ</p>
+<p><figure data-bai-block="385" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="336" /><figcaption>รูปที่ 12.29</figcaption></figure>
+</p>
+<p data-bai-block="386">คุณจะถูกเปลี่ยนเส้นทางไปยังหน้า Chat ซึ่งโมเดลที่คุณสร้างจะถูกเลือกโดยอัตโนมัติ
+โดยใช้อินเทอร์เฟซแชทที่ให้บริการในหน้า Chat คุณสามารถทดสอบโมเดล LLM
+สำหรับข้อมูลเพิ่มเติมเกี่ยวกับฟีเจอร์แชท โปรดดู <a href="./chat.html#chat-page">หน้าแชท</a></p>
+<p><figure data-bai-block="387" class="doc-figure"><img src="./images/LLM_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>รูปที่ 12.30</figcaption></figure>
+</p>
+<h4 data-bai-block="388" id="deployment-การเลอกโทเคนในหนา-chat">การเลือกโทเค็นในหน้า Chat<a class="hash-link" href="#deployment-การเลอกโทเคนในหนา-chat" aria-label="Direct link to การเลือกโทเค็นในหน้า Chat">#</a></h4>
+<p data-bai-block="389">เมื่อหน้า Chat เชื่อมต่อกับการปรับใช้ของ Backend.AI ช่องโทเค็นจะไม่ใช่ช่องข้อความธรรมดา แต่เป็นตัวเลือกที่แสดงรายการโทเค็นการเข้าถึงของการปรับใช้นั้น</p>
+<ul>
+<li data-bai-block="390">แต่ละตัวเลือกจะแสดง <strong>อักขระ 6 ตัวสุดท้าย</strong> ของโทเค็นในรูปแบบโค้ด พร้อมวันหมดอายุ (เช่น <code>~ 26 ส.ค. 2026</code> หรือ <code>~ 31 ธ.ค. 2099</code> สำหรับโทเค็นที่สร้างด้วย <strong>ไม่มีวันหมดอายุ</strong>) เนื่องจากโทเค็นทุกตัวขึ้นต้นด้วยส่วนหัว JWT เหมือนกัน ส่วนท้ายจึงเป็นสิ่งที่ใช้แยกความแตกต่างได้จริง วางเมาส์เหนือตัวเลือกเพื่อดูเวลาที่ออกโทเค็น → เวลาหมดอายุแบบเต็ม</li>
+<li data-bai-block="391"><strong>โทเค็นที่หมดอายุแล้วจะไม่ถูกแสดง</strong> รายการจะมีเฉพาะโทเค็นที่ยังใช้ได้เท่านั้น</li>
+<li data-bai-block="392">เมื่อช่องยังว่าง ระบบจะเลือก <strong>โทเค็นที่ใช้ได้ซึ่งสร้างล่าสุด</strong> ให้โดยอัตโนมัติ หากคุณล้างการเลือกเอง ระบบจะไม่เลือกให้ใหม่อีก</li>
+<li data-bai-block="393">ไอคอนรูปเฟืองถัดจากช่อง (<strong>การตั้งค่าโทเค็นการเข้าถึง</strong>) จะพาไปยังส่วนโทเค็นการเข้าถึงของการปรับใช้นั้น เพื่อให้คุณออกโทเค็นใหม่ได้โดยไม่เสียบริบทเดิม เมื่อกลับมา รายการจะถูกโหลดใหม่ คุณจึงเลือกโทเค็นที่เพิ่งสร้างได้ทันที</li>
+</ul>
+<p data-bai-block="394">หากการปรับใช้ไม่มีโทเค็นที่ใช้ได้เลย ตัวเลือกจะว่างเปล่า ให้สร้างโทเค็นก่อนตามที่อธิบายไว้ใน <a href="#generating-tokens">การสร้างโทเค็น</a></p>
+<p><figure data-bai-block="395" class="doc-figure"><img src="./images/chat_deployment_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2184" height="454" /><figcaption>รูปที่ 12.31</figcaption></figure>
+</p>
+<p data-bai-block="396">หากคุณพบปัญหาในการเชื่อมต่อกับ API หน้าแชทจะแสดงตัวเลือกที่ให้คุณกำหนดค่าการตั้งค่าโมเดลด้วยตนเอง
+ในการใช้โมเดล คุณจะต้องมีข้อมูลต่อไปนี้:</p>
+<ul>
+<li data-bai-block="397"><strong>เส้นทางฐาน</strong> (ไม่บังคับ): Base URL ของเซิร์ฟเวอร์ที่โมเดลตั้งอยู่
+ตรวจสอบให้แน่ใจว่าได้รวมข้อมูลเวอร์ชัน
+เช่น เมื่อใช้ OpenAI API คุณควรใส่ <a href="https://api.openai.com/v1">https://api.openai.com/v1</a></li>
+<li data-bai-block="398"><strong>โทเค็น</strong> (ไม่บังคับ): คีย์การรับรองความถูกต้องเพื่อเข้าถึงบริการโมเดล โทเค็นสามารถ
+สร้างได้จากบริการต่างๆ ไม่ใช่แค่ Backend.AI เท่านั้น รูปแบบและกระบวนการสร้าง
+อาจแตกต่างกันไปขึ้นอยู่กับบริการ ควรอ้างถึงคู่มือของบริการเฉพาะสำหรับรายละเอียด
+เช่น เมื่อใช้บริการที่สร้างโดย Backend.AI โปรดดู
+<a href="#generating-tokens">การสร้างโทเค็น</a> สำหรับคำแนะนำเกี่ยวกับวิธีสร้างโทเค็น</li>
+</ul>
+<p><figure data-bai-block="399" class="doc-figure"><img src="./images/LLM_chat_custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>รูปที่ 12.32</figcaption></figure>
+</p>
+<p><a id="model-store"></a></p>
+<h2 data-bai-block="400" id="deployment-คลงโมเดล">คลังโมเดล<a class="hash-link" href="#deployment-คลงโมเดล" aria-label="Direct link to คลังโมเดล">#</a></h2>
+<p data-bai-block="401">คลังโมเดล (Model Store) ให้บริการแกลเลอรีแบบการ์ดของโมเดลที่กำหนดค่าไว้ล่วงหน้าซึ่งคุณสามารถเรียกดู ค้นหา และ deploy ได้ คุณสามารถเข้าถึงคลังโมเดลได้จากเมนูด้านข้าง</p>
+<p><figure data-bai-block="402" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>รูปที่ 12.33</figcaption></figure>
+</p>
+<h3 data-bai-block="403" id="deployment-การเรยกดและคนหาโมเดล">การเรียกดูและค้นหาโมเดล<a class="hash-link" href="#deployment-การเรยกดและคนหาโมเดล" aria-label="Direct link to การเรียกดูและค้นหาโมเดล">#</a></h3>
+<p data-bai-block="404">ส่วนบนของหน้าใช้รูปแบบตัวกรองและเรียงลำดับ:</p>
+<ul>
+<li data-bai-block="405"><p><strong>แถบตัวกรองคุณสมบัติ</strong>: เพิ่มเงื่อนไขหนึ่งข้อขึ้นไปเพื่อจำกัดรายการการ์ด มีคุณสมบัติให้ใช้สองรายการ</p>
+<ul>
+<li data-bai-block="406"><strong>ชื่อโมเดล</strong>: ค้นหาการ์ดโมเดลตามชื่อ</li>
+<li data-bai-block="407"><strong>โฮสต์ที่เก็บข้อมูล</strong>: กรองการ์ดตาม storage host ที่โฟลเดอร์โมเดลตั้งอยู่ แทนที่จะพิมพ์ชื่อโฮสต์ ให้เลือกจากดรอปดาวน์ของ storage host ที่ลงทะเบียนไว้บนเซิร์ฟเวอร์ ค่าที่เลือกจะถูกเพิ่มเป็นเงื่อนไขตัวกรองทันที ใช้ตัวดำเนินการ <code>equals</code> เพื่อแสดงเฉพาะโฮสต์นั้น หรือ <code>not equals</code> เพื่อยกเว้นโฮสต์นั้น</li>
+</ul>
+</li>
+<li data-bai-block="408"><p><strong>เรียงลำดับ (Sort)</strong>: เลือกวิธีการเรียงลำดับผลลัพธ์ ตัวเลือกที่ใช้งานได้คือ <code>ชื่อ (A→Z)</code>, <code>ชื่อ (Z→A)</code>, <code>เก่าสุดก่อน</code> และ <code>ใหม่สุดก่อน</code></p>
+</li>
+<li data-bai-block="409"><p><strong>รีเฟรช (Refresh)</strong>: คลิกปุ่มรีเฟรชเพื่อโหลดรายการการ์ดใหม่</p>
+<p> เนื่องจากเลือกโฮสต์จากรายการแทนการพิมพ์เอง การพิมพ์ชื่อโฮสต์ผิดจึงไม่ทำให้ได้ผลลัพธ์ว่างเปล่าโดยไม่รู้ตัว เงื่อนไขจะถูกรวมกันด้วย <code>AND</code> คุณจึงใช้เงื่อนไขชื่อร่วมกับเงื่อนไข storage host ได้</p>
+</li>
+</ul>
+<div class="admonition admonition-note">
+<div data-bai-block="410" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="411">รายการโมเดลจะถูกกำหนดขอบเขตโดยอัตโนมัติให้เฉพาะโปรเจกต์ MODEL_STORE ของโดเมนปัจจุบัน โดยไม่มีตัวกรองโดเมนแยกต่างหาก การ์ดทั้งหมดที่มองเห็นได้ในหน้านี้เป็นของโดเมนของคุณอยู่แล้ว</p>
+</div></div>
+
+
+<p data-bai-block="412">การ์ดแต่ละใบจะแสดงไอคอนแบรนด์ของโมเดล ชื่อเรื่อง (หรือชื่อเมื่อไม่มีการตั้งชื่อเรื่อง) แท็กงาน เวลาสร้างแบบสัมพัทธ์ และผู้เขียน (Author) พร้อมไอคอน การ์ดที่ <strong>ไม่มี preset ที่เข้ากันได้</strong> สำหรับโปรเจกต์ปัจจุบันจะถูกแสดงที่ความโปร่งใส 50 % คุณสามารถเปิดการ์ดดังกล่าวเพื่อดูรายละเอียดได้ แต่ปุ่ม <code>Deploy</code> จะถูกปิดใช้งานและมีการแจ้งเตือนข้อผิดพลาด <strong>ไม่มี preset ที่เข้ากันได้ ไม่สามารถ deploy โมเดลนี้ได้</strong> แสดงใน Drawer</p>
+<p data-bai-block="413">หากไม่ได้ตั้งค่าโปรเจกต์ <code>MODEL_STORE</code> บนเซิร์ฟเวอร์ หน้าจะแสดงข้อความ <em>ไม่พบโปรเจกต์ Model Store</em> พร้อมคำแนะนำให้ติดต่อผู้ดูแลระบบ หากไม่มีการ์ดโมเดลใดที่ตรงกับตัวกรองของคุณ หน้าจะแสดง <em>ไม่พบโมเดล</em></p>
+<p data-bai-block="414">รายการจะถูกแบ่งหน้าที่ด้านล่าง คุณสามารถเปลี่ยนขนาดหน้าระหว่าง <code>10</code>, <code>20</code> และ <code>50</code> รายการได้</p>
+<h3 data-bai-block="415" id="deployment-รายละเอยดการดโมเดล">รายละเอียดการ์ดโมเดล<a class="hash-link" href="#deployment-รายละเอยดการดโมเดล" aria-label="Direct link to รายละเอียดการ์ดโมเดล">#</a></h3>
+<p data-bai-block="416">คลิกการ์ดเพื่อเปิด Drawer การ์ดโมเดลทางด้านขวาของหน้า Drawer จะแสดงชื่อเรื่องและคำอธิบายโมเดลที่ด้านบน ตามด้วยแท็กงาน หมวดหมู่ ป้ายกำกับ และใบอนุญาต จากนั้นจะเป็นรายการรายละเอียดที่มีรายการต่อไปนี้:</p>
+<ul>
+<li data-bai-block="417"><strong>ผู้เขียน (Author)</strong></li>
+<li data-bai-block="418"><strong>สถาปัตยกรรม (Architecture)</strong></li>
+<li data-bai-block="419"><strong>เฟรมเวิร์ก (Framework)</strong> (เฟรมเวิร์กแต่ละตัวจะแสดงพร้อมไอคอน)</li>
+<li data-bai-block="420"><strong>เวอร์ชัน (Version)</strong></li>
+<li data-bai-block="421"><strong>สร้างเมื่อ (Created) และแก้ไขล่าสุด (Last Modified)</strong> เวลาประทับ</li>
+<li data-bai-block="422"><strong>โฟลเดอร์โมเดล (Model Folder)</strong>: ลิงก์ที่คลิกได้ซึ่งเปิดตัวสำรวจโฟลเดอร์สำหรับโฟลเดอร์จัดเก็บโมเดล</li>
+<li data-bai-block="423"><strong>ทรัพยากรขั้นต่ำ (Min Resource)</strong>: ข้อกำหนดทรัพยากรขั้นต่ำ (CPU, หน่วยความจำ, GPU)</li>
+</ul>
+<p data-bai-block="424">หากการ์ดโมเดลมี README จะถูกเรนเดอร์เป็นการ์ด <code>README.md</code> ที่ด้านล่างของ Drawer</p>
+<p><figure data-bai-block="425" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>รูปที่ 12.34</figcaption></figure>
+</p>
+<h3 data-bai-block="426" id="deployment-การ-deploy-โมเดล">การ Deploy โมเดล<a class="hash-link" href="#deployment-การ-deploy-โมเดล" aria-label="Direct link to การ Deploy โมเดล">#</a></h3>
+<p data-bai-block="427">คลิกปุ่ม <code>Deploy</code> ในส่วนหัวของ Drawer เพื่อ deploy โมเดลเป็นบริการ ขั้นตอนการ deploy ทำงานได้ด้วยหนึ่งในสองรูปแบบ:</p>
+<ul>
+<li data-bai-block="428"><p><strong>Deploy อัตโนมัติ</strong>: หากโมเดลมี preset ที่ใช้งานได้เพียงหนึ่งรายการ และโปรเจกต์ปัจจุบันมีกลุ่มทรัพยากรที่เข้าถึงได้เพียงหนึ่งรายการ การ deploy จะถูกสร้างขึ้นอย่างเงียบ ๆ โดยไม่มีโมดอลแสดงขึ้น หลังจาก endpoint พร้อมให้สืบค้นแล้ว คุณจะถูกนำไปยังหน้าข้อมูลรายละเอียดการปรับใช้</p>
+</li>
+<li data-bai-block="429"><p><strong>โมดอล Deploy Model</strong>: มิฉะนั้น โมดอล Deploy Model จะเปิดขึ้นพร้อมด้วยฟิลด์ที่จำเป็นต่อไปนี้</p>
+<ul>
+<li data-bai-block="430"><strong>Preset</strong>: ดรอปดาวน์ที่จัดกลุ่มของ preset ทรัพยากรที่ใช้งานได้ เมื่อ preset ครอบคลุมตัวแปร runtime หลายตัว ตัวเลือกจะถูกจัดกลุ่มตามชื่อตัวแปร runtime มิฉะนั้น ตัวเลือกจะถูกแสดงเป็นรายการแบบแบน</li>
+<li data-bai-block="431"><strong>Resource Group</strong>: กลุ่มทรัพยากรที่บริการจะทำงาน</li>
+</ul>
+<p> คลิกปุ่ม <code>Deploy</code> ในโมดอลเพื่อเริ่มการ deploy จะมีการแสดง toast แสดงความสำเร็จที่ยืนยันว่าโมเดลได้รับการ deploy แล้ว และคุณจะถูกนำไปยังหน้าข้อมูลรายละเอียดการปรับใช้</p>
+</li>
+</ul>
+<p><figure data-bai-block="432" class="doc-figure"><img src="./images/model_card_deploy_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="314" /><figcaption>รูปที่ 12.35</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="433" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="434">หากโมเดลที่เลือกไม่มี preset ที่เข้ากันได้สำหรับโปรเจกต์ปัจจุบัน ปุ่ม <code>Deploy</code> ใน Drawer
+จะถูกปิดใช้งาน และการ deploy จะถูกปิดกั้นจนกว่าจะมี preset ที่เข้ากันได้</p>
+</div></div>
+
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
+  <span class="last-updated">อัปเดตล่าสุด 9 ก.ย. 2569</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">
+        <div class="pagination-nav__sublabel">ก่อนหน้า</div>
+        <div class="pagination-nav__label">&laquo; เซสชันคลัสเตอร์</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./chat.html">
+        <div class="pagination-nav__sublabel">ถัดไป</div>
+        <div class="pagination-nav__label">แชท &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">หัวข้อในหน้านี้</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%A7%E0%B8%A1%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%83%E0%B8%8A" data-toc-target="deployment-ภาพรวมการปรบใช">ภาพรวมการปรับใช้</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%83%E0%B8%8A" data-toc-target="deployment-หนาการปรบใช">หน้าการปรับใช้</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%83%E0%B8%8A" data-toc-target="deployment-การสรางการปรบใช">การสร้างการปรับใช้</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B8%95%E0%B8%B2%E0%B8%87%E0%B8%AA%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%83%E0%B8%8A" data-toc-target="deployment-หนาตางสรางการปรบใช">หน้าต่างสร้างการปรับใช้</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%9E%E0%B8%A1-revision" data-toc-target="deployment-การเพม-revision">การเพิ่ม Revision</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%9F%E0%B8%A5%E0%B8%94%E0%B8%AD%E0%B8%B2%E0%B8%87%E0%B8%AD%E0%B8%87-revision-add-revision" data-toc-target="deployment-ฟลดอางอง-revision-add-revision">ฟิลด์อ้างอิง Revision: Add Revision</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B9%84%E0%B8%9F%E0%B8%A5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%81%E0%B8%B3%E0%B8%AB%E0%B8%99%E0%B8%94%E0%B8%84%E0%B8%B2%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%9A-custom-runtime" data-toc-target="deployment-ไฟลการกำหนดคาสำหรบ-custom-runtime">ไฟล์การกำหนดค่าสำหรับ Custom Runtime</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%83%E0%B8%8A%E0%B8%AD%E0%B8%A2%E0%B8%B2%E0%B8%87%E0%B8%A3%E0%B8%A7%E0%B8%94%E0%B9%80%E0%B8%A3%E0%B8%A7" data-toc-target="deployment-การปรบใชอยางรวดเรว">การปรับใช้อย่างรวดเร็ว</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B8%82%E0%B8%AD%E0%B8%A1%E0%B8%A5%E0%B8%A3%E0%B8%B2%E0%B8%A2%E0%B8%A5%E0%B8%B0%E0%B9%80%E0%B8%AD%E0%B8%A2%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%83%E0%B8%8A" data-toc-target="deployment-หนาขอมลรายละเอยดการปรบใช">หน้าข้อมูลรายละเอียดการปรับใช้</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%88%E0%B8%87%E0%B9%80%E0%B8%95%E0%B8%AD%E0%B8%99%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%83%E0%B8%8A" data-toc-target="deployment-การแจงเตอนของการปรบใช">การแจ้งเตือนของการปรับใช้</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%82%E0%B8%AD%E0%B8%A1%E0%B8%A5%E0%B8%9A%E0%B8%A3%E0%B8%81%E0%B8%B2%E0%B8%A3" data-toc-target="deployment-ขอมลบรการ">ข้อมูลบริการ</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B9%81%E0%B8%97%E0%B8%9A-revisions" data-toc-target="deployment-แทบ-revisions">แท็บ Revisions</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B9%80%E0%B8%A3%E0%B8%9E%E0%B8%A5%E0%B8%81%E0%B8%B2" data-toc-target="deployment-เรพลกา">เรพลิกา</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%8E%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B8%82%E0%B8%99%E0%B8%B2%E0%B8%94%E0%B8%AD%E0%B8%95%E0%B9%82%E0%B8%99%E0%B8%A1%E0%B8%95" data-toc-target="deployment-กฎการปรบขนาดอตโนมต">กฎการปรับขนาดอัตโนมัติ</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B9%82%E0%B8%97%E0%B9%80%E0%B8%84%E0%B8%99" data-toc-target="deployment-การสรางโทเคน">การสร้างโทเค็น</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%A2%E0%B8%95%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%83%E0%B8%8A" data-toc-target="deployment-การยตการปรบใช">การยุติการปรับใช้</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B8%96%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%9A%E0%B9%83%E0%B8%8A%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%84%E0%B8%93" data-toc-target="deployment-การเขาถงการปรบใชของคณ">การเข้าถึงการปรับใช้ของคุณ</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B8%87%E0%B8%84%E0%B8%B3%E0%B8%82%E0%B8%AD-api" data-toc-target="deployment-การสงคำขอ-api">การส่งคำขอ API</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%97%E0%B8%94%E0%B8%AA%E0%B8%AD%E0%B8%9A-llm-chat" data-toc-target="deployment-การทดสอบ-llm-chat">การทดสอบ LLM Chat</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#deployment-%E0%B8%84%E0%B8%A5%E0%B8%87%E0%B9%82%E0%B8%A1%E0%B9%80%E0%B8%94%E0%B8%A5" data-toc-target="deployment-คลงโมเดล">คลังโมเดล</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%A3%E0%B8%A2%E0%B8%81%E0%B8%94%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%84%E0%B8%99%E0%B8%AB%E0%B8%B2%E0%B9%82%E0%B8%A1%E0%B9%80%E0%B8%94%E0%B8%A5" data-toc-target="deployment-การเรยกดและคนหาโมเดล">การเรียกดูและค้นหาโมเดล</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%A3%E0%B8%B2%E0%B8%A2%E0%B8%A5%E0%B8%B0%E0%B9%80%E0%B8%AD%E0%B8%A2%E0%B8%94%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%94%E0%B9%82%E0%B8%A1%E0%B9%80%E0%B8%94%E0%B8%A5" data-toc-target="deployment-รายละเอยดการดโมเดล">รายละเอียดการ์ดโมเดล</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#deployment-%E0%B8%81%E0%B8%B2%E0%B8%A3-deploy-%E0%B9%82%E0%B8%A1%E0%B9%80%E0%B8%94%E0%B8%A5" data-toc-target="deployment-การ-deploy-โมเดล">การ Deploy โมเดล</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">ขอความช่วยเหลือ</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>แก้ไขหน้านี้</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="ค้นหาเอกสาร..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="ค้นหาเอกสาร..." data-no-results="ไม่พบผลลัพธ์" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>
