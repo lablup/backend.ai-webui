@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../../theme-shim';
 import {
   ChatMessageContainer,
   ChatMessagePlacement,
@@ -14,6 +13,7 @@ import { Spinner } from '@astryxdesign/core/Spinner';
 import { Text } from '@astryxdesign/core/Text';
 import { Thumbnail } from '@astryxdesign/core/Thumbnail';
 import { Token } from '@astryxdesign/core/Token';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PaperclipIcon } from 'lucide-react';
@@ -44,7 +44,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   isStreaming,
   avatar,
 }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
 
@@ -98,7 +98,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
               style={{
                 maxWidth: '50vw',
                 maxHeight: '12vh',
-                borderRadius: token.borderRadius,
+                borderRadius: token('--radius-inner'),
               }}
             />
           </BAIFlex>
@@ -122,13 +122,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         align="stretch"
         direction="column"
         style={{
-          borderRadius: token.borderRadius,
-          borderColor: token.colorBorderSecondary,
-          borderWidth: token.lineWidth,
+          borderRadius: token('--radius-inner'),
+          borderColor: token('--color-border'),
+          borderWidth: token('--border-width'),
           padding: '1em',
           paddingTop: 0,
           paddingBottom: 0,
-          backgroundColor: token.colorBgElevated,
+          backgroundColor: token('--color-background-popover'),
           maxWidth: '100%',
           width: _.trim(reasoningText) ? '100%' : 'auto',
         }}
@@ -137,8 +137,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           <Collapsible
             defaultIsOpen={false}
             style={{
-              marginTop: token.margin,
-              marginBottom: hasContent ? 0 : token.margin,
+              marginTop: token('--spacing-4'),
+              marginBottom: hasContent ? 0 : token('--spacing-4'),
               width: '100%',
             }}
             trigger={
@@ -163,7 +163,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       </BAIFlex>
       <BAIFlex
         style={{
-          fontSize: token.fontSizeSM,
+          fontSize: token('--font-size-sm'),
           ...(enableExtraHover
             ? {
                 opacity: isHovered ? 1 : 0,

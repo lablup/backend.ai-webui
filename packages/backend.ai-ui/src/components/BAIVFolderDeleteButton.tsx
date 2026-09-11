@@ -5,7 +5,7 @@
  PILOT PHASE 6 (cn-oss-removal / ticket 10, item 4) — `BAIVFolderDeleteButton`.
 
  BUI's version is `BAIButton` + `@ant-design/icons` `DeleteOutlined` coloured
- from `theme.useToken().colorError`, gated by a Relay fragment that checks the
+ from `useTheme().token('--color-error')`, gated by a Relay fragment that checks the
  `delete_vfolder` permission across the selected folders.
 
  **Native** rebuild: the only consumer in the pilot graph is the page's bulk
@@ -16,7 +16,7 @@
 
  PILOT-DECISIONs:
  - **The icon colour moves from a prop to a CSS var.** antd needed
-   `style={{color: token.colorError}}`; Astryx `IconButton` has no `color` (P5),
+   `style={{color: token('--color-error')}}`; Astryx `IconButton` has no `color` (P5),
    so the danger tint comes from the same
    `.bai-name-action-cell-danger` class the row actions use — one rule, one
    place, and it follows the theme.

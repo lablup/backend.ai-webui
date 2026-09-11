@@ -29,9 +29,13 @@ const AstryxReverseTheme: React.FC<AstryxReverseThemeProps> = ({
   children,
 }) => {
   'use memo';
-  const { themeConfig, activeThemeFamily } = useCustomThemeConfig();
+  const { rawThemeConfig, activeThemeFamily } = useCustomThemeConfig();
   const { mode } = useTheme();
-  const theme = resolveRoleTheme(themeConfig, 'brand', activeThemeFamily);
+  const theme = resolveRoleTheme(
+    rawThemeConfig?.theme,
+    'brand',
+    activeThemeFamily,
+  );
   return (
     <AstryxTheme theme={theme} mode={mode === 'dark' ? 'light' : 'dark'}>
       {children}

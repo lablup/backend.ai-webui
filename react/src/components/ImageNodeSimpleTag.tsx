@@ -5,10 +5,10 @@
 import { ImageNodeSimpleTagFragment$key } from '../__generated__/ImageNodeSimpleTagFragment.graphql';
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
-import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Divider } from '@astryxdesign/core/Divider';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   badgeVariantForTagColor,
   BAIDoubleTag,
@@ -31,7 +31,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
   copyable = true,
 }) => {
   const [, { tagAlias }] = useBackendAIImageMetaData();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const image = useFragment(
     graphql`
       fragment ImageNodeSimpleTagFragment on ImageNode {
@@ -129,7 +129,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
       )}
       {copyable && (
         <BAIText
-          style={{ color: token.colorLink }}
+          style={{ color: token('--color-link') }}
           copyable={{
             text: fullName,
           }}

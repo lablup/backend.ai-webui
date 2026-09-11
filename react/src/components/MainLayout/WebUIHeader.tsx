@@ -5,7 +5,6 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useIsProjectAgnosticPage } from '../../hooks/useIsProjectAgnosticPage';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { theme, useBAIBreakpoint } from '../../theme-shim';
 import BAINotificationButton from '../BAINotificationButton';
 import GlobalSearchPaletteButton from '../GlobalSearchPalette/GlobalSearchPaletteButton';
 import LoginSessionExtendButton from '../LoginSessionExtendButton';
@@ -16,11 +15,12 @@ import './WebUIHeader.css';
 import WebUIHeaderProjectSelect from './WebUIHeaderProjectSelect';
 import { useAppShellMobile } from '@astryxdesign/core/AppShell';
 import { IconButton } from '@astryxdesign/core/IconButton';
-import { MediaTheme } from '@astryxdesign/core/theme';
+import { MediaTheme, useTheme } from '@astryxdesign/core/theme';
 import {
   ANTD_REVERSED_BAND_OVERLAYS,
   BAIFlex,
   BAIFlexProps,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import { MenuIcon } from 'lucide-react';
 import { Suspense } from 'react';
@@ -30,7 +30,7 @@ export interface WebUIHeaderProps extends BAIFlexProps {}
 
 const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   // FR-3612: hamburger visibility and action come from AppShell's mobile
   // context, so the header and the shell share one breakpoint verdict (no
   // off-by-one band around 768px between two media queries).
@@ -61,10 +61,10 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
       justify="between"
       direction="row"
       style={{
-        height: token.Layout?.headerHeight || 60,
-        backgroundColor: token.Layout?.headerBg,
-        paddingRight: token.marginLG,
-        paddingLeft: token.marginLG,
+        height: 'var(--webui-header-height)',
+        backgroundColor: token('--header-bg'),
+        paddingRight: token('--spacing-6'),
+        paddingLeft: token('--spacing-6'),
         // The inherited colour for band content that declares none of its own
         // (bare `currentColor` glyphs). Inverts with the app mode, like the
         // `MediaTheme`s below.
@@ -93,7 +93,7 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
               }}
               className="non-draggable"
               style={{
-                marginLeft: token.marginSM * -1,
+                marginLeft: `calc(${token('--spacing-3')} * -1)`,
               }}
             />
           )}
@@ -119,7 +119,9 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
                   a SPACER, not a rule. Astryx `Divider` has no colour prop
                   (closed enums, P5), so the spacer is expressed as spacing
                   instead of a hidden rule. */}
-              {gridBreakpoint.md && <span style={{ width: token.marginXS }} />}
+              {gridBreakpoint.md && (
+                <span style={{ width: token('--spacing-2') }} />
+              )}
             </Suspense>
           )}
         {/* Same self-scoping reason as `BAINotificationButton` below: both own
@@ -151,10 +153,10 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
             `UserDropdownMenu.tsx`. */}
         <UserDropdownMenu
           style={{
-            marginLeft: token.marginXXS,
-            marginRight: token.marginSM * -1,
-            paddingLeft: token.paddingSM,
-            paddingRight: token.paddingSM,
+            marginLeft: token('--spacing-1'),
+            marginRight: `calc(${token('--spacing-3')} * -1)`,
+            paddingLeft: token('--spacing-3'),
+            paddingRight: token('--spacing-3'),
           }}
         />
       </BAIFlex>

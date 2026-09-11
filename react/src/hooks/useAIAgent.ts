@@ -21,10 +21,7 @@ export type AgentCategory =
   | 'utility';
 
 export type ToolPermission =
-  | 'always_allow'
-  | 'ask_once'
-  | 'ask_always'
-  | 'never_allow';
+  'always_allow' | 'ask_once' | 'ask_always' | 'never_allow';
 
 export interface ToolConfig {
   enabledTools?: string[];

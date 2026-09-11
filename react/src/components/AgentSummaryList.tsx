@@ -16,11 +16,11 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useResourceGroupsForCurrentProject } from '../hooks/useCurrentProject';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIProgressWithLabel,
@@ -60,7 +60,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
@@ -222,8 +222,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                         percent={cpuPercent}
                         strokeColor={
                           cpuPercent > 80
-                            ? token.colorError
-                            : token.colorSuccess
+                            ? token('--color-error')
+                            : token('--color-success')
                         }
                         width={120}
                         valueLabel={
@@ -261,8 +261,8 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                         percent={memPercent}
                         strokeColor={
                           memPercent > 80
-                            ? token.colorError
-                            : token.colorSuccess
+                            ? token('--color-error')
+                            : token('--color-success')
                         }
                         width={120}
                         valueLabel={
@@ -304,7 +304,9 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
                       <BAIProgressWithLabel
                         percent={percent}
                         strokeColor={
-                          percent > 80 ? token.colorError : token.colorSuccess
+                          percent > 80
+                            ? token('--color-error')
+                            : token('--color-success')
                         }
                         width={120}
                         valueLabel={
@@ -336,16 +338,16 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
             {value === true ? (
               <CircleCheck
                 style={{
-                  color: token.colorSuccess,
-                  fontSize: token.fontSizeXL,
+                  color: token('--color-success'),
+                  fontSize: token('--font-size-xl'),
                 }}
                 size="1em"
               />
             ) : (
               <CircleMinus
                 style={{
-                  color: token.colorTextDisabled,
-                  fontSize: token.fontSizeXL,
+                  color: token('--color-text-disabled'),
+                  fontSize: token('--font-size-xl'),
                 }}
                 size="1em"
               />

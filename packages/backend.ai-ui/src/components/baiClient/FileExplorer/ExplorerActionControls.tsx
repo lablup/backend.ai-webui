@@ -2,8 +2,8 @@ import { App } from '../../../app-shim';
 import { initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { useToggle } from '../../../hooks';
+import { useBAIBreakpoint } from '../../../hooks/useBAIBreakpoint';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
-import { theme, useBAIBreakpoint } from '../../../theme-shim';
 import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAISelectionLabel from '../../BAISelectionLabel';
@@ -19,6 +19,7 @@ import { useUploadVFolderFiles } from './hooks';
 import type { RcFile } from './hooks';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   DownloadIcon,
   FilePlus,
@@ -80,7 +81,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   // SSR safety — which would make every label here flash in and out. The shim
   // exists for exactly this (RESPONSIVE-POLICY §2) and is a pure import swap.
   const { lg } = useBAIBreakpoint();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { uploadFiles } = useUploadVFolderFiles();
   const { targetVFolderId, targetVFolderName, currentPath } =
@@ -181,8 +182,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                     size="1em"
                     style={{
                       color: enableDelete
-                        ? token.colorError
-                        : token.colorTextDisabled,
+                        ? token('--color-error')
+                        : token('--color-text-disabled'),
                     }}
                   />
                 }
@@ -203,8 +204,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                     <DownloadIcon
                       style={{
                         color: enableDownload
-                          ? token.colorInfo
-                          : token.colorTextDisabled,
+                          ? token('--color-info')
+                          : token('--color-text-disabled'),
                       }}
                     />
                   }

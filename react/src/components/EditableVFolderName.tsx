@@ -159,7 +159,10 @@ const EditableVFolderName: React.FC<EditableVFolderNameProps> = ({
             // The router link stays BUI's `BAILink` (react-router `to`), which
             // is what the V1 component already used; Astryx's `Link as=` slot
             // is href-first and cannot take a react-router `To` object.
-            <BAILink type="hover" to={generateFolderPath(toLocalId(vfolder?.id))}>
+            <BAILink
+              type="hover"
+              to={generateFolderPath(toLocalId(vfolder?.id))}
+            >
               {nameNode}
             </BAILink>
           ) : (

@@ -14,7 +14,6 @@ import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
@@ -24,6 +23,7 @@ import UserSettingModal from './UserSettingModal';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIAdminUserV2Table,
   BAIButton,
@@ -115,7 +115,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
 
   const { logger } = useBAILogger();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const bailClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
@@ -458,13 +458,18 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 onClearSelection={() => setSelectedUserList([])}
               />
               <BAIButton
-                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                icon={
+                  <SquarePenIcon style={{ color: token('--color-info') }} />
+                }
                 onClick={toggleUpdateUsersModal}
               />
               {statusValue === 'INACTIVE' && (
                 <BAIButton
                   icon={
-                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                    <Trash2
+                      style={{ color: token('--color-error') }}
+                      size="1em"
+                    />
                   }
                   onClick={togglePurgeUsersModal}
                 />

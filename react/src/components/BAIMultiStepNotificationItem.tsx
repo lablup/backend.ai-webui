@@ -3,12 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { NotificationState } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import './BAIMultiStepNotificationItem.css';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import './BAINotificationListItem.css';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import {
@@ -30,25 +30,28 @@ const StepIcon: React.FC<{
   size?: number;
   animated?: boolean;
 }> = ({ status, size = 14, animated = false }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   if (status === 'resolved') {
     return (
       <CircleCheck
-        style={{ color: token.colorSuccess, fontSize: size }}
+        style={{ color: token('--color-success'), fontSize: size }}
         size="1em"
       />
     );
   }
   if (status === 'rejected') {
     return (
-      <CircleX style={{ color: token.colorError, fontSize: size }} size="1em" />
+      <CircleX
+        style={{ color: token('--color-error'), fontSize: size }}
+        size="1em"
+      />
     );
   }
   if (status === 'warned') {
     return (
       <CircleAlert
-        style={{ color: token.colorWarning, fontSize: size }}
+        style={{ color: token('--color-warning'), fontSize: size }}
         size="1em"
       />
     );
@@ -56,17 +59,20 @@ const StepIcon: React.FC<{
   if (status === 'pending') {
     return animated ? (
       <LoaderCircle
-        style={{ color: token.colorInfo, fontSize: size }}
+        style={{ color: token('--color-info'), fontSize: size }}
         size="1em"
       />
     ) : (
-      <Clock style={{ color: token.colorInfo, fontSize: size }} size="1em" />
+      <Clock
+        style={{ color: token('--color-info'), fontSize: size }}
+        size="1em"
+      />
     );
   }
   if (status === 'cancelled') {
     return (
       <CircleMinus
-        style={{ color: token.colorTextDisabled, fontSize: size }}
+        style={{ color: token('--color-text-disabled'), fontSize: size }}
         size="1em"
       />
     );
@@ -78,7 +84,7 @@ const StepIcon: React.FC<{
         width: size,
         height: size,
         borderRadius: '50%',
-        border: `1px solid ${token.colorBorder}`,
+        border: `1px solid ${token('--color-border-emphasized')}`,
       }}
     />
   );
@@ -93,7 +99,7 @@ const BAIMultiStepNotificationItem: React.FC<{
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { multiStep } = notification;
 
   const [expanded, setExpanded] = useState(false);
@@ -145,15 +151,18 @@ const BAIMultiStepNotificationItem: React.FC<{
 
   const overallIcon =
     overallStatus === 'completed' ? (
-      <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
+      <CircleCheck style={{ color: token('--color-success') }} size="1em" />
     ) : overallStatus === 'failed' ? (
-      <CircleX style={{ color: token.colorError }} size="1em" />
+      <CircleX style={{ color: token('--color-error') }} size="1em" />
     ) : overallStatus === 'warned' ? (
-      <CircleAlert style={{ color: token.colorWarning }} size="1em" />
+      <CircleAlert style={{ color: token('--color-warning') }} size="1em" />
     ) : overallStatus === 'cancelled' ? (
-      <CircleMinus style={{ color: token.colorTextDisabled }} size="1em" />
+      <CircleMinus
+        style={{ color: token('--color-text-disabled') }}
+        size="1em"
+      />
     ) : (
-      <Clock style={{ color: token.colorInfo }} size="1em" />
+      <Clock style={{ color: token('--color-info') }} size="1em" />
     );
 
   const stepLabel =
@@ -211,7 +220,7 @@ const BAIMultiStepNotificationItem: React.FC<{
           direction="row"
           align="start"
           gap={'xs'}
-          style={{ paddingRight: token.paddingMD }}
+          style={{ paddingRight: token('--spacing-5') }}
         >
           <BAIFlex style={{ height: 22 }}>{overallIcon}</BAIFlex>
           {/* antd `Typography.Paragraph` -> `Text as="p" display="block"`;
@@ -251,13 +260,19 @@ const BAIMultiStepNotificationItem: React.FC<{
           {!isTerminal && (
             <Text
               color="secondary"
-              style={{ fontSize: token.fontSizeSM, whiteSpace: 'nowrap' }}
+              style={{
+                fontSize: token('--font-size-sm'),
+                whiteSpace: 'nowrap',
+              }}
             >
               {currentStep + 1}/{totalSteps}
             </Text>
           )}
           {isTerminal ? (
-            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+            <Text
+              color="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
+            >
               {stepLabel}
             </Text>
           ) : (
@@ -270,7 +285,7 @@ const BAIMultiStepNotificationItem: React.FC<{
                       : 'bai-step-slide-up'
                   }`}
                 >
-                  <Text style={{ fontSize: token.fontSizeSM }}>
+                  <Text style={{ fontSize: token('--font-size-sm') }}>
                     {outgoingStepDef.label}
                   </Text>
                 </div>
@@ -282,7 +297,7 @@ const BAIMultiStepNotificationItem: React.FC<{
                     : 'bai-step-slide-center'
                 }`}
               >
-                <Text style={{ fontSize: token.fontSizeSM }}>
+                <Text style={{ fontSize: token('--font-size-sm') }}>
                   {incomingStepDef?.label}
                 </Text>
               </div>
@@ -295,7 +310,7 @@ const BAIMultiStepNotificationItem: React.FC<{
                   ? 'bai-step-expand-icon-open'
                   : 'bai-step-expand-icon-closed'
               }`}
-              style={{ color: token.colorTextSecondary }}
+              style={{ color: token('--color-text-secondary') }}
               size="1em"
             />
           )}
@@ -312,7 +327,7 @@ const BAIMultiStepNotificationItem: React.FC<{
               direction="column"
               align="stretch"
               gap={'xxs'}
-              style={{ paddingTop: token.paddingXXS }}
+              style={{ paddingTop: token('--spacing-1') }}
             >
               {steps.map((step, idx) => (
                 <BAIFlex
@@ -331,10 +346,10 @@ const BAIMultiStepNotificationItem: React.FC<{
                   </BAIFlex>
                   <Text
                     style={{
-                      fontSize: token.fontSizeSM,
+                      fontSize: token('--font-size-sm'),
                       color:
                         step.status === 'idle'
-                          ? token.colorTextDisabled
+                          ? token('--color-text-disabled')
                           : undefined,
                     }}
                   >
@@ -350,13 +365,13 @@ const BAIMultiStepNotificationItem: React.FC<{
         {isTerminal && notification.description && (
           <Text
             style={{
-              fontSize: token.fontSizeSM,
+              fontSize: token('--font-size-sm'),
               color:
                 overallStatus === 'failed'
-                  ? token.colorError
+                  ? token('--color-error')
                   : overallStatus === 'warned'
-                    ? token.colorWarning
-                    : token.colorTextSecondary,
+                    ? token('--color-warning')
+                    : token('--color-text-secondary'),
             }}
           >
             {notification.description}

@@ -23,13 +23,13 @@ import {
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
-import { useBAIBreakpoint } from '../../theme-shim';
 import ProjectSelect from '../ProjectSelect';
 import { Text } from '@astryxdesign/core/Text';
 import { MediaTheme } from '@astryxdesign/core/theme';
 import {
   ANTD_REVERSED_BAND_OVERLAYS,
   useSessionStorageState,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useState, useTransition } from 'react';

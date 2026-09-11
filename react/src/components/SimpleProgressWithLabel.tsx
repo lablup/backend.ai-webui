@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIProgressWithLabel,
@@ -29,7 +29,7 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
 }) => {
   'use memo';
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const formattedPercent = toFixedFloorWithoutTrailingZeros(percent || 0, 1);
   const percentLabel = formattedPercent + '%';
@@ -57,11 +57,11 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
           // verbatim (`selfTokens`, verdict 'self') as a light/dark pair, so
           // routing through it restores the legacy light value EXACTLY and
           // gets rgba(255,255,255,0.25) in dark for free.
-          strokeColor={token.colorTextQuaternary}
+          strokeColor={token('--color-text-quaternary')}
           progressStyle={{ border: 'none' }}
           showInfo={false}
           labelStyle={{
-            height: token.sizeXS,
+            height: token('--spacing-2'),
           }}
         />
       </BAIFlex>
@@ -81,7 +81,7 @@ const SimpleProgressWithLabel: React.FC<SimpleProgressWithLabelProps> = ({
             height: 12,
             // Same mode-blind hardcode as `strokeColor` above — this bare
             // div IS the small-size variant's bar.
-            backgroundColor: token.colorTextQuaternary,
+            backgroundColor: token('--color-text-quaternary'),
           }}
         ></BAIFlex>
         {/* PILOT-DECISION: the tight `lineHeight: fontSizeSM` is dropped —

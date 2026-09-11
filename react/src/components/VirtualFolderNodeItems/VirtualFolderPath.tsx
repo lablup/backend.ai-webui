@@ -4,7 +4,7 @@
  */
 import { useVirtualFolderNodePathFragment$key } from '../../__generated__/useVirtualFolderNodePathFragment.graphql';
 import { useVirtualFolderPath } from '../../hooks/useVirtualFolderNodePath';
-import { theme } from '../../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -25,7 +25,7 @@ const VirtualFolderPath: React.FC<VirtualFolderPathProps> = ({
     vfolderIdRest,
   } = useVirtualFolderPath(vfolderNodeFrgmt);
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <BAIFlex direction="row" align="start" justify="start" wrap="wrap" gap={3}>
@@ -50,7 +50,7 @@ const VirtualFolderPath: React.FC<VirtualFolderPathProps> = ({
         <BAIText
           type="secondary"
           style={{
-            fontSize: token.fontSizeSM,
+            fontSize: token('--font-size-sm'),
           }}
         >
           Quota Scope ID ({_.upperFirst(quotaScopeType)})
@@ -86,7 +86,7 @@ const VirtualFolderPath: React.FC<VirtualFolderPathProps> = ({
         <BAIText
           type="secondary"
           style={{
-            fontSize: token.fontSizeSM,
+            fontSize: token('--font-size-sm'),
           }}
         >
           VFolder ID

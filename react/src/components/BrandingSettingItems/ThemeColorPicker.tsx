@@ -2,65 +2,66 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { getDefaultDesignToken } from '../../helper/defaultDesignTokens';
+import {
+  BAIThemeSeedValue,
+  BAIThemeSeeds,
+  getStaticAppearanceConfig,
+  pickSeed,
+} from '../../helper/customThemeConfig';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import LightDarkColorPicker from '../LightDarkColorPicker';
 import * as _ from 'lodash-es';
 
 /**
- * The design-token names the shim hands out, reached through its own
- * signature rather than `import type { AliasToken } from 'antd/lib/theme'` —
- * a type-only antd specifier still counts against the import-graph gate
- * (P15), and this set is the same one antd's `AliasToken` described.
+ * A seed path into the v2 appearance document (FR-1964). The Branding page
+ * edits the `default` family; other families are edited via the JSON modal.
  */
-type DesignTokenName = keyof ReturnType<typeof getDefaultDesignToken> & string;
-
-type TokenPath = `token.${DesignTokenName}`;
-/**
- * `components.<AntdComponent>.<token>` (e.g. `components.Layout.headerBg`).
- * The component half was `keyof ComponentTokenMap`; it is a plain string now
- * for the same reason as above. The leaf was already untyped, and the paths
- * are literals written at the seven `BrandingSettingList` call sites.
- */
-type ComponentPath = `components.${string}.${string}`;
-export type ThemeConfigPath = TokenPath | ComponentPath;
+export type AppearanceSeedPath =
+  | `theme.families.${string}.seeds.${keyof BAIThemeSeeds}`
+  | `theme.families.${string}.headerBg`;
 
 interface ThemeColorPickerSettingItemProps {
-  tokenName?: ThemeConfigPath;
+  seedPath: AppearanceSeedPath;
 }
+
 const ThemeColorPicker: React.FC<ThemeColorPickerSettingItemProps> = ({
-  tokenName,
+  seedPath,
 }) => {
   'use memo';
 
   const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
 
-  const lightModeColor = getDefaultThemeValue<string>(`light.${tokenName}`);
-  const darkModeColor = getDefaultThemeValue<string>(`dark.${tokenName}`);
+  const draftValue = getDefaultThemeValue<BAIThemeSeedValue>(seedPath);
+  // Shipped theme.json value backs an empty draft slot so the picker never
+  // shows a blank swatch for a seed the app actually renders.
+  const shippedValue = _.get(getStaticAppearanceConfig(), seedPath) as
+    BAIThemeSeedValue | undefined;
+  const currentValue = draftValue ?? shippedValue;
 
-  // Was `theme.getDesignToken({ algorithm: theme.<mode>Algorithm })`. The
-  // shim-backed replacement reproduces antd's palette algorithm over antd's
-  // own seeds — see helper/defaultDesignTokens.ts for the parity table and
-  // the two documented differences.
-  const defaultLightTokens = getDefaultDesignToken('light');
-  const defaultDarkTokens = getDefaultDesignToken('dark');
+  // Seeds are stored whole (string or [light, dark] tuple); editing one
+  // scheme rewrites the full tuple so a string seed never gets index-patched
+  // into an object. A scheme the document leaves out has no color of its own
+  // (the app renders Astryx's default there), so it takes the picked one.
+  const updateScheme = (mode: 'light' | 'dark', value: string) => {
+    const other = mode === 'light' ? 'dark' : 'light';
+    const otherValue = pickSeed(currentValue, other) ?? value;
+    const next: [string, string] =
+      mode === 'light' ? [value, otherValue] : [otherValue, value];
+    updateDefaultTheme(seedPath, next);
+  };
 
   return (
     <LightDarkColorPicker
       light={{
-        value:
-          lightModeColor ??
-          _.get(defaultLightTokens, _.last(_.split(tokenName, '.')) || ''),
+        value: pickSeed(currentValue, 'light'),
         onChangeComplete: (value) => {
-          updateDefaultTheme(`light.${tokenName}`, value);
+          updateScheme('light', value);
         },
       }}
       dark={{
-        value:
-          darkModeColor ??
-          _.get(defaultDarkTokens, _.last(_.split(tokenName, '.')) || ''),
+        value: pickSeed(currentValue, 'dark'),
         onChangeComplete: (value) => {
-          updateDefaultTheme(`dark.${tokenName}`, value);
+          updateScheme('dark', value);
         },
       }}
     />

@@ -12,7 +12,6 @@ import { useRouteAccessDecision } from '../../hooks/useRouteAccess';
 import { useCurrentMenuKey, useRouteScope } from '../../hooks/useRouteScope';
 import { useSiderCollapsedState } from '../../hooks/useShellPanels';
 import { useSetupWebUIPluginEffect } from '../../hooks/useWebUIPluginState';
-import { theme } from '../../theme-shim';
 import AnnouncementBanner from '../AnnouncementBanner';
 import BAIContentWithDrawerArea from '../BAIContentWithDrawerArea';
 import BAIErrorBoundary from '../BAIErrorBoundary';
@@ -34,6 +33,7 @@ import WebUISider, { useSiderThemeReversed } from './WebUISider';
 import WebUISiderFooter from './WebUISiderFooter';
 import WebUISiderLogo from './WebUISiderLogo';
 import WebUISiderNavigation from './WebUISiderNavigation';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAI_Z_INDEX,
   BAIAppShell,
@@ -76,7 +76,7 @@ function MainLayout() {
   // Lifted to Jotai so the search palette's "Toggle sidebar" action drives the
   // same state as the `[` shortcut.
   const [sideCollapsed, setSideCollapsed] = useSiderCollapsedState();
-  // The operator's `sider.theme` polarity override applies to the drawer's
+  // The operator's `theme.siderMode` polarity override applies to the drawer's
   // navigation surface too.
   const shouldReverse = useSiderThemeReversed();
 
@@ -105,7 +105,7 @@ function MainLayout() {
     },
   );
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const contentScrollFlexRef = useRef<HTMLDivElement>(null);
   const setMainContentDivRefState = useSetAtom(mainContentDivRefState);
   useEffect(() => {
@@ -143,8 +143,6 @@ function MainLayout() {
       document.removeEventListener('react-navigate', handleNavigate);
     };
   }, [navigate]);
-
-  const headerHeight = Number(token.Layout?.headerHeight) || 60;
 
   return (
     <>
@@ -208,9 +206,9 @@ function MainLayout() {
               // scrollability.
               className="main-layout-content-scroll"
               style={{
-                paddingLeft: token.paddingContentHorizontalLG,
-                paddingRight: token.paddingContentHorizontalLG,
-                paddingBottom: token.paddingContentVertical,
+                paddingLeft: token('--spacing-6'),
+                paddingRight: token('--spacing-6'),
+                paddingBottom: token('--spacing-3'),
                 height: '100%',
                 overflow: 'auto',
               }}
@@ -218,7 +216,7 @@ function MainLayout() {
               <BAIErrorBoundary>
                 <div
                   style={{
-                    margin: `0 -${token.paddingContentHorizontalLG}px 0 -${token.paddingContentHorizontalLG}px`,
+                    margin: `0 -${token('--spacing-6')} 0 -${token('--spacing-6')}`,
                     position: 'sticky',
                     top: 0,
                     zIndex: BAI_Z_INDEX.appHeader,
@@ -228,8 +226,8 @@ function MainLayout() {
                     fallback={
                       <div
                         style={{
-                          height: headerHeight,
-                          backgroundColor: token.Layout?.headerBg,
+                          height: 'var(--webui-header-height)',
+                          backgroundColor: token('--header-bg'),
                         }}
                       />
                     }
@@ -294,15 +292,15 @@ function MainLayout() {
                       {isHiddenBreadcrumb ? (
                         <div
                           style={{
-                            marginBottom: token.marginMD,
+                            marginBottom: token('--spacing-5'),
                           }}
                         />
                       ) : (
                         <WebUIBreadcrumb
                           style={{
-                            marginBottom: token.marginMD,
-                            marginLeft: token.paddingContentHorizontalLG * -1,
-                            marginRight: token.paddingContentHorizontalLG * -1,
+                            marginBottom: token('--spacing-5'),
+                            marginLeft: `calc(${token('--spacing-6')} * -1)`,
+                            marginRight: `calc(${token('--spacing-6')} * -1)`,
                           }}
                         />
                       )}
@@ -436,14 +434,12 @@ const usePageTestId = () => {
  * nonce plumbing goes away with the last antd-style import.
  */
 export const CSSTokenVariables = () => {
-  const { token } = theme.useToken();
-  const { colorPrimary, colorBgBase, colorBgContainer, colorBorder } = token;
-  // The token may be a number or a CSS length string; only a number gets px.
-  const rawHeaderHeight = token.Layout?.headerHeight ?? 60;
-  const headerHeight =
-    typeof rawHeaderHeight === 'number'
-      ? `${rawHeaderHeight}px`
-      : rawHeaderHeight;
+  const { token } = useTheme();
+  const colorPrimary = token('--color-accent');
+  const colorBgBase = token('--color-background-body');
+  const colorBgContainer = token('--color-background-surface');
+  const colorBorder = token('--color-border-emphasized');
+  const headerHeight = '60px';
 
   useLayoutEffect(() => {
     const root = document.documentElement;

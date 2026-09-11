@@ -3,11 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
-import { theme } from '../../theme-shim';
 import PanelFrame from './PanelFrame';
 import type { ResourceTablePanelProps } from './ResourceTablePanel';
 import { resolvePanelTitle, resourceRegistry } from './resourceRegistry';
 import type { PanelDescriptor } from './types';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIRowWrapWithDividers,
@@ -32,14 +32,16 @@ const ResourceCountPanel: React.FC<ResourceTablePanelProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const title = resolvePanelTitle(descriptor, t);
 
   return (
     <PanelFrame title={title} onEdit={onEdit} onRemove={onRemove}>
       {(localFetchKey) => (
         <BAIFlex direction="row" wrap="wrap" gap="lg">
-          <BAIRowWrapWithDividers style={{ paddingBlock: token.padding }}>
+          <BAIRowWrapWithDividers
+            style={{ paddingBlock: token('--spacing-4') }}
+          >
             <Suspense fallback={<BAISkeleton />}>
               <ResourceCountContent
                 key={`${descriptor.resourceType}:${JSON.stringify(descriptor.filter ?? null)}`}

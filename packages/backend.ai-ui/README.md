@@ -11,14 +11,14 @@ section was (re)defined by the Astryx migration, ticket 30.
 
 The design-system contract is **Astryx**:
 
-| Peer                                        | Required?             | Why                                                                 |
-| ------------------------------------------- | --------------------- | ------------------------------------------------------------------- |
-| `@astryxdesign/core`                        | yes                   | Every component BUI renders. Must be a **single** copy — see below. |
-| `@astryxdesign/theme-neutral`               | yes                   | The token set `theme-shim` resolves `useToken()` against.           |
-| `react` / `react-dom`                       | yes                   | —                                                                   |
-| `react-relay` / `relay-runtime` / `graphql` | yes                   | The `fragments/` components are Relay-bound.                        |
-| `@tanstack/react-query`                     | yes                   | `BAIConfigProvider` owns the QueryClient.                           |
-| `react-router-dom`                          | yes                   | `BAILink` and friends.                                              |
+| Peer                                        | Required? | Why                                                                 |
+| ------------------------------------------- | --------- | ------------------------------------------------------------------- |
+| `@astryxdesign/core`                        | yes       | Every component BUI renders. Must be a **single** copy — see below. |
+| `@astryxdesign/theme-neutral`               | yes       | The base theme BUI's `src/theme` recipe data extends.               |
+| `react` / `react-dom`                       | yes       | —                                                                   |
+| `react-relay` / `relay-runtime` / `graphql` | yes       | The `fragments/` components are Relay-bound.                        |
+| `@tanstack/react-query`                     | yes       | `BAIConfigProvider` owns the QueryClient.                           |
+| `react-router-dom`                          | yes       | `BAILink` and friends.                                              |
 
 `@astryxdesign/core` and `@astryxdesign/theme-neutral` are peers, **not**
 dependencies and **not** bundled. They were `devDependencies` until ticket 30,
@@ -52,15 +52,16 @@ visible in comments across the package:
   the barrel still wanted antd's declarations.
 - The final switch closed the type-level hole as well. The two type imports
   that survived every render conversion — `GlobalToken` (the shape
-  `theme.useToken()` returns) and `antd/es/locale`'s `Locale` — are now
-  `src/theme-shim/tokenType.ts`, a frozen capture of antd 6.5.0's token shape,
-  and a `BAILocale` that carries only `lang`.
+  `theme.useToken()` returns) and `antd/es/locale`'s `Locale` — became a
+  frozen `theme-shim` capture and a `BAILocale` that carries only `lang`.
+- FR-3605 retired the `theme-shim` itself. Components read tokens through
+  Astryx's `useTheme().token()`, and what remains under `src/theme/` is
+  measured data, not ported antd code: the alignment tables
+  (`antdParity.ts`) and the custom-token builder (`baiCustomTokens.ts`) the
+  app's theme recipe and Storybook's brand theme are both built from.
 
-One antd-family package remains, in `devDependencies` only:
-`@ant-design/colors`, which `src/theme-shim/themeShim.test.ts` uses as the
-reference implementation its vendored port (`theme-shim/vendor/antdColors.ts`)
-is asserted bit-identical to. It ships in nothing and is invisible to the
-production dependency graph — the workspace's exact-pinned `pnpm-lock.yaml` is what keeps it that way.
+No antd-family package remains, not even in `devDependencies` — the
+workspace's exact-pinned `pnpm-lock.yaml` is what keeps it that way.
 
 ### CSS
 
@@ -272,7 +273,7 @@ const App = ({ children }) => {
 ```
 
 > Until the to-astryx final switch this was `import en_US from
-> 'backend.ai-ui/dist/locale/en_US'`, one of 21 published per-language modules.
+'backend.ai-ui/dist/locale/en_US'`, one of 21 published per-language modules.
 > Each carried an `antd/es/locale/*` bundle in `BAILocale.antdLocale`, whose
 > only consumer was antd `ConfigProvider`'s `locale` prop. With that provider
 > gone the modules, the `./dist/locale/*` package export and the field were all

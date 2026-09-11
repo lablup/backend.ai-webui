@@ -3,13 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { FolderExplorerHeaderFragment$key } from '../__generated__/FolderExplorerHeaderFragment.graphql';
-import { theme, useBAIBreakpoint } from '../theme-shim';
 import EditableVFolderName from './EditableVFolderName';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButton from './FileBrowserButton';
 import SFTPServerButton from './SFTPServerButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
+import { useTheme } from '@astryxdesign/core/theme';
+import { BAISkeleton, BAIFlex, useBAIBreakpoint } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -25,7 +25,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
 }) => {
   'use memo';
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   // antd `Grid.useBreakpoint` → `useBAIBreakpoint` (RESPONSIVE-POLICY R2);
   // Astryx `useMediaQuery` returns false on first render and flashes.
   const { lg } = useBAIBreakpoint();
@@ -51,7 +51,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
     <BAIFlex
       data-testid="folder-explorer-header"
       justify="between"
-      gap={token.marginMD}
+      gap="md"
       style={{ width: '100%' }}
     >
       <BAIFlex
@@ -64,18 +64,18 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
           <VFolderNodeIdenticon
             vfolderNodeIdenticonFrgmt={vfolderNode}
             style={{
-              fontSize: token.fontSizeHeading4,
+              fontSize: token('--font-size-xl'),
             }}
           />
         ) : (
           <BAIFlex
             style={{
-              borderColor: token.colorBorderSecondary,
+              borderColor: token('--color-border'),
               borderWidth: 1,
               borderStyle: 'solid',
-              width: token.fontSizeHeading3,
-              height: token.fontSizeHeading3,
-              borderRadius: token.borderRadius,
+              width: token('--font-size-2xl'),
+              height: token('--font-size-2xl'),
+              borderRadius: token('--radius-inner'),
             }}
           />
         )}
@@ -101,11 +101,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
           />
         )}
       </BAIFlex>
-      <BAIFlex
-        data-testid="folder-explorer-actions"
-        justify="end"
-        gap={token.marginSM}
-      >
+      <BAIFlex data-testid="folder-explorer-actions" justify="end" gap="sm">
         {vfolderNode && !vfolderNode?.unmanaged_path ? (
           <Suspense fallback={<BAISkeleton variant="button" />}>
             <ErrorBoundaryWithNullFallback>

@@ -7,8 +7,8 @@ import { AgentLifeCycleControlModalRefetchQuery } from '../__generated__/AgentLi
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIModal,
@@ -49,7 +49,7 @@ const AgentLifeCycleControlModal: React.FC<AgentLifeCycleControlModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -151,11 +151,11 @@ const AgentLifeCycleControlModal: React.FC<AgentLifeCycleControlModalProps> = ({
         <div
           role="list"
           style={{
-            backgroundColor: token.colorFillQuaternary,
-            border: `1px solid ${token.colorBorderSecondary}`,
-            borderRadius: token.borderRadiusSM,
-            padding: token.paddingXS,
-            paddingInline: token.padding,
+            backgroundColor: token('--color-fill-quaternary'),
+            border: `1px solid ${token('--color-border')}`,
+            borderRadius: token('--radius-none'),
+            padding: token('--spacing-2'),
+            paddingInline: token('--spacing-4'),
           }}
         >
           <div role="listitem">{agent?.id && toLocalId(agent.id)}</div>

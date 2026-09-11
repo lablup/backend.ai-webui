@@ -1,4 +1,4 @@
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import Big from 'big.js';
 import * as _ from 'lodash-es';
 
@@ -481,13 +481,13 @@ export type SemanticColor =
   'success' | 'info' | 'warning' | 'error' | 'default';
 
 export const useSemanticColorMap = (): Record<SemanticColor, string> => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   return {
-    success: token.colorSuccess,
-    info: token.colorInfo,
-    warning: token.colorWarning,
-    error: token.colorError,
-    default: token.colorBorder,
+    success: token('--color-success'),
+    info: token('--color-info'),
+    warning: token('--color-warning'),
+    error: token('--color-error'),
+    default: token('--color-border-emphasized'),
   };
 };
 

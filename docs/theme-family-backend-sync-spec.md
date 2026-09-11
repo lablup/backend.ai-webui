@@ -12,7 +12,7 @@ against the current client surface:
 
 | Store | What it persists | Scope | Usable here? |
 |---|---|---|---|
-| `BackendAISettingsStore` (`react/src/global-stores.ts`) | `themeMode`, `themeFamily`, `custom_primary_color`, `custom_theme_config`, language, … | **localStorage only** | client-only, no sync |
+| `BackendAISettingsStore` (`react/src/global-stores.ts`) | `themeMode`, `themeFamily`, `custom_theme_config`, language, … | **localStorage only** | client-only, no sync |
 | `Setting` / `Registry` → `/config/{get,set,delete}` | etcd keys (`config/docker/registry`, …) | global, **superadmin** | no (not per-user) |
 | `UserConfig` → `/user-config/{dotfiles,bootstrap-script}` | shell dotfiles, bootstrap scripts | per-user, **mounted into compute sessions** | no (leaks a UI file into containers) |
 | `modify_user` GraphQL mutation | `full_name`, `description`, `status`, `role`, … | fixed columns | no (no free-form prefs field) |
@@ -26,8 +26,7 @@ A small, bounded per-user JSON blob of UI preferences. Initial keys:
 
 ```jsonc
 {
-  "themeFamily": "stained",   // family key from the catalog (theme.json `families` + the synthesized "default")
-  "customPrimaryColor": "#11aa22",  // optional #rrggbb primary-color override, or null
+  "themeFamily": "stained",   // family key from the catalog (theme.json `theme.families`, which must include `default`)
   "themeMode": "system"       // "system" | "light" | "dark"
 }
 ```
@@ -42,9 +41,7 @@ All theme-family state flows through a single hook, so wiring a backend store is
 a localized change:
 
 - `react/src/hooks/useCustomThemeConfig.tsx` owns the family selection, persisted via
-  `useLocalStorageGlobalState(THEME_FAMILY_STORAGE_KEY)`, and applies the
-  `custom_primary_color` user setting (an ordinary `useBAISettingUserState`
-  key, owned by `ThemeAccentColorPicker`).
+  `useLocalStorageGlobalState(THEME_FAMILY_STORAGE_KEY)`.
 - `react/src/hooks/useThemeMode.tsx` owns `themeMode`, same primitive.
 
 To add sync, replace the `useLocalStorageGlobalState` read/write in these hooks
@@ -107,7 +104,7 @@ localStorage.
 ## 6. Migration & FOUC
 
 - **First login with the new API**: if the server document is empty but
-  localStorage has `themeFamily`/`customPrimaryColor`/`themeMode`, POST the local values
+  localStorage has `themeFamily`/`themeMode`, POST the local values
   once (migrate up), then treat the server as source of truth.
 - **FOUC**: keep writing the resolved values to localStorage after each server
   read. The `index.html` bootstrap and `useCustomThemeConfig`/`useThemeMode` still read
@@ -119,8 +116,7 @@ localStorage.
 ## 7. Validation & security
 
 - Re-validate on read: `themeFamily` must exist in the active family
-  catalog (else fall back to `default`); `customPrimaryColor` must be a valid
-  `#rrggbb` hex string before it reaches the Ant Design token system;
+  catalog (else fall back to `default`);
   `themeMode` ∈ {system,light,dark}.
 - Server should treat the document as opaque but enforce a size cap and reject
   non-JSON.

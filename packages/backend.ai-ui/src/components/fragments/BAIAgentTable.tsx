@@ -10,7 +10,6 @@ import {
 } from '../../helper';
 import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIAlertIconWithTooltip from '../BAIAlertIconWithTooltip';
 import BAIDoubleTag from '../BAIDoubleTag';
 import BAIFlex from '../BAIFlex';
@@ -32,6 +31,7 @@ import {
   useConnectedBAIClient,
 } from '../provider';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleMinus } from 'lucide-react';
@@ -92,7 +92,7 @@ const CellErrorBoundary: React.FC<
 
 const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { mergedResourceSlots } = useBAIResourceSlots();
   const parsedOccupiedSlots: {
     [key in ResourceSlotName]: string | undefined;
@@ -131,14 +131,19 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                       0,
                     )}
                   </Text>
-                  <Text color="secondary" style={{ fontSize: token.sizeXS }}>
+                  <Text
+                    color="secondary"
+                    style={{ fontSize: token('--spacing-2') }}
+                  >
                     {mergedResourceSlots.cpu?.display_unit}
                   </Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
                   percent={cpuPercent}
                   strokeColor={
-                    cpuPercent > 80 ? token.colorError : token.colorSuccess
+                    cpuPercent > 80
+                      ? token('--color-error')
+                      : token('--color-success')
                   }
                   width={120}
                   valueLabel={
@@ -169,14 +174,19 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                     {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
                       ?.numberFixed ?? 0}
                   </Text>
-                  <Text color="secondary" style={{ fontSize: token.sizeXS }}>
+                  <Text
+                    color="secondary"
+                    style={{ fontSize: token('--spacing-2') }}
+                  >
                     GiB
                   </Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
                   percent={memPercent}
                   strokeColor={
-                    memPercent > 80 ? token.colorError : token.colorSuccess
+                    memPercent > 80
+                      ? token('--color-error')
+                      : token('--color-success')
                   }
                   width={120}
                   valueLabel={
@@ -211,14 +221,19 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                       2,
                     )}
                   </Text>
-                  <Text color="secondary" style={{ fontSize: token.sizeXS }}>
+                  <Text
+                    color="secondary"
+                    style={{ fontSize: token('--spacing-2') }}
+                  >
                     {mergedResourceSlots[key]?.display_unit}
                   </Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
                   percent={percent}
                   strokeColor={
-                    percent > 80 ? token.colorError : token.colorSuccess
+                    percent > 80
+                      ? token('--color-error')
+                      : token('--color-success')
                   }
                   width={120}
                   valueLabel={
@@ -490,11 +505,11 @@ const UtilizationCell: React.FC<{
 
 const DiskPctCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const parsedDisk = JSON.parse(record?.live_stat || '{}')?.node?.disk ?? {};
   const pctValue = _.toFinite(parsedDisk.pct) || 0;
   const pct = _.toFinite(toFixedFloorWithoutTrailingZeros(pctValue, 2));
-  const color = pct > 80 ? token.colorError : token.colorSuccess;
+  const color = pct > 80 ? token('--color-error') : token('--color-success');
   const baseUnit =
     convertUnitValue(parsedDisk?.capacity, 'auto', { base: 1000 })?.unit || 'g';
   return (
@@ -506,7 +521,7 @@ const DiskPctCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
         width={120}
       />
       {!_.isEmpty(parsedDisk) && (
-        <Text style={{ fontSize: token.fontSizeSM }}>
+        <Text style={{ fontSize: token('--font-size-sm') }}>
           {convertToDecimalUnit(parsedDisk?.current, baseUnit)?.numberFixed}
           &nbsp;/&nbsp;
           {convertToDecimalUnit(parsedDisk?.capacity, baseUnit)?.displayValue}
@@ -597,7 +612,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useConnectedBAIClient();
 
   const agents = useFragment(
@@ -749,16 +764,16 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
             {value === true ? (
               <CircleCheck
                 style={{
-                  color: token.colorSuccess,
-                  fontSize: token.fontSizeXL,
+                  color: token('--color-success'),
+                  fontSize: token('--font-size-xl'),
                 }}
                 size="1em"
               />
             ) : (
               <CircleMinus
                 style={{
-                  color: token.colorTextDisabled,
-                  fontSize: token.fontSizeXL,
+                  color: token('--color-text-disabled'),
+                  fontSize: token('--font-size-xl'),
                 }}
                 size="1em"
               />

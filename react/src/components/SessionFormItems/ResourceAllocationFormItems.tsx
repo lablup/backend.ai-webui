@@ -20,7 +20,6 @@ import {
   ResourcePreset,
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
-import { theme } from '../../theme-shim';
 import { ProjectContext } from '../../types/projectContext';
 import AgentSelect from '../AgentSelect';
 import {
@@ -38,6 +37,7 @@ import { Card } from '@astryxdesign/core/Card';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
 import { VStack } from '@astryxdesign/core/Stack';
+import { useTheme } from '@astryxdesign/core/theme';
 import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
@@ -246,7 +246,7 @@ const ResourceAllocationFormItems: React.FC<
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const baiClient = useSuspendedBackendaiClient();
   const supportMultiAgents = baiClient.supports('multi-agents');
@@ -730,7 +730,7 @@ const ResourceAllocationFormItems: React.FC<
         <Form.Item
           label={t('resourcePreset.ResourcePresets')}
           name="allocationPreset"
-          style={{ marginBottom: token.marginXS }}
+          style={{ marginBottom: token('--spacing-2') }}
           rules={[
             {
               required: true,
@@ -775,7 +775,7 @@ const ResourceAllocationFormItems: React.FC<
       {/* MAPPING §5.1: antd `Card` -> Astryx `Card`, a bare container. This
           call site passes no `title`/`extra`/`tabList`, so nothing needs
           composing around it — only the bottom margin, which stays. */}
-      <Card style={{ marginBottom: token.margin }}>
+      <Card style={{ marginBottom: token('--spacing-4') }}>
         <Form.Item
           shouldUpdate={(prev, cur) =>
             prev.allocationPreset !== cur.allocationPreset
@@ -873,7 +873,7 @@ const ResourceAllocationFormItems: React.FC<
                             ? {
                                 [resourceLimits.cpu?.max]: {
                                   style: {
-                                    color: token.colorTextSecondary,
+                                    color: token('--color-text-secondary'),
                                   },
                                   label: resourceLimits.cpu?.max,
                                 },

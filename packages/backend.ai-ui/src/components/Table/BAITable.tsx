@@ -36,7 +36,6 @@
 */
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
@@ -80,6 +79,7 @@ import type {
   TableSortState,
 } from '@astryxdesign/core/Table';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import {
@@ -492,7 +492,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
 }: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   // rc-table's own mapping of `scroll` onto CSS lengths (`y` has no `true`).
   const scrollXWidth =
@@ -773,12 +773,16 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     _.forEach(flatColumns, ({ key, column, groupTitle }) => {
       const width = column.width;
       const persistedWidth = columnWidths[key];
+      // A `px` string is a pixel width too: a spacing token read through
+      // `useTheme().token()` arrives as `'48px'`.
       const numericWidth =
         typeof persistedWidth === 'number'
           ? persistedWidth
           : typeof width === 'number'
             ? width
-            : undefined;
+            : typeof width === 'string' && /^\d+(\.\d+)?px$/.test(width.trim())
+              ? parseFloat(width)
+              : undefined;
 
       // Header text is clipped, not overflowed. Astryx puts a plain-string
       // `header` straight into the `<th>` (which is `overflow: visible`), so a
@@ -1145,7 +1149,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
           <td
             colSpan={renderedColumnCount}
             style={{
-              padding: token.paddingSM,
+              padding: token('--spacing-3'),
               paddingInlineStart: detailInsetStart,
             }}
           >
@@ -1333,7 +1337,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
           // `<BAIFlex direction="column" gap="sm">` wrapping [table,
           // pagination row], i.e. a 12px table->pagination gap. `marginXS`
           // (8px) shrank it; `marginSM` restores the measured legacy value.
-          style={{ marginTop: token.marginSM }}
+          style={{ marginTop: token('--spacing-3') }}
         >
           {isPagerVisible ? (
             <>
