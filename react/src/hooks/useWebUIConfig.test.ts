@@ -7,6 +7,7 @@
  *
  * Tests cover:
  * - fetchAndParseConfig: TOML fetching and parsing
+ * - fetchAppConfigOnce: one shared config.toml fetch per page load
  * - preprocessToml: escape sequence handling in apiEndpointText
  * - processConfig (via fetchAndParseConfig): config value extraction
  * - Atom initial values
@@ -381,5 +382,46 @@ describe('getDefaultLoginConfig fallback values', () => {
     const b = getDefaultLoginConfig();
     a.api_endpoint = 'https://modified.example.com';
     expect(b.api_endpoint).toBe('');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fetchAppConfigOnce
+// ---------------------------------------------------------------------------
+
+describe('fetchAppConfigOnce', () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('fetches config.toml once and shares the result between callers', async () => {
+    mockFetch(200, '[general]\napiEndpoint = "https://api.example.com"');
+    const mod = await import('./useWebUIConfig');
+
+    const [first, second] = await Promise.all([
+      mod.fetchAppConfigOnce(),
+      mod.fetchAppConfigOnce(),
+    ]);
+
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(first).toBe(second);
+    expect(first.config?.general?.apiEndpoint).toBe('https://api.example.com');
+  });
+
+  it('does not cache a missing config.toml, so a later caller retries', async () => {
+    mockFetch(404, '');
+    const mod = await import('./useWebUIConfig');
+
+    expect((await mod.fetchAppConfigOnce()).config).toBeNull();
+
+    mockFetch(200, '[general]\napiEndpoint = "https://api.example.com"');
+    const retried = await mod.fetchAppConfigOnce();
+    expect(retried.config?.general?.apiEndpoint).toBe(
+      'https://api.example.com',
+    );
   });
 });
