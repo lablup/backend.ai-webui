@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../../app-shim';
+import { migrateV1AppearanceConfig } from '../../helper/appearanceConfigV1';
 import { downloadBlob } from '../../helper/csv-util';
 import { pickValidAppearanceConfig } from '../../helper/customThemeConfig';
 import { loadMonacoEditor } from '../../helper/monacoEditor';
@@ -101,7 +102,13 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
 
                 try {
                   const parsed = JSON.parse(content);
-                  setEditorValue(JSON.stringify(parsed, null, 2));
+                  // An operator's pre-FR-3605 theme.json arrives in the v1
+                  // shape; it is converted rather than left to fail the schema.
+                  const migrated = migrateV1AppearanceConfig(parsed);
+                  setEditorValue(JSON.stringify(migrated ?? parsed, null, 2));
+                  if (migrated) {
+                    message.info(t('theme.ConvertedV1ThemeConfig'));
+                  }
                 } catch (error) {
                   // Invalid JSON format - still load content into editor for user to fix
                   setEditorValue(content);
@@ -154,12 +161,6 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
               variant="primary"
               label={t('button.OK')}
               clickAction={async () => {
-                const markers =
-                  await monacoRef.current?.editor.getModelMarkers();
-                if (markers && markers.length > 0) {
-                  message.error(t('theme.CannotApplyInvalidJsonConfig'));
-                  return;
-                }
                 let parsedValue;
                 try {
                   parsedValue = JSON.parse(editorValue);
@@ -167,6 +168,22 @@ const ThemeJsonConfigModal: React.FC<ThemeJsonConfigModalProps> = ({
                   logger.warn('Invalid JSON format in theme config', error);
                   message.error(t('theme.CannotApplyInvalidJsonConfig'));
                   return;
+                }
+                // A pasted v1 document is converted before the markers are
+                // read: they report the v1 shape failing the v2 schema, which
+                // the conversion is what resolves.
+                const migrated = migrateV1AppearanceConfig(parsedValue);
+                if (migrated) {
+                  parsedValue = migrated;
+                  setEditorValue(JSON.stringify(migrated, null, 2));
+                  message.info(t('theme.ConvertedV1ThemeConfig'));
+                } else {
+                  const markers =
+                    await monacoRef.current?.editor.getModelMarkers();
+                  if (markers && markers.length > 0) {
+                    message.error(t('theme.CannotApplyInvalidJsonConfig'));
+                    return;
+                  }
                 }
                 // The Monaco markers are advisory (the schema fetch can fail);
                 // this is the gate every draft passes before it is stored.
