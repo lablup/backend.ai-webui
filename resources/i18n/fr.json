@@ -462,6 +462,7 @@
     "Yes": "Oui"
   },
   "chatui": {
+    "AttachmentNotStored": "Pièce jointe non enregistrée en raison de la limite de stockage du navigateur",
     "Attachments": "Pièces jointes",
     "CannotFindModel": "Les modèles LLM ne sont pas trouvés. Vérifiez le chemin de base et la compatibilité des jetons avec OpenAI, puis cliquez sur \"Actualiser les modèles\".",
     "ChatTitle": "Titre de la discussion",
@@ -474,6 +475,9 @@
     "DeploymentModels": "Modèles de {{name}}",
     "DropFileHere": "Déposez le fichier ici",
     "History": "L'histoire",
+    "HistoryAttachmentsNotStored": "Le stockage du navigateur est plein. Les pièces jointes ne sont plus enregistrées dans l'historique des conversations.",
+    "HistoryNotStored": "Le stockage du navigateur est plein. Les modifications récentes de cette conversation disparaîtront après un rechargement.",
+    "HistoryOlderChatsNotStored": "Le stockage du navigateur est plein. Les conversations les plus anciennes ne sont plus enregistrées et disparaîtront après un rechargement.",
     "NewChat": "Nouvelle discussion",
     "NoDesiredReplicas": "Le nombre de répliques souhaité pour ce déploiement est de 0, il ne peut donc pas répondre. Définissez le nombre de répliques souhaité sur 1 ou plus pour l'utiliser.",
     "ScrollToBottom": "Défiler vers le bas",

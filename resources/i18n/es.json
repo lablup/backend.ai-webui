@@ -462,6 +462,7 @@
     "Yes": "Sí"
   },
   "chatui": {
+    "AttachmentNotStored": "Adjunto no almacenado debido al límite de almacenamiento del navegador",
     "Attachments": "Adjuntos",
     "CannotFindModel": "Modelos LLM no encontrados. Verifica la ruta base y la compatibilidad de los tokens con OpenAI, después pulsa 'Actualizar modelos'.",
     "ChatTitle": "Título del chat",
@@ -474,6 +475,9 @@
     "DeploymentModels": "Modelos de {{name}}",
     "DropFileHere": "Suelta el archivo aquí",
     "History": "Historia",
+    "HistoryAttachmentsNotStored": "El almacenamiento del navegador está lleno. Los adjuntos ya no se guardan en el historial de chat.",
+    "HistoryNotStored": "El almacenamiento del navegador está lleno. Los cambios recientes de este chat se perderán al recargar.",
+    "HistoryOlderChatsNotStored": "El almacenamiento del navegador está lleno. Los chats más antiguos ya no se guardan y se perderán al recargar.",
     "NewChat": "Nuevo chat",
     "NoDesiredReplicas": "El número deseado de réplicas para este despliegue es 0, por lo que no puede responder. Establezca el número deseado de réplicas en 1 o más para usarlo.",
     "ScrollToBottom": "Desplazarse al final",
