@@ -96,7 +96,12 @@ describe('UserSettingsRouteRedirect', () => {
   });
 
   it('moves an already-converted link onto the tracked page', async () => {
-    rememberNonSettingsLocation({ pathname: '/session', search: '' });
+    rememberNonSettingsLocation({
+      pathname: '/session',
+      search: '',
+      hash: '',
+      state: null,
+    });
     renderAt('/usersettings?settings=logs');
     expect(await screen.findByTestId('location')).toHaveTextContent(
       '/session?settings=logs',
