@@ -17,13 +17,6 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
-import ImageMetaIcon from './ImageMetaIcon';
-import {
-  imageNodeTagFacts,
-  ImageMetaDivider,
-  ImageTagBadges,
-  ImageTags,
-} from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
@@ -32,45 +25,75 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
 import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAICard,
   BAIFlex,
+  BAIImageMetaIcon,
+  BAIImageMetaRow,
   BAIMetadataList,
   BAITable,
   BAIText,
+  imageNodeTagFacts,
+  imageTagFacts,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { CheckIcon, CopyIcon } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
- * Copy-only affordance replacing antd `Typography.Text copyable` with no
- * children (a bare copy icon that copies the full image name).
+ * The review step's image row. A manually typed image has no parts to
+ * decompose, so it stays a copyable code string; everything else renders
+ * through the shared image row (ADR 0004).
  */
-const CopyValueIconButton: React.FC<{ value?: string; label: string }> = ({
-  value,
-  label,
-}) => {
+const SessionLauncherImageRow: React.FC = () => {
   'use memo';
-  const [copied, setCopied] = useState(false);
+  const { t } = useTranslation();
+  const form = Form.useFormInstance<SessionLauncherFormValue>();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportExtendedImageInfo =
+    baiClient?.supports('extended-image-info') ?? false;
+  const [, { getBaseImage, getBaseVersion, getTags, tagAlias }] =
+    useBackendAIImageMetaData();
+
+  const environments = form.getFieldValue('environments');
+  const image = environments?.image;
+
+  if (environments?.manual) {
+    return (
+      <BAIFlex direction="row" align="center" gap="xs" wrap="nowrap">
+        <BAIImageMetaIcon image={environments.manual} />
+        <BAIText code copyable>
+          {environments.manual}
+        </BAIText>
+      </BAIFlex>
+    );
+  }
+
   return (
-    <IconButton
-      variant="ghost"
-      size="sm"
-      icon={copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}
-      label={label}
-      tooltip={label}
-      isDisabled={copied}
-      onClick={() => {
-        void navigator.clipboard?.writeText(value ?? '');
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      }}
+    <BAIImageMetaRow
+      fullName={getImageFullName(image) || environments?.version}
+      name={
+        supportExtendedImageInfo
+          ? tagAlias(image?.base_image_name)
+          : tagAlias(getBaseImage(environments?.version))
+      }
+      version={
+        supportExtendedImageInfo
+          ? image?.version
+          : getBaseVersion(environments?.version)
+      }
+      architecture={image?.architecture}
+      tags={
+        supportExtendedImageInfo
+          ? imageNodeTagFacts(image?.tags, image?.labels, tagAlias)
+          : imageTagFacts(
+              getTags(image?.tag ?? '', image?.labels ?? []),
+              tagAlias,
+            )
+      }
+      copyLabel={t('button.CopySomething', { name: t('general.Image') })}
     />
   );
 };
@@ -84,11 +107,7 @@ const SessionLauncherPreview: React.FC<{
   const baiClient = useSuspendedBackendaiClient();
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
-  const supportExtendedImageInfo =
-    baiClient?.supports('extended-image-info') ?? false;
   const currentProject = useCurrentProjectValue();
-  const [, { getBaseVersion, getBaseImage, tagAlias }] =
-    useBackendAIImageMetaData();
 
   return (
     <>
@@ -218,128 +237,7 @@ const SessionLauncherPreview: React.FC<{
             {currentProject.name}
           </MetadataListItem>
           <MetadataListItem label={t('general.Image')}>
-            {supportExtendedImageInfo ? (
-              <BAIFlex direction="row" align="center" gap="xs" wrap="nowrap">
-                <ImageMetaIcon
-                  image={
-                    form.getFieldValue('environments')?.version ||
-                    form.getFieldValue('environments')?.manual
-                  }
-                />
-                <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
-                  {form.getFieldValue('environments')?.manual ? (
-                    <BAIText code copyable>
-                      {form.getFieldValue('environments')?.manual}
-                    </BAIText>
-                  ) : (
-                    <>
-                      <Text>
-                        {tagAlias(
-                          form.getFieldValue('environments')?.image
-                            ?.base_image_name,
-                        )}
-                      </Text>
-                      <ImageMetaDivider />
-                      <Text>
-                        {form.getFieldValue('environments')?.image?.version}
-                      </Text>
-                      <ImageMetaDivider />
-                      <Text>
-                        {
-                          form.getFieldValue('environments')?.image
-                            ?.architecture
-                        }
-                      </Text>
-                      <ImageMetaDivider />
-                      {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                      <ImageTagBadges
-                        facts={imageNodeTagFacts(
-                          form.getFieldValue('environments')?.image?.tags,
-                          form.getFieldValue('environments')?.image?.labels,
-                          tagAlias,
-                        )}
-                      />
-                      <BAIFlex gap={'xxs'}>
-                        <CopyValueIconButton
-                          label={t('button.CopySomething', {
-                            name: t('general.Image'),
-                          })}
-                          value={
-                            getImageFullName(
-                              form.getFieldValue('environments')?.image,
-                            ) || form.getFieldValue('environments')?.version
-                          }
-                        />
-                      </BAIFlex>
-                    </>
-                  )}
-                </BAIFlex>
-              </BAIFlex>
-            ) : (
-              <BAIFlex direction="row" align="center" gap="xs" wrap="nowrap">
-                <ImageMetaIcon
-                  image={
-                    form.getFieldValue('environments')?.version ||
-                    form.getFieldValue('environments')?.manual
-                  }
-                />
-                <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
-                  {form.getFieldValue('environments')?.manual ? (
-                    <BAIText code copyable>
-                      {form.getFieldValue('environments')?.manual}
-                    </BAIText>
-                  ) : (
-                    <>
-                      <Text>
-                        {tagAlias(
-                          getBaseImage(
-                            form.getFieldValue('environments')?.version,
-                          ),
-                        )}
-                      </Text>
-                      <ImageMetaDivider />
-                      <Text>
-                        {getBaseVersion(
-                          form.getFieldValue('environments')?.version,
-                        )}
-                      </Text>
-                      <ImageMetaDivider />
-                      <Text>
-                        {
-                          form.getFieldValue('environments')?.image
-                            ?.architecture
-                        }
-                      </Text>
-                      <ImageMetaDivider />
-                      <ImageTags
-                        tag={form.getFieldValue([
-                          'environments',
-                          'image',
-                          'tag',
-                        ])}
-                        labels={
-                          form.getFieldValue('environments')?.image
-                            ?.labels as Array<{
-                            key: string;
-                            value: string;
-                          }>
-                        }
-                      />
-                      <CopyValueIconButton
-                        label={t('button.CopySomething', {
-                          name: t('general.Image'),
-                        })}
-                        value={
-                          getImageFullName(
-                            form.getFieldValue('environments')?.image,
-                          ) || form.getFieldValue('environments')?.version
-                        }
-                      />
-                    </>
-                  )}
-                </BAIFlex>
-              </BAIFlex>
-            )}
+            <SessionLauncherImageRow />
           </MetadataListItem>
           {form.getFieldValue('envvars')?.length > 0 && (
             <MetadataListItem label={t('session.launcher.EnvironmentVariable')}>
