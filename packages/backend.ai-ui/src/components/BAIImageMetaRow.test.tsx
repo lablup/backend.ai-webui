@@ -94,6 +94,19 @@ describe('BAIImageMetaRow', () => {
     expect(screen.queryByText('9')).not.toBeInTheDocument();
   });
 
+  // A v1 tag value is nullable; `key + undefined` would look up
+  // `tensorflowundefined` and flip an exactly-aliased tag to a double tag.
+  it('treats a null tag value as an empty one', () => {
+    const [fact] = imageNodeTagFacts(
+      [{ key: 'py3', value: null }],
+      [],
+      (tag) => (tag === 'py3' ? 'Python' : preserveDotStartCase(tag)),
+    );
+
+    expect(fact.aliasedTag).toBe('Python');
+    expect(fact.isDouble).toBe(false);
+  });
+
   it('takes a customized image name from the labels', () => {
     const tags = imageNodeTagFacts(
       [{ key: 'customized_abc', value: 'deadbeef' }],

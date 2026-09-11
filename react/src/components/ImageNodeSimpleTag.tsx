@@ -53,7 +53,9 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
 
   return (
     <BAIImageMetaRow
-      fullName={`${image.registry}/${image.namespace}:${image.tag}@${image.architecture}`}
+      // `namespace` is `@since(version: "24.12.0")`; before that the
+      // deprecated `name` carries it, as `getImageFullName` also assumes.
+      fullName={`${image.registry}/${image.namespace ?? image.name}:${image.tag}@${image.architecture}`}
       variant={withoutTag ? 'compact' : 'full'}
       name={tagAlias(image.base_image_name || '')}
       version={image.version}

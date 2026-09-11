@@ -37,9 +37,12 @@ const toFact = (
   isCustomized: boolean,
   tagAlias: TagAlias,
 ): BAIImageTagFact => {
-  const aliasedTag = tagAlias(key + value);
+  // A tag's value is nullable on the v1 schema, and `key + undefined` would
+  // alias `tensorflow` as `tensorflowundefined` and flip it to a double tag.
+  const lookup = key + (value ?? '');
+  const aliasedTag = tagAlias(lookup);
   const isDouble =
-    _.isEqual(aliasedTag, preserveDotStartCase(key + value)) || isCustomized;
+    _.isEqual(aliasedTag, preserveDotStartCase(lookup)) || isCustomized;
   return {
     key,
     value,

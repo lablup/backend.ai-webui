@@ -120,9 +120,11 @@ flowchart TB
 
 | adapter | fragment | 넘기는 것 |
 |---|---|---|
-| `ImageNodeSimpleTag` | `ImageNodeSimpleTagFragment on ImageNode` | `registry`, `namespace`, `tag`, `architecture`로 조립한 `fullName`과 server의 `base_image_name`, `version` |
-| `BAIImageNodeSimpleTagV2` | `BAIImageNodeSimpleTagV2Fragment on ImageV2` | `identity.canonicalName`을 `fullName`으로, `identity.architecture` |
+| `ImageNodeSimpleTag` | `ImageNodeSimpleTagFragment on ImageNode` | `registry`, `namespace ?? name`, `tag`, `architecture`로 조립한 `fullName`과 server의 `base_image_name`, `version` |
+| `BAIImageNodeSimpleTagV2` | `BAIImageNodeSimpleTagV2Fragment on ImageV2` | `identity.canonicalName`과 `identity.architecture`를 `@`로 이어 붙인 `fullName`과 `identity.architecture` |
 | `AliasedImageDoubleTags` | `AliasedImageDoubleTagsFragment on ImageNode` | `BAIImageTagBadges`에 넘길 fact만. 행이 아니라 chip만 그리는 표의 Tags 열용이다 |
+
+- **`fullName` is the full reference**: adapter는 row에 registry부터 `@architecture`까지 다 붙은 문자열을 넘긴다. row의 copy control이 그 값을 그대로 복사하므로, 짧은 문자열을 넘기면 화면에 보이는 image와 복사되는 image가 달라진다. v1의 `namespace`는 `@since(version: "24.12.0")`이라 그 이전 manager에서는 deprecated된 `name`이 그 자리를 채우고, v2의 `identity.canonicalName`에는 architecture가 들어 있지 않다.
 
 - **Adapter prop surface**: 두 image node adapter는 `variant` 대신 `withoutTag`와 `copyable`을 받아 `withoutTag`를 `compact`로 옮긴다. 이 이름은 antd 시절부터 call site가 쓰던 것이고, `.claude/rules/component-props-extension.md`가 그 어휘를 바꾸지 말라고 정한다.
 - **Why adapters survive**: fragment spread는 call site의 query가 해야 하므로, fragment를 읽는 component가 schema마다 하나씩 필요하다. 세 adapter는 fragment를 읽어 `BAIImageMetaRow`나 `BAIImageTagBadges`에 넘기는 일만 한다.

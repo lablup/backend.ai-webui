@@ -42,7 +42,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Use `path` for the human-readable identity of an image; it is the machine-readable reference, and it deliberately carries no icon or chips.',
+          'Reach for `path` when you want a human to recognise the image — it renders the machine-readable reference and deliberately carries no icon and no chips. `full` and `compact` are the human-readable forms.',
       },
     ],
   },
@@ -64,19 +64,19 @@ export const docs = {
       name: 'name',
       type: 'string | null',
       description:
-        'Aliased base image name. Defaults to `tagAlias(getBaseImage(fullName))`; pass the server-provided `base_image_name` where one exists.',
+        'Base image name, rendered verbatim — alias it yourself. Empty or absent falls back to `tagAlias(getBaseImage(fullName))`, which is what a server that does not send `base_image_name` produces.',
     },
     {
       name: 'version',
       type: 'string | null',
       description:
-        'Base version. Defaults to `getBaseVersion(fullName)`; pass the server-provided `version` where one exists.',
+        'Base version. Empty or absent falls back to `getBaseVersion(fullName)`; pass the server-provided `version` where one exists.',
     },
     {
       name: 'architecture',
       type: 'string | null',
       description:
-        'Architecture. Defaults to the part of `fullName` after `@`.',
+        'Architecture. Empty or absent falls back to the part of `fullName` after `@`.',
     },
     {
       name: 'tags',
@@ -108,7 +108,7 @@ export const docs = {
       label: 'Detail surface — full row',
       code: `<BAIImageMetaRow
   fullName={fullName}
-  name={image.base_image_name}
+  name={tagAlias(image.base_image_name ?? '')}
   version={image.version}
   architecture={image.architecture}
   tags={imageNodeTagFacts(image.tags, image.labels, tagAlias)}

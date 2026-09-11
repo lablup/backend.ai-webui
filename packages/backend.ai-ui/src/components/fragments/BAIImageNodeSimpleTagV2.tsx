@@ -49,11 +49,21 @@ const BAIImageNodeSimpleTagV2: React.FC<BAIImageNodeSimpleTagV2Props> = ({
 
   if (!image) return null;
 
+  // `canonicalName` carries no architecture, so the copy control would emit a
+  // shorter reference than the row displays. Every other v2 call site joins
+  // the two the same way.
+  const architecture = image.identity?.architecture;
+  const canonicalName = image.identity?.canonicalName;
+
   return (
     <BAIImageMetaRow
-      fullName={image.identity?.canonicalName}
+      fullName={
+        canonicalName && architecture
+          ? `${canonicalName}@${architecture}`
+          : canonicalName
+      }
       variant={withoutTag ? 'compact' : 'full'}
-      architecture={image.identity?.architecture}
+      architecture={architecture}
       tags={imageNodeTagFacts(
         image.metadata?.tags,
         image.metadata?.labels,
