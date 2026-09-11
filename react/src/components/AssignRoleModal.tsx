@@ -10,7 +10,6 @@ import { theme } from '../theme-shim';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIAdminUserV2Select,
-  type BAIAdminUserV2SelectProps,
   BAIBulkErrorModal,
   type BAIColumnsType,
   BAIComplexSelect,
@@ -37,32 +36,6 @@ interface FailedAssignment {
   userLabel: string;
   message: string;
 }
-
-type AssignRoleUserFieldProps = Pick<
-  BAIAdminUserV2SelectProps,
-  'value' | 'onChange' | 'status'
->;
-
-/** Sync shell so the `userIds` field stays mounted while the options load. */
-const AssignRoleUserField: React.FC<AssignRoleUserFieldProps> = (props) => {
-  'use memo';
-  const { t } = useTranslation();
-  const commonProps = {
-    multiple: true,
-    label: t('credential.Users'),
-    isLabelHidden: true,
-    placeholder: t('rbac.SelectUsers'),
-  } as const;
-  return (
-    <Suspense
-      fallback={
-        <BAIComplexSelect {...commonProps} options={[]} isLoading isDisabled />
-      }
-    >
-      <BAIAdminUserV2Select {...commonProps} valuePropName="id" {...props} />
-    </Suspense>
-  );
-};
 
 /**
  * Assigns users to a role via `adminBulkAssignRole` (FR-3357). On partial
@@ -191,6 +164,18 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
     }
   };
 
+  const userIdsItemProps = {
+    name: 'userIds',
+    label: t('credential.Users'),
+    rules: [{ required: true, message: t('rbac.PleaseSelectUsers') }],
+  };
+  const userSelectProps = {
+    multiple: true,
+    label: t('credential.Users'),
+    isLabelHidden: true,
+    placeholder: t('rbac.SelectUsers'),
+  } as const;
+
   const failureColumns: BAIColumnsType<FailedAssignment> = [
     {
       key: 'user',
@@ -232,23 +217,35 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">
-        <Form.Item
-          name="userIds"
-          label={t('credential.Users')}
-          rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+        <Suspense
+          // Same field on the fallback: keeps `userIds` registered while the options load.
+          fallback={
+            <Form.Item {...userIdsItemProps}>
+              <BAIComplexSelect
+                {...userSelectProps}
+                options={[]}
+                isLoading
+                isDisabled
+              />
+            </Form.Item>
+          }
         >
-          <AssignRoleUserField
-            onChange={(value, option) => {
-              _.castArray(option ?? []).forEach((o) => {
-                userLabelsRef.current.set(
-                  String(o.value),
-                  String(o.label ?? o.value),
-                );
-              });
-              setSelectedUserIds(_.castArray(value ?? []));
-            }}
-          />
-        </Form.Item>
+          <Form.Item {...userIdsItemProps}>
+            <BAIAdminUserV2Select
+              {...userSelectProps}
+              valuePropName="id"
+              onChange={(value, option) => {
+                _.castArray(option ?? []).forEach((o) => {
+                  userLabelsRef.current.set(
+                    String(o.value),
+                    String(o.label ?? o.value),
+                  );
+                });
+                setSelectedUserIds(_.castArray(value ?? []));
+              }}
+            />
+          </Form.Item>
+        </Suspense>
       </Form>
       {/* Per-user errors of a partially-failed assignment (FR-3357). The
           assign modal (and the remaining failed selection) stays open behind
