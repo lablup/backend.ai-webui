@@ -104,7 +104,7 @@ const AssignRoleUserSelect: React.FC<AssignRoleUserSelectProps> = ({
           {option.data?.description && (
             <div
               style={{
-                fontSize: 12,
+                fontSize: 'var(--font-size-sm)',
                 color: 'var(--color-text-secondary)',
               }}
             >
