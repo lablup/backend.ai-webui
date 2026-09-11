@@ -9,6 +9,20 @@ import {
 } from '../utils/user-profile-util';
 import test, { expect, type Page } from '@playwright/test';
 
+// Astryx also renders each toast into a screen-reader announcer, so an
+// unscoped getByText() matches twice.
+function toastRegion(page: Page) {
+  return page.getByRole('region', { name: 'Notifications' });
+}
+
+// Both bulk-toolbar IconButtons are named "Action"; a name: 'delete' match hits
+// the row-level "Permanently Delete" buttons instead, so key on the trash icon.
+function bulkPurgeButton(page: Page) {
+  return page
+    .getByRole('button', { name: 'Action', exact: true })
+    .filter({ has: page.locator('svg.lucide-trash2') });
+}
+
 // Generate unique identifiers for this test run to avoid conflicts
 const TEST_RUN_ID = Date.now().toString(36);
 const EMAIL_SUFFIX = 'lablup.com';
@@ -42,8 +56,10 @@ async function cleanupBulkCreatedUsers(
         .locator('.bai-name-action-cell-actions button')
         .nth(2)
         .click();
-      const popconfirm = page.locator('.ant-popconfirm');
-      await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+      const popconfirm = page.getByRole('dialog', { name: 'Deactivate' });
+      await popconfirm
+        .getByRole('button', { name: 'Deactivate', exact: true })
+        .click();
       await expect(userRow).toBeHidden({ timeout: 10000 });
     }
   }
@@ -71,9 +87,7 @@ async function cleanupBulkCreatedUsers(
   }
 
   if (hasInactiveUsers) {
-    // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
-    // Use .first() to target the header bulk-delete button, not row-level purge buttons.
-    await page.getByRole('button', { name: 'delete' }).first().click();
+    await bulkPurgeButton(page).click();
     const purgeModal = new PurgeUsersModal(page);
     await purgeModal.waitForVisible();
     await purgeModal.confirmDeletion();
@@ -213,7 +227,7 @@ test.describe(
           // 12. Click "OK" and wait for success message
           await modal.submit();
           await expect(
-            page.locator('.ant-message').getByText(/Successfully created/),
+            toastRegion(page).getByText(/Successfully created/),
           ).toBeVisible({ timeout: 30000 });
 
           // 13. A successful bulk create reveals the generated keypairs in a
@@ -245,9 +259,11 @@ test.describe(
               .locator('.bai-name-action-cell-actions button')
               .nth(2)
               .click();
-            const popconfirm = page.locator('.ant-popconfirm');
+            const popconfirm = page.getByRole('dialog', {
+              name: 'Deactivate',
+            });
             await popconfirm
-              .getByRole('button', { name: 'Deactivate' })
+              .getByRole('button', { name: 'Deactivate', exact: true })
               .click();
             await expect(userRow).toBeHidden({ timeout: 10000 });
           }
@@ -269,9 +285,7 @@ test.describe(
           }
 
           // 18. Click the purge (trash bin) button.
-          // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
-          // Use .first() to target the header bulk-delete button, not row-level purge buttons.
-          await page.getByRole('button', { name: 'delete' }).first().click();
+          await bulkPurgeButton(page).click();
 
           // 19. Confirm permanent deletion in the purge modal
           const purgeModal = new PurgeUsersModal(page);
@@ -369,8 +383,11 @@ test.describe(
           // 5. Verify the "Number of users" spinner shows the default value 1
           await expect(modal.getUserCountInput()).toHaveValue('1');
 
-          // 6. Verify the Decrease Value button is disabled at value 1
-          await expect(modal.getDecreaseValueButton()).toBeDisabled();
+          // 6. Verify the count cannot go below 1 (the input exposes min=1)
+          await expect(modal.getUserCountInput()).toHaveAttribute(
+            'aria-valuemin',
+            '1',
+          );
 
           // 7. Fill in "Email prefix (before @)"
           await modal.fillEmailPrefix(EMAIL_PREFIX);
@@ -385,7 +402,7 @@ test.describe(
           // 11. Click "OK" and wait for success message
           await modal.submit();
           await expect(
-            page.locator('.ant-message').getByText(/Successfully created/),
+            toastRegion(page).getByText(/Successfully created/),
           ).toBeVisible({ timeout: 30000 });
 
           // 11b. A successful bulk create reveals the generated keypairs in a
@@ -416,8 +433,10 @@ test.describe(
             .locator('.bai-name-action-cell-actions button')
             .nth(2)
             .click();
-          const popconfirm = page.locator('.ant-popconfirm');
-          await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+          const popconfirm = page.getByRole('dialog', { name: 'Deactivate' });
+          await popconfirm
+            .getByRole('button', { name: 'Deactivate', exact: true })
+            .click();
           await expect(userRow).toBeHidden({ timeout: 10000 });
 
           // 15. Switch to Inactive tab and verify the user appears there
@@ -433,9 +452,7 @@ test.describe(
           await inactiveRow.getByRole('checkbox').click();
 
           // 17. Click the purge (trash bin) button.
-          // The purge button uses <DeleteFilled /> icon whose aria-label is "delete".
-          // Use .first() to target the header bulk-delete button, not row-level purge buttons.
-          await page.getByRole('button', { name: 'delete' }).first().click();
+          await bulkPurgeButton(page).click();
 
           // 18. Confirm permanent deletion in the purge modal
           const purgeModal = new PurgeUsersModal(page);

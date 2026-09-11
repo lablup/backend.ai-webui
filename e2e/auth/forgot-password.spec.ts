@@ -598,7 +598,9 @@ test.describe('Change password page', () => {
 
       // 3. Click Update and verify the password mismatch error notification
       await page.getByRole('button', { name: 'Update' }).click();
-      await expect(page.getByText('Password mismatch')).toBeVisible({
+      await expect(
+        toastRegion(page).getByText('Password mismatch'),
+      ).toBeVisible({
         timeout: 10_000,
       });
 
