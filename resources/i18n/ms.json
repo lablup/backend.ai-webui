@@ -2532,6 +2532,7 @@
     "PendingTimeout": "Tamat tempoh yang belum selesai",
     "PendingTimeoutDesc": "Masa maksimum sesi boleh tinggal di negeri yang belum selesai.\n\nJika ditetapkan kepada 0, ia akan menunggu selama -lamanya tanpa had.\n\nJika tidak tersendiri, ia mungkir kepada 0.",
     "Public": "Awam",
+    "PublicDesc": "Apabila dilumpuhkan, kumpulan sumber ini dikhaskan untuk sesi sistem seperti muat naik SFTP. Ia disembunyikan daripada senarai kumpulan sumber pengguna biasa dan penciptaan sesi biasa ditolak, tetapi ia kekal kelihatan kepada pentadbir. Tetapan ini tidak meluaskan akses: domain, projek dan pasangan kunci yang boleh menggunakan kumpulan sumber ini ditentukan oleh tetapan perkaitan masing-masing.",
     "PublicStatus": "Status Awam",
     "ResourceGroupAlreadyExist": "Kumpulan sumber dengan nama yang sama sudah ada.",
     "ResourceGroupCreated": "Kumpulan sumber berjaya dibuat",

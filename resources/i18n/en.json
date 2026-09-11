@@ -2519,6 +2519,7 @@
     "PendingTimeout": "Pending Timeout",
     "PendingTimeoutDesc": "Maximum time a session can stay in pending state.\nIf set to 0, it will wait indefinitely without a limit.\nIf left unset, it defaults to 0.",
     "Public": "Public",
+    "PublicDesc": "When disabled, this resource group becomes reserved for system sessions such as SFTP uploads. It is hidden from regular users' resource group lists and regular session creation is rejected, but it stays visible to administrators. This setting does not widen access: which domains, projects, and keypairs can use this resource group is decided by their respective association settings.",
     "PublicStatus": "Public Status",
     "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
     "ResourceGroupCreated": "Resource group succesfully created",

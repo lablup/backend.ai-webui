@@ -2534,6 +2534,7 @@
     "PendingTimeout": "Ausstehende Auszeit",
     "PendingTimeoutDesc": "Eine maximale Zeit, die eine Sitzung in einem anhängigen Zustand bleibt.\n\nWenn es auf 0 gesetzt ist, warten Sie auf unbestimmte Zeit ohne Grenzwert.\n\nWenn es nicht festgelegt wird, ist es standardmäßig 0.",
     "Public": "Öffentlich",
+    "PublicDesc": "Wenn deaktiviert, ist diese Ressourcengruppe Systemsitzungen wie SFTP-Uploads vorbehalten. Sie wird in den Ressourcengruppenlisten regulärer Benutzer ausgeblendet und die Erstellung regulärer Sitzungen wird abgelehnt, für Administratoren bleibt sie jedoch sichtbar. Diese Einstellung erweitert den Zugriff nicht: Welche Domänen, Projekte und Schlüsselpaare diese Ressourcengruppe verwenden können, wird durch ihre jeweiligen Zuordnungseinstellungen bestimmt.",
     "PublicStatus": "Öffentlicher Status",
     "ResourceGroupAlreadyExist": "Eine Ressourcengruppe mit demselben Namen ist bereits vorhanden.",
     "ResourceGroupCreated": "Ressourcengruppe erfolgreich erstellt",

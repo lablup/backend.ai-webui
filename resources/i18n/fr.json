@@ -2534,6 +2534,7 @@
     "PendingTimeout": "Délai d'attente en attente",
     "PendingTimeoutDesc": "Temps maximum Une session peut rester dans l'état en attente.\n\nS'il est réglé sur 0, il attendra indéfiniment sans limite.\n\nSi elle est restée, elle est par défaut à 0.",
     "Public": "Public",
+    "PublicDesc": "Lorsqu'il est désactivé, ce groupe de ressources est réservé aux sessions système telles que les téléversements SFTP. Il est masqué dans les listes de groupes de ressources des utilisateurs ordinaires et la création de sessions ordinaires est refusée, mais il reste visible pour les administrateurs. Ce paramètre n'élargit pas l'accès : les domaines, projets et paires de clés autorisés à utiliser ce groupe de ressources sont déterminés par leurs paramètres d'association respectifs.",
     "PublicStatus": "Statut public",
     "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
     "ResourceGroupCreated": "Groupe de ressources créé avec succès",

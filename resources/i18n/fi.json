@@ -2532,6 +2532,7 @@
     "PendingTimeout": "Odotettaessa aikakatkaisua",
     "PendingTimeoutDesc": "Suurin aika, jonka istunto voi pysyä vireillä olevassa tilassa.\n\nJos se on asetettu 0: een, se odottaa määräämättömäksi sanottuna ilman rajaa.\n\nJos se on jätetty, se oletusarvo on 0.",
     "Public": "Julkinen",
+    "PublicDesc": "Kun tämä on pois käytöstä, resurssiryhmä on varattu järjestelmäistunnoille, kuten SFTP-latauksille. Se piilotetaan tavallisten käyttäjien resurssiryhmäluetteloista ja tavallisten istuntojen luonti hylätään, mutta se pysyy näkyvissä järjestelmänvalvojille. Tämä asetus ei laajenna käyttöoikeuksia: se, mitkä toimialueet, projektit ja avainparit voivat käyttää tätä resurssiryhmää, määräytyy niiden omien liitosasetusten perusteella.",
     "PublicStatus": "Julkinen asema",
     "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
     "ResourceGroupCreated": "Resurssiryhmä luotu onnistuneesti",

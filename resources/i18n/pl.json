@@ -2534,6 +2534,7 @@
     "PendingTimeout": "Oczekujący limit czasu",
     "PendingTimeoutDesc": "Maksymalny czas sesji może pozostać w stanie oczekiwanym.\n\nJeśli zostanie ustawiony na 0, będzie czekać na czas bez ograniczeń.\n\nJeśli pozostanie unset, domyślnie 0.",
     "Public": "Publiczny",
+    "PublicDesc": "Po wyłączeniu ta grupa zasobów jest zarezerwowana dla sesji systemowych, takich jak przesyłanie przez SFTP. Jest ukryta na listach grup zasobów zwykłych użytkowników, a tworzenie zwykłych sesji jest odrzucane, ale pozostaje widoczna dla administratorów. To ustawienie nie rozszerza dostępu: o tym, które domeny, projekty i pary kluczy mogą korzystać z tej grupy zasobów, decydują ich odpowiednie ustawienia powiązań.",
     "PublicStatus": "Status publiczny",
     "ResourceGroupAlreadyExist": "Grupa zasobów o tej samej nazwie już istnieje.",
     "ResourceGroupCreated": "Pomyślnie utworzono grupę zasobów",

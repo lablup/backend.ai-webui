@@ -2534,6 +2534,7 @@
     "PendingTimeout": "Aguardando tempo limite",
     "PendingTimeoutDesc": "Tempo máximo Uma sessão pode permanecer no estado pendente.\n\nSe definido como 0, ele esperará indefinidamente sem um limite.\n\nSe deixado sem serem definidos, é padrão para 0.",
     "Public": "Público",
+    "PublicDesc": "Quando desativado, este grupo de recursos fica reservado para sessões do sistema, como carregamentos por SFTP. É ocultado das listas de grupos de recursos dos utilizadores comuns e a criação de sessões comuns é rejeitada, mas continua visível para os administradores. Esta definição não alarga o acesso: quais os domínios, projetos e pares de chaves que podem usar este grupo de recursos é decidido pelas respetivas definições de associação.",
     "PublicStatus": "Estado público",
     "ResourceGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome.",
     "ResourceGroupCreated": "Grupo de recursos criado com sucesso",

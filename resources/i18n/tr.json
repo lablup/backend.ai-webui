@@ -2532,6 +2532,7 @@
     "PendingTimeout": "Bekleyen zaman aşımı",
     "PendingTimeoutDesc": "Maksimum Süre Bir oturum bekleyen durumda kalabilir.\n\n0 olarak ayarlanırsa, sınırsız süresiz olarak bekleyecektir.\n\nSet kalmazsa, varsayılan 0 olarakdır.",
     "Public": "Kamu",
+    "PublicDesc": "Devre dışı bırakıldığında bu kaynak grubu, SFTP yüklemeleri gibi sistem oturumlarına ayrılır. Normal kullanıcıların kaynak grubu listelerinden gizlenir ve normal oturum oluşturma reddedilir, ancak yöneticiler için görünür kalır. Bu ayar erişimi genişletmez: hangi etki alanlarının, projelerin ve anahtar çiftlerinin bu kaynak grubunu kullanabileceği, ilgili ilişkilendirme ayarlarıyla belirlenir.",
     "PublicStatus": "Kamu Statüsü",
     "ResourceGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten var.",
     "ResourceGroupCreated": "Kaynak grubu başarıyla oluşturuldu",

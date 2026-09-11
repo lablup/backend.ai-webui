@@ -98,6 +98,7 @@
         "resourceGroup.PendingTimeout",
         "resourceGroup.PendingTimeoutDesc",
         "resourceGroup.Public",
+        "resourceGroup.PublicDesc",
         "resourceGroup.ResourceGroupCreated",
         "resourceGroup.ResourceGroupDeleted",
         "resourceGroup.ResourceGroupDetail",
