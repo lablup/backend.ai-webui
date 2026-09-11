@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Admin Features" />
   <meta name="twitter:description" content="Logging in with an admin account adds an Admin Settings menu at the top of the sidebar." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-09-08T04:37:06.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-09-10T12:26:42.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (09dcdfd)">v26.9.0-alpha.0 (09dcdfd)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (11fe8aa)">v26.9.0-alpha.0 (11fe8aa)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -626,14 +626,13 @@ Depending on the system settings, project folders may not be allowed.</p>
 
 
 <p data-bai-block="154">First, log in with an admin account and create a project folder. After moving to
-the Data page, click <code>Create Folder</code> to open the folder creation dialog.
-Enter the folder name, set the Type to Project. When the type is set to Project,
-it will be automatically assigned to the project selected in the project selector in the header.
-Permission is set to Read-Only.</p>
-<p><figure data-bai-block="155" class="doc-figure"><img src="./images/group_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="674" height="612" /><figcaption>Figure 24.24</figcaption></figure>
+the admin Data page, click <code>Create Folder</code> to open the folder creation dialog.
+Because the admin Data page can create only project folders, the dialog does not show a folder type
+selector.
+In the <strong>Target Project</strong> field at the top of the dialog, choose the project that will own the
+folder, then enter the folder name and set <strong>Mount Permission</strong>.</p>
+<p><figure data-bai-block="155" class="doc-figure"><img src="./images/group_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="1036" /><figcaption>Figure 24.24</figcaption></figure>
 </p>
-<!-- TODO: Re-capture group_folder_creation.png — shows the old UI. -->
-
 <p data-bai-block="156">After confirming that the folder has been created, log in with the User B&#39;s
 account and check that the project folder just created on the Data &amp; Storage page
 is displayed without any invitation procedure. You can see that R (Read Only) is
@@ -1103,7 +1102,7 @@ to hide the columns you do not need; your choice is kept per browser.</p>
 clusters with many policies. Click a column header to change the sort order, and
 use the pager below the table to move through the results.</p>
 <p data-bai-block="398">To create a new user resource policy, click the <strong>Create</strong> button.</p>
-<p><figure data-bai-block="399" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1636" /><figcaption>Figure 24.45</figcaption></figure>
+<p><figure data-bai-block="399" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1432" /><figcaption>Figure 24.45</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="400">Name: The name of the user resource policy.</li>
@@ -1205,208 +1204,203 @@ version 26.4.0 or later.</p>
 </div></div>
 
 
-<p data-bai-block="433">On the <strong>Sessions</strong> tab, the property filter offers the following conditions:</p>
-<ul>
-<li data-bai-block="434"><strong>Project</strong>: Choose the project from a searchable dropdown of the projects on this cluster. Because the
-project is picked from the list, you do not have to look up its identifier; the resulting filter tag
-shows the project&#39;s name.</li>
-<li data-bai-block="435"><strong>Session Name</strong>, <strong>Resource Group</strong>, <strong>Agent</strong>, <strong>Owner Email</strong>: Narrow the list by text match.</li>
-</ul>
-<p data-bai-block="436">When the experimental <strong>Session resource grid view</strong> feature is enabled in User Settings (refer to the
+<p data-bai-block="433">On the <strong>Sessions</strong> tab, you can use the property filter to narrow the list, including by <strong>Session ID</strong>
+when needed.</p>
+<p data-bai-block="434">When the experimental <strong>Session resource grid view</strong> feature is enabled in User Settings (refer to the
 <a href="./user_settings.html#experimental-features">Experimental features</a> section), the <strong>Sessions</strong> tab shows a <strong>View mode</strong>
 control next to the refresh button that switches between <strong>Table</strong> and <strong>Grid</strong>. The grid displays one
 cell per session, colored by that session&#39;s live resource utilization. For a description of the grid&#39;s
 own controls, refer to the <a href="./sessions_all.html#session-list-view-and-refresh">Session List View</a> section.</p>
 <p><a id="fair-share-scheduler"></a></p>
-<h2 data-bai-block="437" id="admin_menu-fair-share-scheduler">Fair share scheduler<a class="hash-link" href="#admin_menu-fair-share-scheduler" aria-label="Direct link to Fair share scheduler">#</a></h2>
-<p data-bai-block="438">The Fair Share Scheduler page is available in the
+<h2 data-bai-block="435" id="admin_menu-fair-share-scheduler">Fair share scheduler<a class="hash-link" href="#admin_menu-fair-share-scheduler" aria-label="Direct link to Fair share scheduler">#</a></h2>
+<p data-bai-block="436">The Fair Share Scheduler page is available in the
 <strong>Admin Settings</strong> menu. This feature allows administrators to manage fair share scheduling weights
 across a hierarchical structure of resource groups, domains, projects, and users.</p>
-<p data-bai-block="439">Fair share scheduling allocates compute resources based on historical usage patterns,
+<p data-bai-block="437">Fair share scheduling allocates compute resources based on historical usage patterns,
 ensuring that resources are distributed fairly among users. Users who have consumed fewer
 resources in the past receive higher scheduling priority, while those who have used more
 resources are given lower priority. Administrators can fine-tune this behavior by adjusting
 weights at each level of the hierarchy.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="440" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="438" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="441">The Fair Share Scheduler is only available when a resource group&#39;s scheduler type is set
+<p data-bai-block="439">The Fair Share Scheduler is only available when a resource group&#39;s scheduler type is set
 to <code>FAIR_SHARE</code>. To configure the scheduler type for a resource group, refer to the
 <a href="#manage-resource-group">Manage resource group</a> section.</p>
 </div></div>
 
 
-<p data-bai-block="442">To access this feature, click the <strong>Scheduler</strong> menu item under <strong>Admin Settings</strong> in the sidebar.
+<p data-bai-block="440">To access this feature, click the <strong>Scheduler</strong> menu item under <strong>Admin Settings</strong> in the sidebar.
 The page displays a Fair Share Setting tab with a 4-step drill-down interface.</p>
-<p><figure data-bai-block="443" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>Figure 24.49</figcaption></figure>
+<p><figure data-bai-block="441" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>Figure 24.49</figcaption></figure>
 </p>
-<p data-bai-block="444">The page is organized into four hierarchical steps:</p>
+<p data-bai-block="442">The page is organized into four hierarchical steps:</p>
 <ol>
-<li data-bai-block="445"><strong>Resource Group</strong>: Configure core fair share parameters for each resource group</li>
-<li data-bai-block="446"><strong>Domain</strong>: Set weights for domains within a resource group</li>
-<li data-bai-block="447"><strong>Project</strong>: Set weights for projects within a domain</li>
-<li data-bai-block="448"><strong>User</strong>: Set weights for individual users within a project</li>
+<li data-bai-block="443"><strong>Resource Group</strong>: Configure core fair share parameters for each resource group</li>
+<li data-bai-block="444"><strong>Domain</strong>: Set weights for domains within a resource group</li>
+<li data-bai-block="445"><strong>Project</strong>: Set weights for projects within a domain</li>
+<li data-bai-block="446"><strong>User</strong>: Set weights for individual users within a project</li>
 </ol>
-<p data-bai-block="449">A step indicator bar at the top of the page shows your current position in the hierarchy.
+<p data-bai-block="447">A step indicator bar at the top of the page shows your current position in the hierarchy.
 Completed steps display the name of the selected item. You can click on any completed step
 to navigate back to that level.</p>
-<p><figure data-bai-block="450" class="doc-figure"><img src="./images/fair_share_step_indicator.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="54" /><figcaption>Figure 24.50</figcaption></figure>
+<p><figure data-bai-block="448" class="doc-figure"><img src="./images/fair_share_step_indicator.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="54" /><figcaption>Figure 24.50</figcaption></figure>
 </p>
-<p data-bai-block="451">If the selected resource group does not have its scheduler type set to <code>FAIR_SHARE</code>, a
+<p data-bai-block="449">If the selected resource group does not have its scheduler type set to <code>FAIR_SHARE</code>, a
 warning alert is displayed indicating that the Fair Share Scheduler is not enabled for that
 resource group.</p>
-<p><figure data-bai-block="452" class="doc-figure"><img src="./images/fair_share_scheduler_warning.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="40" /><figcaption>Figure 24.51</figcaption></figure>
+<p><figure data-bai-block="450" class="doc-figure"><img src="./images/fair_share_scheduler_warning.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="40" /><figcaption>Figure 24.51</figcaption></figure>
 </p>
 <p><a id="fair-share-resource-group-warnings"></a></p>
-<p data-bai-block="453">The page also warns when the entity you are looking at cannot actually use the resource group you drilled
+<p data-bai-block="451">The page also warns when the entity you are looking at cannot actually use the resource group you drilled
 into. Because the check is made against the domain or project you selected on the way down, the warning
 follows your current position in the hierarchy instead of reflecting a stale selection:</p>
 <ul>
-<li data-bai-block="454">On the <strong>Domain</strong> step, a warning icon appears next to any domain for which the selected resource group
+<li data-bai-block="452">On the <strong>Domain</strong> step, a warning icon appears next to any domain for which the selected resource group
 is not allowed. Hovering the icon explains that the group may still be allowed in the domain&#39;s
 sub-projects.</li>
-<li data-bai-block="455">On the <strong>Project</strong> step, the same icon marks projects for which the selected resource group is not
+<li data-bai-block="453">On the <strong>Project</strong> step, the same icon marks projects for which the selected resource group is not
 allowed.</li>
-<li data-bai-block="456">On the <strong>User</strong> step, a warning states that users under the selected project cannot use the selected
+<li data-bai-block="454">On the <strong>User</strong> step, a warning states that users under the selected project cannot use the selected
 resource group.</li>
 </ul>
-<p data-bai-block="457">The matching alert is repeated inside the weight setting modal, so the mismatch is visible at the moment
+<p data-bai-block="455">The matching alert is repeated inside the weight setting modal, so the mismatch is visible at the moment
 you edit a weight rather than only in the table.</p>
-<p data-bai-block="458">At each step, the following common features are available:</p>
+<p data-bai-block="456">At each step, the following common features are available:</p>
 <ul>
-<li data-bai-block="459"><strong>Pagination</strong>: Navigate through results with configurable page size.</li>
+<li data-bai-block="457"><strong>Pagination</strong>: Navigate through results with configurable page size.</li>
 </ul>
-<h3 data-bai-block="460" id="admin_menu-resource-group">Resource group<a class="hash-link" href="#admin_menu-resource-group" aria-label="Direct link to Resource group">#</a></h3>
-<p data-bai-block="461">The Resource Group step displays a table of all resource groups with their fair share configuration.</p>
-<p><figure data-bai-block="462" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>Figure 24.52</figcaption></figure>
+<h3 data-bai-block="458" id="admin_menu-resource-group">Resource group<a class="hash-link" href="#admin_menu-resource-group" aria-label="Direct link to Resource group">#</a></h3>
+<p data-bai-block="459">The Resource Group step displays a table of all resource groups with their fair share configuration.</p>
+<p><figure data-bai-block="460" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="420" /><figcaption>Figure 24.52</figcaption></figure>
 </p>
-<p data-bai-block="463">The table includes the following columns:</p>
+<p data-bai-block="461">The table includes the following columns:</p>
 <ul>
-<li data-bai-block="464"><strong>Name</strong>: The resource group name. Click the name to drill into the domain-level settings for that resource group.</li>
-<li data-bai-block="465"><strong>Control</strong>: A settings (gear) button that opens the Resource Group Fair Share Settings modal.</li>
-<li data-bai-block="466"><strong>Allocation</strong>: Resource usage showing used/capacity for each resource type allocated to the resource group (e.g., CPU, Memory, CUDA GPU).</li>
-<li data-bai-block="467"><strong>Resource Weight</strong>: Per-resource-type weights. Displays &quot;default&quot; if using the default weight.</li>
-<li data-bai-block="468"><strong>Default Weight</strong>: The fallback weight value for domains, projects, and users without a specified weight.</li>
-<li data-bai-block="469"><strong>Decay Unit</strong>: The period (in days) for aggregating usage.</li>
-<li data-bai-block="470"><strong>Half Life</strong>: The period (in days) over which the usage reflection rate decreases by half.</li>
-<li data-bai-block="471"><strong>Lookback</strong>: The range (in days) of usage history reflected in calculations.</li>
+<li data-bai-block="462"><strong>Name</strong>: The resource group name. Click the name to drill into the domain-level settings for that resource group.</li>
+<li data-bai-block="463"><strong>Control</strong>: A settings (gear) button that opens the Resource Group Fair Share Settings modal.</li>
+<li data-bai-block="464"><strong>Allocation</strong>: Resource usage showing used/capacity for each resource type allocated to the resource group (e.g., CPU, Memory, CUDA GPU).</li>
+<li data-bai-block="465"><strong>Resource Weight</strong>: Per-resource-type weights. Displays &quot;default&quot; if using the default weight.</li>
+<li data-bai-block="466"><strong>Default Weight</strong>: The fallback weight value for domains, projects, and users without a specified weight.</li>
+<li data-bai-block="467"><strong>Decay Unit</strong>: The period (in days) for aggregating usage.</li>
+<li data-bai-block="468"><strong>Half Life</strong>: The period (in days) over which the usage reflection rate decreases by half.</li>
+<li data-bai-block="469"><strong>Lookback</strong>: The range (in days) of usage history reflected in calculations.</li>
 </ul>
-<h3 data-bai-block="472" id="admin_menu-resource-group-fair-share-settings">Resource group fair share settings<a class="hash-link" href="#admin_menu-resource-group-fair-share-settings" aria-label="Direct link to Resource group fair share settings">#</a></h3>
-<p data-bai-block="473">Click the settings (gear) button in the Control column of a resource group to open the
+<h3 data-bai-block="470" id="admin_menu-resource-group-fair-share-settings">Resource group fair share settings<a class="hash-link" href="#admin_menu-resource-group-fair-share-settings" aria-label="Direct link to Resource group fair share settings">#</a></h3>
+<p data-bai-block="471">Click the settings (gear) button in the Control column of a resource group to open the
 Fair Share Settings modal.</p>
-<p><figure data-bai-block="474" class="doc-figure"><img src="./images/fair_share_resource_group_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="726" /><figcaption>Figure 24.53</figcaption></figure>
+<p><figure data-bai-block="472" class="doc-figure"><img src="./images/fair_share_resource_group_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="726" /><figcaption>Figure 24.53</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="475" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="473" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="476">Changes are not immediately reflected in Fair Share calculations and may take
+<p data-bai-block="474">Changes are not immediately reflected in Fair Share calculations and may take
 approximately 5 minutes due to the calculation cycle.</p>
 </div></div>
 
 
-<p data-bai-block="477">The modal contains the following fields:</p>
+<p data-bai-block="475">The modal contains the following fields:</p>
 <ul>
-<li data-bai-block="478"><strong>Resource Group</strong>: Read-only field showing the resource group name.</li>
-<li data-bai-block="479"><strong>Half Life</strong>: The period over which the usage reflection rate decreases by half, specified in days (minimum 1). For example, if set to 7 days, usage from 7 days ago is calculated at 50%, and usage from 14 days ago at 25%. It is recommended to set this as a multiple of the decay unit.</li>
-<li data-bai-block="480"><strong>Lookback</strong>: The range of usage history reflected in Fair Share calculations, specified in days (minimum 1). Usage prior to this period is excluded from calculations. It is recommended to set this as a multiple of the half life.</li>
-<li data-bai-block="481"><strong>Default Weight</strong>: The default value applied to domains, projects, and users without a specified weight (minimum 1, step 0.1).</li>
-<li data-bai-block="482"><strong>Resource Weights</strong>: Per-resource-type weights (e.g., CPU, Memory, GPU), each with a minimum value of 1 and step 0.1. This section is only displayed if resource weights exist for the resource group.</li>
+<li data-bai-block="476"><strong>Resource Group</strong>: Read-only field showing the resource group name.</li>
+<li data-bai-block="477"><strong>Half Life</strong>: The period over which the usage reflection rate decreases by half, specified in days (minimum 1). For example, if set to 7 days, usage from 7 days ago is calculated at 50%, and usage from 14 days ago at 25%. It is recommended to set this as a multiple of the decay unit.</li>
+<li data-bai-block="478"><strong>Lookback</strong>: The range of usage history reflected in Fair Share calculations, specified in days (minimum 1). Usage prior to this period is excluded from calculations. It is recommended to set this as a multiple of the half life.</li>
+<li data-bai-block="479"><strong>Default Weight</strong>: The default value applied to domains, projects, and users without a specified weight (minimum 1, step 0.1).</li>
+<li data-bai-block="480"><strong>Resource Weights</strong>: Per-resource-type weights (e.g., CPU, Memory, GPU), each with a minimum value of 1 and step 0.1. This section is only displayed if resource weights exist for the resource group.</li>
 </ul>
-<h3 data-bai-block="483" id="admin_menu-domain">Domain<a class="hash-link" href="#admin_menu-domain" aria-label="Direct link to Domain">#</a></h3>
-<p data-bai-block="484">After selecting a resource group, the Domain step displays a table of domains with their
+<h3 data-bai-block="481" id="admin_menu-domain">Domain<a class="hash-link" href="#admin_menu-domain" aria-label="Direct link to Domain">#</a></h3>
+<p data-bai-block="482">After selecting a resource group, the Domain step displays a table of domains with their
 fair share weights and usage within that resource group.</p>
-<p><figure data-bai-block="485" class="doc-figure"><img src="./images/fair_share_domain_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="468" /><figcaption>Figure 24.54</figcaption></figure>
+<p><figure data-bai-block="483" class="doc-figure"><img src="./images/fair_share_domain_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="468" /><figcaption>Figure 24.54</figcaption></figure>
 </p>
-<p data-bai-block="486">The table includes the following columns:</p>
+<p data-bai-block="484">The table includes the following columns:</p>
 <ul>
-<li data-bai-block="487"><strong>Name</strong>: The domain name. Click the name to drill into project-level settings for that domain.</li>
-<li data-bai-block="488"><strong>Control</strong>: A settings (gear) button that opens the weight setting modal for this domain.</li>
-<li data-bai-block="489"><strong>Weight</strong>: The current weight value. Displays &quot;default&quot; if using the default weight.</li>
-<li data-bai-block="490"><strong>Fair Share Factor</strong>: The scheduling priority calculated by the scheduler. Higher values indicate higher priority.</li>
-<li data-bai-block="491"><strong>Resource Allocation</strong>: Average daily decayed resource usage per resource type (CPU, Memory, GPU / Day).</li>
-<li data-bai-block="492"><strong>Modified At</strong>: The last modification timestamp.</li>
-<li data-bai-block="493"><strong>Created At</strong>: The creation timestamp.</li>
+<li data-bai-block="485"><strong>Name</strong>: The domain name. Click the name to drill into project-level settings for that domain.</li>
+<li data-bai-block="486"><strong>Control</strong>: A settings (gear) button that opens the weight setting modal for this domain.</li>
+<li data-bai-block="487"><strong>Weight</strong>: The current weight value. Displays &quot;default&quot; if using the default weight.</li>
+<li data-bai-block="488"><strong>Fair Share Factor</strong>: The scheduling priority calculated by the scheduler. Higher values indicate higher priority.</li>
+<li data-bai-block="489"><strong>Resource Allocation</strong>: Average daily decayed resource usage per resource type (CPU, Memory, GPU / Day).</li>
+<li data-bai-block="490"><strong>Modified At</strong>: The last modification timestamp.</li>
+<li data-bai-block="491"><strong>Created At</strong>: The creation timestamp.</li>
 </ul>
-<p data-bai-block="494">You can select multiple rows using the checkboxes on the left side of the table. When rows
+<p data-bai-block="492">You can select multiple rows using the checkboxes on the left side of the table. When rows
 are selected, two additional buttons appear:</p>
 <ul>
-<li data-bai-block="495"><strong>Usage Graph</strong> (chart icon): Opens the Usage History modal for the selected items.</li>
-<li data-bai-block="496"><strong>Bulk Edit</strong> (gear icon): Opens the weight setting modal to edit weights for all selected items at once.</li>
+<li data-bai-block="493"><strong>Usage Graph</strong> (chart icon): Opens the Usage History modal for the selected items.</li>
+<li data-bai-block="494"><strong>Bulk Edit</strong> (gear icon): Opens the weight setting modal to edit weights for all selected items at once.</li>
 </ul>
-<h3 data-bai-block="497" id="admin_menu-project">Project<a class="hash-link" href="#admin_menu-project" aria-label="Direct link to Project">#</a></h3>
-<p data-bai-block="498">After selecting a domain, the Project step displays a table of projects with the same
+<h3 data-bai-block="495" id="admin_menu-project">Project<a class="hash-link" href="#admin_menu-project" aria-label="Direct link to Project">#</a></h3>
+<p data-bai-block="496">After selecting a domain, the Project step displays a table of projects with the same
 column structure as the Domain step. Click a project name to drill into the User step.</p>
-<p><figure data-bai-block="499" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="534" /><figcaption>Figure 24.55</figcaption></figure>
+<p><figure data-bai-block="497" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="534" /><figcaption>Figure 24.55</figcaption></figure>
 </p>
-<p data-bai-block="500">The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.</p>
-<h3 data-bai-block="501" id="admin_menu-user">User<a class="hash-link" href="#admin_menu-user" aria-label="Direct link to User">#</a></h3>
-<p data-bai-block="502">After selecting a project, the User step displays a table of individual users with their
+<p data-bai-block="498">The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.</p>
+<h3 data-bai-block="499" id="admin_menu-user">User<a class="hash-link" href="#admin_menu-user" aria-label="Direct link to User">#</a></h3>
+<p data-bai-block="500">After selecting a project, the User step displays a table of individual users with their
 fair share weights and usage.</p>
-<p><figure data-bai-block="503" class="doc-figure"><img src="./images/fair_share_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="732" /><figcaption>Figure 24.56</figcaption></figure>
+<p><figure data-bai-block="501" class="doc-figure"><img src="./images/fair_share_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="732" /><figcaption>Figure 24.56</figcaption></figure>
 </p>
-<p data-bai-block="504">The table includes the following columns:</p>
+<p data-bai-block="502">The table includes the following columns:</p>
 <ul>
-<li data-bai-block="505"><strong>Email</strong>: The user&#39;s email address.</li>
-<li data-bai-block="506"><strong>Name</strong>: The user&#39;s name.</li>
-<li data-bai-block="507"><strong>Control</strong>: A settings (gear) button that opens the weight setting modal for this user.</li>
-<li data-bai-block="508"><strong>Weight</strong>: The current weight value. Displays &quot;default&quot; if using the default weight.</li>
-<li data-bai-block="509"><strong>Fair Share Factor</strong>: The scheduling priority calculated by the scheduler.</li>
-<li data-bai-block="510"><strong>Resource Allocation</strong>: Average daily decayed resource usage per resource type.</li>
-<li data-bai-block="511"><strong>Modified At</strong>: The last modification timestamp.</li>
-<li data-bai-block="512"><strong>Created At</strong>: The creation timestamp.</li>
+<li data-bai-block="503"><strong>Email</strong>: The user&#39;s email address.</li>
+<li data-bai-block="504"><strong>Name</strong>: The user&#39;s name.</li>
+<li data-bai-block="505"><strong>Control</strong>: A settings (gear) button that opens the weight setting modal for this user.</li>
+<li data-bai-block="506"><strong>Weight</strong>: The current weight value. Displays &quot;default&quot; if using the default weight.</li>
+<li data-bai-block="507"><strong>Fair Share Factor</strong>: The scheduling priority calculated by the scheduler.</li>
+<li data-bai-block="508"><strong>Resource Allocation</strong>: Average daily decayed resource usage per resource type.</li>
+<li data-bai-block="509"><strong>Modified At</strong>: The last modification timestamp.</li>
+<li data-bai-block="510"><strong>Created At</strong>: The creation timestamp.</li>
 </ul>
-<p data-bai-block="513">The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.</p>
-<h3 data-bai-block="514" id="admin_menu-editing-fair-share-weights">Editing fair share weights<a class="hash-link" href="#admin_menu-editing-fair-share-weights" aria-label="Direct link to Editing fair share weights">#</a></h3>
-<p data-bai-block="515">To edit the fair share weight for a domain, project, or user, click the settings (gear) button
+<p data-bai-block="511">The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.</p>
+<h3 data-bai-block="512" id="admin_menu-editing-fair-share-weights">Editing fair share weights<a class="hash-link" href="#admin_menu-editing-fair-share-weights" aria-label="Direct link to Editing fair share weights">#</a></h3>
+<p data-bai-block="513">To edit the fair share weight for a domain, project, or user, click the settings (gear) button
 in the Control column of the desired row. This opens the weight setting modal.</p>
-<p><figure data-bai-block="516" class="doc-figure"><img src="./images/fair_share_weight_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="524" /><figcaption>Figure 24.57</figcaption></figure>
+<p><figure data-bai-block="514" class="doc-figure"><img src="./images/fair_share_weight_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="524" /><figcaption>Figure 24.57</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="517" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="515" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="518">Changes are not immediately reflected in Fair Share calculations and may take
+<p data-bai-block="516">Changes are not immediately reflected in Fair Share calculations and may take
 approximately 5 minutes due to the calculation cycle.</p>
 </div></div>
 
 
-<p data-bai-block="519">In single-edit mode, the modal displays the entity name (read-only) and a weight input field.</p>
+<p data-bai-block="517">In single-edit mode, the modal displays the entity name (read-only) and a weight input field.</p>
 <ul>
-<li data-bai-block="520"><strong>Weight</strong>: The multiplier that determines Fair Share scheduling priority. Higher weight results in higher priority. The default value is &quot;1.0&quot;. A weight of &quot;2.0&quot; has twice the priority of &quot;1.0&quot;. The minimum value is 1 with a step of 0.1.</li>
+<li data-bai-block="518"><strong>Weight</strong>: The multiplier that determines Fair Share scheduling priority. Higher weight results in higher priority. The default value is &quot;1.0&quot;. A weight of &quot;2.0&quot; has twice the priority of &quot;1.0&quot;. The minimum value is 1 with a step of 0.1.</li>
 </ul>
-<p data-bai-block="521">To edit weights for multiple items at once, select the desired rows using the checkboxes in the
+<p data-bai-block="519">To edit weights for multiple items at once, select the desired rows using the checkboxes in the
 table, then click the Bulk Edit (gear icon) button. In bulk-edit mode, the modal displays a
 tag list of all selected entities and a single weight input that will be applied to all of them.</p>
-<p><figure data-bai-block="522" class="doc-figure"><img src="./images/fair_share_weight_bulk_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="524" /><figcaption>Figure 24.58</figcaption></figure>
+<p><figure data-bai-block="520" class="doc-figure"><img src="./images/fair_share_weight_bulk_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="524" /><figcaption>Figure 24.58</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="523" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="521" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="524">If the selected resource group does not have its scheduler type set to <code>FAIR_SHARE</code>,
+<p data-bai-block="522">If the selected resource group does not have its scheduler type set to <code>FAIR_SHARE</code>,
 a warning alert is displayed in the modal.</p>
 </div></div>
 
 
-<h3 data-bai-block="525" id="admin_menu-viewing-usage-history">Viewing usage history<a class="hash-link" href="#admin_menu-viewing-usage-history" aria-label="Direct link to Viewing usage history">#</a></h3>
-<p data-bai-block="526">To view the usage history for domains, projects, or users, select the desired rows using
+<h3 data-bai-block="523" id="admin_menu-viewing-usage-history">Viewing usage history<a class="hash-link" href="#admin_menu-viewing-usage-history" aria-label="Direct link to Viewing usage history">#</a></h3>
+<p data-bai-block="524">To view the usage history for domains, projects, or users, select the desired rows using
 the checkboxes in the table, then click the Usage Graph (chart icon) button. This opens
 the Usage History modal.</p>
-<p><figure data-bai-block="527" class="doc-figure"><img src="./images/fair_share_usage_bucket_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="1260" /><figcaption>Figure 24.59</figcaption></figure>
+<p><figure data-bai-block="525" class="doc-figure"><img src="./images/fair_share_usage_bucket_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="1260" /><figcaption>Figure 24.59</figcaption></figure>
 </p>
-<p data-bai-block="528">The modal displays the following:</p>
+<p data-bai-block="526">The modal displays the following:</p>
 <ul>
-<li data-bai-block="529"><strong>Date range picker</strong>: Select a date range for the usage history. Presets are available for Last 7 Days, Last 30 Days, and Last 90 Days.</li>
-<li data-bai-block="530"><strong>Refresh button</strong>: Manually refresh the usage data.</li>
-<li data-bai-block="531"><strong>Context information</strong>: Shows the resource group, domain, and project (depending on the current step).</li>
-<li data-bai-block="532"><strong>Selected entities</strong>: Displayed as tags showing the names of the selected items.</li>
-<li data-bai-block="533"><strong>Usage chart</strong>: A chart showing the average daily resource usage over the selected period.</li>
+<li data-bai-block="527"><strong>Date range picker</strong>: Select a date range for the usage history. Presets are available for Last 7 Days, Last 30 Days, and Last 90 Days.</li>
+<li data-bai-block="528"><strong>Refresh button</strong>: Manually refresh the usage data.</li>
+<li data-bai-block="529"><strong>Context information</strong>: Shows the resource group, domain, and project (depending on the current step).</li>
+<li data-bai-block="530"><strong>Selected entities</strong>: Displayed as tags showing the names of the selected items.</li>
+<li data-bai-block="531"><strong>Usage chart</strong>: A chart showing the average daily resource usage over the selected period.</li>
 </ul>
 <p><a id="manage-images"></a></p>
-<h2 data-bai-block="534" id="admin_menu-manage-images">Manage images<a class="hash-link" href="#admin_menu-manage-images" aria-label="Direct link to Manage images">#</a></h2>
-<p data-bai-block="535">Admins can manage images, which are used in creating a compute session, in the
+<h2 data-bai-block="532" id="admin_menu-manage-images">Manage images<a class="hash-link" href="#admin_menu-manage-images" aria-label="Direct link to Manage images">#</a></h2>
+<p data-bai-block="533">Admins can manage images, which are used in creating a compute session, in the
 Images tab of the Environments page. In the tab, meta information of all images
 currently in the Backend.AI server is displayed. You can check information such
 as registry, architecture, namespace, image name, digest, and minimum
@@ -1415,39 +1409,39 @@ nodes, there will be an <code>installed</code> tag in the Status column. Private
 additionally show a <code>Private</code> tag in the Status column, and a private image
 cannot be selected in the session launcher even when it is installed.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="536" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="534" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="537">The feature to install images by selecting specific agents is currently
+<p data-bai-block="535">The feature to install images by selecting specific agents is currently
 under development.</p>
 </div></div>
 
 
-<p><figure data-bai-block="538" class="doc-figure"><img src="./images/image_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.60</figcaption></figure>
+<p><figure data-bai-block="536" class="doc-figure"><img src="./images/image_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.60</figcaption></figure>
 </p>
-<p data-bai-block="539">The image list displays additional columns for more detailed image information:</p>
+<p data-bai-block="537">The image list displays additional columns for more detailed image information:</p>
 <ul>
-<li data-bai-block="540"><strong>Architecture</strong>: The CPU architecture of the image (e.g., x86_64, aarch64).</li>
-<li data-bai-block="541"><strong>Namespace</strong>: The namespace of the image within the registry.</li>
-<li data-bai-block="542"><strong>Base Image Name</strong>: The base name of the image, with alias tags for easier identification.</li>
-<li data-bai-block="543"><strong>Version</strong>: The version tag of the image.</li>
-<li data-bai-block="544"><strong>Tags</strong>: Detailed tags associated with the image, displayed as double tags with aliases.</li>
+<li data-bai-block="538"><strong>Architecture</strong>: The CPU architecture of the image (e.g., x86_64, aarch64).</li>
+<li data-bai-block="539"><strong>Namespace</strong>: The namespace of the image within the registry.</li>
+<li data-bai-block="540"><strong>Base Image Name</strong>: The base name of the image, with alias tags for easier identification.</li>
+<li data-bai-block="541"><strong>Version</strong>: The version tag of the image.</li>
+<li data-bai-block="542"><strong>Tags</strong>: Detailed tags associated with the image, displayed as double tags with aliases.</li>
 </ul>
-<p data-bai-block="545">You can select multiple uninstalled images and click the <strong>Install Image</strong> button to install them in
+<p data-bai-block="543">You can select multiple uninstalled images and click the <strong>Install Image</strong> button to install them in
 bulk. Installing an image enqueues a short-lived session that pulls the image, so the dialog asks
 where that session runs:</p>
 <ul>
-<li data-bai-block="546"><strong>Install Session Project</strong>: The project the install session runs in. The session is created in this
+<li data-bai-block="544"><strong>Install Session Project</strong>: The project the install session runs in. The session is created in this
 project as your own session, so only projects you belong to are listed.</li>
-<li data-bai-block="547"><strong>Target Resource Group</strong>: The resource group the image is pulled into. Only resource groups
+<li data-bai-block="545"><strong>Target Resource Group</strong>: The resource group the image is pulled into. Only resource groups
 accessible from the selected project are listed.</li>
 </ul>
-<p data-bai-block="548">Both fields are required, and the dialog&#39;s own button — which reads <strong>Install</strong> — stays disabled until
+<p data-bai-block="546">Both fields are required, and the dialog&#39;s own button — which reads <strong>Install</strong> — stays disabled until
 you have chosen a project and a resource group. Images in your selection that are already installed
 are excluded from the request.</p>
-<p><figure data-bai-block="549" class="doc-figure"><img src="./images/image_install_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="828" /><figcaption>Figure 24.61</figcaption></figure>
+<p><figure data-bai-block="547" class="doc-figure"><img src="./images/image_install_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="828" /><figcaption>Figure 24.61</figcaption></figure>
 </p>
-<p data-bai-block="550">You can change the minimum resource requirements for each image by clicking the
+<p data-bai-block="548">You can change the minimum resource requirements for each image by clicking the
 <strong>Edit</strong> (pencil) action in the <code>Controls</code> panel, which opens the
 <strong>Edit Minimum Image Resource Limit</strong> dialog. Each image has hardware and resource
 requirements for minimal operation. (For example, for GPU-only images, there
@@ -1456,126 +1450,126 @@ amount is provided as embedded in the image&#39;s metadata. If an attempt is mad
 create a compute session with a resource that is less than the amount of
 resources specified in each image, the request is automatically adjusted to the
 minimum resource requirements for the image and then generated, not cancelled.</p>
-<p><figure data-bai-block="551" class="doc-figure"><img src="./images/update_image_resource_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="844" /><figcaption>Figure 24.62</figcaption></figure>
+<p><figure data-bai-block="549" class="doc-figure"><img src="./images/update_image_resource_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="844" /><figcaption>Figure 24.62</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="552" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="550" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="553">The minimum resource requirements included in the image metadata are values
+<p data-bai-block="551">The minimum resource requirements included in the image metadata are values
 that have been tested and determined, so unless you have a clear reason to
 change the minimum resource amounts, it is recommended to keep the default values.</p>
 </div></div>
 
 
-<p data-bai-block="554">Additionally, you can add or modify the supported apps for each image by clicking the <code>Apps</code> icon located in the Controls column.
+<p data-bai-block="552">Additionally, you can add or modify the supported apps for each image by clicking the <code>Apps</code> icon located in the Controls column.
 Once you click the icon, the name of the app and its corresponding port number will be displayed accordingly.</p>
-<p><figure data-bai-block="555" class="doc-figure"><img src="./images/manage_app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="1100" /><figcaption>Figure 24.63</figcaption></figure>
+<p><figure data-bai-block="553" class="doc-figure"><img src="./images/manage_app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="1100" /><figcaption>Figure 24.63</figcaption></figure>
 </p>
-<p data-bai-block="556">In this interface, you can add supported custom applications by clicking the <code>+ Add</code> button below. To delete an application, simply click the <code>trash can</code> button on the right side of each row.</p>
+<p data-bai-block="554">In this interface, you can add supported custom applications by clicking the <code>+ Add</code> button below. To delete an application, simply click the <code>trash can</code> button on the right side of each row.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="557" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="555" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
 
 
-<p><figure data-bai-block="558" class="doc-figure"><img src="./images/confirmation_dialog_for_manage_app_change_in_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="736" /><figcaption>Figure 24.64</figcaption></figure>
+<p><figure data-bai-block="556" class="doc-figure"><img src="./images/confirmation_dialog_for_manage_app_change_in_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="736" /><figcaption>Figure 24.64</figcaption></figure>
 </p>
 </div></div>
 
 
 <p><a id="manage-docker-registry"></a></p>
-<h2 data-bai-block="559" id="admin_menu-manage-docker-registry">Manage docker registry<a class="hash-link" href="#admin_menu-manage-docker-registry" aria-label="Direct link to Manage docker registry">#</a></h2>
-<p data-bai-block="560">You can click on the Registries tab in Environments page to see the information
+<h2 data-bai-block="557" id="admin_menu-manage-docker-registry">Manage docker registry<a class="hash-link" href="#admin_menu-manage-docker-registry" aria-label="Direct link to Manage docker registry">#</a></h2>
+<p data-bai-block="558">You can click on the Registries tab in Environments page to see the information
 of the docker registry that are currently connected. <code>cr.backend.ai</code> is
 registered by default, and it is a registry provided by Harbor.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="561" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="559" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="562">In the offline environment, the default registry is not accessible, so
+<p data-bai-block="560">In the offline environment, the default registry is not accessible, so
 click the trash icon on the right to delete it.</p>
 </div></div>
 
 
-<p data-bai-block="563">Click the refresh icon in Controls to update image metadata for Backend.AI from
+<p data-bai-block="561">Click the refresh icon in Controls to update image metadata for Backend.AI from
 the connected registry. Image information which does not have labels for
 Backend.AI among the images stored in the registry is not updated.</p>
-<p><figure data-bai-block="564" class="doc-figure"><img src="./images/image_registries_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.65</figcaption></figure>
+<p><figure data-bai-block="562" class="doc-figure"><img src="./images/image_registries_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.65</figcaption></figure>
 </p>
-<p data-bai-block="565">You can add your own private docker registry by clicking the <strong>Add Registry</strong>
+<p data-bai-block="563">You can add your own private docker registry by clicking the <strong>Add Registry</strong>
 button. The registry creation dialog contains the following fields:</p>
 <ul>
-<li data-bai-block="566"><strong>Registry Name</strong>: A unique name for the registry (up to 50 characters). Must match the prefix used in image names stored in the registry.</li>
-<li data-bai-block="567"><strong>Registry URL</strong>: The URL of the registry. A scheme such as <code>http://</code> or <code>https://</code> must be explicitly included.</li>
-<li data-bai-block="568"><strong>Username</strong>: Optional. Fill in if you have separate authentication settings in the registry.</li>
-<li data-bai-block="569"><strong>Password</strong>: Optional. When editing an existing registry, check the &quot;Change Password&quot; checkbox to modify it.</li>
-<li data-bai-block="570"><strong>Registry Type</strong>: Select the type of registry. Supported types include: <code>docker</code>, <code>harbor</code>, <code>harbor2</code>, <code>github</code>, <code>gitlab</code>, <code>ecr</code>, and <code>ecr-public</code>.</li>
-<li data-bai-block="571"><strong>Project Name</strong>: The project or namespace in the registry (required). Use the full path including namespace and project name for GitLab registries.</li>
-<li data-bai-block="572"><strong>Extra Information</strong>: A JSON string for additional configuration needed for each registry type.</li>
-<li data-bai-block="573"><strong>SSL Verification</strong>: Toggles whether Backend.AI verifies the registry&#39;s SSL certificate when connecting. <strong>Enabled by default</strong>, which is the recommended setting for any registry reachable over the public internet. Disable this only for a registry served with a self-signed certificate inside a trusted internal environment where you have already verified the network path; turning it off makes the connection vulnerable to man-in-the-middle attacks.</li>
-<li data-bai-block="574"><strong>Set as Global Registry</strong>: A toggle that, when enabled, allows access to the registry from all projects.</li>
-<li data-bai-block="575"><strong>Allowed Projects</strong>: When <strong>Set as Global Registry</strong> is turned off, use this field to select the specific projects that are allowed to use the registry.</li>
+<li data-bai-block="564"><strong>Registry Name</strong>: A unique name for the registry (up to 50 characters). Must match the prefix used in image names stored in the registry.</li>
+<li data-bai-block="565"><strong>Registry URL</strong>: The URL of the registry. A scheme such as <code>http://</code> or <code>https://</code> must be explicitly included.</li>
+<li data-bai-block="566"><strong>Username</strong>: Optional. Fill in if you have separate authentication settings in the registry.</li>
+<li data-bai-block="567"><strong>Password</strong>: Optional. When editing an existing registry, check the &quot;Change Password&quot; checkbox to modify it.</li>
+<li data-bai-block="568"><strong>Registry Type</strong>: Select the type of registry. Supported types include: <code>docker</code>, <code>harbor</code>, <code>harbor2</code>, <code>github</code>, <code>gitlab</code>, <code>ecr</code>, and <code>ecr-public</code>.</li>
+<li data-bai-block="569"><strong>Project Name</strong>: The project or namespace in the registry (required). Use the full path including namespace and project name for GitLab registries.</li>
+<li data-bai-block="570"><strong>Extra Information</strong>: A JSON string for additional configuration needed for each registry type.</li>
+<li data-bai-block="571"><strong>SSL Verification</strong>: Toggles whether Backend.AI verifies the registry&#39;s SSL certificate when connecting. <strong>Enabled by default</strong>, which is the recommended setting for any registry reachable over the public internet. Disable this only for a registry served with a self-signed certificate inside a trusted internal environment where you have already verified the network path; turning it off makes the connection vulnerable to man-in-the-middle attacks.</li>
+<li data-bai-block="572"><strong>Set as Global Registry</strong>: A toggle that, when enabled, allows access to the registry from all projects.</li>
+<li data-bai-block="573"><strong>Allowed Projects</strong>: When <strong>Set as Global Registry</strong> is turned off, use this field to select the specific projects that are allowed to use the registry.</li>
 </ul>
-<p><figure data-bai-block="576" class="doc-figure"><img src="./images/container_registry_editor_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="544" height="1244" /><figcaption>Figure 24.66</figcaption></figure>
+<p><figure data-bai-block="574" class="doc-figure"><img src="./images/container_registry_editor_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="544" height="1244" /><figcaption>Figure 24.66</figcaption></figure>
 </p>
 <!-- TODO: Re-capture container_registry_editor_modal.png to show the Set as Global Registry toggle and the Allowed Projects field -->
 
 
 
 
-<h3 data-bai-block="577" id="admin_menu-gitlab-container-registry-configuration">GitLab container registry configuration<a class="hash-link" href="#admin_menu-gitlab-container-registry-configuration" aria-label="Direct link to GitLab container registry configuration">#</a></h3>
-<p data-bai-block="578">When adding a GitLab container registry, you must specify the <code>api_endpoint</code>
+<h3 data-bai-block="575" id="admin_menu-gitlab-container-registry-configuration">GitLab container registry configuration<a class="hash-link" href="#admin_menu-gitlab-container-registry-configuration" aria-label="Direct link to GitLab container registry configuration">#</a></h3>
+<p data-bai-block="576">When adding a GitLab container registry, you must specify the <code>api_endpoint</code>
 in the Extra Information field. This is required because GitLab uses separate
 endpoints for the container registry and the GitLab API.</p>
-<p data-bai-block="579">For <strong>GitLab.com (public instance)</strong>:</p>
+<p data-bai-block="577">For <strong>GitLab.com (public instance)</strong>:</p>
 <ul>
-<li data-bai-block="580">Registry URL: <code>https://registry.gitlab.com</code></li>
-<li data-bai-block="581">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.com&quot;}</code></li>
+<li data-bai-block="578">Registry URL: <code>https://registry.gitlab.com</code></li>
+<li data-bai-block="579">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.com&quot;}</code></li>
 </ul>
-<p data-bai-block="582">For <strong>self-hosted (on-premise) GitLab</strong>:</p>
+<p data-bai-block="580">For <strong>self-hosted (on-premise) GitLab</strong>:</p>
 <ul>
-<li data-bai-block="583">Registry URL: Your GitLab registry URL (e.g., <code>https://registry.example.com</code>)</li>
-<li data-bai-block="584">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.example.com&quot;}</code></li>
+<li data-bai-block="581">Registry URL: Your GitLab registry URL (e.g., <code>https://registry.example.com</code>)</li>
+<li data-bai-block="582">Extra Information: <code>{&quot;api_endpoint&quot;: &quot;https://gitlab.example.com&quot;}</code></li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="585" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="583" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="586">The <code>api_endpoint</code> should point to your GitLab instance URL, not the registry URL.</p>
+<p data-bai-block="584">The <code>api_endpoint</code> should point to your GitLab instance URL, not the registry URL.</p>
 </div></div>
 
 
-<p data-bai-block="587">Additional configuration notes:</p>
+<p data-bai-block="585">Additional configuration notes:</p>
 <ul>
-<li data-bai-block="588"><p><strong>Project path format</strong>: When specifying the project, use the full path including
+<li data-bai-block="586"><p><strong>Project path format</strong>: When specifying the project, use the full path including
 namespace and project name (e.g., <code>namespace/project-name</code>). Both components
 are required for the registry to function correctly.</p>
 </li>
-<li data-bai-block="589"><p><strong>Access token permissions</strong>: The access token used for the registry must have
+<li data-bai-block="587"><p><strong>Access token permissions</strong>: The access token used for the registry must have
 both <code>read_registry</code> and <code>read_api</code> scopes. The <code>read_api</code> scope is
 required for Backend.AI to query the GitLab API for image metadata during
 rescan operations.</p>
 </li>
 </ul>
-<p data-bai-block="590">You can also change the settings of an existing registry, except the
+<p data-bai-block="588">You can also change the settings of an existing registry, except the
 Registry Name, from the <strong>Edit Registry</strong> dialog.</p>
-<p data-bai-block="591">After creating a registry and updating the image metadata, users still cannot
+<p data-bai-block="589">After creating a registry and updating the image metadata, users still cannot
 use the images immediately. You must enable the registry by toggling the
 Enabled switch in the registry list to allow users to access images from
 the registry.</p>
 <p><a id="manage-resource-preset"></a></p>
-<h2 data-bai-block="592" id="admin_menu-manage-resource-preset">Manage resource preset<a class="hash-link" href="#admin_menu-manage-resource-preset" aria-label="Direct link to Manage resource preset">#</a></h2>
-<p data-bai-block="593">The following predefined resource presets are displayed in the Resource
+<h2 data-bai-block="590" id="admin_menu-manage-resource-preset">Manage resource preset<a class="hash-link" href="#admin_menu-manage-resource-preset" aria-label="Direct link to Manage resource preset">#</a></h2>
+<p data-bai-block="591">The following predefined resource presets are displayed in the Resource
 allocation panel when creating a compute session. Superadmin can manage these
 resource presets.</p>
-<p><figure data-bai-block="594" class="doc-figure"><img src="./images/resource_presets_in_resource_monitor.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="950" /><figcaption>Figure 24.67</figcaption></figure>
+<p><figure data-bai-block="592" class="doc-figure"><img src="./images/resource_presets_in_resource_monitor.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="950" /><figcaption>Figure 24.67</figcaption></figure>
 </p>
-<p data-bai-block="595">Go to the Resource Presets tab on the Environment page. You can check the list
+<p data-bai-block="593">Go to the Resource Presets tab on the Environment page. You can check the list
 of currently defined resource presets.</p>
-<p><figure data-bai-block="596" class="doc-figure"><img src="./images/resource_preset_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.68</figcaption></figure>
+<p><figure data-bai-block="594" class="doc-figure"><img src="./images/resource_preset_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.68</figcaption></figure>
 </p>
-<p data-bai-block="597">You can set resources such as CPU, RAM, fGPU, etc. to be provided by the
+<p data-bai-block="595">You can set resources such as CPU, RAM, fGPU, etc. to be provided by the
 resource preset by clicking the <strong>Edit</strong> (pencil) action in the Name column.
 The <strong>Create Resource Preset</strong> / <strong>Edit Resource Preset</strong> modal shows fields of the resources currently
 available. Depending on your server&#39;s settings, certain resources may not be visible.
@@ -1583,97 +1577,97 @@ After setting the resources with the desired values, click <strong>Save</strong>
 when creating a compute session. If available resources are less
 than the amount of resources defined in the preset, the corresponding preset
 would not be shown.</p>
-<p data-bai-block="598">The resource preset dialog includes:</p>
+<p data-bai-block="596">The resource preset dialog includes:</p>
 <ul>
-<li data-bai-block="599"><strong>Preset Name</strong>: A unique name for the preset (only alphanumeric characters, periods, hyphens, and underscores allowed).</li>
-<li data-bai-block="600"><strong>Resource Group</strong>: Associate the preset with a specific resource group. This field is optional — leave it empty (or clear it) to keep the preset global, so it applies regardless of the resource group.</li>
-<li data-bai-block="601"><strong>Resource Preset</strong>: Dynamic fields for each available resource type (CPU, Memory, GPU, etc.). Memory fields support dynamic unit input (<code>MiB</code>, <code>GiB</code>, <code>TiB</code>, <code>PiB</code>).</li>
-<li data-bai-block="602"><strong>Shared Memory</strong>: The amount of shared memory allocated for the preset. This value must be less than the <strong>Memory</strong> value.</li>
+<li data-bai-block="597"><strong>Preset Name</strong>: A unique name for the preset (only alphanumeric characters, periods, hyphens, and underscores allowed).</li>
+<li data-bai-block="598"><strong>Resource Group</strong>: Associate the preset with a specific resource group. This field is optional — leave it empty (or clear it) to keep the preset global, so it applies regardless of the resource group.</li>
+<li data-bai-block="599"><strong>Resource Preset</strong>: Dynamic fields for each available resource type (CPU, Memory, GPU, etc.). Memory fields support dynamic unit input (<code>MiB</code>, <code>GiB</code>, <code>TiB</code>, <code>PiB</code>).</li>
+<li data-bai-block="600"><strong>Shared Memory</strong>: The amount of shared memory allocated for the preset. This value must be less than the <strong>Memory</strong> value.</li>
 </ul>
-<p><figure data-bai-block="603" class="doc-figure"><img src="./images/modify_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>Figure 24.69</figcaption></figure>
+<p><figure data-bai-block="601" class="doc-figure"><img src="./images/modify_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>Figure 24.69</figcaption></figure>
 </p>
-<p data-bai-block="604">You can also create a resource preset by clicking the <strong>Create Preset</strong> button in the
+<p data-bai-block="602">You can also create a resource preset by clicking the <strong>Create Preset</strong> button in the
 right top of the Resource Presets tab. Resource preset names must still be
 unique. If you enter a name that already exists, the server rejects the request
 when you click <strong>Create</strong> and an error message is displayed.</p>
-<p><figure data-bai-block="605" class="doc-figure"><img src="./images/create_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>Figure 24.70</figcaption></figure>
+<p><figure data-bai-block="603" class="doc-figure"><img src="./images/create_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>Figure 24.70</figcaption></figure>
 </p>
 <p><a id="manage-agent-nodes"></a></p>
-<h2 data-bai-block="606" id="admin_menu-manage-agent-nodes">Manage agent nodes<a class="hash-link" href="#admin_menu-manage-agent-nodes" aria-label="Direct link to Manage agent nodes">#</a></h2>
-<p data-bai-block="607">Superadmins can view the list of agent nodes, currently connected to
+<h2 data-bai-block="604" id="admin_menu-manage-agent-nodes">Manage agent nodes<a class="hash-link" href="#admin_menu-manage-agent-nodes" aria-label="Direct link to Manage agent nodes">#</a></h2>
+<p data-bai-block="605">Superadmins can view the list of agent nodes, currently connected to
 Backend.AI, by visiting the Resources page. You can check agent node&#39;s IP,
 connecting time, actual resources currently in use, etc. From the agent&#39;s detail
 drawer you can also change its schedulable status and control the agent service itself.</p>
 <p><a id="query-agent-nodes"></a></p>
-<h4 data-bai-block="608" id="admin_menu-query-agent-nodes">Query agent nodes<a class="hash-link" href="#admin_menu-query-agent-nodes" aria-label="Direct link to Query agent nodes">#</a></h4>
-<p><figure data-bai-block="609" class="doc-figure"><img src="./images/agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.71</figcaption></figure>
+<h4 data-bai-block="606" id="admin_menu-query-agent-nodes">Query agent nodes<a class="hash-link" href="#admin_menu-query-agent-nodes" aria-label="Direct link to Query agent nodes">#</a></h4>
+<p><figure data-bai-block="607" class="doc-figure"><img src="./images/agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.71</figcaption></figure>
 </p>
-<p data-bai-block="610">Use the <strong>Connected</strong> / <strong>Terminated</strong> selector to switch between agents that are currently connected and
+<p data-bai-block="608">Use the <strong>Connected</strong> / <strong>Terminated</strong> selector to switch between agents that are currently connected and
 agents that have been connected once and then terminated or disconnected. The Terminated list can be used
 as a reference for node management; if it is empty, then no disconnection or termination has occurred.</p>
-<p><figure data-bai-block="611" class="doc-figure"><img src="./images/terminated_agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.72</figcaption></figure>
+<p><figure data-bai-block="609" class="doc-figure"><img src="./images/terminated_agent_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.72</figcaption></figure>
 </p>
-<p data-bai-block="612">You can narrow the list with the property filter, which supports <strong>ID</strong>, <strong>Endpoint</strong>, and
+<p data-bai-block="610">You can narrow the list with the property filter, which supports <strong>ID</strong>, <strong>Endpoint</strong>, and
 <strong>Schedulable</strong>.</p>
-<p data-bai-block="613">Click an agent&#39;s ID to open the <strong>Agent Info</strong> drawer, which shows the exact resource usage for that
+<p data-bai-block="611">Click an agent&#39;s ID to open the <strong>Agent Info</strong> drawer, which shows the exact resource usage for that
 node. The drawer has two tabs: <strong>Resources</strong>, which breaks the usage down per resource slot, and
 <strong>Sessions</strong>, which lists the compute sessions assigned to this agent so you can see what is running on
 the node before stopping or restarting it. On the <strong>Sessions</strong> tab, use the <strong>Running</strong> / <strong>Finished</strong>
 selector to switch between sessions that still occupy the node&#39;s resources and sessions that have
-already finished, and click a session name to open its detail view on the Admin Session page.</p>
-<p><figure data-bai-block="614" class="doc-figure"><img src="./images/detailed_agent_node_usage_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>Figure 24.73</figcaption></figure>
+already finished, and click a session name to show that session&#39;s details.</p>
+<p><figure data-bai-block="612" class="doc-figure"><img src="./images/detailed_agent_node_usage_information.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>Figure 24.73</figcaption></figure>
 </p>
 <p><a id="control-agent-service"></a></p>
-<h4 data-bai-block="615" id="admin_menu-start-stop-or-restart-an-agent">Start, stop, or restart an agent<a class="hash-link" href="#admin_menu-start-stop-or-restart-an-agent" aria-label="Direct link to Start, stop, or restart an agent">#</a></h4>
-<p data-bai-block="616">The Agent Info drawer holds a group of action buttons for the agent service itself:</p>
+<h4 data-bai-block="613" id="admin_menu-start-stop-or-restart-an-agent">Start, stop, or restart an agent<a class="hash-link" href="#admin_menu-start-stop-or-restart-an-agent" aria-label="Direct link to Start, stop, or restart an agent">#</a></h4>
+<p data-bai-block="614">The Agent Info drawer holds a group of action buttons for the agent service itself:</p>
 <ul>
-<li data-bai-block="617"><strong>Start Agent</strong>: Brings the agent service back up. Available only while the agent is not <code>ALIVE</code>.</li>
-<li data-bai-block="618"><strong>Stop Agent</strong>: Shuts the agent service down. Available only while the agent is <code>ALIVE</code>.</li>
-<li data-bai-block="619"><strong>Restart Agent</strong>: Restarts the agent service.</li>
+<li data-bai-block="615"><strong>Start Agent</strong>: Brings the agent service back up. Available only while the agent is not <code>ALIVE</code>.</li>
+<li data-bai-block="616"><strong>Stop Agent</strong>: Shuts the agent service down. Available only while the agent is <code>ALIVE</code>.</li>
+<li data-bai-block="617"><strong>Restart Agent</strong>: Restarts the agent service.</li>
 </ul>
-<p><figure data-bai-block="620" class="doc-figure"><img src="./images/agent_watcher_actions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="334" /><figcaption>Figure 24.74</figcaption></figure>
+<p><figure data-bai-block="618" class="doc-figure"><img src="./images/agent_watcher_actions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="334" /><figcaption>Figure 24.74</figcaption></figure>
 </p>
-<p data-bai-block="621">Each action opens a confirmation dialog that names the affected agent and warns that running sessions on
+<p data-bai-block="619">Each action opens a confirmation dialog that names the affected agent and warns that running sessions on
 this agent may be affected. Confirm to send the request; a message reports that the start, stop, or
 restart has been requested, and the agent&#39;s status is re-read afterwards.</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="622" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="620" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="623">These actions act on the agent service on the node, not on a single session. Stopping or restarting an
+<p data-bai-block="621">These actions act on the agent service on the node, not on a single session. Stopping or restarting an
 agent affects every compute session currently running on it. Make sure the node is drained — or that you
 accept the impact — before confirming.</p>
 </div></div>
 
 
 <blockquote>
-<p data-bai-block="624">The request is relayed to the agent&#39;s watcher daemon. If the watcher is unreachable, or the node is
+<p data-bai-block="622">The request is relayed to the agent&#39;s watcher daemon. If the watcher is unreachable, or the node is
 not managed in a way that allows the operation, the WebUI reports the failure returned by the agent
 instead of the success message.</p>
 </blockquote>
 <p><a id="set-schedulable-status-of-agent-nodes"></a></p>
-<h4 data-bai-block="625" id="admin_menu-set-schedulable-status-of-agent-nodes">Set schedulable status of agent nodes<a class="hash-link" href="#admin_menu-set-schedulable-status-of-agent-nodes" aria-label="Direct link to Set schedulable status of agent nodes">#</a></h4>
-<p data-bai-block="626">You may want to prevent new compute sessions from being scheduled to an Agent
+<h4 data-bai-block="623" id="admin_menu-set-schedulable-status-of-agent-nodes">Set schedulable status of agent nodes<a class="hash-link" href="#admin_menu-set-schedulable-status-of-agent-nodes" aria-label="Direct link to Set schedulable status of agent nodes">#</a></h4>
+<p data-bai-block="624">You may want to prevent new compute sessions from being scheduled to an Agent
 service without stopping it. In this case, you can disable the Schedulable
 status of the Agent from the <strong>Settings</strong> button in the Agent Info drawer. Then, you can block the
 creation of a new session while preserving the existing sessions on the Agent.</p>
-<p><figure data-bai-block="627" class="doc-figure"><img src="./images/agent_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="400" height="338" /><figcaption>Figure 24.75</figcaption></figure>
+<p><figure data-bai-block="625" class="doc-figure"><img src="./images/agent_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="400" height="338" /><figcaption>Figure 24.75</figcaption></figure>
 </p>
 <p><a id="manage-resource-group"></a></p>
-<h2 data-bai-block="628" id="admin_menu-manage-resource-group">Manage resource group<a class="hash-link" href="#admin_menu-manage-resource-group" aria-label="Direct link to Manage resource group">#</a></h2>
-<p data-bai-block="629">Agents can be grouped into units called resource groups. For example,
+<h2 data-bai-block="626" id="admin_menu-manage-resource-group">Manage resource group<a class="hash-link" href="#admin_menu-manage-resource-group" aria-label="Direct link to Manage resource group">#</a></h2>
+<p data-bai-block="627">Agents can be grouped into units called resource groups. For example,
 let&#39;s say there are 3 agents with V100 GPUs and 2 agents with P100 GPUs. You
 want to expose two types of GPUs to users separately, then you can group three
 V100 agents into one resource group, and the remaining two P100 agents into
 another resource group.</p>
-<p data-bai-block="630">Adding a specific agent to a specific resource group is not currently handled in
+<p data-bai-block="628">Adding a specific agent to a specific resource group is not currently handled in
 the WebUI, and it can be done by editing agent config file from the installation
 location and restart the agent daemon. Management of the resource groups is
 possible in Resource Group tab of the Resource page.</p>
-<p><figure data-bai-block="631" class="doc-figure"><img src="./images/resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.76</figcaption></figure>
+<p><figure data-bai-block="629" class="doc-figure"><img src="./images/resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.76</figcaption></figure>
 </p>
 <p><a id="scheduling-methods"></a></p>
-<p data-bai-block="632">You can edit a resource group by clicking the <strong>Edit</strong> (pencil) action in the Name column, which opens
+<p data-bai-block="630">You can edit a resource group by clicking the <strong>Edit</strong> (pencil) action in the Name column, which opens
 the <strong>Edit Resource Group</strong> dialog. In the <strong>Scheduler</strong> field, you can choose the scheduling method for
 creating a compute session. Currently, there are four types: <code>FIFO</code>, <code>LIFO</code>,
 <code>DRF</code>, and <code>FAIR_SHARE</code>. <code>FIFO</code> and <code>LIFO</code> are scheduling methods creating the first- or the
@@ -1682,491 +1676,491 @@ Fairness, and it aims to provide resources as fair as possible for each user.
 <code>FAIR_SHARE</code> allocates compute resources based on historical usage patterns. For
 more details, refer to the <a href="#fair-share-scheduler">Fair Share Scheduler</a> section.
 You can deactivate a resource group by turning off <strong>Active</strong>. Click <strong>Save</strong> to apply your changes.</p>
-<p><figure data-bai-block="633" class="doc-figure"><img src="./images/modify_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>Figure 24.77</figcaption></figure>
+<p><figure data-bai-block="631" class="doc-figure"><img src="./images/modify_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>Figure 24.77</figcaption></figure>
 </p>
-<p data-bai-block="634">The resource group edit dialog contains the following additional fields:</p>
+<p data-bai-block="632">The resource group edit dialog contains the following additional fields:</p>
 <ul>
-<li data-bai-block="635"><strong>Allowed session types</strong>: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.</li>
-<li data-bai-block="636"><strong>App Proxy Server Address</strong>: Sets the App Proxy address for the resource group&#39;s Agents to use. If you set a URL in this field, App Proxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager.</li>
-<li data-bai-block="637"><strong>App Proxy API Token</strong>: The API token for authenticating with the App Proxy server.</li>
-<li data-bai-block="638"><strong>SFTP Storage Proxies</strong>: The storage proxies used when users in this resource group transfer files to
+<li data-bai-block="633"><strong>Allowed session types</strong>: Since users can choose the type of session, the resource group can allow certain types. You should allow at least one session type. The allowed session types are Interactive, Batch, Inference, and System.</li>
+<li data-bai-block="634"><strong>App Proxy Server Address</strong>: Sets the App Proxy address for the resource group&#39;s Agents to use. If you set a URL in this field, App Proxy will relay the traffic of an app like Jupyter directly to the compute session via Agent bypassing Manager.</li>
+<li data-bai-block="635"><strong>App Proxy API Token</strong>: The API token for authenticating with the App Proxy server.</li>
+<li data-bai-block="636"><strong>SFTP Storage Proxies</strong>: The storage proxies used when users in this resource group transfer files to
 their folders over SFTP. The field is available to superadmins and is pre-filled with the proxies that
 currently serve this resource group. Saving synchronizes only this group&#39;s membership — it is added to
 the proxies you selected and removed from the ones you cleared, and every other resource group on those
 proxies is left untouched. When no proxy is selected for a group, that group is not restricted to a
 particular proxy.</li>
-<li data-bai-block="639"><strong>Active</strong>: Toggle the active status of the resource group.</li>
-<li data-bai-block="640"><strong>Public</strong>: When enabled, the resource group is visible to all users.</li>
-<li data-bai-block="641"><strong>Pending timeout</strong>:
+<li data-bai-block="637"><strong>Active</strong>: Toggle the active status of the resource group.</li>
+<li data-bai-block="638"><strong>Public</strong>: When enabled, the resource group is visible to all users.</li>
+<li data-bai-block="639"><strong>Pending timeout</strong>:
 A compute session will be canceled if it stays <code>PENDING</code> status for longer
 than the Pending timeout. When you wish to prevent a session from remaining
 PENDING indefinitely, set this time. Set this value to zero (0) if you do not
 want to apply the pending timeout feature.</li>
-<li data-bai-block="642"><strong>Retries to skip pending session</strong>:
+<li data-bai-block="640"><strong>Retries to skip pending session</strong>:
 The number of retries the scheduler tries before skipping a PENDING session.
 It can be configured to prevent the situation where one PENDING session blocks
 the scheduling of the subsequent sessions indefinitely (Head-of-line blocking,
 HOL). If no value is specified, the global value in Etcd will be used (<code>num retries to skip</code>, default three times).</li>
 </ul>
-<p data-bai-block="643">You can create a new resource group by clicking the <strong>Create Resource Group</strong> button.
+<p data-bai-block="641">You can create a new resource group by clicking the <strong>Create Resource Group</strong> button.
 Likewise other creating options, you cannot create a resource group with the name
 that already exists, since name is the key value.</p>
-<p><figure data-bai-block="644" class="doc-figure"><img src="./images/create_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>Figure 24.78</figcaption></figure>
+<p><figure data-bai-block="642" class="doc-figure"><img src="./images/create_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>Figure 24.78</figcaption></figure>
 </p>
 <p><a id="bulk-edit-resource-groups"></a></p>
-<h3 data-bai-block="645" id="admin_menu-edit-several-resource-groups-at-once">Edit several resource groups at once<a class="hash-link" href="#admin_menu-edit-several-resource-groups-at-once" aria-label="Direct link to Edit several resource groups at once">#</a></h3>
-<p data-bai-block="646">Settings that apply the same way to a set of resource groups can be changed in one pass:</p>
+<h3 data-bai-block="643" id="admin_menu-edit-several-resource-groups-at-once">Edit several resource groups at once<a class="hash-link" href="#admin_menu-edit-several-resource-groups-at-once" aria-label="Direct link to Edit several resource groups at once">#</a></h3>
+<p data-bai-block="644">Settings that apply the same way to a set of resource groups can be changed in one pass:</p>
 <ol>
-<li data-bai-block="647">Select the resource groups with the row checkboxes. (The checkboxes are available to superadmins.)</li>
-<li data-bai-block="648">A selection count appears in the toolbar. Click the <strong>Bulk Edit</strong> (gear) button next to it.</li>
-<li data-bai-block="649">The <strong>Bulk Edit Resource Groups</strong> dialog opens.</li>
+<li data-bai-block="645">Select the resource groups with the row checkboxes. (The checkboxes are available to superadmins.)</li>
+<li data-bai-block="646">A selection count appears in the toolbar. Click the <strong>Bulk Edit</strong> (gear) button next to it.</li>
+<li data-bai-block="647">The <strong>Bulk Edit Resource Groups</strong> dialog opens.</li>
 </ol>
-<p><figure data-bai-block="650" class="doc-figure"><img src="./images/bulk_edit_resource_groups_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="792" /><figcaption>Figure 24.79</figcaption></figure>
+<p><figure data-bai-block="648" class="doc-figure"><img src="./images/bulk_edit_resource_groups_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="792" /><figcaption>Figure 24.79</figcaption></figure>
 </p>
-<p data-bai-block="651">An alert at the top of the dialog lists every resource group that will be changed. Below it sits the
+<p data-bai-block="649">An alert at the top of the dialog lists every resource group that will be changed. Below it sits the
 <strong>SFTP Storage Proxies</strong> field, pre-filled with the union of the proxies that already serve any of the
 selected groups.</p>
 <ul>
-<li data-bai-block="652">Selecting a proxy puts <strong>every</strong> selected resource group on that proxy.</li>
-<li data-bai-block="653">Clearing a proxy removes the selected resource groups from it. Because this takes SFTP access away, the
+<li data-bai-block="650">Selecting a proxy puts <strong>every</strong> selected resource group on that proxy.</li>
+<li data-bai-block="651">Clearing a proxy removes the selected resource groups from it. Because this takes SFTP access away, the
 dialog asks you to confirm before the change is applied, naming the proxies involved.</li>
 </ul>
-<p data-bai-block="654">Resource groups you did not select keep their existing proxy assignments in either case.</p>
+<p data-bai-block="652">Resource groups you did not select keep their existing proxy assignments in either case.</p>
 <p><a id="storages"></a></p>
-<h2 data-bai-block="655" id="admin_menu-storages">Storages<a class="hash-link" href="#admin_menu-storages" aria-label="Direct link to Storages">#</a></h2>
-<p data-bai-block="656">On STORAGES tab, you can see what kind of mount volumes (usually NFS) exist.
+<h2 data-bai-block="653" id="admin_menu-storages">Storages<a class="hash-link" href="#admin_menu-storages" aria-label="Direct link to Storages">#</a></h2>
+<p data-bai-block="654">On STORAGES tab, you can see what kind of mount volumes (usually NFS) exist.
 Backend.AI provides per-user/per-project quota setting on storage that supports quota management.
 By using this feature, admin can easily manage and monitor the exact amount of storage usage for each user and project based folder.</p>
-<p><figure data-bai-block="657" class="doc-figure"><img src="./images/storage_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.80</figcaption></figure>
+<p><figure data-bai-block="655" class="doc-figure"><img src="./images/storage_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.80</figcaption></figure>
 </p>
-<p data-bai-block="658">To manage a storage host, click the storage host name in the Storages list. This opens the <strong>Storage Host
+<p data-bai-block="656">To manage a storage host, click the storage host name in the Storages list. This opens the <strong>Storage Host
 Detail Drawer</strong>, where capacity (quota) and folder permissions are configured.</p>
 <p><a id="storage-host-detail-drawer"></a></p>
-<h4 data-bai-block="659" id="admin_menu-storage-host-detail-drawer">Storage host detail drawer<a class="hash-link" href="#admin_menu-storage-host-detail-drawer" aria-label="Direct link to Storage host detail drawer">#</a></h4>
-<p data-bai-block="660">The Storage Host Detail Drawer is the single place to inspect and manage a
+<h4 data-bai-block="657" id="admin_menu-storage-host-detail-drawer">Storage host detail drawer<a class="hash-link" href="#admin_menu-storage-host-detail-drawer" aria-label="Direct link to Storage host detail drawer">#</a></h4>
+<p data-bai-block="658">The Storage Host Detail Drawer is the single place to inspect and manage a
 storage host. You can open it by clicking the host name in the Storages list. The
 top displays basic information about the host, while the bottom provides tabs for
 configuring folder permissions and capacity (quota).</p>
-<p><figure data-bai-block="661" class="doc-figure"><img src="./images/storage_host_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="1855" /><figcaption>Figure 24.81</figcaption></figure>
+<p><figure data-bai-block="659" class="doc-figure"><img src="./images/storage_host_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="1855" /><figcaption>Figure 24.81</figcaption></figure>
 </p>
-<p data-bai-block="662">The drawer contains the following tabs:</p>
+<p data-bai-block="660">The drawer contains the following tabs:</p>
 <ul>
-<li data-bai-block="663"><strong>Project Folder Permissions</strong>: View and manage which domains and projects can
+<li data-bai-block="661"><strong>Project Folder Permissions</strong>: View and manage which domains and projects can
 access the host&#39;s project folders. See the <a href="#project-folder-permission">Project Folder Permissions</a> section below.</li>
-<li data-bai-block="664"><strong>User Folder Permissions</strong>: View and manage the permissions that apply to user
+<li data-bai-block="662"><strong>User Folder Permissions</strong>: View and manage the permissions that apply to user
 folders on the host. User folder permissions are determined by the keypair
 resource policy linked to a user&#39;s main access key.</li>
-<li data-bai-block="665"><strong>Capacity</strong>: Configure per-user and per-project storage quotas, and view the
+<li data-bai-block="663"><strong>Capacity</strong>: Configure per-user and per-project storage quotas, and view the
 host&#39;s usage and capabilities. This tab is unavailable for storage hosts that do not support quota configuration.</li>
 </ul>
 <p><a id="project-folder-permission"></a></p>
-<h4 data-bai-block="666" id="admin_menu-project-folder-permissions">Project folder permissions<a class="hash-link" href="#admin_menu-project-folder-permissions" aria-label="Direct link to Project folder permissions">#</a></h4>
-<p data-bai-block="667">The <strong>Project Folder Permissions</strong> tab of the <a href="#storage-host-detail-drawer">Storage Host Detail Drawer</a> lets administrators view and manage the permissions of the project folders created on the selected storage host.</p>
-<p><figure data-bai-block="668" class="doc-figure"><img src="./images/project_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1702" height="1300" /><figcaption>Figure 24.82</figcaption></figure>
+<h4 data-bai-block="664" id="admin_menu-project-folder-permissions">Project folder permissions<a class="hash-link" href="#admin_menu-project-folder-permissions" aria-label="Direct link to Project folder permissions">#</a></h4>
+<p data-bai-block="665">The <strong>Project Folder Permissions</strong> tab of the <a href="#storage-host-detail-drawer">Storage Host Detail Drawer</a> lets administrators view and manage the permissions of the project folders created on the selected storage host.</p>
+<p><figure data-bai-block="666" class="doc-figure"><img src="./images/project_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1702" height="1300" /><figcaption>Figure 24.82</figcaption></figure>
 </p>
 <!-- TODO: Capture screenshot of project_folder_permission_tab.png — Project Folder Permissions tab with the domain selector and the tri-state effective-permission indicators -->
 
-<p data-bai-block="669">Project folder permissions consist of permissions for the selected domain and permissions for the projects under that domain.</p>
-<p data-bai-block="670">In the Backend.AI structure, a project belongs under a specific domain. Therefore, the storage permissions set on a project inherit the domain&#39;s permissions by default.</p>
-<p data-bai-block="671">You can select multiple rows (using the row checkboxes) in the Domains, Projects, or User Folder Permissions tables to compare their permission sets side by side. With rows selected, click <strong>Edit Permissions</strong> to open the bulk edit modal, which applies the chosen permission set to all selected entities at once. The modal opens with all permissions selected by default, and saving overwrites the selected entities&#39; permissions with exactly the set you choose.</p>
+<p data-bai-block="667">Project folder permissions consist of permissions for the selected domain and permissions for the projects under that domain.</p>
+<p data-bai-block="668">In the Backend.AI structure, a project belongs under a specific domain. Therefore, the storage permissions set on a project inherit the domain&#39;s permissions by default.</p>
+<p data-bai-block="669">You can select multiple rows (using the row checkboxes) in the Domains, Projects, or User Folder Permissions tables to compare their permission sets side by side. With rows selected, click <strong>Edit Permissions</strong> to open the bulk edit modal, which applies the chosen permission set to all selected entities at once. The modal opens with all permissions selected by default, and saving overwrites the selected entities&#39; permissions with exactly the set you choose.</p>
 <p><a id="user-folder-permission"></a></p>
-<h4 data-bai-block="672" id="admin_menu-user-folder-permissions">User folder permissions<a class="hash-link" href="#admin_menu-user-folder-permissions" aria-label="Direct link to User folder permissions">#</a></h4>
-<p data-bai-block="673">User folder permissions are the permissions configured in the keypair resource policy. To narrow the list
+<h4 data-bai-block="670" id="admin_menu-user-folder-permissions">User folder permissions<a class="hash-link" href="#admin_menu-user-folder-permissions" aria-label="Direct link to User folder permissions">#</a></h4>
+<p data-bai-block="671">User folder permissions are the permissions configured in the keypair resource policy. To narrow the list
 to one person, add a <strong>User</strong> condition in the filter bar above the table: the value is a searchable
 dropdown of user accounts rather than a free-text box, so you pick the account instead of typing an
 address. Only the keypair resource policies assigned to that user&#39;s keypairs are then shown, and the
 resulting filter tag displays the user&#39;s email address. The <strong>Assigned Keypairs</strong> column shows the user&#39;s
 main access key; it is only shown while a user is selected. Picking another user replaces the existing
 condition instead of adding a second one.</p>
-<p><figure data-bai-block="674" class="doc-figure"><img src="./images/user_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="739" /><figcaption>Figure 24.83</figcaption></figure>
+<p><figure data-bai-block="672" class="doc-figure"><img src="./images/user_folder_permission_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="739" /><figcaption>Figure 24.83</figcaption></figure>
 </p>
 <!-- TODO: Capture screenshot of user_folder_permission_tab.png — User Folder Permissions tab with the user selector and the Assigned Keypair column. -->
 
 <p><a id="quota-settings"></a></p>
-<h4 data-bai-block="675" id="admin_menu-quota-settings">Quota settings<a class="hash-link" href="#admin_menu-quota-settings" aria-label="Direct link to Quota settings">#</a></h4>
-<p data-bai-block="676">Please remind that quota setting is only available in storage that provides quota setting
+<h4 data-bai-block="673" id="admin_menu-quota-settings">Quota settings<a class="hash-link" href="#admin_menu-quota-settings" aria-label="Direct link to Quota settings">#</a></h4>
+<p data-bai-block="674">Please remind that quota setting is only available in storage that provides quota setting
 (e.g. XFS, CephFS, NetApp, Purestorage, etc.). Although you can see the usage of storage
 in the Capacity tab regardless of storage, you cannot configure the quota which doesn&#39;t
 support quota configuration internally.</p>
 <p><a id="set-user-quota"></a></p>
-<h4 data-bai-block="677" id="admin_menu-set-user-quota">Set user quota<a class="hash-link" href="#admin_menu-set-user-quota" aria-label="Direct link to Set user quota">#</a></h4>
-<p data-bai-block="678">In Backend.AI, there are two types of vfolders created by user and admin(project). In this section,
+<h4 data-bai-block="675" id="admin_menu-set-user-quota">Set user quota<a class="hash-link" href="#admin_menu-set-user-quota" aria-label="Direct link to Set user quota">#</a></h4>
+<p data-bai-block="676">In Backend.AI, there are two types of vfolders created by user and admin(project). In this section,
 we would like to show how to check current quota setting per-user and how to configure it.
 First, on the Capacity tab, make sure the active sub-tab of the Quota Settings panel is <code>For User</code>. Then, select user you desire to
 check and edit the quota. You can see the quota id that corresponds to user&#39;s id and the configuration already set
 in the table, if you already set the quota.</p>
-<p><figure data-bai-block="679" class="doc-figure"><img src="./images/per_user_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1788" height="546" /><figcaption>Figure 24.84</figcaption></figure>
+<p><figure data-bai-block="677" class="doc-figure"><img src="./images/per_user_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1788" height="546" /><figcaption>Figure 24.84</figcaption></figure>
 </p>
 <!-- TODO: Re-capture per_user_quota.png — needs update. -->
 
-<p data-bai-block="680">Click the Edit button in the Quota Scope ID column to open the modal for configuring the quota.</p>
-<p><figure data-bai-block="681" class="doc-figure"><img src="./images/quota_settings_panel.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="308" /><figcaption>Figure 24.85</figcaption></figure>
+<p data-bai-block="678">Click the Edit button in the Quota Scope ID column to open the modal for configuring the quota.</p>
+<p><figure data-bai-block="679" class="doc-figure"><img src="./images/quota_settings_panel.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="308" /><figcaption>Figure 24.85</figcaption></figure>
 </p>
 <!-- TODO: Re-capture quota_settings_panel.png — needs update. -->
 
 <p><a id="set-project-quota"></a></p>
-<h4 data-bai-block="682" id="admin_menu-set-project-quota">Set project quota<a class="hash-link" href="#admin_menu-set-project-quota" aria-label="Direct link to Set project quota">#</a></h4>
-<p data-bai-block="683">Setting a quota on project-folder is similar to setting a user quota. The difference between setting
+<h4 data-bai-block="680" id="admin_menu-set-project-quota">Set project quota<a class="hash-link" href="#admin_menu-set-project-quota" aria-label="Direct link to Set project quota">#</a></h4>
+<p data-bai-block="681">Setting a quota on project-folder is similar to setting a user quota. The difference between setting
 project quota and user quota is to confirm setting the project quota requires one more procedure,
 which is selecting the domain that the project is dependent on. The rest are the same.
 As in the picture below, you need to first select the domain, and then select the project.</p>
-<p><figure data-bai-block="684" class="doc-figure"><img src="./images/per_project_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="558" /><figcaption>Figure 24.86</figcaption></figure>
+<p><figure data-bai-block="682" class="doc-figure"><img src="./images/per_project_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="558" /><figcaption>Figure 24.86</figcaption></figure>
 </p>
 <!-- TODO: Re-capture per_project_quota.png — needs update. -->
 
 <p><a id="unset-quota"></a></p>
-<h4 data-bai-block="685" id="admin_menu-unset-quota">Unset quota<a class="hash-link" href="#admin_menu-unset-quota" aria-label="Direct link to Unset quota">#</a></h4>
-<p data-bai-block="686">We also provides the feature to unset the quota. Please remind that after removing the quota setting, quota will automatically follows
+<h4 data-bai-block="683" id="admin_menu-unset-quota">Unset quota<a class="hash-link" href="#admin_menu-unset-quota" aria-label="Direct link to Unset quota">#</a></h4>
+<p data-bai-block="684">We also provides the feature to unset the quota. Please remind that after removing the quota setting, quota will automatically follows
 user or project default quota, which cannot be set in WebUI. If you want to change the default quota setting, you may need to access to admin-only page.
 By Clicking <code>Unset</code> button in the Quota Scope ID column, the small snackbar message will show up and confirm whether you really want to delete the current quota setting.
 If you click <code>OK</code> button in the snackbar message, then it will delete the quota setting and automatically reset the quota follows to corresponding quota,
 which depends on the quota type(user / project).</p>
-<p><figure data-bai-block="687" class="doc-figure"><img src="./images/unset_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1750" height="428" /><figcaption>Figure 24.87</figcaption></figure>
+<p><figure data-bai-block="685" class="doc-figure"><img src="./images/unset_quota.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1750" height="428" /><figcaption>Figure 24.87</figcaption></figure>
 </p>
 <!-- TODO: Re-capture unset_quota.png — needs update. -->
 
 <div class="admonition admonition-note">
-<div data-bai-block="688" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="686" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="689">If there&#39;s no config per user/project, then corresponding values in the user/project resource policy will be set as
+<p data-bai-block="687">If there&#39;s no config per user/project, then corresponding values in the user/project resource policy will be set as
 a default value. For example, If no hard limit value for quota is set, <code>max_vfolder_size</code> value in the resource policy
 is used as the default value.</p>
 </div></div>
 
 
 <p><a id="system-settings"></a></p>
-<h2 data-bai-block="690" id="admin_menu-system-settings">System settings<a class="hash-link" href="#admin_menu-system-settings" aria-label="Direct link to System settings">#</a></h2>
-<p data-bai-block="691">In the Configurations page, you can see main settings of Backend.AI server.
+<h2 data-bai-block="688" id="admin_menu-system-settings">System settings<a class="hash-link" href="#admin_menu-system-settings" aria-label="Direct link to System settings">#</a></h2>
+<p data-bai-block="689">In the Configurations page, you can see main settings of Backend.AI server.
 Currently, it provides several controls which can change and list settings.</p>
-<p data-bai-block="692">You can change image auto install and update rule by selecting one option from
+<p data-bai-block="690">You can change image auto install and update rule by selecting one option from
 <code>Digest</code>, <code>Tag</code>, <code>None</code>. <code>Digest</code> is kind of checksum for the image which
 verifies integrity of the image and also enhances efficiency in downloading images
 by reusing duplicated layers. <code>Tag</code> is only for developing option since it does not
 guarantee the Integrity of the image.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="693" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="691" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="694">Don&#39;t change rule selection unless you completely understand the meaning of each rule.</p>
+<p data-bai-block="692">Don&#39;t change rule selection unless you completely understand the meaning of each rule.</p>
 </div></div>
 
 
-<p><figure data-bai-block="695" class="doc-figure"><img src="./images/system_setting_about_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1718" height="700" /><figcaption>Figure 24.88</figcaption></figure>
+<p><figure data-bai-block="693" class="doc-figure"><img src="./images/system_setting_about_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1718" height="700" /><figcaption>Figure 24.88</figcaption></figure>
 </p>
-<p data-bai-block="696">The Configurations page also displays the status of plugins and enterprise features:</p>
-<p data-bai-block="697"><strong>Plugins:</strong></p>
+<p data-bai-block="694">The Configurations page also displays the status of plugins and enterprise features:</p>
+<p data-bai-block="695"><strong>Plugins:</strong></p>
 <ul>
-<li data-bai-block="698"><strong>Open Source CUDA GPU support</strong>: Status of CUDA GPU support.</li>
-<li data-bai-block="699"><strong>ROCm GPU support</strong>: Status of ROCm GPU support.</li>
+<li data-bai-block="696"><strong>Open Source CUDA GPU support</strong>: Status of CUDA GPU support.</li>
+<li data-bai-block="697"><strong>ROCm GPU support</strong>: Status of ROCm GPU support.</li>
 </ul>
-<p data-bai-block="700"><strong>Enterprise Features:</strong></p>
+<p data-bai-block="698"><strong>Enterprise Features:</strong></p>
 <ul>
-<li data-bai-block="701"><strong>Fractional GPU</strong>: Fractional GPU (fGPU) virtualization for sharing GPUs across sessions.</li>
+<li data-bai-block="699"><strong>Fractional GPU</strong>: Fractional GPU (fGPU) virtualization for sharing GPUs across sessions.</li>
 </ul>
-<p data-bai-block="702">Backend.AI supports a wide range of AI accelerators across multiple vendors:</p>
+<p data-bai-block="700">Backend.AI supports a wide range of AI accelerators across multiple vendors:</p>
 <ul>
-<li data-bai-block="703"><strong>NVIDIA</strong><ul>
-<li data-bai-block="704">Spark (GB10)</li>
-<li data-bai-block="705">Blackwell (B300, B200, RTX PRO 6000, etc.)</li>
-<li data-bai-block="706">Hopper (H200, H100 NVL, etc.)</li>
-<li data-bai-block="707">Grace Superchip (GB300, GB200, GH200, etc.)</li>
-<li data-bai-block="708">Turing (Titan RTX, RTX 8000, T4)</li>
-<li data-bai-block="709">Ampere (A100, A40, A10, etc.)</li>
-<li data-bai-block="710">Ada Lovelace (L40S, L4)</li>
-<li data-bai-block="711">Jetson (TX, Xavier, Orin, Thor, etc.)</li>
+<li data-bai-block="701"><strong>NVIDIA</strong><ul>
+<li data-bai-block="702">Spark (GB10)</li>
+<li data-bai-block="703">Blackwell (B300, B200, RTX PRO 6000, etc.)</li>
+<li data-bai-block="704">Hopper (H200, H100 NVL, etc.)</li>
+<li data-bai-block="705">Grace Superchip (GB300, GB200, GH200, etc.)</li>
+<li data-bai-block="706">Turing (Titan RTX, RTX 8000, T4)</li>
+<li data-bai-block="707">Ampere (A100, A40, A10, etc.)</li>
+<li data-bai-block="708">Ada Lovelace (L40S, L4)</li>
+<li data-bai-block="709">Jetson (TX, Xavier, Orin, Thor, etc.)</li>
 </ul>
 </li>
-<li data-bai-block="712"><strong>Intel</strong><ul>
-<li data-bai-block="713">Gaudi 3</li>
-<li data-bai-block="714">Gaudi 2</li>
-<li data-bai-block="715">Gaudi 1</li>
-<li data-bai-block="716">Arc</li>
+<li data-bai-block="710"><strong>Intel</strong><ul>
+<li data-bai-block="711">Gaudi 3</li>
+<li data-bai-block="712">Gaudi 2</li>
+<li data-bai-block="713">Gaudi 1</li>
+<li data-bai-block="714">Arc</li>
 </ul>
 </li>
-<li data-bai-block="717"><strong>AMD</strong><ul>
-<li data-bai-block="718">Instinct MI Series (including MI300X)</li>
-<li data-bai-block="719">MI300A</li>
-<li data-bai-block="720">MI250</li>
+<li data-bai-block="715"><strong>AMD</strong><ul>
+<li data-bai-block="716">Instinct MI Series (including MI300X)</li>
+<li data-bai-block="717">MI300A</li>
+<li data-bai-block="718">MI250</li>
 </ul>
 </li>
-<li data-bai-block="721"><strong>Rebellions</strong><ul>
-<li data-bai-block="722">ATOM Max</li>
-<li data-bai-block="723">ATOM+</li>
-<li data-bai-block="724">REBEL</li>
+<li data-bai-block="719"><strong>Rebellions</strong><ul>
+<li data-bai-block="720">ATOM Max</li>
+<li data-bai-block="721">ATOM+</li>
+<li data-bai-block="722">REBEL</li>
 </ul>
 </li>
-<li data-bai-block="725"><strong>FuriosaAI</strong><ul>
-<li data-bai-block="726">RNGD</li>
+<li data-bai-block="723"><strong>FuriosaAI</strong><ul>
+<li data-bai-block="724">RNGD</li>
 </ul>
 </li>
-<li data-bai-block="727"><strong>Tenstorrent</strong><ul>
-<li data-bai-block="728">Wormhole n150s</li>
-<li data-bai-block="729">Wormhole n300s</li>
+<li data-bai-block="725"><strong>Tenstorrent</strong><ul>
+<li data-bai-block="726">Wormhole n150s</li>
+<li data-bai-block="727">Wormhole n300s</li>
 </ul>
 </li>
-<li data-bai-block="730"><strong>Google</strong><ul>
-<li data-bai-block="731">TPU v7 (Ironwood)</li>
-<li data-bai-block="732">Coral TPU v5p</li>
-<li data-bai-block="733">Coral TPU v5e</li>
-<li data-bai-block="734">TPU v4</li>
+<li data-bai-block="728"><strong>Google</strong><ul>
+<li data-bai-block="729">TPU v7 (Ironwood)</li>
+<li data-bai-block="730">Coral TPU v5p</li>
+<li data-bai-block="731">Coral TPU v5e</li>
+<li data-bai-block="732">TPU v4</li>
 </ul>
 </li>
-<li data-bai-block="735"><strong>Graphcore</strong><ul>
-<li data-bai-block="736">C600 IPU</li>
-<li data-bai-block="737">Bow IPU</li>
+<li data-bai-block="733"><strong>Graphcore</strong><ul>
+<li data-bai-block="734">C600 IPU</li>
+<li data-bai-block="735">Bow IPU</li>
 </ul>
 </li>
-<li data-bai-block="738"><strong>HyperAccel</strong><ul>
+<li data-bai-block="736"><strong>HyperAccel</strong><ul>
+<li data-bai-block="737">LPU</li>
+</ul>
+</li>
+<li data-bai-block="738"><strong>Groq</strong><ul>
 <li data-bai-block="739">LPU</li>
 </ul>
 </li>
-<li data-bai-block="740"><strong>Groq</strong><ul>
-<li data-bai-block="741">LPU</li>
-</ul>
-</li>
-<li data-bai-block="742"><strong>Cerebras</strong><ul>
-<li data-bai-block="743">WSE-3</li>
+<li data-bai-block="740"><strong>Cerebras</strong><ul>
+<li data-bai-block="741">WSE-3</li>
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="744" class="doc-figure"><img src="./images/system_setting_about_scaling_plugins.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2600" height="1440" /><figcaption>Figure 24.89</figcaption></figure>
+<p><figure data-bai-block="742" class="doc-figure"><img src="./images/system_setting_about_scaling_plugins.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2600" height="1440" /><figcaption>Figure 24.89</figcaption></figure>
 </p>
-<p data-bai-block="745">When a user launches a multi-node cluster session, Backend.AI will dynamically create an overlay network to support
+<p data-bai-block="743">When a user launches a multi-node cluster session, Backend.AI will dynamically create an overlay network to support
 private inter-node communication. Admins can set the value of the Maximum
 Transmission Unit (MTU) for the overlay network, if it is certain that the value
 will enhance the network speed.</p>
-<p><figure data-bai-block="746" class="doc-figure"><img src="./images/overlay_network_setting_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="604" height="504" /><figcaption>Figure 24.90</figcaption></figure>
+<p><figure data-bai-block="744" class="doc-figure"><img src="./images/overlay_network_setting_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="604" height="504" /><figcaption>Figure 24.90</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="747" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="745" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="748">For more information about Backend.AI Cluster session, please refer to
+<p data-bai-block="746">For more information about Backend.AI Cluster session, please refer to
 <a href="./cluster_session.html#backendai-cluster-compute-session">Backend.AI Cluster Compute Session</a> section.</p>
 </div></div>
 
 
-<p data-bai-block="749">You can edit the configuration per job scheduler by clicking the Scheduler&#39;s config button.
+<p data-bai-block="747">You can edit the configuration per job scheduler by clicking the Scheduler&#39;s config button.
 The values in the scheduler setting are the defaults to use when there is no scheduler
 setting in each <a href="#scheduling-methods">resource group</a>. If there is a resource
 group-specific setting, this value will be ignored.</p>
-<p data-bai-block="750">Currently supported scheduling methods include <code>FIFO</code>, <code>LIFO</code>, and <code>DRF</code>.
+<p data-bai-block="748">Currently supported scheduling methods include <code>FIFO</code>, <code>LIFO</code>, and <code>DRF</code>.
 Each method of scheduling is exactly the same as the <a href="#scheduling-methods">scheduling methods</a> above.
 Scheduler options include session creation retries. Session creation retries refers to the number
 of retries to create a session if it fails. If the session cannot be created within the trials,
 the request will be ignored and Backend.AI will process the next request. Currently, changes are
 only possible when the scheduler is FIFO.</p>
-<p><figure data-bai-block="751" class="doc-figure"><img src="./images/system_setting_dialog_scheduler_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="568" height="768" /><figcaption>Figure 24.91</figcaption></figure>
+<p><figure data-bai-block="749" class="doc-figure"><img src="./images/system_setting_dialog_scheduler_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="568" height="768" /><figcaption>Figure 24.91</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="752" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="750" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="753">We will continue to add broader range of setting controls.</p>
+<p data-bai-block="751">We will continue to add broader range of setting controls.</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="754" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="752" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="755">System settings are default settings. If resource group has certain value,
+<p data-bai-block="753">System settings are default settings. If resource group has certain value,
 then it overrides configured value in system settings.</p>
 </div></div>
 
 
 <p><a id="server-management"></a></p>
-<h2 data-bai-block="756" id="admin_menu-server-management">Server management<a class="hash-link" href="#admin_menu-server-management" aria-label="Direct link to Server management">#</a></h2>
-<p data-bai-block="757">Go to the Maintenance page and you will see the server management actions, grouped by purpose. A search
+<h2 data-bai-block="754" id="admin_menu-server-management">Server management<a class="hash-link" href="#admin_menu-server-management" aria-label="Direct link to Server management">#</a></h2>
+<p data-bai-block="755">Go to the Maintenance page and you will see the server management actions, grouped by purpose. A search
 bar at the top of the page filters the list when you are looking for a specific entry.</p>
-<p><figure data-bai-block="758" class="doc-figure"><img src="./images/maintenance_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.92</figcaption></figure>
+<p><figure data-bai-block="756" class="doc-figure"><img src="./images/maintenance_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.92</figcaption></figure>
 </p>
-<p data-bai-block="759"><strong>Fix</strong></p>
+<p data-bai-block="757"><strong>Fix</strong></p>
 <ul>
-<li data-bai-block="760"><strong>Match usage database with current state</strong>: Occasionally, due to unstable network connections or
+<li data-bai-block="758"><strong>Match usage database with current state</strong>: Occasionally, due to unstable network connections or
 container management problem of Docker daemon, there may be a case where the
 resource occupied by Backend.AI does not match the resource actually used by
 the container. In this case, click <strong>Recalculate Usage</strong> to manually
 correct the resource occupancy.</li>
 </ul>
-<p data-bai-block="761"><strong>Images / Environment</strong></p>
+<p data-bai-block="759"><strong>Images / Environment</strong></p>
 <ul>
-<li data-bai-block="762"><strong>Rescan image list from repository</strong>: Click <strong>Rescan Images</strong> to update image meta information from
+<li data-bai-block="760"><strong>Rescan image list from repository</strong>: Click <strong>Rescan Images</strong> to update image meta information from
 all registered Docker registries. It can be used when a new image is pushed to a
 Backend.AI-connected docker registry. The scan can take a long time; progress is reported in the
 notification area.</li>
 </ul>
-<p data-bai-block="763"><strong>Announcement</strong></p>
+<p data-bai-block="761"><strong>Announcement</strong></p>
 <ul>
-<li data-bai-block="764"><strong>System announcement</strong>: Click <strong>Edit Announcement</strong> to create or change the announcement banner shown
+<li data-bai-block="762"><strong>System announcement</strong>: Click <strong>Edit Announcement</strong> to create or change the announcement banner shown
 to every user at the top of every page. See the <a href="#system-announcement">System announcement</a> section below.</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="765" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="763" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="766">We will continue to add other settings needed for management, such as
+<p data-bai-block="764">We will continue to add other settings needed for management, such as
 removing unused images or registering periodic maintenance schedules.</p>
 </div></div>
 
 
 <p><a id="system-announcement"></a></p>
-<h3 data-bai-block="767" id="admin_menu-system-announcement">System announcement<a class="hash-link" href="#admin_menu-system-announcement" aria-label="Direct link to System announcement">#</a></h3>
-<p data-bai-block="768">Superadmins can publish a short message that every user sees as a banner at the top of every page — for
+<h3 data-bai-block="765" id="admin_menu-system-announcement">System announcement<a class="hash-link" href="#admin_menu-system-announcement" aria-label="Direct link to System announcement">#</a></h3>
+<p data-bai-block="766">Superadmins can publish a short message that every user sees as a banner at the top of every page — for
 example, a planned maintenance window. The announcement is written in Markdown and is managed entirely
 from the WebUI, whether or not one has been published before.</p>
-<p data-bai-block="769">Open the editor in either of two ways:</p>
+<p data-bai-block="767">Open the editor in either of two ways:</p>
 <ul>
-<li data-bai-block="770">From the Maintenance page, click <strong>Edit Announcement</strong> in the <strong>System announcement</strong> row. This works
+<li data-bai-block="768">From the Maintenance page, click <strong>Edit Announcement</strong> in the <strong>System announcement</strong> row. This works
 even when no announcement exists yet, so it is the way to publish the first one.</li>
-<li data-bai-block="771">From the announcement banner itself, when one is already published. Because the banner sits at the top
+<li data-bai-block="769">From the announcement banner itself, when one is already published. Because the banner sits at the top
 of every page, a superadmin can open the editor from anywhere in the WebUI.</li>
 </ul>
-<p><figure data-bai-block="772" class="doc-figure"><img src="./images/announcement_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2592" height="1696" /><figcaption>Figure 24.93</figcaption></figure>
+<p><figure data-bai-block="770" class="doc-figure"><img src="./images/announcement_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2592" height="1696" /><figcaption>Figure 24.93</figcaption></figure>
 </p>
-<p data-bai-block="773">The <strong>Edit Announcement</strong> dialog is split into two panes:</p>
+<p data-bai-block="771">The <strong>Edit Announcement</strong> dialog is split into two panes:</p>
 <ul>
-<li data-bai-block="774"><strong>Message</strong>: A Markdown editor with a formatting toolbar. The toolbar provides Heading (H1–H3), Bold,
+<li data-bai-block="772"><strong>Message</strong>: A Markdown editor with a formatting toolbar. The toolbar provides Heading (H1–H3), Bold,
 Italic, Strikethrough, Quote, Code, Link, Image, Bullet List, and Numbered List. Each button applies
 to the current selection, or inserts a placeholder you can type over.</li>
-<li data-bai-block="775"><strong>Preview</strong>: A live rendering of the message exactly as users will see it, updated as you type.</li>
+<li data-bai-block="773"><strong>Preview</strong>: A live rendering of the message exactly as users will see it, updated as you type.</li>
 </ul>
-<p data-bai-block="776">The footer holds three actions:</p>
+<p data-bai-block="774">The footer holds three actions:</p>
 <ul>
-<li data-bai-block="777"><strong>Publish</strong>: Saves the message and makes the banner visible to all users. The button stays disabled
+<li data-bai-block="775"><strong>Publish</strong>: Saves the message and makes the banner visible to all users. The button stays disabled
 while the message is empty, because an empty announcement cannot be published.</li>
-<li data-bai-block="778"><strong>Cancel</strong>: Closes the dialog without saving.</li>
-<li data-bai-block="779"><strong>Delete</strong>: Removes the published announcement so the banner disappears for everyone. A confirmation
+<li data-bai-block="776"><strong>Cancel</strong>: Closes the dialog without saving.</li>
+<li data-bai-block="777"><strong>Delete</strong>: Removes the published announcement so the banner disappears for everyone. A confirmation
 dialog appears first. The action is unavailable when nothing is currently published.</li>
 </ul>
 <p><a id="detailed-information"></a></p>
-<h2 data-bai-block="780" id="admin_menu-detailed-information">Detailed information<a class="hash-link" href="#admin_menu-detailed-information" aria-label="Direct link to Detailed information">#</a></h2>
-<p data-bai-block="781">In Information page, you can see several detailed information and status of each feature.
+<h2 data-bai-block="778" id="admin_menu-detailed-information">Detailed information<a class="hash-link" href="#admin_menu-detailed-information" aria-label="Direct link to Detailed information">#</a></h2>
+<p data-bai-block="779">In Information page, you can see several detailed information and status of each feature.
 To see Manager version and API version, check the Core panel. To see whether each component
 for Backend.AI is compatible or not, check the Component panel.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="782" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="780" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="783">This page is only for showing current information.</p>
+<p data-bai-block="781">This page is only for showing current information.</p>
 </div></div>
 
 
-<p><figure data-bai-block="784" class="doc-figure"><img src="./images/information_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.94</figcaption></figure>
+<p><figure data-bai-block="782" class="doc-figure"><img src="./images/information_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.94</figcaption></figure>
 </p>
 <p><a id="manage-projects"></a></p>
-<h2 data-bai-block="785" id="admin_menu-manage-projects">Manage projects<a class="hash-link" href="#admin_menu-manage-projects" aria-label="Direct link to Manage projects">#</a></h2>
-<p data-bai-block="786">Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
+<h2 data-bai-block="783" id="admin_menu-manage-projects">Manage projects<a class="hash-link" href="#admin_menu-manage-projects" aria-label="Direct link to Manage projects">#</a></h2>
+<p data-bai-block="784">Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
 activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.</p>
 <p><a id="set-project-admin"></a></p>
-<h3 data-bai-block="787" id="admin_menu-set-project-admins">Set project admins<a class="hash-link" href="#admin_menu-set-project-admins" aria-label="Direct link to Set project admins">#</a></h3>
-<p data-bai-block="788">Instead of locating the project&#39;s role on the RBAC Management page, you can manage a project&#39;s
+<h3 data-bai-block="785" id="admin_menu-set-project-admins">Set project admins<a class="hash-link" href="#admin_menu-set-project-admins" aria-label="Direct link to Set project admins">#</a></h3>
+<p data-bai-block="786">Instead of locating the project&#39;s role on the RBAC Management page, you can manage a project&#39;s
 administrators directly from the project list.</p>
 <ol>
-<li data-bai-block="789">Locate the project in the Projects list.</li>
-<li data-bai-block="790">Click the <strong>Set Project Admin</strong> (shield) action in the row. The action is unavailable for Model Store
+<li data-bai-block="787">Locate the project in the Projects list.</li>
+<li data-bai-block="788">Click the <strong>Set Project Admin</strong> (shield) action in the row. The action is unavailable for Model Store
 projects.</li>
-<li data-bai-block="791">The <strong>Set Project Admin</strong> dialog opens.</li>
+<li data-bai-block="789">The <strong>Set Project Admin</strong> dialog opens.</li>
 </ol>
-<p><figure data-bai-block="792" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="880" /><figcaption>Figure 24.95</figcaption></figure>
+<p><figure data-bai-block="790" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="880" /><figcaption>Figure 24.95</figcaption></figure>
 </p>
-<p data-bai-block="793">The dialog contains:</p>
+<p data-bai-block="791">The dialog contains:</p>
 <ul>
-<li data-bai-block="794">An information alert explaining that granting project admin permission automatically adds the project
+<li data-bai-block="792">An information alert explaining that granting project admin permission automatically adds the project
 to the user&#39;s allowed project list, so the user can access the project afterwards.</li>
-<li data-bai-block="795">A <strong>Search and select users</strong> field where you can pick one or more accounts, followed by an <strong>Add</strong>
+<li data-bai-block="793">A <strong>Search and select users</strong> field where you can pick one or more accounts, followed by an <strong>Add</strong>
 button that grants them project admin permission.</li>
-<li data-bai-block="796">A table of the users who currently hold the permission, showing each user&#39;s email and ID, with a
+<li data-bai-block="794">A table of the users who currently hold the permission, showing each user&#39;s email and ID, with a
 <strong>Revoke admin permission</strong> action at the end of the row.</li>
 </ul>
-<p data-bai-block="797">The dialog stays open after each change, so you can grant and revoke several people in one sitting. If
+<p data-bai-block="795">The dialog stays open after each change, so you can grant and revoke several people in one sitting. If
 only part of a batch succeeds, the failures are reported per user.</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="798" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="796" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="799">Revoking project admin permission does <strong>not</strong> remove the project from the user&#39;s allowed project list.
+<p data-bai-block="797">Revoking project admin permission does <strong>not</strong> remove the project from the user&#39;s allowed project list.
 To take away access to the project as well, remove it from that list manually — see
 <a href="#create-and-update-users">Browse and manage users</a>.</p>
 </div></div>
 
 
-<p data-bai-block="800">For the full role and permission model behind this shortcut, and for the equivalent flow on the RBAC
+<p data-bai-block="798">For the full role and permission model behind this shortcut, and for the equivalent flow on the RBAC
 Management page, refer to the <a href="./rbac_management.html#grant-project-admin">Grant Project Admin authority</a> section.</p>
-<h2 data-bai-block="801" id="admin_menu-rbac-management">RBAC management<a class="hash-link" href="#admin_menu-rbac-management" aria-label="Direct link to RBAC management">#</a></h2>
-<p data-bai-block="802">RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. You can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.</p>
-<p data-bai-block="803">For detailed information about managing roles, permissions, and user assignments, refer to the dedicated <a href="#rbac-management">RBAC Management</a> page.</p>
+<h2 data-bai-block="799" id="admin_menu-rbac-management">RBAC management<a class="hash-link" href="#admin_menu-rbac-management" aria-label="Direct link to RBAC management">#</a></h2>
+<p data-bai-block="800">RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. You can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.</p>
+<p data-bai-block="801">For detailed information about managing roles, permissions, and user assignments, refer to the dedicated <a href="#rbac-management">RBAC Management</a> page.</p>
 <p><a id="diagnostics"></a></p>
-<h2 data-bai-block="804" id="admin_menu-diagnostics">Diagnostics<a class="hash-link" href="#admin_menu-diagnostics" aria-label="Direct link to Diagnostics">#</a></h2>
-<p data-bai-block="805">Superadmins can open the <strong>Diagnostics</strong> page from the admin sidebar to run a set of automated health checks on the WebUI deployment. The page evaluates the browser-to-server configuration and reports any misconfiguration, so that connectivity or security problems can be identified before they affect users.</p>
-<p><figure data-bai-block="806" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>Figure 24.96</figcaption></figure>
+<h2 data-bai-block="802" id="admin_menu-diagnostics">Diagnostics<a class="hash-link" href="#admin_menu-diagnostics" aria-label="Direct link to Diagnostics">#</a></h2>
+<p data-bai-block="803">Superadmins can open the <strong>Diagnostics</strong> page from the admin sidebar to run a set of automated health checks on the WebUI deployment. The page evaluates the browser-to-server configuration and reports any misconfiguration, so that connectivity or security problems can be identified before they affect users.</p>
+<p><figure data-bai-block="804" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>Figure 24.96</figcaption></figure>
 </p>
-<p data-bai-block="807">The toolbar at the top of the page provides the following controls:</p>
+<p data-bai-block="805">The toolbar at the top of the page provides the following controls:</p>
 <ul>
-<li data-bai-block="808"><strong>Show only failed items</strong>: A toggle that hides every passing check so that only the sections containing warnings or errors remain visible.</li>
-<li data-bai-block="809"><code>Re-run Diagnostics</code>: Re-evaluates every check and refreshes the results.</li>
-<li data-bai-block="810"><code>Export CSV</code>: Available from the actions dropdown menu, this exports all diagnostic results to a CSV file named <code>diagnostics-YYYY-MM-DD.csv</code>.</li>
+<li data-bai-block="806"><strong>Show only failed items</strong>: A toggle that hides every passing check so that only the sections containing warnings or errors remain visible.</li>
+<li data-bai-block="807"><code>Re-run Diagnostics</code>: Re-evaluates every check and refreshes the results.</li>
+<li data-bai-block="808"><code>Export CSV</code>: Available from the actions dropdown menu, this exports all diagnostic results to a CSV file named <code>diagnostics-YYYY-MM-DD.csv</code>.</li>
 </ul>
 <div class="admonition admonition-tip">
-<div data-bai-block="811" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
+<div data-bai-block="809" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
 <div class="admonition-content">
 
-<p data-bai-block="812">Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters without garbling.</p>
+<p data-bai-block="810">Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters without garbling.</p>
 </div></div>
 
 
-<p data-bai-block="813">The diagnostics are organized into the following collapsible sections, each showing the result of its individual checks with a pass, warning, or critical severity:</p>
+<p data-bai-block="811">The diagnostics are organized into the following collapsible sections, each showing the result of its individual checks with a pass, warning, or critical severity:</p>
 <ul>
-<li data-bai-block="814"><strong>Content Security Policy</strong>: Verifies the Content Security Policy headers (such as <code>connect-src</code>, <code>frame-src</code>, <code>script-src</code>, and <code>style-src</code>) so that the application can reach the resources it needs.</li>
-<li data-bai-block="815"><strong>Storage Proxy</strong>: Checks the storage volume list together with the storage proxy&#39;s reachability and usage metrics.</li>
-<li data-bai-block="816"><strong>Endpoint Connectivity</strong>: Validates that the API endpoint is reachable and that a connection can be established.</li>
-<li data-bai-block="817"><strong>Web Server Configuration</strong>: Validates the <code>config.toml</code> settings, including URL formatting, SSL/protocol consistency, and connection mode.</li>
+<li data-bai-block="812"><strong>Content Security Policy</strong>: Verifies the Content Security Policy headers (such as <code>connect-src</code>, <code>frame-src</code>, <code>script-src</code>, and <code>style-src</code>) so that the application can reach the resources it needs.</li>
+<li data-bai-block="813"><strong>Storage Proxy</strong>: Checks the storage volume list together with the storage proxy&#39;s reachability and usage metrics.</li>
+<li data-bai-block="814"><strong>Endpoint Connectivity</strong>: Validates that the API endpoint is reachable and that a connection can be established.</li>
+<li data-bai-block="815"><strong>Web Server Configuration</strong>: Validates the <code>config.toml</code> settings, including URL formatting, SSL/protocol consistency, and connection mode.</li>
 </ul>
-<p data-bai-block="818">When <strong>Show only failed items</strong> is enabled and every check passes, the page does not go blank: it shows a
+<p data-bai-block="816">When <strong>Show only failed items</strong> is enabled and every check passes, the page does not go blank: it shows a
 placeholder reading <code>No failed items. All diagnostics passed.</code>, so a clean result is unmistakable.</p>
-<p><figure data-bai-block="819" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.97</figcaption></figure>
+<p><figure data-bai-block="817" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.97</figcaption></figure>
 </p>
 <div class="admonition admonition-tip">
-<div data-bai-block="820" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
+<div data-bai-block="818" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
 <div class="admonition-content">
 
-<p data-bai-block="821">When troubleshooting a connection problem, enable <strong>Show only failed items</strong> and click <code>Re-run Diagnostics</code> first — it surfaces just the checks that need attention.</p>
+<p data-bai-block="819">When troubleshooting a connection problem, enable <strong>Show only failed items</strong> and click <code>Re-run Diagnostics</code> first — it surfaces just the checks that need attention.</p>
 </div></div>
 
 
 <p><a id="branding"></a></p>
-<h2 data-bai-block="822" id="admin_menu-branding">Branding<a class="hash-link" href="#admin_menu-branding" aria-label="Direct link to Branding">#</a></h2>
-<p data-bai-block="823">The <strong>Branding</strong> page lets superadmins customize the visual identity of the WebUI — colors, logos, and fonts — to match an organization&#39;s corporate identity. It is available from the admin sidebar.</p>
-<p><figure data-bai-block="824" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>Figure 24.98</figcaption></figure>
+<h2 data-bai-block="820" id="admin_menu-branding">Branding<a class="hash-link" href="#admin_menu-branding" aria-label="Direct link to Branding">#</a></h2>
+<p data-bai-block="821">The <strong>Branding</strong> page lets superadmins customize the visual identity of the WebUI — colors, logos, and fonts — to match an organization&#39;s corporate identity. It is available from the admin sidebar.</p>
+<p><figure data-bai-block="822" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>Figure 24.98</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="825" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="823" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="826">The updated theme cannot be applied immediately from this page. To apply a customized theme, export the configuration as a JSON file and provide it to the support team.</p>
+<p data-bai-block="824">The updated theme cannot be applied immediately from this page. To apply a customized theme, export the configuration as a JSON file and provide it to the support team.</p>
 </div></div>
 
 
-<p data-bai-block="827">The toolbar provides:</p>
+<p data-bai-block="825">The toolbar provides:</p>
 <ul>
-<li data-bai-block="828"><code>Preview</code>: Opens a new window that previews the current theme changes.</li>
-<li data-bai-block="829"><code>JSON Config</code>: Opens a modal where the theme configuration can be edited directly as JSON and exported.</li>
-<li data-bai-block="830">A reset control that restores all branding settings to their defaults.</li>
-<li data-bai-block="831">A search bar to filter the settings.</li>
+<li data-bai-block="826"><code>Preview</code>: Opens a new window that previews the current theme changes.</li>
+<li data-bai-block="827"><code>JSON Config</code>: Opens a modal where the theme configuration can be edited directly as JSON and exported.</li>
+<li data-bai-block="828">A reset control that restores all branding settings to their defaults.</li>
+<li data-bai-block="829">A search bar to filter the settings.</li>
 </ul>
-<p data-bai-block="832">The settings are divided into the following groups:</p>
+<p data-bai-block="830">The settings are divided into the following groups:</p>
 <ul>
-<li data-bai-block="833"><strong>Theme</strong>: Color pickers for the primary, header background, link, info, error, success, and text colors. Each color can be set independently for light and dark mode and reset individually.</li>
-<li data-bai-block="834"><strong>Logo CI</strong>: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.</li>
-<li data-bai-block="835"><strong>Detail Logo CI</strong>: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.</li>
-<li data-bai-block="836"><strong>Font</strong>: Select the font family used throughout the interface.</li>
+<li data-bai-block="831"><strong>Theme</strong>: Color pickers for the primary, header background, link, info, error, success, and text colors. Each color can be set independently for light and dark mode and reset individually.</li>
+<li data-bai-block="832"><strong>Logo CI</strong>: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.</li>
+<li data-bai-block="833"><strong>Detail Logo CI</strong>: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.</li>
+<li data-bai-block="834"><strong>Font</strong>: Select the font family used throughout the interface.</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="837" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="835" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="838">After uploading an image or changing a color, use <code>Preview</code> to see the result. Because the changes are not applied to the live service automatically, export the JSON configuration and contact support to roll it out.</p>
+<p data-bai-block="836">After uploading an image or changing a color, use <code>Preview</code> to see the result. Because the changes are not applied to the live service automatically, export the JSON configuration and contact support to roll it out.</p>
 </div></div>
 
 
@@ -2174,7 +2168,7 @@ placeholder reading <code>No failed items. All diagnostics passed.</code>, so a 
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 8, 2026</span>
+  <span class="last-updated">Last updated on Sep 10, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">

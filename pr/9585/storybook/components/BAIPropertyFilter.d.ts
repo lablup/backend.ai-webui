@@ -25,10 +25,7 @@ export type FilterProperty = {
     };
     /**
      * Replaces the built-in value editor with a controlled control (e.g.
-     * `BAIUserSelect`). Call `onAddCondition(value, label?)` to stage the value;
-     * the popover's Apply button commits it. Pass the human-readable `label`
-     * when the committed value is opaque (e.g. a UUID) so the token shows the
-     * label while the raw value still serializes unchanged.
+     * `BAIUserSelect`); see `FilterRenderInput` for the stage/Apply contract.
      */
     renderInput?: FilterRenderInput;
 };

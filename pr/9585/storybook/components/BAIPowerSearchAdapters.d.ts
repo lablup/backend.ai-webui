@@ -13,7 +13,12 @@ export type FilterPropertyOption = {
 };
 /** The `renderInput` escape hatch shared by both filters (FR-3011 / FR-3258). */
 export type FilterRenderInput = (props: {
+    /** Stages a value; the edit popover's Apply button commits it. */
     onAddCondition: (value: string | undefined, label?: string) => void;
+    /** The staged (or committed) value — feed it back so the pick stays visible. */
+    value: string | null;
+    /** The popover's disabled state. */
+    isDisabled?: boolean;
 }) => ReactNode;
 /** Only string-ish labels survive into a token; anything else falls back. */
 export declare const optionLabelToString: (label: ReactNode, fallback: string) => string;
@@ -40,11 +45,7 @@ export interface RenderInputEditors {
 }
 /**
  * Builds (and caches) one `custom` operator value per `renderInput` property.
- *
- * PILOT-DECISION: the antd filter committed a condition the instant the
- * control emitted a value. PowerSearch owns the commit (its popover has an
- * Apply button), so the control now stages the value and the user confirms.
- * One extra click; the alternative was reimplementing the popover.
+ * The control stages a value; the popover's Apply button commits it.
  */
 export declare function useRenderInputEditors({ recordLabel, resolveLabel, }: RenderInputEditorsOptions): RenderInputEditors;
 /**
