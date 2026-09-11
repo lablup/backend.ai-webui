@@ -164,18 +164,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
     }
   };
 
-  const userIdsItemProps = {
-    name: 'userIds',
-    label: t('credential.Users'),
-    rules: [{ required: true, message: t('rbac.PleaseSelectUsers') }],
-  };
-  const userSelectProps = {
-    multiple: true,
-    label: t('credential.Users'),
-    isLabelHidden: true,
-    placeholder: t('rbac.SelectUsers'),
-  } as const;
-
   const failureColumns: BAIColumnsType<FailedAssignment> = [
     {
       key: 'user',
@@ -220,9 +208,16 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         <Suspense
           // Same field on the fallback: keeps `userIds` registered while the options load.
           fallback={
-            <Form.Item {...userIdsItemProps}>
+            <Form.Item
+              name="userIds"
+              label={t('credential.Users')}
+              rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+            >
               <BAIComplexSelect
-                {...userSelectProps}
+                multiple
+                label={t('credential.Users')}
+                isLabelHidden
+                placeholder={t('rbac.SelectUsers')}
                 options={[]}
                 isLoading
                 isDisabled
@@ -230,10 +225,17 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             </Form.Item>
           }
         >
-          <Form.Item {...userIdsItemProps}>
+          <Form.Item
+            name="userIds"
+            label={t('credential.Users')}
+            rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
+          >
             <BAIAdminUserV2Select
-              {...userSelectProps}
+              multiple
               valuePropName="id"
+              label={t('credential.Users')}
+              isLabelHidden
+              placeholder={t('rbac.SelectUsers')}
               onChange={(value, option) => {
                 _.castArray(option ?? []).forEach((o) => {
                   userLabelsRef.current.set(
