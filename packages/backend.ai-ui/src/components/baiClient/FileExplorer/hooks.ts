@@ -1,11 +1,8 @@
-import { App } from '../../../app-shim';
-import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
-import { FolderInfoContext } from './BAIFileExplorer';
 import { useQuery } from '@tanstack/react-query';
 import * as _ from 'lodash-es';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * `RcFile` from `antd/es/upload`, restated locally (to-astryx W2-D).
@@ -172,49 +169,131 @@ export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
   };
 };
 
-export const useUploadVFolderFiles = () => {
-  const { t } = useBAIi18n();
-  const { modal } = App.useApp();
-  const { targetVFolderId, currentPath } = use(FolderInfoContext);
+/** One top-level entry a picked file list will create in the target directory. */
+export interface UploadEntry {
+  name: string;
+  isDirectory: boolean;
+  files: Array<RcFile>;
+}
+
+/** An entry whose name is already taken in the target directory. */
+export interface DuplicatedUploadEntry extends UploadEntry {
+  existingItem: VFolderFile;
+}
+
+// A folder pick arrives as its leaf files, each carrying the path it will take
+// inside the target directory; a plain file pick carries an empty one. Only the
+// first segment lands in the current directory, so only it can collide.
+const resolveUploadEntry = (file: RcFile) => {
+  const relativePath = file.webkitRelativePath ?? '';
+  const separatorIndex = relativePath.indexOf('/');
+  return separatorIndex > 0
+    ? { name: relativePath.slice(0, separatorIndex), isDirectory: true }
+    : { name: file.name, isDirectory: false };
+};
+
+const EMPTY_DUPLICATED_ENTRIES: Array<DuplicatedUploadEntry> = [];
+
+/**
+ * Resolves name collisions before handing a pick to the uploader: the caller
+ * gets `requestUpload`, and renders `OverwriteConfirmModal` with the returned
+ * props so the user can keep or overwrite each colliding entry (FR-1564).
+ *
+ * Must be called where it outlives the upload trigger — the drag overlay
+ * unmounts on drop, which would take the pending decision with it.
+ */
+export const useUploadVFolderFiles = ({
+  targetVFolderId,
+  currentPath,
+  onUpload,
+}: {
+  targetVFolderId: string;
+  currentPath: string;
+  onUpload: (files: Array<RcFile>, currentPath: string) => void;
+}) => {
+  'use memo';
   const baiClient = useConnectedBAIClient();
+  const [pendingUpload, setPendingUpload] = useState<{
+    fileList: Array<RcFile>;
+    // Captured at request time: the user may browse elsewhere while deciding.
+    uploadPath: string;
+    duplicatedEntries: Array<DuplicatedUploadEntry>;
+    newEntryCount: number;
+  } | null>(null);
 
-  const uploadFiles = async (
-    fileList: Array<RcFile>,
-    onUpload: (files: Array<RcFile>, currentPath: string) => void,
-    afterUpload?: () => void,
-  ) => {
-    // Currently, backend.ai only supports finding existing files by using list_files API.
-    // This API throw an error if the file does not exist in the target vfolder.
-    // So, we need to catch the error and return undefined.
-    const uploadFolderName = fileList[0].webkitRelativePath.split('/')[0];
+  const requestUpload = async (fileList: Array<RcFile>) => {
+    if (_.isEmpty(fileList)) return;
+    const uploadPath = currentPath;
 
-    const duplicateCheckResult = await baiClient.vfolder
-      .list_files(currentPath, targetVFolderId)
-      .then((files) => {
-        if (uploadFolderName) {
-          return _.some(files.items, (f) => f.name === uploadFolderName);
-        } else {
-          return _.some(files.items, (f) => f.name === fileList[0].name);
-        }
-      })
+    const namedFiles = _.map(fileList, (file) => ({
+      file,
+      ...resolveUploadEntry(file),
+    }));
+    const entries: Array<UploadEntry> = _.map(
+      _.groupBy(namedFiles, 'name'),
+      (group, name) => ({
+        name,
+        isDirectory: group[0].isDirectory,
+        files: _.map(group, 'file'),
+      }),
+    );
+
+    // `list_files` throws when the directory cannot be listed. With nothing to
+    // compare against there is no collision to report, so upload as-is.
+    const existingItems = await baiClient.vfolder
+      .list_files(uploadPath, targetVFolderId)
+      .then((res) => res.items)
       .catch(() => undefined);
+    const existingItemByName = _.keyBy(existingItems ?? [], 'name');
 
-    if (duplicateCheckResult) {
-      modal.confirm({
-        title: t('comp:FileExplorer.DuplicatedFiles'),
-        content: t('comp:FileExplorer.DuplicatedFilesDesc'),
-        onOk: () => {
-          onUpload(fileList, currentPath);
-          afterUpload?.();
-        },
-      });
-    } else {
-      onUpload(fileList, currentPath);
-      afterUpload?.();
+    const [duplicated, fresh] = _.partition(
+      entries,
+      (entry) => !!existingItemByName[entry.name],
+    );
+
+    if (_.isEmpty(duplicated)) {
+      onUpload(fileList, uploadPath);
+      return;
     }
+
+    setPendingUpload({
+      fileList,
+      uploadPath,
+      duplicatedEntries: _.map(duplicated, (entry) => ({
+        ...entry,
+        existingItem: existingItemByName[entry.name],
+      })),
+      newEntryCount: fresh.length,
+    });
+  };
+
+  const resolvePendingUpload = (
+    success: boolean,
+    overwritingNames: Array<string> = [],
+  ) => {
+    if (success && pendingUpload) {
+      const skippedNames = _.difference(
+        _.map(pendingUpload.duplicatedEntries, 'name'),
+        overwritingNames,
+      );
+      const filesToUpload = _.reject(pendingUpload.fileList, (file) =>
+        _.includes(skippedNames, resolveUploadEntry(file).name),
+      );
+      if (!_.isEmpty(filesToUpload)) {
+        onUpload(filesToUpload, pendingUpload.uploadPath);
+      }
+    }
+    setPendingUpload(null);
   };
 
   return {
-    uploadFiles,
+    requestUpload,
+    overwriteConfirmModalProps: {
+      open: !!pendingUpload,
+      duplicatedEntries:
+        pendingUpload?.duplicatedEntries ?? EMPTY_DUPLICATED_ENTRIES,
+      newEntryCount: pendingUpload?.newEntryCount ?? 0,
+      onRequestClose: resolvePendingUpload,
+    },
   };
 };

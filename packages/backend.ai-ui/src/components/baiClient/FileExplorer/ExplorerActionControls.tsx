@@ -15,7 +15,6 @@ import CreateFileModal from './CreateFileModal';
 import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
-import { useUploadVFolderFiles } from './hooks';
 import type { RcFile } from './hooks';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -34,7 +33,8 @@ interface ExplorerActionControlsProps {
     success: boolean,
     modifiedItems?: Array<VFolderFile>,
   ) => void;
-  onUpload: (files: Array<RcFile>, currentPath: string) => void;
+  /** Hands the pick to the explorer's duplicate-aware upload path. */
+  onUpload: (files: Array<RcFile>) => void;
   onDeleteFilesInBackground: DeleteSelectedItemsModalProps['onDeleteFilesInBackground'];
   onClearSelection?: () => void;
   enableDownload?: boolean;
@@ -82,7 +82,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const { lg } = useBAIBreakpoint();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const { uploadFiles } = useUploadVFolderFiles();
   const { targetVFolderId, targetVFolderName, currentPath } =
     use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
@@ -116,7 +115,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
     if (!fileList || fileList.length === 0) return;
     const files = Array.from(fileList) as Array<RcFile>;
     if (files !== lastFileListRef.current) {
-      uploadFiles(files, onUpload);
+      onUpload(files);
     }
     lastFileListRef.current = files;
     // Q-28: an explicit close, not a flip — the menu is already closed by the
