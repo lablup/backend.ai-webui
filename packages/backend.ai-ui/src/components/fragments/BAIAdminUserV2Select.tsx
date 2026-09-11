@@ -8,7 +8,7 @@
 */
 import { BAIAdminUserV2SelectPaginatedQuery } from '../../__generated__/BAIAdminUserV2SelectPaginatedQuery.graphql';
 import { BAIAdminUserV2SelectValueQuery } from '../../__generated__/BAIAdminUserV2SelectValueQuery.graphql';
-import { toLocalId } from '../../helper';
+import { combineFiltersWithAnd, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -63,15 +63,6 @@ export interface BAIAdminUserV2SelectProps extends Omit<
   ref?: React.Ref<BAIAdminUserV2SelectRef>;
 }
 
-/** `UserV2Filter` has no merge semantics of its own — combine through `AND`. */
-const combineFilters = (
-  parts: Array<BAIAdminUserV2SelectFilter | null | undefined>,
-): BAIAdminUserV2SelectFilter | null => {
-  const compacted = _.compact(parts);
-  if (compacted.length === 0) return null;
-  return compacted.length === 1 ? compacted[0] : { AND: compacted };
-};
-
 const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
   filter: filterFromProps,
   excludeInactive = false,
@@ -105,7 +96,8 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const baseFilter = combineFilters([
+  // `UserV2Filter` has no merge semantics of its own — combine through `AND`.
+  const baseFilter = combineFiltersWithAnd<BAIAdminUserV2SelectFilter>([
     excludeInactive ? { status: { equals: 'ACTIVE' } } : null,
     filterFromProps,
   ]);
@@ -146,7 +138,10 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
       `,
       {
         selectedFilter: shouldResolveSelected
-          ? combineFilters([{ uuid: { in: selectedKeys } }, baseFilter])
+          ? combineFiltersWithAnd<BAIAdminUserV2SelectFilter>([
+              { uuid: { in: selectedKeys } },
+              baseFilter,
+            ])
           : null,
         limit: Math.max(selectedKeys.length, 1),
         skipSelected: !shouldResolveSelected,
@@ -191,7 +186,7 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
       `,
       { limit: 10 },
       {
-        filter: combineFilters([
+        filter: combineFiltersWithAnd<BAIAdminUserV2SelectFilter>([
           baseFilter,
           debouncedDeferredValue
             ? { email: { iContains: debouncedDeferredValue } }
@@ -250,13 +245,17 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
 
   /** Plain keys -> labelInValue, resolving each label where we can. */
   const labeledValue: BAIComplexSelectValue = (() => {
+    const emailByKey = new Map(
+      _.compact(
+        _.map(selectedUsers?.edges, (edge) => {
+          const key = keyOfNode(edge?.node);
+          return key ? ([key, edge?.node?.basicInfo?.email] as const) : null;
+        }),
+      ),
+    );
     const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
-      const edge = _.find(
-        selectedUsers?.edges,
-        (e) => keyOfNode(e?.node) === key,
-      );
       // Echoing the key as its own label is the antd fallback, made explicit.
-      return { label: edge?.node?.basicInfo?.email ?? key, value: key };
+      return { label: emailByKey.get(key) ?? key, value: key };
     });
     if (multiple) return labeled;
     return labeled[0] ?? null;

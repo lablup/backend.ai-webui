@@ -30,7 +30,7 @@
 */
 import { BAIProjectVfolderSelectPaginatedQuery } from '../../__generated__/BAIProjectVfolderSelectPaginatedQuery.graphql';
 import { BAIProjectVfolderSelectValueQuery } from '../../__generated__/BAIProjectVfolderSelectValueQuery.graphql';
-import { convertToUUID, toLocalId } from '../../helper';
+import { combineFiltersWithAnd, convertToUUID, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -119,22 +119,13 @@ const BAIProjectVfolderSelect: React.FC<BAIProjectVfolderSelectProps> = ({
   // `VFolderFilter` allows each field at most once at the top level, so the
   // caller's `filter` is composed with the search / `excludeDeleted`
   // shortcuts via the `AND` combinator (unchanged from the antd original).
-  const subFilters: BAIProjectVfolderSelectFilter[] = [];
-  if (filter) subFilters.push(filter);
-  if (excludeDeleted) {
-    subFilters.push({
-      status: { notIn: EXCLUDED_DELETION_STATUSES },
-    });
-  }
-  if (debouncedDeferredValue) {
-    subFilters.push({ name: { iContains: debouncedDeferredValue } });
-  }
-  const mergedFilter: BAIProjectVfolderSelectFilter | null =
-    subFilters.length === 0
-      ? null
-      : subFilters.length === 1
-        ? subFilters[0]
-        : { AND: subFilters };
+  const mergedFilter = combineFiltersWithAnd<BAIProjectVfolderSelectFilter>([
+    filter,
+    excludeDeleted ? { status: { notIn: EXCLUDED_DELETION_STATUSES } } : null,
+    debouncedDeferredValue
+      ? { name: { iContains: debouncedDeferredValue } }
+      : null,
+  ]);
 
   // Selected-value name lookup. `VFolderFilter` does not expose an id
   // filter, so the single selected vfolder is resolved via the
