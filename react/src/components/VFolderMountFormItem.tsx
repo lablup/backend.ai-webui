@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { VFolderMountFormItemAutoMountQuery } from '../__generated__/VFolderMountFormItemAutoMountQuery.graphql';
 import { Form } from '../form-engine';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useSuspendedAutoMountedFolderNames } from '../hooks/useSuspendedAutoMountedFolderNames';
 import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -36,7 +36,6 @@ import React, {
   useCallback,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
  * Form item for selecting vfolders with mount path configuration.
@@ -318,47 +317,14 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
   );
 };
 
-/**
- * Lazy-loaded section that queries and displays auto-mount folders (name starts with '.').
- * Uses GraphQL vfolder_nodes with the same filter condition as VFolderTable and VFolderNodeListPage.
- */
+/** Lists the folders a session in this project mounts on its own. */
 const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
   currentProjectId,
 }) => {
   'use memo';
   const { t } = useTranslation();
 
-  const { vfolder_nodes } =
-    useLazyLoadQuery<VFolderMountFormItemAutoMountQuery>(
-      graphql`
-        query VFolderMountFormItemAutoMountQuery(
-          $scopeId: ScopeField
-          $filter: String
-        ) {
-          vfolder_nodes(
-            scope_id: $scopeId
-            filter: $filter
-            first: 100
-            permission: "read_attribute"
-          ) {
-            edges {
-              node {
-                name
-                status
-              }
-            }
-          }
-        }
-      `,
-      {
-        scopeId: `project:${currentProjectId}`,
-        filter: 'name ilike ".%" & status == "ready"',
-      },
-    );
-
-  const autoMountNames = _.compact(
-    _.map(vfolder_nodes?.edges, (edge) => edge?.node?.name),
-  );
+  const autoMountNames = useSuspendedAutoMountedFolderNames(currentProjectId);
 
   if (autoMountNames.length === 0) return null;
 

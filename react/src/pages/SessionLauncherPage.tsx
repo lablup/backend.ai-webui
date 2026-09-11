@@ -24,6 +24,7 @@ import ResourceAllocationFormItems, {
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
 import SessionLauncherFormIncompatibleValueChecker from '../components/SessionLauncherFormIncompatibleValueChecker';
 import SessionLauncherPreview from '../components/SessionLauncherPreview';
+import SessionLauncherStorageStep from '../components/SessionLauncherStorageStep';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -31,9 +32,6 @@ import SessionOwnerSetterCard, {
   SessionOwnerSetterFormValues,
 } from '../components/SessionOwnerSetterCard';
 import SessionTemplateModal from '../components/SessionTemplateModal';
-import VFolderTableFormItem, {
-  VFolderTableFormValues,
-} from '../components/VFolderTableFormItem';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -44,6 +42,7 @@ import {
 } from '../components/astryxFormControls';
 import { Form } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
+import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentUserRole,
@@ -77,6 +76,7 @@ import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { Step, Stepper } from '@astryxdesign/lab';
 import * as stylex from '@stylexjs/stylex';
+import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {
   BAIPopconfirm,
   BAIFlex,
@@ -84,6 +84,7 @@ import {
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
   ResourceTypeIcon,
+  type VFolderMountConfigValue,
   filterOutEmpty,
   generateRandomString,
   useBAILogger,
@@ -123,7 +124,7 @@ import { useLocation } from 'react-router-dom';
 
 type SessionLauncherFormData = Omit<
   Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
-  'autoMountedFolderNames' | 'mounts'
+  'mounts'
 >;
 
 export interface SessionResources {
@@ -150,17 +151,16 @@ export interface SessionResources {
       shmem?: string;
       allow_fractional_resource_fragmentation?: boolean;
     };
-    mount_ids?: string[];
-    mount_id_map?: {
-      [key: string]: string;
-    };
     environ?: {
       [key: string]: string;
     };
     scaling_group?: string;
     preopen_ports?: number[];
     agent_list?: string[];
-  };
+  } & Pick<
+    NonNullable<ClientSessionResources['config']>,
+    'mount_ids' | 'mount_id_map' | 'mount_options'
+  >;
 }
 
 interface SessionLauncherValue {
@@ -184,11 +184,20 @@ interface SessionLauncherValue {
   reuseIfExists?: boolean;
 }
 
+export interface SessionLauncherVFolderMountValues {
+  vfolderMounts?: VFolderMountConfigValue[];
+  /**
+   * Deprecated mount-by-name field. Only `SessionLauncherFormIncompatibleValueChecker`
+   * still reads it, to warn about and clear a stale `?formValues=` param.
+   */
+  mounts?: string[];
+}
+
 export type SessionLauncherFormValue = SessionLauncherValue &
   SessionNameFormItemValue &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue &
-  VFolderTableFormValues &
+  SessionLauncherVFolderMountValues &
   PortSelectFormValues &
   SessionOwnerSetterFormValues;
 
@@ -289,7 +298,6 @@ const SessionLauncherPage = () => {
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
-  const supportsMountById = baiClient.supports('mount-by-id');
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentUserRole = useCurrentUserRole();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
@@ -307,8 +315,13 @@ const SessionLauncherPage = () => {
   const { startSession, defaultFormValues, upsertSessionNotification } =
     useStartSession();
   const StepParam = parseAsInteger.withDefault(0);
+  // Migrate at the parser so every reader of `formValuesFromQueryParams` sees
+  // `vfolderMounts`, never the legacy mount fields.
   const FormValuesParam = parseAsJson<DeepPartial<SessionLauncherFormValue>>(
-    (value) => value as DeepPartial<SessionLauncherFormValue>,
+    (value) =>
+      normalizeLegacyMountFields(
+        value as DeepPartial<SessionLauncherFormValue>,
+      ),
   ).withDefault(defaultFormValues);
   const AppOptionParam = parseAsJson<AppOption>(
     (value) => value as AppOption,
@@ -350,7 +363,6 @@ const SessionLauncherPage = () => {
           _.omit(form.getFieldsValue(), [
             'environments.image',
             'environments.customizedTag',
-            'autoMountedFolderNames',
             'owner',
             'envvars',
           ]),
@@ -532,7 +544,7 @@ const SessionLauncherPage = () => {
       return;
     }
 
-    if (_.isEmpty(values.mount_ids) || values.mount_ids?.length === 0) {
+    if (_.isEmpty(values.vfolderMounts)) {
       const isConfirmed = await app.modal.confirm({
         title: t('session.launcher.NoFolderMounted'),
         content: (
@@ -1328,33 +1340,10 @@ const SessionLauncherPage = () => {
                   title={t('webui.menu.Data&Storage')}
                   hidden={currentStepKey !== 'storage'}
                 >
-                  <Form.Item noStyle dependencies={['owner']}>
-                    {({ getFieldValue }) => {
-                      const ownerInfo = getFieldValue('owner');
-                      const isValidOwner =
-                        ownerInfo?.enabled &&
-                        _.every(_.omit(ownerInfo, 'enabled'), (key) => {
-                          return key !== undefined;
-                        });
-
-                      return (
-                        <VFolderTableFormItem
-                          rowKey={supportsMountById ? 'id' : 'name'}
-                          rowFilter={(vfolder) => {
-                            return (
-                              vfolder.status === 'ready' &&
-                              !vfolder.name?.startsWith('.')
-                            );
-                          }}
-                          tableProps={{
-                            ownerEmail: isValidOwner
-                              ? ownerInfo?.email
-                              : undefined,
-                          }}
-                        />
-                      );
-                    }}
-                  </Form.Item>
+                  <SessionLauncherStorageStep
+                    form={form}
+                    project={currentProjectContext}
+                  />
                 </StepCard>
 
                 {/* Step Start*/}
@@ -1368,6 +1357,7 @@ const SessionLauncherPage = () => {
                 {/* Step Start*/}
                 {currentStepKey === 'review' && (
                   <SessionLauncherPreview
+                    currentProjectId={currentProjectContext.id}
                     onClickEditStep={(stepKey) => {
                       const nextStep = _.findIndex(steps, { key: stepKey });
                       setCurrentStep(nextStep);
@@ -1601,9 +1591,7 @@ const SessionLauncherPage = () => {
                 // reset fields related to optional and nested fields
                 sessionName: '',
                 ports: [],
-                vfoldersNameMap: {},
-                mount_ids: [],
-                mount_id_map: {},
+                vfolderMounts: [],
                 bootstrap_script: '',
                 num_of_sessions: 1,
                 owner: {
@@ -1625,7 +1613,7 @@ const SessionLauncherPage = () => {
                 reuseIfExists: false,
                 agent: ['auto'], // Add the missing 'agent' property
               } as SessionLauncherFormData,
-              formValue,
+              normalizeLegacyMountFields(formValue),
             );
 
             if (!_.isEmpty(fieldsValue.sessionName)) {

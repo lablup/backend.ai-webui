@@ -2963,6 +2963,7 @@
       "FolderAliasInvalid": "Only alphanumeric characters, underscore (_), slash (/), dot (.), and dash (-) are allowed.",
       "FolderAliasOverlapping": "Aliases overlap with other names that already exist",
       "FolderAliasOverlappingToAutoMount": "An auto-mount folder with the same name exists.",
+      "FolderSubpath": "Subpath",
       "FolderToMount": "Folder to mount",
       "FolderToMountList": "Folder to mount",
       "GPUSlot": "Slot",

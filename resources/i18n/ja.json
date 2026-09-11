@@ -2978,6 +2978,7 @@
       "FolderAliasInvalid": "使用できる文字は、英数字、アンダースコア (_)、スラッシュ (/)、ドット (.)、ダッシュ (-) のみです。",
       "FolderAliasOverlapping": "代替名前が既に存在する他の名前と重なります。",
       "FolderAliasOverlappingToAutoMount": "同名の自動マウントフォルダが存在する。",
+      "FolderSubpath": "サブパス",
       "FolderToMount": "マウントするフォルダー",
       "FolderToMountList": "マウントするフォルダー",
       "GPUSlot": "スロット",

@@ -2976,6 +2976,7 @@
       "FolderAliasInvalid": "Hanya aksara abjad angka, garis bawah (_), garis miring (/), titik (.), dan sempang (-) dibenarkan.",
       "FolderAliasOverlapping": "Alias bertindih dengan nama lain yang sudah wujud",
       "FolderAliasOverlappingToAutoMount": "Folder auto-lekap dengan nama yang sama wujud.",
+      "FolderSubpath": "Sublaluan",
       "FolderToMount": "Folder untuk dipasang",
       "FolderToMountList": "Folder untuk dipasang",
       "GPUSlot": "Slot",

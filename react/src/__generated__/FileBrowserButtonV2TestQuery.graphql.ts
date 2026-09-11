@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a3c05b0ef424601184ee0c306c842726>>
+ * @generated SignedSource<<27d5f979ac8da222ea42d59dff52ddc5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,7 +37,13 @@ v1 = [
     "name": "vfolderId",
     "variableName": "vfolderId"
   }
-];
+],
+v2 = {
+  "enumValues": null,
+  "nullable": false,
+  "plural": false,
+  "type": "String"
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -92,6 +98,24 @@ return {
             "kind": "ScalarField",
             "name": "host",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "VFolderMetadataInfo",
+            "kind": "LinkedField",
+            "name": "metadata",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -99,7 +123,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "60112ae1ba2959395759c78a9d26f26f",
+    "cacheID": "69e349b3bad588ca899ad9d50b48aa56",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -109,23 +133,25 @@ return {
           "plural": false,
           "type": "VFolder"
         },
-        "vfolderV2.host": {
-          "enumValues": null,
-          "nullable": false,
-          "plural": false,
-          "type": "String"
-        },
+        "vfolderV2.host": (v2/*: any*/),
         "vfolderV2.id": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
           "type": "ID"
-        }
+        },
+        "vfolderV2.metadata": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "VFolderMetadataInfo"
+        },
+        "vfolderV2.metadata.name": (v2/*: any*/)
       }
     },
     "name": "FileBrowserButtonV2TestQuery",
     "operationKind": "query",
-    "text": "query FileBrowserButtonV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...FileBrowserButtonV2Fragment\n    id\n  }\n}\n\nfragment FileBrowserButtonV2Fragment on VFolder {\n  id\n  host\n}\n"
+    "text": "query FileBrowserButtonV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...FileBrowserButtonV2Fragment\n    id\n  }\n}\n\nfragment FileBrowserButtonV2Fragment on VFolder {\n  id\n  host\n  metadata {\n    name\n  }\n}\n"
   }
 };
 })();

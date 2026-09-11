@@ -2978,6 +2978,7 @@
       "FolderAliasInvalid": "Es sind nur alphanumerische Zeichen, Unterstrich (_), Schrägstrich (/), Punkt (.) und Bindestrich (-) zulässig.",
       "FolderAliasOverlapping": "Aliasnamen überschneiden sich mit anderen bereits bestehenden Namen",
       "FolderAliasOverlappingToAutoMount": "Es existiert ein Auto-Mount-Ordner mit demselben Namen.",
+      "FolderSubpath": "Unterpfad",
       "FolderToMount": "Ordner zum Einhängen",
       "FolderToMountList": "Ordner zum Einhängen",
       "GPUSlot": "Slot",

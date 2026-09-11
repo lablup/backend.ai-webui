@@ -2978,6 +2978,7 @@
       "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/), dấu chấm (.) và dấu gạch ngang (-).",
       "FolderAliasOverlapping": "Bí danh trùng lặp với các tên khác đã tồn tại",
       "FolderAliasOverlappingToAutoMount": "Đã tồn tại một thư mục tự động gắn kết có cùng tên.",
+      "FolderSubpath": "Đường dẫn con",
       "FolderToMount": "Thư mục để gắn kết",
       "FolderToMountList": "Thư mục để gắn kết",
       "GPUSlot": "Chỗ",

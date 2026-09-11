@@ -2976,6 +2976,7 @@
       "FolderAliasInvalid": "Sono consentiti solo caratteri alfanumerici, carattere di sottolineatura (_), barra (/), punto (.) e trattino (-).",
       "FolderAliasOverlapping": "Gli pseudonimi si sovrappongono ad altri nomi già esistenti.",
       "FolderAliasOverlappingToAutoMount": "Esiste una cartella di montaggio automatico con lo stesso nome.",
+      "FolderSubpath": "Sottopercorso",
       "FolderToMount": "Cartella da montare",
       "FolderToMountList": "Cartella da montare",
       "GPUSlot": "Fessura",

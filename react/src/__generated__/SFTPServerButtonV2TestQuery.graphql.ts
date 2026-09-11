@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6c14e44113776800267f5d8f7c4185c2>>
+ * @generated SignedSource<<d5dc322264475d0cfcdb50708411dbce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,7 +37,13 @@ v1 = [
     "name": "vfolderId",
     "variableName": "vfolderId"
   }
-];
+],
+v2 = {
+  "enumValues": null,
+  "nullable": false,
+  "plural": false,
+  "type": "String"
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -92,6 +98,24 @@ return {
             "kind": "ScalarField",
             "name": "host",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "VFolderMetadataInfo",
+            "kind": "LinkedField",
+            "name": "metadata",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -99,7 +123,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "adc7a2183bb7de55b41e51dff543bbfa",
+    "cacheID": "f9f4af925a11699e6e992300e2f37222",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -109,23 +133,25 @@ return {
           "plural": false,
           "type": "VFolder"
         },
-        "vfolderV2.host": {
-          "enumValues": null,
-          "nullable": false,
-          "plural": false,
-          "type": "String"
-        },
+        "vfolderV2.host": (v2/*: any*/),
         "vfolderV2.id": {
           "enumValues": null,
           "nullable": false,
           "plural": false,
           "type": "ID"
-        }
+        },
+        "vfolderV2.metadata": {
+          "enumValues": null,
+          "nullable": false,
+          "plural": false,
+          "type": "VFolderMetadataInfo"
+        },
+        "vfolderV2.metadata.name": (v2/*: any*/)
       }
     },
     "name": "SFTPServerButtonV2TestQuery",
     "operationKind": "query",
-    "text": "query SFTPServerButtonV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...SFTPServerButtonV2Fragment\n    id\n  }\n}\n\nfragment SFTPServerButtonV2Fragment on VFolder {\n  id\n  host\n}\n"
+    "text": "query SFTPServerButtonV2TestQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    ...SFTPServerButtonV2Fragment\n    id\n  }\n}\n\nfragment SFTPServerButtonV2Fragment on VFolder {\n  id\n  host\n  metadata {\n    name\n  }\n}\n"
   }
 };
 })();
