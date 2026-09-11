@@ -136,13 +136,13 @@ describe('buildHits', () => {
     expect(hit?.label).toBe('User Session History');
   });
 
-  it('targets a setting item through ?tab=&setting=', () => {
+  it('targets a setting item through ?settings=&setting=', () => {
     const hit = _.find(build(), {
       id: 'setting:/usersettings#userSettings.AutoLogout',
     });
     expect(hit?.target).toEqual({
       path: '/usersettings',
-      search: { tab: 'general', setting: 'userSettings.AutoLogout' },
+      search: { settings: 'general', setting: 'userSettings.AutoLogout' },
     });
     expect(hit?.breadcrumbKeys).toEqual([
       'webui.menu.Settings&Logs',
