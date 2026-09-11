@@ -3532,6 +3532,8 @@
     "EnterConfirmationCode": "확인을 위해 인증기에서 생성된 OTP를 입력하세요.",
     "InvalidTotpCode": "올바르지 않은 이중 인증 코드입니다.",
     "OTP": "이중 인증",
+    "RegistrationTokenExpired": "이중 인증 설정 링크가 만료되었습니다. 다시 로그인하여 새 링크를 받으세요.",
+    "RegistrationTokenInvalid": "이중 인증 설정 링크가 올바르지 않습니다. 다시 로그인하여 새 링크를 받으세요.",
     "RemoveTotpSetupCompleted": "이중 인증이 비활성화 되었습니다.",
     "RequireOTP": "OTP에 표시된 숫자를 입력하세요.",
     "ScanQRToEnable": "이중 인증 프로그램으로 하단의 QR 코드를 스캔하여 이중 인증을 인증기에 등록하세요.",

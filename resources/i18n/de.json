@@ -3531,6 +3531,8 @@
     "EnterConfirmationCode": "Geben Sie nun zur Überprüfung das vom Authentifikator generierte OTP ein.",
     "InvalidTotpCode": "Ungültiges OTP",
     "OTP": "Einmaliges Passwort",
+    "RegistrationTokenExpired": "Ihr Einrichtungslink für die Zwei-Faktor-Authentifizierung ist abgelaufen. Melden Sie sich erneut an, um einen neuen zu erhalten.",
+    "RegistrationTokenInvalid": "Dieser Einrichtungslink für die Zwei-Faktor-Authentifizierung ist ungültig. Melden Sie sich erneut an, um einen neuen zu erhalten.",
     "RemoveTotpSetupCompleted": "Deaktivierte 2FA",
     "RequireOTP": "Schreiben Sie OTP.",
     "ScanQRToEnable": "Scannen Sie den QR-Code mit Ihrem Authenticator, um die Zwei-Faktor-Authentifizierung einzurichten.",

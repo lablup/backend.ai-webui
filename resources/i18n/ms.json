@@ -3529,6 +3529,8 @@
     "EnterConfirmationCode": "Sekarang masukkan OTP yang dijana oleh pengesah untuk mengesahkan.",
     "InvalidTotpCode": "OTP tidak sah",
     "OTP": "Kata laluan sekali sahaja",
+    "RegistrationTokenExpired": "Pautan persediaan pengesahan dua faktor anda telah tamat tempoh. Log masuk semula untuk menerima pautan baharu.",
+    "RegistrationTokenInvalid": "Pautan persediaan pengesahan dua faktor ini tidak sah. Log masuk semula untuk menerima pautan baharu.",
     "RemoveTotpSetupCompleted": "Dilumpuhkan 2FA",
     "RequireOTP": "Tulis OTP.",
     "ScanQRToEnable": "Imbas kod QR dengan pengesah anda untuk mula menyediakan pengesahan dua faktor.",

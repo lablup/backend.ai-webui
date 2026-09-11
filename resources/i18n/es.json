@@ -3529,6 +3529,8 @@
     "EnterConfirmationCode": "Ahora ingrese la OTP generada por el autenticador para verificar.",
     "InvalidTotpCode": "OTP inválido",
     "OTP": "Contraseña de un solo uso",
+    "RegistrationTokenExpired": "Tu enlace de configuración de la autenticación de dos factores ha caducado. Inicia sesión de nuevo para recibir uno nuevo.",
+    "RegistrationTokenInvalid": "Este enlace de configuración de la autenticación de dos factores no es válido. Inicia sesión de nuevo para recibir uno nuevo.",
     "RemoveTotpSetupCompleted": "2FA desactivado",
     "RequireOTP": "Escribe OTP.",
     "ScanQRToEnable": "Escanea el código QR con tu autenticador para empezar a configurar la autenticación de dos factores.",

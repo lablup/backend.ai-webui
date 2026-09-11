@@ -3529,6 +3529,8 @@
     "EnterConfirmationCode": "Anna nyt autentikaattorin luoma OTP vahvistaaksesi.",
     "InvalidTotpCode": "Virheellinen OTP",
     "OTP": "Kertasalasana",
+    "RegistrationTokenExpired": "Kaksitekijätodennuksen käyttöönottolinkkisi on vanhentunut. Kirjaudu sisään uudelleen saadaksesi uuden linkin.",
+    "RegistrationTokenInvalid": "Tämä kaksitekijätodennuksen käyttöönottolinkki ei ole kelvollinen. Kirjaudu sisään uudelleen saadaksesi uuden linkin.",
     "RemoveTotpSetupCompleted": "2FA pois käytöstä",
     "RequireOTP": "Kirjoita OTP.",
     "ScanQRToEnable": "Skannaa QR-koodi todennuslaitteellasi aloittaaksesi kaksitekijätodennuksen käyttöönoton.",

@@ -3531,6 +3531,8 @@
     "EnterConfirmationCode": "次に、認証システムによって生成された OTP を入力して確認します。",
     "InvalidTotpCode": "正しくない二要素認証コードです、",
     "OTP": "二要素認証",
+    "RegistrationTokenExpired": "二要素認証の設定リンクの有効期限が切れました。再度ログインして新しいリンクを受け取ってください。",
+    "RegistrationTokenInvalid": "この二要素認証の設定リンクは有効ではありません。再度ログインして新しいリンクを受け取ってください。",
     "RemoveTotpSetupCompleted": "二要素認証が無効になりました。",
     "RequireOTP": "OTPを書き込みます。",
     "ScanQRToEnable": "二要素認証プログラムで下部のQRコードをスキャンして二要素認証を認証機に登録してください。",
