@@ -3,27 +3,25 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AssignRoleModalBulkAssignMutation } from '../__generated__/AssignRoleModalBulkAssignMutation.graphql';
-import { AssignRoleModalQuery } from '../__generated__/AssignRoleModalQuery.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
 import { theme } from '../theme-shim';
 import { Text } from '@astryxdesign/core/Text';
 import {
+  BAIAdminUserV2Select,
   BAIBulkErrorModal,
   type BAIColumnsType,
+  BAIComplexSelect,
   BAIModal,
   BAIModalProps,
-  BAISelect,
-  type BAISelectProps,
-  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
+import React, { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql } from 'react-relay';
 
 interface AssignRoleModalProps extends BAIModalProps {
   roleId: string;
@@ -38,85 +36,6 @@ interface FailedAssignment {
   userLabel: string;
   message: string;
 }
-
-type AssignRoleUserSelectProps = Pick<
-  BAISelectProps<string[]>,
-  'value' | 'onChange' | 'placeholder' | 'status' | 'disabled'
->;
-
-/** Owns the user options query; render it under a Suspense boundary. */
-const AssignRoleUserSelect: React.FC<AssignRoleUserSelectProps> = ({
-  onChange,
-  ...selectProps
-}) => {
-  'use memo';
-  const [search, setSearch] = useState('');
-  const deferredSearch = useDeferredValue(search);
-
-  const data = useLazyLoadQuery<AssignRoleModalQuery>(
-    graphql`
-      query AssignRoleModalQuery($filter: UserV2Filter, $first: Int) {
-        adminUsersV2(filter: $filter, first: $first) {
-          edges {
-            node {
-              id
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      filter: deferredSearch ? { email: { contains: deferredSearch } } : null,
-      first: 50,
-    },
-    { fetchPolicy: 'store-and-network' },
-  );
-
-  const users = data.adminUsersV2?.edges?.map((edge) => edge?.node) ?? [];
-
-  return (
-    <BAISelect
-      mode="multiple"
-      style={{ width: '100%' }}
-      onChange={(value: string[], options) => {
-        setSearch('');
-        onChange?.(value, options);
-      }}
-      loading={deferredSearch !== search}
-      allowClear
-      showSearch={{
-        searchValue: search,
-        onSearch: (v) => setSearch(v),
-        filterOption: false,
-      }}
-      options={users.map((user) => ({
-        value: user?.id ? toLocalId(user.id) : undefined,
-        label: user?.basicInfo?.email || user?.id,
-        description: user?.basicInfo?.fullName,
-      }))}
-      optionRender={(option) => (
-        <div>
-          <div>{option.label}</div>
-          {option.data?.description && (
-            <div
-              style={{
-                fontSize: 'var(--font-size-sm)',
-                color: 'var(--color-text-secondary)',
-              }}
-            >
-              {option.data.description}
-            </div>
-          )}
-        </div>
-      )}
-      {...selectProps}
-    />
-  );
-};
 
 /**
  * Assigns users to a role via `adminBulkAssignRole` (FR-3357). On partial
@@ -297,29 +216,33 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           // required rule active) while the options load.
           fallback={
             <Form.Item {...userIdsItemProps}>
-              <BAISelect
-                mode="multiple"
-                style={{ width: '100%' }}
+              <BAIComplexSelect
+                multiple
+                label={t('credential.Users')}
+                isLabelHidden
                 placeholder={t('rbac.SelectUsers')}
-                loading
-                disabled
+                options={[]}
+                isLoading
+                isDisabled
               />
             </Form.Item>
           }
         >
           <Form.Item {...userIdsItemProps}>
-            <AssignRoleUserSelect
+            <BAIAdminUserV2Select
+              multiple
+              valuePropName="id"
+              label={t('credential.Users')}
+              isLabelHidden
               placeholder={t('rbac.SelectUsers')}
-              onChange={(value: string[], options) => {
-                _.castArray(options ?? []).forEach((option: any) => {
-                  if (option?.value !== undefined) {
-                    userLabelsRef.current.set(
-                      String(option.value),
-                      String(option.label ?? option.value),
-                    );
-                  }
+              onChange={(value, option) => {
+                _.castArray(option ?? []).forEach((o) => {
+                  userLabelsRef.current.set(
+                    String(o.value),
+                    String(o.label ?? o.value),
+                  );
                 });
-                setSelectedUserIds(value);
+                setSelectedUserIds(_.castArray(value ?? []));
               }}
             />
           </Form.Item>
