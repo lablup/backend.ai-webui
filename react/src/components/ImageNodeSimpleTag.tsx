@@ -51,11 +51,16 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
 
   if (!image) return null;
 
+  // `namespace` is `@since(version: "24.12.0")`; before that the deprecated
+  // `name` carries it, as `getImageFullName` also assumes. `architecture` is
+  // nullable, and the row copies this string, so the suffix is conditional.
+  const reference = `${image.registry}/${image.namespace ?? image.name}:${image.tag}`;
+
   return (
     <BAIImageMetaRow
-      // `namespace` is `@since(version: "24.12.0")`; before that the
-      // deprecated `name` carries it, as `getImageFullName` also assumes.
-      fullName={`${image.registry}/${image.namespace ?? image.name}:${image.tag}@${image.architecture}`}
+      fullName={
+        image.architecture ? `${reference}@${image.architecture}` : reference
+      }
       variant={withoutTag ? 'compact' : 'full'}
       name={tagAlias(image.base_image_name || '')}
       version={image.version}

@@ -1,3 +1,4 @@
+import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import BAIImageMetaDivider from './BAIImageMetaDivider';
 import BAIImageMetaIcon from './BAIImageMetaIcon';
@@ -68,10 +69,23 @@ const BAIImageMetaRow: React.FC<BAIImageMetaRowProps> = ({
 }) => {
   'use memo';
   const [, { tagAlias, getBaseImage, getBaseVersion }] = useBAIImageMetaData();
+  const { t } = useBAIi18n();
   const reference = fullName ?? '';
 
+  // `tooltips` is a `[resting, copied]` tuple; a bare string leaves the copied
+  // state with no tooltip at all.
   const copyConfig = copyable
-    ? { text: reference, ...(copyLabel ? { tooltips: copyLabel } : {}) }
+    ? {
+        text: reference,
+        ...(copyLabel
+          ? {
+              tooltips: [copyLabel, t('general.button.Copied')] as [
+                string,
+                string,
+              ],
+            }
+          : {}),
+      }
     : undefined;
 
   if (variant === 'path') {

@@ -9,7 +9,7 @@
 - tag chip을 [double tag](#용어)로 그릴지 badge 하나로 그릴지는 `BAIImageTagBadges`와 같은 모듈의 `imageNodeTagFacts` / `imageTagFacts`가 정한다. FR-3544가 host의 `react/src/components/ImageTags.tsx`에 만든 규칙을 BUI로 옮긴 것이고, chip 색을 호출자가 고르는 prop은 없앴다.
 - 부분 사이의 구분선은 `BAIImageMetaDivider`다. Astryx `Divider`를 `orientation="vertical"`로 직접 쓰면 `BAIFlex` 안에서 높이가 0으로 접힌다.
 - Relay fragment를 읽는 일은 schema마다 하나씩 있는 adapter가 한다. v1 `ImageNode`는 `ImageNodeSimpleTag`, v2 `ImageV2`는 `BAIImageNodeSimpleTagV2`, tag 열만 그리는 `AliasedImageDoubleTags`가 그 셋이다.
-- 범위 밖: image 하나의 identity가 아닌 화면 세 곳은 이 행을 쓰지 않는다. 환경 선택 dropdown의 환경 목록과 version 목록, 그리고 session launcher가 손으로 입력받은 image 문자열이다.
+- 범위 밖: image 하나의 identity가 아닌 화면 네 곳은 이 행을 쓰지 않는다. 환경 선택 dropdown의 환경 목록과 version 목록, session launcher가 손으로 입력받은 image 문자열, 그리고 session template 표의 축약 label이다.
 
 ## Context
 
@@ -137,9 +137,10 @@ flowchart TB
 
 ## 대안과 기각 사유
 
-- **Relay fragment를 받는 component 하나로 통일한다**: 공용 component가 직접 `useFragment`를 불러 call site가 fragment만 spread하면 되는 형태다. adapter 계층이 없어지는 것이 장점이다. 기각한 이유는 입력 네 가지가 한 fragment로 덮이지 않기 때문이다. v1 `ImageNode`와 v2 `ImageV2`는 schema가 다르고, session launcher의 form value는 Relay를 거치지 않으며, `compute_session.image`는 image node가 아니라 문자열 한 개다.
-- **공용 component를 host의 `react/src/components/`에 둔다**: v1 화면이 모두 host에 있으니 이동 거리가 짧은 것이 장점이다. 기각한 이유는 BUI의 `BAISessionNodesV2`가 같은 행을 쓰는데 BUI가 host를 import할 수 없고, `.claude/rules/bui-component-home.md`가 재사용 component의 집을 BUI로 정해 두었기 때문이다.
-- **`path` variant에도 icon을 넣는다**: 표의 Full image path 열도 한눈에 framework를 알아볼 수 있는 것이 장점이다. 기각한 이유는 그 열의 폭이 `token.screenXS`로 묶여 있어 icon이 차지하는 만큼 reference가 잘리고, `path`는 복사해서 쓰는 값이기 때문이다.
+- **One fragment-reading component**: 공용 component가 직접 `useFragment`를 불러 call site가 fragment만 spread하면 되는 형태다. adapter 계층이 없어지는 것이 장점이다. 기각한 이유는 입력 네 가지가 한 fragment로 덮이지 않기 때문이다. v1 `ImageNode`와 v2 `ImageV2`는 schema가 다르고, session launcher의 form value는 Relay를 거치지 않으며, `compute_session.image`는 image node가 아니라 문자열 한 개다.
+- **Keep the shared component in the host app**: v1 화면이 모두 host에 있으니 이동 거리가 짧은 것이 장점이다. 기각한 이유는 BUI의 `BAISessionNodesV2`가 같은 행을 쓰는데 BUI가 host를 import할 수 없고, `.claude/rules/bui-component-home.md`가 재사용 component의 집을 BUI로 정해 두었기 때문이다.
+- **An icon on the `path` variant too**: 표의 Full image path 열도 한눈에 framework를 알아볼 수 있는 것이 장점이다. 기각한 이유는 그 열의 폭이 `token.screenXS`로 묶여 있어 icon이 차지하는 만큼 reference가 잘리고, `path`는 복사해서 쓰는 값이기 때문이다.
+- **Convert every surface that shows an image icon**: session template 표의 Environments 열처럼 icon과 이름을 함께 보여주는 자리를 모두 행으로 바꾸는 형태다. 예외를 세지 않아도 되는 것이 장점이다. 기각한 이유는 그런 자리가 image 한 개의 identity가 아니라 좁은 cell에 넣는 축약 label이라, 행으로 바꾸면 architecture와 copy control이 딸려 들어와 폭을 넘기기 때문이다.
 
 ## Consequences
 
@@ -149,7 +150,7 @@ flowchart TB
 - **Neutral chips become blue**: 지금까지 neutral이던 chip이 모두 blue가 된다. session 목록과 session 상세의 image 행, `CustomizedImageList`의 Tags 열이 그 대상이고, `ImageList`의 Tags 열과 session launcher 경로는 이미 blue였다. `CustomizedImageList`의 Tags 열 badge는 검색어 highlight도 받게 된다.
 - **Session detail fallback changes shape**: image node가 없는 session의 상세 화면이 blue/green double tag 표현에서 `compact` 행으로 바뀐다. 이 경로에는 tag 정보가 없으므로 chip은 없다.
 - **Empty chips and empty parts disappear**: key가 빈 tag가 그리던 빈 badge가 사라지고, `base_image_name`을 주지 않는 manager에서 비어 있던 이름 자리에 파생된 이름이 들어간다.
-- **Three surfaces stay outside the row**: 환경 선택 dropdown의 환경 목록과 version 목록, 그리고 손으로 입력한 image 문자열은 image 하나의 identity가 아니라서 이 행을 쓰지 않는다. 셋 다 `BAIImageMetaIcon`과 — version 목록은 `BAIImageMetaDivider`와 `BAIImageTagBadges`까지 — 같은 부품은 쓴다.
+- **Four surfaces stay outside the row**: 환경 선택 dropdown의 환경 목록과 version 목록, 손으로 입력한 image 문자열, 그리고 `react/src/components/SessionTemplateModal.tsx`의 Environments 열은 이 행을 쓰지 않는다. 앞의 셋은 image 하나의 identity가 아니고, 마지막은 폭이 250px로 묶인 cell에 넣는 축약 label이라 architecture와 copy control이 들어갈 자리가 없다. 넷 다 `BAIImageMetaIcon`과 — version 목록은 `BAIImageMetaDivider`와 `BAIImageTagBadges`까지 — 같은 부품은 쓴다.
 
 ## 출처
 

@@ -92,10 +92,10 @@ const BAIImageTagBadges: React.FC<BAIImageTagBadgesProps> = ({
   'use memo';
   return (
     <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
-      {_.map(facts, (fact) =>
+      {_.map(facts, (fact, index) =>
         fact.isDouble ? (
           <BAIDoubleTag
-            key={fact.key}
+            key={`${fact.key}-${index}`}
             highlightKeyword={highlightKeyword}
             values={[
               {
@@ -110,7 +110,7 @@ const BAIImageTagBadges: React.FC<BAIImageTagBadgesProps> = ({
           />
         ) : (
           <Badge
-            key={fact.key}
+            key={`${fact.key}-${index}`}
             variant={badgeVariantForTagColor(
               fact.isCustomized ? 'cyan' : 'blue',
             )}

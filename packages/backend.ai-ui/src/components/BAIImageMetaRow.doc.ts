@@ -42,7 +42,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Reach for `path` when you want a human to recognise the image — it renders the machine-readable reference and deliberately carries no icon and no chips. `full` and `compact` are the human-readable forms.',
+          'Show a reader who the image is with `path`. It prints the bare reference, with no icon and no chips, for copying and pasting; `full` and `compact` are the forms a person reads.',
       },
     ],
   },
