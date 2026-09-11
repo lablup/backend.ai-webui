@@ -62,7 +62,7 @@
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "catalog:",
-    "vitest": "^4.1.4",
+    "vitest": "^4.1.11",
     "yaml": "^2.9.0"
   }
 }
