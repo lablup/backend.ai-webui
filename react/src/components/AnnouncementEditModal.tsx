@@ -120,6 +120,10 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   const [bodyDraft, setBodyDraft] = useState<string>();
   const body = bodyDraft ?? announcement?.body ?? '';
 
+  // Monaco is lazily imported, so the body has a second loading phase after
+  // the Relay read resolves. It stays behind a Skeleton until both are done.
+  const [isEditorReady, setIsEditorReady] = useState(false);
+
   // Publish and Save as Draft write the same document; only `enabled` differs.
   const [saving, setSaving] = useState<'publish' | 'draft'>();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -208,7 +212,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
           <Button
             variant="destructive"
             label={t('button.Delete')}
-            isDisabled={announcement === undefined}
+            isDisabled={!isEditorReady || announcement === undefined}
             isLoading={isDeleting}
             onClick={confirmDelete}
           />
@@ -224,7 +228,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
               <Button
                 variant="primary"
                 label={t('button.Publish')}
-                isDisabled={saving === 'draft'}
+                isDisabled={!isEditorReady || saving === 'draft'}
                 isLoading={saving === 'publish'}
                 onClick={() => save(true)}
               />
@@ -234,7 +238,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
                   variant: 'primary',
                   icon: <Ellipsis size="1em" />,
                   isIconOnly: true,
-                  isDisabled: saving !== undefined,
+                  isDisabled: !isEditorReady || saving !== undefined,
                   label: t('button.SaveAsDraft'),
                 }}
                 items={[
@@ -265,7 +269,17 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
             <AstryxFormTextInput label={t('summary.AnnouncementTitle')} />
           </BAIFormItem>
         </Form>
-        <BAIFlex direction="row" align="stretch" gap="sm" wrap="wrap">
+        {!isEditorReady && <BAISkeleton rows={4} />}
+        <BAIFlex
+          direction="row"
+          align="stretch"
+          gap="sm"
+          wrap="wrap"
+          // `flex`, not `undefined`: BAIFlex merges as `{ display: 'flex',
+          // ...style }`, so an `undefined` here deletes its own display and the
+          // two panes stack instead of sitting side by side.
+          style={{ display: isEditorReady ? 'flex' : 'none' }}
+        >
           <BAIFlex
             direction="column"
             align="stretch"
@@ -277,6 +291,7 @@ const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
               height={EDITOR_HEIGHT}
               value={body}
               onChange={setBodyDraft}
+              onReady={() => setIsEditorReady(true)}
             />
           </BAIFlex>
           <BAIFlex
