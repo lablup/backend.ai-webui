@@ -5,6 +5,7 @@
 import { App } from '../app-shim';
 import {
   APPEARANCE_SCHEMA_VERSION,
+  getDomainAppearanceConfig,
   getStaticAppearanceConfig,
 } from '../helper/customThemeConfig';
 import { useBAISettingUserState } from './useBAISetting';
@@ -17,8 +18,9 @@ import { useTranslation } from 'react-i18next';
  * The *editable* appearance document (the operator's `theme.json`
  * equivalent) backing the admin Branding page. Kept as a per-user draft in
  * localStorage (`custom_theme_config`) and applied through the theme preview
- * mode. Seeded from the shipped `theme.json`, not from the applied document,
- * so the user's active family never leaks into the edited default.
+ * mode. Seeded from the saved domain document, else the shipped
+ * `theme.json` — never from the applied (preview) document, so the user's
+ * active family never leaks into the edited default.
  */
 export const useDefaultTheme = () => {
   'use memo';
@@ -30,20 +32,19 @@ export const useDefaultTheme = () => {
     'custom_theme_config',
   );
 
-  // Seed the draft from the SHIPPED document (never from `rawThemeConfig`:
-  // in preview mode that IS the draft, so reseeding from it would loop). A
-  // draft from before the v2 format (no schemaVersion) is reseeded rather
-  // than edited — its v1 paths no longer mean anything to the editor.
-  // Note: useBAISettingUserState returns null (not undefined) when
-  // localStorage has no value.
+  // Seed the draft from the saved domain document, else the SHIPPED one —
+  // never from `rawThemeConfig`, which in preview mode IS the draft and would
+  // loop. A draft from before the v2 format (no schemaVersion) is reseeded
+  // rather than edited. Note: useBAISettingUserState returns null (not
+  // undefined) when localStorage has no value.
   const initializeDefaultTheme = useEffectEvent(() => {
-    const shipped = getStaticAppearanceConfig();
+    const seed = getDomainAppearanceConfig() ?? getStaticAppearanceConfig();
     if (
       (_.isNil(defaultTheme) ||
         defaultTheme.schemaVersion !== APPEARANCE_SCHEMA_VERSION) &&
-      !_.isNil(shipped)
+      !_.isNil(seed)
     ) {
-      setDefaultTheme(_.cloneDeep(shipped));
+      setDefaultTheme(_.cloneDeep(seed));
     }
   });
   useEffect(() => {

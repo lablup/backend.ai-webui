@@ -15,6 +15,7 @@ import SSHKeypairManagementModal from '../components/SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from '../components/SettingList';
 import ShellScriptEditModal from '../components/ShellScriptEditModal';
 import { useSuspendedBackendaiClient, useTabQuerySnapshot } from '../hooks';
+import { useUpdateMyUserAppConfig } from '../hooks/useAppConfig';
 import {
   useBAISettingGeneralState,
   useBAISettingUserState,
@@ -29,6 +30,7 @@ import {
   BAISkeleton,
   BAICard,
   filterOutEmpty,
+  useErrorMessageResolver,
   useSessionStorageState,
   useToggle,
 } from 'backend.ai-ui';
@@ -53,6 +55,7 @@ const UserPreferencesPage = () => {
 
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
   const { currentTab, onTabChange } = useTabQuerySnapshot(tabParser);
 
@@ -98,6 +101,24 @@ const UserPreferencesPage = () => {
     setActiveThemeFamily: setThemeFamily,
     themeFamilies: families,
   } = useCustomThemeConfig();
+  // `userConfig.themeFamily` is the authoritative store; the localStorage
+  // FOUC mirror is written only after the server accepts (FR-1964).
+  const updateMyUserAppConfig = useUpdateMyUserAppConfig();
+  // The select shows the chosen family while the write is in flight.
+  const [pendingThemeFamily, setPendingThemeFamily] = useState<{
+    family: string | undefined;
+  }>();
+  const persistThemeFamily = async (next: string | undefined) => {
+    setPendingThemeFamily({ family: next });
+    try {
+      await updateMyUserAppConfig('themeFamily', next);
+      setThemeFamily(next);
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    } finally {
+      setPendingThemeFamily(undefined);
+    }
+  };
   // Branding preview mode shows the edited default theme as-is, so the theme
   // (family) setting is hidden there (useCustomThemeConfig ignores it in that
   // mode).
@@ -229,17 +250,22 @@ const UserPreferencesPage = () => {
                   label: config.label ?? _.startCase(key),
                   value: key,
                 })),
+                loading: !!pendingThemeFamily,
               },
               defaultValue: DEFAULT_THEME_FAMILY,
-              value: themeFamily,
+              value: pendingThemeFamily
+                ? pendingThemeFamily.family
+                : themeFamily,
               onChange: (value: string | number | undefined) => {
                 if (typeof value === 'string') {
-                  setThemeFamily(value);
+                  persistThemeFamily(value);
                 }
               },
               // Clear the stored selection instead of writing the default key
               // so resolution keeps following the `default` family.
-              onReset: () => setThemeFamily(undefined),
+              onReset: () => {
+                persistThemeFamily(undefined);
+              },
             }
           : null,
         {

@@ -63,6 +63,7 @@ type SelectSettingItemProps = BaseSettingItemProps & {
     options: SettingSelectOption[];
     hasSearch?: boolean;
     disabled?: boolean;
+    loading?: boolean;
   };
   checkboxProps?: never;
 };
@@ -228,6 +229,7 @@ const SettingItem: React.FC<SettingItemProps> = ({
             options={selectProps?.options ?? []}
             hasSearch={selectProps?.hasSearch}
             isDisabled={selectProps?.disabled}
+            isLoading={selectProps?.loading}
             value={value}
             width="fit-content"
             onChange={(nextValue) => onChange?.(nextValue)}
