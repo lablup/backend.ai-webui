@@ -3512,6 +3512,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Ustawienia motywu nie pasują do schematu. Sprawdź plik.",
+    "ConvertedV1ThemeConfig": "Stary plik motywu (v1) został przekonwertowany do bieżącego formatu. Sprawdź go przed zastosowaniem.",
     "FailedToReadFile": "Nie udało się odczytać pliku.",
     "InvalidJsonFileAlert": "Nieprawidłowy format JSON. Sprawdź zawartość pliku.",
     "JsonConfigAppliedSuccessfully": "Ustawienia motywu zostały pomyślnie zastosowane.",

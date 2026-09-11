@@ -3513,6 +3513,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Pengaturan tema tidak sesuai skema. Silakan periksa file.",
+    "ConvertedV1ThemeConfig": "File tema lama (v1) telah dikonversi ke format saat ini. Periksa sebelum menerapkannya.",
     "FailedToReadFile": "Gagal membaca file.",
     "InvalidJsonFileAlert": "Format JSON tidak valid. Periksa isi file.",
     "JsonConfigAppliedSuccessfully": "Pengaturan tema berhasil diterapkan.",

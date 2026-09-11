@@ -3509,6 +3509,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Tema ayarları şemaya uymuyor. Lütfen dosyayı kontrol edin.",
+    "ConvertedV1ThemeConfig": "Eski (v1) tema dosyası geçerli biçime dönüştürüldü. Uygulamadan önce gözden geçirin.",
     "FailedToReadFile": "Dosya okunamadı.",
     "InvalidJsonFileAlert": "Geçersiz JSON biçimi. Lütfen dosya içeriğini kontrol edin.",
     "JsonConfigAppliedSuccessfully": "Tema ayarları başarıyla uygulandı.",

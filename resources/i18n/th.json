@@ -3509,6 +3509,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "การตั้งค่าธีมไม่ตรงตามสคีมา โปรดตรวจสอบไฟล์",
+    "ConvertedV1ThemeConfig": "แปลงไฟล์ธีมรุ่นเก่า (v1) เป็นรูปแบบปัจจุบันแล้ว โปรดตรวจสอบก่อนนำไปใช้",
     "FailedToReadFile": "ไม่สามารถอ่านไฟล์ได้",
     "InvalidJsonFileAlert": "รูปแบบ JSON ไม่ถูกต้อง โปรดตรวจสอบเนื้อหาในไฟล์",
     "JsonConfigAppliedSuccessfully": "การตั้งค่าธีมถูกนำไปใช้เรียบร้อยแล้ว",
