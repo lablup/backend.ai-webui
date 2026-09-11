@@ -613,15 +613,21 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format de chemin invalide.",
     "AliasOverlapping": "Le chemin de montage chevauche un autre dossier.",
+    "AliasOverlappingWithAutoMount": "Le chemin de montage chevauche un dossier monté automatiquement.",
     "AliasPlaceholder": "Chemin de montage",
     "AutoMountedFolders": "Dossiers montés automatiquement",
+    "CreateFolder": "Créer un nouveau dossier de stockage",
+    "Folders": "Dossiers",
     "Name": "Nom",
     "PathAndAlias": "Chemin & Alias",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
+    "Refresh": "Rafraîchir",
     "RemoveFolder": "Supprimer",
+    "SelectFolder": "Sélectionner un dossier",
     "Subpath": "Sous-chemin",
     "SubpathInvalid": "Le sous-chemin doit être un chemin relatif et ne doit pas contenir '..'.",
-    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Cliquez sur le champ pour parcourir le dossier et en choisir un ; / correspond à la racine du dossier."
+    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Cliquez sur le champ pour parcourir le dossier et en choisir un ; / correspond à la racine du dossier.",
+    "UnmountableFoldersRemoved": "Les dossiers que vous ne pouvez plus monter ont été retirés de la sélection."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Sélectionner un dossier"

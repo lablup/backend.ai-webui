@@ -613,15 +613,21 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Geçersiz yol biçimi.",
     "AliasOverlapping": "Bağlama yolu başka bir klasörle çakışıyor.",
+    "AliasOverlappingWithAutoMount": "Bağlama yolu otomatik bağlanan bir klasörle çakışıyor.",
     "AliasPlaceholder": "Bağlama yolu",
     "AutoMountedFolders": "Otomatik bağlanan klasörler",
+    "CreateFolder": "Yeni bir depolama klasörü oluşturun",
+    "Folders": "klasörler",
     "Name": "Ad",
     "PathAndAlias": "Yol & Takma Ad",
     "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
+    "Refresh": "Yenile",
     "RemoveFolder": "Kaldır",
+    "SelectFolder": "Klasör Seç",
     "Subpath": "Alt yol",
     "SubpathInvalid": "Alt yol göreli bir yol olmalı ve '..' içermemelidir.",
-    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Klasöre göz atıp bir alt klasör seçmek için alana tıklayın; / klasörün kökünü belirtir."
+    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Klasöre göz atıp bir alt klasör seçmek için alana tıklayın; / klasörün kökünü belirtir.",
+    "UnmountableFoldersRemoved": "Artık bağlayamayacağınız klasörler seçimden kaldırıldı."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Klasör Seç"

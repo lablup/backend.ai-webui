@@ -613,15 +613,21 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "รูปแบบพาธไม่ถูกต้อง",
     "AliasOverlapping": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์อื่น",
+    "AliasOverlappingWithAutoMount": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์ที่ mount อัตโนมัติ",
     "AliasPlaceholder": "พาธ mount",
     "AutoMountedFolders": "โฟลเดอร์ที่ mount อัตโนมัติ",
+    "CreateFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
+    "Folders": "โฟลเดอร์",
     "Name": "ชื่อ",
     "PathAndAlias": "พาธ & Alias",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
+    "Refresh": "รีเฟรช",
     "RemoveFolder": "ลบ",
+    "SelectFolder": "เลือกโฟลเดอร์",
     "Subpath": "พาธย่อย",
     "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
-    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root คลิกที่ช่องนี้เพื่อเรียกดูโฟลเดอร์และเลือกโฟลเดอร์ย่อย โดย / คือ root ของโฟลเดอร์"
+    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root คลิกที่ช่องนี้เพื่อเรียกดูโฟลเดอร์และเลือกโฟลเดอร์ย่อย โดย / คือ root ของโฟลเดอร์",
+    "UnmountableFoldersRemoved": "โฟลเดอร์ที่คุณไม่สามารถเมานต์ได้อีกต่อไปถูกนำออกจากรายการที่เลือกแล้ว"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"

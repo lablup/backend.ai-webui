@@ -613,15 +613,21 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Formato de ruta inválido.",
     "AliasOverlapping": "La ruta de montaje se superpone con otra carpeta.",
+    "AliasOverlappingWithAutoMount": "La ruta de montaje se superpone con una carpeta de montaje automático.",
     "AliasPlaceholder": "Ruta de montaje",
     "AutoMountedFolders": "Carpetas de montaje automático",
+    "CreateFolder": "Crear una nueva carpeta de almacenamiento",
+    "Folders": "Carpetas",
     "Name": "Nombre",
     "PathAndAlias": "Ruta & Alias",
     "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
+    "Refresh": "Actualizar",
     "RemoveFolder": "Eliminar",
+    "SelectFolder": "Seleccionar carpeta",
     "Subpath": "Subruta",
     "SubpathInvalid": "La subruta debe ser una ruta relativa y no debe contener '..'.",
-    "SubpathTooltip": "Monta una subcarpeta dentro de la carpeta como origen en lugar de su raíz. Haga clic en el campo para explorar la carpeta y elegir una; / es la raíz de la carpeta."
+    "SubpathTooltip": "Monta una subcarpeta dentro de la carpeta como origen en lugar de su raíz. Haga clic en el campo para explorar la carpeta y elegir una; / es la raíz de la carpeta.",
+    "UnmountableFoldersRemoved": "Se han eliminado de la selección las carpetas que ya no puedes montar."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleccionar carpeta"

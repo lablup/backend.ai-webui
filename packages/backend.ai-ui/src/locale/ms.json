@@ -613,15 +613,21 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format laluan tidak sah.",
     "AliasOverlapping": "Laluan mount bertindih dengan folder lain.",
+    "AliasOverlappingWithAutoMount": "Laluan mount bertindih dengan folder mount automatik.",
     "AliasPlaceholder": "Laluan mount",
     "AutoMountedFolders": "Folder mount automatik",
+    "CreateFolder": "Buat folder storan baru",
+    "Folders": "Folder",
     "Name": "Nama",
     "PathAndAlias": "Laluan & Alias",
     "PathAndAliasTooltip": "Laluan di dalam container tempat folder akan di-mount. Biarkan kosong untuk menggunakan laluan lalai.",
+    "Refresh": "Segarkan",
     "RemoveFolder": "Buang",
+    "SelectFolder": "Pilih Folder",
     "Subpath": "Sublaluan",
     "SubpathInvalid": "Sublaluan mestilah laluan relatif dan tidak boleh mengandungi '..'.",
-    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber dan bukannya root-nya. Klik medan ini untuk melayari folder dan memilih satu; / ialah root folder."
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber dan bukannya root-nya. Klik medan ini untuk melayari folder dan memilih satu; / ialah root folder.",
+    "UnmountableFoldersRemoved": "Folder yang tidak lagi boleh anda lekapkan telah dibuang daripada pilihan."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"

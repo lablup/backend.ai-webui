@@ -619,15 +619,21 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Formato de caminho inválido.",
     "AliasOverlapping": "O caminho de montagem se sobrepõe a outra pasta.",
+    "AliasOverlappingWithAutoMount": "O caminho de montagem se sobrepõe a uma pasta de montagem automática.",
     "AliasPlaceholder": "Caminho de montagem",
     "AutoMountedFolders": "Pastas de montagem automática",
+    "CreateFolder": "Crie uma nova pasta de armazenamento",
+    "Folders": "Pastas",
     "Name": "Nome",
     "PathAndAlias": "Caminho & Alias",
     "PathAndAliasTooltip": "O caminho dentro do container onde a pasta será montada. Deixe em branco para usar o caminho padrão.",
+    "Refresh": "Atualizar",
     "RemoveFolder": "Remover",
+    "SelectFolder": "Selecionar pasta",
     "Subpath": "Subcaminho",
     "SubpathInvalid": "O subcaminho deve ser um caminho relativo e não deve conter '..'.",
-    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Clique no campo para navegar pela pasta e escolher uma; / é a raiz da pasta."
+    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Clique no campo para navegar pela pasta e escolher uma; / é a raiz da pasta.",
+    "UnmountableFoldersRemoved": "As pastas que você não pode mais montar foram removidas da seleção."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Selecionar pasta"

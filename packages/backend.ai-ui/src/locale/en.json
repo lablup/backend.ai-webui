@@ -613,15 +613,21 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Invalid path format.",
     "AliasOverlapping": "Mount path overlaps with another folder.",
+    "AliasOverlappingWithAutoMount": "Mount path overlaps with an auto-mounted folder.",
     "AliasPlaceholder": "Mount path",
     "AutoMountedFolders": "Automount Folders",
+    "CreateFolder": "Create a new storage folder",
+    "Folders": "Folders",
     "Name": "Name",
     "PathAndAlias": "Path & Alias",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
+    "Refresh": "Refresh",
     "RemoveFolder": "Remove",
+    "SelectFolder": "Select Folder",
     "Subpath": "Subpath",
     "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Click the field to browse the folder and pick one; / is the folder root."
+    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Click the field to browse the folder and pick one; / is the folder root.",
+    "UnmountableFoldersRemoved": "Folders you can no longer mount were removed from the selection."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Select Folder"
