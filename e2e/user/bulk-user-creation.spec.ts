@@ -383,8 +383,11 @@ test.describe(
           // 5. Verify the "Number of users" spinner shows the default value 1
           await expect(modal.getUserCountInput()).toHaveValue('1');
 
-          // 6. Verify the Decrease Value button is disabled at value 1
-          await expect(modal.getDecreaseValueButton()).toBeDisabled();
+          // 6. Verify the count cannot go below 1 (the input exposes min=1)
+          await expect(modal.getUserCountInput()).toHaveAttribute(
+            'aria-valuemin',
+            '1',
+          );
 
           // 7. Fill in "Email prefix (before @)"
           await modal.fillEmailPrefix(EMAIL_PREFIX);
@@ -399,7 +402,7 @@ test.describe(
           // 11. Click "OK" and wait for success message
           await modal.submit();
           await expect(
-            page.locator('.ant-message').getByText(/Successfully created/),
+            toastRegion(page).getByText(/Successfully created/),
           ).toBeVisible({ timeout: 30000 });
 
           // 11b. A successful bulk create reveals the generated keypairs in a
@@ -430,8 +433,10 @@ test.describe(
             .locator('.bai-name-action-cell-actions button')
             .nth(2)
             .click();
-          const popconfirm = page.locator('.ant-popconfirm');
-          await popconfirm.getByRole('button', { name: 'Deactivate' }).click();
+          const popconfirm = page.getByRole('dialog', { name: 'Deactivate' });
+          await popconfirm
+            .getByRole('button', { name: 'Deactivate', exact: true })
+            .click();
           await expect(userRow).toBeHidden({ timeout: 10000 });
 
           // 15. Switch to Inactive tab and verify the user appears there

@@ -14,7 +14,13 @@ import {
   createDisposableUser,
   profileModal,
 } from '../utils/user-profile-util';
-import test, { expect } from '@playwright/test';
+import test, { expect, type Page } from '@playwright/test';
+
+// Astryx also renders each toast into a screen-reader announcer, so an
+// unscoped getByText() matches twice.
+function toastRegion(page: Page) {
+  return page.getByRole('region', { name: 'Notifications' });
+}
 
 // These tests edit the logged-in account's own profile — full name, password,
 // and the **Allowed Client IP** allowlist. Running them as the shared
@@ -161,11 +167,12 @@ test.describe(
           '192.168.0.0/16',
         ]);
 
+        // Each tag renders as a "Remove {cidr}" button
         await expect(
-          formItem.locator('.ant-tag').filter({ hasText: '10.20.30.0/24' }),
+          formItem.getByRole('button', { name: 'Remove 10.20.30.0/24' }),
         ).toBeVisible();
         await expect(
-          formItem.locator('.ant-tag').filter({ hasText: '192.168.0.0/16' }),
+          formItem.getByRole('button', { name: 'Remove 192.168.0.0/16' }),
         ).toBeVisible();
 
         await profileModal(page)
@@ -173,7 +180,7 @@ test.describe(
           .click();
       });
 
-      test('Invalid IP/CIDR entries are highlighted in red', async ({
+      test('Invalid IP/CIDR entries are flagged with a validation error', async ({
         page,
         request,
       }) => {
@@ -184,18 +191,18 @@ test.describe(
 
         await addIpTags(profileModal(page), ['not-an-ip']);
 
-        const redTag = formItem
-          .locator('.ant-tag')
-          .filter({ hasText: 'not-an-ip' });
-        await expect(redTag).toBeVisible();
-        await expect(redTag).toHaveClass(/ant-tag-red/);
+        // The tokenizer keeps the entry; the field's validator names it.
+        await expect(
+          formItem.getByRole('button', { name: 'Remove not-an-ip' }),
+        ).toBeVisible();
+        await expect(formItem.getByText('Invalid IP: not-an-ip')).toBeVisible();
 
         await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
           .click();
       });
 
-      test('Mixed valid and invalid IPs show correct tag colors', async ({
+      test('Mixed valid and invalid IPs flag only the invalid entry', async ({
         page,
         request,
       }) => {
@@ -210,23 +217,15 @@ test.describe(
           '10.0.0.0/8',
         ]);
 
-        const validTag = formItem
-          .locator('.ant-tag')
-          .filter({ hasText: '192.168.1.1' });
-        await expect(validTag).toBeVisible();
-        await expect(validTag).not.toHaveClass(/ant-tag-red/);
+        for (const ip of ['192.168.1.1', 'invalid-ip', '10.0.0.0/8']) {
+          await expect(
+            formItem.getByRole('button', { name: `Remove ${ip}` }),
+          ).toBeVisible();
+        }
 
-        const invalidTag = formItem
-          .locator('.ant-tag')
-          .filter({ hasText: 'invalid-ip' });
-        await expect(invalidTag).toBeVisible();
-        await expect(invalidTag).toHaveClass(/ant-tag-red/);
-
-        const cidrTag = formItem
-          .locator('.ant-tag')
-          .filter({ hasText: '10.0.0.0/8' });
-        await expect(cidrTag).toBeVisible();
-        await expect(cidrTag).not.toHaveClass(/ant-tag-red/);
+        const error = formItem.getByText(/^Invalid IP:/);
+        await expect(error).toBeVisible();
+        await expect(error).toHaveText('Invalid IP: invalid-ip');
 
         await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
@@ -241,23 +240,16 @@ test.describe(
 
         await addIpTags(profileModal(page), ['192.168.1.1']);
 
-        const tag = formItem
-          .locator('.ant-tag')
-          .filter({ hasText: '192.168.1.1' });
-        await expect(tag).toBeVisible();
+        // Each token carries a remove button named "Remove {ip}"
+        const removeButton = formItem.getByRole('button', {
+          name: 'Remove 192.168.1.1',
+        });
+        await expect(removeButton).toBeVisible();
 
-        // to-astryx final-B: was `.anticon-close` — a per-glyph class from
-        // `@ant-design/icons` that nothing in this app renders any more (the
-        // first-party icon shim emits `bai-icon`, and it never emitted
-        // glyph-specific names at all). The allowed-client-IP control is an
-        // Astryx `Tokenizer`; each token carries a real remove button whose
-        // accessible name is `Remove <value>` (measured on the live profile
-        // modal), so target that instead of any class.
-        // NOTE: the `.ant-tag` selectors still in this file are equally stale
-        // and belong to the separate `.ant-*` selector migration.
-        await tag.getByRole('button', { name: /^Remove / }).click();
+        await removeButton.click();
 
-        await expect(tag).toBeHidden();
+        await expect(removeButton).toBeHidden();
+        await expect(formItem.getByText('192.168.1.1')).toBeHidden();
 
         await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
@@ -301,7 +293,7 @@ test.describe(
         await modal.getByRole('button', { name: 'Update' }).click();
 
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
 
         // Cleanup: clear allowed IPs
@@ -311,7 +303,7 @@ test.describe(
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
       });
 
@@ -333,7 +325,7 @@ test.describe(
         await modal.getByRole('button', { name: 'Update' }).click();
 
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
 
         // Cleanup: clear allowed IPs
@@ -343,7 +335,7 @@ test.describe(
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
       });
 
@@ -361,7 +353,7 @@ test.describe(
         await addIpTags(profileModal(page), [currentIp]);
         await modal.getByRole('button', { name: 'Update' }).click();
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
 
         // Reopen and remove all IPs
@@ -371,13 +363,15 @@ test.describe(
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
 
         // Verify IPs are cleared
         await openProfileModal(page);
         const formItem = getAllowedClientIpFormItem(profileModal(page));
-        await expect(formItem.locator('.ant-tag')).toHaveCount(0);
+        await expect(
+          formItem.getByRole('button', { name: /^Remove / }),
+        ).toHaveCount(0);
 
         await profileModal(page)
           .getByRole('button', { name: 'Cancel' })
@@ -398,7 +392,7 @@ test.describe(
 
         const modal = profileModal(page);
 
-        const fullNameInput = modal.locator('input#full_name');
+        const fullNameInput = modal.getByRole('textbox', { name: 'Full Name' });
         const originalName = await fullNameInput.inputValue();
 
         const testName = `E2E Test User ${Date.now().toString(36)}`;
@@ -408,24 +402,28 @@ test.describe(
         await modal.getByRole('button', { name: 'Update' }).click();
 
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
 
         // Reopen and verify the name was saved
         await openProfileModal(page);
         const updatedName = await profileModal(page)
-          .locator('input#full_name')
+          .getByRole('textbox', { name: 'Full Name' })
           .inputValue();
         expect(updatedName).toBe(testName);
 
         // Cleanup: restore original name
-        await profileModal(page).locator('input#full_name').clear();
-        await profileModal(page).locator('input#full_name').fill(originalName);
+        await profileModal(page)
+          .getByRole('textbox', { name: 'Full Name' })
+          .clear();
+        await profileModal(page)
+          .getByRole('textbox', { name: 'Full Name' })
+          .fill(originalName);
         await profileModal(page)
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
       });
 
@@ -439,7 +437,7 @@ test.describe(
         const modal = profileModal(page);
         const currentIp = await getCurrentClientIp(page);
 
-        const fullNameInput = modal.locator('input#full_name');
+        const fullNameInput = modal.getByRole('textbox', { name: 'Full Name' });
         const originalName = await fullNameInput.inputValue();
         const testName = `E2E Combined ${Date.now().toString(36)}`;
 
@@ -451,30 +449,34 @@ test.describe(
         await modal.getByRole('button', { name: 'Update' }).click();
 
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
 
         // Reopen and verify both changes were saved
         await openProfileModal(page);
         const savedName = await profileModal(page)
-          .locator('input#full_name')
+          .getByRole('textbox', { name: 'Full Name' })
           .inputValue();
         expect(savedName).toBe(testName);
 
         const savedFormItem = getAllowedClientIpFormItem(profileModal(page));
         await expect(
-          savedFormItem.locator('.ant-tag').filter({ hasText: currentIp }),
+          savedFormItem.getByRole('button', { name: `Remove ${currentIp}` }),
         ).toBeVisible();
 
         // Cleanup: restore original name and clear IPs
-        await profileModal(page).locator('input#full_name').clear();
-        await profileModal(page).locator('input#full_name').fill(originalName);
+        await profileModal(page)
+          .getByRole('textbox', { name: 'Full Name' })
+          .clear();
+        await profileModal(page)
+          .getByRole('textbox', { name: 'Full Name' })
+          .fill(originalName);
         await removeAllIpTags(profileModal(page));
         await profileModal(page)
           .getByRole('button', { name: 'Update' })
           .click();
         await expect(
-          page.getByText('Profile has been successfully updated.'),
+          toastRegion(page).getByText('Profile has been successfully updated.'),
         ).toBeVisible({ timeout: 10000 });
       });
     });
@@ -492,11 +494,17 @@ test.describe(
 
         const modal = profileModal(page);
 
-        await expect(modal.locator('input#password')).toBeVisible();
-        await expect(modal.locator('input#passwordConfirm')).toBeVisible();
+        await expect(
+          modal.getByRole('textbox', { name: 'New Password', exact: true }),
+        ).toBeVisible();
+        await expect(
+          modal.getByRole('textbox', { name: 'New password (again)' }),
+        ).toBeVisible();
 
         // "Original password" field should NOT be present
-        await expect(modal.locator('input#originalPassword')).toHaveCount(0);
+        await expect(
+          modal.getByRole('textbox', { name: /original password/i }),
+        ).toHaveCount(0);
 
         await modal.getByRole('button', { name: 'Cancel' }).click();
       });
@@ -507,7 +515,9 @@ test.describe(
 
         const modal = profileModal(page);
 
-        await modal.locator('input#password').fill('123');
+        await modal
+          .getByRole('textbox', { name: 'New Password', exact: true })
+          .fill('123');
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -522,8 +532,12 @@ test.describe(
 
         const modal = profileModal(page);
 
-        await modal.locator('input#password').fill('NewPass1!');
-        await modal.locator('input#passwordConfirm').fill('DifferentPass2!');
+        await modal
+          .getByRole('textbox', { name: 'New Password', exact: true })
+          .fill('NewPass1!');
+        await modal
+          .getByRole('textbox', { name: 'New password (again)' })
+          .fill('DifferentPass2!');
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -543,7 +557,9 @@ test.describe(
 
         const modal = profileModal(page);
 
-        await modal.locator('input#password').fill('NewPass1!');
+        await modal
+          .getByRole('textbox', { name: 'New Password', exact: true })
+          .fill('NewPass1!');
 
         await modal.getByRole('button', { name: 'Update' }).click();
 
@@ -571,7 +587,7 @@ test.describe(
         await modal.getByRole('button', { name: 'Update' }).click();
 
         await expect(
-          page.getByText('There are no changes to update.'),
+          toastRegion(page).getByText('There are no changes to update.'),
         ).toBeVisible({ timeout: 5000 });
       });
 
@@ -581,7 +597,7 @@ test.describe(
 
         const modal = profileModal(page);
 
-        const fullNameInput = modal.locator('input#full_name');
+        const fullNameInput = modal.getByRole('textbox', { name: 'Full Name' });
         const originalName = await fullNameInput.inputValue();
 
         await fullNameInput.clear();
@@ -594,13 +610,13 @@ test.describe(
         // Reopen and verify nothing changed
         await openProfileModal(page);
         const restoredName = await profileModal(page)
-          .locator('input#full_name')
+          .getByRole('textbox', { name: 'Full Name' })
           .inputValue();
         expect(restoredName).toBe(originalName);
 
         const formItem = getAllowedClientIpFormItem(profileModal(page));
         await expect(
-          formItem.locator('.ant-tag').filter({ hasText: '10.0.0.1' }),
+          formItem.getByRole('button', { name: 'Remove 10.0.0.1' }),
         ).toHaveCount(0);
 
         await profileModal(page)
