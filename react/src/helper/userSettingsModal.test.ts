@@ -83,10 +83,15 @@ describe('background location tracking', () => {
     rememberNonSettingsLocation({
       pathname: '/session',
       search: '?tab=running',
+      hash: '#top',
+      state: { drawerFrgmt: 'cached' },
     });
     expect(peekNonSettingsLocation()).toEqual({
       pathname: '/session',
       search: '?tab=running',
+      hash: '#top',
+      // Kept so reopening over the page does not drop its prefetched data.
+      state: { drawerFrgmt: 'cached' },
     });
   });
 
@@ -94,11 +99,23 @@ describe('background location tracking', () => {
     'ignores the settings route itself (%s)',
     (pathname) => {
       forgetNonSettingsLocation();
-      rememberNonSettingsLocation({ pathname: '/session', search: '' });
-      rememberNonSettingsLocation({ pathname, search: '?tab=logs' });
+      rememberNonSettingsLocation({
+        pathname: '/session',
+        search: '',
+        hash: '',
+        state: null,
+      });
+      rememberNonSettingsLocation({
+        pathname,
+        search: '?tab=logs',
+        hash: '',
+        state: null,
+      });
       expect(peekNonSettingsLocation()).toEqual({
         pathname: '/session',
         search: '',
+        hash: '',
+        state: null,
       });
     },
   );

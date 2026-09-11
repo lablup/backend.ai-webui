@@ -32,19 +32,24 @@ const UserSettingsRouteRedirect: React.FC = () => {
   if (params.get(USER_SETTINGS_PARAM)) return null;
 
   const category = coerceUserSettingsCategory(params.get('tab')) ?? 'general';
+  // `hash` and `state` travel with the background: the session list keeps its
+  // already-fetched detail fragment in `state`, and dropping it puts the drawer
+  // back on its fetch fallback.
   const background = peekNonSettingsLocation();
   const target = background
     ? {
         pathname: background.pathname,
         search: buildUserSettingsSearch(background.search, category),
+        hash: background.hash,
       }
     : {
         pathname: USER_SETTINGS_ROUTE,
         search: buildUserSettingsSearch('', category),
+        hash: location.hash,
       };
 
   // `replace`: a push would make Back bounce through here and reopen the modal.
-  return <WebUINavigate to={target} replace />;
+  return <WebUINavigate to={target} state={background?.state} replace />;
 };
 
 export default UserSettingsRouteRedirect;

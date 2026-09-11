@@ -58,16 +58,26 @@ export const isUserSettingsPath = (pathname: string): boolean =>
  * Last location that was not the settings route, so the redirect shim can put
  * the modal back over the page the user was actually looking at. A cache, not
  * state: `null` simply means "cold load".
+ *
+ * `hash` and `state` ride along because dropping them silently degrades the
+ * page underneath — the session list carries its already-fetched detail
+ * fragment in `state` (`ComputeSessionListPage`), so losing it puts the drawer
+ * back on its fetch fallback.
  */
-let lastNonSettingsLocation: { pathname: string; search: string } | null = null;
+export type NonSettingsLocation = Pick<
+  Location,
+  'pathname' | 'search' | 'hash' | 'state'
+>;
 
-export const rememberNonSettingsLocation = (
-  location: Pick<Location, 'pathname' | 'search'>,
-) => {
+let lastNonSettingsLocation: NonSettingsLocation | null = null;
+
+export const rememberNonSettingsLocation = (location: NonSettingsLocation) => {
   if (isUserSettingsPath(location.pathname)) return;
   lastNonSettingsLocation = {
     pathname: location.pathname,
     search: location.search,
+    hash: location.hash,
+    state: location.state,
   };
 };
 

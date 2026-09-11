@@ -78,6 +78,8 @@ describe('UserSettingsRouteRedirect', () => {
     rememberNonSettingsLocation({
       pathname: '/session',
       search: '?tab=running',
+      hash: '',
+      state: null,
     });
     renderAt('/usersettings?tab=logs');
     expect(await screen.findByTestId('location')).toHaveTextContent(
