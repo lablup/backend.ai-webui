@@ -3509,6 +3509,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Teema-asetukset eivät vastaa skeemaa. Tarkista tiedosto.",
+    "ConvertedV1ThemeConfig": "Vanha (v1) teematiedosto muunnettiin nykyiseen muotoon. Tarkista se ennen käyttöönottoa.",
     "FailedToReadFile": "Tiedoston lukeminen epäonnistui.",
     "InvalidJsonFileAlert": "Virheellinen JSON-muoto. Tarkista tiedoston sisältö.",
     "JsonConfigAppliedSuccessfully": "Teema-asetukset on otettu käyttöön.",

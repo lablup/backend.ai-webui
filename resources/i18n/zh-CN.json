@@ -3511,6 +3511,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "主题设置不符合模式。请检查该文件。",
+    "ConvertedV1ThemeConfig": "已将旧版 (v1) 主题文件转换为当前格式。应用前请确认。",
     "FailedToReadFile": "无法读取文件。",
     "InvalidJsonFileAlert": "JSON 格式无效。请检查文件内容。",
     "JsonConfigAppliedSuccessfully": "主题设置已成功应用。",

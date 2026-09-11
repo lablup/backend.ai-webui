@@ -3511,6 +3511,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Cài đặt chủ đề không khớp với lược đồ. Vui lòng kiểm tra tệp.",
+    "ConvertedV1ThemeConfig": "Đã chuyển đổi tệp giao diện cũ (v1) sang định dạng hiện tại. Vui lòng kiểm tra trước khi áp dụng.",
     "FailedToReadFile": "Không thể đọc tệp.",
     "InvalidJsonFileAlert": "Định dạng JSON không hợp lệ. Vui lòng kiểm tra nội dung tệp.",
     "JsonConfigAppliedSuccessfully": "Cài đặt chủ đề đã được áp dụng thành công.",
