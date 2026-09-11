@@ -58,7 +58,7 @@ const isEnableSorter = (key: string) => {
 
 const STATUS_COLOR_MAP: Partial<Record<SessionV2Status, string>> = {
   PENDING: 'default',
-  RESERVED: 'purple',
+  RESERVED: 'blue',
   SCHEDULED: 'blue',
   PREPARING: 'blue',
   PREPARED: 'blue',
@@ -66,7 +66,7 @@ const STATUS_COLOR_MAP: Partial<Record<SessionV2Status, string>> = {
   RUNNING: 'green',
   DEPRIORITIZING: 'orange',
   PREEMPTED: 'orange',
-  RESCHEDULING: 'blue',
+  RESCHEDULING: 'orange',
   TERMINATING: 'orange',
   TERMINATED: 'default',
   CANCELLED: 'red',

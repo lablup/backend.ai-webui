@@ -85,11 +85,12 @@ describe('badgeVariantForStatus', () => {
   });
 
   it('maps preemption lifecycle states and reasons', () => {
-    // RESERVED is the beneficiary holding a reservation, not a victim
-    expect(badgeVariantForStatus('session', 'RESERVED')).toBe('purple');
+    // No new hue: RESERVED progresses toward RUNNING like SCHEDULED, the two
+    // victim states lose resources like TERMINATING.
+    expect(badgeVariantForStatus('session', 'RESERVED')).toBe('info');
     expect(badgeVariantForStatus('session', 'PREEMPTED')).toBe('warning');
-    expect(badgeVariantForStatus('session', 'RESCHEDULING')).toBe('info');
-    expect(badgeVariantForStatus('kernel', 'RESERVED')).toBe('purple');
+    expect(badgeVariantForStatus('session', 'RESCHEDULING')).toBe('warning');
+    expect(badgeVariantForStatus('kernel', 'RESERVED')).toBe('success');
     expect(
       badgeVariantForStatus('sessionStatusInfo', 'PREEMPTED_BY_SCHEDULER'),
     ).toBe('warning');
@@ -98,7 +99,7 @@ describe('badgeVariantForStatus', () => {
     );
     expect(
       badgeVariantForStatus('sessionStatusInfo', 'preemption-reservation'),
-    ).toBe('purple');
+    ).toBe('info');
     expect(
       badgeVariantForStatus('sessionStatusInfo', 'preempted-by-reservation'),
     ).toBe('warning');
