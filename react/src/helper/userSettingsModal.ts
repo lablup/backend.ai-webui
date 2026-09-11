@@ -32,15 +32,21 @@ export const coerceUserSettingsCategory = (
       : 'general';
 
 /**
- * Merge the category into a page's search string. The page's own `tab` is left
- * alone — it belongs to the page underneath, and the help button reads the
+ * Search string for the modal open at `category` over `pageSearch`, carrying
+ * over anything else the caller sent (the search palette adds `?setting=` to
+ * scroll to one row). The legacy `tab` key is dropped from `carried` only —
+ * the page underneath keeps its own `?tab=`, and the help button reads the
  * category rather than `tab` while the modal is open.
  */
 export const buildUserSettingsSearch = (
-  search: string,
+  pageSearch: string,
   category: UserSettingsCategory,
+  carried?: URLSearchParams,
 ): string => {
-  const params = new URLSearchParams(search);
+  const params = new URLSearchParams(pageSearch);
+  carried?.forEach((value, key) => {
+    if (key !== 'tab' && key !== USER_SETTINGS_PARAM) params.set(key, value);
+  });
   params.set(USER_SETTINGS_PARAM, category);
   return `?${params.toString()}`;
 };

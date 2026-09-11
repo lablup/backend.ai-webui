@@ -110,14 +110,13 @@ export interface BuildHitsParams {
   fallbackGroup?: string;
 }
 
-const tabLabelKeyOf = (
-  entry: SearchIndexEntry,
-  tabKey: string | undefined,
-): string | undefined =>
-  tabKey
-    ? _.find(entry.tabs, (tab) => tab.param === 'tab' && tab.key === tabKey)
-        ?.labelKey
-    : undefined;
+/**
+ * The tab a setting belongs to, found by key alone: a page-level strip hangs
+ * off `?tab=`, but the user-settings modal drives its categories from
+ * `?settings=` (FR-3903), so the param is read off the entry, not assumed.
+ */
+const settingTabOf = (entry: SearchIndexEntry, tabKey: string | undefined) =>
+  tabKey ? _.find(entry.tabs, (tab) => tab.key === tabKey) : undefined;
 
 const makeTabHit = (
   entry: SearchIndexEntry,
@@ -158,13 +157,16 @@ const makeSettingHit = (
   labelKey: setting.key,
   breadcrumbKeys: _.compact([
     entry.labelKey,
-    tabLabelKeyOf(entry, setting.tab),
+    settingTabOf(entry, setting.tab)?.labelKey,
     setting.groupKey,
   ]),
   target: {
     path,
     search: {
-      ...(setting.tab ? { tab: setting.tab } : {}),
+      ...(() => {
+        const tab = settingTabOf(entry, setting.tab);
+        return tab ? { [tab.param]: tab.key } : {};
+      })(),
       setting: setting.key,
     },
   },

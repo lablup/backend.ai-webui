@@ -87,11 +87,31 @@ describe('UserSettingsRouteRedirect', () => {
     );
   });
 
-  it('renders nothing once the param is already present, so it cannot loop', async () => {
+  it('renders nothing on a cold load once the param is final, so it cannot loop', async () => {
     renderAt('/usersettings?settings=general');
     // Unchanged location: the opener owns the modal from here.
     expect(await screen.findByTestId('location')).toHaveTextContent(
       '/usersettings?settings=general',
+    );
+  });
+
+  it('moves an already-converted link onto the tracked page', async () => {
+    rememberNonSettingsLocation({
+      pathname: '/session',
+      search: '',
+      hash: '',
+      state: null,
+    });
+    renderAt('/usersettings?settings=logs');
+    expect(await screen.findByTestId('location')).toHaveTextContent(
+      '/session?settings=logs',
+    );
+  });
+
+  it("carries the palette's setting deep link across the redirect", async () => {
+    renderAt('/usersettings?tab=general&setting=userSettings.AutoLogout');
+    expect(await screen.findByTestId('location')).toHaveTextContent(
+      '/usersettings?setting=userSettings.AutoLogout&settings=general',
     );
   });
 });
