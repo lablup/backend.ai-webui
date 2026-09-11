@@ -244,9 +244,10 @@ test.describe(
         'true',
         { timeout: 10000 },
       );
+      // An unscoped getByText also matches a hidden node with the same label.
       await expect(
-        secondChatCardHeader.getByText('gpt-mock-model-b'),
-      ).toBeVisible({ timeout: 10000 });
+        secondChatCardHeader.getByRole('button', { name: 'Select Model' }),
+      ).toContainText('gpt-mock-model-b', { timeout: 10000 });
 
       // Verify both panes have sync ON
       await expect(getSyncToggle(page, 0).first()).toBeVisible({

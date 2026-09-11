@@ -134,12 +134,12 @@ test.describe(
 
         await addIpTags(profileModal(page), ['192.168.1.1', '10.0.0.1']);
 
-        // Verify tags are created
+        // Verify tags are created (each renders as a "Remove {ip}" button)
         await expect(
-          formItem.locator('.ant-tag').filter({ hasText: '192.168.1.1' }),
+          formItem.getByRole('button', { name: 'Remove 192.168.1.1' }),
         ).toBeVisible();
         await expect(
-          formItem.locator('.ant-tag').filter({ hasText: '10.0.0.1' }),
+          formItem.getByRole('button', { name: 'Remove 10.0.0.1' }),
         ).toBeVisible();
 
         await profileModal(page)
