@@ -2534,6 +2534,7 @@
     "PendingTimeout": "Chờ hết thời gian chờ",
     "PendingTimeoutDesc": "Thời gian tối đa một phiên có thể ở trong trạng thái chờ xử lý.\n\nNếu được đặt thành 0, nó sẽ đợi vô thời hạn mà không có giới hạn.\n\nNếu bỏ lại, nó mặc định là 0.",
     "Public": "Công cộng",
+    "PublicDesc": "Khi bị tắt, nhóm tài nguyên này được dành riêng cho các phiên hệ thống như tải lên qua SFTP. Nhóm sẽ bị ẩn khỏi danh sách nhóm tài nguyên của người dùng thông thường và việc tạo phiên thông thường sẽ bị từ chối, nhưng quản trị viên vẫn nhìn thấy nhóm này. Cài đặt này không mở rộng quyền truy cập: miền, dự án và cặp khóa nào được dùng nhóm tài nguyên này do cài đặt liên kết tương ứng của chúng quyết định.",
     "PublicStatus": "Trạng thái công khai",
     "ResourceGroupAlreadyExist": "Một nhóm tài nguyên có cùng tên đã tồn tại.",
     "ResourceGroupCreated": "Đã tạo thành công nhóm tài nguyên",

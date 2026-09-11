@@ -2536,6 +2536,7 @@
     "PendingTimeout": "等待暫停",
     "PendingTimeoutDesc": "會話可以保持在待處理狀態。\n如果設置為0，它將無限期地等待而無需限制。\n如果保持不設定，則默認為0。",
     "Public": "公众",
+    "PublicDesc": "停用後，此資源群組將僅供 SFTP 上傳等系統工作階段使用。它會從一般使用者的資源群組清單中隱藏，一般工作階段的建立也會被拒絕，但管理員仍然可以看到它。此設定不會擴大存取範圍：哪些網域、專案和金鑰對可以使用此資源群組，由各自的關聯設定決定。",
     "PublicStatus": "公众地位",
     "ResourceGroupAlreadyExist": "已存在同名的資源組。",
     "ResourceGroupCreated": "資源組創建成功",

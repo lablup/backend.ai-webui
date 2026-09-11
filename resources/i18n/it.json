@@ -2532,6 +2532,7 @@
     "PendingTimeout": "In attesa di timeout",
     "PendingTimeoutDesc": "Tempo massimo Una sessione può rimanere nello stato in sospeso.\n\nSe impostato su 0, aspetterà indefinitamente senza un limite.\n\nSe lasciato Unset, è default a 0.",
     "Public": "Pubblico",
+    "PublicDesc": "Se disabilitato, questo gruppo di risorse è riservato alle sessioni di sistema come i caricamenti SFTP. Viene nascosto dagli elenchi dei gruppi di risorse degli utenti normali e la creazione di sessioni normali viene rifiutata, ma rimane visibile agli amministratori. Questa impostazione non amplia l'accesso: quali domini, progetti e coppie di chiavi possono usare questo gruppo di risorse è deciso dalle rispettive impostazioni di associazione.",
     "PublicStatus": "Stato pubblico",
     "ResourceGroupAlreadyExist": "Esiste già un gruppo di risorse con lo stesso nome.",
     "ResourceGroupCreated": "Gruppo di risorse creato con successo",

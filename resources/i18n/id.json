@@ -2535,6 +2535,7 @@
     "PendingTimeout": "Waktu tunggu yang tertunda",
     "PendingTimeoutDesc": "Waktu maksimum sesi dapat tetap dalam keadaan tertunda.\n\nJika diatur ke 0, itu akan menunggu tanpa batas tanpa batas.\n\nJika dibiarkan tidak disetel, itu default ke 0.",
     "Public": "Publik",
+    "PublicDesc": "Jika dinonaktifkan, grup sumber daya ini dikhususkan untuk sesi sistem seperti unggahan SFTP. Grup ini disembunyikan dari daftar grup sumber daya pengguna biasa dan pembuatan sesi biasa ditolak, tetapi tetap terlihat oleh administrator. Pengaturan ini tidak memperluas akses: domain, proyek, dan pasangan kunci mana yang dapat menggunakan grup sumber daya ini ditentukan oleh pengaturan asosiasi masing-masing.",
     "PublicStatus": "Status Publik",
     "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
     "ResourceGroupCreated": "Grup sumber daya berhasil dibuat",
