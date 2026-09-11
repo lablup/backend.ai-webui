@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ユーザー設定" />
   <meta name="twitter:description" content="ユーザー設定ダイアログでは、Backend.AI WebUIの環境をカスタマイズできます。 右上の人アイコンをクリックし、環境設定メニューを選択すると、表示中のページの 上に開きます。閉じると元の作業にそのまま戻れます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ユーザー設定","inLanguage":"ja","description":"ユーザー設定ダイアログでは、Backend.AI WebUIの環境をカスタマイズできます。 右上の人アイコンをクリックし、環境設定メニューを選択すると、表示中のページの 上に開きます。閉じると元の作業にそのまま戻れます。","dateModified":"2026-09-11T03:52:09.000Z","url":"https://webui.docs.backend.ai/next/ja/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ユーザー設定","inLanguage":"ja","description":"ユーザー設定ダイアログでは、Backend.AI WebUIの環境をカスタマイズできます。 右上の人アイコンをクリックし、環境設定メニューを選択すると、表示中のページの 上に開きます。閉じると元の作業にそのまま戻れます。","dateModified":"2026-09-11T04:15:46.000Z","url":"https://webui.docs.backend.ai/next/ja/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/user_settings.html" />
   <link rel="alternate" hreflang="en" href="../en/user_settings.html" />
   <link rel="alternate" hreflang="ja" href="../ja/user_settings.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e34216f)">v26.9.0-alpha.0 (e34216f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (b1aafef)">v26.9.0-alpha.0 (b1aafef)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -557,8 +557,8 @@ PPKキーに変換する必要がある場合があります。</p>
 </ul>
 <p><a id="logs-tab"></a></p>
 <h2 data-bai-block="123" id="user_settings-ログ">ログ<a class="hash-link" href="#user_settings-ログ" aria-label="Direct link to ログ">#</a></h2>
-<p data-bai-block="124">クライアント側で記録されたさまざまなログの詳細情報を表示します。このページを
-訪れることで、発生したエラーについて詳しく知ることができます。エラーログの
+<p data-bai-block="124">クライアント側で記録されたさまざまなログの詳細情報を表示します。このカテゴリを
+開くと、発生したエラーについて詳しく知ることができます。エラーログの
 検索、フィルタリング、ログの更新、右上の<strong>ログをクリアする</strong>ボタンをクリックして
 のログクリアが可能です。</p>
 <p><figure data-bai-block="125" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 19.14</figcaption></figure>
@@ -568,11 +568,11 @@ PPKキーに変換する必要がある場合があります。</p>
 <div class="admonition-content">
 
 <p data-bai-block="127">1つのページにしかログインしていない場合、<strong>更新</strong>ボタンをクリックしても正しく
-機能していないように見えるかもしれません。ログページはサーバーへのリクエストと
-サーバーからのレスポンスの集まりです。現在のページがログページである場合、
-ページを明示的にリフレッシュする以外にサーバーへのリクエストは送信されません。
-ログが正しく積み重ねられているか確認するには、別のページを開いて<strong>更新</strong>ボタンを
-クリックしてください。</p>
+機能していないように見えるかもしれません。ログはサーバーへのリクエストと
+サーバーからのレスポンスの集まりですが、このダイアログを開いている間、背後の
+ページはサーバーへリクエストを送信しません。ログが正しく積み重ねられているか
+確認するには、ダイアログを閉じて別のページで操作したあと、再び<strong>ログ</strong>を開いて
+ください。</p>
 </div></div>
 
 

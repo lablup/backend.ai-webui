@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="User Settings" />
   <meta name="twitter:description" content="The User Settings dialog allows you to customize your Backend.AI WebUI experience." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"User Settings","inLanguage":"en","description":"The User Settings dialog allows you to customize your Backend.AI WebUI experience.","dateModified":"2026-09-11T03:52:09.000Z","url":"https://webui.docs.backend.ai/next/en/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"User Settings","inLanguage":"en","description":"The User Settings dialog allows you to customize your Backend.AI WebUI experience.","dateModified":"2026-09-11T04:15:46.000Z","url":"https://webui.docs.backend.ai/next/en/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/user_settings.html" />
   <link rel="alternate" hreflang="en" href="../en/user_settings.html" />
   <link rel="alternate" hreflang="ja" href="../ja/user_settings.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e34216f)">v26.9.0-alpha.0 (e34216f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (b1aafef)">v26.9.0-alpha.0 (b1aafef)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -566,8 +566,8 @@ this feature is enabled; for the grid&#39;s own controls, see
 </ul>
 <p><a id="logs-tab"></a></p>
 <h2 data-bai-block="123" id="user_settings-logs">Logs<a class="hash-link" href="#user_settings-logs" aria-label="Direct link to Logs">#</a></h2>
-<p data-bai-block="124">Displays detailed information of various logs recorded on the client side. You
-can visit this page to find out more about errors that occurred.
+<p data-bai-block="124">Displays detailed information of various logs recorded on the client side. Open
+this category to find out more about errors that occurred.
 You can search and filter error logs, refresh the list, and clear all logs by
 clicking the <strong>Clear Logs</strong> button at the top right.</p>
 <p><figure data-bai-block="125" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.14</figcaption></figure>
@@ -577,11 +577,10 @@ clicking the <strong>Clear Logs</strong> button at the top right.</p>
 <div class="admonition-content">
 
 <p data-bai-block="127">If you only have one page logged in, clicking the <strong>Refresh</strong> button may not
-seem to work properly. The Logs page is a collection of requests to the server
-and responses from the server. If the current page is the Logs page, it will
-not send any requests to the server except when explicitly refreshing the page.
-To check that logs are being stacked properly, open another page and click
-the <strong>Refresh</strong> button.</p>
+seem to work properly. The log is a collection of requests to the server and
+responses from the server, and the page behind this dialog sends none while
+you are reading them. To check that logs are being stacked properly, close the
+dialog, do something on another page, and open <strong>Logs</strong> again.</p>
 </div></div>
 
 
