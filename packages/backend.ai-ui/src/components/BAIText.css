@@ -161,12 +161,20 @@
   white-space: nowrap;
 }
 
-/* rows: N — `-webkit-line-clamp` is set inline (the value is dynamic). */
+/* rows: N — `-webkit-line-clamp` is set inline (the value is dynamic). Under
+   `expandable` the box shows a measured prefix + `…` + the link, and the clamp
+   stays on as the net for a prefix that still spills. */
 .bai-text-content-clamp {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   white-space: normal;
   word-break: break-word;
+}
+
+/* The expand link inline at the end of the text (antd `operationUnit`). */
+.bai-text-content > .bai-text-expand {
+  margin-inline-start: var(--spacing-1);
+  white-space: nowrap;
 }
 
 /* `expandable` opened: show everything, wrapping. Selector matches the row

@@ -297,6 +297,97 @@ describe('BAIText ellipsis', () => {
     expect(screen.getByText('long')).toHaveClass('bai-text-content-clamp');
   });
 
+  // The link ends the text (antd): beside a CSS-clipped single line, inside
+  // the box after `…` on a multi-line clamp and after the last word once
+  // expanded (FR-3733). Astryx `Link` wraps its label, so address the link
+  // element by class.
+  const expandLink = (label: string) =>
+    screen.getByText(label).closest('.bai-text-expand') as HTMLElement;
+
+  it('keeps the Expand link beside a single-line clip box', () => {
+    setOverflow(true);
+    render(
+      <BAIText data-testid="t" ellipsis={{ expandable: true }}>
+        long
+      </BAIText>,
+    );
+    const box = screen.getByText('long');
+    const link = expandLink('Expand');
+    expect(box).not.toContainElement(link);
+    expect(link.parentElement).toBe(screen.getByTestId('t'));
+  });
+
+  it('puts the Expand link inside a multi-line clamp box', () => {
+    setOverflow(true);
+    render(<BAIText ellipsis={{ rows: 2, expandable: true }}>long</BAIText>);
+    expect(screen.getByText('long')).toContainElement(expandLink('Expand'));
+  });
+
+  it('puts the Collapse link after the last word once expanded', () => {
+    setOverflow(true);
+    render(<BAIText ellipsis={{ expandable: true }}>long</BAIText>);
+    fireEvent.click(screen.getByText('Expand'));
+    const box = screen.getByText('long');
+    const link = expandLink('Collapse');
+    expect(box).toContainElement(link);
+    expect(box.lastElementChild).toBe(link);
+  });
+
+  it('cuts a multi-line clamp so `…` and the link fit on the last line', () => {
+    // A layout stand-in: every line holds ten characters and is 20px tall.
+    const rect = vi
+      .spyOn(Element.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: Element) {
+        const height = Math.ceil((this.textContent?.length ?? 0) / 10) * 20;
+        return { height } as DOMRect;
+      });
+    try {
+      render(
+        <BAIText ellipsis={{ rows: 2, expandable: true }}>
+          {'a'.repeat(30)}
+        </BAIText>,
+      );
+      const link = expandLink('Expand');
+      const box = link.parentElement as HTMLElement;
+      // 13 chars + `…` + "Expand" = 20 chars = two lines.
+      expect(box.textContent).toBe(`${'a'.repeat(13)}…Expand`);
+      expect(box).toHaveClass('bai-text-content-clamp');
+
+      fireEvent.click(link);
+      expect(expandLink('Collapse').parentElement?.textContent).toBe(
+        `${'a'.repeat(30)}Collapse`,
+      );
+      fireEvent.click(screen.getByText('Collapse'));
+      expect(expandLink('Expand').parentElement?.textContent).toBe(
+        `${'a'.repeat(13)}…Expand`,
+      );
+    } finally {
+      rect.mockRestore();
+    }
+  });
+
+  it('slices a multi-line clamp through styled children', () => {
+    const rect = vi
+      .spyOn(Element.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: Element) {
+        const height = Math.ceil((this.textContent?.length ?? 0) / 10) * 20;
+        return { height } as DOMRect;
+      });
+    try {
+      render(
+        <BAIText ellipsis={{ rows: 2, expandable: true }}>
+          {'a'.repeat(8)}
+          <strong>{'b'.repeat(22)}</strong>
+        </BAIText>,
+      );
+      const box = expandLink('Expand').parentElement as HTMLElement;
+      expect(box.textContent).toBe(`${'a'.repeat(8)}${'b'.repeat(5)}…Expand`);
+      expect(box.querySelector('strong')?.textContent).toBe('b'.repeat(5));
+    } finally {
+      rect.mockRestore();
+    }
+  });
+
   it('follows BUI i18next for the expand link', async () => {
     setOverflow(true);
     await act(async () => {
