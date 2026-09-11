@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c17e0dcbf5998f79378510bbc4eaf131>>
+ * @generated SignedSource<<6d1e838237324a774ae147c693f5cd1a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type ProjectFairShareOrderField = "CREATED_AT" | "FAIR_SHARE_FACTOR" | "PROJECT_IS_ACTIVE" | "PROJECT_NAME" | "%future added value";
-export type ProjectFairShareTypeEnum = "GENERAL" | "MODEL_STORE" | "%future added value";
+export type ProjectFairShareTypeEnum = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type RGProjectFairShareFilter = {
   AND?: ReadonlyArray<RGProjectFairShareFilter> | null | undefined;
   NOT?: ReadonlyArray<RGProjectFairShareFilter> | null | undefined;

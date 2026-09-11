@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<173bcb3ad670b51e681345ce6bae930c>>
+ * @generated SignedSource<<6aaa1d863e6f36968426a8286a54c034>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,7 @@ export type VFolderFilter = {
   cloneable?: boolean | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   host?: StringFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   status?: VFolderOperationStatusFilter | null | undefined;
   usageMode?: VFolderUsageModeFilter | null | undefined;
@@ -63,6 +64,26 @@ export type DateTimeFilter = {
   before?: string | null | undefined;
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type VFolderOrderBy = {
   direction?: OrderDirection;

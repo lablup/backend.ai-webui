@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d6680eefaf2a38d6cf387952f8529b67>>
+ * @generated SignedSource<<0c7c1d772d942303fe1044624c7b972e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "%future added value";
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type ProjectV2OrderField = "CREATED_AT" | "DOMAIN_NAME" | "IS_ACTIVE" | "MODIFIED_AT" | "NAME" | "TYPE" | "USER_EMAIL" | "USER_USERNAME" | "%future added value";
 export type VFolderHostPermissionV2 = "CREATE_VFOLDER" | "DELETE_VFOLDER" | "DOWNLOAD_FILE" | "INVITE_OTHERS" | "MODIFY_VFOLDER" | "MOUNT_IN_SESSION" | "SET_USER_PERM" | "UPLOAD_FILE" | "%future added value";
 export type ProjectV2Filter = {
