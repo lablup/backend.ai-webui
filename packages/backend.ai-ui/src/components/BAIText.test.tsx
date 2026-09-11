@@ -388,6 +388,46 @@ describe('BAIText ellipsis', () => {
     }
   });
 
+  it('shrinks the cut until a styled prefix fits the rendered box', () => {
+    // The probe reads plain text (ten characters per line), but the rendered
+    // box counts <strong> text double, so the first cut of 13 still spills.
+    const weighted = (el: Element) =>
+      Array.from(el.childNodes).reduce((sum, node) => {
+        const length = node.textContent?.length ?? 0;
+        return sum + (node.nodeName === 'STRONG' ? length * 2 : length);
+      }, 0);
+    const rect = vi
+      .spyOn(Element.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: Element) {
+        const height = Math.ceil((this.textContent?.length ?? 0) / 10) * 20;
+        return { height } as DOMRect;
+      });
+    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
+      configurable: true,
+      get() {
+        return Math.ceil(weighted(this) / 10) * 20;
+      },
+    });
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
+      configurable: true,
+      get: () => 40,
+    });
+    try {
+      render(
+        <BAIText ellipsis={{ rows: 2, expandable: true }}>
+          <strong>{'b'.repeat(30)}</strong>
+        </BAIText>,
+      );
+      const box = expandLink('Expand').parentElement as HTMLElement;
+      // 13 → 11 → 9 → 8 → 7 → 6: the first prefix whose doubled width plus
+      // `…Expand` fits two lines.
+      expect(box.querySelector('strong')?.textContent).toBe('b'.repeat(6));
+      expect(box.textContent).toBe(`${'b'.repeat(6)}…Expand`);
+    } finally {
+      rect.mockRestore();
+    }
+  });
+
   it('never cuts a multi-line clamp inside a surrogate pair', () => {
     const rect = vi
       .spyOn(Element.prototype, 'getBoundingClientRect')

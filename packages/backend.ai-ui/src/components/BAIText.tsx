@@ -340,10 +340,10 @@ const useMeasuredClamp = (
     if (contentOverflows(element)) {
       setMeasure({
         overflow: true,
-        cut: cut - Math.max(1, Math.ceil(cut / 10)),
+        cut: toCodePointBoundary(text, cut - Math.max(1, Math.ceil(cut / 10))),
       });
     }
-  }, [ref, enabled, measure]);
+  }, [ref, enabled, text, measure]);
 
   return measure;
 };
