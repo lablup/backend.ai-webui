@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'One-line identity of a container image — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag chips. It reads `BAIImageNodeSimpleTagV2Fragment` on `ImageV2` (`identity.canonicalName`, `identity.namespace`, `identity.architecture`, `metadata.tags`, `metadata.labels`), so the caller spreads that fragment on the `ImageV2` node in its query and hands the node to `imageFrgmt`; a null reference renders nothing. It must sit under `BAIMetaDataProvider`, because the icon, the tag aliases and the base-name/base-version split all come from `useBAIImageMetaData`. This is the v2 counterpart of the host app’s `ImageNodeSimpleTag` and produces the same row the v1 session list shows.',
+      'The `ImageV2` adapter over `BAIImageMetaRow`: it reads `BAIImageNodeSimpleTagV2Fragment` on `ImageV2` (`identity.canonicalName`, `identity.namespace`, `identity.architecture`, `metadata.tags`, `metadata.labels`) and hands the row its plain facts, so the caller spreads that fragment on the `ImageV2` node in its query and passes the node to `imageFrgmt`; a null reference renders nothing. The row itself is the project-wide image representation (ADR 0004) — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag chips and a copy control. It must sit under `BAIMetaDataProvider`, because the icon, the tag aliases and the base-name/base-version split all come from `useBAIImageMetaData`. The v1 counterpart is the host app’s `ImageNodeSimpleTag`, and both render the identical row.',
     bestPractices: [
       {
         guidance: true,

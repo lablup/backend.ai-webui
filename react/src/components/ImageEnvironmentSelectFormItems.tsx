@@ -21,15 +21,7 @@ import {
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
-// @ts-ignore
-import ImageMetaIcon from './ImageMetaIcon';
-import {
-  imageNodeTagFacts,
-  imageTagFacts,
-  ImageMetaDivider,
-  ImageTagBadges,
-  ImageTags,
-} from './ImageTags';
+import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -38,6 +30,11 @@ import {
   badgeVariantForTagColor,
   BAIDoubleTag,
   BAIFlex,
+  BAIImageMetaDivider,
+  BAIImageMetaIcon,
+  BAIImageTagBadges,
+  imageNodeTagFacts,
+  imageTagFacts,
   BAISelect,
   // BAISelect still accepts antd's children option API via BUI's render-null
   // carriers; the rich JSX option rows below survive through `renderOption`.
@@ -518,7 +515,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   gap="xs"
                   style={{ display: 'inline-flex' }}
                 >
-                  <ImageMetaIcon
+                  <BAIImageMetaIcon
                     image={getImageFullName(fullNameMatchedImage) || ''}
                     style={{
                       width: 15,
@@ -611,7 +608,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         >
                           <BAIFlex direction="row" justify="between">
                             <BAIFlex direction="row" align="center" gap="xs">
-                              <ImageMetaIcon
+                              <BAIImageMetaIcon
                                 image={getImageFullName(firstImage) || ''}
                                 style={{
                                   width: 15,
@@ -864,12 +861,12 @@ const ImageEnvironmentSelectFormItems: React.FC<
                               <TextHighlighter keyword={versionSearch}>
                                 {image?.version}
                               </TextHighlighter>
-                              <ImageMetaDivider />
+                              <BAIImageMetaDivider />
                               <TextHighlighter keyword={versionSearch}>
                                 {image?.architecture}
                               </TextHighlighter>
-                              <ImageMetaDivider />
-                              <ImageTagBadges
+                              <BAIImageMetaDivider />
+                              <BAIImageTagBadges
                                 facts={tagFacts}
                                 highlightKeyword={versionSearch}
                               />
@@ -880,11 +877,11 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                 <TextHighlighter keyword={versionSearch}>
                                   {getBaseVersion(imageFullName || '')}
                                 </TextHighlighter>
-                                <ImageMetaDivider />
+                                <BAIImageMetaDivider />
                                 <TextHighlighter keyword={versionSearch}>
                                   {image?.architecture}
                                 </TextHighlighter>
-                                <ImageMetaDivider />
+                                <BAIImageMetaDivider />
                                 <ImageTags
                                   tag={image?.tag || ''}
                                   highlightKeyword={versionSearch}

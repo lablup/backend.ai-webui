@@ -3,19 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ImageNodeSimpleTagFragment$key } from '../__generated__/ImageNodeSimpleTagFragment.graphql';
-import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
-import { theme } from '../theme-shim';
-import ImageMetaIcon from './ImageMetaIcon';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Divider } from '@astryxdesign/core/Divider';
-import {
-  badgeVariantForTagColor,
-  BAIDoubleTag,
-  BAIFlex,
-  BAIText,
-} from 'backend.ai-ui';
-import * as _ from 'lodash-es';
+import { BAIImageMetaRow, imageNodeTagFacts } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -25,13 +14,18 @@ interface ImageNodeSimpleTagProps {
   copyable?: boolean;
 }
 
+/**
+ * `ImageNode` adapter over `BAIImageMetaRow`: it reads the fragment and hands
+ * the row its plain facts. The v2 counterpart is `BAIImageNodeSimpleTagV2`,
+ * and both render the identical row (ADR 0004).
+ */
 const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
   imageFrgmt,
   withoutTag = false,
   copyable = true,
 }) => {
+  'use memo';
   const [, { tagAlias }] = useBackendAIImageMetaData();
-  const { token } = theme.useToken();
   const image = useFragment(
     graphql`
       fragment ImageNodeSimpleTagFragment on ImageNode {
@@ -57,85 +51,23 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
 
   if (!image) return null;
 
-  const fullName = `${image.registry}/${image.namespace}:${image.tag}@${image.architecture}`;
+  // `namespace` is `@since(version: "24.12.0")`; before that the deprecated
+  // `name` carries it, as `getImageFullName` also assumes. `architecture` is
+  // nullable, and the row copies this string, so the suffix is conditional.
+  const reference = `${image.registry}/${image.namespace ?? image.name}:${image.tag}`;
 
   return (
-    <BAIFlex direction="row" gap={'xs'} wrap="wrap">
-      <ImageMetaIcon image={fullName} />
-      <BAIText>{tagAlias(image.base_image_name || '')}</BAIText>
-      <Divider
-        orientation="vertical"
-        style={{
-          marginInline: 0,
-        }}
-      />
-      <BAIText>{image.version}</BAIText>
-      <Divider
-        orientation="vertical"
-        style={{
-          marginInline: 0,
-        }}
-      />
-      <BAIText>{image.architecture}</BAIText>
-      {withoutTag ? null : (
-        <>
-          <Divider
-            orientation="vertical"
-            style={{
-              marginInline: 0,
-            }}
-          />
-          {_.map(image.tags, (tag, index) => {
-            if (!tag) return null;
-            const isCustomized = tag.key && _.includes(tag.key, 'customized_');
-            const tagValue =
-              (isCustomized
-                ? _.find(image?.labels, {
-                    key: 'ai.backend.customized-image.name',
-                  })?.value
-                : tag?.value) || '';
-            const aliasedTag = tag?.key
-              ? tagAlias(tag.key + tagValue)
-              : undefined;
-            return tag?.key &&
-              _.isEqual(
-                aliasedTag,
-                preserveDotStartCase(tag.key + tagValue),
-              ) ? (
-              <BAIDoubleTag
-                key={`${tag.key}-${index}`}
-                values={[
-                  {
-                    label: tagAlias(tag.key),
-                    color: isCustomized ? 'cyan' : undefined,
-                  },
-                  {
-                    label: tagValue,
-                    color: isCustomized ? 'cyan' : undefined,
-                  },
-                ]}
-              />
-            ) : (
-              <Badge
-                key={`${tag.key}-${index}`}
-                variant={badgeVariantForTagColor(
-                  isCustomized ? 'cyan' : undefined,
-                )}
-                label={aliasedTag}
-              />
-            );
-          })}
-        </>
-      )}
-      {copyable && (
-        <BAIText
-          style={{ color: token.colorLink }}
-          copyable={{
-            text: fullName,
-          }}
-        />
-      )}
-    </BAIFlex>
+    <BAIImageMetaRow
+      fullName={
+        image.architecture ? `${reference}@${image.architecture}` : reference
+      }
+      variant={withoutTag ? 'compact' : 'full'}
+      name={tagAlias(image.base_image_name || '')}
+      version={image.version}
+      architecture={image.architecture}
+      tags={imageNodeTagFacts(image.tags, image.labels, tagAlias)}
+      copyable={copyable}
+    />
   );
 };
 
