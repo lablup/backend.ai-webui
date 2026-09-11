@@ -379,8 +379,8 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
 
 ## Logs
 
-Displays detailed information of various logs recorded on the client side. You
-can visit this page to find out more about errors that occurred.
+Displays detailed information of various logs recorded on the client side. Open
+this category to find out more about errors that occurred.
 You can search and filter error logs, refresh the list, and clear all logs by
 clicking the **Clear Logs** button at the top right.
 
@@ -388,11 +388,10 @@ clicking the **Clear Logs** button at the top right.
 
 :::note
 If you only have one page logged in, clicking the **Refresh** button may not
-seem to work properly. The Logs page is a collection of requests to the server
-and responses from the server. If the current page is the Logs page, it will
-not send any requests to the server except when explicitly refreshing the page.
-To check that logs are being stacked properly, open another page and click
-the **Refresh** button.
+seem to work properly. The log is a collection of requests to the server and
+responses from the server, and the page behind this dialog sends none while
+you are reading them. To check that logs are being stacked properly, close the
+dialog, do something on another page, and open **Logs** again.
 :::
 
 If you want to hide or show certain columns, click the gear icon at the bottom
