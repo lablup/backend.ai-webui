@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Pratonton & pengesahan",
     "ProjectAndGroup": "Projek & Kumpulan",
     "Projects": "Projek",
+    "PurgeUsersPartialFailureDescription": "{{failed}} daripada {{total}} pengguna tidak dapat dipadam secara kekal. Semak sebab untuk setiap pengguna di bawah.",
     "PurgeUsersWarningAlertTitle": "Folder maya pengguna, sejarah kernel dan pasangan kunci yang berkaitan juga akan dipadamkan. Tindakan ini tidak boleh dibatalkan.",
     "Queries": "Pertanyaan",
     "RateLimit": "Had Kadar",

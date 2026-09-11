@@ -672,6 +672,7 @@
     "PreviewAndValidation": "プレビューと検証",
     "ProjectAndGroup": "プロジェクトとグループ",
     "Projects": "プロジェクト",
+    "PurgeUsersPartialFailureDescription": "{{total}}人中{{failed}}人のユーザーを完全に削除できませんでした。以下で各ユーザーの理由を確認してください。",
     "PurgeUsersWarningAlertTitle": "ユーザーの仮想フォルダー、カーネル履歴、および関連するキーペアも削除されます。この操作は元に戻せません。",
     "Queries": "クエリ",
     "RateLimit": "レート制限",

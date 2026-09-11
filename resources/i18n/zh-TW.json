@@ -672,6 +672,7 @@
     "PreviewAndValidation": "預覽和驗證",
     "ProjectAndGroup": "項目和團體",
     "Projects": "專案",
+    "PurgeUsersPartialFailureDescription": "{{total}} 位使用者中有 {{failed}} 位無法永久刪除。請在下方查看每位使用者的失敗原因。",
     "PurgeUsersWarningAlertTitle": "使用者的虛擬資料夾、kernel 歷史與相關金鑰對也將被刪除。此操作無法復原。",
     "Queries": "查詢",
     "RateLimit": "速率限制",

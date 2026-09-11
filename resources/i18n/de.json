@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Vorschau & Validierung",
     "ProjectAndGroup": "Projekte & Gruppen",
     "Projects": "Projekte",
+    "PurgeUsersPartialFailureDescription": "{{failed}} von {{total}} Benutzern konnten nicht dauerhaft gelöscht werden. Überprüfen Sie unten den Grund für jeden Benutzer.",
     "PurgeUsersWarningAlertTitle": "Die virtuellen Ordner des Benutzers, der Kernel-Verlauf und die zugehörigen Schlüsselpaare werden ebenfalls gelöscht. Diese Aktion ist unwiderruflich.",
     "Queries": "Abfragen",
     "RateLimit": "Bewertungslimit",

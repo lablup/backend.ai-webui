@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Pratinjau & validasi",
     "ProjectAndGroup": "Proyek & Grup",
     "Projects": "Proyek",
+    "PurgeUsersPartialFailureDescription": "{{failed}} dari {{total}} pengguna tidak dapat dihapus secara permanen. Periksa alasan untuk setiap pengguna di bawah ini.",
     "PurgeUsersWarningAlertTitle": "VFolder pengguna, riwayat kernel, dan pasangan kunci terkait juga akan dihapus. Tindakan ini tidak dapat dibatalkan.",
     "Queries": "Pertanyaan",
     "RateLimit": "Batas Tarif",

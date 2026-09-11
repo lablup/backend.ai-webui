@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Vista previa y validación",
     "ProjectAndGroup": "Proyectos y grupos",
     "Projects": "Proyectos",
+    "PurgeUsersPartialFailureDescription": "No se pudieron eliminar permanentemente {{failed}} de {{total}} usuarios. Consulte el motivo de cada usuario a continuación.",
     "PurgeUsersWarningAlertTitle": "Las carpetas virtuales del usuario, el historial de kernels y los pares de claves relacionados también se eliminarán. Esta acción es irreversible.",
     "Queries": "Consultas",
     "RateLimit": "Límite de tarifa",

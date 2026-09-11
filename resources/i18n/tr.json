@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Önizleme ve doğrulama",
     "ProjectAndGroup": "Projeler ve Gruplar",
     "Projects": "Projeler",
+    "PurgeUsersPartialFailureDescription": "Toplam {{total}} kullanıcıdan {{failed}} tanesi kalıcı olarak silinemedi. Aşağıda her kullanıcının nedenini kontrol edin.",
     "PurgeUsersWarningAlertTitle": "Kullanıcının sanal klasörleri, kernel geçmişi ve ilgili anahtar çiftleri de silinecektir. Bu işlem geri alınamaz.",
     "Queries": "Sorgular",
     "RateLimit": "Oran Sınırı",

@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Aperçu et validation",
     "ProjectAndGroup": "Projets & Groupes",
     "Projects": "Projets",
+    "PurgeUsersPartialFailureDescription": "{{failed}} utilisateur(s) sur {{total}} n'ont pas pu être supprimés définitivement. Vérifiez la raison de chaque utilisateur ci-dessous.",
     "PurgeUsersWarningAlertTitle": "Les dossiers virtuels de l'utilisateur, l'historique des kernels et les paires de clés associées seront également supprimés. Cette action est irréversible.",
     "Queries": "Requêtes",
     "RateLimit": "Limite de débit",

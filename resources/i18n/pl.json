@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Podgląd i walidacja",
     "ProjectAndGroup": "Projekty i grupy",
     "Projects": "Projekty",
+    "PurgeUsersPartialFailureDescription": "Nie udało się trwale usunąć {{failed}} z {{total}} użytkowników. Sprawdź poniżej powód dla każdego użytkownika.",
     "PurgeUsersWarningAlertTitle": "Wirtualne foldery użytkownika, historia kerneli i powiązane pary kluczy zostaną również usunięte. Ta operacja jest nieodwracalna.",
     "Queries": "Zapytania",
     "RateLimit": "Ograniczenie szybkości",

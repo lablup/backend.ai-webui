@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Προεπισκόπηση & επαλήθευση",
     "ProjectAndGroup": "Έργα & Ομάδες",
     "Projects": "Έργα",
+    "PurgeUsersPartialFailureDescription": "Δεν ήταν δυνατή η οριστική διαγραφή {{failed}} από τους {{total}} χρήστες. Ελέγξτε τον λόγο για κάθε χρήστη παρακάτω.",
     "PurgeUsersWarningAlertTitle": "Τα εικονικά φακέλια του χρήστη, το ιστορικό kernel και τα σχετικά ζεύγη κλειδιών θα διαγραφούν επίσης. Αυτή η ενέργεια είναι μη αναστρέψιμη.",
     "Queries": "Ερωτήματα",
     "RateLimit": "Όριο τιμής",

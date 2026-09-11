@@ -672,6 +672,7 @@
     "PreviewAndValidation": "预览和验证",
     "ProjectAndGroup": "项目和团体",
     "Projects": "项目",
+    "PurgeUsersPartialFailureDescription": "{{total}} 位用户中有 {{failed}} 位无法永久删除。请在下方查看每位用户的失败原因。",
     "PurgeUsersWarningAlertTitle": "用户的虚拟文件夹、内核历史记录和相关密钥对也将被删除。此操作不可撤销。",
     "Queries": "查询",
     "RateLimit": "速率限制",

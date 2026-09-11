@@ -659,6 +659,7 @@
     "PreviewAndValidation": "Preview & validation",
     "ProjectAndGroup": "Projects & Groups",
     "Projects": "Projects",
+    "PurgeUsersPartialFailureDescription": "{{failed}} of {{total}} users could not be permanently deleted. Check the reason for each user below.",
     "PurgeUsersWarningAlertTitle": "User's virtual folders, kernel history, and related keypairs will also be deleted. This action is irreversible.",
     "Queries": "Queries",
     "RateLimit": "Rate Limit",

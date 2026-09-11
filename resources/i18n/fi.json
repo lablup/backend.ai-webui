@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Esikatselu & validointi",
     "ProjectAndGroup": "Projektit & ryhmät",
     "Projects": "Projektit",
+    "PurgeUsersPartialFailureDescription": "{{failed}}/{{total}} käyttäjää ei voitu poistaa pysyvästi. Tarkista alla kunkin käyttäjän syy.",
     "PurgeUsersWarningAlertTitle": "Käyttäjän virtuaalikansiot, kernelin historia ja niihin liittyvät avainparit poistetaan myös. Tämä toimenpide on peruuttamaton.",
     "Queries": "Kyselyt",
     "RateLimit": "Määräraja",

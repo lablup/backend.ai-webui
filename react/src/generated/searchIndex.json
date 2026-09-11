@@ -2740,6 +2740,7 @@
         "credential.PreviewAndValidation",
         "credential.ProjectAndGroup",
         "credential.Projects",
+        "credential.PurgeUsersPartialFailureDescription",
         "credential.Queries",
         "credential.RateLimit",
         "credential.RateLimitFor15min",

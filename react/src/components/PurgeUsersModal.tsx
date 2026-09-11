@@ -9,6 +9,8 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { VStack } from '@astryxdesign/core/Stack';
 import {
+  BAIBulkErrorModal,
+  type BAIColumnsType,
   BAIDeleteConfirmModal,
   filterOutNullAndUndefined,
   toLocalId,
@@ -26,6 +28,12 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 // (BUI/antd) has no Astryx equivalent to extend in place. The public prop
 // contract (`usersFrgmt`/`open`/`onOk`/`onCancel`) is kept unchanged so
 // AdminUserManagement.tsx's 2 call sites don't need to change.
+interface PurgeFailure {
+  key: string;
+  email: string;
+  message: string;
+}
+
 export interface PurgeUsersModalProps {
   usersFrgmt: PurgeUsersModalFragment$key;
   open?: boolean;
@@ -65,6 +73,12 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   // is the whole mechanism here too.
   const [purgeSharedVfolders, setPurgeSharedVfolders] = useState(false);
   const [deleteModelServices, setDeleteModelServices] = useState(false);
+  // Per-user failures of the last request; `total` is what the request
+  // carried, kept apart from the selection the parent clears on success.
+  const [failureReport, setFailureReport] = useState<{
+    failures: PurgeFailure[];
+    total: number;
+  } | null>(null);
 
   // `successes` only exists on 26.9.0+ managers; older ones reject the whole
   // document, so it is gated and the deprecated count is selected instead.
@@ -126,8 +140,17 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             : (deprecatedCount ?? 0);
 
           if (failed.length > 0) {
-            const failedMessages = failed.map((f) => f.message).join(', ');
-            message.error(failedMessages);
+            const emailByLocalId = _.fromPairs(
+              _.map(userList, (u) => [toLocalId(u.id), u.basicInfo.email]),
+            );
+            setFailureReport({
+              total: userList.length,
+              failures: _.map(failed, (f) => ({
+                key: f.userId,
+                email: emailByLocalId[f.userId] ?? f.userId,
+                message: f.message,
+              })),
+            });
           }
 
           if (purgedCount > 0) {
@@ -153,44 +176,61 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
     });
   };
 
+  const failureColumns: BAIColumnsType<PurgeFailure> = [
+    { key: 'email', title: t('general.E-Mail'), dataIndex: 'email' },
+    { key: 'message', title: t('dialog.error.Error'), dataIndex: 'message' },
+  ];
+
   return (
-    <BAIDeleteConfirmModal
-      isOpen={!!open}
-      onOpenChange={(next) => {
-        if (!next) onCancel?.();
-      }}
-      title={t('credential.PermanentlyDeleteUsers')}
-      maskClosable={false}
-      confirmLoading={isPending || isInFlightBulkPurge}
-      items={_.map(userList, (user) => ({
-        key: user.id,
-        label: user.basicInfo.email,
-      }))}
-      requireConfirmInput
-      confirmText={t('credential.PermanentlyDelete')}
-      inputLabel={t('credential.TypePermanentlyDelete', {
-        text: t('credential.PermanentlyDelete'),
-      })}
-      inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
-      cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
-      okText={t('credential.PermanentlyDelete')}
-      cancelText={t('button.Cancel')}
-      extraContent={
-        <VStack gap={1} align="stretch">
-          <CheckboxInput
-            label={t('credential.DeleteSharedVirtualFolders')}
-            value={purgeSharedVfolders}
-            onChange={setPurgeSharedVfolders}
-          />
-          <CheckboxInput
-            label={t('credential.DeleteDeploymentsAsWell')}
-            value={deleteModelServices}
-            onChange={setDeleteModelServices}
-          />
-        </VStack>
-      }
-      onOk={handleAction}
-    />
+    <>
+      <BAIDeleteConfirmModal
+        isOpen={!!open}
+        onOpenChange={(next) => {
+          if (!next) onCancel?.();
+        }}
+        title={t('credential.PermanentlyDeleteUsers')}
+        maskClosable={false}
+        confirmLoading={isPending || isInFlightBulkPurge}
+        items={_.map(userList, (user) => ({
+          key: user.id,
+          label: user.basicInfo.email,
+        }))}
+        requireConfirmInput
+        confirmText={t('credential.PermanentlyDelete')}
+        inputLabel={t('credential.TypePermanentlyDelete', {
+          text: t('credential.PermanentlyDelete'),
+        })}
+        inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
+        cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
+        okText={t('credential.PermanentlyDelete')}
+        cancelText={t('button.Cancel')}
+        extraContent={
+          <VStack gap={1} align="stretch">
+            <CheckboxInput
+              label={t('credential.DeleteSharedVirtualFolders')}
+              value={purgeSharedVfolders}
+              onChange={setPurgeSharedVfolders}
+            />
+            <CheckboxInput
+              label={t('credential.DeleteDeploymentsAsWell')}
+              value={deleteModelServices}
+              onChange={setDeleteModelServices}
+            />
+          </VStack>
+        }
+        onOk={handleAction}
+      />
+      <BAIBulkErrorModal<PurgeFailure>
+        open={!!failureReport}
+        alertDescription={t('credential.PurgeUsersPartialFailureDescription', {
+          failed: failureReport?.failures.length ?? 0,
+          total: failureReport?.total ?? 0,
+        })}
+        columns={failureColumns}
+        dataSource={failureReport?.failures ?? []}
+        onRequestClose={() => setFailureReport(null)}
+      />
+    </>
   );
 };
 

@@ -672,6 +672,7 @@
     "PreviewAndValidation": "Xem trước và xác thực",
     "ProjectAndGroup": "Dự án & Nhóm",
     "Projects": "Dự án",
+    "PurgeUsersPartialFailureDescription": "{{failed}} trong số {{total}} người dùng không thể xóa vĩnh viễn. Kiểm tra lý do cho từng người dùng bên dưới.",
     "PurgeUsersWarningAlertTitle": "Thư mục ảo của người dùng, lịch sử kernel và các cặp khóa liên quan cũng sẽ bị xóa. Hành động này không thể hoàn tác.",
     "Queries": "Truy vấn",
     "RateLimit": "Giới hạn tỷ lệ",
