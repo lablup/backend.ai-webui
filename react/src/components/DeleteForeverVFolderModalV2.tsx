@@ -5,16 +5,25 @@
 import { DeleteForeverVFolderModalV2Fragment$key } from '../__generated__/DeleteForeverVFolderModalV2Fragment.graphql';
 import { DeleteForeverVFolderModalV2Mutation } from '../__generated__/DeleteForeverVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
+  BAIBulkErrorModal,
+  type BAIColumnsType,
   BAIDeleteConfirmModal,
   type BAIDeleteConfirmModalProps,
   toLocalId,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
+
+interface DeleteFailure {
+  key: string;
+  name: string;
+  message: string;
+}
 
 interface DeleteForeverVFolderModalV2Props extends Omit<
   BAIDeleteConfirmModalProps,
@@ -33,6 +42,17 @@ const DeleteForeverVFolderModalV2: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
+  // `successes` is 26.9.0+ and `failed` 26.4.4+; `@since` strips each from
+  // the document below its version, and the flag picks which count to read.
+  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
+    'bulk-mutation-per-id-results',
+  );
+  // Per-folder failures of the last request; `total` is what the request
+  // carried, kept apart from the selection the parent clears on success.
+  const [failureReport, setFailureReport] = useState<{
+    failures: DeleteFailure[];
+    total: number;
+  } | null>(null);
 
   const vfolders = useFragment(
     graphql`
@@ -53,7 +73,12 @@ const DeleteForeverVFolderModalV2: React.FC<
         $input: BulkPurgeVFoldersV2Input!
       ) {
         bulkPurgeVfoldersV2(input: $input) {
-          purgedCount
+          successes @since(version: "26.9.0")
+          failed @since(version: "26.4.4") {
+            vfolderId
+            message
+          }
+          purgedCount @deprecatedSince(version: "26.9.0")
         }
       }
     `);
@@ -68,81 +93,126 @@ const DeleteForeverVFolderModalV2: React.FC<
       ? (purgeable[0]?.metadata?.name ?? t('button.Delete'))
       : t('button.Delete');
 
+  const failureColumns: BAIColumnsType<DeleteFailure> = [
+    { key: 'name', title: t('data.folders.Name'), dataIndex: 'name' },
+    {
+      key: 'message',
+      title: t('data.folders.ErrorMessage'),
+      dataIndex: 'message',
+    },
+  ];
+
   return (
-    <BAIDeleteConfirmModal
-      {...modalProps}
-      isOpen={!!open}
-      onOpenChange={(next) => {
-        if (!next) onRequestClose?.(false);
-      }}
-      title={t('dialog.title.DeleteForever')}
-      description={
-        purgeable.length === 1
-          ? t('data.folders.DeleteForeverDescription', {
-              folderName: purgeable[0]?.metadata?.name ?? '',
-            })
-          : undefined
-      }
-      maskClosable={false}
-      okText={t('data.folders.DeleteForever')}
-      cancelText={t('button.Cancel')}
-      confirmLoading={isInFlightBulkPurge}
-      items={_.map(purgeable, (vfolder) => ({
-        key: vfolder.id ?? '',
-        label: vfolder.metadata?.name ?? '',
-      }))}
-      requireConfirmInput
-      confirmText={confirmText}
-      inputLabel={t('dialog.PleaseTypeToConfirm', { confirmText })}
-      inputProps={{ placeholder: confirmText }}
-      cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
-      onOk={() => {
-        if (purgeable.length === 0) {
-          onRequestClose?.(false);
-          return;
+    <>
+      <BAIDeleteConfirmModal
+        {...modalProps}
+        isOpen={!!open}
+        onOpenChange={(next) => {
+          if (!next) onRequestClose?.(false);
+        }}
+        title={t('dialog.title.DeleteForever')}
+        description={
+          purgeable.length === 1
+            ? t('data.folders.DeleteForeverDescription', {
+                folderName: purgeable[0]?.metadata?.name ?? '',
+              })
+            : undefined
         }
-        const ids = _.map(purgeable, (vfolder) => toLocalId(vfolder.id));
-        commitBulkPurgeMutation({
-          variables: { input: { ids } },
-          onCompleted: (data, errors) => {
-            if (errors && errors.length > 0) {
-              const firstError = errors[0];
-              message.error(firstError?.message ?? getErrorMessage(firstError));
-              return;
-            }
-            const purgedCount = data?.bulkPurgeVfoldersV2?.purgedCount ?? 0;
-            if (purgedCount === 0) {
-              message.error(
-                t('data.folders.FailedToDeleteFolders', {
-                  folderNames: _.map(purgeable, (v) => v?.metadata?.name).join(
-                    ', ',
-                  ),
-                }),
-              );
-              return;
-            }
-            if (purgeable.length === 1) {
-              message.success(
-                t('data.folders.FolderDeletedForever', {
-                  folderName: purgeable[0]?.metadata?.name,
-                }),
-              );
-            } else {
-              message.success(
-                t('data.folders.MultipleFolderDeletedForever', {
-                  count: purgedCount,
+        maskClosable={false}
+        okText={t('data.folders.DeleteForever')}
+        cancelText={t('button.Cancel')}
+        confirmLoading={isInFlightBulkPurge}
+        items={_.map(purgeable, (vfolder) => ({
+          key: vfolder.id ?? '',
+          label: vfolder.metadata?.name ?? '',
+        }))}
+        requireConfirmInput
+        confirmText={confirmText}
+        inputLabel={t('dialog.PleaseTypeToConfirm', { confirmText })}
+        inputProps={{ placeholder: confirmText }}
+        cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
+        onOk={() => {
+          if (purgeable.length === 0) {
+            onRequestClose?.(false);
+            return;
+          }
+          const ids = _.map(purgeable, (vfolder) => toLocalId(vfolder.id));
+          commitBulkPurgeMutation({
+            variables: { input: { ids } },
+            onCompleted: (data, errors) => {
+              if (errors && errors.length > 0) {
+                const firstError = errors[0];
+                message.error(
+                  firstError?.message ?? getErrorMessage(firstError),
+                );
+                return;
+              }
+              const purgedCount = supportsPerIdResults
+                ? (data?.bulkPurgeVfoldersV2?.successes?.length ?? 0)
+                : (data?.bulkPurgeVfoldersV2?.purgedCount ?? 0);
+              const failed = data?.bulkPurgeVfoldersV2?.failed ?? [];
+              // The mutation answers per id, so a partial failure arrives as a
+              // success with `failed` populated rather than as a top-level error.
+              if (failed.length > 0) {
+                const nameByLocalId = _.fromPairs(
+                  _.map(purgeable, (v) => [toLocalId(v.id), v.metadata?.name]),
+                );
+                setFailureReport({
                   total: purgeable.length,
-                }),
-              );
-            }
-            onRequestClose?.(true);
-          },
-          onError: (error) => {
-            message.error(getErrorMessage(error));
-          },
-        });
-      }}
-    />
+                  failures: _.map(failed, (f) => ({
+                    key: f.vfolderId,
+                    name: nameByLocalId[f.vfolderId] ?? f.vfolderId,
+                    message: f.message,
+                  })),
+                });
+              } else if (purgedCount === 0) {
+                // Older managers report only the count, so there is no reason
+                // to show per folder.
+                message.error(
+                  t('data.folders.FailedToDeleteFolders', {
+                    folderNames: _.map(
+                      purgeable,
+                      (v) => v?.metadata?.name,
+                    ).join(', '),
+                  }),
+                );
+              }
+              if (purgedCount === 0) {
+                return;
+              }
+              if (purgeable.length === 1) {
+                message.success(
+                  t('data.folders.FolderDeletedForever', {
+                    folderName: purgeable[0]?.metadata?.name,
+                  }),
+                );
+              } else {
+                message.success(
+                  t('data.folders.MultipleFolderDeletedForever', {
+                    count: purgedCount,
+                    total: purgeable.length,
+                  }),
+                );
+              }
+              onRequestClose?.(true);
+            },
+            onError: (error) => {
+              message.error(getErrorMessage(error));
+            },
+          });
+        }}
+      />
+      <BAIBulkErrorModal<DeleteFailure>
+        open={!!failureReport}
+        alertDescription={t('data.folders.DeleteFailureDescription', {
+          failed: failureReport?.failures.length ?? 0,
+          total: failureReport?.total ?? 0,
+        })}
+        columns={failureColumns}
+        dataSource={failureReport?.failures ?? []}
+        onRequestClose={() => setFailureReport(null)}
+      />
+    </>
   );
 };
 

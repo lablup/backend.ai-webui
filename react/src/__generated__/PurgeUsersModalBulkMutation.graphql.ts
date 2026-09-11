@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f9f3afdfc167cac3c492a44a450e4dec>>
+ * @generated SignedSource<<b6061f7760e181d7904231cdeb8835f0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,6 +27,7 @@ export type PurgeUsersModalBulkMutation$data = {
       readonly userId: string;
     }>;
     readonly purgedCount: number;
+    readonly successes: ReadonlyArray<string>;
   } | null | undefined;
 };
 export type PurgeUsersModalBulkMutation = {
@@ -57,6 +58,13 @@ v1 = [
     "name": "adminBulkPurgeUsersV2",
     "plural": false,
     "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "successes",
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -111,16 +119,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "a34039d89cddc22073c15447b5f4fbc0",
+    "cacheID": "df535a5315c891cc628480620e7ada84",
     "id": null,
     "metadata": {},
     "name": "PurgeUsersModalBulkMutation",
     "operationKind": "mutation",
-    "text": "mutation PurgeUsersModalBulkMutation(\n  $input: BulkPurgeUsersV2Input!\n) {\n  adminBulkPurgeUsersV2(input: $input) {\n    purgedCount\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation PurgeUsersModalBulkMutation(\n  $input: BulkPurgeUsersV2Input!\n) {\n  adminBulkPurgeUsersV2(input: $input) {\n    successes @since(version: \"26.9.0\")\n    purgedCount @deprecatedSince(version: \"26.9.0\")\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5fc5df3e560d0004beb729841ee30b31";
+(node as any).hash = "85173f349ac7f0b8e14ff0ee2bd5dfb9";
 
 export default node;
