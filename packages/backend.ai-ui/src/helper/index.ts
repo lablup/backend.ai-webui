@@ -3,7 +3,7 @@ import Big from 'big.js';
 import * as _ from 'lodash-es';
 
 export * from './astryxTagVariant';
-export * from './combineGraphQLFilters';
+export * from './combineFilters';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
 

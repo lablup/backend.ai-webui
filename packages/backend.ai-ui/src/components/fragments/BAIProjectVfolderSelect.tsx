@@ -30,7 +30,7 @@
 */
 import { BAIProjectVfolderSelectPaginatedQuery } from '../../__generated__/BAIProjectVfolderSelectPaginatedQuery.graphql';
 import { BAIProjectVfolderSelectValueQuery } from '../../__generated__/BAIProjectVfolderSelectValueQuery.graphql';
-import { combineFiltersWithAnd, convertToUUID, toLocalId } from '../../helper';
+import { combineFilters, convertToUUID, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -119,7 +119,7 @@ const BAIProjectVfolderSelect: React.FC<BAIProjectVfolderSelectProps> = ({
   // `VFolderFilter` allows each field at most once at the top level, so the
   // caller's `filter` is composed with the search / `excludeDeleted`
   // shortcuts via the `AND` combinator (unchanged from the antd original).
-  const mergedFilter = combineFiltersWithAnd<BAIProjectVfolderSelectFilter>([
+  const mergedFilter = combineFilters<BAIProjectVfolderSelectFilter>([
     filter,
     excludeDeleted ? { status: { notIn: EXCLUDED_DELETION_STATUSES } } : null,
     debouncedDeferredValue

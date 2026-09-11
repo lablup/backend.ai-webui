@@ -8,7 +8,7 @@
 */
 import { BAIAdminUserV2SelectPaginatedQuery } from '../../__generated__/BAIAdminUserV2SelectPaginatedQuery.graphql';
 import { BAIAdminUserV2SelectValueQuery } from '../../__generated__/BAIAdminUserV2SelectValueQuery.graphql';
-import { combineFiltersWithAnd, toLocalId } from '../../helper';
+import { combineFilters, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -97,7 +97,7 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
   const deferredFetchKey = useDeferredValue(fetchKey);
 
   // `UserV2Filter` has no merge semantics of its own — combine through `AND`.
-  const baseFilter = combineFiltersWithAnd<BAIAdminUserV2SelectFilter>([
+  const baseFilter = combineFilters<BAIAdminUserV2SelectFilter>([
     excludeInactive ? { status: { equals: 'ACTIVE' } } : null,
     filterFromProps,
   ]);
@@ -138,7 +138,7 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
       `,
       {
         selectedFilter: shouldResolveSelected
-          ? combineFiltersWithAnd<BAIAdminUserV2SelectFilter>([
+          ? combineFilters<BAIAdminUserV2SelectFilter>([
               { uuid: { in: selectedKeys } },
               baseFilter,
             ])
@@ -186,7 +186,7 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
       `,
       { limit: 10 },
       {
-        filter: combineFiltersWithAnd<BAIAdminUserV2SelectFilter>([
+        filter: combineFilters<BAIAdminUserV2SelectFilter>([
           baseFilter,
           debouncedDeferredValue
             ? { email: { iContains: debouncedDeferredValue } }
