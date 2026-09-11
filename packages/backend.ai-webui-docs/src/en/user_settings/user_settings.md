@@ -6,28 +6,31 @@ navTitle: User Settings
 
 # User Settings
 
-The User Settings page allows you to customize your Backend.AI WebUI experience.
-You can access it by clicking the person icon at the top right and selecting
-the Preferences menu. From here, you can configure preferences such as theme mode,
+The User Settings dialog allows you to customize your Backend.AI WebUI
+experience. You can open it by clicking the person icon at the top right and
+selecting the Preferences menu; it opens over the page you are on, so closing
+it puts you back where you were. From here, you can configure preferences such as theme mode,
 language, desktop notifications, SSH keypair management, shell scripts, and
 experimental features. You can also review the client-side logs, the login
 sessions currently signed in to your account, and your login history.
 
 ![](../images/preferences.png)
 
-The page is organized into four tabs: **General**, **Logs**, **Login Sessions**,
-and **Login History**.
+The dialog is organized into four categories, listed down its left side:
+**General**, **Logs**, **Login Sessions**, and **Login History**. On a narrow
+screen the list fills the dialog and selecting a category opens it, with a back
+button to return to the list.
 
 <a id="general-tab"></a>
 
-## General tab
+## General
 
 ![](../images/user_settings_page.png)
 
-The General tab contains all preference settings organized into groups:
-**Preferences**, **Shell Environments**, and **Experimental features**. The list
-on the left lets you jump to a single group, or select **All** to see every
-setting at once.
+The General category contains all preference settings organized into groups:
+**Preferences**, **Shell Environments**, and **Experimental features**. Every
+group is listed one after another; use the search bar to narrow the list down
+to the setting you are looking for.
 
 ### Searching and filtering settings
 
@@ -374,7 +377,7 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
 
 <a id="logs-tab"></a>
 
-## Logs tab
+## Logs
 
 Displays detailed information of various logs recorded on the client side. You
 can visit this page to find out more about errors that occurred.
@@ -400,9 +403,9 @@ want to see.
 
 <a id="login-sessions-tab"></a>
 
-## Login Sessions tab
+## Login Sessions
 
-The Login Sessions tab lists the login sessions currently associated with your
+The Login Sessions category lists the login sessions currently associated with your
 account — one entry for every place where you are signed in to Backend.AI. Use
 it to review where your account is in use and to sign out a session you no
 longer need.
@@ -450,11 +453,11 @@ session you are currently using, you have to log in again.
 
 <a id="login-history-tab"></a>
 
-## Login History tab
+## Login History
 
-The Login History tab shows the login attempts recorded for your account —
+The Login History category shows the login attempts recorded for your account —
 successful sign-ins, failed attempts, and login session events such as logout or
-expiry. This tab is read-only; there are no actions on the rows.
+expiry. This category is read-only; there are no actions on the rows.
 
 ![](../images/login_history_tab.png)
 

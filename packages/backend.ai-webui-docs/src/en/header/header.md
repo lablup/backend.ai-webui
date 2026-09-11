@@ -160,9 +160,9 @@ Below the user information, the following action items are available.
 - `About Backend.AI`: Displays information such as the version of Backend.AI WebUI,
   license type, etc.
 - `My Account`: Check and update information of the current logged-in user.
-- `Preferences`: Go to the user settings page.
-- `Logs / Errors`: Go to the logs tab in the user settings page. You can check
-  the log and error history recorded on the client side.
+- `Preferences`: Open the User Settings dialog over the current page. It has a
+  **Logs** category where you can check the log and error history recorded on
+  the client side.
 - `Downloads`: Open the Downloads dialog, where you can get the stand-alone
   WebUI desktop app and the Backend.AI command-line interface (CLI). This option
   is only visible when the administrator has enabled at least one of the two.

@@ -48,6 +48,15 @@ describe('buildUserSettingsSearch', () => {
       '?settings=login-history',
     );
   });
+
+  it("carries the caller's extra params but not its tab or category", () => {
+    const carried = new URLSearchParams(
+      '?tab=general&settings=general&setting=userSettings.AutoLogout',
+    );
+    expect(buildUserSettingsSearch('?order=name', 'logs', carried)).toBe(
+      '?order=name&setting=userSettings.AutoLogout&settings=logs',
+    );
+  });
 });
 
 describe('isUserSettingsPath', () => {
