@@ -12,14 +12,13 @@ import {
   BAIAdminUserV2Select,
   BAIBulkErrorModal,
   type BAIColumnsType,
-  BAIComplexSelect,
   BAIModal,
   BAIModalProps,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql } from 'react-relay';
 
@@ -205,49 +204,28 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">
-        <Suspense
-          // Same field on the fallback: keeps `userIds` registered while the options load.
-          fallback={
-            <Form.Item
-              name="userIds"
-              label={t('credential.Users')}
-              rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
-            >
-              <BAIComplexSelect
-                multiple
-                label={t('credential.Users')}
-                isLabelHidden
-                placeholder={t('rbac.SelectUsers')}
-                options={[]}
-                isLoading
-                isDisabled
-              />
-            </Form.Item>
-          }
+        <Form.Item
+          name="userIds"
+          label={t('credential.Users')}
+          rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
         >
-          <Form.Item
-            name="userIds"
+          <BAIAdminUserV2Select
+            multiple
+            valuePropName="id"
             label={t('credential.Users')}
-            rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
-          >
-            <BAIAdminUserV2Select
-              multiple
-              valuePropName="id"
-              label={t('credential.Users')}
-              isLabelHidden
-              placeholder={t('rbac.SelectUsers')}
-              onChange={(value, option) => {
-                _.castArray(option ?? []).forEach((o) => {
-                  userLabelsRef.current.set(
-                    String(o.value),
-                    String(o.label ?? o.value),
-                  );
-                });
-                setSelectedUserIds(_.castArray(value ?? []));
-              }}
-            />
-          </Form.Item>
-        </Suspense>
+            isLabelHidden
+            placeholder={t('rbac.SelectUsers')}
+            onChange={(value, option) => {
+              _.castArray(option ?? []).forEach((o) => {
+                userLabelsRef.current.set(
+                  String(o.value),
+                  String(o.label ?? o.value),
+                );
+              });
+              setSelectedUserIds(_.castArray(value ?? []));
+            }}
+          />
+        </Form.Item>
       </Form>
       {/* Per-user errors of a partially-failed assignment (FR-3357). The
           assign modal (and the remaining failed selection) stays open behind

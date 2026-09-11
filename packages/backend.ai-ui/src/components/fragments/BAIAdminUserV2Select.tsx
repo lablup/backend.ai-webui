@@ -195,9 +195,8 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
         orderBy: [{ field: 'EMAIL', direction: 'ASC' }],
       },
       {
-        // Closed: serve the store but fetch once when it is empty, so the first
-        // mount suspends into the caller's fallback. Open: refresh the list.
-        fetchPolicy: deferredOpen ? 'network-only' : 'store-or-network',
+        // P26-6: the open state comes back out of the Astryx popup.
+        fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
         fetchKey: deferredFetchKey,
       },
       {

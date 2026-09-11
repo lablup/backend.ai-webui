@@ -19,12 +19,12 @@ export const docs = {
   ],
   usage: {
     description:
-      'The superadmin-only user picker over the adminUsersV2 connection, and the V2 sibling of BAIUserSelect. It runs two Relay queries of its own: BAIAdminUserV2SelectPaginatedQuery pages adminUsersV2 ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; BAIAdminUserV2SelectValueQuery re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label and StringFilter has no in. Both queries suspend, so the control needs a Suspense boundary above it. The filter prop is a UserV2Filter object, not the query-filter minilang string BAIUserSelect takes, and it is combined with the search and status predicates through the schema AND combinator. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
+      'The superadmin-only user picker over the adminUsersV2 connection, and the V2 sibling of BAIUserSelect. It runs two Relay queries of its own: BAIAdminUserV2SelectPaginatedQuery pages adminUsersV2 ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; BAIAdminUserV2SelectValueQuery re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label and StringFilter has no in. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it; only the value query can suspend on mount, and only when valuePropName="id" starts with a value already set. The filter prop is a UserV2Filter object, not the query-filter minilang string BAIUserSelect takes, and it is combined with the search and status predicates through the schema AND combinator. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Wrap it, or the form item holding it, in a Suspense boundary — the option query suspends on first load.',
+          'Wrap it, or the form item holding it, in a Suspense boundary when valuePropName="id" and a value is preset — that resolution query suspends on mount. The option list needs none: it is fetched when the popup opens and the trigger shows a loading state meanwhile.',
       },
       {
         guidance: true,
@@ -113,7 +113,7 @@ export const docs = {
       name: 'open',
       type: 'boolean',
       description:
-        'Controlled popup state. It also drives the option query fetch policy, which is network-only while open and store-or-network while closed, so the first mount fetches and suspends and later closes are served from the store.',
+        'Controlled popup state. It also drives the option query fetch policy, which is network-only while open and store-only while closed.',
     },
     {
       name: 'defaultOpen',
@@ -137,17 +137,15 @@ export const docs = {
   examples: [
     {
       label: 'Multi-user field in an assign-role modal',
-      code: `<Suspense fallback={<BAISkeleton variant="input" />}>
-  <Form.Item name="userIds" label={t('credential.Users')}>
-    <BAIAdminUserV2Select
-      multiple
-      valuePropName="id"
-      label={t('credential.Users')}
-      isLabelHidden
-      placeholder={t('rbac.SelectUsers')}
-    />
-  </Form.Item>
-</Suspense>`,
+      code: `<Form.Item name="userIds" label={t('credential.Users')}>
+  <BAIAdminUserV2Select
+    multiple
+    valuePropName="id"
+    label={t('credential.Users')}
+    isLabelHidden
+    placeholder={t('rbac.SelectUsers')}
+  />
+</Form.Item>`,
     },
     {
       label: 'Active users of one domain only',
