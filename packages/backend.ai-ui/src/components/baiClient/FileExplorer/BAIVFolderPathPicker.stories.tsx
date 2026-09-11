@@ -1,81 +1,42 @@
 import type { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
 import { Form } from '../../../form-engine';
 import { toGlobalId } from '../../../helper';
+import MockVFolderFileProviders from '../../../tests/MockVFolderFileProviders';
+import {
+  mockVFolderFile as entry,
+  type MockVFolderFileTrees,
+} from '../../../tests/mockVFolderFileTree';
 import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAIText from '../../BAIText';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import BAIVFolderSelect from '../../fragments/BAIVFolderSelect';
-import { BAIClientContext } from '../../provider/BAIClientProvider/context';
-import type {
-  BAIClient,
-  VFolderFile,
-} from '../../provider/BAIClientProvider/types';
 import BAIDirectoryPickerModal, {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
 import BAIVFolderPathPicker from './BAIVFolderPathPicker';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useTransition } from 'react';
-import { RelayEnvironmentProvider, useQueryLoader } from 'react-relay';
-import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
-
-/**
- * The stories mock two data sources so every interaction works end-to-end
- * without a backend:
- * - Relay (the directory modal's `vfolder_node` query and the external
- *   BAIVFolderSelect in the Form story) → mock Relay environment returning
- *   SAMPLE_VFOLDERS;
- * - the directory modal's REST calls through BAIClientContext
- *   (`vfolder.list_files` / `mkdir` / `rename_file` / `delete_files`) → mock
- *   client backed by an in-memory directory tree.
- */
+import { useQueryLoader } from 'react-relay';
 
 const MOCK_VFOLDERS = [
   {
-    label: 'my-workspace',
-    uuid: '11111111-1111-1111-1111-111111111111',
-    permissions: ['read_content', 'write_content', 'delete_content'],
+    name: 'my-workspace',
+    row_id: '11111111-1111-1111-1111-111111111111',
   },
   {
     // Read-only folder — demonstrates permission gating: folder CRUD
     // (create / rename / delete) is disabled inside the picker modal.
-    label: 'team-shared-data',
-    uuid: '22222222-2222-2222-2222-222222222222',
+    name: 'team-shared-data',
+    row_id: '22222222-2222-2222-2222-222222222222',
     permissions: ['read_content'],
   },
 ];
 
-// Relay global ids must decode to the UUIDs the mock REST client is keyed by.
-const SAMPLE_VFOLDERS = MOCK_VFOLDERS.map(({ label, uuid }) => ({
-  node: {
-    id: btoa(`VFolderNode:${uuid}`),
-    name: label,
-    row_id: uuid,
-  },
-}));
-
-const entry = (
-  name: string,
-  type: VFolderFile['type'],
-  modified: string,
-): VFolderFile => ({
-  name,
-  type,
-  size: type === 'FILE' ? 4096 : 0,
-  mode: 0o755,
-  created: modified,
-  modified,
-});
-
 // Directory trees keyed by vfolder UUID, then by the same path notation
 // `useSearchVFolderFiles` uses ('.' = root, 'a/b' below it).
-const createInitialTrees = (): Record<
-  string,
-  Record<string, Array<VFolderFile>>
-> => ({
-  [MOCK_VFOLDERS[0].uuid]: {
+const createInitialTrees = (): MockVFolderFileTrees => ({
+  [MOCK_VFOLDERS[0].row_id]: {
     '.': [
       entry('models', 'DIRECTORY', '2026-07-21T14:02:00'),
       entry('datasets', 'DIRECTORY', '2026-07-18T09:45:00'),
@@ -105,7 +66,7 @@ const createInitialTrees = (): Record<
     'datasets/raw': [],
     outputs: [],
   },
-  [MOCK_VFOLDERS[1].uuid]: {
+  [MOCK_VFOLDERS[1].row_id]: {
     '.': [
       entry('shared-corpus', 'DIRECTORY', '2026-07-10T08:00:00'),
       entry('LICENSE', 'FILE', '2026-07-02T12:00:00'),
@@ -113,168 +74,6 @@ const createInitialTrees = (): Record<
     'shared-corpus': [],
   },
 });
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const splitJoinedPath = (joined: string) => {
-  const parts = joined.split('/').filter((p) => p !== '');
-  const name = parts.pop() ?? '';
-  const parentParts = parts.filter((p) => p !== '.');
-  return {
-    parent: parentParts.length === 0 ? '.' : parentParts.join('/'),
-    name,
-  };
-};
-
-const childKey = (parent: string, name: string) =>
-  parent === '.' ? name : `${parent}/${name}`;
-
-const createMockClient = (): BAIClient => {
-  const trees = createInitialTrees();
-
-  const mockVFolder = {
-    list_files: async (path: string, id: string) => {
-      await delay(250);
-      return { items: trees[id]?.[path] ?? [] };
-    },
-    mkdir: async (path: string, id: string | null) => {
-      await delay(250);
-      const tree = trees[id ?? ''];
-      const { parent, name } = splitJoinedPath(path);
-      if (!tree || !name) throw new Error('Invalid path');
-      if (tree[parent]?.some((item) => item.name === name)) {
-        throw new Error(`Directory already exists: ${name}`);
-      }
-      tree[parent] = [
-        entry(name, 'DIRECTORY', '2026-07-29T12:00:00'),
-        ...(tree[parent] ?? []),
-      ];
-      tree[childKey(parent, name)] = [];
-      return {};
-    },
-    rename_file: async (
-      target_path: string,
-      new_name: string,
-      targetFolder: string,
-    ) => {
-      await delay(250);
-      const tree = trees[targetFolder];
-      const { parent, name } = splitJoinedPath(target_path);
-      const item = tree?.[parent]?.find((i) => i.name === name);
-      if (!tree || !item) throw new Error('Not found');
-      item.name = new_name;
-      const oldKey = childKey(parent, name);
-      const newKey = childKey(parent, new_name);
-      for (const key of Object.keys(tree)) {
-        if (key === oldKey || key.startsWith(`${oldKey}/`)) {
-          tree[key.replace(oldKey, newKey)] = tree[key];
-          delete tree[key];
-        }
-      }
-      return {};
-    },
-    delete_files: async (
-      files: Array<string>,
-      _recursive: boolean,
-      id: string,
-    ) => {
-      await delay(250);
-      const tree = trees[id];
-      if (!tree) throw new Error('Not found');
-      for (const file of files) {
-        const { parent, name } = splitJoinedPath(file);
-        tree[parent] = (tree[parent] ?? []).filter((i) => i.name !== name);
-        const key = childKey(parent, name);
-        for (const treeKey of Object.keys(tree)) {
-          if (treeKey === key || treeKey.startsWith(`${key}/`)) {
-            delete tree[treeKey];
-          }
-        }
-      }
-      return { bgtask_id: null };
-    },
-    request_download_token: async () => {
-      throw new Error('Download is not available in Storybook');
-    },
-  };
-
-  return {
-    vfolder: mockVFolder,
-    supports: () => false,
-    _config: { isDirectorySizeVisible: false },
-  } as unknown as BAIClient;
-};
-
-/**
- * Wraps stories with everything the picker needs: a mock Relay environment
- * (for the directory modal's `vfolder_node` query and the external
- * BAIVFolderSelect) and a mock BAIClientContext client (for the directory
- * modal's REST calls).
- */
-const MockProviders: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [queryClient] = useState(
-    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
-  );
-  const [clientPromise] = useState(() => Promise.resolve(createMockClient()));
-  const [relayEnvironment] = useState(() => {
-    const environment = createMockEnvironment();
-    const pickerGlobalIds = MOCK_VFOLDERS.map(({ uuid }) =>
-      toGlobalId('VirtualFolderNode', uuid),
-    );
-    // Queue a resolver and a pending operation per mocked fetch; the picker's
-    // preloaded query hangs unless its operation is registered up front.
-    for (let i = 0; i < 20; i++) {
-      environment.mock.queueOperationResolver((operation) => {
-        // BAIDirectoryPickerModal queries `vfolder_node(id: $vfolderGlobalId)`
-        // with a `VirtualFolderNode:<uuid>` global id — answer with the
-        // matching mock folder's name and permissions.
-        const { vfolderGlobalId } = operation.request.variables;
-        const requestedUuid =
-          typeof vfolderGlobalId === 'string'
-            ? atob(vfolderGlobalId).split(':')[1]
-            : undefined;
-        const requestedVFolder =
-          MOCK_VFOLDERS.find((v) => v.uuid === requestedUuid) ??
-          MOCK_VFOLDERS[0];
-
-        return MockPayloadGenerator.generate(operation, {
-          Query: () => ({
-            vfolder_nodes: {
-              count: SAMPLE_VFOLDERS.length,
-              edges: SAMPLE_VFOLDERS,
-            },
-            vfolder_node: {
-              name: requestedVFolder.label,
-              permissions: requestedVFolder.permissions,
-            },
-          }),
-        });
-      });
-      pickerGlobalIds.forEach((vfolderGlobalId) =>
-        environment.mock.queuePendingOperation(BAIDirectoryPickerQuery, {
-          vfolderGlobalId,
-        }),
-      );
-    }
-    return environment;
-  });
-
-  return (
-    <RelayEnvironmentProvider environment={relayEnvironment}>
-      <QueryClientProvider client={queryClient}>
-        <BAIClientContext.Provider value={clientPromise}>
-          {/* No Suspense boundary here on purpose: every opener mounts
-                BAIDirectoryPickerModal inside a transition (loadQuery + open
-                wrapped in startTransition), so the suspension is absorbed by
-                the transition and a host never needs a boundary. */}
-          {children}
-        </BAIClientContext.Provider>
-      </QueryClientProvider>
-    </RelayEnvironmentProvider>
-  );
-};
 
 const meta: Meta<typeof BAIVFolderPathPicker> = {
   title: 'Input/BAIVFolderPathPicker',
@@ -295,10 +94,10 @@ The value is the **sub path inside the vfolder** — \`''\` for the vfolder root
 | \`vfolderUuid\` | \`string\` | - | UUID of the vfolder to browse; pair with \`disabled={!vfolderUuid}\` until one is selected |
 | \`value\` | \`string\` | - | Selected sub path (\`''\` = vfolder root) |
 | \`defaultValue\` | \`string\` | - | Initial value for uncontrolled usage |
-| \`onChange\` | \`(selectedSubPath?: string) => void\` | - | Fired when a location is confirmed in the modal |
+| \`onChange\` | \`(selectedSubPath: string) => void\` | - | Fired when a location is confirmed in the modal |
 | \`label\` | \`string\` | "Select a path" | Accessible name of the trigger (visually hidden; the surrounding Form.Item renders the visible label) |
 
-> The stories run against a mock Relay environment and a mock \`BAIClientContext\` client, so vfolder search, browsing, mkdir, rename and delete all work without a backend. The second folder (\`team-shared-data\`) is read-only — pick it in the Form story to see permission gating disable folder CRUD inside the modal.
+> The stories run against a mock Relay environment and a mock \`BAIClient\`, so vfolder search, browsing, mkdir, rename and delete all work without a backend. The second folder (\`team-shared-data\`) is read-only — pick it in the Form story to see permission gating disable folder CRUD inside the modal.
         `,
       },
     },
@@ -314,7 +113,10 @@ export const Default: Story = {
     const [lastChange, setLastChange] = useState<string | undefined>();
 
     return (
-      <MockProviders>
+      <MockVFolderFileProviders
+        vfolders={MOCK_VFOLDERS}
+        trees={createInitialTrees}
+      >
         <BAIFlex
           direction="column"
           align="stretch"
@@ -322,7 +124,7 @@ export const Default: Story = {
           style={{ width: 560 }}
         >
           <BAIVFolderPathPicker
-            vfolderUuid={MOCK_VFOLDERS[0].uuid}
+            vfolderUuid={MOCK_VFOLDERS[0].row_id}
             onChange={setLastChange}
           />
           <BAIText type="secondary">
@@ -334,7 +136,7 @@ export const Default: Story = {
             </BAIText>
           </BAIText>
         </BAIFlex>
-      </MockProviders>
+      </MockVFolderFileProviders>
     );
   },
 };
@@ -358,7 +160,10 @@ export const WithinForm: Story = {
     const [submitted, setSubmitted] = useState<string>();
 
     return (
-      <MockProviders>
+      <MockVFolderFileProviders
+        vfolders={MOCK_VFOLDERS}
+        trees={createInitialTrees}
+      >
         <Form
           form={form}
           layout="vertical"
@@ -419,7 +224,7 @@ export const WithinForm: Story = {
             )}
           </BAIFlex>
         </Form>
-      </MockProviders>
+      </MockVFolderFileProviders>
     );
   },
 };
@@ -430,8 +235,8 @@ export const WithinForm: Story = {
  * handler via `useQueryLoader` **inside a transition** (the modal suspends on
  * the preloaded query, and the transition absorbs that suspension — surfaced
  * as the trigger's loading state), then pass the resulting `queryRef` to the
- * modal. Must live inside `MockProviders` so `useQueryLoader` finds the Relay
- * environment.
+ * modal. Must live inside `MockVFolderFileProviders` so `useQueryLoader` finds
+ * the Relay environment.
  */
 const DirectoryPickerModalDemo: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -452,7 +257,7 @@ const DirectoryPickerModalDemo: React.FC = () => {
               {
                 vfolderGlobalId: toGlobalId(
                   'VirtualFolderNode',
-                  MOCK_VFOLDERS[0].uuid,
+                  MOCK_VFOLDERS[0].row_id,
                 ),
               },
               { fetchPolicy: 'store-and-network' },
@@ -473,7 +278,7 @@ const DirectoryPickerModalDemo: React.FC = () => {
         <BAIUnmountAfterClose>
           <BAIDirectoryPickerModal
             open={isOpen}
-            vfolderUuid={MOCK_VFOLDERS[0].uuid}
+            vfolderUuid={MOCK_VFOLDERS[0].row_id}
             queryRef={queryRef}
             onRequestClose={(selectedSubPath) => {
               if (selectedSubPath !== undefined) {
@@ -499,8 +304,11 @@ export const PickerModalOnly: Story = {
     },
   },
   render: () => (
-    <MockProviders>
+    <MockVFolderFileProviders
+      vfolders={MOCK_VFOLDERS}
+      trees={createInitialTrees}
+    >
       <DirectoryPickerModalDemo />
-    </MockProviders>
+    </MockVFolderFileProviders>
   ),
 };

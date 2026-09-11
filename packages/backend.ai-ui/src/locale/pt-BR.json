@@ -627,8 +627,7 @@
     "RemoveFolder": "Remover",
     "Subpath": "Subcaminho",
     "SubpathInvalid": "O subcaminho deve ser um caminho relativo e não deve conter '..'.",
-    "SubpathPlaceholder": "ex. dataset/train (opcional)",
-    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Deixe em branco para montar a raiz."
+    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Clique no campo para navegar pela pasta e escolher uma; / é a raiz da pasta."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Selecionar pasta"

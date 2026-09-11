@@ -10,7 +10,11 @@ import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import BAIDirectoryPickerModal, {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
-import { ComplexSelector } from '@astryxdesign/core/ComplexSelector';
+import {
+  ComplexSelector,
+  type ComplexSelectorSize,
+} from '@astryxdesign/core/ComplexSelector';
+import type { SizeValue } from '@astryxdesign/core/utils';
 import {
   useEffectEvent,
   useLayoutEffect,
@@ -33,8 +37,13 @@ export interface BAIVFolderPathPickerProps {
    */
   value?: string;
   defaultValue?: string;
+  // Optional so a future clear affordance can emit `undefined` (nothing picked).
   onChange?: (selectedSubPath?: string) => void;
   disabled?: boolean;
+  /** Control height, in the Astryx size vocabulary. */
+  size?: ComplexSelectorSize;
+  /** Field width, forwarded to ComplexSelector. */
+  width?: SizeValue;
   style?: React.CSSProperties;
   /**
    * Accessible name of the trigger; visually hidden (the surrounding
@@ -80,7 +89,7 @@ const PopoverToModalRedirect: React.FC<{
 const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
   'use memo';
 
-  const { vfolderUuid, disabled, style, label } = props;
+  const { vfolderUuid, disabled, size, width = '100%', style, label } = props;
   const { t } = useBAIi18n();
   const [selectedSubPath, setSelectedSubPath] = useControllableValue<
     string | undefined
@@ -134,7 +143,8 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
             : t('comp:VFolderPathPicker.SelectFolderFirst')
         }
         isDisabled={disabled}
-        width={style?.width}
+        size={size}
+        width={width}
         style={style}
       >
         {(_value, _onChange, close, { isOpen }) => (

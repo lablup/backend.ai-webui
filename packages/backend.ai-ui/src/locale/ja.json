@@ -621,8 +621,7 @@
     "RemoveFolder": "削除",
     "Subpath": "サブパス",
     "SubpathInvalid": "サブパスは相対パスである必要があり、'..' を含めることはできません。",
-    "SubpathPlaceholder": "例: dataset/train (省略可)",
-    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。ルートをマウントするには空欄にしてください。"
+    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。入力欄をクリックしてフォルダを参照し、選択してください。/ はフォルダのルートを表します。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "フォルダを選択"

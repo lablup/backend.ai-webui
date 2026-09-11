@@ -621,8 +621,7 @@
     "RemoveFolder": "제거",
     "Subpath": "하위 경로",
     "SubpathInvalid": "하위 경로는 상대 경로여야 하며 '..'을 포함할 수 없습니다.",
-    "SubpathPlaceholder": "예: dataset/train (선택)",
-    "SubpathTooltip": "폴더 루트 대신 폴더 내부의 하위 경로를 마운트 소스로 사용합니다. 비워두면 루트가 마운트됩니다."
+    "SubpathTooltip": "폴더 루트 대신 폴더 내부의 하위 경로를 마운트 소스로 사용합니다. 입력란을 클릭해 폴더를 탐색하며 선택하세요. /는 폴더 루트를 의미합니다."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "폴더를 선택해주세요"

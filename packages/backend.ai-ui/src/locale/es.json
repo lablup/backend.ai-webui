@@ -621,8 +621,7 @@
     "RemoveFolder": "Eliminar",
     "Subpath": "Subruta",
     "SubpathInvalid": "La subruta debe ser una ruta relativa y no debe contener '..'.",
-    "SubpathPlaceholder": "p. ej. dataset/train (opcional)",
-    "SubpathTooltip": "Monta una subcarpeta dentro de la carpeta como origen en lugar de su raíz. Déjelo vacío para montar la raíz."
+    "SubpathTooltip": "Monta una subcarpeta dentro de la carpeta como origen en lugar de su raíz. Haga clic en el campo para explorar la carpeta y elegir una; / es la raíz de la carpeta."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleccionar carpeta"

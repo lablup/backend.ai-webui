@@ -621,8 +621,7 @@
     "RemoveFolder": "ลบ",
     "Subpath": "พาธย่อย",
     "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
-    "SubpathPlaceholder": "เช่น dataset/train (ไม่บังคับ)",
-    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root ปล่อยว่างเพื่อ mount จาก root"
+    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root คลิกที่ช่องนี้เพื่อเรียกดูโฟลเดอร์และเลือกโฟลเดอร์ย่อย โดย / คือ root ของโฟลเดอร์"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"

@@ -621,8 +621,7 @@
     "RemoveFolder": "Poista",
     "Subpath": "Alihakemisto",
     "SubpathInvalid": "Alihakemiston on oltava suhteellinen polku eikä se saa sisältää '..'.",
-    "SubpathPlaceholder": "esim. dataset/train (valinnainen)",
-    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Jätä tyhjäksi liittääksesi juuren."
+    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Napsauta kenttää selataksesi kansiota ja valitaksesi alikansion; / on kansion juuri."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Valitse kansio"
