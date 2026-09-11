@@ -312,8 +312,8 @@ catalogs:
       specifier: ^20.1.1
       version: 20.1.1
     react-router-dom:
-      specifier: ^6.30.4
-      version: 6.30.4
+      specifier: ^6.30.6
+      version: 6.30.6
     relay-compiler:
       specifier: ^20.1.1
       version: 20.1.1
@@ -728,7 +728,7 @@ importers:
         version: 20.1.1(react@19.2.8)
       react-router-dom:
         specifier: 'catalog:'
-        version: 6.30.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 6.30.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       relay-runtime:
         specifier: 'catalog:'
         version: 20.1.1(patch_hash=cc791a2ea160bc7c87571401d2f1430d50527847c44039d45579a5bfa60effa6)
@@ -1074,7 +1074,7 @@ importers:
         version: 5.1.16
       nuqs:
         specifier: ^2.9.5
-        version: 2.9.5(react-router-dom@6.30.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-router@6.30.4(react@19.2.8))(react@19.2.8)
+        version: 2.9.5(react-router-dom@6.30.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-router@6.30.6(react@19.2.8))(react@19.2.8)
       p-queue:
         specifier: ^8.1.1
         version: 8.1.1
@@ -1110,7 +1110,7 @@ importers:
         version: 20.1.1(react@19.2.8)
       react-router-dom:
         specifier: 'catalog:'
-        version: 6.30.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 6.30.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-virtuoso:
         specifier: ^4.18.11
         version: 4.18.11(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4148,8 +4148,8 @@ packages:
     peerDependencies:
       react: '>=18'
 
-  '@remix-run/router@1.23.3':
-    resolution: {integrity: sha512-4An71tdz9X8+3sI4Qqqd2LWd9vS39J7sqd9EU4Scw7TJE/qB10Flv/UuqbPVgfQV9XoK8Np6jNquZitnZq5i+Q==}
+  '@remix-run/router@1.23.4':
+    resolution: {integrity: sha512-q7j5geK7xs3UJSdm9/iytUNclBnLmYx1EnSeCFXHPeutdqgIMeFeHtUZgS3EhlKxdBEAu8OwtJCwmLrEzpSs7Q==}
     engines: {node: '>=14.0.0'}
 
   '@rolldown/pluginutils@1.0.0-beta.27':
@@ -9461,15 +9461,15 @@ packages:
     peerDependencies:
       react: ^16.9.0 || ^17 || ^18 || ^19
 
-  react-router-dom@6.30.4:
-    resolution: {integrity: sha512-q4HvNl+mmDdkS0g+MqiBZNteQJCuimWoOyHMy4T/RQLAn9Z29+E91QXRaxOujeMl2HTzRSS0KFPd7lxX3PjV0Q==}
+  react-router-dom@6.30.6:
+    resolution: {integrity: sha512-0RHKZz7wwffvkU+2MFVT2NnjK44ssLEV+m0CAJaS2Ksmorrwj7WxH00jO0SOCW26/tINUnJHToXblDs33I38YQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
 
-  react-router@6.30.4:
-    resolution: {integrity: sha512-SVUsDe+DybHM/WmYKIVYhZh1o5Dcuf16yM6WjG02Q9XVFMZIJyHYhwrr6bFBXZkVP6z69kNkMyBCujt8FaFLJA==}
+  react-router@6.30.6:
+    resolution: {integrity: sha512-5HfK7k5im7LTOB0EqCQmfvy4C13G92Ssj1VTmouTK3AJvyjKTnFuCV0vcMAD/JS+JC4DvDIBRrlAeJIFjh5VWg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
@@ -14427,7 +14427,7 @@ snapshots:
       '@react-hook/passive-layout-effect': 1.2.1(react@19.2.8)
       react: 19.2.8
 
-  '@remix-run/router@1.23.3': {}
+  '@remix-run/router@1.23.4': {}
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 
@@ -20468,13 +20468,13 @@ snapshots:
 
   nullthrows@1.1.1: {}
 
-  nuqs@2.9.5(react-router-dom@6.30.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-router@6.30.4(react@19.2.8))(react@19.2.8):
+  nuqs@2.9.5(react-router-dom@6.30.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-router@6.30.6(react@19.2.8))(react@19.2.8):
     dependencies:
       '@standard-schema/spec': 1.1.0
       react: 19.2.8
     optionalDependencies:
-      react-router: 6.30.4(react@19.2.8)
-      react-router-dom: 6.30.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react-router: 6.30.6(react@19.2.8)
+      react-router-dom: 6.30.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
   object-assign@4.1.1: {}
 
@@ -21177,16 +21177,16 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  react-router-dom@6.30.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+  react-router-dom@6.30.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
-      '@remix-run/router': 1.23.3
+      '@remix-run/router': 1.23.4
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
-      react-router: 6.30.4(react@19.2.8)
+      react-router: 6.30.6(react@19.2.8)
 
-  react-router@6.30.4(react@19.2.8):
+  react-router@6.30.6(react@19.2.8):
     dependencies:
-      '@remix-run/router': 1.23.3
+      '@remix-run/router': 1.23.4
       react: 19.2.8
 
   react-smooth@4.0.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
@@ -23677,7 +23677,7 @@ time:
   react-i18next@16.6.6: '2026-03-24T15:35:20.832Z'
   react-markdown@10.1.0: '2025-03-07T10:32:53.222Z'
   react-relay@20.1.1: '2025-08-06T23:52:26.678Z'
-  react-router-dom@6.30.4: '2026-05-29T19:41:50.812Z'
+  react-router-dom@6.30.6: '2026-08-18T14:56:52.880Z'
   react-test-renderer@19.2.8: '2026-07-21T15:42:09.248Z'
   react-virtuoso@4.18.11: '2026-07-17T08:39:53.813Z'
   react@19.2.8: '2026-07-21T15:41:28.716Z'
