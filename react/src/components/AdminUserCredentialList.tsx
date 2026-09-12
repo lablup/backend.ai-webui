@@ -8,7 +8,6 @@ import {
   AdminUserCredentialListQuery as AdminUserCredentialListQueryType,
   AdminUserCredentialListQuery$data,
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
-import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { App } from '../app-shim';
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -117,7 +116,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
   const { logger } = useBAILogger();
 
   const [keypairSettingModalFrgmt, setKeypairSettingModalFrgmt] =
-    useState<KeypairSettingModalFragment$key | null>(null);
+    useState<Keypair | null>(null);
   const [openUserKeypairSettingModal, setOpenUserKeypairSettingModal] =
     useState(false);
   const [keypairInfoModalFrgmt, setKeypairInfoModalFrgmt] = useState<any>(null);

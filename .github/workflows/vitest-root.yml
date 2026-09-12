@@ -6,6 +6,7 @@ on:
     paths:
       - scripts/**
       - src/**
+      - packages/eslint-config-bai/**
       - vitest.config.ts
       # The help-anchor table is read by scripts/check-help-anchors.test.ts,
       # the only test that resolves its entries against the manual (FR-3773).

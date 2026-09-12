@@ -7,7 +7,6 @@ import {
   BulkCreateUserFromCSVModalMutation,
   CreateUserV2Input,
 } from '../__generated__/BulkCreateUserFromCSVModalMutation.graphql';
-import type { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
   UserRoleV2,
   UserStatusV2,
@@ -94,6 +93,12 @@ import {
   useMutation,
   useRelayEnvironment,
 } from 'react-relay';
+
+type CreatedKeypair = NonNullable<
+  NonNullable<
+    BulkCreateUserFromCSVModalMutation['response']['adminBulkCreateUsersWithKeypairV2']
+  >['created'][number]['keypair']
+>;
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -230,7 +235,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // adminBulkCreateUsersWithKeypairV2 returns each keypair's one-time secret
   // key directly in the payload; no follow-up fetch is needed.
   const [createdKeypairs, setCreatedKeypairs] =
-    useState<GeneratedKeypairListModalFragment$key | null>(null);
+    useState<ReadonlyArray<CreatedKeypair> | null>(null);
 
   const relayEnvironment = useRelayEnvironment();
 

@@ -9,7 +9,6 @@ import {
   DeploymentOrderBy,
   DeploymentStatus,
 } from '../__generated__/DeploymentListPageQuery.graphql';
-import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { App } from '../app-shim';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
@@ -56,6 +55,16 @@ import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type DeploymentStatusCategory = 'running' | 'finished';
 
+type RevisionNode = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<
+        DeploymentListPageQuery['response']['myDeployments']
+      >['edges'][number]
+    >['node']
+  >['currentRevision']
+>;
+
 interface DeploymentListPageContentProps {
   /** Owned by the page so the trigger can live in the card's `extra` slot. */
   isCreating: boolean;
@@ -80,7 +89,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
     string | null
   >(null);
   const [drawerRevisionFrgmt, setDrawerRevisionFrgmt] =
-    useState<DeploymentRevisionDetail_revision$key | null>(null);
+    useState<RevisionNode | null>(null);
 
   const {
     baiPaginationOption,
