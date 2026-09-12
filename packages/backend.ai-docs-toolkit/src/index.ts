@@ -97,6 +97,7 @@ export { buildWebDocument } from "./html-builder-web.js";
 export type {
   LanguagePeer,
   LanguagePickerPageOptions,
+  NotFoundPageOptions,
   PageAssets,
   PageSeoContext,
   PageVersionContext,
@@ -110,6 +111,7 @@ export {
   buildHomePage,
   buildIndexPage,
   buildLanguagePickerPage,
+  buildNotFoundPage,
   buildRootRedirectIndexPage,
   buildWebPage,
 } from "./website-builder.js";
