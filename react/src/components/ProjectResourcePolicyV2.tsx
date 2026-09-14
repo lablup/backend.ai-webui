@@ -10,6 +10,7 @@ import type {
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import MaxFolderSizeFilterInput from './MaxFolderSizeFilterInput';
 import ProjectResourcePolicyV2SettingModal from './ProjectResourcePolicyV2SettingModal';
 import {
   BAIButton,
@@ -171,6 +172,15 @@ const ProjectResourcePolicyV2 = ({
               propertyLabel: t('resourcePolicy.MaxVFolderCount'),
               type: 'number',
               defaultOperator: 'greaterThanOrEqual',
+            },
+            {
+              key: 'maxQuotaScopeSize',
+              propertyLabel: t('storageHost.MaxFolderSize'),
+              type: 'number',
+              defaultOperator: 'greaterThanOrEqual',
+              renderInput: ({ onAddCondition }) => (
+                <MaxFolderSizeFilterInput onAddCondition={onAddCondition} />
+              ),
             },
             {
               key: 'maxNetworkCount',
