@@ -1193,10 +1193,20 @@ async function main(argv) {
   }
 
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
-  fs.writeFileSync(outFile, text);
+  // Rewriting identical bytes still bumps mtime, which Vite reads as a change
+  // and turns into a full page reload. `pnpm run dev` now builds this in the
+  // background on every boot (FR-3925), so the no-op case must not touch it.
+  let unchanged = false;
+  try {
+    unchanged = fs.readFileSync(outFile, 'utf8') === text;
+  } catch {
+    unchanged = false; // absent or unreadable — write it
+  }
+  if (!unchanged) fs.writeFileSync(outFile, text);
   console.log(
     `${rel(outFile)}: ${index.entries.length} entries, ` +
-      `${Buffer.byteLength(text)} B, ${Date.now() - t0} ms`,
+      `${Buffer.byteLength(text)} B, ${Date.now() - t0} ms` +
+      (unchanged ? ' (unchanged)' : ''),
   );
   if (argv.includes('--verbose')) reportOn(built, index);
   return 0;
