@@ -113,9 +113,6 @@ export type { BAIDeploymentStatusTagProps, BAIDeploymentStatus, } from './BAIDep
 export { default as BAIIntervalView } from './BAIIntervalView';
 export { default as BAIImageMetaIcon } from './BAIImageMetaIcon';
 export type { BAIImageMetaIconProps } from './BAIImageMetaIcon';
-export { default as BAIImageMetaDivider } from './BAIImageMetaDivider';
-export { default as BAIImageTagBadges, imageNodeTagFacts, } from './BAIImageTagBadges';
-export type { BAIImageTagBadgesProps, BAIImageTagFact, } from './BAIImageTagBadges';
 export { default as BAIDoubleTag } from './BAIDoubleTag';
 export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';
 export { default as BAIProgressWithLabel } from './BAIProgressWithLabel';
