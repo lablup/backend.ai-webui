@@ -3150,7 +3150,9 @@
       "SessionNameTooLong64": "Введите не более 64 символов.",
       "SessionNameTooShort": "Пожалуйста, введите не менее 4 символов.",
       "SluggedStrings": "Строки с засечками (>3 символов)"
-    }
+    },
+    "Domain": "__NOT_TRANSLATED__",
+    "ProjectName": "__NOT_TRANSLATED__"
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max поддержка",

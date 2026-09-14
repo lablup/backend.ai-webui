@@ -3154,7 +3154,9 @@
       "SessionNameTooLong64": "Silakan masukkan 64 karakter atau kurang.",
       "SessionNameTooShort": "Masukkan setidaknya 4 karakter.",
       "SluggedStrings": "String yang disumbat (>3 karakter)"
-    }
+    },
+    "Domain": "__NOT_TRANSLATED__",
+    "ProjectName": "__NOT_TRANSLATED__"
   },
   "settings": {
     "ATOMMaxSupport": "Dukungan Atom Max",

@@ -3154,7 +3154,9 @@
       "SessionNameTooLong64": "請輸入不超過 64 個字元。",
       "SessionNameTooShort": "请输入至少 4 个字符。",
       "SluggedStrings": "多字符串（>3 字符）"
-    }
+    },
+    "Domain": "__NOT_TRANSLATED__",
+    "ProjectName": "__NOT_TRANSLATED__"
   },
   "settings": {
     "ATOMMaxSupport": "原子最大支持",
