@@ -35,7 +35,7 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
-    permissions: ["local-network-access"],
+    permissions: ["local-network-access", "clipboard-read", "clipboard-write"],
     /*
      * Bound every action (click/fill/check/hover/…) so a single stuck action
      * cannot consume the whole 180s test budget. Without this, a transiently

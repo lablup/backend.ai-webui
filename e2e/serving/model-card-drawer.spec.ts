@@ -293,9 +293,10 @@ test.describe(
       // Verify the README card title is visible (with file icon)
       await expect(drawer.getByText('README.md')).toBeVisible();
 
-      // Verify the README heading is rendered as markdown (H1)
+      // Verify the README heading is rendered as markdown (H1). `level: 1`
+      // — the drawer title is a level-5 heading with the same name.
       await expect(
-        drawer.getByRole('heading', { name: 'Mock LLM Model' }),
+        drawer.getByRole('heading', { level: 1, name: 'Mock LLM Model' }),
       ).toBeVisible();
 
       // Verify the README paragraph text is visible
@@ -484,24 +485,15 @@ test.describe(
       await deployModal.getByRole('combobox').first().click();
 
       // Verify the dropdown options are grouped under "vllm" and "huggingface-tgi" headers
+      const listbox = page.getByRole('listbox');
+      await expect(listbox.getByText('vllm', { exact: true })).toBeVisible();
       await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-group', {
-          hasText: 'vllm',
-        }),
-      ).toBeVisible();
-      await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-group', {
-          hasText: 'huggingface-tgi',
-        }),
+        listbox.getByText('huggingface-tgi', { exact: true }),
       ).toBeVisible();
 
       // Verify the "gpu-small" option is available in the dropdown
       await expect(
-        page
-          .locator('.ant-select-dropdown .ant-select-item-option', {
-            hasText: 'gpu-small',
-          })
-          .first(),
+        page.getByRole('option', { name: 'gpu-small' }).first(),
       ).toBeVisible();
     });
 
@@ -525,14 +517,10 @@ test.describe(
 
       // Verify resource group options are visible
       await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-option', {
-          hasText: 'default',
-        }),
+        page.getByRole('option', { name: 'default', exact: true }),
       ).toBeVisible();
       await expect(
-        page.locator('.ant-select-dropdown .ant-select-item-option', {
-          hasText: 'gpu-cluster',
-        }),
+        page.getByRole('option', { name: 'gpu-cluster', exact: true }),
       ).toBeVisible();
     });
 
@@ -585,10 +573,7 @@ test.describe(
       await deployModal.getByRole('combobox').first().click();
 
       // Select "gpu-small" under "huggingface-tgi" group (second option in the list)
-      const gpuSmallOptions = page.locator(
-        '.ant-select-dropdown .ant-select-item-option',
-        { hasText: 'gpu-small' },
-      );
+      const gpuSmallOptions = page.getByRole('option', { name: 'gpu-small' });
       // The second "gpu-small" belongs to huggingface-tgi group
       await gpuSmallOptions.nth(1).click();
 
@@ -618,9 +603,7 @@ test.describe(
 
       // Select "gpu-cluster"
       await page
-        .locator('.ant-select-dropdown .ant-select-item-option', {
-          hasText: 'gpu-cluster',
-        })
+        .getByRole('option', { name: 'gpu-cluster', exact: true })
         .click();
 
       // Verify the Deploy button remains enabled after selection change

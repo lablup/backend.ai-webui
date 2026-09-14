@@ -63,11 +63,7 @@ test.describe(
      */
     async function openSessionDetailDrawer(page: Page) {
       // Click the first session name cell to open the Session Detail drawer.
-      // Use .ant-table-row to skip the ant-table-measure-row (a zero-height
-      // column-width measurement row that Ant Design inserts at the top of tbody).
-      const firstSessionRow = page
-        .locator('table tbody tr.ant-table-row')
-        .first();
+      const firstSessionRow = page.locator('table tbody tr').first();
       await expect(firstSessionRow).toBeVisible({ timeout: 10000 });
       const firstSessionCell = firstSessionRow.locator('td').nth(1);
       await firstSessionCell.click();
