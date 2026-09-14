@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7d83a5f470c179edd60aa1fdf923a6f1>>
+ * @generated SignedSource<<616ab88067a7d04b1f759fdb766b78d5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,14 +10,13 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type ImageNodeSimpleTagFragment$data = {
+export type BAIImageNodeSimpleTagFragment$data = {
   readonly architecture: string | null | undefined;
   readonly base_image_name: string | null | undefined;
   readonly labels: ReadonlyArray<{
     readonly key: string;
     readonly value: string | null | undefined;
   } | null | undefined> | null | undefined;
-  readonly name: string | null | undefined;
   readonly namespace: string | null | undefined;
   readonly registry: string | null | undefined;
   readonly tag: string | null | undefined;
@@ -26,11 +25,11 @@ export type ImageNodeSimpleTagFragment$data = {
     readonly value: string | null | undefined;
   } | null | undefined> | null | undefined;
   readonly version: string | null | undefined;
-  readonly " $fragmentType": "ImageNodeSimpleTagFragment";
+  readonly " $fragmentType": "BAIImageNodeSimpleTagFragment";
 };
-export type ImageNodeSimpleTagFragment$key = {
-  readonly " $data"?: ImageNodeSimpleTagFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"ImageNodeSimpleTagFragment">;
+export type BAIImageNodeSimpleTagFragment$key = {
+  readonly " $data"?: BAIImageNodeSimpleTagFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIImageNodeSimpleTagFragment">;
 };
 
 const node: ReaderFragment = (function(){
@@ -52,7 +51,7 @@ return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "ImageNodeSimpleTagFragment",
+  "name": "BAIImageNodeSimpleTagFragment",
   "selections": [
     {
       "alias": null,
@@ -73,13 +72,6 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "architecture",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "name",
       "storageKey": null
     },
     {
@@ -139,6 +131,6 @@ return {
 };
 })();
 
-(node as any).hash = "0972f8ef382672ba4f3cadb0ab052131";
+(node as any).hash = "9ef6813fb8045ef9849e6a382cbc8e42";
 
 export default node;

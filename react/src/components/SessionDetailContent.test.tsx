@@ -119,7 +119,16 @@ vi.mock(
   './ComputeSessionNodeItems/ConnectedKernelList',
   stubComponent('mock-connected-kernel-list'),
 );
-vi.mock('./ImageNodeSimpleTag', stubComponent('mock-image-node-simple-tag'));
+vi.mock('backend.ai-ui', async (importOriginal) => {
+  const React = await import('react');
+  return {
+    ...(await importOriginal<typeof import('backend.ai-ui')>()),
+    BAIImageNodeSimpleTag: () =>
+      React.createElement('div', {
+        'data-testid': 'mock-image-node-simple-tag',
+      }),
+  };
+});
 vi.mock('./MountedVFolderLinks', stubComponent('mock-mounted-vfolder-links'));
 vi.mock('./SessionUsageMonitor', stubComponent('mock-session-usage-monitor'));
 vi.mock(
