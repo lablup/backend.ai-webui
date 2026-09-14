@@ -2550,7 +2550,8 @@
     "SelectScheduler": "Seleziona l'agenda",
     "TimeoutSeconds": "Secondi",
     "TypeResourceGroupNameToDelete": "Digita il nome del gruppo di risorse da eliminare",
-    "UpdateResourceGroups": "Aggiorna gruppi di risorse"
+    "UpdateResourceGroups": "Aggiorna gruppi di risorse",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Stai per eliminare questa policy sulle risorse:",

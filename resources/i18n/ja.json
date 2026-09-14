@@ -2552,7 +2552,8 @@
     "SelectScheduler": "スケジューラを選択",
     "TimeoutSeconds": "秒",
     "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します",
-    "UpdateResourceGroups": "リソースグループを更新"
+    "UpdateResourceGroups": "リソースグループを更新",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",

@@ -2553,7 +2553,8 @@
     "SelectScheduler": "Pilih Penjadwal",
     "TimeoutSeconds": "Detik",
     "TypeResourceGroupNameToDelete": "Ketik nama grup sumber daya yang akan dihapus",
-    "UpdateResourceGroups": "Perbarui Grup Sumber Daya"
+    "UpdateResourceGroups": "Perbarui Grup Sumber Daya",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",

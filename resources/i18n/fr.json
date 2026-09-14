@@ -2552,7 +2552,8 @@
     "SelectScheduler": "Sélectionnez le planificateur",
     "TimeoutSeconds": "Seconds",
     "TypeResourceGroupNameToDelete": "Tapez le nom du groupe de ressources à supprimer",
-    "UpdateResourceGroups": "Mettre à jour les groupes de ressources"
+    "UpdateResourceGroups": "Mettre à jour les groupes de ressources",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :",

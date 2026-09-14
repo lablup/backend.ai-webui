@@ -2550,7 +2550,8 @@
     "SelectScheduler": "Επιλέξτε Προγραμματιστής",
     "TimeoutSeconds": "δευτερόλεπτα",
     "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή",
-    "UpdateResourceGroups": "Ενημέρωση ομάδων πόρων"
+    "UpdateResourceGroups": "Ενημέρωση ομάδων πόρων",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Πρόκειται να διαγράψετε αυτήν την πολιτική πόρων:",

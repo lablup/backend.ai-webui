@@ -2552,7 +2552,8 @@
     "SelectScheduler": "Chọn bộ lập lịch",
     "TimeoutSeconds": "Giây",
     "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa",
-    "UpdateResourceGroups": "Cập nhật nhóm tài nguyên"
+    "UpdateResourceGroups": "Cập nhật nhóm tài nguyên",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bạn sắp xóa chính sách tài nguyên này:",

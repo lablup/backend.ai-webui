@@ -2550,7 +2550,8 @@
     "SelectScheduler": "Pilih Penjadual",
     "TimeoutSeconds": "Detik",
     "TypeResourceGroupNameToDelete": "Taipkan nama kumpulan sumber untuk dipadamkan",
-    "UpdateResourceGroups": "Kemas kini Kumpulan Sumber"
+    "UpdateResourceGroups": "Kemas kini Kumpulan Sumber",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan memadamkan dasar sumber ini:",

@@ -2552,7 +2552,8 @@
     "SelectScheduler": "Wybierz harmonogram",
     "TimeoutSeconds": "sekundy",
     "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia",
-    "UpdateResourceGroups": "Aktualizuj grupy zasobów"
+    "UpdateResourceGroups": "Aktualizuj grupy zasobów",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Zamierzasz usunąć tę zasadę dotyczącą zasobów:",

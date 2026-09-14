@@ -2550,7 +2550,8 @@
     "SelectScheduler": "Seleccione Programador",
     "TimeoutSeconds": "Segundos",
     "TypeResourceGroupNameToDelete": "Escriba el nombre del grupo de recursos que desea eliminar",
-    "UpdateResourceGroups": "Actualizar grupos de recursos"
+    "UpdateResourceGroups": "Actualizar grupos de recursos",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Está a punto de eliminar esta política de recursos:",

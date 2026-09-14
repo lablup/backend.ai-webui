@@ -2504,6 +2504,7 @@
     "CreateResourceGroup": "Create Resource Group",
     "Deactivate": "Deactivate",
     "DeactivateResourceGroup": "Deactivate resource group",
+    "Default": "Default",
     "DeleteResourceGroup": "Delete Resource Group",
     "Description": "Description",
     "Domain": "Domain",

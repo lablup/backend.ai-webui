@@ -2550,7 +2550,8 @@
     "SelectScheduler": "Zamanlayıcı Seç",
     "TimeoutSeconds": "saniye",
     "TypeResourceGroupNameToDelete": "Silmek için kaynak grubu adını yazın",
-    "UpdateResourceGroups": "Kaynak Gruplarını Güncelle"
+    "UpdateResourceGroups": "Kaynak Gruplarını Güncelle",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bu kaynak politikasını silmek üzeresiniz:",

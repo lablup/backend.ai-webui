@@ -3,14 +3,20 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceGroupListDeleteMutation } from '../__generated__/ResourceGroupListDeleteMutation.graphql';
+import { ResourceGroupListInfoModalQuery } from '../__generated__/ResourceGroupListInfoModalQuery.graphql';
 import {
+  ResourceGroupFilter,
   ResourceGroupListQuery,
   ResourceGroupListQuery$data,
+  ResourceGroupOrderBy,
 } from '../__generated__/ResourceGroupListQuery.graphql';
+import { ResourceGroupListSettingModalQuery } from '../__generated__/ResourceGroupListSettingModalQuery.graphql';
 import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupListUpdateMutation.graphql';
 import { App } from '../app-shim';
+import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -25,6 +31,7 @@ import {
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
   BAISelectionLabel,
@@ -35,6 +42,7 @@ import {
   useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
   Check,
@@ -46,7 +54,12 @@ import {
   SquarePenIcon,
   UndoIcon,
 } from 'lucide-react';
-import React, { useState, useTransition } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 import { PayloadError } from 'relay-runtime';
@@ -60,11 +73,67 @@ export interface ScalingGroupOpts {
   enforce_spreading_endpoint_replica: boolean;
 }
 
-type ResourceGroup = NonNullable<
+type ResourceGroupNode = NonNullable<
   NonNullable<
-    NonNullable<ResourceGroupListQuery$data>['scaling_groups']
-  >[number]
+    NonNullable<
+      ResourceGroupListQuery$data['adminResourceGroups']
+    >['edges'][number]
+  >['node']
 >;
+
+/**
+ * The modals still read the graphene `ScalingGroup` (it carries `driver`,
+ * `driver_opts`, `scheduler_opts` and `wsproxy_api_token`, none of which the
+ * strawberry `ResourceGroup` exposes), so they load their own row by name.
+ */
+const ResourceGroupInfoModalWithQuery: React.FC<{
+  resourceGroupName: string;
+  open: boolean;
+  onRequestClose: () => void;
+}> = ({ resourceGroupName, ...modalProps }) => {
+  'use memo';
+  const { scaling_group } = useLazyLoadQuery<ResourceGroupListInfoModalQuery>(
+    graphql`
+      query ResourceGroupListInfoModalQuery($name: String!) {
+        scaling_group(name: $name) {
+          ...ResourceGroupInfoModalFragment
+        }
+      }
+    `,
+    { name: resourceGroupName },
+    { fetchPolicy: 'store-and-network' },
+  );
+
+  return (
+    <ResourceGroupInfoModal resourceGroupFrgmt={scaling_group} {...modalProps} />
+  );
+};
+
+const ResourceGroupSettingModalWithQuery: React.FC<{
+  resourceGroupName: string;
+  open: boolean;
+  onRequestClose: (success: boolean) => void;
+}> = ({ resourceGroupName, ...modalProps }) => {
+  'use memo';
+  const { scaling_group } = useLazyLoadQuery<ResourceGroupListSettingModalQuery>(
+    graphql`
+      query ResourceGroupListSettingModalQuery($name: String!) {
+        scaling_group(name: $name) {
+          ...ResourceGroupSettingModalFragment
+        }
+      }
+    `,
+    { name: resourceGroupName },
+    { fetchPolicy: 'store-and-network' },
+  );
+
+  return (
+    <ResourceGroupSettingModal
+      resourceGroupFrgmt={scaling_group}
+      {...modalProps}
+    />
+  );
+};
 
 const ResourceGroupList: React.FC = () => {
   'use memo';
@@ -72,12 +141,15 @@ const ResourceGroupList: React.FC = () => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
+  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
+  // capability; older ones reject them, so restrict to a single condition.
+  const supportsSubFilter = baiClient.supports('sub-filter');
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [openCreateModal, { toggle: toggleOpenCreateModal }] = useToggle(false);
   const [openInfoModal, { toggle: toggleOpenInfoModal }] = useToggle(false);
   const [openSFTPModal, setOpenSFTPModal] = useState(false);
-  const [selectedResourceGroup, setSelectedResourceGroup] =
-    useState<ResourceGroup>();
+  const [infoModalName, setInfoModalName] = useState<string>();
+  const [settingModalName, setSettingModalName] = useState<string>();
   const [selectedResourceGroupName, setSelectedResourceGroupName] =
     useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -101,33 +173,83 @@ const ResourceGroupList: React.FC = () => {
     ),
     (pairs) => _.map(pairs, 'proxy'),
   );
-  const [isActiveTypePending, startActiveTypeTransition] = useTransition();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
-  const { scaling_groups } = useLazyLoadQuery<ResourceGroupListQuery>(
-    graphql`
-      query ResourceGroupListQuery($is_active: Boolean) {
-        scaling_groups(is_active: $is_active) {
-          name
-          description
-          is_active
-          is_public
-          driver
-          scheduler
-          wsproxy_addr
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  const [filter, setFilter] = useState<ResourceGroupFilter | undefined>(
+    undefined,
+  );
+  const [order, setOrder] = useState<string | undefined>(undefined);
 
-          ...ResourceGroupInfoModalFragment
-          ...ResourceGroupSettingModalFragment
+  const queryVariables = {
+    limit: baiPaginationOption.limit,
+    offset: baiPaginationOption.offset,
+    // The Active/Inactive radio owns `isActive`, so it always wins over the
+    // property filter (which does not expose that key).
+    filter: {
+      ...filter,
+      isActive: activeType === 'active',
+    },
+    orderBy: convertToOrderBy<ResourceGroupOrderBy>(order) ?? null,
+  };
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+  const isRefetching = queryVariables !== deferredQueryVariables;
+
+  // `driver` / `driver_opts` are deliberately absent from the strawberry
+  // `ResourceGroup`, so the Driver column is gone (its value is always
+  // "static"); the Info modal still shows both via its own graphene query.
+  const { adminResourceGroups } = useLazyLoadQuery<ResourceGroupListQuery>(
+    graphql`
+      query ResourceGroupListQuery(
+        $limit: Int
+        $offset: Int
+        $filter: ResourceGroupFilter
+        $orderBy: [ResourceGroupOrderBy!]
+      ) {
+        adminResourceGroups(
+          limit: $limit
+          offset: $offset
+          filter: $filter
+          orderBy: $orderBy
+        ) {
+          count
+          edges {
+            node {
+              id
+              name
+              status {
+                isActive
+                isPublic
+                isDefault
+              }
+              metadata {
+                description
+                createdAt
+              }
+              network {
+                wsproxyAddr
+              }
+              scheduler {
+                type
+              }
+            }
+          }
         }
       }
     `,
-    {
-      is_active: activeType === 'active',
-    },
+    deferredQueryVariables,
     {
       fetchPolicy: 'store-and-network',
       fetchKey,
     },
+  );
+
+  const resourceGroups = filterOutNullAndUndefined(
+    _.map(adminResourceGroups?.edges, 'node'),
   );
 
   const [commitUpdateResourceGroup] =
@@ -153,12 +275,30 @@ const ResourceGroupList: React.FC = () => {
       }
     `);
 
-  const columns: BAIColumnsType<ResourceGroup> = filterOutEmpty([
+  const renderBooleanCell = (value: boolean | null | undefined) =>
+    value ? (
+      <Check style={{ color: token.colorSuccess }} size="1em" />
+    ) : (
+      <X style={{ color: token.colorTextSecondary }} size="1em" />
+    );
+
+  const closeSettingModal = (success: boolean) => {
+    toggleOpenCreateModal();
+    setSettingModalName(undefined);
+    if (success) {
+      startRefetchTransition(() => {
+        updateFetchKey();
+      });
+    }
+  };
+
+  const columns: BAIColumnsType<ResourceGroupNode> = filterOutEmpty([
     {
       key: 'name',
       title: t('resourceGroup.Name'),
       dataIndex: 'name',
-      render: (name: string, record: ResourceGroup) => (
+      sorter: true,
+      render: (name: string, record: ResourceGroupNode) => (
         <BAINameActionCell
           title={name}
           showActions="always"
@@ -168,7 +308,7 @@ const ResourceGroupList: React.FC = () => {
               title: t('button.Info'),
               icon: <Info size="1em" />,
               onClick: () => {
-                setSelectedResourceGroup(record);
+                setInfoModalName(record.name);
                 toggleOpenInfoModal();
               },
             },
@@ -177,26 +317,26 @@ const ResourceGroupList: React.FC = () => {
               title: t('button.Edit'),
               icon: <SquarePenIcon />,
               onClick: () => {
-                setSelectedResourceGroup(record);
+                setSettingModalName(record.name);
                 toggleOpenCreateModal();
               },
             },
             {
               key: 'activate-deactivate',
-              title: record.is_active
+              title: record.status.isActive
                 ? t('resourceGroup.Deactivate')
                 : t('resourceGroup.Activate'),
-              icon: record.is_active ? <BanIcon /> : <UndoIcon />,
-              type: record.is_active ? 'danger' : 'default',
+              icon: record.status.isActive ? <BanIcon /> : <UndoIcon />,
+              type: record.status.isActive ? 'danger' : 'default',
               popConfirm: {
-                title: record.is_active
+                title: record.status.isActive
                   ? t('resourceGroup.DeactivateResourceGroup')
                   : t('resourceGroup.ActivateResourceGroup'),
                 description: record?.name,
                 okButtonProps: {
-                  danger: !!record.is_active,
+                  danger: !!record.status.isActive,
                 },
-                okText: record.is_active
+                okText: record.status.isActive
                   ? t('resourceGroup.Deactivate')
                   : t('resourceGroup.Activate'),
                 cancelText: t('button.Cancel'),
@@ -206,7 +346,7 @@ const ResourceGroupList: React.FC = () => {
                       variables: {
                         name: record.name ?? '',
                         input: {
-                          is_active: !record.is_active,
+                          is_active: !record.status.isActive,
                         },
                       },
                       onCompleted: ({ modify_scaling_group: res }, errors) => {
@@ -265,20 +405,20 @@ const ResourceGroupList: React.FC = () => {
     {
       key: 'description',
       title: t('resourceGroup.Description'),
-      dataIndex: 'description',
+      dataIndex: ['metadata', 'description'],
       render: (value) => value || '-',
     },
     {
       key: 'is_public',
       title: t('resourceGroup.Public'),
-      dataIndex: 'is_public',
-      render: (value) => {
-        return value ? (
-          <Check style={{ color: token.colorSuccess }} size="1em" />
-        ) : (
-          <X style={{ color: token.colorTextSecondary }} size="1em" />
-        );
-      },
+      dataIndex: ['status', 'isPublic'],
+      render: renderBooleanCell,
+    },
+    {
+      key: 'is_default',
+      title: t('resourceGroup.Default'),
+      dataIndex: ['status', 'isDefault'],
+      render: renderBooleanCell,
     },
     {
       key: 'sftp',
@@ -308,47 +448,83 @@ const ResourceGroupList: React.FC = () => {
       },
     },
     {
-      key: 'driver',
-      title: t('resourceGroup.Driver'),
-      dataIndex: 'driver',
-    },
-    {
       key: 'scheduler',
       title: t('resourceGroup.Scheduler'),
-      dataIndex: 'scheduler',
+      dataIndex: ['scheduler', 'type'],
       render: (value) => _.toUpper(value),
     },
     {
       key: 'wsproxy_addr',
       title: t('resourceGroup.AppProxyAddress'),
-      dataIndex: 'wsproxy_addr',
+      dataIndex: ['network', 'wsproxyAddr'],
       render: (value) => value || '-',
+    },
+    {
+      key: 'created_at',
+      title: t('general.CreatedAt'),
+      dataIndex: ['metadata', 'createdAt'],
+      sortKey: 'createdAt',
+      sorter: true,
+      render: (value: string | null | undefined) =>
+        value ? dayjs(value).format('lll') : '-',
     },
   ]);
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex justify="between">
-        <BAIRadioGroup
-          value={activeType}
-          onChange={(value) => {
-            startActiveTypeTransition(() => {
+      <BAIFlex justify="between" gap="sm" align="start" wrap="wrap">
+        <BAIFlex gap="sm" align="start" wrap="wrap" style={{ flexShrink: 1 }}>
+          <BAIRadioGroup
+            value={activeType}
+            onChange={(value) => {
               setActiveType(value.target.value);
+              setTablePaginationOption({ current: 1 });
               setSelectedRowKeys([]);
-            });
-          }}
-          optionType="button"
-          options={[
-            {
-              label: t('general.Active'),
-              value: 'active',
-            },
-            {
-              label: t('general.Inactive'),
-              value: 'inactive',
-            },
-          ]}
-        />
+            }}
+            optionType="button"
+            options={[
+              {
+                label: t('general.Active'),
+                value: 'active',
+              },
+              {
+                label: t('general.Inactive'),
+                value: 'inactive',
+              },
+            ]}
+          />
+          <BAIGraphQLPropertyFilter<ResourceGroupFilter>
+            singleCondition={!supportsSubFilter}
+            filterProperties={[
+              {
+                key: 'name',
+                propertyLabel: t('resourceGroup.Name'),
+                type: 'string',
+              },
+              {
+                key: 'description',
+                propertyLabel: t('resourceGroup.Description'),
+                type: 'string',
+              },
+              {
+                key: 'isPublic',
+                propertyLabel: t('resourceGroup.Public'),
+                type: 'boolean',
+              },
+              {
+                key: 'isDefault',
+                propertyLabel: t('resourceGroup.Default'),
+                type: 'boolean',
+              },
+            ]}
+            value={filter}
+            onChange={(value) => {
+              setFilter(value);
+              setTablePaginationOption({ current: 1 });
+              setSelectedRowKeys([]);
+            }}
+          />
+        </BAIFlex>
         <BAIFlex gap="xs">
           {baiClient.is_superadmin && selectedRowKeys.length > 0 && (
             <BAIFlex align="center" gap="xs">
@@ -367,7 +543,7 @@ const ResourceGroupList: React.FC = () => {
             </BAIFlex>
           )}
           <BAIFetchKeyButton
-            loading={isPendingRefetch}
+            loading={isPendingRefetch || isRefetching}
             value={fetchKey}
             onChange={() => {
               startRefetchTransition(() => {
@@ -391,8 +567,25 @@ const ResourceGroupList: React.FC = () => {
         resizable
         size="small"
         columns={columns}
-        dataSource={filterOutNullAndUndefined(scaling_groups)}
-        loading={isActiveTypePending}
+        dataSource={resourceGroups}
+        loading={isRefetching}
+        order={order}
+        onChangeOrder={(newOrder) => {
+          setOrder(newOrder ?? undefined);
+          setTablePaginationOption({ current: 1 });
+          setSelectedRowKeys([]);
+        }}
+        pagination={{
+          pageSize: tablePaginationOption.pageSize,
+          current: tablePaginationOption.current,
+          total: adminResourceGroups?.count ?? 0,
+          onChange: (current, pageSize) => {
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({ current, pageSize });
+              setSelectedRowKeys([]);
+            }
+          },
+        }}
         rowSelection={
           baiClient.is_superadmin
             ? {
@@ -456,28 +649,32 @@ const ResourceGroupList: React.FC = () => {
           setSelectedResourceGroupName(undefined);
         }}
       />
-      <ResourceGroupInfoModal
-        open={openInfoModal && !!selectedResourceGroup}
-        resourceGroupFrgmt={selectedResourceGroup}
-        onRequestClose={() => {
-          toggleOpenInfoModal();
-          setSelectedResourceGroup(undefined);
-        }}
-      />
-      <ResourceGroupSettingModal
-        open={openCreateModal}
-        resourceGroupFrgmt={selectedResourceGroup}
-        onRequestClose={(success) => {
-          toggleOpenCreateModal();
-          setSelectedResourceGroup(undefined);
-
-          if (success) {
-            startRefetchTransition(() => {
-              updateFetchKey();
-            });
-          }
-        }}
-      />
+      {infoModalName ? (
+        <Suspense fallback={null}>
+          <ResourceGroupInfoModalWithQuery
+            resourceGroupName={infoModalName}
+            open={openInfoModal}
+            onRequestClose={() => {
+              toggleOpenInfoModal();
+              setInfoModalName(undefined);
+            }}
+          />
+        </Suspense>
+      ) : null}
+      {settingModalName ? (
+        <Suspense fallback={null}>
+          <ResourceGroupSettingModalWithQuery
+            resourceGroupName={settingModalName}
+            open={openCreateModal}
+            onRequestClose={closeSettingModal}
+          />
+        </Suspense>
+      ) : (
+        <ResourceGroupSettingModal
+          open={openCreateModal}
+          onRequestClose={closeSettingModal}
+        />
+      )}
       <BAIUnmountAfterClose>
         <UpdateResourceGroupsModal
           open={openSFTPModal}

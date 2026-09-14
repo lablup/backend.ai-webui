@@ -2552,7 +2552,8 @@
     "SelectScheduler": "Selecione o Agendador",
     "TimeoutSeconds": "Segundos",
     "TypeResourceGroupNameToDelete": "Digite o nome do grupo de recursos para excluir",
-    "UpdateResourceGroups": "Atualizar Grupos de Recursos"
+    "UpdateResourceGroups": "Atualizar Grupos de Recursos",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Você está prestes a excluir esta política de recursos:",

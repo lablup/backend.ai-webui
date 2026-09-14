@@ -2552,7 +2552,8 @@
     "SelectScheduler": "Wählen Sie Planer",
     "TimeoutSeconds": "Sekunden",
     "TypeResourceGroupNameToDelete": "Geben Sie den Namen der zu löschenden Ressourcengruppe ein",
-    "UpdateResourceGroups": "Ressourcengruppen aktualisieren"
+    "UpdateResourceGroups": "Ressourcengruppen aktualisieren",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Sie sind im Begriff, diese Ressourcenrichtlinie zu löschen:",

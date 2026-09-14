@@ -2551,7 +2551,8 @@
     "SelectScheduler": "Цагийн хуваарийг сонгоно уу",
     "TimeoutSeconds": "Секунд",
     "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү",
-    "UpdateResourceGroups": "Нөөцийн бүлгүүдийг шинэчлэх"
+    "UpdateResourceGroups": "Нөөцийн бүлгүүдийг шинэчлэх",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",

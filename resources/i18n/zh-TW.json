@@ -2554,7 +2554,8 @@
     "SelectScheduler": "選擇調度程序",
     "TimeoutSeconds": "秒",
     "TypeResourceGroupNameToDelete": "輸入要刪除的資源組名稱",
-    "UpdateResourceGroups": "更新資源群組"
+    "UpdateResourceGroups": "更新資源群組",
+    "Default": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "您即將刪除此資源策略：",
