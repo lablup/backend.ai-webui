@@ -22,7 +22,7 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIDeleteConfirmModal,
   BAIFlex,
-  BAIImageMetaRow,
+  BAIImageNodeSimpleTagV2,
   BAITable,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -175,7 +175,7 @@ const CustomizedImageList: React.FC = () => {
       // Computed column (no `dataIndex`), so the record comes from `render`'s
       // SECOND argument — see `ImageList`'s matching column.
       render: (_value, row) => (
-        <BAIImageMetaRow
+        <BAIImageNodeSimpleTagV2
           fullName={getImageFullName(row)}
           variant="path"
           highlightKeyword={imageSearch}

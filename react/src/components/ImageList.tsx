@@ -30,7 +30,7 @@ import { Text } from '@astryxdesign/core/Text';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
-  BAIImageMetaRow,
+  BAIImageNodeSimpleTagV2,
   BAIPropertyFilter,
   BAISelectionLabel,
   BAIResourceNumberWithIcon,
@@ -333,7 +333,10 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // rc-table quirk that `BAITable` does not reproduce; taking it
       // from the second is the Astryx/antd `(value, record, index)` contract.
       render: (_value, row) => (
-        <BAIImageMetaRow fullName={getImageFullName(row)} variant="path" />
+        <BAIImageNodeSimpleTagV2
+          fullName={getImageFullName(row)}
+          variant="path"
+        />
       ),
       // Computed (`getImageFullName`) — not orderable on the server.
       width: token.screenXS,

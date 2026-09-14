@@ -8,6 +8,7 @@ export type { BAISessionClusterModeV2Props } from './BAISessionClusterModeV2';
 export { default as BAIImageNodeSimpleTag } from './BAIImageNodeSimpleTag';
 export type { BAIImageNodeSimpleTagProps } from './BAIImageNodeSimpleTag';
 export { default as BAIImageNodeSimpleTagV2 } from './BAIImageNodeSimpleTagV2';
+export type { BAIImageNodeSimpleTagV2Variant } from './BAIImageNodeSimpleTagV2';
 export type { BAIImageNodeSimpleTagV2Props } from './BAIImageNodeSimpleTagV2';
 export { default as BAIArtifactRevisionTable } from './BAIArtifactRevisionTable';
 export type {

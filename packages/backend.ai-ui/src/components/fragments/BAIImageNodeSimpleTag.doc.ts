@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The v1 `ImageNode` adapter over `BAIImageMetaRow`: it reads `BAIImageNodeSimpleTagFragment` on `ImageNode` (`registry`, `namespace`, `tag`, `architecture`, `base_image_name`, `version`, `tags`, `labels`) and hands the row its plain facts, so the caller spreads that fragment on the `ImageNode` in its query and passes the node to `imageFrgmt`; a null reference renders nothing. The row itself is the project-wide image representation (ADR 0004) — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag chips and a copy control. It must sit under `BAIMetaDataProvider`, because the icon, the tag aliases and the base-name/base-version split all come from `useBAIImageMetaData`. The v2 counterpart is `BAIImageNodeSimpleTagV2`, and both render the identical row.',
+      'The v1 `ImageNode` adapter over `BAIImageNodeSimpleTagV2`: it reads `BAIImageNodeSimpleTagFragment` on `ImageNode` (`registry`, `namespace`, `tag`, `architecture`, `base_image_name`, `version`, `tags`, `labels`) and hands the row its plain facts, so the caller spreads that fragment on the `ImageNode` in its query and passes the node to `imageFrgmt`; a null reference renders nothing. The row itself is the project-wide image representation (ADR 0004) — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag chips and a copy control. It must sit under `BAIMetaDataProvider`, because the icon, the tag aliases and the base-name/base-version split all come from `useBAIImageMetaData`. The v2 counterpart is `BAIImageNodeSimpleTagV2`, and both render the identical row.',
     bestPractices: [
       {
         guidance: true,

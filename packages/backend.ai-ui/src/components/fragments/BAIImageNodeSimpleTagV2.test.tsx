@@ -1,8 +1,8 @@
-import { preserveDotStartCase } from '../helper';
-import BAIImageMetaRow from './BAIImageMetaRow';
-import { imageNodeTagFacts } from './BAIImageTagBadges';
-import { BAIMetaDataProvider } from './provider';
-import type { ImageMetaData } from './provider';
+import { preserveDotStartCase } from '../../helper';
+import { imageNodeTagFacts } from '../BAIImageTagBadges';
+import { BAIMetaDataProvider } from '../provider';
+import type { ImageMetaData } from '../provider';
+import BAIImageNodeSimpleTagV2 from './BAIImageNodeSimpleTagV2';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 
@@ -33,9 +33,9 @@ const renderRow = (ui: React.ReactNode) =>
     </BAIMetaDataProvider>,
   );
 
-describe('BAIImageMetaRow', () => {
+describe('BAIImageNodeSimpleTagV2', () => {
   it('derives name, version and architecture from fullName alone', () => {
-    renderRow(<BAIImageMetaRow fullName={FULL_NAME} />);
+    renderRow(<BAIImageNodeSimpleTagV2 fullName={FULL_NAME} />);
 
     expect(screen.getByText('TensorFlow')).toBeInTheDocument();
     expect(screen.getByText('2.15')).toBeInTheDocument();
@@ -44,7 +44,7 @@ describe('BAIImageMetaRow', () => {
 
   it('prefers the parts the caller passes over the derived ones', () => {
     renderRow(
-      <BAIImageMetaRow
+      <BAIImageNodeSimpleTagV2
         fullName={FULL_NAME}
         name="Ngc Pytorch"
         version="26.03"
@@ -62,7 +62,7 @@ describe('BAIImageMetaRow', () => {
   // older manager, so an empty override must not blank the part out.
   it('falls back to the derived part when an override is empty', () => {
     renderRow(
-      <BAIImageMetaRow
+      <BAIImageNodeSimpleTagV2
         fullName={FULL_NAME}
         name=""
         version=""
@@ -81,14 +81,18 @@ describe('BAIImageMetaRow', () => {
     const tags = imageNodeTagFacts([{ key: 'py3', value: '9' }], [], tagAlias);
 
     const { unmount } = renderRow(
-      <BAIImageMetaRow fullName={FULL_NAME} tags={tags} />,
+      <BAIImageNodeSimpleTagV2 fullName={FULL_NAME} tags={tags} />,
     );
     expect(screen.getByText('Python')).toBeInTheDocument();
     expect(screen.getByText('9')).toBeInTheDocument();
     unmount();
 
     renderRow(
-      <BAIImageMetaRow fullName={FULL_NAME} variant="compact" tags={tags} />,
+      <BAIImageNodeSimpleTagV2
+        fullName={FULL_NAME}
+        variant="compact"
+        tags={tags}
+      />,
     );
     expect(screen.queryByText('Python')).not.toBeInTheDocument();
     expect(screen.queryByText('9')).not.toBeInTheDocument();
@@ -114,7 +118,7 @@ describe('BAIImageMetaRow', () => {
       tagAlias,
     );
 
-    renderRow(<BAIImageMetaRow fullName={FULL_NAME} tags={tags} />);
+    renderRow(<BAIImageNodeSimpleTagV2 fullName={FULL_NAME} tags={tags} />);
 
     expect(screen.getByText('my-image')).toBeInTheDocument();
     expect(screen.queryByText('deadbeef')).not.toBeInTheDocument();
@@ -122,7 +126,7 @@ describe('BAIImageMetaRow', () => {
 
   it('renders the path variant as the raw reference in monospace', () => {
     const { container } = renderRow(
-      <BAIImageMetaRow fullName={FULL_NAME} variant="path" />,
+      <BAIImageNodeSimpleTagV2 fullName={FULL_NAME} variant="path" />,
     );
 
     expect(screen.getByText(FULL_NAME)).toBeInTheDocument();
@@ -131,11 +135,15 @@ describe('BAIImageMetaRow', () => {
   });
 
   it('drops the copy control when copyable is false', () => {
-    const { unmount } = renderRow(<BAIImageMetaRow fullName={FULL_NAME} />);
+    const { unmount } = renderRow(
+      <BAIImageNodeSimpleTagV2 fullName={FULL_NAME} />,
+    );
     const withCopy = screen.getAllByRole('button').length;
     unmount();
 
-    renderRow(<BAIImageMetaRow fullName={FULL_NAME} copyable={false} />);
+    renderRow(
+      <BAIImageNodeSimpleTagV2 fullName={FULL_NAME} copyable={false} />,
+    );
     expect(screen.queryAllByRole('button')).toHaveLength(withCopy - 1);
   });
 });

@@ -218,11 +218,6 @@ export type {
   BAIImageTagBadgesProps,
   BAIImageTagFact,
 } from './BAIImageTagBadges';
-export { default as BAIImageMetaRow } from './BAIImageMetaRow';
-export type {
-  BAIImageMetaRowProps,
-  BAIImageMetaRowVariant,
-} from './BAIImageMetaRow';
 export { default as BAIDoubleTag } from './BAIDoubleTag';
 export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';
 export { default as BAIProgressWithLabel } from './BAIProgressWithLabel';

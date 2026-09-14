@@ -31,7 +31,7 @@ import {
   BAICard,
   BAIFlex,
   BAIImageMetaIcon,
-  BAIImageMetaRow,
+  BAIImageNodeSimpleTagV2,
   BAIMetadataList,
   BAITable,
   BAIText,
@@ -67,7 +67,7 @@ const SessionLauncherImageRow: React.FC = () => {
   }
 
   return (
-    <BAIImageMetaRow
+    <BAIImageNodeSimpleTagV2
       fullName={getImageFullName(image) || environments?.version}
       name={tagAlias(image?.base_image_name)}
       version={image?.version}

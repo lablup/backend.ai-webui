@@ -4,11 +4,11 @@
 
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
-- container image 한 개의 identity를 보여주는 화면은 `packages/backend.ai-ui/src/components/BAIImageMetaRow.tsx`의 `BAIImageMetaRow`를 쓴다. image의 icon, 이름, version, architecture, tag chip, 그리고 full reference를 복사하는 control을 이 component가 그린다.
+- container image 한 개의 identity를 보여주는 화면은 `packages/backend.ai-ui/src/components/fragments/BAIImageNodeSimpleTagV2.tsx`의 `BAIImageNodeSimpleTagV2`를 쓴다. image의 icon, 이름, version, architecture, tag chip, 그리고 full reference를 복사하는 control을 이 component가 그린다. 행과 fragment 읽기 사이에 다른 component를 두지 않는다.
 - `variant` prop이 surface를 가른다. `full`은 tag chip까지 그리고, `compact`는 chip을 뺀 행을 그리고, `path`는 같은 reference를 monospace 한 줄로 그린다.
-- tag chip을 [double tag](#용어)로 그릴지 badge 하나로 그릴지는 `BAIImageTagBadges`와 같은 모듈의 `imageNodeTagFacts`가 정한다. FR-3544가 host의 `react/src/components/ImageTags.tsx`에 만든 규칙을 BUI로 옮긴 것이고, chip 색을 호출자가 고르는 prop은 없앴다.
+- tag chip을 [double tag](#용어)로 그릴지 badge 하나로 그릴지는 `BAIImageTagBadges`와 같은 module의 `imageNodeTagFacts`가 정한다. FR-3544가 host의 `react/src/components/ImageTags.tsx`에 만든 규칙을 옮긴 것이고, chip 색을 호출자가 고르는 prop은 없앴다.
 - 부분 사이의 구분선은 `BAIImageMetaDivider`다. Astryx `Divider`를 `orientation="vertical"`로 직접 쓰면 `BAIFlex` 안에서 높이가 0으로 접힌다.
-- Relay fragment를 읽는 일은 schema마다 하나씩 있는 adapter가 한다. v1 `ImageNode`는 `ImageNodeSimpleTag`, v2 `ImageV2`는 `BAIImageNodeSimpleTagV2`, tag 열만 그리는 `AliasedImageDoubleTags`가 그 셋이다.
+- v2 `ImageV2`는 이 component가 직접 읽는다. v1 `ImageNode`는 `BAIImageNodeSimpleTag`가 읽어 문자열로 넘기고, tag 열만 그리는 `AliasedImageDoubleTags`가 셋째다. fragment가 없는 call site는 `imageFrgmt` 대신 `fullName`과 `variant`를 넘긴다.
 - 이 저장소가 지원하는 가장 낮은 manager는 26.4.x이고 [extended image info](#용어)는 24.12.0부터 켜지므로, 그 이전 manager를 위한 image 표현은 모두 지웠다.
 - 범위 밖: image 하나의 identity가 아닌 화면 네 곳은 이 행을 쓰지 않는다. 환경 선택 dropdown의 환경 목록과 version 목록, session launcher가 손으로 입력받은 image 문자열, 그리고 session template 표의 축약 label이다.
 
@@ -36,8 +36,8 @@
 ```mermaid
 flowchart TB
   subgraph schema["Relay fragment를 읽는 adapter"]
-    v1["ImageNodeSimpleTag<br/>react/src/components"]
-    v2["BAIImageNodeSimpleTagV2<br/>BUI components/fragments"]
+    v1["BAIImageNodeSimpleTag<br/>BUI components/fragments"]
+    v2["BAIImageNodeSimpleTagV2<br/>행을 직접 그린다"]
     tagsOnly["AliasedImageDoubleTags<br/>react/src/components"]
   end
   subgraph plain["행에 문자열을 직접 넘기는 call site"]
@@ -49,7 +49,7 @@ flowchart TB
     envSelect["ImageEnvironmentSelectFormItems<br/>version 옵션 행"]
   end
   facts["imageNodeTagFacts<br/>BAIImageTagBadges.tsx"]
-  row["BAIImageMetaRow"]
+  row["BAIImageNodeSimpleTagV2"]
   icon["BAIImageMetaIcon"]
   divider["BAIImageMetaDivider"]
   badges["BAIImageTagBadges"]
@@ -77,11 +77,11 @@ flowchart TB
 
 ## Decision
 
-### 1. image identity는 `BAIImageMetaRow`가 그린다
+### 1. image identity는 `BAIImageNodeSimpleTagV2`가 그린다
 
-- **Single renderer**: container image 한 개의 identity를 보여주는 화면은 `BAIImageMetaRow`를 쓴다. `BAIImageMetaIcon`, Astryx `Text`, divider, chip을 call site에서 손으로 조립하지 않는다.
-- **Plain props**: 이 component는 `fullName`, `name`, `version`, `architecture`를 문자열로, `tags`를 `BAIImageTagFact` 배열로 받는다. Relay fragment를 받지 않으므로 v1 schema, v2 schema, launcher form value, `compute_session.image` 문자열이 모두 같은 행으로 들어간다.
-- **Props base**: `BAIImageMetaRowProps`는 `Omit<React.HTMLAttributes<HTMLElement>, 'children'>`를 extend하고, 남은 prop을 root로 넘긴다. root는 `full`과 `compact`에서 `BAIFlex`, `path`에서 `BAIText`라 둘 다 받는 DOM 타입을 base로 쓴다. `.claude/rules/component-props-extension.md`가 정한 두 번째 경우다.
+- **Single renderer**: container image 한 개의 identity를 보여주는 화면은 `BAIImageNodeSimpleTagV2`를 쓴다. `BAIImageMetaIcon`, Astryx `Text`, divider, chip을 call site에서 손으로 조립하지 않는다.
+- **Two inputs, one markup**: `imageFrgmt`로 `ImageV2` fragment를 받거나, `fullName`·`name`·`version`·`architecture`·`tags`를 문자열과 배열로 받는다. 그래서 v1 schema, launcher form value, `compute_session.image` 문자열이 모두 같은 행으로 들어간다.
+- **Props base**: `BAIImageNodeSimpleTagV2Props`는 `Omit<React.HTMLAttributes<HTMLElement>, 'children'>`를 extend하고, 남은 prop을 root로 넘긴다. root는 `full`과 `compact`에서 `BAIFlex`, `path`에서 `BAIText`라 둘 다 받는 DOM 타입을 base로 쓴다. `.claude/rules/component-props-extension.md`가 정한 두 번째 경우다.
 - **Provider requirement**: icon과 alias는 `useBAIImageMetaData`에서 오므로 세 variant 모두 `BAIMetaDataProvider` 안에 있어야 한다. host app은 `react/src/components/DefaultProviders.tsx`에서 app 전체를 그 provider로 감싸고 `imagePath="resources/icons"`를 넘긴다.
 
 ### 2. variant 세 개가 surface를 나눈다
@@ -105,7 +105,7 @@ flowchart TB
 
 ### 4. tag chip 규칙은 fact builder 하나에 있다
 
-- **`BAIImageTagFact`**: chip 하나의 표시 사실을 담는 type이다. `key`, `value`, `isCustomized`, `aliasedTag`, `isDouble`, `keyAlias` 여섯 field를 가지며 `packages/backend.ai-ui/src/components/BAIImageTagBadges.tsx`가 export한다.
+- **`BAIImageTagFact`**: chip 하나의 표시 사실을 담는 type이다. `key`, `value`, `isCustomized`, `aliasedTag`, `isDouble`, `keyAlias` 여섯 field를 가지며 같은 module이 export한다.
 - **`imageNodeTagFacts`**: image node의 `tags`와 `labels`를 받는 유일한 builder다. key에 `customized_`가 든 tag를 customized로 보고, 값이 hash라서 읽을 수 있는 이름을 `ai.backend.customized-image.name` label에서 가져온다.
 - **Who calls it**: image node의 `tags`를 가진 call site가 직접 부른다. `ImageNodeSimpleTag`, `BAIImageNodeSimpleTagV2`, `AliasedImageDoubleTags`, `SessionLauncherPreview`, `ImageEnvironmentSelectFormItems`가 그렇게 하고, 새 call site도 이 builder를 부르지 직접 판정하지 않는다.
 - **Colour**: customized tag는 cyan, 나머지는 blue다. 호출자가 색을 넘기는 prop은 없다.
@@ -120,8 +120,8 @@ flowchart TB
 
 | adapter | fragment | 넘기는 것 |
 |---|---|---|
-| `ImageNodeSimpleTag` | `ImageNodeSimpleTagFragment on ImageNode` | `registry`, `namespace ?? name`, `tag`, `architecture`로 조립한 `fullName`과 server의 `base_image_name`, `version` |
-| `BAIImageNodeSimpleTagV2` | `BAIImageNodeSimpleTagV2Fragment on ImageV2` | `identity.canonicalName`과 `identity.architecture`를 `@`로 이어 붙인 `fullName`과 `identity.architecture` |
+| `BAIImageNodeSimpleTag` | `BAIImageNodeSimpleTagFragment on ImageNode` | `registry`, `namespace ?? name`, `tag`, `architecture`로 조립한 `fullName`과 server의 `base_image_name`, `version` |
+| `BAIImageNodeSimpleTagV2` | `BAIImageNodeSimpleTagV2Fragment on ImageV2` | 스스로 읽는다. `identity.canonicalName`과 `identity.architecture`를 `@`로 이어 붙여 reference를 만든다 |
 | `AliasedImageDoubleTags` | `AliasedImageDoubleTagsFragment on ImageNode` | `BAIImageTagBadges`에 넘길 fact만. 행이 아니라 chip만 그리는 표의 Tags 열용이다 |
 
 - **`fullName` is the full reference**: adapter는 row에 registry부터 `@architecture`까지 다 붙은 문자열을 넘긴다. row의 copy control이 그 값을 그대로 복사하므로, 짧은 문자열을 넘기면 화면에 보이는 image와 복사되는 image가 달라진다. v1의 `namespace`는 `@since(version: "24.12.0")`이라 그 이전 manager에서는 deprecated된 `name`이 그 자리를 채우고, v2의 `identity.canonicalName`에는 architecture가 들어 있지 않다.
@@ -131,9 +131,10 @@ flowchart TB
 
 ### 7. 공용 component는 BUI에 산다
 
-- **Home**: `BAIImageMetaRow`, `BAIImageTagBadges`, `BAIImageMetaDivider`와 fact builder 두 개는 `packages/backend.ai-ui/src/components/`에 있고 components barrel이 export한다. `.claude/rules/bui-component-home.md`가 정한 자리다.
+- **Home**: 행과 두 adapter는 `packages/backend.ai-ui/src/components/fragments/`에, chip과 구분선은 `packages/backend.ai-ui/src/components/`에 있다. `.claude/rules/bui-component-home.md`가 정한 자리다.
+- **Why the chips and the divider stay their own files**: 둘 다 행을 쓰지 않는 surface가 쓰므로 barrel이 export해야 하고, `astryxIntegration.test.ts`는 barrel이 export하는 component마다 같은 이름의 source 파일과 `{Name}.doc.ts`를 요구한다.
 - **The icon twin is retired**: host의 `react/src/components/ImageMetaIcon.tsx`를 지우고 call site를 `BAIImageMetaIcon`으로 옮겼다. 두 component는 같은 metadata를 읽어 같은 icon과 같은 fallback glyph를 그렸고, BUI 쪽은 `imagePath`가 없으면 null을 그리는 점만 달랐다. host app은 늘 `imagePath`를 넘긴다.
-- **Host side**: host에 남는 image 관련 component는 host의 `useBackendAIImageMetaData`나 host query가 필요한 것뿐이다. `ImageNodeSimpleTag`, `AliasedImageDoubleTags`, `ImageTags`가 그에 해당한다.
+- **Host side**: host에 남는 image 관련 component는 host query가 필요한 `AliasedImageDoubleTags`와 `UNSAFELazySessionImageTag`뿐이다.
 
 ### 8. 24.12 이전 manager를 위한 image 표현은 없다
 
@@ -148,6 +149,7 @@ flowchart TB
 - **One fragment-reading component**: 공용 component가 직접 `useFragment`를 불러 call site가 fragment만 spread하면 되는 형태다. adapter 계층이 없어지는 것이 장점이다. 기각한 이유는 입력 네 가지가 한 fragment로 덮이지 않기 때문이다. v1 `ImageNode`와 v2 `ImageV2`는 schema가 다르고, session launcher의 form value는 Relay를 거치지 않으며, `compute_session.image`는 image node가 아니라 문자열 한 개다.
 - **Keep the shared component in the host app**: v1 화면이 모두 host에 있으니 이동 거리가 짧은 것이 장점이다. 기각한 이유는 BUI의 `BAISessionNodesV2`가 같은 행을 쓰는데 BUI가 host를 import할 수 없고, `.claude/rules/bui-component-home.md`가 재사용 component의 집을 BUI로 정해 두었기 때문이다.
 - **An icon on the `path` variant too**: 표의 Full image path 열도 한눈에 framework를 알아볼 수 있는 것이 장점이다. 기각한 이유는 그 열의 폭이 `token.screenXS`로 묶여 있어 icon이 차지하는 만큼 reference가 잘리고, `path`는 복사해서 쓰는 값이기 때문이다.
+- **A separate row component between the adapters and the markup**: `BAIImageMetaRow`를 따로 두고 두 adapter가 그것을 부르는 형태로, adapter가 schema만 다루고 행은 행만 다루는 것이 장점이다. 기각한 이유는 adapter에서 행까지 hop이 한 단계 늘기만 하고 행을 혼자 쓰는 call site가 없기 때문이다. 행은 `BAIImageNodeSimpleTagV2`가 직접 그리고, fragment가 없는 call site는 같은 component에 문자열을 넘긴다.
 - **Convert every surface that shows an image icon**: session template 표의 Environments 열처럼 icon과 이름을 함께 보여주는 자리를 모두 행으로 바꾸는 형태다. 예외를 세지 않아도 되는 것이 장점이다. 기각한 이유는 그런 자리가 image 한 개의 identity가 아니라 좁은 cell에 넣는 축약 label이라, 행으로 바꾸면 architecture와 copy control이 딸려 들어와 폭을 넘기기 때문이다.
 
 ## Consequences

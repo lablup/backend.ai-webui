@@ -1,7 +1,7 @@
 import { BAIImageNodeSimpleTagFragment$key } from '../../__generated__/BAIImageNodeSimpleTagFragment.graphql';
-import BAIImageMetaRow from '../BAIImageMetaRow';
 import { imageNodeTagFacts } from '../BAIImageTagBadges';
 import { useBAIImageMetaData } from '../provider/BAIMetaDataProvider';
+import BAIImageNodeSimpleTagV2 from './BAIImageNodeSimpleTagV2';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -13,9 +13,9 @@ export interface BAIImageNodeSimpleTagProps {
 }
 
 /**
- * `ImageNode` adapter over {@link BAIImageMetaRow}: it reads the fragment and
- * hands the row its plain facts. The v2 counterpart is
- * `BAIImageNodeSimpleTagV2`, and both render the identical row (ADR 0004).
+ * `ImageNode` adapter over {@link BAIImageNodeSimpleTagV2}: it reads the v1
+ * fragment and hands that component its plain facts, so both schemas render
+ * the identical row (ADR 0004).
  */
 const BAIImageNodeSimpleTag: React.FC<BAIImageNodeSimpleTagProps> = ({
   imageFrgmt,
@@ -53,7 +53,7 @@ const BAIImageNodeSimpleTag: React.FC<BAIImageNodeSimpleTagProps> = ({
   const reference = `${image.registry}/${image.namespace}:${image.tag}`;
 
   return (
-    <BAIImageMetaRow
+    <BAIImageNodeSimpleTagV2
       fullName={
         image.architecture ? `${reference}@${image.architecture}` : reference
       }

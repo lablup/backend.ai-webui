@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ImageTagsUNSAFELazySessionImageTagQuery } from '../__generated__/ImageTagsUNSAFELazySessionImageTagQuery.graphql';
-import { BAIImageMetaRow } from 'backend.ai-ui';
+import { BAIImageNodeSimpleTagV2 } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -45,6 +45,6 @@ export const UNSAFELazySessionImageTag: React.FC<
 
   // No image node means no tags to show, so the row stays compact.
   return imageFullName ? (
-    <BAIImageMetaRow fullName={imageFullName} variant="compact" />
+    <BAIImageNodeSimpleTagV2 fullName={imageFullName} variant="compact" />
   ) : null;
 };
