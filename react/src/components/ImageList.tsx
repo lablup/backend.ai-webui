@@ -16,6 +16,7 @@ import {
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { ProjectContextOrNull } from '../types/projectContext';
+import AddImageModal from './AddImageModal';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
@@ -52,6 +53,7 @@ import {
   RotateCw,
   Settings,
   ArrowDownToLine,
+  Plus,
   SquarePenIcon,
 } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -221,12 +223,15 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
   const [, { tagAlias }] = useBackendAIImageMetaData();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
     useState<EnvironmentImage | null>(null);
   const [isOpenInstallModal, setIsOpenInstallModal] = useState<boolean>(false);
+  const [isOpenAddImageModal, setIsOpenAddImageModal] =
+    useState<boolean>(false);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [, startTransition] = useTransition();
   const [installingImages, setInstallingImages] = useState<string[]>([]);
@@ -728,6 +733,18 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                 startRefreshTransition(() => updateFetchKey());
               }}
             />
+            {/* The Images tab is admin-scoped but the REST route behind this
+                is `superadmin_required`, so the role check cannot be
+                inherited from the route. */}
+            {baiClient.is_superadmin &&
+            baiClient.supports('scan-image-by-canonical') ? (
+              <Button
+                variant="secondary"
+                icon={<Plus size="1em" />}
+                label={t('environment.AddImage')}
+                onClick={() => setIsOpenAddImageModal(true)}
+              />
+            ) : null}
             {/* PILOT-DECISION: the hand-painted primary button
                 (style backgroundColor token('--color-accent')) becomes Astryx
                 `Button variant="primary"` — the brand accent comes from the
@@ -831,6 +848,17 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
         }}
         imageFrgmt={managingApp}
       />
+      <BAIUnmountAfterClose>
+        <AddImageModal
+          open={isOpenAddImageModal}
+          onRequestClose={() => setIsOpenAddImageModal(false)}
+          onAdded={() => {
+            startTransition(() => {
+              updateFetchKey();
+            });
+          }}
+        />
+      </BAIUnmountAfterClose>
       {/* No project is handed down: installing an image enqueues a session,
           and the modal asks for that session's own project and resource group.
           The list's project filter only decides which images are on screen.

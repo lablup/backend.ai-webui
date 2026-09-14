@@ -1,0 +1,447 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import { AddImageModalRegistriesQuery } from '../__generated__/AddImageModalRegistriesQuery.graphql';
+import { App } from '../app-shim';
+import { baiSignedRequestWithPromise } from '../helper';
+import {
+  parseImageReferenceLine,
+  resolveImageReference,
+  type ImageReferenceReason,
+  type RegistryRow,
+  type ResolvedReference,
+} from '../helper/imageReferenceParser';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import { usePainKiller } from '../hooks/usePainKiller';
+import './AddImageModal.css';
+import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Button } from '@astryxdesign/core/Button';
+import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Text } from '@astryxdesign/core/Text';
+import { TextArea } from '@astryxdesign/core/TextArea';
+import {
+  BAIFlex,
+  BAILink,
+  BAIModal,
+  BAIModalProps,
+  BAISelect,
+  BAISkeleton,
+  BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
+  filterOutNullAndUndefined,
+  useFetchKey,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { PlusIcon } from 'lucide-react';
+import { Suspense, useDeferredValue, useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
+
+/**
+ * `RescanImagesResponse` / `ImageDTO` from
+ * `ai.backend.common.dto.manager.image.response`. Only the fields this modal
+ * reads are declared; the client package cannot host it while `@ts-nocheck`
+ * stands on its resource files.
+ */
+interface ScanImageResponse {
+  item: {
+    id: string;
+    name: string;
+    registry: string;
+    project: string | null;
+    tag: string | null;
+    architecture: string;
+  };
+  errors: Array<string>;
+}
+
+type LineOutcome = { status: 'success' | 'error'; message?: string };
+
+export interface AddImageModalProps extends Omit<BAIModalProps, 'onOk'> {
+  onRequestClose: () => void;
+  /** Canonicals the manager accepted, in submission order. */
+  onAdded?: (added: Array<string>) => void;
+}
+
+const ARCHITECTURES = ['x86_64', 'aarch64'] as const;
+
+/** The catalog page that lists a repository's tags, for a tag-less NGC paste. */
+const ngcTagsUrl = (remotePath: string | null) => {
+  const segments = (remotePath ?? '').split('/');
+  if (segments.length < 2) return null;
+  const [org, ...rest] = segments;
+  const name = rest.pop();
+  return `https://catalog.ngc.nvidia.com/orgs/${org}/${rest[0] ?? '-'}/containers/${name}/-/tags`;
+};
+
+const AddImageModalContent: React.FC<{
+  onRequestClose: () => void;
+  onAdded?: (added: Array<string>) => void;
+}> = ({ onRequestClose, onAdded }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
+  const painKiller = usePainKiller();
+
+  const [text, setText] = useState('');
+  const [architecture, setArchitecture] = useState<string>(ARCHITECTURES[0]);
+  const [outcomes, setOutcomes] = useState<Record<string, LineOutcome>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [prefilledRegistry, setPrefilledRegistry] = useState<{
+    registry_name: string;
+    project?: string;
+    url: string;
+    type?: string;
+  } | null>(null);
+
+  const [registryFetchKey, updateRegistryFetchKey] = useFetchKey();
+  const [, startRegistryTransition] = useTransition();
+  const deferredRegistryFetchKey = useDeferredValue(registryFetchKey);
+
+  const { container_registry_nodes } =
+    useLazyLoadQuery<AddImageModalRegistriesQuery>(
+      graphql`
+        query AddImageModalRegistriesQuery($first: Int) {
+          container_registry_nodes(first: $first) @since(version: "24.09.0") {
+            edges {
+              node {
+                id
+                registry_name
+                project
+                url
+                type
+              }
+            }
+          }
+        }
+      `,
+      { first: 300 },
+      {
+        fetchPolicy:
+          deferredRegistryFetchKey === INITIAL_FETCH_KEY
+            ? 'store-and-network'
+            : 'network-only',
+        fetchKey: deferredRegistryFetchKey,
+      },
+    );
+
+  const registryNodes = filterOutNullAndUndefined(
+    _.map(container_registry_nodes?.edges, (edge) => edge?.node),
+  ).filter((node) => !!node.registry_name);
+  const registries: Array<RegistryRow> = registryNodes.map((node) => ({
+    registry_name: node.registry_name as string,
+    project: node.project ?? null,
+  }));
+
+  // A host already registered under a different project fixes the URL and the
+  // type of the row we are about to create; only the project differs.
+  const prefillForHost = (host: string, project?: string) => {
+    const sibling = registryNodes.find((node) => node.registry_name === host);
+    return {
+      registry_name: host,
+      project,
+      url: sibling?.url ?? `https://${host}`,
+      type: sibling?.type ?? undefined,
+    };
+  };
+
+  const lines = text.split('\n').map((raw, index) => ({
+    key: `${index}`,
+    raw,
+    resolved: resolveImageReference(parseImageReferenceLine(raw), registries),
+  }));
+  const previewLines = lines.filter(
+    ({ resolved }) => resolved.kind !== 'blank',
+  );
+  const pendingLines = previewLines.filter(
+    ({ resolved }) =>
+      resolved.submittable &&
+      outcomes[resolved.canonical ?? '']?.status !== 'success',
+  );
+  const hasBlockedLine = previewLines.some(
+    ({ resolved }) => !resolved.submittable,
+  );
+  const hasFailure = _.some(outcomes, (outcome) => outcome.status === 'error');
+  const canSubmit = pendingLines.length > 0 && !hasBlockedLine;
+
+  const scanImage = useTanMutation<
+    ScanImageResponse,
+    unknown,
+    { canonical: string; architecture: string }
+  >({
+    mutationFn: (values) =>
+      baiSignedRequestWithPromise<ScanImageResponse>({
+        method: 'POST',
+        url: '/admin/images/rescan',
+        body: values,
+        client: baiClient,
+      }),
+  });
+
+  const describeReason = (resolved: ResolvedReference) => {
+    const reasons: Record<ImageReferenceReason, string> = {
+      tag_required: t('environment.AddImageTagRequired'),
+      digest_unsupported: t('environment.AddImageDigestUnsupported'),
+      scheme_in_canonical: t('environment.AddImageSchemeNotAllowed'),
+      host_required: t('environment.AddImageHostRequired'),
+      registry_not_registered: t('environment.AddImageRegistryNotRegistered', {
+        registry: resolved.registryHost ?? '',
+      }),
+      registry_ambiguous: t('environment.AddImageRegistryAmbiguous', {
+        registries: resolved.matchedRegistries
+          .map((row) =>
+            [row.registry_name, row.project].filter(Boolean).join('/'),
+          )
+          .join(', '),
+      }),
+      invalid_tag: t('environment.AddImageInvalidTag'),
+      invalid_reference: t('environment.AddImageInvalidReference'),
+      empty_image_name: t('environment.AddImageEmptyImageName'),
+      ngc_not_a_container: t('environment.AddImageNotAContainer'),
+      ngc_url_unparseable: t('environment.AddImageUnreadableCatalogUrl'),
+      unsupported_command: t('environment.AddImageUnsupportedCommand'),
+    };
+    return resolved.reason ? reasons[resolved.reason] : null;
+  };
+
+  // A 404 `image_read_not-found` is today's behaviour for a canonical the
+  // manager's DB does not already carry (lablup/backend.ai#14612), and a bodiless
+  // 500 is how a missing manifest surfaces until the same ticket lands.
+  const describeError = (error: any) => {
+    if (
+      error?.statusCode === 404 &&
+      error?.error_code === 'image_read_not-found'
+    ) {
+      return t('environment.AddImageManagerCannotRegisterNewImages');
+    }
+    if (error?.statusCode === 500 && !error?.response) {
+      return t('environment.AddImageTagNotFoundInRegistry');
+    }
+    if (error?.statusCode === 403) {
+      return t('environment.AddImageRequiresSuperadmin');
+    }
+    return painKiller.relieve(error?.title) || error?.message || String(error);
+  };
+
+  const handleAdd = async () => {
+    setIsSubmitting(true);
+    const added: Array<string> = [];
+    const nextOutcomes: Record<string, LineOutcome> = { ...outcomes };
+    for (const { resolved } of pendingLines) {
+      const canonical = resolved.canonical as string;
+      try {
+        await scanImage.mutateAsync({ canonical, architecture });
+        nextOutcomes[canonical] = { status: 'success' };
+        added.push(canonical);
+      } catch (error) {
+        nextOutcomes[canonical] = {
+          status: 'error',
+          message: describeError(error),
+        };
+      }
+      setOutcomes({ ...nextOutcomes });
+    }
+    setIsSubmitting(false);
+
+    if (added.length > 0) {
+      onAdded?.(added);
+    }
+    if (added.length === pendingLines.length) {
+      message.success({
+        key: 'images-added',
+        content: t('environment.ImagesSuccessfullyAdded', {
+          count: added.length,
+        }),
+      });
+      onRequestClose();
+    }
+  };
+
+  return (
+    <BAIFlex direction="column" align="stretch" gap="md">
+      <TextArea
+        label={t('environment.AddImageReferences')}
+        description={t('environment.AddImageDesc')}
+        placeholder={t('environment.AddImagePlaceholder')}
+        rows={5}
+        value={text}
+        isDisabled={isSubmitting}
+        onChange={(value) => setText(value)}
+      />
+      {previewLines.length > 0 ? (
+        <BAIFlex
+          className="add-image-preview"
+          direction="column"
+          align="stretch"
+          gap="sm"
+        >
+          {previewLines.map(({ key, raw, resolved }) => {
+            const outcome = resolved.canonical
+              ? outcomes[resolved.canonical]
+              : undefined;
+            const reasonText = describeReason(resolved);
+            const tagsUrl =
+              resolved.reason === 'tag_required' && resolved.kind === 'ngc-url'
+                ? ngcTagsUrl(resolved.remotePath)
+                : null;
+            return (
+              <BAIFlex key={key} direction="column" align="start" gap="xxs">
+                <BAIFlex gap="xs" align="center" wrap="wrap">
+                  <Badge
+                    variant={
+                      outcome?.status === 'success'
+                        ? 'success'
+                        : outcome?.status === 'error'
+                          ? 'error'
+                          : resolved.submittable
+                            ? 'info'
+                            : 'warning'
+                    }
+                    label={
+                      outcome?.status === 'success'
+                        ? t('environment.AddImageAdded')
+                        : outcome?.status === 'error'
+                          ? t('environment.AddImageFailed')
+                          : resolved.submittable
+                            ? t('environment.AddImageReady')
+                            : t('environment.AddImageNeedsAttention')
+                    }
+                  />
+                  <Text
+                    type="code"
+                    hasStrikethrough={outcome?.status === 'success'}
+                  >
+                    {resolved.canonical ?? raw.trim()}
+                  </Text>
+                </BAIFlex>
+                {resolved.imageName ? (
+                  <Text type="supporting">
+                    {[
+                      resolved.project ?? t('environment.AddImageNoProject'),
+                      resolved.imageName,
+                      resolved.tag || t('environment.AddImageNoTag'),
+                    ].join(' · ')}
+                  </Text>
+                ) : null}
+                {reasonText ? (
+                  <Text type="supporting" color="primary">
+                    {reasonText}
+                  </Text>
+                ) : null}
+                {outcome?.message ? (
+                  <Text type="supporting" color="primary">
+                    {outcome.message}
+                  </Text>
+                ) : null}
+                {tagsUrl ? (
+                  <BAILink to={tagsUrl} target="_blank">
+                    {t('environment.AddImageOpenCatalogTags')}
+                  </BAILink>
+                ) : null}
+                {resolved.reason === 'registry_not_registered' &&
+                resolved.registryHost ? (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    icon={<PlusIcon size="1em" />}
+                    label={t('registry.AddRegistry')}
+                    onClick={() =>
+                      setPrefilledRegistry(
+                        prefillForHost(
+                          resolved.registryHost as string,
+                          resolved.remotePath?.split('/')[0],
+                        ),
+                      )
+                    }
+                  />
+                ) : null}
+              </BAIFlex>
+            );
+          })}
+        </BAIFlex>
+      ) : null}
+      <Collapsible
+        defaultIsOpen={false}
+        trigger={t('environment.AddImageAdvanced')}
+      >
+        <BAISelect
+          label={t('environment.Architecture')}
+          value={architecture}
+          disabled={isSubmitting}
+          onChange={(value) => setArchitecture(value)}
+          options={ARCHITECTURES.map((value) => ({ label: value, value }))}
+        />
+      </Collapsible>
+      <BAIFlex justify="end" gap="xs">
+        <Button
+          variant="secondary"
+          label={t('button.Cancel')}
+          isDisabled={isSubmitting}
+          onClick={onRequestClose}
+        />
+        <Button
+          variant="primary"
+          isDisabled={!canSubmit}
+          isLoading={isSubmitting}
+          label={
+            hasFailure ? t('environment.AddImageRetryFailed') : t('button.Add')
+          }
+          clickAction={handleAdd}
+        />
+      </BAIFlex>
+      <BAIUnmountAfterClose>
+        <ContainerRegistryEditorModal
+          open={!!prefilledRegistry}
+          initialValues={prefilledRegistry ?? undefined}
+          centered={false}
+          onOk={(type) => {
+            setPrefilledRegistry(null);
+            if (type === 'create') {
+              message.success({
+                key: 'registry-added',
+                content: t('registry.RegistrySuccessfullyAdded'),
+              });
+              // The new row re-resolves every line that named this registry.
+              startRegistryTransition(() => updateRegistryFetchKey());
+            }
+          }}
+          onCancel={() => setPrefilledRegistry(null)}
+        />
+      </BAIUnmountAfterClose>
+    </BAIFlex>
+  );
+};
+
+const AddImageModal: React.FC<AddImageModalProps> = ({
+  onRequestClose,
+  onAdded,
+  ...baiModalProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+
+  return (
+    <BAIModal
+      {...baiModalProps}
+      title={t('environment.AddImage')}
+      width={720}
+      footer={null}
+      onCancel={onRequestClose}
+    >
+      {/* The registry query lives in the content so the header stays on
+          screen while it loads. */}
+      <Suspense fallback={<BAISkeleton rows={5} />}>
+        <AddImageModalContent
+          onRequestClose={onRequestClose}
+          onAdded={onAdded}
+        />
+      </Suspense>
+    </BAIModal>
+  );
+};
+
+export default AddImageModal;
