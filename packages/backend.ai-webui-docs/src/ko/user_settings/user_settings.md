@@ -430,6 +430,7 @@ Backend.AI WebUI는 사설 저장소 접근 등 유연성을 제공하기 위해
 표시됩니다. 이 탭은 조회 전용이며 행에 대한 별도의 작업은 없습니다.
 
 ![](../images/login_history_tab.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 테이블에는 다음 열이 포함됩니다:
 

@@ -458,6 +458,7 @@ successful sign-ins, failed attempts, and login session events such as logout or
 expiry. This tab is read-only; there are no actions on the rows.
 
 ![](../images/login_history_tab.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 The table includes the following columns:
 

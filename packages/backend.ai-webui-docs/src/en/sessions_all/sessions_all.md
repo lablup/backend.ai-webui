@@ -528,6 +528,7 @@ changes, resource modifications, and administrative operations — along with wh
 action and when.
 
 ![](../images/session_audit_log.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 :::note
 The Audit Log is enforced by the backend and may be visible only to superadmins. Regular users
@@ -539,6 +540,9 @@ may see an empty result even when the tab is accessible.
 The Audit Log table includes the following columns:
 
 - **Triggered By**: The email address and account ID of the actor who initiated the action
+- **Client IP**: The IP address the action was requested from, shown exactly as the server
+  reports it. It may be partially masked by the administrator's client IP masking policy,
+  or `-` when it was not recorded
 - **Operation**: The type of action performed (for example, session creation, termination, or
   resource change)
 - **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, `DENIED`, or

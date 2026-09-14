@@ -449,6 +449,7 @@ Backend.AI WebUIは、プライベートリポジトリへのアクセスなど�
 関するイベントも表示されます。このタブは閲覧専用で、行に対する操作はありません。
 
 ![](../images/login_history_tab.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 テーブルには次の列が含まれます:
 
