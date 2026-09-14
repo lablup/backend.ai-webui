@@ -1,0 +1,73 @@
+import{r as d,j as e,B as s}from"./iframe-DgrY_kR7.js";import{t as S}from"./index-8H6nZE3H.js";import{B as f,M as v,a as E,m as r,b as O,c as U}from"./MockVFolderFileProviders-D7OzBfDE.js";import{B as D}from"./BAIButton-CA6y5WyL.js";import{B as y}from"./BAIFlex-q5g52q86.js";import{B as j}from"./BAIUnmountAfterClose-BAjZr7SY.js";import{r as V}from"./index-DL9i3Dmq.js";import{F as a}from"./engine-Cwy8Ii_r.js";import"./preload-helper-Dp1pzeXC.js";import"./isNumber-BadCaXWX.js";import"./toString-BWuQXuuf.js";import"./isSymbol-EbkFiaqZ.js";import"./filter-Dxp_fEjI.js";import"./_baseEach-DRpRmuf_.js";import"./get-DEJRmJLM.js";import"./_baseGet-Cg_Szi1L.js";import"./identity-DKeuBCMA.js";import"./isEmpty-DI62GE0Z.js";import"./useDebounce-BCVqGSaG.js";import"./useEventNotStable-B9o5eMXJ.js";import"./uniqBy-bDcZObK1.js";import"./_baseUniq-D62yvupP.js";import"./_baseIndexOf-Be9UPhX8.js";import"./_baseFindIndex-Cj99RmFE.js";import"./noop-DX6rZLP_.js";import"./useControllableValue-yMnbZxnV.js";import"./toFinite-CBLEZkbE.js";import"./_trimmedEndIndex-DuQxD0U0.js";import"./index-anrbg5Wo.js";import"./useConnectedBAIClient-DaqJe46r.js";import"./reactQueryAlias-CCZ0Iszw.js";import"./BAIComplexSelect-CteG32dC.js";import"./useIndicator-nkaybc8G.js";import"./isRenderable-BUV0eL6r.js";import"./clamp-CGfe6drS.js";import"./_baseClamp-DVUOCJN_.js";import"./_baseSlice-F8doVSIJ.js";import"./toInteger-DuKdBXjy.js";import"./map-BKJv1wad.js";import"./usePopover-DbNc-EkH.js";import"./useDevWarning-1r3in0Q0.js";import"./rtlStyles-T4i24HtE.js";import"./useResolvedRequired-SMAlSyaK.js";import"./composeEventHandlers-BolWE7qY.js";import"./InputClearButton-kdaK7aCD.js";import"./Divider-BbRUW_7R.js";import"./compact-CU4PNV0P.js";import"./some-BEn45fGL.js";import"./Token-BU61Vwqn.js";import"./SelectorOption-B4jto-Yk.js";import"./Item-DW4PDGtP.js";import"./BAIPropertyFilter-vG4o1rtr.js";import"./PowerSearch-8NqD4fgz.js";import"./_charsEndIndex-BHSW-HpW.js";import"./isNil-CHIgUVhi.js";import"./includes-Be0cq0jy.js";import"./isString-D3djnzm0.js";import"./toLower-s8ohjtoN.js";import"./_baseAssignValue-BWjxoikD.js";import"./_defineProperty-CjUvI3oh.js";import"./characters-DWaYg7k3.js";import"./NumberInput-DbH-REeO.js";import"./useInputStatusIcon-hQUZcLBE.js";import"./InputGroupContext-xUMWCeIl.js";import"./Selector-ousggebt.js";import"./useTypeahead-7G_klXqY.js";import"./isRtlElement-B2-7SF8s.js";import"./TextInput-ClbgFxDc.js";import"./VStack-CXhePhFv.js";import"./find-q8zLuDE4.js";import"./join-DKskq_cE.js";import"./forEach-BVIIF7pV.js";import"./_arrayEach-DpGxo2Of.js";import"./_castFunction-a6W-o7Lo.js";import"./split-D9MesEyL.js";import"./_isIterateeCall-CG5VKXG_.js";import"./uniq-D0nUp0Qx.js";import"./BAIModal-DfLBw6NJ.js";import"./BAIFetchKeyButton-DvPgQkzM.js";import"./useIntervalValue-BaEi__JI.js";import"./rotate-cw-Defhfily.js";import"./useListFocus-BOpobWCf.js";import"./DropdownMenu-BxzJY9eS.js";import"./renderDropdownItems-B2WUlvJD.js";import"./useMenuHover-3KApkIz-.js";import"./BAIDeleteConfirmModal-DQtT-fMI.js";import"./circle-alert-N2EktUVz.js";import"./Banner-CKCMWCNC.js";import"./BAISelectionLabel-BT2lSbEb.js";import"./astryxFormControls-CBvjNQOD.js";import"./trash-2-DJ_m_cDr.js";import"./download-Dlig-JEL.js";import"./BAINameActionCell-D1432qko.js";import"./BAILink-Don58MlL.js";import"./index-EjW3oKwZ.js";import"./Popover-C858kG8q.js";import"./folder-BvPBK3Cn.js";import"./BAITable-D0r-8l-s.js";import"./CheckboxInput-dn5oRpBz.js";import"./flatMap-DFLMlp5B.js";import"./_baseFlatten-CknlkNy2.js";import"./negate-CgKyvzXE.js";import"./sortBy-DJAjglXX.js";import"./_overRest-DO6dbRr7.js";import"./EmptyState-DYgwkJRF.js";import"./settings-BFyxesc_.js";import"./startsWith-DdAhxuZ1.js";import"./storybook-mock-utils-gk3nbAE0.js";import"./index-D5XIcgRh.js";import"./astryxLabel-CZ87o7t0.js";import"./circle-question-mark-V4sA40FX.js";const o=[{name:"my-workspace",row_id:"11111111-1111-1111-1111-111111111111"},{name:"team-shared-data",row_id:"22222222-2222-2222-2222-222222222222",permissions:["read_content"]}],I=()=>({[o[0].row_id]:{".":[r("models","DIRECTORY","2026-07-21T14:02:00"),r("datasets","DIRECTORY","2026-07-18T09:45:00"),r("outputs","DIRECTORY","2026-07-28T22:10:00"),r("README.md","FILE","2026-07-01T11:20:00"),r("train.py","FILE","2026-07-25T16:33:00")],models:[r("checkpoints","DIRECTORY","2026-07-27T03:12:00"),r("llama-3-ft","DIRECTORY","2026-07-26T19:40:00"),r("model_definition.yaml","FILE","2026-07-22T10:05:00")],"models/checkpoints":[r("epoch-001","DIRECTORY","2026-07-27T03:12:00"),r("epoch-002","DIRECTORY","2026-07-27T09:47:00"),r("latest.pt","FILE","2026-07-27T09:47:00")],"models/checkpoints/epoch-001":[],"models/checkpoints/epoch-002":[],"models/llama-3-ft":[r("adapter_config.json","FILE","2026-07-26T19:40:00")],datasets:[r("raw","DIRECTORY","2026-07-18T09:45:00"),r("cleaned.parquet","FILE","2026-07-19T08:00:00")],"datasets/raw":[],outputs:[]},[o[1].row_id]:{".":[r("shared-corpus","DIRECTORY","2026-07-10T08:00:00"),r("LICENSE","FILE","2026-07-02T12:00:00")],"shared-corpus":[]}}),Nr={title:"Input/BAIVFolderPathPicker",component:f,tags:["autodocs"],parameters:{layout:"centered",docs:{description:{component:"\n**BAIVFolderPathPicker** is a sub path picker for a given vfolder: a select-like trigger that opens a directory-only picker modal. The vfolder itself is chosen elsewhere (e.g. a `BAIVFolderSelect`) and passed in as `vfolderUuid`. The modal's vfolder query is preloaded from the open gesture (`useQueryLoader` + transition), so the trigger shows its own `loading` state while the data is in flight.\n\nThe value is the **sub path inside the vfolder** — `''` for the vfolder root, `\"sub/path\"` below it, `undefined` while nothing is picked — so it plugs directly into a Form.Item; `value`/`onChange` follow the controllable-state convention, so the component works both controlled and uncontrolled. Files are visible but disabled inside the picker; only directories can be entered and chosen. Folder CRUD (create / rename / delete) stays available via `BAIFileExplorer`'s `directoryPicker` mode. When the vfolder changes, reset the value — a sub path only makes sense within the vfolder it was picked from.\n\n## BAI-Specific Props\n| Prop | Type | Default | Description |\n|------|------|---------|-------------|\n| `vfolderUuid` | `string` | - | UUID of the vfolder to browse; pair with `disabled={!vfolderUuid}` until one is selected |\n| `value` | `string` | - | Selected sub path (`''` = vfolder root) |\n| `defaultValue` | `string` | - | Initial value for uncontrolled usage |\n| `onChange` | `(selectedSubPath: string) => void` | - | Fired when a location is confirmed in the modal |\n| `label` | `string` | \"Select a path\" | Accessible name of the trigger (visually hidden; the surrounding Form.Item renders the visible label) |\n\n> The stories run against a mock Relay environment and a mock `BAIClient`, so vfolder search, browsing, mkdir, rename and delete all work without a backend. The second folder (`team-shared-data`) is read-only — pick it in the Form story to see permission gating disable folder CRUD inside the modal.\n        "}}}},m={name:"Basic Usage (uncontrolled)",render:()=>{const[t,i]=d.useState();return e.jsx(v,{vfolders:o,trees:I,children:e.jsxs(y,{direction:"column",align:"stretch",gap:"md",style:{width:560},children:[e.jsx(f,{vfolderUuid:o[0].row_id,onChange:i}),e.jsxs(s,{type:"secondary",children:["onChange:"," ",e.jsx(s,{code:!0,children:t===void 0?"undefined":JSON.stringify(t)})]})]})})}},c={name:"Within Form (with external BAIVFolderSelect)",parameters:{docs:{description:{story:'The intended composition: a separate `BAIVFolderSelect` (with `valuePropName="row_id"` so the field holds the UUID) feeds `vfolderUuid`, and the picker plugs into its own Form.Item with `disabled={!vfolderUuid}` until a folder is chosen. Changing the vfolder resets the path field, and the required rule uses a custom validator because `""` (the vfolder root) is a valid pick.'}}},render:()=>{const[t]=a.useForm(),i=a.useWatch("vfolderUuid",t),[l,u]=d.useState();return e.jsx(v,{vfolders:o,trees:I,children:e.jsxs(a,{form:t,layout:"vertical",style:{width:560},onFinish:n=>{u(JSON.stringify(n))},children:[e.jsx(a.Item,{name:"vfolderUuid",label:"Folder",rules:[{required:!0}],children:e.jsx(E,{label:"Folder",isLabelHidden:!0,valuePropName:"row_id",onChange:()=>{t.setFieldValue("destination",void 0)}})}),e.jsx(a.Item,{name:"destination",label:"Destination",required:!0,rules:[{validator:(n,h)=>h===void 0?Promise.reject(new Error("Please select a path")):Promise.resolve()}],children:e.jsx(f,{vfolderUuid:i,disabled:!i})}),e.jsxs(y,{direction:"column",align:"start",gap:"sm",children:[e.jsx(D,{type:"primary",onClick:()=>t.submit(),children:"Submit"}),l&&e.jsxs(s,{type:"secondary",children:["submitted: ",e.jsx(s,{code:!0,children:l})]})]})]})})}},L=()=>{const[t,i]=d.useState(!1),[l,u]=d.useTransition(),[n,h]=d.useState(),[g,R]=V.useQueryLoader(O);return e.jsxs(y,{direction:"column",gap:"md",align:"start",children:[e.jsx(D,{type:"primary",loading:l,onClick:()=>{u(()=>{R({vfolderGlobalId:S("VirtualFolderNode",o[0].row_id)},{fetchPolicy:"store-and-network"}),i(!0)})},children:"Open directory picker"}),e.jsxs(s,{type:"secondary",children:["Last selection:"," ",e.jsx(s,{code:!0,children:n===void 0?"(none)":`/${n}`})]}),g!=null&&e.jsx(j,{children:e.jsx(U,{open:t,vfolderUuid:o[0].row_id,queryRef:g,onRequestClose:F=>{F!==void 0&&h(F),i(!1)}})})]})},p={name:"Directory Picker Modal",parameters:{docs:{description:{story:"`BAIDirectoryPickerModal` can also be driven directly — preload `BAIDirectoryPickerQuery` with `useQueryLoader` in the opening event (wrapped in a transition, since the modal suspends until the query resolves), pass the `queryRef`, and receive the chosen sub path via `onRequestClose` (`undefined` when cancelled)."}}},render:()=>e.jsx(v,{vfolders:o,trees:I,children:e.jsx(L,{})})};var b,k,w;m.parameters={...m.parameters,docs:{...(b=m.parameters)==null?void 0:b.docs,source:{originalSource:`{
+  name: 'Basic Usage (uncontrolled)',
+  render: () => {
+    const [lastChange, setLastChange] = useState<string | undefined>();
+    return <MockVFolderFileProviders vfolders={MOCK_VFOLDERS} trees={createInitialTrees}>
+        <BAIFlex direction="column" align="stretch" gap="md" style={{
+        width: 560
+      }}>
+          <BAIVFolderPathPicker vfolderUuid={MOCK_VFOLDERS[0].row_id} onChange={setLastChange} />
+          <BAIText type="secondary">
+            onChange:{' '}
+            <BAIText code>
+              {lastChange === undefined ? 'undefined' : JSON.stringify(lastChange)}
+            </BAIText>
+          </BAIText>
+        </BAIFlex>
+      </MockVFolderFileProviders>;
+  }
+}`,...(w=(k=m.parameters)==null?void 0:k.docs)==null?void 0:w.source}}};var B,T,x;c.parameters={...c.parameters,docs:{...(B=c.parameters)==null?void 0:B.docs,source:{originalSource:`{
+  name: 'Within Form (with external BAIVFolderSelect)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'The intended composition: a separate \`BAIVFolderSelect\` (with \`valuePropName="row_id"\` so the field holds the UUID) feeds \`vfolderUuid\`, and the picker plugs into its own Form.Item with \`disabled={!vfolderUuid}\` until a folder is chosen. Changing the vfolder resets the path field, and the required rule uses a custom validator because \`""\` (the vfolder root) is a valid pick.'
+      }
+    }
+  },
+  render: () => {
+    const [form] = Form.useForm<{
+      vfolderUuid?: string;
+      destination?: string;
+    }>();
+    const vfolderUuid = Form.useWatch('vfolderUuid', form);
+    const [submitted, setSubmitted] = useState<string>();
+    return <MockVFolderFileProviders vfolders={MOCK_VFOLDERS} trees={createInitialTrees}>
+        <Form form={form} layout="vertical" style={{
+        width: 560
+      }} onFinish={values => {
+        setSubmitted(JSON.stringify(values));
+      }}>
+          <Form.Item name="vfolderUuid" label="Folder" rules={[{
+          required: true
+        }]}>
+            <BAIVFolderSelect label="Folder" isLabelHidden valuePropName="row_id" onChange={() => {
+            // A sub path belongs to the vfolder it was picked from.
+            form.setFieldValue('destination', undefined);
+          }} />
+          </Form.Item>
+          <Form.Item name="destination" label="Destination" required rules={[{
+          // \`''\` (vfolder root) is a valid pick, so \`required: true\`
+          // (which rejects empty strings) cannot be used here.
+          validator: (_rule, value) => value === undefined ? Promise.reject(new Error('Please select a path')) : Promise.resolve()
+        }]}>
+            <BAIVFolderPathPicker vfolderUuid={vfolderUuid} disabled={!vfolderUuid} />
+          </Form.Item>
+          <BAIFlex direction="column" align="start" gap="sm">
+            {/* \`BAIButton\` deliberately does not expose antd's \`htmlType\`
+                (PILOT-DECISION in \`BAIButton.tsx\`), and Astryx \`Button\`
+                defaults its native \`type\` to \`'button'\` — so a bare click would
+                never submit. This form already holds an instance, so driving it
+                directly is the engine-native equivalent and keeps the \`rules\`
+                validation in the loop. */}
+            <BAIButton type="primary" onClick={() => form.submit()}>
+              Submit
+            </BAIButton>
+            {submitted && <BAIText type="secondary">
+                submitted: <BAIText code>{submitted}</BAIText>
+              </BAIText>}
+          </BAIFlex>
+        </Form>
+      </MockVFolderFileProviders>;
+  }
+}`,...(x=(T=c.parameters)==null?void 0:T.docs)==null?void 0:x.source}}};var A,P,C;p.parameters={...p.parameters,docs:{...(A=p.parameters)==null?void 0:A.docs,source:{originalSource:"{\n  name: 'Directory Picker Modal',\n  parameters: {\n    docs: {\n      description: {\n        story: '`BAIDirectoryPickerModal` can also be driven directly — preload `BAIDirectoryPickerQuery` with `useQueryLoader` in the opening event (wrapped in a transition, since the modal suspends until the query resolves), pass the `queryRef`, and receive the chosen sub path via `onRequestClose` (`undefined` when cancelled).'\n      }\n    }\n  },\n  render: () => <MockVFolderFileProviders vfolders={MOCK_VFOLDERS} trees={createInitialTrees}>\n      <DirectoryPickerModalDemo />\n    </MockVFolderFileProviders>\n}",...(C=(P=p.parameters)==null?void 0:P.docs)==null?void 0:C.source}}};const Yr=["Default","WithinForm","PickerModalOnly"];export{m as Default,p as PickerModalOnly,c as WithinForm,Yr as __namedExportsOrder,Nr as default};

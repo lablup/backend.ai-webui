@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>プロジェクト管理者機能 - Backend.AI WebUI User Guide - 日本語</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="プロジェクト管理者は、特定のプロジェクトに対する管理権限を付与されたユーザーです。プロジェクト管理者は、システム全体のスーパー管理者権限を必要とせずに、自分が管理するプロジェクトに所属するユーザーを確認したり、コンピュートセッションやモデルデプロイメントを監視したり、ストレージフォルダを運用したりできます。" />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/ja/project_admin.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="プロジェクト管理者機能" />
+  <meta property="og:description" content="プロジェクト管理者は、特定のプロジェクトに対する管理権限を付与されたユーザーです。プロジェクト管理者は、システム全体のスーパー管理者権限を必要とせずに、自分が管理するプロジェクトに所属するユーザーを確認したり、コンピュートセッションやモデルデプロイメントを監視したり、ストレージフォルダを運用したりできます。" />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/ja/project_admin.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="ja" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="プロジェクト管理者機能" />
+  <meta name="twitter:description" content="プロジェクト管理者は、特定のプロジェクトに対する管理権限を付与されたユーザーです。プロジェクト管理者は、システム全体のスーパー管理者権限を必要とせずに、自分が管理するプロジェクトに所属するユーザーを確認したり、コンピュートセッションやモデルデプロイメントを監視したり、ストレージフォルダを運用したりできます。" />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"プロジェクト管理者機能","inLanguage":"ja","description":"プロジェクト管理者は、特定のプロジェクトに対する管理権限を付与されたユーザーです。プロジェクト管理者は、システム全体のスーパー管理者権限を必要とせずに、自分が管理するプロジェクトに所属するユーザーを確認したり、コンピュートセッションやモデルデプロイメントを監視したり、ストレージフォルダを運用したりできます。","dateModified":"2026-09-03T09:07:18.000Z","url":"https://webui.docs.backend.ai/next/ja/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/project_admin.html" />
+  <link rel="alternate" hreflang="en" href="../en/project_admin.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/project_admin.html" />
+  <link rel="alternate" hreflang="th" href="../th/project_admin.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/project_admin.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="project_admin"></script>
+</head>
+<body data-copy-label="コピー" data-copied-label="コピーしました!" data-copy-failed-label="コピーに失敗しました">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (fff8618)">v26.9.0-alpha.0 (fff8618)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">ドキュメント検索...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="ドキュメント検索..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/project_admin.html" lang="ko">한국어</option><option value="../en/project_admin.html" lang="en">English</option><option value="../ja/project_admin.html" lang="ja" selected>日本語</option><option value="../th/project_admin.html" lang="th">ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">WebUI 次期バージョン (Next) の未公開ドキュメントです。</span>
+    <span class="docs-banner__desc">最新のドキュメントは<a class="docs-banner__link" href="../../26.8/ja/index.html">最新バージョン(26.8)</a>をご覧ください。</span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">バージョン</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="ja"
+      data-slug="project_admin"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">以前のバージョン</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">はじめに</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">はじめに</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="はじめに">
+    <li><a href="./quickstart.html">1. クイックスタート</a></li>
+<li><a href="./disclaimer.html">2. 免責事項</a></li>
+<li><a href="./overview.html">3. 概要</a></li>
+<li><a href="./installation.html">4. インストール</a></li>
+<li><a href="./login.html">5. ログイン</a></li>
+<li><a href="./header.html">6. トップバー</a></li>
+<li><a href="./start.html">7. スタート</a></li>
+<li><a href="./dashboard.html">8. ダッシュボード</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">ワークロード</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="ワークロード">
+    <li><a href="./session_page.html">9. セッションページ</a></li>
+<li><a href="./sessions_all.html">10. コンピュートセッション</a></li>
+<li><a href="./cluster_session.html">11. クラスターセッション</a></li>
+<li><a href="./deployment.html">12. デプロイ</a></li>
+<li><a href="./chat.html">13. チャット</a></li>
+<li><a href="./my_environments.html">14. マイ環境</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">ストレージとデータ</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="ストレージとデータ">
+    <li><a href="./vfolder.html">15. ストレージフォルダ</a></li>
+<li><a href="./mount_vfolder.html">16. ストレージフォルダのマウント</a></li>
+<li><a href="./share_vfolder.html">17. ストレージフォルダの共有</a></li>
+<li><a href="./sftp_to_container.html">18. コンピュートセッションへのSFTP接続</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">管理</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="管理">
+    <li><a href="./user_settings.html">19. ユーザー設定</a></li>
+<li><a href="./project_admin.html" class="active" aria-current="page">20. プロジェクト管理者機能</a></li>
+<li><a href="./rbac_management.html">21. RBAC管理</a></li>
+<li><a href="./agent_summary.html">22. エージェントサマリー</a></li>
+<li><a href="./statistics.html">23. 統計</a></li>
+<li><a href="./admin_menu.html">24. 管理者機能</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">リファレンス</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="リファレンス">
+    <li><a href="./trouble_shooting.html">25. FAQ＆トラブルシューティング</a></li>
+<li><a href="./appendix.html">26. 付録</a></li>
+<li><a href="./license_agreement.html">27. ライセンス契約</a></li>
+<li><a href="./references.html">28. 参考資料</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="このページはバージョン {version} には存在しません。代わりにバージョンのインデックスを表示しています。">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="閉じる" title="閉じる">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">ホーム</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">管理</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">プロジェクト管理者機能</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-project_admin">
+<p><a id="project-admin-features"></a></p>
+<h1 data-bai-block="0" id="project_admin-プロジェクト管理者機能">プロジェクト管理者機能<a class="hash-link" href="#project_admin-プロジェクト管理者機能" aria-label="Direct link to プロジェクト管理者機能">#</a></h1>
+<p data-bai-block="1"><strong>プロジェクト管理者</strong>は、特定のプロジェクトに対する管理権限を付与されたユーザーです。プロジェクト管理者は、システム全体のスーパー管理者権限を必要とせずに、自分が管理するプロジェクトに所属するユーザーを確認したり、コンピュートセッションやモデルデプロイメントを監視したり、ストレージフォルダを運用したりできます。</p>
+<p><a id="identifying-project-admin-projects"></a></p>
+<h2 data-bai-block="2" id="project_admin-プロジェクト管理者権限のあるプロジェクトの識別">プロジェクト管理者権限のあるプロジェクトの識別<a class="hash-link" href="#project_admin-プロジェクト管理者権限のあるプロジェクトの識別" aria-label="Direct link to プロジェクト管理者権限のあるプロジェクトの識別">#</a></h2>
+<p data-bai-block="3">ヘッダーのプロジェクトドロップダウンを開くと、プロジェクト管理者ロールを持つプロジェクトには名前の横に盾の形のバッジが表示されます。バッジにカーソルを合わせると <strong>プロジェクト管理者</strong> ツールチップが表示され、このプロジェクトを選択すると以下で説明するプロジェクト管理者向けサイドバー項目が表示されることが確認できます。</p>
+<p><figure data-bai-block="4" class="doc-figure"><img src="./images/header_project_selector_with_admin_badge.png" alt="" class="doc-image" loading="lazy" decoding="async" width="600" height="200" /><figcaption>図 20.1</figcaption></figure>
+</p>
+<p data-bai-block="5">ヘッダーのプロジェクトセレクターで別のプロジェクトに切り替えると、ユーザーのロールが再評価されます。同じユーザーが同一のログインセッション内で、あるプロジェクトではプロジェクト管理者として、別のプロジェクトでは一般ユーザーとして振る舞うことがあります。プロジェクト管理者ロールの付与と取り消しの方法については、RBAC管理章の<a href="./rbac_management.html#grant-project-admin">プロジェクト管理者権限の付与</a>セクションを参照してください。</p>
+<div class="admonition admonition-note">
+<div data-bai-block="6" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="7">プロジェクト管理者権限は選択したプロジェクトごとに再評価されるため、利用できるページはプロジェクトによって異なる場合があります。権限のないURLを開いたり、権限のないプロジェクトを選択したりすると、<strong>不正アクセス</strong>ページが表示され、最初に利用できるページに戻るボタンが併せて提供されます。</p>
+</div></div>
+
+
+<p><figure data-bai-block="8" class="doc-figure"><img src="./images/forbidden_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1260" height="700" /><figcaption>図 20.2</figcaption></figure>
+</p>
+<p><a id="set-project-admin"></a></p>
+<h2 data-bai-block="9" id="project_admin-プロジェクト管理者を設定">プロジェクト管理者を設定<a class="hash-link" href="#project_admin-プロジェクト管理者を設定" aria-label="Direct link to プロジェクト管理者を設定">#</a></h2>
+<p data-bai-block="10">スーパー管理者は、<strong>プロジェクト</strong>管理者ページ（<strong>ユーザー → プロジェクト</strong>）から起動する<strong>プロジェクト管理者を設定</strong>モーダルを通じて、1か所で1人以上のユーザーにプロジェクト管理者権限を付与・取り消しできます。</p>
+<p data-bai-block="11">各プロジェクト行で<strong>プロジェクト管理者を設定</strong>ボタンをクリックしてモーダルを開きます。</p>
+<p><figure data-bai-block="12" class="doc-figure"><img src="./images/project_admin_set_admin_action.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1212" height="399" /><figcaption>図 20.3</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="13" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="14"><strong>プロジェクト管理者を設定</strong>アクションは、<strong>マネージャー26.8.0以降</strong>のスーパー管理者が利用できます。それより古いマネージャーでは表示されず、モデルストアプロジェクトでは無効になります。</p>
+</div></div>
+
+
+<p data-bai-block="15">このモーダルは以下を提供します:</p>
+<ul>
+<li data-bai-block="16"><strong>ユーザー選択と追加</strong>: 1人以上のユーザーを選択する複数選択と、現在のプロジェクトに対するプロジェクト管理者権限を付与する<strong>追加</strong>ボタンです。</li>
+<li data-bai-block="17"><strong>現在の管理者テーブル</strong>: プロジェクトの現在の管理者の一覧で、各項目にはそのユーザーのプロジェクト管理者権限を削除する<strong>管理者権限を無効化</strong>（X）アクションがあります。</li>
+</ul>
+<p><figure data-bai-block="18" class="doc-figure"><img src="./images/project_admin_set_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="600" height="594" /><figcaption>図 20.4</figcaption></figure>
+</p>
+<p data-bai-block="19">このモーダルには、割り当てまたは取り消しの前に読むべき2つのアラートが表示されます:</p>
+<ul>
+<li data-bai-block="20"><strong>情報</strong>: プロジェクト管理者権限を付与すると、そのプロジェクトがユーザーの許可されたプロジェクトリストに自動的に追加され、以降そのユーザーはそのプロジェクトにアクセスできるようになります。</li>
+<li data-bai-block="21"><strong>警告</strong>: プロジェクト管理者権限を取り消しても、そのプロジェクトはユーザーの許可されたプロジェクトリストから自動的には削除され<strong>ません</strong>。プロジェクトへのアクセスをブロックするには、リストから手動で削除してください。</li>
+</ul>
+<p data-bai-block="22">モーダルタイトルの横にある<strong>RBAC権限を表示</strong>アイコンは、プロジェクトの<code>role_project_&lt;project_id&gt;_admin</code>ロールがあらかじめフィルターされ、詳細パネルが開いた状態でRBAC管理ページを開き、基盤となるロールを確認できるようにします。このロールの詳細については、RBAC管理章の<a href="./rbac_management.html#grant-project-admin">プロジェクト管理者権限の付与</a>を参照してください。</p>
+<p data-bai-block="23">複数のユーザーを一度に追加すると、失敗したユーザーは割り当てできなかったユーザー数を含むエラー通知で表示され、成功したユーザーには引き続き権限が付与されます。</p>
+<p><a id="the-project-admin-sidebar"></a></p>
+<h2 data-bai-block="24" id="project_admin-プロジェクト管理者用サイドバー">プロジェクト管理者用サイドバー<a class="hash-link" href="#project_admin-プロジェクト管理者用サイドバー" aria-label="Direct link to プロジェクト管理者用サイドバー">#</a></h2>
+<p data-bai-block="25">プロジェクト管理者ロールを持つプロジェクトを選択すると、サイドバーの <strong>運用</strong> セクションに、そのプロジェクトを管理するための4つの項目が表示されます:</p>
+<ul>
+<li data-bai-block="26"><strong>ユーザー</strong> — 現在のプロジェクトのメンバー</li>
+<li data-bai-block="27"><strong>データ</strong> — 現在のプロジェクトが所有するストレージフォルダ</li>
+<li data-bai-block="28"><strong>セッション</strong> — 現在のプロジェクトのユーザーが所有するコンピュートセッション</li>
+<li data-bai-block="29"><strong>デプロイメント</strong> — 現在のプロジェクトが所有するモデルデプロイメント</li>
+</ul>
+<p><figure data-bai-block="30" class="doc-figure"><img src="./images/project_admin_sidebar.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="900" /><figcaption>図 20.5</figcaption></figure>
+</p>
+<p data-bai-block="31">プロジェクト管理者ページでは、上部のプロジェクトセレクターで選択したプロジェクト配下の項目のみが表示されます。この内容はページ上部のバナーで確認できます。</p>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/project_admin_scope_alert.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2676" height="92" /><figcaption>図 20.6</figcaption></figure>
+</p>
+<p><a id="refreshing-project-admin-pages"></a></p>
+<h2 data-bai-block="33" id="project_admin-プロジェクト管理者ページの更新">プロジェクト管理者ページの更新<a class="hash-link" href="#project_admin-プロジェクト管理者ページの更新" aria-label="Direct link to プロジェクト管理者ページの更新">#</a></h2>
+<p data-bai-block="34">プロジェクト管理者ページには同じ更新ボタンが用意されています。更新ボタンをクリックすると、テーブルの一覧を更新できます。</p>
+<p data-bai-block="35">更新ボタンの横のドロップダウンボタンをクリックすると <strong>自動更新</strong> メニューが開き、自動更新の間隔を選択できます。</p>
+<p><figure data-bai-block="36" class="doc-figure"><img src="./images/project_admin_auto_refresh_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="188" height="446" /><figcaption>図 20.7</figcaption></figure>
+</p>
+<p><a id="users"></a></p>
+<h2 data-bai-block="37" id="project_admin-ユーザー">ユーザー<a class="hash-link" href="#project_admin-ユーザー" aria-label="Direct link to ユーザー">#</a></h2>
+<p data-bai-block="38"><strong>ユーザー</strong> ページには、現在選択されているプロジェクトに所属するすべてのユーザーが表示されます。このページを使用して、プロジェクトのメンバーを一目で確認できます。例えば、プロジェクトのリソースにアクセスできるユーザーを確認したり、非アクティブなアカウントを特定したりできます。</p>
+<p><figure data-bai-block="39" class="doc-figure"><img src="./images/project_admin_users_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.8</figcaption></figure>
+</p>
+<p data-bai-block="40">このページには以下のコントロールが用意されています:</p>
+<ul>
+<li data-bai-block="41"><strong>アクティブ / 非アクティブ</strong> セグメントコントロール: アクティブユーザーと非アクティブユーザーを切り替えます。デフォルトではアクティブが選択されています。</li>
+<li data-bai-block="42"><strong>プロパティフィルター</strong>: E-Mail、ID、ユーザー名、ロール、作成日時で一覧をフィルタリングします。</li>
+</ul>
+<p data-bai-block="43">プロジェクト管理者にとって、ユーザーページは<strong>読み取り専用</strong>です。このページにはユーザーの作成、編集、無効化のアクションはなく、これらの操作はスーパー管理者のみが、<a href="./admin_menu.html#admin-menus">管理者機能</a>章で説明されているシステム全体のユーザーページから実行できます。</p>
+<p><a id="data"></a></p>
+<h2 data-bai-block="44" id="project_admin-データ">データ<a class="hash-link" href="#project_admin-データ" aria-label="Direct link to データ">#</a></h2>
+<p data-bai-block="45"><strong>データ</strong> ページには、現在選択されているプロジェクトが所有するストレージフォルダ（vfolder）が表示されます。このページから、プロジェクト共有フォルダの作成、誤って削除されたフォルダの復元、保持の必要がなくなったフォルダの完全削除を行えます。</p>
+<p><figure data-bai-block="46" class="doc-figure"><img src="./images/project_admin_data_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.9</figcaption></figure>
+</p>
+<p data-bai-block="47">このページには以下のコントロールが用意されています:</p>
+<ul>
+<li data-bai-block="48"><p><strong>アクティブ / ゴミ箱</strong> タブ: 現在アクティブなフォルダとソフト削除されたフォルダを切り替えます。各タブには、含まれるフォルダ数を示す件数バッジが表示されます。</p>
+</li>
+<li data-bai-block="49"><p><strong>モードフィルター</strong>: フォルダの使用モードでフィルタリングします — <strong>全て</strong>、<strong>一般</strong>、<strong>パイプラインフォルダ</strong>、<strong>オートマウント</strong>、<strong>モデル</strong>。</p>
+<p> <strong>パイプラインフォルダ</strong> と <strong>モデル</strong> のオプションは、デプロイメントで対応する機能が有効になっている場合にのみ表示されます — <strong>パイプラインフォルダ</strong> には FastTrack パイプラインエンドポイント、<strong>モデル</strong> にはモデルフォルダが有効になっている必要があります。</p>
+</li>
+<li data-bai-block="50"><p><strong>プロパティフィルター</strong>: 標準のストレージフォルダプロパティフィルターを使用して一覧を絞り込みます。</p>
+</li>
+</ul>
+<h3 data-bai-block="51" id="project_admin-フォルダの作成">フォルダの作成<a class="hash-link" href="#project_admin-フォルダの作成" aria-label="Direct link to フォルダの作成">#</a></h3>
+<p data-bai-block="52">このページから新しいフォルダを作成するには:</p>
+<ol>
+<li data-bai-block="53">ページ右上の <strong>フォルダー作成</strong> ボタンをクリックします。</li>
+<li data-bai-block="54">作成モーダルでフォルダ情報を入力します。</li>
+<li data-bai-block="55"><strong>作成</strong> をクリックしてフォルダを作成します。</li>
+</ol>
+<p><figure data-bai-block="56" class="doc-figure"><img src="./images/project_admin_create_folder_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="984" /><figcaption>図 20.10</figcaption></figure>
+</p>
+<div class="admonition admonition-info">
+<div data-bai-block="57" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>情報</div>
+<div class="admonition-content">
+
+<p data-bai-block="58">プロジェクト管理者用データページからは、<strong>プロジェクト所有</strong>フォルダのみ作成できます。作成モーダルには、これを明示する次のメッセージが表示されます:</p>
+<blockquote>
+<p data-bai-block="59">プロジェクト管理者用データページではプロジェクトフォルダーのみ作成できます。</p>
+</blockquote>
+</div></div>
+
+
+<p data-bai-block="60">フォルダの使用モード、権限、クォータの詳細については、<a href="./vfolder.html#vfolders">ストレージフォルダ</a>章を参照してください。</p>
+<h3 data-bai-block="61" id="project_admin-フォルダの復元または完全削除">フォルダの復元または完全削除<a class="hash-link" href="#project_admin-フォルダの復元または完全削除" aria-label="Direct link to フォルダの復元または完全削除">#</a></h3>
+<p data-bai-block="62"><strong>ゴミ箱</strong> タブに切り替えると、ソフト削除されたフォルダを確認できます。行のチェックボックスで1つ以上のフォルダを選択し、選択件数の横に表示されるヘッダーのアクションボタンを使用します:</p>
+<ul>
+<li data-bai-block="63"><strong>復元</strong>: 選択したフォルダをアクティブタブに戻します。</li>
+<li data-bai-block="64"><strong>完全削除</strong>: 選択したフォルダを完全に削除します。この操作は取り消せず、確認のためにフォルダ名を入力する必要があります。</li>
+</ul>
+<p><figure data-bai-block="65" class="doc-figure"><img src="./images/project_admin_data_deleted_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.11</figcaption></figure>
+</p>
+<div class="admonition admonition-danger">
+<div data-bai-block="66" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>危険</div>
+<div class="admonition-content">
+
+<p data-bai-block="67">ストレージフォルダを完全削除すると、すべてのコンテンツが削除され、取り消すことはできません。確認モーダルでは、削除ボタンが有効になる前にフォルダ名を正確に入力する必要があります。</p>
+</div></div>
+
+
+<p><a id="sessions"></a></p>
+<h2 data-bai-block="68" id="project_admin-セッション">セッション<a class="hash-link" href="#project_admin-セッション" aria-label="Direct link to セッション">#</a></h2>
+<p data-bai-block="69"><strong>セッション</strong> ページには、現在選択されているプロジェクトのユーザーが所有するコンピュートセッションが表示されます。このページから、アクティブなワークロードの監視、長時間実行されているセッションの特定、不要になったセッションの終了を行えます。</p>
+<p><figure data-bai-block="70" class="doc-figure"><img src="./images/project_admin_sessions_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.12</figcaption></figure>
+</p>
+<p data-bai-block="71">このページには以下のコントロールが用意されています:</p>
+<ul>
+<li data-bai-block="72"><strong>実行中 / 終了済み</strong> セグメントコントロール: 現在実行中のセッションとすでに終了したセッションを切り替えます。</li>
+<li data-bai-block="73"><strong>プロパティフィルターと並べ替え</strong>: ID、セッション名、所有者UUIDで一覧をフィルタリングできます。並べ替え可能な列ヘッダーをクリックするとテーブルを並べ替えられます。</li>
+</ul>
+<h3 data-bai-block="74" id="project_admin-セッションの終了">セッションの終了<a class="hash-link" href="#project_admin-セッションの終了" aria-label="Direct link to セッションの終了">#</a></h3>
+<p data-bai-block="75">1つ以上のセッションを終了するには:</p>
+<ol>
+<li data-bai-block="76">最も左側の列のチェックボックスを使用して、終了するセッションを選択します。単一のセッションを終了する場合は、セッション名の横にある <strong>終了する</strong> ボタンを利用できます。</li>
+<li data-bai-block="77">テーブルヘッダーの電源オフアイコンをクリックして確認モーダルを開きます。</li>
+<li data-bai-block="78">モーダルに表示された対象セッションのリストを確認します。</li>
+<li data-bai-block="79">必要に応じて <strong>強制終了</strong> チェックボックスを選択すると、現在のステータスに関係なくセッションを終了またはキャンセルできます。このオプションを有効にすると警告が表示され、確認ボタンのラベルが <strong>終了する</strong> から <strong>強制終了</strong> に変わります。</li>
+<li data-bai-block="80">確認ボタンをクリックしてセッションを終了します。</li>
+</ol>
+<p><figure data-bai-block="81" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1060" height="516" /><figcaption>図 20.13</figcaption></figure>
+</p>
+<div class="admonition admonition-warning">
+<div data-bai-block="82" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div class="admonition-content">
+
+<p data-bai-block="83"><strong>強制終了</strong> は、セッションがハングして状態が不当に長時間変化しない場合にのみ使用してください。強制終了はエージェント上の実際のコンテナを削除しないため、その後に手動でのクリーンアップが必要になる場合があります。</p>
+</div></div>
+
+
+<div class="admonition admonition-note">
+<div data-bai-block="84" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div class="admonition-content">
+
+<p data-bai-block="85">プロジェクト管理者用のセッションページでは、現時点ではセッション名をクリックしてもセッションの詳細パネルは開きません。コンピュートセッションと詳細表示についての背景情報は、<a href="./session_page.html#session-page">セッションページ</a>章を参照してください。</p>
+</div></div>
+
+
+<p><a id="deployments"></a></p>
+<h2 data-bai-block="86" id="project_admin-デプロイメント">デプロイメント<a class="hash-link" href="#project_admin-デプロイメント" aria-label="Direct link to デプロイメント">#</a></h2>
+<p data-bai-block="87"><strong>デプロイメント</strong> ページには、現在選択されているプロジェクトが所有するモデルデプロイメントが表示されます。このページから、推論エンドポイントの管理、デプロイメント設定の編集、使用しなくなったデプロイメントの削除を行えます。</p>
+<p><figure data-bai-block="88" class="doc-figure"><img src="./images/project_admin_deployments_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.14</figcaption></figure>
+</p>
+<p data-bai-block="89">このページには以下のコントロールが用意されています:</p>
+<ul>
+<li data-bai-block="90"><strong>実行中 / 終了済み</strong> セグメントコントロール: 現在実行中のデプロイメントと終了したデプロイメントを切り替えます。</li>
+<li data-bai-block="91"><strong>プロパティフィルター</strong>: 名前、タグ、エンドポイントURL、公開設定で一覧をフィルタリングします。</li>
+</ul>
+<p data-bai-block="92">テーブルにはデプロイメントの名前、リビジョン、ライフサイクル、レプリカ、モデル、所有者、作成日時の各列に加え、必要に応じてドメイン、プロジェクト、リソースグループも表示されます。</p>
+<p data-bai-block="93"><strong>リビジョン</strong> 列には、デプロイメントの現在のリビジョンがクリック可能な <code>#N</code> リンクとして表示されます。これをクリックすると、現在のリビジョンの詳細を表示するパネルが開きます。</p>
+<h3 data-bai-block="94" id="project_admin-デプロイメントの操作">デプロイメントの操作<a class="hash-link" href="#project_admin-デプロイメントの操作" aria-label="Direct link to デプロイメントの操作">#</a></h3>
+<p data-bai-block="95">各デプロイメントの行では、以下のアクションが利用できます:</p>
+<ul>
+<li data-bai-block="96"><strong>デプロイメント名</strong>をクリックすると、プロジェクト管理者スコープ内のデプロイメント詳細ページに移動します。</li>
+<li data-bai-block="97"><strong>リビジョン番号</strong>（<code>#N</code>）をクリックすると、現在のリビジョンの詳細パネルが開きます。</li>
+<li data-bai-block="98"><strong>鉛筆アイコン</strong>をクリックすると、設定モーダルでデプロイメントの構成を編集できます。</li>
+<li data-bai-block="99"><strong>ゴミ箱アイコン</strong>をクリックすると、デプロイメントを削除できます。削除を実行するには、確認モーダルでデプロイメント名を入力する必要があります。</li>
+</ul>
+<p><figure data-bai-block="100" class="doc-figure"><img src="./images/project_admin_deployment_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.15</figcaption></figure>
+</p>
+<p data-bai-block="101">デプロイメントのリビジョン、レプリカ、トラフィックルーティングの詳細については、<a href="./deployment.html#model-serving">デプロイ</a>章を参照してください。</p>
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/project_admin/project_admin.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
+  <span class="last-updated">最終更新日 2026年9月3日</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./user_settings.html">
+        <div class="pagination-nav__sublabel">前へ</div>
+        <div class="pagination-nav__label">&laquo; ユーザー設定</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./rbac_management.html">
+        <div class="pagination-nav__sublabel">次へ</div>
+        <div class="pagination-nav__label">RBAC管理 &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">このページの目次</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E7%AE%A1%E7%90%86%E8%80%85%E6%A8%A9%E9%99%90%E3%81%AE%E3%81%82%E3%82%8B%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E8%AD%98%E5%88%A5" data-toc-target="project_admin-プロジェクト管理者権限のあるプロジェクトの識別">プロジェクト管理者権限のあるプロジェクトの識別</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E7%AE%A1%E7%90%86%E8%80%85%E3%82%92%E8%A8%AD%E5%AE%9A" data-toc-target="project_admin-プロジェクト管理者を設定">プロジェクト管理者を設定</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E7%AE%A1%E7%90%86%E8%80%85%E7%94%A8%E3%82%B5%E3%82%A4%E3%83%89%E3%83%90%E3%83%BC" data-toc-target="project_admin-プロジェクト管理者用サイドバー">プロジェクト管理者用サイドバー</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E7%AE%A1%E7%90%86%E8%80%85%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E6%9B%B4%E6%96%B0" data-toc-target="project_admin-プロジェクト管理者ページの更新">プロジェクト管理者ページの更新</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC" data-toc-target="project_admin-ユーザー">ユーザー</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%E3%83%87%E3%83%BC%E3%82%BF" data-toc-target="project_admin-データ">データ</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#project_admin-%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AE%E4%BD%9C%E6%88%90" data-toc-target="project_admin-フォルダの作成">フォルダの作成</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#project_admin-%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AE%E5%BE%A9%E5%85%83%E3%81%BE%E3%81%9F%E3%81%AF%E5%AE%8C%E5%85%A8%E5%89%8A%E9%99%A4" data-toc-target="project_admin-フォルダの復元または完全削除">フォルダの復元または完全削除</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3" data-toc-target="project_admin-セッション">セッション</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#project_admin-%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E7%B5%82%E4%BA%86" data-toc-target="project_admin-セッションの終了">セッションの終了</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#project_admin-%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%83%A1%E3%83%B3%E3%83%88" data-toc-target="project_admin-デプロイメント">デプロイメント</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#project_admin-%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4%E3%83%A1%E3%83%B3%E3%83%88%E3%81%AE%E6%93%8D%E4%BD%9C" data-toc-target="project_admin-デプロイメントの操作">デプロイメントの操作</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">ヘルプ</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/project_admin/project_admin.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>このページを編集</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="ドキュメント検索..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="ドキュメント検索..." data-no-results="結果が見つかりません" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>

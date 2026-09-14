@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RBAC 관리 - Backend.AI WebUI User Guide - 한국어</title>
+  <script>(function(){try{var t=localStorage.getItem('docs-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){t='dark';}if(t){document.documentElement.setAttribute('data-theme',t);}}catch(_){ }})();</script>
+  <link rel="stylesheet" href="../../assets/styles.79023af5.css" />
+  <link rel="icon" href="../../favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
+  <link rel="manifest" href="../../site.webmanifest" />
+  <meta name="description" content="RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 세부 권한을 묶은 역할을 정의하고 사용자에게 할당할 수 있습니다. RBAC를 사용하면 Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 동작을 제어할 수 있습니다." />
+  <link rel="canonical" href="https://webui.docs.backend.ai/26.8/ko/rbac_management.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="RBAC 관리" />
+  <meta property="og:description" content="RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 세부 권한을 묶은 역할을 정의하고 사용자에게 할당할 수 있습니다. RBAC를 사용하면 Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 동작을 제어할 수 있습니다." />
+  <meta property="og:url" content="https://webui.docs.backend.ai/next/ko/rbac_management.html" />
+  <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
+  <meta property="og:locale" content="ko" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RBAC 관리" />
+  <meta name="twitter:description" content="RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 세부 권한을 묶은 역할을 정의하고 사용자에게 할당할 수 있습니다. RBAC를 사용하면 Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 동작을 제어할 수 있습니다." />
+  <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"RBAC 관리","inLanguage":"ko","description":"RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 세부 권한을 묶은 역할을 정의하고 사용자에게 할당할 수 있습니다. RBAC를 사용하면 Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 동작을 제어할 수 있습니다.","dateModified":"2026-09-03T09:07:18.000Z","url":"https://webui.docs.backend.ai/next/ko/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <link rel="alternate" hreflang="ko" href="../ko/rbac_management.html" />
+  <link rel="alternate" hreflang="en" href="../en/rbac_management.html" />
+  <link rel="alternate" hreflang="ja" href="../ja/rbac_management.html" />
+  <link rel="alternate" hreflang="th" href="../th/rbac_management.html" />
+  <link rel="alternate" hreflang="x-default" href="../en/rbac_management.html" />
+  <link rel="stylesheet" href="../../assets/pr-preview.css" />
+  <script defer src="../../assets/pr-preview.js" data-page="rbac_management"></script>
+</head>
+<body data-copy-label="복사" data-copied-label="복사됨!" data-copy-failed-label="복사 실패">
+<header class="bai-topbar" role="banner">
+  <button class="bai-iconbtn bai-topbar__menu" type="button" aria-label="Toggle navigation"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__brandgroup">
+    <a class="bai-topbar__brand" href="./index.html">
+      <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
+      <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
+    </a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (fff8618)">v26.9.0-alpha.0 (fff8618)</a>
+  </div>
+  <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span class="bai-topbar__search-label">문서 검색...</span>
+    <span class="bai-kbd-group" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+  </button>
+  <button class="bai-iconbtn bai-topbar__searchicon" type="button" data-search-trigger aria-label="문서 검색..."><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <div class="bai-topbar__actions">
+    <label class="lang-switcher" aria-label="Language switcher">
+    <select class="lang-switcher__select" aria-label="Language switcher" onchange="if(this.value)window.location.assign(this.value)"><option value="../ko/rbac_management.html" lang="ko" selected>한국어</option><option value="../en/rbac_management.html" lang="en">English</option><option value="../ja/rbac_management.html" lang="ja">日本語</option><option value="../th/rbac_management.html" lang="th">ภาษาไทย</option></select>
+    <svg class="lang-switcher__icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M9.22 1.09V13.13H10.96V7.12H12.63V5.71H10.96V1.09ZM2.07 2.34V3.73H5.99C5.69 6.41 4.2 8.31 1.4 9.75L2.38 11.06C6.38 9.05 7.76 5.96 7.76 2.34Z M10.95 23H12.9L13.57 20.53H16.68L17.36 23H19.38L16.3 13.37H14.03ZM13.99 19.04 14.28 17.98C14.56 16.98 14.84 15.89 15.09 14.84H15.15C15.43 15.86 15.69 16.98 15.99 17.98L16.28 19.04Z"/></svg>
+  </label>
+    <button class="bai-iconbtn" type="button" data-theme-toggle aria-label="Toggle dark mode"><svg class="bai-theme-icon bai-theme-icon--light" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M12 3v2M12 19v2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4"/></svg><svg class="bai-theme-icon bai-theme-icon--dark" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg></button>
+    <a class="bai-iconbtn" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg></a>
+  </div>
+</header>
+<div class="docs-banner docs-banner--view-latest docs-banner--preview" role="status" data-current-version="next" data-latest-version="26.8">
+  <span class="docs-banner__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></span>
+  <div class="docs-banner__body">
+    <span class="docs-banner__title">WebUI 다음 버전(Next)의 미발행 문서입니다.</span>
+    <span class="docs-banner__desc">최신 문서는 <a class="docs-banner__link" href="../../26.8/ko/index.html">최신 버전(26.8)</a>에서 확인하세요.</span>
+  </div>
+</div>
+<div class="doc-page">
+  
+<aside class="doc-sidebar">
+  <div class="doc-sidebar-version">
+    <span class="doc-sidebar-version__label">버전</span>
+    <select
+      id="version-switcher"
+      class="version-switcher"
+      aria-label="Version switcher"
+      data-current="next"
+      data-lang="ko"
+      data-slug="rbac_management"
+      data-root-depth="3"
+      data-availability="{&quot;next&quot;:true,&quot;26.8&quot;:false,&quot;26.7&quot;:false,&quot;26.4&quot;:false}" data-legacy-url="https://webui.docs-archive.backend.ai/"
+    ><option value="next" selected>next</option><option value="26.8">26.8 (latest)</option><option value="26.7">26.7</option><option value="26.4">26.4</option><option value="__legacy__">이전 버전</option></select>
+    <script>(function(){
+  var sel = document.currentScript && document.currentScript.previousElementSibling;
+  if (!sel || sel.tagName !== 'SELECT') return;
+  sel.addEventListener('change', function(e) {
+    var target = e.target.value;
+    if (!target) return;
+    var current = sel.dataset.current;
+    if (target === '__legacy__') {
+      var legacy = sel.dataset.legacyUrl;
+      if (legacy) window.open(legacy, '_blank', 'noopener,noreferrer');
+      sel.value = current;
+      return;
+    }
+    if (target === current) return;
+    var lang = sel.dataset.lang;
+    var slug = sel.dataset.slug;
+    var rootDepth = parseInt(sel.dataset.rootDepth, 10) || 2;
+    var availability = {};
+    try { availability = JSON.parse(sel.dataset.availability || '{}'); } catch (_) {}
+    var hops = Math.max(0, rootDepth - 1);
+    var prefix = '';
+    for (var i = 0; i < hops; i++) { prefix += '../'; }
+    var hasSlug = availability[target] === true;
+    if (!hasSlug) {
+      try {
+        sessionStorage.setItem('docs.notice.notInVersion', target + '::' + slug);
+      } catch (_) {}
+    }
+    var dest = hasSlug
+      ? prefix + target + '/' + lang + '/' + slug + '.html'
+      : prefix + target + '/' + lang + '/index.html';
+    window.location.assign(dest);
+  });
+})();</script>
+  </div>
+  <div class="doc-sidebar__scroll">
+  <a class="doc-sidebar-intro" href="./index.html">
+    <span class="doc-sidebar-intro__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg></span>
+    <span class="doc-sidebar-intro__label">소개</span>
+  </a>
+    <nav class="doc-sidebar-groups" aria-label="Documentation navigation">
+      <details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span>
+    <span class="doc-sidebar-group__label">시작하기</span>
+    <span class="doc-sidebar-group__count" aria-label="8 pages">8</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="시작하기">
+    <li><a href="./quickstart.html">1. 빠른 시작</a></li>
+<li><a href="./disclaimer.html">2. 면책 조항</a></li>
+<li><a href="./overview.html">3. 개요</a></li>
+<li><a href="./installation.html">4. 설치</a></li>
+<li><a href="./login.html">5. 로그인</a></li>
+<li><a href="./header.html">6. 상단 바</a></li>
+<li><a href="./start.html">7. 시작 페이지</a></li>
+<li><a href="./dashboard.html">8. 대시보드</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m12 3 9 5v8l-9 5-9-5V8l9-5Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="m3 8 9 5 9-5M12 13v8"/></svg></span>
+    <span class="doc-sidebar-group__label">워크로드</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="워크로드">
+    <li><a href="./session_page.html">9. 세션 페이지</a></li>
+<li><a href="./sessions_all.html">10. 연산 세션</a></li>
+<li><a href="./cluster_session.html">11. 클러스터 세션</a></li>
+<li><a href="./deployment.html">12. 배포</a></li>
+<li><a href="./chat.html">13. 채팅</a></li>
+<li><a href="./my_environments.html">14. 내 환경</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></span>
+    <span class="doc-sidebar-group__label">스토리지 및 데이터</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="스토리지-및-데이터">
+    <li><a href="./vfolder.html">15. 스토리지 폴더</a></li>
+<li><a href="./mount_vfolder.html">16. 스토리지 폴더 마운트</a></li>
+<li><a href="./share_vfolder.html">17. 스토리지 폴더 공유</a></li>
+<li><a href="./sftp_to_container.html">18. 연산 세션에 대한 SFTP 연결</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group" open>
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg></span>
+    <span class="doc-sidebar-group__label">관리</span>
+    <span class="doc-sidebar-group__count" aria-label="6 pages">6</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="관리">
+    <li><a href="./user_settings.html">19. 사용자 설정</a></li>
+<li><a href="./project_admin.html">20. 프로젝트 관리자 기능</a></li>
+<li><a href="./rbac_management.html" class="active" aria-current="page">21. RBAC 관리</a></li>
+<li><a href="./agent_summary.html">22. 에이전트 요약</a></li>
+<li><a href="./statistics.html">23. 통계</a></li>
+<li><a href="./admin_menu.html">24. 관리자 기능</a></li>
+  </ul>
+</details>
+<details class="doc-sidebar-group">
+  <summary class="doc-sidebar-group__summary">
+    <span class="doc-sidebar-group__icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg></span>
+    <span class="doc-sidebar-group__label">참고 자료</span>
+    <span class="doc-sidebar-group__count" aria-label="4 pages">4</span>
+  </summary>
+  <ul class="doc-sidebar-nav doc-sidebar-nav--grouped" data-group="참고-자료">
+    <li><a href="./trouble_shooting.html">25. FAQ 및 문제 해결</a></li>
+<li><a href="./appendix.html">26. 부록</a></li>
+<li><a href="./license_agreement.html">27. 사용권 계약 조건</a></li>
+<li><a href="./references.html">28. 참고 자료</a></li>
+  </ul>
+</details>
+    </nav>
+  </div>
+</aside>
+  <main class="doc-main">
+    <div class="docs-notice docs-notice--not-in-version" role="status" hidden data-current-version="next" data-message-template="이 페이지는 버전 {version}에 존재하지 않습니다. 해당 버전의 인덱스 페이지로 이동했습니다.">
+  <span class="docs-notice__body"></span>
+  <button type="button" class="docs-notice__dismiss" aria-label="닫기" title="닫기">&times;</button>
+</div>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a class="breadcrumb__link" href="./index.html">홈</a></li>
+    <li class="breadcrumb__item breadcrumb__item--category">관리</li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">RBAC 관리</li>
+  </ol>
+</nav>
+    <section class="chapter" id="chapter-rbac_management">
+<p><a id="rbac-management"></a></p>
+<h1 data-bai-block="0" id="rbac_management-rbac-관리">RBAC 관리<a class="hash-link" href="#rbac_management-rbac-관리" aria-label="Direct link to RBAC 관리">#</a></h1>
+<p data-bai-block="1">RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 세부 권한을 묶은 역할을 정의하고 사용자에게 할당할 수 있습니다. RBAC를 사용하면 Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 동작을 제어할 수 있습니다.</p>
+<p data-bai-block="2">RBAC 관리 페이지에 접근하려면 사이드바 메뉴의 <strong>관리자 설정</strong> 섹션에서 <strong>RBAC 관리</strong>를 클릭합니다.</p>
+<p><figure data-bai-block="3" class="doc-figure"><img src="./images/rbac_role_list_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.1</figcaption></figure>
+</p>
+<p><a id="role-list"></a></p>
+<h2 data-bai-block="4" id="rbac_management-역할-목록">역할 목록<a class="hash-link" href="#rbac_management-역할-목록" aria-label="Direct link to 역할 목록">#</a></h2>
+<p data-bai-block="5">역할 목록 페이지는 모든 역할을 테이블 형태로 표시합니다. 페이지 상단의 컨트롤을 사용하여 역할을 필터링, 검색 및 정렬할 수 있습니다.</p>
+<ul>
+<li data-bai-block="6"><strong>상태 필터</strong>: <strong>활성</strong> 및 <strong>비활성</strong> 역할을 전환하는 세그먼트 컨트롤입니다. 기본적으로 활성이 선택되어 있습니다.</li>
+<li data-bai-block="7"><strong>속성 필터</strong>: 목록을 좁히는 속성 필터입니다. 필터 입력은 선택한 속성에 따라 달라집니다. 다음 속성을 사용할 수 있습니다:<ul>
+<li data-bai-block="8"><strong>이름</strong>: 역할 이름으로 검색하는 자유 형식 텍스트입니다.</li>
+<li data-bai-block="9"><strong>소스</strong>: 사용 가능한 값(<strong>시스템</strong> / <strong>사용자 정의</strong>)을 자유 형식 텍스트 대신 선택형 입력으로 노출합니다.</li>
+<li data-bai-block="10"><strong>할당된 사용자</strong>: 사용자 선택기로, 선택한 사용자에게 할당된 역할만 표시하도록 목록을 필터링합니다. 생성된 조건 태그에는 사용자의 이메일이 표시됩니다.</li>
+<li data-bai-block="11"><strong>적용 범위</strong>: RBAC 적용 범위 타입(예: 도메인, 프로젝트, 사용자)을 나열하는 선택형 입력입니다.</li>
+<li data-bai-block="12"><strong>적용 범위 ID</strong>: 원시 적용 범위 UUID로 검색하는 자유 형식 텍스트입니다.</li>
+</ul>
+</li>
+<li data-bai-block="13"><strong>역할 생성</strong>: 새로운 사용자 정의 역할을 생성하는 버튼입니다.</li>
+</ul>
+<p data-bai-block="14">테이블에는 다음 열이 표시됩니다:</p>
+<ul>
+<li data-bai-block="15"><strong>역할 이름</strong>: 역할의 이름입니다. 이름을 클릭하면 역할 상세 패널이 열립니다.</li>
+<li data-bai-block="16"><strong>설명</strong>: 역할의 목적에 대한 간략한 설명입니다.</li>
+<li data-bai-block="17"><strong>적용 범위</strong>: 역할에 처음 할당된 적용 범위의 타입입니다. 역할에 여러 적용 범위가 할당된 경우 <code>+N</code> 표시가 함께 표시됩니다.</li>
+<li data-bai-block="18"><strong>적용 대상 ID</strong>: 역할에 처음 할당된 적용 범위의 원시 ID입니다. 여러 적용 범위가 할당된 경우 <code>+N</code> 표시가 함께 표시됩니다.</li>
+<li data-bai-block="19"><strong>소스</strong>: 역할이 <strong>시스템</strong>(사전 정의) 또는 <strong>사용자 정의</strong>(사용자 생성)인지 나타냅니다.</li>
+<li data-bai-block="20"><strong>자동 할당</strong>: 역할이 등록된 적용 범위에 사용자가 추가될 때 자동으로 역할이 할당되는지 여부를 나타냅니다. 자동 할당이 활성화된 경우 <strong>활성</strong>, 비활성화된 경우 <strong>비활성</strong>으로 표시됩니다.</li>
+<li data-bai-block="21"><strong>생성일</strong>: 역할이 생성된 날짜와 시간입니다.</li>
+<li data-bai-block="22"><strong>수정일</strong>: 역할이 마지막으로 수정된 날짜와 시간입니다.</li>
+</ul>
+<h3 data-bai-block="23" id="rbac_management-시스템-역할과-사용자-정의-역할">시스템 역할과 사용자 정의 역할<a class="hash-link" href="#rbac_management-시스템-역할과-사용자-정의-역할" aria-label="Direct link to 시스템 역할과 사용자 정의 역할">#</a></h3>
+<p data-bai-block="24">역할은 두 가지 소스 유형으로 분류됩니다:</p>
+<ul>
+<li data-bai-block="25"><strong>시스템</strong>: 자동 생성되는 역할입니다. 이름이나 설명을 편집할 수 없지만, 사용자 할당 및 세부 권한을 관리할 수 있습니다.</li>
+<li data-bai-block="26"><strong>사용자 정의</strong>: 슈퍼 관리자가 생성한 역할입니다. 이름, 설명, 할당, 적용 범위, 세부 권한 등 모든 항목을 편집할 수 있습니다.</li>
+</ul>
+<h2 data-bai-block="27" id="rbac_management-역할-생성">역할 생성<a class="hash-link" href="#rbac_management-역할-생성" aria-label="Direct link to 역할 생성">#</a></h2>
+<p data-bai-block="28">역할을 생성할 때는 <strong>적용 범위</strong>를 먼저 정의합니다. 적용 범위는 역할을 특정 리소스 엔티티(도메인, 프로젝트, 사용자 등)에 바인딩하여, 이후 추가되는 모든 세부 권한이 여기에서 정의한 적용 범위 내에서만 작동하도록 제한합니다.</p>
+<p data-bai-block="29">새로운 사용자 정의 역할을 생성하려면:</p>
+<ol>
+<li data-bai-block="30">역할 목록 페이지 오른쪽 상단의 <strong>역할 생성</strong> 버튼을 클릭합니다</li>
+<li data-bai-block="31">생성 모달에서 다음 필드를 입력합니다:<ul>
+<li data-bai-block="32"><strong>역할 이름</strong> (필수): 고유한 역할 이름을 입력합니다</li>
+<li data-bai-block="33"><strong>설명</strong> (선택): 역할의 목적에 대한 설명을 입력합니다</li>
+<li data-bai-block="34"><strong>자동 할당</strong> (선택): 활성화하면 역할이 등록된 적용 범위에 사용자가 추가될 때 자동으로 역할이 부여됩니다. 기본적으로 비활성화되어 있습니다.</li>
+<li data-bai-block="35"><strong>적용 범위 / 적용 대상</strong> (필수, 최소 1개): 각 적용 범위 행에서 <strong>적용 범위</strong>를 선택한 후 해당 범위 내의 특정 <strong>적용 대상</strong>을 선택합니다. <strong>추가</strong> 버튼으로 적용 범위 행을 더 추가하거나 삭제 아이콘으로 행을 제거할 수 있습니다. 최소 하나의 적용 범위를 추가해야 합니다.</li>
+</ul>
+</li>
+<li data-bai-block="36"><strong>확인</strong>을 클릭하여 역할을 생성합니다</li>
+</ol>
+<p><figure data-bai-block="37" class="doc-figure"><img src="./images/rbac_create_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.2</figcaption></figure>
+</p>
+<div class="admonition admonition-info">
+<div data-bai-block="38" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>정보</div>
+<div class="admonition-content">
+
+<p data-bai-block="39">역할 생성 시점에 설정하는 <strong>적용 범위</strong>와 <strong>적용 대상</strong>은 그 자체로 어떤 권한을 부여하지 않습니다. 대신 이후 이 역할에 <a href="#manage-permissions">세부 권한</a>을 추가할 때 선택할 수 있는 <strong>적용 범위 / 적용 대상</strong>의 후보를 미리 정의하는 역할을 합니다. 즉, 역할 생성 단계에서는 이 역할의 세부 권한이 가질 수 있는 적용 범위와 적용 대상의 범주를 미리 한정하는 것이며, 세부 권한은 여기에서 정의한 적용 범위와 적용 대상 안에서만 설정할 수 있습니다.</p>
+</div></div>
+
+
+<div class="admonition admonition-warning">
+<div data-bai-block="40" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
+<div class="admonition-content">
+
+<p data-bai-block="41">적용 범위는 역할 생성 시점에 정의되며 이후 역할 상세 패널에서 수정할 수 없습니다. 역할을 생성하기 전에 적용 범위를 신중하게 계획하세요.</p>
+</div></div>
+
+
+<h2 data-bai-block="42" id="rbac_management-역할-상세-보기">역할 상세 보기<a class="hash-link" href="#rbac_management-역할-상세-보기" aria-label="Direct link to 역할 상세 보기">#</a></h2>
+<p data-bai-block="43">역할에 대한 상세 정보를 확인하려면 테이블에서 역할 이름을 클릭합니다. 페이지 오른쪽에 상세 패널이 열립니다.</p>
+<p data-bai-block="44">패널 헤더에는 역할 이름이 표시되며 사용자 정의 역할의 경우 <strong>편집</strong> 버튼이 제공됩니다. 상세 섹션에는 다음 메타데이터가 표시됩니다:</p>
+<ul>
+<li data-bai-block="45"><strong>소스</strong>: 시스템 또는 사용자 정의</li>
+<li data-bai-block="46"><strong>상태</strong>: 활성 또는 비활성</li>
+<li data-bai-block="47"><strong>자동 할당</strong>: 자동 할당이 활성 또는 비활성 여부를 나타냅니다. 활성 상태이면 역할이 등록된 적용 범위 중 하나에 사용자가 추가될 때 자동으로 역할이 부여됩니다.</li>
+<li data-bai-block="48"><strong>생성일</strong>: 생성 시간</li>
+<li data-bai-block="49"><strong>수정일</strong>: 마지막 수정 시간</li>
+<li data-bai-block="50"><strong>설명</strong>: 역할의 설명</li>
+</ul>
+<p data-bai-block="51">메타데이터 아래에는 <strong>권한</strong>과 <strong>역할 할당</strong> 두 개의 탭이 있습니다. 기본적으로 <strong>권한</strong> 탭이 선택되어 있습니다.</p>
+<p><figure data-bai-block="52" class="doc-figure"><img src="./images/rbac_role_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.3</figcaption></figure>
+</p>
+<h3 data-bai-block="53" id="rbac_management-역할-편집">역할 편집<a class="hash-link" href="#rbac_management-역할-편집" aria-label="Direct link to 역할 편집">#</a></h3>
+<p data-bai-block="54">사용자 정의 역할의 이름, 설명 또는 자동 할당 설정을 편집하려면:</p>
+<ol>
+<li data-bai-block="55">테이블에서 역할 이름을 클릭하여 상세 패널을 엽니다</li>
+<li data-bai-block="56">패널 헤더의 <strong>편집</strong> 버튼(연필 아이콘)을 클릭합니다</li>
+<li data-bai-block="57">편집 모달에서 다음 필드를 수정합니다:<ul>
+<li data-bai-block="58"><strong>역할 이름</strong>: 역할의 이름</li>
+<li data-bai-block="59"><strong>설명</strong>: 역할의 목적에 대한 설명</li>
+<li data-bai-block="60"><strong>자동 할당</strong>: 활성화하면 역할이 등록된 적용 범위에 사용자가 추가될 때 자동으로 역할이 부여됩니다.</li>
+</ul>
+</li>
+<li data-bai-block="61"><strong>확인</strong>을 클릭하여 변경 사항을 저장합니다</li>
+</ol>
+<p><figure data-bai-block="62" class="doc-figure"><img src="./images/rbac_edit_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.4</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="63" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="64">편집 버튼은 사용자 정의 역할에서만 사용할 수 있습니다. 시스템 역할의 이름이나 설명은 수정할 수 없습니다. 또한 역할 생성 후에는 어느 경우에도 적용 범위를 수정할 수 없습니다.</p>
+</div></div>
+
+
+<p><a id="view-role-scopes"></a></p>
+<p><a id="manage-permissions"></a></p>
+<h2 data-bai-block="65" id="rbac_management-세부-권한-관리">세부 권한 관리<a class="hash-link" href="#rbac_management-세부-권한-관리" aria-label="Direct link to 세부 권한 관리">#</a></h2>
+<p data-bai-block="66">역할 상세 패널의 <strong>권한</strong> 탭은 역할의 적용 범위와 세분화된 세부 권한을 결합한 통합 상세 보기입니다. 역할이 사용하는 <strong>적용 범위 타입마다 하나의 카드</strong>를 렌더링하며 각 카드는 해당 적용 범위 타입의 적용 범위와 그 위에 부여된 권한을 함께 표시합니다.</p>
+<p><figure data-bai-block="67" class="doc-figure"><img src="./images/rbac_permissions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.5</figcaption></figure>
+</p>
+<div class="admonition admonition-info">
+<div data-bai-block="68" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>정보</div>
+<div class="admonition-content">
+
+<p data-bai-block="69">역할이 참조할 수 있는 적용 범위는 역할 생성 시에 정의되며 이후에는 <strong>읽기 전용</strong>입니다. 역할 상세 패널에서 변경할 수 없습니다. 권한 탭에서는 적용 범위가 각 적용 범위 타입 카드 내부의 행으로 나타납니다. 역할의 적용 범위를 변경하려면 원하는 적용 범위를 가진 새 역할을 생성해야 합니다.</p>
+</div></div>
+
+
+<h3 data-bai-block="70" id="rbac_management-적용-범위-타입-카드">적용 범위 타입 카드<a class="hash-link" href="#rbac_management-적용-범위-타입-카드" aria-label="Direct link to 적용 범위 타입 카드">#</a></h3>
+<p data-bai-block="71">권한 탭에는 역할이 사용하는 적용 범위 타입(예: 도메인, 프로젝트, 사용자)마다 하나의 카드가 표시됩니다. 역할이 사용하지 않는 적용 범위 타입은 숨겨지며 카드 제목은 현지화된 적용 범위 타입 이름입니다. 각 카드는 다음을 포함합니다:</p>
+<ul>
+<li data-bai-block="72"><strong>적용 범위 ID 필터</strong>: 원시 적용 범위 UUID로 카드의 행을 좁히는 속성 필터입니다. 현지화된 적용 범위 이름으로는 검색할 수 없습니다.</li>
+<li data-bai-block="73"><strong>새로 고침</strong> 버튼: 카드의 행을 다시 불러오고 권한 태그를 다시 계산합니다.</li>
+<li data-bai-block="74"><strong>적용 범위 테이블</strong>: 이 타입에 속하는 역할의 적용 범위를 다음 열과 함께 나열합니다:<ul>
+<li data-bai-block="75"><strong>이름</strong>: 현지화된 적용 범위 이름(예: 도메인, 프로젝트 또는 사용자의 표시 이름)이며, 해당 적용 범위에 대한 권한 편집 모달을 여는 인라인 <strong>편집</strong> 동작이 함께 표시됩니다.</li>
+<li data-bai-block="76"><strong>ID</strong>: 적용 범위 UUID입니다.</li>
+<li data-bai-block="77"><strong>권한</strong>: 권한 타입마다 하나의 태그가 부여 상태에 따라 색상으로 표시됩니다(아래 참조). 적용 범위 타입에 설정 가능한 엔티티가 없으면 이 열은 <code>-</code>로 표시됩니다.</li>
+</ul>
+</li>
+<li data-bai-block="78"><strong>페이지네이션</strong>: 적용 범위가 많을 때 카드의 적용 범위를 페이지로 나눕니다.</li>
+</ul>
+<p data-bai-block="79">역할에 적용 범위가 전혀 없으면 탭에는 카드 대신 <strong>역할이 적용될 범위가 설정되지 않았습니다</strong> 메시지가 표시됩니다.</p>
+<p><a id="grant-state-tags"></a></p>
+<h3 data-bai-block="80" id="rbac_management-부여-상태-태그">부여 상태 태그<a class="hash-link" href="#rbac_management-부여-상태-태그" aria-label="Direct link to 부여 상태 태그">#</a></h3>
+<p data-bai-block="81"><strong>권한</strong> 열에서 각 권한 타입 태그는 해당 적용 범위에 대해 그 타입의 동작이 얼마나 부여되었는지에 따라 색상으로 표시됩니다:</p>
+<ul>
+<li data-bai-block="82"><strong>모두 허용됨</strong>(초록색): 해당 권한 타입의 모든 동작이 부여되었습니다.</li>
+<li data-bai-block="83"><strong>일부 허용됨</strong>(노란색): 일부 동작만 부여되었고 전부는 아닙니다.</li>
+<li data-bai-block="84"><strong>허용되지 않음</strong>(색상 없음): 어떤 동작도 부여되지 않았습니다.</li>
+</ul>
+<p data-bai-block="85">태그 위에 마우스를 올리면 상태 라벨을 확인할 수 있습니다.</p>
+<p><figure data-bai-block="86" class="doc-figure"><img src="./images/rbac_permissions_card_grant_tags.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1502" height="470" /><figcaption>그림 21.6</figcaption></figure>
+</p>
+<h3 data-bai-block="87" id="rbac_management-세부-권한-이해하기">세부 권한 이해하기<a class="hash-link" href="#rbac_management-세부-권한-이해하기" aria-label="Direct link to 세부 권한 이해하기">#</a></h3>
+<p data-bai-block="88">각 세부 권한은 네 가지 구성 요소로 이루어져 있습니다:</p>
+<ul>
+<li data-bai-block="89"><strong>적용 범위</strong>: 세부 권한이 적용될 유효 범위(예: 도메인, 프로젝트, 사용자)</li>
+<li data-bai-block="90"><strong>적용 대상</strong>: 유효 범위 내의 특정 엔티티(예: 특정 도메인 이름, 특정 프로젝트)</li>
+<li data-bai-block="91"><strong>권한 타입</strong>: 권한의 적용 유효 범위 안에서 동작이 수행되는 대상입니다.</li>
+<li data-bai-block="92"><strong>동작</strong>: 권한 타입에 허용되는 동작입니다. 선택한 권한 타입에 따라 허용되는 동작만 필터링되어 표시됩니다. 동작은 두 가지 카테고리로 그룹화됩니다:<ul>
+<li data-bai-block="93"><strong>직접 수행</strong>: 생성, 조회, 수정, 삭제, 영구 삭제</li>
+<li data-bai-block="94"><strong>타인에게 위임</strong>: 모든 권한 위임, 조회 권한 위임, 수정 권한 위임, 삭제 권한 위임, 영구 삭제 권한 위임</li>
+</ul>
+</li>
+</ul>
+<div class="admonition admonition-info">
+<div data-bai-block="95" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>정보</div>
+<div class="admonition-content">
+
+<p data-bai-block="96">각 세부 권한의 <strong>적용 범위 / 적용 대상</strong> 조합은 역할의 적용 범위 항목에서 상속됩니다. 역할 생성 시에 정의된 적용 범위에 대해서만 세부 권한을 부여할 수 있습니다. 역할의 범위를 넓히려면 적용 범위가 추가된 새 역할을 생성해야 합니다.</p>
+</div></div>
+
+
+<h3 data-bai-block="97" id="rbac_management-세부-권한-설정-예시">세부 권한 설정 예시<a class="hash-link" href="#rbac_management-세부-권한-설정-예시" aria-label="Direct link to 세부 권한 설정 예시">#</a></h3>
+<p data-bai-block="98">다음은 네 가지 구성 요소가 어떻게 함께 작동하는지 이해하는 데 도움이 되는 일반적인 세부 권한 설정 예시입니다. <strong>적용 범위 / 적용 대상</strong> 열은 세부 권한이 재사용하는 역할 수준의 적용 범위를 나타냅니다.</p>
+<table>
+<thead>
+<tr data-bai-block="99">
+<th>시나리오</th>
+<th>적용 범위 / 적용 대상</th>
+<th>권한 타입</th>
+<th>동작</th>
+</tr>
+</thead>
+<tbody><tr data-bai-block="100">
+<td>특정 프로젝트에서 스토리지 폴더 생성 허용</td>
+<td>프로젝트 / my-project</td>
+<td>폴더</td>
+<td>생성</td>
+</tr>
+<tr data-bai-block="101">
+<td>특정 도메인 내 모든 세션 조회 허용</td>
+<td>도메인 / default</td>
+<td>세션</td>
+<td>조회</td>
+</tr>
+<tr data-bai-block="102">
+<td>특정 도메인 내 모델 서비스 관리 허용</td>
+<td>도메인 / default</td>
+<td>모델 서비스</td>
+<td>생성, 조회, 수정</td>
+</tr>
+<tr data-bai-block="103">
+<td>특정 도메인 내 컨테이너 이미지 삭제 허용</td>
+<td>도메인 / default</td>
+<td>이미지</td>
+<td>삭제</td>
+</tr>
+</tbody></table>
+<p><a id="add-a-permission"></a></p>
+<p><a id="remove-a-permission"></a></p>
+<p><a id="edit-permissions-for-a-scope"></a></p>
+<h3 data-bai-block="104" id="rbac_management-적용-범위-권한-수정단일-적용-범위">적용 범위 권한 수정(단일 적용 범위)<a class="hash-link" href="#rbac_management-적용-범위-권한-수정단일-적용-범위" aria-label="Direct link to 적용 범위 권한 수정(단일 적용 범위)">#</a></h3>
+<p data-bai-block="105">세부 권한은 각 행이 권한 타입이고 각 셀이 동작 체크박스인 그리드 기반 모달을 통해 적용 범위별로 수정합니다.</p>
+<ol>
+<li data-bai-block="106"><strong>권한</strong> 탭에서 적용 범위 타입 카드를 열고 변경할 적용 범위 행의 <strong>편집</strong> 동작을 클릭합니다.</li>
+<li data-bai-block="107"><strong>{적용 범위 타입} 권한 수정</strong> 모달이 열리며, 적용 범위 이름이 부제로 표시됩니다. 다음과 같은 그리드가 표시됩니다:<ul>
+<li data-bai-block="108">행은 적용 범위 타입에 유효한 <strong>권한 타입</strong>입니다.</li>
+<li data-bai-block="109">열은 <strong>직접 수행</strong>(생성, 조회, 수정, 삭제, 영구 삭제)과 <strong>타인에게 위임</strong>(모두, 조회, 수정, 삭제, 영구 삭제) 그룹으로 나뉩니다.</li>
+<li data-bai-block="110">권한 매트릭스가 지원하지 않는 셀은 <code>-</code>로 표시되며 <strong>해당 권한은 할당이 불가능합니다.</strong> 툴팁이 나타납니다.</li>
+</ul>
+</li>
+<li data-bai-block="111">각 체크박스는 적용 범위에 현재 부여된 동작에 맞춰 <strong>미리 선택</strong>되어 있습니다. 셀을 선택하거나 해제하여 허용 항목을 변경합니다.</li>
+<li data-bai-block="112"><strong>저장</strong>을 클릭합니다. 변경 사항은 적용 범위의 현재 부여 상태와 대조되어 새로 선택한 셀은 부여되고 해제한 셀은 제거됩니다.</li>
+</ol>
+<p><figure data-bai-block="113" class="doc-figure"><img src="./images/rbac_permission_edit_modal_single.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1520" height="596" /><figcaption>그림 21.7</figcaption></figure>
+</p>
+<div class="admonition admonition-note">
+<div data-bai-block="114" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="115">세부 권한 수정은 <strong>되돌릴 수 있는</strong> 작업입니다. 언제든지 모달을 다시 열어 그리드를 변경할 수 있으므로, 저장 시 이름을 입력해 확인하는 대신 일반 <strong>저장</strong> 버튼을 사용합니다.</p>
+</div></div>
+
+
+<p><a id="edit-permissions-for-multiple-scopes"></a></p>
+<h3 data-bai-block="116" id="rbac_management-여러-적용-범위-권한-수정일괄">여러 적용 범위 권한 수정(일괄)<a class="hash-link" href="#rbac_management-여러-적용-범위-권한-수정일괄" aria-label="Direct link to 여러 적용 범위 권한 수정(일괄)">#</a></h3>
+<p data-bai-block="117">같은 타입의 여러 적용 범위에 동일한 권한 변경을 한 번에 적용할 수 있습니다.</p>
+<ol>
+<li data-bai-block="118">적용 범위 타입 카드에서 행 체크박스를 사용하여 <strong>두 개 이상</strong>의 적용 범위를 선택합니다. 선택 개수 라벨이 나타나면 그 옆의 연필(<strong>권한 수정</strong>) 컨트롤을 사용하여 일괄 모달을 엽니다.</li>
+<li data-bai-block="119"><strong>{적용 범위 타입} 권한 일괄 수정</strong> 모달이 열립니다. 모든 셀은 <strong>유지</strong> 상태로 시작합니다. 건드리지 않은 셀은 선택한 각 적용 범위의 기존 값을 그대로 유지하며, 편집 모드로 전환한 셀만 선택한 <strong>모든</strong> 적용 범위에 적용됩니다.</li>
+<li data-bai-block="120">셀을 클릭하여 편집 모드로 전환합니다(선택된 상태로 시작). 선택하거나 해제하여 모든 선택된 적용 범위에 적용할 값을 설정합니다.</li>
+<li data-bai-block="121"><strong>저장</strong>을 클릭하여 선택한 모든 적용 범위에 변경 사항을 적용합니다.</li>
+</ol>
+<p><figure data-bai-block="122" class="doc-figure"><img src="./images/rbac_permission_edit_modal_bulk.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="856" /><figcaption>그림 21.8</figcaption></figure>
+</p>
+<p><a id="no-op-and-partial-failure-behavior"></a></p>
+<h3 data-bai-block="123" id="rbac_management-변경-없음-및-부분-실패-동작">변경 없음 및 부분 실패 동작<a class="hash-link" href="#rbac_management-변경-없음-및-부분-실패-동작" aria-label="Direct link to 변경 없음 및 부분 실패 동작">#</a></h3>
+<p data-bai-block="124">권한 변경을 저장할 때:</p>
+<ul>
+<li data-bai-block="125">변경 사항이 없으면 모달은 요청을 보내지 않고 닫히며 <strong>변경사항이 없습니다.</strong> 메시지가 표시됩니다.</li>
+<li data-bai-block="126">성공하면 <strong>세부 권한이 저장되었습니다.</strong> 메시지가 표시되고 카드의 태그가 다시 계산됩니다.</li>
+<li data-bai-block="127"><strong>부분 실패</strong> 시에는 모달이 열린 상태로 유지되고 실패한 셀이 표시됩니다. 일괄 오류 모달에 실패한 각 요청(대상 적용 범위, 권한, 오류 메시지)과 성공 및 실패 개수가 나열됩니다. 그리드를 조정한 후 다시 저장하면 실패한 셀만 재시도할 수 있습니다.</li>
+</ul>
+<!-- ![](/images/rbac_permission_partial_failure_modal.png) -->
+<!-- TODO: Capture the bulk-error modal shown after a partial-failure permission save -->
+
+<p><a id="manage-user-assignments"></a></p>
+<h2 data-bai-block="128" id="rbac_management-사용자-할당-관리">사용자 할당 관리<a class="hash-link" href="#rbac_management-사용자-할당-관리" aria-label="Direct link to 사용자 할당 관리">#</a></h2>
+<p data-bai-block="129">상세 패널의 <strong>역할 할당</strong> 탭에서 해당 역할에 할당된 사용자를 확인할 수 있습니다.</p>
+<p><figure data-bai-block="130" class="doc-figure"><img src="./images/rbac_assignments_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.9</figcaption></figure>
+</p>
+<p><a id="add-users-to-a-role"></a></p>
+<h3 data-bai-block="131" id="rbac_management-역할에-사용자-추가">역할에 사용자 추가<a class="hash-link" href="#rbac_management-역할에-사용자-추가" aria-label="Direct link to 역할에 사용자 추가">#</a></h3>
+<ol>
+<li data-bai-block="132">상세 패널을 열고 <strong>역할 할당</strong> 탭을 선택합니다</li>
+<li data-bai-block="133"><strong>사용자 추가</strong> 버튼을 클릭합니다</li>
+<li data-bai-block="134">모달에서 이메일이나 이름으로 사용자를 검색합니다</li>
+<li data-bai-block="135">체크박스를 사용하여 한 명 이상의 사용자를 선택합니다</li>
+<li data-bai-block="136"><strong>추가</strong>를 클릭하여 선택한 사용자를 역할에 할당합니다</li>
+</ol>
+<p><figure data-bai-block="137" class="doc-figure"><img src="./images/rbac_add_user_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.10</figcaption></figure>
+</p>
+<p data-bai-block="138">사용자 추가는 일괄 작업입니다. 한 번에 여러 사용자를 선택하여 모두 한꺼번에 할당할 수 있습니다. 일부 할당이 실패하면 모달이 열린 상태로 유지되며 일괄 오류 모달에 실패한 각 사용자와 오류 메시지, 성공 및 실패 개수가 나열됩니다. 성공적으로 할당된 사용자는 선택에서 지워지므로 실패한 사용자만 선택된 상태로 남아 <strong>추가</strong>를 다시 클릭하여 해당 사용자만 재시도할 수 있습니다.</p>
+<!-- ![](/images/rbac_assign_user_partial_failure.png) -->
+<!-- TODO: Capture the Add User modal with the bulk-error modal listing failed assignments -->
+
+<p><a id="system-roles-and-assignment-restrictions"></a></p>
+<h3 data-bai-block="139" id="rbac_management-시스템-역할과-할당-제한">시스템 역할과 할당 제한<a class="hash-link" href="#rbac_management-시스템-역할과-할당-제한" aria-label="Direct link to 시스템 역할과 할당 제한">#</a></h3>
+<p data-bai-block="140">시스템이 생성한 프로젝트 관리자 역할(<strong>소스</strong>가 <strong>시스템</strong>인 <code>role_project_&lt;project_id&gt;_admin</code> 역할)에는 역할 할당 탭에서 사용자를 직접 할당하거나 해제할 수 없습니다. 이 탭에는 <strong>시스템에 의해 자동으로 생성된 역할은 사용자를 직접 할당하거나 할당 해제할 수 없습니다.</strong> 경고 알림이 표시되며 할당 테이블은 읽기 전용입니다(<strong>사용자 추가</strong> 및 해제 컨트롤이 숨겨집니다).</p>
+<p><figure data-bai-block="141" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>그림 21.11</figcaption></figure>
+</p>
+<p data-bai-block="142">프로젝트를 관리할 사용자를 지정하려면 대신 프로젝트 페이지의 <strong>프로젝트 관리자 권한 설정</strong>을 사용하세요. 프로젝트 관리자 기능 챕터의 <a href="./project_admin.html#set-project-admin">프로젝트 관리자 권한 설정</a>과 아래의 <a href="#grant-project-admin">프로젝트 관리자 권한 부여</a>를 참고하세요.</p>
+<p><a id="revoke-users-from-a-role"></a></p>
+<h3 data-bai-block="143" id="rbac_management-역할에서-사용자-해제">역할에서 사용자 해제<a class="hash-link" href="#rbac_management-역할에서-사용자-해제" aria-label="Direct link to 역할에서 사용자 해제">#</a></h3>
+<p data-bai-block="144">한 명의 사용자를 해제하거나 여러 명의 사용자를 한 번에 해제할 수 있습니다.</p>
+<p data-bai-block="145">한 명의 사용자를 해제하려면:</p>
+<ol>
+<li data-bai-block="146"><strong>역할 할당</strong> 탭에서 사용자 행 위에 마우스를 올린 후 사용자 옆의 해제(휴지통) 아이콘을 클릭합니다.</li>
+<li data-bai-block="147"><strong>사용자 해제</strong> 확인 모달이 열립니다. 목록에 표시된 사용자를 확인한 후 <strong>사용자 해제</strong>를 클릭하여 확정하거나 <strong>취소</strong>를 눌러 닫습니다.</li>
+</ol>
+<p><figure data-bai-block="148" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="496" /><figcaption>그림 21.12</figcaption></figure>
+</p>
+<p data-bai-block="149">여러 명의 사용자를 한 번에 해제하려면:</p>
+<ol>
+<li data-bai-block="150"><strong>역할 할당</strong> 탭에서 체크박스를 사용하여 제거할 사용자를 선택합니다. 해제 컨트롤 옆에 선택된 행 수를 나타내는 선택 개수 라벨이 표시되며, 해당 라벨의 선택 해제 컨트롤을 사용하여 모든 행의 선택을 해제할 수 있습니다.</li>
+<li data-bai-block="151">하나 이상의 행이 선택되면 나타나는 일괄 <strong>사용자 해제</strong> 버튼(휴지통 아이콘)을 클릭합니다.</li>
+<li data-bai-block="152"><strong>사용자 해제</strong> 확인 모달에서 목록에 표시된 사용자를 확인한 후 <strong>사용자 해제</strong>를 클릭하여 확정하거나 <strong>취소</strong>를 눌러 닫습니다.</li>
+</ol>
+<p><figure data-bai-block="153" class="doc-figure"><img src="./images/rbac_bulk_revoke_selection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.13</figcaption></figure>
+</p>
+<p data-bai-block="154">사용자를 해제하면 해당 사용자의 역할 할당만 제거되며 역할 자체와 다른 할당은 그대로 유지됩니다.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="155" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="156">역할 할당 해제는 <strong>역할 할당</strong> 탭에서 사용자를 다시 추가하면 복구할 수 있습니다.</p>
+</div></div>
+
+
+<p><a id="grant-project-admin"></a></p>
+<h2 data-bai-block="157" id="rbac_management-프로젝트-관리자-권한-부여">프로젝트 관리자 권한 부여<a class="hash-link" href="#rbac_management-프로젝트-관리자-권한-부여" aria-label="Direct link to 프로젝트 관리자 권한 부여">#</a></h2>
+<p data-bai-block="158">프로젝트를 생성하면 <code>role_project_&lt;project_id&gt;_admin</code>이라는 전용 역할이 함께 생성되며 여기서 <code>&lt;project_id&gt;</code>는 해당 프로젝트 UUID의 앞 8자리입니다. 이 역할에 할당된 사용자는 그 프로젝트에 대한 <a href="./project_admin.html#project-admin-features">프로젝트 관리자</a> 권한을 얻습니다. 즉, 시스템 전반의 슈퍼 관리자 권한을 갖지 않고도 해당 프로젝트의 사용자, 세션, 배포, 스토리지 폴더를 관리할 수 있습니다.</p>
+<p><figure data-bai-block="159" class="doc-figure"><img src="./images/rbac_project_admin_role_in_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.14</figcaption></figure>
+</p>
+<p data-bai-block="160">프로젝트 관리자 권한은 프로젝트 관리자 기능 챕터의 <a href="./project_admin.html#set-project-admin">프로젝트 관리자 권한 설정</a>에서 설명하는 <strong>프로젝트</strong> 관리자 페이지의 <strong>프로젝트 관리자 권한 설정</strong> 원클릭 흐름을 통해 부여하고 회수합니다. <code>role_project_&lt;project_id&gt;_admin</code> 역할은 시스템 역할이므로, 여기의 역할 할당 탭은 <strong>읽기 전용</strong>이며 확인용으로 제공됩니다. 역할을 열어 현재 프로젝트 관리자 권한을 가진 사용자를 검토할 수 있습니다. <strong>프로젝트 관리자 권한 설정</strong> 모달은 RBAC 바로 가기를 통해 이 역할의 상세 패널로 다시 연결됩니다.</p>
+<p><figure data-bai-block="161" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1800" /><figcaption>그림 21.15</figcaption></figure>
+</p>
+<p data-bai-block="162">권한이 부여되면 사용자에게는 즉시 프로젝트 관리자 권한이 적용됩니다. 다음에 헤더의 프로젝트 드롭다운을 열면 해당 프로젝트 옆에 프로젝트 관리자 배지가 표시되며 <a href="./project_admin.html#project-admin-features">프로젝트 관리자 기능</a> 챕터에서 설명한 프로젝트 관리자 전용 사이드바 항목도 함께 나타납니다.</p>
+
+</section>
+    <div class="page-footer">
+      <div class="page-metadata">
+  <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/rbac_management/rbac_management.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
+  <span class="last-updated">마지막 업데이트 2026년 9월 3일</span>
+</div>
+      <nav class="pagination-nav" aria-label="Docs pages">
+  <a class="pagination-nav__link pagination-nav__link--prev" href="./project_admin.html">
+        <div class="pagination-nav__sublabel">이전</div>
+        <div class="pagination-nav__label">&laquo; 프로젝트 관리자 기능</div>
+      </a>
+  <a class="pagination-nav__link pagination-nav__link--next" href="./agent_summary.html">
+        <div class="pagination-nav__sublabel">다음</div>
+        <div class="pagination-nav__label">에이전트 요약 &raquo;</div>
+      </a>
+</nav>
+    </div>
+    <footer class="docfoot">
+  <div>&copy; 2026 Lablup Inc. &middot; Backend.AI WebUI Docs</div>
+</footer>
+  </main>
+  <aside class="doc-toc" aria-labelledby="doc-toc-heading">
+  <div class="doc-toc__heading" id="doc-toc-heading">이 페이지의 목차</div>
+  <ul class="doc-toc__list">
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-%EC%97%AD%ED%95%A0-%EB%AA%A9%EB%A1%9D" data-toc-target="rbac_management-역할-목록">역할 목록</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EC%97%AD%ED%95%A0%EA%B3%BC-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%A0%95%EC%9D%98-%EC%97%AD%ED%95%A0" data-toc-target="rbac_management-시스템-역할과-사용자-정의-역할">시스템 역할과 사용자 정의 역할</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-%EC%97%AD%ED%95%A0-%EC%83%9D%EC%84%B1" data-toc-target="rbac_management-역할-생성">역할 생성</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-%EC%97%AD%ED%95%A0-%EC%83%81%EC%84%B8-%EB%B3%B4%EA%B8%B0" data-toc-target="rbac_management-역할-상세-보기">역할 상세 보기</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%97%AD%ED%95%A0-%ED%8E%B8%EC%A7%91" data-toc-target="rbac_management-역할-편집">역할 편집</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-%EC%84%B8%EB%B6%80-%EA%B6%8C%ED%95%9C-%EA%B4%80%EB%A6%AC" data-toc-target="rbac_management-세부-권한-관리">세부 권한 관리</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%A0%81%EC%9A%A9-%EB%B2%94%EC%9C%84-%ED%83%80%EC%9E%85-%EC%B9%B4%EB%93%9C" data-toc-target="rbac_management-적용-범위-타입-카드">적용 범위 타입 카드</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EB%B6%80%EC%97%AC-%EC%83%81%ED%83%9C-%ED%83%9C%EA%B7%B8" data-toc-target="rbac_management-부여-상태-태그">부여 상태 태그</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%84%B8%EB%B6%80-%EA%B6%8C%ED%95%9C-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0" data-toc-target="rbac_management-세부-권한-이해하기">세부 권한 이해하기</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%84%B8%EB%B6%80-%EA%B6%8C%ED%95%9C-%EC%84%A4%EC%A0%95-%EC%98%88%EC%8B%9C" data-toc-target="rbac_management-세부-권한-설정-예시">세부 권한 설정 예시</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%A0%81%EC%9A%A9-%EB%B2%94%EC%9C%84-%EA%B6%8C%ED%95%9C-%EC%88%98%EC%A0%95%EB%8B%A8%EC%9D%BC-%EC%A0%81%EC%9A%A9-%EB%B2%94%EC%9C%84" data-toc-target="rbac_management-적용-범위-권한-수정단일-적용-범위">적용 범위 권한 수정(단일 적용 범위)</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%97%AC%EB%9F%AC-%EC%A0%81%EC%9A%A9-%EB%B2%94%EC%9C%84-%EA%B6%8C%ED%95%9C-%EC%88%98%EC%A0%95%EC%9D%BC%EA%B4%84" data-toc-target="rbac_management-여러-적용-범위-권한-수정일괄">여러 적용 범위 권한 수정(일괄)</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EB%B3%80%EA%B2%BD-%EC%97%86%EC%9D%8C-%EB%B0%8F-%EB%B6%80%EB%B6%84-%EC%8B%A4%ED%8C%A8-%EB%8F%99%EC%9E%91" data-toc-target="rbac_management-변경-없음-및-부분-실패-동작">변경 없음 및 부분 실패 동작</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-%EC%82%AC%EC%9A%A9%EC%9E%90-%ED%95%A0%EB%8B%B9-%EA%B4%80%EB%A6%AC" data-toc-target="rbac_management-사용자-할당-관리">사용자 할당 관리</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%97%AD%ED%95%A0%EC%97%90-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%B6%94%EA%B0%80" data-toc-target="rbac_management-역할에-사용자-추가">역할에 사용자 추가</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EC%97%AD%ED%95%A0%EA%B3%BC-%ED%95%A0%EB%8B%B9-%EC%A0%9C%ED%95%9C" data-toc-target="rbac_management-시스템-역할과-할당-제한">시스템 역할과 할당 제한</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#rbac_management-%EC%97%AD%ED%95%A0%EC%97%90%EC%84%9C-%EC%82%AC%EC%9A%A9%EC%9E%90-%ED%95%B4%EC%A0%9C" data-toc-target="rbac_management-역할에서-사용자-해제">역할에서 사용자 해제</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#rbac_management-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B4%80%EB%A6%AC%EC%9E%90-%EA%B6%8C%ED%95%9C-%EB%B6%80%EC%97%AC" data-toc-target="rbac_management-프로젝트-관리자-권한-부여">프로젝트 관리자 권한 부여</a></li>
+  </ul>
+  <div class="doc-toc__divider"></div>
+  <div class="doc-toc__contrib">
+    <div class="doc-toc__heading">도움 받기</div>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/rbac_management/rbac_management.md" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></svg>이 페이지 편집</a>
+    <a class="doc-toc__link doc-toc__link--external" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.95 10.95 0 0 1 5.76 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/></svg>GitHub</a>
+  </div>
+</aside>
+</div>
+<div class="bai-palette" data-search-palette role="dialog" aria-modal="true" aria-label="문서 검색..." hidden aria-hidden="true">
+  <div class="bai-palette__scrim"></div>
+  <div class="bai-palette__panel doc-search" role="search">
+    <div class="bai-palette__searchrow">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="search-input" placeholder="문서 검색..." data-no-results="검색 결과가 없습니다" autocomplete="off" />
+      <kbd class="bai-palette__close-hint">esc</kbd>
+    </div>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+</div>
+<script defer src="../../assets/search.d605e0b2.js"></script>
+<script defer src="../../assets/code-copy.956c3e8e.js"></script>
+<script defer src="../../assets/toc-scrollspy.0a397532.js"></script>
+<script defer src="../../assets/version-banner.f8680767.js"></script>
+<script defer src="../../assets/interactions.96180245.js"></script>
+</body>
+</html>

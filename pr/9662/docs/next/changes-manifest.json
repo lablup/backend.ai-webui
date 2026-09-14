@@ -1,0 +1,342 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-14T09:11:45.797Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 4,
+        "changes": 4,
+        "added": 4,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "Admin Features",
+          "status": "modified",
+          "url": "next/en/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "d382e0dc5c4e"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "782a71287d0c"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "User Settings",
+          "status": "modified",
+          "url": "next/en/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/user_settings/user_settings.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "ef71b6959650"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "Storage Folders",
+          "status": "modified",
+          "url": "next/en/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "0df808054660"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 4,
+        "changes": 4,
+        "added": 4,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "管理者機能",
+          "status": "modified",
+          "url": "next/ja/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "b007015c69f5"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "cba6c806ed0f"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "ユーザー設定",
+          "status": "modified",
+          "url": "next/ja/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/user_settings/user_settings.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "b9a126ac85b2"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "ストレージフォルダ",
+          "status": "modified",
+          "url": "next/ja/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "4b080121e1f7"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 4,
+        "changes": 4,
+        "added": 4,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "관리자 기능",
+          "status": "modified",
+          "url": "next/ko/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "2456f28991a5"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "340d954bd5c2"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "사용자 설정",
+          "status": "modified",
+          "url": "next/ko/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "f50aa716e135"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "스토리지 폴더",
+          "status": "modified",
+          "url": "next/ko/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "d0d810bd8ebe"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 4,
+        "changes": 4,
+        "added": 4,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "ฟีเจอร์ผู้ดูแลระบบ",
+          "status": "modified",
+          "url": "next/th/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "13a0f9f303a8"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "779f54d59187"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "ตั้งค่าผู้ใช้",
+          "status": "modified",
+          "url": "next/th/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/user_settings/user_settings.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "92f7a3c6d535"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
+          "counts": {
+            "added": 1,
+            "modified": 0,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "cc2e4cdad3bc"
+          ]
+        }
+      ]
+    }
+  }
+}

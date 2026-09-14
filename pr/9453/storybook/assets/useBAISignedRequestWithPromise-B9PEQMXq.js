@@ -1,0 +1,1 @@
+import{u as t}from"./useConnectedBAIClient-BRP4j3l7.js";const n=({method:s,url:u,body:r=null,client:e})=>{const o=e==null?void 0:e.newSignedRequest(s,u,r,null);return e==null?void 0:e._wrapWithPromise(o)},a=()=>{const s=t();return({method:u,url:r,body:e=null})=>n({method:u,url:r,body:e,client:s})};export{a as u};

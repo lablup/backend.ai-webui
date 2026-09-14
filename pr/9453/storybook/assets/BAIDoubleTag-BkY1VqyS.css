@@ -1,0 +1,16 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ The weld antd's `<Tag style={{ margin: 0, marginRight: -1 }}>` performed
+ (FR-3687). Same three-route analysis as `BAICompactGroup.css`: StyleX `xstyle`
+ is unavailable in BUI, and `defineTheme({ components: { badge } })` is flat and
+ global, so neither can square a corner CONDITIONALLY on having a neighbour.
+
+ antd overlapped two BORDERED tags by 1px so their strokes coincided. Astryx
+ `Badge` carries no border, so the overlap has nothing to merge and `gap: 0`
+ alone FUSES two same-variant halves into one uniform capsule — which seven call
+ sites hit, including the whole `values: Array<string>` API that hardcodes
+ `blue` for every element. So the 1px seam below replaces the stroke antd drew,
+ and is not optional.
+*/@layer components{.bai-double-tag>.astryx-badge:not(:last-child){margin-inline-end:var(--border-width)}.bai-double-tag>.astryx-badge:not(:first-child){border-start-start-radius:0;border-end-start-radius:0}.bai-double-tag>.astryx-badge:not(:last-child){border-start-end-radius:0;border-end-end-radius:0}}
