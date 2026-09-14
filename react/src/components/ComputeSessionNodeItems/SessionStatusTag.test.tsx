@@ -165,6 +165,24 @@ describe('SessionStatusTag kernel breakdown popover (FR-3924)', () => {
     expect(screen.getByText('0')).toBeInTheDocument();
   });
 
+  it('makes the breakdown trigger reachable by keyboard', async () => {
+    renderTag({
+      status: 'TERMINATING',
+      cluster_size: 120,
+      kernelStatuses: [...repeat('TERMINATED', 119), 'TERMINATING'],
+    });
+
+    // Astryx `Badge` is a bare <span>; without a tabIndex the hover card has
+    // no keyboard path at all.
+    const trigger = (await screen.findByText('TERMINATING')).closest(
+      '[tabindex="0"]',
+    );
+    expect(trigger).not.toBeNull();
+
+    trigger && (trigger as HTMLElement).focus();
+    expect(await screen.findByText('119 / 120')).toBeInTheDocument();
+  });
+
   it('gives a single-node session no breakdown trigger', async () => {
     renderTag({
       status: 'TERMINATING',
