@@ -495,7 +495,7 @@ You can narrow the list using the property filter bar at the top, which supports
 
 - **Name**: Filter by the model card's name (string match).
 - **Domain**: Filter by the owning domain (string match).
-- **Project**: Filter by the owning project. Instead of typing a project identifier, pick the project from a searchable dropdown of the Model Store projects; the filter tag shows the project's name.
+- **Project**: Filter by the owning project. Instead of typing a project identifier, you can pick from a searchable dropdown of the Model Store projects.
 - **Storage Host**: Filter by the storage host of the linked folder. Instead of typing a value, pick the host from a dropdown of the hosts registered on this cluster; the equals and not-equals operators are both available.
 
 Edit and delete action icons are shown directly in the **Name** cell of each row.
