@@ -738,8 +738,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             {/* The Images tab is admin-scoped but the REST route behind this
                 is `superadmin_required`, so the role check cannot be
                 inherited from the route. */}
-            {baiClient.is_superadmin &&
-            baiClient.supports('scan-image-by-canonical') ? (
+            {baiClient.is_superadmin ? (
               <Button
                 variant="secondary"
                 icon={<Plus size="1em" />}
