@@ -3,13 +3,18 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import '../../__test__/resizeObserver.mock.js';
+import type { ContainerRegistryEditorModalTestQuery } from '../__generated__/ContainerRegistryEditorModalTestQuery.graphql';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import '@testing-library/jest-dom';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ComponentProps, Suspense } from 'react';
-import { RelayEnvironmentProvider } from 'react-relay';
-import { createMockEnvironment } from 'relay-test-utils';
+import {
+  graphql,
+  RelayEnvironmentProvider,
+  useLazyLoadQuery,
+} from 'react-relay';
+import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -172,5 +177,104 @@ describe('ContainerRegistryEditorModal (FR-3939)', () => {
     await waitFor(() =>
       expect(onOk).toHaveBeenCalledWith('create', createdRegistry),
     );
+  });
+});
+
+const REGISTRY_NODE = {
+  id: 'container-registry-global-id',
+  row_id: 'container-registry-row-id',
+  name: 'nvcr.io',
+  registry_name: 'nvcr.io',
+  url: 'https://nvcr.io',
+  type: 'docker',
+  project: 'nvidia',
+  username: 'ngc-user',
+  ssl_verify: true,
+  extra: null,
+  is_global: true,
+  allowed_groups: null,
+};
+
+const ModifyModeModal = ({ onOk }: { onOk: (...args: Array<any>) => void }) => {
+  const data = useLazyLoadQuery<ContainerRegistryEditorModalTestQuery>(
+    graphql`
+      query ContainerRegistryEditorModalTestQuery($id: String!)
+      @relay_test_operation {
+        container_registry_node(id: $id) {
+          ...ContainerRegistryEditorModalFragment
+        }
+      }
+    `,
+    { id: REGISTRY_NODE.row_id },
+  );
+  if (!data.container_registry_node) return null;
+  return (
+    <ContainerRegistryEditorModal
+      open
+      containerRegistryFrgmt={data.container_registry_node}
+      onOk={onOk}
+      onCancel={vi.fn()}
+    />
+  );
+};
+
+describe('ContainerRegistryEditorModal modify mode (FR-3939)', () => {
+  it('hands onOk only the result fields, never the mutation payload itself', async () => {
+    const user = userEvent.setup();
+    const environment = createMockEnvironment();
+    const onOk = vi.fn();
+
+    render(
+      <RelayEnvironmentProvider environment={environment}>
+        <Suspense fallback={null}>
+          <ModifyModeModal onOk={onOk} />
+        </Suspense>
+      </RelayEnvironmentProvider>,
+    );
+
+    act(() => {
+      environment.mock.resolveMostRecentOperation((operation) =>
+        MockPayloadGenerator.generate(operation, {
+          ContainerRegistryNode: () => REGISTRY_NODE,
+        }),
+      );
+    });
+
+    await screen.findByText('registry.ModifyRegistry');
+    await user.click(screen.getByRole('button', { name: 'button.Save' }));
+    await waitFor(() =>
+      expect(environment.mock.getAllOperations()).toHaveLength(1),
+    );
+
+    act(() => {
+      environment.mock.resolveMostRecentOperation({
+        data: {
+          modify_container_registry_node_v2: {
+            container_registry: {
+              ...REGISTRY_NODE,
+              // The payload the manager actually returns carries form-only
+              // fields the callback must not forward.
+              password: 'super-secret',
+            },
+          },
+        },
+      });
+    });
+
+    await waitFor(() =>
+      expect(onOk).toHaveBeenCalledWith('modify', {
+        id: REGISTRY_NODE.id,
+        row_id: REGISTRY_NODE.row_id,
+        registry_name: REGISTRY_NODE.registry_name,
+        project: REGISTRY_NODE.project,
+        url: REGISTRY_NODE.url,
+        type: REGISTRY_NODE.type,
+      }),
+    );
+
+    const projected = onOk.mock.calls[0][1];
+    expect(projected).not.toHaveProperty('password');
+    expect(projected).not.toHaveProperty('name');
+    expect(projected).not.toHaveProperty('ssl_verify');
   });
 });

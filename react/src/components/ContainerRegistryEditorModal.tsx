@@ -48,6 +48,28 @@ export type ContainerRegistryEditorModalResult = {
   type?: string;
 };
 
+/** The mutation nodes carry form-only fields (`password`, …); hand `onOk` only the result shape. */
+const toResult = (
+  node?: {
+    id: string;
+    row_id?: string | null;
+    registry_name: string;
+    project?: string | null;
+    url?: string;
+    type?: string;
+  } | null,
+): ContainerRegistryEditorModalResult | undefined =>
+  node
+    ? {
+        id: node.id,
+        row_id: node.row_id,
+        registry_name: node.registry_name,
+        project: node.project,
+        url: node.url,
+        type: node.type,
+      }
+    : undefined;
+
 interface ContainerRegistryEditorModalProps extends Omit<
   BAIModalProps,
   'onOk'
@@ -65,6 +87,7 @@ interface ContainerRegistryEditorModalProps extends Omit<
 const ContainerRegistryEditorModal: React.FC<
   ContainerRegistryEditorModalProps
 > = ({ containerRegistryFrgmt = null, onOk, initialValues, ...modalProps }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message, modal } = App.useApp();
@@ -218,8 +241,9 @@ const ContainerRegistryEditorModal: React.FC<
                 onOk &&
                   onOk(
                     'modify',
-                    res.modify_container_registry_node_v2?.container_registry ??
-                      undefined,
+                    toResult(
+                      res.modify_container_registry_node_v2?.container_registry,
+                    ),
                   );
               }
             },
@@ -253,8 +277,9 @@ const ContainerRegistryEditorModal: React.FC<
                 onOk &&
                   onOk(
                     'create',
-                    res.create_container_registry_node_v2?.container_registry ??
-                      undefined,
+                    toResult(
+                      res.create_container_registry_node_v2?.container_registry,
+                    ),
                   );
               }
             },
