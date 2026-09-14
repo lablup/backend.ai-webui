@@ -26,6 +26,7 @@ import {
   type BAITableSettings,
   toLocalId,
   useBAILogger,
+  filterOutEmpty,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -134,23 +135,31 @@ const AdminDeploymentPreset = ({
   };
 
   const isSupported = baiClient.supports('deployment-preset');
+  // AND/OR/NOT on DeploymentRevisionPresetFilter arrived in 26.7.0.
+  const supportsSubFilter = baiClient.supports('sub-filter');
+  // BA-5918 (26.4.4rc3) turned `runtimeVariantId` into a UUIDFilter; the
+  // control only emits the wrapper shape.
+  const supportsFilterWrapperInputs = baiClient.supports(
+    'v2-filter-wrapper-inputs',
+  );
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<DeploymentRevisionPresetFilter>
-            filterProperties={[
+            maxConditions={supportsSubFilter ? undefined : 1}
+            filterProperties={filterOutEmpty([
               {
                 key: 'name',
                 propertyLabel: t('adminDeploymentPreset.Name'),
                 type: 'string',
               },
-              {
+              supportsFilterWrapperInputs && {
                 key: 'runtimeVariantId',
                 propertyLabel: t('adminDeploymentPreset.Runtime'),
-                type: 'uuid',
-                fixedOperator: 'equals',
+                type: 'uuid' as const,
+                fixedOperator: 'equals' as const,
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIRuntimeVariantSelect
                     label={t('adminDeploymentPreset.Runtime')}
@@ -163,7 +172,7 @@ const AdminDeploymentPreset = ({
                   />
                 ),
               },
-            ]}
+            ])}
             value={filter as DeploymentRevisionPresetFilter | undefined}
             onChange={(value) => {
               onReload(
