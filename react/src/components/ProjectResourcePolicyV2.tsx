@@ -178,8 +178,12 @@ const ProjectResourcePolicyV2 = ({
               propertyLabel: t('storageHost.MaxFolderSize'),
               type: 'number',
               defaultOperator: 'greaterThanOrEqual',
-              renderInput: ({ onAddCondition }) => (
-                <MaxFolderSizeFilterInput onAddCondition={onAddCondition} />
+              renderInput: ({ onAddCondition, value, isDisabled }) => (
+                <MaxFolderSizeFilterInput
+                  onAddCondition={onAddCondition}
+                  value={value}
+                  isDisabled={isDisabled}
+                />
               ),
             },
             {

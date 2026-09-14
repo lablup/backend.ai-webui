@@ -211,19 +211,24 @@ const KeypairResourcePolicyV2 = ({
               propertyLabel: t('resourcePolicy.User'),
               type: 'uuid',
               fixedOperator: 'equals',
-              renderInput: ({ onAddCondition }) => (
-                <Suspense fallback={<BAISkeleton variant="input" width={200} />}>
+              renderInput: ({ onAddCondition, value, isDisabled }) => (
+                <Suspense
+                  fallback={<BAISkeleton variant="input" width={200} />}
+                >
                   <BAIUserSelect
                     valuePropName="id"
-                    value={null}
+                    value={value}
+                    isDisabled={isDisabled}
                     label={t('resourcePolicy.User')}
                     isLabelHidden
-                    onChange={(value, option) =>
+                    onChange={(next, option) =>
                       // The picker emits the user UUID; forward the option label
                       // (email) so the condition tag stays readable.
                       onAddCondition(
-                        value as string | undefined,
-                        Array.isArray(option) ? option[0]?.label : option?.label,
+                        next as string | undefined,
+                        Array.isArray(option)
+                          ? option[0]?.label
+                          : option?.label,
                       )
                     }
                     width={200}
