@@ -1,16 +1,16 @@
 import { default as React } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 /**
- * Shortest arc the determinate ring ever draws, in percent. An empty ring is
- * a bare track, which hides the rotation that says the work is still moving.
+ * The percent range the determinate ring is allowed to DRAW. Both bounds fall
+ * out of the geometry `strokeWidth` fixes — the radius, hence the
+ * circumference, and the `strokeWidth` the two round caps add to the arc and
+ * take out of the gap — so they hold at any stroke: 7.96%..86.74% at the
+ * default 2, 0%..57.6% at 5. Only the drawn arc is bounded; `aria-valuenow`
+ * always carries the true percent.
  */
-export declare const BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT = 8;
-/**
- * Longest arc the determinate ring ever draws, in percent. The bound is
- * geometry, not taste: `stroke-linecap: round` grows the arc by
- * `strokeWidth / 2` at each end, so at the default stroke 86% leaves
- * `37.7 - 0.86 * 37.7 - 2` = 3.3 user units open — a gap, not a seam.
- */
-export declare const BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT = 86;
+export declare const getVisibleArcRange: (strokeWidth: number) => {
+    min: number;
+    max: number;
+};
 export interface BAIProgressRingProps extends Omit<React.SVGProps<SVGSVGElement>, 'children' | 'rotate'> {
     /**
      * Completion in percent, clamped to 0..100. Leave it out (or pass a
@@ -18,10 +18,9 @@ export interface BAIProgressRingProps extends Omit<React.SVGProps<SVGSVGElement>
      * the same 1s as the `.bai-icon-spin` glyph.
      *
      * The value reported to assistive technology is this one. The arc that gets
-     * DRAWN is additionally pinned into
-     * `BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT..BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT`,
-     * so it never reaches empty or full and the slow rotation stays visible at
-     * both ends; everything between the two bounds is drawn honestly.
+     * DRAWN is additionally pinned into `getVisibleArcRange(strokeWidth)`, so it
+     * never reaches empty or full and the slow rotation stays visible at both
+     * ends; everything between the two bounds is drawn honestly.
      */
     percent?: number;
     /**
@@ -56,8 +55,9 @@ export interface BAIProgressRingProps extends Omit<React.SVGProps<SVGSVGElement>
  *
  * With a `percent` it is a `progressbar` to assistive technology; without one
  * it is decorative (`aria-hidden`) unless an `aria-label` names it. The
- * reported value is the true one; the drawn arc never reaches empty or full,
- * so the ring keeps reading as "in progress" at 0% and at 100%.
+ * reported value is the true one; the drawn arc never reaches empty or full —
+ * `getVisibleArcRange` derives both bounds from `strokeWidth` — so the ring
+ * keeps reading as "in progress" at 0% and at 100%, at any stroke.
  */
 declare const BAIProgressRing: React.FC<BAIProgressRingProps>;
 export default BAIProgressRing;
