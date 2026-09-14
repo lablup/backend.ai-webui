@@ -7,6 +7,7 @@ import {
   ResourceGroupOrderBy,
 } from '../../__generated__/ResourceGroupFairShareStepQuery.graphql';
 import { convertToOrderBy } from '../../helper';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
 import FairShareStepToolbar from './FairShareStepToolbar';
 import ResourceGroupFairShareTable, {
@@ -32,6 +33,14 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+
+  // Two conditions serialize as `{ AND: [...] }`, which needs `sub-filter`
+  // (26.7+); this step is reachable from 26.2. Below 26.7 expose only the
+  // property that shipped before FR-3920, capped at one condition.
+  // TODO(FR-3920): once #9638's `maxConditions` lands, show them with
+  // `maxConditions={1}` instead of hiding them.
+  const supportsSubFilter =
+    useSuspendedBackendaiClient().supports('sub-filter');
 
   const {
     baiPaginationOption,
@@ -103,27 +112,32 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       <FairShareStepToolbar
+        singleCondition={!supportsSubFilter}
         filterProperties={[
           {
             key: 'name',
             propertyLabel: t('fairShare.Name'),
             type: 'string',
           },
-          {
-            key: 'description',
-            propertyLabel: t('resourceGroup.Description'),
-            type: 'string',
-          },
-          {
-            key: 'isActive',
-            propertyLabel: t('resourceGroup.ActiveStatus'),
-            type: 'boolean',
-          },
-          {
-            key: 'isPublic',
-            propertyLabel: t('resourceGroup.PublicStatus'),
-            type: 'boolean',
-          },
+          ...(supportsSubFilter
+            ? ([
+                {
+                  key: 'description',
+                  propertyLabel: t('resourceGroup.Description'),
+                  type: 'string',
+                },
+                {
+                  key: 'isActive',
+                  propertyLabel: t('resourceGroup.ActiveStatus'),
+                  type: 'boolean',
+                },
+                {
+                  key: 'isPublic',
+                  propertyLabel: t('resourceGroup.PublicStatus'),
+                  type: 'boolean',
+                },
+              ] as const)
+            : []),
         ]}
         filterValue={queryParams.filter || {}}
         onChangeFilter={(filter) => {

@@ -21,6 +21,7 @@ interface FairShareStepToolbarProps {
   filterProperties: BAIGraphQLPropertyFilterProps['filterProperties'];
   filterValue: BAIGraphQLPropertyFilterProps['value'];
   onChangeFilter: NonNullable<BAIGraphQLPropertyFilterProps['onChange']>;
+  singleCondition?: BAIGraphQLPropertyFilterProps['singleCondition'];
   fetchKeyLoading: boolean;
   onRefresh: () => void;
   // Selection actions are only rendered when `selection` is provided; the
@@ -37,6 +38,7 @@ const FairShareStepToolbar: React.FC<FairShareStepToolbarProps> = ({
   filterProperties,
   filterValue,
   onChangeFilter,
+  singleCondition,
   fetchKeyLoading,
   onRefresh,
   selection,
@@ -52,6 +54,7 @@ const FairShareStepToolbar: React.FC<FairShareStepToolbarProps> = ({
         filterProperties={filterProperties}
         value={filterValue}
         onChange={onChangeFilter}
+        singleCondition={singleCondition}
       />
       <BAIFlex gap="xs">
         {selection && selection.selectedCount > 0 && (
