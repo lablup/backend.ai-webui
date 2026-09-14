@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  getSessionKernelBreakdown,
   getSessionKernelProgress,
   isTransitionalSessionStatus,
 } from './sessionStatus';
@@ -153,5 +154,92 @@ describe('getSessionKernelProgress', () => {
         },
       }),
     ).toEqual({ phase: 'terminating', done: 1, total: 4, percent: 25 });
+  });
+});
+
+describe('getSessionKernelBreakdown', () => {
+  it('has nothing to group for a settled session', () => {
+    expect(
+      getSessionKernelBreakdown({
+        status: 'RUNNING',
+        cluster_size: 3,
+        kernel_nodes: kernels(...repeat('RUNNING', 3)),
+      }),
+    ).toEqual([]);
+  });
+
+  it('orders a teardown as TERMINATED, TERMINATING, RUNNING', () => {
+    expect(
+      getSessionKernelBreakdown({
+        status: 'TERMINATING',
+        cluster_size: 120,
+        kernel_nodes: kernels(...repeat('TERMINATED', 119), 'TERMINATING'),
+      }),
+    ).toEqual([
+      { status: 'TERMINATED', count: 119 },
+      { status: 'TERMINATING', count: 1 },
+      { status: 'RUNNING', count: 0 },
+    ]);
+  });
+
+  it('collapses PREPARING / PREPARED / CREATING into one CREATING bucket', () => {
+    expect(
+      getSessionKernelBreakdown({
+        status: 'PREPARING',
+        cluster_size: 8,
+        kernel_nodes: kernels(
+          'RUNNING',
+          'PREPARING',
+          'PREPARED',
+          'CREATING',
+          'PULLING',
+          'PENDING',
+          'SCHEDULED',
+        ),
+      }),
+    ).toEqual([
+      { status: 'RUNNING', count: 1 },
+      { status: 'CREATING', count: 3 },
+      { status: 'PULLING', count: 1 },
+      { status: 'PENDING', count: 2 },
+    ]);
+  });
+
+  it('keeps a status the phase does not name under its own label, last', () => {
+    expect(
+      getSessionKernelBreakdown({
+        status: 'TERMINATING',
+        cluster_size: 4,
+        kernel_nodes: kernels('TERMINATED', 'ERROR', 'CANCELLED', 'ERROR'),
+      }),
+    ).toEqual([
+      { status: 'TERMINATED', count: 1 },
+      { status: 'TERMINATING', count: 0 },
+      { status: 'RUNNING', count: 0 },
+      { status: 'ERROR', count: 2 },
+      { status: 'CANCELLED', count: 1 },
+    ]);
+  });
+
+  it('survives null edges, null nodes and a missing connection', () => {
+    expect(
+      getSessionKernelBreakdown({
+        status: 'TERMINATING',
+        cluster_size: 4,
+        kernel_nodes: {
+          edges: [null, { node: null }, { node: { status: 'TERMINATED' } }],
+        },
+      }),
+    ).toEqual([
+      { status: 'TERMINATED', count: 1 },
+      { status: 'TERMINATING', count: 0 },
+      { status: 'RUNNING', count: 0 },
+    ]);
+    expect(getSessionKernelBreakdown({ status: 'CREATING' })).toEqual([
+      { status: 'RUNNING', count: 0 },
+      { status: 'CREATING', count: 0 },
+      { status: 'PULLING', count: 0 },
+      { status: 'PENDING', count: 0 },
+    ]);
   });
 });
