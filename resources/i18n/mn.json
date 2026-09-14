@@ -2518,6 +2518,7 @@
     "CreateResourceGroup": "Нөөцийн бүлэг үүсгэх",
     "Deactivate": "Идэвхгүй болгох",
     "DeactivateResourceGroup": "Нөөцийн бүлгийг идэвхгүй болгох",
+    "Default": "Өгөгдмөл",
     "DeleteResourceGroup": "Нөөцийн бүлгийг устгах",
     "Description": "Тодорхойлолт",
     "Domain": "Домэйн",

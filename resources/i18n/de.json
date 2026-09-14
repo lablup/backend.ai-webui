@@ -2519,6 +2519,7 @@
     "CreateResourceGroup": "Ressourcengruppe erstellen",
     "Deactivate": "Deaktivieren",
     "DeactivateResourceGroup": "Deaktivierung der Ressourcengruppe",
+    "Default": "Standard",
     "DeleteResourceGroup": "Ressourcengruppe löschen",
     "Description": "Beschreibung",
     "Domain": "Bereich",

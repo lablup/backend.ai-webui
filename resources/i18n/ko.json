@@ -2519,6 +2519,7 @@
     "CreateResourceGroup": "자원 그룹 추가",
     "Deactivate": "비활성화",
     "DeactivateResourceGroup": "자원 그룹 비활성화",
+    "Default": "기본",
     "DeleteResourceGroup": "자원 그룹 삭제",
     "Description": "설명",
     "Domain": "도메인",

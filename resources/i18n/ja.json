@@ -2519,6 +2519,7 @@
     "CreateResourceGroup": "リソースグループの作成",
     "Deactivate": "無効にします",
     "DeactivateResourceGroup": "リソースグループを無効にします",
+    "Default": "デフォルト",
     "DeleteResourceGroup": "リソースグループを削除します",
     "Description": "説明",
     "Domain": "ドメイン",

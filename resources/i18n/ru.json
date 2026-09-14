@@ -2517,6 +2517,7 @@
     "CreateResourceGroup": "Создать группу ресурсов",
     "Deactivate": "Деактивировать",
     "DeactivateResourceGroup": "Деактивировать ресурсную группу",
+    "Default": "По умолчанию",
     "DeleteResourceGroup": "Удалить ресурсную группу",
     "Description": "Описание",
     "Domain": "Домен",

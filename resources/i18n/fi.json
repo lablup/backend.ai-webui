@@ -2517,6 +2517,7 @@
     "CreateResourceGroup": "Luo resurssiryhmä",
     "Deactivate": "Deaktivoida",
     "DeactivateResourceGroup": "Deaktivoi resurssiryhmä",
+    "Default": "Oletus",
     "DeleteResourceGroup": "Poista resurssiryhmä",
     "Description": "Kuvaus",
     "Domain": "Verkkotunnus",

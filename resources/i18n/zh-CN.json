@@ -2519,6 +2519,7 @@
     "CreateResourceGroup": "创建资源组",
     "Deactivate": "停用",
     "DeactivateResourceGroup": "停用资源组",
+    "Default": "默认",
     "DeleteResourceGroup": "删除资源组",
     "Description": "描述",
     "Domain": "域名",

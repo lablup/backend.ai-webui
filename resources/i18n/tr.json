@@ -2517,6 +2517,7 @@
     "CreateResourceGroup": "Kaynak Grubu Oluştur",
     "Deactivate": "Devre dışı bırakmak",
     "DeactivateResourceGroup": "Kaynak grubunu devre dışı bırak",
+    "Default": "Varsayılan",
     "DeleteResourceGroup": "Kaynak Grubunu Sil",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
