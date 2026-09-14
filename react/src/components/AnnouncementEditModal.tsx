@@ -3,24 +3,33 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { App } from '../app-shim';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
-import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
+import { Form, FormInstance } from '../form-engine';
+import {
+  DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
+  DomainAnnouncement,
+} from '../helper/announcement';
+import {
+  useDomainAppConfig,
+  useUpdateDomainAppConfig,
+} from '../hooks/useAppConfig';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
+import BAIFormItem from './BAIFormItem';
+import { AstryxFormTextInput } from './astryxFormControls';
 import { Button } from '@astryxdesign/core/Button';
+import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Markdown } from '@astryxdesign/core/Markdown';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import { useTheme } from '@astryxdesign/core/theme';
 import type { OnMount } from '@monaco-editor/react';
-import { useQueryClient } from '@tanstack/react-query';
 import {
-  BAISkeleton,
   BAIModal,
   BAIModalProps,
   BAIFlex,
+  BAISkeleton,
   useErrorMessageResolver,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -28,6 +37,7 @@ import {
   Bold,
   Code,
   ALargeSmall,
+  Ellipsis,
   Italic,
   Link,
   ListOrdered,
@@ -35,7 +45,7 @@ import {
   Strikethrough,
   List,
 } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type MonacoEditorInstance = Parameters<OnMount>[0];
@@ -43,23 +53,53 @@ type MonacoNamespace = Parameters<OnMount>[1];
 
 // Height of the markdown editor. Sized relative to the viewport so the whole
 // editor + label + toolbar + validation message fits inside the modal body's
-// max-height without producing a scrollbar. The `- 320px` budget covers the
-// modal chrome (header, footer, body padding) plus the field label, toolbar,
-// and the validation message row shown when enabling with an empty message.
-// The preview box matches the editor's outer height (this value + the editor
-// wrapper's 1px border).
-const EDITOR_HEIGHT = 'calc(100vh - 320px)';
-
-interface AnnouncementValues {
-  enabled: boolean;
-  message: string;
-}
+// max-height without producing a scrollbar. The `- 360px` budget covers the
+// modal chrome (header, footer, body padding) plus the title field, the body
+// label, toolbar, and the validation message row. The preview box matches the
+// editor's outer height (this value + the editor wrapper's 1px border).
+const EDITOR_HEIGHT = 'calc(100vh - 360px)';
 
 interface AnnouncementEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
 }
 
+type AnnouncementFormValues = { title: string };
+
+/**
+ * Edits the domain's system announcement in the domain app config
+ * (`domainConfig.announcement`, FR-3877). The content reads the saved
+ * announcement through Relay and suspends; the fallback keeps the modal
+ * chrome on screen with a skeleton body while it loads.
+ */
 const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
+  onRequestClose,
+  ...modalProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  return (
+    <Suspense
+      fallback={
+        <BAIModal
+          width="90%"
+          style={{ maxWidth: 1900 }}
+          title={t('summary.EditAnnouncement')}
+          onCancel={() => onRequestClose()}
+          footer={null}
+          loading
+          {...modalProps}
+        />
+      }
+    >
+      <AnnouncementEditModalContent
+        onRequestClose={onRequestClose}
+        {...modalProps}
+      />
+    </Suspense>
+  );
+};
+
+const AnnouncementEditModalContent: React.FC<AnnouncementEditModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
@@ -71,88 +111,65 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
-  const baiClient = useSuspendedBackendaiClient();
-  const queryClient = useQueryClient();
-
-  // The modal owns its data. Fetch without Suspense so the modal chrome (title,
-  // footer with the Enabled toggle and Publish button) renders immediately and
-  // only the body shows a Skeleton while the current announcement loads.
-  const { data: announcement, isLoading } = useTanQuery(
-    announcementQueryOptions(baiClient),
+  const announcement = useDomainAppConfig<DomainAnnouncement>(
+    DOMAIN_ANNOUNCEMENT_CONFIG_KEY,
   );
+  const updateDomainAppConfig = useUpdateDomainAppConfig();
 
-  // The `enabled` flag is not user-controllable for now: the manager stores the
-  // announcement purely by presence — publishing a message enables it, and
-  // "disabling" it just deletes the stored message (there is no way to persist a
-  // disabled-but-present announcement). So the footer exposes an explicit Delete
-  // action instead of an Enabled toggle. The toggle implementation is kept below
-  // (commented out) so it can be restored once the backend can persist the flag.
-  //
-  // const [enabledDraft, setEnabledDraft] = useState<boolean>();
-  // const enabled = enabledDraft ?? announcement?.enabled ?? true;
-  const [messageDraft, setMessageDraft] = useState<string>();
-  const message = messageDraft ?? announcement?.message ?? '';
+  const formRef = useRef<FormInstance<AnnouncementFormValues>>(null);
+  const [bodyDraft, setBodyDraft] = useState<string>();
+  const body = bodyDraft ?? announcement?.body ?? '';
 
-  // Monaco is lazily imported, so the body has a second loading phase after the
-  // query resolves. The whole body stays a Skeleton until both are done.
+  // Monaco is lazily imported, so the body has a second loading phase after
+  // the Relay read resolves. It stays behind a Skeleton until both are done.
   const [isEditorReady, setIsEditorReady] = useState(false);
-  const isBodyReady = !isLoading && isEditorReady;
 
-  // Publishing always enables the announcement, and the backend rejects an empty
-  // message ("Empty message not allowed to enable announcement"), so a non-empty
-  // message is required to publish. (Previously gated on `enabled && ...`.)
-  const isMessageMissing = !message.trim();
+  // Publish and Save as Draft write the same document; only `enabled` differs.
+  const [saving, setSaving] = useState<'publish' | 'draft'>();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const updateMutation = useTanMutation({
-    mutationFn: (values: AnnouncementValues) => {
-      return baiClient.service.update_announcement(
-        values.enabled,
-        values.message,
-      );
-    },
-  });
-
-  // Deleting is `update_announcement(false, ...)`: with `enabled: false` the
-  // manager removes the stored message from etcd, clearing the announcement.
-  const deleteMutation = useTanMutation({
-    mutationFn: () => baiClient.service.update_announcement(false, ''),
-  });
-
-  const handleSubmit = () => {
-    if (isMessageMissing) return;
-    updateMutation.mutate(
-      { enabled: true, message },
-      {
-        onSuccess: () => {
-          appMessage.success(t('summary.AnnouncementUpdated'));
-          queryClient.invalidateQueries({
-            queryKey: announcementQueryOptions(baiClient).queryKey,
-          });
-          onRequestClose(true);
-        },
-        onError: (error) => {
-          appMessage.error(getErrorMessage(error));
-          logger.error(error);
-        },
-      },
-    );
-  };
-
-  const handleDelete = async () => {
+  const save = async (enabled: boolean) => {
+    let values: AnnouncementFormValues | undefined;
     try {
-      await deleteMutation.mutateAsync();
-      appMessage.success(t('summary.AnnouncementDeleted'));
-      queryClient.invalidateQueries({
-        queryKey: announcementQueryOptions(baiClient).queryKey,
-      });
+      values = await formRef.current?.validateFields();
+    } catch {
+      return; // the form item shows the field error
+    }
+    if (!values) return;
+    setSaving(enabled ? 'publish' : 'draft');
+    try {
+      const next: DomainAnnouncement = {
+        enabled,
+        title: values.title.trim(),
+        body: body.trim() || undefined,
+        updatedAt: new Date().toISOString(),
+      };
+      await updateDomainAppConfig(DOMAIN_ANNOUNCEMENT_CONFIG_KEY, next);
+      appMessage.success(t('summary.AnnouncementUpdated'));
       onRequestClose(true);
     } catch (error) {
       appMessage.error(getErrorMessage(error));
       logger.error(error);
+    } finally {
+      setSaving(undefined);
     }
   };
 
-  // Delete removes the published announcement from the server, so it goes
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await updateDomainAppConfig(DOMAIN_ANNOUNCEMENT_CONFIG_KEY, undefined);
+      appMessage.success(t('summary.AnnouncementDeleted'));
+      onRequestClose(true);
+    } catch (error) {
+      appMessage.error(getErrorMessage(error));
+      logger.error(error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // Delete removes the announcement from the domain config, so it goes
   // through a confirm modal instead of firing on the footer click. `onOk`
   // returns the delete promise so the modal's OK button shows a spinner until
   // the request settles.
@@ -170,7 +187,20 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
     <BAIModal
       width="90%"
       style={{ maxWidth: 1900 }}
-      title={t('summary.EditAnnouncement')}
+      title={
+        announcement?.enabled === false ? (
+          <BAIFlex gap="xs" align="center">
+            {t('summary.EditAnnouncement')}
+            <Token
+              label={t('summary.AnnouncementDraft')}
+              size="sm"
+              color="gray"
+            />
+          </BAIFlex>
+        ) : (
+          t('summary.EditAnnouncement')
+        )
+      }
       onCancel={() => onRequestClose()}
       footer={
         <BAIFlex
@@ -179,59 +209,77 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
           gap="sm"
           style={{ width: '100%' }}
         >
-          {/* Delete clears the published announcement, placed at the footer's
-              bottom-left like other edit modals' destroy action. Disabled when
-              there is nothing stored to delete. Restore the Enabled checkbox
-              here once the backend can persist a disabled-but-present
-              announcement:
-          <Checkbox
-            checked={enabled}
-            onChange={(e) => setEnabledDraft(e.target.checked)}
-          >
-            {t('summary.AnnouncementEnabled')}
-          </Checkbox> */}
-          <BAIFlex>
-            <Button
-              variant="destructive"
-              label={t('button.Delete')}
-              isDisabled={!isBodyReady || !announcement?.enabled}
-              isLoading={deleteMutation.isPending}
-              onClick={confirmDelete}
-            />
-          </BAIFlex>
+          <Button
+            variant="destructive"
+            label={t('button.Delete')}
+            isDisabled={!isEditorReady || announcement === undefined}
+            isLoading={isDeleting}
+            onClick={confirmDelete}
+          />
           <BAIFlex gap="xs" align="center">
             <Button
               variant="secondary"
               label={t('button.Cancel')}
               onClick={() => onRequestClose()}
             />
-            <Button
-              variant="primary"
-              label={t('button.Publish')}
-              isDisabled={!isBodyReady || isMessageMissing}
-              isLoading={updateMutation.isPending}
-              onClick={handleSubmit}
-            />
+            {/* Split button as the session launcher's Launch: the dropdown
+                owns its own trigger. */}
+            <ButtonGroup label={t('button.Publish')}>
+              <Button
+                variant="primary"
+                label={t('button.Publish')}
+                isDisabled={!isEditorReady || saving === 'draft'}
+                isLoading={saving === 'publish'}
+                onClick={() => save(true)}
+              />
+              <DropdownMenu
+                hasChevron={false}
+                button={{
+                  variant: 'primary',
+                  icon: <Ellipsis size="1em" />,
+                  isIconOnly: true,
+                  isDisabled: !isEditorReady || saving !== undefined,
+                  label: t('button.SaveAsDraft'),
+                }}
+                items={[
+                  {
+                    label: t('button.SaveAsDraft'),
+                    onClick: () => save(false),
+                  },
+                ]}
+              />
+            </ButtonGroup>
           </BAIFlex>
         </BAIFlex>
       }
       {...modalProps}
     >
-      {!isBodyReady && <BAISkeleton rows={4} />}
-      {/* Mounted from the first render but hidden until `isBodyReady`, so
-          Monaco's lazy chunk loads behind the Skeleton — and in parallel with
-          the announcement query — instead of flashing an empty frame. The
-          editor is controlled, so the message arriving later just updates it. */}
-      <BAIFlex
-        direction="row"
-        align="stretch"
-        gap="sm"
-        wrap="wrap"
-        // `flex`, not `undefined`: BAIFlex merges as `{ display: 'flex',
-        // ...style }`, so an `undefined` here deletes its own display and the
-        // two panes stack instead of sitting side by side.
-        style={{ display: isBodyReady ? 'flex' : 'none' }}
-      >
+      <BAIFlex direction="column" align="stretch" gap="sm">
+        <Form
+          ref={formRef}
+          layout="vertical"
+          validateTrigger={['onChange', 'onBlur']}
+          initialValues={{ title: announcement?.title ?? '' }}
+        >
+          <BAIFormItem
+            name="title"
+            label={t('summary.AnnouncementTitle')}
+            rules={[{ required: true, whitespace: true }]}
+          >
+            <AstryxFormTextInput label={t('summary.AnnouncementTitle')} />
+          </BAIFormItem>
+        </Form>
+        {!isEditorReady && <BAISkeleton rows={4} />}
+        <BAIFlex
+          direction="row"
+          align="stretch"
+          gap="sm"
+          wrap="wrap"
+          // `flex`, not `undefined`: BAIFlex merges as `{ display: 'flex',
+          // ...style }`, so an `undefined` here deletes its own display and the
+          // two panes stack instead of sitting side by side.
+          style={{ display: isEditorReady ? 'flex' : 'none' }}
+        >
           <BAIFlex
             direction="column"
             align="stretch"
@@ -241,19 +289,10 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
             <Text weight="semibold">{t('summary.AnnouncementMessage')}</Text>
             <MarkdownEditorField
               height={EDITOR_HEIGHT}
-              value={message}
-              onChange={setMessageDraft}
+              value={body}
+              onChange={setBodyDraft}
               onReady={() => setIsEditorReady(true)}
             />
-            {isMessageMissing && (
-              // PILOT-DECISION: antd `Typography.Text type="danger"` has no
-              // Astryx TextColor equivalent (MAPPING §3.4) — same drop as
-              // AdminModelCard.tsx: red tint dropped, `type="supporting"`
-              // keeps the small caption size.
-              <Text type="supporting" color="primary">
-                {t('summary.AnnouncementMessageRequired')}
-              </Text>
-            )}
           </BAIFlex>
           <BAIFlex
             direction="column"
@@ -277,10 +316,16 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
               {/* Must stay byte-identical to AnnouncementBanner's expanded
                   markdown props — a preview that renders differently from the
                   published banner is the whole of FR-3402. */}
-              <Markdown density="compact" headingLevelStart={3} autolink="gfm">
-                {message}
+              <Markdown
+                className="webui-announcement-body"
+                density="compact"
+                headingLevelStart={3}
+                autolink="gfm"
+              >
+                {body}
               </Markdown>
             </div>
+          </BAIFlex>
         </BAIFlex>
       </BAIFlex>
     </BAIModal>
@@ -304,40 +349,41 @@ const MarkdownEditorField: React.FC<{
 
   // Wrap the current selection (or a placeholder when nothing is selected)
   // with inline markdown markers, e.g. **bold**, *italic*, `code`.
-  const wrapSelection = useCallback(
-    (before: string, after: string, placeholder: string) => {
-      const editor = editorRef.current;
-      const selection = editor?.getSelection();
-      const model = editor?.getModel();
-      if (!editor || !selection || !model) return;
-      const selected = model.getValueInRange(selection);
-      const inner = selected || placeholder;
-      editor.executeEdits('md-toolbar', [
-        {
-          range: selection,
-          text: `${before}${inner}${after}`,
-          forceMoveMarkers: false,
-        },
-      ]);
-      // Re-select the inner text (the original selection, or the placeholder)
-      // so the caret lands on it — ready to type over — instead of after the
-      // closing marker. `inner` is single-line for inline formatting, so the
-      // column math stays on the start line.
-      const startColumn = selection.startColumn + before.length;
-      editor.setSelection({
-        startLineNumber: selection.startLineNumber,
-        startColumn,
-        endLineNumber: selection.startLineNumber,
-        endColumn: startColumn + inner.length,
-      });
-      editor.focus();
-    },
-    [],
-  );
+  const wrapSelection = (
+    before: string,
+    after: string,
+    placeholder: string,
+  ) => {
+    const editor = editorRef.current;
+    const selection = editor?.getSelection();
+    const model = editor?.getModel();
+    if (!editor || !selection || !model) return;
+    const selected = model.getValueInRange(selection);
+    const inner = selected || placeholder;
+    editor.executeEdits('md-toolbar', [
+      {
+        range: selection,
+        text: `${before}${inner}${after}`,
+        forceMoveMarkers: false,
+      },
+    ]);
+    // Re-select the inner text (the original selection, or the placeholder)
+    // so the caret lands on it — ready to type over — instead of after the
+    // closing marker. `inner` is single-line for inline formatting, so the
+    // column math stays on the start line.
+    const startColumn = selection.startColumn + before.length;
+    editor.setSelection({
+      startLineNumber: selection.startLineNumber,
+      startColumn,
+      endLineNumber: selection.startLineNumber,
+      endColumn: startColumn + inner.length,
+    });
+    editor.focus();
+  };
 
   // Prepend a marker to the start of every line in the selection, e.g. "## ",
   // "> ", "- ", "1. ".
-  const prependLines = useCallback((prefix: string) => {
+  const prependLines = (prefix: string) => {
     const editor = editorRef.current;
     const monaco = monacoRef.current;
     const selection = editor?.getSelection();
@@ -356,7 +402,7 @@ const MarkdownEditorField: React.FC<{
     }
     editor.executeEdits('md-toolbar', edits);
     editor.focus();
-  }, []);
+  };
 
   return (
     <BAIFlex direction="column" align="stretch" gap={0}>

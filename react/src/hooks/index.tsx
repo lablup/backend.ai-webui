@@ -191,6 +191,13 @@ export const useCurrentDomainValue = () => {
   return baiClient._config.domainName;
 };
 
+// `id` is the domain uuid `AppConfigScopeRef.scopeId` expects; both are stored
+// at login from `myUserV2` (see `connectViaGQL`).
+export const useCurrentDomain = (): { name: string; id: string } => {
+  const baiClient = useSuspendedBackendaiClient();
+  return { name: baiClient._config.domainName, id: baiClient._config.domainId };
+};
+
 export const useAnonymousBackendaiClient = ({
   api_endpoint,
 }: {
@@ -742,6 +749,7 @@ type BackendAIConfig = {
   connectionMode: string;
   _session_id: string;
   domainName: string;
+  domainId: string;
   default_session_environment: string;
   default_import_environment: string;
   allow_project_resource_monitor: boolean;
