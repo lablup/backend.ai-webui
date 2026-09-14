@@ -1003,7 +1003,8 @@
       "TypeFolderNameToLeave": "Kirjoita poistuvan kansion nimi",
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
       "TypeToConfirmDeleteForever": "Kirjoita alla oleva sana pysyvää poistoa varten",
-      "View": "Näytä"
+      "View": "Näytä",
+      "Creator": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Kutsu epäonnistui",

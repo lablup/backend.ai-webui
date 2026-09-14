@@ -1003,7 +1003,8 @@
       "TypeFolderNameToLeave": "Ketik nama folder untuk ditinggalkan",
       "TypeNewFolderName": "Ketik nama folder baru",
       "TypeToConfirmDeleteForever": "Ketik kata di bawah ini untuk menghapus secara permanen",
-      "View": "Lihat"
+      "View": "Lihat",
+      "Creator": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Gagal menerima undangan",

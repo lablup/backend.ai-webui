@@ -1003,7 +1003,8 @@
       "TypeFolderNameToLeave": "Digite o nome da pasta para sair",
       "TypeNewFolderName": "Digite o nome da nova pasta",
       "TypeToConfirmDeleteForever": "Digite a palavra abaixo para excluir permanentemente",
-      "View": "Visualizar"
+      "View": "Visualizar",
+      "Creator": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Falhou em aceitar convite",

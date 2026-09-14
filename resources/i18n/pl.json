@@ -1003,7 +1003,8 @@
       "TypeFolderNameToLeave": "Wpisz nazwę folderu do opuszczenia",
       "TypeNewFolderName": "Wpisz nową nazwę folderu",
       "TypeToConfirmDeleteForever": "Wpisz poniższe słowo, aby trwale usunąć",
-      "View": "Widok"
+      "View": "Widok",
+      "Creator": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Nie przyjął zaproszenia",

@@ -904,6 +904,7 @@
       "Control": "Controls",
       "CreateModelFolderOnlyInExclusiveProject": "Model project folders can only be created in model-store–exclusive projects.",
       "CreatedAt": "Created At",
+      "Creator": "Creator",
       "Delete": "Delete",
       "DeleteAFolder": "Delete folder",
       "DeleteForever": "Delete forever",

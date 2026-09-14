@@ -1003,7 +1003,8 @@
       "TypeFolderNameToLeave": "Escriba el nombre de la carpeta que desea abandonar",
       "TypeNewFolderName": "Escriba el nombre de la nueva carpeta",
       "TypeToConfirmDeleteForever": "Escribe la palabra a continuación para eliminar permanentemente",
-      "View": "Ver"
+      "View": "Ver",
+      "Creator": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "FailedToAcceptInvitation": "No se pudo aceptar la invitación",

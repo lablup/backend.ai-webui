@@ -1003,7 +1003,8 @@
       "TypeFolderNameToLeave": "Digita il nome della cartella da lasciare",
       "TypeNewFolderName": "Digita il nuovo nome della cartella",
       "TypeToConfirmDeleteForever": "Digita la parola qui sotto per eliminare definitivamente",
-      "View": "Visualizza"
+      "View": "Visualizza",
+      "Creator": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Impossibile accettare l'invito",

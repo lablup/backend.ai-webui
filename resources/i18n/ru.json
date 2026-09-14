@@ -1003,7 +1003,8 @@
       "TypeFolderNameToLeave": "Введите имя папки, чтобы оставить",
       "TypeNewFolderName": "Введите новое имя папки",
       "TypeToConfirmDeleteForever": "Введите слово ниже для безвозвратного удаления",
-      "View": "Вид"
+      "View": "Вид",
+      "Creator": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Не удалось принять приглашение",

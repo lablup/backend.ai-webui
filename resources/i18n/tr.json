@@ -1003,7 +1003,8 @@
       "TypeFolderNameToLeave": "Ayrılmak için klasör adını yazın",
       "TypeNewFolderName": "Yeni klasör adını yazın",
       "TypeToConfirmDeleteForever": "Kalıcı olarak silmek için aşağıdaki kelimeyi yazın",
-      "View": "Görünüm"
+      "View": "Görünüm",
+      "Creator": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Davetiyeyi kabul edemedi",
