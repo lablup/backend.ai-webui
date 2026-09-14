@@ -8,7 +8,7 @@ export const docs = {
   keywords: ['image', 'tag', 'badge', 'customized', 'kernel', 'environment'],
   usage: {
     description:
-      "The tag chips of a container image (ADR 0004). It renders a list of `BAIImageTagFact`s, each as a `BAIDoubleTag` when the tag's alias still reads as a `key` + `value` pair, and as a single `Badge` when the metadata replaced it with one humanized label. Customized-image tags are tinted cyan, everything else blue. It renders only the chips, so the surrounding row owns the icon, the name and the dividers — `BAIImageMetaRow` is that row, and a select option that shows tags without an identity row uses this component directly. Build the facts with `imageNodeTagFacts` (an image node's own `tags` plus `labels`) or `imageTagFacts` (a tag string parsed by `getTags`), both exported from this module, so the double-tag decision is made in exactly one place.",
+      "The tag chips of a container image (ADR 0004). It renders a list of `BAIImageTagFact`s, each as a `BAIDoubleTag` when the tag's alias still reads as a `key` + `value` pair, and as a single `Badge` when the metadata replaced it with one humanized label. Customized-image tags are tinted cyan, everything else blue. It renders only the chips, so the surrounding row owns the icon, the name and the dividers — `BAIImageMetaRow` is that row, and a select option that shows tags without an identity row uses this component directly. Build the facts with `imageNodeTagFacts`, exported from this module, so the double-tag decision is made in exactly one place.",
     bestPractices: [
       {
         guidance: true,
@@ -45,13 +45,6 @@ export const docs = {
       label: 'Chips from an image node',
       code: `<BAIImageTagBadges
   facts={imageNodeTagFacts(image.tags, image.labels, tagAlias)}
-/>`,
-    },
-    {
-      label: 'Chips from a parsed tag string',
-      code: `<BAIImageTagBadges
-  facts={imageTagFacts(getTags(image.tag, image.labels), tagAlias)}
-  highlightKeyword={versionSearch}
 />`,
     },
   ],

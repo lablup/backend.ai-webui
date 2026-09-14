@@ -11,14 +11,10 @@ import { CustomizedImageListUntagMutation } from '../__generated__/CustomizedIma
 import { App } from '../app-shim';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { getImageFullName, localeCompare } from '../helper';
-import {
-  useBackendAIImageMetaData,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { useBackendAIImageMetaData } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { theme } from '../theme-shim';
 import AliasedImageDoubleTags from './AliasedImageDoubleTags';
-import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
@@ -49,9 +45,6 @@ const CustomizedImageList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportExtendedImageInfo =
-    baiClient?.supports('extended-image-info') ?? false;
 
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
@@ -66,8 +59,7 @@ const CustomizedImageList: React.FC = () => {
   const [imageToDelete, setImageToDelete] = useState<CommittedImage | null>(
     null,
   );
-  const [, { getBaseVersion, getBaseImages, getBaseImage, tagAlias, getTags }] =
-    useBackendAIImageMetaData();
+  const [, { tagAlias }] = useBackendAIImageMetaData();
 
   const { customized_images } = useLazyLoadQuery<CustomizedImageListQuery>(
     graphql`
@@ -137,30 +129,14 @@ const CustomizedImageList: React.FC = () => {
   const imageFilterValues = useMemo(() => {
     return defaultSortedImages?.map((image) => {
       return {
-        namespace: supportExtendedImageInfo ? image?.namespace : image?.name,
+        namespace: image?.namespace,
         fullName: getImageFullName(image) || '',
         digest: image?.digest || '',
-        // ------------ need only before 24.12.0 ------------
-        baseversion: getBaseVersion(getImageFullName(image) || ''),
-        baseimage:
-          image?.tag && image?.name ? getBaseImages(image.tag, image.name) : [],
-        tag:
-          getTags(
-            image?.tag || '',
-            image?.labels as Array<{ key: string; value: string }>,
-          ) || [],
-        isCustomized: image?.tag
-          ? image.tag.indexOf('customized') !== -1
-          : false,
-        // -------------------------------------------------
-        // ------------ need only after 24.12.0 ------------
-        baseImageName: supportExtendedImageInfo ? image?.base_image_name : '',
-        tags: supportExtendedImageInfo ? image?.tags : [],
-        version: supportExtendedImageInfo ? image?.version : '',
-        // -------------------------------------------------
+        baseImageName: image?.base_image_name,
+        tags: image?.tags,
+        version: image?.version,
       };
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultSortedImages]);
 
   const filteredImageData = useMemo(() => {
@@ -172,17 +148,6 @@ const CustomizedImageList: React.FC = () => {
         if (['digest', 'architecture', 'registry'].includes(key))
           return regExp.test(_.toString(value));
         const curFilterValues = imageFilterValues[idx] || {};
-        const baseVersionMatch = regExp.test(curFilterValues.baseversion);
-        const baseImagesMatch = _.some(curFilterValues.baseimage, (value) =>
-          regExp.test(value),
-        );
-        const tagMatch = _.some(
-          curFilterValues.tag,
-          (tag) => regExp.test(tag.key) || regExp.test(tag.value),
-        );
-        const customizedMatch = curFilterValues.isCustomized
-          ? regExp.test('customized')
-          : false;
         const namespaceMatch = regExp.test(curFilterValues.namespace || '');
         const fullNameMatch = regExp.test(curFilterValues.fullName);
         const tagsMatch = _.some(
@@ -193,11 +158,7 @@ const CustomizedImageList: React.FC = () => {
         const versionMatch = regExp.test(curFilterValues.version || '');
         const digestMatch = regExp.test(curFilterValues.digest);
         return (
-          baseVersionMatch ||
-          baseImagesMatch ||
-          tagMatch ||
           namespaceMatch ||
-          customizedMatch ||
           fullNameMatch ||
           tagsMatch ||
           versionMatch ||
@@ -263,7 +224,7 @@ const CustomizedImageList: React.FC = () => {
         <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
       ),
     },
-    supportExtendedImageInfo && {
+    {
       title: t('environment.Namespace'),
       key: 'namespace',
       dataIndex: 'namespace',
@@ -272,7 +233,7 @@ const CustomizedImageList: React.FC = () => {
         <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
       ),
     },
-    supportExtendedImageInfo && {
+    {
       title: t('environment.BaseImageName'),
       key: 'base_image_name',
       dataIndex: 'base_image_name',
@@ -283,7 +244,7 @@ const CustomizedImageList: React.FC = () => {
         </TextHighlighter>
       ),
     },
-    supportExtendedImageInfo && {
+    {
       title: t('environment.Version'),
       key: 'version',
       dataIndex: 'version',
@@ -292,7 +253,7 @@ const CustomizedImageList: React.FC = () => {
         <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
       ),
     },
-    supportExtendedImageInfo && {
+    {
       title: t('environment.Tags'),
       key: 'tags',
       dataIndex: 'tags',
@@ -304,58 +265,6 @@ const CustomizedImageList: React.FC = () => {
       ),
     },
 
-    !supportExtendedImageInfo && {
-      title: t('environment.Namespace'),
-      key: 'name',
-      dataIndex: 'name',
-      sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
-      render: (text) => (
-        <TextHighlighter keyword={imageSearch}>{text}</TextHighlighter>
-      ),
-    },
-    !supportExtendedImageInfo && {
-      title: t('environment.Version'),
-      key: 'baseversion',
-      dataIndex: 'baseversion',
-      sorter: (a, b) =>
-        localeCompare(
-          getBaseVersion(getImageFullName(a) || ''),
-          getBaseVersion(getImageFullName(b) || ''),
-        ),
-      render: (_text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {getBaseVersion(getImageFullName(row) || '')}
-        </TextHighlighter>
-      ),
-    },
-    !supportExtendedImageInfo && {
-      title: t('environment.Base'),
-      key: 'baseimage',
-      dataIndex: 'baseimage',
-      sorter: (a, b) =>
-        localeCompare(
-          getBaseImage(getImageFullName(a) || ''),
-          getBaseImage(getImageFullName(b) || ''),
-        ),
-      render: (_text, row) => (
-        <TextHighlighter keyword={imageSearch}>
-          {tagAlias(getBaseImage(getImageFullName(row) || ''))}
-        </TextHighlighter>
-      ),
-    },
-    !supportExtendedImageInfo && {
-      title: t('environment.Tags'),
-      key: 'tag',
-      dataIndex: 'tag',
-      sorter: (a, b) => localeCompare(a?.tag, b?.tag),
-      render: (text, row) => (
-        <ImageTags
-          tag={text}
-          labels={row?.labels as Array<{ key: string; value: string }>}
-          highlightKeyword={imageSearch}
-        />
-      ),
-    },
     {
       title: t('environment.Digest'),
       dataIndex: 'digest',

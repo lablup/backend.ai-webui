@@ -4264,7 +4264,6 @@
         "credential.TypePermanentlyDelete",
         "dialog.title.DeleteSomething",
         "environment.Architecture",
-        "environment.Base",
         "environment.BaseImageName",
         "environment.CustomizedImageSuccessfullyDeleted",
         "environment.Digest",

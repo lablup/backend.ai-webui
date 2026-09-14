@@ -53,15 +53,6 @@ const toFact = (
   };
 };
 
-/** Facts from `getTags`-parsed tags (servers without extended image info). */
-export const imageTagFacts = (
-  tags: ReadonlyArray<RawTag> | null | undefined,
-  tagAlias: TagAlias,
-): Array<BAIImageTagFact> =>
-  _.map(keyedTags(tags), (tag) =>
-    toFact(tag.key, tag.value ?? undefined, tag.key === 'Customized', tagAlias),
-  );
-
 /** Facts from an image node's own `tags` (extended image info). */
 export const imageNodeTagFacts = (
   tags: ReadonlyArray<RawTag> | null | undefined,

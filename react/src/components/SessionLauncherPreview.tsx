@@ -36,7 +36,6 @@ import {
   BAITable,
   BAIText,
   imageNodeTagFacts,
-  imageTagFacts,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -51,11 +50,7 @@ const SessionLauncherImageRow: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportExtendedImageInfo =
-    baiClient?.supports('extended-image-info') ?? false;
-  const [, { getBaseImage, getBaseVersion, getTags, tagAlias }] =
-    useBackendAIImageMetaData();
+  const [, { tagAlias }] = useBackendAIImageMetaData();
 
   const environments = form.getFieldValue('environments');
   const image = environments?.image;
@@ -74,25 +69,10 @@ const SessionLauncherImageRow: React.FC = () => {
   return (
     <BAIImageMetaRow
       fullName={getImageFullName(image) || environments?.version}
-      name={
-        supportExtendedImageInfo
-          ? tagAlias(image?.base_image_name)
-          : tagAlias(getBaseImage(environments?.version))
-      }
-      version={
-        supportExtendedImageInfo
-          ? image?.version
-          : getBaseVersion(environments?.version)
-      }
+      name={tagAlias(image?.base_image_name)}
+      version={image?.version}
       architecture={image?.architecture}
-      tags={
-        supportExtendedImageInfo
-          ? imageNodeTagFacts(image?.tags, image?.labels, tagAlias)
-          : imageTagFacts(
-              getTags(image?.tag ?? '', image?.labels ?? []),
-              tagAlias,
-            )
-      }
+      tags={imageNodeTagFacts(image?.tags, image?.labels, tagAlias)}
       copyLabel={t('button.CopySomething', { name: t('general.Image') })}
     />
   );

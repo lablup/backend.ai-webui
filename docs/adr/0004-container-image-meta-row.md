@@ -6,9 +6,10 @@
 
 - container image 한 개의 identity를 보여주는 화면은 `packages/backend.ai-ui/src/components/BAIImageMetaRow.tsx`의 `BAIImageMetaRow`를 쓴다. image의 icon, 이름, version, architecture, tag chip, 그리고 full reference를 복사하는 control을 이 component가 그린다.
 - `variant` prop이 surface를 가른다. `full`은 tag chip까지 그리고, `compact`는 chip을 뺀 행을 그리고, `path`는 같은 reference를 monospace 한 줄로 그린다.
-- tag chip을 [double tag](#용어)로 그릴지 badge 하나로 그릴지는 `BAIImageTagBadges`와 같은 모듈의 `imageNodeTagFacts` / `imageTagFacts`가 정한다. FR-3544가 host의 `react/src/components/ImageTags.tsx`에 만든 규칙을 BUI로 옮긴 것이고, chip 색을 호출자가 고르는 prop은 없앴다.
+- tag chip을 [double tag](#용어)로 그릴지 badge 하나로 그릴지는 `BAIImageTagBadges`와 같은 모듈의 `imageNodeTagFacts`가 정한다. FR-3544가 host의 `react/src/components/ImageTags.tsx`에 만든 규칙을 BUI로 옮긴 것이고, chip 색을 호출자가 고르는 prop은 없앴다.
 - 부분 사이의 구분선은 `BAIImageMetaDivider`다. Astryx `Divider`를 `orientation="vertical"`로 직접 쓰면 `BAIFlex` 안에서 높이가 0으로 접힌다.
 - Relay fragment를 읽는 일은 schema마다 하나씩 있는 adapter가 한다. v1 `ImageNode`는 `ImageNodeSimpleTag`, v2 `ImageV2`는 `BAIImageNodeSimpleTagV2`, tag 열만 그리는 `AliasedImageDoubleTags`가 그 셋이다.
+- 이 저장소가 지원하는 가장 낮은 manager는 26.4.x이고 [extended image info](#용어)는 24.12.0부터 켜지므로, 그 이전 manager를 위한 image 표현은 모두 지웠다.
 - 범위 밖: image 하나의 identity가 아닌 화면 네 곳은 이 행을 쓰지 않는다. 환경 선택 dropdown의 환경 목록과 version 목록, session launcher가 손으로 입력받은 image 문자열, 그리고 session template 표의 축약 label이다.
 
 ## Context
@@ -47,7 +48,7 @@ flowchart TB
   subgraph rowless["행을 쓰지 않고 부품만 쓰는 call site"]
     envSelect["ImageEnvironmentSelectFormItems<br/>version 옵션 행"]
   end
-  facts["imageNodeTagFacts / imageTagFacts<br/>BAIImageTagBadges.tsx"]
+  facts["imageNodeTagFacts<br/>BAIImageTagBadges.tsx"]
   row["BAIImageMetaRow"]
   icon["BAIImageMetaIcon"]
   divider["BAIImageMetaDivider"]
@@ -99,15 +100,14 @@ flowchart TB
 ### 3. 부분값은 `fullName`에서 파생하고 호출자가 덮어쓴다
 
 - **Derived by default**: `name`은 `tagAlias(getBaseImage(fullName))`, `version`은 `getBaseVersion(fullName)`, `architecture`는 `fullName`의 `@` 뒤 부분이다. 호출자가 아무것도 넘기지 않으면 `fullName` 하나로 행이 완성된다.
-- **Empty means derive**: 세 override는 비어 있으면 파생값으로 되돌아간다. `ImageNode`의 `base_image_name`과 `version`은 `@since(version: "24.12.0")`이라 그 이전 manager에서 null로 오고 adapter는 그대로 넘기므로, 빈 값을 그대로 그리면 이름 자리가 빈 채로 남는다.
+- **Empty means derive**: 세 override는 비어 있으면 파생값으로 되돌아간다. adapter는 server field를 그대로 넘기고 그 field는 nullable이므로, 빈 값을 그대로 그리면 이름 자리가 빈 채로 남는다. v2 adapter처럼 `architecture`만 넘기는 call site도 나머지 두 자리를 `fullName`에서 얻는다.
 - **Overridden where the server knows better**: [extended image info](#용어)를 지원하는 서버는 `base_image_name`과 `version`을 따로 준다. 그 값이 있으면 adapter가 넘겨 문자열 parsing 대신 server 값을 쓴다.
 
-### 4. tag chip 규칙은 fact builder 두 개에 있다
+### 4. tag chip 규칙은 fact builder 하나에 있다
 
 - **`BAIImageTagFact`**: chip 하나의 표시 사실을 담는 type이다. `key`, `value`, `isCustomized`, `aliasedTag`, `isDouble`, `keyAlias` 여섯 field를 가지며 `packages/backend.ai-ui/src/components/BAIImageTagBadges.tsx`가 export한다.
-- **`imageNodeTagFacts`**: image node의 `tags`와 `labels`를 받는다. extended image info를 지원하는 서버의 경로다. key에 `customized_`가 든 tag를 customized로 보고, 값이 hash라서 읽을 수 있는 이름을 `ai.backend.customized-image.name` label에서 가져온다.
-- **`imageTagFacts`**: `getTags`가 parse한 tag 목록을 받는다. extended image info가 없는 서버의 경로다. 이 목록에서 customized tag의 key는 `Customized` 한 가지다.
-- **Who calls them**: `getTags`는 host의 `useBackendAIImageMetaData`에만 있으므로 extended image info가 없는 경로의 fact는 host에서 만든다. `ImageTags`, `SessionLauncherPreview`, `ImageEnvironmentSelectFormItems` 셋이 그렇게 하고, 새 call site도 두 builder 중 하나를 부르지 직접 판정하지 않는다.
+- **`imageNodeTagFacts`**: image node의 `tags`와 `labels`를 받는 유일한 builder다. key에 `customized_`가 든 tag를 customized로 보고, 값이 hash라서 읽을 수 있는 이름을 `ai.backend.customized-image.name` label에서 가져온다.
+- **Who calls it**: image node의 `tags`를 가진 call site가 직접 부른다. `ImageNodeSimpleTag`, `BAIImageNodeSimpleTagV2`, `AliasedImageDoubleTags`, `SessionLauncherPreview`, `ImageEnvironmentSelectFormItems`가 그렇게 하고, 새 call site도 이 builder를 부르지 직접 판정하지 않는다.
 - **Colour**: customized tag는 cyan, 나머지는 blue다. 호출자가 색을 넘기는 prop은 없다.
 - **Tags without a key**: key가 빈 tag는 alias할 것이 없으므로 chip을 그리지 않는다.
 
@@ -134,6 +134,14 @@ flowchart TB
 - **Home**: `BAIImageMetaRow`, `BAIImageTagBadges`, `BAIImageMetaDivider`와 fact builder 두 개는 `packages/backend.ai-ui/src/components/`에 있고 components barrel이 export한다. `.claude/rules/bui-component-home.md`가 정한 자리다.
 - **The icon twin is retired**: host의 `react/src/components/ImageMetaIcon.tsx`를 지우고 call site를 `BAIImageMetaIcon`으로 옮겼다. 두 component는 같은 metadata를 읽어 같은 icon과 같은 fallback glyph를 그렸고, BUI 쪽은 `imagePath`가 없으면 null을 그리는 점만 달랐다. host app은 늘 `imagePath`를 넘긴다.
 - **Host side**: host에 남는 image 관련 component는 host의 `useBackendAIImageMetaData`나 host query가 필요한 것뿐이다. `ImageNodeSimpleTag`, `AliasedImageDoubleTags`, `ImageTags`가 그에 해당한다.
+
+### 8. 24.12 이전 manager를 위한 image 표현은 없다
+
+- **Support floor**: 이 저장소가 지원하는 가장 낮은 manager는 26.4.x다. `extended-image-info`는 `packages/backend.ai-client/src/client.ts`에서 manager 24.12.0부터 켜지므로, 이 flag는 지원 범위 안에서 늘 참이다.
+- **What went**: 그 flag의 거짓 분기가 그리던 image 표현을 모두 지웠다. host의 `ImageTags` component, `CustomizedImageList`의 Namespace/Version/Base/Tags 레거시 열 네 개, `ImageEnvironmentSelectFormItems`의 version 옵션 레거시 행, `SessionLauncherPreview`의 두 번째 복제본이다.
+- **Parsers that went with them**: image 문자열에서 tag와 base image를 다시 parse하던 `getTags`와 `getBaseImages`를 host의 `imageParser`에서 지웠고, 그것을 받던 BUI의 `imageTagFacts`도 지웠다. 서버가 `tags`를 직접 주므로 다시 parse할 이유가 없다.
+- **Search coverage**: `CustomizedImageList`의 검색은 이제 서버가 준 `tags`, `version`, `namespace`, `digest`, 전체 reference만 본다. 다시 parse한 base version과 base image는 같은 값을 중복으로 훑던 것이라 함께 지웠다.
+- **New code**: `supports('extended-image-info')`로 갈리는 분기를 새로 만들지 않는다.
 
 ## 대안과 기각 사유
 

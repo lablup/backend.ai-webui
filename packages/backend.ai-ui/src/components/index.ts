@@ -212,7 +212,6 @@ export type { BAIImageMetaIconProps } from './BAIImageMetaIcon';
 export { default as BAIImageMetaDivider } from './BAIImageMetaDivider';
 export {
   default as BAIImageTagBadges,
-  imageTagFacts,
   imageNodeTagFacts,
 } from './BAIImageTagBadges';
 export type {

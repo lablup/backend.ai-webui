@@ -21,7 +21,6 @@ import {
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
-import { ImageTags } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -34,7 +33,6 @@ import {
   BAIImageMetaIcon,
   BAIImageTagBadges,
   imageNodeTagFacts,
-  imageTagFacts,
   BAISelect,
   // BAISelect still accepts antd's children option API via BUI's render-null
   // carriers; the rich JSX option rows below survive through `renderOption`.
@@ -84,15 +82,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const environments = Form.useWatch('environments', { form, preserve: true });
   const baiClient = useSuspendedBackendaiClient();
-  const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
 
   const [environmentSearch, setEnvironmentSearch] = useState(
     searchPrefill ?? '',
   );
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
-  const [metadata, { getBaseVersion, getImageMeta, getTags, tagAlias }] =
-    useBackendAIImageMetaData();
+  const [metadata, { getImageMeta, tagAlias }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
@@ -202,9 +198,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   // metadata?.imageInfo[
                   //   getImageMeta(getImageFullName(image) || "").key
                   // ]?.name || image?.name
-                  `${image?.registry}/${
-                    supportExtendedImageInfo ? image?.namespace : image?.name
-                  }`
+                  `${image?.registry}/${image?.namespace}`
                 );
               }),
               (images, environmentName) => {
@@ -453,10 +447,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               if (fullNameMatchedImage) {
                 form.setFieldsValue({
                   environments: {
-                    environment:
-                      (supportExtendedImageInfo
-                        ? fullNameMatchedImage?.namespace
-                        : fullNameMatchedImage?.name) || '',
+                    environment: fullNameMatchedImage?.namespace || '',
                     version: getImageFullName(fullNameMatchedImage),
                     image: fullNameMatchedImage,
                   },
@@ -502,11 +493,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           >
             {fullNameMatchedImage ? (
               <SelectOption
-                value={
-                  supportExtendedImageInfo
-                    ? fullNameMatchedImage?.namespace
-                    : fullNameMatchedImage?.name
-                }
+                value={fullNameMatchedImage?.namespace}
                 filterValue={getImageFullName(fullNameMatchedImage)}
               >
                 <BAIFlex
@@ -809,32 +796,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       // The closed trigger renders a plain string (BAISelect
                       // FR-3544): compute each tag's display facts once, then
                       // derive both the trigger text and the option row from them.
-                      const tagFacts = supportExtendedImageInfo
-                        ? imageNodeTagFacts(
-                            image?.tags as Array<{
-                              key: string;
-                              value: string;
-                            }>,
-                            image?.labels as Array<{
-                              key: string;
-                              value: string;
-                            }>,
-                            tagAlias,
-                          )
-                        : imageTagFacts(
-                            getTags(
-                              image?.tag || '',
-                              image?.labels as Array<{
-                                key: string;
-                                value: string;
-                              }>,
-                            ),
-                            tagAlias,
-                          );
+                      const tagFacts = imageNodeTagFacts(
+                        image?.tags as Array<{ key: string; value: string }>,
+                        image?.labels as Array<{ key: string; value: string }>,
+                        tagAlias,
+                      );
                       const selectedLabel = _.compact([
-                        supportExtendedImageInfo
-                          ? image?.version
-                          : getBaseVersion(imageFullName || ''),
+                        image?.version,
                         image?.architecture,
                         ..._.map(tagFacts, (fact) =>
                           fact.isDouble
@@ -856,45 +824,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             ...extraFilterValues,
                           ].join('\t')}
                         >
-                          {supportExtendedImageInfo ? (
-                            <BAIFlex direction="row">
-                              <TextHighlighter keyword={versionSearch}>
-                                {image?.version}
-                              </TextHighlighter>
-                              <BAIImageMetaDivider />
-                              <TextHighlighter keyword={versionSearch}>
-                                {image?.architecture}
-                              </TextHighlighter>
-                              <BAIImageMetaDivider />
-                              <BAIImageTagBadges
-                                facts={tagFacts}
-                                highlightKeyword={versionSearch}
-                              />
-                            </BAIFlex>
-                          ) : (
-                            <BAIFlex direction="row" justify="between">
-                              <BAIFlex direction="row" gap="xxs">
-                                <TextHighlighter keyword={versionSearch}>
-                                  {getBaseVersion(imageFullName || '')}
-                                </TextHighlighter>
-                                <BAIImageMetaDivider />
-                                <TextHighlighter keyword={versionSearch}>
-                                  {image?.architecture}
-                                </TextHighlighter>
-                                <BAIImageMetaDivider />
-                                <ImageTags
-                                  tag={image?.tag || ''}
-                                  highlightKeyword={versionSearch}
-                                  labels={
-                                    image?.labels as Array<{
-                                      key: string;
-                                      value: string;
-                                    }>
-                                  }
-                                />
-                              </BAIFlex>
-                            </BAIFlex>
-                          )}
+                          <BAIFlex direction="row">
+                            <TextHighlighter keyword={versionSearch}>
+                              {image?.version}
+                            </TextHighlighter>
+                            <BAIImageMetaDivider />
+                            <TextHighlighter keyword={versionSearch}>
+                              {image?.architecture}
+                            </TextHighlighter>
+                            <BAIImageMetaDivider />
+                            <BAIImageTagBadges
+                              facts={tagFacts}
+                              highlightKeyword={versionSearch}
+                            />
+                          </BAIFlex>
                         </SelectOption>
                       );
                     },

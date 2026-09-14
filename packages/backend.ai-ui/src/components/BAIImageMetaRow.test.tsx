@@ -1,6 +1,6 @@
 import { preserveDotStartCase } from '../helper';
 import BAIImageMetaRow from './BAIImageMetaRow';
-import { imageNodeTagFacts, imageTagFacts } from './BAIImageTagBadges';
+import { imageNodeTagFacts } from './BAIImageTagBadges';
 import { BAIMetaDataProvider } from './provider';
 import type { ImageMetaData } from './provider';
 import '@testing-library/jest-dom';
@@ -78,7 +78,7 @@ describe('BAIImageMetaRow', () => {
   it('renders the tag chips only for the full variant', () => {
     // `py3` has its own alias but `py39` does not, so the chip stays a
     // two-part double tag rather than collapsing into one badge.
-    const tags = imageTagFacts([{ key: 'py3', value: '9' }], tagAlias);
+    const tags = imageNodeTagFacts([{ key: 'py3', value: '9' }], [], tagAlias);
 
     const { unmount } = renderRow(
       <BAIImageMetaRow fullName={FULL_NAME} tags={tags} />,
