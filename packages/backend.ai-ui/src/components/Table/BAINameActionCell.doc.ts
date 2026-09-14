@@ -101,6 +101,13 @@ export const docs = {
       default: '0',
     },
     {
+      name: 'minTitleWidth',
+      type: 'number',
+      description:
+        'Width (px) the title keeps before an action may claim space; actions that no longer fit fold into the more menu. Raise it where the title is long and the cell is narrow — the file explorer passes 120 so a file name stays readable.',
+      default: '40',
+    },
+    {
       name: 'moreMenuDisabled',
       type: 'boolean',
       description:

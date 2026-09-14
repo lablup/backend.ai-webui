@@ -158,3 +158,53 @@ describe('BAINameActionCell — the overflow row keeps its action colour (FR-372
     expect(menuIcon()?.style.color).toBe(expectedTint);
   });
 });
+
+/**
+ FR-3926: the cell reserves a slice of its width for the title before any
+ action may claim space. The default suits a short identifier; a long one — a
+ file name — raises it, and the actions that no longer fit fold into the more
+ menu instead of squeezing the title away entirely.
+*/
+describe('BAINameActionCell — minTitleWidth reserves width for the title', () => {
+  const NARROW_CELL_WIDTH = 200;
+
+  const renderTwoActions = (minTitleWidth?: number) =>
+    render(
+      <BAINameActionCell
+        title="a-very-long-file-name.tar.gz"
+        showActions="always"
+        minTitleWidth={minTitleWidth}
+        actions={[
+          { key: 'download', title: 'Download' },
+          { key: 'delete', title: 'Delete' },
+        ]}
+      />,
+    );
+
+  const setCellWidth = (value: number) =>
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+      configurable: true,
+      value,
+    });
+
+  beforeEach(() => setCellWidth(NARROW_CELL_WIDTH));
+  afterEach(() => setCellWidth(800));
+
+  it('keeps both actions visible at the default reserve', () => {
+    renderTwoActions();
+
+    expect(
+      screen.getByRole('button', { name: /Download/ }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Delete/ })).toBeInTheDocument();
+  });
+
+  it('folds them into the more menu once the reserve no longer fits them', () => {
+    renderTwoActions(NARROW_CELL_WIDTH);
+
+    expect(screen.queryByRole('button', { name: /Download/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Delete/ })).toBeNull();
+    // Both are still reachable — the more button is what the cell keeps.
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+});

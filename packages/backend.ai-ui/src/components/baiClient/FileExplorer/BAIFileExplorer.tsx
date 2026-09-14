@@ -233,6 +233,10 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     {
       title: t('comp:FileExplorer.Name'),
       dataIndex: 'name',
+      // The only flexing column, so it takes what the sized ones leave — it
+      // carries the row actions as well as the name (FR-3670), and an equal
+      // quarter of the explorer left the name nothing to render in (FR-3926).
+      minWidth: 180,
       sorter: (a, b) => localeCompare(a.name, b.name),
       render: (name, record) => {
         if (isDirectoryPicker && record.type !== 'DIRECTORY') {
@@ -295,6 +299,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     {
       title: t('comp:FileExplorer.Size'),
       dataIndex: 'size',
+      // Sized to their content so the name column keeps the rest; all three
+      // stay drag-resizable.
+      width: 90,
       sorter: (a, b) => localeCompare(a.type, b.type),
       render: (size, record) => {
         if (record.type === 'DIRECTORY' && !isDirectorySizeVisible) {
@@ -308,12 +315,14 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     {
       title: t('comp:FileExplorer.CreatedAt'),
       dataIndex: 'created',
+      width: 160,
       sorter: (a, b) => localeCompare(a.created, b.created),
       render: (createdAt) => dayjs(createdAt).format('lll'),
     },
     {
       title: t('comp:FileExplorer.ModifiedAt'),
       dataIndex: 'modified',
+      width: 160,
       sorter: (a, b) => localeCompare(a.modified, b.modified),
       render: (modifiedAt) => dayjs(modifiedAt).format('lll'),
     },

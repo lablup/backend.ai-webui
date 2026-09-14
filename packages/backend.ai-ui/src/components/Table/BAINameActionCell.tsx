@@ -125,6 +125,13 @@ export interface BAINameActionCellProps {
   showActions?: 'hover' | 'always';
   /** Minimum number of action buttons to keep visible before overflow. Default: 0 */
   minVisibleActions?: number;
+  /**
+   * Width (px) the title keeps for itself before an action may claim space;
+   * actions that no longer fit fold into the more menu. The default suits an
+   * identifier a few characters of which already identify the row — raise it
+   * where the title is long and the cell is narrow (FR-3926).
+   */
+  minTitleWidth?: number;
   /** Disable the overflow More (…) button. Individual menu items remain visible. */
   moreMenuDisabled?: boolean;
   /** Show a copy-to-clipboard icon on hover next to the title text */
@@ -137,6 +144,7 @@ export interface BAINameActionCellProps {
 const ACTION_BUTTON_WIDTH = 24;
 const MORE_BUTTON_WIDTH = 24;
 const ACTIONS_GAP = 2;
+const DEFAULT_MIN_TITLE_WIDTH = 40;
 
 /**
  * The anchored confirmation an antd `Popconfirm` used to provide.
@@ -228,6 +236,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   actions,
   showActions = 'hover',
   minVisibleActions = 0,
+  minTitleWidth = DEFAULT_MIN_TITLE_WIDTH,
   moreMenuDisabled,
   copyable,
   style,
@@ -266,7 +275,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         '.bai-name-action-cell-title-icon',
       );
       const titleIconWidth = titleIcon ? titleIcon.clientWidth : 0;
-      const minTitleReserve = titleIconWidth + token.marginXXS + 40;
+      const minTitleReserve = titleIconWidth + token.marginXXS + minTitleWidth;
       // Account for the more button which is always shown when menuOnlyActions exist
       const moreButtonReserve =
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
@@ -327,7 +336,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       ro.disconnect();
       cancelAnimationFrame(rafId);
     };
-  }, [autoActionCount, calculateVisibleActions]);
+  }, [autoActionCount, minTitleWidth, calculateVisibleActions]);
 
   const hasOverflow = visibleCount < autoActionCount;
   const visibleActions = autoActions.slice(0, visibleCount);
