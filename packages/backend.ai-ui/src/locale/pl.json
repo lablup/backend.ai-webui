@@ -246,6 +246,10 @@
       "Title": "Nie udało się zalogować przez Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Postęp uruchamiania jąder",
+    "KernelTerminationProgress": "Postęp kończenia jąder"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Wielkość klastra",
     "Concurrency": "Równoczesne sesje",

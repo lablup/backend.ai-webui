@@ -246,6 +246,10 @@
       "Title": "无法使用 Backend.AI 登录"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "内核启动进度",
+    "KernelTerminationProgress": "内核终止进度"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "簇的大小",
     "Concurrency": "并发会话数",

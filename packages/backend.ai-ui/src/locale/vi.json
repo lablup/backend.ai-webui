@@ -246,6 +246,10 @@
       "Title": "Không thể đăng nhập bằng Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Tiến trình khởi động kernel",
+    "KernelTerminationProgress": "Tiến trình kết thúc kernel"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Kích thước cụm",
     "Concurrency": "Phiên đồng thời",

@@ -246,6 +246,10 @@
       "Title": "Backend.AI-аар нэвтэрч чадсангүй"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Кернел эхлүүлэх явц",
+    "KernelTerminationProgress": "Кернел зогсоох явц"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Кластерийн хэмжээ",
     "Concurrency": "Зэрэгцээ сессүүд",

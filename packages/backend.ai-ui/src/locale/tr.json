@@ -246,6 +246,10 @@
       "Title": "Backend.AI ile oturum açılamadı"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Çekirdek başlatma ilerlemesi",
+    "KernelTerminationProgress": "Çekirdek sonlandırma ilerlemesi"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Küme boyutu",
     "Concurrency": "Eşzamanlı Oturumlar",

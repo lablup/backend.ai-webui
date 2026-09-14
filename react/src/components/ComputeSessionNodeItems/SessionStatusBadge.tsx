@@ -4,13 +4,21 @@
  */
 import { SessionStatusBadgeFragment$key } from '../../__generated__/SessionStatusBadgeFragment.graphql';
 import {
+  getSessionKernelBreakdown,
   getSessionKernelProgress,
   isTransitionalSessionStatus,
 } from '../../helper/sessionStatus';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { Badge } from '@astryxdesign/core/Badge';
+import { HoverCard } from '@astryxdesign/core/HoverCard';
+import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAIFlex, BAIProgressRing, badgeVariantForStatus } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIKernelProgressBreakdown,
+  BAIProgressRing,
+  badgeVariantForStatus,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
@@ -80,22 +88,73 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
     return null;
   }
 
+  const progress = getSessionKernelProgress(session);
+
   // One icon for all three render paths below, so they cannot drift apart. The
   // ring is determinate only where `getSessionKernelProgress` can trust the
   // fraction; elsewhere it spins like the glyph it replaces.
-  const progressPercent = getSessionKernelProgress(session).percent;
   const statusIcon = isTransitionalSessionStatus(session.status) ? (
     <BAIProgressRing
-      percent={progressPercent}
+      percent={progress.percent}
       // Only the determinate ring is a `progressbar`, and a progressbar needs
       // a name; naming the indeterminate one would announce a decoration.
       aria-label={
-        progressPercent === undefined
+        progress.percent === undefined
           ? undefined
           : (session.status ?? undefined)
       }
     />
   ) : undefined;
+
+  const { phase } = progress;
+  // The breakdown only says something a cluster session's badge does not: one
+  // kernel has no distribution, and a settled one is not moving.
+  const kernelBreakdownPhase =
+    phase !== null &&
+    progress.total > 1 &&
+    (session.kernel_nodes?.edges?.length ?? 0) > 0
+      ? phase
+      : null;
+
+  /**
+   * One overlay per badge. A transitional badge can carry both a `status_info`
+   * reason and the kernel breakdown, and a Tooltip and a HoverCard on the same
+   * element open on the same hover and overlap — so where the breakdown
+   * applies, the hover card takes the reason as its first line and the tooltip
+   * stands down.
+   */
+  const withStatusOverlay = (
+    badge: React.ReactElement,
+    tooltipContent?: React.ReactNode,
+  ) => {
+    if (kernelBreakdownPhase) {
+      return (
+        <HoverCard
+          hasHoverIndication={false}
+          content={
+            <BAIFlex direction="column" align="stretch" gap="xs">
+              {tooltipContent ? (
+                <Text type="supporting">{tooltipContent}</Text>
+              ) : null}
+              <BAIKernelProgressBreakdown
+                phase={kernelBreakdownPhase}
+                done={progress.done}
+                total={progress.total}
+                segments={getSessionKernelBreakdown(session)}
+              />
+            </BAIFlex>
+          }
+        >
+          {badge}
+        </HoverCard>
+      );
+    }
+    return tooltipContent ? (
+      <Tooltip content={tooltipContent}>{badge}</Tooltip>
+    ) : (
+      badge
+    );
+  };
 
   const statusBadge = (
     <Badge
@@ -136,12 +195,11 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
     );
     return (
       <BAIFlex gap="xs">
-        {showTooltip && statusInfoDescriptionKey ? (
-          <Tooltip content={t(statusInfoDescriptionKey)}>
-            {schedulingHistoryBadge}
-          </Tooltip>
-        ) : (
-          schedulingHistoryBadge
+        {withStatusOverlay(
+          schedulingHistoryBadge,
+          showTooltip && statusInfoDescriptionKey
+            ? t(statusInfoDescriptionKey)
+            : undefined,
         )}
         {queuePositionBadge}
       </BAIFlex>
@@ -151,18 +209,13 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   if (_.isEmpty(session.status_info) || !showInfo) {
     return (
       <BAIFlex wrap="nowrap" gap="xs">
-        {showTooltip && session.status_info ? (
-          <Tooltip
-            content={
-              statusInfoDescriptionKey
-                ? t(statusInfoDescriptionKey)
-                : session.status_info
-            }
-          >
-            {statusBadge}
-          </Tooltip>
-        ) : (
-          statusBadge
+        {withStatusOverlay(
+          statusBadge,
+          showTooltip && session.status_info
+            ? statusInfoDescriptionKey
+              ? t(statusInfoDescriptionKey)
+              : session.status_info
+            : undefined,
         )}
         {queuePositionBadge}
       </BAIFlex>
@@ -172,11 +225,13 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   return (
     <BAIFlex gap={'xs'}>
       <BAIFlex gap="xxs">
-        <Badge
-          variant={badgeVariantForStatus('session', session.status)}
-          icon={statusIcon}
-          label={session.status || ' '}
-        />
+        {withStatusOverlay(
+          <Badge
+            variant={badgeVariantForStatus('session', session.status)}
+            icon={statusIcon}
+            label={session.status || ' '}
+          />,
+        )}
         {statusInfoDescriptionKey ? (
           <Tooltip content={t(statusInfoDescriptionKey)}>
             <Badge

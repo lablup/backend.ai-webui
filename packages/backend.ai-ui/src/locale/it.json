@@ -246,6 +246,10 @@
       "Title": "Impossibile accedere con Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Avanzamento dell'avvio dei kernel",
+    "KernelTerminationProgress": "Avanzamento della terminazione dei kernel"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Dimensione del cluster",
     "Concurrency": "Sessioni simultanee",

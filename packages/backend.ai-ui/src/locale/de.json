@@ -246,6 +246,10 @@
       "Title": "Anmeldung mit Backend.AI nicht möglich"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Fortschritt des Kernel-Starts",
+    "KernelTerminationProgress": "Fortschritt der Kernel-Beendigung"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Clustergröße",
     "Concurrency": "Gleichzeitige Sitzungen",
