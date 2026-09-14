@@ -605,6 +605,7 @@
     "DescRequirePasswordChange": "Cambio password richiesto",
     "Description": "Descrizione",
     "Domain": "Dominio",
+    "DomainIsActive": "Dominio attivo",
     "DownloadCSV": "Scarica CSV",
     "DownloadCSVTemplate": "Scarica modello CSV",
     "EmailPrefix": "Prefisso email (prima di @)",
@@ -632,6 +633,7 @@
     "InactivateTheFollowingUsers": "Disattiva i seguenti utenti.",
     "InactiveIncludeKeypair": "Inattivo (includi keypair)",
     "Information": "Informazione",
+    "IntegrationName": "Nome integrazione",
     "InvalidIP": "IP non valido",
     "InvalidRateLimitValue": "Immettere un valore valido di Limite di velocità.",
     "IssueNewKeypair": "Emetti nuova coppia di chiavi",
@@ -671,6 +673,7 @@
     "PolicyGroup": "Gruppo criteri",
     "PreviewAndValidation": "Anteprima e validazione",
     "ProjectAndGroup": "Progetti e gruppi",
+    "ProjectIsActive": "Progetto attivo",
     "Projects": "Progetti",
     "PurgeUsersPartialFailureDescription": "Impossibile eliminare definitivamente {{failed}} utenti su {{total}}. Controlla il motivo per ciascun utente qui sotto.",
     "PurgeUsersWarningAlertTitle": "Le cartelle virtuali dell'utente, la cronologia dei kernel e le coppie di chiavi correlate saranno inoltre eliminate. Questa azione è irreversibile.",
@@ -700,6 +703,7 @@
     "SetAsMain": "Imposta come principale",
     "SetAsMainConfirm": "Sei sicuro di voler impostare questa coppia di chiavi come chiave di accesso principale?",
     "SignoutSuccessfullyFinished": "Il signout è terminato in modo sicuro",
+    "SomeFiltersAreNotAppliedToCSVExport": "L'esportazione CSV non supporta alcuni filtri, quindi il file esportato potrebbe contenere più righe della tabella.",
     "SourceFile": "File sorgente",
     "SourceFileHint": "Carica il file CSV da importare. Ogni riga nel file viene creata come un account utente.",
     "Status": "Stato",
@@ -744,11 +748,7 @@
       "PleaseEnterUniqueNumbers": "Inserisci numeri univoci",
       "PleaseEnterValidNumber": "Inserisci un numero valido",
       "PleaseSelectDomain": "Seleziona prima un dominio."
-    },
-    "ProjectIsActive": "__NOT_TRANSLATED__",
-    "DomainIsActive": "__NOT_TRANSLATED__",
-    "IntegrationName": "__NOT_TRANSLATED__",
-    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
+    }
   },
   "dashboard": {
     "Edit": "Modifica",

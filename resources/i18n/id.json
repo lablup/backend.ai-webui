@@ -605,6 +605,7 @@
     "DescRequirePasswordChange": "Perubahan kata sandi diperlukan",
     "Description": "Deskripsi",
     "Domain": "Domain",
+    "DomainIsActive": "Domain aktif",
     "DownloadCSV": "Unduh CSV",
     "DownloadCSVTemplate": "Unduh Template CSV",
     "EmailPrefix": "Awalan email (sebelum @)",
@@ -632,6 +633,7 @@
     "InactivateTheFollowingUsers": "Nonaktifkan pengguna berikut.",
     "InactiveIncludeKeypair": "Tidak aktif (termasuk keypair)",
     "Information": "Informasi",
+    "IntegrationName": "Nama integrasi",
     "InvalidIP": "IP tidak valid",
     "InvalidRateLimitValue": "Masukkan nilai Batas Tarif yang valid.",
     "IssueNewKeypair": "Terbitkan pasangan kunci baru",
@@ -671,6 +673,7 @@
     "PolicyGroup": "Grup Kebijakan",
     "PreviewAndValidation": "Pratinjau & validasi",
     "ProjectAndGroup": "Proyek & Grup",
+    "ProjectIsActive": "Proyek aktif",
     "Projects": "Proyek",
     "PurgeUsersPartialFailureDescription": "{{failed}} dari {{total}} pengguna tidak dapat dihapus secara permanen. Periksa alasan untuk setiap pengguna di bawah ini.",
     "PurgeUsersWarningAlertTitle": "VFolder pengguna, riwayat kernel, dan pasangan kunci terkait juga akan dihapus. Tindakan ini tidak dapat dibatalkan.",
@@ -700,6 +703,7 @@
     "SetAsMain": "Tetapkan sebagai utama",
     "SetAsMainConfirm": "Apakah Anda yakin ingin menetapkan pasangan kunci ini sebagai kunci akses utama?",
     "SignoutSuccessfullyFinished": "Keluar dengan aman selesai",
+    "SomeFiltersAreNotAppliedToCSVExport": "Beberapa filter tidak didukung oleh ekspor CSV, sehingga berkas yang diekspor dapat berisi lebih banyak baris daripada tabel.",
     "SourceFile": "File sumber",
     "SourceFileHint": "Unggah file CSV untuk diimpor. Setiap baris dalam file dibuat sebagai satu akun pengguna.",
     "Status": "Status",
@@ -744,11 +748,7 @@
       "PleaseEnterUniqueNumbers": "Silakan masukkan angka yang unik",
       "PleaseEnterValidNumber": "Silakan masukkan angka yang valid",
       "PleaseSelectDomain": "Silakan pilih domain terlebih dahulu."
-    },
-    "ProjectIsActive": "__NOT_TRANSLATED__",
-    "DomainIsActive": "__NOT_TRANSLATED__",
-    "IntegrationName": "__NOT_TRANSLATED__",
-    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
+    }
   },
   "dashboard": {
     "Edit": "Sunting",
