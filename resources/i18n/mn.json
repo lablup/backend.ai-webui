@@ -743,7 +743,11 @@
       "PleaseEnterUniqueNumbers": "Давтагдаагүй тоо оруулна уу",
       "PleaseEnterValidNumber": "Зөв тоо оруулна уу",
       "PleaseSelectDomain": "Эхлээд доменээ сонгоно уу."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Засах",

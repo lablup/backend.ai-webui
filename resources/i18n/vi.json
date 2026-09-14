@@ -743,7 +743,11 @@
       "PleaseEnterUniqueNumbers": "Vui lòng nhập các số không trùng lặp",
       "PleaseEnterValidNumber": "Vui lòng nhập số hợp lệ",
       "PleaseSelectDomain": "Vui lòng chọn miền trước."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Chỉnh sửa",

@@ -743,7 +743,11 @@
       "PleaseEnterUniqueNumbers": "Proszę wprowadzić unikalne liczby",
       "PleaseEnterValidNumber": "Proszę wprowadzić prawidłową liczbę",
       "PleaseSelectDomain": "Najpierw wybierz domenę."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Edytuj",

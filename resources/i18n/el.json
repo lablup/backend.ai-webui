@@ -743,7 +743,11 @@
       "PleaseEnterUniqueNumbers": "Παρακαλώ εισάγετε μοναδικούς αριθμούς",
       "PleaseEnterValidNumber": "Παρακαλώ εισάγετε έγκυρο αριθμό",
       "PleaseSelectDomain": "Παρακαλώ επιλέξτε πρώτα το domain."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Επεξεργασία",

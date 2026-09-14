@@ -743,7 +743,11 @@
       "PleaseEnterUniqueNumbers": "Пожалуйста, введите уникальные числа",
       "PleaseEnterValidNumber": "Пожалуйста, введите допустимое число",
       "PleaseSelectDomain": "Пожалуйста, сначала выберите домен."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Редактировать",

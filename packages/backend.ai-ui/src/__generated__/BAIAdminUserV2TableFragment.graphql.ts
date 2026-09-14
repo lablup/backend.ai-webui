@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<47d1f265f2e8be29be972a1654752c18>>
+ * @generated SignedSource<<cff50d43035c68183e3a2f97871ae4f1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,6 +32,16 @@ export type BAIAdminUserV2TableFragment$data = ReadonlyArray<{
     readonly resourcePolicy: string;
     readonly role: UserRoleV2 | null | undefined;
   };
+  readonly projects: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly basicInfo: {
+          readonly name: string;
+        };
+        readonly id: string;
+      };
+    }>;
+  } | null | undefined;
   readonly security: {
     readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
     readonly sudoSessionEnabled: boolean;
@@ -54,7 +64,15 @@ export type BAIAdminUserV2TableFragment$key = ReadonlyArray<{
   readonly " $fragmentSpreads": FragmentRefs<"BAIAdminUserV2TableFragment">;
 }>;
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [
     {
       "kind": "RootArgument",
@@ -69,13 +87,7 @@ const node: ReaderFragment = {
   "selections": [
     {
       "kind": "RequiredField",
-      "field": {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
+      "field": (v0/*: any*/),
       "action": "NONE"
     },
     {
@@ -158,6 +170,58 @@ const node: ReaderFragment = {
           "args": null,
           "kind": "ScalarField",
           "name": "mainAccessKey",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ProjectV2Connection",
+      "kind": "LinkedField",
+      "name": "projects",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ProjectV2Edge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectV2",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                (v0/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ProjectBasicInfo",
+                  "kind": "LinkedField",
+                  "name": "basicInfo",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "name",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
           "storageKey": null
         }
       ],
@@ -302,7 +366,8 @@ const node: ReaderFragment = {
   "type": "UserV2",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "2a7ebc6edb19014b896c2fb9c7b8f3e7";
+(node as any).hash = "6d8325dfe4b721cbb05a01e0a350ab94";
 
 export default node;

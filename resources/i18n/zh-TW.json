@@ -743,7 +743,11 @@
       "PleaseEnterUniqueNumbers": "請輸入不重複的數字",
       "PleaseEnterValidNumber": "請輸入有效的數字",
       "PleaseSelectDomain": "請先選擇網域。"
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "編輯",

@@ -743,7 +743,11 @@
       "PleaseEnterUniqueNumbers": "Silakan masukkan angka yang unik",
       "PleaseEnterValidNumber": "Silakan masukkan angka yang valid",
       "PleaseSelectDomain": "Silakan pilih domain terlebih dahulu."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Sunting",

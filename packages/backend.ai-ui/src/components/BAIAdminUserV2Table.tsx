@@ -30,6 +30,7 @@ const availableUserV2SorterKeys = [
   'username',
   'status',
   'domainName',
+  'projectName',
   'createdAt',
   'modifiedAt',
 ] as const;
@@ -83,6 +84,19 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           role
           resourcePolicy
           mainAccessKey
+        }
+        # Unpaginated, matching every other UserV2 projects selection in the
+        # tree: Relay requires identical arguments across fragments on one
+        # parent, and the modals spread alongside this one take none.
+        projects {
+          edges {
+            node {
+              id
+              basicInfo {
+                name
+              }
+            }
+          }
         }
         security {
           # @skipOnClient strips the field from the request text; the standard
@@ -165,6 +179,25 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         exportKey: 'domain_name',
         sorter: isEnableSorter('domainName'),
         render: (__, record) => record.organization?.domainName || '-',
+      },
+      {
+        key: 'projects',
+        title: t('comp:UserNodes.Projects'),
+        sortKey: 'projectName',
+        sorter: isEnableSorter('projectName'),
+        defaultHidden: true,
+        render: (__, record) => (
+          <BAITagList
+            variant="text"
+            maxInline={2}
+            items={_.compact(
+              _.map(
+                record.projects?.edges,
+                (edge) => edge?.node?.basicInfo?.name,
+              ),
+            )}
+          />
+        ),
       },
       {
         key: 'integration_name',

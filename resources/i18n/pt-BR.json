@@ -743,7 +743,11 @@
       "PleaseEnterUniqueNumbers": "Por favor, insira números únicos",
       "PleaseEnterValidNumber": "Por favor, insira um número válido",
       "PleaseSelectDomain": "Por favor, selecione o domínio primeiro."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Editar",
