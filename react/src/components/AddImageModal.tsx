@@ -13,7 +13,7 @@ import {
   type ResolvedReference,
 } from '../helper/imageReferenceParser';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import './AddImageModal.css';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
@@ -30,7 +30,6 @@ import {
   BAISelect,
   BAISkeleton,
   BAIUnmountAfterClose,
-  INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -38,7 +37,8 @@ import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import { Suspense, useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
+import type { IEnvironment } from 'relay-runtime';
 
 /**
  * `RescanImagesResponse` / `ImageDTO` from
@@ -59,6 +59,85 @@ interface ScanImageResponse {
 }
 
 type LineOutcome = { status: 'success' | 'error'; message?: string };
+
+const registriesQuery = graphql`
+  query AddImageModalRegistriesQuery($first: Int, $after: String) {
+    container_registry_nodes(first: $first, after: $after)
+      @since(version: "24.09.0") {
+      edges {
+        node {
+          id
+          registry_name
+          project
+          url
+          type
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`;
+
+type RegistryConnection = NonNullable<
+  AddImageModalRegistriesQuery['response']['container_registry_nodes']
+>;
+type RegistryNode = NonNullable<RegistryConnection['edges']>[number];
+
+const REGISTRY_PAGE_SIZE = 100;
+/** Bounds the loop if a manager ever answers `hasNextPage` without advancing. */
+const REGISTRY_PAGE_LIMIT = 100;
+
+/**
+ * Every registered registry, not just the first page: the prefix match below
+ * is only as complete as this list, so a row past the cap would read as
+ * "registry not registered". Forward cursor mode only -- see
+ * `.claude/rules/graphql-pagination.md`.
+ */
+const fetchAllRegistries = async (
+  environment: IEnvironment,
+): Promise<Array<RegistryNode>> => {
+  const nodes: Array<RegistryNode> = [];
+  let after: string | null = null;
+  for (let page = 0; page < REGISTRY_PAGE_LIMIT; page++) {
+    // Annotated: `after` is written from this very result, so an inferred
+    // type would be circular (TS7022).
+    const data: AddImageModalRegistriesQuery['response'] | undefined =
+      await fetchQuery<AddImageModalRegistriesQuery>(
+        environment,
+        registriesQuery,
+        { first: REGISTRY_PAGE_SIZE, after },
+        { fetchPolicy: 'network-only' },
+      ).toPromise();
+    const connection: RegistryConnection | null | undefined =
+      data?.container_registry_nodes;
+    nodes.push(..._.map(connection?.edges, (edge) => edge));
+    if (
+      !connection?.pageInfo?.hasNextPage ||
+      !connection?.pageInfo?.endCursor
+    ) {
+      break;
+    }
+    after = connection.pageInfo.endCursor;
+  }
+  return nodes;
+};
+
+/**
+ * `client.ts` stores an empty `Blob` in `response` when the manager answers
+ * without a body, so `!error.response` is never true for a bodiless failure.
+ */
+export const isEmptyResponse = (error: any) => {
+  const response = error?.response;
+  if (response === null || response === undefined) return true;
+  if (typeof response === 'string') return response.length === 0;
+  if (typeof Blob !== 'undefined' && response instanceof Blob) {
+    return response.size === 0;
+  }
+  return false;
+};
 
 export interface AddImageModalProps extends Omit<BAIModalProps, 'onOk'> {
   onRequestClose: () => void;
@@ -90,6 +169,8 @@ const AddImageModalContent: React.FC<{
   const [text, setText] = useState('');
   const [architecture, setArchitecture] = useState<string>(ARCHITECTURES[0]);
   const [outcomes, setOutcomes] = useState<Record<string, LineOutcome>>({});
+  /** Every canonical the manager accepted, across the first run and retries. */
+  const [addedCanonicals, setAddedCanonicals] = useState<Array<string>>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [prefilledRegistry, setPrefilledRegistry] = useState<{
     registry_name: string;
@@ -102,35 +183,17 @@ const AddImageModalContent: React.FC<{
   const [, startRegistryTransition] = useTransition();
   const deferredRegistryFetchKey = useDeferredValue(registryFetchKey);
 
-  const { container_registry_nodes } =
-    useLazyLoadQuery<AddImageModalRegistriesQuery>(
-      graphql`
-        query AddImageModalRegistriesQuery($first: Int) {
-          container_registry_nodes(first: $first) @since(version: "24.09.0") {
-            edges {
-              node {
-                id
-                registry_name
-                project
-                url
-                type
-              }
-            }
-          }
-        }
-      `,
-      { first: 300 },
-      {
-        fetchPolicy:
-          deferredRegistryFetchKey === INITIAL_FETCH_KEY
-            ? 'store-and-network'
-            : 'network-only',
-        fetchKey: deferredRegistryFetchKey,
-      },
-    );
+  const relayEnvironment = useRelayEnvironment();
+  // The fetch key is part of the cache key, so a refresh is a new entry
+  // rather than react-query staleness; nothing else may re-run the page loop.
+  const { data: registryEdges } = useSuspenseTanQuery({
+    queryKey: ['AddImageModalRegistries', deferredRegistryFetchKey],
+    queryFn: () => fetchAllRegistries(relayEnvironment),
+    staleTime: Infinity,
+  });
 
   const registryNodes = filterOutNullAndUndefined(
-    _.map(container_registry_nodes?.edges, (edge) => edge?.node),
+    _.map(registryEdges, (edge) => edge?.node),
   ).filter((node) => !!node.registry_name);
   const registries: Array<RegistryRow> = registryNodes.map((node) => ({
     registry_name: node.registry_name as string,
@@ -157,10 +220,10 @@ const AddImageModalContent: React.FC<{
   const previewLines = lines.filter(
     ({ resolved }) => resolved.kind !== 'blank',
   );
+  // Succeeded lines leave the text area for the locked list below, so whatever
+  // is still in `previewLines` is by definition unsubmitted or failed.
   const pendingLines = previewLines.filter(
-    ({ resolved }) =>
-      resolved.submittable &&
-      outcomes[resolved.canonical ?? '']?.status !== 'success',
+    ({ resolved }) => resolved.submittable,
   );
   const hasBlockedLine = previewLines.some(
     ({ resolved }) => !resolved.submittable,
@@ -218,7 +281,7 @@ const AddImageModalContent: React.FC<{
     ) {
       return t('environment.AddImageManagerCannotRegisterNewImages');
     }
-    if (error?.statusCode === 500 && !error?.response) {
+    if (error?.statusCode === 500 && isEmptyResponse(error)) {
       return t('environment.AddImageTagNotFoundInRegistry');
     }
     if (error?.statusCode === 403) {
@@ -229,32 +292,59 @@ const AddImageModalContent: React.FC<{
 
   const handleAdd = async () => {
     setIsSubmitting(true);
-    const added: Array<string> = [];
-    const nextOutcomes: Record<string, LineOutcome> = { ...outcomes };
-    for (const { resolved } of pendingLines) {
-      const canonical = resolved.canonical as string;
-      try {
-        await scanImage.mutateAsync({ canonical, architecture });
-        nextOutcomes[canonical] = { status: 'success' };
-        added.push(canonical);
-      } catch (error) {
-        nextOutcomes[canonical] = {
-          status: 'error',
-          message: describeError(error),
-        };
+    setOutcomes({});
+    const runOutcomes: Record<string, LineOutcome> = {};
+    const addedInThisRun: Array<string> = [];
+    const remainingRawLines: Array<string> = [];
+
+    for (const { raw, resolved } of lines) {
+      const canonical = resolved.canonical;
+      if (!resolved.submittable || !canonical) {
+        remainingRawLines.push(raw);
+        continue;
       }
-      setOutcomes({ ...nextOutcomes });
+      let failure: string | null = null;
+      try {
+        const response = await scanImage.mutateAsync({
+          canonical,
+          architecture,
+        });
+        // A 200 only says the rescan ran; a per-image failure comes back in
+        // `errors`, and such an image was not registered.
+        const errors = _.compact(response?.errors);
+        if (errors.length > 0) {
+          failure = errors.join('\n');
+        }
+      } catch (error) {
+        failure = describeError(error);
+      }
+      if (failure === null) {
+        runOutcomes[canonical] = { status: 'success' };
+        addedInThisRun.push(canonical);
+      } else {
+        runOutcomes[canonical] = { status: 'error', message: failure };
+        remainingRawLines.push(raw);
+      }
+      setOutcomes({ ...runOutcomes });
     }
     setIsSubmitting(false);
 
-    if (added.length > 0) {
-      onAdded?.(added);
+    // Succeeded lines are locked: out of the editable text and into the list
+    // below, with the architecture frozen because it applies to the whole
+    // batch. A retry therefore submits only what is left.
+    const cumulative = [...addedCanonicals, ...addedInThisRun];
+    setAddedCanonicals(cumulative);
+    setText(remainingRawLines.join('\n'));
+    setOutcomes(_.pickBy(runOutcomes, (outcome) => outcome.status === 'error'));
+
+    if (addedInThisRun.length > 0) {
+      onAdded?.(addedInThisRun);
     }
-    if (added.length === pendingLines.length) {
+    if (!_.some(remainingRawLines, (raw) => raw.trim().length > 0)) {
       message.success({
         key: 'images-added',
         content: t('environment.ImagesSuccessfullyAdded', {
-          count: added.length,
+          count: cumulative.length,
         }),
       });
       onRequestClose();
@@ -272,6 +362,22 @@ const AddImageModalContent: React.FC<{
         isDisabled={isSubmitting}
         onChange={(value) => setText(value)}
       />
+      {addedCanonicals.length > 0 ? (
+        <BAIFlex
+          data-testid="add-image-added-list"
+          direction="column"
+          align="stretch"
+          gap="xxs"
+        >
+          <Text type="supporting">{t('environment.AddImageAdded')}</Text>
+          {addedCanonicals.map((canonical) => (
+            <BAIFlex key={canonical} gap="xs" align="center" wrap="wrap">
+              <Badge variant="success" label={t('environment.AddImageAdded')} />
+              <Text type="code">{canonical}</Text>
+            </BAIFlex>
+          ))}
+        </BAIFlex>
+      ) : null}
       {previewLines.length > 0 ? (
         <BAIFlex
           className="add-image-preview"
@@ -371,7 +477,9 @@ const AddImageModalContent: React.FC<{
         <BAISelect
           label={t('environment.Architecture')}
           value={architecture}
-          disabled={isSubmitting}
+          // One architecture is sent with every line, so it cannot change once
+          // part of the batch is registered.
+          disabled={isSubmitting || addedCanonicals.length > 0}
           onChange={(value) => setArchitecture(value)}
           options={ARCHITECTURES.map((value) => ({ label: value, value }))}
         />

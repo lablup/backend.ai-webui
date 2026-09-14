@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0ae2de11b09d0db4d2472e5b94b8d678>>
+ * @generated SignedSource<<195ab82b9d2a48d42d9ef0e0c142ab3d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type AddImageModalRegistriesQuery$variables = {
+  after?: string | null | undefined;
   first?: number | null | undefined;
 };
 export type AddImageModalRegistriesQuery$data = {
@@ -23,6 +24,10 @@ export type AddImageModalRegistriesQuery$data = {
         readonly url: string;
       } | null | undefined;
     } | null | undefined>;
+    readonly pageInfo: {
+      readonly endCursor: string | null | undefined;
+      readonly hasNextPage: boolean;
+    };
   } | null | undefined;
 };
 export type AddImageModalRegistriesQuery = {
@@ -31,17 +36,25 @@ export type AddImageModalRegistriesQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "first"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "after"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "first"
+},
+v2 = [
   {
     "alias": null,
     "args": [
+      {
+        "kind": "Variable",
+        "name": "after",
+        "variableName": "after"
+      },
       {
         "kind": "Variable",
         "name": "first",
@@ -109,6 +122,31 @@ v1 = [
           }
         ],
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "PageInfo",
+        "kind": "LinkedField",
+        "name": "pageInfo",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "hasNextPage",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "endCursor",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -116,32 +154,38 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "AddImageModalRegistriesQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "AddImageModalRegistriesQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "8e021c5b1145408f565a466080407dd7",
+    "cacheID": "595999c864d88a45b52ffa26a7a5c191",
     "id": null,
     "metadata": {},
     "name": "AddImageModalRegistriesQuery",
     "operationKind": "query",
-    "text": "query AddImageModalRegistriesQuery(\n  $first: Int\n) {\n  container_registry_nodes(first: $first) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        id\n        registry_name\n        project\n        url\n        type\n      }\n    }\n  }\n}\n"
+    "text": "query AddImageModalRegistriesQuery(\n  $first: Int\n  $after: String\n) {\n  container_registry_nodes(first: $first, after: $after) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        id\n        registry_name\n        project\n        url\n        type\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d5c77fee5c4b4ada7a57e563355ce436";
+(node as any).hash = "04c71460ccddfa1109043c6b1dc23ef5";
 
 export default node;
